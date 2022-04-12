@@ -18,7 +18,7 @@
 							<view>{{item.name}}</view>
 							<view>{{item.deviceId}}</view>
 						</view>
-						<view>123</view>
+						<view>1234</view>
 					</view>
 				</view>
 				<!-- 	<view class="singleRight">
