@@ -16,7 +16,11 @@
 						</view>
 					</scroll-view>
 					<text v-else class="selected-area placeholder">{{placeholder}}</text>
+<<<<<<< HEAD
 					<view v-show="clearIcon && !readonly && inputSelected.length" class="icon-clear"
+=======
+					<view v-if="clearIcon && !readonly && inputSelected.length" class="icon-clear"
+>>>>>>> ddefe00 (update)
 						@click.stop="clear">
 						<uni-icons type="clear" color="#e1e1e1" size="14"></uni-icons>
 					</view>
@@ -292,7 +296,11 @@
 	}
 </script>
 
+<<<<<<< HEAD
 <style scoped>
+=======
+<style >
+>>>>>>> ddefe00 (update)
 	.uni-data-tree {
 		position: relative;
 		font-size: 14px;
@@ -505,8 +513,14 @@
 	}
 
 	/* #endif */
+<<<<<<< HEAD
 	
 	/* picker 弹出层通用的指示小三角, todo：扩展至上下左右方向定位 */
+=======
+
+	/* picker 弹出层通用的指示小三角, todo：扩展至上下左右方向定位 */
+	/* #ifndef APP-NVUE */
+>>>>>>> ddefe00 (update)
 	.uni-popper__arrow,
 	.uni-popper__arrow::after {
 		position: absolute;
@@ -534,4 +548,8 @@
 		border-top-width: 0;
 		border-bottom-color: #fff;
 	}
+<<<<<<< HEAD
+=======
+	/* #endif */
+>>>>>>> ddefe00 (update)
 	</style>

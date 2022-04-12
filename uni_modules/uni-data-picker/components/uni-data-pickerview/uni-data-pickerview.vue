@@ -177,7 +177,11 @@
 		}
 	}
 </script>
+<<<<<<< HEAD
 <style scoped>
+=======
+<style >
+>>>>>>> ddefe00 (update)
 	.uni-data-pickerview {
 		flex: 1;
 		/* #ifndef APP-NVUE */
