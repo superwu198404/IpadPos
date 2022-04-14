@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<button type="default" @click="initBle">初始化蓝牙模块</button>
+		<button type="default" @click="initBle()">初始化蓝牙模块</button>
 		<scroll-view scroll-y="true" show-scrollbar="true">
 			<radio-group>
 				<view v-for="(item, index) in bleDevs" :key="index" v-if="item.name.length > 0">
@@ -11,8 +11,8 @@
 					<view style="font-size: 20rpx">信号强度: {{ item.RSSI }}dBm ({{ Math.max(100 + item.RSSI, 0) }}%)</view>
 					<view style="font-size: 20rpx">deviceId: {{ item.deviceId }} 设备名称: {{ item.name }}</view>
 
-					<view @click="createBLEConnection(item)" style="margin: 20rpx;background-color: #bfffb8;padding: 10rpx;">连接</view>
-					<view @click="close(item)" style="margin: 20rpx;background-color: #fff5cd;padding: 10rpx;">断开</view>
+					<view @tap="createBLEConnection(item)" style="margin: 20rpx;background-color: #bfffb8;padding: 10rpx;">连接</view>
+					<view @tap="close(item)" style="margin: 20rpx;background-color: #fff5cd;padding: 10rpx;">断开</view>
 				</view>
 			</radio-group>
 		</scroll-view>
@@ -59,7 +59,7 @@
 				})
 			},
 			//初始化蓝牙
-			initBle:function() {
+			initBle:function() { 
 				console.info('初始化蓝牙>>>');
 				this.bleDevs = [];
 				uni.openBluetoothAdapter({
@@ -89,8 +89,6 @@
 			},
 			// 开始搜索蓝牙设备
 			startBluetoothDeviceDiscovery:function() {
-				
-	 
 				uni.startBluetoothDevicesDiscovery({
 					//allowDuplicatesKey:false;
 					success: (res) => {
@@ -105,18 +103,31 @@
 			},
 			// 发现外围设备
 			onBluetoothDeviceFound:function() {
-				
-		 
 				// console.log("执行到这--发现外围设备")
 				uni.onBluetoothDeviceFound((res) => {
+					let resdev = res.devices[0];
 					// console.log(res)
 					// ["name", "deviceId"]
 					// 吧搜索到的设备存储起来，方便我们在页面上展示
-					if (this.bleDevs.indexOf(res.devices[0].deviceId) == -1) {
-						this.bleDevs.push(res.devices[0])
+					if (this.bleDevs.indexOf(resdev.deviceId) == -1) {
+						this.bleDevs.push(resdev)
+					} else {
+						// 说明存在相同设备，要进行RSSI更新
+						let n = this.bleDevs.indexOf(res.devices[0].deviceId);
+						// 转换信号
+						let rssi = Math.floor(max(0, resdev.RSSI + 100) / 10);
+						if (rssi <= 0) {
+							// 无信号删除
+							this.bleDevs.splice(n, 1);
+						} else {
+							this.bleDevs[n].RSSI = rssi;
+						}
 					}
-					console.info("蓝牙列表",JSON.stringify(this.bleDevs));
-				})
+					this.bleDevs.forEach((currentValue, index, ) => {
+						that.devData[index].services = [];
+					});
+					console.info("蓝牙列表", JSON.stringify(this.bleDevs));
+				});
 			},
 
 			//选择设备连接吧deviceId传进来
@@ -187,7 +198,7 @@
 										this.getBLEDeviceCharacteristics()
 								}else{
 									
-									console.info("没有搜索到指定的设备")
+									console.info("没有搜索到指定的服务")
 								}
 							})
 						}
@@ -256,8 +267,6 @@
 					}
 				})
 			}
-			
-		
 		
 		}
 

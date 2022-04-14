@@ -1,7 +1,7 @@
 {
 	"pages": [
 		{
-			"path": "pages/index/RquestDemo",
+			"path": "pages/index/BTDemo",
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
@@ -28,7 +28,7 @@
 			}
 		},
 		{
-			"path": "pages/index/BTDemo",
+			"path": "pages/index/RquestDemo",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
