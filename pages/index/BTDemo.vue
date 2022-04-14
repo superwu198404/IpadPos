@@ -11,8 +11,8 @@
 					<view style="font-size: 20rpx">信号强度: {{ item.RSSI }}dBm ({{ Math.max(100 + item.RSSI, 0) }}%)</view>
 					<view style="font-size: 20rpx">deviceId: {{ item.deviceId }} 设备名称: {{ item.name }}</view>
 
-					<view @tap="createBLEConnection(item)" style="margin: 20rpx;background-color: #bfffb8;padding: 10rpx;">连接</view>
-					<view @tap="close(item)" style="margin: 20rpx;background-color: #fff5cd;padding: 10rpx;">断开</view>
+					<view @click="createBLEConnection(item)" style="margin: 20rpx;background-color: #bfffb8;padding: 10rpx;">连接</view>
+					<view @click="close(item)" style="margin: 20rpx;background-color: #fff5cd;padding: 10rpx;">断开</view>
 				</view>
 			</radio-group>
 		</scroll-view>

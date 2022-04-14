@@ -22,7 +22,7 @@
 					hideMsg: true, // 默认 false
 					method: 'POST' // 默认 POST
 				}).then(res => {
-					console.log(0);
+					console.log(JSON.stringify(res));
 				}).catch(err => {
 					console.log(1);
 				}).then(res => {

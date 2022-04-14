@@ -1,7 +1,7 @@
 {
 	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/index/RquestDemo",
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
@@ -14,14 +14,7 @@
 			}
 		},
 		{
-			"path": "pages/index/BTDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/RquestDemo",
+			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
@@ -29,6 +22,13 @@
 		},
 		{
 			"path": "pages/index/ScanCodeDemo",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/index/BTDemo",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
