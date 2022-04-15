@@ -14,5 +14,8 @@
 </script>
 
 <style>
-	/*每个页面公共css */
+  /*每个页面公共css */
+  .uni-forms-item__inner {
+    padding-bottom: 10px !important;
+  }
 </style>

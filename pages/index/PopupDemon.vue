@@ -18,13 +18,10 @@
 		<button type="default" class="btn" @click="open6">
 			<text class="text">修改标题和内容颜色</text>
 		</button>
-		<button type="default" class="btn" @click="open7">
-			<text class="text">打开js中调用的弹窗</text>
-		</button>
 	</view>
 </template>
 <script>
-	import { openPopup } from '@/static/js/demo.js';
+ 
 	export default {
 		data() {
 			return {
@@ -68,8 +65,8 @@
 			},
 			open3() {
 				this.$store.dispatch('popup/open', {
-					showCancel: false,
-					showDetail:false,
+					showCancel: true,
+					showOther:true,
 					title: '提示',
 					content: '只显示确认按钮',
 					confirm(res) {
@@ -119,10 +116,7 @@
 						console.log('点击取消回调：', res)
 					}
 				});
-			},
-			open7(){
-				openPopup();
-			}
+			} 
 		}
 	}
 </script>

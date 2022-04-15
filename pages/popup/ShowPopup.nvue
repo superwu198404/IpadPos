@@ -1,5 +1,6 @@
 <template>
-	<view class="popup" @click="maskClick">
+	<uni-popup ref="ShowPopup" :type="type" >
+	<view class="popup"  @click="maskClick">
 		<uni-transition class="uni-transition" @click="maskClick" :show="true" :duration="200">
 			<view class="popup-mask" @click="maskClick">
 				<view class="content" v-if="customPopup">
@@ -51,6 +52,7 @@
 			</view>
 		</uni-transition>
 	</view>
+	</uni-popup>
 </template>
 <script>
 	import uniTransition from '@/components/uni-transition/uni-transition.vue'
@@ -135,15 +137,18 @@
 			},
 			btnType() {
 				return this.$store.getters.customPopup.btnType;
+			},
+			refresh() {
+				return this.$store.getters.customPopup.refresh;
 			}
+			
 		},
 		onBackPress() {
 			this.$store.dispatch('popup/setCache', 2);
 			// 不允许点击蒙层的时同时禁止侧滑返回
 			if (!this.allowBack) return true;
 		},
-		onLoad() {
-			
+		onLoad() { 
 			this.$store.dispatch('popup/setCache');
 			if (this.$store.state.popup.cache.length > 1) {
 				uni.navigateBack();

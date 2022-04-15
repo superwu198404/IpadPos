@@ -1,17 +1,21 @@
 import App from './App'
-
+import * as request from '@/utils/request.js';
+import * as $ from '@/utils/common.js'
 // #ifndef VUE3
-import Vue from 'vue'
-import store from './store'
+import Vue from 'vue' 
+import store from './store' 
+ 
+//把vuex定义成全局组件
 Vue.config.productionTip = false
-App.mpType = 'app'
+Vue.config.$=$
+App.mpType = 'app' 
+ 
 const app = new Vue({
-	 store,
+	 store, 
     ...App
 })
 app.$mount()
-// // #endif
-
+// // #endif 
 // // #ifdef VUE3
 // import { createSSRApp } from 'vue'
 // export function createApp() {

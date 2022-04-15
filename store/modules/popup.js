@@ -68,14 +68,12 @@ const popup = {
 				showConfirmIco,
 				confirmText,
 				confirmColor,
-				confirmIco,
-				
+				confirmIco, 
 				showCancel,
 				cancelColor,
 				cancelText,
 				cancelIco,
-				showCancelIco,
-				
+				showCancelIco, 
 				showOther,
 				otherColor,
 				otherText,
@@ -85,7 +83,8 @@ const popup = {
 				maskClick,
 				confirm,
 				cancel,
-				other
+				other,
+				refresh
 			} = param;
 			let data = {
 				title,
@@ -99,12 +98,12 @@ const popup = {
 				confirmText: confirmText ? confirmText : '确认',
 				confirmColor: confirmColor ? confirmColor : '#2878FF',
 				confirmIco:confirmIco ?confirmIco:null,
-				showCancel: showCancel == false ? showCancel : true,
+				showCancel: showCancel == true ? showCancel : false,
 				cancelColor: cancelColor ? cancelColor : '#222',
 				cancelText: cancelText ? cancelText : '取消',
 				cancelIco:cancelIco?cancelIco:null,
 				showCancelIco:showCancelIco?true:false,
-				showOther: showOther == false ? showOther : true,
+				showOther: showOther == true ? showOther : false,
 				otherColor: otherColor ? otherColor : '#ffaa00',
 				otherText: otherText ? otherText : '其它自定义',
 				otherIco:otherIco?otherIco:null,
@@ -114,6 +113,7 @@ const popup = {
 				confirm,
 				cancel,
 				other,
+				refresh:false,
 				random: new Date().getTime()
 			};
 			
@@ -123,7 +123,7 @@ const popup = {
 			// 		url: '/pages/lipan-popup/lipan-popup'
 			// 	})
 			// })
-			 
+			
 			this.dispatch('popup/removePopup').then(() => {
 				this.dispatch('popup/setPopup', [{ type: 'customPopup', data: data }])
 				uni.navigateTo({
