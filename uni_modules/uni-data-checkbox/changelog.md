@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
-## 1.0.1（2022-02-07）
+# 1.0.1（2022-02-07）
 - 修复 multiple 为 true 时，v-model 的值为 null 报错的 bug
->>>>>>> ddefe00 (update)
 ## 1.0.0（2021-11-19）
 - 优化 组件UI，并提供设计资源，详见:[https://uniapp.dcloud.io/component/uniui/resource](https://uniapp.dcloud.io/component/uniui/resource)
 - 文档迁移，详见:[https://uniapp.dcloud.io/component/uniui/uni-data-checkbox](https://uniapp.dcloud.io/component/uniui/uni-data-checkbox)

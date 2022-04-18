@@ -1,11 +1,10 @@
 {
   "id": "uni-data-checkbox",
   "displayName": "uni-data-checkbox 数据选择器",
-<<<<<<< HEAD
-  "version": "1.0.0",
-=======
+
+
+
   "version": "1.0.1",
->>>>>>> ddefe00 (update)
   "description": "通过数据驱动的单选框和复选框",
   "keywords": [
     "uni-ui",

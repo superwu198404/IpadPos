@@ -23,6 +23,11 @@
         "modules" : {
             "SQLite" : {}
         },
+=======
+        "modules" : {
+            "SQLite" : {}
+        },
+>>>>>>> remotes/origin/HEAD
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -73,10 +78,12 @@
     "uniStatistics" : {
         "enable" : false
     },
+
     "vueVersion" : "2",
     "h5" : {
         "devServer" : {
             "https" : false
         }
     }
+
 }

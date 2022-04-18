@@ -1,9 +1,8 @@
 //全局地址
-<<<<<<< HEAD
- let commonUrl = ''
-=======
  // let commonUrl = 'https://lsg.minglangab.cn'
->>>>>>> ddefe00 (update)
+
+ let commonUrl = ''
+
 // TODO 此处修改不同环境编译
 if (process.env.NODE_ENV === 'development') {
 	commonUrl = "";
@@ -12,33 +11,30 @@ if (process.env.NODE_ENV === 'development') {
 	commonUrl = "";  
 
 }
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> ddefe00 (update)
 // post请求封装
 function postRequest(url, data) {
 	var promise = new Promise((resolve, reject) => {
 		var that = this;
-<<<<<<< HEAD
+
+		
+
+		var postData = data;
+
 		var postData = JSON.stringify(data);;
 		 uni.showLoading({
 			  title: '加载中..'
 		  });
-=======
-		var postData = data;
->>>>>>> ddefe00 (update)
+
 		uni.request({
 			url: commonUrl + url,
 			data: postData,
 			method: "POST",
-<<<<<<< HEAD
+
 			header: {
 				'content-type': 'application/x-www-form-urlencoded'
 			},
-=======
->>>>>>> ddefe00 (update)
+
 			success: function(res) {
 				if (res.statusCode !== 200) {
 					// resolve({data:{message:'发生错误'+res.statusCode}});
@@ -75,12 +71,11 @@ function postRequest(url, data) {
 						title: '请检查网络连接'
 					})
 				reject("请检查网络连接");
-<<<<<<< HEAD
+
 			},
 			complete:function(){
 				 uni.hideLoading();
-=======
->>>>>>> ddefe00 (update)
+
 			}
 		});
 	});
