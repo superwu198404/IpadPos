@@ -4,7 +4,7 @@
 		<view class="text-area">
 			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
 		</view>
-		<timeline></timeline>
+	 
 	</view>
 </template>
 <script> 
@@ -114,9 +114,7 @@
 		onNavigationBarSearchInputClicked() {
 			//监听原生标题栏搜搜输入框点击事件 （pages.json 中的 searchInput 配置 disabled 为 true 时才会触发）
 		},
-		onShareTimeline() {
-			//监听用户点击又上角转发到朋友圈
-		},
+		 
 		onAddToFavorites(){
 			//监听用户点击右上角收藏
 		}
