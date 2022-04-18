@@ -1,4 +1,4 @@
-//全局地址
+//全局地址   
  let commonUrl = ''
 // TODO 此处修改不同环境编译
 if (process.env.NODE_ENV === 'development') {
