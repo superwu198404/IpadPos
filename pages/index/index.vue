@@ -4,7 +4,7 @@
 		<view class="text-area">
 			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
 		</view>
-		<timeline></timeline>
+	 
 	</view>
 </template>
 <script> 
@@ -28,23 +28,36 @@
 		//方法初始化
 		methods: {
 			change: function(msg) {
-				 this.$store.dispatch('popup/open', {
-				 	title: '提示',
-				 	content: '修改按钮和颜色',
-				 	showOther:true,
-					showCancel:false,
-					showConfirm:false,
-				 	confirm(res) 
-					{
-						that.context=res.confirmText
-				 	},
-				 	cancel(res) {
-							that.context=res.cancelText
-				 	},
-					other(res){
-						that.context=res.otherText
-					}
-				 });
+				
+				
+				this.$showModal({
+					concent:'测试测试~',
+					confirmText:'知道了',
+					showCancel:true, 
+					showOther:true 
+					})
+				.then(res=>{
+					console.log(res);
+					//第一个按钮 
+				}).catch(res=>{
+					//第二个 /第三个按钮
+					console.log('aa',res);
+				});
+				
+				
+				// uni.showModal({
+				// 	title: '提示',
+				// 	content: '这是一个模态弹窗',
+				// 	success: function (res) {
+				// 		if (res.confirm) {
+				// 			console.log('用户点击确定');
+				// 		} else if (res.cancel) {
+				// 			console.log('用户点击取消');
+				// 		}
+				// 	}
+				// });
+				
+				
 			},
 			cc: bb 
 		
@@ -101,9 +114,7 @@
 		onNavigationBarSearchInputClicked() {
 			//监听原生标题栏搜搜输入框点击事件 （pages.json 中的 searchInput 配置 disabled 为 true 时才会触发）
 		},
-		onShareTimeline() {
-			//监听用户点击又上角转发到朋友圈
-		},
+		 
 		onAddToFavorites(){
 			//监听用户点击右上角收藏
 		}
