@@ -12,7 +12,7 @@ const showToast = (title, icon = "none") => {
 
 /**请求接口
  * @method http
- * @param {String} url 接口地址
+ * @param {String} url 接口地址1
  * @param {Object} data 接口参数
  * @param {Object} option 接口配置信息，可选
  * @param {string} msg 加载提示信息，可选
