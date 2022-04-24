@@ -2,16 +2,8 @@
 	<view class="content">
 		<image class="logo" src="/static/logo.png"></image>
 		<view class="text-area">
-			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
 		</view>
 	 
-	</view>
-</template>
-<script> 
-
-			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
-		</view>
-		<timeline></timeline>
 	</view>
 </template>
 <script> 
@@ -22,7 +14,7 @@
 			return {
 				title: 'Hello',
 
-				context: "点了",
+
 				onShowrefresh:true,
 
 				lists: ['a', 'b', 'c'],

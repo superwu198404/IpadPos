@@ -60,7 +60,8 @@
                 })
             },
             //初始化蓝牙
-
+            initBluetooth:function()
+			{
                 console.info('初始化蓝牙>>>');
                 this.bleDevs = [];
                 uni.openBluetoothAdapter({
@@ -160,8 +161,6 @@
             createBLEConnection:function(item) {
 				console.info("item.deviceId", item.deviceId);
 				let thit = this;
-                console.info("item.deviceId", item.deviceId);
-                let thit = this;
                 //data里面建立一个deviceId，存储起来
                 this.deviceId = item.deviceId
                 
