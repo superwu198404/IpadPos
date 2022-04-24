@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import tkiBarcode  from "@/components/tki-barcode/tki-barcode.vue"
+import tkiBarcode from "@/components/tki-barcode/tki-barcode.vue"
 export default {
-	 
 	data() {
 		return {
 			bar: ['code128', 'code39', 'ean13', 'ean8', 'upc', 'itf14'],

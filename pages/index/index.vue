@@ -4,7 +4,6 @@
 		<view class="text-area">
 			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
 		</view>
-		<timeline></timeline>
 	</view>
 </template>
 <script> 
@@ -27,24 +26,59 @@
 		},
 		//方法初始化
 		methods: {
-			change: function(msg) {
-				 this.$store.dispatch('popup/open', {
-				 	title: '提示',
-				 	content: '修改按钮和颜色',
-				 	showOther:true,
-					showCancel:false,
-					showConfirm:false,
-				 	confirm(res) 
-					{
-						that.context=res.confirmText
-				 	},
-				 	cancel(res) {
-							that.context=res.cancelText
-				 	},
-					other(res){
-						that.context=res.otherText
-					}
-				 });
+			change: function(e) {
+				let i=10;
+				while(i>0){
+					console.info(i);
+					i--;
+					
+				}
+				console.info('aaaassss');
+				// uni.showModal({
+				// 	title: '提示',
+				// 	content: '这是一个模态弹窗',
+				// 	success: function (res) {
+				// 		if (res.confirm) {
+				// 			console.log('用户点击确定');
+				// 		} else if (res.cancel) {
+				// 			console.log('用户点击取消');
+				// 		}
+				// 	}
+				// });
+				 // this.$store.dispatch('popup/open', {
+				 // 	title: '提示',
+				 // 	content: '修改按钮和颜色',
+				 // 	showOther:true,
+				 // showCancel:false,
+				 // showConfirm:false,
+				 // 	confirm(res) 
+					// {
+					// 	that.context=res.confirmText
+				 // 	},
+				 // 	cancel(res) {
+					// 		that.context=res.cancelText
+				 // 	},
+					// other(res){
+					// 	that.context=res.otherText
+					// }
+				 // });
+				 
+				this.$showModal({
+						concent: '测试测试~',
+						showCancel: true,
+						showOther: true,
+						confirmVal: '知道了',
+						align: 'left',
+						$confirm:function(res){
+							console.log("$confirm");
+						},
+						$cancel:function(res){
+							console.log("$cancel");
+						},
+						 $other:function(res){
+							 console.log("$other");
+						 }
+					}); 
 			},
 			cc: bb 
 		
