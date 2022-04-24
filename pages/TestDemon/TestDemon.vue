@@ -14,7 +14,7 @@
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
 	import hybase from '@/api/hy/hy_base.js';
-
+	import hy_model from '@/class/hy_model.js';
 	export default {
 		data() {
 			return {
@@ -22,28 +22,31 @@
 			}
 		},
 		onLoad: function() {
+			var a=new hy_model.hyObj('13597696131',"夏末")
+			let res=a.GetHyInfo("好厉害");
+			console.log(res);
 			debugger;
-			Req.asyncFunc({
-					http: true,
-					url: "Values/GetData",
-					title: "请求一",
-					data: {
-						age: "10",
-						name: "小明"
-					}
-				}, function(res) {
-					console.log("回调一：");
-					console.log(res);
-					return {
-						http: true,
-						url: "Values/GetData",
-						title: "请求二",
-						data: {
-							age: res.data.age + 10,
-							name: res.data.name + "的妈妈"
-						}
-					};
-				});
+			// Req.asyncFunc({
+			// 	http: true,
+			// 	url: "Values/GetData",
+			// 	title: "请求一",
+			// 	data: {
+			// 		age: "10",
+			// 		name: "小明"
+			// 	}
+			// }, function(res) {
+			// 	console.log("回调一：");
+			// 	console.log(res);
+			// 	return {
+			// 		http: true,
+			// 		url: "Values/GetData",
+			// 		title: "请求二",
+			// 		data: {
+			// 			age: res.data.age + 10,
+			// 			name: res.data.name + "的妈妈"
+			// 		}
+			// 	};
+			// });
 			return;
 			// Req.httpArr2({
 			// 	age: "10",
