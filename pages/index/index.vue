@@ -2,19 +2,21 @@
 	<view class="content">
 		<image class="logo" src="/static/logo.png"></image>
 		<view class="text-area">
-			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
 		</view>
 	 
 	</view>
 </template>
 <script> 
+
 	export default {
 		//变量初始化
 		data() {
 			return {
 				title: 'Hello',
-				context: "点了",
+
+
 				onShowrefresh:true,
+
 				lists: ['a', 'b', 'c'],
 				lst: [{
 					str: 'a'
@@ -58,6 +60,31 @@
 				// });
 				
 				
+			},
+			cc: bb 
+		
+		},
+
+		//方法初始化
+		methods: {
+			change: function(msg) {
+				 this.$store.dispatch('popup/open', {
+				 	title: '提示',
+				 	content: '修改按钮和颜色',
+				 	showOther:true,
+					showCancel:false,
+					showConfirm:false,
+				 	confirm(res) 
+					{
+						that.context=res.confirmText
+				 	},
+				 	cancel(res) {
+							that.context=res.cancelText
+				 	},
+					other(res){
+						that.context=res.otherText
+					}
+				 });
 			},
 			cc: bb 
 		
@@ -119,6 +146,7 @@
 			//监听用户点击右上角收藏
 		}
 	
+
 	}
 	//可定义方法和变量
 	function bb() {

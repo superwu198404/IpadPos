@@ -177,7 +177,11 @@
 		}
 	}
 </script>
+<<<<<<< HEAD
+<style >
+=======
 <style scoped>
+>>>>>>> remotes/origin/HEAD
 	.uni-data-pickerview {
 		flex: 1;
 		/* #ifndef APP-NVUE */

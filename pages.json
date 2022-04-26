@@ -50,6 +50,10 @@
 			}
 		},
 		{
+
+
+
+
  
 		    "path" : "pages/TestDemon/TestDemon",
 		    "style" :                                                                                    
@@ -87,6 +91,7 @@
                 "enablePullDownRefresh": false
             }
             
+
         } 
 	],
  
@@ -106,3 +111,4 @@
 	// 	}]
 	// }
 }
+

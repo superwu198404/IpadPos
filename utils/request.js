@@ -530,22 +530,15 @@ var asyncFunc1 = async function RequestDataArray1(pm_data, callbackfun, callback
 var asyncFunc2 = async function RequestDataArray2(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
 	var callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	if (callbackfun2) {
-		callbacklist.push(callbackfun2);
-	}
-	if (callbackfun3) {
-		callbacklist.push(callbackfun3);
+	
+	for(var i= 1;i<=3;i++)
+	{
+	   if( arguments[i])
+	   {
+		   callbacklist.push(arguments[i]);
+	   }
 	}
 	let res = pm_data;
-	if (pm_data.http) {
-		res = await httpFunc(pm_data);
-	} else {
-		//其他异步操作
-	}
-	let currentP;
 	for (var i = 0; i < callbacklist.length; i++) {
 		debugger;
 		if (res && res.http) {
