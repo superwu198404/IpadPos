@@ -1,6 +1,9 @@
 <script>
 	import store from '@/store'
 	export default {
+		globalData: {
+			appid: 'keengee'
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
@@ -14,8 +17,5 @@
 </script>
 
 <style>
-  /*每个页面公共css */
-  .uni-forms-item__inner {
-    padding-bottom: 10px !important;
-  }
+ 
 </style>

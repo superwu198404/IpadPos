@@ -1,6 +1,15 @@
 {
 	"pages": [
 		{
+		    "path" : "pages/MicroPay/MicroPay",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
 		     "path" : "pages/AppPay/AppPay",
 		     "style" :                                                                                    
 		     {
@@ -90,7 +99,7 @@
 			}
 		},
 		{
-			"path": "pages/test/test",
+			"path": "pages/TestDemon/TestDemon",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
@@ -98,6 +107,7 @@
 
 		}
 	 
+       
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
