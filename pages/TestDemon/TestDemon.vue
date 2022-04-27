@@ -22,12 +22,13 @@
 			}
 		},
 		onLoad: function() {
-			var a=new hy_model.hyObj('13597696131',"夏末")
-			let res=a.GetHyInfo("好厉害");
-			console.log(res);
-			debugger;
+			// var a=new hy_model.hyObj('13597696131',"夏末")
+			// let res=a.GetHyInfo("好厉害");
+			// console.log(res);
+			// debugger;
 			// Req.asyncFunc({
 			// 	http: true,
+			// 	url_type: "jkpt",
 			// 	url: "Values/GetData",
 			// 	title: "请求一",
 			// 	data: {
@@ -47,7 +48,7 @@
 			// 		}
 			// 	};
 			// });
-			return;
+			//return;
 			// Req.httpArr2({
 			// 	age: "10",
 			// 	name: "小明"
@@ -63,9 +64,9 @@
 			// 	})
 			// })
 			//会员信息查询调用接口
-			// hybase.Query_Member_Assets("15527956801", "Mobile", function(res) {
-			// 	console.log(res);
-			// })
+			hybase.Query_Member_Assets("15527956801", "Mobile", function(res) {
+				console.log(res);
+			})
 			return;
 			//简单多层机构 适用于不依赖上层请求结果的请求集
 			// Req.Post(["Values/GetData", "Values/PutData", "Values/DelData"], [{

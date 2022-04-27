@@ -2,10 +2,14 @@
 function openSqllite() {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.openDatabase({
-			name: 'life', 					// 数据库名称
-			path: '_doc/life.db',   // 数据库地址
-			success(e) { resolve(0) },
-			fail(e) { reject(-1) }
+			name: 'life', // 数据库名称
+			path: '_doc/life.db', // 数据库地址
+			success(e) {
+				resolve(0)
+			},
+			fail(e) {
+				reject(-1)
+			}
 		})
 	})
 }
@@ -15,15 +19,22 @@ function closeSqllite() {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.closeDatabase({
 			name: 'life',
-			success(e) { resolve() },
-			fail(e) { reject() }
+			success(e) {
+				resolve()
+			},
+			fail(e) {
+				reject()
+			}
 		})
 	})
 }
 
 // 监听数据库是否开启 return type : Boolean
 function isOpen(name, path) {
-	return plus.sqlite.isOpenDatabase({ name: 'life', path: '_doc/life.db' })
+	return plus.sqlite.isOpenDatabase({
+		name: 'life',
+		path: '_doc/life.db'
+	})
 }
 
 // 执行 sql 语句 for create table
@@ -55,9 +66,13 @@ function executeSql(sqlCode) {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.executeSql({
 			name: 'life',
-			sql: sqlCode,   // sql 语句
-			success(e) { resolve(e) },
-			fail(e) { reject(e) }
+			sql: sqlCode, // sql 语句
+			success(e) {
+				resolve(e)
+			},
+			fail(e) {
+				reject(e)
+			}
 		})
 	})
 }
@@ -75,146 +90,158 @@ function selectSql(sqlCode) {
 	return new Promise((resolve, reject) => {
 
 		plus.sqlite.selectSql({
-			name: 'life',    // 数据库名称
+			name: 'life', // 数据库名称
 			sql: sqlCode,
-			success(e) { resolve(e) },
-			fail(e) { reject(e) }
+			success(e) {
+				resolve(e)
+			},
+			fail(e) {
+				reject(e)
+			}
 		})
 	})
 }
-mySqllite= Function()
-{
-	var name: 'ipad'；
-	var path:'_doc/ipad.db；
+var mySqllite = function() {
+	var name = "ipad";
+	var path = "_doc/ipad.db";
 	///作为 opentran方法 pm_operation的参数选型
-	var tranEnum={commit:"commit",rollback:"rollback",begin:"begin"}
-	var dbOperTionEnum{ openDatabase:"openDatabase",
-	                selectSql:"selectSql",
-				    closeDatabase:"closeDatabase",
-				    executeSql:"executeSql" ,
-				    transaction:"transaction" }
-					
-	var  getOperationPromise( pm_dboperation,otherParm )
-	{
-	      	return  new Promise
-	      	(
-	      	    (resolve,reject)=>
-	      		{
-					let inputParm=  {};
-					inputParm.name       =  this.name;
-					inputParm.operation  = pm_dboperation;
-					inputParm.success    = (e)=>{   return  resolve({code: true,msg:e})  }
-					inputParm.fail       = (e)=>{   return  reject({code: false,msg:e})  }
-					for(prm in otherParm)
-					{
-					   inputParm[prm]  =otherParm[prm];
-					}	
-	      			plus.sqlite[pm_dboperation](inputParm);
-	      		}
-	      	)
-		
+	var tranEnum = {
+		commit: "commit",
+		rollback: "rollback",
+		begin: "begin"
 	}
-	var open=function(msg)
-	{
-	  
-	    var msg = msg  |  "正在进行操作";
-	   uni.showLoading({title: msg, mask: true })
-	   return 	getOperationPromise(dbOperTionEnum.openDatabase,{path:this.path});
-	};
-	var close=function()
-	{
-	   return getOperationPromise(dbOperTionEnum.closeDatabase, {});
-	};
-	
-	
-	
-	var exec =function(pm_sql)
-	{
-		return  getOperationPromise(dbOperTionEnum.executeSql,{sql: pm_sql});
+	var dbOperTionEnum = {
+		openDatabase: "openDatabase",
+		selectSql: "selectSql",
+		closeDatabase: "closeDatabase",
+		executeSql: "executeSql",
+		transaction: "transaction"
 	}
-	var qry =function(pm_sql)
-	{
-		return  getOperationPromise(dbOperTionEnum.selectSql,{sql: pm_sql});
-	}
-	
-	var tran=function(pm_str)
-	{
-	    return	getOperationPromise(dbOperTionEnum.transaction,{operation: pm_str});
-	}
-  
-     var  callBackCloseLoading = (res,infun)=>{uni.hideLoading() ;  return  infun(res) };
-	 
-	 
-   this.executeSqlArray =async function(sqlArray,pm_msg,success,fail)
-	{
-		    var retcode ;
-		   
-		    retcode = await open(pm_msg);
-			   if(!retcode.code)  return callBackCloseLoading(retcode,fail);
-		    retcode = await tran(tranEnum.begin);
-			   if(!retcode.code)  return callBackCloseLoading(retcode,fail);
-			for(var i=0;i<sqlArray.length;i++ )
-			{
-			    retcode = await  exec(sqlArray[i]);
-				 if(!retcode.code)  
-				 {
-				     await tran(tranEnum.rollback);
-				     return   callBackCloseLoading(retcode,fail);
-				 }
-			}
-	        retcode =await tran(tranEnum.commit);
-			if( !retcode.code )
-			{
-				 await tran(tranEnum.rollback);
-				 return   callBackCloseLoading(retcode,fail);
-			}
-		     await close();
-		   return callBackCloseLoading(retcode,success);
-	};
-	
-	
-	this.executeQry = async function(sql,pm_msg,success,fail)
-	{
-		 var retcode ;	   
-		 retcode = await open(pm_msg);
-		 if(!retcode.code)  return callBackCloseLoading(retcode,fail);
-		 retcode = await  qry(sql);
-		 await close();
-		 if(retcode.msg.length  >0  )
-		 {
-			  return callBackCloseLoading(retcode,success);
-		 }
-		 else
-		 {
-			  return callBackCloseLoading(retcode,fail);
-		 }
-		
-	}
-	this.executeDml = async function(sql,pm_msg,success,fail)
-	{
-		 var retcode ;	   
-		 retcode = await open(pm_msg);
-		 if(!retcode.code)  return callBackCloseLoading(retcode,fail);
-		 retcode = await  exec(sql);
-		 await close();
-		 if(retcode.msg.length  >0  )
-		 {
-			  return callBackCloseLoading(retcode,success);
-		 }
-		 else
-		 {
-			  return callBackCloseLoading(retcode,fail);
-		 }
-		
-	}
-	
-} 
 
-SqliteHelper= {
+	var getOperationPromise = function(pm_dboperation, otherParm) {
+		return new Promise(
+			(resolve, reject) => {
+				let inputParm = {};
+				inputParm.name = this.name;
+				inputParm.operation = pm_dboperation;
+				inputParm.success = (e) => {
+					return resolve({
+						code: true,
+						msg: e
+					})
+				}
+				inputParm.fail = (e) => {
+					return reject({
+						code: false,
+						msg: e
+					})
+				}
+				for (prm in otherParm) {
+					inputParm[prm] = otherParm[prm];
+				}
+				plus.sqlite[pm_dboperation](inputParm);
+			}
+		)
 
-    get:function(){
-		
-        return  new  mySqllite();
+	}
+	var open = function(msg) {
+
+		var msg = msg | "正在进行操作";
+		uni.showLoading({
+			title: msg,
+			mask: true
+		})
+		return getOperationPromise(dbOperTionEnum.openDatabase, {
+			path: this.path
+		});
+	};
+	var close = function() {
+		return getOperationPromise(dbOperTionEnum.closeDatabase, {});
+	};
+
+
+
+	var exec = function(pm_sql) {
+		return getOperationPromise(dbOperTionEnum.executeSql, {
+			sql: pm_sql
+		});
+	}
+	var qry = function(pm_sql) {
+		return getOperationPromise(dbOperTionEnum.selectSql, {
+			sql: pm_sql
+		});
+	}
+
+	var tran = function(pm_str) {
+		return getOperationPromise(dbOperTionEnum.transaction, {
+			operation: pm_str
+		});
+	}
+
+	var callBackCloseLoading = (res, infun) => {
+		uni.hideLoading();
+		return infun(res)
+	};
+
+
+	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail) {
+		var retcode;
+
+		retcode = await open(pm_msg);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		retcode = await tran(tranEnum.begin);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		for (var i = 0; i < sqlArray.length; i++) {
+			retcode = await exec(sqlArray[i]);
+			if (!retcode.code) {
+				await tran(tranEnum.rollback);
+				return callBackCloseLoading(retcode, fail);
+			}
+		}
+		retcode = await tran(tranEnum.commit);
+		if (!retcode.code) {
+			await tran(tranEnum.rollback);
+			return callBackCloseLoading(retcode, fail);
+		}
+		await close();
+		return callBackCloseLoading(retcode, success);
+	};
+
+
+	this.executeQry = async function(sql, pm_msg, success, fail) {
+		var retcode;
+		retcode = await open(pm_msg);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		retcode = await qry(sql);
+		await close();
+		if (retcode.msg.length > 0) {
+			return callBackCloseLoading(retcode, success);
+		} else {
+			return callBackCloseLoading(retcode, fail);
+		}
+
+	}
+	this.executeDml = async function(sql, pm_msg, success, fail) {
+		var retcode;
+		retcode = await open(pm_msg);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		retcode = await exec(sql);
+		await close();
+		if (retcode.msg.length > 0) {
+			return callBackCloseLoading(retcode, success);
+		} else {
+			return callBackCloseLoading(retcode, fail);
+		}
+
+	}
+
+}
+
+var SqliteHelper = {
+
+	get: function() {
+
+		return new mySqllite();
 	}
 }
 

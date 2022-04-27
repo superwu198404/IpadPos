@@ -146,280 +146,6 @@ const Post = function(urls, datas, msgs, option = {}, func) {
 	}
 };
 
-const httpArr = async function RequestDataArray(pm_data, content, method, callbackfun, callbackfun2, catchfun,
-	finallyfun) {
-	var callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	if (callbackfun2) {
-		callbacklist.push(callbackfun2);
-	}
-	var funm = function() {
-		uni.showLoading({
-			title: content,
-			mask: true,
-			icon: "none",
-			duration: 0
-		});
-		return new Promise(function(resolve, reject) {
-			uni.request({
-				url: baseUrl + "Values/GetData",
-				method: method,
-				header: {
-					'Content-Type': method == 'GET' ? 'application/x-www-form-urlencoded' :
-						"application/json"
-				},
-				data: pm_data,
-				success: (res) => {
-					uni.hideLoading();
-					if (res.data.code) {
-						return resolve(res.data);
-					} else {
-						return reject(res.data.msg);
-					}
-				},
-				fail: (res) => {
-					uni.hideLoading();
-					return reject(res);
-				}
-			})
-		}).catch(function(reason) {
-			console.log('异常捕捉catch:', reason);
-		});
-	}
-	/*
-	p.finally(
-	          function()
-	          {
-	            setTimeout(res=>{
-	                
-	            wx.hideLoading();
-	            },2500);
-	          if(finallyfun)
-	          {
-	            finallyfun();
-	          }
-	          }
-
-	)*/
-	var forPromise = function(func) {
-		return new Promise(function(resolve, reject) {
-			return resolve(func(res));
-		})
-	};
-	var currentP = null;
-	var res;
-	for (var i = 0; i < callbacklist.length; i++) {
-		if (currentP == null) {
-			res = await funm();
-		} else {
-			res = await forPromise(callbacklist[i]);
-		}
-		currentP = callbacklist[i];
-		callbacklist[i](res);
-	}
-	if (forPromise != null) {
-		await forPromise(currentP);
-	}
-	Promise.all([funm, forPromise]).then(function(results) {
-		if (finallyfun) finallyfun(res);
-	})
-}
-
-const httpArr1 = async function RequestDataArray(pm_data, content, method, callbackfun, callbackfun2, catchfun,
-	finallyfun) {
-	var callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	if (callbackfun2) {
-		callbacklist.push(callbackfun2);
-	}
-	var funm = function() {
-		uni.showLoading({
-			title: content,
-			mask: true,
-			icon: "none",
-			duration: 0
-		});
-		return new Promise(function(resolve, reject) {
-			uni.request({
-				url: baseUrl + "Values/GetData",
-				method: method,
-				header: {
-					'Content-Type': method == 'GET' ? 'application/x-www-form-urlencoded' :
-						"application/json"
-				},
-				data: pm_data,
-				success: (res) => {
-					uni.hideLoading();
-					if (res.data.code) {
-						return resolve(res.data);
-					} else {
-						return reject(res.data.msg);
-					}
-				},
-				fail: (res) => {
-					uni.hideLoading();
-					return reject(res);
-				}
-			})
-		}).catch(function(reason) {
-			if (catchfun)
-				catchfun(reason);
-			console.log('异常捕捉catch:', reason);
-		});
-	}
-	/*
-	p.finally(
-	          function()
-	          {
-	            setTimeout(res=>{
-	                
-	            wx.hideLoading();
-	            },2500);
-	          if(finallyfun)
-	          {
-	            finallyfun();
-	          }
-	          }
-
-	)*/
-	let forPromise = function(func, pm_data) {
-		let res;
-		try {
-			if (pm_data) {
-				res = pm_data.data ? pm_data.data : pm_data;
-				return new Promise(function(resolve, reject) {
-					return resolve(func(res))
-				})
-			}
-		} catch (e) {
-			//TODO handle the exception
-			return null;
-			if (catchfun)
-				catchfun(e.message);
-		}
-	};
-	let currentP = null;
-	let res;
-	try {
-		for (var i = 0; i < callbacklist.length; i++) {
-			if (currentP == null) {
-				debugger;
-				res = await funm();
-				callbacklist[i](res)
-			} else {
-				debugger;
-				res = await forPromise(callbacklist[i], res);
-			}
-			currentP = callbacklist[i];
-		}
-	} catch (e) {
-		//TODO handle the exception
-		currentP = null;
-		if (catchfun)
-			catchfun(e.message);
-	}
-	Promise.all([funm, forPromise]).then(function(f_res) {
-		uni.hideLoading();
-		console.log(f_res);
-		if (finallyfun)
-			finallyfun(f_res);
-	})
-	// if (currentP) {
-	// 	await forPromise(currentP, res);
-	// }
-}
-//版本2
-const httpArr2 = async function RequestDataArray(pm_data, content, method, callbackfun, callbackfun2, catchfun,
-	finallyfun) {
-	var callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	if (callbackfun2) {
-		callbacklist.push(callbackfun2);
-	}
-	var funm = function() {
-		uni.showLoading({
-			title: content,
-			mask: true,
-			icon: "none",
-			duration: 0
-		});
-		return new Promise(function(resolve, reject) {
-			uni.request({
-				url: baseUrl + "Values/GetData",
-				method: method,
-				header: {
-					'Content-Type': method == 'GET' ? 'application/x-www-form-urlencoded' :
-						"application/json"
-				},
-				data: pm_data,
-				success: (res) => {
-					uni.hideLoading();
-
-					if (res.data.code) {
-						return resolve(res.data);
-					} else {
-						return reject(res.data.msg);
-					}
-				},
-				fail: (res) => {
-					uni.hideLoading();
-					return reject(res);
-				}
-			})
-		}).catch(function(reason) {
-			if (catchfun)
-				catchfun(reason);
-			console.log('异常捕捉catch:', reason);
-		});
-	}
-	let forPromise = function(func, pm_data) {
-		let res;
-		try {
-			if (pm_data) {
-				res = pm_data.data ? pm_data.data : pm_data;
-				return new Promise(function(resolve, reject) {
-					return resolve(func(res))
-				})
-			}
-		} catch (e) {
-			//TODO handle the exception
-			return null;
-			if (catchfun)
-				catchfun(e.message);
-		}
-	};
-	let currentP = null;
-	let res;
-	try {
-		debugger;
-		res = await funm();
-		for (var i = 0; i < callbacklist.length; i++) {
-			currentP = callbacklist[i];
-			currentP(res);
-			// res = await forPromise(currentP, res);
-		}
-	} catch (e) {
-		//TODO handle the exception
-		// currentP = null;
-		if (catchfun)
-			catchfun(e.message);
-	}
-	Promise.all([funm, forPromise]).then(function(f_res) {
-		console.log("回调执行完毕：" + f_res);
-		if (finallyfun)
-			finallyfun(f_res);
-	})
-	// if (currentP) {
-	// 	await forPromise(currentP, res);
-	// }
-}
-
 //请求方法
 let httpFunc = function(pm_data) {
 	if (!pm_data.url) {
@@ -432,10 +158,15 @@ let httpFunc = function(pm_data) {
 	uni.showLoading({
 		title: pm_data.title || "加载中..."
 	});
-
+	let p_url; //判断是走业务后台还是走接口平台
+	if (pm_data.url_type && pm_data.url_type == 'jkpt') {
+		p_url = jkptUrl;
+	} else {
+		p_url = baseUrl
+	}
 	return new Promise(function(resolve, reject) {
 		uni.request({
-			url: baseUrl + pm_data.url,
+			url: p_url + pm_data.url,
 			method: pm_data.method || "POST",
 			header: {
 				'Content-Type': pm_data.method == 'GET' ?
@@ -470,73 +201,15 @@ let forPromise = function(func, pm_data) {
 		return resolve(func(pm_data));
 	})
 };
-
-//异步处理方法1
-var asyncFunc = async function RequestDataArray(pm_data, callbackfun, catchfun, finallyfun) {
-	let callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	let res = pm_data;
-	if (pm_data.http) {
-		res = await httpFunc(pm_data);
-	} else {
-		//其他异步操作
-	}
-	let currentP;
-	for (var i = 0; i < callbacklist.length; i++) {
-		debugger;
-		if (res && res.http) {
-			res = await httpFunc(res)
-		}
-		res = await forPromise(callbacklist[i], res)
-	}
-	Promise.all([httpFunc, forPromise]).then(function(f_res) {
-		if (finallyfun)
-			finallyfun(f_res);
-	})
-};
-
-//异步处理方法2
-var asyncFunc1 = async function RequestDataArray1(pm_data, callbackfun, callbackfun2, catchfun, finallyfun) {
-	var callbacklist = [];
-	if (callbackfun) {
-		callbacklist.push(callbackfun);
-	}
-	if (callbackfun2) {
-		callbacklist.push(callbackfun2);
-	}
-	let res = pm_data;
-	if (pm_data.http) {
-		res = await httpFunc(pm_data);
-	} else {
-		//其他异步操作
-	}
-	let currentP;
-	for (var i = 0; i < callbacklist.length; i++) {
-		debugger;
-		if (res && res.http) {
-			res = await httpFunc(res);
-		}
-		res = await forPromise(callbacklist[i], res)
-	}
-	Promise.all([httpFunc, forPromise]).then(function(f_res) {
-		if (finallyfun)
-			finallyfun(f_res);
-	})
-};
-
-//异步处理方法3
-var asyncFunc2 = async function RequestDataArray2(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
+//异步处理方法
+var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
 	var callbacklist = [];
-	
-	for(var i= 1;i<=3;i++)
-	{
-	   if( arguments[i])
-	   {
-		   callbacklist.push(arguments[i]);
-	   }
+
+	for (var i = 1; i <= 3; i++) {
+		if (arguments[i]) {
+			callbacklist.push(arguments[i]);
+		}
 	}
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
@@ -551,15 +224,9 @@ var asyncFunc2 = async function RequestDataArray2(pm_data, callbackfun, callback
 			finallyfun(f_res);
 	})
 };
-
 
 export default {
 	http,
 	Post,
-	httpArr,
-	httpArr1,
-	httpArr2,
-	asyncFunc,
-	asyncFunc1,
-	asyncFunc2
+	asyncFunc
 }
