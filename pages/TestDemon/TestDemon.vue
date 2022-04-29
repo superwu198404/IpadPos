@@ -24,7 +24,7 @@
 		onLoad: function() {
 			debugger;
 
-			Req.asyncArr({
+			Req.asyncFunc({
 				http: true,
 				url: "Values/GetData",
 				title: "请求一",
@@ -35,7 +35,7 @@
 			}, [function(res) {
 				console.log("回调一：");
 				console.log(res);
-				Req.asyncArr({
+				Req.asyncFunc({
 					http: true,
 					title: "请求二",
 					url: "Values/GetData",

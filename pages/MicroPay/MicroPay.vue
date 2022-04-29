@@ -21,6 +21,8 @@
 
 <script>
 	import Req from '@/utils/request.js';
+	import _wx from '@/utils/Pay/WxPay.js';
+	import _ali from '@/utils/Pay/Alipay.js';
     import uQRCode from '@/uni_modules/Sansnn-uQRCode/components/uqrcode/common/uqrcode';
 	export default {
 		data() {
@@ -46,89 +48,29 @@
 			},
 			   //支付宝付款码支付
 				AliPay:function(){
-					Req.asyncFunc({
-					        http: true,
-					        url: "/WxPay/AliPay",
-					        title: "请稍等...",
-							method:"POST",
-					        data: {
-					        	out_trade_no:this.out_trade_no,
-					        	auth_code:this.auth_code,
-					        	subject: "测试测试",
-					        	total_amount:0.01
-					        }
-					      }, function(res) {
-					        console.log(JSON.stringify(res));
-					      });
+					//title,auth_code,body,total_fee
+				let result= _ali.CodePayment("支付宝付款码支付",this.out_trade_no,"测试~",1);
 				},
-				//支付宝退款
+				
+				BAliPay:function(){
+					//title,out_trade_no,subject,total_amount
+					let result= _ali.CodeScanPay("支付宝扫码付",this.out_trade_no,"测试测试" ,0.01);
+				},
+				//支付宝退款 title,out_trade_no,out_request_no,refund_amount
 				AlipayTradeRefund:function(){
-					Req.asyncFunc({
-					        http: true,
-					        url: "/WxPay/AlipayTradeRefund",
-					        title: "请稍等...",
-							method:"POST",
-					        data: {
-					        	out_trade_no:this.out_trade_no, 
-					        	out_request_no: "TD"+this.out_trade_no,
-					        	refund_amount:0.01
-					        }
-					      }, function(res) {
-					        console.log(JSON.stringify(res));
-					      });
+					let result= _ali.TradeRefund("支付宝退款",this.out_trade_no,"TD"+this.out_trade_no,0.01);
 				},
+				
 				//微信付款码付
 				wxPay:function(){
-					Req.asyncFunc({
-					        http: true,
-					        url: "/WxPay/WxPay",
-					        title: "微信付款码支付",
-							method:"POST",
-					        data: {
-					        	auth_code: this.auth_code,
-					        	body: "测试测试",
-					        	total_fee:1
-					        }
-					      }, function(res) {
-					        console.log(JSON.stringify(res));
-					      });
-					
+					//title,auth_code,body,total_fee
+					let result= _wx.CodePayment("微信付款码支付",this.auth_code,"测试测试" ,1);
 				},
-				//支付宝扫码付  目前参数只有小程序的  但是小程序不支持当面付
-				BAliPay:function(){
-					let that=this;
-					Req.asyncFunc({
-					        http: true,
-					        url: "/WxPay/TradePrecreate",
-					        title: "商户二维码",
-							method:"POST",
-					        data: {
-					        	out_trade_no: that.out_trade_no,
-					        	subject: "测试测试",
-					        	total_amount:0.01
-					        }
-					      }, function(res) {
-							  that.url=res.JsonData;
-					        console.log(JSON.stringify(res));
-					      });
-				},
+				
 				//微信扫码付
 				BwxPay:function(){
-					let that=this;
-					Req.asyncFunc({
-					        http: true,
-					        url: "/WxPay/TransactionsNative",
-					        title: "商户二维码",
-							method:"POST",
-					        data: {
-					        	out_trade_no: that.out_trade_no,
-					        	subject: "测试测试",
-					        	total_amount:0.01
-					        }
-					      }, function(res) {
-							  that.url=res.code_url;
-					        console.log(JSON.stringify(res));
-					      });
+					//title,out_trade_no,subject,total_amount
+					let result= _wx.CodeScanPay("微信扫码付",this.out_trade_no,"测试测试" ,0.01);
 				}
 		}
 	}
