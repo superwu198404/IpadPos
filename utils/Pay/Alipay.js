@@ -1,7 +1,7 @@
 import Req from '@/utils/request.js';
  
 //支付宝付款码支付
-const CodePayment=(title,out_trade_no，auth_code，subject，total_amount) => {
+const CodePayment=(title,out_trade_no,auth_code,subject,total_amount) => {
 	Req.asyncFunc({
 	        http: true,
 	        url: "/AliPay/CodePayment",
@@ -15,11 +15,12 @@ const CodePayment=(title,out_trade_no，auth_code，subject，total_amount) => {
 	        }
 	      }, function(res) {
 	        console.log(JSON.stringify(res));
+			return  res;
   });
 }
 
 //支付宝扫码付款
-const codeScanPay=(title,out_trade_no，subject，total_amount) => {
+const CodeScanPay=(title,out_trade_no,subject,total_amount) => {
 	 Req.asyncFunc({
 	     http: true,
 	     url: "/AliPay/CodeScanPay",
@@ -30,14 +31,14 @@ const codeScanPay=(title,out_trade_no，subject，total_amount) => {
 	     	subject: subject,
 	     	total_amount:0.01
 	     }
-	    }, function(res) {
-	     that.url=res.JsonData;
+	    }, function(res) { 
 	     console.log(JSON.stringify(res));
+		 return  res;
 	   });
 }
 
 ///支付宝退款
-const AlipayTradeRefund=(title,out_trade_no,out_request_no,refund_amount)=>{
+const TradeRefund=(title,out_trade_no,out_request_no,refund_amount)=>{
 	Req.asyncFunc({
 	        http: true,
 	        url: "/AliPay/TradeRefund",
@@ -50,5 +51,13 @@ const AlipayTradeRefund=(title,out_trade_no,out_request_no,refund_amount)=>{
 	        }
 	      }, function(res) {
 	        console.log(JSON.stringify(res));
+			return  res;
 	   });
+}
+
+
+export default {
+	CodePayment,
+	CodeScanPay,
+	TradeRefund
 }

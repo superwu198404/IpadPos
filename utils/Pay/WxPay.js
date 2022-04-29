@@ -7,15 +7,15 @@ const CodePayment = (title,auth_code,body,total_fee) => {
 		method: "POST",
 		data: {
 			auth_code: auth_code,
-			body: body,,
+			body: body,
 			total_fee: total_fee
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		return  res;
 	});
 }
 ///微信扫码支付
-const codeScanPay=(title,out_trade_no，subject，total_amount) => {
+const CodeScanPay=(title,out_trade_no,subject,total_amount) => {
 	Req.asyncFunc({
 	        http: true,
 	        url: "/WxPay/CodeScanPay",
@@ -28,7 +28,13 @@ const codeScanPay=(title,out_trade_no，subject，total_amount) => {
 	        }
 	      }, function(res) {
 	        console.log(JSON.stringify(res));
+			return  res;
 	   });
+}
+
+export default {
+	CodePayment,
+	CodeScanPay 
 }
 
 
