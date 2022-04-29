@@ -44,7 +44,7 @@
 					}
 				});
 			},
-			   //支付宝款码支付
+			   //支付宝付款码支付
 				AliPay:function(){
 					Req.asyncFunc({
 					        http: true,
@@ -130,7 +130,6 @@
 					        console.log(JSON.stringify(res));
 					      });
 				}
-				
 		}
 	}
 </script>
