@@ -1,8 +1,11 @@
-const baseUrl = 'https://localhost:44313/Api/'; //业务后台
+const baseUrl = 'http://localhost:44377/Api/'; //业务后台
 const jkptUrl = 'https://wgpay.zczyofficial.com/'; //接口平台地址
+const centerUrl = 'http://localhost:44377/Api/'; //初始化地址
 const appid = "keengee";
+
 export default {
 	baseUrl,
 	jkptUrl,
+	centerUrl,
 	appid
 }

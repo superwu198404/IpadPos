@@ -2,6 +2,7 @@ import configInfo from '@/utils/configInfo.js'; //配置参数
 
 const baseUrl = configInfo.baseUrl;
 const jkptUrl = configInfo.jkptUrl;
+const centerUrl = configInfo.centerUrl;
 
 const showToast = (title, icon = "none") => {
 	uni.showToast({
@@ -29,8 +30,11 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 			mask: true
 		})
 	}
-	if (option.url) {
-		p_url = p_url == 'jkpt' ? jkptUrl : baseUrl;
+	if (option.url == 'jkpt') {
+		p_url = jkptUrl;
+	}
+	if (option.url == 'center') {
+		p_url = centerUrl;
 	}
 	return new Promise((resolve, reject) => {
 		uni.request({
@@ -44,7 +48,7 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 				if (!hideLoading) uni.hideLoading()
 				if (res.statusCode === 200) {
 					let result = res.data
-					if (result.code >= 0 || result.code == 'S') {
+					if (result.code || result.code >= 0 || result.code == 'S') {
 						resolve(result)
 						return
 					} else {
@@ -146,12 +150,11 @@ const Post = function(urls, datas, msgs, option = {}, func) {
 	}
 };
 
- Function retData(pm_code,pm_msg,pm_http)
-{
-  this.code  =	pm_code;
-  this.msg   =  pm_msg;
-  this.http  = pm_http
-	
+function retData(pm_code, pm_msg, pm_http) {
+	this.code = pm_code;
+	this.msg = pm_msg;
+	this.http = pm_http
+
 }
 
 
@@ -169,10 +172,20 @@ let httpFunc = function(pm_data) {
 	uni.showLoading({
 		title: pm_data.title || "加载中..."
 	});
-
+	let p_url = baseUrl;
+	let config = uni.getStorageSync("config");
+	if (config) {
+		p_url = config.ywurl;
+	}
+	if (pm_data.url_type && pm_data.url_type == 'jkpt') {
+		p_url = jkptUrl;
+	}
+	if (pm_data.url_type && pm_data.url_type == 'center') {
+		p_url = centerUrl;
+	}
 	return new Promise(function(resolve, reject) {
 		uni.request({
-			url: baseUrl + pm_data.url,
+			url: p_url + pm_data.url,
 			method: pm_data.method || "POST",
 			header: {
 				'Content-Type': pm_data.method == 'GET' ?
@@ -181,11 +194,10 @@ let httpFunc = function(pm_data) {
 			data: pm_data.data,
 			success: (res) => {
 				uni.hideLoading();
-				if (res.statusCode == 200) 
-				{
+				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
-					return reject(  new retData(false,res.errMsg));
+					return reject(new retData(false, res.errMsg));
 				}
 			},
 			fail: (res) => {
@@ -195,7 +207,7 @@ let httpFunc = function(pm_data) {
 		})
 	}).catch(function(reason) {
 		//if (catchfun)
-			//catchfun(reason);
+		//catchfun(reason);
 		console.log('异常捕捉catch:', reason);
 	});
 }
@@ -207,23 +219,18 @@ let forPromise = function(func, pm_data) {
 	return new Promise(function(resolve, reject) {
 		// func(pm_data)
 		// return resolve(pm_data);
-		try
-		{
-		  return resolve(func(pm_data));
+		try {
+			return resolve(func(pm_data));
+		} catch (e) {
+			return reject(new retData(false, e.message));
 		}
-		catch(e)
-		{
-			return  reject( new retData(false,e.message) ); 
-		}	
 	})
 };
 ///作为异常和finally 的默认载体   
-let def  =function( pm_callback,pm_data)
-{
+let def = function(pm_callback, pm_data) {
 	uni.hideLoading();
-	if( pm_callback )
-	{
-	   pm_callback(pm_data);
+	if (pm_callback) {
+		pm_callback(pm_data);
 	}
 }
 /// 
@@ -232,36 +239,29 @@ let def  =function( pm_callback,pm_data)
 var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
 	var callbacklist = [];
-	
-	for(var i= 1;i<=3;i++)
-	{
-	   if( arguments[i])
-	   {
-		   callbacklist.push(arguments[i]);
-	   }
+
+	for (var i = 1; i <= 3; i++) {
+		if (arguments[i]) {
+			callbacklist.push(arguments[i]);
+		}
 	}
 	let res = pm_data;
-	for (var i = 0; i < callbacklist.length; i++) 
-	{
-		debugger;
-		if (res && res.http)
-		{
+	for (var i = 0; i < callbacklist.length; i++) {
+		if (res && res.http) {
 			res = await httpFunc(res);
-			if(!res.code)
-			{
-			   def(catchfun,res);
+			if (!res.code) {
+				def(catchfun, res);
 				break;
 			}
 		}
 		res = await forPromise(callbacklist[i], res)
-			if(!res.code)
-			{
-			   def(catchfun,res);
-				break;
-			}
+		if (res && !res.code) {
+			def(catchfun, res);
+			break;
+		}
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
-	if (finallyfun)  def(finallyfun,res);
+	if (finallyfun) def(finallyfun, res);
 	/*
 	Promise.all([httpFunc, forPromise]).then(function(f_res) {
 		if (finallyfun)

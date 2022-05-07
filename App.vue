@@ -1,10 +1,13 @@
 <script>
 	import store from '@/store'
+	import common from '@/api/common.js'
 	export default {
 		globalData: {
 			appid: 'keengee'
 		},
 		onLaunch: function() {
+			//初始化数据
+			common.InitData("K210QTD001")
 			console.log('App Launch')
 		},
 		onShow: function() {

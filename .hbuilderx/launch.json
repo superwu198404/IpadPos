@@ -104,6 +104,27 @@
 			"launchtype" : "local"
 		},
 		"type" : "unicloud"
+	},
+	{
+		"h5" : 
+		{
+			"launchtype" : "local"
+		},
+		"type" : "unicloud"
+	},
+	{
+		"h5" : 
+		{
+			"launchtype" : "local"
+		},
+		"type" : "unicloud"
+	},
+	{
+		"type" : "unicloud",
+		"uniapp" : 
+		{
+			"launchtype" : "local"
+		}
 	}
     ]
 }

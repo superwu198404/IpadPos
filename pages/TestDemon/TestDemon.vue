@@ -22,52 +22,28 @@
 			}
 		},
 		onLoad: function() {
+			// Req.asyncFunc({
+			// 	http: true,
+			// 	url: "/WxPay/AliPay",
+			// 	title: "请稍等...",
+			// 	data: {
+			// 		out_trade_no: "",
+			// 		auth_code: "",
+			// 		subject: "测试测试",
+			// 		total_amount: 0.01
+			// 	}
+			// }, function(res) {
+			// 	console.log("请求一：");
+			// });
 			// var a=new hy_model.hyObj('13597696131',"夏末")
 			// let res=a.GetHyInfo("好厉害");
 			// console.log(res);
 			// debugger;
-			// Req.asyncFunc({
-			// 	http: true,
-			// 	url_type: "jkpt",
-			// 	url: "Values/GetData",
-			// 	title: "请求一",
-			// 	data: {
-			// 		age: "10",
-			// 		name: "小明"
-			// 	}
-			// }, function(res) {
-			// 	console.log("回调一：");
-			// 	console.log(res);
-			// 	return {
-			// 		http: true,
-			// 		url: "Values/GetData",
-			// 		title: "请求二",
-			// 		data: {
-			// 			age: res.data.age + 10,
-			// 			name: res.data.name + "的妈妈"
-			// 		}
-			// 	};
-			// });
-			//return;
-			// Req.httpArr2({
-			// 	age: "10",
-			// 	name: "小明"
-			// }, "请求一", "POST", function(res) {
-			// 	console.log("回调一：" + res);
-			// },  function(res1) {
-			// 	console.log("回调二：" + res1);
-			// 	Req.httpArr2({
-			// 		age: res1.age,
-			// 		name: res1.name
-			// 	}, "请求二", "POST", function(res) {
-			// 		console.log("回调三：" + res);
-			// 	})
-			// })
 			//会员信息查询调用接口
-			hybase.Query_Member_Assets("15527956801", "Mobile", function(res) {
-				console.log(res);
-			})
-			return;
+			// hybase.Query_Member_Assets("15527956801", "Mobile", function(res) {
+			// 	console.log(res);
+			// })
+			// return;
 			//简单多层机构 适用于不依赖上层请求结果的请求集
 			// Req.Post(["Values/GetData", "Values/PutData", "Values/DelData"], [{
 			// 	age: 10,
