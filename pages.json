@@ -1,5 +1,29 @@
 {
 	"pages": [{
+			"path": "pages/MicroPay/MicroPay",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
+				"path": "pages/MicroPay/wxpay",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+		
+			},
+		{
+			"path": "pages/AppPay/AppPay",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "",
@@ -7,10 +31,28 @@
 			}
 		},
 		{
-			"path": "pages/index/BTDemo",
+			"path": "pages/modal/modal",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
 			}
+
+		},
+		{
+			"path": "pages/Barcode/Barcode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
+			"path": "pages/QRCode/QRCode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		},
 		{
 			"path": "pages/index/PopupDemon",
@@ -19,6 +61,15 @@
 				"enablePullDownRefresh": false
 			}
 		},
+
+
+		{
+			"path": "pages/index/BTDemo",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+
 
 		{
 			"path": "pages/index/ScanCodeDemo",
@@ -50,56 +101,61 @@
 			}
 		},
 		{
+			"path": "pages/TestDemon/TestDemon",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}
+
+		, {
+			"path": "pages/QRCode/QRCode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/Barcode/Barcode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}
+
+		, {
+			"path": "pages/QRCode/QRCode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 
 
+		}
 
 
- 
-		    "path" : "pages/TestDemon/TestDemon",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		} 
-        
-        ,{
-            "path" : "pages/QRCode/QRCode",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/Barcode/Barcode",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    
-        ,{
-            "path" : "pages/QRCode/QRCode",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
+		, {
+			"path": "pages/hy/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 
-        } 
+		}
 	],
- 
+
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue"
+		}
 	}
 	// ,
 	// "condition": { //模式配置，仅开发期间生效
@@ -111,4 +167,3 @@
 	// 	}]
 	// }
 }
-

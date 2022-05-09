@@ -20,10 +20,9 @@ export class show_model{
 		let otherColor=option.otherColor||'#0F7EF5';
 		let showCancel=option.showCancel||false;
 		let showOther=option.showOther||false;
-		let align=option.align||"center"
-		let fn = ()=>{}
+		let align=option.align||"center";
+		let fn = ()=>{};
 		this.$event = option.$event || fn
-		
 		//#ifdef APP-PLUS
 		this.creatView({height:`${pageHeight}px`,top:0},opacity,
 		clickEvent,
@@ -33,11 +32,11 @@ export class show_model{
 
 	//生成提示框view
 	creatView(style,opa,clickEvent,modelInfo){
-		style = {
+		   style = {
 			left:'0px',
 			width:'100%',
 			...style
-		}
+		   }
 		
 		let view = new plus.nativeObj.View('showModalView',style);
 		let butnums=modelInfo.showCancel||modelInfo.showOther?(modelInfo.showCancel&&modelInfo.showOther?3:2):1;
@@ -64,7 +63,7 @@ export class show_model{
 				]);
 				
 				viewCancel.addEventListener("click",(e)=>{
-					this.$event({res:false,types:'cancel'});
+					this.$event({res:true,types:'cancel'});
 					this.hide()
 				},false);
 				this.cancelModel=viewCancel;
@@ -81,7 +80,7 @@ export class show_model{
 				]);
 				
 				viewOther.addEventListener("click",(e)=>{
-					this.$event({res:false,types:'other'});
+					this.$event({res:true,types:'other'});
 					this.hide()
 				},false);
 				this.otherModel=viewOther;
@@ -98,13 +97,14 @@ export class show_model{
 					]);
 				
 					viewconfirm.addEventListener("click",(e)=>{
+						
 						this.$event({res:true,types:'confirm'});
 						this.hide();
 					},false);	
 				  //点击蒙布
 				  if(clickEvent){
 					 view.addEventListener("click", (e) => {
-						this.$event({res:false,types:'cover'});
+						this.$on({res:true,types:'cover'});
 						this.hide()
 					}, false);
 				}
