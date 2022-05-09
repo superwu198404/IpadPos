@@ -55,7 +55,8 @@
 		methods: {
 			//微信扫码支付
 			wxSanPay: function() {
-				let bill=common.CreateBill("K210","001");
+				let bill = common.CreateBill("K210", "001");
+				this.$data.out_trade_no = bill;
 				console.log(bill);
 				return;
 				let _that = this;
