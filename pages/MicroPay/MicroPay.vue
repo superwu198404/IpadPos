@@ -1,11 +1,11 @@
 <template>
 	<view>
-		<view class="text-area">
-		假装随机生成的订单号:<text  class="title">{{out_trade_no}}</text>
-		</view>
-		<view class="text-area">
-		假装扫出来的付款码:<text  class="title">{{auth_code}}</text>
-		</view>
+		
+		<view class="text-area"> 总价：{{totalAmount}} </view>
+		<view class="text-area"> 支付方式：{{PayWay}} </view>
+		<view class="input"> 待支付：{{PayAmont}} </view>
+		<input  placeholder=""   v-model="PayAmont" />
+		<view class="text-area"> 支付金额：{{PayAmont}} </view>
 		<button @click="San()">扫码枪扫描付款码</button>
 		<button @click="AliPay()">支付宝支付</button>
 		<button @click="AlipayTradeRefund()">支付宝退款</button>
@@ -13,13 +13,13 @@
 		<button @click="BwxPay()">商户生成二维码让微信用户扫</button>
 		<uqrcode  cid="uQRCode" ref="uQRCode"  :text="url" />
 		<button @click="BAliPay()">商户生成二维码让支付宝用户扫</button>
-		 
 	</view>
  
  <!-- <uqrcode ref="uQRCode" text="uQRCode 3.0" /> -->
 </template>
 
 <script>
+	import hy from '@/utils/hy/hy_query.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/utils/Pay/WxPay.js';
 	import _ali from '@/utils/Pay/Alipay.js';
@@ -29,8 +29,11 @@
 			return {
 				auth_code:"288811249915033182",
 				out_trade_no:"202204271458564",
+				totalAmount:100,//总金额
+				PayWay:"zfb2.0",//支付方式
+				yPayAmount:0,//已支付金额
+				PayAmont:totalAmount-yPayAmount,
 				url:""
-				
 			}
 		},
 		methods: {
@@ -49,7 +52,13 @@
 			   //支付宝付款码支付
 				AliPay:function(){
 					//title,auth_code,body,total_fee
-				let result= _ali.CodePayment("支付宝付款码支付",this.out_trade_no,"测试~",1);
+				// let result= _ali.CodePayment("支付宝付款码支付",this.out_trade_no,"测试~",1);
+				let result=_ali.Payment("支付宝付款码支付","CodePayment","WxPayService",{
+					out_trade_no:"",
+					auth_code:"",
+					subject:"",
+					total_amount:""
+				});
 				},
 				
 				BAliPay:function(){
