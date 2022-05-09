@@ -12,10 +12,20 @@
 				</view>
 			</view>
 		</uni-popup>
+
 	</view>
 </template>
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue'
+
+		<view class="dialog">
+
+		</view>
+	</view>
+</template>
+<script>
+	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+
 	export default {
 		components: {
 			uniPopup

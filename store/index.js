@@ -1,7 +1,134 @@
+// #ifndef VUE3
 import Vue from 'vue'
 import Vuex from 'vuex'
-import getters from './getters' 
-Vue.use(Vuex) 
+Vue.use(Vuex)
+const store = new Vuex.Store({
+// #endif
+
+// #ifdef VUE3
+import { createStore } from 'vuex'
+const store = createStore({
+// #endif
+	state: {
+		hasLogin: false,
+		isUniverifyLogin: false,
+		loginProvider: "",
+		openid: null,
+		testvuex: false,
+		colorIndex: 0,
+		colorList: ['#FF0000', '#00FF00', '#0000FF'],
+		noMatchLeftWindow: true,
+		active: 'componentPage',
+		leftWinActive: '/pages/component/view/view',
+		activeOpen: '',
+		menu: [],
+		univerifyErrorMsg: ''
+	},
+	mutations: {
+		login(state, provider) {
+			state.hasLogin = true;
+			state.loginProvider = provider;
+		},
+		logout(state) {
+			state.hasLogin = false
+			state.openid = null
+		},
+		setOpenid(state, openid) {
+			state.openid = openid
+		},
+		setTestTrue(state) {
+			state.testvuex = true
+		},
+		setTestFalse(state) {
+			state.testvuex = false
+		},
+		setColorIndex(state, index) {
+			state.colorIndex = index
+		},
+		setMatchLeftWindow(state, matchLeftWindow) {
+			state.noMatchLeftWindow = !matchLeftWindow
+		},
+		setActive(state, tabPage) {
+			state.active = tabPage
+		},
+		setLeftWinActive(state, leftWinActive) {
+			state.leftWinActive = leftWinActive
+		},
+		setActiveOpen(state, activeOpen) {
+			state.activeOpen = activeOpen
+		},
+		setMenu(state, menu) {
+			state.menu = menu
+		},
+		setUniverifyLogin(state, payload) {
+			typeof payload !== 'boolean' ? payload = !!payload : '';
+			state.isUniverifyLogin = payload;
+		},
+		setUniverifyErrorMsg(state,payload = ''){
+			state.univerifyErrorMsg = payload
+		}
+	},
+	getters: {
+		currentColor(state) {
+			return state.colorList[state.colorIndex]
+		}
+	},
+	actions: {
+		// lazy loading openid
+		getUserOpenId: async function({
+			commit,
+			state
+		}) {
+			return await new Promise((resolve, reject) => {
+				if (state.openid) {
+					resolve(state.openid)
+				} else {
+					uni.login({
+						success: (data) => {
+							commit('login')
+							setTimeout(function() { //Ä£ÄâÒì²½ÇëÇó·þÎñÆ÷»ñÈ¡ openid
+								const openid = '123456789'
+								console.log('uni.request mock openid[' + openid + ']');
+								commit('setOpenid', openid)
+								resolve(openid)
+							}, 1000)
+						},
+						fail: (err) => {
+							console.log('uni.login ½Ó¿Úµ÷ÓÃÊ§°Ü£¬½«ÎÞ·¨Õý³£Ê¹ÓÃ¿ª·Å½Ó¿ÚµÈ·þÎñ', err)
+							reject(err)
+						}
+					})
+				}
+			})
+		},
+		getPhoneNumber: function({
+			commit
+		}, univerifyInfo) {
+			return new Promise((resolve, reject) => {
+				uni.request({
+					url: 'https://97fca9f2-41f6-449f-a35e-3f135d4c3875.bspapp.com/http/univerify-login',
+					method: 'POST',
+					data: univerifyInfo,
+					success: (res) => {
+						const data = res.data
+						if (data.success) {
+							resolve(data.phoneNumber)
+						} else {
+							reject(res)
+						}
+
+					},
+					fail: (err) => {
+						reject(res)
+					}
+				})
+			})
+		}
+	}
+})
+
+export default store
+
 const modulesFiles = require.context('./modules', true, /\.js$/);
 const modules = modulesFiles.keys().reduce((modules, modulePath) => {
 	const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1')
@@ -9,79 +136,9 @@ const modules = modulesFiles.keys().reduce((modules, modulePath) => {
 	modules[moduleName] = value.default
 	return modules
 }, {}) 
-const store = new Vuex.Store({
-	modules,
-	getters:getters,
-	state: {
-		//ç”¨æˆ·ç™»å½•æ‰‹æœºå·
-		mobile: uni.getStorageSync("thorui_mobile") || "echo.",
-		//æ˜¯å¦ç™»å½• é¡¹ç›®ä¸­æ”¹ä¸ºçœŸå®žç™»å½•ä¿¡æ¯åˆ¤æ–­ï¼Œå¦‚token
-		isLogin: uni.getStorageSync("thorui_mobile") ? true : false,
-		//ç™»å½•åŽè·³è½¬çš„é¡µé¢è·¯å¾„ + é¡µé¢å‚æ•°
-		returnUrl: "",
-		//appç‰ˆæœ¬
-		version: "1.7.2",
-		//å½“å‰æ˜¯å¦æœ‰ç½‘ç»œè¿žæŽ¥
-		networkConnected: true,
-		isOnline: true
-	},
-	mutations: {
-		login(state, payload) {
-			if (payload) {
-				state.mobile = payload.mobile
-			}
-			state.isLogin = true
-		},
-		logout(state) {
-			state.mobile = ""
-			state.isLogin = false
-			state.returnUrl = ""
-		},
-		setReturnUrl(state, returnUrl) {
-			state.returnUrl = returnUrl
-		},
-		networkChange(state, payload) {
-			state.networkConnected = payload.isConnected
-		},
-		setOnline(state, payload) {
-			state.isOnline = state.isOnline
-		}
-	},
-	actions: {
-		getOnlineStatus: async function({
-			commit,
-			state
-		}) {
-			return await new Promise((resolve, reject) => {
-				// #ifndef MP-WEIXIN
-				resolve(true)
-				// #endif
-				// #ifdef MP-WEIXIN
-				if (state.isOnline) {
-					resolve(state.isOnline)
-				} else {
-					fetch.request("/Home/GetStatus", "GET", {}, false, true, true).then((res) => {
-						if (res.code == 100 && res.data == 1) {
-							commit('setOnline', {
-								isOnline: true
-							})
-							resolve(true)
-						} else {
-							commit('setOnline', {
-								isOnline: false
-							})
-							resolve(false)
-						}
-					}).catch((res) => {
-						reject(false)
-					})
-				}
-				// #endif
-			})
-		}
-	}
-	
-});
-export default store
+
+
+
 
  
+
