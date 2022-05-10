@@ -1,3 +1,5 @@
+import Req from '@/utils/request.js';
+
 ///微信付款码支付
 const CodePayment = (title, auth_code, body, total_fee) => {
 	Req.asyncFunc({
@@ -15,7 +17,7 @@ const CodePayment = (title, auth_code, body, total_fee) => {
 	});
 }
 ///微信扫码支付
-const CodeScanPay = (title, out_trade_no, subject, total_amount) => {
+const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
@@ -26,12 +28,16 @@ const CodeScanPay = (title, out_trade_no, subject, total_amount) => {
 			type: 'WxPayService',
 			body: {
 				out_trade_no: out_trade_no,
-				subject: subject,
-				total_amount: total_amount
+				body: subject,
+				auth_code: auth_code,
+				total_fee: total_amount
 			}
 		}
 	}, function(res) {
 		console.log(JSON.stringify(res));
+		if (func) {
+			func(res);
+		}
 		return res;
 	});
 }

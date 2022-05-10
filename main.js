@@ -3,7 +3,7 @@ import App from './App'
 import * as request from '@/utils/request.js' 
 import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
-// #ifndef VUE3
+// #ifdef VUE3
 // #endif
 import Vue from 'vue' 
 import store from './store' 
@@ -20,7 +20,7 @@ const app = new Vue({
     ...App
 })
 app.$mount()
-// #endif 
+
 // #ifdef VUE3
 import { createSSRApp } from 'vue'
 export function createApp() {

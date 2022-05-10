@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import tkiBarcode from "@/components/tki-barcode/tki-barcode.vue"
+import tkiBarcode from "@/components/tki-barcode/tki-barcode.vue";
+
 export default {
 	data() {
 		return {
