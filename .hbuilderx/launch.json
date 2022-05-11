@@ -186248,6 +186248,13 @@
 			"launchtype" : "local"
 		},
 		"type" : "unicloud"
+	},
+	{
+		"type" : "unicloud",
+		"uniapp" : 
+		{
+			"launchtype" : "local"
+		}
 	}
     ]
 }
