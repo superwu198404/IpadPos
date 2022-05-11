@@ -2,7 +2,7 @@
  * 字符串转时间（yyyy-MM-dd HH:mm:ss） 
  * result （分钟） 
  */
-const stringToDate=(fDate)=> {
+const stringToDate = (fDate) => {
 	var fullDate = fDate.split("-");
 	return new Date(fullDate[0], fullDate[1] - 1, fullDate[2], 0, 0, 0);
 };
@@ -13,7 +13,7 @@ const stringToDate=(fDate)=> {
  * @param format 格式化样式,例如yyyy-MM-dd HH:mm:ss E 
  * @return 格式化后的 
  */
-const formatDate=(date, format) =>{
+const formatDate = (date, format) => {
 	var v = "";
 	if (typeof date == "string" || typeof date != "object") {
 		return;
@@ -52,7 +52,7 @@ const formatDate=(date, format) =>{
 	v = v.replace(/YY/g, (year + "").substring(2, 4));
 
 	//Month 
-	var monthStr =  month;
+	var monthStr = month;
 	v = v.replace(/MM/g, monthStr);
 	// var monthStr = ("0" + month);
 	// v = v.replace(/MM/g, monthStr.substring(monthStr.length - 2));
@@ -91,7 +91,7 @@ const formatDate=(date, format) =>{
  * oriDate  比较时间
  * 返回 正数为cusDate>oriDate
  */
-const calculateTime=(cusDate, oriDate)=> {
+const calculateTime = (cusDate, oriDate) => {
 	var cusTime = cusDate.getTime();
 	var oriTime = oriDate.getTime();
 	return (cusTime - oriTime) / (1000 * 60 * 60 * 24)
@@ -100,7 +100,7 @@ const calculateTime=(cusDate, oriDate)=> {
  * 时间戳转日期格式
  * @param {Object} timeStamp
  */
-const timeStampTurnTime=(timeStamp, type = "")=> {
+const timeStampTurnTime = (timeStamp, type = "") => {
 	if (timeStamp != undefined && timeStamp != "" && timeStamp > 0) {
 		var date = new Date();
 		date.setTime(timeStamp * 1000);
@@ -129,7 +129,7 @@ const timeStampTurnTime=(timeStamp, type = "")=> {
  * 日期格式转时间戳
  * @param {Object} timeStamp
  */
-const timeTurnTimeStamp=(string)=> {
+const timeTurnTimeStamp = (string) => {
 	var f = string.split(' ', 2);
 	var d = (f[0] ? f[0] : '').split('-', 3);
 	var t = (f[1] ? f[1] : '').split(':', 3);
@@ -147,7 +147,7 @@ const timeTurnTimeStamp=(string)=> {
  * 倒计时
  * @param {Object} seconds 秒
  */
-const countDown=(seconds)=> {
+const countDown = (seconds) => {
 	let [day, hour, minute, second] = [0, 0, 0, 0]
 	if (seconds > 0) {
 		day = Math.floor(seconds / (60 * 60 * 24))
@@ -175,8 +175,8 @@ const countDown=(seconds)=> {
 	};
 };
 //获取现在时刻的日期，星期几，时分秒
-const GetDateTimeNowStr=(type)=>{
-		let date = new Date(),
+const GetDateTimeNowStr = (type) => {
+	let date = new Date(),
 		currentDate,
 		currentTime,
 		seperator = "-", // 如果想要其他格式 只需 修改这里 
@@ -187,81 +187,106 @@ const GetDateTimeNowStr=(type)=>{
 		hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
 		minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
 		second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		month >= 1 && month <= 9 ? (month = "0" + month) : "";
-		day >= 0 && day <= 9 ? (day = "0" + day) : "";
-		  //当前 日期
-		 currentDate = year + seperator + month + seperator + day;
-		  //当前 时间
-		 currentTime = hour + ":" + minute + ":" + second;
-		  // 输出格式 为 2018-8-27 14:45:33
-		 // console.log(currentDate +" "+ currentTime);
-		
-		 if(type==0){
-             return currentDate
-         }
-         else if(type==1){
-             return currentTime;
-         }
-         else if(type==2){
-             if(weex==1){
-                 return '星期一'
-             }if(weex==2){
-                 return '星期二'
-             }if(weex==3){
-                 return '星期三'
-             }if(weex==4){
-                 return '星期四'
-             }if(weex==5){
-                 return '星期五'
-             }if(weex==6){
-                 return '星期六'
-             }if(weex==7){
-                 return '星期日'
-             }
-         }
-         else{
-            return currentDate+" "+ currentTime;
-         }
+	month >= 1 && month <= 9 ? (month = "0" + month) : "";
+	day >= 0 && day <= 9 ? (day = "0" + day) : "";
+	//当前 日期
+	currentDate = year + seperator + month + seperator + day;
+	//当前 时间
+	currentTime = hour + ":" + minute + ":" + second;
+	// 输出格式 为 2018-8-27 14:45:33
+	// console.log(currentDate +" "+ currentTime);
+
+	if (type == 0) {
+		return currentDate
+	} else if (type == 1) {
+		return currentTime;
+	} else if (type == 2) {
+		if (weex == 1) {
+			return '星期一'
+		}
+		if (weex == 2) {
+			return '星期二'
+		}
+		if (weex == 3) {
+			return '星期三'
+		}
+		if (weex == 4) {
+			return '星期四'
+		}
+		if (weex == 5) {
+			return '星期五'
+		}
+		if (weex == 6) {
+			return '星期六'
+		}
+		if (weex == 7) {
+			return '星期日'
+		}
+	} else {
+		return currentDate + " " + currentTime;
+	}
 };
 
-const GetTimeStamp=()=>{
+const GetTimeStamp = () => {
 	return (new Date()).getTime();
 };
 
 //某个日期是否晚于某个日期
-const after=(date1, date2)=> {
-       var stime = this._getTime(this._transferDate(date1));
-       var etime = this._getTime(this._transferDate(date2));
-       return stime < etime ? true : false;
+const after = (date1, date2) => {
+	var stime = this._getTime(this._transferDate(date1));
+	var etime = this._getTime(this._transferDate(date2));
+	return stime < etime ? true : false;
 };
 
 //某个日期是在当月中的星期几
-const getDayOfWeek=(date)=> {
-       return this._getWeek(date1);
-},
- 
- /*获取今天星期几,如果为0代表星期日*/
-const getWeek=(date)=> {
-       return this._transferDate(date).getDay();
-};
-//获取两个日期相隔天数
-const getDays=(date1, date2)=>{
-    const dateTime = 1000 * 60 * 60 * 24; //每一天的毫秒数
-    const minusDays = Math.floor(((date2.getTime() - date1.getTime()) / dateTime));//计算出两个日期的天数差
-    return Math.abs(minusDays);
+const getDayOfWeek = (date) => {
+	return this._getWeek(date1);
 };
 
-export default{
-stringToDate,
-formatDate,
-calculateTime,
-timeStampTurnTime,
-timeTurnTimeStamp,
-countDown,
-GetDateTimeNowStr,
-GetTimeStamp,
-after,
-getDayOfWeek,
-getWeek,
-getDays
- }
+/*获取今天星期几,如果为0代表星期日*/
+const getWeek = (date) => {
+	return this._transferDate(date).getDay();
+};
+//获取两个日期相隔天数
+const getDays = (date1, date2) => {
+	const dateTime = 1000 * 60 * 60 * 24; //每一天的毫秒数
+	const minusDays = Math.floor(((date2.getTime() - date1.getTime()) / dateTime)); //计算出两个日期的天数差
+	return Math.abs(minusDays);
+};
+//获取当前日期 yyyyMMdd
+const getYMD = () => {
+	let date = new Date();
+	let year = date.getFullYear().toString();
+	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
+	let str = year + '-' + month + '-' + day;
+	return str;
+};
+//获取当前日期时间yyyyMMddHHmmss
+const getYMDS = () => {
+	let date = new Date();
+	let year = date.getFullYear().toString();
+	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
+	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
+	let min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
+	let sec = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
+	let str = year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
+	return str;
+};
+export default {
+	stringToDate,
+	formatDate,
+	calculateTime,
+	timeStampTurnTime,
+	timeTurnTimeStamp,
+	countDown,
+	GetDateTimeNowStr,
+	GetTimeStamp,
+	after,
+	getDayOfWeek,
+	getWeek,
+	getDays,
+	getYMD,
+	getYMDS
+}

@@ -1,13 +1,17 @@
+var name = "ipad";
+var path = "_doc/ipad.db";
 // 创建数据库 ｜ 打开数据库
-function openSqllite() {
+var openSqllite = function() {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.openDatabase({
-			name: 'life', // 数据库名称
-			path: '_doc/life.db', // 数据库地址
+			name: name, // 数据库名称
+			path: path, // 数据库地址
 			success(e) {
+				console.log("ok");
 				resolve(0)
 			},
 			fail(e) {
+				console.log(e);
 				reject(-1)
 			}
 		})
@@ -15,10 +19,10 @@ function openSqllite() {
 }
 
 // 关闭数据库
-function closeSqllite() {
+var closeSqllite = function() {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.closeDatabase({
-			name: 'life',
+			name: name,
 			success(e) {
 				resolve()
 			},
@@ -30,10 +34,10 @@ function closeSqllite() {
 }
 
 // 监听数据库是否开启 return type : Boolean
-function isOpen(name, path) {
+var isOpen = function() {
 	return plus.sqlite.isOpenDatabase({
-		name: 'life',
-		path: '_doc/life.db'
+		name: name,
+		path: path
 	})
 }
 
@@ -62,12 +66,14 @@ function isOpen(name, path) {
 	'update '+listName+' set '+name+'="'+cont+'" where '+use+'="'+sel+'"'
 	'update '+listName+' set '+name+'="'+cont+'"'
 */
-function executeSql(sqlCode) {
+var executeSql = function(sqlCode) {
 	return new Promise((resolve, reject) => {
 		plus.sqlite.executeSql({
-			name: 'life',
+			name: name,
 			sql: sqlCode, // sql 语句
 			success(e) {
+				console.log("结果");
+				console.log(e);
 				resolve(e)
 			},
 			fail(e) {
@@ -86,11 +92,11 @@ function executeSql(sqlCode) {
 	// 高级查询
 	'select * from '+id+' order by list desc limit 15 offset '+num+'',
 */
-function selectSql(sqlCode) {
+var selectSql = function(sqlCode) {
 	return new Promise((resolve, reject) => {
 
 		plus.sqlite.selectSql({
-			name: 'life', // 数据库名称
+			name: name, // 数据库名称
 			sql: sqlCode,
 			success(e) {
 				resolve(e)
@@ -111,6 +117,7 @@ var mySqllite = function() {
 		begin: "begin"
 	}
 	var dbOperTionEnum = {
+		isOpenDatabase: "isOpenDatabase",
 		openDatabase: "openDatabase",
 		selectSql: "selectSql",
 		closeDatabase: "closeDatabase",
@@ -122,7 +129,7 @@ var mySqllite = function() {
 		return new Promise(
 			(resolve, reject) => {
 				let inputParm = {};
-				inputParm.name = this.name;
+				inputParm.name = name;
 				inputParm.operation = pm_dboperation;
 				inputParm.success = (e) => {
 					return resolve({
@@ -131,19 +138,26 @@ var mySqllite = function() {
 					})
 				}
 				inputParm.fail = (e) => {
-					return reject({
+					return resolve({
 						code: false,
 						msg: e
 					})
 				}
-				for (prm in otherParm) {
+				for (var prm in otherParm) {
 					inputParm[prm] = otherParm[prm];
 				}
 				plus.sqlite[pm_dboperation](inputParm);
+
 			}
 		)
 
 	}
+	var isopen = function(msg) {
+		return plus.sqlite.isOpenDatabase({
+			path: path,
+			name: name
+		});
+	};
 	var open = function(msg) {
 
 		var msg = msg | "正在进行操作";
@@ -152,14 +166,13 @@ var mySqllite = function() {
 			mask: true
 		})
 		return getOperationPromise(dbOperTionEnum.openDatabase, {
-			path: this.path
+			path: path
 		});
 	};
+
 	var close = function() {
 		return getOperationPromise(dbOperTionEnum.closeDatabase, {});
 	};
-
-
 
 	var exec = function(pm_sql) {
 		return getOperationPromise(dbOperTionEnum.executeSql, {
@@ -186,7 +199,6 @@ var mySqllite = function() {
 
 	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail) {
 		var retcode;
-
 		retcode = await open(pm_msg);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await tran(tranEnum.begin);
@@ -214,20 +226,26 @@ var mySqllite = function() {
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await qry(sql);
 		await close();
-		if (retcode.msg.length > 0) {
+		if (retcode.code) {
 			return callBackCloseLoading(retcode, success);
 		} else {
 			return callBackCloseLoading(retcode, fail);
 		}
 
 	}
+
 	this.executeDml = async function(sql, pm_msg, success, fail) {
-		var retcode;
-		retcode = await open(pm_msg);
+		var retcode = {
+			code: true,
+			msg: "默认打开"
+		};
+		if (!isopen()) {//关闭就打开
+			retcode = await open(pm_msg);
+		}
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
 		await close();
-		if (retcode.msg.length > 0) {
+		if (retcode.code) {
 			return callBackCloseLoading(retcode, success);
 		} else {
 			return callBackCloseLoading(retcode, fail);
@@ -247,5 +265,10 @@ var SqliteHelper = {
 
 
 export default {
-	SqliteHelper
+	SqliteHelper,
+	openSqllite,
+	closeSqllite,
+	isOpen,
+	selectSql,
+	executeSql
 }

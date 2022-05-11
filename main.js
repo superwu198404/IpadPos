@@ -1,8 +1,8 @@
 import App from './App'
 import * as request from '@/utils/request.js';
 import * as $ from '@/utils/common.js'
- import tui from './common/httpRequest'
-// #ifndef VUE3
+import tui from './common/httpRequest'
+// #ifdef VUE3
 import Vue from 'vue' 
 import store from './store' 
 import G_show_modal from './static/js/ShowModal/Gshow_modal.js'
@@ -18,7 +18,7 @@ const app = new Vue({
     ...App
 })
 app.$mount()
-// #endif 
+
 // #ifdef VUE3
 import { createSSRApp } from 'vue'
 export function createApp() {

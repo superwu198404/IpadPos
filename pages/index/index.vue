@@ -1,5 +1,6 @@
 <template>
 	<view class="content">
+		<text>123456</text>
 		<image class="logo" src="/static/logo.png"></image>
 		<view class="text-area">
 			<text v-on:click='change()' class="title">{{title+"："+context}}</text>

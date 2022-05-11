@@ -249,7 +249,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
 			res = await httpFunc(res);
-			if (!res.code) {
+			if (res && !res.code) {
 				debugger;
 				def(catchfun, res);
 				break;
