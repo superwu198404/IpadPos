@@ -41,8 +41,52 @@ const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func
 		return res;
 	});
 }
-
+///查询微信扫码支付的结果
+const QueryCodeScanPay = (title, out_trade_no, func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: 'V2TradeQuery',
+			type: 'WxPayService',
+			body: {
+				out_trade_no: out_trade_no
+			}
+		}
+	}, function(res) {
+		console.log(JSON.stringify(res));
+		if (func) {
+			func(res);
+		}
+		return res;
+	});
+}
+///撤销支付订单
+const CancelCodeScanPay = (title, out_trade_no, func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: 'V2TradeCancel',
+			type: 'WxPayService',
+			body: {
+				out_trade_no: out_trade_no
+			}
+		}
+	}, function(res) {
+		console.log(JSON.stringify(res));
+		if (func) {
+			func(res);
+		}
+		return res;
+	});
+}
 export default {
 	CodePayment,
-	CodeScanPay
+	CodeScanPay,
+	QueryCodeScanPay
 }
