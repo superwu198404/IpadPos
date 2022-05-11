@@ -37,6 +37,8 @@
 			</radio-group>
 		</view>
 		<button @click="Pay()">支付</button>
+		<button @click="CreatTable()">创建表</button>
+		<button @click="TestSql()">数据测试</button>
 		<view> 支付列表:
 			<p>序号---支付方式---支付金额---编码</p>
 			<view v-for="(way, index) in PayList">
@@ -144,7 +146,6 @@
 					return;
 				}
 				this.$refs['popup'].open();
-
 			},
 			//微信扫码支付
 			wxSanPay: function() {
@@ -159,23 +160,6 @@
 				// 	console.log("数据库执行失败");
 				// 	console.log(err);
 				// });
-				// sql = "insert into OSALE001 (KHID) values('K210QTD');";
-				// db.SqliteHelper.get().executeDml(sql, "执行sql", function(res) {
-				// 	console.log("sql执行成功")
-				// 	console.log(res)
-				// }, function(err) {
-				// 	console.log("sql执行失败")
-				// 	console.log(err)
-				// })
-				// return;
-				// db.SqliteHelper.get().executeQry("select * from OSALE001", "", function(res) {
-				// 	console.log("数据库查询成功");
-				// 	console.log(res);
-				// }, function(err) {
-				// 	console.log("数据库查询失败");
-				// 	console.log(err);
-				// });
-				// return;
 				// this.CreateSale()
 				console.log(dateformat.getYMDS());
 				this.$refs['popup'].open();
@@ -393,33 +377,35 @@
 			ToPay: function(e) {
 				let that = this;
 				let code = e.target.value;
-				if (!code) {
-					uni.showToast({
-						title: "请输入付款码",
-						icon: "error"
-					});
-					return;
-				}
+
 				that.sale1_obj.out_trade_no = common.CreateBill("K210QTD002", "001");
 				that.sale1_obj.auth_code = code;
 				that.sale1_obj.subject = "商品支付";
 				that.sale1_obj.totalAmount = that.PayAmount;
-				//发起支付
-				that.paymentAll(that.selectPayWay, that.sale1_obj, function(res) {
-					debugger
-					if (res.new_code < 0) {
-						uni.showToast({
-							title: res.new_msg,
-							icon: "error",
-							success() {
-								that.$refs['popup'].close();
-							}
-						});
-						return;
-					}
-					//轮询操作
-					that.circleQuery(t, that.sale1_obj, func);
-				})
+				if (code) { //code 有值则发起支付
+					//发起支付
+					that.paymentAll(that.selectPayWay, that.sale1_obj, function(res) {
+						debugger
+						if (res.new_code < 0) {
+							uni.showToast({
+								title: res.new_msg,
+								icon: "error",
+								success() {
+									that.$refs['popup'].close();
+								}
+							});
+							return;
+						}
+						//轮询操作
+						that.circleQuery(t, that.sale1_obj, func);
+					})
+				} else { //没值则发起查询
+					that.queryPayAll(that.selectPayWay, that.sale1_obj, function(res) {
+						if (res.new_code > 0) {//是支付成功的
+							that.createPay(t);//追加支付成功的记录
+						}
+					})
+				}
 			},
 			//回车发起支付原版
 			ToPay2: function(e) {
@@ -634,8 +620,39 @@
 						console.log(err);
 					});
 				}
-			}
+			},
 
+			//创建表结构
+			CreatTable: function() {
+				let sql = c_sql.createSql; //创建表
+				db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
+					console.log("表结构创建成功");
+					console.log(res);
+				}, function(err) {
+					console.log("表结构创建失败");
+					console.log(err);
+				});
+			},
+
+			//测试sql
+			TestSql: function() {
+				sql = "insert into OSALE001 (KHID) values('K210QTD');";
+				db.SqliteHelper.get().executeDml(sql, "执行sql", function(res) {
+					console.log("sql执行成功")
+					console.log(res)
+				}, function(err) {
+					console.log("sql执行失败")
+					console.log(err)
+				})
+				return;
+				db.SqliteHelper.get().executeQry("select * from OSALE001", "", function(res) {
+					console.log("sql查询成功");
+					console.log(res);
+				}, function(err) {
+					console.log("sql查询失败");
+					console.log(err);
+				});
+			},
 		}
 	}
 </script>

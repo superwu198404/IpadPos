@@ -129,6 +129,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/Refund/Refund",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

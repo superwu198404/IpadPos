@@ -85,6 +85,54 @@ const CancelCodeScanPay = (title, out_trade_no, func) => {
 		return res;
 	});
 }
+///查询订单是否退款
+const QueryRefund = (title, out_trade_no, func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: 'V2RefundQuery',
+			type: 'WxPayService',
+			body: {
+				out_trade_no: out_trade_no
+			}
+		}
+	}, function(res) {
+		console.log(JSON.stringify(res));
+		if (func) {
+			func(res);
+		}
+		return res;
+	});
+}
+
+///订单退款
+const Refund = (title, out_trade_no, out_refund_no, total_fee, func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: 'V2TradeRefund',
+			type: 'WxPayService',
+			body: {
+				out_trade_no: out_trade_no,
+				out_refund_no: out_refund_no,
+				total_fee: total_fee,
+				refund_fee: total_fee
+			}
+		}
+	}, function(res) {
+		console.log(JSON.stringify(res));
+		if (func) {
+			func(res);
+		}
+		return res;
+	});
+}
 export default {
 	CodePayment,
 	CodeScanPay,
