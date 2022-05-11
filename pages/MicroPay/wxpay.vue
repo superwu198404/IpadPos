@@ -82,14 +82,14 @@
 				// 	console.log("数据库执行失败");
 				// 	console.log(err);
 				// });
-				sql = "insert into OSALE001 (KHID) values('K210QTD');";
-				db.SqliteHelper.get().executeDml(sql, "执行sql", function(res) {
-					console.log("sql执行成功")
-					console.log(res)
-				}, function(err) {
-					console.log("sql执行失败")
-					console.log(err)
-				})
+				// sql = "insert into OSALE001 (KHID) values('K210QTD');";
+				// db.SqliteHelper.get().executeDml(sql, "执行sql", function(res) {
+				// 	console.log("sql执行成功")
+				// 	console.log(res)
+				// }, function(err) {
+				// 	console.log("sql执行失败")
+				// 	console.log(err)
+				// })
 				// return;
 				// db.SqliteHelper.get().executeQry("select * from OSALE001", "", function(res) {
 				// 	console.log("数据库查询成功");
