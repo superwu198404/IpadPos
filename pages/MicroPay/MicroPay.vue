@@ -74,6 +74,7 @@
 					subject: "测试测试",
 					total_amount: 2000
 				});
+				
 			},
 
 			BAliPay: function() {
