@@ -250,6 +250,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 		if (res && res.http) {
 			res = await httpFunc(res);
 			if (res && !res.code) {
+				debugger;
 				def(catchfun, res);
 				break;
 			}
@@ -269,6 +270,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 	})
 	*/
 };
+
 
 
 export default {

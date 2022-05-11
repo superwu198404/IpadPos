@@ -1,7 +1,19 @@
 import Req from '@/utils/request.js';
-
+const Payment = (title, apiName, type, body={},fun1,fun4) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment1",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: apiName,
+			type: type,
+			body: body
+		}
+	},fun1,null,null,fun4);
+}
 //支付宝付款码支付
-const CodePayment = (title, out_trade_no, auth_code, subject, total_amount) => {
+const CodePayment = (title, out_trade_no, auth_code, subject, total_amount,func) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/AliPay/CodePayment",
@@ -14,7 +26,41 @@ const CodePayment = (title, out_trade_no, auth_code, subject, total_amount) => {
 			total_amount: 0.01
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		if(func){
+			func(res);
+		}
+		return res;
+	});
+}
+const OrderQuery= (title, out_trade_no,func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/AliPay/AlipayTradeQuery",
+		title: title,
+		method: "POST",
+		data: {
+			out_trade_no: this.out_trade_no 
+		}
+	}, function(res) {
+		if(func){
+			func(res);
+		}
+		return res;
+	});
+}
+const OrderCancel = (title, out_trade_no,func) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/AliPay/AlipayTradeCancel",
+		title: title,
+		method: "POST",
+		data: {
+			out_trade_no: this.out_trade_no 
+		}
+	}, function(res) {
+		if(func){
+			func(res);
+		}
 		return res;
 	});
 }
@@ -55,26 +101,11 @@ const TradeRefund = (title, out_trade_no, out_request_no, refund_amount) => {
 	});
 }
 
-const Payment = (title, apiName, type, body={}) => {
-	Req.asyncFunc({
-		http: true,
-		url: "/Payment/Payment",
-		title: title,
-		method: "POST",
-		data: {
-			apiName: apiName,
-			type: type,
-			body: body
-		}
-	}, function(res) {
-		console.log(JSON.stringify(res));
-		return res;
-});
 
-
-}
 export default {
 	CodePayment,
+	OrderQuery,
+	OrderCancel,
 	CodeScanPay,
 	TradeRefund,
 	Payment

@@ -1,11 +1,6 @@
 <template>
 	<view>
 
-		<view class="text-area"> 总价：{{totalAmount}} </view>
-		<view class="text-area"> 支付方式：{{PayWay}} </view>
-		<view class="input"> 待支付：{{PayAmont}} </view>
-		<input placeholder="" v-model="PayAmont" />
-		<view class="text-area"> 支付金额：{{PayAmont}} </view>
 		<button @click="San()">扫码枪扫描付款码</button>
 		<button @click="AliPay()">支付宝支付</button>
 		<button @click="AlipayTradeRefund()">支付宝退款</button>
@@ -27,16 +22,35 @@
 	export default {
 		data() {
 			return {
-				auth_code: "288811249915033182",
+				auth_code: "289547390641106797",
 				out_trade_no: "202204271458564",
-				totalAmount: 100, //总金额
-				PayWay: "zfb2.0", //支付方式
+				totalAmount: 100, //应付
 				yPayAmount: 0, //已支付金额
-				PayAmont: this.totalAmount - this.yPayAmount,
+				PayWay: [{
+						name: '支付宝',
+						value: 'zfb',
+						checked: 'true'
+					},
+					{
+						name: '微信',
+						value: 'wx',
+						
+					},
+					{
+						name: '仟吉券',
+						value: 'qjq'
+					},
+					{
+						name: '电子卡',
+						value: 'dzk'
+					}
+				], //支付方式
+				PayAmont: 100000,
 				url: ""
 			}
 		},
 		methods: {
+			 
 			San: function() {
 				let _that = this;
 				// 调起条码扫描
@@ -51,13 +65,14 @@
 			},
 			//支付宝付款码支付
 			AliPay: function() {
+				let that=this;
 				//title,auth_code,body,total_fee
 				// let result= _ali.CodePayment("支付宝付款码支付",this.out_trade_no,"测试~",1);
-				let result = _ali.Payment("支付宝付款码支付", "CodePayment", "WxPayService", {
-					out_trade_no: "",
-					auth_code: "",
-					subject: "",
-					total_amount: ""
+				let result = _ali.Payment("支付宝付款码支付", "CodePayment", "AliPayService", {
+					out_trade_no: "2022050914270237",//2022050914270235
+					auth_code: "282411163073918928",
+					subject: "测试测试",
+					total_amount: 2000
 				});
 			},
 

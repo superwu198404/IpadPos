@@ -106,45 +106,30 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		}
-
-		, {
-			"path": "pages/QRCode/QRCode",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/Barcode/Barcode",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		}
-
-		, {
-			"path": "pages/QRCode/QRCode",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
 
 
 		}
-
-
-		, {
-			"path": "pages/hy/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		}
-	],
-
+	 
+       
+        ,{
+            "path" : "pages/hy/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/Payment/Payment",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

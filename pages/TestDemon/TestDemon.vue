@@ -21,6 +21,7 @@
 				status: ""
 			}
 		},
+		
 		onLoad: function() {
 			// Req.asyncFunc({
 			// 	http: true,
@@ -34,6 +35,7 @@
 			// 	}
 			// }, function(res) {
 			// 	console.log("请求一：");
+			
 			// });
 			// var a=new hy_model.hyObj('13597696131',"夏末")
 			// let res=a.GetHyInfo("好厉害");
