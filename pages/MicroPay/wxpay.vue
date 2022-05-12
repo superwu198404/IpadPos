@@ -369,7 +369,7 @@
 				that.PayList.Push({
 					way: payobj.name,
 					amount: that.PayAmount,
-					no: that.PayList.length
+					no: that.PayList.length + 1;
 				});
 				//预留处理业务数据的地方
 			},
@@ -401,8 +401,8 @@
 					})
 				} else { //没值则发起查询
 					that.queryPayAll(that.selectPayWay, that.sale1_obj, function(res) {
-						if (res.new_code > 0) {//是支付成功的
-							that.createPay(t);//追加支付成功的记录
+						if (res.new_code > 0) { //是支付成功的
+							that.createPay(t); //追加支付成功的记录
 						}
 					})
 				}

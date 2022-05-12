@@ -2,7 +2,8 @@
 	import store from '@/store'
 	export default {
 		globalData: {
-			appid: 'keengee'
+			appid: 'keengee',
+			brand: "KG"
 		},
 		onLaunch: function() {
 			console.log('App Launch')
@@ -17,5 +18,5 @@
 </script>
 
 <style>
- 
+
 </style>

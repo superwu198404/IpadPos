@@ -161,7 +161,15 @@
 				this.queryRefundAll(this.selectPayWay, this.sale3_obj, function(res) {
 					console.log("查询结果" + res);
 					if (res.new_code > 0) {
+						let payobj = this.PayWay.find(item => {
+							return item.value == this.selectPayWay
+						});
 						//查询到已经是退款成功的生成退款记录
+						this.PayList.push({
+							way: payobj.name,
+							amount: data.amount,
+							no: this.PayList.length + 1;
+						});
 					} else {
 						this.RefundAll(this.selectPayWay, this.sale3_obj, function(res1) {
 							console.log("发起退款的结果" + res1);
@@ -212,11 +220,7 @@
 								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0]
 									.value);
 							}
-							that.PayList.push({
-								way: "支付宝",
-								amount: data.amount,
-								no: "T" + data.no
-							});
+
 							//查询是否已经生成退款记录
 
 							//支付成功生成记录
