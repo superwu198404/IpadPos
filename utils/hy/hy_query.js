@@ -2,7 +2,7 @@ import configInfo from '@/utils/configInfo.js'; //配置参数
 import Req from '@/utils/request.js';
 
 //会员信息查询接口
-function Query_Member_Assets(a, b, func) {
+const  Query_Member_Assets= (a, b, func) =>{
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets",
 		appid: configInfo.appid,
@@ -12,7 +12,7 @@ function Query_Member_Assets(a, b, func) {
 			type: type,
 		}
 	}, "查询中...", {
-		url: "jkpt"
+		url: "center"
 	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
@@ -21,7 +21,7 @@ function Query_Member_Assets(a, b, func) {
 };
 
 //会员中心查询查询接口
-function hyQuery_new(a, b, func) {
+const hyQuery_new= (a, b, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "hyQuery_new",
 		appid: configInfo.appid,
@@ -31,7 +31,7 @@ function hyQuery_new(a, b, func) {
 			type: type,
 		}
 	}, "查询中...", {
-		url: "jkpt"
+		url: "center"
 	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
@@ -40,7 +40,7 @@ function hyQuery_new(a, b, func) {
 };
  
 //会员中心查询查询接口
-function queryCustomCard(a, b, func) {
+const queryCustomCard=(p, t, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "queryCustomCard",
 		appid: configInfo.appid,
@@ -58,7 +58,7 @@ function queryCustomCard(a, b, func) {
 		},
 		phone: p
 	}, "查询中...", {
-		url: "jkpt"
+		url: "center"
 	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
@@ -66,17 +66,16 @@ function queryCustomCard(a, b, func) {
 	})
 };
  
-
 //仟吉单券查询
-function TicktQuery(a, b, func) {
+const QJTicktQuery= (a, b, func)=> {
 	Req.http("Hy/hy", {
-		"apiname": "TICKETQUERY",
-		"appid": configInfo.appid,
-		"paramkey": "acc",
-		"data": {
-			"GT_IMPORT": [{
-				"ZZCP_NUM": a,
-				"ZZCPHX_STORE": b
+		apiname: "TICKETQUERY",
+		appid: configInfo.appid,
+		paramkey: "acc",
+		data: {
+			GT_IMPORT: [{
+				ZZCP_NUM: a,
+				ZZCPHX_STORE: b
 			}]
 		}
 	}, "查询中...", {
@@ -88,13 +87,13 @@ function TicktQuery(a, b, func) {
 	})
 };
 //仟吉单券核销
-function TicktUse(data = [], func) {
+const QJTicktUse=(d, func)=> {
 	Req.http("Hy/hy", {
-		"apiname": "TICKETUSE",
-		"appid": configInfo.appid,
-		"paramkey": "acc",
-		"data": {
-			"GT_IMPORT": data
+		apiname: "TICKETUSE",
+		appid: configInfo.appid,
+		paramkey: "acc",
+		data: {
+			GT_IMPORT: d
 		}
 	}, "核销中...", {
 		url: "center"
@@ -104,35 +103,51 @@ function TicktUse(data = [], func) {
 		return res;
 	})
 };
-
-
 //卓越券核销
-function couponConsume(d, b, func) {
+const couponConsume= (d,b,func)=> {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
-		"apiname": "couponConsume",
-		"paramkey": "others",
-		"source": "wxsmallprogram",
-		"data": {
-			"type": "queryCustomCard",
-			"kquser": configInfo.kquser,
-			"ynencript": "Y",
-			"databody": d,
-			"bill": b
+		appid: configInfo.appid,
+		apiname: "couponConsume",
+		paramkey: "others",
+		source: "wxsmallprogram",
+		data: {
+			type: "queryCustomCard",
+			kquser: configInfo.kquser,
+			ynencript: "Y",
+			databody: d,
+		    bill: b
 		}
 	}, "查询中...", {
-		url: "jkpt"
+		url: "center"
 	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
 	})
 };
+const HyQuery= (a,b,func)=>{
+	if(configInfo.Brand=="QJ"){
+		Query_Member_Assets(a,b,func);
+	}else if(configInfo.Brand=="ZY"){
+		queryCustomCard(a,b,func);
+	}
+};
+const TicktQuery= (a,b, func)=>{
+	if(configInfo.Brand=="QJ"){
+		QJTicktQuery(a,b,func);
+	}else if(configInfo.Brand=="ZY"){
+		 
+	}
+};
+const TicktUse= (d,b, func)=>{
+	if(configInfo.Brand=="QJ"){
+		QJTicktUse(d,b,func);
+	}else if(configInfo.Brand=="ZY"){
+		couponConsume(d,b);
+	}
+};
 export default {
-	Query_Member_Assets,
-	hyQuery_new,
-	queryCustomCard,
+	HyQuery,
 	TicktQuery,
-	couponConsume,
 	TicktUse
 }

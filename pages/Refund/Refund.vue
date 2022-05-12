@@ -209,8 +209,7 @@
 								});
 							} else {
 								//没有退款  
-								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0]
-									.value);
+								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0].value);
 							}
 							that.PayList.push({
 								way: "支付宝",
@@ -218,12 +217,12 @@
 								no: "T" + data.no
 							});
 							//查询是否已经生成退款记录
+							
 
 							//支付成功生成记录
 							that.dPayAmount += data.amount; //等支付减去支付金额
 							that.yPayAmount -= data.amount //已支付加上支付金额
-							if (that.selectPayWay == 'AliPayService' || that.selectPayWay ==
-								'WxPayService') {
+							if (that.selectPayWay == 'AliPayService' || that.selectPayWay =='WxPayService') {
 								that.PayAmont = that.totalAmount - that.yPayAmount;
 							} else {
 								that.PayAmont = 0;
@@ -307,8 +306,8 @@
 						}
 
 					});
-			},
-		}
+			}
+		}}
 </script>
 
 <style>
