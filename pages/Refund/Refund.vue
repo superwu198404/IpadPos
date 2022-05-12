@@ -25,6 +25,7 @@
 <script>
 	import _wx from '@/utils/Pay/WxPay.js';
 	import _ali from '@/utils/Pay/Alipay.js';
+	import common from '@/api/common.js';
 
 	export default {
 		data() {
@@ -48,7 +49,8 @@
 					}
 				], //支付方式列表
 				bill: "", //单号
-				selectPayWay: "" //选中的支付方式
+				selectPayWay: "", //选中的支付方式
+				sale3_obj: {}
 			}
 		},
 		methods: {
@@ -99,7 +101,7 @@
 				}
 			},
 			//退款的合集
-			queryRefundAll: function(t, e, func) {
+			RefundAll: function(t, e, func) {
 				let Result;
 				if (t == 'WX') {
 					_wx.Refund("微信退款", e.out_trade_no, e.out_refund_no, e.total_fee, function(res) {
@@ -125,6 +127,7 @@
 							Result.new_code = '1';
 						} else {
 							Result.new_code = '-1';
+							Result.new_msg = Result.sub_msg;
 						}
 					})
 					if (func) func(Result);
@@ -133,6 +136,11 @@
 				} else if (t == 'COUPON') {
 
 				} else {}
+			},
+			//查询订单详情
+			Search: function() {
+				this.sale3_obj.out_trade_no = this.bill;
+				this.sale3_obj.out_refund_no = common.CreateBill("K210QTD002", "001");
 			},
 			//退款点击事件
 			refund: function() {
@@ -143,10 +151,38 @@
 					})
 					return;
 				}
-				this.queryRefundAll(this.selectPayWay, {
-					out_trade_no: this.bill
-				}, function(res) {
+				if (!this.selectPayWay) {
+					uni.showToast({
+						title: "请选择退款方式",
+						icon: "error"
+					})
+					return;
+				}
+				this.queryRefundAll(this.selectPayWay, this.sale3_obj, function(res) {
 					console.log("查询结果" + res);
+					if (res.new_code > 0) {
+						//退款成功生成退款记录
+					} else {
+						this.RefundAll(this.selectPayWay, this.sale3_obj, function(res1) {
+							console.log( //发起退款的结果);
+								if (res1.code > 0) {
+									//退款成功
+									uni.showToast({
+										title: "退款成功!",
+										icon: "success"
+									});
+									//生成退款记录
+								}
+							}
+							else {
+								//退款失败
+								uni.showToast({
+									title: +res.new_msg,
+									icon: "error"
+								});
+							}
+						})
+					}
 				})
 			},
 			//发起退款原版
