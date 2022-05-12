@@ -23,17 +23,21 @@ var InitData = function(e) {
 	});
 }
 //创建表
-var CreateTable=function(){
-	
-	
+var CreateTable = function() {
+
+
 }
 
 //创建单号
-var CreateBill = function(khid, posid) {
+var CreateBill = function(khid, posid, seq) {
 	if (!khid || !posid) {
 		return "";
 	}
-	return khid + posid + util.ymsFormat();
+	let bill = khid + posid + util.ymsFormat();
+	if (seq) {
+		bill + '_' + seq;
+	}
+	return bill;
 }
 
 //传入集合数组，和表名字，返回包含oracle 和sqllite得sql 数组
@@ -41,9 +45,12 @@ var CreateSQL = function(e, t) {
 	if (!e || !t) {
 		return [];
 	}
-	let oracle_sql="", lite_sql="";
+	let oracle_sql = "",
+		lite_sql = "";
 	for (var i = 0; i < e.length; i++) {
-		let nameStr="", valStr="", liteStr="";
+		let nameStr = "",
+			valStr = "",
+			liteStr = "";
 		for (var name in e[i]) { //遍历对象属性名
 			nameStr += name + ",";
 			if (name.toUpperCase().indexOf('DATE') >= 0 || name.toUpperCase().indexOf('TIME') > 0) {
