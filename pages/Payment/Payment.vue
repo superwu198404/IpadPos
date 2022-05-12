@@ -51,9 +51,9 @@
 		data() {
 			return {
 				type: 'center',
-				totalAmount: 1000000, //应付
+				totalAmount: 20, //应付
 				yPayAmount: 0, //已支付金额
-				dPayAmount: 1000000, //待支付
+				dPayAmount: 20, //待支付
 				PayWay: [{
 						name: '支付宝',
 						value: 'WX',
@@ -334,6 +334,7 @@
 			closeCode: function() {
 				this.$refs['popup'].close();
 			},
+			
 			ToRefund: function(title, out_trade_no, amount, out_request_no, way) {
 				_ali.Payment(title, "TradeRefund", way, {
 						out_trade_no: out_trade_no,
@@ -382,43 +383,51 @@
 					});
 			},
 			Qj_QPay: function(code) {
+				let  that=this;
 				//查询券  code查询出来券的金额 假如是10块钱
-				hy.TicktQuery()
-				let flag = true;
-				let qAmount = 10;
-				//将查询出来的券值赋值
-				that.PayAmont = qAmount;
-				if (qAmount > dPayAmount) {
+				let qamount=0;
+				hy.TicktQuery(code,"",
+				function(res){
+					//有券
+					if(res.code){
+						let q=JSON.parse(res.data);
+						qamount=q.ZZCPVALUE;
+					}else{
+						//无券或者异常
+						uni.showToast({
+							title: res.msg,
+							duration: 2000,
+							icon: "error"
+						});
+						return;
+					}
+				});
+				 
+				if (qamount> that.dPayAmount) {
 					uni.showModal({
 						title: '提示',
-						content: '券金额大于支付金额，是否继续支付？',
+						content: '券金额:'+qamount+',大于支付金额，是否继续支付？',
 						confirmText: "是",
 						cancelText: "否",
 						success: function(res) {
 							if (res.confirm) {
-								flag = true;
-								//继续支付   扣掉券的信息   
+								//继续支付   扣掉券的信息  
+								that.PayAmont=that.dPayAmount;
+								 //多的生成放弃记录
+								 if (qamount> that.dPayAmount) {
+								 	//放弃金额
+								 	let fq=qamount- that.dPayAmount; //券金额-待支付金额=放弃金额
+								 	 //生成放弃记录
+								 }
+								 //生成支付记录   抵扣金额=所有待支付金额
+								 
 							} else if (res.cancel) {
-								flag = false;
 								return;
 							}
 						}
 					});
 				}
-				if (flag) {
-					//多的生成放弃记录
-					if (qAmount > dPayAmount) {
-						that.paysuccess({
-							out_trade_no: "",
-							total_amount: qAmount - dPayAmount
-						});
-					}
-					//生成支付记录
-					that.paysuccess({
-						out_trade_no: "",
-						total_amount: qAmount
-					});
-				}
+		 
 
 			},
 			Pay: function() {
@@ -430,21 +439,23 @@
 					});
 					return;
 				}
-				if (!this.PayAmont) {
-					uni.showToast({
-						title: '请输入支付金额',
-						duration: 2000,
-						icon: "error"
-					});
-					return;
-				}
-				if (this.PayAmont > (this.totalAmount - this.yPayAmount)) {
-					uni.showToast({
-						title: '输入的金额有误',
-						duration: 2000,
-						icon: "error"
-					});
-					return;
+				if(this.selectPayWay!='qjqzf'&&this.selectPayWay!='zyqzf'){
+					if (!this.PayAmont) {
+						uni.showToast({
+							title: '请输入支付金额',
+							duration: 2000,
+							icon: "error"
+						});
+						return;
+					}
+					if (this.PayAmont > (this.totalAmount - this.yPayAmount)) {
+						uni.showToast({
+							title: '输入的金额有误',
+							duration: 2000,
+							icon: "error"
+						});
+						return;
+					}
 				}
 				this.$refs['popup'].open();
 
