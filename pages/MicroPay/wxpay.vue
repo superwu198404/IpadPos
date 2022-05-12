@@ -11,10 +11,10 @@
 		<!-- 商品详情 -->
 		<view>
 			<view v-for="(item) in products">
-				<text>{{item.name}}</text>-
-				<text>￥{{item.amount}}</text>-
-				<text>{{item.price}}元/kg</text>-
-				<text>x{{item.num}}</text>
+				<text>{{item.NAME}}</text>-
+				<text>￥{{item.AMOUNT}}</text>-
+				<text>{{item.PRICE}}元/kg</text>-
+				<text>x{{item.QTY}}</text>
 			</view>
 		</view>
 		<view>
@@ -67,37 +67,51 @@
 			return {
 				PayWay: [{
 						name: '微信',
-						value: 'WX'
+						value: 'WX',
+						fkid: "ZF01"
 					},
 					{
 						name: '支付宝',
 						value: 'ALI',
-
+						fkid: "ZF02"
 					},
 					{
 						name: '电子卡',
-						value: 'CARD'
+						value: 'CARD',
+						fkid: "ZF03"
 					},
 					{
 						name: '电子券',
-						value: 'COUPON'
+						value: 'COUPON',
+						fkid: "ZF04"
 					}
-				], //支付方式
+				],
 				products: [{
-					name: "黑森林",
-					price: "10",
-					amount: "20",
-					num: 2
+					PLID: "100",
+					BARCODE: '4533331313',
+					SPID: "123456",
+					UNIT: "个",
+					NAME: "黑森林",
+					PRICE: "10",
+					OPRICE: "10",
+					AMOUNT: "20",
+					QTY: 2
 				}, {
-					name: "毛毛虫",
-					price: "12",
-					amount: "24",
-					num: 2
+					PLID: "101",
+					SPID: "456786",
+					UNIT: "袋",
+					BARCODE: '4533338338454533',
+					NAME: "毛毛虫",
+					PRICE: "12",
+					OPRICE: "12",
+					AMOUNT: "24",
+					QTY: 2
 				}],
 				authCode: "130108158206176736",
 				out_trade_no: "202204271458564",
 				totalAmount: 100, //总金额
-				Discount: "0.5", //支付方式
+				Discount: "5", //折扣金额
+				RealAmount: 95, //实际需要支付金额
 				yPayAmount: 0, //已支付金额
 				PayAmount: 1, //待支付
 				url: "",
@@ -105,7 +119,9 @@
 				PayList: [],
 				sale1_obj: {},
 				sale2_obj: {},
-				sale3_obj: {}
+				sale2_arr: [],
+				sale3_obj: {},
+				sale3_arr: [],
 			}
 		},
 		methods: {
@@ -369,7 +385,8 @@
 				that.PayList.Push({
 					way: payobj.name,
 					amount: that.PayAmount,
-					no: that.PayList.length + 1;
+					no: that.PayList.length + 1,
+					fkid: payobj.fkid
 				});
 				//预留处理业务数据的地方
 			},
@@ -594,6 +611,100 @@
 					});
 			},
 
+			//创建页面订单数据
+			CreateData: function() {
+				this.sale1_obj = {
+					BILL: this.out_trade_no,
+					SALEDATE: dateformat.getYMD(),
+					SALETIME: dateformat.getYMDS(),
+					KHID: getApp().store.globalData.KHID,
+					POSID: getApp().store.globalData.POSID,
+					RYID: getApp().store.globalData.RYID,
+					BILL_TYPE: 'Z101', //门店现场销售单
+					XSTYPE: "1",
+					XS_BILL: "", //退款时记录原单号
+					XS_POSID: "", //退款时记录原posid
+					XS_DATE: "", //退款时记录原销售日期
+					XS_KHID: "", //退款时记录原khid
+					XS_GSID: "", //退款时记录原GSID
+					TLINE: this.sale2_obj.length,
+					TNET: this.RealAmount,
+					DNET: 0,
+					ZNET: this.totalAmount,
+					BILLDISC: this.Discount,
+					ROUND: 0,
+					CHANGENET: 0,
+					CXTNET: 0,
+					TCXDISC: 0,
+					CUID: "", //会员号
+					CRADID: "", //卡号
+					THYDISC: this.Discount,
+					YN_SC: 'N',
+					GSID: getApp().store.globalData.GSID, //公司
+					GCID: getApp().store.globalData.GCID, //工厂
+					DPID: getApp().store.globalData.DPID, //店铺
+					KCDID: getApp().store.globalData.KCDID, //库存点
+					BMID: getApp().store.globalData.BMID, //部门id
+					DKFID: getApp().store.globalData.DKFID, //大客户id默认编码
+					XSPTID: 'POS',
+					YN_OK: 'X',
+					THTYPE: 0,
+					CLTIME: dateformat.getYMDS()
+				};
+				for (var i = 0; i < this.products.length; i++) {
+					this.sale2_obj = {
+						BILL: this.out_trade_no,
+						SALEDATE: dateformat.getYMD(),
+						SALETIME: dateformat.getYMDS(),
+						KHID: getApp().store.globalData.KHID,
+						POSID: getApp().store.globalData.POSID,
+						SPID: this.products[i].SPID,
+						NO: i,
+						PLID: this.products[i].PLID,
+						BARCODE: this.products[i].BARCODE,
+						UNIT: this.products[i].UNIT,
+						QTY: this.products[i].QTY,
+						PRICE: this.products[i].PRICE,
+						OPRICE: this.products[i].OPRICE,
+						NET: this.products[i].PRICE,
+						DISCRATE: "0",
+						YN_SKYDISC: 'N', //是否有手工折扣
+						DISC: 0, //手工折扣额
+						YN_CXDISC: 'N',
+						CXDISC: 0,
+						YEAR: new Date().getFullYear(),
+						MONTH: new Date().getMonth() + 1,
+						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
+							new Date().getDay()),
+						TIME: new Date().getHours(),
+						RYID: getApp().store.globalData.RYID, //人员
+						GCID: getApp().store.globalData.GCID, //工厂
+						DPID: getApp().store.globalData.DPID, //店铺
+						KCDID: getApp().store.globalData.KCDID, //库存点
+						BMID: getApp().store.globalData.BMID //部门id
+					};
+					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
+				}
+				for (var i = 0; i < this.PayList.length; i++) {
+					this.sale3_obj = {
+						BILL: this.out_trade_no,
+						SALEDATE: dateformat.getYMD(),
+						SALETIME: dateformat.getYMDS(),
+						KHID: getApp().store.globalData.KHID,
+						POSID: getApp().store.globalData.POSID,
+						NO: i,
+						FKID: this.PayList[i].fkid,
+						AMT: this.PayList[i].amount,
+						RYID: getApp().store.globalData.RYID, //人员
+						GCID: getApp().store.globalData.GCID, //工厂
+						DPID: getApp().store.globalData.DPID, //店铺
+						KCDID: getApp().store.globalData.KCDID, //库存点
+						BMID: getApp().store.globalData.BMID, //部门id
+						DISC: ""
+					};
+					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
+				}
+			},
 			//创建业务数据
 			CreateSale: function() {
 				let sql1 = common.CreateSQL(this.products, 'SALE001');
