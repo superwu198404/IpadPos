@@ -168,7 +168,7 @@
 						this.PayList.push({
 							way: payobj.name,
 							amount: data.amount,
-							no: this.PayList.length + 1;
+							no: this.PayList.length + 1
 						});
 					} else {
 						this.RefundAll(this.selectPayWay, this.sale3_obj, function(res1) {

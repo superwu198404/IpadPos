@@ -475,12 +475,12 @@
 						"ZZCPHX_CHANNEL": qinfo.ZZCPHX_CHANNEL,
 						"ZZCPHX_STORE": qinfo.ZZCPHX_STORE,
 						"ZZVBELN": qinfo.ZZVBELN,
-						"ZZTPRICE": "288.00",
-						"ZZCPHXDATE": qinfo.ZZCPHXDATE.replace(/-/g, ''),
-						"ZZCPTIME": "180121",
-						"ZZPRODUCT_ID": "000000001090100002",
-						"ZZPRODUCT_NET": 279.0,
-						"ZZPRODUCT_NUM": 1.0
+						"ZZTPRICE": "288.00",  //订单金额
+						// "ZZCPHXDATE": DateTime.Now.ToString("yyyyMMdd"),
+						// "ZZCPTIME": DateTime.Now.ToString("HHmmss"),
+						"ZZPRODUCT_ID": "000000001090100002", // 商品编码
+						"ZZPRODUCT_NET": 279.0, //商品金额
+						"ZZPRODUCT_NUM": 1.0   //商品数量
 					}],
 					function(res) {
 						let used = JSON.parse(res.data);

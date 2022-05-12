@@ -369,7 +369,7 @@
 				that.PayList.Push({
 					way: payobj.name,
 					amount: that.PayAmount,
-					no: that.PayList.length + 1;
+					no: that.PayList.length + 1
 				});
 				//预留处理业务数据的地方
 			},
