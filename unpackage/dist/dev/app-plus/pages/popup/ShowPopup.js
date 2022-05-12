@@ -130,9 +130,6 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 module.exports = {
-  "uni-forms-item__inner": {
-    "paddingBottom": "10"
-  },
   "@VERSION": 2
 }
 
