@@ -39,7 +39,7 @@ function hyQuery_new(a, t, func) {
 	})
 };
 //会员中心查询查询接口
-function queryCustomCard(y, p,t, func) {
+function queryCustomCard(p,t, func) {
 	Req.http("Hy/queryCustomCard", {
       "appid": configInfo.appid,
       "apiname": "queryCustomCard",
@@ -48,7 +48,7 @@ function queryCustomCard(y, p,t, func) {
       "data": {
         "type": "queryCustomCard",
         "kquser": configInfo.kquser,
-        "ynencript": y,
+        "ynencript": "N",
         "databody": {
 			 "kquser":configInfo.kquser,
 			 "phone": p,
@@ -64,10 +64,75 @@ function queryCustomCard(y, p,t, func) {
 		return res;
 	})
 };
+//仟吉单券查询
+function TicktQuery(a,b, func) {
+	Req.http("Hy/TicktQuery", {
+		"apiname": "TICKETQUERY",
+		"appid": configInfo.appid,
+		"paramkey": "acc",
+		"data": {
+			"GT_IMPORT": [
+			     {  
+			     "ZZCP_NUM": a,
+			      "ZZCPHX_STORE": b
+			     }
+		      ]
+		}
+	}, "查询中...", {
+		url: "jkpt"
+	}).then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
 
-
+//仟吉单券核销
+function TicktUse(data=[], func) {
+	Req.http("Hy/TicktUse", {
+		"apiname": "TICKETUSE",
+		"appid": configInfo.appid,
+		"paramkey": "acc",
+		"data": {
+			"GT_IMPORT": data 
+		}
+	}, "查询中...", {
+		url: "jkpt"
+	}).then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
+//卓越单券查询
+ 
+//卓越券核销
+function couponConsume(d,b, func) {
+	Req.http("Hy/couponConsume", {
+      "appid": configInfo.appid,
+      "apiname": "couponConsume",
+      "paramkey": "others",
+      "source": "wxsmallprogram",
+      "data": {
+        "type": "queryCustomCard",
+        "kquser": configInfo.kquser,
+        "ynencript": "Y",
+        "databody": d,
+		"bill":b
+      }
+    }, "查询中...", {
+		url: "jkpt"
+	}).then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
 export default {
 	Query_Member_Assets,
 	hyQuery_new,
-    queryCustomCard
+    queryCustomCard,
+	TicktQuery,
+	couponConsume,
+	TicktUse
 }
