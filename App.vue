@@ -3,7 +3,17 @@
 	export default {
 		globalData: {
 			appid: 'keengee',
-			brand: "KG"
+			brand: "KG",
+			store: {
+				GSID: "1001",
+				KHID: "K210QTD001",
+				POSID: "001",
+				RYID: "10086",
+				KCDID: "123",
+				DKFID: '80000000',
+				BMID: "001",
+				GCID: "1001"
+			}
 		},
 		onLaunch: function() {
 			console.log('App Launch')
