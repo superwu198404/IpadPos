@@ -161,23 +161,21 @@
 				this.queryRefundAll(this.selectPayWay, this.sale3_obj, function(res) {
 					console.log("查询结果" + res);
 					if (res.new_code > 0) {
-						//退款成功生成退款记录
+						//查询到已经是退款成功的生成退款记录
 					} else {
 						this.RefundAll(this.selectPayWay, this.sale3_obj, function(res1) {
-							console.log( //发起退款的结果);
-								if (res1.code > 0) {
-									//退款成功
-									uni.showToast({
-										title: "退款成功!",
-										icon: "success"
-									});
-									//生成退款记录
-								}
-							}
-							else {
+							console.log("发起退款的结果" + res1);
+							if (res1.code > 0) {
+								//退款成功
+								uni.showToast({
+									title: "退款成功!",
+									icon: "success"
+								});
+								//生成退款记录
+							} else {
 								//退款失败
 								uni.showToast({
-									title: +res.new_msg,
+									title: "退款失败：" + res.new_msg,
 									icon: "error"
 								});
 							}
