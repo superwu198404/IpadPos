@@ -124,14 +124,33 @@ if (typeof plus !== 'undefined') {
 if (typeof Promise !== 'undefined' && !Promise.prototype.finally) {
   Promise.prototype.finally = function (callback) {
     var promise = this.constructor;
-    return this.then(
-    function (value) {return promise.resolve(callback()).then(function () {return value;});},
-    function (reason) {return promise.resolve(callback()).then(function () {
+    return this.then(function (value) {
+      return promise.resolve(callback()).then(function () {
+        return value;
+      });
+    }, function (reason) {
+      return promise.resolve(callback()).then(function () {
         throw reason;
-      });});
-
+      });
+    });
   };
 }
+if (typeof uni !== 'undefined' && uni && uni.requireGlobal) {
+  var global = uni.requireGlobal();
+  ArrayBuffer = global.ArrayBuffer;
+  Int8Array = global.Int8Array;
+  Uint8Array = global.Uint8Array;
+  Uint8ClampedArray = global.Uint8ClampedArray;
+  Int16Array = global.Int16Array;
+  Uint16Array = global.Uint16Array;
+  Int32Array = global.Int32Array;
+  Uint32Array = global.Uint32Array;
+  Float32Array = global.Float32Array;
+  Float64Array = global.Float64Array;
+  BigInt64Array = global.BigInt64Array;
+  BigUint64Array = global.BigUint64Array;
+}
+
 window.__uniConfig = { "window": { "navigationBarTextStyle": "black", "navigationBarTitleText": "uni-app", "navigationBarBackgroundColor": "#F8F8F8", "backgroundColor": "#F8F8F8" } };
 if (uni.restoreGlobal) {
   uni.restoreGlobal(weex, plus, setTimeout, clearTimeout, setInterval, clearInterval);
@@ -9805,42 +9824,86 @@ var render = function() {
     "v-uni-view",
     { attrs: { _i: 0 } },
     [
-      _c("p", { attrs: { _i: 1 } }, [_vm._v("总金额：" + _vm._$g(1, "t0-0"))]),
-      _c("p", { attrs: { _i: 2 } }, [_vm._v("应收：" + _vm._$g(2, "t0-0"))]),
-      _c("p", { attrs: { _i: 3 } }, [_vm._v("已支付：" + _vm._$g(3, "t0-0"))]),
-      _c("p", { attrs: { _i: 4 } }, [_vm._v("待支付：" + _vm._$g(4, "t0-0"))]),
       _c(
         "v-uni-view",
-        { attrs: { _i: 5 } },
+        { attrs: { _i: 1 } },
+        [
+          _c("p", { attrs: { _i: 2 } }, [
+            _vm._v("总金额：" + _vm._$g(2, "t0-0"))
+          ]),
+          _c("p", { attrs: { _i: 3 } }, [
+            _vm._v("应收：" + _vm._$g(3, "t0-0"))
+          ]),
+          _c("p", { attrs: { _i: 4 } }, [
+            _vm._v("已支付：" + _vm._$g(4, "t0-0"))
+          ]),
+          _c("p", { attrs: { _i: 5 } }, [
+            _vm._v("待支付：" + _vm._$g(5, "t0-0"))
+          ])
+        ],
+        1
+      ),
+      _c(
+        "v-uni-view",
+        { attrs: { _i: 6 } },
+        _vm._l(_vm._$g(7, "f"), function(item, index, $20, $30) {
+          return _c(
+            "v-uni-view",
+            { key: item, attrs: { _i: "7-" + $30 } },
+            [
+              _c("v-uni-text", { attrs: { _i: "8-" + $30 } }, [
+                _vm._v(_vm._$g("8-" + $30, "t0-0"))
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "9-" + $30 } }, [
+                _vm._v("￥" + _vm._$g("9-" + $30, "t0-0"))
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "10-" + $30 } }, [
+                _vm._v(_vm._$g("10-" + $30, "t0-0") + "元/kg")
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "11-" + $30 } }, [
+                _vm._v("x" + _vm._$g("11-" + $30, "t0-0"))
+              ])
+            ],
+            1
+          )
+        }),
+        1
+      ),
+      _c(
+        "v-uni-view",
+        { attrs: { _i: 12 } },
         [
           _c(
             "v-uni-radio-group",
             {
-              staticClass: _vm._$g(6, "sc"),
-              attrs: { _i: 6 },
+              staticClass: _vm._$g(13, "sc"),
+              attrs: { _i: 13 },
               on: {
                 change: function($event) {
                   return _vm.$handleViewEvent($event)
                 }
               }
             },
-            _vm._l(_vm._$g(7, "f"), function(item, index, $20, $30) {
+            _vm._l(_vm._$g(14, "f"), function(item, index, $21, $31) {
               return _c(
                 "v-uni-label",
                 {
                   key: item,
-                  staticClass: _vm._$g("7-" + $30, "sc"),
-                  attrs: { _i: "7-" + $30 }
+                  staticClass: _vm._$g("14-" + $31, "sc"),
+                  attrs: { _i: "14-" + $31 }
                 },
                 [
                   _c("v-uni-radio", {
                     attrs: {
-                      value: _vm._$g("8-" + $30, "a-value"),
-                      checked: _vm._$g("8-" + $30, "a-checked"),
-                      _i: "8-" + $30
+                      value: _vm._$g("15-" + $31, "a-value"),
+                      checked: _vm._$g("15-" + $31, "a-checked"),
+                      _i: "15-" + $31
                     }
                   }),
-                  _vm._v(_vm._$g("7-" + $30, "t1-0"))
+                  _vm._v(_vm._$g("14-" + $31, "t1-0"))
                 ],
                 1
               )
@@ -9857,20 +9920,20 @@ var render = function() {
             {
               name: "show",
               rawName: "v-show",
-              value: _vm._$g(9, "v-show"),
-              expression: "_$g(9,'v-show')"
+              value: _vm._$g(16, "v-show"),
+              expression: "_$g(16,'v-show')"
             }
           ],
-          attrs: { _i: 9 }
+          attrs: { _i: 16 }
         },
         [
           _vm._v("支付金额:"),
           _c("v-uni-input", {
-            attrs: { disabled: _vm._$g(10, "a-disabled"), _i: 10 },
+            attrs: { disabled: _vm._$g(17, "a-disabled"), _i: 17 },
             model: {
-              value: _vm._$g(10, "v-model"),
+              value: _vm._$g(17, "v-model"),
               callback: function($$v) {
-                _vm.$handleVModelEvent(10, $$v)
+                _vm.$handleVModelEvent(17, $$v)
               },
               expression: "PayAmount"
             }
@@ -9881,7 +9944,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 11 },
+          attrs: { _i: 18 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -9892,32 +9955,30 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 12 } },
+        { attrs: { _i: 19 } },
         [
           _vm._v("支付列表:"),
-          _c("p", { attrs: { _i: 13 } }, [
-            _vm._v("序号---支付方式---金额---编码--操作")
+          _c("p", { attrs: { _i: 20 } }, [
+            _vm._v("序号---支付方式---金额--操作")
           ]),
-          _vm._l(_vm._$g(14, "f"), function(way, index, $21, $31) {
+          _vm._l(_vm._$g(21, "f"), function(way, index, $22, $32) {
             return _c(
               "v-uni-view",
-              { key: way, attrs: { _i: "14-" + $31 } },
+              { key: way, attrs: { _i: "21-" + $32 } },
               [
                 _vm._v(
-                  _vm._$g("14-" + $31, "t0-0") +
+                  _vm._$g("21-" + $32, "t0-0") +
                     " --- " +
-                    _vm._$g("14-" + $31, "t0-1") +
+                    _vm._$g("21-" + $32, "t0-1") +
                     " ---" +
-                    _vm._$g("14-" + $31, "t0-2") +
-                    "---" +
-                    _vm._$g("14-" + $31, "t0-3") +
+                    _vm._$g("21-" + $32, "t0-2") +
                     "--"
                 ),
                 _c(
                   "v-uni-label",
                   {
                     staticStyle: { width: "50rpx" },
-                    attrs: { _i: "15-" + $31 },
+                    attrs: { _i: "22-" + $32 },
                     on: {
                       click: function($event) {
                         return _vm.$handleViewEvent($event)
@@ -9935,20 +9996,20 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 16 } },
+        { attrs: { _i: 23 } },
         [
           _c(
             "uni-popup",
-            { ref: "popup", attrs: { _i: 17 } },
+            { ref: "popup", attrs: { _i: 24 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
+                { staticClass: _vm._$g(25, "sc"), attrs: { _i: 25 } },
                 [
                   _c(
                     "v-uni-button",
                     {
-                      attrs: { _i: 19 },
+                      attrs: { _i: 26 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
@@ -9959,16 +10020,16 @@ var render = function() {
                   ),
                   _vm._v("付款码："),
                   _c("v-uni-input", {
-                    attrs: { "confirm-type": "confirm", _i: 20 },
+                    attrs: { "confirm-type": "confirm", _i: 27 },
                     on: {
                       confirm: function($event) {
                         return _vm.$handleViewEvent($event)
                       }
                     },
                     model: {
-                      value: _vm._$g(20, "v-model"),
+                      value: _vm._$g(27, "v-model"),
                       callback: function($$v) {
-                        _vm.$handleVModelEvent(20, $$v)
+                        _vm.$handleVModelEvent(27, $$v)
                       },
                       expression: "authCode"
                     }

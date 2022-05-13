@@ -46,28 +46,83 @@ var CreateSQL = function(e, t) {
 		return [];
 	}
 	let oracle_sql = "",
-		lite_sql = "";
-	for (var i = 0; i < e.length; i++) {
+		lite_sql = "",
+		oracle_arr = [],
+		lite_arr = [],
+		liteStr = "";
+	if (Array.isArray(e)) {
+		for (var i = 0; i < e.length; i++) {
+			let nameStr = "",
+				valStr = "",
+				sql1 = "",
+				sql2 = "";
+			for (var name in e[i]) { //遍历对象属性名
+				nameStr += name + ",";
+				let data = e[i][name];
+				if (name.toUpperCase().indexOf('DATE') >= 0 || name.toUpperCase().indexOf('TIME') > 0) {
+					if (data) {
+						valStr += "TO_DATE('" + data + "','yyyy-MM-dd HH24:mi:ss'),";
+						liteStr += "DATETIME('" + data + "'),";
+					} else {
+						valStr += "null,";
+						liteStr += "null,";
+					}
+				} else {
+					if (data) {
+						valStr += "'" + data + "',";
+						liteStr = valStr;
+					} else {
+						valStr += "null,";
+						liteStr = valStr;
+					}
+				}
+			}
+			sql1 = "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) + ") values(" +
+				valStr.substring(0, valStr.lastIndexOf(',')) + ");";
+			sql2 = "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) +
+				") values(" + liteStr.substring(0, liteStr.lastIndexOf(',')) + ")";
+			oracle_arr.push(sql1);
+			lite_arr.push(sql2);
+			oracle_sql += sql1;
+			lite_sql += sql2;
+		}
+	} else {
 		let nameStr = "",
-			valStr = "",
-			liteStr = "";
-		for (var name in e[i]) { //遍历对象属性名
+			valStr = "";
+		for (var name in e) { //遍历对象属性名
 			nameStr += name + ",";
+			let data = e[name];
 			if (name.toUpperCase().indexOf('DATE') >= 0 || name.toUpperCase().indexOf('TIME') > 0) {
-				valStr += "TO_DATE('" + e[i][name] + "','yyyy-MM-dd HH24:mi:ss'),";
-				liteStr += "DATETIME('" + e[i][name] + "')"
+				if (data) {
+					valStr += "TO_DATE('" + data + "','yyyy-MM-dd HH24:mi:ss'),";
+					liteStr += "DATETIME('" + data + "'),";
+				} else {
+					valStr += "null,";
+					liteStr += "null,";
+				}
 			} else {
-				valStr += "'" + e[i][name] + "',";
-				liteStr = valStr;
+				if (data) {
+					valStr += "'" + data + "',";
+					liteStr += "'" + data + "',";
+				} else {
+					valStr += "null,";
+					liteStr += "null,";
+				}
 			}
 		}
 		oracle_sql += "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) + ") values(" +
-			valStr.substring(0, valStr.lastIndexOf(',')) + ");"
+			valStr.substring(0, valStr.lastIndexOf(',')) + ");";
 		lite_sql += "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) +
-			") values(" + liteStr.substring(0, liteStr.lastIndexOf(',')) + ");"
+			") values(" + liteStr.substring(0, liteStr.lastIndexOf(',')) + ")";
 	}
-	return [oracle_sql, lite_sql];
+	return {
+		oracleArr: oracle_arr,
+		sqlliteArr: lite_arr,
+		oracleSql: oracle_sql,
+		sqlliteSql: lite_sql
+	};
 }
+
 
 export default {
 	InitData,

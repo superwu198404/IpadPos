@@ -120,8 +120,9 @@ const createSql = [
 		
 		  THTYPE   VARCHAR2(30),
 		
-		  CLTIME   DATE
-	)`,
+		  CLTIME   DATE,
+	
+	CONSTRAINT SALE001_KEY PRIMARY KEY (SALEDATE,GCID,KHID,POSID,BILL))`,
 	`create table if not exists SALE002 (
  SALEDATE DATE,
  SALETIME DATE,
@@ -228,7 +229,9 @@ const createSql = [
 
  XPDGSTR VARCHAR2(30),
 
- XPDGCOM VARCHAR2(30))`,
+ XPDGCOM VARCHAR2(30),
+ 
+ CONSTRAINT SALE002_KEY PRIMARY KEY (SALEDATE,GCID,KHID,POSID,BILL,SPID,NO))`,
 
 	`create table if not exists SALE003 (SALEDATE   DATE,
 
@@ -298,7 +301,21 @@ const createSql = [
 
   ZKLX   VARCHAR2(30),
 
-  DISC   REAL)`
+  DISC   REAL,
+  
+  CONSTRAINT SALE003_KEY PRIMARY KEY (SALEDATE,GCID,KHID,POSID,BILL,FKID,NO))`,
+  
+  `create table if not exists POS_TXFILE(  SEQ_NO     integer, 
+             TX_SQL        VARCHAR2(6),  
+             STOREID      VARCHAR(10),  
+             POSID        VARCHAR2(10),  
+             TAB_NAME     VARCHAR(40),   
+             STR1         VARCHAR(40), 
+             ERRTEXT      VARCHAR2(100),  
+             BDATE        VARCHAR2(10), 
+             YW_NAME    VARCHAR(100),
+             CONNSTR    VARCHAR(100),  
+             CONSTRAINT POS_TXFILE_KEY PRIMARY KEY (SEQ_NO))`
 ]
 export default {
 	createSql

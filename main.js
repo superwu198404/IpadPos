@@ -2,7 +2,7 @@ import App from './App'
 import * as request from '@/utils/request.js';
 import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
-// #ifdef VUE3
+// #ifdef VUE2
 import Vue from 'vue' 
 import store from './store' 
 import G_show_modal from './static/js/ShowModal/Gshow_modal.js'
@@ -18,15 +18,4 @@ const app = new Vue({
     ...App
 })
 app.$mount()
-// #endif
-// #ifdef VUE3
-import { createSSRApp } from 'vue'
-export function createApp() {
-  const app = createSSRApp(App)
-  app.use(store)
-  app.config.globalProperties.tui = tui;
-  return {
-    app
-  }
-}
 // #endif

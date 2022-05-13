@@ -704,9 +704,6 @@
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				}
-			},
-			//创建业务数据
-			CreateSale: function() {
 				let sql1 = common.CreateSQL(this.products, 'SALE001');
 				let sql2 = common.CreateSQL(this.products, 'SALE002');
 				let sql3 = common.CreateSQL(this.products, 'SALE003');
@@ -732,9 +729,13 @@
 					});
 				}
 			},
+			//创建本地业务数据
+			CreateDBData: function() {
+				
+			},
 
-			//创建表结构
-			CreatTable: function() {
+			//创建销售表结构
+			CreatSaleTable: function() {
 				let sql = c_sql.createSql; //创建表
 				db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
 					console.log("表结构创建成功");

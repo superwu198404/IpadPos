@@ -239,7 +239,8 @@ var mySqllite = function() {
 			code: true,
 			msg: "默认打开"
 		};
-		if (!isopen()) {//关闭就打开
+		//console.log("数据库状态" + isopen())
+		if (!isopen()) { //关闭就打开
 			retcode = await open(pm_msg);
 		}
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
