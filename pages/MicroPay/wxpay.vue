@@ -39,6 +39,8 @@
 		<button @click="Pay()">支付</button>
 		<button @click="CreatTable()">创建表</button>
 		<button @click="TestSql()">数据测试</button>
+		<button @click="CreateData()">添加数据</button>
+		
 		<view> 支付列表:
 			<p>序号---支付方式---支付金额---编码</p>
 			<view v-for="(way, index) in PayList">
@@ -118,6 +120,7 @@
 				type: "center",
 				PayList: [],
 				sale1_obj: {},
+				sale1_arr: [],
 				sale2_obj: {},
 				sale2_arr: [],
 				sale3_obj: {},
@@ -613,51 +616,16 @@
 
 			//创建页面订单数据
 			CreateData: function() {
-				this.sale1_obj = {
-					BILL: this.out_trade_no,
-					SALEDATE: dateformat.getYMD(),
-					SALETIME: dateformat.getYMDS(),
-					KHID: getApp().store.globalData.KHID,
-					POSID: getApp().store.globalData.POSID,
-					RYID: getApp().store.globalData.RYID,
-					BILL_TYPE: 'Z101', //门店现场销售单
-					XSTYPE: "1",
-					XS_BILL: "", //退款时记录原单号
-					XS_POSID: "", //退款时记录原posid
-					XS_DATE: "", //退款时记录原销售日期
-					XS_KHID: "", //退款时记录原khid
-					XS_GSID: "", //退款时记录原GSID
-					TLINE: this.sale2_obj.length,
-					TNET: this.RealAmount,
-					DNET: 0,
-					ZNET: this.totalAmount,
-					BILLDISC: this.Discount,
-					ROUND: 0,
-					CHANGENET: 0,
-					CXTNET: 0,
-					TCXDISC: 0,
-					CUID: "", //会员号
-					CRADID: "", //卡号
-					THYDISC: this.Discount,
-					YN_SC: 'N',
-					GSID: getApp().globalData.store.GSID, //公司
-					GCID: getApp().globalData.store.GCID, //工厂
-					DPID: getApp().globalData.store.DPID, //店铺
-					KCDID: getApp().globalData.store.KCDID, //库存点
-					BMID: getApp().globalData.store.BMID, //部门id
-					DKFID: getApp().globalData.store.DKFID, //大客户id默认编码
-					XSPTID: 'POS',
-					YN_OK: 'X',
-					THTYPE: 0,
-					CLTIME: dateformat.getYMDS()
-				};
+				let that=this; 
+				let store=getApp().globalData.store;
+				
 				for (var i = 0; i < this.products.length; i++) {
 					this.sale2_obj = {
 						BILL: this.out_trade_no,
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
-						KHID: getApp().globalData.store.KHID,
-						POSID: getApp().globalData.store.POSID,
+						KHID:  store.KHID,
+						POSID:  store.POSID,
 						SPID: this.products[i].SPID,
 						NO: i,
 						PLID: this.products[i].PLID,
@@ -677,11 +645,11 @@
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
 							new Date().getDay()),
 						TIME: new Date().getHours(),
-						RYID: getApp().store.globalData.RYID, //人员
-						GCID: getApp().store.globalData.GCID, //工厂
-						DPID: getApp().store.globalData.DPID, //店铺
-						KCDID: getApp().store.globalData.KCDID, //库存点
-						BMID: getApp().store.globalData.BMID //部门id
+						RYID:  store.RYID, //人员
+						GCID:  store.GCID, //工厂
+						DPID:  store.DPID, //店铺
+						KCDID:  store.KCDID, //库存点
+						BMID:  store.BMID //部门id
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
@@ -690,20 +658,87 @@
 						BILL: this.out_trade_no,
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
-						KHID: getApp().store.globalData.KHID,
-						POSID: getApp().store.globalData.POSID,
+						KHID:  store.KHID,
+						POSID:  store.POSID,
 						NO: i,
 						FKID: this.PayList[i].fkid,
 						AMT: this.PayList[i].amount,
-						RYID: getApp().store.globalData.RYID, //人员
-						GCID: getApp().store.globalData.GCID, //工厂
-						DPID: getApp().store.globalData.DPID, //店铺
-						KCDID: getApp().store.globalData.KCDID, //库存点
-						BMID: getApp().store.globalData.BMID, //部门id
+						RYID:  store.RYID, //人员
+						GCID: store.GCID, //工厂
+						DPID:  store.DPID, //店铺
+						KCDID:  store.KCDID, //库存点
+						BMID:  store.BMID, //部门id
 						DISC: ""
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				}
+				this.sale1_obj = {
+					BILL: this.out_trade_no,
+					SALEDATE: dateformat.getYMD(),
+					SALETIME: dateformat.getYMDS(),
+					KHID: store.KHID, 
+					POSID: store.POSID,
+					RYID:  store.RYID,
+					BILL_TYPE: 'Z101', //门店现场销售单
+					XSTYPE: "1",
+					XS_BILL: "", //退款时记录原单号
+					XS_POSID: "", //退款时记录原posid
+					XS_DATE: dateformat.getYMDS(), //退款时记录原销售日期
+					XS_KHID: "", //退款时记录原khid
+					XS_GSID: "", //退款时记录原GSID
+					TLINE: this.sale2_arr.length,
+					TNET: this.RealAmount,
+					DNET: 0,
+					ZNET: this.totalAmount,
+					BILLDISC: this.Discount,
+					ROUND: 0,
+					CHANGENET: 0,
+					CXTNET: 0,
+					TCXDISC: 0,
+					CUID: "", //会员号
+					CRADID: "", //卡号
+					THYDISC: this.Discount,
+					YN_SC: 'N',
+					GSID:  store.GSID, //公司
+					GCID:  store.GCID, //工厂
+					DPID:  store.DPID, //店铺
+					KCDID: store.KCDID, //库存点
+					BMID:  store.BMID, //部门id
+					DKFID:  store.DKFID, //大客户id默认编码
+					XSPTID: 'POS',
+					YN_OK: 'X',
+					THTYPE: 0,
+					CLTIME: dateformat.getYMDS()
+				};
+				this.sale1_arr.push(this.sale1_obj);
+				
+				let sql1=common.CreateSQL(this.sale1_arr,'SALE001');
+				console.info(JSON.stringify(sql1[1]));
+				let sql2=common.CreateSQL(this.sale2_arr,'SALE002');
+				 
+				let sql3=common.CreateSQL(this.sale3_arr,'SALE003');
+				 
+				db.SqliteHelper.get().executeDml(sql1[1], "执行sql1", function(res) {
+					console.log("sql执行成功")
+					console.log(res)
+				}, function(err) {
+					console.log("sql执行失败")
+					console.log(err)
+				});
+				db.SqliteHelper.get().executeDml(sql2[1], "执行sql2", function(res) {
+					console.log("sql执行成功")
+					console.log(res)
+				}, function(err) {
+					console.log("sql执行失败")
+					console.log(err)
+				});
+				db.SqliteHelper.get().executeDml(sql3[1], "执行sql3", function(res) {
+					console.log("sql执行成功")
+					console.log(res)
+				}, function(err) {
+					console.log("sql执行失败")
+					console.log(err)
+				})
 			},
 			//创建业务数据
 			CreateSale: function() {

@@ -6,9 +6,10 @@
 			store: {
 				GSID: "1001",
 				KHID: "K210QTD001",
-				POSID: "1",
+				POSID: "001",
 				RYID: "10086",
 				KCDID: "123",
+				DPID: "123",
 				DKFID: '80000000',
 				BMID: "001",
 				GCID: "1001"
