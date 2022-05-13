@@ -262,9 +262,7 @@ var mySqllite = function() {
 }
 
 var SqliteHelper = {
-
 	get: function() {
-
 		return new mySqllite();
 	}
 }
