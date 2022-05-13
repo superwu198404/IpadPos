@@ -32,7 +32,6 @@
 				while(i>0){
 					console.info(i);
 					i--;
-					
 				}
 				console.info('aaaassss');
 				// uni.showModal({

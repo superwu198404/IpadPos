@@ -66,6 +66,11 @@
     "app-plus" : {
         "modules" : {
             "SQLite" : {}
+        },
+        "distribute" : {
+            "android" : {
+                "abiFilters" : [ "armeabi-v7a" ]
+            }
         }
     },
     "appid" : "__UNI__A407FA0",
