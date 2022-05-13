@@ -640,12 +640,12 @@
 					CRADID: "", //卡号
 					THYDISC: this.Discount,
 					YN_SC: 'N',
-					GSID: getApp().store.globalData.GSID, //公司
-					GCID: getApp().store.globalData.GCID, //工厂
-					DPID: getApp().store.globalData.DPID, //店铺
-					KCDID: getApp().store.globalData.KCDID, //库存点
-					BMID: getApp().store.globalData.BMID, //部门id
-					DKFID: getApp().store.globalData.DKFID, //大客户id默认编码
+					GSID: getApp().globalData.store.GSID, //公司
+					GCID: getApp().globalData.store.GCID, //工厂
+					DPID: getApp().globalData.store.DPID, //店铺
+					KCDID: getApp().globalData.store.KCDID, //库存点
+					BMID: getApp().globalData.store.BMID, //部门id
+					DKFID: getApp().globalData.store.DKFID, //大客户id默认编码
 					XSPTID: 'POS',
 					YN_OK: 'X',
 					THTYPE: 0,
@@ -656,8 +656,8 @@
 						BILL: this.out_trade_no,
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
-						KHID: getApp().store.globalData.KHID,
-						POSID: getApp().store.globalData.POSID,
+						KHID: getApp().globalData.store.KHID,
+						POSID: getApp().globalData.store.POSID,
 						SPID: this.products[i].SPID,
 						NO: i,
 						PLID: this.products[i].PLID,
