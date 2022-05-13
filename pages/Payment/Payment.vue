@@ -474,12 +474,12 @@
 						"ZZCPHX_CHANNEL": qinfo.ZZCPHX_CHANNEL,
 						"ZZCPHX_STORE": qinfo.ZZCPHX_STORE,
 						"ZZVBELN": qinfo.ZZVBELN,
-						"ZZTPRICE": "288.00",  //订单金额
+						"ZZTPRICE": "288.00", //订单金额
 						// "ZZCPHXDATE": DateTime.Now.ToString("yyyyMMdd"),
 						// "ZZCPTIME": DateTime.Now.ToString("HHmmss"),
 						"ZZPRODUCT_ID": "000000001090100002", // 商品编码
 						"ZZPRODUCT_NET": 279.0, //商品金额
-						"ZZPRODUCT_NUM": 1.0   //商品数量
+						"ZZPRODUCT_NUM": 1.0 //商品数量
 					}],
 					function(res) {
 						let used = JSON.parse(res.data);
@@ -588,19 +588,36 @@
 				}
 				//支付宝支付
 				else if (that.selectPayWay == 'AliPayService') {
-
+					let t = "ALI";
 					if (!code) {
 						///查询
 						//根据单号—+序号进行查询
-						title = "正在查询订单支付结果，请稍后...";
-						//查询 订单
-						that.OrderQuery(title, that.out_trade_no);
+						that.queryPayAll(t, that.sale1_obj, function(res) {
+							if (res.code > 0) {
+								//创建支付记录
+								that.createPay(t);
+							}
+							if (res.code == 0) {
+								 //用户支付中
+								 uni.showToast({
+								 	title: res.msg,
+								 	duration: 2000,
+								 	icon: "error"
+								 });
+							} else {
+								// 
+								uni.showToast({
+									title: res.msg,
+									duration: 2000,
+									icon: "error"
+								});
+							}
+						});
 					} else {
 						that.sale1_obj.out_trade_no = common.CreateBill("K210QTD002", "001");
 						that.sale1_obj.auth_code = code;
 						that.sale1_obj.subject = "商品支付";
 						that.sale1_obj.totalAmount = that.PayAmont;
-						let t = "ALI";
 						//发起支付
 						that.paymentAll(t, that.sale1_obj, function(res) {
 							debugger;
