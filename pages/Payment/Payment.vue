@@ -12,7 +12,7 @@
 				</label>
 			</radio-group>
 		</view>
-		<view v-show="selectPayWay!=null">
+		<view v-show="PayWay!=null">
 			支付金额:
 			<input :disabled="disablePayInput" v-model="PayAmont">
 		</view>
@@ -73,9 +73,10 @@
 						value: 'dzk',
 						type: "dzk"
 					}
-				], //支付方式
+				], 
 				PayAmont: 0,
-				selectPayWay: null,
+				//支付方式
+				PayWay: null,
 				PayList: [{
 					way: "支付宝",
 					amount: 0.01,
@@ -95,13 +96,13 @@
 				let payobj = this.PayWay.find(item => {
 					return item.value == value
 				});
-				this.selectPayWay = payobj.type;
-				if (this.selectPayWay == 'AliPayService' || this.selectPayWay == 'WxPayService') {
+				this.PayWay = payobj.type;
+				if (this.PayWay == 'AliPayService' || this.PayWay == 'WxPayService') {
 					this.PayAmont = this.totalAmount - this.yPayAmount;
 					this.disablePayInput = false;
 				} else {
 					//券支付
-					if (this.selectPayWay == "qzf") {
+					if (this.PayWay == "qzf") {
 						//禁用输入金额框
 						this.disablePayInput = true;
 					}
@@ -124,7 +125,7 @@
 							if (func) func(Result);
 						});
 				} else if (t == 'ALI') {
-					_ali.Payment("订单撤销中..", "TradeCancel", this.selectPayWay, {
+					_ali.Payment("订单撤销中..", "TradeCancel", 'AliPayService', {
 							out_trade_no: e.out_trade_no
 						},
 						function(res) {
@@ -211,7 +212,7 @@
 							//支付成功生成记录
 							that.dPayAmount += data.amount; //等支付减去支付金额
 							that.yPayAmount -= data.amount //已支付加上支付金额
-							if (that.selectPayWay == 'AliPayService' || that.selectPayWay == 'WxPayService') {
+							if (that.PayWay == 'AliPayService' || that.PayWay == 'WxPayService') {
 								that.PayAmont = that.totalAmount - that.yPayAmount;
 							} else {
 								that.PayAmont = 0;
@@ -335,7 +336,7 @@
 				} else if (t == 'ALI') {
 					let Result;
 					let that = this;
-					_ali.Payment("订单查询..", "TradeQuery", this.selectPayWay, {
+					_ali.Payment("订单查询..", "TradeQuery", 'AliPayService', {
 							out_trade_no: e.out_trade_no
 						},
 						function(res) {
@@ -392,7 +393,7 @@
 				//支付成功生成记录
 				this.dPayAmount -= Result.total_amount; //等支付减去支付金额
 				this.yPayAmount += Result.total_amount //已支付加上支付金额
-				if (this.selectPayWay == 'AliPayService' || this.selectPayWay == 'WxPayService') {
+				if (this.PayWay == 'AliPayService' || this.PayWay == 'WxPayService') {
 					this.PayAmont = this.totalAmount - this.yPayAmount;
 				} else {
 					this.PayAmont = 0;
@@ -545,7 +546,7 @@
 
 			},
 			Pay: function() {
-				if (!this.selectPayWay) {
+				if (!this.PayWay) {
 					uni.showToast({
 						title: '请选择支付方式',
 						duration: 2000,
@@ -554,7 +555,7 @@
 					return;
 				}
 				//券支付
-				if (this.selectPayWay != 'qzf') {
+				if (this.PayWay != 'qzf') {
 					if (!this.PayAmont) {
 						uni.showToast({
 							title: '请输入支付金额',
@@ -581,13 +582,13 @@
 				let code = e.target.value;
 				that.out_trade_no = common.CreateBill("K210QTD002", "001");
 				console.info(that.out_trade_no);
-				if (that.selectPayWay == null) return
+				if (that.PayWay == null) return
 				//券支付
-				if (that.selectPayWay == 'qzf') {
+				if (that.PayWay == 'qzf') {
 					that.QPay(code);
 				}
 				//支付宝支付
-				else if (that.selectPayWay == 'AliPayService') {
+				else if (that.PayWay == 'AliPayService') {
 					let t = "ALI";
 					if (!code) {
 						///查询
@@ -751,7 +752,7 @@
 							if (func) func(Result);
 						});
 				} else if (t == 'ALI') {
-					_ali.Payment("支付宝付款码支付", "CodePayment", "AliPayService", {
+					_ali.Payment("支付宝付款码支付", "CodePayment", this.PayWay, {
 							out_trade_no: e.out_trade_no,
 							auth_code: e.auth_code,
 							subject: e.subject,
