@@ -6610,48 +6610,42 @@ var render = function() {
     "v-uni-view",
     { attrs: { _i: 0 } },
     [
-      _c("p", { attrs: { _i: 1 } }, [_vm._v("应收：" + _vm._$g(1, "t0-0"))]),
+      _c("p", { attrs: { _i: 1 } }, [_vm._v("总金额：" + _vm._$g(1, "t0-0"))]),
+      _c("p", { attrs: { _i: 2 } }, [_vm._v("应收：" + _vm._$g(2, "t0-0"))]),
+      _c("p", { attrs: { _i: 3 } }, [_vm._v("已支付：" + _vm._$g(3, "t0-0"))]),
+      _c("p", { attrs: { _i: 4 } }, [_vm._v("待支付：" + _vm._$g(4, "t0-0"))]),
       _c(
         "v-uni-view",
-        { attrs: { _i: 2 } },
-        [
-          _vm._v("待支付："),
-          _c("v-uni-label", { attrs: { _i: 3 } }, [_vm._v(_vm._$g(3, "t0-0"))])
-        ],
-        1
-      ),
-      _c(
-        "v-uni-view",
-        { attrs: { _i: 4 } },
+        { attrs: { _i: 5 } },
         [
           _c(
             "v-uni-radio-group",
             {
-              staticClass: _vm._$g(5, "sc"),
-              attrs: { _i: 5 },
+              staticClass: _vm._$g(6, "sc"),
+              attrs: { _i: 6 },
               on: {
                 change: function($event) {
                   return _vm.$handleViewEvent($event)
                 }
               }
             },
-            _vm._l(_vm._$g(6, "f"), function(item, index, $20, $30) {
+            _vm._l(_vm._$g(7, "f"), function(item, index, $20, $30) {
               return _c(
                 "v-uni-label",
                 {
                   key: item,
-                  staticClass: _vm._$g("6-" + $30, "sc"),
-                  attrs: { _i: "6-" + $30 }
+                  staticClass: _vm._$g("7-" + $30, "sc"),
+                  attrs: { _i: "7-" + $30 }
                 },
                 [
                   _c("v-uni-radio", {
                     attrs: {
-                      value: _vm._$g("7-" + $30, "a-value"),
-                      checked: _vm._$g("7-" + $30, "a-checked"),
-                      _i: "7-" + $30
+                      value: _vm._$g("8-" + $30, "a-value"),
+                      checked: _vm._$g("8-" + $30, "a-checked"),
+                      _i: "8-" + $30
                     }
                   }),
-                  _vm._v(_vm._$g("6-" + $30, "t1-0"))
+                  _vm._v(_vm._$g("7-" + $30, "t1-0"))
                 ],
                 1
               )
@@ -6668,22 +6662,22 @@ var render = function() {
             {
               name: "show",
               rawName: "v-show",
-              value: _vm._$g(8, "v-show"),
-              expression: "_$g(8,'v-show')"
+              value: _vm._$g(9, "v-show"),
+              expression: "_$g(9,'v-show')"
             }
           ],
-          attrs: { _i: 8 }
+          attrs: { _i: 9 }
         },
         [
           _vm._v("支付金额:"),
           _c("v-uni-input", {
-            attrs: { disabled: _vm._$g(9, "a-disabled"), _i: 9 },
+            attrs: { disabled: _vm._$g(10, "a-disabled"), _i: 10 },
             model: {
-              value: _vm._$g(9, "v-model"),
+              value: _vm._$g(10, "v-model"),
               callback: function($$v) {
-                _vm.$handleVModelEvent(9, $$v)
+                _vm.$handleVModelEvent(10, $$v)
               },
-              expression: "PayAmont"
+              expression: "PayAmount"
             }
           })
         ],
@@ -6692,7 +6686,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 10 },
+          attrs: { _i: 11 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -6703,32 +6697,32 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 11 } },
+        { attrs: { _i: 12 } },
         [
           _vm._v("支付列表:"),
-          _c("p", { attrs: { _i: 12 } }, [
+          _c("p", { attrs: { _i: 13 } }, [
             _vm._v("序号---支付方式---金额---编码--操作")
           ]),
-          _vm._l(_vm._$g(13, "f"), function(way, index, $21, $31) {
+          _vm._l(_vm._$g(14, "f"), function(way, index, $21, $31) {
             return _c(
               "v-uni-view",
-              { key: way, attrs: { _i: "13-" + $31 } },
+              { key: way, attrs: { _i: "14-" + $31 } },
               [
                 _vm._v(
-                  _vm._$g("13-" + $31, "t0-0") +
+                  _vm._$g("14-" + $31, "t0-0") +
                     " --- " +
-                    _vm._$g("13-" + $31, "t0-1") +
+                    _vm._$g("14-" + $31, "t0-1") +
                     " ---" +
-                    _vm._$g("13-" + $31, "t0-2") +
+                    _vm._$g("14-" + $31, "t0-2") +
                     "---" +
-                    _vm._$g("13-" + $31, "t0-3") +
+                    _vm._$g("14-" + $31, "t0-3") +
                     "--"
                 ),
                 _c(
                   "v-uni-label",
                   {
                     staticStyle: { width: "50rpx" },
-                    attrs: { _i: "14-" + $31 },
+                    attrs: { _i: "15-" + $31 },
                     on: {
                       click: function($event) {
                         return _vm.$handleViewEvent($event)
@@ -6746,20 +6740,20 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 15 } },
+        { attrs: { _i: 16 } },
         [
           _c(
             "uni-popup",
-            { ref: "popup", attrs: { _i: 16 } },
+            { ref: "popup", attrs: { _i: 17 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(17, "sc"), attrs: { _i: 17 } },
+                { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
                 [
                   _c(
                     "v-uni-button",
                     {
-                      attrs: { _i: 18 },
+                      attrs: { _i: 19 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
@@ -6770,16 +6764,16 @@ var render = function() {
                   ),
                   _vm._v("付款码："),
                   _c("v-uni-input", {
-                    attrs: { "confirm-type": "confirm", _i: 19 },
+                    attrs: { "confirm-type": "confirm", _i: 20 },
                     on: {
                       confirm: function($event) {
                         return _vm.$handleViewEvent($event)
                       }
                     },
                     model: {
-                      value: _vm._$g(19, "v-model"),
+                      value: _vm._$g(20, "v-model"),
                       callback: function($$v) {
-                        _vm.$handleVModelEvent(19, $$v)
+                        _vm.$handleVModelEvent(20, $$v)
                       },
                       expression: "authCode"
                     }
@@ -6824,20 +6818,9 @@ __webpack_require__.r(__webpack_exports__);
   !*** ./node_modules/babel-loader/lib!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--12-1!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/using-components.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib??vue-loader-options!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/style.js!D:/Work/Code/MobilePos/IpadPos/pages/Payment/Payment.vue?vue&type=script&lang=js&mpType=page ***!
   \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-var _uniPopup = _interopRequireDefault(__webpack_require__(/*! @/components/uni-popup/components/uni-popup/uni-popup.vue */ 45));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
-{
-
-  data: function data() {
-    return {
-      wxsProps: {} };
-
-  },
-  components: {
-    'uniPopup': _uniPopup.default } };exports.default = _default;
+throw new Error("Module build failed (from ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js):\nSyntaxError: Unexpected token (102:4)\n    at Object._raise (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:746:17)\n    at Object.raiseWithData (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:739:17)\n    at Object.raise (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:733:17)\n    at Object.unexpected (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:8807:16)\n    at Object.parseExprAtom (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10130:20)\n    at Object.parseExprSubscripts (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9656:23)\n    at Object.parseMaybeUnary (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9636:21)\n    at Object.parseMaybeUnary (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6877:20)\n    at Object.parseExprOpBaseRightExpr (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9599:34)\n    at Object.parseExprOpRightExpr (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9592:21)\n    at Object.parseExprOp (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9558:27)\n    at Object.parseExprOp (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6483:18)\n    at Object.parseExprOps (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9516:17)\n    at Object.parseMaybeConditional (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9479:23)\n    at Object.parseMaybeAssign (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9434:21)\n    at Object.parseMaybeAssign (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6822:20)");
 
 /***/ }),
 /* 150 */
