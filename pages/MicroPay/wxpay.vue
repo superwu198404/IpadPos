@@ -747,7 +747,7 @@
 
 			//测试sql
 			TestSql: function() {
-				sql = "insert into OSALE001 (KHID) values('K210QTD');";
+				let sql = "insert into OSALE001 (KHID) values('test');";
 				db.SqliteHelper.get().executeDml(sql, "执行sql", function(res) {
 					console.log("sql执行成功")
 					console.log(res)
@@ -756,13 +756,13 @@
 					console.log(err)
 				})
 				return;
-				db.SqliteHelper.get().executeQry("select * from OSALE001", "", function(res) {
-					console.log("sql查询成功");
-					console.log(res);
-				}, function(err) {
-					console.log("sql查询失败");
-					console.log(err);
-				});
+				// db.SqliteHelper.get().executeQry("select * from OSALE001", "", function(res) {
+				// 	console.log("sql查询成功");
+				// 	console.log(res);
+				// }, function(err) {
+				// 	console.log("sql查询失败");
+				// 	console.log(err);
+				// });
 			},
 		}
 	}

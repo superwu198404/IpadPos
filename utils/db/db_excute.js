@@ -126,12 +126,15 @@ var mySqllite = function() {
 	}
 
 	var getOperationPromise = function(pm_dboperation, otherParm) {
+		console.info(isopen());
+		
 		return new Promise(
 			(resolve, reject) => {
 				let inputParm = {};
 				inputParm.name = name;
 				inputParm.operation = pm_dboperation;
 				inputParm.success = (e) => {
+					
 					return resolve({
 						code: true,
 						msg: e
@@ -143,9 +146,12 @@ var mySqllite = function() {
 						msg: e
 					})
 				}
+				
 				for (var prm in otherParm) {
 					inputParm[prm] = otherParm[prm];
 				}
+				console.info(JSON.stringify(pm_dboperation));
+				console.info(JSON.stringify(inputParm));
 				plus.sqlite[pm_dboperation](inputParm);
 
 			}

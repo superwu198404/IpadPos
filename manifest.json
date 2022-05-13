@@ -67,7 +67,10 @@
         "modules" : {
             "SQLite" : {}
         }
-    }
+    },
+    "appid" : "__UNI__A407FA0",
+    "name" : "POS",
+    "versionName" : "1.0.0.0"
 }
 // ,
 // "condition": { //模式配置，仅开发期间生效

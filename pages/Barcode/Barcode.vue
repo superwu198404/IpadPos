@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import tkiBarcode from "@/components/tki-barcode/tki-barcode.vue"
+import tkiBarcode from "@/components/tki-barcode/tki-barcode.vue";
 export default {
 	data() {
 		return {
@@ -44,22 +44,21 @@ export default {
 		}
 	},
 	components: {
-		tkiBarcode,
-		tkiBarcode2: tkiBarcode
+		tkiBarcode 
 	},
 	onLoad() {
-		// setTimeout(() => {
-		// 	// this.opations.text = '1234567890'
-		// 	// this.val = "1234567890"
-		// }, 1000)
-		// setTimeout(() => {
-		// 	for (let index = 0; index < this.bar.length; index++) {
-		// 		setTimeout(() => {
-		// 			console.log(index)
-		// 			this.$refs[this.bar[index]]._makeCode()
-		// 		}, 1000 * index);
-		// 	}
-		// }, 1000);
+		setTimeout(() => {
+			// this.opations.text = '1234567890'
+			// this.val = "1234567890"
+		}, 1000)
+		setTimeout(() => {
+			for (let index = 0; index < this.bar.length; index++) {
+				setTimeout(() => {
+					console.log(index)
+					this.$refs[this.bar[index]]._makeCode()
+				}, 1000 * index);
+			}
+		}, 1000);
 	},
 	methods: {
 		code128(v) {

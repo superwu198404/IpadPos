@@ -38,7 +38,6 @@
 
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
-
 	import hy from '@/utils/hy/hy_query.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/utils/Pay/WxPay.js';
@@ -774,7 +773,7 @@
 									res.msg = errResult.sub_msg;
 								}
 							}
-							err.code = -'-1'
+							res.code = '-1'
 							if (func) func(res);
 						}
 
