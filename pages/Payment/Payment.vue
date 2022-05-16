@@ -6,7 +6,7 @@
 		<p>待支付：{{dPayAmount}}</p>
 		<view>
 			<radio-group class="radio-group" @change="radioChange">
-				<label class="radio" v-for="(item, index) in PayWay" :key="item.value">
+				<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
 					<radio :value="item.value" :checked="item.checked" /> {{item.name}}
 				</label>
 			</radio-group>
@@ -76,7 +76,7 @@
 					AMOUNT: 24,
 					QTY: 2
 				}],
-				PayWay: [{
+				PayWayList: [{
 						name: '支付宝',
 						value: 'ALI',
 						type: "AliPayService",
@@ -152,8 +152,8 @@
 			UniqueBill: function() {
 				let that = this;
 				//单号防止重处理
-				let pay_way = that.PayWay.find(function(item) {
-					return item.type == this.PayWay;
+				let pay_way = that.PayWayList.find(function(item) {
+					return item.type == that.PayWay;
 				});
 				if (pay_way) {
 					let pay_obj = that.PayList.find(function(item) {
@@ -167,7 +167,7 @@
 			//支付方式切换事件
 			radioChange(e) {
 				let value = e.target.value;
-				let payobj = this.PayWay.find(item => {
+				let payobj = this.PayWayList.find(item => {
 					return item.value == value
 				});
 				this.PayWay = payobj.type;
@@ -459,13 +459,13 @@
 			//创建支付记录
 			createPayDataData: function(t) {
 				let that = this;
-				let payobj = that.PayWay.find(item => {
+				let payobj = that.PayWayList.find(item => {
 					return item.value == t
 				});
 				that.PayList.push({
 					fkid: payobj.fkid,
 					way: payobj.name,
-					amount: this.dPayAmount,
+					amount: that.dPayAmount,
 					no: that.PayList.length + 1
 				});
 				//重新计算待支付金额
@@ -558,11 +558,11 @@
 						"ZZCPHX_STORE": qinfo.ZZCPHX_STORE,
 						"ZZVBELN": qinfo.ZZVBELN,
 						"ZZTPRICE": "288.00", //订单金额
-						// "ZZCPHXDATE": DateTime.Now.ToString("yyyyMMdd"),
-						// "ZZCPTIME": DateTime.Now.ToString("HHmmss"),
+					    "ZZCPHXDATE": dateformat.getYMD(),
+						"ZZCPTIME": dateformat.getYMDS(),
 						"ZZPRODUCT_ID": "000000001090100002", // 商品编码
-						"ZZPRODUCT_NET": 279.0, //商品金额
-						"ZZPRODUCT_NUM": 1.0 //商品数量
+						"ZZPRODUCT_NET": this.Products.length, //商品金额
+						"ZZPRODUCT_NUM": this.allAmount //商品数量
 					}],
 					function(res) {
 						let used = JSON.parse(res.data);
@@ -576,10 +576,22 @@
 						} else {
 							that.PayAmount = that.dPayAmount;
 							//多的生成放弃记录
+							that.PayList.push({
+								fkid: "",
+								way: "券支付",
+								amount: that.dPayAmount,
+								no: that.PayList.length + 1
+							});
 							if (qamount > that.dPayAmount) {
 								//放弃金额
 								let fq = qamount - that.dPayAmount; //券金额-待支付金额=放弃金额
 								//生成放弃记录
+								that.PayList.push({
+									fkid: "",
+									way: "券支付-放弃金额",
+									amount: fq,
+									no: that.PayList.length + 1
+								});
 							}
 							//生成支付记录   抵扣金额=所有待支付金额
 						}
@@ -587,7 +599,7 @@
 			},
 			QPay: function(code) {
 				let that = this;
-				//查询券  code查询出来券的金额 假如是10块钱
+				//查询券  code查询出来券的金额 
 				let qamount = 0;
 				hy.TicktQuery(code, "",
 					function(res) {
@@ -728,7 +740,7 @@
 			},
 			refund: function(data) {
 				let that = this;
-				var array = this.PayWay.filter((item) => {
+				var array = this.PayWayList.filter((item) => {
 					return item.name == data.way;
 				})
 				let t = array[0].value;
