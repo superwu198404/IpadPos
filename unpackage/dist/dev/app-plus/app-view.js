@@ -1633,23 +1633,35 @@ var render = function() {
         [_vm._v("数据测试")]
       ),
       _c(
+        "v-uni-button",
+        {
+          attrs: { _i: 24 },
+          on: {
+            click: function($event) {
+              return _vm.$handleViewEvent($event)
+            }
+          }
+        },
+        [_vm._v("添加数据")]
+      ),
+      _c(
         "v-uni-view",
-        { attrs: { _i: 24 } },
+        { attrs: { _i: 25 } },
         [
           _vm._v("支付列表:"),
-          _c("p", { attrs: { _i: 25 } }, [
+          _c("p", { attrs: { _i: 26 } }, [
             _vm._v("序号---支付方式---支付金额---编码")
           ]),
-          _vm._l(_vm._$g(26, "f"), function(way, index, $22, $32) {
-            return _c("v-uni-view", { key: way, attrs: { _i: "26-" + $32 } }, [
+          _vm._l(_vm._$g(27, "f"), function(way, index, $22, $32) {
+            return _c("v-uni-view", { key: way, attrs: { _i: "27-" + $32 } }, [
               _vm._v(
-                _vm._$g("26-" + $32, "t0-0") +
+                _vm._$g("27-" + $32, "t0-0") +
                   " --- " +
-                  _vm._$g("26-" + $32, "t0-1") +
+                  _vm._$g("27-" + $32, "t0-1") +
                   " ---" +
-                  _vm._$g("26-" + $32, "t0-2") +
+                  _vm._$g("27-" + $32, "t0-2") +
                   "--- " +
-                  _vm._$g("26-" + $32, "t0-3")
+                  _vm._$g("27-" + $32, "t0-3")
               )
             ])
           })
@@ -6818,9 +6830,20 @@ __webpack_require__.r(__webpack_exports__);
   !*** ./node_modules/babel-loader/lib!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--12-1!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/using-components.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib??vue-loader-options!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/style.js!D:/Work/Code/MobilePos/IpadPos/pages/Payment/Payment.vue?vue&type=script&lang=js&mpType=page ***!
   \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js):\nSyntaxError: Unexpected token (102:4)\n    at Object._raise (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:746:17)\n    at Object.raiseWithData (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:739:17)\n    at Object.raise (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:733:17)\n    at Object.unexpected (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:8807:16)\n    at Object.parseExprAtom (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10130:20)\n    at Object.parseExprSubscripts (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9656:23)\n    at Object.parseMaybeUnary (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9636:21)\n    at Object.parseMaybeUnary (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6877:20)\n    at Object.parseExprOpBaseRightExpr (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9599:34)\n    at Object.parseExprOpRightExpr (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9592:21)\n    at Object.parseExprOp (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9558:27)\n    at Object.parseExprOp (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6483:18)\n    at Object.parseExprOps (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9516:17)\n    at Object.parseMaybeConditional (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9479:23)\n    at Object.parseMaybeAssign (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9434:21)\n    at Object.parseMaybeAssign (C:\\Users\\ZC_FL\\Downloads\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6822:20)");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+var _uniPopup = _interopRequireDefault(__webpack_require__(/*! @/components/uni-popup/components/uni-popup/uni-popup.vue */ 45));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
+{
+
+  data: function data() {
+    return {
+      wxsProps: {} };
+
+  },
+  components: {
+    'uniPopup': _uniPopup.default } };exports.default = _default;
 
 /***/ }),
 /* 150 */

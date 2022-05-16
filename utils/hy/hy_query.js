@@ -125,7 +125,6 @@ const couponConsume= (d,b,func)=> {
 		return res;
 	})
 };
- 
 const HyQuery= (a,b,func)=>{
 	if(configInfo.Brand=="QJ"){
 		Query_Member_Assets(a,b,func);

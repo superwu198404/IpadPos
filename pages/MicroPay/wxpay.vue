@@ -618,7 +618,6 @@
 			CreateData: function() {
 				let that=this; 
 				let store=getApp().globalData.store;
-				
 				for (var i = 0; i < this.products.length; i++) {
 					this.sale2_obj = {
 						BILL: this.out_trade_no,
@@ -696,7 +695,7 @@
 					CXTNET: 0,
 					TCXDISC: 0,
 					CUID: "", //会员号
-					CRADID: "", //卡号
+					CARDID: "", //卡号
 					THYDISC: this.Discount,
 					YN_SC: 'N',
 					GSID:  store.GSID, //公司
@@ -713,11 +712,9 @@
 				this.sale1_arr.push(this.sale1_obj);
 				
 				let sql1=common.CreateSQL(this.sale1_arr,'SALE001');
-				console.info(JSON.stringify(sql1[1]));
 				let sql2=common.CreateSQL(this.sale2_arr,'SALE002');
-				 
 				let sql3=common.CreateSQL(this.sale3_arr,'SALE003');
-				 
+				console.info(JSON.stringify(sql3));
 				db.SqliteHelper.get().executeDml(sql1[1], "执行sql1", function(res) {
 					console.log("sql执行成功")
 					console.log(res)
