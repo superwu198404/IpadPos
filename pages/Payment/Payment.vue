@@ -22,7 +22,7 @@
 				</label>
 			</radio-group>
 		</view>
-		<view v-show="PayWay!=null">
+		<view v-show="selectPayWay!=null">
 			支付金额:
 			<input :disabled="disablePayInput" v-model="PayAmount">
 		</view>
@@ -117,7 +117,7 @@
 						fkid: "ZF04"
 					}
 				], //支付方式
-				PayWay: null,
+				selectPayWay: null,
 				selectPayWayVal: null,
 				PayList: [{
 					bill: "652313345645663",
@@ -169,7 +169,7 @@
 				this.CalDZFMoney();
 				setTimeout(() => { //测试时加的延迟定时器
 					// this.CreateDBData();
-					 this.SearcheOrder("K210QTD00112022516175759256");
+					this.SearcheOrder("K210QTD00112022516175759256");
 					// this.TestDB();
 				}, 3000);
 
@@ -201,7 +201,7 @@
 				that.out_trade_no = that.out_trade_no_old + '_' + that.PayList.length;
 				return;
 				//单号防止重处理（暂不启用）
-				let pay_way = that.PayWay.find(function(item) {
+				let pay_way = that.PayWayList.find(function(item) {
 					return item.type == that.selectPayWay;
 				});
 				if (pay_way) {
@@ -226,7 +226,7 @@
 					this.disablePayInput = false;
 				} else {
 					//券支付
-					if (this.PayWay == "qzf") {
+					if (this.selectPayWay == "qzf") {
 						//禁用输入金额框
 						this.disablePayInput = true;
 					}
@@ -336,7 +336,7 @@
 							//支付成功生成记录
 							that.dPayAmount += data.amount; //等支付减去支付金额
 							that.yPayAmount -= data.amount //已支付加上支付金额
-							if (that.PayWay == 'AliPayService' || that.PayWay == 'WxPayService') {
+							if (that.selectPayWay == 'AliPayService' || that.selectPayWay == 'WxPayService') {
 								that.PayAmount = that.totalAmount - that.yPayAmount;
 							} else {
 								that.PayAmount = 0;
@@ -683,7 +683,7 @@
 					fkid: payobj.fkid,
 					bill: that.out_trade_no,
 					name: payobj.name,
-					amount: that.dPayAmount,
+					amount: that.PayAmount,
 					no: that.PayList.length
 				});
 				//重新计算待支付金额
@@ -788,8 +788,8 @@
 						ZZCPHXDATE: dateformat.getYMD(),
 						ZZCPTIME: dateformat.getYMDS(),
 						ZZPRODUCT_ID: "000000001090100002", // 商品编码
-						ZZPRODUCT_NET: this.allAmount , //商品金额
-						ZZPRODUCT_NUM: this.Products.length//商品数量
+						ZZPRODUCT_NET: this.allAmount, //商品金额
+						ZZPRODUCT_NUM: this.Products.length //商品数量
 					}],
 					function(res) {
 						if (res.code) {
@@ -828,7 +828,7 @@
 										//生成支付记录的放弃记录
 										//......
 									}
-								
+
 								}
 							}
 						} else {
@@ -900,7 +900,7 @@
 						let data = JSON.parse(res.data);
 						if (!data.cardList) {
 							//卓越
-                            
+
 						} else {
 							//仟吉
 							let data = data.cardList;
@@ -935,7 +935,7 @@
 					return;
 				}
 				//券支付
-				if (this.PayWay != 'qzf') {
+				if (this.selectPayWay != 'qzf') {
 					if (!this.PayAmount) {
 						uni.showToast({
 							title: '请输入支付金额',
@@ -992,9 +992,10 @@
 							});
 						}
 					})
-				} else if (that.PayWay == 'dzk') {
-					that.KPay(code);
 				}
+				//  else if (that.selectPayWay == 'dzk') {
+				// 	
+				// }
 				// return;
 				// //作废
 				// if (that.selectPayWay == null) return
@@ -1067,25 +1068,25 @@
 						refund_amount: data.amount,
 						out_request_no: out_request_no
 					};
-					that.RefundAll(t, that.sale3_obj, 
-					function(res1) {
-						console.log("发起退款的结果" + res1);
-						if (res1.code > 0) {
-							//退款成功
-							uni.showToast({
-								title: "退款成功!",
-								icon: "success"
-							});
-							//生成退款记录
+					that.RefundAll(t, that.sale3_obj,
+						function(res1) {
+							console.log("发起退款的结果" + res1);
+							if (res1.code > 0) {
+								//退款成功
+								uni.showToast({
+									title: "退款成功!",
+									icon: "success"
+								});
+								//生成退款记录
 
-						} else {
-							//退款失败
-							uni.showToast({
-								title: "退款失败：" + res1.msg,
-								icon: "error"
-							});
-						}
-					});
+							} else {
+								//退款失败
+								uni.showToast({
+									title: "退款失败：" + res1.msg,
+									icon: "error"
+								});
+							}
+						});
 				} else {
 					//如果有退款单号就查退款接口
 					let obj = {
@@ -1195,9 +1196,9 @@
 						}
 					);
 				} else if ('CARD') {
-
+					that.KPay(e.auth_code);
 				} else if ('COUPON') {
-					that.QPay(code);
+					that.QPay(e.auth_code);
 				} else {}
 			}
 		}
