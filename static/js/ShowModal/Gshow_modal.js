@@ -25,7 +25,6 @@ const g_show_modal = {
 		    								this.$cover=op.$cover||fn;
 		    								this.$cover({op});
 		    							}
-		    							clearTimeout(dsk);
 		    							resolve(e);
 		    						}else{
 		    							reject(e);

@@ -195,7 +195,7 @@ const createSql = [
 
  HYJFCD REAL,
 
- YAER REAL,
+ YEAR REAL,
 
  MONTH REAL,
 

@@ -132,6 +132,7 @@ var mySqllite = function() {
 				inputParm.name = name;
 				inputParm.operation = pm_dboperation;
 				inputParm.success = (e) => {
+					
 					return resolve({
 						code: true,
 						msg: e
@@ -143,9 +144,10 @@ var mySqllite = function() {
 						msg: e
 					})
 				}
+				
 				for (var prm in otherParm) {
 					inputParm[prm] = otherParm[prm];
-				}
+				} 
 				plus.sqlite[pm_dboperation](inputParm);
 
 			}
@@ -257,9 +259,7 @@ var mySqllite = function() {
 }
 
 var SqliteHelper = {
-
 	get: function() {
-
 		return new mySqllite();
 	}
 }

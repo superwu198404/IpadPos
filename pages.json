@@ -1,12 +1,23 @@
 {
-	"pages": [{
+	"pages": [
+		{
 			"path": "pages/MicroPay/MicroPay",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
+		
 		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		
+		
+		
 		{
 				"path": "pages/MicroPay/wxpay",
 				"style": {
@@ -23,13 +34,7 @@
 			}
 
 		},
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
+		
 		{
 			"path": "pages/modal/modal",
 			"style": {
@@ -83,21 +88,6 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/popup/ShowPopup",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false,
-				"disableScroll": true,
-				"backgroundColorTop": "transparent",
-				"background": "transparent",
-				"titleNView": false,
-				"scrollIndicator": false,
-				"popGesture": "none",
-				"animationType": "fade-in",
-				"animationDuration": 300
 			}
 		},
 		{
