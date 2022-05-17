@@ -255,6 +255,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 			}
 		}
 		res = await forPromise(callbacklist[i], res)
+		
 		if (res && !res.code) {
 			def(catchfun, res);
 			break;

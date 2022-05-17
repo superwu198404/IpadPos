@@ -72,7 +72,7 @@
 				PayAmount: 0,
 				Products: [{
 					PLID: "100",
-					BARCODE: '4533331313',
+					BARCODE: '111111111',
 					SPID: "123456",
 					UNIT: "个",
 					NAME: "黑森林",
@@ -84,7 +84,7 @@
 					PLID: "101",
 					SPID: "456786",
 					UNIT: "袋",
-					BARCODE: '4533338338454533',
+					BARCODE: '2222222222',
 					NAME: "毛毛虫",
 					PRICE: 12,
 					OPRICE: 12,
@@ -122,24 +122,25 @@
 					bill: "652313345645663",
 					name: "支付宝",
 					amount: 40,
-					no: 1, //序号
+					no: 0, //序号
 					fkid: "ZF01"
 				}, {
 					bill: "652313345645663",
 					name: "微信",
 					amount: 3.99,
-					no: 2, //序号
+					no: 1, //序号
 					fkid: "ZF02"
 				}],
 				authCode: null,
-				out_trade_no_old: "", //原顶单号
-				out_trade_no: "", //单次支付的订单号（可能存在多笔同种支付的操作）
+				out_trade_no_old: "", //原定单号
+				out_trade_no: "", //单次发起支付的订单号（匹配多笔支付的操作 采用原订单号加序号的规则）
 				disablePayInput: false,
 				sale1_obj: {},
 				sale2_obj: {},
 				sale2_arr: [],
 				sale3_obj: {},
 				sale3_arr: [],
+				tx_obj: {},
 				GSID: getApp().globalData.store.GSID,
 				KHID: getApp().globalData.store.KHID,
 				POSID: getApp().globalData.store.POSID,
@@ -165,8 +166,12 @@
 				this.allAmount = money;
 				this.totalAmount = money;
 				this.CalDZFMoney();
-				
-				this.CreateDBData();
+				setTimeout(() => { //测试时加的延迟定时器
+					// this.CreateDBData();
+					 this.SearcheOrder("K210QTD00112022516175759256");
+					// this.TestDB();
+				}, 3000);
+
 			},
 			//创建销售表结构
 			CreatSaleTable: function() {
@@ -187,11 +192,14 @@
 				}
 				this.yPayAmount = ymoney.toFixed(2);
 				this.dPayAmount = (this.totalAmount - this.yPayAmount).toFixed(2);
+				this.PayAmount = this.dPayAmount;
 			},
 			//单号防重处理
 			UniqueBill: function() {
 				let that = this;
-				//单号防止重处理
+				that.out_trade_no = that.out_trade_no_old + '_' + that.PayList.length;
+				return;
+				//单号防止重处理（暂不启用）
 				let pay_way = that.PayWay.find(function(item) {
 					return item.type == that.selectPayWay;
 				});
@@ -317,11 +325,11 @@
 								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0].value);
 							}
 
-							that.PayList.push({
-								way: "支付宝",
-								amount: data.amount,
-								no: "T" + data.no
-							});
+							// that.PayList.push({
+							// 	way: "支付宝",
+							// 	amount: data.amount,
+							// 	no: "T" + data.no
+							// });
 							//查询是否已经生成退款记录
 
 							//支付成功生成记录
@@ -433,25 +441,25 @@
 			queryPayAll: function(t, e, func) {
 				let Result;
 				if (t == 'WX') {
-					_wx.QueryCodeScanPay("微信扫码付", e.out_trade_no,
+					_wx.QueryCodeScanPay("查询支付结果...", e.out_trade_no,
 						function(res) {
 							Result = JSON.parse(res.data);
 							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
 								.trade_state == 'SUCCESS') { //支付成功
-								Result.new_code = '1';
+								Result.code = '1';
 							} else if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
 								.trade_state == 'USERPAYING') { //支付中
-								Result.new_code = '0';
+								Result.code = '0';
 							} else {
-								Result.new_code = '-1';
-								Result.new_msg = Result.return_msg;
+								Result.code = '-1';
+								Result.msg = Result.return_msg;
 							}
 							if (func) func(Result);
 						});
 				} else if (t == 'ALI') {
 					let Result;
 					let that = this;
-					_ali.Payment("订单查询..", "TradeQuery", this.selectPayWay, {
+					_ali.Payment("查询支付结果...", "TradeQuery", this.selectPayWay, {
 							out_trade_no: e.out_trade_no
 						},
 						function(res) {
@@ -513,9 +521,9 @@
 					XS_KHID: "", //退款时记录原khid
 					XS_GSID: "", //退款时记录原GSID
 					TLINE: this.sale2_obj.length,
-					TNET: this.RealAmount,
+					TNET: this.totalAmount,
 					DNET: 0,
-					ZNET: this.totalAmount,
+					ZNET: this.allAmount,
 					BILLDISC: this.Discount,
 					ROUND: 0,
 					CHANGENET: 0,
@@ -538,13 +546,13 @@
 				};
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
-						BILL: this.out_trade_no,
+						BILL: this.out_trade_no_old,
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
 						POSID: this.POSID,
 						SPID: this.Products[i].SPID,
-						NO: i+1,
+						NO: i + 1,
 						PLID: this.Products[i].PLID,
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
@@ -572,12 +580,12 @@
 				}
 				for (var i = 0; i < this.PayList.length; i++) {
 					this.sale3_obj = {
-						BILL: this.out_trade_no,
+						BILL: this.out_trade_no_old,
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
 						POSID: this.POSID,
-						NO: i+1,
+						NO: this.PayList[i].no,
 						FKID: this.PayList[i].fkid,
 						AMT: this.PayList[i].amount,
 						RYID: this.RYID, //人员
@@ -589,20 +597,49 @@
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				}
-				debugger;
+
 				//执行sql
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-				console.log(sql1);
-				console.log(sql2);
-				console.log(sql3);
+
+				this.tx_obj = {
+					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
+					STOREID: this.KHID,
+					POSID: this.POSID,
+					TAB_NAME: 'XS',
+					STR1: this.out_trade_no_old,
+					BDATE: dateformat.getYMD(),
+					YW_NAME: "销售单据",
+					CONNSTR: 'CONNSTRING'
+				};
+				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
+
+				// console.log(sql1.sqlliteArr);
+				// console.log(sql2.sqlliteArr);
+				// console.log(sql3.sqlliteArr);
+				// console.log(sql4.sqlliteArr);
+
+				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
+				console.log("sqlite待执行sql:")
+				console.log(exeSql);
 				//return;
-				db.SqliteHelper.get().executeDml(sql3.sqlliteArr, "订单创建中", function(res) {
+				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {
 					console.log("订单创建失败");
+					console.log(err);
+				});
+			},
+			//查询订单数据
+			SearcheOrder: function(e) {
+				let sql = 'select * from sale001 where STR1="' + e + '"';
+				db.SqliteHelper.get().executeQry(sql, "数据查询", function(res) {
+					console.log("查询成功");
+					console.log(res);
+				}, function(err) {
+					console.log("查询失败");
 					console.log(err);
 				});
 			},
@@ -617,7 +654,7 @@
 					bill: that.out_trade_no,
 					name: payobj.name,
 					amount: this.dPayAmount,
-					no: that.PayList.length + 1
+					no: that.PayList.length
 				});
 				//重新计算待支付金额
 				that.CalDZFMoney();
@@ -630,8 +667,20 @@
 				})
 				//预留处理业务数据的地方
 				if (that.dPayAmount == 0) { //说明支付完毕了
-
+					this.CreateDBData();
 				}
+			},
+			TestDB: function() {
+				let sql = [
+					"insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values(\"K210QTD00112022516171757506_2\",DATETIME(\"2022-05-16\"),DATETIME(\"2022-05-16 17:18:42\"),\"K210QTD001\",\"1\",\"123456\",\"1\",\"100\",\"4533331313\",\"个\",\"2\",\"10\",\"10\",\"10\",\"0\",\"N\",null,\"N\",null,\"2022\",\"5\",\"18\",\"17\",\"10086\",\"1001\",null,null,\"001\")"
+				];
+				db.SqliteHelper.get().executeDml(sql, "订单创建中", function(res) {
+					console.log("订单创建成功");
+					console.log(res);
+				}, function(err) {
+					console.log("订单创建失败");
+					console.log(err);
+				});
 			},
 			//轮询方法
 			circleQuery: function(t, e, func1) {
@@ -674,8 +723,11 @@
 								//查询失败信息
 								uni.showToast({
 									title: res.msg,
-									duration: 2000,
-									icon: "error"
+									icon: "error",
+									success: function() {
+										//撤销订单
+										that.cancelPayAll(t, e, func1);
+									}
 								});
 							}
 						});
@@ -816,7 +868,6 @@
 				param.auth_code = code;
 				param.subject = "商品支付";
 				param.totalAmount = that.PayAmount;
-
 				if (code) { //code 有值则发起支付
 					that.paymentAll(that.selectPayWayVal, param, function(res) {
 						if (res.code < 0) {
@@ -983,24 +1034,31 @@
 			paymentAll: function(t, e, func) {
 				let Result;
 				if (t == 'WX') {
-					_wx.CodeScanPay("微信扫码付", e.out_trade_no, e.subject, e.auth_code, e.totalAmount,
+					_wx.CodeScanPay("微信支付", e.out_trade_no, e.subject, e.auth_code, e.totalAmount * 100,
 						function(res) {
+							debugger;
 							Result = JSON.parse(res.data);
 							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' &&
 								Result
 								.trade_type == 'MICROPAY') { //支付成功
 								Result.code = '1';
-							} else if (Result.return_code == 'SUCCESS' && Result.result_code ==
+							} else if (Result.return_code == 'SUCCESS' && Result.err_code ==
 								'USERPAYING') { //支付中
 								Result.code = '0';
 							} else {
 								Result.code = '-1';
-								Result.msg = Result.return_msg;
+								Result.msg = Result.err_code_des; //return_msg;
 							}
 							if (func) func(Result);
+						},
+						function(err) {
+							if (err) {
+								err.code = '-1';
+							}
+							if (func) func(err);
 						});
 				} else if (t == 'ALI') {
-					_ali.Payment("支付宝付款码支付", "CodePayment", "AliPayService", {
+					_ali.Payment("支付宝支付", "CodePayment", "AliPayService", {
 							out_trade_no: e.out_trade_no,
 							auth_code: e.auth_code,
 							subject: e.subject,
@@ -1083,4 +1141,3 @@
 		min-height: 60px;
 	}
 </style>
-

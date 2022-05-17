@@ -26,44 +26,77 @@
 	import _wx from '@/utils/Pay/WxPay.js';
 	import _ali from '@/utils/Pay/Alipay.js';
 	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import create_sql from '@/utils/db/create_sql.js';
+	import dateformat from '@/utils/dateformat.js';
 
 	export default {
 		data() {
 			return {
+				allAmount: 0, //订单总金额(包含折扣)
+				totalAmount: 0, //应付总金额
+				yPayAmount: 0, //已支付金额
+				dPayAmount: 0, //待支付
+				qPayAmount: 0,
+				PayAmount: 0,
+				Discount: 0,
 				PayWay: [{
-						name: '微信',
-						value: 'WX'
-					},
-					{
 						name: '支付宝',
 						value: 'ALI',
-
+						type: "AliPayService",
+						fkid: "ZF01",
+					},
+					{
+						name: '微信',
+						value: 'WX',
+						type: "AliPayService",
+						fkid: "ZF02"
+					},
+					{
+						name: '券支付',
+						value: 'COUPON',
+						type: "qzf",
+						fkid: "ZF03"
 					},
 					{
 						name: '电子卡',
-						value: 'CARD'
-					},
-					{
-						name: '电子券',
-						value: 'COUPON'
+						value: 'CARD',
+						type: "dzk",
+						fkid: "ZF04"
 					}
-				], //支付方式列表
-				bill: "", //单号
+				], //支付方式
+				bill: "K210QTD00112022516175759256", //单号
 				selectPayWay: "", //选中的支付方式
-				sale3_obj: {},
-				totalAmount: 100,
-				Discount: 10,
-				PayAmount: 10,
-				qPayAmount: 20
+				sale3_obj: {}
 			}
 		},
 		methods: {
+			onLoad: function(e) {
+
+			},
 			//支付方式切换
 			radioChange(e) {
 				let way = e.target.value;
 				this.selectPayWay = way;
 			},
-
+			Search: function(e) {
+				if (this.bill) {
+					let sql = 'select * from SALE001 where BILL="' + this.bill + '"';
+					db.SqliteHelper.get().executeQry(sql, "数据查询", function(res) {
+						console.log("查询成功");
+						console.log(res);
+						if(res.code&&res.msg.length>0){
+							//说明查到了值
+							let dataObj=res.msg[0].
+							this.allAmount=r.ZNET;
+							this.totalAmount=r.TNET;
+						}
+					}, function(err) {
+						console.log("查询失败");
+						console.log(err);
+					});
+				}
+			},
 			//查询退款的合集
 			queryRefundAll: function(t, e, func) {
 				let Result;
@@ -140,11 +173,6 @@
 				} else if (t == 'COUPON') {
 
 				} else {}
-			},
-			//查询订单详情
-			Search: function() {
-				this.sale3_obj.out_trade_no = this.bill;
-				this.sale3_obj.out_refund_no = common.CreateBill("K210QTD002", "001");
 			},
 			//退款点击事件
 			refund: function() {
