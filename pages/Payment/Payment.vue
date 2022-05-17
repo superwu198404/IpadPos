@@ -204,14 +204,14 @@
 							let used = JSON.parse(res.data);
 							if (!used.GT_RETURN[0]) {
 								//卓越
-								res.code = '1';
+								res.code = 1;
 							} else {
 								let GT_RETURN = used.GT_RETURN[0];
 								if (GT_RETURN.TYPE == "E") {
-									res.code = '-1';
+									res.code = -1;
 									res.msg = GT_RETURN.MESSAGE
 								} else {
-									res.code = '1';
+									res.code = 1;
 									// that.PayAmount = that.dPayAmount;
 									// //生成支付列表记录
 									// that.PayList.push({
@@ -239,7 +239,7 @@
 								}
 							}
 						} else {
-							res.code = '-1';
+							res.code = -1;
 						}
 						if (func) func(res);
 					});
@@ -378,10 +378,10 @@
 							Result = Result.alipay_trade_fastpay_refund_query_response;
 							if (Result.code = "10000" && Result.refund_status == "REFUND_SUCCESS") {
 								//已经退款了
-								Result.code = '1';
+								Result.code = 1;
 							} else {
 								//没有退款  
-								Result.code = '0';
+								Result.code = 0;
 								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0].value);
 							}
 
@@ -416,15 +416,15 @@
 									//业务失败
 									res.msg = Result.sub_msg;
 								}
-								res.code = "-1";
+								res.code = -1;
 							}
 							if (func) func(res);
 						});
 
 				} else if (t == 'ACRD') {
-					
+
 				} else if (t == 'COUPON') {
-					
+
 				} else {
 
 				}
@@ -444,8 +444,7 @@
 						}
 						if (func) func(Result);
 					});
-				}
-				 else if (t == 'ALI') {
+				} else if (t == 'ALI') {
 					_ali.Payment("支付宝退款", "TradeRefund", "AliPayService", {
 							out_trade_no: e.out_trade_no,
 							refund_amount: e.refund_amount,
@@ -455,9 +454,9 @@
 							let rResult = JSON.parse(res.data);
 							rResult = rResult.alipay_trade_refund_response;
 							if (Result.code = "10000" && Result.refund_status == "REFUND_SUCCESS") { //退款成功
-								rResult.code = '1';
+								rResult.code = 1;
 							} else {
-								rResult.code = '0';
+								rResult.code = 0;
 							}
 							if (func) func(rResult);
 						},
@@ -472,12 +471,11 @@
 								} else {
 									res.msg = errResult.sub_msg;
 								}
-								res.code = '-1'
+								res.code = -1
 							}
 							if (func) func(res);
 						});
-				} 
-				else if (t == 'ACRD') {
+				} else if (t == 'ACRD') {
 					//会员卡退款
 					let obj = {
 						orderbill: "",
@@ -506,7 +504,7 @@
 						if (func) func(res);
 					})
 				} else if (t == 'COUPON') {
-                       //券的也没有
+					//券的也没有
 				} else {
 
 				}
@@ -542,11 +540,11 @@
 								if (qResult.trade_status == "WAIT_BUYER_PAY") {
 									//交易创建，等待买家付款 加上用户支付中提示
 									qResult.msg = "支付中，请稍后..";
-									qResult.code = '0';
+									qResult.code = 0;
 								} else {
 									//交易支付成功//生成支付记录
 									if (qResult.trade_status == "TRADE_SUCCESS") {
-										qResult.code = '1';
+										qResult.code = 1;
 									} else {
 										let msg = "";
 										if (qResult.trade_status == "TRADE_CLOSED") {
@@ -554,18 +552,18 @@
 										}
 										if (qResult.trade_status == "TRADE_FINISHED")
 											msg = "交易结束完成";
-										qResult.code = '-1';
+										qResult.code = -1;
 										qResult.msg = msg;
 									}
 								}
 							} else {
 								//异常
-								qResult.code = '-1';
+								qResult.code = -1;
 							}
 							if (func) func(qResult);
 						},
 						function(res) {
-							res.code = "-1";
+							res.code = -1;
 							res.msg = "支付异常";
 							if (func) func(res);
 						});
@@ -573,14 +571,18 @@
 					//仟吉
 					hy.QUERY_ALL(e.out_trade_no, function(res) {
 						if (res.code) {
-							res.code = '1';
+							res.code = 1;
 						} else {
-							res.code = '-1';
+							res.code = -1;
 						}
 						if (func) func(res);
 					})
 				} else if ('COUPON') {
-                    //券的暂时没有
+					//券的暂时没有
+					if (func) func({
+						code: 1,
+						msg: ''
+					});
 				} else {}
 			},
 
@@ -831,7 +833,7 @@
 			//支付按钮点击事件
 			Pay: function() {
 				this.authCode = "";
-				if (!this.selectPayWay) {
+				if (!this.PayWay) {
 					uni.showToast({
 						title: '请选择支付方式',
 						duration: 2000,
@@ -880,12 +882,16 @@
 								icon: "error"
 							});
 							return;
+						} else {
+							if (that.selectPayWayVal != 'COUPON') {
+								that.circleQuery(that.selectPayWayVal, param, function(res) {});
+							} else {
+                                //券支付结果
+								//生成券支付记录
+
+							}
 						}
-						//轮询操作
-						that.circleQuery(that.selectPayWayVal, param, function(res) {
-							debugger;
-						});
-					})
+					});
 				} else { //没值则发起查询
 					that.queryPayAll(that.selectPayWayVal, param, function(res) {
 						if (res.code > 0) { //是支付成功的
@@ -1007,9 +1013,7 @@
 							}
 							if (func) func(err);
 						});
-				} 
-				else if (t == 'ALI') 
-				{
+				} else if (t == 'ALI') {
 					_ali.Payment("支付宝支付", "CodePayment", "AliPayService", {
 							out_trade_no: e.out_trade_no,
 							auth_code: e.auth_code,
@@ -1021,16 +1025,16 @@
 							Result = Result.alipay_trade_pay_response;
 							//支付成功
 							if (Result.code == "10000") {
-								Result.code = '1';
+								Result.code = 1;
 							}
 							//支付中或者系统异常情况下 开启轮询
 							else if (Result.code == "10003" || Result.sub_code == "ACQ.SYSTEM_ERROR") {
 								if (!Result.msg) {
 									title = Result.msg;
 								}
-								Result.code = '0';
+								Result.code = 0;
 							} else {
-								Result.code = '-1';
+								Result.code = -1;
 							}
 							if (func) func(Result);
 						},
@@ -1046,13 +1050,11 @@
 									res.msg = Result.sub_msg;
 								}
 							}
-							res.code = '-1';
+							res.code = -1;
 							if (func) func(res);
 						}
 					);
-				} 
-				else if ('CARD')
-				{
+				} else if ('CARD') {
 					let that = this;
 					//查询券  code查询出来券的金额 
 					let kamount = 0;
@@ -1069,12 +1071,12 @@
 					//仟吉
 					hy.PAY_ALL('kg', obj, function(res) {
 						if (res.code) {
-							 res.code='1';
+							res.code = 1;
 							// //仟吉就是成功  
 							// let data = JSON.parse(res.data);
 							// if (!data.cardList) {
 							// 	//卓越
-       //                          res.code='1';
+							//                          res.code='1';
 							// } else {
 							// 	//仟吉
 							// 	let data = data.cardList;
@@ -1088,9 +1090,9 @@
 							// })
 							//生成支付记录
 						} else {
-							res.code='-1';
+							res.code = -1;
 						}
-						if(func) func(res);
+						if (func) func(res);
 					});
 				} else if ('COUPON') {
 					//查询券  code查询出来券的金额
@@ -1113,7 +1115,7 @@
 													if (func) func(res1);
 												});
 											} else if (cres.cancel) {
-												cres.code = '-1';
+												cres.code = -1;
 												cres.msg = '已放弃支付';
 												if (func) func(cres);
 											}
@@ -1127,7 +1129,7 @@
 								}
 							} else {
 								//无券或者异常
-								res.code = '-1';
+								res.code = -1;
 								if (func) func(res);
 							}
 						});
