@@ -274,6 +274,24 @@ const getYMDS = () => {
 	let str = year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
 	return str;
 };
+//获取当前日期时间HHmmss
+const gettimes = () => {
+	let date = new Date();
+	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
+	let min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
+	let sec = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
+	let str = hour + min + sec+'';
+	return str;
+};
+
+const getdate = () => {
+	let date = new Date();
+	let year = date.getFullYear().toString();
+	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
+	let str =year + month + day+'' ;
+	return str;
+};
 //获取当前时今年的第几周：2022,06,20
 var getYearWeek = function(a, b, c)
 {
@@ -303,5 +321,7 @@ export default {
 	getDays,
 	getYMD,
 	getYMDS,
-	getYearWeek
+	getYearWeek,
+	getdate,
+	gettimes
 }

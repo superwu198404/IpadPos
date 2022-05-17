@@ -2,7 +2,7 @@ import Req from '@/utils/request.js';
 const Payment = (title, apiName, type, body={},fun1,fun4) => {
 	Req.asyncFunc({
 		http: true,
-		url: "/Payment/Payment1",
+		url: "/Payment/Payment",
 		title: title,
 		method: "POST",
 		data: {

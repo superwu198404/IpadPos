@@ -148,6 +148,8 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
+				brand: getApp().globalData.brand,
+
 			}
 		},
 		methods: {
@@ -168,9 +170,7 @@
 				this.totalAmount = money;
 				this.CalDZFMoney();
 				setTimeout(() => { //测试时加的延迟定时器
-					// this.CreateDBData();
 					this.SearcheOrder("K210QTD00112022516175759256");
-					// this.TestDB();
 				}, 3000);
 
 			},
@@ -185,59 +185,24 @@
 					console.log(err);
 				});
 			},
-			QUsed: function(qinfo, func) {
+			QUsed: function(d, b, func) {
 				//继续支付   扣掉券的信息
-				hy.TicktUse([{
-						ZZCP_NUM: qinfo.ZZCP_NUM,
-						ZZCPHX_CHANNEL: qinfo.ZZCPHX_CHANNEL,
-						ZZCPHX_STORE: qinfo.ZZCPHX_STORE,
-						ZZVBELN: qinfo.ZZVBELN,
-						ZZTPRICE: "288.00", //订单金额
-						ZZCPHXDATE: dateformat.getYMD(),
-						ZZCPTIME: dateformat.getYMDS(),
-						ZZPRODUCT_ID: "000000001090100002", // 商品编码
-						ZZPRODUCT_NET: this.allAmount, //商品金额
-						ZZPRODUCT_NUM: this.Products.length //商品数量
-					}],
+				hy.TicktUse(d, b,
 					function(res) {
 						if (res.code) {
-							let used = JSON.parse(res.data);
-							if (!used.GT_RETURN[0]) {
-								//卓越
-								res.code = 1;
-							} else {
+							if (res.data) {
+								let used = JSON.parse(res.data);
 								let GT_RETURN = used.GT_RETURN[0];
 								if (GT_RETURN.TYPE == "E") {
 									res.code = -1;
 									res.msg = GT_RETURN.MESSAGE
 								} else {
 									res.code = 1;
-									// that.PayAmount = that.dPayAmount;
-									// //生成支付列表记录
-									// that.PayList.push({
-									// 	fkid: "ZF03",
-									// 	way: "券支付",
-									// 	amount: that.dPayAmount,
-									// 	no: that.PayList.length + 1
-									// });
-									// //生成支付记录 抵扣金额=所有待支付金额
-									// //......
-									// if (qamount > that.dPayAmount) {
-									// 	//放弃金额
-									// 	let fq = qamount - that.dPayAmount; //券金额-待支付金额=放弃金额
-									// 	//生成支付列表放弃记录
-									// 	that.PayList.push({
-									// 		fkid: "ZF03",
-									// 		way: "券支付-放弃金额",
-									// 		amount: fq,
-									// 		no: that.PayList.length + 1
-									// 	});
-									// 	//生成支付记录的放弃记录
-									// 	//......
-									// }
-
 								}
+							} else {
+								res.code = 1;
 							}
+
 						} else {
 							res.code = -1;
 						}
@@ -278,18 +243,14 @@
 				let payobj = this.PayWayList.find(item => {
 					return item.value == value
 				});
-				this.selectPayWay = payobj.type;
+				this.PayWay = payobj.type;
 				this.selectPayWayVal = payobj.value;
-				if (this.selectPayWay == 'AliPayService' || this.selectPayWay == 'WxPayService') {
+				if(this.PayWay == "qzf"){
+					this.disablePayInput = true;
+					this.PayAmount = 0;
+				}else{
 					this.PayAmount = this.dPayAmount;
 					this.disablePayInput = false;
-				} else {
-					//券支付
-					if (this.PayWay == "qzf") {
-						//禁用输入金额框
-						this.disablePayInput = true;
-					}
-					this.PayAmount = 0;
 				}
 			},
 			//撤销支付订单合集
@@ -384,14 +345,6 @@
 								Result.code = 0;
 								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0].value);
 							}
-
-							// that.PayList.push({
-							// 	way: "支付宝",
-							// 	amount: data.amount,
-							// 	no: "T" + data.no
-							// });
-							//查询是否已经生成退款记录
-
 							//支付成功生成记录
 							that.dPayAmount += data.amount; //等支付减去支付金额
 							that.yPayAmount -= data.amount //已支付加上支付金额
@@ -476,6 +429,7 @@
 							if (func) func(res);
 						});
 				} else if (t == 'ACRD') {
+					let that = this;
 					//会员卡退款
 					let obj = {
 						orderbill: "",
@@ -483,23 +437,11 @@
 						refundnet: "",
 						payTxnId: ""
 					}
-					hy.REFUND_ALL('KG', function(res) {
+					hy.REFUND_ALL(that.brand, function(res) {
 						if (res.code) {
 							res.code = '1';
-							// let data = JSON.parse(res.data);
-							// if (!data.cardList) {
-							// 	//卓越
-							// } else {
-							// 	//仟吉
-							// 	let data = data.cardList;
-							// }
 						} else {
 							res.code = '-1';
-							// uni.showToast({
-							// 	title: res.msg,
-							// 	duration: 2000,
-							// 	icon: "error"
-							// });
 						}
 						if (func) func(res);
 					})
@@ -530,7 +472,7 @@
 							if (func) func(Result);
 						});
 				} else if (t == 'ALI') {
-					_ali.Payment("查询支付结果...", "TradeQuery", that.selectPayWay, {
+					_ali.Payment("查询支付结果...", "TradeQuery", that.PayWay, {
 							out_trade_no: e.out_trade_no
 						},
 						function(res) {
@@ -567,7 +509,7 @@
 							res.msg = "支付异常";
 							if (func) func(res);
 						});
-				} else if ('CARD') {
+				} else if (t == 'CARD') {
 					//仟吉
 					hy.QUERY_ALL(e.out_trade_no, function(res) {
 						if (res.code) {
@@ -886,9 +828,8 @@
 							if (that.selectPayWayVal != 'COUPON') {
 								that.circleQuery(that.selectPayWayVal, param, function(res) {});
 							} else {
-                                //券支付结果
-								//生成券支付记录
-
+								//支付成功创建支付记录
+								that.createPayData(t);
 							}
 						}
 					});
@@ -923,7 +864,7 @@
 					out_request_no = common.CreateBill("K210QTD002", "001");
 					console.info(out_request_no);
 					that.sale3_obj = {
-						out_trade_no: data.no,
+						out_trade_no: data.amount,
 						refund_amount: data.amount,
 						out_request_no: out_request_no
 					};
@@ -949,7 +890,7 @@
 				} else {
 					//如果有退款单号就查退款接口
 					let obj = {
-						out_trade_no: data.no,
+						out_trade_no: data.amount,
 						out_request_no: out_request_no
 					}
 					let t = "ALI";
@@ -1054,56 +995,160 @@
 							if (func) func(res);
 						}
 					);
-				} else if ('CARD') {
+				} else if (t == 'CARD') {
 					let that = this;
-					//查询券  code查询出来券的金额 
-					let kamount = 0;
-					let obj = {
-						orderInfo: {
-							ordernet: "",
-							orderbill: ""
-						},
-						paycode: "",
-						storeid: "",
-						storename: "",
-						mer_id: ""
-					};
-					//仟吉
-					hy.PAY_ALL('kg', obj, function(res) {
+					let obj;
+					if (that.brand == "KG") {
+						obj = {
+							orderInfo: {
+								ordernet: "0.99", //amount
+								orderbill: that.out_trade_no //merOrderId
+							},
+							paycode: e.auth_code, //卡号cardNo
+							storeid: "K200QTD005", //storeNo
+							storename: "武汉领秀城店门厅", //storeName
+							mer_id: "999521058120004" //merchantNo
+						};
+					} else {
+						obj = {
+							kquser: "CSKQ",
+							mer_id: "999990053990001",
+							storeid: "K0101QTDS1",
+							ryid: "XCXYD",
+							paycode: e.auth_code,
+							posid: "1",
+							orderInfo: {
+								ordernet: "278.99",//
+								orderbill: "00000000306084",
+								productInfo: [{
+									spid: "10902001",
+									sname: "经典撒哈拉(6寸)",
+									price: "233.8",
+									qty: 1,
+									net: 233.8,
+									plid: 10902,
+									discrate: 0
+								}, {
+									 spid: "10905001",
+									 sname: "奥利奥经典",
+									 price: "49.8",
+									 qty: 1,
+									 net: 49.8,
+									 plid: 10905,
+									 discrate: 0
+								}, {
+									 spid: "10301011",
+									 sname: "咸芝士奶香片(测试)",
+									 price: "1.2",
+									 qty: 1,
+									 net: 1.2,
+									 plid: 10301,
+									 discrate: 0
+								}, {
+									 spid: "10101025",
+									 sname: "全味椰子吐司",
+									 price: "2",
+									 qty: 1,
+									 net: 2,
+									 plid: 10101,
+									 discrate: 0
+								}]
+							},
+							extra1: "",
+							extra2: ""
+						}
+					}
+					hy.PAY_ALL(that.brand, obj, function(res) {
 						if (res.code) {
 							res.code = 1;
-							// //仟吉就是成功  
-							// let data = JSON.parse(res.data);
-							// if (!data.cardList) {
-							// 	//卓越
-							//                          res.code='1';
-							// } else {
-							// 	//仟吉
-							// 	let data = data.cardList;
-							// }
-							// //添加支付列表
-							// that.PayList.push({
-							// 	fkid: "ZF04",
-							// 	way: "电子卡",
-							// 	amount: kamount,
-							// 	no: that.PayList.length + 1
-							// })
-							//生成支付记录
 						} else {
 							res.code = -1;
 						}
 						if (func) func(res);
 					});
 				} else if ('COUPON') {
+					let that = this;
 					//查询券  code查询出来券的金额
 					let qamount = 0;
-					hy.TicktQuery(code, "",
+					//仟吉的返回查询结果  卓越的假装返回结果0
+					hy.TicktQuery(e.auth_code, "",
 						function(res) {
 							//有券
+							let obj;
+							let b = null;
+							let ask = false;
 							if (res.code) {
-								let q = JSON.parse(res.data);
-								qamount = q.ZZCPVALUE;
-								if (qamount > that.dPayAmount) {
+								if (res.data) {
+									//仟吉
+									let q = JSON.parse(res.data);
+									qamount = q.ZZCPVALUE; //仟吉会返回真正的金额  
+									if (qamount > that.dPayAmount) {
+										ask = true;
+									};
+									//构造参数
+									obj = [{
+										ZZCP_NUM: q.ZZCP_NUM,
+										ZZCPHX_CHANNEL: q.ZZCPHX_CHANNEL,
+										ZZCPHX_STORE: q.ZZCPHX_STORE,
+										ZZVBELN: q.ZZVBELN,
+										ZZTPRICE: "288.00", //订单金额
+										ZZCPHXDATE: dateformat.getdate(),
+										ZZCPTIME: dateformat.gettimes(),
+										ZZPRODUCT_ID: "000000001090100002", // 商品编码
+										ZZPRODUCT_NET: that.allAmount, //商品金额
+										ZZPRODUCT_NUM: that.Products.length //商品数量
+									}]
+								} else {
+									//卓越
+									ask = false;
+									b = that.out_trade_no;
+									//构造参数
+									obj = {
+										storeid: "K0101QTDS1",
+										kquser: "CSKQ",
+										ryid: "XCXYD",
+										gsid: "11501",
+										usedetail: [],
+										posid: "1",
+										fkid: "1",
+										lqid: e.auth_code,
+										orderInfo: {
+											ordernet: "10.68",
+											znet: "10.68",
+											orderbill: "00000000306134",
+											productInfo: [{
+													spid: "10901019",
+													sname: "萌萌熊8吋(测试)",
+													price: "2.5",
+													qty: 1,
+													net: 2.5,
+													plid: 10901,
+													discrate: 0
+												},
+												{
+													spid: "10901013",
+													sname: "竖式草莓奶油蛋糕真果粒测试商品测试用",
+													price: "1.18",
+													qty: 1,
+													net: 1.18,
+													plid: 10901,
+													discrate: 0
+												},
+												{
+													spid: "10904001",
+													sname: "水果派对",
+													price: "6",
+													qty: 1,
+													net: 6,
+													plid: 10904,
+													discrate: 0
+												}
+											]
+										}
+									};
+								}
+								//只有仟吉 仟吉券金额大于支付金额的时候才会走询问
+								if (ask) {
 									uni.showModal({
 										title: '提示',
 										content: '券金额:' + qamount + ',大于支付金额，是否继续支付？',
@@ -1111,7 +1156,7 @@
 										cancelText: "否",
 										success: function(cres) {
 											if (cres.confirm) {
-												that.QUsed(q, function(res1) {
+												that.QUsed(obj, null, function(res1) {
 													if (func) func(res1);
 												});
 											} else if (cres.cancel) {
@@ -1122,18 +1167,19 @@
 										}
 									});
 								} else {
-									//继续支付   扣掉券的信息
-									that.QUsed(q, function(res1) {
+									//直接支付 扣掉券的信息
+									that.QUsed(obj, b, function(res1) {
 										if (func) func(res1);
 									});
+
 								}
+
 							} else {
 								//无券或者异常
 								res.code = -1;
 								if (func) func(res);
 							}
 						});
-
 				} else {}
 			}
 		}
