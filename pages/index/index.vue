@@ -1,39 +1,34 @@
 <template>
-	<view class="content">
-		<text>123456</text>
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text v-on:click='change()' class="title">{{title+"："+context}}</text>
-		</view>
+	<view>
+		<button @click="Pay(0)">开始结算</button>
+		<button @click="Pay(1)">开始退款</button>
 	</view>
 </template>
-<script> 
+<script>
 	export default {
 		//变量初始化
 		data() {
-			return {
-				title: 'Hello',
-				context: "点了",
-				onShowrefresh:true,
-				lists: ['a', 'b', 'c'],
-				lst: [{
-					str: 'a'
-				}, {
-					str: 'b'
-				}, {
-					str: 'c'
-				}]
-			}
+			return {}
 		},
 		//方法初始化
 		methods: {
+			Pay: function(e) {
+				if (e == 0) {
+					uni.navigateTo({
+						url: "../Payment/Payment"
+					})
+				} else if (e == 1) {
+					uni.navigateTo({
+						url: "../Refund/Refund"
+					})
+				}
+			},
 			change: function(e) {
-				let i=10;
-				while(i>0){
+				let i = 10;
+				while (i > 0) {
 					console.info(i);
 					i--;
 				}
-				console.info('aaaassss');
 				// uni.showModal({
 				// 	title: '提示',
 				// 	content: '这是一个模态弹窗',
@@ -45,43 +40,41 @@
 				// 		}
 				// 	}
 				// });
-				 // this.$store.dispatch('popup/open', {
-				 // 	title: '提示',
-				 // 	content: '修改按钮和颜色',
-				 // 	showOther:true,
-				 // showCancel:false,
-				 // showConfirm:false,
-				 // 	confirm(res) 
-					// {
-					// 	that.context=res.confirmText
-				 // 	},
-				 // 	cancel(res) {
-					// 		that.context=res.cancelText
-				 // 	},
-					// other(res){
-					// 	that.context=res.otherText
-					// }
-				 // });
-				 
+				// this.$store.dispatch('popup/open', {
+				// 	title: '提示',
+				// 	content: '修改按钮和颜色',
+				// 	showOther:true,
+				// showCancel:false,
+				// showConfirm:false,
+				// 	confirm(res) 
+				// {
+				// 	that.context=res.confirmText
+				// 	},
+				// 	cancel(res) {
+				// 		that.context=res.cancelText
+				// 	},
+				// other(res){
+				// 	that.context=res.otherText
+				// }
+				// });
+
 				this.$showModal({
-						concent: '测试测试~',
-						showCancel: true,
-						showOther: true,
-						confirmVal: '知道了',
-						align: 'left',
-						$confirm:function(res){
-							console.log("$confirm");
-						},
-						$cancel:function(res){
-							console.log("$cancel");
-						},
-						 $other:function(res){
-							 console.log("$other");
-						 }
-					}); 
-			},
-			cc: bb 
-		
+					concent: '测试测试~',
+					showCancel: true,
+					showOther: true,
+					confirmVal: '知道了',
+					align: 'left',
+					$confirm: function(res) {
+						console.log("$confirm");
+					},
+					$cancel: function(res) {
+						console.log("$cancel");
+					},
+					$other: function(res) {
+						console.log("$other");
+					}
+				});
+			}
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
@@ -89,19 +82,19 @@
 			console.info("onLoad");
 		},
 		onShow() {
-		 
+
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
-			
+
 		},
 		onHide() {
 			//监听页面隐藏
 		},
-		onUnload(){
+		onUnload() {
 			//监听页面卸载
 		},
-		onResize(){
+		onResize() {
 			//监听窗口尺寸变化
 		},
 		onPullDownRefresh() {
@@ -120,7 +113,7 @@
 			//监听页面滚动 参数为Objec
 		},
 		onNavigationBarButtonTap() {
-		  //监听原生标题栏按钮点击事件 参数为Object
+			//监听原生标题栏按钮点击事件 参数为Object
 		},
 		onBackPress() {
 			//监听页面返回  
@@ -138,10 +131,10 @@
 		onShareTimeline() {
 			//监听用户点击又上角转发到朋友圈
 		},
-		onAddToFavorites(){
+		onAddToFavorites() {
 			//监听用户点击右上角收藏
 		}
-	
+
 	}
 	//可定义方法和变量
 	function bb() {

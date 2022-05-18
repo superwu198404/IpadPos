@@ -1,13 +1,14 @@
 <template>
 	<view>
 		<view>
+			<p>--订单信息--</p>
 			<p>总金额：{{allAmount}}</p>
 			<p>应收：{{totalAmount}}</p>
 			<p>已支付：{{yPayAmount}}</p>
 			<p>待支付：{{dPayAmount}}</p>
 		</view>
-		<!-- 商品详情 -->
 		<view>
+			<p>--商品信息--</p>
 			<view v-for="(item,index) in Products">
 				<text>{{item.NAME}}</text>-
 				<text>￥{{item.AMOUNT}}</text>-
@@ -16,18 +17,20 @@
 			</view>
 		</view>
 		<view>
+			<p>--支付方式--</p>
 			<radio-group class="radio-group" @change="radioChange">
 				<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
 					<radio :value="item.value" :checked="item.checked" /> {{item.name}}
 				</label>
 			</radio-group>
+			<view v-show="PayWay!=null">
+				支付金额:
+				<input :disabled="disablePayInput" v-model="PayAmount">
+			</view>
+			<button @click="Pay()">支付</button>
 		</view>
-		<view v-show="PayWay!=null">
-			支付金额:
-			<input :disabled="disablePayInput" v-model="PayAmount">
-		</view>
-		<button @click="Pay()">支付</button>
-		<view> 支付列表:
+		<view>
+			<p>--支付列表--</p>
 			<p>序号---支付方式---金额</p>
 			<view v-for="(way, index) in PayList">
 				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
@@ -78,8 +81,8 @@
 					NAME: "黑森林",
 					PRICE: 0.01,
 					OPRICE: 0.01,
-					AMOUNT: 20,
-					QTY: 2
+					AMOUNT: 0.01,
+					QTY: 1
 				}, {
 					PLID: "101",
 					SPID: "10101002",
@@ -89,7 +92,7 @@
 					PRICE: 0.01,
 					OPRICE: 0.01,
 					AMOUNT: 0.02,
-					QTY: 1
+					QTY: 2
 				}],
 				PayWayList: [{
 						name: '支付宝',
