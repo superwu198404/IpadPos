@@ -11,9 +11,7 @@ const  Query_Member_Assets= (a, b, func) =>{
 			acc: acc,
 			type: type,
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -30,9 +28,7 @@ const hyQuery_new= (a, b, func)=> {
 			acc: acc,
 			type: type,
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -57,9 +53,7 @@ const queryCustomCard=(p, t, func)=> {
 			}
 		},
 		phone: p
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -78,9 +72,7 @@ const QJTicktQuery= (a, b, func)=> {
 				ZZCPHX_STORE: b
 			}]
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -95,9 +87,7 @@ const QJTicktUse=(d, func)=> {
 		data: {
 			GT_IMPORT: d
 		}
-	}, "核销中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "核销中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -117,9 +107,7 @@ const couponConsume= (d,b,func)=> {
 			databody: d,
 		    bill: b
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -164,9 +152,7 @@ function QRCODE_CONSUME(e, func) {
 			"storeName": e.storename,
 			"merchantNo": e.mer_id
 		}
-	}, "核销中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "核销中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -183,9 +169,7 @@ function SALE_QUERY(m, func) {
 		"data": {
 			"merOrderId": m
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -205,9 +189,7 @@ function REFUND(e, func) {
 			"amount": e.refundnet,
 			"payTxnId": e.payTxnId
 		}
-	}, "退款中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "退款中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -227,9 +209,7 @@ function customCardpay(d, func) {
 			"ynencript": "N",
 			"databody": d
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -249,9 +229,7 @@ function customCardrefund(d, func) {
 			"ynencript": "N",
 			"databody": d
 		}
-	}, "查询中...", {
-		url: "center"
-	}).then(function(res) {
+	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -270,7 +248,7 @@ function QUERY_ALL(m, e, func) {
 	if (m == 'KG') {
 		SALE_QUERY(e, func);
 	} else {
-		e({code:true});
+		func({code:true});
 		//customCardrefund(e, func);
 	}
 }
