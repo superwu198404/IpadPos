@@ -378,9 +378,13 @@
 				} else if (t == 'ACRD') {
 
 				} else if (t == 'COUPON') {
-
+					if (func) func({
+						code: 1
+					});
 				} else {
-
+					if (func) func({
+						code: 1
+					});
 				}
 			},
 			//退款的合集
@@ -433,12 +437,24 @@
 					let that = this;
 					//会员卡退款
 					let obj = {
-						orderbill: "",
-						refundbill: "",
-						refundnet: "",
-						payTxnId: ""
+						orderbill: e.out_trade_no,
+						refundbill: e.out_refund_no,
+						refundnet: e.refund_amount
 					}
-					hy.REFUND_ALL(that.brand, function(res) {
+					if (that.brand == "KG") {
+						obj.payTxnId = "";
+					} else {
+						obj.kquser = that.kquser;
+						obj.storeid = that.KHID;
+						obj.deviceno = "13001001";
+						obj.ryid = that.RYID;
+						obj.mer_id = that.MerId;
+						obj.posid = that.POSID;
+						obj.trans_date = dateformat.getdate();
+						obj.hyid = "856666000100005005";
+					}
+
+					hy.REFUND_ALL(that.brand,obj, function(res) {
 						if (res.code) {
 							res.code = '1';
 						} else {
@@ -448,8 +464,13 @@
 					})
 				} else if (t == 'COUPON') {
 					//券的也没有
+					if (func) func({
+						code: 1
+					});
 				} else {
-
+					if (func) func({
+						code: 1
+					});
 				}
 			},
 			//查询支付结果合集
