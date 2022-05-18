@@ -15,7 +15,8 @@
 				BMID: "001",
 				GCID: "1001",
 				NAME:"武汉xxx",
-				MERID:"999990053990001"
+				MERID:"999990053990001",
+			    deviceno:"13001001"
 			}
 		},
 		onLaunch: function() {

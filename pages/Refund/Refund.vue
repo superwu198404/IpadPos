@@ -113,6 +113,7 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
+				deviceno: getApp().globalData.store.deviceno
 			}
 		},
 		methods: {
@@ -315,7 +316,7 @@
 					} else {
 						obj.kquser = that.kquser;
 						obj.storeid = that.KHID;
-						obj.deviceno = "13001001";
+						obj.deviceno =that.deviceno ;
 						obj.ryid = that.RYID;
 						obj.mer_id = that.MerId;
 						obj.posid = that.POSID;
