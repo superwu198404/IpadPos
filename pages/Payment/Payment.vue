@@ -22,7 +22,7 @@
 				</label>
 			</radio-group>
 		</view>
-		<view v-show="selectPayWay!=null">
+		<view v-show="PayWay!=null">
 			支付金额:
 			<input :disabled="disablePayInput" v-model="PayAmount">
 		</view>
@@ -36,7 +36,7 @@
 		<view>
 			<uni-popup ref="popup" :type="type" :maskClick="false">
 				<view class="uni-tip">
-					<button @click="closeCode">关闭</button>
+					<button @click="close">关闭</button>
 					付款码：
 					<input confirm-type="confirm" @confirm="ToPay" v-model="authCode">
 				</view>
@@ -73,7 +73,7 @@
 				Products: [{
 					PLID: "100",
 					BARCODE: '111111111',
-					SPID: "123456",
+					SPID: "10101001",
 					UNIT: "个",
 					NAME: "黑森林",
 					PRICE: 0.01,
@@ -82,7 +82,7 @@
 					QTY: 2
 				}, {
 					PLID: "101",
-					SPID: "456786",
+					SPID: "10101002",
 					UNIT: "袋",
 					BARCODE: '2222222222',
 					NAME: "毛毛虫",
@@ -116,7 +116,7 @@
 						fkid: "ZF04"
 					}
 				], //支付方式
-				selectPayWay: null,
+				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [],
 				// PayList: [{
@@ -148,6 +148,10 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
+				Name: getApp().globalData.store.NAME,
+				MerId: getApp().globalData.store.MERID,
+				brand: getApp().globalData.brand,
+				kquser: getApp().globalData.kquser
 			}
 		},
 		methods: {
@@ -185,6 +189,29 @@
 					console.log(err);
 				});
 			},
+			QUsed: function(d, b, func) {
+				//继续支付   扣掉券的信息
+				hy.TicktUse(d, b,
+					function(res) {
+						if (res.code) {
+							let used = JSON.parse(res.data);
+							if (used.GT_RETURN) {
+								let GT_RETURN = used.GT_RETURN[0];
+								if (GT_RETURN.TYPE == "E") {
+									res.code = -1;
+									res.msg = GT_RETURN.MESSAGE
+								} else {
+									res.code = 1;
+								}
+							} else {
+								res.code = 1;
+							}
+						} else {
+							res.code = -1;
+						}
+						if (func) func(res);
+					});
+			},
 			//计算已支付，待支付金额
 			CalDZFMoney: function() {
 				let ymoney = 0; //计算总的已支付金额
@@ -201,7 +228,7 @@
 				that.out_trade_no = that.out_trade_no_old + '_' + that.PayList.length;
 				return;
 				//单号防止重处理（暂不启用）
-				let pay_way = that.PayWayList.find(function(item) {
+				let pay_way = that.PayWay.find(function(item) {
 					return item.type == that.selectPayWay;
 				});
 				if (pay_way) {
@@ -219,19 +246,10 @@
 				let payobj = this.PayWayList.find(item => {
 					return item.value == value
 				});
-				this.selectPayWay = payobj.type;
+				this.PayWay = payobj.type;
 				this.selectPayWayVal = payobj.value;
-				if (this.selectPayWay == 'AliPayService' || this.selectPayWay == 'WxPayService') {
-					this.PayAmount = this.dPayAmount;
-					this.disablePayInput = false;
-				} else {
-					//券支付
-					if (this.selectPayWay == "qzf") {
-						//禁用输入金额框
-						this.disablePayInput = true;
-					}
-					this.PayAmount = 0;
-				}
+				this.PayAmount = this.dPayAmount;
+				this.disablePayInput = false;
 			},
 			//撤销支付订单合集
 			cancelPayAll: function(t, e, func) {
@@ -319,24 +337,16 @@
 							Result = Result.alipay_trade_fastpay_refund_query_response;
 							if (Result.code = "10000" && Result.refund_status == "REFUND_SUCCESS") {
 								//已经退款了
-								Result.code = '1';
+								Result.code = 1;
 							} else {
 								//没有退款  
-								Result.code = '0';
+								Result.code = 0;
 								that.ToRefund("正在退款中..", data.no, data.amount, "T" + data.no, array[0].value);
 							}
-
-							// that.PayList.push({
-							// 	way: "支付宝",
-							// 	amount: data.amount,
-							// 	no: "T" + data.no
-							// });
-							//查询是否已经生成退款记录
-
 							//支付成功生成记录
 							that.dPayAmount += data.amount; //等支付减去支付金额
 							that.yPayAmount -= data.amount //已支付加上支付金额
-							if (that.selectPayWay == 'AliPayService' || that.selectPayWay == 'WxPayService') {
+							if (that.PayWay == 'AliPayService' || that.PayWay == 'WxPayService') {
 								that.PayAmount = that.totalAmount - that.yPayAmount;
 							} else {
 								that.PayAmount = 0;
@@ -357,7 +367,7 @@
 									//业务失败
 									res.msg = Result.sub_msg;
 								}
-								res.code = "-1";
+								res.code = -1;
 							}
 							if (func) func(res);
 						});
@@ -395,9 +405,9 @@
 							let rResult = JSON.parse(res.data);
 							rResult = rResult.alipay_trade_refund_response;
 							if (Result.code = "10000" && Result.refund_status == "REFUND_SUCCESS") { //退款成功
-								rResult.code = '1';
+								rResult.code = 1;
 							} else {
-								rResult.code = '0';
+								rResult.code = 0;
 							}
 							if (func) func(rResult);
 						},
@@ -412,11 +422,12 @@
 								} else {
 									res.msg = errResult.sub_msg;
 								}
-								res.code = '-1'
+								res.code = -1
 							}
 							if (func) func(res);
 						});
 				} else if (t == 'ACRD') {
+					let that = this;
 					//会员卡退款
 					let obj = {
 						orderbill: "",
@@ -424,34 +435,23 @@
 						refundnet: "",
 						payTxnId: ""
 					}
-					hy.REFUND_ALL('KG', function(res) {
+					hy.REFUND_ALL(that.brand, function(res) {
 						if (res.code) {
 							res.code = '1';
-							// let data = JSON.parse(res.data);
-							// if (!data.cardList) {
-							// 	//卓越
-							// } else {
-							// 	//仟吉
-							// 	let data = data.cardList;
-							// }
 						} else {
 							res.code = '-1';
-							// uni.showToast({
-							// 	title: res.msg,
-							// 	duration: 2000,
-							// 	icon: "error"
-							// });
 						}
 						if (func) func(res);
 					})
 				} else if (t == 'COUPON') {
-
+					//券的也没有
 				} else {
 
 				}
 			},
 			//查询支付结果合集
 			queryPayAll: function(t, e, func) {
+				let that = this;
 				let Result;
 				if (t == 'WX') {
 					_wx.QueryCodeScanPay("查询支付结果...", e.out_trade_no,
@@ -470,9 +470,7 @@
 							if (func) func(Result);
 						});
 				} else if (t == 'ALI') {
-					let Result;
-					let that = this;
-					_ali.Payment("查询支付结果...", "TradeQuery", this.selectPayWay, {
+					_ali.Payment("查询支付结果...", "TradeQuery", that.PayWay, {
 							out_trade_no: e.out_trade_no
 						},
 						function(res) {
@@ -482,11 +480,11 @@
 								if (qResult.trade_status == "WAIT_BUYER_PAY") {
 									//交易创建，等待买家付款 加上用户支付中提示
 									qResult.msg = "支付中，请稍后..";
-									qResult.code = '0';
+									qResult.code = 0;
 								} else {
 									//交易支付成功//生成支付记录
 									if (qResult.trade_status == "TRADE_SUCCESS") {
-										qResult.code = '1';
+										qResult.code = 1;
 									} else {
 										let msg = "";
 										if (qResult.trade_status == "TRADE_CLOSED") {
@@ -494,42 +492,37 @@
 										}
 										if (qResult.trade_status == "TRADE_FINISHED")
 											msg = "交易结束完成";
-										qResult.code = '-1';
+										qResult.code = -1;
 										qResult.msg = msg;
 									}
 								}
 							} else {
 								//异常
-								qResult.code = '-1';
+								qResult.code = -1;
 							}
 							if (func) func(qResult);
 						},
 						function(res) {
-							res.code = "-1";
+							res.code = -1;
 							res.msg = "支付异常";
 							if (func) func(res);
 						});
-				} else if ('CARD') {
+				} else if (t == 'CARD') {
 					//仟吉
-					hy.QUERY_ALL(e.out_trade_no, function(res) {
+					hy.QUERY_ALL(that.brand,e.out_trade_no, function(res) {
 						if (res.code) {
-							res.code = '1';
+							res.code = 1;
 						} else {
-							res.code = '-1';
+							res.code = -1;
 						}
-						// if(res.code){
-						// }else{
-						// 	uni.showToast({
-						// 		title: res.msg,
-						// 		duration: 2000,
-						// 		icon: "error"
-						// 	});
-						// }
 						if (func) func(res);
 					})
-
 				} else if ('COUPON') {
-
+					//券的暂时没有
+					if (func) func({
+						code: 1,
+						msg: ''
+					});
 				} else {}
 			},
 
@@ -684,7 +677,31 @@
 					fkid: payobj.fkid,
 					bill: that.out_trade_no,
 					name: payobj.name,
-					amount: that.PayAmount,
+					amount: that.dPayAmount,
+					no: that.PayList.length
+				});
+				//重新计算待支付金额
+				that.CalDZFMoney();
+				uni.showToast({
+					title: "支付成功",
+					icon: "success",
+					success: function(res) {
+						that.$refs['popup'].close();
+					}
+				})
+				//预留处理业务数据的地方
+				if (that.dPayAmount == 0) { //说明支付完毕了
+					this.CreateDBData();
+				}
+			},
+			//创建支付记录
+			createPayData1: function(e) {
+				let that = this;
+				that.PayList.push({
+					fkid: e.payobj.fkid,
+					bill: that.out_trade_no,
+					name: e.payobj.name,
+					amount: e.amount,
 					no: that.PayList.length
 				});
 				//重新计算待支付金额
@@ -719,16 +736,17 @@
 				let nums = 1;
 				var timerIndex;
 				var timerFunc = function() {
+					clearInterval(timerIndex);
 					if (nums <= 24) {
 						that.queryPayAll(t, e, function(res) {
 							if (res.code > 0) {
 								//支付成功创建支付记录
 								that.createPayData(t);
-								clearInterval(timerIndex);
+								
 							} else if (res.code == 0) {
 								//用户支付中  提示是否继续
 								if (nums % 6 == 0) {
-									clearInterval(timerIndex);
+									// clearInterval(timerIndex);
 									uni.showModal({
 										title: '提示',
 										content: '是否继续等待？',
@@ -736,10 +754,9 @@
 										cancelText: "否",
 										success: function(res) {
 											if (res.confirm) { //重启定时器继续查
-												timerIndex = setInterval(timerFunc,
-													5000);
+												timerIndex = setInterval(timerFunc, 5000);
 											} else {
-												clearInterval(timerIndex);
+												// clearInterval(timerIndex);
 												uni.showToast({
 													title: "取消支付，正在撤销订单",
 													icon: "none"
@@ -763,7 +780,7 @@
 							}
 						});
 					} else { //撤销订单
-						clearInterval(timerIndex);
+						// clearInterval(timerIndex);
 						uni.showToast({
 							title: "支付超时，正在撤销订单",
 							icon: "none"
@@ -772,162 +789,16 @@
 					}
 					nums++
 				}
-				timerFunc();
+				// timerFunc();
 				timerIndex = setInterval(timerFunc, 5000);
 			},
-			closeCode: function() {
+			close: function() {
 				this.$refs['popup'].close();
-			},
-			QUsed: function(qinfo) {
-				//继续支付   扣掉券的信息
-				hy.TicktUse([{
-						ZZCP_NUM: qinfo.ZZCP_NUM,
-						ZZCPHX_CHANNEL: qinfo.ZZCPHX_CHANNEL,
-						ZZCPHX_STORE: qinfo.ZZCPHX_STORE,
-						ZZVBELN: qinfo.ZZVBELN,
-						ZZTPRICE: "288.00", //订单金额
-						ZZCPHXDATE: dateformat.getYMD(),
-						ZZCPTIME: dateformat.getYMDS(),
-						ZZPRODUCT_ID: "000000001090100002", // 商品编码
-						ZZPRODUCT_NET: this.allAmount, //商品金额
-						ZZPRODUCT_NUM: this.Products.length //商品数量
-					}],
-					function(res) {
-						if (res.code) {
-							let used = JSON.parse(res.data);
-							if (!used.GT_RETURN[0]) {
-								//卓越
-							} else {
-								let GT_RETURN = used.GT_RETURN[0];
-								if (GT_RETURN.TYPE == "E") {
-									uni.showToast({
-										title: GT_RETURN.MESSAGE,
-										duration: 2000,
-										icon: "error"
-									});
-								} else {
-									that.PayAmount = that.dPayAmount;
-									//生成支付列表记录
-									that.PayList.push({
-										fkid: "ZF03",
-										way: "券支付",
-										amount: that.dPayAmount,
-										no: that.PayList.length + 1
-									});
-									//生成支付记录 抵扣金额=所有待支付金额
-									//......
-									if (qamount > that.dPayAmount) {
-										//放弃金额
-										let fq = qamount - that.dPayAmount; //券金额-待支付金额=放弃金额
-										//生成支付列表放弃记录
-										that.PayList.push({
-											fkid: "ZF03",
-											way: "券支付-放弃金额",
-											amount: fq,
-											no: that.PayList.length + 1
-										});
-										//生成支付记录的放弃记录
-										//......
-									}
-
-								}
-							}
-						} else {
-							uni.showToast({
-								title: res.msg,
-								duration: 2000,
-								icon: "error"
-							});
-						}
-
-					});
-			},
-			QPay: function(code) {
-				let that = this;
-				//查询券  code查询出来券的金额 
-				let qamount = 0;
-				hy.TicktQuery(code, "",
-					function(res) {
-						//有券
-						if (res.code) {
-							let q = JSON.parse(res.data);
-							qamount = q.ZZCPVALUE;
-							if (qamount > that.dPayAmount) {
-								uni.showModal({
-									title: '提示',
-									content: '券金额:' + qamount + ',大于支付金额，是否继续支付？',
-									confirmText: "是",
-									cancelText: "否",
-									success: function(res) {
-										if (res.confirm) {
-											that.QUsed(q);
-										} else if (res.cancel) {
-											return;
-										}
-									}
-								});
-							} else {
-								that.QUsed(q);
-							}
-						} else {
-							//无券或者异常
-							uni.showToast({
-								title: res.msg,
-								duration: 2000,
-								icon: "error"
-							});
-							return;
-						}
-					});
-			},
-			KPay: function() {
-				let that = this;
-				//查询券  code查询出来券的金额 
-				let kamount = 0;
-				let obj = {
-					orderInfo: {
-						ordernet: "",
-						orderbill: ""
-					},
-					paycode: "",
-					storeid: "",
-					storename: "",
-					mer_id: ""
-				};
-				//仟吉
-				hy.PAY_ALL('kg', obj, function(res) {
-					if (res.code) {
-						//仟吉就是成功  
-						let data = JSON.parse(res.data);
-						if (!data.cardList) {
-							//卓越
-
-						} else {
-							//仟吉
-							let data = data.cardList;
-						}
-						//添加支付列表
-						that.PayList.push({
-							fkid: "ZF04",
-							way: "电子卡",
-							amount: kamount,
-							no: that.PayList.length + 1
-						})
-						//生成支付记录
-
-					} else {
-						uni.showToast({
-							title: res.msg,
-							duration: 2000,
-							icon: "error"
-						});
-					}
-				})
 			},
 			//支付按钮点击事件
 			Pay: function() {
 				this.authCode = "";
-				if (!this.selectPayWay) {
+				if (!this.PayWay) {
 					uni.showToast({
 						title: '请选择支付方式',
 						duration: 2000,
@@ -936,7 +807,7 @@
 					return;
 				}
 				//券支付
-				if (this.selectPayWay != 'qzf') {
+				if (this.PayWay != 'qzf') {
 					if (!this.PayAmount) {
 						uni.showToast({
 							title: '请输入支付金额',
@@ -976,12 +847,47 @@
 								icon: "error"
 							});
 							return;
+						} else {
+							if (that.selectPayWayVal != 'COUPON') {
+								that.circleQuery(that.selectPayWayVal, param, function(res) {});
+							} else {
+								//支付成功创建支付记录
+								let resData = JSON.parse(res.data);
+								let lqmoney = 0;
+								let fqmoeny = 0; //放弃金额
+								let relmoeny = 0; //实际核销金额
+								if (resData.GT_RETURN) {
+									lqmoney = parseFloat(resData.GT_RETURN[0].VALUE2);
+								} else {
+									lqmoney = resData.lqmoney
+								}
+								if (lqmoney > that.PayAmount) {
+									//产生放弃金额
+									fqmoeny = lqmoney - that.PayAmount;
+									relmoeny = that.PayAmount;
+								} else {
+									relmoeny =lqmoney;
+								}
+								//产生核销实际金额
+								let payobj = that.PayWayList.find(item => {
+									return item.value == that.selectPayWayVal
+								});
+								let obj = {
+									amount: relmoeny,
+									t: that.selectPayWayVal,
+									payobj: payobj
+								}
+								that.createPayData1(obj);
+								if (fqmoeny > 0) {
+									payobj.name = payobj.name + "放弃";
+									obj.amount = fqmoeny;
+									that.createPayData1(obj);
+								}
+
+
+							}
 						}
-						//轮询操作
-						that.circleQuery(that.selectPayWayVal, param, function(res) {
-							debugger;
-						});
-					})
+					});
 				} else { //没值则发起查询
 					that.queryPayAll(that.selectPayWayVal, param, function(res) {
 						if (res.code > 0) { //是支付成功的
@@ -994,59 +900,7 @@
 						}
 					})
 				}
-				//  else if (that.selectPayWay == 'dzk') {
-				// 	
-				// }
-				// return;
-				// //作废
-				// if (that.selectPayWay == null) return
-				// that.UniqueBill(); //单号防重处理
-				// //券支付
-				// if (that.selectPayWay == 'qzf') {
 
-				// }
-				// //支付宝支付
-				// else if (that.selectPayWay == 'AliPayService') {
-				// 	if (!code) {
-				// 		///查询
-
-				// 		//根据单号—+序号进行查询
-				// 		title = "正在查询订单支付结果，请稍后...";
-				// 		//查询 订单
-				// 		that.OrderQuery(title, that.out_trade_no);
-				// 	} else {
-				// 		param.out_trade_no = that.out_trade_no;
-				// 		param.auth_code = code;
-				// 		param.subject = "商品支付";
-				// 		param.totalAmount = that.PayAmount;
-				// 		let t = "ALI";
-				// 		//发起支付
-				// 		that.paymentAll(t, param, function(res) {
-				// 			debugger;
-				// 			if (res.code > "0") {
-				// 				uni.showToast({
-				// 					title: "支付成功",
-				// 					icon: "success",
-				// 					success() {
-				// 						that.$refs['popup'].close();
-				// 					}
-				// 				});
-				// 			} else if (res.code == 0) {
-				// 				//轮询操作
-				// 				that.circleQuery(t, param);
-				// 			} else {
-				// 				uni.showToast({
-				// 					title: res.msg,
-				// 					icon: "error",
-				// 					success() {
-				// 						that.$refs['popup'].close();
-				// 					}
-				// 				});
-				// 			}
-
-				// 		})
-				// 	}
-				// }
 			},
 			refund: function(data) {
 				let that = this;
@@ -1065,7 +919,7 @@
 					out_request_no = common.CreateBill("K210QTD002", "001");
 					console.info(out_request_no);
 					that.sale3_obj = {
-						out_trade_no: data.no,
+						out_trade_no: data.amount,
 						refund_amount: data.amount,
 						out_request_no: out_request_no
 					};
@@ -1079,7 +933,6 @@
 									icon: "success"
 								});
 								//生成退款记录
-
 							} else {
 								//退款失败
 								uni.showToast({
@@ -1091,7 +944,7 @@
 				} else {
 					//如果有退款单号就查退款接口
 					let obj = {
-						out_trade_no: data.no,
+						out_trade_no: data.amount,
 						out_request_no: out_request_no
 					}
 					let t = "ALI";
@@ -1130,6 +983,9 @@
 			},
 			//支付方法合集
 			paymentAll: function(t, e, func) {
+				let payobj = this.PayWayList.find(item => {
+					return item.value == t
+				});
 				let Result;
 				if (t == 'WX') {
 					_wx.CodeScanPay("微信支付", e.out_trade_no, e.subject, e.auth_code, e.totalAmount * 100,
@@ -1167,16 +1023,16 @@
 							Result = Result.alipay_trade_pay_response;
 							//支付成功
 							if (Result.code == "10000") {
-								Result.code = '1';
+								Result.code = 1;
 							}
 							//支付中或者系统异常情况下 开启轮询
 							else if (Result.code == "10003" || Result.sub_code == "ACQ.SYSTEM_ERROR") {
 								if (!Result.msg) {
 									title = Result.msg;
 								}
-								Result.code = '0';
+								Result.code = 0;
 							} else {
-								Result.code = '-1';
+								Result.code = -1;
 							}
 							if (func) func(Result);
 						},
@@ -1192,14 +1048,165 @@
 									res.msg = Result.sub_msg;
 								}
 							}
-							res.code = '-1';
+							res.code = -1;
 							if (func) func(res);
 						}
 					);
-				} else if ('CARD') {
-					that.KPay(e.auth_code);
+				} else if (t == 'CARD') {
+					let that = this;
+					let obj;
+					// e.auth_code="856666000100003870";
+					e.auth_code="KG97618173949838540810";
+					
+					if (that.brand == "KG") {
+						obj = {
+							orderInfo: {
+								ordernet: e.totalAmount, //amount
+								orderbill: e.out_trade_no //merOrderId
+							},
+							paycode:e.auth_code, //卡号cardNo 
+							storeid: that.KHID, //storeNo
+							storename: that.Name, //storeName
+							mer_id: that.MerId //merchantNo 商户号
+						};
+					} else {
+						//构造参数
+						let productInfo = [];
+						that.Products.forEach(function(item, index) {
+							productInfo.push({
+								spid: item.SPID,
+								sname: item.NAME,
+								price: item.PRICE,
+								qty: item.QTY,
+								net: item.AMOUNT,
+								plid: item.PLID,
+								discrate: 0
+							});
+						});
+						obj = {
+							kquser: that.kquser,
+							mer_id: that.MerId, //商户号
+							storeid: that.KHID,
+							ryid: that.RYID,
+							paycode: e.auth_code,
+							posid: that.POSID,
+							orderInfo: {
+								ordernet: e.totalAmount,
+								orderbill: e.out_trade_no,
+								productInfo: productInfo
+							},
+							extra1: "",
+							extra2: ""
+						}
+					}
+					hy.PAY_ALL(that.brand, obj, function(res) {
+						if (res.code) {
+							res.code = 1;
+						} else {
+							res.code = -1;
+						}
+						if (func) func(res);
+					});
 				} else if ('COUPON') {
-					that.QPay(e.auth_code);
+					let that = this;
+					//查询券  code查询出来券的金额
+					let qamount = 0;
+					//仟吉的返回查询结果  卓越的假装返回结果0
+					hy.TicktQuery(e.auth_code, "",
+						function(res) {
+							//有券
+							let obj;
+							let b = null;
+							let ask = false;
+							if (res.code) {
+								if (res.data) {
+									//仟吉
+									let q = JSON.parse(res.data);
+									qamount = q.ZZCPVALUE; //仟吉会返回真正的金额  
+									if (qamount > e.totalAmount) {
+										ask = true;
+									};
+									//构造参数
+									obj = [];
+									that.Products.forEach(function(item, index) {
+										obj.push({
+											ZZCP_NUM: q.ZZCP_NUM,
+											ZZCPHX_CHANNEL: q.ZZCPHX_CHANNEL,
+											ZZCPHX_STORE: q.ZZCPHX_STORE,
+											ZZVBELN: q.ZZVBELN,
+											ZZTPRICE: e.totalAmount, //订单金额
+											ZZCPHXDATE: dateformat.getdate(),
+											ZZCPTIME: dateformat.gettimes(),
+											ZZPRODUCT_ID: item.PLID, // 商品编码
+											ZZPRODUCT_NET: item.PRICE, //商品金额
+											ZZPRODUCT_NUM: item.QTY //商品数量
+										});
+									});
+								} else {
+									//卓越
+									ask = false;
+									b = e.out_trade_no;
+									//构造参数
+									let productInfo = [];
+									that.Products.forEach(function(item, index) {
+										productInfo.push({
+											spid: item.SPID,
+											sname: item.NAME,
+											price: item.PRICE,
+											qty: item.QTY,
+											net: item.AMOUNT,
+											plid: item.PLID,
+											discrate: 0
+										});
+									});
+									obj = {
+										storeid: that.KHID,
+										kquser: that.kquser,
+										ryid: that.RYID,
+										gsid: that.GSID,
+										usedetail: [],
+										posid: that.POSID,
+										fkid: payobj.fkid,
+										lqid: e.auth_code,
+										orderInfo: {
+											ordernet: e.totalAmount, //实际支付金额
+											znet: that.allAmount, //订单总金额
+											orderbill: e.out_trade_no,
+											productInfo: productInfo
+										}
+									};
+								}
+								//只有仟吉 仟吉券金额大于支付金额的时候才会走询问
+								if (ask) {
+									uni.showModal({
+										title: '提示',
+										content: '券金额:' + qamount + ',大于支付金额，是否继续支付？',
+										confirmText: "是",
+										cancelText: "否",
+										success: function(cres) {
+											if (cres.confirm) {
+												that.QUsed(obj, null, function(res1) {
+													if (func) func(res1);
+												});
+											} else if (cres.cancel) {
+												cres.code = -1;
+												cres.msg = '已放弃支付';
+												if (func) func(cres);
+											}
+										}
+									});
+								} else {
+									//直接支付 扣掉券的信息
+									that.QUsed(obj, b, function(res1) {
+										if (func) func(res1);
+									});
+								}
+							} else {
+								//无券或者异常
+								res.code = -1;
+								if (func) func(res);
+							}
+						});
 				} else {}
 			}
 		}

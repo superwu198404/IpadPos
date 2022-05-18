@@ -111,9 +111,9 @@ const couponConsume= (d,b,func)=> {
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
-			type: "queryCustomCard",
+			type: "couponConsume",
 			kquser: configInfo.kquser,
-			ynencript: "Y",
+			ynencript: "n",
 			databody: d,
 		    bill: b
 		}
@@ -126,31 +126,31 @@ const couponConsume= (d,b,func)=> {
 	})
 };
 const HyQuery= (a,b,func)=>{
-	if(configInfo.Brand=="QJ"){
+	if(configInfo.Brand=="KG"){
 		Query_Member_Assets(a,b,func);
 	}else if(configInfo.Brand=="ZY"){
 		queryCustomCard(a,b,func);
 	}
 };
 const TicktQuery= (a,b, func)=>{
-	if(configInfo.Brand=="QJ"){
+	if(configInfo.Brand=="KG"){
 		QJTicktQuery(a,b,func);
 	}else if(configInfo.Brand=="ZY"){
-		 
+		 func({code:true})
 	}
 };
 const TicktUse= (d,b, func)=>{
-	if(configInfo.Brand=="QJ"){
-		QJTicktUse(d,b,func);
+	if(configInfo.Brand=="KG"){
+		QJTicktUse(d,func);
 	}else if(configInfo.Brand=="ZY"){
-		couponConsume(d,b);
+		couponConsume(d,b,func);
 	}
 };
  
 
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
-	Req.http("Hy/QRCODE_CONSUME", {
+	Req.http("Hy/hy", {
 		"appid": configInfo.appid,
 		"apiname": "QRCODE_CONSUME",
 		"paramkey": "cardNo",
@@ -164,7 +164,9 @@ function QRCODE_CONSUME(e, func) {
 			"storeName": e.storename,
 			"merchantNo": e.mer_id
 		}
-	}, "核销中...").then(function(res) {
+	}, "核销中...", {
+		url: "center"
+	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -173,7 +175,7 @@ function QRCODE_CONSUME(e, func) {
 
 //仟吉 支付订单查询接口
 function SALE_QUERY(m, func) {
-	Req.http("Hy/SALE_QUERY", {
+	Req.http("Hy/hy", {
 		"appid": configInfo.appid,
 		"apiname": "SALE_QUERY",
 		"paramkey": "merOrderId",
@@ -181,7 +183,9 @@ function SALE_QUERY(m, func) {
 		"data": {
 			"merOrderId": m
 		}
-	}, "查询中...").then(function(res) {
+	}, "查询中...", {
+		url: "center"
+	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -190,7 +194,7 @@ function SALE_QUERY(m, func) {
 
 //仟吉 支付订单退款接口
 function REFUND(e, func) {
-	Req.http("Hy/REFUND", {
+	Req.http("Hy/hy", {
 		"appid": configInfo.appid,
 		"apiname": "REFUND",
 		"paramkey": "merOrderId",
@@ -201,7 +205,9 @@ function REFUND(e, func) {
 			"amount": e.refundnet,
 			"payTxnId": e.payTxnId
 		}
-	}, "退款中...").then(function(res) {
+	}, "退款中...", {
+		url: "center"
+	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -210,7 +216,7 @@ function REFUND(e, func) {
 
 //卓越会员卡核销
 function customCardpay(d, func) {
-	Req.http("Hy/customCardpay", {
+	Req.http("Hy/hy", {
 		"appid": configInfo.appid,
 		"apiname": "customCardpay",
 		"paramkey": "others",
@@ -221,7 +227,9 @@ function customCardpay(d, func) {
 			"ynencript": "N",
 			"databody": d
 		}
-	}, "查询中...").then(function(res) {
+	}, "查询中...", {
+		url: "center"
+	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -230,7 +238,7 @@ function customCardpay(d, func) {
 
 //卓越卡核销后退款
 function customCardrefund(d, func) {
-	Req.http("Hy/customCardrefund", {
+	Req.http("Hy/hy", {
 		"appid": configInfo.appid,
 		"apiname": "customCardrefund",
 		"paramkey": "bill",
@@ -241,7 +249,9 @@ function customCardrefund(d, func) {
 			"ynencript": "N",
 			"databody": d
 		}
-	}, "查询中...").then(function(res) {
+	}, "查询中...", {
+		url: "center"
+	}).then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -260,6 +270,7 @@ function QUERY_ALL(m, e, func) {
 	if (m == 'KG') {
 		SALE_QUERY(e, func);
 	} else {
+		e({code:true});
 		//customCardrefund(e, func);
 	}
 }
