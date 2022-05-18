@@ -28,10 +28,9 @@
 		</view>
 		<button @click="Pay()">支付</button>
 		<view> 支付列表:
-			<p>序号---支付方式---金额--操作</p>
+			<p>序号---支付方式---金额</p>
 			<view v-for="(way, index) in PayList">
-				{{ way.no }} --- {{ way.name }} ---{{way.amount}}-- <label style="width:50rpx;"
-					@click=refund(way)>退款</label>
+				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
 			</view>
 		</view>
 		<view>
@@ -77,8 +76,8 @@
 					SPID: "123456",
 					UNIT: "个",
 					NAME: "黑森林",
-					PRICE: 10,
-					OPRICE: 10,
+					PRICE: 0.01,
+					OPRICE: 0.01,
 					AMOUNT: 20,
 					QTY: 2
 				}, {
@@ -87,10 +86,10 @@
 					UNIT: "袋",
 					BARCODE: '2222222222',
 					NAME: "毛毛虫",
-					PRICE: 12,
-					OPRICE: 12,
-					AMOUNT: 24,
-					QTY: 2
+					PRICE: 0.01,
+					OPRICE: 0.01,
+					AMOUNT: 0.02,
+					QTY: 1
 				}],
 				PayWayList: [{
 						name: '支付宝',
@@ -119,19 +118,20 @@
 				], //支付方式
 				selectPayWay: null,
 				selectPayWayVal: null,
-				PayList: [{
-					bill: "652313345645663",
-					name: "支付宝",
-					amount: 40,
-					no: 0, //序号
-					fkid: "ZF01"
-				}, {
-					bill: "652313345645663",
-					name: "微信",
-					amount: 3.99,
-					no: 1, //序号
-					fkid: "ZF02"
-				}],
+				PayList: [],
+				// PayList: [{
+				// 	bill: "652313345645663",
+				// 	name: "支付宝",
+				// 	amount: 39.99,
+				// 	no: 0, //序号
+				// 	fkid: "ZF01"
+				// }, {
+				// 	bill: "652313345645663",
+				// 	name: "微信",
+				// 	amount: 0.01,
+				// 	no: 1, //序号
+				// 	fkid: "ZF02"
+				// }],
 				authCode: null,
 				out_trade_no_old: "", //原定单号
 				out_trade_no: "", //单次发起支付的订单号（匹配多笔支付的操作 采用原订单号加序号的规则）
@@ -156,21 +156,21 @@
 				//首先创建销售表结构
 				this.CreatSaleTable();
 
+				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
+				this.out_trade_no = this.out_trade_no_old
+				console.log("支付订单号" + this.out_trade_no);
 				let spArr = this.Products;
 				let money = 0;
 				for (var i = 0; i < spArr.length; i++) {
 					money += spArr[i].AMOUNT;
 				}
-				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
-				this.out_trade_no = this.out_trade_no_old
-				console.log("订单号" + this.out_trade_no);
 				this.allAmount = money;
 				this.totalAmount = money;
 				this.CalDZFMoney();
 				setTimeout(() => { //测试时加的延迟定时器
-					// this.CreateDBData();
-					this.SearcheOrder("K210QTD00112022516175759256");
-					// this.TestDB();
+					//this.CreateDBData();
+					//this.SearcheOrder("K210QTD00112022516175759256");
+					//this.TestDB();
 				}, 3000);
 
 			},
@@ -582,7 +582,7 @@
 						KHID: this.KHID,
 						POSID: this.POSID,
 						SPID: this.Products[i].SPID,
-						NO: i + 1,
+						NO: i,
 						PLID: this.Products[i].PLID,
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
@@ -618,6 +618,7 @@
 						NO: this.PayList[i].no,
 						FKID: this.PayList[i].fkid,
 						AMT: this.PayList[i].amount,
+						ID: "", //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
@@ -702,7 +703,7 @@
 			},
 			TestDB: function() {
 				let sql = [
-					"insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values(\"K210QTD00112022516171757506_2\",DATETIME(\"2022-05-16\"),DATETIME(\"2022-05-16 17:18:42\"),\"K210QTD001\",\"1\",\"123456\",\"1\",\"100\",\"4533331313\",\"个\",\"2\",\"10\",\"10\",\"10\",\"0\",\"N\",null,\"N\",null,\"2022\",\"5\",\"18\",\"17\",\"10086\",\"1001\",null,null,\"001\")"
+					"update SALE003 set amt='0.01' where bill='K210QTD00112022516175759256' and no='1')"
 				];
 				db.SqliteHelper.get().executeDml(sql, "订单创建中", function(res) {
 					console.log("订单创建成功");

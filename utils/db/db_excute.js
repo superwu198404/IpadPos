@@ -132,7 +132,7 @@ var mySqllite = function() {
 				inputParm.name = name;
 				inputParm.operation = pm_dboperation;
 				inputParm.success = (e) => {
-					
+
 					return resolve({
 						code: true,
 						msg: e
@@ -144,10 +144,10 @@ var mySqllite = function() {
 						msg: e
 					})
 				}
-				
+
 				for (var prm in otherParm) {
 					inputParm[prm] = otherParm[prm];
-				} 
+				}
 				plus.sqlite[pm_dboperation](inputParm);
 
 			}
@@ -167,6 +167,12 @@ var mySqllite = function() {
 			title: msg,
 			mask: true
 		})
+		if (isopen()) {
+			return {
+				code: true,
+				msg: "已经是打开的" //防止重复打开报错
+			};
+		}
 		return getOperationPromise(dbOperTionEnum.openDatabase, {
 			path: path
 		});

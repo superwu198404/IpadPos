@@ -136,5 +136,7 @@ const Refund = (title, out_trade_no, out_refund_no, total_fee, func,func2) => {
 export default {
 	CodePayment,
 	CodeScanPay,
-	QueryCodeScanPay
+	QueryCodeScanPay,
+	QueryRefund,
+	Refund
 }
