@@ -33,7 +33,7 @@
 			<p>--退款列表--</p>
 			<p>序号---退款方式---金额</p>
 			<view v-for="(way, index) in RefundList">
-				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
+				--{{ way.no }} --- {{ way.name }} ---{{way.amount}}
 			</view>
 		</view>
 	</view>
@@ -50,6 +50,7 @@
 	export default {
 		data() {
 			return {
+				CanBack: false, //是否允许退出
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //实际支付金额
 				yRefundAmount: 0, //已退款金额
@@ -121,11 +122,22 @@
 				this.out_refund_no = this.out_refund_no_old;
 				console.log("退款订单号" + this.out_refund_no);
 				//this.TestDB();
+			}, //返回事件
+			onBackPress(e) {
+				if (this.PayList.length > 0 && this.PayAmount > 0) { //如果发起支付了，要判断支付完毕没有
+					if (!this.CanBack) {
+						uni.showToast({
+							title: "抱歉，还有待支付金额",
+							icon: "error"
+						})
+						return true; //返回true阻止默认操作
+					}
+				}
 			},
 			//测试方法
 			TestDB: function() {
 				// let sql = [
-				// 	 "update SALE001 set TNET='40' where bill='K210QTD00112022516175759256'"
+				// 	 "insert into SALE003(bill,no) values('123321',0)"
 				// ];
 				// db.SqliteHelper.get().executeDml(sql, "测试sql 执行中", function(res) {
 				// 	console.log("测试sql 执行成功");
@@ -134,8 +146,9 @@
 				// 	console.log("测试sql 执行失败");
 				// 	console.log(err);
 				// });
-				let sql = "select * from POS_TXFILE where STR1='K210QTD001001202251810291164'";
-				db.SqliteHelper.get().executeQry(sql, "测试sql 执行中", function(res) {
+				// return
+				let sql1 = "select * from SALE003 where bill='123321'";
+				db.SqliteHelper.get().executeQry(sql1, "测试sql 执行中", function(res) {
 					console.log("测试sql 查询成功");
 					console.log(res);
 				}, function(err) {
@@ -350,9 +363,9 @@
 					})
 					return false;
 				}
-				if (!that.no) {
+				if (that.no == null || that.no == undefined || that.no.toString().trim() == "") { //排除0
 					uni.showToast({
-						title: "请输入退款单序号",
+						title: "请输入订单序号",
 						icon: "error"
 					})
 					return false;
@@ -444,28 +457,42 @@
 			//创建退款记录
 			createPayData: function(t) {
 				let that = this;
-				let payobj = that.PayWayList.find(item => {
-					return item.value == t
-				});
-				that.RefundList.push({
-					fkid: payobj.fkid,
-					bill: that.out_refund_no,
-					name: payobj.name,
-					amount: that.RefundAmount,
-					no: that.RefundList.length
-				});
-				//重新计算待支付金额
-				that.CalDZFMoney();
-				uni.showToast({
-					title: "退款成功",
-					icon: "success",
-					success: function(res) {
-						//that.$refs['popup'].close();
-					}
+				let arr = that.RefundList.filter(function(v, i, ar) {
+					return v.amount == that.RefundAmount && v.no == that.no;
 				})
-				//预留处理业务数据的地方
-				if (that.dRefundAmount == 0) { //说明已经退款完毕了
-					this.CreateDBData();
+				if (arr.length == 0) { //说明没有追加过该笔退款
+					let payobj = that.PayWayList.find(item => {
+						return item.value == t
+					});
+					that.RefundList.push({
+						fkid: payobj.fkid,
+						bill: that.out_refund_no,
+						name: payobj.name,
+						amount: that.RefundAmount,
+						no: that.RefundList.length
+					});
+					//重新计算待支付金额
+					that.CalDZFMoney();
+					uni.showToast({
+						title: "退款成功",
+						icon: "success",
+						success: function(res) {
+							//that.$refs['popup'].close();
+						}
+					})
+					//预留处理业务数据的地方
+					if (that.dRefundAmount == 0) { //说明已经退款完毕了
+						this.CanBack = true; //可以返回了
+						this.CreateDBData();
+					}
+				}else{
+					uni.showToast({
+						title: "本单已退款成功",
+						icon: "error",
+						success: function(res) {
+							//that.$refs['popup'].close();
+						}
+					})
 				}
 			},
 			//创建订单数据
@@ -581,6 +608,7 @@
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
 
+				//console.log("开始生成订单数据");
 				// console.log(sql1.sqlliteArr);
 				// console.log(sql2.sqlliteArr);
 				// console.log(sql3.sqlliteArr);

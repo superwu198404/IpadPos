@@ -6646,44 +6646,47 @@ var render = function() {
         [
           _c("p", { attrs: { _i: 2 } }, [_vm._v("--订单信息--")]),
           _c("p", { attrs: { _i: 3 } }, [
-            _vm._v("总金额：" + _vm._$g(3, "t0-0"))
+            _vm._v("订单号：" + _vm._$g(3, "t0-0"))
           ]),
           _c("p", { attrs: { _i: 4 } }, [
-            _vm._v("应收：" + _vm._$g(4, "t0-0"))
+            _vm._v("总金额：" + _vm._$g(4, "t0-0"))
           ]),
           _c("p", { attrs: { _i: 5 } }, [
-            _vm._v("已支付：" + _vm._$g(5, "t0-0"))
+            _vm._v("应收：" + _vm._$g(5, "t0-0"))
           ]),
           _c("p", { attrs: { _i: 6 } }, [
-            _vm._v("待支付：" + _vm._$g(6, "t0-0"))
+            _vm._v("已支付：" + _vm._$g(6, "t0-0"))
+          ]),
+          _c("p", { attrs: { _i: 7 } }, [
+            _vm._v("待支付：" + _vm._$g(7, "t0-0"))
           ])
         ],
         1
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 7 } },
+        { attrs: { _i: 8 } },
         [
-          _c("p", { attrs: { _i: 8 } }, [_vm._v("--商品信息--")]),
-          _vm._l(_vm._$g(9, "f"), function(item, index, $20, $30) {
+          _c("p", { attrs: { _i: 9 } }, [_vm._v("--商品信息--")]),
+          _vm._l(_vm._$g(10, "f"), function(item, index, $20, $30) {
             return _c(
               "v-uni-view",
-              { key: item, attrs: { _i: "9-" + $30 } },
+              { key: item, attrs: { _i: "10-" + $30 } },
               [
-                _c("v-uni-text", { attrs: { _i: "10-" + $30 } }, [
-                  _vm._v(_vm._$g("10-" + $30, "t0-0"))
-                ]),
-                _vm._v("-"),
                 _c("v-uni-text", { attrs: { _i: "11-" + $30 } }, [
-                  _vm._v("￥" + _vm._$g("11-" + $30, "t0-0"))
+                  _vm._v(_vm._$g("11-" + $30, "t0-0"))
                 ]),
                 _vm._v("-"),
                 _c("v-uni-text", { attrs: { _i: "12-" + $30 } }, [
-                  _vm._v(_vm._$g("12-" + $30, "t0-0") + "元/kg")
+                  _vm._v("￥" + _vm._$g("12-" + $30, "t0-0"))
                 ]),
                 _vm._v("-"),
                 _c("v-uni-text", { attrs: { _i: "13-" + $30 } }, [
-                  _vm._v("x" + _vm._$g("13-" + $30, "t0-0"))
+                  _vm._v(_vm._$g("13-" + $30, "t0-0") + "元/kg")
+                ]),
+                _vm._v("-"),
+                _c("v-uni-text", { attrs: { _i: "14-" + $30 } }, [
+                  _vm._v("x" + _vm._$g("14-" + $30, "t0-0"))
                 ])
               ],
               1
@@ -6694,37 +6697,37 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 14 } },
+        { attrs: { _i: 15 } },
         [
-          _c("p", { attrs: { _i: 15 } }, [_vm._v("--支付方式--")]),
+          _c("p", { attrs: { _i: 16 } }, [_vm._v("--支付方式--")]),
           _c(
             "v-uni-radio-group",
             {
-              staticClass: _vm._$g(16, "sc"),
-              attrs: { _i: 16 },
+              staticClass: _vm._$g(17, "sc"),
+              attrs: { _i: 17 },
               on: {
                 change: function($event) {
                   return _vm.$handleViewEvent($event)
                 }
               }
             },
-            _vm._l(_vm._$g(17, "f"), function(item, index, $21, $31) {
+            _vm._l(_vm._$g(18, "f"), function(item, index, $21, $31) {
               return _c(
                 "v-uni-label",
                 {
                   key: item,
-                  staticClass: _vm._$g("17-" + $31, "sc"),
-                  attrs: { _i: "17-" + $31 }
+                  staticClass: _vm._$g("18-" + $31, "sc"),
+                  attrs: { _i: "18-" + $31 }
                 },
                 [
                   _c("v-uni-radio", {
                     attrs: {
-                      value: _vm._$g("18-" + $31, "a-value"),
-                      checked: _vm._$g("18-" + $31, "a-checked"),
-                      _i: "18-" + $31
+                      value: _vm._$g("19-" + $31, "a-value"),
+                      checked: _vm._$g("19-" + $31, "a-checked"),
+                      _i: "19-" + $31
                     }
                   }),
-                  _vm._v(_vm._$g("17-" + $31, "t1-0"))
+                  _vm._v(_vm._$g("18-" + $31, "t1-0"))
                 ],
                 1
               )
@@ -6738,20 +6741,20 @@ var render = function() {
                 {
                   name: "show",
                   rawName: "v-show",
-                  value: _vm._$g(19, "v-show"),
-                  expression: "_$g(19,'v-show')"
+                  value: _vm._$g(20, "v-show"),
+                  expression: "_$g(20,'v-show')"
                 }
               ],
-              attrs: { _i: 19 }
+              attrs: { _i: 20 }
             },
             [
               _vm._v("支付金额:"),
               _c("v-uni-input", {
-                attrs: { disabled: _vm._$g(20, "a-disabled"), _i: 20 },
+                attrs: { disabled: _vm._$g(21, "a-disabled"), _i: 21 },
                 model: {
-                  value: _vm._$g(20, "v-model"),
+                  value: _vm._$g(21, "v-model"),
                   callback: function($$v) {
-                    _vm.$handleVModelEvent(20, $$v)
+                    _vm.$handleVModelEvent(21, $$v)
                   },
                   expression: "PayAmount"
                 }
@@ -6762,7 +6765,7 @@ var render = function() {
           _c(
             "v-uni-button",
             {
-              attrs: { _i: 21 },
+              attrs: { _i: 22 },
               on: {
                 click: function($event) {
                   return _vm.$handleViewEvent($event)
@@ -6776,18 +6779,18 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 22 } },
+        { attrs: { _i: 23 } },
         [
-          _c("p", { attrs: { _i: 23 } }, [_vm._v("--支付列表--")]),
-          _c("p", { attrs: { _i: 24 } }, [_vm._v("序号---支付方式---金额")]),
-          _vm._l(_vm._$g(25, "f"), function(way, index, $22, $32) {
-            return _c("v-uni-view", { key: way, attrs: { _i: "25-" + $32 } }, [
+          _c("p", { attrs: { _i: 24 } }, [_vm._v("--支付列表--")]),
+          _c("p", { attrs: { _i: 25 } }, [_vm._v("序号---支付方式---金额")]),
+          _vm._l(_vm._$g(26, "f"), function(way, index, $22, $32) {
+            return _c("v-uni-view", { key: way, attrs: { _i: "26-" + $32 } }, [
               _vm._v(
-                _vm._$g("25-" + $32, "t0-0") +
+                _vm._$g("26-" + $32, "t0-0") +
                   " --- " +
-                  _vm._$g("25-" + $32, "t0-1") +
+                  _vm._$g("26-" + $32, "t0-1") +
                   " ---" +
-                  _vm._$g("25-" + $32, "t0-2")
+                  _vm._$g("26-" + $32, "t0-2")
               )
             ])
           })
@@ -6796,20 +6799,20 @@ var render = function() {
       ),
       _c(
         "v-uni-view",
-        { attrs: { _i: 26 } },
+        { attrs: { _i: 27 } },
         [
           _c(
             "uni-popup",
-            { ref: "popup", attrs: { _i: 27 } },
+            { ref: "popup", attrs: { _i: 28 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(28, "sc"), attrs: { _i: 28 } },
+                { staticClass: _vm._$g(29, "sc"), attrs: { _i: 29 } },
                 [
                   _c(
                     "v-uni-button",
                     {
-                      attrs: { _i: 29 },
+                      attrs: { _i: 30 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
@@ -6820,16 +6823,16 @@ var render = function() {
                   ),
                   _vm._v("付款码："),
                   _c("v-uni-input", {
-                    attrs: { "confirm-type": "confirm", _i: 30 },
+                    attrs: { "confirm-type": "confirm", _i: 31 },
                     on: {
                       confirm: function($event) {
                         return _vm.$handleViewEvent($event)
                       }
                     },
                     model: {
-                      value: _vm._$g(30, "v-model"),
+                      value: _vm._$g(31, "v-model"),
                       callback: function($$v) {
-                        _vm.$handleVModelEvent(30, $$v)
+                        _vm.$handleVModelEvent(31, $$v)
                       },
                       expression: "authCode"
                     }
@@ -7203,7 +7206,8 @@ var render = function() {
           _vm._l(_vm._$g(29, "f"), function(way, index, $22, $32) {
             return _c("v-uni-view", { key: way, attrs: { _i: "29-" + $32 } }, [
               _vm._v(
-                _vm._$g("29-" + $32, "t0-0") +
+                "--" +
+                  _vm._$g("29-" + $32, "t0-0") +
                   " --- " +
                   _vm._$g("29-" + $32, "t0-1") +
                   " ---" +

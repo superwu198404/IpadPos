@@ -2,6 +2,7 @@
 	<view>
 		<view>
 			<p>--订单信息--</p>
+			<p>订单号：{{out_trade_no_old}}</p>
 			<p>总金额：{{allAmount}}</p>
 			<p>应收：{{totalAmount}}</p>
 			<p>已支付：{{yPayAmount}}</p>
@@ -66,6 +67,7 @@
 		},
 		data() {
 			return {
+				CanBack: false, //是否允许退出
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -175,11 +177,23 @@
 				this.totalAmount = money;
 				this.CalDZFMoney();
 				setTimeout(() => { //测试时加的延迟定时器
-					//this.CreateDBData();
+					// this.CreateDBData();
 					//this.SearcheOrder("K210QTD00112022516175759256");
 					//this.TestDB();
 				}, 3000);
 
+			},
+			//返回事件
+			onBackPress(e) {
+				if (this.PayList.length > 0 && this.PayAmount > 0) { //如果发起支付了，要判断支付完毕没有
+					if (!this.CanBack) {
+						uni.showToast({
+							title: "抱歉，还有待支付金额",
+							icon: "error"
+						})
+						return true; //返回true阻止默认操作
+					}
+				}
 			},
 			//创建销售表结构
 			CreatSaleTable: function() {
@@ -454,7 +468,7 @@
 						obj.hyid = "856666000100005005";
 					}
 
-					hy.REFUND_ALL(that.brand,obj, function(res) {
+					hy.REFUND_ALL(that.brand, obj, function(res) {
 						if (res.code) {
 							res.code = '1';
 						} else {
@@ -694,52 +708,42 @@
 			//创建支付记录
 			createPayData: function(t) {
 				let that = this;
-				let payobj = that.PayWayList.find(item => {
-					return item.value == t
-				});
-				that.PayList.push({
-					fkid: payobj.fkid,
-					bill: that.out_trade_no,
-					name: payobj.name,
-					amount: that.dPayAmount,
-					no: that.PayList.length
-				});
-				//重新计算待支付金额
-				that.CalDZFMoney();
-				uni.showToast({
-					title: "支付成功",
-					icon: "success",
-					success: function(res) {
-						that.$refs['popup'].close();
-					}
+				let arr = that.PayList.filter(function(v, i, ar) {
+					return v.amount == that.RefundAmount && v.no == that.no;
 				})
-				//预留处理业务数据的地方
-				if (that.dPayAmount == 0) { //说明支付完毕了
-					this.CreateDBData();
-				}
-			},
-			//创建支付记录
-			createPayData1: function(e) {
-				let that = this;
-				that.PayList.push({
-					fkid: e.payobj.fkid,
-					bill: that.out_trade_no,
-					name: e.payobj.name,
-					amount: e.amount,
-					no: that.PayList.length
-				});
-				//重新计算待支付金额
-				that.CalDZFMoney();
-				uni.showToast({
-					title: "支付成功",
-					icon: "success",
-					success: function(res) {
-						that.$refs['popup'].close();
+				if (arr.length == 0) { //说明没有追加过该笔支付记录
+					let payobj = that.PayWayList.find(item => {
+						return item.value == t
+					});
+					that.PayList.push({
+						fkid: payobj.fkid,
+						bill: that.out_trade_no,
+						name: payobj.name,
+						amount: that.PayAmount,
+						no: that.PayList.length
+					});
+					//重新计算待支付金额
+					that.CalDZFMoney();
+					uni.showToast({
+						title: "支付成功",
+						icon: "success",
+						success: function(res) {
+							that.$refs['popup'].close();
+						}
+					})
+					//预留处理业务数据的地方
+					if (that.dPayAmount == 0) { //说明支付完毕了
+						this.CanBack = true; //可以返回了
+						this.CreateDBData();
 					}
-				})
-				//预留处理业务数据的地方
-				if (that.dPayAmount == 0) { //说明支付完毕了
-					this.CreateDBData();
+				} else {
+					uni.showToast({
+						title: "本单已退款成功",
+						icon: "error",
+						success: function(res) {
+							//that.$refs['popup'].close();
+						}
+					})
 				}
 			},
 			TestDB: function() {

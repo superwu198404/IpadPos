@@ -7,7 +7,7 @@
 			store: {
 				GSID: "1001",
 				KHID: "K0101QTDS1",
-				POSID: "001",
+				POSID: "1",
 				RYID: "10086",
 				KCDID: "123",
 				DPID: "123",

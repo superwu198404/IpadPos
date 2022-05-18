@@ -197,19 +197,23 @@ let httpFunc = function(pm_data) {
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
-					return reject(new retData(false, res.errMsg));
+					return resolve(new retData(false, res.errMsg));
 				}
 			},
 			fail: (res) => {
 				uni.hideLoading();
-				return reject(res);
+				console.log(res);
+				return resolve(new retData(false, res.errMsg));
 			}
 		})
-	}).catch(function(reason) {
-		//if (catchfun)
-		//catchfun(reason);
-		console.log('异常捕捉catch:', reason);
-	});
+	})
+	//去除catch 因为没有回调方法来处理 
+	// .catch(function(reason) {
+	// 	//if (catchfun)
+	// 	//catchfun(reason);
+	// 	console.log('异常捕捉catch:', reason);
+	// 	return reject(new retData(false, reason.errMsg));
+	// });
 }
 
 

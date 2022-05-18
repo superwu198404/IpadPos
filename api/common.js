@@ -60,7 +60,7 @@ var CreateSQL = function(e, t) {
 				nameStr += name + ",";
 				let data = e[i][name];
 				if (name.toUpperCase().indexOf('DATE') >= 0 || name.toUpperCase().indexOf('TIME') > 0) {
-					if (data) {
+					if (data != null && data != undefined && data.toString().trim() != "") { //包含0的影响
 						valStr += "TO_DATE('" + data + "','yyyy-MM-dd HH24:mi:ss'),";
 						liteStr += 'DATETIME("' + data + '"),';
 					} else {
@@ -68,7 +68,7 @@ var CreateSQL = function(e, t) {
 						liteStr += "null,";
 					}
 				} else {
-					if (data) {
+					if (data != null && data != undefined && data.toString().trim() != "") {
 						valStr += "'" + data + "',";
 						liteStr += '"' + data + '",';
 					} else {
@@ -95,7 +95,7 @@ var CreateSQL = function(e, t) {
 			nameStr += name + ",";
 			let data = e[name];
 			if (name.toUpperCase().indexOf('DATE') >= 0 || name.toUpperCase().indexOf('TIME') > 0) {
-				if (data) {
+				if (data != null && data != undefined && data.toString().trim() != "") {
 					valStr += "TO_DATE('" + data + "','yyyy-MM-dd HH24:mi:ss'),";
 					liteStr += 'DATETIME("' + data + '"),';
 				} else {
@@ -103,7 +103,7 @@ var CreateSQL = function(e, t) {
 					liteStr += "null,";
 				}
 			} else {
-				if (data) {
+				if (data != null && data != undefined && data.toString().trim() != "") {
 					valStr += "'" + data + "',";
 					liteStr += '"' + data + '",';
 				} else {
