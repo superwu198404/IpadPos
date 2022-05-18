@@ -6,7 +6,7 @@
 			brand: "KG",
 			store: {
 				GSID: "1001",
-				KHID: "K210QTD001",
+				KHID: "K0101QTDS1",
 				POSID: "001",
 				RYID: "10086",
 				KCDID: "123",

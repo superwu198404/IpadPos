@@ -74,7 +74,7 @@
 				Products: [{
 					PLID: "100",
 					BARCODE: '111111111',
-					SPID: "123456",
+					SPID: "10101001",
 					UNIT: "个",
 					NAME: "黑森林",
 					PRICE: 10,
@@ -83,7 +83,7 @@
 					QTY: 2
 				}, {
 					PLID: "101",
-					SPID: "456786",
+					SPID: "10101002",
 					UNIT: "袋",
 					BARCODE: '2222222222',
 					NAME: "毛毛虫",
@@ -151,8 +151,7 @@
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
 				brand: getApp().globalData.brand,
-				kquser:getApp().globalData.kquser 
-
+				kquser: getApp().globalData.kquser
 			}
 		},
 		methods: {
@@ -193,8 +192,8 @@
 				hy.TicktUse(d, b,
 					function(res) {
 						if (res.code) {
-							if (res.data) {
-								let used = JSON.parse(res.data);
+							let used = JSON.parse(res.data);
+							if (used.GT_RETURN) {
 								let GT_RETURN = used.GT_RETURN[0];
 								if (GT_RETURN.TYPE == "E") {
 									res.code = -1;
@@ -205,7 +204,6 @@
 							} else {
 								res.code = 1;
 							}
-
 						} else {
 							res.code = -1;
 						}
@@ -248,13 +246,8 @@
 				});
 				this.PayWay = payobj.type;
 				this.selectPayWayVal = payobj.value;
-				if(this.PayWay == "qzf"){
-					this.disablePayInput = true;
-					this.PayAmount = 0;
-				}else{
-					this.PayAmount = this.dPayAmount;
-					this.disablePayInput = false;
-				}
+				this.PayAmount = this.dPayAmount;
+				this.disablePayInput = false;
 			},
 			//撤销支付订单合集
 			cancelPayAll: function(t, e, func) {
@@ -514,7 +507,7 @@
 						});
 				} else if (t == 'CARD') {
 					//仟吉
-					hy.QUERY_ALL(e.out_trade_no, function(res) {
+					hy.QUERY_ALL(that.brand,e.out_trade_no, function(res) {
 						if (res.code) {
 							res.code = 1;
 						} else {
@@ -698,6 +691,30 @@
 					this.CreateDBData();
 				}
 			},
+			//创建支付记录
+			createPayData1: function(e) {
+				let that = this;
+				that.PayList.push({
+					fkid: e.payobj.fkid,
+					bill: that.out_trade_no,
+					name: e.payobj.name,
+					amount: e.amount,
+					no: that.PayList.length
+				});
+				//重新计算待支付金额
+				that.CalDZFMoney();
+				uni.showToast({
+					title: "支付成功",
+					icon: "success",
+					success: function(res) {
+						that.$refs['popup'].close();
+					}
+				})
+				//预留处理业务数据的地方
+				if (that.dPayAmount == 0) { //说明支付完毕了
+					this.CreateDBData();
+				}
+			},
 			TestDB: function() {
 				let sql = [
 					"insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values(\"K210QTD00112022516171757506_2\",DATETIME(\"2022-05-16\"),DATETIME(\"2022-05-16 17:18:42\"),\"K210QTD001\",\"1\",\"123456\",\"1\",\"100\",\"4533331313\",\"个\",\"2\",\"10\",\"10\",\"10\",\"0\",\"N\",null,\"N\",null,\"2022\",\"5\",\"18\",\"17\",\"10086\",\"1001\",null,null,\"001\")"
@@ -716,16 +733,17 @@
 				let nums = 1;
 				var timerIndex;
 				var timerFunc = function() {
+					clearInterval(timerIndex);
 					if (nums <= 24) {
 						that.queryPayAll(t, e, function(res) {
 							if (res.code > 0) {
 								//支付成功创建支付记录
 								that.createPayData(t);
-								clearInterval(timerIndex);
+								
 							} else if (res.code == 0) {
 								//用户支付中  提示是否继续
 								if (nums % 6 == 0) {
-									clearInterval(timerIndex);
+									// clearInterval(timerIndex);
 									uni.showModal({
 										title: '提示',
 										content: '是否继续等待？',
@@ -733,9 +751,9 @@
 										cancelText: "否",
 										success: function(res) {
 											if (res.confirm) { //重启定时器继续查
-												timerIndex = setInterval(timerFunc,5000);
+												timerIndex = setInterval(timerFunc, 5000);
 											} else {
-												clearInterval(timerIndex);
+												// clearInterval(timerIndex);
 												uni.showToast({
 													title: "取消支付，正在撤销订单",
 													icon: "none"
@@ -759,7 +777,7 @@
 							}
 						});
 					} else { //撤销订单
-						clearInterval(timerIndex);
+						// clearInterval(timerIndex);
 						uni.showToast({
 							title: "支付超时，正在撤销订单",
 							icon: "none"
@@ -768,7 +786,7 @@
 					}
 					nums++
 				}
-				timerFunc();
+				// timerFunc();
 				timerIndex = setInterval(timerFunc, 5000);
 			},
 			close: function() {
@@ -831,7 +849,39 @@
 								that.circleQuery(that.selectPayWayVal, param, function(res) {});
 							} else {
 								//支付成功创建支付记录
-								that.createPayData(t);
+								let resData = JSON.parse(res.data);
+								let lqmoney = 0;
+								let fqmoeny = 0; //放弃金额
+								let relmoeny = 0; //实际核销金额
+								if (resData.GT_RETURN) {
+									lqmoney = parseFloat(resData.GT_RETURN[0].VALUE2);
+								} else {
+									lqmoney = resData.lqmoney
+								}
+								if (lqmoney > that.PayAmount) {
+									//产生放弃金额
+									fqmoeny = lqmoney - that.PayAmount;
+									relmoeny = that.PayAmount;
+								} else {
+									relmoeny =lqmoney;
+								}
+								//产生核销实际金额
+								let payobj = that.PayWayList.find(item => {
+									return item.value == that.selectPayWayVal
+								});
+								let obj = {
+									amount: relmoeny,
+									t: that.selectPayWayVal,
+									payobj: payobj
+								}
+								that.createPayData1(obj);
+								if (fqmoeny > 0) {
+									payobj.name = payobj.name + "放弃";
+									obj.amount = fqmoeny;
+									that.createPayData1(obj);
+								}
+
+
 							}
 						}
 					});
@@ -1002,42 +1052,45 @@
 				} else if (t == 'CARD') {
 					let that = this;
 					let obj;
+					// e.auth_code="856666000100003870";
+					e.auth_code="KG97618173949838540810";
+					
 					if (that.brand == "KG") {
 						obj = {
 							orderInfo: {
 								ordernet: e.totalAmount, //amount
 								orderbill: e.out_trade_no //merOrderId
 							},
-							paycode: e.auth_code, //卡号cardNo
+							paycode:e.auth_code, //卡号cardNo 
 							storeid: that.KHID, //storeNo
 							storename: that.Name, //storeName
 							mer_id: that.MerId //merchantNo 商户号
 						};
 					} else {
 						//构造参数
-						let productInfo=[];
-						that.Products.forEach(function(item,index){
-							productInfopush({
-										spid: item.SPID,
-										sname: item.NAME,
-										price: item.PRICE,
-										qty: item.QTY,
-										net: item.AMOUNT,
-										plid: item.PLID,
-										discrate: 0
-									});
+						let productInfo = [];
+						that.Products.forEach(function(item, index) {
+							productInfo.push({
+								spid: item.SPID,
+								sname: item.NAME,
+								price: item.PRICE,
+								qty: item.QTY,
+								net: item.AMOUNT,
+								plid: item.PLID,
+								discrate: 0
+							});
 						});
 						obj = {
 							kquser: that.kquser,
-							mer_id: that.MerId,//商户号
-							storeid:that.KHID,
+							mer_id: that.MerId, //商户号
+							storeid: that.KHID,
 							ryid: that.RYID,
 							paycode: e.auth_code,
 							posid: that.POSID,
 							orderInfo: {
 								ordernet: e.totalAmount,
 								orderbill: e.out_trade_no,
-								productInfo:productInfo
+								productInfo: productInfo
 							},
 							extra1: "",
 							extra2: ""
@@ -1072,14 +1125,14 @@
 									};
 									//构造参数
 									obj = [];
-									that.Products.forEach(function(item,index){
+									that.Products.forEach(function(item, index) {
 										obj.push({
 											ZZCP_NUM: q.ZZCP_NUM,
 											ZZCPHX_CHANNEL: q.ZZCPHX_CHANNEL,
 											ZZCPHX_STORE: q.ZZCPHX_STORE,
 											ZZVBELN: q.ZZVBELN,
 											ZZTPRICE: e.totalAmount, //订单金额
-											ZZCPHXDATE: dateformat.getadate(),
+											ZZCPHXDATE: dateformat.getdate(),
 											ZZCPTIME: dateformat.gettimes(),
 											ZZPRODUCT_ID: item.PLID, // 商品编码
 											ZZPRODUCT_NET: item.PRICE, //商品金额
@@ -1091,30 +1144,30 @@
 									ask = false;
 									b = e.out_trade_no;
 									//构造参数
-									let productInfo=[];
-									that.Products.forEach(function(item,index){
-										productInfopush({
-													spid: item.SPID,
-													sname: item.NAME,
-													price: item.PRICE,
-													qty: item.QTY,
-													net: item.AMOUNT,
-													plid: item.PLID,
-													discrate: 0
-												});
+									let productInfo = [];
+									that.Products.forEach(function(item, index) {
+										productInfo.push({
+											spid: item.SPID,
+											sname: item.NAME,
+											price: item.PRICE,
+											qty: item.QTY,
+											net: item.AMOUNT,
+											plid: item.PLID,
+											discrate: 0
+										});
 									});
 									obj = {
 										storeid: that.KHID,
 										kquser: that.kquser,
-										ryid:that.RYID,
+										ryid: that.RYID,
 										gsid: that.GSID,
 										usedetail: [],
 										posid: that.POSID,
 										fkid: payobj.fkid,
 										lqid: e.auth_code,
 										orderInfo: {
-											ordernet: e.totalAmount,//实际支付金额
-											znet: that.allAmount,//订单总金额
+											ordernet: e.totalAmount, //实际支付金额
+											znet: that.allAmount, //订单总金额
 											orderbill: e.out_trade_no,
 											productInfo: productInfo
 										}

@@ -270,6 +270,7 @@ function QUERY_ALL(m, e, func) {
 	if (m == 'KG') {
 		SALE_QUERY(e, func);
 	} else {
+		e({code:true});
 		//customCardrefund(e, func);
 	}
 }
