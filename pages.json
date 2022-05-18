@@ -1,31 +1,27 @@
 {
-	"pages": [
-		{
-			"path": "pages/MicroPay/MicroPay",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		
-		},
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
 		},
-		
-		
-		
 		{
-				"path": "pages/MicroPay/wxpay",
-				"style": {
-					"navigationBarTitleText": "",
-					"enablePullDownRefresh": false
-				}
-		
-			},
+			"path": "pages/MicroPay/MicroPay",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
+			"path": "pages/MicroPay/wxpay",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
 		{
 			"path": "pages/AppPay/AppPay",
 			"style": {
@@ -34,7 +30,7 @@
 			}
 
 		},
-		
+
 		{
 			"path": "pages/modal/modal",
 			"style": {
@@ -99,36 +95,31 @@
 
 
 		}
-	 
-       
-        ,{
-            "path" : "pages/hy/index",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/Payment/Payment",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/Refund/Refund",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+
+
+		, {
+			"path": "pages/hy/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/Payment/Payment",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/Refund/Refund",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -140,13 +131,12 @@
 		"custom": {
 			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue"
 		}
-	}
-	,
+	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [{
 			"name": "", //模式名称
-			"path": "pages/Refund/Refund", //启动页面，必选
+			"path": "pages/index/index", //启动页面，必选
 			"query": "" //启动参数，在页面的onLoad函数里面得到
 		}]
 	}

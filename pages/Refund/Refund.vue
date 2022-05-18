@@ -1,14 +1,14 @@
 <template>
 	<view>
-		<!-- 订单详情 -->
 		<view>
-			<text>订单总金额：{{allAmount}} </text>
-			<text>实际金额：{{totalAmount}} </text>
-			<text>已退款金额：{{yRefundAmount}} </text>
-			<text>待退款金额：{{dRefundAmount}} </text>
+			<p>--订单信息--</p>
+			<p>订单总金额：{{allAmount}} </p>
+			<p>实际金额：{{totalAmount}} </p>
+			<p>已退款金额：{{yRefundAmount}} </p>
+			<p>待退款金额：{{dRefundAmount}} </p>
 		</view>
-		<!-- 商品详情 -->
 		<view>
+			<p>--商品信息--</p>
 			<view v-for="(item,index) in Products">
 				<text>{{item.NAME}}</text>-
 				<text>￥{{item.AMOUNT}}</text>-
@@ -19,16 +19,18 @@
 		<view>
 			<view>订单号：<input v-model="bill"><button @click="Search()">查询订单</button></view>
 			<view>退款金额：<input v-model="RefundAmount">订单序号：<input v-model="no"></view>
+
+			<view>
+				<radio-group class="radio-group" @change="radioChange">
+					<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
+						<radio :value="item.value" :checked="item.checked" /> {{item.name}}
+					</label>
+				</radio-group>
+			</view>
+			<button @click="refund()">发起退款</button>
 		</view>
 		<view>
-			<radio-group class="radio-group" @change="radioChange">
-				<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
-					<radio :value="item.value" :checked="item.checked" /> {{item.name}}
-				</label>
-			</radio-group>
-		</view>
-		<button @click="refund()">发起退款</button>
-		<view> 退款列表:
+			<p>--退款列表--</p>
 			<p>序号---退款方式---金额</p>
 			<view v-for="(way, index) in RefundList">
 				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
@@ -247,7 +249,7 @@
 						err.msg = msg.sub_msg;
 						if (func) func(err);
 					})
-				} else if (t == 'ACRD') {
+				} else if (t == 'CARD') {
 
 				} else if (t == 'COUPON') {
 
@@ -294,7 +296,7 @@
 						err.msg = msg.sub_msg;
 						if (func) func(err);
 					})
-				} else if (t == 'ACRD') {
+				} else if (t == 'CARD') {
 
 				} else if (t == 'COUPON') {
 
