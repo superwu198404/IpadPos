@@ -117,7 +117,7 @@ export default {
 			// 				}
 			// 				if (func) func(res);
 			// 			});
-			// 	} else if (t == 'ACRD') {
+			// 	} else if (t == 'CARD') {
 			// 		let that = this;
 			// 		//会员卡退款
 			// 		let obj = {
@@ -220,7 +220,7 @@ export default {
 			// 				if (func) func(res);
 			// 			});
 
-			// 	} else if (t == 'ACRD') {
+			// 	} else if (t == 'CARD') {
 
 			// 	} else if (t == 'COUPON') {
 			// 		if (func) func({
