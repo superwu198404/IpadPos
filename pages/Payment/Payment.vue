@@ -148,7 +148,10 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
+				Name: getApp().globalData.store.NAME,
+				MerId: getApp().globalData.store.MERID,
 				brand: getApp().globalData.brand,
+				kquser:getApp().globalData.kquser 
 
 			}
 		},
@@ -730,8 +733,7 @@
 										cancelText: "否",
 										success: function(res) {
 											if (res.confirm) { //重启定时器继续查
-												timerIndex = setInterval(timerFunc,
-													5000);
+												timerIndex = setInterval(timerFunc,5000);
 											} else {
 												clearInterval(timerIndex);
 												uni.showToast({
@@ -878,7 +880,6 @@
 									icon: "success"
 								});
 								//生成退款记录
-
 							} else {
 								//退款失败
 								uni.showToast({
@@ -929,6 +930,9 @@
 			},
 			//支付方法合集
 			paymentAll: function(t, e, func) {
+				let payobj = this.PayWayList.find(item => {
+					return item.value == t
+				});
 				let Result;
 				if (t == 'WX') {
 					_wx.CodeScanPay("微信支付", e.out_trade_no, e.subject, e.auth_code, e.totalAmount * 100,
@@ -1001,58 +1005,39 @@
 					if (that.brand == "KG") {
 						obj = {
 							orderInfo: {
-								ordernet: "0.99", //amount
-								orderbill: that.out_trade_no //merOrderId
+								ordernet: e.totalAmount, //amount
+								orderbill: e.out_trade_no //merOrderId
 							},
 							paycode: e.auth_code, //卡号cardNo
-							storeid: "K200QTD005", //storeNo
-							storename: "武汉领秀城店门厅", //storeName
-							mer_id: "999521058120004" //merchantNo
+							storeid: that.KHID, //storeNo
+							storename: that.Name, //storeName
+							mer_id: that.MerId //merchantNo 商户号
 						};
 					} else {
+						//构造参数
+						let productInfo=[];
+						that.Products.forEach(function(item,index){
+							productInfopush({
+										spid: item.SPID,
+										sname: item.NAME,
+										price: item.PRICE,
+										qty: item.QTY,
+										net: item.AMOUNT,
+										plid: item.PLID,
+										discrate: 0
+									});
+						});
 						obj = {
-							kquser: "CSKQ",
-							mer_id: "999990053990001",
-							storeid: "K0101QTDS1",
-							ryid: "XCXYD",
+							kquser: that.kquser,
+							mer_id: that.MerId,//商户号
+							storeid:that.KHID,
+							ryid: that.RYID,
 							paycode: e.auth_code,
-							posid: "1",
+							posid: that.POSID,
 							orderInfo: {
-								ordernet: "278.99",//
-								orderbill: "00000000306084",
-								productInfo: [{
-									spid: "10902001",
-									sname: "经典撒哈拉(6寸)",
-									price: "233.8",
-									qty: 1,
-									net: 233.8,
-									plid: 10902,
-									discrate: 0
-								}, {
-									 spid: "10905001",
-									 sname: "奥利奥经典",
-									 price: "49.8",
-									 qty: 1,
-									 net: 49.8,
-									 plid: 10905,
-									 discrate: 0
-								}, {
-									 spid: "10301011",
-									 sname: "咸芝士奶香片(测试)",
-									 price: "1.2",
-									 qty: 1,
-									 net: 1.2,
-									 plid: 10301,
-									 discrate: 0
-								}, {
-									 spid: "10101025",
-									 sname: "全味椰子吐司",
-									 price: "2",
-									 qty: 1,
-									 net: 2,
-									 plid: 10101,
-									 discrate: 0
-								}]
+								ordernet: e.totalAmount,
+								orderbill: e.out_trade_no,
+								productInfo:productInfo
 							},
 							extra1: "",
 							extra2: ""
@@ -1082,68 +1067,56 @@
 									//仟吉
 									let q = JSON.parse(res.data);
 									qamount = q.ZZCPVALUE; //仟吉会返回真正的金额  
-									if (qamount > that.dPayAmount) {
+									if (qamount > e.totalAmount) {
 										ask = true;
 									};
 									//构造参数
-									obj = [{
-										ZZCP_NUM: q.ZZCP_NUM,
-										ZZCPHX_CHANNEL: q.ZZCPHX_CHANNEL,
-										ZZCPHX_STORE: q.ZZCPHX_STORE,
-										ZZVBELN: q.ZZVBELN,
-										ZZTPRICE: "288.00", //订单金额
-										ZZCPHXDATE: dateformat.getdate(),
-										ZZCPTIME: dateformat.gettimes(),
-										ZZPRODUCT_ID: "000000001090100002", // 商品编码
-										ZZPRODUCT_NET: that.allAmount, //商品金额
-										ZZPRODUCT_NUM: that.Products.length //商品数量
-									}]
+									obj = [];
+									that.Products.forEach(function(item,index){
+										obj.push({
+											ZZCP_NUM: q.ZZCP_NUM,
+											ZZCPHX_CHANNEL: q.ZZCPHX_CHANNEL,
+											ZZCPHX_STORE: q.ZZCPHX_STORE,
+											ZZVBELN: q.ZZVBELN,
+											ZZTPRICE: e.totalAmount, //订单金额
+											ZZCPHXDATE: dateformat.getadate(),
+											ZZCPTIME: dateformat.gettimes(),
+											ZZPRODUCT_ID: item.PLID, // 商品编码
+											ZZPRODUCT_NET: item.PRICE, //商品金额
+											ZZPRODUCT_NUM: item.QTY //商品数量
+										});
+									});
 								} else {
 									//卓越
 									ask = false;
-									b = that.out_trade_no;
+									b = e.out_trade_no;
 									//构造参数
+									let productInfo=[];
+									that.Products.forEach(function(item,index){
+										productInfopush({
+													spid: item.SPID,
+													sname: item.NAME,
+													price: item.PRICE,
+													qty: item.QTY,
+													net: item.AMOUNT,
+													plid: item.PLID,
+													discrate: 0
+												});
+									});
 									obj = {
-										storeid: "K0101QTDS1",
-										kquser: "CSKQ",
-										ryid: "XCXYD",
-										gsid: "11501",
+										storeid: that.KHID,
+										kquser: that.kquser,
+										ryid:that.RYID,
+										gsid: that.GSID,
 										usedetail: [],
-										posid: "1",
-										fkid: "1",
+										posid: that.POSID,
+										fkid: payobj.fkid,
 										lqid: e.auth_code,
 										orderInfo: {
-											ordernet: "10.68",
-											znet: "10.68",
-											orderbill: "00000000306134",
-											productInfo: [{
-													spid: "10901019",
-													sname: "萌萌熊8吋(测试)",
-													price: "2.5",
-													qty: 1,
-													net: 2.5,
-													plid: 10901,
-													discrate: 0
-												},
-												{
-													spid: "10901013",
-													sname: "竖式草莓奶油蛋糕真果粒测试商品测试用",
-													price: "1.18",
-													qty: 1,
-													net: 1.18,
-													plid: 10901,
-													discrate: 0
-												},
-												{
-													spid: "10904001",
-													sname: "水果派对",
-													price: "6",
-													qty: 1,
-													net: 6,
-													plid: 10904,
-													discrate: 0
-												}
-											]
+											ordernet: e.totalAmount,//实际支付金额
+											znet: that.allAmount,//订单总金额
+											orderbill: e.out_trade_no,
+											productInfo: productInfo
 										}
 									};
 								}
@@ -1171,9 +1144,7 @@
 									that.QUsed(obj, b, function(res1) {
 										if (func) func(res1);
 									});
-
 								}
-
 							} else {
 								//无券或者异常
 								res.code = -1;

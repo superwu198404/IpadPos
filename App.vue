@@ -2,6 +2,7 @@
 	export default {
 		globalData: {
 			appid: 'keengee',
+			kquser:"CSKQ",
 			brand: "KG",
 			store: {
 				GSID: "1001",
@@ -12,7 +13,9 @@
 				DPID: "123",
 				DKFID: '80000000',
 				BMID: "001",
-				GCID: "1001"
+				GCID: "1001",
+				NAME:"武汉xxx",
+				MERID:"999990053990001"
 			}
 		},
 		onLaunch: function() {
