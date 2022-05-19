@@ -1,11 +1,13 @@
-import configInfo from '@/utils/configInfo.js'; //配置参数
 import Req from '@/utils/request.js';
 var Brand=getApp().globalData.brand;
+var appid = getApp().globalData.appid;
+var kquser=getApp().globalData.kquser;
+ 
 //会员信息查询接口
 const  Query_Member_Assets= (a, b, func) =>{
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets",
-		appid: configInfo.appid,
+		appid: appid,
 		paramkey: "acc", 
 		data: {
 			acc: acc,
@@ -22,7 +24,7 @@ const  Query_Member_Assets= (a, b, func) =>{
 const hyQuery_new= (a, b, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "hyQuery_new",
-		appid: configInfo.appid,
+		appid: appid,
 		paramkey: "acc", 
 		data: {
 			acc: acc,
@@ -39,15 +41,15 @@ const hyQuery_new= (a, b, func)=> {
 const queryCustomCard=(p, t, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "queryCustomCard",
-		appid: configInfo.appid,
+		appid: appid,
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
 			type: "queryCustomCard",
-			kquser: configInfo.kquser,
+			kquser: kquser,
 			ynencript: "N",
 			databody: {
-				kquser: configInfo.kquser,
+				kquser: kquser,
 				phone: p,
 				type: t
 			}
@@ -64,7 +66,7 @@ const queryCustomCard=(p, t, func)=> {
 const QJTicktQuery= (a, b, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "TICKETQUERY",
-		appid: configInfo.appid,
+		appid: appid,
 		paramkey: "acc",
 		data: {
 			GT_IMPORT: [{
@@ -82,7 +84,7 @@ const QJTicktQuery= (a, b, func)=> {
 const QJTicktUse=(d, func)=> {
 	Req.http("Hy/hy", {
 		apiname: "TICKETUSE",
-		appid: configInfo.appid,
+		appid: appid,
 		paramkey: "acc",
 		data: {
 			GT_IMPORT: d
@@ -96,13 +98,13 @@ const QJTicktUse=(d, func)=> {
 //卓越券核销
 const couponConsume= (d,b,func)=> {
 	Req.http("Hy/hy", {
-		appid: configInfo.appid,
+		appid: appid,
 		apiname: "couponConsume",
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
 			type: "couponConsume",
-			kquser: configInfo.kquser,
+			kquser: kquser,
 			ynencript: "n",
 			databody: d,
 		    bill: b
@@ -114,23 +116,23 @@ const couponConsume= (d,b,func)=> {
 	})
 };
 const HyQuery= (a,b,func)=>{
-	if(configInfo="KG"){
+	if(Brand="KG"){
 		Query_Member_Assets(a,b,func);
-	}else if(configInfo=="ZY"){
+	}else if(Brand=="ZY"){
 		queryCustomCard(a,b,func);
 	}
 };
 const TicktQuery= (a,b, func)=>{
-	if(configInfo=="KG"){
+	if(Brand=="KG"){
 		QJTicktQuery(a,b,func);
-	}else if(configInfo=="ZY"){
+	}else if(Brand=="ZY"){
 		 func({code:true})
 	}
 };
 const TicktUse= (d,b, func)=>{
-	if(configInfo=="KG"){
+	if(Brand=="KG"){
 		QJTicktUse(d,func);
-	}else if(configInfo=="ZY"){
+	}else if(Brand=="ZY"){
 		couponConsume(d,b,func);
 	}
 };
@@ -139,7 +141,7 @@ const TicktUse= (d,b, func)=>{
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
+		"appid": appid,
 		"apiname": "QRCODE_CONSUME",
 		"paramkey": "cardNo",
 		"source": "mobile_pos",
@@ -162,7 +164,7 @@ function QRCODE_CONSUME(e, func) {
 //仟吉 支付订单查询接口
 function SALE_QUERY(m, func) {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
+		"appid": appid,
 		"apiname": "SALE_QUERY",
 		"paramkey": "merOrderId",
 		"source": "mobile_pos",
@@ -179,7 +181,7 @@ function SALE_QUERY(m, func) {
 //仟吉 支付订单退款接口
 function REFUND(e, func) {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
+		"appid":appid,
 		"apiname": "REFUND",
 		"paramkey": "merOrderId",
 		"source": "mobile_pos",
@@ -199,13 +201,13 @@ function REFUND(e, func) {
 //卓越会员卡核销
 function customCardpay(d, func) {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
+		"appid":appid,
 		"apiname": "customCardpay",
 		"paramkey": "others",
 		"source": "wxsmallprogram",
 		"data": {
 			"type": "customCardpay",
-			"kquser": configInfo.kquser,
+			"kquser": kquser,
 			"ynencript": "N",
 			"databody": d
 		}
@@ -219,13 +221,13 @@ function customCardpay(d, func) {
 //卓越卡核销后退款
 function customCardrefund(d, func) {
 	Req.http("Hy/hy", {
-		"appid": configInfo.appid,
+		"appid": appid,
 		"apiname": "customCardrefund",
 		"paramkey": "bill",
 		"source": "wxsmallprogram",
 		"data": {
 			"type": "customCardrefund",
-			"kquser": configInfo.kquser,
+			"kquser": kquser,
 			"ynencript": "N",
 			"databody": d
 		}

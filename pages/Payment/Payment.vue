@@ -59,7 +59,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-
 	import insertsql from './Insert_sale.js';
 	export default {
 		components: {
@@ -524,7 +523,7 @@
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
 				//return;
-				db.SqliteHelper.get().executeDml(str, "订单创建中", function(res) {
+				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {
