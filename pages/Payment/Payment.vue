@@ -550,16 +550,26 @@
 					return v.amount == that.RefundAmount && v.no == that.no;
 				})
 				if (arr.length == 0) { //说明没有追加过该笔支付记录
-					let payobj = that.PayWayList.find(item => {
-						return item.value == t
-					});
-					that.PayList.push({
-						fkid: payobj.fkid,
-						bill: that.out_trade_no,
-						name: payobj.name,
-						amount: that.PayAmount,
-						no: that.PayList.length
-					});
+					if (!t.payobj) {
+						let payobj = that.PayWayList.find(item => {
+							return item.value == t
+						});
+						that.PayList.push({
+							fkid: payobj.fkid,
+							bill: that.out_trade_no,
+							name: payobj.name,
+							amount: that.PayAmount,
+							no: that.PayList.length
+						});
+					} else {
+						that.PayList.push({
+							fkid: e.payobj.fkid,
+							bill: that.out_trade_no,
+							name: e.payobj.name,
+							amount: e.amount,
+							no: that.PayList.length
+						});
+					}
 					//重新计算待支付金额
 					that.CalDZFMoney();
 					uni.showToast({
@@ -576,7 +586,7 @@
 					}
 				} else {
 					uni.showToast({
-						title: "本单已退款成功",
+						title: "本单已支付成功",
 						icon: "error",
 						success: function(res) {
 							//that.$refs['popup'].close();
@@ -743,11 +753,11 @@
 									t: that.selectPayWayVal,
 									payobj: payobj
 								}
-								that.createPayData1(obj);
+								that.createPayData(obj);
 								if (fqmoeny > 0) {
 									payobj.name = payobj.name + "放弃";
 									obj.amount = fqmoeny;
-									that.createPayData1(obj);
+									that.createPayData(obj);
 								}
 
 
