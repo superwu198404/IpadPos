@@ -84,7 +84,7 @@ const utils = {
 	// 时间戳
 	ymsFormat: function() {
 		let date = new Date();
-		let str = date.getFullYear().toString() + (date.getMonth() + 1).toString() + date.getDate().toString() +
+		let str = date.getFullYear().toString().substring(2) + (date.getMonth() + 1).toString() + date.getDate().toString() +
 			date.getHours().toString() + date
 			.getMinutes().toString() + date.getSeconds().toString() + date.getMilliseconds().toString();
 		return str;

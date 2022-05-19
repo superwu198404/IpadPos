@@ -2,7 +2,7 @@
 	"pages": [{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "首页",
 				"enablePullDownRefresh": false
 			}
 		},
@@ -62,16 +62,12 @@
 				"enablePullDownRefresh": false
 			}
 		},
-
-
 		{
 			"path": "pages/index/BTDemo",
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
 		},
-
-
 		{
 			"path": "pages/index/ScanCodeDemo",
 			"style": {
@@ -92,29 +88,23 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
-
 		}
-
-
 		, {
 			"path": "pages/hy/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
 		}, {
 			"path": "pages/Payment/Payment",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "订单支付",
 				"enablePullDownRefresh": false
 			}
-
 		}, {
 			"path": "pages/Refund/Refund",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "订单退款",
 				"enablePullDownRefresh": false
 			}
 

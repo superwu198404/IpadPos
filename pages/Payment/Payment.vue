@@ -1,13 +1,15 @@
 <template>
 	<view>
 		<view>
+			<p>--订单信息--</p>
+			<p>订单号：{{out_trade_no_old}}</p>
 			<p>总金额：{{allAmount}}</p>
 			<p>应收：{{totalAmount}}</p>
 			<p>已支付：{{yPayAmount}}</p>
 			<p>待支付：{{dPayAmount}}</p>
 		</view>
-		<!-- 商品详情 -->
 		<view>
+			<p>--商品信息--</p>
 			<view v-for="(item,index) in Products">
 				<text>{{item.NAME}}</text>-
 				<text>￥{{item.AMOUNT}}</text>-
@@ -16,18 +18,20 @@
 			</view>
 		</view>
 		<view>
+			<p>--支付方式--</p>
 			<radio-group class="radio-group" @change="radioChange">
 				<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
 					<radio :value="item.value" :checked="item.checked" /> {{item.name}}
 				</label>
 			</radio-group>
+			<view v-show="PayWay!=null">
+				支付金额:
+				<input :disabled="disablePayInput" v-model="PayAmount">
+			</view>
+			<button @click="Pay()">支付</button>
 		</view>
-		<view v-show="PayWay!=null">
-			支付金额:
-			<input :disabled="disablePayInput" v-model="PayAmount">
-		</view>
-		<button @click="Pay()">支付</button>
-		<view> 支付列表:
+		<view>
+			<p>--支付列表--</p>
 			<p>序号---支付方式---金额</p>
 			<view v-for="(way, index) in PayList">
 				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
@@ -55,6 +59,7 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
+
 	import insertsql from './Insert_sale.js';
 	export default {
 		components: {
@@ -62,6 +67,7 @@
 		},
 		data() {
 			return {
+				CanBack: false, //是否允许退出
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -77,8 +83,8 @@
 					NAME: "黑森林",
 					PRICE: 0.01,
 					OPRICE: 0.01,
-					AMOUNT: 20,
-					QTY: 2
+					AMOUNT: 0.01,
+					QTY: 1
 				}, {
 					PLID: "101",
 					SPID: "10101002",
@@ -88,7 +94,7 @@
 					PRICE: 0.01,
 					OPRICE: 0.01,
 					AMOUNT: 0.02,
-					QTY: 1
+					QTY: 2
 				}],
 				PayWayList: [{
 						name: '支付宝',
@@ -160,7 +166,7 @@
 				this.CreatSaleTable();
 
 				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
-				this.out_trade_no = this.out_trade_no_old;
+				this.out_trade_no = this.out_trade_no_old
 				console.log("支付订单号" + this.out_trade_no);
 				let spArr = this.Products;
 				let money = 0;
@@ -171,11 +177,23 @@
 				this.totalAmount = money;
 				this.CalDZFMoney();
 				setTimeout(() => { //测试时加的延迟定时器
-					//this.CreateDBData();
+					// this.CreateDBData();
 					//this.SearcheOrder("K210QTD00112022516175759256");
 					//this.TestDB();
 				}, 3000);
 
+			},
+			//返回事件
+			onBackPress(e) {
+				if (this.PayList.length > 0 && this.PayAmount > 0) { //如果发起支付了，要判断支付完毕没有
+					if (!this.CanBack) {
+						uni.showToast({
+							title: "抱歉，还有待支付金额",
+							icon: "error"
+						})
+						return true; //返回true阻止默认操作
+					}
+				}
 			},
 			//创建销售表结构
 			CreatSaleTable: function() {
@@ -198,7 +216,7 @@
 								let GT_RETURN = used.GT_RETURN[0];
 								if (GT_RETURN.TYPE == "E") {
 									res.code = -1;
-									res.msg = GT_RETURN.MESSAGE;
+									res.msg = GT_RETURN.MESSAGE
 								} else {
 									res.code = 1;
 								}
@@ -243,7 +261,7 @@
 			radioChange(e) {
 				let value = e.target.value;
 				let payobj = this.PayWayList.find(item => {
-					return item.value == value;
+					return item.value == value
 				});
 				this.PayWay = payobj.type;
 				this.selectPayWayVal = payobj.value;
@@ -271,7 +289,7 @@
 						},
 						function(res) {
 							let qResult = JSON.parse(res.data);
-							qResult = qResult.alipay_trade_cancel_response;
+							qResult = qResult.alipay_trade_cancel_response
 							if (qResult.code == "10000") {
 								uni.showToast({
 									title: "支付超时，订单已撤销",
@@ -285,7 +303,7 @@
 							let msg = res.msg;
 							if (res.data != null) {
 								let errResult = JSON.parse(res.data);
-								errResult = errResult.alipay_trade_cancel_response;
+								errResult = errResult.alipay_trade_cancel_response
 								//非业务失败
 								if (errResult.code != "40004") {
 									//业务失败
@@ -503,7 +521,7 @@
 				// console.log(sql4.sqlliteArr);
 
 				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:");
+				console.log("sqlite待执行sql:")
 				console.log(exeSql);
 				//return;
 				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
@@ -528,52 +546,42 @@
 			//创建支付记录
 			createPayData: function(t) {
 				let that = this;
-				let payobj = that.PayWayList.find(item => {
-					return item.value == t;
-				});
-				that.PayList.push({
-					fkid: payobj.fkid,
-					bill: that.out_trade_no,
-					name: payobj.name,
-					amount: that.PayAmount,
-					no: that.PayList.length
-				});
-				//重新计算待支付金额
-				that.CalDZFMoney();
-				uni.showToast({
-					title: "支付成功",
-					icon: "success",
-					success: function(res) {
-						that.$refs['popup'].close();
-					}
+				let arr = that.PayList.filter(function(v, i, ar) {
+					return v.amount == that.RefundAmount && v.no == that.no;
 				})
-				//预留处理业务数据的地方
-				if (that.dPayAmount == 0) { //说明支付完毕了
-					this.CreateDBData();
-				}
-			},
-			//创建支付记录
-			createPayData1: function(e) {
-				let that = this;
-				that.PayList.push({
-					fkid: e.payobj.fkid,
-					bill: that.out_trade_no,
-					name: e.payobj.name,
-					amount: e.amount,
-					no: that.PayList.length
-				});
-				//重新计算待支付金额
-				that.CalDZFMoney();
-				uni.showToast({
-					title: "支付成功",
-					icon: "success",
-					success: function(res) {
-						that.$refs['popup'].close();
+				if (arr.length == 0) { //说明没有追加过该笔支付记录
+					let payobj = that.PayWayList.find(item => {
+						return item.value == t
+					});
+					that.PayList.push({
+						fkid: payobj.fkid,
+						bill: that.out_trade_no,
+						name: payobj.name,
+						amount: that.PayAmount,
+						no: that.PayList.length
+					});
+					//重新计算待支付金额
+					that.CalDZFMoney();
+					uni.showToast({
+						title: "支付成功",
+						icon: "success",
+						success: function(res) {
+							that.$refs['popup'].close();
+						}
+					})
+					//预留处理业务数据的地方
+					if (that.dPayAmount == 0) { //说明支付完毕了
+						this.CanBack = true; //可以返回了
+						this.CreateDBData();
 					}
-				})
-				//预留处理业务数据的地方
-				if (that.dPayAmount == 0) { //说明支付完毕了
-					this.CreateDBData();
+				} else {
+					uni.showToast({
+						title: "本单已退款成功",
+						icon: "error",
+						success: function(res) {
+							//that.$refs['popup'].close();
+						}
+					})
 				}
 			},
 			TestDB: function() {
@@ -717,7 +725,7 @@
 								if (resData.GT_RETURN) {
 									lqmoney = parseFloat(resData.GT_RETURN[0].VALUE2);
 								} else {
-									lqmoney = resData.lqmoney;
+									lqmoney = resData.lqmoney
 								}
 								if (lqmoney > that.PayAmount) {
 									//产生放弃金额
@@ -728,7 +736,7 @@
 								}
 								//产生核销实际金额
 								let payobj = that.PayWayList.find(item => {
-									return item.value == that.selectPayWayVal;
+									return item.value == that.selectPayWayVal
 								});
 								let obj = {
 									amount: relmoeny,
@@ -761,7 +769,7 @@
 			//支付方法合集
 			paymentAll: function(t, e, func) {
 				let payobj = this.PayWayList.find(item => {
-					return item.value == t;
+					return item.value == t
 				});
 				let Result;
 				if (t == 'WX') {
@@ -832,8 +840,8 @@
 				} else if (t == 'CARD') {
 					let that = this;
 					let obj;
-					// e.auth_code="856666000100003870"; //卓越会员卡号 做测试
-					//e.auth_code = "KG97618173949838540810";//仟吉二维码号 做测试
+					// e.auth_code="856666000100003870";
+					e.auth_code = "KG97618173949838540810";
 
 					if (that.brand == "KG") {
 						obj = {
