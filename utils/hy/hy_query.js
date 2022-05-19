@@ -235,7 +235,7 @@ function customCardrefund(d, func) {
 		return res;
 	})
 };
-//支付接口
+//会员卡支付接口
 function PAY_ALL(m, e, func) {
 	if (m == 'KG') {
 		QRCODE_CONSUME(e, func);
@@ -243,7 +243,7 @@ function PAY_ALL(m, e, func) {
 		customCardpay(e, func);
 	}
 }
-//支付查询接口
+//会员卡支付查询接口
 function QUERY_ALL(m, e, func) {
 	if (m == 'KG') {
 		SALE_QUERY(e, func);
@@ -252,7 +252,7 @@ function QUERY_ALL(m, e, func) {
 		//customCardrefund(e, func);
 	}
 }
-//退款接口
+//会员卡退款接口
 function REFUND_ALL(m, e, func) {
 	if (m == 'KG') {
 		REFUND(e, func);

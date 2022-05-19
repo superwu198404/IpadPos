@@ -759,8 +759,6 @@
 									obj.amount = fqmoeny;
 									that.createPayData(obj);
 								}
-
-
 							}
 						}
 					});
