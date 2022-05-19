@@ -59,7 +59,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-
 	import insertsql from './Insert_sale.js';
 	export default {
 		components: {
@@ -851,7 +850,7 @@
 					let that = this;
 					let obj;
 					// e.auth_code="856666000100003870";
-					e.auth_code = "KG97618173949838540810";
+					// e.auth_code = "KG97618173949838540810";
 
 					if (that.brand == "KG") {
 						obj = {

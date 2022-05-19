@@ -84,17 +84,6 @@
 						fkid: "ZF04"
 					}
 				], //支付方式
-				//测试使用
-				// bill: "K210QTD00112022516175759256", //单号
-				// out_trade_no: "K210QTD00112022516154651301_2",//微信退款成功的单号
-				// out_trade_no: "K210QTD00112022513162758285_2", //支付宝退款成功的单号
-				// RefundList: [{
-				// 	bill: "652313345645663",
-				// 	name: "支付宝",
-				// 	amount: 39.99,
-				// 	no: 0, //序号
-				// 	fkid: "ZF01"
-				// }], //退款记录
 				bill: "",
 				out_trade_no: "",
 				out_refund_no: "",
@@ -179,7 +168,6 @@
 					let sql3 = 'select * from SALE003 where BILL="' + that.bill + '"';
 					db.SqliteHelper.get().executeQry(sql1, "数据查询", function(res) {
 						console.log("查询成功");
-						console.log(res);
 						if (res.code && res.msg.length > 0) { //说明查到了值
 							let dataObj = res.msg[0];
 							that.allAmount = dataObj.ZNET;
@@ -373,6 +361,7 @@
 					})
 					return false;
 				}
+				console.info(JSON.stringify(that.PayList))
 				let pay_obj_arr = that.PayList.filter(function(v, i, arr) {
 					return v.amount == that.RefundAmount && v.no == that.no;
 				})

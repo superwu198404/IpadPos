@@ -156,6 +156,8 @@ if (uni.restoreGlobal) {
   uni.restoreGlobal(weex, plus, setTimeout, clearTimeout, setInterval, clearInterval);
 }
 __definePage('pages/index/index', function () {return Vue.extend(__webpack_require__(/*! pages/index/index.vue?mpType=page */ 2).default);});
+__definePage('pages/TestDemon/TestDemon', function () {return Vue.extend(__webpack_require__(/*! pages/TestDemon/TestDemon.vue?mpType=page */ 132).default);});
+__definePage('pages/Payment/Payment', function () {return Vue.extend(__webpack_require__(/*! pages/Payment/Payment.vue?mpType=page */ 145).default);});
 __definePage('pages/MicroPay/MicroPay', function () {return Vue.extend(__webpack_require__(/*! pages/MicroPay/MicroPay.vue?mpType=page */ 14).default);});
 __definePage('pages/MicroPay/wxpay', function () {return Vue.extend(__webpack_require__(/*! pages/MicroPay/wxpay.vue?mpType=page */ 27).default);});
 __definePage('pages/AppPay/AppPay', function () {return Vue.extend(__webpack_require__(/*! pages/AppPay/AppPay.vue?mpType=page */ 56).default);});
@@ -166,9 +168,7 @@ __definePage('pages/index/PopupDemon', function () {return Vue.extend(__webpack_
 __definePage('pages/index/BTDemo', function () {return Vue.extend(__webpack_require__(/*! pages/index/BTDemo.vue?mpType=page */ 117).default);});
 __definePage('pages/index/ScanCodeDemo', function () {return Vue.extend(__webpack_require__(/*! pages/index/ScanCodeDemo.vue?mpType=page */ 122).default);});
 __definePage('pages/index/RquestDemo', function () {return Vue.extend(__webpack_require__(/*! pages/index/RquestDemo.vue?mpType=page */ 127).default);});
-__definePage('pages/TestDemon/TestDemon', function () {return Vue.extend(__webpack_require__(/*! pages/TestDemon/TestDemon.vue?mpType=page */ 132).default);});
 __definePage('pages/hy/index', function () {return Vue.extend(__webpack_require__(/*! pages/hy/index.vue?mpType=page */ 140).default);});
-__definePage('pages/Payment/Payment', function () {return Vue.extend(__webpack_require__(/*! pages/Payment/Payment.vue?mpType=page */ 145).default);});
 __definePage('pages/Refund/Refund', function () {return Vue.extend(__webpack_require__(/*! pages/Refund/Refund.vue?mpType=page */ 153).default);});
 
 /***/ }),
