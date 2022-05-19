@@ -1,6 +1,6 @@
 import configInfo from '@/utils/configInfo.js'; //配置参数
 import Req from '@/utils/request.js';
-
+var Brand=getApp().globalData.brand;
 //会员信息查询接口
 const  Query_Member_Assets= (a, b, func) =>{
 	Req.http("Hy/hy", {
@@ -114,23 +114,23 @@ const couponConsume= (d,b,func)=> {
 	})
 };
 const HyQuery= (a,b,func)=>{
-	if(configInfo.Brand=="KG"){
+	if(configInfo="KG"){
 		Query_Member_Assets(a,b,func);
-	}else if(configInfo.Brand=="ZY"){
+	}else if(configInfo=="ZY"){
 		queryCustomCard(a,b,func);
 	}
 };
 const TicktQuery= (a,b, func)=>{
-	if(configInfo.Brand=="KG"){
+	if(configInfo=="KG"){
 		QJTicktQuery(a,b,func);
-	}else if(configInfo.Brand=="ZY"){
+	}else if(configInfo=="ZY"){
 		 func({code:true})
 	}
 };
 const TicktUse= (d,b, func)=>{
-	if(configInfo.Brand=="KG"){
+	if(configInfo=="KG"){
 		QJTicktUse(d,func);
-	}else if(configInfo.Brand=="ZY"){
+	}else if(configInfo=="ZY"){
 		couponConsume(d,b,func);
 	}
 };

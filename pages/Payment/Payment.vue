@@ -524,7 +524,7 @@
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
 				//return;
-				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
+				db.SqliteHelper.get().executeDml(str, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {
@@ -851,7 +851,7 @@
 					let that = this;
 					let obj;
 					// e.auth_code="856666000100003870";
-					e.auth_code = "KG97618173949838540810";
+					// e.auth_code = "KG97618173949838540810";
 
 					if (that.brand == "KG") {
 						obj = {

@@ -4,7 +4,7 @@
 		<button type="default" @click="closeSqllite">关闭数据库</button>
 		<button type="default" @click="createTable">创建table</button>
 		<button type="default" @click="addData">添加数据</button>
-		<button type="default" @click="getData">查询数据</button>
+		<button type="default" @click="getData">查询数据</button> 
 
 		状态：{{ status }}
 	</view>
@@ -82,6 +82,7 @@
 			// })
 		},
 		methods: {
+		 
 			// 开启数据库
 			openSqllite() {
 				if (sqlLite.isOpen()) {

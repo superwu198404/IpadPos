@@ -3,7 +3,7 @@
 		globalData: {
 			appid: 'keengee',
 			kquser:"CSKQ",
-			brand: "KG",
+			brand: "ZY",
 			store: {
 				GSID: "1001",
 				KHID: "K0101QTDS1",
