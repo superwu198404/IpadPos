@@ -263,6 +263,46 @@ function REFUND_ALL(m, e, func) {
 	}
 }
 
+//卓越积分
+function consumeJFscore(d, func) {
+	Req.http("Hy/hy", {
+		"appid": appid,
+		"apiname": "consumeJFscore",
+		"source": "wxsmallprogram",
+		"paramkey": "bill",
+		"data": {
+			"type": "consumeJFscore",
+			"kquser": kquser,
+			"ynencript": "N",
+			"databody": d
+		}
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
+
+function newUploadHyjf(d, func) {
+	Req.http("Hy/hy", {
+		"appid": appid,
+		"appid": "keengee",
+		"paramkey": "acc",
+		"data": d
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
+//会员积分
+function consumeJF(f, func) {
+	if (m == 'KG') {
+		newUploadHyjf(e, func);
+	} else {
+		consumeJFscore(e, func);
+	}
+}
  
 export default {
 	HyQuery,

@@ -341,11 +341,13 @@
 					})
 				} else if (t == 'COUPON') {
 					if (func) func({
-						code: -2
+						code: -2,
+						msg:"不支持"
 					});
 				} else {
 					if (func) func({
-						code: -2
+						code: -2,
+						msg:"不支持"
 					});
 				}
 			},
