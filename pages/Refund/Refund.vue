@@ -46,6 +46,7 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
+	import config from '@/utils/configInfo.js.js';
 
 	export default {
 		data() {
@@ -122,6 +123,7 @@
 				this.out_refund_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_refund_no = this.out_refund_no_old;
 				console.log("退款订单号" + this.out_refund_no);
+				console.log(config.appid);
 				//this.TestDB();
 			}, //返回事件
 			onBackPress(e) {
@@ -148,7 +150,7 @@
 				// 	console.log(err);
 				// });
 				// return
-				let sql1 = "select * from SALE003 where bill='123321'";
+				let sql1 = "select * from SALE003";
 				db.SqliteHelper.get().executeQry(sql1, "测试sql 执行中", function(res) {
 					console.log("测试sql 查询成功");
 					console.log(res);
