@@ -46,7 +46,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-	import config from '@/utils/configInfo.js.js';
 
 	export default {
 		data() {
@@ -112,7 +111,6 @@
 				this.out_refund_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_refund_no = this.out_refund_no_old;
 				console.log("退款订单号" + this.out_refund_no);
-				console.log(config.appid);
 				//this.TestDB();
 			}, //返回事件
 			onBackPress(e) {

@@ -157,9 +157,6 @@ function retData(pm_code, pm_msg, pm_http) {
 
 }
 
-
-
-
 //请求方法
 let httpFunc = function(pm_data) {
 	if (!pm_data.url) {
@@ -169,9 +166,11 @@ let httpFunc = function(pm_data) {
 		})
 		return;
 	}
-	uni.showLoading({
-		title: pm_data.title || "加载中..."
-	});
+	if (!pm_data.load && pm_data.load != false) { //为空则默认显示加载框
+		uni.showLoading({
+			title: pm_data.title || "加载中..."
+		});
+	}
 	let p_url = baseUrl;
 	let config = uni.getStorageSync("config");
 	if (config) {
@@ -193,7 +192,9 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				uni.hideLoading();
+				if (!pm_data.load && pm_data.load != false) { //为空则关闭默认加载框
+					uni.hideLoading();
+				}
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
@@ -201,7 +202,9 @@ let httpFunc = function(pm_data) {
 				}
 			},
 			fail: (res) => {
-				uni.hideLoading();
+				if (!pm_data.load && pm_data.load != false) { //为空则关闭默认加载框
+					uni.hideLoading();
+				}
 				console.log(res);
 				return resolve(new retData(false, res.errMsg));
 			}
@@ -232,7 +235,6 @@ let forPromise = function(func, pm_data) {
 };
 ///作为异常和finally 的默认载体   
 let def = function(pm_callback, pm_data) {
-	uni.hideLoading();
 	if (pm_callback) {
 		pm_callback(pm_data);
 	}
@@ -259,7 +261,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 			}
 		}
 		res = await forPromise(callbacklist[i], res)
-		
+
 		if (res && !res.code) {
 			def(catchfun, res);
 			break;
