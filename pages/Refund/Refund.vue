@@ -46,6 +46,7 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
+	import hy from '@/utils/hy/hy_query.js';
 
 	export default {
 		data() {
@@ -103,7 +104,11 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
-				deviceno: getApp().globalData.store.deviceno
+				deviceno: getApp().globalData.store.deviceno,
+				Name: getApp().globalData.store.NAME,
+				MerId: getApp().globalData.store.MERID,
+				brand: getApp().globalData.brand,
+				kquser: getApp().globalData.kquser
 			}
 		},
 		methods: {
@@ -140,7 +145,7 @@
 				// 	console.log(err);
 				// });
 				// return
-				let sql1 = "select * from SALE003";
+				let sql1 = "select * from SALE003 where bill='123321'";
 				db.SqliteHelper.get().executeQry(sql1, "测试sql 执行中", function(res) {
 					console.log("测试sql 查询成功");
 					console.log(res);
@@ -256,15 +261,17 @@
 					})
 				} else if (t == 'CARD') {
 					if (func) func({
-						code: 1
+						code: 0
 					});
 				} else if (t == 'COUPON') {
 					if (func) func({
-						code: 1
+						code: -2,
+						msg:"不支持券的退款"
 					});
 				} else {
 					if (func) func({
-						code: 1
+						code: -2,
+						msg:"暂不其它方式退款"
 					});
 				}
 			},
@@ -313,7 +320,7 @@
 					let obj = {
 						orderbill: e.out_trade_no,
 						refundbill: e.out_refund_no,
-						refundnet: e.refund_amount
+						refundnet: e.total_fee
 					}
 					if (that.brand == "KG") {
 						obj.payTxnId = "";
@@ -329,19 +336,21 @@
 					}
 					hy.REFUND_ALL(that.brand, obj, function(res) {
 						if (res.code) {
-							res.code = '1';
+							res.code = 1;
 						} else {
-							res.code = '-1';
+							res.code = -1;
 						}
 						if (func) func(res);
 					})
 				} else if (t == 'COUPON') {
 					if (func) func({
-						code: 1
+						code: -2,
+						msg:"不支持"
 					});
 				} else {
 					if (func) func({
-						code: 1
+						code: -2,
+						msg:"不支持"
 					});
 				}
 			},
@@ -408,6 +417,11 @@
 						if (res.code > 0) {
 							//退款成功创建退款记录
 							that.createPayData(that.selectPayWayVal);
+						}else if(code==-2){
+							uni.showToast({
+								title: res.msg,
+								icon: "error"
+							});
 						} else {
 							that.UniqueBill(); //单号防重处理
 							let param = {}
