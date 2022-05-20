@@ -82,18 +82,20 @@
 					});
 			} ,
 			Codequery:function(){
+				let that = this;
 				// 调起条码扫描
-				uni.scanCode({
-					onlyFromCamera: false,//是否只能从相机扫码，不允许从相册选择图片
-					scanType: ['barCode','qrCode','pdf417','datamatrix'],
-					success: function (res) {
-						let obj=res.result;
-						hy.HyCodeQuery(obj,
-							function(res) {
-								that.content =JSON.stringify(res) ;
-							});
-					}
-				});
+				// uni.scanCode({
+				// 	onlyFromCamera: false,//是否只能从相机扫码，不允许从相册选择图片
+				// 	scanType: ['barCode','qrCode','pdf417','datamatrix'],
+				// 	success: function (res) {
+						
+				// 	}
+				// });
+				let obj="ZY5244621958248771";
+				hy.HyCodeQuery(obj,
+					function(res) {
+						that.content =JSON.stringify(res) ;
+					});
 			}
 		},
 		onLoad(){

@@ -168,7 +168,7 @@ const HyCodeQuery= (o,func)=>{
 	if(Brand=="KG"){
 		 //没找到案例
 	}else if(Brand=="ZY"){
-		GetCardInfo(c,func);
+		GetCardInfo(o,func);
 	}
 };
 const TicktQuery= (a,b, func)=>{
@@ -355,6 +355,7 @@ function consumeJF(f, func) {
  
 export default {
 	HyQuery,
+	HyCodeQuery,
 	TicktQuery,
 	TicktUse,
 	QRCODE_CONSUME,
