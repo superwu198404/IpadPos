@@ -122,6 +122,23 @@ const QJTicktQuery= (a, b, func)=> {
 		return res;
 	})
 };
+
+ 
+const Query_Member_Assets_Code= (d, func)=> {
+	Req.http("Hy/hy", {
+		apiname: "Query_Member_Assets_Code",
+		appid: appid,
+		paramkey: "YWD",
+		data:{
+			YWD:'门店'+d.KHID+'查询信息:'+d.code,
+			qr:d.code
+		}
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
 //仟吉单券核销
 const QJTicktUse=(d, func)=> {
 	Req.http("Hy/hy", {
@@ -166,7 +183,7 @@ const HyQuery= (o,func)=>{
 };
 const HyCodeQuery= (o,func)=>{
 	if(Brand=="KG"){
-		 //没找到案例
+		Query_Member_Assets_Code(o,func)
 	}else if(Brand=="ZY"){
 		GetCardInfo(o,func);
 	}
