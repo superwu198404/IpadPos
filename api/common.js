@@ -2,6 +2,7 @@ import Req from '@/utils/request.js';
 import util from '@/utils/util.js';
 import db from '@/utils/db/db_excute.js';
 import sql from '@/utils/db/create_sql.js';
+import create_sql from '@/utils/db/create_sql.js';
 
 //初始化数据
 var InitData = function(e) {
@@ -22,10 +23,17 @@ var InitData = function(e) {
 		}
 	});
 }
-//创建表
-var CreateTable = function() {
 
-
+//创建销售表结构
+var CreatSaleTable = function() {
+	let sql = create_sql.createSql; //创建表
+	db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
+		console.log("表结构创建成功");
+		console.log(res);
+	}, function(err) {
+		console.log("表结构创建失败");
+		console.log(err);
+	});
 }
 
 //创建单号
@@ -131,5 +139,6 @@ var CreateSQL = function(e, t) {
 export default {
 	InitData,
 	CreateBill,
-	CreateSQL
+	CreateSQL,
+	CreatSaleTable,
 }

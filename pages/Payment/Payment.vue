@@ -57,9 +57,8 @@
 	import _ali from '@/utils/Pay/Alipay.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
-	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-	import insertsql from './Insert_sale.js';
+	
 	export default {
 		components: {
 			uniPopup
@@ -162,7 +161,7 @@
 			//页面首次加载事件
 			onLoad() {
 				//首先创建销售表结构
-				this.CreatSaleTable();
+				common.CreatSaleTable();
 
 				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_trade_no = this.out_trade_no_old
@@ -194,17 +193,7 @@
 					}
 				}
 			},
-			//创建销售表结构
-			CreatSaleTable: function() {
-				let sql = create_sql.createSql; //创建表
-				db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
-					console.log("表结构创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("表结构创建失败");
-					console.log(err);
-				});
-			},
+			
 			QUsed: function(d, b, func) {
 				//继续支付   扣掉券的信息
 				hy.TicktUse(d, b,
