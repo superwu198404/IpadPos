@@ -13,8 +13,18 @@
 		<input type="text" v-model="mumbers" />
 		<button @click="query()">查询</button>
 		<button @click="Codequery()">扫码查询</button>
-		结果：
-		<view class="style_div">{{content}}</view>
+		卡号:
+		<p>{{hyinfo.CardNo}}</p>
+		昵称:
+		<p>{{hyinfo.NickName}}</p>
+		电话:
+		<p>{{hyinfo.Phone}}</p>
+		生日:
+		<p>{{hyinfo.Birthday}}</p>
+		等级:
+		<p>{{hyinfo.hy_Level.LevelName}}</p>
+		账户约:
+		<p>{{hyinfo.Balance}}</p> 
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
 				<view class="uni-tip">
@@ -43,8 +53,70 @@
 				isshow: true,
 				barnd: getApp().globalData.brand,
 				KHID: getApp().globalData.store.KHID,
-				code: null
-
+				code: null, 
+				hyinfo: {
+					hyId: null,
+					CardNo: null,
+					AllinPayAccount: null,
+					AliPayId: null,
+					AllinPayCardNo: null,
+					ActivityId: null,
+					youzanId: null,
+					Balance: null,
+					JFBalance: null,
+					JFFactor: null,
+					Name: null,
+					NickName: null,
+					CertNum: null,
+					Phone: null,
+					Birthday: null,
+					Avatar: null,
+					Sex: null,
+					CountryCode: null,
+					ProvinceCode: null,
+					CityCode: null,
+					DistrictCode: null,
+					OrgCode: null,
+					Area_code: null,
+					Area: null,
+					OpenId: null,
+					AppId: null,
+					UnionId: null,
+					ynhyk: null,
+					Vamt: null,
+					Couponnum: null,
+					CardType: null,
+					RegisterDay: null,
+					CreateTime: null,
+					Status: null,
+					ktypename: null,
+					giftcard: [],
+					hy_Level: {
+						hyId: null,
+						CardNo: null,
+						CardType: null,
+						ShowIndex: null,
+						dValue: null,
+						Level: null,
+						LevelName: null,
+						CardLevel: null,
+						nextLevelName: null,
+						JFBalance: null,
+						Balance: null,
+						ExpDate: null,
+						CardStatus: null,
+						TotalRefundAmount: null,
+						TotalConsumeAmount: null
+					},
+					hy_Assets: {
+						hyId: null,
+						GiftAmt: null,
+						GiftDisAmt: null,
+						OverdueValue: null,
+						FreezeValue: null,
+						eVipDisAmt: null
+					}
+				}
 			}
 		},
 		methods: {
@@ -95,20 +167,28 @@
 					acc: that.mumbers,
 					type: that.typeName
 				}
+				that.hyinfo =hy.hyinfoModel;
 				hy.HyQuery(obj,
-					function(res) {
-						that.content = JSON.stringify(res);
-						if(res.code){
-							getApp().globalData.hyinfo=JSON.parse(res.data)
+					function(res) { 
+						
+						if (res.code) {
+							that.hyinfo = JSON.parse(res.data);
+							getApp().globalData.hyinfo = that.hyinfo;
+						}else{
+							uni.showToast({
+								title:res.msg,
+								icon: "error"
+							});
+							
 						}
 					});
 			},
 			Codequery: function() {
 				this.$refs['popup'].open();
 			},
-			search:function(){
+			search: function() {
 				let that = this;
-				if(!that.code){
+				if (!that.code) {
 					uni.showToast({
 						title: "请输入会员码",
 						icon: "error"
@@ -124,11 +204,17 @@
 				} else {
 					obj = that.code;
 				}
+				that.hyinfo =hy.hyinfoModel;
 				hy.HyCodeQuery(obj,
-					function(res) {
-						that.content = JSON.stringify(res);
-						if(res.code){
-							getApp().globalData.hyinfo=JSON.parse(res.data)
+					function(res) { 
+						if (res.code) {
+							that.hyinfo = JSON.parse(res.data);
+							getApp().globalData.hyinfo = that.hyinfo;
+						}else{
+							uni.showToast({
+								title:res.msg,
+								icon: "error"
+							});
 						}
 						that.$refs['popup'].close();
 					});
@@ -139,7 +225,7 @@
 		}
 	}
 </script>
- 
+
 <style>
 	.style_div {
 		width: 100%;
@@ -153,6 +239,7 @@
 		word-wrap: break-word;
 		/*允许长单词或 URL 地址换行到下一行,在长单词或 URL 地址内部进行换行*/
 	}
+
 	.uni-tip {
 		background: #fff;
 		width: 70%;
@@ -184,4 +271,3 @@
 		min-height: 60px;
 	}
 </style>
-
