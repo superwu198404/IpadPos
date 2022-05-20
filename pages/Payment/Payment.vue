@@ -995,7 +995,8 @@
 										if (func) func(res1);
 									});
 								}
-							} else {
+							} 
+							else {
 								//无券或者异常
 								res.code = -1;
 								if (func) func(res);

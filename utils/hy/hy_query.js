@@ -4,15 +4,12 @@ var appid = getApp().globalData.appid;
 var kquser=getApp().globalData.kquser;
  
 //会员信息查询接口
-const  Query_Member_Assets= (a, b, func) =>{
+const  Query_Member_Assets= (d, func) =>{
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets",
 		appid: appid,
 		paramkey: "acc", 
-		data: {
-			acc: acc,
-			type: type,
-		}
+		data: d
 	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
@@ -36,25 +33,70 @@ const hyQuery_new= (a, b, func)=> {
 		return res;
 	})
 };
- 
+ const queryCustomCard=(p, func)=> {
+ 	Req.http("Hy/hy", {
+ 		apiname: "queryCustomCard",
+ 		appid: appid,
+ 		paramkey: "others",
+ 		source: "wxsmallprogram",
+ 		data: {
+ 			type: "queryCustomCard",
+ 			kquser: kquser,
+ 			ynencript: "N",
+ 			databody: {
+ 				kquser: kquser,
+ 				phone: p,
+ 				type: '1'
+ 			}
+ 		},
+ 		phone: p
+ 	}, "查询中...").then(function(res) {
+ 		//console.log(res);
+ 		if (func) func(res);
+ 		return res;
+ 	})
+ };
 //会员中心查询查询接口
-const queryCustomCard=(p, t, func)=> {
+const queryCustomCard_Pos=(p, func)=> {
 	Req.http("Hy/hy", {
-		apiname: "queryCustomCard",
+		apiname: "queryCustomCard_Pos",
 		appid: appid,
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
-			type: "queryCustomCard",
+			type: "queryCustomCard_Pos",
 			kquser: kquser,
 			ynencript: "N",
 			databody: {
 				kquser: kquser,
 				phone: p,
-				type: t
+				type: '1'
 			}
 		},
 		phone: p
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
+
+const GetCardInfo=(c, func)=> {
+	Req.http("Hy/hy", {
+		apiname: "GetCardInfo",
+		appid: appid,
+		paramkey: "others",
+		source: "wxsmallprogram",
+		data: {
+			type: "GetCardInfo",
+			kquser: kquser,
+			ynencript: "N",
+			databody: {
+				kquser: kquser,
+				cardtype: "ELEC",
+				card_id: c
+			}
+		} 
 	}, "查询中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
@@ -115,11 +157,18 @@ const couponConsume= (d,b,func)=> {
 		return res;
 	})
 };
-const HyQuery= (a,b,func)=>{
-	if(Brand="KG"){
-		Query_Member_Assets(a,b,func);
+const HyQuery= (o,func)=>{
+	if(Brand=="KG"){
+		Query_Member_Assets(o,func);
 	}else if(Brand=="ZY"){
-		queryCustomCard(a,b,func);
+		queryCustomCard_Pos(o.acc,func);
+	}
+};
+const HyCodeQuery= (o,func)=>{
+	if(Brand=="KG"){
+		 //没找到案例
+	}else if(Brand=="ZY"){
+		GetCardInfo(c,func);
 	}
 };
 const TicktQuery= (a,b, func)=>{
