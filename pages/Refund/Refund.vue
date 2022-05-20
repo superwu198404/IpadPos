@@ -108,16 +108,19 @@
 		},
 		methods: {
 			onLoad: function(e) {
+				//首先创建销售表结构
+				common.CreatSaleTable();
+				
 				this.out_refund_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_refund_no = this.out_refund_no_old;
 				console.log("退款订单号" + this.out_refund_no);
 				//this.TestDB();
 			}, //返回事件
 			onBackPress(e) {
-				if (this.PayList.length > 0 && this.PayAmount > 0) { //如果发起支付了，要判断支付完毕没有
+				if (this.RefundList.length > 0 && this.RefundAmount > 0) { //如果发起支付了，要判断支付完毕没有
 					if (!this.CanBack) {
 						uni.showToast({
-							title: "抱歉，还有待支付金额",
+							title: "抱歉，还有待退款金额",
 							icon: "error"
 						})
 						return true; //返回true阻止默认操作
