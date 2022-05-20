@@ -98,6 +98,9 @@
 				hy.HyQuery(obj,
 					function(res) {
 						that.content = JSON.stringify(res);
+						if(res.code){
+							getApp().globalData.hyinfo=JSON.parse(res.data)
+						}
 					});
 			},
 			Codequery: function() {
@@ -124,6 +127,9 @@
 				hy.HyCodeQuery(obj,
 					function(res) {
 						that.content = JSON.stringify(res);
+						if(res.code){
+							getApp().globalData.hyinfo=JSON.parse(res.data)
+						}
 						that.$refs['popup'].close();
 					});
 			}
