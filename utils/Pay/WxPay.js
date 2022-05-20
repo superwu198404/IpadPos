@@ -17,7 +17,7 @@ const CodePayment = (title, auth_code, body, total_fee) => {
 	});
 }
 ///微信扫码支付
-const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func,func2) => {
+const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func, func2) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
@@ -39,14 +39,15 @@ const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func
 			func(res);
 		}
 		return res;
-	},null,null,func2);
+	}, null, null, func2);
 }
 ///查询微信扫码支付的结果
-const QueryCodeScanPay = (title, out_trade_no, func,func2) => {
+const QueryCodeScanPay = (title, out_trade_no, func, func2) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
 		title: title,
+		load: false,
 		method: "POST",
 		data: {
 			apiName: 'V2TradeQuery',
@@ -61,10 +62,10 @@ const QueryCodeScanPay = (title, out_trade_no, func,func2) => {
 			func(res);
 		}
 		return res;
-	},null,null,func2);
+	}, null, null, func2);
 }
 ///撤销支付订单
-const CancelCodeScanPay = (title, out_trade_no, func,func2) => {
+const CancelCodeScanPay = (title, out_trade_no, func, func2) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
@@ -83,10 +84,10 @@ const CancelCodeScanPay = (title, out_trade_no, func,func2) => {
 			func(res);
 		}
 		return res;
-	},null,null,func2);
+	}, null, null, func2);
 }
 ///查询订单是否退款
-const QueryRefund = (title, out_trade_no, func,func2) => {
+const QueryRefund = (title, out_trade_no, func, func2) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
@@ -105,11 +106,11 @@ const QueryRefund = (title, out_trade_no, func,func2) => {
 			func(res);
 		}
 		return res;
-	},null,null,func2);
+	}, null, null, func2);
 }
 
 ///订单退款
-const Refund = (title, out_trade_no, out_refund_no, total_fee, func,func2) => {
+const Refund = (title, out_trade_no, out_refund_no, total_fee, func, func2) => {
 	Req.asyncFunc({
 		http: true,
 		url: "/Payment/Payment",
@@ -131,11 +132,12 @@ const Refund = (title, out_trade_no, out_refund_no, total_fee, func,func2) => {
 			func(res);
 		}
 		return res;
-	},null,null,func2);
+	}, null, null, func2);
 }
 export default {
 	CodePayment,
 	CodeScanPay,
+	CancelCodeScanPay,
 	QueryCodeScanPay,
 	QueryRefund,
 	Refund

@@ -267,140 +267,6 @@
 				this.PayAmount = this.dPayAmount;
 				this.disablePayInput = false;
 			},
-			//撤销支付订单合集
-			cancelPayAll: function(t, e, func) {
-				let Result;
-				if (t == 'WX') {
-					_wx.CancelCodeScanPay("撤销微信扫码付", e.out_trade_no,
-						function(res) {
-							Result = JSON.parse(res.data);
-							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS') { //撤销成功
-								Result.new_code = '1';
-							} else {
-								Result.new_code = '-1';
-								Result.new_msg = Result.return_msg;
-							}
-							if (func) func(Result);
-						});
-				} else if (t == 'ALI') {
-					_ali.Payment("订单撤销中..", "TradeCancel", "WxPayService", {
-							out_trade_no: e.out_trade_no
-						},
-						function(res) {
-							let qResult = JSON.parse(res.data);
-							qResult = qResult.alipay_trade_cancel_response
-							if (qResult.code == "10000") {
-								uni.showToast({
-									title: "支付超时，订单已撤销",
-									duration: 2000,
-									icon: "none"
-								});
-							}
-							if (func) func(res);
-						},
-						function(res) {
-							let msg = res.msg;
-							if (res.data != null) {
-								let errResult = JSON.parse(res.data);
-								errResult = errResult.alipay_trade_cancel_response
-								//非业务失败
-								if (errResult.code != "40004") {
-									//业务失败
-									msg = errResult.sub_msg;
-								} else {
-									//业务失败
-									msg = errResult.sub_msg;
-								}
-							}
-							uni.showToast({
-								title: msg,
-								duration: 2000,
-								icon: "none"
-							});
-							if (func) func(res);
-						});
-				} else if ('CARD') {
-
-				} else if ('COUPON') {
-
-				} else {}
-			},
-			//查询支付结果合集
-			queryPayAll: function(t, e, func) {
-				let that = this;
-				let Result;
-				if (t == 'WX') {
-					_wx.QueryCodeScanPay("查询支付结果...", e.out_trade_no,
-						function(res) {
-							Result = JSON.parse(res.data);
-							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
-								.trade_state == 'SUCCESS') { //支付成功
-								Result.code = '1';
-							} else if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
-								.trade_state == 'USERPAYING') { //支付中
-								Result.code = '0';
-							} else {
-								Result.code = '-1';
-								Result.msg = Result.return_msg;
-							}
-							if (func) func(Result);
-						});
-				} else if (t == 'ALI') {
-					_ali.Payment("查询支付结果...", "TradeQuery", that.PayWay, {
-							out_trade_no: e.out_trade_no
-						},
-						function(res) {
-							let qResult = JSON.parse(res.data);
-							qResult = qResult.alipay_trade_query_response;
-							if (qResult.code == "10000") {
-								if (qResult.trade_status == "WAIT_BUYER_PAY") {
-									//交易创建，等待买家付款 加上用户支付中提示
-									qResult.msg = "支付中，请稍后..";
-									qResult.code = 0;
-								} else {
-									//交易支付成功//生成支付记录
-									if (qResult.trade_status == "TRADE_SUCCESS") {
-										qResult.code = 1;
-									} else {
-										let msg = "";
-										if (qResult.trade_status == "TRADE_CLOSED") {
-											msg = "未付款,交易超时已关闭";
-										}
-										if (qResult.trade_status == "TRADE_FINISHED")
-											msg = "交易结束完成";
-										qResult.code = -1;
-										qResult.msg = msg;
-									}
-								}
-							} else {
-								//异常
-								qResult.code = -1;
-							}
-							if (func) func(qResult);
-						},
-						function(res) {
-							res.code = -1;
-							res.msg = "支付异常";
-							if (func) func(res);
-						});
-				} else if (t == 'CARD') {
-					//仟吉
-					hy.QUERY_ALL(that.brand, e.out_trade_no, function(res) {
-						if (res.code) {
-							res.code = 1;
-						} else {
-							res.code = -1;
-						}
-						if (func) func(res);
-					})
-				} else if ('COUPON') {
-					//券的暂时没有
-					if (func) func({
-						code: 1,
-						msg: ''
-					});
-				} else {}
-			},
 			//创建订单数据
 			CreateDBData: function() {
 				//基础数据
@@ -546,7 +412,7 @@
 			createPayData: function(t) {
 				let that = this;
 				let arr = that.PayList.filter(function(v, i, ar) {
-					return v.amount == that.RefundAmount && v.no == that.no;
+					return v.amount == that.PayAmount && v.no == that.no;
 				})
 				if (arr.length == 0) { //说明没有追加过该笔支付记录
 					if (!t.payobj) {
@@ -611,17 +477,18 @@
 				let nums = 1;
 				var timerIndex;
 				var timerFunc = function() {
-					clearInterval(timerIndex);
+					console.log("循环次数监听：" + nums);
 					if (nums <= 24) {
 						that.queryPayAll(t, e, function(res) {
 							if (res.code > 0) {
+								clearInterval(timerIndex);
 								//支付成功创建支付记录
 								that.createPayData(t);
-
+								uni.hideLoading();
 							} else if (res.code == 0) {
 								//用户支付中  提示是否继续
 								if (nums % 6 == 0) {
-									// clearInterval(timerIndex);
+									clearInterval(timerIndex);
 									uni.showModal({
 										title: '提示',
 										content: '是否继续等待？',
@@ -631,40 +498,55 @@
 											if (res.confirm) { //重启定时器继续查
 												timerIndex = setInterval(timerFunc, 5000);
 											} else {
-												// clearInterval(timerIndex);
+												uni.hideLoading();
+												clearInterval(timerIndex);
 												uni.showToast({
-													title: "取消支付，正在撤销订单",
-													icon: "none"
+													title: "取消支付，即将撤销订单",
+													icon: "error",
+													success: function() {
+														setTimeout(function() {
+															//撤销订单
+															that.cancelPayAll(
+																t, e,
+																func1);
+														}, 2000);
+													}
 												})
-												//撤销订单
-												that.cancelPayAll(t, e, func1);
 											}
 										}
 									})
 								}
 							} else {
-								//查询失败信息
+								uni.hideLoading();
+								clearInterval(timerIndex);
 								uni.showToast({
 									title: res.msg,
 									icon: "error",
 									success: function() {
-										//撤销订单
-										that.cancelPayAll(t, e, func1);
+										setTimeout(function() {
+											//撤销订单
+											that.cancelPayAll(t, e, func1);
+										}, 2000);
 									}
 								});
 							}
+							nums++
 						});
 					} else { //撤销订单
-						// clearInterval(timerIndex);
+						uni.hideLoading();
+						clearInterval(timerIndex);
 						uni.showToast({
-							title: "支付超时，正在撤销订单",
-							icon: "none"
+							title: "支付超时，即将撤销订单",
+							icon: "error",
+							success: function() {
+								setTimeout(function() {
+									that.cancelPayAll(t, e, func1);
+								}, 2000);
+							}
 						})
-						that.cancelPayAll(t, e, func1);
 					}
-					nums++
 				}
-				// timerFunc();
+				timerFunc();
 				timerIndex = setInterval(timerFunc, 5000);
 			},
 			close: function() {
@@ -718,12 +600,16 @@
 					that.paymentAll(that.selectPayWayVal, param, function(res) {
 						if (res.code < 0) {
 							uni.showToast({
-								title: res.msg,
+								title: "支付失败：" + res.msg,
 								icon: "error"
 							});
 							return;
 						} else {
 							if (that.selectPayWayVal != 'COUPON') {
+								uni.showLoading({
+									mask: true,
+									title: "正在查询支付结果"
+								})
 								that.circleQuery(that.selectPayWayVal, param, function(res) {});
 							} else {
 								//支付成功创建支付记录
@@ -782,31 +668,30 @@
 				});
 				let Result;
 				if (t == 'WX') {
-					_wx.CodeScanPay("微信支付", e.out_trade_no, e.subject, e.auth_code, e.totalAmount * 100,
+					_wx.CodeScanPay("支付中...", e.out_trade_no, e.subject, e.auth_code, e.totalAmount * 100,
 						function(res) {
-							debugger;
 							Result = JSON.parse(res.data);
 							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' &&
 								Result
 								.trade_type == 'MICROPAY') { //支付成功
-								Result.code = '1';
+								Result.code = 1;
 							} else if (Result.return_code == 'SUCCESS' && Result.err_code ==
 								'USERPAYING') { //支付中
-								Result.code = '0';
+								Result.code = 0;
 							} else {
-								Result.code = '-1';
+								Result.code = -1;
 								Result.msg = Result.err_code_des; //return_msg;
 							}
 							if (func) func(Result);
 						},
 						function(err) {
 							if (err) {
-								err.code = '-1';
+								err.code = -1;
 							}
 							if (func) func(err);
 						});
 				} else if (t == 'ALI') {
-					_ali.Payment("支付宝支付", "CodePayment", "AliPayService", {
+					_ali.Payment("支付中...", "CodePayment", "AliPayService", {
 							out_trade_no: e.out_trade_no,
 							auth_code: e.auth_code,
 							subject: e.subject,
@@ -1003,7 +888,149 @@
 							}
 						});
 				} else {}
-			}
+			},
+			//查询支付结果合集
+			queryPayAll: function(t, e, func) {
+				let that = this;
+				let Result;
+				if (t == 'WX') {
+					_wx.QueryCodeScanPay("查询支付结果...", e.out_trade_no,
+						function(res) {
+							Result = JSON.parse(res.data);
+							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
+								.trade_state == 'SUCCESS') { //支付成功
+								Result.code = 1;
+							} else if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS' && Result
+								.trade_state == 'USERPAYING') { //支付中
+								Result.code = 0;
+							} else {
+								Result.code = -1;
+								Result.msg = Result.return_msg;
+							}
+							if (func) func(Result);
+						},
+						function(err) {
+							err.code = -1;
+							if (func) func(err);
+						});
+				} else if (t == 'ALI') {
+					_ali.Payment("查询支付结果...", "TradeQuery", that.PayWay, {
+							out_trade_no: e.out_trade_no
+						},
+						function(res) {
+							let qResult = JSON.parse(res.data);
+							qResult = qResult.alipay_trade_query_response;
+							if (qResult.code == "10000") {
+								if (qResult.trade_status == "WAIT_BUYER_PAY") {
+									//交易创建，等待买家付款 加上用户支付中提示
+									qResult.msg = "支付中，请稍后..";
+									qResult.code = 0;
+								} else {
+									//交易支付成功//生成支付记录
+									if (qResult.trade_status == "TRADE_SUCCESS") {
+										qResult.code = 1;
+									} else {
+										let msg = "";
+										if (qResult.trade_status == "TRADE_CLOSED") {
+											msg = "未付款,交易超时已关闭";
+										}
+										if (qResult.trade_status == "TRADE_FINISHED")
+											msg = "交易结束完成";
+										qResult.code = -1;
+										qResult.msg = msg;
+									}
+								}
+							} else {
+								//异常
+								qResult.code = -1;
+							}
+							if (func) func(qResult);
+						},
+						function(res) {
+							res.code = -1;
+							res.msg = "支付异常";
+							if (func) func(res);
+						});
+				} else if (t == 'CARD') {
+					//仟吉
+					hy.QUERY_ALL(that.brand, e.out_trade_no, function(res) {
+						if (res.code) {
+							res.code = 1;
+						} else {
+							res.code = -1;
+						}
+						if (func) func(res);
+					})
+				} else if ('COUPON') {
+					//券的暂时没有
+					if (func) func({
+						code: 1,
+						msg: ''
+					});
+				} else {}
+			},
+			//撤销支付订单合集
+			cancelPayAll: function(t, e, func) {
+				let Result;
+				if (t == 'WX') {
+					_wx.CancelCodeScanPay("订单撤销中...", e.out_trade_no,
+						function(res) {
+							Result = JSON.parse(res.data);
+							if (Result.return_code == 'SUCCESS' && Result.result_code == 'SUCCESS') { //撤销成功
+								Result.new_code = '1';
+							} else {
+								Result.new_code = '-1';
+								Result.new_msg = Result.return_msg;
+							}
+							if (func) func(Result);
+						},
+						function(err) {
+							err.code = "-1";
+							if (func) func(err);
+						});
+				} else if (t == 'ALI') {
+					_ali.Payment("订单撤销中...", "TradeCancel", "WxPayService", {
+							out_trade_no: e.out_trade_no
+						},
+						function(res) {
+							let qResult = JSON.parse(res.data);
+							qResult = qResult.alipay_trade_cancel_response
+							if (qResult.code == "10000") {
+								uni.showToast({
+									title: "支付超时，订单已撤销",
+									duration: 2000,
+									icon: "none"
+								});
+							}
+							if (func) func(res);
+						},
+						function(res) {
+							let msg = res.msg;
+							if (res.data != null) {
+								let errResult = JSON.parse(res.data);
+								errResult = errResult.alipay_trade_cancel_response
+								//非业务失败
+								if (errResult.code != "40004") {
+									//业务失败
+									msg = errResult.sub_msg;
+								} else {
+									//业务失败
+									msg = errResult.sub_msg;
+								}
+							}
+							uni.showToast({
+								title: msg,
+								duration: 2000,
+								icon: "none"
+							});
+							if (func) func(res);
+						});
+				} else if ('CARD') {
+
+				} else if ('COUPON') {
+
+				} else {}
+			},
 		}
 	}
 </script>
