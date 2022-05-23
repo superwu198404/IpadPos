@@ -17,7 +17,8 @@
 				NAME:"武汉xxx",
 				MERID:"999990053990001",
 			    deviceno:"13001001"
-			}
+			},
+			hyinfo:null
 		},
 		onLaunch: function() {
 			console.log('App Launch')

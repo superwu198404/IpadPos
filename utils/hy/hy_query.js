@@ -2,7 +2,69 @@ import Req from '@/utils/request.js';
 var Brand = getApp().globalData.brand;
 var appid = getApp().globalData.appid;
 var kquser = getApp().globalData.kquser;
-
+var hyinfoModel = {
+	hyId: null,
+	CardNo: null,
+	AllinPayAccount: null,
+	AliPayId: null,
+	AllinPayCardNo: null,
+	ActivityId: null,
+	youzanId: null,
+	Balance: null,
+	JFBalance: null,
+	JFFactor: null,
+	Name: null,
+	NickName: null,
+	CertNum: null,
+	Phone: null,
+	Birthday: null,
+	Avatar: null,
+	Sex: null,
+	CountryCode: null,
+	ProvinceCode: null,
+	CityCode: null,
+	DistrictCode: null,
+	OrgCode: null,
+	Area_code: null,
+	Area: null,
+	OpenId: null,
+	AppId: null,
+	UnionId: null,
+	ynhyk: null,
+	Vamt: null,
+	Couponnum: null,
+	CardType: null,
+	RegisterDay: null,
+	CreateTime: null,
+	Status: null,
+	ktypename: null,
+	giftcard: [],
+	hy_Level: {
+		hyId: null,
+		CardNo: null,
+		CardType: null,
+		ShowIndex: null,
+		dValue: null,
+		Level: null,
+		LevelName: null,
+		CardLevel: null,
+		nextLevelName: null,
+		JFBalance: null,
+		Balance: null,
+		ExpDate: null,
+		CardStatus: null,
+		TotalRefundAmount: null,
+		TotalConsumeAmount: null
+	},
+	hy_Assets: {
+		hyId: null,
+		GiftAmt: null,
+		GiftDisAmt: null,
+		OverdueValue: null,
+		FreezeValue: null,
+		eVipDisAmt: null
+	}
+}
 //会员信息查询接口
 const Query_Member_Assets = (d, func) => {
 	Req.http("Hy/hy", {
@@ -122,6 +184,23 @@ const QJTicktQuery = (a, b, func) => {
 		return res;
 	})
 };
+
+
+const Query_Member_Assets_Code = (d, func) => {
+	Req.http("Hy/hy", {
+		apiname: "Query_Member_Assets_Code",
+		appid: appid,
+		paramkey: "YWD",
+		data: {
+			YWD: '门店' + d.KHID + '查询信息:' + d.code,
+			qr: d.code
+		}
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
 //仟吉单券核销
 const QJTicktUse = (d, func) => {
 	Req.http("Hy/hy", {
@@ -166,7 +245,7 @@ const HyQuery = (o, func) => {
 };
 const HyCodeQuery = (o, func) => {
 	if (Brand == "KG") {
-		//没找到案例
+		Query_Member_Assets_Code(o, func)
 	} else if (Brand == "ZY") {
 		GetCardInfo(o, func);
 	}
@@ -367,5 +446,6 @@ export default {
 	REFUND,
 	PAY_ALL,
 	QUERY_ALL,
-	REFUND_ALL
+	REFUND_ALL,
+	hyinfoModel
 }
