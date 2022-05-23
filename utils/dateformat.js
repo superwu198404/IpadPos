@@ -293,7 +293,7 @@ const getdate = () => {
 	return str;
 };
 //获取当前时今年的第几周：2022,06,20
-var getYearWeek = function(a, b, c)
+var getYearWeek = (a, b, c)=>
 {
     /*
     date1是当前日期

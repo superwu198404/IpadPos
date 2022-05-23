@@ -1,14 +1,6 @@
 <template>
 	<view>
-		请选择查询方式：
-		<view>
-			<radio-group class="radio-group" @change="radioChange">
-				<label class="radio">
-					<radio value="1" /> 手机号
-					<radio value="2" /> 会员号
-				</label>
-			</radio-group>
-		</view>
+	 
 		请输入会员手机号码/会员号：
 		<input type="text" v-model="mumbers" />
 		<button @click="query()">查询</button>
@@ -35,7 +27,7 @@
 </template>
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
-	import hy from '@/utils/hy/hy_query.js';
+	import hy from '@/utils/hy/hy_query.js'; 
 	export default {
 		components: {
 			uniPopup
@@ -45,11 +37,10 @@
 				type: null,
 				typeName: null,
 				mumbers: null,
-				content: null,
-				isshow: true,
+				content: null, 
 				barnd: getApp().globalData.brand,
 				KHID: getApp().globalData.store.KHID,
-				code: null, 
+				code: null,
 				hyinfo: {
 					hyId: null,
 					CardNo: null,
@@ -119,63 +110,26 @@
 			close: function() {
 				this.$refs['popup'].close();
 			},
-			radioChange: function(e) {
-				this.type = e.target.value;
-				if (this.barnd == "KG") {
-					if (this.type == '1') {
-						this.typeName = 'Mobile';
-					}
-					if (this.type == '2') {
-						this.typeName = 'ACCOUNT';
-					}
-				} else {
-					if (this.type == '1') {
-						this.typeName = 'phone';
-					}
-					if (this.type == '2') {
-						this.typeName = 'hyid';
-					}
-				}
-			},
 			query: function() {
 				let that = this;
-				if (!that.type) {
-					uni.showToast({
-						title: "请选择查询方式",
-						icon: "error"
-					})
-					return;
-				}
 				if (!that.mumbers) {
-					let msg = "";
-					if (that.type == 1) {
-						msg = "请输入手机号码"
-					} else {
-						msg = "请输入会员号码"
-					}
 					uni.showToast({
-						title: msg,
+						title: "请输入手机号码/会员号码",
 						icon: "error"
 					});
 					return;
 				}
-				let obj = {
-					acc: that.mumbers,
-					type: that.typeName
-				}
-				that.hyinfo =hy.hyinfoModel;
-				hy.HyQuery(obj,
-					function(res) { 
-						
+				that.hyinfo = hy.hyinfoModel;
+				hy.HyQuery(that.mumbers,
+					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
 							getApp().globalData.hyinfo = that.hyinfo;
-						}else{
+						} else {
 							uni.showToast({
-								title:res.msg,
+								title: res.msg,
 								icon: "error"
 							});
-							
 						}
 					});
 			},
@@ -200,15 +154,15 @@
 				} else {
 					obj = that.code;
 				}
-				that.hyinfo =hy.hyinfoModel;
+				that.hyinfo = hy.hyinfoModel;
 				hy.HyCodeQuery(obj,
-					function(res) { 
+					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
 							getApp().globalData.hyinfo = that.hyinfo;
-						}else{
+						} else {
 							uni.showToast({
-								title:res.msg,
+								title: res.msg,
 								icon: "error"
 							});
 						}

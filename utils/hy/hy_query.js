@@ -1,4 +1,5 @@
 import Req from '@/utils/request.js';
+import _checker from '@/utils/graceChecker.js';
 var Brand = getApp().globalData.brand;
 var appid = getApp().globalData.appid;
 var kquser = getApp().globalData.kquser;
@@ -236,11 +237,22 @@ const couponConsume = (d, b, func) => {
 		return res;
 	})
 };
-const HyQuery = (o, func) => {
+const HyQuery = (mumbers, func) => {
+	let typeName=null;
+	let flag=_checker.checkMobile(mumbers);
 	if (Brand == "KG") {
-		Query_Member_Assets(o, func);
+		if(flag){
+			 typeName = 'Mobile';
+		}else{
+			typeName = 'ACCOUNT';
+		}
+		let obj = {
+			acc: mumbers,
+			type: typeName
+		}
+		Query_Member_Assets(obj, func);
 	} else if (Brand == "ZY") {
-		queryCustomCard_Pos(o.acc, func);
+		queryCustomCard_Pos(mumbers, func);
 	}
 };
 const HyCodeQuery = (o, func) => {
