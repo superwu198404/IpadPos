@@ -24,7 +24,7 @@
 		<p>{{hyinfo.JFBalance}}</p>
 		<p>优惠券====================</p>
 		<view v-if="couponlst.length>0">
-			<p v-for="(item,index) in couponlst">{{item.limitmoney}}元{{item.sname}},{{item.sdate}}到{{item.edate}}</p>
+			<p v-for="(item,index) in couponlst">{{item.money}}元{{item.sname}},{{item.sdate}}到{{item.edate}}</p>
 		</view>
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
