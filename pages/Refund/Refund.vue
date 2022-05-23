@@ -476,7 +476,8 @@
 					//预留处理业务数据的地方
 					if (that.dRefundAmount == 0) { //说明已经退款完毕了
 						this.CanBack = true; //可以返回了
-						this.CreateDBData();
+						this.CreateDBData(); //创建订单数据
+						this.scoreConsume(); //积分操作
 					}
 				} else {
 					uni.showToast({
@@ -514,7 +515,7 @@
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
-					CUID: "", //会员号
+					CUID: this.hyinfo.HYID, //会员号, //会员号
 					CARDID: "", //卡号
 					THYDISC: this.Discount,
 					YN_SC: 'N',
@@ -618,6 +619,69 @@
 					console.log("订单创建失败");
 					console.log(err);
 				});
+			},
+			//积分操作
+			scoreConsume: function() {
+				let that = this
+				let hyinfo = app.gloabaldata.hyinfo;
+				if (that.totalAmount > 0 && hyinfo) { //录入过会员信息
+					let param;
+					if (that.brand == 'KG') {
+						let arr = [],
+							arr1 = [];
+						that.Products.forEach(function(item, i) {
+							arr.push({
+								lineNumber: i,
+								product: item.BARCODE,
+								category: item.PLID,
+								quantity: item.QTY,
+								userPrice: item.PRICE,
+								basePrice: item.OPRICE,
+								netPrice: item.AMOUNT
+							})
+						});
+						that.PayList.forEach(function(item, i) {
+							arr1.push({
+								paymentType: item.fkid,
+								payAmount: item.amount
+							});
+						});
+						param = {
+							addPoint: 0,
+							channel: "POS",
+							cityCode: "",
+							code: that.out_trade_no,
+							date: dateformat.getYMDS(),
+							deducePoint: 0,
+							districtCode: "",
+							entryList: arr,
+							memberCode: hyinfo.hyid,
+							netAmount: that.totalAmount,
+							orderAmount: that.allAmount,
+							orderType: "1",
+							paymentInfoList: arr1,
+							pointOfService: that.KHID,
+							preOrderCode: "",
+							promotionIds: [],
+							region: that.BMID,
+							stateCode: ""
+						}
+					} else {
+						param = {
+							kquser: that.kquser,
+							soreid: that.KHID,
+							oderbill: that.out_trade_no,
+							psid: that.POSID,
+							slenet: -that.totalAmount,
+							cxbill: "",
+							hyid: hyinfo.hyid,
+							sign: ""
+						}
+					}
+					hy.consumeJF(that.brand, param, function(res) {
+						console.log("积分上传结果：" + res);
+					})
+				}
 			},
 		}
 	}

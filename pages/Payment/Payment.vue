@@ -282,7 +282,7 @@
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
-					CUID: "", //会员号
+					CUID: this.hyinfo.HYID, //会员号
 					CARDID: "", //卡号
 					THYDISC: this.Discount,
 					YN_SC: 'N',
@@ -436,7 +436,8 @@
 					//预留处理业务数据的地方
 					if (that.dPayAmount == 0) { //说明支付完毕了
 						this.CanBack = true; //可以返回了
-						this.CreateDBData();
+						this.CreateDBData();//创建订单数据
+						this.scoreConsume();//积分操作
 					}
 				} else {
 					uni.showToast({
@@ -1028,23 +1029,23 @@
 					if (that.brand == 'KG') {
 						let arr = [],
 							arr1 = [];
-						for (var i = 0; i < that.Products.length; i++) {
-							let obj = {};
-							obj.lineNumber = i;
-							obj.product = that.Products[i].BARCODE;
-							obj.category = that.Products[i].PLID;
-							obj.quantity = that.Products[i].QTY;
-							obj.userPrice = that.Products[i].PRICE;
-							obj.basePrice = that.Products[i].OPRICE;
-							obj.netPrice = that.Products[i].AMOUNT;
-							arr.push(obj);
-						}
-						for (var i = 0; i < that.PayList.length; i++) {
-							let obj1 = {};
-							obj1.paymentType = that.PayList[i].fkid;
-							obj1.payAmount = that.PayList[i].amount;
-							arr1.push(obj1);
-						}
+						that.Products.forEach(function(item, i) {
+							arr.push({
+								lineNumber: i,
+								product: item.BARCODE,
+								category: item.PLID,
+								quantity: item.QTY,
+								userPrice: item.PRICE,
+								basePrice: item.OPRICE,
+								netPrice: item.AMOUNT
+							})
+						});
+						that.PayList.forEach(function(item, i) {
+							arr1.push({
+								paymentType: item.fkid,
+								payAmount: item.amount
+							});
+						});
 						param = {
 							addPoint: 0,
 							channel: "POS",
@@ -1054,7 +1055,7 @@
 							deducePoint: 0,
 							districtCode: "",
 							entryList: arr,
-							memberCode: that.hyinfo.hyid,
+							memberCode: hyinfo.hyid,
 							netAmount: that.totalAmount,
 							orderAmount: that.allAmount,
 							orderType: "1",
@@ -1072,8 +1073,8 @@
 							oderbill: that.out_trade_no,
 							psid: that.POSID,
 							slenet: that.totalAmount,
-							cbill: "",
-							hd: hyinfo.hyid,
+							cxbill: "",
+							hyid: hyinfo.hyid,
 							sign: ""
 						}
 					}

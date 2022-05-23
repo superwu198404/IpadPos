@@ -278,6 +278,18 @@ var render = function() {
           }
         },
         [_vm._v("开始退款")]
+      ),
+      _c(
+        "v-uni-button",
+        {
+          attrs: { _i: 3 },
+          on: {
+            click: function($event) {
+              return _vm.$handleViewEvent($event)
+            }
+          }
+        },
+        [_vm._v("查询会员")]
       )
     ],
     1
@@ -6477,47 +6489,13 @@ var render = function() {
     "v-uni-view",
     { attrs: { _i: 0 } },
     [
-      _vm._v("请选择查询方式："),
-      _c(
-        "v-uni-view",
-        { attrs: { _i: 1 } },
-        [
-          _c(
-            "v-uni-radio-group",
-            {
-              staticClass: _vm._$g(2, "sc"),
-              attrs: { _i: 2 },
-              on: {
-                change: function($event) {
-                  return _vm.$handleViewEvent($event)
-                }
-              }
-            },
-            [
-              _c(
-                "v-uni-label",
-                { staticClass: _vm._$g(3, "sc"), attrs: { _i: 3 } },
-                [
-                  _c("v-uni-radio", { attrs: { value: "1", _i: 4 } }),
-                  _vm._v("手机号"),
-                  _c("v-uni-radio", { attrs: { value: "2", _i: 5 } }),
-                  _vm._v("会员号")
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
       _vm._v("请输入会员手机号码/会员号："),
       _c("v-uni-input", {
-        attrs: { type: "text", _i: 6 },
+        attrs: { type: "text", _i: 1 },
         model: {
-          value: _vm._$g(6, "v-model"),
+          value: _vm._$g(1, "v-model"),
           callback: function($$v) {
-            _vm.$handleVModelEvent(6, $$v)
+            _vm.$handleVModelEvent(1, $$v)
           },
           expression: "mumbers"
         }
@@ -6525,7 +6503,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 7 },
+          attrs: { _i: 2 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -6537,7 +6515,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 8 },
+          attrs: { _i: 3 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -6546,38 +6524,30 @@ var render = function() {
         },
         [_vm._v("扫码查询")]
       ),
-      _vm._v("卡号:"),
-      _c("p", { attrs: { _i: 9 } }, [_vm._v(_vm._$g(9, "t0-0"))]),
-      _vm._v("昵称:"),
-      _c("p", { attrs: { _i: 10 } }, [_vm._v(_vm._$g(10, "t0-0"))]),
-      _vm._v("性别:"),
-      _c("p", { attrs: { _i: 11 } }, [_vm._v(_vm._$g(11, "t0-0"))]),
-      _vm._v("电话:"),
-      _c("p", { attrs: { _i: 12 } }, [_vm._v(_vm._$g(12, "t0-0"))]),
-      _vm._v("生日:"),
-      _c("p", { attrs: { _i: 13 } }, [_vm._v(_vm._$g(13, "t0-0"))]),
-      _vm._v("等级:"),
-      _c("p", { attrs: { _i: 14 } }, [_vm._v(_vm._$g(14, "t0-0"))]),
-      _vm._v("账户余额:"),
-      _c("p", { attrs: { _i: 15 } }, [_vm._v(_vm._$g(15, "t0-0"))]),
-      _vm._v("积分余额:"),
-      _c("p", { attrs: { _i: 16 } }, [_vm._v(_vm._$g(16, "t0-0"))]),
+      _c("p", { attrs: { _i: 4 } }, [_vm._v("卡号：" + _vm._$g(4, "t0-0"))]),
+      _c("p", { attrs: { _i: 5 } }, [_vm._v("昵称：" + _vm._$g(5, "t0-0"))]),
+      _c("p", { attrs: { _i: 6 } }, [_vm._v("性别：" + _vm._$g(6, "t0-0"))]),
+      _c("p", { attrs: { _i: 7 } }, [_vm._v("电话：" + _vm._$g(7, "t0-0"))]),
+      _c("p", { attrs: { _i: 8 } }, [_vm._v("生日：" + _vm._$g(8, "t0-0"))]),
+      _c("p", { attrs: { _i: 9 } }, [_vm._v("等级：" + _vm._$g(9, "t0-0"))]),
+      _c("p", { attrs: { _i: 10 } }, [_vm._v("余额：" + _vm._$g(10, "t0-0"))]),
+      _c("p", { attrs: { _i: 11 } }, [_vm._v("积分：" + _vm._$g(11, "t0-0"))]),
       _c(
         "v-uni-view",
-        { attrs: { _i: 17 } },
+        { attrs: { _i: 12 } },
         [
           _c(
             "uni-popup",
-            { ref: "popup", attrs: { _i: 18 } },
+            { ref: "popup", attrs: { _i: 13 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(19, "sc"), attrs: { _i: 19 } },
+                { staticClass: _vm._$g(14, "sc"), attrs: { _i: 14 } },
                 [
                   _c(
                     "v-uni-button",
                     {
-                      attrs: { _i: 20 },
+                      attrs: { _i: 15 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
@@ -6588,16 +6558,16 @@ var render = function() {
                   ),
                   _vm._v("会员码："),
                   _c("v-uni-input", {
-                    attrs: { "confirm-type": "confirm", _i: 21 },
+                    attrs: { "confirm-type": "confirm", _i: 16 },
                     on: {
                       confirm: function($event) {
                         return _vm.$handleViewEvent($event)
                       }
                     },
                     model: {
-                      value: _vm._$g(21, "v-model"),
+                      value: _vm._$g(16, "v-model"),
                       callback: function($$v) {
-                        _vm.$handleVModelEvent(21, $$v)
+                        _vm.$handleVModelEvent(16, $$v)
                       },
                       expression: "code"
                     }
