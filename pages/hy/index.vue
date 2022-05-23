@@ -17,14 +17,18 @@
 		<p>{{hyinfo.CardNo}}</p>
 		昵称:
 		<p>{{hyinfo.NickName}}</p>
+		性别:
+		<p>{{hyinfo.Sex!=null?(hyinfo.Sex==0?'女':'男'):''}}</p>
 		电话:
 		<p>{{hyinfo.Phone}}</p>
 		生日:
 		<p>{{hyinfo.Birthday}}</p>
 		等级:
 		<p>{{hyinfo.hy_Level.LevelName}}</p>
-		账户约:
+		账户余额:
 		<p>{{hyinfo.Balance}}</p> 
+		积分余额:
+		<p>{{hyinfo.JFBalance}}</p> 
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
 				<view class="uni-tip">
