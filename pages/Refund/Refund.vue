@@ -46,7 +46,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-	import hy from '@/utils/hy/hy_query.js';
 
 	export default {
 		data() {
@@ -104,18 +103,14 @@
 				RYID: getApp().globalData.store.RYID,
 				GCID: getApp().globalData.store.GCID,
 				BMID: getApp().globalData.store.BMID,
-				deviceno: getApp().globalData.store.deviceno,
-				Name: getApp().globalData.store.NAME,
-				MerId: getApp().globalData.store.MERID,
-				brand: getApp().globalData.brand,
-				kquser: getApp().globalData.kquser
+				deviceno: getApp().globalData.store.deviceno
 			}
 		},
 		methods: {
 			onLoad: function(e) {
 				//首先创建销售表结构
 				common.CreatSaleTable();
-				
+
 				this.out_refund_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_refund_no = this.out_refund_no_old;
 				console.log("退款订单号" + this.out_refund_no);
@@ -145,7 +140,7 @@
 				// 	console.log(err);
 				// });
 				// return
-				let sql1 = "select * from SALE003 where bill='123321'";
+				let sql1 = "select * from SALE003";
 				db.SqliteHelper.get().executeQry(sql1, "测试sql 执行中", function(res) {
 					console.log("测试sql 查询成功");
 					console.log(res);
@@ -261,17 +256,15 @@
 					})
 				} else if (t == 'CARD') {
 					if (func) func({
-						code: 0
+						code: 1
 					});
 				} else if (t == 'COUPON') {
 					if (func) func({
-						code: -2,
-						msg:"不支持券的退款"
+						code: 1
 					});
 				} else {
 					if (func) func({
-						code: -2,
-						msg:"暂不其它方式退款"
+						code: 1
 					});
 				}
 			},
@@ -320,7 +313,7 @@
 					let obj = {
 						orderbill: e.out_trade_no,
 						refundbill: e.out_refund_no,
-						refundnet: e.total_fee
+						refundnet: e.refund_amount
 					}
 					if (that.brand == "KG") {
 						obj.payTxnId = "";
@@ -336,21 +329,19 @@
 					}
 					hy.REFUND_ALL(that.brand, obj, function(res) {
 						if (res.code) {
-							res.code = 1;
+							res.code = '1';
 						} else {
-							res.code = -1;
+							res.code = '-1';
 						}
 						if (func) func(res);
 					})
 				} else if (t == 'COUPON') {
 					if (func) func({
-						code: -2,
-						msg:"不支持"
+						code: 1
 					});
 				} else {
 					if (func) func({
-						code: -2,
-						msg:"不支持"
+						code: 1
 					});
 				}
 			},
@@ -417,11 +408,6 @@
 						if (res.code > 0) {
 							//退款成功创建退款记录
 							that.createPayData(that.selectPayWayVal);
-						}else if(code==-2){
-							uni.showToast({
-								title: res.msg,
-								icon: "error"
-							});
 						} else {
 							that.UniqueBill(); //单号防重处理
 							let param = {}

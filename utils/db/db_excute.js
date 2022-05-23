@@ -161,7 +161,6 @@ var mySqllite = function() {
 		});
 	};
 	var open = function(msg) {
-
 		var msg = msg | "正在进行操作";
 		uni.showLoading({
 			title: msg,
