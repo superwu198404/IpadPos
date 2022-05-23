@@ -1,7 +1,8 @@
 <template>
 	<view>
 		<button @click="Pay(0)">开始结算</button>
-		<button @click="Pay(1)">开始退款</button> 
+		<button @click="Pay(1)">开始退款</button>
+		<button @click="Pay(2)">查询会员</button>
 	</view>
 </template>
 <script>
@@ -23,6 +24,10 @@
 				} else if (e == 1) {
 					uni.navigateTo({
 						url: "../Refund/Refund"
+					})
+				} else if (e == 2) {
+					uni.navigateTo({
+						url: "../hy/index"
 					})
 				}
 			},

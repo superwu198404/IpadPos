@@ -13,22 +13,14 @@
 		<input type="text" v-model="mumbers" />
 		<button @click="query()">查询</button>
 		<button @click="Codequery()">扫码查询</button>
-		卡号:
-		<p>{{hyinfo.CardNo}}</p>
-		昵称:
-		<p>{{hyinfo.NickName}}</p>
-		性别:
-		<p>{{hyinfo.Sex}}</p>
-		电话:
-		<p>{{hyinfo.Phone}}</p>
-		生日:
-		<p>{{hyinfo.Birthday}}</p>
-		等级:
-		<p>{{hyinfo.hy_Level.LevelName}}</p>
-		账户余额:
-		<p>{{hyinfo.Balance}}</p> 
-		积分余额:
-		<p>{{hyinfo.JFBalance}}</p> 
+		<p>卡号：{{hyinfo.CardNo}}</p>
+		<p>昵称：{{hyinfo.NickName}}</p>
+		<p>性别：{{hyinfo.Sex}}</p>
+		<p>电话：{{hyinfo.Phone}}</p>
+		<p>生日：{{hyinfo.Birthday}}</p>
+		<p>等级：{{hyinfo.hy_Level.LevelName}}</p>
+		<p>余额：{{hyinfo.Balance}}</p>
+		<p>积分：{{hyinfo.JFBalance}}</p> 
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
 				<view class="uni-tip">

@@ -62,7 +62,6 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 				}
 			},
 			fail: (err) => { // 接口调用失败的回调函数
-				debugger;
 				if (!hideLoading) uni.hideLoading()
 				if (err.errMsg != 'request:fail abort') {
 					showToast('连接超时，请检查您的网络。')
