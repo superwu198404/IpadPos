@@ -1,10 +1,11 @@
 <template>
 	<view>
-	 
+
 		请输入会员手机号码/会员号：
 		<input type="text" v-model="mumbers" />
 		<button @click="query()">查询</button>
 		<button @click="Codequery()">扫码查询</button>
+		<p>基本信息====================</p>
 		卡号:
 		<p>{{hyinfo.CardNo}}</p>
 		昵称:
@@ -21,6 +22,10 @@
 		<p>{{hyinfo.Balance}}</p>
 		积分余额:
 		<p>{{hyinfo.JFBalance}}</p>
+		<p>优惠券====================</p>
+		<view v-if="couponlst.length>0">
+			<p v-for="(item,index) in couponlst">{{item.limitmoney}}元{{item.sname}},{{item.sdate}}到{{item.edate}}</p>
+		</view>
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
 				<view class="uni-tip">
@@ -35,7 +40,7 @@
 </template>
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
-	import hy from '@/utils/hy/hy_query.js'; 
+	import hy from '@/utils/hy/hy_query.js';
 	export default {
 		components: {
 			uniPopup
@@ -45,7 +50,7 @@
 				type: null,
 				typeName: null,
 				mumbers: null,
-				content: null, 
+				content: null,
 				barnd: getApp().globalData.brand,
 				KHID: getApp().globalData.store.KHID,
 				code: null,
@@ -111,7 +116,9 @@
 						FreezeValue: null,
 						eVipDisAmt: null
 					}
-				}
+				},
+				couponlst: []
+
 			}
 		},
 		methods: {
@@ -133,6 +140,19 @@
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
 							getApp().globalData.hyinfo = that.hyinfo;
+							//查询优惠券信息
+							let No;
+							if(that.barnd=='KG'){
+								No=that.hyinfo.hyId;
+								
+							}else{
+								No=that.hyinfo.Phone;
+							}
+							hy.couponlst(No, function(res) {
+								if (res.code) {
+									that.couponlst = JSON.parse(res.data);
+								}
+							})
 						} else {
 							uni.showToast({
 								title: res.msg,
