@@ -36,8 +36,6 @@
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/utils/hy/hy_query.js'; 
-	
-
 	export default {
 		components: {
 			uniPopup

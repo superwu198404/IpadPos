@@ -163,7 +163,6 @@
 			onLoad() {
 				//首先创建销售表结构
 				common.CreatSaleTable();
-
 				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
 				this.out_trade_no = this.out_trade_no_old
 				console.log("支付订单号" + this.out_trade_no);
