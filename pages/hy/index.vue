@@ -36,7 +36,7 @@
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/utils/hy/hy_query.js'; 
-	import _checker from '@/utils/graceChecker.js';
+	
 
 	export default {
 		components: {
@@ -129,25 +129,8 @@
 					});
 					return;
 				}
-				if (_checker.checkMobile(that.mumbers)) {
-					if (that.barnd == 'KG') {
-						that.typeName = 'Mobile';
-					} else {
-						that.typeName = 'phone';
-					}
-				} else {
-					if (that.barnd == 'KG') {
-						that.typeName = 'ACCOUNT';
-					} else {
-						that.typeName = 'hyid';
-					}
-				}
-				let obj = {
-					acc: that.mumbers,
-					type: that.typeName
-				}
 				that.hyinfo = hy.hyinfoModel;
-				hy.HyQuery(obj,
+				hy.HyQuery(that.mumbers,
 					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
