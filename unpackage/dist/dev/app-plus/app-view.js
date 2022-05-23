@@ -6941,22 +6941,43 @@ var render = function() {
       _c("p", { attrs: { _i: 9 } }, [_vm._v("积分：" + _vm._$g(9, "t0-0"))]),
       _c("p", { attrs: { _i: 10 } }, [_vm._v("等级：" + _vm._$g(10, "t0-0"))]),
       _c("p", { attrs: { _i: 11 } }, [_vm._v("生日：" + _vm._$g(11, "t0-0"))]),
+      _c("p", { attrs: { _i: 12 } }, [_vm._v("优惠券====================")]),
+      _vm._$g(13, "i")
+        ? _c(
+            "v-uni-view",
+            { attrs: { _i: 13 } },
+            _vm._l(_vm._$g(14, "f"), function(item, index, $20, $30) {
+              return _c("p", { key: item, attrs: { _i: "14-" + $30 } }, [
+                _vm._v(
+                  _vm._$g("14-" + $30, "t0-0") +
+                    "元" +
+                    _vm._$g("14-" + $30, "t0-1") +
+                    "," +
+                    _vm._$g("14-" + $30, "t0-2") +
+                    "到" +
+                    _vm._$g("14-" + $30, "t0-3")
+                )
+              ])
+            }),
+            1
+          )
+        : _vm._e(),
       _c(
         "v-uni-view",
-        { attrs: { _i: 12 } },
+        { attrs: { _i: 15 } },
         [
           _c(
             "uni-popup",
-            { ref: "popup", attrs: { _i: 13 } },
+            { ref: "popup", attrs: { _i: 16 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(14, "sc"), attrs: { _i: 14 } },
+                { staticClass: _vm._$g(17, "sc"), attrs: { _i: 17 } },
                 [
                   _c(
                     "v-uni-button",
                     {
-                      attrs: { _i: 15 },
+                      attrs: { _i: 18 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
@@ -6967,16 +6988,16 @@ var render = function() {
                   ),
                   _vm._v("会员码："),
                   _c("v-uni-input", {
-                    attrs: { "confirm-type": "confirm", _i: 16 },
+                    attrs: { "confirm-type": "confirm", _i: 19 },
                     on: {
                       confirm: function($event) {
                         return _vm.$handleViewEvent($event)
                       }
                     },
                     model: {
-                      value: _vm._$g(16, "v-model"),
+                      value: _vm._$g(19, "v-model"),
                       callback: function($$v) {
-                        _vm.$handleVModelEvent(16, $$v)
+                        _vm.$handleVModelEvent(19, $$v)
                       },
                       expression: "code"
                     }

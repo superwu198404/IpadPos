@@ -217,6 +217,45 @@ const QJTicktUse = (d, func) => {
 		return res;
 	})
 };
+
+//券列表
+const customcouponList = (p, func) => {
+	Req.http("Hy/hy", {
+		appid: appid,
+		apiname: "customcouponList",
+		paramkey: "others",
+		source: "wxsmallprogram",
+		data: {
+			type: "customcouponList",
+			kquser: kquser,
+			ynencript: "n",
+			databody: {
+				kquser: "CSKQ",
+				phone: p
+			},
+			phone: p
+		}
+	}, "查询中...").then(function(res) {
+		if (func) func(res);
+		return res;
+	})
+}
+const NEW_HYQCX = (o, func) => {
+	Req.http("Hy/hy", {
+		appid: appid,
+		apiname: "NEW_HYQCX",
+		paramkey: "acc",
+		source: "mobile_pos",
+		data: {
+			 I_PARTNER : o,
+			 I_ZZCPSTATE : "J01"
+		}
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+}
 //卓越券核销
 const couponConsume = (d, b, func) => {
 	Req.http("Hy/hy", {
@@ -238,12 +277,12 @@ const couponConsume = (d, b, func) => {
 	})
 };
 const HyQuery = (mumbers, func) => {
-	let typeName=null;
-	let flag=_checker.checkMobile(mumbers);
+	let typeName = null;
+	let flag = _checker.checkMobile(mumbers);
 	if (Brand == "KG") {
-		if(flag){
-			 typeName = 'Mobile';
-		}else{
+		if (flag) {
+			typeName = 'Mobile';
+		} else {
 			typeName = 'ACCOUNT';
 		}
 		let obj = {
@@ -278,7 +317,13 @@ const TicktUse = (d, b, func) => {
 		couponConsume(d, b, func);
 	}
 };
-
+const couponlst = (o, func) => {
+	if (Brand == "KG") {
+		NEW_HYQCX(o, func);
+	} else if (Brand == "ZY") {
+		customcouponList(o, func);
+	}
+}
 
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
@@ -454,6 +499,7 @@ export default {
 	TicktQuery,
 	TicktUse,
 	QRCODE_CONSUME,
+	couponlst,
 	SALE_QUERY,
 	REFUND,
 	PAY_ALL,
