@@ -13,8 +13,8 @@ const checkEmail=(email)=> {
 	return RegExp(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/).test(mobile);
 }
 //数字
-const checkInt=(email)=> {
-	return RegExp(/^(?:[1-9]\d*|0)(?:\.\d+)?$/).test(mobile);
+const checkInt=(number)=> {
+	return RegExp(/^(?:[1-9]\d*|0)(?:\.\d+)?$/).test(number);
 }
 //校验金额 
 const checkMoney=(s) =>{ 
@@ -31,13 +31,13 @@ const checkMoney=(s) =>{
             return false;
         }
     }
-const  checkIdCard (sId) {
+const  checkIdCard =(sId) =>{
     if (!/(^\d{15}$)|(^\d{17}(\d|X|x)$)/.test(sId)) {
-        console.log('你输入的身份证长度或格式错误')
-        return false
+        console.log('你输入的身份证长度或格式错误');
+        return false;
     }
     //身份证城市
-    var aCity = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外" };
+ var aCity = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外" };
     if (!aCity[parseInt(sId.substr(0, 2))]) {
         console.log('你的身份证地区非法')
         return false
@@ -62,31 +62,31 @@ const  checkIdCard (sId) {
         return false
     }
     return true
-};
+}
 //小数
-const IsDecimal=function(input)=> {
+const IsDecimal=(input)=> {
    return /^[-+]?(?:0|[1-9]\d*)\.\d+$/.test(input);
-};
+}
 //负小数
-const IsNegativeDecimal=function(input)=>{
+const IsNegativeDecimal=(input)=>{
 return /^\-?(?:0|[1-9]\d*)\.\d+$/.test(input);
-};
+}
 //正小数
-const IsPositiveDecimal=function(input)=> {
+const IsPositiveDecimal=(input)=> {
  return /^\+?(?:0|[1-9]\d*)\.\d+$/.test(input);
-};
+}
 //整数
-const IsInteger=function(input)=> {
+const IsInteger=(input)=> {
    return /^[-+]?(?:0|[1-9]\d*)$/.test(input);
-};
+}
 //正整数
-IsPositiveInteger= function(input)=> {
+const IsPositiveInteger= (input)=> {
    return /^\+?(?:0|[1-9]\d*)$/.test(input);
-};
+}
 //负整数
-IsNegativeInteger= function(input)=> {
+const IsNegativeInteger= (input)=> {
 return /^\-?(?:0|[1-9]\d*)$/.test(input);
-};
+}
 //，undefined,null等转化为""
 const praseStrEmpty=(str)=> {
     if (!str || str == "undefined" || str == "null") {
