@@ -18,7 +18,7 @@
 		昵称:
 		<p>{{hyinfo.NickName}}</p>
 		性别:
-		<p>{{hyinfo.Sex!=null?(hyinfo.Sex==0?'女':'男'):''}}</p>
+		<p>{{hyinfo.Sex}}</p>
 		电话:
 		<p>{{hyinfo.Phone}}</p>
 		生日:
