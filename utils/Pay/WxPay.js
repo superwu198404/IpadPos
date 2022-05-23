@@ -34,7 +34,7 @@ const CodeScanPay = (title, out_trade_no, subject, auth_code, total_amount, func
 			}
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		// console.log(JSON.stringify(res));
 		if (func) {
 			func(res);
 		}
@@ -57,7 +57,7 @@ const QueryCodeScanPay = (title, out_trade_no, func, func2) => {
 			}
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		// console.log(JSON.stringify(res));
 		if (func) {
 			func(res);
 		}
@@ -79,7 +79,7 @@ const CancelCodeScanPay = (title, out_trade_no, func, func2) => {
 			}
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		// console.log(JSON.stringify(res));
 		if (func) {
 			func(res);
 		}
@@ -101,7 +101,7 @@ const QueryRefund = (title, out_trade_no, func, func2) => {
 			}
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		// console.log(JSON.stringify(res));
 		if (func) {
 			func(res);
 		}
@@ -127,7 +127,7 @@ const Refund = (title, out_trade_no, out_refund_no, total_fee, func, func2) => {
 			}
 		}
 	}, function(res) {
-		console.log(JSON.stringify(res));
+		// console.log(JSON.stringify(res));
 		if (func) {
 			func(res);
 		}

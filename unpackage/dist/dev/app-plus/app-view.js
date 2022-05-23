@@ -6448,6 +6448,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components
+try {
+  components = {
+    uniPopup: __webpack_require__(/*! @/components/uni-popup/uni-popup.vue */ 30).default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -6525,10 +6546,71 @@ var render = function() {
         },
         [_vm._v("扫码查询")]
       ),
-      _vm._v("结果："),
-      _c("v-uni-view", { staticClass: _vm._$g(9, "sc"), attrs: { _i: 9 } }, [
-        _vm._v(_vm._$g(9, "t0-0"))
-      ])
+      _vm._v("卡号:"),
+      _c("p", { attrs: { _i: 9 } }, [_vm._v(_vm._$g(9, "t0-0"))]),
+      _vm._v("昵称:"),
+      _c("p", { attrs: { _i: 10 } }, [_vm._v(_vm._$g(10, "t0-0"))]),
+      _vm._v("性别:"),
+      _c("p", { attrs: { _i: 11 } }, [_vm._v(_vm._$g(11, "t0-0"))]),
+      _vm._v("电话:"),
+      _c("p", { attrs: { _i: 12 } }, [_vm._v(_vm._$g(12, "t0-0"))]),
+      _vm._v("生日:"),
+      _c("p", { attrs: { _i: 13 } }, [_vm._v(_vm._$g(13, "t0-0"))]),
+      _vm._v("等级:"),
+      _c("p", { attrs: { _i: 14 } }, [_vm._v(_vm._$g(14, "t0-0"))]),
+      _vm._v("账户余额:"),
+      _c("p", { attrs: { _i: 15 } }, [_vm._v(_vm._$g(15, "t0-0"))]),
+      _vm._v("积分余额:"),
+      _c("p", { attrs: { _i: 16 } }, [_vm._v(_vm._$g(16, "t0-0"))]),
+      _c(
+        "v-uni-view",
+        { attrs: { _i: 17 } },
+        [
+          _c(
+            "uni-popup",
+            { ref: "popup", attrs: { _i: 18 } },
+            [
+              _c(
+                "v-uni-view",
+                { staticClass: _vm._$g(19, "sc"), attrs: { _i: 19 } },
+                [
+                  _c(
+                    "v-uni-button",
+                    {
+                      attrs: { _i: 20 },
+                      on: {
+                        click: function($event) {
+                          return _vm.$handleViewEvent($event)
+                        }
+                      }
+                    },
+                    [_vm._v("关闭")]
+                  ),
+                  _vm._v("会员码："),
+                  _c("v-uni-input", {
+                    attrs: { "confirm-type": "confirm", _i: 21 },
+                    on: {
+                      confirm: function($event) {
+                        return _vm.$handleViewEvent($event)
+                      }
+                    },
+                    model: {
+                      value: _vm._$g(21, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(21, $$v)
+                      },
+                      expression: "code"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )
@@ -6563,8 +6645,8 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
-
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+var _uniPopup = _interopRequireDefault(__webpack_require__(/*! @/components/uni-popup/components/uni-popup/uni-popup.vue */ 45));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
 {
 
   data: function data() {
@@ -6572,7 +6654,8 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
       wxsProps: {} };
 
   },
-  components: {} };exports.default = _default;
+  components: {
+    'uniPopup': _uniPopup.default } };exports.default = _default;
 
 /***/ }),
 /* 145 */
@@ -7349,7 +7432,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 10);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "\n.style_div {\n\twidth: 100%;\n\t/*盒子宽自己设置想要的宽度*/\n\theight: auto;\n\t/*高度自动*/\n\tdisplay: inline-block;\n\t/*转为行内块元素*/\n\twhite-space: pre-wrap;\n\t/*处理元素内的空白,保留空白符序列，但是正常地进行换行*/\n\tword-wrap: break-word;\n\t/*允许长单词或 URL 地址换行到下一行,在长单词或 URL 地址内部进行换行*/\n}\n", ""]);
+exports.push([module.i, "\n.style_div {\n\twidth: 100%;\n\t/*盒子宽自己设置想要的宽度*/\n\theight: auto;\n\t/*高度自动*/\n\tdisplay: inline-block;\n\t/*转为行内块元素*/\n\twhite-space: pre-wrap;\n\t/*处理元素内的空白,保留空白符序列，但是正常地进行换行*/\n\tword-wrap: break-word;\n\t/*允许长单词或 URL 地址换行到下一行,在长单词或 URL 地址内部进行换行*/\n}\n.uni-tip {\n\tbackground: #fff;\n\twidth: 70%;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding: 10px;\n\tborder-radius: 10px;\n}\n.uni-tip-title {\n\ttext-align: center;\n\tfont-size: 16px;\n}\n.uni-tip-group-button {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\talign-content: center;\n}\n.uni-tip-group-button uni-button {\n\tmargin: 0;\n}\n.uni-tip-content {\n\tmin-height: 60px;\n}\n", ""]);
 // Exports
 module.exports = exports;
 

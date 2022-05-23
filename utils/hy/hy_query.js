@@ -428,7 +428,7 @@ function newUploadHyjf(d, func) {
 	})
 };
 //会员积分
-function consumeJF(f, func) {
+function consumeJF(m, e, func) {
 	if (m == 'KG') {
 		newUploadHyjf(e, func);
 	} else {

@@ -58,7 +58,7 @@
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
-	
+	var that;
 	export default {
 		components: {
 			uniPopup
@@ -154,7 +154,8 @@
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
 				brand: getApp().globalData.brand,
-				kquser: getApp().globalData.kquser
+				kquser: getApp().globalData.kquser,
+				hyinfo: getApp().globalData.hyinfo,
 			}
 		},
 		methods: {
@@ -193,7 +194,7 @@
 					}
 				}
 			},
-			
+
 			QUsed: function(d, b, func) {
 				//继续支付   扣掉券的信息
 				hy.TicktUse(d, b,
@@ -869,8 +870,7 @@
 										if (func) func(res1);
 									});
 								}
-							} 
-							else {
+							} else {
 								//无券或者异常
 								res.code = -1;
 								if (func) func(res);
@@ -1019,6 +1019,69 @@
 				} else if ('COUPON') {
 
 				} else {}
+			},
+			//积分操作
+			scoreConsume: function() {
+				let that = this
+				let hyinfo = app.gloabaldata.hyinfo;
+				if (that.totalAmount > 0 && hyinfo) { //录入过会员信息
+					let param;
+					if (that.brand == 'KG') {
+						let arr = [],
+							arr1 = [];
+						for (var i = 0; i < that.Products.length; i++) {
+							let obj = {};
+							obj.lineNumber = i;
+							obj.product = that.Products[i].BARCODE;
+							obj.category = that.Products[i].PLID;
+							obj.quantity = that.Products[i].QTY;
+							obj.userPrice = that.Products[i].PRICE;
+							obj.basePrice = that.Products[i].OPRICE;
+							obj.netPrice = that.Products[i].AMOUNT;
+							arr.push(obj);
+						}
+						for (var i = 0; i < that.PayList.length; i++) {
+							let obj1 = {};
+							obj1.paymentType = that.PayList[i].fkid;
+							obj1.payAmount = that.PayList[i].amount;
+							arr1.push(obj1);
+						}
+						param = {
+							addPoint: 0,
+							channel: "POS",
+							cityCode: "",
+							code: that.out_trade_no,
+							date: dateformat.getYMDS(),
+							deducePoint: 0,
+							districtCode: "",
+							entryList: arr,
+							memberCode: that.hyinfo.hyid,
+							netAmount: that.totalAmount,
+							orderAmount: that.allAmount,
+							orderType: "1",
+							paymentInfoList: arr1,
+							pointOfService: that.KHID,
+							preOrderCode: "",
+							promotionIds: [],
+							region: that.BMID,
+							stateCode: ""
+						}
+					} else {
+						param = {
+							kquser: that.kquser,
+							soreid: that.KHID,
+							oderbill: that.out_trade_no,
+							psid: that.POSID,
+							slenet: that.totalAmount,
+							cbill: "",
+							hd: hyinfo.hyid,
+							sign: ""
+						}
+					}
+					hy.consumeJF(that.brand, param, function(res) {
+						console.log("积分上传结果：" + res);
+					})
+				}
 			},
 		}
 	}
