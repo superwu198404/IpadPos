@@ -318,6 +318,7 @@ const TicktUse = (d, b, func) => {
 	}
 };
 const couponlst = (o, func) => {
+	
 	if (Brand == "KG") {
 		NEW_HYQCX(o, func);
 	} else if (Brand == "ZY") {

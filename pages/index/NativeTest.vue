@@ -4,8 +4,6 @@
 		<button type="default" @click="nativetest2()">监听蓝牙状态</button> 
 		<button type="default" @click="nativetest3()">已配对蓝牙列表</button>
 		<button type="default" @click="searchDevices('')">搜索蓝牙列表</button>
-		
-		
 		<view>
 			未配对蓝牙设备
 			<ul id="li2">
