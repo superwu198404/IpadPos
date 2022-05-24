@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<button @click="ApiRquset()">接口请求调用示例</button>
+		<button>接口请求调用示例</button>
 	</view>
 </template>
 
