@@ -1,27 +1,17 @@
 <template>
 	<view>
-
-		请输入会员手机号码/会员号：
-		<input type="text" v-model="mumbers" />
+		请输入手机号码/会员号：
+		<input type="text" v-model="numbers" />
 		<button @click="query()">查询</button>
 		<button @click="Codequery()">扫码查询</button>
-		<p>基本信息====================</p>
-		卡号:
-		<p>{{hyinfo.CardNo}}</p>
-		昵称:
-		<p>{{hyinfo.NickName}}</p>
-		性别:
-		<p>{{hyinfo.Sex}}</p>
-		电话:
-		<p>{{hyinfo.Phone}}</p>
-		生日:
-		<p>{{hyinfo.Birthday}}</p>
-		等级:
-		<p>{{hyinfo.hy_Level.LevelName}}</p>
-		账户余额:
-		<p>{{hyinfo.Balance}}</p>
-		积分余额:
-		<p>{{hyinfo.JFBalance}}</p>
+		<p>昵称：{{hyinfo.NickName}}</p>
+		<p>性别：{{hyinfo.Sex}}</p>
+		<p>卡号：{{hyinfo.CardNo}}</p>
+		<p>电话：{{hyinfo.Phone}}</p>
+		<p>余额：{{hyinfo.Balance}}</p>
+		<p>积分：{{hyinfo.JFBalance}}</p>
+		<p>等级：{{hyinfo.hy_Level.LevelName}}</p>
+		<p>生日：{{hyinfo.Birthday}}</p>
 		<p>优惠券====================</p>
 		<view v-if="couponlst.length>0">
 			<p v-for="(item,index) in couponlst">{{item.money}}元{{item.sname}},{{item.sdate}}到{{item.edate}}</p>
@@ -49,7 +39,7 @@
 			return {
 				type: null,
 				typeName: null,
-				mumbers: null,
+				numbers: null,
 				content: null,
 				barnd: getApp().globalData.brand,
 				KHID: getApp().globalData.store.KHID,
@@ -127,7 +117,7 @@
 			},
 			query: function() {
 				let that = this;
-				if (!that.mumbers) {
+				if (!that.numbers) {
 					uni.showToast({
 						title: "请输入手机号码/会员号码",
 						icon: "error"
@@ -135,18 +125,18 @@
 					return;
 				}
 				that.hyinfo = hy.hyinfoModel;
-				hy.HyQuery(that.mumbers,
+				hy.HyQuery(that.numbers,
 					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
 							getApp().globalData.hyinfo = that.hyinfo;
 							//查询优惠券信息
 							let No;
-							if(that.barnd=='KG'){
-								No=that.hyinfo.hyId;
-								
-							}else{
-								No=that.hyinfo.Phone;
+							if (that.barnd == 'KG') {
+								No = that.hyinfo.hyId;
+
+							} else {
+								No = that.hyinfo.Phone;
 							}
 							hy.couponlst(No, function(res) {
 								if (res.code) {
@@ -162,13 +152,24 @@
 					});
 			},
 			Codequery: function() {
-				this.$refs['popup'].open();
+				let that = this;
+				//this.$refs['popup'].open();
+				// that.code='ZY3322595874469644';
+				// that.search();
+				uni.scanCode({
+					success: function(res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+						that.code = res.result;
+						that.search();
+					}
+				});
 			},
 			search: function() {
 				let that = this;
 				if (!that.code) {
 					uni.showToast({
-						title: "请输入会员码",
+						title: "请扫描会员码",
 						icon: "error"
 					});
 					return;
