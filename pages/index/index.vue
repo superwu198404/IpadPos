@@ -1,13 +1,13 @@
 <template>
 	<view>
-		<button @click="Pay(0)">开始结算</button>
-		<button @click="Pay(1)">开始退款</button>
-		<button @click="Pay(2)">查询会员</button>
+		<button @click="MenuPage(0)">开始结算</button>
+		<button @click="MenuPage(1)">开始退款</button>
+		<button @click="MenuPage(2)">查询会员</button>
+		<button @click="Test(2)">测试一下啦</button>
 	</view>
 </template>
 <script>
-	import db from '@/utils/db/db_excute.js';
-	import create_sql from '@/utils/db/create_sql.js';
+	import Req from '@/utils/request.js';
 	export default {
 		//变量初始化
 		data() {
@@ -15,8 +15,7 @@
 		},
 		//方法初始化
 		methods: {
-
-			Pay: function(e) {
+			MenuPage: function(e) {
 				if (e == 0) {
 					uni.navigateTo({
 						url: "../Payment/Payment"
@@ -31,8 +30,23 @@
 					})
 				}
 			},
+			Test: function(e) {
+				Req.asyncFunc({
+					http: true,
+					title: '测试请求',
+					data: {
+						objmodel: '',
+						objtype: 'Qrylist',
+						objname: 'SYSSALE001CLASS',
+						offset: '10'
+					}
+				}, function(res) {
+					console.log("请求结果：", res);
+				});
+			},
+
 			change: function(e) {
-				
+
 				// uni.showModal({
 				// 	title: '提示',
 				// 	content: '这是一个模态弹窗',

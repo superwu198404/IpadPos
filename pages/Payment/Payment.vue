@@ -52,10 +52,10 @@
 
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
-	import hy from '@/utils/hy/hy_query.js';
+	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
-	import _wx from '@/utils/Pay/WxPay.js';
-	import _ali from '@/utils/Pay/Alipay.js';
+	import _wx from '@/api/Pay/WxPay.js';
+	import _ali from '@/api/Pay/Alipay.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';

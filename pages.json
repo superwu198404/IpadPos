@@ -22,30 +22,6 @@
 				"enablePullDownRefresh": false
 			}
 		},
-		{
-			"path": "pages/MicroPay/MicroPay",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		},
-		{
-			"path": "pages/MicroPay/wxpay",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		},
-		{
-			"path": "pages/AppPay/AppPay",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		},
 
 		{
 			"path": "pages/modal/modal",
@@ -72,27 +48,7 @@
 
 		},
 		{
-			"path": "pages/index/BTDemo",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		},
-		{
-			"path": "pages/index/ScanCodeDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/RquestDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/hy/index",
+			"path": "pages/hyinfo/index",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false

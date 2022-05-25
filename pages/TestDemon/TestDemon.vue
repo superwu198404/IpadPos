@@ -13,7 +13,6 @@
 <script>
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
-	import hybase from '@/api/hy/hy_base.js';
 	import hy_model from '@/class/hy_model.js';
 	export default {
 		data() {

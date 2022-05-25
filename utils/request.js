@@ -1,7 +1,6 @@
 import configInfo from '@/utils/configInfo.js'; //配置参数
 
 const baseUrl = configInfo.baseUrl;
-const jkptUrl = configInfo.jkptUrl;
 const centerUrl = configInfo.centerUrl;
 
 const showToast = (title, icon = "none") => {
@@ -29,9 +28,6 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 			title: msg,
 			mask: true
 		})
-	}
-	if (option.url == 'jkpt') {
-		p_url = jkptUrl;
 	}
 	if (option.url == 'center') {
 		p_url = centerUrl;
@@ -160,11 +156,12 @@ function retData(pm_code, pm_msg, pm_http) {
 //请求方法
 let httpFunc = function(pm_data) {
 	if (!pm_data.url) {
-		uni.showModal({
-			title: "请求地址不正确",
-			icon: "error"
-		})
-		return;
+		pm_data.url = 'ReqMuster/Handle';
+		// uni.showModal({
+		// 	title: "请求地址不正确",
+		// 	icon: "error"
+		// })
+		// return;
 	}
 	if (!pm_data.load && pm_data.load != false) { //为空则默认显示加载框
 		uni.showLoading({
@@ -176,11 +173,11 @@ let httpFunc = function(pm_data) {
 	if (config) {
 		p_url = config.ywurl;
 	}
-	if (pm_data.url_type && pm_data.url_type == 'jkpt') {
-		p_url = jkptUrl;
-	}
 	if (pm_data.url_type && pm_data.url_type == 'center') {
 		p_url = centerUrl;
+	}
+	if (pm_data.data && !pm_data.data.brand) { //brand给默认值
+		pm_data.data.brand = "MobilePos_API.Models";
 	}
 	return new Promise(function(resolve, reject) {
 		uni.request({
@@ -240,12 +237,11 @@ let def = function(pm_callback, pm_data) {
 	}
 }
 /// 
-///  res  =  { code:ture/false,msg:"消息",http:{url，title,method}，data:{}} 
-//异步处理方法3
-var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
+/// res  =  { code:ture/false,msg:"消息",http:{url，title,method}，data:{}} 
+/// 异步处理方法
+var asyncFunc = async function RequestDataArray(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
 	var callbacklist = [];
-
 	for (var i = 1; i <= 3; i++) {
 		if (arguments[i]) {
 			callbacklist.push(arguments[i]);
@@ -260,8 +256,7 @@ var asyncFunc = async function RequestDataArray2(pm_data, callbackfun, callbackf
 				break;
 			}
 		}
-		res = await forPromise(callbacklist[i], res)
-
+		res = await forPromise(callbacklist[i], res);
 		if (res && !res.code) {
 			def(catchfun, res);
 			break;
