@@ -2,10 +2,6 @@
 	<view class="container">
 		<uni-card is-full :is-shadow="false"> 
 		</uni-card>
- 
- 
-
-
 		<uni-section title="对话框示例" type="line" class="hideOnPc">
 			<view class="example-body box">
 				<button class="button popup-success" @click="dialogToggle('success')"><text
@@ -18,7 +14,6 @@
 						class="button-text info-text">信息</text></button>
 			</view>
 		</uni-section>
- 
 		<view>
 			<!-- 普通弹窗 -->
 			<uni-popup ref="popup" background-color="#fff" @change="change">
@@ -26,14 +21,12 @@
 						class="text">popup 内容</text></view>
 			</uni-popup>
 		</view>
-
 		<view>
 			<!-- 提示信息弹窗 -->
 			<uni-popup ref="message" type="message">
 				<uni-popup-message :type="msgType" :message="messageText" :duration="2000"></uni-popup-message>
 			</uni-popup>
 		</view>
-
 		<view>
 			<!-- 提示窗示例 -->
 			<uni-popup ref="alertDialog" type="dialog">
@@ -41,7 +34,6 @@
 					@close="dialogClose"></uni-popup-dialog>
 			</uni-popup>
 		</view>
-
 		<view>
 			<!-- 输入框示例 -->
 			<uni-popup ref="inputDialog" type="dialog">
@@ -49,7 +41,6 @@
 					placeholder="请输入内容" @confirm="dialogInputConfirm"></uni-popup-dialog>
 			</uni-popup>
 		</view>
-
 		<view>
 			<!-- 分享示例 -->
 			<uni-popup ref="share" type="share" safeArea backgroundColor="#fff">
@@ -94,7 +85,6 @@
 				uni.showLoading({
 					title: '3秒后会关闭'
 				})
-
 				setTimeout(() => {
 					uni.hideLoading()
 					console.log(val)

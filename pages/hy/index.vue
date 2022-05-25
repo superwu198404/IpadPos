@@ -4,14 +4,16 @@
 		<input type="text" v-model="numbers" />
 		<button @click="query()">查询</button>
 		<button @click="Codequery()">扫码查询</button>
-		<p>昵称：{{hyinfo.NickName}}</p>
-		<p>性别：{{hyinfo.Sex}}</p>
-		<p>卡号：{{hyinfo.CardNo}}</p>
-		<p>电话：{{hyinfo.Phone}}</p>
-		<p>余额：{{hyinfo.Balance}}</p>
-		<p>积分：{{hyinfo.JFBalance}}</p>
-		<p>等级：{{hyinfo.hy_Level.LevelName}}</p>
-		<p>生日：{{hyinfo.Birthday}}</p>
+		<view>
+			<p>昵称：{{hyinfo.NickName}}</p>
+			<p>性别：{{hyinfo.Sex}}</p>
+			<p>卡号：{{hyinfo.CardNo}}</p>
+			<p>电话：{{hyinfo.Phone}}</p>
+			<p>余额：{{hyinfo.Balance}}</p>
+			<p>积分：{{hyinfo.JFBalance}}</p>
+			<p>等级：{{hyinfo.hy_Level.LevelName}}</p>
+			<p>生日：{{hyinfo.Birthday}}</p>
+		</view>
 		<p>优惠券====================</p>
 		<view v-if="couponlst.length>0">
 			<view v-for="(item,index) in couponlst" :key="index">
@@ -31,7 +33,6 @@
 			</uni-popup>
 		</view>
 	</view>
-
 </template>
 <script>
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
@@ -113,7 +114,6 @@
 					}
 				},
 				couponlst: []
-
 			}
 		},
 		methods: {

@@ -72,13 +72,6 @@
 
 		},
 		{
-			"path": "pages/index/PopupDemon",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
 			"path": "pages/index/BTDemo",
 			"style": {
 				"navigationBarTitleText": "uni-app"

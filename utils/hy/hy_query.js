@@ -79,7 +79,6 @@ const Query_Member_Assets = (d, func) => {
 		return res;
 	})
 };
-
 //会员中心查询查询接口
 const hyQuery_new = (a, b, func) => {
 	Req.http("Hy/hy", {
@@ -143,7 +142,6 @@ const queryCustomCard_Pos = (p, func) => {
 		return res;
 	})
 };
-
 const GetCardInfo = (c, func) => {
 	Req.http("Hy/hy", {
 		apiname: "GetCardInfo",
@@ -166,7 +164,6 @@ const GetCardInfo = (c, func) => {
 		return res;
 	})
 };
-
 //仟吉单券查询
 const QJTicktQuery = (a, b, func) => {
 	Req.http("Hy/hy", {
@@ -185,8 +182,6 @@ const QJTicktQuery = (a, b, func) => {
 		return res;
 	})
 };
-
-
 const Query_Member_Assets_Code = (d, func) => {
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets_Code",
@@ -217,7 +212,6 @@ const QJTicktUse = (d, func) => {
 		return res;
 	})
 };
-
 //券列表
 const customcouponList = (p, func) => {
 	Req.http("Hy/hy", {
@@ -318,13 +312,13 @@ const TicktUse = (d, b, func) => {
 	}
 };
 const couponlst = (o, func) => {
+	
 	if (Brand == "KG") {
 		NEW_HYQCX(o, func);
 	} else if (Brand == "ZY") {
 		customcouponList(o, func);
 	}
 }
-
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
 	Req.http("Hy/hy", {
@@ -347,7 +341,6 @@ function QRCODE_CONSUME(e, func) {
 		return res;
 	})
 };
-
 //仟吉 支付订单查询接口
 function SALE_QUERY(m, func) {
 	Req.http("Hy/hy", {
@@ -364,7 +357,6 @@ function SALE_QUERY(m, func) {
 		return res;
 	})
 };
-
 //仟吉 支付订单退款接口
 function REFUND(e, func) {
 	Req.http("Hy/hy", {
@@ -384,7 +376,6 @@ function REFUND(e, func) {
 		return res;
 	})
 };
-
 //卓越会员卡核销
 function customCardpay(d, func) {
 	Req.http("Hy/hy", {
@@ -404,7 +395,6 @@ function customCardpay(d, func) {
 		return res;
 	})
 };
-
 //卓越卡核销后退款
 function customCardrefund(d, func) {
 	Req.http("Hy/hy", {
@@ -451,7 +441,6 @@ function REFUND_ALL(m, e, func) {
 		customCardrefund(e, func);
 	}
 }
-
 //卓越积分
 function consumeJFscore(d, func) {
 	Req.http("Hy/hy", {
@@ -471,7 +460,6 @@ function consumeJFscore(d, func) {
 		return res;
 	})
 };
-
 function newUploadHyjf(d, func) {
 	Req.http("Hy/hy", {
 		"appid": appid,
@@ -492,7 +480,6 @@ function consumeJF(m, e, func) {
 		consumeJFscore(e, func);
 	}
 }
-
 export default {
 	HyQuery,
 	HyCodeQuery,
