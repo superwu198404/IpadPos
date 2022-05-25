@@ -36,6 +36,7 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 	if (option.url == 'center') {
 		p_url = centerUrl;
 	}
+	//console.log("请求地址：", p_url + url);
 	return new Promise((resolve, reject) => {
 		uni.request({
 			url: p_url + url,

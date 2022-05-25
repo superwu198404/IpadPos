@@ -32,11 +32,7 @@
 				}
 			},
 			change: function(e) {
-				let i = 10;
-				while (i > 0) {
-					console.info(i);
-					i--;
-				}
+				
 				// uni.showModal({
 				// 	title: '提示',
 				// 	content: '这是一个模态弹窗',
@@ -83,54 +79,6 @@
 					}
 				});
 			},
-			create: function() {
-				let sql = create_sql.createSql; //创建表
-				db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
-					console.log("表结构创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("表结构创建失败");
-					console.log(err);
-				});
-			},
-			search: function() {
-				let sql3 = 'select * from SALE003 where BILL="K0101QTDS112251992132402"';
-				db.SqliteHelper.get().executeQry(sql3, "数据查询", function(res) {
-					console.log("支付方式查询成功");
-					console.log(res);
-					if (res.code && res.msg.length > 0) { //说明查到了值
-						let arr = res.msg;
-						console.log(res.msg.length);
-					}
-				}, function(err) {
-					console.log("查询失败");
-					console.log(err);
-				});
-			},
-			insert: function() {
-				let sql = {
-					"0": "insert into SALE001 (BILL,SALEDATE,SALETIME,KHID,POSID,RYID,BILL_TYPE,XSTYPE,XS_BILL,XS_POSID,XS_DATE,XS_KHID,XS_GSID,TLINE,TNET,DNET,ZNET,BILLDISC,ROUND,CHANGENET,CXTNET,TCXDISC,CUID,CARDID,THYDISC,YN_SC,GSID,GCID,DPID,KCDID,BMID,DKFID,XSPTID,YN_OK,THTYPE,CLTIME) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"10086\",\"Z101\",\"1\",null,null,null,null,null,null,\"0.03\",\"0\",\"0.03\",\"0\",\"0\",\"0\",\"0\",\"0\",null,null,\"0\",\"N\",\"1001\",\"1001\",null,null,\"001\",null,\"POS\",\"X\",\"0\",DATETIME(\"2022-05-19 09:24:22\"))",
-					"1": "insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"10101001\",\"0\",\"100\",\"111111111\",\"个\",\"1\",\"0.01\",\"0.01\",\"0.01\",\"0\",\"N\",\"0\",\"N\",\"0\",\"2022\",\"5\",\"19\",\"9\",\"10086\",\"1001\",null,null,\"001\")",
-					"2": "insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"10101002\",\"1\",\"101\",\"2222222222\",\"袋\",\"2\",\"0.01\",\"0.01\",\"0.01\",\"0\",\"N\",\"0\",\"N\",\"0\",\"2022\",\"5\",\"19\",\"9\",\"10086\",\"1001\",null,null,\"001\")",
-					"3": "insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"0\",\"ZF04\",\"0.01\",null,\"10086\",\"1001\",null,null,\"001\",null)",
-					"4": "insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"1\",\"ZF01\",\"0.01\",null,\"10086\",\"1001\",null,null,\"001\",null)",
-					"5": "insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values(\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),DATETIME(\"2022-05-19 09:24:22\"),\"K0101QTDS1\",\"1\",\"2\",\"ZF02\",\"0.01\",null,\"10086\",\"1001\",null,null,\"001\",null)",
-					"6": "insert into POS_TXFILE (TX_SQL,STOREID,POSID,TAB_NAME,STR1,BDATE,YW_NAME,CONNSTR) values(\"insert into SALE001 (BILL,SALEDATE,SALETIME,KHID,POSID,RYID,BILL_TYPE,XSTYPE,XS_BILL,XS_POSID,XS_DATE,XS_KHID,XS_GSID,TLINE,TNET,DNET,ZNET,BILLDISC,ROUND,CHANGENET,CXTNET,TCXDISC,CUID,CARDID,THYDISC,YN_SC,GSID,GCID,DPID,KCDID,BMID,DKFID,XSPTID,YN_OK,THTYPE,CLTIME) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','10086','Z101','1',null,null,null,null,null,null,'0.03','0','0.03','0','0','0','0','0',null,null,'0','N','1001','1001',null,null,'001',null,'POS','X','0',TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'));insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','10101001','0','100','111111111','个','1','0.01','0.01','0.01','0','N','0','N','0','2022','5','19','9','10086','1001',null,null,'001');insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,YAER,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','10101002','1','101','2222222222','袋','2','0.01','0.01','0.01','0','N','0','N','0','2022','5','19','9','10086','1001',null,null,'001');insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','0','ZF04','0.01',null,'10086','1001',null,null,'001',null);insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','1','ZF01','0.01',null,'10086','1001',null,null,'001',null);insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC) values('K0101QTDS112251992132402',TO_DATE('2022-05-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-05-19 09:24:22','yyyy-MM-dd HH24:mi:ss'),'K0101QTDS1','1','2','ZF02','0.01',null,'10086','1001',null,null,'001',null);\",\"K0101QTDS1\",\"1\",\"XS\",\"K0101QTDS112251992132402\",DATETIME(\"2022-05-19\"),\"销售单据\",\"CONNSTRING\")",
-					"length": 7
-				};
-				let str = ""
-				for (var i = 0; i < sql.length; i++) {
-					str += sql[i] + ";"
-				}
-				console.info(str);
-				db.SqliteHelper.get().executeDml(str, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
-				});
-			}
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {

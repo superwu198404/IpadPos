@@ -14,7 +14,12 @@
 		<p>生日：{{hyinfo.Birthday}}</p>
 		<p>优惠券====================</p>
 		<view v-if="couponlst.length>0">
-			<p v-for="(item,index) in couponlst">{{item.money}}元{{item.sname}},{{item.sdate}}到{{item.edate}}</p>
+			<view v-for="(item,index) in couponlst" :key="index">
+				<p>名称：{{item.sname}}</p>
+				<p>面额：{{item.money}}元</p>
+				<p>有效期：{{item.sdate}}至{{item.edate}}</p>
+				<button @click="couponUse(item)">去使用</button>
+			</view>
 		</view>
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
@@ -197,6 +202,13 @@
 						}
 						that.$refs['popup'].close();
 					});
+			},
+			//券使用
+			couponUse: function(e) {
+				console.log("券信息：", e.sname);
+				uni.navigateTo({
+					url: "../Payment/Payment?lqid=" + e.lqid + e.code
+				})
 			}
 		},
 		onLoad() {

@@ -28,6 +28,7 @@
 				支付金额:
 				<input :disabled="disablePayInput" v-model="PayAmount">
 			</view>
+			<p>付款码：<input confirm-type="confirm" @confirm="ToPay" v-model="authCode"></p>
 			<button @click="Pay()">支付</button>
 		</view>
 		<view>
@@ -38,13 +39,13 @@
 			</view>
 		</view>
 		<view>
-			<uni-popup ref="popup" :type="type" :maskClick="false">
+			<!-- <uni-popup ref="popup" :type="type" :maskClick="false">
 				<view class="uni-tip">
 					<button @click="close">关闭</button>
 					付款码：
 					<input confirm-type="confirm" @confirm="ToPay" v-model="authCode">
 				</view>
-			</uni-popup>
+			</uni-popup> -->
 		</view>
 	</view>
 </template>
@@ -160,7 +161,7 @@
 		},
 		methods: {
 			//页面首次加载事件
-			onLoad() {
+			onLoad(options) {
 				//首先创建销售表结构
 				common.CreatSaleTable();
 				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
@@ -174,6 +175,21 @@
 				this.allAmount = money;
 				this.totalAmount = money;
 				this.CalDZFMoney();
+
+				//券信息加载
+				let lqid = options.lqid;
+				if (lqid) {
+					console.log("券号：", lqid);
+					let that = this
+					that.authCode = lqid;
+					that.PayWayList.forEach(function(v, i) {
+						if (v.value == 'COUPON') {
+							v.checked = true;
+							that.PayWay = v.type;
+							that.selectPayWayVal = v.value;
+						}
+					})
+				}
 				setTimeout(() => { //测试时加的延迟定时器
 					// this.CreateDBData();
 					//this.SearcheOrder("K210QTD00112022516175759256");
@@ -251,6 +267,7 @@
 				let payobj = this.PayWayList.find(item => {
 					return item.value == value
 				});
+				this.authCode = "";
 				this.PayWay = payobj.type;
 				this.selectPayWayVal = payobj.value;
 				this.PayAmount = this.dPayAmount;
@@ -404,7 +421,7 @@
 					return v.amount == that.PayAmount && v.no == that.no;
 				})
 				if (arr.length == 0) { //说明没有追加过该笔支付记录
-					if (!t.payobj) {
+					if (!t.payobj) { //不是券的支付
 						let payobj = that.PayWayList.find(item => {
 							return item.value == t
 						});
@@ -415,12 +432,12 @@
 							amount: that.PayAmount,
 							no: that.PayList.length
 						});
-					} else {
+					} else { //券的支付
 						that.PayList.push({
-							fkid: e.payobj.fkid,
+							fkid: t.payobj.fkid,
 							bill: that.out_trade_no,
-							name: e.payobj.name,
-							amount: e.amount,
+							name: t.payobj.name,
+							amount: t.amount,
 							no: that.PayList.length
 						});
 					}
@@ -436,8 +453,8 @@
 					//预留处理业务数据的地方
 					if (that.dPayAmount == 0) { //说明支付完毕了
 						this.CanBack = true; //可以返回了
-						this.CreateDBData();//创建订单数据
-						this.scoreConsume();//积分操作
+						this.CreateDBData(); //创建订单数据
+						this.scoreConsume(); //积分操作
 					}
 				} else {
 					uni.showToast({
@@ -544,7 +561,6 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
-				this.authCode = "";
 				if (!this.PayWay) {
 					uni.showToast({
 						title: '请选择支付方式',
@@ -572,15 +588,29 @@
 						return;
 					}
 				}
-				this.$refs['popup'].open();
+				//this.$refs['popup'].open();
 
+				//适配真机
+				let that = this;
+				if (that.authCode) { //如果有码
+					that.ToPay(); //直接发起支付
+				} else { //为空就进行扫码
+					uni.scanCode({
+						success: function(res) {
+							console.log('条码类型：' + res.scanType);
+							console.log('条码内容：' + res.result);
+							that.authCode = res.result;
+							that.ToPay(); //直接发起支付
+						}
+					});
+				}
 			},
-			//输入付款码后发起支付
+			//输入付款码后回车发起支付
 			ToPay: function(e) {
 				let that = this;
 				let title = "";
 				let param = {};
-				let code = e.target.value;
+				let code = e ? e.target.value : that.authCode;
 				that.UniqueBill(); //单号防重处理
 				param.out_trade_no = that.out_trade_no;
 				param.auth_code = code;
@@ -590,7 +620,7 @@
 					that.paymentAll(that.selectPayWayVal, param, function(res) {
 						if (res.code < 0) {
 							uni.showToast({
-								title: "支付失败：" + res.msg,
+								title: res.msg,
 								icon: "error"
 							});
 							return;
@@ -630,7 +660,7 @@
 								}
 								that.createPayData(obj);
 								if (fqmoeny > 0) {
-									payobj.name = payobj.name + "放弃";
+									obj.payobj.name = payobj.name + "放弃";
 									obj.amount = fqmoeny;
 									that.createPayData(obj);
 								}
