@@ -8,6 +8,7 @@
 </template>
 <script>
 	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
 	export default {
 		//变量初始化
 		data() {
@@ -30,15 +31,20 @@
 					})
 				}
 			},
+			onLoad: function(e) {
+				console.log("onload");
+				// setInterval(function() {
+				// 	common.TransLiteData();
+				// }, 1000 * 60); //1min 处理一次
+			},
 			Test: function(e) {
 				Req.asyncFunc({
 					http: true,
 					title: '测试请求',
 					data: {
-						objmodel: '',
-						objtype: 'Qrylist',
-						objname: 'SYSSALE001CLASS',
-						offset: '10'
+						action: 'ExecuteBatchSQL',
+						ywname: 'SALE001CLASS',
+						data: ""
 					}
 				}, function(res) {
 					console.log("请求结果：", res);

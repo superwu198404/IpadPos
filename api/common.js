@@ -135,10 +135,49 @@ var CreateSQL = function(e, t) {
 	};
 }
 
+//传输本地缓存的数据
+var TransLiteData = function() {
+	let sql = "select * from POS_TXFILE";
+	db.SqliteHelper.get().executeQry(sql, "数据查询中", function(res) {
+			// console.log("传输数据查询成功", res);
+			if (res.code && res.msg.length > 0) {
+				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
+					let sql1 = res.msg[i].TX_SQL;
+					let delVal = "'" + res.msg[i].STR1 + "'";
+					// console.log("传输sql", sql1);
+					// console.log("待删除数据", delVal);
+					Req.asyncFunc({
+						http: true,
+						title: '销售数据传输',
+						data: {
+							action: 'ExecuteBatchSQL',
+							ywname: 'SALE001CLASS',
+							data: sql1
+						}
+					}, function(res1) {
+						// console.log("传输结果：", res1);
+						if (res1.code) {
+							let delStr = "delete from POS_TXFILE where str1 =" + delVal;
+							db.SqliteHelper.get().executeDml(delStr, "数据删除中", function(res2) {
+								// console.log("数据删除成功", res2);
+							}, function(err1) {
+								// console.log("数据删除失败", err1);
+							});
+						}
+					});
+				}
+			}
+		},
+		function(err) {
+			console.log("传输数据查询失败", err);
+		});
+}
+
 
 export default {
 	InitData,
 	CreateBill,
 	CreateSQL,
 	CreatSaleTable,
+	TransLiteData,
 }

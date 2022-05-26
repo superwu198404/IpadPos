@@ -1,8 +1,10 @@
 <script>
+	import common from '@/api/common.js';
+	let int;
 	export default {
 		globalData: {
 			appid: 'keengee',
-			kquser:"CSKQ",
+			kquser: "CSKQ",
 			brand: "ZY",
 			store: {
 				GSID: "1001",
@@ -14,20 +16,26 @@
 				DKFID: '80000000',
 				BMID: "001",
 				GCID: "1001",
-				NAME:"武汉xxx",
-				MERID:"999990053990001",
-			    deviceno:"13001001"
+				NAME: "武汉xxx",
+				MERID: "999990053990001",
+				deviceno: "13001001"
 			},
-			hyinfo:null
+			hyinfo: null
 		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
 		onShow: function() {
 			console.log('App Show')
+			
+			//1min执行一次销售单传输
+			// int = setInterval(() => {
+			// 	common.TransLiteData();
+			// }, 1000 * 60); 
 		},
 		onHide: function() {
-			console.log('App Hide')
+			console.log('App Hide');
+			clearInterval(int);
 		}
 	}
 </script>
