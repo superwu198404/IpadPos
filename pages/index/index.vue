@@ -31,12 +31,6 @@
 					})
 				}
 			},
-			onLoad: function(e) {
-				console.log("onload");
-				// setInterval(function() {
-				// 	common.TransLiteData();
-				// }, 1000 * 60); //1min 处理一次
-			},
 			Test: function(e) {
 				Req.asyncFunc({
 					http: true,
