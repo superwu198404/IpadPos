@@ -236,10 +236,12 @@ let def = function(pm_callback, pm_data) {
 		pm_callback(pm_data);
 	}
 }
+
+
 /// 
 /// res  =  { code:ture/false,msg:"消息",http:{url，title,method}，data:{}} 
-/// 异步处理方法
-var asyncFunc = async function RequestDataArray(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
+/// 异步处理方法旧版本
+var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
 	var callbacklist = [];
 	for (var i = 1; i <= 3; i++) {
@@ -272,8 +274,55 @@ var asyncFunc = async function RequestDataArray(pm_data, callbackfun, callbackfu
 	*/
 };
 
+var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
+	finallyfun) {
+	var callbacklist = [];
 
+	for (var i = 1; i <= 3; i++) {
+		if (arguments[i]) {
+			callbacklist.push(arguments[i]);
+		}
+	}
+	let res = pm_data;
+	asyncFuncArr(pm_data, callbacklist, catchfun, finallyfun);
+	/*
+	Promise.all([httpFunc, forPromise]).then(function(f_res) {
+	if (finallyfun)
+	finallyfun(f_res);
+	})
+	*/
+};
 
+var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
+	return asyncFunc(pm_data, callbackfun, null, null, catchfun, null);
+}
+
+var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun) {
+	var callbacklist = [];
+	callbacklist = callbackfunArr;
+	let res = pm_data;
+	for (var i = 0; i < callbacklist.length; i++) {
+		if (res && res.http) {
+			console.log("http请求" + JSON.stringify(res));
+			debugger;
+			res = await myhttp(res);
+			if (res && !res.code) {
+				def(catchfun, res);
+				break;
+			}
+		}
+		//console.log("http返回"+ JSON.stringify(res));
+		res = await forPromise(callbacklist[i], res)
+		console.log("回调函数" + i.toString() + JSON.stringify(res));
+		console.log(res);
+		if (res && !res.code) {
+			def(catchfun, res);
+			break;
+		}
+	}
+	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
+	if (finallyfun) def(finallyfun, res);
+}
 export default {
 	http,
 	Post,

@@ -395,7 +395,7 @@
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
 				//return;
-				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
+				db.get().executeDml(exeSql, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {
@@ -406,7 +406,7 @@
 			//查询订单数据
 			SearcheOrder: function(e) {
 				let sql = 'select * from sale001 where STR1="' + e + '"';
-				db.SqliteHelper.get().executeQry(sql, "数据查询", function(res) {
+				db.get().executeQry(sql, "数据查询", function(res) {
 					console.log("查询成功");
 					console.log(res);
 				}, function(err) {
@@ -470,7 +470,7 @@
 				let sql = [
 					"update SALE003 set amt='0.01' where bill='K210QTD00112022516175759256' and no='1')"
 				];
-				db.SqliteHelper.get().executeDml(sql, "订单创建中", function(res) {
+				db.get().executeDml(sql, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {

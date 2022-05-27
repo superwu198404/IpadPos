@@ -132,7 +132,7 @@
 				// let sql = [
 				// 	 "insert into SALE003(bill,no) values('123321',0)"
 				// ];
-				// db.SqliteHelper.get().executeDml(sql, "测试sql 执行中", function(res) {
+				// db.get().executeDml(sql, "测试sql 执行中", function(res) {
 				// 	console.log("测试sql 执行成功");
 				// 	console.log(res);
 				// }, function(err) {
@@ -141,7 +141,7 @@
 				// });
 				// return
 				let sql1 = "select * from SALE003";
-				db.SqliteHelper.get().executeQry(sql1, "测试sql 执行中", function(res) {
+				db.get().executeQry(sql1, "测试sql 执行中", function(res) {
 					console.log("测试sql 查询成功");
 					console.log(res);
 				}, function(err) {
@@ -167,7 +167,7 @@
 					let sql1 = 'select * from SALE001 where BILL="' + that.bill + '"';
 					let sql2 = 'select * from SALE002 where BILL="' + that.bill + '"';
 					let sql3 = 'select * from SALE003 where BILL="' + that.bill + '"';
-					db.SqliteHelper.get().executeQry(sql1, "数据查询", function(res) {
+					db.get().executeQry(sql1, "数据查询", function(res) {
 						console.log("查询成功");
 						if (res.code && res.msg.length > 0) { //说明查到了值
 							let dataObj = res.msg[0];
@@ -179,7 +179,7 @@
 						console.log("查询失败");
 						console.log(err);
 					});
-					db.SqliteHelper.get().executeQry(sql2, "数据查询", function(res) {
+					db.get().executeQry(sql2, "数据查询", function(res) {
 						console.log("查询成功");
 						console.log(res);
 						if (res.code && res.msg.length > 0) { //说明查到了值
@@ -197,7 +197,7 @@
 						console.log("查询失败");
 						console.log(err);
 					});
-					db.SqliteHelper.get().executeQry(sql3, "数据查询", function(res) {
+					db.get().executeQry(sql3, "数据查询", function(res) {
 						console.log("支付方式查询成功");
 						console.log(res);
 						if (res.code && res.msg.length > 0) { //说明查到了值
@@ -612,7 +612,7 @@
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
 				//return;
-				db.SqliteHelper.get().executeDml(exeSql, "订单创建中", function(res) {
+				db.get().executeDml(exeSql, "订单创建中", function(res) {
 					console.log("订单创建成功");
 					console.log(res);
 				}, function(err) {

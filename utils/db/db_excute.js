@@ -144,12 +144,12 @@ var mySqllite = function() {
 						msg: e
 					})
 				}
-
-				for (var prm in otherParm) {
-					inputParm[prm] = otherParm[prm];
+				if (otherParm) {
+					for (var prm in otherParm) {
+						inputParm[prm] = otherParm[prm];
+					}
 				}
 				plus.sqlite[pm_dboperation](inputParm);
-
 			}
 		)
 
@@ -198,32 +198,43 @@ var mySqllite = function() {
 		});
 	}
 
-	var callBackCloseLoading = (res, infun) => {
-		uni.hideLoading();
-		return infun(res)
+	var callBackCloseLoading = (res, infun, msg) => {
+		// uni.hideLoading();
+		// return infun(res)
+		if (msg) {
+			uni.hideLoading();
+		}
+		console.log(JSON.stringify(res) + JSON.stringify(infun))
+		if (infun) {
+			return infun(res)
+		} else {
+			return res;
+		}
 	};
 
 
 	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail) {
 		var retcode;
-		retcode = await open(pm_msg);
-		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+
+		retcode = await this.open(pm_msg);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
+
 		retcode = await tran(tranEnum.begin);
-		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
 			if (!retcode.code) {
 				await tran(tranEnum.rollback);
-				return callBackCloseLoading(retcode, fail);
+				return callBackCloseLoading(retcode, fail, pm_msg);
 			}
 		}
 		retcode = await tran(tranEnum.commit);
 		if (!retcode.code) {
 			await tran(tranEnum.rollback);
-			return callBackCloseLoading(retcode, fail);
+			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
-		await close();
-		return callBackCloseLoading(retcode, success);
+		await this.close();
+		return callBackCloseLoading(retcode, success, pm_msg);
 	};
 
 
@@ -254,27 +265,22 @@ var mySqllite = function() {
 		retcode = await exec(sql);
 		await close();
 		if (retcode.code) {
-			return callBackCloseLoading(retcode, success);
+			retcode = await tran(tranEnum.commit);
+			await close();
+			return callBackCloseLoading(retcode, success, pm_msg);
 		} else {
-			return callBackCloseLoading(retcode, fail);
+			retcode = await tran(tranEnum.rollback);
+			await close();
+			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
-
 	}
-
 }
 
-var SqliteHelper = {
-	get: function() {
-		return new mySqllite();
-	}
+var get = function() {
+	return new mySqllite();
 }
 
 
 export default {
-	SqliteHelper,
-	openSqllite,
-	closeSqllite,
-	isOpen,
-	selectSql,
-	executeSql
+	get
 }

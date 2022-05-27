@@ -30,7 +30,7 @@
 			
 			//1min执行一次销售单传输
 			// int = setInterval(() => {
-			// 	common.TransLiteData();
+			 	//common.TransLiteData();
 			// }, 1000 * 60); 
 		},
 		onHide: function() {

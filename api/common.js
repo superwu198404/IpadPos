@@ -27,7 +27,7 @@ var InitData = function(e) {
 //创建销售表结构
 var CreatSaleTable = function() {
 	let sql = create_sql.createSql; //创建表
-	db.SqliteHelper.get().executeDml(sql, "表结构创建中", function(res) {
+	db.get().executeDml(sql, "表结构创建中", function(res) {
 		console.log("表结构创建成功");
 		console.log(res);
 	}, function(err) {
@@ -138,7 +138,7 @@ var CreateSQL = function(e, t) {
 //传输本地缓存的数据
 var TransLiteData = function() {
 	let sql = "select * from POS_TXFILE";
-	db.SqliteHelper.get().executeQry(sql, "数据查询中", function(res) {
+	db.get().executeQry(sql, "数据查询中", function(res) {
 			// console.log("传输数据查询成功", res);
 			if (res.code && res.msg.length > 0) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
@@ -158,7 +158,7 @@ var TransLiteData = function() {
 						// console.log("传输结果：", res1);
 						if (res1.code) {
 							let delStr = "delete from POS_TXFILE where str1 =" + delVal;
-							db.SqliteHelper.get().executeDml(delStr, "数据删除中", function(res2) {
+							db.get().executeDml(delStr, "数据删除中", function(res2) {
 								// console.log("数据删除成功", res2);
 							}, function(err1) {
 								// console.log("数据删除失败", err1);
