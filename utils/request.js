@@ -323,8 +323,50 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
 	if (finallyfun) def(finallyfun, res);
 }
+
+var resObj = function(pm_code, pm_msg, pm_data, pm_url) {
+
+	let urlx = pm_url || '';
+	let urlArr = urlx.split('.')
+	let httpParm = null;
+	let reqData = {};
+	if (urlArr.length >= 3) {
+
+		httpParm = {
+			url: "ReqMuster/Handle",
+			title: pm_msg,
+			method: "POST"
+		};
+
+		reqData.objmodel = pm_data ? JSON.stringify(pm_data) : null;
+		reqData.objNameSpace = urlArr.slice(0, urlArr.length - 2).join('.');
+		reqData.objtype = urlArr[urlArr.length - 1];
+		reqData.objname = urlArr[urlArr.length - 2];
+	} else {
+		reqData = pm_data;
+		httpParm = null;
+	}
+	var ret = {
+		code: pm_code,
+		msg: null,
+		http: httpParm,
+		data: reqData,
+	}
+
+	return ret;
+}
+
+var getResData = function(res) {
+	let resdata = JSON.parse(res.data);
+	return JSON.parse(resdata.data);
+}
+
 export default {
 	http,
 	Post,
-	asyncFunc
+	asyncFunc,
+	resObj,
+	asyncFuncOne,
+	asyncFuncArr,
+	getResData
 }
