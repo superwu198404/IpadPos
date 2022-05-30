@@ -27,7 +27,7 @@
 					})
 				} else if (e == 2) {
 					uni.navigateTo({
-						url: "../hy/index"
+						url: "../hyinfo/index"
 					})
 				}
 			},
