@@ -220,13 +220,17 @@ let httpFunc = function(pm_data) {
 
 //处理回调的地方 放外面
 let forPromise = function(func, pm_data) {
-	return new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) 
+	{
 		// func(pm_data)
 		// return resolve(pm_data);
-		try {
+		try
+		{
 			return resolve(func(pm_data));
-		} catch (e) {
-			return reject(new retData(false, e.message));
+		} 
+		catch (e) 
+		{
+			return resolve(new retData(false, e.message));
 		}
 	})
 };
@@ -338,10 +342,10 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url) {
 			method: "POST"
 		};
 
-		reqData.objmodel = pm_data ? JSON.stringify(pm_data) : null;
-		reqData.objNameSpace = urlArr.slice(0, urlArr.length - 2).join('.');
-		reqData.objtype = urlArr[urlArr.length - 1];
-		reqData.objname = urlArr[urlArr.length - 2];
+		reqData.data     = pm_data ? JSON.stringify(pm_data) : null;
+		reqData.brand     = urlArr.slice(0, urlArr.length - 2).join('.');
+		reqData.action      = urlArr[urlArr.length - 1];
+		reqData.ywname      = urlArr[urlArr.length - 2];
 	} else {
 		reqData = pm_data;
 		httpParm = null;
