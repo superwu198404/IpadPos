@@ -216,8 +216,6 @@ let httpFunc = function(pm_data) {
 	// });
 }
 
-
-
 //处理回调的地方 放外面
 let forPromise = function(func, pm_data) {
 	return new Promise(function(resolve, reject) {
@@ -305,7 +303,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		if (res && res.http) {
 			console.log("http请求" + JSON.stringify(res));
 			debugger;
-			res = await myhttp(res);
+			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
