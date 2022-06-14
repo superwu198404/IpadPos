@@ -3,6 +3,7 @@
  * @author echo.
  * @version 1.5.0
  **/
+//勿删
 const utils = {
 	//去空格
 	trim: function(value) {
@@ -80,15 +81,42 @@ const utils = {
 			b: parseInt(result[3], 16)
 		} : null;
 	},
-	
+
 	// 时间戳
 	ymsFormat: function() {
 		let date = new Date();
-		let str = date.getFullYear().toString().substring(2) + (date.getMonth() + 1).toString() + date.getDate().toString() +
+		let str = date.getFullYear().toString().substring(2) + (date.getMonth() + 1).toString() + date.getDate()
+			.toString() +
 			date.getHours().toString() + date
 			.getMinutes().toString() + date.getSeconds().toString() + date.getMilliseconds().toString();
 		return str;
+	},
+
+	//排序的函数
+	objKeySort: function(arys) {
+		var newObj = "";
+		//先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
+		if (arys === null) {
+			return;
+		}
+		const newkey = Object.keys(arys).sort();
+		for (let i = 0; i < newkey.length; i++) {
+			const newArrKey = newkey[i];
+			const newArrOne = arys[newkey[i]];
+			//遍历newkey数组
+			if (Object.prototype.toString.call(newArrOne).slice(8, -1) === "Array") {
+				// for (let j = 0; j < newArrOne.length; j++) {
+				// 	this.objKeySort(newArrOne[j]);
+				// }
+			} else if (Object.prototype.toString.call(newArrOne).slice(8, -1) === "Object") {
+				// this.objKeySort(newArrOne);
+			} else {
+				newObj += [newArrKey] + "=" + newArrOne + "&";
+			}
+		}
+		return newObj.substring(0, newObj.length - 1);
 	}
+
 }
 
 export default {
@@ -99,5 +127,6 @@ export default {
 	formatDate: utils.formatDate,
 	rgbToHex: utils.rgbToHex,
 	hexToRgb: utils.hexToRgb,
-	ymsFormat: utils.ymsFormat
+	ymsFormat: utils.ymsFormat,
+	objKeySort: utils.objKeySort
 }

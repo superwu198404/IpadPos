@@ -4,7 +4,7 @@
 		<button type="default" @click="closeSqllite">关闭数据库</button>
 		<button type="default" @click="createTable">创建table</button>
 		<button type="default" @click="addData">添加数据</button>
-		<button type="default" @click="getData">查询数据</button> 
+		<button type="default" @click="getData">查询数据</button>
 
 		状态：{{ status }}
 	</view>
@@ -14,14 +14,32 @@
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
 	import hy_model from '@/class/hy_model.js';
+	import common from '@/utils/util.js';
+	import rsa from '@/utils/rsa.js';
 	export default {
 		data() {
 			return {
 				status: ""
 			}
 		},
-		
+
 		onLoad: function() {
+			let arr = {
+				subject: "商品销售",
+				out_trade_no: "12345678912345678909",
+				money: "1",
+				auth_code: "134492385890939315",
+				product_info: [{
+					spid: "21313131",
+					name: "苹果",
+					price: "1",
+					num: "1"
+				}]
+			}
+			let str = rsa.rsaEncrypt(JSON.stringify(arr));
+			console.log("加密测试：", str);
+			// console.log("解密测试：", rsa.rsaDecrypt(str));
+			// console.log("排序：", common.objKeySort(arr));
 			// Req.asyncFunc({
 			// 	http: true,
 			// 	url: "/WxPay/AliPay",
@@ -34,7 +52,7 @@
 			// 	}
 			// }, function(res) {
 			// 	console.log("请求一：");
-			
+
 			// });
 			// var a=new hy_model.hyObj('13597696131',"夏末")
 			// let res=a.GetHyInfo("好厉害");
@@ -81,7 +99,7 @@
 			// })
 		},
 		methods: {
-		 
+
 			// 开启数据库
 			openSqllite() {
 				if (sqlLite.isOpen()) {
