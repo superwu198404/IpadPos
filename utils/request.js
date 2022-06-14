@@ -154,27 +154,18 @@ function retData(pm_code, pm_msg, pm_http) {
 }
 
 //请求方法
-let httpFunc = function(pm_data) 
-{
-	if (pm_data.http.load ) 
-	{ //为空则默认显示加载框
+let httpFunc = function(pm_data) {
+	if (pm_data.http.load) { //为空则默认显示加载框
 		uni.showLoading({
 			title: pm_data.http.title || "加载中...",
-			mask:true
+			mask: true
 		});
 	}
 	let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
 	let p_url = baseUrl;
-	if (config) 
-	{
+	if (config) {
 		p_url = config.urls[pm_data.url_type]; //通过键值来取
 	}
-	// if (pm_data.url_type && pm_data.url_type == 'center') {
-	// 	p_url = centerUrl;
-	// }
-	// if (pm_data.data && !pm_data.data.brand) { //brand给默认值
-	// 	pm_data.data.brand = "MobilePos_API.Models";
-	// }
 	return new Promise(function(resolve, reject) {
 		uni.request({
 			url: p_url + pm_data.http.url,
@@ -193,7 +184,7 @@ let httpFunc = function(pm_data)
 				}
 			},
 			fail: (res) => {
-			
+
 				console.log(res);
 				return resolve(new retData(false, res.errMsg));
 			}
@@ -210,23 +201,18 @@ let httpFunc = function(pm_data)
 
 //处理回调的地方 放外面
 let forPromise = function(func, pm_data) {
-	return new Promise(function(resolve, reject) 
-	{
+	return new Promise(function(resolve, reject) {
 		// func(pm_data)
 		// return resolve(pm_data);
-		try
-		{
+		try {
 			return resolve(func(pm_data));
-		} 
-		catch (e) 
-		{
+		} catch (e) {
 			return resolve(new retData(false, e.message));
 		}
 	})
 };
 ///作为异常和finally 的默认载体   
-let def = function(pm_callback, pm_data) 
-{
+let def = function(pm_callback, pm_data) {
 	console.log("執行了def");
 	uni.hideLoading();
 	if (pm_callback) {
@@ -247,8 +233,7 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 	}
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
-		if (res && res.http) 
-		{
+		if (res && res.http) {
 			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -256,8 +241,7 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 			}
 		}
 		res = await forPromise(callbacklist[i], res);
-		if (res && !res.code) 
-		{
+		if (res && !res.code) {
 			def(catchfun, res);
 			break;
 		}
@@ -299,23 +283,20 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	var callbacklist = [];
 	callbacklist = callbackfunArr;
 	let res = pm_data;
-	for (var i = 0; i < callbacklist.length; i++) 
-	{
+	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
 			console.log("http请求" + JSON.stringify(res));
-			debugger;
 			res = await httpFunc(res);
-			if (res && !res.code) 
-			{
+			if (res && !res.code) {
 				def(catchfun, res);
 				break;
 			}
 		}
-		console.log("http返回"+ JSON.stringify(callbacklist[i])+"\r\n" +JSON.stringify(res).substring(0,100));
+		console.log("http返回" + JSON.stringify(callbacklist[i]) + "\r\n" + JSON.stringify(res).substring(0,
+		100));
 		res = await forPromise(callbacklist[i], res)
 		//console.log("回调函数" + i.toString() + JSON.stringify(res));
-		if (res && !res.code) 
-		{
+		if (res && !res.code) {
 			def(catchfun, res);
 			break;
 		}
@@ -324,26 +305,25 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	if (finallyfun) def(finallyfun, res);
 }
 
-var resObj = function(pm_code, pm_msg, pm_data, pm_url,pm_load) {
+var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 
 	let urlx = pm_url || '';
 	let urlArr = urlx.split('.')
 	let httpParm = null;
 	let reqData = {};
-	if (urlArr&&urlArr.length >= 3)
-	{
+	if (urlArr && urlArr.length >= 3) {
 
 		httpParm = {
 			url: "ReqMuster/Handle",
 			title: pm_msg,
 			method: "POST",
-			load:pm_load||true,
+			load: pm_load || true,
 		};
 
-		reqData.data        = pm_data ? JSON.stringify(pm_data) : null;
-		reqData.brand       = urlArr.slice(0, urlArr.length - 2).join('.');
-		reqData.action      = urlArr[urlArr.length - 1];
-		reqData.ywname      = urlArr[urlArr.length - 2];
+		reqData.data = pm_data ? JSON.stringify(pm_data) : null;
+		reqData.brand = urlArr.slice(0, urlArr.length - 2).join('.');
+		reqData.action = urlArr[urlArr.length - 1];
+		reqData.ywname = urlArr[urlArr.length - 2];
 	} else {
 		reqData = pm_data;
 		httpParm = null;
@@ -357,10 +337,9 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url,pm_load) {
 	return ret;
 }
 
-var getResData = function(res) 
-{
+var getResData = function(res) {
 	let resdata = JSON.parse(res.data);
-	return resdata.data?JSON.parse(resdata.data):resdata;
+	return resdata.data ? JSON.parse(resdata.data) : resdata;
 }
 
 export default {

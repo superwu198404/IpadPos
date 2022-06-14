@@ -142,9 +142,11 @@ const Refund = (title, out_trade_no, out_refund_no, total_fee, func, func2) => {
 var WxPay = function() {
 	var BasePayment = async function(p, d) {
 		await Req.asyncFuncOne({
-			http: true,
-			url: "/PaymentAll/Handle",
-			title: title,
+			http: {
+				load: true,
+				url: "/PaymentAll/Handle",
+				title: title,
+			},
 			method: "POST",
 			data: {
 				paytype: "WxPay_ScanCode",
@@ -185,15 +187,18 @@ var WxPay = function() {
 		money: "",
 		auth_code: ""
 	}
-	var CreateData = function(p, d) {
+
+	var CreateData = function(t, m, d) {
 		return {
-			http: true,
-			url: "/PaymentAll/Handle",
-			title: title,
+			http: {
+				load: true,
+				url: "/PaymentAll/Handle",
+				title: t,
+			},
 			method: "POST",
 			data: {
 				paytype: "WxPay_ScanCode",
-				method: p,
+				method: m,
 				param: {
 					"appid": getApp().globalData.appid,
 					"gsid": getApp().globalData.store.GSID
@@ -206,57 +211,91 @@ var WxPay = function() {
 	/**
 	 * 包含支付和查询以及撤销的支付体
 	 */
-	var PaymentAll = function(body) {
-		Req.asyncFuncArr(this.CreateData("Payment", body), [
+	this.PaymentAll = function(body, func) {
+		Req.asyncFuncArr(CreateData("支付中...", "Payment", body), [
 			function(res) {
 				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
+				return CreateData("查询中...", "QueryPayment", {
 					out_trade_no: body.out_trade_no
 				});
 			},
-			function(res1) {
-				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			},
-			function(res2) {
-				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			},
-			function(res3) {
-				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			},
-			function(res4) {
-				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			},
-			function(res5) {
-				util.sleep(5000);
-				return this.CreateData("QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			},
-			function(res6) {
-				util.sleep(5000);
-				return this.CreateData("CancelPayment", {
-					out_trade_no: body.out_trade_no
-				});
+			function(res) {
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData("查询中...", "QueryPayment", {
+						out_trade_no: body.out_trade_no
+					});
+				}
 			}
 		], function(err) {
+			console.log("错误信息：", err)
 			//支付或者查询false了 则进行撤销操作
-			return this.CreateData("CancelPayment", {
+			return CreateData("撤销中...", "CancelPayment", {
 				out_trade_no: body.out_trade_no
 			});
 		});
 	}
+}
+var GetPay = function() {
+	return new WxPay();
 }
 export default {
 	CodePayment,
@@ -265,5 +304,5 @@ export default {
 	QueryCodeScanPay,
 	QueryRefund,
 	Refund,
-	WxPay
+	GetPay
 }

@@ -16,6 +16,9 @@
 	import hy_model from '@/class/hy_model.js';
 	import common from '@/utils/util.js';
 	import rsa from '@/utils/rsa.js';
+	import pay from '@/api/Pay/WxPay.js';
+	import db from '@/utils/db/db_excute.js';
+	
 	export default {
 		data() {
 			return {
@@ -24,9 +27,9 @@
 		},
 
 		onLoad: function() {
-			let arr = {
+			let obj = {
 				subject: "商品销售",
-				out_trade_no: "12345678912345678909",
+				out_trade_no: "12345678912345678910",
 				money: "1",
 				auth_code: "134492385890939315",
 				product_info: [{
@@ -36,8 +39,12 @@
 					num: "1"
 				}]
 			}
-			let str = rsa.rsaEncrypt(JSON.stringify(arr));
-			console.log("加密测试：", str);
+			pay.GetPay().PaymentAll(obj, function(res) {
+				console.log("支付结果：", res);
+			})
+
+			// let str = rsa.rsaEncrypt(JSON.stringify(arr));
+			// console.log("加密测试：", str);
 			// console.log("解密测试：", rsa.rsaDecrypt(str));
 			// console.log("排序：", common.objKeySort(arr));
 			// Req.asyncFunc({
