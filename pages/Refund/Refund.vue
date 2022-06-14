@@ -46,7 +46,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';
 	import dateformat from '@/utils/dateformat.js';
-
 	export default {
 		data() {
 			return {
@@ -218,7 +217,7 @@
 				}
 			},
 			//查询退款的合集
-			queryRefundAll: function(t, e, func) {
+			queryRefundAll: async function(t, e, func) {
 				let Result;
 				if (t == 'WX') {
 					_wx.QueryRefund("微信退款查询", e.out_trade_no, function(res) {
@@ -682,7 +681,7 @@
 						console.log("积分上传结果：" + res);
 					})
 				}
-			},
+			}
 		}
 	}
 </script>

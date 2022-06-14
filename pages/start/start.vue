@@ -79,9 +79,10 @@
 																		if( new004.length>0 )//存在数据说明这里有初始化的内容
 																		{
 																	    	sql.push("drop table  " + item.TABNAME); 
-																		    sql.push(item.DDLSTR);
+																		    
 																			console.log("生成了删除表的语句");
 																		}
+																		sql.push(item.DDLSTR);
 																		sql  = sql.concat(new004);
 																	});
 																	return  Req.resObj(true,"正在开始重建数据库",sql);

@@ -1,24 +1,24 @@
 export default {
- msg ,
- successToast,
- showLoading,
- hideLoading,
- getStorage,
- setStorage,
- delStorage,
- clearStorage,
- uploadFile, 
- getQueryString,
- fixed2,
- deepClone,
- copy,
- getUnique,
- prePage,
- CheckLogin,
- throttle,
- Debounce
+	msg,
+	successToast,
+	showLoading,
+	hideLoading,
+	getStorage,
+	setStorage,
+	delStorage,
+	clearStorage,
+	uploadFile,
+	getQueryString,
+	fixed2,
+	deepClone,
+	copy,
+	getUnique,
+	prePage,
+	CheckLogin,
+	throttle,
+	Debounce,
 }
- 
+
 
 //消息提示
 const msg = (str) => {
@@ -219,12 +219,12 @@ const uploadFile = (obj) => {
 	})
 }
 //获取url上的参数
-const getQueryString=(name)=> {
-  let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-  let r = window.location.search.substr(1).match(reg);
-  if (r != null) return unescape(r[2]);
-  return null;
-  }
+const getQueryString = (name) => {
+	let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	let r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]);
+	return null;
+}
 
 
 let _debounceTimeout = null,
@@ -285,8 +285,8 @@ const prePage = (preIndex = 1) => {
 	const pages = getCurrentPages();
 	const prePage = pages[pages.length - (preIndex + 1)];
 	return prePage.$vm;
-} 
- 
+}
+
 
 
 //二维数组去重
@@ -295,9 +295,5 @@ const getUnique = array => {
 	return array.filter((item, index) => {
 		let newItem = item + JSON.stringify(item)
 		return obj.hasOwnProperty(newItem) ? false : obj[newItem] = true
-})
- }
- 
- 
-
-
+	})
+}

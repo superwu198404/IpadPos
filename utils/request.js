@@ -163,22 +163,18 @@ let httpFunc = function(pm_data)
 			mask:true
 		});
 	}
+	let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
 	let p_url = baseUrl;
-	let config = uni.getStorageSync("config");
-	   
-	// p_url=configInfo[pm_data.url_type]	
-	  
 	if (config) 
 	{
-		p_url = config.ywurl;
+		p_url = config.urls[pm_data.url_type]; //通过键值来取
 	}
-	if (pm_data.url_type && pm_data.url_type == 'center') {
-		p_url = centerUrl;
-	}
-	if (pm_data.data && !pm_data.data.brand) 
-	{ //brand给默认值
-		pm_data.data.brand = "MobilePos_API.Models";
-	}
+	// if (pm_data.url_type && pm_data.url_type == 'center') {
+	// 	p_url = centerUrl;
+	// }
+	// if (pm_data.data && !pm_data.data.brand) { //brand给默认值
+	// 	pm_data.data.brand = "MobilePos_API.Models";
+	// }
 	return new Promise(function(resolve, reject) {
 		uni.request({
 			url: p_url + pm_data.http.url,
@@ -211,8 +207,6 @@ let httpFunc = function(pm_data)
 	// 	return reject(new retData(false, reason.errMsg));
 	// });
 }
-
-
 
 //处理回调的地方 放外面
 let forPromise = function(func, pm_data) {
@@ -372,8 +366,8 @@ var getResData = function(res)
 export default {
 	http,
 	Post,
-	asyncFunc,
 	resObj,
+	asyncFunc,
 	asyncFuncOne,
 	asyncFuncArr,
 	getResData
