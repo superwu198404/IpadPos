@@ -115,8 +115,15 @@ const utils = {
 			}
 		}
 		return newObj.substring(0, newObj.length - 1);
-	}
+	},
 
+	//模拟休眠方法
+	sleep: function(ms) {
+		var start = Date.now(),
+			end = start + ms;
+		while (Date.now() < end);
+		return;
+	}
 }
 
 export default {
@@ -128,5 +135,6 @@ export default {
 	rgbToHex: utils.rgbToHex,
 	hexToRgb: utils.hexToRgb,
 	ymsFormat: utils.ymsFormat,
-	objKeySort: utils.objKeySort
+	objKeySort: utils.objKeySort,
+	sleep: utils.sleep
 }
