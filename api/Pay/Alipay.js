@@ -1,18 +1,24 @@
 import Req from '@/utils/request.js';
-const Payment = (title, apiName, type, body={},fun1,fun4) => {
-	Req.asyncFunc({
+
+var def_body = {
+	    "paytype": "",
+	    "method": "",
+	    "param": {}, 
+	    "data": {}
+};
+
+//请求处理入口
+export default (title, body = {...def_body},...callbacks) => {
+	Req.asyncFunc(...[{
 		http: true,
-		url: "/Payment/Payment",
+		url: "PaymentAll/Handle",
 		title: title,
 		method: "POST",
 		data: {
-			apiName: apiName,
-			type: type,
-			body: body
+			paytype:"AliPay_ScanCode",
+			method:body.method,
+			param:body.param,
+			data:body.data
 		}
-	},fun1,null,null,fun4);
-}
-
-export default {
-	Payment
+	},...callbacks]);
 }
