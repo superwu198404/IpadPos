@@ -1,4 +1,5 @@
 import Req from '@/utils/request.js';
+import rsa from '@/utils/rsa.js';
 
 var def_body = {
 	    "paytype": "",
@@ -8,7 +9,7 @@ var def_body = {
 };
 
 //请求处理入口
-export default (title, body = {...def_body},...callbacks) => {
+const RequestHandle = (title, body = {...def_body},...callbacks) => {
 	Req.asyncFunc(...[{
 		http: true,
 		url: "PaymentAll/Handle",
@@ -18,7 +19,26 @@ export default (title, body = {...def_body},...callbacks) => {
 			paytype:"AliPay_ScanCode",
 			method:body.method,
 			param:body.param,
-			data:body.data
+			sign:rsa.rsaEncrypt(JSON.stringify(body.data))
 		}
 	},...callbacks]);
+}
+
+const Payment = (title, apiName, type, body={},fun1,fun4) => {
+	Req.asyncFunc({
+		http: true,
+		url: "/Payment/Payment",
+		title: title,
+		method: "POST",
+		data: {
+			apiName: apiName,
+			type: type,
+			body: body
+		}
+	},fun1,null,null,fun4);
+}
+
+export default {
+	Payment,
+	RequestHandle
 }
