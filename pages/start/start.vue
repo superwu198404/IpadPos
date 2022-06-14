@@ -1,8 +1,9 @@
 <template>
 	<view>
 		<text>{{showmsg}}</text>>
-		<input  placeholder="请输入门店的编码进行初始化"  v-model="khid" />
-		<button @click="init()">确定</button>
+		<input  placeholder="请输入门店的编码"  v-model="khid" />
+		<button @click="init">确定</button>
+		<button @click="toDbqry">调试xx</button>
 	</view>
 </template>
 
@@ -17,17 +18,22 @@
 	   
 		data()
 		{
-			return { tx001:null,khid:'',yninit:false,showmsg:"正在检查是否初始化"}
+			return { tx001:null,khid:'K0101QT2',yninit:false,showmsg:"正在检查是否初始化"}
 		},
 		onLoad() 
 		{
-			
+			 that =this;
 		},
 		methods: 
 		{
+			  toDbqry:function()
+			  {
+				  uni.redirectTo({url: "/pages/sqlitetest/sqlitetest" });
+			  },
+			   
 		       startx:function()
 			   {
-				   that =this;
+				  
 				   //this.init();
 				   //第一步检查本地数据库是否存在
 				    var sql  = " select  cvalue  from  ipadconfig where  type='KHID'";
@@ -40,10 +46,10 @@
 					 let getkhid  = req.getResData(res);
 					 console.log(getkhid);
 				},
-				init:function()
+				init: async function()
 				{
 										   
-										   console.log("准备开始初始化");
+										   console.log("准备开始初始化"+that.khid);
 										   let apistr= "MobilePos_API.Utils.PosInit.getTx001";
 										   let reqdata  = Req.resObj(true,"正在进行初始化001",null,apistr);
 										   console.log( JSON.stringify( reqdata));
@@ -51,7 +57,8 @@
 										                    (res)=>
 															     {
 																	 console.log(that.khid);
-																     that.tx001=  req.getResData(res);
+																	 
+																     that.tx001=  Req.getResData(res);
 																	 let reqPosData  ={"KHID":that.khid,"POSID":"8"};
 																	 let apistr= "MobilePos_API.Utils.PosInit.reloadsqlite";
 																	 return Req.resObj(true,"正在获取通讯数据004",reqPosData,apistr);
@@ -60,35 +67,54 @@
 															(res)=> 
 															     {
 																	let  sql =[];
-																	let   tx004 = req.getResData(res);
+																	console.log("开始创建数据库");
+																	let   tx004 = Req.getResData(res);
 																	//根据001循环创建表，并生成初始化语句
 																	that.tx001.forEach(function(item)
 																	{   
-																		sql.push("drop table  " + item.TABNAME); 
-																		sql.push(item.DDLSTR); 
+																		
 																	    let arr004=	tx004.filter((item4)=>{ return item4.TABNAME == item.TABNAME });
-																		sql  = sql.concat(arr004);
+																		//console.log( JSON.stringify( arr004));
+																	    let  new004=arr004.map( function(item004){ return item.SQLINS + item004.INSSTR } );
+																		if( new004.length>0 )//存在数据说明这里有初始化的内容
+																		{
+																	    	sql.push("drop table  " + item.TABNAME); 
+																		    sql.push(item.DDLSTR);
+																			console.log("生成了删除表的语句");
+																		}
+																		sql  = sql.concat(new004);
 																	});
 																	return  Req.resObj(true,"正在开始重建数据库",sql);
 															     },
-															(res)=>
+														    async (res)=>
 																 {
-																	 debugger;
-																    that.tx001 =null;
-																    mysqlite.executeSqlArray(res.data,res.msg,
-																	()=>{
-																		//跳转到新页面 
-																	},
-																	()=>{
-																		//报错
+																   
+																     that.tx001 =null;
+																	 console.log("开始执行语句" + res.data.length);
+																    let x=  await  mysqlite.executeSqlArray(res.data,"开始创建数据库",
+																	   ()=>{
+																		uni.redirectTo({
+																		
+																		url: "/pages/sqlitetest/sqlitetest" // 传递参数 id，值为1
+																		
+																		});
+																		console.log(JSON.stringify("start创建完成"));
+																		return  Req.retData(true,"start创建完成");
+																	 },
+																	(res)=>{
+																		console.log("数据库失败了"+JSON.stringify(res))
+																		return  Req.retData(true,"start创建失败")
 																	}
 																	);
+																	console.log(JSON.stringify(x));
+						                                            return x; 
 																 },
 																null,
 															 (res)=>
 															     {
 																	 that.tx001
 																	  =null;
+																	  console.log("开始执行语句" + JSON.stringify(res));
 																 }
 															)
 				},

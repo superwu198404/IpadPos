@@ -154,34 +154,34 @@ function retData(pm_code, pm_msg, pm_http) {
 }
 
 //请求方法
-let httpFunc = function(pm_data) {
-	if (!pm_data.url) {
-		pm_data.url = 'ReqMuster/Handle';
-		// uni.showModal({
-		// 	title: "请求地址不正确",
-		// 	icon: "error"
-		// })
-		// return;
-	}
-	if (!pm_data.load && pm_data.load != false) { //为空则默认显示加载框
+let httpFunc = function(pm_data) 
+{
+	if (pm_data.http.load ) 
+	{ //为空则默认显示加载框
 		uni.showLoading({
-			title: pm_data.title || "加载中..."
+			title: pm_data.http.title || "加载中...",
+			mask:true
 		});
 	}
 	let p_url = baseUrl;
 	let config = uni.getStorageSync("config");
-	if (config) {
+	   
+	// p_url=configInfo[pm_data.url_type]	
+	  
+	if (config) 
+	{
 		p_url = config.ywurl;
 	}
 	if (pm_data.url_type && pm_data.url_type == 'center') {
 		p_url = centerUrl;
 	}
-	if (pm_data.data && !pm_data.data.brand) { //brand给默认值
+	if (pm_data.data && !pm_data.data.brand) 
+	{ //brand给默认值
 		pm_data.data.brand = "MobilePos_API.Models";
 	}
 	return new Promise(function(resolve, reject) {
 		uni.request({
-			url: p_url + pm_data.url,
+			url: p_url + pm_data.http.url,
 			method: pm_data.method || "POST",
 			header: {
 				'Content-Type': pm_data.method == 'GET' ?
@@ -189,9 +189,7 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				if (!pm_data.load && pm_data.load != false) { //为空则关闭默认加载框
-					uni.hideLoading();
-				}
+
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
@@ -199,9 +197,7 @@ let httpFunc = function(pm_data) {
 				}
 			},
 			fail: (res) => {
-				if (!pm_data.load && pm_data.load != false) { //为空则关闭默认加载框
-					uni.hideLoading();
-				}
+			
 				console.log(res);
 				return resolve(new retData(false, res.errMsg));
 			}
@@ -235,12 +231,14 @@ let forPromise = function(func, pm_data) {
 	})
 };
 ///作为异常和finally 的默认载体   
-let def = function(pm_callback, pm_data) {
+let def = function(pm_callback, pm_data) 
+{
+	console.log("執行了def");
+	uni.hideLoading();
 	if (pm_callback) {
 		pm_callback(pm_data);
 	}
 }
-
 
 /// 
 /// res  =  { code:ture/false,msg:"消息",http:{url，title,method}，data:{}} 
@@ -255,7 +253,8 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 	}
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
-		if (res && res.http) {
+		if (res && res.http) 
+		{
 			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -263,7 +262,8 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 			}
 		}
 		res = await forPromise(callbacklist[i], res);
-		if (res && !res.code) {
+		if (res && !res.code) 
+		{
 			def(catchfun, res);
 			break;
 		}
@@ -305,21 +305,23 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	var callbacklist = [];
 	callbacklist = callbackfunArr;
 	let res = pm_data;
-	for (var i = 0; i < callbacklist.length; i++) {
+	for (var i = 0; i < callbacklist.length; i++) 
+	{
 		if (res && res.http) {
 			console.log("http请求" + JSON.stringify(res));
 			debugger;
-			res = await myhttp(res);
-			if (res && !res.code) {
+			res = await httpFunc(res);
+			if (res && !res.code) 
+			{
 				def(catchfun, res);
 				break;
 			}
 		}
-		//console.log("http返回"+ JSON.stringify(res));
+		console.log("http返回"+ JSON.stringify(callbacklist[i])+"\r\n" +JSON.stringify(res).substring(0,100));
 		res = await forPromise(callbacklist[i], res)
-		console.log("回调函数" + i.toString() + JSON.stringify(res));
-		console.log(res);
-		if (res && !res.code) {
+		//console.log("回调函数" + i.toString() + JSON.stringify(res));
+		if (res && !res.code) 
+		{
 			def(catchfun, res);
 			break;
 		}
@@ -328,22 +330,24 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	if (finallyfun) def(finallyfun, res);
 }
 
-var resObj = function(pm_code, pm_msg, pm_data, pm_url) {
+var resObj = function(pm_code, pm_msg, pm_data, pm_url,pm_load) {
 
 	let urlx = pm_url || '';
 	let urlArr = urlx.split('.')
 	let httpParm = null;
 	let reqData = {};
-	if (urlArr.length >= 3) {
+	if (urlArr&&urlArr.length >= 3)
+	{
 
 		httpParm = {
 			url: "ReqMuster/Handle",
 			title: pm_msg,
-			method: "POST"
+			method: "POST",
+			load:pm_load||true,
 		};
 
-		reqData.data     = pm_data ? JSON.stringify(pm_data) : null;
-		reqData.brand     = urlArr.slice(0, urlArr.length - 2).join('.');
+		reqData.data        = pm_data ? JSON.stringify(pm_data) : null;
+		reqData.brand       = urlArr.slice(0, urlArr.length - 2).join('.');
 		reqData.action      = urlArr[urlArr.length - 1];
 		reqData.ywname      = urlArr[urlArr.length - 2];
 	} else {
@@ -356,13 +360,13 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url) {
 		http: httpParm,
 		data: reqData,
 	}
-
 	return ret;
 }
 
-var getResData = function(res) {
+var getResData = function(res) 
+{
 	let resdata = JSON.parse(res.data);
-	return JSON.parse(resdata.data);
+	return resdata.data?JSON.parse(resdata.data):resdata;
 }
 
 export default {
