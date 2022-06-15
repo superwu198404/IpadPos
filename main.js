@@ -2,6 +2,7 @@ import App from './App'
 import * as request from '@/utils/request.js';
 import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
+import store from '@/utils/store.js';
 // #ifdef VUE2
 import Vue from 'vue' 
  
@@ -14,7 +15,7 @@ Vue.config.$=$
 App.mpType = 'app' 
 
 const app = new Vue({ 
-    ...App
+    ...App,store
 })
 app.$mount()
 // #endif
