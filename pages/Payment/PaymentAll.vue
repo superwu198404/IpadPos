@@ -152,7 +152,7 @@
 		},
 		data() {
 			return {
-				xuanzhong:true,
+				xuanzhong: true,
 				CanBack: false, //是否允许退出
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
@@ -195,8 +195,9 @@
 			debt: function() {
 				this.allAmount = (this.totalAmount - this.Discount - this.yPayAmount).toFixed(2);
 				this.allAmount = this.allAmount < 0 ? 0 : this.allAmount;
-				this.dPayAmount = this.dPayAmount || this.allAmount;
-				return this.dPayAmount ?? this.allAmount;
+				this.dPayAmount = Number((Number(this.dPayAmount) < Number(this.allAmount) ? this.dPayAmount : this
+					.allAmount)).toFixed(2);
+				return this.allAmount;
 			}
 		},
 		methods: {
@@ -583,35 +584,6 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
-				if (!this.PayWay) {
-					uni.showToast({
-						title: '请选择支付方式',
-						duration: 2000,
-						icon: "error"
-					});
-					return;
-				}
-				//券支付
-				if (this.PayWay != 'qzf') {
-					if (!this.PayAmount) {
-						uni.showToast({
-							title: '请输入支付金额',
-							duration: 2000,
-							icon: "error"
-						});
-						return;
-					}
-					if (this.PayAmount <= 0 || this.PayAmount > this.dPayAmount) {
-						uni.showToast({
-							title: '输入的金额有误',
-							duration: 2000,
-							icon: "error"
-						});
-						return;
-					}
-				}
-				//this.$refs['popup'].open();
-
 				//适配真机
 				let that = this;
 				if (that.authCode) { //如果有码
@@ -619,10 +591,36 @@
 				} else { //为空就进行扫码
 					uni.scanCode({
 						success: function(res) {
+							if (true) {
+
+							} else {
+								_ali.RequestHandle("", {
+									method: "Payment",
+									param: {},
+									data: {
+										subject: "商品销售",
+										// out_trade_no: "K12345678912345678902",
+										out_trade_no: this.out_trade_no,
+										total_money: this.totalAmount,
+										money: this.dPayAmount,
+										// auth_code: "132716010020176325",
+										auth_code: "285142260393078668",
+										store_id: this.DPID,
+										store_name: "武汉xxx",
+										merchant_no: "999990053990001",
+										product_info: this.Products.map(i => {
+											return {
+												spid:i.SPID,
+												name:i.NAME,
+												price:i.PRICE,
+												num:i.QTY
+											}
+										})
+									}
+								})
+							}
 							console.log('条码类型：' + res.scanType);
 							console.log('条码内容：' + res.result);
-							that.authCode = res.result;
-							that.ToPay(); //直接发起支付
 						}
 					});
 				}
@@ -1138,16 +1136,17 @@
 			//初始化
 			paramInit: function() {
 				var prev_page_param = this.$store.state.location;
-				this.Products = prev_page_param.Products;//商品数据
+				this.Products = prev_page_param.Products; //商品数据
+				this.Discount = prev_page_param.Discount; //商品数据
 				this.PayWayList = prev_page_param.PayWayList;
 				this.hyinfo = prev_page_param.hyinfo;
 				this.authCode = prev_page_param.authCode;
 				this.sale1_obj = prev_page_param.sale1_obj;
 				this.sale2_arr = prev_page_param.sale2_arr;
 			},
-			priceCount: function(){
+			priceCount: function() {
 				let total = 0;
-				this.Products.forEach(product => total+=product.AMOUNT);
+				this.Products.forEach(product => total += product.AMOUNT);
 				this.totalAmount = total;
 			}
 		},
