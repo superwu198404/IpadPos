@@ -55,7 +55,7 @@
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/api/Pay/WxPay.js';
-	import _ali from '@/api/Pay/Alipay.js';
+	import _ali from '@/api/Pay/AliPay.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
@@ -74,27 +74,7 @@
 				dPayAmount: 0, //待支付
 				PayAmount: 0,
 				Discount: 0,
-				Products: [{
-					PLID: "100",
-					BARCODE: '111111111',
-					SPID: "10101001",
-					UNIT: "个",
-					NAME: "黑森林",
-					PRICE: 0.01,
-					OPRICE: 0.01,
-					AMOUNT: 0.01,
-					QTY: 1
-				}, {
-					PLID: "101",
-					SPID: "10101002",
-					UNIT: "袋",
-					BARCODE: '2222222222',
-					NAME: "毛毛虫",
-					PRICE: 0.01,
-					OPRICE: 0.01,
-					AMOUNT: 0.02,
-					QTY: 2
-				}],
+				Products: [],
 				PayWayList: [{
 						name: '支付宝',
 						value: 'ALI',
@@ -123,19 +103,6 @@
 				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [],
-				// PayList: [{
-				// 	bill: "652313345645663",
-				// 	name: "支付宝",
-				// 	amount: 39.99,
-				// 	no: 0, //序号
-				// 	fkid: "ZF01"
-				// }, {
-				// 	bill: "652313345645663",
-				// 	name: "微信",
-				// 	amount: 0.01,
-				// 	no: 1, //序号
-				// 	fkid: "ZF02"
-				// }],
 				authCode: null,
 				out_trade_no_old: "", //原定单号
 				out_trade_no: "", //单次发起支付的订单号（匹配多笔支付的操作 采用原订单号加序号的规则）
