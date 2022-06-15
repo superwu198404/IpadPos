@@ -18,8 +18,69 @@
 		methods: {
 			MenuPage: function(e) {
 				if (e == 0) {
+					this.$store.commit('set-location', {
+						allow_discount_amount: "", //允许折扣金额
+						discount_amount: "", //折扣金额
+						store_id: "", //门店id
+						out_trade_no_old: "", //老订单号
+						cashier: "", //收银员
+						date: "", //日期
+						company: "", //公司
+						sale1_obj: {}, //001 主单 数据对象
+						sale2_arr: {}, //002 商品 数据对象集合
+						Products: [{
+								PLID: "100",
+								BARCODE: '111111111',
+								SPID: "10101001",
+								UNIT: "个",
+								NAME: "黑森林",
+								PRICE: 0.01,
+								OPRICE: 0.01,
+								AMOUNT: 0.01,
+								QTY: 1
+							},
+							{
+								PLID: "101",
+								SPID: "10101002",
+								UNIT: "袋",
+								BARCODE: '2222222222',
+								NAME: "毛毛虫",
+								PRICE: 0.01,
+								OPRICE: 0.01,
+								AMOUNT: 0.02,
+								QTY: 2
+							}
+						], //商品信息
+						PayWayList: [{
+								name: '支付宝',
+								value: 'ALI',
+								type: "AliPayService",
+								fkid: "ZF01",
+							},
+							{
+								name: '微信',
+								value: 'WX',
+								type: "AliPayService",
+								fkid: "ZF02"
+							},
+							{
+								name: '券支付',
+								value: 'COUPON',
+								type: "qzf",
+								fkid: "ZF03"
+							},
+							{
+								name: '电子卡',
+								value: 'CARD',
+								type: "dzk",
+								fkid: "ZF04"
+							}
+						],//支付方式
+						hyinfo: {}, //会员信息
+						authCode: {} //卡券信息 or 支付授权码
+					});
 					uni.navigateTo({
-						url: "../Payment/Payment"
+						url: "../Payment/PaymentAll"
 					})
 				} else if (e == 1) {
 					uni.navigateTo({
