@@ -7,7 +7,7 @@
 			kquser: "CSKQ",
 			brand: "ZY",
 			store: {
-				GSID: "1001",
+				GSID: "027001",
 				KHID: "K0101QTDS1",
 				POSID: "1",
 				RYID: "10086",
