@@ -20,7 +20,7 @@
 				if (e == 0) {
 					this.$store.commit('set-location', {
 						allow_discount_amount: "", //允许折扣金额
-						discount_amount: "", //折扣金额
+						Discount: 0, //折扣金额
 						store_id: "", //门店id
 						out_trade_no_old: "", //老订单号
 						cashier: "", //收银员
