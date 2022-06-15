@@ -191,8 +191,9 @@ var  inputParm =function(input_pm)
 			name: name
 		});
 	};
-	var open =  function(msg) {
-		var msg = msg | "正在进行操作";
+	var open =  function(msg) 
+	{
+		 msg = msg | "正在进行操作";
 		uni.showLoading({
 			title: msg,
 			mask: true
@@ -202,12 +203,12 @@ var  inputParm =function(input_pm)
 		{
 			console.log("已经打开");
 			return  new Promise(
-			        (resolve, reject) => {
-					return resolve({
-						code: true,
-						msg: "已经打开了"})
-					}
-			)
+			        (resolve, reject) => 
+					{
+						return resolve({
+							code: true,
+							msg: "已经打开了"})
+						})
 		}
 		else
 		{
@@ -241,9 +242,9 @@ var  inputParm =function(input_pm)
 		return new Promise((resolve, reject) => {
 				      // 修改表数据
 				      plus.sqlite.closeDatabase({
-				        name: that.name+"xx",
+				        name: that.name,
 				        success(e) {
-					   // console.log("close:okkkk"+JSON.stringify(e));
+					    console.log("close:okkkk"+JSON.stringify(e));
 				          return resolve({
 				          	code: true,
 				          	msg: e});
@@ -272,7 +273,7 @@ var  inputParm =function(input_pm)
 		          	msg: e});
 		          },
 		        fail(e) {
-			      console.log("executeSql:errrrrrr"+JSON.stringify(e));
+			      console.log("executeSql:errrrrrr"+pm_sql+JSON.stringify(e));
 		          return resolve({
 		          	code: false,
 		          	msg: e});
@@ -331,15 +332,22 @@ var  inputParm =function(input_pm)
 	var callBackCloseLoading =  function(res, infun, msg) {
 		// uni.hideLoading();
 		// return infun(res)
-		if (msg) {
+		if (msg)
+		{
 			uni.hideLoading();
 		}
-		//console.log(JSON.stringify(res) + JSON.stringify(infun))
-		if (infun) {
+		let ret
+		if (infun) 
+		{
+			//console.log("进入方法了" + infun)
 			return infun(res)
-		} else {
-			return res;
+		} 
+		else 
+		{
+			ret= res;
 		}
+		
+		return ret;
 	};
 
 
@@ -355,28 +363,30 @@ var  inputParm =function(input_pm)
 		 if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) 
 		{
-			//console.log(i+"execbegin:"+JSON.stringify( sqlArray[i]));
+			
 			retcode = await exec(sqlArray[i]);
-			//console.log(i+"exec:"+JSON.stringify( retcode));
+			
 			if (!retcode.code) 
 			{
-				console.log(i+"exec:"+JSON.stringify( retcode));
-				if(retcode.msg.code===-1404)//表已经存在
+				//console.log(i+"exec:"+JSON.stringify( retcode));
+				if(retcode.msg.code===-1404)
 				{
 					continue;
 				}
 				await tran(tranEnum.rollback);
-				return callBackCloseLoading(retcode, fail, pm_msg);
+				return  callBackCloseLoading(retcode, fail, pm_msg);
 			}
 		}
 	    retcode= await tran(tranEnum.commit);
 		if (!retcode.code) 
 		{
 		    tran(tranEnum.rollback);
-			return callBackCloseLoading(retcode, fail, pm_msg);
+			return   callBackCloseLoading(retcode, fail, pm_msg);
 		}
 		await close();
+	
 		return callBackCloseLoading(retcode, success, pm_msg);
+		 
 	};
 
 
@@ -388,10 +398,12 @@ var  inputParm =function(input_pm)
 		console.log("executeQry:"+JSON.stringify(sql));
 		retcode = await qry(sql);
 		await close();
-		if (retcode.code) {
-			return callBackCloseLoading(retcode, success);
-		} else {
-			return callBackCloseLoading(retcode, fail);
+		if (retcode.code) 
+		{
+			return  callBackCloseLoading(retcode, success,pm_msg);
+		} else 
+		{
+			return   callBackCloseLoading(retcode, fail,pm_msg);
 		}
 
 	}
