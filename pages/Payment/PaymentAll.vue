@@ -1,52 +1,138 @@
+<link rel="stylesheet" href="../../style/basis.css" type="text/css" />
+<style type="text/css">
+	/* @import url(../../style/basis.css); */
+	@import url(@/style/payment/paymentall/basis.css);
+</style>
 <template>
-	<view>
-		<view>
-			<p>--订单信息--</p>
-			<p>订单号：{{out_trade_no_old}}</p>
-			<p>总金额：{{allAmount}}</p>
-			<p>应收：{{totalAmount}}</p>
-			<p>已支付：{{yPayAmount}}</p>
-			<p>待支付：{{dPayAmount}}</p>
-		</view>
-		<view>
-			<p>--商品信息--</p>
-			<view v-for="(item,index) in Products">
-				<text>{{item.NAME}}</text>-
-				<text>￥{{item.AMOUNT}}</text>-
-				<text>{{item.PRICE}}元/kg</text>-
-				<text>x{{item.QTY}}</text>
+	<view class="content">
+		<view class="navmall">
+			<view class="logo">
+				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
-		</view>
-		<view>
-			<p>--支付方式--</p>
-			<radio-group class="radio-group" @change="radioChange">
-				<label class="radio" v-for="(item, index) in PayWayList" :key="item.value">
-					<radio :value="item.value" :checked="item.checked" /> {{item.name}}
-				</label>
-			</radio-group>
-			<view v-show="PayWay!=null">
-				支付金额:
-				<input :disabled="disablePayInput" v-model="PayAmount">
-			</view>
-			<p>付款码：<input confirm-type="confirm" @confirm="ToPay" v-model="authCode"></p>
-			<button @click="Pay()">支付</button>
-		</view>
-		<view>
-			<p>--支付列表--</p>
-			<p>序号---支付方式---金额</p>
-			<view v-for="(way, index) in PayList">
-				{{ way.no }} --- {{ way.name }} ---{{way.amount}}
-			</view>
-		</view>
-		<view>
-			<!-- <uni-popup ref="popup" :type="type" :maskClick="false">
-				<view class="uni-tip">
-					<button @click="close">关闭</button>
-					付款码：
-					<input confirm-type="confirm" @confirm="ToPay" v-model="authCode">
+			<view class="menu">
+				<view class="curr">
+					<image src="../../images/xiaoshou.png" mode="widthFix"></image>
+					<text>销售</text>
 				</view>
-			</uni-popup> -->
+				<view>
+					<image v-if="xuanzhong" src="../../images/yuding.png" mode="widthFix"></image>
+					<image src="../../images/yuding-hui.png" mode="widthFix"></image>
+					<text>预定</text>
+				</view>
+			</view>
+			<view class="exit">
+				<image src="../../images/tuichu.png" mode="widthFix"></image>
+				<text>退出</text>
+			</view>
 		</view>
+		<view class="right">
+			<view class="nav">
+				<view class="message">
+					<view class="imgs">
+						<image src="../../images/tongzhi.png" mode="widthFix"></image>
+					</view>
+					<text>门店有一条新的外卖配送单消息来啦...</text>
+				</view>
+				<view class="account">
+					<text>员工账号</text>
+					<view>
+						<image src="../../images/touxiang.png" mode="widthFix"></image>
+					</view>
+				</view>
+			</view>
+			<view class="hh">
+				<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
+			</view>
+			<view class="amounts">
+				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
+				<p><text>总金额</text><text>{{totalAmount}}</text></p>
+				<p><text>折扣</text><text>{{Discount}}</text></p>
+				<p><text>已收</text><text>{{yPayAmount}}</text></p>
+				<p><text>欠款</text><text>{{debt}}</text></p>
+				<p><text>还需支付</text><input type="text" value="" v-model="dPayAmount" /></p>
+			</view>
+
+			<view class="paydetails">
+				<view class="pay-sum">
+					<view class="settleds">
+						<h3>已结算</h3>
+						<!-- <p>序号---支付方式---金额</p> {{ way.no }} -->
+						<view class="sets-list">
+							<view class="paylists">
+								<view class="Methods" v-for="(item, index) in Products">
+									<view class="payicon">
+										<image src="../../images/dianziquan.png" mode="widthFix"></image>
+										{{ item.NAME }}
+									</view>
+									<text>-{{item.AMOUNT}}</text>
+								</view>
+							</view>
+							<view class="stills">
+								<view class="Methods">
+									<view class="payicon">
+										<image src="../../images/shouyintai.png" mode="widthFix"></image>
+										还需支付
+									</view>
+									<text>￥{{dPayAmount}}</text>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="choosepays">
+					<view class="pays-bj">
+						<view class="top-zhifu">
+							<view class="polys curr">
+								<image class="p-bg" src="../../images/xzbj-da.png"></image>
+								<p>聚合支付</p>
+								<label>
+									<image src="../../images/zfb-da.png" mode="widthFix"></image>
+									<image src="../../images/wxzf-da.png" mode="widthFix"></image>
+									<image src="../../images/hyk-da.png" mode="widthFix"></image>
+								</label>
+								<text>支持支付宝、微信及会员卡支付</text>
+							</view>
+							<view class="r-zhifu">
+								<view class="pattern">
+									<view class="">
+										<p>电子券</p>
+										<text>coupons</text>
+									</view>
+									<image src="../../images/dzq-da.png" mode="widthFix"></image>
+								</view>
+								<view class="pattern nots">
+									<view class="">
+										<p>云闪付</p>
+										<text>暂未开放</text>
+									</view>
+									<image src="../../images/ysf-da.png" mode="widthFix"></image>
+								</view>
+							</view>
+						</view>
+						<view class="bom-zhifu">
+							<view class="pattern nots">
+								<view class="">
+									<p>可伴支付</p>
+									<text>暂未开放</text>
+								</view>
+								<image src="../../images/kb-da.png" mode="widthFix"></image>
+							</view>
+							<view class="pattern nots">
+								<view class="">
+									<p>品诺支付</p>
+									<text>暂未开放</text>
+								</view>
+								<image src="../../images/pn-da.png" mode="widthFix"></image>
+							</view>
+
+						</view>
+					</view>
+					</p>
+					<button class="btn gopays" @click="Pay()">支 付</button>
+				</view>
+			</view>
+		</view>
+	</view>
 	</view>
 </template>
 
@@ -66,6 +152,7 @@
 		},
 		data() {
 			return {
+				xuanzhong: true,
 				CanBack: false, //是否允许退出
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
@@ -75,31 +162,7 @@
 				PayAmount: 0,
 				Discount: 0,
 				Products: [],
-				PayWayList: [{
-						name: '支付宝',
-						value: 'ALI',
-						type: "AliPayService",
-						fkid: "ZF01",
-					},
-					{
-						name: '微信',
-						value: 'WX',
-						type: "AliPayService",
-						fkid: "ZF02"
-					},
-					{
-						name: '券支付',
-						value: 'COUPON',
-						type: "qzf",
-						fkid: "ZF03"
-					},
-					{
-						name: '电子卡',
-						value: 'CARD',
-						type: "dzk",
-						fkid: "ZF04"
-					}
-				], //支付方式
+				PayWayList: [], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [],
@@ -111,19 +174,30 @@
 				sale2_obj: {},
 				sale2_arr: [],
 				sale3_obj: {},
-				sale3_arr: [],
+				sale3_arr: [], //已支付的交易数据（本页面存在多次交易的可能，所以此参数只能在本页面动态构造）
 				tx_obj: {},
-				GSID: getApp().globalData.store.GSID,
+				GSID: getApp().globalData.store.GSID, //公司id
+				DPID: getApp().globalData.store.DPID, //店铺id
+				KCDID: getApp().globalData.store.KCDID, //存库点id
+				GCID: getApp().globalData.store.GCID, //工厂id
+				BMID: getApp().globalData.store.BMID, //部门id
 				KHID: getApp().globalData.store.KHID,
 				POSID: getApp().globalData.store.POSID,
 				RYID: getApp().globalData.store.RYID,
-				GCID: getApp().globalData.store.GCID,
-				BMID: getApp().globalData.store.BMID,
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
-				hyinfo: getApp().globalData.hyinfo,
+				hyinfo: getApp().globalData.hyinfo, //会员卡信息
+			}
+		},
+		computed: {
+			debt: function() {
+				this.allAmount = (this.totalAmount - this.Discount - this.yPayAmount).toFixed(2);
+				this.allAmount = this.allAmount < 0 ? 0 : this.allAmount;
+				this.dPayAmount = Number((Number(this.dPayAmount) < Number(this.allAmount) ? this.dPayAmount : this
+					.allAmount)).toFixed(2);
+				return this.allAmount;
 			}
 		},
 		methods: {
@@ -131,24 +205,12 @@
 			onLoad(options) {
 				//首先创建销售表结构
 				common.CreatSaleTable();
-				this.out_trade_no_old = common.CreateBill(this.KHID, this.POSID);
-				this.out_trade_no = this.out_trade_no_old
-				console.log("支付订单号" + this.out_trade_no);
-				let spArr = this.Products;
-				let money = 0;
-				for (var i = 0; i < spArr.length; i++) {
-					money += spArr[i].AMOUNT;
-				}
-				this.allAmount = money;
-				this.totalAmount = money;
-				this.CalDZFMoney();
-
 				//券信息加载
 				let lqid = options.lqid;
 				if (lqid) {
 					console.log("券号：", lqid);
 					let that = this
-					that.authCode = lqid;
+					that.auth_code = lqid;
 					that.PayWayList.forEach(function(v, i) {
 						if (v.value == 'COUPON') {
 							v.checked = true;
@@ -157,11 +219,6 @@
 						}
 					})
 				}
-				setTimeout(() => { //测试时加的延迟定时器
-					// this.CreateDBData();
-					//this.SearcheOrder("K210QTD00112022516175759256");
-					//this.TestDB();
-				}, 3000);
 
 			},
 			//返回事件
@@ -176,7 +233,6 @@
 					}
 				}
 			},
-
 			QUsed: function(d, b, func) {
 				//继续支付   扣掉券的信息
 				hy.TicktUse(d, b,
@@ -528,35 +584,6 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
-				if (!this.PayWay) {
-					uni.showToast({
-						title: '请选择支付方式',
-						duration: 2000,
-						icon: "error"
-					});
-					return;
-				}
-				//券支付
-				if (this.PayWay != 'qzf') {
-					if (!this.PayAmount) {
-						uni.showToast({
-							title: '请输入支付金额',
-							duration: 2000,
-							icon: "error"
-						});
-						return;
-					}
-					if (this.PayAmount <= 0 || this.PayAmount > this.dPayAmount) {
-						uni.showToast({
-							title: '输入的金额有误',
-							duration: 2000,
-							icon: "error"
-						});
-						return;
-					}
-				}
-				//this.$refs['popup'].open();
-
 				//适配真机
 				let that = this;
 				if (that.authCode) { //如果有码
@@ -564,10 +591,36 @@
 				} else { //为空就进行扫码
 					uni.scanCode({
 						success: function(res) {
+							if (true) {
+
+							} else {
+								_ali.RequestHandle("", {
+									method: "Payment",
+									param: {},
+									data: {
+										subject: "商品销售",
+										// out_trade_no: "K12345678912345678902",
+										out_trade_no: this.out_trade_no,
+										total_money: this.totalAmount,
+										money: this.dPayAmount,
+										// auth_code: "132716010020176325",
+										auth_code: "285142260393078668",
+										store_id: this.DPID,
+										store_name: "武汉xxx",
+										merchant_no: "999990053990001",
+										product_info: this.Products.map(i => {
+											return {
+												spid:i.SPID,
+												name:i.NAME,
+												price:i.PRICE,
+												num:i.QTY
+											}
+										})
+									}
+								})
+							}
 							console.log('条码类型：' + res.scanType);
 							console.log('条码内容：' + res.result);
-							that.authCode = res.result;
-							that.ToPay(); //直接发起支付
 						}
 					});
 				}
@@ -1080,6 +1133,26 @@
 					})
 				}
 			},
+			//初始化
+			paramInit: function() {
+				var prev_page_param = this.$store.state.location;
+				this.Products = prev_page_param.Products; //商品数据
+				this.Discount = prev_page_param.Discount; //商品数据
+				this.PayWayList = prev_page_param.PayWayList;
+				this.hyinfo = prev_page_param.hyinfo;
+				this.authCode = prev_page_param.authCode;
+				this.sale1_obj = prev_page_param.sale1_obj;
+				this.sale2_arr = prev_page_param.sale2_arr;
+			},
+			priceCount: function() {
+				let total = 0;
+				this.Products.forEach(product => total += product.AMOUNT);
+				this.totalAmount = total;
+			}
+		},
+		created() {
+			this.paramInit();
+			this.priceCount();
 		}
 	}
 </script>

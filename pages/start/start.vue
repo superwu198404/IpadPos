@@ -3,7 +3,7 @@
 		<text>{{showmsg}}</text>>
 		<input  placeholder="请输入门店的编码"  v-model="khid" />
 		<button @click="init">确定</button>
-		<button @click="toDbqry">调试xx</button>
+		<button @click="toDbqry">调试y</button>
 	</view>
 </template>
 
@@ -18,7 +18,7 @@
 	   
 		data()
 		{
-			return { tx001:null,khid:'K0101QT2',yninit:false,showmsg:"正在检查是否初始化"}
+			return {initok:false,errstr:"", tx001:null,khid:'K0101QT2',yninit:false,showmsg:"正在检查是否初始化"}
 		},
 		onLoad() 
 		{
@@ -70,7 +70,7 @@
 																	console.log("开始创建数据库");
 																	let   tx004 = Req.getResData(res);
 																	//根据001循环创建表，并生成初始化语句
-																	that.tx001.forEach(function(item)
+																	this.tx001.forEach(function(item)
 																	{   
 																		
 																	    let arr004=	tx004.filter((item4)=>{ return item4.TABNAME == item.TABNAME });
@@ -80,42 +80,50 @@
 																		{
 																	    	sql.push("drop table  " + item.TABNAME); 
 																		    
-																			console.log("生成了删除表的语句");
+																			
 																		}
 																		sql.push(item.DDLSTR);
 																		sql  = sql.concat(new004);
 																	});
 																	return  Req.resObj(true,"正在开始重建数据库",sql);
 															     },
-														    async (res)=>
+														      async  (res)=>
 																 {
 																   
 																     that.tx001 =null;
-																	 console.log("开始执行语句" + res.data.length);
-																    let x=  await  mysqlite.executeSqlArray(res.data,"开始创建数据库",
-																	   ()=>{
-																		uni.redirectTo({
-																		
-																		url: "/pages/sqlitetest/sqlitetest" // 传递参数 id，值为1
-																		
-																		});
-																		console.log(JSON.stringify("start创建完成"));
-																		return  Req.retData(true,"start创建完成");
-																	 },
-																	(res)=>{
-																		console.log("数据库失败了"+JSON.stringify(res))
-																		return  Req.retData(true,"start创建失败")
-																	}
+																	
+																     let x=  await  mysqlite.executeSqlArray(res.data,"开始创建数据库",
+																	   (resks)=>
+																	   {
+																		  
+																		  console.log("执行语句成功" + res.data.length);
+																		 uni.redirectTo({
+																		 
+																		 url: "/pages/sqlitetest/sqlitetest" // 传递参数 id，值为1
+																		 
+																		 });
+																		 
+																		  let reqdata=  Req.retData(true,"start创建成功")
+							
+																		  return reqdata; 
+																	  },
+																	  (res)=>
+																	  {
+																		that.initok =false;
+																		that.errstr =res;
+		
+																		return  Req.retData(false,"start创建失败")
+																	  }
 																	);
-																	console.log(JSON.stringify(x));
+						
 						                                            return x; 
 																 },
 																null,
 															 (res)=>
 															     {
-																	 that.tx001
-																	  =null;
-																	  console.log("开始执行语句" + JSON.stringify(res));
+																	  that.tx001 =null;
+																	  console.log(JSON.stringify("start创建完成"));
+																	
 																 }
 															)
 				},
