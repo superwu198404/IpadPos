@@ -41,7 +41,7 @@
 
 <script>
 	import _wx from '@/api/Pay/WxPay.js';
-	import _ali from '@/api/Pay/AliPay.js';
+	import _ali from '@/api/Pay/Alipay.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import create_sql from '@/utils/db/create_sql.js';

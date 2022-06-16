@@ -1,18 +1,9 @@
 <template>
 	<view>
-		<p>--加购的商品商品信息--</p>
-		<view v-for="(item,index) in Products">
-			<text>{{item.NAME}}</text>-
-			<text>￥{{item.AMOUNT}}</text>-
-			<text>{{item.PRICE}}元/kg</text>-
-			<text>x{{item.QTY}}</text>
-		</view>
-
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">查询会员</button>
 		<button @click="Test(2)">测试一下啦</button>
-
 	</view>
 </template>
 <script>
@@ -22,92 +13,19 @@
 		//变量初始化
 		data() {
 			return {
-				allAmount: 0, //订单总金额(包含折扣)
-				totalAmount: 0, //应付总金额
-				Discount: 0, //折扣金额
-				GSID: getApp().globalData.store.GSID, //公司id
-				DPID: getApp().globalData.store.DPID, //店铺id
-				KCDID: getApp().globalData.store.KCDID, //存库点id
-				GCID: getApp().globalData.store.GCID, //工厂id
-				BMID: getApp().globalData.store.BMID, //部门id
 				KHID: getApp().globalData.store.KHID,
-				POSID: getApp().globalData.store.POSID,
-				RYID: getApp().globalData.store.RYID,
-				Name: getApp().globalData.store.NAME,
-				MerId: getApp().globalData.store.MERID,
-				sale1_obj: {},
-				sale2_obj: {},
-				sale2_arr: [],
-				sale3_arr: [],
-				hyinfo: getApp().globalData.hyinfo,
-				Products: [{
-						PLID: "100",
-						BARCODE: '111111111',
-						SPID: "10101001",
-						UNIT: "个",
-						NAME: "黑森林",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
-					},
-					{
-						PLID: "101",
-						SPID: "10101002",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "毛毛虫",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.02,
-						QTY: 2
-					}
-				], //商品信息
-				PayWayList: []
+				POSID: getApp().globalData.store.POSID
 			}
 		},
 		//方法初始化
 		methods: {
-			//获取支付方式
-			GetPayWay: function(e) {
-				let that = this;
-				common.GetPayWay(e, function(res) {
-					console.log("本地获取支付方式结果：", res);
-					if (res.code) {
-						that.PayWayList = [];
-						for (var i = 0; i < res.msg.length; i++) {
-							let obj = {};
-							obj.name = res.msg[i].SNAME;
-							obj.fkid = res.msg[i].FKID;
-							if (res.msg[i].JKSNAME == 'SZQ') {
-								obj.value = "COUPON";
-								obj.type = "qzf";
-							}
-							if (res.msg[i].JKSNAME == 'ZFB20') {
-								obj.value = "ALI";
-								obj.type = "AliPayService";
-							}
-							if (res.msg[i].JKSNAME == 'PAYCARD') {
-								obj.value = "CARD";
-								obj.type = "dzk";
-							}
-							if (res.msg[i].JKSNAME == 'WX_CLZF') {
-								obj.value = "WX";
-								obj.type = "WxPayService";
-							}
-							that.PayWayList.push(obj);
-						}
-					}
-					console.log("获取到的支付方式：", that.PayWayList);
-				})
-			},
 			MenuPage: function(e) {
 				if (e == 0) {
 					this.$store.commit('set-location', {
 						allow_discount_amount: "", //允许折扣金额
 						Discount: 0, //折扣金额
 						store_id: "", //门店id
-						out_trade_no_old: "", //老订单号
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID), //老订单号
 						cashier: "", //收银员
 						date: "", //日期
 						company: "", //公司
@@ -136,9 +54,33 @@
 								QTY: 2
 							}
 						], //商品信息
-						PayWayList: this.PayWayList, //支付方式
+						PayWayList: [{
+								name: '支付宝',
+								value: 'ALI',
+								type: "AliPayService",
+								fkid: "ZF01",
+							},
+							{
+								name: '微信',
+								value: 'WX',
+								type: "AliPayService",
+								fkid: "ZF02"
+							},
+							{
+								name: '券支付',
+								value: 'COUPON',
+								type: "qzf",
+								fkid: "ZF03"
+							},
+							{
+								name: '电子卡',
+								value: 'CARD',
+								type: "dzk",
+								fkid: "ZF04"
+							}
+						],//支付方式
 						hyinfo: {}, //会员信息
-						authCode: {} //卡券信息 or 支付授权码
+						authCode: "", //卡券信息 or 支付授权码
 					});
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -153,137 +95,6 @@
 					})
 				}
 			},
-			//创建订单数据
-			CreateDBData: function() {
-				//基础数据
-				this.sale1_obj = {
-					BILL: this.out_trade_no_old,
-					SALEDATE: dateformat.getYMD(),
-					SALETIME: dateformat.getYMDS(),
-					KHID: this.KHID,
-					POSID: this.POSID,
-					RYID: this.RYID,
-					BILL_TYPE: 'Z101', //门店现场销售单
-					XSTYPE: "1",
-					XS_BILL: "", //退款时记录原单号
-					XS_POSID: "", //退款时记录原posid
-					XS_DATE: "", //退款时记录原销售日期
-					XS_KHID: "", //退款时记录原khid
-					XS_GSID: "", //退款时记录原GSID
-					TLINE: this.sale2_obj.length,
-					TNET: this.totalAmount,
-					DNET: 0,
-					ZNET: this.allAmount,
-					BILLDISC: this.Discount,
-					ROUND: 0,
-					CHANGENET: 0,
-					CXTNET: 0,
-					TCXDISC: 0,
-					CUID: this.hyinfo.HYID, //会员号
-					CARDID: "", //卡号
-					THYDISC: this.Discount,
-					YN_SC: 'N',
-					GSID: this.GSID, //公司
-					GCID: this.GCID, //工厂
-					DPID: this.DPID, //店铺
-					KCDID: this.KCDID, //库存点
-					BMID: this.BMID, //部门id
-					DKFID: this.DKFID, //大客户id默认编码
-					XSPTID: 'POS',
-					YN_OK: 'X',
-					THTYPE: 0,
-					CLTIME: dateformat.getYMDS()
-				};
-				for (var i = 0; i < this.Products.length; i++) {
-					this.sale2_obj = {
-						BILL: this.out_trade_no_old,
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
-						KHID: this.KHID,
-						POSID: this.POSID,
-						SPID: this.Products[i].SPID,
-						NO: i,
-						PLID: this.Products[i].PLID,
-						BARCODE: this.Products[i].BARCODE,
-						UNIT: this.Products[i].UNIT,
-						QTY: this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE,
-						OPRICE: this.Products[i].OPRICE,
-						NET: this.Products[i].PRICE,
-						DISCRATE: "0",
-						YN_SKYDISC: 'N', //是否有手工折扣
-						DISC: 0, //手工折扣额
-						YN_CXDISC: 'N',
-						CXDISC: 0,
-						YAER: new Date().getFullYear(),
-						MONTH: new Date().getMonth() + 1,
-						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
-							new Date().getDay()),
-						TIME: new Date().getHours(),
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID //部门id
-					};
-					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
-				}
-				for (var i = 0; i < this.PayList.length; i++) {
-					this.sale3_obj = {
-						BILL: this.out_trade_no_old,
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
-						KHID: this.KHID,
-						POSID: this.POSID,
-						NO: this.PayList[i].no,
-						FKID: this.PayList[i].fkid,
-						AMT: this.PayList[i].amount,
-						ID: "", //卡号或者券号
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID, //部门id
-						DISC: ""
-					};
-					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
-				}
-
-				//执行sql
-				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
-				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
-				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-
-				let tx_obj = {
-					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
-					STOREID: this.KHID,
-					POSID: this.POSID,
-					TAB_NAME: 'XS',
-					STR1: this.out_trade_no_old,
-					BDATE: dateformat.getYMD(),
-					YW_NAME: "销售单据",
-					CONNSTR: 'CONNSTRING'
-				};
-				let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
-
-				// console.log(sql1.sqlliteArr);
-				// console.log(sql2.sqlliteArr);
-				// console.log(sql3.sqlliteArr);
-				// console.log(sql4.sqlliteArr);
-
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:")
-				console.log(exeSql);
-				//return;
-				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
-				});
-			},
-
 			Test: function(e) {
 				Req.asyncFunc({
 					http: true,
@@ -349,20 +160,11 @@
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
-			//this.change("world");
-			this.GetPayWay();
+			//this.change("world");    
 			console.info("onLoad");
 		},
 		onShow() {
-			let that = this;
-			uni.$on('updateData', function(data) {
-				that.PayList = data
-				console.log('监听支付页面回传的支付参数为：', that.PayList);
-				//创建订单数据
-				if (that.PayList && that.PayList.length > 0) {
-					this.CreateDBData()
-				}
-			})
+
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

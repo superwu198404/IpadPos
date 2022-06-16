@@ -1,4 +1,3 @@
-
 uni-page-body, uni-page-refresh{
 	height: 100%;
 }
@@ -181,6 +180,19 @@ uni-page-body, uni-page-refresh{
 }
 .settleds h3{
 	line-height: 100px;
+}
+.paymentlist{
+	min-height: 86%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.paymentlist .refund{
+	background-color: #fff;
+	border-top:1px solid #D3D3D3;
+	margin-top:40px;
+	border-radius: 0;
+	min-height: 50%;
 }
 .sets-list{
 	min-height: 86%;

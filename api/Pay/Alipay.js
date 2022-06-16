@@ -68,8 +68,6 @@ var AliPay = function() {
 			if (func)
 				func(res)
 		}, function(res) {
-			// if (func)
-			// 	func(res)
 			uni.showToast({
 				icon: "error",
 				title: res.msg
