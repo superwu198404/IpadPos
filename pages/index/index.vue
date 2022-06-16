@@ -12,7 +12,10 @@
 	export default {
 		//变量初始化
 		data() {
-			return {}
+			return {
+				KHID: getApp().globalData.store.KHID,
+				POSID: getApp().globalData.store.POSID
+			}
 		},
 		//方法初始化
 		methods: {
@@ -22,7 +25,7 @@
 						allow_discount_amount: "", //允许折扣金额
 						Discount: 0, //折扣金额
 						store_id: "", //门店id
-						out_trade_no_old: "", //老订单号
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID), //老订单号
 						cashier: "", //收银员
 						date: "", //日期
 						company: "", //公司
@@ -77,7 +80,7 @@
 							}
 						],//支付方式
 						hyinfo: {}, //会员信息
-						authCode: {} //卡券信息 or 支付授权码
+						authCode: "", //卡券信息 or 支付授权码
 					});
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
