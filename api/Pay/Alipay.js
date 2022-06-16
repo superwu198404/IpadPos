@@ -112,6 +112,7 @@ var AliPay = function() {
 					appid: getApp().globalData.appid,
 					gsid: getApp().globalData.store.GSID
 				},
+				// sign: rsa.rsaEncrypt(JSON.stringify(d)),
 				sign: aes.aesEncrypt(JSON.stringify(d))
 			}
 		}

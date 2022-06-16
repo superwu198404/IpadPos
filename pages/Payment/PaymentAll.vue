@@ -157,6 +157,8 @@
 	import Req from '@/utils/request.js';
 	import _wx from '@/api/Pay/WxPay.js';
 	import _ali from '@/api/Pay/Alipay.js';
+	import _card from '@/api/Pay/ECardPay.js';
+	import _couon from '@/api/Pay/ECoupon.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
@@ -210,7 +212,8 @@
 				MerId: getApp().globalData.store.MERID,//商户号id
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
-				hyinfo: getApp().globalData.hyinfo, //会员卡信息
+				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
+				dPayList: [],
 				domRefresh: new Date().toString()
 			}
 		},
@@ -278,6 +281,12 @@
 						})
 						return true; //返回true阻止默认操作
 					}
+				}
+				if (this.YN_TotalPay) { //标注是否已经完成支付,已经完成需要携带支付参数
+					uni.$emit('updateData', this.PayList)
+					uni.navigateBack({
+						delta: 1
+					})
 				}
 			},
 			QUsed: function(d, b, func) {
@@ -811,9 +820,73 @@
 			domForceRefresh: function() {
 				this.domRefresh = new Date().toString();
 			},
-			//支付后部分参数的重置
-			resetPayAfter:function(){
-				this.authCode = "";
+			//创建待支付记录 支付成功后需要剔除该数据
+			CreateDPayData: function(t, e = 1) {
+				let that = this;
+				if (e > 0) { //追加记录
+					let arr = that.dPayList.filter(function(v, i, ar) {
+						return v.amount == that.PayAmount && v.no == that.no;
+					})
+					if (arr.length == 0) { //说明没有追加过该笔支付记录
+						if (!t.payobj) { //不是券的支付
+							let payobj = that.PayWayList.find(item => {
+								return item.value == t
+							});
+							that.dPayList.push({
+								type: payobj.value,
+								fkid: payobj.fkid,
+								bill: that.out_trade_no,
+								name: payobj.name,
+								amount: that.PayAmount,
+								no: that.PayList.length
+							});
+						} else { //券的支付
+							that.dPayList.push({
+								type: "COUPON",
+								fkid: t.payobj.fkid,
+								bill: that.out_trade_no,
+								name: t.payobj.name,
+								amount: t.amount,
+								no: that.PayList.length
+							});
+						}
+					}
+				} else {
+					if (that.dPayList.length > 0) {
+						that.dPayList.splice(that.dPayList.findIndex(item => item.bill === that.out_trade_no), 1);
+					}
+				}
+			},
+			//查询重试
+			RetrySearch: function(e) {
+				let that = this;
+				let obj = {
+					out_trade_no: e.bill
+				};
+				if (e == "WX") {
+					_wx.WxPayment().QueryPayment(obj, function(res) {
+						that.CreateDPayData(null, -1);
+						that.createPayData(null,e);
+					})
+				}
+				if (e == "Ali") {
+					_ali.AliPayment().QueryPayment(obj, function(res) {
+						that.CreateDPayData(null, -1);
+						that.createPayData(null,e);
+					})
+				}
+				if (e == "CARD") {
+					_card.CardPayment().QueryPayment(obj, function(res) {
+						that.CreateDPayData(null, -1);
+						that.createPayData(null,e);
+					})
+				}
+				if (e == "COUPON") {
+					_coupon.CouponPayment().QueryPayment(obj, function(res) {
+						that.CreateDPayData(null, -1);
+						that.createPayData(null,e);
+					})
+				}
 			}
 		},
 		created() {

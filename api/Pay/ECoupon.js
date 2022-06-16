@@ -67,7 +67,7 @@ var CouonPay = function() {
 				method: m,
 				param: {
 					appid: getApp().globalData.appid,
-					gsid: getApp().globalData.store.GSID
+					gsid: getApp().globalData.store.GSID,
 					source: "Mobile_Pos"
 				},
 				// sign: rsa.rsaEncrypt(JSON.stringify(d))
