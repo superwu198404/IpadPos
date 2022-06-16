@@ -164,7 +164,7 @@
 			console.info("onLoad");
 		},
 		onShow() {
-
+			console.log("订单数据:",this.$store.state.orders);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

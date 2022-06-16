@@ -49,7 +49,7 @@
 				<p><text>折扣</text><text>{{Discount}}</text></p>
 				<p><text>已收</text><text>{{yPayAmount}}</text></p>
 				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><input type="text" value="" :key="domRefresh" v-model="dPayAmount" /></p>
+				<p><text>还需支付</text><input :disabled="allowInput" type="text" value="" :key="domRefresh" v-model="dPayAmount" /></p>
 			</view>
 
 			<view class="paydetails">
@@ -167,6 +167,7 @@
 		},
 		data() {
 			return {
+				allowInput:true,
 				YN_TotalPay:false,
 				refundShow:false,
 				currentPayInfo:null,//当前一单的支付平台信息（提供 fkid 和 name）
@@ -640,6 +641,9 @@
 							success: function(res) {
 								that.authCode = res.result;//获取扫码的 authCode
 								that.PayHandle();
+							},
+							fail:function(err){
+								alert("错误")
 							}
 						});
 					}
@@ -697,7 +701,7 @@
 				}
 				let payAfter = this.PayDataAssemble();
 				handlePayment.PaymentAll(payAfter,(function(result){
-					debugger;
+					this.resetPayAfter();
 					uni.showToast({
 						title:"支付成功!"
 					});
@@ -806,6 +810,10 @@
 			//文本框dom刷新
 			domForceRefresh: function() {
 				this.domRefresh = new Date().toString();
+			},
+			//支付后部分参数的重置
+			resetPayAfter:function(){
+				this.authCode = "";
 			}
 		},
 		created() {
