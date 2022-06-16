@@ -5,12 +5,16 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 	  state () {
 	    return {
-	      location: null
+	      location: null,//每次跳转传入的数据
+		  orders:null//订单记录数据
 	    }
 	  },
 	  mutations: {
 		"set-location"(state,data) {
 	      state.location = data;
-	    }
+	    },
+		"set-orders"(state,data) {
+		  state.orders = data;
+		}
 	  }
 	})
