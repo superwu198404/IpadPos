@@ -541,10 +541,35 @@ var render = function() {
     "v-uni-view",
     { attrs: { _i: 0 } },
     [
+      _c("p", { attrs: { _i: 1 } }, [_vm._v("--加购的商品商品信息--")]),
+      _vm._l(_vm._$g(2, "f"), function(item, index, $20, $30) {
+        return _c(
+          "v-uni-view",
+          { key: item, attrs: { _i: "2-" + $30 } },
+          [
+            _c("v-uni-text", { attrs: { _i: "3-" + $30 } }, [
+              _vm._v(_vm._$g("3-" + $30, "t0-0"))
+            ]),
+            _vm._v("-"),
+            _c("v-uni-text", { attrs: { _i: "4-" + $30 } }, [
+              _vm._v("￥" + _vm._$g("4-" + $30, "t0-0"))
+            ]),
+            _vm._v("-"),
+            _c("v-uni-text", { attrs: { _i: "5-" + $30 } }, [
+              _vm._v(_vm._$g("5-" + $30, "t0-0") + "元/kg")
+            ]),
+            _vm._v("-"),
+            _c("v-uni-text", { attrs: { _i: "6-" + $30 } }, [
+              _vm._v("x" + _vm._$g("6-" + $30, "t0-0"))
+            ])
+          ],
+          1
+        )
+      }),
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 1 },
+          attrs: { _i: 7 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -556,7 +581,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 2 },
+          attrs: { _i: 8 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -568,7 +593,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 3 },
+          attrs: { _i: 9 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -580,7 +605,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 4 },
+          attrs: { _i: 10 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -590,7 +615,7 @@ var render = function() {
         [_vm._v("测试一下啦")]
       )
     ],
-    1
+    2
   )
 }
 var recyclableRender = false
@@ -2109,9 +2134,20 @@ __webpack_require__.r(__webpack_exports__);
   !*** ./node_modules/babel-loader/lib!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--12-1!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/using-components.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib??vue-loader-options!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/style.js!D:/SVN项目/IpadPos/pages/Payment/PaymentAll.vue?vue&type=script&lang=js&mpType=page ***!
   \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-uni-app-loader/view/script.js):\nSyntaxError: Unexpected token, expected \",\" (216:3)\n    at Object._raise (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:746:17)\n    at Object.raiseWithData (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:739:17)\n    at Object.raise (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:733:17)\n    at Object.unexpected (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:8807:16)\n    at Object.expect (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:8793:28)\n    at Object.parseObj (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10439:14)\n    at Object.parseExprAtom (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10055:28)\n    at Object.parseExprSubscripts (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9656:23)\n    at Object.parseMaybeUnary (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9636:21)\n    at Object.parseMaybeUnary (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6877:20)\n    at Object.parseExprOps (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9506:23)\n    at Object.parseMaybeConditional (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9479:23)\n    at Object.parseMaybeAssign (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9434:21)\n    at Object.parseMaybeAssign (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:6822:20)\n    at Object.parseExpression (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9386:23)\n    at Object.parseReturnStatement (D:\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11523:28)");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+var _uniPopup = _interopRequireDefault(__webpack_require__(/*! @/components/uni-popup/components/uni-popup/uni-popup.vue */ 32));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
+{
+
+  data: function data() {
+    return {
+      wxsProps: {} };
+
+  },
+  components: {
+    'uniPopup': _uniPopup.default } };exports.default = _default;
 
 /***/ }),
 /* 32 */
@@ -2563,7 +2599,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 16);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "\r\n\r\n/* @import url(../../style/basis.css); */\nuni-page-body, uni-page-refresh{\r\n\theight: 100%;\n}\n.content{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\theight: 100%;\r\n\tbackground-color: #F5F4F8;\n}\n.navmall{\r\n\theight: 100%;\r\n\twidth:10%;\r\n\tbackground-color: #fff;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: baseline;\r\n\tposition: relative;\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 14px;\n}\n.navmall .logo{\r\n\twidth:40%;\r\n\tmargin:20px auto;\n}\n.navmall .logo uni-image{\r\n\twidth:100%;\n}\n.menu{\r\n\twidth:100%;\r\n\tmargin-top:20px;\r\n\theight: 76%;\r\n\tpadding-bottom: 50%;\n}\n.menu uni-view{\r\n\twidth:100%;\r\n\ttext-align: center;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tpadding:12% 0;\n}\n.menu .curr{\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\twidth:80%;\r\n\tmargin:6% auto;\r\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image{\r\n\twidth:50px;\r\n\tmargin-bottom: 10px;\n}\n.exit{\r\n\twidth:100%;\r\n\tposition: absolute;\r\n\tbottom:3%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translateX(-50%);\r\n\t        transform: translateX(-50%);\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tfont-size: 13px;\n}\n.exit uni-image{\r\n\twidth:40px;\n}\n.right{\r\n\twidth:90%;\n}\n.nav{\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding:10px 2%;\r\n\tbackground-color: #fff;\n}\n.message{\r\n\tdisplay: flex;\n}\n.message .imgs{\r\n\tbackground-color: #006B44;\r\n\tborder-radius: 10px 0 0 10px;\r\n\twidth:70px;\r\n\theight: 70px;\r\n\tline-height: 70px;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.message .imgs uni-image{\r\n\twidth:50%;\n}\n.message uni-text{\r\n\tdisplay: inline-block;\r\n\theight: 70px;\r\n\tline-height: 70px;\r\n\tbackground-color: #EEEEEE;\r\n\tcolor: #006B44;\r\n\tpadding:0 18px;\r\n\tborder-radius:0 10px 10px 0;\r\n\tfont-size: 16px;\n}\n.account{\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.account uni-image{\r\n\twidth:80px;\r\n\theight: 80px;\r\n\tmargin-left: 20px;\n}\n.hh{\r\n\tpadding:16px 2%;\r\n\tfont-size: 36px;\r\n\tfont-weight: 700;\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.hh uni-image{\r\n\twidth:40px;\r\n\tmargin-right: 12px;\n}\n.amounts{\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:20px 0;\r\n\twidth:96%;\r\n\tmargin:0 auto;\r\n\tdisplay: flex;\n}\n.amounts p{\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: start;\r\n\talign-items: center;\r\n\twidth:19.5%;\r\n\tborder-right:1px solid #f5f5f5;\r\n\tfont-size: 32px;\r\n\tfont-weight: 700;\r\n\tpadding-top:20px;\r\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1){\r\n\tborder-right:none;\n}\n.amounts p uni-text:nth-child(2){\r\n\tfont-size: 56px;\r\n\tline-height: 100px;\r\n\tcolor: #333;\n}\n.amounts p uni-input{\r\n\tmargin-top:10px;\r\n\theight: 80px;\r\n\tline-height: 80px;\r\n\tborder:1px solid #006B44;\r\n\tbackground-color: #F1F9F1;\r\n\ttext-align: center;\r\n\tborder-radius: 10px;\n}\n.paydetails{\r\n\tdisplay: flex;\r\n\theight: 68%;\r\n\tmargin:2%;\n}\n.pay-sum{\r\n\tdisplay: flex;\r\n\twidth:30%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:0 1.5%;\r\n\theight: 100%;\n}\n.settleds{\r\n\twidth:100%;\n}\n.settleds h3{\r\n\tline-height: 100px;\n}\n.paymentlist{\r\n\tmin-height: 86%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-between;\n}\n.paymentlist .refund{\r\n\tbackground-color: #fff;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tmargin-top:40px;\r\n\tborder-radius: 0;\r\n\tmin-height: 50%;\n}\n.sets-list{\r\n\tmin-height: 86%;\r\n\tbackground-color: #F9F9F9;\r\n\tborder-radius: 10px;\r\n\tpadding:0 5%;\r\n\tposition: relative;\n}\n.paylists{\r\n\tmax-height: 80%;\r\n\toverflow: auto;\r\n\tpadding-bottom: 150px;\n}\n.Methods{\r\n\twidth:100%;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tmargin: 40px 0;\n}\n.payicon{\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.payicon uni-image{\r\n\twidth:70px;\r\n\tmargin-right: 20px;\n}\n.stills{\r\n\twidth:90%;\r\n\theight: 150px;\r\n\tdisplay:flex;\r\n\talign-items: center;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tposition: absolute;\r\n\tbottom:0;\r\n\tleft: 5%;\n}\n.stills .payicon uni-image{\r\n\twidth:60px;\n}\n.choosepays{\r\n\twidth:68%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.5%;\r\n\theight: 95%;\r\n\tmargin-left: 2%;\n}\n.pays-bj{\r\n\twidth:100%;\r\n\theight: 88%;\n}\n.top-zhifu{\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\r\n\twidth:100%;\r\n\tmargin-bottom: 3.5%;\r\n\theight: 60%;\n}\n.polys{\r\n\twidth:48%;\r\n\ttext-align: center;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\theight: 100%;\n}\n.polys p{\r\n\tfont-size: 42px;\r\n\tline-height: 160px;\r\n\tfont-weight: 700;\r\n\tpadding-top:5%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label uni-image{\r\n\twidth:100px;\r\n\tmargin:0 5%;\n}\n.polys uni-text{\r\n\tdisplay: block;\r\n\tfont-size: 28px;\r\n\tcolor: #CCCCCC;\r\n\tmargin-top:25%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.r-zhifu{\r\n\twidth:48%;\r\n\tmargin-left: 3%;\n}\n.pattern{\r\n\twidth:88%;\r\n\tdisplay: flex;\r\n\theight: 46.3%;\r\n\talign-items: center;\r\n\tjustify-content: space-between;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\tpadding:0 6%;\n}\n.pattern:nth-child(1){\r\n\tmargin-bottom:6%;\n}\n.pattern p{\r\n\tfont-size: 42px;\r\n\tfont-weight: 700;\r\n\tline-height: 80px;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-text{\r\n\tcolor: #999;\r\n\tfont-size: 28px;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-image{\r\n\twidth:120px;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.bom-zhifu{\r\n\tdisplay: flex;\n}\n.bom-zhifu .pattern{\r\n\twidth:48%;\r\n\theight: 100%;\r\n\tpadding:5.5% 3%;\n}\n.bom-zhifu .pattern:nth-child(2){\r\n\tmargin-left:3%;\n}\n.nots p{\r\n\tcolor: #CCCCCC;\n}\n.btn{\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\tfont-size: 38px;\n}\n.pays-bj .curr{\r\n\tborder-color: #338869;\r\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\r\n\tposition: relative;\n}\n.pays-bj .curr .p-bg{\r\n\tposition: absolute;\r\n\ttop:0;\r\n\tright: 0;\r\n\twidth:80%;\r\n\theight: 100%;\r\n\tz-index: 0;\n}\n.pays-bj .curr p,.pays-bj .curr uni-text{\r\n\tcolor: #338869;\n}\r\n", ""]);
+exports.push([module.i, "\r\n\r\n/* @import url(../../style/basis.css); */\nuni-page-body, uni-page-refresh{\r\n\theight: 100%;\n}\n.content{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\theight: 100%;\r\n\tbackground-color: #F5F4F8;\n}\n.navmall{\r\n\theight: 100%;\r\n\twidth:10%;\r\n\tbackground-color: #fff;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: baseline;\r\n\tposition: relative;\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 28rpx;\n}\n.navmall .logo{\r\n\twidth:40%;\r\n\tmargin:20rpx auto;\n}\n.navmall .logo uni-image{\r\n\twidth:100%;\n}\n.menu{\r\n\twidth:100%;\r\n\tmargin-top:20rpx;\r\n\theight: 76%;\r\n\tpadding-bottom: 50%;\n}\n.menu uni-view{\r\n\twidth:100%;\r\n\ttext-align: center;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tpadding:12% 0;\n}\n.menu .curr{\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\twidth:80%;\r\n\tmargin:6% auto;\r\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image{\r\n\twidth:50rpx;\r\n\tmargin-bottom: 20rpx;\n}\n.exit{\r\n\twidth:100%;\r\n\tposition: absolute;\r\n\tbottom:3%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translateX(-50%);\r\n\t        transform: translateX(-50%);\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tfont-size: 26rpx;\n}\n.exit uni-image{\r\n\twidth:40rpx;\n}\n.right{\r\n\twidth:90%;\n}\n.nav{\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding:10rpx 2%;\r\n\tbackground-color: #fff;\n}\n.message{\r\n\tdisplay: flex;\n}\n.message .imgs{\r\n\tbackground-color: #006B44;\r\n\tborder-radius: 10px 0 0 10px;\r\n\twidth:70rpx;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.message .imgs uni-image{\r\n\twidth:50%;\n}\n.message uni-text{\r\n\tdisplay: inline-block;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tbackground-color: #EEEEEE;\r\n\tcolor: #006B44;\r\n\tpadding:0 18rpx;\r\n\tborder-radius:0 10px 10px 0;\r\n\tfont-size: 20rpx;\n}\n.account{\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.account uni-image{\r\n\twidth:80rpx;\r\n\theight: 80rpx;\r\n\tmargin-left: 20rpx;\n}\n.hh{\r\n\tpadding:16rpx 2%;\r\n\tfont-size: 36rpx;\r\n\tfont-weight: 700;\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.hh uni-image{\r\n\twidth:40rpx;\r\n\tmargin-right: 12rpx;\n}\n.amounts{\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.6% 0 1%;\r\n\twidth:96%;\r\n\tmargin:0 auto;\r\n\tdisplay: flex;\n}\n.amounts p{\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: start;\r\n\talign-items: center;\r\n\twidth:19.5%;\r\n\tborder-right:1px solid #f5f5f5;\r\n\tfont-size: 32rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:20rpx;\r\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1){\r\n\tborder-right:none;\n}\n.amounts p uni-text:nth-child(2){\r\n\tfont-size: 60rpx;\r\n\tline-height: 100px;\r\n\tcolor: #333;\n}\n.amounts p uni-input{\r\n\tmargin-top:12rpx;\r\n\theight: 80rpx;\r\n\tline-height: 80rpx;\r\n\tborder:1px solid #006B44;\r\n\tbackground-color: #F1F9F1;\r\n\ttext-align: center;\r\n\tborder-radius: 10px;\n}\n.paydetails{\r\n\tdisplay: flex;\r\n\theight: 68%;\r\n\tmargin:2%;\n}\n.pay-sum{\r\n\tdisplay: flex;\r\n\twidth:30%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:0 1.5%;\r\n\theight: 100%;\n}\n.settleds{\r\n\twidth:100%;\n}\n.settleds h3{\r\n\tline-height: 100rpx;\n}\n.paymentlist{\r\n\tmin-height: 86%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-between;\n}\n.paymentlist .refund{\r\n\tbackground-color: #fff;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tmargin-top:20px;\r\n\tborder-radius: 0;\r\n\tmin-height: 50%;\n}\n.sets-list{\r\n\tmin-height: 86%;\r\n\tbackground-color: #F9F9F9;\r\n\tborder-radius: 10rpx;\r\n\tpadding:0 5%;\r\n\tposition: relative;\n}\n.paylists{\r\n\tmax-height: 80%;\r\n\toverflow: auto;\r\n\tpadding-bottom: 150rpx;\n}\n.Methods{\r\n\twidth:100%;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tmargin: 40rpx 0;\n}\n.payicon{\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.payicon uni-image{\r\n\twidth:70rpx;\r\n\tmargin-right: 10px;\n}\n.stills{\r\n\twidth:90%;\r\n\theight: 150rpx;\r\n\tdisplay:flex;\r\n\talign-items: center;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tposition: absolute;\r\n\tbottom:0;\r\n\tleft: 5%;\n}\n.stills .payicon uni-image{\r\n\twidth:60rpx;\n}\n.choosepays{\r\n\twidth:68%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.5%;\r\n\theight: 95%;\r\n\tmargin-left: 2%;\n}\n.pays-bj{\r\n\twidth:100%;\r\n\theight: 88%;\n}\n.top-zhifu{\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\r\n\twidth:100%;\r\n\tmargin-bottom: 3.5%;\r\n\theight: 60%;\n}\n.polys{\r\n\twidth:48%;\r\n\ttext-align: center;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\theight: 100%;\n}\n.polys p{\r\n\tfont-size: 40rpx;\r\n\tline-height: 160rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:5%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label uni-image{\r\n\twidth:100rpx;\r\n\tmargin:0 5%;\n}\n.polys uni-text{\r\n\tdisplay: block;\r\n\tfont-size: 14px;\r\n\tcolor: #CCCCCC;\r\n\tmargin-top:25%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.r-zhifu{\r\n\twidth:48%;\r\n\tmargin-left: 3%;\n}\n.pattern{\r\n\twidth:88%;\r\n\tdisplay: flex;\r\n\theight: 46.3%;\r\n\talign-items: center;\r\n\tjustify-content: space-between;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\tpadding:0 6%;\n}\n.pattern:nth-child(1){\r\n\tmargin-bottom:6%;\n}\n.pattern p{\r\n\tfont-size: 40rpx;\r\n\tfont-weight: 700;\r\n\tline-height: 80rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-text{\r\n\tcolor: #999;\r\n\tfont-size: 28rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-image{\r\n\twidth:120rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.bom-zhifu{\r\n\tdisplay: flex;\n}\n.bom-zhifu .pattern{\r\n\twidth:48%;\r\n\theight: 100%;\r\n\tpadding:5.5% 3%;\n}\n.bom-zhifu .pattern:nth-child(2){\r\n\tmargin-left:3%;\n}\n.nots p{\r\n\tcolor: #CCCCCC;\n}\n.btn{\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\tfont-size: 38rpx;\n}\n.pays-bj .curr{\r\n\tborder-color: #338869;\r\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\r\n\tposition: relative;\n}\n.pays-bj .curr .p-bg{\r\n\tposition: absolute;\r\n\ttop:0;\r\n\tright: 0;\r\n\twidth:80%;\r\n\theight: 100%;\r\n\tz-index: 0;\n}\n.pays-bj .curr p,.pays-bj .curr uni-text{\r\n\tcolor: #338869;\n}\r\n", ""]);
 // Exports
 module.exports = exports;
 

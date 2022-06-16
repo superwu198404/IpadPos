@@ -212,7 +212,7 @@
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
-				dPayList: []
+				dPayList: [],
 				domRefresh: new Date().toString()
 			}
 		},
