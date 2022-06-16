@@ -316,7 +316,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	{
 		if (res && res.http) 
 		{
-			//console.log("http请求" + JSON.stringify(res));
+			console.log("http请求" + JSON.stringify(res));
 			showloding(res.http.load,res.http.title);
 			res = await httpFunc(res);
 			if (res && !res.code) 

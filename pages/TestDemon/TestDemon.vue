@@ -15,7 +15,7 @@
 	import sqlLite from '@/utils/db/db_excute.js';
 	import hy_model from '@/class/hy_model.js';
 	import common from '@/utils/util.js';
-	import pay from '@/api/Pay/ECardPay.js';
+	import pay from '@/api/Pay/AliPay.js';
 	import db from '@/utils/db/db_excute.js';
 
 	export default {
@@ -29,12 +29,12 @@
 			
 			let obj = {
 				subject: "商品销售",
-				// out_trade_no: "K12345678912345678902",
-				out_trade_no: "K12345678912345678907",
+				out_trade_no: "K12345678912345678902",
+				// out_trade_no: "K12345678912345678907",
 				total_money: "1",
 				money: "1",
-				// auth_code: "132716010020176325",
-				auth_code: "285142260393078668",
+				auth_code: "132716010020176325",
+				// auth_code: "285142260393078668",
 				store_id: "K0101QTDS1",
 				store_name: "武汉xxx",
 				merchant_no: "999990053990001",
@@ -45,12 +45,12 @@
 					num: "1"
 				}]
 			}
-			pay.CardPayment().PaymentAll(obj, function(res) {
-				console.log("支付结果：", res);
-				uni.showToast({
-					title: "支付成功"
-				})
-			})
+			// pay.CardPayment().PaymentAll(obj, function(res) {
+			// 	console.log("支付结果：", res);
+			// 	uni.showToast({
+			// 		title: "支付成功"
+			// 	})
+			// })
 			// pay.WxPayment().Payment(obj, function(res) {
 			// 	console.log("支付结果", res);
 			// });

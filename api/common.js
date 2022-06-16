@@ -173,6 +173,20 @@ var TransLiteData = function() {
 		});
 }
 
+//获取支付方式
+var GetPayWay = function(e, func) {
+	let sql = "select * from fkda";
+	db.get().executeQry(sql, "数据查询中", function(res) {
+		if (func) func(res);
+	}, function(err) {
+		console.log("获取付款方式出错:",err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取付款方式出错"
+		})
+	});
+}
+
 
 export default {
 	InitData,
@@ -180,4 +194,5 @@ export default {
 	CreateSQL,
 	CreatSaleTable,
 	TransLiteData,
+	GetPayWay
 }
