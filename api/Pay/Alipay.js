@@ -9,7 +9,7 @@ var def_body = {
 	"data": {}
 };
 
-//请求处理入口
+//请求处理入口1
 const RequestHandle = (title, body = {
 	...def_body
 }, ...callbacks) => {
