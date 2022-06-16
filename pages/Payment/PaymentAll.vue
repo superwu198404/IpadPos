@@ -49,31 +49,46 @@
 				<p><text>折扣</text><text>{{Discount}}</text></p>
 				<p><text>已收</text><text>{{yPayAmount}}</text></p>
 				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><input type="text" value="" v-model="dPayAmount" /></p>
+				<p><text>还需支付</text><input type="text" value="" :key="domRefresh" v-model="dPayAmount" /></p>
 			</view>
 
 			<view class="paydetails">
 				<view class="pay-sum">
 					<view class="settleds">
-						<h3>已结算</h3>
-						<!-- <p>序号---支付方式---金额</p> {{ way.no }} -->
-						<view class="sets-list">
-							<view class="paylists">
-								<view class="Methods" v-for="(item, index) in Products">
-									<view class="payicon">
-										<image src="../../images/dianziquan.png" mode="widthFix"></image>
-										{{ item.NAME }}
+
+						<view class="paymentlist">
+							<h3>已结算</h3>
+							<view class="sets-list">
+								<view class="paylists">
+									<view class="Methods" v-for="(product, index) in Products">
+										<view class="payicon">
+											<image src="../../images/dianziquan.png" mode="widthFix"></image>
+											{{ product.NAME }}
+										</view>
+										<text>-{{product.AMOUNT}}</text>
 									</view>
-									<text>-{{item.AMOUNT}}</text>
+								</view>
+								<view class="stills">
+									<view class="Methods">
+										<view class="payicon">
+											<image src="../../images/shouyintai.png" mode="widthFix"></image>
+											还需支付
+										</view>
+										<text>￥{{ dPayAmount }}</text>
+									</view>
 								</view>
 							</view>
-							<view class="stills">
-								<view class="Methods">
-									<view class="payicon">
-										<image src="../../images/shouyintai.png" mode="widthFix"></image>
-										还需支付
+							<!-- 退款 -->
+							<h3>已退款</h3>
+							<view class="sets-list refund">
+								<view class="paylists">
+									<view class="Methods" v-for="(product, index) in Products">
+										<view class="payicon">
+											<image src="../../images/dianziquan.png" mode="widthFix"></image>
+											{{ product.NAME }}
+										</view>
+										<text>-{{product.AMOUNT}}</text>
 									</view>
-									<text>￥{{dPayAmount}}</text>
 								</view>
 							</view>
 						</view>
@@ -141,7 +156,7 @@
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/api/Pay/WxPay.js';
-	import _ali from '@/api/Pay/AliPay.js';
+	import _ali from '@/api/Pay/Alipay.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
@@ -152,6 +167,7 @@
 		},
 		data() {
 			return {
+				subject:"",//订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: false, //是否允许退出
 				type: 'center',
@@ -189,14 +205,27 @@
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息
+				domRefresh: new Date().toString()
+			}
+		},
+		watch: {
+			dPayAmount: function(n, o) {
+				let amount = this.toBePaidPrice();
+				//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
+				if (Number(n) > this.toBePaidPrice()) {
+					this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
+					uni.showToast({
+						title: '待支付金额超过欠款,已自动修正!',
+						duration: 2000,
+						icon: "error"
+					});
+					this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
+				}
 			}
 		},
 		computed: {
 			debt: function() {
-				this.allAmount = (this.totalAmount - this.Discount - this.yPayAmount).toFixed(2);
-				this.allAmount = this.allAmount < 0 ? 0 : this.allAmount;
-				this.dPayAmount = Number((Number(this.dPayAmount) < Number(this.allAmount) ? this.dPayAmount : this
-					.allAmount)).toFixed(2);
+				this.allAmount = this.toBePaidPrice();
 				return this.allAmount;
 			}
 		},
@@ -584,52 +613,71 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
+				debugger
 				//适配真机
 				let that = this;
 				if (that.authCode) { //如果有码
-					that.ToPay(); //直接发起支付
+					that.PayHandle(); //直接发起支付
 				} else { //为空就进行扫码
 					uni.scanCode({
 						success: function(res) {
-							if (true) {
-
-							} else {
-								_ali.RequestHandle("", {
-									method: "Payment",
-									param: {},
-									data: {
-										subject: "商品销售",
-										// out_trade_no: "K12345678912345678902",
-										out_trade_no: this.out_trade_no,
-										total_money: this.totalAmount,
-										money: this.dPayAmount,
-										// auth_code: "132716010020176325",
-										auth_code: "285142260393078668",
-										store_id: this.DPID,
-										store_name: "武汉xxx",
-										merchant_no: "999990053990001",
-										product_info: this.Products.map(i => {
-											return {
-												spid:i.SPID,
-												name:i.NAME,
-												price:i.PRICE,
-												num:i.QTY
-											}
-										})
-									}
-								})
-							}
-							console.log('条码类型：' + res.scanType);
-							console.log('条码内容：' + res.result);
+							that.PayHandle();
 						}
 					});
 				}
+			},
+			//支付类型判断
+			PayTypeJudgment: function() {
+				let startCode = this.authCode.substring(0, 2);
+				switch (startCode) {
+					case "28":
+						return "AliPay";
+					case "13":
+						return "WxPay";
+					default:
+						return "Other";
+				}
+			},
+			//支付 data 对象组装
+			PayDataAssemble: function() {
+				return {
+					subject: this.subject,
+					out_trade_no: this.out_trade_no,
+					total_money: this.totalAmount,//总支付金额
+					money: this.dPayAmount,//这一笔的支付金额
+					auth_code: this.authCode,
+					store_id: this.DPID,
+					store_name: "武汉xxx",
+					merchant_no: "999990053990001",
+					product_info: this.Products.map(i => {//商品清单
+						return {
+							spid: i.SPID,
+							name: i.NAME,
+							price: i.PRICE,
+							num: i.QTY
+						}
+					})
+				}
+			},
+			PayHandle: function() {
+				let handlePayment;
+				switch (this.PayTypeJudgment()) {
+					case "AliPay": //支付宝支付处理
+						handlePayment = _ali.AliPayment();
+						break;
+					case "WxPay": //微信支付处理
+						handlePayment = _wx.WxPayment();
+						break;
+				}
+				handlePayment.Payment(this.PayDataAssemble(),function(result){
+					debugger
+				})
 			},
 			//输入付款码后回车发起支付
 			ToPay: function(e) {
 				let that = this;
 				let title = "";
-				let param = {};
+				let param = {};//支付接口参数
 				let code = e ? e.target.value : that.authCode;
 				that.UniqueBill(); //单号防重处理
 				param.out_trade_no = that.out_trade_no;
@@ -1144,15 +1192,27 @@
 				this.sale1_obj = prev_page_param.sale1_obj;
 				this.sale2_arr = prev_page_param.sale2_arr;
 			},
+			//总金额计算
 			priceCount: function() {
 				let total = 0;
 				this.Products.forEach(product => total += product.AMOUNT);
 				this.totalAmount = total;
+			},
+			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
+			toBePaidPrice: function() {
+				let amount = (this.totalAmount - this.Discount - this.yPayAmount).toFixed(2);
+				let price = amount >= 0 ? amount : 0;
+				return price;
+			},
+			//文本框dom刷新
+			domForceRefresh: function() {
+				this.domRefresh = new Date().toString();
 			}
 		},
 		created() {
 			this.paramInit();
 			this.priceCount();
+			this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 		}
 	}
 </script>
