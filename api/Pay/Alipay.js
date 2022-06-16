@@ -68,8 +68,6 @@ var AliPay = function() {
 			if (func)
 				func(res)
 		}, function(res) {
-			// if (func)
-			// 	func(res)
 			uni.showToast({
 				icon: "error",
 				title: res.msg
@@ -114,7 +112,7 @@ var AliPay = function() {
 					appid: getApp().globalData.appid,
 					gsid: getApp().globalData.store.GSID
 				},
-				sign: rsa.rsaEncrypt(JSON.stringify(d))
+				sign: aes.aesEncrypt(JSON.stringify(d))
 			}
 		}
 	}
