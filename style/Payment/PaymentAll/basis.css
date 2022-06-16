@@ -17,18 +17,18 @@ uni-page-body, uni-page-refresh{
 	align-items: baseline;
 	position: relative;
 	color: #B0B0B0;
-	font-size: 14px;
+	font-size: 28rpx;
 }
 .navmall .logo{
 	width:40%;
-	margin:20px auto;
+	margin:20rpx auto;
 }
 .navmall .logo image{
 	width:100%;
 }
 .menu{
 	width:100%;
-	margin-top:20px;
+	margin-top:20rpx;
 	height: 76%;
 	padding-bottom: 50%;
 }
@@ -49,8 +49,8 @@ uni-page-body, uni-page-refresh{
 	border-radius: 30px;
 }
 .menu view image{
-	width:50px;
-	margin-bottom: 10px;
+	width:50rpx;
+	margin-bottom: 20rpx;
 }
 .exit{
 	width:100%;
@@ -62,10 +62,10 @@ uni-page-body, uni-page-refresh{
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	font-size: 13px;
+	font-size: 26rpx;
 }
 .exit image{
-	width:40px;
+	width:40rpx;
 }
 .right{
 	width:90%;
@@ -74,7 +74,7 @@ uni-page-body, uni-page-refresh{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding:10px 2%;
+	padding:10rpx 2%;
 	background-color: #fff;
 }
 .message{
@@ -83,9 +83,9 @@ uni-page-body, uni-page-refresh{
 .message .imgs{
 	background-color: #006B44;
 	border-radius: 10px 0 0 10px;
-	width:70px;
-	height: 70px;
-	line-height: 70px;
+	width:70rpx;
+	height: 70rpx;
+	line-height: 70rpx;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -95,13 +95,13 @@ uni-page-body, uni-page-refresh{
 }
 .message text{
 	display: inline-block;
-	height: 70px;
-	line-height: 70px;
+	height: 70rpx;
+	line-height: 70rpx;
 	background-color: #EEEEEE;
 	color: #006B44;
-	padding:0 18px;
+	padding:0 18rpx;
 	border-radius:0 10px 10px 0;
-	font-size: 16px;
+	font-size: 20rpx;
 }
 .account{
 	display: flex;
@@ -109,26 +109,26 @@ uni-page-body, uni-page-refresh{
 	align-items: center;
 }
 .account image{
-	width:80px;
-	height: 80px;
-	margin-left: 20px;
+	width:80rpx;
+	height: 80rpx;
+	margin-left: 20rpx;
 }
 .hh{
-	padding:16px 2%;
-	font-size: 36px;
+	padding:16rpx 2%;
+	font-size: 36rpx;
 	font-weight: 700;
 	display: flex;
 	justify-content: start;
 	align-items: center;
 }
 .hh image{
-	width:40px;
-	margin-right: 12px;
+	width:40rpx;
+	margin-right: 12rpx;
 }
 .amounts{
 	background-color: #fff;
 	border-radius: 10px;
-	padding:20px 0;
+	padding:1.6% 0 1%;
 	width:96%;
 	margin:0 auto;
 	display: flex;
@@ -140,23 +140,23 @@ uni-page-body, uni-page-refresh{
 	align-items: center;
 	width:19.5%;
 	border-right:1px solid #f5f5f5;
-	font-size: 32px;
+	font-size: 32rpx;
 	font-weight: 700;
-	padding-top:20px;
+	padding-top:20rpx;
 	color: #666;
 }
 .amounts p:nth-last-child(1){
 	border-right:none;
 }
 .amounts p text:nth-child(2){
-	font-size: 56px;
+	font-size: 60rpx;
 	line-height: 100px;
 	color: #333;
 }
 .amounts p input{
-	margin-top:10px;
-	height: 80px;
-	line-height: 80px;
+	margin-top:12rpx;
+	height: 80rpx;
+	line-height: 80rpx;
 	border:1px solid #006B44;
 	background-color: #F1F9F1;
 	text-align: center;
@@ -179,7 +179,7 @@ uni-page-body, uni-page-refresh{
 	width:100%;
 }
 .settleds h3{
-	line-height: 100px;
+	line-height: 100rpx;
 }
 .paymentlist{
 	min-height: 86%;
@@ -190,28 +190,28 @@ uni-page-body, uni-page-refresh{
 .paymentlist .refund{
 	background-color: #fff;
 	border-top:1px solid #D3D3D3;
-	margin-top:40px;
+	margin-top:20px;
 	border-radius: 0;
 	min-height: 50%;
 }
 .sets-list{
 	min-height: 86%;
 	background-color: #F9F9F9;
-	border-radius: 10px;
+	border-radius: 10rpx;
 	padding:0 5%;
 	position: relative;
 }
 .paylists{
 	max-height: 80%;
 	overflow: auto;
-	padding-bottom: 150px;
+	padding-bottom: 150rpx;
 }
 .Methods{
 	width:100%;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 40px 0;
+	margin: 40rpx 0;
 }
 .payicon{
 	display: flex;
@@ -219,12 +219,12 @@ uni-page-body, uni-page-refresh{
 	align-items: center;
 }
 .payicon image{
-	width:70px;
-	margin-right: 20px;
+	width:70rpx;
+	margin-right: 10px;
 }
 .stills{
 	width:90%;
-	height: 150px;
+	height: 150rpx;
 	display:flex;
 	align-items: center;
 	border-top:1px solid #D3D3D3;
@@ -233,7 +233,7 @@ uni-page-body, uni-page-refresh{
 	left: 5%;
 }
 .stills .payicon image{
-	width:60px;
+	width:60rpx;
 }
 .choosepays{
 	width:68%;
@@ -263,8 +263,8 @@ uni-page-body, uni-page-refresh{
 	height: 100%;
 }
 .polys p{
-	font-size: 42px;
-	line-height: 160px;
+	font-size: 40rpx;
+	line-height: 160rpx;
 	font-weight: 700;
 	padding-top:5%;
 	position: relative;
@@ -280,12 +280,12 @@ uni-page-body, uni-page-refresh{
 	
 }
 .polys label image{
-	width:100px;
+	width:100rpx;
 	margin:0 5%;
 }
 .polys text{
 	display: block;
-	font-size: 28px;
+	font-size: 14px;
 	color: #CCCCCC;
 	margin-top:25%;
 	position: relative;
@@ -309,20 +309,20 @@ uni-page-body, uni-page-refresh{
 	margin-bottom:6%;
 }
 .pattern p{
-	font-size: 42px;
+	font-size: 40rpx;
 	font-weight: 700;
-	line-height: 80px;
+	line-height: 80rpx;
 	position: relative;
 	z-index: 9;
 }
 .pattern text{
 	color: #999;
-	font-size: 28px;
+	font-size: 28rpx;
 	position: relative;
 	z-index: 9;
 }
 .pattern image{
-	width:120px;
+	width:120rpx;
 	position: relative;
 	z-index: 9;
 }
@@ -343,7 +343,7 @@ uni-page-body, uni-page-refresh{
 .btn{
 	background-color: #42B14B;
 	color: #fff;
-	font-size: 38px;
+	font-size: 38rpx;
 }
 .pays-bj .curr{
 	border-color: #338869;
