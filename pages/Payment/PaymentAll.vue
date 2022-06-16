@@ -170,6 +170,7 @@
 		data() {
 			return {
 				YN_TotalPay: false,
+				allowInput:true,
 				refundShow: false,
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				subject: "商品销售", //订单类型（文本说明）
