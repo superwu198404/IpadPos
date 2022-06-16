@@ -412,7 +412,7 @@ var mySqllite = function() {
 		}
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
-		console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
+		//console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
 		await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);

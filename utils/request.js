@@ -146,23 +146,20 @@ const Post = function(urls, datas, msgs, option = {}, func) {
 	}
 };
 
-function retData(pm_code, pm_msg, pm_http) 
-{
-	var ret ={};
+function retData(pm_code, pm_msg, pm_http) {
+	var ret = {};
 	ret.code = pm_code;
 	ret.msg = pm_msg;
 	ret.http = pm_http
-    return ret;
+	return ret;
 }
 
 //请求方法
-let httpFunc = function(pm_data) 
-{
-	
+let httpFunc = function(pm_data) {
+
 	let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
 	let p_url = baseUrl;
-	if (config) 
-	{
+	if (config) {
 		p_url = config.urls[pm_data.url_type]; //通过键值来取
 	}
 	// if (pm_data.url_type && pm_data.url_type == 'center') {
@@ -182,17 +179,14 @@ let httpFunc = function(pm_data)
 			data: pm_data.data,
 			success: (res) => {
 
-				if (res.statusCode == 200) 
-				{
+				if (res.statusCode == 200) {
 					return resolve(res.data);
-				} 
-				else 
-				{
+				} else {
 					return resolve(new retData(false, res.errMsg));
 				}
 			},
 			fail: (res) => {
-			
+
 				console.log(res);
 				return resolve(new retData(false, res.errMsg));
 			}
@@ -209,23 +203,18 @@ let httpFunc = function(pm_data)
 
 //处理回调的地方 放外面
 let forPromise = function(func, pm_data) {
-	return new Promise(function(resolve, reject) 
-	{
+	return new Promise(function(resolve, reject) {
 		// func(pm_data)
 		// return resolve(pm_data);
-		try
-		{
+		try {
 			return resolve(func(pm_data));
-		} 
-		catch (e) 
-		{
+		} catch (e) {
 			return resolve(new retData(false, e.message));
 		}
 	})
 };
 ///作为异常和finally 的默认载体   
-let def =  function(pm_callback, pm_data) 
-{
+let def = function(pm_callback, pm_data) {
 	uni.hideLoading();
 	if (pm_callback) {
 		pm_callback(pm_data);
@@ -245,8 +234,7 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 	}
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
-		if (res && res.http) 
-		{
+		if (res && res.http) {
 			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -254,14 +242,13 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 			}
 		}
 		res = await forPromise(callbacklist[i], res);
-		if (res && !res.code) 
-		{
+		if (res && !res.code) {
 			def(catchfun, res);
 			break;
 		}
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
-	 def(finallyfun, res);
+	def(finallyfun, res);
 	/*
 	Promise.all([httpFunc, forPromise]).then(function(f_res) {
 		if (finallyfun)
@@ -272,8 +259,8 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 
 var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
 	finallyfun) {
-		
-	
+
+
 	var callbacklist = [];
 
 	for (var i = 1; i <= 3; i++) {
@@ -291,14 +278,12 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 	*/
 };
 
-var showloding=function(yn_show,pm_txt)
-{
-	console.log("show"+pm_txt)
-	if ( yn_show && pm_txt)
-	{
+var showloding = function(yn_show, pm_txt) {
+	console.log("show" + pm_txt)
+	if (yn_show && pm_txt) {
 		uni.showLoading({
 			title: pm_txt || "加载中...",
-			mask:true
+			mask: true
 		});
 	}
 }
@@ -309,35 +294,31 @@ var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
 
 var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun) {
 	var callbacklist = [];
-	
+
 	callbacklist = callbackfunArr;
 	let res = pm_data;
-	for (var i = 0; i < callbacklist.length; i++) 
-	{
-		if (res && res.http) 
-		{
+	for (var i = 0; i < callbacklist.length; i++) {
+		if (res && res.http) {
 			console.log("http请求" + JSON.stringify(res));
-			showloding(res.http.load,res.http.title);
+			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
-			if (res && !res.code) 
-			{
+			if (res && !res.code) {
 				def(catchfun, res);
 				break;
 			}
 		}
-		showloding(res.load,res.msg);
+		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res)
-		console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0,100));
-		
-		if (res && !res.code) 
-		{
+		console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0, 100));
+
+		if (res && !res.code) {
 			console.log("回调函数异常了" + i.toString() + JSON.stringify(res));
-		     def(catchfun, res);
+			def(catchfun, res);
 			break;
 		}
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
-	 def(finallyfun, res);
+	def(finallyfun, res);
 }
 
 /**
@@ -353,12 +334,14 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
+			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
 			}
 		}
+		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res)
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
@@ -374,20 +357,19 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 	let urlArr = urlx.split('.')
 	let httpParm = null;
 	let reqData = {};
-	if (urlArr&&urlArr.length >= 3)
-	{
+	if (urlArr && urlArr.length >= 3) {
 
 		httpParm = {
 			url: "ReqMuster/Handle",
 			title: pm_msg,
 			method: "POST",
-			load:pm_load||true,
+			load: pm_load || true,
 		};
 
-		reqData.data        = pm_data ? JSON.stringify(pm_data) : null;
-		reqData.brand       = urlArr.slice(0, urlArr.length - 2).join('.');
-		reqData.action      = urlArr[urlArr.length - 1];
-		reqData.ywname      = urlArr[urlArr.length - 2];
+		reqData.data = pm_data ? JSON.stringify(pm_data) : null;
+		reqData.brand = urlArr.slice(0, urlArr.length - 2).join('.');
+		reqData.action = urlArr[urlArr.length - 1];
+		reqData.ywname = urlArr[urlArr.length - 2];
 	} else {
 		reqData = pm_data;
 		httpParm = null;
@@ -397,15 +379,14 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 		msg: null,
 		http: httpParm,
 		data: reqData,
-		load:pm_load?true:false
+		load: pm_load ? true : false
 	}
 	return ret;
 }
 
-var getResData = function(res) 
-{
+var getResData = function(res) {
 	let resdata = JSON.parse(res.data);
-	return resdata.data?JSON.parse(resdata.data):resdata;
+	return resdata.data ? JSON.parse(resdata.data) : resdata;
 }
 
 export default {

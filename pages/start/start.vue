@@ -4,6 +4,7 @@
 		<input placeholder="请输入门店的编码" v-model="khid" />
 		<button @click="init">确定</button>
 		<button @click="toDbqry">调试y</button>
+		<button @click="toIndex">去结算</button>
 	</view>
 </template>
 
@@ -32,6 +33,11 @@
 			toDbqry: function() {
 				uni.redirectTo({
 					url: "/pages/sqlitetest/sqlitetest"
+				});
+			},
+			toIndex: function() {
+				uni.redirectTo({
+					url: "/pages/index/index"
 				});
 			},
 

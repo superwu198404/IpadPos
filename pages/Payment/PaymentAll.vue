@@ -156,7 +156,7 @@
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/api/Pay/WxPay.js';
-	import _ali from '@/api/Pay/Alipay.js';
+	import _ali from '@/api/Pay/AliPay.js';
 	import _card from '@/api/Pay/ECardPay.js';
 	import _couon from '@/api/Pay/ECoupon.js';
 	import common from '@/api/common.js';
@@ -169,10 +169,10 @@
 		},
 		data() {
 			return {
-				YN_TotalPay:false,
-				refundShow:false,
-				currentPayInfo:null,//当前一单的支付平台信息（提供 fkid 和 name）
-				subject:"商品销售",//订单类型（文本说明）
+				YN_TotalPay: false,
+				refundShow: false,
+				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
+				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: false, //是否允许退出
 				type: 'center',
@@ -186,10 +186,10 @@
 				PayWayList: [], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
-				PayList: [],//支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
-				PaidList:[],//已支付商品信息
-				RefundList:[],//退款信息
-				authCode: null,//支付授权码
+				PayList: [], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
+				PaidList: [], //已支付商品信息
+				RefundList: [], //退款信息
+				authCode: "", //支付授权码
 				out_trade_no_old: "", //原定单号
 				out_trade_no: "", //单次发起支付的订单号（匹配多笔支付的操作 采用原订单号加序号的规则）
 				disablePayInput: false,
@@ -204,11 +204,11 @@
 				KCDID: getApp().globalData.store.KCDID, //存库点id
 				GCID: getApp().globalData.store.GCID, //工厂id
 				BMID: getApp().globalData.store.BMID, //部门id
-				KHID: getApp().globalData.store.KHID,//客户id
-				POSID: getApp().globalData.store.POSID,//pos机id
-				RYID: getApp().globalData.store.RYID,//人员id
-				Name: getApp().globalData.store.NAME,//店铺名称
-				MerId: getApp().globalData.store.MERID,//商户号id
+				KHID: getApp().globalData.store.KHID, //客户id
+				POSID: getApp().globalData.store.POSID, //pos机id
+				RYID: getApp().globalData.store.RYID, //人员id
+				Name: getApp().globalData.store.NAME, //店铺名称
+				MerId: getApp().globalData.store.MERID, //商户号id
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
@@ -218,8 +218,8 @@
 		},
 		watch: {
 			dPayAmount: function(n, o) {
-				let amount = this.toBePaidPrice();//计算待支付金额
-				if(amount > 0){//未完成支付，仍然存在欠款
+				let amount = this.toBePaidPrice(); //计算待支付金额
+				if (amount > 0) { //未完成支付，仍然存在欠款
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) {
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
@@ -230,17 +230,18 @@
 						});
 						this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
 					}
-				}
-				else{//完成支付，推送数据
+				} else { //完成支付，推送数据
 					this.YN_TotalPay = true;
-					this.$store.commit('set-orders',this.PayList);
+					this.CanBack = true;
+					this.$store.commit('set-orders', this.PayList);
 				}
 			},
-			yPayAmount:function(n,o){
-				this.dPayAmount = this.toBePaidPrice();//一旦已支付金额发生变化，自动触发计算剩余待支付金额
+			yPayAmount: function(n, o) {
+				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
-			authCode:function(n,o){
-				this.currentPayInfo = this.PayWayList.find(i => i.value === this.PayTypeJudgment());//每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+			authCode: function(n, o) {
+				this.currentPayInfo = this.PayWayList.find(i => i.value === this
+					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			}
 		},
 		computed: {
@@ -272,10 +273,11 @@
 			},
 			//返回事件
 			onBackPress(e) {
-				if (this.PayList.length > 0 && this.PayAmount > 0) { //如果发起支付了，要判断支付完毕没有
+				console.log("检测是否能返回：", this.PayList.length + this.dPayAmount + this.CanBack)
+				if (this.PayList.length > 0 && this.dPayAmount > 0) { //如果发起支付了，要判断支付完毕没有
 					if (!this.CanBack) {
 						uni.showToast({
-							title: "抱歉，还有待支付金额",
+							title: "未支付完成",
 							icon: "error"
 						})
 						return true; //返回true阻止默认操作
@@ -504,11 +506,11 @@
 							return item.value == t
 						});
 						that.PayList.push({
-							fkid: payobj.fkid,//付款id（对应类别）
-							bill: that.out_trade_no,//单号（可控）
-							name: payobj.name,//支付类别
-							amount: that.PayAmount,//单次支付金额（金额单位：元）
-							no: that.PayList.length//序号
+							fkid: payobj.fkid, //付款id（对应类别）
+							bill: that.out_trade_no, //单号（可控）
+							name: payobj.name, //支付类别
+							amount: that.PayAmount, //单次支付金额（金额单位：元）
+							no: that.PayList.length //序号
 						});
 					} else { //券的支付
 						that.PayList.push({
@@ -641,21 +643,21 @@
 			Pay: function() {
 				//适配真机
 				let that = this;
-				if(!this.YN_TotalPay){//如果未支付完成
+				that.authCode = "";
+				if (!this.YN_TotalPay) { //如果未支付完成
 					if (that.authCode) { //如果有码
 						that.PayHandle(); //直接发起支付
 					} else { //为空就进行扫码
 						uni.scanCode({
 							success: function(res) {
-								that.authCode = res.result;//获取扫码的 authCode
+								that.authCode = res.result; //获取扫码的 authCode
 								that.PayHandle();
 							}
 						});
 					}
-				}
-				else{
+				} else {
 					uni.showToast({
-						title:"订单已完成支付!"
+						title: "订单已完成支付!"
 					});
 				}
 			},
@@ -668,26 +670,26 @@
 					case "13":
 						return "WX";
 					default:
-						return "Other";
+						return "CARD";
 				}
 			},
 			//支付 data 对象组装
 			PayDataAssemble: function() {
-				this.UniqueBill();//包装 data 前先执行防重复单号操作
+				this.UniqueBill(); //包装 data 前先执行防重复单号操作
 				return {
 					subject: this.subject,
 					out_trade_no: this.out_trade_no,
-					total_money: (Number(this.totalAmount) * 100).toFixed(0),//总支付金额
-					money:(Number(this.dPayAmount) * 100).toFixed(0),//这一笔的支付金额
+					total_money: (Number(this.totalAmount) * 100).toFixed(0), //总支付金额
+					money: (Number(this.dPayAmount) * 100).toFixed(0), //这一笔的支付金额
 					auth_code: this.authCode,
-					store_id: this.DPID,
-					store_name: "武汉xxx",
+					store_id: this.KHID,
+					store_name: this.Name,
 					merchant_no: "999990053990001",
-					product_info: this.Products.map(i => {//商品清单
+					product_info: this.Products.map(i => { //商品清单
 						return {
 							spid: i.SPID,
 							name: i.NAME,
-							price:(Number(i.AMOUNT) * 100).toFixed(0),
+							price: (Number(i.AMOUNT) * 100).toFixed(0),
 							num: i.QTY
 						}
 					})
@@ -703,24 +705,28 @@
 					case "WX": //微信支付处理
 						handlePayment = _wx.WxPayment();
 						break;
+					case "CARD": //电子卡支付处理
+						handlePayment = _card.CardPayment();
+						break;
 				}
 				let payAfter = this.PayDataAssemble();
-				handlePayment.PaymentAll(payAfter,(function(result){
+				console.log("支付单号：", this.out_trade_no);
+				handlePayment.PaymentAll(payAfter, (function(result) {
 					debugger;
 					uni.showToast({
-						title:"支付成功!"
+						title: "支付成功!"
 					});
 					this.PaidList = payAfter.product_info.map(i => {
 						i.price /= 100;
 						return i;
-					});//把支付信息贴出来
-					this.yPayAmount += (payAfter.money / 100);//把支付成功部分金额加上
-					this.PayList.push({//每支付成功一笔，则往此数组内存入一笔记录
-						fkid:this.currentPayInfo?.fkid ?? "",
-						bill:payAfter.out_trade_no,
-						name:this.currentPayInfo?.name ?? "",
-						amount:(payAfter.money / 100).toFixed(2),
-						no:this.PayList.length
+					}); //把支付信息贴出来
+					this.yPayAmount += (payAfter.money / 100); //把支付成功部分金额加上
+					this.PayList.push({ //每支付成功一笔，则往此数组内存入一笔记录
+						fkid: this.currentPayInfo?.fkid ?? "",
+						bill: payAfter.out_trade_no,
+						name: this.currentPayInfo?.name ?? "",
+						amount: (payAfter.money / 100).toFixed(2),
+						no: this.PayList.length
 					});
 				}).bind(this))
 			},
@@ -794,9 +800,9 @@
 				this.Discount = prev_page_param.Discount; //折扣信息
 				this.PayWayList = prev_page_param.PayWayList;
 				this.hyinfo = prev_page_param.hyinfo;
-				this.out_trade_no_old = prev_page_param.out_trade_no_old;//单号初始化（源代号）
-				this.out_trade_no = this.out_trade_no_old;//子单号
-				this.authCode = prev_page_param.authCode;
+				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
+				this.out_trade_no = this.out_trade_no_old; //子单号
+				//this.authCode = prev_page_param.authCode;
 				this.sale1_obj = prev_page_param.sale1_obj;
 				this.sale2_arr = prev_page_param.sale2_arr;
 			},
@@ -862,25 +868,25 @@
 				if (e == "WX") {
 					_wx.WxPayment().QueryPayment(obj, function(res) {
 						that.CreateDPayData(null, -1);
-						that.createPayData(null,e);
+						that.createPayData(null, e);
 					})
 				}
 				if (e == "Ali") {
 					_ali.AliPayment().QueryPayment(obj, function(res) {
 						that.CreateDPayData(null, -1);
-						that.createPayData(null,e);
+						that.createPayData(null, e);
 					})
 				}
 				if (e == "CARD") {
 					_card.CardPayment().QueryPayment(obj, function(res) {
 						that.CreateDPayData(null, -1);
-						that.createPayData(null,e);
+						that.createPayData(null, e);
 					})
 				}
 				if (e == "COUPON") {
 					_coupon.CouponPayment().QueryPayment(obj, function(res) {
 						that.CreateDPayData(null, -1);
-						that.createPayData(null,e);
+						that.createPayData(null, e);
 					})
 				}
 			}

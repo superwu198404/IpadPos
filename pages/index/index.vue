@@ -138,7 +138,8 @@
 						], //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
-						authCode: {} //卡券信息 or 支付授权码
+						authCode: {}, //卡券信息 or 支付授权码
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
 					});
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -355,8 +356,9 @@
 		},
 		onShow() {
 			let that = this;
-			that.PayList = this.$store.state.orders;//全局参数
-			console.log('监听支付页面回传的支付参数为：', that.PayList);
+			that.PayList = this.$store.state.orders; //全局参数
+			console.log('监听支付页面回传的支付参数为：');
+			console.log(that.PayList);
 			//创建订单数据
 			if (that.PayList && that.PayList.length > 0) {
 				this.CreateDBData()

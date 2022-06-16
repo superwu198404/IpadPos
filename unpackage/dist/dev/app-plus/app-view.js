@@ -155,8 +155,8 @@ window.__uniConfig = { "window": { "navigationBarTextStyle": "black", "navigatio
 if (uni.restoreGlobal) {
   uni.restoreGlobal(weex, plus, setTimeout, clearTimeout, setInterval, clearInterval);
 }
-__definePage('pages/index/index', function () {return Vue.extend(__webpack_require__(/*! pages/index/index.vue?mpType=page */ 8).default);});
 __definePage('pages/start/start', function () {return Vue.extend(__webpack_require__(/*! pages/start/start.vue?mpType=page */ 2).default);});
+__definePage('pages/index/index', function () {return Vue.extend(__webpack_require__(/*! pages/index/index.vue?mpType=page */ 8).default);});
 __definePage('pages/TestDemon/TestDemon', function () {return Vue.extend(__webpack_require__(/*! pages/TestDemon/TestDemon.vue?mpType=page */ 19).default);});
 __definePage('pages/Payment/PaymentAll', function () {return Vue.extend(__webpack_require__(/*! pages/Payment/PaymentAll.vue?mpType=page */ 27).default);});
 __definePage('pages/modal/modal', function () {return Vue.extend(__webpack_require__(/*! pages/modal/modal.vue?mpType=page */ 51).default);});
@@ -283,6 +283,18 @@ var render = function() {
           }
         },
         [_vm._v("调试y")]
+      ),
+      _c(
+        "v-uni-button",
+        {
+          attrs: { _i: 5 },
+          on: {
+            click: function($event) {
+              return _vm.$handleViewEvent($event)
+            }
+          }
+        },
+        [_vm._v("去结算")]
       )
     ],
     1
