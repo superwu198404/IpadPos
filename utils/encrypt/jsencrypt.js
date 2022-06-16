@@ -900,7 +900,7 @@
 							ret[ret.length] = s;
 						}
 						len = start - stream
-						.pos; // undefined lengths are represented as negative values
+							.pos; // undefined lengths are represented as negative values
 					} catch (e) {
 						throw new Error(
 							"Exception while decoding undefined length content: " + e);
@@ -912,7 +912,7 @@
 				// must have valid content
 				sub = getSub();
 			} else if (tag.isUniversal() && ((tag.tagNumber == 0x03) || (tag.tagNumber ==
-				0x04))) {
+					0x04))) {
 				// sometimes BitString and OctetString are used to encapsulate ASN.1
 				try {
 					if (tag.tagNumber == 0x03) {
@@ -2915,6 +2915,58 @@
 				return h;
 			} else {
 				return "0" + h;
+			}
+		};
+		/**
+		     * 长文本加密
+		     * @param {string} string 待加密长文本
+		     * @returns {string} 加密后的base64编码
+		     */
+
+		RSAKey.prototype.encryptLong = function(text) {
+			var _this = this;
+			var maxLength = ((this.n.bitLength() + 7) >> 3) - 11;
+			try {
+				var ct_1 = "";
+				if (text.length > maxLength) {
+					var lt = text.match(/.{1,117}/g);
+					lt.forEach(function(entry) {
+						var t1 = _this.encrypt(entry);
+						ct_1 += t1;
+					});
+					return hex2b64(ct_1);
+				}
+				var t = this.encrypt(text);
+				var y = hex2b64(t);
+				return y;
+			} catch (ex) {
+				return false;
+			}
+		};
+
+		/**
+		     * 长文本解密
+		     * @param {string} string 加密后的base64编码
+		     * @returns {string} 解密后的原文
+		     */
+		RSAKey.prototype.decryptLong = function(text) {
+			var _this = this;
+			var maxLength = (this.n.bitLength() + 7) >> 3;
+			text = b64tohex(text);
+			try {
+				if (text.length > maxLength) {
+					var ct_2 = "";
+					var lt = text.match(/.{1,256}/g); // 128位解密。取256位
+					lt.forEach(function(entry) {
+						var t1 = _this.decrypt(entry);
+						ct_2 += t1;
+					});
+					return ct_2;
+				}
+				var y = this.decrypt(text);
+				return y;
+		 } catch (ex) {
+				return false;
 			}
 		};
 		// RSAKey.prototype.setPrivate = RSASetPrivate;
@@ -5191,7 +5243,7 @@
 			options = options || {};
 			this.default_key_size = parseInt(options.default_key_size, 10) || 1024;
 			this.default_public_exponent = options.default_public_exponent ||
-			"010001"; // 65537 default openssl public exponent for rsa key type
+				"010001"; // 65537 default openssl public exponent for rsa key type
 			this.log = options.log || false;
 			// The private and public key.
 			this.key = null;
@@ -5243,6 +5295,14 @@
 				return false;
 			}
 		};
+		JSEncrypt.prototype.decryptLong = function(str) {
+			// Return the decrypted string.
+			try {
+				return this.getKey().decryptLong(b64tohex(str));
+			} catch (ex) {
+				return false;
+			}
+		};
 		/**
 		 * Proxy method for RSAKey object's encrypt, encrypt the string using the public
 		 * components of the rsa key object. Note that if the object was not set will be created
@@ -5255,6 +5315,14 @@
 			// Return the encrypted string.
 			try {
 				return hex2b64(this.getKey().encrypt(str));
+			} catch (ex) {
+				return false;
+			}
+		};
+		JSEncrypt.prototype.encryptLong = function(str) {
+			// Return the encrypted string.
+			try {
+				return hex2b64(this.getKey().encryptLong(str));
 			} catch (ex) {
 				return false;
 			}

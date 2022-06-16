@@ -285,15 +285,15 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("http请求" + JSON.stringify(res));
+			//console.log("http请求" + JSON.stringify(res));
 			res = await httpFunc(res);
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
 			}
 		}
-		console.log("http返回" + JSON.stringify(callbacklist[i]) + "\r\n" + JSON.stringify(res).substring(0,
-		100));
+		// console.log("http返回" + JSON.stringify(callbacklist[i]) + "\r\n" + JSON.stringify(res).substring(0,
+		// 	100));
 		res = await forPromise(callbacklist[i], res)
 		//console.log("回调函数" + i.toString() + JSON.stringify(res));
 		if (res && !res.code) {
@@ -305,6 +305,34 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	if (finallyfun) def(finallyfun, res);
 }
 
+/**
+ * 重载方法
+ * @param {*} pm_data 
+ * @param {*} callbackfunArr 
+ * @param {*} catchfun 
+ * @param {*} otherfun 
+ */
+var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
+	var callbacklist = [];
+	callbacklist = callbackfunArr;
+	let res = pm_data;
+	for (var i = 0; i < callbacklist.length; i++) {
+		if (res && res.http) {
+			res = await httpFunc(res);
+			if (res && !res.code) {
+				def(catchfun, res);
+				break;
+			}
+		}
+		res = await forPromise(callbacklist[i], res)
+		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
+			def(otherfun, res);
+			break;
+		}
+	}
+	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
+	if (finallyfun) def(finallyfun, res);
+}
 var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 
 	let urlx = pm_url || '';
@@ -349,5 +377,6 @@ export default {
 	asyncFunc,
 	asyncFuncOne,
 	asyncFuncArr,
+	asyncFuncArr1,
 	getResData
 }

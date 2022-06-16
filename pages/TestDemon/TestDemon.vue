@@ -15,10 +15,9 @@
 	import sqlLite from '@/utils/db/db_excute.js';
 	import hy_model from '@/class/hy_model.js';
 	import common from '@/utils/util.js';
-	import rsa from '@/utils/rsa.js';
-	import pay from '@/api/Pay/WxPay.js';
+	import pay from '@/api/Pay/ECardPay.js';
 	import db from '@/utils/db/db_excute.js';
-	
+
 	export default {
 		data() {
 			return {
@@ -27,11 +26,18 @@
 		},
 
 		onLoad: function() {
+			
 			let obj = {
 				subject: "商品销售",
-				out_trade_no: "12345678912345678910",
+				// out_trade_no: "K12345678912345678902",
+				out_trade_no: "K12345678912345678907",
+				total_money: "1",
 				money: "1",
-				auth_code: "134492385890939315",
+				// auth_code: "132716010020176325",
+				auth_code: "285142260393078668",
+				store_id: "K0101QTDS1",
+				store_name: "武汉xxx",
+				merchant_no: "999990053990001",
 				product_info: [{
 					spid: "21313131",
 					name: "苹果",
@@ -39,10 +45,24 @@
 					num: "1"
 				}]
 			}
-			pay.GetPay().PaymentAll(obj, function(res) {
+			pay.CardPayment().PaymentAll(obj, function(res) {
 				console.log("支付结果：", res);
+				uni.showToast({
+					title: "支付成功"
+				})
 			})
-
+			// pay.WxPayment().Payment(obj, function(res) {
+			// 	console.log("支付结果", res);
+			// });
+			// pay.AliPayment().PaymentAll(obj, function(res) {
+			// 	console.log("支付结果：", res);
+			// 	uni.showToast({
+			// 		title: "支付成功"
+			// 	})
+			// })
+			// pay.AliPayment().Payment(obj, function(res) {
+			// 	console.log("支付结果", res);
+			// });
 			// let str = rsa.rsaEncrypt(JSON.stringify(arr));
 			// console.log("加密测试：", str);
 			// console.log("解密测试：", rsa.rsaDecrypt(str));

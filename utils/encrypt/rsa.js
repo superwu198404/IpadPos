@@ -8,7 +8,8 @@ const PUBLIC_KEY =
 var rsaEncrypt = function(msg) {
 	const jsencrypt = new JSEncrypt()
 	jsencrypt.setPublicKey('-----BEGIN PUBLIC KEY-----' + PUBLIC_KEY + '-----END PUBLIC KEY-----')
-	const encryptMsg = jsencrypt.encrypt(msg)
+	debugger;
+	const encryptMsg = jsencrypt.encryptLong(msg)
 	return encryptMsg
 }
 // 解密私钥
@@ -18,7 +19,7 @@ const PRIVATE_KEY =
 var rsaDecrypt = function(msg) {
 	const decrypt = new JSEncrypt()
 	decrypt.setPrivateKey('-----BEGIN RSA PRIVATE KEY-----'+PRIVATE_KEY+'-----END RSA PRIVATE KEY-----')
-	const decryptMsg = decrypt.decrypt(msg)
+	const decryptMsg = decrypt.decryptLong(msg)
 	return decryptMsg
 }
 export default {
