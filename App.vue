@@ -8,7 +8,7 @@
 			brand: "ZY",
 			store: {
 				GSID: "027001",
-				KHID: "K0101QTDS1",
+				KHID: "K200QTD005",
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "123",

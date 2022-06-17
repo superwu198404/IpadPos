@@ -132,14 +132,25 @@
 								NAME: "毛毛虫",
 								PRICE: 0.01,
 								OPRICE: 0.01,
-								AMOUNT: 0.02,
-								QTY: 2
-							}
+								AMOUNT: 0.01,
+								QTY: 1
+							},
+							// {
+							// 	PLID: "102",
+							// 	SPID: "10101003",
+							// 	UNIT: "袋",
+							// 	BARCODE: '2222222223',
+							// 	NAME: "虎皮蛋糕",
+							// 	PRICE: 0.01,
+							// 	OPRICE: 0.01,
+							// 	AMOUNT: 0.01,
+							// 	QTY: 1
+							// }
 						], //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
-						authCode: {}, //卡券信息 or 支付授权码
-						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+						authCode: "", //卡券信息 or 支付授权码
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID)
 					});
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -284,7 +295,6 @@
 					console.log(err);
 				});
 			},
-
 			Test: function(e) {
 				Req.asyncFunc({
 					http: true,
@@ -300,36 +310,6 @@
 			},
 
 			change: function(e) {
-
-				// uni.showModal({
-				// 	title: '提示',
-				// 	content: '这是一个模态弹窗',
-				// 	success: function (res) {
-				// 		if (res.confirm) {
-				// 			console.log('用户点击确定');
-				// 		} else if (res.cancel) {
-				// 			console.log('用户点击取消');
-				// 		}
-				// 	}
-				// });
-				// this.$store.dispatch('popup/open', {
-				// 	title: '提示',
-				// 	content: '修改按钮和颜色',
-				// 	showOther:true,
-				// showCancel:false,
-				// showConfirm:false,
-				// 	confirm(res) 
-				// {
-				// 	that.context=res.confirmText
-				// 	},
-				// 	cancel(res) {
-				// 		that.context=res.cancelText
-				// 	},
-				// other(res){
-				// 	that.context=res.otherText
-				// }
-				// });
-
 				this.$showModal({
 					concent: '测试测试~',
 					showCancel: true,

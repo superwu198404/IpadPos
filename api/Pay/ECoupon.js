@@ -63,7 +63,7 @@ var CouonPay = function() {
 			},
 			method: "POST",
 			data: {
-				paytype: "ECard_Payment",
+				paytype: "ECoupon_Payment",
 				method: m,
 				param: {
 					appid: getApp().globalData.appid,
@@ -83,9 +83,12 @@ var CouonPay = function() {
 		Req.asyncFuncArr1(CreateData("支付中...", "Payment", body), [
 			function(res) {
 				util.sleep(5000);
-				return CreateData("查询中...", "QueryPayment", {
+				//查询调用的是另外一个 api，所以此处得提出来改路径
+				let req = CreateData("查询中...", "QueryPayment", {
 					out_trade_no: body.out_trade_no
 				});
+				req.http.url = "/Hy/hy";//重设置url路径
+				return req;
 			},
 			function(res) {
 				if (res.code && res.data.status == "SUCCESS") {

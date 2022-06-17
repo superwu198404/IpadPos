@@ -1,3 +1,4 @@
+
 uni-page-body, uni-page-refresh{
 	height: 100%;
 }
@@ -21,7 +22,7 @@ uni-page-body, uni-page-refresh{
 }
 .navmall .logo{
 	width:40%;
-	margin:20rpx auto;
+	margin:0 auto 20rpx;
 }
 .navmall .logo image{
 	width:100%;
@@ -185,7 +186,8 @@ uni-page-body, uni-page-refresh{
 	min-height: 86%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	/* justify-content: space-between; */
+	gap:10px;
 }
 .paymentlist .refund{
 	background-color: #fff;
@@ -247,6 +249,7 @@ uni-page-body, uni-page-refresh{
 .pays-bj{
 	width:100%;
 	height: 88%;
+	overflow: auto;
 }
 .top-zhifu{
 	display: flex;
@@ -334,6 +337,9 @@ uni-page-body, uni-page-refresh{
 	height: 100%;
 	padding:5.5% 3%;
 }
+.bom-zhifu .pattern{
+	margin-bottom: 3%;
+}
 .bom-zhifu .pattern:nth-child(2){
 	margin-left:3%;
 }
@@ -345,19 +351,23 @@ uni-page-body, uni-page-refresh{
 	color: #fff;
 	font-size: 38rpx;
 }
-.pays-bj .curr{
+.pays-bj .curr.selected{
 	border-color: #338869;
 	background: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);
 	position: relative;
 }
-.pays-bj .curr .p-bg{
+.pays-bj .curr.selected .p-bg{
 	position: absolute;
 	top:0;
 	right: 0;
 	width:80%;
 	height: 100%;
 	z-index: 0;
+	display: block;
 }
-.pays-bj .curr p,.pays-bj .curr text{
+.pays-bj .curr.selected p,.pays-bj .curr.selected text{
 	color: #338869;
+}
+.pays-bj .p-bg{
+	display: none;
 }

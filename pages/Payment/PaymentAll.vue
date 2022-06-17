@@ -5,7 +5,7 @@
 </style>
 <template>
 	<view class="content">
-		<view class="navmall">
+		<view class="navmall"  v-if ="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
@@ -49,13 +49,12 @@
 				<p><text>折扣</text><text>{{Discount}}</text></p>
 				<p><text>已收</text><text>{{yPayAmount}}</text></p>
 				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><input type="text" value="" :key="domRefresh" v-model="dPayAmount" /></p>
+				<p><text>还需支付</text><input type="text" :disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" /></p>
 			</view>
 
 			<view class="paydetails">
 				<view class="pay-sum">
 					<view class="settleds">
-
 						<view class="paymentlist">
 							<h3>已结算</h3>
 							<view class="sets-list">
@@ -97,7 +96,7 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="top-zhifu">
-							<view class="polys curr">
+							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY' @click="clickPayType($event)">
 								<image class="p-bg" src="../../images/xzbj-da.png"></image>
 								<p>聚合支付</p>
 								<label>
@@ -108,14 +107,14 @@
 								<text>支持支付宝、微信及会员卡支付</text>
 							</view>
 							<view class="r-zhifu">
-								<view class="pattern">
+								<view :class="currentPayType === 'COUPON'? 'pattern curr selected':'pattern curr'" id="COUPON" @click="clickPayType($event)">
 									<view class="">
 										<p>电子券</p>
 										<text>coupons</text>
 									</view>
 									<image src="../../images/dzq-da.png" mode="widthFix"></image>
 								</view>
-								<view class="pattern nots">
+								<view class="pattern nots curr">
 									<view class="">
 										<p>云闪付</p>
 										<text>暂未开放</text>
@@ -125,14 +124,14 @@
 							</view>
 						</view>
 						<view class="bom-zhifu">
-							<view class="pattern nots">
+							<view class="pattern nots curr">
 								<view class="">
 									<p>可伴支付</p>
 									<text>暂未开放</text>
 								</view>
 								<image src="../../images/kb-da.png" mode="widthFix"></image>
 							</view>
-							<view class="pattern nots">
+							<view class="pattern nots curr">
 								<view class="">
 									<p>品诺支付</p>
 									<text>暂未开放</text>
@@ -158,7 +157,7 @@
 	import _wx from '@/api/Pay/WxPay.js';
 	import _ali from '@/api/Pay/AliPay.js';
 	import _card from '@/api/Pay/ECardPay.js';
-	import _couon from '@/api/Pay/ECoupon.js';
+	import _coupon from '@/api/Pay/ECoupon.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
@@ -169,10 +168,13 @@
 		},
 		data() {
 			return {
+				navmall:false,
+				channel:"POS",
 				YN_TotalPay: false,
-				allowInput:true,
+				allowInput: false,
 				refundShow: false,
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
+				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: false, //是否允许退出
@@ -184,10 +186,60 @@
 				PayAmount: 0,
 				Discount: 0,
 				Products: [],
-				PayWayList: [], //支付方式
+				PayWayList: [
+					{
+							name: '支付宝',
+							value: 'ALI',
+							type: "AliPayService",
+							fkid: "ZF01",
+						},
+						{
+							name: '微信',
+							value: 'WX',
+							type: "AliPayService",
+							fkid: "ZF02"
+						},
+						{
+							name: '券支付',
+							value: 'COUPON',
+							type: "qzf",
+							fkid: "ZF03"
+						},
+						{
+							name: '电子卡',
+							value: 'CARD',
+							type: "dzk",
+							fkid: "ZF04"
+						}
+				], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
-				PayList: [], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
+				PayList: [],
+				// [{ //每支付成功一笔，则往此数组内存入一笔记录
+				// 		fkid: "",
+				// 		bill: "12",
+				// 		name: "支付宝",
+				// 		amount: 0.01,
+				// 		no: 1
+				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
+				// 		fkid: "",
+				// 		bill: "12",
+				// 		name: "支付宝",
+				// 		amount: 0.01,
+				// 		no: 1
+				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
+				// 		fkid: "",
+				// 		bill: "12",
+				// 		name: "支付宝",
+				// 		amount: 0.01,
+				// 		no: 1
+				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
+				// 		fkid: "",
+				// 		bill: "12",
+				// 		name: "支付宝",
+				// 		amount: 0.01,
+				// 		no: 1
+				// 	}], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
 				PaidList: [], //已支付商品信息
 				RefundList: [], //退款信息
 				authCode: "", //支付授权码
@@ -214,11 +266,22 @@
 				kquser: getApp().globalData.kquser,
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
 				dPayList: [],
-				domRefresh: new Date().toString()
+				domRefresh: new Date().toString(),
+				query:null
 			}
 		},
 		watch: {
 			dPayAmount: function(n, o) {
+				if(Object.is(NaN,Number(n))){//判断输入的是否是数字
+					this.dPayAmount = o;
+					uni.showToast({
+						title: '输入的数字有误,已自动修正!',
+						duration: 2000,
+						icon: "error"
+					});
+					this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
+					return;
+				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
 				if (amount > 0) { //未完成支付，仍然存在欠款
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
@@ -243,6 +306,13 @@
 			authCode: function(n, o) {
 				this.currentPayInfo = this.PayWayList.find(i => i.value === this
 					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+			},
+			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
+				if (n === "COUPON") //如果用券，则不再允许编辑待付款金额
+					this.allowInput = false;
+					// this.allowInput = true;
+				else
+					this.allowInput = false;
 			}
 		},
 		computed: {
@@ -644,7 +714,15 @@
 			Pay: function() {
 				//适配真机
 				let that = this;
-				that.authCode = "";
+				that.authCode = ""; //避免同一个付款码多次使用
+				debugger;
+				if (!this.currentPayType) {
+					uni.showToast({
+						title: "未选择支付方式，请选择后再进行支付!",
+						icon:"error"
+					});
+					return;
+				}
 				if (!this.YN_TotalPay) { //如果未支付完成
 					if (that.authCode) { //如果有码
 						that.PayHandle(); //直接发起支付
@@ -671,7 +749,10 @@
 					case "13":
 						return "WX";
 					default:
+						if(this.currentPayType === "COUPON")//判断当前支付方式是否为 券 支付，如果是券支付，则返回券 类型，否则是卡类型
+							return "COUPON"
 						return "CARD";
+						break;
 				}
 			},
 			//支付 data 对象组装
@@ -686,11 +767,13 @@
 					store_id: this.KHID,
 					store_name: this.Name,
 					merchant_no: "999990053990001",
+					channel: this.channel,
 					product_info: this.Products.map(i => { //商品清单
 						return {
 							spid: i.SPID,
 							name: i.NAME,
-							price: (Number(i.AMOUNT) * 100).toFixed(0),
+							price: (Number(i.PRICE) * 100).toFixed(0),//单价
+							amount: (Number(i.AMOUNT) * 100).toFixed(0),//总金额
 							num: i.QTY
 						}
 					})
@@ -708,6 +791,9 @@
 						break;
 					case "CARD": //电子卡支付处理
 						handlePayment = _card.CardPayment();
+						break;
+					case "COUPON": //券支付接口
+						handlePayment = _coupon.CouponPayment();
 						break;
 				}
 				let payAfter = this.PayDataAssemble();
@@ -796,10 +882,11 @@
 			},
 			//初始化
 			paramInit: function() {
+				this.query = uni.createSelectorQuery().in(this);//获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
-				this.PayWayList = prev_page_param.PayWayList;
+				// this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_trade_no = this.out_trade_no_old; //子单号
@@ -860,6 +947,10 @@
 					}
 				}
 			},
+			//点击切换支付方式
+			clickPayType:function(e){
+				this.currentPayType = e.target.id;//小程序
+			},
 			//查询重试
 			RetrySearch: function(e) {
 				let that = this;
@@ -893,9 +984,14 @@
 			}
 		},
 		created() {
+			if (window && !window.vue) { //把vue放到全局上，方便调试
+				window.vue = this;
+			}
 			this.paramInit();
 			this.priceCount();
 			this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
+		},
+		mounted() {
 		}
 	}
 </script>
