@@ -186,9 +186,17 @@ var mySqllite = function() {
 
 	} */
 	var isopen = function(msg) {
+		console.log(`path:${path},name:${name}`)
 		return plus.sqlite.isOpenDatabase({
 			path: path,
-			name: name
+			name: name,
+			success: (e) => {
+				this.showToast("数据库已打开");
+			},
+			fail: (e) => {
+				this.showToast("数据库开启失败");
+			}
+
 		});
 	};
 	var open = function(msg) {
@@ -262,11 +270,11 @@ var mySqllite = function() {
 	var exec = function(pm_sql) {
 		return new Promise((resolve, reject) => {
 			// 修改表数据
-			plus.sqlite.executeSql({
+			var r = plus.sqlite.executeSql({
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					//console.log("executeSql:okkkk"+JSON.stringify(e));
+					console.log("executeSql:okkkk"+JSON.stringify(e));
 					return resolve({
 						code: true,
 						msg: e
@@ -279,10 +287,10 @@ var mySqllite = function() {
 						msg: e
 					});
 				}
-
-			})
+			});
 		})
 	}
+	
 	var qry = function(pm_sql) {
 		return new Promise((resolve, reject) => {
 			// 修改表数据
@@ -406,13 +414,25 @@ var mySqllite = function() {
 			code: true,
 			msg: "默认打开"
 		};
-		//console.log("数据库状态" + isopen())
+		console.log("检测数据库状态...");
 		if (!isopen()) { //关闭就打开
+			console.log("检测到数据库关闭，尝试打开...");
 			retcode = await open(pm_msg);
 		}
-		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		retcode = await exec(sql);
+		if (!retcode.code) {
+			console.log("数据库打开失败...")
+			return callBackCloseLoading(retcode, fail);
+		}
+		//执行sql
+		console.log("数据库已打开...")
+		console.log("sql准备执行...")
+		retcode =  await exec(sql);
+		retcode.catch((e) => {
+			console.log(`执行sql发生异常，异常:${JSON.stringify((e))}`)
+		});
+		console.log(`sql执行:${Json.stringify(retcode)}`)
 		//console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
+		console.log("即将关闭数据库...")
 		await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);

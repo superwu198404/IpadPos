@@ -40,29 +40,7 @@
 				sale2_arr: [],
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
-				Products: [{
-						PLID: "100",
-						BARCODE: '111111111',
-						SPID: "10101001",
-						UNIT: "个",
-						NAME: "黑森林",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
-					},
-					{
-						PLID: "101",
-						SPID: "10101002",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "毛毛虫",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.02,
-						QTY: 2
-					}
-				], //商品信息
+				Products: [], //商品信息
 				PayWayList: []
 			}
 		},
@@ -111,8 +89,6 @@
 						cashier: "", //收银员
 						date: "", //日期
 						company: "", //公司
-						sale1_obj: {}, //001 主单 数据对象
-						sale2_arr: {}, //002 商品 数据对象集合
 						Products: [{
 								PLID: "100",
 								BARCODE: '111111111',
@@ -135,17 +111,17 @@
 								AMOUNT: 0.01,
 								QTY: 1
 							},
-							// {
-							// 	PLID: "102",
-							// 	SPID: "10101003",
-							// 	UNIT: "袋",
-							// 	BARCODE: '2222222223',
-							// 	NAME: "虎皮蛋糕",
-							// 	PRICE: 0.01,
-							// 	OPRICE: 0.01,
-							// 	AMOUNT: 0.01,
-							// 	QTY: 1
-							// }
+							{
+								PLID: "102",
+								SPID: "10101003",
+								UNIT: "袋",
+								BARCODE: '2222222223',
+								NAME: "虎皮蛋糕",
+								PRICE: 0.01,
+								OPRICE: 0.01,
+								AMOUNT: 0.01,
+								QTY: 1
+							}
 						], //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
