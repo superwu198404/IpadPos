@@ -612,7 +612,7 @@ var render = function() {
             }
           }
         },
-        [_vm._v("查询会员")]
+        [_vm._v("录入会员")]
       ),
       _c(
         "v-uni-button",
@@ -624,7 +624,7 @@ var render = function() {
             }
           }
         },
-        [_vm._v("测试一下啦")]
+        [_vm._v("测试一下")]
       )
     ],
     2
@@ -1463,76 +1463,86 @@ var render = function() {
     "v-uni-view",
     { staticClass: _vm._$g(0, "sc"), attrs: { _i: 0 } },
     [
-      _c(
-        "v-uni-view",
-        { staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } },
-        [
-          _c(
+      _vm._$g(1, "i")
+        ? _c(
             "v-uni-view",
-            { staticClass: _vm._$g(2, "sc"), attrs: { _i: 2 } },
-            [
-              _c("v-uni-image", {
-                attrs: { src: _vm._$g(3, "a-src"), mode: "widthFix", _i: 3 }
-              })
-            ],
-            1
-          ),
-          _c(
-            "v-uni-view",
-            { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
+            { staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(5, "sc"), attrs: { _i: 5 } },
+                { staticClass: _vm._$g(2, "sc"), attrs: { _i: 2 } },
                 [
                   _c("v-uni-image", {
-                    attrs: { src: _vm._$g(6, "a-src"), mode: "widthFix", _i: 6 }
-                  }),
-                  _c("v-uni-text", { attrs: { _i: 7 } }, [_vm._v("销售")])
+                    attrs: { src: _vm._$g(3, "a-src"), mode: "widthFix", _i: 3 }
+                  })
                 ],
                 1
               ),
               _c(
                 "v-uni-view",
-                { attrs: { _i: 8 } },
+                { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
                 [
-                  _vm._$g(9, "i")
-                    ? _c("v-uni-image", {
+                  _c(
+                    "v-uni-view",
+                    { staticClass: _vm._$g(5, "sc"), attrs: { _i: 5 } },
+                    [
+                      _c("v-uni-image", {
                         attrs: {
-                          src: _vm._$g(9, "a-src"),
+                          src: _vm._$g(6, "a-src"),
                           mode: "widthFix",
-                          _i: 9
+                          _i: 6
                         }
-                      })
-                    : _vm._e(),
+                      }),
+                      _c("v-uni-text", { attrs: { _i: 7 } }, [_vm._v("销售")])
+                    ],
+                    1
+                  ),
+                  _c(
+                    "v-uni-view",
+                    { attrs: { _i: 8 } },
+                    [
+                      _vm._$g(9, "i")
+                        ? _c("v-uni-image", {
+                            attrs: {
+                              src: _vm._$g(9, "a-src"),
+                              mode: "widthFix",
+                              _i: 9
+                            }
+                          })
+                        : _vm._e(),
+                      _c("v-uni-image", {
+                        attrs: {
+                          src: _vm._$g(10, "a-src"),
+                          mode: "widthFix",
+                          _i: 10
+                        }
+                      }),
+                      _c("v-uni-text", { attrs: { _i: 11 } }, [_vm._v("预定")])
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _c(
+                "v-uni-view",
+                { staticClass: _vm._$g(12, "sc"), attrs: { _i: 12 } },
+                [
                   _c("v-uni-image", {
                     attrs: {
-                      src: _vm._$g(10, "a-src"),
+                      src: _vm._$g(13, "a-src"),
                       mode: "widthFix",
-                      _i: 10
+                      _i: 13
                     }
                   }),
-                  _c("v-uni-text", { attrs: { _i: 11 } }, [_vm._v("预定")])
+                  _c("v-uni-text", { attrs: { _i: 14 } }, [_vm._v("退出")])
                 ],
                 1
               )
             ],
             1
-          ),
-          _c(
-            "v-uni-view",
-            { staticClass: _vm._$g(12, "sc"), attrs: { _i: 12 } },
-            [
-              _c("v-uni-image", {
-                attrs: { src: _vm._$g(13, "a-src"), mode: "widthFix", _i: 13 }
-              }),
-              _c("v-uni-text", { attrs: { _i: 14 } }, [_vm._v("退出")])
-            ],
-            1
           )
-        ],
-        1
-      ),
+        : _vm._e(),
       _c(
         "v-uni-view",
         { staticClass: _vm._$g(15, "sc"), attrs: { _i: 15 } },
@@ -1656,7 +1666,12 @@ var render = function() {
                   _c("v-uni-text", { attrs: { _i: 41 } }, [_vm._v("还需支付")]),
                   _c("v-uni-input", {
                     key: _vm._$g(42, "a-key"),
-                    attrs: { type: "text", value: "", _i: 42 },
+                    attrs: {
+                      type: "number",
+                      disabled: _vm._$g(42, "a-disabled"),
+                      value: "",
+                      _i: 42
+                    },
                     model: {
                       value: _vm._$g(42, "v-model"),
                       callback: function($$v) {
@@ -1904,8 +1919,13 @@ var render = function() {
                           _c(
                             "v-uni-view",
                             {
-                              staticClass: _vm._$g(69, "sc"),
-                              attrs: { _i: 69 }
+                              class: _vm._$g(69, "c"),
+                              attrs: { id: "POLY", _i: 69 },
+                              on: {
+                                click: function($event) {
+                                  return _vm.$handleViewEvent($event)
+                                }
+                              }
                             },
                             [
                               _c("v-uni-image", {
@@ -1959,8 +1979,13 @@ var render = function() {
                               _c(
                                 "v-uni-view",
                                 {
-                                  staticClass: _vm._$g(78, "sc"),
-                                  attrs: { _i: 78 }
+                                  class: _vm._$g(78, "c"),
+                                  attrs: { id: "COUPON", _i: 78 },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.$handleViewEvent($event)
+                                    }
+                                  }
                                 },
                                 [
                                   _c(
@@ -2611,7 +2636,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 16);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "\r\n\r\n/* @import url(../../style/basis.css); */\nuni-page-body, uni-page-refresh{\r\n\theight: 100%;\n}\n.content{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\theight: 100%;\r\n\tbackground-color: #F5F4F8;\n}\n.navmall{\r\n\theight: 100%;\r\n\twidth:10%;\r\n\tbackground-color: #fff;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: baseline;\r\n\tposition: relative;\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 28rpx;\n}\n.navmall .logo{\r\n\twidth:40%;\r\n\tmargin:20rpx auto;\n}\n.navmall .logo uni-image{\r\n\twidth:100%;\n}\n.menu{\r\n\twidth:100%;\r\n\tmargin-top:20rpx;\r\n\theight: 76%;\r\n\tpadding-bottom: 50%;\n}\n.menu uni-view{\r\n\twidth:100%;\r\n\ttext-align: center;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tpadding:12% 0;\n}\n.menu .curr{\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\twidth:80%;\r\n\tmargin:6% auto;\r\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image{\r\n\twidth:50rpx;\r\n\tmargin-bottom: 20rpx;\n}\n.exit{\r\n\twidth:100%;\r\n\tposition: absolute;\r\n\tbottom:3%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translateX(-50%);\r\n\t        transform: translateX(-50%);\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tfont-size: 26rpx;\n}\n.exit uni-image{\r\n\twidth:40rpx;\n}\n.right{\r\n\twidth:90%;\n}\n.nav{\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding:10rpx 2%;\r\n\tbackground-color: #fff;\n}\n.message{\r\n\tdisplay: flex;\n}\n.message .imgs{\r\n\tbackground-color: #006B44;\r\n\tborder-radius: 10px 0 0 10px;\r\n\twidth:70rpx;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.message .imgs uni-image{\r\n\twidth:50%;\n}\n.message uni-text{\r\n\tdisplay: inline-block;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tbackground-color: #EEEEEE;\r\n\tcolor: #006B44;\r\n\tpadding:0 18rpx;\r\n\tborder-radius:0 10px 10px 0;\r\n\tfont-size: 20rpx;\n}\n.account{\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.account uni-image{\r\n\twidth:80rpx;\r\n\theight: 80rpx;\r\n\tmargin-left: 20rpx;\n}\n.hh{\r\n\tpadding:16rpx 2%;\r\n\tfont-size: 36rpx;\r\n\tfont-weight: 700;\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.hh uni-image{\r\n\twidth:40rpx;\r\n\tmargin-right: 12rpx;\n}\n.amounts{\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.6% 0 1%;\r\n\twidth:96%;\r\n\tmargin:0 auto;\r\n\tdisplay: flex;\n}\n.amounts p{\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: start;\r\n\talign-items: center;\r\n\twidth:19.5%;\r\n\tborder-right:1px solid #f5f5f5;\r\n\tfont-size: 32rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:20rpx;\r\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1){\r\n\tborder-right:none;\n}\n.amounts p uni-text:nth-child(2){\r\n\tfont-size: 60rpx;\r\n\tline-height: 100px;\r\n\tcolor: #333;\n}\n.amounts p uni-input{\r\n\tmargin-top:12rpx;\r\n\theight: 80rpx;\r\n\tline-height: 80rpx;\r\n\tborder:1px solid #006B44;\r\n\tbackground-color: #F1F9F1;\r\n\ttext-align: center;\r\n\tborder-radius: 10px;\n}\n.paydetails{\r\n\tdisplay: flex;\r\n\theight: 68%;\r\n\tmargin:2%;\n}\n.pay-sum{\r\n\tdisplay: flex;\r\n\twidth:30%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:0 1.5%;\r\n\theight: 100%;\n}\n.settleds{\r\n\twidth:100%;\n}\n.settleds h3{\r\n\tline-height: 100rpx;\n}\n.paymentlist{\r\n\tmin-height: 86%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-between;\n}\n.paymentlist .refund{\r\n\tbackground-color: #fff;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tmargin-top:20px;\r\n\tborder-radius: 0;\r\n\tmin-height: 50%;\n}\n.sets-list{\r\n\tmin-height: 86%;\r\n\tbackground-color: #F9F9F9;\r\n\tborder-radius: 10rpx;\r\n\tpadding:0 5%;\r\n\tposition: relative;\n}\n.paylists{\r\n\tmax-height: 80%;\r\n\toverflow: auto;\r\n\tpadding-bottom: 150rpx;\n}\n.Methods{\r\n\twidth:100%;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tmargin: 40rpx 0;\n}\n.payicon{\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.payicon uni-image{\r\n\twidth:70rpx;\r\n\tmargin-right: 10px;\n}\n.stills{\r\n\twidth:90%;\r\n\theight: 150rpx;\r\n\tdisplay:flex;\r\n\talign-items: center;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tposition: absolute;\r\n\tbottom:0;\r\n\tleft: 5%;\n}\n.stills .payicon uni-image{\r\n\twidth:60rpx;\n}\n.choosepays{\r\n\twidth:68%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.5%;\r\n\theight: 95%;\r\n\tmargin-left: 2%;\n}\n.pays-bj{\r\n\twidth:100%;\r\n\theight: 88%;\n}\n.top-zhifu{\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\r\n\twidth:100%;\r\n\tmargin-bottom: 3.5%;\r\n\theight: 60%;\n}\n.polys{\r\n\twidth:48%;\r\n\ttext-align: center;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\theight: 100%;\n}\n.polys p{\r\n\tfont-size: 40rpx;\r\n\tline-height: 160rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:5%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label uni-image{\r\n\twidth:100rpx;\r\n\tmargin:0 5%;\n}\n.polys uni-text{\r\n\tdisplay: block;\r\n\tfont-size: 14px;\r\n\tcolor: #CCCCCC;\r\n\tmargin-top:25%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.r-zhifu{\r\n\twidth:48%;\r\n\tmargin-left: 3%;\n}\n.pattern{\r\n\twidth:88%;\r\n\tdisplay: flex;\r\n\theight: 46.3%;\r\n\talign-items: center;\r\n\tjustify-content: space-between;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\tpadding:0 6%;\n}\n.pattern:nth-child(1){\r\n\tmargin-bottom:6%;\n}\n.pattern p{\r\n\tfont-size: 40rpx;\r\n\tfont-weight: 700;\r\n\tline-height: 80rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-text{\r\n\tcolor: #999;\r\n\tfont-size: 28rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-image{\r\n\twidth:120rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.bom-zhifu{\r\n\tdisplay: flex;\n}\n.bom-zhifu .pattern{\r\n\twidth:48%;\r\n\theight: 100%;\r\n\tpadding:5.5% 3%;\n}\n.bom-zhifu .pattern:nth-child(2){\r\n\tmargin-left:3%;\n}\n.nots p{\r\n\tcolor: #CCCCCC;\n}\n.btn{\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\tfont-size: 38rpx;\n}\n.pays-bj .curr{\r\n\tborder-color: #338869;\r\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\r\n\tposition: relative;\n}\n.pays-bj .curr .p-bg{\r\n\tposition: absolute;\r\n\ttop:0;\r\n\tright: 0;\r\n\twidth:80%;\r\n\theight: 100%;\r\n\tz-index: 0;\n}\n.pays-bj .curr p,.pays-bj .curr uni-text{\r\n\tcolor: #338869;\n}\r\n", ""]);
+exports.push([module.i, "\r\n\r\n/* @import url(../../style/basis.css); */\nuni-page-body, uni-page-refresh{\r\n\theight: 100%;\n}\n.content{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\theight: 100%;\r\n\tbackground-color: #F5F4F8;\r\n\tpadding-top:44px;\n}\n.navmall{\r\n\theight: 100%;\r\n\twidth:10%;\r\n\tbackground-color: #fff;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: baseline;\r\n\tposition: relative;\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 28rpx;\n}\n.navmall .logo{\r\n\twidth:40%;\r\n\tmargin:0 auto 20rpx;\n}\n.navmall .logo uni-image{\r\n\twidth:100%;\n}\n.menu{\r\n\twidth:100%;\r\n\tmargin-top:20rpx;\r\n\theight: 76%;\r\n\tpadding-bottom: 50%;\n}\n.menu uni-view{\r\n\twidth:100%;\r\n\ttext-align: center;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tpadding:12% 0;\n}\n.menu .curr{\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\twidth:80%;\r\n\tmargin:6% auto;\r\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image{\r\n\twidth:50rpx;\r\n\tmargin-bottom: 20rpx;\n}\n.exit{\r\n\twidth:100%;\r\n\tposition: absolute;\r\n\tbottom:3%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translateX(-50%);\r\n\t        transform: translateX(-50%);\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tfont-size: 26rpx;\n}\n.exit uni-image{\r\n\twidth:40rpx;\n}\n.right{\r\n\twidth:90%;\n}\n.nav{\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding:10rpx 2%;\r\n\tbackground-color: #fff;\n}\n.message{\r\n\tdisplay: flex;\n}\n.message .imgs{\r\n\tbackground-color: #006B44;\r\n\tborder-radius: 10px 0 0 10px;\r\n\twidth:70rpx;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.message .imgs uni-image{\r\n\twidth:50%;\n}\n.message uni-text{\r\n\tdisplay: inline-block;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tbackground-color: #EEEEEE;\r\n\tcolor: #006B44;\r\n\tpadding:0 18rpx;\r\n\tborder-radius:0 10px 10px 0;\r\n\tfont-size: 20rpx;\n}\n.account{\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.account uni-image{\r\n\twidth:80rpx;\r\n\theight: 80rpx;\r\n\tmargin-left: 20rpx;\n}\n.hh{\r\n\tpadding:16rpx 2%;\r\n\tfont-size: 36rpx;\r\n\tfont-weight: 700;\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.hh uni-image{\r\n\twidth:40rpx;\r\n\tmargin-right: 12rpx;\n}\n.amounts{\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.6% 0 1%;\r\n\twidth:96%;\r\n\tmargin:0 auto;\r\n\tdisplay: flex;\n}\n.amounts p{\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: start;\r\n\talign-items: center;\r\n\twidth:19.5%;\r\n\tborder-right:1px solid #f5f5f5;\r\n\tfont-size: 32rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:20rpx;\r\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1){\r\n\tborder-right:none;\n}\n.amounts p uni-text:nth-child(2){\r\n\tfont-size: 60rpx;\r\n\tline-height: 100px;\r\n\tcolor: #333;\n}\n.amounts p uni-input{\r\n\tmargin-top:12rpx;\r\n\theight: 80rpx;\r\n\tline-height: 80rpx;\r\n\tborder:1px solid #006B44;\r\n\tbackground-color: #F1F9F1;\r\n\ttext-align: center;\r\n\tborder-radius: 10px;\n}\n.paydetails{\r\n\tdisplay: flex;\r\n\theight: 68%;\r\n\tmargin:2%;\n}\n.pay-sum{\r\n\tdisplay: flex;\r\n\twidth:30%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:0 1.5%;\r\n\theight: 100%;\n}\n.settleds{\r\n\twidth:100%;\n}\n.settleds h3{\r\n\tline-height: 100rpx;\n}\n.paymentlist{\r\n\tmin-height: 86%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\t/* justify-content: space-between; */\r\n\tgap:10px;\n}\n.paymentlist .refund{\r\n\tbackground-color: #fff;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tmargin-top:20px;\r\n\tborder-radius: 0;\r\n\tmin-height: 50%;\n}\n.sets-list{\r\n\tmin-height: 86%;\r\n\tbackground-color: #F9F9F9;\r\n\tborder-radius: 10rpx;\r\n\tpadding:0 5%;\r\n\tposition: relative;\n}\n.paylists{\r\n\tmax-height: 80%;\r\n\toverflow: auto;\r\n\tpadding-bottom: 150rpx;\n}\n.Methods{\r\n\twidth:100%;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tmargin: 40rpx 0;\n}\n.payicon{\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.payicon uni-image{\r\n\twidth:70rpx;\r\n\tmargin-right: 10px;\n}\n.stills{\r\n\twidth:90%;\r\n\theight: 150rpx;\r\n\tdisplay:flex;\r\n\talign-items: center;\r\n\tborder-top:1px solid #D3D3D3;\r\n\tposition: absolute;\r\n\tbottom:0;\r\n\tleft: 5%;\n}\n.stills .payicon uni-image{\r\n\twidth:60rpx;\n}\n.choosepays{\r\n\twidth:68%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding:1.5%;\r\n\theight: 95%;\r\n\tmargin-left: 2%;\n}\n.pays-bj{\r\n\twidth:100%;\r\n\theight: 88%;\r\n\toverflow: auto;\n}\n.top-zhifu{\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\r\n\twidth:100%;\r\n\tmargin-bottom: 3.5%;\r\n\theight: 60%;\n}\n.polys{\r\n\twidth:48%;\r\n\ttext-align: center;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\theight: 100%;\n}\n.polys p{\r\n\tfont-size: 40rpx;\r\n\tline-height: 160rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top:5%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label{\r\n\tdisplay: flex;\r\n\twidth:100%;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label uni-image{\r\n\twidth:100rpx;\r\n\tmargin:0 5%;\n}\n.polys uni-text{\r\n\tdisplay: block;\r\n\tfont-size: 14px;\r\n\tcolor: #CCCCCC;\r\n\tmargin-top:25%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.r-zhifu{\r\n\twidth:48%;\r\n\tmargin-left: 3%;\n}\n.pattern{\r\n\twidth:88%;\r\n\tdisplay: flex;\r\n\theight: 46.3%;\r\n\talign-items: center;\r\n\tjustify-content: space-between;\r\n\tborder:1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\tpadding:0 6%;\n}\n.pattern:nth-child(1){\r\n\tmargin-bottom:6%;\n}\n.pattern p{\r\n\tfont-size: 40rpx;\r\n\tfont-weight: 700;\r\n\tline-height: 80rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-text{\r\n\tcolor: #999;\r\n\tfont-size: 28rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-image{\r\n\twidth:120rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.bom-zhifu{\r\n\tdisplay: flex;\n}\n.bom-zhifu .pattern{\r\n\twidth:48%;\r\n\theight: 100%;\r\n\tpadding:5.5% 3%;\n}\n.bom-zhifu .pattern{\r\n\tmargin-bottom: 3%;\n}\n.bom-zhifu .pattern:nth-child(2){\r\n\tmargin-left:3%;\n}\n.nots p{\r\n\tcolor: #CCCCCC;\n}\n.btn{\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\tfont-size: 38rpx;\n}\n.pays-bj .curr.selected{\r\n\tborder-color: #338869;\r\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\r\n\tposition: relative;\n}\n.pays-bj .curr.selected .p-bg{\r\n\tposition: absolute;\r\n\ttop:0;\r\n\tright: 0;\r\n\twidth:80%;\r\n\theight: 100%;\r\n\tz-index: 0;\r\n\tdisplay: block;\n}\n.pays-bj .curr.selected p,.pays-bj .curr.selected uni-text{\r\n\tcolor: #338869;\n}\n.pays-bj .p-bg{\r\n\tdisplay: none;\n}\r\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -2663,7 +2688,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 16);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "\n.uni-tip {\n\tbackground: #fff;\n\twidth: 70%;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding: 10px;\n\tborder-radius: 10px;\n}\n.uni-tip-title {\n\ttext-align: center;\n\tfont-size: 16px;\n}\n.uni-tip-group-button {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\talign-content: center;\n}\n.uni-tip-group-button uni-button {\n\tmargin: 0;\n}\n.uni-tip-content {\n\tmin-height: 60px;\n}\n", ""]);
+exports.push([module.i, "\n.right {\n\twidth: 100%;\n}\n.uni-tip {\n\tbackground: #fff;\n\twidth: 70%;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding: 10px;\n\tborder-radius: 10px;\n}\n.uni-tip-title {\n\ttext-align: center;\n\tfont-size: 16px;\n}\n.uni-tip-group-button {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\talign-content: center;\n}\n.uni-tip-group-button uni-button {\n\tmargin: 0;\n}\n.uni-tip-content {\n\tmin-height: 60px;\n}\n", ""]);
 // Exports
 module.exports = exports;
 

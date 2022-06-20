@@ -75,16 +75,59 @@ var CouonPay = function() {
 			}
 		}
 	}
-
+	var CreateData1 = function(t, m, d) {
+		return {
+			code: true,
+			http: {
+				load: true,
+				url: "/Hy/hy",
+				title: t,
+			},
+			method: "POST",
+			data: {
+				apiname: "TICKETQUERY",
+				appid: getApp().globalData.appid,
+				paramkey: "acc",
+				data: {
+					GT_IMPORT: [{
+						ZZCP_NUM: d.auth_code,
+						ZZCPHX_STORE: d.store_id
+					}]
+				}
+			}
+		}
+	}
 	/**
 	 * 包含支付和查询以及撤销的支付体
 	 */
 	this.PaymentAll = function(body, func) {
-		Req.asyncFuncArr1(CreateData("支付中...", "Payment", body), [
+		let type = "", //券类型
+			yn_zq = "", //是否赠券
+			yn_lp = "", //是否礼品券
+			yn_jl = "", //是否节令券
+			discount = 0; //折扣额
+		Req.asyncFuncArr1(CreateData1("查询中...", body), [
+			function(res) {
+				console.log("券查询结果：", res);
+				let data = JSON.parse(res.data);
+				type = data.ZZDISCTYPE;
+				discount = data.ZZCPXSDISC;
+				yn_zq = data.ZZKSZQ;
+				yn_lp = data.ZZKSZQ == 'Y' ? 'N' : 'Y';
+				return CreateData("支付中...", "Payment", body);
+			},
 			function(res) {
 				util.sleep(5000);
-				if (func)
+				if (func) {
+					//组建券类型和折扣额
+					res.data.card_coupon_type = type;
+					res.data.discount = discount;
+					res.data.yn_zq = yn_zq;
+					res.data.yn_lp = yn_lp;
+					res.data.yn_jl = yn_jl;
+					console.log("券支付结果：", res);
 					func(res);
+				}
 				return res;
 				//查询调用的是另外一个 api，所以此处得提出来改路径
 				// let req = CreateData("查询中...", "QueryPayment", {

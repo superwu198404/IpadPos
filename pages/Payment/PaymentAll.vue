@@ -49,7 +49,7 @@
 				<p><text>折扣</text><text>{{Discount}}</text></p>
 				<p><text>已收</text><text>{{yPayAmount}}</text></p>
 				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><input type="text" :disabled="allowInput" value="" :key="domRefresh"
+				<p><text>还需支付</text><input type="number" :disabled="allowInput" value="" :key="domRefresh"
 						v-model="dPayAmount" /></p>
 			</view>
 
@@ -188,60 +188,12 @@
 				dPayAmount: 0, //待支付
 				PayAmount: 0,
 				Discount: 0,
-				Products: [],
-				PayWayList: [{
-						name: '支付宝',
-						value: 'ALI',
-						type: "AliPayService",
-						fkid: "ZF01",
-					},
-					{
-						name: '微信',
-						value: 'WX',
-						type: "AliPayService",
-						fkid: "ZF02"
-					},
-					{
-						name: '券支付',
-						value: 'COUPON',
-						type: "qzf",
-						fkid: "ZF03"
-					},
-					{
-						name: '电子卡',
-						value: 'CARD',
-						type: "dzk",
-						fkid: "ZF04"
-					}
-				], //支付方式
+				allow_discount_amount: 0, //不可折扣金额 传入支付宝 0 不折扣 >0 折扣
+				Products: [], //商品信息
+				PayWayList: [], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [],
-				// [{ //每支付成功一笔，则往此数组内存入一笔记录
-				// 		fkid: "",
-				// 		bill: "12",
-				// 		name: "支付宝",
-				// 		amount: 0.01,
-				// 		no: 1
-				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
-				// 		fkid: "",
-				// 		bill: "12",
-				// 		name: "支付宝",
-				// 		amount: 0.01,
-				// 		no: 1
-				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
-				// 		fkid: "",
-				// 		bill: "12",
-				// 		name: "支付宝",
-				// 		amount: 0.01,
-				// 		no: 1
-				// 	},{ //每支付成功一笔，则往此数组内存入一笔记录
-				// 		fkid: "",
-				// 		bill: "12",
-				// 		name: "支付宝",
-				// 		amount: 0.01,
-				// 		no: 1
-				// 	}], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
 				PaidList: [], //已支付商品信息
 				RefundList: [], //退款信息
 				authCode: "", //支付授权码
@@ -269,7 +221,9 @@
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
 				dPayList: [],
 				domRefresh: new Date().toString(),
-				query: null
+				query: null,
+				BILL_TYPE:"",
+				XS_TYPE: ""
 			}
 		},
 		watch: {
@@ -290,8 +244,7 @@
 					if (Number(n) > this.toBePaidPrice()) {
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						uni.showToast({
-							title: '待支付金额超过欠款,已自动修正!',
-							duration: 2000,
+							title: '金额输入错误!',
 							icon: "error"
 						});
 						this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
@@ -436,8 +389,8 @@
 					KHID: this.KHID,
 					POSID: this.POSID,
 					RYID: this.RYID,
-					BILL_TYPE: 'Z101', //门店现场销售单
-					XSTYPE: "1",
+					BILL_TYPE: this.BILL_TYPE, //销售类型
+					XSTYPE: this.XS_TYPE,//销售类型
 					XS_BILL: "", //退款时记录原单号
 					XS_POSID: "", //退款时记录原posid
 					XS_DATE: "", //退款时记录原销售日期
