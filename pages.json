@@ -1,16 +1,16 @@
 {
 	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/start/start",
 			"style": {
-				"navigationBarTitleText": "首页",
+				"navigationBarTitleText": "开始",
 				"enablePullDownRefresh": false
 			}
 		},
 		{
-			"path": "pages/start/start",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "开始",
+				"navigationBarTitleText": "首页",
 				"enablePullDownRefresh": false
 			}
 		},

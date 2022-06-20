@@ -7,11 +7,10 @@
 			<text>{{item.PRICE}}元/kg</text>-
 			<text>x{{item.QTY}}</text>
 		</view>
-
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
-		<button @click="MenuPage(2)">查询会员</button>
-		<button @click="Test(2)">测试一下啦</button>
+		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="Test(2)">测试一下</button>
 
 	</view>
 </template>
@@ -41,7 +40,9 @@
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
-				PayWayList: []
+				PayWayList: [],
+				BILL_TYPE: "Z101", //销售类型 默认为销售业务
+				XS_TYPE: "1" //销售类型 默认为销售业务
 			}
 		},
 		//方法初始化
@@ -73,6 +74,10 @@
 								obj.value = "WX";
 								obj.type = "WxPayService";
 							}
+							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
+								obj.value = "EXCESS";
+								obj.type = "ce";
+							}
 							that.PayWayList.push(obj);
 						}
 					}
@@ -80,7 +85,9 @@
 				})
 			},
 			MenuPage: function(e) {
-				if (e == 0) {
+				if (e == 0 || e == 1) {
+					this.BILL_TYPE = e == 0 ? "Z101" : "Z151";//区分是销售还是退款
+					this.XS_TYPE = e == 0 ? "1" : "2";//区分是销售还是退款
 					this.$store.commit('set-location', {
 						allow_discount_amount: "", //允许折扣金额
 						Discount: 0, //折扣金额
@@ -89,51 +96,18 @@
 						cashier: "", //收银员
 						date: "", //日期
 						company: "", //公司
-						Products: [{
-								PLID: "100",
-								BARCODE: '111111111',
-								SPID: "10101001",
-								UNIT: "个",
-								NAME: "黑森林",
-								PRICE: 0.01,
-								OPRICE: 0.01,
-								AMOUNT: 0.01,
-								QTY: 1
-							},
-							{
-								PLID: "101",
-								SPID: "10101002",
-								UNIT: "袋",
-								BARCODE: '2222222222',
-								NAME: "毛毛虫",
-								PRICE: 0.01,
-								OPRICE: 0.01,
-								AMOUNT: 0.01,
-								QTY: 1
-							},
-							{
-								PLID: "102",
-								SPID: "10101003",
-								UNIT: "袋",
-								BARCODE: '2222222223',
-								NAME: "虎皮蛋糕",
-								PRICE: 0.01,
-								OPRICE: 0.01,
-								AMOUNT: 0.01,
-								QTY: 1
-							}
-						], //商品信息
+						sale1_obj: {}, //001 主单 数据对象
+						sale2_arr: [], //002 商品 数据对象集合
+						Products: this.Products, //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
 						authCode: "", //卡券信息 or 支付授权码
-						out_trade_no_old: common.CreateBill(this.KHID, this.POSID)
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+						BILL_TYPE: this.BILL_TYPE,
+						XS_TYPE: this.XS_TYPE
 					});
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
-					})
-				} else if (e == 1) {
-					uni.navigateTo({
-						url: "../Refund/Refund"
 					})
 				} else if (e == 2) {
 					uni.navigateTo({
