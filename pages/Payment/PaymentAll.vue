@@ -1,11 +1,10 @@
-<link rel="stylesheet" href="../../style/basis.css" type="text/css" />
+
 <style type="text/css">
-	/* @import url(../../style/basis.css); */
-	@import url(@/style/payment/paymentall/basis.css);
+	@import url(@/static/style/payment/paymentall/basis.css);
 </style>
 <template>
 	<view class="content">
-		<view class="navmall"  v-if ="navmall">
+		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
@@ -27,11 +26,14 @@
 		</view>
 		<view class="right">
 			<view class="nav">
-				<view class="message">
-					<view class="imgs">
-						<image src="../../images/tongzhi.png" mode="widthFix"></image>
+				<view class="getback">
+					<image class="fh" src="../../images/fh.png" mode="widthFix"></image>
+					<view class="message">
+						<view class="imgs">
+							<image src="../../images/tongzhi.png" mode="widthFix"></image>
+						</view>
+						<text>门店有一条新的外卖配送单消息来啦...</text>
 					</view>
-					<text>门店有一条新的外卖配送单消息来啦...</text>
 				</view>
 				<view class="account">
 					<text>员工账号</text>
@@ -49,7 +51,8 @@
 				<p><text>折扣</text><text>{{Discount}}</text></p>
 				<p><text>已收</text><text>{{yPayAmount}}</text></p>
 				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><input type="text" :disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" /></p>
+				<p><text>还需支付</text><input type="text" :disabled="allowInput" value="" :key="domRefresh"
+						v-model="dPayAmount" /></p>
 			</view>
 
 			<view class="paydetails">
@@ -96,7 +99,8 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="top-zhifu">
-							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY' @click="clickPayType($event)">
+							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY'
+								@click="clickPayType($event)">
 								<image class="p-bg" src="../../images/xzbj-da.png"></image>
 								<p>聚合支付</p>
 								<label>
@@ -107,7 +111,8 @@
 								<text>支持支付宝、微信及会员卡支付</text>
 							</view>
 							<view class="r-zhifu">
-								<view :class="currentPayType === 'COUPON'? 'pattern curr selected':'pattern curr'" id="COUPON" @click="clickPayType($event)">
+								<view :class="currentPayType === 'COUPON'? 'pattern curr selected':'pattern curr'"
+									id="COUPON" @click="clickPayType($event)">
 									<view class="">
 										<p>电子券</p>
 										<text>coupons</text>
@@ -168,8 +173,8 @@
 		},
 		data() {
 			return {
-				navmall:false,
-				channel:"POS",
+				navmall: false,
+				channel: "POS",
 				YN_TotalPay: false,
 				allowInput: false,
 				refundShow: false,
@@ -186,31 +191,30 @@
 				PayAmount: 0,
 				Discount: 0,
 				Products: [],
-				PayWayList: [
+				PayWayList: [{
+						name: '支付宝',
+						value: 'ALI',
+						type: "AliPayService",
+						fkid: "ZF01",
+					},
 					{
-							name: '支付宝',
-							value: 'ALI',
-							type: "AliPayService",
-							fkid: "ZF01",
-						},
-						{
-							name: '微信',
-							value: 'WX',
-							type: "AliPayService",
-							fkid: "ZF02"
-						},
-						{
-							name: '券支付',
-							value: 'COUPON',
-							type: "qzf",
-							fkid: "ZF03"
-						},
-						{
-							name: '电子卡',
-							value: 'CARD',
-							type: "dzk",
-							fkid: "ZF04"
-						}
+						name: '微信',
+						value: 'WX',
+						type: "AliPayService",
+						fkid: "ZF02"
+					},
+					{
+						name: '券支付',
+						value: 'COUPON',
+						type: "qzf",
+						fkid: "ZF03"
+					},
+					{
+						name: '电子卡',
+						value: 'CARD',
+						type: "dzk",
+						fkid: "ZF04"
+					}
 				], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
@@ -267,12 +271,12 @@
 				hyinfo: getApp().globalData.hyinfo, //会员卡信息,
 				dPayList: [],
 				domRefresh: new Date().toString(),
-				query:null
+				query: null
 			}
 		},
 		watch: {
 			dPayAmount: function(n, o) {
-				if(Object.is(NaN,Number(n))){//判断输入的是否是数字
+				if (Object.is(NaN, Number(n))) { //判断输入的是否是数字
 					this.dPayAmount = o;
 					uni.showToast({
 						title: '输入的数字有误,已自动修正!',
@@ -305,12 +309,12 @@
 			},
 			authCode: function(n, o) {
 				this.currentPayInfo = this.PayWayList.find(i => i.value === this
-					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+			.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				if (n === "COUPON") //如果用券，则不再允许编辑待付款金额
 					this.allowInput = false;
-					// this.allowInput = true;
+				// this.allowInput = true;
 				else
 					this.allowInput = false;
 			}
@@ -719,7 +723,7 @@
 				if (!this.currentPayType) {
 					uni.showToast({
 						title: "未选择支付方式，请选择后再进行支付!",
-						icon:"error"
+						icon: "error"
 					});
 					return;
 				}
@@ -749,7 +753,7 @@
 					case "13":
 						return "WX";
 					default:
-						if(this.currentPayType === "COUPON")//判断当前支付方式是否为 券 支付，如果是券支付，则返回券 类型，否则是卡类型
+						if (this.currentPayType === "COUPON") //判断当前支付方式是否为 券 支付，如果是券支付，则返回券 类型，否则是卡类型
 							return "COUPON"
 						return "CARD";
 						break;
@@ -772,8 +776,8 @@
 						return {
 							spid: i.SPID,
 							name: i.NAME,
-							price: (Number(i.PRICE) * 100).toFixed(0),//单价
-							amount: (Number(i.AMOUNT) * 100).toFixed(0),//总金额
+							price: (Number(i.PRICE) * 100).toFixed(0), //单价
+							amount: (Number(i.AMOUNT) * 100).toFixed(0), //总金额
 							num: i.QTY
 						}
 					})
@@ -882,7 +886,7 @@
 			},
 			//初始化
 			paramInit: function() {
-				this.query = uni.createSelectorQuery().in(this);//获取元素选择器
+				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
@@ -948,8 +952,8 @@
 				}
 			},
 			//点击切换支付方式
-			clickPayType:function(e){
-				this.currentPayType = e.target.id;//小程序
+			clickPayType: function(e) {
+				this.currentPayType = e.target.id; //小程序
 			},
 			//查询重试
 			RetrySearch: function(e) {
@@ -991,8 +995,7 @@
 			this.priceCount();
 			this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 		},
-		mounted() {
-		}
+		mounted() {}
 	}
 </script>
 <style>
