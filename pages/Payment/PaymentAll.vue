@@ -999,6 +999,10 @@
 	}
 </script>
 <style>
+	.right {
+		width: 100%;
+	}
+
 	.uni-tip {
 		background: #fff;
 		width: 70%;
