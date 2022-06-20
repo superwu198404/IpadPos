@@ -1,7 +1,5 @@
-<link rel="stylesheet" href="../../style/basis.css" type="text/css" />
-<style type="text/css">
-	/* @import url(../../style/basis.css); */
-	@import url(@/style/payment/paymentall/basis.css);
+<style scopeed>
+	@import url(@/static/style/payment/paymentall/basis.css);
 </style>
 <template>
 	<view class="content">
@@ -27,11 +25,14 @@
 		</view>
 		<view class="right">
 			<view class="nav">
-				<view class="message">
-					<view class="imgs">
-						<image src="../../images/tongzhi.png" mode="widthFix"></image>
+				<view class="getback">
+					<image class="fh" src="../../images/fh.png" mode="widthFix"></image>
+					<view class="message">
+						<view class="imgs">
+							<image src="../../images/tongzhi.png" mode="widthFix"></image>
+						</view>
+						<text>门店有一条新的外卖配送单消息来啦...</text>
 					</view>
-					<text>门店有一条新的外卖配送单消息来啦...</text>
 				</view>
 				<view class="account">
 					<text>员工账号</text>
@@ -260,7 +261,7 @@
 			},
 			authCode: function(n, o) {
 				this.currentPayInfo = this.PayWayList.find(i => i.value === this
-					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+			.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				if (n === "COUPON") //如果用券，则不再允许编辑待付款金额

@@ -1,6 +1,6 @@
-
-uni-page-body, uni-page-refresh{
+uni-page-body, uni-page-refresh,page{
 	height: 100%;
+	background-color: #F5F4F8;
 }
 .content{
 	display: flex;
@@ -8,6 +8,15 @@ uni-page-body, uni-page-refresh{
 	height: 100%;
 	background-color: #F5F4F8;
 	padding-top:44px;
+}
+.getback{
+	display: flex;
+	justify-content: start;
+	align-items: center;
+}
+.fh{
+	width:20px;
+	margin-right: 50rpx;
 }
 .navmall{
 	height: 100%;
@@ -187,8 +196,7 @@ uni-page-body, uni-page-refresh{
 	min-height: 86%;
 	display: flex;
 	flex-direction: column;
-	/* justify-content: space-between; */
-	gap:10px;
+	justify-content: space-between;
 }
 .paymentlist .refund{
 	background-color: #fff;
