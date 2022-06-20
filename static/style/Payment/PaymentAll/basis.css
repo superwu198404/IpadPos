@@ -360,12 +360,12 @@ uni-page-body, uni-page-refresh,page{
 	color: #fff;
 	font-size: 38rpx;
 }
-.pays-bj .curr[seleced="true"]{
+.pays-bj .curr.selected{
 	border-color: #338869;
 	background: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);
 	position: relative;
 }
-.pays-bj .curr[seleced="true"] .p-bg{
+.pays-bj .curr.selected .p-bg{
 	position: absolute;
 	top:0;
 	right: 0;
@@ -374,7 +374,7 @@ uni-page-body, uni-page-refresh,page{
 	z-index: 0;
 	display: block;
 }
-.pays-bj .curr[seleced="true"] p,.pays-bj .curr[seleced="true"] text{
+.pays-bj .curr.selected p,.pays-bj .curr.selected text{
 	color: #338869;
 }
 .pays-bj .p-bg{

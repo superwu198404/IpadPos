@@ -1,4 +1,4 @@
-<style type="text/css">
+<style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 </style>
 <template>
