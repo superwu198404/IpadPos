@@ -1,4 +1,3 @@
-
 <style type="text/css">
 	@import url(@/static/style/payment/paymentall/basis.css);
 </style>
