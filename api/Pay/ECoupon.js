@@ -75,7 +75,7 @@ var CouonPay = function() {
 			}
 		}
 	}
-	var CreateData1 = function(t, m, d) {
+	var CreateData1 = function(t, d) {
 		return {
 			code: true,
 			http: {
@@ -114,6 +114,7 @@ var CouonPay = function() {
 				discount = data.ZZCPXSDISC;
 				yn_zq = data.ZZKSZQ;
 				yn_lp = data.ZZKSZQ == 'Y' ? 'N' : 'Y';
+				yn_jl = data.ZZIFJLQ;
 				return CreateData("支付中...", "Payment", body);
 			},
 			function(res) {
