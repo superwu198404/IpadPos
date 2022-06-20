@@ -39,7 +39,29 @@
 				sale2_arr: [],
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
-				Products: [], //商品信息
+				Products: [{
+				            PLID: "100",
+				            BARCODE: '111111111',
+				            SPID: "10101001",
+				            UNIT: "个",
+				            NAME: "黑森林",
+				            PRICE: 0.01,
+				            OPRICE: 0.01,
+				            AMOUNT: 0.01,
+				            QTY: 1
+				          },
+				          {
+				            PLID: "101",
+				            SPID: "10101002",
+				            UNIT: "袋",
+				            BARCODE: '2222222222',
+				            NAME: "毛毛虫",
+				            PRICE: 0.01,
+				            OPRICE: 0.01,
+				            AMOUNT: 489,
+				            QTY: 2
+				          }
+				        ],  //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1" //销售类型 默认为销售业务

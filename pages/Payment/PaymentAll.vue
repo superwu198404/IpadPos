@@ -736,6 +736,7 @@
 				}
 				let payAfter = this.PayDataAssemble();
 				console.log("支付单号：", this.out_trade_no);
+				console.log(JSON.stringify(payAfter))
 				handlePayment.PaymentAll(payAfter, (function(result) {
 					uni.showToast({
 						title: "支付成功!"
@@ -862,7 +863,7 @@
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
-				// this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_trade_no = this.out_trade_no_old; //子单号

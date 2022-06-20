@@ -75,7 +75,8 @@ var CouonPay = function() {
 			}
 		}
 	}
-	var CreateData1 = function(t, m, d) {
+	var CreateData1 = function(t, d) {
+		console.log(d);
 		return {
 			code: true,
 			http: {
