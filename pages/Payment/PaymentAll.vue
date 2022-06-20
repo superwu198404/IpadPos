@@ -26,7 +26,7 @@
 		<view class="right">
 			<view class="nav">
 				<view class="getback">
-					<image class="fh" src="../../images/fh.png" mode="widthFix"></image>
+					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<view class="message">
 						<view class="imgs">
 							<image src="../../images/tongzhi.png" mode="widthFix"></image>
@@ -181,7 +181,7 @@
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
-				CanBack: false, //是否允许退出
+				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -194,7 +194,7 @@
 				PayWayList: [], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
-				PayList: [],
+				PayList: [], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
 				PaidList: [], //已支付商品信息
 				RefundList: [], //退款信息
 				authCode: "", //支付授权码
@@ -253,7 +253,8 @@
 				} else { //完成支付，推送数据
 					this.YN_TotalPay = true;
 					this.CanBack = true;
-					this.$store.commit('set-orders', this.PayList);
+					// this.$store.commit('set-orders', this.PayList);
+					this.CreateDBData();
 				}
 			},
 			yPayAmount: function(n, o) {
@@ -261,12 +262,12 @@
 			},
 			authCode: function(n, o) {
 				this.currentPayInfo = this.PayWayList.find(i => i.value === this
-			.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				if (n === "COUPON") //如果用券，则不再允许编辑待付款金额
-					this.allowInput = false;
-				// this.allowInput = true;
+					// this.allowInput = false;
+					this.allowInput = true;
 				else
 					this.allowInput = false;
 			}
@@ -297,25 +298,6 @@
 					})
 				}
 
-			},
-			//返回事件
-			onBackPress(e) {
-				console.log("检测是否能返回：", this.PayList.length + this.dPayAmount + this.CanBack)
-				if (this.PayList.length > 0 && this.dPayAmount > 0) { //如果发起支付了，要判断支付完毕没有
-					if (!this.CanBack) {
-						uni.showToast({
-							title: "未支付完成",
-							icon: "error"
-						})
-						return true; //返回true阻止默认操作
-					}
-				}
-				if (this.YN_TotalPay) { //标注是否已经完成支付,已经完成需要携带支付参数
-					uni.$emit('updateData', this.PayList)
-					uni.navigateBack({
-						delta: 1
-					})
-				}
 			},
 			QUsed: function(d, b, func) {
 				//继续支付   扣掉券的信息
@@ -442,7 +424,7 @@
 						DISC: 0, //手工折扣额
 						YN_CXDISC: 'N',
 						CXDISC: 0,
-						YAER: new Date().getFullYear(),
+						// YAER: new Date().getFullYear(),
 						MONTH: new Date().getMonth() + 1,
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
 							new Date().getDay()),
@@ -754,8 +736,8 @@
 				}
 				let payAfter = this.PayDataAssemble();
 				console.log("支付单号：", this.out_trade_no);
+				console.log(JSON.stringify(payAfter))
 				handlePayment.PaymentAll(payAfter, (function(result) {
-					debugger;
 					uni.showToast({
 						title: "支付成功!"
 					});
@@ -763,15 +745,54 @@
 						i.price /= 100;
 						return i;
 					}); //把支付信息贴出来
-					this.yPayAmount += (payAfter.money / 100); //把支付成功部分金额加上
+					this.orderGenarator(payAfter, result); //支付记录处理
+				}).bind(this))
+			},
+			//创建支付记录
+			orderGenarator: function(payload, result) {
+				if (this.currentPayType === "COUPON") { //如果是券支付
+					let couponAmount = result.data.money; //获取券的面额
+					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS");
+					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
+						this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
+						let orderBrother = [{ //券抵消金额单号
+								fkid: this.currentPayInfo?.fkid ?? "",
+								bill: payload.out_trade_no,
+								name: this.currentPayInfo?.name ?? "",
+								amount: (payload.money / 100).toFixed(2),
+								no: this.PayList.length
+							},
+							{ //弃用金额单号
+								fkid: excessInfo?.fkid ?? "",
+								bill: payload.out_trade_no, // 弃用金额单号（和主要抵消金额单号保持一致）
+								name: excessInfo?.name ?? "", // 弃用金额名称
+								amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
+								no: this.PayList.length + 1
+							}
+						];
+						this.PayList = this.PayList.concat(orderBrother); // 推入支付记录数组
+					} else //如果券面额未小于
+					{
+						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
+						this.PayList.push({ //每支付成功一笔，则往此数组内存入一笔记录
+							fkid: this.currentPayInfo?.fkid ?? "",
+							bill: payload.out_trade_no,
+							name: this.currentPayInfo?.name ?? "",
+							amount: (couponAmount / 100).toFixed(2),
+							no: this.PayList.length
+						});
+					}
+				} else //如果是聚合支付
+				{
+					this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push({ //每支付成功一笔，则往此数组内存入一笔记录
 						fkid: this.currentPayInfo?.fkid ?? "",
-						bill: payAfter.out_trade_no,
+						bill: payload.out_trade_no,
 						name: this.currentPayInfo?.name ?? "",
-						amount: (payAfter.money / 100).toFixed(2),
+						amount: (payload.money / 100).toFixed(2),
 						no: this.PayList.length
 					});
-				}).bind(this))
+				}
 			},
 			//积分操作
 			scoreConsume: function() {
@@ -842,13 +863,13 @@
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
-				// this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_trade_no = this.out_trade_no_old; //子单号
 				//this.authCode = prev_page_param.authCode;
-				this.sale1_obj = prev_page_param.sale1_obj;
-				this.sale2_arr = prev_page_param.sale2_arr;
+				// this.sale1_obj = prev_page_param.sale1_obj;
+				// this.sale2_arr = prev_page_param.sale2_arr;
 			},
 			//总金额计算
 			priceCount: function() {
@@ -905,7 +926,7 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(e) {
-				this.currentPayType = e.target.id; //小程序
+				this.currentPayType = e.currentTarget.id; //小程序
 			},
 			//查询重试
 			RetrySearch: function(e) {
@@ -937,6 +958,10 @@
 						that.createPayData(null, e);
 					})
 				}
+			},
+			//返回上个页面
+			backPrevPage: function() {
+				uni.navigateBack();
 			}
 		},
 		created() {
