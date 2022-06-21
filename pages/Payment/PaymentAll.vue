@@ -1079,8 +1079,10 @@
 						icon: "error"
 					})
 				} else {
+					console.log("待付款：",that.debt);
+					console.log("券集合：",JSON.stringify(that.coupon_list));
 					let arr = that.coupon_list.filter(function(item, index, arr) {
-						return item.limitmoney <= that.debt //筛选下可支付的券
+						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
 					})
 					that.coupon_list = arr;
 					that.coupons = !that.coupons;
