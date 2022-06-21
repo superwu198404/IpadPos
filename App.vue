@@ -5,7 +5,7 @@
 		globalData: {
 			appid: 'keengee',
 			kquser: "CSKQ",
-			brand: "ZY",
+			brand: "KG",
 			store: {
 				GSID: "027001",
 				KHID: "K200QTD005",
@@ -20,17 +20,19 @@
 				MERID: "999990053990001",
 				deviceno: "13001001"
 			},
-			hyinfo: null
+			hyinfo: {
+				// hyId: "1000311640"
+			}
 		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
 		onShow: function() {
 			console.log('App Show')
-			
+
 			//1min执行一次销售单传输
 			// int = setInterval(() => {
-			 	//common.TransLiteData();
+			//common.TransLiteData();
 			// }, 1000 * 60); 
 		},
 		onHide: function() {
