@@ -328,6 +328,16 @@ var WxPay = function() {
 			// });
 		});
 	}
+
+	//查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
+	this.RefundAll = function(body, catchFunc, finallyFunc) {
+		Req.asyncFuncArr1(CreateData("查询退款中...", "QueryRefund", body), [
+			function(res) {
+				util.sleep(5000);
+				return CreateData("退款中...", "Refund", body);
+			}
+		], catchFunc,null, finallyFunc);
+	}
 }
 var WxPayment = function() {
 	return new WxPay();

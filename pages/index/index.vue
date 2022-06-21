@@ -45,22 +45,22 @@
 						SPID: "10101001",
 						UNIT: "个",
 						NAME: "黑森林",
-						PRICE: 0.4,
-						OPRICE: 0.4,
-						AMOUNT: 0.4,
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
 						QTY: 1
 					},
-					{
-						PLID: "101",
-						SPID: "10101002",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "毛毛虫",
-						PRICE: 0.3,
-						OPRICE: 0.3,
-						AMOUNT: 0.6,
-						QTY: 2
-					}
+					// {
+					// 	PLID: "101",
+					// 	SPID: "10101002",
+					// 	UNIT: "袋",
+					// 	BARCODE: '2222222222',
+					// 	NAME: "毛毛虫",
+					// 	PRICE: 0.01,
+					// 	OPRICE: 0.01,
+					// 	AMOUNT: 0.01,
+					// 	QTY: 2
+					// }
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
@@ -109,7 +109,7 @@
 			MenuPage: function(e) {
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
-					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
+					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款（1是支付，2是退款）
 					this.$store.commit('set-location', {
 						allow_discount_amount: "", //允许折扣金额
 						Discount: 0, //折扣金额
@@ -120,11 +120,13 @@
 						company: "", //公司
 						sale1_obj: {}, //001 主单 数据对象
 						sale2_arr: [], //002 商品 数据对象集合
+						sale3_arr:this.sale3_arr,
 						Products: this.Products, //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
 						authCode: "", //卡券信息 or 支付授权码
-						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),//生成订单号
+						out_refund_no:common.CreateBill(this.KHID, this.POSID),//生成退款单号
 						BILL_TYPE: this.BILL_TYPE,
 						XS_TYPE: this.XS_TYPE
 					});
