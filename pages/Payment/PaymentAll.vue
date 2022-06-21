@@ -528,11 +528,16 @@
 				console.log(exeSql);
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
+					console.log("订单创建成功：", res);
+					uni.showToast({
+						title: "销售单创建成功"
+					})
 				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
+					console.log("订单创建失败：", err);
+					uni.showToast({
+						title: "销售单创建失败",
+						icon: "error"
+					})
 				});
 			},
 			//查询订单数据

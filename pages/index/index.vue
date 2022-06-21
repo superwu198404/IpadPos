@@ -10,8 +10,8 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
-		<button @click="Test(2)">测试一下</button>
-
+		<button @click="MenuPage(3)">返回调试</button>
+		<!-- <button @click="Test(2)">测试一下</button> -->
 	</view>
 </template>
 <script>
@@ -137,6 +137,9 @@
 					uni.navigateTo({
 						url: "../hyinfo/index"
 					})
+				}
+				else if (e == 3) {
+					uni.navigateBack();
 				}
 			},
 			//创建订单数据
@@ -303,18 +306,19 @@
 		//接收上个页面传入的参数
 		onLoad(option) {
 			//this.change("world");
+			//获取支付方式
 			this.GetPayWay();
 			console.info("onLoad");
 		},
 		onShow() {
-			let that = this;
-			that.PayList = this.$store.state.orders; //全局参数
-			console.log('监听支付页面回传的支付参数为：');
-			console.log(that.PayList);
-			//创建订单数据
-			if (that.PayList && that.PayList.length > 0) {
-				this.CreateDBData()
-			}
+			// let that = this;
+			// that.PayList = this.$store.state.orders; //全局参数
+			// console.log('监听支付页面回传的支付参数为：');
+			// console.log(that.PayList);
+			// //创建订单数据
+			// if (that.PayList && that.PayList.length > 0) {
+			// 	this.CreateDBData()
+			// }
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
