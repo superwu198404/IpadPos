@@ -40,28 +40,28 @@
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [{
-				            PLID: "100",
-				            BARCODE: '111111111',
-				            SPID: "10101001",
-				            UNIT: "个",
-				            NAME: "黑森林",
-				            PRICE: 0.01,
-				            OPRICE: 0.01,
-				            AMOUNT: 0.01,
-				            QTY: 1
-				          },
-				          {
-				            PLID: "101",
-				            SPID: "10101002",
-				            UNIT: "袋",
-				            BARCODE: '2222222222',
-				            NAME: "毛毛虫",
-				            PRICE: 0.01,
-				            OPRICE: 0.01,
-				            AMOUNT: 489,
-				            QTY: 2
-				          }
-				        ],  //商品信息
+						PLID: "100",
+						BARCODE: '111111111',
+						SPID: "10101001",
+						UNIT: "个",
+						NAME: "黑森林",
+						PRICE: 0.4,
+						OPRICE: 0.4,
+						AMOUNT: 0.4,
+						QTY: 1
+					},
+					{
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "毛毛虫",
+						PRICE: 0.3,
+						OPRICE: 0.3,
+						AMOUNT: 0.6,
+						QTY: 2
+					}
+				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1" //销售类型 默认为销售业务
@@ -108,8 +108,8 @@
 			},
 			MenuPage: function(e) {
 				if (e == 0 || e == 1) {
-					this.BILL_TYPE = e == 0 ? "Z101" : "Z151";//区分是销售还是退款
-					this.XS_TYPE = e == 0 ? "1" : "2";//区分是销售还是退款
+					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
+					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
 					this.$store.commit('set-location', {
 						allow_discount_amount: "", //允许折扣金额
 						Discount: 0, //折扣金额
@@ -256,16 +256,14 @@
 				// console.log(sql4.sqlliteArr);
 
 				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:")
-				console.log(exeSql);
+				console.log("sqlite待执行sql:", exeSql);
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
-				});
+						console.log("订单创建成功", res);
+					},
+					function(err) {
+						console.log("订单创建失败", err);
+					});
 			},
 			Test: function(e) {
 				Req.asyncFunc({
