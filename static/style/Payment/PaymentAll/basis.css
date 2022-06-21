@@ -11,6 +11,7 @@ page {
 	height: 100%;
 	background-color: #F5F4F8;
 	padding-top: 44px;
+	box-sizing: border-box;
 }
 
 .getback {
@@ -148,17 +149,27 @@ page {
 }
 
 .hh {
-	padding: 16rpx 2%;
+	padding: 24rpx 2%;
 	font-size: 36rpx;
 	font-weight: 700;
 	display: flex;
-	justify-content: start;
+	justify-content: space-between;
 	align-items: center;
 }
 
 .hh image {
 	width: 40rpx;
 	margin-right: 12rpx;
+}
+
+.hh button {
+	background-color: #006B44;
+	color: #fff;
+	height: 50rpx;
+	line-height: 50rpx;
+	font-size: 26rpx;
+	margin: 0;
+	border-radius: 50rpx;
 }
 
 .amounts {
@@ -227,18 +238,17 @@ page {
 }
 
 .paymentlist {
-    min-height: 96%;
-    max-height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    /* justify-content: space-between;*/
+	min-height: 96%;
+	max-height: 100%;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	/* justify-content: space-between;*/
 }
 
 .paymentlist .refund {
 	background-color: #fff;
 	border-top: 1px solid #D3D3D3;
-	margin-top: 20px;
 	border-radius: 0;
 	min-height: 50%;
 }
@@ -258,7 +268,10 @@ page {
 .paylists {
 	max-height: 80%;
 	overflow: auto;
-	/* padding-bottom: 150rpx; */
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px 0px;
 }
 
 .Methods {
@@ -266,7 +279,6 @@ page {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 40rpx 0;
 }
 
 .payicon {
@@ -298,24 +310,31 @@ page {
 .choosepays {
 	width: 68%;
 	background-color: #fff;
-	border-radius: 10px;
+	border-radius: 5px;
 	padding: 1.5%;
-	height: 95%;
+	height: 100%;
 	margin-left: 2%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	box-sizing: border-box;
 }
 
 .pays-bj {
 	width: 100%;
-	height: 88%;
 	overflow: auto;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4.5%;
 }
 
 .top-zhifu {
 	display: flex;
 	flex-wrap: wrap;
 	width: 100%;
-	margin-bottom: 3.5%;
 	height: 60%;
+	justify-content: center;
 }
 
 .polys {
@@ -362,6 +381,9 @@ page {
 .r-zhifu {
 	width: 48%;
 	margin-left: 3%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 .pattern {
@@ -375,9 +397,7 @@ page {
 	padding: 0 6%;
 }
 
-.pattern:nth-child(1) {
-	margin-bottom: 6%;
-}
+.pattern:nth-child(1) {}
 
 .pattern p {
 	font-size: 40rpx;
@@ -402,12 +422,14 @@ page {
 
 .bom-zhifu {
 	display: flex;
+	justify-content: center;
 }
 
 .bom-zhifu .pattern {
 	width: 48%;
 	height: 100%;
-	padding: 5.5% 3%;
+	padding: 3.4% 3%;
+	box-sizing: border-box;
 }
 
 .bom-zhifu .pattern {
@@ -426,6 +448,7 @@ page {
 	background-color: #42B14B;
 	color: #fff;
 	font-size: 38rpx;
+	width: 98.5%;
 }
 
 .pays-bj .curr.selected {
@@ -458,4 +481,158 @@ page {
 	width: 0;
 	height: 0;
 	color: transparent;
+}
+
+.boxs {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+}
+
+.coupons {
+	background-color: #fff;
+	border-radius: 20rpx;
+	width: 86%;
+	min-height: 40%;
+	max-height: 90%;
+	overflow: auto;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding-bottom: 2%;
+}
+
+.coupons .h4 {
+	line-height: 80rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1% 3% 0;
+	font-size: 32rpx;
+	font-weight: 700;
+}
+
+.coupons .h4 button {
+	font-size: 40rpx;
+	margin: 0;
+	background-color: #fff;
+	border-color: #fff;
+}
+
+uni-button:after {
+	border: none;
+}
+
+.coupons .uls {
+	padding: 0 2%;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.coupons .uls .lis {
+	width: 48%;
+	margin: 1% 1% 2%;
+	display: flex;
+}
+
+.coupons .uls .lis .banyuan {
+	width: 22rpx;
+	height: 100%;
+	margin-left: -1px;
+}
+
+.voucher {
+	background-color: #42B14B;
+	color: #fff;
+	width: 30%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	border-radius: 14rpx 0 0 14rpx;
+}
+
+.voucher view {
+	font-size: 80rpx;
+	font-weight: 700;
+}
+
+.voucher view text {
+	font-size: 40rpx;
+}
+
+.voucher .datas {
+	font-size: 26rpx;
+}
+
+.coupon-dets {
+	width: 80%;
+	background-color: #F0F9F1;
+	border-radius: 0 14rpx 14rpx 0;
+}
+
+.coupon-dets image {
+	width: 26rpx;
+}
+
+.directions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 1% 4% 1% 2%;
+	border-top: 1rpx solid #D6EED8;
+	padding: 3% 2% 2%;
+	color: #474747;
+	font-size: 24rpx;
+	position: relative;
+}
+
+.directions .bg {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+
+.directions view image {
+	width: 20rpx;
+	margin-left: 10rpx;
+}
+
+.directions button {
+	margin: 0;
+	height: 58rpx;
+	line-height: 58rpx;
+	font-size: 26rpx;
+	background: none;
+	border-radius: 40rpx;
+	border: 1px solid #006B44;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #006B44;
+}
+
+.directions button image {
+	margin-left: 8rpx;
+}
+
+.limit {
+	padding: 2% 4% 3% 3%;
+}
+
+.limit .h3 {
+	font-size: 34rpx;
+	font-weight: 700;
+	line-height: 80rpx;
+}
+
+.limit text {
+	color: #B0B0B0;
+	font-size: 26rpx;
 }
