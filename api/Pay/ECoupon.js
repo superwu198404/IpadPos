@@ -238,6 +238,22 @@ var CouonPay = function() {
 			// });
 		});
 	}
+
+	//查询-退款（券的默认成功，此处是摆设）
+	this.RefundAll = function(body, func) {
+		Req.asyncFuncArr1(CreateData("查询退款中...", "QueryRefund", body), [
+			function(res) {
+				util.sleep(5000);
+				return CreateData("退款中...", "Refund", body);
+			}
+		], function(err) {
+			console.log("退款接口返回的错误信息：", err)
+			// uni.showToast({
+			// 	icon: "error",
+			// 	title: err.msg
+			// })
+		});
+	}
 }
 var CouponPayment = function() {
 	return new CouonPay();

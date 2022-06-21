@@ -84,7 +84,7 @@ var CardPay = function() {
 	 * 包含支付和查询以及撤销的支付体
 	 */
 	this.PaymentAll = function(body, func) {
-		Req.asyncFuncArr1(CreateData("支付中...", "Payment", body), [
+		Req.asyncFuncChain(CreateData("支付中...", "Payment", body), [
 			function(res) {
 				util.sleep(5000);
 				return CreateData("查询中...", "QueryPayment", {
@@ -191,6 +191,16 @@ var CardPay = function() {
 			// 	out_trade_no: body.out_trade_no
 			// });
 		});
+	}
+	
+	//查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
+	this.RefundAll = function(body, catchFunc, finallyFunc) {
+		Req.asyncFuncArr1(CreateData("查询退款中...", "QueryPayment", body), [
+			function(res) {
+				util.sleep(5000);
+				return CreateData("退款中...", "Refund", body);
+			}
+		], catchFunc,null, finallyFunc);
 	}
 }
 var CardPayment = function() {

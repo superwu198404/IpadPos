@@ -328,21 +328,44 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
  * @param {*} catchfun 
  * @param {*} otherfun 
  */
+var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
+	var callbacklist = [];
+	callbacklist = callbackfunArr;
+	let res = pm_data;
+	for (var i = 0; i <= callbacklist.length; i++) {
+		if (res && res.http) {
+			showloding(res.http.load, res.http.title);
+			res = await httpFunc(res);//发起请求
+			if (res && !res.code) {//如果请求失败，则调用配置的catch函数
+				def(catchfun, res);
+			}
+		}
+		showloding(res.load, res.msg);
+		res = await forPromise(callbacklist[i], res);
+		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
+			def(otherfun, res);
+			break;
+		}
+	}
+	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
+	if (finallyfun) def(finallyfun, res);
+}
+
 var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
 	var callbacklist = [];
 	callbacklist = callbackfunArr;
 	let res = pm_data;
-	for (var i = 0; i < callbacklist.length; i++) {
+	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			showloding(res.http.load, res.http.title);
-			res = await httpFunc(res);
-			if (res && !res.code) {
+			res = await httpFunc(res);//发起请求
+			if (res && !res.code) {//如果请求失败，则调用配置的catch函数
 				def(catchfun, res);
 				break;
 			}
 		}
 		showloding(res.load, res.msg);
-		res = await forPromise(callbacklist[i], res)
+		res = await forPromise(callbacklist[i], res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
 			break;
@@ -398,5 +421,6 @@ export default {
 	asyncFuncOne,
 	asyncFuncArr,
 	asyncFuncArr1,
+	asyncFuncChain,
 	getResData
 }

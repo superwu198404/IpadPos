@@ -131,11 +131,13 @@
 						company: "", //公司
 						sale1_obj: {}, //001 主单 数据对象
 						sale2_arr: [], //002 商品 数据对象集合
+						sale3_arr:this.sale3_arr,
 						Products: this.Products, //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
 						authCode: "", //卡券信息 or 支付授权码
 						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+						out_refund_no:common.CreateBill(this.KHID, this.POSID),//生成退款单号
 						BILL_TYPE: this.BILL_TYPE,
 						XS_TYPE: this.XS_TYPE
 					});
