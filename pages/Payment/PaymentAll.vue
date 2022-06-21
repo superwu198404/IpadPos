@@ -223,7 +223,7 @@
 				dPayList: [],
 				domRefresh: new Date().toString(),
 				query: null,
-				BILL_TYPE:"",
+				BILL_TYPE: "",
 				XS_TYPE: ""
 			}
 		},
@@ -373,7 +373,7 @@
 					POSID: this.POSID,
 					RYID: this.RYID,
 					BILL_TYPE: this.BILL_TYPE, //销售类型
-					XSTYPE: this.XS_TYPE,//销售类型
+					XSTYPE: this.XS_TYPE, //销售类型
 					XS_BILL: "", //退款时记录原单号
 					XS_POSID: "", //退款时记录原posid
 					XS_DATE: "", //退款时记录原销售日期
@@ -485,11 +485,16 @@
 				console.log(exeSql);
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
+					console.log("订单创建成功：", res);
+					uni.showToast({
+						title: "销售单创建成功"
+					})
 				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
+					console.log("订单创建失败：", err);
+					uni.showToast({
+						title: "销售单创建失败",
+						icon: "error"
+					})
 				});
 			},
 			//查询订单数据
@@ -863,7 +868,7 @@
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
-				this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_trade_no = this.out_trade_no_old; //子单号

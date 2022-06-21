@@ -431,13 +431,6 @@ var mySqllite = function() {
 		console.log("准备执行sql：", sql);
 		retcode = await exec(sql);
 		console.log("sql执行结果：", retcode);
-		// retcode.catch((e) => {
-		// 	console.log(`执行sql发生异常，异常:${JSON.stringify((e))}`)
-		// });
-		//console.log(`sql执行:${Json.stringify(retcode)}`)
-		//console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
-		//console.log("即将关闭数据库...")
-		//await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);
 			await close();
