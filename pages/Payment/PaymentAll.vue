@@ -42,7 +42,10 @@
 				</view>
 			</view>
 			<view class="hh">
-				<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
+				<view>
+					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
+				</view>
+				<button @click="coupons = !coupons">+ 添加卡券</button>
 			</view>
 			<view class="amounts">
 				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
@@ -53,13 +56,12 @@
 				<p><text>还需支付</text><input type="number" :disabled="allowInput" value="" :key="domRefresh"
 						v-model="dPayAmount" /></p>
 			</view>
-
 			<view class="paydetails">
 				<view class="pay-sum">
 					<view class="settleds">
 						<view class="paymentlist">
-							<h3>已结算</h3>
-							<view class="sets-list">
+							<h3 v-if="!isRefund">已结算</h3>
+							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists">
 									<view class="Methods" v-for="(paid, index) in PayList">
 										<view class="payicon">
@@ -80,10 +82,22 @@
 								</view>
 							</view>
 							<!-- 退款 -->
-							<h3 v-if="refundShow">已退款</h3>
-							<view class="sets-list refund" v-if="refundShow">
+							<h3 v-if="isRefund">待退款</h3>
+							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods" v-for="(refund, index) in RefundList">
+										<view class="payicon">
+											<image src="../../images/dianziquan.png" mode="widthFix"></image>
+											{{ refund.name }}
+										</view>
+										<text>-{{refund.amount}}</text>
+									</view>
+								</view>
+							</view>
+							<h3 v-if="isRefund">已退款</h3>
+							<view class="sets-list refund" v-if="isRefund">
+								<view class="paylists">
+									<view class="Methods" v-for="(refund, index) in RefundList.filter(i => !i.fail)">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
@@ -146,10 +160,35 @@
 						</view>
 					</view>
 					</p>
-					<button class="btn gopays" @click="Pay()">支 付</button>
+					<button class="btn gopays" @click="isRefund ? Pay() : Refund()">{{ isRefund ? "退 款":"支 付"}}</button>
 				</view>
 			</view>
 		</view>
+		<view class="boxs" v-if="coupons">
+		    <view class="coupons">
+		    <view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = false">×</button></view>
+		    <view class="uls">
+		      <view class="lis">
+		        <view class="voucher">
+		          <view><text>￥</text>50</view>
+		          <text>满189可用</text>
+		        </view>
+		        <image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+		        <view class="coupon-dets">
+		          <view class="limit">
+		            <view class="h3">50元蛋糕券</view>
+		            <text class="datas">2021-11-17 至 2022-12-31</text>
+		          </view>
+		          <view class="directions">
+		            <image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+		            <view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image></view>
+		            <button>门店核销 <image src="../../images/ewm.png" mode="widthFix"></image></button>
+		          </view>
+		        </view>
+		      </view>
+		    </view>
+		    </view>
+		  </view>
 	</view>
 	</view>
 </template>
@@ -172,11 +211,12 @@
 		},
 		data() {
 			return {
+				coupons:false,//卡券弹窗
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
 				allowInput: false,
-				refundShow: false,
+				isRefund: true, //是否是退款模式
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
@@ -223,7 +263,7 @@
 				dPayList: [],
 				domRefresh: new Date().toString(),
 				query: null,
-				BILL_TYPE:"",
+				BILL_TYPE: "",
 				XS_TYPE: ""
 			}
 		},
@@ -373,7 +413,7 @@
 					POSID: this.POSID,
 					RYID: this.RYID,
 					BILL_TYPE: this.BILL_TYPE, //销售类型
-					XSTYPE: this.XS_TYPE,//销售类型
+					XSTYPE: this.XS_TYPE, //销售类型
 					XS_BILL: "", //退款时记录原单号
 					XS_POSID: "", //退款时记录原posid
 					XS_DATE: "", //退款时记录原销售日期
@@ -555,18 +595,6 @@
 					})
 				}
 			},
-			TestDB: function() {
-				let sql = [
-					"update SALE003 set amt='0.01' where bill='K210QTD00112022516175759256' and no='1')"
-				];
-				db.get().executeDml(sql, "订单创建中", function(res) {
-					console.log("订单创建成功");
-					console.log(res);
-				}, function(err) {
-					console.log("订单创建失败");
-					console.log(err);
-				});
-			},
 			//轮询方法
 			circleQuery: function(t, e, func1) {
 				let that = this;
@@ -677,6 +705,20 @@
 						title: "订单已完成支付!"
 					});
 				}
+			},
+			//退款数据处理
+			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
+				this.RefundList = [
+					{fkid:"1",bill:"aliy",name:"支付宝",amount:"0.02",no:"1",fail:true},
+					{fkid:"2",bill:"wx",name:"微信",amount:"0.01",no:"2"},
+					{fkid:"3",bill:"aliy",name:"支付宝",amount:"0.02",no:"3",fail:true},
+					{fkid:"4",bill:"wx",name:"微信",amount:"0.01",no:"4"},
+					{fkid:"5",bill:"aliy",name:"支付宝",amount:"0.02",no:"5"}
+				];
+			},
+			//退款操作
+			Refund: function() {
+
 			},
 			//支付类型判断
 			PayTypeJudgment: function() {
@@ -863,13 +905,13 @@
 				var prev_page_param = this.$store.state.location;
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
-				this.PayWayList = prev_page_param.PayWayList;//此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_trade_no = this.out_trade_no_old; //子单号
+				this.isRefund = this.isRefund ?? false; //默认为付款结算
+				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
-				// this.sale1_obj = prev_page_param.sale1_obj;
-				// this.sale2_arr = prev_page_param.sale2_arr;
 			},
 			//总金额计算
 			priceCount: function() {
