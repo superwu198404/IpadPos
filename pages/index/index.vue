@@ -62,16 +62,16 @@
 						QTY: 2
 					},
 					{
-							PLID: "102",
-							BARCODE: '11111135454111',
-							SPID: "10201002",
-							UNIT: "个",
-							NAME: "慕斯",
-							PRICE: 1.05,
-							OPRICE: 1.05,
-							AMOUNT: 1.05,
-							QTY: 1
-						}
+						PLID: "102",
+						BARCODE: '11111135454111',
+						SPID: "10201002",
+						UNIT: "个",
+						NAME: "慕斯",
+						PRICE: 1.05,
+						OPRICE: 1.05,
+						AMOUNT: 1.05,
+						QTY: 1
+					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
@@ -91,25 +91,26 @@
 							let obj = {};
 							obj.name = res.msg[i].SNAME;
 							obj.fkid = res.msg[i].FKID;
+							obj.type = res.msg[i].JKSNAME;
 							if (res.msg[i].JKSNAME == 'SZQ') {
 								obj.value = "COUPON";
-								obj.type = "qzf";
+								//obj.type = "qzf";
 							}
 							if (res.msg[i].JKSNAME == 'ZFB20') {
 								obj.value = "ALI";
-								obj.type = "AliPayService";
+								//obj.type = "AliPayService";
 							}
 							if (res.msg[i].JKSNAME == 'PAYCARD') {
 								obj.value = "CARD";
-								obj.type = "dzk";
+								//obj.type = "dzk";
 							}
 							if (res.msg[i].JKSNAME == 'WX_CLZF') {
 								obj.value = "WX";
-								obj.type = "WxPayService";
+								//obj.type = "WxPayService";
 							}
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.value = "EXCESS";
-								obj.type = "ce";
+								//obj.type = "ce";
 							}
 							that.PayWayList.push(obj);
 						}
@@ -131,13 +132,13 @@
 						company: "", //公司
 						sale1_obj: {}, //001 主单 数据对象
 						sale2_arr: [], //002 商品 数据对象集合
-						sale3_arr:this.sale3_arr,
+						sale3_arr: this.sale3_arr,
 						Products: this.Products, //商品信息
 						PayWayList: this.PayWayList, //支付方式
 						hyinfo: {}, //会员信息
 						authCode: "", //卡券信息 or 支付授权码
 						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
-						out_refund_no:common.CreateBill(this.KHID, this.POSID),//生成退款单号
+						out_refund_no: common.CreateBill(this.KHID, this.POSID), //生成退款单号
 						BILL_TYPE: this.BILL_TYPE,
 						XS_TYPE: this.XS_TYPE
 					});
@@ -148,8 +149,7 @@
 					uni.navigateTo({
 						url: "../hyinfo/index"
 					})
-				}
-				else if (e == 3) {
+				} else if (e == 3) {
 					uni.navigateBack();
 				}
 			},

@@ -206,6 +206,7 @@
 	import _ali from '@/api/Pay/AliPay.js';
 	import _card from '@/api/Pay/ECardPay.js';
 	import _coupon from '@/api/Pay/ECoupon.js';
+	import _pay from '@/api/Pay/PaymentALL.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
