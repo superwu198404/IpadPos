@@ -82,10 +82,12 @@
 								</view>
 							</view>
 							<!-- 退款 -->
-							<h3 v-if="isRefund">待退款</h3>
+							<h3 v-if="isRefund">已退款</h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
-									<view class="Methods" v-for="(refund, index) in RefundList">
+									<view class="Methods"
+										v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding)">
+										<!-- 这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）且是状态确定的（正在支付操作算不确定的，所以不显示，当成功或失败才算确定的状态） -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
@@ -94,17 +96,27 @@
 									</view>
 								</view>
 							</view>
-							<h3 v-if="isRefund">已退款</h3>
+							<h3 v-if="isRefund">退款失败</h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
-									<view class="Methods" v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num!=0)">这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）
+									<view class="Methods" v-for="(refund, index) in RefundList">
+										<!-- v-for="(refund, index) in RefundList.filter(i => i.fail && i.refund_num!=0 && !i.refunding)"> -->
+
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>-{{refund.amount}}</text>
+										<div class="refund-more-box" @click="showDetails('失败详情:',refund.msg)">
+											<text>-{{refund.amount}}</text>
+											<div class="refund-reset">重试<div class="refund-icon refund-loading"></div>
+											</div>
+										</div>
 									</view>
 								</view>
+							</view>
+							<view>
+								<button class="btn gopays" @click="Refund(true)"
+									v-if="RefundList.filter(i => i.fail && i.refund_num!=0).length > 0">重试</button>
 							</view>
 						</view>
 					</view>
@@ -218,6 +230,7 @@
 				YN_TotalPay: false,
 				allowInput: false,
 				isRefund: true, //是否是退款模式
+				refundRefresh: new Date().toString(), //刷新退款成功和失败列表
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
@@ -313,6 +326,16 @@
 					this.allowInput = true;
 				else
 					this.allowInput = false;
+			},
+			PayList: function(n, o) { //测试用
+				let test = this.PayList.map(i => {
+					i.fail = true;
+					i.refund_num = 0;
+					refunding = false;
+					msg = "";
+					return i;
+				});
+				this.$store.commit("set-refund", test)
 			}
 		},
 		computed: {
@@ -448,12 +471,12 @@
 				};
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
-						BILL: this.out_trade_no_old,//主单号
+						BILL: this.out_trade_no_old, //主单号
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
 						POSID: this.POSID,
-						SPID: this.Products[i].SPID,//交易商品id
+						SPID: this.Products[i].SPID, //交易商品id
 						NO: i,
 						PLID: this.Products[i].PLID,
 						BARCODE: this.Products[i].BARCODE,
@@ -482,7 +505,7 @@
 				}
 				for (var i = 0; i < this.PayList.length; i++) {
 					this.sale3_obj = {
-						BILL: this.out_trade_no_old,//主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
@@ -681,6 +704,7 @@
 				timerFunc();
 				timerIndex = setInterval(timerFunc, 5000);
 			},
+			//关闭
 			close: function() {
 				this.$refs['popup'].close();
 			},
@@ -723,58 +747,114 @@
 				// 	amount:i.AMT,
 				// 	no:i.NO,
 				// 	fail:true,//def初始和退款失败的皆为true
-				// 	refund_num:0
+				// 	refund_num:0,//退款（尝试）次数
+				//  refunding:false,//是否在正在退款中
+				//  msg:""//操作提示信息（可以显示失败的或者成功的）
 				// } });
+				// this.RefundList = (this.$store.state.refund ?? []); //测试：获取支付的订单信息
 				this.RefundList = [{
-					fkid: "1",
+					fkid: "ZF10",
 					bill: "K200QTD005122621175729733_0",
 					name: "支付宝",
 					amount: "0.01",
 					no: "0",
 					fail: true,
-					refund_num:0//退款次数（第一次和重试）
+					refund_num: 0, //退款次数（第一次和重试）
+					refunding: false,
+					msg: ""
+				}, {
+					fkid: "ZF09",
+					bill: "K200QTD005122621175729733_0",
+					name: "金凤券",
+					amount: "0.01",
+					no: "0",
+					fail: true,
+					refund_num: 0, //退款次数（第一次和重试）
+					refunding: false,
+					msg: ""
+				}, {
+					fkid: "ZF31",
+					bill: "K200QTD005122621175729733_0",
+					name: "仟吉电子卡",
+					amount: "0.01",
+					no: "0",
+					fail: true,
+					refund_num: 0, //退款次数（第一次和重试）
+					refunding: false,
+					msg: ""
+				}, {
+					fkid: "ZF06",
+					bill: "K200QTD005122621175729733_0",
+					name: "微信支付",
+					amount: "0.01",
+					no: "0",
+					fail: true,
+					refund_num: 0, //退款次数（第一次和重试）
+					refunding: false,
+					msg: ""
 				}];
 			},
 			//退款操作
-			Refund: function() {
+			Refund: function(isRetry = false) {
 				let refund_no = this.out_refund_no,
 					that = this;
 				let testPayWayList = [{
-					fkid: 1,
-					value: "ALI"
+					"name": "金凤券",
+					"fkid": "ZF09",
+					"value": "COUPON",
+					"type": "qzf"
 				}, {
-					fkid: 4,
-					value: "COUPON"
+					"name": "口碑次卡",
+					"fkid": "ZF10",
+					"value": "ALI",
+					"type": "AliPayService"
 				}, {
-					fkid: 3,
-					value: "WX"
+					"name": "仟吉电子卡",
+					"fkid": "ZF31",
+					"value": "CARD",
+					"type": "dzk"
 				}, {
-					fkid: 2,
-					value: "CARD"
+					"name": "微信支付",
+					"fkid": "ZF06",
+					"value": "WX",
+					"type": "WxPayService"
 				}];
 				//遍历所有退款失败的(或者未退款的)
-				this.RefundList.filter(i => i.fail).forEach(refundInfo => {
-					let payWayName = testPayWayList.find(i => i.fkid == refundInfo.fkid)?.value;
-					if(payWayName == "COUPON") {//如果为券，直接默认成功
+				let refunds = this.RefundList;
+				if (isRetry)
+					refunds = refunds.filter(i => i.refund_num >= 1) //筛选出：退款状态为失败，且已经经历了一次退款（refund_num为退款次数）
+				refunds.filter(i => i.fail).forEach(refundInfo => {
+					// let payWayName = testPayWayList.find(i => i.fkid == refundInfo.fkid)?.value;
+					let payWayName = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.value;
+					if (payWayName == "COUPON") { //如果为券，直接默认成功
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						return;
 					}
 					let handle = that.handles[payWayName];
-					// let handle = that.handles[this.PayWayList.find(i => i.fkid === refundInfo.fkid)?.value];
 					if (handle) {
-						refundInfo.fail = false; //开始默认为退款成功
+						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+						refundInfo.refunding = true; //标记为正在退款的状态
 						handle.RefundAll({
-							out_trade_no: refundInfo.bill, //单号
-							out_refund_no: refund_no, //退款单号
-							refund_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款金额
-						}, (function(err) { //如果发生异
-							//标记为退款失败
-							refundInfo.fail = true;
-						}).bind(that),
-						(function(res) { //执行完毕，退款次数 +1
-							refundInfo.refund_num +=1;//发起请求默认加1
-						}).bind(that));
+								out_trade_no: refundInfo.bill, //单号
+								out_refund_no: refund_no, //退款单号
+								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
+								total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
+							}, (function(err) { //如果发生异常（catch）
+								// catch code...
+							}).bind(that),
+							(function(res) { //执行完毕（finally），退款次数 +1
+								refundInfo.refund_num += 1; //发起请求默认加1
+								refundInfo.refunding = false; //标记为已经结束退款操作
+								this.RefundList = Object.assign([], this.RefundList) //刷新视图
+							}).bind(that),
+							(function(ress) { //执行完毕（results），根据结果判断
+								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+									refundInfo.fail = true;
+									refundInfo.msg = ress[1].msg; //错误提示信息记录
+								} else
+									refundInfo.fail = false;
+							}).bind(that));
 					} else
 						uni.showToast({
 							title: "所记录的支付方式不存在!",
@@ -1065,11 +1145,19 @@
 					CARD: _card.CardPayment()
 				}
 			},
+			//切换-退款和支付
 			ActionSwtich: function() {
 				if (this.isRefund)
 					this.Refund();
 				else
 					this.Pay();
+			},
+			//详细信息
+			showDetails: function(t = "详情", m = "失败！") {
+				uni.showModal({
+					title: t,
+					content: m
+				})
 			}
 		},
 		created() {
@@ -1124,5 +1212,39 @@
 
 	.amounts {
 		box-sizing: border-box;
+	}
+
+	.refund-more-box {
+		display: inline-flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.refund-icon {
+		width: 22px;
+		height: 22px;
+		background-size: cover;
+		margin-left: 4px;
+	}
+
+	.refund-warm {
+		background-image: url(../../images/warn.png);
+	}
+
+	.refund-loading {
+		background-image: url(../../images/loading.png);
+		filter: brightness(100);
+	}
+
+	.refund-reset {
+		background-color: #42b14b;
+		color: white;
+		font-size: 12px;
+		border-radius: 5px;
+		padding: 1px 2px;
+		margin-left: 6px;
+		display: inline-flex;
+		flex-direction: row;
+		align-items: center;
 	}
 </style>

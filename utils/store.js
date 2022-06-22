@@ -6,7 +6,8 @@ export default new Vuex.Store({
 	  state () {
 	    return {
 	      location: null,//每次跳转传入的数据
-		  orders:null//订单记录数据
+		  orders:null,//订单记录数据
+		  refund:null//退款操作（测试）
 	    }
 	  },
 	  mutations: {
@@ -15,6 +16,9 @@ export default new Vuex.Store({
 	    },
 		"set-orders"(state,data) {
 		  state.orders = data;
+		},
+		"set-refund"(state,data) {
+		  state.refund = data;
 		}
 	  }
 	})
