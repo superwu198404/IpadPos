@@ -45,7 +45,7 @@
 				<view>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 				</view>
-				<button @click="coupons = !coupons">+ 添加卡券</button>
+				<button @click="ShowCoupon()">+ 使用卡券</button>
 			</view>
 			<view class="amounts">
 				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
@@ -176,26 +176,30 @@
 				</view>
 			</view>
 		</view>
+		<!-- 会员券列表 -->
 		<view class="boxs" v-if="coupons">
 			<view class="coupons">
 				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = false">×</button></view>
 				<view class="uls">
-					<view class="lis">
+					<view class="lis" v-for="(item,index) in coupon_list">
 						<view class="voucher">
-							<view><text>￥</text>50</view>
-							<text>满189可用</text>
+							<view><text>￥</text>{{item.money}}</view>
+							<text>满{{item.limitmoney}}可用</text>
 						</view>
 						<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 						<view class="coupon-dets">
 							<view class="limit">
-								<view class="h3">50元蛋糕券</view>
-								<text class="datas">2021-11-17 至 2022-12-31</text>
+								<view class="h3" v-for="(item1,index1) in item.limitDesc">
+									<text>{{item1}}</text>
+								</view>
+								<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 							</view>
 							<view class="directions">
 								<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 								<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 								</view>
-								<button>门店核销 <image src="../../images/ewm.png" mode="widthFix"></image></button>
+								<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+										mode="widthFix"></image></button>
 							</view>
 						</view>
 					</view>
@@ -217,6 +221,7 @@
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
 	var that;
 	export default {
 		components: {
@@ -225,6 +230,7 @@
 		data() {
 			return {
 				coupons: false, //卡券弹窗
+				coupon_list: [], //券集合
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
@@ -279,6 +285,7 @@
 				domRefresh: new Date().toString(),
 				query: null,
 				BILL_TYPE: "",
+				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
 				XS_TYPE: "",
 				handles: null,
 			}
@@ -347,22 +354,23 @@
 		methods: {
 			//页面首次加载事件
 			onLoad(options) {
+				that = this;
+				this.GetHyCoupons();
 				//首先创建销售表结构
-				common.CreatSaleTable();
+				//common.CreatSaleTable();
 				//券信息加载
-				let lqid = options.lqid;
-				if (lqid) {
-					console.log("券号：", lqid);
-					let that = this
-					that.auth_code = lqid;
-					that.PayWayList.forEach(function(v, i) {
-						if (v.value == 'COUPON') {
-							v.checked = true;
-							that.PayWay = v.type;
-							that.selectPayWayVal = v.value;
-						}
-					})
-				}
+				// let lqid = options.lqid;
+				// if (lqid) {
+				// 	console.log("券号：", lqid);
+				// 	that.auth_code = lqid;
+				// 	that.PayWayList.forEach(function(v, i) {
+				// 		if (v.value == 'COUPON') {
+				// 			v.checked = true;
+				// 			that.PayWay = v.type;
+				// 			that.selectPayWayVal = v.value;
+				// 		}
+				// 	})
+				// }
 
 			},
 			QUsed: function(d, b, func) {
@@ -449,14 +457,15 @@
 					TNET: this.totalAmount,
 					DNET: 0,
 					ZNET: this.allAmount,
-					BILLDISC: this.Discount,
-					ROUND: 0,
+					BILLDISC: this.Discount, //整单折扣,
+					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
 					CUID: this.hyinfo.HYID, //会员号
 					CARDID: "", //卡号
-					THYDISC: this.Discount,
+					THYDISC: 0,
+					TDISC: this.SKY_DISCOUNT,
 					YN_SC: 'N',
 					GSID: this.GSID, //公司
 					GCID: this.GCID, //工厂
@@ -485,9 +494,9 @@
 						PRICE: this.Products[i].PRICE,
 						OPRICE: this.Products[i].OPRICE,
 						NET: this.Products[i].PRICE,
-						DISCRATE: "0",
-						YN_SKYDISC: 'N', //是否有手工折扣
-						DISC: 0, //手工折扣额
+						DISCRATE: this.SKY_DISCOUNT, //总折扣额
+						YN_SKYDISC: this.Products[i].ADISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
+						DISC: this.Products[i].ADISCOUNT, //手工折扣额
 						YN_CXDISC: 'N',
 						CXDISC: 0,
 						// YAER: new Date().getFullYear(),
@@ -1048,7 +1057,13 @@
 			priceCount: function() {
 				let total = 0;
 				this.Products.forEach(product => total += product.AMOUNT);
-				this.totalAmount = total;
+				this.SKY_DISCOUNT = total.toFixed(2) % 1;
+				console.log("总舍弃分：", this.SKY_DISCOUNT);
+				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
+				this.Products.forEach(function(item, index) {
+					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2);
+				});
+				console.log("处理分后的商品信息：", JSON.stringify(this.Products));
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
 			toBePaidPrice: function() {
@@ -1135,6 +1150,52 @@
 			//返回上个页面
 			backPrevPage: function() {
 				uni.navigateBack();
+			},
+			//展示会员卡券信息
+			ShowCoupon: function() {
+				if (that.coupon_list.length <= 0) {
+					uni.showToast({
+						title: "暂无可用券",
+						icon: "error"
+					})
+				} else {
+					console.log("待付款：",that.debt);
+					console.log("券集合：",JSON.stringify(that.coupon_list));
+					let arr = that.coupon_list.filter(function(item, index, arr) {
+						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
+					})
+					that.coupon_list = arr;
+					that.coupons = !that.coupons;
+				}
+			},
+			//获取会员卡券	
+			GetHyCoupons: function() {
+				let hyinfo = getApp().globalData.hyinfo;
+				if (hyinfo.hyId) {
+					console.log("会员信息：", JSON.stringify(hyinfo));
+					hy.CouponList_ALL(hyinfo.hyId, function(res) {
+						if (res.code) {
+							that.coupon_list = res.data;
+						}
+					});
+				}
+			},
+			//点击券去使用
+			CouponToUse: function(e) {
+				//有券号
+				if (e) {
+					console.log("选择使用的卡券号：", e);
+					that.currentPayType = 'COUPON';
+					if (!this.YN_TotalPay) { //如果未支付完成
+						that.coupons = !that.coupons; //关闭弹窗
+						that.authCode = e; //券号赋值
+						that.PayHandle();
+					} else {
+						uni.showToast({
+							title: "订单已完成支付!"
+						});
+					}
+				}
 			},
 			//处理操作映射
 			handleMapper: function() {

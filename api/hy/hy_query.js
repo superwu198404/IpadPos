@@ -142,6 +142,7 @@ const queryCustomCard_Pos = (p, func) => {
 		return res;
 	})
 };
+//卓越会员查询
 const GetCardInfo = (c, func) => {
 	Req.http("Hy/hy", {
 		apiname: "GetCardInfo",
@@ -155,7 +156,7 @@ const GetCardInfo = (c, func) => {
 			databody: {
 				kquser: kquser,
 				cardtype: "ELEC",
-				card_id: c
+				card_id: c.code
 			}
 		}
 	}, "查询中...").then(function(res) {
@@ -188,7 +189,7 @@ const Query_Member_Assets_Code = (d, func) => {
 		appid: appid,
 		paramkey: "YWD",
 		data: {
-			YWD: '门店' + d.KHID + '查询信息:' + d.code,
+			YWD: '门店' + d.khid + '查询信息:' + d.code,
 			qr: d.code
 		}
 	}, "查询中...").then(function(res) {
@@ -212,7 +213,7 @@ const QJTicktUse = (d, func) => {
 		return res;
 	})
 };
-//券列表
+//会员券列表——卓越
 const customcouponList = (p, func) => {
 	Req.http("Hy/hy", {
 		appid: appid,
@@ -234,15 +235,20 @@ const customcouponList = (p, func) => {
 		return res;
 	})
 }
+/**
+ * 仟吉会员券列表查询
+ * @param {} o 
+ * @param {*} func 
+ */
 const NEW_HYQCX = (o, func) => {
 	Req.http("Hy/hy", {
 		appid: appid,
 		apiname: "NEW_HYQCX",
-		paramkey: "acc",
-		source: "mobile_pos",
+		paramkey: "I_PARTNER",
+		source: "Mobile_Pos",
 		data: {
-			 I_PARTNER : o,
-			 I_ZZCPSTATE : "J01"
+			I_PARTNER: o,
+			I_ZZCPSTATE: "J01"
 		}
 	}, "查询中...").then(function(res) {
 		//console.log(res);
@@ -288,6 +294,11 @@ const HyQuery = (mumbers, func) => {
 		queryCustomCard_Pos(mumbers, func);
 	}
 };
+/**
+ *会员扫码查询 
+ * @param {*} o 
+ * @param {*} func 
+ */
 const HyCodeQuery = (o, func) => {
 	if (Brand == "KG") {
 		Query_Member_Assets_Code(o, func)
@@ -311,14 +322,6 @@ const TicktUse = (d, b, func) => {
 		couponConsume(d, b, func);
 	}
 };
-const couponlst = (o, func) => {
-	
-	if (Brand == "KG") {
-		NEW_HYQCX(o, func);
-	} else if (Brand == "ZY") {
-		customcouponList(o, func);
-	}
-}
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
 	Req.http("Hy/hy", {
@@ -441,6 +444,19 @@ function REFUND_ALL(m, e, func) {
 		customCardrefund(e, func);
 	}
 }
+
+/**
+ *会员券列表(组合)
+ * @param {*} o 
+ * @param {*} func 
+ */
+const CouponList_ALL = (o, func) => {
+	if (Brand == "KG") {
+		NEW_HYQCX(o, func);
+	} else if (Brand == "ZY") {
+		customcouponList(o, func);
+	}
+}
 //卓越积分
 function consumeJFscore(d, func) {
 	Req.http("Hy/hy", {
@@ -460,6 +476,7 @@ function consumeJFscore(d, func) {
 		return res;
 	})
 };
+
 function newUploadHyjf(d, func) {
 	Req.http("Hy/hy", {
 		"appid": appid,
@@ -486,11 +503,11 @@ export default {
 	TicktQuery,
 	TicktUse,
 	QRCODE_CONSUME,
-	couponlst,
 	SALE_QUERY,
 	REFUND,
 	PAY_ALL,
 	QUERY_ALL,
 	REFUND_ALL,
+	CouponList_ALL,
 	hyinfoModel
 }

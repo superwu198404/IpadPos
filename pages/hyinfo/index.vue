@@ -7,14 +7,14 @@
 		<view>
 			<p>昵称：{{hyinfo.NickName}}</p>
 			<p>性别：{{hyinfo.Sex}}</p>
-			<p>卡号：{{hyinfo.CardNo}}</p>
+			<p>会员号：{{hyinfo.hyId}}</p>
 			<p>电话：{{hyinfo.Phone}}</p>
 			<p>余额：{{hyinfo.Balance}}</p>
 			<p>积分：{{hyinfo.JFBalance}}</p>
 			<p>等级：{{hyinfo.hy_Level.LevelName}}</p>
 			<p>生日：{{hyinfo.Birthday}}</p>
 		</view>
-		<p>优惠券====================</p>
+		<!-- <p>优惠券====================</p>
 		<view v-if="couponlst.length>0">
 			<view v-for="(item,index) in couponlst" :key="index">
 				<p>名称：{{item.sname}}</p>
@@ -22,7 +22,7 @@
 				<p>有效期：{{item.sdate}}至{{item.edate}}</p>
 				<button @click="couponUse(item)">去使用</button>
 			</view>
-		</view>
+		</view> -->
 		<view>
 			<uni-popup ref="popup" type="center" :maskClick="false">
 				<view class="uni-tip">
@@ -47,7 +47,7 @@
 				typeName: null,
 				numbers: null,
 				content: null,
-				barnd: getApp().globalData.brand,
+				brand: getApp().globalData.brand,
 				KHID: getApp().globalData.store.KHID,
 				code: null,
 				hyinfo: {
@@ -135,11 +135,11 @@
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
 							getApp().globalData.hyinfo = that.hyinfo;
+							// console.log("会员信息：", getApp().globalData.hyinfo.hyId);
 							//查询优惠券信息
 							let No;
 							if (that.barnd == 'KG') {
 								No = that.hyinfo.hyId;
-
 							} else {
 								No = that.hyinfo.Phone;
 							}
@@ -158,6 +158,9 @@
 			},
 			Codequery: function() {
 				let that = this;
+				// that.code = that.numbers;
+				// that.search();
+				// return;
 				//this.$refs['popup'].open();
 				// that.code='ZY3322595874469644';
 				// that.search();
@@ -179,15 +182,11 @@
 					});
 					return;
 				}
-				let obj;
-				if (that.brand == 'KG') {
-					obj = {
-						KHID: that.KHID,
-						code: that.code
-					}
-				} else {
-					obj = that.code;
+				let obj = {
+					khid: that.KHID,
+					code: that.code
 				}
+				// console.log("会员查询请求参数：", obj);
 				that.hyinfo = hy.hyinfoModel;
 				hy.HyCodeQuery(obj,
 					function(res) {
