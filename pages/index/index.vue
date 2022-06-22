@@ -45,9 +45,6 @@
 						SPID: "10101001",
 						UNIT: "个",
 						NAME: "黑森林",
-						PRICE: 1.01,
-						OPRICE: 1.01,
-						AMOUNT: 1.01,
 						QTY: 1
 					},
 					{
@@ -56,22 +53,22 @@
 						UNIT: "袋",
 						BARCODE: '2222222222',
 						NAME: "毛毛虫",
-						PRICE: 1.01,
-						OPRICE: 1.01,
-						AMOUNT: 2.02,
-						QTY: 2
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
 					},
 					{
-						PLID: "102",
-						BARCODE: '11111135454111',
-						SPID: "10201002",
-						UNIT: "个",
-						NAME: "慕斯",
-						PRICE: 1.05,
-						OPRICE: 1.05,
-						AMOUNT: 1.05,
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "虎皮蛋糕",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
 						QTY: 1
-					}
+					} 
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
