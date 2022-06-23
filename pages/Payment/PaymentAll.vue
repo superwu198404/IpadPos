@@ -753,21 +753,14 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				this.RefundList = this.sale3_arr.map((function(i){//将sale3的数据转为页面适用的格式
-					return {
-						fkid: i.FKID,
-						bill: `${i.BILL}_${i.NO}`,
-						name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-						amount: i.AMT,
-						no: i.NO,
-						fail: true, //def初始和退款失败的皆为true
-						refund_num: 0, //退款（尝试）次数
-						refunding: false, //是否在正在退款中
-						loading: false,
-						msg: "" //操作提示信息（可以显示失败的或者成功的）
-					}
-				}).bind(this));
-				this.
+				let that = this;
+				that.SALE1Init(this.sale1_obj);//sale1 初始化
+				this.sale2_arr.forEach(s1 => {//sale2 初始化
+					that.SALE2Init(s1);
+				});
+				this.sale3_arr.forEach(s1 => {//sale3 初始化
+					that.SALE3Init(s1);
+				});
 				// this.RefundList = (this.$store.state.refund ?? []); //测试：获取支付的订单信息
 				// this.RefundList = [{
 				// 	fkid: "ZF10",
@@ -814,6 +807,43 @@
 				// 	loading: false,
 				// 	msg: ""
 				// }];
+			},
+			//SALE001 初始化
+			SALE1Init:function(obj){
+				this.sale1_obj = Object.assign({},obj);
+			},
+			//SALE002 初始化、处理
+			SALE2Init:function(arr){
+				this.Products = arr.map((function(i){
+					return {
+						PLID: i.PLID,
+						SPID: i.SPID,
+						UNIT: i.UNIT,
+						BARCODE: i.BARCODE,
+						NAME: i.NAME,
+						PRICE: i.PRICE,
+						OPRICE: i.OPRICE,
+						AMOUNT: i.NET,
+						QTY: i.QTY
+					}
+				}).bind(this));
+			},
+			//SALE003 初始化、处理
+			SALE3Init:function(arr){
+				this.RefundList = arr.map((function(i){//将sale3的数据转为页面适用的格式
+					return {
+						fkid: i.FKID,
+						bill: `${i.BILL}_${i.NO}`,
+						name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
+						amount: i.AMT,
+						no: i.NO,
+						fail: true, //def初始和退款失败的皆为true
+						refund_num: 0, //退款（尝试）次数
+						refunding: false, //是否在正在退款中
+						loading: false,
+						msg: "" //操作提示信息（可以显示失败的或者成功的）
+					}
+				}).bind(this));
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
