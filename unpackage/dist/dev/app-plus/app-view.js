@@ -2160,6 +2160,7 @@ var render = function() {
                           _c(
                             "v-uni-view",
                             {
+                              staticClass: _vm._$g(86, "sc"),
                               class: _vm._$g(86, "c"),
                               attrs: { id: "POLY", _i: 86 },
                               on: {
@@ -2171,7 +2172,11 @@ var render = function() {
                             [
                               _c("v-uni-image", {
                                 staticClass: _vm._$g(87, "sc"),
-                                attrs: { src: _vm._$g(87, "a-src"), _i: 87 }
+                                attrs: {
+                                  src: _vm._$g(87, "a-src"),
+                                  mode: "widthFix",
+                                  _i: 87
+                                }
                               }),
                               _c("p", { attrs: { _i: 88 } }, [
                                 _vm._v("聚合支付")
@@ -2214,109 +2219,33 @@ var render = function() {
                             "v-uni-view",
                             {
                               staticClass: _vm._$g(94, "sc"),
-                              attrs: { _i: 94 }
+                              class: _vm._$g(94, "c"),
+                              attrs: { id: "COUPON", _i: 94 },
+                              on: {
+                                click: function($event) {
+                                  return _vm.$handleViewEvent($event)
+                                }
+                              }
                             },
                             [
                               _c(
                                 "v-uni-view",
-                                {
-                                  class: _vm._$g(95, "c"),
-                                  attrs: { id: "COUPON", _i: 95 },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.$handleViewEvent($event)
-                                    }
-                                  }
-                                },
+                                { attrs: { _i: 95 } },
                                 [
-                                  _c(
-                                    "v-uni-view",
-                                    { attrs: { _i: 96 } },
-                                    [
-                                      _c("p", { attrs: { _i: 97 } }, [
-                                        _vm._v("电子券")
-                                      ]),
-                                      _c("v-uni-text", { attrs: { _i: 98 } }, [
-                                        _vm._v("coupons")
-                                      ])
-                                    ],
-                                    1
-                                  ),
-                                  _c("v-uni-image", {
-                                    attrs: {
-                                      src: _vm._$g(99, "a-src"),
-                                      mode: "widthFix",
-                                      _i: 99
-                                    }
-                                  })
-                                ],
-                                1
-                              ),
-                              _c(
-                                "v-uni-view",
-                                {
-                                  staticClass: _vm._$g(100, "sc"),
-                                  attrs: { _i: 100 }
-                                },
-                                [
-                                  _c(
-                                    "v-uni-view",
-                                    { attrs: { _i: 101 } },
-                                    [
-                                      _c("p", { attrs: { _i: 102 } }, [
-                                        _vm._v("云闪付")
-                                      ]),
-                                      _c("v-uni-text", { attrs: { _i: 103 } }, [
-                                        _vm._v("暂未开放")
-                                      ])
-                                    ],
-                                    1
-                                  ),
-                                  _c("v-uni-image", {
-                                    attrs: {
-                                      src: _vm._$g(104, "a-src"),
-                                      mode: "widthFix",
-                                      _i: 104
-                                    }
-                                  })
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _c(
-                        "v-uni-view",
-                        { staticClass: _vm._$g(105, "sc"), attrs: { _i: 105 } },
-                        [
-                          _c(
-                            "v-uni-view",
-                            {
-                              staticClass: _vm._$g(106, "sc"),
-                              attrs: { _i: 106 }
-                            },
-                            [
-                              _c(
-                                "v-uni-view",
-                                { attrs: { _i: 107 } },
-                                [
-                                  _c("p", { attrs: { _i: 108 } }, [
-                                    _vm._v("可伴支付")
+                                  _c("p", { attrs: { _i: 96 } }, [
+                                    _vm._v("电子券")
                                   ]),
-                                  _c("v-uni-text", { attrs: { _i: 109 } }, [
-                                    _vm._v("暂未开放")
+                                  _c("v-uni-text", { attrs: { _i: 97 } }, [
+                                    _vm._v("coupons")
                                   ])
                                 ],
                                 1
                               ),
                               _c("v-uni-image", {
                                 attrs: {
-                                  src: _vm._$g(110, "a-src"),
+                                  src: _vm._$g(98, "a-src"),
                                   mode: "widthFix",
-                                  _i: 110
+                                  _i: 98
                                 }
                               })
                             ],
@@ -2325,18 +2254,18 @@ var render = function() {
                           _c(
                             "v-uni-view",
                             {
-                              staticClass: _vm._$g(111, "sc"),
-                              attrs: { _i: 111 }
+                              staticClass: _vm._$g(99, "sc"),
+                              attrs: { _i: 99 }
                             },
                             [
                               _c(
                                 "v-uni-view",
-                                { attrs: { _i: 112 } },
+                                { attrs: { _i: 100 } },
                                 [
-                                  _c("p", { attrs: { _i: 113 } }, [
-                                    _vm._v("品诺支付")
+                                  _c("p", { attrs: { _i: 101 } }, [
+                                    _vm._v("云闪付")
                                   ]),
-                                  _c("v-uni-text", { attrs: { _i: 114 } }, [
+                                  _c("v-uni-text", { attrs: { _i: 102 } }, [
                                     _vm._v("暂未开放")
                                   ])
                                 ],
@@ -2344,9 +2273,69 @@ var render = function() {
                               ),
                               _c("v-uni-image", {
                                 attrs: {
-                                  src: _vm._$g(115, "a-src"),
+                                  src: _vm._$g(103, "a-src"),
                                   mode: "widthFix",
-                                  _i: 115
+                                  _i: 103
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _c(
+                            "v-uni-view",
+                            {
+                              staticClass: _vm._$g(104, "sc"),
+                              attrs: { _i: 104 }
+                            },
+                            [
+                              _c(
+                                "v-uni-view",
+                                { attrs: { _i: 105 } },
+                                [
+                                  _c("p", { attrs: { _i: 106 } }, [
+                                    _vm._v("可伴支付")
+                                  ]),
+                                  _c("v-uni-text", { attrs: { _i: 107 } }, [
+                                    _vm._v("暂未开放")
+                                  ])
+                                ],
+                                1
+                              ),
+                              _c("v-uni-image", {
+                                attrs: {
+                                  src: _vm._$g(108, "a-src"),
+                                  mode: "widthFix",
+                                  _i: 108
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _c(
+                            "v-uni-view",
+                            {
+                              staticClass: _vm._$g(109, "sc"),
+                              attrs: { _i: 109 }
+                            },
+                            [
+                              _c(
+                                "v-uni-view",
+                                { attrs: { _i: 110 } },
+                                [
+                                  _c("p", { attrs: { _i: 111 } }, [
+                                    _vm._v("品诺支付")
+                                  ]),
+                                  _c("v-uni-text", { attrs: { _i: 112 } }, [
+                                    _vm._v("暂未开放")
+                                  ])
+                                ],
+                                1
+                              ),
+                              _c("v-uni-image", {
+                                attrs: {
+                                  src: _vm._$g(113, "a-src"),
+                                  mode: "widthFix",
+                                  _i: 113
                                 }
                               })
                             ],
@@ -2358,19 +2347,19 @@ var render = function() {
                     ],
                     1
                   ),
-                  _c("p", { attrs: { _i: 116 } }),
+                  _c("p", { attrs: { _i: 114 } }),
                   _c(
                     "v-uni-button",
                     {
-                      staticClass: _vm._$g(117, "sc"),
-                      attrs: { _i: 117 },
+                      staticClass: _vm._$g(115, "sc"),
+                      attrs: { _i: 115 },
                       on: {
                         click: function($event) {
                           return _vm.$handleViewEvent($event)
                         }
                       }
                     },
-                    [_vm._v(_vm._$g(117, "t0-0"))]
+                    [_vm._v(_vm._$g(115, "t0-0"))]
                   )
                 ],
                 1
@@ -2381,27 +2370,27 @@ var render = function() {
         ],
         1
       ),
-      _vm._$g(118, "i")
+      _vm._$g(116, "i")
         ? _c(
             "v-uni-view",
-            { staticClass: _vm._$g(118, "sc"), attrs: { _i: 118 } },
+            { staticClass: _vm._$g(116, "sc"), attrs: { _i: 116 } },
             [
               _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(119, "sc"), attrs: { _i: 119 } },
+                { staticClass: _vm._$g(117, "sc"), attrs: { _i: 117 } },
                 [
                   _c(
                     "v-uni-view",
-                    { staticClass: _vm._$g(120, "sc"), attrs: { _i: 120 } },
+                    { staticClass: _vm._$g(118, "sc"), attrs: { _i: 118 } },
                     [
-                      _c("v-uni-text", { attrs: { _i: 121 } }, [
+                      _c("v-uni-text", { attrs: { _i: 119 } }, [
                         _vm._v("选择优惠券")
                       ]),
                       _c(
                         "v-uni-button",
                         {
-                          staticClass: _vm._$g(122, "sc"),
-                          attrs: { _i: 122 },
+                          staticClass: _vm._$g(120, "sc"),
+                          attrs: { _i: 120 },
                           on: {
                             click: function($event) {
                               return _vm.$handleViewEvent($event)
@@ -2415,43 +2404,43 @@ var render = function() {
                   ),
                   _c(
                     "v-uni-view",
-                    { staticClass: _vm._$g(123, "sc"), attrs: { _i: 123 } },
-                    _vm._l(_vm._$g(124, "f"), function(item, index, $23, $33) {
+                    { staticClass: _vm._$g(121, "sc"), attrs: { _i: 121 } },
+                    _vm._l(_vm._$g(122, "f"), function(item, index, $23, $33) {
                       return _c(
                         "v-uni-view",
                         {
                           key: item,
-                          staticClass: _vm._$g("124-" + $33, "sc"),
-                          attrs: { _i: "124-" + $33 }
+                          staticClass: _vm._$g("122-" + $33, "sc"),
+                          attrs: { _i: "122-" + $33 }
                         },
                         [
                           _c(
                             "v-uni-view",
                             {
-                              staticClass: _vm._$g("125-" + $33, "sc"),
-                              attrs: { _i: "125-" + $33 }
+                              staticClass: _vm._$g("123-" + $33, "sc"),
+                              attrs: { _i: "123-" + $33 }
                             },
                             [
                               _c(
                                 "v-uni-view",
-                                { attrs: { _i: "126-" + $33 } },
+                                { attrs: { _i: "124-" + $33 } },
                                 [
                                   _c(
                                     "v-uni-text",
-                                    { attrs: { _i: "127-" + $33 } },
+                                    { attrs: { _i: "125-" + $33 } },
                                     [_vm._v("￥")]
                                   ),
-                                  _vm._v(_vm._$g("126-" + $33, "t1-0"))
+                                  _vm._v(_vm._$g("124-" + $33, "t1-0"))
                                 ],
                                 1
                               ),
                               _c(
                                 "v-uni-text",
-                                { attrs: { _i: "128-" + $33 } },
+                                { attrs: { _i: "126-" + $33 } },
                                 [
                                   _vm._v(
                                     "满" +
-                                      _vm._$g("128-" + $33, "t0-0") +
+                                      _vm._$g("126-" + $33, "t0-0") +
                                       "可用"
                                   )
                                 ]
@@ -2460,40 +2449,40 @@ var render = function() {
                             1
                           ),
                           _c("v-uni-image", {
-                            staticClass: _vm._$g("129-" + $33, "sc"),
+                            staticClass: _vm._$g("127-" + $33, "sc"),
                             attrs: {
-                              src: _vm._$g("129-" + $33, "a-src"),
+                              src: _vm._$g("127-" + $33, "a-src"),
                               mode: "widthFix",
-                              _i: "129-" + $33
+                              _i: "127-" + $33
                             }
                           }),
                           _c(
                             "v-uni-view",
                             {
-                              staticClass: _vm._$g("130-" + $33, "sc"),
-                              attrs: { _i: "130-" + $33 }
+                              staticClass: _vm._$g("128-" + $33, "sc"),
+                              attrs: { _i: "128-" + $33 }
                             },
                             [
                               _c(
                                 "v-uni-view",
                                 {
-                                  staticClass: _vm._$g("131-" + $33, "sc"),
-                                  attrs: { _i: "131-" + $33 }
+                                  staticClass: _vm._$g("129-" + $33, "sc"),
+                                  attrs: { _i: "129-" + $33 }
                                 },
                                 [
                                   _vm._l(
-                                    _vm._$g(132 + "-" + $33, "f"),
+                                    _vm._$g(130 + "-" + $33, "f"),
                                     function(item1, index1, $24, $34) {
                                       return _c(
                                         "v-uni-view",
                                         {
                                           key: item1,
                                           staticClass: _vm._$g(
-                                            "132-" + $33 + "-" + $34,
+                                            "130-" + $33 + "-" + $34,
                                             "sc"
                                           ),
                                           attrs: {
-                                            _i: "132-" + $33 + "-" + $34
+                                            _i: "130-" + $33 + "-" + $34
                                           }
                                         },
                                         [
@@ -2501,13 +2490,13 @@ var render = function() {
                                             "v-uni-text",
                                             {
                                               attrs: {
-                                                _i: "133-" + $33 + "-" + $34
+                                                _i: "131-" + $33 + "-" + $34
                                               }
                                             },
                                             [
                                               _vm._v(
                                                 _vm._$g(
-                                                  "133-" + $33 + "-" + $34,
+                                                  "131-" + $33 + "-" + $34,
                                                   "t0-0"
                                                 )
                                               )
@@ -2521,14 +2510,14 @@ var render = function() {
                                   _c(
                                     "v-uni-text",
                                     {
-                                      staticClass: _vm._$g("134-" + $33, "sc"),
-                                      attrs: { _i: "134-" + $33 }
+                                      staticClass: _vm._$g("132-" + $33, "sc"),
+                                      attrs: { _i: "132-" + $33 }
                                     },
                                     [
                                       _vm._v(
-                                        _vm._$g("134-" + $33, "t0-0") +
+                                        _vm._$g("132-" + $33, "t0-0") +
                                           " 至 " +
-                                          _vm._$g("134-" + $33, "t0-1")
+                                          _vm._$g("132-" + $33, "t0-1")
                                       )
                                     ]
                                   )
@@ -2538,28 +2527,28 @@ var render = function() {
                               _c(
                                 "v-uni-view",
                                 {
-                                  staticClass: _vm._$g("135-" + $33, "sc"),
-                                  attrs: { _i: "135-" + $33 }
+                                  staticClass: _vm._$g("133-" + $33, "sc"),
+                                  attrs: { _i: "133-" + $33 }
                                 },
                                 [
                                   _c("v-uni-image", {
-                                    staticClass: _vm._$g("136-" + $33, "sc"),
+                                    staticClass: _vm._$g("134-" + $33, "sc"),
                                     attrs: {
-                                      src: _vm._$g("136-" + $33, "a-src"),
+                                      src: _vm._$g("134-" + $33, "a-src"),
                                       mode: "widthFix",
-                                      _i: "136-" + $33
+                                      _i: "134-" + $33
                                     }
                                   }),
                                   _c(
                                     "v-uni-view",
-                                    { attrs: { _i: "137-" + $33 } },
+                                    { attrs: { _i: "135-" + $33 } },
                                     [
                                       _vm._v("使用说明"),
                                       _c("v-uni-image", {
                                         attrs: {
-                                          src: _vm._$g("138-" + $33, "a-src"),
+                                          src: _vm._$g("136-" + $33, "a-src"),
                                           mode: "widthFix",
-                                          _i: "138-" + $33
+                                          _i: "136-" + $33
                                         }
                                       })
                                     ],
@@ -2568,7 +2557,7 @@ var render = function() {
                                   _c(
                                     "v-uni-button",
                                     {
-                                      attrs: { _i: "139-" + $33 },
+                                      attrs: { _i: "137-" + $33 },
                                       on: {
                                         click: function($event) {
                                           return _vm.$handleViewEvent($event)
@@ -2579,9 +2568,9 @@ var render = function() {
                                       _vm._v("点击使用"),
                                       _c("v-uni-image", {
                                         attrs: {
-                                          src: _vm._$g("140-" + $33, "a-src"),
+                                          src: _vm._$g("138-" + $33, "a-src"),
                                           mode: "widthFix",
-                                          _i: "140-" + $33
+                                          _i: "138-" + $33
                                         }
                                       })
                                     ],
@@ -3102,7 +3091,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 16);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "uni-page-body,\r\nuni-page-refresh,\r\nbody {\r\n\theight: 92%;\r\n\tbackground-color: #F5F4F8;\n}\n.content {\r\n\tdisplay: flex;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n\tbackground-color: #F5F4F8;\r\n\tbox-sizing: border-box;\r\n\talign-items: center;\n}\n.getback {\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.fh {\r\n\twidth: 12px;\r\n\tmargin-right: 50rpx;\n}\n.navmall {\r\n\theight: 100%;\r\n\twidth: 10%;\r\n\tbackground-color: #fff;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: baseline;\r\n\tposition: relative;\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 28rpx;\n}\n.navmall .logo {\r\n\twidth: 40%;\r\n\tmargin: 0 auto 20rpx;\n}\n.navmall .logo uni-image {\r\n\twidth: 100%;\n}\n.menu {\r\n\twidth: 100%;\r\n\tmargin-top: 20rpx;\r\n\theight: 76%;\r\n\tpadding-bottom: 50%;\n}\n.menu uni-view {\r\n\twidth: 100%;\r\n\ttext-align: center;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tpadding: 12% 0;\n}\n.menu .curr {\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\twidth: 80%;\r\n\tmargin: 6% auto;\r\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image {\r\n\twidth: 50rpx;\r\n\tmargin-bottom: 20rpx;\n}\n.exit {\r\n\twidth: 100%;\r\n\tposition: absolute;\r\n\tbottom: 3%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translateX(-50%);\r\n\t        transform: translateX(-50%);\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tfont-size: 26rpx;\n}\n.exit uni-image {\r\n\twidth: 40rpx;\n}\n.right {\r\n\twidth: 100%;\r\n\theight: 92%;\n}\n.nav {\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding: 10rpx 2%;\r\n\tbackground-color: #fff;\n}\n.message {\r\n\tdisplay: flex;\n}\n.message .imgs {\r\n\tbackground-color: #006B44;\r\n\tborder-radius: 10px 0 0 10px;\r\n\twidth: 70rpx;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.message .imgs uni-image {\r\n\twidth: 50%;\n}\n.message uni-text {\r\n\tdisplay: inline-block;\r\n\theight: 70rpx;\r\n\tline-height: 70rpx;\r\n\tbackground-color: #EEEEEE;\r\n\tcolor: #006B44;\r\n\tpadding: 0 18rpx;\r\n\tborder-radius: 0 10px 10px 0;\r\n\tfont-size: 20rpx;\n}\n.account {\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\n}\n.account uni-image {\r\n\twidth: 80rpx;\r\n\theight: 80rpx;\r\n\tmargin-left: 20rpx;\n}\n.hh {\r\n\tpadding: 24rpx 2%;\r\n\tfont-size: 36rpx;\r\n\tfont-weight: 700;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\n}\n.hh uni-image {\r\n\twidth: 40rpx;\r\n\tmargin-right: 12rpx;\n}\n.hh uni-button {\r\n\tbackground-color: #006B44;\r\n\tcolor: #fff;\r\n\theight: 50rpx;\r\n\tline-height: 50rpx;\r\n\tfont-size: 26rpx;\r\n\tmargin: 0;\r\n\tborder-radius: 50rpx;\n}\n.amounts {\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding: 1.6% 0 1%;\r\n\twidth: 96%;\r\n\tmargin: 0 auto;\r\n\tdisplay: flex;\n}\n.amounts p {\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: start;\r\n\talign-items: center;\r\n\twidth: 19.5%;\r\n\tborder-right: 1px solid #f5f5f5;\r\n\tfont-size: 32rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top: 20rpx;\r\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1) {\r\n\tborder-right: none;\n}\n.amounts p uni-text:nth-child(2) {\r\n\tfont-size: 60rpx;\r\n\tline-height: 100px;\r\n\tcolor: #333;\n}\n.amounts p uni-input {\r\n\tmargin-top: 12rpx;\r\n\theight: 80rpx;\r\n\tline-height: 80rpx;\r\n\tborder: 1px solid #006B44;\r\n\tbackground-color: #F1F9F1;\r\n\ttext-align: center;\r\n\tborder-radius: 10px;\n}\n.paydetails {\r\n\tdisplay: flex;\r\n\theight: 68%;\r\n\tmargin: 2%;\n}\n.pay-sum {\r\n\tdisplay: flex;\r\n\twidth: 30%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 10px;\r\n\tpadding: 0 1.5%;\r\n\theight: 100%;\n}\n.settleds {\r\n\twidth: 100%;\n}\n.settleds h3 {\r\n\tline-height: 100rpx;\n}\n.paymentlist {\r\n\tmin-height: 96%;\r\n\tmax-height: 100%;\r\n\toverflow-y: auto;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\t/* justify-content: space-between;*/\n}\n.paymentlist .refund {\r\n\tbackground-color: #fff;\r\n\tborder-top: 1px solid #D3D3D3;\r\n\tborder-radius: 0;\r\n\tmin-height: 50%;\n}\n.sets-list {\r\n\tmin-height: 86%;\r\n\tbackground-color: #F9F9F9;\r\n\tborder-radius: 10rpx;\r\n\tposition: relative;\r\n\tflex: 1;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-between;\n}\n.paylists {\r\n\tmax-height: 80%;\r\n\toverflow: auto;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tgap: 25px;\r\n\tpadding: 10px 2.8%;\n}\n.Methods {\r\n\twidth: 100%;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tright: -10px;\n}\n.payicon {\r\n\tdisplay: flex;\r\n\tjustify-content: start;\r\n\talign-items: center;\n}\n.payicon uni-image {\r\n\twidth: 70rpx;\r\n\tmargin-right: 10px;\n}\n.stills {\r\n\twidth: 90%;\r\n\theight: 150rpx;\r\n\tdisplay: flex;\r\n\talign-items: center;\r\n\tborder-top: 1px solid #D3D3D3;\r\n\t/* position: absolute; */\r\n\tbottom: 0;\r\n\tleft: 5%;\n}\n.stills .payicon uni-image {\r\n\twidth: 60rpx;\n}\n.choosepays {\r\n\twidth: 68%;\r\n\tbackground-color: #fff;\r\n\tborder-radius: 5px;\r\n\tpadding: 1.5%;\r\n\theight: 100%;\r\n\tmargin-left: 2%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-around;\r\n\tbox-sizing: border-box;\n}\n.pays-bj {\r\n\twidth: 100%;\r\n\toverflow: auto;\r\n\tflex: 1;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tgap: 4.5%;\n}\n.top-zhifu {\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\r\n\twidth: 100%;\r\n\theight: 60%;\r\n\tjustify-content: center;\n}\n.polys {\r\n\twidth: 48%;\r\n\ttext-align: center;\r\n\tborder: 1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\theight: 100%;\n}\n.polys p {\r\n\tfont-size: 40rpx;\r\n\tline-height: 160rpx;\r\n\tfont-weight: 700;\r\n\tpadding-top: 5%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label {\r\n\tdisplay: flex;\r\n\twidth: 100%;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.polys uni-label uni-image {\r\n\twidth: 100rpx;\r\n\tmargin: 0 5%;\n}\n.polys uni-text {\r\n\tdisplay: block;\r\n\tfont-size: 14px;\r\n\tcolor: #CCCCCC;\r\n\tmargin-top: 10%;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.r-zhifu {\r\n\twidth: 48%;\r\n\tmargin-left: 3%;\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: space-between;\n}\n.pattern {\r\n\twidth: 88%;\r\n\tdisplay: flex;\r\n\theight: 46.3%;\r\n\talign-items: center;\r\n\tjustify-content: space-between;\r\n\tborder: 1px solid #D3D3D3;\r\n\tborder-radius: 10px;\r\n\tpadding: 0 6%;\n}\n.pattern:nth-child(1) {}\n.pattern p {\r\n\tfont-size: 40rpx;\r\n\tfont-weight: 700;\r\n\tline-height: 80rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-text {\r\n\tcolor: #999;\r\n\tfont-size: 28rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.pattern uni-image {\r\n\twidth: 120rpx;\r\n\tposition: relative;\r\n\tz-index: 9;\n}\n.bom-zhifu {\r\n\tdisplay: flex;\r\n\tjustify-content: center;\n}\n.bom-zhifu .pattern {\r\n\twidth: 48%;\r\n\theight: 100%;\r\n\tpadding: 1.9% 3%;\r\n\tbox-sizing: border-box;\n}\n.bom-zhifu .pattern {\r\n\tmargin-bottom: 3%;\n}\n.bom-zhifu .pattern:nth-child(2) {\r\n\tmargin-left: 3%;\n}\n.nots p {\r\n\tcolor: #CCCCCC;\n}\n.btn {\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\tfont-size: 38rpx;\r\n\twidth: 98.5%;\n}\n.pays-bj .curr.selected {\r\n\tborder-color: #338869;\r\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\r\n\tposition: relative;\n}\n.pays-bj .curr.selected .p-bg {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tright: 0;\r\n\twidth: 80%;\r\n\theight: 100%;\r\n\tz-index: 0;\r\n\tdisplay: block;\n}\n.pays-bj .curr.selected p,\r\n.pays-bj .curr.selected uni-text {\r\n\tcolor: #338869;\n}\n.pays-bj .p-bg {\r\n\tdisplay: none;\n}\n::-webkit-scrollbar {\r\n\tdisplay: none;\r\n\twidth: 0;\r\n\theight: 0;\r\n\tcolor: transparent;\n}\n.boxs {\r\n\tposition: fixed;\r\n\ttop: 0;\r\n\tleft: 0;\r\n\tbackground-color: rgba(0, 0, 0, 0.5);\r\n\twidth: 100%;\r\n\theight: 100%;\r\n\tz-index: 999;\n}\n.coupons {\r\n\tbackground-color: #fff;\r\n\tborder-radius: 20rpx;\r\n\twidth: 86%;\r\n\tmin-height: 40%;\r\n\tmax-height: 90%;\r\n\toverflow: auto;\r\n\tposition: fixed;\r\n\ttop: 50%;\r\n\tleft: 50%;\r\n\t-webkit-transform: translate(-50%, -50%);\r\n\t        transform: translate(-50%, -50%);\r\n\tpadding-bottom: 2%;\n}\n.coupons .h4 {\r\n\tline-height: 80rpx;\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tpadding: 1% 3% 0;\r\n\tfont-size: 32rpx;\r\n\tfont-weight: 700;\n}\n.coupons .h4 uni-button {\r\n\tfont-size: 40rpx;\r\n\tmargin: 0;\r\n\tbackground-color: #fff;\r\n\tborder-color: #fff;\n}\nuni-button:after {\r\n\tborder: none;\n}\n.coupons .uls {\r\n\tpadding: 0 2%;\r\n\tdisplay: flex;\r\n\tflex-wrap: wrap;\n}\n.coupons .uls .lis {\r\n\twidth: 48%;\r\n\tmargin: 1% 1% 2%;\r\n\tdisplay: flex;\n}\n.coupons .uls .lis .banyuan {\r\n\twidth: 22rpx;\r\n\theight: 100%;\r\n\tmargin-left: -1px;\n}\n.voucher {\r\n\tbackground-color: #42B14B;\r\n\tcolor: #fff;\r\n\twidth: 30%;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tflex-direction: column;\r\n\tborder-radius: 14rpx 0 0 14rpx;\n}\n.voucher uni-view {\r\n\tfont-size: 80rpx;\r\n\tfont-weight: 700;\n}\n.voucher uni-view uni-text {\r\n\tfont-size: 40rpx;\n}\n.voucher .datas {\r\n\tfont-size: 26rpx;\n}\n.coupon-dets {\r\n\twidth: 80%;\r\n\tbackground-color: #F0F9F1;\r\n\tborder-radius: 0 14rpx 14rpx 0;\n}\n.coupon-dets uni-image {\r\n\twidth: 26rpx;\n}\n.directions {\r\n\tdisplay: flex;\r\n\tjustify-content: space-between;\r\n\talign-items: center;\r\n\tmargin: 1% 4% 1% 2%;\r\n\tborder-top: 1rpx solid #D6EED8;\r\n\tpadding: 3% 2% 2%;\r\n\tcolor: #474747;\r\n\tfont-size: 24rpx;\r\n\tposition: relative;\n}\n.directions .bg {\r\n\tposition: absolute;\r\n\tbottom: 0;\r\n\tleft: 0;\r\n\twidth: 100%;\n}\n.directions uni-view uni-image {\r\n\twidth: 20rpx;\r\n\tmargin-left: 10rpx;\n}\n.directions uni-button {\r\n\tmargin: 0;\r\n\theight: 58rpx;\r\n\tline-height: 58rpx;\r\n\tfont-size: 26rpx;\r\n\tbackground: none;\r\n\tborder-radius: 40rpx;\r\n\tborder: 1px solid #006B44;\r\n\tdisplay: flex;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tcolor: #006B44;\n}\n.directions uni-button uni-image {\r\n\tmargin-left: 8rpx;\n}\n.limit {\r\n\tpadding: 2% 4% 3% 3%;\n}\n.limit .h3 {\r\n\tfont-size: 34rpx;\r\n\tfont-weight: 700;\r\n\tline-height: 80rpx;\n}\n.limit uni-text {\r\n\tcolor: #B0B0B0;\r\n\tfont-size: 26rpx;\n}\r\n", ""]);
+exports.push([module.i, "uni-page-body,\nuni-page-refresh,\nbody {\n\theight: 92%;\n\tbackground-color: #F5F4F8;\n}\n.content {\n\tdisplay: flex;\n\twidth: 100%;\n\theight: 100%;\n\tbackground-color: #F5F4F8;\n\tbox-sizing: border-box;\n\talign-items: center;\n}\n.getback {\n\tdisplay: flex;\n\tjustify-content: start;\n\talign-items: center;\n}\n.fh {\n\twidth: 12px;\n\tmargin-right: 50rpx;\n}\n.navmall {\n\theight: 100%;\n\twidth: 10%;\n\tbackground-color: #fff;\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: center;\n\talign-items: baseline;\n\tposition: relative;\n\tcolor: #B0B0B0;\n\tfont-size: 28rpx;\n}\n.navmall .logo {\n\twidth: 40%;\n\tmargin: 0 auto 20rpx;\n}\n.navmall .logo uni-image {\n\twidth: 100%;\n}\n.menu {\n\twidth: 100%;\n\tmargin-top: 20rpx;\n\theight: 76%;\n\tpadding-bottom: 50%;\n}\n.menu uni-view {\n\twidth: 100%;\n\ttext-align: center;\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: center;\n\talign-items: center;\n\tpadding: 12% 0;\n}\n.menu .curr {\n\tbackground-color: #006B44;\n\tcolor: #fff;\n\twidth: 80%;\n\tmargin: 6% auto;\n\tborder-radius: 30px;\n}\n.menu uni-view uni-image {\n\twidth: 50rpx;\n\tmargin-bottom: 20rpx;\n}\n.exit {\n\twidth: 100%;\n\tposition: absolute;\n\tbottom: 3%;\n\tleft: 50%;\n\t-webkit-transform: translateX(-50%);\n\t        transform: translateX(-50%);\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: center;\n\talign-items: center;\n\tfont-size: 26rpx;\n}\n.exit uni-image {\n\twidth: 40rpx;\n}\n.right {\n\twidth: 100%;\n\theight: 92%;\n}\n.nav {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\tpadding: 10rpx 2%;\n\tbackground-color: #fff;\n}\n.message {\n\tdisplay: flex;\n}\n.message .imgs {\n\tbackground-color: #006B44;\n\tborder-radius: 10px 0 0 10px;\n\twidth: 70rpx;\n\theight: 70rpx;\n\tline-height: 70rpx;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n}\n.message .imgs uni-image {\n\twidth: 50%;\n}\n.message uni-text {\n\tdisplay: inline-block;\n\theight: 70rpx;\n\tline-height: 70rpx;\n\tbackground-color: #EEEEEE;\n\tcolor: #006B44;\n\tpadding: 0 18rpx;\n\tborder-radius: 0 10px 10px 0;\n\tfont-size: 20rpx;\n}\n.account {\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n}\n.account uni-image {\n\twidth: 80rpx;\n\theight: 80rpx;\n\tmargin-left: 20rpx;\n}\n.hh {\n\tpadding: 24rpx 2%;\n\tfont-size: 36rpx;\n\tfont-weight: 700;\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n}\n.hh uni-image {\n\twidth: 40rpx;\n\tmargin-right: 12rpx;\n}\n.hh uni-button {\n\tbackground-color: #006B44;\n\tcolor: #fff;\n\theight: 50rpx;\n\tline-height: 50rpx;\n\tfont-size: 26rpx;\n\tmargin: 0;\n\tborder-radius: 50rpx;\n}\n.amounts {\n\tbackground-color: #fff;\n\tborder-radius: 10px;\n\tpadding: 1.6% 0 1%;\n\twidth: 96%;\n\tmargin: 0 auto;\n\tdisplay: flex;\n}\n.amounts p {\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: start;\n\talign-items: center;\n\twidth: 19.5%;\n\tborder-right: 1px solid #f5f5f5;\n\tfont-size: 32rpx;\n\tfont-weight: 700;\n\tpadding-top: 20rpx;\n\tcolor: #666;\n}\n.amounts p:nth-last-child(1) {\n\tborder-right: none;\n}\n.amounts p uni-text:nth-child(2) {\n\tfont-size: 60rpx;\n\tline-height: 100px;\n\tcolor: #333;\n}\n.amounts p uni-input {\n\tmargin-top: 12rpx;\n\theight: 80rpx;\n\tline-height: 80rpx;\n\tborder: 1px solid #006B44;\n\tbackground-color: #F1F9F1;\n\ttext-align: center;\n\tborder-radius: 10px;\n}\n.paydetails {\n\tdisplay: flex;\n\theight: 68%;\n\tmargin: 2%;\n}\n.pay-sum {\n\tdisplay: flex;\n\twidth: 30%;\n\tbackground-color: #fff;\n\tborder-radius: 10px;\n\tpadding: 0 1.5%;\n\theight: 100%;\n}\n.settleds {\n\twidth: 100%;\n}\n.settleds h3 {\n\tline-height: 100rpx;\n}\n.paymentlist {\n\tmin-height: 96%;\n\tmax-height: 100%;\n\toverflow-y: auto;\n\tdisplay: flex;\n\tflex-direction: column;\n\t/* justify-content: space-between;*/\n}\n.paymentlist .refund {\n\tbackground-color: #fff;\n\tborder-top: 1px solid #D3D3D3;\n\tborder-radius: 0;\n\tmin-height: 50%;\n}\n.sets-list {\n\tmin-height: 86%;\n\tbackground-color: #F9F9F9;\n\tborder-radius: 10rpx;\n\tposition: relative;\n\tflex: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n}\n.paylists {\n\tmax-height: 80%;\n\toverflow: auto;\n\tdisplay: flex;\n\tflex-direction: column;\n\tgap: 25px;\n\tpadding: 10px 2.8%;\n}\n.Methods {\n\twidth: 100%;\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\tposition: relative;\n\tright: -10px;\n}\n.payicon {\n\tdisplay: flex;\n\tjustify-content: start;\n\talign-items: center;\n}\n.payicon uni-image {\n\twidth: 70rpx;\n\tmargin-right: 10px;\n}\n.stills {\n\twidth: 90%;\n\theight: 150rpx;\n\tdisplay: flex;\n\talign-items: center;\n\tborder-top: 1px solid #D3D3D3;\n\t/* position: absolute; */\n\tbottom: 0;\n\tleft: 5%;\n}\n.stills .payicon uni-image {\n\twidth: 60rpx;\n}\n.choosepays {\n\twidth: 68%;\n\tbackground-color: #fff;\n\tborder-radius: 5px;\n\tpadding: 1.5%;\n\theight: 100%;\n\tmargin-left: 2%;\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-around;\n\tbox-sizing: border-box;\n}\n.pays-bj {\n\twidth: 100%;\n\toverflow: auto;\n\tflex: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n\tgap: 4.5%;\n}\n.top-zhifu {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\twidth: 100%;\n\theight: 60%;\n\tjustify-content: center;\n}\n.bom-zhifu .pattern:nth-child(1) {\n\twidth: 47%;\n\ttext-align: center;\n\tborder: 1px solid #D3D3D3;\n\tborder-radius: 10px;\n\theight: 500rpx;\n\tfloat: left;\n\tdisplay: flex;\n\tflex-direction: column;\n\toverflow: hidden;\n\tmargin-left: 0;\n}\n.bom-zhifu .pattern:nth-child(1) p {\n\tfont-size: 40rpx;\n\tline-height: 160rpx;\n\tfont-weight: 700;\n\tposition: relative;\n\tz-index: 9;\n}\n.bom-zhifu .pattern:nth-child(1) uni-label {\n\tdisplay: flex;\n\twidth: 100%;\n\tjustify-content: center;\n\talign-items: center;\n\tposition: relative;\n\tz-index: 9;\n}\n.bom-zhifu .pattern:nth-child(1) uni-label uni-image {\n\twidth: 100rpx;\n\tmargin: 0 5%;\n}\n.bom-zhifu .pattern:nth-child(1) uni-text {\n\tdisplay: block;\n\tfont-size: 14px;\n\tcolor: #CCCCCC;\n\tmargin-top: 10%;\n\tposition: relative;\n\tz-index: 9;\n}\n.r-zhifu {\n\twidth: 48%;\n\tmargin-left: 3%;\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n}\n.pattern {\n\tdisplay: flex;\n\talign-items: center;\n\tjustify-content: space-between;\n\tborder: 1px solid #D3D3D3;\n\tborder-radius: 10px;\n\tpadding: 0 6%;\n}\n.pattern:nth-child(1) {}\n.pattern p {\n\tfont-size: 40rpx;\n\tfont-weight: 700;\n\tline-height: 80rpx;\n\tposition: relative;\n\tz-index: 9;\n}\n.pattern uni-text {\n\tcolor: #999;\n\tfont-size: 28rpx;\n\tposition: relative;\n\tz-index: 9;\n}\n.pattern uni-image {\n\twidth: 120rpx;\n\tposition: relative;\n\tz-index: 9;\n}\n.bom-zhifu {\n\twidth:100%;\n\t/* display: flex;\n\tjustify-content: start;\n\tflex-wrap: wrap; */\n}\n.bom-zhifu .pattern {\n\twidth: 47%;\n\theight:230rpx;\n\tpadding: 1.9% 3%;\n\tbox-sizing: border-box;\n\tfloat: left;\n\tmargin-bottom: 40rpx;\n\tmargin-left: 3%;\n}\n.bom-zhifu .pattern:nth-child(4n){\n\tmargin-left: 0;\n}\n.nots p {\n\tcolor: #CCCCCC;\n}\n.btn {\n\tbackground-color: #42B14B;\n\tcolor: #fff;\n\tfont-size: 38rpx;\n\twidth: 98.5%;\n}\n.pays-bj .curr.selected {\n\tborder-color: #338869;\n\tbackground: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);\n\tposition: relative;\n}\n.pays-bj .curr.selected .p-bg {\n\tposition: absolute;\n\ttop: 0;\n\tright: 0;\n\twidth: 80%;\n\theight: 100%;\n\tz-index: 0;\n\tdisplay: block;\n}\n.pays-bj .curr.selected p,\n.pays-bj .curr.selected uni-text {\n\tcolor: #338869;\n}\n.pays-bj .p-bg {\n\tdisplay: none;\n}\n::-webkit-scrollbar {\n\tdisplay: none;\n\twidth: 0;\n\theight: 0;\n\tcolor: transparent;\n}\n.boxs {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tbackground-color: rgba(0, 0, 0, 0.5);\n\twidth: 100%;\n\theight: 100%;\n\tz-index: 999;\n}\n.coupons {\n\tbackground-color: #fff;\n\tborder-radius: 20rpx;\n\twidth: 86%;\n\tmin-height: 40%;\n\tmax-height: 90%;\n\toverflow: auto;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding-bottom: 2%;\n}\n.coupons .h4 {\n\tline-height: 80rpx;\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\tpadding: 1% 3% 0;\n\tfont-size: 32rpx;\n\tfont-weight: 700;\n}\n.coupons .h4 uni-button {\n\tfont-size: 40rpx;\n\tmargin: 0;\n\tbackground-color: #fff;\n\tborder-color: #fff;\n}\nuni-button:after {\n\tborder: none;\n}\n.coupons .uls {\n\tpadding: 0 2%;\n\tdisplay: flex;\n\tflex-wrap: wrap;\n}\n.coupons .uls .lis {\n\twidth: 48%;\n\tmargin: 1% 1% 2%;\n\tdisplay: flex;\n}\n.coupons .uls .lis .banyuan {\n\twidth: 22rpx;\n\theight: 100%;\n\tmargin-left: -1px;\n}\n.voucher {\n\tbackground-color: #42B14B;\n\tcolor: #fff;\n\twidth: 30%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tflex-direction: column;\n\tborder-radius: 14rpx 0 0 14rpx;\n}\n.voucher uni-view {\n\tfont-size: 80rpx;\n\tfont-weight: 700;\n}\n.voucher uni-view uni-text {\n\tfont-size: 40rpx;\n}\n.voucher .datas {\n\tfont-size: 26rpx;\n}\n.coupon-dets {\n\twidth: 80%;\n\tbackground-color: #F0F9F1;\n\tborder-radius: 0 14rpx 14rpx 0;\n}\n.coupon-dets uni-image {\n\twidth: 26rpx;\n}\n.directions {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\tmargin: 1% 4% 1% 2%;\n\tborder-top: 1rpx solid #D6EED8;\n\tpadding: 3% 2% 2%;\n\tcolor: #474747;\n\tfont-size: 24rpx;\n\tposition: relative;\n}\n.directions .bg {\n\tposition: absolute;\n\tbottom: 0;\n\tleft: 0;\n\twidth: 100%;\n}\n.directions uni-view uni-image {\n\twidth: 20rpx;\n\tmargin-left: 10rpx;\n}\n.directions uni-button {\n\tmargin: 0;\n\theight: 58rpx;\n\tline-height: 58rpx;\n\tfont-size: 26rpx;\n\tbackground: none;\n\tborder-radius: 40rpx;\n\tborder: 1px solid #006B44;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tcolor: #006B44;\n}\n.directions uni-button uni-image {\n\tmargin-left: 8rpx;\n}\n.limit {\n\tpadding: 2% 4% 3% 3%;\n}\n.limit .h3 {\n\tfont-size: 34rpx;\n\tfont-weight: 700;\n\tline-height: 80rpx;\n}\n.limit uni-text {\n\tcolor: #B0B0B0;\n\tfont-size: 26rpx;\n}\n", ""]);
 // Exports
 module.exports = exports;
 

@@ -339,24 +339,28 @@ page {
 	justify-content: center;
 }
 
-.polys {
-	width: 48%;
+.bom-zhifu .pattern:nth-child(1) {
+	width: 47%;
 	text-align: center;
 	border: 1px solid #D3D3D3;
 	border-radius: 10px;
-	height: 100%;
+	height: 500rpx;
+	float: left;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	margin-left: 0;
 }
 
-.polys p {
+.bom-zhifu .pattern:nth-child(1) p {
 	font-size: 40rpx;
 	line-height: 160rpx;
 	font-weight: 700;
-	padding-top: 5%;
 	position: relative;
 	z-index: 9;
 }
 
-.polys label {
+.bom-zhifu .pattern:nth-child(1) label {
 	display: flex;
 	width: 100%;
 	justify-content: center;
@@ -366,12 +370,12 @@ page {
 
 }
 
-.polys label image {
+.bom-zhifu .pattern:nth-child(1) label image {
 	width: 100rpx;
 	margin: 0 5%;
 }
 
-.polys text {
+.bom-zhifu .pattern:nth-child(1) text {
 	display: block;
 	font-size: 14px;
 	color: #CCCCCC;
@@ -389,9 +393,7 @@ page {
 }
 
 .pattern {
-	width: 88%;
 	display: flex;
-	height: 46.3%;
 	align-items: center;
 	justify-content: space-between;
 	border: 1px solid #D3D3D3;
@@ -423,23 +425,23 @@ page {
 }
 
 .bom-zhifu {
-	display: flex;
-	justify-content: center;
+	width:100%;
+	/* display: flex;
+	justify-content: start;
+	flex-wrap: wrap; */
 }
 
 .bom-zhifu .pattern {
-	width: 48%;
-	height: 100%;
+	width: 47%;
+	height:230rpx;
 	padding: 1.9% 3%;
 	box-sizing: border-box;
-}
-
-.bom-zhifu .pattern {
-	margin-bottom: 3%;
-}
-
-.bom-zhifu .pattern:nth-child(2) {
+	float: left;
+	margin-bottom: 40rpx;
 	margin-left: 3%;
+}
+.bom-zhifu .pattern:nth-child(4n){
+	margin-left: 0;
 }
 
 .nots p {
@@ -638,3 +640,4 @@ uni-button:after {
 	color: #B0B0B0;
 	font-size: 26rpx;
 }
+

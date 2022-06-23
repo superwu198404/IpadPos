@@ -1,5 +1,6 @@
 <script>
 	import common from '@/api/common.js';
+	import Req from '@/utils/request.js';
 	let int;
 	export default {
 		globalData: {
@@ -56,7 +57,7 @@
 				SOURCE: "Mobile_Pos",
 				BRAND: "KG"
 			}],
-			CodeRule: {//支付码规则
+			CodeRule: { //支付码规则
 				13: "WX_CLZF",
 				28: "ZFB20",
 				card: "PAYCARD",
@@ -69,10 +70,10 @@
 		onShow: function() {
 			console.log('App Show')
 
-			//1min执行一次销售单传输
+			//3min执行一次销售单传输
 			// int = setInterval(() => {
-			//common.TransLiteData();
-			// }, 1000 * 60); 
+			// common.TransLiteData();
+			// }, 1000 * 60 *3); 
 		},
 		onHide: function() {
 			console.log('App Hide');
