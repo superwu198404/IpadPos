@@ -85,28 +85,28 @@
 						AMOUNT: 1,
 						QTY: 1
 					},
-					// {
-					// 	PLID: "101",
-					// 	SPID: "10101002",
-					// 	UNIT: "袋",
-					// 	BARCODE: '2222222222',
-					// 	NAME: "毛毛虫",
-					// 	PRICE: 0.5,
-					// 	OPRICE: 0.5,
-					// 	AMOUNT: 1,
-					// 	QTY: 2
-					// },
-					// {
-					// 	PLID: "101",
-					// 	SPID: "10101002",
-					// 	UNIT: "袋",
-					// 	BARCODE: '2222222222',
-					// 	NAME: "虎皮蛋糕",
-					// 	PRICE: 0.01,
-					// 	OPRICE: 0.01,
-					// 	AMOUNT: 2,
-					// 	QTY: 1
-					// }
+					{
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "毛毛虫",
+						PRICE: 0.5,
+						OPRICE: 0.5,
+						AMOUNT: 1,
+						QTY: 2
+					},
+					{
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "虎皮蛋糕",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 2,
+						QTY: 1
+					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务

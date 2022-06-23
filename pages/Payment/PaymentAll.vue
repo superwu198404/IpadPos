@@ -811,11 +811,12 @@
 						i.price /= 100;
 						return i;
 					}); //把支付信息贴出来
-					that.authCode = ""; //避免同一个付款码多次使用
+					this.authCode = ""; //避免同一个付款码多次使用
 					this.orderGenarator(payAfter, result, false); //支付记录处理(成功)
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, result, true); //支付记录处理(失败)
-					that.authCode = ""; //避免同一个付款码多次使用
+					console.log("支付失败！")
+					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
 			//创建支付记录
