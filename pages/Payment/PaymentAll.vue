@@ -451,13 +451,13 @@
 					RYID: this.RYID,
 					BILL_TYPE: this.BILL_TYPE, //销售类型
 					XSTYPE: this.XS_TYPE, //销售类型
-					XS_BILL: "", //退款时记录原单号
-					XS_POSID: "", //退款时记录原posid
-					XS_DATE: "", //退款时记录原销售日期
-					XS_KHID: "", //退款时记录原khid
-					XS_GSID: "", //退款时记录原GSID
+					XS_BILL: "", //退款时记录原单号（重点）
+					XS_POSID: "", //退款时记录原posid（重点）
+					XS_DATE: "", //退款时记录原销售日期（重点）
+					XS_KHID: "", //退款时记录原khid（重点）
+					XS_GSID: "", //退款时记录原GSID（重点）
 					TLINE: this.sale2_obj.length,
-					TNET: this.totalAmount,
+					TNET: this.totalAmount,//总金额（重点）
 					DNET: 0,
 					ZNET: this.allAmount,
 					BILLDISC: this.Discount, //整单折扣,
@@ -515,31 +515,29 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
-				// disc: payload.discount,
-				// zklx: payload?.ZKLX ?? "",
-				// id_type:payload?.IDTYPE ?? "",
-				// user_id:payload.open_id
-				for (var i = 0; i < this.PayList.length; i++) {
+				var list = this.isRefund ? this.RefundList : this.PayList;//如果是退款，那么就是退款信息，否则是支付信息
+				list.forEach((item) => {
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
 						POSID: this.POSID,
-						NO: this.PayList[i].no,
-						FKID: this.PayList[i].fkid,
-						AMT: this.PayList[i].amount,
-						ID: this.PayList[i]?.user_id, //卡号或者券号
+						NO: item.no,//付款序号
+						FKID: item.fkid,//付款类型id
+						AMT: item.amount,//付款金额
+						ID: item.user_id, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
-						DISC: this.PayList[i]?.disc
+						DISC: item.disc,//折扣金额
+						ZKLX: item.zklx,//折扣类型
+						IDTYPE: item.id_type//卡类型
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
-				}
-
+				})
 				//执行sql
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
@@ -679,7 +677,11 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
+<<<<<<< HEAD
 				this.RefundList = this.sale3_arr.map((function(i) {
+=======
+				this.RefundList = this.sale3_arr.map((function(i){//将sale3的数据转为页面适用的格式
+>>>>>>> 316889659c982b0a22bcf3f0aa7401dd10065fce
 					return {
 						fkid: i.FKID,
 						bill: `${i.BILL}_${i.NO}`,
@@ -693,6 +695,7 @@
 						msg: "" //操作提示信息（可以显示失败的或者成功的）
 					}
 				}).bind(this));
+				this.
 				// this.RefundList = (this.$store.state.refund ?? []); //测试：获取支付的订单信息
 				// this.RefundList = [{
 				// 	fkid: "ZF10",
