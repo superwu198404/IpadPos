@@ -10,8 +10,8 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
-		<button @click="MenuPage(3)">返回调试</button>
-		<!-- <button @click="Test(2)">测试一下</button> -->
+		<!-- <button @click="MenuPage(3)">返回调试</button>
+		<button @click="Test(2)">测试一下</button> -->
 	</view>
 </template>
 <script>
@@ -45,6 +45,9 @@
 						SPID: "10101001",
 						UNIT: "个",
 						NAME: "黑森林",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
 						QTY: 1
 					},
 					{
@@ -53,10 +56,10 @@
 						UNIT: "袋",
 						BARCODE: '2222222222',
 						NAME: "毛毛虫",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
+						PRICE: 0.5,
+						OPRICE: 0.5,
+						AMOUNT: 1,
+						QTY: 2
 					},
 					{
 						PLID: "101",

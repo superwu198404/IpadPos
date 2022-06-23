@@ -3,7 +3,7 @@
 		<text>{{showmsg}}</text>>
 		<input placeholder="请输入门店的编码" v-model="khid" />
 		<button @click="init">确定</button>
-		<button @click="toDbqry">调试y</button>
+		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
 	</view>
 </template>
@@ -31,12 +31,12 @@
 		},
 		methods: {
 			toDbqry: function() {
-				uni.redirectTo({
+				uni.navigateTo({
 					url: "/pages/sqlitetest/sqlitetest"
 				});
 			},
 			toIndex: function() {
-				uni.redirectTo({
+				uni.navigateTo({
 					url: "/pages/index/index"
 				});
 			},
