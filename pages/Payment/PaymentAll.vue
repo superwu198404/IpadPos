@@ -376,39 +376,6 @@
 				// }
 
 			},
-			QUsed: function(d, b, func) {
-				//继续支付   扣掉券的信息
-				hy.TicktUse(d, b,
-					function(res) {
-						if (res.code) {
-							let used = JSON.parse(res.data);
-							if (used.GT_RETURN) {
-								let GT_RETURN = used.GT_RETURN[0];
-								if (GT_RETURN.TYPE == "E") {
-									res.code = -1;
-									res.msg = GT_RETURN.MESSAGE
-								} else {
-									res.code = 1;
-								}
-							} else {
-								res.code = 1;
-							}
-						} else {
-							res.code = -1;
-						}
-						if (func) func(res);
-					});
-			},
-			//计算已支付，待支付金额
-			CalDZFMoney: function() {
-				let ymoney = 0; //计算总的已支付金额
-				for (var i = 0; i < this.PayList.length; i++) {
-					ymoney += parseFloat(this.PayList[i].amount);
-				}
-				this.yPayAmount = ymoney.toFixed(2);
-				this.dPayAmount = (this.totalAmount - this.yPayAmount).toFixed(2);
-				this.PayAmount = this.dPayAmount;
-			},
 			//单号防重处理
 			UniqueBill: function() {
 				let that = this;
@@ -426,18 +393,6 @@
 						that.out_trade_no = that.out_trade_no_old + '_' + (that.PayList.length + 1);
 					}
 				}
-			},
-			//支付方式切换事件
-			radioChange(e) {
-				let value = e.target.value;
-				let payobj = this.PayWayList.find(item => {
-					return item.value == value
-				});
-				this.authCode = "";
-				this.PayWay = payobj.type;
-				this.selectPayWayVal = payobj.value;
-				this.PayAmount = this.dPayAmount;
-				this.disablePayInput = false;
 			},
 			//创建订单数据
 			CreateDBData: function() {
@@ -577,74 +532,6 @@
 					})
 				});
 			},
-			//查询订单数据
-			SearcheOrder: function(e) {
-				let sql = 'select * from sale001 where STR1="' + e + '"';
-				db.get().executeQry(sql, "数据查询", function(res) {
-					console.log("查询成功");
-					console.log(res);
-				}, function(err) {
-					console.log("查询失败");
-					console.log(err);
-				});
-			},
-			//创建支付记录
-			createPayData: function(t) {
-				let that = this;
-				let arr = that.PayList.filter(function(v, i, ar) {
-					return v.amount == that.PayAmount && v.no == that.no;
-				})
-				if (arr.length == 0) { //说明没有追加过该笔支付记录
-					if (!t.payobj) { //不是券的支付
-						let payobj = that.PayWayList.find(item => {
-							return item.value == t
-						});
-						that.PayList.push({
-							fkid: payobj.fkid, //付款id（对应类别）
-							bill: that.out_trade_no, //单号（可控）
-							name: payobj.name, //支付类别
-							amount: that.PayAmount, //单次支付金额（金额单位：元）
-							no: that.PayList.length //序号
-						});
-					} else { //券的支付
-						that.PayList.push({
-							fkid: t.payobj.fkid,
-							bill: that.out_trade_no,
-							name: t.payobj.name,
-							amount: t.amount,
-							no: that.PayList.length
-						});
-					}
-					//重新计算待支付金额
-					that.CalDZFMoney();
-					uni.showToast({
-						title: "支付成功",
-						icon: "success",
-						success: function(res) {
-							that.$refs['popup'].close();
-						}
-					})
-					//预留处理业务数据的地方
-					if (that.dPayAmount == 0) { //说明支付完毕了
-						this.CanBack = true; //可以返回了
-						this.CreateDBData(); //创建订单数据
-						this.scoreConsume(); //积分操作
-					}
-				} else {
-					uni.showToast({
-						title: "本单已支付成功",
-						icon: "error",
-						success: function(res) {
-							//that.$refs['popup'].close();
-						}
-					})
-				}
-			},
-
-			//关闭
-			close: function() {
-				this.$refs['popup'].close();
-			},
 			//支付按钮点击事件
 			Pay: function() {
 				//适配真机
@@ -677,11 +564,7 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-<<<<<<< HEAD
 				this.RefundList = this.sale3_arr.map((function(i) {
-=======
-				this.RefundList = this.sale3_arr.map((function(i){//将sale3的数据转为页面适用的格式
->>>>>>> 316889659c982b0a22bcf3f0aa7401dd10065fce
 					return {
 						fkid: i.FKID,
 						bill: `${i.BILL}_${i.NO}`,
@@ -695,7 +578,6 @@
 						msg: "" //操作提示信息（可以显示失败的或者成功的）
 					}
 				}).bind(this));
-				this.
 				// this.RefundList = (this.$store.state.refund ?? []); //测试：获取支付的订单信息
 				// this.RefundList = [{
 				// 	fkid: "ZF10",
@@ -1059,77 +941,9 @@
 			domForceRefresh: function() {
 				this.domRefresh = new Date().toString();
 			},
-			//创建待支付记录 支付成功后需要剔除该数据
-			CreateDPayData: function(t, e = 1) {
-				let that = this;
-				if (e > 0) { //追加记录
-					let arr = that.dPayList.filter(function(v, i, ar) {
-						return v.amount == that.PayAmount && v.no == that.no;
-					})
-					if (arr.length == 0) { //说明没有追加过该笔支付记录
-						if (!t.payobj) { //不是券的支付
-							let payobj = that.PayWayList.find(item => {
-								return item.value == t
-							});
-							that.dPayList.push({
-								type: payobj.value,
-								fkid: payobj.fkid,
-								bill: that.out_trade_no,
-								name: payobj.name,
-								amount: that.PayAmount,
-								no: that.PayList.length
-							});
-						} else { //券的支付
-							that.dPayList.push({
-								type: "COUPON",
-								fkid: t.payobj.fkid,
-								bill: that.out_trade_no,
-								name: t.payobj.name,
-								amount: t.amount,
-								no: that.PayList.length
-							});
-						}
-					}
-				} else {
-					if (that.dPayList.length > 0) {
-						that.dPayList.splice(that.dPayList.findIndex(item => item.bill === that.out_trade_no), 1);
-					}
-				}
-			},
 			//点击切换支付方式
 			clickPayType: function(e) {
 				this.currentPayType = e.currentTarget.id; //小程序
-			},
-			//查询重试
-			RetrySearch: function(e) {
-				let that = this;
-				let obj = {
-					out_trade_no: e.bill
-				};
-				if (e == "WX") {
-					_wx.WxPayment().QueryPayment(obj, function(res) {
-						that.CreateDPayData(null, -1);
-						that.createPayData(null, e);
-					})
-				}
-				if (e == "Ali") {
-					_ali.AliPayment().QueryPayment(obj, function(res) {
-						that.CreateDPayData(null, -1);
-						that.createPayData(null, e);
-					})
-				}
-				if (e == "CARD") {
-					_card.CardPayment().QueryPayment(obj, function(res) {
-						that.CreateDPayData(null, -1);
-						that.createPayData(null, e);
-					})
-				}
-				if (e == "COUPON") {
-					_coupon.CouponPayment().QueryPayment(obj, function(res) {
-						that.CreateDPayData(null, -1);
-						that.createPayData(null, e);
-					})
-				}
 			},
 			//返回上个页面
 			backPrevPage: function() {
