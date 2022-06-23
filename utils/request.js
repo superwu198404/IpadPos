@@ -322,33 +322,33 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 }
 
 /**
- * 重载方法
- * @param {*} pm_data 
- * @param {*} callbackfunArr 
- * @param {*} catchfun 
- * @param {*} otherfun 
+ * 重载方法（不中断调用-用于退款操作）
+ * @param {*} pm_data 请求数据
+ * @param {*} callbackfunArr 回调数组
+ * @param {*} catchfun 异常处理函数
+ * @param {*} finallyfun 末端执行的函数
+ * @param {*} resultsFunc 获取所有请求返回值的函数（返回包括首次、所有回调，依次按顺序连接，类似 Promise.all 的返回操作）
  */
-var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
-	var callbacklist = [];
+var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfun, resultsFunc) {
+	var callbacklist = [],results = [];
 	callbacklist = callbackfunArr;
 	let res = pm_data;
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);//发起请求
+			results.push(res);//存入执行结果
 			if (res && !res.code) {//如果请求失败，则调用配置的catch函数
 				def(catchfun, res);
 			}
 		}
 		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res);
-		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
-			def(otherfun, res);
-			break;
-		}
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
 	if (finallyfun) def(finallyfun, res);
+	//将所有回调执行结果，通过回调传递到外部
+	if (resultsFunc) def(resultsFunc, results);
 }
 
 var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {

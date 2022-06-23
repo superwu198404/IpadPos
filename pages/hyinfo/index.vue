@@ -134,20 +134,21 @@
 					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
+							that.hyinfo.Balance=(that.hyinfo.Balance/100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
 							// console.log("会员信息：", getApp().globalData.hyinfo.hyId);
 							//查询优惠券信息
-							let No;
-							if (that.barnd == 'KG') {
-								No = that.hyinfo.hyId;
-							} else {
-								No = that.hyinfo.Phone;
-							}
-							hy.couponlst(No, function(res) {
-								if (res.code) {
-									that.couponlst = JSON.parse(res.data);
-								}
-							})
+							// let No;
+							// if (that.barnd == 'KG') {
+							// 	No = that.hyinfo.hyId;
+							// } else {
+							// 	No = that.hyinfo.Phone;
+							// }
+							// hy.couponlst(No, function(res) {
+							// 	if (res.code) {
+							// 		that.couponlst = JSON.parse(res.data);
+							// 	}
+							// })
 						} else {
 							uni.showToast({
 								title: res.msg,

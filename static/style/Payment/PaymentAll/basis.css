@@ -258,7 +258,6 @@ page {
 	min-height: 86%;
 	background-color: #F9F9F9;
 	border-radius: 10rpx;
-	padding: 0 5%;
 	position: relative;
 	flex: 1;
 	display: flex;
@@ -272,7 +271,7 @@ page {
 	display: flex;
 	flex-direction: column;
 	gap: 25px;
-	padding: 20px 0px;
+	padding: 10px 2.8%;
 }
 
 .Methods {
@@ -280,6 +279,8 @@ page {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	position: relative;
+	right: -10px;
 }
 
 .payicon {

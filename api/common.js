@@ -187,6 +187,20 @@ var GetPayWay = function(e, func) {
 	});
 }
 
+var Excute =async function(sql,func){
+	let datas = null;
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		if (func) func(res);
+		datas = res.msg;
+	}, function(err) {
+		console.log("获取付款方式出错:",err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取付款方式出错"
+		})
+	});
+	return datas;
+}
 
 export default {
 	InitData,
@@ -194,5 +208,6 @@ export default {
 	CreateSQL,
 	CreatSaleTable,
 	TransLiteData,
-	GetPayWay
+	GetPayWay,
+	Excute
 }

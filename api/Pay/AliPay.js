@@ -232,13 +232,12 @@ var AliPay = function() {
 	}
 
 	//查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
-	this.RefundAll = function(body, catchFunc, finallyFunc) {
-		Req.asyncFuncChain(CreateData("查询退款中...", "QueryRefund", body), [
+	this.RefundAll = function(body, catchFunc, finallyFunc, resultsFunc) {
+		Req.asyncFuncChain(CreateData("查询退款中...", "QueryPayment", body), [
 			function(res) {
-				util.sleep(5000);
 				return CreateData("退款中...", "Refund", body);
 			}
-		], catchFunc,null, finallyFunc);
+		], catchFunc, finallyFunc, resultsFunc);
 	}
 }
 var AliPayment = function() {
