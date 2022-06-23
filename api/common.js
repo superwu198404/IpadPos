@@ -136,35 +136,36 @@ var CreateSQL = function(e, t) {
 }
 
 //传输本地缓存的数据
-var TransLiteData = function() {
-	let sql = "select * from POS_TXFILE";
+var TransLiteData = function(e) {
+	let sql = "select * from POS_TXFILE where BDATE<=datetime('now','-5 minute')"; //五分钟前 
+	if (e) {
+		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
+	}
 	db.get().executeQry(sql, "数据查询中", function(res) {
-			// console.log("传输数据查询成功", res);
+			console.log("传输数据查询成功", res);
 			if (res.code && res.msg.length > 0) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
 					let delVal = "'" + res.msg[i].STR1 + "'";
-					// console.log("传输sql", sql1);
+					console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
-					Req.asyncFunc({
-						http: true,
-						title: '销售数据传输',
-						data: {
-							action: 'ExecuteBatchSQL',
-							ywname: 'SALE001CLASS',
-							data: sql1
-						}
-					}, function(res1) {
-						// console.log("传输结果：", res1);
-						if (res1.code) {
-							let delStr = "delete from POS_TXFILE where str1 =" + delVal;
-							db.get().executeDml(delStr, "数据删除中", function(res2) {
-								// console.log("数据删除成功", res2);
-							}, function(err1) {
-								// console.log("数据删除失败", err1);
-							});
-						}
-					});
+					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+					let reqdata = Req.resObj(true, "数据传输中", {
+						sql: sql1
+					}, apistr);
+					Req.asyncFuncOne(reqdata,
+						function(res1) {
+							console.log("数据传输结果：", res1);
+							if (res1.code) {
+								let delStr = "delete from POS_TXFILE where str1 =" + delVal;
+								delStr += "update SALE001 set yn_sc='Y'"; //修改001的数据
+								db.get().executeDml(delStr, "数据删除中", function(res2) {
+									console.log("数据删除更改状态成功", res2);
+								}, function(err1) {
+									console.log("数据删除更改并状态失败", err1);
+								});
+							}
+						});
 				}
 			}
 		},
@@ -175,25 +176,86 @@ var TransLiteData = function() {
 
 //获取支付方式
 var GetPayWay = function(e, func) {
-	let sql = "select * from fkda";
+	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
+                                       F1.JK_PRINT_PATH  JK_PRINT_PATH,\
+                                       IFNULL(F1.YN_ZL, 'N') YN_ZL,\
+                                       IFNULL(F1.NET_ADDTYPE, 'N') NET_ADDTYPE,\
+                                       IFNULL(F1.YN_INPUTJE, 'N') YN_INPUTJE,\
+                                       F1.FKID  FKID,\
+                                       F1.SNAME  SNAME,\
+                                       F1.PINYIN  PINYIN,\
+                                       F1.MEDIA  MEDIA,\
+                                       F1.YN_DBM  YN_DBM,\
+                                       F1. YN_SQ  YN_SQ,\
+                                       F1. YN_CEZF  YN_CEZF,\
+                                       IFNULL(F1.YN_JK, 'N') YN_JK,\
+                                       F1.JK_KEY1  JK_KEY1,\
+                                       F1.JK_KEY2  JK_KEY2,\
+                                       F1.JK_KEY3  JK_KEY3,\
+                                       F1.FKJBID   FKJBID,\
+                                       F1.FKID_F   FKID_F,\
+                                       F1.ID_RY_LR  ID_RY_LR,\
+                                       F1.DATE_LR  DATE_LR,\
+                                       F1.ID_RY_XG  ID_RY_XG,\
+                                       F1.DATE_XG  DATE_XG,\
+                                       F1.DA_STATUS  DA_STATUS,\
+                                       F1. ID_RY_SH  ID_RY_SH,\
+                                       F1.DATE_SH  DATE_SH,\
+                                       F1.JKSNAME  JKSNAME,\
+                                       F1. NBJKNO  NBJKNO,\
+                                       'N' YN_FP  ,\
+                                       'Y' YN_YLTH ,\
+                                       F1.ZKLX  ZKLX\
+                                  FROM FKDA F1, KHZFKDA K1,KHDA K2 \
+                                     WHERE  f1.fkid = k1.fkid  \
+                                        AND  k2.dqid = k1.khzid \
+                                        AND  k2.khid ='" + e + "' \
+                                 ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	db.get().executeQry(sql, "数据查询中", function(res) {
+		GetPolyPayWay(e, (res1) => {
+			console.log("聚合数据：", res1);
+			for (var i = 0; i < res.msg.length; i++) {
+				let obj = res1.msg.find((item) => {
+					return item.ID_NR == res.msg[i].FKID;
+				})
+				if (obj) {
+					res.msg[i].POLY = 'Y';
+				} else {
+					res.msg[i].POLY = 'N';
+				}
+			}
+			if (func) func(res);
+			return;
+		})
 		if (func) func(res);
 	}, function(err) {
-		console.log("获取付款方式出错:",err);
+		console.log("获取付款方式出错:", err);
 		uni.showToast({
 			icon: 'error',
 			title: "获取付款方式出错"
 		})
 	});
 }
-
-var Excute =async function(sql,func){
+//获取聚合支付
+var GetPolyPayWay = function(e, func) {
+	let sql = "select  ID_NR,ZF  from  dapzcs_nr where id  ='FKJHZF'";
+	db.get().executeQry(sql, "数据查询中", function(res) {
+		if (func) func(res);
+	}, function(err) {
+		console.log("获取聚合付款方式出错:", err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取聚合付款方式出错"
+		})
+	});
+}
+var Excute = async function(sql, func) {
 	let datas = null;
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		if (func) func(res);
 		datas = res.msg;
 	}, function(err) {
-		console.log("获取付款方式出错:",err);
+		console.log("获取付款方式出错:", err);
 		uni.showToast({
 			icon: 'error',
 			title: "获取付款方式出错"
@@ -209,5 +271,6 @@ export default {
 	CreatSaleTable,
 	TransLiteData,
 	GetPayWay,
-	Excute
+	Excute,
+	GetPolyPayWay
 }

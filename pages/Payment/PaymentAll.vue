@@ -146,15 +146,71 @@
 				</view>
 				<view class="choosepays">
 					<view class="pays-bj">
+						<view class="bom-zhifu">
+							<view class="pattern nots curr" :class="currentPayType === 'POLY'? 'selected':' '" id='POLY'
+								@click="clickPayType($event)">
+								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
+								<p>聚合支付</p>
+								<label>
+				 				<image src="../../images/ZFB20.png" mode="widthFix"></image>
+				 				<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
+				 				<image src="../../images/PAYCARD.png" mode="widthFix"></image>
+								</label>
+								<text>支持支付宝、微信及会员卡支付</text>
+								<!-- </view>
+				              <view class="r-zhifu"> -->
+							</view>
+
+							<!-- </view>
+				            
+				            <view class="bom-zhifu"> -->
+							<view class="pattern nots curr" :class="currentPayType === 'COUPON'? 'selected':' '"
+								id="COUPON" @click="clickPayType($event)">
+								<view class="">
+									<p>电子券</p>
+									<text>coupons</text>
+								</view>
+								<image src="../../images/SZQ.png" mode="widthFix"></image>
+							</view>
+							<view class="pattern nots curr">
+								<view class="">
+									<p>云闪付</p>
+									<text>暂未开放</text>
+								</view>
+								<image src="../../images/ysf-da.png" mode="widthFix"></image>
+							</view>
+
+							<view class="pattern nots curr">
+								<view class="">
+									<p>可伴支付</p>
+									<text>暂未开放</text>
+								</view>
+				  		<image src="../../images/kb-da.png" mode="widthFix"></image>
+							</view>
+							<view class="pattern nots curr">
+								<view class="">
+									<p>品诺支付</p>
+									<text>暂未开放</text>
+								</view>
+								<image src="../../images/pn-da.png" mode="widthFix"></image>
+							</view>
+						</view>
+
+					</view>
+					</p>
+					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
+				</view>
+				<!-- <view class="choosepays">
+					<view class="pays-bj">
 						<view class="top-zhifu">
 							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY'
 								@click="clickPayType($event)">
 								<image class="p-bg" src="../../images/xzbj-da.png"></image>
 								<p>聚合支付</p>
 								<label>
-									<image src="../../images/zfb-da.png" mode="widthFix"></image>
-									<image src="../../images/wxzf-da.png" mode="widthFix"></image>
-									<image src="../../images/hyk-da.png" mode="widthFix"></image>
+									<image src="../../images/ZFB20.png" mode="widthFix"></image>
+									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
+									<image src="../../images/PAYCARD.png" mode="widthFix"></image>
 								</label>
 								<text>支持支付宝、微信及会员卡支付</text>
 							</view>
@@ -165,7 +221,7 @@
 										<p>电子券</p>
 										<text>coupons</text>
 									</view>
-									<image src="../../images/dzq-da.png" mode="widthFix"></image>
+									<image src="../../images/SZQ.png" mode="widthFix"></image>
 								</view>
 								<view class="pattern nots curr">
 									<view class="">
@@ -196,7 +252,7 @@
 					</view>
 					</p>
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<!-- 会员券列表 -->
@@ -345,7 +401,15 @@
 					this.YN_TotalPay = true;
 					this.CanBack = true;
 					// this.$store.commit('set-orders', this.PayList);
-					this.CreateDBData();
+					this.CreateDBData((res) => {
+						//销售单单创建成功后 上传一下数据
+						let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+						common.TransLiteData(bill);
+						//上传积分
+						if (this.hyinfo.hyid) {
+							this.scoreConsume();
+						}
+					});
 				}
 			},
 			yPayAmount: function(n, o) {
@@ -395,12 +459,14 @@
 				}
 			},
 			//创建订单数据
-			CreateDBData: function() {
+			CreateDBData: function(func) {
+				let saledate = dateformat.getYMD();
+				let saletime = dateformat.getYMDS();
 				//基础数据
 				this.sale1_obj = {
 					BILL: this.out_trade_no_old,
-					SALEDATE: dateformat.getYMD(),
-					SALETIME: dateformat.getYMDS(),
+					SALEDATE: saledate,
+					SALETIME: saletime,
 					KHID: this.KHID,
 					POSID: this.POSID,
 					RYID: this.RYID,
@@ -434,13 +500,13 @@
 					XSPTID: 'POS',
 					YN_OK: 'X',
 					THTYPE: 0,
-					CLTIME: dateformat.getYMDS()
+					CLTIME: saletime
 				};
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
 						BILL: this.out_trade_no_old, //主单号
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
+						SALEDATE: saledate,
+						SALETIME: saletime,
 						KHID: this.KHID,
 						POSID: this.POSID,
 						SPID: this.Products[i].SPID, //交易商品id
@@ -475,8 +541,8 @@
 				list.forEach((item) => {
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
+						SALEDATE: saledate,
+						SALETIME: saletime,
 						KHID: this.KHID,
 						POSID: this.POSID,
 						NO: item.no, //付款序号
@@ -505,7 +571,7 @@
 					POSID: this.POSID,
 					TAB_NAME: 'XS',
 					STR1: this.out_trade_no_old,
-					BDATE: dateformat.getYMD(),
+					BDATE: saletime, //增加时分秒的操作
 					YW_NAME: "销售单据",
 					CONNSTR: 'CONNSTRING'
 				};
@@ -521,6 +587,7 @@
 				console.log(exeSql);
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
+					if (func) func(res);
 					console.log("订单创建成功：", res);
 					uni.showToast({
 						title: "销售单创建成功"
@@ -714,7 +781,7 @@
 					if (res.length > 0) that.CreateDBData();
 				})
 			},
-			//支付类型判断  旧版
+			//支付类型判断  旧版-弃用
 			PayTypeJudgment_: function() {
 				let startCode = this.authCode.substring(0, 2);
 				if (startCode) {
@@ -778,7 +845,7 @@
 					})
 				}
 			},
-			//支付处理入口 旧版
+			//支付处理入口 旧版-弃用
 			PayHandle_: function() {
 				let handlePayment;
 				handlePayment = this.handles[this.PayTypeJudgment()];
@@ -880,7 +947,7 @@
 			scoreConsume: function() {
 				let that = this
 				let hyinfo = app.gloabaldata.hyinfo;
-				if (that.totalAmount > 0 && hyinfo) { //录入过会员信息
+				if (hyinfo && hyinfo.hyid) { //录入过会员信息
 					let param;
 					if (that.brand == 'KG') {
 						let arr = [],
@@ -914,7 +981,7 @@
 							memberCode: hyinfo.hyid,
 							netAmount: that.totalAmount,
 							orderAmount: that.allAmount,
-							orderType: "1",
+							orderType: that.XS_TYPE, //订单类型
 							paymentInfoList: arr1,
 							pointOfService: that.KHID,
 							preOrderCode: "",
@@ -935,6 +1002,10 @@
 						}
 					}
 					hy.consumeJF(that.brand, param, function(res) {
+						uni.showToast({
+							title: res.code ? "积分上传成功" : res.msg,
+							icon: res.code ? "success" : "error"
+						})
 						console.log("积分上传结果：" + res);
 					})
 				}

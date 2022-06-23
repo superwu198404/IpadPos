@@ -30,13 +30,14 @@
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="InputProduct()">录入测试商品</button>
 		<button @click="MenuPage(2)">录入会员</button>
-		<!-- <button @click="MenuPage(3)">返回调试</button>
-		<button @click="Test(2)">测试一下</button> -->
+		<!-- <button @click="MenuPage(3)">返回调试</button>-->
+		<!-- <button @click="Test(2)">测试一下</button> -->
 	</view>
 </template>
 <script>
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
 	export default {
 		//变量初始化
 		data() {
@@ -128,6 +129,7 @@
 							obj.name = res.msg[i].SNAME;
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
+							obj.poly = res.msg[i].POLY;
 							if (res.msg[i].JKSNAME == 'SZQ') {
 								obj.value = "COUPON";
 								//obj.type = "qzf";
@@ -166,9 +168,12 @@
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
 					if (this.XS_TYPE == '2') {
-						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no + "'")[0];
-						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no + "'");
-						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no + "'");
+						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no +
+							"'")[0];
+						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no +
+							"'");
+						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no +
+							"'");
 					}
 					console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
 					this.DataAssembleSaveForGlobal(); 
@@ -183,7 +188,7 @@
 					uni.navigateBack();
 				}
 			},
-			DataAssembleSaveForGlobal:function(){
+			DataAssembleSaveForGlobal: function() {
 				//把数据传入下个页面
 				this.$store.commit('set-location', {
 					allow_discount_amount: "", //允许折扣金额
@@ -194,7 +199,7 @@
 					company: "", //公司
 					sale1_obj: this.sale1_obj, //001 主单 数据对象
 					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
-					sale3_arr: this.sale3_arr,//002 商品 数据对象集合
+					sale3_arr: this.sale3_arr, //002 商品 数据对象集合
 					Products: this.Products, //商品信息
 					PayWayList: this.PayWayList, //支付方式
 					hyinfo: {}, //会员信息
@@ -206,146 +211,31 @@
 					XS_TYPE: this.XS_TYPE
 				});
 			},
-			//创建订单数据
-			CreateDBData: function() {
-				//基础数据
-				this.sale1_obj = {
-					BILL: this.out_trade_no_old,
-					SALEDATE: dateformat.getYMD(),
-					SALETIME: dateformat.getYMDS(),
-					KHID: this.KHID,
-					POSID: this.POSID,
-					RYID: this.RYID,
-					BILL_TYPE: 'Z101', //门店现场销售单
-					XSTYPE: "1",
-					XS_BILL: "", //退款时记录原单号
-					XS_POSID: "", //退款时记录原posid
-					XS_DATE: "", //退款时记录原销售日期
-					XS_KHID: "", //退款时记录原khid
-					XS_GSID: "", //退款时记录原GSID
-					TLINE: this.sale2_obj.length,
-					TNET: this.totalAmount,
-					DNET: 0,
-					ZNET: this.allAmount,
-					BILLDISC: this.Discount,
-					ROUND: 0,
-					CHANGENET: 0,
-					CXTNET: 0,
-					TCXDISC: 0,
-					CUID: this.hyinfo.HYID, //会员号
-					CARDID: "", //卡号
-					THYDISC: this.Discount,
-					YN_SC: 'N',
-					GSID: this.GSID, //公司
-					GCID: this.GCID, //工厂
-					DPID: this.DPID, //店铺
-					KCDID: this.KCDID, //库存点
-					BMID: this.BMID, //部门id
-					DKFID: this.DKFID, //大客户id默认编码
-					XSPTID: 'POS',
-					YN_OK: 'X',
-					THTYPE: 0,
-					CLTIME: dateformat.getYMDS()
-				};
-				for (var i = 0; i < this.Products.length; i++) {
-					this.sale2_obj = {
-						BILL: this.out_trade_no_old,
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
-						KHID: this.KHID,
-						POSID: this.POSID,
-						SPID: this.Products[i].SPID,
-						NO: i,
-						PLID: this.Products[i].PLID,
-						BARCODE: this.Products[i].BARCODE,
-						UNIT: this.Products[i].UNIT,
-						QTY: this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE,
-						OPRICE: this.Products[i].OPRICE,
-						NET: this.Products[i].PRICE,
-						DISCRATE: "0",
-						YN_SKYDISC: 'N', //是否有手工折扣
-						DISC: 0, //手工折扣额
-						YN_CXDISC: 'N',
-						CXDISC: 0,
-						YAER: new Date().getFullYear(),
-						MONTH: new Date().getMonth() + 1,
-						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
-							new Date().getDay()),
-						TIME: new Date().getHours(),
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID //部门id
-					};
-					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
-				}
-				for (var i = 0; i < this.PayList.length; i++) {
-					this.sale3_obj = {
-						BILL: this.out_trade_no_old,
-						SALEDATE: dateformat.getYMD(),
-						SALETIME: dateformat.getYMDS(),
-						KHID: this.KHID,
-						POSID: this.POSID,
-						NO: this.PayList[i].no,
-						FKID: this.PayList[i].fkid,
-						AMT: this.PayList[i].amount,
-						ID: "", //卡号或者券号
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID, //部门id
-						DISC: ""
-					};
-					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
-				}
-
-				//执行sql
-				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
-				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
-				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-
-				let tx_obj = {
-					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
-					STOREID: this.KHID,
-					POSID: this.POSID,
-					TAB_NAME: 'XS',
-					STR1: this.out_trade_no_old,
-					BDATE: dateformat.getYMD(),
-					YW_NAME: "销售单据",
-					CONNSTR: 'CONNSTRING'
-				};
-				let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
-
-				// console.log(sql1.sqlliteArr);
-				// console.log(sql2.sqlliteArr);
-				// console.log(sql3.sqlliteArr);
-				// console.log(sql4.sqlliteArr);
-
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:", exeSql);
-				//return;
-				db.get().executeDml(exeSql, "订单创建中", function(res) {
-						console.log("订单创建成功", res);
-					},
-					function(err) {
-						console.log("订单创建失败", err);
-					});
-			},
 			Test: function(e) {
-				Req.asyncFunc({
-					http: true,
-					title: '测试请求',
-					data: {
-						action: 'ExecuteBatchSQL',
-						ywname: 'SALE001CLASS',
-						data: ""
-					}
-				}, function(res) {
-					console.log("请求结果：", res);
-				});
+				let arr = [
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+				]
+				for (var i = 0; i < arr.length; i++) {
+					db.get().executeDml(arr[i], "执行中", (res) => {
+						console.log("sql 执行结果：", res);
+					});
+				}
+				// Req.asyncFunc({
+				// 	http: true,
+				// 	title: '测试请求',
+				// 	data: {
+				// 		action: 'ExecuteBatchSQL',
+				// 		ywname: 'SALE001CLASS',
+				// 		data: ""
+				// 	}
+				// }, function(res) {
+				// 	console.log("请求结果：", res);
+				// });
 			},
 			InputProduct:function(){
 				let data = Object.assign({},this.input.data);
@@ -373,10 +263,9 @@
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
-			//this.change("world");
 			//获取支付方式
-			this.GetPayWay();
-			console.info("onLoad");
+			this.KHID = "K0101QT2";
+			this.GetPayWay(this.KHID);
 		},
 		onShow() {
 			// let that = this;
