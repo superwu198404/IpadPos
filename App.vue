@@ -55,7 +55,13 @@
 				PAYTYPE: "ECoupon_Payment",
 				SOURCE: "Mobile_Pos",
 				BRAND: "KG"
-			}]
+			}],
+			CodeRule: {//支付码规则
+				13: "WX_CLZF",
+				28: "ZFB20",
+				card: "PAYCARD",
+				coupon: "SZQ"
+			}
 		},
 		onLaunch: function() {
 			console.log('App Launch')

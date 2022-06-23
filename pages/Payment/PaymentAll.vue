@@ -327,7 +327,7 @@
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
-				this.currentPayInfo = this.PayWayList.find(i => i.value === this
+				this.currentPayInfo = this.PayWayList.find(i => i.type === this
 					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
@@ -861,9 +861,18 @@
 						});
 				})
 			},
-			//支付类型判断
-			PayTypeJudgment: function() {
+			//支付类型判断  旧版
+			PayTypeJudgment_: function() {
 				let startCode = this.authCode.substring(0, 2);
+				if (startCode) {
+					let CodeRule = getApp().globalData.CodeRule;
+					if (this.currentPayType === "COUPON") //券
+					{
+						startCode = "coupon";
+					}
+					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
+					let curPayType = CodeRule[startCode] || CodeRule["card"];
+				}
 				switch (startCode) {
 					case "28":
 						return "ALI";
@@ -875,6 +884,22 @@
 						return "CARD";
 						break;
 				}
+			},
+			//支付类型判断
+			PayTypeJudgment: function() {
+				let curPayType = "";
+				let startCode = this.authCode.substring(0, 2);
+				if (startCode) {
+					let CodeRule = getApp().globalData.CodeRule;
+					if (this.currentPayType === "COUPON") //券
+					{
+						startCode = "coupon";
+					}
+					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
+					curPayType = CodeRule[startCode] || CodeRule["card"]; //SZQ,PAYCARD....
+				}
+				console.log("当前支付类型：", curPayType);
+				return curPayType;
 			},
 			//支付 data 对象组装
 			PayDataAssemble: function() {
@@ -900,14 +925,32 @@
 					})
 				}
 			},
-			//支付处理入口
-			PayHandle: function() {
+			//支付处理入口 旧版
+			PayHandle_: function() {
 				let handlePayment;
 				handlePayment = this.handles[this.PayTypeJudgment()];
 				let payAfter = this.PayDataAssemble();
 				console.log("支付单号：", this.out_trade_no);
 				console.log(JSON.stringify(payAfter))
+
 				handlePayment.PaymentAll(payAfter, (function(result) {
+					uni.showToast({
+						title: "支付成功!"
+					});
+					this.PaidList = payAfter.product_info.map(i => {
+						i.price /= 100;
+						return i;
+					}); //把支付信息贴出来
+					this.orderGenarator(payAfter, result); //支付记录处理
+				}).bind(this))
+			},
+			//支付处理入口
+			PayHandle: function() {
+				let payAfter = this.PayDataAssemble();
+				console.log("支付单号：", this.out_trade_no);
+				console.log("支付参数：", JSON.stringify(payAfter));
+				_pay.PaymentAll(this.PayTypeJudgment(), payAfter, (function(result) {
+					console.log("支付结果：", result);
 					uni.showToast({
 						title: "支付成功!"
 					});
@@ -1065,7 +1108,9 @@
 			priceCount: function() {
 				let total = 0;
 				this.Products.forEach(product => total += product.AMOUNT);
-				this.SKY_DISCOUNT = total.toFixed(2) % 1;
+				//this.totalAmount = total;
+				//舍弃分的处理
+				this.SKY_DISCOUNT = util.myFixed(total, 2) % 1;
 				console.log("总舍弃分：", this.SKY_DISCOUNT);
 				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
 				this.Products.forEach(function(item, index) {
@@ -1200,7 +1245,7 @@
 						that.PayHandle();
 					} else {
 						uni.showToast({
-							title: "订单已完成支付!"
+							title: "订单已支付完成!"
 						});
 					}
 				}

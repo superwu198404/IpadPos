@@ -13,9 +13,9 @@ import util from '@/utils/util.js';
 var CreateData = function(pt, t, m, d) {
 	let data;
 	let PayInfo = getApp().globalData.PayInfo;
-	if (pt && ptPayInfo && PayInfo.length > 0) {
+	if (pt && PayInfo && PayInfo.length > 0) {
 		let PayObj = PayInfo.find(function(item, index, arr) {
-			item.TYPE == pt
+			return item.TYPE == pt;
 		})
 		if (PayObj) { //查询到支付信息
 			data = {
@@ -39,12 +39,14 @@ var CreateData = function(pt, t, m, d) {
 				}
 			}
 		} else {
+			console.log("PayObj为空 pt：", pt + PayInfo);
 			uni.showToast({
 				title: "参数错误",
 				icon: "error"
 			})
 		}
 	} else {
+		console.log("pt,或者PayInfo为空：", pt + PayInfo);
 		uni.showToast({
 			title: "参数错误",
 			icon: "error"
@@ -109,9 +111,7 @@ const PaymentAll = function(pt, body, func) {
 	Req.asyncFuncArr1(CreateData(pt, "支付中...", "Payment", body), [
 		function(res) {
 			util.sleep(5000);
-			return CreateData(pt, "查询中...", "QueryPayment", {
-				out_trade_no: body.out_trade_no
-			});
+			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
 			if (res.code && res.data.status == "SUCCESS") {
@@ -123,9 +123,7 @@ const PaymentAll = function(pt, body, func) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				util.sleep(5000);
-				return CreateData(pt, "查询中...", "QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+				return CreateData(pt, "查询中...", "QueryPayment", body);
 			}
 		},
 		function(res) {
@@ -138,9 +136,7 @@ const PaymentAll = function(pt, body, func) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				util.sleep(5000);
-				return CreateData(pt, "查询中...", "QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+				return CreateData(pt, "查询中...", "QueryPayment", body);
 			}
 		},
 		function(res) {
@@ -153,9 +149,7 @@ const PaymentAll = function(pt, body, func) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				util.sleep(5000);
-				return CreateData(pt, "查询中...", "QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+				return CreateData(pt, "查询中...", "QueryPayment", body);
 			}
 		},
 		function(res) {
@@ -168,9 +162,7 @@ const PaymentAll = function(pt, body, func) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				util.sleep(5000);
-				return CreateData(pt, "查询中...", "QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+				return CreateData(pt, "查询中...", "QueryPayment", body);
 			}
 		},
 		function(res) {
@@ -183,9 +175,7 @@ const PaymentAll = function(pt, body, func) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				util.sleep(5000);
-				return CreateData(pt, "查询中...", "QueryPayment", {
-					out_trade_no: body.out_trade_no
-				});
+				return CreateData(pt, "查询中...", "QueryPayment", body);
 			}
 		},
 		function(res) {
@@ -197,9 +187,8 @@ const PaymentAll = function(pt, body, func) {
 					msg: "支付成功了"
 				};
 			} else { //res.code&&res.data.status=="PAYING"
-				return CreateData(pt, "撤销中...", "CancelPayment", { //30s超时撤销
-					out_trade_no: body.out_trade_no
-				});
+				//30s超时撤销
+				return CreateData(pt, "撤销中...", "CancelPayment", body);
 			}
 		}
 	], function(err) {
@@ -208,21 +197,16 @@ const PaymentAll = function(pt, body, func) {
 			icon: "error",
 			title: err.msg
 		})
-		//支付或者查询false了 则进行撤销操作
-		// return CreateData("撤销中...", "CancelPayment", {
-		// 	out_trade_no: body.out_trade_no
-		// });
 	});
 }
 
 //查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
 const RefundAll = function(pt, body, catchFunc, finallyFunc) {
-	Req.asyncFuncArr1(CreateData(pt, "查询退款中...", "QueryRefund", body), [
+	Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
 		function(res) {
-			util.sleep(5000);
 			return CreateData(pt, "退款中...", "Refund", body);
 		}
-	], catchFunc, null, finallyFunc);
+	], catchFunc, finallyFunc, resultsFunc);
 }
 export default {
 	Payment,
