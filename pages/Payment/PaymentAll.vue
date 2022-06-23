@@ -359,22 +359,6 @@
 			onLoad(options) {
 				that = this;
 				this.GetHyCoupons();
-				//首先创建销售表结构
-				//common.CreatSaleTable();
-				//券信息加载
-				// let lqid = options.lqid;
-				// if (lqid) {
-				// 	console.log("券号：", lqid);
-				// 	that.auth_code = lqid;
-				// 	that.PayWayList.forEach(function(v, i) {
-				// 		if (v.value == 'COUPON') {
-				// 			v.checked = true;
-				// 			that.PayWay = v.type;
-				// 			that.selectPayWayVal = v.value;
-				// 		}
-				// 	})
-				// }
-
 			},
 			//单号防重处理
 			UniqueBill: function() {
@@ -406,13 +390,13 @@
 					RYID: this.RYID,
 					BILL_TYPE: this.BILL_TYPE, //销售类型
 					XSTYPE: this.XS_TYPE, //销售类型
-					XS_BILL: "", //退款时记录原单号（重点）
-					XS_POSID: "", //退款时记录原posid（重点）
-					XS_DATE: "", //退款时记录原销售日期（重点）
-					XS_KHID: "", //退款时记录原khid（重点）
-					XS_GSID: "", //退款时记录原GSID（重点）
+					XS_BILL: this.sale1_obj?.XS_BILL ?? "", //退款时记录原单号（重点）
+					XS_POSID: this.sale1_obj?.XS_POSID ?? "", //退款时记录原posid（重点）
+					XS_DATE: this.sale1_obj?.XS_DATE ?? "", //退款时记录原销售日期（重点）
+					XS_KHID: this.sale1_obj?.XS_KHID ?? "", //退款时记录原khid（重点）
+					XS_GSID: this.sale1_obj?.XS_GSID ?? "", //退款时记录原GSID（重点）
 					TLINE: this.sale2_obj.length,
-					TNET: this.totalAmount,//总金额（重点）
+					TNET: this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: this.allAmount,
 					BILLDISC: this.Discount, //整单折扣,
@@ -470,7 +454,8 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
-				var list = this.isRefund ? this.RefundList : this.PayList;//如果是退款，那么就是退款信息，否则是支付信息
+				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
+					.PayList; //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
@@ -478,18 +463,18 @@
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
 						POSID: this.POSID,
-						NO: item.no,//付款序号
-						FKID: item.fkid,//付款类型id
-						AMT: item.amount,//付款金额
+						NO: item.no, //付款序号
+						FKID: item.fkid, //付款类型id
+						AMT: item.amount, //付款金额
 						ID: item.user_id, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
-						DISC: item.disc,//折扣金额
-						ZKLX: item.zklx,//折扣类型
-						IDTYPE: item.id_type//卡类型
+						DISC: item.disc, //折扣金额
+						ZKLX: item.zklx, //折扣类型
+						IDTYPE: item.id_type //卡类型
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				})
@@ -532,12 +517,49 @@
 					})
 				});
 			},
+			SaleExcuted: function(sqlArr) {
+				db.get().executeDml(sqlArr, null, function(res) {
+					uni.showToast({
+						title: "销售单创建成功"
+					})
+				}, function(err) {
+					uni.showToast({
+						title: "销售单创建失败",
+						icon: "error"
+					})
+				});
+			},
+			Sale3PackageSaveForSqlite: function(list) {
+				let current = [];
+				list.forEach(((item) => {
+					current.push({
+						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						SALEDATE: dateformat.getYMD(),
+						SALETIME: dateformat.getYMDS(),
+						KHID: this.KHID,
+						POSID: this.POSID,
+						NO: item.no, //付款序号
+						FKID: item.fkid, //付款类型id
+						AMT: item.amount, //付款金额
+						ID: item.user_id, //卡号或者券号
+						RYID: this.RYID, //人员
+						GCID: this.GCID, //工厂
+						DPID: this.DPID, //店铺
+						KCDID: this.KCDID, //库存点
+						BMID: this.BMID, //部门id
+						DISC: item.disc, //折扣金额
+						ZKLX: item.zklx, //折扣类型
+						IDTYPE: item.id_type //卡类型
+					});
+				}).bind(this))
+				let sql3 = common.CreateSQL(current, 'SALE003');
+				this.SaleExcuted(sql3);
+			},
 			//支付按钮点击事件
 			Pay: function() {
 				//适配真机
 				let that = this;
 				that.authCode = ""; //避免同一个付款码多次使用
-				debugger;
 				if (!this.currentPayType) {
 					uni.showToast({
 						title: "未选择支付方式，请选择后再进行支付!",
@@ -565,67 +587,21 @@
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
 				let that = this;
-				that.SALE1Init(this.sale1_obj);//sale1 初始化
-				this.sale2_arr.forEach(s1 => {//sale2 初始化
+				that.SALE1Init(this.sale1_obj); //sale1 初始化
+				this.sale2_arr.forEach(s1 => { //sale2 初始化
 					that.SALE2Init(s1);
 				});
-				this.sale3_arr.forEach(s1 => {//sale3 初始化
+				this.sale3_arr.forEach(s1 => { //sale3 初始化
 					that.SALE3Init(s1);
 				});
-				// this.RefundList = (this.$store.state.refund ?? []); //测试：获取支付的订单信息
-				// this.RefundList = [{
-				// 	fkid: "ZF10",
-				// 	bill: "K200QTD00512262217404965_0",
-				// 	name: "支付宝",
-				// 	amount: "1",
-				// 	no: "0",
-				// 	fail: true,
-				// 	refund_num: 1, //退款次数（第一次和重试）
-				// 	refunding: false,
-				// 	loading: false,
-				// 	msg: ""
-				// }, {
-				// 	fkid: "ZF09",
-				// 	bill: "K200QTD005122621175729733_1",
-				// 	name: "金凤券",
-				// 	amount: "0.01",
-				// 	no: "0",
-				// 	fail: false,
-				// 	refund_num: 1, //退款次数（第一次和重试）
-				// 	refunding: false,
-				// 	loading: false,
-				// 	msg: ""
-				// }, {
-				// 	fkid: "ZF31",
-				// 	bill: "K200QTD005122622173948973_0",
-				// 	name: "仟吉电子卡",
-				// 	amount: "1",
-				// 	no: "0",
-				// 	fail: true,
-				// 	refund_num: 1, //退款次数（第一次和重试）
-				// 	refunding: false,
-				// 	loading: false,
-				// 	msg: ""
-				// }, {
-				// 	fkid: "ZF06",
-				// 	bill: "K200QTD0051226221742296_0",
-				// 	name: "微信支付",
-				// 	amount: "1",
-				// 	no: "0",
-				// 	fail: true,
-				// 	refund_num: 1, //退款次数（第一次和重试）
-				// 	refunding: false,
-				// 	loading: false,
-				// 	msg: ""
-				// }];
 			},
 			//SALE001 初始化
-			SALE1Init:function(obj){
-				this.sale1_obj = Object.assign({},obj);
+			SALE1Init: function(obj) {
+				this.sale1_obj = Object.assign({}, obj);
 			},
 			//SALE002 初始化、处理
-			SALE2Init:function(arr){
-				this.Products = arr.map((function(i){
+			SALE2Init: function(arr) {
+				this.Products = arr.map((function(i) {
 					return {
 						PLID: i.PLID,
 						SPID: i.SPID,
@@ -640,8 +616,8 @@
 				}).bind(this));
 			},
 			//SALE003 初始化、处理
-			SALE3Init:function(arr){
-				this.RefundList = arr.map((function(i){//将sale3的数据转为页面适用的格式
+			SALE3Init: function(arr) {
+				this.RefundList = arr.map((function(i) { //将sale3的数据转为页面适用的格式
 					return {
 						fkid: i.FKID,
 						bill: `${i.BILL}_${i.NO}`,
@@ -659,7 +635,8 @@
 			//退款操作
 			Refund: function(isRetry = false) {
 				let refund_no = this.out_refund_no,
-					that = this;
+					that = this,
+					promises = [];
 				//遍历所有退款失败的(或者未退款的)
 				let refunds = this.RefundList;
 				if (isRetry)
@@ -676,7 +653,7 @@
 					if (payWayType) {
 						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 						refundInfo.refunding = true; //标记为正在退款的状态
-						_pay.RefundAll(payWayType, {
+						let res = _pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
 								out_refund_no: refund_no, //退款单号
 								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
@@ -696,13 +673,16 @@
 								} else
 									refundInfo.fail = false;
 							}).bind(that));
+						promises.push(res)
 					} else {
-						console.log("当前支付方式:", payWayType);
 						uni.showToast({
 							title: "支付方式不存在!",
 							icon: "error"
 						});
 					}
+				});
+				Promise.all(res).then((res) => {
+					that.CreateDBData();
 				})
 			},
 			//支付类型判断  旧版
@@ -1073,14 +1053,16 @@
 							}).bind(that),
 							(function(ress) { //执行完毕（results），根据结果判断
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
-									singleRefund.fail = true;
+									singleRefund.fail = true; //退款失败
 									singleRefund.msg = ress[1].msg; //错误提示信息记录
 									uni.showModal({
 										title: '退款失败',
 										content: ress[1].msg
 									});
-								} else
+								} else {
 									singleRefund.fail = false;
+									Sale3PackageSaveForSqlite([singleRefund]);//追加重试成功的订单信息
+								}
 								singleRefund.loading = false; //关闭加载样式
 							}).bind(that));
 					} else

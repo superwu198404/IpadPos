@@ -202,7 +202,7 @@ const PaymentAll = function(pt, body, func) {
 
 //查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
 const RefundAll = function(pt, body, catchFunc, finallyFunc) {
-	Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
+	return Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
 		function(res) {
 			return CreateData(pt, "退款中...", "Refund", body);
 		}
