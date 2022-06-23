@@ -63,12 +63,13 @@
 							<h3 v-if="!isRefund">已结算</h3>
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists">
-									<view class="Methods" v-for="(paid, index) in PayList">
+									<view class="Methods"
+										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.payding)">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
-											{{ paid.name }}
+											{{ pay.name }}
 										</view>
-										<text>-{{paid.amount}}￥</text>
+										<text>-{{pay.amount}}￥</text>
 									</view>
 								</view>
 								<view class="stills">
@@ -78,6 +79,26 @@
 											还需支付
 										</view>
 										<text>{{ dPayAmount}}￥</text>
+									</view>
+								</view>
+							</view>
+							<h3 v-if="!isRefund">结算失败</h3>
+							<view class="sets-list refund" v-if="!isRefund">
+								<view class="paylists">
+									<view class="Methods"
+										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding)"
+										v-if="pay.pay_num == 0">
+										<view class="payicon">
+											<image src="../../images/dianziquan.png" mode="widthFix"></image>
+											{{ pay.name }}
+										</view>
+										<div class="refund-more-box">
+											<text class="refund-text">-{{pay.amount}}￥</text>
+											<div class="refund-reset" @click="singlePayRetry(pay.fkid,pay.bill)">
+												重试
+												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
+											</div>
+										</div>
 									</view>
 								</view>
 							</view>
@@ -314,8 +335,12 @@
 							title: '金额输入错误!',
 							icon: "error"
 						});
-						this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
+					} else {
+						let count = this.dPayAmount.toString().split('.')[1].length;
+						if (count > 2)
+							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
 					}
+					this.domForceRefresh();
 				} else { //完成支付，推送数据
 					this.YN_TotalPay = true;
 					this.CanBack = true;
@@ -331,21 +356,12 @@
 					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
-				if (n === "COUPON") //如果用券，则不再允许编辑待付款金额
-					// this.allowInput = false;
+				if (n === "COUPON") { //如果用券，则不再允许编辑待付款金额
+					this.dPayAmount = this.toBePaidPrice();
+					this.domForceRefresh();
 					this.allowInput = true;
-				else
+				} else
 					this.allowInput = false;
-			},
-			PayList: function(n, o) { //测试用
-				let test = this.PayList.map(i => {
-					i.fail = true;
-					i.refund_num = 0;
-					refunding = false;
-					msg = "";
-					return i;
-				});
-				this.$store.commit("set-refund", test)
 			}
 		},
 		computed: {
@@ -517,6 +533,7 @@
 					})
 				});
 			},
+			// 执行表单插入本地数据库操作
 			SaleExcuted: function(sqlArr) {
 				db.get().executeDml(sqlArr, null, function(res) {
 					uni.showToast({
@@ -529,6 +546,7 @@
 					})
 				});
 			},
+			//生成SALE3表sql
 			Sale3PackageSaveForSqlite: function(list) {
 				let current = [];
 				list.forEach(((item) => {
@@ -559,7 +577,6 @@
 			Pay: function() {
 				//适配真机
 				let that = this;
-				that.authCode = ""; //避免同一个付款码多次使用
 				if (!this.currentPayType) {
 					uni.showToast({
 						title: "未选择支付方式，请选择后再进行支付!",
@@ -567,7 +584,16 @@
 					});
 					return;
 				}
+				if (!this.dPayAmount || this.dPayAmount == "0") {
+					uni.showToast({
+						title: "金额不能为空!",
+						icon: "error"
+					});
+					this.dPayAmount = this.toBePaidPrice();
+					return;
+				}
 				if (!this.YN_TotalPay) { //如果未支付完成
+					console.log("判断券号是否为空：", )
 					if (that.authCode) { //如果有码
 						that.PayHandle(); //直接发起支付
 					} else { //为空就进行扫码
@@ -597,40 +623,43 @@
 			},
 			//SALE001 初始化
 			SALE1Init: function(obj) {
-				this.sale1_obj = Object.assign({}, obj);
+				if (this.isRefund)
+					this.sale1_obj = obj ? Object.assign({}, obj) : {};
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function(arr) {
-				this.Products = arr.map((function(i) {
-					return {
-						PLID: i.PLID,
-						SPID: i.SPID,
-						UNIT: i.UNIT,
-						BARCODE: i.BARCODE,
-						NAME: i.NAME,
-						PRICE: i.PRICE,
-						OPRICE: i.OPRICE,
-						AMOUNT: i.NET,
-						QTY: i.QTY
-					}
-				}).bind(this));
+				if (this.isRefund)
+					this.Products = arr?.map((function(i) {
+						return {
+							PLID: i.PLID,
+							SPID: i.SPID,
+							UNIT: i.UNIT,
+							BARCODE: i.BARCODE,
+							NAME: i.NAME,
+							PRICE: i.PRICE,
+							OPRICE: i.OPRICE,
+							AMOUNT: i.NET,
+							QTY: i.QTY
+						}
+					}).bind(this));
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function(arr) {
-				this.RefundList = arr.map((function(i) { //将sale3的数据转为页面适用的格式
-					return {
-						fkid: i.FKID,
-						bill: `${i.BILL}_${i.NO}`,
-						name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-						amount: i.AMT,
-						no: i.NO,
-						fail: true, //def初始和退款失败的皆为true
-						refund_num: 0, //退款（尝试）次数
-						refunding: false, //是否在正在退款中
-						loading: false,
-						msg: "" //操作提示信息（可以显示失败的或者成功的）
-					}
-				}).bind(this));
+				if (this.isRefund)
+					this.RefundList = arr?.map((function(i) { //将sale3的数据转为页面适用的格式
+						return {
+							fkid: i.FKID,
+							bill: `${i.BILL}_${i.NO}`,
+							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
+							amount: i.AMT,
+							no: i.NO,
+							fail: true, //def初始和退款失败的皆为true
+							refund_num: 0, //退款（尝试）次数
+							refunding: false, //是否在正在退款中
+							loading: false,
+							msg: "" //操作提示信息（可以显示失败的或者成功的）
+						}
+					}).bind(this));
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -681,8 +710,8 @@
 						});
 					}
 				});
-				Promise.all(res).then((res) => {
-					that.CreateDBData();
+				Promise.all(promises).then((res) => {
+					if (res.length > 0) that.CreateDBData();
 				})
 			},
 			//支付类型判断  旧版
@@ -782,70 +811,69 @@
 						i.price /= 100;
 						return i;
 					}); //把支付信息贴出来
-					this.orderGenarator(payAfter, result); //支付记录处理
+					that.authCode = ""; //避免同一个付款码多次使用
+					this.orderGenarator(payAfter, result, false); //支付记录处理(成功)
+				}).bind(this), (function(error) {
+					this.orderGenarator(payAfter, result, true); //支付记录处理(失败)
+					that.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
 			//创建支付记录
-			orderGenarator: function(payload, result) {
+			orderGenarator: function(payload, result, fail) {
 				if (this.currentPayType === "COUPON") { //如果是券支付
-					let couponAmount = result.data.money; //获取券的面额
-					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS");
+					let couponAmount = result.data.voucher.discount; //获取券的面额
+					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS"); //放弃金额
+					console.log("excessInfo:", excessInfo);
+					console.log("result:", result);
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
 						this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
-						let orderBrother = [{ //券抵消金额单号
-								fkid: this.currentPayInfo?.fkid ?? "",
-								bill: payload.out_trade_no,
-								name: this.currentPayInfo?.name ?? "",
-								amount: (payload.money / 100).toFixed(2),
-								no: this.PayList.length,
-								disc: payload.discount,
-								zklx: payload?.ZKLX ?? "",
-								id_type: payload?.IDTYPE ?? "",
-								user_id: payload.open_id
-							},
-							{ //弃用金额单号
-								fkid: excessInfo?.fkid ?? "",
-								bill: payload.out_trade_no, // 弃用金额单号（和主要抵消金额单号保持一致）
-								name: excessInfo?.name ?? "", // 弃用金额名称
-								amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
-								no: this.PayList.length + 1,
-								disc: payload.discount,
-								zklx: payload?.ZKLX ?? "",
-								id_type: payload?.IDTYPE ?? "",
-								user_id: payload.open_id
-							}
-						];
-						this.PayList = this.PayList.concat(orderBrother); // 推入支付记录数组
+						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+							amount: (payload.money / 100).toFixed(2),
+							fail,
+						}, payload));
+						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+							fkid: excessInfo?.fkid ?? "",
+							name: excessInfo?.name ?? "", // 弃用金额名称
+							amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
+							fail
+						}, payload));
 					} else //如果券面额未小于
 					{
 						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
-						this.PayList.push({ //每支付成功一笔，则往此数组内存入一笔记录
-							fkid: this.currentPayInfo?.fkid ?? "",
-							bill: payload.out_trade_no,
-							name: this.currentPayInfo?.name ?? "",
+						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (couponAmount / 100).toFixed(2),
-							no: this.PayList.length,
-							disc: payload.discount,
-							zklx: payload?.ZKLX ?? "",
-							id_type: payload?.IDTYPE ?? "",
-							user_id: payload.open_id
-						});
+							fail
+						}, payload));
 					}
 				} else //如果是聚合支付
 				{
 					this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
-					this.PayList.push({ //每支付成功一笔，则往此数组内存入一笔记录
-						fkid: this.currentPayInfo?.fkid ?? "",
-						bill: payload.out_trade_no,
-						name: this.currentPayInfo?.name ?? "",
+					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
-						no: this.PayList.length,
-						disc: payload.discount,
-						zklx: payload?.ZKLX ?? "",
-						id_type: payload?.IDTYPE ?? "",
-						user_id: payload.open_id
-					});
+						fail
+					}, payload));
 				}
+				this.PayList = Object.assign([],this.PayList);
+			},
+			//订单对象创建
+			orderCreated: function(obj, payload) {
+				return Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
+					fkid: this.currentPayInfo?.fkid ?? "",
+					bill: payload.out_trade_no,
+					name: this.currentPayInfo?.name ?? "",
+					amount: (payload.money / 100).toFixed(2),
+					no: this.PayList.length,
+					disc: payload.discount,
+					zklx: payload?.ZKLX ?? "",
+					id_type: payload?.IDTYPE ?? "",
+					user_id: payload.open_id,
+					//业务配置字段 ↓
+					fail: true, //def初始和退款失败的皆为true
+					pay_num: 0, //退款（尝试）次数
+					paying: false, //是否在正在退款中
+					loading: false,
+					msg: "" //操作提示信息（可以显示失败的或者成功的）
+				}, obj)
 			},
 			//积分操作
 			scoreConsume: function() {
@@ -997,8 +1025,9 @@
 					that.currentPayType = 'COUPON';
 					if (!this.YN_TotalPay) { //如果未支付完成
 						that.coupons = !that.coupons; //关闭弹窗
-						that.authCode = e; //券号赋值
-						that.PayHandle();
+						this.authCode = e; //券号赋值
+						console.log("券号：", that.authCode)
+						that.Pay();
 					} else {
 						uni.showToast({
 							title: "订单已支付完成!"
@@ -1022,7 +1051,7 @@
 				else
 					this.Pay();
 			},
-			//单笔订单重试
+			//单笔订单退款重试
 			singleRetry: function(trade_no) {
 				console.log("重试单号：", trade_no)
 				let singleRefund = this.RefundList.find(i => i.bill === trade_no);
@@ -1061,7 +1090,7 @@
 									});
 								} else {
 									singleRefund.fail = false;
-									Sale3PackageSaveForSqlite([singleRefund]);//追加重试成功的订单信息
+									Sale3PackageSaveForSqlite([singleRefund]); //追加重试成功的订单信息
 								}
 								singleRefund.loading = false; //关闭加载样式
 							}).bind(that));
@@ -1072,6 +1101,30 @@
 						icon: "error"
 					});
 				}
+			},
+			//单笔订单重试
+			singlePayRetry: function(fkid, trade_no) {
+				let trade = this.PayList.find(i => i.bill === trade_no),
+					type = this.PayWayList.find(i => i.fkid == fkid)?.type;
+				console.log("fkid:" + fkid);
+				trade.loading = true;
+				_pay.QueryPayment(type, {
+					out_trade_no: trade_no
+				}, (function(res) {
+					trade.loading = false;
+					trade.pay_num += 1; //支付次数加一
+					trade.fail = false;
+					this.dPayAmount -= trade.amount;
+					this.PayList = Object.assign([], this.PayList); //刷新视图
+				}).bind(this), (function(err) {
+					trade.loading = false;
+					trade.pay_num += 1; //支付次数加一
+					this.PayList = Object.assign([], this.PayList); //刷新视图
+					uni.showModal({
+						title: '支付失败',
+						content: "未查询到订单！"
+					});
+				}).bind(this));
 			}
 		},
 		created() {

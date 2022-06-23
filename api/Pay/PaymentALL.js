@@ -62,17 +62,15 @@ var CreateData = function(pt, t, m, d) {
  * @param {*} d 
  * @param {*} func 
  */
-const BasePayment = async function(pt, t, m, d, func) {
+const BasePayment = async function(pt, t, m, d, func, catchFunc) {
 	let data = CreateData(pt, t, d);
 	if (data) {
 		Req.asyncFuncOne(data, function(res) {
 			if (func)
 				func(res)
 		}, function(res) {
-			uni.showToast({
-				title: res.msg,
-				icon: "error"
-			})
+			if (catchFunc)
+				catchFunc(res)
 		});
 	} else {
 		uni.showToast({
@@ -91,8 +89,8 @@ const BasePayment = async function(pt, t, m, d, func) {
 const Payment = function(pt, d, func) {
 	this.BasePayment(pt, "支付中...", "Payment", d, func);
 };
-const QueryPayment = function(pt, d, func) {
-	this.BasePayment(pt, "查询中...", "QueryPayment", d, func);
+const QueryPayment = function(pt, d, func, catchFunc) {
+	BasePayment(pt, "查询中...", "QueryPayment", d, func, catchFunc);
 };
 const CancelPayment = function(pt, d, func) {
 	this.BasePayment(pt, "撤销中...", "CancelPayment", d, func);
@@ -107,8 +105,11 @@ const QueryRefund = function(pt, d, func) {
 /**
  * 包含支付和查询以及撤销的支付体
  */
-const PaymentAll = function(pt, body, func) {
-	Req.asyncFuncArr1(CreateData(pt, "支付中...", "Payment", body), [
+const PaymentAll = function(pt, body, func, catchFunc) {
+	let request = CreateData(pt, "支付中...", "Payment", body);
+	console.log("获取请求体：",body);
+	console.log("获取请求体(whole)：",request);
+	Req.asyncFuncArr1(request, [
 		function(res) {
 			util.sleep(5000);
 			return CreateData(pt, "查询中...", "QueryPayment", body);
@@ -193,6 +194,7 @@ const PaymentAll = function(pt, body, func) {
 		}
 	], function(err) {
 		console.log("支付接口返回的错误信息：", err)
+		if(catchFunc) catchFunc(err);
 		uni.showToast({
 			icon: "error",
 			title: err.msg
