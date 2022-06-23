@@ -98,25 +98,26 @@
 							let obj = {};
 							obj.name = res.msg[i].SNAME;
 							obj.fkid = res.msg[i].FKID;
+							obj.type = res.msg[i].JKSNAME;
 							if (res.msg[i].JKSNAME == 'SZQ') {
 								obj.value = "COUPON";
-								obj.type = "qzf";
+								//obj.type = "qzf";
 							}
 							if (res.msg[i].JKSNAME == 'ZFB20') {
 								obj.value = "ALI";
-								obj.type = "AliPayService";
+								//obj.type = "AliPayService";
 							}
 							if (res.msg[i].JKSNAME == 'PAYCARD') {
 								obj.value = "CARD";
-								obj.type = "dzk";
+								//obj.type = "dzk";
 							}
 							if (res.msg[i].JKSNAME == 'WX_CLZF') {
 								obj.value = "WX";
-								obj.type = "WxPayService";
+								//obj.type = "WxPayService";
 							}
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.value = "EXCESS";
-								obj.type = "ce";
+								//obj.type = "ce";
 							}
 							that.PayWayList.push(obj);
 						}

@@ -22,7 +22,40 @@
 			},
 			hyinfo: {
 				// hyId: "1000311640"
-			}
+			},
+			PayInfo: [{ //支付参数
+				TYPE: "WX_CLZF",
+				APPID: "keengee",
+				GSID: "027001",
+				URL: "/PaymentAll/Handle",
+				PAYTYPE: "WxPay_ScanCode",
+				SOURCE: "Mobile_Pos",
+				BRAND: "KG"
+			}, {
+				TYPE: "ZFB20",
+				APPID: "keengee",
+				GSID: "027001",
+				URL: "/PaymentAll/Handle",
+				PAYTYPE: "AliPay_ScanCode",
+				SOURCE: "Mobile_Pos",
+				BRAND: "KG"
+			}, {
+				TYPE: "PAYCARD",
+				APPID: "keengee",
+				GSID: "027001",
+				URL: "/PaymentAll/Handle",
+				PAYTYPE: "ECard_Payment",
+				SOURCE: "Mobile_Pos",
+				BRAND: "KG"
+			}, {
+				TYPE: "SZQ",
+				APPID: "keengee",
+				GSID: "027001",
+				URL: "/PaymentAll/Handle",
+				PAYTYPE: "ECoupon_Payment",
+				SOURCE: "Mobile_Pos",
+				BRAND: "KG"
+			}]
 		},
 		onLaunch: function() {
 			console.log('App Launch')
