@@ -504,7 +504,8 @@
 						CXDISC: 0,
 						// YAER: new Date().getFullYear(),
 						MONTH: new Date().getMonth() + 1,
-						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDay()),
+						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
+							new Date().getDay()),
 						TIME: new Date().getHours(),
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
@@ -641,84 +642,7 @@
 					})
 				}
 			},
-			//轮询方法
-			circleQuery: function(t, e, func1) {
-				let that = this;
-				let nums = 1;
-				var timerIndex;
-				var timerFunc = function() {
-					console.log("循环次数监听：" + nums);
-					if (nums <= 24) {
-						that.queryPayAll(t, e, function(res) {
-							if (res.code > 0) {
-								clearInterval(timerIndex);
-								//支付成功创建支付记录
-								that.createPayData(t);
-								uni.hideLoading();
-							} else if (res.code == 0) {
-								//用户支付中  提示是否继续
-								if (nums % 6 == 0) {
-									clearInterval(timerIndex);
-									uni.showModal({
-										title: '提示',
-										content: '是否继续等待？',
-										confirmText: "是",
-										cancelText: "否",
-										success: function(res) {
-											if (res.confirm) { //重启定时器继续查
-												timerIndex = setInterval(timerFunc, 5000);
-											} else {
-												uni.hideLoading();
-												clearInterval(timerIndex);
-												uni.showToast({
-													title: "取消支付，即将撤销订单",
-													icon: "error",
-													success: function() {
-														setTimeout(function() {
-															//撤销订单
-															that.cancelPayAll(
-																t, e,
-																func1);
-														}, 2000);
-													}
-												})
-											}
-										}
-									})
-								}
-							} else {
-								uni.hideLoading();
-								clearInterval(timerIndex);
-								uni.showToast({
-									title: res.msg,
-									icon: "error",
-									success: function() {
-										setTimeout(function() {
-											//撤销订单
-											that.cancelPayAll(t, e, func1);
-										}, 2000);
-									}
-								});
-							}
-							nums++
-						});
-					} else { //撤销订单
-						uni.hideLoading();
-						clearInterval(timerIndex);
-						uni.showToast({
-							title: "支付超时，即将撤销订单",
-							icon: "error",
-							success: function() {
-								setTimeout(function() {
-									that.cancelPayAll(t, e, func1);
-								}, 2000);
-							}
-						})
-					}
-				}
-				timerFunc();
-				timerIndex = setInterval(timerFunc, 5000);
-			},
+
 			//关闭
 			close: function() {
 				this.$refs['popup'].close();
@@ -755,7 +679,7 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				this.RefundList = this.sale3_arr.map((function(i){
+				this.RefundList = this.sale3_arr.map((function(i) {
 					return {
 						fkid: i.FKID,
 						bill: `${i.BILL}_${i.NO}`,
@@ -825,17 +749,18 @@
 				if (isRetry)
 					refunds = refunds.filter(i => i.refund_num >= 1) //筛选出：退款状态为失败，且已经经历了一次退款（refund_num为退款次数）
 				refunds.filter(i => i.fail).forEach(refundInfo => {
-					let payWayName = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.value;
-					if (payWayName == "COUPON") { //如果为券，直接默认成功
+					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
+					if (payWayType == "SZQ") { //如果为券，直接默认成功
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						return;
 					}
-					let handle = that.handles[payWayName];
-					if (handle) {
+					// let handle = that.handles[payWayName];
+					// if (handle) {
+					if (payWayType) {
 						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 						refundInfo.refunding = true; //标记为正在退款的状态
-						handle.RefundAll({
+						_pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
 								out_refund_no: refund_no, //退款单号
 								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
@@ -855,11 +780,13 @@
 								} else
 									refundInfo.fail = false;
 							}).bind(that));
-					} else
+					} else {
+						console.log("当前支付方式:", payWayType);
 						uni.showToast({
-							title: "所记录的支付方式不存在!",
+							title: "支付方式不存在!",
 							icon: "error"
 						});
+					}
 				})
 			},
 			//支付类型判断  旧版
@@ -977,8 +904,8 @@
 								no: this.PayList.length,
 								disc: payload.discount,
 								zklx: payload?.ZKLX ?? "",
-								id_type:payload?.IDTYPE ?? "",
-								user_id:payload.open_id
+								id_type: payload?.IDTYPE ?? "",
+								user_id: payload.open_id
 							},
 							{ //弃用金额单号
 								fkid: excessInfo?.fkid ?? "",
@@ -988,8 +915,8 @@
 								no: this.PayList.length + 1,
 								disc: payload.discount,
 								zklx: payload?.ZKLX ?? "",
-								id_type:payload?.IDTYPE ?? "",
-								user_id:payload.open_id
+								id_type: payload?.IDTYPE ?? "",
+								user_id: payload.open_id
 							}
 						];
 						this.PayList = this.PayList.concat(orderBrother); // 推入支付记录数组
@@ -1004,8 +931,8 @@
 							no: this.PayList.length,
 							disc: payload.discount,
 							zklx: payload?.ZKLX ?? "",
-							id_type:payload?.IDTYPE ?? "",
-							user_id:payload.open_id
+							id_type: payload?.IDTYPE ?? "",
+							user_id: payload.open_id
 						});
 					}
 				} else //如果是聚合支付
@@ -1019,8 +946,8 @@
 						no: this.PayList.length,
 						disc: payload.discount,
 						zklx: payload?.ZKLX ?? "",
-						id_type:payload?.IDTYPE ?? "",
-						user_id:payload.open_id
+						id_type: payload?.IDTYPE ?? "",
+						user_id: payload.open_id
 					});
 				}
 			},
@@ -1097,11 +1024,11 @@
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
-				this.$store.commit("set-trade",this.out_trade_no_old);//保存当前单号至全局
+				this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
 				this.out_trade_no = this.out_trade_no_old; //子单号
 				this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
 				this.sale3_arr = prev_page_param.sale3_arr;
-				console.log("PayWays:",this.PayWayList)
+				console.log("PayWays:", this.PayWayList)
 				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
 			},
@@ -1275,15 +1202,16 @@
 					singleRefund.loading = true; //开启加载样式
 					let refund_no = this.out_refund_no, //获取订单号
 						that = this; //转存this指向
-					let payWayName = this.PayWayList.find(i => i.fkid == singleRefund.fkid)?.value;
-					if (payWayName == "COUPON") { //如果为券，直接默认成功
+					let payWayType = this.PayWayList.find(i => i.fkid == singleRefund.fkid)?.type;
+					if (payWayType == "SZQ") { //如果为券，直接默认成功
 						singleRefund.fail = false;
 						singleRefund.refund_num += 1;
 						return;
 					}
-					let handle = that.handles[payWayName];
-					if (handle) {
-						handle.RefundAll({
+					// let handle = that.handles[payWayName];
+					// if (handle) {
+					if (payWayType) {
+						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
 								refund_money: (Number(singleRefund.amount) * 100).toFixed(0), //退款金额
@@ -1308,10 +1236,11 @@
 								singleRefund.loading = false; //关闭加载样式
 							}).bind(that));
 					} else
-						uni.showToast({
-							title: "所记录的支付方式不存在!",
-							icon: "error"
-						});
+						console.log("当前支付方式：", payWayType);
+					uni.showToast({
+						title: "支付方式不存在!",
+						icon: "error"
+					});
 				}
 			}
 		},
