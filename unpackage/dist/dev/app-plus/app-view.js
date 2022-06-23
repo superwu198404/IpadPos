@@ -579,9 +579,37 @@ var render = function() {
         )
       }),
       _c(
+        "v-uni-view",
+        { attrs: { _i: 7 } },
+        [
+          _c("v-uni-text", { attrs: { _i: 8 } }, [
+            _vm._v("请输入单号（用于测试退款）：")
+          ]),
+          _c(
+            "v-uni-text",
+            { attrs: { _i: 9 } },
+            [
+              _c("v-uni-input", {
+                staticStyle: { border: "1px solid gray" },
+                attrs: { type: "text", _i: 10 },
+                model: {
+                  value: _vm._$g(10, "v-model"),
+                  callback: function($$v) {
+                    _vm.$handleVModelEvent(10, $$v)
+                  },
+                  expression: "refund_no"
+                }
+              })
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _c(
         "v-uni-button",
         {
-          attrs: { _i: 7 },
+          attrs: { _i: 11 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -593,7 +621,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 8 },
+          attrs: { _i: 12 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -605,7 +633,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 9 },
+          attrs: { _i: 13 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -1808,7 +1836,8 @@ var render = function() {
                                             [
                                               _vm._v(
                                                 "-" +
-                                                  _vm._$g("58-" + $30, "t0-0")
+                                                  _vm._$g("58-" + $30, "t0-0") +
+                                                  "￥"
                                               )
                                             ]
                                           )
@@ -1853,7 +1882,7 @@ var render = function() {
                                           _c(
                                             "v-uni-text",
                                             { attrs: { _i: 63 } },
-                                            [_vm._v("￥" + _vm._$g(63, "t0-0"))]
+                                            [_vm._v(_vm._$g(63, "t0-0") + "￥")]
                                           )
                                         ],
                                         1
@@ -1933,7 +1962,8 @@ var render = function() {
                                             [
                                               _vm._v(
                                                 "-" +
-                                                  _vm._$g("70-" + $31, "t0-0")
+                                                  _vm._$g("70-" + $31, "t0-0") +
+                                                  "￥"
                                               )
                                             ]
                                           )
@@ -2028,14 +2058,21 @@ var render = function() {
                                             [
                                               _c(
                                                 "v-uni-text",
-                                                { attrs: { _i: "78-" + $32 } },
+                                                {
+                                                  staticClass: _vm._$g(
+                                                    "78-" + $32,
+                                                    "sc"
+                                                  ),
+                                                  attrs: { _i: "78-" + $32 }
+                                                },
                                                 [
                                                   _vm._v(
                                                     "-" +
                                                       _vm._$g(
                                                         "78-" + $32,
                                                         "t0-0"
-                                                      )
+                                                      ) +
+                                                      "￥"
                                                   )
                                                 ]
                                               ),
@@ -2050,13 +2087,17 @@ var render = function() {
                                                 },
                                                 [
                                                   _vm._v("重试"),
-                                                  _c("div", {
-                                                    staticClass: _vm._$g(
-                                                      "80-" + $32,
-                                                      "sc"
-                                                    ),
-                                                    attrs: { _i: "80-" + $32 }
-                                                  })
+                                                  _vm._$g("80-" + $32, "i")
+                                                    ? _c("div", {
+                                                        staticClass: _vm._$g(
+                                                          "80-" + $32,
+                                                          "sc"
+                                                        ),
+                                                        attrs: {
+                                                          _i: "80-" + $32
+                                                        }
+                                                      })
+                                                    : _vm._e()
                                                 ],
                                                 1
                                               )
@@ -3118,7 +3159,7 @@ exports = ___CSS_LOADER_API_IMPORT___(false);
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = ___CSS_LOADER_GET_URL_IMPORT___(___CSS_LOADER_URL_IMPORT_0___);
 var ___CSS_LOADER_URL_REPLACEMENT_1___ = ___CSS_LOADER_GET_URL_IMPORT___(___CSS_LOADER_URL_IMPORT_1___);
 // Module
-exports.push([module.i, "\n.uni-tip {\n\tbackground: #fff;\n\twidth: 70%;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding: 10px;\n\tborder-radius: 10px;\n}\n.uni-tip-title {\n\ttext-align: center;\n\tfont-size: 16px;\n}\n.uni-tip-group-button {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\talign-content: center;\n}\n.uni-tip-group-button uni-button {\n\tmargin: 0;\n}\n.uni-tip-content {\n\tmin-height: 60px;\n}\n.pay-center {\n\tdisplay: inline-flex;\n\talign-items: center;\n\theight: 100%;\n}\n.amounts {\n\tbox-sizing: border-box;\n}\n.refund-more-box {\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\talign-items: center;\n}\n.refund-icon {\n\twidth: 22px;\n\theight: 22px;\n\tbackground-size: cover;\n\tmargin-left: 4px;\n}\n.refund-warm {\n\tbackground-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.refund-loading {\n\tbackground-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_1___ + ");\n\t-webkit-filter: brightness(100);\n\t        filter: brightness(100);\n}\n.refund-reset {\n\tbackground-color: #42b14b;\n\tcolor: white;\n\tfont-size: 12px;\n\tborder-radius: 5px;\n\tpadding: 1px 2px;\n\tmargin-left: 6px;\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\talign-items: center;\n}\n", ""]);
+exports.push([module.i, "\n@-webkit-keyframes loading {\n0% {\n\t\t-webkit-transform: rotate(0deg);\n\t\t        transform: rotate(0deg);\n}\n100% {\n\t\t-webkit-transform: rotate(360deg);\n\t\t        transform: rotate(360deg);\n}\n}\n@keyframes loading {\n0% {\n\t\t-webkit-transform: rotate(0deg);\n\t\t        transform: rotate(0deg);\n}\n100% {\n\t\t-webkit-transform: rotate(360deg);\n\t\t        transform: rotate(360deg);\n}\n}\n.uni-tip {\n\tbackground: #fff;\n\twidth: 70%;\n\tposition: fixed;\n\ttop: 50%;\n\tleft: 50%;\n\t-webkit-transform: translate(-50%, -50%);\n\t        transform: translate(-50%, -50%);\n\tpadding: 10px;\n\tborder-radius: 10px;\n}\n.uni-tip-title {\n\ttext-align: center;\n\tfont-size: 16px;\n}\n.uni-tip-group-button {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\talign-content: center;\n}\n.uni-tip-group-button uni-button {\n\tmargin: 0;\n}\n.uni-tip-content {\n\tmin-height: 60px;\n}\n.pay-center {\n\tdisplay: inline-flex;\n\talign-items: center;\n\theight: 100%;\n}\n.amounts {\n\tbox-sizing: border-box;\n}\n.refund-more-box {\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\talign-items: center;\n}\n.refund-icon {\n\twidth: 12px;\n\theight: 12px;\n\tbackground-size: cover;\n\tmargin-left: 4px;\n}\n.refund-warm {\n\tbackground-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.refund-loading {\n\tbackground-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_1___ + ");\n\t-webkit-filter: brightness(100);\n\t        filter: brightness(100);\n\t-webkit-animation: loading infinite 0.5s linear;\n\t        animation: loading infinite 0.5s linear;\n}\n.refund-text {\n\tmargin-right: 6px;\n}\n.refund-reset {\n\tbackground-color: #42b14b;\n\tcolor: white;\n\tfont-size: 12px;\n\tborder-radius: 5px;\n\tpadding: 1px 2px;\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\talign-items: center;\n}\n", ""]);
 // Exports
 module.exports = exports;
 

@@ -7,6 +7,12 @@
 			<text>{{item.PRICE}}元/kg</text>-
 			<text>x{{item.QTY}}</text>
 		</view>
+		<view>
+			<text>请输入单号（用于测试退款）：</text>
+			<text>
+				<input style="border:1px solid gray" type="text" v-model="refund_no" />
+			</text>
+		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
@@ -40,10 +46,10 @@
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [{
-						PLID: "100",
-						BARCODE: '111111111',
-						SPID: "10101001",
-						UNIT: "个",
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
 						NAME: "黑森林",
 						PRICE: 0.01,
 						OPRICE: 0.01,
@@ -69,13 +75,14 @@
 						NAME: "虎皮蛋糕",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 0.01,
+						AMOUNT: 1,
 						QTY: 1
 					} 
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
-				XS_TYPE: "1" //销售类型 默认为销售业务
+				XS_TYPE: "1", //销售类型 默认为销售业务
+				refund_no: ""
 			}
 		},
 		//方法初始化
@@ -122,29 +129,61 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
-					this.$store.commit('set-location', {
-						allow_discount_amount: "", //允许折扣金额
-						Discount: 0, //折扣金额
-						store_id: "", //门店id
-						out_trade_no_old: "", //老订单号
-						cashier: "", //收银员
-						date: "", //日期
-						company: "", //公司
-						sale1_obj: {}, //001 主单 数据对象
-						sale2_arr: [], //002 商品 数据对象集合
-						sale3_arr: this.sale3_arr,
-						Products: this.Products, //商品信息
-						PayWayList: this.PayWayList, //支付方式
-						hyinfo: {}, //会员信息
-						authCode: "", //卡券信息 or 支付授权码
-						out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
-						out_refund_no: common.CreateBill(this.KHID, this.POSID), //生成退款单号
-						BILL_TYPE: this.BILL_TYPE,
-						XS_TYPE: this.XS_TYPE
-					});
-					uni.navigateTo({
-						url: "../Payment/PaymentAll"
-					})
+					if (this.XS_TYPE == '2')
+						common.Excute("select * from SALE003 where BILL='" + this.refund_no + "'",
+							(function(sale3) {
+								console.log("SALE3:",sale3.msg)
+								this.$store.commit('set-location', {
+									allow_discount_amount: "", //允许折扣金额
+									Discount: 0, //折扣金额
+									store_id: "", //门店id
+									out_trade_no_old: "", //老订单号
+									cashier: "", //收银员
+									date: "", //日期
+									company: "", //公司
+									sale1_obj: {}, //001 主单 数据对象
+									sale2_arr: [], //002 商品 数据对象集合
+									sale3_arr: sale3.msg,
+									Products: this.Products, //商品信息
+									PayWayList: this.PayWayList, //支付方式
+									hyinfo: {}, //会员信息
+									authCode: "", //卡券信息 or 支付授权码
+									out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+									out_refund_no: common.CreateBill(this.KHID, this
+										.POSID), //生成退款单号
+									BILL_TYPE: this.BILL_TYPE,
+									XS_TYPE: this.XS_TYPE
+								});
+								uni.navigateTo({
+									url: "../Payment/PaymentAll"
+								})
+							}).bind(this))
+					else {
+						this.$store.commit('set-location', {
+							allow_discount_amount: "", //允许折扣金额
+							Discount: 0, //折扣金额
+							store_id: "", //门店id
+							out_trade_no_old: "", //老订单号
+							cashier: "", //收银员
+							date: "", //日期
+							company: "", //公司
+							sale1_obj: {}, //001 主单 数据对象
+							sale2_arr: [], //002 商品 数据对象集合
+							sale3_arr: this.sale3_arr,
+							Products: this.Products, //商品信息
+							PayWayList: this.PayWayList, //支付方式
+							hyinfo: {}, //会员信息
+							authCode: "", //卡券信息 or 支付授权码
+							out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+							out_refund_no: common.CreateBill(this.KHID, this
+								.POSID), //生成退款单号
+							BILL_TYPE: this.BILL_TYPE,
+							XS_TYPE: this.XS_TYPE
+						});
+						uni.navigateTo({
+							url: "../Payment/PaymentAll"
+						})
+					}
 				} else if (e == 2) {
 					uni.navigateTo({
 						url: "../hyinfo/index"
@@ -330,6 +369,7 @@
 			// if (that.PayList && that.PayList.length > 0) {
 			// 	this.CreateDBData()
 			// }
+			this.refund_no = this.$store.state.trade;
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
