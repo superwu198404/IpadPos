@@ -77,7 +77,7 @@
 						OPRICE: 0.01,
 						AMOUNT: 1,
 						QTY: 1
-					} 
+					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
@@ -125,65 +125,20 @@
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
 			},
-			MenuPage: function(e) {
+			MenuPage: async function(e) {
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
-					if (this.XS_TYPE == '2')
-						common.Excute("select * from SALE003 where BILL='" + this.refund_no + "'",
-							(function(sale3) {
-								console.log("SALE3:",sale3.msg)
-								this.$store.commit('set-location', {
-									allow_discount_amount: "", //允许折扣金额
-									Discount: 0, //折扣金额
-									store_id: "", //门店id
-									out_trade_no_old: "", //老订单号
-									cashier: "", //收银员
-									date: "", //日期
-									company: "", //公司
-									sale1_obj: {}, //001 主单 数据对象
-									sale2_arr: [], //002 商品 数据对象集合
-									sale3_arr: sale3.msg,
-									Products: this.Products, //商品信息
-									PayWayList: this.PayWayList, //支付方式
-									hyinfo: {}, //会员信息
-									authCode: "", //卡券信息 or 支付授权码
-									out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
-									out_refund_no: common.CreateBill(this.KHID, this
-										.POSID), //生成退款单号
-									BILL_TYPE: this.BILL_TYPE,
-									XS_TYPE: this.XS_TYPE
-								});
-								uni.navigateTo({
-									url: "../Payment/PaymentAll"
-								})
-							}).bind(this))
-					else {
-						this.$store.commit('set-location', {
-							allow_discount_amount: "", //允许折扣金额
-							Discount: 0, //折扣金额
-							store_id: "", //门店id
-							out_trade_no_old: "", //老订单号
-							cashier: "", //收银员
-							date: "", //日期
-							company: "", //公司
-							sale1_obj: {}, //001 主单 数据对象
-							sale2_arr: [], //002 商品 数据对象集合
-							sale3_arr: this.sale3_arr,
-							Products: this.Products, //商品信息
-							PayWayList: this.PayWayList, //支付方式
-							hyinfo: {}, //会员信息
-							authCode: "", //卡券信息 or 支付授权码
-							out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
-							out_refund_no: common.CreateBill(this.KHID, this
-								.POSID), //生成退款单号
-							BILL_TYPE: this.BILL_TYPE,
-							XS_TYPE: this.XS_TYPE
-						});
-						uni.navigateTo({
-							url: "../Payment/PaymentAll"
-						})
+					this.refund_no = "K200QTD005122622181743705";
+					if (this.XS_TYPE == '2') {
+						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no + "'")[0];
+						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no + "'");
+						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no + "'");
 					}
+					this.DataAssembleSave();
+					uni.navigateTo({
+						url: "../Payment/PaymentAll"
+					})
 				} else if (e == 2) {
 					uni.navigateTo({
 						url: "../hyinfo/index"
@@ -191,6 +146,29 @@
 				} else if (e == 3) {
 					uni.navigateBack();
 				}
+			},
+			DataAssembleSaveForGlobal:function(){
+				//把数据传入下个页面
+				this.$store.commit('set-location', {
+					allow_discount_amount: "", //允许折扣金额
+					Discount: 0, //折扣金额
+					store_id: "", //门店id
+					cashier: "", //收银员
+					date: "", //日期
+					company: "", //公司
+					sale1_obj: this.sale1_obj, //001 主单 数据对象
+					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
+					sale3_arr: this.sale3_arr,//002 商品 数据对象集合
+					Products: this.Products, //商品信息
+					PayWayList: this.PayWayList, //支付方式
+					hyinfo: {}, //会员信息
+					authCode: "", //卡券信息 or 支付授权码
+					out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
+					out_refund_no: common.CreateBill(this.KHID, this
+						.POSID), //生成退款单号
+					BILL_TYPE: this.BILL_TYPE,
+					XS_TYPE: this.XS_TYPE
+				});
 			},
 			//创建订单数据
 			CreateDBData: function() {
