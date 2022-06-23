@@ -31,7 +31,7 @@
 	var encode = require("../../utils/xprinter/encoding.js");
 	var util = require("../../utils/xprinter/util.js");
 	var qrCode = require("../../utils/xprinter/weapp-qrcode.js");
-	import sqlLite from '@/utils/db/db_excute.js';
+	import db from '@/utils/db/db_excute.js';
 	export default {
 		data() {
 			return {
@@ -462,10 +462,10 @@
 			},
 			// 添加数据
 			addData(xsBill,xsDate,billStr) {
-				sqlLite.executeSql(
-						'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '","' +billStr+'")'
-					).then((e) => this.status = '添加成功!')
-					.catch((e) => this.status = '添加失败!')
+				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '","' +billStr+'")';
+				db.get().executeDml(addSql, "执行中", (res) => {
+					console.log("sql 执行结果：", res);
+				});	
 			},
 			queryStatus: function() {
 				//查询打印机状态
