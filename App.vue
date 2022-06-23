@@ -62,6 +62,36 @@
 				28: "ZFB20",
 				card: "PAYCARD",
 				coupon: "SZQ"
+			},
+			getModel: function () {
+			  //获取手机型号
+			  return wx.getSystemInfoSync()["model"];
+			},
+			getSystem: function () {
+			  //获取操作系统版本
+			  return wx.getSystemInfoSync()["system"];
+			},
+			getPlatform: function () {
+			  //获取客户端平台
+			  return wx.getSystemInfoSync()["platform"];
+			},
+			getSDKVersion: function () {
+			  //获取客户端基础库版本
+			  return wx.getSystemInfoSync()["SDKVersion"];
+			},
+			userInfo: null,
+			platform: "",
+			screenWidth: uni.getSystemInfoSync().screenWidth,
+			screenHeight: uni.getSystemInfoSync().screenHeight,
+			BLEInformation: {
+			  platform: "",
+			  deviceId: "",
+			  writeCharaterId: "",
+			  writeServiceId: "",
+			  notifyCharaterId: "",
+			  notifyServiceId: "",
+			  readCharaterId: "",
+			  readServiceId: ""
 			}
 		},
 		onLaunch: function() {
@@ -74,6 +104,7 @@
 			// int = setInterval(() => {
 			// common.TransLiteData();
 			// }, 1000 * 60 *3); 
+			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {
 			console.log('App Hide');

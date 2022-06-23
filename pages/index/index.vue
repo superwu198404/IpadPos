@@ -1,5 +1,18 @@
 <template>
 	<view>
+		<view>
+			<div class="product">
+				<div>商品名称：</div>
+				<div><input v-model="input.name" /></div>
+			</div>
+			<div class="product">
+				<div>商品价格：</div>
+				<div><input v-model="input.amount" /></div>
+			</div>
+			<div class="product">
+				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;" @click="InputProduct()">添加</div>
+			</div>
+		</view>
 		<p>--加购的商品商品信息--</p>
 		<view v-for="(item,index) in Products">
 			<text>{{item.NAME}}</text>-
@@ -15,6 +28,7 @@
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
+		<button @click="InputProduct()">录入测试商品</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<!-- <button @click="Test(2)">测试一下</button> -->
@@ -28,6 +42,21 @@
 		//变量初始化
 		data() {
 			return {
+				input:{
+					name:"",
+					amount:"",
+					data:{
+						PLID: Number(new Date()),
+						SPID: Number(new Date())/2,
+						UNIT: "个",
+						BARCODE: 'test',
+						NAME: "",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
+					}
+				},
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
 				Discount: 0, //折扣金额
@@ -54,36 +83,36 @@
 						NAME: "黑森林",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
-					},
-					{
-						PLID: "101",
-						SPID: "10101002",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "毛毛虫",
-						PRICE: 0.5,
-						OPRICE: 0.5,
-						AMOUNT: 1,
-						QTY: 2
-					},
-					{
-						PLID: "101",
-						SPID: "10101002",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "虎皮蛋糕",
-						PRICE: 0.01,
-						OPRICE: 0.01,
 						AMOUNT: 1,
 						QTY: 1
-					}
+					},
+					// {
+					// 	PLID: "101",
+					// 	SPID: "10101002",
+					// 	UNIT: "袋",
+					// 	BARCODE: '2222222222',
+					// 	NAME: "毛毛虫",
+					// 	PRICE: 0.5,
+					// 	OPRICE: 0.5,
+					// 	AMOUNT: 1,
+					// 	QTY: 2
+					// },
+					// {
+					// 	PLID: "101",
+					// 	SPID: "10101002",
+					// 	UNIT: "袋",
+					// 	BARCODE: '2222222222',
+					// 	NAME: "虎皮蛋糕",
+					// 	PRICE: 0.01,
+					// 	OPRICE: 0.01,
+					// 	AMOUNT: 2,
+					// 	QTY: 1
+					// }
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
-				refund_no: ""
+				refund_no: "K200QTD005122623173547611"
 			}
 		},
 		//方法初始化
@@ -123,6 +152,13 @@
 							}
 							that.PayWayList.push(obj);
 						}
+						//添加弃用金额方式
+						that.PayWayList.push({
+							name:"弃用金额",
+							fkid:"qyje",
+							type:"qy",
+							value:"EXCESS"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -131,7 +167,6 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
-					this.refund_no = "K200QTD005122622181743705";
 					if (this.XS_TYPE == '2') {
 						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no +
 							"'")[0];
@@ -140,7 +175,8 @@
 						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no +
 							"'");
 					}
-					this.DataAssembleSaveForGlobal();
+					console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+					this.DataAssembleSaveForGlobal(); 
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
 					})
@@ -201,7 +237,11 @@
 				// 	console.log("请求结果：", res);
 				// });
 			},
-
+			InputProduct:function(){
+				let data = Object.assign({},this.input.data);
+				data.name = this.input.name;
+				data.AMOUNT = this.input.amount;
+			},
 			change: function(e) {
 				this.$showModal({
 					concent: '测试测试~',
@@ -236,7 +276,7 @@
 			// if (that.PayList && that.PayList.length > 0) {
 			// 	this.CreateDBData()
 			// }
-			this.refund_no = this.$store.state.trade;
+			this.refund_no =this.refund_no ?? this.$store.state.trade;
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
@@ -320,5 +360,12 @@
 	.title {
 		font-size: 36rpx;
 		color: #8f8f94;
+	}
+	.product{
+		display: inline-flex;
+	}
+	.product input{
+		width: 150px;
+		border: 1px solid gray;
 	}
 </style>
