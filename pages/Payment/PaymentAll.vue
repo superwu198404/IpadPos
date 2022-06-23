@@ -152,9 +152,12 @@
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
-				 				<image src="../../images/ZFB20.png" mode="widthFix"></image>
-				 				<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
-				 				<image src="../../images/PAYCARD.png" mode="widthFix"></image>
+									<view v-for="(item,index) in PayWayList">
+										<image :src=require("../../images/"+item.type+".png") mode="widthFix"></image>
+									</view>
+									<!-- <image src="../../images/ZFB20.png" mode="widthFix"></image>
+									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
+									<image src="../../images/PAYCARD.png" mode="widthFix"></image> -->
 								</label>
 								<text>支持支付宝、微信及会员卡支付</text>
 								<!-- </view>
@@ -185,7 +188,7 @@
 									<p>可伴支付</p>
 									<text>暂未开放</text>
 								</view>
-				  		<image src="../../images/kb-da.png" mode="widthFix"></image>
+								<image src="../../images/kb-da.png" mode="widthFix"></image>
 							</view>
 							<view class="pattern nots curr">
 								<view class="">
@@ -920,7 +923,7 @@
 						fail
 					}, payload));
 				}
-				this.PayList = Object.assign([],this.PayList);
+				this.PayList = Object.assign([], this.PayList);
 			},
 			//订单对象创建
 			orderCreated: function(obj, payload) {
