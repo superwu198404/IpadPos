@@ -72,7 +72,7 @@ function getComputedByteLen(content, totalleng) {
 	let nbspStr = "";
 	//如果长度超出最大占位，则截取字符显示
 	if (contentLength > totalleng) {
-		data = content.substr(0, contentLength - totalleng);
+		data = content.substr(0, totalleng / 2).PadRight(totalleng - 1, '\u0020');
 	} else {
 		data = content;
 		let subLength = totalleng - contentLength;
@@ -93,8 +93,100 @@ String.prototype.PadRight = function(len, charStr) {
 	return s + new Array(len - s.length + 1).join(charStr, '');
 }
 
+function inArray(arr, key, val) {
+	for (let i = 0; i < arr.length; i++) {
+		if (arr[i][key] === val) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+// ArrayBuffer转16进度字符串示例
+function ab2hex(buffer) {
+	var hexArr = Array.prototype.map.call(new Uint8Array(buffer), function(bit) {
+		return ("00" + bit.toString(16)).slice(-2);
+	});
+	return hexArr.join("");
+}
+
+function convertToGrayscale(data) {
+	let g = 0;
+
+	for (let i = 0; i < data.length; i += 4) {
+		g = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+		data[i] = g;
+		data[i + 1] = g;
+		data[i + 2] = g;
+	}
+	return data;
+}
+
+function setPixel(data, offset, value) {
+	data[offset] = value;
+	data[offset + 1] = value;
+	data[offset + 2] = value;
+}
+
+function adjustPixel(data, offset, value) {
+	data[offset] += value;
+}
+
+// 彩色图转成单色图
+function convertToMonoImage(width, height, data, shake) {
+	let g = 0;
+	let e = 0;
+
+	for (let i = 0; i < data.length; i += 4) {
+		data[i] = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+	}
+
+	for (let y = 0; y < height; y++) {
+		for (let x = 0; x < width; x++) {
+			let dataOffset = (width * y + x) * 4;
+			g = data[dataOffset];
+
+			if (g >= 150) {
+				// 灰色转黑白的阈值, 可以调整打印效果
+				e = g - 255;
+				setPixel(data, dataOffset, 255);
+			} else {
+				e = g;
+				setPixel(data, dataOffset, 0);
+			}
+
+			if (!shake) continue;
+
+			if (x < width - 1 && y < height - 1) {
+				//右边像素处理
+				data[(width * y + x + 1) * 4] += (7 * e) / 16; //下
+
+				data[(width * (y + 1) + x) * 4] += (5 * e) / 16; //右下
+
+				data[(width * (y + 1) + x + 1) * 4] += e / 16; //左下
+
+				if (x > 0) {
+					data[(width * (y + 1) + x - 1) * 4] += (3 * e) / 16;
+				}
+			} else if (x == width - 1 && y < height - 1) {
+				//下方像素处理
+				data[(width * (y + 1) + x) * 4] += (5 * e) / 16;
+			} else if (x < width - 1 && y == height - 1) {
+				//右边像素处理
+				data[(width * y + x + 1) * 4] += (7 * e) / 16;
+			}
+		}
+	}
+	return data;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
-	getComputedByteLen: getComputedByteLen
+	getComputedByteLen: getComputedByteLen,
+	inArray: inArray,
+	ab2hex: ab2hex,
+	convertToGrayscale: convertToGrayscale,
+	adjustPixel: adjustPixel,
+	convertToMonoImage: convertToMonoImage
 };
