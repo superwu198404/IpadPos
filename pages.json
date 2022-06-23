@@ -77,7 +77,31 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+		{
+		    "path" : "pages/xprinter/home",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		},
+		{
+		    "path" : "pages/xprinter/bleConnect",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		},
+		{
+		    "path" : "pages/xprinter/receipt",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
