@@ -38,6 +38,7 @@
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
+	import _pay from '@/api/Pay/PaymentALL.js';
 	export default {
 		//变量初始化
 		data() {
@@ -45,6 +46,7 @@
 				input:{
 					name:"",
 					amount:"",
+					trade_no:"K200QTD005122623173547611_0",
 					data:{
 						PLID: Number(new Date()),
 						SPID: Number(new Date())/2,
@@ -260,6 +262,13 @@
 					}
 				});
 			},
+			refund:function(){
+				_pay.Refund("ZFB20",{ out_trade_no:this.input.trade_no,out_refund_no:this.input.trade_no,refund_money:100 },(res) => { 
+					console.log("成功：",res)
+				},(err)=> {
+					console.log("错误：",err)
+				});
+			}
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {

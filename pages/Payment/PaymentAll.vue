@@ -153,11 +153,8 @@
 								<p>聚合支付</p>
 								<label>
 									<view v-for="(item,index) in PayWayList">
-										<image :src=require("../../images/"+item.type+".png") mode="widthFix"></image>
+										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix"></image>
 									</view>
-									<!-- <image src="../../images/ZFB20.png" mode="widthFix"></image>
-									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
-									<image src="../../images/PAYCARD.png" mode="widthFix"></image> -->
 								</label>
 								<text>支持支付宝、微信及会员卡支付</text>
 								<!-- </view>
@@ -334,7 +331,25 @@
 				Discount: 0,
 				allow_discount_amount: 0, //不可折扣金额 传入支付宝 0 不折扣 >0 折扣
 				Products: [], //商品信息
-				PayWayList: [], //支付方式
+				PayWayList: [{
+					"name": "金凤券",
+					"fkid": "ZF09",
+					"type": "SZQ",
+					"poly": "N",
+					"value": "COUPON"
+				}, {
+					"name": "微信支付",
+					"fkid": "ZF06",
+					"type": "WX_CLZF",
+					"poly": "N",
+					"value": "WX"
+				}, {
+					"name": "口碑次卡",
+					"fkid": "ZF10",
+					"type": "ZFB20",
+					"poly": "N",
+					"value": "ALI"
+				}], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
