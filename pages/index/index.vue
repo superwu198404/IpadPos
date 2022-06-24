@@ -276,27 +276,34 @@
 				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF31', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
 				// ]
-				let arr = [
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);"
-				]
-				let sql = "";
-				for (var i = 0; i < arr.length; i++) {
-					sql += arr[i];
-				}
-				db.get().executeDml(sql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
-				// Req.asyncFunc({
-				// 	http: true,
-				// 	title: '测试请求',
-				// 	data: {
-				// 		action: 'ExecuteBatchSQL',
-				// 		ywname: 'SALE001CLASS',
-				// 		data: ""
-				// 	}
-				// }, function(res) {
-				// 	console.log("请求结果：", res);
+				// let arr = [
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);"
+				// ]
+				// let sql = "";
+				// for (var i = 0; i < arr.length; i++) {
+				// 	sql += arr[i];
+				// }
+				// db.get().executeDml(sql, "执行中", (res) => {
+				// 	console.log("sql 执行结果：", res);
 				// });
+				let sql1="insert into SALE001 (BILL,SALEDATE,SALETIME,KHID,POSID,RYID,BILL_TYPE,XSTYPE,XS_BILL,XS_POSID,XS_DATE,XS_KHID,XS_GSID,TLINE,TNET,DNET,ZNET,BILLDISC,ROUND,CHANGENET,CXTNET,TCXDISC,CUID,CARDID,THYDISC,TDISC,YN_SC,GSID,GCID,DPID,KCDID,BMID,DKFID,XSPTID,YN_OK,THTYPE,CLTIME) values('K0101QT2122624184536871',TO_DATE('2022-06-24','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'),'K200QTD005','1','10086',null,null,null,null,null,null,null,null,'1','0','1.00','0','0','0','0','0',null,null,'0','0','N','027001','1001','123','123','001',null,'POS','X','0',TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'));insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values('K0101QT2122624184536871',TO_DATE('2022-06-24','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'),'K200QTD005','1','10101002','0','101','2222222222','袋','1','0.01','0.01','0.01','0','N',null,'N','0','6','23','18','10086','1001','123','123','001');insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values('K0101QT2122624184536871',TO_DATE('2022-06-24','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'),'K200QTD005','1','10101002','1','101','2222222222','袋','2','0.5','0.5','0.5','0','N',null,'N','0','6','23','18','10086','1001','123','123','001');insert into SALE002 (BILL,SALEDATE,SALETIME,KHID,POSID,SPID,NO,PLID,BARCODE,UNIT,QTY,PRICE,OPRICE,NET,DISCRATE,YN_SKYDISC,DISC,YN_CXDISC,CXDISC,MONTH,WEEK,TIME,RYID,GCID,DPID,KCDID,BMID) values('K0101QT2122624184536871',TO_DATE('2022-06-24','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'),'K200QTD005','1','10101002','2','101','2222222222','袋','1','0.01','0.01','0.01','0','N',null,'N','0','6','23','18','10086','1001','123','123','001');insert into SALE003 (BILL,SALEDATE,SALETIME,KHID,POSID,NO,FKID,AMT,ID,RYID,GCID,DPID,KCDID,BMID,DISC,ZKLX,IDTYPE) values('K0101QT2122624184536871',TO_DATE('2022-06-24','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-06-24 18:46:05','yyyy-MM-dd HH24:mi:ss'),'K200QTD005','1','0','ZF31','1.00','1082770000400302','10086','1001','123','123','001','9',null,'Z005');";
+				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+				let reqdata = Req.resObj(true, "数据传输中", {
+					sql: sql1
+				}, apistr);
+				Req.asyncFuncOne(reqdata,
+					function(res1) {
+						console.log("数据传输结果：", res1);
+						// if (res1.code) {
+						// 	let delStr = "delete from POS_TXFILE where str1 =" + delVal;
+						// 	delStr += "update SALE001 set yn_sc='Y'"; //修改001的数据
+						// 	db.get().executeDml(delStr, "数据删除中", function(res2) {
+						// 		console.log("数据删除更改状态成功", res2);
+						// 	}, function(err1) {
+						// 		console.log("数据删除更改并状态失败", err1);
+						// 	});
+						// }
+					});
 			},
 			InputProduct: function() {
 				let data = Object.assign({}, this.input.data);

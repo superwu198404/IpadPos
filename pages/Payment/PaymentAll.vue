@@ -3,7 +3,7 @@
 </style>
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;"/>
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -216,7 +216,7 @@
 </template>
 
 <script>
-	import PrinterPage  from '../xprinter/receipt';
+	import PrinterPage from '../xprinter/receipt';
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
@@ -249,7 +249,7 @@
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
-				CanBack: false, //是否允许退出(为false，此处是为了方便测试)
+				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -301,7 +301,7 @@
 		},
 		watch: {
 			dPayAmount: function(n, o) {
-				if(this.isRefund) return;//如果为退款，直接退出
+				if (this.isRefund) return; //如果为退款，直接退出
 				if (Object.is(NaN, Number(n))) { //判断输入的是否是数字
 					this.dPayAmount = o;
 					uni.showToast({
@@ -314,6 +314,7 @@
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
 				if (amount > 0) { //未完成支付，仍然存在欠款
+					console.log("触发第一次：");
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) {
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
@@ -339,7 +340,7 @@
 						if (this.hyinfo.hyid) {
 							this.scoreConsume();
 						}
-						
+
 					});
 				}
 			},
@@ -359,8 +360,8 @@
 				} else
 					this.allowInput = false;
 			},
-			RefundList:function(n , o){
-				if(n && n.filter(i => i.fail).length == 0)
+			RefundList: function(n, o) {
+				if (n && n.filter(i => i.fail).length == 0)
 					this.CanBack = true;
 			}
 		},
@@ -475,7 +476,7 @@
 				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
 					.PayList; //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
-					console.log("Item:",item)
+					console.log("Item:", item)
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: saledate,
@@ -702,9 +703,9 @@
 								refundInfo.refund_num += 1; //发起请求默认加1
 								refundInfo.refunding = false; //标记为已经结束退款操作
 								this.RefundList = Object.assign([], this.RefundList) //刷新视图
-								
+
 								//调用页面BPage的方法
-								this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
+								//this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 							}).bind(that),
 							(function(ress) { //执行完毕（results），根据结果判断
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
@@ -723,16 +724,16 @@
 				});
 				Promise.all(promises).then((res) => {
 					if (res.length > 0)
-					that.CreateDBData((res) => {
-						//销售单单创建成功后 上传一下数据
-						let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
-						common.TransLiteData(bill);
-						//上传积分
-						if (this.hyinfo.hyid) {
-							this.scoreConsume();
-						}
-						
-					});
+						that.CreateDBData((res) => {
+							//销售单单创建成功后 上传一下数据
+							let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+							common.TransLiteData(bill);
+							//上传积分
+							if (this.hyinfo.hyid) {
+								this.scoreConsume();
+							}
+
+						});
 				})
 			},
 			//支付类型判断
@@ -789,11 +790,14 @@
 						i.price /= 100;
 						return i;
 					}); //把支付信息贴出来
-					this.UpdateHyInfo(result.data); //更新支付信息
+					this.UpdateHyInfo(result.data); //更新会员信息
 					this.authCode = ""; //避免同一个付款码多次使用
 					this.orderGenarator(payAfter, result.data, false); //支付记录处理(成功)
 					//调用页面BPage的方法
-					this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
+					//this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
+					if (this.debt > 0) {
+						this.CanBack = false;
+					}
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					console.log("支付失败！")
@@ -802,7 +806,7 @@
 			},
 			//创建支付记录
 			orderGenarator: function(payload, result, fail) {
-				console.log("生成订单类型[orderGenarator]：",this.currentPayType)
+				console.log("生成订单类型[orderGenarator]：", this.currentPayType)
 				if (this.currentPayType === "COUPON") { //如果是券支付
 					let couponAmount = result.data.voucher.discount; //获取券的面额
 					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS"); //放弃金额
@@ -840,7 +844,7 @@
 			},
 			//订单对象创建
 			orderCreated: function(obj, payload) {
-				console.log("=============================================================obj:",{ //每支付成功一笔，则往此数组内存入一笔记录
+				console.log("=============================================================obj:", { //每支付成功一笔，则往此数组内存入一笔记录
 					fkid: this.currentPayInfo?.fkid ?? "",
 					bill: payload.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
@@ -993,11 +997,11 @@
 			},
 			//返回上个页面
 			backPrevPage: function() {
-				if(this.CanBack)uni.navigateBack();
+				if (this.CanBack) uni.navigateBack();
 				else uni.showToast({
-								title: `您还未完成${this.isRefund ? "退款":"支付"}操作！`,
-								icon: "error"
-							})
+					title: `您还未完成${this.isRefund ? "退款":"支付"}操作！`,
+					icon: "error"
+				})
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
