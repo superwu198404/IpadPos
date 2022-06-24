@@ -341,7 +341,7 @@
 							this.scoreConsume();
 						}
 						//调用页面BPage的方法
-						this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
+						this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					});
 				}
 			},
@@ -730,7 +730,9 @@
 							if (this.hyinfo.hyid) {
 								this.scoreConsume();
 							}
-
+							//调用页面BPage的方法
+							this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this
+								.sale3_arr);
 						});
 				})
 			},
@@ -791,8 +793,6 @@
 					this.UpdateHyInfo(result.data); //更新会员信息
 					this.authCode = ""; //避免同一个付款码多次使用
 					this.orderGenarator(payAfter, result.data, false); //支付记录处理(成功)
-					//调用页面BPage的方法
-					//this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 					if (this.debt > 0) {
 						this.CanBack = false;
 					}
