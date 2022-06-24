@@ -339,6 +339,7 @@
 						if (this.hyinfo.hyid) {
 							this.scoreConsume();
 						}
+						
 					});
 				}
 			},
@@ -721,32 +722,18 @@
 					}
 				});
 				Promise.all(promises).then((res) => {
-					if (res.length > 0) that.CreateDBData();
+					if (res.length > 0)
+					that.CreateDBData((res) => {
+						//销售单单创建成功后 上传一下数据
+						let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+						common.TransLiteData(bill);
+						//上传积分
+						if (this.hyinfo.hyid) {
+							this.scoreConsume();
+						}
+						
+					});
 				})
-			},
-			//支付类型判断  旧版-弃用
-			PayTypeJudgment_: function() {
-				let startCode = this.authCode.substring(0, 2);
-				if (startCode) {
-					let CodeRule = getApp().globalData.CodeRule;
-					if (this.currentPayType === "COUPON") //券
-					{
-						startCode = "coupon";
-					}
-					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
-					let curPayType = CodeRule[startCode] || CodeRule["card"];
-				}
-				switch (startCode) {
-					case "28":
-						return "ALI";
-					case "13":
-						return "WX";
-					default:
-						if (this.currentPayType === "COUPON") //判断当前支付方式是否为 券 支付，如果是券支付，则返回券 类型，否则是卡类型
-							return "COUPON"
-						return "CARD";
-						break;
-				}
 			},
 			//支付类型判断
 			PayTypeJudgment: function() {
@@ -787,25 +774,6 @@
 						}
 					})
 				}
-			},
-			//支付处理入口 旧版-弃用
-			PayHandle_: function() {
-				let handlePayment;
-				handlePayment = this.handles[this.PayTypeJudgment()];
-				let payAfter = this.PayDataAssemble();
-				console.log("支付单号：", this.out_trade_no);
-				console.log(JSON.stringify(payAfter))
-
-				handlePayment.PaymentAll(payAfter, (function(result) {
-					uni.showToast({
-						title: "支付成功!"
-					});
-					this.PaidList = payAfter.product_info.map(i => {
-						i.price /= 100;
-						return i;
-					}); //把支付信息贴出来
-					this.orderGenarator(payAfter, result); //支付记录处理
-				}).bind(this))
 			},
 			//支付处理入口
 			PayHandle: function() {
