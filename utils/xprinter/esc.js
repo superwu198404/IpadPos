@@ -1,4 +1,5 @@
 var encode = require("./encoding.js");
+var util = require("./util.js");
 
 var app = getApp();
 var jpPrinter = {
@@ -7,11 +8,11 @@ var jpPrinter = {
     var data = [];
     var bar = ["UPC-A", "UPC-E", "EAN13", "EAN8", "CODE39", "ITF", "CODABAR", "CODE93", "CODE128"];
     jpPrinter.name = "蓝牙打印机";
-    /**
+    
+	/**
      * ESC @ 初始化打印机
      * 清除打印缓冲区数据，打印模式被设为上电时的默认值模式
      */
-
     jpPrinter.init = function () {
       data.push(27);
       data.push(64);
@@ -49,59 +50,54 @@ var jpPrinter = {
     jpPrinter.setPrint = function () {
       data.push(10);
     };
+	
     /**
      * ESC J 打印并走纸n 个单位
      * 打印缓冲区数据并走纸[n × 纵向或横向移动单位]英寸。
      */
-
-
     jpPrinter.setPrintAndFeed = function (n) {
       data.push(27);
       data.push(74);
       data.push(n);
     };
+	
     /**
      * ESC d 打印并走纸n 行
      * 打印缓冲区里的数据并向前走纸n 行（字符行）
      */
-
-
     jpPrinter.setPrintAndFeedRow = function (n) {
       data.push(27);
       data.push(100);
       data.push(n);
     };
+	
     /**
      * HT 水平定位
      *移动打印位置到下一个水平定位点的位置
      */
-
-
     jpPrinter.setHorTab = function () {
       data.push(9);
     };
+	
     /**
      * ESC $ 设置绝对打印位置
      * 将当前位置设置到距离行首（nL + nH × 256）×（横向或纵向移动单位）处。
      * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setAbsolutePrintPosition = function (where) {
       data.push(27);
       data.push(36);
       data.push(parseInt(where % 256));
       data.push(parseInt(where / 256));
     };
+	
     /**
      * ESC \ 设置相对横向打印位置
      * 以横向或纵向移动单位设置横向相对位移
      * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setRelativePrintPositon = function (where) {
       //设置相对横向打印位置
       data.push(27);
@@ -109,6 +105,7 @@ var jpPrinter = {
       data.push(parseInt(where % 256));
       data.push(parseInt(where / 256));
     };
+	
     /**
      * ESC a 选择对齐方式
      * 使所有的打印数据按某一指定对齐方式排列。
@@ -117,52 +114,48 @@ var jpPrinter = {
      * • 当n 为1 时 ： 中间对齐
      * • 当n 为2 时  右对齐
      */
-
-
     jpPrinter.setSelectJustification = function (which) {
       data.push(27);
       data.push(97);
       data.push(which);
     };
+	
     /**
      * GS L 设置左边距
      * 传入参数为点数  
      * 1mm=8dot
      */
-
-
     jpPrinter.setLeftMargin = function (n) {
       data.push(29);
       data.push(76);
       data.push(parseInt(n % 256));
       data.push(parseInt(n / 256));
     };
+	
     /**
      * GS W 设置打印区域宽度
     * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setPrintingAreaWidth = function (width) {
       data.push(29);
       data.push(87);
       data.push(parseInt(width % 256));
       data.push(parseInt(width / 256));
     };
+	
     /**
      * GS P 设置横向和纵向移动单位
      * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setHorizontalAndVertical = function (x, y) {
       data.push(29);
       data.push(80);
       data.push(x);
       data.push(y);
     };
+	
     /**
      * DLE DC4 实时产生钱箱开启脉冲
      * 在指定的钱箱插座引脚产生设定的开启脉冲，引脚由m 指定：
@@ -171,8 +164,6 @@ var jpPrinter = {
        1 钱箱插座引脚5
      * 脉冲高电平时间为[t × 100 ms]，低电平的时间为[t × 100 ms]
      */
-
-
     jpPrinter.setCashboxPulse = function (n, m, t) {
       data.push(16);
       data.push(20);
@@ -180,6 +171,7 @@ var jpPrinter = {
       data.push(m);
       data.push(t);
     };
+	
     /**
      * ESC c 3 选择打印纸传感器以输出缺纸信号
      * 传入参数说明
@@ -189,14 +181,13 @@ var jpPrinter = {
      * • 当n 为3 时：开启纸尽传感器
      * • 当n 为4 时：开启纸尽传感器
      */
-
-
     jpPrinter.setPrintPageSignal = function (n) {
       data.push(27);
       data.push(99);
       data.push(51);
       data.push(n);
     };
+	
     /**
      * ESC c 4 选择打印纸传感器以停止打印
     * 传入参数说明
@@ -204,14 +195,13 @@ var jpPrinter = {
      * • 当n 为1 时：允许纸将尽传感器
      * • 当n 为2 时：允许纸将尽传感器
      */
-
-
     jpPrinter.setSensorToStopPrint = function (n) {
       data.push(27);
       data.push(99);
       data.push(52);
       data.push(n);
     };
+	
     /**
      * ESC c 5 允许/禁止按键
      * 允许/禁止按键
@@ -219,14 +209,13 @@ var jpPrinter = {
      * • 当n 为0 时，按键起作用。
      * • 当n 为1 时，按键被禁止。
      */
-
-
     jpPrinter.setSelectKey = function (n) {
       data.push(27);
       data.push(99);
       data.push(53);
       data.push(n);
     };
+	
     /**
      * ESC p 产生钱箱控制脉冲
      * 输出由t1 和t2 设定的钱箱开启脉冲到由m 指定的引脚：
@@ -234,8 +223,6 @@ var jpPrinter = {
      * • 当m 为0 时，钱箱插座的引脚2
      * • 当m 为1 时，钱箱插座的引脚5
      */
-
-
     jpPrinter.setCashCashboxPulse = function (m, t1, t2) {
       data.push(27);
       data.push(112);
@@ -243,6 +230,7 @@ var jpPrinter = {
       data.push(t1);
       data.push(t2);
     };
+	
     /**
      * ESC = 选择打印机
      * 选择打印机，被选择的打印机可以接收主计算机发送的数据
@@ -250,72 +238,66 @@ var jpPrinter = {
      * • 当n 为0 时，打印机禁止
      * • 当n 为1 时，打印机允许。
      */
-
-
     jpPrinter.setSelectPrinter = function (n) {
       data.push(27);
       data.push(112);
       data.push(n);
     };
+	
     /**
      * ESC 2 设置默认行间距
      *选择默认行间距
      */
-
-
     jpPrinter.setDefaultLineSpace = function () {
       data.push(27);
       data.push(50);
     };
+	
     /**
      * ESC 3 设置行间距
      * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setLineSpace = function (n) {
       data.push(27);
       data.push(51);
       data.push(n);
     };
+	
     /**
      * ESC SP 设置字符右间距
      * 传入参数为点数
      * 1mm=8dot
      */
-
-
     jpPrinter.setCharacterRightSpace = function (n) {
       data.push(27);
       data.push(32);
       data.push(n);
     };
+	
     /**
      * ESC ! 选择打印模式
      * 传入参数说明
      * 根据n 的值设置字符打印模式
      */
-
-
     jpPrinter.setPrintMode = function (mode) {
       //设置打印模式
       data.push(27);
       data.push(33);
       data.push(mode);
     };
+	
     /**
      * ESC % 选择/取消用户自定义字符
      * • 当n 为0 时，不使用用户自定义字符。
      * • 当n 为1 时，使用用户自定义字符。
      */
-
-
     jpPrinter.setUserDefinitionCharacter = function (n) {
       data.push(27);
       data.push(37);
       data.push(n);
     };
+	
     /**
      * ESC – 选择/取消下划线模式
      * 传入参数说明
@@ -323,64 +305,59 @@ var jpPrinter = {
      * • 当n 为1 时：选择下划线模式（1 点宽）
      * • 当n 为2 时：选择下划线模式（2 点宽）
      */
-
-
     jpPrinter.setUnderlineMode = function (n) {
       data.push(27);
       data.push(45);
       data.push(n);
     };
+	
     /**
      * ESC ? 取消用户自定义字符
      * 传入参数说明
      * 取消用户自定义字符中代码为n 的字符。取消后，此字符使用内部字库
      */
-
-
     jpPrinter.setCancleUserDefinitionCharacter = function (n) {
       data.push(27);
       data.push(63);
       data.push(n);
     };
+	
     /**
      * ESC E 选择/取消加粗模式
      * 传入参数说明
      * 当n 为0 时，取消加粗模式。
      * 当n 为1 时，选择加粗模式。
      */
-
-
     jpPrinter.setBoldMode = function (n) {
       data.push(27);
       data.push(69);
       data.push(n);
     };
+	
     /**
      * ESC G 选择/取消双重打印模式
      *传入参数说明
      *• 当n 位为0 时，取消双重打印模式。
      *• 当n 位为1 时，选择双重打印模式。
      */
-
-
     jpPrinter.setDoublePrintMode = function (n) {
       data.push(27);
       data.push(71);
       data.push(n);
     };
+	
     /**
      * ESC M 选择字体
      * 传入参数说明
      * • 当n 位为0 时， 选择标准ASCII 码字体(12 × 24)
      * • 当n 位为1 时， 选择压缩ASCII 码字体(9 × 17))
      */
-
-
     jpPrinter.setSelectFont = function (n) {
       data.push(27);
       data.push(77);
       data.push(n);
     };
+	
     /**
      * ESC R 选择国际字符集
      * 传入参数说明
@@ -401,26 +378,24 @@ var jpPrinter = {
      * • 当n 位为14 时， 选择斯洛维尼亚/克罗帝亚
      * • 当n 位为15 时， 选择中国
      */
-
-
     jpPrinter.setInternationalCharacters = function (n) {
       data.push(27);
       data.push(82);
       data.push(n);
     };
+	
     /**
      * ESC V 选择/取消顺时针旋转90 度
      * 传入参数说明
      * • 当n 位为0 时， 取消顺时针旋转90 度模式
      * • 当n 位为1 时，选择顺时针旋转90 度模式
      */
-
-
     jpPrinter.setRotate90 = function (n) {
       data.push(27);
       data.push(86);
       data.push(n);
     };
+	
     /**
      * ESC t 选择字符代码页
      * 传入参数说明
@@ -455,26 +430,24 @@ var jpPrinter = {
      * • 当n 位为255 时， 选择Uygur
      * 打印机支持代码页请以打印机自检测试页为准
      */
-
-
     jpPrinter.setCodePage = function (n) {
       data.push(27);
       data.push(116);
       data.push(n);
     };
+	
     /**
      * ESC { 选择/取消倒置打印模式
      * 传入参数说明
      * • 当n 位为0 时， 选择PC437 [美国，欧洲标准]（默认）
      * • 当n 位为1 时， 选择日文片假名
      */
-
-
     jpPrinter.setInvertPrintMode = function (n) {
       data.push(27);
       data.push(123);
       data.push(n);
     };
+	
     /**
      * GS ! 选择字符大小
      * 传入参数说明
@@ -498,8 +471,6 @@ var jpPrinter = {
      * • 当n 位为112 时，8（倍高）
      * 若需要倍宽倍高，请在同等倍数下相加 如17为倍宽倍高
      */
-
-
     jpPrinter.setCharacterSize = function (n) {
       data.push(29);
       data.push(33);
@@ -548,6 +519,7 @@ var jpPrinter = {
         data.push(bits[i]);
       }
     }
+	
     /*
     单色图片转成多张bitmap, 高度按BLOCK_SIZE拆分图片
     */
@@ -571,11 +543,10 @@ var jpPrinter = {
 
       console.log(data);
     }
+	
     /*
     单色图片整图转成一张bitmap
     */
-
-
     function convertToSingleBitmap(res) {
       console.log(res);
       var w = res.width;
@@ -727,33 +698,29 @@ var jpPrinter = {
      * • 当n 位为2 时，条码下方
      * • 当n 位为3 时，条码上、下方
      */
-
-
     jpPrinter.setHRIPosition = function (position) {
       data.push(29);
       data.push(72);
       data.push(position);
     };
+	
     /**
      * GS f 选择HRI 使用字体
      * 传入参数说明
      * • 当n 位为0 时，标准ASCII 码字符(12 × 24)
      * • 当n 位为1 时，压缩ASCII 码字符(9 × 17)
      */
-
-
     jpPrinter.setHRIFont = function (font) {
       data.push(29);
       data.push(102);
       data.push(font);
     };
+	
     /**
      * GS h 选择条码高度
      * 传入参数说明
      * 2 ≤ n ≤ 6
      */
-
-
     jpPrinter.setBarcodeWidth = function (width) {
       data.push(29);
       data.push(119);
@@ -768,23 +735,21 @@ var jpPrinter = {
 
       data.push(width);
     };
+	
     /**
      * GS h 选择条码高度
      * 传入参数说明
      * 1 ≤ n ≤ 255
      */
-
-
     jpPrinter.setBarcodeHeight = function (height) {
       data.push(29);
       data.push(104);
       data.push(height);
     };
+	
     /**
      * 打印条码128类型
      */
-
-
     jpPrinter.setCode128 = function (content) {
       data.push(29);
       data.push(107);
@@ -805,8 +770,6 @@ var jpPrinter = {
      * t:条码类型
      * content：内容
      */
-
-
     jpPrinter.setBarcodeContent = function (t, content) {
       var ty = 73;
       data.push(29);
@@ -853,6 +816,7 @@ var jpPrinter = {
       data.push(ty);
       data.push(content);
     };
+	
     /**
      * FS ! 设置汉字字符模式
      * 传入参数说明
@@ -861,31 +825,28 @@ var jpPrinter = {
      * • 当n 位为8 时，选择倍高
      * • 当n 位为128 时，选择下划线
      */
-
-
     jpPrinter.setChineseCharacterMode = function (n) {
       data.push(28);
       data.push(33);
       data.push(n);
     };
+	
     /**
      * FS & 选择汉字模式
      */
-
-
     jpPrinter.setSelectChineseCharacter = function () {
       data.push(28);
       data.push(38);
     };
+	
     /**
     * FS . 取消汉字模式
     */
-
-
     jpPrinter.setCancelChineseCharacter = function () {
       data.push(28);
       data.push(46);
     };
+	
     /**
      * FS - 选择/取消汉字下划线模式
      * 传入参数说明
@@ -893,39 +854,36 @@ var jpPrinter = {
      * • 当n 位为1 时，选择汉字下划线（1 点宽）
      * • 当n 位为2 时，选择汉字下划线（2 点宽）
      */
-
-
     jpPrinter.setCancelUnderLine = function (n) {
       data.push(28);
       data.push(45);
       data.push(n);
     };
+	
     /**
      * FS S 设置汉字字符左右间距
      * 传入参数说明
      * 分别将汉字的左间距和右间距设置为n1 和n2
      * 传入点数，1mm=8dot
      */
-
-
     jpPrinter.setChineseCharacterSpace = function (n1, n2) {
       data.push(28);
       data.push(83);
       data.push(n1);
       data.push(n2);
     };
+	
     /**
      * FS W 选择/取消汉字倍高倍宽
      * • 当n 的最低位为0，取消汉字倍高倍宽模式。
      * • 当n 的最低位为1，选择汉字倍高倍宽模式。
      */
-
-
     jpPrinter.setChineseCharacteHeightWidth = function (n) {
       data.push(28);
       data.push(87);
       data.push(n);
     };
+	
     /**
      * GS ( F 设置黑标定位偏移量
      * 该命令用于选择黑标定位控制允许，且设置切/撕纸位置或起始打印位置相对于黑标检测的偏移值。该值以点数计算。
@@ -941,8 +899,6 @@ var jpPrinter = {
      * 
      * 0 ≤ n ≤ 1700
      */
-
-
     jpPrinter.setBlackMaskOffset = function (p, a, m, n) {
       data.push(29);
       data.push(40);
@@ -954,41 +910,39 @@ var jpPrinter = {
       data.push(n % 256);
       data.push(n / 256);
     };
+	
     /**
      * GS FF 设置黑标至打印起始位置
      */
-
-
     jpPrinter.setBlackMarkStart = function () {
       //黑标至打印起始位置
       data.push(29);
       data.push(12);
     };
+	
     /**
      * GS V 选择切纸模式并切纸
      * 半切
      */
-
-
     jpPrinter.setCutter = function () {
       data.push(29);
       data.push(86);
       data.push(1);
     };
+	
     /**
     * GS V 选择切纸模式并切纸
     * 传入参数说明
     * 传入点数，1mm=8dot
     * 进纸n 并且半切纸
     */
-
-
     jpPrinter.setCut = function (n) {
       data.push(29);
       data.push(86);
       data.push(101);
       data.push(n);
     };
+	
     /**
      * ESC B 打印机来单打印蜂鸣提示
      * 传入参数说明
@@ -997,8 +951,6 @@ var jpPrinter = {
      * n 是指蜂鸣器鸣叫次数。
      * t 是指蜂鸣器鸣每次数鸣叫时间为(t × 50) ms
      */
-
-
     jpPrinter.setSound = function (n, t) {
       //设置蜂鸣器
       data.push(27);
@@ -1019,6 +971,7 @@ var jpPrinter = {
       data.push(n);
       data.push(t);
     };
+	
     /**
      * ESC C 打印机来单打印蜂鸣提示及报警灯闪烁
      * 传入参数说明
@@ -1033,8 +986,6 @@ var jpPrinter = {
      * 当n = 2 时，报警灯闪烁
      * 当n = 3 时，蜂鸣器鸣叫，同时报警灯闪烁
      */
-
-
     jpPrinter.setOrderTip = function (m, t, n) {
       data.push(27);
       data.push(67);
@@ -1061,14 +1012,13 @@ var jpPrinter = {
       data.push(t);
       data.push(n);
     };
+	
     /**
      * 设置QRCode 模块大小为n dot
      * 传入参数说明
      * 1 ≤ n ≤ 15
      * [默认值] n = 3
      */
-
-
     jpPrinter.setSelectSizeOfModuleForQRCode = function (n) {
       //设置二维码大小
       data.push(29);
@@ -1089,6 +1039,7 @@ var jpPrinter = {
 
       data.push(n);
     };
+	
     /**
      * 选择QRCode 纠错等级
      * 传入参数说明
@@ -1098,8 +1049,6 @@ var jpPrinter = {
      * 50    选择纠错等级  Q 25
      * 51    选择纠错等级  H 30
      */
-
-
     jpPrinter.setSelectErrorCorrectionLevelForQRCode = function (n) {
       data.push(29);
       data.push(40);
@@ -1110,11 +1059,10 @@ var jpPrinter = {
       data.push(69);
       data.push(n);
     };
+	
     /**
      * 存储QRCode 数据(d1...dk)到符号存储区
      */
-
-
     jpPrinter.setStoreQRCodeData = function (content) {
       var code = new encode.TextEncoder('gb18030', {
         NONSTANDARD_allowLegacyEncoding: true
@@ -1151,6 +1099,7 @@ var jpPrinter = {
      * 设置GB18030编码格式文字
      */
     jpPrinter.setText = function (content) {
+	  console.log("打印格式",content);
       var code = new encode.TextEncoder('gb18030', {
         NONSTANDARD_allowLegacyEncoding: true
       }).encode(content);
@@ -1159,11 +1108,10 @@ var jpPrinter = {
         data.push(code[i]);
       }
     };
+	
     /**
      * 添加用户自定义指令
      */
-
-
     jpPrinter.setUserCommand = function (content) {
       //添加用户指令
       data.push(content);
@@ -1183,40 +1131,214 @@ var jpPrinter = {
 	
 	//打印格式 9 种：销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单接单、外卖单接单；
 	var printerType = ["XS", "TD", "YD", "YDTQ", "YDQX", "SX", "SXTD", "XSDD", "XSWMJD"];
-	jpPrinter.formString = function(type){
-		var contentNew = "";
+	
+	jpPrinter.formString = function(data){
+		var type = data.xsType;
+		var xpType ="销售";
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(1); //设置居左	
+		jpPrinter.setText("欢迎光临");
+		jpPrinter.setPrint(); //打印并换行
+		
 		switch (type) {
 		  case printerType[0]:
+		    xpType ="销售";
 		    break;
 		
 		  case printerType[1]:
+		    xpType ="退单";
 		    break;
 		
 		  case printerType[2]:
+			xpType ="预订";
 		    break;
 		
 		  case printerType[3]:
+			xpType ="预订提取";
 		    break;
 		
 		  case printerType[4]:
+			xpType ="预订取消";
 		    break;
 		
 		  case printerType[5]:
+			xpType ="赊销";
 		    break;
 		
 		  case printerType[6]:
+			xpType ="赊销退单";
 		    break;
 		
 		  case printerType[7]:
+			xpType ="线上订单";
 		    break;
 		
 		  case printerType[8]:
+			xpType ="外卖单";
 		    break;
 		}
-		data.push(content);
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType + "小票: " + data.khName);
+		jpPrinter.setPrint(); //打印并换行
+	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType + "时间: " + data.xsDate);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("单号: "+data.xsBill + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("商品名称       数量  单价  金额  折扣  ");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		//商品信息
+		data.goodsList.forEach((item, i) => {
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(util.getComputedByteLen(item.spname, 15));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty, 6) + util
+				.getComputedByteLen(item.price, 6) + util.getComputedByteLen(item.amount, 6) + util.getComputedByteLen(
+					item.discount, 6));
+			jpPrinter.setPrint(); //打印并换行
+		})
 	}
 	
-
+	//总计
+	jpPrinter.formStringTotal = function(data){
+		var type = data.xsType;
+		var xpType ="销售";	
+		switch (type) {
+		  case printerType[0]:
+		    xpType ="销售";
+		    break;
+		
+		  case printerType[1]:
+		    xpType ="退单";
+		    break;
+		
+		  case printerType[2]:
+			xpType ="预订";
+		    break;
+		
+		  case printerType[3]:
+			xpType ="提取";
+		    break;
+		
+		  case printerType[4]:
+			xpType ="预订";
+		    break;
+		
+		  case printerType[5]:
+			xpType ="赊销";
+		    break;
+		
+		  case printerType[6]:
+			xpType ="退单";
+		    break;
+		
+		  case printerType[7]:
+			xpType ="线上";
+		    break;
+		
+		  case printerType[8]:
+			xpType ="外卖";
+		    break;
+		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("条目:" + data.lineNum + " 数量:" + data.qty + " 应付金额:" + data.payableAmount);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("已优惠金额:" + data.discountedAmount + " 原金额:" + data.originalAmount);
+		jpPrinter.setPrint(); //打印并换行
+	}
+	
+	//付款方式
+	jpPrinter.formStringPaymentMethod = function(data){
+		var type = data.xsType;
+		var xpType ="销售";	
+		switch (type) {
+		  case printerType[0]:
+		    xpType ="销售";
+		    break;
+		
+		  case printerType[1]:
+		    xpType ="退单";
+		    break;
+		
+		  case printerType[2]:
+			xpType ="预订";
+		    break;
+		
+		  case printerType[3]:
+			xpType ="提取";
+		    break;
+		
+		  case printerType[4]:
+			xpType ="预订";
+		    break;
+		
+		  case printerType[5]:
+			xpType ="赊销";
+		    break;
+		
+		  case printerType[6]:
+			xpType ="退单";
+		    break;
+		
+		  case printerType[7]:
+			xpType ="线上";
+		    break;
+		
+		  case printerType[8]:
+			xpType ="外卖";
+		    break;
+		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("现金:" + data.cash);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("支付:" + data.payTotal);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("找零:" + data.change);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("门店地址: " + data.khAddress);
+		jpPrinter.setPrint(); //打印并换行
+	}
+	
     return jpPrinter;
   },
   Query: function () {

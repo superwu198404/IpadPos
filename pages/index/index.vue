@@ -29,7 +29,6 @@
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
-		<button @click="InputProduct()">录入测试商品</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
@@ -39,14 +38,16 @@
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
+	import _pay from '@/api/Pay/PaymentALL.js';
 	export default {
 		//变量初始化
 		data() {
 			return {
-				input: {
-					name: "",
-					amount: "",
-					data: {
+				input:{
+					name:"",
+					amount:"",
+					trade_no:"",
+					data:{
 						PLID: Number(new Date()),
 						SPID: Number(new Date()) / 2,
 						UNIT: "个",
@@ -87,33 +88,34 @@
 						AMOUNT: 1,
 						QTY: 1
 					},
-					// {
-					// 	PLID: "101",
-					// 	SPID: "10101002",
-					// 	UNIT: "袋",
-					// 	BARCODE: '2222222222',
-					// 	NAME: "毛毛虫",
-					// 	PRICE: 0.5,
-					// 	OPRICE: 0.5,
-					// 	AMOUNT: 1,
-					// 	QTY: 2
-					// },
-					// {
-					// 	PLID: "101",
-					// 	SPID: "10101002",
-					// 	UNIT: "袋",
-					// 	BARCODE: '2222222222',
-					// 	NAME: "虎皮蛋糕",
-					// 	PRICE: 0.01,
-					// 	OPRICE: 0.01,
-					// 	AMOUNT: 2,
-					// 	QTY: 1
-					// }
+					{
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "毛毛虫",
+						PRICE: 0.5,
+						OPRICE: 0.5,
+						AMOUNT: 1,
+						QTY: 2
+					},
+					{
+						PLID: "101",
+						SPID: "10101002",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "虎皮蛋糕",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 1,
+						QTY: 1
+					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
-				refund_no: "K200QTD005122623173547611"
+				// refund_no: "K0101QT2122624153953331" 
+				refund_no: ""
 			}
 		},
 		//方法初始化
@@ -193,6 +195,13 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
+						//添加电子卡支付
+						that.PayWayList.push({
+							name:"电子卡支付",
+							fkid:"ZF04",
+							type:"PAYCARD",
+							value:"DZK"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -201,16 +210,29 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
+					console.log("待退款单号：",this.refund_no)
 					if (this.XS_TYPE == '2') {
-						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no +
-							"'")[0];
-						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no +
-							"'");
-						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no +
-							"'");
+						let data = await common.QueryRefund(this.refund_no);
+						this.sale1_obj = data.sale1;
+						this.sale2_arr = data.sale2;
+						this.sale3_arr = data.sale3;
+						this.refund_no = "";//清空单号
+						console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+						if(!this.sale1_obj || Object.keys(this.sale1_obj).length!=0 || this.sale2_arr.length == 0 || this.sale3_arr.length == 0){
+							uni.showToast({
+								title:"订单不存在！",
+								icon:"error"
+							})
+							return;
+							}
 					}
-					console.log("SALE1、2、3：", [this.sale1_obj, this.sale2_arr, this.sale3_arr]);
-					this.DataAssembleSaveForGlobal();
+					else{
+						this.sale1_obj = {};
+						this.sale2_arr = [];
+						this.sale3_arr = [];
+					}
+					
+					this.DataAssembleSaveForGlobal(); 
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
 					})
@@ -296,6 +318,13 @@
 					}
 				});
 			},
+			refund:function(){
+				_pay.Refund("ZFB20",{ out_trade_no:this.input.trade_no,out_refund_no:this.input.trade_no,refund_money:100 },(res) => { 
+					console.log("成功：",res)
+				},(err)=> {
+					console.log("错误：",err)
+				});
+			}
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
@@ -318,7 +347,7 @@
 			// if (that.PayList && that.PayList.length > 0) {
 			// 	this.CreateDBData()
 			// }
-			this.refund_no = this.refund_no ?? this.$store.state.trade;
+			this.refund_no = this.$store.state.trade;
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

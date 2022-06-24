@@ -6,7 +6,6 @@
 </template>
 
 <script>
-// pages/blueconn/blueconn.js
 var app = getApp();
 
 export default {

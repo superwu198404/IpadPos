@@ -57,13 +57,13 @@ var CreateData = function(pt, t, m, d) {
 
 /**
  *基础支付接口 
- * @param {*} pt 
- * @param {*} t 
- * @param {*} d 
+ * @param {*} pt 支付类型 pay-type
+ * @param {*} t 请求加载标题 title
+ * @param {*} d 请求数据 data
  * @param {*} func 
  */
 const BasePayment = async function(pt, t, m, d, func, catchFunc) {
-	let data = CreateData(pt, t, d);
+	let data = CreateData(pt, t, m, d);
 	if (data) {
 		Req.asyncFuncOne(data, function(res) {
 			if (func)
@@ -86,20 +86,20 @@ const BasePayment = async function(pt, t, m, d, func, catchFunc) {
  * @param {业务参数} d 
  * @param {回调结果函数} func 
  */
-const Payment = function(pt, d, func) {
-	this.BasePayment(pt, "支付中...", "Payment", d, func);
+const Payment = function(pt, d, func, catchFunc) {
+	BasePayment(pt, "支付中...", "Payment", d, func, catchFunc);
 };
 const QueryPayment = function(pt, d, func, catchFunc) {
 	BasePayment(pt, "查询中...", "QueryPayment", d, func, catchFunc);
 };
-const CancelPayment = function(pt, d, func) {
-	this.BasePayment(pt, "撤销中...", "CancelPayment", d, func);
+const CancelPayment = function(pt, d, func, catchFunc) {
+	BasePayment(pt, "撤销中...", "CancelPayment", d, func, catchFunc);
 };
-const Refund = function(pt, d, func) {
-	this.BasePayment(pt, "退款中...", "Refund", d, func);
+const Refund = function(pt, d, func, catchFunc) {
+	BasePayment(pt, "退款中...", "Refund", d, func, catchFunc);
 };
-const QueryRefund = function(pt, d, func) {
-	this.BasePayment(pt, "查询中...", "QueryRefund", d, func)
+const QueryRefund = function(pt, d, func, catchFunc) {
+	BasePayment(pt, "查询中...", "QueryRefund", d, func, catchFunc)
 };
 
 /**
@@ -194,6 +194,7 @@ const PaymentAll = function(pt, body, func, catchFunc) {
 		}
 	], function(err) {
 		console.log("支付接口返回的错误信息：", err)
+		console.log("catch:",catchFunc)
 		if(catchFunc) catchFunc(err);
 		uni.showToast({
 			icon: "error",
@@ -203,7 +204,7 @@ const PaymentAll = function(pt, body, func, catchFunc) {
 }
 
 //查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
-const RefundAll = function(pt, body, catchFunc, finallyFunc) {
+const RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 	return Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
 		function(res) {
 			return CreateData(pt, "退款中...", "Refund", body);

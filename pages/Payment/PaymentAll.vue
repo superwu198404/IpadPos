@@ -342,8 +342,8 @@
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
-				this.currentPayInfo = this.PayWayList.find(i => i.type === this
-					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				console.log("当前支付类型信息：",this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				if (n === "COUPON") { //如果用券，则不再允许编辑待付款金额
@@ -462,8 +462,7 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
-				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
-					.PayList; //如果是退款，那么就是退款信息，否则是支付信息
+				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this.PayList; //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
@@ -491,7 +490,9 @@
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-
+				// console.log("SALE1-OBJ:", this.sale1_obj);
+				// console.log("SALE2-ARR:", this.sale2_arr);
+				// console.log("SALE3-ARR:", this.sale3_arr);
 				this.tx_obj = {
 					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
 					STOREID: this.KHID,
@@ -503,12 +504,9 @@
 					CONNSTR: 'CONNSTRING'
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-
-				// console.log(sql1.sqlliteArr);
-				// console.log(sql2.sqlliteArr);
-				// console.log(sql3.sqlliteArr);
-				// console.log(sql4.sqlliteArr);
-
+				console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
+				console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
+				console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
 				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
@@ -606,19 +604,18 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				let that = this;
-				that.SALE1Init(this.sale1_obj); //sale1 初始化
-				this.sale2_arr.forEach(s1 => { //sale2 初始化
-					that.SALE2Init(s1);
-				});
-				this.sale3_arr.forEach(s1 => { //sale3 初始化
-					that.SALE3Init(s1);
-				});
+				console.log("SALE1 初始化开始：",this.sale1_obj);
+				this.SALE1Init(this.sale1_obj); //sale1 初始化
+				console.log("SALE2 初始化开始：",this.sale2_arr);
+				this.SALE2Init(this.sale2_arr);
+				console.log("SALE3 初始化开始：",this.sale3_arr);
+				this.SALE3Init(this.sale3_arr);
 			},
 			//SALE001 初始化
 			SALE1Init: function(obj) {
 				if (this.isRefund)
 					this.sale1_obj = obj ? Object.assign({}, obj) : {};
+				console.log("SALE1 初始化完毕！",this.sale1_obj )
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function(arr) {
@@ -636,6 +633,7 @@
 							QTY: i.QTY
 						}
 					}).bind(this));
+				console.log("SALE2 初始化完毕！",this.Products)
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function(arr) {
@@ -654,28 +652,33 @@
 							msg: "" //操作提示信息（可以显示失败的或者成功的）
 						}
 					}).bind(this));
+				console.log("SALE3 初始化完毕！",this.RefundList)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
+				console.log("开始退款流程...")
+				console.log("退款单号为：",this.out_refund_no)
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
 				//遍历所有退款失败的(或者未退款的)
-				let refunds = this.RefundList;
-				if (isRetry)
-					refunds = refunds.filter(i => i.refund_num >= 1) //筛选出：退款状态为失败，且已经经历了一次退款（refund_num为退款次数）
-				refunds.filter(i => i.fail).forEach(refundInfo => {
+				console.log("退款单列表：",this.RefundList)
+				this.RefundList.filter(i => i.fail).forEach(refundInfo => {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
 					if (payWayType == "SZQ") { //如果为券，直接默认成功
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						return;
 					}
-					// let handle = that.handles[payWayName];
-					// if (handle) {
 					if (payWayType) {
 						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 						refundInfo.refunding = true; //标记为正在退款的状态
+						console.log("退款表单数据：",{
+								out_trade_no: refundInfo.bill, //单号
+								out_refund_no: refund_no, //退款单号
+								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
+								total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
+							})
 						let res = _pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
 								out_refund_no: refund_no, //退款单号
@@ -745,7 +748,6 @@
 					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
 					curPayType = CodeRule[startCode] || CodeRule["card"]; //SZQ,PAYCARD....
 				}
-				console.log("当前支付类型：", curPayType);
 				return curPayType;
 			},
 			//支付 data 对象组装
@@ -806,11 +808,12 @@
 						i.price /= 100;
 						return i;
 					}); //把支付信息贴出来
-					that.authCode = ""; //避免同一个付款码多次使用
+					this.authCode = ""; //避免同一个付款码多次使用
 					this.orderGenarator(payAfter, result, false); //支付记录处理(成功)
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, result, true); //支付记录处理(失败)
-					that.authCode = ""; //避免同一个付款码多次使用
+					console.log("支付失败！")
+					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
 			//创建支付记录
@@ -951,8 +954,9 @@
 				this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
 				this.out_trade_no = this.out_trade_no_old; //子单号
 				this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
-				this.sale3_arr = prev_page_param.sale3_arr;
-				console.log("PayWays:", JSON.stringify(this.PayWayList));
+				this.sale1_obj = prev_page_param?.sale1_obj;//sale1数据
+				this.sale2_arr = prev_page_param?.sale2_arr;//sale2数据
+				this.sale3_arr = prev_page_param?.sale3_arr;//sale3数据
 				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
 			},

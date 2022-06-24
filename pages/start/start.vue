@@ -5,6 +5,7 @@
 		<button @click="init">确定</button>
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
+		<button @click="toPrinter">去打印</button>
 	</view>
 </template>
 
@@ -40,7 +41,11 @@
 					url: "/pages/index/index"
 				});
 			},
-
+			toPrinter: function() {
+				uni.navigateTo({
+					url: "/pages/xprinter/home"
+				});
+			},
 			startx: function() {
 
 				//this.init();
