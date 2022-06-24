@@ -28,10 +28,9 @@
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
-		<button @click="InputProduct()">录入测试商品</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<!-- <button @click="Test(2)">测试一下</button> -->
+		<button @click="Test(2)">测试一下</button>
 	</view>
 </template>
 <script>
@@ -46,7 +45,7 @@
 				input:{
 					name:"",
 					amount:"",
-					trade_no:"K200QTD005122623173547611_0",
+					trade_no:"",
 					data:{
 						PLID: Number(new Date()),
 						SPID: Number(new Date())/2,
@@ -107,14 +106,15 @@
 						NAME: "虎皮蛋糕",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 2,
+						AMOUNT: 1,
 						QTY: 1
 					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
-				refund_no: "K200QTD005122623173547611"
+				// refund_no: "K0101QT2122624153953331" 
+				refund_no: ""
 			}
 		},
 		//方法初始化
@@ -161,6 +161,13 @@
 							type:"qy",
 							value:"EXCESS"
 						});
+						//添加电子卡支付
+						that.PayWayList.push({
+							name:"电子卡支付",
+							fkid:"ZF04",
+							type:"PAYCARD",
+							value:"DZK"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -169,15 +176,28 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
+					console.log("待退款单号：",this.refund_no)
 					if (this.XS_TYPE == '2') {
-						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no +
-							"'")[0];
-						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no +
-							"'");
-						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no +
-							"'");
+						let data = await common.QueryRefund(this.refund_no);
+						this.sale1_obj = data.sale1;
+						this.sale2_arr = data.sale2;
+						this.sale3_arr = data.sale3;
+						this.refund_no = "";//清空单号
+						console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+						if(!this.sale1_obj || Object.keys(this.sale1_obj).length!=0 || this.sale2_arr.length == 0 || this.sale3_arr.length == 0){
+							uni.showToast({
+								title:"订单不存在！",
+								icon:"error"
+							})
+							return;
+							}
 					}
-					console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+					else{
+						this.sale1_obj = {};
+						this.sale2_arr = [];
+						this.sale3_arr = [];
+					}
+					
 					this.DataAssembleSaveForGlobal(); 
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -222,8 +242,12 @@
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
 				]
-				for (var i = 0; i < arr.length; i++) {
-					db.get().executeDml(arr[i], "执行中", (res) => {
+				let arr2 = [
+						"insert into SALE001 (BILL,SALEDATE,SALETIME,KHID,POSID,RYID,BILL_TYPE,XSTYPE,XS_BILL,XS_POSID,XS_DATE,XS_KHID,XS_GSID,TLINE,TNET,DNET,ZNET,BILLDISC,ROUND,CHANGENET,CXTNET,TCXDISC,CUID,CARDID,THYDISC,TDISC,YN_SC,GSID,GCID,DPID,KCDID,BMID,DKFID,XSPTID,YN_OK,THTYPE,CLTIME) values(\"K0101QT2122624111031144\",DATETIME(\"2022-06-24\"),DATETIME(\"2022-06-24 11:10:44\"),\"K200QTD005\",\"1\",\"10086\",null,null,null,null,null,null,null,null,\"1\",\"0\",\"1.00\",\"0\",\"0\",\"0\",\"0\",\"0\",null,null,\"0\",\"0\",\"N\",\"027001\",\"1001\",\"123\",\"123\",\"001\",null,\"POS\",\"X\",\"0\",DATETIME(\"2022-06-24 11:10:44\"))"
+				]
+				console.log("执行测试sql：")
+				for (var i = 0; i < arr2.length; i++) {
+					db.get().executeDml(arr2[i], "执行中", (res) => {
 						console.log("sql 执行结果：", res);
 					});
 				}
@@ -285,7 +309,7 @@
 			// if (that.PayList && that.PayList.length > 0) {
 			// 	this.CreateDBData()
 			// }
-			this.refund_no =this.refund_no ?? this.$store.state.trade;
+			this.refund_no = this.$store.state.trade;
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

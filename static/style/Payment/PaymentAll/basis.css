@@ -344,7 +344,7 @@ page {
 	text-align: center;
 	border: 1px solid #D3D3D3;
 	border-radius: 10px;
-	height: 500rpx;
+	height: 480rpx;
 	float: left;
 	display: flex;
 	flex-direction: column;
@@ -433,7 +433,7 @@ page {
 
 .bom-zhifu .pattern {
 	width: 47%;
-	height:230rpx;
+	height:220rpx;
 	padding: 1.9% 3%;
 	box-sizing: border-box;
 	float: left;
