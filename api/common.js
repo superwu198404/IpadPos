@@ -224,6 +224,7 @@ var GetPayWay = function(e, func) {
 					res.msg[i].POLY = 'N';
 				}
 			}
+			console.log("序列化支付：", res);
 			if (func) func(res);
 			return;
 		})
@@ -249,19 +250,47 @@ var GetPolyPayWay = function(e, func) {
 		})
 	});
 }
-var Excute = async function(sql, func) {
-	let datas = null;
-	await db.get().executeQry(sql, "数据查询中", function(res) {
-		if (func) func(res);
-		datas = res.msg;
+
+//查询退单所需信息
+var QueryRefund = async function(trade) {
+	let datas = { sale1:null,sale2:null,sale3:null};
+	await db.get().executeQry(`select * from SALE001 where BILL='${trade}'`, "查询SALE1...", function(res) {
+		datas.sale1 = res.msg[0];
 	}, function(err) {
-		console.log("获取付款方式出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取付款方式出错"
-		})
+		console.log("Sale1查询执行异常:", err);
+	});
+	await db.get().executeQry(`select * from SALE002 where BILL='${trade}'`, "查询SALE2...", function(res) {
+		datas.sale2 = res.msg;
+	}, function(err) {
+		console.log("Sale2查询执行异常:", err);
+	});
+	await db.get().executeQry(`select * from SALE003 where BILL='${trade}'`, "查询SALE3...", function(res) {
+		datas.sale3 = res.msg;
+	}, function(err) {
+		console.log("Sale3查询执行异常:", err);
 	});
 	return datas;
+}
+
+//获取档案参数
+var GetPZCS = async function(e, func) {
+	let sql = "select * from dapzcs_nr where id_nr in('YN_ZFBKBQ')";
+	if (e && e.length > 0) {
+		let str = "";
+		for (var i = 0; i < e.length; i++) {
+			str += "'" + e[i] + "',";
+		}
+		sql = "select * from dapzcs_nr where id_nr in(" + str.substr(0, str.length - 1) + ")";
+	}
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		if(func) func(res);
+	}, function(err) {
+		console.log("获取档案参数出错:", err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取档案参数出错"
+		})
+	});
 }
 
 export default {
@@ -271,6 +300,6 @@ export default {
 	CreatSaleTable,
 	TransLiteData,
 	GetPayWay,
-	Excute,
-	GetPolyPayWay
+	QueryRefund,
+	GetPZCS
 }

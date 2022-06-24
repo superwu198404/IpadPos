@@ -10,7 +10,8 @@
 				<div><input v-model="input.amount" /></div>
 			</div>
 			<div class="product">
-				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;" @click="InputProduct()">添加</div>
+				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;"
+					@click="InputProduct()">添加</div>
 			</div>
 		</view>
 		<p>--加购的商品商品信息--</p>
@@ -28,10 +29,9 @@
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
-		<button @click="InputProduct()">录入测试商品</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<!-- <button @click="Test(2)">测试一下</button> -->
+		<button @click="Test(2)">测试一下</button>
 	</view>
 </template>
 <script>
@@ -46,10 +46,10 @@
 				input:{
 					name:"",
 					amount:"",
-					trade_no:"K200QTD005122623173547611_0",
+					trade_no:"",
 					data:{
 						PLID: Number(new Date()),
-						SPID: Number(new Date())/2,
+						SPID: Number(new Date()) / 2,
 						UNIT: "个",
 						BARCODE: 'test',
 						NAME: "",
@@ -107,14 +107,15 @@
 						NAME: "虎皮蛋糕",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 2,
+						AMOUNT: 1,
 						QTY: 1
 					}
 				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
-				refund_no: "K200QTD005122623173547611"
+				// refund_no: "K0101QT2122624153953331" 
+				refund_no: ""
 			}
 		},
 		//方法初始化
@@ -154,12 +155,52 @@
 							}
 							that.PayWayList.push(obj);
 						}
-						//添加弃用金额方式
+						//如果fkda没有则追加c测试数据
+						let arr = [{
+							name: "弃用金额",
+							fkid: "ZCV1",
+							type: "qy",
+							value: "EXCESS",
+							poly: "O"
+						}, {
+							name: "电子卡支付",
+							fkid: "ZF31",
+							type: "PAYCARD",
+							value: "DZK",
+							poly: "Y"
+						}, {
+							name: "云闪付",
+							fkid: "ZF33",
+							type: "YSF",
+							value: "ysf",
+							poly: "N"
+						}, {
+							name: "可伴支付",
+							fkid: "ZF22",
+							type: "COUPON",
+							value: "kb",
+							poly: "N"
+						}, {
+							name: "品诺支付",
+							fkid: "ZF32",
+							type: "PINNUO",
+							value: "kb",
+							poly: "N",
+						}]
+						for (var i = 0; i < arr.length; i++) {
+							let obj = that.PayWayList.find((item) => {
+								return item.type == arr[i].type;
+							});
+							if (!obj) {
+								that.PayWayList.push(arr[i]);
+							}
+						}
+						//添加电子卡支付
 						that.PayWayList.push({
-							name:"弃用金额",
-							fkid:"qyje",
-							type:"qy",
-							value:"EXCESS"
+							name:"电子卡支付",
+							fkid:"ZF04",
+							type:"PAYCARD",
+							value:"DZK"
 						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
@@ -169,15 +210,28 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
+					console.log("待退款单号：",this.refund_no)
 					if (this.XS_TYPE == '2') {
-						this.sale1_obj = await common.Excute("select * from SALE001 where BILL='" + this.refund_no +
-							"'")[0];
-						this.sale2_arr = await common.Excute("select * from SALE002 where BILL='" + this.refund_no +
-							"'");
-						this.sale3_arr = await common.Excute("select * from SALE003 where BILL='" + this.refund_no +
-							"'");
+						let data = await common.QueryRefund(this.refund_no);
+						this.sale1_obj = data.sale1;
+						this.sale2_arr = data.sale2;
+						this.sale3_arr = data.sale3;
+						this.refund_no = "";//清空单号
+						console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+						if(!this.sale1_obj || Object.keys(this.sale1_obj).length!=0 || this.sale2_arr.length == 0 || this.sale3_arr.length == 0){
+							uni.showToast({
+								title:"订单不存在！",
+								icon:"error"
+							})
+							return;
+							}
 					}
-					console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
+					else{
+						this.sale1_obj = {};
+						this.sale2_arr = [];
+						this.sale3_arr = [];
+					}
+					
 					this.DataAssembleSaveForGlobal(); 
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -216,17 +270,19 @@
 			Test: function(e) {
 				let arr = [
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF31', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
 				]
+				let sql = "";
 				for (var i = 0; i < arr.length; i++) {
-					db.get().executeDml(arr[i], "执行中", (res) => {
-						console.log("sql 执行结果：", res);
-					});
+					sql += arr[i];
 				}
+				db.get().executeDml(sql, "执行中", (res) => {
+					console.log("sql 执行结果：", res);
+				});
 				// Req.asyncFunc({
 				// 	http: true,
 				// 	title: '测试请求',
@@ -239,8 +295,8 @@
 				// 	console.log("请求结果：", res);
 				// });
 			},
-			InputProduct:function(){
-				let data = Object.assign({},this.input.data);
+			InputProduct: function() {
+				let data = Object.assign({}, this.input.data);
 				data.name = this.input.name;
 				data.AMOUNT = this.input.amount;
 			},
@@ -275,6 +331,12 @@
 			//获取支付方式
 			this.KHID = "K0101QT2";
 			this.GetPayWay(this.KHID);
+			//初始化配置参数
+			this.GetPZCS("", (res) => {
+				for (var i = 0; i < res.msg.length; i++) {
+					getApp().globalData.PZCS[res.msg[i].ID_NR] = res.msg[i].ZF;
+				}
+			});
 		},
 		onShow() {
 			// let that = this;
@@ -285,7 +347,7 @@
 			// if (that.PayList && that.PayList.length > 0) {
 			// 	this.CreateDBData()
 			// }
-			this.refund_no =this.refund_no ?? this.$store.state.trade;
+			this.refund_no = this.$store.state.trade;
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
@@ -370,10 +432,12 @@
 		font-size: 36rpx;
 		color: #8f8f94;
 	}
-	.product{
+
+	.product {
 		display: inline-flex;
 	}
-	.product input{
+
+	.product input {
 		width: 150px;
 		border: 1px solid gray;
 	}

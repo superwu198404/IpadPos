@@ -152,47 +152,25 @@
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
-									<view v-for="(item,index) in PayWayList">
-										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix"></image>
+									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
+										<!-- <text>{{item.type}}</text> -->
+										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
+										</image>
 									</view>
 								</label>
-								<text>支持支付宝、微信及会员卡支付</text>
-								<!-- </view>
-				              <view class="r-zhifu"> -->
+								<label>
+									<text>支持</text>
+									<text v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
+										,{{item.name}}</text>
+								</label>
 							</view>
-
-							<!-- </view>
-				            
-				            <view class="bom-zhifu"> -->
-							<view class="pattern nots curr" :class="currentPayType === 'COUPON'? 'selected':' '"
-								id="COUPON" @click="clickPayType($event)">
+							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
+								:class="currentPayType === 'COUPON'&&item.type==='SZQ'? 'selected':' '" id="COUPON"
+								@click="clickPayType($event)">
 								<view class="">
-									<p>电子券</p>
-									<text>coupons</text>
+									<p>{{item.name}}</p>
 								</view>
-								<image src="../../images/SZQ.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>云闪付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/ysf-da.png" mode="widthFix"></image>
-							</view>
-
-							<view class="pattern nots curr">
-								<view class="">
-									<p>可伴支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/kb-da.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>品诺支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/pn-da.png" mode="widthFix"></image>
+								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 							</view>
 						</view>
 
@@ -200,59 +178,6 @@
 					</p>
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
 				</view>
-				<!-- <view class="choosepays">
-					<view class="pays-bj">
-						<view class="top-zhifu">
-							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY'
-								@click="clickPayType($event)">
-								<image class="p-bg" src="../../images/xzbj-da.png"></image>
-								<p>聚合支付</p>
-								<label>
-									<image src="../../images/ZFB20.png" mode="widthFix"></image>
-									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
-									<image src="../../images/PAYCARD.png" mode="widthFix"></image>
-								</label>
-								<text>支持支付宝、微信及会员卡支付</text>
-							</view>
-							<view class="r-zhifu">
-								<view :class="currentPayType === 'COUPON'? 'pattern curr selected':'pattern curr'"
-									id="COUPON" @click="clickPayType($event)">
-									<view class="">
-										<p>电子券</p>
-										<text>coupons</text>
-									</view>
-									<image src="../../images/SZQ.png" mode="widthFix"></image>
-								</view>
-								<view class="pattern nots curr">
-									<view class="">
-										<p>云闪付</p>
-										<text>暂未开放</text>
-									</view>
-									<image src="../../images/ysf-da.png" mode="widthFix"></image>
-								</view>
-							</view>
-						</view>
-						<view class="bom-zhifu">
-							<view class="pattern nots curr">
-								<view class="">
-									<p>可伴支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/kb-da.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>品诺支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/pn-da.png" mode="widthFix"></image>
-							</view>
-
-						</view>
-					</view>
-					</p>
-					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
-				</view> -->
 			</view>
 		</view>
 		<!-- 会员券列表 -->
@@ -331,25 +256,7 @@
 				Discount: 0,
 				allow_discount_amount: 0, //不可折扣金额 传入支付宝 0 不折扣 >0 折扣
 				Products: [], //商品信息
-				PayWayList: [{
-					"name": "金凤券",
-					"fkid": "ZF09",
-					"type": "SZQ",
-					"poly": "N",
-					"value": "COUPON"
-				}, {
-					"name": "微信支付",
-					"fkid": "ZF06",
-					"type": "WX_CLZF",
-					"poly": "N",
-					"value": "WX"
-				}, {
-					"name": "口碑次卡",
-					"fkid": "ZF10",
-					"type": "ZFB20",
-					"poly": "N",
-					"value": "ALI"
-				}], //支付方式
+				PayWayList: [], //支付方式
 				PayWay: null,
 				selectPayWayVal: null,
 				PayList: [], //支付订单信息 {fkid:"",bill:"",name:"",amount:"",no:""}
@@ -386,6 +293,7 @@
 				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
 				XS_TYPE: "",
 				handles: null,
+				ZFBZK: getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0,
 			}
 		},
 		watch: {
@@ -434,8 +342,8 @@
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
-				this.currentPayInfo = this.PayWayList.find(i => i.type === this
-					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				console.log("当前支付类型信息：",this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				if (n === "COUPON") { //如果用券，则不再允许编辑待付款金额
@@ -554,8 +462,7 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
-				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
-					.PayList; //如果是退款，那么就是退款信息，否则是支付信息
+				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this.PayList; //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
 					this.sale3_obj = {
 						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
@@ -566,7 +473,8 @@
 						NO: item.no, //付款序号
 						FKID: item.fkid, //付款类型id
 						AMT: item.amount, //付款金额
-						ID: item.user_id, //卡号或者券号
+						CUID: item.user_id, //会员号
+						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
@@ -582,7 +490,9 @@
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-
+				// console.log("SALE1-OBJ:", this.sale1_obj);
+				// console.log("SALE2-ARR:", this.sale2_arr);
+				// console.log("SALE3-ARR:", this.sale3_arr);
 				this.tx_obj = {
 					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
 					STOREID: this.KHID,
@@ -594,12 +504,9 @@
 					CONNSTR: 'CONNSTRING'
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-
-				// console.log(sql1.sqlliteArr);
-				// console.log(sql2.sqlliteArr);
-				// console.log(sql3.sqlliteArr);
-				// console.log(sql4.sqlliteArr);
-
+				console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
+				console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
+				console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
 				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
 				console.log("sqlite待执行sql:")
 				console.log(exeSql);
@@ -697,19 +604,18 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				let that = this;
-				that.SALE1Init(this.sale1_obj); //sale1 初始化
-				this.sale2_arr.forEach(s1 => { //sale2 初始化
-					that.SALE2Init(s1);
-				});
-				this.sale3_arr.forEach(s1 => { //sale3 初始化
-					that.SALE3Init(s1);
-				});
+				console.log("SALE1 初始化开始：",this.sale1_obj);
+				this.SALE1Init(this.sale1_obj); //sale1 初始化
+				console.log("SALE2 初始化开始：",this.sale2_arr);
+				this.SALE2Init(this.sale2_arr);
+				console.log("SALE3 初始化开始：",this.sale3_arr);
+				this.SALE3Init(this.sale3_arr);
 			},
 			//SALE001 初始化
 			SALE1Init: function(obj) {
 				if (this.isRefund)
 					this.sale1_obj = obj ? Object.assign({}, obj) : {};
+				console.log("SALE1 初始化完毕！",this.sale1_obj )
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function(arr) {
@@ -727,6 +633,7 @@
 							QTY: i.QTY
 						}
 					}).bind(this));
+				console.log("SALE2 初始化完毕！",this.Products)
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function(arr) {
@@ -745,28 +652,33 @@
 							msg: "" //操作提示信息（可以显示失败的或者成功的）
 						}
 					}).bind(this));
+				console.log("SALE3 初始化完毕！",this.RefundList)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
+				console.log("开始退款流程...")
+				console.log("退款单号为：",this.out_refund_no)
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
 				//遍历所有退款失败的(或者未退款的)
-				let refunds = this.RefundList;
-				if (isRetry)
-					refunds = refunds.filter(i => i.refund_num >= 1) //筛选出：退款状态为失败，且已经经历了一次退款（refund_num为退款次数）
-				refunds.filter(i => i.fail).forEach(refundInfo => {
+				console.log("退款单列表：",this.RefundList)
+				this.RefundList.filter(i => i.fail).forEach(refundInfo => {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
 					if (payWayType == "SZQ") { //如果为券，直接默认成功
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						return;
 					}
-					// let handle = that.handles[payWayName];
-					// if (handle) {
 					if (payWayType) {
 						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 						refundInfo.refunding = true; //标记为正在退款的状态
+						console.log("退款表单数据：",{
+								out_trade_no: refundInfo.bill, //单号
+								out_refund_no: refund_no, //退款单号
+								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
+								total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
+							})
 						let res = _pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
 								out_refund_no: refund_no, //退款单号
@@ -836,7 +748,6 @@
 					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
 					curPayType = CodeRule[startCode] || CodeRule["card"]; //SZQ,PAYCARD....
 				}
-				console.log("当前支付类型：", curPayType);
 				return curPayType;
 			},
 			//支付 data 对象组装
@@ -852,6 +763,7 @@
 					store_name: this.Name,
 					merchant_no: "999990053990001",
 					channel: this.channel,
+					discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 					product_info: this.Products.map(i => { //商品清单
 						return {
 							spid: i.SPID,
@@ -916,20 +828,20 @@
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (payload.money / 100).toFixed(2),
 							fail,
-						}, payload));
+						}, result));
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
 							amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
 							fail
-						}, payload));
+						}, result));
 					} else //如果券面额未小于
 					{
 						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (couponAmount / 100).toFixed(2),
 							fail
-						}, payload));
+						}, result));
 					}
 				} else //如果是聚合支付
 				{
@@ -937,7 +849,7 @@
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail
-					}, payload));
+					}, result));
 				}
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -950,9 +862,10 @@
 					amount: (payload.money / 100).toFixed(2),
 					no: this.PayList.length,
 					disc: payload.discount,
-					zklx: payload?.ZKLX ?? "",
-					id_type: payload?.IDTYPE ?? "",
-					user_id: payload.open_id,
+					zklx: payload?.disc_type ?? "",
+					id_type: payload?.voucher.type ?? "",
+					user_id: payload.open_id || payload.hyid,
+					card_no: payload.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
 					pay_num: 0, //退款（尝试）次数
@@ -1041,8 +954,9 @@
 				this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
 				this.out_trade_no = this.out_trade_no_old; //子单号
 				this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
-				this.sale3_arr = prev_page_param.sale3_arr;
-				console.log("PayWays:", this.PayWayList)
+				this.sale1_obj = prev_page_param?.sale1_obj;//sale1数据
+				this.sale2_arr = prev_page_param?.sale2_arr;//sale2数据
+				this.sale3_arr = prev_page_param?.sale3_arr;//sale3数据
 				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
 			},
