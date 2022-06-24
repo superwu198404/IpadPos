@@ -340,7 +340,8 @@
 						if (this.hyinfo.hyid) {
 							this.scoreConsume();
 						}
-
+						//调用页面BPage的方法
+						this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 					});
 				}
 			},
@@ -703,9 +704,6 @@
 								refundInfo.refund_num += 1; //发起请求默认加1
 								refundInfo.refunding = false; //标记为已经结束退款操作
 								this.RefundList = Object.assign([], this.RefundList) //刷新视图
-
-								//调用页面BPage的方法
-								//this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 							}).bind(that),
 							(function(ress) { //执行完毕（results），根据结果判断
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
