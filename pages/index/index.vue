@@ -124,7 +124,7 @@
 			GetPayWay: function(e) {
 				let that = this;
 				common.GetPayWay(e, function(res) {
-					console.log("本地获取支付方式结果：", res);
+					//console.log("本地获取支付方式结果：", res);
 					if (res.code) {
 						that.PayWayList = [];
 						for (var i = 0; i < res.msg.length; i++) {
