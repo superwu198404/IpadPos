@@ -43,11 +43,11 @@
 		//变量初始化
 		data() {
 			return {
-				input:{
-					name:"",
-					amount:"",
-					trade_no:"",
-					data:{
+				input: {
+					name: "",
+					amount: "",
+					trade_no: "",
+					data: {
 						PLID: Number(new Date()),
 						SPID: Number(new Date()) / 2,
 						UNIT: "个",
@@ -96,7 +96,7 @@
 						NAME: "毛毛虫",
 						PRICE: 0.5,
 						OPRICE: 0.5,
-						AMOUNT: 1,
+						AMOUNT: 0,
 						QTY: 2
 					},
 					{
@@ -107,7 +107,7 @@
 						NAME: "虎皮蛋糕",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 1,
+						AMOUNT: 0,
 						QTY: 1
 					}
 				], //商品信息
@@ -197,10 +197,10 @@
 						}
 						//添加电子卡支付
 						that.PayWayList.push({
-							name:"电子卡支付",
-							fkid:"ZF04",
-							type:"PAYCARD",
-							value:"DZK"
+							name: "电子卡支付",
+							fkid: "ZF04",
+							type: "PAYCARD",
+							value: "DZK"
 						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
@@ -210,29 +210,29 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
-					console.log("待退款单号：",this.refund_no)
+					console.log("待退款单号：", this.refund_no)
 					if (this.XS_TYPE == '2') {
 						let data = await common.QueryRefund(this.refund_no);
 						this.sale1_obj = data.sale1;
 						this.sale2_arr = data.sale2;
 						this.sale3_arr = data.sale3;
-						this.refund_no = "";//清空单号
-						console.log("SALE1、2、3：",[this.sale1_obj,this.sale2_arr,this.sale3_arr]);
-						if(!this.sale1_obj || Object.keys(this.sale1_obj).length!=0 || this.sale2_arr.length == 0 || this.sale3_arr.length == 0){
+						this.refund_no = ""; //清空单号
+						console.log("SALE1、2、3：", [this.sale1_obj, this.sale2_arr, this.sale3_arr]);
+						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length == 0 ||
+							this.sale3_arr.length == 0) {
 							uni.showToast({
-								title:"订单不存在！",
-								icon:"error"
+								title: "订单不存在！",
+								icon: "error"
 							})
 							return;
-							}
-					}
-					else{
+						}
+					} else {
 						this.sale1_obj = {};
 						this.sale2_arr = [];
 						this.sale3_arr = [];
 					}
-					
-					this.DataAssembleSaveForGlobal(); 
+
+					this.DataAssembleSaveForGlobal();
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
 					})
@@ -268,13 +268,16 @@
 				});
 			},
 			Test: function(e) {
+				// let arr = [
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF31', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+				// ]
 				let arr = [
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF31', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF10', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);"
 				]
 				let sql = "";
 				for (var i = 0; i < arr.length; i++) {
@@ -318,11 +321,15 @@
 					}
 				});
 			},
-			refund:function(){
-				_pay.Refund("ZFB20",{ out_trade_no:this.input.trade_no,out_refund_no:this.input.trade_no,refund_money:100 },(res) => { 
-					console.log("成功：",res)
-				},(err)=> {
-					console.log("错误：",err)
+			refund: function() {
+				_pay.Refund("ZFB20", {
+					out_trade_no: this.input.trade_no,
+					out_refund_no: this.input.trade_no,
+					refund_money: 100
+				}, (res) => {
+					console.log("成功：", res)
+				}, (err) => {
+					console.log("错误：", err)
 				});
 			}
 		},
@@ -348,6 +355,7 @@
 			// 	this.CreateDBData()
 			// }
 			this.refund_no = this.$store.state.trade;
+			// this.refund_no = "K0101QT2122624174159578";
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
