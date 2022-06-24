@@ -32,6 +32,7 @@
 	var encode = require("../../utils/xprinter/encoding.js");
 	var util = require("../../utils/xprinter/util.js");
 	var qrCode = require("../../utils/xprinter/weapp-qrcode.js");
+
     import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	export default {
@@ -208,43 +209,76 @@
 					}
 				});
 			},
-			receiptPrinter: function(data) { //打印小票
+			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) { //打印小票
+				console.log("打印接收数据 sale1_obj",sale1_obj);
+				console.log("打印接收数据 sale2_arr",sale2_arr);
+				console.log("打印接收数据 sale3_arr",sale3_arr);	
 				//票据测试
 				var that = this;
 				
 				var xsType = "XS";
-				var xsBill = "2214055034000983";
+				var xsBill = sale1_obj.BILL;
 				var xsDate = util.getTime();
-				var khName = "武汉万科汉阳国际店门厅";
-				var khAddress = "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园";
-				var posId = "8";
-				var posUser = "003";
-				var lineNum = "1";
-				var qty = "1";
-				var payableAmount = "1.00";
-				var discountedAmount = "0.00";
-				var originalAmount = "1.00";
-				var cash = "1.00";
-				var payTotal = "1.00";
-				var change = "0.00";
+				var khName = getApp().globalData.NAME;
+				var khAddress = getApp().globalData.KHAddress;
+				var posId = sale1_obj.POSID;
+				var posUser = sale1_obj.RYID;
+				var lineNum = sale1_obj.TLINE;
+				var payableAmount = sale1_obj.totalAmount;
+				var discountedAmount = sale1_obj.BILLDISC;
+				var originalAmount = sale1_obj.allAmount;
 				
-				var goodsList= [{
-					spid: "10101021",
-					spname: "你好吐司",
-					qty: "1",
-					price: "1.00",
-					amount: "1.00",
-					discount: "0.00"
-				}, 
-				{
-					spid: "10101023",
-					spname: "德式黑杂粮切片方包",
-					qty: "1",
-					price: "1.00",
-					amount: "1.00",
-					discount: "0.00"
-				}]
+
 				
+				var goods_obj = {};
+				var goodsList = [];
+				for (var i = 0; i < sale2_arr.length; i++){
+					this.sale2_obj = {
+						bill: sale2_arr[i].BILL, //主单号
+						saleDate: sale2_arr[i].SALEDATE,
+						saleTime: sale2_arr[i].SALETIME,
+						khid: sale2_arr[i].KHID,
+						posId: sale2_arr[i].POSID,
+					    no: i,
+						plid: sale2_arr[i].PLID,
+						barCode: sale2_arr[i].BARCODE,
+						unit: sale2_arr[i].UNIT, //单位
+						
+						spid: sale2_arr[i].SPID, //商品编码
+						spname: "你好吐司", //商品名称
+						qty: sale2_arr[i].QTY, //数量
+						price: sale2_arr[i].PRICE, //单价
+						amount: sale2_arr[i].NET, //金额
+						discount: sale2_arr[i].DISCRATE, //总折扣额
+					};
+					goodsList = goodsList.concat(sale2_obj);
+				}
+				
+				var payTotal = 0.00;
+				var change = 0.00;
+				
+				var sale3_obj = {};
+				var sale3List = [];
+				for (var i = 0; i < sale3_arr.length; i++){
+					this.sale3_obj = {
+					   bill: sale3_arr[i].BILL,
+					   saleDate: sale3_arr[i].SALEDATE,
+					   saleTime: sale3_arr[i].SALETIME,
+					   khid: sale3_arr[i].KHID,
+					   posId: sale3_arr[i].POSID,
+					   no: sale3_arr[i].NO, //付款序号
+					   fkid: sale3_arr[i].FKID, //付款类型id
+					   amt: sale3_arr[i].AMT, //付款金额
+					   id: sale3_arr[i].ID,  //卡号或者券号
+					   ryid: sale3_arr[i].RYID, //人员
+					   disc: sale3_arr[i].DISC, //折扣金额
+					   zklx: sale3_arr[i].ZKLX, //折扣类型
+					   idType: sale3_arr[i].IDTYPE, //卡类型
+					};
+					sale3List = sale3List.concat(sale3_obj);
+					payTotal += sale3_obj.amt;
+				}
+
 				var printerInfo = {
 					xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 					xsBill, //单号
@@ -257,11 +291,12 @@
 					goodsList,//商品集合
 				
 					lineNum, //条目
-					qty, //数量
 					payableAmount, //应付金额
 					discountedAmount, //已优惠金额
 					originalAmount, //原金额
-					cash, //现金
+					
+					sale3List, //付款方式
+					
 					payTotal, //支付
 					change, //找零
 				}
@@ -275,33 +310,33 @@
 				command.setSelectJustification(1); //居中
 				command.setCharacterSize(17); //设置倍高倍宽
 				command.setText("KenGee 仟吉" + "\n");
-				command.setPrint(); //打印并换行
+				//command.setPrint(); //打印并换行
 									
 				command.formString(printerInfo);
 
 				command.setCharacterSize(0); //设置正常大小
 				command.setSelectJustification(0); //设置居左
 				command.setText("--------------------总计-----------------------");
-				command.setPrint(); //打印并换行
+				//command.setPrint(); //打印并换行
 
 				command.formStringTotal(printerInfo);
 
 				command.setCharacterSize(0); //设置正常大小
 				command.setSelectJustification(0); //设置居左
 				command.setText("--------------------付款方式-------------------");
-				command.setPrint(); //打印并换行
+				//command.setPrint(); //打印并换行
 
 				command.formStringPaymentMethod(printerInfo);
 
 				command.setCharacterSize(0); //设置正常大小
 				command.setSelectJustification(0); //设置居左
 				command.setText("-----------------------------------------------");
-				command.setPrint(); //打印并换行
+				//command.setPrint(); //打印并换行
 
 				command.setCharacterSize(0); //设置正常大小
 				command.setSelectJustification(0); //设置居左
 				command.setText("轻轻地走了，正如我轻轻的来");
-				command.setPrint(); //打印并换行
+				//command.setPrint(); //打印并换行
 
 				command.setCharacterSize(0); //设置正常大小
 				command.setSelectJustification(0); //设置居左
@@ -339,19 +374,23 @@
 				// 	}
 				// });
 				
-				//console.log("打印格式记录", command.getData());
+				console.log("打印格式记录", command.getData());
 				that.addData(xsBill,xsDate,command.getData());
 				that.prepareSend(command.getData()); //准备发送数据
 			},
 			againPrinter:function(xsBill){ //重新打印
+				console.log("进入到打印了",xsBill)
+				var that = this;
 				xsBill = "2214055034000983";
-				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"'";
+				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"' order by XSDATE desc";
 				db.get().executeQry(sql, "数据查询中", function(res) {
-					var billStr = res.msg[0].BILLSTR;
+					let billStr = res.msg[0].BILLSTR;
 					console.log("重打数据:",res.msg[0].BILLSTR);
 					//初始化打印机
 					var command = esc.jpPrinter.createNew();
-					this.prepareSend(billStr); //准备发送数据
+					command.addCotent(billStr);
+					console.log("打印格式记录", command.getData());
+					that.prepareSend(command.getData()); //准备发送数据
 				}, function(err) {
 					console.log("获取打印数据出错:", err);
 					uni.showToast({
@@ -464,11 +503,11 @@
 			},
 			prepareSend: function(buff) {
 				//准备发送，根据每次发送字节数来处理分包数量
-				//console.log(buff)
+				console.log("prepareSend 开始")
 				var that = this;
 				var time = that.oneTimeData;
 				var looptime = parseInt(buff.length / time);
-				var lastData = parseInt(buff.length % time); //console.log(looptime + "---" + lastData)
+				var lastData = parseInt(buff.length % time); 
 
 				that.setData({
 					looptime: looptime + 1,
@@ -479,7 +518,7 @@
 			},
 			// 添加数据
 			addData(xsBill,xsDate,billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '","' +billStr+'")';
+				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '",' + billStr + ')';
 				db.get().executeDml(addSql, "执行中", (res) => {
 					console.log("sql 执行结果：", res);
 				});	
@@ -603,7 +642,8 @@
 					for (var i = 0; i < lastData; ++i) {
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
-				} //console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
+				}
+				 console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,

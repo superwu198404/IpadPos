@@ -302,6 +302,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			console.log("http请求" + JSON.stringify(res));
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
+			console.log("http请求结果：" + JSON.stringify(res));
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
@@ -330,15 +331,16 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
  * @param {*} resultsFunc 获取所有请求返回值的函数（返回包括首次、所有回调，依次按顺序连接，类似 Promise.all 的返回操作）
  */
 var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfun, resultsFunc) {
-	var callbacklist = [],results = [];
+	var callbacklist = [],
+		results = [];
 	callbacklist = callbackfunArr;
 	let res = pm_data;
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			showloding(res.http.load, res.http.title);
-			res = await httpFunc(res);//发起请求
-			results.push(res);//存入执行结果
-			if (res && !res.code) {//如果请求失败，则调用配置的catch函数
+			res = await httpFunc(res); //发起请求
+			results.push(res); //存入执行结果
+			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
 				def(catchfun, res);
 			}
 		}
@@ -358,8 +360,8 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			showloding(res.http.load, res.http.title);
-			res = await httpFunc(res);//发起请求
-			if (res && !res.code) {//如果请求失败，则调用配置的catch函数
+			res = await httpFunc(res); //发起请求
+			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
 				def(catchfun, res);
 				break;
 			}

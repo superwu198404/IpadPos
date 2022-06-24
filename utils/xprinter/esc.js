@@ -18,6 +18,10 @@ var jpPrinter = {
       data.push(64);
     };
 	
+	jpPrinter.addCotent = function(content){
+	   data.push(content);
+	}
+	
 	jpPrinter.byteToString = function(arr) {
 		if (typeof arr === 'string') {
 			return arr;
@@ -1138,7 +1142,7 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(1); //设置居左	
 		jpPrinter.setText("欢迎光临");
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		switch (type) {
 		  case printerType[0]:
@@ -1181,32 +1185,32 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(xpType + "小票: " + data.khName);
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(xpType + "时间: " + data.xsDate);
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser);
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("单号: "+data.xsBill + "\n");
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("商品名称       数量  单价  金额  折扣  ");
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		//商品信息
 		data.goodsList.forEach((item, i) => {
@@ -1214,15 +1218,15 @@ var jpPrinter = {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen(item.spname, 15));
-			jpPrinter.setPrint(); //打印并换行
+			//jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty, 6) + util
 				.getComputedByteLen(item.price, 6) + util.getComputedByteLen(item.amount, 6) + util.getComputedByteLen(
 					item.discount, 6));
-			jpPrinter.setPrint(); //打印并换行
-		})
+			//jpPrinter.setPrint(); //打印并换行
+		});
 	}
 	
 	//总计
@@ -1269,12 +1273,12 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("条目:" + data.lineNum + " 数量:" + data.qty + " 应付金额:" + data.payableAmount);
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount + " 原金额:" + data.originalAmount);
-		jpPrinter.setPrint(); //打印并换行
+		//jpPrinter.setPrint(); //打印并换行
 	}
 	
 	//付款方式
@@ -1318,11 +1322,15 @@ var jpPrinter = {
 			xpType ="外卖";
 		    break;
 		}
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("现金:" + data.cash);
-		jpPrinter.setPrint(); //打印并换行
 		
+		//付款方式
+		data.sale3List.forEach((item, i) => {		
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item.fkid + ":" + item.amt);
+			//jpPrinter.setPrint(); //打印并换行
+		});
+				
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("支付:" + data.payTotal);
