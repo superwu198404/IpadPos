@@ -3,6 +3,7 @@
 </style>
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;"/>
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -215,6 +216,7 @@
 </template>
 
 <script>
+	import PrinterPage  from '../xprinter/receipt';
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
@@ -230,7 +232,8 @@
 	var that;
 	export default {
 		components: {
-			uniPopup
+			uniPopup,
+			PrinterPage
 		},
 		data() {
 			return {
@@ -691,6 +694,9 @@
 								refundInfo.refund_num += 1; //发起请求默认加1
 								refundInfo.refunding = false; //标记为已经结束退款操作
 								this.RefundList = Object.assign([], this.RefundList) //刷新视图
+								
+								//调用页面BPage的方法
+								this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 							}).bind(that),
 							(function(ress) { //执行完毕（results），根据结果判断
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
@@ -810,6 +816,8 @@
 					}); //把支付信息贴出来
 					this.authCode = ""; //避免同一个付款码多次使用
 					this.orderGenarator(payAfter, result, false); //支付记录处理(成功)
+					//调用页面BPage的方法
+					this.$refs.printerPage.receiptPrinter(this.sale1_obj,this.sale2_arr,this.sale3_arr);
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, result, true); //支付记录处理(失败)
 					console.log("支付失败！")
