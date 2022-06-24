@@ -152,50 +152,25 @@
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
-									<view v-for="(item,index) in PayWayList">
-										<image :src=require("../../images/"+item.type+".png") mode="widthFix"></image>
+									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
+										<!-- <text>{{item.type}}</text> -->
+										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
+										</image>
 									</view>
-									<!-- <image src="../../images/ZFB20.png" mode="widthFix"></image>
-									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
-									<image src="../../images/PAYCARD.png" mode="widthFix"></image> -->
 								</label>
-								<text>支持支付宝、微信及会员卡支付</text>
-								<!-- </view>
-				              <view class="r-zhifu"> -->
+								<label>
+									<text>支持</text>
+									<text v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
+										,{{item.name}}</text>
+								</label>
 							</view>
-
-							<!-- </view>
-				            
-				            <view class="bom-zhifu"> -->
-							<view class="pattern nots curr" :class="currentPayType === 'COUPON'? 'selected':' '"
-								id="COUPON" @click="clickPayType($event)">
+							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
+								:class="currentPayType === 'COUPON'&&item.type==='SZQ'? 'selected':' '" id="COUPON"
+								@click="clickPayType($event)">
 								<view class="">
-									<p>电子券</p>
-									<text>coupons</text>
+									<p>{{item.name}}</p>
 								</view>
-								<image src="../../images/SZQ.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>云闪付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/ysf-da.png" mode="widthFix"></image>
-							</view>
-
-							<view class="pattern nots curr">
-								<view class="">
-									<p>可伴支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/kb-da.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>品诺支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/pn-da.png" mode="widthFix"></image>
+								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 							</view>
 						</view>
 
@@ -203,59 +178,6 @@
 					</p>
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
 				</view>
-				<!-- <view class="choosepays">
-					<view class="pays-bj">
-						<view class="top-zhifu">
-							<view :class="currentPayType === 'POLY'? 'polys curr selected':'polys curr'" id='POLY'
-								@click="clickPayType($event)">
-								<image class="p-bg" src="../../images/xzbj-da.png"></image>
-								<p>聚合支付</p>
-								<label>
-									<image src="../../images/ZFB20.png" mode="widthFix"></image>
-									<image src="../../images/WX_CLZF.png" mode="widthFix"></image>
-									<image src="../../images/PAYCARD.png" mode="widthFix"></image>
-								</label>
-								<text>支持支付宝、微信及会员卡支付</text>
-							</view>
-							<view class="r-zhifu">
-								<view :class="currentPayType === 'COUPON'? 'pattern curr selected':'pattern curr'"
-									id="COUPON" @click="clickPayType($event)">
-									<view class="">
-										<p>电子券</p>
-										<text>coupons</text>
-									</view>
-									<image src="../../images/SZQ.png" mode="widthFix"></image>
-								</view>
-								<view class="pattern nots curr">
-									<view class="">
-										<p>云闪付</p>
-										<text>暂未开放</text>
-									</view>
-									<image src="../../images/ysf-da.png" mode="widthFix"></image>
-								</view>
-							</view>
-						</view>
-						<view class="bom-zhifu">
-							<view class="pattern nots curr">
-								<view class="">
-									<p>可伴支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/kb-da.png" mode="widthFix"></image>
-							</view>
-							<view class="pattern nots curr">
-								<view class="">
-									<p>品诺支付</p>
-									<text>暂未开放</text>
-								</view>
-								<image src="../../images/pn-da.png" mode="widthFix"></image>
-							</view>
-
-						</view>
-					</view>
-					</p>
-					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
-				</view> -->
 			</view>
 		</view>
 		<!-- 会员券列表 -->
@@ -371,6 +293,7 @@
 				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
 				XS_TYPE: "",
 				handles: null,
+				ZFBZK: getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0,
 			}
 		},
 		watch: {
@@ -551,7 +474,8 @@
 						NO: item.no, //付款序号
 						FKID: item.fkid, //付款类型id
 						AMT: item.amount, //付款金额
-						ID: item.user_id, //卡号或者券号
+						CUID: item.user_id, //会员号
+						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
@@ -837,6 +761,7 @@
 					store_name: this.Name,
 					merchant_no: "999990053990001",
 					channel: this.channel,
+					discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 					product_info: this.Products.map(i => { //商品清单
 						return {
 							spid: i.SPID,
@@ -900,20 +825,20 @@
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (payload.money / 100).toFixed(2),
 							fail,
-						}, payload));
+						}, result));
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
 							amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
 							fail
-						}, payload));
+						}, result));
 					} else //如果券面额未小于
 					{
 						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (couponAmount / 100).toFixed(2),
 							fail
-						}, payload));
+						}, result));
 					}
 				} else //如果是聚合支付
 				{
@@ -921,7 +846,7 @@
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail
-					}, payload));
+					}, result));
 				}
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -934,9 +859,10 @@
 					amount: (payload.money / 100).toFixed(2),
 					no: this.PayList.length,
 					disc: payload.discount,
-					zklx: payload?.ZKLX ?? "",
-					id_type: payload?.IDTYPE ?? "",
-					user_id: payload.open_id,
+					zklx: payload?.disc_type ?? "",
+					id_type: payload?.voucher.type ?? "",
+					user_id: payload.open_id || payload.hyid,
+					card_no: payload.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
 					pay_num: 0, //退款（尝试）次数
@@ -1026,7 +952,7 @@
 				this.out_trade_no = this.out_trade_no_old; //子单号
 				this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
 				this.sale3_arr = prev_page_param.sale3_arr;
-				console.log("PayWays:", this.PayWayList)
+				console.log("PayWays:", JSON.stringify(this.PayWayList));
 				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
 			},

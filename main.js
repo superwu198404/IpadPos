@@ -4,8 +4,8 @@ import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
 import store from '@/utils/store.js';
 // #ifdef VUE2
-import Vue from 'vue' 
- 
+import Vue from 'vue'
+
 import G_show_modal from './static/js/ShowModal/Gshow_modal.js'
 Vue.use(G_show_modal);
 
@@ -19,12 +19,13 @@ Vue.mixin(Mixin);
 
 //把vuex定义成全局组件
 Vue.config.productionTip = false
-Vue.config.$=$
- Vue.prototype.tui = tui
-App.mpType = 'app' 
+Vue.config.$ = $
+Vue.prototype.tui = tui
+App.mpType = 'app'
 
-const app = new Vue({ 
-    ...App,store
+const app = new Vue({
+	...App,
+	store
 })
 app.$mount()
 // #endif

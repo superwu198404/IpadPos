@@ -224,6 +224,7 @@ var GetPayWay = function(e, func) {
 					res.msg[i].POLY = 'N';
 				}
 			}
+			console.log("序列化支付：", res);
 			if (func) func(res);
 			return;
 		})
@@ -264,6 +265,27 @@ var Excute = async function(sql, func) {
 	return datas;
 }
 
+//获取档案参数
+var GetPZCS = async function(e, func) {
+	let sql = "select * from dapzcs_nr where id_nr in('YN_ZFBKBQ')";
+	if (e && e.length > 0) {
+		let str = "";
+		for (var i = 0; i < e.length; i++) {
+			str += "'" + e[i] + "',";
+		}
+		sql = "select * from dapzcs_nr where id_nr in(" + str.substr(0, str.length - 1) + ")";
+	}
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		if(func) func(res);
+	}, function(err) {
+		console.log("获取档案参数出错:", err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取档案参数出错"
+		})
+	});
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -272,5 +294,5 @@ export default {
 	TransLiteData,
 	GetPayWay,
 	Excute,
-	GetPolyPayWay
+	GetPZCS
 }

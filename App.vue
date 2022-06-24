@@ -63,35 +63,38 @@
 				card: "PAYCARD",
 				coupon: "SZQ"
 			},
-			getModel: function () {
-			  //获取手机型号
-			  return wx.getSystemInfoSync()["model"];
+			PZCS: { //档案配置参数
+				YN_ZFBKBQ: "N"
 			},
-			getSystem: function () {
-			  //获取操作系统版本
-			  return wx.getSystemInfoSync()["system"];
+			getModel: function() {
+				//获取手机型号
+				return wx.getSystemInfoSync()["model"];
 			},
-			getPlatform: function () {
-			  //获取客户端平台
-			  return wx.getSystemInfoSync()["platform"];
+			getSystem: function() {
+				//获取操作系统版本
+				return wx.getSystemInfoSync()["system"];
 			},
-			getSDKVersion: function () {
-			  //获取客户端基础库版本
-			  return wx.getSystemInfoSync()["SDKVersion"];
+			getPlatform: function() {
+				//获取客户端平台
+				return wx.getSystemInfoSync()["platform"];
+			},
+			getSDKVersion: function() {
+				//获取客户端基础库版本
+				return wx.getSystemInfoSync()["SDKVersion"];
 			},
 			userInfo: null,
 			platform: "",
 			screenWidth: uni.getSystemInfoSync().screenWidth,
 			screenHeight: uni.getSystemInfoSync().screenHeight,
 			BLEInformation: {
-			  platform: "",
-			  deviceId: "",
-			  writeCharaterId: "",
-			  writeServiceId: "",
-			  notifyCharaterId: "",
-			  notifyServiceId: "",
-			  readCharaterId: "",
-			  readServiceId: ""
+				platform: "",
+				deviceId: "",
+				writeCharaterId: "",
+				writeServiceId: "",
+				notifyCharaterId: "",
+				notifyServiceId: "",
+				readCharaterId: "",
+				readServiceId: ""
 			}
 		},
 		onLaunch: function() {
