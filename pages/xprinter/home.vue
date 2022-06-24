@@ -2,11 +2,13 @@
 <view>
 <button class="button" hover-class="hover" @tap="blueTooth"> 蓝牙设备 </button>
 <button class="button" hover-class="hover" @tap="recipt"> 小票打印 </button>
+<PrinterPage ref="bPage" style="display: none;"/>
 </view>
 </template>
 
 <script>
 var app = getApp();
+import PrinterPage  from '../xprinter/receipt';
 
 export default {
   data() {
@@ -15,7 +17,7 @@ export default {
     };
   },
 
-  components: {},
+  components: {PrinterPage},
   props: {},
 
   /**
@@ -61,6 +63,10 @@ export default {
    */
   onShareAppMessage: function () {},
   methods: {
+	methodA() { //调用其他页面打印
+	    //调用页面BPage的方法
+	    this.$refs.bPage.receiptPrinter();
+	},
     blueTooth: function () {
       uni.navigateTo({
         url: '../xprinter/bleConnect'
