@@ -184,7 +184,7 @@ export default {
 								var num = 0;
 
 								for (var i = 0; i < res.devices.length; ++i) {
-									if (res.devices[i].name != "未知设备"&&res.devices[i].name != "") {
+									if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
 										devices[num] = res.devices[i];
 										num++;
 									}

@@ -22,6 +22,7 @@
 			@change="printNumBindChange">
 			当前打印份数(点击可更换)：{{ printNum[printNumIndex] }}
 		</picker>
+		<button class="button" hover-class="hover" @tap="againPrinter">重打</button>
 	</view>
 </template>
 
@@ -31,6 +32,7 @@
 	var encode = require("../../utils/xprinter/encoding.js");
 	var util = require("../../utils/xprinter/util.js");
 	var qrCode = require("../../utils/xprinter/weapp-qrcode.js");
+    import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	export default {
 		data() {
@@ -54,9 +56,9 @@
 				canvasHeight: 200,
 				jpgWidth: 340,
 				jpgHeight: 113,
-				qrCodeWidth: 200,
-				qrCodeHeight: 200,
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/"
+				qrCodeWidth: 200,//二维码宽
+				qrCodeHeight: 200,// 二维码高
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 			};
 		},
 
@@ -209,9 +211,7 @@
 			receiptPrinter: function(data) { //打印小票
 				//票据测试
 				var that = this;
-				var canvasWidth = that.canvasWidth;
-				var canvasHeight = that.canvasHeight;
-
+				
 				var xsType = "XS";
 				var xsBill = "2214055034000983";
 				var xsDate = util.getTime();
@@ -246,7 +246,7 @@
 				}]
 				
 				var printerInfo = {
-					xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单接单、外卖单接单；
+					xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 					xsBill, //单号
 					xsDate, //打印时间
 					khName, //门店名称
@@ -342,6 +342,23 @@
 				//console.log("打印格式记录", command.getData());
 				that.addData(xsBill,xsDate,command.getData());
 				that.prepareSend(command.getData()); //准备发送数据
+			},
+			againPrinter:function(xsBill){ //重新打印
+				xsBill = "2214055034000983";
+				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"'";
+				db.get().executeQry(sql, "数据查询中", function(res) {
+					var billStr = res.msg[0].BILLSTR;
+					console.log("重打数据:",res.msg[0].BILLSTR);
+					//初始化打印机
+					var command = esc.jpPrinter.createNew();
+					this.prepareSend(billStr); //准备发送数据
+				}, function(err) {
+					console.log("获取打印数据出错:", err);
+					uni.showToast({
+						icon: 'error',
+						title: "获取打印数据出错"
+					})
+				});
 			},
 			printPhoto: function() { //打印二维码事件
 				//打印bitmap，图片内容不建议太大，小程序限制传输的字节数为20byte
