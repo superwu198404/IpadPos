@@ -1170,11 +1170,11 @@ var jpPrinter = {
 		    break;
 		
 		  case printerType[7]:
-			xpType ="线上订单接单";
+			xpType ="线上订单";
 		    break;
 		
 		  case printerType[8]:
-			xpType ="外卖单接单";
+			xpType ="外卖单";
 		    break;
 		}
 		
@@ -1243,11 +1243,11 @@ var jpPrinter = {
 		    break;
 		
 		  case printerType[3]:
-			xpType ="预订提取";
+			xpType ="提取";
 		    break;
 		
 		  case printerType[4]:
-			xpType ="预订取消";
+			xpType ="预订";
 		    break;
 		
 		  case printerType[5]:
@@ -1255,15 +1255,15 @@ var jpPrinter = {
 		    break;
 		
 		  case printerType[6]:
-			xpType ="赊销退单";
+			xpType ="退单";
 		    break;
 		
 		  case printerType[7]:
-			xpType ="线上订单接单";
+			xpType ="线上";
 		    break;
 		
 		  case printerType[8]:
-			xpType ="外卖单接单";
+			xpType ="外卖";
 		    break;
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1295,11 +1295,11 @@ var jpPrinter = {
 		    break;
 		
 		  case printerType[3]:
-			xpType ="预订提取";
+			xpType ="提取";
 		    break;
 		
 		  case printerType[4]:
-			xpType ="预订取消";
+			xpType ="预订";
 		    break;
 		
 		  case printerType[5]:
@@ -1307,15 +1307,15 @@ var jpPrinter = {
 		    break;
 		
 		  case printerType[6]:
-			xpType ="赊销退单";
+			xpType ="退单";
 		    break;
 		
 		  case printerType[7]:
-			xpType ="线上订单接单";
+			xpType ="线上";
 		    break;
 		
 		  case printerType[8]:
-			xpType ="外卖单接单";
+			xpType ="外卖";
 		    break;
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
