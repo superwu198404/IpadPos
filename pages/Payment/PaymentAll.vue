@@ -436,8 +436,8 @@
 					TLINE: this.sale2_obj.length,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
-					ZNET: (this.isRefund ? -1 : 1) * this.allAmount,
-					BILLDISC: this.Discount, //整单折扣,
+					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
+					BILLDISC: this.Discount + this.SKY_DISCOUNT, //整单折扣需要加上手工折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
@@ -471,12 +471,12 @@
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
 						QTY: (this.isRefund ? -1 : 1) * this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE,
+						PRICE: this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
 						OPRICE: this.Products[i].OPRICE,
-						NET: (this.isRefund ? -1 : 1) * this.Products[i].PRICE,
-						DISCRATE: this.SKY_DISCOUNT, //总折扣额
-						YN_SKYDISC: this.Products[i].ADISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.Products[i].ADISCOUNT, //手工折扣额
+						NET: (this.isRefund ? -1 : 1) * this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						DISCRATE: this.Products[i].SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						YN_SKYDISC: this.Products[i].SKYDISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
+						DISC: this.Products[i].SKYDISCOUNT, //手工折扣额
 						YN_CXDISC: 'N',
 						CXDISC: 0,
 						// YAER: new Date().getFullYear(),
@@ -797,9 +797,11 @@
 			},
 			//支付处理入口
 			PayHandle: function() {
-				let payAfter = this.PayDataAssemble(),type = this.PayTypeJudgment(),info = this.PayWayList.find(i => i.type === type);
+				let payAfter = this.PayDataAssemble(),
+					type = this.PayTypeJudgment(),
+					info = this.PayWayList.find(i => i.type === type);
 				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
-				if(this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
+				if (this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
 					uni.showToast({
 						title: "已存在同类型的支付方式!"
 					});
@@ -990,7 +992,7 @@
 				this.SKY_DISCOUNT = util.myFixed(total, 2) % 1;
 				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
 				this.Products.forEach(function(item, index) {
-					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2);
+					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2); //分摊的手工折扣额
 				});
 			},
 			//欠款界面绑定数据更新

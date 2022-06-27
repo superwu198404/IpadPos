@@ -34,7 +34,7 @@
 				SOURCE: "Mobile_Pos",
 				BRAND: "KG"
 			}, {
-				TYPE: "ZFB20",
+				TYPE: "ZFB_CLZF",
 				APPID: "keengee",
 				GSID: "027001",
 				URL: "/PaymentAll/Handle",
@@ -42,7 +42,7 @@
 				SOURCE: "Mobile_Pos",
 				BRAND: "KG"
 			}, {
-				TYPE: "PAYCARD",
+				TYPE: "HYK",
 				APPID: "keengee",
 				GSID: "027001",
 				URL: "/PaymentAll/Handle",
@@ -60,8 +60,8 @@
 			}],
 			CodeRule: { //支付码规则
 				13: "WX_CLZF",
-				28: "ZFB20",
-				card: "PAYCARD",
+				28: "ZFB_CLZF",
+				card: "HYK",
 				coupon: "SZQ"
 			},
 			PZCS: { //档案配置参数
