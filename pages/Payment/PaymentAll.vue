@@ -504,7 +504,7 @@
 						POSID: this.POSID,
 						NO: item.no, //付款序号
 						FKID: (function() {
-							switch (is_free) {
+							switch (item.is_free) {
 								case 'Y':
 									return 'ZZ01';
 								case 'N':
@@ -522,7 +522,7 @@
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
 						ZKLX:(function() {
-							switch (is_free) {
+							switch (item.is_free) {
 								case 'Y':
 									return 'ZV01';
 								case 'N':
@@ -901,7 +901,7 @@
 					zklx: payload?.disc_type ?? "",
 					id_type: payload?.voucher.type ?? "",
 					user_id: payload.open_id || payload.hyid,
-					is_free: payload?.yn_zq || "",
+					is_free: payload?.voucher?.yn_zq || "",
 					card_no: payload.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
@@ -989,6 +989,7 @@
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
 				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				console.log("PayWayList:",this.PayWayList)
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
