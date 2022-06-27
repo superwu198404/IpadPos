@@ -122,10 +122,10 @@
 		//方法初始化
 		methods: {
 			//获取支付方式
-			GetPayWay: function(e) {
+			GetPayWay: async function(e) {
 				let that = this;
-				common.GetPayWay(e, function(res) {
-					//console.log("本地获取支付方式结果：", res);
+				await common.GetPayWay(e, function(res) {
+					console.log("本地获取支付方式结果：", res);
 					if (res.code) {
 						that.PayWayList = [];
 						for (var i = 0; i < res.msg.length; i++) {
@@ -134,34 +134,34 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							if (res.msg[i].JKSNAME == 'SZQ') {
-								obj.value = "COUPON";
-								//obj.type = "qzf";
-							}
-							if (res.msg[i].JKSNAME == 'ZFB_CLZF') {
-								obj.value = "ALI";
-								//obj.type = "AliPayService";
-							}
-							if (res.msg[i].JKSNAME == 'HYK') {
-								obj.value = "CARD";
-								//obj.type = "dzk";
-							}
-							if (res.msg[i].JKSNAME == 'WX_CLZF') {
-								obj.value = "WX";
-								//obj.type = "WxPayService";
-							}
+							// if (res.msg[i].JKSNAME == 'SZQ') {
+							// 	obj.value = "COUPON";
+							// 	//obj.type = "qzf";
+							// }
+							// if (res.msg[i].JKSNAME == 'ZFB_CLZF') {
+							// 	obj.value = "ALI";
+							// 	//obj.type = "AliPayService";
+							// }
+							// if (res.msg[i].JKSNAME == 'HYK') {
+							// 	obj.value = "CARD";
+							// 	//obj.type = "dzk";
+							// }
+							// if (res.msg[i].JKSNAME == 'WX_CLZF') {
+							// 	obj.value = "WX";
+							// 	//obj.type = "WxPayService";
+							// }
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
-								obj.value = "EXCESS";
-								//obj.type = "ce";
+								obj.type = "EXCESS";
+								//obj.value= "ce";
 							}
 							that.PayWayList.push(obj);
 						}
-						//如果fkda没有则追加c测试数据
+						//如果fkda没有则追加测试数据
 						let arr = [{
 							name: "弃用金额",
 							fkid: "ZCV1",
-							type: "qy",
-							value: "EXCESS",
+							type: "EXCESS",
+							value: "qy",
 							poly: "O"
 						}, {
 							name: "仟吉电子卡",
@@ -324,23 +324,22 @@
 					console.log("错误：", err)
 				});
 			},
-			
+
 			//初始化支付数据
 			InitData: async function() {
 				let that = this;
-				await common.GetJHZF("",(r)=>{
-					// that.KHID = "K0101QT2";
-					//获取支付方式
-					that.GetPayWay(that.KHID);
-				})
+				//生成支付规则数据
+				await common.InitZFRULE();
+				// await common.GetJHZF();
+				// that.KHID = "K0101QT2";
+				//获取支付方式
+				await that.GetPayWay(that.KHID);
 				//初始化配置参数
 				await common.GetPZCS("", (res) => {
 					for (var i = 0; i < res.msg.length; i++) {
 						getApp().globalData.PZCS[res.msg[i].ID_NR] = res.msg[i].ZF;
 					}
 				});
-				//生成支付规则数据
-				await common.InitZFRULE();
 				//获取支付规则数据
 				await common.GetZFRULE("", (r) => {
 					console.log("最终支付规则数据：", getApp().globalData.PayInfo);
@@ -353,20 +352,18 @@
 			this.InitData();
 		},
 		onShow() {
-			uni.setStorageSync("products",[
-				{
-					PLID: "101",
-					SPID: "10101020",
-					UNIT: "袋",
-					BARCODE: '2222222220',
-					NAME: "超软白土司",
-					PRICE: 0.01,
-					OPRICE: 0.01,
-					AMOUNT: 0.01,
-					QTY: 1
-				}
-			])
-			console.log("缓存：",uni.getStorageSync("products"))
+			uni.setStorageSync("products", [{
+				PLID: "101",
+				SPID: "10101020",
+				UNIT: "袋",
+				BARCODE: '2222222220',
+				NAME: "超软白土司",
+				PRICE: 0.01,
+				OPRICE: 0.01,
+				AMOUNT: 0.01,
+				QTY: 1
+			}])
+			console.log("缓存：", uni.getStorageSync("products"))
 			// let that = this;
 			// that.PayList = this.$store.state.orders; //全局参数
 			// console.log('监听支付页面回传的支付参数为：');

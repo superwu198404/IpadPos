@@ -298,18 +298,26 @@ var GetPZCS = async function(e, func) {
 }
 //初始化支付规则（测试使用）
 var InitZFRULE = async function(e, func) {
+	//创建表结构和测试数据 后期可挪到数据库中初始化
 	let arr = [create_sql.ZFRuleSql,
 		"delete from ZF_RULE",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('WX_CLZF','keengee','027001','/PaymentAll/Handle','WxPay_ScanCode','Mobile_Pos','KG','10,11,12,13,14,15','Y')",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('ZFB_CLZF','keengee','027001','/PaymentAll/Handle','AliPay_ScanCode','Mobile_Pos','KG','25,26,27,28,29,30','Y')",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('HYK','keengee','027001','/PaymentAll/Handle','ECard_Payment','Mobile_Pos','KG','KG','Y')",
-		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('SZQ','keengee','027001','/PaymentAll/Handle','ECoupon_Payment','Mobile_Pos','KG','coupon','Y')"
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('SZQ','keengee','027001','/PaymentAll/Handle','ECoupon_Payment','Mobile_Pos','KG','coupon','Y')",
+		"delete from dapzcs_nr where id='FKJHZF';",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
 	];
 	await db.get().executeDml(arr, "sql执行中", function(res) {
-		console.log("支付规则数据初始化成功：", res);
+		console.log("支付规则数据和聚合数据初始化成功：", res);
 		if (func) func(res);
 	}, function(err) {
-		console.log("支付规则数据初始化失败:", err);
+		console.log("支付规则数据和聚合数据初始化失败:", err);
 	});
 }
 //获取支付规则
@@ -348,7 +356,10 @@ var GetJHZF = async function(e, func) {
 	]
 	//批量执行sql 必须是数组
 	await db.get().executeDml(arr, "执行中", (res) => {
-		console.log("聚合数据初始化结果：", res);
+		if (func) func(res);
+		console.log("聚合数据初始化成功：", res);
+	}, (err) => {
+		console.log("聚合数据初始化失败：", err);
 	});
 }
 

@@ -861,7 +861,7 @@
 				console.log("券请求返回结果[result]：", result);
 				if (this.currentPayType === "COUPON") { //如果是券支付
 					let couponAmount = result.voucher.denomination; //获取券的面额
-					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS"); //放弃金额
+					let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
 					console.log("excessInfo:", excessInfo);
 					console.log("result:", result);
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
