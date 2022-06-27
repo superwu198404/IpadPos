@@ -503,7 +503,16 @@
 						KHID: this.KHID,
 						POSID: this.POSID,
 						NO: item.no, //付款序号
-						FKID: item.fkid, //付款类型id
+						FKID: (function() {
+							switch (is_free) {
+								case 'Y':
+									return 'ZZ01';
+								case 'N':
+									return 'ZF09';
+								default:
+									return item.fkid;
+							}
+						})(), //付款类型id
 						AMT: item.amount, //付款金额
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
@@ -512,7 +521,16 @@
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
-						ZKLX: item.zklx, //折扣类型
+						ZKLX:(function() {
+							switch (is_free) {
+								case 'Y':
+									return 'ZV01';
+								case 'N':
+									return 'ZV09';
+								default:
+									return item.zklx;
+							}
+						})(), //折扣类型
 						IDTYPE: item.id_type //卡类型
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
@@ -827,7 +845,7 @@
 					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					console.log("支付失败！")
 					uni.showToast({
-						title: "支付失败!原因："+error.msg
+						title: "支付失败!原因：" + error.msg
 					});
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
@@ -883,6 +901,7 @@
 					zklx: payload?.disc_type ?? "",
 					id_type: payload?.voucher.type ?? "",
 					user_id: payload.open_id || payload.hyid,
+					is_free: payload?.yn_zq || "",
 					card_no: payload.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
