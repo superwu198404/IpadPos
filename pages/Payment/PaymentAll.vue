@@ -313,9 +313,17 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
-				if (amount > 0) { //未完成支付，仍然存在欠款
+				if (Number(n) < 0) { //待支付金额必须为正数
+					this.dPayAmount = o;
+					uni.showToast({
+						title: '待支付金额必须大于0!',
+						icon: "error"
+					});
+					this.domForceRefresh();
+				}
 				console.log(`newValue:${n},amount:${amount}`);
-					if(this.PayList.length === 0) this.CanBack = true;//未使金额发生变化则仍然可以退出
+				if (amount > 0) { //未完成支付，仍然存在欠款
+					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) {
@@ -324,12 +332,15 @@
 							title: '金额输入错误!',
 							icon: "error"
 						});
+						this.domForceRefresh();
 					} else {
 						let count = this.dPayAmount.toString().split('.')[1].length;
-						if (count > 2)
+						if (count > 2) {
 							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
+							this.domForceRefresh();
+						}
 					}
-					this.domForceRefresh();
+
 				} else { //完成支付，推送数据
 					this.YN_TotalPay = true;
 					this.CanBack = true;
