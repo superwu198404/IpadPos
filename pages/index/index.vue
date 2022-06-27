@@ -196,6 +196,13 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
+						that.PayWayList.push({
+							"name": "电子券",
+							"fkid": "ZZ01",
+							"type": "SZQ",
+							"poly": "O", 
+							"value": "COUPON"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -314,7 +321,7 @@
 				// 	"stateCode": ""
 				// }
 				// debugger;
-				
+
 				// hy.consumeJF(brand, param, function(res) {
 				// 	console.log("积分上传结果：" + res);
 				// 	uni.showToast({
@@ -324,7 +331,7 @@
 				// })
 				// return;
 				let arr = [
-					"delete from dapzcs_nr where id='FKJHZF';",//09
+					"delete from dapzcs_nr where id='FKJHZF';", //09
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
@@ -399,20 +406,18 @@
 			});
 		},
 		onShow() {
-			uni.setStorageSync("products",[
-				{
-					PLID: "101",
-					SPID: "10101020",
-					UNIT: "袋",
-					BARCODE: '2222222220',
-					NAME: "超软白土司",
-					PRICE: 0.01,
-					OPRICE: 0.01,
-					AMOUNT: 0.01,
-					QTY: 1
-				}
-			])
-			console.log("缓存：",uni.getStorageSync("products"))
+			uni.setStorageSync("products", [{
+				PLID: "101",
+				SPID: "10101020",
+				UNIT: "袋",
+				BARCODE: '2222222220',
+				NAME: "超软白土司",
+				PRICE: 0.01,
+				OPRICE: 0.01,
+				AMOUNT: 0.01,
+				QTY: 1
+			}])
+			console.log("缓存：", uni.getStorageSync("products"))
 			// let that = this;
 			// that.PayList = this.$store.state.orders; //全局参数
 			// console.log('监听支付页面回传的支付参数为：');
@@ -422,7 +427,7 @@
 			// 	this.CreateDBData()
 			// }
 			this.refund_no = this.$store.state.trade;
-			// this.refund_no = "K0101QT2122624174159578";
+			// this.refund_no = "K0101QT2122627193339597";
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

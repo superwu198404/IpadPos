@@ -110,7 +110,7 @@
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding)">
+										v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid!=='ZCV1')">
 										<!-- 这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）且是状态确定的（正在支付操作算不确定的，所以不显示，当成功或失败才算确定的状态） -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
@@ -319,7 +319,7 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
-				if(Number(n) === 0 && n.length > 1 && n[0] === '-'){
+				if (Number(n) === 0 && n.length > 1 && n[0] === '-') {
 					this.dPayAmount = 0;
 					this.domForceRefresh();
 				}
@@ -384,8 +384,9 @@
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
-				if (n && n.filter(i => i.fail).length == 0)
+				if (n && n.filter(i => i.fail).length == 0) {
 					this.CanBack = true;
+				}
 			}
 		},
 		computed: {
@@ -525,7 +526,7 @@
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
-						ZKLX:(function() {
+						ZKLX: (function() {
 							switch (item.is_free) {
 								case 'Y':
 									return 'ZV01';
@@ -629,7 +630,7 @@
 					});
 					return;
 				}
-				console.log("this.toBePaidPrice():",this.toBePaidPrice())
+				console.log("this.toBePaidPrice():", this.toBePaidPrice())
 				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
 					uni.showToast({
 						title: "金额不能为空!",
@@ -720,50 +721,55 @@
 					promises = [];
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
-				this.RefundList.filter(i => i.fail).forEach(refundInfo => {
+				if(this.RefundList.filter(i => i.fail).length === 0){
+					uni.showToast({
+						title: "已完成退款!"
+					});
+					return;
+				}
+				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
+					console.log(`退款单Item:${JSON.stringify(refundInfo)}`);
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (payWayType == "SZQ") { //如果为券，直接默认成功
+					let payWayFkid = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.fkid;
+					console.log(`type:${payWayType},fkid:${payWayFkid}`);
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
-						return;
-					}
-					if (payWayType) {
-						if (!isRetry) refundInfo.fail = false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
-						refundInfo.refunding = true; //标记为正在退款的状态
-						console.log("退款表单数据：", {
-							out_trade_no: refundInfo.bill, //单号
-							out_refund_no: refund_no, //退款单号
-							refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
-							total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
-						})
-						let res = _pay.RefundAll(payWayType, {
-								out_trade_no: refundInfo.bill, //单号
-								out_refund_no: refund_no, //退款单号
-								refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
-								total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
-							}, (function(err) { //如果发生异常（catch）
-								// catch code...
-							}).bind(that),
-							(function(res) { //执行完毕（finally），退款次数 +1
-								refundInfo.refund_num += 1; //发起请求默认加1
-								refundInfo.refunding = false; //标记为已经结束退款操作
-								this.RefundList = Object.assign([], this.RefundList) //刷新视图
-							}).bind(that),
-							(function(ress) { //执行完毕（results），根据结果判断
-								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
-									refundInfo.fail = true;
-									refundInfo.msg = ress[1].msg; //错误提示信息记录
-								} else
-									refundInfo.fail = false;
-							}).bind(that));
-						promises.push(res)
 					} else {
-						uni.showToast({
-							title: "支付方式不存在!",
-							icon: "error"
-						});
+						if (payWayType) {
+							if (!isRetry) refundInfo.fail =
+								false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+							refundInfo.refunding = true; //标记为正在退款的状态
+							let res = _pay.RefundAll(payWayType, {
+									out_trade_no: refundInfo.bill, //单号
+									out_refund_no: refund_no, //退款单号
+									refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
+									total_money: (Number(refundInfo.amount) * 100).toFixed(
+										0) //退款总金额（兼容微信）
+								}, (function(err) { //如果发生异常（catch）
+									// catch code...
+								}).bind(that),
+								(function(res) { //执行完毕（finally），退款次数 +1
+									refundInfo.refund_num += 1; //发起请求默认加1
+									refundInfo.refunding = false; //标记为已经结束退款操作
+									this.RefundList = Object.assign([], this.RefundList) //刷新视图
+								}).bind(that),
+								(function(ress) { //执行完毕（results），根据结果判断
+									if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+										refundInfo.fail = true;
+										refundInfo.msg = ress[1].msg; //错误提示信息记录
+									} else
+										refundInfo.fail = false;
+								}).bind(that));
+							promises.push(res)
+						} else {
+							uni.showToast({
+								title: "支付方式不存在!",
+								icon: "error"
+							});
+						}
 					}
-				});
+				}).bind(this));
 				Promise.all(promises).then((res) => {
 					if (res.length > 0)
 						that.CreateDBData((res) => {
@@ -847,11 +853,11 @@
 						this.CanBack = false;
 					}
 				}).bind(this), (function(error) {
-					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					console.log("支付失败！")
 					uni.showToast({
 						title: "支付失败!原因：" + error.msg
 					});
+					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
@@ -870,6 +876,7 @@
 							amount: (payload.money / 100).toFixed(2),
 							fail,
 						}, result));
+						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
@@ -898,16 +905,16 @@
 			orderCreated: function(obj, payload) {
 				let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
 					fkid: this.currentPayInfo?.fkid ?? "",
-					bill: payload.out_trade_no,
+					bill: payload?.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
-					amount: (this.isRefund ? -1 : 1) * (payload.money / 100).toFixed(2),
+					amount: (this.isRefund ? -1 : 1) * (payload?.money / 100).toFixed(2),
 					no: this.PayList.length,
-					disc: payload.discount,
+					disc: payload?.discount,
 					zklx: payload?.disc_type ?? "",
 					id_type: payload?.voucher.type ?? "",
-					user_id: payload.open_id || payload.hyid,
+					user_id: payload?.open_id || payload?.hyid,
 					is_free: payload?.voucher?.yn_zq || "",
-					card_no: payload.voucher.no ?? "",
+					card_no: payload?.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
 					pay_num: 0, //退款（尝试）次数
@@ -994,7 +1001,7 @@
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
 				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
-				console.log("PayWayList:",this.PayWayList)
+				console.log("PayWayList:", this.PayWayList)
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
@@ -1025,19 +1032,21 @@
 				//总金额
 				this.refundView.totalAmount = ((function() {
 					let count = 0;
-					this.RefundList.map(i => count += i.amount); //将金额加起来
+					this.RefundList.filter(i => i.fkid !== "ZCV1").map(i => count += i.amount); //将金额加起来
 					return -count.toFixed(2);
 				}).bind(this))();
 				//实退金额
 				this.refundView.actualAmount = ((function() {
 					let count = 0;
-					this.RefundList.filter(i => !i.fail).map(i => count += i.amount); //将金额加起来
+					this.RefundList.filter(i => !i.fail && i.fkid !== "ZCV1").map(i => count += i
+						.amount); //将金额加起来
 					return -count.toFixed(2);
 				}).bind(this))();
 				//待退款金额
 				this.refundView.debtAmount = ((function() {
 					let count = 0;
-					this.RefundList.filter(i => i.fail).map(i => count += i.amount); //将金额加起来
+					this.RefundList.filter(i => i.fail && i.fkid !== "ZCV1").map(i => count += i
+						.amount); //将金额加起来
 					return -count.toFixed(2);
 				}).bind(this))();;
 			},
