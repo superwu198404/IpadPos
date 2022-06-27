@@ -353,6 +353,20 @@
 			this.InitData();
 		},
 		onShow() {
+			uni.setStorageSync("products",[
+				{
+					PLID: "101",
+					SPID: "10101020",
+					UNIT: "袋",
+					BARCODE: '2222222220',
+					NAME: "超软白土司",
+					PRICE: 0.01,
+					OPRICE: 0.01,
+					AMOUNT: 0.01,
+					QTY: 1
+				}
+			])
+			console.log("缓存：",uni.getStorageSync("products"))
 			// let that = this;
 			// that.PayList = this.$store.state.orders; //全局参数
 			// console.log('监听支付页面回传的支付参数为：');

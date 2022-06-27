@@ -319,6 +319,10 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
+				if(Number(n) === 0 && n.length > 1 && n[0] === '-'){
+					this.dPayAmount = 0;
+					this.domForceRefresh();
+				}
 				if (Number(n) < 0) { //待支付金额必须为正数
 					this.dPayAmount = o;
 					uni.showToast({
@@ -503,7 +507,16 @@
 						KHID: this.KHID,
 						POSID: this.POSID,
 						NO: item.no, //付款序号
-						FKID: item.fkid, //付款类型id
+						FKID: (function() {
+							switch (item.is_free) {
+								case 'Y':
+									return 'ZZ01';
+								case 'N':
+									return 'ZF09';
+								default:
+									return item.fkid;
+							}
+						})(), //付款类型id
 						AMT: item.amount, //付款金额
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
@@ -512,7 +525,16 @@
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
-						ZKLX: item.zklx, //折扣类型
+						ZKLX:(function() {
+							switch (item.is_free) {
+								case 'Y':
+									return 'ZV01';
+								case 'N':
+									return 'ZV09';
+								default:
+									return item.zklx;
+							}
+						})(), //折扣类型
 						IDTYPE: item.id_type //卡类型
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
@@ -607,7 +629,8 @@
 					});
 					return;
 				}
-				if (!this.dPayAmount || this.dPayAmount == "0") {
+				console.log("this.toBePaidPrice():",this.toBePaidPrice())
+				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
 					uni.showToast({
 						title: "金额不能为空!",
 						icon: "error"
@@ -826,6 +849,9 @@
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					console.log("支付失败！")
+					uni.showToast({
+						title: "支付失败!原因：" + error.msg
+					});
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
@@ -839,7 +865,7 @@
 					console.log("excessInfo:", excessInfo);
 					console.log("result:", result);
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
-						this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
+						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (payload.money / 100).toFixed(2),
 							fail,
@@ -852,7 +878,7 @@
 						}, result));
 					} else //如果券面额未小于
 					{
-						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
+						this.yPayAmount += fail ? 0 : (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (couponAmount / 100).toFixed(2),
 							fail
@@ -860,7 +886,7 @@
 					}
 				} else //如果是聚合支付
 				{
-					this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
+					this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail
@@ -880,6 +906,7 @@
 					zklx: payload?.disc_type ?? "",
 					id_type: payload?.voucher.type ?? "",
 					user_id: payload.open_id || payload.hyid,
+					is_free: payload?.voucher?.yn_zq || "",
 					card_no: payload.voucher.no ?? "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
@@ -967,6 +994,7 @@
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
 				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+				console.log("PayWayList:",this.PayWayList)
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
