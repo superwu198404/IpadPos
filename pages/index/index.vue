@@ -79,21 +79,21 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [{
 						PLID: "101",
-						SPID: "10101002",
+						SPID: "10101020",
 						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "黑森林",
+						BARCODE: '2222222220',
+						NAME: "超软白土司",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 1,
+						AMOUNT: 0.01,
 						QTY: 1
 					},
 					{
 						PLID: "101",
-						SPID: "10101002",
+						SPID: "10101021",
 						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "毛毛虫",
+						BARCODE: '2222222221',
+						NAME: "你好土司",
 						PRICE: 0.5,
 						OPRICE: 0.5,
 						AMOUNT: 1,
@@ -101,13 +101,13 @@
 					},
 					{
 						PLID: "101",
-						SPID: "10101002",
+						SPID: "10101022",
 						UNIT: "袋",
 						BARCODE: '2222222222',
-						NAME: "虎皮蛋糕",
+						NAME: "黄金唱片",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 1,
+						AMOUNT: 0.01,
 						QTY: 1
 					}
 				], //商品信息
