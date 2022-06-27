@@ -319,6 +319,10 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
+				if(Number(n) === 0 && n.length > 1 && n[0] === '-'){
+					this.dPayAmount = 0;
+					this.domForceRefresh();
+				}
 				if (Number(n) < 0) { //待支付金额必须为正数
 					this.dPayAmount = o;
 					uni.showToast({
@@ -625,7 +629,8 @@
 					});
 					return;
 				}
-				if (!this.dPayAmount || this.dPayAmount == "0") {
+				console.log("this.toBePaidPrice():",this.toBePaidPrice())
+				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
 					uni.showToast({
 						title: "金额不能为空!",
 						icon: "error"
