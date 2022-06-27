@@ -50,12 +50,14 @@
 			</view>
 			<view class="amounts">
 				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
-				<p><text>总金额</text><text>{{totalAmount}}</text></p>
+				<p><text>总金额</text><text>{{isRefund ? refundView.totalAmount : totalAmount}}</text></p>
 				<p><text>折扣</text><text>{{Discount}}</text></p>
-				<p><text>已收</text><text>{{Number(yPayAmount).toFixed(2)}}</text></p>
-				<p><text>欠款</text><text>{{debt}}</text></p>
-				<p><text>还需支付</text><text class="pay-center"><input type="number" :disabled="allowInput" value=""
-							:key="domRefresh" v-model="dPayAmount" /></text></p>
+				<p><text>已收</text><text>{{isRefund ? refundView.actualAmount : Number(yPayAmount).toFixed(2)}}</text>
+				</p>
+				<p><text>欠款</text><text>{{isRefund ? refundView.debtAmount : debt}}</text></p>
+				<p><text>还需支付</text><text class="pay-center"><span
+							v-if="isRefund">{{ refundView.debtAmount }}</span><input v-if="!isRefund" type="number"
+							:disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" /></text></p>
 			</view>
 			<view class="paydetails">
 				<view class="pay-sum">
@@ -154,7 +156,6 @@
 								<p>聚合支付</p>
 								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
-										<!-- <text>{{item.type}}</text> -->
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 										</image>
 									</view>
@@ -297,6 +298,11 @@
 				XS_TYPE: "",
 				handles: null,
 				ZFBZK: getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0,
+				refundView: {
+					totalAmount: 0,
+					actualAmount: 0,
+					debtAmount: 0
+				}
 			}
 		},
 		watch: {
@@ -375,6 +381,7 @@
 					this.allowInput = false;
 			},
 			RefundList: function(n, o) {
+				this.refundAmountCount(); //重新计算金额
 				if (n && n.filter(i => i.fail).length == 0)
 					this.CanBack = true;
 			}
@@ -429,9 +436,9 @@
 					XS_KHID: this.sale1_obj?.XS_KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: this.sale1_obj?.XS_GSID ?? "", //退款时记录原GSID（重点）
 					TLINE: this.sale2_obj.length,
-					TNET: this.totalAmount, //总金额（重点）
+					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
-					ZNET: this.allAmount,
+					ZNET: (this.isRefund ? -1 : 1) * this.allAmount,
 					BILLDISC: this.Discount, //整单折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
@@ -465,10 +472,10 @@
 						PLID: this.Products[i].PLID,
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
-						QTY: this.Products[i].QTY,
+						QTY: (this.isRefund ? -1 : 1) * this.Products[i].QTY,
 						PRICE: this.Products[i].PRICE,
 						OPRICE: this.Products[i].OPRICE,
-						NET: this.Products[i].PRICE,
+						NET: (this.isRefund ? -1 : 1) * this.Products[i].PRICE,
 						DISCRATE: this.SKY_DISCOUNT, //总折扣额
 						YN_SKYDISC: this.Products[i].ADISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.Products[i].ADISCOUNT, //手工折扣额
@@ -488,7 +495,7 @@
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
 				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
-					.PayList; //如果是退款，那么就是退款信息，否则是支付信息
+					.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
 					console.log("Item:", item)
 					this.sale3_obj = {
@@ -645,7 +652,7 @@
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function(arr) {
-				if (this.isRefund)
+				if (this.isRefund) {
 					this.Products = arr?.map((function(i) {
 						return {
 							PLID: i.PLID,
@@ -659,11 +666,13 @@
 							QTY: i.QTY
 						}
 					}).bind(this));
+					this.refundAmountCount(); //退款金额计算
+				}
 				console.log("SALE2 初始化完毕！", this.Products)
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function(arr) {
-				if (this.isRefund)
+				if (this.isRefund) {
 					this.RefundList = arr?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
@@ -678,6 +687,7 @@
 							msg: "" //操作提示信息（可以显示失败的或者成功的）
 						}
 					}).bind(this));
+				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
 			},
 			//退款操作
@@ -791,9 +801,15 @@
 			},
 			//支付处理入口
 			PayHandle: function() {
-				let payAfter = this.PayDataAssemble();
-				console.log("支付单号：", this.out_trade_no);
-				console.log("支付参数：", JSON.stringify(payAfter));
+				let payAfter = this.PayDataAssemble(),type = this.PayTypeJudgment(),info = this.PayWayList.find(i => i.type === type);
+				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
+				if(this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
+					uni.showToast({
+						title: "已存在同类型的支付方式!"
+					});
+					this.authCode = '';
+					return;
+				}
 				_pay.PaymentAll(this.PayTypeJudgment(), payAfter, (function(result) {
 					console.log("支付结果：", result);
 					uni.showToast({
@@ -860,7 +876,7 @@
 					fkid: this.currentPayInfo?.fkid ?? "",
 					bill: payload.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
-					amount: (payload.money / 100).toFixed(2),
+					amount: (this.isRefund ? -1 : 1) * (payload.money / 100).toFixed(2),
 					no: this.PayList.length,
 					disc: payload.discount,
 					zklx: payload?.disc_type ?? "",
@@ -967,15 +983,33 @@
 			priceCount: function() {
 				let total = 0;
 				this.Products.forEach(product => total += product.AMOUNT);
-				//this.totalAmount = total;
 				//舍弃分的处理
 				this.SKY_DISCOUNT = util.myFixed(total, 2) % 1;
-				//console.log("总舍弃分：", this.SKY_DISCOUNT);
 				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
 				this.Products.forEach(function(item, index) {
 					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2);
 				});
-				//console.log("处理分后的商品信息：", JSON.stringify(this.Products));
+			},
+			//欠款界面绑定数据更新
+			refundAmountCount: function() {
+				//总金额
+				this.refundView.totalAmount = ((function() {
+					let count = 0;
+					this.RefundList.map(i => count += i.amount); //将金额加起来
+					return -count.toFixed(2);
+				}).bind(this))();
+				//实退金额
+				this.refundView.actualAmount = ((function() {
+					let count = 0;
+					this.RefundList.filter(i => !i.fail).map(i => count += i.amount); //将金额加起来
+					return -count.toFixed(2);
+				}).bind(this))();
+				//待退款金额
+				this.refundView.debtAmount = ((function() {
+					let count = 0;
+					this.RefundList.filter(i => i.fail).map(i => count += i.amount); //将金额加起来
+					return -count.toFixed(2);
+				}).bind(this))();;
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
 			toBePaidPrice: function() {
