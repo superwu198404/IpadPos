@@ -107,7 +107,11 @@
 						NAME: "黄金唱片",
 						PRICE: 0.01,
 						OPRICE: 0.01,
+<<<<<<< HEAD
 						AMOUNT: 0.01,
+=======
+						AMOUNT: 1,
+>>>>>>> 227ada7e60521ab801d55cae76ec1ad7fcce7964
 						QTY: 1
 					}
 				], //商品信息

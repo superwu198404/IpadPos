@@ -314,7 +314,9 @@
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
 				if (amount > 0) { //未完成支付，仍然存在欠款
-					console.log("触发第一次：");
+				console.log(`newValue:${n},amount:${amount}`);
+					if(this.PayList.length === 0) this.CanBack = true;//未使金额发生变化则仍然可以退出
+					else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) {
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
@@ -804,9 +806,10 @@
 			},
 			//创建支付记录
 			orderGenarator: function(payload, result, fail) {
-				console.log("生成订单类型[orderGenarator]：", this.currentPayType)
+				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
+				console.log("券请求返回结果[result]：", result);
 				if (this.currentPayType === "COUPON") { //如果是券支付
-					let couponAmount = result.data.voucher.discount; //获取券的面额
+					let couponAmount = result.voucher.denomination; //获取券的面额
 					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS"); //放弃金额
 					console.log("excessInfo:", excessInfo);
 					console.log("result:", result);
@@ -842,7 +845,7 @@
 			},
 			//订单对象创建
 			orderCreated: function(obj, payload) {
-				console.log("=============================================================obj:", { //每支付成功一笔，则往此数组内存入一笔记录
+				let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
 					fkid: this.currentPayInfo?.fkid ?? "",
 					bill: payload.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
@@ -859,25 +862,9 @@
 					paying: false, //是否在正在退款中
 					loading: false,
 					msg: "" //操作提示信息（可以显示失败的或者成功的）
-				})
-				return Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
-					fkid: this.currentPayInfo?.fkid ?? "",
-					bill: payload.out_trade_no,
-					name: this.currentPayInfo?.name ?? "",
-					amount: (payload.money / 100).toFixed(2),
-					no: this.PayList.length,
-					disc: payload.discount,
-					zklx: payload?.disc_type ?? "",
-					id_type: payload?.voucher.type ?? "",
-					user_id: payload.open_id || payload.hyid,
-					card_no: payload.voucher.no ?? "",
-					//业务配置字段 ↓
-					fail: true, //def初始和退款失败的皆为true
-					pay_num: 0, //退款（尝试）次数
-					paying: false, //是否在正在退款中
-					loading: false,
-					msg: "" //操作提示信息（可以显示失败的或者成功的）
-				}, obj)
+				}, obj);
+				console.log("封装响应体[orderCreated]:", order)
+				return order;
 			},
 			//积分操作
 			scoreConsume: function() {
