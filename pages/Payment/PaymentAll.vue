@@ -314,8 +314,8 @@
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
 				if (amount > 0) { //未完成支付，仍然存在欠款
-				console.log(`newValue:${n},amount:${amount}`);
-					if(this.PayList.length === 0) this.CanBack = true;//未使金额发生变化则仍然可以退出
+					console.log(`newValue:${n},amount:${amount}`);
+					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) {
@@ -339,9 +339,7 @@
 						let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
 						common.TransLiteData(bill);
 						//上传积分
-						if (this.hyinfo.hyid) {
-							this.scoreConsume();
-						}
+						this.scoreConsume();
 						//调用页面BPage的方法
 						this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					});
@@ -729,9 +727,7 @@
 							let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
 							common.TransLiteData(bill);
 							//上传积分
-							if (this.hyinfo.hyid) {
-								this.scoreConsume();
-							}
+							that.scoreConsume();
 							//调用页面BPage的方法
 							this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this
 								.sale3_arr);
@@ -868,9 +864,10 @@
 			},
 			//积分操作
 			scoreConsume: function() {
+				console.log("正在准备上传积分，会员信息：", getApp().globalData.hyinfo);
 				let that = this
-				let hyinfo = app.gloabaldata.hyinfo;
-				if (hyinfo && hyinfo.hyid) { //录入过会员信息
+				let hyinfo = getApp().globalData.hyinfo;
+				if (hyinfo && hyinfo.hyId) { //录入过会员信息
 					let param;
 					if (that.brand == 'KG') {
 						let arr = [],
@@ -896,14 +893,14 @@
 							addPoint: 0,
 							channel: "POS",
 							cityCode: "",
-							code: that.out_trade_no,
+							code: that.out_trade_no_old,
 							date: dateformat.getYMDS(),
 							deducePoint: 0,
 							districtCode: "",
 							entryList: arr,
-							memberCode: hyinfo.hyid,
+							memberCode: hyinfo.hyId,
 							netAmount: that.totalAmount,
-							orderAmount: that.allAmount,
+							orderAmount: that.totalAmount,
 							orderType: that.XS_TYPE, //订单类型
 							paymentInfoList: arr1,
 							pointOfService: that.KHID,
@@ -920,16 +917,17 @@
 							psid: that.POSID,
 							slenet: that.totalAmount,
 							cxbill: "",
-							hyid: hyinfo.hyid,
+							hyid: hyinfo.hyId,
 							sign: ""
 						}
 					}
+					console.log("积分上传参数：", that.brand + param);
 					hy.consumeJF(that.brand, param, function(res) {
+						console.log("积分上传结果：", res);
 						uni.showToast({
 							title: res.code ? "积分上传成功" : res.msg,
 							icon: res.code ? "success" : "error"
 						})
-						console.log("积分上传结果：" + res);
 					})
 				}
 			},
@@ -949,6 +947,8 @@
 				this.sale1_obj = prev_page_param?.sale1_obj; //sale1数据
 				this.sale2_arr = prev_page_param?.sale2_arr; //sale2数据
 				this.sale3_arr = prev_page_param?.sale3_arr; //sale3数据
+				this.XS_TYPE = prev_page_param.XS_TYPE;
+				this.BILL_TYPE = prev_page_param.BILL_TYPE;
 				this.RefundDataHandle();
 				//this.authCode = prev_page_param.authCode;
 			},
@@ -1128,9 +1128,11 @@
 			},
 			//会员信息重写
 			UpdateHyInfo: function(e) {
+				console.log("接口返回的信息：", e);
 				if (e && e.hyid) { //支付接口有返回会员信息
 					let hyinfo = getApp().globalData.hyinfo;
-					if (!hyinfo || !hyinfo.hyid) { //如果没有会员信息就重新录入一下
+					console.log("当前会员信息：", hyinfo);
+					if (!hyinfo || !hyinfo.hyId) { //如果没有会员信息就重新录入一下
 						getApp().globalData.hyinfo.hyId = e.hyid;
 					}
 				}

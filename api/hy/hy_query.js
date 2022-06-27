@@ -480,8 +480,8 @@ function consumeJFscore(d, func) {
 function newUploadHyjf(d, func) {
 	Req.http("Hy/hy", {
 		"appid": appid,
-		"appid": "keengee",
-		"paramkey": "acc",
+		"apiname": "newUploadHyjf",
+		"paramkey": "code",
 		"data": d
 	}, "查询中...").then(function(res) {
 		//console.log(res);
@@ -489,8 +489,8 @@ function newUploadHyjf(d, func) {
 		return res;
 	})
 };
-//会员积分
-function consumeJF(m, e, func) {
+//会员积分 合集
+const consumeJF = function(m, e, func) {
 	if (m == 'KG') {
 		newUploadHyjf(e, func);
 	} else {
@@ -509,5 +509,6 @@ export default {
 	QUERY_ALL,
 	REFUND_ALL,
 	CouponList_ALL,
-	hyinfoModel
+	hyinfoModel,
+	consumeJF
 }

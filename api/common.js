@@ -157,8 +157,8 @@ var TransLiteData = function(e) {
 						function(res1) {
 							console.log("数据传输结果：", res1);
 							if (res1.code) {
-								let delStr = "delete from POS_TXFILE where str1 =" + delVal;
-								delStr += "update SALE001 set yn_sc='Y'"; //修改001的数据
+								let delStr = "delete from POS_TXFILE where str1 =" + delVal + ";";
+								delStr += "update SALE001 set yn_sc='Y';"; //修改001的数据
 								db.get().executeDml(delStr, "数据删除中", function(res2) {
 									console.log("数据删除更改状态成功", res2);
 								}, function(err1) {
@@ -253,7 +253,11 @@ var GetPolyPayWay = function(e, func) {
 
 //查询退单所需信息
 var QueryRefund = async function(trade) {
-	let datas = { sale1:null,sale2:null,sale3:null};
+	let datas = {
+		sale1: null,
+		sale2: null,
+		sale3: null
+	};
 	await db.get().executeQry(`select * from SALE001 where BILL='${trade}'`, "查询SALE1...", function(res) {
 		datas.sale1 = res.msg[0];
 	}, function(err) {
@@ -283,7 +287,7 @@ var GetPZCS = async function(e, func) {
 		sql = "select * from dapzcs_nr where id_nr in(" + str.substr(0, str.length - 1) + ")";
 	}
 	await db.get().executeQry(sql, "数据查询中", function(res) {
-		if(func) func(res);
+		if (func) func(res);
 	}, function(err) {
 		console.log("获取档案参数出错:", err);
 		uni.showToast({
