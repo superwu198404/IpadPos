@@ -824,6 +824,9 @@
 				}).bind(this), (function(error) {
 					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					console.log("支付失败！")
+					uni.showToast({
+						title: "支付失败!原因："+error.msg
+					});
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
@@ -837,7 +840,7 @@
 					console.log("excessInfo:", excessInfo);
 					console.log("result:", result);
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
-						this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
+						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (payload.money / 100).toFixed(2),
 							fail,
@@ -850,7 +853,7 @@
 						}, result));
 					} else //如果券面额未小于
 					{
-						this.yPayAmount += (couponAmount / 100); //把支付成功部分金额加上
+						this.yPayAmount += fail ? 0 : (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (couponAmount / 100).toFixed(2),
 							fail
@@ -858,7 +861,7 @@
 					}
 				} else //如果是聚合支付
 				{
-					this.yPayAmount += (payload.money / 100); //把支付成功部分金额加上
+					this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail
