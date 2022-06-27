@@ -134,7 +134,7 @@
 					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
-							that.hyinfo.Balance=(that.hyinfo.Balance/100).toFixed(2);
+							that.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
 							// console.log("会员信息：", getApp().globalData.hyinfo.hyId);
 							//查询优惠券信息
@@ -193,6 +193,7 @@
 					function(res) {
 						if (res.code) {
 							that.hyinfo = JSON.parse(res.data);
+							that.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
 						} else {
 							uni.showToast({
