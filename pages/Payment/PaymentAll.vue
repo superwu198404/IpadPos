@@ -765,8 +765,8 @@
 					{
 						startCode = "coupon";
 					}
-					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
-					curPayType = CodeRule[startCode] || CodeRule["card"]; //SZQ,PAYCARD....
+					//取出当前是何种类型的支付方式
+					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 				}
 				return curPayType;
 			},
