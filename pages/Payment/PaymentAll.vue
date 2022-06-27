@@ -317,7 +317,7 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
-				if(Number(n) === 0 && n.length > 1 && n[0] === '-'){
+				if (Number(n) === 0 && n.length > 1 && n[0] === '-') {
 					this.dPayAmount = 0;
 					this.domForceRefresh();
 				}
@@ -360,7 +360,7 @@
 						//上传积分
 						this.scoreConsume();
 						//调用打印
-						vm.$emit('receiptPrinter',this.sale1_obj,this.sale2_arr,this.sale3_arr);
+						vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					});
 				}
 			},
@@ -439,7 +439,7 @@
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: this.Discount + this.SKY_DISCOUNT, //整单折扣需要加上手工折扣,
+					BILLDISC: (this.Discount + this.SKY_DISCOUNT).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
@@ -473,9 +473,10 @@
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
 						QTY: (this.isRefund ? -1 : 1) * this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						PRICE: (this.Products[i].PRICE - this.Products[i].SKYDISCOUNT).toFixed(2),
 						OPRICE: this.Products[i].OPRICE,
-						NET: (this.isRefund ? -1 : 1) * this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						NET: this.isRefund ? (-1 * this.Products[i].PRICE).toFixed(2) : (this.Products[i].PRICE *
+							this.Products[i].QTY - this.Products[i].SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.Products[i].SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.Products[i].SKYDISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.Products[i].SKYDISCOUNT, //手工折扣额
@@ -523,7 +524,7 @@
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
-						ZKLX:(function() {
+						ZKLX: (function() {
 							switch (item.is_free) {
 								case 'Y':
 									return 'ZV01';
@@ -627,7 +628,7 @@
 					});
 					return;
 				}
-				console.log("this.toBePaidPrice():",this.toBePaidPrice())
+				console.log("this.toBePaidPrice():", this.toBePaidPrice())
 				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
 					uni.showToast({
 						title: "金额不能为空!",
@@ -771,7 +772,7 @@
 							//上传积分
 							that.scoreConsume();
 							//调用打印
-							vm.$emit('receiptPrinter',this.sale1_obj,this.sale2_arr,this.sale3_arr);
+							vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 						});
 				})
 			},
@@ -801,7 +802,7 @@
 					auth_code: this.authCode,
 					store_id: this.KHID,
 					store_name: this.Name,
-					merchant_no: "999990053990001",
+					merchant_no: this.MerId,
 					channel: this.channel,
 					discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 					product_info: this.Products.map(i => { //商品清单
@@ -991,7 +992,7 @@
 				this.Products = prev_page_param.Products;
 				this.Discount = prev_page_param.Discount; //折扣信息
 				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
-				console.log("PayWayList:",this.PayWayList)
+				console.log("PayWayList:", this.PayWayList)
 				this.hyinfo = prev_page_param.hyinfo;
 				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
