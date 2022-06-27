@@ -46,12 +46,12 @@ export default {
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-    uni.closeBLEConnection({
-      deviceId: app.globalData.BLEInformation.deviceId,
-      success: function (res) {
-        console.log("关闭蓝牙成功");
-      }
-    });
+    // uni.closeBLEConnection({
+    //   deviceId: app.globalData.BLEInformation.deviceId,
+    //   success: function (res) {
+    //     console.log("关闭蓝牙成功");
+    //   }
+    // });
   },
   /**
    * 页面上拉触底事件的处理函数
