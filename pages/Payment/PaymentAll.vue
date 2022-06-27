@@ -3,7 +3,6 @@
 </style>
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -217,7 +216,6 @@
 </template>
 
 <script>
-	import PrinterPage from '../xprinter/receipt';
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
@@ -230,11 +228,11 @@
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
+	import vm from '@/utils/xprinter/MiddleUtil.js';
 	var that;
 	export default {
 		components: {
-			uniPopup,
-			PrinterPage
+			uniPopup
 		},
 		data() {
 			return {
@@ -361,8 +359,8 @@
 						common.TransLiteData(bill);
 						//上传积分
 						this.scoreConsume();
-						//调用页面BPage的方法
-						this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						//调用打印
+						vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					});
 				}
 			},
@@ -442,7 +440,7 @@
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: this.Discount + this.SKY_DISCOUNT, //整单折扣需要加上手工折扣,
+					BILLDISC: (this.Discount + this.SKY_DISCOUNT).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
@@ -476,9 +474,10 @@
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
 						QTY: (this.isRefund ? -1 : 1) * this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						PRICE: (this.Products[i].PRICE - this.Products[i].SKYDISCOUNT).toFixed(2),
 						OPRICE: this.Products[i].OPRICE,
-						NET: (this.isRefund ? -1 : 1) * this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						NET: this.isRefund ? (-1 * this.Products[i].PRICE).toFixed(2) : (this.Products[i].PRICE *
+							this.Products[i].QTY - this.Products[i].SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.Products[i].SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.Products[i].SKYDISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.Products[i].SKYDISCOUNT, //手工折扣额
@@ -778,9 +777,8 @@
 							common.TransLiteData(bill);
 							//上传积分
 							that.scoreConsume();
-							//调用页面BPage的方法
-							this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this
-								.sale3_arr);
+							//调用打印
+							vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 						});
 				})
 			},
@@ -794,8 +792,8 @@
 					{
 						startCode = "coupon";
 					}
-					//取出当前是何种类型的支付方式，如果取出为空则默认为卡因为只有卡支付没有配置
-					curPayType = CodeRule[startCode] || CodeRule["card"]; //SZQ,PAYCARD....
+					//取出当前是何种类型的支付方式
+					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 				}
 				return curPayType;
 			},
@@ -810,7 +808,7 @@
 					auth_code: this.authCode,
 					store_id: this.KHID,
 					store_name: this.Name,
-					merchant_no: "999990053990001",
+					merchant_no: this.MerId,
 					channel: this.channel,
 					discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 					product_info: this.Products.map(i => { //商品清单
@@ -867,7 +865,7 @@
 				console.log("券请求返回结果[result]：", result);
 				if (this.currentPayType === "COUPON") { //如果是券支付
 					let couponAmount = result.voucher.denomination; //获取券的面额
-					let excessInfo = this.PayWayList.find(item => item.value == "EXCESS"); //放弃金额
+					let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
 					console.log("excessInfo:", excessInfo);
 					console.log("result:", result);
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额

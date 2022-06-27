@@ -348,7 +348,7 @@ export default {
 		openControl: function() {
 			//连接成功返回页
 			uni.navigateTo({
-				url: "../xprinter/home"
+				url: "../start/start"
 			});
 		}
 	}

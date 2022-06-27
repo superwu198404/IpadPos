@@ -9,7 +9,7 @@
 			brand: "KG",
 			store: {
 				GSID: "027001",
-				KHID: "K200QTD005",
+				KHID: "K0101QT2",//"K200QTD005",
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "123",
@@ -25,45 +25,47 @@
 			hyinfo: {
 				// hyId: "1000311640"
 			},
-			PayInfo: [{ //支付参数
-				TYPE: "WX_CLZF",
-				APPID: "keengee",
-				GSID: "027001",
-				URL: "/PaymentAll/Handle",
-				PAYTYPE: "WxPay_ScanCode",
-				SOURCE: "Mobile_Pos",
-				BRAND: "KG"
-			}, {
-				TYPE: "ZFB_CLZF",
-				APPID: "keengee",
-				GSID: "027001",
-				URL: "/PaymentAll/Handle",
-				PAYTYPE: "AliPay_ScanCode",
-				SOURCE: "Mobile_Pos",
-				BRAND: "KG"
-			}, {
-				TYPE: "HYK",
-				APPID: "keengee",
-				GSID: "027001",
-				URL: "/PaymentAll/Handle",
-				PAYTYPE: "ECard_Payment",
-				SOURCE: "Mobile_Pos",
-				BRAND: "KG"
-			}, {
-				TYPE: "SZQ",
-				APPID: "keengee",
-				GSID: "027001",
-				URL: "/PaymentAll/Handle",
-				PAYTYPE: "ECoupon_Payment",
-				SOURCE: "Mobile_Pos",
-				BRAND: "KG"
-			}],
-			CodeRule: { //支付码规则
-				13: "WX_CLZF",
-				28: "ZFB_CLZF",
-				card: "HYK",
-				coupon: "SZQ"
-			},
+			PayInfo:[],
+			CodeRule:{},
+			// PayInfo: [{ //支付参数
+			// 	TYPE: "WX_CLZF",
+			// 	APPID: "keengee",
+			// 	GSID: "027001",
+			// 	URL: "/PaymentAll/Handle",
+			// 	PAYTYPE: "WxPay_ScanCode",
+			// 	SOURCE: "Mobile_Pos",
+			// 	BRAND: "KG"
+			// }, {
+			// 	TYPE: "ZFB_CLZF",
+			// 	APPID: "keengee",
+			// 	GSID: "027001",
+			// 	URL: "/PaymentAll/Handle",
+			// 	PAYTYPE: "AliPay_ScanCode",
+			// 	SOURCE: "Mobile_Pos",
+			// 	BRAND: "KG"
+			// }, {
+			// 	TYPE: "HYK",
+			// 	APPID: "keengee",
+			// 	GSID: "027001",
+			// 	URL: "/PaymentAll/Handle",
+			// 	PAYTYPE: "ECard_Payment",
+			// 	SOURCE: "Mobile_Pos",
+			// 	BRAND: "KG"
+			// }, {
+			// 	TYPE: "SZQ",
+			// 	APPID: "keengee",
+			// 	GSID: "027001",
+			// 	URL: "/PaymentAll/Handle",
+			// 	PAYTYPE: "ECoupon_Payment",
+			// 	SOURCE: "Mobile_Pos",
+			// 	BRAND: "KG"
+			// }],
+			// CodeRule: { //支付码规则
+			// 	13: "WX_CLZF",
+			// 	28: "ZFB_CLZF",
+			// 	card: "HYK",
+			// 	coupon: "SZQ"
+			// },
 			PZCS: { //档案配置参数
 				YN_ZFBKBQ: "N"
 			},
