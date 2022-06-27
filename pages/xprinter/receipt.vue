@@ -32,7 +32,7 @@
 	var encode = require("../../utils/xprinter/encoding.js");
 	var util = require("../../utils/xprinter/util.js");
 	var qrCode = require("../../utils/xprinter/weapp-qrcode.js");
-
+	import vm from '@/utils/xprinter/MiddleUtil.js';	
     import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	export default {
@@ -60,6 +60,7 @@
 				qrCodeWidth: 200,//二维码宽
 				qrCodeHeight: 200,// 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				property1: ''
 			};
 		},
 
@@ -135,7 +136,17 @@
 		 * 用户点击右上角分享
 		 */
 		onShareAppMessage: function() {},
+		mounted(){
+		    var that = this;
+		    vm.$on('receiptPrinter', function (sale1_obj,sale2_arr,sale3_arr) {
+		        console.log("调用打印方法成功");
+				that.receiptPrinter(sale1_obj,sale2_arr,sale3_arr);
+		    })
+		},
 		methods: {
+			methodB(data) {
+			   if (data) this.property1 = data;
+			},
 			fileReader: function() {
 				const self = this;
 				// 请求本地系统文件对象 plus.io.PRIVATE_WWW：应用运行资源目录常量
@@ -209,97 +220,123 @@
 					}
 				});
 			},
-			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) { //打印小票
+			//打印小票
+			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) {
 				console.log("打印接收数据 sale1_obj",sale1_obj);
 				console.log("打印接收数据 sale2_arr",sale2_arr);
 				console.log("打印接收数据 sale3_arr",sale3_arr);	
 				//票据测试
 				var that = this;
 				
-				var xsType = "XS";
-				var xsBill = sale1_obj.BILL;
-				var xsDate = util.getTime();
-				var khName = getApp().globalData.NAME;
-				var khAddress = getApp().globalData.KHAddress;
-				var posId = sale1_obj.POSID;
-				var posUser = sale1_obj.RYID;
-				var lineNum = sale1_obj.TLINE;
-				var payableAmount = sale1_obj.totalAmount;
-				var discountedAmount = sale1_obj.BILLDISC;
-				var originalAmount = sale1_obj.allAmount;
+				// var xsType = "XS";
+				// var xsBill = sale1_obj.BILL;
+				// var xsDate = util.getTime();
+				// var khName = getApp().globalData.NAME;
+				// var khAddress = getApp().globalData.KHAddress;
+				// var posId = sale1_obj.POSID;
+				// var posUser = sale1_obj.RYID;
+				// var lineNum = sale1_obj.TLINE;
+				// var payableAmount = sale1_obj.totalAmount;
+				// var discountedAmount = sale1_obj.BILLDISC;
+				// var originalAmount = sale1_obj.allAmount;
 				
-
-				
-				var goods_obj = {};
-				var goodsList = [];
-				for (var i = 0; i < sale2_arr.length; i++){
-					this.sale2_obj = {
-						bill: sale2_arr[i].BILL, //主单号
-						saleDate: sale2_arr[i].SALEDATE,
-						saleTime: sale2_arr[i].SALETIME,
-						khid: sale2_arr[i].KHID,
-						posId: sale2_arr[i].POSID,
-					    no: i,
-						plid: sale2_arr[i].PLID,
-						barCode: sale2_arr[i].BARCODE,
-						unit: sale2_arr[i].UNIT, //单位
+				// var goods_obj = {};
+				// var goodsList = [];
+				// for (var i = 0; i < sale2_arr.length; i++){
+				// 	let spname = "";
+				// 	let sqlSpda = "SELECT SPID,SNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
+				// 	db.get().executeQry(sqlSpda, "数据查询中", function(res) {
+				// 		spname = res.msg[0].SNAME;
+				// 		console.log("商品数据:",res.msg[0].SNAME);
+				// 	}, function(err) {
+				// 		console.log("获取商品数据出错:", err);
+				// 		uni.showToast({
+				// 			icon: 'error',
+				// 			title: "获取商品数据出错"
+				// 		})
+				// 	});
+					
+				// 	this.sale2_obj = {
+				// 		bill: sale2_arr[i].BILL, //主单号
+				// 		saleDate: sale2_arr[i].SALEDATE,
+				// 		saleTime: sale2_arr[i].SALETIME,
+				// 		khid: sale2_arr[i].KHID,
+				// 		posId: sale2_arr[i].POSID,
+				// 	    no: i,
+				// 		plid: sale2_arr[i].PLID,
+				// 		barCode: sale2_arr[i].BARCODE,
+				// 		unit: sale2_arr[i].UNIT, //单位
 						
-						spid: sale2_arr[i].SPID, //商品编码
-						spname: "你好吐司", //商品名称
-						qty: sale2_arr[i].QTY, //数量
-						price: sale2_arr[i].PRICE, //单价
-						amount: sale2_arr[i].NET, //金额
-						discount: sale2_arr[i].DISCRATE, //总折扣额
-					};
-					goodsList = goodsList.concat(sale2_obj);
-				}
+				// 		spid: sale2_arr[i].SPID, //商品编码
+				// 		spname: spname, //商品名称
+				// 		qty: sale2_arr[i].QTY, //数量
+				// 		price: sale2_arr[i].PRICE, //单价
+				// 		amount: sale2_arr[i].NET, //金额
+				// 		discount: sale2_arr[i].DISCRATE, //总折扣额
+				// 	};
+				// 	goodsList = goodsList.concat(sale2_obj);
+				// }
 				
-				var payTotal = 0.00;
-				var change = 0.00;
+				// var payTotal = 0.00;
+				// var change = 0.00;
 				
-				var sale3_obj = {};
-				var sale3List = [];
-				for (var i = 0; i < sale3_arr.length; i++){
-					this.sale3_obj = {
-					   bill: sale3_arr[i].BILL,
-					   saleDate: sale3_arr[i].SALEDATE,
-					   saleTime: sale3_arr[i].SALETIME,
-					   khid: sale3_arr[i].KHID,
-					   posId: sale3_arr[i].POSID,
-					   no: sale3_arr[i].NO, //付款序号
-					   fkid: sale3_arr[i].FKID, //付款类型id
-					   amt: sale3_arr[i].AMT, //付款金额
-					   id: sale3_arr[i].ID,  //卡号或者券号
-					   ryid: sale3_arr[i].RYID, //人员
-					   disc: sale3_arr[i].DISC, //折扣金额
-					   zklx: sale3_arr[i].ZKLX, //折扣类型
-					   idType: sale3_arr[i].IDTYPE, //卡类型
-					};
-					sale3List = sale3List.concat(sale3_obj);
-					payTotal += sale3_obj.amt;
-				}
+				// var sale3_obj = {};
+				// var sale3List = [];
+				// for (var i = 0; i < sale3_arr.length; i++){
+				// 	let fkName = "";
+				// 	let sqlFkda = "SELECT FKID,SNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[i].FKID +"' order by FKID";
+				// 	db.get().executeQry(sqlFkda, "数据查询中", function(res) {
+				// 		fkName = res.msg[0].SNAME;
+				// 		console.log("付款方式数据:",res.msg[0].SNAME);
+				// 	}, function(err) {
+				// 		console.log("获取付款方式出错:", err);
+				// 		uni.showToast({
+				// 			icon: 'error',
+				// 			title: "获取付款方式出错"
+				// 		})
+				// 	});
+					
+				// 	this.sale3_obj = {
+				// 	   bill: sale3_arr[i].BILL,
+				// 	   saleDate: sale3_arr[i].SALEDATE,
+				// 	   saleTime: sale3_arr[i].SALETIME,
+				// 	   khid: sale3_arr[i].KHID,
+				// 	   posId: sale3_arr[i].POSID,
+				// 	   no: sale3_arr[i].NO, //付款序号
+				// 	   fkid: sale3_arr[i].FKID, //付款类型id
+				// 	   amt: sale3_arr[i].AMT, //付款金额
+				// 	   id: sale3_arr[i].ID,  //卡号或者券号
+				// 	   ryid: sale3_arr[i].RYID, //人员
+				// 	   disc: sale3_arr[i].DISC, //折扣金额
+				// 	   zklx: sale3_arr[i].ZKLX, //折扣类型
+				// 	   idType: sale3_arr[i].IDTYPE, //卡类型
+				// 	   fkName: fkName,
+				// 	};
+				// 	sale3List = sale3List.concat(sale3_obj);
+				// 	payTotal += sale3_obj.amt;
+				// }
 
-				var printerInfo = {
-					xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
-					xsBill, //单号
-					xsDate, //打印时间
-					khName, //门店名称
-					khAddress, //门店地址
-					posId, //款台
-					posUser, //收银员
+				// var printerInfo = {
+				// 	xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
+				// 	xsBill, //单号
+				// 	xsDate, //打印时间
+				// 	khName, //门店名称
+				// 	khAddress, //门店地址
+				// 	posId, //款台
+				// 	posUser, //收银员
 				
-					goodsList,//商品集合
+				// 	goodsList,//商品集合
 				
-					lineNum, //条目
-					payableAmount, //应付金额
-					discountedAmount, //已优惠金额
-					originalAmount, //原金额
+				// 	lineNum, //条目
+				// 	payableAmount, //应付金额
+				// 	discountedAmount, //已优惠金额
+				// 	originalAmount, //原金额
 					
-					sale3List, //付款方式
+				// 	sale3List, //付款方式
 					
-					payTotal, //支付
-					change, //找零
-				}
+				// 	payTotal, //支付
+				// 	change, //找零
+				// }
 
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
@@ -312,36 +349,36 @@
 				command.setText("KenGee 仟吉" + "\n");
 				//command.setPrint(); //打印并换行
 									
-				command.formString(printerInfo);
+				// command.formString(printerInfo);
 
-				command.setCharacterSize(0); //设置正常大小
-				command.setSelectJustification(0); //设置居左
-				command.setText("--------------------总计-----------------------");
-				//command.setPrint(); //打印并换行
+				// command.setCharacterSize(0); //设置正常大小
+				// command.setSelectJustification(0); //设置居左
+				// command.setText("--------------------总计-----------------------");
+				// //command.setPrint(); //打印并换行
 
-				command.formStringTotal(printerInfo);
+				// command.formStringTotal(printerInfo);
 
-				command.setCharacterSize(0); //设置正常大小
-				command.setSelectJustification(0); //设置居左
-				command.setText("--------------------付款方式-------------------");
-				//command.setPrint(); //打印并换行
+				// command.setCharacterSize(0); //设置正常大小
+				// command.setSelectJustification(0); //设置居左
+				// command.setText("--------------------付款方式-------------------");
+				// //command.setPrint(); //打印并换行
 
-				command.formStringPaymentMethod(printerInfo);
+				// command.formStringPaymentMethod(printerInfo);
 
-				command.setCharacterSize(0); //设置正常大小
-				command.setSelectJustification(0); //设置居左
-				command.setText("-----------------------------------------------");
-				//command.setPrint(); //打印并换行
+				// command.setCharacterSize(0); //设置正常大小
+				// command.setSelectJustification(0); //设置居左
+				// command.setText("-----------------------------------------------");
+				// //command.setPrint(); //打印并换行
 
-				command.setCharacterSize(0); //设置正常大小
-				command.setSelectJustification(0); //设置居左
-				command.setText("轻轻地走了，正如我轻轻的来");
-				//command.setPrint(); //打印并换行
+				// command.setCharacterSize(0); //设置正常大小
+				// command.setSelectJustification(0); //设置居左
+				// command.setText("轻轻地走了，正如我轻轻的来");
+				// //command.setPrint(); //打印并换行
 
-				command.setCharacterSize(0); //设置正常大小
-				command.setSelectJustification(0); //设置居左
-				command.setText("-----------------------------------------------");
-				command.setPrint(); //打印并换行
+				// command.setCharacterSize(0); //设置正常大小
+				// command.setSelectJustification(0); //设置居左
+				// command.setText("-----------------------------------------------");
+				// command.setPrint(); //打印并换行
 
 				//打印二维码
 				// uni.canvasGetImageData({
@@ -374,11 +411,13 @@
 				// 	}
 				// });
 				
+				command.setPrint(); //打印并换行
 				console.log("打印格式记录", command.getData());
-				that.addData(xsBill,xsDate,command.getData());
+				//that.addData(xsBill,xsDate,command.getData());
 				that.prepareSend(command.getData()); //准备发送数据
 			},
-			againPrinter:function(xsBill){ //重新打印
+			//重新打印
+			againPrinter:function(xsBill){
 				console.log("进入到打印了",xsBill)
 				var that = this;
 				xsBill = "2214055034000983";

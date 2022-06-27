@@ -3,7 +3,6 @@
 </style>
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -217,7 +216,6 @@
 </template>
 
 <script>
-	import PrinterPage from '../xprinter/receipt';
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
@@ -230,11 +228,11 @@
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
+	import vm from '@/utils/xprinter/MiddleUtil.js';
 	var that;
 	export default {
 		components: {
-			uniPopup,
-			PrinterPage
+			uniPopup
 		},
 		data() {
 			return {
@@ -361,8 +359,8 @@
 						common.TransLiteData(bill);
 						//上传积分
 						this.scoreConsume();
-						//调用页面BPage的方法
-						this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						//调用打印
+						vm.$emit('receiptPrinter',this.sale1_obj,this.sale2_arr,this.sale3_arr);
 					});
 				}
 			},
@@ -772,9 +770,8 @@
 							common.TransLiteData(bill);
 							//上传积分
 							that.scoreConsume();
-							//调用页面BPage的方法
-							this.$refs.printerPage.receiptPrinter(this.sale1_obj, this.sale2_arr, this
-								.sale3_arr);
+							//调用打印
+							vm.$emit('receiptPrinter',this.sale1_obj,this.sale2_arr,this.sale3_arr);
 						});
 				})
 			},
