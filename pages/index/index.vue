@@ -96,7 +96,7 @@
 						NAME: "毛毛虫",
 						PRICE: 0.5,
 						OPRICE: 0.5,
-						AMOUNT: 0,
+						AMOUNT: 1,
 						QTY: 2
 					},
 					{
@@ -107,7 +107,7 @@
 						NAME: "虎皮蛋糕",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 0,
+						AMOUNT: 1,
 						QTY: 1
 					}
 				], //商品信息
