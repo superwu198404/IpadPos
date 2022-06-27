@@ -878,7 +878,7 @@
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
-							amount: ((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
+							amount: -((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
 							fail
 						}, result));
 					} else //如果券面额未小于
