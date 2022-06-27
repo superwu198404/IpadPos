@@ -304,8 +304,8 @@ const createSql = [
   DISC   REAL,
   
   CONSTRAINT SALE003_KEY PRIMARY KEY (SALEDATE,GCID,KHID,POSID,BILL,FKID,NO))`,
-  
-  `create table if not exists POS_TXFILE(  SEQ_NO     integer, 
+
+	`create table if not exists POS_TXFILE(  SEQ_NO     integer, 
              TX_SQL        VARCHAR2(6),  
              STOREID      VARCHAR(10),  
              POSID        VARCHAR2(10),  
@@ -317,6 +317,21 @@ const createSql = [
              CONNSTR    VARCHAR(100),  
              CONSTRAINT POS_TXFILE_KEY PRIMARY KEY (SEQ_NO))`
 ]
+
+const ZFRuleSql = [
+	`create table if not exists ZF_RULE(  SEQ_NO     integer,
+	           TYPE        VARCHAR2(40),  
+	           APPID      VARCHAR(40),  
+	           GSID        VARCHAR2(40),  
+	           URL     VARCHAR(100),   
+	           PAYTYPE         VARCHAR(100), 
+	           SOURCE      VARCHAR2(100),  
+	           BRAND        VARCHAR2(40), 
+			   CODE    VARCHAR(100),
+	           NOTE    VARCHAR(100),
+	           CONSTRAINT POS_TXFILE_KEY PRIMARY KEY (SEQ_NO))`
+]
 export default {
-	createSql
+	createSql,
+	ZFRuleSql
 }

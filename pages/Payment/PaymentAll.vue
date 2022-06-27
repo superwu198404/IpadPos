@@ -429,8 +429,8 @@
 					TLINE: this.sale2_obj.length,
 					TNET: this.totalAmount, //总金额（重点）
 					DNET: 0,
-					ZNET: this.allAmount,
-					BILLDISC: this.Discount, //整单折扣,
+					ZNET: this.totalAmount,
+					BILLDISC: this.Discount + this.SKY_DISCOUNT, //整单折扣需要加上手工折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
@@ -464,12 +464,12 @@
 						BARCODE: this.Products[i].BARCODE,
 						UNIT: this.Products[i].UNIT,
 						QTY: this.Products[i].QTY,
-						PRICE: this.Products[i].PRICE,
+						PRICE: this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
 						OPRICE: this.Products[i].OPRICE,
-						NET: this.Products[i].PRICE,
-						DISCRATE: this.SKY_DISCOUNT, //总折扣额
-						YN_SKYDISC: this.Products[i].ADISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.Products[i].ADISCOUNT, //手工折扣额
+						NET: this.Products[i].PRICE - this.Products[i].SKYDISCOUNT,
+						DISCRATE: this.Products[i].SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						YN_SKYDISC: this.Products[i].SKYDISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
+						DISC: this.Products[i].SKYDISCOUNT, //手工折扣额
 						YN_CXDISC: 'N',
 						CXDISC: 0,
 						// YAER: new Date().getFullYear(),
@@ -973,7 +973,7 @@
 				//console.log("总舍弃分：", this.SKY_DISCOUNT);
 				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
 				this.Products.forEach(function(item, index) {
-					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2);
+					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2); //分摊的手工折扣额
 				});
 				//console.log("处理分后的商品信息：", JSON.stringify(this.Products));
 			},
