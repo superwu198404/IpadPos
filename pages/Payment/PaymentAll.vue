@@ -211,6 +211,13 @@
 				</view>
 			</view>
 		</view>
+		<!-- 画布 -->
+		<view class="canvasdiv">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		</view>
 	</view>
 	</view>
 </template>
@@ -228,7 +235,11 @@
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
-	import vm from '@/utils/xprinter/MiddleUtil.js';
+	//打印相关
+	import esc from '@/utils/xprinter/esc.js';
+	import encode from '@/utils/xprinter/encoding.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
+	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	var that;
 	export default {
 		components: {
@@ -303,7 +314,28 @@
 				},
 				sbsp_arr: [], //水吧产品初始集合
 				sale8_obj: {}, //水吧产品对象
-				sale8_arr: [] //水吧产品集合
+				sale8_arr: [], //水吧产品集合
+				//打印相关
+				looptime: 0,
+				currentTime: 1,
+				lastData: 0,
+				oneTimeData: 0,
+				buffSize: [],
+				buffIndex: 0,
+				//发送字节数下标
+				printNum: [],
+				printNumIndex: 0,
+				printerNum: 1,
+				currentPrint: 1,
+				isReceiptSend: false,
+				isQuery: false,
+				imageSrc: "/static/xprinter/logo.jpg",
+				jpgSrc: "/static/xprinter/logo.jpg",
+				jpgWidth: 340,
+				jpgHeight: 113,
+				qrCodeWidth: 200,//二维码宽
+				qrCodeHeight: 200,// 二维码高
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 			}
 		},
 		watch: {
@@ -363,7 +395,7 @@
 						//上传积分
 						this.scoreConsume();
 						//调用打印
-						vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						this.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					});
 				}
 			},
@@ -401,6 +433,10 @@
 			onLoad(options) {
 				that = this;
 				this.GetHyCoupons();
+				//生成二维码
+				setTimeout(() => {
+					this.couponQrCode()
+				}, 50);
 			},
 			//单号防重处理
 			UniqueBill: function() {
@@ -811,7 +847,7 @@
 							//that.scoreConsume();
 							that.scoreReduce();
 							//调用打印
-							vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
+							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
 						});
 				})
 			},
@@ -1326,6 +1362,587 @@
 					})
 				}
 				console.log("本单水吧商品：", that.sbsp_arr);
+			},
+			// 二维码生成工具
+			couponQrCode() {
+				let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+				console.log("二维码生成内容", this.qrCodeContent + bill)
+				new qrCode('couponQrcode', {
+					text: this.qrCodeContent,
+					width: this.qrCodeWidth,
+					height: this.qrCodeHeight,
+					colorDark: "#333333",
+					colorLight: "#FFFFFF",
+					correctLevel: qrCode.CorrectLevel.H
+				})
+			},
+			//初始化画布数据
+			initPhoto: function() {},
+			//打印小票
+			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) {
+				console.log("打印接收数据 sale1_obj",sale1_obj);
+				console.log("打印接收数据 sale2_arr",sale2_arr);
+				console.log("打印接收数据 sale3_arr",sale3_arr);	
+				
+				//票据测试
+				var that = this;
+
+				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' :  'XS'; //如果等于 2，则表示退款，否则是支付
+				var billType = sale1_obj.BILL_TYPE; //Z101
+				var bill = sale1_obj.BILL;
+				var xsDate = sale1_obj.SALETIME;
+				var khName = getApp().globalData.store.NAME;
+				var khAddress = getApp().globalData.store.KHAddress;
+				var posId = sale1_obj.POSID;
+				var posUser = sale1_obj.RYID;
+				var lineNum = sale2_arr.length;
+				var totalQty = 0;
+				var payableAmount = sale1_obj.TNET;
+				var discountedAmount = sale1_obj.BILLDISC;
+				var originalAmount = sale1_obj.ZNET;
+			    
+				var goodsList = [];
+				for (var i = 0; i < sale2_arr.length; i++){
+					let spname = "测试商品" + i;
+					let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
+					db.get().executeQry(sqlSpda, "数据查询中", function(res) {
+						spname = res.msg[0].SPNAME;
+						console.log("商品数据:",res.msg[0].SPNAME);
+					}, function(err) {
+						console.log("获取商品数据出错:", err);
+						uni.showToast({
+							icon: 'error',
+							title: "获取商品数据出错"
+						})
+					});
+					
+					var sale2_printer = {
+						bill: sale2_arr[i].BILL, //主单号
+						saleDate: sale2_arr[i].SALEDATE,
+						saleTime: sale2_arr[i].SALETIME,
+						khid: sale2_arr[i].KHID,
+						posId: sale2_arr[i].POSID,
+					    no: i,
+						plid: sale2_arr[i].PLID,
+						barCode: sale2_arr[i].BARCODE,
+						unit: sale2_arr[i].UNIT, //单位
+						
+						spid: sale2_arr[i].SPID, //商品编码
+						spname: spname, //商品名称
+						qty: sale2_arr[i].QTY, //数量
+						price: sale2_arr[i].PRICE, //单价
+						amount: sale2_arr[i].NET, //金额
+						discount: sale2_arr[i].DISCRATE, //总折扣额
+					};
+					goodsList = goodsList.concat(sale2_printer);
+					totalQty += sale2_arr[i].QTY;
+				}
+				
+				console.log("goodsList 转换后数据:", goodsList);
+				
+				var payTotal = 0.00;
+				var change = 0.00;
+				
+				var sale3List = [];
+				for (var j = 0; j < sale3_arr.length; j++){
+					let fkName = sale3_arr[j].FKID;
+					let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +"' order by FKID";
+					db.get().executeQry(sqlFkda, "数据查询中", function(res) {
+						fkName = res.msg[0].FKNAME;
+						console.log("付款方式数据:",res.msg[0].FKNAME);
+					}, function(err) {
+						console.log("获取付款方式出错:", err);
+						uni.showToast({
+							icon: 'error',
+							title: "获取付款方式出错"
+						})
+					});
+					
+					var sale3_printer = {
+					   bill: sale3_arr[j].BILL,
+					   saleDate: sale3_arr[j].SALEDATE,
+					   saleTime: sale3_arr[j].SALETIME,
+					   khid: sale3_arr[j].KHID,
+					   posId: sale3_arr[j].POSID,
+					   no: sale3_arr[j].NO, //付款序号
+					   fkid: sale3_arr[j].FKID, //付款类型id
+					   amt: parseFloat(sale3_arr[j].AMT), //付款金额
+					   id: sale3_arr[j].ID,  //卡号或者券号
+					   ryid: sale3_arr[j].RYID, //人员
+					   disc: sale3_arr[j].DISC, //折扣金额
+					   zklx: sale3_arr[j].ZKLX, //折扣类型
+					   idType: sale3_arr[j].IDTYPE, //卡类型
+					   fkName: fkName,
+					};
+					sale3List = sale3List.concat(sale3_printer);
+					payTotal += sale3_printer.amt;
+				}
+				
+				console.log("sale3List 转换后数据:", sale3List);
+				console.log("sale3List payTotal:", payTotal);
+			    
+				var printerInfo = {
+					xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
+					billType,
+				    bill, //单号
+					xsDate, //打印时间
+					khName, //门店名称
+					khAddress, //门店地址
+					posId, //款台
+					posUser, //收银员
+				
+					goodsList,//商品集合
+				
+					lineNum, //条目
+					payableAmount, //应付金额
+					discountedAmount, //已优惠金额
+					originalAmount, //原金额
+					totalQty,
+					
+					sale3List, //付款方式
+					
+					payTotal, //支付
+					change, //找零
+				}
+			    
+			    console.log("打印接收数据转换后 printerInfo:", printerInfo);
+			    
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.init(); 
+			
+				//打印Logo
+				// uni.canvasGetImageData({
+				// 	canvasId: "canvasLogo",
+				// 	x: 0,
+				// 	y: 0,
+				// 	width: that.jpgWidth,
+				// 	height: that.jpgHeight,
+				// 	success: function(res) {
+				// 		console.log("获取画布数据成功");
+				// 		command.setSelectJustification(1); //居中
+				// 		command.setBitmap(res);
+				// 		command.setPrint();
+						
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	},
+				// 	complete: function(res) {
+				// 		console.log("finish");
+				// 	},
+				// 	fail: function(res) {
+				// 		console.log(res);
+				// 		uni.showToast({
+				// 			title: "获取画布数据失败",
+				// 			icon: "none"
+				// 		});
+						
+				// 	    that.prepareSend(command.getData()); //发送数据
+				// 	}
+				// });
+				
+				command.setSelectJustification(1); //居中
+				command.setCharacterSize(17); //设置倍高倍宽
+				command.setText("KenGee 仟吉" + "\n");
+				command.setPrint(); //打印并换行
+									
+			    command.formString(printerInfo);
+			
+				command.setCharacterSize(0); //设置正常大小
+				command.setSelectJustification(0); //设置居左
+				command.setText("--------------------总计-----------------------");
+				command.setPrint(); //打印并换行
+			
+				command.formStringTotal(printerInfo);
+			
+				command.setCharacterSize(0); //设置正常大小
+				command.setSelectJustification(0); //设置居左
+				command.setText("--------------------付款方式-------------------");
+				command.setPrint(); //打印并换行
+			
+				command.formStringPaymentMethod(printerInfo);
+			
+				command.setCharacterSize(0); //设置正常大小
+				command.setSelectJustification(0); //设置居左
+				command.setText("-----------------------------------------------");
+				command.setPrint(); //打印并换行
+			
+				command.setCharacterSize(0); //设置正常大小
+				command.setSelectJustification(0); //设置居左
+				command.setText("轻轻地走了，正如我轻轻的来");
+				command.setPrint(); //打印并换行
+			
+				command.setCharacterSize(0); //设置正常大小
+				command.setSelectJustification(0); //设置居左
+				command.setText("-----------------------------------------------");
+				command.setPrint(); //打印并换行
+			
+				// 打印二维码
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
+						
+						that.addData(bill,xsDate,command.getData());
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+						that.addData(bill,xsDate,command.getData());
+					    that.prepareSend(command.getData()); //发送数据
+					}
+				});
+				// that.prepareSend(command.getData()); //发送数据
+				console.log("打印格式记录", command.getData());
+			},
+			//重新打印
+			againPrinter:function(xsBill){
+				console.log("进入到打印了",xsBill)
+				var that = this;
+				//xsBill = "2214055034000983";
+				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"' order by XSDATE desc";
+				db.get().executeQry(sql, "数据查询中", function(res) {
+					let billStr = res.msg[0].BILLSTR;
+					console.log("重打数据:",res.msg[0].BILLSTR);
+					//初始化打印机
+					var command = esc.jpPrinter.createNew();
+					command.addCotent(billStr);
+					console.log("重新打印格式记录", command.getData());
+					that.prepareSend(command.getData()); //准备发送数据
+				}, function(err) {
+					console.log("获取重新打印数据出错:", err);
+					uni.showToast({
+						icon: 'error',
+						title: "获取重新打印数据出错"
+					})
+				});
+			},
+			//打印二维码事件
+			printPhoto: function() {
+				//打印bitmap，图片内容不建议太大，小程序限制传输的字节数为20byte
+				var that = this;
+				var canvasWidth = that.qrCodeWidth;
+				var canvasHeight = that.qrCodeHeight;
+				var command = esc.jpPrinter.createNew();
+				command.init(); //初始化打印机
+			
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: canvasWidth,
+					height: canvasHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+					}
+				});
+			},
+			//打印Logo事件
+			printJPGPhoto: function() {
+				var that = this;
+				var canvasWidth = that.jpgWidth;
+				var canvasHeight = that.jpgHeight; //抖动处理JPG图片
+			
+				const cfg = {
+					x: 0,
+					y: 0,
+					width: canvasWidth,
+					height: canvasHeight
+				};
+				uni.canvasGetImageData({
+					canvasId: "canvasLogo",
+					...cfg,
+					success: res => {
+						//const data = xprinter_util.convertToGrayscale(res.data)
+						const data = xprinter_util.convertToMonoImage(res.width, res.height, res.data, true);
+						uni.canvasPutImageData({
+							canvasId: "canvasLogo",
+							data,
+							...cfg,
+							success: res => {
+								console.log(res);
+								console.log("deal graphic width: " + cfg.width);
+								console.log("deal graphic width: " + cfg.height);
+								that.printerJPG();
+							},
+							fail: err => {
+								console.error(err);
+							}
+						});
+					},
+					fail: err => {
+						console.error(err);
+					}
+				});
+			},
+			printerJPG: function() {
+				var that = this;
+				var canvasWidth = that.jpgWidth;
+				var canvasHeight = that.jpgHeight;
+				var command = esc.jpPrinter.createNew();
+				command.init(); //初始化打印机
+			
+				uni.canvasGetImageData({
+					canvasId: "canvasLogo",
+					x: 0,
+					y: 0,
+					width: canvasWidth,
+					height: canvasHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+					}
+				});
+			},
+			//准备发送，根据每次发送字节数来处理分包数量
+			prepareSend: function(buff) {
+				console.log("prepareSend 开始")
+				var that = this;
+				var time = that.oneTimeData;
+				var looptime = parseInt(buff.length / time);
+				var lastData = parseInt(buff.length % time); 
+			
+				that.setData({
+					looptime: looptime + 1,
+					lastData: lastData,
+					currentTime: 1
+				});
+				that.Send(buff);
+			},
+			// 添加数据
+			addData(xsBill,xsDate,billStr) {
+				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '",' + billStr + ')';
+				db.get().executeDml(addSql, "执行中", (res) => {
+					console.log("sql 执行结果：", res);
+				});	
+			},
+			//查询打印机状态
+			queryStatus: function() {
+				var that = this;
+				var buf;
+				var dateView;
+				/*
+				  n = 1：传送打印机状态
+				  n = 2：传送脱机状态
+				  n = 3：传送错误状态
+				  n = 4：传送纸传感器状态
+				*/
+				buf = new ArrayBuffer(3);
+				dateView = new DataView(buf);
+				dateView.setUint8(0, 16);
+				dateView.setUint8(1, 4);
+				dateView.setUint8(2, 2);
+				uni.writeBLECharacteristicValue({
+					deviceId: app.globalData.BLEInformation.deviceId,
+					serviceId: app.globalData.BLEInformation.writeServiceId,
+					characteristicId: app.globalData.BLEInformation.writeCharaterId,
+					value: buf,
+					success: function(res) {
+						console.log("发送成功");
+						that.setData({
+							isQuery: true
+						});
+					},
+					fail: function(e) {
+						uni.showToast({
+							title: "发送失败",
+							icon: "none"
+						}); //console.log(e)
+			
+						return;
+					},
+					complete: function() {}
+				});
+				uni.notifyBLECharacteristicValueChange({
+					deviceId: app.globalData.BLEInformation.deviceId,
+					serviceId: app.globalData.BLEInformation.notifyServiceId,
+					characteristicId: app.globalData.BLEInformation.notifyCharaterId,
+					state: true,
+					success: function(res) {
+						uni.onBLECharacteristicValueChange(function(r) {
+							console.log(
+								`characteristic ${r.characteristicId} has changed, now is ${r}`
+								);
+							var result = xprinter_util.ab2hex(r.value);
+							console.log("返回" + result);
+							var tip = "";
+			
+							if (result == 12) {
+								//正常
+								tip = "正常";
+							} else if (result == 32) {
+								//缺纸
+								tip = "缺纸";
+							} else if (result == 36) {
+								//开盖、缺纸
+								tip = "开盖、缺纸";
+							} else if (result == 16) {
+								tip = "开盖";
+							} else if (result == 40) {
+								//其他错误
+								tip = "其他错误";
+							} else {
+								//未处理错误
+								tip = "未知错误";
+							}
+							 uni.showModal({
+							 	title: "打印机状态",
+							 	content: tip,
+							 	showCancel: false
+							 });
+						});
+					},
+					fail: function(e) {
+						uni.showModal({
+							title: "打印机状态",
+							content: "获取失败",
+							showCancel: false
+						});
+						console.log(e);
+					},
+					complete: function(e) {
+						that.setData({
+							isQuery: false
+						});
+						console.log("执行完成");
+					}
+				});
+			},
+			//分包发送
+			Send: function(buff) {
+				var that = this;
+				var currentTime = that.currentTime;
+				var loopTime = that.looptime;
+				var lastData = that.lastData;
+				var onTimeData = that.oneTimeData;
+				var printNum = that.printerNum;
+				var currentPrint = that.currentPrint;
+				var buf;
+				var dataView;
+			
+				if (currentTime < loopTime) {
+					buf = new ArrayBuffer(onTimeData);
+					dataView = new DataView(buf);
+			
+					for (var i = 0; i < onTimeData; ++i) {
+						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
+					}
+				} else {
+					buf = new ArrayBuffer(lastData);
+					dataView = new DataView(buf);
+			
+					for (var i = 0; i < lastData; ++i) {
+						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
+					}
+				}
+				 console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
+			
+				uni.writeBLECharacteristicValue({
+					deviceId: app.globalData.BLEInformation.deviceId,
+					serviceId: app.globalData.BLEInformation.writeServiceId,
+					characteristicId: app.globalData.BLEInformation.writeCharaterId,
+					value: buf,
+					success: function(res) {
+						if (currentTime <= loopTime) {
+			
+						} else {
+							uni.showToast({
+								title: "已打印第" + currentPrint + "张成功"
+							});
+						} //console.log(res)
+					},
+					fail: function(e) {
+						uni.showToast({
+							title: "打印第" + currentPrint + "张失败",
+							icon: "none"
+						}); //console.log(e)
+					},
+					complete: function() {
+						currentTime++;
+			
+						if (currentTime <= loopTime) {
+							that.setData({
+								currentTime: currentTime
+							});
+							that.Send(buff);
+						} else {
+							if (currentPrint == printNum) {
+								that.setData({
+									looptime: 0,
+									lastData: 0,
+									currentTime: 1,
+									isReceiptSend: false,
+									currentPrint: 1
+								});
+							} else {
+								currentPrint++;
+								that.setData({
+									currentPrint: currentPrint,
+									currentTime: 1
+								});
+								that.Send(buff);
+							}
+						}
+					}
+				});
+			},
+			//更改打印字节数
+			buffBindChange: function(res) {
+				var index = res.detail.value;
+				var time = this.buffSize[index];
+				this.setData({
+					buffIndex: index,
+					oneTimeData: time
+				});
+			},
+			//更改打印份数
+			printNumBindChange: function(res) {
+				var index = res.detail.value;
+				var num = this.printNum[index];
+				this.setData({
+					printNumIndex: index,
+					printerNum: num
+				});
 			}
 		},
 		created() {
@@ -1428,5 +2045,10 @@
 		display: inline-flex;
 		flex-direction: row;
 		align-items: center;
+	}
+	.canvasdiv{
+		width: 0px;
+		height: 0px;
+		visibility: hidden;
 	}
 </style>
