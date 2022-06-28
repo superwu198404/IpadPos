@@ -695,16 +695,16 @@
 				this.SALE3Init(this.sale3_arr);
 			},
 			//SALE001 初始化
-			SALE1Init: function(obj) {
+			SALE1Init: function() {
 				if (this.isRefund)
-					this.sale1_obj = obj ? Object.assign({}, obj) : {};
+					this.sale1_obj = this.sale1_obj ? Object.assign({}, this.sale1_obj) : {};
 				console.log("SALE1 初始化完毕！", this.sale1_obj)
+				this.sale1_obj = {};//重置此项	
 			},
 			//SALE002 初始化、处理
-			SALE2Init: function(arr) {
+			SALE2Init: function() {
 				if (this.isRefund) {
-					console.log("商品信息循环前：", this.Products);
-					this.Products = arr?.map((function(i) {
+					this.Products = this.sale2_arr?.map((function(i) {
 						return {
 							PLID: i.PLID,
 							SPID: i.SPID,
@@ -721,11 +721,12 @@
 					this.refundAmountCount(); //退款金额计算
 				}
 				console.log("SALE2 初始化完毕！", this.Products)
+				this.sale2_arr = [];//重置此项
 			},
 			//SALE003 初始化、处理
-			SALE3Init: function(arr) {
+			SALE3Init: function() {
 				if (this.isRefund) {
-					this.RefundList = arr?.map((function(i) { //将sale3的数据转为页面适用的格式
+					this.RefundList = this.sale3_arr?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
 							bill: `${i.BILL}_${i.NO}`,
@@ -741,6 +742,7 @@
 					}).bind(this));
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
+				this.sale3_arr = [];//重置此项
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
