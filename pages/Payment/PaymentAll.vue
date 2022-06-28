@@ -699,7 +699,7 @@
 				if (this.isRefund)
 					this.sale1_obj = this.sale1_obj ? Object.assign({}, this.sale1_obj) : {};
 				console.log("SALE1 初始化完毕！", this.sale1_obj)
-				this.sale1_obj = {};//重置此项	
+				this.sale1_obj = {}; //重置此项	
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function() {
@@ -721,7 +721,7 @@
 					this.refundAmountCount(); //退款金额计算
 				}
 				console.log("SALE2 初始化完毕！", this.Products)
-				this.sale2_arr = [];//重置此项
+				this.sale2_arr = []; //重置此项
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function() {
@@ -742,7 +742,7 @@
 					}).bind(this));
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
-				this.sale3_arr = [];//重置此项
+				this.sale3_arr = []; //重置此项
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -759,10 +759,11 @@
 					});
 					return;
 				}
-				console.log("RefundList-Before:",this.RefundList);
+				console.log("RefundList-Before:", this.RefundList);
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
+						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 					} else {
@@ -774,7 +775,8 @@
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no, //退款单号
 									refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
-									total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
+									total_money: (Number(refundInfo.amount) * 100).toFixed(
+										0) //退款总金额（兼容微信）
 								}, (function(err) { //如果发生异常（catch）
 									// catch code...
 								}).bind(that),
@@ -799,8 +801,8 @@
 						}
 					}
 				}).bind(this));
-				console.log("RefundList-After:",this.RefundList);
-				this.refundAmountCount();//重新计算
+				console.log("RefundList-After:", this.RefundList);
+				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
 					if (res.length > 0)
 						that.CreateDBData((res) => {
@@ -862,11 +864,13 @@
 					info = this.PayWayList.find(i => i.type === type);
 				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
 				let XZZF = util.getStorage("XZZF");
+				let pt = this.PayTypeJudgment();
 				console.log("限制支付集合数据：", XZZF);
 				console.log("当前支付集合：", this.PayList);
-				if (XZZF && XZZF.length > 0 && XZZF.indexOf(this.PayTypeJudgment()) >= 0) {//如果被限制了 则进行判断是否有过支付
+				console.log("当前支付类型：", pt);
+				if (XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) { //如果被限制了 则进行判断是否有过支付
 					let obj = this.PayList.find((r) => {
-						return XZZF.indexOf(r.type) >= 0
+						return r.type == pt;
 					})
 					if (obj) {
 						uni.showToast({
@@ -877,13 +881,6 @@
 						return;
 					}
 				}
-				// if (this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
-				// 	uni.showToast({
-				// 		title: "已存在同类型的支付方式!"
-				// 	});
-				// 	this.authCode = '';
-				// 	return;
-				// }
 				//this.authCode = ""; //避免 authCode 重复使用
 				_pay.PaymentAll(this.PayTypeJudgment(), payAfter, (function(result) {
 					console.log("支付结果：", result);
@@ -1273,7 +1270,7 @@
 						icon: "error"
 					});
 				}
-				this.refundAmountCount();//重新计算
+				this.refundAmountCount(); //重新计算
 			},
 			//单笔订单重试
 			singlePayRetry: function(fkid, trade_no) {

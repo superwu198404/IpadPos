@@ -396,6 +396,11 @@
 				});
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
+				
+				await common.Query(`select BILL from sale001`).then((function(res){
+					this.input.bills = res.map(i => i.BILL);
+					console.log("BILLS:",this.input.bills)
+				}).bind(this));
 			}
 		},
 		//接收上个页面传入的参数
@@ -406,11 +411,6 @@
 			this.refreshProduct();
 			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
-			
-			common.Query(`select BILL from sale001`).then((function(res){
-				this.input.bills = res.map(i => i.BILL);
-				console.log("BILLS:",this.input.bills)
-			}).bind(this));
 			
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {

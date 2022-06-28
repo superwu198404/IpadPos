@@ -28,7 +28,7 @@
 			PayInfo: [], //支付规则
 			CodeRule: {},
 			PZCS: { //档案配置参数
-				YN_ZFBKBQ: "N"
+				YN_ZFBKBQ: "N" 
 
 			},
 			POSCS: [{ //POS参数组 测试用
