@@ -821,6 +821,7 @@
 						}
 					})
 				}
+				this.authCode = "";//避免 authCode 重复使用
 			},
 			//支付处理入口
 			PayHandle: function() {
@@ -855,7 +856,7 @@
 					uni.showToast({
 						title: "支付失败!原因：" + error.msg
 					});
-					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
+					// this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
