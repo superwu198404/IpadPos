@@ -411,11 +411,6 @@
 			this.refund_no = this.$store.state.trade;
 			// this.refund_no = "K0101QT2122628193555279";
 			
-			common.Query(`select BILL from sale001`).then((function(res){
-				this.input.bills = res.map(i => i.BILL);
-				console.log("BILLS:",this.input.bills)
-			}).bind(this));
-			
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
 				this.hyinfo = info;
