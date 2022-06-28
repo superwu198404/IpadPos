@@ -116,6 +116,11 @@
 				couponlst: []
 			}
 		},
+		watch:{
+			numbers:function(n,o){
+				uni.setStorageSync("hyid",n);
+			}
+		},
 		methods: {
 			close: function() {
 				this.$refs['popup'].close();
@@ -136,6 +141,7 @@
 							that.hyinfo = JSON.parse(res.data);
 							that.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
+							uni.setStorageSync("hyinfo",that.hyinfo);
 							// console.log("会员信息：", getApp().globalData.hyinfo.hyId);
 							//查询优惠券信息
 							// let No;
@@ -213,7 +219,7 @@
 			}
 		},
 		onLoad() {
-
+			this.numbers = uni.getStorageSync("hyid");
 		}
 	}
 </script>

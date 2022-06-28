@@ -865,7 +865,7 @@
 			//创建支付记录
 			orderGenarator: function(payload, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
-				console.log("券请求返回结果[result]：", result);
+				console.log("请求返回结果[result]：", result);
 				if (this.currentPayType === "COUPON") { //如果是券支付
 					let couponAmount = result.voucher.denomination; //获取券的面额
 					let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
@@ -882,7 +882,7 @@
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
 							amount: -((couponAmount - payload.money) / 100).toFixed(
-								2), // 券面额 - 支付金额 = 弃用金额
+							2), // 券面额 - 支付金额 = 弃用金额
 							fail
 						}, result));
 					} else //如果券面额未小于
@@ -1000,23 +1000,25 @@
 			paramInit: function() {
 				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
-				this.Products = prev_page_param.Products;
-				this.Discount = prev_page_param.Discount; //折扣信息
-				this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
-				console.log("PayWayList:", this.PayWayList)
-				this.hyinfo = prev_page_param.hyinfo;
-				this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
-				this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
-				this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
-				this.out_trade_no = this.out_trade_no_old; //子单号
-				this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
-				this.sale1_obj = prev_page_param?.sale1_obj; //sale1数据
-				this.sale2_arr = prev_page_param?.sale2_arr; //sale2数据
-				this.sale3_arr = prev_page_param?.sale3_arr; //sale3数据
-				this.XS_TYPE = prev_page_param.XS_TYPE;
-				this.BILL_TYPE = prev_page_param.BILL_TYPE;
-				this.RefundDataHandle();
-				//this.authCode = prev_page_param.authCode;
+				if (prev_page_param) {
+					this.Products = prev_page_param.Products;
+					this.Discount = prev_page_param.Discount; //折扣信息
+					this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+					console.log("PayWayList:", this.PayWayList)
+					this.hyinfo = prev_page_param.hyinfo;
+					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
+					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
+					this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
+					this.out_trade_no = this.out_trade_no_old; //子单号
+					this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
+					this.sale1_obj = prev_page_param?.sale1_obj; //sale1数据
+					this.sale2_arr = prev_page_param?.sale2_arr; //sale2数据
+					this.sale3_arr = prev_page_param?.sale3_arr; //sale3数据
+					this.XS_TYPE = prev_page_param.XS_TYPE;
+					this.BILL_TYPE = prev_page_param.BILL_TYPE;
+					this.RefundDataHandle();
+					//this.authCode = prev_page_param.authCode;
+				}
 			},
 			//总金额计算
 			priceCount: function() {

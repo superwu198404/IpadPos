@@ -2,24 +2,53 @@
 	<view>
 		<view>
 			<div class="product">
+				<div>商品ID：</div>
+				<div><input v-model="input.fromData.SPID" /></div>
+			</div>
+			<div class="product">
+				<div>商品种类ID：</div>
+				<div><input v-model="input.fromData.PLID" /></div>
+			</div>
+			<div class="product">
 				<div>商品名称：</div>
-				<div><input v-model="input.name" /></div>
+				<div><input v-model="input.fromData.NAME" /></div>
+			</div>
+			<div class="product">
+				<div>商品代码：</div>
+				<div><input v-model="input.fromData.BARCODE" /></div>
+			</div>
+			<div class="product">
+				<div>商品数量：</div>
+				<div><input v-model="input.fromData.QTY" /></div>
+			</div>
+			<div class="product">
+				<div>商品单位：</div>
+				<div><input v-model="input.fromData.UNIT" /></div>
 			</div>
 			<div class="product">
 				<div>商品价格：</div>
-				<div><input v-model="input.amount" /></div>
+				<div><input v-model="input.fromData.PRICE" /></div>
+			</div>
+			<div class="product">
+				<div>商品金额：</div>
+				<div>{{ input.fromData.AMOUNT }}</div>
 			</div>
 			<div class="product">
 				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;"
-					@click="InputProduct()">添加</div>
+					@click="insertProduct()">添加</div>
 			</div>
 		</view>
 		<p>--加购的商品商品信息--</p>
-		<view v-for="(item,index) in Products">
-			<text>{{item.NAME}}</text>-
-			<text>￥{{item.AMOUNT}}</text>-
-			<text>{{item.PRICE}}元/kg</text>-
-			<text>x{{item.QTY}}</text>
+		<view style="max-height: 180px;border: 1px solid gray;overflow-y:auto;">
+			<view v-for="(item,index) in Products" style="margin: 14px 2px;">
+				<text>{{item.NAME}}</text>-
+				<text>￥{{item.AMOUNT}}</text>-
+				<text>{{item.PRICE}}元/kg</text>-
+				<text>x{{item.QTY}}</text>
+				<text><span
+						style="background-color: red;color: white;padding: 2px 4px;border-radius: 5px;margin-left: 10px;"
+						@click="removeProduct(item.ID)">删除</span></text>
+			</view>
 		</view>
 		<view>
 			<text>请输入单号（用于测试退款）：</text>
@@ -40,23 +69,21 @@
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
+	import util from '@/utils/util.js';
 	export default {
 		//变量初始化
 		data() {
 			return {
 				input: {
-					name: "",
-					amount: "",
-					trade_no: "",
-					data: {
-						PLID: Number(new Date()),
-						SPID: Number(new Date()) / 2,
+					fromData: {
+						PLID: "101",
+						SPID: "",
 						UNIT: "个",
-						BARCODE: 'test',
+						BARCODE: '',
 						NAME: "",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
+						PRICE: 1.00,
+						OPRICE: 1.00,
+						AMOUNT: 1.00,
 						QTY: 1
 					}
 				},
@@ -138,6 +165,14 @@
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 
 				refund_no: ""
+			}
+		},
+		watch: {
+			'input.fromData.QTY': function(n, o) {
+				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
+			},
+			'input.fromData.PRICE': function(n, o) {
+				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
 			}
 		},
 		//方法初始化
@@ -294,10 +329,58 @@
 				// 		console.log("数据传输结果：", res1);
 				// 	});
 			},
-			InputProduct: function() {
-				let data = Object.assign({}, this.input.data);
-				data.name = this.input.name;
-				data.AMOUNT = this.input.amount;
+			insertProduct: function() {
+				let product = Object.assign({
+					ID: util.uuid()
+				}, this.input.fromData);
+				let products = uni.getStorageSync("products");
+				products.push(product);
+				uni.setStorageSync("products", products);
+				this.refreshProduct();
+			},
+			removeProduct: function(id) {
+				let products = uni.getStorageSync("products");
+				products.splice(products.findIndex(i => i.ID === id), 1);
+				uni.setStorageSync("products", products);
+				this.refreshProduct();
+			},
+			refreshProduct: function() {
+				let products = uni.getStorageSync("products");
+				if (!products) products = [{
+						PLID: "101",
+						SPID: "10101020",
+						UNIT: "袋",
+						BARCODE: '2222222220',
+						NAME: "超软白土司",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
+					},
+					{
+						PLID: "101",
+						SPID: "10101021",
+						UNIT: "袋",
+						BARCODE: '2222222221',
+						NAME: "你好土司",
+						PRICE: 0.5,
+						OPRICE: 0.5,
+						AMOUNT: 1,
+						QTY: 2
+					},
+					{
+						PLID: "101",
+						SPID: "10101022",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "黄金唱片",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
+					}
+				];
+				this.Products = products;
 			},
 			change: function(e) {
 				this.$showModal({
@@ -317,18 +400,6 @@
 					}
 				});
 			},
-			refund: function() {
-				_pay.Refund("ZFB20", {
-					out_trade_no: this.input.trade_no,
-					out_refund_no: this.input.trade_no,
-					refund_money: 100
-				}, (res) => {
-					console.log("成功：", res)
-				}, (err) => {
-					console.log("错误：", err)
-				});
-			},
-
 			//初始化基础数据
 			InitData: async function() {
 				let that = this;
@@ -358,18 +429,16 @@
 			this.InitData();
 		},
 		onShow() {
-			uni.setStorageSync("products", [{
-				PLID: "101",
-				SPID: "10101020",
-				UNIT: "袋",
-				BARCODE: '2222222220',
-				NAME: "超软白土司",
-				PRICE: 0.01,
-				OPRICE: 0.01,
-				AMOUNT: 0.01,
-				QTY: 1
-			}])
+			this.refreshProduct();
+			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
+
+			let info = uni.getStorageSync("hyinfo");
+			if (info) {
+				this.hyinfo = info;
+				this.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
+				getApp().globalData.hyinfo = that.hyinfo;
+			}
 			// this.refund_no = "K0101QT2122624174159578";
 		},
 		onReady() {

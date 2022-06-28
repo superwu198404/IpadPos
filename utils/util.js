@@ -138,6 +138,11 @@ const utils = {
 		num = parseFloat(num);
 		return (Math.round((num + Number.EPSILON) * Math.pow(10, digit)) / Math.pow(10, digit)).toFixed(digit);
 	},
+	UUID: function() {
+		let func = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		return (func() + func() + "-" + func() + "-" + func() + "-" + func() + "-" + func() + func() +
+			func());
+	},
 	/**
 	 * 系统存值
 	 * @param key: 键
@@ -164,7 +169,7 @@ const utils = {
 			}
 		}
 		return val;
-	},
+	}
 }
 
 export default {
@@ -179,6 +184,7 @@ export default {
 	objKeySort: utils.objKeySort,
 	sleep: utils.sleep,
 	myFixed: utils.myFixed,
+	uuid: utils.UUID,
 	setStorage: utils.setStorage,
 	getStorage: utils.getStorage
 }
