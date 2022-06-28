@@ -71,7 +71,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
 										</view>
-										<text>-{{pay.amount}}￥</text>
+										<text>{{pay.amount}}￥</text>
 									</view>
 								</view>
 								<view class="stills">
@@ -80,7 +80,7 @@
 											<image src="../../images/shouyintai.png" mode="widthFix"></image>
 											还需支付
 										</view>
-										<text>{{ dPayAmount}}￥</text>
+										<text>{{ dPayAmount }}￥</text>
 									</view>
 								</view>
 							</view>
@@ -95,7 +95,7 @@
 											{{ pay.name }}
 										</view>
 										<div class="refund-more-box">
-											<text class="refund-text">-{{pay.amount}}￥</text>
+											<text class="refund-text">{{pay.amount}}￥</text>
 											<div class="refund-reset" @click="singlePayRetry(pay.fkid,pay.bill)">
 												重试
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
@@ -115,7 +115,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>-{{refund.amount}}￥</text>
+										<text>{{refund.amount}}￥</text>
 									</view>
 								</view>
 							</view>
@@ -130,7 +130,7 @@
 											{{ refund.name }}
 										</view>
 										<div class="refund-more-box" @click="singleRetry(refund.bill)">
-											<text class="refund-text">-{{refund.amount}}￥</text>
+											<text class="refund-text">{{refund.amount}}￥</text>
 											<div class="refund-reset">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
@@ -443,7 +443,7 @@
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: (this.Discount + this.SKY_DISCOUNT).toFixed(2), //整单折扣需要加上手工折扣,
+					BILLDISC: Number(this.Discount + this.SKY_DISCOUNT).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
@@ -759,11 +759,10 @@
 					});
 					return;
 				}
+				console.log("RefundList-Before:",this.RefundList);
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
-					console.log(`退款单Item:${JSON.stringify(refundInfo)}`);
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
-						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 					} else {
@@ -775,8 +774,7 @@
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no, //退款单号
 									refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
-									total_money: (Number(refundInfo.amount) * 100).toFixed(
-										0) //退款总金额（兼容微信）
+									total_money: (Number(refundInfo.amount) * 100).toFixed(0) //退款总金额（兼容微信）
 								}, (function(err) { //如果发生异常（catch）
 									// catch code...
 								}).bind(that),
@@ -801,6 +799,8 @@
 						}
 					}
 				}).bind(this));
+				console.log("RefundList-After:",this.RefundList);
+				this.refundAmountCount();//重新计算
 				Promise.all(promises).then((res) => {
 					if (res.length > 0)
 						that.CreateDBData((res) => {
@@ -921,22 +921,14 @@
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
 						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (payload.money / 100).toFixed(2),
+							amount: -(payload.money / 100).toFixed(2),
 							fail,
-						}, result));
-						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
-						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							fkid: excessInfo?.fkid ?? "",
-							name: excessInfo?.name ?? "", // 弃用金额名称
-							amount: -((couponAmount - payload.money) / 100).toFixed(
-								2), // 券面额 - 支付金额 = 弃用金额
-							fail
 						}, result));
 					} else //如果券面额未小于
 					{
 						this.yPayAmount += fail ? 0 : (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (couponAmount / 100).toFixed(2),
+							amount: -(couponAmount / 100).toFixed(2),
 							fail
 						}, result));
 					}
@@ -944,7 +936,7 @@
 				{
 					this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: (payload.money / 100).toFixed(2),
+						amount: -(payload.money / 100).toFixed(2),
 						fail
 					}, result));
 				}
@@ -1093,7 +1085,7 @@
 				var prev_page_param = this.$store.state.location;
 				if (prev_page_param) {
 					this.Products = prev_page_param.Products;
-					this.Discount = prev_page_param.Discount; //折扣信息
+					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
 					this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 					console.log("PayWayList:", this.PayWayList)
 					this.hyinfo = prev_page_param.hyinfo;
@@ -1118,7 +1110,7 @@
 				this.Products.forEach(product => total += product.AMOUNT);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = util.myFixed(total, 2) % 1;
-				this.totalAmount = total.toFixed(2) - this.SKY_DISCOUNT; //舍弃分数位
+				this.totalAmount = Number(total.toFixed(2) - this.SKY_DISCOUNT).toFixed(2); //舍弃分数位
 				this.Products.forEach(function(item, index) {
 					item.SKYDISCOUNT = util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2); //分摊的手工折扣额
 				});
@@ -1129,21 +1121,21 @@
 				this.refundView.totalAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => i.fkid !== "ZCV1").map(i => count += i.amount); //将金额加起来
-					return -count.toFixed(2);
+					return (-count).toFixed(2);
 				}).bind(this))();
 				//实退金额
 				this.refundView.actualAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => !i.fail && i.fkid !== "ZCV1").map(i => count += i
 						.amount); //将金额加起来
-					return -count.toFixed(2);
+					return (-count).toFixed(2);
 				}).bind(this))();
 				//待退款金额
 				this.refundView.debtAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => i.fail && i.fkid !== "ZCV1").map(i => count += i
 						.amount); //将金额加起来
-					return -count.toFixed(2);
+					return (-count).toFixed(2);
 				}).bind(this))();;
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
@@ -1281,6 +1273,7 @@
 						icon: "error"
 					});
 				}
+				this.refundAmountCount();//重新计算
 			},
 			//单笔订单重试
 			singlePayRetry: function(fkid, trade_no) {

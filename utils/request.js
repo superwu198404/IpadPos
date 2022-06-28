@@ -351,6 +351,7 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 	if (finallyfun) def(finallyfun, res);
 	//将所有回调执行结果，通过回调传递到外部
 	if (resultsFunc) def(resultsFunc, results);
+	return results;//返回总执行结果集合
 }
 
 var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
