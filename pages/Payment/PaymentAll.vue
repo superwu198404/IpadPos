@@ -153,13 +153,13 @@
 								@click="clickPayType($event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
-								<label>
+								<label class="poly-box">
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 										</image>
 									</view>
 								</label>
-								<label>
+								<label class="poly-text">
 									<text>支持</text>
 									<text v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										,{{item.name}}</text>
@@ -755,10 +755,7 @@
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
 					console.log(`退款单Item:${JSON.stringify(refundInfo)}`);
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					let payWayFkid = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.fkid;
-					console.log(`type:${payWayType},fkid:${payWayFkid}`);
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
-						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 					} else {
@@ -848,6 +845,7 @@
 						}
 					})
 				}
+				this.authCode = "";//避免 authCode 重复使用
 			},
 			//支付处理入口
 			PayHandle: function() {
@@ -882,7 +880,7 @@
 					uni.showToast({
 						title: "支付失败!原因：" + error.msg
 					});
-					this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
+					// this.orderGenarator(payAfter, error, true); //支付记录处理(失败)
 					this.authCode = ""; //避免同一个付款码多次使用
 				}).bind(this))
 			},
