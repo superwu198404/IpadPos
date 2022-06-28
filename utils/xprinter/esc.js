@@ -640,7 +640,7 @@ var jpPrinter = {
      */
     jpPrinter.setBitmap = function (res) {
       //参数，画布的参数
-      console.log('画布的参数',res);
+      //console.log('画布的参数',res);
       convertToSingleBitmap(res); // 转成单张位图
       //convertToMultiBitmap(res) // 转成多张位图
 
@@ -649,13 +649,13 @@ var jpPrinter = {
 	
 	jpPrinter.setBitmap1 = function (res) {
 	  //参数，画布的参数
-	  console.log('画布的参数',res);
+	  //console.log('画布的参数',res);
 	  convertToSingleBitmapNew(res); // 转成单张位图
 	  console.log(data);
 	};
 	
 	jpPrinter.setBitmap2 = function (res) { //参数，画布的参数
-	      console.log(res)
+	      //console.log(res)
 	      var width = parseInt((res.width + 7) / 8 * 8 / 8)
 	      var height = res.height;
 	      var time = 1;
@@ -1142,7 +1142,7 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(1); //设置居左	
 		jpPrinter.setText("欢迎光临");
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 		
 		switch (type) {
 		  case printerType[0]:
@@ -1185,32 +1185,32 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(xpType + "小票: " + data.khName);
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(xpType + "时间: " + data.xsDate);
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser);
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("单号: "+data.xsBill + "\n");
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setText("单号: "+ data.bill + "\n");
+		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("商品名称       数量  单价  金额  折扣  ");
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setPrint(); //打印并换行
 		
 		//商品信息
 		data.goodsList.forEach((item, i) => {
@@ -1218,14 +1218,14 @@ var jpPrinter = {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen(item.spname, 15));
-			//jpPrinter.setPrint(); //打印并换行
+			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty, 6) + util
-				.getComputedByteLen(item.price, 6) + util.getComputedByteLen(item.amount, 6) + util.getComputedByteLen(
-					item.discount, 6));
-			//jpPrinter.setPrint(); //打印并换行
+			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
+				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
+					item.discount.toString(), 6));
+			jpPrinter.setPrint(); //打印并换行
 		});
 	}
 	
@@ -1272,13 +1272,13 @@ var jpPrinter = {
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + data.lineNum + " 数量:" + data.qty + " 应付金额:" + data.payableAmount);
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setText("条目:" + data.lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("已优惠金额:" + data.discountedAmount + " 原金额:" + data.originalAmount);
-		//jpPrinter.setPrint(); //打印并换行
+		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setPrint(); //打印并换行
 	}
 	
 	//付款方式
@@ -1327,18 +1327,18 @@ var jpPrinter = {
 		data.sale3List.forEach((item, i) => {		
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item.fkid + ":" + item.amt);
-			//jpPrinter.setPrint(); //打印并换行
+			jpPrinter.setText(item.fkid + ":" + item.amt.toString());
+			jpPrinter.setPrint(); //打印并换行
 		});
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("支付:" + data.payTotal);
+		jpPrinter.setText("支付:" + data.payTotal.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("找零:" + data.change);
+		jpPrinter.setText("找零:" + data.change.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
