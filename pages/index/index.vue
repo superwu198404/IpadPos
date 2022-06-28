@@ -369,7 +369,7 @@
 				//生成支付规则数据
 				await common.InitZFRULE();
 				// await common.GetJHZF();
-				// that.KHID = "K0101QT2";
+				that.KHID = "K0101QT2";
 				//获取支付方式
 				await that.GetPayWay(that.KHID);
 				//初始化配置参数

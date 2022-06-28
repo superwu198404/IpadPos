@@ -9,7 +9,7 @@
 			brand: "KG",
 			store: {
 				GSID: "027001",
-				KHID: "K0101QT2",//"K200QTD005",
+				KHID: "K200QTD005",//"K0101QT2",
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "123",

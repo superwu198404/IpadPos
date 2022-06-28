@@ -394,6 +394,7 @@ page {
 
 .pattern {
 	display: flex;
+	position: relative;
 	align-items: center;
 	justify-content: space-between;
 	border: 1px solid #D3D3D3;
@@ -639,5 +640,19 @@ uni-button:after {
 .limit text {
 	color: #B0B0B0;
 	font-size: 26rpx;
+}
+
+.poly-box{
+	display: inline-flex !important;
+	flex-wrap: wrap !important;
+	justify-content:center !important;
+	gap: 10px;
+	align-items: center !important;
+	width: 60% !important;
+}
+
+.poly-text{
+	position: absolute;
+	bottom: 8%;
 }
 
