@@ -1590,7 +1590,7 @@
 						command.setBitmap(res);
 						command.setPrint();
 						
-						that.addData(bill,xsDate,command.getData());
+						//that.addData(bill,xsDate,command.getData());
 						that.prepareSend(command.getData()); //发送数据
 					},
 					complete: function(res) {
@@ -1602,7 +1602,7 @@
 							title: "获取画布数据失败",
 							icon: "none"
 						});
-						that.addData(bill,xsDate,command.getData());
+						//that.addData(bill,xsDate,command.getData());
 					    that.prepareSend(command.getData()); //发送数据
 					}
 				});

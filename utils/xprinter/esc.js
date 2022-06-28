@@ -640,7 +640,7 @@ var jpPrinter = {
      */
     jpPrinter.setBitmap = function (res) {
       //参数，画布的参数
-      console.log('画布的参数',res);
+      //console.log('画布的参数',res);
       convertToSingleBitmap(res); // 转成单张位图
       //convertToMultiBitmap(res) // 转成多张位图
 
@@ -649,13 +649,13 @@ var jpPrinter = {
 	
 	jpPrinter.setBitmap1 = function (res) {
 	  //参数，画布的参数
-	  console.log('画布的参数',res);
+	  //console.log('画布的参数',res);
 	  convertToSingleBitmapNew(res); // 转成单张位图
 	  console.log(data);
 	};
 	
 	jpPrinter.setBitmap2 = function (res) { //参数，画布的参数
-	      console.log(res)
+	      //console.log(res)
 	      var width = parseInt((res.width + 7) / 8 * 8 / 8)
 	      var height = res.height;
 	      var time = 1;
