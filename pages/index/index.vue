@@ -60,7 +60,7 @@
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<button @click="Test(2)">测试一下</button>
+		<!-- <button @click="Test(2)">测试一下</button> -->
 	</view>
 </template>
 <script>
@@ -105,7 +105,61 @@
 				sale2_arr: [],
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
-				Products: [], //商品信息
+				Products: [{
+						PLID: "101",
+						SPID: "10101020",
+						UNIT: "袋",
+						BARCODE: '2222222220',
+						NAME: "超软白土司",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
+					},
+					{
+						PLID: "101",
+						SPID: "10101021",
+						UNIT: "袋",
+						BARCODE: '2222222221',
+						NAME: "你好土司",
+						PRICE: 0.5,
+						OPRICE: 0.5,
+						AMOUNT: 1,
+						QTY: 2
+					},
+					{
+						PLID: "101",
+						SPID: "10101022",
+						UNIT: "袋",
+						BARCODE: '2222222222',
+						NAME: "黄金唱片",
+						PRICE: 0.01,
+						OPRICE: 0.01,
+						AMOUNT: 0.01,
+						QTY: 1
+					},
+					{
+						PLID: "107",
+						SPID: "10701001",
+						UNIT: "杯",
+						BARCODE: '2222222223',
+						NAME: "焦糖玛奇朵",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
+						QTY: 1
+					}, {
+						PLID: "107",
+						SPID: "10701002",
+						UNIT: "杯",
+						BARCODE: '2222222224',
+						NAME: "法式香草拿铁",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
+						QTY: 1
+					}
+				], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
@@ -136,25 +190,8 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							// if (res.msg[i].JKSNAME == 'SZQ') {
-							// 	obj.value = "COUPON";
-							// 	//obj.type = "qzf";
-							// }
-							// if (res.msg[i].JKSNAME == 'ZFB_CLZF') {
-							// 	obj.value = "ALI";
-							// 	//obj.type = "AliPayService";
-							// }
-							// if (res.msg[i].JKSNAME == 'HYK') {
-							// 	obj.value = "CARD";
-							// 	//obj.type = "dzk";
-							// }
-							// if (res.msg[i].JKSNAME == 'WX_CLZF') {
-							// 	obj.value = "WX";
-							// 	//obj.type = "WxPayService";
-							// }
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
-								//obj.value= "ce";
 							}
 							that.PayWayList.push(obj);
 						}
@@ -363,7 +400,7 @@
 					}
 				});
 			},
-			//初始化支付数据
+			//初始化基础数据
 			InitData: async function() {
 				let that = this;
 				//生成支付规则数据
@@ -383,6 +420,8 @@
 					console.log("最终支付规则数据：", getApp().globalData.PayInfo);
 					console.log("最终支付规则数据1：", getApp().globalData.CodeRule);
 				});
+				//获取POS参数组数据
+				await common.GetPOSCS(that.KHID);
 			}
 		},
 		//接收上个页面传入的参数

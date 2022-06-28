@@ -576,7 +576,7 @@ var render = function() {
             "div",
             { staticClass: _vm._$g(2, "sc"), attrs: { _i: 2 } },
             [
-              _c("div", { attrs: { _i: 3 } }, [_vm._v("商品名称：")]),
+              _c("div", { attrs: { _i: 3 } }, [_vm._v("商品ID：")]),
               _c(
                 "div",
                 { attrs: { _i: 4 } },
@@ -588,7 +588,7 @@ var render = function() {
                       callback: function($$v) {
                         _vm.$handleVModelEvent(5, $$v)
                       },
-                      expression: "input.name"
+                      expression: "input.fromData.SPID"
                     }
                   })
                 ],
@@ -601,7 +601,7 @@ var render = function() {
             "div",
             { staticClass: _vm._$g(6, "sc"), attrs: { _i: 6 } },
             [
-              _c("div", { attrs: { _i: 7 } }, [_vm._v("商品价格：")]),
+              _c("div", { attrs: { _i: 7 } }, [_vm._v("商品种类ID：")]),
               _c(
                 "div",
                 { attrs: { _i: 8 } },
@@ -613,7 +613,7 @@ var render = function() {
                       callback: function($$v) {
                         _vm.$handleVModelEvent(9, $$v)
                       },
-                      expression: "input.amount"
+                      expression: "input.fromData.PLID"
                     }
                   })
                 ],
@@ -626,6 +626,140 @@ var render = function() {
             "div",
             { staticClass: _vm._$g(10, "sc"), attrs: { _i: 10 } },
             [
+              _c("div", { attrs: { _i: 11 } }, [_vm._v("商品名称：")]),
+              _c(
+                "div",
+                { attrs: { _i: 12 } },
+                [
+                  _c("v-uni-input", {
+                    attrs: { _i: 13 },
+                    model: {
+                      value: _vm._$g(13, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(13, $$v)
+                      },
+                      expression: "input.fromData.NAME"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(14, "sc"), attrs: { _i: 14 } },
+            [
+              _c("div", { attrs: { _i: 15 } }, [_vm._v("商品代码：")]),
+              _c(
+                "div",
+                { attrs: { _i: 16 } },
+                [
+                  _c("v-uni-input", {
+                    attrs: { _i: 17 },
+                    model: {
+                      value: _vm._$g(17, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(17, $$v)
+                      },
+                      expression: "input.fromData.BARCODE"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
+            [
+              _c("div", { attrs: { _i: 19 } }, [_vm._v("商品数量：")]),
+              _c(
+                "div",
+                { attrs: { _i: 20 } },
+                [
+                  _c("v-uni-input", {
+                    attrs: { _i: 21 },
+                    model: {
+                      value: _vm._$g(21, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(21, $$v)
+                      },
+                      expression: "input.fromData.QTY"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(22, "sc"), attrs: { _i: 22 } },
+            [
+              _c("div", { attrs: { _i: 23 } }, [_vm._v("商品单位：")]),
+              _c(
+                "div",
+                { attrs: { _i: 24 } },
+                [
+                  _c("v-uni-input", {
+                    attrs: { _i: 25 },
+                    model: {
+                      value: _vm._$g(25, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(25, $$v)
+                      },
+                      expression: "input.fromData.UNIT"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(26, "sc"), attrs: { _i: 26 } },
+            [
+              _c("div", { attrs: { _i: 27 } }, [_vm._v("商品价格：")]),
+              _c(
+                "div",
+                { attrs: { _i: 28 } },
+                [
+                  _c("v-uni-input", {
+                    attrs: { _i: 29 },
+                    model: {
+                      value: _vm._$g(29, "v-model"),
+                      callback: function($$v) {
+                        _vm.$handleVModelEvent(29, $$v)
+                      },
+                      expression: "input.fromData.PRICE"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(30, "sc"), attrs: { _i: 30 } },
+            [
+              _c("div", { attrs: { _i: 31 } }, [_vm._v("商品金额：")]),
+              _c("div", { attrs: { _i: 32 } }, [_vm._v(_vm._$g(32, "t0-0"))])
+            ],
+            1
+          ),
+          _c(
+            "div",
+            { staticClass: _vm._$g(33, "sc"), attrs: { _i: 33 } },
+            [
               _c(
                 "div",
                 {
@@ -636,7 +770,7 @@ var render = function() {
                     padding: "2px 3px",
                     "margin-left": "5px"
                   },
-                  attrs: { _i: 11 },
+                  attrs: { _i: 34 },
                   on: {
                     click: function($event) {
                       return _vm.$handleViewEvent($event)
@@ -651,49 +785,91 @@ var render = function() {
         ],
         1
       ),
-      _c("p", { attrs: { _i: 12 } }, [_vm._v("--加购的商品商品信息--")]),
-      _vm._l(_vm._$g(13, "f"), function(item, index, $20, $30) {
-        return _c(
-          "v-uni-view",
-          { key: item, attrs: { _i: "13-" + $30 } },
-          [
-            _c("v-uni-text", { attrs: { _i: "14-" + $30 } }, [
-              _vm._v(_vm._$g("14-" + $30, "t0-0"))
-            ]),
-            _vm._v("-"),
-            _c("v-uni-text", { attrs: { _i: "15-" + $30 } }, [
-              _vm._v("￥" + _vm._$g("15-" + $30, "t0-0"))
-            ]),
-            _vm._v("-"),
-            _c("v-uni-text", { attrs: { _i: "16-" + $30 } }, [
-              _vm._v(_vm._$g("16-" + $30, "t0-0") + "元/kg")
-            ]),
-            _vm._v("-"),
-            _c("v-uni-text", { attrs: { _i: "17-" + $30 } }, [
-              _vm._v("x" + _vm._$g("17-" + $30, "t0-0"))
-            ])
-          ],
-          1
-        )
-      }),
+      _c("p", { attrs: { _i: 35 } }, [_vm._v("--加购的商品商品信息--")]),
       _c(
         "v-uni-view",
-        { attrs: { _i: 18 } },
+        {
+          staticStyle: {
+            "max-height": "180px",
+            border: "1px solid gray",
+            "overflow-y": "auto"
+          },
+          attrs: { _i: 36 }
+        },
+        _vm._l(_vm._$g(37, "f"), function(item, index, $20, $30) {
+          return _c(
+            "v-uni-view",
+            {
+              key: item,
+              staticStyle: { margin: "14px 2px" },
+              attrs: { _i: "37-" + $30 }
+            },
+            [
+              _c("v-uni-text", { attrs: { _i: "38-" + $30 } }, [
+                _vm._v(_vm._$g("38-" + $30, "t0-0"))
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "39-" + $30 } }, [
+                _vm._v("￥" + _vm._$g("39-" + $30, "t0-0"))
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "40-" + $30 } }, [
+                _vm._v(_vm._$g("40-" + $30, "t0-0") + "元/kg")
+              ]),
+              _vm._v("-"),
+              _c("v-uni-text", { attrs: { _i: "41-" + $30 } }, [
+                _vm._v("x" + _vm._$g("41-" + $30, "t0-0"))
+              ]),
+              _c(
+                "v-uni-text",
+                { attrs: { _i: "42-" + $30 } },
+                [
+                  _c(
+                    "span",
+                    {
+                      staticStyle: {
+                        "background-color": "red",
+                        color: "white",
+                        padding: "2px 4px",
+                        "border-radius": "5px",
+                        "margin-left": "10px"
+                      },
+                      attrs: { _i: "43-" + $30 },
+                      on: {
+                        click: function($event) {
+                          return _vm.$handleViewEvent($event)
+                        }
+                      }
+                    },
+                    [_vm._v("删除")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        }),
+        1
+      ),
+      _c(
+        "v-uni-view",
+        { attrs: { _i: 44 } },
         [
-          _c("v-uni-text", { attrs: { _i: 19 } }, [
+          _c("v-uni-text", { attrs: { _i: 45 } }, [
             _vm._v("请输入单号（用于测试退款）：")
           ]),
           _c(
             "v-uni-text",
-            { attrs: { _i: 20 } },
+            { attrs: { _i: 46 } },
             [
               _c("v-uni-input", {
                 staticStyle: { border: "1px solid gray" },
-                attrs: { type: "text", _i: 21 },
+                attrs: { type: "text", _i: 47 },
                 model: {
-                  value: _vm._$g(21, "v-model"),
+                  value: _vm._$g(47, "v-model"),
                   callback: function($$v) {
-                    _vm.$handleVModelEvent(21, $$v)
+                    _vm.$handleVModelEvent(47, $$v)
                   },
                   expression: "refund_no"
                 }
@@ -707,7 +883,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 22 },
+          attrs: { _i: 48 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -719,7 +895,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 23 },
+          attrs: { _i: 49 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -731,7 +907,7 @@ var render = function() {
       _c(
         "v-uni-button",
         {
-          attrs: { _i: 24 },
+          attrs: { _i: 50 },
           on: {
             click: function($event) {
               return _vm.$handleViewEvent($event)
@@ -739,21 +915,9 @@ var render = function() {
           }
         },
         [_vm._v("录入会员")]
-      ),
-      _c(
-        "v-uni-button",
-        {
-          attrs: { _i: 25 },
-          on: {
-            click: function($event) {
-              return _vm.$handleViewEvent($event)
-            }
-          }
-        },
-        [_vm._v("测试一下")]
       )
     ],
-    2
+    1
   )
 }
 var recyclableRender = false

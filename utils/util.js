@@ -141,7 +141,34 @@ const utils = {
 	UUID: function() {
 		let func = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 		return (func() + func() + "-" + func() + "-" + func() + "-" + func() + "-" + func() + func() +
-		func());
+			func());
+	},
+	/**
+	 * 系统存值
+	 * @param key: 键
+	 * @param val: 值
+	 * @returns string
+	 */
+	setStorage: function(key, val) {
+		if (key) {
+			getApp().globalData[key] = val;
+			uni.setStorageSync(key, val);
+		}
+	},
+	/**
+	 * 系统取值
+	 * @param key: 键
+	 * @returns string
+	 */
+	getStorage: function(key) {
+		let val = null;
+		if (key) {
+			val = getApp().globalData[key];
+			if (!val) {
+				val = uni.getStorageSync(key)
+			}
+		}
+		return val;
 	}
 }
 
@@ -157,5 +184,7 @@ export default {
 	objKeySort: utils.objKeySort,
 	sleep: utils.sleep,
 	myFixed: utils.myFixed,
-	uuid: utils.UUID
+	uuid: utils.UUID,
+	setStorage: utils.setStorage,
+	getStorage: utils.getStorage
 }

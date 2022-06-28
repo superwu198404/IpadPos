@@ -68,6 +68,11 @@
 			// },
 			PZCS: { //档案配置参数
 				YN_ZFBKBQ: "N"
+				
+			},
+			POSCSZ: { //POS参数组
+				YN_ZFBKBQ: "N"
+				
 			},
 			getModel: function() {
 				//获取手机型号

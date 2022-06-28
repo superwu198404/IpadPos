@@ -300,7 +300,9 @@
 					totalAmount: 0,
 					actualAmount: 0,
 					debtAmount: 0
-				}
+				},
+				sale8_obj: {}, //水吧产品对象
+				sale8_arr: [] //水吧产品集合
 			}
 		},
 		watch: {
