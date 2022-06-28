@@ -276,6 +276,17 @@ var QueryRefund = async function(trade) {
 	return datas;
 }
 
+//查询退单所需信息
+var Query = async function(sql) {
+	let data = null
+	await db.get().executeQry(sql, "查询SALE1...", function(res) {
+		data = res.msg;
+	}, function(err) {
+		console.log("查询执行异常:", err);
+	});
+	return data;
+}
+
 //获取档案参数
 var GetPZCS = async function(e, func) {
 	let sql = "select * from dapzcs_nr where id_nr in('YN_ZFBKBQ')";
@@ -400,6 +411,7 @@ export default {
 	TransLiteData,
 	GetPayWay,
 	QueryRefund,
+	Query,
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,

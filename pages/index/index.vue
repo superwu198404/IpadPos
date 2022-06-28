@@ -85,7 +85,8 @@
 						OPRICE: 1.00,
 						AMOUNT: 1.00,
 						QTY: 1
-					}
+					},
+					bills:[]
 				},
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -181,6 +182,12 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
+						that.PayWayList.push({
+							"name": "不可原路退回",
+							"fkid": "ZZ01",
+							"type": "SZQ",
+							"poly": "O"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -399,7 +406,12 @@
 			this.refreshProduct();
 			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
-
+			
+			common.Query(`select BILL from sale001`).then((function(res){
+				this.input.bills = res.map(i => i.BILL);
+				console.log("BILLS:",this.input.bills)
+			}).bind(this));
+			
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
 				this.hyinfo = info;
