@@ -332,7 +332,7 @@
 						BARCODE: '2222222223',
 						NAME: "焦糖玛奇朵",
 						PRICE: 1,
-						OPRICE: 1.5,
+						OPRICE: 1,
 						AMOUNT: 1,
 						QTY: 1
 					}, {
@@ -342,7 +342,7 @@
 						BARCODE: '2222222224',
 						NAME: "法式香草拿铁",
 						PRICE: 1,
-						OPRICE: 1.5,
+						OPRICE: 1,
 						AMOUNT: 1,
 						QTY: 1
 					}
