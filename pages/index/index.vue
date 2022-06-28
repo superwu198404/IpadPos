@@ -39,12 +39,16 @@
 			</div>
 		</view>
 		<p>--加购的商品商品信息--</p>
-		<view v-for="(item,index) in Products" style="margin-top: 4px;">
-			<text>{{item.NAME}}</text>-
-			<text>￥{{item.AMOUNT}}</text>-
-			<text>{{item.PRICE}}元/kg</text>-
-			<text>x{{item.QTY}}</text>
-			<text><span style="background-color: red;color: white;padding: 2px 4px;border-radius: 5px;margin-left: 10px;" @click="removeProduct(item.ID)">删除</span></text>
+		<view style="max-height: 180px;border: 1px solid gray;overflow-y:auto;">
+			<view v-for="(item,index) in Products" style="margin: 14px 2px;">
+				<text>{{item.NAME}}</text>-
+				<text>￥{{item.AMOUNT}}</text>-
+				<text>{{item.PRICE}}元/kg</text>-
+				<text>x{{item.QTY}}</text>
+				<text><span
+						style="background-color: red;color: white;padding: 2px 4px;border-radius: 5px;margin-left: 10px;"
+						@click="removeProduct(item.ID)">删除</span></text>
+			</view>
 		</view>
 		<view>
 			<text>请输入单号（用于测试退款）：</text>
@@ -71,7 +75,7 @@
 		data() {
 			return {
 				input: {
-					fromData:{
+					fromData: {
 						PLID: "101",
 						SPID: "",
 						UNIT: "个",
@@ -109,11 +113,11 @@
 				refund_no: ""
 			}
 		},
-		watch:{
-			'input.fromData.QTY':function(n,o){
+		watch: {
+			'input.fromData.QTY': function(n, o) {
 				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
 			},
-			'input.fromData.PRICE':function(n,o){
+			'input.fromData.PRICE': function(n, o) {
 				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
 			}
 		},
@@ -289,21 +293,23 @@
 				// 	});
 			},
 			insertProduct: function() {
-				let product = Object.assign({ ID:util.uuid() },this.input.fromData);
+				let product = Object.assign({
+					ID: util.uuid()
+				}, this.input.fromData);
 				let products = uni.getStorageSync("products");
 				products.push(product);
-				uni.setStorageSync("products",products);
+				uni.setStorageSync("products", products);
 				this.refreshProduct();
 			},
 			removeProduct: function(id) {
 				let products = uni.getStorageSync("products");
-				products.splice(products.findIndex(i => i.ID === id),1);
-				uni.setStorageSync("products",products);
+				products.splice(products.findIndex(i => i.ID === id), 1);
+				uni.setStorageSync("products", products);
 				this.refreshProduct();
 			},
-			refreshProduct: function(){
+			refreshProduct: function() {
 				let products = uni.getStorageSync("products");
-				if(!products) products = [{
+				if (!products) products = [{
 						PLID: "101",
 						SPID: "10101020",
 						UNIT: "袋",
@@ -335,7 +341,8 @@
 						OPRICE: 0.01,
 						AMOUNT: 0.01,
 						QTY: 1
-					}];
+					}
+				];
 				this.Products = products;
 			},
 			change: function(e) {
@@ -386,6 +393,13 @@
 			this.refreshProduct();
 			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
+
+			let info = uni.getStorageSync("hyinfo");
+			if (info) {
+				this.hyinfo = info;
+				this.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
+				getApp().globalData.hyinfo = that.hyinfo;
+			}
 			// this.refund_no = "K0101QT2122624174159578";
 		},
 		onReady() {

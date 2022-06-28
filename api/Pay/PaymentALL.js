@@ -193,8 +193,7 @@ const PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		}
 	], function(err) {
-		console.log("支付接口返回的错误信息：", err)
-		console.log("catch:",catchFunc)
+		console.log("支付接口返回的错误信息：", err);
 		if(catchFunc) catchFunc(err);
 		uni.showToast({
 			icon: "error",
