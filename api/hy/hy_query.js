@@ -528,5 +528,6 @@ export default {
 	REFUND_ALL,
 	CouponList_ALL,
 	hyinfoModel,
-	consumeJF
+	consumeJF,
+	minusHyJf
 }

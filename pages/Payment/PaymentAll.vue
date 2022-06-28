@@ -809,6 +809,7 @@
 							common.TransLiteData(bill);
 							//上传积分
 							//that.scoreConsume();
+							that.scoreReduce();
 							//调用打印
 							vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 						});
@@ -860,13 +861,30 @@
 					type = this.PayTypeJudgment(),
 					info = this.PayWayList.find(i => i.type === type);
 				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
-				if (this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
-					uni.showToast({
-						title: "已存在同类型的支付方式!"
-					});
-					this.authCode = '';
-					return;
+				let XZZF = util.getStorage("XZZF");
+				console.log("限制支付集合数据：", XZZF);
+				console.log("当前支付集合：", this.PayList);
+				if (XZZF && XZZF.length > 0 && XZZF.indexOf(this.PayTypeJudgment()) >= 0) {//如果被限制了 则进行判断是否有过支付
+					let obj = this.PayList.find((r) => {
+						return XZZF.indexOf(r.type) >= 0
+					})
+					if (obj) {
+						uni.showToast({
+							title: "请更换支付方式!",
+							icon: "error"
+						});
+						this.authCode = '';
+						return;
+					}
 				}
+				// if (this.PayList.findIndex(i => i.fkid === info.fkid) != -1) {
+				// 	uni.showToast({
+				// 		title: "已存在同类型的支付方式!"
+				// 	});
+				// 	this.authCode = '';
+				// 	return;
+				// }
+				//this.authCode = ""; //避免 authCode 重复使用
 				_pay.PaymentAll(this.PayTypeJudgment(), payAfter, (function(result) {
 					console.log("支付结果：", result);
 					uni.showToast({
@@ -928,6 +946,7 @@
 			orderCreated: function(obj, payload) {
 				let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
 					fkid: this.currentPayInfo?.fkid ?? "",
+					type: this.currentPayInfo?.type ?? "",
 					bill: payload?.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
 					amount: (this.isRefund ? -1 : 1) * (payload?.money / 100).toFixed(2),
@@ -948,7 +967,7 @@
 				console.log("封装响应体[orderCreated]:", order)
 				return order;
 			},
-			//积分操作
+			//积分操作 支付调用
 			scoreConsume: function() {
 				console.log("正在准备上传积分，会员信息：", getApp().globalData.hyinfo);
 				let that = this
@@ -977,7 +996,7 @@
 						});
 						param = {
 							addPoint: 0,
-							channel: "POS",
+							channel: that.channel,
 							cityCode: "",
 							code: that.out_trade_no_old,
 							date: dateformat.getYMDS(),
@@ -987,7 +1006,7 @@
 							memberCode: hyinfo.hyId,
 							netAmount: that.totalAmount,
 							orderAmount: that.totalAmount,
-							orderType: that.XS_TYPE, //订单类型
+							orderType: '1', //订单类型
 							paymentInfoList: arr1,
 							pointOfService: that.KHID,
 							preOrderCode: "",
@@ -1009,6 +1028,49 @@
 					}
 					console.log("积分上传参数：", param);
 					hy.consumeJF(that.brand, param, function(res) {
+						console.log("积分上传结果：", res);
+						uni.showToast({
+							title: res.code ? "积分上传成功" : res.msg,
+							icon: res.code ? "success" : "error"
+						})
+					})
+				}
+			},
+			//积分操作 退款调用
+			scoreReduce: function() {
+				console.log("正在准备上传积分，会员信息：", getApp().globalData.hyinfo);
+				let that = this
+				let hyinfo = getApp().globalData.hyinfo;
+				if (hyinfo && hyinfo.hyId) { //录入过会员信息
+					let param;
+					if (that.brand == 'KG') {
+						param = {
+							LT_IMPORT: [{
+								ZZITEM: "1",
+								ZZMEMBER_ID: hyinfo.hyId,
+								ZZYZ_ID: "",
+								ZZORDER_NUM: that.out_refund_no,
+								ZZORDER_TYPE: "2",
+								ZZLORDER: that.sale1_obj?.XS_BILL,
+								ZZTPRICE: that.totalAmount,
+								ZZPAYMENT: that.totalAmount,
+								ZZPOINT_ADD: "0",
+								ZZPOINT_PAY: that.totalAmount,
+								ZZCHANNEL: that.channel,
+								ZZSTORE: that.KHID,
+								ZZORDER_DATE: dateformat.getYMD(),
+								ZZCPTIME: dateformat.gettimes(),
+								ZYL01: "",
+								ZYL02: "",
+								ZYL03: "",
+								ZYL04: "",
+								ZYL05: ""
+							}],
+							LT_ITEM: []
+						}
+					} else {}
+					console.log("积分上传参数：", param);
+					hy.minusHyJf(that.brand, param, function(res) {
 						console.log("积分上传结果：", res);
 						uni.showToast({
 							title: res.code ? "积分上传成功" : res.msg,
