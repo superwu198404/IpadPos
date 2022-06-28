@@ -9,7 +9,7 @@
 			brand: "KG",
 			store: {
 				GSID: "027001",
-				KHID: "K200QTD005",//"K0101QT2",
+				KHID: "K200QTD005", //"K0101QT2",
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "123",
@@ -25,55 +25,18 @@
 			hyinfo: {
 				// hyId: "1000311640"
 			},
-			PayInfo:[],
-			CodeRule:{},
-			// PayInfo: [{ //支付参数
-			// 	TYPE: "WX_CLZF",
-			// 	APPID: "keengee",
-			// 	GSID: "027001",
-			// 	URL: "/PaymentAll/Handle",
-			// 	PAYTYPE: "WxPay_ScanCode",
-			// 	SOURCE: "Mobile_Pos",
-			// 	BRAND: "KG"
-			// }, {
-			// 	TYPE: "ZFB_CLZF",
-			// 	APPID: "keengee",
-			// 	GSID: "027001",
-			// 	URL: "/PaymentAll/Handle",
-			// 	PAYTYPE: "AliPay_ScanCode",
-			// 	SOURCE: "Mobile_Pos",
-			// 	BRAND: "KG"
-			// }, {
-			// 	TYPE: "HYK",
-			// 	APPID: "keengee",
-			// 	GSID: "027001",
-			// 	URL: "/PaymentAll/Handle",
-			// 	PAYTYPE: "ECard_Payment",
-			// 	SOURCE: "Mobile_Pos",
-			// 	BRAND: "KG"
-			// }, {
-			// 	TYPE: "SZQ",
-			// 	APPID: "keengee",
-			// 	GSID: "027001",
-			// 	URL: "/PaymentAll/Handle",
-			// 	PAYTYPE: "ECoupon_Payment",
-			// 	SOURCE: "Mobile_Pos",
-			// 	BRAND: "KG"
-			// }],
-			// CodeRule: { //支付码规则
-			// 	13: "WX_CLZF",
-			// 	28: "ZFB_CLZF",
-			// 	card: "HYK",
-			// 	coupon: "SZQ"
-			// },
+			PayInfo: [], //支付规则
+			CodeRule: {},
 			PZCS: { //档案配置参数
 				YN_ZFBKBQ: "N"
-				
+
 			},
-			POSCSZ: { //POS参数组
-				YN_ZFBKBQ: "N"
-				
-			},
+			POSCS: [{ //POS参数组 测试用
+				KHID: "K0101QT2",
+				SNAME: "水吧类别编码",
+				POSCS: "SBLBBM",
+				POSCSNR: "107,108"
+			}],
 			getModel: function() {
 				//获取手机型号
 				return wx.getSystemInfoSync()["model"];

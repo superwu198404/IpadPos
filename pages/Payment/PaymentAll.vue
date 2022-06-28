@@ -301,6 +301,7 @@
 					actualAmount: 0,
 					debtAmount: 0
 				},
+				sbsp_arr: [], //水吧产品初始集合
 				sale8_obj: {}, //水吧产品对象
 				sale8_arr: [] //水吧产品集合
 			}
@@ -425,7 +426,7 @@
 				let saletime = dateformat.getYMDS();
 				//基础数据
 				this.sale1_obj = {
-					BILL: this.out_trade_no_old,
+					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
 					SALETIME: saletime,
 					KHID: this.KHID,
@@ -465,7 +466,7 @@
 				};
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
-						BILL: this.out_trade_no_old, //主单号
+						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						KHID: this.KHID,
@@ -503,7 +504,8 @@
 				list.forEach((item) => {
 					console.log("Item:", item)
 					this.sale3_obj = {
-						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						BILL: this.isRefund ? this.out_refund_no : this
+							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						KHID: this.KHID,
@@ -541,30 +543,51 @@
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				})
-				//执行sql
+				for (var i = 0; i < this.sbsp_arr.length; i++) {
+					this.sale8_obj = {
+						SALEDATE: saledate,
+						SALETIME: saletime,
+						GCID: this.GCID,
+						KHID: this.KHID,
+						POSID: this.POSID,
+						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
+						SPID: this.sbsp_arr[i].SPID,
+						NO: i,
+						ATTCODE: "1",
+						ATTNAME: "糖",
+						OPTCODE: "1",
+						CSTCODE: "1",
+						OPTMAT: "123456",
+						QTY: this.sbsp_arr[i].QTY,
+						PRICE: this.sbsp_arr[i].PRICE
+					}
+					this.sale8_arr = this.sale8_arr.concat(this.sale8_obj);
+				}
+
+				//生成执行sql
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
+				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
 				// console.log("SALE1-OBJ:", this.sale1_obj);
 				// console.log("SALE2-ARR:", this.sale2_arr);
-				// console.log("SALE3-ARR:", this.sale3_arr);
+				 console.log("SALE8-ARR:", this.sale8_arr);
 				this.tx_obj = {
-					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql,
+					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
 					STOREID: this.KHID,
 					POSID: this.POSID,
 					TAB_NAME: 'XS',
-					STR1: this.out_trade_no_old,
+					STR1: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					BDATE: saletime, //增加时分秒的操作
 					YW_NAME: "销售单据",
 					CONNSTR: 'CONNSTRING'
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-				console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
-				console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
-				console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:")
-				console.log(exeSql);
+				// console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
+				// console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
+				// console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
+				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql8.sqlliteArr).concat(sql4.sqlliteArr);
+				console.log("sqlite待执行sql:",exeSql)
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
 					if (func) func(res);
@@ -598,7 +621,8 @@
 				let current = [];
 				list.forEach(((item) => {
 					current.push({
-						BILL: this.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						BILL: this.isRefund ? this.out_refund_no : this
+							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: dateformat.getYMD(),
 						SALETIME: dateformat.getYMDS(),
 						KHID: this.KHID,
@@ -882,7 +906,7 @@
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
 							amount: -((couponAmount - payload.money) / 100).toFixed(
-							2), // 券面额 - 支付金额 = 弃用金额
+								2), // 券面额 - 支付金额 = 弃用金额
 							fail
 						}, result));
 					} else //如果券面额未小于
@@ -1018,6 +1042,7 @@
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
+					this.GetSBData(); //筛选水吧产品
 				}
 			},
 			//总金额计算
@@ -1225,6 +1250,23 @@
 					}
 				}
 			},
+			//获取水吧商品
+			GetSBData: function(e) {
+				let arr = util.getStorage("POSCS");
+				let obj = arr.find((r) => {
+					return r.POSCS == 'SBLBBM';
+				})
+				let bmArr = [];
+				if (obj) {
+					bmArr = obj.POSCSNR.split(',');
+				}
+				if (that.Products.length > 0) {
+					that.sbsp_arr = that.Products.filter((r) => {
+						return bmArr.indexOf(r.PLID) >= 0;
+					})
+				}
+				console.log("本单水吧商品：", that.sbsp_arr);
+			}
 		},
 		created() {
 			if (window && !window.vue) { //把vue放到全局上，方便调试

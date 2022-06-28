@@ -6,7 +6,7 @@
 				<div><input v-model="input.fromData.SPID" /></div>
 			</div>
 			<div class="product">
-				<div>商品种类ID：</div>
+				<div>品类ID：</div>
 				<div><input v-model="input.fromData.PLID" /></div>
 			</div>
 			<div class="product">
@@ -14,7 +14,7 @@
 				<div><input v-model="input.fromData.NAME" /></div>
 			</div>
 			<div class="product">
-				<div>商品代码：</div>
+				<div>商品条码：</div>
 				<div><input v-model="input.fromData.BARCODE" /></div>
 			</div>
 			<div class="product">
@@ -26,7 +26,7 @@
 				<div><input v-model="input.fromData.UNIT" /></div>
 			</div>
 			<div class="product">
-				<div>商品价格：</div>
+				<div>商品价格(元)：</div>
 				<div><input v-model="input.fromData.PRICE" /></div>
 			</div>
 			<div class="product">
@@ -105,61 +105,7 @@
 				sale2_arr: [],
 				sale3_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
-				Products: [{
-						PLID: "101",
-						SPID: "10101020",
-						UNIT: "袋",
-						BARCODE: '2222222220',
-						NAME: "超软白土司",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
-					},
-					{
-						PLID: "101",
-						SPID: "10101021",
-						UNIT: "袋",
-						BARCODE: '2222222221',
-						NAME: "你好土司",
-						PRICE: 0.5,
-						OPRICE: 0.5,
-						AMOUNT: 1,
-						QTY: 2
-					},
-					{
-						PLID: "101",
-						SPID: "10101022",
-						UNIT: "袋",
-						BARCODE: '2222222222',
-						NAME: "黄金唱片",
-						PRICE: 0.01,
-						OPRICE: 0.01,
-						AMOUNT: 0.01,
-						QTY: 1
-					},
-					{
-						PLID: "107",
-						SPID: "10701001",
-						UNIT: "杯",
-						BARCODE: '2222222223',
-						NAME: "焦糖玛奇朵",
-						PRICE: 1,
-						OPRICE: 1.5,
-						AMOUNT: 1,
-						QTY: 1
-					}, {
-						PLID: "107",
-						SPID: "10701002",
-						UNIT: "杯",
-						BARCODE: '2222222224',
-						NAME: "法式香草拿铁",
-						PRICE: 1,
-						OPRICE: 1.5,
-						AMOUNT: 1,
-						QTY: 1
-					}
-				], //商品信息
+				Products: [], //商品信息
 				PayWayList: [],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
@@ -301,33 +247,33 @@
 				});
 			},
 			Test: function(e) {
-				// let arr = [
-				// 	"delete from dapzcs_nr where id='FKJHZF';",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-				// 	"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
-				// ]
-				// let sql = "";
-				// for (var i = 0; i < arr.length; i++) {
-				// 	sql += arr[i];
-				// }
-				// console.log("测试sql:", sql);
-				// //批量执行sql 必须是数组
-				// db.get().executeDml(arr, "执行中", (res) => {
-				// 	console.log("sql 执行结果：", res);
-				// });
-				// let sql1="";
-				// let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
-				// let reqdata = Req.resObj(true, "数据传输中", {
-				// 	sql: sql1
-				// }, apistr);
-				// Req.asyncFuncOne(reqdata,
-				// 	function(res1) {
-				// 		console.log("数据传输结果：", res1);
-				// 	});
+				let arr = [
+					"delete from dapzcs_nr where id='FKJHZF';",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+				]
+				let sql = "";
+				for (var i = 0; i < arr.length; i++) {
+					sql += arr[i];
+				}
+				console.log("测试sql:", sql);
+				//批量执行sql 必须是数组
+				db.get().executeDml(arr, "执行中", (res) => {
+					console.log("sql 执行结果：", res);
+				});
+				let sql1 = "";
+				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+				let reqdata = Req.resObj(true, "数据传输中", {
+					sql: sql1
+				}, apistr);
+				Req.asyncFuncOne(reqdata,
+					function(res1) {
+						console.log("数据传输结果：", res1);
+					});
 			},
 			insertProduct: function() {
 				let product = Object.assign({
@@ -346,7 +292,7 @@
 			},
 			refreshProduct: function() {
 				let products = uni.getStorageSync("products");
-				if (!products) products = [{
+				if (!products || products.length == 0) products = [{
 						PLID: "101",
 						SPID: "10101020",
 						UNIT: "袋",
@@ -377,6 +323,27 @@
 						PRICE: 0.01,
 						OPRICE: 0.01,
 						AMOUNT: 0.01,
+						QTY: 1
+					},
+					{
+						PLID: "107",
+						SPID: "10701001",
+						UNIT: "杯",
+						BARCODE: '2222222223',
+						NAME: "焦糖玛奇朵",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
+						QTY: 1
+					}, {
+						PLID: "107",
+						SPID: "10701002",
+						UNIT: "杯",
+						BARCODE: '2222222224',
+						NAME: "法式香草拿铁",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
 						QTY: 1
 					}
 				];
