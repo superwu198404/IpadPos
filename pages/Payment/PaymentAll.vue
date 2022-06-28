@@ -300,7 +300,9 @@
 					totalAmount: 0,
 					actualAmount: 0,
 					debtAmount: 0
-				}
+				},
+				sale8_obj: {}, //水吧产品对象
+				sale8_arr: [] //水吧产品集合
 			}
 		},
 		watch: {
@@ -720,7 +722,7 @@
 					promises = [];
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
-				if(this.RefundList.filter(i => i.fail).length === 0){
+				if (this.RefundList.filter(i => i.fail).length === 0) {
 					uni.showToast({
 						title: "已完成退款!"
 					});
@@ -731,7 +733,8 @@
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
 					let payWayFkid = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.fkid;
 					console.log(`type:${payWayType},fkid:${payWayFkid}`);
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
+						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 					} else {
@@ -878,7 +881,8 @@
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
-							amount: -((couponAmount - payload.money) / 100).toFixed(2), // 券面额 - 支付金额 = 弃用金额
+							amount: -((couponAmount - payload.money) / 100).toFixed(
+								2), // 券面额 - 支付金额 = 弃用金额
 							fail
 						}, result));
 					} else //如果券面额未小于

@@ -137,8 +137,34 @@ const utils = {
 		}
 		num = parseFloat(num);
 		return (Math.round((num + Number.EPSILON) * Math.pow(10, digit)) / Math.pow(10, digit)).toFixed(digit);
-	}
-
+	},
+	/**
+	 * 系统存值
+	 * @param key: 键
+	 * @param val: 值
+	 * @returns string
+	 */
+	setStorage: function(key, val) {
+		if (key) {
+			getApp().globalData[key] = val;
+			uni.setStorageSync(key, val);
+		}
+	},
+	/**
+	 * 系统取值
+	 * @param key: 键
+	 * @returns string
+	 */
+	getStorage: function(key) {
+		let val = null;
+		if (key) {
+			val = getApp().globalData[key];
+			if (!val) {
+				val = uni.getStorageSync(key)
+			}
+		}
+		return val;
+	},
 }
 
 export default {
@@ -152,5 +178,7 @@ export default {
 	ymsFormat: utils.ymsFormat,
 	objKeySort: utils.objKeySort,
 	sleep: utils.sleep,
-	myFixed: utils.myFixed
+	myFixed: utils.myFixed,
+	setStorage: utils.setStorage,
+	getStorage: utils.getStorage
 }

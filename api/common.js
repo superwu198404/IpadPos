@@ -363,6 +363,34 @@ var GetJHZF = async function(e, func) {
 	});
 }
 
+//获取POS参数组内容
+var GetPOSCS = async function(e, func) {
+	if (e) {
+		let sql = `SELECT
+						kh.khid,
+						D1.SNAME,
+						P1.POSCS,
+						P1.POSCSNR 
+					FROM 
+						POSCSZMX P1,
+						DAPZCS_NR D1,
+						KHDA kh 
+					WHERE
+						D1.ID = 'POSCS' 
+						AND D1.ID_NR = P1.POSCS 
+						AND P1.POSCSZID = kh.POSCSZID 
+						AND kh.khid = '` + e + `'
+					ORDER BY
+						P1.SZ`;
+		await db.get().executeQry(sql, "数据查询中", function(res) {
+			console.log("获取POS参数成功:", res);
+			util.setStorage("POSCS", res.msg);
+			if (func) func(res);
+		}, function(err) {
+			console.log("获取POS参数出错:", err);
+		});
+	}
+}
 export default {
 	InitData,
 	CreateBill,
@@ -374,5 +402,6 @@ export default {
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,
-	GetJHZF
+	GetJHZF,
+	GetPOSCS
 }

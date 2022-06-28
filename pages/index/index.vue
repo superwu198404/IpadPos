@@ -31,7 +31,7 @@
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<button @click="Test(2)">测试一下</button>
+		<!-- <button @click="Test(2)">测试一下</button> -->
 	</view>
 </template>
 <script>
@@ -110,6 +110,27 @@
 						OPRICE: 0.01,
 						AMOUNT: 0.01,
 						QTY: 1
+					},
+					{
+						PLID: "107",
+						SPID: "10701001",
+						UNIT: "杯",
+						BARCODE: '2222222223',
+						NAME: "焦糖玛奇朵",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
+						QTY: 1
+					}, {
+						PLID: "107",
+						SPID: "10701002",
+						UNIT: "杯",
+						BARCODE: '2222222224',
+						NAME: "法式香草拿铁",
+						PRICE: 1,
+						OPRICE: 1.5,
+						AMOUNT: 1,
+						QTY: 1
 					}
 				], //商品信息
 				PayWayList: [],
@@ -134,25 +155,8 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							// if (res.msg[i].JKSNAME == 'SZQ') {
-							// 	obj.value = "COUPON";
-							// 	//obj.type = "qzf";
-							// }
-							// if (res.msg[i].JKSNAME == 'ZFB_CLZF') {
-							// 	obj.value = "ALI";
-							// 	//obj.type = "AliPayService";
-							// }
-							// if (res.msg[i].JKSNAME == 'HYK') {
-							// 	obj.value = "CARD";
-							// 	//obj.type = "dzk";
-							// }
-							// if (res.msg[i].JKSNAME == 'WX_CLZF') {
-							// 	obj.value = "WX";
-							// 	//obj.type = "WxPayService";
-							// }
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
-								//obj.value= "ce";
 							}
 							that.PayWayList.push(obj);
 						}
@@ -325,13 +329,13 @@
 				});
 			},
 
-			//初始化支付数据
+			//初始化基础数据
 			InitData: async function() {
 				let that = this;
 				//生成支付规则数据
 				await common.InitZFRULE();
 				// await common.GetJHZF();
-				// that.KHID = "K0101QT2";
+				that.KHID = "K0101QT2";
 				//获取支付方式
 				await that.GetPayWay(that.KHID);
 				//初始化配置参数
@@ -345,6 +349,8 @@
 					console.log("最终支付规则数据：", getApp().globalData.PayInfo);
 					console.log("最终支付规则数据1：", getApp().globalData.CodeRule);
 				});
+				//获取POS参数组数据
+				await common.GetPOSCS(that.KHID);
 			}
 		},
 		//接收上个页面传入的参数
@@ -363,15 +369,6 @@
 				AMOUNT: 0.01,
 				QTY: 1
 			}])
-			console.log("缓存：", uni.getStorageSync("products"))
-			// let that = this;
-			// that.PayList = this.$store.state.orders; //全局参数
-			// console.log('监听支付页面回传的支付参数为：');
-			// console.log(that.PayList);
-			// //创建订单数据
-			// if (that.PayList && that.PayList.length > 0) {
-			// 	this.CreateDBData()
-			// }
 			this.refund_no = this.$store.state.trade;
 			// this.refund_no = "K0101QT2122624174159578";
 		},
