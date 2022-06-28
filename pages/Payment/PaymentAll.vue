@@ -464,6 +464,7 @@
 					THTYPE: 0,
 					CLTIME: saletime
 				};
+				this.sale2_arr = [];
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
@@ -499,6 +500,7 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
+				this.sale3_arr = [];
 				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
 					.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
@@ -571,7 +573,7 @@
 				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
 				// console.log("SALE1-OBJ:", this.sale1_obj);
 				// console.log("SALE2-ARR:", this.sale2_arr);
-				 console.log("SALE8-ARR:", this.sale8_arr);
+				console.log("SALE8-ARR:", this.sale8_arr);
 				this.tx_obj = {
 					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
 					STOREID: this.KHID,
@@ -586,8 +588,9 @@
 				// console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
 				// console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
 				// console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql8.sqlliteArr).concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:",exeSql)
+				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql8.sqlliteArr)
+					.concat(sql4.sqlliteArr);
+				console.log("sqlite待执行sql:", exeSql)
 				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
 					if (func) func(res);
@@ -700,6 +703,7 @@
 			//SALE002 初始化、处理
 			SALE2Init: function(arr) {
 				if (this.isRefund) {
+					console.log("商品信息循环前：", this.Products);
 					this.Products = arr?.map((function(i) {
 						return {
 							PLID: i.PLID,
@@ -713,6 +717,7 @@
 							QTY: i.QTY
 						}
 					}).bind(this));
+					console.log("商品信息循环后：", this.Products);
 					this.refundAmountCount(); //退款金额计算
 				}
 				console.log("SALE2 初始化完毕！", this.Products)
@@ -755,7 +760,8 @@
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
 					console.log(`退款单Item:${JSON.stringify(refundInfo)}`);
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
+						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 					} else {
@@ -800,7 +806,7 @@
 							let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
 							common.TransLiteData(bill);
 							//上传积分
-							that.scoreConsume();
+							//that.scoreConsume();
 							//调用打印
 							vm.$emit('receiptPrinter', this.sale1_obj, this.sale2_arr, this.sale3_arr);
 						});
@@ -845,7 +851,7 @@
 						}
 					})
 				}
-				this.authCode = "";//避免 authCode 重复使用
+				this.authCode = ""; //避免 authCode 重复使用
 			},
 			//支付处理入口
 			PayHandle: function() {
@@ -1008,7 +1014,7 @@
 							sign: ""
 						}
 					}
-					console.log("积分上传参数：", that.brand + param);
+					console.log("积分上传参数：", param);
 					hy.consumeJF(that.brand, param, function(res) {
 						console.log("积分上传结果：", res);
 						uni.showToast({
@@ -1040,7 +1046,7 @@
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
-					this.GetSBData(); //筛选水吧产品
+					//this.GetSBData(); //筛选水吧产品
 				}
 			},
 			//总金额计算

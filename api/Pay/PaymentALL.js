@@ -41,14 +41,14 @@ var CreateData = function(pt, t, m, d) {
 		} else {
 			console.log("PayObj为空 pt：", pt + PayInfo);
 			uni.showToast({
-				title: "参数错误",
+				title: "参数错误，请重扫",
 				icon: "error"
 			})
 		}
 	} else {
 		console.log("pt,或者PayInfo为空：", pt + PayInfo);
 		uni.showToast({
-			title: "参数错误",
+			title: "参数错误,请重扫",
 			icon: "error"
 		})
 	}

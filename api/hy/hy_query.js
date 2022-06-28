@@ -477,6 +477,7 @@ function consumeJFscore(d, func) {
 	})
 };
 
+//增加积分
 function newUploadHyjf(d, func) {
 	Req.http("Hy/hy", {
 		"appid": appid,
@@ -489,7 +490,24 @@ function newUploadHyjf(d, func) {
 		return res;
 	})
 };
-//会员积分 合集
+/**
+ *扣减积分 
+ * @param {*} d 
+ * @param {*} func 
+ */
+function minusHyJf(d, func) {
+	Req.http("Hy/hy", {
+		"appid": appid,
+		"apiname": "minusHyJf",
+		"paramkey": "code",
+		"data": d
+	}, "查询中...").then(function(res) {
+		//console.log(res);
+		if (func) func(res);
+		return res;
+	})
+};
+//会员积分 合集(支付调用)
 const consumeJF = function(m, e, func) {
 	if (m == 'KG') {
 		newUploadHyjf(e, func);
