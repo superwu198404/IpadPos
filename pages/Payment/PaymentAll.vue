@@ -223,6 +223,7 @@
 </template>
 
 <script>
+	var app = getApp();
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import Req from '@/utils/request.js';
