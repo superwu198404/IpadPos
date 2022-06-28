@@ -400,8 +400,11 @@
 						common.TransLiteData(bill);
 						//上传积分
 						this.scoreConsume();
+						var that = this;
 						//调用打印
-						this.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						setTimeout(function() {
+							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						}, 3000);	
 					});
 				}
 			},
@@ -870,7 +873,9 @@
 							//that.scoreConsume();
 							that.scoreReduce();
 							//调用打印
-							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+							setTimeout(function() {
+								that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+							}, 3000);	
 						});
 				})
 			},
@@ -1429,17 +1434,17 @@
 				var goodsList = [];
 				for (var i = 0; i < sale2_arr.length; i++){
 					let spname = "测试商品" + i;
-					let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
-					db.get().executeQry(sqlSpda, "数据查询中", function(res) {
-						spname = res.msg[0].SPNAME;
-						console.log("商品数据:",res.msg[0].SPNAME);
-					}, function(err) {
-						console.log("获取商品数据出错:", err);
-						uni.showToast({
-							icon: 'error',
-							title: "获取商品数据出错"
-						})
-					});
+					// let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
+					// db.get().executeQry(sqlSpda, "数据查询中", function(res) {
+					// 	spname = res.msg[0].SPNAME;
+					// 	console.log("商品数据:",res.msg[0].SPNAME);
+					// }, function(err) {
+					// 	console.log("获取商品数据出错:", err);
+					// 	uni.showToast({
+					// 		icon: 'error',
+					// 		title: "获取商品数据出错"
+					// 	})
+					// });
 					
 					var sale2_printer = {
 						bill: sale2_arr[i].BILL, //主单号
@@ -1471,17 +1476,17 @@
 				var sale3List = [];
 				for (var j = 0; j < sale3_arr.length; j++){
 					let fkName = sale3_arr[j].FKID;
-					let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +"' order by FKID";
-					db.get().executeQry(sqlFkda, "数据查询中", function(res) {
-						fkName = res.msg[0].FKNAME;
-						console.log("付款方式数据:",res.msg[0].FKNAME);
-					}, function(err) {
-						console.log("获取付款方式出错:", err);
-						uni.showToast({
-							icon: 'error',
-							title: "获取付款方式出错"
-						})
-					});
+					// let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +"' order by FKID";
+					// db.get().executeQry(sqlFkda, "数据查询中", function(res) {
+					// 	fkName = res.msg[0].FKNAME;
+					// 	console.log("付款方式数据:",res.msg[0].FKNAME);
+					// }, function(err) {
+					// 	console.log("获取付款方式出错:", err);
+					// 	uni.showToast({
+					// 		icon: 'error',
+					// 		title: "获取付款方式出错"
+					// 	})
+					// });
 					
 					var sale3_printer = {
 					   bill: sale3_arr[j].BILL,
@@ -1602,35 +1607,36 @@
 				command.setPrint(); //打印并换行
 			
 				// 打印二维码
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
+				// uni.canvasGetImageData({
+				// 	canvasId: "couponQrcode",
+				// 	x: 0,
+				// 	y: 0,
+				// 	width: that.qrCodeWidth,
+				// 	height: that.qrCodeHeight,
+				// 	success: function(res) {
+				// 		console.log("获取画布数据成功");
+				// 		command.setSelectJustification(1); //居中
+				// 		command.setBitmap(res);
+				// 		command.setPrint();
 						
-						//that.addData(bill,xsDate,command.getData());
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-						//that.addData(bill,xsDate,command.getData());
-					    that.prepareSend(command.getData()); //发送数据
-					}
-				});
-				// that.prepareSend(command.getData()); //发送数据
+				// 		//that.addData(bill,xsDate,command.getData());
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	},
+				// 	complete: function(res) {
+				// 		console.log("finish");
+				// 	},
+				// 	fail: function(res) {
+				// 		console.log(res);
+				// 		uni.showToast({
+				// 			title: "获取画布数据失败",
+				// 			icon: "none"
+				// 		});
+				// 		//that.addData(bill,xsDate,command.getData());
+				// 	    that.prepareSend(command.getData()); //发送数据
+				// 	}
+				// });
+				
+				that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
