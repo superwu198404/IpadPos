@@ -137,8 +137,12 @@ const utils = {
 		}
 		num = parseFloat(num);
 		return (Math.round((num + Number.EPSILON) * Math.pow(10, digit)) / Math.pow(10, digit)).toFixed(digit);
+	},
+	UUID: function() {
+		let func = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		return (func() + func() + "-" + func() + "-" + func() + "-" + func() + "-" + func() + func() +
+		func());
 	}
-
 }
 
 export default {
@@ -152,5 +156,6 @@ export default {
 	ymsFormat: utils.ymsFormat,
 	objKeySort: utils.objKeySort,
 	sleep: utils.sleep,
-	myFixed: utils.myFixed
+	myFixed: utils.myFixed,
+	uuid: utils.UUID
 }
