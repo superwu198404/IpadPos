@@ -51,7 +51,9 @@
 			</view>
 		</view>
 		<view>
-			<text>请输入单号（用于测试退款）：</text>
+			<text style="height: 50px;line-height: 50px;">请输入单号（用于测试退款）：<span
+					style="border-radius: 5px;padding: 2px 3px;margin-left: 5px;background-color: royalblue;color: white;"
+					@click="searchOrder()">查询</span></text>
 			<text>
 				<input style="border:1px solid gray" type="text" v-model="refund_no" />
 				<div class="bills">
@@ -64,6 +66,42 @@
 		<button @click="MenuPage(2)">录入会员</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<!-- <button @click="Test(2)">测试一下</button> -->
+		<div v-if="view.orders.showDetail"
+			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
+			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
+				<div style="height: 25px;">
+					<div @click="view.orders.showDetail = false"
+						style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
+						×</div>
+				</div>
+				<div style="display: flex;">
+					<div>
+						<span>
+							SALE001:
+						</span>
+						<pre>
+						{{ view.orders.sale1_string }}
+						</pre>
+					</div>
+					<div>
+						<span>
+							SALE002:
+						</span>
+						<pre>
+						{{ view.orders.sale2_string }}
+						</pre>
+					</div>
+					<div>
+						<span>
+							SALE003:
+						</span>
+						<pre>
+						{{ view.orders.sale3_string }}
+						</pre>
+					</div>
+				</div>
+			</div>
+		</div>
 	</view>
 </template>
 <script>
@@ -91,6 +129,14 @@
 					},
 					bills: [], //整集合
 					similar: [] //类似
+				},
+				view: {
+					orders: {
+						showDetail: false,
+						sale1_string: "",
+						sale2_string: "",
+						sale3_string: ""
+					}
 				},
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -343,7 +389,7 @@
 			},
 			refreshProduct: function() {
 				let products = uni.getStorageSync("products");
-				if (!products || products.length == 0) products = [{
+				if (!products || products.length == 0) uni.setStorageSync("products",[{
 						PLID: "101",
 						SPID: "10101020",
 						UNIT: "袋",
@@ -397,8 +443,8 @@
 						AMOUNT: 1,
 						QTY: 1
 					}
-				];
-				this.Products = products;
+				]);
+				this.Products = uni.getStorageSync("products");
 			},
 			change: function(e) {
 				this.$showModal({
@@ -423,6 +469,14 @@
 				this.input.similar = [];
 				this.$forceUpdate();
 			},
+			searchOrder: async function() {
+				let sales = await common.QueryRefund(this.refund_no);
+				console.log("SALES:", sales);
+				this.view.orders.sale1_string = JSON.stringify(sales.sale1, null, 2);
+				this.view.orders.sale2_string = JSON.stringify(sales.sale2, null, 2);
+				this.view.orders.sale3_string = JSON.stringify(sales.sale3, null, 2);
+				this.view.orders.showDetail = true;
+			},
 			//初始化基础数据
 			InitData: async function() {
 				var that = this;
@@ -444,8 +498,8 @@
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
 
-				console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
-				console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
+				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122629141725876'))
+				console.log("Refund-SALE1、2、3：", await common.QueryRefund('K0101QT2122629141725876'))
 			}
 		},
 		//接收上个页面传入的参数
