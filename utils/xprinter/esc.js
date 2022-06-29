@@ -1,5 +1,6 @@
 var encode = require("./encoding.js");
 var util = require("./util.js");
+import db from '@/utils/db/db_excute.js';
 
 var app = getApp();
 var jpPrinter = {
@@ -552,7 +553,7 @@ var jpPrinter = {
     单色图片整图转成一张bitmap
     */
     function convertToSingleBitmap(res) {
-      console.log(res);
+      //console.log(res);
       var w = res.width;
       var h = res.height;
       var bitw = parseInt((w + 7) / 8) * 8;
@@ -1214,10 +1215,21 @@ var jpPrinter = {
 		
 		//商品信息
 		data.goodsList.forEach((item, i) => {
-			
+			let spname = "" + i;
+			let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + item.spid +"' order by SPID";
+			db.get().executeQry(sqlSpda, "数据查询中", function(res) {
+				spname = res.msg[0].SPNAME;
+				console.log("商品数据:",res.msg[0].SPNAME);
+			}, function(err) {
+				console.log("获取商品数据出错:", err);
+				uni.showToast({
+					icon: 'error',
+					title: "获取商品数据出错"
+				})
+			});
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(item.spname, 15));
+			jpPrinter.setText(util.getComputedByteLen(spname, 15));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1225,7 +1237,7 @@ var jpPrinter = {
 			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
 					item.discount.toString(), 6));
-			jpPrinter.setPrint(); //打印并换行
+			jpPrinter.setPrint(); //打印并换行		
 		});
 	}
 	
@@ -1323,22 +1335,38 @@ var jpPrinter = {
 		    break;
 		}
 		
+		var payTotal = 0.00;
+		var change = 0.00;
+		
 		//付款方式
-		data.sale3List.forEach((item, i) => {		
+		data.sale3List.forEach((item, i) => {
+			let fkName = item.fkid;
+			let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + item.fkid +"' order by FKID";
+			db.get().executeQry(sqlFkda, "数据查询中", function(res) {
+				fkName = res.msg[0].FKNAME;
+				console.log("付款方式数据:",res.msg[0].FKNAME);
+			}, function(err) {
+				console.log("获取付款方式出错:", err);
+				uni.showToast({
+					icon: 'error',
+					title: "获取付款方式出错"
+				})
+			});
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item.fkid + ":" + item.amt.toString());
+			jpPrinter.setText(fkName + ":" + item.amt.toString());
 			jpPrinter.setPrint(); //打印并换行
+			payTotal += parseFloat(item.amt);
 		});
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("支付:" + data.payTotal.toString());
+		jpPrinter.setText("支付:" + payTotal.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("找零:" + data.change.toString());
+		jpPrinter.setText("找零:" + change.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
