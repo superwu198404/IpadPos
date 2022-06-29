@@ -54,6 +54,9 @@
 			<text>请输入单号（用于测试退款）：</text>
 			<text>
 				<input style="border:1px solid gray" type="text" v-model="refund_no" />
+				<div class="bills">
+					<div v-for="bill in input.similar" @click="billAssignment(bill)">{{ bill }}</div>
+				</div>
 			</text>
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
@@ -86,7 +89,8 @@
 						AMOUNT: 1.00,
 						QTY: 1
 					},
-					bills:[]
+					bills: [], //整集合
+					similar: [] //类似
 				},
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -120,6 +124,14 @@
 			},
 			'input.fromData.PRICE': function(n, o) {
 				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
+			},
+			'refund_no': function(n, o) {
+				if (!n) {
+					this.input.similar = [];
+					this.$forceUpdate();
+					return;
+				}
+				this.input.similar = this.input.bills.filter(bill => bill?.includes(n) || false);
 			}
 		},
 		//方法初始化
@@ -374,9 +386,17 @@
 					}
 				});
 			},
+			billAssignment: function(bill) {
+				this.refund_no = bill;
+				this.input.similar = [];
+				this.$forceUpdate();
+			},
 			//初始化基础数据
 			InitData: async function() {
-				let that = this;
+				var that = this;
+				//获取BILLS
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
+
 				//生成支付规则数据
 				await common.InitZFRULE();
 				// await common.GetJHZF();
@@ -391,14 +411,13 @@
 				});
 				//获取支付规则数据
 				await common.GetZFRULE("", (r) => {
-					console.log("最终支付规则数据：", getApp().globalData.PayInfo);
-					console.log("最终支付规则数据1：", getApp().globalData.CodeRule);
+					// console.log(`最终支付规则数据：①${getApp().globalData.PayInfo},②${ getApp().globalData.CodeRule}`);
 				});
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
-				
-				console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
-				console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
+
+				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
+				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			}
 		},
 		//接收上个页面传入的参数
@@ -407,10 +426,9 @@
 		},
 		onShow() {
 			this.refreshProduct();
-			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
 			// this.refund_no = "K0101QT2122628193555279";
-			
+
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
 				this.hyinfo = info;
