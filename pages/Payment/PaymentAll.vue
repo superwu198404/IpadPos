@@ -906,13 +906,13 @@
 									let obj = that.Products.find((i) => {
 										return i.SPID == item.SPID;
 									})
-									item.sname = obj.NAME;
+									item.SNAME = obj.NAME;
 								})
 								let arr3 = that.sale3_arr.forEach(function(item, index) {
 									let obj = that.PayWayList.find((i) => {
 										return i.fkid == item.FKID;
 									})
-									item.sname = obj.name;
+									item.SNAME = obj.name;
 								})
 								that.receiptPrinter(that.sale1_obj, arr2, arr3);
 							}, 3000);
