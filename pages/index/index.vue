@@ -117,6 +117,7 @@
 		//变量初始化
 		data() {
 			return {
+				first:true,
 				input: {
 					fromData: {
 						PLID: "101",
@@ -484,7 +485,7 @@
 				var that = this;
 				//获取BILLS
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
-
+				
 				//生成支付规则数据
 				await common.InitZFRULE();
 				// await common.GetJHZF();
@@ -507,19 +508,21 @@
 		//接收上个页面传入的参数
 		onLoad(option) {
 			this.InitData();
+			this.first = false;
 			console.log("时间格式化：",dateformat.getYMD().replace(/\-/g,''));
 		},
-		onShow() {
+		async onShow() {
 			this.refreshProduct();
 			this.refund_no = this.$store.state.trade;
 			// this.refund_no = "K0101QT2122628193555279";
-
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
 				this.hyinfo = info;
 				this.hyinfo.Balance = (this.hyinfo.Balance / 100).toFixed(2);
 				getApp().globalData.hyinfo = this.hyinfo;
 			}
+			if(!this.first) //首次不执行
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
@@ -612,5 +615,9 @@
 	.product input {
 		width: 150px;
 		border: 1px solid gray;
+	}
+	.bills{
+		max-height: 200px;
+		overflow-y: auto;
 	}
 </style>
