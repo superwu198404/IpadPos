@@ -876,7 +876,7 @@
 							//调用打印
 							setTimeout(function() {
 								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that
-								.sale3_arr);
+									.sale3_arr);
 							}, 3000);
 						});
 				})
@@ -1127,7 +1127,7 @@
 								ZZPOINT_PAY: that.totalAmount,
 								ZZCHANNEL: that.channel,
 								ZZSTORE: that.KHID,
-								ZZORDER_DATE: dateformat.getYMD(),
+								ZZORDER_DATE: dateformat.getYMD().replace(/\-/g,''),
 								ZZCPTIME: dateformat.gettimes(),
 								ZYL01: "",
 								ZYL02: "",
@@ -1135,7 +1135,8 @@
 								ZYL04: "",
 								ZYL05: ""
 							}],
-							LT_ITEM: []
+							LT_ITEM: [],
+							code: that.out_refund_no
 						}
 					} else {}
 					console.log("积分上传参数：", param);

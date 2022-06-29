@@ -253,7 +253,10 @@ const getDays = (date1, date2) => {
 	const minusDays = Math.floor(((date2.getTime() - date1.getTime()) / dateTime)); //计算出两个日期的天数差
 	return Math.abs(minusDays);
 };
-//获取当前日期 yyyyMMdd
+
+/**
+ * 获取当前日期yyyy-MM-dd
+ */
 const getYMD = () => {
 	let date = new Date();
 	let year = date.getFullYear().toString();
@@ -262,7 +265,10 @@ const getYMD = () => {
 	let str = year + '-' + month + '-' + day;
 	return str;
 };
-//获取当前日期时间yyyyMMddHHmmss
+
+/**
+ * 获取当前日期时间yyyy-MM-dd HH:mm:ss
+ */
 const getYMDS = () => {
 	let date = new Date();
 	let year = date.getFullYear().toString();

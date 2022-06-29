@@ -73,6 +73,8 @@
 	import db from '@/utils/db/db_excute.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
 	import util from '@/utils/util.js';
+	
+	import dateformat from '@/utils/dateformat.js';
 	export default {
 		//变量初始化
 		data() {
@@ -451,6 +453,7 @@
 		//接收上个页面传入的参数
 		onLoad(option) {
 			this.InitData();
+			console.log("时间格式化：",dateformat.getYMD().replace(/\-/g,''));
 		},
 		onShow() {
 			this.refreshProduct();
