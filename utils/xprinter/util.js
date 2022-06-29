@@ -1,19 +1,3 @@
-import common from '@/api/common.js';
-import db from '@/utils/db/db_excute.js';
-
-//获取付款方式
-var GetFKDA = function(e, func) {
-	let sql = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + e + "' order by FKID";
-	db.get().executeQry(sql, "数据查询中", function(res) {
-		if (func) func(res);
-	}, function(err) {
-		console.log("获取付款方式出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取付款方式出错"
-		})
-	});
-};
 
 const formatTime = date => {
 	const year = date.getFullYear();
@@ -205,6 +189,5 @@ module.exports = {
 	ab2hex: ab2hex,
 	convertToGrayscale: convertToGrayscale,
 	adjustPixel: adjustPixel,
-	convertToMonoImage: convertToMonoImage,
-	GetFKDA
+	convertToMonoImage: convertToMonoImage
 };
