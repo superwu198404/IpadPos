@@ -45,7 +45,7 @@
 				<view>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 				</view>
-				<button @click="ShowCoupon()">+ 使用卡券</button>
+				<button v-if="!isRefund" @click="ShowCoupon()">+ 使用卡券</button>
 			</view>
 			<view class="amounts">
 				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
@@ -488,6 +488,8 @@
 					sale2 = this.SALES.sale2,
 					sale3 = this.SALES.sale3;
 				console.log("sale1 封装中...");
+				let hyinfo = getApp().globalData.hyinfo;
+				console.log("创建订单前的会员信息:", hyinfo);
 				//基础数据
 				this.sale1_obj = {
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
@@ -507,12 +509,13 @@
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: (Number(this.Discount) + Number(this.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
+						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
-					CUID: this.hyinfo.hyId, //会员号
+					CUID: hyinfo.hyId, //会员号
 					CARDID: "", //卡号
 					THYDISC: 0,
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
@@ -600,6 +603,8 @@
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
+						FAMT: item.disc, //折扣金额(卡券消费后要记录)
+						RATE: item.disc, //折扣金额(卡消费后要记录)
 						ZKLX: (function() {
 							switch (item.is_free) {
 								case 'Y':
@@ -915,7 +920,19 @@
 						//调用打印
 						if (that.isRefund)
 							setTimeout(function() {
-								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that.sale3_arr);
+								let arr2 = that.sale2_arr.forEach(function(item, index) {
+									let obj = that.Products.find((i) => {
+										return i.SPID == item.SPID;
+									})
+									item.SNAME = obj.NAME;
+								})
+								let arr3 = that.sale3_arr.forEach(function(item, index) {
+									let obj = that.PayWayList.find((i) => {
+										return i.fkid == item.FKID;
+									})
+									item.SNAME = obj.name;
+								})
+								that.receiptPrinter(that.sale1_obj, arr2, arr3);
 							}, 3000);
 					});
 			},
@@ -1058,7 +1075,7 @@
 					name: this.currentPayInfo?.name ?? "",
 					amount: (this.isRefund ? -1 : 1) * (payload?.money / 100).toFixed(2),
 					no: this.PayList.length,
-					disc: payload?.discount,
+					disc: (payload?.discount / 100).toFixed(2),
 					zklx: payload?.disc_type ?? "",
 					id_type: payload?.voucher.type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
@@ -1418,7 +1435,7 @@
 			},
 			//会员信息重写
 			UpdateHyInfo: function(e) {
-				console.log("接口返回的信息：", e);
+				console.log("接口返回的会员信息：", e);
 				if (e && e.hyid) { //支付接口有返回会员信息
 					let hyinfo = getApp().globalData.hyinfo;
 					console.log("当前会员信息：", hyinfo);
@@ -1426,6 +1443,7 @@
 						getApp().globalData.hyinfo.hyId = e.hyid;
 					}
 				}
+				console.log("更新后的会员信息:", getApp().globalData.hyinfo);
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
