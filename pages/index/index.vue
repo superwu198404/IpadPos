@@ -161,32 +161,32 @@
 							name: "弃用金额",
 							fkid: "ZCV1",
 							type: "EXCESS",
-							value: "qy",
 							poly: "O"
 						}, {
 							name: "仟吉电子卡",
 							fkid: "ZF04",
 							type: "HYK",
-							value: "DZK",
 							poly: "Y"
 						}, {
 							name: "云闪付",
 							fkid: "ZF33",
 							type: "YSF",
-							value: "ysf",
 							poly: "N"
 						}, {
 							name: "可伴支付",
 							fkid: "ZF22",
 							type: "COUPON",
-							value: "kb",
 							poly: "N"
 						}, {
 							name: "品诺支付",
 							fkid: "ZF32",
 							type: "PINNUO",
-							value: "kb",
 							poly: "N",
+						},{
+							name: "不可原路退回",
+							fkid: "ZZ01",
+							type: "NO",
+							poly: "O"
 						}]
 						for (var i = 0; i < arr.length; i++) {
 							let obj = that.PayWayList.find((item) => {
@@ -196,12 +196,6 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
-						that.PayWayList.push({
-							"name": "不可原路退回",
-							"fkid": "ZZ01",
-							"type": "SZQ",
-							"poly": "O"
-						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -347,7 +341,7 @@
 				let products = uni.getStorageSync("products");
 				if (!products || products.length == 0) products = [{
 						PLID: "101",
-						SPID: "10101020",
+						SPID: "1010100004",
 						UNIT: "袋",
 						BARCODE: '2222222220',
 						NAME: "超软白土司",
@@ -358,7 +352,7 @@
 					},
 					{
 						PLID: "101",
-						SPID: "10101021",
+						SPID: "1010100010",
 						UNIT: "袋",
 						BARCODE: '2222222221',
 						NAME: "你好土司",
@@ -446,14 +440,14 @@
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
 
-				console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
-				console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
+				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
+				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			}
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
 			this.InitData();
-			console.log("时间格式化：",dateformat.getYMD().replace(/\-/g,''));
+			// console.log("时间格式化：",dateformat.getYMD().replace(/\-/g,''));
 		},
 		onShow() {
 			this.refreshProduct();
