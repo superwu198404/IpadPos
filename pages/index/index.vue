@@ -444,8 +444,8 @@
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
 
-				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
-				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
+				console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
+				console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122629113150963'))
 			}
 		},
 		//接收上个页面传入的参数

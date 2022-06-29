@@ -389,24 +389,12 @@
 							this.domForceRefresh();
 						}
 					}
-
 				} else { //完成支付，推送数据
-
 					var that = this;
 					this.YN_TotalPay = true;
 					this.CanBack = true;
 					// this.$store.commit('set-orders', this.PayList);
-					this.CreateDBData((res) => {
-						//销售单单创建成功后 上传一下数据
-						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
-						common.TransLiteData(bill);
-						//上传积分
-						that.scoreConsume();
-						//调用打印
-						// setTimeout(function() {
-						// 	that.receiptPrinter(that.sale1_obj, that.sale2_arr, that.sale3_arr);
-						// }, 3000);
-					});
+					this.createOrders(true);
 				}
 			},
 			yPayAmount: function(n, o) {
@@ -485,10 +473,10 @@
 					BILL_TYPE: this.BILL_TYPE, //销售类型
 					XSTYPE: this.XS_TYPE, //销售类型
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID: sale1?.XS_POSID ?? "", //退款时记录原posid（重点）
-					XS_DATE: sale1?.XS_DATE ?? "", //退款时记录原销售日期（重点）
-					XS_KHID: sale1?.XS_KHID ?? "", //退款时记录原khid（重点）
-					XS_GSID: sale1?.XS_GSID ?? "", //退款时记录原GSID（重点）
+					XS_POSID: sale1?.POSID ?? "", //退款时记录原posid（重点）
+					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
+					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
+					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
 					TLINE: sale2.length,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
@@ -865,21 +853,28 @@
 				console.log("RefundList-After:", this.RefundList);
 				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
-					if (res.length > 0)
-						that.CreateDBData((res) => {
-							//销售单单创建成功后 上传一下数据
-							let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
-							common.TransLiteData(bill);
-							//上传积分
-							//that.scoreConsume();
+					if (res.length > 0) //用来过滤掉无退款而进行创建的问题（保险代码）
+						that.createOrders();
+				})
+			},
+			createOrders: function(is_success) {
+				if (this.RefundList.filter(i => i.fail).length === 0 || is_success)
+					this.CreateDBData((res) => {
+						//销售单单创建成功后 上传一下数据
+						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
+						common.TransLiteData(bill);
+						//上传积分
+						if (that.isRefund)
 							that.scoreReduce();
-							//调用打印
+						else
+							that.scoreConsume();
+						//调用打印
+						if (that.isRefund)
 							setTimeout(function() {
 								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that
-								.sale3_arr);
+									.sale3_arr);
 							}, 3000);
-						});
-				})
+					});
 			},
 			//支付类型判断
 			PayTypeJudgment: function() {
@@ -1322,8 +1317,8 @@
 						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								refund_money: (Number(singleRefund.amount) * 100).toFixed(0), //退款金额
-								total_money: (Number(singleRefund.amount) * 100).toFixed(0) //退款总金额（兼容微信）
+								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0), //退款金额
+								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0) //退款总金额（兼容微信）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 							}).bind(that),
@@ -1341,7 +1336,8 @@
 									});
 								} else {
 									singleRefund.fail = false;
-									Sale3PackageSaveForSqlite([singleRefund]); //追加重试成功的订单信息
+									// this.Sale3PackageSaveForSqlite([singleRefund]); //追加重试成功的订单信息
+									this.createOrders();
 								}
 								singleRefund.loading = false; //关闭加载样式
 							}).bind(that));
