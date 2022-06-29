@@ -248,6 +248,11 @@
 		},
 		data() {
 			return {
+				SALES: {
+					sale1: {},
+					sale2: [],
+					sale3: []
+				},
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
 				navmall: false,
@@ -395,8 +400,11 @@
 						common.TransLiteData(bill);
 						//上传积分
 						this.scoreConsume();
+						var that = this;
 						//调用打印
-						// this.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						setTimeout(function() {
+							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						}, 3000);	
 					});
 				}
 			},
@@ -461,6 +469,10 @@
 			CreateDBData: function(func) {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
+				let sale1 = this.SALES.sale1,
+					sale2 = this.SALES.sale2,
+					sale3 = this.SALES.sale3;
+				console.log("sale1 封装中...");
 				//基础数据
 				this.sale1_obj = {
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
@@ -471,24 +483,24 @@
 					RYID: this.RYID,
 					BILL_TYPE: this.BILL_TYPE, //销售类型
 					XSTYPE: this.XS_TYPE, //销售类型
-					XS_BILL: this.sale1_obj?.XS_BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID: this.sale1_obj?.XS_POSID ?? "", //退款时记录原posid（重点）
-					XS_DATE: this.sale1_obj?.XS_DATE ?? "", //退款时记录原销售日期（重点）
-					XS_KHID: this.sale1_obj?.XS_KHID ?? "", //退款时记录原khid（重点）
-					XS_GSID: this.sale1_obj?.XS_GSID ?? "", //退款时记录原GSID（重点）
-					TLINE: this.sale2_obj.length,
+					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
+					XS_POSID: sale1?.XS_POSID ?? "", //退款时记录原posid（重点）
+					XS_DATE: sale1?.XS_DATE ?? "", //退款时记录原销售日期（重点）
+					XS_KHID: sale1?.XS_KHID ?? "", //退款时记录原khid（重点）
+					XS_GSID: sale1?.XS_GSID ?? "", //退款时记录原GSID（重点）
+					TLINE: sale2.length,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: Number(this.Discount + this.SKY_DISCOUNT).toFixed(2), //整单折扣需要加上手工折扣,
-					ROUND: this.SKY_DISCOUNT, //取整差值（手工折扣总额）,
+					BILLDISC: (Number(this.Discount) + Number(this.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
+					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）,
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
 					CUID: this.hyinfo.hyId, //会员号
 					CARDID: "", //卡号
 					THYDISC: 0,
-					TDISC: this.SKY_DISCOUNT,
+					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					YN_SC: 'N',
 					GSID: this.GSID, //公司
 					GCID: this.GCID, //工厂
@@ -501,7 +513,9 @@
 					THTYPE: 0,
 					CLTIME: saletime
 				};
+				console.log("sale1 封装完毕!");
 				this.sale2_arr = [];
+				console.log("sale2 封装中...");
 				for (var i = 0; i < this.Products.length; i++) {
 					this.sale2_obj = {
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
@@ -537,8 +551,11 @@
 					};
 					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
 				}
+				console.log("sale2 封装完毕!");
 				this.sale3_arr = [];
-				var list = this.isRefund ? this.RefundList.filter(i => !i.fail) : this
+				console.log("sale3 封装中...");
+				console.log("筛选掉弃用金额：", this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1'))
+				var list = this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this
 					.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 				list.forEach((item) => {
 					console.log("Item:", item)
@@ -582,6 +599,7 @@
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
 				})
+				console.log("sale3 封装完毕!");
 				for (var i = 0; i < this.sbsp_arr.length; i++) {
 					this.sale8_obj = {
 						SALEDATE: saledate,
@@ -734,14 +752,14 @@
 			//SALE001 初始化
 			SALE1Init: function() {
 				if (this.isRefund)
-					this.sale1_obj = this.sale1_obj ? Object.assign({}, this.sale1_obj) : {};
+					this.sale1_obj = this.SALES.sale1 ? Object.assign({}, this.SALES.sale1) : {};
 				console.log("SALE1 初始化完毕！", this.sale1_obj)
 				this.sale1_obj = {}; //重置此项	
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function() {
 				if (this.isRefund) {
-					this.Products = this.sale2_arr?.map((function(i) {
+					this.Products = this.SALES.sale2?.map((function(i) {
 						return {
 							PLID: i.PLID,
 							SPID: i.SPID,
@@ -758,12 +776,11 @@
 					this.refundAmountCount(); //退款金额计算
 				}
 				console.log("SALE2 初始化完毕！", this.Products)
-				this.sale2_arr = []; //重置此项
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function() {
 				if (this.isRefund) {
-					this.RefundList = this.sale3_arr?.map((function(i) { //将sale3的数据转为页面适用的格式
+					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
 							bill: `${i.BILL}_${i.NO}`,
@@ -779,7 +796,6 @@
 					}).bind(this));
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
-				this.sale3_arr = []; //重置此项
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -797,12 +813,18 @@
 					return;
 				}
 				console.log("RefundList-Before:", this.RefundList);
-				this.RefundList.filter(i => i.fail).forEach((function(refundInfo) {
+				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
 					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
 						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
+						if (["ZZ01", "ZF09"].indexOf(refundInfo.fkid) !== -1)
+							refundInfo.name = "不可原路退回";
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
+
+						promises.push(new Promise(function(resolve, reject) { //避免空数组检测不到
+							resolve(true);
+						}));
 					} else {
 						if (payWayType) {
 							if (!isRetry) refundInfo.fail =
@@ -810,9 +832,10 @@
 							refundInfo.refunding = true; //标记为正在退款的状态
 							let res = _pay.RefundAll(payWayType, {
 									out_trade_no: refundInfo.bill, //单号
-									out_refund_no: refund_no, //退款单号
-									refund_money: (Number(refundInfo.amount) * 100).toFixed(0), //退款金额
-									total_money: (Number(refundInfo.amount) * 100).toFixed(
+									out_refund_no: refund_no + `_${index}`, //退款单号
+									refund_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
+										0), //退款金额
+									total_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
 										0) //退款总金额（兼容微信）
 								}, (function(err) { //如果发生异常（catch）
 									// catch code...
@@ -850,7 +873,9 @@
 							//that.scoreConsume();
 							that.scoreReduce();
 							//调用打印
-							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+							setTimeout(function() {
+								that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
+							}, 3000);	
 						});
 				})
 			},
@@ -957,6 +982,14 @@
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: -(payload.money / 100).toFixed(2),
 							fail,
+						}, result));
+						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
+						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+							fkid: excessInfo?.fkid ?? "",
+							name: excessInfo?.name ?? "", // 弃用金额名称
+							amount: -((couponAmount - payload.money) / 100).toFixed(
+								2), // 券面额 - 支付金额 = 弃用金额
+							fail
 						}, result));
 					} else //如果券面额未小于
 					{
@@ -1128,9 +1161,9 @@
 					this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
 					this.out_trade_no = this.out_trade_no_old; //子单号
 					this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
-					this.sale1_obj = prev_page_param?.sale1_obj; //sale1数据
-					this.sale2_arr = prev_page_param?.sale2_arr; //sale2数据
-					this.sale3_arr = prev_page_param?.sale3_arr; //sale3数据
+					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
+					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
+					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.XS_TYPE = prev_page_param.XS_TYPE;
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
 					this.RefundDataHandle();
@@ -1323,7 +1356,6 @@
 			singlePayRetry: function(fkid, trade_no) {
 				let trade = this.PayList.find(i => i.bill === trade_no),
 					type = this.PayWayList.find(i => i.fkid == fkid)?.type;
-				console.log("fkid:" + fkid);
 				trade.loading = true;
 				_pay.QueryPayment(type, {
 					out_trade_no: trade_no
@@ -1412,19 +1444,17 @@
 				var goodsList = [];
 				for (var i = 0; i < sale2_arr.length; i++) {
 					let spname = "测试商品" + i;
-					let sqlSpda =
-						"SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" +
-						sale2_arr[i].SPID + "' order by SPID";
-					db.get().executeQry(sqlSpda, "数据查询中", function(res) {
-						spname = res.msg[0].SPNAME;
-						console.log("商品数据:", res.msg[0].SPNAME);
-					}, function(err) {
-						console.log("获取商品数据出错:", err);
-						uni.showToast({
-							icon: 'error',
-							title: "获取商品数据出错"
-						})
-					});
+					// let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
+					// db.get().executeQry(sqlSpda, "数据查询中", function(res) {
+					// 	spname = res.msg[0].SPNAME;
+					// 	console.log("商品数据:",res.msg[0].SPNAME);
+					// }, function(err) {
+					// 	console.log("获取商品数据出错:", err);
+					// 	uni.showToast({
+					// 		icon: 'error',
+					// 		title: "获取商品数据出错"
+					// 	})
+					// });
 
 					var sale2_printer = {
 						bill: sale2_arr[i].BILL, //主单号
@@ -1456,18 +1486,17 @@
 				var sale3List = [];
 				for (var j = 0; j < sale3_arr.length; j++) {
 					let fkName = sale3_arr[j].FKID;
-					let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +
-						"' order by FKID";
-					db.get().executeQry(sqlFkda, "数据查询中", function(res) {
-						fkName = res.msg[0].FKNAME;
-						console.log("付款方式数据:", res.msg[0].FKNAME);
-					}, function(err) {
-						console.log("获取付款方式出错:", err);
-						uni.showToast({
-							icon: 'error',
-							title: "获取付款方式出错"
-						})
-					});
+					// let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +"' order by FKID";
+					// db.get().executeQry(sqlFkda, "数据查询中", function(res) {
+					// 	fkName = res.msg[0].FKNAME;
+					// 	console.log("付款方式数据:",res.msg[0].FKNAME);
+					// }, function(err) {
+					// 	console.log("获取付款方式出错:", err);
+					// 	uni.showToast({
+					// 		icon: 'error',
+					// 		title: "获取付款方式出错"
+					// 	})
+					// });
 
 					var sale3_printer = {
 						bill: sale3_arr[j].BILL,
@@ -1588,35 +1617,36 @@
 				command.setPrint(); //打印并换行
 
 				// 打印二维码
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
+				// uni.canvasGetImageData({
+				// 	canvasId: "couponQrcode",
+				// 	x: 0,
+				// 	y: 0,
+				// 	width: that.qrCodeWidth,
+				// 	height: that.qrCodeHeight,
+				// 	success: function(res) {
+				// 		console.log("获取画布数据成功");
+				// 		command.setSelectJustification(1); //居中
+				// 		command.setBitmap(res);
+				// 		command.setPrint();
 
-						//that.addData(bill,xsDate,command.getData());
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-						//that.addData(bill,xsDate,command.getData());
-						that.prepareSend(command.getData()); //发送数据
-					}
-				});
-				// that.prepareSend(command.getData()); //发送数据
+				// 		//that.addData(bill,xsDate,command.getData());
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	},
+				// 	complete: function(res) {
+				// 		console.log("finish");
+				// 	},
+				// 	fail: function(res) {
+				// 		console.log(res);
+				// 		uni.showToast({
+				// 			title: "获取画布数据失败",
+				// 			icon: "none"
+				// 		});
+				// 		//that.addData(bill,xsDate,command.getData());
+				// 	    that.prepareSend(command.getData()); //发送数据
+				// 	}
+				// });
+				
+				that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印

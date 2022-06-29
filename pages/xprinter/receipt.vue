@@ -28,10 +28,10 @@
 
 <script>
 	var app = getApp();
-	var esc = require("../../utils/xprinter/esc.js");
-	var encode = require("../../utils/xprinter/encoding.js");
-	var util = require("../../utils/xprinter/util.js");
-	var qrCode = require("../../utils/xprinter/weapp-qrcode.js");
+	import esc from '@/utils/xprinter/esc.js';
+	import encode from '@/utils/xprinter/encoding.js';
+	import util from '@/utils/xprinter/util.js';
+	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	import vm from '@/utils/xprinter/MiddleUtil.js';	
     import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
@@ -60,7 +60,6 @@
 				qrCodeWidth: 200,//二维码宽
 				qrCodeHeight: 200,// 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
-				property1: ''
 			};
 		},
 
@@ -140,13 +139,13 @@
 		    var that = this;
 		    vm.$on('receiptPrinter', function (sale1_obj,sale2_arr,sale3_arr) {
 		        console.log("调用打印方法成功");
+				// console.log("打印接收数据1 sale1_obj",sale1_obj);
+				// console.log("打印接收数据2 sale2_arr",sale2_arr);
+				// console.log("打印接收数据3 sale3_arr",sale3_arr);	
 				that.receiptPrinter(sale1_obj,sale2_arr,sale3_arr);
 		    })
 		},
 		methods: {
-			methodB(data) {
-			   if (data) this.property1 = data;
-			},
 			fileReader: function() {
 				const self = this;
 				// 请求本地系统文件对象 plus.io.PRIVATE_WWW：应用运行资源目录常量
@@ -231,8 +230,8 @@
 				// var xsType = "XS";
 				// var xsBill = sale1_obj.BILL;
 				// var xsDate = util.getTime();
-				// var khName = getApp().globalData.NAME;
-				// var khAddress = getApp().globalData.KHAddress;
+				// var khName = getApp().globalData.store.NAME;
+				// var khAddress = getApp().globalData.store.KHAddress;		
 				// var posId = sale1_obj.POSID;
 				// var posUser = sale1_obj.RYID;
 				// var lineNum = sale1_obj.TLINE;
@@ -337,6 +336,65 @@
 				// 	payTotal, //支付
 				// 	change, //找零
 				// }
+				
+				//-----------------------------------------test
+				var xsType = "XS"; //如果等于 2，则表示退款，否则是支付
+				var billType = "Z101"; //
+								var bill = "2214055034000983";
+								var xsDate = util.getTime();
+								var khName = getApp().globalData.NAME;
+								var khAddress = getApp().globalData.KHAddress;
+								var posId = "1";
+								var posUser = "003";
+								var lineNum = 1;
+								var totalQty = 1.00;
+								var payableAmount = 1.00;
+								var discountedAmount = 0.00;
+								var originalAmount = 1.00;
+								var cash = 1.00;
+								var payTotal = 1.00;
+								var change = 0.00;
+								
+								
+								var goodsList= [{
+									spid: "10101021",
+									spname: "你好吐司",
+									qty: 1,
+									price: parseFloat("1.20"),
+									amount: 1.00,
+									discount: 0.00
+								}, 
+								{
+									spid: "10101023",
+									spname: "德式黑杂粮切片方包",
+									qty: 1,
+									price: parseFloat("1.50"),
+									amount: 1.00,
+									discount: 0.00
+								}]
+														
+								var printerInfo = {
+									xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
+									bill, //单号
+									xsDate, //打印时间
+									khName, //门店名称
+									khAddress, //门店地址
+									posId, //款台
+									posUser, //收银员
+								
+									goodsList,//商品集合
+								
+									lineNum, //条目
+									totalQty, //数量
+									payableAmount, //应付金额
+									discountedAmount, //已优惠金额
+									originalAmount, //原金额
+									cash, //现金
+									payTotal, //支付
+									change, //找零
+								}
+								
+								console.log("printerInfo 数据:",printerInfo);
 
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
@@ -347,9 +405,9 @@
 				command.setSelectJustification(1); //居中
 				command.setCharacterSize(17); //设置倍高倍宽
 				command.setText("KenGee 仟吉" + "\n");
-				//command.setPrint(); //打印并换行
+				command.setPrint(); //打印并换行
 									
-				// command.formString(printerInfo);
+				command.formString(printerInfo);
 
 				// command.setCharacterSize(0); //设置正常大小
 				// command.setSelectJustification(0); //设置居左
@@ -438,7 +496,8 @@
 					})
 				});
 			},
-			printPhoto: function() { //打印二维码事件
+			//打印二维码事件
+			printPhoto: function() {
 				//打印bitmap，图片内容不建议太大，小程序限制传输的字节数为20byte
 				var that = this;
 				var canvasWidth = that.qrCodeWidth;
@@ -471,7 +530,8 @@
 					}
 				});
 			},
-			printJPGPhoto: function() { //打印彩图事件
+			//打印彩图事件
+			printJPGPhoto: function() {
 				var that = this;
 				var canvasWidth = that.jpgWidth;
 				var canvasHeight = that.jpgHeight; //抖动处理JPG图片
@@ -540,8 +600,8 @@
 					}
 				});
 			},
+			//准备发送，根据每次发送字节数来处理分包数量
 			prepareSend: function(buff) {
-				//准备发送，根据每次发送字节数来处理分包数量
 				console.log("prepareSend 开始")
 				var that = this;
 				var time = that.oneTimeData;

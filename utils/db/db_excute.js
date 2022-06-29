@@ -397,7 +397,7 @@ var mySqllite = function() {
 		retcode = await open(pm_msg);
 		console.log("executeQryOpen:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("executeQry:" + JSON.stringify(sql));
+		console.log("executeQry:" + sql);
 		retcode = await qry(sql);
 		await close();
 		if (retcode.code) {

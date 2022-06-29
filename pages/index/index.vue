@@ -393,10 +393,8 @@
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
 				
-				await common.Query(`select BILL from sale001`).then((function(res){
-					this.input.bills = res.map(i => i.BILL);
-					console.log("BILLS:",this.input.bills)
-				}).bind(this));
+				console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
+				console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			}
 		},
 		//接收上个页面传入的参数
@@ -407,6 +405,7 @@
 			this.refreshProduct();
 			console.log("缓存：", uni.getStorageSync("products"))
 			this.refund_no = this.$store.state.trade;
+			// this.refund_no = "K0101QT2122628193555279";
 			
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
@@ -414,7 +413,6 @@
 				this.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 				getApp().globalData.hyinfo = that.hyinfo;
 			}
-			// this.refund_no = "K0101QT2122624174159578";
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
