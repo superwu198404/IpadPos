@@ -817,9 +817,10 @@
 					}).bind(this));
 					console.log("SALE3-处理前：", list);
 					let coupons = list.filter(i => group.indexOf(i.fkid) !== -1),
-						count = 0, unback = undefined; //筛选出 赠券、有偿券、弃用金额 类的订单数据
+						count = 0,
+						unback = undefined; //筛选出 赠券、有偿券、弃用金额 类的订单数据
 					console.log("SALE3-券类：", coupons);
-					if (coupons.length > 0) {//如果存在券数据则进行合并，否则不管
+					if (coupons.length > 0) { //如果存在券数据则进行合并，否则不管
 						coupons.map(i => count += Number(i.amount)); //计算获取这笔订单中所有券的实际支付金额
 						unback = { //不可回退金额对象（复数券的 面额 - 放弃金额）
 							fkid: "ZZ01",
@@ -834,7 +835,8 @@
 							msg: "" //操作提示信息（可以显示失败的或者成功的）
 						};
 					}
-					this.RefundList = list.filter(i => group.indexOf(i.fkid) === -1).concat(unback ? [unback] : []);; //筛选出 非 赠券、有偿券、弃用金额 类的订单数据，然后重新追加上面处理完毕的 不可回退金额 对象
+					this.RefundList = list.filter(i => group.indexOf(i.fkid) === -1).concat(unback ? [unback] :
+				[]);; //筛选出 非 赠券、有偿券、弃用金额 类的订单数据，然后重新追加上面处理完毕的 不可回退金额 对象
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
 			},
@@ -920,6 +922,7 @@
 						//调用打印
 						// if (that.isRefund)
 						setTimeout(function() {
+							console.log("that.Products", that.Products);
 							let arr2 = that.sale2_arr;
 							arr2.forEach(function(item, index) {
 								let obj = that.Products.find((i) => {
@@ -1256,7 +1259,7 @@
 			},
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {
-				console.log("重新计算金额：",this.RefundList)
+				console.log("重新计算金额：", this.RefundList)
 				//总金额
 				this.refundView.totalAmount = ((function() {
 					let count = 0;
