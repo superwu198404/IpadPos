@@ -426,6 +426,32 @@
 				return this.allAmount;
 			}
 		},
+		/**
+		 * 生命周期函数--监听页面初次渲染完成
+		 */
+		onReady: function() {
+			let that = this;
+			var list = [];
+			var numList = [];
+			var j = 0;
+		
+			for (var i = 20; i < 200; i += 10) {
+				list[j] = i;
+				j++;
+			}
+		
+			for (var i = 1; i < 10; i++) {
+				numList[i - 1] = i;
+			}
+		
+			that.setData({
+				buffSize: list,
+				oneTimeData: list[0],
+				printNum: numList,
+				printerNum: numList[0]
+			});
+			that.initPhoto();
+		},
 		methods: {
 			//页面首次加载事件
 			onLoad(options) {
@@ -871,8 +897,7 @@
 						//调用打印
 						if (that.isRefund)
 							setTimeout(function() {
-								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that
-									.sale3_arr);
+								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that.sale3_arr);
 							}, 3000);
 					});
 			},
