@@ -1215,18 +1215,7 @@ var jpPrinter = {
 		
 		//商品信息
 		data.goodsList.forEach((item, i) => {
-			let spname = "" + i;
-			let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + item.spid +"' order by SPID";
-			db.get().executeQry(sqlSpda, "数据查询中", function(res) {
-				spname = res.msg[0].SPNAME;
-				console.log("商品数据:",res.msg[0].SPNAME);
-			}, function(err) {
-				console.log("获取商品数据出错:", err);
-				uni.showToast({
-					icon: 'error',
-					title: "获取商品数据出错"
-				})
-			});
+			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen(spname, 15));
@@ -1340,21 +1329,9 @@ var jpPrinter = {
 		
 		//付款方式
 		data.sale3List.forEach((item, i) => {
-			let fkName = item.fkid;
-			let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + item.fkid +"' order by FKID";
-			db.get().executeQry(sqlFkda, "数据查询中", function(res) {
-				fkName = res.msg[0].FKNAME;
-				console.log("付款方式数据:",res.msg[0].FKNAME);
-			}, function(err) {
-				console.log("获取付款方式出错:", err);
-				uni.showToast({
-					icon: 'error',
-					title: "获取付款方式出错"
-				})
-			});
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(fkName + ":" + item.amt.toString());
+			jpPrinter.setText(item.fkName + ":" + item.amt.toString());
 			jpPrinter.setPrint(); //打印并换行
 			payTotal += parseFloat(item.amt);
 		});
