@@ -1450,13 +1450,13 @@
 			initPhoto: function() {},
 			//打印小票
 			receiptPrinter: function(sale1_obj, sale2_arr, sale3_arr) {
+				//输出日志
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
 
-				//票据测试
+				//票据
 				var that = this;
-
 				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
 				var billType = sale1_obj.BILL_TYPE; //Z101
 				var bill = sale1_obj.BILL;
@@ -1471,21 +1471,10 @@
 				var discountedAmount = sale1_obj.BILLDISC;
 				var originalAmount = sale1_obj.ZNET;
 
+				//商品数据
 				var goodsList = [];
 				for (var i = 0; i < sale2_arr.length; i++) {
-					let spname = "测试商品" + i;
-					// let sqlSpda = "SELECT SPID,SNAME AS SPNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
-					// db.get().executeQry(sqlSpda, "数据查询中", function(res) {
-					// 	spname = res.msg[0].SPNAME;
-					// 	console.log("商品数据:",res.msg[0].SPNAME);
-					// }, function(err) {
-					// 	console.log("获取商品数据出错:", err);
-					// 	uni.showToast({
-					// 		icon: 'error',
-					// 		title: "获取商品数据出错"
-					// 	})
-					// });
-
+					let spname = "" + i;
 					var sale2_printer = {
 						bill: sale2_arr[i].BILL, //主单号
 						saleDate: sale2_arr[i].SALEDATE,
@@ -1510,23 +1499,10 @@
 
 				console.log("goodsList 转换后数据:", goodsList);
 
-				var payTotal = 0.00;
-				var change = 0.00;
-
+				//支付数据
 				var sale3List = [];
 				for (var j = 0; j < sale3_arr.length; j++) {
 					let fkName = sale3_arr[j].FKID;
-					// let sqlFkda = "SELECT FKID,SNAME AS FKNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[j].FKID +"' order by FKID";
-					// db.get().executeQry(sqlFkda, "数据查询中", function(res) {
-					// 	fkName = res.msg[0].FKNAME;
-					// 	console.log("付款方式数据:",res.msg[0].FKNAME);
-					// }, function(err) {
-					// 	console.log("获取付款方式出错:", err);
-					// 	uni.showToast({
-					// 		icon: 'error',
-					// 		title: "获取付款方式出错"
-					// 	})
-					// });
 
 					var sale3_printer = {
 						bill: sale3_arr[j].BILL,
@@ -1545,11 +1521,9 @@
 						fkName: fkName,
 					};
 					sale3List = sale3List.concat(sale3_printer);
-					payTotal += sale3_printer.amt;
 				}
 
 				console.log("sale3List 转换后数据:", sale3List);
-				console.log("sale3List payTotal:", payTotal);
 
 				var printerInfo = {
 					xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
@@ -1560,21 +1534,14 @@
 					khAddress, //门店地址
 					posId, //款台
 					posUser, //收银员
-
 					goodsList, //商品集合
-
 					lineNum, //条目
 					payableAmount, //应付金额
 					discountedAmount, //已优惠金额
 					originalAmount, //原金额
-					totalQty,
-
-					sale3List, //付款方式
-
-					payTotal, //支付
-					change, //找零
+					totalQty, //总数量
+					sale3List,//支付信息
 				}
-
 				console.log("打印接收数据转换后 printerInfo:", printerInfo);
 
 				//初始化打印机
