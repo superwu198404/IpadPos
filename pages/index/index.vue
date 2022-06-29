@@ -266,6 +266,38 @@
 				});
 			},
 			Test: function(e) {
+				let param = {
+					LT_IMPORT: [{
+						ZZITEM: "1",
+						ZZMEMBER_ID: "1000311640",
+						ZZYZ_ID: "",
+						ZZORDER_NUM: "K0101QT212262994030603",
+						ZZORDER_TYPE: "2",
+						ZZLORDER: "K0101QT212262993953620",
+						ZZTPRICE: "3.00",
+						ZZPAYMENT: "3.00",
+						ZZPOINT_ADD: "0",
+						ZZPOINT_PAY: "3.00",
+						ZZCHANNEL: "POS",
+						ZZSTORE: "K200QTD005",
+						ZZORDER_DATE: "2022-06-29",
+						ZZCPTIME: "094033",
+						ZYL01: "",
+						ZYL02: "",
+						ZYL03: "",
+						ZYL04: "",
+						ZYL05: ""
+					}],
+					LT_ITEM: []
+				}
+				hy.minusHyJf(param, function(res) {
+					console.log("积分上传结果：", res);
+					uni.showToast({
+						title: res.code ? "积分上传成功" : res.msg,
+						icon: res.code ? "success" : "error"
+					})
+				})
+				return;
 				let arr = [
 					"delete from dapzcs_nr where id='FKJHZF';",
 					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
@@ -428,8 +460,8 @@
 			let info = uni.getStorageSync("hyinfo");
 			if (info) {
 				this.hyinfo = info;
-				this.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
-				getApp().globalData.hyinfo = that.hyinfo;
+				this.hyinfo.Balance = (this.hyinfo.Balance / 100).toFixed(2);
+				getApp().globalData.hyinfo = this.hyinfo;
 			}
 		},
 		onReady() {
