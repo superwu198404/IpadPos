@@ -577,7 +577,7 @@
 									return item.fkid;
 							}
 						})(), //付款类型id
-						AMT: item.amount, //付款金额
+						AMT: (this.isRefund?-1:1) * item.amount, //付款金额
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
@@ -980,11 +980,11 @@
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
 						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: -(payload.money / 100).toFixed(2),
+							amount: (payload.money / 100).toFixed(2),
 							fail,
 						}, result));
 						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
-						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录。放弃金额为负数
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
 							amount: -((couponAmount - payload.money) / 100).toFixed(
@@ -995,7 +995,7 @@
 					{
 						this.yPayAmount += fail ? 0 : (couponAmount / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: -(couponAmount / 100).toFixed(2),
+							amount: (couponAmount / 100).toFixed(2),
 							fail
 						}, result));
 					}
@@ -1003,7 +1003,7 @@
 				{
 					this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: -(payload.money / 100).toFixed(2),
+						amount: (payload.money / 100).toFixed(2),
 						fail
 					}, result));
 				}
