@@ -391,20 +391,21 @@
 					}
 
 				} else { //完成支付，推送数据
+
+					var that = this;
 					this.YN_TotalPay = true;
 					this.CanBack = true;
 					// this.$store.commit('set-orders', this.PayList);
 					this.CreateDBData((res) => {
 						//销售单单创建成功后 上传一下数据
-						let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
 						common.TransLiteData(bill);
 						//上传积分
-						this.scoreConsume();
-						var that = this;
+						that.scoreConsume();
 						//调用打印
-						setTimeout(function() {
-							that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
-						}, 3000);	
+						// setTimeout(function() {
+						// 	that.receiptPrinter(that.sale1_obj, that.sale2_arr, that.sale3_arr);
+						// }, 3000);
 					});
 				}
 			},
@@ -867,15 +868,16 @@
 					if (res.length > 0)
 						that.CreateDBData((res) => {
 							//销售单单创建成功后 上传一下数据
-							let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
+							let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
 							common.TransLiteData(bill);
 							//上传积分
 							//that.scoreConsume();
 							that.scoreReduce();
 							//调用打印
 							setTimeout(function() {
-								that.receiptPrinter(this.sale1_obj, this.sale2_arr, this.sale3_arr);
-							}, 3000);	
+								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that
+								.sale3_arr);
+							}, 3000);
 						});
 				})
 			},
@@ -1645,7 +1647,7 @@
 				// 	    that.prepareSend(command.getData()); //发送数据
 				// 	}
 				// });
-				
+
 				that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
