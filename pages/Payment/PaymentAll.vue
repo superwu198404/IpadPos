@@ -489,7 +489,7 @@
 					sale3 = this.SALES.sale3;
 				console.log("sale1 封装中...");
 				let hyinfo = getApp().globalData.hyinfo;
-				console.log("创建订单前的会员信息:",hyinfo);
+				console.log("创建订单前的会员信息:", hyinfo);
 				//基础数据
 				this.sale1_obj = {
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
@@ -902,7 +902,19 @@
 						//调用打印
 						if (that.isRefund)
 							setTimeout(function() {
-								that.receiptPrinter(that.sale1_obj, that.sale2_arr, that.sale3_arr);
+								let arr2 = that.sale2_arr.forEach(function(item, index) {
+									let obj = that.Products.find((i) => {
+										return i.SPID == item.SPID;
+									})
+									item.sname = obj.NAME;
+								})
+								let arr3 = that.sale3_arr.forEach(function(item, index) {
+									let obj = that.PayWayList.find((i) => {
+										return i.fkid == item.FKID;
+									})
+									item.sname = obj.name;
+								})
+								that.receiptPrinter(that.sale1_obj, arr2, arr3);
 							}, 3000);
 					});
 			},
@@ -1540,7 +1552,7 @@
 					discountedAmount, //已优惠金额
 					originalAmount, //原金额
 					totalQty, //总数量
-					sale3List,//支付信息
+					sale3List, //支付信息
 				}
 				console.log("打印接收数据转换后 printerInfo:", printerInfo);
 
