@@ -384,11 +384,7 @@
 				//获取支付方式
 				await that.GetPayWay(that.KHID);
 				//初始化配置参数
-				await common.GetPZCS("", (res) => {
-					for (var i = 0; i < res.msg.length; i++) {
-						getApp().globalData.PZCS[res.msg[i].ID_NR] = res.msg[i].ZF;
-					}
-				});
+				await common.GetPZCS();
 				//获取支付规则数据
 				await common.GetZFRULE("", (r) => {
 					console.log("最终支付规则数据：", getApp().globalData.PayInfo);

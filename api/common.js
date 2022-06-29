@@ -298,6 +298,11 @@ var GetPZCS = async function(e, func) {
 		sql = "select * from dapzcs_nr where id_nr in(" + str.substr(0, str.length - 1) + ")";
 	}
 	await db.get().executeQry(sql, "数据查询中", function(res) {
+		if (res.code) {
+			for (var i = 0; i < res.msg.length; i++) {
+				getApp().globalData.PZCS[res.msg[i].ID_NR] = res.msg[i].ZF;
+			}
+		}
 		if (func) func(res);
 	}, function(err) {
 		console.log("获取档案参数出错:", err);
