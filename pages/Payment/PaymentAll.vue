@@ -1139,7 +1139,7 @@
 						}
 					} else {}
 					console.log("积分上传参数：", param);
-					hy.minusHyJf(that.brand, param, function(res) {
+					hy.minusHyJf(param, function(res) {
 						console.log("积分上传结果：", res);
 						uni.showToast({
 							title: res.code ? "积分上传成功" : res.msg,

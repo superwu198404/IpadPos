@@ -484,7 +484,7 @@ function newUploadHyjf(d, func) {
 		"apiname": "newUploadHyjf",
 		"paramkey": "code",
 		"data": d
-	}, "查询中...").then(function(res) {
+	}, "积分上传中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
@@ -501,7 +501,7 @@ function minusHyJf(d, func) {
 		"apiname": "minusHyJf",
 		"paramkey": "code",
 		"data": d
-	}, "查询中...").then(function(res) {
+	}, "积分上传中...").then(function(res) {
 		//console.log(res);
 		if (func) func(res);
 		return res;
