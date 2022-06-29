@@ -2,7 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 </style>
 <template>
-	<view class="content">
+	<view class="content" style="border:1px solid red">
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
