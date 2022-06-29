@@ -34,7 +34,8 @@ export default {
 			writeCharacter: false,
 			readCharacter: false,
 			notifyCharacter: false,
-			isScanning: false
+			isScanning: false,
+			blueName: 'Printer001', //对应的蓝牙名称
 		};
 	},
 
@@ -56,7 +57,10 @@ export default {
 	/**
 	 * 生命周期函数--监听页面显示
 	 */
-	onShow: function() {},
+	onShow: function() {
+		//搜索蓝牙
+		this.startSearch()
+	},
 
 	/**
 	 * 生命周期函数--监听页面隐藏
@@ -187,8 +191,11 @@ export default {
 									if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
 										devices[num] = res.devices[i];
 										num++;
+										console.log("蓝牙设备",res.devices[i].name)
+										if (res.devices[i].name == that.blueName) {
+											
+										}
 									}
-									//console.log("蓝牙设备",res.devices[i].name)
 								}
 								
 								that.setData({

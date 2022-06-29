@@ -1510,7 +1510,6 @@
 				//商品数据
 				var goodsList = [];
 				for (var i = 0; i < sale2_arr.length; i++) {
-					let spname = "" + i;
 					var sale2_printer = {
 						bill: sale2_arr[i].BILL, //主单号
 						saleDate: sale2_arr[i].SALEDATE,
@@ -1523,7 +1522,7 @@
 						unit: sale2_arr[i].UNIT, //单位
 
 						spid: sale2_arr[i].SPID, //商品编码
-						spname: spname, //商品名称
+						spname: sale2_arr[i].SNAME, //商品名称
 						qty: sale2_arr[i].QTY, //数量
 						price: sale2_arr[i].PRICE, //单价
 						amount: sale2_arr[i].NET, //金额
@@ -1538,8 +1537,6 @@
 				//支付数据
 				var sale3List = [];
 				for (var j = 0; j < sale3_arr.length; j++) {
-					let fkName = sale3_arr[j].FKID;
-
 					var sale3_printer = {
 						bill: sale3_arr[j].BILL,
 						saleDate: sale3_arr[j].SALEDATE,
@@ -1554,7 +1551,7 @@
 						disc: sale3_arr[j].DISC, //折扣金额
 						zklx: sale3_arr[j].ZKLX, //折扣类型
 						idType: sale3_arr[j].IDTYPE, //卡类型
-						fkName: fkName,
+						fkName: sale3_arr[j].SNAME,
 					};
 					sale3List = sale3List.concat(sale3_printer);
 				}
