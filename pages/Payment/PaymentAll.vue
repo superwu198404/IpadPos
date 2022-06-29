@@ -800,12 +800,13 @@
 			//SALE003 初始化、处理
 			SALE3Init: function() {
 				if (this.isRefund) {
-					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
+					let group = ["ZZ01", "ZF09", "ZCV1"];
+					let list = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
 							bill: `${i.BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-							amount: i.AMT > 0 ? i.AMT * -1 : i.AMT,
+							amount: Number(i.AMT).toFixed(2),
 							no: i.NO,
 							fail: true, //def初始和退款失败的皆为true
 							refund_num: 0, //退款（尝试）次数
@@ -814,6 +815,26 @@
 							msg: "" //操作提示信息（可以显示失败的或者成功的）
 						}
 					}).bind(this));
+					console.log("SALE3-处理前：", list);
+					let coupons = list.filter(i => group.indexOf(i.fkid) !== -1),
+						count = 0, unback = undefined; //筛选出 赠券、有偿券、弃用金额 类的订单数据
+					console.log("SALE3-券类：", coupons);
+					if (coupons.length > 0) {//如果存在券数据则进行合并，否则不管
+						coupons.map(i => count += Number(i.amount)); //计算获取这笔订单中所有券的实际支付金额
+						unback = { //不可回退金额对象（复数券的 面额 - 放弃金额）
+							fkid: "ZZ01",
+							bill: ``, //券不参与退款请求，所以不需要订单号
+							name: this.PayWayList.find(p => p.fkid == "ZZ01")?.name ?? "", //获取不可回退金额 name
+							amount: Number(count).toFixed(2),
+							no: 0,
+							fail: true, //def初始和退款失败的皆为true
+							refund_num: 0, //退款（尝试）次数
+							refunding: false, //是否在正在退款中
+							loading: false,
+							msg: "" //操作提示信息（可以显示失败的或者成功的）
+						};
+					}
+					this.RefundList = list.filter(i => group.indexOf(i.fkid) === -1).concat(unback ? [unback] : []);; //筛选出 非 赠券、有偿券、弃用金额 类的订单数据，然后重新追加上面处理完毕的 不可回退金额 对象
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
 			},
@@ -833,15 +854,12 @@
 					return;
 				}
 				console.log("RefundList-Before:", this.RefundList);
+				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (["ZZ01", "ZF09", "ZCV1"].indexOf(refundInfo.fkid) !== -
-						1) { //如果为券，直接默认成功 fkid 分别为 券、券放弃金额
-						if (["ZZ01", "ZF09"].indexOf(refundInfo.fkid) !== -1)
-							refundInfo.name = "不可原路退回";
+					if (refundInfo.fkid === "ZZ01") { //如果为不可回退金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
-
 						promises.push(new Promise(function(resolve, reject) { //避免空数组检测不到
 							resolve(true);
 						}));
@@ -1023,14 +1041,14 @@
 					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
 						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (payload.money / 100).toFixed(2),
+							amount: (couponAmount / 100).toFixed(2),
 							fail,
 						}, result));
 						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录。放弃金额为负数
 							fkid: excessInfo?.fkid ?? "",
 							name: excessInfo?.name ?? "", // 弃用金额名称
-							amount: -((couponAmount - payload.money) / 100).toFixed(
+							amount: Number(-((couponAmount - payload.money) / 100)).toFixed(
 								2), // 券面额 - 支付金额 = 弃用金额
 							fail
 						}, result));
@@ -1238,25 +1256,24 @@
 			},
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {
+				console.log("重新计算金额：",this.RefundList)
 				//总金额
 				this.refundView.totalAmount = ((function() {
 					let count = 0;
-					this.RefundList.filter(i => i.fkid !== "ZCV1").map(i => count += i.amount); //将金额加起来
-					return (count).toFixed(2);
+					this.RefundList.map(i => count += Number(i.amount)); //将金额加起来
+					return (-count).toFixed(2);
 				}).bind(this))();
 				//实退金额
 				this.refundView.actualAmount = ((function() {
 					let count = 0;
-					this.RefundList.filter(i => !i.fail && i.fkid !== "ZCV1").map(i => count += i
-						.amount); //将金额加起来
-					return (count).toFixed(2);
+					this.RefundList.filter(i => !i.fail).map(i => count += Number(i.amount)); //将金额加起来
+					return (-count).toFixed(2);
 				}).bind(this))();
 				//待退款金额
 				this.refundView.debtAmount = ((function() {
 					let count = 0;
-					this.RefundList.filter(i => i.fail && i.fkid !== "ZCV1").map(i => count += i
-						.amount); //将金额加起来
-					return (count).toFixed(2);
+					this.RefundList.filter(i => i.fail).map(i => count += Number(i.amount)); //将金额加起来
+					return (-count).toFixed(2);
 				}).bind(this))();;
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
