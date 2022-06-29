@@ -577,7 +577,7 @@
 									return item.fkid;
 							}
 						})(), //付款类型id
-						AMT: (this.isRefund?-1:1) * item.amount, //付款金额
+						AMT: item.amount, //付款金额
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
@@ -785,7 +785,7 @@
 							fkid: i.FKID,
 							bill: `${i.BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-							amount: i.AMT,
+							amount: i.AMT > 0 ? i.AMT * -1 : i.AMT,
 							no: i.NO,
 							fail: true, //def初始和退款失败的皆为true
 							refund_num: 0, //退款（尝试）次数
@@ -1198,21 +1198,21 @@
 				this.refundView.totalAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => i.fkid !== "ZCV1").map(i => count += i.amount); //将金额加起来
-					return (-count).toFixed(2);
+					return (count).toFixed(2);
 				}).bind(this))();
 				//实退金额
 				this.refundView.actualAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => !i.fail && i.fkid !== "ZCV1").map(i => count += i
 						.amount); //将金额加起来
-					return (-count).toFixed(2);
+					return (count).toFixed(2);
 				}).bind(this))();
 				//待退款金额
 				this.refundView.debtAmount = ((function() {
 					let count = 0;
 					this.RefundList.filter(i => i.fail && i.fkid !== "ZCV1").map(i => count += i
 						.amount); //将金额加起来
-					return (-count).toFixed(2);
+					return (count).toFixed(2);
 				}).bind(this))();;
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
