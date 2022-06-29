@@ -900,22 +900,26 @@
 						else
 							that.scoreConsume();
 						//调用打印
-						if (that.isRefund)
-							setTimeout(function() {
-								let arr2 = that.sale2_arr.forEach(function(item, index) {
-									let obj = that.Products.find((i) => {
-										return i.SPID == item.SPID;
-									})
+						// if (that.isRefund)
+						setTimeout(function() {
+							let arr2 = that.sale2_arr;
+							arr2.forEach(function(item, index) {
+								let obj = that.Products.find((i) => {
+									return i.SPID == item.SPID;
+								})
+								if (obj) {
 									item.SNAME = obj.NAME;
+								}
+							})
+							let arr3 = that.sale3_arr;
+							arr3.forEach(function(item, index) {
+								let obj = that.PayWayList.find((i) => {
+									return i.fkid == item.FKID;
 								})
-								let arr3 = that.sale3_arr.forEach(function(item, index) {
-									let obj = that.PayWayList.find((i) => {
-										return i.fkid == item.FKID;
-									})
-									item.SNAME = obj.name;
-								})
-								that.receiptPrinter(that.sale1_obj, arr2, arr3);
-							}, 3000);
+								item.SNAME = obj.name;
+							})
+							that.receiptPrinter(that.sale1_obj, arr2, arr3);
+						}, 3000);
 					});
 			},
 			//支付类型判断
