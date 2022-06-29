@@ -204,7 +204,7 @@
 						} else {
 							uni.showToast({
 								title: res.msg,
-								icon: "error"
+								icon: "error" 
 							});
 						}
 						that.$refs['popup'].close();
