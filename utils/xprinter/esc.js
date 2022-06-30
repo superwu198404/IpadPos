@@ -1,6 +1,7 @@
 var encode = require("./encoding.js");
 var util = require("./util.js");
 import db from '@/utils/db/db_excute.js';
+import excPostUtil from '@/components/gprint/EscPosUtil.js';
 
 var app = getApp();
 var jpPrinter = {
@@ -1141,6 +1142,14 @@ var jpPrinter = {
 		var type = data.xsType;
 		var xpType = "销售";
 		var xsBill= "";
+		var lineNum = data.lineNum;
+        var isReturn = false;
+		
+		jpPrinter.setSelectJustification(1); //居中
+		jpPrinter.setCharacterSize(17); //设置倍高倍宽
+		jpPrinter.setText("KenGee 仟吉" + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(1); //设置居左	
 		jpPrinter.setText("欢迎光临");
@@ -1154,6 +1163,8 @@ var jpPrinter = {
 		  case printerType[1]:
 		    xpType ="退单";
 			xsBill= data.xsBill;
+			lineNum = -Math.abs(lineNum);
+			isReturn = true;
 		    break;
 		
 		  case printerType[2]:
@@ -1167,6 +1178,8 @@ var jpPrinter = {
 		  case printerType[4]:
 			xpType ="预订取消";
 			xsBill= data.xsBill;
+			lineNum = -Math.abs(lineNum);
+			isReturn = true;
 		    break;
 		
 		  case printerType[5]:
@@ -1176,6 +1189,8 @@ var jpPrinter = {
 		  case printerType[6]:
 			xpType ="赊销退单";
 			xsBill= data.xsBill;
+			lineNum = -Math.abs(lineNum);
+			isReturn = true;
 		    break;
 		
 		  case printerType[7]:
@@ -1245,53 +1260,12 @@ var jpPrinter = {
 					item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
-	}
-	
-	//总计
-	jpPrinter.formStringTotal = function(data){
-		var type = data.xsType;
-		var xpType ="销售";	
-		var lineNum = data.lineNum;
-		switch (type) {
-		  case printerType[0]:
-		    xpType ="销售";
-		    break;
 		
-		  case printerType[1]:
-		    xpType ="退单";
-			lineNum = -Math.abs(lineNum);
-		    break;
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------总计-----------------------");
+		jpPrinter.setPrint(); //打印并换行
 		
-		  case printerType[2]:
-		  	xpType ="预订";
-		    break;
-		  		
-		  case printerType[3]:
-		  	xpType ="预订提取";
-		    break;
-		  		
-		  case printerType[4]:
-		  	xpType ="预订取消";
-			lineNum = -Math.abs(lineNum);
-		    break;
-		  		
-		  case printerType[5]:
-		  	xpType ="赊销";
-		    break;
-		  		
-		  case printerType[6]:
-		  	xpType ="赊销退单";
-			lineNum = -Math.abs(lineNum);
-		    break;
-		  		
-		  case printerType[7]:
-		  	xpType ="线上订单";
-		    break;
-		  		
-		  case printerType[8]:
-		  	xpType ="外卖单";
-		    break;
-		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString());
@@ -1301,53 +1275,11 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
-	}
-	
-	//付款方式
-	jpPrinter.formStringPaymentMethod = function(data){
-		var type = data.xsType;
-		var xpType ="销售";
-		var isReturn = false;
-		switch (type) {
-		  case printerType[0]:
-		    xpType ="销售";
-		    break;
 		
-		  case printerType[1]:
-		    xpType ="退单";
-			isReturn = true;
-		    break;
-		
-		  case printerType[2]:
-		  	xpType ="预订";
-		    break;
-		  		
-		  case printerType[3]:
-		  	xpType ="预订提取";
-		    break;
-		  		
-		  case printerType[4]:
-		  	xpType ="预订取消";
-			isReturn = true;
-		    break;
-		  		
-		  case printerType[5]:
-		  	xpType ="赊销";
-		    break;
-		  		
-		  case printerType[6]:
-		  	xpType ="赊销退单";
-			isReturn = true;
-		    break;
-		  		
-		  case printerType[7]:
-		  	xpType ="线上订单";
-		    break;
-		  		
-		  case printerType[8]:
-		  	xpType ="外卖单";
-		    break;
-		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------付款方式-------------------");
+		jpPrinter.setPrint(); //打印并换行
 		
 		var payTotal = 0.00;
 		var change = 0.00;
@@ -1380,6 +1312,125 @@ var jpPrinter = {
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("门店地址: " + data.khAddress);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("轻轻地走了，正如我轻轻的来");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+	}
+	
+	//打印格式
+	jpPrinter.formatString = function(data){
+		var strCenter = excPostUtil.Center();
+		var strLeft = excPostUtil.Left();
+		var strSize1 = excPostUtil.Size1();
+		var strSize2 = excPostUtil.Size2(16);
+		var strSetPrint = excPostUtil.SetPrint();
+		
+		var type = data.xsType;
+		var xpType ="销售";
+		var isReturn = false;
+		var lineNum = data.lineNum;
+		switch (type) {
+		  case printerType[0]:
+		    xpType ="销售";
+		    break;
+		
+		  case printerType[1]:
+		    xpType ="退单";
+			isReturn = true;
+			lineNum = -Math.abs(lineNum);
+		    break;
+		
+		  case printerType[2]:
+		  	xpType ="预订";
+		    break;
+		  		
+		  case printerType[3]:
+		  	xpType ="预订提取";
+		    break;
+		  		
+		  case printerType[4]:
+		  	xpType ="预订取消";
+			lineNum = -Math.abs(lineNum);
+			isReturn = true;
+		    break;
+		  		
+		  case printerType[5]:
+		  	xpType ="赊销";
+		    break;
+		  		
+		  case printerType[6]:
+		  	xpType ="赊销退单";
+			isReturn = true;
+			lineNum = -Math.abs(lineNum);
+		    break;
+		  		
+		  case printerType[7]:
+		  	xpType ="线上订单";
+		    break;
+		  		
+		  case printerType[8]:
+		  	xpType ="外卖单";
+		    break;
+		}
+
+		let strCmd = strCenter + strSize2 + "KenGee 仟吉" + "\n" + strSetPrint;
+		strCmd += strCenter + strSize1 + "欢迎光临" + strSetPrint;
+		strCmd += strLeft + strSize1 + (xpType + "小票: " + data.khName) + strSetPrint;
+		strCmd += strLeft + strSize1 + (xpType + "时间: " + data.xsDate) + strSetPrint;
+		strCmd += strLeft + strSize1 + (util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser) + strSetPrint;
+		strCmd += strLeft + strSize1 + "单号: " + data.bill + strSetPrint;
+		strCmd += strLeft + strSize1 + "原单" + data.xsBill + strSetPrint;
+		
+		strCmd += strLeft + strSize1 + "商品名称       数量  单价  金额  折扣  " + strSetPrint;
+		strCmd += strLeft + strSize1 + "-----------------------------------------------" + strSetPrint;
+		//商品信息
+		data.goodsList.forEach((item, i) => {
+			let spname = (i + 1).toString() + item.spname.toString();
+			
+			strCmd += strLeft + strSize1 + util.getComputedByteLen(spname, 15) + strSetPrint;
+		    strCmd += strLeft + strSize1 + (util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
+				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
+					item.discount.toString(), 6)) + strSetPrint;
+		});
+		
+		strCmd += strLeft + strSize1 + "--------------------总计-----------------------" + strSetPrint;
+		strCmd += strLeft + strSize1 + ("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString()) + strSetPrint;
+		strCmd += strLeft + strSize1 + ("已优惠金额:" + data.discountedAmount.toString() + " 原金额:" + data.originalAmount.toString()) + strSetPrint;
+		
+		strCmd += strLeft + strSize1 + "--------------------付款方式-------------------" + strSetPrint;	
+		var payTotal = 0.00;
+		var change = 0.00;
+		data.sale3List.forEach((item, i) => {
+			if(isReturn){
+				item.amt = -Math.abs(item.amt);
+			}
+			strCmd += strLeft + strSize1 + (item.fkName + ":" + item.amt.toString()) + strSetPrint;
+			payTotal += parseFloat(item.amt);
+		});
+		
+		if(isReturn){
+			payTotal = -Math.abs(payTotal);
+		}
+		strCmd += strLeft + strSize1 + "支付:" + payTotal.toString() + strSetPrint;
+		strCmd += strLeft + strSize1 + "找零:" + change.toString() + strSetPrint;
+		strCmd += strLeft + strSize1 + "门店地址: " + data.khAddress + strSetPrint;
+		
+		strCmd += strLeft + strSize1 + "-----------------------------------------------" + strSetPrint;
+		
+		jpPrinter.setText(strCmd);
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
