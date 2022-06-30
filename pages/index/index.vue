@@ -243,6 +243,12 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
+						that.PayWayList.push({
+							name: "电子券",
+							fkid: "ZZ01",
+							type: "ZQ",
+							poly: "O"
+						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
