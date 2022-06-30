@@ -1260,24 +1260,15 @@
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {
 				console.log("重新计算金额：", this.RefundList)
-				//总金额
-				this.refundView.totalAmount = ((function() {
-					let count = 0;
-					this.RefundList.map(i => count += Number(i.amount)); //将金额加起来
-					return (-count).toFixed(2);
-				}).bind(this))();
-				//实退金额
-				this.refundView.actualAmount = ((function() {
-					let count = 0;
-					this.RefundList.filter(i => !i.fail).map(i => count += Number(i.amount)); //将金额加起来
-					return (-count).toFixed(2);
-				}).bind(this))();
-				//待退款金额
-				this.refundView.debtAmount = ((function() {
-					let count = 0;
-					this.RefundList.filter(i => i.fail).map(i => count += Number(i.amount)); //将金额加起来
-					return (-count).toFixed(2);
-				}).bind(this))();;
+				let ta = 0,aa = 0,da = 0;
+				this.RefundList.forEach(i => {
+					ta += Number(i.amount);
+					if(!i.fail) aa += Number(i.amount);
+					if(i.fail) da += Number(i.amount);
+				});
+				this.refundView.totalAmount = (-ta).toFixed(2);
+				this.refundView.actualAmount = (-aa).toFixed(2);
+				this.refundView.debtAmount = (-da).toFixed(2);
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
 			toBePaidPrice: function() {
