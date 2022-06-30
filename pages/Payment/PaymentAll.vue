@@ -1496,6 +1496,7 @@
 				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
 				var billType = sale1_obj.BILL_TYPE; //Z101
 				var bill = sale1_obj.BILL;
+				var xsBill= sale1_obj.XS_BILL;
 				var xsDate = sale1_obj.SALETIME;
 				var khName = getApp().globalData.store.NAME;
 				var khAddress = getApp().globalData.store.KHAddress;
@@ -1562,6 +1563,7 @@
 					xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 					billType,
 					bill, //单号
+					xsBill, //原单号
 					xsDate, //打印时间
 					khName, //门店名称
 					khAddress, //门店地址
@@ -1647,36 +1649,36 @@
 				command.setPrint(); //打印并换行
 
 				// 打印二维码
-				// uni.canvasGetImageData({
-				// 	canvasId: "couponQrcode",
-				// 	x: 0,
-				// 	y: 0,
-				// 	width: that.qrCodeWidth,
-				// 	height: that.qrCodeHeight,
-				// 	success: function(res) {
-				// 		console.log("获取画布数据成功");
-				// 		command.setSelectJustification(1); //居中
-				// 		command.setBitmap(res);
-				// 		command.setPrint();
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
 
-				// 		//that.addData(bill,xsDate,command.getData());
-				// 		that.prepareSend(command.getData()); //发送数据
-				// 	},
-				// 	complete: function(res) {
-				// 		console.log("finish");
-				// 	},
-				// 	fail: function(res) {
-				// 		console.log(res);
-				// 		uni.showToast({
-				// 			title: "获取画布数据失败",
-				// 			icon: "none"
-				// 		});
-				// 		//that.addData(bill,xsDate,command.getData());
-				// 	    that.prepareSend(command.getData()); //发送数据
-				// 	}
-				// });
+						//that.addData(bill,xsDate,command.getData());
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+						//that.addData(bill,xsDate,command.getData());
+					    that.prepareSend(command.getData()); //发送数据
+					}
+				});
 
-				that.prepareSend(command.getData()); //发送数据
+				//that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印

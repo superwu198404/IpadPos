@@ -1139,7 +1139,8 @@ var jpPrinter = {
 	
 	jpPrinter.formString = function(data){
 		var type = data.xsType;
-		var xpType ="销售";
+		var xpType = "销售";
+		var xsBill= "";
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(1); //设置居左	
 		jpPrinter.setText("欢迎光临");
@@ -1152,6 +1153,7 @@ var jpPrinter = {
 		
 		  case printerType[1]:
 		    xpType ="退单";
+			xsBill= data.xsBill;
 		    break;
 		
 		  case printerType[2]:
@@ -1164,6 +1166,7 @@ var jpPrinter = {
 		
 		  case printerType[4]:
 			xpType ="预订取消";
+			xsBill= data.xsBill;
 		    break;
 		
 		  case printerType[5]:
@@ -1172,6 +1175,7 @@ var jpPrinter = {
 		
 		  case printerType[6]:
 			xpType ="赊销退单";
+			xsBill= data.xsBill;
 		    break;
 		
 		  case printerType[7]:
@@ -1198,10 +1202,23 @@ var jpPrinter = {
 		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser);
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("单号: "+ data.bill + "\n");
-		jpPrinter.setPrint(); //打印并换行
+		//如果是退单，有原单号，则将原单号打印
+		if(xsBill != ""){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("单号: "+ data.bill);
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("原单: "+ xsBill + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}else{		
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("单号: "+ data.bill + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
@@ -1234,6 +1251,7 @@ var jpPrinter = {
 	jpPrinter.formStringTotal = function(data){
 		var type = data.xsType;
 		var xpType ="销售";	
+		var lineNum = data.lineNum;
 		switch (type) {
 		  case printerType[0]:
 		    xpType ="销售";
@@ -1241,39 +1259,42 @@ var jpPrinter = {
 		
 		  case printerType[1]:
 		    xpType ="退单";
+			lineNum = -Math.abs(lineNum);
 		    break;
 		
 		  case printerType[2]:
-			xpType ="预订";
+		  	xpType ="预订";
 		    break;
-		
+		  		
 		  case printerType[3]:
-			xpType ="提取";
+		  	xpType ="预订提取";
 		    break;
-		
+		  		
 		  case printerType[4]:
-			xpType ="预订";
+		  	xpType ="预订取消";
+			lineNum = -Math.abs(lineNum);
 		    break;
-		
+		  		
 		  case printerType[5]:
-			xpType ="赊销";
+		  	xpType ="赊销";
 		    break;
-		
+		  		
 		  case printerType[6]:
-			xpType ="退单";
+		  	xpType ="赊销退单";
+			lineNum = -Math.abs(lineNum);
 		    break;
-		
+		  		
 		  case printerType[7]:
-			xpType ="线上";
+		  	xpType ="线上订单";
 		    break;
-		
+		  		
 		  case printerType[8]:
-			xpType ="外卖";
+		  	xpType ="外卖单";
 		    break;
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + data.lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1285,7 +1306,8 @@ var jpPrinter = {
 	//付款方式
 	jpPrinter.formStringPaymentMethod = function(data){
 		var type = data.xsType;
-		var xpType ="销售";	
+		var xpType ="销售";
+		var isReturn = false;
 		switch (type) {
 		  case printerType[0]:
 		    xpType ="销售";
@@ -1293,34 +1315,37 @@ var jpPrinter = {
 		
 		  case printerType[1]:
 		    xpType ="退单";
+			isReturn = true;
 		    break;
 		
 		  case printerType[2]:
-			xpType ="预订";
+		  	xpType ="预订";
 		    break;
-		
+		  		
 		  case printerType[3]:
-			xpType ="提取";
+		  	xpType ="预订提取";
 		    break;
-		
+		  		
 		  case printerType[4]:
-			xpType ="预订";
+		  	xpType ="预订取消";
+			isReturn = true;
 		    break;
-		
+		  		
 		  case printerType[5]:
-			xpType ="赊销";
+		  	xpType ="赊销";
 		    break;
-		
+		  		
 		  case printerType[6]:
-			xpType ="退单";
+		  	xpType ="赊销退单";
+			isReturn = true;
 		    break;
-		
+		  		
 		  case printerType[7]:
-			xpType ="线上";
+		  	xpType ="线上订单";
 		    break;
-		
+		  		
 		  case printerType[8]:
-			xpType ="外卖";
+		  	xpType ="外卖单";
 		    break;
 		}
 		
@@ -1329,6 +1354,9 @@ var jpPrinter = {
 		
 		//付款方式
 		data.sale3List.forEach((item, i) => {
+			if(isReturn){
+				item.amt = -Math.abs(item.amt);
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(item.fkName + ":" + item.amt.toString());
@@ -1336,6 +1364,9 @@ var jpPrinter = {
 			payTotal += parseFloat(item.amt);
 		});
 		
+		if(isReturn){
+			payTotal = -Math.abs(payTotal);
+		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("支付:" + payTotal.toString());

@@ -180,7 +180,7 @@
 					this.$forceUpdate();
 					return;
 				}
-				this.input.similar = this.input.bills.filter(bill => bill?.includes(n) || false);
+				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) || false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
 		//方法初始化
@@ -329,6 +329,13 @@
 					});
 			},
 			insertProduct: function() {
+				if(Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined || arr[1] === "") !== -1){
+					uni.showToast({
+						title: "有字段为空，无法添加!",
+						icon: "error"
+					});
+					return;
+				}
 				let product = Object.assign({
 					ID: util.uuid()
 				}, this.input.fromData);
@@ -437,8 +444,8 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				that.input.bills = await common.Query("SELECT BILL FROM SALE001").map(i => i
-					.BILL);
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+
 				//生成支付规则数据
 				await common.InitZFRULE();
 				that.KHID = "K0101QT2";
@@ -470,7 +477,7 @@
 				getApp().globalData.hyinfo = this.hyinfo;
 			}
 			if (!this.first) //首次不执行
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
