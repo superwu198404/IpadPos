@@ -238,7 +238,6 @@
 	import util from '@/utils/util.js';
 	//打印相关
 	import esc from '@/utils/xprinter/esc.js';
-	import encode from '@/utils/xprinter/encoding.js';
 	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	var that;
@@ -1526,7 +1525,7 @@
 			},
 			//重新打印
 			againPrinter: function(xsBill) {
-				console.log("进入到打印了", xsBill)
+				console.log("重新打印", xsBill)
 				var that = this;
 				//xsBill = "2214055034000983";
 				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill + "' order by XSDATE desc";
@@ -1629,7 +1628,6 @@
 					}
 				}
 				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
-
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: app.globalData.BLEInformation.writeServiceId,
