@@ -180,7 +180,7 @@
 					this.$forceUpdate();
 					return;
 				}
-				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n) || false) || (bill?.toUpperCase()?.includes(n) || false));
+				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) || false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
 		//方法初始化
