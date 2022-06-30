@@ -199,7 +199,7 @@
 		    })
 		},
 		methods: {
-// 监听蓝牙设备连接状态
+			// 监听蓝牙设备连接状态
 			listenerConnection() {
 				console.log('监听蓝牙设备连接状态')
 				let _this = this;
@@ -567,91 +567,8 @@
 				
 				//票据
 				var that = this;
-				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
-				var billType = sale1_obj.BILL_TYPE; //Z101
-				var bill = sale1_obj.BILL;
-				var xsBill= sale1_obj.XS_BILL;
-				var xsDate = sale1_obj.SALETIME;
-				var khName = getApp().globalData.store.NAME;
-				var khAddress = getApp().globalData.store.KHAddress;
-				var posId = sale1_obj.POSID;
-				var posUser = sale1_obj.RYID;
-				var lineNum = sale2_arr.length;
-				var totalQty = 0;
-				var payableAmount = sale1_obj.TNET;
-				var discountedAmount = sale1_obj.BILLDISC;
-				var originalAmount = sale1_obj.ZNET;
-				
-				//商品数据
-				var goodsList = [];
-				for (var i = 0; i < sale2_arr.length; i++) {
-					var sale2_printer = {
-						bill: sale2_arr[i].BILL, //主单号
-						saleDate: sale2_arr[i].SALEDATE,
-						saleTime: sale2_arr[i].SALETIME,
-						khid: sale2_arr[i].KHID,
-						posId: sale2_arr[i].POSID,
-						no: i,
-						plid: sale2_arr[i].PLID,
-						barCode: sale2_arr[i].BARCODE,
-						unit: sale2_arr[i].UNIT, //单位
-				
-						spid: sale2_arr[i].SPID, //商品编码
-						spname: sale2_arr[i].SNAME, //商品名称
-						qty: sale2_arr[i].QTY, //数量
-						price: sale2_arr[i].PRICE, //单价
-						amount: sale2_arr[i].NET, //金额
-						discount: sale2_arr[i].DISCRATE, //总折扣额
-					};
-					goodsList = goodsList.concat(sale2_printer);
-					totalQty += sale2_arr[i].QTY;
-				}
-				
-				console.log("goodsList 转换后数据:", goodsList);
-				
-				//支付数据
-				var sale3List = [];
-				for (var j = 0; j < sale3_arr.length; j++) {
-					var sale3_printer = {
-						bill: sale3_arr[j].BILL,
-						saleDate: sale3_arr[j].SALEDATE,
-						saleTime: sale3_arr[j].SALETIME,
-						khid: sale3_arr[j].KHID,
-						posId: sale3_arr[j].POSID,
-						no: sale3_arr[j].NO, //付款序号
-						fkid: sale3_arr[j].FKID, //付款类型id
-						amt: parseFloat(sale3_arr[j].AMT), //付款金额
-						id: sale3_arr[j].ID, //卡号或者券号
-						ryid: sale3_arr[j].RYID, //人员
-						disc: sale3_arr[j].DISC, //折扣金额
-						zklx: sale3_arr[j].ZKLX, //折扣类型
-						idType: sale3_arr[j].IDTYPE, //卡类型
-						fkName: sale3_arr[j].SNAME,
-					};
-					sale3List = sale3List.concat(sale3_printer);
-				}
-				
-				console.log("sale3List 转换后数据:", sale3List);
-				
-				var printerInfo = {
-					xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
-					billType,
-					bill, //单号
-					xsBill, //原单号
-					xsDate, //打印时间
-					khName, //门店名称
-					khAddress, //门店地址
-					posId, //款台
-					posUser, //收银员
-					goodsList, //商品集合
-					lineNum, //条目
-					payableAmount, //应付金额
-					discountedAmount, //已优惠金额
-					originalAmount, //原金额
-					totalQty, //总数量
-					sale3List, //支付信息
-				}
-				console.log("打印接收数据转换后 printerInfo:", printerInfo);
+				//打印数据转换
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
 				
 				//初始化打印机
 				var strCenter = excPostUtil.Center();
