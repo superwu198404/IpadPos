@@ -115,7 +115,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>{{refund.amount}}￥</text>
+										<text>{{(-refund.amount).toFixed(2)}}￥</text>
 									</view>
 								</view>
 							</view>
@@ -130,7 +130,7 @@
 											{{ refund.name }}
 										</view>
 										<div class="refund-more-box" @click="singleRetry(refund.bill)">
-											<text class="refund-text">{{refund.amount}}￥</text>
+											<text class="refund-text">{{(-refund.amount).toFixed(2)}}￥</text>
 											<div class="refund-reset">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
@@ -393,7 +393,7 @@
 					var that = this;
 					this.YN_TotalPay = true;
 					this.CanBack = true;
-					// this.$store.commit('set-orders', this.PayList);
+					console.log("Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this.sale3_arr);
 					this.createOrders(true);
 				}
 			},
@@ -1040,37 +1040,23 @@
 			//创建支付记录
 			orderGenarator: function(payload, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
-				console.log("请求返回结果[result]：", result);
-				if (this.currentPayType === "COUPON") { //如果是券支付
-					let couponAmount = result.voucher.denomination; //获取券的面额
-					let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
-					console.log("excessInfo:", excessInfo);
-					console.log("result:", result);
-					if (payload.money < couponAmount) { //判断支付金额是否小于 券的面额，小于则生成两单，一单是已支付的金额，一单是弃用的金额
-						this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
+				let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
+				this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
+				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
+					result.vouchers.forEach((function(coupon, index) {
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (couponAmount / 100).toFixed(2),
+							amount:((coupon.yn_card ==='Y'? coupon.pay_amount : (coupon.type === 'EXCESS' ? -coupon.pay_amount : coupon.denomination))/100).toFixed(2),
+							fkid: coupon.type === 'EXCESS' ? excessInfo.fkid : this.currentPayInfo?.fkid,
+							name: coupon.type === 'EXCESS' ? excessInfo.name : this.currentPayInfo?.name,
+							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
+							id_type: coupon?.type,
+							is_free: coupon?.yn_zq,
+							card_no: coupon?.no
 						}, result));
-						result.voucher.yn_zq = ""; //避免放弃金额fkid同时被修改
-						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录。放弃金额为负数
-							fkid: excessInfo?.fkid ?? "",
-							name: excessInfo?.name ?? "", // 弃用金额名称
-							amount: Number(-((couponAmount - payload.money) / 100)).toFixed(
-								2), // 券面额 - 支付金额 = 弃用金额
-							fail
-						}, result));
-					} else //如果券面额未小于
-					{
-						this.yPayAmount += fail ? 0 : (couponAmount / 100); //把支付成功部分金额加上
-						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (couponAmount / 100).toFixed(2),
-							fail
-						}, result));
-					}
+					}).bind(this));
 				} else //如果是聚合支付
 				{
-					this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail
@@ -1085,14 +1071,14 @@
 					type: this.currentPayInfo?.type ?? "",
 					bill: payload?.out_trade_no,
 					name: this.currentPayInfo?.name ?? "",
-					amount: (this.isRefund ? -1 : 1) * (payload?.money / 100).toFixed(2),
+					amount: 0,
 					no: this.PayList.length,
 					disc: (payload?.discount / 100).toFixed(2),
 					zklx: payload?.disc_type ?? "",
-					id_type: payload?.voucher.type ?? "",
+					id_type: "",
 					user_id: payload?.open_id || payload?.hyid,
-					is_free: payload?.voucher?.yn_zq || "",
-					card_no: payload?.voucher.no ?? "",
+					is_free: "",
+					card_no: "",
 					//业务配置字段 ↓
 					fail: true, //def初始和退款失败的皆为true
 					pay_num: 0, //退款（尝试）次数
