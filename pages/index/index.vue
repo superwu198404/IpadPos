@@ -444,7 +444,7 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 
 				//生成支付规则数据
 				await common.InitZFRULE();
@@ -481,7 +481,7 @@
 				getApp().globalData.hyinfo = this.hyinfo;
 			}
 			if (!this.first) //首次不执行
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
