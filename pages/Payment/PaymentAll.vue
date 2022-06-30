@@ -1496,6 +1496,7 @@
 				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
 				var billType = sale1_obj.BILL_TYPE; //Z101
 				var bill = sale1_obj.BILL;
+				var xsBill= sale1_obj.XS_BILL;
 				var xsDate = sale1_obj.SALETIME;
 				var khName = getApp().globalData.store.NAME;
 				var khAddress = getApp().globalData.store.KHAddress;
@@ -1562,6 +1563,7 @@
 					xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 					billType,
 					bill, //单号
+					xsBill, //原单号
 					xsDate, //打印时间
 					khName, //门店名称
 					khAddress, //门店地址
