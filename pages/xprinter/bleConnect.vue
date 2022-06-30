@@ -34,7 +34,8 @@ export default {
 			writeCharacter: false,
 			readCharacter: false,
 			notifyCharacter: false,
-			isScanning: false
+			isScanning: false,
+			blueName: 'Printer001', //对应的蓝牙名称
 		};
 	},
 
@@ -56,7 +57,10 @@ export default {
 	/**
 	 * 生命周期函数--监听页面显示
 	 */
-	onShow: function() {},
+	onShow: function() {
+		//搜索蓝牙
+		this.startSearch()
+	},
 
 	/**
 	 * 生命周期函数--监听页面隐藏
@@ -182,13 +186,16 @@ export default {
 							success: function(res) {
 								var devices = [];
 								var num = 0;
-
 								for (var i = 0; i < res.devices.length; ++i) {
 									if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
 										devices[num] = res.devices[i];
 										num++;
+										console.log("蓝牙设备",res.devices[i].name)
+										if (res.devices[i].name == that.blueName) {
+											//断开蓝牙连接
+											that.closeBLEConnection(res.devices[i].deviceId,i);
+										}
 									}
-									//console.log("蓝牙设备",res.devices[i].name)
 								}
 								
 								that.setData({
@@ -350,6 +357,28 @@ export default {
 			uni.navigateTo({
 				url: "../start/start"
 			});
+		},
+		//断开所有已经建立的连接，释放系统资源，要求在蓝牙功能使用完成后调用
+		closeBluetoothAdapter() {
+			plus.bluetooth.closeBluetoothAdapter({
+				success: function(e) {
+					console.log('close success: ' + JSON.stringify(e));
+				},
+				fail: function(e) {
+					console.log('close failed: ' + JSON.stringify(e));
+				}
+			});
+		},
+		//断开蓝牙连接
+		closeBLEConnection(deviceId, index) {
+			const _this = this
+			plus.bluetooth.closeBLEConnection({
+				deviceId: deviceId,
+				success: res => {
+					console.log('断开蓝牙连接')
+					_this.isLink.splice(index, 1, 4)
+				}
+			})
 		}
 	}
 };

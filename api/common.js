@@ -263,11 +263,15 @@ var QueryRefund = async function(trade) {
 	}, function(err) {
 		console.log("Sale1查询执行异常:", err);
 	});
-	await db.get().executeQry(`select * from SALE002 where BILL='${trade}'`, "查询SALE2...", function(res) {
-		datas.sale2 = res.msg;
-	}, function(err) {
-		console.log("Sale2查询执行异常:", err);
-	});
+	await db.get().executeQry(
+		`select s2.*,ifnull(s.SNAME,'名称无') NAME from SALE002 s2 left join spda s on s2.spid=s.spid where BILL='${trade}'`,
+		"查询SALE2...",
+		function(res) {
+			datas.sale2 = res.msg;
+		},
+		function(err) {
+			console.log("Sale2查询执行异常:", err);
+		});
 	await db.get().executeQry(`select * from SALE003 where BILL='${trade}'`, "查询SALE3...", function(res) {
 		datas.sale3 = res.msg;
 	}, function(err) {
@@ -306,10 +310,6 @@ var GetPZCS = async function(e, func) {
 		if (func) func(res);
 	}, function(err) {
 		console.log("获取档案参数出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取档案参数出错"
-		})
 	});
 }
 //初始化支付规则（测试使用）

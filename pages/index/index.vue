@@ -111,13 +111,13 @@
 	import db from '@/utils/db/db_excute.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
 	import util from '@/utils/util.js';
-	
+
 	import dateformat from '@/utils/dateformat.js';
 	export default {
 		//变量初始化
 		data() {
 			return {
-				first:true,
+				first: true,
 				input: {
 					fromData: {
 						PLID: "101",
@@ -229,7 +229,7 @@
 							fkid: "ZF32",
 							type: "PINNUO",
 							poly: "N",
-						},{
+						}, {
 							name: "不可原路退回",
 							fkid: "ZZ01",
 							type: "NO",
@@ -309,56 +309,15 @@
 				});
 			},
 			Test: function(e) {
-				let param = {
-					LT_IMPORT: [{
-						ZZITEM: "1",
-						ZZMEMBER_ID: "1000311640",
-						ZZYZ_ID: "",
-						ZZORDER_NUM: "K0101QT212262994030603",
-						ZZORDER_TYPE: "2",
-						ZZLORDER: "K0101QT212262993953620",
-						ZZTPRICE: "3.00",
-						ZZPAYMENT: "3.00",
-						ZZPOINT_ADD: "0",
-						ZZPOINT_PAY: "3.00",
-						ZZCHANNEL: "POS",
-						ZZSTORE: "K200QTD005",
-						ZZORDER_DATE: "2022-06-29",
-						ZZCPTIME: "094033",
-						ZYL01: "",
-						ZYL02: "",
-						ZYL03: "",
-						ZYL04: "",
-						ZYL05: ""
-					}],
-					LT_ITEM: []
-				}
-				hy.minusHyJf(param, function(res) {
-					console.log("积分上传结果：", res);
-					uni.showToast({
-						title: res.code ? "积分上传成功" : res.msg,
-						icon: res.code ? "success" : "error"
-					})
-				})
-				return;
-				let arr = [
-					"delete from dapzcs_nr where id='FKJHZF';",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-					"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
-				]
-				let sql = "";
-				for (var i = 0; i < arr.length; i++) {
-					sql += arr[i];
-				}
+				let sql =
+					"select s2.*,ifnull(s.SNAME,'名称无') NAME from SALE002 s2 left join spda s on s2.spid=s.spid  where BILL='K0101QT2122629185756893'";
+				// sql="select * from SALE002 where BILL='K0101QT2122629185756893'";
 				console.log("测试sql:", sql);
 				//批量执行sql 必须是数组
-				db.get().executeDml(arr, "执行中", (res) => {
+				db.get().executeQry(sql, "执行中", (res) => {
 					console.log("sql 执行结果：", res);
 				});
+				return;
 				let sql1 = "";
 				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 				let reqdata = Req.resObj(true, "数据传输中", {
@@ -393,7 +352,7 @@
 			},
 			refreshProduct: function() {
 				let products = uni.getStorageSync("products");
-				if (!products || products.length == 0) uni.setStorageSync("products",[{
+				if (!products || products.length == 0) uni.setStorageSync("products", [{
 						PLID: "101",
 						SPID: "1010100004",
 						UNIT: "袋",
@@ -486,7 +445,7 @@
 				var that = this;
 				//获取BILLS
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
-				
+
 				//生成支付规则数据
 				await common.InitZFRULE();
 				// await common.GetJHZF();
@@ -521,7 +480,7 @@
 				this.hyinfo.Balance = (this.hyinfo.Balance / 100).toFixed(2);
 				getApp().globalData.hyinfo = this.hyinfo;
 			}
-			if(!this.first) //首次不执行
+			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL);
 		},
 		onReady() {
@@ -616,7 +575,8 @@
 		width: 150px;
 		border: 1px solid gray;
 	}
-	.bills{
+
+	.bills {
 		max-height: 200px;
 		overflow-y: auto;
 	}
