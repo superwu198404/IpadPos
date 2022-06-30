@@ -1647,36 +1647,36 @@
 				command.setPrint(); //打印并换行
 
 				// 打印二维码
-				// uni.canvasGetImageData({
-				// 	canvasId: "couponQrcode",
-				// 	x: 0,
-				// 	y: 0,
-				// 	width: that.qrCodeWidth,
-				// 	height: that.qrCodeHeight,
-				// 	success: function(res) {
-				// 		console.log("获取画布数据成功");
-				// 		command.setSelectJustification(1); //居中
-				// 		command.setBitmap(res);
-				// 		command.setPrint();
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
 
-				// 		//that.addData(bill,xsDate,command.getData());
-				// 		that.prepareSend(command.getData()); //发送数据
-				// 	},
-				// 	complete: function(res) {
-				// 		console.log("finish");
-				// 	},
-				// 	fail: function(res) {
-				// 		console.log(res);
-				// 		uni.showToast({
-				// 			title: "获取画布数据失败",
-				// 			icon: "none"
-				// 		});
-				// 		//that.addData(bill,xsDate,command.getData());
-				// 	    that.prepareSend(command.getData()); //发送数据
-				// 	}
-				// });
+						//that.addData(bill,xsDate,command.getData());
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+						//that.addData(bill,xsDate,command.getData());
+					    that.prepareSend(command.getData()); //发送数据
+					}
+				});
 
-				that.prepareSend(command.getData()); //发送数据
+				//that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
