@@ -551,9 +551,11 @@
 						OPRICE: this.Products[i].OPRICE,
 						NET: this.isRefund ? (-1 * this.Products[i].PRICE).toFixed(2) : (this.Products[i].PRICE *
 							this.Products[i].QTY - this.Products[i].SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.Products[i].SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
-						YN_SKYDISC: this.Products[i].SKYDISCOUNT > 0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.Products[i].SKYDISCOUNT, //手工折扣额
+						DISCRATE: this.isRefund ? -this.Products[i].DISCRATE : this.Products[i]
+							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						YN_SKYDISC: this.isRefund ? this.Products[i].YN_SKYDISC : this.Products[i].SKYDISCOUNT >
+							0 ? "Y" : "N", //是否有手工折扣
+						DISC: this.isRefund ? -this.Products[i].DISC : this.Products[i].SKYDISCOUNT, //手工折扣额
 						YN_CXDISC: 'N',
 						CXDISC: 0,
 						// YAER: new Date().getFullYear(),
@@ -792,7 +794,10 @@
 							PRICE: i.PRICE,
 							OPRICE: i.OPRICE,
 							AMOUNT: i.NET,
-							QTY: i.QTY
+							QTY: i.QTY,
+							DISCRATE: i.DISCRATE, //退款使用
+							YN_SKYDISC: i.YN_SKYDISC,//退款使用
+							DISC: i.DISC //退款使用
 						}
 					}).bind(this));
 					console.log("商品信息循环后：", this.Products);
