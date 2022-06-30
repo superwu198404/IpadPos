@@ -231,7 +231,7 @@
 							poly: "N",
 						}, {
 							name: "不可原路退回",
-							fkid: "ZZ01",
+							fkid: "ZG11",
 							type: "NO",
 							poly: "O"
 						}]
