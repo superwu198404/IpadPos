@@ -585,16 +585,19 @@
 						KHID: this.KHID,
 						POSID: this.POSID,
 						NO: item.no, //付款序号
-						FKID: (function() {
-							switch (item.is_free) {
-								case 'Y':
-									return 'ZZ01';
-								case 'N':
-									return 'ZF09';
-								default:
-									return item.fkid;
-							}
-						})(), //付款类型id
+						FKID: ((function() {
+							if (this.isRefund)
+								return item.fkid;
+							else
+								switch (item.is_free) {
+									case 'Y':
+										return 'ZZ01';
+									case 'N':
+										return 'ZF09';
+									default:
+										return item.fkid;
+								}
+						}).bind(this))(), //付款类型id
 						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
@@ -823,9 +826,9 @@
 					if (coupons.length > 0) { //如果存在券数据则进行合并，否则不管
 						coupons.map(i => count += Number(i.amount)); //计算获取这笔订单中所有券的实际支付金额
 						unback = { //不可回退金额对象（复数券的 面额 - 放弃金额）
-							fkid: "ZZ01",
+							fkid: "ZG11",
 							bill: ``, //券不参与退款请求，所以不需要订单号
-							name: this.PayWayList.find(p => p.fkid == "ZZ01")?.name ?? "", //获取不可回退金额 name
+							name: this.PayWayList.find(p => p.fkid == "ZG11")?.name ?? "", //获取不可回退金额 name
 							amount: Number(count).toFixed(2),
 							no: 0,
 							fail: true, //def初始和退款失败的皆为true
@@ -859,7 +862,7 @@
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (refundInfo.fkid === "ZZ01") { //如果为不可回退金额
+					if (refundInfo.fkid === "ZG11") { //如果为不可回退金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						promises.push(new Promise(function(resolve, reject) { //避免空数组检测不到
@@ -923,6 +926,8 @@
 						// if (that.isRefund)
 						setTimeout(function() {
 							console.log("that.Products", that.Products);
+							console.log("that.PayWayList", that.PayWayList);
+							console.log("that.sale3_arr", that.sale3_arr);
 							let arr2 = that.sale2_arr;
 							arr2.forEach(function(item, index) {
 								let obj = that.Products.find((i) => {
@@ -1944,7 +1949,7 @@
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
 				}
-				console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
+				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
