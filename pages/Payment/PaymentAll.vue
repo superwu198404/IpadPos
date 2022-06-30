@@ -1948,7 +1948,7 @@
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
 				}
-				console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
+				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
