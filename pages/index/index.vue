@@ -370,6 +370,13 @@
 					});
 			},
 			insertProduct: function() {
+				if(Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined || arr[1] === "") !== -1){
+					uni.showToast({
+						title: "有字段为空，无法添加!",
+						icon: "error"
+					});
+					return;
+				}
 				let product = Object.assign({
 					ID: util.uuid()
 				}, this.input.fromData);
