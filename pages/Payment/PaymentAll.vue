@@ -1242,16 +1242,17 @@
 				this.Products.forEach(product => total += product.AMOUNT);
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
-				this.SKY_DISCOUNT = parseFloat(util.myFixed(total, 2) % 1).toFixed(2);
-				this.totalAmount = parseFloat(total - this.SKY_DISCOUNT).toFixed(2); //舍弃分数位
+				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
+				console.log("手工折扣额：", this.SKY_DISCOUNT);
+				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
-					let high = parseFloat(util.myFixed((item.AMOUNT / total * that.SKY_DISCOUNT), 2));
+					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
 					item.SKYDISCOUNT = high;
-					curDis += item.SKYDISCOUNT;
+					curDis += high;
 					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
 					if (index == arr.length - 1) {
-						let dif = that.SKY_DISCOUNT - curDis; //实际的差值
+						let dif = parseFloat((that.SKY_DISCOUNT - curDis).toFixed(2)); //实际的差值
 						item.SKYDISCOUNT += dif;
 					}
 				});
@@ -1260,11 +1261,13 @@
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {
 				console.log("重新计算金额：", this.RefundList)
-				let ta = 0,aa = 0,da = 0;
+				let ta = 0,
+					aa = 0,
+					da = 0;
 				this.RefundList.forEach(i => {
 					ta += Number(i.amount);
-					if(!i.fail) aa += Number(i.amount);
-					if(i.fail) da += Number(i.amount);
+					if (!i.fail) aa += Number(i.amount);
+					if (i.fail) da += Number(i.amount);
 				});
 				this.refundView.totalAmount = (-ta).toFixed(2);
 				this.refundView.actualAmount = (-aa).toFixed(2);
@@ -1487,7 +1490,7 @@
 				var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
 				var billType = sale1_obj.BILL_TYPE; //Z101
 				var bill = sale1_obj.BILL;
-				var xsBill= sale1_obj.XS_BILL;
+				var xsBill = sale1_obj.XS_BILL;
 				var xsDate = sale1_obj.SALETIME;
 				var khName = getApp().globalData.store.NAME;
 				var khAddress = getApp().globalData.store.KHAddress;
@@ -1665,7 +1668,7 @@
 							icon: "none"
 						});
 						//that.addData(bill,xsDate,command.getData());
-					    that.prepareSend(command.getData()); //发送数据
+						that.prepareSend(command.getData()); //发送数据
 					}
 				});
 
