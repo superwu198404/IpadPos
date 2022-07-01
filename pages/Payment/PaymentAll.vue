@@ -3,7 +3,7 @@
 </style>
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;"/>
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -239,7 +239,7 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	//打印相关
-    import vm from '@/utils/xprinter/MiddleUtil.js';
+	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that;
 	export default {
@@ -580,7 +580,7 @@
 					}
 					this.sale8_arr = this.sale8_arr.concat(this.sale8_obj);
 				}
-			
+
 				//生成执行sql
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
@@ -621,15 +621,18 @@
 					})
 				});
 			},
-			SaleDataCombine:function(){
+			SaleDataCombine: function() {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let hyinfo = getApp().globalData.hyinfo;
 				let sale1 = this.SALES.sale1,
 					sale2 = this.SALES.sale2,
 					sale3 = this.SALES.sale3;
+				console.log("sale1", sale1);
+				console.log("sale2", sale2);
+				console.log("sale3", sale3);
 				console.log("sale1 封装中...");
-				this.sale1_obj = Object.assign(sale1,{//上个页面传入的 sale1 和 当前追加
+				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
 					SALETIME: saletime,
@@ -641,10 +644,10 @@
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime
 				});
-				console.log("sale1 封装完毕!",this.sale1_obj);
+				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
-				this.sale2_arr = sale2.map((function(item,index){
-					return Object.assign(item,{
+				this.sale2_arr = sale2.map((function(item, index) {
+					let obj = Object.assign(item, {
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
@@ -657,14 +660,18 @@
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
 						MONTH: new Date().getMonth() + 1,
-						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
+						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date()
+							.getMonth() + 1,
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					})
+					delete obj.SKYDISCOUNT;
+					delete obj.NAME;
+					return obj;
 				}).bind(this));
-				console.log("sale2 封装完毕!",this.sale2_arr);
+				console.log("sale2 封装完毕!", this.sale2_arr);
 				console.log("sale3 封装中...");
-				this.sale3_arr = this.Sale3Source().map((function(item,index){
+				this.sale3_arr = this.Sale3Source().map((function(item, index) {
 					return {
 						BILL: this.isRefund ? this.out_refund_no : this
 							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
@@ -688,10 +695,10 @@
 						IDTYPE: item.id_type //卡类型
 					}
 				}).bind(this));
-				console.log("sale3 封装完毕!",this.sale3_arr);
+				console.log("sale3 封装完毕!", this.sale3_arr);
 				console.log("sale8 封装中...");
-				this.sale8_arr = this.sale8_arr.map((function(item,index){
-					return Object.assign(item,{
+				this.sale8_arr = this.sale8_arr.map((function(item, index) {
+					return Object.assign(item, {
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						GCID: this.GCID,
@@ -711,17 +718,17 @@
 				}).bind(this));
 				console.log("sale8 封装完毕!");
 			},
-			orderSQLGenarator:function(){
+			orderSQLGenarator: function() {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
 				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
-				console.log("[orderSQLGenarator]sql1生成：",sql1)
-				console.log("[orderSQLGenarator]sql2生成：",sql2)
-				console.log("[orderSQLGenarator]sql3生成：",sql3)
-				console.log("[orderSQLGenarator]sql8生成：",sql8)
+				console.log("[orderSQLGenarator]sql1生成：", sql1)
+				console.log("[orderSQLGenarator]sql2生成：", sql2)
+				console.log("[orderSQLGenarator]sql3生成：", sql3)
+				console.log("[orderSQLGenarator]sql8生成：", sql8)
 				this.tx_obj = {
 					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
 					STOREID: this.KHID,
@@ -733,11 +740,13 @@
 					CONNSTR: 'CONNSTRING'
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-				return sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr).concat(sql8.sqlliteArr);
+				return sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr).concat(
+					sql8.sqlliteArr);
 			},
 			//sale 003 数据源：
-			Sale3Source:function(){
-				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
+			Sale3Source: function() {
+				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(
+					i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 			},
 			//创建订单数据
 			_CreateDBData: function(func) {
@@ -880,7 +889,7 @@
 							DISCRATE: i.DISCRATE, //退款使用
 							YN_SKYDISC: i.YN_SKYDISC, //退款使用
 							DISC: i.DISC //退款使用
-						},i)
+						}, i)
 					}).bind(this));
 					console.log("商品信息循环后：", this.Products);
 					this.refundAmountCount(); //退款金额计算
@@ -1005,33 +1014,33 @@
 						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
 						common.TransLiteData(bill);
 						//上传积分
-						if (that.isRefund)
-							that.scoreReduce();
-						else
-							that.scoreConsume();
+						// if (that.isRefund)
+						// 	that.scoreReduce();
+						// else
+						that.scoreConsume();
 						//调用打印
 						// if (that.isRefund)
 						setTimeout(() => {
-						console.log("that.Products", that.Products);
-						console.log("that.PayWayList", that.PayWayList);
-						console.log("that.sale3_arr", that.sale3_arr);
-						let arr2 = that.sale2_arr;
-						arr2.forEach(function(item, index) {
-							let obj = that.Products.find((i) => {
-								return i.SPID == item.SPID;
+							console.log("that.Products", that.Products);
+							console.log("that.PayWayList", that.PayWayList);
+							console.log("that.sale3_arr", that.sale3_arr);
+							let arr2 = that.sale2_arr;
+							arr2.forEach(function(item, index) {
+								let obj = that.Products.find((i) => {
+									return i.SPID == item.SPID;
+								})
+								if (obj) {
+									item.SNAME = obj.NAME;
+								}
 							})
-							if (obj) {
-								item.SNAME = obj.NAME;
-							}
-						})
-						let arr3 = that.sale3_arr;
-						arr3.forEach(function(item, index) {
-							let obj = that.PayWayList.find((i) => {
-								return i.fkid == item.FKID;
+							let arr3 = that.sale3_arr;
+							arr3.forEach(function(item, index) {
+								let obj = that.PayWayList.find((i) => {
+									return i.fkid == item.FKID;
+								})
+								item.SNAME = obj.name;
 							})
-							item.SNAME = obj.name;
-						})
-						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+							that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
 						}, 3000);
 					});
 			},
@@ -1131,13 +1140,14 @@
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon.note === 'EXCESS' ? -coupon.pay_amount : coupon
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
+								.note === 'EXCESS' ? -coupon.pay_amount : coupon
 								.denomination)) / 100).toFixed(2),
 							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : this
 								.currentPayInfo?.fkid,
 							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
-							zklx:coupon.note === 'EXCESS' ? "ZCV1" : coupon.disc_type,
+							zklx: coupon.note === 'EXCESS' ? "ZCV1" : coupon.disc_type,
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
@@ -1271,6 +1281,8 @@
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.XS_TYPE = prev_page_param.XS_TYPE;
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
+					this.SKY_DISCOUNT = prev_page_param.SKY_DISCOUNT;
+					this.totalAmount = prev_page_param.totalAmount;
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品

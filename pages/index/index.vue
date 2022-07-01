@@ -164,7 +164,9 @@
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 
-				refund_no: ""
+				refund_no: "",
+				totalAmount: 0,
+				SKY_DISCOUNT: 0
 			}
 		},
 		watch: {
@@ -180,7 +182,8 @@
 					this.$forceUpdate();
 					return;
 				}
-				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) || false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
+				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) ||
+					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
 		//方法初始化
@@ -263,6 +266,22 @@
 						this.sale1_obj = data.sale1;
 						this.sale2_arr = data.sale2;
 						this.sale3_arr = data.sale3;
+						this.Products = this.sale3_arr?.map((function(i) {
+							return Object.assign({
+								PLID: i.PLID,
+								SPID: i.SPID,
+								UNIT: i.UNIT,
+								BARCODE: i.BARCODE,
+								NAME: i.NAME,
+								PRICE: i.PRICE,
+								OPRICE: i.OPRICE,
+								AMOUNT: i.NET,
+								QTY: i.QTY,
+								DISCRATE: i.DISCRATE, //退款使用
+								YN_SKYDISC: i.YN_SKYDISC, //退款使用
+								DISC: i.DISC //退款使用
+							}, i)
+						}).bind(this));
 						this.refund_no = ""; //清空单号
 						console.log("SALE1、2、3：", [this.sale1_obj, this.sale2_arr, this.sale3_arr]);
 						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length == 0 ||
@@ -274,10 +293,10 @@
 							return;
 						}
 					} else {
-						// this.sale1_obj = {};
-						// this.sale2_arr = [];
-						// this.sale3_arr = [];
-						this.SaleBaseInit();
+						this.sale1_obj = {};
+						this.sale2_arr = [];
+						this.sale3_arr = [];
+						// this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
 					uni.navigateTo({
@@ -311,10 +330,35 @@
 					out_refund_no: common.CreateBill(this.KHID, this
 						.POSID), //生成退款单号
 					BILL_TYPE: this.BILL_TYPE,
-					XS_TYPE: this.XS_TYPE
+					XS_TYPE: this.XS_TYPE,
+					SKY_DISCOUNT: this.SKY_DISCOUNT,
+					totalAmount: this.totalAmount
 				});
 			},
-			SaleBaseInit:function(){
+			priceCount: function() {
+				let total = 0;
+				let that = this;
+				this.Products.forEach(product => total += product.AMOUNT);
+				// console.log("商品总金额：", this.SKY_DISCOUNT);
+				//舍弃分的处理
+				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
+				console.log("手工折扣额：", this.SKY_DISCOUNT);
+				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				let curDis = 0;
+				this.Products.forEach(function(item, index, arr) {
+					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
+					item.SKYDISCOUNT = high;
+					curDis += high;
+					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
+					if (index == arr.length - 1) {
+						let dif = parseFloat((that.SKY_DISCOUNT - curDis).toFixed(2)); //实际的差值
+						item.SKYDISCOUNT += dif;
+					}
+				});
+				console.log("处理分后的商品信息：", this.Products);
+			},
+			SaleBaseInit: function() {
+				this.priceCount() //支付金额初始化
 				//预先重置
 				this.sale1_obj = {};
 				this.sale2_arr = [];
@@ -322,9 +366,9 @@
 				//创建基本结构
 				//sale 001:
 				this.sale1_obj = {
-					BILL: "",//payall 追加
-					SALEDATE: "",//payall 追加
-					SALETIME: "",//payall 追加
+					BILL: "", //payall 追加
+					SALEDATE: "", //payall 追加
+					SALETIME: "", //payall 追加
 					KHID: this.KHID,
 					POSID: this.POSID,
 					RYID: this.RYID,
@@ -338,30 +382,30 @@
 					TLINE: this.Products.length,
 					TNET: 0, //payall 追加
 					DNET: 0,
-					ZNET: 0,//payall 追加
+					ZNET: 0, //payall 追加
 					BILLDISC: 0, //payall 追加
-					ROUND: 0,//payall 追加
+					ROUND: 0, //payall 追加
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
 					CUID: this.hyinfo.hyId,
 					CARDID: "",
 					THYDISC: 0,
-					TDISC: 0,//payall 追加
+					TDISC: 0, //payall 追加
 					YN_SC: 'N',
 					GSID: this.GSID, //公司
 					GCID: this.GCID,
 					DPID: this.DPID,
 					KCDID: this.KCDID,
 					BMID: this.BMID,
-					DKFID: this.DKFID, 
+					DKFID: this.DKFID,
 					XSPTID: 'POS',
 					YN_OK: 'X',
 					THTYPE: 0,
-					CLTIME: ""//payall 追加
+					CLTIME: "" //payall 追加
 				};
 				//sale 002:
-				this.sale2_arr = this.Products.map((item,index) => {
+				this.sale2_arr = this.Products.map((item, index) => {
 					return {
 						BILL: "", //payall 追加
 						SALEDATE: "", //payall 追加
@@ -374,22 +418,23 @@
 						BARCODE: item.BARCODE,
 						UNIT: item.UNIT,
 						QTY: (this.isRefund ? -1 : 1) * item.QTY,
-						PRICE: 0,//payall 追加
+						PRICE: item.PRICE, //payall 追加
 						OPRICE: item.OPRICE,
-						NET: 0,//payall 追加
-						DISCRATE: 0,//payall 追加
+						NET: 0, //payall 追加
+						DISCRATE: 0, //payall 追加
 						YN_SKYDISC: '', //payall 追加
 						DISC: 0, //payall 追加
 						YN_CXDISC: 'N',
 						CXDISC: 0,
-						MONTH: '',//payall 追加
-						WEEK: '',//payall 追加
-						TIME: '',//payall 追加
+						MONTH: '', //payall 追加
+						WEEK: '', //payall 追加
+						TIME: '', //payall 追加
 						RYID: this.RYID,
 						GCID: this.GCID,
 						DPID: this.DPID,
 						KCDID: this.KCDID,
-						BMID: this.BMID
+						BMID: this.BMID,
+						SKYDISCOUNT: item.SKYDISCOUNT
 					}
 				});
 			},
@@ -414,7 +459,8 @@
 					});
 			},
 			insertProduct: function() {
-				if(Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined || arr[1] === "") !== -1){
+				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||
+						arr[1] === "") !== -1) {
 					uni.showToast({
 						title: "有字段为空，无法添加!",
 						icon: "error"
@@ -529,7 +575,8 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
+					.reverse();
 
 				//生成支付规则数据
 				await common.InitZFRULE();
