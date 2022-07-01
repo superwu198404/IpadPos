@@ -108,7 +108,7 @@
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);
-									uni.redirectTo({
+									uni.navigateTo({
 										url: "/pages/sqlitetest/sqlitetest" // 传递参数 id，值为1
 									});
 									let reqdata = Req.retData(true, "start创建成功")

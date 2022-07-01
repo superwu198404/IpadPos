@@ -361,25 +361,6 @@ var GetZFRULE = async function(e, func) {
 		console.log("获取支付规则数据出错:", err);
 	});
 }
-//初始化聚合支付数据
-var GetJHZF = async function(e, func) {
-	let arr = [
-		"delete from dapzcs_nr where id='FKJHZF';",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF08', '翼支付', 'yzf', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF15', '银联二维码', 'ylewm', NULL, '62', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
-	]
-	//批量执行sql 必须是数组
-	await db.get().executeDml(arr, "执行中", (res) => {
-		if (func) func(res);
-		console.log("聚合数据初始化成功：", res);
-	}, (err) => {
-		console.log("聚合数据初始化失败：", err);
-	});
-}
 
 //获取POS参数组内容
 var GetPOSCS = async function(e, func) {
@@ -420,6 +401,5 @@ export default {
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,
-	GetJHZF,
 	GetPOSCS
 }

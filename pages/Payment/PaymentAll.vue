@@ -153,7 +153,7 @@
 								@click="clickPayType($event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
-								<label class="poly-box">
+								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 										</image>
@@ -609,7 +609,7 @@
 						BMID: this.BMID, //部门id
 						DISC: item.disc, //折扣金额
 						FAMT: item.disc, //折扣金额(卡券消费后要记录)
-						RATE: item.disc, //折扣金额(卡消费后要记录)
+						RATE: item.id_type ? item.disc : "", //折扣金额(卡消费后要记录)
 						ZKLX: (function() {
 							switch (item.is_free) {
 								case 'Y':
@@ -796,7 +796,7 @@
 							AMOUNT: i.NET,
 							QTY: i.QTY,
 							DISCRATE: i.DISCRATE, //退款使用
-							YN_SKYDISC: i.YN_SKYDISC,//退款使用
+							YN_SKYDISC: i.YN_SKYDISC, //退款使用
 							DISC: i.DISC //退款使用
 						}
 					}).bind(this));
@@ -1050,9 +1050,13 @@
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount:((coupon.yn_card ==='Y'? coupon.pay_amount : (coupon.type === 'EXCESS' ? -coupon.pay_amount : coupon.denomination))/100).toFixed(2),
-							fkid: coupon.type === 'EXCESS' ? excessInfo.fkid : this.currentPayInfo?.fkid,
-							name: coupon.type === 'EXCESS' ? excessInfo.name : this.currentPayInfo?.name,
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
+								.type === 'EXCESS' ? -coupon.pay_amount : coupon
+								.denomination)) / 100).toFixed(2),
+							fkid: coupon.type === 'EXCESS' ? excessInfo.fkid : this
+								.currentPayInfo?.fkid,
+							name: coupon.type === 'EXCESS' ? excessInfo.name : this
+								.currentPayInfo?.name,
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
@@ -1480,7 +1484,7 @@
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
-				
+
 				//票据
 				var that = this;
 				//打印数据转换
@@ -1678,7 +1682,7 @@
 						}
 					}
 				});
-			}	
+			}
 		},
 		created() {
 			if (window && !window.vue) { //把vue放到全局上，方便调试

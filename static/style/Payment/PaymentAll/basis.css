@@ -1,18 +1,19 @@
 uni-page-body,
 uni-page-refresh,
 page {
-	height: 92%;
+	height: 98%;
 	background-color: #F5F4F8;
 }
 
 .content {
 	display: flex;
 	width: 100%;
-	height: 100vh;
+	height: 98vh;
 	overflow: hidden;
 	background-color: #F5F4F8;
 	box-sizing: border-box;
 	align-items: center;
+	margin-top:44rpx;
 }
 
 .getback {
@@ -97,7 +98,7 @@ page {
 
 .right {
 	width: 100%;
-	height: 92%;
+	height: 100%;
 }
 
 .nav {
@@ -218,8 +219,8 @@ page {
 
 .paydetails {
 	display: flex;
-	height: 62%;
-	margin: 2%;
+	height: 66%;
+	margin: 2% 2% 0;
 }
 
 .pay-sum {
@@ -534,28 +535,28 @@ uni-button:after {
 	border: none;
 }
 
-.coupons .uls {
+.uls {
 	padding: 0 2%;
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.coupons .uls .lis {
+.uls .lis {
 	width: 48%;
 	margin: 1% 1% 2%;
 	display: flex;
 }
 
-.coupons .uls .lis .banyuan {
-	width: 22rpx;
+.uls .lis .banyuan {
+	width: 24rpx;
 	height: 100%;
-	margin-left: -1px;
+	margin-left: -2px;
 }
 
 .voucher {
 	background-color: #42B14B;
 	color: #fff;
-	width: 30%;
+	width: 35%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -564,12 +565,14 @@ uni-button:after {
 }
 
 .voucher view {
-	font-size: 80rpx;
+	font-size: 60rpx;
+	line-height: 80rpx;
 	font-weight: 700;
+	letter-spacing:-4px;
 }
 
 .voucher view text {
-	font-size: 40rpx;
+	font-size: 30rpx;
 }
 
 .voucher .datas {
@@ -636,8 +639,12 @@ uni-button:after {
 	font-size: 34rpx;
 	font-weight: 700;
 	line-height: 80rpx;
+	color:#333;
 }
-
+.limit .h3 text{
+	color:#333;
+	font-size: 34rpx;
+}
 .limit text {
 	color: #B0B0B0;
 	font-size: 26rpx;
