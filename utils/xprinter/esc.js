@@ -1,6 +1,5 @@
 var encode = require("./encoding.js");
 var util = require("./util.js");
-import db from '@/utils/db/db_excute.js';
 import excPostUtil from '@/components/gprint/EscPosUtil.js';
 
 var app = getApp();
@@ -575,7 +574,7 @@ var jpPrinter = {
       data.push(parseInt(pitch / 256));
       data.push(parseInt(bith % 256));
       data.push(parseInt(bith / 256));
-      console.log(res.data.length);
+      //console.log(res.data.length);
 
       for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
@@ -1135,6 +1134,16 @@ var jpPrinter = {
       }
     };
 	
+	//方法一扩展（C#中PadLeft、PadRight）
+	String.prototype.PadLeft = function(len, charStr) {
+		var s = this + '';
+		return new Array(len - s.length + 1).join(charStr, '') + s;
+	}
+	String.prototype.PadRight = function(len, charStr) {
+		var s = this + '';
+		return s + new Array(len - s.length + 1).join(charStr, '');
+	}
+	
 	//打印格式 9 种：销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单接单、外卖单接单；
 	var printerType = ["XS", "TD", "YD", "YDTQ", "YDQX", "SX", "SXTD", "XSDD", "XSWMJD"];
 	
@@ -1218,7 +1227,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		//如果是退单，有原单号，则将原单号打印
-		if(xsBill != ""){
+		if(xsBill != "" && xsBill != undefined){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
@@ -1314,6 +1323,34 @@ var jpPrinter = {
 		jpPrinter.setText("门店地址: " + data.khAddress);
 		jpPrinter.setPrint(); //打印并换行
 		
+		data.sale3List.forEach((item, i) => {
+			if(isReturn){
+				item.amt = -Math.abs(item.amt);
+			}
+			//卡券号存在，才打印
+			if(item.id != "" && item.id != undefined){
+				jpPrinter.setCharacterSize(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("-----------------------------------------------");
+				jpPrinter.setPrint(); //打印并换行
+				
+				jpPrinter.setCharacterSize(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("卡/券号:" + util.onlyFourBank(item.id));
+				jpPrinter.setPrint(); //打印并换行
+				
+				jpPrinter.setCharacterSize(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("消费额:" + item.amt.toString());
+				jpPrinter.setPrint(); //打印并换行
+				
+				jpPrinter.setCharacterSize(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("卡类型:" + item.fkName.toString());
+				jpPrinter.setPrint(); //打印并换行
+			}
+		});
+			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");

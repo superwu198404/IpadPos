@@ -3,6 +3,7 @@
 </style>
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;"/>
 		<view class="navmall" v-if="navmall">
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
@@ -232,19 +233,19 @@
 	import _card from '@/api/Pay/ECardPay.js';
 	import _coupon from '@/api/Pay/ECoupon.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
+	import _member from '@/api/hy/MemberInterfaces.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	//打印相关
-	import esc from '@/utils/xprinter/esc.js';
-	import encode from '@/utils/xprinter/encoding.js';
-	import xprinter_util from '@/utils/xprinter/util.js';
-	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
+    import vm from '@/utils/xprinter/MiddleUtil.js';
+	import PrinterPage from '@/pages/xprinter/receipt';
 	var that;
 	export default {
 		components: {
-			uniPopup
+			uniPopup,
+			PrinterPage
 		},
 		data() {
 			return {
@@ -322,21 +323,6 @@
 				sale8_obj: {}, //水吧产品对象
 				sale8_arr: [], //水吧产品集合
 				//打印相关
-				looptime: 0,
-				currentTime: 1,
-				lastData: 0,
-				oneTimeData: 0,
-				buffSize: [],
-				buffIndex: 0,
-				//发送字节数下标
-				printNum: [],
-				printNumIndex: 0,
-				printerNum: 1,
-				currentPrint: 1,
-				isReceiptSend: false,
-				isQuery: false,
-				imageSrc: "/static/xprinter/logo.jpg",
-				jpgSrc: "/static/xprinter/logo.jpg",
 				jpgWidth: 340,
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
@@ -426,41 +412,11 @@
 				return this.allAmount;
 			}
 		},
-		/**
-		 * 生命周期函数--监听页面初次渲染完成
-		 */
-		onReady: function() {
-			let that = this;
-			var list = [];
-			var numList = [];
-			var j = 0;
-
-			for (var i = 20; i < 200; i += 10) {
-				list[j] = i;
-				j++;
-			}
-
-			for (var i = 1; i < 10; i++) {
-				numList[i - 1] = i;
-			}
-
-			that.setData({
-				buffSize: list,
-				oneTimeData: list[0],
-				printNum: numList,
-				printerNum: numList[0]
-			});
-			that.initPhoto();
-		},
 		methods: {
 			//页面首次加载事件
 			onLoad(options) {
 				that = this;
 				this.GetHyCoupons();
-				//生成二维码
-				setTimeout(() => {
-					this.couponQrCode()
-				}, 50);
 			},
 			//单号防重处理
 			UniqueBill: function() {
@@ -587,19 +543,7 @@
 						KHID: this.KHID,
 						POSID: this.POSID,
 						NO: item.no, //付款序号
-						FKID: ((function() {
-							if (this.isRefund)
-								return item.fkid;
-							else
-								switch (item.is_free) {
-									case 'Y':
-										return 'ZZ01';
-									case 'N':
-										return 'ZF09';
-									default:
-										return item.fkid;
-								}
-						}).bind(this))(), //付款类型id
+						FKID: item.fkid, //付款类型id
 						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
 						ID: item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
@@ -610,16 +554,7 @@
 						DISC: item.disc, //折扣金额
 						FAMT: item.disc, //折扣金额(卡券消费后要记录)
 						RATE: item.id_type ? item.disc : "", //折扣金额(卡消费后要记录)
-						ZKLX: (function() {
-							switch (item.is_free) {
-								case 'Y':
-									return 'ZV01';
-								case 'N':
-									return 'ZV09';
-								default:
-									return item.zklx;
-							}
-						})(), //折扣类型
+						ZKLX: item.zklx, //折扣类型
 						IDTYPE: item.id_type //卡类型
 					};
 					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
@@ -645,7 +580,7 @@
 					}
 					this.sale8_arr = this.sale8_arr.concat(this.sale8_obj);
 				}
-
+			
 				//生成执行sql
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
@@ -685,6 +620,153 @@
 						icon: "error"
 					})
 				});
+			},
+			SaleDataCombine:function(){
+				let saledate = dateformat.getYMD();
+				let saletime = dateformat.getYMDS();
+				let hyinfo = getApp().globalData.hyinfo;
+				let sale1 = this.SALES.sale1,
+					sale2 = this.SALES.sale2,
+					sale3 = this.SALES.sale3;
+				console.log("sale1 封装中...");
+				this.sale1_obj = Object.assign(sale1,{//上个页面传入的 sale1 和 当前追加
+					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
+					SALEDATE: saledate,
+					SALETIME: saletime,
+					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
+					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
+						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
+					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
+					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
+					CLTIME: saletime
+				});
+				console.log("sale1 封装完毕!",this.sale1_obj);
+				console.log("sale2 封装中...");
+				this.sale2_arr = sale2.map((function(item,index){
+					return Object.assign(item,{
+						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
+						SALEDATE: saledate,
+						SALETIME: saletime,
+						PRICE: (item.PRICE - item.SKYDISCOUNT).toFixed(2),
+						NET: this.isRefund ? (-1 * item.PRICE).toFixed(2) : (item.PRICE *
+							item.QTY - item.SKYDISCOUNT).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : item
+							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
+							0 ? "Y" : "N", //是否有手工折扣
+						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
+						MONTH: new Date().getMonth() + 1,
+						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
+							new Date().getDay()),
+						TIME: new Date().getHours()
+					})
+				}).bind(this));
+				console.log("sale2 封装完毕!",this.sale2_arr);
+				console.log("sale3 封装中...");
+				this.sale3_arr = this.Sale3Source().map((function(item,index){
+					return {
+						BILL: this.isRefund ? this.out_refund_no : this
+							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						SALEDATE: saledate,
+						SALETIME: saletime,
+						KHID: this.KHID,
+						POSID: this.POSID,
+						NO: item.no, //付款序号
+						FKID: item.fkid, //付款类型id
+						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
+						ID: item.card_no, //卡号或者券号
+						RYID: this.RYID, //人员
+						GCID: this.GCID, //工厂
+						DPID: this.DPID, //店铺
+						KCDID: this.KCDID, //库存点
+						BMID: this.BMID, //部门id
+						DISC: item.disc, //折扣金额
+						FAMT: item.disc, //折扣金额(卡券消费后要记录)
+						RATE: item.disc, //折扣金额(卡消费后要记录)
+						ZKLX: item.zklx, //折扣类型
+						IDTYPE: item.id_type //卡类型
+					}
+				}).bind(this));
+				console.log("sale3 封装完毕!",this.sale3_arr);
+				console.log("sale8 封装中...");
+				this.sale8_arr = this.sale8_arr.map((function(item,index){
+					return Object.assign(item,{
+						SALEDATE: saledate,
+						SALETIME: saletime,
+						GCID: this.GCID,
+						KHID: this.KHID,
+						POSID: this.POSID,
+						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
+						SPID: item.SPID,
+						NO: i,
+						ATTCODE: "1",
+						ATTNAME: "糖",
+						OPTCODE: "1",
+						CSTCODE: "1",
+						OPTMAT: "123456",
+						QTY: item.QTY,
+						PRICE: item.PRICE
+					});
+				}).bind(this));
+				console.log("sale8 封装完毕!");
+			},
+			orderSQLGenarator:function(){
+				let saledate = dateformat.getYMD();
+				let saletime = dateformat.getYMDS();
+				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
+				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
+				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
+				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
+				console.log("[orderSQLGenarator]sql1生成：",sql1)
+				console.log("[orderSQLGenarator]sql2生成：",sql2)
+				console.log("[orderSQLGenarator]sql3生成：",sql3)
+				console.log("[orderSQLGenarator]sql8生成：",sql8)
+				this.tx_obj = {
+					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
+					STOREID: this.KHID,
+					POSID: this.POSID,
+					TAB_NAME: 'XS',
+					STR1: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
+					BDATE: saletime, //增加时分秒的操作
+					YW_NAME: "销售单据",
+					CONNSTR: 'CONNSTRING'
+				};
+				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
+				return sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr).concat(sql8.sqlliteArr);
+			},
+			//sale 003 数据源：
+			Sale3Source:function(){
+				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
+			},
+			//创建订单数据
+			_CreateDBData: function(func) {
+				//对订单数据进行合并
+				this.SaleDataCombine();
+				//生成执行sql
+				let exeSql = this.orderSQLGenarator();
+				console.log("sqlite待执行sql:", exeSql)
+				db.get().executeDml(exeSql, "订单创建中", function(res) {
+					if (func) func(res);
+					console.log("订单创建成功：", res);
+					uni.showToast({
+						title: "销售单创建成功"
+					})
+				}, function(err) {
+					console.log("订单创建失败：", err);
+					uni.showToast({
+						title: "销售单创建失败",
+						icon: "error"
+					})
+				});
+			},
+			//使用的 单号 判断（支付单号、退款单号）
+			useOrderNoChoice: function() {
+				return this.isRefund ? this.out_refund_no : this.out_trade_no_old;
+			},
+			//使用的 积分 类型操作 增加/减少 积分
+			useOrderTypeChoice: function() {
+				return this.isRefund ? "DECREASE" : "INCREASE";
 			},
 			// 执行表单插入本地数据库操作
 			SaleExcuted: function(sqlArr) {
@@ -785,7 +867,7 @@
 			SALE2Init: function() {
 				if (this.isRefund) {
 					this.Products = this.SALES.sale2?.map((function(i) {
-						return {
+						return Object.assign({
 							PLID: i.PLID,
 							SPID: i.SPID,
 							UNIT: i.UNIT,
@@ -798,7 +880,7 @@
 							DISCRATE: i.DISCRATE, //退款使用
 							YN_SKYDISC: i.YN_SKYDISC, //退款使用
 							DISC: i.DISC //退款使用
-						}
+						},i)
 					}).bind(this));
 					console.log("商品信息循环后：", this.Products);
 					this.refundAmountCount(); //退款金额计算
@@ -929,27 +1011,27 @@
 							that.scoreConsume();
 						//调用打印
 						// if (that.isRefund)
-						setTimeout(function() {
-							console.log("that.Products", that.Products);
-							console.log("that.PayWayList", that.PayWayList);
-							console.log("that.sale3_arr", that.sale3_arr);
-							let arr2 = that.sale2_arr;
-							arr2.forEach(function(item, index) {
-								let obj = that.Products.find((i) => {
-									return i.SPID == item.SPID;
-								})
-								if (obj) {
-									item.SNAME = obj.NAME;
-								}
+						setTimeout(() => {
+						console.log("that.Products", that.Products);
+						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.sale3_arr", that.sale3_arr);
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
 							})
-							let arr3 = that.sale3_arr;
-							arr3.forEach(function(item, index) {
-								let obj = that.PayWayList.find((i) => {
-									return i.fkid == item.FKID;
-								})
-								item.SNAME = obj.name;
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
 							})
-							that.receiptPrinter(that.sale1_obj, arr2, arr3);
+							item.SNAME = obj.name;
+						})
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
 						}, 3000);
 					});
 			},
@@ -1017,7 +1099,6 @@
 						return;
 					}
 				}
-				//this.authCode = ""; //避免 authCode 重复使用
 				_pay.PaymentAll(this.PayTypeJudgment(), payAfter, (function(result) {
 					console.log("支付结果：", result);
 					uni.showToast({
@@ -1050,13 +1131,13 @@
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
-								.type === 'EXCESS' ? -coupon.pay_amount : coupon
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon.note === 'EXCESS' ? -coupon.pay_amount : coupon
 								.denomination)) / 100).toFixed(2),
-							fkid: coupon.type === 'EXCESS' ? excessInfo.fkid : this
+							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : this
 								.currentPayInfo?.fkid,
-							name: coupon.type === 'EXCESS' ? excessInfo.name : this
+							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
+							zklx:coupon.note === 'EXCESS' ? "ZCV1" : coupon.disc_type,
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
@@ -1098,118 +1179,77 @@
 				console.log("封装响应体[orderCreated]:", order)
 				return order;
 			},
-			//积分操作 支付调用
+			//积分操作 
 			scoreConsume: function() {
-				console.log("正在准备上传积分，会员信息：", getApp().globalData.hyinfo);
-				let that = this
-				let hyinfo = getApp().globalData.hyinfo;
-				if (hyinfo && hyinfo.hyId) { //录入过会员信息
-					let param;
-					if (that.brand == 'KG') {
-						let arr = [],
-							arr1 = [];
-						that.Products.forEach(function(item, i) {
-							arr.push({
-								lineNumber: i,
-								product: item.BARCODE,
-								category: item.PLID,
-								quantity: item.QTY,
-								userPrice: item.PRICE,
-								basePrice: item.OPRICE,
-								netPrice: item.AMOUNT
-							})
-						});
-						that.PayList.forEach(function(item, i) {
-							arr1.push({
-								paymentType: item.fkid,
-								payAmount: item.amount
-							});
-						});
-						param = {
-							addPoint: 0,
-							channel: that.channel,
-							cityCode: "",
-							code: that.out_trade_no_old,
-							date: dateformat.getYMDS(),
-							deducePoint: 0,
-							districtCode: "",
-							entryList: arr,
-							memberCode: hyinfo.hyId,
-							netAmount: that.totalAmount,
-							orderAmount: that.totalAmount,
-							orderType: '1', //订单类型
-							paymentInfoList: arr1,
-							pointOfService: that.KHID,
-							preOrderCode: "",
-							promotionIds: [],
-							region: that.BMID,
-							stateCode: ""
-						}
-					} else {
-						param = {
-							kquser: that.kquser,
-							soreid: that.KHID,
-							oderbill: that.out_trade_no,
-							psid: that.POSID,
-							slenet: that.totalAmount,
-							cxbill: "",
-							hyid: hyinfo.hyId,
-							sign: ""
-						}
-					}
-					console.log("积分上传参数：", param);
-					hy.consumeJF(that.brand, param, function(res) {
-						console.log("积分上传结果：", res);
-						uni.showToast({
-							title: res.code ? "积分上传成功" : res.msg,
-							icon: res.code ? "success" : "error"
-						})
+				let data = this.memberGenarator();
+				console.log("积分上传参数：", data);
+				_member.UploadPoint("积分上传中...", {
+					brand: that.brand,
+					data
+				}, (res) => {
+					console.log("积分上传成功...")
+					uni.showToast({
+						title: res.code ? "积分上传成功" : res.msg,
+						icon: "success"
 					})
-				}
+				}, (err) => {
+					console.log("积分上传失败...")
+					uni.showToast({
+						title: err.code ? "积分上传失败" : err.msg,
+						icon: "error"
+					})
+				})
 			},
-			//积分操作 退款调用
-			scoreReduce: function() {
-				console.log("正在准备上传积分，会员信息：", getApp().globalData.hyinfo);
-				let that = this
+			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
-				if (hyinfo && hyinfo.hyId) { //录入过会员信息
-					let param;
-					if (that.brand == 'KG') {
-						param = {
-							LT_IMPORT: [{
-								ZZITEM: "1",
-								ZZMEMBER_ID: hyinfo.hyId,
-								ZZYZ_ID: "",
-								ZZORDER_NUM: that.out_refund_no,
-								ZZORDER_TYPE: "2",
-								ZZLORDER: that.sale1_obj?.XS_BILL,
-								ZZTPRICE: that.totalAmount,
-								ZZPAYMENT: that.totalAmount,
-								ZZPOINT_ADD: "0",
-								ZZPOINT_PAY: that.totalAmount,
-								ZZCHANNEL: that.channel,
-								ZZSTORE: that.KHID,
-								ZZORDER_DATE: dateformat.getYMD().replace(/\-/g, ''),
-								ZZCPTIME: dateformat.gettimes(),
-								ZYL01: "",
-								ZYL02: "",
-								ZYL03: "",
-								ZYL04: "",
-								ZYL05: ""
-							}],
-							LT_ITEM: [],
-							code: that.out_refund_no
+				return Object.assign({
+					//if (brand == 'KG')
+					addPoint: 0,
+					channel: this.channel,
+					cityCode: "",
+					bill: this.useOrderNoChoice(), //订单号
+					date: dateformat.getYMDS(),
+					deducePoint: 0,
+					districtCode: "",
+					productList: this.Products.map((item, i) => {
+						return {
+							lineNumber: i,
+							product: item.BARCODE,
+							category: item.PLID,
+							quantity: item.QTY,
+							userPrice: item.PRICE,
+							basePrice: item.OPRICE,
+							netPrice: item.AMOUNT
 						}
-					} else {}
-					console.log("积分上传参数：", param);
-					hy.minusHyJf(param, function(res) {
-						console.log("积分上传结果：", res);
-						uni.showToast({
-							title: res.code ? "积分上传成功" : res.msg,
-							icon: res.code ? "success" : "error"
-						})
-					})
-				}
+					}),
+					amount: this.totalAmount, //netAmount: that.totalAmount,
+					orderAmount: this.totalAmount,
+					orderType: '1', //订单类型
+					payList: this.PayList.map(item => {
+						return {
+							paymentType: item.fkid,
+							payAmount: item.amount
+						}
+					}),
+					khid: this.KHID,
+					preOrderCode: "",
+					promotionIds: [],
+					region: this.BMID,
+					stateCode: "",
+					//else
+					kquser: this.kquser,
+					posid: this.POSID,
+					cxbill: "",
+					hyid: hyinfo.hyId, //会员id
+					sign: "",
+					time: dateformat.gettimes(),
+					zf_bill: this.sale1_obj?.XS_BILL,
+					bill: this.out_refund_no,
+					price: this.totalAmount,
+					pay_amount: this.totalAmount,
+					//判断积分是扣还是加
+					actionType: this.useOrderTypeChoice() //values： INCREASE(增加) or DECREASE(减少)
+				}, obj);
 			},
 			//初始化
 			paramInit: function() {
@@ -1462,226 +1502,6 @@
 					})
 				}
 				console.log("本单水吧商品：", that.sbsp_arr);
-			},
-			// 二维码生成工具
-			couponQrCode() {
-				let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
-				console.log("二维码生成内容", this.qrCodeContent + bill)
-				new qrCode('couponQrcode', {
-					text: this.qrCodeContent,
-					width: this.qrCodeWidth,
-					height: this.qrCodeHeight,
-					colorDark: "#333333",
-					colorLight: "#FFFFFF",
-					correctLevel: qrCode.CorrectLevel.H
-				})
-			},
-			//初始化画布数据
-			initPhoto: function() {},
-			//打印小票
-			receiptPrinter: function(sale1_obj, sale2_arr, sale3_arr) {
-				//输出日志
-				console.log("打印接收数据 sale1_obj", sale1_obj);
-				console.log("打印接收数据 sale2_arr", sale2_arr);
-				console.log("打印接收数据 sale3_arr", sale3_arr);
-
-				//票据
-				var that = this;
-				//打印数据转换
-				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
-				//初始化打印机
-				var command = esc.jpPrinter.createNew();
-				command.init();
-				//打印格式
-				command.formString(printerInfo);
-
-				// 打印二维码
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
-
-						//that.addData(bill,xsDate,command.getData());
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-						//that.addData(bill,xsDate,command.getData());
-						that.prepareSend(command.getData()); //发送数据
-					}
-				});
-
-				//that.prepareSend(command.getData()); //发送数据
-				console.log("打印格式记录", command.getData());
-			},
-			//重新打印
-			againPrinter: function(xsBill) {
-				console.log("进入到打印了", xsBill)
-				var that = this;
-				//xsBill = "2214055034000983";
-				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill + "' order by XSDATE desc";
-				db.get().executeQry(sql, "数据查询中", function(res) {
-					let billStr = res.msg[0].BILLSTR;
-					console.log("重打数据:", res.msg[0].BILLSTR);
-					//初始化打印机
-					var command = esc.jpPrinter.createNew();
-					command.addCotent(billStr);
-					console.log("重新打印格式记录", command.getData());
-					that.prepareSend(command.getData()); //准备发送数据
-				}, function(err) {
-					console.log("获取重新打印数据出错:", err);
-					uni.showToast({
-						icon: 'error',
-						title: "获取重新打印数据出错"
-					})
-				});
-			},
-			printerJPG: function() {
-				var that = this;
-				var canvasWidth = that.jpgWidth;
-				var canvasHeight = that.jpgHeight;
-				var command = esc.jpPrinter.createNew();
-				command.init(); //初始化打印机
-
-				uni.canvasGetImageData({
-					canvasId: "canvasLogo",
-					x: 0,
-					y: 0,
-					width: canvasWidth,
-					height: canvasHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-					}
-				});
-			},
-			//准备发送，根据每次发送字节数来处理分包数量
-			prepareSend: function(buff) {
-				console.log("prepareSend 开始")
-				var that = this;
-				var time = that.oneTimeData;
-				var looptime = parseInt(buff.length / time);
-				var lastData = parseInt(buff.length % time);
-
-				that.setData({
-					looptime: looptime + 1,
-					lastData: lastData,
-					currentTime: 1
-				});
-				that.Send(buff);
-			},
-			// 添加数据
-			addData(xsBill, xsDate, billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
-					'",' + billStr + ')';
-				db.get().executeDml(addSql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
-			},
-			//分包发送
-			Send: function(buff) {
-				var that = this;
-				var currentTime = that.currentTime;
-				var loopTime = that.looptime;
-				var lastData = that.lastData;
-				var onTimeData = that.oneTimeData;
-				var printNum = that.printerNum;
-				var currentPrint = that.currentPrint;
-				var buf;
-				var dataView;
-
-				if (currentTime < loopTime) {
-					buf = new ArrayBuffer(onTimeData);
-					dataView = new DataView(buf);
-
-					for (var i = 0; i < onTimeData; ++i) {
-						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
-					}
-				} else {
-					buf = new ArrayBuffer(lastData);
-					dataView = new DataView(buf);
-
-					for (var i = 0; i < lastData; ++i) {
-						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
-					}
-				}
-				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
-
-				uni.writeBLECharacteristicValue({
-					deviceId: app.globalData.BLEInformation.deviceId,
-					serviceId: app.globalData.BLEInformation.writeServiceId,
-					characteristicId: app.globalData.BLEInformation.writeCharaterId,
-					value: buf,
-					success: function(res) {
-						if (currentTime <= loopTime) {
-
-						} else {
-							uni.showToast({
-								title: "已打印第" + currentPrint + "张成功"
-							});
-						} //console.log(res)
-					},
-					fail: function(e) {
-						uni.showToast({
-							title: "打印第" + currentPrint + "张失败",
-							icon: "none"
-						}); //console.log(e)
-					},
-					complete: function() {
-						currentTime++;
-
-						if (currentTime <= loopTime) {
-							that.setData({
-								currentTime: currentTime
-							});
-							that.Send(buff);
-						} else {
-							if (currentPrint == printNum) {
-								that.setData({
-									looptime: 0,
-									lastData: 0,
-									currentTime: 1,
-									isReceiptSend: false,
-									currentPrint: 1
-								});
-							} else {
-								currentPrint++;
-								that.setData({
-									currentPrint: currentPrint,
-									currentTime: 1
-								});
-								that.Send(buff);
-							}
-						}
-					}
-				});
 			}
 		},
 		created() {

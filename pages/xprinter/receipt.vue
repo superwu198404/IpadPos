@@ -1,6 +1,6 @@
 <template>
 	<view class="body">
-		<button class="button" hover-class="hover" @tap="receiptPrinter" :loading="isReceiptSend"
+		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend"
 			:disabled="isReceiptSend">
 			打印小票
 		</button>
@@ -29,12 +29,19 @@
 <script>
 	var app = getApp();
 	import esc from '@/utils/xprinter/esc.js';
-	import encode from '@/utils/xprinter/encoding.js';
-	import util from '@/utils/xprinter/util.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	import vm from '@/utils/xprinter/MiddleUtil.js';	
     import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
+	
+	import excPostUtil from '@/components/gprint/EscPosUtil.js';
+	import {
+		mapState,
+		mapGetters,
+		mapMutations
+	} from 'vuex'
+	
 	export default {
 		data() {
 			return {
@@ -60,10 +67,27 @@
 				qrCodeWidth: 200,//二维码宽
 				qrCodeHeight: 200,// 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				
+				isSearch: false,
+				bluetooth: [],
+				isLink: [],
+				// 调试数据
+				serverList: [],
+				characteristics: [],
+				serviceId: '',
+				characteristicId: '',
+				macBlueName: 'Printer001', //对应的蓝牙名称
+				macBlueDeviceId: "",
+				macBlueIndex: 0,
+				isSearchShow: false,
+				isGetShow: true,
+				connected: 0,
+				oneTimeData: 20,
 			};
 		},
 
-		components: {},
+		components: {
+			...mapState(['blueName'])},
 		props: {},
 
 		/**
@@ -75,7 +99,36 @@
 				this.couponQrCode()
 			}, 50)
 			console.log('onLoad start');
-			this.fileReader();
+
+			//蓝牙是否在扫描设备
+			uni.onBluetoothAdapterStateChange((res) => {
+				console.log("蓝牙" + (res.discovering ? "开启" : "关闭") + "搜索")
+				this.discovering = res.discovering;
+			})
+			//监听扫描到的蓝牙设备
+			uni.onBluetoothDeviceFound(resd => {
+				//在这里识别你要用到的设备；
+				const devices = resd.devices;
+			})
+			//监听蓝牙连接状态
+			// uni.onBLEConnectionStateChange(res => {
+			// 	console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
+			// 	this.Connecting = res.connected;
+			// 	if (res.connected == false) {
+			// 		this.closeBluetoothAdapter();
+			// 		this.closeBLEConnection(res.deviceId, 0);
+			// 		this.connected = 1;
+			// 		if (this.connected == 1) {
+			// 			//选择适合需求的定时器
+			// 			this.timer = setTimeout(() => {
+			// 				this.getBlueInfo()
+			// 			}, 1000)
+			// 		}
+			// 	} else {
+			// 		this.connected = 0;
+			// 	}
+			// 	this.deviceId = res.deviceId;
+			// })
 		},
 
 		/**
@@ -107,7 +160,10 @@
 		/**
 		 * 生命周期函数--监听页面显示
 		 */
-		onShow: function() {},
+		onShow: function() {
+			console.log('ENTER TO')
+			//this.getBlueInfo()
+		},
 
 		/**
 		 * 生命周期函数--监听页面隐藏
@@ -137,15 +193,335 @@
 		onShareAppMessage: function() {},
 		mounted(){
 		    var that = this;
-		    vm.$on('receiptPrinter', function (sale1_obj,sale2_arr,sale3_arr) {
-		        console.log("调用打印方法成功");
-				// console.log("打印接收数据1 sale1_obj",sale1_obj);
-				// console.log("打印接收数据2 sale2_arr",sale2_arr);
-				// console.log("打印接收数据3 sale3_arr",sale3_arr);	
-				that.receiptPrinter(sale1_obj,sale2_arr,sale3_arr);
+		    vm.$on('bluePrinter', function (sale1_obj,sale2_arr,sale3_arr) {
+		        //console.log("调用打印方法成功");
+				that.bluePrinter(sale1_obj,sale2_arr,sale3_arr);
 		    })
 		},
 		methods: {
+			// 监听蓝牙设备连接状态
+			listenerConnection() {
+				console.log('监听蓝牙设备连接状态')
+				let _this = this;
+				plus.bluetooth.onBLEConnectionStateChange(function(e) {
+					console.log('connection state changed: ' + JSON.stringify(e));
+					_this.deviceId = e.deviceId;
+					_this.createBLEConnection(_this.deviceId)
+				});
+			},
+			// 蓝牙手机初始化
+			getBlueInfo() {
+				console.log('getBlueInfo')
+				const _this = this
+				plus.bluetooth.openBluetoothAdapter({
+					success(res) {
+						console.log(JSON.stringify(res))
+						_this.startBluetoothDevicesDiscovery()
+					},
+					fail(err) {
+						console.log('fail', err)
+						uni.showToast({
+							title: '未检测到蓝牙',
+							icon: 'none'
+						})
+					}
+				});
+			},
+			// 搜索周围蓝牙设备
+			startBluetoothDevicesDiscovery() {
+				console.log('开始搜索蓝牙设备')
+				const _this = this
+				console.log(_this.bluetooth)
+				this.isSearch = true
+				this.bluetooth = []
+				this.searchNoNameBluetooths = []
+				plus.bluetooth.startBluetoothDevicesDiscovery({
+					// services:['FE7D','FFF0'],//可选 要获取设备的uuid列表
+					success(res) {
+						console.log(JSON.stringify(res))
+						plus.bluetooth.onBluetoothDeviceFound(res => {
+							console.log('蓝牙名称', res.devices[0].deviceId)
+							if (res.devices[0].name == _this.macBlueName) {
+								console.log(JSON.stringify(res))
+								uni.setStorageSync(res.devices[0].name, res);
+							}
+							_this.getBluetoothDevices();
+						})
+					},
+					fail(err) {
+						console.log('错误信息', JSON.stringify(err))
+						uni.showToast({
+							title: '蓝牙未初始化',
+							icon: 'none',
+							duration: 2000
+						});
+					}
+				})
+			},
+			// 停止搜索
+			stopBluetoothDevicesDiscovery() {
+				plus.bluetooth.stopBluetoothDevicesDiscovery({
+					success: e => {
+						console.log('停止搜索蓝牙设备:' + e.errMsg);
+					},
+					fail: e => {
+						console.log('停止搜索蓝牙设备失败，错误码：' + e.errCode);
+					}
+				});
+			},
+			// 获取已发现的蓝牙设备
+			getBluetoothDevices() {
+				console.log('获取已发现的蓝牙设备')
+				const _this = this
+				plus.bluetooth.getBluetoothDevices({
+					success(res) {
+						var isAuto = false;
+						var _macBlueDeviceId = "";
+						var _macBlueIndex = 0;
+						console.log(' 已发现的蓝牙设备', res)
+						// _this.stopBluetoothDevicesDiscovery()
+						if (this.macBlueName != null && this.macBlueName != '') {
+							console.log("蓝牙缓存", key)
+							let key = uni.getStorageSync(this.macBlueName);
+						}
+						_this.bluetooth = res.devices.filter(item => {
+							//console.log('获取已发现的蓝牙设备-名称', item.name)
+							if (item.name == _this.macBlueName) {
+								console.log('获取已发现的蓝牙设备-deviceId', item.deviceId)
+								_macBlueDeviceId = item.deviceId
+								isAuto = true;
+							}
+							return item.name
+						})
+
+						_this.isLink = []
+						var i = 0;
+						_this.bluetooth.forEach(e => {
+							_this.isLink.push(0)
+							if (e.name == _this.macBlueName) {
+								_macBlueIndex = i;
+							}
+							i++;
+						})
+						//console.log('获取已发现的蓝牙设备-_macBlueDeviceId', _macBlueIndex)
+						if (isAuto) {
+							//连接蓝牙
+							_this.createBLEConnection(_macBlueDeviceId, _macBlueIndex)
+						}
+					}
+				})
+			},
+			// 获取蓝牙适配器状态
+			getBluetoothAdapterState() {
+				plus.bluetooth.getBluetoothAdapterState({
+					success(res) {
+						console.log('获取蓝牙适配器状态', res)
+					}
+				})
+			},
+			// 连接蓝牙
+			createBLEConnection(deviceId, index) {
+				console.log('连接蓝牙', deviceId, index)
+				const _this = this
+				this.deviceId = deviceId;
+				if (this.isLink[index] == 2) {
+					return;
+				}
+				this.isLink.splice(index, 1, 1)
+				plus.bluetooth.createBLEConnection({
+					deviceId: _this.deviceId,
+					success: res => {
+						console.log(res)
+						_this.isLink.splice(index, 1, 2)
+						_this.stopBluetoothDevicesDiscovery();
+						_this.getBLEDeviceServices(_this.deviceId);
+						uni.showLoading({
+							title: '连接中...',
+							mask: true
+						});
+						//自动读取称重
+					},
+					fail: res => {
+						if (res.message == 'already connect') {
+							_this.isLink[index] = 2;
+							_this.stopBluetoothDevicesDiscovery();
+							_this.getBLEDeviceServices(_this.deviceId);
+						} else {
+							_this.isLink.splice(index, 1, 3)
+						}
+						console.log(JSON.stringify(res))
+					}
+				})
+			},
+			//获取蓝牙设备所有服务(service)。
+			getBLEDeviceServices(deviceId) {
+				const _this = this
+				console.log(deviceId)
+				setTimeout(() => {
+					plus.bluetooth.getBLEDeviceServices({
+						// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
+						deviceId: deviceId,
+						success: (res) => {
+							console.log('获取蓝牙设备所有服务:', JSON.stringify(res.services))
+							_this.serverList = res.services
+							var findItem = res.services.find(item => {
+								//FE7D FFF0
+								if (item.uuid != '00001800-0000-1000-8000-00805F9B34FB' && item
+									.uuid != '00001801-0000-1000-8000-00805F9B34FB' &&
+									item.uuid != '0000180A-0000-1000-8000-00805F9B34FB') {
+									return item;
+								}
+							})
+							console.log(JSON.stringify(findItem))
+							_this.serviceId = findItem.uuid;
+							_this.getBLEDeviceCharacteristics(_this.deviceId)
+						},
+
+						fail: res => {
+							console.log(res)
+						}
+					})
+				}, 4000)
+			},
+			// 获取蓝牙特征值
+			getBLEDeviceCharacteristics(deviceId) {
+				console.log("进入特征");
+				const _this = this
+				setTimeout(() => {
+					plus.bluetooth.getBLEDeviceCharacteristics({
+						// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
+						deviceId: deviceId,
+						// 这里的 serviceId 需要在 getBLEDeviceServices 接口中获取
+						serviceId: this.serviceId,
+						success: (res) => {
+							_this.characteristics = res.characteristics
+							console.log('characteristics', JSON.stringify(_this.characteristics))
+
+							let findItem = res.characteristics.find(item => {
+								let uuid = item.uuid
+								console.log("配置信息", item)
+								return item.properties.write
+							})
+							console.log("characteristicId", findItem)
+							_this.characteristicId = findItem.uuid;
+							console.log('当前使用的特征characteristicId:', _this.characteristicId)
+							_this.notifyBLECharacteristicValueChange(_this.deviceId)
+							let bluetoothData = {
+								deviceId: _this.deviceId,
+								serviceId: _this.serviceId,
+								characteristicId: _this.characteristicId
+							}
+							uni.setStorageSync('bluetoothData', bluetoothData)
+							uni.hideLoading();
+
+						},
+						fail: (res) => {
+							uni.hideLoading();
+							console.log(res)
+						}
+					})
+				}, 4000)
+			},
+			// 启用 notify 功能
+			notifyBLECharacteristicValueChange(deviceId) {
+				const _this = this;
+				console.log('deviceId' + deviceId)
+				console.log('serviceId' + _this.serviceId)
+				console.log('characteristicId' + _this.characteristicId)
+				plus.bluetooth.notifyBLECharacteristicValueChange({
+					state: true, // 启用 notify 功能
+					// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
+					deviceId: deviceId,
+					// 这里的 serviceId 需要在 getBLEDeviceServices 接口中获取
+					serviceId: _this.serviceId,
+					// 这里的 uuid 需要在 getBLEDeviceCharacteristics 接口中获取
+					characteristicId: _this.characteristicId,
+					success: (res) => {
+						console.log('notifyBLECharacteristicValueChange success', res)
+						_this.$api.msg('连接成功', 'success')
+					},
+					fail: (res) => {
+						console.log('notifyBLECharacteristicValueChange fail', res)
+						console.log(JSON.stringify(res))
+						_this.$api.msg('连接失败')
+					}
+				})
+			},
+			//打印的数据
+			senBlData(deviceId, serviceId, characteristicId, uint8Array) {
+				console.log('************deviceId = [' + deviceId + ']  serviceId = [' + serviceId +
+					'] characteristics=[' + characteristicId + "]")
+				var uint8Buf = Array.from(uint8Array);
+				console.log("这个是什么。。。。。", uint8Buf)
+			
+				function split_array(datas, size) {
+					console.log("data是什么：", datas)
+					var result = {};
+					var j = 0
+					for (var i = 0; i < datas.length; i += size) {
+						result[j] = datas.slice(i, i + size)
+						j++
+					}
+					console.log(result)
+					return result
+				}
+				var sendloop = split_array(uint8Buf, 20);
+				// console.log(sendloop.length)
+				function realWriteData(sendloop, i) {
+					var data = sendloop[i]
+					if (typeof(data) == "undefined") {
+						return
+					}
+					console.log("第【" + i + "】次写数据" + data)
+					var buffer = new ArrayBuffer(data.length)
+					var dataView = new DataView(buffer)
+					for (var j = 0; j < data.length; j++) {
+						dataView.setUint8(j, data[j]);
+					}
+					uni.writeBLECharacteristicValue({
+						deviceId,
+						serviceId,
+						characteristicId,
+						value: buffer,
+						success(res) {
+							setTimeout(() => {
+								realWriteData(sendloop, i + 1);
+							}, 10); //就是这里需要加延时，具体原因不清楚，等大神解释吧  
+						},
+						fail(res) {
+							console.log(res)
+						},
+					})
+				}
+				var i = 0;
+				realWriteData(sendloop, i);
+			},
+			//断开蓝牙连接
+			closeBLEConnection(deviceId, index) {
+				const _this = this
+				plus.bluetooth.closeBLEConnection({
+					deviceId: deviceId,
+					success: res => {
+						console.log('断开蓝牙连接')
+						_this.isLink.splice(index, 1, 4)
+					}
+				})
+			},
+			//断开所有已经建立的连接，释放系统资源，要求在蓝牙功能使用完成后调用
+			closeBluetoothAdapter() {
+				plus.bluetooth.closeBluetoothAdapter({
+					success: function(e) {
+						console.log('close success: ' + JSON.stringify(e));
+					},
+					fail: function(e) {
+						console.log('close failed: ' + JSON.stringify(e));
+					}
+				});
+			},
+			//重启app
+			restart() {
+				plus.runtime.restart();
+			},
 			fileReader: function() {
 				const self = this;
 				// 请求本地系统文件对象 plus.io.PRIVATE_WWW：应用运行资源目录常量
@@ -181,305 +557,63 @@
 					correctLevel: qrCode.CorrectLevel.H
 				})
 			},
-			initPhoto: function() {
-				//初始化画布数据
-				//创建一个png格式
-				var that = this;
-				const ctx_out = uni.createCanvasContext("canvasOut", this);
-				var png = that.imageSrc;
-				uni.getImageInfo({
-					src: png,
-
-					success(res) {
-						that.setData({
-							canvasWidth: res.width,
-							canvasHeight: res.height
-						});
-						console.log("画布宽度" + res.width, "画布高度" + res.height);
-						ctx_out.drawImage(png, 0, 0, res.width, res.height);
-						ctx_out.draw();
-					}
-				}); //创建一个jpg格式图片
-
-				const ctx_jpg = uni.createCanvasContext("canvasJPG", this);
-				var jpg_width = that.jpgWidth;
-				var jpg_height = that.jpgHeight;
-				var img = that.jpgSrc;
-				uni.getImageInfo({
-					src: img,
-
-					success(res) {
-						that.setData({
-							jpgWidth: res.width,
-							jpgHeight: res.height
-						});
-						console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
-						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
-						ctx_jpg.draw();
-					}
-				});
-			},
+			initPhoto: function() {},
 			//打印小票
-			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) {
-				console.log("打印接收数据 sale1_obj",sale1_obj);
-				console.log("打印接收数据 sale2_arr",sale2_arr);
-				console.log("打印接收数据 sale3_arr",sale3_arr);	
-				//票据测试
+			bluePrinter: function(sale1_obj,sale2_arr,sale3_arr) {
+				//输出日志
+				console.log("打印接收数据 sale1_obj", sale1_obj);
+				console.log("打印接收数据 sale2_arr", sale2_arr);
+				console.log("打印接收数据 sale3_arr", sale3_arr);
+				
+				//票据
 				var that = this;
-				
-				// var xsType = "XS";
-				// var xsBill = sale1_obj.BILL;
-				// var xsDate = util.getTime();
-				// var khName = getApp().globalData.store.NAME;
-				// var khAddress = getApp().globalData.store.KHAddress;		
-				// var posId = sale1_obj.POSID;
-				// var posUser = sale1_obj.RYID;
-				// var lineNum = sale1_obj.TLINE;
-				// var payableAmount = sale1_obj.totalAmount;
-				// var discountedAmount = sale1_obj.BILLDISC;
-				// var originalAmount = sale1_obj.allAmount;
-				
-				// var goods_obj = {};
-				// var goodsList = [];
-				// for (var i = 0; i < sale2_arr.length; i++){
-				// 	let spname = "";
-				// 	let sqlSpda = "SELECT SPID,SNAME,PRODUCT_TYPE,PRODUCT_STATUS,UNIT,PLID,BARCODE FROM SPDA where SPID='" + sale2_arr[i].SPID +"' order by SPID";
-				// 	db.get().executeQry(sqlSpda, "数据查询中", function(res) {
-				// 		spname = res.msg[0].SNAME;
-				// 		console.log("商品数据:",res.msg[0].SNAME);
-				// 	}, function(err) {
-				// 		console.log("获取商品数据出错:", err);
-				// 		uni.showToast({
-				// 			icon: 'error',
-				// 			title: "获取商品数据出错"
-				// 		})
-				// 	});
-					
-				// 	this.sale2_obj = {
-				// 		bill: sale2_arr[i].BILL, //主单号
-				// 		saleDate: sale2_arr[i].SALEDATE,
-				// 		saleTime: sale2_arr[i].SALETIME,
-				// 		khid: sale2_arr[i].KHID,
-				// 		posId: sale2_arr[i].POSID,
-				// 	    no: i,
-				// 		plid: sale2_arr[i].PLID,
-				// 		barCode: sale2_arr[i].BARCODE,
-				// 		unit: sale2_arr[i].UNIT, //单位
-						
-				// 		spid: sale2_arr[i].SPID, //商品编码
-				// 		spname: spname, //商品名称
-				// 		qty: sale2_arr[i].QTY, //数量
-				// 		price: sale2_arr[i].PRICE, //单价
-				// 		amount: sale2_arr[i].NET, //金额
-				// 		discount: sale2_arr[i].DISCRATE, //总折扣额
-				// 	};
-				// 	goodsList = goodsList.concat(sale2_obj);
-				// }
-				
-				// var payTotal = 0.00;
-				// var change = 0.00;
-				
-				// var sale3_obj = {};
-				// var sale3List = [];
-				// for (var i = 0; i < sale3_arr.length; i++){
-				// 	let fkName = "";
-				// 	let sqlFkda = "SELECT FKID,SNAME,PINYIN FROM FKDA where FKID ='" + sale3_arr[i].FKID +"' order by FKID";
-				// 	db.get().executeQry(sqlFkda, "数据查询中", function(res) {
-				// 		fkName = res.msg[0].SNAME;
-				// 		console.log("付款方式数据:",res.msg[0].SNAME);
-				// 	}, function(err) {
-				// 		console.log("获取付款方式出错:", err);
-				// 		uni.showToast({
-				// 			icon: 'error',
-				// 			title: "获取付款方式出错"
-				// 		})
-				// 	});
-					
-				// 	this.sale3_obj = {
-				// 	   bill: sale3_arr[i].BILL,
-				// 	   saleDate: sale3_arr[i].SALEDATE,
-				// 	   saleTime: sale3_arr[i].SALETIME,
-				// 	   khid: sale3_arr[i].KHID,
-				// 	   posId: sale3_arr[i].POSID,
-				// 	   no: sale3_arr[i].NO, //付款序号
-				// 	   fkid: sale3_arr[i].FKID, //付款类型id
-				// 	   amt: sale3_arr[i].AMT, //付款金额
-				// 	   id: sale3_arr[i].ID,  //卡号或者券号
-				// 	   ryid: sale3_arr[i].RYID, //人员
-				// 	   disc: sale3_arr[i].DISC, //折扣金额
-				// 	   zklx: sale3_arr[i].ZKLX, //折扣类型
-				// 	   idType: sale3_arr[i].IDTYPE, //卡类型
-				// 	   fkName: fkName,
-				// 	};
-				// 	sale3List = sale3List.concat(sale3_obj);
-				// 	payTotal += sale3_obj.amt;
-				// }
-
-				// var printerInfo = {
-				// 	xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
-				// 	xsBill, //单号
-				// 	xsDate, //打印时间
-				// 	khName, //门店名称
-				// 	khAddress, //门店地址
-				// 	posId, //款台
-				// 	posUser, //收银员
-				
-				// 	goodsList,//商品集合
-				
-				// 	lineNum, //条目
-				// 	payableAmount, //应付金额
-				// 	discountedAmount, //已优惠金额
-				// 	originalAmount, //原金额
-					
-				// 	sale3List, //付款方式
-					
-				// 	payTotal, //支付
-				// 	change, //找零
-				// }
-				
-				//-----------------------------------------test
-				var xsType = "XS"; //如果等于 2，则表示退款，否则是支付
-				var billType = "Z101"; //
-								var bill = "2214055034000983";
-								var xsDate = util.getTime();
-								var khName = getApp().globalData.NAME;
-								var khAddress = getApp().globalData.KHAddress;
-								var posId = "1";
-								var posUser = "003";
-								var lineNum = 1;
-								var totalQty = 1.00;
-								var payableAmount = 1.00;
-								var discountedAmount = 0.00;
-								var originalAmount = 1.00;
-								var cash = 1.00;
-								var payTotal = 1.00;
-								var change = 0.00;
-								
-								
-								var goodsList= [{
-									spid: "10101021",
-									spname: "你好吐司",
-									qty: 1,
-									price: parseFloat("1.20"),
-									amount: 1.00,
-									discount: 0.00
-								}, 
-								{
-									spid: "10101023",
-									spname: "德式黑杂粮切片方包",
-									qty: 1,
-									price: parseFloat("1.50"),
-									amount: 1.00,
-									discount: 0.00
-								}]
-														
-								var printerInfo = {
-									xsType,//销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
-									bill, //单号
-									xsDate, //打印时间
-									khName, //门店名称
-									khAddress, //门店地址
-									posId, //款台
-									posUser, //收银员
-								
-									goodsList,//商品集合
-								
-									lineNum, //条目
-									totalQty, //数量
-									payableAmount, //应付金额
-									discountedAmount, //已优惠金额
-									originalAmount, //原金额
-									cash, //现金
-									payTotal, //支付
-									change, //找零
-								}
-								
-								console.log("printerInfo 数据:",printerInfo);
-
+				//打印数据转换
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
-				command.init(); 
-
-				//打印Logo
-				
-				command.setSelectJustification(1); //居中
-				command.setCharacterSize(17); //设置倍高倍宽
-				command.setText("KenGee 仟吉" + "\n");
-				command.setPrint(); //打印并换行
-									
+				command.init();
+				//打印格式
 				command.formString(printerInfo);
-
-				// command.setCharacterSize(0); //设置正常大小
-				// command.setSelectJustification(0); //设置居左
-				// command.setText("--------------------总计-----------------------");
-				// //command.setPrint(); //打印并换行
-
-				// command.formStringTotal(printerInfo);
-
-				// command.setCharacterSize(0); //设置正常大小
-				// command.setSelectJustification(0); //设置居左
-				// command.setText("--------------------付款方式-------------------");
-				// //command.setPrint(); //打印并换行
-
-				// command.formStringPaymentMethod(printerInfo);
-
-				// command.setCharacterSize(0); //设置正常大小
-				// command.setSelectJustification(0); //设置居左
-				// command.setText("-----------------------------------------------");
-				// //command.setPrint(); //打印并换行
-
-				// command.setCharacterSize(0); //设置正常大小
-				// command.setSelectJustification(0); //设置居左
-				// command.setText("轻轻地走了，正如我轻轻的来");
-				// //command.setPrint(); //打印并换行
-
-				// command.setCharacterSize(0); //设置正常大小
-				// command.setSelectJustification(0); //设置居左
-				// command.setText("-----------------------------------------------");
-				// command.setPrint(); //打印并换行
-
-				//打印二维码
-				// uni.canvasGetImageData({
-				// 	canvasId: "couponQrcode",
-				// 	x: 0,
-				// 	y: 0,
-				// 	width: that.qrCodeWidth,
-				// 	height: that.qrCodeHeight,
-				// 	success: function(res) {
-				// 		console.log("获取画布数据成功");
-				// 		command.setSelectJustification(1); //居中
-				// 		command.setBitmap(res);
-				// 		command.setPrint();
+				//写入打印记录表
+				//xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());	
+				// 打印二维码
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
 						
-				// 		that.addData(xsBill,xsDate,command.getData());
-				// 		that.prepareSend(command.getData()); //发送数据
-				// 	},
-				// 	complete: function(res) {
-				// 		console.log("finish");
-				// 	},
-				// 	fail: function(res) {
-				// 		console.log(res);
-				// 		uni.showToast({
-				// 			title: "获取画布数据失败",
-				// 			icon: "none"
-				// 		});
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log("获取画布数据失败:",res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
 						
-				// 		that.addData(xsBill,xsDate,command.getData());
-				// 	    that.prepareSend(command.getData()); //发送数据
-				// 	}
-				// });
+						that.prepareSend(command.getData()); //发送数据
+					}
+				});
 				
-				command.setPrint(); //打印并换行
 				console.log("打印格式记录", command.getData());
-				//that.addData(xsBill,xsDate,command.getData());
-				that.prepareSend(command.getData()); //准备发送数据
 			},
 			//重新打印
 			againPrinter:function(xsBill){
 				console.log("进入到打印了",xsBill)
 				var that = this;
-				xsBill = "2214055034000983";
-				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"' order by XSDATE desc";
+				xsBill = "K0101QT212271113832795";
+				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill +"' order by XSDATE desc";
+					
 				db.get().executeQry(sql, "数据查询中", function(res) {
 					let billStr = res.msg[0].BILLSTR;
 					console.log("重打数据:",res.msg[0].BILLSTR);
@@ -546,8 +680,8 @@
 					canvasId: "canvasJPG",
 					...cfg,
 					success: res => {
-						//const data = util.convertToGrayscale(res.data)
-						const data = util.convertToMonoImage(res.width, res.height, res.data, true);
+						//const data = xprinter_util.convertToGrayscale(res.data)
+						const data = xprinter_util.convertToMonoImage(res.width, res.height, res.data, true);
 						uni.canvasPutImageData({
 							canvasId: "canvasJPG",
 							data,
@@ -602,7 +736,7 @@
 			},
 			//准备发送，根据每次发送字节数来处理分包数量
 			prepareSend: function(buff) {
-				console.log("prepareSend 开始")
+				console.log("receipt prepareSend 开始")
 				var that = this;
 				var time = that.oneTimeData;
 				var looptime = parseInt(buff.length / time);
@@ -614,13 +748,6 @@
 					currentTime: 1
 				});
 				that.Send(buff);
-			},
-			// 添加数据
-			addData(xsBill,xsDate,billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '",' + billStr + ')';
-				db.get().executeDml(addSql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});	
 			},
 			queryStatus: function() {
 				//查询打印机状态
@@ -669,7 +796,7 @@
 							console.log(
 								`characteristic ${r.characteristicId} has changed, now is ${r}`
 								);
-							var result = util.ab2hex(r.value);
+							var result = xprinter_util.ab2hex(r.value);
 							console.log("返回" + result);
 							var tip = "";
 
@@ -742,8 +869,7 @@
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
 				}
-				 console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
-
+				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: app.globalData.BLEInformation.writeServiceId,

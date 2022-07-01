@@ -274,11 +274,11 @@
 							return;
 						}
 					} else {
-						this.sale1_obj = {};
-						this.sale2_arr = [];
-						this.sale3_arr = [];
+						// this.sale1_obj = {};
+						// this.sale2_arr = [];
+						// this.sale3_arr = [];
+						this.SaleBaseInit();
 					}
-
 					this.DataAssembleSaveForGlobal();
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
@@ -312,6 +312,85 @@
 						.POSID), //生成退款单号
 					BILL_TYPE: this.BILL_TYPE,
 					XS_TYPE: this.XS_TYPE
+				});
+			},
+			SaleBaseInit:function(){
+				//预先重置
+				this.sale1_obj = {};
+				this.sale2_arr = [];
+				this.sale3_arr = [];
+				//创建基本结构
+				//sale 001:
+				this.sale1_obj = {
+					BILL: "",//payall 追加
+					SALEDATE: "",//payall 追加
+					SALETIME: "",//payall 追加
+					KHID: this.KHID,
+					POSID: this.POSID,
+					RYID: this.RYID,
+					BILL_TYPE: this.BILL_TYPE,
+					XSTYPE: this.XS_TYPE,
+					XS_BILL: "",
+					XS_POSID: "",
+					XS_DATE: "",
+					XS_KHID: "",
+					XS_GSID: "",
+					TLINE: this.Products.length,
+					TNET: 0, //payall 追加
+					DNET: 0,
+					ZNET: 0,//payall 追加
+					BILLDISC: 0, //payall 追加
+					ROUND: 0,//payall 追加
+					CHANGENET: 0,
+					CXTNET: 0,
+					TCXDISC: 0,
+					CUID: this.hyinfo.hyId,
+					CARDID: "",
+					THYDISC: 0,
+					TDISC: 0,//payall 追加
+					YN_SC: 'N',
+					GSID: this.GSID, //公司
+					GCID: this.GCID,
+					DPID: this.DPID,
+					KCDID: this.KCDID,
+					BMID: this.BMID,
+					DKFID: this.DKFID, 
+					XSPTID: 'POS',
+					YN_OK: 'X',
+					THTYPE: 0,
+					CLTIME: ""//payall 追加
+				};
+				//sale 002:
+				this.sale2_arr = this.Products.map((item,index) => {
+					return {
+						BILL: "", //payall 追加
+						SALEDATE: "", //payall 追加
+						SALETIME: "", //payall 追加
+						KHID: this.KHID,
+						POSID: this.POSID,
+						SPID: item.SPID,
+						NO: index,
+						PLID: item.PLID,
+						BARCODE: item.BARCODE,
+						UNIT: item.UNIT,
+						QTY: (this.isRefund ? -1 : 1) * item.QTY,
+						PRICE: 0,//payall 追加
+						OPRICE: item.OPRICE,
+						NET: 0,//payall 追加
+						DISCRATE: 0,//payall 追加
+						YN_SKYDISC: '', //payall 追加
+						DISC: 0, //payall 追加
+						YN_CXDISC: 'N',
+						CXDISC: 0,
+						MONTH: '',//payall 追加
+						WEEK: '',//payall 追加
+						TIME: '',//payall 追加
+						RYID: this.RYID,
+						GCID: this.GCID,
+						DPID: this.DPID,
+						KCDID: this.KCDID,
+						BMID: this.BMID
+					}
 				});
 			},
 			Test: function(e) {
@@ -450,7 +529,7 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
 
 				//生成支付规则数据
 				await common.InitZFRULE();
