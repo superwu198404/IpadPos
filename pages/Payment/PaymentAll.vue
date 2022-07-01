@@ -239,9 +239,6 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	//打印相关
-	import esc from '@/utils/xprinter/esc.js';
-	import xprinter_util from '@/utils/xprinter/util.js';
-	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
     import vm from '@/utils/xprinter/MiddleUtil.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that;
@@ -326,7 +323,6 @@
 				sale8_obj: {}, //水吧产品对象
 				sale8_arr: [], //水吧产品集合
 				//打印相关
-				//发送字节数下标
 				jpgWidth: 340,
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
@@ -421,10 +417,6 @@
 			onLoad(options) {
 				that = this;
 				this.GetHyCoupons();
-				//生成二维码
-				setTimeout(() => {
-					this.couponQrCode()
-				}, 50);
 			},
 			//单号防重处理
 			UniqueBill: function() {
@@ -1041,7 +1033,7 @@
 							})
 							item.SNAME = obj.name;
 						})
-						this.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
 						}, 3000);
 					});
 			},
@@ -1513,19 +1505,6 @@
 					})
 				}
 				console.log("本单水吧商品：", that.sbsp_arr);
-			},
-			// 二维码生成工具
-			couponQrCode() {
-				let bill = this.XS_TYPE == '2' ? this.out_refund_no : this.out_trade_no_old;
-				console.log("二维码生成内容", this.qrCodeContent + bill)
-				new qrCode('couponQrcode', {
-					text: this.qrCodeContent,
-					width: this.qrCodeWidth,
-					height: this.qrCodeHeight,
-					colorDark: "#333333",
-					colorLight: "#FFFFFF",
-					correctLevel: qrCode.CorrectLevel.H
-				})
 			}
 		},
 		created() {
