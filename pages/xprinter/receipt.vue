@@ -1,6 +1,6 @@
 <template>
 	<view class="body">
-		<button class="button" hover-class="hover" @tap="receiptPrinter" :loading="isReceiptSend"
+		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend"
 			:disabled="isReceiptSend">
 			打印小票
 		</button>
@@ -29,7 +29,7 @@
 <script>
 	var app = getApp();
 	import esc from '@/utils/xprinter/esc.js';
-	import util from '@/utils/xprinter/util.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	import vm from '@/utils/xprinter/MiddleUtil.js';	
     import common from '@/api/common.js';
@@ -193,9 +193,9 @@
 		onShareAppMessage: function() {},
 		mounted(){
 		    var that = this;
-		    vm.$on('receiptPrinter', function (sale1_obj,sale2_arr,sale3_arr) {
-		        console.log("调用打印方法成功");
-				that.receiptPrinter(sale1_obj,sale2_arr,sale3_arr);
+		    vm.$on('bluePrinter', function (sale1_obj,sale2_arr,sale3_arr) {
+		        //console.log("调用打印方法成功");
+				that.bluePrinter(sale1_obj,sale2_arr,sale3_arr);
 		    })
 		},
 		methods: {
@@ -559,7 +559,7 @@
 			},
 			initPhoto: function() {},
 			//打印小票
-			receiptPrinter: function(sale1_obj,sale2_arr,sale3_arr) {
+			bluePrinter: function(sale1_obj,sale2_arr,sale3_arr) {
 				//输出日志
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
@@ -569,20 +569,13 @@
 				var that = this;
 				//打印数据转换
 				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
-				
 				//初始化打印机
-				var strCenter = excPostUtil.Center();
-				var strLeft = excPostUtil.Left();
-				var strSize1 = excPostUtil.Size1();
-				var strSize2 = excPostUtil.Size2(16);
-				var strSetPrint = excPostUtil.strSetPrint();
-				
 				var command = esc.jpPrinter.createNew();
 				command.init();
-				
 				//打印格式
-				command.formatString(printerInfo);
-				console.log("打印格式记录", command.getData());
+				command.formString(printerInfo);
+				//写入打印记录表
+				//xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());	
 				// 打印二维码
 				uni.canvasGetImageData({
 					canvasId: "couponQrcode",
@@ -595,24 +588,24 @@
 						command.setSelectJustification(1); //居中
 						command.setBitmap(res);
 						command.setPrint();
-				
-						//that.addData(bill,xsDate,command.getData());
+						
 						that.prepareSend(command.getData()); //发送数据
 					},
 					complete: function(res) {
 						console.log("finish");
 					},
 					fail: function(res) {
-						console.log(res);
+						console.log("获取画布数据失败:",res);
 						uni.showToast({
 							title: "获取画布数据失败",
 							icon: "none"
 						});
-						//that.addData(bill,xsDate,command.getData());
-					    that.prepareSend(command.getData()); //发送数据
+						
+						that.prepareSend(command.getData()); //发送数据
 					}
-				});		
-				//that.prepareSend(command.getData()); //发送数据
+				});
+				
+				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
 			againPrinter:function(xsBill){
@@ -687,8 +680,8 @@
 					canvasId: "canvasJPG",
 					...cfg,
 					success: res => {
-						//const data = util.convertToGrayscale(res.data)
-						const data = util.convertToMonoImage(res.width, res.height, res.data, true);
+						//const data = xprinter_util.convertToGrayscale(res.data)
+						const data = xprinter_util.convertToMonoImage(res.width, res.height, res.data, true);
 						uni.canvasPutImageData({
 							canvasId: "canvasJPG",
 							data,
@@ -745,8 +738,7 @@
 			prepareSend: function(buff) {
 				console.log("receipt prepareSend 开始")
 				var that = this;
-				// var time = that.oneTimeData;
-				var time = 20;
+				var time = that.oneTimeData;
 				var looptime = parseInt(buff.length / time);
 				var lastData = parseInt(buff.length % time); 
 
@@ -756,13 +748,6 @@
 					currentTime: 1
 				});
 				that.Send(buff);
-			},
-			// 添加数据
-			addData(xsBill,xsDate,billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate + '",' + billStr + ')';
-				db.get().executeDml(addSql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});	
 			},
 			queryStatus: function() {
 				//查询打印机状态
@@ -811,7 +796,7 @@
 							console.log(
 								`characteristic ${r.characteristicId} has changed, now is ${r}`
 								);
-							var result = util.ab2hex(r.value);
+							var result = xprinter_util.ab2hex(r.value);
 							console.log("返回" + result);
 							var tip = "";
 
@@ -884,8 +869,7 @@
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
 				}
-				 console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
-
+				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: app.globalData.BLEInformation.writeServiceId,
