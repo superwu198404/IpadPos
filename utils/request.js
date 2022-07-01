@@ -258,12 +258,8 @@ var asyncFunc1 = async function RequestDataArray(pm_data, callbackfun, callbackf
 	*/
 };
 
-var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun,
-	finallyfun) {
-
-
+var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3, catchfun, finallyfun) {
 	var callbacklist = [];
-
 	for (var i = 1; i <= 3; i++) {
 		if (arguments[i]) {
 			callbacklist.push(arguments[i]);
@@ -271,12 +267,6 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 	}
 	let res = pm_data;
 	asyncFuncArr(pm_data, callbacklist, catchfun, finallyfun);
-	/*
-	Promise.all([httpFunc, forPromise]).then(function(f_res) {
-	if (finallyfun)
-	finallyfun(f_res);
-	})
-	*/
 };
 
 var showloding = function(yn_show, pm_txt) {
