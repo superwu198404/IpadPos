@@ -574,7 +574,7 @@ var jpPrinter = {
       data.push(parseInt(pitch / 256));
       data.push(parseInt(bith % 256));
       data.push(parseInt(bith / 256));
-      console.log(res.data.length);
+      //console.log(res.data.length);
 
       for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
@@ -1327,8 +1327,6 @@ var jpPrinter = {
 			if(isReturn){
 				item.amt = -Math.abs(item.amt);
 			}
-			console.log("sale3List item",JSON.stringify(item));
-			console.log("sale3List item.id",item.id);
 			//卡券号存在，才打印
 			if(item.id != "" && item.id != undefined){
 				jpPrinter.setCharacterSize(0); //设置正常大小
