@@ -239,7 +239,6 @@
 	import util from '@/utils/util.js';
 	//打印相关
 	import esc from '@/utils/xprinter/esc.js';
-	import encode from '@/utils/xprinter/encoding.js';
 	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 	var that;
@@ -1058,27 +1057,27 @@
 							that.scoreConsume();
 						//调用打印
 						// if (that.isRefund)
-						setTimeout(function() {
-							console.log("that.Products", that.Products);
-							console.log("that.PayWayList", that.PayWayList);
-							console.log("that.sale3_arr", that.sale3_arr);
-							let arr2 = that.sale2_arr;
-							arr2.forEach(function(item, index) {
-								let obj = that.Products.find((i) => {
-									return i.SPID == item.SPID;
-								})
-								if (obj) {
-									item.SNAME = obj.NAME;
-								}
+						setTimeout(() => {
+						console.log("that.Products", that.Products);
+						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.sale3_arr", that.sale3_arr);
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
 							})
-							let arr3 = that.sale3_arr;
-							arr3.forEach(function(item, index) {
-								let obj = that.PayWayList.find((i) => {
-									return i.fkid == item.FKID;
-								})
-								item.SNAME = obj.name;
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
 							})
-							that.receiptPrinter(that.sale1_obj, arr2, arr3);
+							item.SNAME = obj.name;
+						})
+						that.receiptPrinter(that.sale1_obj, arr2, arr3);
 						}, 3000);
 					});
 			},
@@ -1582,7 +1581,8 @@
 				command.init();
 				//打印格式
 				command.formString(printerInfo);
-
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());	
 				// 打印二维码
 				uni.canvasGetImageData({
 					canvasId: "couponQrcode",
@@ -1595,8 +1595,7 @@
 						command.setSelectJustification(1); //居中
 						command.setBitmap(res);
 						command.setPrint();
-
-						//that.addData(bill,xsDate,command.getData());
+						
 						that.prepareSend(command.getData()); //发送数据
 					},
 					complete: function(res) {
@@ -1608,19 +1607,17 @@
 							title: "获取画布数据失败",
 							icon: "none"
 						});
-						//that.addData(bill,xsDate,command.getData());
+						
 						that.prepareSend(command.getData()); //发送数据
 					}
 				});
 
-				//that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
 			againPrinter: function(xsBill) {
-				console.log("进入到打印了", xsBill)
+				console.log("重新打印", xsBill)
 				var that = this;
-				//xsBill = "2214055034000983";
 				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill + "' order by XSDATE desc";
 				db.get().executeQry(sql, "数据查询中", function(res) {
 					let billStr = res.msg[0].BILLSTR;
@@ -1685,14 +1682,6 @@
 				});
 				that.Send(buff);
 			},
-			// 添加数据
-			addData(xsBill, xsDate, billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
-					'",' + billStr + ')';
-				db.get().executeDml(addSql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
-			},
 			//分包发送
 			Send: function(buff) {
 				var that = this;
@@ -1721,7 +1710,6 @@
 					}
 				}
 				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
-
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: app.globalData.BLEInformation.writeServiceId,

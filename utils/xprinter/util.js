@@ -1,3 +1,4 @@
+import db from '@/utils/db/db_excute.js';
 
 const formatTime = date => {
 	const year = date.getFullYear();
@@ -181,8 +182,11 @@ function convertToMonoImage(width, height, data, shake) {
 	return data;
 }
 
-//打印数据转换
-function printerData(sale1_obj, sale2_arr, sale3_arr){
+/**
+ * 打印数据转换
+ * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
+ */
+const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 	var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
 	var billType = sale1_obj.BILL_TYPE; //Z101
 	var bill = sale1_obj.BILL;
@@ -272,6 +276,27 @@ function printerData(sale1_obj, sale2_arr, sale3_arr){
 	return printerInfo;
 }
 
+/**
+ * 只显示后几位 *********** 0222
+ * @param {value} 传入数据
+ */
+const onlyFourBank = (value) => {
+	if (value && value.length > 8) {
+		return `${"*".repeat(value.length - 8)}${value.length % 6 ? " " : ""}${value.slice(-6)}`;
+	}
+	return value;
+}
+
+// 添加打印记录
+const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
+	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +'","' + billStr + '")'];
+    db.get().executeDml(execSql_arr, "执行中", function(res) {
+		console.log("POS_XSBILLPRINT sql执行结果：", res);
+	}, function(err) {
+		console.log("POS_XSBILLPRINT sql执行失败：", err);
+	});	
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -281,5 +306,7 @@ module.exports = {
 	convertToGrayscale: convertToGrayscale,
 	adjustPixel: adjustPixel,
 	convertToMonoImage: convertToMonoImage,
-	printerData: printerData
+	printerData: printerData,
+	onlyFourBank: onlyFourBank,
+	addPos_XsBillPrintData: addPos_XsBillPrintData
 };
