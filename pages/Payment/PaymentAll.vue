@@ -685,28 +685,28 @@
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime
 				});
-				console.log("sale1 封装完毕!");
+				console.log("sale1 封装完毕!",this.sale1_obj);
 				console.log("sale2 封装中...");
-				this.sale2_arr = this.sale2_arr.map((function(item,index){
+				this.sale2_arr = sale2.map((function(item,index){
 					return Object.assign(item,{
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
-						PRICE: (this.Products[i].PRICE - this.Products[i].SKYDISCOUNT).toFixed(2),
-						NET: this.isRefund ? (-1 * this.Products[i].PRICE).toFixed(2) : (this.Products[i].PRICE *
-							this.Products[i].QTY - this.Products[i].SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.isRefund ? -this.Products[i].DISCRATE : this.Products[i]
+						PRICE: (item.PRICE - item.SKYDISCOUNT).toFixed(2),
+						NET: this.isRefund ? (-1 * item.PRICE).toFixed(2) : (item.PRICE *
+							item.QTY - item.SKYDISCOUNT).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : item
 							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
-						YN_SKYDISC: this.isRefund ? this.Products[i].YN_SKYDISC : this.Products[i].SKYDISCOUNT >
+						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.isRefund ? -this.Products[i].DISC : this.Products[i].SKYDISCOUNT, //手工折扣额
+						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
 						MONTH: new Date().getMonth() + 1,
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					})
 				}).bind(this));
-				console.log("sale2 封装完毕!");
+				console.log("sale2 封装完毕!",this.sale2_arr);
 				console.log("sale3 封装中...");
 				this.sale3_arr = this.Sale3Source().map((function(item,index){
 					return {
@@ -732,50 +732,40 @@
 						IDTYPE: item.id_type //卡类型
 					}
 				}).bind(this));
-				console.log("sale3 封装完毕!");
+				console.log("sale3 封装完毕!",this.sale3_arr);
 				console.log("sale8 封装中...");
 				this.sale8_arr = this.sale8_arr.map((function(item,index){
 					return Object.assign(item,{
-						
-					});
-				}).bind(this));
-			},
-			//sale 003 数据源：
-			Sale3Source:function(){
-				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
-			},
-			//创建订单数据
-			_CreateDBData: function(func) {
-				console.log("sale3 封装完毕!");
-				for (var i = 0; i < this.sbsp_arr.length; i++) {
-					this.sale8_obj = {
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						GCID: this.GCID,
 						KHID: this.KHID,
 						POSID: this.POSID,
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
-						SPID: this.sbsp_arr[i].SPID,
+						SPID: item.SPID,
 						NO: i,
 						ATTCODE: "1",
 						ATTNAME: "糖",
 						OPTCODE: "1",
 						CSTCODE: "1",
 						OPTMAT: "123456",
-						QTY: this.sbsp_arr[i].QTY,
-						PRICE: this.sbsp_arr[i].PRICE
-					}
-					this.sale8_arr = this.sale8_arr.concat(this.sale8_obj);
-				};
-
-				//生成执行sql
+						QTY: item.QTY,
+						PRICE: item.PRICE
+					});
+				}).bind(this));
+				console.log("sale8 封装完毕!");
+			},
+			orderSQLGenarator:function(){
+				let saledate = dateformat.getYMD();
+				let saletime = dateformat.getYMDS();
 				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
 				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
 				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
 				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
-				// console.log("SALE1-OBJ:", this.sale1_obj);
-				// console.log("SALE2-ARR:", this.sale2_arr);
-				console.log("SALE8-ARR:", this.sale8_arr);
+				console.log("[orderSQLGenarator]sql1生成：",sql1)
+				console.log("[orderSQLGenarator]sql2生成：",sql2)
+				console.log("[orderSQLGenarator]sql3生成：",sql3)
+				console.log("[orderSQLGenarator]sql8生成：",sql8)
 				this.tx_obj = {
 					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
 					STOREID: this.KHID,
@@ -787,13 +777,19 @@
 					CONNSTR: 'CONNSTRING'
 				};
 				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-				// console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
-				// console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
-				// console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql8.sqlliteArr)
-					.concat(sql4.sqlliteArr);
+				return sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr).concat(sql8.sqlliteArr);
+			},
+			//sale 003 数据源：
+			Sale3Source:function(){
+				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
+			},
+			//创建订单数据
+			_CreateDBData: function(func) {
+				//对订单数据进行合并
+				this.SaleDataCombine();
+				//生成执行sql
+				let exeSql = this.orderSQLGenarator();
 				console.log("sqlite待执行sql:", exeSql)
-				//return;
 				db.get().executeDml(exeSql, "订单创建中", function(res) {
 					if (func) func(res);
 					console.log("订单创建成功：", res);
@@ -808,9 +804,11 @@
 					})
 				});
 			},
+			//使用的 单号 判断（支付单号、退款单号）
 			useOrderNoChoice: function() {
 				return this.isRefund ? this.out_refund_no : this.out_trade_no_old;
 			},
+			//使用的 积分 类型操作 增加/减少 积分
 			useOrderTypeChoice: function() {
 				return this.isRefund ? "DECREASE" : "INCREASE";
 			},
@@ -1177,14 +1175,13 @@
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
-								.type === 'EXCESS' ? -coupon.pay_amount : coupon
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon.note === 'EXCESS' ? -coupon.pay_amount : coupon
 								.denomination)) / 100).toFixed(2),
-							fkid: coupon.type === 'EXCESS' ? excessInfo.fkid : this
+							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : this
 								.currentPayInfo?.fkid,
-							name: coupon.type === 'EXCESS' ? excessInfo.name : this
+							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
-							zklx:coupon.type === 'EXCESS' ? "ZCV1" : coupon.disc_type,
+							zklx:coupon.note === 'EXCESS' ? "ZCV1" : coupon.disc_type,
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,

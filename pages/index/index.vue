@@ -274,10 +274,10 @@
 							return;
 						}
 					} else {
-						this.sale1_obj = {};
-						this.sale2_arr = [];
-						this.sale3_arr = [];
-						// this.SaleBaseInit();
+						// this.sale1_obj = {};
+						// this.sale2_arr = [];
+						// this.sale3_arr = [];
+						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
 					uni.navigateTo({
@@ -344,7 +344,7 @@
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
-					CUID: hyinfo.hyId,
+					CUID: this.hyinfo.hyId,
 					CARDID: "",
 					THYDISC: 0,
 					TDISC: 0,//payall 追加
@@ -529,7 +529,7 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
 
 				//生成支付规则数据
 				await common.InitZFRULE();
