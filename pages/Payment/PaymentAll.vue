@@ -928,6 +928,7 @@
 							that.scoreConsume();
 						//调用打印
 						// if (that.isRefund)
+						setTimeout(() => {
 						console.log("that.Products", that.Products);
 						console.log("that.PayWayList", that.PayWayList);
 						console.log("that.sale3_arr", that.sale3_arr);
@@ -948,6 +949,7 @@
 							item.SNAME = obj.name;
 						})
 						that.receiptPrinter(that.sale1_obj, arr2, arr3);
+						}, 3000);
 					});
 			},
 			//支付类型判断
@@ -1487,7 +1489,8 @@
 				command.init();
 				//打印格式
 				command.formString(printerInfo);
-				that.addData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());	
 				// 打印二维码
 				uni.canvasGetImageData({
 					canvasId: "couponQrcode",
@@ -1517,14 +1520,12 @@
 					}
 				});
 
-				//that.prepareSend(command.getData()); //发送数据
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
 			againPrinter: function(xsBill) {
 				console.log("重新打印", xsBill)
 				var that = this;
-				//xsBill = "2214055034000983";
 				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill + "' order by XSDATE desc";
 				db.get().executeQry(sql, "数据查询中", function(res) {
 					let billStr = res.msg[0].BILLSTR;
@@ -1588,14 +1589,6 @@
 					currentTime: 1
 				});
 				that.Send(buff);
-			},
-			// 添加数据
-			addData(xsBill, xsDate, billStr) {
-				let addSql = 'insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
-					'",' + billStr + ')';
-				db.get().executeDml(addSql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
 			},
 			//分包发送
 			Send: function(buff) {

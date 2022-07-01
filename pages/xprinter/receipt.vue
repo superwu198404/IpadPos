@@ -111,24 +111,24 @@
 				const devices = resd.devices;
 			})
 			//监听蓝牙连接状态
-			uni.onBLEConnectionStateChange(res => {
-				console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
-				this.Connecting = res.connected;
-				if (res.connected == false) {
-					this.closeBluetoothAdapter();
-					this.closeBLEConnection(res.deviceId, 0);
-					this.connected = 1;
-					if (this.connected == 1) {
-						//选择适合需求的定时器
-						this.timer = setTimeout(() => {
-							this.getBlueInfo()
-						}, 1000)
-					}
-				} else {
-					this.connected = 0;
-				}
-				this.deviceId = res.deviceId;
-			})
+			// uni.onBLEConnectionStateChange(res => {
+			// 	console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
+			// 	this.Connecting = res.connected;
+			// 	if (res.connected == false) {
+			// 		this.closeBluetoothAdapter();
+			// 		this.closeBLEConnection(res.deviceId, 0);
+			// 		this.connected = 1;
+			// 		if (this.connected == 1) {
+			// 			//选择适合需求的定时器
+			// 			this.timer = setTimeout(() => {
+			// 				this.getBlueInfo()
+			// 			}, 1000)
+			// 		}
+			// 	} else {
+			// 		this.connected = 0;
+			// 	}
+			// 	this.deviceId = res.deviceId;
+			// })
 		},
 
 		/**
@@ -162,7 +162,7 @@
 		 */
 		onShow: function() {
 			console.log('ENTER TO')
-			this.getBlueInfo()
+			//this.getBlueInfo()
 		},
 
 		/**
@@ -618,8 +618,9 @@
 			againPrinter:function(xsBill){
 				console.log("进入到打印了",xsBill)
 				var that = this;
-				//xsBill = "2214055034000983";
-				let sql = "select * from POS_XSBILLPRINT where XSBILL='" + xsBill +"' order by XSDATE desc";
+				xsBill = "K0101QT212271113832795";
+				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill +"' order by XSDATE desc";
+					
 				db.get().executeQry(sql, "数据查询中", function(res) {
 					let billStr = res.msg[0].BILLSTR;
 					console.log("重打数据:",res.msg[0].BILLSTR);
