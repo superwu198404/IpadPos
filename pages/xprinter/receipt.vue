@@ -31,17 +31,17 @@
 	import esc from '@/utils/xprinter/esc.js';
 	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
-	import vm from '@/utils/xprinter/MiddleUtil.js';	
-    import common from '@/api/common.js';
+	import vm from '@/utils/xprinter/MiddleUtil.js';
+	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
-	
+
 	import excPostUtil from '@/components/gprint/EscPosUtil.js';
 	import {
 		mapState,
 		mapGetters,
 		mapMutations
 	} from 'vuex'
-	
+
 	export default {
 		data() {
 			return {
@@ -64,10 +64,11 @@
 				canvasHeight: 200,
 				jpgWidth: 340,
 				jpgHeight: 113,
-				qrCodeWidth: 200,//二维码宽
-				qrCodeHeight: 200,// 二维码高
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
-				
+				bill: "",
+				//蓝牙相关
 				isSearch: false,
 				bluetooth: [],
 				isLink: [],
@@ -87,19 +88,18 @@
 		},
 
 		components: {
-			...mapState(['blueName'])},
+			...mapState(['blueName'])
+		},
 		props: {},
 
 		/**
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
-			// this.canvas();
+			let that = this;
 			setTimeout(() => {
-				this.couponQrCode()
+				that.couponQrCode(that.bill)
 			}, 50)
-			console.log('onLoad start');
-
 			//蓝牙是否在扫描设备
 			uni.onBluetoothAdapterStateChange((res) => {
 				console.log("蓝牙" + (res.discovering ? "开启" : "关闭") + "搜索")
@@ -111,24 +111,24 @@
 				const devices = resd.devices;
 			})
 			//监听蓝牙连接状态
-			// uni.onBLEConnectionStateChange(res => {
-			// 	console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
-			// 	this.Connecting = res.connected;
-			// 	if (res.connected == false) {
-			// 		this.closeBluetoothAdapter();
-			// 		this.closeBLEConnection(res.deviceId, 0);
-			// 		this.connected = 1;
-			// 		if (this.connected == 1) {
-			// 			//选择适合需求的定时器
-			// 			this.timer = setTimeout(() => {
-			// 				this.getBlueInfo()
-			// 			}, 1000)
-			// 		}
-			// 	} else {
-			// 		this.connected = 0;
-			// 	}
-			// 	this.deviceId = res.deviceId;
-			// })
+			uni.onBLEConnectionStateChange(res => {
+				console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
+				this.Connecting = res.connected;
+				if (res.connected == false) {
+					this.closeBluetoothAdapter();
+					this.closeBLEConnection(res.deviceId, 0);
+					this.connected = 1;
+					if (this.connected == 1) {
+						//选择适合需求的定时器
+						this.timer = setTimeout(() => {
+							this.getBlueInfo()
+						}, 1000)
+					}
+				} else {
+					this.connected = 0;
+				}
+				this.deviceId = res.deviceId;
+			})
 		},
 
 		/**
@@ -154,7 +154,6 @@
 				printNum: numList,
 				printerNum: numList[0]
 			});
-			this.initPhoto();
 		},
 
 		/**
@@ -191,12 +190,11 @@
 		 * 用户点击右上角分享
 		 */
 		onShareAppMessage: function() {},
-		mounted(){
-		    var that = this;
-		    vm.$on('bluePrinter', function (sale1_obj,sale2_arr,sale3_arr) {
-		        //console.log("调用打印方法成功");
-				that.bluePrinter(sale1_obj,sale2_arr,sale3_arr);
-		    })
+		mounted() {
+			var that = this;
+			vm.$on('bluePrinter', function(sale1_obj, sale2_arr, sale3_arr) {
+				that.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
+			})
 		},
 		methods: {
 			// 监听蓝牙设备连接状态
@@ -278,8 +276,7 @@
 						var isAuto = false;
 						var _macBlueDeviceId = "";
 						var _macBlueIndex = 0;
-						console.log(' 已发现的蓝牙设备', res)
-						// _this.stopBluetoothDevicesDiscovery()
+						console.log('已发现的蓝牙设备', res)
 						if (this.macBlueName != null && this.macBlueName != '') {
 							console.log("蓝牙缓存", key)
 							let key = uni.getStorageSync(this.macBlueName);
@@ -453,7 +450,7 @@
 					'] characteristics=[' + characteristicId + "]")
 				var uint8Buf = Array.from(uint8Array);
 				console.log("这个是什么。。。。。", uint8Buf)
-			
+
 				function split_array(datas, size) {
 					console.log("data是什么：", datas)
 					var result = {};
@@ -547,24 +544,25 @@
 				});
 			},
 			// 二维码生成工具
-			couponQrCode() {
+			couponQrCode(bill) {
+				let that = this;
+				console.log("二维码生成内容:", that.qrCodeContent + bill)
 				new qrCode('couponQrcode', {
-					text: this.qrCodeContent,
-					width: this.qrCodeWidth,
-					height: this.qrCodeHeight,
+					text: that.qrCodeContent,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
 					colorDark: "#333333",
 					colorLight: "#FFFFFF",
 					correctLevel: qrCode.CorrectLevel.H
 				})
 			},
-			initPhoto: function() {},
 			//打印小票
-			bluePrinter: function(sale1_obj,sale2_arr,sale3_arr) {
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr) {
 				//输出日志
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
-				
+
 				//票据
 				var that = this;
 				//打印数据转换
@@ -575,59 +573,109 @@
 				//打印格式
 				command.formString(printerInfo);
 				//写入打印记录表
-				//xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL,sale1_obj.SALETIME,command.getData());	
-				// 打印二维码
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
-						
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log("获取画布数据失败:",res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-						
-						that.prepareSend(command.getData()); //发送数据
-					}
-				});
-				
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
+
+				//生成二维码
+				setTimeout(() => {
+					that.couponQrCode(sale1_obj.BILL)
+				}, 50);
+
+				//打印二维码
+				that.printPhoto(command);
+				// uni.canvasGetImageData({
+				// 	canvasId: "couponQrcode",
+				// 	x: 0,
+				// 	y: 0,
+				// 	width: that.qrCodeWidth,
+				// 	height: that.qrCodeHeight,
+				// 	success: function(res) {
+				// 		console.log("获取画布数据成功");
+				// 		command.setSelectJustification(1); //居中
+				// 		command.setBitmap(res);
+				// 		command.setPrint();
+
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	},
+				// 	complete: function(res) {
+				// 		console.log("finish");
+				// 	},
+				// 	fail: function(res) {
+				// 		console.log("获取画布数据失败:", res);
+				// 		uni.showToast({
+				// 			title: "获取画布数据失败",
+				// 			icon: "none"
+				// 		});
+
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	}
+				// });
+
 				console.log("打印格式记录", command.getData());
 			},
 			//重新打印
-			againPrinter:function(xsBill){
-				console.log("进入到打印了",xsBill)
+			againPrinter: function(xsBill) {
+				console.log("重新打印单号:",xsBill)
 				var that = this;
-				xsBill = "K0101QT212271113832795";
-				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill +"' order by XSDATE desc";
-					
-				db.get().executeQry(sql, "数据查询中", function(res) {
+				if(xsBill == "" || xsBill == null){
+					uni.showToast({
+						icon: 'error',
+						title: "打印单号不能为空"
+					})
+					return;
+				}
+				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
+				db.get().executeQry(sql, "数据查询中", function(res) { 
 					let billStr = res.msg[0].BILLSTR;
-					console.log("重打数据:",res.msg[0].BILLSTR);
+
 					//初始化打印机
 					var command = esc.jpPrinter.createNew();
-					command.addCotent(billStr);
+					command.addContent(billStr);
 					console.log("打印格式记录", command.getData());
-					that.prepareSend(command.getData()); //准备发送数据
+					
+					that.prepareSend(command.getData()); //发送数据
+					//生成二维码
+					//that.couponQrCode(xsBill);
+					
+					//打印二维码
+					//that.printPhoto(command);
 				}, function(err) {
 					console.log("获取打印数据出错:", err);
 					uni.showToast({
 						icon: 'error',
 						title: "获取打印数据出错"
 					})
+				});
+			},
+			//打印二维码事件
+			printPhoto: function(command) {
+				//打印bitmap，图片内容不建议太大，小程序限制传输的字节数为20byte
+				var that = this;
+				var canvasWidth = that.qrCodeWidth;
+				var canvasHeight = that.qrCodeHeight;
+		
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: canvasWidth,
+					height: canvasHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log(res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
+					}
 				});
 			},
 			//打印二维码事件
@@ -664,7 +712,7 @@
 					}
 				});
 			},
-			//打印彩图事件
+			//打印Logon事件
 			printJPGPhoto: function() {
 				var that = this;
 				var canvasWidth = that.jpgWidth;
@@ -680,8 +728,8 @@
 					canvasId: "canvasJPG",
 					...cfg,
 					success: res => {
-						//const data = xprinter_util.convertToGrayscale(res.data)
-						const data = xprinter_util.convertToMonoImage(res.width, res.height, res.data, true);
+						const data = xprinter_util.convertToMonoImage(res.width, res.height, res.data,
+							true);
 						uni.canvasPutImageData({
 							canvasId: "canvasJPG",
 							data,
@@ -740,7 +788,7 @@
 				var that = this;
 				var time = that.oneTimeData;
 				var looptime = parseInt(buff.length / time);
-				var lastData = parseInt(buff.length % time); 
+				var lastData = parseInt(buff.length % time);
 
 				that.setData({
 					looptime: looptime + 1,
@@ -795,7 +843,7 @@
 						uni.onBLECharacteristicValueChange(function(r) {
 							console.log(
 								`characteristic ${r.characteristicId} has changed, now is ${r}`
-								);
+							);
 							var result = xprinter_util.ab2hex(r.value);
 							console.log("返回" + result);
 							var tip = "";
