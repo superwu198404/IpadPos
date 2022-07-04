@@ -1,6 +1,7 @@
 <template>
 	<view>
 		<view>
+			<PrinterPage ref="printerPage" style="display: none;" />
 			<div class="product">
 				<div>商品ID：</div>
 				<div><input v-model="input.fromData.SPID" /></div>
@@ -64,6 +65,7 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="againPrinter()">重新打印</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<!-- <button @click="Test(2)">测试一下</button> -->
 		<div v-if="view.orders.showDetail"
@@ -116,7 +118,12 @@
 	import {
 		RefundQuery
 	} from '@/api/business/da.js';
+	//打印相关
+    import PrinterPage from '@/pages/xprinter/receipt';
 	export default {
+		components: {
+			PrinterPage
+		},
 		//变量初始化
 		data() {
 			return {
@@ -595,6 +602,11 @@
 				await common.GetPOSCS(that.KHID);
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
+			},
+			//重新打印
+			againPrinter: function(xsBill) {
+				let that = this;
+			    that.$refs.printerPage.againPrinter(that.refund_no);
 			}
 		},
 		//接收上个页面传入的参数

@@ -297,6 +297,16 @@ const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
 	});	
 }
 
+const addContent = function(content){
+    var contentArr = content.split(',');
+	let arrNew = [];
+	contentArr.forEach(function(item, index) {
+		item = parseInt(item);
+		arrNew.push(item);
+	})
+	return arrNew;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -308,5 +318,6 @@ module.exports = {
 	convertToMonoImage: convertToMonoImage,
 	printerData: printerData,
 	onlyFourBank: onlyFourBank,
-	addPos_XsBillPrintData: addPos_XsBillPrintData
+	addPos_XsBillPrintData: addPos_XsBillPrintData,
+	addContent: addContent
 };
