@@ -637,7 +637,8 @@
 					SALETIME: saletime,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
+						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
@@ -646,6 +647,8 @@
 					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
 					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
+					XSTYPE: this.XS_TYPE,
+					BILL_TYPE: this.BILL_TYPE,
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
@@ -1289,6 +1292,7 @@
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
+					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
 				}
 			},
 			//总金额计算
@@ -1504,6 +1508,7 @@
 			//获取水吧商品
 			GetSBData: function(e) {
 				let arr = util.getStorage("POSCS");
+				console.log("水吧商品编码:", arr);
 				let obj = arr.find((r) => {
 					return r.POSCS == 'SBLBBM';
 				})
