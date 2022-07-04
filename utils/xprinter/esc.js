@@ -19,8 +19,13 @@ var jpPrinter = {
       data.push(64);
     };
 	
-	jpPrinter.addCotent = function(content){
-	   data.push(content);
+	jpPrinter.addContent = function(content){
+		var contentArr = content.split(',');
+		data = [];
+		contentArr.forEach(function(item, index) {
+			item = parseInt(item);
+			data.push(item);
+		})
 	}
 	
 	jpPrinter.byteToString = function(arr) {
