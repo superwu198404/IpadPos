@@ -113,6 +113,9 @@
 	import util from '@/utils/util.js';
 
 	import dateformat from '@/utils/dateformat.js';
+	import {
+		RefundQuery
+	} from '@/api/business/da.js';
 	export default {
 		//变量初始化
 		data() {
@@ -564,6 +567,7 @@
 				this.$forceUpdate();
 			},
 			searchOrder: async function() {
+				// await RefundQuery(this.refund_no)
 				let sales = await common.QueryRefund(this.refund_no);
 				console.log("SALES:", sales);
 				this.view.orders.sale1_string = JSON.stringify(sales.sale1, null, 2);

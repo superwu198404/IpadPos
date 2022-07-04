@@ -241,7 +241,12 @@
 	//打印相关
 	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
-	var that;
+	var that,is_log = false;
+	var log = console.log;
+	console.log = (...params) => {
+		if(is_log)
+			log(...params)
+	};
 	export default {
 		components: {
 			uniPopup,
@@ -256,6 +261,7 @@
 				},
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
+				logs:false,
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
@@ -404,6 +410,9 @@
 				if (n && n.filter(i => i.fail).length == 0) {
 					this.CanBack = true;
 				}
+			},
+			logs:function(n,o){
+				is_log = n;
 			}
 		},
 		computed: {
@@ -646,6 +655,7 @@
 					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
 					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
+					XSTYPE: this.XS_TYPE
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
@@ -861,12 +871,14 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
+				this.logs = true;
 				console.log("SALE1 初始化开始：", this.sale1_obj);
 				this.SALE1Init(this.sale1_obj); //sale1 初始化
 				console.log("SALE2 初始化开始：", this.sale2_arr);
 				this.SALE2Init(this.sale2_arr);
 				console.log("SALE3 初始化开始：", this.sale3_arr);
 				this.SALE3Init(this.sale3_arr);
+				this.logs = false;
 			},
 			//SALE001 初始化
 			SALE1Init: function() {
