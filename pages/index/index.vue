@@ -1,7 +1,6 @@
 <template>
 	<view>
 		<view>
-			<PrinterPage ref="printerPage" style="display: none;" />
 			<div class="product">
 				<div>商品ID：</div>
 				<div><input v-model="input.fromData.SPID" /></div>
@@ -65,7 +64,6 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
-		<button @click="againPrinter()">重新打印</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<!-- <button @click="Test(2)">测试一下</button> -->
 		<div v-if="view.orders.showDetail"
@@ -115,12 +113,11 @@
 	import util from '@/utils/util.js';
 
 	import dateformat from '@/utils/dateformat.js';
+	import {
+		RefundQuery
+	} from '@/api/business/da.js';
 	//打印相关
-    import PrinterPage from '@/pages/xprinter/receipt';
 	export default {
-		components: {
-			PrinterPage
-		},
 		//变量初始化
 		data() {
 			return {
@@ -173,7 +170,7 @@
 				// refund_no: "K0101QT2122624153953331" 
 				refund_no: "",
 				totalAmount: 0,
-				SKY_DISCOUNT: 0
+				SKY_DISCOUNT: 0,
 			}
 		},
 		watch: {
@@ -269,7 +266,14 @@
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
 					console.log("待退款单号：", this.refund_no)
 					if (this.XS_TYPE == '2') {
-						let data = await common.QueryRefund(this.refund_no);
+						let data = null;
+						data = await RefundQuery(this.refund_no);
+						console.log("服务器：", data)
+						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length ==
+								0 || this.sale3_arr.length == 0) { //如果服务器查不到
+							data = await common.QueryRefund(this.refund_no);
+							console.log("本地SQLITE：", data)
+						}
 						this.sale1_obj = data.sale1;
 						this.sale2_arr = data.sale2;
 						this.sale3_arr = data.sale3;
@@ -300,9 +304,6 @@
 							return;
 						}
 					} else {
-						// this.sale1_obj = {};
-						// this.sale2_arr = [];
-						// this.sale3_arr = [];
 						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
@@ -598,11 +599,6 @@
 				await common.GetPOSCS(that.KHID);
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
-			},
-			//重新打印
-			againPrinter: function(xsBill) {
-				let that = this;
-			    that.$refs.printerPage.againPrinter(that.refund_no);
 			}
 		},
 		//接收上个页面传入的参数

@@ -1,28 +1,35 @@
 <template>
 	<view class="body">
+		<view>
+			<view style="height: 50px;line-height: 50px;">请输入单号（用于测试重新打印）</view>
+			<view>
+				<input style="border:1px solid gray" type="text" v-model="bill_printer" />
+			</view>
+		</view>
+		<button class="button" hover-class="hover" @tap="againPrinter">重打</button>
 		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend"
-			:disabled="isReceiptSend">
-			打印小票
+			:disabled="isReceiptSend" v-show="false">
+			打印小票-测试
 		</button>
 		<button class="button" hover-class="hover" @tap="queryStatus" :loading="isQuery" :disabled="isQuery">
 			查询状态
 		</button>
-		<button class="button" hover-class="hover" @tap="printPhoto">打印二维码</button>
+		<button class="button" hover-class="hover" @tap="printPhoto" v-show="false">打印二维码-测试</button>
 		<canvas canvas-id="couponQrcode" class="canvas"
-			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 
-		<button class="button" hover-class="hover" @tap="printJPGPhoto">打印logo</button>
+		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
 		<canvas canvas-id="canvasJPG" class="canvas"
-			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-		<picker style="margin:20px" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
+			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		
+		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
 			当前每次发送字节数为(点击可更换)：{{ buffSize[buffIndex] }}
 		</picker>
 
-		<picker style="margin:20px" mode="selector" :range="printNum" :value="printNumIndex"
+		<picker style="margin:20px;display: none;" mode="selector" :range="printNum" :value="printNumIndex"
 			@change="printNumBindChange">
 			当前打印份数(点击可更换)：{{ printNum[printNumIndex] }}
 		</picker>
-		<button class="button" hover-class="hover" @tap="againPrinter">重打</button>
 	</view>
 </template>
 
@@ -84,13 +91,13 @@
 				isGetShow: true,
 				connected: 0,
 				oneTimeData: 20,
+				bill_printer: ""
 			};
 		},
 
 		components: {
 			...mapState(['blueName'])
 		},
-		props: {},
 
 		/**
 		 * 生命周期函数--监听页面加载
@@ -135,6 +142,7 @@
 		 * 生命周期函数--监听页面初次渲染完成
 		 */
 		onReady: function() {
+			console.log("onReady GO");
 			var list = [];
 			var numList = [];
 			var j = 0;
@@ -155,7 +163,6 @@
 				printerNum: numList[0]
 			});
 		},
-
 		/**
 		 * 生命周期函数--监听页面显示
 		 */
@@ -163,33 +170,6 @@
 			console.log('ENTER TO')
 			//this.getBlueInfo()
 		},
-
-		/**
-		 * 生命周期函数--监听页面隐藏
-		 */
-		onHide: function() {},
-
-		/**
-		 * 生命周期函数--监听页面卸载
-		 */
-		onUnload: function() {
-
-		},
-
-		/**
-		 * 页面相关事件处理函数--监听用户下拉动作
-		 */
-		onPullDownRefresh: function() {},
-
-		/**
-		 * 页面上拉触底事件的处理函数
-		 */
-		onReachBottom: function() {},
-
-		/**
-		 * 用户点击右上角分享
-		 */
-		onShareAppMessage: function() {},
 		mounted() {
 			var that = this;
 			vm.$on('bluePrinter', function(sale1_obj, sale2_arr, sale3_arr) {
@@ -544,10 +524,10 @@
 				});
 			},
 			// 二维码生成工具
-			couponQrCode(bill) {
+			couponQrCode: async function(bill) {
 				let that = this;
 				console.log("二维码生成内容:", that.qrCodeContent + bill)
-				new qrCode('couponQrcode', {
+			    await new qrCode('couponQrcode', {
 					text: that.qrCodeContent,
 					width: that.qrCodeWidth,
 					height: that.qrCodeHeight,
@@ -558,13 +538,16 @@
 			},
 			//打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr) {
+				//票据
+				var that = this;
 				//输出日志
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
-
-				//票据
-				var that = this;
+				//生成二维码
+				setTimeout(() => {
+					that.couponQrCode(sale1_obj.BILL)
+				}, 50);
 				//打印数据转换
 				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
 				//初始化打印机
@@ -575,47 +558,43 @@
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 
-				//生成二维码
-				setTimeout(() => {
-					that.couponQrCode(sale1_obj.BILL)
-				}, 50);
-
 				//打印二维码
-				that.printPhoto(command);
-				// uni.canvasGetImageData({
-				// 	canvasId: "couponQrcode",
-				// 	x: 0,
-				// 	y: 0,
-				// 	width: that.qrCodeWidth,
-				// 	height: that.qrCodeHeight,
-				// 	success: function(res) {
-				// 		console.log("获取画布数据成功");
-				// 		command.setSelectJustification(1); //居中
-				// 		command.setBitmap(res);
-				// 		command.setPrint();
+				//that.printPhoto(command);	
+				uni.canvasGetImageData({
+					canvasId: "couponQrcode",
+					x: 0,
+					y: 0,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					success: function(res) {
+						console.log("获取画布数据成功");
+						command.setSelectJustification(1); //居中
+						command.setBitmap(res);
+						command.setPrint();
 
-				// 		that.prepareSend(command.getData()); //发送数据
-				// 	},
-				// 	complete: function(res) {
-				// 		console.log("finish");
-				// 	},
-				// 	fail: function(res) {
-				// 		console.log("获取画布数据失败:", res);
-				// 		uni.showToast({
-				// 			title: "获取画布数据失败",
-				// 			icon: "none"
-				// 		});
+						that.prepareSend(command.getData()); //发送数据
+					},
+					complete: function(res) {
+						console.log("finish");
+					},
+					fail: function(res) {
+						console.log("获取画布数据失败:", res);
+						uni.showToast({
+							title: "获取画布数据失败",
+							icon: "none"
+						});
 
-				// 		that.prepareSend(command.getData()); //发送数据
-				// 	}
-				// });
+						that.prepareSend(command.getData()); //发送数据
+					}
+				});
 
-				console.log("打印格式记录", command.getData());
+				console.log("打印格式记录结束");
 			},
 			//重新打印
 			againPrinter: function(xsBill) {
-				console.log("重新打印单号:",xsBill)
 				var that = this;
+				xsBill = that.bill_printer;
+				console.log("重新打印单号:",xsBill)
 				if(xsBill == "" || xsBill == null){
 					uni.showToast({
 						icon: 'error',
@@ -623,21 +602,45 @@
 					})
 					return;
 				}
+				//查询打印记录
 				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-				db.get().executeQry(sql, "数据查询中", function(res) { 
+			    db.get().executeQry(sql, "数据查询中", function(res) { 
 					let billStr = res.msg[0].BILLSTR;
 
 					//初始化打印机
 					var command = esc.jpPrinter.createNew();
 					command.addContent(billStr);
-					console.log("打印格式记录", command.getData());
-					
-					that.prepareSend(command.getData()); //发送数据
-					//生成二维码
-					//that.couponQrCode(xsBill);
+					//that.prepareSend(command.getData()); //发送数据
 					
 					//打印二维码
 					//that.printPhoto(command);
+					uni.canvasGetImageData({
+						canvasId: "couponQrcode",
+						x: 0,
+						y: 0,
+						width: that.qrCodeWidth,
+						height: that.qrCodeHeight,
+						success: function(res) {
+							console.log("获取画布数据成功");
+							command.setSelectJustification(1); //居中
+							command.setBitmap(res);
+							command.setPrint();
+					
+							that.prepareSend(command.getData()); //发送数据
+						},
+						complete: function(res) {
+							console.log("finish");
+						},
+						fail: function(res) {
+							console.log("获取画布数据失败:", res);
+							uni.showToast({
+								title: "获取画布数据失败",
+								icon: "none"
+							});
+					
+							that.prepareSend(command.getData()); //发送数据
+						}
+					});
 				}, function(err) {
 					console.log("获取打印数据出错:", err);
 					uni.showToast({
@@ -645,6 +648,7 @@
 						title: "获取打印数据出错"
 					})
 				});
+				console.log("打印格式记录结束");
 			},
 			//打印二维码事件
 			printPhoto: function(command) {

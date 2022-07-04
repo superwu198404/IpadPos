@@ -240,26 +240,26 @@ var mySqllite = function() {
 	};
 
 	var close = function() {
-		return new Promise((resolve, reject) => {
-			// 修改表数据
-			plus.sqlite.closeDatabase({
-				name: that.name,
-				success(e) {
-					console.log("close:okkkk" + JSON.stringify(e));
-					return resolve({
-						code: true,
-						msg: e
-					});
-				},
-				fail(e) {
-					console.log("close:errrrrrr" + JSON.stringify(e));
-					return resolve({
-						code: false,
-						msg: e
-					});
-				}
-			})
-		})
+		// return new Promise((resolve, reject) => {
+		// 	// 修改表数据
+		// 	plus.sqlite.closeDatabase({
+		// 		name: that.name,
+		// 		success(e) {
+		// 			console.log("close:okkkk" + JSON.stringify(e));
+		// 			return resolve({
+		// 				code: true,
+		// 				msg: e
+		// 			});
+		// 		},
+		// 		fail(e) {
+		// 			console.log("close:errrrrrr" + JSON.stringify(e));
+		// 			return resolve({
+		// 				code: false,
+		// 				msg: e
+		// 			});
+		// 		}
+		// 	})
+		// })
 	};
 
 
@@ -427,11 +427,11 @@ var mySqllite = function() {
 		console.log("sql执行结果：", retcode);
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);
-			await close();
+			//await close();
 			return callBackCloseLoading(retcode, success, pm_msg);
 		} else {
 			retcode = await tran(tranEnum.rollback);
-			await close();
+			//await close();
 			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
 	}

@@ -8,12 +8,12 @@ page {
 .content {
 	display: flex;
 	width: 100%;
-	height: 98vh;
+	height: 95vh;
 	overflow: hidden;
 	background-color: #F5F4F8;
 	box-sizing: border-box;
 	align-items: center;
-	margin-top:44rpx;
+	margin-top:3vh;
 }
 
 .getback {
@@ -136,7 +136,7 @@ page {
 	color: #006B44;
 	padding: 0 18rpx;
 	border-radius: 0 10px 10px 0;
-	font-size: 20rpx;
+	font-size: 24rpx;
 }
 
 .account {
@@ -159,7 +159,10 @@ page {
 	justify-content: space-between;
 	align-items: center;
 }
-
+.hh view{
+	display: flex;
+	align-items: center;
+}
 .hh image {
 	width: 40rpx;
 	margin-right: 12rpx;
@@ -215,11 +218,12 @@ page {
 	background-color: #F1F9F1;
 	text-align: center;
 	border-radius: 10px;
+	font-size: 60rpx;
 }
 
 .paydetails {
 	display: flex;
-	height: 66%;
+	height: 61%;
 	margin: 2% 2% 0;
 }
 
@@ -251,7 +255,7 @@ page {
 
 .paymentlist .refund {
 	background-color: #fff;
-	border-top: 1px solid #D3D3D3;
+	border-top: 1px solid #eee;
 	border-radius: 0;
 	min-height: 50%;
 }
@@ -374,9 +378,11 @@ page {
 
 .bom-zhifu .pattern:nth-child(1) label image {
 	width: 100rpx;
-	margin: 0 5%;
+	margin: 0 2%;
 }
-
+.bom-zhifu .pattern:nth-child(1) label view{
+	margin:0 20rpx;
+}
 .bom-zhifu .pattern:nth-child(1) text {
 	display: block;
 	font-size: 14px;
@@ -506,7 +512,6 @@ page {
 	width: 86%;
 	min-height: 40%;
 	max-height: 90%;
-	overflow: auto;
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -519,9 +524,15 @@ page {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 1% 3% 0;
+	padding: 0 1% 0 3%;
 	font-size: 32rpx;
 	font-weight: 700;
+	position: absolute;
+	top:0;
+	left: 0;
+	width:96%;
+	background-color: #fff;
+	border-radius: 20rpx 20rpx 0 0;
 }
 
 .coupons .h4 button {
@@ -536,9 +547,11 @@ uni-button:after {
 }
 
 .uls {
-	padding: 0 2%;
+	padding: 100rpx 2%;
 	display: flex;
 	flex-wrap: wrap;
+	max-height: 90%;
+	overflow: auto;
 }
 
 .uls .lis {
@@ -568,15 +581,16 @@ uni-button:after {
 	font-size: 60rpx;
 	line-height: 80rpx;
 	font-weight: 700;
-	letter-spacing:-4px;
+	letter-spacing:-2px;
 }
 
 .voucher view text {
 	font-size: 30rpx;
 }
 
-.voucher .datas {
-	font-size: 26rpx;
+.datas {
+	font-size: 24rpx;
+	color: #999;
 }
 
 .coupon-dets {
@@ -593,7 +607,6 @@ uni-button:after {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 1% 4% 1% 2%;
 	border-top: 1rpx solid #D6EED8;
 	padding: 3% 2% 2%;
 	color: #474747;
@@ -604,7 +617,7 @@ uni-button:after {
 .directions .bg {
 	position: absolute;
 	bottom: 0;
-	left: 0;
+	right: 0;
 	width: 100%;
 }
 
@@ -632,18 +645,18 @@ uni-button:after {
 }
 
 .limit {
-	padding: 2% 4% 3% 3%;
+	padding: 4% 3% 4% 2%;
 }
 
 .limit .h3 {
-	font-size: 34rpx;
+	font-size: 32rpx;
 	font-weight: 700;
-	line-height: 80rpx;
+	line-height: 56rpx;
 	color:#333;
 }
 .limit .h3 text{
 	color:#333;
-	font-size: 34rpx;
+	font-size: 32rpx;
 }
 .limit text {
 	color: #B0B0B0;
@@ -663,4 +676,5 @@ uni-button:after {
 	position: absolute;
 	bottom: 8%;
 }
+
 
