@@ -655,7 +655,8 @@
 					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
 					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
-					XSTYPE: this.XS_TYPE
+					XSTYPE: this.XS_TYPE,
+					BILL_TYPE: this.BILL_TYPE
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
