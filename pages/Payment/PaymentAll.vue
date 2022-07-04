@@ -631,10 +631,6 @@
 				console.log("sale1", sale1);
 				console.log("sale2", sale2);
 				console.log("sale3", sale3);
-				console.log("totalAmount:", this.totalAmount);
-				console.log("Discount:", this.Discount);
-				console.log("SKY_DISCOUNT:", this.SKY_DISCOUNT);
-				console.log("sale1 封装中...");
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
@@ -644,7 +640,12 @@
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
-					CLTIME: saletime
+					CLTIME: saletime,
+					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
+					XS_POSID: sale1?.POSID ?? "", //退款时记录原posid（重点）
+					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
+					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
+					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
@@ -653,7 +654,7 @@
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
-						PRICE: (item.PRICE - item.SKYDISCOUNT).toFixed(2),
+						PRICE: item.PRICE.toFixed(2),
 						NET: this.isRefund ? (-1 * item.PRICE).toFixed(2) : (item.PRICE *
 							item.QTY - item.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
