@@ -119,7 +119,7 @@
 		RefundQuery
 	} from '@/api/business/da.js';
 	//打印相关
-    import PrinterPage from '@/pages/xprinter/receipt';
+	import PrinterPage from '@/pages/xprinter/receipt';
 	export default {
 		components: {
 			PrinterPage
@@ -272,7 +272,14 @@
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
 					console.log("待退款单号：", this.refund_no)
 					if (this.XS_TYPE == '2') {
-						let data = await common.QueryRefund(this.refund_no);
+						let data = null;
+						data = await RefundQuery(this.refund_no);
+						console.log("服务器：", data)
+						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length ==
+								0 || this.sale3_arr.length == 0) { //如果服务器查不到
+							data = await common.QueryRefund(this.refund_no);
+							console.log("本地SQLITE：", data)
+						}
 						this.sale1_obj = data.sale1;
 						this.sale2_arr = data.sale2;
 						this.sale3_arr = data.sale3;
@@ -303,9 +310,6 @@
 							return;
 						}
 					} else {
-						// this.sale1_obj = {};
-						// this.sale2_arr = [];
-						// this.sale3_arr = [];
 						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
@@ -574,7 +578,6 @@
 				this.$forceUpdate();
 			},
 			searchOrder: async function() {
-				// await RefundQuery(this.refund_no)
 				let sales = await common.QueryRefund(this.refund_no);
 				console.log("SALES:", sales);
 				this.view.orders.sale1_string = JSON.stringify(sales.sale1, null, 2);
@@ -606,7 +609,7 @@
 			//重新打印
 			againPrinter: function(xsBill) {
 				let that = this;
-			    that.$refs.printerPage.againPrinter(that.refund_no);
+				that.$refs.printerPage.againPrinter(that.refund_no);
 			}
 		},
 		//接收上个页面传入的参数
