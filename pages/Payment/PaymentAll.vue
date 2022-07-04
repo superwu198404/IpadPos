@@ -437,7 +437,7 @@
 				}
 			},
 			//创建订单数据
-			CreateDBData: function(func) {
+			CreateDBData_: function(func) {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let sale1 = this.SALES.sale1,
@@ -631,6 +631,9 @@
 				console.log("sale1", sale1);
 				console.log("sale2", sale2);
 				console.log("sale3", sale3);
+				console.log("totalAmount:", this.totalAmount);
+				console.log("Discount:", this.Discount);
+				console.log("SKY_DISCOUNT:", this.SKY_DISCOUNT);
 				console.log("sale1 封装中...");
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
@@ -638,8 +641,7 @@
 					SALETIME: saletime,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
-						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime
@@ -749,7 +751,7 @@
 					i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 			},
 			//创建订单数据
-			_CreateDBData: function(func) {
+			CreateDBData: function(func) {
 				//对订单数据进行合并
 				this.SaleDataCombine();
 				//生成执行sql

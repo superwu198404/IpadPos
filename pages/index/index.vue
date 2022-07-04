@@ -293,10 +293,10 @@
 							return;
 						}
 					} else {
-						this.sale1_obj = {};
-						this.sale2_arr = [];
-						this.sale3_arr = [];
-						// this.SaleBaseInit();
+						// this.sale1_obj = {};
+						// this.sale2_arr = [];
+						// this.sale3_arr = [];
+						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
 					uni.navigateTo({
