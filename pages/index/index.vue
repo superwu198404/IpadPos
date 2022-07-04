@@ -118,9 +118,6 @@
 	} from '@/api/business/da.js';
 	//打印相关
 	export default {
-		components: {
-			
-		},
 		//变量初始化
 		data() {
 			return {

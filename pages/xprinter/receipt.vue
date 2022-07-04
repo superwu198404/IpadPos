@@ -1,26 +1,26 @@
 <template>
 	<view class="body">
 		<view>
-			<text style="height: 50px;line-height: 50px;">请输入单号（用于测试重新打印）</text>
-			<text>
+			<view style="height: 50px;line-height: 50px;">请输入单号（用于测试重新打印）</view>
+			<view>
 				<input style="border:1px solid gray" type="text" v-model="bill_printer" />
-			</text>
+			</view>
 		</view>
 		<button class="button" hover-class="hover" @tap="againPrinter">重打</button>
 		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend"
-			:disabled="isReceiptSend">
+			:disabled="isReceiptSend" v-show="false">
 			打印小票-测试
 		</button>
 		<button class="button" hover-class="hover" @tap="queryStatus" :loading="isQuery" :disabled="isQuery">
 			查询状态
 		</button>
-		<button class="button" hover-class="hover" @tap="printPhoto">打印二维码-测试</button>
+		<button class="button" hover-class="hover" @tap="printPhoto" v-show="false">打印二维码-测试</button>
 		<canvas canvas-id="couponQrcode" class="canvas"
-			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 
-		<button class="button" hover-class="hover" @tap="printJPGPhoto">打印logo-测试</button>
+		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
 		<canvas canvas-id="canvasJPG" class="canvas"
-			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
 		
 		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
 			当前每次发送字节数为(点击可更换)：{{ buffSize[buffIndex] }}
@@ -591,7 +591,7 @@
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: async function(xsBill) {
+			againPrinter: function(xsBill) {
 				var that = this;
 				xsBill = that.bill_printer;
 				console.log("重新打印单号:",xsBill)
@@ -604,7 +604,7 @@
 				}
 				//查询打印记录
 				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-			    await db.get().executeQry(sql, "数据查询中", function(res) { 
+			    db.get().executeQry(sql, "数据查询中", function(res) { 
 					let billStr = res.msg[0].BILLSTR;
 
 					//初始化打印机
