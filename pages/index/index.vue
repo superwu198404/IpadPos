@@ -270,7 +270,7 @@
 						data = await RefundQuery(this.refund_no);
 						console.log("服务器：", data)
 						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length ==
-								0 || this.sale3_arr.length == 0) { //如果服务器查不到
+							0 || this.sale3_arr.length == 0) { //如果服务器查不到
 							data = await common.QueryRefund(this.refund_no);
 							console.log("本地SQLITE：", data)
 						}
@@ -603,6 +603,7 @@
 		},
 		//接收上个页面传入的参数
 		onLoad(option) {
+			//console.log("单号测试：", common.CreateBill(this.KHID, this.POSID));
 			this.InitData();
 			this.first = false;
 		},

@@ -469,7 +469,7 @@
 					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
 					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
-					TLINE: sale2.length,
+					TLINE: (this.isRefund ? -1 : 1) * sale2.length,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
@@ -1051,7 +1051,7 @@
 							item.SNAME = obj.name;
 						})
 						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
-	
+
 					});
 			},
 			//支付类型判断
@@ -1223,7 +1223,6 @@
 			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
 				return Object.assign({
-					//if (brand == 'KG')
 					addPoint: 0,
 					channel: this.channel,
 					cityCode: "",
@@ -1297,10 +1296,10 @@
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
 					// console.log("主单信息：", this.SALES.sale1);
-					this.KHID=this.SALES.sale1.KHID;//重新赋值KHID
-					this.GSID=this.SALES.sale1.GSID;//重新赋值GSID
-					this.POSID=this.SALES.sale1.POSID;//重新赋值RYID
-					this.RYID=this.SALES.sale1.RYID;//重新赋值RYID
+					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
+					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
+					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
+					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
 				}
 			},
