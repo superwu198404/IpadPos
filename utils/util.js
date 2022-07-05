@@ -25,7 +25,7 @@ const utils = {
 	},
 	privatePropety: (obj, ...props) => {
 		let configs = {};
-		console.log("private-before:",JSON.stringify(obj))
+		console.log("private-before:", JSON.stringify(obj))
 		props.forEach(p => {
 			if (configs[p])
 				configs[p] = {
@@ -35,7 +35,7 @@ const utils = {
 				}
 		})
 		Object.defineProperties(obj, configs);
-		console.log("private-after:",JSON.stringify(obj))
+		console.log("private-after:", JSON.stringify(obj))
 		return obj;
 	},
 	//日期格式化
@@ -100,10 +100,21 @@ const utils = {
 	// 时间戳
 	ymsFormat: function() {
 		let date = new Date();
-		let str = date.getFullYear().toString().substring(2) + (date.getMonth() + 1).toString() + date.getDate()
-			.toString() +
-			date.getHours().toString() + date
-			.getMinutes().toString() + date.getSeconds().toString() + date.getMilliseconds().toString();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+		var hours = date.getHours();
+		var minu = date.getMinutes();
+		var second = date.getSeconds();
+		var mile = date.getMilliseconds().toString();
+
+		month = month < 10 ? '0' + month : month;
+		day = day < 10 ? '0' + day : day;
+		hours = hours < 10 ? ('0' + hours) : hours;
+		minu = minu < 10 ? '0' + minu : minu;
+		second = second < 10 ? '0' + second : second;
+		mile = mile < 10 ? ("00" + mile) : (mile < 100 ? "0" + mile : mile);
+
+		let str = date.getFullYear().toString().substring(2) + month + day + hours + minu + second + mile;
 		return str;
 	},
 
