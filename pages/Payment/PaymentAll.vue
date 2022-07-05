@@ -1031,28 +1031,27 @@
 						common.TransLiteData(bill);
 						that.scoreConsume();
 						//调用打印
-						setTimeout(() => {
-							console.log("that.Products", that.Products);
-							console.log("that.PayWayList", that.PayWayList);
-							console.log("that.sale3_arr", that.sale3_arr);
-							let arr2 = that.sale2_arr;
-							arr2.forEach(function(item, index) {
-								let obj = that.Products.find((i) => {
-									return i.SPID == item.SPID;
-								})
-								if (obj) {
-									item.SNAME = obj.NAME;
-								}
+						console.log("that.Products", that.Products);
+						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.sale3_arr", that.sale3_arr);
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
 							})
-							let arr3 = that.sale3_arr;
-							arr3.forEach(function(item, index) {
-								let obj = that.PayWayList.find((i) => {
-									return i.fkid == item.FKID;
-								})
-								item.SNAME = obj.name;
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
 							})
-							that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
-						}, 3000);
+							item.SNAME = obj.name;
+						})
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+	
 					});
 			},
 			//支付类型判断

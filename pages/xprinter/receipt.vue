@@ -524,10 +524,10 @@
 				});
 			},
 			// 二维码生成工具
-			couponQrCode: async function(bill) {
+			couponQrCode: function(bill) {
 				let that = this;
 				console.log("二维码生成内容:", that.qrCodeContent + bill)
-			    await new qrCode('couponQrcode', {
+			    new qrCode('couponQrcode', {
 					text: that.qrCodeContent,
 					width: that.qrCodeWidth,
 					height: that.qrCodeHeight,
@@ -544,10 +544,7 @@
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
-				//生成二维码
-				setTimeout(() => {
-					that.couponQrCode(sale1_obj.BILL)
-				}, 50);
+				
 				//打印数据转换
 				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
 				//初始化打印机
@@ -606,7 +603,7 @@
 				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 			    db.get().executeQry(sql, "数据查询中", function(res) { 
 					let billStr = res.msg[0].BILLSTR;
-
+				    console.log("重新打印数据" + res.msg[0].XSBILL, billStr);
 					//初始化打印机
 					var command = esc.jpPrinter.createNew();
 					command.addContent(billStr);
