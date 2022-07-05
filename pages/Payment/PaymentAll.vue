@@ -184,8 +184,8 @@
 		</view>
 		<!-- 会员券列表 -->
 		<view class="boxs" v-if="coupons">
-			<view class="coupons">
-				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = false">×</button></view>
+			<view class="coupons" style="overflow-y: auto;">
+				<view class="h4" style="position: fixed;background-color: white;"><text>选择优惠券</text> <button class="colse" @click="coupons = !coupons">×</button></view>
 				<view class="uls">
 					<view class="lis" v-for="(item,index) in coupon_list">
 						<view class="voucher">
@@ -374,7 +374,7 @@
 						});
 						this.domForceRefresh();
 					} else {
-						let count = this.dPayAmount.toString().split('.')[1].length;
+						let count = (this.dPayAmount?.toString() || "").split('.')[1].length;
 						if (count > 2) {
 							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
 							this.domForceRefresh();
@@ -651,10 +651,10 @@
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID: sale1?.POSID ?? "", //退款时记录原posid（重点）
-					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
-					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
-					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
+					XS_POSID:this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
+					XS_DATE: this.isRefund ? (sale1?.SALEDATE ?? "") : "", //退款时记录原销售日期（重点）
+					XS_KHID: this.isRefund ? (sale1?.KHID ?? "") : "", //退款时记录原khid（重点）
+					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
@@ -1397,6 +1397,7 @@
 				} else {
 					console.log("待付款：", that.debt);
 					console.log("券集合：", JSON.stringify(that.coupon_list));
+					this.currentPayType = "COUPON"
 					let arr = that.coupon_list.filter(function(item, index, arr) {
 						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
 					})
