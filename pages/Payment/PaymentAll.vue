@@ -1255,7 +1255,6 @@
 					promotionIds: [],
 					region: this.BMID,
 					stateCode: "",
-					//else
 					kquser: this.kquser,
 					posid: this.POSID,
 					cxbill: "",
@@ -1263,7 +1262,6 @@
 					sign: "",
 					time: dateformat.gettimes(),
 					zf_bill: this.sale1_obj?.XS_BILL,
-					bill: this.out_refund_no,
 					price: this.totalAmount,
 					pay_amount: this.totalAmount,
 					//判断积分是扣还是加
