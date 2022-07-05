@@ -639,6 +639,7 @@
 				console.log("sale1", sale1);
 				console.log("sale2", sale2);
 				console.log("sale3", sale3);
+				console.log("TLINE", (this.isRefund?-sale1.TLINE:sale1.TLINE));
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
@@ -657,6 +658,7 @@
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
+					TLINE: (this.isRefund?-sale1.TLINE:sale1.TLINE)
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
@@ -665,7 +667,8 @@
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
-						PRICE: item.PRICE.toFixed(2),
+						PRICE: parseFloat(item.PRICE).toFixed(2),
+						// PRICE: item.PRICE.toFixed(2),
 						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.PRICE *
 							item.QTY - item.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
@@ -674,6 +677,7 @@
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
 						MONTH: new Date().getMonth() + 1,
+						QTY:(this.isRefund?-1:1) * item.QTY,
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date()
 							.getMonth() + 1,
 							new Date().getDay()),
@@ -1280,7 +1284,6 @@
 					this.hyinfo = prev_page_param.hyinfo;
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
-					this.$store.commit("set-trade", this.out_trade_no_old); //保存当前单号至全局
 					this.out_trade_no = this.out_trade_no_old; //子单号
 					this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
@@ -1299,6 +1302,7 @@
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
+					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this.out_trade_no_old); //保存当前单号至全局
 				}
 			},
 			//总金额计算
