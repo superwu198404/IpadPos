@@ -1410,6 +1410,17 @@
 				let hyinfo = getApp().globalData.hyinfo;
 				if (hyinfo.hyId) {
 					console.log("会员信息：", JSON.stringify(hyinfo));
+					// _member.CouponList("获取中...",{
+					// 	brand: that.brand,
+					// 	data:{
+					// 		hyid: hyinfo.hyId,
+					// 		phone:hyinfo.Phone
+					// 	}
+					// },(res) => {
+					// 	console.log("数据：",res)
+					// },(err) => {
+					// 	console.log("异常数据：",res)
+					// })
 					hy.CouponList_ALL(hyinfo.hyId, function(res) {
 						if (res.code) {
 							that.coupon_list = res.data;
