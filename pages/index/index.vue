@@ -607,15 +607,15 @@
 
 				//生成支付规则数据
 				await common.InitZFRULE();
-				that.KHID = "K0101QT2";
+				let khid = "K0101QT2";
 				//获取支付方式
-				await that.GetPayWay(that.KHID);
+				await that.GetPayWay(khid);
 				//初始化配置参数
 				await common.GetPZCS();
 				//获取支付规则数据
 				await common.GetZFRULE();
 				//获取POS参数组数据
-				await common.GetPOSCS(that.KHID);
+				await common.GetPOSCS(khid);
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			},
