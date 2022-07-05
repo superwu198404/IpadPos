@@ -699,17 +699,17 @@
 						NO: item.no, //付款序号
 						FKID: item.fkid, //付款类型id
 						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
-						ID: this.isRefund? item.origin.ID : item.card_no, //卡号或者券号
+						ID: this.isRefund ? (item.origin?.ID || "") : item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
-						DISC: this.isRefund? -item.origin.DISC : item.disc, //折扣金额
-						FAMT: this.isRefund? -item.origin.FAMT : item.disc, //折扣金额(卡券消费后要记录)
-						RATE: this.isRefund? -item.origin.RATE : item.disc, //折扣金额(卡消费后要记录)
-						ZKLX: this.isRefund? item.origin.ZKLX : item.zklx, //折扣类型
-						IDTYPE: this.isRefund? item.origin.IDTYPE : item.id_type //卡类型
+						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
+						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item.disc, //折扣金额(卡券消费后要记录)
+						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item.disc, //折扣金额(卡消费后要记录)
+						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
+						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type //卡类型
 					}
 				}).bind(this));
 				console.log("sale3 封装完毕!", this.sale3_arr);
@@ -1151,11 +1151,26 @@
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
 				let payObj = this.PayWayList.find(item => item.type == type); //会员卡的信息
-				console.log("当前支付方式的的折扣类型对象：",payObj);
-				this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
+				console.log("当前支付方式的的折扣类型对象：", payObj);
+				this.yPayAmount += fail ? 0 : ((function() {
+					if (result.vouchers.length > 0){
+						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),card = result.vouchers.filter(i => i.yn_card === 'Y');
+						if(coupon.length > 0){
+							let fq = coupon.find(i => i.note === "EXCESS");
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result.vouchers[0].denomination) / 100;
+						}
+						else{
+							let num = 0;
+							card.map(i => num += i.pay_amount);
+							return num/100
+						}
+					}
+					else
+						return (payload.money / 100)
+				}).bind(this))(); //把支付成功部分金额加上
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
-						console.log("卡券：",coupon)
+						console.log("卡券：", coupon)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
 								.note === 'EXCESS' ? -coupon.pay_amount : coupon
@@ -1310,7 +1325,7 @@
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
 					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this
-					.out_trade_no_old); //保存当前单号至全局
+						.out_trade_no_old); //保存当前单号至全局
 				}
 			},
 			//总金额计算
