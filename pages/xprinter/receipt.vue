@@ -41,8 +41,8 @@
 	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
-
 	import excPostUtil from '@/components/gprint/EscPosUtil.js';
+	import Req from '@/utils/request.js';
 	import {
 		mapState,
 		mapGetters,
@@ -537,7 +537,7 @@
 				})
 			},
 			//打印小票
-			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr) {
+			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr) {
 				//票据
 				var that = this;
 				//输出日志
@@ -545,47 +545,56 @@
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
 				
-				//打印数据转换
-				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
-				//初始化打印机
-				var command = esc.jpPrinter.createNew();
-				command.init();
-				//打印格式
-				command.formString(printerInfo);
-				//写入打印记录表
-				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
-
-				//打印二维码
-				//that.printPhoto(command);	
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
-
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log("获取画布数据失败:", res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
+				//查询终端参数
+				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
+				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
+				console.log("查询终端参数",printer_poscs);
+				// 通过终端参数，Y 打印小票
+				if(printer_poscs.YN_YXDY == "Y"){
+					//打印数据转换
+					var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
+					//初始化打印机
+					var command = esc.jpPrinter.createNew();
+					command.init();
+					//打印格式
+					command.formString(printerInfo);
+					//写入打印记录表
+					xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
+					
+					// 电子发票二维码不为空，则打印二维码
+					if(printer_poscs.DZFPEWMDZ != ""){
+						//打印二维码
+						uni.canvasGetImageData({
+							canvasId: "couponQrcode",
+							x: 0,
+							y: 0,
+							width: that.qrCodeWidth,
+							height: that.qrCodeHeight,
+							success: function(res) {
+								console.log("获取画布数据成功");
+								command.setSelectJustification(1); //居中
+								command.setBitmap(res);
+								command.setPrint();
+								that.prepareSend(command.getData()); //发送数据
+							},
+							complete: function(res) {
+								console.log("finish");
+							},
+							fail: function(res) {
+								console.log("获取画布数据失败:", res);
+								uni.showToast({
+									title: "获取画布数据失败",
+									icon: "none"
+								});
+								that.prepareSend(command.getData()); //发送数据
+							}
 						});
-
+					}else{
 						that.prepareSend(command.getData()); //发送数据
 					}
-				});
-
-				console.log("打印格式记录结束");
+					console.log("打印格式记录结束");
+				}
+				
 			},
 			//重新打印
 			againPrinter: async function(xsBill) {
@@ -601,52 +610,62 @@
 					})
 					return;
 				}
-				//查询打印记录
-				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-			    await db.get().executeQry(sql, "数据查询中", function(res) { 
-					let billStr = res.msg[0].BILLSTR;
-				    console.log("重打数据查询成功",res.msg[0].XSBILL);
-					//初始化打印机
-					var command = esc.jpPrinter.createNew();
-					command.addContent(billStr);
-			
-					//打印二维码
-					//that.printPhoto(command);
-				    uni.canvasGetImageData({
-						canvasId: "couponQrcode",
-						x: 0,
-						y: 0,
-						width: that.qrCodeWidth,
-						height: that.qrCodeHeight,
-						success: function(res) {
-							console.log("获取画布数据成功");
-							command.setSelectJustification(1); //居中
-							command.setBitmap(res);
-							command.setPrint();
-					
-							that.prepareSend(command.getData()); //发送数据
-						},
-						complete: function(res) {
-							console.log("finish");
-						},
-						fail: function(res) {
-							console.log("获取画布数据失败:", res);
-							uni.showToast({
-								title: "获取画布数据失败",
-								icon: "none"
+				
+				//查询终端参数
+				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
+				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
+			    console.log("查询终端参数",printer_poscs);
+				// 通过终端参数，Y 打印小票
+				if(printer_poscs.YN_YXDY == "Y"){
+					//查询打印记录
+					let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
+					await db.get().executeQry(sql, "数据查询中", function(res) { 
+						let billStr = res.msg[0].BILLSTR;
+					    console.log("重打数据查询成功",res.msg[0].XSBILL);
+						//初始化打印机
+						var command = esc.jpPrinter.createNew();
+						command.addContent(billStr);
+					    // 电子发票二维码不为空，则打印二维码
+						if(printer_poscs.DZFPEWMDZ != ""){
+							//打印二维码
+							uni.canvasGetImageData({
+								canvasId: "couponQrcode",
+								x: 0,
+								y: 0,
+								width: that.qrCodeWidth,
+								height: that.qrCodeHeight,
+								success: function(res) {
+									console.log("获取画布数据成功");
+									command.setSelectJustification(1); //居中
+									command.setBitmap(res);
+									command.setPrint();	
+									that.prepareSend(command.getData()); //发送数据
+								},
+								complete: function(res) {
+									console.log("finish");
+								},
+								fail: function(res) {
+									console.log("获取画布数据失败:", res);
+									uni.showToast({
+										title: "获取画布数据失败",
+										icon: "none"
+									});
+									that.prepareSend(command.getData()); //发送数据
+								}
 							});
-					
+						}else{
 							that.prepareSend(command.getData()); //发送数据
 						}
+						
+					}, function(err) {
+						console.log("获取打印数据出错:", err);
+						uni.showToast({
+							icon: 'error',
+							title: "获取打印数据出错"
+						})
 					});
-				}, function(err) {
-					console.log("获取打印数据出错:", err);
-					uni.showToast({
-						icon: 'error',
-						title: "获取打印数据出错"
-					})
-				});
-				console.log("打印格式记录结束");
+					console.log("打印格式记录结束");
+				}
 			},
 			//打印二维码事件
 			printPhoto: function(command) {

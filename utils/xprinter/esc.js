@@ -1158,7 +1158,7 @@ var jpPrinter = {
 		var xsBill= "";
 		var lineNum = data.lineNum;
         var isReturn = false;
-		
+		var isYD = false;
 		jpPrinter.setSelectJustification(1); //居中
 		jpPrinter.setCharacterSize(17); //设置倍高倍宽
 		jpPrinter.setText("KenGee 仟吉" + "\n");
@@ -1180,39 +1180,35 @@ var jpPrinter = {
 			lineNum = -Math.abs(lineNum);
 			isReturn = true;
 		    break;
-		
 		  case printerType[2]:
-			xpType ="预订";
-		    break;
-		
+			xpType ="预定";
+			isYD = true;
+		    break;	
 		  case printerType[3]:
-			xpType ="预订提取";
-		    break;
-		
+			xpType ="提取";
+			isYD = true;
+		    break;	
 		  case printerType[4]:
-			xpType ="预订取消";
+			xpType ="预定";
 			xsBill= data.xsBill;
 			lineNum = -Math.abs(lineNum);
 			isReturn = true;
-		    break;
-		
+			isYD = true;
+		    break;	
 		  case printerType[5]:
 			xpType ="赊销";
 		    break;
-		
 		  case printerType[6]:
-			xpType ="赊销退单";
+			xpType ="赊销";
 			xsBill= data.xsBill;
 			lineNum = -Math.abs(lineNum);
 			isReturn = true;
 		    break;
-		
 		  case printerType[7]:
-			xpType ="线上订单";
+			xpType ="线上";
 		    break;
-		
 		  case printerType[8]:
-			xpType ="外卖单";
+			xpType ="外卖";
 		    break;
 		}
 		
@@ -1242,7 +1238,7 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("原单: "+ xsBill + "\n");
 			jpPrinter.setPrint(); //打印并换行
-		}else{		
+		}else{
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill + "\n");
@@ -1355,7 +1351,20 @@ var jpPrinter = {
 				jpPrinter.setPrint(); //打印并换行
 			}
 		});
+		
+		if(isYD){
+			//预定信息
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("--------------------预定信息-------------------");
+			jpPrinter.setPrint(); //打印并换行
 			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("定金:" + item.amt.toString());
+			jpPrinter.setPrint(); //打印并换行
+		}
+	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
@@ -1372,7 +1381,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
-	//打印格式
+	//打印格式 - 暂时不用
 	jpPrinter.formatString = function(data){
 		var strCenter = excPostUtil.Center();
 		var strLeft = excPostUtil.Left();

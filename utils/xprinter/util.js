@@ -1,5 +1,6 @@
 import db from '@/utils/db/db_excute.js';
-
+import qrCode from '@/utils/xprinter/weapp-qrcode.js';
+	
 const formatTime = date => {
 	const year = date.getFullYear();
 	const month = date.getMonth() + 1;
@@ -187,7 +188,15 @@ function convertToMonoImage(width, height, data, shake) {
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
 const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
-	var xsType = sale1_obj.XSTYPE == '2' ? 'TD' : 'XS'; //如果等于 2，则表示退款，否则是支付
+	var xsType = "XS";
+	switch(sale1_obj.XSTYPE){
+		case "1":
+		xsType = "XS";
+		break;
+		case "2": //退款
+		xsType = "TD";
+		break;
+	}
 	var billType = sale1_obj.BILL_TYPE; //Z101
 	var bill = sale1_obj.BILL;
 	var xsBill = sale1_obj.XS_BILL;
@@ -307,6 +316,173 @@ const addContent = function(content){
 	return arrNew;
 }
 
+// 二维码生成工具
+const couponQrCode = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
+	console.log("二维码生成内容:", qrCodeContent + bill)
+    new qrCode('couponQrcode', {
+		text: qrCodeContent,
+		width: qrCodeWidth,
+		height: qrCodeHeight,
+		colorDark: "#333333",
+		colorLight: "#FFFFFF",
+		correctLevel: qrCode.CorrectLevel.H
+	})
+}
+
+/**
+ * 查询终端参数
+ * @param {parmid 参数组id} 
+ */
+const getPOSCS = async (parmid) => {
+	let poscs = [];
+	let execSql_arr = "SELECT D1.SNAME,P1.POSCS,P1.POSCSNR FROM POSCSZMX P1 ,DAPZCS_NR D1 WHERE D1.ID ='POSCS' AND D1.ID_NR = P1.POSCS AND P1.POSCSZID ='"+parmid+"' ORDER BY  P1.SZ";
+    await db.get().executeQry(execSql_arr, "执行中", function(res) {
+		console.log("POSCS sql执行结果：", res.msg);
+		poscs = res.msg;
+	}, function(err) {
+		console.log("POSCS sql执行失败：", err);
+	});
+	return poscs;
+}
+
+/**
+ * 终端参数
+ * @param {poscsData} 
+ */
+const commonPOSCS = async (poscsData) => {
+	let poscs = "";
+	var YN_YXDY  = ""; //是否打印小票 ，N不调用打印逻辑；
+	var YN_DYFP  = "";//是否打印发票，使用黑标发票纸的维护Y，Ipad收银 统一N；
+	var DYJZF  = "";//小票打印机字符，32对应58mm宽的纸，40-对应80mm宽纸，iPad连的蓝牙打印机 统一推荐使用40参数；
+	var XPZZHS  = "";//小票走纸行数，打印完小票内容后，再走几行空白纸，一般仟吉维护0，取参数值走纸；
+	var HYY  = ""; //小票欢迎语，维护文本内容
+	var XPLOGO = "";//票抬头logo，通过参数内容 logo.jpg 取对应图片文件打印到小票顶部作为商户logo；
+	var XPEWM = "";//票结尾二维码，内容维护 二维码图片名称，png格式；取对应图片文件打印，取不到时不打且不能占位；
+	var DZFPEWMDZ = "";//电子发票二维码地址，前端生成发票开票二维码，打印在小票底部
+	var YN_CALLNUM = ""; //水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
+	var SBLBBM = "";
+	
+	var obj1 = poscsData;
+	var YN_YXDY_obj = obj1.filter(item => {
+	   if (item.POSCS == "YN_YXDY") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(YN_YXDY_obj.length > 0){
+		YN_YXDY = YN_YXDY_obj[0].POSCSNR;
+	}
+	
+    var obj2 = poscsData;
+	var YN_DYFP_obj = obj2.filter(item => {
+	   if (item.POSCS == "YN_DYFP") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(YN_DYFP_obj.length > 0){
+		YN_DYFP = YN_DYFP_obj[0].POSCSNR;
+	}
+	
+	var obj3 = poscsData;
+	var DYJZF_obj = obj3.filter(item => {
+	   if (item.POSCS == "DYJZF") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(DYJZF_obj.length > 0){
+		DYJZF = DYJZF_obj[0].POSCSNR;
+	}
+	
+	var obj4 = poscsData;
+	var XPZZHS_obj = obj4.filter(item => {
+	   if (item.POSCS == "XPZZHS") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(XPZZHS_obj.length > 0){
+		XPZZHS = XPZZHS_obj[0].POSCSNR;
+	}
+	
+	var obj5 = poscsData;
+	var HYY_obj = obj5.filter(item => {
+	   if (item.POSCS == "HYY") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(HYY_obj.length > 0){
+		HYY = HYY_obj[0].POSCSNR;
+	}
+	
+	var obj6 = poscsData;
+	var XPLOGO_obj = obj6.filter(item => {
+	   if (item.POSCS == "XPLOGO") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(XPLOGO_obj.length > 0){
+		XPLOGO = XPLOGO_obj[0].POSCSNR;
+	}
+	
+	var obj7 = poscsData;
+	var XPEWM_obj = obj7.filter(item => {
+	   if (item.POSCS == "XPEWM") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(XPEWM_obj.length > 0){
+		XPEWM = XPEWM_obj[0].POSCSNR;
+	}
+	
+	var obj8 = poscsData;
+	var DZFPEWMDZ_obj = obj8.filter(item => {
+	   if (item.POSCS == "DZFPEWMDZ") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(DZFPEWMDZ_obj.length > 0){
+		DZFPEWMDZ = DZFPEWMDZ_obj[0].POSCSNR;
+	}
+	
+	var obj9 = poscsData;
+	var YN_CALLNUM_obj = obj9.filter(item => {
+	   if (item.POSCS == "YN_CALLNUM") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(YN_CALLNUM_obj.length > 0){
+		YN_CALLNUM = YN_CALLNUM_obj[0].POSCSNR;
+	}
+	
+	var obj10 = poscsData;
+	var SBLBBM_obj = obj10.filter(item => {
+	   if (item.POSCS == "SBLBBM") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(SBLBBM_obj.length > 0){
+		SBLBBM = SBLBBM_obj[0].POSCSNR;
+	}
+	
+	// console.log("YN_YXDY",YN_YXDY);
+	// console.log("SBLBBM",SBLBBM);
+	
+	var printer_poscs=
+	{
+       YN_YXDY,
+	   YN_DYFP,
+	   DYJZF,
+	   XPZZHS,
+	   HYY,
+	   XPLOGO,
+	   XPEWM,
+	   DZFPEWMDZ,
+	   YN_CALLNUM,
+	   SBLBBM,
+	};
+
+	//console.log("commonPOSCS",printer_poscs)
+	return printer_poscs;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -319,5 +495,8 @@ module.exports = {
 	printerData: printerData,
 	onlyFourBank: onlyFourBank,
 	addPos_XsBillPrintData: addPos_XsBillPrintData,
-	addContent: addContent
+	addContent: addContent,
+	couponQrCode: couponQrCode,
+	getPOSCS: getPOSCS,
+	commonPOSCS: commonPOSCS
 };
