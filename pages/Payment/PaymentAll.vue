@@ -1296,7 +1296,7 @@
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
-					console.log("主单信息：", this.SALES.sale1);
+					// console.log("主单信息：", this.SALES.sale1);
 					this.KHID=this.SALES.sale1.KHID;//重新赋值KHID
 					this.GSID=this.SALES.sale1.GSID;//重新赋值GSID
 					this.POSID=this.SALES.sale1.POSID;//重新赋值RYID
