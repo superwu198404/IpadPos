@@ -469,7 +469,7 @@
 					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
 					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
-					TLINE: (this.isRefund ? -1 : 1) * sale2.length,
+					TLINE: sale2.length,
 					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
 					DNET: 0,
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
@@ -639,7 +639,6 @@
 				console.log("sale1", sale1);
 				console.log("sale2", sale2);
 				console.log("sale3", sale3);
-				console.log("TLINE", (this.isRefund?-sale1.TLINE:sale1.TLINE));
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
@@ -658,7 +657,7 @@
 					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
-					TLINE: (this.isRefund?-sale1.TLINE:sale1.TLINE)
+					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
 				console.log("sale2 封装中...");
@@ -677,7 +676,7 @@
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
 						MONTH: new Date().getMonth() + 1,
-						QTY:(this.isRefund?-1:1) * item.QTY,
+						QTY: (this.isRefund ? -1 : 1) * item.QTY,
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date()
 							.getMonth() + 1,
 							new Date().getDay()),
@@ -700,17 +699,17 @@
 						NO: item.no, //付款序号
 						FKID: item.fkid, //付款类型id
 						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
-						ID: item.card_no, //卡号或者券号
+						ID: this.isRefund? item.origin.ID : item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
 						KCDID: this.KCDID, //库存点
 						BMID: this.BMID, //部门id
-						DISC: item.disc, //折扣金额
-						FAMT: item.disc, //折扣金额(卡券消费后要记录)
-						RATE: item.disc, //折扣金额(卡消费后要记录)
-						ZKLX: item.zklx, //折扣类型
-						IDTYPE: item.id_type //卡类型
+						DISC: this.isRefund? -item.origin.DISC : item.disc, //折扣金额
+						FAMT: this.isRefund? -item.origin.FAMT : item.disc, //折扣金额(卡券消费后要记录)
+						RATE: this.isRefund? -item.origin.RATE : item.disc, //折扣金额(卡消费后要记录)
+						ZKLX: this.isRefund? item.origin.ZKLX : item.zklx, //折扣类型
+						IDTYPE: this.isRefund? item.origin.IDTYPE : item.id_type //卡类型
 					}
 				}).bind(this));
 				console.log("sale3 封装完毕!", this.sale3_arr);
@@ -931,7 +930,8 @@
 							refund_num: 0, //退款（尝试）次数
 							refunding: false, //是否在正在退款中
 							loading: false,
-							msg: "" //操作提示信息（可以显示失败的或者成功的）
+							msg: "", //操作提示信息（可以显示失败的或者成功的）
+							origin: i
 						}
 					}).bind(this));
 					console.log("SALE3-处理前：", list);
@@ -1153,6 +1153,7 @@
 				this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
+						console.log("卡券：",coupon)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
 								.note === 'EXCESS' ? -coupon.pay_amount : coupon
@@ -1227,6 +1228,7 @@
 			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
 				return Object.assign({
+					//if (brand == 'KG')
 					addPoint: 0,
 					channel: this.channel,
 					cityCode: "",
@@ -1259,6 +1261,7 @@
 					promotionIds: [],
 					region: this.BMID,
 					stateCode: "",
+					//else
 					kquser: this.kquser,
 					posid: this.POSID,
 					cxbill: "",
@@ -1266,6 +1269,7 @@
 					sign: "",
 					time: dateformat.gettimes(),
 					zf_bill: this.sale1_obj?.XS_BILL,
+					bill: this.out_refund_no,
 					price: this.totalAmount,
 					pay_amount: this.totalAmount,
 					//判断积分是扣还是加
@@ -1296,13 +1300,14 @@
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
-					// console.log("主单信息：", this.SALES.sale1);
+					console.log("主单信息：", this.SALES.sale1);
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
-					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this.out_trade_no_old); //保存当前单号至全局
+					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this
+					.out_trade_no_old); //保存当前单号至全局
 				}
 			},
 			//总金额计算
