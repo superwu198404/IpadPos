@@ -241,7 +241,7 @@
 	//打印相关
 	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
-	var that,is_log = false;
+	var that, is_log = true;
 	var log = console.log;
 	// console.log = (...params) => {
 	// 	if(is_log)
@@ -255,13 +255,12 @@
 		data() {
 			return {
 				SALES: {
-					sale1: {},
 					sale2: [],
 					sale3: []
 				},
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
-				logs:false,
+				logs: false,
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
@@ -411,7 +410,7 @@
 					this.CanBack = true;
 				}
 			},
-			logs:function(n,o){
+			logs: function(n, o) {
 				is_log = n;
 			}
 		},
@@ -1030,35 +1029,29 @@
 						//销售单单创建成功后 上传一下数据
 						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
 						common.TransLiteData(bill);
-						//上传积分
-						// if (that.isRefund)
-						// 	that.scoreReduce();
-						// else
 						that.scoreConsume();
 						//调用打印
-						// if (that.isRefund)
-						setTimeout(() => {
-							console.log("that.Products", that.Products);
-							console.log("that.PayWayList", that.PayWayList);
-							console.log("that.sale3_arr", that.sale3_arr);
-							let arr2 = that.sale2_arr;
-							arr2.forEach(function(item, index) {
-								let obj = that.Products.find((i) => {
-									return i.SPID == item.SPID;
-								})
-								if (obj) {
-									item.SNAME = obj.NAME;
-								}
+						console.log("that.Products", that.Products);
+						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.sale3_arr", that.sale3_arr);
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
 							})
-							let arr3 = that.sale3_arr;
-							arr3.forEach(function(item, index) {
-								let obj = that.PayWayList.find((i) => {
-									return i.fkid == item.FKID;
-								})
-								item.SNAME = obj.name;
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
 							})
-							that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
-						}, 3000);
+							item.SNAME = obj.name;
+						})
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+	
 					});
 			},
 			//支付类型判断
@@ -1303,6 +1296,11 @@
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
+					console.log("主单信息：", this.SALES.sale1);
+					this.KHID=this.SALES.sale1.KHID;//重新赋值KHID
+					this.GSID=this.SALES.sale1.GSID;//重新赋值GSID
+					this.POSID=this.SALES.sale1.POSID;//重新赋值RYID
+					this.RYID=this.SALES.sale1.RYID;//重新赋值RYID
 					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
 				}
 			},
