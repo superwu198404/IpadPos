@@ -652,7 +652,7 @@
 		},
 		onBackPress() {
 			//监听页面返回  
-			console.info("onBackPress");
+			//console.info("onBackPress");
 		},
 		onNavigationBarSearchInputChanged() {
 			//监听原生标题栏搜搜输入框输入内容变化事件
