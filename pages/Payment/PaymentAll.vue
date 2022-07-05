@@ -1150,7 +1150,7 @@
 			orderGenarator: function(payload, type, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
-				let payObj = this.PayWayList.find(item => item.type == type); //会员卡的信息
+				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				console.log("当前支付方式的的折扣类型对象：", payObj);
 				this.yPayAmount += fail ? 0 : ((function() {
 					if (result.vouchers.length > 0){
