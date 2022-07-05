@@ -23,6 +23,21 @@ const utils = {
 			.replace(
 				/\,$/, '').split('').reverse().join('');
 	},
+	privatePropety: (obj, ...props) => {
+		let configs = {};
+		console.log("private-before:",JSON.stringify(obj))
+		props.forEach(p => {
+			if (configs[p])
+				configs[p] = {
+					configurable: true,
+					enumerable: false,
+					writable: true
+				}
+		})
+		Object.defineProperties(obj, configs);
+		console.log("private-after:",JSON.stringify(obj))
+		return obj;
+	},
 	//日期格式化
 	formatDate: function(formatStr, fdate) {
 		if (fdate) {
@@ -186,5 +201,6 @@ export default {
 	myFixed: utils.myFixed,
 	uuid: utils.UUID,
 	setStorage: utils.setStorage,
-	getStorage: utils.getStorage
+	getStorage: utils.getStorage,
+	privatePropety: utils.privatePropety
 }

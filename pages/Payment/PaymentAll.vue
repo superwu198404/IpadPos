@@ -243,10 +243,10 @@
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that,is_log = false;
 	var log = console.log;
-	console.log = (...params) => {
-		if(is_log)
-			log(...params)
-	};
+	// console.log = (...params) => {
+	// 	if(is_log)
+	// 		log(...params)
+	// };
 	export default {
 		components: {
 			uniPopup,
@@ -667,7 +667,7 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: item.PRICE.toFixed(2),
-						NET: this.isRefund ? (-1 * item.PRICE).toFixed(2) : (item.PRICE *
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.PRICE *
 							item.QTY - item.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
 							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
