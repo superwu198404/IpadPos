@@ -1133,7 +1133,7 @@
 					}); //把支付信息贴出来
 					this.UpdateHyInfo(result.data); //更新会员信息
 					this.authCode = ""; //避免同一个付款码多次使用
-					this.orderGenarator(payAfter, result.data, false); //支付记录处理(成功)
+					this.orderGenarator(payAfter, type, result.data, false); //支付记录处理(成功)
 					if (this.debt > 0) {
 						this.CanBack = false;
 					}
@@ -1147,9 +1147,11 @@
 				}).bind(this))
 			},
 			//创建支付记录
-			orderGenarator: function(payload, result, fail) {
+			orderGenarator: function(payload, type, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
+				let payObj = this.PayWayList.find(item => item.type == type); //会员卡的信息
+				console.log("当前支付方式的的折扣类型对象：",payObj);
 				this.yPayAmount += fail ? 0 : (payload.money / 100); //把支付成功部分金额加上
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 					result.vouchers.forEach((function(coupon, index) {
@@ -1162,7 +1164,8 @@
 								.currentPayInfo?.fkid,
 							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
-							zklx: coupon.note === 'EXCESS' ? "ZCV1" : coupon.disc_type,
+							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+								'EXCESS' ? "ZCV1" : coupon.disc_type),
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
