@@ -224,6 +224,7 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
+							obj.zklx = res.msg[i].ZKLX;//折扣类型（主要是会员卡使用）
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
 							}
