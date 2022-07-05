@@ -243,10 +243,10 @@
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that, is_log = true;
 	var log = console.log;
-	console.log = (...params) => {
-		if (true)
-			log(...params)
-	};
+	// console.log = (...params) => {
+	// 	if(is_log)
+	// 		log(...params)
+	// };
 	export default {
 		components: {
 			uniPopup,
@@ -666,7 +666,7 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: item.PRICE.toFixed(2),
-						NET: this.isRefund ? (-1 * item.PRICE).toFixed(2) : (item.PRICE *
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.PRICE *
 							item.QTY - item.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
 							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
@@ -1031,28 +1031,27 @@
 						common.TransLiteData(bill);
 						that.scoreConsume();
 						//调用打印
-						setTimeout(() => {
-							console.log("that.Products", that.Products);
-							console.log("that.PayWayList", that.PayWayList);
-							console.log("that.sale3_arr", that.sale3_arr);
-							let arr2 = that.sale2_arr;
-							arr2.forEach(function(item, index) {
-								let obj = that.Products.find((i) => {
-									return i.SPID == item.SPID;
-								})
-								if (obj) {
-									item.SNAME = obj.NAME;
-								}
+						console.log("that.Products", that.Products);
+						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.sale3_arr", that.sale3_arr);
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
 							})
-							let arr3 = that.sale3_arr;
-							arr3.forEach(function(item, index) {
-								let obj = that.PayWayList.find((i) => {
-									return i.fkid == item.FKID;
-								})
-								item.SNAME = obj.name;
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
 							})
-							that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
-						}, 3000);
+							item.SNAME = obj.name;
+						})
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+	
 					});
 			},
 			//支付类型判断
