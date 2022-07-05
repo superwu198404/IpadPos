@@ -524,10 +524,10 @@
 				});
 			},
 			// 二维码生成工具
-			couponQrCode: function(bill) {
+			couponQrCode: async function(bill) {
 				let that = this;
 				console.log("二维码生成内容:", that.qrCodeContent + bill)
-			    new qrCode('couponQrcode', {
+			    await new qrCode('couponQrcode', {
 					text: that.qrCodeContent,
 					width: that.qrCodeWidth,
 					height: that.qrCodeHeight,
@@ -588,30 +588,31 @@
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: function(xsBill) {
+			againPrinter: async function(xsBill) {
 				var that = this;
-				xsBill = that.bill_printer;
-				console.log("重新打印单号:",xsBill)
+				//生成二维码
+			    await that.couponQrCode(xsBill)
+				//xsBill = that.bill_printer;
+				console.log("重打单号:",xsBill)
 				if(xsBill == "" || xsBill == null){
 					uni.showToast({
 						icon: 'error',
-						title: "打印单号不能为空"
+						title: "重打单号为空"
 					})
 					return;
 				}
 				//查询打印记录
 				let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-			    db.get().executeQry(sql, "数据查询中", function(res) { 
+			    await db.get().executeQry(sql, "数据查询中", function(res) { 
 					let billStr = res.msg[0].BILLSTR;
-				    console.log("重新打印数据" + res.msg[0].XSBILL, billStr);
+				    console.log("重打数据查询成功",res.msg[0].XSBILL);
 					//初始化打印机
 					var command = esc.jpPrinter.createNew();
 					command.addContent(billStr);
-					//that.prepareSend(command.getData()); //发送数据
-					
+			
 					//打印二维码
 					//that.printPhoto(command);
-					uni.canvasGetImageData({
+				    uni.canvasGetImageData({
 						canvasId: "couponQrcode",
 						x: 0,
 						y: 0,

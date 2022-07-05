@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<PrinterPage ref="printerPage" style="display: none;"/>
 		<view>
 			<div class="product">
 				<div>商品ID：</div>
@@ -64,6 +65,7 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="againPrinter()">重新打印</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<!-- <button @click="Test(2)">测试一下</button> -->
 		<div v-if="view.orders.showDetail"
@@ -102,6 +104,13 @@
 				</div>
 			</div>
 		</div>
+		<!-- 画布 -->
+		<view class="canvasdiv">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		</view>
 	</view>
 </template>
 <script>
@@ -116,8 +125,12 @@
 	import {
 		RefundQuery
 	} from '@/api/business/da.js';
+	import PrinterPage from '@/pages/xprinter/receipt';
 	//打印相关
 	export default {
+		components: {
+			PrinterPage
+		},
 		//变量初始化
 		data() {
 			return {
@@ -171,6 +184,12 @@
 				refund_no: "",
 				totalAmount: 0,
 				SKY_DISCOUNT: 0,
+				//打印相关
+				jpgWidth: 340,
+				jpgHeight: 113,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 			}
 		},
 		watch: {
@@ -599,6 +618,11 @@
 				await common.GetPOSCS(that.KHID);
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
+			},
+			//重新打印
+			againPrinter: function(xsBill) {
+				let that = this;
+			    that.$refs.printerPage.againPrinter(that.refund_no);
 			}
 		},
 		//接收上个页面传入的参数
@@ -715,5 +739,11 @@
 	.bills {
 		max-height: 200px;
 		overflow-y: auto;
+	}
+	
+	.canvasdiv {
+		width: 0px;
+		height: 0px;
+		visibility: hidden;
 	}
 </style>
