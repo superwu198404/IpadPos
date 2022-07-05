@@ -1152,7 +1152,7 @@ var jpPrinter = {
 	//打印格式 9 种：销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单接单、外卖单接单；
 	var printerType = ["XS", "TD", "YD", "YDTQ", "YDQX", "SX", "SXTD", "XSDD", "XSWMJD"];
 	
-	jpPrinter.formString = function(data){
+	jpPrinter.formString = function(data,printer_poscs){
 		var type = data.xsType;
 		var xpType = "销售";
 		var xsBill= "";
@@ -1164,11 +1164,15 @@ var jpPrinter = {
 		jpPrinter.setText("KenGee 仟吉" + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
+		let HYY = "欢迎光临";
+		if(printer_poscs.HYY  != ""){
+			HYY = printer_poscs.HYY;
+		}	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(1); //设置居左	
-		jpPrinter.setText("欢迎光临");
+		jpPrinter.setText(HYY);
 		jpPrinter.setPrint(); //打印并换行
-		
+
 		switch (type) {
 		  case printerType[0]:
 		    xpType ="销售";
@@ -1210,6 +1214,14 @@ var jpPrinter = {
 		  case printerType[8]:
 			xpType ="外卖";
 		    break;
+		}
+		
+		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
+		if(printer_poscs.YN_CALLNUM  != ""){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(xpType + "取餐码: " + printer_poscs.YN_CALLNUM);
+			jpPrinter.setPrint(); //打印并换行
 		}
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小

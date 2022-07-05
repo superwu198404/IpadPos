@@ -557,14 +557,15 @@
 					var command = esc.jpPrinter.createNew();
 					command.init();
 					//打印格式
-					command.formString(printerInfo);
+					command.formString(printerInfo,printer_poscs);
 					//写入打印记录表
 					xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 					
 					// 电子发票二维码不为空，则打印二维码
 					if(printer_poscs.DZFPEWMDZ != ""){
+						await xprinter_util.couponQrCode(sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
 						//打印二维码
-						uni.canvasGetImageData({
+						await uni.canvasGetImageData({
 							canvasId: "couponQrcode",
 							x: 0,
 							y: 0,
@@ -593,14 +594,14 @@
 						that.prepareSend(command.getData()); //发送数据
 					}
 					console.log("打印格式记录结束");
+				}else{
+					console.log("终端设置了不打印小票");
 				}
 				
 			},
 			//重新打印
 			againPrinter: async function(xsBill) {
 				var that = this;
-				//生成二维码
-			    await that.couponQrCode(xsBill)
 				//xsBill = that.bill_printer;
 				console.log("重打单号:",xsBill)
 				if(xsBill == "" || xsBill == null){
@@ -619,7 +620,7 @@
 				if(printer_poscs.YN_YXDY == "Y"){
 					//查询打印记录
 					let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-					await db.get().executeQry(sql, "数据查询中", function(res) { 
+				    await db.get().executeQry(sql, "数据查询中", function(res) { 
 						let billStr = res.msg[0].BILLSTR;
 					    console.log("重打数据查询成功",res.msg[0].XSBILL);
 						//初始化打印机
@@ -627,8 +628,9 @@
 						command.addContent(billStr);
 					    // 电子发票二维码不为空，则打印二维码
 						if(printer_poscs.DZFPEWMDZ != ""){
+							 xprinter_util.couponQrCode(xsBill,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
 							//打印二维码
-							uni.canvasGetImageData({
+						     uni.canvasGetImageData({
 								canvasId: "couponQrcode",
 								x: 0,
 								y: 0,
@@ -665,7 +667,10 @@
 						})
 					});
 					console.log("打印格式记录结束");
+				}else{
+					console.log("终端设置了不打印小票");
 				}
+				
 			},
 			//打印二维码事件
 			printPhoto: function(command) {
