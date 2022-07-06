@@ -113,7 +113,7 @@
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid!=='ZCV1')">
+										v-for="(refund, index) in refundedList">
 										<!-- 这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）且是状态确定的（正在支付操作算不确定的，所以不显示，当成功或失败才算确定的状态） -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
@@ -425,7 +425,8 @@
 				return this.allAmount;
 			},
 			refundedList:function(){
-				return RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid!=='ZCV1');
+				let fkid = this.PayWayInfo('EXCESS').fkid;
+				return this.RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid !== fkid);
 			}
 		},
 		methods: {
