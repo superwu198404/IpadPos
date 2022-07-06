@@ -1376,7 +1376,7 @@ var jpPrinter = {
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("卡类型:" + item.fkName.toString());
+				jpPrinter.setText("卡类型:" + item.fkName.toString()+ " 识别码:" + item.no.toString());
 				jpPrinter.setPrint(); //打印并换行
 			}
 		});
