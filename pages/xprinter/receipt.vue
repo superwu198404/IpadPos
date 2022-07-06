@@ -105,7 +105,7 @@
 		onLoad: function(options) {
 			let that = this;
 			setTimeout(() => {
-				that.couponQrCode(that.bill)
+				xprinter_util.couponQrCode(that.bill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
 			}, 50)
 			//蓝牙是否在扫描设备
 			uni.onBluetoothAdapterStateChange((res) => {
@@ -424,55 +424,6 @@
 					}
 				})
 			},
-			//打印的数据
-			senBlData(deviceId, serviceId, characteristicId, uint8Array) {
-				console.log('************deviceId = [' + deviceId + ']  serviceId = [' + serviceId +
-					'] characteristics=[' + characteristicId + "]")
-				var uint8Buf = Array.from(uint8Array);
-				console.log("这个是什么。。。。。", uint8Buf)
-
-				function split_array(datas, size) {
-					console.log("data是什么：", datas)
-					var result = {};
-					var j = 0
-					for (var i = 0; i < datas.length; i += size) {
-						result[j] = datas.slice(i, i + size)
-						j++
-					}
-					console.log(result)
-					return result
-				}
-				var sendloop = split_array(uint8Buf, 20);
-				// console.log(sendloop.length)
-				function realWriteData(sendloop, i) {
-					var data = sendloop[i]
-					if (typeof(data) == "undefined") {
-						return
-					}
-					console.log("第【" + i + "】次写数据" + data)
-					var buffer = new ArrayBuffer(data.length)
-					var dataView = new DataView(buffer)
-					for (var j = 0; j < data.length; j++) {
-						dataView.setUint8(j, data[j]);
-					}
-					uni.writeBLECharacteristicValue({
-						deviceId,
-						serviceId,
-						characteristicId,
-						value: buffer,
-						success(res) {
-							setTimeout(() => {
-								realWriteData(sendloop, i + 1);
-							}, 10); //就是这里需要加延时，具体原因不清楚，等大神解释吧  
-						},
-						fail(res) {
-							console.log(res)
-						},
-					})
-				}
-				var i = 0;
-				realWriteData(sendloop, i);
-			},
 			//断开蓝牙连接
 			closeBLEConnection(deviceId, index) {
 				const _this = this
@@ -498,43 +449,6 @@
 			//重启app
 			restart() {
 				plus.runtime.restart();
-			},
-			fileReader: function() {
-				const self = this;
-				// 请求本地系统文件对象 plus.io.PRIVATE_WWW：应用运行资源目录常量
-				plus.io.requestFileSystem(plus.io.PRIVATE_DOC, function(fobject) {
-					// fs.root是根目录操作对象DirectoryEntry
-					fobject.root.getFile('poem.txt', {
-						create: true
-					}, function(fileEntry) {
-						fileEntry.file(function(file) {
-							var fileReader = new plus.io.FileReader();
-							self.resInfo = JSON.stringify(file);
-							console.log("getFile:", JSON.stringify(file));
-							fileReader.onloadend = function(evt) {
-								console.log("Read success");
-								self.resInfo = self.resInfo + '--' + JSON.stringify(evt);
-								console.log('result', JSON.stringify(evt));
-							}
-							fileReader.readAsText(file, 'utf-8');
-							self.resInfo = self.resInfo + '-- ' + file.size + '--' + file.name;
-							console.log('file文件', self.resInfo);
-						});
-					});
-				});
-			},
-			// 二维码生成工具
-			couponQrCode: async function(bill) {
-				let that = this;
-				console.log("二维码生成内容:", that.qrCodeContent + bill)
-			    await new qrCode('couponQrcode', {
-					text: that.qrCodeContent,
-					width: that.qrCodeWidth,
-					height: that.qrCodeHeight,
-					colorDark: "#333333",
-					colorLight: "#FFFFFF",
-					correctLevel: qrCode.CorrectLevel.H
-				})
 			},
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr) {
@@ -612,63 +526,68 @@
 					return;
 				}
 				
+				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
+				//console.log("pos_xsbillprint",pos_xsbillprint);	
+				if(pos_xsbillprint == "" || pos_xsbillprint == null){
+					uni.showToast({
+						icon: 'error',
+						title: "未查询到重打数据"
+					})
+					return;
+				}
+				
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
 			    console.log("查询终端参数",printer_poscs);
+				
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY == "Y"){
-					//查询打印记录
-					let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
-				    await db.get().executeQry(sql, "数据查询中", function(res) { 
-						let billStr = res.msg[0].BILLSTR;
-					    console.log("重打数据查询成功",res.msg[0].XSBILL);
-						//初始化打印机
-						var command = esc.jpPrinter.createNew();
-						command.addContent(billStr);
-					    // 电子发票二维码不为空，则打印二维码
-						if(printer_poscs.DZFPEWMDZ != ""){
-							 xprinter_util.couponQrCode(xsBill,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
-							//打印二维码
-						     uni.canvasGetImageData({
-								canvasId: "couponQrcode",
-								x: 0,
-								y: 0,
-								width: that.qrCodeWidth,
-								height: that.qrCodeHeight,
-								success: function(res) {
-									console.log("获取画布数据成功");
-									command.setSelectJustification(1); //居中
-									command.setBitmap(res);
-									command.setPrint();	
-									that.prepareSend(command.getData()); //发送数据
-								},
-								complete: function(res) {
-									console.log("finish");
-								},
-								fail: function(res) {
-									console.log("获取画布数据失败:", res);
-									uni.showToast({
-										title: "获取画布数据失败",
-										icon: "none"
-									});
-									that.prepareSend(command.getData()); //发送数据
-								}
+				if(printer_poscs.YN_YXDY != "Y"){
+					uni.showToast({
+						icon: 'error',
+						title: "终端参数未设置打印小票"
+					})
+					console.log("终端参数未设置打印小票");
+					return;
+				}
+						
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.addContent(pos_xsbillprint);
+				
+				await xprinter_util.couponQrCode(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
+				
+				// 电子发票二维码不为空，则打印二维码
+				if(printer_poscs.DZFPEWMDZ != ""){
+					//打印二维码
+					 uni.canvasGetImageData({
+						canvasId: "couponQrcode",
+						x: 0,
+						y: 0,
+						width: that.qrCodeWidth,
+						height: that.qrCodeHeight,
+						success: function(res) {
+							console.log("获取画布数据成功");
+							command.setSelectJustification(1); //居中
+							command.setBitmap(res);
+							command.setPrint();	
+							that.prepareSend(command.getData()); //发送数据
+						},
+						complete: function(res) {
+							console.log("finish");
+						},
+						fail: function(res) {
+							console.log("获取画布数据失败:", res);
+							uni.showToast({
+								title: "获取画布数据失败",
+								icon: "none"
 							});
-						}else{
 							that.prepareSend(command.getData()); //发送数据
 						}
-						
-					}, function(err) {
-						console.log("获取打印数据出错:", err);
-						uni.showToast({
-							icon: 'error',
-							title: "获取打印数据出错"
-						})
 					});
-					console.log("打印格式记录结束");
 				}else{
-					console.log("终端设置了不打印小票");
+					//不打印二维码
+					that.prepareSend(command.getData()); //发送数据
 				}
 				
 			},
@@ -816,12 +735,12 @@
 				var looptime = parseInt(buff.length / time);
 				var lastData = parseInt(buff.length % time);
 
-				that.setData({
+			    that.setData({
 					looptime: looptime + 1,
 					lastData: lastData,
 					currentTime: 1
 				});
-				that.Send(buff);
+			    that.Send(buff);
 			},
 			queryStatus: function() {
 				//查询打印机状态
@@ -916,7 +835,7 @@
 					}
 				});
 			},
-			Send: function(buff) {
+			Send: async function(buff) {
 				//分包发送
 				var that = this;
 				var currentTime = that.currentTime;
