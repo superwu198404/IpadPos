@@ -423,6 +423,9 @@
 			debt: function() {
 				this.allAmount = this.toBePaidPrice();
 				return this.allAmount;
+			},
+			refundedList:function(){
+				return RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid!=='ZCV1');
 			}
 		},
 		methods: {
