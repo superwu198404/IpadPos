@@ -13,7 +13,7 @@ page {
 	background-color: #F5F4F8;
 	box-sizing: border-box;
 	align-items: center;
-	margin-top:3vh;
+	margin-top:88rpx;
 }
 
 .getback {
@@ -22,7 +22,7 @@ page {
 	align-items: center;
 }
 
-.fh {
+.hh .fh {
 	width: 12px;
 	margin-right: 50rpx;
 }
@@ -152,7 +152,7 @@ page {
 }
 
 .hh {
-	padding: 24rpx 2%;
+	padding:24rpx 2%;
 	font-size: 36rpx;
 	font-weight: 700;
 	display: flex;
@@ -177,7 +177,20 @@ page {
 	margin: 0;
 	border-radius: 50rpx;
 }
-
+.checkout{
+	display: flex;
+}
+.checkout label{
+	margin-left: 40rpx;
+	font-size: 26rpx;
+	color: #006B44;
+	display: flex;
+	align-items: center;
+}
+.checkout label image{
+	width:22rpx;
+	margin-right: 6rpx;
+}
 .amounts {
 	background-color: #fff;
 	border-radius: 10px;
@@ -223,7 +236,7 @@ page {
 
 .paydetails {
 	display: flex;
-	height: 61%;
+	height: 74%;
 	margin: 2% 2% 0;
 }
 
@@ -242,8 +255,19 @@ page {
 
 .settleds h3 {
 	line-height: 100rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-
+.settleds h3 button{
+	background-color: #006B44;
+	color: #fff;
+	height: 50rpx;
+	line-height: 50rpx;
+	font-size: 26rpx;
+	margin: 0;
+	border-radius: 50rpx;
+}
 .paymentlist {
 	min-height: 96%;
 	max-height: 100%;
@@ -533,6 +557,7 @@ page {
 	width:96%;
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
+	z-index: 99;
 }
 
 .coupons .h4 button {
@@ -608,7 +633,7 @@ uni-button:after {
 	justify-content: space-between;
 	align-items: center;
 	border-top: 1rpx solid #D6EED8;
-	padding: 3% 2% 2%;
+	padding: 2% 2%;
 	color: #474747;
 	font-size: 24rpx;
 	position: relative;
@@ -645,7 +670,7 @@ uni-button:after {
 }
 
 .limit {
-	padding: 4% 3% 4% 2%;
+	padding: 4% 3% 2% 2%;
 }
 
 .limit .h3 {
@@ -653,6 +678,9 @@ uni-button:after {
 	font-weight: 700;
 	line-height: 56rpx;
 	color:#333;
+	height: 112rpx;
+	overflow: hidden;
+	text-overflow: ellipsis; 
 }
 .limit .h3 text{
 	color:#333;
@@ -676,5 +704,4 @@ uni-button:after {
 	position: absolute;
 	bottom: 8%;
 }
-
 

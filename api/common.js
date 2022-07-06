@@ -389,6 +389,13 @@ var GetPOSCS = async function(e, func) {
 		});
 	}
 }
+
+//支付行为
+var actTypeEnum = {
+	Payment: "Payment",//支付
+	Refund: "Refund",//退款
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -401,5 +408,6 @@ export default {
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,
-	GetPOSCS
+	GetPOSCS,
+	actTypeEnum
 }

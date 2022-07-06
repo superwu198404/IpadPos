@@ -25,9 +25,8 @@
 			</view>
 		</view>
 		<view class="right">
-			<view class="nav">
+			<view class="nav" style="display: none;">
 				<view class="getback">
-					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<view class="message">
 						<view class="imgs">
 							<image src="../../images/tongzhi.png" mode="widthFix"></image>
@@ -42,11 +41,15 @@
 					</view>
 				</view>
 			</view>
-			<view class="hh">
+			<view class="hh" style="padding-top:0;">
 				<view>
+					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 				</view>
-				<button v-if="!isRefund" @click="ShowCoupon()">+ 使用卡券</button>
+				<view class="checkout">
+					<label><image src="../../images/dx-mendian.png" mode="widthFix"></image>门店名称</label>
+					<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3</label>
+				</view>
 			</view>
 			<view class="amounts">
 				<!-- <p>订单号：{{out_trade_no_old}}</p> -->
@@ -63,7 +66,7 @@
 				<view class="pay-sum">
 					<view class="settleds">
 						<view class="paymentlist">
-							<h3 v-if="!isRefund">已结算</h3>
+							<h3 v-if="!isRefund">已结算<button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists">
 									<view class="Methods"
@@ -106,7 +109,7 @@
 								</view>
 							</view>
 							<!-- 退款 -->
-							<h3 v-if="isRefund">已退款</h3>
+							<h3 v-if="isRefund">已退款 <button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
@@ -186,7 +189,8 @@
 		<view class="boxs" v-if="coupons">
 			<view class="coupons">
 				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = false">×</button></view>
-				<view class="uls">
+				<view style="max-height: 620px;overflow: auto;">
+				<view class="uls">							
 					<view class="lis" v-for="(item,index) in coupon_list">
 						<view class="voucher">
 							<view><text>￥</text>{{item.money}}</view>
@@ -208,7 +212,8 @@
 										mode="widthFix"></image></button>
 							</view>
 						</view>
-					</view>
+					</view>				
+				</view>
 				</view>
 			</view>
 		</view>
@@ -222,7 +227,6 @@
 	</view>
 	</view>
 </template>
-
 <script>
 	var app = getApp();
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
@@ -333,6 +337,7 @@
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				actType: "" //当前操作行为 用以定义是支付还是退款
 			}
 		},
 		watch: {
@@ -444,7 +449,7 @@
 					}
 				}
 			},
-			//创建订单数据
+			//创建订单数据 待废弃
 			CreateDBData_: function(func) {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
@@ -1031,7 +1036,8 @@
 				if (this.RefundList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
 						//销售单单创建成功后 上传一下数据
-						let bill = that.XS_TYPE == '2' ? that.out_refund_no : that.out_trade_no_old;
+						let bill = that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
+							.out_trade_no_old;
 						common.TransLiteData(bill);
 						that.scoreConsume();
 						//调用打印
@@ -1153,19 +1159,19 @@
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				console.log("当前支付方式的的折扣类型对象：", payObj);
 				this.yPayAmount += fail ? 0 : ((function() {
-					if (result.vouchers.length > 0){
-						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),card = result.vouchers.filter(i => i.yn_card === 'Y');
-						if(coupon.length > 0){
+					if (result.vouchers.length > 0) {
+						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),
+							card = result.vouchers.filter(i => i.yn_card === 'Y');
+						if (coupon.length > 0) {
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result.vouchers[0].denomination) / 100;
-						}
-						else{
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+								.vouchers[0].denomination) / 100;
+						} else {
 							let num = 0;
 							card.map(i => num += i.pay_amount);
-							return num/100
+							return num / 100
 						}
-					}
-					else
+					} else
 						return (payload.money / 100)
 				}).bind(this))(); //把支付成功部分金额加上
 				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
@@ -1246,7 +1252,6 @@
 			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
 				return Object.assign({
-					//if (brand == 'KG')
 					addPoint: 0,
 					channel: this.channel,
 					cityCode: "",
@@ -1307,7 +1312,7 @@
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
 					this.out_trade_no = this.out_trade_no_old; //子单号
-					this.isRefund = prev_page_param.XS_TYPE == "2"; //如果等于 2，则表示退款，否则是支付
+					this.isRefund = prev_page_param.actType == common.actTypeEnum.Refund; //如果等于退款行为，则表示退款，否则是支付
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
@@ -1323,7 +1328,9 @@
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
-					console.log("销售类型:", this.XS_TYPE + this.BILL_TYPE);
+					this.actType = prev_page_param.actType; //当前行为操作
+					console.log("行为类型:", this.actType + this.XS_TYPE + this.BILL_TYPE);
+
 					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this
 						.out_trade_no_old); //保存当前单号至全局
 				}

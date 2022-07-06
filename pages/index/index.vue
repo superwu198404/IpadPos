@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<PrinterPage ref="printerPage" style="display: none;"/>
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view>
 			<div class="product">
 				<div>商品ID：</div>
@@ -190,6 +190,7 @@
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},
 		watch: {
@@ -224,7 +225,7 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							obj.zklx = res.msg[i].ZKLX;//折扣类型（主要是会员卡使用）
+							obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
 							}
@@ -284,8 +285,9 @@
 				if (e == 0 || e == 1) {
 					this.BILL_TYPE = e == 0 ? "Z101" : "Z151"; //区分是销售还是退款
 					this.XS_TYPE = e == 0 ? "1" : "2"; //区分是销售还是退款
+					this.actType = e == 0 ? common.actTypeEnum.Payment : common.actTypeEnum.Refund; //定义当前行为
 					console.log("待退款单号：", this.refund_no)
-					if (this.XS_TYPE == '2') {
+					if (this.actType == common.actTypeEnum.Refund) { //如果是退款
 						let data = null;
 						data = await RefundQuery(this.refund_no);
 						console.log("服务器：", data)
@@ -360,7 +362,8 @@
 					BILL_TYPE: this.BILL_TYPE,
 					XS_TYPE: this.XS_TYPE,
 					SKY_DISCOUNT: this.SKY_DISCOUNT,
-					totalAmount: this.totalAmount
+					totalAmount: this.totalAmount,
+					actType: this.actType
 				});
 			},
 			priceCount: function() {
@@ -623,7 +626,7 @@
 			//重新打印
 			againPrinter: function(xsBill) {
 				let that = this;
-			    that.$refs.printerPage.againPrinter(that.refund_no);
+				that.$refs.printerPage.againPrinter(that.refund_no);
 			}
 		},
 		//接收上个页面传入的参数
@@ -742,7 +745,7 @@
 		max-height: 200px;
 		overflow-y: auto;
 	}
-	
+
 	.canvasdiv {
 		width: 0px;
 		height: 0px;
