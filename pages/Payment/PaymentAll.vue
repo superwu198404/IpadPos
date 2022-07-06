@@ -35,7 +35,7 @@
 					</view>
 				</view>
 				<view class="account">
-					<text>员工账号</text>
+					<text>{{RYID}}</text>
 					<view>
 						<image src="../../images/touxiang.png" mode="widthFix"></image>
 					</view>
@@ -47,8 +47,8 @@
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 				</view>
 				<view class="checkout">
-					<label><image src="../../images/dx-mendian.png" mode="widthFix"></image>门店名称</label>
-					<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3</label>
+					<label><image src="../../images/dx-mendian.png" mode="widthFix"></image>{{NAME}}</label>
+					<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}</label>
 				</view>
 			</view>
 			<view class="amounts">
@@ -310,7 +310,7 @@
 				KHID: getApp().globalData.store.KHID, //客户id
 				POSID: getApp().globalData.store.POSID, //pos机id
 				RYID: getApp().globalData.store.RYID, //人员id
-				Name: getApp().globalData.store.NAME, //店铺名称
+				NAME: getApp().globalData.store.NAME, //店铺名称
 				MerId: getApp().globalData.store.MERID, //商户号id
 				brand: getApp().globalData.brand,
 				kquser: getApp().globalData.kquser,
@@ -913,7 +913,7 @@
 					money: (Number(this.dPayAmount) * 100).toFixed(0), //这一笔的支付金额
 					auth_code: this.authCode,
 					store_id: this.KHID,
-					store_name: this.Name,
+					store_name: this.NAME,
 					merchant_no: this.MerId,
 					channel: this.channel,
 					discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
