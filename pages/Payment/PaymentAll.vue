@@ -185,7 +185,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- 会员券列表  -->
+		<!-- 会员券列表 -->
 		<view class="boxs" v-if="coupons">
 			<view class="coupons">
 				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = !coupons">×</button></view>
