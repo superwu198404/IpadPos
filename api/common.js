@@ -329,7 +329,10 @@ var InitZFRULE = async function(e, func) {
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF54', '积慕支付', 'jmzf', NULL, 'JM', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF04', '仟吉电子卡', 'qjdzk', NULL, 'KG,kg', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
 		"delete from dapzcs_nr where id='POSCS';",
-		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'SBLBBM', '水吧类别编码', 'sblbbm', 21, 'XXX', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'SBLBBM', '水吧类别编码', 'sblbbm', 21, 'XXX', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'YN_YXDY', '是否打印小票', 'sfdyxp', 12, 'Y', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'XPEWM', '小票结尾二维码', 'xpjwewm', 46, 'qjgzh.png', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'DZFPEWMDZ', '电子发票二维码地址', 'dzfpewmdz', 51, 'https://www.baidu.com/', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
 	];
 	await db.get().executeDml(arr, "sql执行中", function(res) {
 		console.log("支付规则数据和聚合数据初始化成功：", res);

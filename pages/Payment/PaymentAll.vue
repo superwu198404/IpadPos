@@ -186,9 +186,9 @@
 			</view>
 		</view>
 		<!-- 会员券列表 -->
-		<view class="boxs" v-if="coupons">
+		<view class="boxs" v-if="!coupons">
 			<view class="coupons">
-				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = false">×</button></view>
+				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = !coupons">×</button></view>
 				<view style="max-height: 620px;overflow: auto;">
 				<view class="uls">							
 					<view class="lis" v-for="(item,index) in coupon_list">
@@ -265,11 +265,11 @@
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
 				logs: false,
+				isRefund:true,
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
 				allowInput: false,
-				isRefund: true, //是否是退款模式
 				refundRefresh: new Date().toString(), //刷新退款成功和失败列表
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
@@ -379,7 +379,7 @@
 						});
 						this.domForceRefresh();
 					} else {
-						let count = this.dPayAmount.toString().split('.')[1].length;
+						let count = (this.dPayAmount?.toString() || "").split('.')[1].length;
 						if (count > 2) {
 							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
 							this.domForceRefresh();
@@ -449,191 +449,6 @@
 					}
 				}
 			},
-			//创建订单数据 待废弃
-			CreateDBData_: function(func) {
-				let saledate = dateformat.getYMD();
-				let saletime = dateformat.getYMDS();
-				let sale1 = this.SALES.sale1,
-					sale2 = this.SALES.sale2,
-					sale3 = this.SALES.sale3;
-				console.log("sale1 封装中...");
-				let hyinfo = getApp().globalData.hyinfo;
-				console.log("创建订单前的会员信息:", hyinfo);
-				//基础数据
-				this.sale1_obj = {
-					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
-					SALEDATE: saledate,
-					SALETIME: saletime,
-					KHID: this.KHID,
-					POSID: this.POSID,
-					RYID: this.RYID,
-					BILL_TYPE: this.BILL_TYPE, //销售类型
-					XSTYPE: this.XS_TYPE, //销售类型
-					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID: sale1?.POSID ?? "", //退款时记录原posid（重点）
-					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
-					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
-					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
-					TLINE: sale2.length,
-					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
-					DNET: 0,
-					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
-					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
-						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
-					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）,
-					CHANGENET: 0,
-					CXTNET: 0,
-					TCXDISC: 0,
-					CUID: hyinfo.hyId, //会员号
-					CARDID: "", //卡号
-					THYDISC: 0,
-					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
-					YN_SC: 'N',
-					GSID: this.GSID, //公司
-					GCID: this.GCID, //工厂
-					DPID: this.DPID, //店铺
-					KCDID: this.KCDID, //库存点
-					BMID: this.BMID, //部门id
-					DKFID: this.DKFID, //大客户id默认编码
-					XSPTID: 'POS',
-					YN_OK: 'X',
-					THTYPE: 0,
-					CLTIME: saletime
-				};
-				console.log("sale1 封装完毕!");
-				this.sale2_arr = [];
-				console.log("sale2 封装中...");
-				for (var i = 0; i < this.Products.length; i++) {
-					this.sale2_obj = {
-						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
-						SALEDATE: saledate,
-						SALETIME: saletime,
-						KHID: this.KHID,
-						POSID: this.POSID,
-						SPID: this.Products[i].SPID, //交易商品id
-						NO: i,
-						PLID: this.Products[i].PLID,
-						BARCODE: this.Products[i].BARCODE,
-						UNIT: this.Products[i].UNIT,
-						QTY: (this.isRefund ? -1 : 1) * this.Products[i].QTY,
-						PRICE: (this.Products[i].PRICE - this.Products[i].SKYDISCOUNT).toFixed(2),
-						OPRICE: this.Products[i].OPRICE,
-						NET: this.isRefund ? (-1 * this.Products[i].PRICE).toFixed(2) : (this.Products[i].PRICE *
-							this.Products[i].QTY - this.Products[i].SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.isRefund ? -this.Products[i].DISCRATE : this.Products[i]
-							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
-						YN_SKYDISC: this.isRefund ? this.Products[i].YN_SKYDISC : this.Products[i].SKYDISCOUNT >
-							0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.isRefund ? -this.Products[i].DISC : this.Products[i].SKYDISCOUNT, //手工折扣额
-						YN_CXDISC: 'N',
-						CXDISC: 0,
-						// YAER: new Date().getFullYear(),
-						MONTH: new Date().getMonth() + 1,
-						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date().getMonth() + 1,
-							new Date().getDay()),
-						TIME: new Date().getHours(),
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID //部门id
-					};
-					this.sale2_arr = this.sale2_arr.concat(this.sale2_obj);
-				}
-				console.log("sale2 封装完毕!");
-				this.sale3_arr = [];
-				console.log("sale3 封装中...");
-				console.log("筛选掉弃用金额：", this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1'))
-				var list = this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this
-					.PayList.filter(i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
-				list.forEach((item) => {
-					console.log("Item:", item)
-					this.sale3_obj = {
-						BILL: this.isRefund ? this.out_refund_no : this
-							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
-						SALEDATE: saledate,
-						SALETIME: saletime,
-						KHID: this.KHID,
-						POSID: this.POSID,
-						NO: item.no, //付款序号
-						FKID: item.fkid, //付款类型id
-						AMT: (this.isRefund ? -1 : 1) * item.amount, //付款金额(退款记录为负额)
-						ID: item.card_no, //卡号或者券号
-						RYID: this.RYID, //人员
-						GCID: this.GCID, //工厂
-						DPID: this.DPID, //店铺
-						KCDID: this.KCDID, //库存点
-						BMID: this.BMID, //部门id
-						DISC: item.disc, //折扣金额
-						FAMT: item.disc, //折扣金额(卡券消费后要记录)
-						RATE: item.id_type ? item.disc : "", //折扣金额(卡消费后要记录)
-						ZKLX: item.zklx, //折扣类型
-						IDTYPE: item.id_type //卡类型
-					};
-					this.sale3_arr = this.sale3_arr.concat(this.sale3_obj);
-				})
-				console.log("sale3 封装完毕!");
-				for (var i = 0; i < this.sbsp_arr.length; i++) {
-					this.sale8_obj = {
-						SALEDATE: saledate,
-						SALETIME: saletime,
-						GCID: this.GCID,
-						KHID: this.KHID,
-						POSID: this.POSID,
-						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
-						SPID: this.sbsp_arr[i].SPID,
-						NO: i,
-						ATTCODE: "1",
-						ATTNAME: "糖",
-						OPTCODE: "1",
-						CSTCODE: "1",
-						OPTMAT: "123456",
-						QTY: this.sbsp_arr[i].QTY,
-						PRICE: this.sbsp_arr[i].PRICE
-					}
-					this.sale8_arr = this.sale8_arr.concat(this.sale8_obj);
-				}
-
-				//生成执行sql
-				let sql1 = common.CreateSQL(this.sale1_obj, 'SALE001');
-				let sql2 = common.CreateSQL(this.sale2_arr, 'SALE002');
-				let sql3 = common.CreateSQL(this.sale3_arr, 'SALE003');
-				let sql8 = common.CreateSQL(this.sale8_arr, 'SALE008');
-				// console.log("SALE1-OBJ:", this.sale1_obj);
-				// console.log("SALE2-ARR:", this.sale2_arr);
-				console.log("SALE8-ARR:", this.sale8_arr);
-				this.tx_obj = {
-					TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
-					STOREID: this.KHID,
-					POSID: this.POSID,
-					TAB_NAME: 'XS',
-					STR1: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
-					BDATE: saletime, //增加时分秒的操作
-					YW_NAME: "销售单据",
-					CONNSTR: 'CONNSTRING'
-				};
-				let sql4 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
-				// console.log("SALE1-OBJ-SQL:", sql1.sqlliteArr);
-				// console.log("SALE2-ARR-SQL:", sql2.sqlliteArr);
-				// console.log("SALE3-ARR-SQL:", sql3.sqlliteArr);
-				let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql8.sqlliteArr)
-					.concat(sql4.sqlliteArr);
-				console.log("sqlite待执行sql:", exeSql)
-				//return;
-				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					if (func) func(res);
-					console.log("订单创建成功：", res);
-					uni.showToast({
-						title: "销售单创建成功"
-					})
-				}, function(err) {
-					console.log("订单创建失败：", err);
-					uni.showToast({
-						title: "销售单创建失败",
-						icon: "error"
-					})
-				});
-			},
 			SaleDataCombine: function() {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
@@ -652,14 +467,14 @@
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
-					ROUND: Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
+					ROUND:this.isRefund? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID: sale1?.POSID ?? "", //退款时记录原posid（重点）
-					XS_DATE: sale1?.SALEDATE ?? "", //退款时记录原销售日期（重点）
-					XS_KHID: sale1?.KHID ?? "", //退款时记录原khid（重点）
-					XS_GSID: sale1?.GSID ?? "", //退款时记录原GSID（重点）
+					XS_POSID:this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
+					XS_DATE: this.isRefund ? (sale1?.SALEDATE ?? "") : "", //退款时记录原销售日期（重点）
+					XS_KHID: this.isRefund ? (sale1?.KHID ?? "") : "", //退款时记录原khid（重点）
+					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
@@ -923,7 +738,10 @@
 			//SALE003 初始化、处理
 			SALE3Init: function() {
 				if (this.isRefund) {
-					let group = ["ZZ01", "ZF09", "ZCV1"];
+					// let group = ["ZZ01", "ZF09", "ZCV1"];
+					let group = ["ZQ", "SZQ", "EXCESS"].map((function(type){
+						return this.PayWayInfo(type).fkid;
+					}).bind(this));
 					let list = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
@@ -947,9 +765,9 @@
 					if (coupons.length > 0) { //如果存在券数据则进行合并，否则不管
 						coupons.map(i => count += Number(i.amount)); //计算获取这笔订单中所有券的实际支付金额
 						unback = { //不可回退金额对象（复数券的 面额 - 放弃金额）
-							fkid: "ZG11",
+							fkid: this.PayWayInfo("NO").fkid,
 							bill: ``, //券不参与退款请求，所以不需要订单号
-							name: this.PayWayList.find(p => p.fkid == "ZG11")?.name ?? "", //获取不可回退金额 name
+							name: this.PayWayInfo("NO").name || "", //获取不可回退金额 name
 							amount: Number(count).toFixed(2),
 							no: 0,
 							fail: true, //def初始和退款失败的皆为true
@@ -963,6 +781,9 @@
 				[]);; //筛选出 非 赠券、有偿券、弃用金额 类的订单数据，然后重新追加上面处理完毕的 不可回退金额 对象
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
+			},
+			PayWayInfo:function(type){
+				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -983,7 +804,7 @@
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					if (refundInfo.fkid === "ZG11") { //如果为不可回退金额
+					if (refundInfo.fkid === this.PayWayInfo("NO").fkid) { //如果为不可回退金额
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						promises.push(new Promise(function(resolve, reject) { //避免空数组检测不到
@@ -1304,6 +1125,8 @@
 				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				if (prev_page_param) {
+					console.log("Init-that:",that.isRefund);
+					console.log("Init-this:",this.isRefund);
 					this.Products = prev_page_param.Products;
 					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
 					this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
@@ -1323,7 +1146,6 @@
 					this.RefundDataHandle();
 					//this.authCode = prev_page_param.authCode;
 					this.GetSBData(); //筛选水吧产品
-					console.log("主单信息：", this.SALES.sale1);
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
@@ -1404,6 +1226,7 @@
 				} else {
 					console.log("待付款：", that.debt);
 					console.log("券集合：", JSON.stringify(that.coupon_list));
+					this.currentPayType = "COUPON"
 					let arr = that.coupon_list.filter(function(item, index, arr) {
 						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
 					})
@@ -1416,6 +1239,17 @@
 				let hyinfo = getApp().globalData.hyinfo;
 				if (hyinfo.hyId) {
 					console.log("会员信息：", JSON.stringify(hyinfo));
+					// _member.CouponList("获取中...",{
+					// 	brand: that.brand,
+					// 	data:{
+					// 		hyid: hyinfo.hyId,
+					// 		phone:hyinfo.Phone
+					// 	}
+					// },(res) => {
+					// 	console.log("数据：",res)
+					// },(err) => {
+					// 	console.log("异常数据：",res)
+					// })
 					hy.CouponList_ALL(hyinfo.hyId, function(res) {
 						if (res.code) {
 							that.coupon_list = res.data;

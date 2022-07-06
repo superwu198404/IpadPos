@@ -120,7 +120,6 @@
 	import db from '@/utils/db/db_excute.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
 	import util from '@/utils/util.js';
-
 	import dateformat from '@/utils/dateformat.js';
 	import {
 		RefundQuery
@@ -272,7 +271,7 @@
 							}
 						}
 						that.PayWayList.push({
-							name: "电子券",
+							name: "仟吉赠券",
 							fkid: "ZZ01",
 							type: "ZQ",
 							poly: "O"

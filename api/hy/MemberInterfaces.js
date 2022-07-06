@@ -19,7 +19,9 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 			param: {
 				appid: global.appid, //getApp().globalData.appid,
 				gsid: global.store.GSID, //getApp().globalData.store.GSID
-				brand: options.brand
+				brand: options.brand,
+				kquser:options.kquser
+				
 			},
 			member: JSON.stringify(options.data)
 		}
@@ -43,6 +45,25 @@ const UploadPoint = function(loading_title, request, success, error) {
 	});
 }
 
+//会员券列表
+const CouponList = function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		kquser: global.kquser,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "CouponList"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+
 export default {
-	UploadPoint
+	UploadPoint,
+	CouponList
 }
