@@ -341,9 +341,8 @@ const addContent = function(content){
 }
 
 // 二维码生成工具
-const couponQrCode = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
-	console.log("二维码生成内容:", qrCodeContent + bill)
-    new qrCode('couponQrcode', {
+const couponQrCode = async function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
+    await new qrCode('couponQrcode', {
 		text: qrCodeContent,
 		width: qrCodeWidth,
 		height: qrCodeHeight,
@@ -351,6 +350,7 @@ const couponQrCode = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
 		colorLight: "#FFFFFF",
 		correctLevel: qrCode.CorrectLevel.H
 	})
+	console.log("二维码生成内容:", qrCodeContent + bill)
 }
 
 /**
@@ -507,6 +507,60 @@ const commonPOSCS = async (poscsData) => {
 	return printer_poscs;
 }
 
+/**
+ * 查询打印记录
+ * @param {xsBill}  
+ */
+const getBillPrinterData = async (xsBill)=>{
+	let billStr = "";
+	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		billStr = res.msg[0].BILLSTR;
+	    console.log("重打数据查询成功",res.msg[0].XSBILL);
+	}, function(err) {
+		console.log("获取打印数据出错:", err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取打印数据出错"
+		})
+	});
+	return billStr;
+}
+
+/**
+ * 打印二维码
+ * @param {*} command 
+ * @param {*} qrCodeWidth 
+ * @param {*} qrCodeHeight 
+ */
+const canvasGetImageData = async (command,qrCodeWidth,qrCodeHeight)=>{
+	//打印二维码
+	await uni.canvasGetImageData({
+		canvasId: "couponQrcode",
+		x: 0,
+		y: 0,
+		width: qrCodeWidth,
+		height: qrCodeHeight,
+		success: function(res) {
+			console.log("获取画布数据成功");
+			command.setSelectJustification(1); //居中
+			command.setBitmap(res);
+			command.setPrint();	
+		},
+		complete: function(res) {
+			console.log("couponQrcode finish");
+		},
+		fail: function(res) {
+			console.log("获取画布数据失败:", res);
+			uni.showToast({
+				title: "获取画布数据失败",
+				icon: "none"
+			});
+		}
+	});
+	return command;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -522,5 +576,7 @@ module.exports = {
 	addContent: addContent,
 	couponQrCode: couponQrCode,
 	getPOSCS: getPOSCS,
-	commonPOSCS: commonPOSCS
+	commonPOSCS: commonPOSCS,
+	getBillPrinterData: getBillPrinterData,
+	canvasGetImageData: canvasGetImageData
 };
