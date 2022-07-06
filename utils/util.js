@@ -23,11 +23,10 @@ const utils = {
 			.replace(
 				/\,$/, '').split('').reverse().join('');
 	},
-	privatePropety: (obj, ...props) => {
+	hidePropety: (obj, ...props) => {
 		let configs = {};
-		console.log("private-before:", JSON.stringify(obj))
 		props.forEach(p => {
-			if (configs[p])
+			if (Object.hasOwn(obj,p))
 				configs[p] = {
 					configurable: true,
 					enumerable: false,
@@ -35,7 +34,6 @@ const utils = {
 				}
 		})
 		Object.defineProperties(obj, configs);
-		console.log("private-after:", JSON.stringify(obj))
 		return obj;
 	},
 	//日期格式化
@@ -213,5 +211,5 @@ export default {
 	uuid: utils.UUID,
 	setStorage: utils.setStorage,
 	getStorage: utils.getStorage,
-	privatePropety: utils.privatePropety
+	hidePropety: utils.hidePropety
 }

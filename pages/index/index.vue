@@ -289,14 +289,14 @@
 					if (this.actType == common.actTypeEnum.Refund) { //如果是退款
 						let data = null;
 						data = await RefundQuery(this.refund_no);
-						console.log("服务器：", data)
 						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length ==
 							0 || this.sale3_arr.length == 0) { //如果服务器查不到
 							data = await common.QueryRefund(this.refund_no);
-							console.log("本地SQLITE：", data)
 						}
 						this.sale1_obj = data.sale1;
-						this.sale2_arr = data.sale2;
+						console.log("private-before:",data.sale2)
+						this.sale2_arr = data.sale2.map(i => util.hidePropety(i,"SKYDISCOUNT","NAME"));
+						console.log("private-after:",data.sale2)
 						this.sale3_arr = data.sale3;
 						this.Products = this.sale3_arr?.map((function(i) {
 							return Object.assign({
@@ -436,7 +436,7 @@
 				};
 				//sale 002:
 				this.sale2_arr = this.Products.map((item, index) => {
-					return {
+					return util.hidePropety({
 						BILL: "", //payall 追加
 						SALEDATE: "", //payall 追加
 						SALETIME: "", //payall 追加
@@ -465,8 +465,10 @@
 						KCDID: this.KCDID,
 						BMID: this.BMID,
 						SKYDISCOUNT: item.SKYDISCOUNT
-					}
+					},"SKYDISCOUNT");
 				});
+				console.log("after:",this.sale2_arr)
+				console.log("after:",JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
 				let sql =
@@ -646,11 +648,6 @@
 			}
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
-				
-				var obj = { name:"qp",sex:"man",age:22};
-				console.log("pub-obj:",obj);
-				util.privatePropety(obj,'name');
-				console.log("pri-obj:",obj);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

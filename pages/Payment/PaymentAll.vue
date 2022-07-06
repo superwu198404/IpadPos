@@ -491,7 +491,6 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: parseFloat(item.PRICE).toFixed(2),
-						// PRICE: item.PRICE.toFixed(2),
 						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.PRICE *
 							item.QTY - item.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
@@ -505,9 +504,7 @@
 							.getMonth() + 1,
 							new Date().getDay()),
 						TIME: new Date().getHours()
-					})
-					delete obj.SKYDISCOUNT;
-					delete obj.NAME;
+					});
 					return obj;
 				}).bind(this));
 				console.log("sale2 封装完毕!", this.sale2_arr);
@@ -586,7 +583,8 @@
 			},
 			//sale 003 数据源：
 			Sale3Source: function() {
-				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != 'ZCV1') : this.PayList.filter(
+				let fkid = this.PayWayInfo("EXCESS").fkid;
+				return this.isRefund ? this.RefundList.filter(i => !i.fail && i.fkid != fkid) : this.PayList.filter(
 					i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
 			},
 			//创建订单数据
