@@ -270,13 +270,16 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 };
 
 var showloding = function(yn_show, pm_txt) {
-	console.log("show" + pm_txt)
 	if (yn_show && pm_txt) {
 		uni.showLoading({
 			title: pm_txt || "加载中...",
 			mask: true
 		});
 	}
+}
+
+var hideloding = function(yn_show, pm_txt) {
+	uni.hideLoading();
 }
 
 var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
@@ -293,6 +296,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			console.log("http请求" + res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
+			hideloding();
 			console.log("http请求结果：" + JSON.stringify(res));
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -309,6 +313,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			break;
 		}
 	}
+	hideloding();
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
 	def(finallyfun, res);
 }

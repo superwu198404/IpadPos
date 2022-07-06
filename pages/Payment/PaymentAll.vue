@@ -1228,8 +1228,6 @@
 						icon: "error"
 					})
 				} else {
-					console.log("待付款：", that.debt);
-					console.log("券集合：", JSON.stringify(that.coupon_list));
 					this.currentPayType = "COUPON"
 					let arr = that.coupon_list.filter(function(item, index, arr) {
 						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
@@ -1243,22 +1241,19 @@
 				let hyinfo = getApp().globalData.hyinfo;
 				if (hyinfo.hyId) {
 					console.log("会员信息：", JSON.stringify(hyinfo));
-					// _member.CouponList("获取中...",{
-					// 	brand: that.brand,
-					// 	data:{
-					// 		hyid: hyinfo.hyId,
-					// 		phone:hyinfo.Phone
-					// 	}
-					// },(res) => {
-					// 	console.log("数据：",res)
-					// },(err) => {
-					// 	console.log("异常数据：",res)
-					// })
-					hy.CouponList_ALL(hyinfo.hyId, function(res) {
+					_member.CouponList("获取中...",{
+						brand: that.brand,
+						data:{
+							hyid: hyinfo.hyId,
+							phone:hyinfo.Phone
+						}
+					},(res) => {
 						if (res.code) {
 							that.coupon_list = res.data;
 						}
-					});
+					},(err) => {
+						console.log("异常数据：",res)
+					})
 				}
 			},
 			//点击券去使用

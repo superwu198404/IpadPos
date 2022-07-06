@@ -646,6 +646,11 @@
 			}
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+				
+				var obj = { name:"qp",sex:"man",age:22};
+				console.log("pub-obj:",obj);
+				util.privatePropety(obj,'name');
+				console.log("pri-obj:",obj);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
