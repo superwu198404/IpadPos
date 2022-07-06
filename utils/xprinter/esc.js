@@ -1149,8 +1149,8 @@ var jpPrinter = {
 		return s + new Array(len - s.length + 1).join(charStr, '');
 	}
 	
-	//打印格式 9 种：销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单接单、外卖单接单；
-	var printerType = ["XS", "TD", "YD", "YDTQ", "YDQX", "SX", "SXTD", "XSDD", "XSWMJD"];
+	//打印格式：外卖单接单、销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单提取、线上订单取消；
+	var printerType = ["WM","XS", "TD", "YD","YDQX", "YDTQ", "SX", "SXTD", "XSDD","XSDDQX"];
 	
 	jpPrinter.formString = function(data,printer_poscs){
 		var type = data.xsType;
@@ -1165,6 +1165,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		let HYY = "欢迎光临";
+		// 终端参数配置了欢迎语，则取配置
 		if(printer_poscs.HYY  != ""){
 			HYY = printer_poscs.HYY;
 		}	
@@ -1174,46 +1175,60 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 
 		switch (type) {
-		  case printerType[0]:
+			case printerType[0]:
+			  xpType ="外卖";
+			  break;
+			  
+		   case printerType[1]:
 		    xpType ="销售";
-		    break;
-		
-		  case printerType[1]:
+		    break;	
+			
+		   case printerType[2]:
 		    xpType ="退单";
 			xsBill= data.xsBill;
 			lineNum = -Math.abs(lineNum);
 			isReturn = true;
 		    break;
-		  case printerType[2]:
+			
+		   case printerType[3]:
 			xpType ="预定";
 			isYD = true;
 		    break;	
-		  case printerType[3]:
+			
+		   case printerType[4]:
+			 xpType ="预定";
+			 xsBill= data.xsBill;
+			 lineNum = -Math.abs(lineNum);
+			 isReturn = true;
+			 isYD = true;
+			break;	
+			
+		  case printerType[5]:
 			xpType ="提取";
 			isYD = true;
 		    break;	
-		  case printerType[4]:
-			xpType ="预定";
-			xsBill= data.xsBill;
-			lineNum = -Math.abs(lineNum);
-			isReturn = true;
-			isYD = true;
-		    break;	
-		  case printerType[5]:
-			xpType ="赊销";
-		    break;
+			
 		  case printerType[6]:
 			xpType ="赊销";
+		    break;
+			
+		  case printerType[7]:
+			xpType ="赊销";
 			xsBill= data.xsBill;
 			lineNum = -Math.abs(lineNum);
 			isReturn = true;
 		    break;
-		  case printerType[7]:
+			
+		  case printerType[8]:
 			xpType ="线上";
 		    break;
-		  case printerType[8]:
-			xpType ="外卖";
-		    break;
+			
+		   case printerType[9]:
+			 xpType ="线上";
+			 xsBill= data.xsBill;
+			 lineNum = -Math.abs(lineNum);
+			 isReturn = true;
+			 break;
 		}
 		
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
@@ -1308,6 +1323,7 @@ var jpPrinter = {
 		
 		//付款方式
 		data.sale3List.forEach((item, i) => {
+			//是退单，金额显示负数
 			if(isReturn){
 				item.amt = -Math.abs(item.amt);
 			}
@@ -1318,6 +1334,7 @@ var jpPrinter = {
 			payTotal += parseFloat(item.amt);
 		});
 		
+		//是退单，金额显示负数
 		if(isReturn){
 			payTotal = -Math.abs(payTotal);
 		}

@@ -190,11 +190,35 @@ function convertToMonoImage(width, height, data, shake) {
 const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 	var xsType = "XS";
 	switch(sale1_obj.XSTYPE){
-		case "1":
+		case "0": //外卖单接单
+		xsType = "WM";
+		break;
+		case "1": //销售
 		xsType = "XS";
 		break;
-		case "2": //退款
+		case "2": //退单
 		xsType = "TD";
+		break;
+		case "3": //预订
+		xsType = "YD";
+		break;
+		case "4": //预订取消
+		xsType = "YDQX";
+		break;
+		case "5": //预订提取
+		xsType = "YDTQ";
+		break;
+		case "6": //赊销
+		xsType = "SX";
+		break;
+		case "7": //赊销退单
+		xsType = "SXTD";
+		break;
+		case "8": //线上订单提取
+		xsType = "XSDD";
+		break;
+		case "9": //线上订单取消
+		xsType = "XSDDQX";
 		break;
 	}
 	var billType = sale1_obj.BILL_TYPE; //Z101
