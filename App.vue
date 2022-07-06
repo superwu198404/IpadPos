@@ -62,6 +62,7 @@
 			BLEInformation: {
 				platform: "",
 				deviceId: "",
+				deviceName: "Printer001",
 				writeCharaterId: "",
 				writeServiceId: "",
 				notifyCharaterId: "",

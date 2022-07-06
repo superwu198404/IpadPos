@@ -35,7 +35,6 @@ export default {
 			readCharacter: false,
 			notifyCharacter: false,
 			isScanning: false,
-			blueName: 'Printer001', //对应的蓝牙名称
 		};
 	},
 
@@ -58,29 +57,10 @@ export default {
 	 * 生命周期函数--监听页面显示
 	 */
 	onShow: function() {
+		let that = this;
 		//搜索蓝牙
-		this.startSearch()
-	},
-
-	/**
-	 * 生命周期函数--监听页面隐藏
-	 */
-	onHide: function() {},
-
-	/**
-	 * 生命周期函数--监听页面卸载
-	 */
-	onUnload: function() {},
-	
-	/**
-	 * 页面上拉触底事件的处理函数
-	 */
-	onReachBottom: function() {},
-
-	/**
-	 * 用户点击右上角分享
-	 */
-	onShareAppMessage: function() {},
+		that.startSearch();
+	},	
 	methods: {
 		//搜索设备
 		startSearch: function() {
@@ -190,10 +170,11 @@ export default {
 									if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
 										devices[num] = res.devices[i];
 										num++;
-										console.log("蓝牙设备",res.devices[i].name)
-										if (res.devices[i].name == that.blueName) {
-											//断开蓝牙连接
-											that.closeBLEConnection(res.devices[i].deviceId,i);
+										//console.log("蓝牙设备",res.devices[i].name)
+										if (res.devices[i].name == app.globalData.BLEInformation.deviceName) {
+											console.log("蓝牙打印设备",res.devices[i].name)
+											app.globalData.BLEInformation.deviceId = res.devices[i].deviceId;
+											that.bindAutoTap(app.globalData.BLEInformation.deviceId);
 										}
 									}
 								}
@@ -228,14 +209,14 @@ export default {
 				readCharacter: false,
 				notifyCharacter: false
 			});
-			console.log(e.currentTarget.dataset.title);
+			console.log("当前连接蓝牙:",e.currentTarget.dataset.title);
 			uni.showLoading({
 				title: "正在连接"
 			});
 			uni.createBLEConnection({
 				deviceId: e.currentTarget.dataset.title,
 				success: function(res) {
-					console.log(res);
+					console.log("Connection success:",res);
 					app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
 					that.getSeviceId();
 				},
@@ -245,11 +226,50 @@ export default {
 						content: "连接失败",
 						showCancel: false
 					});
-					console.log(e);
+					console.log("Connection fail:",e);
 					uni.hideLoading();
 				},
 				complete: function(e) {
-					console.log(e);
+					console.log("Connection complete:",e);
+				}
+			});
+		},
+		bindAutoTap: function(deviceId) {
+			console.log("bindAutoTap",deviceId);
+			var that = this;
+			uni.stopBluetoothDevicesDiscovery({
+				success: function(res) {
+					console.log(res);
+				}
+			});
+			that.setData({
+				serviceId: 0,
+				writeCharacter: false,
+				readCharacter: false,
+				notifyCharacter: false
+			});
+			console.log("当前连接蓝牙:",deviceId);
+			uni.showLoading({
+				title: "正在连接"
+			});
+			uni.createBLEConnection({
+				deviceId: deviceId,
+				success: function(res) {
+					console.log("Connection success:",res);
+					app.globalData.BLEInformation.deviceId = deviceId;
+					that.getSeviceId();
+				},
+				fail: function(e) {
+					uni.showModal({
+						title: "提示",
+						content: "连接失败",
+						showCancel: false
+					});
+					console.log("Connection fail:",e);
+					uni.hideLoading();
+				},
+				complete: function(e) {
+					console.log("Connection complete:",e);
 				}
 			});
 		},
