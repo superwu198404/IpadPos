@@ -1009,7 +1009,7 @@
 							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
 							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
-								'EXCESS' ? "ZCV1" : coupon.disc_type),
+								'EXCESS' ? excessInfo.fkid : coupon.disc_type),
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
