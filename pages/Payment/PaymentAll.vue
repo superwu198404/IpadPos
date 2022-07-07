@@ -784,6 +784,7 @@
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
 			},
+			//根据 type 获取 支付信息
 			PayWayInfo:function(type){
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
@@ -855,6 +856,7 @@
 						that.createOrders();
 				})
 			},
+			//创建订单对象列表
 			createOrders: function(is_success) {
 				if (this.RefundList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
@@ -979,6 +981,7 @@
 			orderGenarator: function(payload, type, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				let excessInfo = this.PayWayList.find(item => item.type == "EXCESS"); //放弃金额
+				let give = this.PayWayInfo("ZQ");
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				console.log("当前支付方式的的折扣类型对象：", payObj);
 				this.yPayAmount += fail ? 0 : ((function() {
@@ -1004,12 +1007,9 @@
 							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
 								.note === 'EXCESS' ? -coupon.pay_amount : coupon
 								.denomination)) / 100).toFixed(2),
-							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : this
-								.currentPayInfo?.fkid,
-							name: coupon.note === 'EXCESS' ? excessInfo.name : this
-								.currentPayInfo?.name,
-							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
-								'EXCESS' ? excessInfo.fkid : coupon.disc_type),
+							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : (coupon.yn_zq === 'Y'? give.fkid : this.currentPayInfo?.fkid),
+							name: coupon.note === 'EXCESS' ? excessInfo.name : (coupon.yn_zq === 'Y'? give.name : this.currentPayInfo?.name),
+							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note === 'EXCESS' ? excessInfo.fkid : coupon.disc_type),
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
 							id_type: coupon?.type,
@@ -1198,7 +1198,7 @@
 			},
 			//待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额),判断:如果小于0时候，便只返回0
 			toBePaidPrice: function() {
-				let amount = (this.totalAmount - this.Discount - this.yPayAmount).toFixed(2);
+				let amount = (Number(this.totalAmount - this.Discount - this.yPayAmount)).toFixed(2);
 				let price = amount >= 0 ? amount : 0;
 				return price;
 			},
