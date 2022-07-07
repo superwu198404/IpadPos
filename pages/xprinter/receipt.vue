@@ -55,7 +55,7 @@
 				looptime: 0,
 				currentTime: 1,
 				lastData: 0,
-				oneTimeData: 0,
+				oneTimeData: 20,
 				buffSize: [],
 				buffIndex: 0,
 				//发送字节数下标
@@ -74,70 +74,20 @@
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
-				bill: "",
+				bill_printer: "",
 				//蓝牙相关
-				isSearch: false,
-				bluetooth: [],
-				isLink: [],
-				// 调试数据
-				serverList: [],
-				characteristics: [],
-				serviceId: '',
-				characteristicId: '',
-				macBlueName: 'Printer001', //对应的蓝牙名称
-				macBlueDeviceId: "",
-				macBlueIndex: 0,
-				isSearchShow: false,
-				isGetShow: true,
-				connected: 0,
-				oneTimeData: 20,
-				bill_printer: ""
 			};
 		},
-
-		components: {
-			...mapState(['blueName'])
-		},
-
+		components: {},
 		/**
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
 			let that = this;
 			setTimeout(() => {
-				xprinter_util.couponQrCode(that.bill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
+				xprinter_util.couponQrCode(that.bill_printer,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
 			}, 50)
-			//蓝牙是否在扫描设备
-			uni.onBluetoothAdapterStateChange((res) => {
-				console.log("蓝牙" + (res.discovering ? "开启" : "关闭") + "搜索")
-				this.discovering = res.discovering;
-			})
-			//监听扫描到的蓝牙设备
-			uni.onBluetoothDeviceFound(resd => {
-				//在这里识别你要用到的设备；
-				const devices = resd.devices;
-			})
-			//监听蓝牙连接状态
-			uni.onBLEConnectionStateChange(res => {
-				console.log(`设备 ${res.deviceId},connected: ${res.connected}`)
-				this.Connecting = res.connected;
-				if (res.connected == false) {
-					this.closeBluetoothAdapter();
-					this.closeBLEConnection(res.deviceId, 0);
-					this.connected = 1;
-					if (this.connected == 1) {
-						//选择适合需求的定时器
-						this.timer = setTimeout(() => {
-							this.getBlueInfo()
-						}, 1000)
-					}
-				} else {
-					this.connected = 0;
-				}
-				this.deviceId = res.deviceId;
-			})
 		},
-
 		/**
 		 * 生命周期函数--监听页面初次渲染完成
 		 */
@@ -167,8 +117,7 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
-			console.log('ENTER TO')
-			//this.getBlueInfo()
+			//console.log('onShow GO')
 		},
 		mounted() {
 			var that = this;
@@ -177,279 +126,7 @@
 			})
 		},
 		methods: {
-			// 监听蓝牙设备连接状态
-			listenerConnection() {
-				console.log('监听蓝牙设备连接状态')
-				let _this = this;
-				plus.bluetooth.onBLEConnectionStateChange(function(e) {
-					console.log('connection state changed: ' + JSON.stringify(e));
-					_this.deviceId = e.deviceId;
-					_this.createBLEConnection(_this.deviceId)
-				});
-			},
-			// 蓝牙手机初始化
-			getBlueInfo() {
-				console.log('getBlueInfo')
-				const _this = this
-				plus.bluetooth.openBluetoothAdapter({
-					success(res) {
-						console.log(JSON.stringify(res))
-						_this.startBluetoothDevicesDiscovery()
-					},
-					fail(err) {
-						console.log('fail', err)
-						uni.showToast({
-							title: '未检测到蓝牙',
-							icon: 'none'
-						})
-					}
-				});
-			},
-			// 搜索周围蓝牙设备
-			startBluetoothDevicesDiscovery() {
-				console.log('开始搜索蓝牙设备')
-				const _this = this
-				console.log(_this.bluetooth)
-				this.isSearch = true
-				this.bluetooth = []
-				this.searchNoNameBluetooths = []
-				plus.bluetooth.startBluetoothDevicesDiscovery({
-					// services:['FE7D','FFF0'],//可选 要获取设备的uuid列表
-					success(res) {
-						console.log(JSON.stringify(res))
-						plus.bluetooth.onBluetoothDeviceFound(res => {
-							console.log('蓝牙名称', res.devices[0].deviceId)
-							if (res.devices[0].name == _this.macBlueName) {
-								console.log(JSON.stringify(res))
-								uni.setStorageSync(res.devices[0].name, res);
-							}
-							_this.getBluetoothDevices();
-						})
-					},
-					fail(err) {
-						console.log('错误信息', JSON.stringify(err))
-						uni.showToast({
-							title: '蓝牙未初始化',
-							icon: 'none',
-							duration: 2000
-						});
-					}
-				})
-			},
-			// 停止搜索
-			stopBluetoothDevicesDiscovery() {
-				plus.bluetooth.stopBluetoothDevicesDiscovery({
-					success: e => {
-						console.log('停止搜索蓝牙设备:' + e.errMsg);
-					},
-					fail: e => {
-						console.log('停止搜索蓝牙设备失败，错误码：' + e.errCode);
-					}
-				});
-			},
-			// 获取已发现的蓝牙设备
-			getBluetoothDevices() {
-				console.log('获取已发现的蓝牙设备')
-				const _this = this
-				plus.bluetooth.getBluetoothDevices({
-					success(res) {
-						var isAuto = false;
-						var _macBlueDeviceId = "";
-						var _macBlueIndex = 0;
-						console.log('已发现的蓝牙设备', res)
-						if (this.macBlueName != null && this.macBlueName != '') {
-							console.log("蓝牙缓存", key)
-							let key = uni.getStorageSync(this.macBlueName);
-						}
-						_this.bluetooth = res.devices.filter(item => {
-							//console.log('获取已发现的蓝牙设备-名称', item.name)
-							if (item.name == _this.macBlueName) {
-								console.log('获取已发现的蓝牙设备-deviceId', item.deviceId)
-								_macBlueDeviceId = item.deviceId
-								isAuto = true;
-							}
-							return item.name
-						})
-
-						_this.isLink = []
-						var i = 0;
-						_this.bluetooth.forEach(e => {
-							_this.isLink.push(0)
-							if (e.name == _this.macBlueName) {
-								_macBlueIndex = i;
-							}
-							i++;
-						})
-						//console.log('获取已发现的蓝牙设备-_macBlueDeviceId', _macBlueIndex)
-						if (isAuto) {
-							//连接蓝牙
-							_this.createBLEConnection(_macBlueDeviceId, _macBlueIndex)
-						}
-					}
-				})
-			},
-			// 获取蓝牙适配器状态
-			getBluetoothAdapterState() {
-				plus.bluetooth.getBluetoothAdapterState({
-					success(res) {
-						console.log('获取蓝牙适配器状态', res)
-					}
-				})
-			},
-			// 连接蓝牙
-			createBLEConnection(deviceId, index) {
-				console.log('连接蓝牙', deviceId, index)
-				const _this = this
-				this.deviceId = deviceId;
-				if (this.isLink[index] == 2) {
-					return;
-				}
-				this.isLink.splice(index, 1, 1)
-				plus.bluetooth.createBLEConnection({
-					deviceId: _this.deviceId,
-					success: res => {
-						console.log(res)
-						_this.isLink.splice(index, 1, 2)
-						_this.stopBluetoothDevicesDiscovery();
-						_this.getBLEDeviceServices(_this.deviceId);
-						uni.showLoading({
-							title: '连接中...',
-							mask: true
-						});
-						//自动读取称重
-					},
-					fail: res => {
-						if (res.message == 'already connect') {
-							_this.isLink[index] = 2;
-							_this.stopBluetoothDevicesDiscovery();
-							_this.getBLEDeviceServices(_this.deviceId);
-						} else {
-							_this.isLink.splice(index, 1, 3)
-						}
-						console.log(JSON.stringify(res))
-					}
-				})
-			},
-			//获取蓝牙设备所有服务(service)。
-			getBLEDeviceServices(deviceId) {
-				const _this = this
-				console.log(deviceId)
-				setTimeout(() => {
-					plus.bluetooth.getBLEDeviceServices({
-						// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
-						deviceId: deviceId,
-						success: (res) => {
-							console.log('获取蓝牙设备所有服务:', JSON.stringify(res.services))
-							_this.serverList = res.services
-							var findItem = res.services.find(item => {
-								//FE7D FFF0
-								if (item.uuid != '00001800-0000-1000-8000-00805F9B34FB' && item
-									.uuid != '00001801-0000-1000-8000-00805F9B34FB' &&
-									item.uuid != '0000180A-0000-1000-8000-00805F9B34FB') {
-									return item;
-								}
-							})
-							console.log(JSON.stringify(findItem))
-							_this.serviceId = findItem.uuid;
-							_this.getBLEDeviceCharacteristics(_this.deviceId)
-						},
-
-						fail: res => {
-							console.log(res)
-						}
-					})
-				}, 4000)
-			},
-			// 获取蓝牙特征值
-			getBLEDeviceCharacteristics(deviceId) {
-				console.log("进入特征");
-				const _this = this
-				setTimeout(() => {
-					plus.bluetooth.getBLEDeviceCharacteristics({
-						// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
-						deviceId: deviceId,
-						// 这里的 serviceId 需要在 getBLEDeviceServices 接口中获取
-						serviceId: this.serviceId,
-						success: (res) => {
-							_this.characteristics = res.characteristics
-							console.log('characteristics', JSON.stringify(_this.characteristics))
-
-							let findItem = res.characteristics.find(item => {
-								let uuid = item.uuid
-								console.log("配置信息", item)
-								return item.properties.write
-							})
-							console.log("characteristicId", findItem)
-							_this.characteristicId = findItem.uuid;
-							console.log('当前使用的特征characteristicId:', _this.characteristicId)
-							_this.notifyBLECharacteristicValueChange(_this.deviceId)
-							let bluetoothData = {
-								deviceId: _this.deviceId,
-								serviceId: _this.serviceId,
-								characteristicId: _this.characteristicId
-							}
-							uni.setStorageSync('bluetoothData', bluetoothData)
-							uni.hideLoading();
-
-						},
-						fail: (res) => {
-							uni.hideLoading();
-							console.log(res)
-						}
-					})
-				}, 4000)
-			},
-			// 启用 notify 功能
-			notifyBLECharacteristicValueChange(deviceId) {
-				const _this = this;
-				console.log('deviceId' + deviceId)
-				console.log('serviceId' + _this.serviceId)
-				console.log('characteristicId' + _this.characteristicId)
-				plus.bluetooth.notifyBLECharacteristicValueChange({
-					state: true, // 启用 notify 功能
-					// 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接
-					deviceId: deviceId,
-					// 这里的 serviceId 需要在 getBLEDeviceServices 接口中获取
-					serviceId: _this.serviceId,
-					// 这里的 uuid 需要在 getBLEDeviceCharacteristics 接口中获取
-					characteristicId: _this.characteristicId,
-					success: (res) => {
-						console.log('notifyBLECharacteristicValueChange success', res)
-						_this.$api.msg('连接成功', 'success')
-					},
-					fail: (res) => {
-						console.log('notifyBLECharacteristicValueChange fail', res)
-						console.log(JSON.stringify(res))
-						_this.$api.msg('连接失败')
-					}
-				})
-			},
-			//断开蓝牙连接
-			closeBLEConnection(deviceId, index) {
-				const _this = this
-				plus.bluetooth.closeBLEConnection({
-					deviceId: deviceId,
-					success: res => {
-						console.log('断开蓝牙连接')
-						_this.isLink.splice(index, 1, 4)
-					}
-				})
-			},
-			//断开所有已经建立的连接，释放系统资源，要求在蓝牙功能使用完成后调用
-			closeBluetoothAdapter() {
-				plus.bluetooth.closeBluetoothAdapter({
-					success: function(e) {
-						console.log('close success: ' + JSON.stringify(e));
-					},
-					fail: function(e) {
-						console.log('close failed: ' + JSON.stringify(e));
-					}
-				});
-			},
-			//重启app
-			restart() {
-				plus.runtime.restart();
-			},
+			
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr) {
 				//票据
@@ -463,55 +140,61 @@
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
 				console.log("查询终端参数",printer_poscs);
+				
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY == "Y"){
-					//打印数据转换
-					var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
-					//初始化打印机
-					var command = esc.jpPrinter.createNew();
-					command.init();
-					//打印格式
-					command.formString(printerInfo,printer_poscs);
-					//写入打印记录表
-					xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
-					
-					// 电子发票二维码不为空，则打印二维码
-					if(printer_poscs.DZFPEWMDZ != ""){
-						await xprinter_util.couponQrCode(sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
-						//打印二维码
-						await uni.canvasGetImageData({
-							canvasId: "couponQrcode",
-							x: 0,
-							y: 0,
-							width: that.qrCodeWidth,
-							height: that.qrCodeHeight,
-							success: function(res) {
-								console.log("获取画布数据成功");
-								command.setSelectJustification(1); //居中
-								command.setBitmap(res);
-								command.setPrint();
-								that.prepareSend(command.getData()); //发送数据
-							},
-							complete: function(res) {
-								console.log("finish");
-							},
-							fail: function(res) {
-								console.log("获取画布数据失败:", res);
-								uni.showToast({
-									title: "获取画布数据失败",
-									icon: "none"
-								});
-								that.prepareSend(command.getData()); //发送数据
-							}
-						});
-					}else{
-						that.prepareSend(command.getData()); //发送数据
-					}
-					console.log("打印格式记录结束");
-				}else{
-					console.log("终端设置了不打印小票");
+				if(printer_poscs.YN_YXDY != "Y"){
+					uni.showToast({
+						icon: 'error',
+						title: "终端参数未设置打印小票"
+					})
+					console.log("终端参数未设置打印小票");
+					return;
 				}
 				
+				//打印数据转换
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.init();
+				//打印格式
+				command.formString(printerInfo,printer_poscs);
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
+				
+				// 电子发票二维码不为空，则打印二维码
+				if(printer_poscs.DZFPEWMDZ != ""){
+					await xprinter_util.couponQrCode(sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
+					//打印二维码
+					await uni.canvasGetImageData({
+						canvasId: "couponQrcode",
+						x: 0,
+						y: 0,
+						width: that.qrCodeWidth,
+						height: that.qrCodeHeight,
+						success: function(res) {
+							console.log("获取画布数据成功");
+							command.setSelectJustification(1); //居中
+							command.setBitmap(res);
+							command.setPrint();
+							that.prepareSend(command.getData()); //发送数据
+						},
+						complete: function(res) {
+							console.log("打印二维码 finish");
+						},
+						fail: function(res) {
+							console.log("获取画布数据失败:", res);
+							uni.showToast({
+								title: "获取画布数据失败",
+								icon: "none"
+							});
+							//获取画布失败，也发送打印文字格式单据
+							that.prepareSend(command.getData()); //发送数据
+						}
+					});
+				}else{
+					that.prepareSend(command.getData()); //发送数据
+				}
+				console.log("打印格式记录结束");
 			},
 			//重新打印
 			againPrinter: async function(xsBill) {
@@ -525,7 +208,7 @@
 					})
 					return;
 				}
-				
+				//通过单号，查询重打格式数据
 				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 				//console.log("pos_xsbillprint",pos_xsbillprint);	
 				if(pos_xsbillprint == "" || pos_xsbillprint == null){
@@ -555,10 +238,12 @@
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
 				
-				await xprinter_util.couponQrCode(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
-				
 				// 电子发票二维码不为空，则打印二维码
 				if(printer_poscs.DZFPEWMDZ != ""){
+					//生成属于单号的二维码
+					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
+					await xprinter_util.couponQrCode(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
+					
 					//打印二维码
 					 uni.canvasGetImageData({
 						canvasId: "couponQrcode",
@@ -582,6 +267,7 @@
 								title: "获取画布数据失败",
 								icon: "none"
 							});
+							//获取画布失败，也发送打印文字格式单据
 							that.prepareSend(command.getData()); //发送数据
 						}
 					});
@@ -590,38 +276,6 @@
 					that.prepareSend(command.getData()); //发送数据
 				}
 				
-			},
-			//打印二维码事件
-			printPhoto: function(command) {
-				//打印bitmap，图片内容不建议太大，小程序限制传输的字节数为20byte
-				var that = this;
-				var canvasWidth = that.qrCodeWidth;
-				var canvasHeight = that.qrCodeHeight;
-		
-				uni.canvasGetImageData({
-					canvasId: "couponQrcode",
-					x: 0,
-					y: 0,
-					width: canvasWidth,
-					height: canvasHeight,
-					success: function(res) {
-						console.log("获取画布数据成功");
-						command.setSelectJustification(1); //居中
-						command.setBitmap(res);
-						command.setPrint();
-						that.prepareSend(command.getData()); //发送数据
-					},
-					complete: function(res) {
-						console.log("finish");
-					},
-					fail: function(res) {
-						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
-					}
-				});
 			},
 			//打印二维码事件
 			printPhoto: function() {
@@ -657,7 +311,7 @@
 					}
 				});
 			},
-			//打印Logon事件
+			//打印Logo事件
 			printJPGPhoto: function() {
 				var that = this;
 				var canvasWidth = that.jpgWidth;
