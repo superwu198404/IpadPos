@@ -320,6 +320,18 @@ const onlyFourBank = (value) => {
 	return value;
 }
 
+/**
+ * 手机号中间四位隐藏
+ * @param {value} 传入数据
+ */
+const onlyFourPhone = (value) => {
+	if (value && value.length > 4) {
+		 let reg = /^(.{3}).*(.{4})$/
+		 value = value.replace(reg,'$1****$2')
+	}
+	return value;
+}
+
 // 添加打印记录
 const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
 	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +'","' + billStr + '")'];
@@ -578,5 +590,6 @@ module.exports = {
 	getPOSCS: getPOSCS,
 	commonPOSCS: commonPOSCS,
 	getBillPrinterData: getBillPrinterData,
-	canvasGetImageData: canvasGetImageData
+	canvasGetImageData: canvasGetImageData,
+	onlyFourPhone: onlyFourPhone
 };

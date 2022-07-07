@@ -41,7 +41,6 @@
 	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
-	import excPostUtil from '@/components/gprint/EscPosUtil.js';
 	import Req from '@/utils/request.js';
 	import {
 		mapState,
@@ -201,7 +200,7 @@
 				var that = this;
 				//xsBill = that.bill_printer;
 				console.log("重打单号:",xsBill)
-				if(xsBill == "" || xsBill == null){
+				if(xsBill == null || xsBill.length() == 0){
 					uni.showToast({
 						icon: 'error',
 						title: "重打单号为空"

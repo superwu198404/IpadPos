@@ -1514,6 +1514,40 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
+	/** 预定业务蛋糕标签打印格式
+	 * @param {Object} data
+	 * @param {Object} printer_poscs
+	 */
+	jpPrinter.advanceformatString = function(data){
+	
+		data.forEach((item, i) => {
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("顾客姓名:" + item.custmname);
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("顾客电话:" + util.onlyFourPhone(item.custmphone));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("产品名称:" + item.spname.toString());
+			jpPrinter.setPrint(); //打印并换
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("要求提货日期:" + item.thdate.toString());
+			jpPrinter.setPrint(); //打印并换
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("-----------------------------------------------");
+			jpPrinter.setPrint(); //打印并换行
+		});
+	}
+	
     return jpPrinter;
   },
   Query: function () {
