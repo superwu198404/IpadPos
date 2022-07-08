@@ -124,8 +124,7 @@
 				that.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
 			})
 		},
-		methods: {
-			
+		methods: {	
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr) {
 				//票据
@@ -200,7 +199,7 @@
 				var that = this;
 				//xsBill = that.bill_printer;
 				console.log("重打单号:",xsBill)
-				if(xsBill == null || xsBill.length() == 0){
+				if(xsBill == "" || xsBill == null){
 					uni.showToast({
 						icon: 'error',
 						title: "重打单号为空"
@@ -232,44 +231,45 @@
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-						
+				
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
 				
 				// 电子发票二维码不为空，则打印二维码
 				if(printer_poscs.DZFPEWMDZ != ""){
-					//生成属于单号的二维码
+					生成属于单号的二维码
 					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
 					await xprinter_util.couponQrCode(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
-					
-					//打印二维码
-					 uni.canvasGetImageData({
-						canvasId: "couponQrcode",
-						x: 0,
-						y: 0,
-						width: that.qrCodeWidth,
-						height: that.qrCodeHeight,
-						success: function(res) {
-							console.log("获取画布数据成功");
-							command.setSelectJustification(1); //居中
-							command.setBitmap(res);
-							command.setPrint();	
-							that.prepareSend(command.getData()); //发送数据
-						},
-						complete: function(res) {
-							console.log("finish");
-						},
-						fail: function(res) {
-							console.log("获取画布数据失败:", res);
-							uni.showToast({
-								title: "获取画布数据失败",
-								icon: "none"
-							});
-							//获取画布失败，也发送打印文字格式单据
-							that.prepareSend(command.getData()); //发送数据
-						}
-					});
+	
+				    //打印二维码
+				    uni.canvasGetImageData({
+				    	canvasId: "couponQrcode",
+				    	x: 0,
+				    	y: 0,
+				    	width: that.qrCodeWidth,
+				    	height: that.qrCodeHeight,
+				    	success: function(res) {
+				    		console.log("获取画布数据成功");
+				    		command.setSelectJustification(1); //居中
+				    		command.setBitmap(res);
+				    		command.setPrint();	
+				    		that.prepareSend(command.getData()); //发送数据
+				    	},
+				    	complete: function(res) {
+				    		console.log("finish");
+				    	},
+				    	fail: function(res) {
+				    		console.log("获取画布数据失败:", res);
+				    		uni.showToast({
+				    			title: "获取画布数据失败",
+				    			icon: "none"
+				    		});
+				    		//获取画布失败，也发送打印文字格式单据
+				    		that.prepareSend(command.getData()); //发送数据
+				    	}
+				     });
+								
 				}else{
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
@@ -381,7 +381,7 @@
 				});
 			},
 			//准备发送，根据每次发送字节数来处理分包数量
-			prepareSend: function(buff) {
+			prepareSend: async function(buff) {
 				console.log("receipt prepareSend 开始")
 				var that = this;
 				var time = that.oneTimeData;
@@ -587,7 +587,6 @@
 	};
 </script>
 <style>
-	/* pages/receipt/receipt.wxss */
 	.button {
 		margin-top: 20px;
 		width: 90%;
