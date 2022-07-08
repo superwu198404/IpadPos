@@ -847,7 +847,8 @@
 				if (this.RefundList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
 						//销售单单创建成功后 上传一下数据
-						let bill = that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
+						let bill = that.actType == common.actTypeEnum.Refund ? that.out_refund_no :
+							that
 							.out_trade_no_old;
 						common.TransLiteData(bill);
 						that.scoreConsume();
@@ -906,7 +907,9 @@
 					info = this.PayWayInfo(this.currentPayType);
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
-				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
+				console.log(
+					`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`
+				);
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
 				console.log("当前支付集合：", this.PayList);
@@ -948,7 +951,8 @@
 						if (coupon.length > 0) {
 							console.log("券 payload.money：",payload.money)
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) :
+								result
 								.vouchers[0].denomination) / 100;
 						} else {
 							console.log("卡 payload.money：",card)
@@ -964,14 +968,17 @@
 					result.vouchers.forEach((function(coupon, index) {
 						console.log("卡券：", coupon)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
-								.note === 'EXCESS' ? -coupon.pay_amount : coupon
-								.denomination)) / 100).toFixed(2),
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
+								(coupon
+									.note === 'EXCESS' ? -coupon
+									.pay_amount : coupon
+									.denomination)) / 100).toFixed(2),
 							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : (coupon
 								.yn_zq === 'Y' ? give.fkid : this.currentPayInfo?.fkid),
 							name: coupon.note === 'EXCESS' ? excessInfo.name : (coupon
 								.yn_zq === 'Y' ? give.name : this.currentPayInfo?.name),
-							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
+								.note ===
 								'EXCESS' ? excessInfo.fkid : coupon.disc_type),
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
@@ -1078,7 +1085,8 @@
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
 					this.out_trade_no = this.out_trade_no_old; //子单号
-					this.isRefund = prev_page_param.actType == common.actTypeEnum.Refund; //如果等于退款行为，则表示退款，否则是支付
+					this.isRefund = prev_page_param.actType == common.actTypeEnum
+						.Refund; //如果等于退款行为，则表示退款，否则是支付
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
@@ -1244,8 +1252,10 @@
 						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0), //退款金额
-								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0) //退款总金额（兼容微信）
+								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
+									0), //退款金额
+								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
+									0) //退款总金额（兼容微信）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 							}).bind(that),

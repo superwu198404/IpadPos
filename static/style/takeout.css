@@ -1,0 +1,114 @@
+.commodity{
+	height: 97%;
+}
+.prolist{
+	width:100%;
+}
+.sousuo{
+	background-color: #006B44;
+	color: #fff;
+	font-weight: 400;
+	border-radius: 30rpx;
+	font-size: 28rpx;
+	padding:0 18rpx 0 12rpx;
+	height: 48rpx;
+	line-height: 48rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.sousuo image{
+	width:30rpx;
+	height: 30rpx;
+}
+.products{
+	display: flex;
+	height: 93%;
+}
+.products .procycle{
+	width:40%;
+	margin-top:0;
+	display: block;
+}
+.products .procycle .li{
+	width:96%;
+	padding:2% 3%;
+}
+
+.products .procycle .li .h3{
+	line-height: 80rpx;
+	display: flex;
+	justify-content: space-between;
+	font-size: 32rpx;
+}
+.products .procycle .li .h3 .state{
+	color: #b0b0b0;
+	font-weight: 400;
+	font-size: 24rpx;
+	margin-left: 5%;
+}
+.products .procycle .li .h3 .quxiao text{
+	color: #FF8367;
+}
+.products .procycle .li .h3 .jiedan text{
+	color: #42B14B;
+}
+.platform{
+	display: flex;
+	width:80%;
+}
+.prolist .cods{
+	flex-wrap: wrap;
+	margin:1% 0;
+}
+.cods label{
+	width:48%;
+	line-height: 50rpx;
+	color: #b0b0b0;
+}
+.cods label:nth-last-child(1){
+	width:100%;
+}
+.prolist .cods label text{
+	color: #b0b0b0;
+}
+.cods label:nth-child(2) text{
+	color: #333;
+}
+.address{
+	margin-top:10px;
+	padding:2% 2% 0;
+	line-height: 50rpx;
+	font-size: 24rpx;
+	border-top:1px solid #eee;
+}
+.meminfo{
+	width:100%;
+}
+.member{
+	padding:2% 4%;
+}
+.products .details{
+	width:58%;
+	margin-left: 2%;
+	height: 100%;
+	background-color: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.details .goods{
+	padding:0 4%;
+	max-height: 400rpx;
+	overflow: auto;
+	border-bottom:1px solid #eee;
+}
+.operat{
+	display: flex;
+	flex-wrap: wrap;
+}
+.operat button{
+	width:46%;
+	margin:1% 2%;
+	font-size: 32rpx;
+}

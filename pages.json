@@ -106,6 +106,7 @@
             "path" : "pages/TakeAway/TakeAway",
             "style" :                                                                                    
             {
+				"titleNView": false,
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
             }
@@ -128,7 +129,7 @@
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [{
 			"name": "", //模式名称
-			"path": "pages/start/start", //启动页面，必选  pages/index/index
+			"path": "pages/index/index", //启动页面，必选  pages/TakeAway/TakeAway
 			"query": "" //启动参数，在页面的onLoad函数里面得到
 		}]
 	}

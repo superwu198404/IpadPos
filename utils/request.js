@@ -305,7 +305,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		}
 		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res)
-		console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0, 100));
+		// console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0, 100));
 
 		if (res && !res.code) {
 			console.log("回调函数异常了" + i.toString() + JSON.stringify(res));
