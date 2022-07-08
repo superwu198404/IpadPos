@@ -67,7 +67,7 @@
 		<button @click="MenuPage(2)">录入会员</button>
 		<button @click="againPrinter()">重新打印</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<!-- <button @click="Test(2)">测试一下</button> -->
+		<button @click="Test(2)">测试一下</button>
 		<div v-if="view.orders.showDetail"
 			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
 			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
@@ -135,6 +135,7 @@
 			return {
 				first: true,
 				input: {
+					sql:"",
 					fromData: {
 						PLID: "101",
 						SPID: "",
@@ -224,7 +225,7 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							obj.dtm = res.msg[i].YN_DTM;
+							obj.dbm = res.msg[i].YN_DBM;//是否要扫码 Y:扫码 N:不扫码
 							obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
@@ -472,24 +473,10 @@
 				console.log("after:",JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				let sql =
-					"select s2.*,ifnull(s.SNAME,'名称无') NAME from SALE002 s2 left join spda s on s2.spid=s.spid  where BILL='K0101QT2122629185756893'";
-				// sql="select * from SALE002 where BILL='K0101QT2122629185756893'";
-				console.log("测试sql:", sql);
-				//批量执行sql 必须是数组
-				db.get().executeQry(sql, "执行中", (res) => {
+				let sql = "update fkda set yn_dbm='Y' where sname='电子券'";
+				db.get().executeDml(sql, "执行中", (res) => {
 					console.log("sql 执行结果：", res);
 				});
-				return;
-				let sql1 = "";
-				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
-				let reqdata = Req.resObj(true, "数据传输中", {
-					sql: sql1
-				}, apistr);
-				Req.asyncFuncOne(reqdata,
-					function(res1) {
-						console.log("数据传输结果：", res1);
-					});
 			},
 			insertProduct: function() {
 				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||
