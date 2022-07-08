@@ -363,6 +363,7 @@ const couponQrCode = async function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight)
 		correctLevel: qrCode.CorrectLevel.H
 	})
 	console.log("二维码生成内容:", qrCodeContent + bill)
+	return true;
 }
 
 /**
@@ -373,7 +374,7 @@ const getPOSCS = async (parmid) => {
 	let poscs = [];
 	let execSql_arr = "SELECT D1.SNAME,P1.POSCS,P1.POSCSNR FROM POSCSZMX P1 ,DAPZCS_NR D1 WHERE D1.ID ='POSCS' AND D1.ID_NR = P1.POSCS AND P1.POSCSZID ='"+parmid+"' ORDER BY  P1.SZ";
     await db.get().executeQry(execSql_arr, "执行中", function(res) {
-		console.log("POSCS sql执行结果：", res.msg);
+		console.log(parmid + "POSCS sql执行结果：", res.msg);
 		poscs = res.msg;
 	}, function(err) {
 		console.log("POSCS sql执行失败：", err);
@@ -527,6 +528,7 @@ const getBillPrinterData = async (xsBill)=>{
 	let billStr = "";
 	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("重打数据查询成功",res);
 		billStr = res.msg[0].BILLSTR;
 	    console.log("重打数据查询成功",res.msg[0].XSBILL);
 	}, function(err) {
@@ -539,38 +541,49 @@ const getBillPrinterData = async (xsBill)=>{
 	return billStr;
 }
 
-/**
- * 打印二维码
- * @param {*} command 
- * @param {*} qrCodeWidth 
- * @param {*} qrCodeHeight 
- */
-const canvasGetImageData = async (command,qrCodeWidth,qrCodeHeight)=>{
-	//打印二维码
-	await uni.canvasGetImageData({
-		canvasId: "couponQrcode",
-		x: 0,
-		y: 0,
-		width: qrCodeWidth,
-		height: qrCodeHeight,
-		success: function(res) {
-			console.log("获取画布数据成功");
-			command.setSelectJustification(1); //居中
-			command.setBitmap(res);
-			command.setPrint();	
-		},
-		complete: function(res) {
-			console.log("couponQrcode finish");
-		},
-		fail: function(res) {
-			console.log("获取画布数据失败:", res);
-			uni.showToast({
-				title: "获取画布数据失败",
-				icon: "none"
-			});
-		}
-	});
-	return command;
+const groupByOrder = function(array, f) {
+     let groups = {};
+     array.forEach(function(o) {
+       let group = JSON.stringify(f(o));
+       groups[group] = groups[group] || [];
+       groups[group].push(o);
+     });
+     return Object.keys(groups).map(function(group) {
+       return groups[group];
+     });
+}
+
+ const groupBy = function (array, callback) {
+      return new Promise((resolve) => {
+        let groups = {};
+        array.forEach(item => {
+          let group = JSON.stringify(callback(item));
+          groups[group] = groups[group] || [];
+          groups[group].push(item);
+        });
+        let res = Object.keys(groups).map(group => {
+          return groups[group];
+        });
+        resolve(res)
+      })
+}
+	
+ const getSum = function (arr,bykey) {
+      return new Promise((resolve) => {
+        let res = this.groupBy(arr, function (item) {
+          return item.fkid
+        }).then(res => {
+          console.log(res)
+          let resultSum = res.map(item => {
+            let sum = item.reduce((total, curr) => {
+              return total + curr[bykey]
+            }, 0);
+            return sum
+          })
+          return resultSum
+        })
+        resolve(res)
+      })
 }
 
 module.exports = {
@@ -590,6 +603,8 @@ module.exports = {
 	getPOSCS: getPOSCS,
 	commonPOSCS: commonPOSCS,
 	getBillPrinterData: getBillPrinterData,
-	canvasGetImageData: canvasGetImageData,
-	onlyFourPhone: onlyFourPhone
+	onlyFourPhone: onlyFourPhone,
+	groupBy: groupBy,
+	getSum: getSum,
+	groupByOrder: groupByOrder
 };
