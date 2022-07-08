@@ -9,6 +9,30 @@ const utils = {
 	trim: function(value) {
 		return value.replace(/(^\s*)|(\s*$)/g, "");
 	},
+	/**
+	 * 简单消息提示
+	 * @param title: 标题
+	 * @param isError?: 是否是错误信息
+	 * @returns void
+	 */
+	simpleMsg: function(title, isError = false) {
+		uni.showToast({
+			title,
+			icon: isError ? "error" : "success"
+		})
+	},
+	/**
+	 * 简单模态弹窗
+	 * @param title: 标题
+	 * @param content: 内容
+	 * @returns void
+	 */
+	simpleModal:function(title,content){
+		uni.showModal({
+			title,
+			content
+		});
+	},
 	//内容替换
 	replaceAll: function(text, repstr, newstr) {
 		return text.replace(new RegExp(repstr, "gm"), newstr);
@@ -197,6 +221,8 @@ const utils = {
 }
 
 export default {
+	simpleMsg: utils.simpleMsg,
+	simpleModal:utils.simpleModal,
 	trim: utils.trim,
 	replaceAll: utils.replaceAll,
 	formatNumber: utils.formatNumber,

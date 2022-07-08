@@ -14,7 +14,7 @@ page {
 	box-sizing: border-box;
 	align-items: center;
 	align-items: center;
-	padding-top:56rpx;
+	padding-top: 56rpx;
 }
 
 .getback {
@@ -153,17 +153,19 @@ page {
 }
 
 .hh {
-	padding:24rpx 2%;
+	padding: 24rpx 2%;
 	font-size: 36rpx;
 	font-weight: 700;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
-.hh view{
+
+.hh view {
 	display: flex;
 	align-items: center;
 }
+
 .hh image {
 	width: 40rpx;
 	margin-right: 12rpx;
@@ -178,20 +180,24 @@ page {
 	margin: 0;
 	border-radius: 50rpx;
 }
-.checkout{
+
+.checkout {
 	display: flex;
 }
-.checkout label{
+
+.checkout label {
 	margin-left: 40rpx;
 	font-size: 26rpx;
 	color: #006B44;
 	display: flex;
 	align-items: center;
 }
-.checkout label image{
-	width:22rpx;
+
+.checkout label image {
+	width: 22rpx;
 	margin-right: 6rpx;
 }
+
 .amounts {
 	background-color: #fff;
 	border-radius: 10px;
@@ -260,7 +266,8 @@ page {
 	justify-content: space-between;
 	align-items: center;
 }
-.settleds h3 button{
+
+.settleds h3 button {
 	background-color: #006B44;
 	color: #fff;
 	height: 50rpx;
@@ -269,6 +276,7 @@ page {
 	margin: 0;
 	border-radius: 50rpx;
 }
+
 .paymentlist {
 	min-height: 96%;
 	max-height: 100%;
@@ -405,9 +413,11 @@ page {
 	width: 100rpx;
 	margin: 0 2%;
 }
-.bom-zhifu .pattern:nth-child(1) label view{
-	margin:0 20rpx;
+
+.bom-zhifu .pattern:nth-child(1) label view {
+	margin: 0 20rpx;
 }
+
 .bom-zhifu .pattern:nth-child(1) text {
 	display: block;
 	font-size: 14px;
@@ -459,7 +469,7 @@ page {
 }
 
 .bom-zhifu {
-	width:100%;
+	width: 100%;
 	/* display: flex;
 	justify-content: start;
 	flex-wrap: wrap; */
@@ -467,14 +477,15 @@ page {
 
 .bom-zhifu .pattern {
 	width: 47%;
-	height:210rpx;
+	height: 210rpx;
 	padding: 1.9% 3%;
 	box-sizing: border-box;
 	float: left;
 	margin-bottom: 40rpx;
 	margin-left: 3%;
 }
-.bom-zhifu .pattern:nth-child(4n){
+
+.bom-zhifu .pattern:nth-child(4n) {
 	margin-left: 0;
 }
 
@@ -553,9 +564,9 @@ page {
 	font-size: 32rpx;
 	font-weight: 700;
 	position: absolute;
-	top:0;
+	top: 0;
 	left: 0;
-	width:96%;
+	width: 96%;
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
 	z-index: 99;
@@ -607,7 +618,7 @@ uni-button:after {
 	font-size: 60rpx;
 	line-height: 80rpx;
 	font-weight: 700;
-	letter-spacing:-2px;
+	letter-spacing: -2px;
 }
 
 .voucher view text {
@@ -678,31 +689,127 @@ uni-button:after {
 	font-size: 32rpx;
 	font-weight: 700;
 	line-height: 56rpx;
-	color:#333;
+	color: #333;
 	height: 112rpx;
 	overflow: hidden;
-	text-overflow: ellipsis; 
+	text-overflow: ellipsis;
 }
-.limit .h3 text{
-	color:#333;
+
+.limit .h3 text {
+	color: #333;
 	font-size: 32rpx;
 }
+
 .limit text {
 	color: #B0B0B0;
 	font-size: 26rpx;
 }
 
-.poly-box{
+.poly-box {
 	display: inline-flex !important;
 	flex-wrap: wrap !important;
-	justify-content:center !important;
+	justify-content: center !important;
 	gap: 10px;
 	align-items: center !important;
 	width: 60% !important;
 }
 
-.poly-text{
+.poly-text {
 	position: absolute;
 	bottom: 8%;
 }
 
+@keyframes loading {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.uni-tip {
+	background: #fff;
+	width: 70%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.uni-tip-title {
+	text-align: center;
+	font-size: 16px;
+}
+
+.uni-tip-group-button {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+}
+
+.uni-tip-group-button button {
+	margin: 0;
+}
+
+.uni-tip-content {
+	min-height: 60px;
+}
+
+.pay-center {
+	display: inline-flex;
+	align-items: center;
+	height: 100%;
+}
+
+.amounts {
+	box-sizing: border-box;
+}
+
+.refund-more-box {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.refund-icon {
+	width: 12px;
+	height: 12px;
+	background-size: cover;
+	margin-left: 4px;
+}
+
+.refund-warm {
+	background-image: url(../../images/warn.png);
+}
+
+.refund-loading {
+	background-image: url(../../images/loading.png);
+	filter: brightness(100);
+	animation: loading infinite 0.5s linear;
+}
+
+.refund-text {
+	margin-right: 6px;
+}
+
+.refund-reset {
+	background-color: #42b14b;
+	color: white;
+	font-size: 12px;
+	border-radius: 5px;
+	padding: 1px 2px;
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.canvasdiv {
+	width: 0px;
+	height: 0px;
+	visibility: hidden;
+}

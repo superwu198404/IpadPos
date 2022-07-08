@@ -69,8 +69,9 @@ const BasePayment = async function(pt, t, m, d, func, catchFunc) {
 			if (func)
 				func(res)
 		}, function(res) {
-			if (catchFunc)
+			if (catchFunc){
 				catchFunc(res)
+			}
 		});
 	} else {
 		uni.showToast({
