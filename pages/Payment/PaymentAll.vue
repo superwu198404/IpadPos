@@ -268,7 +268,7 @@
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
 				logs: false,
-				is_poly:true,//指示当前选择的是聚合还是非聚合
+				is_poly: true, //指示当前选择的是聚合还是非聚合
 				isRefund: true,
 				navmall: false,
 				channel: "POS",
@@ -401,12 +401,14 @@
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
-				this.currentPayInfo = this.PayWayList.find(i => i.type === this
-					.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				if (n)
+					this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				else
+					this.currentPayInfo = null
 				console.log("当前支付类型信息：", this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
-				this.currentPayInfo = this.PayWayInfo(n);//根据 type 获取支付信息
+				this.currentPayInfo = this.PayWayInfo(n); //根据 type 获取支付信息
 				if (n === "COUPON") { //如果用券，则不再允许编辑待付款金额
 					this.dPayAmount = this.toBePaidPrice();
 					this.domForceRefresh();
@@ -683,18 +685,17 @@
 					return;
 				}
 				if (!this.YN_TotalPay) { //如果未支付完成
-					if(pay_info.dbm === "Y" || this.is_poly){//需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
-					console.log("此操作类型需要扫码！",pay_info)
-					console.log("是否属于聚合支付：", this.is_poly)
+					if (pay_info.dbm === "Y" || this.is_poly) { //需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
+						console.log("此操作类型需要扫码！", pay_info)
+						console.log("是否属于聚合支付：", this.is_poly)
 						uni.scanCode({
 							success: function(res) {
 								that.authCode = res.result; //获取扫码的 authCode
 								that.PayHandle();
 							}
 						});
-					}
-					else{//不需要扫码操作
-					console.log("此操作类型不需要扫码！",pay_info)
+					} else { //不需要扫码操作
+						console.log("此操作类型不需要扫码！", pay_info)
 						that.PayHandle(); //直接发起支付
 					}
 					// if (that.authCode) { //如果有码
@@ -799,9 +800,11 @@
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					console.log("退款fkid:",refundInfo.fkid)
-					console.log("退款fkids:",[this.PayWayInfo("SZQ").fkid,this.PayWayInfo("ZQ").fkid])
-					if ([this.PayWayInfo("SZQ").fkid,this.PayWayInfo("ZQ").fkid,this.PayWayInfo("EXCESS").fkid].indexOf(refundInfo.fkid) !== -1) { //如果为券支付
+					console.log("退款fkid:", refundInfo.fkid)
+					console.log("退款fkids:", [this.PayWayInfo("SZQ").fkid, this.PayWayInfo("ZQ").fkid])
+					if ([this.PayWayInfo("SZQ").fkid, this.PayWayInfo("ZQ").fkid, this.PayWayInfo("EXCESS")
+							.fkid
+						].indexOf(refundInfo.fkid) !== -1) { //如果为券支付
 						refundInfo.fail = false;
 						refundInfo.refund_num += 1;
 						promises.push(new Promise(function(resolve, reject) { //避免空数组检测不到
@@ -934,8 +937,8 @@
 				let payAfter = this.PayDataAssemble(),
 					type = this.PayTypeJudgment(),
 					info = this.PayWayInfo(this.currentPayType);
-					if(Object.keys(info).length === 0)
-						info = this.PayWayInfo(type);
+				if (Object.keys(info).length === 0)
+					info = this.PayWayInfo(type);
 				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
@@ -1064,13 +1067,13 @@
 					brand: that.brand,
 					data
 				}, (res) => {
-					console.log("积分上传成功...",res)
+					console.log("积分上传成功...", res)
 					uni.showToast({
 						title: res.code ? "积分上传成功" : res.msg,
 						icon: "success"
 					})
 				}, (err) => {
-					console.log("积分上传失败...",err)
+					console.log("积分上传失败...", err)
 					uni.showToast({
 						title: err.code ? "积分上传失败" : err.msg,
 						icon: "error"
@@ -1214,7 +1217,7 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(e) {
-				this.is_poly = e.currentTarget.id === 'POLY';//如果是 POLY 则是聚合，否则不是
+				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				this.currentPayType = e.currentTarget.id; //小程序
 			},
 			//返回上个页面
@@ -1290,7 +1293,7 @@
 			},
 			//切换-退款和支付
 			ActionSwtich: function() {
-				console.log("是否是退款：",this.isRefund)
+				console.log("是否是退款：", this.isRefund)
 				if (this.isRefund)
 					this.Refund();
 				else
