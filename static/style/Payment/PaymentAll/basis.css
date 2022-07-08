@@ -13,7 +13,8 @@ page {
 	background-color: #F5F4F8;
 	box-sizing: border-box;
 	align-items: center;
-	margin-top:88rpx;
+	align-items: center;
+	padding-top:56rpx;
 }
 
 .getback {

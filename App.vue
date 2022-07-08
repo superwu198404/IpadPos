@@ -22,7 +22,7 @@
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-				POSCSZID: "武汉现烤",
+				POSCSZID: "武汉前厅",
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -63,6 +63,7 @@
 			BLEInformation: {
 				platform: "",
 				deviceId: "",
+				deviceName: "Printer001",
 				writeCharaterId: "",
 				writeServiceId: "",
 				notifyCharaterId: "",

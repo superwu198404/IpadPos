@@ -5,7 +5,7 @@
 		<button @click="init">数据初始化</button>
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
-		<button @click="toPrinter">去打印</button>
+		<button @click="toPrinter">蓝牙与打印</button>
 	</view>
 </template>
 

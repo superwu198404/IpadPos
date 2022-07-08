@@ -4,19 +4,27 @@ Database Access
 */
 import Req from '@/utils/request.js';
 
-const RequestSend = async function(sql, succesFunc, errorFunc) {
-	let reqdata = Req.resObj(true, "数据传输中", sql, `MobilePos_API.Models.DataQuery.SALEQuery`);
+export const RequestSend = async function(sql, succesFunc, errorFunc) {
+	let reqdata = Req.resObj(true, "数据传输中", sql, `MobilePos_API.Models.DataQuery.SALEQuery`),code = true,result = null;
 	reqdata.data.data = sql;
-	console.log("[RequestSend]reqdata:", reqdata);
 	await Req.asyncFuncOne(reqdata,
 		function(res) {
+			code = true;
+			result = res;
 			if (succesFunc) succesFunc(res);
 		},
 		function(error) {
+			code = false;
+			result = error;
 			if (errorFunc) succesFunc(error);
 		});
+		return {
+			code:code,
+			result:result
+		}
 }
 
+// 退款用的订单查询
 export const RefundQuery = async function(bill) {
 	let sales = {
 		sale1: {},

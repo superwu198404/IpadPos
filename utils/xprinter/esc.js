@@ -1232,7 +1232,7 @@ var jpPrinter = {
 		}
 		
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
-		if(printer_poscs.YN_CALLNUM  != ""){
+		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(xpType + "取餐码: " + printer_poscs.YN_CALLNUM);
@@ -1321,26 +1321,43 @@ var jpPrinter = {
 		var payTotal = 0.00;
 		var change = 0.00;
 		
+		//支付方式分组的处理
+		let sale3_arrOrigin = JSON.stringify(data.sale3List);
+		//console.log("data.sale3List",sale3_arrOrigin);
+		let sale3_arr = [];
 		//付款方式
-		data.sale3List.forEach((item, i) => {
+		data.sale3List.forEach((item1, index1) => {
+			payTotal += Math.abs(parseFloat(item1.amt));		
+			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
+			if (!parent) {
+				let totalAmt = data.sale3List.reduce((prev, cur) => {
+					return prev + cur.amt;
+				}, 0)
+				item1.amt = totalAmt;
+				sale3_arr.push(item1)
+			} 
+		});
+		//console.log("data.sale3List 111",data.sale3List);
+		sale3_arr.forEach((item2, index2) => {
+			let amount = item2.amt;
 			//是退单，金额显示负数
 			if(isReturn){
-				item.amt = -Math.abs(item.amt);
+				item2.amt = -Math.abs(amount);
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item.fkName + ":" + item.amt.toString());
+			jpPrinter.setText(item2.fkName + ":" + amount.toString());
 			jpPrinter.setPrint(); //打印并换行
-			payTotal += parseFloat(item.amt);
-		});
+		});		
+	    //console.log("sale3_arr",sale3_arr);
 		
 		//是退单，金额显示负数
 		if(isReturn){
-			payTotal = -Math.abs(payTotal);
+			payTotal = -Math.abs(payTotal.toFixed(2));
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("支付:" + payTotal.toString());
+		jpPrinter.setText("支付:" + payTotal.toFixed(2).toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1353,12 +1370,14 @@ var jpPrinter = {
 		jpPrinter.setText("门店地址: " + data.khAddress);
 		jpPrinter.setPrint(); //打印并换行
 		
-		data.sale3List.forEach((item, i) => {
+	    let	sale3_List = JSON.parse(sale3_arrOrigin);
+		//console.log("data.sale3List 111",sale3_List)
+		sale3_List.forEach((item3, index3) => {
 			if(isReturn){
-				item.amt = -Math.abs(item.amt);
+				item3.amt = -Math.abs(item3.amt);
 			}
 			//卡券号存在，才打印
-			if(item.id != "" && item.id != undefined){
+			if(item3.id != "" && item3.id != undefined){
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
 				jpPrinter.setText("-----------------------------------------------");
@@ -1366,17 +1385,17 @@ var jpPrinter = {
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("卡/券号:" + util.onlyFourBank(item.id));
+				jpPrinter.setText("卡/券号:" + util.onlyFourBank(item3.id));
 				jpPrinter.setPrint(); //打印并换行
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("消费额:" + item.amt.toString());
+				jpPrinter.setText("消费额:" + item3.amt.toString());
 				jpPrinter.setPrint(); //打印并换行
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("卡类型:" + item.fkName.toString()+ " 识别码:" + item.no.toString());
+				jpPrinter.setText("卡类型:" + item3.fkName.toString()+ " 识别码:" + item3.no.toString());
 				jpPrinter.setPrint(); //打印并换行
 			}
 		});
@@ -1512,6 +1531,73 @@ var jpPrinter = {
 		
 		jpPrinter.setText(strCmd);
 		jpPrinter.setPrint(); //打印并换行
+	}
+	
+	/**
+	 * 打印二维码
+	 * @param {*} command 
+	 * @param {*} qrCodeWidth 
+	 * @param {*} qrCodeHeight 
+	 */
+	jpPrinter.canvasGetImageData = async (qrCodeWidth,qrCodeHeight)=>{
+		//打印二维码
+		await uni.canvasGetImageData({
+			canvasId: "couponQrcode",
+			x: 0,
+			y: 0,
+			width: qrCodeWidth,
+			height: qrCodeHeight,
+			success: function(res) {
+				console.log("获取画布数据成功");
+				jpPrinter.setSelectJustification(1); //居中
+				jpPrinter.setBitmap(res);
+				jpPrinter.setPrint();	
+			},
+			complete: function(res) {
+				console.log("打印二维码 finish");
+			},
+			fail: function(res) {
+				console.log("获取画布数据失败:", res);
+				uni.showToast({
+					title: "获取画布数据失败",
+					icon: "none"
+				});
+			}
+		});
+	}
+	
+	/** 预定业务蛋糕标签打印格式
+	 * @param {Object} data
+	 * @param {Object} printer_poscs
+	 */
+	jpPrinter.advanceformatString = function(data){
+	
+		data.forEach((item, i) => {
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("顾客姓名:" + item.custmname);
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("顾客电话:" + util.onlyFourPhone(item.custmphone));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("产品名称:" + item.spname.toString());
+			jpPrinter.setPrint(); //打印并换
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("要求提货日期:" + item.thdate.toString());
+			jpPrinter.setPrint(); //打印并换
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("-----------------------------------------------");
+			jpPrinter.setPrint(); //打印并换行
+		});
 	}
 	
     return jpPrinter;

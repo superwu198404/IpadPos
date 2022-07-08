@@ -26,7 +26,7 @@ const utils = {
 	hidePropety: (obj, ...props) => {
 		let configs = {};
 		props.forEach(p => {
-			if (Object.hasOwn(obj,p))
+			if (obj[p] !== undefined)
 				configs[p] = {
 					configurable: true,
 					enumerable: false,
