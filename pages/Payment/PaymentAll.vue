@@ -47,8 +47,12 @@
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 				</view>
 				<view class="checkout">
-					<label><image src="../../images/dx-mendian.png" mode="widthFix"></image>{{NAME}}</label>
-					<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}</label>
+					<label>
+						<image src="../../images/dx-mendian.png" mode="widthFix"></image>{{NAME}}
+					</label>
+					<label>
+						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+					</label>
 				</view>
 			</view>
 			<view class="amounts">
@@ -112,8 +116,7 @@
 							<h3 v-if="isRefund">已退款 <button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
-									<view class="Methods"
-										v-for="(refund, index) in refundedList">
+									<view class="Methods" v-for="(refund, index) in refundedList">
 										<!-- 这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）且是状态确定的（正在支付操作算不确定的，所以不显示，当成功或失败才算确定的状态） -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
@@ -190,30 +193,30 @@
 			<view class="coupons">
 				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = !coupons">×</button></view>
 				<view style="max-height: 620px;overflow: auto;">
-				<view class="uls">							
-					<view class="lis" v-for="(item,index) in coupon_list">
-						<view class="voucher">
-							<view><text>￥</text>{{item.money}}</view>
-							<text>满{{item.limitmoney}}可用</text>
-						</view>
-						<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
-						<view class="coupon-dets">
-							<view class="limit">
-								<view class="h3" v-for="(item1,index1) in item.limitDesc">
-									<text>{{item1}}</text>
-								</view>
-								<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
+					<view class="uls">
+						<view class="lis" v-for="(item,index) in coupon_list">
+							<view class="voucher">
+								<view><text>￥</text>{{item.money}}</view>
+								<text>满{{item.limitmoney}}可用</text>
 							</view>
-							<view class="directions">
-								<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-								<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+							<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+							<view class="coupon-dets">
+								<view class="limit">
+									<view class="h3" v-for="(item1,index1) in item.limitDesc">
+										<text>{{item1}}</text>
+									</view>
+									<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 								</view>
-								<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-										mode="widthFix"></image></button>
+								<view class="directions">
+									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+									<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+									</view>
+									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+											mode="widthFix"></image></button>
+								</view>
 							</view>
 						</view>
-					</view>				
-				</view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -265,7 +268,7 @@
 				coupons: false, //卡券弹窗
 				coupon_list: [], //券集合
 				logs: false,
-				isRefund:true,
+				isRefund: true,
 				navmall: false,
 				channel: "POS",
 				YN_TotalPay: false,
@@ -424,9 +427,9 @@
 				this.allAmount = this.toBePaidPrice();
 				return this.allAmount;
 			},
-			refundedList:function(){
+			refundedList: function() {
 				let fkid = this.PayWayInfo('EXCESS').fkid;
-				return this.RefundList.filter(i => !i.fail && i.refund_num!=0 && !i.refunding && i.fkid !== fkid);
+				return this.RefundList.filter(i => !i.fail && i.refund_num != 0 && !i.refunding && i.fkid !== fkid);
 			}
 		},
 		methods: {
@@ -471,11 +474,11 @@
 					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
-					ROUND:this.isRefund? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
+					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
-					XS_POSID:this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
+					XS_POSID: this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
 					XS_DATE: this.isRefund ? (sale1?.SALEDATE ?? "") : "", //退款时记录原销售日期（重点）
 					XS_KHID: this.isRefund ? (sale1?.KHID ?? "") : "", //退款时记录原khid（重点）
 					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
@@ -741,7 +744,7 @@
 			SALE3Init: function() {
 				if (this.isRefund) {
 					// let group = ["ZZ01", "ZF09", "ZCV1"];
-					let group = ["ZQ", "SZQ", "EXCESS"].map((function(type){
+					let group = ["ZQ", "SZQ", "EXCESS"].map((function(type) {
 						return this.PayWayInfo(type).fkid;
 					}).bind(this));
 					let list = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
@@ -784,7 +787,7 @@
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
 			},
-			PayWayInfo:function(type){
+			PayWayInfo: function(type) {
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			//退款操作
@@ -859,7 +862,8 @@
 				if (this.RefundList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
 						//销售单单创建成功后 上传一下数据
-						let bill = that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
+						let bill = that.actType == common.actTypeEnum.Refund ? that.out_refund_no :
+							that
 							.out_trade_no_old;
 						common.TransLiteData(bill);
 						that.scoreConsume();
@@ -932,13 +936,16 @@
 				let payAfter = this.PayDataAssemble(),
 					type = this.PayTypeJudgment(),
 					info = this.PayWayList.find(i => i.type === type);
-				console.log(`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`);
+				console.log(
+					`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`
+				);
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
 				console.log("限制支付集合数据：", XZZF);
 				console.log("当前支付集合：", this.PayList);
 				console.log("当前支付类型：", pt);
-				if (XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) { //如果被限制了 则进行判断是否有过支付
+				if (XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >=
+					0) { //如果被限制了 则进行判断是否有过支付
 					let obj = this.PayList.find((r) => {
 						return r.type == pt;
 					})
@@ -987,7 +994,8 @@
 							card = result.vouchers.filter(i => i.yn_card === 'Y');
 						if (coupon.length > 0) {
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) :
+								result
 								.vouchers[0].denomination) / 100;
 						} else {
 							let num = 0;
@@ -1001,14 +1009,17 @@
 					result.vouchers.forEach((function(coupon, index) {
 						console.log("卡券：", coupon)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
-								.note === 'EXCESS' ? -coupon.pay_amount : coupon
-								.denomination)) / 100).toFixed(2),
+							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
+								(coupon
+									.note === 'EXCESS' ? -coupon
+									.pay_amount : coupon
+									.denomination)) / 100).toFixed(2),
 							fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : this
 								.currentPayInfo?.fkid,
 							name: coupon.note === 'EXCESS' ? excessInfo.name : this
 								.currentPayInfo?.name,
-							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
+								.note ===
 								'EXCESS' ? "ZCV1" : coupon.disc_type),
 							disc: (coupon?.discount / 100).toFixed(2),
 							fail,
@@ -1127,8 +1138,8 @@
 				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				if (prev_page_param) {
-					console.log("Init-that:",that.isRefund);
-					console.log("Init-this:",this.isRefund);
+					console.log("Init-that:", that.isRefund);
+					console.log("Init-this:", this.isRefund);
 					this.Products = prev_page_param.Products;
 					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
 					this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
@@ -1137,7 +1148,8 @@
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
 					this.out_trade_no = this.out_trade_no_old; //子单号
-					this.isRefund = prev_page_param.actType == common.actTypeEnum.Refund; //如果等于退款行为，则表示退款，否则是支付
+					this.isRefund = prev_page_param.actType == common.actTypeEnum
+						.Refund; //如果等于退款行为，则表示退款，否则是支付
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
@@ -1239,18 +1251,18 @@
 				let hyinfo = getApp().globalData.hyinfo;
 				if (hyinfo.hyId) {
 					console.log("会员信息：", JSON.stringify(hyinfo));
-					_member.CouponList("获取中...",{
+					_member.CouponList("获取中...", {
 						brand: that.brand,
-						data:{
+						data: {
 							hyid: hyinfo.hyId,
-							phone:hyinfo.Phone
+							phone: hyinfo.Phone
 						}
-					},(res) => {
+					}, (res) => {
 						if (res.code) {
 							that.coupon_list = res.data;
 						}
-					},(err) => {
-						console.log("异常数据：",res)
+					}, (err) => {
+						console.log("异常数据：", res)
 					})
 				}
 			},
@@ -1308,8 +1320,10 @@
 						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0), //退款金额
-								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0) //退款总金额（兼容微信）
+								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
+									0), //退款金额
+								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
+									0) //退款总金额（兼容微信）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 							}).bind(that),
