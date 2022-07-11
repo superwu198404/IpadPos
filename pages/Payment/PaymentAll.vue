@@ -1427,6 +1427,12 @@
 					})
 				}
 				console.log("本单水吧商品：", that.sbsp_arr);
+			},
+			//页面卸载事件
+			onUnLoad:function(e){
+				console.log("页面卸载事件：");
+				util.removeStorage("hyinfo");
+				console.log("会员信息：",util.getStorage("hyinfo"));
 			}
 		},
 		created() {

@@ -493,14 +493,6 @@
 			//确认接收
 			ConfirmReceipt: function() {
 				if (that.Order) {
-					// if (that.Order.STATUS != '12' && that.Order.STATUS != '15' &&
-					// 	that.Order.STATUS != '33') //不是则无法接单
-					// {
-					// 	uni.showToast({
-					// 		title: "该订单无法接单"
-					// 	})
-					// 	return;
-					// }
 					_take.ConfirmReceipt({
 						status: that.Order.STATUS,
 						bill: that.Order.BILL,
@@ -521,6 +513,12 @@
 							title: res.code ? "接收成功" : "接收失败：" + res.msg,
 							icon: res.code ? "success" : "error"
 						})
+						if(res.data.yn_print){
+							//调用打印
+						}
+						if(res.data.yn_bs){
+							//调用处理报损
+						}
 					})
 				}
 			},

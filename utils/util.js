@@ -217,6 +217,20 @@ const utils = {
 			}
 		}
 		return val;
+	},
+	
+	/**
+	 * 清除全局存储值
+	 * @param key: 键
+	 * @returns string
+	 */
+	removeStorage: function(key) {
+		let val = null;
+		if (key) {
+			getApp().globalData[key] = null;
+			uni.removeStorageSync(key);
+		}
+		return val;
 	}
 }
 
@@ -237,5 +251,6 @@ export default {
 	uuid: utils.UUID,
 	setStorage: utils.setStorage,
 	getStorage: utils.getStorage,
-	hidePropety: utils.hidePropety
+	removeStorage:utils.removeStorage,
+	hidePropety: utils.hidePropety,
 }
