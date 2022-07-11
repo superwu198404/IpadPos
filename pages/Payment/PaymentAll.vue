@@ -384,7 +384,7 @@
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
-				console.log("判断-authCode===================：",n)
+				console.log("判断-authCode===================：", n)
 				if (n)
 					this.currentPayInfo = this.PayWayList.find(i => i.type === this
 						.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
@@ -508,7 +508,7 @@
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
 					let sale3_obj = util.hidePropety({
 						BILL: this.isRefund ? this.out_refund_no : this
-						.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						KHID: this.KHID,
@@ -524,9 +524,9 @@
 						BMID: this.BMID, //部门id
 						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
 						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
-						.disc, //折扣金额(卡券消费后要记录)
+							.disc, //折扣金额(卡券消费后要记录)
 						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item
-						.disc, //折扣金额(卡消费后要记录)
+							.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						balance: this.isRefund ? "" : item.balance, //如果是电子卡，余额
@@ -661,11 +661,11 @@
 				let that = this;
 				let pay_info = this.PayWayInfo(this.currentPayType);
 				if (!this.currentPayType) {
-					util.simpleMsg("未选择支付方式，请选择后再进行支付!",false);
+					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
 				}
 				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
-					util.simpleMsg("金额不能为空!",false);
+					util.simpleMsg("金额不能为空!", false);
 					this.dPayAmount = this.toBePaidPrice();
 					return;
 				}
@@ -918,6 +918,8 @@
 						//调用打印
 						console.log("that.Products", that.Products);
 						console.log("that.PayWayList", that.PayWayList);
+						console.log("that.balance", that.sale3_arr[0].balance);
+						console.log("that.balance_old", that.sale3_arr[0].balance_old);
 						let arr2 = that.sale2_arr;
 						arr2.forEach(function(item, index) {
 							let obj = that.Products.find((i) => {
@@ -1038,14 +1040,12 @@
 									.note === 'EXCESS' ? -coupon
 									.pay_amount : coupon
 									.denomination)) / 100).toFixed(2),
-							// fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : (coupon
-							// 	.yn_zq === 'Y' ? give.fkid : this.currentPayInfo?.fkid),
 							fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid : coupon
 								?.fkid,
-							// name: coupon.note === 'EXCESS' ? excessInfo.name : (coupon
-							// 	.yn_zq === 'Y' ? give.name : this.currentPayInfo?.name),
 							name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
 								excessInfo.name,
+							balance: (coupon?.balance / 100).toFixed(2), //如果是电子卡，余额
+							balance_old: ((coupon.balance + coupon.pay_amount) / 100).toFixed(2), //如果是电子卡，余额
 							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
 								.note ===
 								'EXCESS' ? excessInfo.fkid : coupon.disc_type),
@@ -1231,7 +1231,7 @@
 			//点击切换支付方式
 			clickPayType: function(e) {
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				if(['POLY','SZQ'].indexOf(e.currentTarget.id)!==-1)
+				if (['POLY', 'SZQ'].indexOf(e.currentTarget.id) !== -1)
 					this.currentPayType = e.currentTarget.id; //小程序
 			},
 			//返回上个页面
@@ -1422,9 +1422,9 @@
 				console.log("本单水吧商品：", that.sbsp_arr);
 			},
 			//页面卸载事件
-			onUnload:function(e){
+			onUnload: function(e) {
 				console.log("页面卸载事件：");
-				util.removeStorage("hyinfo");//支付完成后清除下会员信息
+				util.removeStorage("hyinfo"); //支付完成后清除下会员信息
 			}
 		},
 		created() {

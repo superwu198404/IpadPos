@@ -21,8 +21,6 @@ export const orderCreated = function(obj, payload) {
 		is_free: "",
 		card_no: "",
 		auth_code:"",//用于处理从上个页面传入，但未进行支付的订单
-		balance: (payload?.balance / 100).toFixed(2),//如果是电子卡，余额
-		balance_old: ((payload.balance + payload.money)/100).toFixed(2),//如果是电子卡，余额
 		//业务配置字段 ↓
 		fail: true, //def初始和退款失败的皆为true
 		pay_num: 0, //退款（尝试）次数
