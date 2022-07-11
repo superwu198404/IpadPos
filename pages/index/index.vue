@@ -255,7 +255,7 @@
 							let obj = {};
 							obj.name = res.msg[i].SNAME;
 							obj.fkid = res.msg[i].FKID;
-							obj.type = res.msg[i].JKSNAME;
+							obj.type = res.msg[i].JKSNAME || "NOPAY";
 							obj.poly = res.msg[i].POLY;
 							obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 							obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
@@ -264,11 +264,12 @@
 							}
 							that.PayWayList.push(obj);
 						}
+						console.log("res.msg:",res.msg)
 						//如果fkda没有则追加测试数据
 						let arr = [{
 							name: "弃用金额",
 							fkid: "ZCV1",
-							type: "EXCESS",
+							type: "NOPAY",
 							poly: "O"
 						}, {
 							name: "仟吉电子卡",
@@ -295,7 +296,8 @@
 							fkid: "ZG11",
 							type: "NO",
 							poly: "O"
-						}]
+						},
+						]
 						for (var i = 0; i < arr.length; i++) {
 							let obj = that.PayWayList.find((item) => {
 								return item.type == arr[i].type;
@@ -307,7 +309,8 @@
 						that.PayWayList.push({
 							name: "仟吉赠券",
 							fkid: "ZZ01",
-							type: "ZQ",
+							// type: "ZQ",
+							type: "NOPAY",
 							poly: "O"
 						});
 					}
