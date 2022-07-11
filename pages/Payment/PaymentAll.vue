@@ -973,7 +973,9 @@
 									.note === 'EXCESS' ? -coupon
 									.pay_amount : coupon
 									.denomination)) / 100).toFixed(2),
-							fkid: coupon.yn_card ? coupon.fkid : this.currentPayInfo?.fkid,
+							// fkid: coupon.note === 'EXCESS' ? excessInfo.fkid : (coupon
+							// 	.yn_zq === 'Y' ? give.fkid : this.currentPayInfo?.fkid),
+							fkid:coupon.yn_card === 'Y'? this.currentPayInfo?.fkid : coupon?.fkid
 							name: coupon.note === 'EXCESS' ? excessInfo.name : (coupon
 								.yn_zq === 'Y' ? give.name : this.currentPayInfo?.name),
 							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon

@@ -49,6 +49,7 @@ export const PayDataAssemble = function(){
 		store_name: this.NAME,
 		merchant_no: this.MerId,
 		channel: this.channel,
+		memo:this.currentPayInfo?.fkid,
 		discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		product_info: this.Products.map(i => { //商品清单
 			return {
