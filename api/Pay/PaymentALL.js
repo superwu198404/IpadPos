@@ -219,14 +219,14 @@ var wxPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-	
-	Payment:function(pt, body, func, catchFunc) {
+
+	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
-	QueryPayment:function(pt, body, func, catchFunc) {
+	QueryPayment: function(pt, body, func, catchFunc) {
 		_QueryPayment(pt, body, func, catchFunc);
 	},
-	CancelPayment:function(pt, body, func, catchFunc) {
+	CancelPayment: function(pt, body, func, catchFunc) {
 		_CancelPayment(pt, body, func, catchFunc);
 	},
 	Refund: function(pt, body, func, catchFunc) {
@@ -244,14 +244,14 @@ var zfbPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-	
-	Payment:function(pt, body, func, catchFunc) {
+
+	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
-	QueryPayment:function(pt, body, func, catchFunc) {
+	QueryPayment: function(pt, body, func, catchFunc) {
 		_QueryPayment(pt, body, func, catchFunc);
 	},
-	CancelPayment:function(pt, body, func, catchFunc) {
+	CancelPayment: function(pt, body, func, catchFunc) {
 		_CancelPayment(pt, body, func, catchFunc);
 	},
 	Refund: function(pt, body, func, catchFunc) {
@@ -269,14 +269,14 @@ var hykPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-	
-	Payment:function(pt, body, func, catchFunc) {
+
+	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
-	QueryPayment:function(pt, body, func, catchFunc) {
+	QueryPayment: function(pt, body, func, catchFunc) {
 		_QueryPayment(pt, body, func, catchFunc);
 	},
-	CancelPayment:function(pt, body, func, catchFunc) {
+	CancelPayment: function(pt, body, func, catchFunc) {
 		_CancelPayment(pt, body, func, catchFunc);
 	},
 	Refund: function(pt, body, func, catchFunc) {
@@ -292,23 +292,112 @@ var szqPay = {
 		_PaymentAll(pt, body, func, catchFunc);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		// _RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		//退款自处理
+		if (finallyFunc)
+			finallyFunc({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
 	},
-	
-	Payment:function(pt, body, func, catchFunc) {
+
+	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
-	QueryPayment:function(pt, body, func, catchFunc) {
+	QueryPayment: function(pt, body, func, catchFunc) {
 		_QueryPayment(pt, body, func, catchFunc);
 	},
-	CancelPayment:function(pt, body, func, catchFunc) {
+	CancelPayment: function(pt, body, func, catchFunc) {
+		//注意券后端无该接口
 		_CancelPayment(pt, body, func, catchFunc);
 	},
 	Refund: function(pt, body, func, catchFunc) {
-		_Refund(pt, body, func, catchFunc);
+		//_Refund(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
 	},
 	QueryRefund: function(pt, body, func, catchFunc) {
 		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+//无后端接口的处理方式
+var noPay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		//_PaymentAll(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		// _RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		//退款自处理
+		if (finallyFunc)
+			finallyFunc({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+
+	Payment: function(pt, body, func, catchFunc) {
+		// _Payment(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		//_QueryPayment(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		//_CancelPayment(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		//_Refund(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		//_QueryRefund(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
 	}
 }
 
@@ -317,7 +406,8 @@ var payType = {
 	WX_CLZF: wxPay,
 	ZFB_CLZF: zfbPay,
 	HYK: hykPay,
-	SZQ: szqPay
+	SZQ: szqPay,
+	NOPAY: noPay
 }
 
 //聚合支付主入口

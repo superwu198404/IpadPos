@@ -402,7 +402,8 @@
 			},
 			authCode: function(n, o) {
 				if (n)
-					this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					this.currentPayInfo = this.PayWayList.find(i => i.type === this
+				.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 				else
 					this.currentPayInfo = null
 				console.log("当前支付类型信息：", this.currentPayInfo);
