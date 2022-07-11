@@ -1,3 +1,7 @@
+
+.content{
+	height: 100vh;
+}
 .commodity{
 	height: 97%;
 }
@@ -111,4 +115,40 @@
 	width:46%;
 	margin:1% 2%;
 	font-size: 32rpx;
+}
+.breakage{
+	padding:1% 4%;
+}
+.breakage label{
+	display: flex;
+	width:100%;
+	margin: 30rpx 0;
+}
+.breakage label text{
+	min-width: 160rpx;
+	line-height: 60rpx;
+	color: #b0b0b0;
+	font-size: 26rpx;
+}
+.breakage label input,.breakage label textarea{
+	width:70%;
+	background-color: #F5F5F5;
+	height: 60rpx;
+	line-height: 60rpx;
+	border-radius: 6rpx;
+	border:1px solid #eee;
+}
+.breakage label textarea{
+	line-height: 40rpx;
+	height: 120rpx;
+	vertical-align: top;
+}
+.memberes .goods{
+	height:58%;
+}
+.confirm{
+	display: flex;
+}
+.confirm button{
+	margin:0 2%;
 }

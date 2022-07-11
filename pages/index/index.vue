@@ -179,27 +179,28 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
-				PayList: [{
-					fkid: "ZF04",
-					type: "HYK",
-					bill: "111111111111111111111111111",
-					name: "微信支付",
-					amount: 0.01,
-					no: 0,
-					disc: 0.2,
-					zklx: "test-测试数据",
-					id_type: "test-测试数据",
-					user_id: "test-测试数据",
-					auth_code: "KG99504660018941542400",
-					is_free: "",
-					card_no: "",
-					//业务配置字段 ↓
-					fail: true, //def初始和退款失败的皆为true
-					pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
-					paying: false, //是否在正在退款中
-					loading: false,
-					msg: "" //操作提示信息（可以显示失败的或者成功的）
-				}],
+				PayList:[],
+				// PayList: [{
+				// 	fkid: "ZF04",
+				// 	type: "HYK",
+				// 	bill: "111111111111111111111111111",
+				// 	name: "微信支付",
+				// 	amount: 0.01,
+				// 	no: 0,
+				// 	disc: 0.2,
+				// 	zklx: "test-测试数据",
+				// 	id_type: "test-测试数据",
+				// 	user_id: "test-测试数据",
+				// 	auth_code: "KG99504660018941542400",
+				// 	is_free: "",
+				// 	card_no: "",
+				// 	//业务配置字段 ↓
+				// 	fail: true, //def初始和退款失败的皆为true
+				// 	pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+				// 	paying: false, //是否在正在退款中
+				// 	loading: false,
+				// 	msg: "" //操作提示信息（可以显示失败的或者成功的）
+				// }],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 
