@@ -66,6 +66,7 @@
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<button @click="againPrinter()">重新打印</button>
+		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
 		<div v-if="view.orders.showDetail"
@@ -135,7 +136,7 @@
 			return {
 				first: true,
 				input: {
-					sql:"",
+					sql: "",
 					fromData: {
 						PLID: "101",
 						SPID: "",
@@ -178,6 +179,27 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
+				PayList: [{
+					fkid: "ZF04",
+					type: "HYK",
+					bill: "111111111111111111111111111",
+					name: "微信支付",
+					amount: 0.01,
+					no: 0,
+					disc: 0.2,
+					zklx: "test-测试数据",
+					id_type: "test-测试数据",
+					user_id: "test-测试数据",
+					auth_code: "KG99504660018941542400",
+					is_free: "",
+					card_no: "",
+					//业务配置字段 ↓
+					fail: true, //def初始和退款失败的皆为true
+					pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+					paying: false, //是否在正在退款中
+					loading: false,
+					msg: "" //操作提示信息（可以显示失败的或者成功的）
+				}],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 
@@ -212,6 +234,16 @@
 		},
 		//方法初始化
 		methods: {
+			inputAuthCode: function() {
+				uni.scanCode({
+					success: (function(res) {
+						console.log("auth_code:", res.result)
+						this.PayList[0].auth_code = res.result;
+						console.log("this.PayList[0].auth_code:", this.PayList[0].auth_code)
+					}).bind(this)
+				});
+
+			},
 			//获取支付方式
 			GetPayWay: async function(e) {
 				let that = this;
@@ -225,7 +257,7 @@
 							obj.fkid = res.msg[i].FKID;
 							obj.type = res.msg[i].JKSNAME;
 							obj.poly = res.msg[i].POLY;
-							obj.dbm = res.msg[i].YN_DBM;//是否要扫码 Y:扫码 N:不扫码
+							obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 							obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
@@ -296,9 +328,9 @@
 							data = await common.QueryRefund(this.refund_no);
 						}
 						this.sale1_obj = data.sale1;
-						console.log("private-before:",data.sale2)
-						this.sale2_arr = data.sale2.map(i => util.hidePropety(i,"SKYDISCOUNT","NAME"));
-						console.log("private-after:",data.sale2)
+						console.log("private-before:", data.sale2)
+						this.sale2_arr = data.sale2.map(i => util.hidePropety(i, "SKYDISCOUNT", "NAME"));
+						console.log("private-after:", data.sale2)
 						this.sale3_arr = data.sale3;
 						this.Products = this.sale3_arr?.map((function(i) {
 							return Object.assign({
@@ -364,7 +396,8 @@
 					XS_TYPE: this.XS_TYPE,
 					SKY_DISCOUNT: this.SKY_DISCOUNT,
 					totalAmount: this.totalAmount,
-					actType: this.actType
+					actType: this.actType,
+					PayList: this.PayList
 				});
 			},
 			priceCount: function() {
@@ -467,10 +500,10 @@
 						KCDID: this.KCDID,
 						BMID: this.BMID,
 						SKYDISCOUNT: item.SKYDISCOUNT
-					},"SKYDISCOUNT");
+					}, "SKYDISCOUNT");
 				});
-				console.log("after:",this.sale2_arr)
-				console.log("after:",JSON.stringify(this.sale2_arr))
+				console.log("after:", this.sale2_arr)
+				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
 				let sql = "update fkda set yn_dbm='Y' where sname='电子券'";
