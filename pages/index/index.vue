@@ -179,8 +179,8 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
-				PayList: [
-				// 	{
+				PayList:[],
+				// PayList: [{
 				// 	fkid: "ZF04",
 				// 	type: "HYK",
 				// 	bill: "111111111111111111111111111",
@@ -200,8 +200,7 @@
 				// 	paying: false, //是否在正在退款中
 				// 	loading: false,
 				// 	msg: "" //操作提示信息（可以显示失败的或者成功的）
-				// }
-				 ],
+				// }],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 

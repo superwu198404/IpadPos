@@ -198,154 +198,36 @@
 
 		</view>
 
-
-		<!-- 会员登陆结算 -->
-		<view class="boxs" v-if="statements">
+		<view class="boxs">
 			<view class="memberes">
-				<view class="meminfo" v-if="Memberinfo">
-					<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix"></image>
-					<view class="member">
-						<label>
-							<image class="touxiang" src="@/images/touxiang.png"></image>
-							<label class="meminfo"><text>会员名称</text><text>13012341234</text></label>
-						</label>
-						<button>×</button>
-					</view>
-					<view class="nom">
-						<label>
-							<text>￥123</text>
-							<text>余额</text>
-						</label>
-						<label>
-							<text>6123</text>
-							<text>积分</text>
-						</label>
-						<label>
-							<text>23</text>
-							<text>优惠券</text>
-						</label>
-						<label>
-							<text>12</text>
-							<text>礼品卡</text>
-						</label>
-					</view>
-					<view class="rests">
-						<view class="h2">其他</view>
-						<view class="restlist">
-							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
-							<label><text>是否推送活动信息：</text><text>是</text></label>
-							<label><text>上次购买金额：</text><text>￥56</text></label>
-							<label><text>是否参与上次活动：</text><text>否</text></label>
-						</view>
-					</view>
-					<view class="coulist">
-						<view class="h2">优惠券</view>
-						<view class="uls">
-							<view class="lis" v-for="(item,index) in coupon_list">
-								<view class="voucher">
-									<view><text>￥</text>{{item.money}}</view>
-									<text>满{{item.limitmoney}}可用</text>
-								</view>
-								<image class="banyuan" src="@/images/quan-fenge.png" mode="widthFix"></image>
-								<view class="coupon-dets">
-									<view class="limit">
-										<view class="h3" v-for="(item1,index1) in item.limitDesc">
-											<text>{{item1}}</text>
-										</view>
-										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
-									</view>
-									<view class="directions">
-										<image class="bg" src="@/images/quan-bg.png" mode="widthFix"></image>
-										<view>使用说明<image src="@/images/xiala.png" mode="widthFix"></image>
-										</view>
-										<button @click="CouponToUse(item.lqid)">点击使用<image src="@/images/ewm.png"
-												mode="widthFix"></image></button>
-									</view>
-								</view>
-							</view>
-						</view>
-
-					</view>
-				</view>
-				<view class="meminfo" v-if="Shoppingbags">
-					<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix"></image>
-					<view>
-						<view class="member">
-							<label class="h9">武汉满20元赠小号手提袋</label>
-							<button>×</button>
-						</view>
-						<view class="shoppbag">
-							<view class="baglist curr">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-
 				<view class="pop-r">
 					<view class="member">
 						<label>
-							<image class="touxiang" src="@/images/touxiang.png"></image>
-							<button class="btn" @click="Memberlogin()">会员登录</button>
+							门店报损
 						</label>
-						<text>清空</text>
+						<button>×</button>
 					</view>
-					<view class="h5"><text>账单</text></view>
+					<view class="breakage">
+						<label><text>报损原因：</text><input /></label>
+						<label><text>备注：</text><textarea></textarea></label>
+					</view>
+					<view class="h5"><text>报损商品</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
 						<view class="prolist">
 							<view class="h3">
 								<label>
-									<image src="@/images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
 								</label>
 								<text>X2</text>
 							</view>
 							<view class="cods">
 								<view>
 									<label>
-										<image src="@/images/dx-bm.png" mode="widthFix"></image>12345678
+										<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
 									</label>
 									<label>
-										<image src="@/images/dx-dw.png" mode="widthFix"></image>10个装
+										<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
 									</label>
 								</view>
 								<text>￥56</text>
@@ -354,73 +236,21 @@
 
 					</view>
 
-					<view class="ul">
-						<view class="li"><text>总金额</text><text>￥567</text></view>
-						<view class="li"><text>件数</text><text>7</text></view>
-						<view class="li"><text>折扣</text><text>-￥5</text></view>
-						<view class="li"><text>应收金额</text><text>￥560</text></view>
-					</view>
-					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
-
-					<view class="shoppbag">
-						<view class="hengs">
-							<view class="baglist curr">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-
-						</view>
-					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn">报 损</button>
+						<button class="btn">提 交</button>
 					</view>
 
 					<!-- <view class="states" @click="Statements()">
-					<text>结算单</text>
-					<label>»</label>
-				</view> -->
+          <text>结算单</text>
+          <label>»</label>
+        </view> -->
 
 				</view>
 			</view>
 		</view>
+
+	</view>
 
 	</view>
 </template>
@@ -493,14 +323,6 @@
 			//确认接收
 			ConfirmReceipt: function() {
 				if (that.Order) {
-					// if (that.Order.STATUS != '12' && that.Order.STATUS != '15' &&
-					// 	that.Order.STATUS != '33') //不是则无法接单
-					// {
-					// 	uni.showToast({
-					// 		title: "该订单无法接单"
-					// 	})
-					// 	return;
-					// }
 					_take.ConfirmReceipt({
 						status: that.Order.STATUS,
 						bill: that.Order.BILL,
@@ -521,6 +343,12 @@
 							title: res.code ? "接收成功" : "接收失败：" + res.msg,
 							icon: res.code ? "success" : "error"
 						})
+						if (res.data.yn_print) {
+							//调用打印
+						}
+						if (res.data.yn_bs) {
+							//调用处理报损
+						}
 					})
 				}
 			},

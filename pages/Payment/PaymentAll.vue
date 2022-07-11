@@ -1420,6 +1420,11 @@
 					})
 				}
 				console.log("本单水吧商品：", that.sbsp_arr);
+			},
+			//页面卸载事件
+			onUnload:function(e){
+				console.log("页面卸载事件：");
+				util.removeStorage("hyinfo");//支付完成后清除下会员信息
 			}
 		},
 		created() {
