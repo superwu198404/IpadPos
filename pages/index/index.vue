@@ -179,27 +179,29 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
-				PayList: [{
-					fkid: "ZF04",
-					type: "HYK",
-					bill: "111111111111111111111111111",
-					name: "微信支付",
-					amount: 0.01,
-					no: 0,
-					disc: 0.2,
-					zklx: "test-测试数据",
-					id_type: "test-测试数据",
-					user_id: "test-测试数据",
-					auth_code: "KG99504660018941542400",
-					is_free: "",
-					card_no: "",
-					//业务配置字段 ↓
-					fail: true, //def初始和退款失败的皆为true
-					pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
-					paying: false, //是否在正在退款中
-					loading: false,
-					msg: "" //操作提示信息（可以显示失败的或者成功的）
-				}],
+				PayList: [
+				// 	{
+				// 	fkid: "ZF04",
+				// 	type: "HYK",
+				// 	bill: "111111111111111111111111111",
+				// 	name: "微信支付",
+				// 	amount: 0.01,
+				// 	no: 0,
+				// 	disc: 0.2,
+				// 	zklx: "test-测试数据",
+				// 	id_type: "test-测试数据",
+				// 	user_id: "test-测试数据",
+				// 	auth_code: "KG99504660018941542400",
+				// 	is_free: "",
+				// 	card_no: "",
+				// 	//业务配置字段 ↓
+				// 	fail: true, //def初始和退款失败的皆为true
+				// 	pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+				// 	paying: false, //是否在正在退款中
+				// 	loading: false,
+				// 	msg: "" //操作提示信息（可以显示失败的或者成功的）
+				// }
+				 ],
 				BILL_TYPE: "Z101", //销售类型 默认为销售业务
 				XS_TYPE: "1", //销售类型 默认为销售业务
 				// refund_no: "K0101QT2122624153953331" 
@@ -264,7 +266,7 @@
 							}
 							that.PayWayList.push(obj);
 						}
-						console.log("res.msg:",res.msg)
+						console.log("res.msg:", res.msg)
 						//如果fkda没有则追加测试数据
 						let arr = [{
 							name: "弃用金额",
@@ -296,8 +298,7 @@
 							fkid: "ZG11",
 							type: "NO",
 							poly: "O"
-						},
-						]
+						}, ]
 						for (var i = 0; i < arr.length; i++) {
 							let obj = that.PayWayList.find((item) => {
 								return item.type == arr[i].type;
@@ -672,6 +673,10 @@
 			}
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+				console.log("======================index-PayList======================:",this.PayList)
+				console.log("======================index-Sale1======================:",this.sale1_obj)
+				console.log("======================index-Sale2======================:",this.sale2_arr)
+				console.log("======================index-Sale3======================:",this.sale3_arr)
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

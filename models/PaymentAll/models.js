@@ -7,7 +7,7 @@ import util from '@/utils/util.js';
 
 //订单对象创建
 export const orderCreated = function(obj, payload) {
-	let order =util.hidePropety(Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
+	let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
 		fkid: this.currentPayInfo?.fkid ?? "",
 		type: this.currentPayInfo?.type ?? "",
 		bill: payload?.out_trade_no,
@@ -29,7 +29,7 @@ export const orderCreated = function(obj, payload) {
 		paying: false, //是否在正在退款中
 		loading: false,
 		msg: "" //操作提示信息（可以显示失败的或者成功的）
-	}, obj),"balance","balance_old");
+	}, obj);
 	console.log("封装响应体[orderCreated]:", order)
 	return order;
 }
