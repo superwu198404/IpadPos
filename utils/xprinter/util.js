@@ -280,6 +280,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 			zklx: sale3_arr[j].ZKLX, //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
 			fkName: sale3_arr[j].SNAME,
+			save_je: sale3_arr[j].balance, // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
@@ -353,18 +354,18 @@ const addContent = function(content){
 }
 
 // 二维码生成工具
-const couponQrCode = async function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
-    await new qrCode('couponQrcode', {
-		text: qrCodeContent,
-		width: qrCodeWidth,
-		height: qrCodeHeight,
-		colorDark: "#333333",
-		colorLight: "#FFFFFF",
-		correctLevel: qrCode.CorrectLevel.H
-	})
-	console.log("二维码生成内容:", qrCodeContent + bill)
-	return true;
-}
+// const couponQrCode = async function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
+//     await new qrCode('couponQrcode', {
+// 		text: qrCodeContent,
+// 		width: qrCodeWidth,
+// 		height: qrCodeHeight,
+// 		colorDark: "#333333",
+// 		colorLight: "#FFFFFF",
+// 		correctLevel: qrCode.CorrectLevel.H
+// 	})
+// 	console.log("二维码生成内容:", qrCodeContent + bill)
+// 	return true;
+// }
 
 /**
  * 查询终端参数
@@ -586,6 +587,73 @@ const groupByOrder = function(array, f) {
       })
 }
 
+/**
+ * 打印二维码
+ * @param {*} command 
+ * @param {*} qrCodeWidth 
+ * @param {*} qrCodeHeight 
+ */
+const qrCodeAction = function(command,qrCodeWidth,qrCodeHeight){
+    return new Promise((resolve, reject) => {
+		//打印二维码
+		uni.canvasGetImageData({
+			canvasId: "couponQrcode",
+			x: 0,
+			y: 0,
+			width: qrCodeWidth,
+			height: qrCodeHeight,
+			success: function(res) {
+				resolve(res)
+				console.log("获取画布数据成功");
+				command.setSelectJustification(1); //居中
+				command.setBitmap(res);
+				command.setPrint();	
+			},
+			complete: function(res) {
+				console.log("finish");
+			},
+			fail: function(res) {
+				console.log("获取画布数据失败:", res);
+				uni.showToast({
+					title: "获取画布数据失败",
+					icon: "none"
+				});
+			}
+		 });
+        console.log("3");
+    });
+}
+
+/**
+ * 生成二维码
+ * @param {*} bill 
+ * @param {*} qrCodeContent 
+ * @param {*} qrCodeWidth 
+ * @param {*} qrCodeHeight 
+ */
+const qrCodeGenerate = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
+    return new Promise((resolve, reject) => {
+       new qrCode('couponQrcode', {
+       	text: qrCodeContent,
+       	width: qrCodeWidth,
+       	height: qrCodeHeight,
+       	colorDark: "#333333",
+       	colorLight: "#FFFFFF",
+       	correctLevel: qrCode.CorrectLevel.H
+       })
+       resolve('1')
+	   console.log("二维码生成内容:", qrCodeContent + bill)
+    });
+}
+
+const gzhQrCodeGenerate = function(){
+    return new Promise((resolve, reject) => {
+         resolve('2')
+        console.log("2");
+    });
+}
+
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -599,12 +667,15 @@ module.exports = {
 	onlyFourBank: onlyFourBank,
 	addPos_XsBillPrintData: addPos_XsBillPrintData,
 	addContent: addContent,
-	couponQrCode: couponQrCode,
+	// couponQrCode: couponQrCode,
 	getPOSCS: getPOSCS,
 	commonPOSCS: commonPOSCS,
 	getBillPrinterData: getBillPrinterData,
 	onlyFourPhone: onlyFourPhone,
 	groupBy: groupBy,
 	getSum: getSum,
-	groupByOrder: groupByOrder
+	groupByOrder: groupByOrder,
+	qrCodeGenerate: qrCodeGenerate,
+	gzhQrCodeGenerate: gzhQrCodeGenerate,
+	qrCodeAction: qrCodeAction
 };
