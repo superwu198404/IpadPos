@@ -118,7 +118,7 @@
 		},
 		watch:{
 			numbers:function(n,o){
-				uni.setStorageSync("hyid",n);
+				// uni.setStorageSync("hyid",n);
 			}
 		},
 		methods: {
@@ -219,7 +219,7 @@
 			}
 		},
 		onLoad() {
-			this.numbers = uni.getStorageSync("hyid");
+			// this.numbers = uni.getStorageSync("hyid");
 		}
 	}
 </script>
