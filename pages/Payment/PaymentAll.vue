@@ -324,6 +324,7 @@
 				tx_obj: {},
 				domRefresh: new Date().toString(),
 				query: null,
+				complete:false,
 				BILL_TYPE: "",
 				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
 				XS_TYPE: "",
@@ -509,7 +510,7 @@
 				console.log("sale2 封装完毕!", this.sale2_arr);
 				console.log("sale3 封装中...");
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
-					let sale3_obj = util.hidePropety({
+					return util.hidePropety({
 						BILL: this.isRefund ? this.out_refund_no : this
 							.out_trade_no_old, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: saledate,
@@ -532,10 +533,9 @@
 							.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
-						balance: this.isRefund ? "" : item.balance, //如果是电子卡，余额
-						balance_old: this.isRefund ? "" : item.balance_old //如果是电子卡，余额
-					}, "balance", "balance_old");
-					return sale3_obj;
+						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
+						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
+					}, "balance", "balance_old");;
 				}).bind(this));
 				console.log("sale3 封装完毕!", this.sale3_arr);
 				console.log("sale8 封装中...");
@@ -593,19 +593,24 @@
 			},
 			//创建订单数据
 			CreateDBData: function(func) {
-				//对订单数据进行合并
-				this.SaleDataCombine();
-				//生成执行sql
-				let exeSql = this.orderSQLGenarator();
-				console.log("sqlite待执行sql:", exeSql)
-				db.get().executeDml(exeSql, "订单创建中", function(res) {
-					if (func) func(res);
-					console.log("订单创建成功：", res);
-					util.simpleMsg("销售单创建成功");
-				}, function(err) {
-					console.log("订单创建失败：", err);
-					util.simpleMsg("销售单创建失败", false);
-				});
+				console.log("是否完成创建销售单：",this.complete)
+				if(!this.complete){// complete 为 false 代表未创建销售单，如果为true则代表已经创建完毕
+					//对订单数据进行合并
+					this.SaleDataCombine();
+					//生成执行sql
+					let exeSql = this.orderSQLGenarator();
+					console.log("sqlite待执行sql:", exeSql)
+					db.get().executeDml(exeSql, "订单创建中", (function(res) {
+						if (func) func(res);
+						this.complete = true;
+						console.log("订单创建成功：", res);
+						util.simpleMsg("销售单创建成功");
+						
+					}).bind(this), function(err) {
+						console.log("订单创建失败：", err);
+						util.simpleMsg("销售单创建失败", false);
+					});
+				}
 			},
 			//使用的 单号 判断（支付单号、退款单号）
 			useOrderNoChoice: function() {
