@@ -416,8 +416,8 @@ var PaymentAll = function(pt, body, func, catchFunc) {
 	payType[pt].PaymentAll(pt, body, func, catchFunc)
 }
 //聚合退款主入口
-var RefundAll = function(pt, body, func, catchFunc) {
-	payType[pt].RefundAll(pt, body, func, catchFunc)
+var RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+	payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
 }
 
 //单个支付入口

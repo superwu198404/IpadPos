@@ -393,8 +393,7 @@
 					hyinfo: {}, //会员信息
 					authCode: "", //卡券信息 or 支付授权码
 					out_trade_no_old: common.CreateBill(this.KHID, this.POSID),
-					out_refund_no: common.CreateBill(this.KHID, this
-						.POSID), //生成退款单号
+					out_refund_no: common.CreateBill(this.KHID, this.POSID), //生成退款单号
 					BILL_TYPE: this.BILL_TYPE,
 					XS_TYPE: this.XS_TYPE,
 					SKY_DISCOUNT: this.SKY_DISCOUNT,
@@ -456,7 +455,7 @@
 					CHANGENET: 0,
 					CXTNET: 0,
 					TCXDISC: 0,
-					CUID: this.hyinfo.hyId,
+					CUID: this?.hyinfo?.hyId,
 					CARDID: "",
 					THYDISC: 0,
 					TDISC: 0, //payall 追加
@@ -672,10 +671,6 @@
 			}
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
-				console.log("======================index-PayList======================:",this.PayList)
-				console.log("======================index-Sale1======================:",this.sale1_obj)
-				console.log("======================index-Sale2======================:",this.sale2_arr)
-				console.log("======================index-Sale3======================:",this.sale3_arr)
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
