@@ -566,7 +566,7 @@ var jpPrinter = {
       var pitch = parseInt(bitw / 8);
       var bits = new Uint8Array(bith * pitch);
       console.log(w + "--" + h);
-      console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
+      //console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
       data.push(29); // 0x1D
 
       data.push(118); // 0x76
@@ -597,7 +597,7 @@ var jpPrinter = {
     }
 	
 	function convertToSingleBitmapNew(res) {
-	  console.log(res);
+	  //console.log(res);
 	  var w = res.width;
 	  var h = res.height;
 	  var bitw = parseInt((w + 7) / 8) * 8;
@@ -621,7 +621,7 @@ var jpPrinter = {
 	  Print.push(parseInt(pitch / 256));
 	  Print.push(parseInt(bith % 256));
 	  Print.push(parseInt(bith / 256));
-	  console.log(res.data.length);
+	  //console.log(res.data.length);
 	
 	  for (var y = 0; y < h; y++) {
 	    for (var x = 0; x < w; x++) {
@@ -1152,7 +1152,7 @@ var jpPrinter = {
 	//打印格式：外卖单接单、销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单提取、线上订单取消；
 	var printerType = ["WM","XS", "TD", "YD","YDQX", "YDTQ", "SX", "SXTD", "XSDD","XSDDQX"];
 	
-	jpPrinter.formString = function(data,printer_poscs){
+	jpPrinter.formString = function(data,printer_poscs,print){
 		var type = data.xsType;
 		var xpType = "销售";
 		var xsBill= "";
@@ -1390,7 +1390,7 @@ var jpPrinter = {
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("消费额:" + item3.amt.toString());
+				jpPrinter.setText("消费额:" + item3.amt.toString() + " 余额:" + item3.save_je.toString());
 				jpPrinter.setPrint(); //打印并换行
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小

@@ -82,6 +82,7 @@
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
+			console.log("onLoad GO");
 			let that = this;
 			setTimeout(() => {
 				xprinter_util.couponQrCode(that.bill_printer,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
@@ -126,13 +127,14 @@
 		},
 		methods: {	
 			//打印小票
-			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr) {
+			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
 				//票据
 				var that = this;
 				//输出日志
 				console.log("打印接收数据 sale1_obj", sale1_obj);
 				console.log("打印接收数据 sale2_arr", sale2_arr);
 				console.log("打印接收数据 sale3_arr", sale3_arr);
+				console.log("打印控制参数 print", print);
 				
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
@@ -155,40 +157,22 @@
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.formString(printerInfo,printer_poscs);
+				command.formString(printerInfo,printer_poscs,print);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 				
 				// 电子发票二维码不为空，则打印二维码
 				if(printer_poscs.DZFPEWMDZ != ""){
-					await xprinter_util.couponQrCode(sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight);
-					//打印二维码
-					await uni.canvasGetImageData({
-						canvasId: "couponQrcode",
-						x: 0,
-						y: 0,
-						width: that.qrCodeWidth,
-						height: that.qrCodeHeight,
-						success: function(res) {
-							console.log("获取画布数据成功");
-							command.setSelectJustification(1); //居中
-							command.setBitmap(res);
-							command.setPrint();
-							that.prepareSend(command.getData()); //发送数据
-						},
-						complete: function(res) {
-							console.log("打印二维码 finish");
-						},
-						fail: function(res) {
-							console.log("获取画布数据失败:", res);
-							uni.showToast({
-								title: "获取画布数据失败",
-								icon: "none"
-							});
-							//获取画布失败，也发送打印文字格式单据
-							that.prepareSend(command.getData()); //发送数据
-						}
-					});
+					//生成属于单号的二维码
+					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
+					Promise.all([
+					    xprinter_util.qrCodeGenerate(sale1_obj.BILL,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
+					    xprinter_util.gzhQrCodeGenerate(),
+						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					]).then(res => {
+					    console.log("开始发送打印命令");
+						that.prepareSend(command.getData()); //发送数据
+					})
 				}else{
 					that.prepareSend(command.getData()); //发送数据
 				}
@@ -238,43 +222,20 @@
 				
 				// 电子发票二维码不为空，则打印二维码
 				if(printer_poscs.DZFPEWMDZ != ""){
-					生成属于单号的二维码
+					//生成属于单号的二维码
 					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
-					await xprinter_util.couponQrCode(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
-	
-				    //打印二维码
-				    uni.canvasGetImageData({
-				    	canvasId: "couponQrcode",
-				    	x: 0,
-				    	y: 0,
-				    	width: that.qrCodeWidth,
-				    	height: that.qrCodeHeight,
-				    	success: function(res) {
-				    		console.log("获取画布数据成功");
-				    		command.setSelectJustification(1); //居中
-				    		command.setBitmap(res);
-				    		command.setPrint();	
-				    		that.prepareSend(command.getData()); //发送数据
-				    	},
-				    	complete: function(res) {
-				    		console.log("finish");
-				    	},
-				    	fail: function(res) {
-				    		console.log("获取画布数据失败:", res);
-				    		uni.showToast({
-				    			title: "获取画布数据失败",
-				    			icon: "none"
-				    		});
-				    		//获取画布失败，也发送打印文字格式单据
-				    		that.prepareSend(command.getData()); //发送数据
-				    	}
-				     });
-								
+					Promise.all([
+					    xprinter_util.qrCodeGenerate(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
+					    xprinter_util.gzhQrCodeGenerate(),
+						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					]).then(res => {
+					    console.log("开始发送打印命令");
+						that.prepareSend(command.getData()); //发送数据
+					})		
 				}else{
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
-				}
-				
+				}	
 			},
 			//打印二维码事件
 			printPhoto: function() {
@@ -381,8 +342,8 @@
 				});
 			},
 			//准备发送，根据每次发送字节数来处理分包数量
-			prepareSend: async function(buff) {
-				console.log("receipt prepareSend 开始")
+			prepareSend: function(buff) {
+				console.log("printer prepareSend")
 				var that = this;
 				var time = that.oneTimeData;
 				var looptime = parseInt(buff.length / time);
@@ -488,7 +449,7 @@
 					}
 				});
 			},
-			Send: async function(buff) {
+			Send: function(buff) {
 				//分包发送
 				var that = this;
 				var currentTime = that.currentTime;
