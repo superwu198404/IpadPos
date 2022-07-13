@@ -15,12 +15,12 @@
 			查询状态
 		</button>
 		<button class="button" hover-class="hover" @tap="printPhoto" v-show="false">打印二维码-测试</button>
-		<canvas canvas-id="couponQrcode" class="canvas"
-			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+		<canvas canvas-id="couponQrcode" class="canvas" :style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 
 		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
-		<canvas canvas-id="canvasJPG" class="canvas"
-			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		<canvas canvas-id="canvasLogoJPG" class="canvas" :style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		
+		<canvas canvas-id="canvasXPEWM" class="canvas" :style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		
 		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
 			当前每次发送字节数为(点击可更换)：{{ buffSize[buffIndex] }}
@@ -64,17 +64,16 @@
 				currentPrint: 1,
 				isReceiptSend: false,
 				isQuery: false,
-				imageSrc: "/static/xprinter/logo.jpg",
+				imageSrc: "/static/xprinter/erweima.png",
 				jpgSrc: "/static/xprinter/logo.jpg",
-				canvasWidth: 200,
-				canvasHeight: 200,
+				canvasGZHWidth: 200,
+				canvasGZHHeight: 200,
 				jpgWidth: 340,
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 				bill_printer: "",
-				//蓝牙相关
 			};
 		},
 		components: {},
@@ -82,17 +81,12 @@
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
-			console.log("onLoad GO");
-			let that = this;
-			setTimeout(() => {
-				xprinter_util.couponQrCode(that.bill_printer,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
-			}, 50)
+
 		},
 		/**
 		 * 生命周期函数--监听页面初次渲染完成
 		 */
 		onReady: function() {
-			console.log("onReady GO");
 			var list = [];
 			var numList = [];
 			var j = 0;
@@ -112,6 +106,8 @@
 				printNum: numList,
 				printerNum: numList[0]
 			});
+			
+			this.initPhoto();
 		},
 		/**
 		 * 生命周期函数--监听页面显示
@@ -125,7 +121,60 @@
 				that.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
 			})
 		},
-		methods: {	
+		methods: {
+			initPhoto: function() {
+				//console.log("initPhoto GO");
+				//初始化画布数据
+				//创建一个png格式
+				var that = this;
+				
+				const ctx_Qrcode = uni.createCanvasContext("couponQrcode", this);
+				var png_Qrcode = that.imageSrc;
+				uni.getImageInfo({
+					src: png_Qrcode,
+					success(res) {
+						that.setData({
+							qrCodeWidth: that.qrCodeWidth,
+							qrCodeHeight: that.qrCodeHeight
+						});
+						//console.log("画布宽度" + res.width, "画布高度" + res.height);
+						ctx_Qrcode.drawImage(png_Qrcode, 0, 0, res.width, res.height);
+						ctx_Qrcode.draw();
+					}
+				}); 
+				
+				const ctx_out = uni.createCanvasContext("canvasXPEWM", this);
+				var png = that.imageSrc;
+				uni.getImageInfo({
+					src: png,
+					success(res) {
+						that.setData({
+							canvasGZHWidth: that.canvasGZHWidth,
+							canvasGZHHeight: that.canvasGZHHeight
+						});
+						//console.log("画布宽度" + res.width, "画布高度" + res.height);
+						ctx_out.drawImage(png, 0, 0, res.width, res.height);
+						ctx_out.draw();
+					}
+				}); 
+				
+				//创建一个jpg格式图片
+				const ctx_jpg = uni.createCanvasContext("canvasLogoJPG", this);
+				var img = that.jpgSrc;
+				uni.getImageInfo({
+					src: img,
+			
+					success(res) {
+						that.setData({
+							jpgWidth: that.jpgWidth,
+							jpgHeight:  that.jpgHeight
+						});
+						//console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
+						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
+						ctx_jpg.draw();
+					}
+				});
+			},
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
 				//票据
@@ -161,14 +210,16 @@
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 				
-				// 电子发票二维码不为空，则打印二维码
-				if(printer_poscs.DZFPEWMDZ != ""){
+				let is_dzfpewmdz = printer_poscs.DZFPEWMDZ != "" ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				// 电子发票二维码不为空、小票结尾二维码不为空
+				if(is_dzfpewmdz || is_xpewm){
 					//生成属于单号的二维码
-					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(sale1_obj.BILL,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
-					    xprinter_util.gzhQrCodeGenerate(),
-						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
+					    xprinter_util.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM,that),
+						xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
@@ -220,14 +271,18 @@
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
 				
+				let is_dzfpewmdz = printer_poscs.DZFPEWMDZ != "" ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				console.log("is_dzfpewmdz",is_dzfpewmdz)
+				console.log("is_xpewm",is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
-				if(printer_poscs.DZFPEWMDZ != ""){
+				if(is_dzfpewmdz || is_xpewm){
 					//生成属于单号的二维码
-					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
-					    xprinter_util.gzhQrCodeGenerate(),
-						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,xsBill,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
+					    xprinter_util.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM,that),
+						xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据

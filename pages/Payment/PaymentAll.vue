@@ -226,6 +226,8 @@
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
 				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
 		</view>
 	</view>
 	</view>

@@ -23,6 +23,7 @@
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
 				POSCSZID: "武汉前厅",
+				PHONE: 18171372662,
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -69,7 +70,8 @@
 				notifyCharaterId: "",
 				notifyServiceId: "",
 				readCharaterId: "",
-				readServiceId: ""
+				readServiceId: "",
+				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
 			}
 		},
 		onLaunch: function() {
