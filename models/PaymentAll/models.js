@@ -89,7 +89,6 @@ export const print = {
 			jpgHeight: 113,
 			qrCodeWidth: 200, //二维码宽
 			qrCodeHeight: 200, // 二维码高
-			qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 			canvasGZHWidth: 200, //小票结尾二维码宽
 			canvasGZHHeight: 200, //小票结尾二维码高
 		}

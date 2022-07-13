@@ -187,7 +187,7 @@ function convertToMonoImage(width, height, data, shake) {
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
+const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 	var xsType = "XS";
 	switch(sale1_obj.XSTYPE){
 		case "0": //外卖单接单
@@ -237,7 +237,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 	var originalAmount = sale1_obj.ZNET;
 	var cuid = sale1_obj.CUID;
 	var hdnet = 0;
-	
+	var ggy = ggyContent;
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -310,6 +310,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 		cuid, //会员编号
 		hdnet, //商家承担
 		sale3List, //支付信息
+		ggy,//广告语
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
 	
@@ -708,7 +709,6 @@ const gzhQrCodeGenerate = function(is_xpewm,url,that){
     });
 }
 
-
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -732,5 +732,5 @@ module.exports = {
 	qrCodeGenerate: qrCodeGenerate,
 	gzhQrCodeGenerate: gzhQrCodeGenerate,
 	qrCodeAction: qrCodeAction,
-	gzhQrCodeAction: gzhQrCodeAction
+	gzhQrCodeAction: gzhQrCodeAction,
 };

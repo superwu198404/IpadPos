@@ -47,7 +47,7 @@
 		mapGetters,
 		mapMutations
 	} from 'vuex'
-
+	
 	export default {
 		data() {
 			return {
@@ -72,7 +72,6 @@
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 				bill_printer: "",
 			};
 		},
@@ -175,6 +174,18 @@
 					}
 				});
 			},
+			//广告语
+			ggy: async function() {
+				var that = this;
+				let ggyContent = "";
+			    await that.$http.get(app.globalData.BLEInformation.printerFile + "poem.txt")
+				.then(res => {
+					//console.log(res.data)
+					app.globalData.BLEInformation.ggy = res.data;
+					ggyContent = res.data;
+				})
+				return ggyContent;
+			},
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
 				//票据
@@ -199,9 +210,9 @@
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-				
+				var ggyContent = await that.ggy();
 				//打印数据转换
-				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
