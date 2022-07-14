@@ -112,6 +112,8 @@
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
 				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
 		</view>
 	</view>
 </template>
@@ -213,7 +215,8 @@
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				canvasGZHWidth: 200,
+				canvasGZHHeight: 200,
 				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},

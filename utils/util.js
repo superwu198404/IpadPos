@@ -49,8 +49,9 @@ const utils = {
 	},
 	hidePropety: (obj, ...props) => {
 		let configs = {};
+		let keys = Object.keys(obj);
 		props.forEach(p => {
-			if (obj[p] !== undefined)
+			if (keys.indexOf(p) !== -1)
 				configs[p] = {
 					configurable: true,
 					enumerable: false,

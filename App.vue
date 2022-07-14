@@ -24,7 +24,8 @@
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
 				POSCSZID: "武汉前厅",
 				RYNAME: "老王",
-				KHZID: "03"
+				KHZID: "03",
+				PHONE: 18171372662,
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -71,7 +72,10 @@
 				notifyCharaterId: "",
 				notifyServiceId: "",
 				readCharaterId: "",
-				readServiceId: ""
+				readServiceId: "",
+				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				ggy: "",//广告语
 			}
 		},
 		onLaunch: function() {

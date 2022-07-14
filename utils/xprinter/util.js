@@ -187,7 +187,7 @@ function convertToMonoImage(width, height, data, shake) {
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
+const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 	var xsType = "XS";
 	switch(sale1_obj.XSTYPE){
 		case "0": //外卖单接单
@@ -227,6 +227,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 	var xsDate = sale1_obj.SALETIME;
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
+	var khPhone = getApp().globalData.store.PHONE;
 	var posId = sale1_obj.POSID;
 	var posUser = sale1_obj.RYID;
 	var lineNum = sale2_arr.length;
@@ -234,7 +235,9 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = sale1_obj.BILLDISC;
 	var originalAmount = sale1_obj.ZNET;
-	
+	var cuid = sale1_obj.CUID;
+	var hdnet = 0;
+	var ggy = ggyContent;
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -295,6 +298,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 		xsDate, //打印时间
 		khName, //门店名称
 		khAddress, //门店地址
+		khPhone, //门店电话
 		posId, //款台
 		posUser, //收银员
 		goodsList, //商品集合
@@ -303,7 +307,10 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr)=>{
 		discountedAmount, //已优惠金额
 		originalAmount, //原金额
 		totalQty, //总数量
+		cuid, //会员编号
+		hdnet, //商家承担
 		sale3List, //支付信息
+		ggy,//广告语
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
 	
@@ -352,20 +359,6 @@ const addContent = function(content){
 	})
 	return arrNew;
 }
-
-// 二维码生成工具
-// const couponQrCode = async function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight) {
-//     await new qrCode('couponQrcode', {
-// 		text: qrCodeContent,
-// 		width: qrCodeWidth,
-// 		height: qrCodeHeight,
-// 		colorDark: "#333333",
-// 		colorLight: "#FFFFFF",
-// 		correctLevel: qrCode.CorrectLevel.H
-// 	})
-// 	console.log("二维码生成内容:", qrCodeContent + bill)
-// 	return true;
-// }
 
 /**
  * 查询终端参数
@@ -588,13 +581,58 @@ const groupByOrder = function(array, f) {
 }
 
 /**
- * 打印二维码
+ * 打印小票结尾二维码
  * @param {*} command 
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const qrCodeAction = function(command,qrCodeWidth,qrCodeHeight){
+const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
     return new Promise((resolve, reject) => {
+		if(!is_xpewm){
+			resolve(is_xpewm)
+			return;
+		}
+		//打印小票结尾二维码
+		uni.canvasGetImageData({
+			canvasId: "canvasXPEWM",
+			x: 0,
+			y: 0,
+			width: qrCodeWidth,
+			height: qrCodeHeight,
+			success: function(res) {
+				console.log("获取小票结尾二维码画布数据成功");
+				command.setSelectJustification(1); //居中
+				command.setBitmap(res);
+				command.setPrint();	
+				resolve('3')
+			},
+			complete: function(res) {
+				console.log("小票结尾二维码 finish");
+			},
+			fail: function(res) {
+				console.log("获取小票结尾二维码画布数据失败:", res);
+				uni.showToast({
+					title: "获取小票结尾二维码画布数据失败",
+					icon: "none"
+				});
+			}
+		 });
+        console.log("3",is_xpewm);
+    });
+}
+
+/**
+ * 打印开票二维码
+ * @param {*} command 
+ * @param {*} qrCodeWidth 
+ * @param {*} qrCodeHeight 
+ */
+const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
+    return new Promise((resolve, reject) => {
+		if(!is_dzfpewmdz){
+			resolve(is_dzfpewmdz)
+			return;
+		}
 		//打印二维码
 		uni.canvasGetImageData({
 			canvasId: "couponQrcode",
@@ -603,24 +641,24 @@ const qrCodeAction = function(command,qrCodeWidth,qrCodeHeight){
 			width: qrCodeWidth,
 			height: qrCodeHeight,
 			success: function(res) {
-				resolve(res)
-				console.log("获取画布数据成功");
+				console.log("获取开票二维码画布数据成功");
 				command.setSelectJustification(1); //居中
 				command.setBitmap(res);
 				command.setPrint();	
+				resolve('4')
 			},
 			complete: function(res) {
-				console.log("finish");
+				console.log("开票二维码 finish");
 			},
 			fail: function(res) {
-				console.log("获取画布数据失败:", res);
+				console.log("获取开票二维码画布数据失败:", res);
 				uni.showToast({
-					title: "获取画布数据失败",
+					title: "获取开票二维码画布数据失败",
 					icon: "none"
 				});
 			}
 		 });
-        console.log("3");
+        console.log("4",is_dzfpewmdz);
     });
 }
 
@@ -631,8 +669,12 @@ const qrCodeAction = function(command,qrCodeWidth,qrCodeHeight){
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const qrCodeGenerate = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
+const qrCodeGenerate = function(is_dzfpewmdz,bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
     return new Promise((resolve, reject) => {
+		if(!is_dzfpewmdz){
+		    resolve(bill)
+			return;
+		}
        new qrCode('couponQrcode', {
        	text: qrCodeContent,
        	width: qrCodeWidth,
@@ -641,18 +683,31 @@ const qrCodeGenerate = function(bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
        	colorLight: "#FFFFFF",
        	correctLevel: qrCode.CorrectLevel.H
        })
-       resolve('1')
+       resolve(bill)
 	   console.log("二维码生成内容:", qrCodeContent + bill)
     });
 }
 
-const gzhQrCodeGenerate = function(){
+const gzhQrCodeGenerate = function(is_xpewm,url,that){
     return new Promise((resolve, reject) => {
-         resolve('2')
-        console.log("2");
+		if(!is_xpewm){
+			resolve(url)
+			return;
+		}
+		const ctx_out = uni.createCanvasContext("canvasXPEWM");
+		var png = url;
+		uni.getImageInfo({
+			src: png,
+			success(res) {
+				console.log("小票结尾二维码画布宽度" + res.width, "画布高度" + res.height);
+				ctx_out.drawImage(png, 0, 0, res.width, res.height);
+				ctx_out.draw();
+				resolve('2')
+			}
+		}); 
+		console.log("gzhQrCodeGenerate",url);
     });
 }
-
 
 module.exports = {
 	formatTime: formatTime,
@@ -667,7 +722,6 @@ module.exports = {
 	onlyFourBank: onlyFourBank,
 	addPos_XsBillPrintData: addPos_XsBillPrintData,
 	addContent: addContent,
-	// couponQrCode: couponQrCode,
 	getPOSCS: getPOSCS,
 	commonPOSCS: commonPOSCS,
 	getBillPrinterData: getBillPrinterData,
@@ -677,5 +731,6 @@ module.exports = {
 	groupByOrder: groupByOrder,
 	qrCodeGenerate: qrCodeGenerate,
 	gzhQrCodeGenerate: gzhQrCodeGenerate,
-	qrCodeAction: qrCodeAction
+	qrCodeAction: qrCodeAction,
+	gzhQrCodeAction: gzhQrCodeAction,
 };
