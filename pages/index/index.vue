@@ -65,6 +65,7 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="MenuPage(3)">外卖处理</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
@@ -373,7 +374,9 @@
 						url: "../hyinfo/index"
 					})
 				} else if (e == 3) {
-					uni.navigateBack();
+					uni.navigateTo({
+						url: "../TakeAway/TakeAway"
+					})
 				}
 			},
 			DataAssembleSaveForGlobal: function() {

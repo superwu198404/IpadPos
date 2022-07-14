@@ -8,7 +8,7 @@
 			kquser: "CSKQ",
 			brand: "KG",
 			store: {
-				GSID: "K200",//027001
+				GSID: "K200", //027001
 				KHID: "K200QTD005", //"K0101QT2",
 				POSID: "1",
 				RYID: "10086",
@@ -17,12 +17,14 @@
 				DKFID: '80000000',
 				BMID: "001",
 				GCID: "K201",
-				DQID:'K01000',
+				DQID: 'K01000',
 				NAME: "武汉xxx",
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
 				POSCSZID: "武汉前厅",
+				RYNAME: "老王",
+				KHZID: "03"
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -30,7 +32,7 @@
 			PayInfo: [], //支付规则
 			CodeRule: {},
 			PZCS: { //档案配置参数
-				YN_ZFBKBQ: "N" 
+				YN_ZFBKBQ: "N"
 
 			},
 			POSCS: [{ //POS参数组 测试用

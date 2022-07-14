@@ -223,9 +223,9 @@
 		<!-- 画布 -->
 		<view class="canvasdiv">
 			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;display:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;display:none;'"></canvas>
 		</view>
 	</view>
 	</view>

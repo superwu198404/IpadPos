@@ -56,6 +56,11 @@
 }
 .products .procycle .li .h3 .jiedan text{
 	color: #42B14B;
+	margin-right: 4rpx;
+}
+.procycle .li .danhao{
+	color: #999;
+	font-size: 28rpx;
 }
 .platform{
 	display: flex;
@@ -63,7 +68,7 @@
 }
 .prolist .cods{
 	flex-wrap: wrap;
-	margin:1% 0;
+	/* margin:1% 0; */
 }
 .cods label{
 	width:48%;
@@ -76,12 +81,12 @@
 .prolist .cods label text{
 	color: #b0b0b0;
 }
-.cods label:nth-child(2) text{
+/* .cods label:nth-child(1) text{
 	color: #333;
-}
+} */
 .address{
 	margin-top:10px;
-	padding:2% 2% 0;
+	padding:2% 1% 0;
 	line-height: 50rpx;
 	font-size: 24rpx;
 	border-top:1px solid #eee;
@@ -148,7 +153,18 @@
 }
 .confirm{
 	display: flex;
+	background-color: #fff;
+	padding:2%;
+	position: absolute;
+	bottom:0;
+	width:96%;
 }
 .confirm button{
 	margin:0 2%;
+}
+.meminfo{
+	right:0;
+	width:60%;
+	position: fixed;
+	height: 100%;
 }
