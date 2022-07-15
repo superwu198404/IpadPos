@@ -124,6 +124,7 @@ page {
 }
 .procycle .li .h3 image,.commods .h3 image,.prolist .h3 image{
 	width:40rpx;
+	height: 40rpx;
 	margin-right: 6rpx;
 }
 .cods{
@@ -141,6 +142,7 @@ page {
 }
 .cods label image{
 	width:30rpx;
+	height: 30rpx;
 }
 .price{
 	display: flex;

@@ -30,15 +30,21 @@
 	height: 93%;
 }
 .products .procycle{
-	width:40%;
-	margin-top:0;
-	display: block;
+  width:41%;
+  margin-top:0;
+  display: block;
+  height: 100%;
+  overflow: auto;
 }
 .products .procycle .li{
-	width:96%;
-	padding:2% 3%;
+  width:93%;
+  padding:2% 3%;
+  border:1px solid #ddd;
 }
-
+.products .procycle .li.curr{
+  border:1px solid #42B14B;
+  box-shadow: 0px 15px 20px 1px rgba(197,231,200,0.3);
+}
 .products .procycle .li .h3{
 	line-height: 80rpx;
 	display: flex;
@@ -70,6 +76,7 @@
 	flex-wrap: wrap;
 	/* margin:1% 0; */
 }
+
 .cods label{
 	width:48%;
 	line-height: 50rpx;
@@ -155,7 +162,7 @@
 	display: flex;
 	background-color: #fff;
 	padding:2%;
-	position: absolute;
+	/* position: absolute; */
 	bottom:0;
 	width:96%;
 }
@@ -164,7 +171,28 @@
 }
 .meminfo{
 	right:0;
-	width:60%;
 	position: fixed;
 	height: 100%;
+}
+.boxs .memberes .confirm{
+	width:96%;
+	padding:1% 2%;
+	display: flex;
+}
+.boxs .memberes .confirm button{
+	width:46%;
+}
+.prolist .cods view{
+  width:80%;
+}
+.detinfo .member label label{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: flex-start;
+}
+.detinfo .member label label text:nth-child(2){
+  background:none;
+  color: #333;
+  padding:0;
 }

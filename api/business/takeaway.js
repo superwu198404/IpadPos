@@ -2,6 +2,7 @@ import Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
 import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
+import util from '../../utils/util';
 
 /**
  * 获取外卖单
@@ -78,7 +79,7 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid) {
 			icon: "error"
 		})
 	}
-	this.tx_obj = {
+	let tx_obj = {
 		TX_SQL: sql,
 		STOREID: khid,
 		POSID: posid,
@@ -88,7 +89,7 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid) {
 		YW_NAME: "",
 		CONNSTR: 'CONNSTRING'
 	};
-	let arr3 = common.CreateSQL(this.tx_obj, 'POS_TXFILE');
+	let arr3 = common.CreateSQL(tx_obj, 'POS_TXFILE');
 	console.log("sqlite保存外卖sql：", arr3.sqlliteSql);
 	await db.get().executeDml(arr3.sqlliteSql, "保存中...", r => {
 		console.log("通讯数据保存结果：", r);
@@ -104,42 +105,94 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid) {
 		"UPDATE  SYSYWTEMP002 SET STATUS= '1' WHERE YWTYPE = '" + is_ywtype +
 		"' AND  BILL = '" + pm_bill + "'"
 	]
-	await db.get().executeDml(sqlArr, r => {
-		console.log("更改外卖单状态结果:", r);
+	await db.get().executeDml(sqlArr, "保存中...", res => {
+		console.log("更改外卖单状态成功:", res);
 		uni.showToast({
 			title: "报损单保存成功"
 		})
-	}, e => {
+	}, err => {
+		console.log("更改外卖单状态失败:", err);
 		uni.showToast({
 			title: "报损单保存失败",
 			icon: "error"
 		})
 	})
 }
-//确认提交报损
-var ConfirmBS = function(e, bill) {
-	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmBS";
+//查询外卖袋
+var GetWMDData = function(d, e, func) {
+	let sql = "select dr.note SPID, sd.sname, sd.unit, '0' BQTY, dr.sz ZQTY from dapzcs_nr dr, spda sd\
+             where dr.id = 'WM_ZSDZ' and dr.sname = '" + d + "'and sd.spid = dr.note and dr.ZF='" + e + "'";
+	console.log("外卖袋查询sql:", sql);
+	db.get().executeQry(sql, "查询中...", res => {
+		if (func)
+			func(res);
+	}, err => {
+		console.log("查询外卖袋数据出错:", err);
+		uni.showToast({
+			title: "查询异常：" + err.msg,
+			icon: "error"
+		})
+	});
+}
+
+//确认提交报损和领用
+var ConfirmLY = function(e, bill, ywtype) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmLY";
 	let reqdata = Req.resObj(true, "操作中...", e, apistr);
 	Req.asyncFuncOne(reqdata, res => {
 		console.log("后台报损返回数据:", res);
 		let arr = JSON.parse(res.data).split(';');
 		arr = arr.filter(r => r != ""); //去除分割后的空字符串
-		db.get().executeDml(arr, "本地保存中...", r => {
-			console.log("本地单据保存成功:", err);
-			dj_commit(bill, "QTBS");
+		db.get().executeDml(arr, "本地保存中...", res => {
+			console.log("本地单据保存成功:", res);
+			dj_commit(bill, ywtype);
 		}, err => {
 			console.log("本地单据保存异常:", err);
+			uni.showToast({
+				title: "本地单据保存异常",
+				icon: "error"
+			})
 		})
 	}, err1 => {
 		console.log("后台报损返回数据:", err1);
 	});
 }
+
+//报损业务确认
+var ConfirmBS = function(data, is_ywtype, bill, Program) {
+	let excesql = common.CreateSQL(data, "SYSYWTEMP002");
+	let sqlArr = [
+		"delete from SYSYWTEMP002 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'",
+		"delete from SYSYWTEMP001 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'",
+		excesql.sqlliteSql,
+		"insert into SYSYWTEMP001 (KHID,POSID,GSID,BMID,YWTYPE,BILL,RYID,RYNAME,WDATE,WTIME,STR1,STR2,STR3,STR4,STR5,STR6,STR7,NOTE1,NOTE2,STATUS,TO_BMID,TO_KHID) values('" +
+		Program.storeid + "','" + Program.posid + "','" + Program.gsid + "','','" + is_ywtype + "','" +
+		bill + "','" + Program.czyid + "','" + Program.czyname + "','" + _date.getYMD() + "','" + _date
+		.getYMDS() + "','','','','','','','','','','0','','')",
+		"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = '" + is_ywtype + "' AND  BILL = '" + bill + "'",
+		"UPDATE  SYSYWTEMP002 SET STATUS= '0' WHERE YWTYPE = '" + is_ywtype + "' AND  BILL = '" + bill + "'"
+	]
+	db.get().executeDml(sqlArr, "操作中...", res => {
+		console.log("临时单据生成成功：", res);
+		dj_commit(bill, is_ywtype, Program.storeid, Program.posid);
+		console.log("临时单据保存通讯成功：", res);
+	}, err => {
+		console.log("临时单据保存失败：", err);
+		uni.showToast({
+			title: "临时单据生成失败",
+			icon: "error"
+		})
+	})
+}
+
 export default {
 	GetWMOrders,
 	GetWMOrderDetail,
 	ConfirmReceipt,
 	CommonRefund,
 	GetBSData,
-	ConfirmBS,
-	dj_commit
+	ConfirmLY,
+	dj_commit,
+	GetWMDData,
+	ConfirmBS
 }
