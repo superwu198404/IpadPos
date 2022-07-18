@@ -392,6 +392,7 @@ const commonPOSCS = async (poscsData) => {
 	var DZFPEWMDZ = "";//电子发票二维码地址，前端生成发票开票二维码，打印在小票底部
 	var YN_CALLNUM = ""; //水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
 	var SBLBBM = "";
+	var YN_DYDZFPEWM = ""; //是否打印电子发票二维码
 	
 	var obj1 = poscsData;
 	var YN_YXDY_obj = obj1.filter(item => {
@@ -493,6 +494,16 @@ const commonPOSCS = async (poscsData) => {
 		SBLBBM = SBLBBM_obj[0].POSCSNR;
 	}
 	
+	var obj11 = poscsData;
+	var YN_DYDZFPEWM_obj = obj11.filter(item => {
+	   if (item.POSCS == "YN_DYDZFPEWM") {
+	      return item.POSCSNR;
+	   }
+	});
+	if(YN_DYDZFPEWM_obj.length > 0){
+		YN_DYDZFPEWM = YN_DYDZFPEWM_obj[0].POSCSNR;
+	}
+	
 	// console.log("YN_YXDY",YN_YXDY);
 	// console.log("SBLBBM",SBLBBM);
 	
@@ -508,6 +519,7 @@ const commonPOSCS = async (poscsData) => {
 	   DZFPEWMDZ,
 	   YN_CALLNUM,
 	   SBLBBM,
+	   YN_DYDZFPEWM,
 	};
 
 	//console.log("commonPOSCS",printer_poscs)
@@ -588,8 +600,9 @@ const groupByOrder = function(array, f) {
  */
 const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
     return new Promise((resolve, reject) => {
+	    console.log("3",is_xpewm,qrCodeWidth,qrCodeHeight);
 		if(!is_xpewm){
-			resolve(is_xpewm)
+			resolve('3')
 			return;
 		}
 		//打印小票结尾二维码
@@ -600,24 +613,23 @@ const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
 			width: qrCodeWidth,
 			height: qrCodeHeight,
 			success: function(res) {
-				console.log("获取小票结尾二维码画布数据成功");
+				console.log("3.获取小票结尾二维码画布数据成功");
 				command.setSelectJustification(1); //居中
 				command.setBitmap(res);
 				command.setPrint();	
-				resolve('3')
+				resolve(res)
 			},
 			complete: function(res) {
-				console.log("小票结尾二维码 finish");
+				console.log("3.小票结尾二维码 finish");
 			},
 			fail: function(res) {
-				console.log("获取小票结尾二维码画布数据失败:", res);
+				console.log("3.获取小票结尾二维码画布数据失败:", res);
 				uni.showToast({
 					title: "获取小票结尾二维码画布数据失败",
 					icon: "none"
 				});
 			}
 		 });
-        console.log("3",is_xpewm);
     });
 }
 
@@ -629,8 +641,9 @@ const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
  */
 const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
     return new Promise((resolve, reject) => {
+		console.log("4",is_dzfpewmdz);
 		if(!is_dzfpewmdz){
-			resolve(is_dzfpewmdz)
+			resolve('4')
 			return;
 		}
 		//打印二维码
@@ -641,24 +654,23 @@ const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
 			width: qrCodeWidth,
 			height: qrCodeHeight,
 			success: function(res) {
-				console.log("获取开票二维码画布数据成功");
+				console.log("4.获取开票二维码画布数据成功");
 				command.setSelectJustification(1); //居中
 				command.setBitmap(res);
 				command.setPrint();	
-				resolve('4')
+				resolve(res)
 			},
 			complete: function(res) {
-				console.log("开票二维码 finish");
+				console.log("4.开票二维码 finish");
 			},
 			fail: function(res) {
-				console.log("获取开票二维码画布数据失败:", res);
+				console.log("4.获取开票二维码画布数据失败:", res);
 				uni.showToast({
 					title: "获取开票二维码画布数据失败",
 					icon: "none"
 				});
 			}
 		 });
-        console.log("4",is_dzfpewmdz);
     });
 }
 
@@ -671,8 +683,9 @@ const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
  */
 const qrCodeGenerate = function(is_dzfpewmdz,bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
     return new Promise((resolve, reject) => {
+	    console.log("1.二维码生成内容:", is_dzfpewmdz, qrCodeContent + bill)
 		if(!is_dzfpewmdz){
-		    resolve(bill)
+		    resolve('1')
 			return;
 		}
        new qrCode('couponQrcode', {
@@ -683,15 +696,14 @@ const qrCodeGenerate = function(is_dzfpewmdz,bill,qrCodeContent,qrCodeWidth,qrCo
        	colorLight: "#FFFFFF",
        	correctLevel: qrCode.CorrectLevel.H
        })
-       resolve(bill)
-	   console.log("二维码生成内容:", qrCodeContent + bill)
+       resolve('1')
     });
 }
 
-const gzhQrCodeGenerate = function(is_xpewm,url,that){
+const gzhQrCodeGenerate = function(is_xpewm,url){
     return new Promise((resolve, reject) => {
 		if(!is_xpewm){
-			resolve(url)
+			resolve('2')
 			return;
 		}
 		const ctx_out = uni.createCanvasContext("canvasXPEWM");
@@ -699,13 +711,13 @@ const gzhQrCodeGenerate = function(is_xpewm,url,that){
 		uni.getImageInfo({
 			src: png,
 			success(res) {
-				console.log("小票结尾二维码画布宽度" + res.width, "画布高度" + res.height);
+				//console.log("小票结尾二维码画布宽度" + res.width, "画布高度" + res.height);
 				ctx_out.drawImage(png, 0, 0, res.width, res.height);
 				ctx_out.draw();
-				resolve('2')
+				resolve(res)
 			}
 		}); 
-		console.log("gzhQrCodeGenerate",url);
+		console.log("2.gzhQrCodeGenerate",url);
     });
 }
 
