@@ -66,6 +66,7 @@
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
 		<button @click="MenuPage(3)">外卖处理</button>
+		<button @click="MenuPage(4)">外卖预定</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
@@ -129,6 +130,8 @@
 		RefundQuery
 	} from '@/api/business/da.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
+	
+	import _take from '@/api/business/takeaway.js';
 	//打印相关
 	export default {
 		components: {
@@ -182,7 +185,7 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
-				PayList:[],
+				PayList: [],
 				// PayList: [{
 				// 	fkid: "ZF04",
 				// 	type: "HYK",
@@ -380,6 +383,10 @@
 					uni.navigateTo({
 						url: "../TakeAway/TakeAway"
 					})
+				} else if (e == 4) {
+					uni.navigateTo({
+						url: "../TakeYD/TakeYD"
+					})
 				}
 			},
 			DataAssembleSaveForGlobal: function() {
@@ -514,10 +521,27 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				let sql = "update fkda set yn_dbm='Y' where sname='电子券'";
-				db.get().executeDml(sql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
+				let obj = {
+					storeid: "K200QTD005",
+					posid: "1",
+					gsid: "K200",
+					czyid: "10086",
+					czyname: "老王",
+					storeKhzid: "03",
+					storeDqid: "K01000",
+					datas: [{
+						BQTY: 1,
+						SNAME: "纸盒20x20cm",
+						SPID: "000000009010200002",
+						UNIT: "个",
+						ZQTY: 3
+					}],
+					bill: "WMLYE2022062312152805160157",
+					ywtype: "QTLY"
+				};
+				let bill = 'WMLYE2022062312152805160157';
+
+				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY);
 			},
 			insertProduct: function() {
 				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||

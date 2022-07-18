@@ -69,7 +69,7 @@ var sql_commit = async function(pm_bill, is_ywtype, mqty) {
 	return arr.oracleSql + arr1.oracleSql;
 }
 
-var dj_commit = async function(pm_bill, is_ywtype, khid, posid) {
+var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 	console.log("oracle_sqlsql开始组装");
 	let sql = await sql_commit(pm_bill, is_ywtype, "BQTY")
 	console.log("oracle_sql组装完毕：", sql);
@@ -92,24 +92,26 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid) {
 	let arr3 = common.CreateSQL(tx_obj, 'POS_TXFILE');
 	console.log("sqlite保存外卖sql：", arr3.sqlliteSql);
 	await db.get().executeDml(arr3.sqlliteSql, "保存中...", r => {
-		console.log("通讯数据保存结果：", r);
+		console.log("通讯数据保存成功：", r);
 	}, e => {
-		console.log("通讯数据保存结果：", r);
+		console.log("通讯数据保存失败：", e);
 		uni.showToast({
 			title: "通讯数据保存失败",
 			icon: "error"
 		})
 	})
 	let sqlArr = ["UPDATE  SYSYWTEMP001 SET STATUS= '1' WHERE YWTYPE = '" + is_ywtype +
-		"' AND  BILL = '" + pm_bill + "'",
-		"UPDATE  SYSYWTEMP002 SET STATUS= '1' WHERE YWTYPE = '" + is_ywtype +
-		"' AND  BILL = '" + pm_bill + "'"
+		"' AND BILL = '" + pm_bill + "'",
+		"UPDATE SYSYWTEMP002 SET STATUS= '1' WHERE YWTYPE = '" + is_ywtype +
+		"' AND BILL = '" + pm_bill + "'"
 	]
 	await db.get().executeDml(sqlArr, "保存中...", res => {
 		console.log("更改外卖单状态成功:", res);
 		uni.showToast({
 			title: "报损单保存成功"
 		})
+		common.TransLite(pm_bill); //直接传输数据
+		if (func) func(res);
 	}, err => {
 		console.log("更改外卖单状态失败:", err);
 		uni.showToast({
@@ -136,16 +138,23 @@ var GetWMDData = function(d, e, func) {
 }
 
 //确认提交报损和领用
-var ConfirmLY = function(e, bill, ywtype) {
+var ConfirmLY = function(obj, bill, ywtype, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmLY";
-	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	let reqdata = Req.resObj(true, "操作中...", obj, apistr);
 	Req.asyncFuncOne(reqdata, res => {
-		console.log("后台报损返回数据:", res);
+		console.log("后台领用返回数据:", res);
+		if (!res.code) {
+			uni.showToast({
+				title: res.msg,
+				icon: "error"
+			})
+			return;
+		}
 		let arr = JSON.parse(res.data).split(';');
 		arr = arr.filter(r => r != ""); //去除分割后的空字符串
 		db.get().executeDml(arr, "本地保存中...", res => {
 			console.log("本地单据保存成功:", res);
-			dj_commit(bill, ywtype);
+			dj_commit(bill, ywtype, obj.khid, obj.posid, func);
 		}, err => {
 			console.log("本地单据保存异常:", err);
 			uni.showToast({
@@ -159,7 +168,7 @@ var ConfirmLY = function(e, bill, ywtype) {
 }
 
 //报损业务确认
-var ConfirmBS = function(data, is_ywtype, bill, Program) {
+var ConfirmBS = function(data, is_ywtype, bill, Program, func) {
 	let excesql = common.CreateSQL(data, "SYSYWTEMP002");
 	let sqlArr = [
 		"delete from SYSYWTEMP002 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'",
@@ -174,7 +183,7 @@ var ConfirmBS = function(data, is_ywtype, bill, Program) {
 	]
 	db.get().executeDml(sqlArr, "操作中...", res => {
 		console.log("临时单据生成成功：", res);
-		dj_commit(bill, is_ywtype, Program.storeid, Program.posid);
+		dj_commit(bill, is_ywtype, Program.storeid, Program.posid, func);
 		console.log("临时单据保存通讯成功：", res);
 	}, err => {
 		console.log("临时单据保存失败：", err);
@@ -183,6 +192,18 @@ var ConfirmBS = function(data, is_ywtype, bill, Program) {
 			icon: "error"
 		})
 	})
+}
+
+/////////////////////////外卖预订单
+/**
+ * 获取外卖单
+ */
+var GetWMOrders_YD = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrders_YD";
+	let reqdata = Req.resObj(true, "查询中...", {
+		khid: e
+	}, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
 }
 
 export default {
@@ -194,5 +215,6 @@ export default {
 	ConfirmLY,
 	dj_commit,
 	GetWMDData,
-	ConfirmBS
+	ConfirmBS,
+	GetWMOrders_YD
 }

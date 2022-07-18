@@ -135,8 +135,20 @@ var CreateSQL = function(e, t) {
 	};
 }
 
-//传输本地缓存的数据
+//传输支付数据
 var TransLiteData = function(e) {
+	TransLite(e, r => {
+		let delArr = ["update SALE001 set yn_sc='Y' where bill='" + delVal + "'"];
+		db.get().executeDml(delArr, "数据删除中", function(res2) {
+			console.log("销售数据传输状态更改成功：", res2);
+		}, function(err1) {
+			console.log("销售数据传输状态更改失败", err1);
+		});
+	})
+}
+
+//传输本地缓存的数据
+var TransLite = function(e) {
 	let sql = "select * from POS_TXFILE where BDATE<=datetime('now','-5 minute')"; //五分钟前 
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
@@ -146,26 +158,29 @@ var TransLiteData = function(e) {
 			if (res.code && res.msg.length > 0) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
-					let delVal = "'" + res.msg[i].STR1 + "'";
+					let delVal = res.msg[i].STR1;
 					console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
 						sql: sql1
 					}, apistr);
-					Req.asyncFuncOne(reqdata,
-						function(res1) {
-							console.log("数据传输结果：", res1);
-							if (res1.code) {
-								let delStr = "delete from POS_TXFILE where str1 =" + delVal + ";";
-								delStr += "update SALE001 set yn_sc='Y';"; //修改001的数据
-								db.get().executeDml(delStr, "数据删除中", function(res2) {
-									console.log("数据删除更改状态成功", res2);
-								}, function(err1) {
-									console.log("数据删除更改并状态失败", err1);
-								});
-							}
-						});
+					Req.asyncFuncOne(reqdata, function(res1) {
+						console.log("数据传输结果：", res1);
+						uni.showToast({
+							title: res1.code ? "数据传输成功" : "数据传输失败",
+							icon: res1.code ? "success" : "error"
+						})
+						if (res1.code) {
+							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
+							db.get().executeDml(delStr, "数据删除中", function(res2) {
+								console.log("缓存数据删除成功:", res2);
+								if (func) func(res2);
+							}, function(err1) {
+								console.log("缓存数据删除失败:", err1);
+							});
+						}
+					});
 				}
 			}
 		},
@@ -429,6 +444,7 @@ export default {
 	CreateSQL,
 	CreatSaleTable,
 	TransLiteData,
+	TransLite,
 	GetPayWay,
 	QueryRefund,
 	Query,

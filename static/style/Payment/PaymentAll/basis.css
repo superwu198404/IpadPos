@@ -8,12 +8,12 @@ page {
 .content {
 	display: flex;
 	width: 100%;
-	height: 95vh;
+	height: 100vh;
 	/* overflow: hidden; */
 	background-color: #F5F4F8;
 	box-sizing: border-box;
 	align-items: center;
-	padding-top:44rpx;
+	/* padding-top:44rpx; */
 }
 
 .getback {
@@ -28,16 +28,17 @@ page {
 }
 
 .navmall {
-	height: 100%;
-	width: 10%;
-	background-color: #fff;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: baseline;
-	position: relative;
-	color: #B0B0B0;
-	font-size: 28rpx;
+	height: 97%;
+	    width: 10%;
+	    background-color: #fff;
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: start;
+	    align-items: baseline;
+	    position: relative;
+	    color: #B0B0B0;
+	    font-size: 14px;
+	    padding-top: 3%;
 }
 
 .navmall .logo {
@@ -98,7 +99,7 @@ page {
 	width:600rpx;
 	height: 180rpx;
 	background-color: #fff;
-	box-shadow: 0px 10px 40px 1px rgba(0,107,68,0.3000);
+	box-shadow: 0px 5px 20px 1px rgba(0,107,68,0.2);
 	top:50%;
 	left: 100%;
 	transform: translateY(-50%);
@@ -107,6 +108,7 @@ page {
 	flex-direction: row;
 	border-radius: 10rpx;
 	color: #6FAA95;
+	z-index: 999;
 }
 .menu view .chargeback label{
 	margin:0 10rpx;
@@ -159,6 +161,8 @@ page {
 	align-items: center;
 	padding: 10rpx 2%;
 	background-color: #fff;
+	border-left: 1rpx solid #eee;
+	padding-top:44rpx;
 }
 
 .message {
@@ -279,12 +283,19 @@ page {
 
 .amounts p text:nth-child(2) {
 	font-size: 60rpx;
+	height: 100rpx;
 	line-height: 100px;
 	color: #333;
 }
+.amounts p .pay-center{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100rpx;
+	line-height: 100px;
+}
 
 .amounts p input {
-	margin-top: 12rpx;
 	height: 80rpx;
 	line-height: 80rpx;
 	border: 1px solid #006B44;
@@ -292,6 +303,7 @@ page {
 	text-align: center;
 	border-radius: 10px;
 	font-size: 60rpx;
+	width:80%;
 }
 
 .paydetails {
@@ -783,9 +795,9 @@ uni-button:after {
 	bottom: 8%;
 }
 .canvasdiv{
-  position: fixed;
-  top:50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  z-index: 99;
+	position: fixed;
+	top:50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	z-index: 99;
 }

@@ -2,7 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
-	@import url(@/static/style/takeout.css);
+	@import url(@/static/style/takeyd.css);
 </style>
 
 <template>
@@ -27,10 +27,15 @@
 					<image class="wx" src="@/images/wxz-ydtq.png" mode="widthFix"></image>
 					<text>预定提取</text>
 				</view>
-				<view class="curr">
+				<view>
 					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
 					<text>外卖单</text>
+				</view>
+				<view class="curr">
+					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
+					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
+					<text>外卖预定</text>
 				</view>
 				<view>
 					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
@@ -67,7 +72,7 @@
 				</view>
 			</view>
 
-			<view class="exit" @click="ReBack()">
+			<view class="exit" @click="Close()">
 				<image src="@/images/tuichu.png" mode="widthFix"></image>
 				<text>退出</text>
 			</view>
@@ -106,17 +111,18 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
+								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖预定单
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 							</view>
 							<view class="sousuo" @click="Refresh()">
-								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+								<image src="@/images/sousuo.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
 						<!-- 小类循环 -->
 						<view class="products">
 							<view class="procycle">
 								<!-- 外卖单循环 -->
+
 								<view class="li" :class="curIndex === index? 'curr':' '"
 									v-for="(item,index) in WMOrders" :order="item" @click="ShowDetail(item,index)">
 									<view class="h3">
@@ -172,6 +178,9 @@
 										<view class="prolist" v-for="(item1,index1) in Details">
 											<view class="h3">
 												<label>
+													<checkbox-group>
+														<checkbox></checkbox>
+													</checkbox-group>
 													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
 													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 												</label>
@@ -213,7 +222,7 @@
 						<label>
 							门店报损
 						</label>
-						<button @click="Close()">×</button>
+						<button @click="yn_bs=!yn_bs">×</button>
 					</view>
 					<view class="breakage">
 						<label><text>报损原因：</text>{{bs_Reason}}</label>
@@ -246,7 +255,7 @@
 
 					<view class="confirm">
 						<button class="btn" @click="ConfirmBS()">报 损</button>
-						<button class="btn" @click="Close()">取 消</button>
+						<button class="btn" @click="yn_bs=false">取 消</button>
 					</view>
 
 					<!-- <view class="states" @click="Statements()">
@@ -265,7 +274,7 @@
 				<view>
 					<view class="member">
 						<label class="h9">选择外带包装袋</label>
-						<button @click="Close()">×</button>
+						<button @click="yn_wmd=false">×</button>
 					</view>
 					<view class="shoppbag">
 						<view class="baglist curr" v-for="(item,index) in WMDDATA">
@@ -285,7 +294,7 @@
 					</view>
 					<view class="confirm">
 						<button class="btn" @click="ConfirmWMD()">确 认</button>
-						<button class="btn btn-xk" @click="Close()">跳 过</button>
+						<button class="btn btn-xk" @click="yn_wmd=false">跳 过</button>
 					</view>
 				</view>
 			</view>
@@ -346,9 +355,9 @@
 					that.ShowDetail(that.WMOrders[0], 0);
 				});
 			},
-			//获取外卖单数据
+			//获取外卖预定单数据
 			GetOrders: function(e, func) {
-				_take.GetWMOrders(e, res => {
+				_take.GetWMOrders_YD(e, res => {
 					// console.log("外卖单查询结果：", res);
 					if (res.code) {
 						that.WMOrders = JSON.parse(res.data).main;
@@ -372,7 +381,24 @@
 			ShowDetail: function(e, i) {
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
-				that.Details = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				let detailArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				let arr = util.getStorage("POSCS");
+				console.log("水吧商品编码:", arr);
+				let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				let bmArr = [];
+				if (obj) {
+					bmArr = obj.POSCSNR.split(',');
+				}
+				if (detailArr.length > 0) {
+					detailArr.map((r) => {
+						if (bmArr.indexOf(r.STR4) >= 0) {
+							r.yn_sb = true;
+						}else{
+							r.yn_sb = false;
+						};
+					});
+					that.Details = detailArr;
+				}
 				that.curIndex = i;
 				console.log("明细单详情：", JSON.stringify(that.Details));
 			},
@@ -401,9 +427,6 @@
 						})
 						if (res.code) {
 							let data = JSON.parse(res.data);
-							console.log("返回信息:", data.yn_print);
-							console.log("返回信息1:", data.bs);
-							console.log("返回信息2:", data.yn_wmd);
 							if (data.yn_print) {
 								//调用打印
 								console.log("此处调用打印：");
@@ -416,23 +439,18 @@
 							}
 							if (data.yn_wmd) //有外卖袋
 							{
-								console.log("此处调用领用：");
 								that.GetWMDData(that.DQID, that.Order.XSPTID);
 							}
 						}
-						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
+						setTimeout(r => {
 							//刷新列表
-							that.Refresh();
-						}
-					})
-				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
+							that.GetOrders(that.KHID, r => {
+								that.ShowDetail(that.WMOrders[0], 0);
+							});
+						}, 1500);
 					})
 				}
 			},
-
 			//同意退单
 			ConfirmReback: function() {
 				if (that.Order) {
@@ -445,11 +463,6 @@
 						return;
 					}
 					that.commonRefund("1");
-				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
 				}
 			},
 			//拒绝退单
@@ -464,11 +477,6 @@
 						return;
 					}
 					that.commonRefund("0");
-				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
 				}
 			},
 			//同意和拒绝退单操作
@@ -499,8 +507,12 @@
 						icon: res.code ? "success" : "error"
 
 					})
-					//刷新列表
-					that.Refresh();
+					setTimeout(r => {
+						//刷新列表
+						that.GetOrders(that.KHID, r => {
+							that.ShowDetail(that.WMOrders[0], 0);
+						});
+					}, 1500);
 				})
 			},
 			//获取报损数据
@@ -555,10 +567,7 @@
 					storeDqid: that.DQID
 				};
 				console.log("报损数据处理开始：", obj);
-				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, r => {
-					console.log("主动关闭报损");
-					setTimeout(r=>{that.Close();},1000);
-				});
+				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj);
 			},
 
 			//获取外卖袋数据
@@ -592,8 +601,8 @@
 						e.BQTY += 1;
 					}
 				} else if (t == '-') {
-					if (e.BQTY <= 0) {
-						e.BQTY = 0;
+					if (e.BQTY <= 1) {
+						e.BQTY = 1;
 						uni.showToast({
 							title: "不能再少了",
 							icon: "error"
@@ -605,12 +614,12 @@
 					let num = event.detail.value;
 					num = parseFloat(num);
 					console.log("输入得值:", num);
-					if (num > e.ZQTY || num <= 0) {
+					if (num > e.ZQTY || num < 0) {
 						uni.showToast({
-							title: "数量输入有误",
+							title: "输入有误",
 							icon: "error"
 						})
-						num = 0;
+						num = 1;
 					}
 					e.BQTY = num;
 				}
@@ -651,10 +660,7 @@
 					ywtype: common.ywTypeEnum.QTLY
 				};
 				console.log("外卖袋请求数据：", obj);
-				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, r => {
-					console.log("主动关闭领用");
-					setTimeout(r=>{that.Close();},1000);
-				});
+				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY);
 			},
 			//列表刷新
 			Refresh: function() {
@@ -664,10 +670,7 @@
 			},
 			//退出
 			Close: function() {
-				that.yn_bs = false;
-				that.yn_wmd = false;
-				//刷新列表
-				that.Refresh();
+				uni.navigateBack();
 			},
 			//退出按钮
 			ReBack: function() {

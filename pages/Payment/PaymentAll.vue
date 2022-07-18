@@ -41,7 +41,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="hh" style="padding-top:0;">
+			<view class="hh" style="padding-top:56rpx;">
 				<view>
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
