@@ -69,6 +69,7 @@ export const global = {
 			KCDID: getApp().globalData.store.KCDID, //存库点id
 			GCID: getApp().globalData.store.GCID, //工厂id
 			BMID: getApp().globalData.store.BMID, //部门id
+			BHLB: getApp().globalData.store.BHLB, //裱花类别
 			KHID: getApp().globalData.store.KHID, //客户id
 			POSID: getApp().globalData.store.POSID, //pos机id
 			RYID: getApp().globalData.store.RYID, //人员id

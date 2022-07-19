@@ -65,6 +65,7 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="onlineOrders()">线上订单</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
@@ -316,6 +317,12 @@
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
+			},
+			onlineOrders:function(){
+				console.log("跳转至线上订单界面")
+				uni.navigateTo({
+					url: "../Home/Home"
+				});
 			},
 			MenuPage: async function(e) {
 				if (e == 0 || e == 1) {

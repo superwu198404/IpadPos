@@ -519,7 +519,7 @@
 						POSID: this.POSID,
 						NO: item.no, //付款序号
 						FKID: item.fkid, //付款类型id
-						AMT: this.isRefund ? -(Math.abs(Number(item.amount))) : item.amount, //付款金额(退款记录为负额)
+						AMT: this.isRefund ? -(Number(item.amount)) : item.amount, //付款金额(退款记录为负额)
 						ID: this.isRefund ? (item.origin?.ID || "") : item.card_no, //卡号或者券号
 						RYID: this.RYID, //人员
 						GCID: this.GCID, //工厂

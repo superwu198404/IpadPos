@@ -8,14 +8,15 @@
 			kquser: "CSKQ",
 			brand: "KG",
 			store: {
-				GSID: "K200",//027001
-				KHID: "K200QTD005", //"K0101QT2",
+				GSID: "11301",// K200 027001
+				KHID: "K0101QT1", //"K0101QT2",K200QTD005
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "D005",
-				DPID: "11072",
+				DPID: "BJ80BM121",//"11072",
 				DKFID: '80000000',
 				BMID: "001",
+				BHLB:"('109')",
 				GCID: "K201",
 				DQID:'K01000',
 				NAME: "武汉xxx",

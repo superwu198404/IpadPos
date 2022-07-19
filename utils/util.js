@@ -61,6 +61,9 @@ const utils = {
 		Object.defineProperties(obj, configs);
 		return obj;
 	},
+	callBind:function(thisObject,func){
+		return func.bind(thisObject);
+	},
 	//日期格式化
 	formatDate: function(formatStr, fdate) {
 		if (fdate) {
@@ -254,4 +257,5 @@ export default {
 	getStorage: utils.getStorage,
 	removeStorage:utils.removeStorage,
 	hidePropety: utils.hidePropety,
+	callBind:utils.callBind
 }
