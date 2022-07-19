@@ -297,7 +297,6 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
 			hideloding();
-			console.log("http请求结果：",res);
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
