@@ -1026,13 +1026,13 @@
 			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
 				return Object.assign({
-					addPoint: 0,
+					// addPoint: 0,//接口默认字段无需传值 下面的同理
 					channel: this.channel,
-					cityCode: "",
+					// cityCode: "",
 					bill: this.useOrderNoChoice(), //订单号
 					date: dateformat.getYMDS(),
-					deducePoint: 0,
-					districtCode: "",
+					// deducePoint: 0,
+					// districtCode: "",
 					productList: this.Products.map((item, i) => {
 						return {
 							lineNumber: i,
@@ -1046,7 +1046,7 @@
 					}),
 					amount: this.totalAmount, //netAmount: that.totalAmount,
 					orderAmount: this.totalAmount,
-					orderType: '1', //订单类型
+					// orderType: '1', //订单类型
 					payList: this.PayList.map(item => {
 						return {
 							paymentType: item.fkid,
@@ -1054,10 +1054,10 @@
 						}
 					}),
 					khid: this.KHID,
-					preOrderCode: "",
-					promotionIds: [],
+					// preOrderCode: "",
+					// promotionIds: [],
 					region: this.BMID,
-					stateCode: "",
+					// stateCode: "",
 					//else
 					kquser: this.kquser,
 					posid: this.POSID,
@@ -1066,7 +1066,6 @@
 					sign: "",
 					time: dateformat.gettimes(),
 					zf_bill: this.sale1_obj?.XS_BILL,
-					bill: this.out_refund_no,
 					price: this.totalAmount,
 					pay_amount: this.totalAmount,
 					//判断积分是扣还是加

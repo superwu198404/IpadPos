@@ -65,7 +65,7 @@
 		data() {
 			return {
 				    alldata:[],
-				    sql:"select * from spda where spid ='000000009010200002'",
+				    sql:"select * from dapzcs_nr where id ='BHLBBM'",
 					sqltable:false,
 				    showAll:false,
 					OrderByType:{},

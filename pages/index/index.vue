@@ -521,27 +521,27 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				let obj = {
-					storeid: "K200QTD005",
-					posid: "1",
-					gsid: "K200",
-					czyid: "10086",
-					czyname: "老王",
-					storeKhzid: "03",
-					storeDqid: "K01000",
-					datas: [{
-						BQTY: 1,
-						SNAME: "纸盒20x20cm",
-						SPID: "000000009010200002",
-						UNIT: "个",
-						ZQTY: 3
-					}],
-					bill: "WMLYE2022062312152805160157",
-					ywtype: "QTLY"
-				};
-				let bill = 'WMLYE2022062312152805160157';
-
-				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY);
+				let sql1="insert into SYSYWTEMP001 (BILL,BMID,GSID,KHID,NOTE1,NOTE2,POSID,RYID,RYNAME,STATUS,STR1,STR2,STR3,STR4,STR5,STR6,STR7,TO_BMID,TO_KHID,WDATE,WTIME,YWTYPE) values('WMLYE20220623121528051606241',null,'K200','K200QTD005',null,null,'1','10086','老王','0',null,null,null,null,null,'Z39',null,null,null,TO_DATE('2022-07-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-07-19 17:56:25','yyyy-MM-dd HH24:mi:ss'),'QTLY');insert into SYSYWTEMP002 (BILL,BQTY,NUM1,NUM2,NUM3,NUM4,NUM5,NUM6,PACK,PRICE,QTY1,QTY2,QTY3,SPID,STATUS,STR1,STR2,STR5,STR6,STR7,YWTYPE) values('WMLYE20220623121528051606241','1','0','0','0','99999','0','1','0','0','0','0','0','000000001010100004','0','Z39','外卖收费袋领用',null,'Y','袋','QTLY');";
+				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+				let reqdata = Req.resObj(true, "数据传输中", {
+					sql: sql1
+				}, apistr);
+				Req.asyncFuncOne(reqdata, function(res1) {
+					console.log("数据传输结果：", res1);
+					uni.showToast({
+						title: res1.code ? "数据传输成功" : "数据传输失败",
+						icon: res1.code ? "success" : "error"
+					})
+					if (res1.code) {
+						let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
+						db.get().executeDml(delStr, "数据删除中", function(res2) {
+							console.log("缓存数据删除成功:", res2);
+							if (func) func(res2);
+						}, function(err1) {
+							console.log("缓存数据删除失败:", err1);
+						});
+					}
+				});
 			},
 			insertProduct: function() {
 				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||
