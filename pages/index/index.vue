@@ -114,52 +114,6 @@
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
 				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
-		<button @click="againPrinter()">重新打印</button>
-		<button @click="inputAuthCode()">录入付款码</button>
-		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<button @click="Test(2)">测试一下</button>
-		<div v-if="view.orders.showDetail"
-			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
-			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
-				<div style="height: 25px;">
-					<div @click="view.orders.showDetail = false"
-						style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
-						×</div>
-				</div>
-				<div style="display: flex;">
-					<div>
-						<span>
-							SALE001:
-						</span>
-						<pre>
-						{{ view.orders.sale1_string }}
-						</pre>
-					</div>
-					<div>
-						<span>
-							SALE002:
-						</span>
-						<pre>
-						{{ view.orders.sale2_string }}
-						</pre>
-					</div>
-					<div>
-						<span>
-							SALE003:
-						</span>
-						<pre>
-						{{ view.orders.sale3_string }}
-						</pre>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- 画布 -->
-		<view class="canvasdiv">
-			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
-			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasXPEWM" class="canvas"
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
 		</view>
@@ -177,7 +131,7 @@
 		RefundQuery
 	} from '@/api/business/da.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
-	
+
 	import _take from '@/api/business/takeaway.js';
 	//打印相关
 	export default {
@@ -371,7 +325,7 @@
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
 			},
-			onlineOrders:function(){
+			onlineOrders: function() {
 				console.log("跳转至线上订单界面")
 				uni.navigateTo({
 					url: "../Home/Home"
@@ -574,7 +528,7 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				let sql1="insert into SYSYWTEMP001 (BILL,BMID,GSID,KHID,NOTE1,NOTE2,POSID,RYID,RYNAME,STATUS,STR1,STR2,STR3,STR4,STR5,STR6,STR7,TO_BMID,TO_KHID,WDATE,WTIME,YWTYPE) values('WMLYE20220623121528051606241',null,'K200','K200QTD005',null,null,'1','10086','老王','0',null,null,null,null,null,'Z39',null,null,null,TO_DATE('2022-07-19','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-07-19 17:56:25','yyyy-MM-dd HH24:mi:ss'),'QTLY');insert into SYSYWTEMP002 (BILL,BQTY,NUM1,NUM2,NUM3,NUM4,NUM5,NUM6,PACK,PRICE,QTY1,QTY2,QTY3,SPID,STATUS,STR1,STR2,STR5,STR6,STR7,YWTYPE) values('WMLYE20220623121528051606241','1','0','0','0','99999','0','1','0','0','0','0','0','000000001010100004','0','Z39','外卖收费袋领用',null,'Y','袋','QTLY');";
+				let sql1 = "";
 				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 				let reqdata = Req.resObj(true, "数据传输中", {
 					sql: sql1
