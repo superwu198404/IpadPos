@@ -67,7 +67,7 @@
 				</view>
 			</view>
 
-			<view class="exit">
+			<view class="exit" @click="ReBack()">
 				<image src="@/images/tuichu.png" mode="widthFix"></image>
 				<text>退出</text>
 			</view>
@@ -106,54 +106,63 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
-								<view>类型：<text>立即送</text><text>预订单</text></view>
+								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
+								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 							</view>
-							<view class="sousuo">
-								<image src="@/images/sousuo.png" mode="widthFix"></image>搜索
+							<view class="sousuo" @click="Refresh()">
+								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
 						<!-- 小类循环 -->
 						<view class="products">
 							<view class="procycle">
 								<!-- 外卖单循环 -->
-								<view class="li" v-for="(item,index) in WMOrders" :order="item"
-									@click="ShowDetail(item)">
+								<view class="li" :class="curIndex === index? 'curr':' '"
+									v-for="(item,index) in WMOrders" :order="item" @click="ShowDetail(item,index)">
 									<view class="h3">
 										<view class="platform">
 											<label>
-												<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
+												<image v-if="item.XSPTID=='ELM'" src="@/images/wmd-eleme.png"
+													mode="widthFix"></image>
+												<image v-if="item.XSPTID=='MEITUAN'" src="@/images/wmd-meituan.png"
+													mode="widthFix"></image>
+												<image v-if="item.XSPTID=='YOUZAN'" src="@/images/wmd-youzan.png"
+													mode="widthFix"></image>
 												{{item.NOTE2}}
 											</label>
-											<label class="state quxiao"><text>●</text>取消订单</label>
-											<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
+											<label class="state jiedan"
+												v-if="item.STATUS==12"><text>●</text>{{item.STR3}}</label>
+											<label class="state quxiao" v-else><text>●</text>{{item.STR3}}</label>
 										</view>
 										<view>￥{{item.ZNET}}</view>
 									</view>
 									<view class="cods">
-										<label><text>外卖单号：</text><text>{{item.BILL}}</text></label>
 										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
-										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
+										<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
 										<label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
+										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
 										<label><text>备注：</text><text>{{item.STR1}}</text></label>
 									</view>
 									<view class="address">
-										配送地址：{{item.STR4}}
+										订单类型：{{item.GSID}}
 									</view>
 								</view>
+
 							</view>
 							<view class="details">
-								<view class="meminfo">
+								<view class="detinfo">
 									<view class="member">
 										<label>
 											<image class="touxiang" src="@/images/touxiang.png"></image>
-											<label class="meminfo"><text>会员名称</text><text>13012341234</text></label>
+											<label
+												class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
 										</label>
 									</view>
 									<view class="harvest">
+										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
 										<label><text>收货人：</text><text>{{Order.STR5}}</text></label>
 										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label>
-										<label><text>下单时间：</text><text>{{Order.WDATE}}</text></label>
+										<label><text>下单时间：</text><text>{{Order.WDATE}} {{Order.WTIME}}</text></label>
 										<label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label>
 										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
 									</view>
@@ -164,9 +173,9 @@
 											<view class="h3">
 												<label>
 													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
-													{{item1.STR5}}
+													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 												</label>
-												<text>X{{item.QTY}}</text>
+												<view class="shuls"><text>×{{item1.QTY}}</text></view>
 											</view>
 											<view class="cods">
 												<view>
@@ -179,7 +188,7 @@
 														{{item1.STR7}}
 													</label>
 												</view>
-												<text>￥{{item1.PRICE}}</text>
+												<text>已取消：{{item1.BQTY}}</text>
 											</view>
 										</view>
 									</view>
@@ -188,57 +197,56 @@
 									<button class="btn" @click="ConfirmReceipt()">接受确认</button>
 									<button class="btn" @click="ConfirmReback()">同意退单</button>
 									<button class="btn" @click="RejectReback()">拒绝退单</button>
-									<button class="btn btn-qx" @click="Close()">退出</button>
+									<button class="btn btn-qx" @click="ReBack()">退出</button>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-
 		</view>
-
-		<view class="boxs">
+		<!-- 报损数据 -->
+		<view class="boxs" v-if="yn_bs">
 			<view class="memberes">
 				<view class="pop-r">
 					<view class="member">
 						<label>
 							门店报损
 						</label>
-						<button>×</button>
+						<button @click="Close()">×</button>
 					</view>
 					<view class="breakage">
-						<label><text>报损原因：</text><input /></label>
-						<label><text>备注：</text><textarea></textarea></label>
+						<label><text>报损原因：</text>{{bs_Reason}}</label>
+						<label><text>备注：{{bs_Note}}</text></label>
 					</view>
 					<view class="h5"><text>报损商品</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
-						<view class="prolist">
+						<view class="prolist" v-for="(item,index) in BSDATA">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image>{{item.STR5}}
 								</label>
-								<text>X2</text>
+								<text>X{{item.BQTY}}</text>
 							</view>
 							<view class="cods">
 								<view>
 									<label>
-										<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
+										<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
 									</label>
 									<label>
-										<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
+										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.PACK}}个
 									</label>
 								</view>
-								<text>￥56</text>
+								<text>￥{{item.NUM1}}</text>
 							</view>
 						</view>
 
 					</view>
 
 					<view class="confirm">
-						<button class="btn">报 损</button>
-						<button class="btn">提 交</button>
+						<button class="btn" @click="ConfirmBS()">报 损</button>
+						<button class="btn" @click="Close()">取 消</button>
 					</view>
 
 					<!-- <view class="states" @click="Statements()">
@@ -249,7 +257,39 @@
 				</view>
 			</view>
 		</view>
-
+		<!-- 外卖袋 -->
+		<view class="boxs" v-if="yn_wmd">
+			<!-- v-if="Shoppingbags" -->
+			<view class="meminfo">
+				<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+				<view>
+					<view class="member">
+						<label class="h9">选择外带包装袋</label>
+						<button @click="Close()">×</button>
+					</view>
+					<view class="shoppbag">
+						<view class="baglist curr" v-for="(item,index) in WMDDATA">
+							<view class="bag">
+								<text class="h8">{{item.SNAME}}</text>
+								<label><text>说明</text>最多可选{{item.ZQTY}}{{item.UNIT}}</label>
+							</view>
+							<view class="quantit">
+								<text>数量</text>
+								<view class="nums">
+									<text @click="Calculate(item,'-')">-</text>
+									<input type="number" v-model="item.BQTY" @blur="Calculate(item,'*',$event)" />
+									<text @click="Calculate(item,'+')">+</text>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" @click="ConfirmWMD()">确 认</button>
+						<button class="btn btn-xk" @click="Close()">跳 过</button>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 
 	</view>
@@ -273,9 +313,11 @@
 				NAME: getApp().globalData.store.NAME,
 				RYID: getApp().globalData.store.RYID,
 				KCDID: getApp().globalData.store.KCDID,
-				DQID: getApp().globalData.store.BMID,
+				DQID: getApp().globalData.store.DQID,
 				GSID: getApp().globalData.store.GSID,
 				GCID: getApp().globalData.store.GCID,
+				RYNAME: getApp().globalData.store.RYNAME,
+				KHZID: getApp().globalData.store.KHZID,
 				WMOrders: [],
 				Order: {},
 				OrderDeails: [],
@@ -286,6 +328,14 @@
 				Shoppingbags: false,
 				Chargeback: false,
 				coupon_list: [],
+				yn_bs: false,
+				yn_wmd: false,
+				BSDATA: [],
+				bs_Reason: "",
+				bs_Note: "",
+				new_bill: "", //单据操作后新生成的单号
+				curIndex: 0,
+				WMDDATA: []
 			}
 		},
 		methods: {
@@ -293,7 +343,7 @@
 				that = this; //全局赋值
 				//外卖单渲染
 				that.GetOrders(that.KHID, r => {
-					that.ShowDetail(that.WMOrders[0]);
+					that.ShowDetail(that.WMOrders[0], 0);
 				});
 			},
 			//获取外卖单数据
@@ -303,22 +353,28 @@
 					if (res.code) {
 						that.WMOrders = JSON.parse(res.data).main;
 						that.OrderDeails = JSON.parse(res.data).detail;
-						console.log("主单信息：", JSON.stringify(that.WMOrders));
-						console.log("明细单信息：", JSON.stringify(that.OrderDeails));
+						// console.log("主单集合信息：", JSON.stringify(that.WMOrders));
+						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
 						if (func) func(res);
 					} else {
-						uni.showToast({
-							title: res.msg,
-							icon: "error"
-						})
+						// uni.showToast({
+						// 	title: res.msg,
+						// 	icon: "error"
+						// })
+						that.WMOrders = [];
+						that.OrderDeails = [];
+						that.Order = {};
+						that.Details = [];
 					}
 				})
 			},
 			//展示外卖单信息
-			ShowDetail: function(e) {
-				console.log("详情：", JSON.stringify(e));
+			ShowDetail: function(e, i) {
+				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
 				that.Details = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				that.curIndex = i;
+				console.log("明细单详情：", JSON.stringify(that.Details));
 			},
 			//确认接收
 			ConfirmReceipt: function() {
@@ -340,29 +396,60 @@
 					}, res => {
 						console.log("外卖单接收结果：", res);
 						uni.showToast({
-							title: res.code ? "接收成功" : "接收失败：" + res.msg,
+							title: res.code ? "接收成功" : res.msg,
 							icon: res.code ? "success" : "error"
 						})
-						if (res.data.yn_print) {
-							//调用打印
+						if (res.code) {
+							let data = JSON.parse(res.data);
+							console.log("返回信息:", data.yn_print);
+							console.log("返回信息1:", data.bs);
+							console.log("返回信息2:", data.yn_wmd);
+							if (data.yn_print) {
+								//调用打印
+								console.log("此处调用打印：");
+							}
+							if (data.yn_bs) { //有报损操作
+								that.new_bill = data.new_bill;
+								//调用处理报损
+								console.log("此处调用报损：");
+								that.GetBSData(that.new_bill, that.Order.WDATE);
+							}
+							if (data.yn_wmd) //有外卖袋
+							{
+								console.log("此处调用领用：");
+								that.GetWMDData(that.DQID, that.Order.XSPTID);
+							}
 						}
-						if (res.data.yn_bs) {
-							//调用处理报损
+						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
+							//刷新列表
+							that.Refresh();
 						}
+					})
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
 					})
 				}
 			},
+
 			//同意退单
 			ConfirmReback: function() {
 				if (that.Order) {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
 						uni.showToast({
-							title: "该订单无法退单"
+							title: "请点击“接受确认”",
+							icon: "error"
 						})
 						return;
 					}
 					that.commonRefund("1");
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
+					})
 				}
 			},
 			//拒绝退单
@@ -371,11 +458,17 @@
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
 						uni.showToast({
-							title: "该订单无法拒接"
+							title: "请点击“接受确认”",
+							icon: "error"
 						})
 						return;
 					}
 					that.commonRefund("0");
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
+					})
 				}
 			},
 			//同意和拒绝退单操作
@@ -385,24 +478,214 @@
 					serial += item.SERIAL + ",";
 				})
 				serial = serial.substr(0, serial.length - 1); //去除逗号
-				_take.ConmmonRefund({
+				_take.CommonRefund({
 					type: e,
 					bill: that.Order.BILL,
 					orderDate: that.Order.WDATE,
 					platformid: that.Order.XSPTID,
 					status: that.Order.STATUS,
-					serial: serial
+					serial: serial,
+					gsid: that.GSID,
+					khid: that.KHID,
+					posid: that.POSID,
+					ryid: that.RYID,
+					storeKcdid: that.KCDID,
+					storeGcid: that.GCID,
+					storeDqid: that.DQID
 				}, res => {
-					console.log("外卖单接收结果：", res);
+					console.log("同意和拒绝退单结果：", res);
 					uni.showToast({
-						title: res.code ? "拒绝成功" : "拒绝失败：" + res.msg,
+						title: res.code ? "操作成功" : res.msg,
 						icon: res.code ? "success" : "error"
+
 					})
+					//刷新列表
+					that.Refresh();
 				})
+			},
+			//获取报损数据
+			GetBSData: function(b, d) {
+				// let arr = [
+				// 	"delete from SYSYWTEMP001 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
+				// 	"delete from SYSYWTEMP002 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
+				// 	"insert into SYSYWTEMP002 ( CLTIME,STATUS,NUM6,NUM5,NUM4,NUM3,NUM2,NUM1,STR7,STR6,STR5,STR4,STR3,STR2,STR1,NOTE2,NOTE1,QTY3,QTY2,QTY1,PRICE,BQTY,PACK,SPID,YWTYPE,BILL,NOTEERR )\r\n values (NULL,NULL,'1','0','99999','0','0','0','个','N','樱桃诱惑12号-仟吉',NULL,NULL,'外卖收费袋领用','Z39',NULL,NULL,'0','0','0','0','1','0','000000001090100003','QTBS','K200QTD0051220713191155',NULL)",
+				// 	"insert into SYSYWTEMP001   (KHID,POSID,GSID,BMID,YWTYPE,BILL,RYID,RYNAME,WDATE,WTIME,STR1,STR2,STR3,STR4,STR5,STR6,STR7,NOTE1,NOTE2,STATUS,TO_BMID,TO_KHID) \r\n                    values('K200QTD005','1','K200','','QTBS','K200QTD0051220713191155','10086','老王','2022-07-14','2022-07-14 09:55:21','','','','','','Z39','','','','0','','')",
+				// 	"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
+				// 	"UPDATE  SYSYWTEMP002 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'"
+				// ]
+				// db.get().executeDml(arr,"操作中...", r => {
+				// 	console.log("执行成功", r);
+				// }, e => {
+				// 	console.log("执行失败", e);
+				// });
+				// _take.dj_commit('K200QTD0051220713191155', "QTBS");
+				// return;
+				// b = "K200QTD0051220714145754";
+				// d = "2022-07-14";
+				that.yn_bs = true;
+				_take.GetBSData({
+					bill: b,
+					orderDate: d
+				}, res => {
+					console.log("外卖单报损数据：", res);
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						that.BSDATA = data;
+						that.bs_Reason = data[0].STR2;
+						that.bs_Note = data[0].STR1;
+					}
+				})
+			},
+			//报损确认
+			ConfirmBS: function() {
+				if (!that.BSDATA || that.BSDATA.length == 0) {
+					uni.showToast({
+						title: "暂无报损数据",
+						icon: "error"
+					})
+					return;
+				}
+				let obj = {
+					storeid: that.KHID,
+					posid: that.POSID,
+					gsid: that.GSID,
+					czyid: that.RYID,
+					czyname: that.RYNAME,
+					storeKhzid: that.KHZID,
+					storeDqid: that.DQID
+				};
+				console.log("报损数据处理开始：", obj);
+				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, r => {
+					console.log("主动关闭报损");
+					setTimeout(r=>{that.Close();},1000);
+				});
+			},
+
+			//获取外卖袋数据
+			GetWMDData: function(b, d) {
+				that.yn_wmd = true;
+				_take.GetWMDData(b, d, res => {
+					console.log("外卖袋数据：", res);
+					if (res.code) {
+						that.WMDDATA = res.msg;
+						that.WMDDATA.forEach((item, index, arr) => {
+							if (arr.length == 1) {
+								item.BQTY = 1;
+							} else {
+								item.BQTY = 0;
+							}
+						})
+					}
+				})
+			},
+			//数量计算
+			Calculate: function(e, t, event) {
+				// console.log("计算事件:", e + t);
+				if (t == '+') {
+					if (e.BQTY == e.ZQTY) {
+						e.BQTY = e.ZQTY;
+						uni.showToast({
+							title: "不能再多了",
+							icon: "error"
+						})
+					} else {
+						e.BQTY += 1;
+					}
+				} else if (t == '-') {
+					if (e.BQTY <= 0) {
+						e.BQTY = 0;
+						uni.showToast({
+							title: "不能再少了",
+							icon: "error"
+						})
+					} else {
+						e.BQTY -= 1;
+					}
+				} else if (t == '*') {
+					let num = event.detail.value;
+					num = parseFloat(num);
+					console.log("输入得值:", num);
+					if (num > e.ZQTY || num <= 0) {
+						uni.showToast({
+							title: "数量输入有误",
+							icon: "error"
+						})
+						num = 0;
+					}
+					e.BQTY = num;
+				}
+				that.WMDDATA.forEach((item, index, arr) => {
+					// console.log("商品信息：", item.SPID + "/" + e.SPID);
+					if (item.SPID == e.SPID) {
+						item.BQTY = e.BQTY;
+					}
+				});
+
+				// that.$set(that.WMDDATA[index], "BQTY", e.BQTY); // 实例方法$set
+				that.$forceUpdate(); //刷新input的值 狗bug
+				console.log("新数量:", that.WMDDATA);
+			},
+			//外卖袋确认
+			ConfirmWMD: function() {
+				let arr = that.WMDDATA.filter((item) => {
+					return item.BQTY > 0
+				});
+				let bill = "WMLY" + that.Order.BILL;
+				if (!arr || arr.length == 0) {
+					uni.showToast({
+						title: "无可用数据",
+						icon: "error"
+					})
+					return;
+				}
+				let obj = {
+					storeid: that.KHID,
+					posid: that.POSID,
+					gsid: that.GSID,
+					czyid: that.RYID,
+					czyname: that.RYNAME,
+					storeKhzid: that.KHZID,
+					storeDqid: that.DQID,
+					datas: arr,
+					bill: bill,
+					ywtype: common.ywTypeEnum.QTLY
+				};
+				console.log("外卖袋请求数据：", obj);
+				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, r => {
+					console.log("主动关闭领用");
+					setTimeout(r=>{that.Close();},1000);
+				});
+			},
+			//列表刷新
+			Refresh: function() {
+				that.GetOrders(that.KHID, r => {
+					that.ShowDetail(that.WMOrders[0], 0);
+				});
 			},
 			//退出
 			Close: function() {
-				uni.navigateBack()
+				that.yn_bs = false;
+				that.yn_wmd = false;
+				//刷新列表
+				that.Refresh();
+			},
+			//退出按钮
+			ReBack: function() {
+				uni.navigateBack({});
+				// that.GetWMDData(that.DQID, "YOUZAN"); //that.Order.XSPTID
+				// let arr = [
+				// 	"delete from SYSYWTEMP001 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220714145754'",
+				// 	"delete from SYSYWTEMP002 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220714145754'",
+				// 	"delete from pos_txfile where str1='K200QTD0051220714145754'"
+				// ]
+				// db.get().executeDml(arr, "操作中...", r => {
+				// 	console.log("删除成功", r);
+				// }, e => {
+				// 	console.log("删除失败", e);
+				// });
+				// that.yn_bs = true;
+				// that.new_bill = "K200QTD0051220714145754";
+				//  that.GetBSData("K200QTD0051220714145754", "2022-07-14");
 			},
 			//、、、、、、、、、、、、、、、、、、、、
 			Statements: function(e) {
@@ -422,7 +705,7 @@
 			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
-			},
+			}
 		}
 	}
 </script>

@@ -65,7 +65,7 @@
 		data() {
 			return {
 				    alldata:[],
-				    sql:"select * from plda",
+				    sql:"select * from spda where spid ='000000009010200002'",
 					sqltable:false,
 				    showAll:false,
 					OrderByType:{},

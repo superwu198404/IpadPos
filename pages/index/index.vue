@@ -65,6 +65,8 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">录入会员</button>
+		<button @click="MenuPage(3)">外卖处理</button>
+		<button @click="MenuPage(4)">外卖预定</button>
 		<button @click="onlineOrders()">线上订单</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
@@ -112,6 +114,54 @@
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
 				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		<button @click="againPrinter()">重新打印</button>
+		<button @click="inputAuthCode()">录入付款码</button>
+		<!-- <button @click="MenuPage(3)">返回调试</button>-->
+		<button @click="Test(2)">测试一下</button>
+		<div v-if="view.orders.showDetail"
+			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
+			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
+				<div style="height: 25px;">
+					<div @click="view.orders.showDetail = false"
+						style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
+						×</div>
+				</div>
+				<div style="display: flex;">
+					<div>
+						<span>
+							SALE001:
+						</span>
+						<pre>
+						{{ view.orders.sale1_string }}
+						</pre>
+					</div>
+					<div>
+						<span>
+							SALE002:
+						</span>
+						<pre>
+						{{ view.orders.sale2_string }}
+						</pre>
+					</div>
+					<div>
+						<span>
+							SALE003:
+						</span>
+						<pre>
+						{{ view.orders.sale3_string }}
+						</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 画布 -->
+		<view class="canvasdiv">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
 		</view>
 	</view>
 </template>
@@ -127,6 +177,8 @@
 		RefundQuery
 	} from '@/api/business/da.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
+	
+	import _take from '@/api/business/takeaway.js';
 	//打印相关
 	export default {
 		components: {
@@ -180,7 +232,7 @@
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
-				PayList:[],
+				PayList: [],
 				// PayList: [{
 				// 	fkid: "ZF04",
 				// 	type: "HYK",
@@ -213,7 +265,8 @@
 				jpgHeight: 113,
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				canvasGZHWidth: 200,
+				canvasGZHHeight: 200,
 				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},
@@ -380,7 +433,13 @@
 						url: "../hyinfo/index"
 					})
 				} else if (e == 3) {
-					uni.navigateBack();
+					uni.navigateTo({
+						url: "../TakeAway/TakeAway"
+					})
+				} else if (e == 4) {
+					uni.navigateTo({
+						url: "../TakeYD/TakeYD"
+					})
 				}
 			},
 			DataAssembleSaveForGlobal: function() {
@@ -515,10 +574,27 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				let sql = "update fkda set yn_dbm='Y' where sname='电子券'";
-				db.get().executeDml(sql, "执行中", (res) => {
-					console.log("sql 执行结果：", res);
-				});
+				let obj = {
+					storeid: "K200QTD005",
+					posid: "1",
+					gsid: "K200",
+					czyid: "10086",
+					czyname: "老王",
+					storeKhzid: "03",
+					storeDqid: "K01000",
+					datas: [{
+						BQTY: 1,
+						SNAME: "纸盒20x20cm",
+						SPID: "000000009010200002",
+						UNIT: "个",
+						ZQTY: 3
+					}],
+					bill: "WMLYE2022062312152805160157",
+					ywtype: "QTLY"
+				};
+				let bill = 'WMLYE2022062312152805160157';
+
+				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY);
 			},
 			insertProduct: function() {
 				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||

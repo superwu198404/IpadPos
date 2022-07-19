@@ -15,12 +15,12 @@
 			查询状态
 		</button>
 		<button class="button" hover-class="hover" @tap="printPhoto" v-show="false">打印二维码-测试</button>
-		<canvas canvas-id="couponQrcode" class="canvas"
-			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+		<canvas canvas-id="couponQrcode" class="canvas" :style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 
 		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
-		<canvas canvas-id="canvasJPG" class="canvas"
-			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+		<canvas canvas-id="canvasLogoJPG" class="canvas" :style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;display:none;'"></canvas>
+		
+		<canvas canvas-id="canvasXPEWM" class="canvas" :style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		
 		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
 			当前每次发送字节数为(点击可更换)：{{ buffSize[buffIndex] }}
@@ -47,14 +47,14 @@
 		mapGetters,
 		mapMutations
 	} from 'vuex'
-
+	
 	export default {
 		data() {
 			return {
 				looptime: 0,
 				currentTime: 1,
 				lastData: 0,
-				oneTimeData: 20,
+				oneTimeData: 5000,
 				buffSize: [],
 				buffIndex: 0,
 				//发送字节数下标
@@ -64,17 +64,15 @@
 				currentPrint: 1,
 				isReceiptSend: false,
 				isQuery: false,
-				imageSrc: "/static/xprinter/logo.jpg",
+				imageSrc: "/static/xprinter/erweima.png",
 				jpgSrc: "/static/xprinter/logo.jpg",
-				canvasWidth: 200,
-				canvasHeight: 200,
+				canvasGZHWidth: 200,//小票结尾二维码宽
+				canvasGZHHeight: 200,//小票结尾二维码高
 				jpgWidth: 340,
 				jpgHeight: 113,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
-				bill_printer: "",
-				//蓝牙相关
+				qrCodeWidth: 200, //开票二维码宽
+				qrCodeHeight: 200, // 开票二维码高
+				bill_printer: "", //单号
 			};
 		},
 		components: {},
@@ -82,42 +80,37 @@
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
-			console.log("onLoad GO");
-			let that = this;
+			var that = this;
 			setTimeout(() => {
-				xprinter_util.couponQrCode(that.bill_printer,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight);
-			}, 50)
+				that.couponQrCode()
+			}, 50);
 		},
 		/**
 		 * 生命周期函数--监听页面初次渲染完成
 		 */
 		onReady: function() {
-			console.log("onReady GO");
 			var list = [];
 			var numList = [];
 			var j = 0;
-
-			for (var i = 20; i < 200; i += 10) {
+			//打印字节数组
+			for (var i = 2000; i <= 20000; i += 1000) {
 				list[j] = i;
 				j++;
 			}
-
-			for (var i = 1; i < 10; i++) {
+			//打印份数数组
+			for (var i = 1; i <= 10; i++) {
 				numList[i - 1] = i;
 			}
-
+			// console.log("buffSize",list);
+			// console.log("printNum",numList);	
 			this.setData({
 				buffSize: list,
-				oneTimeData: list[0],
+				oneTimeData: list[3],
 				printNum: numList,
 				printerNum: numList[0]
 			});
-		},
-		/**
-		 * 生命周期函数--监听页面显示
-		 */
-		onShow: function() {
-			//console.log('onShow GO')
+			//初始化画布
+			this.initPhoto();
 		},
 		mounted() {
 			var that = this;
@@ -125,7 +118,31 @@
 				that.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
 			})
 		},
-		methods: {	
+		methods: {
+			// 二维码生成工具
+			couponQrCode: function(){
+				let that = this;
+				new qrCode('couponQrcode', {
+					text: app.globalData.BLEInformation.qrCodeContent,
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					colorDark: "#333333",
+					colorLight: "#FFFFFF",
+					correctLevel: qrCode.CorrectLevel.H
+				})
+			},
+			//广告语
+			ggy: async function() {
+				var that = this;
+				let ggyContent = "";
+			    await that.$http.get(app.globalData.BLEInformation.printerFile + "poem.txt")
+				.then(res => {
+					//console.log(res.data)
+					app.globalData.BLEInformation.ggy = res.data;
+					ggyContent = res.data;
+				})
+				return ggyContent;
+			},
 			//打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
 				//票据
@@ -150,9 +167,9 @@
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-				
+				var ggyContent = await that.ggy();
 				//打印数据转换
-				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr);
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
@@ -161,14 +178,16 @@
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 				
-				// 电子发票二维码不为空，则打印二维码
-				if(printer_poscs.DZFPEWMDZ != ""){
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				// 电子发票二维码不为空、小票结尾二维码不为空
+				if(is_dzfpewmdz || is_xpewm){
 					//生成属于单号的二维码
-					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(sale1_obj.BILL,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
-					    xprinter_util.gzhQrCodeGenerate(),
-						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
+					    //that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
@@ -220,22 +239,118 @@
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
 				
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				console.log("is_dzfpewmdz",is_dzfpewmdz)
+				console.log("is_xpewm",is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
-				if(printer_poscs.DZFPEWMDZ != ""){
+				if(is_dzfpewmdz || is_xpewm){
 					//生成属于单号的二维码
-					that.qrCodeContent = printer_poscs.DZFPEWMDZ;
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(xsBill,that.qrCodeContent,that.qrCodeWidth,that.qrCodeHeight),
-					    xprinter_util.gzhQrCodeGenerate(),
-						xprinter_util.qrCodeAction(command,that.qrCodeWidth,that.qrCodeHeight)
+					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,xsBill,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
+					    //that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),
+						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
-					})		
+					})
 				}else{
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
 				}	
+			},
+			gzhQrCodeGenerate : function(is_xpewm,url){
+			    return new Promise((resolve, reject) => {
+					if(!is_xpewm){
+						resolve(url)
+						return;
+					}
+					const ctx_out = uni.createCanvasContext("canvasXPEWM",this);
+					var png = url;
+					uni.getImageInfo({
+						src: png,
+						success(res) {
+							console.log("2.创建小票结尾二维码画布宽度" + res.width, "画布高度" + res.height);
+							ctx_out.drawImage(png, 0, 0, res.width, res.height);
+							ctx_out.draw();
+							resolve(res)
+						}
+					}); 
+					console.log("2.gzhQrCodeGenerate 111",url);
+			    });
+			},
+			//初始化画布数据
+			initPhoto: function() {
+				//初始化画布数据
+				var that = this;
+				const ctx_out = uni.createCanvasContext("canvasXPEWM", that);
+				var png = that.imageSrc;
+				uni.getImageInfo({
+					src: png,
+					success(res) {
+						that.setData({
+							canvasGZHWidth: that.canvasGZHWidth,
+							canvasGZHHeight: that.canvasGZHHeight
+						});
+						//console.log("画布宽度" + res.width, "画布高度" + res.height);
+						ctx_out.drawImage(png, 0, 0, res.width, res.height);
+						ctx_out.draw();
+					}
+				}); 
+				
+				//创建一个jpg格式图片
+				const ctx_jpg = uni.createCanvasContext("canvasLogoJPG", that);
+				var img = that.jpgSrc;
+				uni.getImageInfo({
+					src: img,				
+					success(res) {
+						that.setData({
+							jpgWidth: that.jpgWidth,
+							jpgHeight:  that.jpgHeight
+						});
+						//console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
+						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
+						ctx_jpg.draw();
+					}
+				});
+			},
+			initCanvasXPEWM: function() {
+				//创建一个png格式
+				var that = this;
+				const ctx_out = uni.createCanvasContext("canvasXPEWM", that);
+				var png = that.imageSrc;
+				uni.getImageInfo({
+					src: png,
+					success(res) {
+						that.setData({
+							canvasGZHWidth: that.canvasGZHWidth,
+							canvasGZHHeight: that.canvasGZHHeight
+						});
+						//console.log("画布宽度" + res.width, "画布高度" + res.height);
+						ctx_out.drawImage(png, 0, 0, res.width, res.height);
+						ctx_out.draw();
+					}
+				}); 		
+			},
+			initCanvasLogoJPG: function() {
+				//创建一个png格式
+				var that = this;
+				//创建一个jpg格式图片
+				const ctx_jpg = uni.createCanvasContext("canvasLogoJPG", that);
+				var img = that.jpgSrc;
+				uni.getImageInfo({
+					src: img,				
+					success(res) {
+						that.setData({
+							jpgWidth: that.jpgWidth,
+							jpgHeight:  that.jpgHeight
+						});
+						//console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
+						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
+						ctx_jpg.draw();
+					}
+				});
 			},
 			//打印二维码事件
 			printPhoto: function() {

@@ -8,22 +8,24 @@
 			kquser: "CSKQ",
 			brand: "KG",
 			store: {
-				GSID: "11301",// K200 027001
-				KHID: "K0101QT1", //"K0101QT2",K200QTD005
+				GSID: "K200", //027001
+				KHID: "K200QTD005", //"K0101QT2",
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "D005",
-				DPID: "BJ80BM121",//"11072",
+				DPID: "11072",
 				DKFID: '80000000',
 				BMID: "001",
-				BHLB:"('109')",
 				GCID: "K201",
-				DQID:'K01000',
+				DQID: 'K01000',
 				NAME: "武汉xxx",
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
 				POSCSZID: "武汉前厅",
+				RYNAME: "老王",
+				KHZID: "03",
+				PHONE: 18171372662,
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -31,7 +33,7 @@
 			PayInfo: [], //支付规则
 			CodeRule: {},
 			PZCS: { //档案配置参数
-				YN_ZFBKBQ: "N" 
+				YN_ZFBKBQ: "N"
 
 			},
 			POSCS: [{ //POS参数组 测试用
@@ -70,7 +72,10 @@
 				notifyCharaterId: "",
 				notifyServiceId: "",
 				readCharaterId: "",
-				readServiceId: ""
+				readServiceId: "",
+				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				ggy: "",//广告语
 			}
 		},
 		onLaunch: function() {

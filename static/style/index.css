@@ -4,6 +4,36 @@ page {
 	height: 100%;
 	background-color: #F5F4F8;
 }
+.btn-xg{
+	color: #42B14B;
+	border: 1px solid #42B14B;
+	height: 60rpx;
+	line-height: 60rpx;
+	margin:0 1% ;
+	background-color: #F5F5F5;
+	font-size: 28rpx;
+	padding:0 10rpx;
+}
+.btn-sc{
+	color: #FE694B;
+	border: 1px solid #FE694B;
+	height: 60rpx;
+	line-height: 60rpx;
+	margin:0 1% ;
+	background-color: #F5F5F5;
+	font-size: 28rpx;
+	padding:0 10rpx;
+}
+.btn-xk{
+	color: #42B14B;
+	border: 1px solid #42B14B;
+	height: 80rpx;
+	line-height: 80rpx;
+	margin:0 1% ;
+	background-color: #fff;
+	font-size: 28rpx;
+	padding:0 10rpx;
+}
 
 .listof{
 	display: flex;
@@ -94,6 +124,7 @@ page {
 }
 .procycle .li .h3 image,.commods .h3 image,.prolist .h3 image{
 	width:40rpx;
+	height: 40rpx;
 	margin-right: 6rpx;
 }
 .cods{
@@ -111,6 +142,7 @@ page {
 }
 .cods label image{
 	width:30rpx;
+	height: 30rpx;
 }
 .price{
 	display: flex;
@@ -371,6 +403,7 @@ page {
 	width:60%;
 	position: relative;
 	background-color: #fff;
+	height: 100%;
 }
 .meminfo .bgs{
 	position: absolute;
@@ -486,6 +519,7 @@ page {
 .goods{
 	height: 33%;
 	overflow: auto;
+	padding:0 4%;
 }
 .prolist .h3{
 	display: flex;
@@ -741,4 +775,72 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before{
 	display: inline-block;
 	color: #b0b0b0;
 	width:130rpx;
+}
+
+/* 搜索 */
+.sousuo{
+	background-color: #006B44;
+	color: #fff;
+	font-weight: 400;
+	border-radius: 30rpx;
+	font-size: 28rpx;
+	padding:0 18rpx 0 12rpx;
+	height: 48rpx;
+	line-height: 48rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin:0 10rpx;
+	position: relative;
+}
+.sousuo label{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.sousuo image{
+	width:30rpx;
+	height: 30rpx;
+}
+.criterias{
+	position: absolute;
+	background-color: #fff;
+	width:500rpx;
+	top:105%;
+	right:0;
+	padding:20rpx 30rpx;
+	border-radius: 10rpx;
+	display: flex;
+	flex-direction: column;
+}
+.criterias .critlist{
+	width:100%;
+	border:1px solid #98C3B3;
+	height: 60rpx;
+	border-radius: 6rpx;
+	color: #333;
+	padding:0 10rpx;
+	margin:10rpx;
+	display: flex;
+}
+.criterias .critlist text{
+	color: #98C3B3;
+}
+.criterias .critlist input{
+	height: 58rpx;
+}
+.confs{
+	width:100%;
+}
+.hh .sousuo .btn{
+	margin:0 20rpx;
+	border-radius: 10rpx;
+	width:48%;
+	height: 62rpx;
+	line-height: 62rpx;
+	font-size: 30rpx;
+}
+.hh .sousuo .btn-qx{
+	background-color: #eee;
+	color: #aaa;
 }

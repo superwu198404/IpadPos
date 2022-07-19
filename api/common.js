@@ -135,8 +135,20 @@ var CreateSQL = function(e, t) {
 	};
 }
 
-//传输本地缓存的数据
+//传输支付数据
 var TransLiteData = function(e) {
+	TransLite(e, r => {
+		let delArr = ["update SALE001 set yn_sc='Y' where bill='" + delVal + "'"];
+		db.get().executeDml(delArr, "数据删除中", function(res2) {
+			console.log("销售数据传输状态更改成功：", res2);
+		}, function(err1) {
+			console.log("销售数据传输状态更改失败", err1);
+		});
+	})
+}
+
+//传输本地缓存的数据
+var TransLite = function(e) {
 	let sql = "select * from POS_TXFILE where BDATE<=datetime('now','-5 minute')"; //五分钟前 
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
@@ -146,26 +158,29 @@ var TransLiteData = function(e) {
 			if (res.code && res.msg.length > 0) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
-					let delVal = "'" + res.msg[i].STR1 + "'";
+					let delVal = res.msg[i].STR1;
 					console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
 						sql: sql1
 					}, apistr);
-					Req.asyncFuncOne(reqdata,
-						function(res1) {
-							console.log("数据传输结果：", res1);
-							if (res1.code) {
-								let delStr = "delete from POS_TXFILE where str1 =" + delVal + ";";
-								delStr += "update SALE001 set yn_sc='Y';"; //修改001的数据
-								db.get().executeDml(delStr, "数据删除中", function(res2) {
-									console.log("数据删除更改状态成功", res2);
-								}, function(err1) {
-									console.log("数据删除更改并状态失败", err1);
-								});
-							}
-						});
+					Req.asyncFuncOne(reqdata, function(res1) {
+						console.log("数据传输结果：", res1);
+						uni.showToast({
+							title: res1.code ? "数据传输成功" : "数据传输失败",
+							icon: res1.code ? "success" : "error"
+						})
+						if (res1.code) {
+							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
+							db.get().executeDml(delStr, "数据删除中", function(res2) {
+								console.log("缓存数据删除成功:", res2);
+								if (func) func(res2);
+							}, function(err1) {
+								console.log("缓存数据删除失败:", err1);
+							});
+						}
+					});
 				}
 			}
 		},
@@ -334,8 +349,25 @@ var InitZFRULE = async function(e, func) {
 		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'XPEWM', '小票结尾二维码', 'xpjwewm', 46, 'qjgzh.png', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'HYY', '小票欢迎语', 'xphyy', 11, '欢迎光临', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'YN_CALLNUM', '水吧打印录入叫号器', 'sbdylrjhq', 65, '001', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
-		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'YN_CDXP', '是否允许重打小票', 'sfyxcdxp', 53, 'Y', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",	
-		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'DZFPEWMDZ', '电子发票二维码地址', 'dzfpewmdz', 51, 'https://www.baidu.com/', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);"
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'YN_CDXP', '是否允许重打小票', 'sfyxcdxp', 53, 'Y', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'YN_DYDZFPEWM', '是否打印电子发票二维码', 'sfdydzfpewm', 52, 'Y', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('POSCS', 'DZFPEWMDZ', '电子发票二维码地址', 'dzfpewmdz', 51, 'https://www.baidu.com/', NULL, NULL, 'SYSTEM', DATETIME('2019-09-26 16:30:55'), 'SYSTEM', DATETIME('2019-12-10 14:30:54'), NULL, NULL, NULL, NULL, NULL, NULL);",
+		"delete from dapzcs_nr where id='WM_ZSDZ';",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '14', 'K01000', NULL, '22', 'MEITUAN', NULL, '000000002010100010', 'SYSTEM', DATETIME('2022-04-26 19:08:15'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '15', 'K01000', NULL, '10', 'ELM', NULL, '000000004010100016', 'SYSTEM', DATETIME('2022-04-26 19:13:54'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '12', 'K01000', NULL, '11', 'XCX', NULL, '000000001010100007', 'SYSTEM', DATETIME('2022-04-26 18:51:29' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '16', 'K01000', NULL, '20', 'ELM', NULL, '000000004010100017', 'SYSTEM', DATETIME('2022-04-27 15:07:35' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '32', 'K01000', NULL, '3', 'YOUZAN', NULL, '000000009010200002', 'SYSTEM', DATETIME('2022-04-28 09:41:12' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '24', 'K01000', NULL, '5', 'MEITUAN', NULL, '000000001010100014', 'SYSTEM', DATETIME('2022-04-27 17:39:35' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '26', 'K01000', NULL, '2', 'MEITUAN', NULL, '000000001010100004', 'SYSTEM', DATETIME('2022-04-27 17:52:17' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '17', 'K01000', NULL, '5', 'YOUZAN', NULL, '000000001010100004', 'SYSTEM', DATETIME('2022-04-27 15:56:46' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '18', 'K01000', NULL, '5', 'ELM', NULL, '000000001010100011', 'SYSTEM', DATETIME('2022-04-27 15:56:46'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '19', 'K01000', NULL, '5', 'ELM', NULL, '000000001010100012', 'SYSTEM', DATETIME('2022-04-27 15:56:46' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '23', 'K01000', NULL, '6', 'ELM', NULL, '000000001010100014', 'SYSTEM', DATETIME('2022-04-27 17:38:39' ), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '30', 'K01000', NULL, '1', 'MEITUAN', NULL, '000000001010100013', 'SYSTEM', DATETIME('2022-04-27 18:24:51'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"delete from spda where spid in ('000000001010100004','000000009010200002');",
+		"INSERT INTO SPDA ('SPID', 'BARCODE', 'SNAME', 'PINYIN', 'SPECS', 'WEIGHT', 'PRODUCT_TYPE', 'SPBQ', 'SPKW', 'MLQTY', 'JGSTAT', 'ADDR_SC', 'PLID', 'UNIT', 'UNIT_PF', 'PFXS', 'PFXSFZ', 'PFXSFM', 'QCID', 'SHELFLIFE', 'YN_ZS', 'OSPID', 'PRODUCT_STATUS', 'YN_XPDG', 'SPJGZ', 'SMODE', 'YN_ZH', 'PGPL', 'YN_DEL', 'ID_RY_LR', 'DATE_LR', 'ID_RY_XG', 'DATE_XG') VALUES('000000001010100004', '6951143188169', '竹节排包(原味)', 'zjpb(yw)', '个(201312)', '300', 'Z001', NULL, '原味', NULL, NULL, '-仟吉', '10101', '袋', NULL, NULL, NULL, NULL, '1030201020000000000', '365', 'Y', '10101004', '1', NULL, '01', NULL, NULL, '7930', NULL, 'JK', datetime('2018-12-31 14:40:42'), NULL, datetime('2022-06-10 23:37:04'))",
+		"INSERT INTO SPDA ('SPID', 'BARCODE', 'SNAME', 'PINYIN', 'SPECS', 'WEIGHT', 'PRODUCT_TYPE', 'SPBQ', 'SPKW', 'MLQTY', 'JGSTAT', 'ADDR_SC', 'PLID', 'UNIT', 'UNIT_PF', 'PFXS', 'PFXSFZ', 'PFXSFM', 'QCID', 'SHELFLIFE', 'YN_ZS', 'OSPID', 'PRODUCT_STATUS', 'YN_XPDG', 'SPJGZ', 'SMODE', 'YN_ZH', 'PGPL', 'YN_DEL', 'ID_RY_LR', 'DATE_LR', 'ID_RY_XG', 'DATE_XG') VALUES ('000000009010200002', '2090102000020', '纸盒20x20cm', 'zh20x20cm', NULL, '0', 'Z009', NULL, NULL, NULL, NULL, NULL, '90102', '个', NULL, NULL, NULL, NULL, NULL, '0', 'Y', NULL, '1', NULL, '01', NULL, NULL, NULL, NULL, 'JK', datetime('2021-09-15 14:53:26'), NULL, datetime('2021-09-26 16:58:17'))"
 	];
 	await db.get().executeDml(arr, "sql执行中", function(res) {
 		console.log("支付规则数据和聚合数据初始化成功：", res);
@@ -398,8 +430,13 @@ var GetPOSCS = async function(e, func) {
 
 //支付行为
 var actTypeEnum = {
-	Payment: "Payment",//支付
-	Refund: "Refund",//退款
+	Payment: "Payment", //支付
+	Refund: "Refund", //退款
+}
+//y业务类型
+var ywTypeEnum = {
+	QTBS: "QTBS",
+	QTLY: "QTLY"
 }
 
 export default {
@@ -408,6 +445,7 @@ export default {
 	CreateSQL,
 	CreatSaleTable,
 	TransLiteData,
+	TransLite,
 	GetPayWay,
 	QueryRefund,
 	Query,
@@ -415,5 +453,6 @@ export default {
 	InitZFRULE,
 	GetZFRULE,
 	GetPOSCS,
-	actTypeEnum
+	actTypeEnum,
+	ywTypeEnum
 }

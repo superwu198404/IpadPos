@@ -605,7 +605,7 @@ var jpPrinter = {
 	  var pitch = parseInt(bitw / 8);
 	  var bits = new Uint8Array(bith * pitch);
 	  console.log(w + "--" + h);
-	  console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
+	  //console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
 	  
 	  var Print = [];
 	  
@@ -650,7 +650,7 @@ var jpPrinter = {
       convertToSingleBitmap(res); // 转成单张位图
       //convertToMultiBitmap(res) // 转成多张位图
 
-      console.log(data);
+      //console.log(data);
     };
 	
 	jpPrinter.setBitmap1 = function (res) {
@@ -1149,6 +1149,12 @@ var jpPrinter = {
 		return s + new Array(len - s.length + 1).join(charStr, '');
 	}
 	
+	//打印并换行
+	jpPrinter.printerLine = function(){
+		jpPrinter.setText("\n");
+		jpPrinter.setPrint(); //打印并换行
+	}
+	
 	//打印格式：外卖单接单、销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单提取、线上订单取消；
 	var printerType = ["WM","XS", "TD", "YD","YDQX", "YDTQ", "SX", "SXTD", "XSDD","XSDDQX"];
 	
@@ -1243,6 +1249,11 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(xpType + "小票: " + data.khName);
 		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("门店电话: " + data.khPhone);
+		jpPrinter.setPrint(); //打印并换行
 	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
@@ -1305,12 +1316,12 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
-		
+			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1323,11 +1334,10 @@ var jpPrinter = {
 		
 		//支付方式分组的处理
 		let sale3_arrOrigin = JSON.stringify(data.sale3List);
-		//console.log("data.sale3List",sale3_arrOrigin);
 		let sale3_arr = [];
 		//付款方式
 		data.sale3List.forEach((item1, index1) => {
-			payTotal += Math.abs(parseFloat(item1.amt));		
+			payTotal += parseFloat(item1.amt);		
 			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
 			if (!parent) {
 				let totalAmt = data.sale3List.reduce((prev, cur) => {
@@ -1337,23 +1347,18 @@ var jpPrinter = {
 				sale3_arr.push(item1)
 			} 
 		});
-		//console.log("data.sale3List 111",data.sale3List);
+
 		sale3_arr.forEach((item2, index2) => {
 			let amount = item2.amt;
-			//是退单，金额显示负数
-			if(isReturn){
-				item2.amt = -Math.abs(amount);
-			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(item2.fkName + ":" + amount.toString());
 			jpPrinter.setPrint(); //打印并换行
 		});		
-	    //console.log("sale3_arr",sale3_arr);
-		
+
 		//是退单，金额显示负数
 		if(isReturn){
-			payTotal = -Math.abs(payTotal.toFixed(2));
+			payTotal = -Math.abs(payTotal).toFixed(2);
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
@@ -1365,16 +1370,23 @@ var jpPrinter = {
 		jpPrinter.setText("找零:" + change.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("门店地址: " + data.khAddress);
-		jpPrinter.setPrint(); //打印并换行
+		if(data.cuid != "" && data.cuid != null){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("会员编号:" + data.cuid);
+			jpPrinter.setPrint(); //打印并换行
+		}
+
+		// jpPrinter.setCharacterSize(0); //设置正常大小
+		// jpPrinter.setSelectJustification(0); //设置居左
+		// jpPrinter.setText("门店地址: " + data.khAddress);
+		// jpPrinter.setPrint(); //打印并换行
 		
 	    let	sale3_List = JSON.parse(sale3_arrOrigin);
 		//console.log("data.sale3List 111",sale3_List)
 		sale3_List.forEach((item3, index3) => {
 			if(isReturn){
-				item3.amt = -Math.abs(item3.amt);
+				item3.amt = item3.amt;
 			}
 			//卡券号存在，才打印
 			if(item3.id != "" && item3.id != undefined){
@@ -1388,9 +1400,13 @@ var jpPrinter = {
 				jpPrinter.setText("卡/券号:" + util.onlyFourBank(item3.id));
 				jpPrinter.setPrint(); //打印并换行
 				
+				let yeStr = "";
+				if(item3.save_je.toString() !="" && item3.save_je.toString() != null){
+					yeStr = " 余额:" + item3.save_je.toString();
+				}
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("消费额:" + item3.amt.toString() + " 余额:" + item3.save_je.toString());
+				jpPrinter.setText("消费额:" + item3.amt.toString() + yeStr);
 				jpPrinter.setPrint(); //打印并换行
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1399,6 +1415,16 @@ var jpPrinter = {
 				jpPrinter.setPrint(); //打印并换行
 			}
 		});
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("商户承担折扣额:" + data.hdnet.toString());
+		jpPrinter.setPrint(); //打印并换行
 		
 		if(isYD){
 			//预定信息
@@ -1409,7 +1435,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("定金:" + item.amt.toString());
+			jpPrinter.setText("定金:" + payTotal.toFixed(2).toString());
 			jpPrinter.setPrint(); //打印并换行
 		}
 	
@@ -1420,7 +1446,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("轻轻地走了，正如我轻轻的来");
+		jpPrinter.setText(data.ggy);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小

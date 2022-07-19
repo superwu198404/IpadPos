@@ -41,7 +41,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="hh" style="padding-top:0;">
+			<view class="hh" style="padding-top:56rpx;">
 				<view>
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
@@ -223,9 +223,11 @@
 		<!-- 画布 -->
 		<view class="canvasdiv">
 			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;display:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;display:none;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;display:none;'"></canvas>
 		</view>
 	</view>
 	</view>
