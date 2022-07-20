@@ -196,7 +196,7 @@ var ConfirmBS = function(data, is_ywtype, bill, Program, func) {
 
 /////////////////////////外卖预订单
 /**
- * 获取外卖单
+ * 获取外卖预定单
  */
 var GetWMOrders_YD = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrders_YD";
@@ -206,6 +206,19 @@ var GetWMOrders_YD = function(e, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+//同意接收预订单
+var ConfirmReceipt_YD = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmReceipt_YD";
+	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
+//同意和拒绝退单
+var CommonRefund_YD = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund_YD";
+	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
 	GetWMOrders,
 	GetWMOrderDetail,
@@ -216,5 +229,7 @@ export default {
 	dj_commit,
 	GetWMDData,
 	ConfirmBS,
-	GetWMOrders_YD
+	GetWMOrders_YD,
+	ConfirmReceipt_YD,
+	CommonRefund_YD
 }

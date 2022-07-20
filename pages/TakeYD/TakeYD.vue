@@ -115,7 +115,7 @@
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 							</view>
 							<view class="sousuo" @click="Refresh()">
-								<image src="@/images/sousuo.png" mode="widthFix"></image>刷新
+								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
 						<!-- 小类循环 -->
@@ -178,8 +178,8 @@
 										<view class="prolist" v-for="(item1,index1) in Details">
 											<view class="h3">
 												<label>
-													<checkbox-group>
-														<checkbox></checkbox>
+													<checkbox-group @click="checkFunc(item1)">
+														<checkbox :checked="item1.isChecked"></checkbox>
 													</checkbox-group>
 													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
 													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
@@ -393,19 +393,30 @@
 					detailArr.map((r) => {
 						if (bmArr.indexOf(r.STR4) >= 0) {
 							r.yn_sb = true;
-						}else{
+						} else {
 							r.yn_sb = false;
 						};
+						r.isChecked = false; //复选框默认值
 					});
 					that.Details = detailArr;
 				}
 				that.curIndex = i;
 				console.log("明细单详情：", JSON.stringify(that.Details));
 			},
+			//复选款点击事件
+			checkFunc: function(e) {
+				if (e) {
+					that.Details.forEach((item) => {
+						item.isChecked = !e.isChecked;
+					})
+				}
+			},
 			//确认接收
 			ConfirmReceipt: function() {
+				// console.log("详情信息:", JSON.stringify(that.Details));
+				// return;
 				if (that.Order) {
-					_take.ConfirmReceipt({
+					_take.ConfirmReceipt_YD({
 						status: that.Order.STATUS,
 						bill: that.Order.BILL,
 						khid: that.KHID,
@@ -418,9 +429,11 @@
 						platformid: that.Order.XSPTID,
 						storeGcid: that.GCID,
 						storeDqid: that.DQID,
-						gsid: that.GSID
+						gsid: that.GSID,
+						billtype: that.Order.GSID, //立即送,预定单','取消单', '其他'
+						spdatas: that.Details
 					}, res => {
-						console.log("外卖单接收结果：", res);
+						console.log("外卖预定单接收结果：", res);
 						uni.showToast({
 							title: res.code ? "接收成功" : res.msg,
 							icon: res.code ? "success" : "error"
@@ -431,23 +444,9 @@
 								//调用打印
 								console.log("此处调用打印：");
 							}
-							if (data.yn_bs) { //有报损操作
-								that.new_bill = data.new_bill;
-								//调用处理报损
-								console.log("此处调用报损：");
-								that.GetBSData(that.new_bill, that.Order.WDATE);
-							}
-							if (data.yn_wmd) //有外卖袋
-							{
-								that.GetWMDData(that.DQID, that.Order.XSPTID);
-							}
 						}
-						setTimeout(r => {
-							//刷新列表
-							that.GetOrders(that.KHID, r => {
-								that.ShowDetail(that.WMOrders[0], 0);
-							});
-						}, 1500);
+						//列表刷新
+						that.Refresh();
 					})
 				}
 			},
@@ -486,7 +485,7 @@
 					serial += item.SERIAL + ",";
 				})
 				serial = serial.substr(0, serial.length - 1); //去除逗号
-				_take.CommonRefund({
+				_take.CommonRefund_YD({
 					type: e,
 					bill: that.Order.BILL,
 					orderDate: that.Order.WDATE,
@@ -507,166 +506,17 @@
 						icon: res.code ? "success" : "error"
 
 					})
-					setTimeout(r => {
-						//刷新列表
-						that.GetOrders(that.KHID, r => {
-							that.ShowDetail(that.WMOrders[0], 0);
-						});
-					}, 1500);
+					//列表刷新
+					that.Refresh();
 				})
-			},
-			//获取报损数据
-			GetBSData: function(b, d) {
-				// let arr = [
-				// 	"delete from SYSYWTEMP001 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
-				// 	"delete from SYSYWTEMP002 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
-				// 	"insert into SYSYWTEMP002 ( CLTIME,STATUS,NUM6,NUM5,NUM4,NUM3,NUM2,NUM1,STR7,STR6,STR5,STR4,STR3,STR2,STR1,NOTE2,NOTE1,QTY3,QTY2,QTY1,PRICE,BQTY,PACK,SPID,YWTYPE,BILL,NOTEERR )\r\n values (NULL,NULL,'1','0','99999','0','0','0','个','N','樱桃诱惑12号-仟吉',NULL,NULL,'外卖收费袋领用','Z39',NULL,NULL,'0','0','0','0','1','0','000000001090100003','QTBS','K200QTD0051220713191155',NULL)",
-				// 	"insert into SYSYWTEMP001   (KHID,POSID,GSID,BMID,YWTYPE,BILL,RYID,RYNAME,WDATE,WTIME,STR1,STR2,STR3,STR4,STR5,STR6,STR7,NOTE1,NOTE2,STATUS,TO_BMID,TO_KHID) \r\n                    values('K200QTD005','1','K200','','QTBS','K200QTD0051220713191155','10086','老王','2022-07-14','2022-07-14 09:55:21','','','','','','Z39','','','','0','','')",
-				// 	"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'",
-				// 	"UPDATE  SYSYWTEMP002 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220713191155'"
-				// ]
-				// db.get().executeDml(arr,"操作中...", r => {
-				// 	console.log("执行成功", r);
-				// }, e => {
-				// 	console.log("执行失败", e);
-				// });
-				// _take.dj_commit('K200QTD0051220713191155', "QTBS");
-				// return;
-				// b = "K200QTD0051220714145754";
-				// d = "2022-07-14";
-				that.yn_bs = true;
-				_take.GetBSData({
-					bill: b,
-					orderDate: d
-				}, res => {
-					console.log("外卖单报损数据：", res);
-					if (res.code) {
-						let data = JSON.parse(res.data);
-						that.BSDATA = data;
-						that.bs_Reason = data[0].STR2;
-						that.bs_Note = data[0].STR1;
-					}
-				})
-			},
-			//报损确认
-			ConfirmBS: function() {
-				if (!that.BSDATA || that.BSDATA.length == 0) {
-					uni.showToast({
-						title: "暂无报损数据",
-						icon: "error"
-					})
-					return;
-				}
-				let obj = {
-					storeid: that.KHID,
-					posid: that.POSID,
-					gsid: that.GSID,
-					czyid: that.RYID,
-					czyname: that.RYNAME,
-					storeKhzid: that.KHZID,
-					storeDqid: that.DQID
-				};
-				console.log("报损数据处理开始：", obj);
-				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj);
-			},
-
-			//获取外卖袋数据
-			GetWMDData: function(b, d) {
-				that.yn_wmd = true;
-				_take.GetWMDData(b, d, res => {
-					console.log("外卖袋数据：", res);
-					if (res.code) {
-						that.WMDDATA = res.msg;
-						that.WMDDATA.forEach((item, index, arr) => {
-							if (arr.length == 1) {
-								item.BQTY = 1;
-							} else {
-								item.BQTY = 0;
-							}
-						})
-					}
-				})
-			},
-			//数量计算
-			Calculate: function(e, t, event) {
-				// console.log("计算事件:", e + t);
-				if (t == '+') {
-					if (e.BQTY == e.ZQTY) {
-						e.BQTY = e.ZQTY;
-						uni.showToast({
-							title: "不能再多了",
-							icon: "error"
-						})
-					} else {
-						e.BQTY += 1;
-					}
-				} else if (t == '-') {
-					if (e.BQTY <= 1) {
-						e.BQTY = 1;
-						uni.showToast({
-							title: "不能再少了",
-							icon: "error"
-						})
-					} else {
-						e.BQTY -= 1;
-					}
-				} else if (t == '*') {
-					let num = event.detail.value;
-					num = parseFloat(num);
-					console.log("输入得值:", num);
-					if (num > e.ZQTY || num < 0) {
-						uni.showToast({
-							title: "输入有误",
-							icon: "error"
-						})
-						num = 1;
-					}
-					e.BQTY = num;
-				}
-				that.WMDDATA.forEach((item, index, arr) => {
-					// console.log("商品信息：", item.SPID + "/" + e.SPID);
-					if (item.SPID == e.SPID) {
-						item.BQTY = e.BQTY;
-					}
-				});
-
-				// that.$set(that.WMDDATA[index], "BQTY", e.BQTY); // 实例方法$set
-				that.$forceUpdate(); //刷新input的值 狗bug
-				console.log("新数量:", that.WMDDATA);
-			},
-			//外卖袋确认
-			ConfirmWMD: function() {
-				let arr = that.WMDDATA.filter((item) => {
-					return item.BQTY > 0
-				});
-				let bill = "WMLY" + that.Order.BILL;
-				if (!arr || arr.length == 0) {
-					uni.showToast({
-						title: "无可用数据",
-						icon: "error"
-					})
-					return;
-				}
-				let obj = {
-					storeid: that.KHID,
-					posid: that.POSID,
-					gsid: that.GSID,
-					czyid: that.RYID,
-					czyname: that.RYNAME,
-					storeKhzid: that.KHZID,
-					storeDqid: that.DQID,
-					datas: arr,
-					bill: bill,
-					ywtype: common.ywTypeEnum.QTLY
-				};
-				console.log("外卖袋请求数据：", obj);
-				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY);
 			},
 			//列表刷新
 			Refresh: function() {
-				that.GetOrders(that.KHID, r => {
-					that.ShowDetail(that.WMOrders[0], 0);
-				});
+				setTimeout(r => {
+					that.GetOrders(that.KHID, r => {
+						that.ShowDetail(that.WMOrders[0], 0);
+					});
+				}, 1000);
 			},
 			//退出
 			Close: function() {
@@ -675,22 +525,7 @@
 			//退出按钮
 			ReBack: function() {
 				uni.navigateBack({});
-				// that.GetWMDData(that.DQID, "YOUZAN"); //that.Order.XSPTID
-				// let arr = [
-				// 	"delete from SYSYWTEMP001 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220714145754'",
-				// 	"delete from SYSYWTEMP002 WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051220714145754'",
-				// 	"delete from pos_txfile where str1='K200QTD0051220714145754'"
-				// ]
-				// db.get().executeDml(arr, "操作中...", r => {
-				// 	console.log("删除成功", r);
-				// }, e => {
-				// 	console.log("删除失败", e);
-				// });
-				// that.yn_bs = true;
-				// that.new_bill = "K200QTD0051220714145754";
-				//  that.GetBSData("K200QTD0051220714145754", "2022-07-14");
 			},
-			//、、、、、、、、、、、、、、、、、、、、
 			Statements: function(e) {
 				this.statements = !this.statements
 			},

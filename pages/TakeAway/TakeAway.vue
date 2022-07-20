@@ -303,6 +303,7 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _take from '@/api/business/takeaway.js';
+	import _member from '@/api/hy/MemberInterfaces.js';
 
 	var that;
 	export default {
@@ -318,6 +319,8 @@
 				GCID: getApp().globalData.store.GCID,
 				RYNAME: getApp().globalData.store.RYNAME,
 				KHZID: getApp().globalData.store.KHZID,
+				BMID: getApp().globalData.store.BMID,
+				brand: getApp().globalData.brand,
 				WMOrders: [],
 				Order: {},
 				OrderDeails: [],
@@ -401,9 +404,7 @@
 						})
 						if (res.code) {
 							let data = JSON.parse(res.data);
-							console.log("返回信息:", data.yn_print);
-							console.log("返回信息1:", data.bs);
-							console.log("返回信息2:", data.yn_wmd);
+							console.log("返回信息:", data);
 							if (data.yn_print) {
 								//调用打印
 								console.log("此处调用打印：");
@@ -419,11 +420,18 @@
 								console.log("此处调用领用：");
 								that.GetWMDData(that.DQID, that.Order.XSPTID);
 							}
+							if (data.pay_data && data.pay_data.length > 0) {
+								if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
+									console.log("有赞接单后调用积分上传接口:")
+									that.JFConsume(data.pay_data, that.Order.YZID);
+								}
+							}
 						}
 						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
 							//刷新列表
 							that.Refresh();
 						}
+
 					})
 				} else {
 					uni.showToast({
@@ -503,6 +511,56 @@
 					that.Refresh();
 				})
 			},
+
+			//调用积分
+			JFConsume: function(PayList, hyid) {
+				let obj = {
+					channel: "POS",
+					bill: that.Order.BILL, //订单号
+					date: dateformat.getYMDS(),
+					productList: this.Details.map((item, i) => {
+						return {
+							lineNumber: i,
+							product: item.SPID,
+							category: item.STR4,
+							quantity: item.QTY,
+							userPrice: item.PRICE,
+							basePrice: item.PRICE,
+							netPrice: item.NET
+						}
+					}),
+					amount: that.Order.ZNET, //netAmount: that.totalAmount,
+					orderAmount: that.Order.ZNET,
+					payList: PayList.map(item => {
+						return {
+							paymentType: item.FKID,
+							payAmount: item.AMT
+						}
+					}),
+					khid: that.KHID,
+					region: that.BMID,
+					hyid: hyid, //会员id 也就是有赞ID
+					actionType: "INCREASE" //values： INCREASE(增加) or DECREASE(减少)
+				};
+				console.log("积分上传参数：", obj);
+				_member.UploadPoint("积分上传中...", {
+					brand: that.brand,
+					data: obj
+				}, (res) => {
+					console.log("积分上传成功...", res)
+					uni.showToast({
+						title: res.code ? "积分上传成功" : res.msg,
+						icon: res.code ? "success" : "error"
+					})
+				}, (err) => {
+					console.log("积分上传失败...", err)
+					uni.showToast({
+						title: err.code ? "积分上传失败" : err.msg,
+						icon: "error"
+					})
+				})
+			},
+
 			//获取报损数据
 			GetBSData: function(b, d) {
 				// let arr = [
@@ -557,7 +615,7 @@
 				console.log("报损数据处理开始：", obj);
 				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, r => {
 					console.log("主动关闭报损");
-					setTimeout(r=>{that.Close();},1000);
+					that.Close();
 				});
 			},
 
@@ -653,14 +711,16 @@
 				console.log("外卖袋请求数据：", obj);
 				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, r => {
 					console.log("主动关闭领用");
-					setTimeout(r=>{that.Close();},1000);
+					that.Close();
 				});
 			},
 			//列表刷新
 			Refresh: function() {
-				that.GetOrders(that.KHID, r => {
-					that.ShowDetail(that.WMOrders[0], 0);
-				});
+				setTimeout(r => {
+					that.GetOrders(that.KHID, r => {
+						that.ShowDetail(that.WMOrders[0], 0);
+					});
+				}, 1000);
 			},
 			//退出
 			Close: function() {
