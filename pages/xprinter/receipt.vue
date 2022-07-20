@@ -18,7 +18,7 @@
 		<canvas canvas-id="couponQrcode" class="canvas" :style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 
 		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
-		<canvas canvas-id="canvasLogoJPG" class="canvas" :style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;display:none;'"></canvas>
+		<canvas canvas-id="canvasLogoJPG" class="canvas" :style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
 		
 		<canvas canvas-id="canvasXPEWM" class="canvas" :style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		
@@ -191,6 +191,9 @@
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('bluePrinter reject failed reason', reason)
+						that.prepareSend(command.getData()); //发送数据
 					})
 				}else{
 					that.prepareSend(command.getData()); //发送数据
@@ -254,11 +257,14 @@
 					]).then(res => {
 					    console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('againPrinter reject failed reason', reason)
+						that.prepareSend(command.getData()); //发送数据
 					})
 				}else{
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
-				}	
+				}
 			},
 			gzhQrCodeGenerate : function(is_xpewm,url){
 			    return new Promise((resolve, reject) => {
@@ -284,6 +290,21 @@
 			initPhoto: function() {
 				//初始化画布数据
 				var that = this;
+				const ctx_Qrcode = uni.createCanvasContext("couponQrcode", this);
+					var png_Qrcode = that.imageSrc;
+					uni.getImageInfo({
+						src: png_Qrcode,
+						success(res) {
+							that.setData({
+								qrCodeWidth: that.qrCodeWidth,
+								qrCodeHeight: that.qrCodeHeight
+							});
+							//console.log("画布宽度" + res.width, "画布高度" + res.height);
+							ctx_Qrcode.drawImage(png_Qrcode, 0, 0, res.width, res.height);
+							ctx_Qrcode.draw();
+						}
+				}); 
+					
 				const ctx_out = uni.createCanvasContext("canvasXPEWM", that);
 				var png = that.imageSrc;
 				uni.getImageInfo({
