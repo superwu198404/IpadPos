@@ -11,7 +11,9 @@
 			<view class="hotcakes">
 				<image src="../../images/ydtq.png" mode="widthFix"></image> 预定提取
 				<view class="classifys">
-					<text class="curr">今日</text><text>待提货</text><text>已过期</text>
+					<text :class="SelectedClass('今日')" @click="Selected('今日')">今日</text>
+					<text :class="SelectedClass('待提货')" @click="Selected('待提货')">待提货</text>
+					<text :class="SelectedClass('已过期')" @click="Selected('已过期')">已过期</text>
 				</view>
 			</view>
 			<view>
@@ -23,7 +25,7 @@
 						<label @click="Search()">
 							<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 						</label>
-						<view class="criterias" v-if="Criterias">
+						<view class="criterias" v-if="view.Criterias" v-on:blur="Blur">
 							<view class="critlist"><text>订单号：</text><input type="text" /></view>
 							<view class="critlist"><text>手机号：</text><input type="text" /></view>
 							<view class="critlist"><text>收货人：</text><input type="text" /></view>
@@ -38,15 +40,22 @@
 		<view class="products">
 			<view class="procycle">
 				<!-- 产品循环 -->
-				<view class="li">
-					<view class="h3">
-						<text>单号：K77687657897657</text>
-						<text class="price">￥12.9</text>
+				<view v-for="item in extracts" class="li">
+					<view class="title-box">
+						<view class="title-left">
+							<text class="price">{{ item.CUSTMNAME || '-' }}·{{ item.CUSTMPHONE || '-' }}</text>
+							<text
+								:class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</text>
+						</view>
+						<view style="display: inline-block;">
+							<text class="price">{{ item.THDATE || '-' }}</text>
+						</view>
 					</view>
 					<view class="cods">
-						<label>2022-07-19 14:00</label>
+						<view>编号:{{ item.BMID || '-' }}</view>
+						<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 					</view>
-					<view class="handles"><text>5件退单商品</text><button class="btn">详单</button></view>
+					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button class="btn">预定提取</button></view>
 				</view>
 			</view>
 		</view>
@@ -54,40 +63,80 @@
 </template>
 
 <script>
+	import util from '@/utils/util.js';
+	import {
+		global
+	} from '@/models/PaymentAll/models.js';
+	import {
+		getReserveOrders
+	} from '@/api/business/reserve.js'
 	export default {
+		mixins: [global],
 		data() {
 			return {
-				statements: false,
-				Criterias: false,
-				Memberinfo: false,
-				Shoppingbags: false,
-				Chargeback: false,
-				coupon_list: [],
-				Newaddr: false
+				condition: "今日",
+				view: {
+					Details: false,
+					Criterias: false
+				},
+				extracts: []
+			}
+		},
+		computed: {
+			SelectedClass: function() {
+				return function(type) {
+					return this.condition === type ? 'curr' : '';
+				}
+			},
+			Type: function() {
+				return function(type) {
+					if (type)
+						switch (type[0]) {
+							case '0':
+								return 'youself';
+							case '1':
+								return 'home';
+							case '2':
+								return 'delivery';
+							default:
+								return '';
+						}
+					else
+						return ''
+				}
+			},
+			TypeText: function() {
+				return function(type) {
+					return type?.slice(2) || "-"
+				}
 			}
 		},
 		methods: {
-
+			Blur:function(){
+				console.log("失焦！")
+			},
+			Selected: function(type) {
+				this.condition = type;
+			},
 			Statements: function(e) {
-				this.statements = !this.statements
+				this.view.Details = !this.view.Details;
 
 			},
 			Search: function(e) {
-				this.Criterias = !this.Criterias
+				this.view.Criterias = !this.view.Criterias
 
-			},
-			Memberlogin: function(e) {
-				this.Memberinfo = true,
-					this.Shoppingbags = false
-			},
-			Bagslist: function(e) {
-				this.Shoppingbags = true,
-					this.Memberinfo = false
-			},
-			Moreand: function(e) {
-				this.Chargeback = !this.Chargeback
-			},
+			}
+		},
+		mounted() {
+			getReserveOrders({
+				khid: this.KHID
+			}, util.callBind(this, function(res) {
+				let data = JSON.parse(res.data);
+				if (data.constructor === Array)
+					this.extracts = data;
+			}, (err) => {
 
+			}))
 		}
 	}
 </script>
@@ -99,6 +148,111 @@
 
 	.classifys {
 		display: inline-flex !important;
-		width: unset;	
+		width: unset;
+	}
+
+	.handles uni-button {
+		width: auto;
+		display: inline-block;
+	}
+
+	.handles uni-text {
+		color: black;
+	}
+
+	.title-left {
+		display: flex;
+		gap: 3px;
+	}
+
+	.state {
+		color: #b0b0b0;
+		font-size: 12px;
+		display: inline-flex;
+		gap: 12rpx;
+		align-items: center;
+		padding: 0px 10px;
+	}
+
+	.state::before {
+		content: "";
+		display: inline-block;
+		width: 20rpx;
+		height: 20rpx;
+		background-color: #b0b0b0;
+		border-radius: 50%;
+
+	}
+
+	.delivery::before {
+		background-color: #fdb402;
+	}
+
+	.youself::before {
+		background-color: #41b44d;
+	}
+
+	.home::before {
+		background-color: royalblue;
+	}
+
+	.cods {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 18rpx;
+		margin: unset !important;
+		padding: 18rpx 0px;
+	}
+
+	.products .procycle .li {
+		width: calc(50% - 20px) !important;
+		box-sizing: border-box;
+		margin: unset;
+		height: 160px;
+		align-items: center;
+		padding: 1.5%;
+	}
+
+	.products .procycle::after {
+		content: "";
+		flex: 0.95;
+	}
+
+	.products {
+		flex: 1 0px;
+		overflow-y: auto;
+		padding: 0px 2% 2% 2% !important;
+	}
+
+	.procycle {
+		gap: 10px;
+		width: 100% !important;
+		box-sizing: border-box !important;
+		display: flex !important;
+		flex-direction: row !important;
+		height: unset !important;
+		overflow-y: auto;
+		justify-content: center;
+	}
+
+	.commodity {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.price {
+		font-size: 16px;
+		margin-top: 0px;
+	}
+
+	.title-box {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-weight: 600;
+	}
+	
+	.criterias{
+		z-index: 10;
 	}
 </style>

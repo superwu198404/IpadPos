@@ -559,7 +559,7 @@ page {
 	font-size: 38rpx;
 	width: 98.5%;
 	margin:0 ;
-	line-height: 90rpx;
+	line-height: 70rpx;
 	height: 90rpx;
 }
 .btn-xk{
@@ -575,7 +575,6 @@ page {
 .btn-qx{
 	background-color: #EEEEEE;
 	color: #B0B0B0;
-	line-height: 90rpx;
 	height: 90rpx;
 }
 .pays-bj .curr.selected {

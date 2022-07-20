@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<PrinterPage ref="printerPage" style="display: none;" />
+		<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
 		<view>
 			<div class="product">
 				<div>商品ID：</div>
@@ -674,7 +674,6 @@
 				//获取BILLS
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
 					.reverse();
-
 				//生成支付规则数据
 				await common.InitZFRULE();
 				let khid = "K0101QT2";
@@ -686,6 +685,8 @@
 				await common.GetZFRULE();
 				//获取POS参数组数据
 				await common.GetPOSCS(khid);
+				
+				console.log("POSCS",util.getStorage("POSCS"))
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			},

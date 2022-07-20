@@ -98,7 +98,7 @@
 			</view>
 
 			<view class="listof">
-				<view class="prolist">
+				<view class="prolist" style="border: 1px dashed red;box-sizing: border-box;">
 					<component :is="currentPage.componentName"></component>
 				</view>
 			</view>
@@ -113,73 +113,92 @@
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
-	
+
 	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
-	import Extract from '@/pages/Extract/Extract.vue' 
-	
+	import Extract from '@/pages/Extract/Extract.vue'
+
 	export default {
-		mixins:[global],
-		components:{
+		mixins: [global],
+		components: {
 			OnlineOrders,
 			TakeAway,
 			Extract
 		},
-		data(){
+		data() {
 			return {
-				currentPage:{
-					componentName:"",//组件名称
-					name:"" //菜单中文名
+				currentPage: {
+					componentName: "", //组件名称
+					name: "" //菜单中文名
 				},
-				menu:{
-					refundBussiness:{
-						option:false
+				menu: {
+					refundBussiness: {
+						option: false
 					},
-					router:[
-						{
-							
-						}
-					]
+					router: [{
+
+					}]
 				}
 			}
 		},
-		computed:{
-			selected:function(){
+		computed: {
+			selected: function() {
 				return (function(name) {
-					 return this.currentPage.name === name ? "curr" : "";
+					return this.currentPage.name === name ? "curr" : "";
 				}).bind(this)
 			}
 		},
-		watch:{
-			currentPage(n,o){
-				
+		watch: {
+			currentPage(n, o) {
+
 			}
 		},
-		methods:{
-			directional(name,component){
+		methods: {
+			directional(name, component) {
 				console.log("功能切换：" + name)
 				this.currentPage.name = name;
 				this.currentPage.componentName = component;
 			},
-			back(){
+			back() {
 				console.log("返回上一个界面！")
 				uni.navigateTo({
-					url:'../index/index'
+					url: '../index/index'
 				})
 			},
-			init(){
+			init() {
+				// this.currentPage.componentName = 'Extract'
 				this.currentPage.componentName = 'OnlineOrders'
 				this.currentPage.name = '线上订单'
 			}
 		},
-		mounted(){
+		mounted() {
 			this.init();
 		}
 	}
 </script>
 
 <style>
-	.products{
+	.products {
 		padding: 0px;
+	}
+
+	.navmall {
+		height: 100%;
+		box-sizing: border-box;
+	}
+
+	.right {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: auto;
+	}
+
+	.listof {
+		flex: 1 0px;
+		height: calc(100% - 160px);
+	}
+	.prolist{
+		height: 100%;
 	}
 </style>
