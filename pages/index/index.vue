@@ -391,9 +391,14 @@
 						url: "../TakeAway/TakeAway"
 					})
 				} else if (e == 4) {
+					console.log("进入预定");
 					uni.navigateTo({
-						url: "../TakeYD/TakeYD"
-					})
+						url: "../TakeYD/TakeYD",
+						complete: r => {
+							console.log("发生了什么：", r);
+						}
+					});
+					console.log("进入预定后");
 				}
 			},
 			DataAssembleSaveForGlobal: function() {

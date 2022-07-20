@@ -101,8 +101,8 @@
 		        "navigationBarTitleText": "",
 		        "enablePullDownRefresh": false
 		    }
-		}
-        ,{
+		},
+		{
             "path" : "pages/TakeAway/TakeAway",
             "style" :                                                                                    
             {
@@ -111,8 +111,8 @@
                 "enablePullDownRefresh": false
             }
             
-        }
-        ,{
+        },
+		{
             "path" : "pages/TakeYD/TakeYD",
             "style" :                                                                                    
             {
