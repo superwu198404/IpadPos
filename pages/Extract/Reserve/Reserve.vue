@@ -113,11 +113,12 @@
 	export default{
 		name:"Reserve",
 		props:{
-			statements:Boolean
+			show:Boolean
 		},
 		data(){
 			return {
-				Newaddr:false
+				Newaddr:false,
+				Statements:this.show
 			}
 		},
 		methods:{

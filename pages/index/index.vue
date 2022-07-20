@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<PrinterPage ref="printerPage" style="display: none;" />
+		<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
 		<view>
 			<div class="product">
 				<div>商品ID：</div>
@@ -114,54 +114,55 @@
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
 				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
-		<button @click="againPrinter()">重新打印</button>
-		<button @click="inputAuthCode()">录入付款码</button>
-		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<button @click="Test(2)">测试一下</button>
-		<div v-if="view.orders.showDetail"
-			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
-			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
-				<div style="height: 25px;">
-					<div @click="view.orders.showDetail = false"
-						style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
-						×</div>
-				</div>
-				<div style="display: flex;">
-					<div>
-						<span>
-							SALE001:
-						</span>
-						<pre>
-						{{ view.orders.sale1_string }}
-						</pre>
+			<button @click="againPrinter()">重新打印</button>
+			<button @click="inputAuthCode()">录入付款码</button>
+			<!-- <button @click="MenuPage(3)">返回调试</button>-->
+			<button @click="Test(2)">测试一下</button>
+			<div v-if="view.orders.showDetail"
+				style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
+				<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
+					<div style="height: 25px;">
+						<div @click="view.orders.showDetail = false"
+							style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
+							×</div>
 					</div>
-					<div>
-						<span>
-							SALE002:
-						</span>
-						<pre>
-						{{ view.orders.sale2_string }}
-						</pre>
-					</div>
-					<div>
-						<span>
-							SALE003:
-						</span>
-						<pre>
-						{{ view.orders.sale3_string }}
-						</pre>
+					<div style="display: flex;">
+						<div>
+							<span>
+								SALE001:
+							</span>
+							<pre>
+							{{ view.orders.sale1_string }}
+							</pre>
+						</div>
+						<div>
+							<span>
+								SALE002:
+							</span>
+							<pre>
+							{{ view.orders.sale2_string }}
+							</pre>
+						</div>
+						<div>
+							<span>
+								SALE003:
+							</span>
+							<pre>
+							{{ view.orders.sale3_string }}
+							</pre>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- 画布 -->
-		<view class="canvasdiv">
-			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
-			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
-			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
+			<!-- 画布 -->
+			<view class="canvasdiv">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
+			</view>
 		</view>
 	</view>
 </template>
@@ -177,7 +178,7 @@
 		RefundQuery
 	} from '@/api/business/da.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
-	
+
 	import _take from '@/api/business/takeaway.js';
 	//打印相关
 	export default {
@@ -371,7 +372,7 @@
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
 			},
-			onlineOrders:function(){
+			onlineOrders: function() {
 				console.log("跳转至线上订单界面")
 				uni.navigateTo({
 					url: "../Home/Home"
@@ -715,7 +716,6 @@
 				//获取BILLS
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
 					.reverse();
-
 				//生成支付规则数据
 				await common.InitZFRULE();
 				let khid = "K0101QT2";
@@ -727,6 +727,8 @@
 				await common.GetZFRULE();
 				//获取POS参数组数据
 				await common.GetPOSCS(khid);
+				
+				console.log("POSCS",util.getStorage("POSCS"))
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			},

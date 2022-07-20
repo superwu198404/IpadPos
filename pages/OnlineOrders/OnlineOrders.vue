@@ -2,7 +2,6 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
 	@import url(@/static/style/takeout.css);
-	@import url(@/static/style/OnlineOrders/index.css);
 </style>
 
 <template>
@@ -17,32 +16,34 @@
 		<view class="products">
 			<view class="procycle">
 				<!-- 外卖单循环 -->
-				<view class="li" v-for="(item,index) in onlineOrders" :order="item" @click="ShowDetail(item)">
-					<view class="h3">
-						<view class="platform">
-							<label>
-								<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
-								{{item.SNAME}}
-							</label>
-							<label class="state quxiao"><text>●</text>取消订单</label>
-							<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
+				<view class="li-box">
+					<view class="li" v-for="(item,index) in onlineOrders" :order="item" @click="ShowDetail(item)">
+						<view class="h3">
+							<view class="platform">
+								<label>
+									<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
+									{{item.SNAME}}
+								</label>
+								<label class="state quxiao"><text>●</text>取消订单</label>
+								<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
+							</view>
+							<view>￥{{item.PRICE}}</view>
 						</view>
-						<view>￥{{item.PRICE}}</view>
-					</view>
-					<view class="cods">
-						<label><text>预定单号：</text>
-							<div class="trade-roll" style="">
-								<div style="">{{item.BILL || '-'}}</div>
-							</div>
-						</label>
-						<label><text>到货时间：</text><text>{{item.DATE_DH || '-'}}</text></label>
-						<label><text>顾客电话：</text><text>{{item.CUSTMPHONE || '-'}}</text></label>
-						<label><text>预定时间：</text><text>{{item.SALETIME || '-'}}</text></label>
-						<label><text>顾客要求：</text><text>{{item.CUSTMCOMM || '-'}}</text></label>
-						<label><text>补充要求：</text><text>{{item.NOTE || '-'}}</text></label>
-					</view>
-					<view class="address">
-						顾客地址：{{item.CUSTMADDRESS || '-'}}
+						<view class="cods">
+							<label><text>预定单号：</text>
+								<div class="trade-roll" style="">
+									<div style="">{{item.BILL || '-'}}</div>
+								</div>
+							</label>
+							<label><text>到货时间：</text><text>{{item.DATE_DH || '-'}}</text></label>
+							<label><text>顾客电话：</text><text>{{item.CUSTMPHONE || '-'}}</text></label>
+							<label><text>预定时间：</text><text>{{item.SALETIME || '-'}}</text></label>
+							<label><text>顾客要求：</text><text>{{item.CUSTMCOMM || '-'}}</text></label>
+							<label><text>补充要求：</text><text>{{item.NOTE || '-'}}</text></label>
+						</view>
+						<view class="address">
+							顾客地址：{{item.CUSTMADDRESS || '-'}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -118,7 +119,7 @@
 					<button v-if="mode('read')" class="btn btn-qx" @click="Cancel()">取消</button>
 				</view>
 			</view>
-	</view>
+		</view>
 	</view>
 </template>
 
@@ -346,3 +347,32 @@
 		}
 	}
 </script>
+
+<style>
+	.max-height {
+		height: 100%;
+	}
+
+	.products .procycle .li {
+		box-sizing: border-box;
+	}
+
+	.products .details {
+		height: unset;
+	}
+
+	.meminfo {
+		position: unset;
+	}
+
+	.li-box{
+		border: 1px solid red;
+	}
+	
+	.procycle {
+		border: 1px solid blue;
+		max-height: 6%;
+		overflow-y: auto;
+		/* flex: 0; */
+	}
+</style>
