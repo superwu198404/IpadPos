@@ -130,6 +130,36 @@
 		        "enablePullDownRefresh": false
 		    }
 		}
+        ,{
+            "path" : "pages/Login/Login",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/MemberLogin/MemberLogin",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/Main/Main",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -178,13 +178,13 @@
 										<view class="prolist" v-for="(item1,index1) in Details">
 											<view class="h3">
 												<label>
-													<checkbox-group @click="checkFunc(item1)">
+													<checkbox-group @click="checkFunc(item1)" v-if="item1.yn_sb">
 														<checkbox :checked="item1.isChecked"></checkbox>
 													</checkbox-group>
 													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
 													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 												</label>
-												<view class="shuls"><text>×{{item1.QTY}}</text></view>
+												<view class="shuls"><text>×{{item1.PACK}}</text></view>
 											</view>
 											<view class="cods">
 												<view>
@@ -214,93 +214,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- 报损数据 -->
-		<view class="boxs" v-if="yn_bs">
-			<view class="memberes">
-				<view class="pop-r">
-					<view class="member">
-						<label>
-							门店报损
-						</label>
-						<button @click="yn_bs=!yn_bs">×</button>
-					</view>
-					<view class="breakage">
-						<label><text>报损原因：</text>{{bs_Reason}}</label>
-						<label><text>备注：{{bs_Note}}</text></label>
-					</view>
-					<view class="h5"><text>报损商品</text></view>
-					<view class="goods">
-						<!-- 商品循环 -->
-						<view class="prolist" v-for="(item,index) in BSDATA">
-							<view class="h3">
-								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image>{{item.STR5}}
-								</label>
-								<text>X{{item.BQTY}}</text>
-							</view>
-							<view class="cods">
-								<view>
-									<label>
-										<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
-									</label>
-									<label>
-										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.PACK}}个
-									</label>
-								</view>
-								<text>￥{{item.NUM1}}</text>
-							</view>
-						</view>
-
-					</view>
-
-					<view class="confirm">
-						<button class="btn" @click="ConfirmBS()">报 损</button>
-						<button class="btn" @click="yn_bs=false">取 消</button>
-					</view>
-
-					<!-- <view class="states" @click="Statements()">
-          <text>结算单</text>
-          <label>»</label>
-        </view> -->
-
-				</view>
-			</view>
-		</view>
-		<!-- 外卖袋 -->
-		<view class="boxs" v-if="yn_wmd">
-			<!-- v-if="Shoppingbags" -->
-			<view class="meminfo">
-				<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-				<view>
-					<view class="member">
-						<label class="h9">选择外带包装袋</label>
-						<button @click="yn_wmd=false">×</button>
-					</view>
-					<view class="shoppbag">
-						<view class="baglist curr" v-for="(item,index) in WMDDATA">
-							<view class="bag">
-								<text class="h8">{{item.SNAME}}</text>
-								<label><text>说明</text>最多可选{{item.ZQTY}}{{item.UNIT}}</label>
-							</view>
-							<view class="quantit">
-								<text>数量</text>
-								<view class="nums">
-									<text @click="Calculate(item,'-')">-</text>
-									<input type="number" v-model="item.BQTY" @blur="Calculate(item,'*',$event)" />
-									<text @click="Calculate(item,'+')">+</text>
-								</view>
-							</view>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" @click="ConfirmWMD()">确 认</button>
-						<button class="btn btn-xk" @click="yn_wmd=false">跳 过</button>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
-
 	</view>
 </template>
 
@@ -383,8 +296,8 @@
 				that.Order = e; //订单对象
 				let detailArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
 				let arr = util.getStorage("POSCS");
-				console.log("水吧商品编码:", arr);
-				let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				console.log("参数组数据:", arr);
+				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
 				let bmArr = [];
 				if (obj) {
 					bmArr = obj.POSCSNR.split(',');

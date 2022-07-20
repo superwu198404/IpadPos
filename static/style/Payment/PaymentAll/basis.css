@@ -252,7 +252,7 @@ page {
 	align-items: center;
 }
 .checkout label image{
-	width:22rpx;
+	width:26rpx;
 	margin-right: 6rpx;
 }
 .amounts {
@@ -282,9 +282,10 @@ page {
 }
 
 .amounts p text:nth-child(2) {
+	display: inline-block;
 	font-size: 60rpx;
 	height: 100rpx;
-	line-height: 100px;
+	line-height: 100rpx;
 	color: #333;
 }
 .amounts p .pay-center{
@@ -559,7 +560,7 @@ page {
 	font-size: 38rpx;
 	width: 98.5%;
 	margin:0 ;
-	line-height: 70rpx;
+	line-height: 90rpx;
 	height: 90rpx;
 }
 .btn-xk{
@@ -575,6 +576,7 @@ page {
 .btn-qx{
 	background-color: #EEEEEE;
 	color: #B0B0B0;
+	line-height: 90rpx;
 	height: 90rpx;
 }
 .pays-bj .curr.selected {

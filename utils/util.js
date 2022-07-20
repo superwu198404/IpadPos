@@ -27,7 +27,7 @@ const utils = {
 	 * @param content: 内容
 	 * @returns void
 	 */
-	simpleModal:function(title,content){
+	simpleModal: function(title, content) {
 		uni.showModal({
 			title,
 			content
@@ -61,7 +61,7 @@ const utils = {
 		Object.defineProperties(obj, configs);
 		return obj;
 	},
-	callBind:function(thisObject,func){
+	callBind: function(thisObject, func) {
 		return func.bind(thisObject);
 	},
 	//日期格式化
@@ -222,7 +222,7 @@ const utils = {
 		}
 		return val;
 	},
-	
+
 	/**
 	 * 清除全局存储值
 	 * @param key: 键
@@ -240,7 +240,7 @@ const utils = {
 
 export default {
 	simpleMsg: utils.simpleMsg,
-	simpleModal:utils.simpleModal,
+	simpleModal: utils.simpleModal,
 	trim: utils.trim,
 	replaceAll: utils.replaceAll,
 	formatNumber: utils.formatNumber,
@@ -255,7 +255,7 @@ export default {
 	uuid: utils.UUID,
 	setStorage: utils.setStorage,
 	getStorage: utils.getStorage,
-	removeStorage:utils.removeStorage,
+	removeStorage: utils.removeStorage,
 	hidePropety: utils.hidePropety,
-	callBind:utils.callBind
+	callBind: utils.callBind
 }
