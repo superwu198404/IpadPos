@@ -43,7 +43,7 @@
 				</view>
 			</view>
 			<view class="mem-bg">
-				<button class="skip">跳过</button>
+				<button class="skip" @click="ReBack()">跳过</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
 					<label>
@@ -93,10 +93,13 @@
 					data: obj
 				}, res => {
 					console.log("会员信息查询成功:", res);
-					util.simpleMsg("登录成功");
 					if (res.code) {
 						let hyinfo = JSON.parse(res.data);
 						util.setStorage("hyinfo", hyinfo);
+						util.simpleMsg("登录成功");
+						setTimeout(r => {
+							uni.navigateBack({})
+						}, 1000);
 					}
 				}, err => {
 					console.log("会员信息查询失败:", err);
@@ -105,9 +108,21 @@
 			},
 			//退出登录
 			LoginOut: function() {
-				uni.navigateBack({
-
-				})
+				uni.navigateBack({});
+				// switch (uni.getSystemInfoSync().platform) {
+				// 	case 'android':
+				// 		plus.runtime.quit();
+				// 		break;
+				// 	case 'ios':
+				// 		console.log("退出事件");
+				// 		// uni.clearStorage();//清除缓存
+				// 		plus.ios.import('UIApplication').sharedApplication().performSelector('exit');
+				// 		break;
+				// }
+			},
+			//返回
+			ReBack: function() {
+				uni.navigateBack({})
 			}
 		}
 	}

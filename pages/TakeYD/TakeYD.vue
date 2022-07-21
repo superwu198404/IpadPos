@@ -320,15 +320,18 @@
 			checkFunc: function(e) {
 				if (e) {
 					that.Details.forEach((item) => {
-						item.isChecked = !e.isChecked;
+						if (item.SPID == e.SPID) {
+							item.isChecked = !e.isChecked;
+						}
 					})
 				}
 			},
 			//确认接收
 			ConfirmReceipt: function() {
-				// console.log("详情信息:", JSON.stringify(that.Details));
+				console.log("提交单信息:", JSON.stringify(that.Order));
+				console.log("提交单信息1:", JSON.stringify(that.Details));
 				// return;
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					_take.ConfirmReceipt_YD({
 						status: that.Order.STATUS,
 						bill: that.Order.BILL,
@@ -361,11 +364,16 @@
 						//列表刷新
 						that.Refresh();
 					})
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
+					})
 				}
 			},
 			//同意退单
 			ConfirmReback: function() {
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
 						uni.showToast({
@@ -375,11 +383,16 @@
 						return;
 					}
 					that.commonRefund("1");
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
+					})
 				}
 			},
 			//拒绝退单
 			RejectReback: function() {
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
 						uni.showToast({
@@ -389,6 +402,11 @@
 						return;
 					}
 					that.commonRefund("0");
+				} else {
+					uni.showToast({
+						title: "暂无数据",
+						icon: "error"
+					})
 				}
 			},
 			//同意和拒绝退单操作
@@ -429,6 +447,7 @@
 					that.GetOrders(that.KHID, r => {
 						that.ShowDetail(that.WMOrders[0], 0);
 					});
+					that.$forceUpdate(); //刷新input的值 狗bug
 				}, 1000);
 			},
 			//退出

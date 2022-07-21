@@ -75,7 +75,7 @@
 				readServiceId: "",
 				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
-				ggy: "",//广告语
+				ggy: "", //广告语
 			}
 		},
 		onLaunch: function() {
@@ -93,6 +93,10 @@
 		onHide: function() {
 			console.log('App Hide');
 			clearInterval(int);
+		},
+		onUnload: function() {
+			console.log('App 卸载');
+
 		}
 	}
 </script>
