@@ -381,7 +381,7 @@
 			},
 			//确认接收
 			ConfirmReceipt: function() {
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					_take.ConfirmReceipt({
 						status: that.Order.STATUS,
 						bill: that.Order.BILL,
@@ -443,7 +443,7 @@
 
 			//同意退单
 			ConfirmReback: function() {
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
 						uni.showToast({
@@ -462,7 +462,7 @@
 			},
 			//拒绝退单
 			RejectReback: function() {
-				if (that.Order) {
+				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
 						uni.showToast({

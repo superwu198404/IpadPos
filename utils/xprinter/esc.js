@@ -1335,18 +1335,28 @@ var jpPrinter = {
 		//支付方式分组的处理
 		let sale3_arrOrigin = JSON.stringify(data.sale3List);
 		let sale3_arr = [];
+		let zqNet = 0;
 		//付款方式
 		data.sale3List.forEach((item1, index1) => {
 			payTotal += parseFloat(item1.amt);		
 			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
 			if (!parent) {
-				let totalAmt = data.sale3List.reduce((prev, cur) => {
+			    let list = data.sale3List.filter(el => {
+				  return el.fkid === item1.fkid
+			    })
+				//console.log("sFkid 111",list);
+				let totalAmt = list.reduce((prev, cur) => {
 					return prev + cur.amt;
 				}, 0)
+				//如果是赠券
+				if(item1.fkid == "ZZ01"|| item1.fkid=="ZCV1"){
+					zqNet += totalAmt;
+				}
 				item1.amt = totalAmt;
 				sale3_arr.push(item1)
 			} 
 		});
+
 
 		sale3_arr.forEach((item2, index2) => {
 			let amount = item2.amt;
@@ -1382,8 +1392,7 @@ var jpPrinter = {
 		// jpPrinter.setText("门店地址: " + data.khAddress);
 		// jpPrinter.setPrint(); //打印并换行
 		
-	    let	sale3_List = JSON.parse(sale3_arrOrigin);
-		//console.log("data.sale3List 111",sale3_List)
+	    let	sale3_List = JSON.parse(sale3_arrOrigin);	
 		sale3_List.forEach((item3, index3) => {
 			if(isReturn){
 				item3.amt = item3.amt;
@@ -1423,7 +1432,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商户承担折扣额:" + data.hdnet.toString());
+		jpPrinter.setText("商户承担折扣额:" + zqNet.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(isYD){

@@ -62,8 +62,24 @@ const CouponList = function(loading_title, request, success, error) {
 			error(res)
 	});
 }
-
+var QueryHyInfo= function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		kquser: global.kquser,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "QueryHyInfo"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
 export default {
 	UploadPoint,
-	CouponList
+	CouponList,
+	QueryHyInfo
 }

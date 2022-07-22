@@ -101,8 +101,8 @@
 		        "navigationBarTitleText": "",
 		        "enablePullDownRefresh": false
 		    }
-		}
-        ,{
+		},
+		{
             "path" : "pages/TakeAway/TakeAway",
             "style" :                                                                                    
             {
@@ -111,8 +111,8 @@
                 "enablePullDownRefresh": false
             }
             
-        }
-        ,{
+        },
+		{
             "path" : "pages/TakeYD/TakeYD",
             "style" :                                                                                    
             {
@@ -130,6 +130,46 @@
 		        "enablePullDownRefresh": false
 		    }
 		}
+        ,{
+            "path" : "pages/Login/Login",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/MemberLogin/MemberLogin",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/Main/Main",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/RefundOrder/RefundOrder",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
