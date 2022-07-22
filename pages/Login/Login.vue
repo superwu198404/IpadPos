@@ -8,15 +8,18 @@
 			<view class="import">
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
-					<input type="text" v-model="userid" placeholder="请输入登录账号" />
+					<input type="text" v-model="userid" placeholder="请输入登录账号" @blur="GetKHIDS()" />
 				</label>
 				<label>
 					<image src="../../images/dl-mima.png" mode="widthFix"></image>
-					<input password="true" v-model="password" placeholder="请输入登录账号" />
+					<input password="true" v-model="password" placeholder="请输入登录密码" />
 				</label>
 				<label>
 					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<input type="text" v-model="khid " />
+					<!-- <input type="text" v-model="khid " /> -->
+					<picker :range="KHArr" :value="index" @change="ChooseKH">
+						<view style="width: 100%;">{{KHArr[index]}}</view>
+					</picker>
 				</label>
 			</view>
 			<view class="logbtn">
@@ -44,21 +47,57 @@
 			return {
 				userid: "",
 				password: "",
-				khid: ""
+				khid: "",
+				// KHArr: ["1123451", "1123452", "1123453", "1123454", "1123455", "1123456"],
+				KHArr: [],
+				index: 0
 			}
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
 			},
+			GetKHIDS: function() {
+				if (!that.userid) {
+					util.simpleMsg("请输入账号", true);
+					return;
+				}
+				_login.GetKHIDByRYID(that.userid, r => {
+					if (r.code && r.msg.length > 0) {
+						let arr = r.msg.map((rr) => {
+							return rr.KHID;
+						});
+						that.KHArr = arr;
+						that.khid = that.KHArr[0]; //赋默认值
+						console.log("客户信息序列化集合：", arr);
+
+					} else {
+						that.KHArr = [];
+						that.khid = "";
+						util.simpleMsg("未匹配到用户门店", true);
+					}
+				})
+			},
+			//客户选择事件
+			ChooseKH: function(e) {
+				that.index = e.detail.value;
+				that.khid = that.KHArr[that.index];
+				// console.log("选择事件：", e.detail.value);
+				// console.log("选择事件1：", that.index);
+			},
 			Login: function() {
 				if (!that.userid || !that.password) {
 					util.simpleMsg("请输入账号密码", true);
 					return;
 				}
-				_login.GetPassWord(that.userid, that.password, res => {
+				_login.GetPassWord(that.khid, that.userid, that.password, res => {
 					console.log("登录成功：", res);
 					util.simpleMsg("登录成功");
+					setTimeout(r => {
+						uni.navigateTo({
+							url: "../Main/Main"
+						})
+					}, 1000);
 				})
 			}
 		}

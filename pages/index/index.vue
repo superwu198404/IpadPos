@@ -69,6 +69,7 @@
 		<button @click="MenuPage(4)">外卖预定</button>
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
+		<button @click="MenuPage(7)">退单业务</button>
 		<button @click="onlineOrders()">线上订单</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
@@ -403,7 +404,11 @@
 					});
 				}else if (e == 6) {
 					uni.navigateTo({
-						url: "../Main/Main",
+						url: "../Main/Main"
+					});
+				}else if (e == 7) {
+					uni.navigateTo({
+						url: "../RefundOrder/RefundOrder",
 						complete:r=>{
 							console.log(r);
 						}

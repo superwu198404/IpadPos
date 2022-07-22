@@ -4,14 +4,8 @@ import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 
-var GetPassWord = function(userid, password, func) {
-	// debugger;
-	// let a = '&49|ADvC49FiXV133PVIA35}jw155G09wCB03*29w#A@';
-	// let newPs = get_mystr(a);
-	// newPs = newPs.substr(2, newPs.length - 4)
-	// console.log(newPs)
-	// return
-	let sql = "select password_MD,gwid,SNAME from  MDRYKH where ryid='" + userid + "'";
+var GetPassWord = function(khid, userid, password, func) {
+	let sql = "select password_MD,gwid,SNAME from MDRYKH where ryid='" + userid + "' and khid='" + khid + "'";
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("用户密码查询结果：", res);
 		if (res.code && res.msg.length > 0) {
@@ -28,7 +22,7 @@ var GetPassWord = function(userid, password, func) {
 				msg: "登录成功"
 			});
 		} else {
-			util.simpleMsg("无该用户信息", true);
+			util.simpleMsg("账号错误，请检查", true);
 		}
 	}, err => {
 		util.simpleMsg("校验异常", true);
@@ -82,6 +76,18 @@ var get_mystr = function(pm_strpass) {
 	}
 }
 
+//根据ryid 查询khid 一对多的关系
+var GetKHIDByRYID = function(userid, func) {
+	let sql = "select password_MD,gwid,SNAME,KHID from MDRYKH where ryid='" + userid + "'";
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("用户信息查询结果：", res);
+		func(res);
+	}, err => {
+		util.simpleMsg("校验异常", true);
+	});
+}
+
 export default {
-	GetPassWord
+	GetPassWord,
+	GetKHIDByRYID
 }

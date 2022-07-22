@@ -160,6 +160,16 @@
             }
             
         }
+        ,{
+            "path" : "pages/RefundOrder/RefundOrder",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

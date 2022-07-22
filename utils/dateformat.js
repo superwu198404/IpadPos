@@ -286,7 +286,7 @@ const gettimes = () => {
 	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
 	let min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
 	let sec = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
-	let str = hour + min + sec+'';
+	let str = hour + min + sec + '';
 	return str;
 };
 
@@ -295,22 +295,45 @@ const getdate = () => {
 	let year = date.getFullYear().toString();
 	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
 	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
-	let str =year + month + day+'' ;
+	let str = year + month + day + '';
 	return str;
 };
 //获取当前时今年的第几周：2022,06,20
-var getYearWeek = (a, b, c)=>
-{
-    /*
-    date1是当前日期
-    date2是当年第一天
-    d是当前日期是今年第多少天
-    用d + 当前年的第一天的周差距的和在除以7就是本年第几周
-    */
-        var date1 = new Date(a, parseInt(b) - 1, c),
-            date2 = new Date(a, 0, 1),
-            d = Math.round((date1.valueOf() - date2.valueOf()) / 86400000);
-        return Math.ceil((d + ((date2.getDay() + 1) - 1)) / 7);
+var getYearWeek = (a, b, c) => {
+	/*
+	date1是当前日期
+	date2是当年第一天
+	d是当前日期是今年第多少天
+	用d + 当前年的第一天的周差距的和在除以7就是本年第几周
+	*/
+	var date1 = new Date(a, parseInt(b) - 1, c),
+		date2 = new Date(a, 0, 1),
+		d = Math.round((date1.valueOf() - date2.valueOf()) / 86400000);
+	return Math.ceil((d + ((date2.getDay() + 1) - 1)) / 7);
+};
+/**
+ *获取日期时间中的单个数值 
+ * @param {*} t 
+ */
+const getDateByParam = (t) => {
+	let str = "";
+	let date = new Date();
+	if (t == "Y")
+		str = date.getFullYear().toString();
+	if (t == 'M')
+		str = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
+	if (t == "D")
+		str = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
+	if (t == "h")
+		str = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
+	if (t == "m")
+		str = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
+	if (t == "s")
+		str = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
+	if (t == "w")
+		str = getYearWeek(date.getFullYear(), date.getMonth() + 1, date.getDay());
+	// < 10 ? "0" + date.getWeek() : date.getWeek().toString();
+	return str;
 };
 export default {
 	stringToDate,
@@ -329,5 +352,6 @@ export default {
 	getYMDS,
 	getYearWeek,
 	getdate,
-	gettimes
+	gettimes,
+	getDateByParam
 }
