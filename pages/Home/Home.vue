@@ -36,6 +36,11 @@
 					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
 					<text>线上订单</text>
 				</view>
+				<view @click="directional('线上提取','OnlinePick')" :class="selected('线上提取')">
+					<image class="xz" src="@/images/xz-ydtq.png" mode="widthFix"></image>
+					<image class="wx" src="@/images/wxz-ydtq.png" mode="widthFix"></image>
+					<text>线上提取</text>
+				</view>
 				<view @click="directional('退单业务')" :class="selected('退单业务')">
 					<image class="xz" src="@/images/xz-th.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/wxz-th.png" mode="widthFix"></image>
@@ -64,7 +69,11 @@
 					<text>消息</text>
 				</view>
 			</view>
-			<view class="exit" @click="back()">
+			<view class="exit" @click="back()" style="bottom: 10%;">
+				<image src="@/images/dx-qdb.png" mode="widthFix" style="transform: rotate(-90deg);"></image>
+				<text>返回</text>
+			</view>
+			<view class="exit" @click="returned()">
 				<image src="@/images/tuichu.png" mode="widthFix"></image>
 				<text>退出</text>
 			</view>
@@ -98,7 +107,7 @@
 			</view>
 
 			<view class="listof">
-				<view class="prolist" style="border: 1px dashed red;box-sizing: border-box;">
+				<view class="prolist">
 					<component :is="currentPage.componentName"></component>
 				</view>
 			</view>
@@ -117,13 +126,15 @@
 	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
-
+	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
+	
 	export default {
 		mixins: [global],
 		components: {
 			OnlineOrders,
 			TakeAway,
-			Extract
+			Extract,
+			OnlinePick
 		},
 		data() {
 			return {
@@ -131,6 +142,7 @@
 					componentName: "", //组件名称
 					name: "" //菜单中文名
 				},
+				history:[],
 				menu: {
 					refundBussiness: {
 						option: false
@@ -158,8 +170,21 @@
 				console.log("功能切换：" + name)
 				this.currentPage.name = name;
 				this.currentPage.componentName = component;
+				this.history.push({
+					name,
+					component
+				});
 			},
-			back() {
+			back(){
+				let info = this.history.pop();
+				if(info){
+					this.currentPage.name = info.name;
+					this.currentPage.componentName = info.component;
+				}
+				else
+					uni.navigateBack();
+			},
+			returned() {
 				console.log("返回上一个界面！")
 				uni.navigateTo({
 					url: '../index/index'
@@ -168,6 +193,7 @@
 			init() {
 				// this.currentPage.componentName = 'Extract'
 				this.currentPage.componentName = 'OnlineOrders'
+				// this.currentPage.componentName = 'OnlinePick'
 				this.currentPage.name = '线上订单'
 			}
 		},
@@ -198,7 +224,8 @@
 		flex: 1 0px;
 		height: calc(100% - 160px);
 	}
+	
 	.prolist{
-		height: 100%;
+		height: calc(100vh - 76px);
 	}
 </style>

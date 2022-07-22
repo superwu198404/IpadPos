@@ -15,11 +15,12 @@ const utils = {
 	 * @param isError?: 是否是错误信息
 	 * @returns void
 	 */
-	simpleMsg: function(title, isError = false) {
+	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
 			title,
 			icon: isError ? "error" : "success"
 		})
+		if(errData) console.log(title,errData)
 	},
 	/**
 	 * 简单模态弹窗

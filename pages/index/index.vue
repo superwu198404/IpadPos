@@ -667,8 +667,8 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
-					.reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
+				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				await common.InitZFRULE();
 				let khid = "K0101QT2";
