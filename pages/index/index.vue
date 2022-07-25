@@ -114,11 +114,11 @@
 		<!-- 画布 -->
 		<view class="canvasdiv">
 			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 	</view>
 </template>
@@ -218,12 +218,12 @@
 				totalAmount: 0,
 				SKY_DISCOUNT: 0,
 				//打印相关
-				jpgWidth: 340,
-				jpgHeight: 113,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
-				canvasGZHWidth: 200,
-				canvasGZHHeight: 200,
+				jpgWidth: 0,
+				jpgHeight: 0,
+				qrCodeWidth: 0, //二维码宽
+				qrCodeHeight: 0, // 二维码高
+				canvasGZHWidth: 0,
+				canvasGZHHeight: 0,
 				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},
