@@ -79,7 +79,8 @@
 						<view class="imgs">
 							<image src="../../images/tongzhi.png" mode="widthFix"></image>
 						</view>
-						<text>门店有一条新的外卖配送单消息来啦...</text>
+						<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
+						<text v-for="(item,index) in MsgData" @click="ReadMsg(item)">{{item.title}}</text>
 					</view>
 				</view>
 				<view class="stores">
@@ -151,7 +152,7 @@
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z" @click="Letters()">A <text>◀</text></view>
-						<view class="states" @click="Statements()">
+						<view class="states" @click="ShowSale()">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
@@ -187,9 +188,7 @@
 					</view>
 				</view>
 			</view>
-
 		</view>
-
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="attribute">
 			<view class="popup">
@@ -227,110 +226,8 @@
 				</view>
 			</view>
 		</view>
-		<!-- 未登录结算单 -->
-		<view class="boxs" v-if="statement">
-			<view class="pop-r pop-rs">
-				<view class="member">
-					<label>
-						<image class="touxiang" src="../../images/touxiang.png"></image><button
-							class="btn">会员登录</button>
-					</label>
-					<text>清空</text>
-				</view>
-				<view class="h5"><text>账单</text></view>
-				<view class="goods">
-					<!-- 商品循环 -->
-					<view class="prolist">
-						<view class="h3">
-							<label>
-								<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
-							</label>
-							<text>X2</text>
-						</view>
-						<view class="cods">
-							<view>
-								<label>
-									<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
-								</label>
-								<label>
-									<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
-								</label>
-							</view>
-							<text>￥56</text>
-						</view>
-					</view>
-
-				</view>
-
-				<view class="ul">
-					<view class="li"><text>总金额</text><text>￥567</text></view>
-					<view class="li"><text>件数</text><text>7</text></view>
-					<view class="li"><text>折扣</text><text>-￥5</text></view>
-					<view class="li"><text>应收金额</text><text>￥560</text></view>
-				</view>
-				<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
-
-				<view class="shoppbag">
-					<view class="hengs">
-						<view class="baglist curr">
-							<view class="bag">
-								<text class="h8">小号手提袋</text>
-								<label><text>说明</text>已满80元，可赠4个</label>
-							</view>
-							<view class="quantit">
-								<text>数量</text>
-								<view class="nums">
-									<text>-</text>
-									<input type="number" />
-									<text>+</text>
-								</view>
-							</view>
-						</view>
-						<view class="baglist">
-							<view class="bag">
-								<text class="h8">小号手提袋</text>
-								<label><text>说明</text>已满80元，可赠4个</label>
-							</view>
-							<view class="quantit">
-								<text>数量</text>
-								<view class="nums">
-									<text>-</text>
-									<input type="number" />
-									<text>+</text>
-								</view>
-							</view>
-						</view>
-						<view class="baglist">
-							<view class="bag">
-								<text class="h8">小号手提袋</text>
-								<label><text>说明</text>已满80元，可赠4个</label>
-							</view>
-							<view class="quantit">
-								<text>数量</text>
-								<view class="nums">
-									<text>-</text>
-									<input type="number" />
-									<text>+</text>
-								</view>
-							</view>
-						</view>
-
-					</view>
-				</view>
-
-				<view class="confirm">
-					<button class="btn">确 认</button>
-				</view>
-
-				<view class="states" @click="Statements()">
-					<text>结算单</text>
-					<label>»</label>
-				</view>
-
-			</view>
-		</view>
-		<!-- 会员登陆结算 -->
-		<view class="boxs" v-if="statements">
+		<!-- 结算 -->
+		<view class="boxs" v-if="showSale">
 			<view class="memberes">
 				<view class="meminfo" v-if="Memberinfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -394,18 +291,32 @@
 								</view>
 							</view>
 						</view>
-
 					</view>
 				</view>
+				<!-- 辅助促销数据 -->
 				<view class="meminfo" v-if="Shoppingbags">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view>
+					<view v-for="(item,index) in CXDatas">
 						<view class="member">
-							<label class="h9">武汉满20元赠小号手提袋</label>
-							<button>×</button>
+							<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
+							<button @click="Shoppingbags=false">×</button>
 						</view>
 						<view class="shoppbag">
-							<view class="baglist curr">
+							<view class="baglist curr" v-for="(item1,index1) in item.Details">
+								<view class="bag">
+									<text class="h8">{{item1.SNAME}}</text>
+									<label><text>{{item1.DESCRIBE}}</text></label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text @click="CalNum(item1,'-')">-</text>
+										<input type="number" v-model="item1.BQTY"/>
+										<text @click="CalNum(item1,'+')">+</text>
+									</view>
+								</view>
+							</view>
+							<!-- <view class="baglist">
 								<view class="bag">
 									<text class="h8">小号手提袋</text>
 									<label><text>说明</text>已满80元，可赠4个</label>
@@ -432,32 +343,19 @@
 										<text>+</text>
 									</view>
 								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
+							</view> -->
 						</view>
 					</view>
 				</view>
-
 				<view class="pop-r">
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="Memberlogin()">会员登录</button>
+							<button class="btn" @click="Memberlogin()" v-if="!yn_hy">登录</button>
+							<button class="btn" @click="Memberlogin()" v-else>{{hyinfo.hyId}}</button>
 						</label>
-						<text>清空</text>
+						<!-- <text >清空</text> -->
+						<text @click="CloseSale()">关闭</text>
 					</view>
 					<view class="h5"><text>账单</text></view>
 					<view class="goods">
@@ -481,9 +379,7 @@
 								<text>￥56</text>
 							</view>
 						</view>
-
 					</view>
-
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>￥567</text></view>
 						<view class="li"><text>件数</text><text>7</text></view>
@@ -491,10 +387,9 @@
 						<view class="li"><text>应收金额</text><text>￥560</text></view>
 					</view>
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
-
 					<view class="shoppbag">
 						<view class="hengs">
-							<view class="baglist curr">
+							<view class="baglist curr" v-for="(item,index) in CXDatas" >
 								<view class="bag">
 									<text class="h8">小号手提袋</text>
 									<label><text>说明</text>已满80元，可赠4个</label>
@@ -536,18 +431,15 @@
 									</view>
 								</view>
 							</view>
-
 						</view>
 					</view>
 					<view class="confirm">
 						<button class="btn">确 认</button>
 					</view>
-
 					<!-- <view class="states" @click="Statements()">
 					<text>结算单</text>
 					<label>»</label>
 				</view> -->
-
 				</view>
 			</view>
 		</view>
@@ -565,29 +457,76 @@
 	import _take from '@/api/business/takeaway.js';
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import _checker from '@/utils/graceChecker.js';
+	import _msg from '@/api/business/message.js';
+	import _main from '@/api/business/main.js';
+	
 	var that;
 	export default {
 		data() {
 			return {
-				statements: false,
+				attribute: false,
 				Alphabetical: false,
 				Memberinfo: false,
 				Shoppingbags: false,
 				Chargeback: false,
 				coupon_list: [],
 				hyinfo: {},
+				KHID: app.globalData.store.KHID,
+				MsgData: [],
+				showSale: false, //显示结算页面
+				yn_hy: false, //是否有会员
+				CXDatas:[]
 			}
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
-
+				_msg.ShowMsg(that.KHID, res => {
+					console.log("消息数据：", res);
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						that.MsgData = data;
+					}
+				});
+			},
+			//关闭结算
+			CloseSale: function() {
+				that.showSale = false;
+				that.statements = false
+			},
+			ShowSale: function() {
+				that.showSale = true;
+				that.GetFZCX();//获取辅助促销
+			},
+			//消息已读
+			ReadMsg: function(e, i) {
+				_msg.DelMsg(that.KHID, e, res => {
+					console.log("消息数据：", res);
+					that.MsgData.splice(i, 1);
+					// let arr = that.MsgData;
+					// that.MsgData = arr.splice(i, 1);
+					if (e.url) {
+						uni.navigateTo({
+							url: e.url
+						})
+					}
+				});
+			},
+			//获取辅助促销
+			GetFZCX: function() {
+				//that.KHID
+				_main.GetFZCX("K0101QT2", res => {
+					that.CXDatas = res;
+				})
 			},
 			onShow: function() {
 				let hyinfo = util.getStorage("hyinfo");
-				if (hyinfo) {
+				if (hyinfo && JSON.stringify(hyinfo) != "{}") {
+					that.yn_hy = true;
 					that.hyinfo = hyinfo;
 					that.GetHyCoupons(hyinfo);
+				} else {
+					that.yn_hy = false;
 				}
 			},
 			//获取会员卡券
@@ -610,10 +549,7 @@
 					})
 				}
 			},
-			Statements: function(e) {
-				this.statements = !this.statements
 
-			},
 			Letters: function(e) {
 				this.Alphabetical = true
 
