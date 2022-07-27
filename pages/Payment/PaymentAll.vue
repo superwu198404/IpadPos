@@ -474,6 +474,7 @@
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
+					CUID: this.isRefund? sale1.CUID : getApp().globalData.hyinfo.hyId,
 					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
@@ -483,6 +484,7 @@
 					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
+					TDISC:this.isRefund ? (sale1?.TDISC ?? "0") : this.TDISC,
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
@@ -709,7 +711,7 @@
 			//支付数据处理
 			PayDataHandle: function() {
 				if (common.actTypeEnum.Payment === this.actType) { //如果是支付
-					console.log("初始化 PayList 列表...")
+					console.log("初始化 PayList 列表...",this.SALES)
 					this.PayListInit();
 				}
 			},
@@ -1062,7 +1064,7 @@
 					kquser: this.kquser,
 					posid: this.POSID,
 					cxbill: "",
-					hyid: hyinfo?.hyId, //会员id
+					hyid: this.isRefund ? hyinfo?.hyId : this.sale1_obj.CUID, //会员id
 					sign: "",
 					time: dateformat.gettimes(),
 					zf_bill: this.sale1_obj?.XS_BILL,
@@ -1087,8 +1089,7 @@
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
 					this.out_trade_no = this.out_trade_no_old; //子单号
-					this.isRefund = prev_page_param.actType == common.actTypeEnum
-						.Refund; //如果等于退款行为，则表示退款，否则是支付
+					this.isRefund = prev_page_param.actType == common.actTypeEnum.Refund; //如果等于退款行为，则表示退款，否则是支付
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据

@@ -33,8 +33,8 @@
 		<view class="products">
 			<view class="procycle">
 				<!-- 外卖单循环 -->
-				<view :class="'li ' + (item.BILL === details.order.BILL? 'curr' : '')"
-					v-for="(item,index) in onlineOrders" :order="item" @click="ShowDetail(item)">
+				<view v-for="(item,index) in onlineOrders" :class="getCheckStyle(item.BILL)" :order="item"
+					@tap="ShowDetail(item)">
 					<view class="h3">
 						<view class="platform">
 							<label>
@@ -216,21 +216,23 @@
 			'details.order.$date': function(n, o) {
 				this.details.order.DATE_DH = `${this.details.order.$date} ${this.details.order.$time}`.trim() || this
 					.details.order.DATE_DH;
-					console.log("$date",this.details.order.DATE_DH)
+				console.log("$date", this.details.order.DATE_DH)
 			},
 			'details.order.$time': function(n, o) {
 				this.details.order.DATE_DH = `${this.details.order.$date} ${this.details.order.$time}`.trim() || this
 					.details.order.DATE_DH;
-					console.log("$time",this.details.order.DATE_DH)
+				console.log("$time", this.details.order.DATE_DH)
 			},
 			'details.order.DATE_DH': function(n, o) {
 				this.SetTimeRange();
-				let result = this.CheckArrivalDate(n);
-				if (!result) {
-					util.simpleMsg("时间设置有误!")
-					return;
-				}
 			},
+			'details.order': function(n, o) {
+				this.onlineOrders.filter(i => i.$checked).map(i => {
+					i.$checked = false;
+					return i;
+				})
+				n.$checked = true;
+			}
 		},
 		computed: {
 			getOrderDate: function() {
@@ -257,6 +259,11 @@
 						return type.slice(2);
 					else
 						return '-';
+				}
+			},
+			getCheckStyle: function() {
+				return function(bill) {
+					return bill === this.details.order.BILL ? 'li curr' : 'li'
 				}
 			},
 			getTakeWayStyle: function() {
@@ -318,6 +325,8 @@
 					let orders = JSON.parse(res.data).map(i => {
 						i.SALETIME = i.SALETIME.replace('T', " ");
 						i.timestamp = i.SALETIME ? Number(new Date(i.SALETIME)) : 0
+						i.$checked = false;
+						i.$raw = Object.assign({},i);
 						return i
 					});
 					orders.sort((a, b) => a.timestamp - b.timestamp);
@@ -333,26 +342,27 @@
 					"1、自提单到货日期只能为当前日期之后，且不能为晚上21点之后，早上7点之前\n2、配送单到货日期只能为当前日期当前日期一小时之后，到货时间 不能 为晚上18点之后，早上9点之前");
 			},
 			CheckArrivalDate: function(date) { //检查到货时间是否合法，到货时段：0-7、7-14、14-24
-				if(date){
-					let current = (function(){
-						let dt = new Date(date.replaceAll('-','/'));
-						return new Date(dt.setHours(dt.getHours()+8));
-					})(),now = new Date(new Date().setHours(new Date().getHours() + 8));
-					console.log("时间",JSON.stringify(now))
+				if (date) {
+					let current = (function() {
+							let dt = new Date(date.replaceAll('-', '/'));
+							return new Date(dt.setHours(dt.getHours() + 8));
+						})(),
+						now = new Date(new Date().setHours(new Date().getHours() + 8));
+					console.log("时间", JSON.stringify(now))
 					if (this.details.order.THTYPE_CODE == '0') { //自提
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
-						now = new Date(now.setHours(now.getHours()+24));
-						console.log("限制时间",JSON.stringify(now))
-						console.log("当前时间",JSON.stringify(current))
+						now = new Date(now.setHours(now.getHours() + 24));
+						console.log("限制时间", JSON.stringify(now))
+						console.log("当前时间", JSON.stringify(current))
 						if (current.getTime() >= now.getTime())
 							return true;
 						else
 							return false;
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
-						now = new Date(now.setHours(now.getHours()+1));
-						console.log("限制时间",JSON.stringify(now))
-						console.log("当前时间",JSON.stringify(current))
+						now = new Date(now.setHours(now.getHours() + 1));
+						console.log("限制时间", JSON.stringify(now))
+						console.log("当前时间", JSON.stringify(current))
 						if (current.getTime() >= now.getTime())
 							return true;
 						else
@@ -363,104 +373,112 @@
 			SetTimeRange: function() {
 				if (this.details.order.DATE_DH) {
 					this.timeRange.forEach(util.callBind(this, function(time, index) {
-							let date = new Date(this.details.order.DATE_DH.replaceAll('-','/'));
-							let time_arr = time.NAME.split("-");
-							let start = new Date(this.details.order.DATE_DH.replaceAll('-','/'));
-							let end = new Date(this.details.order.DATE_DH.replaceAll('-','/'));
-							start.setHours(Number(time_arr[0]),0,0);
-							end.setHours(Number(time_arr[1]),0,0);
-							if (start <= date && date <= end) {
-								this.details.order.DHSJD = time.ID
-								console.log("匹配时间：", time)
-							}
-						}));
-					}
-				},
-				//渲染到视图
-				RenderFrom: function(source) {
-						Object.assign(this.details.order, source);
-						this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
-						this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
-					},
-					//展示详情
-					ShowDetail: function(order) {
-						this.RenderFrom(order);
-					},
-					//选择裱花间
-					SelectRoom: function(val) {
-						this.details.order.KHSNAME = this.decorationRoom[val.detail.value].addr;
-					},
-					//选择时间段
-					SelectTimeRange: function(val) {
-						this.details.order.DHSJD = this.timeRange[val.detail.value].ID;
-					},
-					//选择日期
-					SelectDate: function(val) {
-						this.details.order.$date = val.detail.value;
-					},
-					//选择时间
-					SelectTime: function(val) {
-						this.details.order.$time = val.detail.value;
-					},
-					//编辑
-					Edit: function() {
-						this.edit = true;
-					},
-					//保存（编辑->保存）
-					Save: function() {
-						this.edit = false;
-						if (this.CheckArrivalDate(this.details.order.DATE_DH))
-							updateOrderInfo({
-								yd_bill: this.details.order.YDBILL,
-								khid: this.details.order.KHID,
-								remark: this.details.order.CUSTMCOMM,
-								date: this.details.order.DATE_DH,
-								timerange: this.details.order.DHSJD
-							}, util.callBind(this, function(res) {
-								this.GetOnlineOrders(); //刷新列表
-								console.log("修改结果：", res);
-								util.simpleMsg("订单修改成功!")
-							}), (err) => {
-								util.simpleMsg(err.msg, true, err);
-							});
-						else
-							util.simpleMsg("时间设置有误!",true)
-					},
-					//取消（编辑->取消）
-					CancelSave: function() {
-						this.edit = false;
-					},
-					//确认接受
-					ConfirmAccept: async function(isAccept) {
-						console.log("处理订单：", this.details.order)
-						this.details.order.STATUS = isAccept;
-
-						//this.details.order.GCID = this.GCID; //测试写死数据（因为存在 id 位数大于 四位的情况 导致报错）
-						// let now = new Date();
-						// let testDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDay())
-						// this.details.order.DATE_DH = (JSON.stringify(testDate).split("T")[0] + " 00:00:00").slice(1); //测试写死数据
-
-						let valid = await Validity(this.details.order);
-						if (valid.state)
-							ordersAccept({
-								storeid: this.KHID, //店铺id
-								gcid: this.GCID, //工厂id
-								orders: [this.details.order]
-							}, util.callBind(this, function(res) {
-								this.GetOnlineOrders(); //刷新页面
-								util.simpleMsg("接受成功!")
-								console.log("处理结果：", res)
-							}), (err) => {
-								util.simpleMsg(err.msg, true);
-							});
-						else
-							util.simpleMsg(valid.msg, true)
-					},
+						let date = new Date(this.details.order.DATE_DH.replaceAll('-', '/'));
+						let time_arr = time.NAME.split("-");
+						let start = new Date(this.details.order.DATE_DH.replaceAll('-', '/'));
+						let end = new Date(this.details.order.DATE_DH.replaceAll('-', '/'));
+						start.setHours(Number(time_arr[0]), 0, 0);
+						end.setHours(Number(time_arr[1]), 0, 0);
+						if (start <= date && date <= end) {
+							this.details.order.DHSJD = time.ID
+							console.log("匹配时间：", time)
+						}
+					}));
+				}
 			},
-			mounted() {
-				this.InitOrders();
-			}
+			//渲染到视图
+			RenderFrom: function(source) {
+				this.details.order.BILL = source.BILL;
+				Object.assign(this.details.order, source);
+				this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
+				this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
+			},
+			//展示详情
+			ShowDetail: function(order) {
+				console.log("当前状态：",this.edit)
+				if (!this.view.edit) {
+					this.RenderFrom(order);
+					this.$forceUpdate();
+				} else
+					util.simpleMsg("请确认保存信息！")
+			},
+			//选择裱花间
+			SelectRoom: function(val) {
+				this.details.order.KHSNAME = this.decorationRoom[val.detail.value].addr;
+			},
+			//选择时间段
+			SelectTimeRange: function(val) {
+				this.details.order.DHSJD = this.timeRange[val.detail.value].ID;
+			},
+			//选择日期
+			SelectDate: function(val) {
+				this.details.order.$date = val.detail.value;
+			},
+			//选择时间
+			SelectTime: function(val) {
+				this.details.order.$time = val.detail.value;
+			},
+			//编辑
+			Edit: function() {
+				this.edit = true;
+				this.details.order.$raw = Object.assign({},this.details.order);
+			},
+			//保存（编辑->保存）
+			Save: function() {
+				this.edit = false;
+				if (this.CheckArrivalDate(this.details.order.DATE_DH))
+					updateOrderInfo({
+						yd_bill: this.details.order.YDBILL,
+						khid: this.details.order.KHID,
+						remark: this.details.order.CUSTMCOMM,
+						date: this.details.order.DATE_DH,
+						timerange: this.details.order.DHSJD
+					}, util.callBind(this, function(res) {
+						this.GetOnlineOrders(); //刷新列表
+						console.log("修改结果：", res);
+						util.simpleMsg("订单修改成功!")
+					}), (err) => {
+						util.simpleMsg(err.msg, true, err);
+					});
+				else
+					util.simpleMsg("时间设置有误!", true)
+			},
+			//取消（编辑->取消）
+			CancelSave: function() {
+				this.edit = false;
+				Object.assign(this.details.order,this.details.order.$raw);
+			},
+			//确认接受
+			ConfirmAccept: async function(isAccept) {
+				console.log("处理订单：", this.details.order)
+				this.details.order.STATUS = isAccept;
+
+				//this.details.order.GCID = this.GCID; //测试写死数据（因为存在 id 位数大于 四位的情况 导致报错）
+				// let now = new Date();
+				// let testDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDay())
+				// this.details.order.DATE_DH = (JSON.stringify(testDate).split("T")[0] + " 00:00:00").slice(1); //测试写死数据
+
+				let valid = await Validity(this.details.order);
+				if (valid.state)
+					ordersAccept({
+						storeid: this.KHID, //店铺id
+						gcid: this.GCID, //工厂id
+						orders: [this.details.order]
+					}, util.callBind(this, function(res) {
+						this.GetOnlineOrders(); //刷新页面
+						util.simpleMsg("接受成功!")
+						console.log("处理结果：", res)
+					}), (err) => {
+						util.simpleMsg(err.msg, true, err);
+					});
+				else
+					util.simpleMsg(valid.msg, true, valid)
+			},
+		},
+		mounted() {
+			this.InitOrders();
 		}
+	}
 </script>
 
 <style>
@@ -516,6 +534,12 @@
 		align-items: center;
 		justify-content: center;
 		margin-left: 10px;
+	}
+	
+	.btn{
+		display: inline-flex !important;
+		align-items: center;
+		justify-content: center;
 	}
 </style>
 <style>

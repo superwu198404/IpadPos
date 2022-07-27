@@ -1,6 +1,8 @@
 <script>
 	import common from '@/api/common.js';
 	import Req from '@/utils/request.js';
+	import { global } from '@/models/PaymentAll/models.js';
+	import Vue from 'vue'
 	let int;
 	export default {
 		globalData: {
@@ -89,6 +91,9 @@
 			// common.TransLiteData();
 			// }, 1000 * 60 *3); 
 			this.globalData.sysinfo = uni.getSystemInfoSync();
+			//全局混入
+			console.log("全局混入！");
+			Vue.mixin(global);
 		},
 		onHide: function() {
 			console.log('App Hide');

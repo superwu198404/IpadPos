@@ -3,6 +3,7 @@ import * as request from '@/utils/request.js';
 import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
 import store from '@/utils/store.js';
+
 // #ifdef VUE2
 import Vue from 'vue'
 
@@ -12,6 +13,8 @@ Vue.use(G_show_modal);
 // Api函数polyfill（目前为实验版本，如不需要，可删除！）';
 import Polyfill from './polyfill/polyfill';
 Polyfill.init();
+
+
 
 // 引入http.js
 import http from './utils/xprinter/http.js'

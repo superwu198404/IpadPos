@@ -70,7 +70,7 @@
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
 		<button @click="MenuPage(7)">退单业务</button>
-		<button @click="onlineOrders()">线上订单</button>
+		<button @click="MenuMain()">功能主页</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
@@ -182,6 +182,7 @@
 				RYID: getApp().globalData.store.RYID,
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
+				DKFID:getApp().globalData.store.DKFID,
 				sale1_obj: {},
 				sale2_obj: {},
 				sale2_arr: [],
@@ -328,10 +329,9 @@
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
 			},
-			onlineOrders: function() {
-				console.log("跳转至线上订单界面")
+			MenuMain: function() {
 				uni.navigateTo({
-					url: "../Home/Home"
+					url: "../Main/Main"
 				});
 			},
 			MenuPage: async function(e) {
