@@ -12,8 +12,8 @@
 			</view>
 			<view class="menu">
 				<view class="curr">
-					<image class="xz" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoshou.png" mode="widthFix"></image>
+					<image class="xz" src="../../images/xiaoshou.png" mode="widthFix"></image>
+					<image class="wx" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
 					<text>销售</text>
 				</view>
 				<view>
@@ -124,6 +124,7 @@
 						</view>
 						<!-- 小类循环 -->
 						<view class="products">
+							<component :is="components.current"></component>
 							<view class="h2">每日现烤 <label></label></view>
 
 							<view class="procycle">
@@ -316,7 +317,7 @@
 									<text>数量</text>
 									<view class="nums">
 										<text @click="CalNum(item1,'-')">-</text>
-										<input type="number" v-model="item1.BQTY"/>
+										<input type="number" v-model="item1.BQTY" />
 										<text @click="CalNum(item1,'+')">+</text>
 									</view>
 								</view>
@@ -394,7 +395,7 @@
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
 					<view class="shoppbag">
 						<view class="hengs">
-							<view class="baglist curr" v-for="(item,index) in CXDatas" >
+							<view class="baglist curr" v-for="(item,index) in CXDatas">
 								<view class="bag">
 									<text class="h8">小号手提袋</text>
 									<label><text>说明</text>已满80元，可赠4个</label>
@@ -464,12 +465,17 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
-	
+
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
+	import Extract from '@/pages/Extract/Extract.vue'
+	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
+	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
+	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
+	import navbar from '@/pages/Main/components/navbar.vue'
 	var that;
 	export default {
-		components:{
-			'top-navbar':navbar,
+		components: {
+			'top-navbar': navbar,
 			Extract,
 			OnlineOrders,
 			TakeAway,
@@ -485,16 +491,17 @@
 		},
 		data() {
 			return {
-				components:{
-					source:{
-						navbar:{
-							
+				components: {
+					source: {
+						navbar: {
+
 						}
 					},
-					component:[],
-					current:"CreditSettlement",
-					history:[]
+					component: [],
+					current: "CreditSettlement",
+					history: []
 				},
+				attribute:false,
 				statements: false,
 				Alphabetical: false,
 				Memberinfo: false,
@@ -506,7 +513,7 @@
 				MsgData: [],
 				showSale: false, //显示结算页面
 				yn_hy: false, //是否有会员
-				CXDatas:[]
+				CXDatas: []
 			}
 		},
 		methods: {
@@ -527,7 +534,7 @@
 			},
 			ShowSale: function() {
 				that.showSale = true;
-				that.GetFZCX();//获取辅助促销
+				that.GetFZCX(); //获取辅助促销
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
@@ -580,7 +587,12 @@
 					})
 				}
 			},
-
+			MenuSwitch: function(name) {
+				if (name) {
+					this.components.current = name;
+				}
+				this.$forceUpdate();
+			},
 			Letters: function(e) {
 				this.Alphabetical = true
 

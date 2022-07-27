@@ -63,9 +63,14 @@
 		padding: 5px;
 		box-sizing: border-box;
 	}
-	
+	.settlement{
+		display: flex;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
 	.item {
-		
+		border: 1px solid red;
+		flex: 0.5;
 	}
 </style>
 <template>
@@ -85,7 +90,7 @@
 		</view>
 		<view class="bottom">
 			<view class="settlement">
-				<view class="item">
+				<view class="item" v-for="i in big_client_settlement">
 					
 				</view>
 			</view>
