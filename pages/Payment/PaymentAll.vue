@@ -223,11 +223,11 @@
 		<!-- 画布 -->
 		<view class="canvasdiv">
 			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;display:none;'"></canvas>
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;display:none;'"></canvas>
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;display:none;'"></canvas>
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 	</view>
 	</view>
