@@ -63,7 +63,7 @@
 					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
 					<text>消息</text>
 				</view>
-				<view :class="Selected('sxjs')" @click="MenuSwitch('sxjs')">
+				<view :class="Selected('CreditSettlement')" @click="MenuSwitch('CreditSettlement')">
 					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
 					<text>赊销结算</text>
@@ -128,7 +128,7 @@
 
 		</view>
 		<!-- 蛋糕属性选择 -->
-		<view class="boxs">
+		<view class="boxs" v-if="attribute">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close">×</button>
@@ -509,6 +509,7 @@
 	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
 	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
+	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	var that;
 	export default {
 		components:{
@@ -516,7 +517,8 @@
 			Extract,
 			OnlineOrders,
 			TakeAway,
-			OnlinePick
+			OnlinePick,
+			CreditSettlement
 		},
 		computed: {
 			Selected: function() {
@@ -534,7 +536,7 @@
 						}
 					},
 					component:[],
-					current:"OnlineOrders",
+					current:"CreditSettlement",
 					history:[]
 				},
 				statements: false,

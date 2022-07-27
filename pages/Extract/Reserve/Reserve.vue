@@ -1,5 +1,11 @@
+<style scopeed>
+	/* @import url(@/static/style/payment/paymentall/basis.css); */
+	@import url(@/static/style/payment/paymentall/basis.css);
+	@import url(@/static/style/index.css);
+	@import url(@/static/style/Extract/Extract.css);
+</style>
 <template>
-	<view class="boxs" v-if="statements">
+	<view class="boxs">
 		<view class="memberes">
 			<!-- v-if="Memberinfo" -->
 			<view class="meminfo">
@@ -46,7 +52,7 @@
 										class="btn-sc">删除</button></view>
 							</view>
 						</view>
-						<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
+						<view class="more">显示全部地址<image src="../../../images/zhankaiqb-dt.png"></image>
 						</view>
 					</view>
 	
@@ -63,7 +69,7 @@
 			<view class="pop-r">
 				<view class="member">
 					<label>
-						<image class="touxiang" src="../../images/touxiang.png"></image>
+						<image class="touxiang" src="../../../images/touxiang.png"></image>
 						<label class="meminfo"><text>会员名称</text><text>13012341234</text></label>
 					</label>
 					<text>清空</text>
@@ -74,17 +80,17 @@
 					<view class="prolist">
 						<view class="h3">
 							<label>
-								<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+								<image src="../../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
 							</label>
 							<text>X2</text>
 						</view>
 						<view class="cods">
 							<view>
 								<label>
-									<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
+									<image src="../../../images/dx-bm.png" mode="widthFix"></image>12345678
 								</label>
 								<label>
-									<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
+									<image src="../../../images/dx-dw.png" mode="widthFix"></image>10个装
 								</label>
 							</view>
 							<text>￥56</text>
