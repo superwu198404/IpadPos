@@ -143,15 +143,76 @@
 				})
 				return ggyContent;
 			},
-			//打印小票
+			//外卖打印小票
+			wmBluePrinter: async function(order, datails, print) {
+				//票据
+				var that = this;
+				let sale1_objO = JSON.stringify(order);
+				let sale2_arrO = JSON.stringify(datails);
+				//输出日志
+				console.log("外卖打印接收数据 sale1_obj", order);
+				console.log("外卖打印接收数据 sale2_arr", datails);
+				console.log("外卖打印控制参数 print", print);
+				
+				let dateNow = xprinter_util.getTime(1);
+				//查询终端参数
+				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
+				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
+				console.log("查询终端参数",printer_poscs);
+				
+				// 通过终端参数，Y 打印小票
+				if(printer_poscs.YN_YXDY != "Y"){
+					uni.showToast({
+						icon: 'error',
+						title: "终端参数未设置打印小票"
+					})
+					console.log("终端参数未设置打印小票");
+					return;
+				}
+				var ggyContent = await that.ggy();
+				//打印数据转换
+				let sale1_obj = JSON.parse(sale1_objO);
+				let sale2_arr = JSON.parse(sale2_arrO);		
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent);
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.init();
+				//打印格式
+				command.wmFormString(printerInfo,printer_poscs,print);
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
+				
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				// 电子发票二维码不为空、小票结尾二维码不为空
+				if(is_dzfpewmdz || is_xpewm){
+					//生成属于单号的二维码
+					Promise.all([
+					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
+					    //that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
+					]).then(res => {
+					    console.log("开始发送打印命令");
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('bluePrinter reject failed reason', reason)
+						that.prepareSend(command.getData()); //发送数据
+					})
+				}else{
+					that.prepareSend(command.getData()); //发送数据
+				}
+				console.log("外卖打印格式记录结束");
+			},
+			//销售打印小票
 			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
 				//票据
 				var that = this;
 				//输出日志
-				console.log("打印接收数据 sale1_obj", sale1_obj);
-				console.log("打印接收数据 sale2_arr", sale2_arr);
-				console.log("打印接收数据 sale3_arr", sale3_arr);
-				console.log("打印控制参数 print", print);
+				console.log("销售打印接收数据 sale1_obj", sale1_obj);
+				console.log("销售打印接收数据 sale2_arr", sale2_arr);
+				console.log("销售打印控制参数 print", print);
+				console.log("销售打印接收数据 sale3_arr", sale3_arr);
 				
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);

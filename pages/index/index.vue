@@ -70,7 +70,7 @@
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
 		<button @click="MenuPage(7)">退单业务</button>
-		<button @click="onlineOrders()">线上订单</button>
+		<button @click="MenuMain()">功能主页</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
@@ -114,11 +114,11 @@
 		<!-- 画布 -->
 		<view class="canvasdiv">
 			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;disabled:none;'"></canvas>
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 	</view>
 </template>
@@ -182,6 +182,7 @@
 				RYID: getApp().globalData.store.RYID,
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
+				DKFID:getApp().globalData.store.DKFID,
 				sale1_obj: {},
 				sale2_obj: {},
 				sale2_arr: [],
@@ -218,12 +219,12 @@
 				totalAmount: 0,
 				SKY_DISCOUNT: 0,
 				//打印相关
-				jpgWidth: 340,
-				jpgHeight: 113,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
-				canvasGZHWidth: 200,
-				canvasGZHHeight: 200,
+				jpgWidth: 0,
+				jpgHeight: 0,
+				qrCodeWidth: 0, //二维码宽
+				qrCodeHeight: 0, // 二维码高
+				canvasGZHWidth: 0,
+				canvasGZHHeight: 0,
 				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},
@@ -328,10 +329,9 @@
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
 			},
-			onlineOrders: function() {
-				console.log("跳转至线上订单界面")
+			MenuMain: function() {
 				uni.navigateTo({
-					url: "../Home/Home"
+					url: "../Main/Main"
 				});
 			},
 			MenuPage: async function(e) {
@@ -686,8 +686,8 @@
 			InitData: async function() {
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
-					.reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
+				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				await common.InitZFRULE();
 				let khid = "K0101QT2";

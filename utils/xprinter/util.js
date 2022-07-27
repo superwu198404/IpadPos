@@ -1,6 +1,6 @@
 import db from '@/utils/db/db_excute.js';
 import qrCode from '@/utils/xprinter/weapp-qrcode.js';
-	
+
 const formatTime = date => {
 	const year = date.getFullYear();
 	const month = date.getMonth() + 1;
@@ -313,6 +313,76 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 		ggy,//广告语
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
+	
+	return printerInfo;
+}
+
+/**
+ * 外卖打印数据转换
+ * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
+ */
+const wmPrinterData = (sale1_obj, sale2_arr,ggyContent)=>{	
+	var xsType = "WM";
+    var bill = sale1_obj.BILL;
+	var wdate = sale1_obj.WDATE;
+    var wtime = sale1_obj.WTIME;
+	var xsBill = sale1_obj.XS_BILL;
+	var custmtime = sale1_obj.CUSTMTIME;
+	var daysn = sale1_obj.DAYSN;
+	var khName = getApp().globalData.store.NAME;
+	var khAddress = getApp().globalData.store.KHAddress;
+	var khPhone = getApp().globalData.store.PHONE;
+	var gsid = sale1_obj.GSID;
+	var status = sale1_obj.STATUS;
+	var remark = sale1_obj.STR1;
+	var payableAmount = sale1_obj.STR2;
+	var originalAmount = sale1_obj.STR8;
+	var shAddress = sale1_obj.STR4;
+	var ggy = ggyContent;
+	
+	//商品数据
+	var goodsList = [];
+	for (var i = 0; i < sale2_arr.length; i++) {
+		var sale2_printer = {
+			bill: sale2_arr[i].BILL, //主单号
+			spid: sale2_arr[i].SPID, //商品编码
+			spname: sale2_arr[i].STR5, //商品名称
+			qty: sale2_arr[i].QTY, //商品数量
+			price: sale2_arr[i].PRICE, //商品价格
+			net: sale2_arr[i].NET, //商品金额
+			unit: sale2_arr[i].STR7, //商品金额
+		};
+		goodsList = goodsList.concat(sale2_printer);
+	}
+	console.log("goodsList 转换后数据:", goodsList);
+	
+	//支付数据
+	var sale3List = [];
+	
+	var printerInfo = {
+		xsType,
+		bill, //单号
+		xsBill, //原单号
+		wdate,
+		wtime,
+		custmtime,
+		daysn,
+		khName, //门店名称
+		khAddress, //门店地址
+		khPhone, //门店电话	
+		gsid,
+		status, //'12', '请接单', '15', '取消订单', '33', '退货订单', '30', '申请退货', '20', '申请取消', '其他'
+		remark,
+		
+		goodsList, //商品集合
+		
+		payableAmount, //应付金额
+		originalAmount, //原金额
+		shAddress,//收货地址
+		sale3List, //支付信息
+		ggy,//广告语
+	}
+	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 	
 	return printerInfo;
 }
@@ -745,4 +815,5 @@ module.exports = {
 	gzhQrCodeGenerate: gzhQrCodeGenerate,
 	qrCodeAction: qrCodeAction,
 	gzhQrCodeAction: gzhQrCodeAction,
+	wmPrinterData: wmPrinterData,
 };

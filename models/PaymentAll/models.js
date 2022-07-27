@@ -68,6 +68,7 @@ export const global = {
 			DPID: getApp().globalData.store.DPID, //店铺id
 			KCDID: getApp().globalData.store.KCDID, //存库点id
 			GCID: getApp().globalData.store.GCID, //工厂id
+			DKFID: getApp().globalData.store.DKFID, //大客户id
 			BMID: getApp().globalData.store.BMID, //部门id
 			BHLB: getApp().globalData.store.BHLB, //裱花类别
 			KHID: getApp().globalData.store.KHID, //客户id
@@ -86,12 +87,12 @@ export const print = {
 	data: function() {
 		return {
 			//打印相关
-			jpgWidth: 340,
-			jpgHeight: 113,
-			qrCodeWidth: 200, //二维码宽
-			qrCodeHeight: 200, // 二维码高
-			canvasGZHWidth: 200, //小票结尾二维码宽
-			canvasGZHHeight: 200, //小票结尾二维码高
+			jpgWidth: 0,
+			jpgHeight: 0,
+			qrCodeWidth: 0, //二维码宽
+			qrCodeHeight: 0, // 二维码高
+			canvasGZHWidth: 0, //小票结尾二维码宽
+			canvasGZHHeight: 0, //小票结尾二维码高
 		}
 	}
 }

@@ -1,6 +1,8 @@
 <script>
 	import common from '@/api/common.js';
 	import Req from '@/utils/request.js';
+	import { global } from '@/models/PaymentAll/models.js';
+	import Vue from 'vue'
 	let int;
 	export default {
 		globalData: {
@@ -13,7 +15,7 @@
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "D005",
-				DPID: "11072",
+				DPID: "11072",// 11072
 				DKFID: '80000000',
 				BMID: "001",
 				GCID: "K201",
@@ -89,6 +91,9 @@
 			// common.TransLiteData();
 			// }, 1000 * 60 *3); 
 			this.globalData.sysinfo = uni.getSystemInfoSync();
+			//全局混入
+			console.log("全局混入！");
+			Vue.mixin(global);
 		},
 		onHide: function() {
 			console.log('App Hide');
