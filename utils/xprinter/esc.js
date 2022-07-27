@@ -344,6 +344,18 @@ var jpPrinter = {
       data.push(n);
     };
 	
+	/**
+	 * 
+	 *传入参数说明
+	 *• 当n 位为0 时，取消加粗。
+	 *• 当n 位为8 时，加粗。
+	 */
+	jpPrinter.setBoldModeNew = function (n) {
+	  data.push(27);
+	  data.push(33);
+	  data.push(n);
+	};
+	
     /**
      * ESC G 选择/取消双重打印模式
      *传入参数说明
@@ -1464,6 +1476,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
+	//外卖单打印格式
 	jpPrinter.wmFormString = function(data,printer_poscs,print){
 		var type = data.xsType;
 		var xpType = "外卖销售单";
@@ -1483,7 +1496,7 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(1); //设置居左	
 			jpPrinter.setText(HYY);
 			jpPrinter.setPrint(); //打印并换行
-		}	
+		}
 
 		switch (data.status) {
 			case "12":
@@ -1521,9 +1534,9 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(data.daysn != "" && data.daysn != null && data.daysn != undefined){
-			jpPrinter.setCharacterSize(12); //设置正常大小
+			jpPrinter.setCharacterSize(16); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("有赞流水号: " + data.daysn);
+			jpPrinter.setText("有赞流水号: " + data.daysn + "\n");
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
@@ -1555,7 +1568,7 @@ var jpPrinter = {
 		jpPrinter.setText("下单时间: " + data.wtime);
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(12); //设置正常大小
+		jpPrinter.setCharacterSize(16); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单类型: " + data.gsid + "\n");
 		jpPrinter.setPrint(); //打印并换行
@@ -1582,9 +1595,9 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(12); //设置正常大小
+		jpPrinter.setCharacterSize(16); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("订单备注: " + data.remark);
+		jpPrinter.setText("订单备注: " + data.remark + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1597,12 +1610,7 @@ var jpPrinter = {
 		jpPrinter.setText("商品名称       数量  单价  金额  属性  ");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("-----------------------------------------------");
-		jpPrinter.setPrint(); //打印并换行
-		
-		console.log("外卖打印接收数据 data.goodsList", data.goodsList);
+		//console.log("外卖打印接收数据 data.goodsList", data.goodsList);
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
@@ -1621,7 +1629,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("--------------------总计-----------------------");
+		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1639,7 +1647,7 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(12); //设置正常大小
+		jpPrinter.setCharacterSize(16); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("收货地址:" + data.shAddress.toString() + "\n");
 		jpPrinter.setPrint(); //打印并换行

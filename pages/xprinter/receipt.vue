@@ -154,7 +154,7 @@
 				console.log("外卖打印接收数据 sale2_arr", datails);
 				console.log("外卖打印控制参数 print", print);
 				
-				let dateNow = xprinter_util.getTime(1);
+				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
@@ -193,15 +193,16 @@
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
 					]).then(res => {
-					    console.log("开始发送打印命令");
+					    console.log("wmBluePrinter 开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
-						console.log('bluePrinter reject failed reason', reason)
+						console.log('wmBluePrinter reject failed reason', reason)
 						that.prepareSend(command.getData()); //发送数据
 					})
 				}else{
 					that.prepareSend(command.getData()); //发送数据
 				}
+				//that.prepareSend(command.getData()); //发送数据
 				console.log("外卖打印格式记录结束");
 			},
 			//销售打印小票
