@@ -162,6 +162,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/Test/Test",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
