@@ -1,6 +1,6 @@
 <style>
 	.content {
-		border: 1px solid red;
+		/* border: 1px solid red; */
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
@@ -11,7 +11,7 @@
 	}
 
 	.top {
-		border: 1px solid blue;
+		/* border: 1px solid blue; */
 		display: flex;
 		justify-content: space-between;
 	}
@@ -48,7 +48,7 @@
 		padding-right: 10px;
 	}
 	.bottom {
-		border: 1px solid green;
+		/* border: 1px solid green; */
 		flex: 1 0px;
 		display: flex;
 		gap: 10px;
@@ -64,13 +64,21 @@
 		box-sizing: border-box;
 	}
 	.settlement{
+		
+	}
+	.item-box{
 		display: flex;
-		gap: 5px;
+		gap: 10px;
 		flex-wrap: wrap;
+		justify-content: center;
 	}
 	.item {
-		border: 1px solid red;
-		flex: 0.5;
+		/* border: 1px solid red; */
+		width: 48%;
+		display: inline-block;
+		height: 20%;
+		background-color: white;
+		border-radius: 5px;
 	}
 </style>
 <template>
@@ -90,8 +98,13 @@
 		</view>
 		<view class="bottom">
 			<view class="settlement">
-				<view class="item" v-for="i in big_client_settlement">
-					
+				<view class="item-box">
+					<view class="item" v-for="i in big_client_settlement">
+						<view>{{ i.DKFNAME }}·{{ i.DKFID }}</view>
+						<view>订单号:{{ i.BILL }}</view>
+						<view>商品名称:{{ i.SNAME }}</view>
+						<view>销售时间:{{ i.SALETIME }}</view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -127,7 +140,8 @@
 				}, util.callBind(this, function(res) {
 					util.simpleMsg("大客户查询成功!");
 					this.big_clients = JSON.parse(res.data);
-					console.log("大客户：", res)
+					this.big_client_info = this.big_clients[0];
+					this.GetBigClientSettlement();
 				}), (err) => {
 					util.simpleMsg("大客户查询失败!", true, err);
 				})

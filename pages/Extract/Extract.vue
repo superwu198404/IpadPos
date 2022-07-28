@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="commodity"> 
+	<view class="commodity" style="height: 100%;"> 
 		<view class="hh">
 			<view class="hotcakes">
 				<image src="../../images/ydtq.png" mode="widthFix"></image> 预定提取
