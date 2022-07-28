@@ -171,6 +171,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/Reserve/Reserve",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
