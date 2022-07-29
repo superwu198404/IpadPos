@@ -71,7 +71,17 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 		util.simpleMsg("查询异常:" + err.message, true);
 	});
 }
+
+
+//查询赊销单
+var SXGetOrders = function(data, func) {
+	let apistr = "MobilePos_API.Models.SXSALE001CLASS.GetOrders";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 export default {
 	GetOrders,
-	GetOrderDetails
+	GetOrderDetails,
+	SXGetOrders
 }

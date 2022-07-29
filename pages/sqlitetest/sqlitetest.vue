@@ -65,7 +65,7 @@
 		data() {
 			return {
 				    alldata:[],
-				    sql:"select * from dapzcs_nr where id ='BHLBBM'",
+				    sql:"select * from POSCSZMX where POSCS='KJGSFW'",
 					sqltable:false,
 				    showAll:false,
 					OrderByType:{},

@@ -70,6 +70,7 @@
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
 		<button @click="MenuPage(7)">退单业务</button>
+		<button @click="MenuPage(8)">预定</button>
 		<button @click="MenuMain()">功能主页</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
@@ -409,6 +410,14 @@
 				}else if (e == 7) {
 					uni.navigateTo({
 						url: "../RefundOrder/RefundOrder",
+						complete:r=>{
+							console.log(r);
+						}
+					});
+				}
+				else if (e == 8) {
+					uni.navigateTo({
+						url: "../Reserve/Reserve",
 						complete:r=>{
 							console.log(r);
 						}

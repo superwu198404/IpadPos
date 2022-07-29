@@ -121,11 +121,14 @@
 											<view class="critlist"><text>订单号：</text>
 												<input type="text" v-model="p_bill" />
 											</view>
-											<view class="critlist"><text>销售日期：</text>
+											<view class="critlist"><text>客户名称：</text>
+												<input type="text" v-model="p_name" />
+											</view>
+											<!-- <view class="critlist"><text>销售日期：</text>
 												<picker mode="date" @change="changeDate">
 													<view class="uni-input">{{p_date}}</view>
 												</picker>
-											</view>
+											</view> -->
 											<view class="confs">
 												<button class="btn btn-qx" @click="Empty()">清空</button>
 												<button class="btn" @click="Search()">查询</button>
@@ -137,21 +140,22 @@
 						</view>
 						<!-- 小类循环 -->
 						<view class="products">
-							<view class="h2">销售退单 <label></label></view>
+							<view class="h2">赊销退单 <label></label></view>
 
 							<view class="procycle">
 								<!-- 订单循环 -->
 								<view class="li" v-for="(item,index) in Orders">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
-										<text class="price">￥{{item.TNET}}</text>
+										<text class="price">￥{{item.DNET}}</text>
 									</view>
 									<view class="cods">
-										<label>{{item.SALEDATE}} {{item.SALETIME}}</label>
-										<label>订单类型 {{item.XSTYPE}}</label>
+										<label>下单时间：{{item.SALEDATE}}</label>
+										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>
-									<view class="handles"><text></text><button class="btn"
-											@click="GetOrderDetails(item)">详情</button></view>
+									<view class="handles"><text></text>
+										<!-- <button class="btn"@click="GetOrderDetails(item)">详情</button> -->
+									</view>
 								</view>
 							</view>
 						</view>
@@ -245,6 +249,7 @@
 				POSID: app.globalData.store.POSID,
 				Orders: [],
 				p_bill: "",
+				p_name: "",
 				p_date: dateformat.getYMD(),
 				Order: {},
 				Details: {}
@@ -263,16 +268,22 @@
 				that.GetOrders();
 			},
 			GetOrders: function(bill, date) {
-				_refund.GetOrders(that.KHID, that.GSID, that.POSID, bill, date, res => {
-					console.log("查询结果:", res);
-					if (res.code && res.msg.length > 0) {
-						that.Orders = res.msg;
-						that.Criterias = false;
-					} else {
-						that.Orders = [];
-						util.simpleMsg("暂无数据", true);
-					}
-				});
+				_refund.SXGetOrders({
+						khid: that.KHID,
+						bill: that.p_bill,
+						dkfname: that.p_name
+					},
+					res => {
+						console.log("查询结果:", res);
+						let data = JSON.parse(res.data);
+						if (res.code && data.length > 0) {
+							that.Orders = data;
+							that.Criterias = false;
+						} else {
+							that.Orders = [];
+							util.simpleMsg("暂无数据", true);
+						}
+					});
 			},
 			GetOrderDetails: (e) => {
 				that.Criterias = false;
@@ -301,6 +312,7 @@
 			//清空查询条件
 			Empty: () => {
 				that.p_bill = "";
+				that.p_name = "";
 				that.p_date = dateformat.getYMD();
 			},
 			//退出
