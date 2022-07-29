@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="navmall">
 			<view class="logo">
 				<image src="@/images/kengee-logo.png" mode="widthFix"></image>
@@ -214,6 +215,15 @@
 				</view>
 			</view>
 		</view>
+	    <!-- 画布 -->
+	    <view class="canvasdiv" :style="'visibility:hidden;'">
+	    	<canvas canvas-id="couponQrcode" class="canvas"
+	    		:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+	    	<canvas canvas-id="canvasLogo" class="canvas"
+	    		:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+	    	<canvas canvas-id="canvasXPEWM" class="canvas"
+	    		:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+	    </view>
 	</view>
 </template>
 
@@ -225,9 +235,13 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _take from '@/api/business/takeaway.js';
-
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
 	var that;
 	export default {
+		components: {
+			PrinterPage
+		},
 		data() {
 			return {
 				KHID: getApp().globalData.store.KHID,
@@ -257,7 +271,14 @@
 				bs_Note: "",
 				new_bill: "", //单据操作后新生成的单号
 				curIndex: 0,
-				WMDDATA: []
+				WMDDATA: [],
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		methods: {
@@ -358,7 +379,8 @@
 							let data = JSON.parse(res.data);
 							if (data.yn_print) {
 								//调用打印
-								console.log("此处调用打印：");
+								//console.log("此处调用打印：");
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,2);
 							}
 						}
 						//列表刷新

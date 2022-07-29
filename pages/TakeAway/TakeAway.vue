@@ -359,7 +359,7 @@
 				qrCodeWidth: 200, //二维码宽
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
-				canvasGZHHeight: 0,
+				canvasGZHHeight: 1,
 			}
 		},
 		methods: {
@@ -428,8 +428,8 @@
 							console.log("返回信息:", data);
 							if (data.yn_print) {
 								//调用打印
-								console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details);
+								//console.log("此处调用打印：");
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,1);
 							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
