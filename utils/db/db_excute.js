@@ -442,5 +442,6 @@ var get = function() {
 
 
 export default {
-	get
+	get,
+	close:closeSqllite
 }

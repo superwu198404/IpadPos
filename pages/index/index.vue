@@ -73,6 +73,7 @@
 		<button @click="MenuMain()">功能主页</button>
 		<button @click="againPrinter()">重新打印</button>
 		<button @click="inputAuthCode()">录入付款码</button>
+		<button @click="closeDB()">断开数据库链接</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
 		<div v-if="view.orders.showDetail"
@@ -684,6 +685,13 @@
 			},
 			//初始化基础数据
 			InitData: async function() {
+				// 插入应对 银联 mis 的 fkid 信息
+				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K03000')`);
+				//await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','CS01')`);
+				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K01000')`);
+				await common.Query("select * from KHZFKDA where FKID='ZF51'",(res) => {
+					console.log("查询结果：",res)
+				})
 				var that = this;
 				//获取BILLS
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
@@ -708,6 +716,9 @@
 			againPrinter: function(xsBill) {
 				let that = this;
 				that.$refs.printerPage.againPrinter(that.refund_no);
+			},
+			closeDB:async function(){
+				await common.Close();
 			}
 		},
 		//接收上个页面传入的参数

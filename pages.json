@@ -179,9 +179,10 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"easycom": {
-		"autoscan": true,
+		"autoscan": false,
 		"custom": {
-			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue"
+			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue",
+			"(.*)": "@/pages/Main/Pages/$1/$1.vue" 
 		}
 	},
 	"condition": { //模式配置，仅开发期间生效

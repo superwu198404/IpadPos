@@ -119,7 +119,8 @@
 	export default{
 		name:"Reserve",
 		props:{
-			show:Boolean
+			show:Boolean,
+			data:Object
 		},
 		data(){
 			return {

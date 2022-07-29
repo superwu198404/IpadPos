@@ -295,14 +295,31 @@ var QueryRefund = async function(trade) {
 	return datas;
 }
 
-//查询退单所需信息
+//查询sql
 var Query = async function(sql) {
 	let data = null
-	await db.get().executeQry(sql, "查询SALE1...", function(res) {
+	await db.get().executeQry(sql, "查询中...", function(res) {
 		data = res.msg;
 	}, function(err) {
 		console.log("查询执行异常:", err);
 	});
+	return data;
+}
+
+//执行sql
+var Excute = async function(...sql) {
+	let data = null
+	await db.get().executeDml(sql, "执行中...", function(res) {
+		data = res.msg;
+	}, function(err) {
+		console.log("修改执行异常:", err);
+	});
+	return data;
+}
+
+var Close = async function(...sql) {
+	let data = null
+	await db.close();
 	return data;
 }
 
@@ -330,15 +347,20 @@ var GetPZCS = async function(e, func) {
 //初始化支付规则（测试使用）
 var InitZFRULE = async function(e, func) {
 	//创建表结构和测试数据 后期可挪到数据库中初始化
-	let arr = [create_sql.ZFRuleSql,
-		"delete from ZF_RULE",
-		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('WX_CLZF','keengee','027001','/PaymentAll/Handle','WxPay_ScanCode','Mobile_Pos','KG','10,11,12,13,14,15','Y')",
-		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('ZFB_CLZF','keengee','027001','/PaymentAll/Handle','AliPay_ScanCode','Mobile_Pos','KG','25,26,27,28,29,30','Y')",
-		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('HYK','keengee','027001','/PaymentAll/Handle','ECard_Payment','Mobile_Pos','KG','KG','Y')",
-		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('SZQ','keengee','027001','/PaymentAll/Handle','ECoupon_Payment','Mobile_Pos','KG','coupon','Y')",
-		// "delete from KHDA",
-		// "insert into KHDA('ADRC','ADRESS','CLIENT_TYPE','DPID','DQID','GCID','KCDID','KHID','KHZID','PHONE','SNAME','ZZTLX') value('武汉市','这里是详细地址描述','1','K01012','K01000','K0101','2','K0101QT2','3','027-22222222','旺旺前厅店','QT')",
-		// "insert into KHDA('ADRC','ADRESS','CLIENT_TYPE','DPID','DQID','GCID','KCDID','KHID','KHZID','PHONE','SNAME','ZZTLX') value('武汉市','这里是详细地址描述','1','K01012','K01000','K0101','2','K200QTD005','3','027-22222222','旺旺前厅店(Test)','QT')",
+	let arr = [
+		create_sql.ZFRuleSql,
+		"delete from 'FKDA';",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JF','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF09','02265213591481','02265213591481','666','SZQ','6','SZQ','NEWADD','dzq','电子券','Y','Y','N','N','N','Y','N','Y','N','ZV09');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JF','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF04','02265213591481','02265213591481','666','HYK','8','HYK','NEWADD','qjdzk','仟吉电子卡','N','Y','Y','Y','Y','N','Y','Y','Y','ZV03');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JF','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF07','02265213591481','02265213591481','022','ZFB_CLZF','8','ZFB_CLZF','NEWADD','zfb','支付宝支付','N','Y','Y','Y','Y','N','Y','Y','Y','');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JF','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF06','02265213591481','02265213591481','022','WX_CLZF','8','WX_CLZF','NEWADD','wx','微信支付','N','Y','Y','Y','Y','N','Y','Y','Y','');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JF','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF51','02265213591481','02265213591481','022','MIS','8','MIS','NEWADD','yl','银联支付','N','Y','Y','Y','Y','N','Y','Y','Y','ZF51');",
+		"delete from 'ZF_RULE';",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('WX_CLZF','keengee','027001','/PaymentAll/Handle','WxPay_ScanCode','Mobile_Pos','KG','10,11,12,13,14,15','Y');",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('ZFB_CLZF','keengee','027001','/PaymentAll/Handle','AliPay_ScanCode','Mobile_Pos','KG','25,26,27,28,29,30','Y');",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('HYK','keengee','027001','/PaymentAll/Handle','ECard_Payment','Mobile_Pos','KG','KG','Y');",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('SZQ','keengee','027001','/PaymentAll/Handle','ECoupon_Payment','Mobile_Pos','KG','coupon','Y');",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('MIS','keengee','027001','/PaymentAll/Handle','Mis_AllinPayment','Mobile_Pos','KG','KG','Y');",
 		"delete from dapzcs_nr where id='FKJHZF';",
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
@@ -453,6 +475,8 @@ export default {
 	GetPayWay,
 	QueryRefund,
 	Query,
+	Excute,
+	Close,
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,

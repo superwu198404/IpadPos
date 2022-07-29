@@ -14,8 +14,6 @@ Vue.use(G_show_modal);
 import Polyfill from './polyfill/polyfill';
 Polyfill.init();
 
-
-
 // 引入http.js
 import http from './utils/xprinter/http.js'
 
@@ -39,4 +37,3 @@ const app = new Vue({
 })
 app.$mount()
 // #endif
-

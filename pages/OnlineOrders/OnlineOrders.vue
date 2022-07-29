@@ -13,11 +13,6 @@
 			</view>
 			<view>
 				<view class="prints">
-					<view class="sousuo" @click="view.search.open = true">
-						<label>
-							<image src="../../images/sousuo.png" mode="widthFix"></image>提取
-						</label>
-					</view>
 					<view class="sousuo">
 						<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
 					</view>
@@ -344,26 +339,28 @@
 			CheckArrivalDate: function(date) { //检查到货时间是否合法，到货时段：0-7、7-14、14-24
 				if (date) {
 					let current = (function() {
-							let dt = new Date(date.replaceAll('-', '/'));
-							return new Date(dt.setHours(dt.getHours() + 8));
+							let dt = new Date(date.replaceAll('-', '/'));//Ipad 时间转换只支持 2000/1/1，不支持 2000-1-1
+							return new Date(dt.setHours(dt.getHours() + 8));//Ipad 时区加 8 小时
 						})(),
 						now = new Date(new Date().setHours(new Date().getHours() + 8));
-					console.log("时间", JSON.stringify(now))
+					console.log("当前时间", JSON.stringify(now))
 					if (this.details.order.THTYPE_CODE == '0') { //自提
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
-						now = new Date(now.setHours(now.getHours() + 24));
-						console.log("限制时间", JSON.stringify(now))
-						console.log("当前时间", JSON.stringify(current))
-						if (current.getTime() >= now.getTime())
+						let limit = new Date(now.setHours(now.getHours() + 24)),
+						date_max = new Date(now.getFullYear(),now.getMonth(),now.getDate(),8+21),//晚上 21:00
+						date_min = new Date(now.getFullYear(),now.getMonth(),now.getDate(),8+7);//早上 7:00
+						//时间必须设置为当前时间 1小时 之后，且时间不能在 21点 以后和 7:00 以前
+						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min.getTime() < current.getTime())
 							return true;
 						else
 							return false;
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
-						now = new Date(now.setHours(now.getHours() + 1));
-						console.log("限制时间", JSON.stringify(now))
-						console.log("当前时间", JSON.stringify(current))
-						if (current.getTime() >= now.getTime())
+						let limit = new Date(now.setHours(now.getHours() + 1)),
+						date_max = new Date(now.getFullYear(),now.getMonth(),now.getDate(),8+18),//晚上 18:00
+						date_min = new Date(now.getFullYear(),now.getMonth(),now.getDate(),8+9);//早上 9:00
+						//时间必须设置为当前时间 1小时 之后，且时间不能在 18点 以后和 9:00 以前
+						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min.getTime() < current.getTime())
 							return true;
 						else
 							return false;
