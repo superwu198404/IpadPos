@@ -1620,7 +1620,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(parseInt(item.spid).toString(), 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
+			jpPrinter.setText(util.getComputedByteLen(parseInt(item.spid).toString(), 15) + util.getComputedByteLen(item.pack.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.net.toString(), 6) + util.getComputedByteLen(
 					item.unit, 6));
 			jpPrinter.setPrint(); //打印并换行		
