@@ -292,7 +292,7 @@
 			</view>
 		</view>
 		<!-- 画布 -->
-		<view class="canvasdiv">
+		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
@@ -354,12 +354,12 @@
 				curIndex: 0,
 				WMDDATA: [],
 				//打印相关
-				jpgWidth: 0,
-				jpgHeight: 0,
-				qrCodeWidth: 0, //二维码宽
-				qrCodeHeight: 0, // 二维码高
-				canvasGZHWidth: 0,
-				canvasGZHHeight: 0,
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		methods: {
@@ -428,8 +428,8 @@
 							console.log("返回信息:", data);
 							if (data.yn_print) {
 								//调用打印
-								console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details);
+								//console.log("此处调用打印：");
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,1);
 							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;

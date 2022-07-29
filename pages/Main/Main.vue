@@ -2,6 +2,10 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(../../style/basis.css); */
 	@import url(@/static/style/index.css);
+	
+	.prolist{
+		width: 100%;
+	}
 </style>
 
 <template>
@@ -11,34 +15,39 @@
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
 			<view class="menu">
-				<view class="curr">
-					<image class="xz" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoshou.png" mode="widthFix"></image>
+				<view :class="Selected('xs')" @click="MenuSwitch('xs')">
+					<image class="xz" src="../../images/xiaoshou.png" mode="widthFix"></image>
+					<image class="wx" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
 					<text>销售</text>
 					<!-- <navigator url="../Main/Main">销售</navigator> -->
 				</view>
-				<view>
+				<view :class="Selected('yd')" @click="MenuSwitch('yd')">
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
 					<text>预定</text>
 				</view>
-				<view>
+				<view :class="Selected('Extract')" @click="MenuSwitch('Extract')">
 					<image class="xz" src="../../images/xz-ydtq.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/wxz-ydtq.png" mode="widthFix"></image>
 					<text>预定提取</text>
 				</view>
-				<view>
+				<view :class="Selected('TakeAway')" @click="MenuSwitch('TakeAway')">
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
 					<text>外卖单</text>
 					<!-- <navigator url="../TakeAway/TakeAway">外卖单</navigator> -->
 				</view>
-				<view>
+				<view :class="Selected('OnlineOrders')" @click="MenuSwitch('OnlineOrders')">
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
 					<text>线上订单</text>
 				</view>
-				<view>
+				<view :class="Selected('OnlinePick')" @click="MenuSwitch('OnlinePick')">
+					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
+					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
+					<text>线上提取</text>
+				</view>
+				<view :class="Selected('tdyw')" @click="MenuSwitch('tdyw')">
 					<image @click="Moreand()" class="xz" src="../../images/xz-th.png" mode="widthFix"></image>
 					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
 					<text @click="Moreand()">退单业务</text>
@@ -59,12 +68,16 @@
 							<text>赊销退单</text>
 						</label>
 					</view>
-
 				</view>
-				<view>
+				<view :class="Selected('xx')" @click="MenuSwitch('xx')">
 					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
 					<text>消息</text>
+				</view>
+				<view :class="Selected('CreditSettlement')" @click="MenuSwitch('CreditSettlement')">
+					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
+					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
+					<text>赊销结算</text>
 				</view>
 			</view>
 
@@ -102,11 +115,11 @@
 					</view>
 				</view>
 			</view>
-
 			<view class="listof">
 				<view class="prolist">
+					<component :is="components.current"></component>
 					<!-- 大类循环 -->
-					<view class="commodity">
+					<view class="commodity" v-if="false">
 						<view class="hh">
 							<view class="hotcakes">
 								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
@@ -122,7 +135,6 @@
 						<!-- 小类循环 -->
 						<view class="products">
 							<view class="h2">每日现烤 <label></label></view>
-
 							<view class="procycle">
 								<!-- 产品循环 -->
 								<view class="li">
@@ -148,7 +160,7 @@
 						</view>
 					</view>
 				</view>
-				<view class="operation">
+				<view class="operation" v-if="false">
 					<view class="sorting">
 						<view class="seasonal">
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
@@ -321,7 +333,7 @@
 						</view>
 					</view>
 				</view>
-				<view class="pop-r">
+				<view class="pop-r" v-if="false">
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
@@ -389,7 +401,6 @@
 				</view>
 			</view>
 		</view>
-
 	</view>
 </template>
 
@@ -406,11 +417,43 @@
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
 
+	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
+	import Extract from '@/pages/Extract/Extract.vue'
+	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
+	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
+	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
+	import navbar from '@/pages/Main/components/navbar.vue'
 	var that;
 	export default {
+		components: {
+			'top-navbar': navbar,
+			Extract,
+			OnlineOrders,
+			TakeAway,
+			OnlinePick,
+			CreditSettlement
+		},
+		computed: {
+			Selected: function() {
+				return (function(name) {
+					return this.components.current === name ? "curr" : "";
+				}).bind(this)
+			}
+		},
 		data() {
 			return {
-				attribute: false,
+				components: {
+					source: {
+						navbar: {
+
+						}
+					},
+					component: [],
+					current: "CreditSettlement",
+					history: []
+				},
+				attribute:false,
+				statements: false,
 				Alphabetical: false,
 				Memberinfo: false,
 				Shoppingbags: false,
@@ -495,7 +538,12 @@
 					})
 				}
 			},
-
+			MenuSwitch: function(name) {
+				if (name) {
+					this.components.current = name;
+				}
+				this.$forceUpdate();
+			},
 			Letters: function(e) {
 				this.Alphabetical = true
 

@@ -321,7 +321,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr,ggyContent)=>{	
+const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{	
 	var xsType = "WM";
     var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
@@ -334,12 +334,19 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent)=>{
 	var khPhone = getApp().globalData.store.PHONE;
 	var gsid = sale1_obj.GSID;
 	var status = sale1_obj.STATUS;
-	var remark = sale1_obj.STR1;
+	var remark = sale1_obj.STR1 == null ? "" : sale1_obj.STR1;
 	var payableAmount = sale1_obj.STR2;
 	var originalAmount = sale1_obj.STR8;
 	var shAddress = sale1_obj.STR4;
 	var ggy = ggyContent;
+	var xsptid = sale1_obj.XSPTID;
 	
+	var note2 = "";
+	if(type == "2"){
+		note2 = sale1_obj.NOTE2; //外卖预订单，平台名称。如美团外卖
+	}
+	var wmType = type;
+
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -350,7 +357,8 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent)=>{
 			qty: sale2_arr[i].QTY, //商品数量
 			price: sale2_arr[i].PRICE, //商品价格
 			net: sale2_arr[i].NET, //商品金额
-			unit: sale2_arr[i].STR7, //商品金额
+			unit: sale2_arr[i].STR7, //商品单位
+			pack: sale2_arr[i].PACK, //外卖预订单商品数量
 		};
 		goodsList = goodsList.concat(sale2_printer);
 	}
@@ -381,6 +389,9 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent)=>{
 		shAddress,//收货地址
 		sale3List, //支付信息
 		ggy,//广告语
+		xsptid,
+		note2,
+		wmType,
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 	

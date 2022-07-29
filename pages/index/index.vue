@@ -113,7 +113,7 @@
 			</div>
 		</div>
 		<!-- 画布 -->
-		<view class="canvasdiv">
+		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
 				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 			<canvas canvas-id="canvasLogo" class="canvas"
@@ -220,12 +220,12 @@
 				totalAmount: 0,
 				SKY_DISCOUNT: 0,
 				//打印相关
-				jpgWidth: 0,
-				jpgHeight: 0,
-				qrCodeWidth: 0, //二维码宽
-				qrCodeHeight: 0, // 二维码高
-				canvasGZHWidth: 0,
-				canvasGZHHeight: 0,
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
 			}
 		},

@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="commodity"> 
+	<view class="commodity" style="height: 100%;"> 
 		<view class="hh">
 			<view class="hotcakes">
 				<image src="../../images/ydtq.png" mode="widthFix"></image> 预定提取
@@ -58,21 +58,25 @@
 						<view>编号:{{ item.BMID || '-' }}</view>
 						<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 					</view>
-					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button
-							class="btn">预定提取</button></view>
+					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button @click="view.Details = true" class="btn">预定提取</button></view>
 				</view>
 			</view>
 		</view>
+		<component :is="'Reserve'" v-if="view.Details"></component>
 	</view>
 </template>
 
 <script>
 	import util from '@/utils/util.js';
+	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
 	import {
 		getReserveOrders
 	} from '@/api/business/reserve.js'
 	export default {
 		mixins: [global],
+		components:{
+			Reserve
+		},
 		data() {
 			return {
 				condition: {
