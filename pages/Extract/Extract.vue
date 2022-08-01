@@ -207,7 +207,6 @@
 		height: 20rpx;
 		background-color: #b0b0b0;
 		border-radius: 50%;
-
 	}
 
 	.delivery::before {

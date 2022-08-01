@@ -466,7 +466,7 @@
 		height: 100%;
 	}
 
-	.menu {
+	/* .menu {
 		box-sizing: border-box;
 		overflow-y: auto;
 		height: 72%;
@@ -489,5 +489,5 @@
 	.menu .curr {
 		margin:unset;
 		margin-bottom: 3%;
-	}
+	} */
 </style>
