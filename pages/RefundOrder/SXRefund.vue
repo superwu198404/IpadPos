@@ -7,100 +7,9 @@
 
 <template>
 	<view class="content">
-		<view class="navmall">
-			<view class="logo">
-				<image src="@/images/kengee-logo.png" mode="widthFix"></image>
-			</view>
-			<view class="menu">
-				<view>
-					<image class="xz" src="@/images/xiaoshou-hui.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
-					<text>销售</text>
-				</view>
-				<view>
-					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-				<view>
-					<image class="xz" src="@/images/xz-ydtq.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/wxz-ydtq.png" mode="widthFix"></image>
-					<text>预定提取</text>
-				</view>
-				<view>
-					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
-					<text>赊销</text>
-				</view>
-				<view>
-					<image class="xz" src="@/images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/yuding-hui.png" mode="widthFix"></image>
-					<text>线上订单</text>
-				</view>
-				<view class="curr">
-					<image @click="Moreand()" class="xz" src="@/images/xz-th.png" mode="widthFix"></image>
-					<image @click="Moreand()" class="wx" src="@/images/wxz-th.png" mode="widthFix"></image>
-					<text @click="Moreand()">退单业务</text>
-					<view class="chargeback" v-if="Chargeback">
-						<label class="currs">
-							<image class="xz" src="@/images/xstd.png" mode="widthFix"></image>
-							<image class="wx" src="@/images/xstd-wxz.png" mode="widthFix"></image>
-							<text>销售退单</text>
-						</label>
-						<label>
-							<image class="xz" src="@/images/ydqx.png" mode="widthFix"></image>
-							<image class="wx" src="@/images/ydqx-wxz.png" mode="widthFix"></image>
-							<text>预订取消</text>
-						</label>
-						<label>
-							<image class="xz" src="@/images/sxtd.png" mode="widthFix"></image>
-							<image class="wx" src="@/images/sxtd-wxz.png" mode="widthFix"></image>
-							<text>赊销退单</text>
-						</label>
-					</view>
-
-				</view>
-				<view>
-					<image class="xz" src="@/images/xz-xx.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/xiaoxi-hui.png" mode="widthFix"></image>
-					<text>消息</text>
-				</view>
-			</view>
-
-			<view class="exit">
-				<image src="@/images/tuichu.png" mode="widthFix"></image>
-				<text @click="Close()">退出</text>
-			</view>
-		</view>
+		<menu_page :menuIndex="5" :sec_index="2"></menu_page>
 		<view class="right">
-			<view class="nav">
-				<view class="getback">
-					<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
-					<view class="message">
-						<view class="imgs">
-							<image src="@/images/tongzhi.png" mode="widthFix"></image>
-						</view>
-						<text>门店有一条新的外卖配送单消息来啦...</text>
-					</view>
-				</view>
-				<view class="stores">
-					<view class="checkout">
-						<label>
-							<image src="@/images/dx-mendian.png" mode="widthFix"></image>门店名称
-						</label>
-						<label>
-							<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：3
-						</label>
-					</view>
-					<view class="account">
-						<text>员工账号</text>
-						<view>
-							<image src="@/images/touxiang.png" mode="widthFix"></image>
-						</view>
-					</view>
-				</view>
-			</view>
-
+			<menu_head></menu_head>
 			<view class="listof">
 				<view class="prolist">
 					<view class="commodity">
@@ -232,9 +141,13 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _refund from '@/api/business/refundorder.js';
-
+	// import menu_page from "@/components/menu_page/menu_page.vue";
+	
 	var that;
 	export default {
+		// components: {
+		// 	menu_page
+		// },
 		data() {
 			return {
 				statements: false,
@@ -275,8 +188,8 @@
 					},
 					res => {
 						console.log("查询结果:", res);
-						let data = JSON.parse(res.data);
-						if (res.code && data.length > 0) {
+						if (res.code) {
+							let data = JSON.parse(res.data);
 							that.Orders = data;
 							that.Criterias = false;
 						} else {
@@ -291,8 +204,9 @@
 				let yw_bill = common.CreateBill(that.KHID, that.POSID);
 				_refund.GetOrderDetails(yw_bill, e.BILL, e.SALEDATE, res => {
 					console.log("详情单查询结果:", res);
-					if (res.code && res.msg.length > 0) {
-						that.Details = res.msg;
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						that.Details = data;
 						that.statements = true;
 					} else {
 						that.Details = [];

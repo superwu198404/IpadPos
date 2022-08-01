@@ -3,72 +3,29 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="content">
-		<view class="navmall">
-			<view class="logo">
-				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
-			</view>
-			<view class="menu">
-				<view :class="menuIndex==0?'curr':''" @click="ToPage('../../pages/Main/Main')">
-					<image class="xz" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoshou.png" mode="widthFix"></image>
-					<text>销售</text>
+	<view class="navmall">
+		<view class="logo">
+			<image src="../../images/kengee-logo.png" mode="widthFix"></image>
+		</view>
+		<view class="menu">
+			<view v-for="(item,index) in urls" :class="menuIndex==item.index?'curr':''" @click="ToPage(item)">
+				<image class="xz" :src="item.icon" mode="widthFix"></image>
+				<image class="wx" :src="item.icon1" mode="widthFix"></image>
+				<text>{{item.title}}</text>
+				<view class="chargeback" v-if="item.details&&showDetail">
+					<label v-for="(item1,index1) in item.details" :class="sec_index==item1.index?'currs':''"
+						@click="ToPage(item1)">
+						<image class="xz" :src="item1.icon" mode="widthFix"></image>
+						<image class="wx" :src="item1.icon1" mode="widthFix"></image>
+						<text>{{item1.title}}</text>
+					</label>
 				</view>
-				<view :class="menuIndex==1?'curr':''" @click="ToPage('../../pages/Reserve/Reserve')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-				<view :class="menuIndex==2?'curr':''" @click="ToPage('../../pages/Reserve/Reserve')">
-					<image class="xz" src="../../images/xz-ydtq.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/wxz-ydtq.png" mode="widthFix"></image>
-					<text>预定提取</text>
-				</view>
-				<view :class="menuIndex==3?'curr':''" @click="ToPage('../../pages/TakeAway/TakeAway')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>外卖单</text>
-				</view>
-				<view :class="menuIndex==4?'curr':''" @click="ToPage('../../pages/OnlineOrders/OnlineOrders')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>线上订单</text>
-				</view>
-				<view :class="menuIndex==5?'curr':''" @click="Chargeback=true">
-					<image class="xz" src="../../images/xz-th.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
-					<text>退单业务</text>
-					<view class="chargeback" v-if="Chargeback">
-						<label class="currs">
-							<image class="xz" src="../../images/xstd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/xstd-wxz.png" mode="widthFix"></image>
-							<text>销售退单</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/ydqx.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/ydqx-wxz.png" mode="widthFix"></image>
-							<text>预订取消</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/sxtd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/sxtd-wxz.png" mode="widthFix"></image>
-							<text>赊销退单</text>
-						</label>
-					</view>
-				</view>
-				<view :class="menuIndex==6?'curr':''" @click="ToPage('../../pages/Message/Message')">
-					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
-					<text>消息</text>
-				</view>
-			</view>
-
-			<view class="exit">
-				<image src="../../images/tuichu.png" mode="widthFix"></image>
-				<text @click="LoginOut()">退出</text>
 			</view>
 		</view>
-
+		<view class="exit" @click="LoginOut()">
+			<image src="../../images/tuichu.png" mode="widthFix"></image>
+			<text>退出</text>
+		</view>
 	</view>
 </template>
 
@@ -77,21 +34,100 @@
 		name: "menu_page",
 		data() {
 			return {
-
+				urls: [{
+						title: "销售",
+						url: "../../pages/Main/Main",
+						icon: require('../../images/xiaoshou.png'),
+						icon1: require("../../images/xiaoshou-hui.png"),
+						index: 0
+					},
+					{
+						title: "预定",
+						url: "../../pages/Reserve/Reserve",
+						icon: require("../../images/yuding.png"),
+						icon1: require("../../images/yuding-hui.png"),
+						index: 1
+					},
+					{
+						title: "预定提取",
+						url: "../../pages/Extract/Extract",
+						icon: require("../../images/xz-ydtq.png"),
+						icon1: require("../../images/wxz-ydtq.png"),
+						index: 2
+					}, {
+						title: "外卖单",
+						url: "../../pages/TakeAway/TakeAway",
+						icon: require("../../images/yuding.png"),
+						icon1: require("../../images/yuding-hui.png"),
+						index: 3
+					},
+					{
+						title: "线上订单",
+						url: "../../pages/OnlineOrders/OnlineOrders",
+						icon: require("../../images/yuding.png"),
+						icon1: require("../../images/yuding-hui.png"),
+						index: 4
+					},
+					{
+						title: "退单业务",
+						url: "",
+						icon: require("../../images/xz-th.png"),
+						icon1: require("../../images/wxz-th.png"),
+						index: 5,
+						details: [{
+							title: "销售退单",
+							url: "../../pages/RefundOrder/RefundOrder",
+							icon: require("../../images/xstd.png"),
+							icon1: require("../../images/xstd-wxz.png"),
+							index: 0
+						}, {
+							title: "预定退单",
+							url: "../../pages/RefundOrder/RefundOrder",
+							icon: require("../../images/ydqx.png"),
+							icon1: require("../../images/ydqx-wxz.png"),
+							index: 1
+						}, {
+							title: "赊销退单",
+							url: "../../pages/RefundOrder/SXRefund",
+							icon: require("../../images/sxtd.png"),
+							icon1: require("../../images/sxtd-wxz.png"),
+							index: 2
+						}]
+					},
+					{
+						title: "消息",
+						url: "../../pages/Message/Message",
+						icon: require("../../images/xz-xx.png"),
+						icon1: require("../../images/xiaoxi-hui.png"),
+						index: 6
+					}
+				],
+				showDetail: false
 			};
 		},
 		props: {
+			Chargeback: false,
 			menuIndex: 0,
-			Chargeback:false
+			sec_index: 0
 		},
 		methods: {
 			ToPage: function(e) {
-				console.log("触发没，",e);
+				console.log("触发没，", e);
+				if (e.url) {
+					uni.redirectTo({
+						url: e.url,
+						complete: r => {
+							console.log(r);
+						}
+					})
+				} else {
+					this.showDetail = !this.showDetail;
+				}
+			},
+			LoginOut:function(){
 				uni.redirectTo({
-					url: e,
-					complete:r=>{
-						console.log(r);
-					}
+					url:"../../pages/index/index",
+					complete:r=>{console.log(r)}
 				})
 			}
 		}
