@@ -10,119 +10,13 @@
 
 <template>
 	<view class="content">
-		<view class="navmall">
-			<view class="logo">
-				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
-			</view>
-			<view class="menu">
-				<view :class="Selected('xs')" @click="MenuSwitch('xs')">
-					<image class="xz" src="../../images/xiaoshou.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
-					<text>销售</text>
-					<!-- <navigator url="../Main/Main">销售</navigator> -->
-				</view>
-				<view :class="Selected('yd')" @click="MenuSwitch('yd')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-				<view :class="Selected('Extract')" @click="MenuSwitch('Extract')">
-					<image class="xz" src="../../images/xz-ydtq.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/wxz-ydtq.png" mode="widthFix"></image>
-					<text>预定提取</text>
-				</view>
-				<view :class="Selected('TakeAway')" @click="MenuSwitch('TakeAway')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>外卖单</text>
-					<!-- <navigator url="../TakeAway/TakeAway">外卖单</navigator> -->
-				</view>
-				<view :class="Selected('OnlineOrders')" @click="MenuSwitch('OnlineOrders')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>线上订单</text>
-				</view>
-				<view :class="Selected('OnlinePick')" @click="MenuSwitch('OnlinePick')">
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>线上提取</text>
-				</view>
-				<view :class="Selected('tdyw')" @click="MenuSwitch('tdyw')">
-					<image @click="Moreand()" class="xz" src="../../images/xz-th.png" mode="widthFix"></image>
-					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
-					<text @click="Moreand()">退单业务</text>
-					<view class="chargeback" v-if="Chargeback">
-						<label class="currs">
-							<image class="xz" src="../../images/xstd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/xstd-wxz.png" mode="widthFix"></image>
-							<text>销售退单</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/ydqx.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/ydqx-wxz.png" mode="widthFix"></image>
-							<text>预订取消</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/sxtd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/sxtd-wxz.png" mode="widthFix"></image>
-							<text>赊销退单</text>
-						</label>
-					</view>
-				</view>
-				<view :class="Selected('xx')" @click="MenuSwitch('xx')">
-					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
-					<text>消息</text>
-				</view>
-				<view :class="Selected('CreditSettlement')" @click="MenuSwitch('CreditSettlement')">
-					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
-					<text>赊销结算</text>
-				</view>
-			</view>
-			<view class="exit" style="bottom: 11%;">
-				<image style="transform: rotate(-90deg)scale(1.1);filter: grayscale(1)brightness(2);"
-					src="../../images/dx-qdb.png" mode="widthFix"></image>
-				<text @click="BackPrev()">返回</text>
-			</view>
-			<view class="exit">
-				<image src="../../images/tuichu.png" mode="widthFix"></image>
-				<text @click="LoginOut()">退出</text>
-			</view>
-		</view>
+		<menu_page :menuIndex="0"></menu_page>
 		<view class="right">
-			<view class="nav">
-				<view class="getback">
-					<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
-					<view class="message">
-						<view class="imgs">
-							<image src="../../images/tongzhi.png" mode="widthFix"></image>
-						</view>
-						<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
-						<text v-for="(item,index) in MsgData" @click="ReadMsg(item)">{{item.title}}</text>
-					</view>
-				</view>
-				<view class="stores">
-					<view class="checkout">
-						<label>
-							<image src="../../images/dx-mendian.png" mode="widthFix"></image>门店名称
-						</label>
-						<label>
-							<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3
-						</label>
-					</view>
-					<view class="account">
-						<text>员工账号</text>
-						<view>
-							<image src="../../images/touxiang.png" mode="widthFix"></image>
-						</view>
-					</view>
-				</view>
-			</view>
+			<menu_head></menu_head>
 			<view class="listof">
 				<view class="prolist" style="overflow: hidden;">
 					<!-- <component is="credit-settlement"></component> -->
-					<component :is="components.current"></component>
+					<!-- <component :is="components.current"></component> -->
 					<!-- 大类循环 -->
 					<view class="commodity" v-if="false">
 						<view class="hh">
@@ -422,22 +316,8 @@
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
 
-	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
-	import Extract from '@/pages/Extract/Extract.vue'
-	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
-	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
-	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
-	import navbar from '@/pages/Main/components/navbar.vue'
 	var that;
 	export default {
-		components: {
-			'top-navbar': navbar,
-			Extract,
-			OnlineOrders,
-			TakeAway,
-			OnlinePick,
-			CreditSettlement
-		},
 		computed: {
 			Selected: function() {
 				return (function(name) {

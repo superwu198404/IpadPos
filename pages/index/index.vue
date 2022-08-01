@@ -65,15 +65,16 @@
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
 		<button @click="MenuPage(2)">会员登录</button>
-		<button @click="MenuPage(3)">外卖处理</button>
-		<button @click="MenuPage(4)">外卖预定</button>
+		<!-- <button @click="MenuPage(3)">外卖处理</button>
+		<button @click="MenuPage(4)">外卖预定</button> -->
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
-		<button @click="MenuPage(7)">退单业务</button>
+		<!-- <button @click="MenuPage(7)">销售退单</button>
 		<button @click="MenuPage(8)">预定</button>
-		<button @click="MenuMain()">功能主页</button>
-		<button @click="againPrinter()">重新打印</button>
-		<button @click="inputAuthCode()">录入付款码</button>
+		<button @click="MenuPage(9)">赊销退单</button>
+		<button @click="MenuMain()">功能主页</button> -->
+		<!-- <button @click="againPrinter()">重新打印</button> -->
+		<!-- <button @click="inputAuthCode()">录入付款码</button> -->
 		<button @click="closeDB()">断开数据库链接</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
@@ -419,6 +420,14 @@
 				else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",
+						complete:r=>{
+							console.log(r);
+						}
+					});
+				}
+				else if (e == 9) {
+					uni.navigateTo({
+						url: "../RefundOrder/SXRefund",
 						complete:r=>{
 							console.log(r);
 						}

@@ -27,15 +27,17 @@
 }
 .products{
 	display: flex;
-	height: 93%;
+	height: 90%;
 }
 .products .procycle{
 	width:40%;
 	margin-top:0;
 	display: block;
+	height: 100%;
+	overflow: auto;
 }
 .products .procycle .li{
-	width:96%;
+	width:94%;
 	padding:2% 3%;
 }
 
@@ -83,20 +85,25 @@
 	width:80%;
 }
 .cods label{
-	width:45%;
+	width:48%;
 	line-height: 50rpx;
 	color: #b0b0b0;
-	margin-right: 30rpx;
+	margin-right: 2%;
 }
 .cods label:nth-last-child(1),.cods label:nth-child(1){
 	width:100%;
 }
 .prolist .cods label text{
 	color: #b0b0b0;
+	display: inline-block;
 }
-/* .cods label:nth-child(1) text{
-	color: #333;
-} */
+.cods label text:nth-child(1){
+	width:120rpx;
+}
+.cods label text:nth-child(2){	
+	max-width:61%;
+	overflow: hidden;
+}
 .address{
 	margin-top:10px;
 	padding:2% 1% 0;
