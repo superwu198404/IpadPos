@@ -367,7 +367,7 @@
 								21), //晚上 21:00
 							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate() - 1, 8 +
 								7); //早上 7:00
-						//时间必须设置为当前时间 1小时 之后，且时间不能在 21点 以后和 7:00 以前
+						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
 							return true;
@@ -376,10 +376,8 @@
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
 						let limit = new Date(now.setHours(now.getHours() + 1)),
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-								18), //晚上 18:00
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-								9); //早上 9:00
+						date_max = new Date(current.getFullYear(),current.getMonth(),current.getDate()-1,8+18),//晚上 18:00
+						date_min = new Date(current.getFullYear(),current.getMonth(),current.getDate()-1,8+9);//早上 9:00
 						//时间必须设置为当前时间 1小时 之后，且时间不能在 18点 以后和 9:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())

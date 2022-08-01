@@ -149,7 +149,6 @@
 					customer: this.condition.customer
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
-					console.log("预定提取数据：", data);
 					if (data.constructor === Array)
 						this.extracts = data;
 					else
