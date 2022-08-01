@@ -266,6 +266,17 @@ var GetPolyPayWay = function(e, func) {
 	});
 }
 
+//获取档案参数
+var GetDapzcs = function(e, func) {
+	let sql = "select * from  dapzcs_nr where id  ='"+e+"'";
+	db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("获取配置参数成功:", res);
+		if (func) func(res);
+	}, function(err) {
+		console.log("获取配置参数出错:", err);
+	});
+}
+
 //查询退单所需信息
 var QueryRefund = async function(trade) {
 	let datas = {
@@ -393,7 +404,13 @@ var InitZFRULE = async function(e, func) {
 		"INSERT INTO DAPZCS_NR VALUES ('WM_ZSDZ', '30', 'K01000', NULL, '1', 'MEITUAN', NULL, '000000001010100013', 'SYSTEM', DATETIME('2022-04-27 18:24:51'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"delete from spda where spid in ('000000001010100004','000000009010200002');",
 		"INSERT INTO SPDA ('SPID', 'BARCODE', 'SNAME', 'PINYIN', 'SPECS', 'WEIGHT', 'PRODUCT_TYPE', 'SPBQ', 'SPKW', 'MLQTY', 'JGSTAT', 'ADDR_SC', 'PLID', 'UNIT', 'UNIT_PF', 'PFXS', 'PFXSFZ', 'PFXSFM', 'QCID', 'SHELFLIFE', 'YN_ZS', 'OSPID', 'PRODUCT_STATUS', 'YN_XPDG', 'SPJGZ', 'SMODE', 'YN_ZH', 'PGPL', 'YN_DEL', 'ID_RY_LR', 'DATE_LR', 'ID_RY_XG', 'DATE_XG') VALUES('000000001010100004', '6951143188169', '竹节排包(原味)', 'zjpb(yw)', '个(201312)', '300', 'Z001', NULL, '原味', NULL, NULL, '-仟吉', '10101', '袋', NULL, NULL, NULL, NULL, '1030201020000000000', '365', 'Y', '10101004', '1', NULL, '01', NULL, NULL, '7930', NULL, 'JK', datetime('2018-12-31 14:40:42'), NULL, datetime('2022-06-10 23:37:04'))",
-		"INSERT INTO SPDA ('SPID', 'BARCODE', 'SNAME', 'PINYIN', 'SPECS', 'WEIGHT', 'PRODUCT_TYPE', 'SPBQ', 'SPKW', 'MLQTY', 'JGSTAT', 'ADDR_SC', 'PLID', 'UNIT', 'UNIT_PF', 'PFXS', 'PFXSFZ', 'PFXSFM', 'QCID', 'SHELFLIFE', 'YN_ZS', 'OSPID', 'PRODUCT_STATUS', 'YN_XPDG', 'SPJGZ', 'SMODE', 'YN_ZH', 'PGPL', 'YN_DEL', 'ID_RY_LR', 'DATE_LR', 'ID_RY_XG', 'DATE_XG') VALUES ('000000009010200002', '2090102000020', '纸盒20x20cm', 'zh20x20cm', NULL, '0', 'Z009', NULL, NULL, NULL, NULL, NULL, '90102', '个', NULL, NULL, NULL, NULL, NULL, '0', 'Y', NULL, '1', NULL, '01', NULL, NULL, NULL, NULL, 'JK', datetime('2021-09-15 14:53:26'), NULL, datetime('2021-09-26 16:58:17'))"
+		"INSERT INTO SPDA ('SPID', 'BARCODE', 'SNAME', 'PINYIN', 'SPECS', 'WEIGHT', 'PRODUCT_TYPE', 'SPBQ', 'SPKW', 'MLQTY', 'JGSTAT', 'ADDR_SC', 'PLID', 'UNIT', 'UNIT_PF', 'PFXS', 'PFXSFZ', 'PFXSFM', 'QCID', 'SHELFLIFE', 'YN_ZS', 'OSPID', 'PRODUCT_STATUS', 'YN_XPDG', 'SPJGZ', 'SMODE', 'YN_ZH', 'PGPL', 'YN_DEL', 'ID_RY_LR', 'DATE_LR', 'ID_RY_XG', 'DATE_XG') VALUES ('000000009010200002', '2090102000020', '纸盒20x20cm', 'zh20x20cm', NULL, '0', 'Z009', NULL, NULL, NULL, NULL, NULL, '90102', '个', NULL, NULL, NULL, NULL, NULL, '0', 'Y', NULL, '1', NULL, '01', NULL, NULL, NULL, NULL, 'JK', datetime('2021-09-15 14:53:26'), NULL, datetime('2021-09-26 16:58:17'))",
+		"delete from dapzcs_nr where id='THTYPE';",
+		"INSERT INTO dapzcs_nr VALUES ('THTYPE', '0', '自提', 'zt', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('THTYPE', '1', '宅配到家', 'shsm', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"INSERT INTO dapzcs_nr VALUES ('THTYPE', '2', '现卖配送', 'xmps', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
+		"delete from POSCSZmx where POSCS='KJGSFW';",
+		"INSERT INTO POSCSZmx (POSCSZID, POSCS, POSCSNR, NOTE, SZ, ID_RY_LR, DATE_LR, ID_RY_XG, DATE_XG) VALUES ('001', 'KJGSFW', 'K960,K900,K210,K200', NULL, '43', 'SYSTEM', DATE('2018-09-10 20:17:19'), 'SYSTEM', DATE('2020-11-30 09:27:58'));",
 	];
 	await db.get().executeDml(arr, "sql执行中", function(res) {
 		console.log("支付规则数据和聚合数据初始化成功：", res);
@@ -482,5 +499,6 @@ export default {
 	GetZFRULE,
 	GetPOSCS,
 	actTypeEnum,
-	ywTypeEnum
+	ywTypeEnum,
+	GetDapzcs
 }

@@ -280,7 +280,9 @@ const getYMDS = () => {
 	let str = year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
 	return str;
 };
-//获取当前日期时间HHmmss
+/**
+ * 获取当前日期时间HHmmss
+ */
 const gettimes = () => {
 	let date = new Date();
 	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
@@ -290,6 +292,17 @@ const gettimes = () => {
 	return str;
 };
 
+/**
+ * 获取当前日期时间HH: mm 
+ */
+const gettime = () => {
+	let date = new Date();
+	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
+	let min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
+	let sec = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
+	let str = hour + ":" + min;
+	return str;
+};
 const getdate = () => {
 	let date = new Date();
 	let year = date.getFullYear().toString();
@@ -353,5 +366,6 @@ export default {
 	getYearWeek,
 	getdate,
 	gettimes,
+	gettime,
 	getDateByParam
 }

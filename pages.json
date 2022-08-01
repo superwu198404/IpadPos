@@ -171,6 +171,35 @@
             }
             
         }
+        ,{
+            "path" : "pages/Reserve/Reserve",
+            "style" :                                                                                    
+            {
+				"titleNView": false,
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+		    "path" : "pages/Extract/Extract",
+		    "style" :                                                                                    
+		    {
+				"titleNView": false,
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+        ,{
+            "path" : "pages/RefundOrder/SXRefund",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

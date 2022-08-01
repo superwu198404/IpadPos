@@ -19,6 +19,7 @@
 					<image class="xz" src="../../images/xiaoshou.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
 					<text>销售</text>
+					<!-- <navigator url="../Main/Main">销售</navigator> -->
 				</view>
 				<view :class="Selected('yd')" @click="MenuSwitch('yd')">
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
@@ -34,6 +35,7 @@
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
 					<text>外卖单</text>
+					<!-- <navigator url="../TakeAway/TakeAway">外卖单</navigator> -->
 				</view>
 				<view :class="Selected('OnlineOrders')" @click="MenuSwitch('OnlineOrders')">
 					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
@@ -327,40 +329,12 @@
 								<view class="quantit">
 									<text>数量</text>
 									<view class="nums">
-										<text @click="CalNum(item1,'-')">-</text>
-										<input type="number" v-model="item1.BQTY" />
-										<text @click="CalNum(item1,'+')">+</text>
+										<text @click="Calculate(item1,'-')">-</text>
+										<input type="number" v-model="item1.BQTY" @blur="Calculate(item1,'*',$event)" />
+										<text @click="Calculate(item1,'+')">+</text>
 									</view>
 								</view>
 							</view>
-							<!-- <view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view> -->
 						</view>
 					</view>
 				</view>
@@ -406,45 +380,17 @@
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
 					<view class="shoppbag">
 						<view class="hengs">
-							<view class="baglist curr" v-for="(item,index) in CXDatas">
+							<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
 								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
+									<text class="h8">{{item.SNAME}}</text>
+									<label><text>说明</text>{{item.DESCRIBE}}</label>
 								</view>
 								<view class="quantit">
 									<text>数量</text>
 									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
+										<text @click="Calculate(item,'-')">-</text>
+										<input type="number" v-model="item.BQTY" @blur="Calculate(item,'*',$event)"/>
+										<text @click="Calculate(item,'+')">+</text>
 									</view>
 								</view>
 							</view>
