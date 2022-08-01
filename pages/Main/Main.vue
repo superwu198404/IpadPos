@@ -79,7 +79,8 @@
 				</view>
 			</view>
 			<view class="exit" style="bottom: 11%;">
-				<image style="transform: rotate(-90deg)scale(1.1);filter: grayscale(1)brightness(2);" src="../../images/dx-qdb.png" mode="widthFix"></image>
+				<image style="transform: rotate(-90deg)scale(1.1);filter: grayscale(1)brightness(2);"
+					src="../../images/dx-qdb.png" mode="widthFix"></image>
 				<text @click="BackPrev()">返回</text>
 			</view>
 			<view class="exit">
@@ -117,7 +118,7 @@
 				</view>
 			</view>
 			<view class="listof">
-				<view class="prolist">
+				<view class="prolist" style="overflow: hidden;">
 					<!-- <component is="credit-settlement"></component> -->
 					<component :is="components.current"></component>
 					<!-- 大类循环 -->
@@ -507,7 +508,7 @@
 						}
 					},
 					component: [],
-					current: "CreditSettlement",
+					current: "Extract",
 					history: []
 				},
 				attribute: false,
@@ -528,7 +529,7 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				console.log("组件：",this.$options.components)
+				console.log("组件：", this.$options.components)
 				_msg.ShowMsg(that.KHID, res => {
 					console.log("消息数据：", res);
 					if (res.code) {
@@ -625,9 +626,9 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
-			LoginOut:function(){
+			LoginOut: function() {
 				uni.navigateTo({
-					url:'/pages/index/index'
+					url: '/pages/index/index'
 				})
 			}
 		}
@@ -645,10 +646,22 @@
 		height: 72%;
 		box-shadow: 0px -10px 10px -10px lightgray inset, 0px 10px 10px -10px lightgray inset;
 		padding-bottom: 0px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	.menu *{
+		transition: all .5s;
 	}
 
 	.exit {
 		left: unset;
 		transform: unset;
+	}
+
+	.menu .curr {
+		margin:unset;
+		margin-bottom: 3%;
 	}
 </style>
