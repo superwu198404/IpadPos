@@ -15,7 +15,6 @@
 						<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
 						<view>类型：<text>立即送</text><text>在线订单</text></view>
 					</view>
-					<view>
 						<view class="prints">
 							<view>
 								<view class="prints">
@@ -34,7 +33,7 @@
 									</view>
 								</view>
 							</view>
-						</view>
+						</view></view>
 						<!-- 小类循环 -->
 						<view class="products">
 							<view class="procycle">
