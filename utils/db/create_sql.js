@@ -330,7 +330,7 @@ const ZFRuleSql =
 			   "CODE"    VARCHAR(100),
 	           "NOTE"    VARCHAR(100),
 			   "YN_USE"    VARCHAR(10)
-			   )`
+			   );`
 export default {
 	createSql,
 	ZFRuleSql

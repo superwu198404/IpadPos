@@ -1,5 +1,5 @@
 /*
-Database Access
+Database Access(SQLite 本地数据库)
 后端数据库访问
 */
 import Req from '@/utils/request.js';

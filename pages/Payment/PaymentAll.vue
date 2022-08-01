@@ -1167,7 +1167,7 @@
 			//点击切换支付方式
 			clickPayType: function(e) {
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				if (['POLY', 'SZQ'].indexOf(e.currentTarget.id) !== -1)
+				if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
 					this.currentPayType = e.currentTarget.id; //小程序
 			},
 			//返回上个页面

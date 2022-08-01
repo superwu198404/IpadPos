@@ -45,8 +45,8 @@
 					<text>销售时间:{{ i.SALEDATE }}</text>
 				</view>
 			</view>
-			<view v-if="extracts.THTYPE === '0'">
-				自提码:<input class="input" v-model="form.code" />
+			<view v-if="extracts.THTYPE === '0' && !form.search.code">
+				自提码:<input class="input" v-model="form.search.code" />
 			</view>
 			<view style="border-radius: 5px;background-color: #70c477;color: white;width: 100px;text-align: center;"
 				@click="Reserve()">提取</view>
@@ -73,7 +73,8 @@
 				form: {
 					search: {
 						code: "",
-						bill: "LH202207190005"
+						bill: "LH202208010004"
+						// bill: ""
 					},
 					code: "", //自提码
 				},
@@ -115,9 +116,10 @@
 			},
 			QueryOrder: function() {
 				getReserveOnlineOrders({
-					code: this.form.search.bill ?? this.form.search.code,
+					bill: this.form.search.bill,
+					code: this.form.search.code,
 					khid: this.KHID,
-					isBill: this.form.search.bill ? true : false
+					isBill: this.form.search.code ? false : true
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
 					console.log("查询 线上取货 结果：", data);
@@ -129,7 +131,7 @@
 			},
 			Valid: function() {
 				if (this.extracts.THTYPE === '0')
-					if (!this.form.code) {
+					if (!this.form.search.code) {
 						util.simpleMsg("请输入自提码!")
 						return false
 					}
@@ -146,7 +148,7 @@
 					}, util.callBind(this, function(res) {
 						console.log("提取成功！", res)
 					}), (err) => {
-						util.simpleMsg(err.msg);
+						util.simpleMsg(err.msg,true);
 					})
 			}
 		},

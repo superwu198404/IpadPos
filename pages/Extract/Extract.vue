@@ -15,9 +15,10 @@
 					<view class="hotcakes">
 						<image src="../../images/ydtq.png" mode="widthFix"></image> 预定提取
 						<view class="classifys">
+							<text :class="SelectedClass('全部')" @click="Selected('全部',-1)">全部</text>
 							<text :class="SelectedClass('今日')" @click="Selected('今日',0)">今日</text>
-							<text :class="SelectedClass('待提货')" @click="Selected('待提货',1)">待提货</text>
-							<text :class="SelectedClass('已过期')" @click="Selected('已过期',-1)">已过期</text>
+							<text :class="SelectedClass('近三天')" @click="Selected('近三天',1)">近三天</text>
+							<text :class="SelectedClass('已过期')" @click="Selected('已过期',2)">已过期</text>
 						</view>
 					</view>
 					<view>
@@ -36,13 +37,10 @@
 									<view class="critlist"><text>手机号：</text><input type="text"
 											v-model="condition.phone" />
 									</view>
-									<view class="critlist"><text>收货人：</text><input type="text"
-											v-model="condition.customer" />
-									</view>
 									<view class="confs"><button class="btn btn-qx">清空</button><button class="btn"
 											@click="GetList()">查询</button>
-								</view>
 									</view>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -53,16 +51,13 @@
 						<!-- 产品循环 -->
 						<view v-for="item in extracts" class="li">
 							<view class="title-box">
-								<view class="title-left">
-									<text class="price">{{ item.CUSTMNAME || '-' }}·{{ item.CUSTMPHONE || '-' }}</text>
-									<text :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</text>
-								</view>
-								<view style="display: inline-block;">
-									<text class="price">{{ item.THDATE || '-' }}</text>
-								</view>
+								<view class="price">{{ item.BILL || '-' }}</view>
+								<view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view>
+								<view class="price">{{ item.THDATE || '-' }}</view>
 							</view>
 							<view class="cods">
-								<view>编号:{{ item.BMID || '-' }}</view>
+								<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
+								<view>定金:{{ item.DNET || '-' }}</view>
 								<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 							</view>
 							<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button
@@ -90,8 +85,8 @@
 		data() {
 			return {
 				condition: {
-					name: "今日",
-					value: 0,
+					name: "全部",
+					value: -1,
 					bill: "",
 					phone: "",
 					customer: ""
@@ -154,6 +149,7 @@
 					customer: this.condition.customer
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
+					console.log("预定提取数据：", data);
 					if (data.constructor === Array)
 						this.extracts = data;
 					else
@@ -186,11 +182,13 @@
 
 	.handles uni-text {
 		color: black;
-	}
-
-	.title-left {
-		display: flex;
-		gap: 3px;
+		flex: 0.94;
+		overflow: hidden;
+		text-overflow: -o-ellipsis-lastline;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
 	}
 
 	.state {
@@ -236,14 +234,13 @@
 		width: calc(50% - 20px) !important;
 		box-sizing: border-box;
 		margin: unset;
-		height: 160px;
+		height: auto;
 		align-items: center;
 		padding: 1.5%;
 	}
 
-	.products .procycle::after {
-		content: "";
-		flex: 0.95;
+	.prolist .cods uni-view {
+		width: 100%;
 	}
 
 	.products {
@@ -280,7 +277,28 @@
 		font-weight: 600;
 	}
 
+	.title-box>*:nth-child(1) {
+		flex: 0.46 0px;
+		display: inline-block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.title-box>*:nth-child(2) {
+		flex: 0.16 0px;
+	}
+
+	.title-box>*:nth-child(3) {
+		flex: 0.38 0px;
+		text-align: right;
+	}
+
 	.criterias {
 		z-index: 10;
+	}
+
+	.handles uni-button {
+		width: 6rem;
 	}
 </style>

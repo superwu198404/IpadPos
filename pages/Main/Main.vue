@@ -2,8 +2,8 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(../../style/basis.css); */
 	@import url(@/static/style/index.css);
-	
-	.prolist{
+
+	.prolist {
 		width: 100%;
 	}
 </style>
@@ -14,7 +14,8 @@
 		<view class="right">
 			<menu_head></menu_head>
 			<view class="listof">
-				<view class="prolist">
+				<view class="prolist" style="overflow: hidden;">
+					<!-- <component is="credit-settlement"></component> -->
 					<!-- <component :is="components.current"></component> -->
 					<!-- 大类循环 -->
 					<view class="commodity" v-if="false">
@@ -333,10 +334,10 @@
 						}
 					},
 					component: [],
-					current: "CreditSettlement",
+					current: "Extract",
 					history: []
 				},
-				attribute:false,
+				attribute: false,
 				statements: false,
 				Alphabetical: false,
 				Memberinfo: false,
@@ -354,6 +355,7 @@
 		methods: {
 			onLoad: function() {
 				that = this;
+				console.log("组件：", this.$options.components)
 				_msg.ShowMsg(that.KHID, res => {
 					console.log("消息数据：", res);
 					if (res.code) {
@@ -450,6 +452,11 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
+			LoginOut: function() {
+				uni.navigateTo({
+					url: '/pages/index/index'
+				})
+			}
 		}
 	}
 </script>
@@ -457,5 +464,30 @@
 <style>
 	.right {
 		height: 100%;
+	}
+
+	.menu {
+		box-sizing: border-box;
+		overflow-y: auto;
+		height: 72%;
+		box-shadow: 0px -10px 10px -10px lightgray inset, 0px 10px 10px -10px lightgray inset;
+		padding-bottom: 0px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	.menu *{
+		transition: all .5s;
+	}
+
+	.exit {
+		left: unset;
+		transform: unset;
+	}
+
+	.menu .curr {
+		margin:unset;
+		margin-bottom: 3%;
 	}
 </style>
