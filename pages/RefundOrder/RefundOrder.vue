@@ -31,7 +31,7 @@
 												<input type="text" v-model="p_bill" />
 											</view>
 											<view class="critlist"><text>销售日期：</text>
-												<picker mode="date" @change="changeDate">
+												<picker mode="date" fields="day" @change="changeDate">
 													<view class="uni-input">{{p_date}}</view>
 												</picker>
 											</view>

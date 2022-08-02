@@ -4,44 +4,9 @@
 
 <template>
 	<view class="content">
-		<view class="navmall">
-			<view class="logo">
-				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
-			</view>
-			<view class="menu">
-				<view class="curr">
-					<image src="../../images/xiaoshou.png" mode="widthFix"></image>
-					<text>销售</text>
-				</view>
-				<view>
-					<image v-if="false" src="../../images/yuding.png" mode="widthFix"></image>
-					<image src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-			</view>
-			<view class="exit">
-				<image src="../../images/tuichu.png" mode="widthFix"></image>
-				<text @click="LoginOut()">退出</text>
-			</view>
-		</view>
+		<menu_page :menuIndex="0"></menu_page>
 		<view class="right">
-			<view class="nav">
-				<view class="getback">
-					<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
-					<view class="message">
-						<view class="imgs">
-							<image src="../../images/tongzhi.png" mode="widthFix"></image>
-						</view>
-						<text>门店有一条新的外卖配送单消息来啦...</text>
-					</view>
-				</view>
-				<view class="account">
-					<text>员工账号</text>
-					<view>
-						<image src="../../images/touxiang.png" mode="widthFix"></image>
-					</view>
-				</view>
-			</view>
+			<menu_head></menu_head>
 			<view class="mem-bg">
 				<button class="skip" @click="ReBack()">跳过</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>

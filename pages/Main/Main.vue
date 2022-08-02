@@ -18,7 +18,7 @@
 					<!-- <component is="credit-settlement"></component> -->
 					<!-- <component :is="components.current"></component> -->
 					<!-- 大类循环 -->
-					<view class="commodity" v-if="false">
+					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
 								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
@@ -59,7 +59,7 @@
 						</view>
 					</view>
 				</view>
-				<view class="operation" v-if="false">
+				<view class="operation">
 					<view class="sorting">
 						<view class="seasonal">
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
@@ -169,7 +169,7 @@
 							<text>礼品卡</text>
 						</label>
 					</view>
-					<view class="rests">
+					<view class="rests" v-if="false">
 						<view class="h2">其他</view>
 						<view class="restlist">
 							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
@@ -232,11 +232,11 @@
 						</view>
 					</view>
 				</view>
-				<view class="pop-r" v-if="false">
+				<view class="pop-r">
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="Memberlogin()" v-if="!yn_hy">登录</button>
+							<button class="btn" @click="Memberlogin()" v-if="!yn_hy">会员登录</button>
 							<button class="btn" @click="Memberlogin()" v-else>{{hyinfo.hyId}}</button>
 						</label>
 						<!-- <text >清空</text> -->
@@ -274,17 +274,20 @@
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
 					<view class="shoppbag">
 						<view class="hengs">
-							<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
-								<view class="bag">
-									<text class="h8">{{item.SNAME}}</text>
-									<label><text>说明</text>{{item.DESCRIBE}}</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text @click="Calculate(item,'-')">-</text>
-										<input type="number" v-model="item.BQTY" @blur="Calculate(item,'*',$event)"/>
-										<text @click="Calculate(item,'+')">+</text>
+							<view v-if="CXDatas.length>0">
+								<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
+									<view class="bag">
+										<text class="h8">{{item.SNAME}}</text>
+										<label><text>说明</text>{{item.DESCRIBE}}</label>
+									</view>
+									<view class="quantit">
+										<text>数量</text>
+										<view class="nums">
+											<text @click="Calculate(item,'-')">-</text>
+											<input type="number" v-model="item.BQTY"
+												@blur="Calculate(item,'*',$event)" />
+											<text @click="Calculate(item,'+')">+</text>
+										</view>
 									</view>
 								</view>
 							</view>
@@ -366,8 +369,11 @@
 			},
 			//关闭结算
 			CloseSale: function() {
+				// console.log("进入关闭事件:");
 				that.showSale = false;
-				that.statements = false
+				that.statements = false;
+				that.Shoppingbags = false;
+				that.Memberinfo = false;
 			},
 			ShowSale: function() {
 				that.showSale = true;
@@ -390,7 +396,9 @@
 			//获取辅助促销
 			GetFZCX: function() {
 				//that.KHID
-				_main.GetFZCX("K0101QT2", res => {
+				//"K0101QT2"
+				_main.GetFZCX(that.KHID, res => {
+					console.log("辅助促销查询结果:", res);
 					that.CXDatas = res;
 				})
 			},
@@ -453,6 +461,7 @@
 				this.Chargeback = !this.Chargeback
 			},
 			LoginOut: function() {
+
 				uni.navigateTo({
 					url: '/pages/index/index'
 				})

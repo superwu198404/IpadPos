@@ -12,8 +12,8 @@
 			<view class="commodity" style="position: relative;">
 				<view class="hh">
 					<view class="hotcakes">
-						<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
-						<view>类型：<text>立即送</text><text>在线订单</text></view>
+						<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
+						<!-- <view>类型：<text>立即送</text><text>在线订单</text></view> -->
 					</view>
 						<view class="prints">
 							<view>
@@ -26,11 +26,11 @@
 									<view class="sousuo">
 										<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
 									</view>
-									<view class="sousuo">
+									<!-- <view class="sousuo">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 										</label>
-									</view>
+									</view> -->
 								</view>
 							</view>
 						</view></view>
