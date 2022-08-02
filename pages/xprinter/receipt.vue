@@ -144,7 +144,7 @@
 				return ggyContent;
 			},
 			//外卖打印小票
-			wmBluePrinter: async function(order, datails, print) {
+			wmBluePrinter: async function(order, datails,type, print) {
 				//票据
 				var that = this;
 				let sale1_objO = JSON.stringify(order);
@@ -173,12 +173,12 @@
 				//打印数据转换
 				let sale1_obj = JSON.parse(sale1_objO);
 				let sale2_arr = JSON.parse(sale2_arrO);		
-				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent);
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent,type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.wmFormString(printerInfo,printer_poscs,print);
+				command.wmFormString(printerInfo,printer_poscs,print,type);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
 				
