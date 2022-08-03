@@ -1,142 +1,174 @@
-
-.content{
+.content {
 	height: 100vh;
 }
-.commodity{
+
+.commodity {
 	height: 100%;
 }
-.prolist{
-	width:100%;
+
+.prolist {
+	width: 100%;
 }
-.sousuo{
+
+.sousuo {
 	background-color: #006B44;
 	color: #fff;
 	font-weight: 400;
 	border-radius: 30rpx;
 	font-size: 28rpx;
-	padding:0 18rpx 0 12rpx;
+	padding: 0 18rpx 0 12rpx;
 	height: 48rpx;
 	line-height: 48rpx;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
-.sousuo image{
-	width:30rpx;
+
+.sousuo image {
+	width: 30rpx;
 	height: 30rpx;
 }
-.products{
+
+.products {
 	display: flex;
-	height: 90%;
+	height: calc(88% - 30px);
+	padding: 0px 2%;
+	box-sizing: border-box;
 }
-.products .procycle{
-	width:40%;
-	margin-top:0;
+
+.products .procycle {
+	width: 40%;
+	margin-top: 0;
 	display: block;
 	height: 100%;
 	overflow: auto;
 }
-.products .procycle .li{
-	width:94%;
-	padding:2% 3%;
+
+.products .procycle .li {
+	width: 94%;
+	padding: 2% 3%;
 }
 
-.products .procycle .li .h3{
+.products .procycle .li .h3 {
 	line-height: 80rpx;
 	display: flex;
 	justify-content: space-between;
 	font-size: 32rpx;
 }
-.products .procycle .li .h3 .state{
+
+.products .procycle .li .h3 .state {
 	color: #b0b0b0;
 	font-weight: 400;
 	font-size: 24rpx;
 	margin-left: 5%;
 }
-.products .procycle .li .h3 .quxiao text{
+
+.products .procycle .li .h3 .quxiao text {
 	color: #FF8367;
 }
-.products .procycle .li .h3 .jiedan text{
+
+.products .procycle .li .h3 .jiedan text {
 	color: #42B14B;
 	margin-right: 4rpx;
 }
-.procycle .li .danhao{
+
+.procycle .li .danhao {
 	color: #999;
 	font-size: 28rpx;
 }
-.prolist .h3 .shuls{
-	display: flex;	
+
+.prolist .h3 .shuls {
+	display: flex;
 }
-.prolist .h3 .shuls text{
+
+.prolist .h3 .shuls text {
 	font-weight: 700;
-} 
-.prolist .h3 text{
+}
+
+.prolist .h3 text {
 	font-weight: 400;
 }
-.platform{
+
+.platform {
 	display: flex;
-	width:80%;
+	width: 80%;
 }
-.prolist .cods{
+
+.prolist .cods {
 	flex-wrap: wrap;
 	/* margin:1% 0; */
 }
-.prolist .cods view{
-	width:80%;
+
+.prolist .cods view {
+	width: 80%;
 }
-.cods label{
-	width:48%;
+
+.cods label {
+	width: 48%;
 	line-height: 50rpx;
 	color: #b0b0b0;
 	margin-right: 2%;
 }
-.cods label:nth-last-child(1),.cods label:nth-child(1){
-	width:100%;
+
+.cods label:nth-last-child(1),
+.cods label:nth-child(1) {
+	width: 100%;
 }
-.prolist .cods label text{
+
+.prolist .cods label text {
 	color: #b0b0b0;
 	display: inline-block;
 }
-.cods label text:nth-child(1){
-	width:120rpx;
+
+.cods label text:nth-child(1) {
+	width: 120rpx;
 }
-.cods label text:nth-child(2){	
-	max-width:61%;
+
+.cods label text:nth-child(2) {
+	max-width: 61%;
 	overflow: hidden;
 }
-.address{
-	margin-top:10px;
-	padding:2% 1% 0;
+
+.address {
+	margin-top: 10px;
+	padding: 2% 1% 0;
 	line-height: 50rpx;
 	font-size: 24rpx;
-	border-top:1px solid #eee;
+	border-top: 1px solid #eee;
 }
-.meminfo{
-	width:100%;
+
+.meminfo {
+	width: 100%;
 }
-.detinfo .member{
-	width:92%;
-	padding:2% 4%;
+
+.detinfo .member {
+	width: 92%;
+	padding: 2% 4%;
 }
-.detinfo .member label{
-	width:80%;
+
+.detinfo .member label {
+	width: 80%;
 }
-.detinfo .member label label{
+
+.detinfo .member label label {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
 	align-items: flex-start;
 }
-.detinfo .member label label text:nth-child(2){
-	background:none;
+
+.detinfo .member label label text:nth-child(2) {
+	background: none;
 	color: #333;
-	padding:0;
+	padding: 0;
 }
-.member{
-	padding:2% 4%;
+
+.member {
+	padding: 2% 4%;
 }
-.products .details{
-	width:58%;
+
+.products .details {
+	width: 58%;
 	margin-left: 2%;
 	height: 100%;
 	background-color: #fff;
@@ -145,72 +177,87 @@
 	justify-content: space-between;
 	padding-bottom: 20rpx;
 }
-.details .goods{
-	padding:0 4%;
+
+.details .goods {
+	padding: 0 4%;
 	max-height: 400rpx;
 	overflow: auto;
-	border-bottom:1px solid #eee;
+	border-bottom: 1px solid #eee;
 }
-.operat{
+
+.operat {
 	display: flex;
 	flex-wrap: wrap;
 }
-.operat button{
-	width:46%;
-	margin:1% 2%;
+
+.operat button {
+	width: 46%;
+	margin: 1% 2%;
 	font-size: 32rpx;
 }
-.breakage{
-	padding:1% 4%;
+
+.breakage {
+	padding: 1% 4%;
 }
-.breakage label{
+
+.breakage label {
 	display: flex;
-	width:100%;
+	width: 100%;
 	margin: 30rpx 0;
 }
-.breakage label text{
+
+.breakage label text {
 	min-width: 160rpx;
 	line-height: 60rpx;
 	color: #b0b0b0;
 	font-size: 26rpx;
 }
-.breakage label input,.breakage label textarea{
-	width:70%;
+
+.breakage label input,
+.breakage label textarea {
+	width: 70%;
 	background-color: #F5F5F5;
 	height: 60rpx;
 	line-height: 60rpx;
 	border-radius: 6rpx;
-	border:1px solid #eee;
+	border: 1px solid #eee;
 }
-.breakage label textarea{
+
+.breakage label textarea {
 	line-height: 40rpx;
 	height: 120rpx;
 	vertical-align: top;
 }
-.memberes .goods{
-	height:58%;
+
+.memberes .goods {
+	height: 58%;
 }
-.confirm{
+
+.confirm {
 	display: flex;
 	background-color: #fff;
-	padding:2%;
+	padding: 2%;
 	/* position: absolute; */
-	bottom:0;
-	width:96%;
+	bottom: 0;
+	width: 96%;
 }
-.confirm button{
-	margin:0 2%;
+
+.confirm button {
+	margin: 0 2%;
 }
-.meminfo{
-	right:0;
+
+.meminfo {
+	right: 0;
 	position: fixed;
 	height: 100%;
 }
-.boxs .memberes .confirm{
-	width:96%;
-	padding:1% 2%;
+
+.boxs .memberes .confirm {
+	width: 96%;
+	padding: 1% 2%;
 	display: flex;
 }
-.boxs .memberes .confirm button{
-	width:46%;
+
+.boxs .memberes .confirm button {
+	width: 46%;
 }
