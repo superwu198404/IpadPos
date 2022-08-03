@@ -36,7 +36,7 @@
 			return {
 				urls: [{
 						title: "销售",
-						url: "../../pages/Sale/Sale",
+						url: "../../pages/Main/Main",
 						icon: require('../../images/xiaoshou.png'),
 						icon1: require("../../images/xiaoshou-hui.png"),
 						index: 0
