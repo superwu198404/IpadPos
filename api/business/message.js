@@ -115,10 +115,12 @@ var GetAllMsg = function(e, func) {
 
 //消息方法处理
 var ShowMsg = function(e, func) {
-	// setInterval(r => {
+	// getApp().globalData.msgInt = setInterval(r => {
 	GetAllMsg(e, res => {
 		if (res.code) {
-			if (func) func(res);
+			console.log("消息数据：", res);
+			let data = JSON.parse(res.data);
+			if (func) func(data);
 			// let data = JSON.parse(res.data);
 			// let arr = [];
 			// data.forEach((item, i) => {

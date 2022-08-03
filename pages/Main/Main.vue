@@ -12,7 +12,7 @@
 	<view class="content">
 		<menu_page :menuIndex="0"></menu_page>
 		<view class="right">
-			<menu_head></menu_head>
+			<menu_head :data="MsgData"></menu_head>
 			<view class="listof">
 				<view class="prolist" style="overflow: hidden;">
 					<!-- <component is="credit-settlement"></component> -->
@@ -352,19 +352,15 @@
 				MsgData: [],
 				showSale: false, //显示结算页面
 				yn_hy: false, //是否有会员
-				CXDatas: []
+				CXDatas: [],
 			}
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
-				console.log("组件：", this.$options.components)
 				_msg.ShowMsg(that.KHID, res => {
 					console.log("消息数据：", res);
-					if (res.code) {
-						let data = JSON.parse(res.data);
-						that.MsgData = data;
-					}
+					that.MsgData = res;
 				});
 			},
 			//关闭结算

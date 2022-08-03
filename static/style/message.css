@@ -1,0 +1,198 @@
+.prolist{
+	width:100%;
+}
+.hh .hotcakes .classifys text{
+	border:0;
+	margin-right: 0;
+}
+.messageblob{
+	display: flex;
+}
+.depart{
+	width:10%;
+	padding:0 2%;
+}
+.depart .h8{
+	line-height: 80rpx;
+	color: #b0b0b0;
+	font-size: 28rpx;
+}
+.genres{
+	display: flex;
+	flex-direction: column;
+	font-size: 28rpx;
+}
+.genres  text{
+	line-height: 60rpx;
+}
+.broad{
+	margin-bottom: 25%;
+}
+.messlist{
+	width:84%;
+}
+.liis{
+	padding:2% 2%;
+	background-color: #fff;
+	border-radius: 12rpx;
+	border:2rpx solid #eee;
+}
+.emergs{
+	color: #b0b0b0;
+	font-size: 24rpx;
+	display: flex;
+	justify-content: space-between;
+	height: 60rpx;
+	line-height: 60rpx;
+	align-items: center;
+}
+.emergs label{	
+	padding:0 20rpx;
+	color: #fff;
+	height: 40rpx;
+	line-height: 40rpx;
+	border-radius: 40rpx;
+}
+.emergs label.zhoyao{
+	background-color: #F27251;
+}
+.emergs label.putong{
+	background-color: #42B14B;
+}
+.infors{
+	margin-bottom: 2%;
+}
+.infors .h7{
+	line-height: 60rpx;
+	color: #b0b0b0;
+	font-size: 28rpx;
+}
+.liis .h6{
+	font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-bottom: 20rpx;
+}
+.liis .sender{
+	display: flex;
+	font-size: 24rpx;
+	color: #b0b0b0;
+	justify-content: space-between;
+	align-items: center;
+}
+.liis .sender button{
+	width:160rpx;
+	height: 60rpx;
+	line-height: 60rpx;
+	border-radius: 60rpx;
+	font-size: 28rpx;
+}
+.meminfo{
+	position: fixed;
+	right:0;
+	width: 90%;
+}
+.bgs{
+	opacity: 0.3;
+}
+.member{
+	padding:2% 1% 1% 3%;
+}
+.meminfo .shoppbag{
+	width:100%;
+}
+.messadet{
+	border:none;
+	padding:0;
+	width:94%;
+}
+.messadet .emergs{	
+	height: 100rpx;
+	line-height: 100rpx;
+}
+.messadet .emergs text{
+	color: #42B14B;
+	font-size: 30rpx;
+}
+.messadet .h6{
+	margin-top:20rpx;
+}
+.messadet .sender{
+	justify-content: start;
+}
+.messadet .sender text{
+	margin-right: 4%;
+	font-size: 30rpx;
+}
+.matters{
+  padding:2% 0;
+  white-space:pre;
+  line-height: 40rpx;
+  min-height: 500rpx;
+  max-height: 600rpx;
+  overflow: auto;
+  width:100%;
+  position: relative;
+  z-index: 999;
+}
+.matters text{
+	display: block;
+}
+.tally,.minute{
+  display: flex;
+  flex-direction: column;
+  padding:2% 0 2%;
+  
+}
+.minute{
+	width:100%;
+	border-top:1px solid #eee;
+}
+.tally image{
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 10rpx;
+ 
+}
+.tally view{
+	display: flex;
+}
+.tally label{
+  height: 60rpx;
+  line-height: 60rpx;
+  padding:0 20rpx;
+  display: flex;
+  align-items: center;
+  border:1px solid #E0E0E0;
+  border-radius: 50rpx;
+  margin-bottom: 20rpx;
+  width: auto;
+}
+.tally view label{
+	margin-right: 40rpx;
+}
+.minute{
+  color: #b0b0b0;
+}
+.minute .h7{
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 60rpx;
+}
+.minute .script{
+  font-size: 26rpx;
+  line-height: 46rpx;
+}
+.pushs{
+  padding:2% 3% 5%;
+}
+.confirm{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top:20rpx;
+}
+.confirm button{
+	width:40%;
+}

@@ -78,7 +78,8 @@
 				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 				ggy: "", //广告语
-			}
+			},
+			msgInt:0,//消息定时id
 		},
 		onLaunch: function() {
 			console.log('App Launch')
