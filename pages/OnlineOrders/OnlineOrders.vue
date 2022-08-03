@@ -5,156 +5,152 @@
 	@import url(@/static/style/OnlineOrders/index.css);
 </style>
 <template>
-	<view class="content">
-		<menu_page :menuIndex="4"></menu_page>
-		<view class="right">
-			<menu_head></menu_head>
-			<view class="commodity" style="position: relative;">
-				<view class="hh">
-					<view class="hotcakes">
-						<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
-						<view>类型：<text>立即送</text><text>在线订单</text></view>
-					</view>
+	<menu_content :index="4">
+		<view class="commodity" style="position: relative;">
+			<view class="hh">
+				<view class="hotcakes">
+					<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
+					<view>类型：<text>立即送</text><text>在线订单</text></view>
+				</view>
+				<view class="prints">
+					<view>
 						<view class="prints">
-							<view>
-								<view class="prints">
-									<view class="sousuo" @click="view.search.open = true">
+							<!-- <view class="sousuo" @click="view.search.open = true">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>提取
 										</label>
-									</view>
-									<view class="sousuo">
-										<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-									</view>
-									<view class="sousuo">
+									</view> -->
+							<view class="sousuo">
+								<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
+							</view>
+							<!-- <view class="sousuo">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 										</label>
-									</view>
-								</view>
-							</view>
-						</view></view>
-						<!-- 小类循环 -->
-						<view class="products">
-							<view class="procycle">
-								<!-- 外卖单循环 -->
-								<view v-for="(item,index) in onlineOrders" :class="getCheckStyle(item.BILL)"
-									:order="item" @tap="ShowDetail(item)">
-									<view class="h3">
-										<view class="platform">
-											<label>
-												<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
-												{{item.SNAME}}
-											</label>
-											<label
-												:class="'state quxiao ' + getTakeWayStyle(item.THTYPE)"><text>●</text>{{ getTakeWayText(item.THTYPE) }}</label>
-											<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
-										</view>
-										<view>￥{{item.PRICE}}</view>
-									</view>
-									<view class="cods">
-										<label><text>预定单号：</text><text>{{item.YDBILL || '-'}}</text></label>
-										<label><text class="text-nowrap">预定时间：</text><text
-												class="ellipsis-text">{{item.SALETIME || '-'}}</text></label>
-										<label><text class="text-nowrap">顾客姓名：</text><text
-												class="ellipsis-text">{{item.CUSTMNAME || '-'}}</text></label>
-										<label><text class="text-nowrap">顾客电话：</text><text
-												class="ellipsis-text">{{item.CUSTMPHONE || '-'}}</text></label>
-									</view>
-									<view class="address">
-										顾客地址：{{item.CUSTMADDRESS || '-'}}
-									</view>
-								</view>
-							</view>
-							<view class="details" v-if="onlineOrders.length>0">
-								<view class="meminfo">
-									<view class="member">
-										<label>
-											<image class="touxiang" src="@/images/touxiang.png"></image>
-											<label
-												class="meminfo"><text>{{ details.order.CUSTMNAME || "-" }}</text><text>{{ details.order.CUSTMPHONE || "-" }}</text></label>
-										</label>
-									</view>
-									<view class="harvest">
-										<label class="from-label">
-											<text>裱花间：</text>
-											<text>{{details.order.KHSNAME || '-'}}</text>
-										</label>
-										<label class="from-label">
-											<text>商品编码：</text>
-											<text>{{details.order.SPID || '-'}}</text>
-										</label>
-										<label class="from-label">
-											<text>商品名称：</text>
-											<text>{{details.order.SNAME || '-'}}</text>
-										</label>
-										<label class="from-label">
-											<text>到货日期：</text>
-											<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
-											<picker v-if="mode('edit')" class="date-picker picker" mode="date"
-												:value="getOrderDate" :start="new Date()" @change="SelectDate">
-												<view class="uni-input">{{ details.order.DATE_DH.split(' ')[0] }}</view>
-											</picker>
-											<picker v-if="mode('edit')" class="time-picker picker" mode="time"
-												:value="getOrderTime" :start="getCurrentTime" @change="SelectTime">
-												<view class="uni-input">{{ details.order.DATE_DH.split(' ')[1] }}</view>
-											</picker>
-											<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
-										</label>
-										<label class="from-label">
-											<text>到货时段：</text>
-											<text>{{ timeRangeView }}</text>
-										</label>
-										<label class="from-label">
-											<text>数量：</text>
-											<text>{{details.order.ZQTY_SQ || '-'}}</text>
-										</label>
-										<label class="from-label">
-											<text>单位：</text>
-											<text>{{details.order.UNIT || '-'}}</text>
-										</label>
-										<label class="from-label">
-											<text>客户要求：</text>
-											<text v-if="mode('read')">{{details.order.CUSTMCOMM || '-'}}</text>
-											<input v-if="mode('edit')" class="input" type="text"
-												v-model="details.order.CUSTMCOMM" />
-										</label>
-									</view>
-								</view>
-								<view class="operat">
-									<button v-if="mode('read')" class="btn btn-edit" @click="Edit()">编辑</button>
-									<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
-									<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-									<button v-if="mode('read')" class="btn" @click="ConfirmAccept(true)">接受确认</button>
-									<button v-if="mode('read')" class="btn btn-qx"
-										@click="ConfirmAccept(false)">取消</button>
-								</view>
-							</view>
+									</view> -->
 						</view>
-						<view class="search-shadow" v-if="view.search.open">
-							<view class="search-panel">
-								<view class="search-top">
-									<text class="search-title">{{ view.search.title }}</text>
-									<text class="search-close" @click="view.search.open = false">×</text>
-								</view>
-								<view class="search-content">
-									<view class="search-toolbar">
-										<view class="search-label">订单号:<input class="search-input" type="text"
-												v-model="view.search.form.bill" /></view>
-										<view class="search-label">自提码:<input class="search-input" type="text"
-												v-model="view.search.form.code" /></view>
-										<view class="search-btn-group">
-											<button class="btn btn-qx">清空</button><button class="btn">查询</button>
-										</view>
-									</view>
-								</view>
+					</view>
+				</view>
+			</view>
+			<!-- 小类循环 -->
+			<view class="products">
+				<view class="procycle">
+					<!-- 外卖单循环 -->
+					<view v-for="(item,index) in onlineOrders" :class="getCheckStyle(item.BILL)" :order="item"
+						@tap="ShowDetail(item)">
+						<view class="h3">
+							<view class="platform">
+								<label>
+									<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
+									{{item.SNAME}}
+								</label>
+								<label
+									:class="'state quxiao ' + getTakeWayStyle(item.THTYPE)"><text>●</text>{{ getTakeWayText(item.THTYPE) }}</label>
+								<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
+							</view>
+							<view>￥{{item.PRICE}}</view>
+						</view>
+						<view class="cods">
+							<label><text>预定单号：</text><text>{{item.YDBILL || '-'}}</text></label>
+							<label><text class="text-nowrap">预定时间：</text><text
+									class="ellipsis-text">{{item.SALETIME || '-'}}</text></label>
+							<label><text class="text-nowrap">顾客姓名：</text><text
+									class="ellipsis-text">{{item.CUSTMNAME || '-'}}</text></label>
+							<label><text class="text-nowrap">顾客电话：</text><text
+									class="ellipsis-text">{{item.CUSTMPHONE || '-'}}</text></label>
+						</view>
+						<view class="address">
+							顾客地址：{{item.CUSTMADDRESS || '-'}}
+						</view>
+					</view>
+				</view>
+				<view class="details" v-if="onlineOrders.length>0">
+					<view class="meminfo">
+						<view class="member">
+							<label>
+								<image class="touxiang" src="@/images/touxiang.png"></image>
+								<label
+									class="meminfo"><text>{{ details.order.CUSTMNAME || "-" }}</text><text>{{ details.order.CUSTMPHONE || "-" }}</text></label>
+							</label>
+						</view>
+						<view class="harvest">
+							<label class="from-label">
+								<text>裱花间：</text>
+								<text>{{details.order.KHSNAME || '-'}}</text>
+							</label>
+							<label class="from-label">
+								<text>商品编码：</text>
+								<text>{{details.order.SPID || '-'}}</text>
+							</label>
+							<label class="from-label">
+								<text>商品名称：</text>
+								<text>{{details.order.SNAME || '-'}}</text>
+							</label>
+							<label class="from-label">
+								<text>到货日期：</text>
+								<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
+								<picker v-if="mode('edit')" class="date-picker picker" mode="date" :value="getOrderDate"
+									:start="new Date()" @change="SelectDate">
+									<view class="uni-input">{{ details.order.DATE_DH.split(' ')[0] }}</view>
+								</picker>
+								<picker v-if="mode('edit')" class="time-picker picker" mode="time" :value="getOrderTime"
+									:start="getCurrentTime" @change="SelectTime">
+									<view class="uni-input">{{ details.order.DATE_DH.split(' ')[1] }}</view>
+								</picker>
+								<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
+							</label>
+							<label class="from-label">
+								<text>到货时段：</text>
+								<text>{{ timeRangeView }}</text>
+							</label>
+							<label class="from-label">
+								<text>数量：</text>
+								<text>{{details.order.ZQTY_SQ || '-'}}</text>
+							</label>
+							<label class="from-label">
+								<text>单位：</text>
+								<text>{{details.order.UNIT || '-'}}</text>
+							</label>
+							<label class="from-label">
+								<text>客户要求：</text>
+								<text v-if="mode('read')">{{details.order.CUSTMCOMM || '-'}}</text>
+								<input v-if="mode('edit')" class="input" type="text"
+									v-model="details.order.CUSTMCOMM" />
+							</label>
+						</view>
+					</view>
+					<view class="operat">
+						<button v-if="mode('read')" class="btn btn-edit" @click="Edit()">编辑</button>
+						<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
+						<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
+						<button v-if="mode('read')" class="btn" @click="ConfirmAccept(true)">接受确认</button>
+						<button v-if="mode('read')" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
+					</view>
+				</view>
+			</view>
+			<view class="search-shadow" v-if="view.search.open">
+				<view class="search-panel">
+					<view class="search-top">
+						<text class="search-title">{{ view.search.title }}</text>
+						<text class="search-close" @click="view.search.open = false">×</text>
+					</view>
+					<view class="search-content">
+						<view class="search-toolbar">
+							<view class="search-label">订单号:<input class="search-input" type="text"
+									v-model="view.search.form.bill" /></view>
+							<view class="search-label">自提码:<input class="search-input" type="text"
+									v-model="view.search.form.code" /></view>
+							<view class="search-btn-group">
+								<button class="btn btn-qx">清空</button><button class="btn">查询</button>
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-	</view>
+		</view>
+		</view>
+	</menu_content>
 </template>
 <script>
 	var app = getApp();
@@ -363,10 +359,10 @@
 					if (this.details.order.THTYPE_CODE == '0') { //自提
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
 						let limit = now,
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate() - 1, 8 +
-								21), //晚上 21:00
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate() - 1, 8 +
-								7); //早上 7:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
+							21), //晚上 21:0
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
+							7); //早上 7:00
 						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -376,8 +372,10 @@
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
 						let limit = new Date(now.setHours(now.getHours() + 1)),
-						date_max = new Date(current.getFullYear(),current.getMonth(),current.getDate()-1,8+18),//晚上 18:00
-						date_min = new Date(current.getFullYear(),current.getMonth(),current.getDate()-1,8+9);//早上 9:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
+							18), //晚上 18:00
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
+							9); //早上 9:00
 						//时间必须设置为当前时间 1小时 之后，且时间不能在 18点 以后和 9:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())

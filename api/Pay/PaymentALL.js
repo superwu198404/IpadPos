@@ -270,7 +270,38 @@ var hykPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+//mis银联支付
+var misPay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		// body.money = 1;//一分钱测试用（避免失误操作导致掉肉）
+		// body.total_money = 1;//一分钱测试用（避免失误操作导致掉肉）
+		// body.merchant_no = "990521082996000";
+		body.merchant_no = null;
+		// body.store_id = "HBTest00";
+		body.store_id = null;
+		_PaymentAll(pt, body, func, catchFunc);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		body.merchant_no = null;//商户号
+		body.store_id = null;
+		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+	},
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
@@ -408,6 +439,7 @@ var payType = {
 	ZFB_CLZF: zfbPay,
 	HYK: hykPay,
 	SZQ: szqPay,
+	MIS: misPay,
 	NOPAY: noPay
 }
 
