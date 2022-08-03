@@ -69,6 +69,7 @@
 		<button @click="MenuPage(4)">外卖预定</button> -->
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
+		<button @click="MenuPage(7)">首页-old</button>
 		<!-- <button @click="MenuPage(7)">销售退单</button>
 		<button @click="MenuPage(8)">预定</button>
 		<button @click="MenuPage(9)">赊销退单</button>
@@ -407,11 +408,11 @@
 					});
 				}else if (e == 6) {
 					uni.navigateTo({
-						url: "../Main/Main"
+						url: "../Sale/Sale"
 					});
 				}else if (e == 7) {
 					uni.navigateTo({
-						url: "../RefundOrder/RefundOrder",
+						url: "../Main/Main",
 						complete:r=>{
 							console.log(r);
 						}
@@ -466,7 +467,7 @@
 				this.Products.forEach(product => total += product.AMOUNT);
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
-				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
+				// this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("手工折扣额：", this.SKY_DISCOUNT);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				let curDis = 0;
@@ -706,7 +707,7 @@
 				// 插入应对 银联 mis 的 fkid 信息
 				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K03000')`);
 				//await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','CS01')`);
-				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K01000')`);
+				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF02','022','022','K01000')`);
 				await common.Query("select * from KHZFKDA where FKID='ZF51'",(res) => {
 					console.log("查询结果：",res)
 				})

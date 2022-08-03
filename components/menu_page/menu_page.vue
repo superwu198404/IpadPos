@@ -36,7 +36,7 @@
 			return {
 				urls: [{
 						title: "销售",
-						url: "../../pages/Main/Main",
+						url: "../../pages/Sale/Sale",
 						icon: require('../../images/xiaoshou.png'),
 						icon1: require("../../images/xiaoshou-hui.png"),
 						index: 0
@@ -69,11 +69,18 @@
 						index: 4
 					},
 					{
+						title: "线上提取",
+						url: "../../pages/OnlinePick/OnlinePick",
+						icon: require("../../images/yuding.png"),
+						icon1: require("../../images/yuding-hui.png"),
+						index: 5
+					},
+					{
 						title: "退单业务",
 						url: "",
 						icon: require("../../images/xz-th.png"),
 						icon1: require("../../images/wxz-th.png"),
-						index: 5,
+						index: 6,
 						details: [{
 							title: "销售退单",
 							url: "../../pages/RefundOrder/RefundOrder",
@@ -99,7 +106,14 @@
 						url: "../../pages/Message/Message",
 						icon: require("../../images/xz-xx.png"),
 						icon1: require("../../images/xiaoxi-hui.png"),
-						index: 6
+						index: 7
+					},
+					{
+						title: "赊销结算",
+						url: "../../pages/CreditSettlement/CreditSettlement",
+						icon: require("../../images/xz-xx.png"),
+						icon1: require("../../images/xiaoxi-hui.png"),
+						index: 8
 					}
 				],
 				showDetail: false

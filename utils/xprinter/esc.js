@@ -71,6 +71,15 @@ var jpPrinter = {
       data.push(n);
     };
 	
+	// 走纸 n = 行数
+	jpPrinter.feedLine = function (n) {
+	  const line = n || 1
+	  writer.write(0x1B)
+	  writer.write(0x64)
+	  writer.write(line) // 行数
+	  writer.flush()
+	}
+	
     /**
      * ESC d 打印并走纸n 行
      * 打印缓冲区里的数据并向前走纸n 行（字符行）
@@ -498,6 +507,24 @@ var jpPrinter = {
       data.push(33);
       data.push(n);
     };
+	
+	// 字符缩放
+	jpPrinter.setCharacterScale = function (n) {
+	  // 打印倍宽高
+	  if (n == 1) {
+	    data.push(0x1B)
+	    data.push(0x21)
+	    data.push(20)
+	
+	    data.push(0x1B)
+	    data.push(0x21)
+	    data.push(40)
+	  } else {
+	    data.push(0x1B)
+	    data.push(0x21)
+	    data.push(0)
+	  }
+	}
 	
     /**
      * GS B 选择/取消黑白反显打印模式
@@ -1543,7 +1570,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(data.note2 != "" && data.note2 != null && data.note2 != undefined){
-			jpPrinter.setCharacterSize(16); //设置正常大小
+			jpPrinter.setCharacterScale(1); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(data.note2 + ": " + data.daysn + "\n");
 			jpPrinter.setPrint(); //打印并换行
@@ -1551,7 +1578,7 @@ var jpPrinter = {
 		
 		//如果是退单，有原单号，则将原单号打印
 		if(isReturn){
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
 			jpPrinter.setPrint(); //打印并换行
@@ -1561,7 +1588,7 @@ var jpPrinter = {
 			jpPrinter.setText("原单: "+ xsBill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
 			jpPrinter.setPrint(); //打印并换行
@@ -1577,29 +1604,29 @@ var jpPrinter = {
 		jpPrinter.setText("下单时间: " + data.wtime);
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单类型: " + data.gsid + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(data.custmtime != "" && data.custmtime != null && data.custmtime != undefined){
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("要求送达时间: " + data.custmtime);
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单备注: " + data.remark + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
@@ -1646,12 +1673,12 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("收货地址:" + data.shAddress.toString() + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(data.ggy);
 		jpPrinter.setPrint(); //打印并换行
@@ -1720,7 +1747,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(data.daysn != "" && data.daysn != null && data.daysn != undefined){
-			jpPrinter.setCharacterSize(16); //设置正常大小
+			jpPrinter.setCharacterScale(1); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("有赞流水号: " + data.daysn + "\n");
 			jpPrinter.setPrint(); //打印并换行
@@ -1728,7 +1755,7 @@ var jpPrinter = {
 		
 		//如果是退单，有原单号，则将原单号打印
 		if(isReturn){
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
 			jpPrinter.setPrint(); //打印并换行
@@ -1738,7 +1765,7 @@ var jpPrinter = {
 			jpPrinter.setText("原单: "+ xsBill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
 			jpPrinter.setPrint(); //打印并换行
@@ -1754,13 +1781,13 @@ var jpPrinter = {
 		jpPrinter.setText("下单时间: " + data.wtime);
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单类型: " + data.gsid + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(data.gsid == "顾客自提"){
-			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("顾客自提订单");
 			jpPrinter.setPrint(); //打印并换行
@@ -1776,17 +1803,17 @@ var jpPrinter = {
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单备注: " + data.remark + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
@@ -1833,12 +1860,12 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(16); //设置正常大小
+		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("收货地址:" + data.shAddress.toString() + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setCharacterScale(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText(data.ggy);
 		jpPrinter.setPrint(); //打印并换行
