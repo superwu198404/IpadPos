@@ -547,11 +547,11 @@ page {
 }
 
 .member .btn {
-	font-size: 28px;
+	font-size: 28rpx;
 	height: 50rpx;
 	line-height: 50rpx;
 	padding: 0;
-	width: 150rpx;
+	width: 200rpx;
 }
 
 .member text:nth-child(2) {
@@ -821,6 +821,8 @@ page {
 
 .coulist .uls {
 	padding: 0;
+	max-height: 600px;
+	overflow: scroll;
 }
 
 .coulist .uls .lis {

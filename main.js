@@ -14,13 +14,6 @@ Vue.use(G_show_modal);
 import Polyfill from './polyfill/polyfill';
 Polyfill.init();
 
-// 引入http.js
-import http from './utils/xprinter/http.js'
-
-Vue.config.productionTip = false
-//添加原型属性到Vue对象
-Vue.prototype.$http = http;
-
 // 全局mixins，用于实现setData等功能';
 import Mixin from './polyfill/mixins';
 Vue.mixin(Mixin);

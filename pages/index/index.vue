@@ -64,7 +64,7 @@
 		</view>
 		<button @click="MenuPage(0)">开始结算</button>
 		<button @click="MenuPage(1)">开始退款</button>
-		<button @click="MenuPage(2)">会员登录</button>
+		<!-- <button @click="MenuPage(2)">会员登录</button> -->
 		<!-- <button @click="MenuPage(3)">外卖处理</button>
 		<button @click="MenuPage(4)">外卖预定</button> -->
 		<button @click="MenuPage(5)">登录</button>

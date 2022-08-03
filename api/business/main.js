@@ -14,6 +14,7 @@ var GetFZCX = function(khid, func) {
 	let cxArr = [];
 	let sql = "select BILL,CXZT from cxformd001 cx where cx.Yn_Jslb='F' order by CXZT";
 	db.get().executeQry(sql, "查询中...", res => {
+		console.log("辅助促销查询结果：", res);
 		if (res.code && res.msg.length > 0) {
 			res.msg.forEach((item, index) => {
 				sql = "select cx2.bill, cx2.classid, sp.sname, '' CZQTY, '' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE , '满'||cx2.XX_NET1||'可售'||cx2.MJ_DISC1||'%' describe \

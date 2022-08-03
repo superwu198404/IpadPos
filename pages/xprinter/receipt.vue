@@ -143,8 +143,25 @@
 				})
 				return ggyContent;
 			},
+			ggyAction: async function() {
+				return new Promise(function(resolve, reject) {
+					uni.request({
+						url: app.globalData.BLEInformation.printerFile + "poem.txt",
+						method: "GET",
+						data: "",
+						success: (res) => {
+					        console.log("ggyAction 结尾内容: ", res.data)
+							return resolve(res.data);
+						},
+						fail: (res) => {
+							console.log("ggyAction false: ",res);
+							return resolve("");
+						}
+					})
+				})		
+			},
 			//外卖打印小票
-			wmBluePrinter: async function(order, datails, print) {
+			wmBluePrinter: async function(order, datails,type, print) {
 				//票据
 				var that = this;
 				let sale1_objO = JSON.stringify(order);
@@ -169,16 +186,16 @@
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-				var ggyContent = await that.ggy();
+				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				let sale1_obj = JSON.parse(sale1_objO);
 				let sale2_arr = JSON.parse(sale2_arrO);		
-				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent);
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent,type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.wmFormString(printerInfo,printer_poscs,print);
+				command.wmFormString(printerInfo,printer_poscs,print,type);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
 				
@@ -229,7 +246,7 @@
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-				var ggyContent = await that.ggy();
+				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent);
 				//初始化打印机
