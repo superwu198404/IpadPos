@@ -54,8 +54,8 @@ page {
 	width: 100%;
 	margin-top: 20rpx;
 	height: 78%;
-	overflow-y: auto;
-	box-shadow: 0px -10px 10px -10px lightgray inset, 0px 10px 10px -10px lightgray inset;
+	/* overflow-y: auto; */
+	/* box-shadow: 0px -10px 10px -10px lightgray inset, 0px 10px 10px -10px lightgray inset; */
 }
 
 .menu view {
