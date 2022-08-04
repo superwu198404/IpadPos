@@ -232,7 +232,7 @@
 				YN_BHSP: false, //用于标注是否有裱花类商品，有则可选配送方式为“宅配到家”
 				_THTYPES: [], //中转集合
 				GGDatas: ["普通蛋糕", "称架蛋糕", "叠层蛋糕"],
-				PSDatas:[],//配送中心数据
+				PSDatas: [], //配送中心数据
 			}
 		},
 		methods: {
@@ -328,7 +328,9 @@
 					phone: that.Order.CUSTMPHONE
 				}, res => {
 					if (res.code && res.data.length > 0) {
-						that.ADDRS = JSON.parse(res.data);
+						that.ADDRS = JSON.parse(res.data).filter((r) => {
+							return r.ADDRID != null;
+						});
 					}
 				})
 			},
@@ -372,7 +374,8 @@
 				}
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
-					util.simpleMsg("操作" + res.code ? "成功" : "失败", !res.code)
+					console.log("编辑结果：", res);
+					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), res.code)
 					that.yn_add = !res.code;
 					if (res.code) {
 						that.GetAddr(); //刷新一下地址列表
@@ -408,6 +411,7 @@
 			//选中配送地址
 			ConfirmOrderAddr: function(e) {
 				console.log("触发没", e);
+				that.AddrArr = []; //清空一下
 				that.Order.CUSTMADDRESS = e.ADDRESS;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;

@@ -33,17 +33,17 @@ var ConfirmADDR = function(data, func) {
 }
 
 //获取高德配置信息
-var GetAmap = async function(e, func) {
+var GetAmap = async function(e) {
 	let obj = {
 		key: "254f6b89b324d15973e2408cbfad55c3",
 		areaid: "027"
 	};
-	// return obj;
 	let sql = "select zf from Dapzcs_Nr where id = 'AmapKey'";
 	let sql1 = "select ZF from Dapzcs_Nr where id = 'CITYCODE' and id_nr=(select Adrp from khda where khid='" +
 		e + "')";
 	await db.get().executeQry(sql, "查询中...", r => {
 		console.log("高德key查询结果：", r);
+
 		if (r.msg.length == 0) {
 			obj.key = "254f6b89b324d15973e2408cbfad55c3";
 		} else {
@@ -58,7 +58,7 @@ var GetAmap = async function(e, func) {
 			obj.areaid = r.msg[0].ZF;
 		}
 	});
-	if (func) func(obj);
+	return obj;
 }
 
 var MatchBHKH = function(data, func) {
