@@ -34,15 +34,16 @@ var ConfirmADDR = function(data, func) {
 
 //获取高德配置信息
 var GetAmap = async function(e, func) {
-	// let obj = {
-	// 	key: "254f6b89b324d15973e2408cbfad55c3",
-	// 	areaid: "027"
-	// };
+	let obj = {
+		key: "254f6b89b324d15973e2408cbfad55c3",
+		areaid: "027"
+	};
 	// return obj;
 	let sql = "select zf from Dapzcs_Nr where id = 'AmapKey'";
 	let sql1 = "select ZF from Dapzcs_Nr where id = 'CITYCODE' and id_nr=(select Adrp from khda where khid='" +
 		e + "')";
 	await db.get().executeQry(sql, "查询中...", r => {
+		console.log("高德key查询结果：", r);
 		if (r.msg.length == 0) {
 			obj.key = "254f6b89b324d15973e2408cbfad55c3";
 		} else {
@@ -50,6 +51,7 @@ var GetAmap = async function(e, func) {
 		}
 	});
 	await db.get().executeQry(sql1, "查询中...", r => {
+		console.log("区域id查询结果：", r);
 		if (r.msg.length == 0) {
 			obj.areaid = "027";
 		} else {
@@ -81,7 +83,7 @@ var getGSKHINFO = (gsid, khid) => {
 	let Gskhinfo = " in ('" + gsid + "',";
 	try {
 		let addgsstr = "";
-		let strgsz = obj.POSCSNR;//QxDict[KJGSFW];
+		let strgsz = obj.POSCSNR; //QxDict[KJGSFW];
 		let arraygs = strgsz.Split(',');
 		for (let i = 0; i < arraygs.Length; i++) {
 			addgsstr += "'" + arraygs[i] + "',";
@@ -96,6 +98,21 @@ var getGSKHINFO = (gsid, khid) => {
 	}
 	return Gskhinfo;
 }
+
+//获取配送中心数据
+var GetPSCenter = function(gsid, khid, func) {
+	let gskhinfo = getGSKHINFO(gsid, khid);
+	let sql =
+		"SELECT KHID,SNAME FROM KHDA WHERE  PINYIN NOT NULL AND BHTYPE IN( '1','2','3') AND ZZTLX IN('BH') and client_status  not  in ('2','3')  AND GSID" +
+		gskhinfo + " ORDER BY KHID";
+	db.get().executeQry(sql, "加载中...", res => {
+		console.log("配送中心查询成功：", res);
+		if (func)
+			func(res);
+	}, err => {
+		console.log("配送中心查询失败：", err);
+	})
+}
 export default {
 	GetAddr,
 	Del_Addr,
@@ -103,5 +120,6 @@ export default {
 	GetAmap,
 	searchMapAddr,
 	MatchBHKH,
-	getGSKHINFO
+	getGSKHINFO,
+	GetPSCenter
 }

@@ -11,7 +11,7 @@
 		<view class="right">
 			<menu_head></menu_head>
 			<view>预留商品加购：</view>
-			<button @click="statements=true">点击录入</button>
+			<button @click="showReserve()">点击录入</button>
 			<view>
 				预定主单数据：{{YDDATA}}
 			</view>
@@ -41,14 +41,27 @@
 										<view>{{Order.TH_TIME}}</view>
 									</picker>
 								</label>
-								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID" /></label>
-								<label><text>*定金：</text><input type="number" v-model="Order.DNET" /></label>
+								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID"
+										disabled="true" /></label>
+								<label><text>*定金：</text><input type="number" v-model="Order.DNET"
+										@input="CheckMoney" /></label>
 								<label><text>*配送方式：</text>
 									<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index">
 										<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 									</picker>
 								</label>
+								<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
+								<label><text>*配送中心：</text>
+									<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
+										<view>{{Order.STR2}}-{{Order._STR2}}</view>
+									</picker>
+								</label>
 								<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
+								<label><text>*蛋糕规格：</text>
+									<picker @change="GGChange" :range="GGDatas">
+										<view>{{Order.CARDID}}</view>
+									</picker>
+								</label>
 								<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 							</view>
 							<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
@@ -142,7 +155,7 @@
 						</view>
 						<view class="confirm">
 							<button class="btn btn-qx">返 回</button>
-							<button class="btn">确 认</button>
+							<button class="btn" @click="Show()">确 认</button>
 						</view>
 					</view>
 				</view>
@@ -171,7 +184,7 @@
 				index: 0,
 				THTYPES: [],
 				Products: [{
-					PLID: "101",
+					PLID: "109",
 					SPID: "10101022",
 					UNIT: "袋",
 					BARCODE: '2222222222',
@@ -187,7 +200,7 @@
 					DISC: 2,
 					ZNET: 12,
 					TNET: 10,
-					DNET: 0,
+					DNET: 1,
 					CUSTMNAME: "",
 					CUSTMPHONE: "12345678982", //
 					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
@@ -196,8 +209,11 @@
 					THTYPE: "",
 					NOTE: "",
 					CUSTMADDRESS: "",
-					THKHID: "",
-					CUSTMCOMM: ""
+					THKHID: app.globalData.store.KHID,
+					CUSTMCOMM: "",
+					STR2: "", //配送中心ID
+					_STR2: "", //配送中心名称
+					CARDID: "" //蛋糕类型
 				},
 				hyinfo: app.globalData.hyinfo,
 				yn_add: false,
@@ -212,33 +228,74 @@
 					LATITUDE: ""
 				},
 				AddrArr: [],
-				YDDATA: ""
+				YDDATA: "",
+				YN_BHSP: false, //用于标注是否有裱花类商品，有则可选配送方式为“宅配到家”
+				_THTYPES: [], //中转集合
+				GGDatas: ["普通蛋糕", "称架蛋糕", "叠层蛋糕"],
+				PSDatas:[],//配送中心数据
 			}
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
 				that.getTHTYPE();
-				that.Order.BILL = common.CreateBill(that.KHID, that.POSID)
+				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
+				that.Order.CARDID = that.GGDatas[0];
 				//以下为测试数据
 				// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// console.log("获取到的GSKHINFO", GSKHINFO);
 			},
+			Show: function() {
+				debugger;
+				let pages = getCurrentPages(); //当前页面栈
+				if (pages.length > 0) {
+					let prevPage = pages[pages.length - 2]; //上一页面
+					prevPage.onLoad();
+				}
+			},
+			//弹出客户信息录入框
+			showReserve: function() {
+				that.statements = true;
+				let arr = util.getStorage("POSCS");
+				console.log("参数组数据:", arr);
+				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
+				let bmArr = [];
+				if (obj) {
+					bmArr = obj.POSCSNR.split(',');
+				}
+				if (that.Products.length > 0) {
+					that.Products.map((r) => {
+						if (bmArr.indexOf(r.PLID) >= 0) {
+							that.YN_BHSP = true;
+						}
+					});
+				}
+				//有水吧产品则展示所有类型
+				if (that.YN_BHSP) {
+					that.THTYPES = that._THTYPES;
+				} else {
+					that.THTYPES = that._THTYPES.filter((r, i) => {
+						return r.ID != 1; //排除宅配到家
+					});
+				}
+				if (that.THTYPES.length > 0) {
+					that.Order.THTYPE = that.THTYPES[0].ID;
+				}
+			},
 			Close: function() {
 				that.statements = false;
 			},
+			//获取配送类型
 			getTHTYPE: function() {
 				common.GetDapzcs("THTYPE", res => {
+					console.log("提货类型数据：", res);
 					if (res.code && res.msg.length > 0) {
-						that.THTYPES = res.msg.map((item, index) => {
+						that._THTYPES = res.msg.map((item, index) => {
 							return {
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
 						})
-						if (that.THTYPES.length > 0) {
-							that.Order.THTYPE = that.THTYPES[that.index].ID;
-						}
 					}
 				})
 			},
@@ -263,6 +320,10 @@
 				that.ADDR.ACT = "Add"; //操作类型
 			},
 			GetAddr: function() {
+				if (that.Order.THTYPE == '0') {
+					console.log("自提类不需要弹出地址栏");
+					return;
+				}
 				_reserve.GetAddr({
 					phone: that.Order.CUSTMPHONE
 				}, res => {
@@ -350,11 +411,15 @@
 				that.Order.CUSTMADDRESS = e.ADDRESS;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
-				if (that.Order.CUSTMADDRESS) {
+				//宅配到家需要匹配最近的配送中心
+				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == '1') {
 					//匹配下裱花间
 					that.MatchBHKH();
 				}
+				//预先获取配送中心数据，供手动修改
+				that.GetPSCenter();
 			},
+			//自动匹配配送中心
 			MatchBHKH: function() {
 				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// GSKHINFO = "in ('K210') ";
@@ -368,10 +433,39 @@
 					if (res.code) {
 						util.simpleMsg("已匹配到最近门店");
 						let khid = JSON.parse(res.data);
-						that.Order.THKHID = khid;
+						that.Order.STR2 = khid;
 						that.$forceUpdate(); //刷新input的值 狗bug
 					}
 				})
+			},
+			//校验定金
+			CheckMoney: e => {
+				let str = e.detail.value;
+				// 正则表达试
+				str = (str.match(/^\d*(\.?\d{0,2})/g)[0]) || null;
+				setTimeout(() => {
+					that.Order.DNET = str;
+				}, 0);
+				// that.$forceUpdate();
+				// console.log("新的定金值：", str);
+				// 重新赋值
+			},
+			//蛋糕规格切换事件
+			GGChange: function(e) {
+				that.Order.CARDID = that.GGDatas[e.detail.value];
+			},
+			//获取配送中心数据
+			GetPSCenter: function(e) {
+				_reserve.GetPSCenter(that.GSID, that.KHID, r => {
+					if (r.msg.length > 0) {
+						that.PSDatas = r.msg;
+					}
+				})
+			},
+			//配送数据切换
+			PSChange: e => {
+				that.Order.STR2 = that.PSDatas[e.detail.value].KHID;
+				that.Order._STR2 = that.PSDatas[e.detail.value].SNAME;
 			},
 			//用户信息确定
 			Confirm: () => {
@@ -417,7 +511,7 @@
 				that.YDDATA = JSON.stringify(that.Order);
 				that.statements = false;
 				that.Empty();
-				console.log("待提交的顾客信息:", JSON.stringify(that.Order));
+				console.log("待提交的顾客信息:", that.YDDATA);
 			},
 
 			//清空

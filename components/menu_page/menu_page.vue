@@ -36,7 +36,7 @@
 			return {
 				urls: [{
 						title: "销售",
-						url: "../../pages/Sale/Sale",
+						url: "../../pages/Main/Main",
 						icon: require('../../images/xiaoshou.png'),
 						icon1: require("../../images/xiaoshou-hui.png"),
 						index: 0
@@ -64,8 +64,8 @@
 					{
 						title: "线上订单",
 						url: "../../pages/OnlineOrders/OnlineOrders",
-						icon: require("../../images/yuding.png"),
-						icon1: require("../../images/yuding-hui.png"),
+						icon: require("../../images/xianshangdd.png"),
+						icon1: require("../../images/xianshangdd-hui.png"),
 						index: 4
 					},
 					{
@@ -111,8 +111,8 @@
 					{
 						title: "赊销结算",
 						url: "../../pages/CreditSettlement/CreditSettlement",
-						icon: require("../../images/xz-xx.png"),
-						icon1: require("../../images/xiaoxi-hui.png"),
+						icon: require("../../images/shexiao.png"),
+						icon1: require("../../images/shexiao-hui.png"),
 						index: 8
 					},
 					{

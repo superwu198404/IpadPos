@@ -240,16 +240,6 @@
 		        "enablePullDownRefresh": false
 		    }
 		}
-        ,{
-            "path" : "pages/Sale/Sale",
-            "style" :                                                                                    
-            {
-                "titleNView": false,
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
