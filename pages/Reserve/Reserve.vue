@@ -321,7 +321,7 @@
 			},
 			GetAddr: function() {
 				if (that.Order.THTYPE == '0') {
-					console.log("自提类不需要弹出地址栏");
+					console.log("自提类不需要弹出地址栏:");
 					return;
 				}
 				_reserve.GetAddr({
