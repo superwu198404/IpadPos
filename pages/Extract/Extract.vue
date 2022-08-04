@@ -59,8 +59,9 @@
 							<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
 							<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
-						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button
-								@click="view.Details = true" class="btn">预定提取</button></view>
+						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
+							<!-- <button @click="view.Details = true" class="btn">预定提取</button> -->
+						</view>
 					</view>
 				</view>
 			</view>

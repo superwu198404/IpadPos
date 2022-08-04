@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="6"></menu_page>
+		<menu_page :menuIndex="7"></menu_page>
 		<view class="right">
 			<menu_head></menu_head>
 			<view class="listof">

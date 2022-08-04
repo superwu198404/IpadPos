@@ -103,13 +103,13 @@
 							index: 2
 						}]
 					},
-					{
-						title: "消息",
-						url: "../../pages/Message/Message",
-						icon: require("../../images/xz-xx.png"),
-						icon1: require("../../images/xiaoxi-hui.png"),
-						index: 7
-					}
+					// {
+					// 	title: "消息",
+					// 	url: "../../pages/Message/Message",
+					// 	icon: require("../../images/xz-xx.png"),
+					// 	icon1: require("../../images/xiaoxi-hui.png"),
+					// 	index: 7
+					// }
 				],
 				showDetail: false
 			};
