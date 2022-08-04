@@ -14,7 +14,7 @@
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<text>门店有一条新的外卖配送单消息来啦...</text>
-					<text v-for="(item,index) in data">{{item.title}}</text>
+					<!-- <text v-for="(item,index) in data">{{item.title}}</text> -->
 				</view>
 			</view>
 			<view class="stores">

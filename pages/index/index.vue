@@ -69,7 +69,6 @@
 		<button @click="MenuPage(4)">外卖预定</button> -->
 		<button @click="MenuPage(5)">登录</button>
 		<button @click="MenuPage(6)">首页</button>
-		<button @click="MenuPage(7)">首页-old</button>
 		<!-- <button @click="MenuPage(7)">销售退单</button>
 		<button @click="MenuPage(8)">预定</button>
 		<button @click="MenuPage(9)">赊销退单</button>
@@ -407,10 +406,6 @@
 						url: "../Login/Login"
 					});
 				}else if (e == 6) {
-					uni.navigateTo({
-						url: "../Sale/Sale"
-					});
-				}else if (e == 7) {
 					uni.navigateTo({
 						url: "../Main/Main",
 						complete:r=>{
