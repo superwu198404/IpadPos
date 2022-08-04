@@ -71,7 +71,7 @@
 				form: {
 					search: {
 						code: "",
-						bill: "LH202208010004"
+						bill: "LH202208030003"
 						// bill: ""
 					},
 					code: "", //自提码
@@ -107,7 +107,6 @@
 			},
 			Statements: function(e) {
 				this.view.Details = !this.view.Details;
-
 			},
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
@@ -122,7 +121,7 @@
 					let data = JSON.parse(res.data);
 					console.log("查询 线上取货 结果：", data);
 					this.extracts = data.details;
-					this.main = data.result[0];
+					this.main = data.result;
 				}), (err) => {
 					util.simpleMsg(err.msg, true, err);
 				});

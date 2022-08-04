@@ -114,6 +114,13 @@
 						icon: require("../../images/xz-xx.png"),
 						icon1: require("../../images/xiaoxi-hui.png"),
 						index: 8
+					},
+					{
+						title: "赊销退单",
+						url: "../../pages/CreditRefund/CreditRefund",
+						icon: require("../../images/xz-xx.png"),
+						icon1: require("../../images/xiaoxi-hui.png"),
+						index: 9
 					}
 				],
 				showDetail: false
