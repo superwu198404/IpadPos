@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="5" :sec_index="2"></menu_page>
+		<menu_page :menuIndex="6" :sec_index="2"></menu_page>
 		<view class="right">
 			<menu_head></menu_head>
 			<view class="listof">
@@ -64,7 +64,7 @@
 										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>
 									<view class="handles"><text></text>
-										<!-- <button class="btn"@click="GetOrderDetails(item)">详情</button> -->
+										<button class="btn"@click="ConfirmToPay(item)">确定</button>
 									</view>
 								</view>
 							</view>
@@ -254,6 +254,20 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
+			//确认去退货
+			ConfirmToPay:function(){
+				uni.showModal({
+					title: '提示',
+					content: '是否确认退货',
+					success: function (res) {
+						if (res.confirm) {
+							console.log('用户点击确定');
+						} else if (res.cancel) {
+							console.log('用户点击取消');
+						}
+					}
+				});
+			}
 		}
 	}
 </script>

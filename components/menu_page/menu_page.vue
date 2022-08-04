@@ -22,10 +22,10 @@
 				</view>
 			</view>
 		</view>
-		<view class="exit" @click="LoginOut()">
+		<!-- <view class="exit" @click="LoginOut()">
 			<image src="../../images/tuichu.png" mode="widthFix"></image>
 			<text>退出</text>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -87,13 +87,15 @@
 							icon: require("../../images/xstd.png"),
 							icon1: require("../../images/xstd-wxz.png"),
 							index: 0
-						}, {
-							title: "预定退单",
-							url: "../../pages/RefundOrder/RefundOrder",
-							icon: require("../../images/ydqx.png"),
-							icon1: require("../../images/ydqx-wxz.png"),
-							index: 1
-						}, {
+						}, 
+						// {
+						// 	title: "预定退单",
+						// 	url: "../../pages/RefundOrder/RefundOrder",
+						// 	icon: require("../../images/ydqx.png"),
+						// 	icon1: require("../../images/ydqx-wxz.png"),
+						// 	index: 1
+						// }, 
+						{
 							title: "赊销退单",
 							url: "../../pages/RefundOrder/SXRefund",
 							icon: require("../../images/sxtd.png"),

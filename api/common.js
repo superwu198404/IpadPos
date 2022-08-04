@@ -268,7 +268,7 @@ var GetPolyPayWay = function(e, func) {
 
 //获取档案参数
 var GetDapzcs = function(e, func) {
-	let sql = "select * from  dapzcs_nr where id  ='"+e+"'";
+	let sql = "select * from  dapzcs_nr where id  ='" + e + "'";
 	db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("获取配置参数成功:", res);
 		if (func) func(res);
@@ -482,6 +482,36 @@ var ywTypeEnum = {
 	QTLY: "QTLY"
 }
 
+//删除过期的销售单
+var DelSale = function(e) { //khid
+	let day = 10; //默认十天
+	// GetPOSCS(e, res => {
+	let arr = util.getStorage("POSCS");
+	console.log("参数组数据:", arr);
+	let obj = arr.find((r) => r.POSCS == 'SJBLTS');
+	if (obj) {
+		day = obj.POSCSNR;
+	}
+	// })
+	let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
+	// let sql = "select * from sale002 where bill in (" + sql1 + ")";
+	// db.get().executeQry(sql1, "", res => {
+	// 	console.log("查询销售单成功:", res);
+	// }, err => {
+	// 	console.log("查询销售单失败:", err);
+	// })
+	// return;
+	let arr1 = [
+		"delete from sale001 where date(saledate)<date('now', '-" + day + " day')",
+		"delete from sale002 where bill in (" + sql1 + ")",
+		"delete from sale003 where bill in (" + sql1 + ")"
+	];
+	db.get().executeDml(arr1, "", res => {
+		console.log("本地销售单删除成功：", res);
+	}, err => {
+		console.log("本地销售单删除失败：", err);
+	})
+}
 export default {
 	InitData,
 	CreateBill,
@@ -500,5 +530,6 @@ export default {
 	GetPOSCS,
 	actTypeEnum,
 	ywTypeEnum,
-	GetDapzcs
+	GetDapzcs,
+	DelSale
 }

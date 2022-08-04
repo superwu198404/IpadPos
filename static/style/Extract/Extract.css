@@ -14,7 +14,7 @@
 }
 .products .procycle .li{
 	width:46%;
-	border:1px solid #f0f0f0;
+	border:1rpx solid #f0f0f0;
 }
 .prolist .products .procycle .li .h3{
 	display: flex;
@@ -43,7 +43,7 @@
 	color: #FF8367;
 }
 .goods{
-	height: 52%;
+	height: 54%;
 }
 .pop-r .confirm{
 	display: flex;
@@ -66,7 +66,7 @@
 }
 .meminfo .restlist label text{
 	display: inline-block;
-	width:140rpx;
+	width:150rpx;
 	font-size: 26rpx;
 	color: #B0b0b0;
 }
@@ -194,4 +194,31 @@
 .hh .hotcakes .classifys text{
 	border:0;
 	margin-right: 0;
+}
+.title-box{
+	display: flex;
+	justify-content: space-between;
+}
+.title-box .price:nth-child(1){
+	width:70%;
+}
+.title-box .price:nth-child(2){
+	width:30%;
+	text-align: right;
+	font-weight: 400;
+}
+.li .cods{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin: unset !important;
+	padding: 10rpx 0px;
+}
+.cods view{
+	width:50%;
+	padding:8rpx 0;
+}
+.times{
+	margin-top:16rpx;
+	font-size: 24rpx;
 }

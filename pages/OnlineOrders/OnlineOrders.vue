@@ -2,7 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
 	@import url(@/static/style/takeout.css);
-	@import url(@/static/style/OnlineOrders/index.css);
+	/* @import url(@/static/style/OnlineOrders/index.css); */
 </style>
 <template>
 	<menu_content :index="4">
@@ -20,9 +20,9 @@
 											<image src="../../images/sousuo.png" mode="widthFix"></image>提取
 										</label>
 									</view> -->
-							<view class="sousuo">
+							<!-- <view class="sousuo">
 								<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-							</view>
+							</view> -->
 							<!-- <view class="sousuo">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
@@ -512,7 +512,7 @@
 	}
 
 	.products .procycle .li {
-		box-sizing: border-box;
+		/* box-sizing: border-box; */
 		border-color: gray;
 	}
 

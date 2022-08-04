@@ -96,7 +96,7 @@
 
 .prolist .cods {
 	flex-wrap: wrap;
-	/* margin:1% 0; */
+	margin:0 0 2%;
 }
 
 .prolist .cods view {

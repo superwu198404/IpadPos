@@ -13,9 +13,9 @@
 				</view>
 				<view>
 					<view class="prints">
-						<view class="sousuo">
+						<!-- <view class="sousuo">
 							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-						</view>
+						</view> -->
 						<view class="sousuo">
 							<label @click="Search()">
 								<image src="../../images/sousuo.png" mode="widthFix"></image>搜索

@@ -53,9 +53,8 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 78%;
-	/* overflow-y: auto; */
-	/* box-shadow: 0px -10px 10px -10px lightgray inset, 0px 10px 10px -10px lightgray inset; */
+	height: 76%;
+	padding-bottom: 50%;
 }
 
 .menu view {
@@ -306,6 +305,7 @@ page {
 	border-radius: 10px;
 	font-size: 60rpx;
 	width:80%;
+	margin:2% auto 0;
 }
 
 .paydetails {
@@ -453,7 +453,7 @@ page {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	margin-left: 0;
+	margin-left: 1.5%;
 }
 
 .bom-zhifu .pattern:nth-child(1) p {
@@ -545,10 +545,7 @@ page {
 	box-sizing: border-box;
 	float: left;
 	margin-bottom: 40rpx;
-	margin-left: 3%;
-}
-.bom-zhifu .pattern:nth-child(4n){
-	margin-left: 0;
+	margin:0 1.5% 40rpx;
 }
 
 .nots p {
