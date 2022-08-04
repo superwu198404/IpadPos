@@ -380,7 +380,7 @@
 							if (data.yn_print) {
 								//调用打印
 								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,2);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,"WMYD");
 							}
 						}
 						//列表刷新
