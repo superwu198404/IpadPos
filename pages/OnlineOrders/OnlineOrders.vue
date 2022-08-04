@@ -223,12 +223,10 @@
 			'details.order.$date': function(n, o) {
 				this.details.order.DATE_DH = `${this.details.order.$date} ${this.details.order.$time}`.trim() || this
 					.details.order.DATE_DH;
-				console.log("$date", this.details.order.DATE_DH)
 			},
 			'details.order.$time': function(n, o) {
 				this.details.order.DATE_DH = `${this.details.order.$date} ${this.details.order.$time}`.trim() || this
 					.details.order.DATE_DH;
-				console.log("$time", this.details.order.DATE_DH)
 			},
 			'details.order.DATE_DH': function(n, o) {
 				this.SetTimeRange();
@@ -318,7 +316,6 @@
 						util.simpleMsg("未获取到到货时间段！", true)
 						return;
 					}
-					console.log("到货时间段:", JSON.parse(res.data))
 					this.timeRange = JSON.parse(res.data)
 				}));
 			},
@@ -355,14 +352,28 @@
 							return new Date(dt.setHours(dt.getHours() + 8)); //Ipad 时区加 8 小时
 						})(),
 						now = new Date(new Date().setHours(new Date().getHours() + 8));
-					console.log("当前时间", JSON.stringify(now))
 					if (this.details.order.THTYPE_CODE == '0') { //自提
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
 						let limit = now,
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-							21), //晚上 21:0
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-							7); //早上 7:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 21),0,0), //晚上 18:00
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 7),0,0); //早上 9:00
+							console.log("========================================")
+														console.log("current:",JSON.stringify(current))
+														console.log("current:",JSON.stringify(current))
+														console.log("now:",JSON.stringify(now))
+														console.log("current-year:",current.getFullYear())
+														console.log("current-month:",current.getMonth())
+														console.log("current-day:",current.getDate())
+														console.log("current-day-UTC:",current.getUTCDate())
+														console.log("test-date:",JSON.stringify(new Date(current.getFullYear(), current.getMonth(), current.getDate()+1, 0, 0 , 0)));
+														console.log("test-date-16:",JSON.stringify(new Date(current.getFullYear(), current.getMonth(), current.getDate()+1, -16, 0, 0)));
+														console.log("limit:",JSON.stringify(limit));
+														console.log("date_max:",JSON.stringify(date_max));
+														console.log("date_min:",JSON.stringify(date_min));
+														console.log("current:",JSON.stringify(current));
+														console.log("current > limit:",JSON.stringify(current.getTime() >= limit.getTime()));
+														console.log("date_max > current:",JSON.stringify(date_max.getTime() > current.getTime()));
+														console.log("date_min <= current:",JSON.stringify(date_min.getTime() <= current.getTime()));
 						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -372,10 +383,8 @@
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
 						let limit = new Date(now.setHours(now.getHours() + 1)),
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-							18), //晚上 18:00
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 8 +
-							9); //早上 9:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 18),0,0), //晚上 18:00
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 9),0,0); //早上 9:00
 						//时间必须设置为当前时间 1小时 之后，且时间不能在 18点 以后和 9:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -395,8 +404,7 @@
 						start.setHours(Number(time_arr[0]), 0, 0);
 						end.setHours(Number(time_arr[1]), 0, 0);
 						if (start <= date && date <= end) {
-							this.details.order.DHSJD = time.ID
-							console.log("匹配时间：", time)
+							this.details.order.DHSJD = time.ID;
 						}
 					}));
 				}
@@ -410,7 +418,6 @@
 			},
 			//展示详情
 			ShowDetail: function(order) {
-				console.log("当前状态：", this.edit)
 				if (!this.view.edit) {
 					this.RenderFrom(order);
 					this.$forceUpdate();
@@ -450,8 +457,7 @@
 						timerange: this.details.order.DHSJD
 					}, util.callBind(this, function(res) {
 						this.GetOnlineOrders(); //刷新列表
-						console.log("修改结果：", res);
-						util.simpleMsg("订单修改成功!")
+						util.simpleMsg("订单修改成功!",false,res)
 					}), (err) => {
 						util.simpleMsg(err.msg, true, err);
 					});
@@ -474,7 +480,7 @@
 				// this.details.order.DATE_DH = (JSON.stringify(testDate).split("T")[0] + " 00:00:00").slice(1); //测试写死数据
 
 				let valid = await Validity(this.details.order);
-				if (valid.state)
+				if (valid.state && this.CheckArrivalDate())
 					ordersAccept({
 						storeid: this.KHID, //店铺id
 						gcid: this.GCID, //工厂id
@@ -487,7 +493,7 @@
 						util.simpleMsg(err.msg, true, err);
 					});
 				else
-					util.simpleMsg(valid.msg, true, valid)
+					util.simpleMsg("校验失败!", true, valid)
 			},
 		},
 		mounted() {

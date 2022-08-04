@@ -80,8 +80,20 @@ var SXGetOrders = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+/**
+ * 获取赊销退单页面
+ * @param {*} data 查询参数 
+ * @param {*} func 回调函数
+ */
+var getBigClientSettlementRefund = function(data, func, catchFunc) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.BigClientSettlementRefund";
+	let reqdata = Req.resObj(true, "赊销退单查询中", data, apistr);
+	Req.asyncFuncOne(reqdata, func, catchFunc);
+}
+
 export default {
 	GetOrders,
 	GetOrderDetails,
-	SXGetOrders
+	SXGetOrders,
+	GetBigClientSettlementRefund
 }
