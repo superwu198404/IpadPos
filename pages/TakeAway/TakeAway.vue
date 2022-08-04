@@ -337,7 +337,7 @@
 							if (data.yn_print) {
 								//调用打印
 								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, 1);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
 							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
