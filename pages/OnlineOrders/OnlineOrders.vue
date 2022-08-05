@@ -308,6 +308,8 @@
 			InitOrders: function() {
 				//查询在线订单列表
 				this.GetOnlineOrders();
+				//首次渲染
+				this.RenderFrom(this.onlineOrders[0]);
 				// 查询到货时间段列表
 				getTimeRange({
 					gsid: this.GSID
@@ -336,7 +338,6 @@
 					orders.sort((a, b) => a.timestamp - b.timestamp);
 					this.onlineOrders = orders.reverse();
 					console.log("线上订单:", this.onlineOrders);
-					this.RenderFrom(this.onlineOrders[0]);
 				}), (res) => {
 					util.simpleMsg("线上订单获取失败!", true, res);
 				});
@@ -357,23 +358,6 @@
 						let limit = now,
 							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 21),0,0), //晚上 18:00
 							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 7),0,0); //早上 9:00
-							console.log("========================================")
-														console.log("current:",JSON.stringify(current))
-														console.log("current:",JSON.stringify(current))
-														console.log("now:",JSON.stringify(now))
-														console.log("current-year:",current.getFullYear())
-														console.log("current-month:",current.getMonth())
-														console.log("current-day:",current.getDate())
-														console.log("current-day-UTC:",current.getUTCDate())
-														console.log("test-date:",JSON.stringify(new Date(current.getFullYear(), current.getMonth(), current.getDate()+1, 0, 0 , 0)));
-														console.log("test-date-16:",JSON.stringify(new Date(current.getFullYear(), current.getMonth(), current.getDate()+1, -16, 0, 0)));
-														console.log("limit:",JSON.stringify(limit));
-														console.log("date_max:",JSON.stringify(date_max));
-														console.log("date_min:",JSON.stringify(date_min));
-														console.log("current:",JSON.stringify(current));
-														console.log("current > limit:",JSON.stringify(current.getTime() >= limit.getTime()));
-														console.log("date_max > current:",JSON.stringify(date_max.getTime() > current.getTime()));
-														console.log("date_min <= current:",JSON.stringify(date_min.getTime() <= current.getTime()));
 						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -479,8 +463,9 @@
 				// let testDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDay())
 				// this.details.order.DATE_DH = (JSON.stringify(testDate).split("T")[0] + " 00:00:00").slice(1); //测试写死数据
 
-				let valid = await Validity(this.details.order);
-				if (valid.state && this.CheckArrivalDate())
+				let info_valid = await Validity(this.details.order);
+				let time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
+				if (info_valid.state && time_valid)
 					ordersAccept({
 						storeid: this.KHID, //店铺id
 						gcid: this.GCID, //工厂id
@@ -492,8 +477,12 @@
 					}), (err) => {
 						util.simpleMsg(err.msg, true, err);
 					});
-				else
-					util.simpleMsg("校验失败!", true, valid)
+				else {
+					if(!info_valid.state)
+						util.simpleMsg(info_valid.msg, true, info_valid)
+					else if(!time_valid)
+						util.simpleMsg("到货时间校验失败!", true, info_valid)
+				}
 			},
 		},
 		mounted() {

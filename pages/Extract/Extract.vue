@@ -47,7 +47,7 @@
 			<view class="products">
 				<view class="procycle">
 					<!-- 产品循环 -->
-					<view v-for="(item,index) in extracts" v-if="index < 3" class="li">
+					<view v-for="(item,index) in extracts" class="li">
 						<view class="title-box">
 							<view class="price">{{ item.BILL || '-' }}</view>
 							<view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view>
