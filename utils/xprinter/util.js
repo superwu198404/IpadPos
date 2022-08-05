@@ -342,7 +342,7 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 	var xsptid = sale1_obj.XSPTID;
 	
 	var note2 = "";
-	if(type == "2"){
+	if(type == "WMYD"){
 		note2 = sale1_obj.NOTE2; //外卖预订单，平台名称。如美团外卖
 	}
 	var wmType = type;
@@ -395,6 +395,51 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 	
+	return printerInfo;
+}
+
+/**
+ * 线上订单打印数据转换
+ * @param {} 传入数据
+ */
+const xsPrinterData = (sale1_obj, ggyContent, type)=>{	
+	var xsType = "XSDD";
+	var bill = sale1_obj.BILL;
+    var ydbill = sale1_obj.YDBILL;
+	var date_dh = sale1_obj.DATE_DH;
+    var saletime = sale1_obj.SALETIME;
+	var thtype = sale1_obj.THTYPE;
+	var custmname = sale1_obj.CUSTMNAME;
+	var custmaddress = sale1_obj.CUSTMADDRESS;
+	var custmphone = sale1_obj.CUSTMPHONE;
+	var custmcomm = sale1_obj.CUSTMCOMM;
+	
+	var spid = sale1_obj.SPID;
+	var sname = sale1_obj.SNAME;
+	var price = sale1_obj.PRICE;
+	var ggy = ggyContent;
+	
+	xsType = type;
+	let dateNow = getTime(3);
+
+	var printerInfo = {
+		xsType,
+		bill,
+		ydbill,
+		date_dh,
+		saletime,
+		thtype,
+		custmname,
+		custmaddress,
+		custmphone,
+		custmcomm,
+		spid,
+		sname,
+		price,
+		ggy,
+		dateNow,
+	}
+	console.log("线上订单打印接收数据转换后 printerInfo:", printerInfo);	
 	return printerInfo;
 }
 
@@ -827,4 +872,5 @@ module.exports = {
 	qrCodeAction: qrCodeAction,
 	gzhQrCodeAction: gzhQrCodeAction,
 	wmPrinterData: wmPrinterData,
+	xsPrinterData: xsPrinterData,
 };
