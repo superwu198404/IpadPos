@@ -71,7 +71,7 @@
 				form: {
 					search: {
 						code: "",
-						bill: "LH202208030003"
+						bill: "LH202208"
 						// bill: ""
 					},
 					code: "", //自提码
@@ -143,10 +143,17 @@
 						isBill: this.extracts.THTYPE !== "0",
 						details: this.extracts
 					}, util.callBind(this, function(res) {
-						console.log("提取成功！", res)
-					}), (err) => {
+						console.log("提取成功！", res);
+						this.Reset();
+					}), util.callBind(this, function(err){
 						util.simpleMsg(err.msg, true);
-					})
+						this.Reset();
+					}))
+			},
+			Reset:function(){
+				for(key in this.main){
+					this.main[key] = this.main[key].constructor();
+				}
 			}
 		},
 		mounted() {

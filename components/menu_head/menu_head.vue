@@ -41,7 +41,12 @@
 	export default {
 		name: "menu_head",
 		props:{
-			data:[]
+			data:{
+				type:Array,
+				default(){
+					return []
+				}
+			}
 		},
 		data() {
 			return {

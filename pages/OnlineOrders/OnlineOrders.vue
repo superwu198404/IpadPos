@@ -123,7 +123,7 @@
 						<button v-if="mode('read')" class="btn btn-edit" @click="Edit()">编辑</button>
 						<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 						<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-						<button v-if="mode('read')" class="btn" @click="ConfirmAccept(true)">接受确认</button>
+						<button v-if="mode('read') && view.search.confirm" class="btn" @click="ConfirmAccept(true)">接受确认</button>
 						<button v-if="mode('read')" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
 					</view>
 				</view>
@@ -164,7 +164,8 @@
 		getTimeRange, //获取时间段
 		getRoom, //获取裱花间（暂时不用修改）
 		updateOrderInfo, //更新表接口
-		ordersAccept //顶顶那处理
+		ordersAccept,//顶顶那处理
+		ordersStatusCheck
 	} from '@/api/business/onlineorders.js';
 	import {
 		Validity
@@ -187,7 +188,8 @@
 						form: {
 							code: "",
 							bill: ""
-						}
+						},
+						confirm:false
 					}
 				},
 				datetime: {
@@ -307,9 +309,10 @@
 			//初始化线上订单列表
 			InitOrders: function() {
 				//查询在线订单列表
-				this.GetOnlineOrders();
-				//首次渲染
-				this.RenderFrom(this.onlineOrders[0]);
+				this.GetOnlineOrders(util.callBind(this, function() {
+					this.RenderFrom(this.onlineOrders[0]); //首次渲染
+				}));
+
 				// 查询到货时间段列表
 				getTimeRange({
 					gsid: this.GSID
@@ -322,7 +325,7 @@
 				}));
 			},
 			//获取在线订单
-			GetOnlineOrders: function() {
+			GetOnlineOrders: function(func) {
 				getOnlineOrders({
 					gsid: this.GSID,
 					khid: this.KHID,
@@ -338,6 +341,7 @@
 					orders.sort((a, b) => a.timestamp - b.timestamp);
 					this.onlineOrders = orders.reverse();
 					console.log("线上订单:", this.onlineOrders);
+					if (func) func();
 				}), (res) => {
 					util.simpleMsg("线上订单获取失败!", true, res);
 				});
@@ -356,8 +360,10 @@
 					if (this.details.order.THTYPE_CODE == '0') { //自提
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
 						let limit = now,
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 21),0,0), //晚上 18:00
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 7),0,0); //早上 9:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
+								16 + 21), 0, 0), //晚上 18:00
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
+								16 + 7), 0, 0); //早上 9:00
 						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -367,8 +373,10 @@
 					} else if (this.details.order.THTYPE_CODE == '1') { //配送
 						//配送单可修改：到货日期（当前日期一小时之后）、到货时段（对应到货日期）、备注
 						let limit = new Date(now.setHours(now.getHours() + 1)),
-							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 18),0,0), //晚上 18:00
-							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate()+1, (-16 + 9),0,0); //早上 9:00
+							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
+								16 + 18), 0, 0), //晚上 18:00
+							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
+								16 + 9), 0, 0); //早上 9:00
 						//时间必须设置为当前时间 1小时 之后，且时间不能在 18点 以后和 9:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
@@ -395,10 +403,21 @@
 			},
 			//渲染到视图
 			RenderFrom: function(source) {
-				this.details.order.BILL = source.BILL;
-				Object.assign(this.details.order, source);
-				this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
-				this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
+				if(source?.BILL){
+					ordersStatusCheck(source?.YDBILL,util.callBind(this,function(res){
+						if(res.data.msg.DATA && res.data.msg.DATA.length && res.data.msg.DATA.length > 0){
+							if(res.data.msg.DATA[0].orderStatus === 'DELIVERED') 
+								this.view.search.confirm = false;
+							else 
+								this.view.search.confirm = true;
+						}
+						else this.view.search.confirm = true;
+					}))
+					this.details.order.BILL = source?.BILL;
+					Object.assign(this.details.order, source);
+					this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
+					this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
+				}
 			},
 			//展示详情
 			ShowDetail: function(order) {
@@ -441,7 +460,7 @@
 						timerange: this.details.order.DHSJD
 					}, util.callBind(this, function(res) {
 						this.GetOnlineOrders(); //刷新列表
-						util.simpleMsg("订单修改成功!",false,res)
+						util.simpleMsg("订单修改成功!", false, res)
 					}), (err) => {
 						util.simpleMsg(err.msg, true, err);
 					});
@@ -478,9 +497,9 @@
 						util.simpleMsg(err.msg, true, err);
 					});
 				else {
-					if(!info_valid.state)
+					if (!info_valid.state)
 						util.simpleMsg(info_valid.msg, true, info_valid)
-					else if(!time_valid)
+					else if (!time_valid)
 						util.simpleMsg("到货时间校验失败!", true, info_valid)
 				}
 			},
@@ -498,6 +517,22 @@
 
 	.max-height {
 		height: 100%;
+	}
+
+	.products {
+		height: calc(88% - 30px) !important;
+	}
+	
+	.picker {
+		border: 1px solid #70c477;
+		border-radius: 5px;
+		margin-right: 5px;
+		padding:.5px 3px;
+	}
+	
+	.harvest uni-label{
+		display: flex;
+		align-items: center;
 	}
 
 	.products .procycle .li {
