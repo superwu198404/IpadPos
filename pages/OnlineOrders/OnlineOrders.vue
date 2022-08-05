@@ -120,7 +120,7 @@
 						</view>
 					</view>
 					<view class="operat">
-						<button v-if="mode('read')" class="btn btn-edit" @click="Edit()">编辑</button>
+						<button v-if="mode('read') && view.search.confirm" class="btn btn-edit" @click="Edit()">编辑</button>
 						<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 						<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
 						<button v-if="mode('read') && view.search.confirm" class="btn" @click="ConfirmAccept(true)">接受确认</button>
@@ -476,15 +476,12 @@
 			ConfirmAccept: async function(isAccept) {
 				console.log("处理订单：", this.details.order)
 				this.details.order.STATUS = isAccept;
-
-				//this.details.order.GCID = this.GCID; //测试写死数据（因为存在 id 位数大于 四位的情况 导致报错）
-				// let now = new Date();
-				// let testDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDay())
-				// this.details.order.DATE_DH = (JSON.stringify(testDate).split("T")[0] + " 00:00:00").slice(1); //测试写死数据
-
-				let info_valid = await Validity(this.details.order);
-				let time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
-				if (info_valid.state && time_valid)
+				let info_valid = true,time_valid =true;
+				if(isAccept){//只有接单才判断
+					info_valid = await Validity(this.details.order);
+					time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
+				}
+				if (info_valid.state && time_valid || !isAccept)
 					ordersAccept({
 						storeid: this.KHID, //店铺id
 						gcid: this.GCID, //工厂id
