@@ -105,18 +105,19 @@ var DelMsg = (type, data, func) => {
  * @param {*} e 
  * @param {*} func 
  */
-var GetAllMsg = function(e, func) {
+var GetAllMsg = function(e, t, func) {
 	let apistr = "MobilePos_API.Models.MessageCLASS.GetMessage";
 	let reqdata = Req.resObj(true, "查询中...", {
-		khid: e
+		khid: e,
+		type: t
 	}, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 //消息方法处理
-var ShowMsg = function(e, func) {
+var ShowMsg = function(khid, type = "", func) {
 	// getApp().globalData.msgInt = setInterval(r => {
-	GetAllMsg(e, res => {
+	GetAllMsg(khid, type, res => {
 		if (res.code) {
 			console.log("消息数据：", res);
 			let data = JSON.parse(res.data);
