@@ -362,6 +362,8 @@
 					console.log("消息数据：", res);
 					that.MsgData = res;
 				});
+				
+				// common.DelSale();//主动删除销售单
 			},
 			//关闭结算
 			CloseSale: function() {

@@ -47,8 +47,7 @@
 						<!-- 小类循环 -->
 						<view class="products">
 							<view class="h2">销售退单 <label></label></view>
-
-							<view class="procycle">
+							<view class="procycle" style="height: 650px; overflow: scroll;">
 								<!-- 订单循环 -->
 								<view class="li" v-for="(item,index) in Orders">
 									<view class="h3">
@@ -66,9 +65,7 @@
 						</view>
 					</view>
 				</view>
-
 			</view>
-
 		</view>
 
 		<!-- 子单信息 -->

@@ -24,6 +24,9 @@
 							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
 						</view>
 						<view class="sousuo">
+							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>蛋糕标签打印
+						</view>
+						<view class="sousuo">
 							<label @click="Search()">
 								<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 							</label>
@@ -56,8 +59,9 @@
 							<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
 							<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
-						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text><button
-								@click="view.Details = true" class="btn">预定提取</button></view>
+						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
+							<!-- <button @click="view.Details = true" class="btn">预定提取</button> -->
+						</view>
 					</view>
 				</view>
 			</view>
@@ -220,9 +224,9 @@
 	}
 
 	.cods {
-		flex-direction: column;
+		/* flex-direction: column;
 		align-items: flex-start;
-		gap: 18rpx;
+		gap: 18rpx; */
 		margin: unset !important;
 		padding: 18rpx 0px;
 	}
@@ -273,7 +277,7 @@
 		font-weight: 600;
 	}
 
-	.title-box>*:nth-child(1) {
+	/* .title-box>*:nth-child(1) {
 		flex: 0.46 0px;
 		display: inline-block;
 		overflow: hidden;
@@ -288,7 +292,7 @@
 	.title-box>*:nth-child(3) {
 		flex: 0.38 0px;
 		text-align: right;
-	}
+	} */
 
 	.criterias {
 		z-index: 10;

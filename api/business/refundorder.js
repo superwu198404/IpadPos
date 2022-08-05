@@ -26,6 +26,7 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
 	if (date) {
 		sql += " and date(S1.SALEDATE) =date('" + date + "')";
 	}
+	sql+=" order by s1.saledate desc"
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("退货信息查询结果：", res);
 		if (func) func(res);
