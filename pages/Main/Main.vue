@@ -235,6 +235,45 @@
 						</view>
 					</view>
 				</view>
+				<!-- 折扣列表 -->
+				<view class="meminfo" v-if="showZK">
+					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+					<view>
+						<view class="member">
+							<label class="h9">折扣<text>（根据商品类型和满足金额自动匹配折扣率）</text></label>
+							<button @click="showZK=false">×</button>
+						</view>
+						<view class="shoppbag">
+							<radio-group>
+								<view class="h8">
+									<label>
+										<radio name="zhe"></radio> 可用标准折扣
+									</label>
+									<label>
+										<radio name="zhe"></radio> 选择临时降点
+									</label>
+									<label>
+										<radio name="zhe"></radio> 选择特批折扣
+									</label>
+								</view>
+							</radio-group>
+							<view class="lists">
+								<view class="conlst">
+									<label>商品名称<text>折扣率：0.8</text></label>
+									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
+								</view>
+								<view class="conlst">
+									<label>商品名称<text>折扣率：0.8</text></label>
+									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
+								</view>
+								<view class="conlst">
+									<label>商品名称<text>折扣率：0.8</text></label>
+									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
 				<view class="pop-r">
 					<view class="member">
 						<label>
@@ -271,7 +310,14 @@
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>￥567</text></view>
 						<view class="li"><text>件数</text><text>7</text></view>
-						<view class="li"><text>折扣</text><text>-￥5</text></view>
+						<view class="li" @click="Discounts()">
+							<label>
+								<text>折扣</text>
+								<image src="../../images/dx-zhekou.png" mode="widthFix"></image>
+							</label>
+							<text>-￥5</text>
+						</view>
+						<!-- <view class="li"><text>折扣</text><text>-￥5</text></view> -->
 						<view class="li"><text>应收金额</text><text>￥560</text></view>
 					</view>
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
@@ -417,7 +463,7 @@
 				statements: false,
 				Alphabetical: false,
 				Memberinfo: false,
-				showMember:false,
+				showMember: false,
 				Shoppingbags: false,
 				Chargeback: false,
 				coupon_list: [],
@@ -427,6 +473,7 @@
 				showSale: false, //显示结算页面
 				yn_hy: false, //是否有会员
 				CXDatas: [],
+				showZK: false, //是否展示折扣数据
 			}
 		},
 		methods: {
@@ -436,8 +483,8 @@
 					console.log("消息数据：", res);
 					that.MsgData = res;
 				});
-
 				// common.DelSale();//主动删除销售单
+				// util.removeStorage("hyinfo");
 			},
 			//关闭结算
 			CloseSale: function() {
@@ -466,7 +513,7 @@
 				});
 			},
 			//切换登录
-			ChangeMember:function(){
+			ChangeMember: function() {
 				uni.navigateTo({
 					url: "../MemberLogin/MemberLogin"
 				})
@@ -543,11 +590,8 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
-			LoginOut: function() {
-
-				uni.navigateTo({
-					url: '/pages/index/index'
-				})
+			Discounts: e => {
+				that.showZK = true;
 			}
 		}
 	}

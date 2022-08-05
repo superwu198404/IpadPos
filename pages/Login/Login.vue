@@ -93,6 +93,7 @@
 				_login.GetPassWord(that.khid, that.userid, that.password, res => {
 					console.log("登录成功：", res);
 					util.simpleMsg("登录成功");
+					// getApp().globalData.store.RYID=that.userid;
 					setTimeout(r => {
 						uni.navigateTo({
 							url: "../Main/Main"
