@@ -22,10 +22,10 @@
 				</view>
 			</view>
 		</view>
-		<view class="exit" @click="LoginOut()">
+		<!-- <view class="exit" @click="LoginOut()">
 			<image src="../../images/tuichu.png" mode="widthFix"></image>
 			<text>退出</text>
-		</view>
+		</view> -->
 	</view>
 </template>
 

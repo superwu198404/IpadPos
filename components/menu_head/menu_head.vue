@@ -2,7 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
-	@import url(@/static/style/Extract/extract.css);
+	@import url(@/static/style/Extract/Extract.css);
 </style>
 <template>
 	<view>
@@ -26,12 +26,27 @@
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
 					</label>
 				</view>
-				<view class="account">
-					<text>{{RYID}}</text>
+				<view class="account">				
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
+					<text  @click="exits()">{{RYID}} > </text>
+					<view class="dropout" v-if="dropout">
+						<view class="exit" @click="Login()">
+							<image src="@/images/qiehuan.png" mode="widthFix"></image>
+							<text>切换账号</text>
+						</view>
+						<view class="exit" @click="LoginOut()">
+							<image src="@/images/tuichu.png" mode="widthFix"></image>
+							<text>退出登录</text>
+						</view>
+						<view class="exit" @click="LoginOut()">
+							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<text>注销</text>
+						</view>
+					</view>
 				</view>
+				
 			</view>
 		</view>
 	</view>
@@ -52,9 +67,29 @@
 			return {
 				STORE_NAME: getApp().globalData.store.NAME,
 				POSID: getApp().globalData.store.POSID,
-				RYID: getApp().globalData.store.RYID
+				RYID: getApp().globalData.store.RYID,
+				dropout:false
 			};
 		},
+		methods: {
+			exits: function(e) {				
+					this.dropout=!this.dropout
+			},
+			//切换登录
+			Login:function(){
+				uni.redirectTo({
+					url:"/pages/Login/Login",
+					complete:r=>{console.log(r)}
+				})
+			},
+			//退出登录
+			LoginOut:function(){
+				uni.redirectTo({
+					url:"../../pages/index/index",
+					complete:r=>{console.log(r)}
+				})
+			}
+		}
 	}
 </script>
 

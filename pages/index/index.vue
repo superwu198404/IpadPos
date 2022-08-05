@@ -744,13 +744,7 @@
 		async onShow() {
 			this.refreshProduct();
 			this.refund_no = this.$store.state.trade;
-			// this.refund_no = "K0101QT2122628193555279";
-			let info = uni.getStorageSync("hyinfo");
-			if (info) {
-				this.hyinfo = info;
-				this.hyinfo.Balance = (this.hyinfo.Balance / 100).toFixed(2);
-				getApp().globalData.hyinfo = this.hyinfo;
-			}
+			
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 		},
