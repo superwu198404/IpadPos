@@ -1,5 +1,6 @@
 import Req from '@/utils/request.js';
 import util from '@/utils/util.js';
+import configInfo from '@/utils/configInfo.js'; //配置参数
 /**
  * 获取线上订单列表
  * @param {*} data 查询参数 
@@ -62,7 +63,7 @@ export const getRoom = function(data, func) {
  * @param {*} data 查询参数 
  * @param {*} func 回调函数 
  */
-export const updateOrderInfo = function(data,func, catchFunc){
+export const updateOrderInfo = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.UpdateOnlineOrderInfo";
 	let reqdata = Req.resObj(true, "订单信息修改中", data, apistr);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
@@ -77,4 +78,27 @@ export const ordersAccept = function(data, func, err) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.OrdersAccept";
 	let reqdata = Req.resObj(true, "订单处理中", data, apistr);
 	Req.asyncFuncOne(reqdata, func, err);
+}
+
+/**
+ * 线上订单状态查询
+ * @param {*} data 查询参数
+ * @param {*} func 回调函数
+ */
+export const ordersStatusCheck = function(bill, func, err = () => {}) {
+	uni.request({
+		url:`http://58.19.103.220:8807/TestTimeOut/CenterTransRetData`,
+		method:"POST",
+		timeout:30000,
+		data:{
+			appid:"keengee",
+			apiname:"XSDD_QUERY_ORDER_STATUS",
+			paramkey:"bill",
+			data:{
+				bill
+			}
+		},
+		success:func,
+		fail:err
+	});
 }
