@@ -65,6 +65,9 @@
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z" @click="Letters()">A <text>◀</text></view>
+						<view class="a-z" @click="Memberlogin(1)">
+							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+						</view>
 						<view class="states" @click="ShowSale()">
 							<text>结算单</text>
 							<label>«</label>
@@ -198,8 +201,8 @@
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
-										<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-												mode="widthFix"></image></button>
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
@@ -303,6 +306,76 @@
 				</view>
 			</view>
 		</view>
+		<!-- 会员弹框 -->
+		<view class="boxs" v-if="showMember">
+			<view class="memberes">
+				<view class="meminfo" v-if="showMember">
+					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+					<view class="member">
+						<label>
+							<image class="touxiang" src="../../images/touxiang.png"></image>
+							<label class="meminfo"><text>{{hyinfo.NickName}}</text><text>{{hyinfo.hyId}}</text></label>
+							<label @click="ChangeMember()">切换</label>
+						</label>
+						<button @click="showMember=false">×</button>
+					</view>
+					<view class="nom">
+						<label>
+							<text>￥{{hyinfo.Balance/100}}</text>
+							<text>余额</text>
+						</label>
+						<label>
+							<text>{{hyinfo.JFBalance/100}}</text>
+							<text>积分</text>
+						</label>
+						<label>
+							<text>{{coupon_list.length}}</text>
+							<text>优惠券</text>
+						</label>
+						<label>
+							<text>{{hyinfo.hy_Assets.GiftAmt/100}}</text>
+							<text>礼品卡</text>
+						</label>
+					</view>
+					<view class="rests" v-if="false">
+						<view class="h2">其他</view>
+						<view class="restlist">
+							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
+							<label><text>是否推送活动信息：</text><text>是</text></label>
+							<label><text>上次购买金额：</text><text>￥56</text></label>
+							<label><text>是否参与上次活动：</text><text>否</text></label>
+						</view>
+					</view>
+					<view class="coulist">
+						<view class="h2">优惠券</view>
+						<view class="uls">
+							<view class="lis" v-for="(item,index) in coupon_list">
+								<view class="voucher">
+									<view><text>￥</text>{{item.money}}</view>
+									<text>满{{item.limitmoney}}可用</text>
+								</view>
+								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+								<view class="coupon-dets">
+									<view class="limit">
+										<view class="h3" v-for="(item1,index1) in item.limitDesc">
+											<text>{{item1}}</text>
+										</view>
+										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
+									</view>
+									<view class="directions">
+										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+										</view>
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button> -->
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -344,6 +417,7 @@
 				statements: false,
 				Alphabetical: false,
 				Memberinfo: false,
+				showMember:false,
 				Shoppingbags: false,
 				Chargeback: false,
 				coupon_list: [],
@@ -362,7 +436,7 @@
 					console.log("消息数据：", res);
 					that.MsgData = res;
 				});
-				
+
 				// common.DelSale();//主动删除销售单
 			},
 			//关闭结算
@@ -391,6 +465,12 @@
 					}
 				});
 			},
+			//切换登录
+			ChangeMember:function(){
+				uni.navigateTo({
+					url: "../MemberLogin/MemberLogin"
+				})
+			},
 			//获取辅助促销
 			GetFZCX: function() {
 				//that.KHID
@@ -402,6 +482,7 @@
 			},
 			onShow: function() {
 				let hyinfo = util.getStorage("hyinfo");
+				console.log("会员信息：", hyinfo);
 				if (hyinfo && JSON.stringify(hyinfo) != "{}") {
 					that.yn_hy = true;
 					that.hyinfo = hyinfo;
@@ -443,8 +524,12 @@
 			//会员登录
 			Memberlogin: function(e) {
 				if (that.hyinfo && JSON.stringify(that.hyinfo) != "{}") {
-					this.Memberinfo = true;
-					this.Shoppingbags = false;
+					if (e) {
+						that.showMember = true;
+					} else {
+						this.Memberinfo = true;
+						this.Shoppingbags = false;
+					}
 				} else {
 					uni.navigateTo({
 						url: "../MemberLogin/MemberLogin"

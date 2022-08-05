@@ -274,7 +274,10 @@ page {
 	top: 0;
 	right: 0;
 }
-
+.sorting .a-z image{
+  width:100%;
+  max-height: 80rpx;
+}
 .states {
 	width: 60rpx;
 	display: flex;

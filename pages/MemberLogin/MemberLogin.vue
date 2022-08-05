@@ -8,7 +8,7 @@
 		<view class="right">
 			<menu_head></menu_head>
 			<view class="mem-bg">
-				<button class="skip" @click="ReBack()">跳过</button>
+				<button class="skip" @click="ReBack()">返回</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
 					<label>
@@ -70,20 +70,6 @@
 					console.log("会员信息查询失败:", err);
 					util.simpleMsg(err.msg, true);
 				});
-			},
-			//退出登录
-			LoginOut: function() {
-				uni.navigateBack({});
-				// switch (uni.getSystemInfoSync().platform) {
-				// 	case 'android':
-				// 		plus.runtime.quit();
-				// 		break;
-				// 	case 'ios':
-				// 		console.log("退出事件");
-				// 		// uni.clearStorage();//清除缓存
-				// 		plus.ios.import('UIApplication').sharedApplication().performSelector('exit');
-				// 		break;
-				// }
 			},
 			//返回
 			ReBack: function() {

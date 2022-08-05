@@ -31,7 +31,7 @@
 
 .products {
 	display: flex;
-	height: calc(88% - 30px);
+	/* height: calc(88% - 30px); */
 	padding: 0px 2%;
 	box-sizing: border-box;
 }
