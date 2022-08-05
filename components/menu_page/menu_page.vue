@@ -107,6 +107,13 @@
 						icon: require("../../images/xz-xx.png"),
 						icon1: require("../../images/xiaoxi-hui.png"),
 						index: 7
+					},
+					{
+						title: "赊销结算",
+						url: "../../pages/CreditSettlement/CreditSettlement",
+						icon: require("../../images/xz-xx.png"),
+						icon1: require("../../images/xiaoxi-hui.png"),
+						index: 8
 					}
 				],
 				showDetail: false

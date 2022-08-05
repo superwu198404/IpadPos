@@ -1,3 +1,9 @@
+<style scopeed>
+	@import url(@/static/style/payment/paymentall/basis.css);
+	@import url(@/static/style/index.css);
+	@import url(@/static/style/takeout.css);
+	/* @import url(@/static/style/OnlineOrders/index.css); */
+</style>
 <template>
 	<menu_content index="8">
 		<view class="page-content">
@@ -6,15 +12,9 @@
 					<image src="@/images/ydtq.png" mode="widthFix"></image> 赊销结算
 				</view>
 				<view class="search-bar">
-					<text style="color: #006B44;">大客户编号:</text>
-					<picker mode="selector" :range="big_clients" range-key="NAME"
-						style="height: calc(100% - 20px);width: 200px;border:1px solid #b2d2c6;border-radius: 5px;"
-						@change="SelectedClient">
-						<view
-							style="text-overflow: ellipsis;overflow: hidden;width: 100%;height: 100%;white-space: nowrap;align-items: center;">
-							{{ big_client_info.NAME }}
-						</view>
-					</picker>
+					<view class="sousuo" @click="view.show = true">
+						选择大客户
+					</view>
 				</view>
 			</view>
 			<view class="bottom">
@@ -62,24 +62,27 @@
 				</view>
 			</view>
 		</view>
+		<BigCustomer v-show="view.show" @ClosePopup="ClosePopup"></BigCustomer>
 	</menu_content>
 </template>
 
 <script>
+	import BigCustomer from '@/pages/CreditSettlement/Popup/BigCustomer.vue'
 	import util from '@/utils/util.js';
 	import {
-		getBigClients,
 		getBigClientSettlement
 	} from '@/api/business/bigclient.js';
 
 	export default {
 		name: "CreditSettlement",
+		components:{
+			BigCustomer
+		},
 		data() {
 			return {
-				search: {
-					client_no: "0020000955" //大客户编号
+				view:{
+					show:true
 				},
-				big_clients: [], //大客户列表
 				big_client_info: {},
 				big_client_settlement: [],
 				current_settlement:{}
@@ -96,21 +99,6 @@
 			}
 		},
 		methods: {
-			GetBigClients: function() {
-				getBigClients({
-					gsid: this.GSID,
-					client_type: '1',
-					khid: "",
-					storeid: this.KHID
-				}, util.callBind(this, function(res) {
-					this.big_clients = JSON.parse(res.data);
-					this.big_client_info = this.big_clients[0];
-					util.simpleMsg("大客户查询成功!", false, this.big_client_info);
-					this.GetBigClientSettlement();
-				}), (err) => {
-					util.simpleMsg("大客户查询失败!", true, err);
-				})
-			},
 			GetBigClientSettlement: function() {
 				getBigClientSettlement({
 					dkhid: this.big_client_info.DKHID,
@@ -131,10 +119,12 @@
 			},
 			ShowDetails:function(i){
 				this.current_settlement = i;
+			},
+			ClosePopup:function(data){
+				this.view.show = false;
+				this.big_client_info = data;
+				this.GetBigClientSettlement();
 			}
-		},
-		mounted() {
-			this.GetBigClients();
 		}
 	}
 </script>
