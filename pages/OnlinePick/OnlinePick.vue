@@ -6,18 +6,18 @@
 
 <template>
 	<menu_content :index="5">
-		<view class="commodity">
+		<view class="commodity" style="height: 100%;">
 			<view class="hh">
 				<view class="hotcakes">
 					<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
 				</view>
 				<view>
 					<view class="prints">
-						<!-- <view class="sousuo">
-							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-						</view> -->
 						<view class="sousuo">
-							<label @click="Search()">
+							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
+						</view>
+						<view class="sousuo">
+							<label @click="Search">
 								<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 							</label>
 							<view class="criterias" v-if="view.Criterias">
@@ -25,8 +25,8 @@
 								</view>
 								<view class="critlist"><text>自提码：</text><input type="text" v-model="form.search.code" />
 								</view>
-								<view class="confs"><button class="btn btn-qx">清空</button><button class="btn"
-										@click="QueryOrder()">查询</button>
+								<view class="confs"><button class="btn btn-qx" @click="ClearSearch()">清空</button><button
+										class="btn" @click="QueryOrder()">查询</button>
 								</view>
 							</view>
 						</view>
@@ -34,22 +34,25 @@
 				</view>
 			</view>
 			<!-- 小类循环 -->
-			<view class="products" style="display: flex;flex-direction: column;">
-				<view>订单号:{{ main.otoCode }}</view>
-				<view>总金额:{{ main.totalAmount }}</view>
-				<view>总金额:{{ main.totalAmount }}</view>
-				<view>商品信息:
-					<view v-for="i in extracts.Products" style="display: flex;gap: 20px;">
-						<text>编号:{{ i.NO }}</text>
-						<text>商品名称:{{ i.SNAME }}</text>
-						<text>数量:{{ i.QTY }}</text>
-						<text>销售时间:{{ i.SALEDATE }}</text>
+			<view class="products">
+				<view class="procycle">
+					<!-- 产品循环 -->
+					<view class="li" v-if="view.Order">
+						<view class="title-box">
+							<view class="price">{{ main.otoCode || '-' }}</view>
+							<view class="price">{{ extracts.SALEDATE || '-' }}</view>
+						</view>
+						<view class="cods">
+							<view>定金:{{ extracts.DNET || '-' }}</view>
+							<view>折扣金额:{{ main.discount || '-' }}</view>
+						</view>
+							<button @click="OpenReserve" class="btn">提取</button>
+						</view>
 					</view>
 				</view>
-				<view style="border-radius: 5px;background-color: #70c477;color: white;width: 100px;text-align: center;"
-					@click="Reserve()">提取</view>
 			</view>
 		</view>
+		<component v-if="view.Details" :details="details" is="Extract" @Close="CloseReserve" @Reset="Reset"></component>
 	</menu_content>
 </template>
 
@@ -59,26 +62,29 @@
 		global
 	} from '@/models/PaymentAll/models.js';
 	import {
-		getReserveOnlineOrders,
-		onlineOrderReserve
+		getReserveOnlineOrders
 	} from '@/api/business/onlineorders.js'
+	import Extract from '@/pages/OnlinePick/Extract/Extract.vue'
 	export default {
 		name: "OnlinePick",
-		mixins: [global],
+		components:{
+			Extract
+		},
 		data() {
 			return {
 				condition: "今日",
 				form: {
 					search: {
 						code: "",
-						bill: "LH202208"
+						bill: "LH2022080"
 						// bill: ""
 					},
 					code: "", //自提码
 				},
 				view: {
 					Details: false,
-					Criterias: false,
+					Order:false,
+					Criterias: true,
 				},
 				extracts: {
 					SALEDATE: "",
@@ -98,7 +104,8 @@
 					postage: "",
 					discount: "",
 					orderEntries: []
-				}
+				},
+				details:{}
 			}
 		},
 		methods: {
@@ -109,7 +116,7 @@
 				this.view.Details = !this.view.Details;
 			},
 			Search: function(e) {
-				this.view.Criterias = !this.view.Criterias
+				this.view.Criterias = !this.view.Criterias;
 			},
 			QueryOrder: function() {
 				getReserveOnlineOrders({
@@ -122,9 +129,16 @@
 					console.log("查询 线上取货 结果：", data);
 					this.extracts = data.details;
 					this.main = data.result;
-				}), (err) => {
+					this.details = {
+						extracts:this.extracts,
+						main:this.main,
+						code:this.form.code
+					};
+					this.view.Order = true;
+				}), util.callBind(this,(err) => {
 					util.simpleMsg(err.msg, true, err);
-				});
+					this.view.Order = false;
+				}));
 			},
 			Valid: function() {
 				if (this.extracts.THTYPE === '0')
@@ -134,30 +148,25 @@
 					}
 				return true;
 			},
-			Reserve: function() {
-				if (this.Valid())
-					onlineOrderReserve({
-						khid: this.KHID,
-						bill: this.main.otoCode,
-						code: this.form.code,
-						isBill: this.extracts.THTYPE !== "0",
-						details: this.extracts
-					}, util.callBind(this, function(res) {
-						console.log("提取成功！", res);
-						this.Reset();
-					}), util.callBind(this, function(err){
-						util.simpleMsg(err.msg, true);
-						this.Reset();
-					}))
+			OpenReserve: function() {
+				this.view.Details = true;
 			},
-			Reset:function(){
-				for(key in this.main){
-					this.main[key] = this.main[key].constructor();
+			CloseReserve: function() {
+				this.view.Details = false;
+			},
+			Reset:function(isSuccess){
+				// for(key in this.main){
+				// 	this.main[key] = this.main[key].constructor();
+				// }
+				if(isSuccess){
+					this.main = null;
+					this.extracts = null;
+					this.view.Order = false;
 				}
 			}
 		},
 		mounted() {
-
+			// this.QueryOrder();
 		}
 	}
 </script>
@@ -170,5 +179,8 @@
 		display: inline-block;
 		border-radius: 5px;
 		padding: 2px 3px;
+	}
+	.price{
+		margin: 0px;
 	}
 </style>
