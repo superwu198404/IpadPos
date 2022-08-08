@@ -473,6 +473,16 @@
 			},
 			//用户信息确定
 			Confirm: () => {
+				if (new Date(that.Order.THDATE) < new Date()) {
+					util.simpleMsg("提货时间早于当前", true);
+					return;
+				}
+				if (new Date(that.Order.THDATE) < new Date().setHours(new Date()
+						.getHours() + 1)) {
+					util.simpleMsg("提货时间小于一小时内", true);
+					return;
+				}
+
 				if (!that.Order.CUSTMPHONE) {
 					util.simpleMsg("联系电话为空", true);
 					return;
@@ -497,11 +507,11 @@
 					util.simpleMsg("定金大于应收金额", true);
 					return;
 				}
-				if (that.Order.THTYPE != '1' && that.Order.THDATE < new Date()) {
+				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE) < new Date()) {
 					util.simpleMsg("提货时间早于当前", true);
 					return;
 				}
-				if (that.Order.THTYPE == '1' && that.Order.THDATE < new Date().setHours(new Date()
+				if (that.Order.THTYPE == '1' && new Date(that.Order.THDATE) < new Date().setHours(new Date()
 						.getHours() + 1)) {
 					util.simpleMsg("提货时间小于一小时内", true);
 					return;

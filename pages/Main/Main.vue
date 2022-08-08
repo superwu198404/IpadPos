@@ -12,7 +12,7 @@
 	<view class="content">
 		<menu_page :menuIndex="0"></menu_page>
 		<view class="right">
-			<menu_head :data="MsgData"></menu_head>
+			<menu_head></menu_head>
 			<view class="listof">
 				<view class="prolist" style="overflow: hidden;">
 					<!-- <component is="credit-settlement"></component> -->
@@ -469,7 +469,6 @@
 				coupon_list: [],
 				hyinfo: {},
 				KHID: app.globalData.store.KHID,
-				MsgData: [],
 				showSale: false, //显示结算页面
 				yn_hy: false, //是否有会员
 				CXDatas: [],
@@ -479,12 +478,11 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				_msg.ShowMsg(that.KHID, res => {
-					console.log("消息数据：", res);
-					that.MsgData = res;
-				});
+				// _msg.ShowMsg(that.KHID, res => {
+				// 	console.log("消息数据：", res);
+				// 	that.MsgData = res;
+				// });
 				// common.DelSale();//主动删除销售单
-				// util.removeStorage("hyinfo");
 			},
 			//关闭结算
 			CloseSale: function() {
@@ -529,7 +527,6 @@
 			},
 			onShow: function() {
 				let hyinfo = util.getStorage("hyinfo");
-				console.log("会员信息：", hyinfo);
 				if (hyinfo && JSON.stringify(hyinfo) != "{}") {
 					that.yn_hy = true;
 					that.hyinfo = hyinfo;
@@ -542,7 +539,7 @@
 			GetHyCoupons: function(hyinfo) {
 				// let hyinfo = getApp().globalData.hyinfo;
 				if (hyinfo?.hyId) {
-					console.log("会员信息：", JSON.stringify(hyinfo));
+					// console.log("会员信息：", JSON.stringify(hyinfo));
 					_member.CouponList("获取中...", {
 						brand: that.brand,
 						data: {

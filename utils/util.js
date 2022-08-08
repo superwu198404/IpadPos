@@ -204,7 +204,6 @@ const utils = {
 	 */
 	setStorage: function(key, val) {
 		if (key) {
-			console.log("存入缓存的值：", val);
 			getApp().globalData[key] = val;
 			uni.setStorageSync(key, val);
 		}
@@ -218,13 +217,10 @@ const utils = {
 		let val = null;
 		if (key) {
 			val = getApp().globalData[key];
-			console.log("val", val);
 			if (Object.keys(val).length == 0) {
 				val = uni.getStorageSync(key);
 			}
 		}
-		console.log("查询key：", key);
-		console.log("缓存信息：", val);
 		return val;
 	},
 

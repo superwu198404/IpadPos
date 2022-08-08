@@ -13,8 +13,8 @@
 					<view class="imgs">
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
-					<text>门店有一条新的外卖配送单消息来啦...</text>
-					<!-- <text v-for="(item,index) in data">{{item.title}}</text> -->
+					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
+					<text v-for="(item,index) in MsgData" @click="ReadMsg(item)">{{item.title}}</text>
 				</view>
 			</view>
 			<view class="stores">
@@ -26,11 +26,11 @@
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
 					</label>
 				</view>
-				<view class="account">				
+				<view class="account">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text  @click="exits()">{{RYID}} > </text>
+					<text @click="exits()">{{RYID}} > </text>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="Login()">
 							<image src="@/images/qiehuan.png" mode="widthFix"></image>
@@ -46,47 +46,69 @@
 						</view>
 					</view>
 				</view>
-				
+
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import _msg from '@/api/business/message.js';
+	let that;
 	export default {
 		name: "menu_head",
-		props:{
-			data:{
-				type:Array,
-				default(){
-					return []
-				}
-			}
+		props: {
+			data: []
 		},
 		data() {
 			return {
 				STORE_NAME: getApp().globalData.store.NAME,
+				KHID: getApp().globalData.store.KHID,
 				POSID: getApp().globalData.store.POSID,
 				RYID: getApp().globalData.store.RYID,
-				dropout:false
+				dropout: false,
+				MsgData: []
 			};
 		},
+		// created: function(e) {
+		// 	that = this;
+		// },
+		created: function(e) {
+			that = this;
+			_msg.ShowMsg(that.KHID, "SYSTEM", res => {
+				that.MsgData = res.filter((r, i) => {
+					return i == 0;
+				});
+				console.log("消息数据that.MsgData：", that.MsgData);
+			});
+		},
 		methods: {
-			exits: function(e) {				
-					this.dropout=!this.dropout
+			ReadMsg: function(e) {
+				if (e.url) {
+					uni.redirectTo({
+						url: e.url + "?msgdata=''"
+					})
+				}
+			},
+			exits: function(e) {
+				this.dropout = !this.dropout
 			},
 			//切换登录
-			Login:function(){
+			Login: function() {
 				uni.redirectTo({
-					url:"/pages/Login/Login",
-					complete:r=>{console.log(r)}
+					url: "/pages/Login/Login",
+					complete: r => {
+						console.log(r)
+					}
 				})
 			},
 			//退出登录
-			LoginOut:function(){
+			LoginOut: function() {
 				uni.redirectTo({
-					url:"../../pages/index/index",
-					complete:r=>{console.log(r)}
+					url: "../../pages/index/index",
+					complete: r => {
+						console.log(r)
+					}
 				})
 			}
 		}
