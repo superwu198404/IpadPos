@@ -471,6 +471,28 @@ var GetPOSCS = async function(e, func) {
 	}
 }
 
+//获取缓存中的POS参数
+var GetPOSCS_Local = async function(e) {
+	let str;
+	let arr = util.getStorage("POSCS");
+	console.log("缓存参数组数据:", arr);
+	if (!arr || arr.length == 0) {
+		await GetPOSCS(getApp().globalData.store.KHID, res => {
+			arr = res.msg;
+			let obj = arr.find((r) => r.POSCS == e);
+			if (obj) {
+				str = obj.POSCSNR;
+			}
+		});
+	} else {
+		let obj = arr.find((r) => r.POSCS == e);
+		if (obj) {
+			str = obj.POSCSNR;
+		}
+	}
+	return str;
+}
+
 //支付行为
 var actTypeEnum = {
 	Payment: "Payment", //支付
@@ -531,5 +553,6 @@ export default {
 	actTypeEnum,
 	ywTypeEnum,
 	GetDapzcs,
-	DelSale
+	DelSale,
+	GetPOSCS_Local
 }

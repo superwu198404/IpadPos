@@ -42,12 +42,15 @@
 										<view>{{Order.TH_TIME}}</view>
 									</picker>
 								</label>
-								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID"
-										disabled="true" /></label>
+								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID" @input="inputTHKH"
+										:disabled="!YN_YDTH" />
+									<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
+								</label>
 								<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 								</label>
 								<label><text>*配送方式：</text>
-									<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index">
+									<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
+										:disabled="YN_THTYPE">
 										<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 									</picker>
 								</label>
@@ -203,7 +206,7 @@
 					TNET: 10,
 					DNET: 1,
 					CUSTMNAME: "",
-					CUSTMPHONE: "12345678982", //
+					CUSTMPHONE: "", //
 					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
 					TH_DATE: dateformat.getYMD(),
 					TH_TIME: dateformat.gettime(),
@@ -234,6 +237,10 @@
 				_THTYPES: [], //中转集合
 				GGDatas: ["普通蛋糕", "称架蛋糕", "叠层蛋糕"],
 				PSDatas: [], //配送中心数据
+				YN_YDTH: false, //是否支持异店提货
+				THKHDATA: [], //提货门店数据
+				THKHDATAS: [], //提货门店数据 筛选后的数据
+				YN_THTYPE: false, //是否允许更改提货方式，异店不允许
 			}
 		},
 		methods: {
@@ -242,9 +249,41 @@
 				that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
 				that.Order.CARDID = that.GGDatas[0];
+				that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
+				// that.YN_YDTH = true;
+				// console.log("是否支持异店提货：", that.YN_YDTH);
+				if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
+					_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
+						console.log("提货门店数据：", res);
+						that.THKHDATA = res.msg;
+					});
+				}
 				//以下为测试数据
 				// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// console.log("获取到的GSKHINFO", GSKHINFO);
+			},
+			//提货门店输入事件
+			inputTHKH: e => {
+				let str = e.detail.value;
+				console.log("输入信息：", str);
+				if (that.THKHDATA.length > 0) {
+					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
+						return item.ADDR.indexOf(str) >= 0;
+					})
+					console.log("筛选后的门店数据：", that.THKHDATAS);
+				}
+			},
+			//手选提货门店
+			ChooseTH: e => {
+				console.log("手选门店值：", e.ADDR);
+				that.Order.THKHID = e.KHID;
+				if (that.Order.THKHID != that.KHID) {
+					that.THTYPE = 0;
+					that.YN_THTYPE = true; //默认自提且不允许更改
+				} else {
+					that.YN_THTYPE = false;
+				}
+				that.THKHDATAS = []; //选择后清空一下数据源
 			},
 			Show: function() {
 				debugger;
