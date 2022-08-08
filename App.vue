@@ -17,7 +17,7 @@
 				KCDID: "D005",
 				DPID: "11072",// 11072
 				DKFID: '80000000',
-				BMID: "001",
+				BMID: "",//对应program.xsbm pos 这个参数为空字符串
 				GCID: "K201",
 				DQID: 'K01000',
 				NAME: "武汉xxx",

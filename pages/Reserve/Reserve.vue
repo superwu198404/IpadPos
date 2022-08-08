@@ -31,7 +31,7 @@
 										@blur="GetAddr()" /></label>
 								<label><text>*提货日期：</text>
 									<!-- <input type="date" v-model="Order.THDATE" /> -->
-									<picker mode="date" @change="dateChange">
+									<picker mode="date" fields="day" @change="dateChange">
 										<view>{{Order.TH_DATE}}</view>
 									</picker>
 								</label>
@@ -43,8 +43,8 @@
 								</label>
 								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID"
 										disabled="true" /></label>
-								<label><text>*定金：</text><input type="number" v-model="Order.DNET"
-										@input="CheckMoney" /></label>
+								<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
+								</label>
 								<label><text>*配送方式：</text>
 									<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index">
 										<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
@@ -473,15 +473,6 @@
 			},
 			//用户信息确定
 			Confirm: () => {
-				if (new Date(that.Order.THDATE) < new Date()) {
-					util.simpleMsg("提货时间早于当前", true);
-					return;
-				}
-				if (new Date(that.Order.THDATE) < new Date().setHours(new Date()
-						.getHours() + 1)) {
-					util.simpleMsg("提货时间小于一小时内", true);
-					return;
-				}
 
 				if (!that.Order.CUSTMPHONE) {
 					util.simpleMsg("联系电话为空", true);
