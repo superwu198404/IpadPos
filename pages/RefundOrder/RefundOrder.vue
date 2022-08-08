@@ -104,7 +104,7 @@
 									</view>
 									<view class="confirm">
 										<button class="btn btn-qx" @click="statements=false">返 回</button>
-										<button class="btn">确 认</button>
+										<button class="btn" @click="Confirm">确 认</button>
 									</view>
 								
 									<!-- <view class="states" @click="Statements()">
@@ -165,7 +165,7 @@
 					</view>
 					<view class="confirm">
 						<button class="btn btn-qx" @click="statements=false">返 回</button>
-						<button class="btn">确 认</button>
+						<button class="btn" @click="Confirm">确 认</button>
 					</view>
 
 					<!-- <view class="states" @click="Statements()">
@@ -189,6 +189,9 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _refund from '@/api/business/refundorder.js';
+	import {
+		Refund
+	} from '@/bll/RefundBusiness/bll.js'
 
 	var that;
 	export default {
@@ -201,11 +204,9 @@
 				Chargeback: false,
 				coupon_list: [],
 				Newaddr: false,
-				KHID: app.globalData.store.KHID,
-				GSID: app.globalData.store.GSID,
-				POSID: app.globalData.store.POSID,
 				Orders: [],
-				p_bill: "",
+				p_bill: "K200QTD0051220808142432432",
+				// p_bill: "",
 				p_date: dateformat.getYMD(),
 				Order: {},
 				Details: {}
@@ -221,10 +222,12 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				that.GetOrders();
+				that.GetOrders(this.p_bill);
 			},
 			GetOrders: function(bill, date) {
-				_refund.GetOrders(that.KHID, that.GSID, that.POSID, bill, date, res => {
+				console.log("[GetOrders]订单号:",bill);
+				console.log("[GetOrders]时间:",date);
+				_refund.GetOrders(this.KHID, this.GSID, this.POSID, bill, date, res => {
 					console.log("查询结果:", res);
 					if (res.code && res.msg.length > 0) {
 						that.Orders = res.msg;
@@ -288,6 +291,17 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
+			Confirm:function(){
+				console.log("退单确认!开始退款...");
+				Refund.call(this,this.Order.BILL).then(util.callBind(this,function(){
+					console.log("[Confirm]退单表数据(SALE1,2,3):",this.$store.state.location);
+					uni.navigateTo({
+						url: "../Payment/PaymentAll"
+					})
+				})).catch(util.callBind(this,function(err){
+					console.log("退单表数据查询异常:",err);
+				}));
+			}
 		}
 	}
 </script>
