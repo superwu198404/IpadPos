@@ -87,6 +87,42 @@ var GetKHIDByRYID = function(userid, func) {
 	});
 }
 
+//初始化当前门店信息
+var InitStore = function(khid, posid, ryinfo, func) {
+	let store = {};
+	let sql =
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA where KHID='" +
+		khid + "'";
+	db.get().executeQry(sql, "加载中...", res => {
+		console.log("门店信息查询成功：", res);
+		store = {
+			GSID: res.msg[0].GSID,
+			KHID: khid,
+			POSID: posid,
+			RYID: "10086",
+			KCDID: res.msg[0].KCDID,
+			DPID: res.msg[0].DPID,
+			// DKFID: '80000000',
+			// BMID: "001",
+			GCID: res.msg[0].GCID,
+			DQID: res.msg[0].DQID,
+			NAME: res.msg[0].SNAME,
+			// MERID: "999990053990001",
+			// deviceno: "13001001",
+			KHAddress: res.msg[0].ADDRESS,
+			POSCSZID: res.msg[0].POSCSZID,
+			RYNAME: "老王",
+			KHZID: res.msg[0].KHZID,
+			PHONE: res.msg[0].PHONE,
+		}
+		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
+		console.log("初始化后的信息：", getApp().globalData.store);
+
+	}, err => {
+		console.log("门店信息查询失败：", err);
+	})
+}
+
 export default {
 	GetPassWord,
 	GetKHIDByRYID
