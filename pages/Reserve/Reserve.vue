@@ -10,9 +10,10 @@
 		<menu_page :menuIndex="1"></menu_page>
 		<view class="right">
 			<menu_head></menu_head>
-			<view>预留商品加购：</view>
-			<button @click="showReserve()">点击录入</button>
-			<view>
+			<view style="width: 400px;">
+				<label>预留商品加购：
+					<button @click="showReserve()">点击录入</button>
+				</label>
 				预定主单数据：{{YDDATA}}
 			</view>
 			<!-- 编辑 -->
@@ -447,12 +448,11 @@
 				let str = e.detail.value;
 				// 正则表达试
 				str = (str.match(/^\d*(\.?\d{0,2})/g)[0]) || null;
-				setTimeout(() => {
+				console.log("金额校验：", str);
+				that.$nextTick(function() { //防止不及时更新的问题
+					//重新赋值
 					that.Order.DNET = str;
-				}, 0);
-				// that.$forceUpdate();
-				// console.log("新的定金值：", str);
-				// 重新赋值
+				});
 			},
 			//蛋糕规格切换事件
 			GGChange: function(e) {
@@ -473,7 +473,6 @@
 			},
 			//用户信息确定
 			Confirm: () => {
-
 				if (!that.Order.CUSTMPHONE) {
 					util.simpleMsg("联系电话为空", true);
 					return;
@@ -483,7 +482,7 @@
 					return;
 				}
 				if (!that.Order.THTYPE) {
-					util.simpleMsg("提货类型为空", true);
+					util.simpleMsg("配送方式为空", true);
 					return;
 				}
 				if (that.Order.DNET == "" || that.Order.DNET == null || that.Order.DNET == undefined) {
@@ -498,11 +497,12 @@
 					util.simpleMsg("定金大于应收金额", true);
 					return;
 				}
-				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE) < new Date()) {
+				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 					util.simpleMsg("提货时间早于当前", true);
 					return;
 				}
-				if (that.Order.THTYPE == '1' && new Date(that.Order.THDATE) < new Date().setHours(new Date()
+				if (that.Order.THTYPE == '1' && new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date().setHours(
+						new Date()
 						.getHours() + 1)) {
 					util.simpleMsg("提货时间小于一小时内", true);
 					return;
@@ -536,8 +536,12 @@
 					THTYPE: "",
 					NOTE: "",
 					CUSTMADDRESS: "",
-					THKHID: "",
-					CUSTMCOMM: ""
+					THKHID: that.KHID,
+					CUSTMCOMM: "",
+					STR2: "", //配送中心ID
+					_STR2: "", //配送中心名称
+					CARDID: "" //蛋糕类型
+
 				};
 				that.ADDRS = [];
 				that.ADDR = {
