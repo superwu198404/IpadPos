@@ -19,7 +19,11 @@ var GetPassWord = function(khid, userid, password, func) {
 			}
 			if (func) func({
 				code: true,
-				msg: "登录成功"
+				data: {
+					ryid: userid,
+					gwid: res.msg[0].GWID,
+					name: res.msg[0].SNAME
+				}
 			});
 		} else {
 			util.simpleMsg("账号错误，请检查", true);
@@ -98,8 +102,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
-			POSID: posid,
-			RYID: "10086",
+			// POSID: posid,
 			KCDID: res.msg[0].KCDID,
 			DPID: res.msg[0].DPID,
 			// DKFID: '80000000',
@@ -111,13 +114,17 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			// deviceno: "13001001",
 			KHAddress: res.msg[0].ADDRESS,
 			POSCSZID: res.msg[0].POSCSZID,
-			RYNAME: "老王",
 			KHZID: res.msg[0].KHZID,
 			PHONE: res.msg[0].PHONE,
+			RYNAME: ryinfo.name,
+			RYID: ryinfo.ryid,
 		}
 		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
-		console.log("初始化后的信息：", getApp().globalData.store);
-
+		console.log("登录后的初始化信息：", getApp().globalData.store);
+		if (func) func({
+			code: true,
+			msg: "初始化成功"
+		});
 	}, err => {
 		console.log("门店信息查询失败：", err);
 	})
@@ -125,5 +132,6 @@ var InitStore = function(khid, posid, ryinfo, func) {
 
 export default {
 	GetPassWord,
-	GetKHIDByRYID
+	GetKHIDByRYID,
+	InitStore
 }
