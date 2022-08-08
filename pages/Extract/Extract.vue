@@ -55,7 +55,7 @@
 						</view>
 						<view class="cods">
 							<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
-							<view>定金:{{ item.DNET || '-' }}</view>
+							<view>定金:{{ item.DNET.toString() || '-' }}</view>
 							<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
 							<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
@@ -152,6 +152,7 @@
 					customer: this.condition.customer
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
+					console.log("[GetList]预定提取:",data);
 					if (data.constructor === Array)
 						this.extracts = data;
 					else
