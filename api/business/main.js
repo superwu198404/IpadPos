@@ -40,6 +40,32 @@ var GetFZCX = function(khid, func) {
 		console.log("查询促销异常：", err);
 	})
 }
+
+/**
+ * 获取门店促销活动信息
+ * @param {} khid 
+ */
+var GetMDCXHD = function(func) {
+	let cxArr = [];
+	let sql =
+		"select  CXZT,DATE(SDATE) \
+             SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE>=date('now') \
+                                        union all \
+                                        select CXZT,DATE(SDATE) \
+             SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE>=date('now')  ORDER  by CXRY , SDATE desc";
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("门店促销活动查询结果：", res);
+		if (res.code && res.msg.length > 0) {
+			if (func) func(res.msg);
+		} else {
+			util.simpleMsg("暂无数据", true);
+		}
+	}, err => {
+		util.simpleMsg("异常：" + err, true);
+		console.log("查询促销异常：", err);
+	})
+}
 export default {
-	GetFZCX
+	GetFZCX,
+	GetMDCXHD
 }

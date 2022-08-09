@@ -426,23 +426,23 @@
 			</view>
 		</view>
 		<!-- 促销活动 -->
-		<view class="boxs" v-if="showCXData">
+		<view class="boxs" v-if="showMDCXData">
 			<view class="popup promot">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="commods" style="padding-top:26rpx;">
 					<view class="h3">
-						促销活动列表<button class="close" @click="showCXData=false">×</button>
+						促销活动列表<button class="close" @click="showMDCXData=false">×</button>
 					</view>
 					<view class="uls">
-						<view class="lis">
-							<view class="h8">促销主题:这是促销主题</view>
-							<label>顾客范围:会员</label>
-							<label>开始日期:2022-09-09 00:00</label>
-							<label>结束日期:2022-10-09 00:00</label>
+						<view class="lis" v-for="(item,index) in MDCXDatas">
+							<view class="h8">促销主题:{{item.CXZT}}</view>
+							<label>顾客范围:{{item.CXRY}}</label>
+							<label>开始日期:{{item.SDATE}}</label>
+							<label>结束日期:{{item.EDATE}}</label>
 						</view>
 					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn" @click="showMDCXData=false">确 认</button>
 					</view>
 				</view>
 			</view>
@@ -498,7 +498,8 @@
 				yn_hy: false, //是否有会员
 				CXDatas: [],
 				showZK: false, //是否展示折扣数据
-				showCXData: false
+				showMDCXData: false,
+				MDCXDatas: []
 			}
 		},
 		methods: {
@@ -616,9 +617,14 @@
 			Discounts: e => {
 				that.showZK = true;
 			},
+
+			//获取并展示门店促销活动
 			ShowCXData: function() {
-				that.showCXData = true;
-			}
+				that.showMDCXData = true;
+				_main.GetMDCXHD(res => {
+					that.MDCXDatas = res;
+				})
+			},
 		}
 	}
 </script>
