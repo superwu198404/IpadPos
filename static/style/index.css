@@ -153,7 +153,35 @@ page {
 	height: 40rpx;
 	margin-right: 6rpx;
 }
-
+.commods .uls{
+	padding:3% 0;
+	max-height: 900rpx;
+	overflow: auto;
+}
+.commods .uls .lis{
+	display: flex;
+	flex-direction: column;
+	border:1px solid #eee;
+	border-radius: 10rpx;
+	background-color: #fefefe;
+	padding:1% 2%;
+	margin:0 2% 3% 0;
+	width:43%;
+}
+.commods .uls .lis .h8{
+	font-weight: 700;
+	line-height: 60rpx;
+}
+.boxs .promot{
+	width:80%;
+}
+.promot .commods .lis label{
+	line-height: 46rpx;
+}
+.promot .lis label:nth-last-child(1),.promot .lis label:nth-last-child(2){
+	color: #B0B0B0;
+	font-size: 26rpx;
+}
 .cods {
 	display: flex;
 	justify-content: space-between;

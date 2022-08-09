@@ -99,6 +99,22 @@ var getGSKHINFO = (gsid, khid) => {
 	return Gskhinfo;
 }
 
+//获取提货门店数据 
+var GetTHKHDA = function(gsid, khid, func) {
+	let gskhinfo = getGSKHINFO(gsid, khid);
+	// gskhinfo = "='11501'";
+	let sql =
+		"SELECT KHID,upper(PINYIN) PINYIN,SNAME,KHID||'_'||SNAME  ADDR FROM KHDA WHERE \
+                                   CLIENT_TYPE IN( '1','2','3')  and GSID " + gskhinfo +
+		"  AND   ZZTLX='QT' AND PINYIN IS NOT NULL   and  client_status  not  in ('2','3') ORDER BY KHID";
+	db.get().executeQry(sql, "加载中...", res => {
+		console.log("提货门店查询成功：", res);
+		if (func)
+			func(res);
+	}, err => {
+		console.log("提货门店查询失败：", err);
+	})
+}
 //获取配送中心数据
 var GetPSCenter = function(gsid, khid, func) {
 	let gskhinfo = getGSKHINFO(gsid, khid);
@@ -121,5 +137,6 @@ export default {
 	searchMapAddr,
 	MatchBHKH,
 	getGSKHINFO,
-	GetPSCenter
+	GetPSCenter,
+	GetTHKHDA
 }

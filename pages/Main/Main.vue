@@ -68,6 +68,9 @@
 						<view class="a-z" @click="Memberlogin(1)">
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 						</view>
+						<view class="a-z" @click="ShowCXData()">
+							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
+						</view>
 						<view class="states" @click="ShowSale()">
 							<text>结算单</text>
 							<label>«</label>
@@ -422,6 +425,28 @@
 				</view>
 			</view>
 		</view>
+		<!-- 促销活动 -->
+		<view class="boxs" v-if="showCXData">
+			<view class="popup promot">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<view class="commods" style="padding-top:26rpx;">
+					<view class="h3">
+						促销活动列表<button class="close" @click="showCXData=false">×</button>
+					</view>
+					<view class="uls">
+						<view class="lis">
+							<view class="h8">促销主题:这是促销主题</view>
+							<label>顾客范围:会员</label>
+							<label>开始日期:2022-09-09 00:00</label>
+							<label>结束日期:2022-10-09 00:00</label>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn">确 认</button>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -473,6 +498,7 @@
 				yn_hy: false, //是否有会员
 				CXDatas: [],
 				showZK: false, //是否展示折扣数据
+				showCXData: false
 			}
 		},
 		methods: {
@@ -589,6 +615,9 @@
 			},
 			Discounts: e => {
 				that.showZK = true;
+			},
+			ShowCXData: function() {
+				that.showCXData = true;
 			}
 		}
 	}

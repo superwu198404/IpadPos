@@ -107,7 +107,7 @@
 				getApp().globalData.store = {}; //清空用户信息
 				uni.removeStorageSync("hyinfo"); //清除会员信息
 				uni.redirectTo({
-					url: "/pages/Login/Login",
+					url: "/pages/index/index",
 					complete: r => {
 						console.log(r)
 					}
