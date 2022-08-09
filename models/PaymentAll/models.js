@@ -37,8 +37,10 @@ export const orderCreated = function(obj, payload) {
  */
 export const PayDataAssemble = function(){
 	this.UniqueBill(); //包装 data 前先执行防重复单号操作
+	console.log("此时的二级单号:",this.prev_no);
 	return {
 		subject: this.subject,
+		no:this.prev_no,//储存当前序号
 		out_trade_no: this.out_trade_no,
 		total_money: (Number(this.totalAmount) * 100).toFixed(0), //总支付金额
 		money: (Number(this.dPayAmount) * 100).toFixed(0), //这一笔的支付金额

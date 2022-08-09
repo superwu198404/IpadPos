@@ -60,12 +60,13 @@
 							<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
 						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
-							<!-- <button @click="view.Details = true" class="btn">预定提取</button> -->
+							<button @click="ExtractOrder(item)" class="btn">预定提取</button>
 						</view>
 					</view>
 				</view>
 			</view>
-			<component :is="'Reserve'" v-if="view.Details"></component>
+			<component :is="'Reserve'" :bill="extract_bill" v-if="view.Details" @Close="view.Details = false">
+			</component>
 		</view>
 	</menu_content>
 </template>
@@ -75,7 +76,7 @@
 	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
 	import {
 		getReserveOrders
-	} from '@/api/business/reserve.js'
+	} from '@/api/business/extract.js'
 	export default {
 		mixins: [global],
 		components: {
@@ -94,6 +95,7 @@
 					Details: false,
 					Criterias: false
 				},
+				extract_bill: "", //提取订单的订单号
 				extracts: []
 			}
 		},
@@ -143,6 +145,10 @@
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
 			},
+			ExtractOrder: function(item) { //提取商品
+				this.view.Details = true;
+				this.extract_bill = item.BILL;
+			},
 			GetList: function() {
 				getReserveOrders({
 					khid: this.KHID,
@@ -152,9 +158,17 @@
 					customer: this.condition.customer
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
-					console.log("[GetList]预定提取:",data);
-					if (data.constructor === Array)
-						this.extracts = data;
+					console.log("[GetList]预定提取:", data);
+					if (data.constructor === Array){
+						this.extracts = (function(){
+							let indexs = data.map(item => {
+								item.$index =item.SALEDATE ? new Date(item.SALEDATE).getTime() : 0
+								return item;
+							});
+							indexs.sort((a,b) => a-b>0);
+							return indexs;
+						})();
+					}
 					else
 						this.extracts = [];
 				}, (err) => {
@@ -301,5 +315,23 @@
 
 	.handles uni-button {
 		width: 6rem;
+	}
+
+	.title-box .price {}
+
+	.title-box>.state {
+		flex-shrink: 0;
+	}
+
+	.title-box>.price:nth-child(1) {
+		width: 50% !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+	}
+
+	.title-box>.price:nth-child(3) {
+		justify-content: right;
+		flex-shrink: 0;
 	}
 </style>
