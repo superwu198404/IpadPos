@@ -946,6 +946,7 @@
 						console.log("[Payment-付款]支付失败！")
 						util.simpleMsg("[Payment-付款]支付失败!原因：" + error.msg);
 						this.authCode = ""; //避免同一个付款码多次使用
+						this.orderGenarator(payAfter, info.type, null, true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this))
 			},
 			//创建支付记录
@@ -953,6 +954,7 @@
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				console.log("生成订单类型[payload]：", payload);
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
+				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
 				this.yPayAmount += fail ? 0 : ((function() {
 					if (result.vouchers.length > 0) {
 						console.log("券支付金额：")
@@ -974,40 +976,51 @@
 						return (payload.money / 100)
 					}
 				}).bind(this))(); //把支付成功部分金额加上
-				if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
-					result.vouchers.forEach((function(coupon, index) {
-						let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
-						console.log("卡券：", coupon)
+				//支付失败的时候 result 并不是标准的响应内容
+				if(result){
+					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
+						result.vouchers.forEach((function(coupon, index) {
+							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
+							console.log("卡券：", coupon)
+							this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+								amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
+									(coupon
+										.note === 'EXCESS' ? -coupon
+										.pay_amount : coupon
+										.denomination)) / 100).toFixed(2),
+								fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid : coupon
+									?.fkid,
+								name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
+									excessInfo.name,
+								balance: (coupon?.balance / 100).toFixed(2), //如果是电子卡，余额
+								balance_old: ((coupon.balance + coupon.pay_amount) / 100).toFixed(
+									2), //如果是电子卡，余额
+								zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
+									.note ===
+									'EXCESS' ? excessInfo.fkid : coupon.disc_type),
+								disc: (coupon?.discount / 100).toFixed(2),
+								fail,
+								id_type: coupon?.type,
+								is_free: coupon?.yn_zq,
+								card_no: coupon?.no,
+								no: payload.no
+							}, result));
+						}).bind(this));
+					} else { //如果是聚合支付
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
-								(coupon
-									.note === 'EXCESS' ? -coupon
-									.pay_amount : coupon
-									.denomination)) / 100).toFixed(2),
-							fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid : coupon
-								?.fkid,
-							name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
-								excessInfo.name,
-							balance: (coupon?.balance / 100).toFixed(2), //如果是电子卡，余额
-							balance_old: ((coupon.balance + coupon.pay_amount) / 100).toFixed(
-								2), //如果是电子卡，余额
-							zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
-								.note ===
-								'EXCESS' ? excessInfo.fkid : coupon.disc_type),
-							disc: (coupon?.discount / 100).toFixed(2),
+							amount: (payload.money / 100).toFixed(2),
 							fail,
-							id_type: coupon?.type,
-							is_free: coupon?.yn_zq,
-							card_no: coupon?.no,
 							no: payload.no
 						}, result));
-					}).bind(this));
-				} else { //如果是聚合支付
+					}
+				}
+				else{//如果为失败的支付请求
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail,
-						no: payload.no
-					}, result));
+						no: payload.no,
+						bill:payload.out_trade_no//保存失败的订单号
+					}));
 				}
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -1320,10 +1333,11 @@
 						this.retryEnd(trade, false)
 						this.yPayAmount += (data.money / 100);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
+						util.simpleModal('[singlePayRetry]重试支付成功!', res);
 					}).bind(this), (function(err) {
 						this.retryEnd(trade);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
-						util.simpleModal('支付失败', err.msg);
+						util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
 					}).bind(this));
 				else
 					util.simpleMsg("已存在相同的付款方式！", false);
