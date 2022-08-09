@@ -104,8 +104,8 @@
 			},
 			//退出登录
 			LoginOut: function() {
-				getApp().globalData.store = {}; //清空用户信息
-				uni.removeStorageSync("hyinfo"); //清除会员信息
+				// getApp().globalData.store = {}; //清空用户信息
+				// uni.removeStorageSync("hyinfo"); //清除会员信息
 				uni.redirectTo({
 					url: "/pages/index/index",
 					complete: r => {

@@ -132,9 +132,9 @@
 		margin-right: 2%;
 	}
 
-	.search label:nth-child(1) {
+	/* .search label:nth-child(1) {
 		width: 16%;
-	}
+	} */
 
 	.search label text {
 		display: flex;
