@@ -28,6 +28,7 @@
 				RYNAME: "老王",
 				KHZID: "03",
 				PHONE: 18171372662,
+				JGID: "K200",
 			},
 			hyinfo: {
 				// hyId: "1000311640"

@@ -204,9 +204,9 @@
 					DISC: 2,
 					ZNET: 12,
 					TNET: 10,
-					DNET: 1,
+					DNET: 0,
 					CUSTMNAME: "",
-					CUSTMPHONE: "", //
+					CUSTMPHONE: "", 
 					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
 					TH_DATE: dateformat.getYMD(),
 					TH_TIME: dateformat.gettime(),
@@ -524,7 +524,8 @@
 					util.simpleMsg("配送方式为空", true);
 					return;
 				}
-				if (that.Order.DNET == "" || that.Order.DNET == null || that.Order.DNET == undefined) {
+				console.log("查看定金数据：", that.Order.DNET);
+				if (that.Order.DNET == null || that.Order.DNET == undefined) {
 					util.simpleMsg("定金为空", true);
 					return;
 				}

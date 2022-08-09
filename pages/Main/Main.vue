@@ -247,31 +247,27 @@
 							<button @click="showZK=false">×</button>
 						</view>
 						<view class="shoppbag">
-							<radio-group>
+							<radio-group @change="ChooseZK">
 								<view class="h8">
 									<label>
-										<radio name="zhe"></radio> 可用标准折扣
+										<radio name="zhe" value="BZ" :checked="curZKType=='BZ'"></radio> 可用标准折扣
 									</label>
 									<label>
-										<radio name="zhe"></radio> 选择临时降点
+										<radio name="zhe" value="LS" :checked="curZKType=='LS'"></radio> 选择临时降点
 									</label>
 									<label>
-										<radio name="zhe"></radio> 选择特批折扣
+										<radio name="zhe" value="TP" :checked="curZKType=='TP'"></radio> 选择特批折扣
 									</label>
 								</view>
 							</radio-group>
 							<view class="lists">
-								<view class="conlst">
-									<label>商品名称<text>折扣率：0.8</text></label>
-									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
+								<view class="conlst" v-if="curZKType=='TP'" v-for="(item,index) in ZKDatas">
+									<label>{{item.SPJGZ}}<text>折扣率：{{item.BFB}}</text></label>
+									<view><text>商品分组：{{item.KONDM}}</text><!-- <text>满足金额：{{item.KBETR}}</text> --></view>
 								</view>
-								<view class="conlst">
-									<label>商品名称<text>折扣率：0.8</text></label>
-									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
-								</view>
-								<view class="conlst">
-									<label>商品名称<text>折扣率：0.8</text></label>
-									<view><text>商品分组：01</text><text>满足金额：1000</text></view>
+								<view class="conlst" v-else v-for="(item,index) in ZKDatas">
+									<label>{{item.ZKNAME}}<text>折扣率：{{item.ZKQTY_JS}}</text></label>
+									<view><text>商品分组：{{item.ZKSTR}}</text><text>满足金额：{{item.MZNET}}</text></view>
 								</view>
 							</view>
 						</view>
@@ -494,12 +490,17 @@
 				coupon_list: [],
 				hyinfo: {},
 				KHID: app.globalData.store.KHID,
+				DQID: app.globalData.store.DQID,
+				DKFID: app.globalData.store.DKFID,
+				JGID: app.globalData.store.JGID,
 				showSale: false, //显示结算页面
 				yn_hy: false, //是否有会员
 				CXDatas: [],
 				showZK: false, //是否展示折扣数据
 				showMDCXData: false,
-				MDCXDatas: []
+				MDCXDatas: [],
+				ZKDatas: [],
+				curZKType: "BZ"
 			}
 		},
 		methods: {
@@ -522,20 +523,6 @@
 			ShowSale: function() {
 				that.showSale = true;
 				that.GetFZCX(); //获取辅助促销
-			},
-			//消息已读
-			ReadMsg: function(e, i) {
-				_msg.DelMsg(that.KHID, e, res => {
-					console.log("消息数据：", res);
-					that.MsgData.splice(i, 1);
-					// let arr = that.MsgData;
-					// that.MsgData = arr.splice(i, 1);
-					if (e.url) {
-						uni.navigateTo({
-							url: e.url
-						})
-					}
-				});
 			},
 			//切换登录
 			ChangeMember: function() {
@@ -614,15 +601,36 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
+			//展示默认折扣数据
 			Discounts: e => {
 				that.showZK = true;
+				that.GetZKDatas();
 			},
-
+			//折扣类型切换事件
+			ChooseZK: e => {
+				that.curZKType = e.detail.value;
+				that.GetZKDatas();
+			},
 			//获取并展示门店促销活动
-			ShowCXData: function() {
-				that.showMDCXData = true;
-				_main.GetMDCXHD(res => {
-					that.MDCXDatas = res;
+			GetZKDatas: function(type) {
+				let data = {
+					zktype: that.curZKType,
+					dqid: that.DQID,
+					spjgz: "",
+					dkhid: that.DKFID, //"0020004824"
+					jgid: that.JGID
+				};
+				_main.GetZKDatas(data, res => {
+					if (res.code) {
+						if (that.curZKType == 'TP') {
+							that.ZKDatas = JSON.parse(res.data);
+						} else {
+							that.ZKDatas = res.msg;
+						}
+					} else {
+						that.ZKDatas =[];
+						util.simpleMsg("暂无数据", true);
+					}
 				})
 			},
 		}

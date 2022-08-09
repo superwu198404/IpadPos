@@ -167,7 +167,7 @@
   border:1px solid #E0E0E0;
   border-radius: 50rpx;
   margin-bottom: 20rpx;
-  width: auto;
+  width: 400rpx;
 }
 .tally view label{
 	margin-right: 40rpx;
@@ -195,4 +195,7 @@
 }
 .confirm button{
 	width:40%;
+}
+.infor{
+	padding-bottom: 2%;
 }
