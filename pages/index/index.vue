@@ -462,7 +462,7 @@
 				this.Products.forEach(product => total += product.AMOUNT);
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
-				// this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
+				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("手工折扣额：", this.SKY_DISCOUNT);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				let curDis = 0;

@@ -81,8 +81,20 @@ var SXGetOrders = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+/**
+ * 赊销退单
+ * @param {*} data 
+ * @param {*} func 
+ */
+var CreditOrderRefund = function (data, func) {
+	let apistr = "MobilePos_API.Models.SXSALE001CLASS.CreditOrderRefund";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func);
+}
+
 export default {
 	GetOrders,
 	GetOrderDetails,
-	SXGetOrders
+	SXGetOrders,
+	CreditOrderRefund
 }

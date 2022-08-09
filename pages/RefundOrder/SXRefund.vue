@@ -255,13 +255,21 @@
 				this.Newaddr = true
 			},
 			//确认去退货
-			ConfirmToPay:function(){
+			ConfirmToPay:function(order){
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
 					success: function (res) {
 						if (res.confirm) {
 							console.log('用户点击确定');
+							_refund.CreditOrderRefund({
+								khid:this.KHID,
+								posid:this.POSID,
+								ryid:this.RYID,
+								dkhname:order.DKFNAME,
+								bill:order.BILL,
+								saledata:new Date().toLocaleDateString()
+							})
 						} else if (res.cancel) {
 							console.log('用户点击取消');
 						}
