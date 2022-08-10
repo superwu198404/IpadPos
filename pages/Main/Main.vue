@@ -247,7 +247,7 @@
 							<button @click="showZK=false">×</button>
 						</view>
 						<view class="shoppbag">
-							<radio-group @change="ChooseZK">
+							<radio-group @change="ChangeZK">
 								<view class="h8">
 									<label>
 										<radio name="zhe" value="BZ" :checked="curZKType=='BZ'"></radio> 可用标准折扣
@@ -261,11 +261,13 @@
 								</view>
 							</radio-group>
 							<view class="lists">
-								<view class="conlst" v-if="curZKType=='TP'" v-for="(item,index) in ZKDatas">
+								<view class="conlst" v-if="curZKType=='TP'" v-for="(item,index) in ZKDatas"
+									@click="ChooseZK(item)">
 									<label>{{item.SPJGZ}}<text>折扣率：{{item.BFB}}</text></label>
-									<view><text>商品分组：{{item.KONDM}}</text><!-- <text>满足金额：{{item.KBETR}}</text> --></view>
+									<view><text>商品分组：{{item.KONDM}}</text><!-- <text>满足金额：{{item.KBETR}}</text> -->
+									</view>
 								</view>
-								<view class="conlst" v-else v-for="(item,index) in ZKDatas">
+								<view class="conlst" v-else v-for="(item,index) in ZKDatas" @click="ChooseZK(item)">
 									<label>{{item.ZKNAME}}<text>折扣率：{{item.ZKQTY_JS}}</text></label>
 									<view><text>商品分组：{{item.ZKSTR}}</text><text>满足金额：{{item.MZNET}}</text></view>
 								</view>
@@ -607,7 +609,7 @@
 				that.GetZKDatas();
 			},
 			//折扣类型切换事件
-			ChooseZK: e => {
+			ChangeZK: e => {
 				that.curZKType = e.detail.value;
 				that.GetZKDatas();
 			},
@@ -617,7 +619,7 @@
 					zktype: that.curZKType,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: that.DKFID, //"0020004824"
+					dkhid: "0020004824",//that.DKFID, 
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {
@@ -628,10 +630,15 @@
 							that.ZKDatas = res.msg;
 						}
 					} else {
-						that.ZKDatas =[];
+						that.ZKDatas = [];
 						util.simpleMsg("暂无数据", true);
 					}
 				})
+			},
+			//选择折扣
+			ChooseZK: e => {
+				console.log("已选折扣：", e);
+				util.simpleMsg("折扣率：" + (e.BFB || e.ZKQTY_JS));
 			},
 		}
 	}

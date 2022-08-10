@@ -6,6 +6,7 @@ import util from '@/utils/util.js';
 
 export const GetPayWayList = async function(e) {
 	let PayWayList = [];
+	e = 'K0101QT2'; //测试使用
 	await common.GetPayWay(e, function(res) {
 		console.log("GetPayWayList：", res);
 		if (res.code) {
@@ -77,12 +78,12 @@ export const GetPayWayList = async function(e) {
 
 export const Refund = async function(bill) {
 	let data = await RefundQuery(bill);
-	let sale1_obj = {},//sale 1 数据对象
-		sale2_arr = [],//sale 2 数据对象
-		sale3_arr = [];//sale 3 数据对象
-	let Products = [];//商品信息 数据对象
-	let PayWayList = [];//支付方式 数据对象
-	PayWayList = await GetPayWayList();
+	let sale1_obj = {}, //sale 1 数据对象
+		sale2_arr = [], //sale 2 数据对象
+		sale3_arr = []; //sale 3 数据对象
+	let Products = []; //商品信息 数据对象
+	let PayWayList = []; //支付方式 数据对象
+	PayWayList = await GetPayWayList(this.KHID);
 	if (!sale1_obj || Object.keys(sale1_obj).length == 0 || sale2_arr.length == 0 || sale3_arr.length ==
 		0) { //如果服务器查不到
 		data = await common.QueryRefund(bill);
@@ -136,6 +137,6 @@ export const Refund = async function(bill) {
 		SKY_DISCOUNT: sale1_obj.BILLDISC,
 		totalAmount: 0,
 		actType: common.actTypeEnum.Refund,
-		PayList:/*this.PayList*/ []
+		PayList: /*this.PayList*/ []
 	});
 }

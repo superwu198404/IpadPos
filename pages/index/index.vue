@@ -712,7 +712,7 @@
 				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				await common.InitZFRULE();
-				let khid = "K0101QT2";
+				let khid = "K0101QT2";//测试使用
 				//获取支付方式
 				await that.GetPayWay(khid);
 				//初始化配置参数

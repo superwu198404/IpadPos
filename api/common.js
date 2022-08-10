@@ -191,6 +191,7 @@ var TransLite = function(e) {
 
 //获取支付方式
 var GetPayWay = function(e, func) {
+	console.log("查询门店的支付方式:", e);
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
                                        F1.JK_PRINT_PATH  JK_PRINT_PATH,\
                                        IFNULL(F1.YN_ZL, 'N') YN_ZL,\

@@ -223,8 +223,7 @@
 				that.GetOrders(this.p_bill);
 			},
 			GetOrders: function(bill, date) {
-				console.log("[GetOrders]订单号:", bill);
-				console.log("[GetOrders]时间:", date);
+				console.log("KHID:", this.KHID);
 				_refund.GetOrders(this.KHID, this.GSID, this.POSID, bill, date, res => {
 					console.log("查询结果:", res);
 					if (res.code && res.msg.length > 0) {
