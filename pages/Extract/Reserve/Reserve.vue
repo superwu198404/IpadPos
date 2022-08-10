@@ -71,14 +71,14 @@
 					<label>
 						<image class="touxiang" src="../../../images/touxiang.png"></image>
 						<label
-							class="meminfo"><text>{{ details.main.CUSTMNAME || "-" }}</text><text>{{ details.main.CUSTMPHONE || "-" }}</text></label>
+							class="meminfo"><text>{{ details.info.CUSTMNAME || "-" }}</text><text>{{ details.info.CUSTMPHONE || "-" }}</text></label>
 					</label>
 					<text>清空</text>
 				</view>
 				<view class="edit-info">
 					<button @click="views.Memberinfo = true">+修改预订单信息</button>
 				</view>
-				<view class="h5"><text>单号：{{ details.main.BILL || "-" }}</text></view>
+				<view class="h5"><text>单号：{{ details.info.BILL || "-" }}</text></view>
 				<view class="goods">
 					<!-- 商品循环 -->
 					<view class="prolist" v-for="i in details.list">
@@ -104,10 +104,10 @@
 				</view>
 
 				<view class="ul">
-					<view class="li"><text>总金额</text><text>￥{{ details.main.ZNET }}</text></view>
+					<view class="li"><text>总金额</text><text>￥{{ details.info.ZNET }}</text></view>
 					<view class="li"><text>件数</text><text>{{ details.list.length }}</text></view>
-					<view class="li"><text>折扣</text><text>-￥{{ details.main.BILLDISC }}</text></view>
-					<view class="li"><text>应收金额</text><text>￥{{ details.main.DNET }}</text></view>
+					<view class="li"><text>折扣</text><text>-￥{{ details.info.BILLDISC }}</text></view>
+					<view class="li"><text>应收金额</text><text>￥{{ details.info.DNET }}</text></view>
 				</view>
 
 				<view class="confirm">
@@ -126,7 +126,7 @@
 		name: "Reserve",
 		props: {
 			show: Boolean,
-			bill: String
+			info: Object
 		},
 		data() {
 			return {
@@ -136,15 +136,18 @@
 					Memberinfo: false
 				},
 				details: {
-					list: [], //列表数据（后端查询的是一个商品集合）
-					main: {
+					info:{
 						BILL: "",
+						THDATE: "",
 						CUSTMNAME: "",
 						CUSTMPHONE: "",
+						CUSTMCOMM: "",
 						DNET: "",
 						ZNET: "",
-						BILLDISC: ""
-					} //主单数据（商品集合中共有的部分，如买家的信息）
+						BILLDISC: "",
+						CUSTMADDRESS: ""
+					},//主单数据（商品集合中共有的部分，如买家的信息）
+					list: []//列表数据（后端查询的是一个商品集合）
 				}
 			}
 		},
@@ -160,45 +163,59 @@
 				}, util.callBind(this, function(res) {
 					if (res.code) {
 						this.details.list = JSON.parse(res.data);
-						if (this.details.list.length > 0) {
-							this.details.main.CUSTMNAME = this.details.list[0].CUSTMNAME;
-							this.details.main.CUSTMPHONE = this.details.list[0].CUSTMPHONE;
-							this.details.main.DNET = this.details.list[0].DNET;
-							this.details.main.ZNET = this.details.list[0].ZNET;
-							this.details.main.BILLDISC = this.details.list[0].BILLDISC;
-							this.details.main.BILL = this.details.list[0].BILL;
-						}
 						console.log("详细信息：", res);
 					} else
 						util.simpleMsg(res.msg, true, res);
 				}))
+			},
+			Save: function() {
+				_extract.reserveOrdersUpdate({
+					khid: this.KHID,
+					gsid: this.GSID,
+					bill: this.order.BILL,
+					order: {
+						remark: this.order.CUSTMCOMM,
+						addr_id: this.order.NOTE2,
+						bhid: this.order.STR2,
+						date: this.order.THDATE,
+						phone: this.order.CUSTMPHONE,
+						addr: this.order.CUSTMADDRESS,
+						custname: this.order.CUSTMNAME,
+					}
+				}, util.callBind(this, function(res) {
+					util.simpleMsg(res.msg, res.code, res);
+				}));
 			},
 			Close: function() {
 				this.$emit("Close");
 			}
 		},
 		mounted() {
+			Object.assign(this.details.info,this.info);
 			this.GetOrderDetails(this.bill);
 		}
 	}
 </script>
 
 <style>
-	.edit-info > uni-button {
-	    flex: 0.9;
+	.edit-info>uni-button {
+		flex: 0.9;
 		font-size: 12px;
 		margin-bottom: 4px;
 	}
+
 	.edit-info {
 		display: flex;
 		justify-content: center;
 	}
+
 	.pop-r {
-	    display: flex;
-	    flex-flow: column;
+		display: flex;
+		flex-flow: column;
 	}
+
 	.goods {
-	    height: unset;
-	    flex: 0.98;
+		height: unset;
+		flex: 0.98;
 	}
 </style>

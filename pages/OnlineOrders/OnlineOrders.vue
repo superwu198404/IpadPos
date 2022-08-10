@@ -124,7 +124,7 @@
 						<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 						<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
 						<button v-if="mode('read') && view.search.confirm" class="btn" @click="ConfirmAccept(true)">接受确认</button>
-						<button v-if="mode('read')" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
+						<button v-if="mode('read') && !view.search.confirm" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
 					</view>
 				</view>
 			</view>
@@ -411,7 +411,9 @@
 							else 
 								this.view.search.confirm = true;
 						}
-						else this.view.search.confirm = true;
+						else 
+							this.view.search.confirm = true;
+						console.log("[RenderFrom]confirm:",this.view.search.confirm);
 					}))
 					this.details.order.BILL = source?.BILL;
 					Object.assign(this.details.order, source);
