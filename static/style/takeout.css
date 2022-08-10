@@ -52,6 +52,7 @@
 .products .procycle .li .h3 {
 	line-height: 80rpx;
 	display: flex;
+	align-items: center;
 	justify-content: space-between;
 	font-size: 32rpx;
 }
@@ -85,21 +86,26 @@
 	font-weight: 700;
 }
 
-.prolist .h3 text {
+.products .h3 text {
 	font-weight: 400;
 }
 
 .platform {
 	display: flex;
+	align-items: center;
 	width: 80%;
 }
+.platform label{
+	display: flex;
+	align-items: center;
+}
 
-.prolist .cods {
+.products .cods {
 	flex-wrap: wrap;
 	margin:0 0 2%;
 }
 
-.prolist .cods view {
+.products .cods view {
 	width: 80%;
 }
 

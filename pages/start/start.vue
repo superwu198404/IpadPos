@@ -23,6 +23,7 @@
 				errstr: "",
 				tx001: null,
 				khid: 'K0101QT2',
+				posid: "8",
 				yninit: false,
 				showmsg: "正在检查是否初始化"
 			}
@@ -47,7 +48,6 @@
 				});
 			},
 			startx: function() {
-
 				//this.init();
 				//第一步检查本地数据库是否存在
 				var sql = " select  cvalue  from  ipadconfig where  type='KHID'";
@@ -64,29 +64,27 @@
 				console.log(getkhid);
 			},
 			init: async function() {
-
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
 				let reqdata = Req.resObj(true, "正在进行初始化001", null, apistr);
 				console.log(JSON.stringify(reqdata));
 				Req.asyncFunc(reqdata,
 					(res) => {
-						console.log("001回调：", that.khid);
+						console.log("001回调：", res);
 						that.tx001 = Req.getResData(res);
 						let reqPosData = {
 							"KHID": that.khid,
-							"POSID": "8"
+							"POSID": that.posid
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
 						return Req.resObj(true, "正在获取通讯数据004", reqPosData, apistr);
 					},
 					(res) => {
 						let sql = [];
-						console.log("开始创建数据库");
+						console.log("004回调：", res);
 						let tx004 = Req.getResData(res);
 						//根据001循环创建表，并生成初始化语句
 						this.tx001.forEach(function(item) {
-
 							let arr004 = tx004.filter((item4) => {
 								return item4.TABNAME == item.TABNAME
 							});
@@ -104,6 +102,7 @@
 						return Req.resObj(true, "正在开始重建数据库", sql);
 					},
 					async (res) => {
+							console.log("数据库重建结果：", res);
 							that.tx001 = null;
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
@@ -129,8 +128,6 @@
 						}
 				)
 			},
-
-
 		}
 	}
 </script>

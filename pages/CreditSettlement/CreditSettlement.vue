@@ -20,8 +20,8 @@
 			<view class="bottom">
 				<view class="settlement">
 					<view class="item-box">
-						<view :class="'item '+ Selected(i.BILL)" v-for="i in big_client_settlement"
-							@click="ShowDetails(i)">
+						<view :class="'item '+ Selected(i.BILL)" v-for="i in big_client_settlement" @click="ShowDetails(i)">
+							<em></em>
 							<view class="item-title">
 								<text>{{ i.BILL }}</text>
 								<text>{{ i.SALETIME }}</text>
@@ -29,9 +29,10 @@
 							<view class="item-content">
 								<view>编号:{{ i.DKFID }}</view>
 								<view>名称:{{ i.DKFNAME }}</view>
-								<view>订单号:{{ i.BILL }}</view>
+								<!-- <view>订单号:{{ i.BILL }}</view> -->
 								<view>商品名称:{{ i.SNAME }}</view>
 							</view>
+
 						</view>
 					</view>
 				</view>
@@ -41,7 +42,7 @@
 							<view class="cover">
 								<image class="touxiang" src="@/images/touxiang.png"></image>
 							</view>
-							<view>
+							<view class="desigs">
 								<view>{{ current_settlement.DKFNAME || "-" }}</view>
 								<view>{{ current_settlement.DKFID || "-"  }}</view>
 							</view>
@@ -67,7 +68,7 @@
 </template>
 
 <script>
-	import BigCustomer from '@/pages/CreditSettlement/Popup/BigCustomer.vue'
+	// import BigCustomer from '@/pages/CreditSettlement/Popup/BigCustomer.vue'
 	import util from '@/utils/util.js';
 	import {
 		getBigClientSettlement
@@ -75,25 +76,25 @@
 
 	export default {
 		name: "CreditSettlement",
-		components: {
-			BigCustomer
-		},
+		// components:{
+		// 	BigCustomer
+		// },
 		data() {
 			return {
-				view: {
-					show: true
+				view:{
+					show:true
 				},
 				big_client_info: {},
 				big_client_settlement: [],
-				current_settlement: {}
+				current_settlement:{}
 			}
 		},
-		computed: {
-			Selected: function() {
-				return function(bill) {
-					if (this.current_settlement.BILL === bill)
+	    computed:{
+			Selected:function(){
+				return function(bill){
+					if(this.current_settlement.BILL === bill) 
 						return 'selected';
-					else
+					else 
 						return '';
 				}
 			}
@@ -106,7 +107,7 @@
 				}, util.callBind(this, function(res) {
 					util.simpleMsg("大客户单据查询成功!");
 					this.big_client_settlement = JSON.parse(res.data);
-					if (this.big_client_settlement?.length && this.big_client_settlement?.length > 0)
+					if(this.big_client_settlement?.length && this.big_client_settlement?.length > 0)
 						this.current_settlement = this.big_client_settlement[0];
 					console.log("大客户单据：", res)
 				}), (err) => {
@@ -117,10 +118,10 @@
 				this.big_client_info = this.big_clients[val.detail.value];
 				this.GetBigClientSettlement();
 			},
-			ShowDetails: function(i) {
+			ShowDetails:function(i){
 				this.current_settlement = i;
 			},
-			ClosePopup: function(data) {
+			ClosePopup:function(data){
 				this.view.show = false;
 				this.big_client_info = data;
 				this.GetBigClientSettlement();
@@ -130,6 +131,7 @@
 </script>
 
 <style>
+	
 	.page-content {
 		box-sizing: border-box;
 		display: flex;
@@ -151,29 +153,28 @@
 	}
 
 	.bottom>* {
-
+		
 		height: 100%;
 		box-sizing: border-box;
 		overflow-y: auto;
 	}
 
 	.settlement {
-		width: 50%;
+		width:50%;
 	}
 
 	.details {
 		background-color: white;
 		display: flex;
 		flex-direction: column;
-		width: 48%;
+		width:48%;
 		margin-left: 2%;
 	}
-
-	.row text,
-	.row:not(:first-child) {
+	
+	.row text,.row:not(:first-child){
 		color: gray;
 		margin-right: 6px;
-		line-height: 50rpx;
+		line-height: 60rpx;
 		font-size: 28rpx;
 	}
 
@@ -189,49 +190,67 @@
 		display: inline-block;
 		height: 20%;
 		background-color: white;
-		border-radius: 20rpx;
-		padding: 8px 3%;
+		border-radius: 14rpx;
+		padding: 20rpx 3%;
 		display: flex;
 		gap: 6px;
 		flex-direction: column;
-		box-shadow: 0px 0px 0px 1px lightgray inset;
+		border:1rpx solid #eee;
+		margin-bottom: 2%;
+		position: relative;
 	}
-
-	.selected {
-		box-shadow: 0px 0px 0px 2px #70c477 inset;
+	.item em{
+		display: flex;
+		height: 40rpx;
+		width:6rpx;
+		background-color: #70c477;
+		position: absolute;
+		top:30rpx;
+		right:0;
+		display: none;
+		opacity: 0.5;
 	}
-
-	.item-title {
+	.selected em{
+		display: block;
+	}
+	.selected{
+		border:1rpx solid #70c477;
+	}
+	
+	.item-title{
 		display: flex;
 		justify-content: space-between;
 		font-weight: 600;
 		font-size: 1em;
 		line-height: 60rpx;
 	}
-
-	.item-title text:nth-child(2) {
+	.item-title text:nth-child(2){
 		font-weight: 400;
 		font-size: 26rpx;
 	}
-
-	.item-content::before {
+	.item-content::before{
 		content: "";
 		border-top: 1px solid lightgray;
 	}
-
-	.item-content {
+	.item-content{
 		color: gray;
 		font-size: 0.8em;
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
 	}
-
-	.item-content>* {}
-
-	.cover,
-	.cover>image {
+	
+	.item-content view {
+		line-height: 50rpx;
+	}
+	
+	.cover,.cover > image{
 		height: 70rpx;
 		width: 70rpx;
+	}
+	.desigs view:nth-child(2){
+		color: #b0b0b0;
+		font-size: 24rpx;
+		line-height: 40rpx;
 	}
 </style>

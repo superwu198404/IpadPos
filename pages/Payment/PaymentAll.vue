@@ -489,7 +489,7 @@
 					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
-					TDISC: this.isRefund ? (sale1?.TDISC ?? "0") : Number(this.SKY_DISCOUNT).toFixed(2),
+					TDISC: this.isRefund ? (-sale1?.TDISC ?? "0") : Number(this.SKY_DISCOUNT).toFixed(2),
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
