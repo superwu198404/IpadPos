@@ -185,7 +185,7 @@
 				RYID: getApp().globalData.store.RYID,
 				Name: getApp().globalData.store.NAME,
 				MerId: getApp().globalData.store.MERID,
-				DKFID:getApp().globalData.store.DKFID,
+				DKFID: getApp().globalData.store.DKFID,
 				sale1_obj: {},
 				sale2_obj: {},
 				sale2_arr: [],
@@ -247,6 +247,9 @@
 				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) ||
 					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
+		},
+		mounted() {
+			console.log("mounted!",_pay.RefundAll);
 		},
 		//方法初始化
 		methods: {
@@ -405,26 +408,24 @@
 					uni.navigateTo({
 						url: "../Login/Login"
 					});
-				}else if (e == 6) {
+				} else if (e == 6) {
 					uni.navigateTo({
 						url: "../Main/Main",
-						complete:r=>{
+						complete: r => {
 							console.log(r);
 						}
 					});
-				}
-				else if (e == 8) {
+				} else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",
-						complete:r=>{
+						complete: r => {
 							console.log(r);
 						}
 					});
-				}
-				else if (e == 9) {
+				} else if (e == 9) {
 					uni.navigateTo({
 						url: "../RefundOrder/SXRefund",
-						complete:r=>{
+						complete: r => {
 							console.log(r);
 						}
 					});
@@ -703,12 +704,13 @@
 				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K03000')`);
 				//await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','CS01')`);
 				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF02','022','022','K01000')`);
-				await common.Query("select * from KHZFKDA where FKID='ZF51'",(res) => {
-					console.log("查询结果：",res)
+				await common.Query("select * from KHZFKDA where FKID='ZF51'", (res) => {
+					console.log("查询结果：", res)
 				})
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL).reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
+					.reverse();
 				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				await common.InitZFRULE();
@@ -730,7 +732,7 @@
 				let that = this;
 				that.$refs.printerPage.againPrinter(that.refund_no);
 			},
-			closeDB:async function(){
+			closeDB: async function() {
 				await common.Close();
 			}
 		},
@@ -743,13 +745,12 @@
 		async onShow() {
 			this.refreshProduct();
 			this.refund_no = this.$store.state.trade;
-			
+
 			if (!this.first) //首次不执行
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
-
 		},
 		onHide() {
 			//监听页面隐藏

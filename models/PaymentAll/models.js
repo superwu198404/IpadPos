@@ -14,7 +14,7 @@ export const orderCreated = function(obj, payload) {
 		name: this.currentPayInfo?.name ?? "",
 		amount: 0,
 		no: this.PayList.length,
-		disc: (payload?.discount / 100).toFixed(2),
+		disc: (payload?.discount / 100).toFixed(2) || 0,//由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
 		zklx: payload?.disc_type ?? "",
 		id_type: "",
 		user_id: payload?.open_id || payload?.hyid,

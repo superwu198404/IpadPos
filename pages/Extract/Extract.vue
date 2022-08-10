@@ -65,7 +65,7 @@
 					</view>
 				</view>
 			</view>
-			<component :is="'Reserve'" :bill="extract_bill" v-if="view.Details" @Close="view.Details = false">
+			<component :is="'Reserve'" :info="extract_order" v-if="view.Details" @Close="view.Details = false">
 			</component>
 		</view>
 	</menu_content>
@@ -95,7 +95,7 @@
 					Details: false,
 					Criterias: false
 				},
-				extract_bill: "", //提取订单的订单号
+				extract_order: {}, //预定订单的信息
 				extracts: []
 			}
 		},
@@ -147,7 +147,7 @@
 			},
 			ExtractOrder: function(item) { //提取商品
 				this.view.Details = true;
-				this.extract_bill = item.BILL;
+				this.extract_order = item;
 			},
 			GetList: function() {
 				getReserveOrders({

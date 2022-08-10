@@ -374,7 +374,7 @@
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						this.domForceRefresh();
 					} else {
-						let count = (this.dPayAmount?.toString() || "").split('.')[1].length;
+						let count = (this.dPayAmount?.toString() || ".").split('.')[1].length;
 						if (count > 2) {
 							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
 							this.domForceRefresh();
@@ -538,8 +538,7 @@
 						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
 						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
 							.disc, //折扣金额(卡券消费后要记录)
-						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item
-							.disc, //折扣金额(卡消费后要记录)
+						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
@@ -1008,7 +1007,7 @@
 								no: payload.no
 							}, result));
 						}).bind(this));
-					} else { //如果是聚合支付
+					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: (payload.money / 100).toFixed(2),
 							fail,
@@ -1330,6 +1329,11 @@
 						trade_no,
 						data
 					}, (function(res) {
+						let data = res.data;
+						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
+						trade.discount = data.discount ?? 0;
+						trade.disc = data.zklx ?? "";
+						trade.user_id = (data?.open_id || data?.hyid) ?? "";
 						this.used_no.push(this.prev_no); //如果成功
 						this.retryEnd(trade, false)
 						this.yPayAmount += (data.money / 100);

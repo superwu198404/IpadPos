@@ -67,6 +67,12 @@ var MatchBHKH = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+var reserveOrdersUpdate = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ReserveOrdersUpdate";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 var getReserveOrdersDetails = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersDetails";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
@@ -145,5 +151,6 @@ export default {
 	getGSKHINFO,
 	GetPSCenter,
 	GetTHKHDA,
+	reserveOrdersUpdate,
 	getReserveOrdersDetails
 }
