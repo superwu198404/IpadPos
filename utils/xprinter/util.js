@@ -338,6 +338,8 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 	var payableAmount = sale1_obj.STR2;
 	var originalAmount = sale1_obj.STR8;
 	var shAddress = sale1_obj.STR4;
+	var shPhone = sale1_obj.STR6;
+	var shContact = sale1_obj.STR5;
 	var ggy = ggyContent;
 	var xsptid = sale1_obj.XSPTID;
 	
@@ -387,6 +389,8 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 		payableAmount, //应付金额
 		originalAmount, //原金额
 		shAddress,//收货地址
+		shPhone,//收货联系电话
+		shContact,// 收货联系人
 		sale3List, //支付信息
 		ggy,//广告语
 		xsptid,

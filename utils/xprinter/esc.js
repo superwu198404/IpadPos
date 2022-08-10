@@ -1801,6 +1801,11 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("提货时间: " + data.custmtime);
 			jpPrinter.setPrint(); //打印并换行
+		}else if(data.custmtime != "" && data.custmtime != null && data.custmtime != undefined){
+			jpPrinter.setCharacterScale(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("要求送达时间: " + data.custmtime);
+			jpPrinter.setPrint(); //打印并换行
 		}
 		
 		jpPrinter.setCharacterScale(0); //设置正常大小
@@ -1862,7 +1867,17 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("收货地址:" + data.shAddress.toString() + "\n");
+		jpPrinter.setText("收货地址:" + data.shAddress.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterScale(1); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("联系人信息:" + data.shContact.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterScale(1); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(data.shPhone.toString() + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterScale(0); //设置正常大小
