@@ -396,7 +396,7 @@
 				console.log("[watch-authCode]PayWayList：", this.PayWayList);
 				if (n)
 					this.currentPayInfo = this.PayWayList.find(i => i.type === this
-				.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+						.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 				else
 					this.currentPayInfo = null
 				console.log("当前支付类型信息：", this.currentPayInfo);
@@ -481,7 +481,6 @@
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : getApp().globalData?.hyinfo?.hyId,
-					TDISC: Number(this.SKY_DISCOUNT).toFixed(2),
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
 					XS_POSID: this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
@@ -490,7 +489,7 @@
 					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
 					XSTYPE: this.XS_TYPE,
 					BILL_TYPE: this.BILL_TYPE,
-					TDISC: this.isRefund ? (sale1?.TDISC ?? "0") : this.TDISC,
+					TDISC: this.isRefund ? (sale1?.TDISC ?? "0") : Number(this.SKY_DISCOUNT).toFixed(2),
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
 				});
 				console.log("sale1 封装完毕!", this.sale1_obj);
@@ -945,7 +944,8 @@
 						console.log("[Payment-付款]支付失败！")
 						util.simpleMsg("[Payment-付款]支付失败!原因：" + error.msg);
 						this.authCode = ""; //避免同一个付款码多次使用
-						this.orderGenarator(payAfter, info.type, null, true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+						this.orderGenarator(payAfter, info.type, null,
+							true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this))
 			},
 			//创建支付记录
@@ -976,7 +976,7 @@
 					}
 				}).bind(this))(); //把支付成功部分金额加上
 				//支付失败的时候 result 并不是标准的响应内容
-				if(result){
+				if (result) {
 					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 						result.vouchers.forEach((function(coupon, index) {
 							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
@@ -987,13 +987,15 @@
 										.note === 'EXCESS' ? -coupon
 										.pay_amount : coupon
 										.denomination)) / 100).toFixed(2),
-								fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid : coupon
+								fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
+									coupon
 									?.fkid,
 								name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
 									excessInfo.name,
 								balance: (coupon?.balance / 100).toFixed(2), //如果是电子卡，余额
-								balance_old: ((coupon.balance + coupon.pay_amount) / 100).toFixed(
-									2), //如果是电子卡，余额
+								balance_old: ((coupon.balance + coupon.pay_amount) / 100)
+									.toFixed(
+										2), //如果是电子卡，余额
 								zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
 									.note ===
 									'EXCESS' ? excessInfo.fkid : coupon.disc_type),
@@ -1012,13 +1014,12 @@
 							no: payload.no
 						}, result));
 					}
-				}
-				else{//如果为失败的支付请求
+				} else { //如果为失败的支付请求
 					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail,
 						no: payload.no,
-						bill:payload.out_trade_no//保存失败的订单号
+						bill: payload.out_trade_no //保存失败的订单号
 					}));
 				}
 				this.PayList = Object.assign([], this.PayList);
@@ -1132,7 +1133,7 @@
 					this.GetHyCoupons();
 					console.log("行为类型:", this.actType + this.XS_TYPE + this.BILL_TYPE);
 					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this
-					.out_trade_no_old); //保存当前单号至全局
+						.out_trade_no_old); //保存当前单号至全局
 					console.log("销售单号：", this.out_trade_no_old)
 					console.log("退款单号：", this.out_refund_no)
 					console.log("存入单号：", this.$store.state.trade)
@@ -1355,13 +1356,18 @@
 			UpdateHyInfo: function(e) {
 				console.log("接口返回的会员信息：", e);
 				if (e && e.hyid) { //支付接口有返回会员信息
-					let hyinfo = getApp().globalData.hyinfo;
+					let hyinfo = util.getStorage("hyinfo");
 					console.log("当前会员信息：", hyinfo);
-					if ((!hyinfo || !hyinfo.hyId) && getApp().globalData.hyinfo) { //如果没有会员信息就重新录入一下
-						getApp().globalData.hyinfo.hyId = e.hyid;
+					if (!hyinfo || JSON.stringify(hyinfo) == '{}' || !hyinfo.hyId) {
+						util.setStorage("hyinfo", {
+							hyId: e.hyid
+						});
 					}
+					// if ((!hyinfo || !hyinfo.hyId) && getApp().globalData.hyinfo) { //如果没有会员信息就重新录入一下
+					// 	getApp().globalData.hyinfo.hyId = e.hyid;
+					// }
 				}
-				console.log("更新后的会员信息:", getApp().globalData.hyinfo);
+				console.log("更新后的会员信息:", util.getStorage("hyinfo"));
 			},
 			//获取水吧商品
 			GetSBData: function(e) {

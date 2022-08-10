@@ -114,6 +114,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			PHONE: res.msg[0].PHONE,
 			RYNAME: ryinfo.name,
 			RYID: ryinfo.ryid,
+			JGID: res.msg[0].JGID,
 		}
 		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
 		console.log("登录后的初始化信息：", getApp().globalData.store);

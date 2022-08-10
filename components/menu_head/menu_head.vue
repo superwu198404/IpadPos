@@ -3,6 +3,7 @@
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
 	@import url(@/static/style/Extract/Extract.css);
+	@import url(@/static/style/message.css);
 </style>
 <template>
 	<view>
@@ -46,7 +47,47 @@
 						</view>
 					</view>
 				</view>
+			</view>
+		</view>
+		<!-- 消息弹窗 -->
+		<view class="boxs" v-if="showMsg">
+			<view class="popup promot">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<view class="infor">
+					<view class="shoppbag">
+						<view class="liis messadet">
+							<view class="emergs"><label class="zhoyao">重要</label><label class="putong"
+									v-if="putong">普通</label><text>● 进行中</text></view>
+							<view class="h6">这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字标题超出五十个字显示...</view>
+							<view class="sender"><text>质管部 · 橘子</text><text>创建时间：2022-06-13 09:00:00</text></view>
+						</view>
+						<view class="matters">
+							<image src="../../images/dl-login.png" mode="widthFix"></image>
+							<text>
+								编程技术的保存失败的次数第v你说的基本上调查
+								上档次
+								十九点v你是
+							</text>
+						</view>
+						<view class="tally">
+							<label>
+								<image src="../../images/yewu-xx.png"></image><text>销售业务</text>
+							</label>
+							<view>
+								<label>
+									<image src="../../images/kaishisj-xx.png"></image><text>2022.07.01 00:00 开始</text>
+								</label>
+								<label>
+									<image src="../../images/jieshusj-xx.png"></image><text>2022.07.30 24:00 截止</text>
+								</label>
+							</view>
+						</view>
 
+					</view>
+					<view class="confirm">
+						<button class="btn" @click="showMsg=false">关 闭 (5s)</button>
+					</view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -67,7 +108,8 @@
 				POSID: getApp().globalData.store.POSID,
 				RYID: getApp().globalData.store.RYID,
 				dropout: false,
-				MsgData: []
+				MsgData: [],
+				showMsg: false
 			};
 		},
 		// created: function(e) {
@@ -83,6 +125,21 @@
 			});
 		},
 		methods: {
+
+			//消息已读
+			ReadMsg1: function(e, i) {
+				_msg.DelMsg(that.KHID, e, res => {
+					console.log("消息数据：", res);
+					that.MsgData.splice(i, 1);
+					// let arr = that.MsgData;
+					// that.MsgData = arr.splice(i, 1);
+					if (e.url) {
+						uni.navigateTo({
+							url: e.url
+						})
+					}
+				});
+			},
 			ReadMsg: function(e) {
 				if (e.url) {
 					uni.redirectTo({

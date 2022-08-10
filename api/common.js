@@ -159,7 +159,7 @@ var TransLite = function(e) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
 					let delVal = res.msg[i].STR1;
-					console.log("传输sql", sql1);
+					// console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
@@ -191,6 +191,8 @@ var TransLite = function(e) {
 
 //获取支付方式
 var GetPayWay = function(e, func) {
+	e = 'K0101QT2'; //测试使用
+	console.log("查询门店的支付方式:", e);
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
                                        F1.JK_PRINT_PATH  JK_PRINT_PATH,\
                                        IFNULL(F1.YN_ZL, 'N') YN_ZL,\
@@ -445,6 +447,7 @@ var GetZFRULE = async function(e, func) {
 
 //获取POS参数组内容
 var GetPOSCS = async function(e, func) {
+	e = "K0101QT2"; //测试使用
 	if (e) {
 		let sql = `SELECT kh.khid,
 						D1.SNAME,

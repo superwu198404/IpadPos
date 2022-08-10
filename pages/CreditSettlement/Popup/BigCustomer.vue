@@ -112,6 +112,10 @@
 
 	.customer .h3 .guan {
 		float: right;
+		background: none;
+		font-size: 32rpx;
+		height: 100rpx;
+		line-height: 100rpx;
 	}
 
 	.customer .credit radio-input {
