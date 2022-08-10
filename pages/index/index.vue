@@ -712,15 +712,14 @@
 				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				await common.InitZFRULE();
-				let khid = "K0101QT2";//测试使用
 				//获取支付方式
-				await that.GetPayWay(khid);
+				await that.GetPayWay(that.KHID);
 				//初始化配置参数
 				await common.GetPZCS();
 				//获取支付规则数据
 				await common.GetZFRULE();
 				//获取POS参数组数据
-				await common.GetPOSCS(khid);
+				await common.GetPOSCS(that.KHID);
 
 				console.log("POSCS", util.getStorage("POSCS"))
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
