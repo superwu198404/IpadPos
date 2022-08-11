@@ -241,12 +241,14 @@ page {
 	border-radius: 50rpx;
 }
 .stores{
-	display: flex;
-	width:50%;
-	justify-content: flex-end;
+  display: flex;
+  width:70%;
+  justify-content: flex-end;
 }
 .stores .checkout{
-	margin-right: 10%;
+  margin-right: 7%;
+  display: flex;
+  justify-content: end;
 }
 .checkout{
 	display: flex;

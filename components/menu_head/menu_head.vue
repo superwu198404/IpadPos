@@ -20,6 +20,9 @@
 			</view>
 			<view class="stores">
 				<view class="checkout">
+					<label style="margin-right: 40rpx;" @click="ShowDKF()">
+						大客户：{{DKFNAME}}▼
+					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
 					</label>
@@ -31,7 +34,7 @@
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text @click="exits()">{{RYID}} > </text>
+					<text @click="exits()">{{RYID}}▼</text>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="Login()">
 							<image src="@/images/qiehuan.png" mode="widthFix"></image>
@@ -90,6 +93,7 @@
 				</view>
 			</view>
 		</view>
+		<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 	</view>
 </template>
 
@@ -107,9 +111,11 @@
 				KHID: getApp().globalData.store.KHID,
 				POSID: getApp().globalData.store.POSID,
 				RYID: getApp().globalData.store.RYID,
+				DKFNAME: getApp().globalData.store.DKFNAME,
 				dropout: false,
 				MsgData: [],
-				showMsg: false
+				showMsg: false,
+				showBig: false
 			};
 		},
 		// created: function(e) {
@@ -169,6 +175,21 @@
 						console.log(r)
 					}
 				})
+			},
+			//选择大客户
+			ShowDKF: function() {
+				this.showBig = true;
+			},
+			//选择大客户
+			ClosePopup: function(data) {
+				this.showBig = false;
+				console.log("选中的大客户：", data);
+				if (data && JSON.stringify(data) != "{}") {
+					getApp().globalData.store.DKFID = data.DKHID;
+					getApp().globalData.store.DKFNAME = data.NAME;
+					this.DKFNAME = data.NAME;
+				}
+				console.log("新的全局变量：", getApp().globalData.store);
 			}
 		}
 	}

@@ -6,7 +6,6 @@ import util from '@/utils/util.js';
 
 export const GetPayWayList = async function(e) {
 	let PayWayList = [];
-	e = 'K0101QT2'; //测试使用
 	await common.GetPayWay(e, function(res) {
 		console.log("GetPayWayList：", res);
 		if (res.code) {
