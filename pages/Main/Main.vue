@@ -619,7 +619,7 @@
 					zktype: that.curZKType,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: "0020004824",//that.DKFID, 
+					dkhid: "0020004824",//that.DKFID,  //测试使用
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {

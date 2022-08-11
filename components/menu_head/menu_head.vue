@@ -34,7 +34,7 @@
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text @click="exits()">{{RYID}} > </text>
+					<text @click="exits()">{{RYID}}▼</text>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="Login()">
 							<image src="@/images/qiehuan.png" mode="widthFix"></image>

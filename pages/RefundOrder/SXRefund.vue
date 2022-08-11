@@ -64,7 +64,7 @@
 										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>
 									<view class="handles"><text></text>
-										<button class="btn"@click="ConfirmToPay(item)">确定</button>
+										<button class="btn" @click="ConfirmToPay(item)">确定</button>
 									</view>
 								</view>
 							</view>
@@ -143,7 +143,7 @@
 	import util from '@/utils/util.js';
 	import _refund from '@/api/business/refundorder.js';
 	// import menu_page from "@/components/menu_page/menu_page.vue";
-	
+
 	var that;
 	export default {
 		// components: {
@@ -161,6 +161,7 @@
 				KHID: app.globalData.store.KHID,
 				GSID: app.globalData.store.GSID,
 				POSID: app.globalData.store.POSID,
+				RYID: app.globalData.store.RYID,
 				Orders: [],
 				p_bill: "",
 				p_name: "",
@@ -255,20 +256,30 @@
 				this.Newaddr = true
 			},
 			//确认去退货
-			ConfirmToPay:function(order){
+			ConfirmToPay: function(order) {
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
-					success: function (res) {
+					success: function(res) {
 						if (res.confirm) {
 							console.log('用户点击确定');
 							_refund.CreditOrderRefund({
-								khid:this.KHID,
-								posid:this.POSID,
-								ryid:this.RYID,
-								dkhname:order.DKFNAME,
-								bill:order.BILL,
-								saledata:new Date().toLocaleDateString()
+								khid: that.KHID,
+								posid: that.POSID,
+								ryid: that.RYID,
+								dkhname: order.DKFNAME,
+								bill: order.BILL,
+								saledata: order.SALEDATE //new Date().toLocaleDateString()
+							}, res => {
+								console.log("退单结果：", res);
+								if (res.code) {
+									util.simpleMsg("退单成功");
+									setTimeout(r => {
+										that.GetOrders();
+									}, 1500);
+								} else {
+									util.simpleMsg("退单失败:" + res.msg, true);
+								}
 							})
 						} else if (res.cancel) {
 							console.log('用户点击取消');
