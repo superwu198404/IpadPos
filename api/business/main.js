@@ -101,9 +101,40 @@ var GetZKDatas = function(data, func) {
 		Req.asyncFuncOne(reqdata, func, func);
 	}
 }
+/**
+ * 获取门店日销商品 
+ * @param {门店id} khid 
+ * @param {时间段} time 
+ */
+var GetRXSPDatas = async function(khid, time, func) {
+	let sql = "select i.XSQTY,s.*,p.SNAME PLNAME from IPAD_RXSP i LEFT JOIN spda s on i.spid=s.spid left join PLDA p on i.PLID=p.PLID where i.khid='" + khid +
+		"' and i.time='" + time + "' order by i.XSQTY desc";
+	let data = [];
+	// await db.get().executeQry(sql, "查询中...", res => {
+	// 	console.log("门店日销数据查询结果：", res);
+	// 	if (res.code && res.msg.length > 0) {
+	// 		data = res.msg;
+	// 	}
+	// }, err => {
+	// 	console.log("查询日销数据异常：", err);
+	// })
+	if (data.length > 0) {
+		if (func) func({
+			code: true,
+			data: JSON.stringify(data)
+		});
+	} else {
+		let apistr = "MobilePos_API.Models.SALE001CLASS.QuerySQL";
+		let reqdata = Req.resObj(true, "查询中...", {
+			sql
+		}, apistr);
+		Req.asyncFuncOne(reqdata, func, func);
+	}
+}
 
 export default {
 	GetFZCX,
 	GetMDCXHD,
-	GetZKDatas
+	GetZKDatas,
+	GetRXSPDatas
 }
