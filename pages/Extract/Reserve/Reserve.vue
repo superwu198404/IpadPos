@@ -64,7 +64,7 @@
 								src="../../../images/zhankaiqb-dt.png"></image>
 						</view>
 					</view>
-					<view style="width: 100%;height: 300px;display: flex;justify-content: center;display: none;">
+					<view v-show="!Newaddr" style="width: 100%;height: 300px;display: flex;justify-content: center;">
 						<view style="width: 90%; height: 290px;">
 							<map style="width: 100%; height: 100%;" :latitude="map.latitude" :longitude="map.longitude"
 								:scale="map.scale" @tap="GetLocation">
