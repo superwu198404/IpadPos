@@ -4,6 +4,7 @@
 	@import url(@/static/style/index.css);
 	@import url(@/static/style/Extract/Extract.css);
 </style>
+
 <template>
 	<view class="boxs">
 		<view class="memberes">
@@ -15,57 +16,67 @@
 				</view>
 				<view class="middle">
 					<view class="restlist">
-						<label><text>收货人：</text><input type="text" /></label>
-						<label><text>联系电话：</text><input type="text" /></label>
-						<label><text>提货时间：</text><input type="text" /></label>
-						<label><text>提货门店：</text><input type="text" /></label>
-						<label><text>定金：</text><input type="text" /></label>
-						<label><text>配送方式：</text><input type="text" /></label>
-						<label><text>备注：</text><textarea></textarea></label>
+						<label><text>收货人：</text><input type="text" v-model="details.info.CUSTMNAME" /></label>
+						<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE"
+								v-on:blur="QueryAddress()" /></label>
+						<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
+						<label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label>
+						<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
+						<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
+						<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
 					</view>
-					<view class='rests' style="margin-bottom: 0; padding-bottom: 0;">
+					<view class='rests' v-if="Newaddr" style="margin-bottom: 0; padding-bottom: 0;">
 						<view class="h6"><text>新增地址</text></view>
 						<view class="restlist">
-							<label><text>收货人：</text><input type="text" /></label>
-							<label><text>联系电话：</text><input type="text" /></label>
-							<label class="long"><text>收货地址：</text><input type="text" /></label>
+							<label><text>收货人：</text><input type="text" v-model="from.address.NAME" /></label>
+							<label><text>联系电话：</text><input type="text" v-model="from.address.PHONE" /></label>
+							<label class="long"><text>收货地址：</text><input type="text"
+									v-model="from.address.ADDRESS" /></label>
 							<view class="note">
-								<label><text>备注：</text><textarea></textarea></label>
-								<view class="caozuo"><button class="btn-xg"> 修改</button><button
-										class="btn-sc">删除</button></view>
+								<!-- <label><text>备注：</text><textarea></textarea></label> -->
+								<view class="caozuo"><button class="btn-xg"
+										@click="ChangeCustomerAddress">{{ state.address_edit ? "保存" : "添加" }}</button><button
+										class="btn-sc" @click="Newaddr = false">关闭</button></view>
 							</view>
 						</view>
-
 					</view>
 					<view class='rests'>
 						<view class="h6"><text>地址</text> <button @click="Newlys()">+ 新增地址</button></view>
 						<view class="location">
-							<view class="site">
-								<view class="sitelist">
-									<radio></radio>
-									<view>
-										<text>张三，13876545678</text>
-										<label>武汉市江汉区后襄河北路海马中心写字楼1号楼25楼2510</label>
+							<radio-group @change="RadioChange">
+								<view class="site" v-for="(i,index) in details.address"
+									v-if="from.more?true:(index===1?true:false)">
+									<view class="sitelist">
+										<radio :value="i.ADDRID" :checked="index === views.current"></radio>
+										<view>
+											<text>{{ i.CNAME }}，{{ i.PHONE }}</text>
+											<label>{{ i.ADDRESS }}</label>
+										</view>
 									</view>
+									<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">
+											修改</button><button class="btn-sc"
+											@click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
 								</view>
-								<view class="caozuo"><button class="btn-xg"> 修改</button><button
-										class="btn-sc">删除</button></view>
-							</view>
+							</radio-group>
 						</view>
-						<view class="more">显示全部地址<image src="../../../images/zhankaiqb-dt.png"></image>
+						<view class="more" @click="from.more = !from.more">{{ from.more?"折叠全部地址":"显示全部地址" }}
+							<image style="transition: .8s all;" :class="from.more?'arrow-direction':''"
+								src="../../../images/zhankaiqb-dt.png"></image>
 						</view>
 					</view>
-
-					<view class="atlas">
-						<div class="map"></div>
+					<view style="width: 100%;height: 300px;display: flex;justify-content: center;display: none;">
+						<view style="width: 90%; height: 290px;">
+							<map style="width: 100%; height: 100%;" :latitude="map.latitude" :longitude="map.longitude"
+								:scale="map.scale" @tap="GetLocation">
+							</map>
+						</view>
 					</view>
 				</view>
 				<view class="operat">
-					<button class="btn btn-qx">取 消</button>
-					<button class="btn">确 定</button>
+					<button class="btn btn-qx" @click="views.Memberinfo = false">取 消</button>
+					<button class="btn" @click="Save">确 定</button>
 				</view>
 			</view>
-
 			<view class="pop-r">
 				<view class="member">
 					<label>
@@ -76,7 +87,7 @@
 					<text>清空</text>
 				</view>
 				<view class="edit-info">
-					<button @click="views.Memberinfo = true">+修改预订单信息</button>
+					<button @click="EditExtract">+修改预订单信息</button>
 				</view>
 				<view class="h5"><text>单号：{{ details.info.BILL || "-" }}</text></view>
 				<view class="goods">
@@ -100,16 +111,13 @@
 							<text>￥{{ i.PRICE }}</text>
 						</view>
 					</view>
-
 				</view>
-
 				<view class="ul">
 					<view class="li"><text>总金额</text><text>￥{{ details.info.ZNET }}</text></view>
 					<view class="li"><text>件数</text><text>{{ details.list.length }}</text></view>
 					<view class="li"><text>折扣</text><text>-￥{{ details.info.BILLDISC }}</text></view>
 					<view class="li"><text>应收金额</text><text>￥{{ details.info.DNET }}</text></view>
 				</view>
-
 				<view class="confirm">
 					<button class="btn btn-qx" @click="Close">返 回</button>
 					<button class="btn">确 认</button>
@@ -118,7 +126,6 @@
 		</view>
 	</view>
 </template>
-
 <script>
 	import _extract from '@/api/business/extract.js'
 	import util from '@/utils/util.js';
@@ -130,13 +137,19 @@
 		},
 		data() {
 			return {
-				Newaddr: true,
+				Newaddr: false,
 				Statements: this.show,
+				map: {
+					longitude: 114.3093413671875, //经度
+					latitude: 30.570206594347283, //纬度
+					scale: 12, //缩放级别
+				},
 				views: {
-					Memberinfo: false
+					Memberinfo: false,
+					current: null
 				},
 				details: {
-					info:{
+					info: {
 						BILL: "",
 						THDATE: "",
 						CUSTMNAME: "",
@@ -146,14 +159,54 @@
 						ZNET: "",
 						BILLDISC: "",
 						CUSTMADDRESS: ""
-					},//主单数据（商品集合中共有的部分，如买家的信息）
-					list: []//列表数据（后端查询的是一个商品集合）
+					}, //主单数据（商品集合中共有的部分，如买家的信息）
+					list: [], //列表数据（后端查询的是一个商品集合）
+					address: [] //用户配送地址集合
+				},
+				state: {
+					address_edit: false
+				},
+				from: {
+					more: false,
+					selected: { //当前选中的配送地址
+						ACT: "",
+						NAME: "", //客户名称
+						PHONE: "", //客户电话
+						LATITUDE: "", //纬度
+						LONGITUDE: "", //经度
+						ADDRESS: "", //地址
+						ADDRID: "" //地址ID
+					},
+					address: {
+						ACT: "",
+						NAME: "", //客户名称
+						PHONE: "", //客户电话
+						LATITUDE: "", //纬度
+						LONGITUDE: "", //经度
+						ADDRESS: "", //地址
+						ADDRID: "" //地址ID
+					}
 				}
 			}
 		},
 		methods: {
 			Newlys: function(e) {
-				this.Newaddr = true
+				this.Newaddr = true; //新增地址
+				this.state.address_edit = false;
+				this.from.address.PHONE = this.details.info.CUSTMPHONE;
+			},
+			RadioChange: function(evt) {
+				for (let i = 0; i < this.details.address.length; i++) {
+					if (this.details.address[i].value === evt.detail.value) {
+						this.views.current = i;
+						break;
+					}
+				}
+			},
+			EditAddress: function(address) {
+				this.Newaddr = true; //编辑地址
+				this.state.address_edit = true;
+				Object.assign(this.from.address, address);
 			},
 			GetOrderDetails: function(bill) { //查询获取订单商品详细信息
 				_extract.getReserveOrdersDetails({
@@ -169,29 +222,95 @@
 				}))
 			},
 			Save: function() {
+				let address = "",address_id = "",phone = "";
+				if(this.views.current){
+					let address_info = this.details.address[this.views.current];
+					address = address_info.ADDRESS;
+					address_id = address_info.ADDRID;
+					phone = address_info.PHONE;
+				}
 				_extract.reserveOrdersUpdate({
 					khid: this.KHID,
 					gsid: this.GSID,
-					bill: this.order.BILL,
+					bill: this.details.info.BILL,
+					regenerate: this.ExistsGenarate(),
 					order: {
-						remark: this.order.CUSTMCOMM,
-						addr_id: this.order.NOTE2,
-						bhid: this.order.STR2,
-						date: this.order.THDATE,
-						phone: this.order.CUSTMPHONE,
-						addr: this.order.CUSTMADDRESS,
-						custname: this.order.CUSTMNAME,
+						remark: this.details.info.CUSTMCOMM,
+						addr_id: address_id ?? this.details.info.NOTE2,
+						bhid: this.details.info.STR2,
+						date: this.details.info.THDATE,
+						phone: this.details.info.CUSTMPHONE,
+						addr: address ?? this.details.info.CUSTMADDRESS,
+						custname: this.details.info.CUSTMNAME,
+						thkhid: this.details.info.thkhid
 					}
 				}, util.callBind(this, function(res) {
 					util.simpleMsg(res.msg, res.code, res);
+					if(res.code){
+						this.views.Memberinfo = false;
+						this.Close();
+					}
 				}));
+			},
+			QueryAddress: function() {
+				console.log("查询客户地址信息...");
+				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+			},
+			GetCustomerAddress: function(number) {
+				_extract.GetAddr({
+					phone: number
+				}, util.callBind(this, function(res) {
+					if (res.code) {
+						console.log("用户电话地址：", res);
+						this.details.address = JSON.parse(res.data);
+					} else {
+						util.simpleMsg(res.msg, true, res);
+						this.details.address = [];
+					}
+				}))
+			},
+			ChangeCustomerAddress: function() {
+				_extract.ConfirmADDR(Object.assign(this.from.address, {
+					ACT: this.state.address_edit ? "Edit" : "Add"
+				}), util.callBind(this, function(res) {
+					util.simpleMsg(res.msg, res.code, res);
+					this.Newaddr = false;
+					this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+				}))
+			},
+			DeleteAddress: function(id, phone) {
+				_extract.Del_Addr({
+					addrid: id,
+					phone: phone
+				}, util.callBind(this, function(res) {
+					util.simpleMsg(res.msg, res.code, res);
+					this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+				}));
+			},
+			ExistsGenarate: function() { //判断是否需要重新生成配送单（详细逻辑可看接口 ReserveOrdersUpdate 内的注释）
+				let before = util.timeZoneCompensation(new Date(util.formatIOSDateTime(this.details.info.$THDATE)));
+				let after = util.timeZoneCompensation(new Date(util.formatIOSDateTime(this.details.info.THDATE)));
+				if (after < before && util.twelveClock(new Date()).getTime() === util.twelveClock(after).getTime() &&
+					details.info.THTYPE.indexOf('自提') === -1)
+					return true;
+				else
+					return false;
+			},
+			EditExtract: function() {
+				this.views.Memberinfo = true;
+				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+			},
+			GetLocation: function(e) {
+				console.log("获取坐标信息:", e);
 			},
 			Close: function() {
 				this.$emit("Close");
 			}
 		},
 		mounted() {
-			Object.assign(this.details.info,this.info);
+			Object.assign(this.details.info, this.info);
+			console.log("预订单信息:", this.details.info);
+			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
 			this.GetOrderDetails(this.bill);
 		}
 	}
@@ -217,5 +336,9 @@
 	.goods {
 		height: unset;
 		flex: 0.98;
+	}
+
+	.arrow-direction {
+		transform: rotate(-180deg);
 	}
 </style>

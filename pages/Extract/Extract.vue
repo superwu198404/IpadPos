@@ -57,7 +57,7 @@
 							<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
 							<view>定金:{{ item.DNET.toString() || '-' }}</view>
 							<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
-							<view>备注:{{ item.CUSTMCOMM || '-' }}</view>
+							<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
 						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
 							<button @click="ExtractOrder(item)" class="btn">预定提取</button>
@@ -65,7 +65,7 @@
 					</view>
 				</view>
 			</view>
-			<component :is="'Reserve'" :info="extract_order" v-if="view.Details" @Close="view.Details = false">
+			<component :is="'Reserve'" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
 			</component>
 		</view>
 	</menu_content>
@@ -149,6 +149,10 @@
 				this.view.Details = true;
 				this.extract_order = item;
 			},
+			CloseDrawer:function(){
+				this.view.Details = false;
+				this.GetList();//刷新列表
+			},
 			GetList: function() {
 				getReserveOrders({
 					khid: this.KHID,
@@ -172,7 +176,7 @@
 					else
 						this.extracts = [];
 				}, (err) => {
-
+					util.simpleMsg(err.msg,true,err);
 				}))
 			}
 		},

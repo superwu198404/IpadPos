@@ -34,6 +34,14 @@ const utils = {
 			content
 		});
 	},
+	//转为IOS上支持的时间格式(ios 上时间对象 Date 不支持 yyyy-MM-dd 这种用'-'分隔的格式)
+	formatIOSDateTime:function(dateStr){
+		return dateStr.replaceAll('-', '/');
+	},
+	//此处是时区补偿，因为IOS上有8个小时的时区（晚了八个小时）
+	timeZoneCompensation:function(datetime,value = 8){
+		return new Date(datetime.setHours(datetime.getHours() + value));
+	},
 	//内容替换
 	replaceAll: function(text, repstr, newstr) {
 		return text.replace(new RegExp(repstr, "gm"), newstr);
@@ -41,6 +49,10 @@ const utils = {
 	//格式化手机号码
 	formatNumber: function(num) {
 		return num.length === 11 ? num.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2') : num;
+	},
+	//获取零点时间 如：2022-01-01 14:12:22 => 2022-01-01 00:00:00
+	twelveClock:function(datetime){
+		return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getUTCDate() + 1, -16, 0, 0)
 	},
 	//金额格式化
 	rmoney: function(money) {
@@ -243,6 +255,9 @@ export default {
 	simpleMsg: utils.simpleMsg,
 	simpleModal: utils.simpleModal,
 	trim: utils.trim,
+	formatIOSDateTime: utils.formatIOSDateTime,
+	timeZoneCompensation: utils.timeZoneCompensation,
+	twelveClock: utils.twelveClock,
 	replaceAll: utils.replaceAll,
 	formatNumber: utils.formatNumber,
 	rmoney: utils.rmoney,

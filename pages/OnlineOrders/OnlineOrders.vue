@@ -361,9 +361,9 @@
 						//自提单可修改：到货日期（只能修改为当前日期之后）、到货时段（对应到货日期）、备注
 						let limit = now,
 							date_max = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
-								16 + 21), 0, 0), //晚上 18:00
+								16 + 21), 0, 0), //晚上 21:00
 							date_min = new Date(current.getFullYear(), current.getMonth(), current.getUTCDate() + 1, (-
-								16 + 7), 0, 0); //早上 9:00
+								16 + 7), 0, 0); //早上 7:00
 						//时间必须设置为当前时间之后，且时间不能在 21点 以后和 7:00 以前
 						if (current.getTime() >= limit.getTime() && date_max.getTime() > current.getTime() && date_min
 							.getTime() <= current.getTime())
