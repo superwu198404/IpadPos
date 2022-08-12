@@ -22,8 +22,8 @@
 				initok: false,
 				errstr: "",
 				tx001: null,
-				khid: 'K0101QT2',
-				posid: "8",
+				khid: 'K0101QT2',//测试使用
+				posid: "8",//测试使用
 				yninit: false,
 				showmsg: "正在检查是否初始化"
 			}

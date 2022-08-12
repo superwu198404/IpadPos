@@ -63,6 +63,8 @@ function getTime(type) {
 		if (weex == 7) {
 			return '星期日'
 		}
+	}else if(type == 10){
+		return weex;
 	} else {
 		return currentDate + " " + currentTime;
 	}
@@ -851,6 +853,26 @@ const gzhQrCodeGenerate = function(is_xpewm,url){
     });
 }
 
+const snvl = function(pb_obj,pm_default){
+	let new_obj = "";
+	if(pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = pm_default;
+	}else{
+		new_obj = pb_obj.toString();
+	}
+	return new_obj;
+}
+
+const ynToBool = function(pm_str){
+	let new_obj = false;
+	if(pm_str == "Y") {
+		new_obj = true;
+	}else{
+		new_obj = false;
+	}
+	return new_obj;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -877,4 +899,6 @@ module.exports = {
 	gzhQrCodeAction: gzhQrCodeAction,
 	wmPrinterData: wmPrinterData,
 	xsPrinterData: xsPrinterData,
+	snvl:snvl,
+	ynToBool:ynToBool
 };

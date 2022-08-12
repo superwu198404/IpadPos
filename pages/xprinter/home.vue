@@ -2,6 +2,7 @@
 <view>
 <button class="button" hover-class="hover" @tap="blueTooth"> 蓝牙设备 </button>
 <button class="button" hover-class="hover" @tap="recipt"> 小票打印 </button>
+<button class="button" hover-class="hover" @tap="cxCount"> 促销 </button>
 <PrinterPage ref="bPage" style="display: none;"/>
 </view>
 </template>
@@ -77,7 +78,14 @@ export default {
       uni.navigateTo({
         url: '../xprinter/receipt'
       });
-    }
+    },
+	//促销
+	cxCount: function () {
+	  uni.navigateTo({
+	    url: '../TestDemon/CxCount'
+	  });
+	},
+	
   }
 };
 </script>

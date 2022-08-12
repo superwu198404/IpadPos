@@ -21,11 +21,13 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
+								<image :src="curTime" mode="widthFix"></image> 本店热销
 								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 							</view>
 							<view class="classifys">
-								<text class="curr">每日现烤</text><text>土司餐包</text>
+								<text :class="PLIndex==index?'curr':' '" v-for="(item,index) in RXPLDatas"
+									@click="ChoosePL(item,index)">{{item.PLNAME}}</text>
+								<!-- <text>土司餐包</text> -->
 								<label>
 									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 								</label>
@@ -33,23 +35,25 @@
 						</view>
 						<!-- 小类循环 -->
 						<view class="products">
-							<view class="h2">每日现烤 <label></label></view>
+							<view class="h2">{{RXPLDatas.length>0?RXPLDatas[PLIndex].PLNAME:""}}<label></label></view>
 							<view class="procycle">
 								<!-- 产品循环 -->
-								<view class="li">
+								<view class="li"
+									v-for="(item,index) in RXSPDatas.filter(r=>{return r.PLID==RXPLDatas[PLIndex].PLID})">
 									<view class="h3">
-										<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+										<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{item.SNAME}}
 									</view>
 									<view class="cods">
 										<label>
-											<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
+											<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
 										</label>
 										<label>
-											<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
+											<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
 										</label>
 									</view>
 									<view class="price">
-										<text>￥12.9</text>
+										<text>￥{{item.PRICE}}</text>
+										<text>销量：{{item.XSQTY}}</text>
 										<view>
 											<image src="../../images/dx-gd.png" mode="widthFix"></image>
 										</view>
@@ -502,7 +506,11 @@
 				showMDCXData: false,
 				MDCXDatas: [],
 				ZKDatas: [],
-				curZKType: "BZ"
+				curZKType: "BZ",
+				RXSPDatas: [], //日销数据集合
+				RXPLDatas: [], //热销品类集合
+				curTime: require("../../images/dx-day.png"), //当前时段 早上 中午 晚上
+				PLIndex: 0, //热销品类索引
 			}
 		},
 		methods: {
@@ -513,6 +521,7 @@
 				// 	that.MsgData = res;
 				// });
 				// common.DelSale();//主动删除销售单
+
 			},
 			//关闭结算
 			CloseSale: function() {
@@ -550,6 +559,8 @@
 				} else {
 					that.yn_hy = false;
 				}
+				that.GetRXSPDatas();
+				that.GetCurTime(); //获取时段
 			},
 			//获取会员卡券
 			GetHyCoupons: function(hyinfo) {
@@ -619,7 +630,7 @@
 					zktype: that.curZKType,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: "0020004824",//that.DKFID,  //测试使用
+					dkhid: "0020004824", //that.DKFID,  //测试使用
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {
@@ -640,6 +651,45 @@
 				console.log("已选折扣：", e);
 				util.simpleMsg("折扣率：" + (e.BFB || e.ZKQTY_JS));
 			},
+			//获取门店日销商品
+			GetRXSPDatas: () => {
+				let time = new Date().getHours();
+				time = 14;
+				_main.GetRXSPDatas(that.KHID, time, res => {
+					if (res.code) {
+						that.RXSPDatas = JSON.parse(res.data);
+						console.log("热销商品数据：", that.RXSPDatas);
+						let arr = that.RXSPDatas.map((item, index) => {
+							let obj = that.RXPLDatas.find(a => {
+								return a.PLID == item.PLID
+							});
+							if (!obj || JSON.stringify(obj) == "{}") {
+								that.RXPLDatas.push({
+									PLID: item.PLID,
+									PLNAME: item.PLNAME
+								});
+							}
+						})
+						console.log("热销品类数据：", that.RXPLDatas);
+					}
+				})
+			},
+			//品类选择
+			ChoosePL: (e, i) => {
+				that.PLIndex = i;
+			},
+			//获取当前时间段
+			GetCurTime: e => {
+				let time = new Date().getHours();
+				console.log("时间：", time);
+				if (7 < time && time < 9) {
+					that.curTime = require("../../images/dx-morning.png");
+				} else if (9 <= time && time < 19) {
+					that.curTime = require("../../images/dx-day.png");
+				} else {
+					that.curTime = require("../../images/dx-night.png");
+				}
+			}
 		}
 	}
 </script>
