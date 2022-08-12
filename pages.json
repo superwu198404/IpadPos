@@ -22,6 +22,14 @@
 			}
 		}
 		, 
+		{
+			"path": "pages/TestDemon/CxCount",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}
+		, 
 		 {
 			"path": "pages/Payment/PaymentAll",
 			"style": {

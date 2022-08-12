@@ -254,6 +254,74 @@ var GetPayWay = function(e, func) {
 		})
 	});
 }
+
+//获取支付方式
+var GetPayWayAsync =async function(e, func) {
+	e = 'K0101QT2'; //测试使用
+	let list = [];
+	console.log("[async]查询门店的支付方式:", e);
+	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
+                                       F1.JK_PRINT_PATH  JK_PRINT_PATH,\
+                                       IFNULL(F1.YN_ZL, 'N') YN_ZL,\
+                                       IFNULL(F1.NET_ADDTYPE, 'N') NET_ADDTYPE,\
+                                       IFNULL(F1.YN_INPUTJE, 'N') YN_INPUTJE,\
+                                       F1.FKID  FKID,\
+                                       F1.SNAME  SNAME,\
+                                       F1.PINYIN  PINYIN,\
+                                       F1.MEDIA  MEDIA,\
+                                       F1.YN_DBM  YN_DBM,\
+                                       F1. YN_SQ  YN_SQ,\
+                                       F1. YN_CEZF  YN_CEZF,\
+                                       IFNULL(F1.YN_JK, 'N') YN_JK,\
+                                       F1.JK_KEY1  JK_KEY1,\
+                                       F1.JK_KEY2  JK_KEY2,\
+                                       F1.JK_KEY3  JK_KEY3,\
+                                       F1.FKJBID   FKJBID,\
+                                       F1.FKID_F   FKID_F,\
+                                       F1.ID_RY_LR  ID_RY_LR,\
+                                       F1.DATE_LR  DATE_LR,\
+                                       F1.ID_RY_XG  ID_RY_XG,\
+                                       F1.DATE_XG  DATE_XG,\
+                                       F1.DA_STATUS  DA_STATUS,\
+                                       F1. ID_RY_SH  ID_RY_SH,\
+                                       F1.DATE_SH  DATE_SH,\
+                                       F1.JKSNAME  JKSNAME,\
+                                       F1. NBJKNO  NBJKNO,\
+                                       'N' YN_FP  ,\
+                                       'Y' YN_YLTH ,\
+                                       F1.ZKLX  ZKLX\
+                                  FROM FKDA F1, KHZFKDA K1,KHDA K2 \
+                                     WHERE  f1.fkid = k1.fkid  \
+                                        AND  k2.dqid = k1.khzid \
+                                        AND  k2.khid ='" + e + "' \
+                                 ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		GetPolyPayWay(e, (res1) => {
+			console.log("聚合数据：", res1);
+			for (var i = 0; i < res.msg.length; i++) {
+				let obj = res1.msg.find((item) => {
+					return item.ID_NR == res.msg[i].FKID;
+				})
+				if (obj) {
+					res.msg[i].POLY = 'Y';
+				} else {
+					res.msg[i].POLY = 'N';
+				}
+			}
+			if (func) func(res);
+			return res;
+		})
+		if (func) func(res);
+		return res;
+	}, function(err) {
+		console.log("获取付款方式出错:", err);
+		uni.showToast({
+			icon: 'error',
+			title: "获取付款方式出错"
+		})
+	});
+}
+
 //获取聚合支付
 var GetPolyPayWay = function(e, func) {
 	let sql = "select  ID_NR,ZF  from  dapzcs_nr where id  ='FKJHZF'";
@@ -428,7 +496,8 @@ var GetZFRULE = async function(e, func) {
 		console.log("获取支付规则数据成功：", res);
 		if (res.code) {
 			let obj = {};
-			getApp().globalData.PayInfo = res.msg; //首先赋值一下支付规则集合
+			util.setStorage("PayInfo",res.msg)
+			// getApp().globalData.PayInfo = res.msg; //首先赋值一下支付规则集合
 			for (var i = 0; i < res.msg.length; i++) {
 				let codeArr = res.msg[i].CODE.split(',');
 				for (var j = 0; j < codeArr.length; j++) {
@@ -545,6 +614,7 @@ export default {
 	TransLiteData,
 	TransLite,
 	GetPayWay,
+	GetPayWayAsync,
 	QueryRefund,
 	Query,
 	Excute,

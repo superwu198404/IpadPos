@@ -10,7 +10,7 @@
 		<view class="commodity" style="height: 100%;">
 			<view class="hh">
 				<view class="hotcakes">
-					<image src="../../images/ydtq.png" mode="widthFix"></image> 预定提取
+					<image src="../../images/ydtq.png" mode="widthFix"></image> {{ mode ? '预定提取' : '预定取消'}} 
 					<view class="classifys">
 						<text :class="SelectedClass('全部')" @click="Selected('全部',-1)">全部</text>
 						<text :class="SelectedClass('今日')" @click="Selected('今日',0)">今日</text>
@@ -57,15 +57,16 @@
 							<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
 							<view>定金:{{ item.DNET.toString() || '-' }}</view>
 							<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
-							<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">备注:{{ item.CUSTMCOMM || '-' }}</view>
+							<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+								备注:{{ item.CUSTMCOMM || '-' }}</view>
 						</view>
 						<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
-							<button @click="ExtractOrder(item)" class="btn">预定提取</button>
+							<button @click="ExtractOrder(item)" class="btn">{{ mode ? '预定提取' : '预定取消'}} </button>
 						</view>
 					</view>
 				</view>
 			</view>
-			<component :is="'Reserve'" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
+			<component :is="'Reserve'" :mode="mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
 			</component>
 		</view>
 	</menu_content>
@@ -81,6 +82,12 @@
 		mixins: [global],
 		components: {
 			Reserve
+		},
+		props: {
+			mode: {//是否是提取模式（true 提取则进入支付，false 否则是退款）
+				type: Boolean,
+				default: true
+			}
 		},
 		data() {
 			return {
@@ -149,9 +156,9 @@
 				this.view.Details = true;
 				this.extract_order = item;
 			},
-			CloseDrawer:function(){
+			CloseDrawer: function() {
 				this.view.Details = false;
-				this.GetList();//刷新列表
+				this.GetList(); //刷新列表
 			},
 			GetList: function() {
 				getReserveOrders({
@@ -163,20 +170,20 @@
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
 					console.log("[GetList]预定提取:", data);
-					if (data.constructor === Array){
-						this.extracts = (function(){
+					if (data.constructor === Array) {
+						this.extracts = (function() {
 							let indexs = data.map(item => {
-								item.$index =item.SALEDATE ? new Date(item.SALEDATE).getTime() : 0
+								item.$index = item.SALEDATE ? new Date(item.SALEDATE)
+									.getTime() : 0
 								return item;
 							});
-							indexs.sort((a,b) => a-b>0);
+							indexs.sort((a, b) => a - b > 0);
 							return indexs;
 						})();
-					}
-					else
+					} else
 						this.extracts = [];
 				}, (err) => {
-					util.simpleMsg(err.msg,true,err);
+					util.simpleMsg(err.msg, true, err);
 				}))
 			}
 		},

@@ -88,7 +88,7 @@
 											<image src="../../images/shouyintai.png" mode="widthFix"></image>
 											还需支付
 										</view>
-										<text>{{ dPayAmount }}￥</text>
+										<text>{{ debt }}￥</text>
 									</view>
 								</view>
 							</view>
@@ -514,7 +514,7 @@
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					});
-					return obj;
+					return util.hidePropety(obj,"NAME");
 				}).bind(this));
 				console.log("sale2 封装完毕!", this.sale2_arr);
 				console.log("sale3 封装中...");
@@ -705,11 +705,11 @@
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
 				this.logs = true;
-				console.log("SALE1 初始化开始：", this.sale1_obj);
+				console.log("[RefundDataHandle]SALE1 初始化开始：", this.sale1_obj);
 				this.SALE1Init(this.sale1_obj); //sale1 初始化
-				console.log("SALE2 初始化开始：", this.sale2_arr);
+				console.log("[RefundDataHandle]SALE2 初始化开始：", this.sale2_arr);
 				this.SALE2Init(this.sale2_arr);
-				console.log("SALE3 初始化开始：", this.sale3_arr);
+				console.log("[RefundDataHandle]SALE3 初始化开始：", this.sale3_arr);
 				this.SALE3Init(this.sale3_arr);
 				this.logs = false;
 			},
@@ -718,6 +718,9 @@
 				if (common.actTypeEnum.Payment === this.actType) { //如果是支付
 					console.log("初始化 PayList 列表...", this.SALES)
 					this.PayListInit();
+					this.sale1_obj = this.SALES.sale1;
+					this.sale2_arr = this.SALES.sale2;
+					this.sale3_arr = this.SALES.sale3;
 				}
 			},
 			//计算从上个页面传入的已完成的支付金额
@@ -770,6 +773,7 @@
 			//SALE003 初始化、处理
 			SALE3Init: function() {
 				if (this.isRefund) {
+					console.log("[SALE3Init]PayWayList:",this.PayWayList);
 					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
@@ -809,8 +813,8 @@
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					console.log("退款fkid:", refundInfo.fkid)
-					console.log("退款fkids:", [this.PayWayInfo("SZQ").fkid, this.PayWayInfo("ZQ").fkid])
+					console.log("[Refund]退款fkid:", refundInfo.fkid)
+					console.log("[Refund]退款payWayType:", payWayType)
 					if (payWayType) {
 						if (!isRetry) refundInfo.fail =
 							false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
@@ -1355,18 +1359,21 @@
 			//会员信息重写
 			UpdateHyInfo: function(e) {
 				console.log("接口返回的会员信息：", e);
-				if (e && e.hyid) { //支付接口有返回会员信息
-					let hyinfo = util.getStorage("hyinfo");
-					console.log("当前会员信息：", hyinfo);
-					if (!hyinfo || JSON.stringify(hyinfo) == '{}' || !hyinfo.hyId) {
-						util.setStorage("hyinfo", {
-							hyId: e.hyid
-						});
+				try{
+					if (e && e.hyid) { //支付接口有返回会员信息
+						let hyinfo = util.getStorage("hyinfo");
+						console.log("当前会员信息：", hyinfo);
+						if (!hyinfo || JSON.stringify(hyinfo) == '{}' || !hyinfo.hyId) {
+							util.setStorage("hyinfo", {
+								hyId: e.hyid
+							});
+						}
+						// if ((!hyinfo || !hyinfo.hyId) && getApp().globalData.hyinfo) { //如果没有会员信息就重新录入一下
+						// 	getApp().globalData.hyinfo.hyId = e.hyid;
+						// }
 					}
-					// if ((!hyinfo || !hyinfo.hyId) && getApp().globalData.hyinfo) { //如果没有会员信息就重新录入一下
-					// 	getApp().globalData.hyinfo.hyId = e.hyid;
-					// }
 				}
+				catch(err){ console.log("HYID:",err); }
 				console.log("更新后的会员信息:", util.getStorage("hyinfo"));
 			},
 			//获取水吧商品

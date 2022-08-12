@@ -56,7 +56,7 @@
 					style="border-radius: 5px;padding: 2px 3px;margin-left: 5px;background-color: royalblue;color: white;"
 					@click="searchOrder()">查询</span></text>
 			<text>
-				<input style="border:1px solid gray" type="text" v-model="refund_no" />
+				<input style="border:1px solid gray" type="text" v-model="refund_no" :adjust-position="false" />
 				<div class="bills">
 					<div v-for="bill in input.similar" @click="billAssignment(bill)">{{ bill }}</div>
 				</div>

@@ -74,7 +74,7 @@
 				</view>
 				<view class="operat">
 					<button class="btn btn-qx" @click="views.Memberinfo = false">取 消</button>
-					<button class="btn" @click="Save">确 定</button>
+					<button class="btn" @click="Save">保 存</button>
 				</view>
 			</view>
 			<view class="pop-r">
@@ -120,7 +120,7 @@
 				</view>
 				<view class="confirm">
 					<button class="btn btn-qx" @click="Close">返 回</button>
-					<button class="btn">确 认</button>
+					<button class="btn" @click="Accept">{{ mode ? '提取' : '取消' }}</button>
 				</view>
 			</view>
 		</view>
@@ -129,11 +129,21 @@
 <script>
 	import _extract from '@/api/business/extract.js'
 	import util from '@/utils/util.js';
+	import {
+		Refund
+	} from '@/bll/RefundBusiness/bll.js'
+	import {
+		Payment
+	} from '@/bll/PaymentBusiness/bll.js'
 	export default {
 		name: "Reserve",
 		props: {
 			show: Boolean,
-			info: Object
+			info: Object,
+			mode: {
+				type: Boolean,
+				default: true
+			}
 		},
 		data() {
 			return {
@@ -216,14 +226,16 @@
 				}, util.callBind(this, function(res) {
 					if (res.code) {
 						this.details.list = JSON.parse(res.data);
-						console.log("详细信息：", res);
+						console.log("详细信息：", this.details.list);
 					} else
 						util.simpleMsg(res.msg, true, res);
 				}))
 			},
 			Save: function() {
-				let address = "",address_id = "",phone = "";
-				if(this.views.current){
+				let address = "",
+					address_id = "",
+					phone = "";
+				if (this.views.current) {
 					let address_info = this.details.address[this.views.current];
 					address = address_info.ADDRESS;
 					address_id = address_info.ADDRID;
@@ -246,7 +258,7 @@
 					}
 				}, util.callBind(this, function(res) {
 					util.simpleMsg(res.msg, res.code, res);
-					if(res.code){
+					if (res.code) {
 						this.views.Memberinfo = false;
 						this.Close();
 					}
@@ -305,13 +317,38 @@
 			},
 			Close: function() {
 				this.$emit("Close");
+			},
+			Accept:function(){//由于支付操作的订单是初始化所以是同步的，而退款的方法涉及数据库查询所以是异步的
+				if(this.mode){//提取操作 => 支付
+					console.log("[预定提取]结算确认!开始结算...")
+					Payment(this.details.list).then(util.callBind(this, function(pay_data) {//处理退款所需的业务信息数据
+						console.log("[预定提取]处理的数据:",pay_data);
+						this.$store.commit('set-location', pay_data);//把数据传入下个页面
+						uni.navigateTo({
+							url: "../Payment/PaymentAll"
+						})
+					})).catch(util.callBind(this, function(err) {
+						console.log("退单表数据查询异常:", err);
+					}));
+				}
+				else{//取消操作 => 退款
+					console.log("[预定取消]退单确认!开始退款...");
+					Refund(this.details.info.BILL).then(util.callBind(this, function(refund_data) {//处理退款所需的业务信息数据
+						this.$store.commit('set-location', refund_data);//把数据传入下个页面
+						uni.navigateTo({
+							url: "../Payment/PaymentAll"
+						})
+					})).catch(util.callBind(this, function(err) {
+						console.log("退单表数据查询异常:", err);
+					}));
+				}
 			}
 		},
 		mounted() {
 			Object.assign(this.details.info, this.info);
 			console.log("预订单信息:", this.details.info);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
-			this.GetOrderDetails(this.bill);
+			this.GetOrderDetails(this.details.info.BILL);
 		}
 	}
 </script>
