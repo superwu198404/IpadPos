@@ -12,6 +12,7 @@ var app = getApp();
  * @param {} khid 
  */
 var GetFZCX = function(khid, func) {
+	//khid = "K0101QT2" //测试使用
 	let cxArr = [];
 	let sql = "select BILL,CXZT from cxformd001 cx where cx.Yn_Jslb='F' order by CXZT";
 	db.get().executeQry(sql, "查询中...", res => {
@@ -54,6 +55,13 @@ var GetMDCXHD = function(func) {
                                         union all \
                                         select CXZT,DATE(SDATE) \
              SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE>=date('now')  ORDER  by CXRY , SDATE desc";
+	//下列sql为 测试使用
+	// sql =
+	// 	"select  CXZT,DATE(SDATE) \
+	// 		          SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE<=date('now') \
+	// 		                                     union all \
+	// 		                                     select CXZT,DATE(SDATE) \
+	// 		          SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE<=date('now')  ORDER  by CXRY , SDATE desc";
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("门店促销活动查询结果：", res);
 		if (res.code && res.msg.length > 0) {
@@ -101,23 +109,26 @@ var GetZKDatas = function(data, func) {
 		Req.asyncFuncOne(reqdata, func, func);
 	}
 }
+
 /**
  * 获取门店日销商品 
  * @param {门店id} khid 
  * @param {时间段} time 
  */
 var GetRXSPDatas = async function(khid, time, func) {
-	let sql = "select i.XSQTY,s.*,p.SNAME PLNAME from IPAD_RXSP i LEFT JOIN spda s on i.spid=s.spid left join PLDA p on i.PLID=p.PLID where i.khid='" + khid +
+	let sql =
+		"select i.XSQTY,s.*,p.SNAME PLNAME from IPAD_RXSP i LEFT JOIN spda s on i.spid=s.spid left join PLDA p on i.PLID=p.PLID where i.khid='" +
+		khid +
 		"' and i.time='" + time + "' order by i.XSQTY desc";
 	let data = [];
-	// await db.get().executeQry(sql, "查询中...", res => {
-	// 	console.log("门店日销数据查询结果：", res);
-	// 	if (res.code && res.msg.length > 0) {
-	// 		data = res.msg;
-	// 	}
-	// }, err => {
-	// 	console.log("查询日销数据异常：", err);
-	// })
+	await db.get().executeQry(sql, "查询中...", res => {
+		console.log("门店日销数据查询结果：", res);
+		if (res.code && res.msg.length > 0) {
+			data = res.msg;
+		}
+	}, err => {
+		console.log("查询日销数据异常：", err);
+	})
 	if (data.length > 0) {
 		if (func) func({
 			code: true,

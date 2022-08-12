@@ -25,42 +25,46 @@
 								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 							</view>
 							<view class="classifys">
-								<text :class="PLIndex==index?'curr':' '" v-for="(item,index) in RXPLDatas"
-									@click="ChoosePL(item,index)">{{item.PLNAME}}</text>
+								<text :class="PLIndex==index?'curr':' '" v-for="(item,index) in RXSPDatas"
+									@click="ChoosePL(item,index)" :key="index">{{item.PLNAME}}</text>
 								<!-- <text>土司餐包</text> -->
 								<label>
 									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 								</label>
 							</view>
 						</view>
-						<!-- 小类循环 -->
-						<view class="products">
-							<view class="h2">{{RXPLDatas.length>0?RXPLDatas[PLIndex].PLNAME:""}}<label></label></view>
-							<view class="procycle">
-								<!-- 产品循环 -->
-								<view class="li"
-									v-for="(item,index) in RXSPDatas.filter(r=>{return r.PLID==RXPLDatas[PLIndex].PLID})">
-									<view class="h3">
-										<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{item.SNAME}}
-									</view>
-									<view class="cods">
-										<label>
-											<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
-										</label>
-										<label>
-											<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
-										</label>
-									</view>
-									<view class="price">
-										<text>￥{{item.PRICE}}</text>
-										<text>销量：{{item.XSQTY}}</text>
-										<view>
-											<image src="../../images/dx-gd.png" mode="widthFix"></image>
+						<!-- 品类循环 -->
+						<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+							<view class="products" v-for="(item1,index1) in RXSPDatas" :id="'tab'+index1">
+								<view class="h2">{{item1.PLNAME}}<label></label></view>
+								<view class="procycle">
+									<!-- 产品循环 -->
+									<view class="li" v-for="(item,index) in item1.Details">
+										<view class="h3">
+											<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+											{{item.SNAME}}
+										</view>
+										<view class="cods">
+											<label>
+												<image src="../../images/dx-bm.png" mode="widthFix"></image>
+												{{item.SPID}}
+											</label>
+											<label>
+												<image src="../../images/dx-dw.png" mode="widthFix"></image>
+												{{item.UNIT}}
+											</label>
+										</view>
+										<view class="price">
+											<text>￥{{item.PRICE}}</text>
+											<text>销量：{{item.XSQTY}}</text>
+											<view>
+												<image src="../../images/dx-gd.png" mode="widthFix"></image>
+											</view>
 										</view>
 									</view>
 								</view>
 							</view>
-						</view>
+						</scroll-view>
 					</view>
 				</view>
 				<view class="operation">
@@ -326,7 +330,7 @@
 						<view class="li"><text>应收金额</text><text>￥560</text></view>
 					</view>
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
-					<view class="shoppbag">
+					<view class="shoppbag" style="flex-wrap: nowrap;">
 						<view class="hengs">
 							<view v-if="CXDatas.length>0">
 								<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
@@ -508,20 +512,15 @@
 				ZKDatas: [],
 				curZKType: "BZ",
 				RXSPDatas: [], //日销数据集合
-				RXPLDatas: [], //热销品类集合
 				curTime: require("../../images/dx-day.png"), //当前时段 早上 中午 晚上
 				PLIndex: 0, //热销品类索引
+				scrollinto: ""
 			}
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
-				// _msg.ShowMsg(that.KHID, res => {
-				// 	console.log("消息数据：", res);
-				// 	that.MsgData = res;
-				// });
 				// common.DelSale();//主动删除销售单
-
 			},
 			//关闭结算
 			CloseSale: function() {
@@ -543,8 +542,6 @@
 			},
 			//获取辅助促销
 			GetFZCX: function() {
-				//that.KHID
-				//"K0101QT2"
 				_main.GetFZCX(that.KHID, res => {
 					console.log("辅助促销查询结果:", res);
 					that.CXDatas = res;
@@ -607,9 +604,21 @@
 					})
 				}
 			},
+			//获取并展示门店促销活动
+			ShowCXData: function() {
+				_main.GetMDCXHD(res => {
+					that.MDCXDatas = res;
+					that.showMDCXData = true;
+				})
+			},
+			//查看更多 辅助促销
 			Bagslist: function(e) {
-				this.Shoppingbags = true;
-				this.Memberinfo = false;
+				if (that.CXDatas.length > 0) {
+					that.Shoppingbags = true;
+					that.Memberinfo = false;
+				} else {
+					util.simpleMsg("暂无更多", true);
+				}
 			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
@@ -654,29 +663,37 @@
 			//获取门店日销商品
 			GetRXSPDatas: () => {
 				let time = new Date().getHours();
-				time = 14;
+				time = 14; //测试使用
 				_main.GetRXSPDatas(that.KHID, time, res => {
 					if (res.code) {
-						that.RXSPDatas = JSON.parse(res.data);
-						console.log("热销商品数据：", that.RXSPDatas);
-						let arr = that.RXSPDatas.map((item, index) => {
-							let obj = that.RXPLDatas.find(a => {
+						let Arr = JSON.parse(res.data);
+						console.log("热销商品数据：", Arr);
+						Arr.map((item, index) => {
+							let obj = that.RXSPDatas.find(a => {
 								return a.PLID == item.PLID
 							});
 							if (!obj || JSON.stringify(obj) == "{}") {
-								that.RXPLDatas.push({
+								that.RXSPDatas.push({
 									PLID: item.PLID,
 									PLNAME: item.PLNAME
 								});
 							}
 						})
-						console.log("热销品类数据：", that.RXPLDatas);
+						that.RXSPDatas.map(r => {
+							r.Details = Arr.filter(rr => {
+								return rr.PLID == r.PLID
+							});
+						})
+						console.log("分组后的热销商品数据：", that.RXSPDatas);
 					}
 				})
 			},
 			//品类选择
 			ChoosePL: (e, i) => {
 				that.PLIndex = i;
+				// that.tabIndex = i;
+				that.scrollinto = 'tab' + i;
+				// console.log("索引数：", that.scrollinto);
 			},
 			//获取当前时间段
 			GetCurTime: e => {

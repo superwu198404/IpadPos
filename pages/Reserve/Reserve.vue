@@ -206,7 +206,7 @@
 					TNET: 10,
 					DNET: 0,
 					CUSTMNAME: "",
-					CUSTMPHONE: "", 
+					CUSTMPHONE: "",
 					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
 					TH_DATE: dateformat.getYMD(),
 					TH_TIME: dateformat.gettime(),
@@ -351,6 +351,9 @@
 			THChange: e => {
 				that.index = e.detail.value;
 				that.Order.THTYPE = that.THTYPES[that.index].ID;
+				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
+					that.GetAddr();
+				}
 			},
 			//显示地址框
 			ShowAddADDR: () => {
@@ -367,6 +370,7 @@
 				_reserve.GetAddr({
 					phone: that.Order.CUSTMPHONE
 				}, res => {
+					console.log("用户地址查询结果:", res);
 					if (res.code && res.data.length > 0) {
 						that.ADDRS = JSON.parse(res.data).filter((r) => {
 							return r.ADDRID != null;

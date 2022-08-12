@@ -112,7 +112,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 	console.log("获取请求体(whole)：", request);
 	Req.asyncFuncArr1(request, [
 		function(res) {
-			util.sleep(3000);
+			// util.sleep(3000);
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {

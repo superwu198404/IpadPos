@@ -270,14 +270,14 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					// console.log("数据库执行成功：", e);
+					 // console.log("数据库执行成功：", e);
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					// console.log("数据库执行失败：", e);
+					 // console.log("数据库执行失败：", e);
 					return resolve({
 						code: false,
 						msg: e
@@ -294,14 +294,14 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					console.log("查询sql成功:", e);
+					// console.log("查询sql成功:", e);
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					console.log("查询sql错误:", e);
+					// console.log("查询sql错误:", e);
 					return resolve({
 						code: false,
 						msg: e

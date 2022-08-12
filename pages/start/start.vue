@@ -1,8 +1,10 @@
 <template>
 	<view>
 		<text>{{showmsg}}</text>>
-		<input placeholder="请输入门店的编码" v-model="khid" />
+		<p>门店：<input placeholder="请输入门店的编码" v-model="khid" /></p>
+		<p>款台：<input placeholder="请输入款台号" v-model="posid" /></p>
 		<button @click="init">数据初始化</button>
+		<!-- <button @click="reinit">重读数据</button> -->
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
 		<button @click="toPrinter">蓝牙与打印</button>
@@ -22,8 +24,8 @@
 				initok: false,
 				errstr: "",
 				tx001: null,
-				khid: 'K0101QT2',//测试使用
-				posid: "8",//测试使用
+				khid: "K200QTD005", //'K0101QT2',//108通讯 测试使用
+				posid: "1", //"8",//108通讯 测试使用
 				yninit: false,
 				showmsg: "正在检查是否初始化"
 			}
@@ -62,6 +64,21 @@
 				console.log("准备开始");
 				let getkhid = req.getResData(res);
 				console.log(getkhid);
+			},
+			reinit: () => {
+				mysqlite.executeQry("SELECT * FROM sqlite_master WHERE type ='table'", "操作中...", res => {
+					// console.log("查询的表信息：", res);
+					let arr = res.msg.map(r => {
+						return "drop table " + r.name;
+					})
+					console.log("删除sql:", arr);
+					mysqlite.executeSqlArray(arr, "删除中...", res => {
+						console.log("表删除成功:", res);
+					}, err => {
+						console.log("表删除失败:", err);
+					})
+				})
+
 			},
 			init: async function() {
 				console.log("准备开始初始化" + that.khid);
