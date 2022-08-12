@@ -12,7 +12,9 @@ import util from '@/utils/util.js';
  */
 var CreateData = function(pt, t, m, d) {
 	let data;
-	let PayInfo = getApp().globalData.PayInfo;
+	// let PayInfo = getApp().globalData.PayInfo;
+	let PayInfo = util.getStorage("PayInfo");
+	console.log("[CreateData]PayInfo:",PayInfo);
 	if (pt && PayInfo && PayInfo.length > 0) {
 		let PayObj = PayInfo.find(function(item, index, arr) {
 			return item.TYPE == pt;

@@ -288,9 +288,11 @@
 				this.Newaddr = true
 			},
 			Confirm: function() {
-				console.log("退单确认!开始退款...");
-				Refund.call(this, this.Order.BILL).then(util.callBind(this, function() {
-					console.log("[Confirm]退单表数据(SALE1,2,3):", this.$store.state.location);
+				console.log("[Confirm]退单确认!开始退款...",this.Order.BILL);
+				//处理退款所需的业务信息数据
+				Refund(this.Order.BILL).then(util.callBind(this, function(refund_data) {
+					console.log("[Confirm]退单生成数据:",refund_data);
+					this.$store.commit('set-location', refund_data);//把数据传入下个页面
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
 					})
