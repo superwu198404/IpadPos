@@ -34,37 +34,39 @@
 							</view>
 						</view>
 						<!-- 品类循环 -->
-						<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
-							<view class="products" v-for="(item1,index1) in RXSPDatas" :id="'tab'+index1">
-								<view class="h2">{{item1.PLNAME}}<label></label></view>
-								<view class="procycle">
-									<!-- 产品循环 -->
-									<view class="li" v-for="(item,index) in item1.Details">
-										<view class="h3">
-											<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
-											{{item.SNAME}}
-										</view>
-										<view class="cods">
-											<label>
-												<image src="../../images/dx-bm.png" mode="widthFix"></image>
-												{{item.SPID}}
-											</label>
-											<label>
-												<image src="../../images/dx-dw.png" mode="widthFix"></image>
-												{{item.UNIT}}
-											</label>
-										</view>
-										<view class="price">
-											<text>￥{{item.PRICE}}</text>
-											<text>销量：{{item.XSQTY}}</text>
-											<view>
-												<image src="../../images/dx-gd.png" mode="widthFix"></image>
+						<view style="height:92%;flex: 1;">
+							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+								<view class="products" v-for="(item1,index1) in RXSPDatas" :id="'tab'+index1">
+									<view class="h2">{{item1.PLNAME}}<label></label></view>
+									<view class="procycle">
+										<!-- 产品循环 -->
+										<view class="li" v-for="(item,index) in item1.Details">
+											<view class="h3">
+												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+												{{item.SNAME}}
+											</view>
+											<view class="cods">
+												<label>
+													<image src="../../images/dx-bm.png" mode="widthFix"></image>
+													{{item.SPID}}
+												</label>
+												<label>
+													<image src="../../images/dx-dw.png" mode="widthFix"></image>
+													{{item.UNIT}}
+												</label>
+											</view>
+											<view class="price">
+												<text>￥{{item.PRICE}}</text>
+												<text>销量：{{item.XSQTY}}</text>
+												<view>
+													<image src="../../images/dx-gd.png" mode="widthFix"></image>
+												</view>
 											</view>
 										</view>
 									</view>
 								</view>
-							</view>
-						</scroll-view>
+							</scroll-view>
+						</view>
 					</view>
 				</view>
 				<view class="operation">
@@ -108,6 +110,7 @@
 						<label><text>S</text></label>
 						<label><text>T</text></label>
 						<label><text>U</text></label>
+						<label><text>V</text></label>
 						<label><text>W</text></label>
 						<label><text>X</text></label>
 						<label><text>Y</text></label>

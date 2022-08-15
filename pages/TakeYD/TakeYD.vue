@@ -108,9 +108,9 @@
 									</view>
 								</view>
 								<view class="operat">
-									<button class="btn" @click="ConfirmReceipt()">接受确认</button>
-									<button class="btn" @click="ConfirmReback()">同意退单</button>
-									<button class="btn" @click="RejectReback()">拒绝退单</button>
+									<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
+									<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
+									<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
 									<button class="btn btn-qx" @click="ReBack()">退出</button>
 								</view>
 							</view>
@@ -119,15 +119,15 @@
 				</view>
 			</view>
 		</view>
-	    <!-- 画布 -->
-	    <view class="canvasdiv" :style="'visibility:hidden;'">
-	    	<canvas canvas-id="couponQrcode" class="canvas"
-	    		:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-	    	<canvas canvas-id="canvasLogo" class="canvas"
-	    		:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-	    	<canvas canvas-id="canvasXPEWM" class="canvas"
-	    		:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-	    </view>
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 
@@ -183,6 +183,9 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+				yn_qr: true,
+				yn_ty: false,
+				yn_jj: false,
 			}
 		},
 		methods: {
@@ -217,6 +220,18 @@
 			},
 			//展示外卖单信息
 			ShowDetail: function(e, i) {
+				if (e) {
+					if (e.STATUS == '12' || e.STATUS == '15' || e.STATUS == '33') {
+						that.yn_qr = true;
+						that.yn_ty = false;
+						that.yn_jj = false;
+					}
+					if (e.STATUS == '20' || e.STATUS == '30') {
+						that.yn_qr = false;
+						that.yn_ty = true;
+						that.yn_jj = true;
+					}
+				}
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
 				let detailArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
@@ -284,7 +299,7 @@
 							if (data.yn_print) {
 								//调用打印
 								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,"WMYD");
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WMYD");
 							}
 						}
 						//列表刷新

@@ -47,8 +47,8 @@
 										<view>￥{{item.ZNET}}</view>
 									</view>
 									<view class="cods">
-										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
 										<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
+										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
 										<label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
 										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
 										<label><text>备注：</text><text>{{item.STR1}}</text></label>
@@ -70,10 +70,10 @@
 									<view class="harvest">
 										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
 										<label><text>收货人：</text><text>{{Order.STR5}}</text></label>
-										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label>
-										<label><text>下单时间：</text><text>{{Order.WDATE}} {{Order.WTIME}}</text></label>
+										<!-- <label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
+										<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
 										<label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label>
-										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
+										<!-- <label><text>订单备注：</text><text>{{Order.STR1}}</text></label> -->
 									</view>
 									<view class="h5"><text>单号：{{Order.BILL}}</text></view>
 									<view class="goods">
@@ -103,9 +103,9 @@
 									</view>
 								</view>
 								<view class="operat">
-									<button class="btn" @click="ConfirmReceipt()">接受确认</button>
-									<button class="btn" @click="ConfirmReback()">同意退单</button>
-									<button class="btn" @click="RejectReback()">拒绝退单</button>
+									<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
+									<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
+									<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
 									<button class="btn btn-qx" @click="ReBack()">退出</button>
 								</view>
 							</view>
@@ -268,6 +268,9 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+				yn_qr: false, //确认按钮
+				yn_ty: false, //同意按钮
+				yn_jj: false //拒绝按钮
 			}
 		},
 		methods: {
@@ -302,6 +305,18 @@
 			},
 			//展示外卖单信息
 			ShowDetail: function(e, i) {
+				if (e) {
+					if (e.STATUS == '12' || e.STATUS == '15' || e.STATUS == '33') {
+						that.yn_qr = true;
+						that.yn_ty = false;
+						that.yn_jj = false;
+					}
+					if (e.STATUS == '20' || e.STATUS == '30') {
+						that.yn_qr = false;
+						that.yn_ty = true;
+						that.yn_jj = true;
+					}
+				}
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
 				that.Details = that.OrderDeails.filter(i => i.BILL == e.BILL);

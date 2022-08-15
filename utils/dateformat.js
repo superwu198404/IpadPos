@@ -295,8 +295,11 @@ const gettimes = () => {
 /**
  * 获取当前日期时间HH: mm 
  */
-const gettime = () => {
+const gettime = (_min) => { //min
 	let date = new Date();
+	if (_min) { //如果传入了分钟
+		date.setMinutes(date.getMinutes() + _min);
+	}
 	let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours().toString();
 	let min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes().toString();
 	let sec = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds().toString();
