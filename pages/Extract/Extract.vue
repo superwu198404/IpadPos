@@ -169,7 +169,6 @@
 					customer: this.condition.customer
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
-					console.log("[GetList]预定提取:", data);
 					if (data.constructor === Array) {
 						this.extracts = (function() {
 							let indexs = data.map(item => {
@@ -188,6 +187,7 @@
 			}
 		},
 		mounted() {
+			console.log("[mounted]触发!");
 			this.GetList();
 		}
 	}

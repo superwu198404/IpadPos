@@ -5,7 +5,8 @@
 </style>
 
 <template>
-	<menu_content :index="5" :_index="1">
+	<menu_content :index="5" :_index="5">
+		<!-- <OnlineOrders></OnlineOrders> -->
 		<view class="commodity" style="height: 100%;">
 			<view class="hh">
 				<view class="hotcakes">

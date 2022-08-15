@@ -323,7 +323,7 @@
 			Close: function() {
 				this.$emit("Close");
 			},
-			Accept:function(){//由于支付操作的订单是初始化所以是同步的，而退款的方法涉及数据库查询所以是异步的
+			Accept:function(){
 				if(this.mode){//提取操作 => 支付
 					console.log("[预定提取]结算确认!开始结算...")
 					Payment(this.details.list).then(util.callBind(this, function(pay_data) {//处理退款所需的业务信息数据

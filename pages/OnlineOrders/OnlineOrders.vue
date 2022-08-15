@@ -36,8 +36,7 @@
 			<view class="products">
 				<view class="procycle">
 					<!-- 外卖单循环 -->
-					<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item.YDBILL)" :order="onlineOrdersGroup[item][0]"
-						@tap="ShowDetail(onlineOrdersGroup[item][0])">
+					<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item)" @tap="ShowDetail(onlineOrdersGroup[item][0])">
 						<view class="h3">
 							<view class="platform">
 								<label>
@@ -76,16 +75,17 @@
 						<view class="harvest">
 							<label class="from-label">
 								<text>裱花间：</text>
-								<text>{{details.order.KHSNAME || '-'}}</text>
+								<text v-if="mode('read')">{{details.order.KHSNAME || '-'}}</text>
+								<StorePicker class="input" :init="details.order.KHID_BH" v-if="mode('edit')" @change="StoreChange"></StorePicker>
 							</label>
 							<label class="from-label">
 								<text>商品编码：</text>
 								<text>{{details.order.SPID || '-'}}</text>
 							</label>
-							<label class="from-label">
+							<!-- <label class="from-label">
 								<text>商品名称：</text>
 								<text>{{details.order.SNAME || '-'}}</text>
-							</label>
+							</label> -->
 							<label class="from-label">
 								<text>到货日期：</text>
 								<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
@@ -118,13 +118,40 @@
 									v-model="details.order.CUSTMCOMM" />
 							</label>
 						</view>
+						<view class="goods">
+							<!-- 商品循环 -->
+							<view class="prolist" v-for="(i,index) in this.details.goods">
+								<view class="h3">
+									<label>
+										<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+										{{i.SNAME}} — <text>￥{{i.PRICE}}</text>
+									</label>
+									<view class="shuls"><text>×{{i.QTY}}</text></view>
+								</view>
+								<view class="cods">
+									<view>
+										<label>
+											<image src="@/images/dx-bm.png" mode="widthFix"></image>
+											{{i.SPID}}
+										</label>
+										<label>
+											<image src="@/images/dx-dw.png" mode="widthFix"></image>
+											{{i.STR7}}
+										</label>
+									</view>
+								</view>
+							</view>
+						</view>
 					</view>
 					<view class="operat">
-						<button v-if="mode('read') && view.search.confirm" class="btn btn-edit" @click="Edit()">编辑</button>
+						<button v-if="mode('read') && view.search.confirm" class="btn btn-edit"
+							@click="Edit()">编辑</button>
 						<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 						<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-						<button v-if="mode('read') && view.search.confirm" class="btn" @click="ConfirmAccept(true)">接受确认</button>
-						<button v-if="mode('read') && !view.search.confirm" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
+						<button v-if="mode('read') && view.search.confirm" class="btn"
+							@click="ConfirmAccept(true)">接受确认</button>
+						<button v-if="mode('read') && !view.search.confirm" class="btn btn-qx"
+							@click="ConfirmAccept(false)">取消</button>
 					</view>
 				</view>
 			</view>
@@ -164,7 +191,7 @@
 		getTimeRange, //获取时间段
 		getRoom, //获取裱花间（暂时不用修改）
 		updateOrderInfo, //更新表接口
-		ordersAccept,//顶顶那处理
+		ordersAccept, //顶顶那处理
 		ordersStatusCheck
 	} from '@/api/business/onlineorders.js';
 	import {
@@ -190,7 +217,7 @@
 							code: "",
 							bill: ""
 						},
-						confirm:false
+						confirm: false
 					}
 				},
 				datetime: {
@@ -271,7 +298,7 @@
 			},
 			getCheckStyle: function() {
 				return function(bill) {
-					return bill === this.details.order.BILL ? 'li curr' : 'li'
+					return bill === this.details.order.YDBILL ? 'li curr' : 'li'
 				}
 			},
 			getTakeWayStyle: function() {
@@ -341,7 +368,7 @@
 					});
 					orders.sort((a, b) => a.timestamp - b.timestamp);
 					this.onlineOrders = orders.reverse();
-					this.onlineOrdersGroup = util.group(this.onlineOrders,'YDBILL');
+					this.onlineOrdersGroup = util.group(this.onlineOrders, 'YDBILL');
 					console.log("[GetOnlineOrders]线上订单数据:", this.onlineOrders);
 					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
 					if (func) func();
@@ -349,11 +376,13 @@
 					util.simpleMsg("线上订单获取失败!", true, res);
 				});
 			},
+			//时间限制说明
 			DateTimeTips: function() {
 				util.simpleModal("提示",
 					"1、自提单到货日期只能为当前日期之后，且不能为晚上21点之后，早上7点之前\n2、配送单到货日期只能为当前日期当前日期一小时之后，到货时间 不能 为晚上18点之后，早上9点之前");
 			},
-			CheckArrivalDate: function(date) { //检查到货时间是否合法，到货时段：0-7、7-14、14-24
+			//检查到货时间是否合法
+			CheckArrivalDate: function(date) { //到货时段：0-7、7-14、14-24
 				if (date) {
 					let current = (function() {
 							let dt = new Date(date.replaceAll('-', '/')); //Ipad 时间转换只支持 2000/1/1，不支持 2000-1-1
@@ -389,6 +418,7 @@
 					}
 				}
 			},
+			//设置时间区间
 			SetTimeRange: function() {
 				if (this.details.order.DATE_DH) {
 					this.timeRange.forEach(util.callBind(this, function(time, index) {
@@ -406,22 +436,24 @@
 			},
 			//渲染到视图
 			RenderFrom: function(source) {
-				if(source?.BILL){
-					ordersStatusCheck(source?.YDBILL,util.callBind(this,function(res){
-						if(res.data.msg.DATA && res.data.msg.DATA.length && res.data.msg.DATA.length > 0){
-							if(res.data.msg.DATA[0].orderStatus === 'DELIVERED') 
+				if (source?.BILL) {
+					ordersStatusCheck(source?.YDBILL, util.callBind(this, function(res) {
+						if (res.data.msg.DATA && res.data.msg.DATA.length && res.data.msg.DATA.length >
+							0) {
+							if (res.data.msg.DATA[0].orderStatus === 'DELIVERED')
 								this.view.search.confirm = false;
-							else 
+							else
 								this.view.search.confirm = true;
-						}
-						else 
+						} else
 							this.view.search.confirm = true;
-						console.log("[RenderFrom]confirm:",this.view.search.confirm);
-					}))
-					this.details.order.BILL = source?.BILL;
+						console.log("[RenderFrom]confirm:", this.view.search.confirm);
+					}));
 					Object.assign(this.details.order, source);
 					this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
 					this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
+					let good_infos = this.onlineOrdersGroup[this.details.order.YDBILL];//获取对应商品集合中商品信息集合
+					console.log("[RenderFrom]当前组数据:",good_infos);
+					if(good_infos) this.details.goods = good_infos;
 				}
 			},
 			//展示详情
@@ -431,6 +463,11 @@
 					this.$forceUpdate();
 				} else
 					util.simpleMsg("请确认保存信息！")
+			},
+			StoreChange:function(data){
+				console.log("[StoreChange]门店选择:",data);
+				this.details.order.KHID_BH = data.KHID;
+				this.details.order.KHSNAME = data.NAME;
 			},
 			//选择裱花间
 			SelectRoom: function(val) {
@@ -462,7 +499,8 @@
 						khid: this.details.order.KHID,
 						remark: this.details.order.CUSTMCOMM,
 						date: this.details.order.DATE_DH,
-						timerange: this.details.order.DHSJD
+						timerange: this.details.order.DHSJD,
+						khid_bh: this.details.order.KHID_BH,
 					}, util.callBind(this, function(res) {
 						this.GetOnlineOrders(); //刷新列表
 						util.simpleMsg("订单修改成功!", false, res)
@@ -481,8 +519,9 @@
 			ConfirmAccept: async function(isAccept) {
 				console.log("处理订单：", this.details.order)
 				this.details.order.STATUS = isAccept;
-				let info_valid = true,time_valid =true;
-				if(isAccept){//只有接单才判断
+				let info_valid = true,
+					time_valid = true;
+				if (isAccept) { //只有接单才判断
 					info_valid = await Validity(this.details.order);
 					time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
 				}
@@ -524,15 +563,15 @@
 	.products {
 		height: calc(88% - 30px) !important;
 	}
-	
+
 	.picker {
 		border: 1px solid #70c477;
 		border-radius: 5px;
 		margin-right: 5px;
-		padding:.5px 3px;
+		padding: .5px 3px;
 	}
-	
-	.harvest uni-label{
+
+	.harvest uni-label {
 		display: flex;
 		align-items: center;
 	}
