@@ -20,7 +20,8 @@
 						<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE"
 								v-on:blur="QueryAddress()" /></label>
 						<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
-						<label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label>
+						<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
+						<label><text>提货门店：</text><StorePicker @change="StoreChange" :init="details.info.THKHID" style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;" class="uni-input-input"></StorePicker></label>
 						<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
 						<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
 						<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
@@ -205,6 +206,10 @@
 				this.state.address_edit = false;
 				this.from.address.PHONE = this.details.info.CUSTMPHONE;
 			},
+			StoreChange:function(data){
+				console.log("[StoreChange]被选中的门店:",data);
+				
+			},
 			RadioChange: function(evt) {
 				for (let i = 0; i < this.details.address.length; i++) {
 					if (this.details.address[i].value === evt.detail.value) {
@@ -242,7 +247,7 @@
 					phone = address_info.PHONE;
 				}
 				_extract.reserveOrdersUpdate({
-					khid: this.KHID,
+					khid: this.details.info.KHID,
 					gsid: this.GSID,
 					bill: this.details.info.BILL,
 					regenerate: this.ExistsGenarate(),
@@ -346,7 +351,7 @@
 		},
 		mounted() {
 			Object.assign(this.details.info, this.info);
-			console.log("预订单信息:", this.details.info);
+			console.log("[Reserve]预订单信息:", this.details.info);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
 			this.GetOrderDetails(this.details.info.BILL);
 		}

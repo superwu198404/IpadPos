@@ -257,6 +257,16 @@ const utils = {
 			rs = rs + s.substr(i, 1).replace(pattern, '');
 		}
 		return rs;
+	},
+	group: function(arr = [], field = "") {
+		let map = new Map();
+		let group = {};
+		arr.map(i => {
+			if(!group[i[field]]){
+				group[i[field]] = arr.filter(obj => obj[field] === i[field]);
+			}
+		});
+		return group;
 	}
 }
 
@@ -282,6 +292,7 @@ export default {
 	getStorage: utils.getStorage,
 	removeStorage: utils.removeStorage,
 	hidePropety: utils.hidePropety,
+	stripscript: utils.stripscript,
 	callBind: utils.callBind,
-	stripscript: utils.stripscript
+	group: utils.group
 }
