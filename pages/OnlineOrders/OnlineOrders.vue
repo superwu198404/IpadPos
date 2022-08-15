@@ -36,31 +36,31 @@
 			<view class="products">
 				<view class="procycle">
 					<!-- 外卖单循环 -->
-					<view v-for="(item,index) in onlineOrders" :class="getCheckStyle(item.BILL)" :order="item"
-						@tap="ShowDetail(item)">
+					<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item.YDBILL)" :order="onlineOrdersGroup[item][0]"
+						@tap="ShowDetail(onlineOrdersGroup[item][0])">
 						<view class="h3">
 							<view class="platform">
 								<label>
 									<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
-									{{item.SNAME}}
+									{{onlineOrdersGroup[item][0].SNAME}}
 								</label>
 								<label
-									:class="'state quxiao ' + getTakeWayStyle(item.THTYPE)"><text>●</text>{{ getTakeWayText(item.THTYPE) }}</label>
+									:class="'state quxiao ' + getTakeWayStyle(onlineOrdersGroup[item][0].THTYPE)"><text>●</text>{{ getTakeWayText(onlineOrdersGroup[item][0].THTYPE) }}</label>
 								<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
 							</view>
-							<view>￥{{item.PRICE}}</view>
+							<view>￥{{onlineOrdersGroup[item][0].PRICE}}</view>
 						</view>
 						<view class="cods">
-							<label><text>预定单号：</text><text>{{item.YDBILL || '-'}}</text></label>
+							<label><text>预定单号：</text><text>{{item || '-'}}</text></label>
 							<label><text class="text-nowrap">预定时间：</text><text
-									class="ellipsis-text">{{item.SALETIME || '-'}}</text></label>
+									class="ellipsis-text">{{onlineOrdersGroup[item][0].SALETIME || '-'}}</text></label>
 							<label><text class="text-nowrap">顾客姓名：</text><text
-									class="ellipsis-text">{{item.CUSTMNAME || '-'}}</text></label>
+									class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMNAME || '-'}}</text></label>
 							<label><text class="text-nowrap">顾客电话：</text><text
-									class="ellipsis-text">{{item.CUSTMPHONE || '-'}}</text></label>
+									class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMPHONE || '-'}}</text></label>
 						</view>
 						<view class="address">
-							顾客地址：{{item.CUSTMADDRESS || '-'}}
+							顾客地址：{{onlineOrdersGroup[item][0].CUSTMADDRESS || '-'}}
 						</view>
 					</view>
 				</view>
@@ -180,6 +180,7 @@
 		data() {
 			return {
 				onlineOrders: [],
+				onlineOrdersGroup: [],
 				BHLB: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
 				view: {
 					search: {
@@ -340,7 +341,9 @@
 					});
 					orders.sort((a, b) => a.timestamp - b.timestamp);
 					this.onlineOrders = orders.reverse();
-					console.log("线上订单:", this.onlineOrders);
+					this.onlineOrdersGroup = util.group(this.onlineOrders,'YDBILL');
+					console.log("[GetOnlineOrders]线上订单数据:", this.onlineOrders);
+					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
 					if (func) func();
 				}), (res) => {
 					util.simpleMsg("线上订单获取失败!", true, res);

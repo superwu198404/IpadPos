@@ -35,11 +35,11 @@ const utils = {
 		});
 	},
 	//转为IOS上支持的时间格式(ios 上时间对象 Date 不支持 yyyy-MM-dd 这种用'-'分隔的格式)
-	formatIOSDateTime:function(dateStr){
+	formatIOSDateTime: function(dateStr) {
 		return dateStr.replaceAll('-', '/');
 	},
 	//此处是时区补偿，因为IOS上有8个小时的时区（晚了八个小时）
-	timeZoneCompensation:function(datetime,value = 8){
+	timeZoneCompensation: function(datetime, value = 8) {
 		return new Date(datetime.setHours(datetime.getHours() + value));
 	},
 	//内容替换
@@ -51,7 +51,7 @@ const utils = {
 		return num.length === 11 ? num.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2') : num;
 	},
 	//获取零点时间 如：2022-01-01 14:12:22 => 2022-01-01 00:00:00
-	twelveClock:function(datetime){
+	twelveClock: function(datetime) {
 		return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getUTCDate() + 1, -16, 0, 0)
 	},
 	//金额格式化
@@ -248,6 +248,16 @@ const utils = {
 			uni.removeStorageSync(key);
 		}
 		return val;
+	},
+	group: function(arr = [], field = "") {
+		let map = new Map();
+		let group = {};
+		arr.map(i => {
+			if(!group[i[field]]){
+				group[i[field]] = arr.filter(obj => obj[field] === i[field]);
+			}
+		});
+		return group;
 	}
 }
 
@@ -273,5 +283,6 @@ export default {
 	getStorage: utils.getStorage,
 	removeStorage: utils.removeStorage,
 	hidePropety: utils.hidePropety,
-	callBind: utils.callBind
+	callBind: utils.callBind,
+	group: utils.group
 }
