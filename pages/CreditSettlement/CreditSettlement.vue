@@ -5,7 +5,8 @@
 	/* @import url(@/static/style/OnlineOrders/index.css); */
 </style>
 <template>
-	<menu_content index="8">
+	<!-- <menu_content index="8"> -->
+	<view>
 		<view class="page-content">
 			<view class="hh">
 				<view class="hotcakes">
@@ -32,7 +33,7 @@
 								<!-- <view>订单号:{{ i.BILL }}</view> -->
 								<view>商品名称:{{ i.SNAME }}</view>
 							</view>
-
+		
 						</view>
 					</view>
 				</view>
@@ -64,7 +65,8 @@
 			</view>
 		</view>
 		<BigCustomer v-show="view.show" @ClosePopup="ClosePopup"></BigCustomer>
-	</menu_content>
+	</view>	
+	<!-- </menu_content> -->
 </template>
 
 <script>

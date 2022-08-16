@@ -5,8 +5,8 @@
 </style>
 
 <template>
-	<menu_content :index="5" :_index="5">
-		<!-- <OnlineOrders></OnlineOrders> -->
+	<!-- <menu_content :index="5" :_index="5"></menu_content> -->
+	<view>
 		<view class="commodity" style="height: 100%;">
 			<view class="hh">
 				<view class="hotcakes">
@@ -47,14 +47,13 @@
 							<view>定金:{{ extracts.DNET || '-' }}</view>
 							<view>折扣金额:{{ main.discount || '-' }}</view>
 						</view>
-							<button @click="OpenReserve" class="btn">提取</button>
-						</view>
+						<button @click="OpenReserve" class="btn">提取</button>
 					</view>
 				</view>
 			</view>
 		</view>
 		<component v-if="view.Details" :details="details" is="Extract" @Close="CloseReserve" @Reset="Reset"></component>
-	</menu_content>
+	</view>
 </template>
 
 <script>
@@ -68,7 +67,7 @@
 	import Extract from '@/pages/OnlinePick/Extract/Extract.vue'
 	export default {
 		name: "OnlinePick",
-		components:{
+		components: {
 			Extract
 		},
 		data() {
@@ -77,14 +76,14 @@
 				form: {
 					search: {
 						code: "",
-						bill: ""//LH2022080
+						bill: "" //LH2022080
 						// bill: ""
 					},
 					code: "", //自提码
 				},
 				view: {
 					Details: false,
-					Order:false,
+					Order: false,
 					Criterias: true,
 				},
 				extracts: {
@@ -106,7 +105,7 @@
 					discount: "",
 					orderEntries: []
 				},
-				details:{}
+				details: {}
 			}
 		},
 		methods: {
@@ -131,12 +130,12 @@
 					this.extracts = data.details;
 					this.main = data.result;
 					this.details = {
-						extracts:this.extracts,
-						main:this.main,
-						code:this.form.code
+						extracts: this.extracts,
+						main: this.main,
+						code: this.form.code
 					};
 					this.view.Order = true;
-				}), util.callBind(this,(err) => {
+				}), util.callBind(this, (err) => {
 					util.simpleMsg(err.msg, true, err);
 					this.view.Order = false;
 				}));
@@ -155,11 +154,11 @@
 			CloseReserve: function() {
 				this.view.Details = false;
 			},
-			Reset:function(isSuccess){
+			Reset: function(isSuccess) {
 				// for(key in this.main){
 				// 	this.main[key] = this.main[key].constructor();
 				// }
-				if(isSuccess){
+				if (isSuccess) {
 					this.main = null;
 					this.extracts = null;
 					this.view.Order = false;
@@ -181,7 +180,8 @@
 		border-radius: 5px;
 		padding: 2px 3px;
 	}
-	.price{
+
+	.price {
 		margin: 0px;
 	}
 </style>

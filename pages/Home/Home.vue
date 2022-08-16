@@ -6,23 +6,17 @@
 		<Page @switch="SwitchPage"></Page>
 		<view class="right">
 			<Head></Head>
-			<!-- <component :is="current"></component> -->
-			<component is="Main" v-if="current === 'Main'"></component>
-			<component is="Reserve" v-if="current === 'Reserve'"></component>
-			<component is="Extract" v-if="current === 'Extract'"></component>
-			<component is="TakeAway" v-if="current === 'TakeAway'"></component>
-			<component is="TakeYD" v-if="current === 'TakeYD'"></component>
-			<component is="OnlineOrders" v-if="current === 'OnlineOrders'"></component>
-			<component is="OnlinePick" v-if="current === 'OnlinePick'"></component>
-			<component is="RefundOrder" v-if="current === 'RefundOrder'"></component>
-			<component is="SXRefund" v-if="current === 'SXRefund'"></component>
-			<component is="Message" v-if="current === 'Message'"></component>
-			<component is="CreditSettlement" v-if="current === 'CreditSettlement'"></component>
+			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
+			<component v-for="c in router" :is="c.name" v-show="current === c.name || !c.keepAlive" v-if="current === c.name || c.keepAlive"></component>
 		</view>
 	</view>
 </template>
 
 <script>
+	import util from '@/utils/util.js';
+	//路由数据
+	import router from '@/utils/router.js'
+	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue'
 	import Page from '@/pages/Home/Component/Page.vue'
 	//页面组件导入
@@ -55,18 +49,28 @@
 		},
 		data() {
 			return {
-				current:""
+				current: "",
+				router: []
 			}
 		},
-		methods:{
-			SwitchPage:function(data){
-				console.log("[SwitchPage]页面切换:",data);
-				console.log("[SwitchPage]页面名称:",data.name);
+		methods: {
+			SwitchPage: function(data) {
+				console.log("[SwitchPage]页面切换:", data);
+				console.log("[SwitchPage]页面名称:", data.name);
 				this.current = data.name;
+			},
+			ComponentRecursion: function(tree, all) {
+				tree.forEach(util.callBind(this, function(item) {
+					all.push(item);
+					if (item.details)
+						this.ComponentRecursion(item.details, all);
+				}));
 			}
 		},
 		created() {
-
+			let components = [];
+			this.ComponentRecursion(router, components)
+			this.router = components;
 		}
 	}
 </script>

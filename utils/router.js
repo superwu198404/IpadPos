@@ -4,6 +4,7 @@
 export default [{
 		title: "销售",
 		name: "Main",
+		keepAlive:true, /*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
 		icon: require('@/images/xiaoshou.png'),
 		icon1: require("@/images/xiaoshou-hui.png"),

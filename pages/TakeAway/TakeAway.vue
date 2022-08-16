@@ -8,10 +8,9 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<menu_page :menuIndex="3"></menu_page>
+		<!-- <menu_page :menuIndex="3"></menu_page> -->
 		<view class="right">
-			<menu_head></menu_head>
-
+			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist">
 					<view class="commodity">
@@ -717,6 +716,13 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			}
+		},
+		created() {
+			that = this; //全局赋值
+			//外卖单渲染
+			that.GetOrders(that.KHID, r => {
+				that.ShowDetail(that.WMOrders[0], 0);
+			});
 		}
 	}
 </script>

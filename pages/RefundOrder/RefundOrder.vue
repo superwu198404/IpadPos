@@ -8,18 +8,17 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="6" :sec_index="0"></menu_page>
+		<!-- <menu_page :menuIndex="6" :sec_index="0"></menu_page> -->
 		<view class="right">
-			<menu_head></menu_head>
-
+			<!-- <menu_head></menu_head> -->
 			<view class="prolist">
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
 							<image src="../../images/tuihuo.png" mode="widthFix"></image> 退单业务
 							<!-- <view class="classifys">
-									<text class="curr">全部</text><text>今日</text><text>近三天</text>
-								</view> -->
+												<text class="curr">全部</text><text>今日</text><text>近三天</text>
+											</view> -->
 						</view>
 						<view>
 							<view class="prints">
@@ -48,7 +47,7 @@
 					<!-- 小类循环 -->
 					<view class="products">
 						<!-- <view class="h2">销售退单 <label></label></view>
- -->
+			-->
 						<view class="procycle">
 							<!-- 订单循环 -->
 							<view class="li" v-for="(item,index) in Orders">
@@ -110,16 +109,15 @@
 									<button class="btn" @click="Confirm">确 认</button>
 								</view>
 								<!-- <view class="states" @click="Statements()">
-									<text>结算单</text>
-									<label>»</label>
-								</view> -->
+												<text>结算单</text>
+												<label>»</label>
+											</view> -->
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-
 		<!-- 子单信息 多余的 -->
 		<!-- statements -->
 		<view class="boxs" v-if="false">
@@ -221,7 +219,7 @@
 			onLoad: function() {
 				that = this;
 			},
-			onShow:function(){
+			onShow: function() {
 				that.GetOrders(that.p_bill);
 			},
 			GetOrders: function(bill, date) {
@@ -290,11 +288,11 @@
 				this.Newaddr = true
 			},
 			Confirm: function() {
-				console.log("[Confirm]退单确认!开始退款...",this.Order.BILL);
+				console.log("[Confirm]退单确认!开始退款...", this.Order.BILL);
 				//处理退款所需的业务信息数据
 				Refund(this.Order.BILL).then(util.callBind(this, function(refund_data) {
-					console.log("[Confirm]退单生成数据:",refund_data);
-					this.$store.commit('set-location', refund_data);//把数据传入下个页面
+					console.log("[Confirm]退单生成数据:", refund_data);
+					this.$store.commit('set-location', refund_data); //把数据传入下个页面
 					uni.navigateTo({
 						url: "../Payment/PaymentAll"
 					})
@@ -302,6 +300,10 @@
 					console.log("退单表数据查询异常:", err);
 				}));
 			}
+		},
+		created() {
+			that = this;
+			that.GetOrders(that.p_bill);
 		}
 	}
 </script>
