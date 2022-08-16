@@ -7,9 +7,9 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="1"></menu_page>
+		<!-- <menu_page :menuIndex="1"></menu_page>
 		<view class="right">
-			<menu_head></menu_head>
+			<menu_head></menu_head> -->
 			<view style="width: 400px;">
 				<label>预留商品加购：
 					<button @click="showReserve()">点击录入</button>
@@ -164,7 +164,7 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		<!-- </view> -->
 	</view>
 </template>
 
@@ -613,6 +613,29 @@
 				};
 				that.AddrArr = [];
 			},
+		},
+		created() {
+			that = this;
+			that.getTHTYPE();
+			that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
+			that.Order.CARDID = that.GGDatas[0];
+			that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
+			// that.YN_YDTH = true;
+			// console.log("是否支持异店提货：", that.YN_YDTH);
+			if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
+				_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
+					console.log("提货门店数据：", res);
+					that.THKHDATA = res.msg;
+				});
+			}
+			let arr = util.getStorage("POSCS");
+			let obj1 = arr.find((r) => r.POSCS == 'YDZXJG');
+			if (obj1 && obj1.POSCSNR) {
+				that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
+			}
+			//以下为测试数据
+			// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
+			// console.log("获取到的GSKHINFO", GSKHINFO);
 		}
 	}
 </script>

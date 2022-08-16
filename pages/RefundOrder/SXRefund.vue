@@ -7,9 +7,9 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="6" :sec_index="2"></menu_page>
+		<!-- <menu_page :menuIndex="6" :sec_index="2"></menu_page> -->
 		<view class="right">
-			<menu_head></menu_head>
+			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist">
 					<view class="commodity">
@@ -73,11 +73,8 @@
 				</view>
 
 			</view>
-
 		</view>
-
 		<!-- 子单信息 -->
-		<!--  -->
 		<view class="boxs" v-if="statements">
 			<view class="memberes">
 				<view class="pop-r">
@@ -130,7 +127,6 @@
 				</view>
 			</view>
 		</view>
-
 	</view>
 </template>
 
@@ -287,6 +283,10 @@
 					}
 				});
 			}
+		},
+		created() {
+			that = this;
+			that.GetOrders();
 		}
 	}
 </script>

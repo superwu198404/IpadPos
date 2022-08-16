@@ -5,7 +5,7 @@
 	/* @import url(@/static/style/OnlineOrders/index.css); */
 </style>
 <template>
-	<menu_content :index="5" :_index="0">
+	<!-- <menu_content :index="5" :_index="0"> -->
 		<view class="commodity" style="position: relative;">
 			<view class="hh">
 				<view class="hotcakes">
@@ -177,7 +177,7 @@
 		</view>
 		</view>
 		</view>
-	</menu_content>
+	<!-- </menu_content> -->
 </template>
 <script>
 	var app = getApp();
