@@ -115,6 +115,112 @@
 					</view>
 				</view>
 			</view>
+			<menu_head></menu_head>
+			<view class="listof">
+				<view class="prolist" style="overflow: hidden;">
+					<!-- <component is="credit-settlement"></component> -->
+					<!-- <component :is="components.current"></component> -->
+					<!-- 大类循环 -->
+					<view class="commodity">
+						<view class="hh">
+							<view class="hotcakes">
+								<image :src="curTime" mode="widthFix"></image> 本店热销
+								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
+							</view>
+							<view class="classifys">
+								<text :class="PLIndex==index?'curr':' '" v-for="(item,index) in RXSPDatas"
+									@click="ChoosePL(item,index)" :key="index">{{item.PLNAME}}</text>
+								<!-- <text>土司餐包</text> -->
+								<label>
+									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
+								</label>
+							</view>
+						</view>
+						<!-- 品类循环 -->
+						<view style="height:92%;flex: 1;">
+							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+								<view class="products" v-for="(item1,index1) in RXSPDatas" :id="'tab'+index1">
+									<view class="h2">{{item1.PLNAME}}<label></label></view>
+									<view class="procycle">
+										<!-- 产品循环 -->
+										<view class="li" v-for="(item,index) in item1.Details">
+											<view class="h3">
+												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+												{{item.SNAME}}
+											</view>
+											<view class="cods">
+												<label>
+													<image src="../../images/dx-bm.png" mode="widthFix"></image>
+													{{item.SPID}}
+												</label>
+												<label>
+													<image src="../../images/dx-dw.png" mode="widthFix"></image>
+													{{item.UNIT}}
+												</label>
+											</view>
+											<view class="price">
+												<text>￥{{item.PRICE}}</text>
+												<text>销量：{{item.XSQTY}}</text>
+												<view>
+													<image src="../../images/dx-gd.png" mode="widthFix"></image>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
+							</scroll-view>
+						</view>
+					</view>
+				</view>
+				<view class="operation">
+					<view class="sorting">
+						<view class="seasonal">
+							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z" @click="Letters()">A <text>◀</text></view>
+						<view class="a-z" @click="Memberlogin(1)">
+							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z" @click="ShowCXData()">
+							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
+						</view>
+						<view class="states" @click="ShowSale()">
+							<text>结算单</text>
+							<label>«</label>
+						</view>
+					</view>
+					<view class="toproof">
+						<image src="../../images/dx-qdb.png" mode="widthFix"></image>
+					</view>
+					<view class="ranks" v-if="Alphabetical">
+						<label class="curr"><text>A</text></label>
+						<label><text>B</text></label>
+						<label><text>C</text></label>
+						<label><text>D</text></label>
+						<label><text>E</text></label>
+						<label><text>F</text></label>
+						<label><text>G</text></label>
+						<label><text>H</text></label>
+						<label><text>J</text></label>
+						<label><text>K</text></label>
+						<label><text>L</text></label>
+						<label><text>M</text></label>
+						<label><text>N</text></label>
+						<label><text>O</text></label>
+						<label><text>P</text></label>
+						<label><text>Q</text></label>
+						<label><text>R</text></label>
+						<label><text>S</text></label>
+						<label><text>T</text></label>
+						<label><text>U</text></label>
+						<label><text>V</text></label>
+						<label><text>W</text></label>
+						<label><text>X</text></label>
+						<label><text>Y</text></label>
+						<label><text>Z</text></label>
+					</view>
+				</view>
+			</view>
 		</view>
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="attribute">

@@ -72,8 +72,8 @@
 								<view class="h6"><text>新增地址</text></view>
 								<view class="restlist">
 									<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
-									<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE"
-											:disabled="ADDR.ACT=='Update'" /></label>
+									<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
+									<!-- :disabled="ADDR.ACT=='Update'" -->
 									<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
 											@blur="searchMapAddr()" /></label>
 									<view v-if="AddrArr.length>0">
@@ -207,9 +207,9 @@
 					DNET: 0,
 					CUSTMNAME: "",
 					CUSTMPHONE: "",
-					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
-					TH_DATE: dateformat.getYMD(),
-					TH_TIME: dateformat.gettime(),
+					THDATE: "",
+					TH_DATE: "",
+					TH_TIME: "",
 					THTYPE: "",
 					NOTE: "",
 					CUSTMADDRESS: "",
@@ -241,6 +241,7 @@
 				THKHDATA: [], //提货门店数据
 				THKHDATAS: [], //提货门店数据 筛选后的数据
 				YN_THTYPE: false, //是否允许更改提货方式，异店不允许
+				YDJGSJ: 10, //提货间隔时间/分钟（存储的单位为小时）
 			}
 		},
 		methods: {
@@ -258,9 +259,15 @@
 						that.THKHDATA = res.msg;
 					});
 				}
+				let arr = util.getStorage("POSCS");
+				let obj1 = arr.find((r) => r.POSCS == 'YDZXJG');
+				if (obj1 && obj1.POSCSNR) {
+					that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
+				}
 				//以下为测试数据
 				// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// console.log("获取到的GSKHINFO", GSKHINFO);
+				
 			},
 			//提货门店输入事件
 			inputTHKH: e => {
@@ -295,9 +302,13 @@
 			},
 			//弹出客户信息录入框
 			showReserve: function() {
+				//给下默认时间
+				that.Order.THDATE = dateformat.getYMD() + ' ' + dateformat.gettime(that.YDJGSJ); //默认间隔十分钟
+				that.Order.TH_DATE = dateformat.getYMD();
+				that.Order.TH_TIME = dateformat.gettime(that.YDJGSJ);
+
 				that.statements = true;
 				let arr = util.getStorage("POSCS");
-				console.log("参数组数据:", arr);
 				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
 				let bmArr = [];
 				if (obj) {
@@ -419,11 +430,12 @@
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
 					console.log("编辑结果：", res);
-					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), res.code)
+					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
-					if (res.code) {
-						that.GetAddr(); //刷新一下地址列表
-					}
+					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
+					// if (res.code) {
+					// 	that.GetAddr(); //刷新一下地址列表
+					// }
 				})
 			},
 			searchMapAddr: async function() {
@@ -431,6 +443,7 @@
 				// 	//最少要输入一点吧
 				// 	return;
 				// }
+				that.ADDR.ADDRESS = util.stripscript(that.ADDR.ADDRESS); //去除一下特殊字符串
 				let obj = await _reserve.GetAmap(that.KHID);
 				_reserve.searchMapAddr({
 					keywords: that.ADDR.ADDRESS,
@@ -557,6 +570,7 @@
 						return;
 					}
 				}
+				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				that.YDDATA = JSON.stringify(that.Order);
 				that.statements = false;
 				that.Empty();
@@ -573,10 +587,10 @@
 					TNET: 10,
 					DNET: 0,
 					CUSTMNAME: "",
-					CUSTMPHONE: "12345678982", //
-					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(),
+					CUSTMPHONE: "",
+					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(that.YDJGSJ), //默认间隔十分钟
 					TH_DATE: dateformat.getYMD(),
-					TH_TIME: dateformat.gettime(),
+					TH_TIME: dateformat.gettime(that.YDJGSJ),
 					THTYPE: "",
 					NOTE: "",
 					CUSTMADDRESS: "",

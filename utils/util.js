@@ -249,6 +249,15 @@ const utils = {
 		}
 		return val;
 	},
+	//去除特殊字符
+	stripscript: function(s) {
+		var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+		var rs = "";
+		for (var i = 0; i < s.length; i++) {
+			rs = rs + s.substr(i, 1).replace(pattern, '');
+		}
+		return rs;
+	},
 	group: function(arr = [], field = "") {
 		let map = new Map();
 		let group = {};
@@ -283,6 +292,7 @@ export default {
 	getStorage: utils.getStorage,
 	removeStorage: utils.removeStorage,
 	hidePropety: utils.hidePropety,
+	stripscript: utils.stripscript,
 	callBind: utils.callBind,
 	group: utils.group
 }

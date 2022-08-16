@@ -220,7 +220,9 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				that.GetOrders(this.p_bill);
+			},
+			onShow:function(){
+				that.GetOrders(that.p_bill);
 			},
 			GetOrders: function(bill, date) {
 				_refund.GetOrders(this.KHID, this.GSID, this.POSID, bill, date, res => {
