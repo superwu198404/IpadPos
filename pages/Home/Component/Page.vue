@@ -36,7 +36,7 @@
 		data() {
 			return {
 				urls: router,
-				menuIndex:0,
+				menuIndex: 0,
 				sec_index: 0
 			};
 		},
@@ -57,17 +57,19 @@
 					// })
 					this.$emit("switch", e);
 					this.menuIndex = e.index;
-					this.sec_index = e.index;
-				} else {
-					this.menuIndex = e.index;
-					this.urls.map((item, index) => {
-						if (item.title != e.title) {
-							item.showDetail = false;
-						} else {
-							e.showDetail = !e.showDetail;
-						}
-					})
+					if (e.details)
+						this.sec_index = -1
+					else
+						this.sec_index = e.index;
 				}
+				this.menuIndex = e.index;
+				this.urls.map((item, index) => {
+					if (item.title != e.title) {
+						item.showDetail = false;
+					} else {
+						e.showDetail = !e.showDetail;
+					}
+				})
 			},
 			LoginOut: function() {
 				uni.redirectTo({

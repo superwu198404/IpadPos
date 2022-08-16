@@ -34,6 +34,7 @@
 	export default {
 		name: "Home",
 		components: {
+			Main,
 			Head,
 			Page,
 			Reserve,
@@ -49,7 +50,7 @@
 		},
 		data() {
 			return {
-				current: "",
+				current: "Main",
 				router: []
 			}
 		},
