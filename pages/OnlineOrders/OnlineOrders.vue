@@ -105,7 +105,8 @@
 							</label>
 							<label class="from-label">
 								<text>数量：</text>
-								<text>{{details.order.ZQTY_SQ || '-'}}</text>
+								<text>{{details.goods.length || '-'}}</text>
+								<!-- <text>{{details.order.ZQTY_SQ || '-'}}</text> -->
 							</label>
 							<label class="from-label">
 								<text>单位：</text>
@@ -126,7 +127,7 @@
 										<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
 										{{i.SNAME}} — <text>￥{{i.PRICE}}</text>
 									</label>
-									<view class="shuls"><text>×{{i.QTY}}</text></view>
+									<view class="shuls"><text>×{{i.ZQTY_SQ}}</text></view>
 								</view>
 								<view class="cods">
 									<view>

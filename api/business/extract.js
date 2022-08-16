@@ -20,6 +20,12 @@ var GetAddr = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+var AddressQuery = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.AddressQuery";
+	let reqdata = Req.resObj(true, "查询地址中", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 var Del_Addr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.Del_Addr";
 	let reqdata = Req.resObj(true, "查询地址中", data, apistr);
@@ -143,6 +149,7 @@ var GetPSCenter = function(gsid, khid, func) {
 }
 export default {
 	GetAddr,
+	AddressQuery,
 	Del_Addr,
 	ConfirmADDR,
 	GetAmap,

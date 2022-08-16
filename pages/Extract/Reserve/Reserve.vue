@@ -31,8 +31,7 @@
 						<view class="restlist">
 							<label><text>收货人：</text><input type="text" v-model="from.address.NAME" /></label>
 							<label><text>联系电话：</text><input type="text" v-model="from.address.PHONE" /></label>
-							<label class="long"><text>收货地址：</text><input type="text"
-									v-model="from.address.ADDRESS" /></label>
+							<label class="long"><text>收货地址：</text><AddressPicker @change="AddressChange"></AddressPicker></label>
 							<view class="note">
 								<!-- <label><text>备注：</text><textarea></textarea></label> -->
 								<view class="caozuo"><button class="btn-xg"
@@ -46,7 +45,7 @@
 						<view class="location">
 							<radio-group @change="RadioChange">
 								<view class="site" v-for="(i,index) in details.address"
-									v-if="from.more?true:(index===1?true:false)">
+									v-show="from.more?true:(index===1?true:false)">
 									<view class="sitelist">
 										<radio :value="i.ADDRID" :checked="index === views.current"></radio>
 										<view>
@@ -212,8 +211,9 @@
 			},
 			RadioChange: function(evt) {
 				for (let i = 0; i < this.details.address.length; i++) {
-					if (this.details.address[i].value === evt.detail.value) {
-						this.views.current = i;
+					if (this.details.address[i].ADDRID === evt.detail.value) {
+						this.views.current = this.details.address[i].ADDRID;
+						console.log("[RadioChange]选择地址ID:",this.views.current);
 						break;
 					}
 				}
@@ -237,15 +237,19 @@
 				}))
 			},
 			Save: function() {
-				let address = "",
-					address_id = "",
+				let address = this.details.info.CUSTMADDRESS,
+					address_id = this.details.info.NOTE2,
 					phone = "";
+					console.log("[Save]选择的地址ID:",this.views.current);
+					console.log("[Save]选择的地址:",this.details.address.find(util.callBind(this,function(i){ return i.ADDRID === this.views.current })));
 				if (this.views.current) {
-					let address_info = this.details.address[this.views.current];
+					let address_info = this.details.address.find(util.callBind(this,function(i){ return i.ADDRID === this.views.current }));
 					address = address_info.ADDRESS;
 					address_id = address_info.ADDRID;
 					phone = address_info.PHONE;
 				}
+				console.log("[Save]选择的address:",address);
+				console.log("[Save]选择的address_id:",address_id);
 				_extract.reserveOrdersUpdate({
 					khid: this.details.info.KHID,
 					gsid: this.GSID,
@@ -253,11 +257,11 @@
 					regenerate: this.ExistsGenarate(),
 					order: {
 						remark: this.details.info.CUSTMCOMM,
-						addr_id: address_id ?? this.details.info.NOTE2,
+						addr_id: address_id,
 						bhid: this.details.info.STR2,
 						date: this.details.info.THDATE,
 						phone: this.details.info.CUSTMPHONE,
-						addr: address ?? this.details.info.CUSTMADDRESS,
+						addr: address,
 						custname: this.details.info.CUSTMNAME,
 						thkhid: this.details.info.thkhid
 					}
@@ -273,7 +277,7 @@
 				console.log("查询客户地址信息...");
 				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
 			},
-			GetCustomerAddress: function(number) {
+			GetCustomerAddress: function(number,callback) {
 				_extract.GetAddr({
 					phone: number
 				}, util.callBind(this, function(res) {
@@ -284,6 +288,7 @@
 						util.simpleMsg(res.msg, true, res);
 						this.details.address = [];
 					}
+					if(callback) callback(res);
 				}))
 			},
 			ChangeCustomerAddress: function() {
@@ -292,7 +297,16 @@
 				}), util.callBind(this, function(res) {
 					util.simpleMsg(res.msg, res.code, res);
 					this.Newaddr = false;
-					this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+					this.GetCustomerAddress(this.details.info.CUSTMPHONE,util.callBind(this,function(res){
+						if(!this.state.address_edit){
+							let address = this.from.address.ADDRESS
+							console.log("[GetCustomerAddress-Inner]插入前的Address:",address);
+							console.log("[GetCustomerAddress-Inner]Address列表:",this.details.address);
+							let index = this.details.address.findIndex(a => a.ADDRESS === address);
+							console.log("[GetCustomerAddress-Inner]Address索引:",index);
+							if(index!=-1) this.views.current = index;
+						}
+					}));
 				}))
 			},
 			DeleteAddress: function(id, phone) {
@@ -347,6 +361,12 @@
 						console.log("退单表数据查询异常:", err);
 					}));
 				}
+			},
+			AddressChange:function(data){
+				console.log("[AddressChange]地址为:",data);
+				this.from.address.ADDRESS = data.address;
+				this.from.address.LONGITUDE = data.adrjd;//经度
+				this.from.address.LATITUDE = data.adrwd;//纬度
 			}
 		},
 		mounted() {
