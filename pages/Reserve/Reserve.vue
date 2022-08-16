@@ -42,7 +42,7 @@
 										<view>{{Order.TH_TIME}}</view>
 									</picker>
 								</label>
-								<label><text>*提货门店：</text><input type="text" v-model="Order.THKHID" @input="inputTHKH"
+								<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 										:disabled="!YN_YDTH" />
 									<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 								</label>
@@ -214,6 +214,7 @@
 					NOTE: "",
 					CUSTMADDRESS: "",
 					THKHID: app.globalData.store.KHID,
+					THNAME: app.globalData.store.NAME,
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
@@ -267,7 +268,7 @@
 				//以下为测试数据
 				// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// console.log("获取到的GSKHINFO", GSKHINFO);
-				
+
 			},
 			//提货门店输入事件
 			inputTHKH: e => {
@@ -284,6 +285,7 @@
 			ChooseTH: e => {
 				console.log("手选门店值：", e.ADDR);
 				that.Order.THKHID = e.KHID;
+				that.Order.THNAME = e.SNAME;
 				if (that.Order.THKHID != that.KHID) {
 					that.THTYPE = 0;
 					that.YN_THTYPE = true; //默认自提且不允许更改
@@ -595,6 +597,7 @@
 					NOTE: "",
 					CUSTMADDRESS: "",
 					THKHID: that.KHID,
+					THNAME: that.NAME,
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称

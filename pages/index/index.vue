@@ -410,7 +410,7 @@
 					});
 				} else if (e == 6) {
 					uni.navigateTo({
-						url: "../Home/Home",
+						url: "../Main/Main",
 						complete: r => {
 							console.log(r);
 						}
