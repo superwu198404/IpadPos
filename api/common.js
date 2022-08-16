@@ -191,7 +191,6 @@ var TransLite = function(e) {
 
 //获取支付方式
 var GetPayWay = function(e, func) {
-	e = 'K0101QT2'; //测试使用
 	console.log("查询门店的支付方式:", e);
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
                                        F1.JK_PRINT_PATH  JK_PRINT_PATH,\
@@ -229,8 +228,9 @@ var GetPayWay = function(e, func) {
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("本地支付方式数据：", res);
 		GetPolyPayWay(e, (res1) => {
-			console.log("聚合数据：", res1);
+			console.log("聚合支付数据：", res1);
 			for (var i = 0; i < res.msg.length; i++) {
 				let obj = res1.msg.find((item) => {
 					return item.ID_NR == res.msg[i].FKID;
@@ -256,8 +256,8 @@ var GetPayWay = function(e, func) {
 }
 
 //获取支付方式
-var GetPayWayAsync =async function(e, func) {
-	e = 'K0101QT2'; //测试使用
+var GetPayWayAsync = async function(e, func) {
+	// e = 'K0101QT2'; //测试使用
 	let list = [];
 	console.log("[async]查询门店的支付方式:", e);
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
@@ -324,7 +324,7 @@ var GetPayWayAsync =async function(e, func) {
 
 //获取聚合支付
 var GetPolyPayWay = function(e, func) {
-	let sql = "select  ID_NR,ZF  from  dapzcs_nr where id  ='FKJHZF'";
+	let sql = "select ID_NR,ZF from  dapzcs_nr where id  ='FKJHZF'";
 	db.get().executeQry(sql, "数据查询中", function(res) {
 		if (func) func(res);
 	}, function(err) {
@@ -496,17 +496,20 @@ var GetZFRULE = async function(e, func) {
 		console.log("获取支付规则数据成功：", res);
 		if (res.code) {
 			let obj = {};
-			util.setStorage("PayInfo",res.msg)
+			util.setStorage("PayInfo", res.msg);
 			// getApp().globalData.PayInfo = res.msg; //首先赋值一下支付规则集合
 			for (var i = 0; i < res.msg.length; i++) {
-				let codeArr = res.msg[i].CODE.split(',');
-				for (var j = 0; j < codeArr.length; j++) {
-					if (codeArr[j]) {
-						obj[codeArr[j]] = res.msg[i].TYPE;
+				if (res.msg[i].CODE) {//防止有些支付防止没有配置code
+					let codeArr = res.msg[i].CODE.split(',');
+					for (var j = 0; j < codeArr.length; j++) {
+						if (codeArr[j]) {
+							obj[codeArr[j]] = res.msg[i].TYPE;
+						}
 					}
 				}
 			}
-			getApp().globalData.CodeRule = obj;
+			util.setStorage("CodeRule", obj);
+			// getApp().globalData.CodeRule = obj;
 		}
 		if (func) func(res);
 	}, function(err) {
@@ -516,7 +519,7 @@ var GetZFRULE = async function(e, func) {
 
 //获取POS参数组内容
 var GetPOSCS = async function(e, func) {
-	e = "K0101QT2"; //测试使用
+	// e = "K0101QT2"; //测试使用
 	if (e) {
 		let sql = `SELECT kh.khid,
 						D1.SNAME,

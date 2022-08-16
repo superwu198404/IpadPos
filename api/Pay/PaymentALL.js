@@ -14,7 +14,7 @@ var CreateData = function(pt, t, m, d) {
 	let data;
 	// let PayInfo = getApp().globalData.PayInfo;
 	let PayInfo = util.getStorage("PayInfo");
-	console.log("[CreateData]PayInfo:",PayInfo);
+	console.log("[CreateData]PayInfo:", PayInfo);
 	if (pt && PayInfo && PayInfo.length > 0) {
 		let PayObj = PayInfo.find(function(item, index, arr) {
 			return item.TYPE == pt;
@@ -71,7 +71,7 @@ const BasePayment = async function(pt, t, m, d, func, catchFunc) {
 			if (func)
 				func(res)
 		}, function(res) {
-			if (catchFunc){
+			if (catchFunc) {
 				catchFunc(res)
 			}
 		});
@@ -300,7 +300,7 @@ var misPay = {
 		_PaymentAll(pt, body, func, catchFunc);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		body.merchant_no = null;//商户号
+		body.merchant_no = null; //商户号
 		body.store_id = null;
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
@@ -437,12 +437,20 @@ var noPay = {
 
 //根据支付类型反射支付方式
 var payType = {
+	// 108测试使用
 	WX_CLZF: wxPay,
 	ZFB_CLZF: zfbPay,
 	HYK: hykPay,
 	SZQ: szqPay,
 	MIS: misPay,
-	NOPAY: noPay
+	NOPAY: noPay,
+
+	//仟吉使用
+	WXZF: wxPay,
+	ZFB20: zfbPay,
+	PAYCARD: hykPay,
+	SZQ: szqPay,
+	TL: misPay,
 }
 
 //聚合支付主入口

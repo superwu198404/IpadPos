@@ -157,7 +157,7 @@
 					<view class="pays-bj">
 						<view class="bom-zhifu">
 							<view class="pattern nots curr" :class="currentPayType === 'POLY'? 'selected':' '" id='POLY'
-								@click="clickPayType($event)">
+								@click="clickPayType('',$event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
@@ -174,7 +174,7 @@
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
 								:class="currentPayType === item.type ? 'selected':' '" :id="item.type"
-								@click="clickPayType($event)">
+								@click="clickPayType(item,$event)">
 								<view class="">
 									<p>{{item.name}}</p>
 								</view>
@@ -514,7 +514,7 @@
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					});
-					return util.hidePropety(obj,"NAME");
+					return util.hidePropety(obj, "NAME");
 				}).bind(this));
 				console.log("sale2 封装完毕!", this.sale2_arr);
 				console.log("sale3 封装中...");
@@ -538,7 +538,8 @@
 						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
 						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
 							.disc, //折扣金额(卡券消费后要记录)
-						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item.disc, //折扣金额(卡消费后要记录)
+						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item
+							.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
@@ -773,7 +774,7 @@
 			//SALE003 初始化、处理
 			SALE3Init: function() {
 				if (this.isRefund) {
-					console.log("[SALE3Init]PayWayList:",this.PayWayList);
+					console.log("[SALE3Init]PayWayList:", this.PayWayList);
 					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
@@ -1193,10 +1194,15 @@
 				this.domRefresh = new Date().toString();
 			},
 			//点击切换支付方式
-			clickPayType: function(e) {
+			clickPayType: function(r, e) {
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
+				// if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
+				// 	this.currentPayType = e.currentTarget.id; //小程序
+
+				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
+				}
+				console.log("id值：", this.is_poly + "_" + this.currentPayType + "_" + r.yn_use);
 			},
 			//返回上个页面
 			backPrevPage: function() {
@@ -1359,7 +1365,7 @@
 			//会员信息重写
 			UpdateHyInfo: function(e) {
 				console.log("接口返回的会员信息：", e);
-				try{
+				try {
 					if (e && e.hyid) { //支付接口有返回会员信息
 						let hyinfo = util.getStorage("hyinfo");
 						console.log("当前会员信息：", hyinfo);
@@ -1372,8 +1378,9 @@
 						// 	getApp().globalData.hyinfo.hyId = e.hyid;
 						// }
 					}
+				} catch (err) {
+					console.log("HYID:", err);
 				}
-				catch(err){ console.log("HYID:",err); }
 				console.log("更新后的会员信息:", util.getStorage("hyinfo"));
 			},
 			//获取水吧商品

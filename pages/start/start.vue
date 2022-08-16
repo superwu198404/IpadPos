@@ -27,7 +27,7 @@
 				khid: "K200QTD005", //'K0101QT2',//108通讯 测试使用
 				posid: "1", //"8",//108通讯 测试使用
 				yninit: false,
-				showmsg: "正在检查是否初始化"
+				showmsg: "门店基础数据初始化"
 			}
 		},
 		onLoad() {
@@ -87,16 +87,17 @@
 				console.log(JSON.stringify(reqdata));
 				Req.asyncFunc(reqdata,
 					(res) => {
-						console.log("001回调：", res);
+						console.log("001回调成功");
 						that.tx001 = Req.getResData(res);
 						let reqPosData = {
-							"KHID": that.khid,
-							"POSID": that.posid
+							"khid": that.khid,
+							"posid": that.posid
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
 						return Req.resObj(true, "正在获取通讯数据004", reqPosData, apistr);
 					},
 					(res) => {
+						debugger;
 						let sql = [];
 						console.log("004回调：", res);
 						let tx004 = Req.getResData(res);
@@ -140,6 +141,7 @@
 						},
 						null,
 						(res) => {
+							console.log("异常结果：", res);
 							that.tx001 = null;
 							console.log(JSON.stringify("start创建完成"));
 						}

@@ -710,6 +710,21 @@
 					that.curTime = require("../../images/dx-night.png");
 				}
 			}
+		},
+		created: function() {
+			that = this;
+			// common.DelSale();//主动删除销售单
+			
+			let hyinfo = util.getStorage("hyinfo");
+			if (hyinfo && JSON.stringify(hyinfo) != "{}") {
+				that.yn_hy = true;
+				that.hyinfo = hyinfo;
+				that.GetHyCoupons(hyinfo);
+			} else {
+				that.yn_hy = false;
+			}
+			that.GetRXSPDatas();
+			that.GetCurTime(); //获取时段
 		}
 	}
 </script>

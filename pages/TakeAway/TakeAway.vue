@@ -269,7 +269,8 @@
 				canvasGZHHeight: 1,
 				yn_qr: false, //确认按钮
 				yn_ty: false, //同意按钮
-				yn_jj: false //拒绝按钮
+				yn_jj: false, //拒绝按钮
+				js_res: {}, //确认接收返回结果
 			}
 		},
 		methods: {
@@ -291,10 +292,10 @@
 						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
 						if (func) func(res);
 					} else {
-						// uni.showToast({
-						// 	title: res.msg,
-						// 	icon: "error"
-						// })
+						uni.showToast({
+							title: "暂无数据",
+							icon: "error"
+						})
 						that.WMOrders = [];
 						that.OrderDeails = [];
 						that.Order = {};
@@ -341,18 +342,16 @@
 						gsid: that.GSID
 					}, res => {
 						console.log("外卖单接收结果：", res);
-						uni.showToast({
-							title: res.code ? "接收成功" : res.msg,
-							icon: res.code ? "success" : "error"
-						})
+
 						if (res.code) {
 							let data = JSON.parse(res.data);
 							console.log("返回信息:", data);
-							if (data.yn_print) {
-								//调用打印
-								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
-							}
+							that.js_res = data;
+							// if (data.yn_print) {
+							// 	//调用打印
+							// 	//console.log("此处调用打印：");
+							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+							// }
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
 								//调用处理报损
@@ -364,12 +363,14 @@
 								console.log("此处调用领用：");
 								that.GetWMDData(that.DQID, that.Order.XSPTID);
 							}
-							if (data.pay_data && data.pay_data.length > 0) {
-								if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
-									console.log("有赞接单后调用积分上传接口:")
-									that.JFConsume(data.pay_data, that.Order.YZID);
-								}
-							}
+							// if (data.pay_data && data.pay_data.length > 0) {
+							// 	if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
+							// 		console.log("有赞接单后调用积分上传接口:")
+							// 		that.JFConsume(data.pay_data, that.Order.YZID);
+							// 	}
+							// }
+						} else {
+							util.simpleMsg("接收失败：", res.msg, true);
 						}
 						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
 							//刷新列表
@@ -564,6 +565,14 @@
 				};
 				console.log("报损数据处理开始：", obj);
 				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, r => {
+					console.log("报损本地操作结果：", res);
+					if (res.code) {
+						util.simpleMsg("接收成功");
+						//调用打印
+						if (that.js_res.yn_print) {
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+						}
+					}
 					console.log("主动关闭报损");
 					that.Close();
 				});
@@ -658,9 +667,22 @@
 					bill: bill,
 					ywtype: common.ywTypeEnum.QTLY
 				};
-				console.log("外卖袋请求数据：", obj);
 				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, r => {
-					console.log("主动关闭领用");
+					console.log("领用本地操作结果：", res);
+					if (res.code) {
+						//先上传积分
+						if (that.js_res.pay_data && that.js_res.pay_data.length > 0) {
+							if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
+								console.log("有赞接单后调用积分上传接口:")
+								that.JFConsume(that.js_res.pay_data, that.Order.YZID);
+							}
+						}
+						util.simpleMsg("接收成功");
+						//后打印
+						if (that.js_res.yn_print) {
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+						}
+					}
 					that.Close();
 				});
 			},
