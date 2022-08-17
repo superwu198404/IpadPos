@@ -65,7 +65,7 @@
 		data() {
 			return {
 				    alldata:[],
-				    sql:"select * from DAPZCS_NR where ID='THTYPE'",
+				    sql:"select * from dapzcs_nr where id_nr in('YN_ZFBKBQ')",
 					sqltable:false,
 				    showAll:false,
 					OrderByType:{},

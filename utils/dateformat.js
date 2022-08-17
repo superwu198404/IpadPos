@@ -257,8 +257,11 @@ const getDays = (date1, date2) => {
 /**
  * 获取当前日期yyyy-MM-dd
  */
-const getYMD = () => {
+const getYMD = (_day) => {
 	let date = new Date();
+	if (_day) { //如果传入了天数
+		date.setDate(date.getDate() + _day);
+	}
 	let year = date.getFullYear().toString();
 	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
 	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();
@@ -269,8 +272,11 @@ const getYMD = () => {
 /**
  * 获取当前日期时间yyyy-MM-dd HH:mm:ss
  */
-const getYMDS = () => {
+const getYMDS = (_day) => {
 	let date = new Date();
+	if (_day) { //如果传入了天数
+		date.setDate(date.getDate() + _day);
+	}
 	let year = date.getFullYear().toString();
 	let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1).toString();
 	let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate().toString();

@@ -295,7 +295,7 @@
 							}
 							that.PayWayList.push(obj);
 						}
-						console.log("res.msg:", res.msg)
+						// console.log("res.msg:", res.msg)
 						//如果fkda没有则追加测试数据
 						let arr = [{
 							name: "云闪付",

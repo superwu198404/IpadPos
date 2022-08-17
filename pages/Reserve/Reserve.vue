@@ -292,6 +292,7 @@
 					that.YN_THTYPE = false;
 				}
 				that.THKHDATAS = []; //选择后清空一下数据源
+				that.RefreshData(); //刷新一下数据
 			},
 			Show: function() {
 				debugger;
@@ -301,13 +302,28 @@
 					prevPage.onLoad();
 				}
 			},
+			//刷新日期和限制关系
+			RefreshData: function() {
+				//给下默认时间
+				let date = dateformat.getYMD(), //现卖的默认当前日期
+					time = dateformat.gettime(1); //默认加一分钟
+
+				if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
+					if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
+						date = dateformat.getYMD(1);
+					}
+				}
+				that.Order.THDATE = date + ' ' + time;
+				that.Order.TH_DATE = date;
+				that.Order.TH_TIME = time;
+
+				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
+					that.Order.DNET = that.Order.TNET;
+				}
+			},
 			//弹出客户信息录入框
 			showReserve: function() {
-				//给下默认时间
-				that.Order.THDATE = dateformat.getYMD() + ' ' + dateformat.gettime(that.YDJGSJ); //默认间隔十分钟
-				that.Order.TH_DATE = dateformat.getYMD();
-				that.Order.TH_TIME = dateformat.gettime(that.YDJGSJ);
-
+				that.RefreshData()
 				that.statements = true;
 				let arr = util.getStorage("POSCS");
 				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
@@ -367,6 +383,7 @@
 				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
 					that.GetAddr();
 				}
+				that.RefreshData();
 			},
 			//显示地址框
 			ShowAddADDR: () => {
@@ -595,9 +612,9 @@
 					DNET: 0,
 					CUSTMNAME: "",
 					CUSTMPHONE: "",
-					THDATE: dateformat.getYMD() + ' ' + dateformat.gettime(that.YDJGSJ), //默认间隔十分钟
-					TH_DATE: dateformat.getYMD(),
-					TH_TIME: dateformat.gettime(that.YDJGSJ),
+					THDATE: "",
+					TH_DATE: "",
+					TH_TIME: "",
 					THTYPE: "",
 					NOTE: "",
 					CUSTMADDRESS: "",
@@ -620,6 +637,7 @@
 					LATITUDE: ""
 				};
 				that.AddrArr = [];
+				that.RefreshData();
 			},
 		},
 		created() {
