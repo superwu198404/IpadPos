@@ -57,7 +57,7 @@
 		methods: {
 			GetAddress: function() {
 				_reserve.searchMapAddr({
-					keywords: this.query,
+					keywords: util.stripscript(this.query),//对特殊字符进行过滤
 					Areaid: this.map_info.areaid,
 					key: this.map_info.key
 				}, util.callBind(this, function(res) {

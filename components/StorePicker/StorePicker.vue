@@ -37,7 +37,8 @@
 		mounted() {
 			getRoom({
 				gsid:[this.GSID],
-				storeid:this.KHID
+				storeid:this.KHID,
+				dqid:this.DQID
 			},util.callBind(this,function(res){
 				console.log("[裱花间选择器-StorePicker]初始化数据:",res);
 				console.log("[裱花间选择器-StorePicker]默认khid:",this.init);

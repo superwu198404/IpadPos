@@ -290,14 +290,20 @@ var hykPay = {
 }
 //mis银联支付
 var misPay = {
+	GetConfig:function(){//获取 mis 支付参数，款台号
+		
+	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		// body.money = 1;//一分钱测试用（避免失误操作导致掉肉）
-		// body.total_money = 1;//一分钱测试用（避免失误操作导致掉肉）
-		// body.merchant_no = "990521082996000";
-		body.merchant_no = null;
-		// body.store_id = "HBTest00";
-		body.store_id = null;
-		_PaymentAll(pt, body, func, catchFunc);
+		this.GetConfig().then(()=> {
+			// body.money = 1;//一分钱测试用（避免失误操作导致掉肉）
+			// body.total_money = 1;//一分钱测试用（避免失误操作导致掉肉）
+			// body.merchant_no = "990521082996000";
+			body.merchant_no = null;
+			// body.store_id = "HBTest00";
+			body.store_id = null;
+			_PaymentAll(pt, body, func, catchFunc);
+		})
+		
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		body.merchant_no = null;//商户号
