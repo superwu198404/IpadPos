@@ -7,7 +7,7 @@
 		<view class="right">
 			<Head></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component v-for="c in router" :is="c.name" v-show="current === c.name || !c.keepAlive" v-if="current === c.name || c.keepAlive"></component>
+			<component v-for="c in router" :is="c.name" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="JSON.parse(JSON.stringify(meta_data))"></component>
 		</view>
 	</view>
 </template>
@@ -51,14 +51,24 @@
 		data() {
 			return {
 				current: "Main",
-				router: []
+				router: [],
+				meta_data:{}
+			}
+		},
+		computed:{
+			show:function(){
+				return util.callBind(this,function(info){
+					return (this.current.name === info.name) && (this.current.title === info.title)
+				});
 			}
 		},
 		methods: {
 			SwitchPage: function(data) {
 				console.log("[SwitchPage]页面切换:", data);
 				console.log("[SwitchPage]页面名称:", data.name);
-				this.current = data.name;
+				this.current = data;
+				console.log("[SwitchPage]页面元数据:", data.meta);
+				this.meta_data = data.meta ?? null;
 			},
 			ComponentRecursion: function(tree, all) {
 				tree.forEach(util.callBind(this, function(item) {

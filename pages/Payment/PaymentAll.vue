@@ -1103,7 +1103,6 @@
 			},
 			//初始化
 			paramInit: function() {
-				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				if (prev_page_param) {
 					that = this;
@@ -1147,12 +1146,15 @@
 			//总金额计算
 			priceCount: function() {
 				let total = 0;
-				this.Products.forEach(product => total += product.AMOUNT);
+				console.log("[PriceCount]商品列表:",this.Products);
+				this.Products.forEach(product => total += (product.AMOUNT || product.NET));
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
-				console.log("手工折扣额：", this.SKY_DISCOUNT);
-				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
+				console.log("[PriceCount]总金额：", total);
+				// this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
 					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));

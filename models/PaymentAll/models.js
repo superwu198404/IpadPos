@@ -68,6 +68,14 @@ export const PayDataAssemble = function() {
 }
 
 export const global = {
+	props: {
+		meta: {
+			type: Object,
+			default: function() {
+				return {};
+			}
+		}
+	},
 	data: function() {
 		return {
 			GSID: getApp().globalData.store.GSID, //公司id
@@ -106,7 +114,7 @@ export const print = {
 export const TransferForPaymentAll = async function(data) {
 	let global_config = getApp().globalData.store,
 		pay_way_list = await GetPayWayList();
-		console.log("[TransferForPaymentAll]支付方式获取:",pay_way_list);
+	console.log("[TransferForPaymentAll]支付方式获取:", pay_way_list);
 	return Object.assign({
 		allow_discount_amount: "", //允许折扣金额
 		Discount: 0, //折扣金额

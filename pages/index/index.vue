@@ -444,6 +444,7 @@
 					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
 					sale3_arr: this.sale3_arr, //002 商品 数据对象集合
 					Products: this.Products, //商品信息
+					// Products: [], //商品信息
 					PayWayList: this.PayWayList, //支付方式
 					hyinfo: {}, //会员信息
 					authCode: "", //卡券信息 or 支付授权码

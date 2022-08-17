@@ -6,7 +6,7 @@ import util from '@/utils/util.js';
 export const GetPayWayList = async function() {
 	let PayWayList = [];
 	// console.log("[GetPayWayList]客户端ID:",glabal);
-	await common.GetPayWayAsync("K200QTD005", function(res) {
+	await common.GetPayWayAsync(getApp()?.globalData?.store?.KHID ?? "K200QTD005", function(res) {
 		console.log("GetPayWayList：", res);
 		if (res.code) {
 			for (var i = 0; i < res.msg.length; i++) {
@@ -69,7 +69,6 @@ export const GetPayWayList = async function() {
 				type: "NOPAY",
 				poly: "O"
 			});
-			console.log("[PayWayList]获取到的支付方式：", PayWayList);
 		}
 	});
 	console.log("[PayWayList-Outer]获取到的支付方式：", PayWayList);

@@ -79,13 +79,17 @@ export default [{
 				icon1: require("@/images/xstd-wxz.png"),
 				index: 0
 			},
-			// {
-			// 	title: "预定退单",
-			// 	url: "@/pages/RefundOrder/RefundOrder",
-			// 	icon: require("@/images/ydqx.png"),
-			// 	icon1: require("@/images/ydqx-wxz.png"),
-			// 	index: 1
-			// }, 
+			{
+				title: "预定退单",
+				name:"Extract",
+				url: "@/pages/Extract/Extract",
+				meta:{//跳转的时候会向组件的 meta 传值，组件内通过 this.meta 获取传入的数据
+					mode: false
+				},
+				icon: require("@/images/ydqx.png"),
+				icon1: require("@/images/ydqx-wxz.png"),
+				index: 1
+			}, 
 			{
 				title: "赊销退单",
 				name: "SXRefund",

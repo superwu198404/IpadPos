@@ -186,7 +186,10 @@
 	import util from '@/utils/util.js';
 	import _refund from '@/api/business/refundorder.js';
 	import {
-		Refund
+		Refund,
+		PaymentToRefundSALE001,
+		PaymentToRefundSALE002,
+		PaymentToRefundSALE003,
 	} from '@/bll/RefundBusiness/bll.js'
 
 	var that;
@@ -290,12 +293,38 @@
 			Confirm: function() {
 				console.log("[Confirm]退单确认!开始退款...", this.Order.BILL);
 				//处理退款所需的业务信息数据
-				Refund(this.Order.BILL).then(util.callBind(this, function(refund_data) {
+				Refund(this.Order.BILL).then(util.callBind(this, async function(refund_data) {
 					console.log("[Confirm]退单生成数据:", refund_data);
-					this.$store.commit('set-location', refund_data); //把数据传入下个页面
-					uni.navigateTo({
-						url: "../Payment/PaymentAll"
-					})
+					if (Number(refund_data.sale1_obj.TNET) === 0) {
+						let config = {
+							REFUND_NO: refund_data.out_refund_no,
+							BILL_TYPE: "Z151",
+							XS_TYPE: "2",
+						}
+						let sale1 = PaymentToRefundSALE001(refund_data.sale1_obj, config),
+							sale2 = PaymentToRefundSALE002(refund_data.sale2_arr, config),
+							sale3 = PaymentToRefundSALE003(refund_data.sale3_arr, config);
+						console.log("[Confirm-Refund]退款对象数据生成完毕!");
+						let sqls = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"],
+							[sale3, "SALE003"]);
+						console.log("[Confirm-Refund]退款生成的SQL:", sqls);
+						await common.Close();//预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+						await db.get().executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
+							if (func) func(res);
+							this.complete = true;
+							console.log("[Confirm]退款订单创建成功!", res);
+							util.simpleMsg("销售单创建成功!");
+						}).bind(this), function(err) {
+							console.log("[Confirm]退款订单创建失败!", err);
+							util.simpleMsg("!销售单创建失败", false);
+						});
+						this.GetOrders(this.p_bill);//刷新界面
+					} else {
+						this.$store.commit('set-location', refund_data); //把数据传入下个页面
+						uni.navigateTo({
+							url: "../Payment/PaymentAll"
+						})
+					}
 				})).catch(util.callBind(this, function(err) {
 					console.log("退单表数据查询异常:", err);
 				}));
