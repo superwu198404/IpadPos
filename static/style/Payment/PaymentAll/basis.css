@@ -253,6 +253,20 @@ page {
 .checkout{
 	display: flex;
 }
+.checkout .buyer{
+	background-color: #E0EAE9;
+	border:1px solid #006B44;
+	border-radius: 60rpx;
+	padding:0 20rpx;
+}
+.checkout .buyer .image{
+	width:20rpx;
+	height: 20rpx;
+}
+.checkout .buyer .image:nth-child(1){
+	width:36rpx;
+	height: 36rpx;
+}
 .checkout label{
 	margin-left: 40rpx;
 	font-size: 26rpx;

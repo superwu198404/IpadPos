@@ -1202,7 +1202,7 @@
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
 				}
-				console.log("id值：", this.is_poly + "_" + this.currentPayType + "_" + r.yn_use);
+				//console.log("id值：", this.is_poly + "_" + this.currentPayType + "_" + r.yn_use);
 			},
 			//返回上个页面
 			backPrevPage: function() {

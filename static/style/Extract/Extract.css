@@ -13,8 +13,11 @@
 	padding:24rpx 0 24rpx 2%;
 }
 .products .procycle .li{
-	width:46%;
+	width:45.5%;
 	border:1rpx solid #f0f0f0;
+}
+.products .procycle .li:nth-child(2n) {
+    margin-right: 0;
 }
 .prolist .products .procycle .li .h3{
 	display: flex;
@@ -176,7 +179,7 @@
 }
 .memberes .operat{
 	display: flex;
-	padding:3% 2%;
+	padding:30rpx 2%;
 	position: absolute;
 	bottom:0;
 	left: 0;

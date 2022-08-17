@@ -103,13 +103,14 @@ export default [{
 		icon: require("@/images/xz-xx.png"),
 		icon1: require("@/images/xiaoxi-hui.png"),
 		index: 7
-	},
-	{
-		title: "赊销结算",
-		name: "CreditSettlement",
-		url: "@/pages/CreditSettlement/CreditSettlement",
-		icon: require("@/images/xz-xx.png"),
-		icon1: require("@/images/xiaoxi-hui.png"),
-		index: 8
 	}
+	//,
+	// {
+	// 	title: "赊销结算",
+	// 	name: "CreditSettlement",
+	// 	url: "@/pages/CreditSettlement/CreditSettlement",
+	// 	icon: require("@/images/xz-xx.png"),
+	// 	icon1: require("@/images/xiaoxi-hui.png"),
+	// 	index: 8
+	// }
 ]

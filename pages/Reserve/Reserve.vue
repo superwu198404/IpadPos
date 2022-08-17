@@ -10,160 +10,159 @@
 		<!-- <menu_page :menuIndex="1"></menu_page>
 		<view class="right">
 			<menu_head></menu_head> -->
-			<view style="width: 400px;">
-				<label>预留商品加购：
-					<button @click="showReserve()">点击录入</button>
-				</label>
-				预定主单数据：{{YDDATA}}
-			</view>
-			<!-- 编辑 -->
-			<view class="boxs" v-if="statements">
-				<view class="memberes">
-					<!-- v-if="Memberinfo" -->
-					<view class="meminfo">
-						<view class="member">
-							<label>填写预定信息</label>
-							<button @click="Close()">×</button>
+		<view style="width: 400px;">
+			<label>预留商品加购：
+				<button @click="showReserve()">点击录入</button>
+			</label>
+			预定主单数据：{{YDDATA}}
+		</view>
+		<!-- 编辑 -->
+		<view class="boxs" v-if="statements">
+			<view class="memberes">
+				<!-- v-if="Memberinfo" -->
+				<view class="meminfo">
+					<view class="member">
+						<label>填写预定信息</label>
+						<button @click="Close()">×</button>
+					</view>
+					<view class="middle">
+						<view class="restlist">
+							<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
+									:disabled="!YN_YDTH" />
+								<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
+							</label>
+							<label><text>*配送方式：</text>
+								<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
+									:disabled="YN_THTYPE">
+									<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
+								</picker>
+							</label>
+							<label><text>*提货时间：</text>
+								<!-- <input type="date" v-model="Order.THDATE" /> -->
+								<picker mode="time" @change="timeChange">
+									<view>{{Order.TH_TIME}}</view>
+								</picker>
+							</label>
+							<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
+							</label>
+							<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+							<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
+									@blur="GetAddr()" /></label>
+							<label><text>*提货日期：</text>
+								<!-- <input type="date" v-model="Order.THDATE" /> -->
+								<picker mode="date" fields="day" @change="dateChange">
+									<view>{{Order.TH_DATE}}</view>
+								</picker>
+							</label>
+							<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
+							<label><text>*配送中心：</text>
+								<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
+									<view>{{Order.STR2}}-{{Order._STR2}}</view>
+								</picker>
+							</label>
+							<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
+							<label><text>*蛋糕规格：</text>
+								<picker @change="GGChange" :range="GGDatas">
+									<view>{{Order.CARDID}}</view>
+								</picker>
+							</label>
+							<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 						</view>
-						<view class="middle">
+						<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
+							<view class="h6"><text>新增地址</text></view>
 							<view class="restlist">
-								<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-								<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
-										@blur="GetAddr()" /></label>
-								<label><text>*提货日期：</text>
-									<!-- <input type="date" v-model="Order.THDATE" /> -->
-									<picker mode="date" fields="day" @change="dateChange">
-										<view>{{Order.TH_DATE}}</view>
-									</picker>
-								</label>
-								<label><text>*提货时间：</text>
-									<!-- <input type="date" v-model="Order.THDATE" /> -->
-									<picker mode="time" @change="timeChange">
-										<view>{{Order.TH_TIME}}</view>
-									</picker>
-								</label>
-								<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
-										:disabled="!YN_YDTH" />
-									<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
-								</label>
-								<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
-								</label>
-								<label><text>*配送方式：</text>
-									<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
-										:disabled="YN_THTYPE">
-										<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
-									</picker>
-								</label>
-								<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
-								<label><text>*配送中心：</text>
-									<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
-										<view>{{Order.STR2}}-{{Order._STR2}}</view>
-									</picker>
-								</label>
-								<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
-								<label><text>*蛋糕规格：</text>
-									<picker @change="GGChange" :range="GGDatas">
-										<view>{{Order.CARDID}}</view>
-									</picker>
-								</label>
-								<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
-							</view>
-							<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
-								<view class="h6"><text>新增地址</text></view>
-								<view class="restlist">
-									<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
-									<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
-									<!-- :disabled="ADDR.ACT=='Update'" -->
-									<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
-											@blur="searchMapAddr()" /></label>
-									<view v-if="AddrArr.length>0">
-										<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
-											style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
-									</view>
-									<view class="note">
-										<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
-										<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
-											<!-- <button class="btn-sc">删除</button> -->
-										</view>
+								<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
+								<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
+								<!-- :disabled="ADDR.ACT=='Update'" -->
+								<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
+										@blur="searchMapAddr()" /></label>
+								<view v-if="AddrArr.length>0">
+									<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
+										style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
+								</view>
+								<view class="note">
+									<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
+									<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
+										<!-- <button class="btn-sc">删除</button> -->
 									</view>
 								</view>
-							</view>
-							<view class='rests'>
-								<view class="h6"><text>地址</text> <button @click="ShowAddADDR()">+ 新增地址</button></view>
-								<view class="location">
-									<view class="site" v-for="(item,index) in ADDRS" @click="ConfirmOrderAddr(item)">
-										<view class="sitelist">
-											<!-- <radio></radio> -->
-											<view>
-												<text>{{item.CNAME}}，{{item.PHONE}}</text>
-												<label>{{item.ADDRESS}}</label>
-											</view>
-										</view>
-										<view class="caozuo">
-											<button class="btn-xg" @click="Up_Addr(item)">修改</button>
-											<button class="btn-sc" @click="Del_Addr(item)">删除</button>
-										</view>
-									</view>
-								</view>
-								<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
-								</view>
-							</view>
-
-							<view class="atlas">
-								<div class="map"></div>
 							</view>
 						</view>
-						<view class="operat">
-							<button class="btn btn-qx" @click="Close()">取 消</button>
-							<button class="btn" @click="Confirm">确 定</button>
+						<view class='rests'>
+							<view class="h6"><text>地址</text> <button @click="ShowAddADDR()">+ 新增地址</button></view>
+							<view class="location">
+								<view class="site" v-for="(item,index) in ADDRS" @click="ConfirmOrderAddr(item)">
+									<view class="sitelist">
+										<!-- <radio></radio> -->
+										<view>
+											<text>{{item.CNAME}}，{{item.PHONE}}</text>
+											<label>{{item.ADDRESS}}</label>
+										</view>
+									</view>
+									<view class="caozuo">
+										<button class="btn-xg" @click="Up_Addr(item)">修改</button>
+										<button class="btn-sc" @click="Del_Addr(item)">删除</button>
+									</view>
+								</view>
+							</view>
+							<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
+							</view>
+						</view>
+
+						<view class="atlas">
+							<div class="map"></div>
 						</view>
 					</view>
+					<view class="operat">
+						<button class="btn btn-qx" @click="Close()">取 消</button>
+						<button class="btn" @click="Confirm">确 定</button>
+					</view>
+				</view>
 
-					<view class="pop-r">
-						<view class="member">
-							<label>
-								<image class="touxiang" src="../../images/touxiang.png"></image>
-								<label
-									class="meminfo"><text>{{hyinfo.NICKNAME}}</text><text>{{hyinfo.hyId}}</text></label>
-							</label>
-							<text @click="Empty()">清空</text>
-						</view>
-						<view class="h5"><text>单号：{{Order.BILL}}</text></view>
-						<view class="goods">
-							<!-- 商品循环 -->
-							<view class="prolist" v-for="(item,index) in Products">
-								<view class="h3">
+				<view class="pop-r">
+					<view class="member">
+						<label>
+							<image class="touxiang" src="../../images/touxiang.png"></image>
+							<label class="meminfo"><text>{{hyinfo.NICKNAME}}</text><text>{{hyinfo.hyId}}</text></label>
+						</label>
+						<text @click="Empty()">清空</text>
+					</view>
+					<view class="h5"><text>单号：{{Order.BILL}}</text></view>
+					<view class="goods">
+						<!-- 商品循环 -->
+						<view class="prolist" v-for="(item,index) in Products">
+							<view class="h3">
+								<label>
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{item.NAME}}
+								</label>
+								<text>X{{item.QTY}}</text>
+							</view>
+							<view class="cods">
+								<view>
 									<label>
-										<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{item.NAME}}
+										<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
 									</label>
-									<text>X{{item.QTY}}</text>
+									<label>
+										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
+									</label>
 								</view>
-								<view class="cods">
-									<view>
-										<label>
-											<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
-										</label>
-										<label>
-											<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
-										</label>
-									</view>
-									<text>￥{{item.AMOUNT}}</text>
-								</view>
+								<text>￥{{item.AMOUNT}}</text>
 							</view>
 						</view>
-						<view class="ul">
-							<view class="li"><text>总金额</text><text>￥{{Order.ZNET}}</text></view>
-							<view class="li"><text>件数</text><text>{{Order.QTY}}</text></view>
-							<view class="li"><text>折扣</text><text>-￥{{Order.DISC}}</text></view>
-							<view class="li"><text>应收金额</text><text>￥{{Order.TNET}}</text></view>
-						</view>
-						<view class="confirm">
-							<button class="btn btn-qx">返 回</button>
-							<button class="btn" @click="Show()">确 认</button>
-						</view>
+					</view>
+					<view class="ul">
+						<view class="li"><text>总金额</text><text>￥{{Order.ZNET}}</text></view>
+						<view class="li"><text>件数</text><text>{{Order.QTY}}</text></view>
+						<view class="li"><text>折扣</text><text>-￥{{Order.DISC}}</text></view>
+						<view class="li"><text>应收金额</text><text>￥{{Order.TNET}}</text></view>
+					</view>
+					<view class="confirm">
+						<button class="btn btn-qx">返 回</button>
+						<button class="btn" @click="Show()">确 认</button>
 					</view>
 				</view>
 			</view>
+		</view>
 		<!-- </view> -->
 	</view>
 </template>

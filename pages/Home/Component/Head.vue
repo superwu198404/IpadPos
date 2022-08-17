@@ -24,11 +24,14 @@
 					<label style="margin-right: 40rpx;" @click="ShowDKF()">
 						大客户：{{DKFNAME}}▼
 					</label>
+					<label style="margin-right: 40rpx;" @click="ShowPrint()">
+						打印机：{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼
+					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
 					</label>
 					<label>
-						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 				</view>
 				<view class="account">
@@ -52,6 +55,7 @@
 					</view>
 				</view>
 			</view>
+			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 		</view>
 	</view>
 </template>
@@ -74,7 +78,8 @@
 				dropout: false,
 				MsgData: [],
 				showMsg: false,
-				showBig: false
+				showBig: false,
+				YN_PRINT_CON: getApp().globalData.YN_PRINT_CON
 			};
 		},
 		// created: function(e) {
@@ -149,7 +154,10 @@
 					this.DKFNAME = data.NAME;
 				}
 				console.log("新的全局变量：", getApp().globalData.store);
-			}
+			},
+			ShowPrint: function() {
+
+			},
 		}
 	}
 </script>

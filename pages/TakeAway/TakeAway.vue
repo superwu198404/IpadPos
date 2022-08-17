@@ -48,9 +48,9 @@
 									<view class="cods">
 										<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
 										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
-										<label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
+										<!-- <label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
 										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
-										<label><text>备注：</text><text>{{item.STR1}}</text></label>
+										<label><text>备注：</text><text>{{item.STR1}}</text></label> -->
 									</view>
 									<view class="address">
 										订单类型：{{item.GSID}}
@@ -68,13 +68,13 @@
 									</view>
 									<view class="harvest">
 										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
-										<label><text>收货人：</text><text>{{Order.STR5}}</text></label>
-										<!-- <label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
+										<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
+										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
 										<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
-										<label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label>
-										<!-- <label><text>订单备注：</text><text>{{Order.STR1}}</text></label> -->
+										<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
+										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
 									</view>
-									<view class="h5"><text>单号：{{Order.BILL}}</text></view>
+									<!-- <view class="h5"><text>单号：{{Order.BILL}}</text></view> -->
 									<view class="goods">
 										<!-- 商品循环 -->
 										<view class="prolist" v-for="(item1,index1) in Details">

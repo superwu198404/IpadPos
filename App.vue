@@ -1,7 +1,9 @@
 <script>
 	import common from '@/api/common.js';
 	import Req from '@/utils/request.js';
-	import { global } from '@/models/PaymentAll/models.js';
+	import {
+		global
+	} from '@/models/PaymentAll/models.js';
 	import Vue from 'vue'
 	let int;
 	export default {
@@ -15,10 +17,10 @@
 				POSID: "1",
 				RYID: "10086",
 				KCDID: "D005",
-				DPID: "11072",// 11072
+				DPID: "11072", // 11072
 				DKFID: '80000000',
 				DKFNAME: '默认大客户',
-				BMID: "",//对应program.xsbm pos 这个参数为空字符串
+				BMID: "", //对应program.xsbm pos 这个参数为空字符串
 				GCID: "K201",
 				DQID: 'K01000',
 				NAME: "武汉xxx",
@@ -37,16 +39,19 @@
 			PayInfo: [], //支付规则
 			CodeRule: {},
 			PZCS: { //档案配置参数
-				YN_ZFBKBQ: "N"
-
+				// YN_ZFBKBQ: "N"
 			},
-			POSCS: [{ //POS参数组 测试用
-				KHID: "K0101QT2",
-				SNAME: "水吧类别编码",
-				POSCS: "SBLBBM",
-				POSCSNR: "107,108"
-			}],
-			XZZF: ["WX_CLZF", "ZFB_CLZF"], //支付中禁止第多次支付的支付方式
+			POSCS: [
+				// 	{ //POS参数组 测试用
+				// 	KHID: "K0101QT2",
+				// 	SNAME: "水吧类别编码",
+				// 	POSCS: "SBLBBM",
+				// 	POSCSNR: "107,108"
+				// },
+			],
+			XZZF: [
+				// "WX_CLZF", "ZFB_CLZF"
+			], //支付中禁止第多次支付的支付方式
 			getModel: function() {
 				//获取手机型号
 				return wx.getSystemInfoSync()["model"];
@@ -81,7 +86,8 @@
 				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
 				ggy: "", //广告语
 			},
-			msgInt:0,//消息定时id
+			YN_PRINT_CON: "N", //打印机连接状态
+			msgInt: 0, //消息定时id
 		},
 		onLaunch: function() {
 			console.log('App Launch')
