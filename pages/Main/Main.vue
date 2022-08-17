@@ -642,7 +642,7 @@
 					zktype: that.curZKType,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: "0020004824", //that.DKFID,  //测试使用
+					dkhid: that.DKFID,//"0020004824", //测试使用
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {
@@ -666,7 +666,7 @@
 			//获取门店日销商品
 			GetRXSPDatas: () => {
 				let time = new Date().getHours();
-				time = 14; //测试使用
+				// time = 14; //测试使用
 				_main.GetRXSPDatas(that.KHID, time, res => {
 					if (res.code) {
 						let Arr = JSON.parse(res.data);

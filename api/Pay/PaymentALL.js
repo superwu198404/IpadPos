@@ -437,7 +437,7 @@ var noPay = {
 
 //根据支付类型反射支付方式
 var payType = {
-	// 108测试使用
+	// 108使用
 	WX_CLZF: wxPay,
 	ZFB_CLZF: zfbPay,
 	HYK: hykPay,
