@@ -8,6 +8,7 @@
 
 .prolist {
 	width: 100%;
+	height: auto;
 }
 
 .sousuo {
@@ -34,6 +35,7 @@
 	/* height: calc(88% - 30px); */
 	padding: 0px 2%;
 	box-sizing: border-box;
+	height: 82%;
 }
 
 .products .procycle {
@@ -185,8 +187,8 @@
 }
 
 .details .goods {
-	padding: 0 4%;
-	max-height: 400rpx;
+	padding: 2% 4% 0;
+	height: 62%;
 	overflow: auto;
 	border-bottom: 1px solid #eee;
 }

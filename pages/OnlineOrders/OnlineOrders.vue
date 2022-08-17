@@ -602,12 +602,12 @@
 
 	.products .procycle .li {
 		/* box-sizing: border-box; */
-		border-color: gray;
+		/* border-color: gray; */
 	}
 
 	.products .procycle .li.curr {
-		border-color: #70c477;
-		box-shadow: 0px 0px 0px 2px #70c477;
+		border-color: #42B14B;
+		box-shadow: 0px 0px 0px 1px #42B14B;
 	}
 
 	.products .details {

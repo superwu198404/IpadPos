@@ -243,7 +243,7 @@
 	}
 
 	.home::before {
-		background-color: royalblue;
+		background-color: #FF8367;
 	}
 
 	.cods {

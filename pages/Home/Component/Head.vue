@@ -21,14 +21,20 @@
 			</view>
 			<view class="stores">
 				<view class="checkout">
-					<label style="margin-right: 40rpx;" @click="ShowDKF()">
-						大客户：{{DKFNAME}}▼
+					<label class="buyer" @click="ShowDKF()">
+						<image src="@/images/dakehu.png" mode="widthFix"></image>大客户：{{DKFNAME}}
+						<image src="@/images/xiala.png" mode="widthFix"></image>
 					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
 					</label>
 					<label>
-						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
+					</label>
+					<label style="margin-right: 40rpx;" @click="ShowPrint()">
+						<!-- ：{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼ -->
+						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
+						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
 				</view>
 				<view class="account">
@@ -52,6 +58,7 @@
 					</view>
 				</view>
 			</view>
+			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 		</view>
 	</view>
 </template>
@@ -74,7 +81,8 @@
 				dropout: false,
 				MsgData: [],
 				showMsg: false,
-				showBig: false
+				showBig: false,
+				YN_PRINT_CON: getApp().globalData.YN_PRINT_CON
 			};
 		},
 		// created: function(e) {
@@ -149,7 +157,13 @@
 					this.DKFNAME = data.NAME;
 				}
 				console.log("新的全局变量：", getApp().globalData.store);
-			}
+			},
+			ShowPrint: function() {
+				uni.showToast({
+					title: that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接",
+					icon: that.YN_PRINT_CON == 'Y' ? "success" : "error",
+				})
+			},
 		}
 	}
 </script>

@@ -7,6 +7,7 @@
 }
 .prolist{
 	width:100%;
+	height: auto;
 }
 .sousuo{
 	background-color: #006B44;
@@ -27,7 +28,9 @@
 }
 .products{
 	display: flex;
-	height: 93%;
+	padding: 0px 2%;
+	box-sizing: border-box;
+	height: 82%;
 }
 .products .procycle{
 	width:40%;
@@ -37,7 +40,7 @@
 	overflow: scroll;
 }
 .products .procycle .li{
-	width:96%;
+	width:94%;
 	padding:2% 3%;
 }
 
@@ -140,9 +143,12 @@
 	justify-content: space-between;
 	padding-bottom: 20rpx;
 }
+.detinfo .h5{
+	display: none;
+}
 .details .goods{
-	padding:0 4%;
-	max-height: 400rpx;
+	padding:2% 4% 0;
+	height: 62%;
 	overflow: auto;
 	border-bottom:1px solid #eee;
 }

@@ -40,7 +40,7 @@ page {
 
 .listof {
 	display: flex;
-	height: 92%;
+	height: 100%;
 }
 .commodity{
 	height: 100%;
@@ -121,6 +121,7 @@ page {
 
 .products {
 	padding: 0 2% 0;
+	/* height: 92%; */
 }
 
 .procycle {
@@ -136,9 +137,13 @@ page {
 	margin-right: 2%;
 	padding: 1% 1.5%;
 	background-color: #fff;
-	border: 1rpx solid #42B14B;
+	border: 1rpx solid #ddd;
 	border-radius: 12rpx;
 	margin-bottom: 2%;
+}
+.procycle .li.curr{
+	border-color: #42B14B;
+	box-shadow:0px 0px 0px 1px #42B14B; ;
 }
 .procycle .li:nth-child(4n){
 	margin-right: 0;
@@ -492,23 +497,19 @@ page {
 	margin-left: 0;
 }
 
-.confirm {
-	margin-top: 5%;
-}
-
 .memberes {
 	height: 100%;
 	position: fixed;
 	top: 0;
 	right: 0;
-	width: 90%;
-	text-align: right;
+	width: 92%;
+	/* text-align: right; */
 	display: flex;
 	justify-content: flex-end;
 }
 
 .meminfo {
-	width: 60%;
+	width: 70%;
 	position: relative;
 	background-color: #fff;
 	height: 100%;
@@ -531,6 +532,7 @@ page {
 	width: 40%;
 	background-color: #F9F9F9;
 	background-color: #fff;
+	position: relative;
 }
 
 .pop-rs {
@@ -671,7 +673,7 @@ page {
 }
 
 .prolist .cods {
-	margin: 4% 0;
+	margin: 2% 0;
 }
 
 .prolist .cods text {
@@ -705,7 +707,12 @@ page {
 	height: 40rpx;
 }
 .pop-r .confirm {
-	padding: 0 4% 0 5%;
+	padding: 30rpx 2%;
+	position: absolute;
+	bottom:0;
+	left: 50%;
+	transform: translateX(-50%);
+	width:96%;
 }
 
 .pop-r .states {
@@ -873,7 +880,7 @@ page {
 
 .coulist .uls {
 	padding: 0;
-	max-height: 600px;
+	max-height: 1000px;
 	overflow: scroll;
 }
 
@@ -1057,4 +1064,8 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 }
 .sgin{
 	color: #ff0000;
+}
+
+.detinfo{
+	height: 88%;
 }

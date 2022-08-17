@@ -642,7 +642,7 @@
 					zktype: that.curZKType,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: "0020004824", //that.DKFID,  //测试使用
+					dkhid: that.DKFID,//"0020004824", //测试使用
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {
@@ -666,7 +666,7 @@
 			//获取门店日销商品
 			GetRXSPDatas: () => {
 				let time = new Date().getHours();
-				time = 14; //测试使用
+				// time = 14; //测试使用
 				_main.GetRXSPDatas(that.KHID, time, res => {
 					if (res.code) {
 						let Arr = JSON.parse(res.data);
@@ -710,6 +710,21 @@
 					that.curTime = require("../../images/dx-night.png");
 				}
 			}
+		},
+		created: function() {
+			that = this;
+			// common.DelSale();//主动删除销售单
+			
+			let hyinfo = util.getStorage("hyinfo");
+			if (hyinfo && JSON.stringify(hyinfo) != "{}") {
+				that.yn_hy = true;
+				that.hyinfo = hyinfo;
+				that.GetHyCoupons(hyinfo);
+			} else {
+				that.yn_hy = false;
+			}
+			that.GetRXSPDatas();
+			that.GetCurTime(); //获取时段
 		}
 	}
 </script>

@@ -330,8 +330,25 @@ const ZFRuleSql =
 			   "CODE"    VARCHAR(100),
 	           "NOTE"    VARCHAR(100),
 			   "YN_USE"    VARCHAR(10)
-			   );`
+			   );`;
+
+//上述sql 已在数据库实现，通讯表数据库没有则在本地创建
+//创建通讯表的过程
+const TXSql = [`drop table POS_TXFILE`,
+	`create table POS_TXFILE(SEQ_NO integer,
+			    TX_SQL        VARCHAR2(6),  
+			    STOREID      VARCHAR(10),  
+			    POSID        VARCHAR2(10),  
+			    TAB_NAME     VARCHAR(40),   
+			    STR1         VARCHAR(40), 
+			    ERRTEXT      VARCHAR2(100),  
+			    BDATE        VARCHAR2(10), 
+			    YW_NAME    VARCHAR(100),
+			    CONNSTR    VARCHAR(100),  
+			    CONSTRAINT POS_TXFILE_KEY PRIMARY KEY (SEQ_NO))`
+];
 export default {
 	createSql,
-	ZFRuleSql
+	ZFRuleSql,
+	TXSql
 }

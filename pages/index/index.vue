@@ -249,7 +249,7 @@
 			}
 		},
 		mounted() {
-			console.log("mounted!",_pay.RefundAll);
+			console.log("mounted!", _pay.RefundAll);
 		},
 		//方法初始化
 		methods: {
@@ -266,11 +266,22 @@
 			//获取支付方式
 			GetPayWay: async function(e) {
 				let that = this;
+				console.log("开始获取本地支付方式");
 				await common.GetPayWay(e, function(res) {
 					console.log("本地获取支付方式结果：", res);
 					if (res.code) {
 						that.PayWayList = [];
+						let PayInfo = util.getStorage("PayInfo");
+						console.log("支付规则信息：", PayInfo);
 						for (var i = 0; i < res.msg.length; i++) {
+							if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
+								return;
+							}
+							let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i]
+								.SNAME);
+							if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
+								continue;
+							}
 							let obj = {};
 							obj.name = res.msg[i].SNAME;
 							obj.fkid = res.msg[i].FKID;
@@ -278,6 +289,7 @@
 							obj.poly = res.msg[i].POLY;
 							obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 							obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
+							obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
 							if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 								obj.type = "EXCESS";
 							}
@@ -286,16 +298,6 @@
 						console.log("res.msg:", res.msg)
 						//如果fkda没有则追加测试数据
 						let arr = [{
-							name: "弃用金额",
-							fkid: "ZCV1",
-							type: "NOPAY",
-							poly: "O"
-						}, {
-							name: "仟吉电子卡",
-							fkid: "ZF04",
-							type: "HYK",
-							poly: "Y"
-						}, {
 							name: "云闪付",
 							fkid: "ZF33",
 							type: "YSF",
@@ -315,7 +317,17 @@
 							fkid: "ZG11",
 							type: "NO",
 							poly: "O"
-						}, ]
+						}, {
+							name: "仟吉赠券",
+							fkid: "ZZ01",
+							type: "NOPAY",
+							poly: "O"
+						}, {
+							name: "弃用金额",
+							fkid: "ZCV1",
+							type: "NOPAY",
+							poly: "O"
+						}]
 						for (var i = 0; i < arr.length; i++) {
 							let obj = that.PayWayList.find((item) => {
 								return item.type == arr[i].type;
@@ -324,13 +336,6 @@
 								that.PayWayList.push(arr[i]);
 							}
 						}
-						that.PayWayList.push({
-							name: "仟吉赠券",
-							fkid: "ZZ01",
-							// type: "ZQ",
-							type: "NOPAY",
-							poly: "O"
-						});
 					}
 					console.log("获取到的支付方式：", that.PayWayList);
 				})
@@ -564,6 +569,18 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
+				
+				// let delStr = ["drop table  KHDA",
+				// 	"CREATE TABLE KHDA(  KHID   VARCHAR2(30),\r\n  DPID   VARCHAR2(30),\r\n  KCDID   VARCHAR2(30),\r\n  SNAME   VARCHAR2(30),\r\n  PINYIN   VARCHAR2(30),\r\n  ADRP   VARCHAR2(30),\r\n  ADRPNAME   VARCHAR2(30),\r\n  ADRC   VARCHAR2(30),\r\n  ADRA   VARCHAR2(30),\r\n  ADRESS   VARCHAR2(30),\r\n  ADRJD   VARCHAR2(30),\r\n  ADRWD   VARCHAR2(30),\r\n  PHONE   VARCHAR2(30),\r\n  ADDR   VARCHAR2(30),\r\n  DATE_KY   VARCHAR2(30),\r\n  ID_RY_DZ   VARCHAR2(30),\r\n  DZPHONE   VARCHAR2(30),\r\n  KQID   VARCHAR2(30),\r\n  SYBID   VARCHAR2(30),\r\n  YYBID   VARCHAR2(30),\r\n  GSID   VARCHAR2(30),\r\n  KHZID   VARCHAR2(30),\r\n  QTLV   VARCHAR2(30),\r\n  SBLV   VARCHAR2(30),\r\n  XKLV   VARCHAR2(30),\r\n  BHTYPE   VARCHAR2(30),\r\n  BHTYPENAME   VARCHAR2(30),\r\n  MRBHKHID   VARCHAR2(30),\r\n  MRXKKHID   VARCHAR2(30),\r\n  CLIENT_TYPE   VARCHAR2(30),\r\n  STIME   VARCHAR2(30),\r\n  ETIME   VARCHAR2(30),\r\n  GCID   VARCHAR2(30),\r\n  DQID   VARCHAR2(30),\r\n  CLIENT_STATUS   VARCHAR2(30),\r\n  CSTATUSNAME   VARCHAR2(30),\r\n  XSMLID   VARCHAR2(30),\r\n  OID   VARCHAR2(30),\r\n  POSCSZID   VARCHAR2(30),\r\n  ZZTLX   VARCHAR2(30),\r\n  JGID   VARCHAR2(30),\r\n  TIMESTAMP   VARCHAR2(30),\r\n  ID_RY_LR   VARCHAR2(30),\r\n  DATE_LR   DATE,\r\n  ID_RY_XG   VARCHAR2(30),\r\n  DATE_XG   DATE,\r\n  ID_RY_SH   VARCHAR2(30),\r\n  DATE_SH   DATE,\r\n  YN_CL   VARCHAR2(30),\r\n  YN_WEBORDER   VARCHAR2(30),\r\n  WERKS   VARCHAR2(30),\r\n\r\n CONSTRAINT  KHDA_KEY PRIMARY KEY(KHID))",
+				// 	"INSERT INTO KHDA( KHID,DPID,KCDID,SNAME,PINYIN,ADRP,ADRPNAME,ADRC,ADRA,ADRESS,ADRJD,ADRWD,PHONE,ADDR,DATE_KY,ID_RY_DZ,DZPHONE,KQID,SYBID,YYBID,GSID,KHZID,QTLV,SBLV,XKLV,BHTYPE,BHTYPENAME,MRBHKHID,MRXKKHID,CLIENT_TYPE,STIME,ETIME,GCID,DQID,CLIENT_STATUS,CSTATUSNAME,XSMLID,OID,POSCSZID,ZZTLX,JGID,TIMESTAMP,ID_RY_LR,DATE_LR,ID_RY_XG,DATE_XG,ID_RY_SH,DATE_SH,YN_CL,YN_WEBORDER,WERKS) VALUES('K200QTD005','11072','D005','武汉领秀城店门厅','whlxcdmt','170','湖北','武汉市','洪山区','雄楚大道领秀城小区6号楼商铺','114.374964000000','30.506491000000','15392968120',NULL,'20120420','01105814','15994286260','110','K12','K104','K200','03','D','A',NULL,NULL,NULL,'K200BHD005','K200XKD005','1','070000','220000','K201','K01000','1','正常营业',NULL,NULL,'001','QT','K200',NULL,'JK',DATETIME('2018-11-23 19:03:22'),'K101',DATETIME('2020-07-09 09:32:46'),'K1',NULL,'N','Y',NULL)"
+				// ];
+				// delStr = ["drop table  KHDA"];
+				// db.get().executeDml(delStr, "数据操作中", function(res2) {
+				// 	console.log("操作成功:", res2);
+				// }, function(err1) {
+				// 	console.log("操作失败:", err1);
+				// });
+				return;
 				let sql1 = "";
 				let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 				let reqdata = Req.resObj(true, "数据传输中", {
@@ -714,13 +731,13 @@
 					.reverse();
 				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
-				await common.InitZFRULE();
-				//获取支付方式
+				// await common.InitZFRULE();
+				//获取支付规则数据 在前执行
+				await common.GetZFRULE();
+				//获取支付方式 在后执行
 				await that.GetPayWay(that.KHID);
 				//初始化配置参数
 				await common.GetPZCS();
-				//获取支付规则数据
-				await common.GetZFRULE();
 				//获取POS参数组数据
 				await common.GetPOSCS(that.KHID);
 

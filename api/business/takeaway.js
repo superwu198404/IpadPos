@@ -107,15 +107,12 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 	]
 	await db.get().executeDml(sqlArr, "保存中...", res => {
 		console.log("更改外卖单状态成功:", res);
-		uni.showToast({
-			title: "报损单保存成功"
-		})
 		common.TransLite(pm_bill); //直接传输数据
 		if (func) func(res);
 	}, err => {
 		console.log("更改外卖单状态失败:", err);
 		uni.showToast({
-			title: "报损单保存失败",
+			title: "保存失败",
 			icon: "error"
 		})
 	})
