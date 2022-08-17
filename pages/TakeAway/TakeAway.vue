@@ -450,10 +450,9 @@
 					uni.showToast({
 						title: res.code ? "操作成功" : res.msg,
 						icon: res.code ? "success" : "error"
-
 					})
 					if (res.code) {
-						if (data.yn_print) {
+						if (res.data.yn_print) {
 							//调用打印
 							console.log("此处调用打印：");
 						}
