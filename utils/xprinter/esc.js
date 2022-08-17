@@ -1231,7 +1231,7 @@ var jpPrinter = {
 		   case printerType[2]:
 		    xpType ="退单";
 			xsBill= data.xsBill;
-			lineNum = -Math.abs(lineNum);
+			lineNum = Math.abs(lineNum);
 			isReturn = true;
 		    break;
 			
@@ -1243,7 +1243,7 @@ var jpPrinter = {
 		   case printerType[4]:
 			 xpType ="预定";
 			 xsBill= data.xsBill;
-			 lineNum = -Math.abs(lineNum);
+			 lineNum = Math.abs(lineNum);
 			 isReturn = true;
 			 isYD = true;
 			break;	
@@ -1260,7 +1260,7 @@ var jpPrinter = {
 		  case printerType[7]:
 			xpType ="赊销";
 			xsBill= data.xsBill;
-			lineNum = -Math.abs(lineNum);
+			lineNum = Math.abs(lineNum);
 			isReturn = true;
 		    break;
 			
@@ -1271,7 +1271,7 @@ var jpPrinter = {
 		   case printerType[9]:
 			 xpType ="线上";
 			 xsBill= data.xsBill;
-			 lineNum = -Math.abs(lineNum);
+			 lineNum = Math.abs(lineNum);
 			 isReturn = true;
 			 break;
 		}
@@ -1324,7 +1324,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商品名称       数量  单价  金额  折扣  ");
+		jpPrinter.setText("商品名称       数量  金额  折扣  ");
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1342,8 +1342,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(item.spid, 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
-				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
 					item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
@@ -1352,7 +1351,7 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("--------------------总计-----------------------");
 		jpPrinter.setPrint(); //打印并换行
-		
+			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
@@ -1408,6 +1407,7 @@ var jpPrinter = {
 		//是退单，金额显示负数
 		if(isReturn){
 			payTotal = -Math.abs(payTotal).toFixed(2);
+			zqNet = 0;
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
@@ -1459,7 +1459,7 @@ var jpPrinter = {
 				
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText("卡类型:" + item3.fkName.toString()+ " 识别码:" + item3.no.toString());
+				jpPrinter.setText("卡类型:" + item3.fkName.toString()+ " 识别码:");
 				jpPrinter.setPrint(); //打印并换行
 			}
 		});
