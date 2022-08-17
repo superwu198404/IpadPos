@@ -336,6 +336,7 @@
 			},
 			Close: function() {
 				that.statements = false;
+				that.yn_add = false;
 			},
 			//获取配送类型
 			getTHTYPE: function() {
@@ -369,10 +370,14 @@
 			},
 			//显示地址框
 			ShowAddADDR: () => {
-				that.yn_add = true;
-				that.ADDR = {};
+				console.log("显示新增地址框")
+				// that.ADDR = {};
+				that.ADDR.NAME = "";
+				that.ADDR.ADDRESS = "";
 				that.ADDR.PHONE = that.Order.CUSTMPHONE; //默认赋值手机号
 				that.ADDR.ACT = "Add"; //操作类型
+				that.yn_add = true;
+				console.log("数据:", that.ADDR);
 			},
 			GetAddr: function() {
 				if (that.Order.THTYPE == '0') {
@@ -574,6 +579,7 @@
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				that.YDDATA = JSON.stringify(that.Order);
 				that.statements = false;
+				that.yn_add = false;
 				that.Empty();
 				console.log("待提交的顾客信息:", that.YDDATA);
 			},

@@ -4,16 +4,17 @@
 
 <template>
 	<view class="content">
-		<menu_page :menuIndex="0"></menu_page>
+		<!-- <menu_page :menuIndex="0"></menu_page> -->
 		<view class="right">
-			<menu_head></menu_head>
+			<!-- <menu_head></menu_head> -->
+			<!-- <Head></Head> -->
 			<view class="mem-bg">
 				<button class="skip" @click="ReBack()">返回</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
 					<label>
 						<image src="../../images/zhanghu.png" mode="widthFix"></image>
-						<input type="number" v-model="numbers" />
+						<input type="number" v-model="numbers" :adjust-position="false" focus="true" :hold-keyboard="true" />
 					</label>
 					<button @click="HYLogin()">登 录</button>
 				</view>
@@ -32,8 +33,12 @@
 	import _take from '@/api/business/takeaway.js';
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import _checker from '@/utils/graceChecker.js';
+	import Head from '@/pages/Home/Component/Head.vue'
 	var that;
 	export default {
+		components: {
+			Head
+		},
 		data() {
 			return {
 				numbers: "",
@@ -93,7 +98,7 @@
 
 	.mem-bg .import {
 		position: absolute;
-		bottom: 22%;
+		top: 36%;
 		left: 12%;
 		display: flex;
 		width: 42%;

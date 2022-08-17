@@ -564,7 +564,7 @@
 					storeDqid: that.DQID
 				};
 				console.log("报损数据处理开始：", obj);
-				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, r => {
+				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, res => {
 					console.log("报损本地操作结果：", res);
 					if (res.code) {
 						util.simpleMsg("接收成功");
@@ -667,7 +667,7 @@
 					bill: bill,
 					ywtype: common.ywTypeEnum.QTLY
 				};
-				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, r => {
+				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, res => {
 					console.log("领用本地操作结果：", res);
 					if (res.code) {
 						//先上传积分

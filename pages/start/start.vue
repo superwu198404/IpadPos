@@ -14,6 +14,7 @@
 <script>
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
+	import _create_sql from '@/utils/db/create_sql.js';
 	var mysqlite = sqlLite.get();
 	var that = null;
 
@@ -117,6 +118,7 @@
 							sql.push(item.DDLSTR);
 							sql = sql.concat(new004);
 						});
+						sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
 						return Req.resObj(true, "正在开始重建数据库", sql);
 					},
 					async (res) => {
