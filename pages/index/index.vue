@@ -455,8 +455,8 @@
 					out_refund_no: common.CreateBill(this.KHID, this.POSID), //生成退款单号
 					BILL_TYPE: this.BILL_TYPE,
 					XS_TYPE: this.XS_TYPE,
-					SKY_DISCOUNT: this.SKY_DISCOUNT,
-					totalAmount: this.totalAmount,
+					// SKY_DISCOUNT: this.SKY_DISCOUNT,
+					// totalAmount: this.totalAmount,
 					actType: this.actType,
 					PayList: this.PayList
 				});
@@ -484,7 +484,7 @@
 				console.log("处理分后的商品信息：", this.Products);
 			},
 			SaleBaseInit: function() {
-				this.priceCount() //支付金额初始化
+				// this.priceCount() //支付金额初始化
 				//预先重置
 				this.sale1_obj = {};
 				this.sale2_arr = [];
