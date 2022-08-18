@@ -1132,8 +1132,6 @@
 					this.PaymentInfos.PayList = prev_page_param?.PayList;
 					this.XS_TYPE = prev_page_param.XS_TYPE;
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
-					// this.SKY_DISCOUNT = prev_page_param.SKY_DISCOUNT;
-					// this.totalAmount = prev_page_param.totalAmount;
 					this.RefundDataHandle(); //处理上个页面传入的退单数据
 					this.PayDataHandle(); //处理上个页面传入的支付数据
 					this.GetSBData(); //筛选水吧产品
