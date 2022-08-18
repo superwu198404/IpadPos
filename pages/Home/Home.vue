@@ -68,7 +68,7 @@
 				console.log("[SwitchPage]页面名称:", data.name);
 				this.current = data;
 				console.log("[SwitchPage]页面元数据:", data.meta);
-				this.meta_data = data.meta ?? null;
+				this.meta_data = data.meta ?? {};
 			},
 			ComponentRecursion: function(tree, all) {
 				tree.forEach(util.callBind(this, function(item) {

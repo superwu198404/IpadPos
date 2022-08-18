@@ -168,8 +168,7 @@
 								</label>
 								<label class="poly-text">
 									<text>支持</text>
-									<text v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
-										,{{item.name}}</text>
+									<text>{{PayWayList.filter(i=>i.poly=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
@@ -692,8 +691,12 @@
 						uni.scanCode({
 							success: (function(res) {
 								this.authCode = res.result; //获取扫码的 authCode
+								console.log("[Pay]scanCode:",res);
 								that.PayHandle();
-							}).bind(this)
+							}).bind(this),
+							fail(err) {
+								console.log("[Pay]Error:",err);
+							}
 						});
 					} else { //不需要扫码操作
 						console.log("此操作类型不需要扫码！", pay_info)
@@ -911,8 +914,10 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
+				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
+				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
 				console.log(
@@ -1154,8 +1159,8 @@
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
 				console.log("[PriceCount]总金额：", total);
-				// this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
-				this.totalAmount = 0.01; //舍弃分数位
+				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
 					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));

@@ -183,7 +183,7 @@
 		},
 		mounted() {
 			console.log("[Extract-Mounted]触发!");
-			if(this.meta) this.view.mode = this.meta.mode;//跳转传值
+			if(this.meta && this.meta.mode) this.view.mode = this.meta.mode;//跳转传值
 			console.log("[Extract-Mounted]元数据:",this.meta);
 			this.GetList();
 		}

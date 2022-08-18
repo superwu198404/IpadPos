@@ -60,7 +60,7 @@ export const PayDataAssemble = function() {
 				spid: i.SPID,
 				name: i.NAME,
 				price: (Number(i.PRICE) * 100).toFixed(0), //单价
-				amount: (Number(i.AMOUNT) * 100).toFixed(0), //总金额
+				amount: (Number(i.AMOUNT || i.NET) * 100).toFixed(0), //总金额
 				num: i.QTY
 			}
 		})
@@ -68,14 +68,14 @@ export const PayDataAssemble = function() {
 }
 
 export const global = {
-	props: {
-		meta: {
-			type: Object,
-			default: function() {
-				return {};
-			}
-		}
-	},
+	// props: {
+	// 	meta: {
+	// 		type: Object,
+	// 		default: function() {
+	// 			return {};
+	// 		}
+	// 	}
+	// },
 	data: function() {
 		return {
 			GSID: getApp().globalData.store.GSID, //公司id
