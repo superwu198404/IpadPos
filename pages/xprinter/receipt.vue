@@ -7,22 +7,26 @@
 			</view>
 		</view>
 		<button class="button" hover-class="hover" @tap="againPrinter">重打</button>
-		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend"
-			:disabled="isReceiptSend" v-show="false">
+		<button class="button" hover-class="hover" @tap="bluePrinter" :loading="isReceiptSend" :disabled="isReceiptSend"
+			v-show="false">
 			打印小票-测试
 		</button>
 		<button class="button" hover-class="hover" @tap="queryStatus" :loading="isQuery" :disabled="isQuery">
 			查询状态
 		</button>
 		<button class="button" hover-class="hover" @tap="printPhoto" v-show="false">打印二维码-测试</button>
-		<canvas canvas-id="couponQrcode" class="canvas" :style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+		<canvas canvas-id="couponQrcode" class="canvas"
+			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
 
 		<button class="button" hover-class="hover" @tap="printJPGPhoto" v-show="false">打印logo-测试</button>
-		<canvas canvas-id="canvasLogoJPG" class="canvas" :style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-		
-		<canvas canvas-id="canvasXPEWM" class="canvas" :style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-		
-		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex" @change="buffBindChange">
+		<canvas canvas-id="canvasLogoJPG" class="canvas"
+			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+
+		<canvas canvas-id="canvasXPEWM" class="canvas"
+			:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+
+		<picker style="margin:20px;display: none;" mode="selector" :range="buffSize" :value="buffIndex"
+			@change="buffBindChange">
 			当前每次发送字节数为(点击可更换)：{{ buffSize[buffIndex] }}
 		</picker>
 
@@ -42,12 +46,14 @@
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import Req from '@/utils/request.js';
+	import util from '@/utils/util.js';
+
 	import {
 		mapState,
 		mapGetters,
 		mapMutations
 	} from 'vuex'
-	
+
 	export default {
 		data() {
 			return {
@@ -66,8 +72,8 @@
 				isQuery: false,
 				imageSrc: "/static/xprinter/erweima.png",
 				jpgSrc: "/static/xprinter/logo.jpg",
-				canvasGZHWidth: 200,//小票结尾二维码宽
-				canvasGZHHeight: 200,//小票结尾二维码高
+				canvasGZHWidth: 200, //小票结尾二维码宽
+				canvasGZHHeight: 200, //小票结尾二维码高
 				jpgWidth: 340,
 				jpgHeight: 113,
 				qrCodeWidth: 200, //开票二维码宽
@@ -118,7 +124,7 @@
 		},
 		methods: {
 			// 二维码生成工具
-			couponQrCode: function(){
+			couponQrCode: function() {
 				let that = this;
 				new qrCode('couponQrcode', {
 					text: app.globalData.BLEInformation.qrCodeContent,
@@ -137,12 +143,12 @@
 						method: "GET",
 						data: "",
 						success: (res) => {
-					        console.log("ggyAction success: ", res.data)
+							console.log("ggyAction success: ", res.data)
 							app.globalData.BLEInformation.ggy = res.data;
 							return resolve(res.data);
 						},
 						fail: (res) => {
-							console.log("ggyAction false: ",res);
+							console.log("ggyAction false: ", res);
 							return resolve("");
 						}
 					})
@@ -156,59 +162,57 @@
 				//输出日志
 				console.log("线上订单打印接收数据 sale1_obj", order);
 				console.log("线上订单打印控制参数 print", print);
-				
+
 				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数",printer_poscs);
-				
+				console.log("查询终端参数", printer_poscs);
+
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY != "Y"){
-					uni.showToast({
-						icon: 'error',
-						title: "终端参数未设置打印小票"
-					})
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("终端参数未设置打印小票", "none");
 					console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
-				let sale1_obj = JSON.parse(sale1_objO);	
-				var printerInfo = xprinter_util.xsPrinterData(sale1_obj, ggyContent,type);
+				let sale1_obj = JSON.parse(sale1_objO);
+				var printerInfo = xprinter_util.xsPrinterData(sale1_obj, ggyContent, type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.FormStringXS(printerInfo,printer_poscs,print,type);
+				command.FormStringXS(printerInfo, printer_poscs, print, type);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
-				
+
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if(is_dzfpewmdz || is_xpewm){
+				if (is_dzfpewmdz || is_xpewm) {
 					//生成属于单号的二维码
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
-					    //that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
+							that.qrCodeWidth, that.qrCodeHeight),
+						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
-						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-					    console.log("xsBluePrinter 开始发送打印命令");
+						console.log("xsBluePrinter 开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('xsBluePrinter reject failed reason', reason)
 						that.prepareSend(command.getData()); //发送数据
 					})
-				}else{
+				} else {
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
 				console.log("线上订单打印格式记录结束");
 			},
 			//外卖打印小票
-			wmBluePrinter: async function(order, datails,type, print) {
+			wmBluePrinter: async function(order, datails, type, print) {
 				//票据
 				var that = this;
 				let sale1_objO = JSON.stringify(order);
@@ -217,53 +221,51 @@
 				console.log("外卖打印接收数据 sale1_obj", order);
 				console.log("外卖打印接收数据 sale2_arr", datails);
 				console.log("外卖打印控制参数 print", print);
-				
+
 				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数",printer_poscs);
-				
+				console.log("查询终端参数", printer_poscs);
+
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY != "Y"){
-					uni.showToast({
-						icon: 'error',
-						title: "终端参数未设置打印小票"
-					})
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("终端参数未设置打印小票", "none");
 					console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				let sale1_obj = JSON.parse(sale1_objO);
-				let sale2_arr = JSON.parse(sale2_arrO);		
-				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent,type);
+				let sale2_arr = JSON.parse(sale2_arrO);
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent, type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.wmFormString(printerInfo,printer_poscs,print,type);
+				command.wmFormString(printerInfo, printer_poscs, print, type);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
-				
+
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if(is_dzfpewmdz || is_xpewm){
+				if (is_dzfpewmdz || is_xpewm) {
 					//生成属于单号的二维码
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
-					    //that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
+							that.qrCodeWidth, that.qrCodeHeight),
+						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
-						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-					    console.log("wmBluePrinter 开始发送打印命令");
+						console.log("wmBluePrinter 开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('wmBluePrinter reject failed reason', reason)
 						that.prepareSend(command.getData()); //发送数据
 					})
-				}else{
+				} else {
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
@@ -278,18 +280,15 @@
 				console.log("销售打印接收数据 sale2_arr", sale2_arr);
 				console.log("销售打印控制参数 print", print);
 				console.log("销售打印接收数据 sale3_arr", sale3_arr);
-				
+
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数",printer_poscs);
-				
+				console.log("查询终端参数", printer_poscs);
+
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY != "Y"){
-					uni.showToast({
-						icon: 'error',
-						title: "终端参数未设置打印小票"
-					})
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("终端参数未设置打印小票", "none");
 					console.log("终端参数未设置打印小票");
 					return;
 				}
@@ -300,28 +299,29 @@
 				var command = esc.jpPrinter.createNew();
 				command.init();
 				//打印格式
-				command.formString(printerInfo,printer_poscs,print);
+				command.formString(printerInfo, printer_poscs, print);
 				//写入打印记录表
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
-				
+
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if(is_dzfpewmdz || is_xpewm){
+				if (is_dzfpewmdz || is_xpewm) {
 					//生成属于单号的二维码
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,sale1_obj.BILL,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
-					    //that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
+							that.qrCodeWidth, that.qrCodeHeight),
+						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
-						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-					    console.log("开始发送打印命令");
+						console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('bluePrinter reject failed reason', reason)
 						that.prepareSend(command.getData()); //发送数据
 					})
-				}else{
+				} else {
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
@@ -330,8 +330,8 @@
 			againPrinter: async function(xsBill) {
 				var that = this;
 				//xsBill = that.bill_printer;
-				console.log("重打单号:",xsBill)
-				if(xsBill == "" || xsBill == null){
+				console.log("重打单号:", xsBill)
+				if (xsBill == "" || xsBill == null) {
 					uni.showToast({
 						icon: 'error',
 						title: "重打单号为空"
@@ -341,64 +341,60 @@
 				//通过单号，查询重打格式数据
 				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 				//console.log("pos_xsbillprint",pos_xsbillprint);	
-				if(pos_xsbillprint == "" || pos_xsbillprint == null){
-					uni.showToast({
-						icon: 'error',
-						title: "未查询到重打数据"
-					})
+				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
+
+					util.simpleMsg("未查询到重打数据", "none");
 					return;
 				}
-				
+
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-			    console.log("查询终端参数",printer_poscs);
-				
+				console.log("查询终端参数", printer_poscs);
+
 				// 通过终端参数，Y 打印小票
-				if(printer_poscs.YN_YXDY != "Y"){
-					uni.showToast({
-						icon: 'error',
-						title: "终端参数未设置打印小票"
-					})
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("未查询到重打数据", "none");
 					console.log("终端参数未设置打印小票");
 					return;
 				}
-				
+
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
-				
+
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				console.log("is_dzfpewmdz",is_dzfpewmdz)
-				console.log("is_xpewm",is_xpewm)
+				console.log("is_dzfpewmdz", is_dzfpewmdz)
+				console.log("is_xpewm", is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
-				if(is_dzfpewmdz || is_xpewm){
+				if (is_dzfpewmdz || is_xpewm) {
 					//生成属于单号的二维码
 					Promise.all([
-					    xprinter_util.qrCodeGenerate(is_dzfpewmdz,xsBill,printer_poscs.DZFPEWMDZ,that.qrCodeWidth,that.qrCodeHeight),
-					    //that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, xsBill, printer_poscs.DZFPEWMDZ, that
+							.qrCodeWidth, that.qrCodeHeight),
+						//that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
-						xprinter_util.qrCodeAction(is_dzfpewmdz,command,that.qrCodeWidth,that.qrCodeHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-					    console.log("开始发送打印命令");
+						console.log("开始发送打印命令");
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('againPrinter reject failed reason', reason)
 						that.prepareSend(command.getData()); //发送数据
 					})
-				}else{
+				} else {
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
 				}
 			},
-			gzhQrCodeGenerate : function(is_xpewm,url){
-			    return new Promise((resolve, reject) => {
-					if(!is_xpewm){
+			gzhQrCodeGenerate: function(is_xpewm, url) {
+				return new Promise((resolve, reject) => {
+					if (!is_xpewm) {
 						resolve(url)
 						return;
 					}
-					const ctx_out = uni.createCanvasContext("canvasXPEWM",this);
+					const ctx_out = uni.createCanvasContext("canvasXPEWM", this);
 					var png = url;
 					uni.getImageInfo({
 						src: png,
@@ -408,29 +404,29 @@
 							ctx_out.draw();
 							resolve(res)
 						}
-					}); 
-					console.log("2.gzhQrCodeGenerate 111",url);
-			    });
+					});
+					console.log("2.gzhQrCodeGenerate 111", url);
+				});
 			},
 			//初始化画布数据
 			initPhoto: function() {
 				//初始化画布数据
 				var that = this;
 				const ctx_Qrcode = uni.createCanvasContext("couponQrcode", this);
-					var png_Qrcode = that.imageSrc;
-					uni.getImageInfo({
-						src: png_Qrcode,
-						success(res) {
-							that.setData({
-								qrCodeWidth: that.qrCodeWidth,
-								qrCodeHeight: that.qrCodeHeight
-							});
-							//console.log("画布宽度" + res.width, "画布高度" + res.height);
-							ctx_Qrcode.drawImage(png_Qrcode, 0, 0, res.width, res.height);
-							ctx_Qrcode.draw();
-						}
-				}); 
-					
+				var png_Qrcode = that.imageSrc;
+				uni.getImageInfo({
+					src: png_Qrcode,
+					success(res) {
+						that.setData({
+							qrCodeWidth: that.qrCodeWidth,
+							qrCodeHeight: that.qrCodeHeight
+						});
+						//console.log("画布宽度" + res.width, "画布高度" + res.height);
+						ctx_Qrcode.drawImage(png_Qrcode, 0, 0, res.width, res.height);
+						ctx_Qrcode.draw();
+					}
+				});
+
 				const ctx_out = uni.createCanvasContext("canvasXPEWM", that);
 				var png = that.imageSrc;
 				uni.getImageInfo({
@@ -444,17 +440,17 @@
 						ctx_out.drawImage(png, 0, 0, res.width, res.height);
 						ctx_out.draw();
 					}
-				}); 
-				
+				});
+
 				//创建一个jpg格式图片
 				const ctx_jpg = uni.createCanvasContext("canvasLogoJPG", that);
 				var img = that.jpgSrc;
 				uni.getImageInfo({
-					src: img,				
+					src: img,
 					success(res) {
 						that.setData({
 							jpgWidth: that.jpgWidth,
-							jpgHeight:  that.jpgHeight
+							jpgHeight: that.jpgHeight
 						});
 						//console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
 						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
@@ -478,7 +474,7 @@
 						ctx_out.drawImage(png, 0, 0, res.width, res.height);
 						ctx_out.draw();
 					}
-				}); 		
+				});
 			},
 			initCanvasLogoJPG: function() {
 				//创建一个png格式
@@ -487,11 +483,11 @@
 				const ctx_jpg = uni.createCanvasContext("canvasLogoJPG", that);
 				var img = that.jpgSrc;
 				uni.getImageInfo({
-					src: img,				
+					src: img,
 					success(res) {
 						that.setData({
 							jpgWidth: that.jpgWidth,
-							jpgHeight:  that.jpgHeight
+							jpgHeight: that.jpgHeight
 						});
 						//console.log("JPG画布宽度" + res.width, "JPG画布高度" + res.height);
 						ctx_jpg.drawImage(img, 0, 0, res.width, res.height);
@@ -526,10 +522,7 @@
 					},
 					fail: function(res) {
 						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
+						util.simpleMsg("获取画布数据失败", "none");
 					}
 				});
 			},
@@ -596,10 +589,7 @@
 					},
 					fail: function(res) {
 						console.log(res);
-						uni.showToast({
-							title: "获取画布数据失败",
-							icon: "none"
-						});
+						util.simpleMsg("获取画布数据失败","none");
 					}
 				});
 			},
@@ -611,12 +601,12 @@
 				var looptime = parseInt(buff.length / time);
 				var lastData = parseInt(buff.length % time);
 
-			    that.setData({
+				that.setData({
 					looptime: looptime + 1,
 					lastData: lastData,
 					currentTime: 1
 				});
-			    that.Send(buff);
+				that.Send(buff);
 			},
 			queryStatus: function() {
 				//查询打印机状态
@@ -646,11 +636,7 @@
 						});
 					},
 					fail: function(e) {
-						uni.showToast({
-							title: "发送失败",
-							icon: "none"
-						}); //console.log(e)
-
+						util.simpleMsg("发送失败",true);
 						return;
 					},
 					complete: function() {}
@@ -748,16 +734,11 @@
 						if (currentTime <= loopTime) {
 
 						} else {
-							uni.showToast({
-								title: "已打印第" + currentPrint + "张成功"
-							});
+							util.simpleMsg("已打印第" + currentPrint + "张成功", "none");
 						} //console.log(res)
 					},
 					fail: function(e) {
-						uni.showToast({
-							title: "打印第" + currentPrint + "张失败",
-							icon: "none"
-						}); //console.log(e)
+						util.simpleMsg("已打印第" + currentPrint + "张成功", "none");
 					},
 					complete: function() {
 						currentTime++;

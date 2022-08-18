@@ -65,6 +65,8 @@
 
 <script>
 	import _msg from '@/api/business/message.js';
+	import util from '@/utils/util.js';
+
 	let that;
 	export default {
 		name: "menu_head",
@@ -159,10 +161,7 @@
 				console.log("新的全局变量：", getApp().globalData.store);
 			},
 			ShowPrint: function() {
-				uni.showToast({
-					title: that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接",
-					icon: that.YN_PRINT_CON == 'Y' ? "success" : "error",
-				})
+				util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
 			},
 		}
 	}

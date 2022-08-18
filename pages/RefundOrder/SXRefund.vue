@@ -2,7 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
-	@import url(@/static/style/Extract/extract.css);
+	@import url(@/static/style/takeout.css);
 </style>
 
 <template>
@@ -47,13 +47,14 @@
 								</view>
 							</view>
 						</view>
+						<view class="h2">赊销退单 <label></label></view>
 						<!-- 小类循环 -->
 						<view class="products">
-							<view class="h2">赊销退单 <label></label></view>
+							<!--  -->
 
 							<view class="procycle">
 								<!-- 订单循环 -->
-								<view class="li" v-for="(item,index) in Orders">
+								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
 										<text class="price">￥{{item.DNET}}</text>
@@ -63,9 +64,58 @@
 										<label>客户编码: {{item.DKFID}}</label>
 										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>
-									<view class="handles"><text></text>
+									<!-- <view class="handles"><text></text>
 										<button class="btn" @click="ConfirmToPay(item)">确定</button>
+									</view> -->
+								</view>
+							</view>
+							<view class="details">
+								<view class="detinfo">
+									<view class="member">
+										<label>
+											<image class="touxiang" src="@/images/touxiang.png"></image>
+											<label
+												class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
+										</label>
 									</view>
+									<view class="harvest">
+										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
+										<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
+										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
+										<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
+										<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
+										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
+									</view>
+									<!-- <view class="h5"><text>单号：{{Order.BILL}}</text></view> -->
+									<view class="goods">
+										<!-- 商品循环 -->
+										<view class="prolist" v-for="(item1,index1) in Details">
+											<view class="h3">
+												<label>
+													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
+												</label>
+												<view class="shuls"><text>×{{item1.QTY}}</text></view>
+											</view>
+											<view class="cods">
+												<view>
+													<label>
+														<image src="@/images/dx-bm.png" mode="widthFix"></image>
+														{{item1.SPID}}
+													</label>
+													<label>
+														<image src="@/images/dx-dw.png" mode="widthFix"></image>
+														{{item1.STR7}}
+													</label>
+												</view>
+												<text>已取消：{{item1.BQTY}}</text>
+											</view>
+										</view>
+									</view>
+								</view>
+								<view class="operat">
+									<!-- <button class="btn" @click="ConfirmReback()">取消</button> -->
+									<button class="btn" @click="ConfirmToPay(item)">确认退单</button>
 								</view>
 							</view>
 						</view>
@@ -85,7 +135,7 @@
 						</label>
 						<text>清空</text>
 					</view>
-					<view class="h5"><text>单号：{{Order.BILL}}</text></view>
+					<view class="h5"><text>单号:{{Order.BILL}}</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
 						<view class="prolist" v-for="(item,index) in Details">
@@ -163,7 +213,8 @@
 				p_name: "",
 				p_date: dateformat.getYMD(),
 				Order: {},
-				Details: {}
+				Details: {},
+				curIndex: 0,
 			}
 		},
 		watch: {
@@ -195,6 +246,9 @@
 							util.simpleMsg("暂无数据", true);
 						}
 					});
+			},
+			ChooseOrder:e=>{
+				
 			},
 			GetOrderDetails: (e) => {
 				that.Criterias = false;
@@ -294,5 +348,14 @@
 <style>
 	.right {
 		height: 100%;
+	}
+	.handles button{
+		width:160rpx;
+		height: 60rpx;
+		line-height: 60rpx;
+		font-size: 28rpx;
+	}
+	.price{
+		margin-top:0;
 	}
 </style>

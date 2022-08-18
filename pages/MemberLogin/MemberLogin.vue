@@ -14,7 +14,8 @@
 				<view class="import">
 					<label>
 						<image src="../../images/zhanghu.png" mode="widthFix"></image>
-						<input type="number" v-model="numbers" :adjust-position="false" focus="true" :hold-keyboard="true" />
+						<input type="number" v-model="numbers" :adjust-position="false" focus="true"
+							:hold-keyboard="true" />
 					</label>
 					<button @click="HYLogin()">登 录</button>
 				</view>
@@ -52,6 +53,10 @@
 			},
 			//登录事件
 			HYLogin: function() {
+				if (!that.numbers) {
+					util.simpleMsg("请输入手机号", true);
+					return;
+				}
 				let flag = _checker.checkMobile(that.numbers);
 				let obj = {
 					code: that.numbers,
@@ -73,7 +78,7 @@
 					}
 				}, err => {
 					console.log("会员信息查询失败:", err);
-					util.simpleMsg(err.msg, true);
+					util.simpleMsg("提示：" + err.msg, "none");
 				});
 			},
 			//返回

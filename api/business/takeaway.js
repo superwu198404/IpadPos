@@ -74,10 +74,8 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 	let sql = await sql_commit(pm_bill, is_ywtype, "BQTY")
 	console.log("oracle_sql组装完毕：", sql);
 	if (!sql) {
-		uni.showToast({
-			title: "提交失败请确认录入信息的正确性！",
-			icon: "error"
-		})
+		util.simpleMsg("单据生成失败", true);
+		return;
 	}
 	let tx_obj = {
 		TX_SQL: sql,
@@ -95,10 +93,7 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 		console.log("通讯数据保存成功：", r);
 	}, e => {
 		console.log("通讯数据保存失败：", e);
-		uni.showToast({
-			title: "通讯数据保存失败",
-			icon: "error"
-		})
+		util.simpleMsg("数据保存失败", true);
 	})
 	let sqlArr = ["UPDATE  SYSYWTEMP001 SET STATUS= '1' WHERE YWTYPE = '" + is_ywtype +
 		"' AND BILL = '" + pm_bill + "'",
@@ -111,10 +106,7 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 		if (func) func(res);
 	}, err => {
 		console.log("更改外卖单状态失败:", err);
-		uni.showToast({
-			title: "保存失败",
-			icon: "error"
-		})
+		util.simpleMsg("数据更改失败", true);
 	})
 }
 //查询外卖袋
@@ -127,10 +119,7 @@ var GetWMDData = function(d, e, func) {
 			func(res);
 	}, err => {
 		console.log("查询外卖袋数据出错:", err);
-		uni.showToast({
-			title: "查询异常：" + err.msg,
-			icon: "error"
-		})
+		util.simpleMsg("异常：" + err.msg, "none");
 	});
 }
 
@@ -141,10 +130,7 @@ var ConfirmLY = function(obj, bill, ywtype, func) {
 	Req.asyncFuncOne(reqdata, res => {
 		console.log("后台领用返回数据:", res);
 		if (!res.code) {
-			uni.showToast({
-				title: res.msg,
-				icon: "error"
-			})
+			util.simpleMsg(res.msg, true);
 			return;
 		}
 		let arr = JSON.parse(res.data).split(';');
@@ -154,10 +140,7 @@ var ConfirmLY = function(obj, bill, ywtype, func) {
 			dj_commit(bill, ywtype, obj.khid, obj.posid, func);
 		}, err => {
 			console.log("本地单据保存异常:", err);
-			uni.showToast({
-				title: "本地单据保存异常",
-				icon: "error"
-			})
+			util.simpleMsg("单据保存异常", true);
 		})
 	}, err1 => {
 		console.log("后台报损返回数据:", err1);
@@ -184,10 +167,7 @@ var ConfirmBS = function(data, is_ywtype, bill, Program, func) {
 		console.log("临时单据保存通讯成功：", res);
 	}, err => {
 		console.log("临时单据保存失败：", err);
-		uni.showToast({
-			title: "临时单据生成失败",
-			icon: "error"
-		})
+		util.simpleMsg("单据生成失败", true);
 	})
 }
 

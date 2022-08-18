@@ -116,8 +116,8 @@
 				couponlst: []
 			}
 		},
-		watch:{
-			numbers:function(n,o){
+		watch: {
+			numbers: function(n, o) {
 				// uni.setStorageSync("hyid",n);
 			}
 		},
@@ -128,10 +128,7 @@
 			query: function() {
 				let that = this;
 				if (!that.numbers) {
-					uni.showToast({
-						title: "请输入手机号码/会员号码",
-						icon: "error"
-					});
+					util.simpleMsg("提示：请输入手机号码/会员号码", "none");
 					return;
 				}
 				that.hyinfo = hy.hyinfoModel;
@@ -141,7 +138,7 @@
 							that.hyinfo = JSON.parse(res.data);
 							that.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
-							uni.setStorageSync("hyinfo",that.hyinfo);
+							uni.setStorageSync("hyinfo", that.hyinfo);
 							// console.log("会员信息：", getApp().globalData.hyinfo.hyId);
 							//查询优惠券信息
 							// let No;
@@ -156,10 +153,7 @@
 							// 	}
 							// })
 						} else {
-							uni.showToast({
-								title: res.msg,
-								icon: "error"
-							});
+							util.simpleMsg("错误：" + res.msg, true);
 						}
 					});
 			},
@@ -183,10 +177,7 @@
 			search: function() {
 				let that = this;
 				if (!that.code) {
-					uni.showToast({
-						title: "请扫描会员码",
-						icon: "error"
-					});
+					util.simpleMsg("请扫会员码", true);
 					return;
 				}
 				let obj = {
@@ -202,10 +193,7 @@
 							that.hyinfo.Balance = (that.hyinfo.Balance / 100).toFixed(2);
 							getApp().globalData.hyinfo = that.hyinfo;
 						} else {
-							uni.showToast({
-								title: res.msg,
-								icon: "error" 
-							});
+							util.simpleMsg(res.msg, "none");
 						}
 						that.$refs['popup'].close();
 					});

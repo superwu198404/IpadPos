@@ -292,10 +292,7 @@
 						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
 						if (func) func(res);
 					} else {
-						uni.showToast({
-							title: "暂无数据",
-							icon: "error"
-						})
+						util.simpleMsg("暂无数据", true);
 						that.WMOrders = [];
 						that.OrderDeails = [];
 						that.Order = {};
@@ -370,7 +367,8 @@
 							// 	}
 							// }
 						} else {
-							util.simpleMsg("接收失败：", res.msg, true);
+							// util.simpleMsg("接收失败：", res.msg, true);
+							util.simpleModal("接收失败", res.msg);
 						}
 						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
 							//刷新列表
@@ -379,10 +377,7 @@
 
 					})
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 
@@ -391,18 +386,12 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
-						uni.showToast({
-							title: "请点击“接受确认”",
-							icon: "error"
-						})
+						util.simpleMsg("提示：请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("1");
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 			//拒绝退单
@@ -410,18 +399,12 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
-						uni.showToast({
-							title: "请点击“接受确认”",
-							icon: "error"
-						})
+						util.simpleMsg("提示：请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("0");
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 			//同意和拒绝退单操作
@@ -447,15 +430,14 @@
 					storeDqid: that.DQID
 				}, res => {
 					console.log("同意和拒绝退单结果：", res);
-					uni.showToast({
-						title: res.code ? "操作成功" : res.msg,
-						icon: res.code ? "success" : "error"
-					})
 					if (res.code) {
+						util.simpleMsg("操作成功");
 						if (res.data.yn_print) {
 							//调用打印
 							console.log("此处调用打印：");
 						}
+					} else {
+						util.simpleModal("操作失败", res.msg);
 					}
 					//刷新列表
 					that.Refresh();
@@ -498,16 +480,15 @@
 					data: obj
 				}, (res) => {
 					console.log("积分上传成功...", res)
-					uni.showToast({
-						title: res.code ? "积分上传成功" : res.msg,
-						icon: res.code ? "success" : "error"
-					})
+					if (res.code) {
+						util.simpleMsg("积分上传成功");
+					} else {
+						util.simpleModal("积分上传失败", res.msg);
+					}
 				}, (err) => {
 					console.log("积分上传失败...", err)
-					uni.showToast({
-						title: err.code ? "积分上传失败" : err.msg,
-						icon: "error"
-					})
+					// util.simpleMsg("提示：积分上传失败" + err.msg, "none");
+					util.simpleModal("积分上传失败", err.msg);
 				})
 			},
 
@@ -547,10 +528,7 @@
 			//报损确认
 			ConfirmBS: function() {
 				if (!that.BSDATA || that.BSDATA.length == 0) {
-					uni.showToast({
-						title: "暂无报损数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无报损数据", true);
 					return;
 				}
 				let obj = {
@@ -571,6 +549,8 @@
 						if (that.js_res.yn_print) {
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
 						}
+					} else {
+						util.simpleModal("操作失败", res.msg);
 					}
 					console.log("主动关闭报损");
 					that.Close();
@@ -600,20 +580,14 @@
 				if (t == '+') {
 					if (e.BQTY == e.ZQTY) {
 						e.BQTY = e.ZQTY;
-						uni.showToast({
-							title: "不能再多了",
-							icon: "error"
-						})
+						util.simpleMsg("不能再多了", true);
 					} else {
 						e.BQTY += 1;
 					}
 				} else if (t == '-') {
 					if (e.BQTY <= 0) {
 						e.BQTY = 0;
-						uni.showToast({
-							title: "不能再少了",
-							icon: "error"
-						})
+						util.simpleMsg("不能再少了", true);
 					} else {
 						e.BQTY -= 1;
 					}
@@ -622,11 +596,8 @@
 					num = parseFloat(num);
 					console.log("输入得值:", num);
 					if (num > e.ZQTY || num <= 0) {
-						uni.showToast({
-							title: "数量输入有误",
-							icon: "error"
-						})
 						num = 0;
+						util.simpleMsg("数量输入有误", true);
 					}
 					e.BQTY = num;
 				}
@@ -648,10 +619,7 @@
 				});
 				let bill = "WMLY" + that.Order.BILL;
 				if (!arr || arr.length == 0) {
-					uni.showToast({
-						title: "无可用数据",
-						icon: "error"
-					})
+					util.simpleMsg("无可用数据", true);
 					return;
 				}
 				let obj = {

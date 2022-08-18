@@ -381,10 +381,7 @@
 						console.log("SALE1、2、3：", [this.sale1_obj, this.sale2_arr, this.sale3_arr]);
 						if (!this.sale1_obj || Object.keys(this.sale1_obj).length == 0 || this.sale2_arr.length == 0 ||
 							this.sale3_arr.length == 0) {
-							uni.showToast({
-								title: "订单不存在！",
-								icon: "error"
-							})
+							util.simpleMsg("订单不存在!", true);
 							return;
 						}
 					} else {
@@ -586,10 +583,7 @@
 				}, apistr);
 				Req.asyncFuncOne(reqdata, function(res1) {
 					console.log("数据传输结果：", res1);
-					uni.showToast({
-						title: res1.code ? "数据传输成功" : "数据传输失败",
-						icon: res1.code ? "success" : "error"
-					})
+					util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
 					if (res1.code) {
 						let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
 						db.get().executeDml(delStr, "数据删除中", function(res2) {
@@ -604,10 +598,7 @@
 			insertProduct: function() {
 				if (Object.entries(this.input.fromData).findIndex(arr => arr[1] === null || arr[1] === undefined ||
 						arr[1] === "") !== -1) {
-					uni.showToast({
-						title: "有字段为空，无法添加!",
-						icon: "error"
-					});
+					util.simpleMsg("提示：有空值，暂无法添加!", "none")
 					return;
 				}
 				let product = Object.assign({
@@ -764,7 +755,7 @@
 			console.log("[Index-onShow]获取上一条支付单号...");
 			this.refund_no = this.$store.state.trade;
 			if (!this.first) { //首次不执行
-				common.Close();//先关闭连接
+				common.Close(); //先关闭连接
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
 			}
 		},

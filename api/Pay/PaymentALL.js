@@ -42,17 +42,11 @@ var CreateData = function(pt, t, m, d) {
 			}
 		} else {
 			console.log("PayObj为空 pt：", pt + PayInfo);
-			uni.showToast({
-				title: "参数错误，请重扫",
-				icon: "error"
-			})
+			util.simpleMsg("抱歉，请重新扫码", true);
 		}
 	} else {
 		console.log("pt,或者PayInfo为空：", pt + PayInfo);
-		uni.showToast({
-			title: "参数错误,请重扫",
-			icon: "error"
-		})
+		util.simpleMsg("抱歉，请重新扫码", true);
 	}
 	return data;
 }
@@ -76,10 +70,7 @@ const BasePayment = async function(pt, t, m, d, func, catchFunc) {
 			}
 		});
 	} else {
-		uni.showToast({
-			title: "参数错误",
-			icon: "error"
-		})
+		util.simpleMsg("参数异常", true);
 	}
 };
 
@@ -198,10 +189,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 	], function(err) {
 		console.log("支付接口返回的错误信息：", err);
 		if (catchFunc) catchFunc(err);
-		uni.showToast({
-			icon: "error",
-			title: err.msg
-		})
+		util.simpleMsg(res.msg, true);
 	});
 }
 

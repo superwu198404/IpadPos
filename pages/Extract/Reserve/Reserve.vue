@@ -398,10 +398,10 @@
 		flex-flow: column;
 	}
 
-	.goods {
+	/* .goods {
 		height: unset;
 		flex: 0.98;
-	}
+	} */
 
 	.arrow-direction {
 		transform: rotate(-180deg);

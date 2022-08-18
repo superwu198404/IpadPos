@@ -19,7 +19,7 @@ const utils = {
 	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
 			title,
-			icon: isError ? "error" : "success"
+			icon: isError == 'none' ? "none" : (isError ? 'error' : "success") //可传入none值
 		})
 		if (errData) console.log(title, errData)
 	},
@@ -274,7 +274,7 @@ const utils = {
 	},
 	//去除特殊字符
 	stripscript: function(s) {
-		var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+		var pattern = new RegExp("[\\^@&•`\"‘’'“”]");
 		var rs = "";
 		for (var i = 0; i < s.length; i++) {
 			rs = rs + s.substr(i, 1).replace(pattern, '');
