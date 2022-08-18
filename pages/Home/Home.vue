@@ -50,7 +50,10 @@
 		},
 		data() {
 			return {
-				current: "Main",
+				current: {
+					name:"Main",
+					title:"销售"
+				},
 				router: [],
 				meta_data:{}
 			}

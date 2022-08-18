@@ -1163,8 +1163,8 @@
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
 				console.log("[PriceCount]总金额：", total);
-				// this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
-				this.totalAmount = 0.01; //舍弃分数位
+				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
 					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
