@@ -48,10 +48,10 @@ const utils = {
 				if (arg.length && arg.length === 2) {
 					let res = common.CreateSQL(arg[0], arg[1]);
 					sqls = sqls.concat(res.sqlliteArr);
-					console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成完毕!`,res);
+					console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成完毕!`, res);
 				}
 			} catch (e) {
-				console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成失败!`,e);
+				console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成失败!`, e);
 			}
 		})
 		return sqls;
@@ -251,7 +251,8 @@ const utils = {
 		let val = null;
 		if (key) {
 			val = getApp().globalData[key];
-			if (Object.keys(val).length == 0) {
+			console.log("key：val", key + val);
+			if (!val || Object.keys(val).length == 0) {
 				val = uni.getStorageSync(key);
 			}
 		}
