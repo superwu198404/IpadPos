@@ -21,7 +21,11 @@
 								v-on:blur="QueryAddress()" /></label>
 						<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
 						<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
-						<label><text>提货门店：</text><StorePicker @change="StoreChange" :init="details.info.THKHID" style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;" class="uni-input-input"></StorePicker></label>
+						<label><text>提货门店：</text>
+							<StorePicker @change="StoreChange" :init="details.info.THKHID"
+								style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;"
+								class="uni-input-input"></StorePicker>
+						</label>
 						<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
 						<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
 						<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
@@ -31,7 +35,9 @@
 						<view class="restlist">
 							<label><text>收货人：</text><input type="text" v-model="from.address.NAME" /></label>
 							<label><text>联系电话：</text><input type="text" v-model="from.address.PHONE" /></label>
-							<label class="long"><text>收货地址：</text><AddressPicker @change="AddressChange"></AddressPicker></label>
+							<label class="long"><text>收货地址：</text>
+								<AddressPicker @change="AddressChange"></AddressPicker>
+							</label>
 							<view class="note">
 								<!-- <label><text>备注：</text><textarea></textarea></label> -->
 								<view class="caozuo"><button class="btn-xg"
@@ -205,15 +211,15 @@
 				this.state.address_edit = false;
 				this.from.address.PHONE = this.details.info.CUSTMPHONE;
 			},
-			StoreChange:function(data){
-				console.log("[StoreChange]被选中的门店:",data);
-				
+			StoreChange: function(data) {
+				console.log("[StoreChange]被选中的门店:", data);
+
 			},
 			RadioChange: function(evt) {
 				for (let i = 0; i < this.details.address.length; i++) {
 					if (this.details.address[i].ADDRID === evt.detail.value) {
 						this.views.current = this.details.address[i].ADDRID;
-						console.log("[RadioChange]选择地址ID:",this.views.current);
+						console.log("[RadioChange]选择地址ID:", this.views.current);
 						break;
 					}
 				}
@@ -240,16 +246,20 @@
 				let address = this.details.info.CUSTMADDRESS,
 					address_id = this.details.info.NOTE2,
 					phone = "";
-					console.log("[Save]选择的地址ID:",this.views.current);
-					console.log("[Save]选择的地址:",this.details.address.find(util.callBind(this,function(i){ return i.ADDRID === this.views.current })));
+				console.log("[Save]选择的地址ID:", this.views.current);
+				console.log("[Save]选择的地址:", this.details.address.find(util.callBind(this, function(i) {
+					return i.ADDRID === this.views.current
+				})));
 				if (this.views.current) {
-					let address_info = this.details.address.find(util.callBind(this,function(i){ return i.ADDRID === this.views.current }));
+					let address_info = this.details.address.find(util.callBind(this, function(i) {
+						return i.ADDRID === this.views.current
+					}));
 					address = address_info.ADDRESS;
 					address_id = address_info.ADDRID;
 					phone = address_info.PHONE;
 				}
-				console.log("[Save]选择的address:",address);
-				console.log("[Save]选择的address_id:",address_id);
+				console.log("[Save]选择的address:", address);
+				console.log("[Save]选择的address_id:", address_id);
 				_extract.reserveOrdersUpdate({
 					khid: this.details.info.KHID,
 					gsid: this.GSID,
@@ -277,7 +287,7 @@
 				console.log("查询客户地址信息...");
 				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
 			},
-			GetCustomerAddress: function(number,callback) {
+			GetCustomerAddress: function(number, callback) {
 				_extract.GetAddr({
 					phone: number
 				}, util.callBind(this, function(res) {
@@ -288,7 +298,7 @@
 						util.simpleMsg(res.msg, true, res);
 						this.details.address = [];
 					}
-					if(callback) callback(res);
+					if (callback) callback(res);
 				}))
 			},
 			ChangeCustomerAddress: function() {
@@ -297,14 +307,17 @@
 				}), util.callBind(this, function(res) {
 					util.simpleMsg(res.msg, res.code, res);
 					this.Newaddr = false;
-					this.GetCustomerAddress(this.details.info.CUSTMPHONE,util.callBind(this,function(res){
-						if(!this.state.address_edit){
+					this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
+					res) {
+						if (!this.state.address_edit) {
 							let address = this.from.address.ADDRESS
-							console.log("[GetCustomerAddress-Inner]插入前的Address:",address);
-							console.log("[GetCustomerAddress-Inner]Address列表:",this.details.address);
-							let index = this.details.address.findIndex(a => a.ADDRESS === address);
-							console.log("[GetCustomerAddress-Inner]Address索引:",index);
-							if(index!=-1) this.views.current = index;
+							console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
+							console.log("[GetCustomerAddress-Inner]Address列表:", this.details
+								.address);
+							let index = this.details.address.findIndex(a => a.ADDRESS ===
+								address);
+							console.log("[GetCustomerAddress-Inner]Address索引:", index);
+							if (index != -1) this.views.current = index;
 						}
 					}));
 				}))
@@ -337,39 +350,46 @@
 			Close: function() {
 				this.$emit("Close");
 			},
-			Accept:function(){
-				if(this.mode){//提取操作 => 支付
+			Accept: function() {
+				if (this.mode) { //提取操作 => 支付
 					console.log("[预定提取]结算确认!开始结算...")
-					Payment(this.details.list).then(util.callBind(this, function(pay_data) {//处理退款所需的业务信息数据
-						console.log("[预定提取]处理的数据:",pay_data);
-						this.$store.commit('set-location', pay_data);//把数据传入下个页面
+					Payment(this.details.list).then(util.callBind(this, function(pay_data) { //处理退款所需的业务信息数据
+						console.log("[预定提取]处理的数据:", pay_data);
+						this.$store.commit('set-location', pay_data); //把数据传入下个页面
 						uni.navigateTo({
-							url: "../Payment/PaymentAll"
+							url: "../Payment/PaymentAll",
+							events: {
+								ExtractBack: util.callBind(this,function(data) {
+									console.log("[ExtractBack]支付完成!", data);
+									this.$emit("Close");
+								})
+							}
 						})
 					})).catch(util.callBind(this, function(err) {
 						console.log("退单表数据查询异常:", err);
 					}));
-				}
-				else{//取消操作 => 退款
+				} else { //取消操作 => 退款
 					console.log("[预定取消]退单确认!开始退款...");
-					Refund(this.details.info.BILL).then(util.callBind(this, function(refund_data) {//处理退款所需的业务信息数据
-						this.$store.commit('set-location', refund_data);//把数据传入下个页面
+					Refund(this.details.info.BILL).then(util.callBind(this, function(refund_data) { //处理退款所需的业务信息数据
+						this.$store.commit('set-location', refund_data); //把数据传入下个页面
 						uni.navigateTo({
-							url: "../Payment/PaymentAll"
-						})
-						this.$on("extract-back",function(data){
-							console.log("支付完成!",data);
+							url: "../Payment/PaymentAll",
+							events: {
+								ExtractBack: function(data) {
+									console.log("支付完成!", data);
+								}
+							}
 						})
 					})).catch(util.callBind(this, function(err) {
 						console.log("退单表数据查询异常:", err);
 					}));
 				}
 			},
-			AddressChange:function(data){
-				console.log("[AddressChange]地址为:",data);
+			AddressChange: function(data) {
+				console.log("[AddressChange]地址为:", data);
 				this.from.address.ADDRESS = data.address;
-				this.from.address.LONGITUDE = data.adrjd;//经度
-				this.from.address.LATITUDE = data.adrwd;//纬度
+				this.from.address.LONGITUDE = data.adrjd; //经度
+				this.from.address.LATITUDE = data.adrwd; //纬度
 			}
 		},
 		mounted() {
