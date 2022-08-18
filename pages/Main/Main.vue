@@ -75,7 +75,9 @@
 						<view class="seasonal">
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z" @click="Letters()">A <image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image></view>
+						<view class="a-z" @click="Letters()">A <image class="text" src="../../images/dx-fldw.png"
+								mode="widthFix"></image>
+						</view>
 						<view class="a-z" @click="Memberlogin(1)">
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 						</view>
