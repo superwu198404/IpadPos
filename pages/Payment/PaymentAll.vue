@@ -272,6 +272,7 @@
 		},
 		data() {
 			return {
+				event:null,
 				SALES: {
 					sale1: {},
 					sale2: [],
@@ -431,6 +432,9 @@
 			}
 		},
 		methods: {
+			onLoad:function(option){
+				this.event = this.getOpenerEventChannel();
+			},
 			//单号防重处理
 			UniqueBill: function() {
 				let that = this;
@@ -1163,8 +1167,8 @@
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
 				console.log("[PriceCount]总金额：", total);
-				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
-				// this.totalAmount = 0.01; //舍弃分数位
+				// this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
 					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
@@ -1213,7 +1217,7 @@
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					this.$emit("extract-back", {
+					this.event.emit("ExtractBack",{
 						msg: "预订单支付完成!"
 					});
 					uni.navigateBack()
