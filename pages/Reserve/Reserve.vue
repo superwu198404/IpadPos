@@ -123,7 +123,8 @@
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<label class="meminfo"><text>{{hyinfo.NICKNAME}}</text><text>{{hyinfo.hyId}}</text></label>
+							<label
+								class="meminfo"><text>{{hyinfo?hyinfo.NICKNAME:""}}</text><text>{{hyinfo?hyinfo.hyId:""}}</text></label>
 						</label>
 						<text @click="Empty()">清空</text>
 					</view>
@@ -219,7 +220,7 @@
 					_STR2: "", //配送中心名称
 					CARDID: "" //蛋糕类型
 				},
-				hyinfo: app.globalData.hyinfo,
+				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
 				ADDRS: [],
 				ADDR: {
@@ -244,15 +245,16 @@
 				YDJGSJ: 10, //提货间隔时间/分钟（存储的单位为小时）
 			}
 		},
+		created() {
+			this.DataInit();
+		},
 		methods: {
-			onLoad: function() {
+			DataInit: function() {
 				that = this;
 				that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
 				that.Order.CARDID = that.GGDatas[0];
 				that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
-				// that.YN_YDTH = true;
-				// console.log("是否支持异店提货：", that.YN_YDTH);
 				if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
 					_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
 						console.log("提货门店数据：", res);
@@ -264,10 +266,10 @@
 				if (obj1 && obj1.POSCSNR) {
 					that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
 				}
-				//以下为测试数据
-				// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
-				// console.log("获取到的GSKHINFO", GSKHINFO);
 
+			},
+			onLoad: function() {
+				this.DataInit();
 			},
 			//提货门店输入事件
 			inputTHKH: e => {
@@ -552,7 +554,7 @@
 			},
 			//用户信息确定
 			Confirm: () => {
-				console.log("预定信息：",that.Order);
+				console.log("预定信息：", that.Order);
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
@@ -646,29 +648,6 @@
 				that.RefreshData();
 			},
 		},
-		created() {
-			that = this;
-			that.getTHTYPE();
-			that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
-			that.Order.CARDID = that.GGDatas[0];
-			that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
-			// that.YN_YDTH = true;
-			// console.log("是否支持异店提货：", that.YN_YDTH);
-			if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
-				_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
-					console.log("提货门店数据：", res);
-					that.THKHDATA = res.msg;
-				});
-			}
-			let arr = util.getStorage("POSCS");
-			let obj1 = arr.find((r) => r.POSCS == 'YDZXJG');
-			if (obj1 && obj1.POSCSNR) {
-				that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
-			}
-			//以下为测试数据
-			// let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
-			// console.log("获取到的GSKHINFO", GSKHINFO);
-		}
 	}
 </script>
 
