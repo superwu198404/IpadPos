@@ -413,9 +413,17 @@ var GetPZCS = async function(e, func) {
 	}
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		if (res.code) {
+			// let arr = res.msg.map(r => {
+			// 	return {
+			// 		ID_NR: r.ID_NR,
+			// 		ZF: r.ZF
+			// 	};
+			// })
+			// util.setStorage("PZCS", arr);
 			for (var i = 0; i < res.msg.length; i++) {
 				getApp().globalData.PZCS[res.msg[i].ID_NR] = res.msg[i].ZF;
 			}
+			// console.log("配置参数集合：", arr)
 		}
 		if (func) func(res);
 	}, function(err) {
@@ -496,7 +504,7 @@ var GetZFRULE = async function(e, func) {
 			util.setStorage("PayInfo", res.msg);
 			// getApp().globalData.PayInfo = res.msg; //首先赋值一下支付规则集合
 			for (var i = 0; i < res.msg.length; i++) {
-				if (res.msg[i].CODE) {//防止有些支付防止没有配置code
+				if (res.msg[i].CODE) { //防止有些支付防止没有配置code
 					let codeArr = res.msg[i].CODE.split(',');
 					for (var j = 0; j < codeArr.length; j++) {
 						if (codeArr[j]) {

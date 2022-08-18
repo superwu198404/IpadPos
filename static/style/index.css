@@ -310,11 +310,12 @@ page {
 	position: relative;
 }
 
-.sorting .a-z text {
-	font-size: 10rpx;
-	position: absolute;
-	top: 0;
-	right: 0;
+.sorting .a-z .text {
+  width:20rpx;
+  height: 20rpx;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 .sorting .a-z image{
 	width:100%;

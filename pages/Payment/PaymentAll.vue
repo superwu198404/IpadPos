@@ -329,7 +329,7 @@
 				BILL_TYPE: "",
 				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
 				XS_TYPE: "",
-				ZFBZK: getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0,
+				ZFBZK: 0, //支付宝折扣额
 				refundView: {
 					totalAmount: 0,
 					actualAmount: 0,
@@ -1139,6 +1139,7 @@
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 					this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
+					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 					this.GetHyCoupons();
 					console.log("行为类型:", this.actType + this.XS_TYPE + this.BILL_TYPE);
 					this.$store.commit("set-trade", this.isRefund ? this.out_refund_no : this
@@ -1146,6 +1147,7 @@
 					console.log("销售单号：", this.out_trade_no_old)
 					console.log("退款单号：", this.out_refund_no)
 					console.log("存入单号：", this.$store.state.trade)
+					console.log("支付宝折扣额：",this.ZFBZK)
 				}
 				this.priceCount();
 			},
@@ -1413,6 +1415,8 @@
 			}
 		},
 		created() {
+			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS);
+			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS["YN_ZFBKBQ"]);
 			if (window && !window.vue) { //把vue放到全局上，方便调试
 				window.vue = this;
 			}
