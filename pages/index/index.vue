@@ -268,7 +268,6 @@
 				let that = this;
 				console.log("开始获取本地支付方式");
 				await common.GetPayWay(e, function(res) {
-					console.log("本地获取支付方式结果：", res);
 					if (res.code) {
 						that.PayWayList = [];
 						let PayInfo = util.getStorage("PayInfo");
@@ -295,7 +294,6 @@
 							}
 							that.PayWayList.push(obj);
 						}
-						// console.log("res.msg:", res.msg)
 						//如果fkda没有则追加测试数据
 						let arr = [{
 							name: "云闪付",
@@ -449,6 +447,7 @@
 					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
 					sale3_arr: this.sale3_arr, //002 商品 数据对象集合
 					Products: this.Products, //商品信息
+					// Products: [], //商品信息
 					PayWayList: this.PayWayList, //支付方式
 					hyinfo: {}, //会员信息
 					authCode: "", //卡券信息 or 支付授权码
@@ -456,8 +455,8 @@
 					out_refund_no: common.CreateBill(this.KHID, this.POSID), //生成退款单号
 					BILL_TYPE: this.BILL_TYPE,
 					XS_TYPE: this.XS_TYPE,
-					SKY_DISCOUNT: this.SKY_DISCOUNT,
-					totalAmount: this.totalAmount,
+					// SKY_DISCOUNT: this.SKY_DISCOUNT,
+					// totalAmount: this.totalAmount,
 					actType: this.actType,
 					PayList: this.PayList
 				});
@@ -485,7 +484,7 @@
 				console.log("处理分后的商品信息：", this.Products);
 			},
 			SaleBaseInit: function() {
-				this.priceCount() //支付金额初始化
+				// this.priceCount() //支付金额初始化
 				//预先重置
 				this.sale1_obj = {};
 				this.sale2_arr = [];
@@ -568,7 +567,7 @@
 				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
-				
+
 				// let delStr = ["drop table  KHDA",
 				// 	"CREATE TABLE KHDA(  KHID   VARCHAR2(30),\r\n  DPID   VARCHAR2(30),\r\n  KCDID   VARCHAR2(30),\r\n  SNAME   VARCHAR2(30),\r\n  PINYIN   VARCHAR2(30),\r\n  ADRP   VARCHAR2(30),\r\n  ADRPNAME   VARCHAR2(30),\r\n  ADRC   VARCHAR2(30),\r\n  ADRA   VARCHAR2(30),\r\n  ADRESS   VARCHAR2(30),\r\n  ADRJD   VARCHAR2(30),\r\n  ADRWD   VARCHAR2(30),\r\n  PHONE   VARCHAR2(30),\r\n  ADDR   VARCHAR2(30),\r\n  DATE_KY   VARCHAR2(30),\r\n  ID_RY_DZ   VARCHAR2(30),\r\n  DZPHONE   VARCHAR2(30),\r\n  KQID   VARCHAR2(30),\r\n  SYBID   VARCHAR2(30),\r\n  YYBID   VARCHAR2(30),\r\n  GSID   VARCHAR2(30),\r\n  KHZID   VARCHAR2(30),\r\n  QTLV   VARCHAR2(30),\r\n  SBLV   VARCHAR2(30),\r\n  XKLV   VARCHAR2(30),\r\n  BHTYPE   VARCHAR2(30),\r\n  BHTYPENAME   VARCHAR2(30),\r\n  MRBHKHID   VARCHAR2(30),\r\n  MRXKKHID   VARCHAR2(30),\r\n  CLIENT_TYPE   VARCHAR2(30),\r\n  STIME   VARCHAR2(30),\r\n  ETIME   VARCHAR2(30),\r\n  GCID   VARCHAR2(30),\r\n  DQID   VARCHAR2(30),\r\n  CLIENT_STATUS   VARCHAR2(30),\r\n  CSTATUSNAME   VARCHAR2(30),\r\n  XSMLID   VARCHAR2(30),\r\n  OID   VARCHAR2(30),\r\n  POSCSZID   VARCHAR2(30),\r\n  ZZTLX   VARCHAR2(30),\r\n  JGID   VARCHAR2(30),\r\n  TIMESTAMP   VARCHAR2(30),\r\n  ID_RY_LR   VARCHAR2(30),\r\n  DATE_LR   DATE,\r\n  ID_RY_XG   VARCHAR2(30),\r\n  DATE_XG   DATE,\r\n  ID_RY_SH   VARCHAR2(30),\r\n  DATE_SH   DATE,\r\n  YN_CL   VARCHAR2(30),\r\n  YN_WEBORDER   VARCHAR2(30),\r\n  WERKS   VARCHAR2(30),\r\n\r\n CONSTRAINT  KHDA_KEY PRIMARY KEY(KHID))",
 				// 	"INSERT INTO KHDA( KHID,DPID,KCDID,SNAME,PINYIN,ADRP,ADRPNAME,ADRC,ADRA,ADRESS,ADRJD,ADRWD,PHONE,ADDR,DATE_KY,ID_RY_DZ,DZPHONE,KQID,SYBID,YYBID,GSID,KHZID,QTLV,SBLV,XKLV,BHTYPE,BHTYPENAME,MRBHKHID,MRXKKHID,CLIENT_TYPE,STIME,ETIME,GCID,DQID,CLIENT_STATUS,CSTATUSNAME,XSMLID,OID,POSCSZID,ZZTLX,JGID,TIMESTAMP,ID_RY_LR,DATE_LR,ID_RY_XG,DATE_XG,ID_RY_SH,DATE_SH,YN_CL,YN_WEBORDER,WERKS) VALUES('K200QTD005','11072','D005','武汉领秀城店门厅','whlxcdmt','170','湖北','武汉市','洪山区','雄楚大道领秀城小区6号楼商铺','114.374964000000','30.506491000000','15392968120',NULL,'20120420','01105814','15994286260','110','K12','K104','K200','03','D','A',NULL,NULL,NULL,'K200BHD005','K200XKD005','1','070000','220000','K201','K01000','1','正常营业',NULL,NULL,'001','QT','K200',NULL,'JK',DATETIME('2018-11-23 19:03:22'),'K101',DATETIME('2020-07-09 09:32:46'),'K1',NULL,'N','Y',NULL)"
@@ -760,11 +759,14 @@
 			this.first = false;
 		},
 		async onShow() {
-			this.refreshProduct();
+			console.log("[Index-onShow]刷新商品列表开始...");
+			this.refreshProduct(); //获取测试用的商品列表
+			console.log("[Index-onShow]获取上一条支付单号...");
 			this.refund_no = this.$store.state.trade;
-
-			if (!this.first) //首次不执行
+			if (!this.first) { //首次不执行
+				common.Close();//先关闭连接
 				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+			}
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发

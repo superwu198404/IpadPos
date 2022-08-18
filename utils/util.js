@@ -1,3 +1,4 @@
+import common from '@/api/common.js'
 /**
  * 数据处理
  * @author echo.
@@ -33,6 +34,27 @@ const utils = {
 			title,
 			content
 		});
+	},
+	/**
+	 * sql 生成
+	 * @param obj: 生成参数，示例结构：[ 对象(数组或对象) , 表名 ]
+	 * @returns void
+	 */
+	generateSQLStringArray: function(...args) { //生成SQL语句数组
+		let sqls = [];
+		args.forEach(arg => {
+			try {
+				console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成开始!`);
+				if (arg.length && arg.length === 2) {
+					let res = common.CreateSQL(arg[0], arg[1]);
+					sqls = sqls.concat(res.sqlliteArr);
+					console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成完毕!`,res);
+				}
+			} catch (e) {
+				console.log(`[GenerateSQLStringArray]表 ${arg[1]} 生成失败!`,e);
+			}
+		})
+		return sqls;
 	},
 	//转为IOS上支持的时间格式(ios 上时间对象 Date 不支持 yyyy-MM-dd 这种用'-'分隔的格式)
 	formatIOSDateTime: function(dateStr) {
@@ -262,11 +284,23 @@ const utils = {
 		let map = new Map();
 		let group = {};
 		arr.map(i => {
-			if(!group[i[field]]){
+			if (!group[i[field]]) {
 				group[i[field]] = arr.filter(obj => obj[field] === i[field]);
 			}
 		});
 		return group;
+	},
+	/**
+	 * 取相反数
+	 * @param {*} num 数字或数字字符串
+	 */
+	inverseNumber: function(num, log = true) {
+		let number = Number(num);
+		if (isNaN(number)) {
+			console.log("[inverseNumber]转换发生错误,目标为:", num)
+			return num;
+		} else
+			return -number;
 	}
 }
 
@@ -294,5 +328,7 @@ export default {
 	hidePropety: utils.hidePropety,
 	stripscript: utils.stripscript,
 	callBind: utils.callBind,
-	group: utils.group
+	group: utils.group,
+	generateSQLStringArray: utils.generateSQLStringArray,
+	inverseNumber: utils.inverseNumber
 }

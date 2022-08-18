@@ -10,7 +10,7 @@
 	<view class="commodity" style="height: 100%;">
 		<view class="hh">
 			<view class="hotcakes">
-				<image src="../../images/ydtq.png" mode="widthFix"></image> {{ mode ? '预定提取' : '预定取消'}}
+				<image src="../../images/ydtq.png" mode="widthFix"></image> {{ view.mode ? '预定提取' : '预定取消'}}
 				<view class="classifys">
 					<text :class="SelectedClass('全部')" @click="Selected('全部',-1)">全部</text>
 					<text :class="SelectedClass('今日')" @click="Selected('今日',0)">今日</text>
@@ -61,12 +61,12 @@
 							备注:{{ item.CUSTMCOMM || '-' }}</view>
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
-						<button @click="ExtractOrder(item)" class="btn">{{ mode ? '预定提取' : '预定取消'}} </button>
+						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '预定提取' : '预定取消'}} </button>
 					</view>
 				</view>
 			</view>
 		</view>
-		<component :is="'Reserve'" :mode="mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
+		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
 		</component>
 	</view>
 	<!-- </menu_content> -->
@@ -83,12 +83,6 @@
 		components: {
 			Reserve
 		},
-		props: {
-			mode: { //是否是提取模式（true 提取则进入支付，false 否则是退款）
-				type: Boolean,
-				default: true
-			}
-		},
 		data() {
 			return {
 				condition: {
@@ -100,7 +94,8 @@
 				},
 				view: {
 					Details: false,
-					Criterias: false
+					Criterias: false,
+					mode:true
 				},
 				extract_order: {}, //预定订单的信息
 				extracts: []
@@ -187,7 +182,9 @@
 			}
 		},
 		mounted() {
-			console.log("[mounted]触发!");
+			console.log("[Extract-Mounted]触发!");
+			if(this.meta && this.meta.mode) this.view.mode = this.meta.mode;//跳转传值
+			console.log("[Extract-Mounted]元数据:",this.meta);
 			this.GetList();
 		}
 	}

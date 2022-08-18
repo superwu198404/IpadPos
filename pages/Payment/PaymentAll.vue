@@ -168,8 +168,7 @@
 								</label>
 								<label class="poly-text">
 									<text>支持</text>
-									<text v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
-										,{{item.name}}</text>
+									<text>{{PayWayList.filter(i=>i.poly=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
@@ -514,7 +513,7 @@
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					});
-					return util.hidePropety(obj, "NAME");
+					return util.hidePropety(obj, "NAME", "AMOUNT");
 				}).bind(this));
 				console.log("sale2 封装完毕!", this.sale2_arr);
 				console.log("sale3 封装中...");
@@ -692,8 +691,12 @@
 						uni.scanCode({
 							success: (function(res) {
 								this.authCode = res.result; //获取扫码的 authCode
+								console.log("[Pay]scanCode:", res);
 								that.PayHandle();
-							}).bind(this)
+							}).bind(this),
+							fail(err) {
+								console.log("[Pay]Error:", err);
+							}
 						});
 					} else { //不需要扫码操作
 						console.log("此操作类型不需要扫码！", pay_info)
@@ -911,17 +914,19 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
+				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
+				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
-				console.log(
-					`支付单号：${this.out_trade_no},支付参数：${JSON.stringify(payAfter)},支付类型：${JSON.stringify(info)}`
-				);
+				console.log("[PayHandle]支付单号:",this.out_trade_no);
+				console.log("[PayHandle]支付参数:",payAfter);
+				console.log("[PayHandle]支付类型:",info);
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
-				console.log("当前支付集合：", this.PayList);
-				console.log("当前支付类型：", pt);
+				console.log("[PayHandle]当前支付集合：", this.PayList);
+				console.log("[PayHandle]当前支付类型：", pt);
 				//如果被限制了 则进行判断是否有过支付
 				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
 						.type == pt)) {
@@ -933,7 +938,7 @@
 						console.log("[Payment-付款]支付结果：", result);
 						util.simpleMsg("支付成功!");
 						this.UpdateHyInfo(result.data); //更新会员信息
-						console.log("auth_code 清空！");
+						console.log("[PayHandle]auth_code清空！");
 						this.authCode = ""; //避免同一个付款码多次使用
 						this.orderGenarator(payAfter, info.type, result.data, false); //支付记录处理(成功)
 						if (this.debt > 0) {
@@ -1104,7 +1109,6 @@
 			},
 			//初始化
 			paramInit: function() {
-				this.query = uni.createSelectorQuery().in(this); //获取元素选择器
 				var prev_page_param = this.$store.state.location;
 				if (prev_page_param) {
 					that = this;
@@ -1124,8 +1128,8 @@
 					this.PaymentInfos.PayList = prev_page_param?.PayList;
 					this.XS_TYPE = prev_page_param.XS_TYPE;
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
-					this.SKY_DISCOUNT = prev_page_param.SKY_DISCOUNT;
-					this.totalAmount = prev_page_param.totalAmount;
+					// this.SKY_DISCOUNT = prev_page_param.SKY_DISCOUNT;
+					// this.totalAmount = prev_page_param.totalAmount;
 					this.RefundDataHandle(); //处理上个页面传入的退单数据
 					this.PayDataHandle(); //处理上个页面传入的支付数据
 					this.GetSBData(); //筛选水吧产品
@@ -1143,19 +1147,22 @@
 					console.log("销售单号：", this.out_trade_no_old)
 					console.log("退款单号：", this.out_refund_no)
 					console.log("存入单号：", this.$store.state.trade)
-					console.log("支付宝折扣额：",this.ZFBZK)
+					console.log("支付宝折扣额：", this.ZFBZK)
 				}
 				this.priceCount();
 			},
 			//总金额计算
 			priceCount: function() {
 				let total = 0;
-				this.Products.forEach(product => total += product.AMOUNT);
+				console.log("[PriceCount]商品列表:", this.Products);
+				this.Products.forEach(product => total += (product.AMOUNT || product.NET));
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
-				console.log("手工折扣额：", this.SKY_DISCOUNT);
-				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
+				console.log("[PriceCount]总金额：", total);
+				// this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
+				this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
 					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));

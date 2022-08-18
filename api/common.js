@@ -228,9 +228,7 @@ var GetPayWay = function(e, func) {
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	db.get().executeQry(sql, "数据查询中", function(res) {
-		console.log("本地支付方式数据：", res);
 		GetPolyPayWay(e, (res1) => {
-			console.log("聚合支付数据：", res1);
 			for (var i = 0; i < res.msg.length; i++) {
 				let obj = res1.msg.find((item) => {
 					return item.ID_NR == res.msg[i].FKID;
@@ -241,7 +239,6 @@ var GetPayWay = function(e, func) {
 					res.msg[i].POLY = 'N';
 				}
 			}
-			console.log("序列化支付：", res);
 			if (func) func(res);
 			return;
 		})
@@ -398,7 +395,7 @@ var Excute = async function(...sql) {
 	return data;
 }
 
-var Close = async function(...sql) {
+var Close = async function() {
 	let data = null
 	await db.close();
 	return data;

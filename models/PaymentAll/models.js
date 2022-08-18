@@ -60,7 +60,7 @@ export const PayDataAssemble = function() {
 				spid: i.SPID,
 				name: i.NAME,
 				price: (Number(i.PRICE) * 100).toFixed(0), //单价
-				amount: (Number(i.AMOUNT) * 100).toFixed(0), //总金额
+				amount: (Number(i.AMOUNT || i.NET) * 100).toFixed(0), //总金额
 				num: i.QTY
 			}
 		})
@@ -68,6 +68,14 @@ export const PayDataAssemble = function() {
 }
 
 export const global = {
+	props: {
+		meta: {
+			type: Object,
+			default: function() {
+				return {};
+			}
+		}
+	},
 	data: function() {
 		return {
 			GSID: getApp().globalData.store.GSID, //公司id
@@ -126,8 +134,6 @@ export const TransferForPaymentAll = async function(data) {
 		BILL_TYPE: "", //* 单号类型
 		XS_TYPE: "", //* 销售类型（1：支付处理，2：退款处理）
 		actType: "", //* 动作类型
-		SKY_DISCOUNT: "", //* 折扣金额
-		totalAmount: 0, //总金额
 		PayList: [] //this.PayList 不需要传入的原因是因为 PaymentALL 会自己根据 sale3 的数据组装 PayList
 	}, data)
 }
