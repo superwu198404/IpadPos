@@ -50,7 +50,8 @@
 				// },
 			],
 			XZZF: [
-				// "WX_CLZF", "ZFB_CLZF"
+				"WX_CLZF", "ZFB_CLZF", //108金凤
+				"WXZF", "ZFB20" //仟吉
 			], //支付中禁止第多次支付的支付方式
 			getModel: function() {
 				//获取手机型号
