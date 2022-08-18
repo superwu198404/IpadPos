@@ -357,7 +357,9 @@
 						uni.navigateTo({
 							url: "../Payment/PaymentAll"
 						})
-						
+						this.$on("extract-back",function(data){
+							console.log("支付完成!",data);
+						})
 					})).catch(util.callBind(this, function(err) {
 						console.log("退单表数据查询异常:", err);
 					}));

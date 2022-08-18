@@ -672,9 +672,10 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
-				//适配真机
-				let that = this;
+				let that = this;//适配真机
+				console.log("[Pay]当前支付类型:",this.currentPayType);
 				let pay_info = this.PayWayInfo(this.currentPayType);
+				console.log("[Pay]当前支付类型信息:",pay_info);
 				if (!this.currentPayType) {
 					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
@@ -798,6 +799,8 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
+				console.log("[PayWayInfo]支付类型:",type);
+				console.log("[PayWayInfo]支付方式列表:",this.PayWayList);
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			//退款操作
@@ -895,6 +898,7 @@
 				console.log("[PayTypeJudgment]开始片段：", startCode);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
+					console.log("[PayTypeJudgment]全局数据：", getApp().globalData);
 					console.log("[PayTypeJudgment]片段规则：", CodeRule);
 					if (this.currentPayType === "SZQ") //券
 						startCode = "coupon";
@@ -920,9 +924,9 @@
 				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
-				console.log("[PayHandle]支付单号:",this.out_trade_no);
-				console.log("[PayHandle]支付参数:",payAfter);
-				console.log("[PayHandle]支付类型:",info);
+				console.log("[PayHandle]支付单号:", this.out_trade_no);
+				console.log("[PayHandle]支付参数:", payAfter);
+				console.log("[PayHandle]支付类型:", info);
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
 				console.log("[PayHandle]当前支付集合：", this.PayList);
@@ -1137,7 +1141,6 @@
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
-					this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 					this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 					this.GetHyCoupons();
@@ -1150,6 +1153,7 @@
 					console.log("支付宝折扣额：", this.ZFBZK)
 				}
 				this.priceCount();
+				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 			},
 			//总金额计算
 			priceCount: function() {
@@ -1207,19 +1211,19 @@
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				// if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
 				// 	this.currentPayType = e.currentTarget.id; //小程序
-
-				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
-					this.currentPayType = e.currentTarget.id; //小程序
-				}
-				//console.log("id值：", this.is_poly + "_" + this.currentPayType + "_" + r.yn_use);
 			},
 			//返回上个页面
 			backPrevPage: function() {
-				if (this.CanBack) uni.navigateBack();
-				else uni.showToast({
-					title: `您还未完成${this.isRefund ? "退款":"支付"}操作！`,
-					icon: "error"
-				})
+				if (this.CanBack) {
+					this.$emit("extract-back", {
+						msg: "预订单支付完成!"
+					});
+					uni.navigateBack()
+				} else
+					uni.showToast({
+						title: `您还未完成${this.isRefund ? "退款":"支付"}操作！`,
+						icon: "error"
+					})
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
@@ -1387,10 +1391,11 @@
 						// 	getApp().globalData.hyinfo.hyId = e.hyid;
 						// }
 					}
+					console.log("更新后的会员信息:", util.getStorage("hyinfo"));
 				} catch (err) {
 					console.log("HYID:", err);
 				}
-				console.log("更新后的会员信息:", util.getStorage("hyinfo"));
+				
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
