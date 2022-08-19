@@ -8,6 +8,7 @@
 <template>
 	<!-- <menu_content :index="5" :_index="0"> -->
 	<view class="commodity" style="position: relative;">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="hh">
 			<view class="hotcakes">
 				<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
@@ -166,6 +167,16 @@
 				</view>
 			</view>
 		</view>
+	    
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 	</view>
 	</view>
@@ -178,6 +189,8 @@
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
 		getOnlineOrders, //获取线上订单
 		getTimeRange, //获取时间段
@@ -196,6 +209,9 @@
 	export default {
 		name: 'OnlineOrders',
 		mixins: [global],
+		components: {
+			PrinterPage
+		},
 		data() {
 			return {
 				onlineOrders: [],
@@ -242,7 +258,14 @@
 				},
 				timeRange: [ /*到货时段*/ ],
 				decorationRoom: [ /*裱花间*/ ],
-				edit: false //开启编辑状态
+				edit: false,//开启编辑状态
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		watch: {
@@ -546,6 +569,10 @@
 						this.GetOnlineOrders(); //刷新页面
 						util.simpleMsg("接受成功!")
 						console.log("处理结果：", res)
+						
+						//调用打印
+						this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
+						
 					}), (err) => {
 						util.simpleMsg("提示：" + err.msg, "none", err);
 					});

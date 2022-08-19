@@ -63,7 +63,7 @@ function getTime(type) {
 		if (weex == 7) {
 			return '星期日'
 		}
-	}else if(type == 10){
+	} else if (type == 10) {
 		return weex;
 	} else {
 		return currentDate + " " + currentTime;
@@ -189,39 +189,39 @@ function convertToMonoImage(width, height, data, shake) {
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
+const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 	var xsType = "XS";
-	switch(sale1_obj.XSTYPE){
+	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
-		xsType = "WM";
-		break;
+			xsType = "WM";
+			break;
 		case "1": //销售
-		xsType = "XS";
-		break;
+			xsType = "XS";
+			break;
 		case "2": //退单
-		xsType = "TD";
-		break;
+			xsType = "TD";
+			break;
 		case "3": //预订
-		xsType = "YD";
-		break;
+			xsType = "YD";
+			break;
 		case "4": //预订取消
-		xsType = "YDQX";
-		break;
+			xsType = "YDQX";
+			break;
 		case "5": //预订提取
-		xsType = "YDTQ";
-		break;
+			xsType = "YDTQ";
+			break;
 		case "6": //赊销
-		xsType = "SX";
-		break;
+			xsType = "SX";
+			break;
 		case "7": //赊销退单
-		xsType = "SXTD";
-		break;
+			xsType = "SXTD";
+			break;
 		case "8": //线上订单提取
-		xsType = "XSDD";
-		break;
+			xsType = "XSDD";
+			break;
 		case "9": //线上订单取消
-		xsType = "XSDDQX";
-		break;
+			xsType = "XSDDQX";
+			break;
 	}
 	var billType = sale1_obj.BILL_TYPE; //Z101
 	var bill = sale1_obj.BILL;
@@ -253,7 +253,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 			plid: sale2_arr[i].PLID,
 			barCode: sale2_arr[i].BARCODE,
 			unit: sale2_arr[i].UNIT, //单位
-	
+
 			spid: sale2_arr[i].SPID, //商品编码
 			spname: sale2_arr[i].SNAME, //商品名称
 			qty: sale2_arr[i].QTY, //数量
@@ -264,9 +264,9 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
 	}
-	
+
 	console.log("goodsList 转换后数据:", goodsList);
-	
+
 	//支付数据
 	var sale3List = [];
 	for (var j = 0; j < sale3_arr.length; j++) {
@@ -289,9 +289,9 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
-	
+
 	console.log("sale3List 转换后数据:", sale3List);
-	
+
 	var printerInfo = {
 		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 		billType,
@@ -312,10 +312,10 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
 		cuid, //会员编号
 		hdnet, //商家承担
 		sale3List, //支付信息
-		ggy,//广告语
+		ggy, //广告语
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
-	
+
 	return printerInfo;
 }
 
@@ -323,11 +323,11 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr,ggyContent)=>{
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{	
+const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 	var xsType = "WM";
-    var bill = sale1_obj.BILL;
+	var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
-    var wtime = sale1_obj.WTIME;
+	var wtime = sale1_obj.WTIME;
 	var xsBill = sale1_obj.XS_BILL;
 	var custmtime = sale1_obj.CUSTMTIME;
 	var daysn = sale1_obj.DAYSN;
@@ -344,9 +344,9 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 	var shContact = sale1_obj.STR5;
 	var ggy = ggyContent;
 	var xsptid = sale1_obj.XSPTID;
-	
+
 	var note2 = "";
-	if(type == "WMYD"){
+	if (type == "WMYD") {
 		note2 = sale1_obj.NOTE2; //外卖预订单，平台名称。如美团外卖
 	}
 	var wmType = type;
@@ -367,10 +367,10 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 		goodsList = goodsList.concat(sale2_printer);
 	}
 	console.log("goodsList 转换后数据:", goodsList);
-	
+
 	//支付数据
 	var sale3List = [];
-	
+
 	var printerInfo = {
 		xsType,
 		bill, //单号
@@ -385,22 +385,22 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
 		gsid,
 		status, //'12', '请接单', '15', '取消订单', '33', '退货订单', '30', '申请退货', '20', '申请取消', '其他'
 		remark,
-		
+
 		goodsList, //商品集合
-		
+
 		payableAmount, //应付金额
 		originalAmount, //原金额
-		shAddress,//收货地址
-		shPhone,//收货联系电话
-		shContact,// 收货联系人
+		shAddress, //收货地址
+		shPhone, //收货联系电话
+		shContact, // 收货联系人
 		sale3List, //支付信息
-		ggy,//广告语
+		ggy, //广告语
 		xsptid,
 		note2,
 		wmType,
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
-	
+
 	return printerInfo;
 }
 
@@ -408,23 +408,23 @@ const wmPrinterData = (sale1_obj, sale2_arr,ggyContent,type)=>{
  * 线上订单打印数据转换
  * @param {} 传入数据
  */
-const xsPrinterData = (sale1_obj, ggyContent, type)=>{	
+const xsPrinterData = (sale1_obj, ggyContent, type) => {
 	var xsType = "XSDD";
 	var bill = sale1_obj.BILL;
-    var ydbill = sale1_obj.YDBILL;
+	var ydbill = sale1_obj.YDBILL;
 	var date_dh = sale1_obj.DATE_DH;
-    var saletime = sale1_obj.SALETIME;
+	var saletime = sale1_obj.SALETIME;
 	var thtype = sale1_obj.THTYPE;
 	var custmname = sale1_obj.CUSTMNAME;
 	var custmaddress = sale1_obj.CUSTMADDRESS;
 	var custmphone = sale1_obj.CUSTMPHONE;
 	var custmcomm = sale1_obj.CUSTMCOMM;
-	
+
 	var spid = sale1_obj.SPID;
 	var sname = sale1_obj.SNAME;
 	var price = sale1_obj.PRICE;
 	var ggy = ggyContent;
-	
+
 	xsType = type;
 	let dateNow = getTime(3);
 
@@ -445,7 +445,7 @@ const xsPrinterData = (sale1_obj, ggyContent, type)=>{
 		ggy,
 		dateNow,
 	}
-	console.log("线上订单打印接收数据转换后 printerInfo:", printerInfo);	
+	console.log("线上订单打印接收数据转换后 printerInfo:", printerInfo);
 	return printerInfo;
 }
 
@@ -466,24 +466,26 @@ const onlyFourBank = (value) => {
  */
 const onlyFourPhone = (value) => {
 	if (value && value.length > 4) {
-		 let reg = /^(.{3}).*(.{4})$/
-		 value = value.replace(reg,'$1****$2')
+		let reg = /^(.{3}).*(.{4})$/
+		value = value.replace(reg, '$1****$2')
 	}
 	return value;
 }
 
 // 添加打印记录
 const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
-	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +'","' + billStr + '")'];
-    db.get().executeDml(execSql_arr, "执行中", function(res) {
+	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
+		'","' + billStr + '")'
+	];
+	db.get().executeDml(execSql_arr, "执行中", function(res) {
 		console.log("POS_XSBILLPRINT sql执行结果：", res);
 	}, function(err) {
 		console.log("POS_XSBILLPRINT sql执行失败：", err);
-	});	
+	});
 }
 
-const addContent = function(content){
-    var contentArr = content.split(',');
+const addContent = function(content) {
+	var contentArr = content.split(',');
 	let arrNew = [];
 	contentArr.forEach(function(item, index) {
 		item = parseInt(item);
@@ -498,8 +500,10 @@ const addContent = function(content){
  */
 const getPOSCS = async (parmid) => {
 	let poscs = [];
-	let execSql_arr = "SELECT D1.SNAME,P1.POSCS,P1.POSCSNR FROM POSCSZMX P1 ,DAPZCS_NR D1 WHERE D1.ID ='POSCS' AND D1.ID_NR = P1.POSCS AND P1.POSCSZID ='"+parmid+"' ORDER BY  P1.SZ";
-    await db.get().executeQry(execSql_arr, "执行中", function(res) {
+	let execSql_arr =
+		"SELECT D1.SNAME,P1.POSCS,P1.POSCSNR FROM POSCSZMX P1 ,DAPZCS_NR D1 WHERE D1.ID ='POSCS' AND D1.ID_NR = P1.POSCS AND P1.POSCSZID ='" +
+		parmid + "' ORDER BY  P1.SZ";
+	await db.get().executeQry(execSql_arr, "执行中", function(res) {
 		console.log(parmid + "POSCS sql执行结果：", res.msg);
 		poscs = res.msg;
 	}, function(err) {
@@ -514,144 +518,143 @@ const getPOSCS = async (parmid) => {
  */
 const commonPOSCS = async (poscsData) => {
 	let poscs = "";
-	var YN_YXDY  = ""; //是否打印小票 ，N不调用打印逻辑；
-	var YN_DYFP  = "";//是否打印发票，使用黑标发票纸的维护Y，Ipad收银 统一N；
-	var DYJZF  = "";//小票打印机字符，32对应58mm宽的纸，40-对应80mm宽纸，iPad连的蓝牙打印机 统一推荐使用40参数；
-	var XPZZHS  = "";//小票走纸行数，打印完小票内容后，再走几行空白纸，一般仟吉维护0，取参数值走纸；
-	var HYY  = ""; //小票欢迎语，维护文本内容
-	var XPLOGO = "";//票抬头logo，通过参数内容 logo.jpg 取对应图片文件打印到小票顶部作为商户logo；
-	var XPEWM = "";//票结尾二维码，内容维护 二维码图片名称，png格式；取对应图片文件打印，取不到时不打且不能占位；
-	var DZFPEWMDZ = "";//电子发票二维码地址，前端生成发票开票二维码，打印在小票底部
+	var YN_YXDY = ""; //是否打印小票 ，N不调用打印逻辑；
+	var YN_DYFP = ""; //是否打印发票，使用黑标发票纸的维护Y，Ipad收银 统一N；
+	var DYJZF = ""; //小票打印机字符，32对应58mm宽的纸，40-对应80mm宽纸，iPad连的蓝牙打印机 统一推荐使用40参数；
+	var XPZZHS = ""; //小票走纸行数，打印完小票内容后，再走几行空白纸，一般仟吉维护0，取参数值走纸；
+	var HYY = ""; //小票欢迎语，维护文本内容
+	var XPLOGO = ""; //票抬头logo，通过参数内容 logo.jpg 取对应图片文件打印到小票顶部作为商户logo；
+	var XPEWM = ""; //票结尾二维码，内容维护 二维码图片名称，png格式；取对应图片文件打印，取不到时不打且不能占位；
+	var DZFPEWMDZ = ""; //电子发票二维码地址，前端生成发票开票二维码，打印在小票底部
 	var YN_CALLNUM = ""; //水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
 	var SBLBBM = "";
 	var YN_DYDZFPEWM = ""; //是否打印电子发票二维码
-	
+
 	var obj1 = poscsData;
 	var YN_YXDY_obj = obj1.filter(item => {
-	   if (item.POSCS == "YN_YXDY") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "YN_YXDY") {
+			return item.POSCSNR;
+		}
 	});
-	if(YN_YXDY_obj.length > 0){
+	if (YN_YXDY_obj.length > 0) {
 		YN_YXDY = YN_YXDY_obj[0].POSCSNR;
 	}
-	
-    var obj2 = poscsData;
+
+	var obj2 = poscsData;
 	var YN_DYFP_obj = obj2.filter(item => {
-	   if (item.POSCS == "YN_DYFP") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "YN_DYFP") {
+			return item.POSCSNR;
+		}
 	});
-	if(YN_DYFP_obj.length > 0){
+	if (YN_DYFP_obj.length > 0) {
 		YN_DYFP = YN_DYFP_obj[0].POSCSNR;
 	}
-	
+
 	var obj3 = poscsData;
 	var DYJZF_obj = obj3.filter(item => {
-	   if (item.POSCS == "DYJZF") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "DYJZF") {
+			return item.POSCSNR;
+		}
 	});
-	if(DYJZF_obj.length > 0){
+	if (DYJZF_obj.length > 0) {
 		DYJZF = DYJZF_obj[0].POSCSNR;
 	}
-	
+
 	var obj4 = poscsData;
 	var XPZZHS_obj = obj4.filter(item => {
-	   if (item.POSCS == "XPZZHS") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "XPZZHS") {
+			return item.POSCSNR;
+		}
 	});
-	if(XPZZHS_obj.length > 0){
+	if (XPZZHS_obj.length > 0) {
 		XPZZHS = XPZZHS_obj[0].POSCSNR;
 	}
-	
+
 	var obj5 = poscsData;
 	var HYY_obj = obj5.filter(item => {
-	   if (item.POSCS == "HYY") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "HYY") {
+			return item.POSCSNR;
+		}
 	});
-	if(HYY_obj.length > 0){
+	if (HYY_obj.length > 0) {
 		HYY = HYY_obj[0].POSCSNR;
 	}
-	
+
 	var obj6 = poscsData;
 	var XPLOGO_obj = obj6.filter(item => {
-	   if (item.POSCS == "XPLOGO") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "XPLOGO") {
+			return item.POSCSNR;
+		}
 	});
-	if(XPLOGO_obj.length > 0){
+	if (XPLOGO_obj.length > 0) {
 		XPLOGO = XPLOGO_obj[0].POSCSNR;
 	}
-	
+
 	var obj7 = poscsData;
 	var XPEWM_obj = obj7.filter(item => {
-	   if (item.POSCS == "XPEWM") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "XPEWM") {
+			return item.POSCSNR;
+		}
 	});
-	if(XPEWM_obj.length > 0){
+	if (XPEWM_obj.length > 0) {
 		XPEWM = XPEWM_obj[0].POSCSNR;
 	}
-	
+
 	var obj8 = poscsData;
 	var DZFPEWMDZ_obj = obj8.filter(item => {
-	   if (item.POSCS == "DZFPEWMDZ") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "DZFPEWMDZ") {
+			return item.POSCSNR;
+		}
 	});
-	if(DZFPEWMDZ_obj.length > 0){
+	if (DZFPEWMDZ_obj.length > 0) {
 		DZFPEWMDZ = DZFPEWMDZ_obj[0].POSCSNR;
 	}
-	
+
 	var obj9 = poscsData;
 	var YN_CALLNUM_obj = obj9.filter(item => {
-	   if (item.POSCS == "YN_CALLNUM") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "YN_CALLNUM") {
+			return item.POSCSNR;
+		}
 	});
-	if(YN_CALLNUM_obj.length > 0){
+	if (YN_CALLNUM_obj.length > 0) {
 		YN_CALLNUM = YN_CALLNUM_obj[0].POSCSNR;
 	}
-	
+
 	var obj10 = poscsData;
 	var SBLBBM_obj = obj10.filter(item => {
-	   if (item.POSCS == "SBLBBM") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "SBLBBM") {
+			return item.POSCSNR;
+		}
 	});
-	if(SBLBBM_obj.length > 0){
+	if (SBLBBM_obj.length > 0) {
 		SBLBBM = SBLBBM_obj[0].POSCSNR;
 	}
-	
+
 	var obj11 = poscsData;
 	var YN_DYDZFPEWM_obj = obj11.filter(item => {
-	   if (item.POSCS == "YN_DYDZFPEWM") {
-	      return item.POSCSNR;
-	   }
+		if (item.POSCS == "YN_DYDZFPEWM") {
+			return item.POSCSNR;
+		}
 	});
-	if(YN_DYDZFPEWM_obj.length > 0){
+	if (YN_DYDZFPEWM_obj.length > 0) {
 		YN_DYDZFPEWM = YN_DYDZFPEWM_obj[0].POSCSNR;
 	}
-	
+
 	// console.log("YN_YXDY",YN_YXDY);
 	// console.log("SBLBBM",SBLBBM);
-	
-	var printer_poscs=
-	{
-       YN_YXDY,
-	   YN_DYFP,
-	   DYJZF,
-	   XPZZHS,
-	   HYY,
-	   XPLOGO,
-	   XPEWM,
-	   DZFPEWMDZ,
-	   YN_CALLNUM,
-	   SBLBBM,
-	   YN_DYDZFPEWM,
+
+	var printer_poscs = {
+		YN_YXDY,
+		YN_DYFP,
+		DYJZF,
+		XPZZHS,
+		HYY,
+		XPLOGO,
+		XPEWM,
+		DZFPEWMDZ,
+		YN_CALLNUM,
+		SBLBBM,
+		YN_DYDZFPEWM,
 	};
 
 	//console.log("commonPOSCS",printer_poscs)
@@ -662,13 +665,13 @@ const commonPOSCS = async (poscsData) => {
  * 查询打印记录
  * @param {xsBill}  
  */
-const getBillPrinterData = async (xsBill)=>{
+const getBillPrinterData = async (xsBill) => {
 	let billStr = "";
 	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
-		console.log("重打数据查询成功",res);
+		console.log("重打数据查询成功", res);
 		billStr = res.msg[0].BILLSTR;
-	    console.log("重打数据查询成功",res.msg[0].XSBILL);
+		console.log("重打数据查询成功", res.msg[0].XSBILL);
 	}, function(err) {
 		console.log("获取打印数据出错:", err);
 		uni.showToast({
@@ -680,48 +683,48 @@ const getBillPrinterData = async (xsBill)=>{
 }
 
 const groupByOrder = function(array, f) {
-     let groups = {};
-     array.forEach(function(o) {
-       let group = JSON.stringify(f(o));
-       groups[group] = groups[group] || [];
-       groups[group].push(o);
-     });
-     return Object.keys(groups).map(function(group) {
-       return groups[group];
-     });
+	let groups = {};
+	array.forEach(function(o) {
+		let group = JSON.stringify(f(o));
+		groups[group] = groups[group] || [];
+		groups[group].push(o);
+	});
+	return Object.keys(groups).map(function(group) {
+		return groups[group];
+	});
 }
 
- const groupBy = function (array, callback) {
-      return new Promise((resolve) => {
-        let groups = {};
-        array.forEach(item => {
-          let group = JSON.stringify(callback(item));
-          groups[group] = groups[group] || [];
-          groups[group].push(item);
-        });
-        let res = Object.keys(groups).map(group => {
-          return groups[group];
-        });
-        resolve(res)
-      })
+const groupBy = function(array, callback) {
+	return new Promise((resolve) => {
+		let groups = {};
+		array.forEach(item => {
+			let group = JSON.stringify(callback(item));
+			groups[group] = groups[group] || [];
+			groups[group].push(item);
+		});
+		let res = Object.keys(groups).map(group => {
+			return groups[group];
+		});
+		resolve(res)
+	})
 }
-	
- const getSum = function (arr,bykey) {
-      return new Promise((resolve) => {
-        let res = this.groupBy(arr, function (item) {
-          return item.fkid
-        }).then(res => {
-          console.log(res)
-          let resultSum = res.map(item => {
-            let sum = item.reduce((total, curr) => {
-              return total + curr[bykey]
-            }, 0);
-            return sum
-          })
-          return resultSum
-        })
-        resolve(res)
-      })
+
+const getSum = function(arr, bykey) {
+	return new Promise((resolve) => {
+		let res = this.groupBy(arr, function(item) {
+			return item.fkid
+		}).then(res => {
+			console.log(res)
+			let resultSum = res.map(item => {
+				let sum = item.reduce((total, curr) => {
+					return total + curr[bykey]
+				}, 0);
+				return sum
+			})
+			return resultSum
+		})
+		resolve(res)
+	})
 }
 
 /**
@@ -730,10 +733,10 @@ const groupByOrder = function(array, f) {
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
-    return new Promise((resolve, reject) => {
-	    console.log("3",is_xpewm,qrCodeWidth,qrCodeHeight);
-		if(!is_xpewm){
+const gzhQrCodeAction = function(is_xpewm, command, qrCodeWidth, qrCodeHeight) {
+	return new Promise((resolve, reject) => {
+		console.log("3", is_xpewm, qrCodeWidth, qrCodeHeight);
+		if (!is_xpewm) {
 			resolve('3')
 			return;
 		}
@@ -748,7 +751,7 @@ const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
 				console.log("3.获取小票结尾二维码画布数据成功");
 				command.setSelectJustification(1); //居中
 				command.setBitmap(res);
-				command.setPrint();	
+				command.setPrint();
 				resolve(res)
 			},
 			complete: function(res) {
@@ -761,8 +764,8 @@ const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
 					icon: "none"
 				});
 			}
-		 });
-    });
+		});
+	});
 }
 
 /**
@@ -771,10 +774,10 @@ const gzhQrCodeAction = function(is_xpewm,command,qrCodeWidth,qrCodeHeight){
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
-    return new Promise((resolve, reject) => {
-		console.log("4",is_dzfpewmdz);
-		if(!is_dzfpewmdz){
+const qrCodeAction = function(is_dzfpewmdz, command, qrCodeWidth, qrCodeHeight) {
+	return new Promise((resolve, reject) => {
+		console.log("4", is_dzfpewmdz);
+		if (!is_dzfpewmdz) {
 			resolve('4')
 			return;
 		}
@@ -789,7 +792,7 @@ const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
 				console.log("4.获取开票二维码画布数据成功");
 				command.setSelectJustification(1); //居中
 				command.setBitmap(res);
-				command.setPrint();	
+				command.setPrint();
 				resolve(res)
 			},
 			complete: function(res) {
@@ -802,8 +805,8 @@ const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
 					icon: "none"
 				});
 			}
-		 });
-    });
+		});
+	});
 }
 
 /**
@@ -813,28 +816,28 @@ const qrCodeAction = function(is_dzfpewmdz,command,qrCodeWidth,qrCodeHeight){
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const qrCodeGenerate = function(is_dzfpewmdz,bill,qrCodeContent,qrCodeWidth,qrCodeHeight){
-    return new Promise((resolve, reject) => {
-	    console.log("1.二维码生成内容:", is_dzfpewmdz, qrCodeContent + bill)
-		if(!is_dzfpewmdz){
-		    resolve('1')
+const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight) {
+	return new Promise((resolve, reject) => {
+		console.log("1.二维码生成内容:", is_dzfpewmdz, qrCodeContent + bill)
+		if (!is_dzfpewmdz) {
+			resolve('1')
 			return;
 		}
-       new qrCode('couponQrcode', {
-       	text: qrCodeContent,
-       	width: qrCodeWidth,
-       	height: qrCodeHeight,
-       	colorDark: "#333333",
-       	colorLight: "#FFFFFF",
-       	correctLevel: qrCode.CorrectLevel.H
-       })
-       resolve('1')
-    });
+		new qrCode('couponQrcode', {
+			text: qrCodeContent,
+			width: qrCodeWidth,
+			height: qrCodeHeight,
+			colorDark: "#333333",
+			colorLight: "#FFFFFF",
+			correctLevel: qrCode.CorrectLevel.H
+		})
+		resolve('1')
+	});
 }
 
-const gzhQrCodeGenerate = function(is_xpewm,url){
-    return new Promise((resolve, reject) => {
-		if(!is_xpewm){
+const gzhQrCodeGenerate = function(is_xpewm, url) {
+	return new Promise((resolve, reject) => {
+		if (!is_xpewm) {
 			resolve('2')
 			return;
 		}
@@ -848,29 +851,172 @@ const gzhQrCodeGenerate = function(is_xpewm,url){
 				ctx_out.draw();
 				resolve(res)
 			}
-		}); 
-		console.log("2.gzhQrCodeGenerate",url);
-    });
+		});
+		console.log("2.gzhQrCodeGenerate", url);
+	});
 }
 
-const snvl = function(pb_obj,pm_default){
+const snvl = function(pb_obj, pm_default) {
 	let new_obj = "";
-	if(pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
 		new_obj = pm_default;
-	}else{
+	} else {
 		new_obj = pb_obj.toString();
 	}
 	return new_obj;
 }
 
-const ynToBool = function(pm_str){
+const ynToBool = function(pm_str) {
 	let new_obj = false;
-	if(pm_str == "Y") {
+	if (pm_str == "Y") {
 		new_obj = true;
-	}else{
+	} else {
 		new_obj = false;
 	}
 	return new_obj;
+}
+
+const dnvl = function(pb_obj, pm_default) {
+	let new_obj = "";
+
+	var dates = [];
+	dates.push(new Date(pm_default))
+	var minDate = new Date(Math.min.apply(null, dates));
+
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = minDate;
+	} else {
+		new_obj = new Date(pb_obj);
+	}
+	return new_obj;
+}
+
+const nnvl = function(pb_obj, pm_default) {
+	let new_obj = 0;
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = pm_default;
+	} else {
+		try {
+			new_obj = parseFloat(pb_obj);
+		} catch (e) {
+			new_obj = -1;
+		}
+	}
+	//console.log(pb_obj + ",nnvl new_obj",new_obj)
+	return new_obj;
+}
+
+const timeTodec = function(dtime, minValue) {
+	let new_obj = 0;
+	if (dtime == minValue) {
+		new_obj = 0;
+	} else {
+		let sd = Math.floor((dtime / 1000 / 60 / 60) % 24);
+		let ff = Math.floor((dtime / 1000 / 60) % 60);
+		ff = Math.Round(ff, 2);
+		new_obj = sd + ff;
+	}
+	return new_obj;
+}
+
+///根据条件过滤出需要的datatable
+const retDtforConditions = function(data, where_al, where_val) {
+	let inputSoArr = data.filter((ev) => {
+		switch (where_al) {
+			case "BILL":
+				return ev.BILL.indexOf(where_val) != -1;
+				break;
+			case "SPID":
+				//console.log("ev",parseInt(ev.SPID).toString().indexOf(where_val));
+				return parseInt(ev.SPID).toString().indexOf(where_val) != -1;
+				break;
+		}
+	});
+	return inputSoArr;
+}
+
+///销售方式 None = 0, Sale = 1, SaleTh=2, SaleYd=3, SaleYdqx=4, SaleYdtq=5, SxSale=6, SxSaleTh=7, SaleWebtq=8, KqSale=9
+const xsType = function(type) {
+	switch (type) {
+		case 0:
+			return "None";
+			break;
+		case 1:
+			return "Sale";
+			break;
+		case 2:
+			return "SaleTh";
+			break;
+		case 3:
+			return "SaleYd";
+			break;
+		case 4:
+			return "SaleYdqx";
+			break;
+		case 5:
+			return "SaleYdtq";
+			break;
+		case 6:
+			return "SxSale";
+			break;
+		case 7:
+			return "SxSaleTh";
+			break;
+		case 8:
+			return "SaleWebtq";
+			break;
+		case 9:
+			return "KqSale";
+			break;
+	}
+}
+
+///所有人 会员或者非会员
+const ryType = function(type) {
+	switch (type) {
+		case 1:
+			return "all";
+			break;
+		case 2:
+			return "Hy";
+			break;
+		case 3:
+			return "Nhy";
+			break;
+	}
+}
+
+///促销折扣方式  新增加最小售价免单  免单数量为MJ_NET   JfSales:积分促销
+const cxZkType = function(type) {
+	switch (type) {
+		case 1:
+			return "Subnet";
+			break;
+		case 2:
+			return "Subdisc";
+			break;
+		case 3:
+			return "zjprice";
+			break;
+		case 4:
+			return "MinFree";
+			break;
+		case 5:
+			return "JfSales";
+			break;
+	}
+}
+
+///促销条件
+const cxZkTj = function(type) {
+	switch (type) {
+		case 1:
+			return "Qty";
+			break;
+		case 2:
+			return "Net";
+			break;
+	}
 }
 
 module.exports = {
@@ -899,6 +1045,14 @@ module.exports = {
 	gzhQrCodeAction: gzhQrCodeAction,
 	wmPrinterData: wmPrinterData,
 	xsPrinterData: xsPrinterData,
-	snvl:snvl,
-	ynToBool:ynToBool
+	snvl: snvl,
+	ynToBool: ynToBool,
+	dnvl: dnvl,
+	timeTodec: timeTodec,
+	xsType: xsType,
+	ryType: ryType,
+	retDtforConditions: retDtforConditions,
+	nnvl: nnvl,
+	cxZkType: cxZkType,
+	cxZkTj: cxZkTj
 };
