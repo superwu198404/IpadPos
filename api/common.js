@@ -167,10 +167,7 @@ var TransLite = function(e) {
 					}, apistr);
 					Req.asyncFuncOne(reqdata, function(res1) {
 						console.log("数据传输结果：", res1);
-						uni.showToast({
-							title: res1.code ? "数据传输成功" : "数据传输失败",
-							icon: res1.code ? "success" : "error"
-						})
+						util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
 						if (res1.code) {
 							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
 							db.get().executeDml(delStr, "数据删除中", function(res2) {
@@ -245,10 +242,7 @@ var GetPayWay = function(e, func) {
 		if (func) func(res);
 	}, function(err) {
 		console.log("获取付款方式出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取付款方式出错"
-		})
+		util.simpleMsg("获取付款方式出错", true);
 	});
 }
 
@@ -312,10 +306,7 @@ var GetPayWayAsync = async function(e, func) {
 		return res;
 	}, function(err) {
 		console.log("获取付款方式出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取付款方式出错"
-		})
+		util.simpleMsg("获取付款方式出错", "none");
 	});
 }
 
@@ -326,10 +317,7 @@ var GetPolyPayWay = function(e, func) {
 		if (func) func(res);
 	}, function(err) {
 		console.log("获取聚合付款方式出错:", err);
-		uni.showToast({
-			icon: 'error',
-			title: "获取聚合付款方式出错"
-		})
+		util.simpleMsg("获取聚合付款方式出错", "none");
 	});
 }
 

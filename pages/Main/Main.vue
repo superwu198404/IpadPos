@@ -43,21 +43,25 @@
 										<view class="li" v-for="(item,index) in item1.Details">
 											<view class="h3">
 												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
-												{{item.SNAME}}
+												<label>{{item.SNAME}}</label>
 											</view>
 											<view class="cods">
 												<label>
 													<image src="../../images/dx-bm.png" mode="widthFix"></image>
 													{{item.SPID}}
 												</label>
+												<!-- <label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}</label> -->
+											</view>
+											<view class="cods">
 												<label>
 													<image src="../../images/dx-dw.png" mode="widthFix"></image>
 													{{item.UNIT}}
 												</label>
+												<label>销量：{{item.XSQTY}}</label>
 											</view>
 											<view class="price">
-												<text>￥{{item.PRICE}}</text>
-												<text>销量：{{item.XSQTY}}</text>
+												<label><text>￥{{item.PRICE}}</text><span>/盒</span></label>
+												<!-- <text>销量：{{item.XSQTY}}</text> -->
 												<view>
 													<image src="../../images/dx-gd.png" mode="widthFix"></image>
 												</view>
@@ -554,6 +558,7 @@
 				})
 			},
 			onShow: function() {
+
 				let hyinfo = util.getStorage("hyinfo");
 				if (hyinfo && JSON.stringify(hyinfo) != "{}") {
 					that.yn_hy = true;
@@ -719,6 +724,9 @@
 			that = this;
 			// common.DelSale();//主动删除销售单
 
+			that.GetRXSPDatas();
+			that.GetCurTime(); //获取时段
+
 			let hyinfo = util.getStorage("hyinfo");
 			if (hyinfo && JSON.stringify(hyinfo) != "{}") {
 				that.yn_hy = true;
@@ -727,8 +735,15 @@
 			} else {
 				that.yn_hy = false;
 			}
-			that.GetRXSPDatas();
-			that.GetCurTime(); //获取时段
+			let arr = util.getStorage("POSCS");
+			let obj1 = arr.find((r) => r.POSCS == 'YN_LRHY');
+			if (obj1 && obj1.POSCSNR && obj1.POSCSNR == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
+				setTimeout(e => {
+					uni.navigateTo({
+						url: "../MemberLogin/MemberLogin"
+					})
+				}, 1000);
+			}
 		}
 	}
 </script>

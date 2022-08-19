@@ -272,7 +272,6 @@
 		},
 		data() {
 			return {
-				event: null,
 				SALES: {
 					sale1: {},
 					sale2: [],
@@ -636,14 +635,9 @@
 			// 执行表单插入本地数据库操作
 			SaleExcuted: function(sqlArr) {
 				db.get().executeDml(sqlArr, null, function(res) {
-					uni.showToast({
-						title: "销售单创建成功"
-					})
+					util.simpleMsg("销售单创建成功");
 				}, function(err) {
-					uni.showToast({
-						title: "销售单创建失败",
-						icon: "error"
-					})
+					util.simpleMsg("销售单创建失败", true);
 				});
 			},
 			//生成SALE3表sql
@@ -910,9 +904,7 @@
 					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 				}
 				if (!curPayType) {
-					uni.showToast({
-						title: "二维码错误！请重新扫码！"
-					});
+					util.simpleMsg("二维码错误！请重新扫码！", "none");
 					this.authCode = '';
 				}
 				console.log("[PayTypeJudgment]支付类型：", curPayType);
@@ -938,7 +930,7 @@
 				//如果被限制了 则进行判断是否有过支付
 				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
 						.type == pt)) {
-					util.simpleMsg("请更换支付方式!", false);
+					util.simpleMsg("请更换支付方式!", true);
 					this.authCode = '';
 					return;
 				}
@@ -960,7 +952,7 @@
 					(function(error) {
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
-						util.simpleMsg("[Payment-付款]支付失败!原因：" + error.msg);
+						util.simpleModal("支付失败", error.msg);
 						this.authCode = ""; //避免同一个付款码多次使用
 						this.orderGenarator(payAfter, info.type, null,
 							true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
@@ -1046,6 +1038,10 @@
 			orderCreated, //避免后续绑定this指向
 			//积分操作 
 			scoreConsume: function() {
+				let hyinfo = util.getStorage("hyinfo");
+				if (!hyinfo || JSON.stringify(hyinfo) == '{}') { //没会员信息的话就不调用上传积分以免接口报错
+					return;
+				}
 				let data = this.memberGenarator();
 				console.log("积分上传参数：", data);
 				_member.UploadPoint("积分上传中...", {
@@ -1053,16 +1049,10 @@
 					data
 				}, (res) => {
 					console.log("积分上传成功...", res)
-					uni.showToast({
-						title: res.code ? "积分上传成功" : res.msg,
-						icon: "success"
-					})
+					util.simpleMsg(res.code ? "积分上传成功" : res.msg, res.code ? false : "none");
 				}, (err) => {
 					console.log("积分上传失败...", err)
-					uni.showToast({
-						title: err.code ? "积分上传失败" : err.msg,
-						icon: "error"
-					})
+					util.simpleMsg("提示：" + err.msg, "none");
 				})
 			},
 			//生成会员积分信息请求参数列表
@@ -1214,6 +1204,9 @@
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
 				}
+				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
+					this.currentPayType = e.currentTarget.id; //小程序
+				}
 			},
 			//返回上个页面
 			backPrevPage: function() {
@@ -1223,18 +1216,12 @@
 					});
 					uni.navigateBack()
 				} else
-					uni.showToast({
-						title: `您还未完成${this.isRefund ? "退款":"支付"}操作！`,
-						icon: "error"
-					})
+					util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
 				if (that.coupon_list.length <= 0) {
-					uni.showToast({
-						title: "暂无可用券",
-						icon: "error"
-					})
+					util.simpleMsg("暂无可用券", true);
 				} else {
 					this.currentPayType = "SZQ"
 					let arr = that.coupon_list.filter(function(item, index, arr) {
@@ -1276,9 +1263,7 @@
 						console.log("券号：", that.authCode)
 						that.Pay();
 					} else {
-						uni.showToast({
-							title: "订单已支付完成!"
-						});
+						util.simpleMsg("订单已完成支付");
 					}
 				}
 			},

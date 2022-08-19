@@ -207,10 +207,6 @@
 						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
 						if (func) func(res);
 					} else {
-						// uni.showToast({
-						// 	title: res.msg,
-						// 	icon: "error"
-						// })
 						that.WMOrders = [];
 						that.OrderDeails = [];
 						that.Order = {};
@@ -290,26 +286,22 @@
 						spdatas: that.Details
 					}, res => {
 						console.log("外卖预定单接收结果：", res);
-						uni.showToast({
-							title: res.code ? "接收成功" : res.msg,
-							icon: res.code ? "success" : "error"
-						})
 						if (res.code) {
+							util.simpleMsg("操作成功");
 							let data = JSON.parse(res.data);
 							if (data.yn_print) {
 								//调用打印
 								//console.log("此处调用打印：");
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WMYD");
 							}
+						} else {
+							util.simpleModal("操作失败", res.msg);
 						}
 						//列表刷新
 						that.Refresh();
 					})
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 			//同意退单
@@ -317,18 +309,12 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
-						uni.showToast({
-							title: "请点击“接受确认”",
-							icon: "error"
-						})
+						util.simpleMsg("请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("1");
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 			//拒绝退单
@@ -336,18 +322,12 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
-						uni.showToast({
-							title: "请点击“接受确认”",
-							icon: "error"
-						})
+						util.simpleMsg("请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("0");
 				} else {
-					uni.showToast({
-						title: "暂无数据",
-						icon: "error"
-					})
+					util.simpleMsg("暂无数据", true);
 				}
 			},
 			//同意和拒绝退单操作
@@ -373,11 +353,11 @@
 					storeDqid: that.DQID
 				}, res => {
 					console.log("同意和拒绝退单结果：", res);
-					uni.showToast({
-						title: res.code ? "操作成功" : res.msg,
-						icon: res.code ? "success" : "error"
-
-					})
+					if (res.code) {
+						util.simpleMsg("操作成功");
+					} else {
+						util.simpleModal("操作失败", res.msg);
+					}
 					//列表刷新
 					that.Refresh();
 				})

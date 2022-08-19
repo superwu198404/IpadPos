@@ -74,7 +74,7 @@
 					} else {
 						that.KHArr = [];
 						that.khid = "";
-						util.simpleMsg("未匹配到用户门店", true);
+						util.simpleMsg("未匹配到门店", true);
 					}
 				})
 			},

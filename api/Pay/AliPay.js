@@ -68,10 +68,7 @@ var AliPay = function() {
 			if (func)
 				func(res)
 		}, function(res) {
-			uni.showToast({
-				icon: "error",
-				title: res.msg
-			})
+			util.simpleMsg(res.msg, true);
 		});
 	};
 
@@ -220,10 +217,7 @@ var AliPay = function() {
 			}
 		], function(err) {
 			console.log("支付接口返回的错误信息：", err)
-			uni.showToast({
-				icon: "error",
-				title: err.msg
-			})
+			util.simpleMsg(res.msg, true);
 			//支付或者查询false了 则进行撤销操作
 			// return CreateData("撤销中...", "CancelPayment", {
 			// 	out_trade_no: body.out_trade_no

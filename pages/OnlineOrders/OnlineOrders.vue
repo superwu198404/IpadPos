@@ -354,7 +354,7 @@
 					gsid: this.GSID
 				}, util.callBind(this, function(res) {
 					if (!res.data) {
-						util.simpleMsg("未获取到到货时间段！", true)
+						util.simpleMsg("未获取到到货时间段！", "none")
 						return;
 					}
 					this.timeRange = JSON.parse(res.data)
@@ -381,7 +381,7 @@
 					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
 					if (func) func();
 				}), (res) => {
-					util.simpleMsg("线上订单获取失败!", true, res);
+					util.simpleMsg("订单获取失败!", true, res);
 				});
 			},
 			//时间限制说明
@@ -529,7 +529,7 @@
 						this.GetOnlineOrders(); //刷新列表
 						util.simpleMsg("订单修改成功!", false, res)
 					}), (err) => {
-						util.simpleMsg(err.msg, true, err);
+						util.simpleMsg("提示：", err.msg, "none", err);
 					});
 				else
 					util.simpleMsg("时间设置有误!", true)
@@ -559,13 +559,13 @@
 						util.simpleMsg("接受成功!")
 						console.log("处理结果：", res)
 					}), (err) => {
-						util.simpleMsg(err.msg, true, err);
+						util.simpleMsg("提示：" + err.msg, "none", err);
 					});
 				else {
 					if (!info_valid.state)
 						util.simpleMsg(info_valid.msg, true, info_valid)
 					else if (!time_valid)
-						util.simpleMsg("到货时间校验失败!", true, info_valid)
+						util.simpleMsg("到货时间错误!", true, info_valid)
 				}
 			},
 		},
