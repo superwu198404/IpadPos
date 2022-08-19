@@ -66,8 +66,7 @@
 				</view>
 			</view>
 		</view>
-		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
-		</component>
+		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer"></component>
 	</view>
 	<!-- </menu_content> -->
 </template>
@@ -183,7 +182,7 @@
 		},
 		mounted() {
 			console.log("[Extract-Mounted]触发!");
-			if(this.meta && this.meta.mode) this.view.mode = this.meta.mode;//跳转传值
+			if(this.meta && this.meta.mode !== undefined) this.view.mode = this.meta.mode;//跳转传值
 			console.log("[Extract-Mounted]元数据:",this.meta);
 			this.GetList();
 		}

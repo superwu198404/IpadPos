@@ -190,8 +190,12 @@
 		PaymentToRefundSALE001,
 		PaymentToRefundSALE002,
 		PaymentToRefundSALE003,
-	} from '@/bll/RefundBusiness/bll.js'
-
+	} from '@/bll/RefundBusiness/bll.js';
+	import {
+		LocalDataQuery,
+		ServiceDataQuery
+	} from '@/bll/SaleBusiness/bll.js';
+	
 	var that;
 	export default {
 		data() {
@@ -293,7 +297,7 @@
 			Confirm: function() {
 				console.log("[Confirm]退单确认!开始退款...", this.Order.BILL);
 				//处理退款所需的业务信息数据
-				Refund(this.Order.BILL).then(util.callBind(this, async function(refund_data) {
+				Refund(LocalDataQuery(this.Order.BILL),ServiceDataQuery(this.Order.BILL)).then(util.callBind(this, async function(refund_data) {
 					console.log("[Confirm]退单生成数据:", refund_data);
 					if (Number(refund_data.sale1_obj.TNET) === 0) {
 						let config = {
@@ -308,7 +312,7 @@
 						let sqls = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"],
 							[sale3, "SALE003"]);
 						console.log("[Confirm-Refund]退款生成的SQL:", sqls);
-						await common.Close();//预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+						await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
 						await db.get().executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
 							if (func) func(res);
 							this.complete = true;
@@ -318,7 +322,7 @@
 							console.log("[Confirm]退款订单创建失败!", err);
 							util.simpleMsg("!销售单创建失败", false);
 						});
-						this.GetOrders(this.p_bill);//刷新界面
+						this.GetOrders(this.p_bill); //刷新界面
 					} else {
 						this.$store.commit('set-location', refund_data); //把数据传入下个页面
 						uni.navigateTo({

@@ -19,6 +19,7 @@ const utils = {
 	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
 			title,
+			mask: true,
 			icon: isError ? "error" : "success"
 		})
 		if (errData) console.log(title, errData)

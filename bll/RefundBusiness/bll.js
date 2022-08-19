@@ -1,5 +1,5 @@
 import {
-	RefundQuery
+	BatchQuery
 } from '@/api/business/da.js';
 import {
 	TransferForPaymentAll
@@ -10,16 +10,23 @@ import dateformat from '@/utils/dateformat.js';
 
 /**
  * 退货（款）处理操作 
- * @param {*} bill 
+ * @param {*} sqlite_source 同步/异步 参数，传入本地 sale1,2,3 数据，数据结构必须为 { sale1:{},sale2:[],sale3:[] }
+ * @param {*} oracle_source 同步/异步 参数，传入服务端 sale1,2,3 数据，数据结构必须为 { sale1:{},sale2:[],sale3:[] }
  */
-export const Refund = async function(bill) {
+export const Refund = async function(sqlite_source,oracle_source) {
 	//判断sale1,sale2,sale3数据是否是正常数据
 	let ErrorData = (data) => !data.sale1 || Object.keys(data.sale1).length == 0 || data.sale2.length == 0 ||
-		data.sale3.length == 0;
-	let data = await common.QueryRefund(bill);
+		data.sale3.length == 0, data = null;
+	if(sqlite_source.constructor === Promise)//如果是异步数据，则等待
+		data = await sqlite_source;
+	else
+		data = sqlite_source;
 	console.log("[Refund]本地数据:", data);
 	if (ErrorData(data)) { //如果服务器查不到
-		data = await RefundQuery(bill); //服务器退款查询
+		if(oracle_source.constructor === Promise)//如果是异步数据，则等待
+			data = await oracle_source;
+		else
+			data = oracle_source;
 		console.log("[Refund]服务器数据:", data);
 		if (ErrorData(data)) {
 			util.simpleMsg("订单不存在!", true);

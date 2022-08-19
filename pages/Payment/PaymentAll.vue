@@ -272,7 +272,7 @@
 		},
 		data() {
 			return {
-				event:null,
+				event: null,
 				SALES: {
 					sale1: {},
 					sale2: [],
@@ -432,7 +432,7 @@
 			}
 		},
 		methods: {
-			onLoad:function(option){
+			onLoad: function(option) {
 				this.event = this.getOpenerEventChannel();
 			},
 			//单号防重处理
@@ -676,10 +676,10 @@
 			},
 			//支付按钮点击事件
 			Pay: function() {
-				let that = this;//适配真机
-				console.log("[Pay]当前支付类型:",this.currentPayType);
+				let that = this; //适配真机
+				console.log("[Pay]当前支付类型:", this.currentPayType);
 				let pay_info = this.PayWayInfo(this.currentPayType);
-				console.log("[Pay]当前支付类型信息:",pay_info);
+				console.log("[Pay]当前支付类型信息:", pay_info);
 				if (!this.currentPayType) {
 					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
@@ -803,8 +803,8 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
-				console.log("[PayWayInfo]支付类型:",type);
-				console.log("[PayWayInfo]支付方式列表:",this.PayWayList);
+				console.log("[PayWayInfo]支付类型:", type);
+				console.log("[PayWayInfo]支付方式列表:", this.PayWayList);
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			//退款操作
@@ -1211,13 +1211,14 @@
 			//点击切换支付方式
 			clickPayType: function(r, e) {
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				// if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
-				// 	this.currentPayType = e.currentTarget.id; //小程序
+				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
+					this.currentPayType = e.currentTarget.id; //小程序
+				}
 			},
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					this.event.emit("ExtractBack",{
+					this.event.emit("ExtractBack", {
 						msg: "预订单支付完成!"
 					});
 					uni.navigateBack()
@@ -1397,7 +1398,7 @@
 				} catch (err) {
 					console.log("HYID:", err);
 				}
-				
+
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
