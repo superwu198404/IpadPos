@@ -11,7 +11,7 @@
 				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive"
 				:meta="meta_data"></component>
 		</view>
-		<newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast>
+		<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 	</view>
 </template>
 

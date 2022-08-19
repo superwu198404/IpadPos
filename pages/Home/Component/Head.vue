@@ -43,17 +43,17 @@
 					</view>
 					<text @click="exits()">{{RYID}}▼</text>
 					<view class="dropout" v-if="dropout">
-						<view class="exit" @click="Login()">
+						<view class="exit" @click="LoginOut()">
 							<image src="@/images/qiehuan.png" mode="widthFix"></image>
-							<text>切换账号</text>
+							<text>退出</text>
 						</view>
-						<view class="exit" @click="LoginOut()">
+						<view class="exit" @click="Login()">
 							<image src="@/images/tuichu.png" mode="widthFix"></image>
-							<text>退出登录</text>
-						</view>
-						<view class="exit" @click="LoginOut()">
-							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
 							<text>注销</text>
+						</view>
+						<view class="exit" @click="UPPWD()">
+							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<text>修改密码</text>
 						</view>
 					</view>
 				</view>
@@ -125,8 +125,13 @@
 			exits: function(e) {
 				this.dropout = !this.dropout
 			},
-			//切换登录
+			//注销
 			Login: function() {
+				if (getApp().globalData.stroe) {
+					getApp().globalData.stroe.RYID = "";
+					getApp().globalData.stroe.RYNAME = "";
+				}
+				util.removeStorage("hyinfo"); //清除会员信息
 				uni.redirectTo({
 					url: "/pages/Login/Login",
 					complete: r => {
@@ -136,8 +141,19 @@
 			},
 			//退出登录
 			LoginOut: function() {
-				// getApp().globalData.store = {}; //清空用户信息
-				// uni.removeStorageSync("hyinfo"); //清除会员信息
+				if (getApp().globalData.stroe) {
+					getApp().globalData.stroe.RYID = "";
+					getApp().globalData.stroe.RYNAME = "";
+				}
+				util.removeStorage("hyinfo"); //清除会员信息
+				if (uni.getSystemInfoSync().platform == 'ios') {
+					plus.ios.import("UIApplication").sharedApplication().performSelector("exit")
+				} else if (uni.getSystemInfoSync().platform == 'android') {
+					plus.runtime.quit();
+				}
+			},
+			//修改密码
+			UPPWD: function() {
 				uni.redirectTo({
 					url: "/pages/index/index",
 					complete: r => {

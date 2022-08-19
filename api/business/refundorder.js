@@ -101,5 +101,6 @@ export default {
 	GetOrders,
 	GetOrderDetails,
 	SXGetOrders,
+	GetSXOrderDetails,
 	CreditOrderRefund
 }

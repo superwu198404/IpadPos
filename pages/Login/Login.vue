@@ -16,10 +16,10 @@
 				</label>
 				<label>
 					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<!-- <input type="text" v-model="khid " /> -->
-					<picker :range="KHArr" :value="index" @change="ChooseKH">
+					<input type="text" v-model="khid" disabled="true"/>
+					<!-- <picker :range="KHArr" :value="index" @change="ChooseKH">
 						<view style="width: 100%;">{{KHArr[index]}}</view>
-					</picker>
+					</picker> -->
 				</label>
 			</view>
 			<view class="logbtn">
@@ -47,8 +47,8 @@
 			return {
 				userid: "",
 				password: "",
-				khid: "",
-				// KHArr: ["1123451", "1123452", "1123453", "1123454", "1123455", "1123456"],
+				khid: getApp().globalData.store.KHID,
+				posid: getApp().globalData.store.POSID,
 				KHArr: [],
 				index: 0
 			}
@@ -58,6 +58,9 @@
 				that = this;
 			},
 			GetKHIDS: function() {
+				if (that.khid) {
+					return;
+				}
 				if (!that.userid) {
 					util.simpleMsg("请输入账号", true);
 					return;
@@ -94,10 +97,10 @@
 					console.log("登录成功：", res);
 					util.simpleMsg("登录成功");
 					//初始化门店信息
-					_login.InitStore(that.khid, "", res.data, r => {
+					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
 							uni.navigateTo({
-								url: "../Main/Main"
+								url: "../Home/Home"
 							})
 						}, 1000);
 					});

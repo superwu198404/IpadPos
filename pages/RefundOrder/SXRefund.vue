@@ -50,11 +50,10 @@
 						<view class="h2">赊销退单 <label></label></view>
 						<!-- 小类循环 -->
 						<view class="products">
-							<!--  -->
-
 							<view class="procycle">
 								<!-- 订单循环 -->
-								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
+								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '"
+									@click="ChooseOrder(item,index)">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
 										<text class="price">￥{{item.DNET}}</text>
@@ -79,21 +78,17 @@
 										</label>
 									</view>
 									<view class="harvest">
-										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
-										<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
-										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
-										<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
-										<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
-										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
+										<label><text>赊销单号：</text><text>{{Order.BILL}}</text></label>
+										<label><text>赊销金额：</text><text>{{Order.DNET}}</text></label>
+										<!-- <label><text>订单备注：</text><text>{{Order.STR1}}</text></label> -->
 									</view>
-									<!-- <view class="h5"><text>单号：{{Order.BILL}}</text></view> -->
 									<view class="goods">
 										<!-- 商品循环 -->
 										<view class="prolist" v-for="(item1,index1) in Details">
 											<view class="h3">
 												<label>
 													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
-													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
+													{{item1.SNAME}} — <text>￥{{item1.PRICE}}</text>
 												</label>
 												<view class="shuls"><text>×{{item1.QTY}}</text></view>
 											</view>
@@ -105,10 +100,9 @@
 													</label>
 													<label>
 														<image src="@/images/dx-dw.png" mode="widthFix"></image>
-														{{item1.STR7}}
+														{{item1.UNIT}}
 													</label>
 												</view>
-												<text>已取消：{{item1.BQTY}}</text>
 											</view>
 										</view>
 									</view>
@@ -125,7 +119,7 @@
 			</view>
 		</view>
 		<!-- 子单信息 -->
-		<view class="boxs" v-if="statements">
+		<view class="boxs" v-if="false">
 			<view class="memberes">
 				<view class="pop-r">
 					<view class="member">
@@ -227,9 +221,11 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				that.GetOrders();
+				that.GetOrders(r => {
+					that.GetSXOrderDetails(r[0]);
+				});
 			},
-			GetOrders: function(bill, date) {
+			GetOrders: function(func) {
 				_refund.SXGetOrders({
 						khid: that.KHID,
 						bill: that.p_bill,
@@ -241,21 +237,25 @@
 							let data = JSON.parse(res.data);
 							that.Orders = data;
 							that.Criterias = false;
+							if (func) func(data);
 						} else {
 							that.Orders = [];
 							util.simpleMsg("暂无数据", true);
 						}
 					});
 			},
-			ChooseOrder:e=>{
-				
+			ChooseOrder: (e, i) => {
+				that.curIndex = i;
+				that.GetSXOrderDetails(e);
 			},
-			GetOrderDetails: (e) => {
-				that.Criterias = false;
+			GetSXOrderDetails: (e) => {
 				that.Order = e;
-				let yw_bill = common.CreateBill(that.KHID, that.POSID);
-				_refund.GetOrderDetails(yw_bill, e.BILL, e.SALEDATE, res => {
-					console.log("详情单查询结果:", res);
+				_refund.GetSXOrderDetails({
+					bill: e.BILL,
+					khid: e.KHID,
+					saledate: e.SALEDATE
+				}, res => {
+					console.log("赊销详情单查询结果:", res);
 					if (res.code) {
 						let data = JSON.parse(res.data);
 						that.Details = data;
@@ -273,7 +273,7 @@
 			},
 			//搜索
 			Search: function() {
-				that.GetOrders(that.p_bill, that.p_date);
+				that.GetOrders();
 			},
 			//清空查询条件
 			Empty: () => {
@@ -340,22 +340,47 @@
 		},
 		created() {
 			that = this;
-			that.GetOrders();
+			that.GetOrders(r => {
+				that.GetSXOrderDetails(r[0]);
+			});
 		}
 	}
 </script>
 
 <style>
-	.right {
-		height: 100%;
-	}
-	.handles button{
-		width:160rpx;
-		height: 60rpx;
-		line-height: 60rpx;
-		font-size: 28rpx;
-	}
-	.price{
-		margin-top:0;
-	}
+  .right {
+    height: 100%;
+  }
+  .handles button{
+    width:160rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    font-size: 28rpx;
+  }
+  .price{
+    margin-top:0;
+  }
+  .h2{
+    padding:0 3% 1%;
+    position: relative;
+  line-height:40rpx;
+  }
+  .h2 label{
+    position: absolute;
+    width:140rpx;
+    bottom:20rpx;
+    left: 3%;
+    height: 8rpx;
+    background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0) 100%);
+  border-radius: 8rpx;
+  }
+  .details .goods{
+    height: 65%;
+  }
+  .detinfo{
+    height: 85%;
+  }
+  .products .details{
+    justify-content: start;
+  }
 </style>

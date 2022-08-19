@@ -11,24 +11,24 @@ import util from '../../utils/util';
  */
 export const getReserveOrders = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrders";
-	let reqdata = Req.resObj(true, "预定取货查询中", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 var GetAddr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.GetAddr";
-	let reqdata = Req.resObj(true, "查询地址中", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var AddressQuery = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.AddressQuery";
-	let reqdata = Req.resObj(true, "查询地址中", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var Del_Addr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.Del_Addr";
-	let reqdata = Req.resObj(true, "查询地址中", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 

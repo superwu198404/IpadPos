@@ -39,7 +39,7 @@
 							</label>
 							<label><text>*提货时间：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
-								<picker mode="time" @change="timeChange">
+								<picker mode="time" @change="timeChange" start="7" end="19">
 									<view>{{Order.TH_TIME}}</view>
 								</picker>
 							</label>
@@ -321,11 +321,13 @@
 
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;
+				} else {
+					that.Order.DNET = 0;
 				}
 			},
-			//弹出客户信息录入框
+			//弹出预定信息录入框
 			showReserve: function() {
-				that.RefreshData()
+				that.Empty();
 				that.statements = true;
 				let arr = util.getStorage("POSCS");
 				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
@@ -457,6 +459,7 @@
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
+					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
 					// if (res.code) {
 					// 	that.GetAddr(); //刷新一下地址列表
@@ -494,6 +497,7 @@
 			ConfirmOrderAddr: function(e) {
 				console.log("触发没", e);
 				that.AddrArr = []; //清空一下
+				that.Order.CUSTMNAME = e.CNAME; //默认赋值
 				that.Order.CUSTMADDRESS = e.ADDRESS;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
@@ -517,10 +521,16 @@
 				}, res => {
 					console.log("匹配结果:", res);
 					if (res.code) {
-						util.simpleMsg("已匹配到最近门店");
-						let khid = JSON.parse(res.data);
-						that.Order.STR2 = khid;
-						that.$forceUpdate(); //刷新input的值 狗bug
+						let data = JSON.parse(res.data);
+						if (data.over) {
+							util.simpleMsg("提示：", res.msg, "none");
+							that.index = 0;
+						} else {
+							util.simpleMsg("已匹配最近的配送中心", "none");
+							that.Order.STR2 = data.khid;
+							that.Order._STR2 = data.name;
+							that.$forceUpdate(); //刷新input的值 狗bug
+						}
 					}
 				})
 			},
