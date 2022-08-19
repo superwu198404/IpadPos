@@ -10,8 +10,7 @@
 	<view class="commodity" style="position: relative;">
 		<view class="hh">
 			<view class="hotcakes">
-				<image src="@/images/ydtq.png" mode="widthFix"></image> 本店热销
-				<view>类型：<text>立即送</text><text>在线订单</text></view>
+				<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
 			</view>
 			<view class="prints">
 				<view>
@@ -43,7 +42,7 @@
 						<view class="platform">
 							<label>
 								<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
-								{{onlineOrdersGroup[item][0].SNAME}}
+								{{ item }}
 							</label>
 							<label
 								:class="'state quxiao ' + getTakeWayStyle(onlineOrdersGroup[item][0].THTYPE)"><text>●</text>{{ getTakeWayText(onlineOrdersGroup[item][0].THTYPE) }}</label>
@@ -52,13 +51,10 @@
 						<view>￥{{onlineOrdersGroup[item][0].PRICE}}</view>
 					</view>
 					<view class="cods">
-						<label><text>预定单号：</text><text>{{item || '-'}}</text></label>
 						<label><text class="text-nowrap">预定时间：</text><text
 								class="ellipsis-text">{{onlineOrdersGroup[item][0].SALETIME || '-'}}</text></label>
 						<label><text class="text-nowrap">顾客姓名：</text><text
 								class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMNAME || '-'}}</text></label>
-						<label><text class="text-nowrap">顾客电话：</text><text
-								class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMPHONE || '-'}}</text></label>
 					</view>
 					<view class="address">
 						顾客地址：{{onlineOrdersGroup[item][0].CUSTMADDRESS || '-'}}
@@ -81,14 +77,6 @@
 							<StorePicker class="input" :init="details.order.KHID_BH" v-if="mode('edit')"
 								@change="StoreChange"></StorePicker>
 						</label>
-						<label class="from-label">
-							<text>商品编码：</text>
-							<text>{{details.order.SPID || '-'}}</text>
-						</label>
-						<!-- <label class="from-label">
-								<text>商品名称：</text>
-								<text>{{details.order.SNAME || '-'}}</text>
-							</label> -->
 						<label class="from-label">
 							<text>到货日期：</text>
 							<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>

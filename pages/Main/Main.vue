@@ -91,6 +91,10 @@
 							<text>结算单</text>
 							<label>«</label>
 						</view>
+						<view class="states" @click="common_sale = true">
+							<text>结算单-通用</text>
+							<label>«</label>
+						</view>
 					</view>
 					<view class="toproof">
 						<image src="../../images/dx-qdb.png" mode="widthFix"></image>
@@ -125,6 +129,7 @@
 				</view>
 			</view>
 		</view>
+		<SaleDrawer :show="common_sale" :good-list="goods"></SaleDrawer>
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="attribute">
 			<view class="popup">
@@ -499,6 +504,21 @@
 					current: "Extract",
 					history: []
 				},
+				common_sale: false,
+				goods: [{
+					NAME: "测试商品-01",
+					QTY: 10,
+					PRICE: 1.5,
+					SPID: "01",
+					UNIT: "个"
+				}, {
+					NAME: "测试商品-02",
+					QTY: 5,
+					PRICE: 1.5,
+					SPID: "02",
+					UNIT: "个"
+				}],
+
 				attribute: false,
 				statements: false,
 				Alphabetical: false,
@@ -720,7 +740,7 @@
 			}
 		},
 		created: function() {
-			util.simpleMsg("xxxxxxxxxxxxxxxxxx",true);
+			util.simpleMsg("xxxxxxxxxxxxxxxxxx", true);
 			that = this;
 			// common.DelSale();//主动删除销售单
 
