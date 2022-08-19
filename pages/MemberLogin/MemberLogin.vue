@@ -35,7 +35,7 @@
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import _checker from '@/utils/graceChecker.js';
 	import Head from '@/pages/Home/Component/Head.vue'
-	var that;
+	var that, eventChannel;
 	export default {
 		components: {
 			Head
@@ -50,6 +50,7 @@
 		methods: {
 			onLoad: function() {
 				that = this;
+				eventChannel = this.getOpenerEventChannel();
 			},
 			//登录事件
 			HYLogin: function() {
@@ -73,7 +74,13 @@
 						util.setStorage("hyinfo", hyinfo);
 						util.simpleMsg("登录成功");
 						setTimeout(r => {
-							uni.navigateBack({})
+							uni.navigateBack({
+								success: function() {
+									eventChannel.emit('refreshHY', {
+										data: '会员登录页面返回'
+									})
+								}
+							})
 						}, 1000);
 					}
 				}, err => {
@@ -83,7 +90,13 @@
 			},
 			//返回
 			ReBack: function() {
-				uni.navigateBack({})
+				uni.navigateBack({
+					success: function() {
+						eventChannel.emit('refreshHY', {
+							data: '会员登录页面返回'
+						})
+					}
+				});
 			}
 		}
 	}

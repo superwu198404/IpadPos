@@ -593,9 +593,11 @@ var DelSale = function(e) { //khid
 	// GetPOSCS(e, res => {
 	let arr = util.getStorage("POSCS");
 	console.log("参数组数据:", arr);
-	let obj = arr.find((r) => r.POSCS == 'SJBLTS');
-	if (obj) {
-		day = obj.POSCSNR;
+	if (arr && arr.length > 0) {
+		let obj = arr.find((r) => r.POSCS == 'SJBLTS');
+		if (obj) {
+			day = obj.POSCSNR;
+		}
 	}
 	// })
 	let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
