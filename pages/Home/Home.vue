@@ -7,7 +7,9 @@
 		<view class="right">
 			<Head></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component @Message="OpenMessage" v-for="c in router" :is="c.name" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="JSON.parse(JSON.stringify(meta_data))"></component>
+			<component @Switch="SwitchPage" @Message="OpenMessage" v-for="c in router" :is="c.name" :ref="c.title"
+				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive"
+				:meta="meta_data"></component>
 		</view>
 		<newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast>
 	</view>
@@ -52,39 +54,47 @@
 		data() {
 			return {
 				current: {
-					name:"Main",
-					title:"销售"
+					name: "Main",
+					title: "销售"
 				},
-				view:{
-					message:false
+				view: {
+					message: false
 				},
 				router: [],
-				meta_data:{}
+				meta_data: {}
 			}
 		},
-		computed:{
-			show:function(){
-				return util.callBind(this,function(info){
+		computed: {
+			show: function() {
+				return util.callBind(this, function(info) {
 					return (this.current.name === info.name) && (this.current.title === info.title)
 				});
 			}
 		},
 		methods: {
-			OpenMessage:function(data){
-				console.log("[OpenMessage]消息框打开!",data);
+			OpenMessage: function(data) {
+				console.log("[OpenMessage]消息框打开!", data);
 				this.view.message = true;
 				this.$refs.message.AutoClose();
 			},
-			CloseMessage:function(data){
-				console.log("[CloseMessage]消息框关闭!",data);
+			CloseMessage: function(data) {
+				console.log("[CloseMessage]消息框关闭!", data);
 				this.view.message = false;
 			},
 			SwitchPage: function(data) {
 				console.log("[SwitchPage]页面切换:", data);
-				console.log("[SwitchPage]页面名称:", data.name);
 				this.current = data;
-				console.log("[SwitchPage]页面元数据:", data.meta);
-				this.meta_data = data.meta ?? {};
+				this.meta_data = Object.assign(data.meta ?? {}, {
+					params: data.params
+				});
+				console.log("meta",this.meta_data);
+				let vue = this.$refs[data.title];
+				if (vue) {
+					if (Array.isArray(vue)) {
+						vue = vue[0];
+					}
+				}
+				vue?.Show ? vue.Show() : undefined;
 			},
 			ComponentRecursion: function(tree, all) {
 				tree.forEach(util.callBind(this, function(item) {

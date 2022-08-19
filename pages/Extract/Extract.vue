@@ -146,7 +146,16 @@
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
 			},
-			ExtractOrder: function(item) { //提取商品
+			ExtractOrder:function(item){
+				this.$emit("Switch",{
+					name:"Main",
+					title:"销售",
+					params:{
+						extract_order:item
+					}
+				})
+			},
+			_ExtractOrder: function(item) { //提取商品
 				this.view.Details = true;
 				this.extract_order = item;
 			},

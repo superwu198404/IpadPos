@@ -491,6 +491,9 @@
 				return (function(name) {
 					return this.components.current === name ? "curr" : "";
 				}).bind(this)
+			},
+			Meta:function(){
+				return this.meta;
 			}
 		},
 		data() {
@@ -505,21 +508,7 @@
 					current: "Extract",
 					history: []
 				},
-				common_sale: false,
-				goods: [{
-					NAME: "测试商品-01",
-					QTY: 10,
-					PRICE: 1.5,
-					SPID: "01",
-					UNIT: "个"
-				}, {
-					NAME: "测试商品-02",
-					QTY: 5,
-					PRICE: 1.5,
-					SPID: "02",
-					UNIT: "个"
-				}],
-
+				
 				attribute: false,
 				statements: false,
 				Alphabetical: false,
@@ -548,6 +537,13 @@
 			}
 		},
 		methods: {
+			Show:function(){
+				console.log("[Show]SHOW触发!");
+				console.log("[Show]参数:",this.meta);
+				if(this.meta.params){//是否存在参数
+					console.log("[Show]参数:",this.meta);
+				}
+			},
 			//使用消息弹框 this.$emit("Message",{ msg:"消息提示" })
 			onLoad: function() {
 				that = this;
@@ -738,10 +734,13 @@
 				} else {
 					that.curTime = require("../../images/dx-night.png");
 				}
+			},
+			InitHandle(){
+				console.log("[InitHandle]初始化处理:",this.meta);
 			}
 		},
 		created: function() {
-			util.simpleMsg("xxxxxxxxxxxxxxxxxx", true);
+			this.InitHandle();
 			that = this;
 			common.DelSale(); //主动删除过期销售单
 
