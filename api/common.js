@@ -362,7 +362,8 @@ var QueryRefund = async function(trade) {
 }
 
 var QueryBatch = async function(sqls) {
-	let result = {}, promises = [];
+	let result = {},
+		promises = [];
 	sqls.forEach((sql_info) => {
 		promises.push(db.get().executeQry(sql_info.sql, `[QueryBatch]查询${sql_info.name}...`,
 			function(res) {
@@ -614,9 +615,9 @@ var DelSale = function(e) { //khid
 		"delete from sale003 where bill in (" + sql1 + ")"
 	];
 	db.get().executeDml(arr1, "", res => {
-		console.log("本地销售单删除成功：", res);
+		console.log("本地销售单删除成功：" + day, res);
 	}, err => {
-		console.log("本地销售单删除失败：", err);
+		console.log("本地销售单删除失败：" + day, err);
 	})
 }
 export default {

@@ -15,6 +15,7 @@
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
 	import _create_sql from '@/utils/db/create_sql.js';
+	import util from '@/utils/util.js';
 	var mysqlite = sqlLite.get();
 	var that = null;
 
@@ -31,10 +32,15 @@
 				showmsg: "门店基础数据初始化"
 			}
 		},
-		onLoad() {
-			that = this;
-		},
 		methods: {
+			onLoad() {
+				that = this;
+				let store = util.getStorage("store");
+				if (store && JSON.stringify(store) != "{}") {
+					that.khid = store.KHID;
+					that.posid = store.POSID;
+				}
+			},
 			toDbqry: function() {
 				uni.navigateTo({
 					url: "/pages/sqlitetest/sqlitetest"
@@ -146,6 +152,8 @@
 							console.log("异常结果：", res);
 							that.tx001 = null;
 							console.log(JSON.stringify("start创建完成"));
+							getApp().globalData.store.KHID = that.khid; //主动赋值
+							getApp().globalData.store.POSID = that.posid;
 						}
 				)
 			},

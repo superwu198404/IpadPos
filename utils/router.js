@@ -12,11 +12,19 @@ export default [{
 	},
 	{
 		title: "预定",
-		name: "Reserve",
-		url: "@/pages/Reserve/Reserve",
+		name: "Main",
+		url: "@/pages/Main/Main",//Reserve
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
 		index: 1
+	},
+	{
+		title: "赊销",
+		name: "Main",
+		url: "@/pages/Main/Main",
+		icon: require("@/images/yuding.png"),
+		icon1: require("@/images/yuding-hui.png"),
+		index: 2
 	},
 	{
 		title: "预定提取",
@@ -24,14 +32,14 @@ export default [{
 		url: "@/pages/Extract/Extract",
 		icon: require("@/images/xz-ydtq.png"),
 		icon1: require("@/images/wxz-ydtq.png"),
-		index: 2
+		index: 3
 	}, {
 		title: "外卖单",
 		name: "TakeAway",
 		url: "@/pages/TakeAway/TakeAway",
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
-		index: 3
+		index: 4
 	},
 	{
 		title: "外卖预订单",
@@ -39,14 +47,14 @@ export default [{
 		url: "@/pages/TakeYD/TakeYD",
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
-		index: 4
+		index: 5
 	},
 	{
 		title: "线上业务",
 		url: "",
 		icon: require("@/images/xianshangdd.png"),
 		icon1: require("@/images/xianshangdd-hui.png"),
-		index: 5,
+		index: 6,
 		showDetail: false,
 		details: [{
 			title: "线上订单",
@@ -69,7 +77,7 @@ export default [{
 		url: "",
 		icon: require("@/images/xz-th.png"),
 		icon1: require("@/images/wxz-th.png"),
-		index: 6,
+		index: 7,
 		showDetail: false,
 		details: [{
 				title: "销售退单",
@@ -106,7 +114,7 @@ export default [{
 		url: "@/pages/Message/Message",
 		icon: require("@/images/xz-xx.png"),
 		icon1: require("@/images/xiaoxi-hui.png"),
-		index: 7
+		index: 8
 	}
 	//,
 	// {

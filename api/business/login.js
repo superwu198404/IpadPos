@@ -26,7 +26,7 @@ var GetPassWord = function(khid, userid, password, func) {
 				}
 			});
 		} else {
-			util.simpleMsg("账号错误，请检查", true);
+			util.simpleMsg("账号错误", true);
 		}
 	}, err => {
 		util.simpleMsg("校验异常", true);
@@ -102,7 +102,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
-			// POSID: posid,
+			POSID: posid,
 			KCDID: res.msg[0].KCDID,
 			DPID: res.msg[0].DPID,
 			GCID: res.msg[0].GCID,

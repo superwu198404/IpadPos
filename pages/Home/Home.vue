@@ -9,7 +9,7 @@
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
 			<component @Message="OpenMessage" v-for="c in router" :is="c.name" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="JSON.parse(JSON.stringify(meta_data))"></component>
 		</view>
-		<newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast>
+		<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 	</view>
 </template>
 

@@ -721,7 +721,6 @@
 			}
 		},
 		created: function() {
-			util.simpleMsg("xxxxxxxxxxxxxxxxxx",true);
 			that = this;
 			common.DelSale(); //主动删除过期销售单
 
