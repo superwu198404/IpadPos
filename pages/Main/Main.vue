@@ -164,7 +164,7 @@
 			</view>
 		</view>
 		<!-- 结算 -->
-		<view class="boxs" v-if="showSale">
+		<view class="boxs" v-if="false">
 			<view class="memberes">
 				<view class="meminfo" v-if="Memberinfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -463,6 +463,7 @@
 				</view>
 			</view>
 		</view>
+		<ShopCart v-if="showSale" @_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
 
@@ -530,7 +531,7 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-				// common.DelSale();//主动删除销售单
+				common.DelSale(); //主动删除销售单
 			},
 			//关闭结算
 			CloseSale: function() {
@@ -721,7 +722,7 @@
 		},
 		created: function() {
 			that = this;
-			// common.DelSale();//主动删除销售单
+			common.DelSale(); //主动删除过期销售单
 
 			that.GetRXSPDatas();
 			that.GetCurTime(); //获取时段
@@ -735,13 +736,15 @@
 				that.yn_hy = false;
 			}
 			let arr = util.getStorage("POSCS");
-			let obj1 = arr.find((r) => r.POSCS == 'YN_LRHY');
-			if (obj1 && obj1.POSCSNR && obj1.POSCSNR == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
-				setTimeout(e => {
-					uni.navigateTo({
-						url: "../MemberLogin/MemberLogin"
-					})
-				}, 1000);
+			if (arr && arr.length > 0) {
+				let obj1 = arr.find((r) => r.POSCS == 'YN_LRHY');
+				if (obj1 && obj1.POSCSNR && obj1.POSCSNR == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
+					setTimeout(e => {
+						uni.navigateTo({
+							url: "../MemberLogin/MemberLogin"
+						})
+					}, 1000);
+				}
 			}
 		}
 	}
