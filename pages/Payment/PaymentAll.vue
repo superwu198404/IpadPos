@@ -272,7 +272,6 @@
 		},
 		data() {
 			return {
-				event:null,
 				SALES: {
 					sale1: {},
 					sale2: [],
@@ -432,7 +431,7 @@
 			}
 		},
 		methods: {
-			onLoad:function(option){
+			onLoad: function(option) {
 				this.event = this.getOpenerEventChannel();
 			},
 			//单号防重处理
@@ -1202,8 +1201,9 @@
 			//点击切换支付方式
 			clickPayType: function(r, e) {
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				// if (['POLY', 'SZQ', 'MIS'].indexOf(e.currentTarget.id) !== -1)
-				// 	this.currentPayType = e.currentTarget.id; //小程序
+				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
+					this.currentPayType = e.currentTarget.id; //小程序
+				}
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
 				}
@@ -1211,7 +1211,7 @@
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					this.event.emit("ExtractBack",{
+					this.event.emit("ExtractBack", {
 						msg: "预订单支付完成!"
 					});
 					uni.navigateBack()

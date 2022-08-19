@@ -16,34 +16,38 @@
 </template>
 
 <script>
+	import util from '@/utils/util.js'
 	export default {
 		name: "newToast",
 		props: {
 			title: "",
 			yn_show: false
 		},
+		
 		data() {
 			return {
-				sec: 3
+				sec: 3,
 			};
 		},
 		methods: {
-			Close: function() {
-				this.yn_show = false;
+			AutoClose:function(){
+				let index = setInterval(util.callBind(this,function() {
+					console.log("[AutoClose]倒数：", this.sec);
+					if (this.sec > 0) {
+						this.sec -= 1;
+					} else {
+						clearInterval(index);
+						this.sec = 3;//重置计时
+						this.$emit("Close",{ msg:"消息关闭"});
+					}
+				}), 1000);
+			},
+			Close:function(){
+				this.$emit("Close",{ msg:"消息关闭"});
 			}
 		},
 		created: function() {
-			let that = this;
-			console.log("开始创建");
-			let id = setInterval(function() {
-				console.log("倒数：", that.sec);
-				if (that.sec > 0) {
-					that.sec -= 1;
-				} else {
-					clearInterval(id);
-					that.yn_show = false;
-				}
-			}, 1000);
+			this.AutoClose();
 		}
 	}
 </script>

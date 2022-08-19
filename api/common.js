@@ -361,6 +361,21 @@ var QueryRefund = async function(trade) {
 	return datas;
 }
 
+var QueryBatch = async function(sqls) {
+	let result = {}, promises = [];
+	sqls.forEach((sql_info) => {
+		promises.push(db.get().executeQry(sql_info.sql, `[QueryBatch]查询${sql_info.name}...`,
+			function(res) {
+				result[sql_info.name] = res.msg;
+			},
+			function(err) {
+				console.log(`${sql_info.name}查询执行异常:`, err);
+			}));
+	});
+	await Promise.all(promises);
+	return result;
+}
+
 //查询sql
 var Query = async function(sql) {
 	let data = null
@@ -614,6 +629,7 @@ export default {
 	GetPayWay,
 	GetPayWayAsync,
 	QueryRefund,
+	QueryBatch,
 	Query,
 	Excute,
 	Close,

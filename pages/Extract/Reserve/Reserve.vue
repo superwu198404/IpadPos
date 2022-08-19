@@ -136,6 +136,10 @@
 	import _extract from '@/api/business/extract.js'
 	import util from '@/utils/util.js';
 	import {
+		LocalDataQuery,
+		ServiceDataQuery
+	} from '@/bll/ExtractBusiness/bll.js';
+	import {
 		Refund
 	} from '@/bll/RefundBusiness/bll.js'
 	import {
@@ -370,13 +374,13 @@
 					}));
 				} else { //取消操作 => 退款
 					console.log("[预定取消]退单确认!开始退款...");
-					Refund(this.details.info.BILL).then(util.callBind(this, function(refund_data) { //处理退款所需的业务信息数据
+					Refund(LocalDataQuery(this.details.info.BILL),ServiceDataQuery(this.details.info.BILL)).then(util.callBind(this, function(refund_data) { //处理退款所需的业务信息数据
 						this.$store.commit('set-location', refund_data); //把数据传入下个页面
 						uni.navigateTo({
 							url: "../Payment/PaymentAll",
 							events: {
 								ExtractBack: function(data) {
-									console.log("支付完成!", data);
+									console.log("[ExtractBack]退款完成!", data);
 								}
 							}
 						})

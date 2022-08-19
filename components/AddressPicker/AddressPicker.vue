@@ -67,7 +67,8 @@
 						console.log("[GetAddress]高德地址查询:", this.list);
 					}
 					else{
-						util.simpleMsg("查询失败!")
+						// util.simpleMsg("!")
+						this.$emit("Message",{ type:'tips',msg:'查询失败!' })
 					}
 				}))
 			},

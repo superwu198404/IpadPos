@@ -266,7 +266,7 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 		}
 	}
 	let res = pm_data;
-	asyncFuncArr(pm_data, callbacklist, catchfun, finallyfun);
+	await asyncFuncArr(pm_data, callbacklist, catchfun, finallyfun);
 };
 
 var showloding = function(yn_show, pm_txt) {
@@ -283,7 +283,7 @@ var hideloding = function(yn_show, pm_txt) {
 }
 
 var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
-	return asyncFunc(pm_data, callbackfun, null, null, catchfun, null);
+	return await asyncFunc(pm_data, callbackfun, null, null, catchfun, null);
 }
 
 var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun) {

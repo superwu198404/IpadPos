@@ -22,7 +22,7 @@
 				DKFNAME: '默认大客户',
 				BMID: "", //对应program.xsbm pos 这个参数为空字符串
 				GCID: "K201",
-				DQID: 'K01000',//地区ID（销售地区）
+				DQID: 'K01000', //地区ID（销售地区）
 				NAME: "武汉xxx",
 				MERID: "999990053990001",
 				deviceno: "13001001",
@@ -117,5 +117,8 @@
 </script>
 
 <style>
-
+	/* uni-toast .uni-toast {
+		width: auto !important;
+		border: 1px solid red; 
+	} */
 </style>

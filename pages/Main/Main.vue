@@ -10,7 +10,6 @@
 
 <template>
 	<view class="content">
-		<!-- <newToast :yn_show="true" :title="'测试一下'"></newToast> -->
 		<!-- <menu_page :menuIndex="0"></menu_page> -->
 		<view class="right">
 			<!-- <menu_head></menu_head> -->
@@ -529,6 +528,7 @@
 			}
 		},
 		methods: {
+			//使用消息弹框 this.$emit("Message",{ msg:"消息提示" })
 			onLoad: function() {
 				that = this;
 				common.DelSale(); //主动删除销售单
@@ -721,6 +721,7 @@
 			}
 		},
 		created: function() {
+			util.simpleMsg("xxxxxxxxxxxxxxxxxx",true);
 			that = this;
 			common.DelSale(); //主动删除过期销售单
 

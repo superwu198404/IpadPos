@@ -7,8 +7,9 @@
 		<view class="right">
 			<Head></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component v-for="c in router" :is="c.name" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="JSON.parse(JSON.stringify(meta_data))"></component>
+			<component @Message="OpenMessage" v-for="c in router" :is="c.name" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="JSON.parse(JSON.stringify(meta_data))"></component>
 		</view>
+		<newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast>
 	</view>
 </template>
 
@@ -54,6 +55,9 @@
 					name:"Main",
 					title:"销售"
 				},
+				view:{
+					message:false
+				},
 				router: [],
 				meta_data:{}
 			}
@@ -66,6 +70,15 @@
 			}
 		},
 		methods: {
+			OpenMessage:function(data){
+				console.log("[OpenMessage]消息框打开!",data);
+				this.view.message = true;
+				this.$refs.message.AutoClose();
+			},
+			CloseMessage:function(data){
+				console.log("[CloseMessage]消息框关闭!",data);
+				this.view.message = false;
+			},
 			SwitchPage: function(data) {
 				console.log("[SwitchPage]页面切换:", data);
 				console.log("[SwitchPage]页面名称:", data.name);
