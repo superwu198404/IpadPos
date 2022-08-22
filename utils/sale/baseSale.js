@@ -1,34 +1,31 @@
 import sale from '@/utils/sale/saleClass.js';
 
-
-
-
 var XsTypeObj=
 {
 	
 	sale://普通销售模式，最基本的模式
 	{
-		typeCode:"1",
+		xstype:"1",
 		nameSale:"销售",
 		iconHui:"@/images/xiaoshou-hui.png",
 		iconCurr:"@/images/xiaosho.png",
 		selectClass:"curr", //重要属性当前的选择
 		spExistOnSwitchType:"false",//切换到此处时是否需要清空商品
+		this.lockRows  =0; //当前锁定的行数为0
 		$initSale:function(pm_type,pm_obj)
 		{
 		   //普通销售具有所有的权限
 		   this.currentOperation=[
 			                      OperEnum.hy,
-								  //OperEnum.DKF,
-								 // OperEnum.Disc,
+								  OperEnum.DKF,
+								  OperEnum.Disc,
 								  OperEnum.SpList,
-								 // OperEnum.yd,
-								 // OperEnum.sth,
-								 // OperEnum.ydcust
+								  OperEnum.yd,
+								  OperEnum.sth,
+								  OperEnum.ydcust
 								 ]
 		   this.lockRows  =0;						 
 		   this.setOperationArr([OperEnum.hy,OperEnum.SpList]);
-		   
 		},
 		///打印的方法
 		$print:function(e)
@@ -67,7 +64,7 @@ var XsTypeObj=
 	},
 	saleYd:
 	{
-		typeCode:"3",
+		xstype:"3",
 		nameSale:"预定",
 		iconHui:"@/images/images/yuding-hui.png",
 		iconCurr:"@/images/yuding.png",
@@ -76,7 +73,7 @@ var XsTypeObj=
 	
 	seleYdtq:
 	{
-		typeCode:"5",
+		xstype:"5",
 		nameSale:"预定提取",
 		iconHui:"@/images/wxz-ydtq.png",
 		iconCurr:"@/images/xz-ydtq.png",
@@ -85,7 +82,7 @@ var XsTypeObj=
 	},
 	seleWebWeb:
 	{
-		typeCode:"8",
+		xstype:"8",
 		nameSale:"线上订单提取",
 		iconHui:"@/images/xiaoshou-hui.png",
 		iconCurr:"@/images/xiaosho.png",
@@ -94,7 +91,7 @@ var XsTypeObj=
 	},
 	seleSx:
 	{
-		typeCode:"6",
+		xstype:"6",
 		nameSale:"赊销",
 		iconHui:"@/images/xiaoshou-hui.png",
 		iconCurr:"@/images/xiaosho.png",
@@ -103,7 +100,7 @@ var XsTypeObj=
 	},
 	seleTh:
 	{
-		typeCode:"2",
+		xstype:"2",
 		nameSale:"销售退货",
 		iconHui:"@/images/xstd-wxz.png",
 		iconCurr:"@/images/xstd.png",
@@ -111,7 +108,7 @@ var XsTypeObj=
 	},
 	saleYdqx:
 	{
-		typeCode:"4",
+		xstype:"4",
 		nameSale:"预定取消",
 		iconHui:"@/images/ydqx-wxz.png",
 		iconCurr:"@/images/ydqx.png",
@@ -119,7 +116,7 @@ var XsTypeObj=
 	},
 	saleSxth:
 	{
-		typeCode:"7",
+		xstype:"7",
 		nameSale:"赊销退货",
 		iconHui:"@/images/sxtd-wxz.png",
 		iconCurr:"@/images/sxtd.png",
@@ -127,22 +124,28 @@ var XsTypeObj=
 	},
 }
 
-function  GetSale(pm_store,pm_posid,pm_ryid,pm_page)
+function   GetSale(pm_store,pm_posid,pm_ryid,pm_page,pm_splist)
 {
-  this.Storeid   =  pm_store;
-  this.Posid     =  pm_posid;
-  this.ryid      =  pm_ryid;
-  this.saledate  =  "";
-  this.saletime  =  new Date();
-  this.xsType    =  ""
-  this.bill_type =  "";
-  this.bill      =  null;
-  this.Page      = pm_page;
-  this.saleDefDkh ="80000000"
+  this.Storeid    =  pm_store;
+  this.Posid      =  pm_posid;
+  this.ryid       =  pm_ryid;
+  this.saledate   =  "";
+  this.saletime   =  new Date();
+  this.xsType     =  "sale"
+  this.bill_type  =  sale.saleBillType[this.xsType];
+  this.bill       =  null;
+  this.Page       =  pm_page;
+  this.saleDefDkh = "80000000"
+  this.disc=null;  //当前选择的折扣方式
   this.Msale     ={};
+  this.currentType =null;//当前的销售模式
+  this.payPassWord=false;//当前模式支付是否要输入登录密码
+  this.hy  ={}//会员的结构
+  ///所有商品的列表,具体参考 utils.sale.xs_sp_init.js
+  this.Allsplist = pm_splist;
  // this.oldOperation = null;
   ///当前锁定的行为多少
-  this.lockRows  =0;
+  
   const  typeStr  ="sale"
   //操作的简称
   this.OperEnum=
@@ -168,8 +171,7 @@ function  GetSale(pm_store,pm_posid,pm_ryid,pm_page)
 					   "openSpItemInput":false,//单品详细是否打开
 					   "openFzCx":false,
                      }
-  //会员的结构
-  this.hy  ={}
+  
   ///批量设置  哪些功能显示 哪些暂时关闭
   this.setOperationArr=function(pm_input_arr)
   {
@@ -206,16 +208,17 @@ function  GetSale(pm_store,pm_posid,pm_ryid,pm_page)
 	  this.Msale      ={};
 	  this.xsType     = pm_type
 	  this.bill_type  = sale.saleBillType[pm_type];
-	  if(XsTypeObj[typeStr+pm_type])
+	  if(XsTypeObj[this.typeStr+pm_type])
 	  {
-		  let typeObj =  XsTypeObj[typeStr+pm_type];
+		 
+		  this.currentType = XsTypeObj[this.typeStr+pm_type];
 		  let arr     = Object.keys(typeObj)
 		  for(var i=0;i<arr.length;i++   )
 		  {
 			  let key = arr[i];
-			  this[key]  =  typeObj[key];
+			  this[key]  =  this.currentType[key];
 		  }
-		  this.$initSale(pm_type);
+		  this.currentType.$initSale(pm_type);
 	  }
 	  else
 	  {
@@ -223,6 +226,22 @@ function  GetSale(pm_store,pm_posid,pm_ryid,pm_page)
 	  }
   }
   
+  
+  this.addS002  =function(pm_id,pm_qty,pm_setlist)
+  {
+  	   //新增002
+  	   //水吧新增008
+  }
+  this.updateS002 =function(pm_id,pm_qty)
+  {
+  	    //更新002 
+  		//更新008
+  }
+  this.deleteS002 =function(pm_id)
+  {
+  	   //删除008
+  	   //删除002
+  }
   //创建新的销售单重置销售模式 
   this.ydSaleList  =function(pm_obj,e)
   {   
@@ -240,6 +259,7 @@ function  GetSale(pm_store,pm_posid,pm_ryid,pm_page)
 	  if( !this.Msale)
 	  {
 		  this.Msale  = new sale.sale001();
+		  //主单据赋值
 	  }
 	  this.$getSp(pm_spid,pm_qry);
   }
