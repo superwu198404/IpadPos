@@ -6,8 +6,6 @@ import {
 } from '@/models/PaymentAll/models.js';
 import common from '@/api/common.js';
 import util from '@/utils/util.js';
-const global = getApp().globalData.store;
-const menber = getApp().globalData.hyinfo;
 /**
  * 支付处理操作 
  * @param {*} products 商品列表 
@@ -24,9 +22,9 @@ export const Payment =async function(products) {
 		BILL: "", //payall 追加
 		SALEDATE: "", //payall 追加
 		SALETIME: "", //payall 追加
-		KHID: global.KHID,
-		POSID: global.POSID,
-		RYID: global.RYID,
+		KHID: getApp().globalData.store.KHID,
+		POSID: getApp().globalData.store.POSID,
+		RYID: getApp().globalData.store.RYID,
 		BILL_TYPE: "Z101", //销售类型
 		XSTYPE: "1",
 		XS_BILL: "",
@@ -43,17 +41,17 @@ export const Payment =async function(products) {
 		CHANGENET: 0,
 		CXTNET: 0,
 		TCXDISC: 0,
-		CUID: menber?.hyId,
+		CUID: getApp().globalData.hyinfo?.hyId,
 		CARDID: "",
 		THYDISC: 0,
 		TDISC: 0, //payall 追加
 		YN_SC: 'N',
-		GSID: global.GSID, //公司
-		GCID: global.GCID,
-		DPID: global.DPID,
-		KCDID: global.KCDID,
-		BMID: global.BMID,
-		DKFID: global.DKFID,
+		GSID: getApp().globalData.store.GSID, //公司
+		GCID: getApp().globalData.store.GCID,
+		DPID: getApp().globalData.store.DPID,
+		KCDID: getApp().globalData.store.KCDID,
+		BMID: getApp().globalData.store.BMID,
+		DKFID: getApp().globalData.store.DKFID,
 		XSPTID: 'POS',
 		YN_OK: 'X',
 		THTYPE: 0,
@@ -65,8 +63,8 @@ export const Payment =async function(products) {
 			BILL: "", //payall 追加
 			SALEDATE: "", //payall 追加
 			SALETIME: "", //payall 追加
-			KHID: global.KHID,
-			POSID: global.POSID,
+			KHID: getApp().globalData.store.KHID,
+			POSID: getApp().globalData.store.POSID,
 			SPID: item.SPID,
 			NO: index,
 			PLID: item.PLID,
@@ -84,14 +82,17 @@ export const Payment =async function(products) {
 			MONTH: '', //payall 追加
 			WEEK: '', //payall 追加
 			TIME: '', //payall 追加
-			RYID: global.RYID,
-			GCID: global.GCID,
-			DPID: global.DPID,
-			KCDID: global.KCDID,
-			BMID: global.BMID,
+			RYID: getApp().globalData.store.RYID,
+			GCID: getApp().globalData.store.GCID,
+			DPID: getApp().globalData.store.DPID,
+			KCDID: getApp().globalData.store.KCDID,
+			BMID: getApp().globalData.store.BMID,
 			SKYDISCOUNT: item.SKYDISCOUNT
 		}, "SKYDISCOUNT");
 	});
+	console.log("[Payment]sale1",sale1_obj);
+	console.log("[Payment]sale2",sale2_arr);
+	console.log("[Payment]sale3",sale3_arr);
 	return await TransferForPaymentAll( //TransferForPaymentAll 简化了部分传值，下面是针对退款需要的值，根据所需也可以调整为支付所需的传值
 		{
 			sale1_obj: sale1_obj,

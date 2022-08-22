@@ -2,6 +2,9 @@ import {
 	BatchQuery
 } from '@/api/business/da.js';
 import {
+		ErrorData
+	} from '@/bll/Common/bll.js'
+import {
 	TransferForPaymentAll
 } from '@/models/PaymentAll/models.js';
 import common from '@/api/common.js';
@@ -10,43 +13,29 @@ import dateformat from '@/utils/dateformat.js';
 
 /**
  * 退货（款）处理操作 
- * @param {*} sqlite_source 同步/异步 参数，传入本地 sale1,2,3 数据，数据结构必须为 { sale1:{},sale2:[],sale3:[] }
- * @param {*} oracle_source 同步/异步 参数，传入服务端 sale1,2,3 数据，数据结构必须为 { sale1:{},sale2:[],sale3:[] }
- */
-export const Refund = async function(sqlite_source,oracle_source) {
+ * @param {*} source 传入 sale1,2,3 数据，数据结构必须为 { sale1:{},sale2:[],sale3:[] }
+ * @param {*} bill_type 销售单类型（销售退款、预定退款...）
+*/
+export const Refund = async function(source,bill_type) {
 	//判断sale1,sale2,sale3数据是否是正常数据
-	let ErrorData = (data) => !data.sale1 || Object.keys(data.sale1).length == 0 || data.sale2.length == 0 ||
-		data.sale3.length == 0, data = null;
-	if(sqlite_source.constructor === Promise)//如果是异步数据，则等待
-		data = await sqlite_source;
-	else
-		data = sqlite_source;
-	console.log("[Refund]本地数据:", data);
-	if (ErrorData(data)) { //如果服务器查不到
-		if(oracle_source.constructor === Promise)//如果是异步数据，则等待
-			data = await oracle_source;
-		else
-			data = oracle_source;
-		console.log("[Refund]服务器数据:", data);
-		if (ErrorData(data)) {
-			util.simpleMsg("订单不存在!", true);
-			return;
-		}
+	if (ErrorData(source)) { //如果服务器查不到
+		console.log("[RefundBusiness-Refund]销售单数据异常!请检查 sale1、2、3 是否有数据为空!");
+		return;
 	}
 	//适配 PaymentAll 
-	data.sale2.map(item => {
+	source.sale2.map(item => {
 		item.AMOUNT = item.NET;
 		return item;
 	})
-	console.log("[Refund]SALES：", [data.sale1, data.sale2, data.sale3]);
+	console.log("[Refund]SALES：", [source.sale1, source.sale2, source.sale3]);
 	return await TransferForPaymentAll( //TransferForPaymentAll 简化了部分传值，下面是针对退款需要的值，根据所需也可以调整为支付所需的传值
 		{
-			sale1_obj: data.sale1, //001 主单 数据对象
-			sale2_arr: data.sale2, //002 商品 数据对象集合
-			sale3_arr: data.sale3, //002 商品 数据对象集合
-			SKY_DISCOUNT: data.sale1.BILLDISC,
+			sale1_obj: source.sale1, //001 主单 数据对象
+			sale2_arr: source.sale2, //002 商品 数据对象集合
+			sale3_arr: source.sale3, //002 商品 数据对象集合
+			SKY_DISCOUNT: source.sale1.BILLDISC,
 			//退款的类型判断类的值👇
-			BILL_TYPE: "Z151",
+			BILL_TYPE: bill_type,
 			XS_TYPE: "2",
 			actType: common.actTypeEnum.Refund,
 		})
@@ -99,7 +88,7 @@ export const PaymentToRefundSALE001 = function(sale, config = {
 	sale_refund.XS_GSID = raw.GSID;
 	sale_refund.XSTYPE = config_assign.XS_TYPE;
 	sale_refund.BILL_TYPE = config_assign.BILL_TYPE;
-	console.log("[PaymentToRefundSALE001]退款对象生成完毕!",sale_refund);
+	console.log("[PaymentToRefundSALE001]退款对象生成完毕!", sale_refund);
 	return sale_refund;
 }
 
@@ -121,7 +110,7 @@ export const PaymentToRefundSALE002 = function(sale_arr, config = {
 	let sale_after = [];
 	console.log("[PaymentToRefundSALE002]退款对象生成开始!");
 	sale_arr.forEach((sale_raw) => {
-		let sale = Object.assign({},sale_raw);
+		let sale = Object.assign({}, sale_raw);
 		BatchInverse(sale, ['NET', 'DISCRATE', 'DISC', 'QTY']);
 		sale.BILL = config_assign.REFUND_NO;
 		sale.SALEDATE = saledate;
@@ -132,9 +121,9 @@ export const PaymentToRefundSALE002 = function(sale_arr, config = {
 			.getMonth() + 1,
 			new Date().getDay());
 		sale.TIME = new Date().getHours();
-		sale_after.push(util.hidePropety(sale,"NAME","AMOUNT"));
+		sale_after.push(util.hidePropety(sale, "NAME", "AMOUNT"));
 	});
-	console.log("[PaymentToRefundSALE002]退款对象生成完毕!",sale_after);
+	console.log("[PaymentToRefundSALE002]退款对象生成完毕!", sale_after);
 	return sale_after;
 }
 
@@ -156,13 +145,13 @@ export const PaymentToRefundSALE003 = function(sale_arr, config = {
 	let sale_after = [];
 	console.log("[PaymentToRefundSALE003]退款对象生成开始!");
 	sale_arr.forEach((sale_raw) => {
-		let sale = Object.assign({},sale_raw);
-		BatchInverse(sale, ['AMT','DISC','FAMT','RATE']);
+		let sale = Object.assign({}, sale_raw);
+		BatchInverse(sale, ['AMT', 'DISC', 'FAMT', 'RATE']);
 		sale.BILL = config_assign.REFUND_NO;
 		sale.SALEDATE = saledate;
 		sale.SALETIME = saletime;
 		sale_after.push(sale);
 	})
-	console.log("[PaymentToRefundSALE003]退款对象生成完毕!",sale_after);
+	console.log("[PaymentToRefundSALE003]退款对象生成完毕!", sale_after);
 	return sale_after;
 }
