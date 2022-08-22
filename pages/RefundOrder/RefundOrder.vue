@@ -186,6 +186,9 @@
 	import util from '@/utils/util.js';
 	import _refund from '@/api/business/refundorder.js';
 	import {
+		ErrorData
+	} from '@/bll/Common/bll.js'
+	import {
 		Refund,
 		PaymentToRefundSALE001,
 		PaymentToRefundSALE002,
@@ -294,7 +297,29 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
-			Confirm: function() {
+			Confirm:async function() {
+				let data = await LocalDataQuery(this.Order.BILL);
+				if(ErrorData(data)){
+					console.log("[RefundOrder-Confirm]本地未查询到数据!");
+				}
+				else{
+					let sale1 = data.sale1.length && data.sale1.length > 0 ? data.sale1[0] : data.sale1;
+					sale1.XSTYPE = '2';
+					sale1.BILL_TYPE = 'Z151';
+					console.log("[Refund-Confirm]sale1数据:",data.sale1);
+					this.$emit("Switch", {
+						name: "Main",
+						title: "销售",
+						params: {
+							order: sale1,
+							goods: data.sale2,
+							payments: data.sale3,
+							open: true
+						},
+					})
+				}
+			},
+			_Confirm: function() {
 				console.log("[Confirm]退单确认!开始退款...", this.Order.BILL);
 				//处理退款所需的业务信息数据
 				Refund(LocalDataQuery(this.Order.BILL),ServiceDataQuery(this.Order.BILL)).then(util.callBind(this, async function(refund_data) {

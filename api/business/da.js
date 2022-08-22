@@ -39,7 +39,7 @@ export const BatchQuery = async function(sqls, succesFunc, errorFunc) {
 			if (succesFunc) succesFunc(res);
 		},
 		function(error) {
-			console.log("[BatchQuery]异常结果:", res);
+			console.log("[BatchQuery]异常结果:", error);
 			code = false;
 			result = error;
 			if (errorFunc) succesFunc(error);

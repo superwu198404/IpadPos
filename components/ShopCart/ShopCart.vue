@@ -233,8 +233,10 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
-	import _extract from '@/bll/ExtractBusiness/bll.js';
-
+	import _refund from '@/api/business/refundorder.js';
+	import {
+		Accept
+	} from '@/bll/Common/bll.js';
 	var that;
 	export default {
 		name: "ShopCart",
@@ -243,7 +245,7 @@
 			_Products: Array, //商品数据
 			_PayDatas: Array, //付款数据
 			_Others: Object, //其他数据
-			_Accept:Function
+			_Accept: Function
 		},
 		data() {
 			return {
@@ -327,9 +329,61 @@
 			CloseSale: function() {
 				this.$emit("_CloseSale", {});
 			},
-			Comfirm:function(){
+			Comfirm:async function() {
 				console.log("[Comfirm]确认!");
-				this._Accept();
+				let result = null;
+				console.log("[ShopCar-Comfirm]sale1:",this.Order);
+				console.log("[ShopCar-Comfirm]sale2:",this.Products);
+				console.log("[ShopCar-Comfirm]sale3:",this.PayDatas);
+				if (this.Order.XSTYPE == 1) {
+					result = await Accept({
+						xs_type: this.Order.XSTYPE,
+						bill_type: this.Order.BILL_TYPE,
+						products: this.Products
+					})
+				} else {
+					if(this.Order.BILL_TYPE == 'Z154'){//赊销退单需要调用api生成数据
+						_refund.CreditOrderRefund({
+							khid: this.KHID,
+							posid: this.POSID,
+							ryid: this.RYID,
+							dkhname: this.Order.DKFNAME,
+							bill: this.Order.BILL,
+							saledata: this.Order.SALEDATE //new Date().toLocaleDateString()
+						}, res => {
+							console.log("退单结果：", res);
+							if (res.code) {
+								util.simpleMsg("退单成功");
+								setTimeout(r => {
+									that.GetOrders();
+								}, 1500);
+							} else {
+								util.simpleMsg("退单失败:" + res.msg, true);
+							}
+						});
+						return;//避免进入支付页面
+					} else {
+						result = await Accept({
+							xs_type: this.Order.XSTYPE,
+							bill_type: this.Order.BILL_TYPE,
+							sales: {
+								sale1: this.Order,
+								sale2: this.Products,
+								sale3: this.PayDatas
+							}
+						})
+					}
+				}
+				this.$store.commit('set-location', result); //把数据存入
+				uni.navigateTo({
+					url: "../Payment/PaymentAll",
+					events: {
+						ExtractBack: util.callBind(this, function(data) {
+							console.log(`[ExtractBack]支付完成!`, data);
+							this.$emit("_CloseSale");
+						})
+					}
+				})
 			},
 			//会员登录
 			Memberlogin: function(e) {

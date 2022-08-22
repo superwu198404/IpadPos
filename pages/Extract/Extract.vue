@@ -77,7 +77,11 @@
 	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
 	import _extract from '@/api/business/extract.js'
 	import {
-		Accept
+		ErrorData
+	} from '@/bll/Common/bll.js'
+	import {
+		LocalDataQuery,
+		ServiceDataQuery
 	} from '@/bll/ExtractBusiness/bll.js'
 	import {
 		getReserveOrders
@@ -156,35 +160,45 @@
 					khid: this.KHID,
 					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
 					bill: item.BILL
-				}, util.callBind(this, function(res) {
+				}, util.callBind(this,async function(res) {
 					if (res.code) {
-						this.$emit("Switch", {
-							name: "Main",
-							title: "销售",
-							params: {
-								order: item,
-								goods: JSON.parse(res.data),
-								accept: util.callBind(this,async function() {
-									console.log(`[预定${this.view.mode?'提取':'取消'}]确认${this.view.mode?'提取':'取消'}!`);
-									let result = await Accept({
-										bill: item.BILL,
-										product: JSON.parse(res.data),
-										xs_type: 1,
-										bill_type: "Z101"
-									})
-									this.$store.commit('set-location', result); //把数据传入下个页面
-									uni.navigateTo({
-										url: "../Payment/PaymentAll",
-										events: {
-											ExtractBack: util.callBind(this,function(data) {
-												console.log(`[ExtractBack]支付完成!`, data);
-												this.$emit("Close");
-											})
-										}
-									})
+						if(this.view.mode){//结算
+							item.XSTYPE = '1';
+							item.BILL_TYPE = 'Z121';
+							this.$emit("Switch", {
+								name: "Main",
+								title: "销售",
+								params: {
+									order: item,
+									goods: JSON.parse(res.data),
+									open: true
+								}
+							})
+						}
+						else{//退款
+							let data = await LocalDataQuery(item.BILL);
+							if(ErrorData(data)){
+								console.log("[ExtractOrder]本地未查询到数据!");
+								data = await ServiceDataQuery(item.BILL);//从服务器查询
+							}
+							if(ErrorData(data)){
+								console.log("[ExtractOrder]服务端未查询到数据!");
+							}
+							else{
+								data.sale1.XSTYPE = '2';
+								data.sale1.BILL_TYPE = 'Z171';
+								this.$emit("Switch", {
+									name: "Main",
+									title: "销售",
+									params: {
+										order: data.sale1,
+										goods: data.sale2,
+										payments: data.sale3,
+										open: true
+									},
 								})
 							}
-						})
+						}
 					} else
 						util.simpleMsg(res.msg, true, res);
 				}))
@@ -225,7 +239,7 @@
 		},
 		mounted() {
 			console.log("[Extract-Mounted]触发!");
-			if (this.meta && this.meta.mode !== undefined) this.view.mode = this.meta.mode; //跳转传值
+			if (this.meta.data && this.meta.data.mode !== undefined) this.view.mode = this.meta.data.mode; //跳转传值
 			console.log("[Extract-Mounted]元数据:", this.meta);
 			this.GetList();
 		}

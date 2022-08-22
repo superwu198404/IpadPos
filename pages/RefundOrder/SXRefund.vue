@@ -109,7 +109,7 @@
 								</view>
 								<view class="operat">
 									<!-- <button class="btn" @click="ConfirmReback()">取消</button> -->
-									<button class="btn" @click="ConfirmToPay(item)">确认退单</button>
+									<button class="btn" @click="ConfirmToPay()">确认退单</button>
 								</view>
 							</view>
 						</view>
@@ -305,8 +305,21 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
-			//确认去退货
 			ConfirmToPay: function(order) {
+				console.log("[ConfirmToPay]order:",this.Order);
+				this.Order.XSTYPE = '2';
+				this.Order.BILL_TYPE = 'Z154';
+				this.$emit("Switch", {
+					name: "Main",
+					title: "销售",
+					params: {
+						order: this.Order,
+						goods: this.Details
+					}
+				})
+			},
+			//确认去退货
+			_ConfirmToPay: function(order) {
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',

@@ -1,11 +1,14 @@
 import common from '@/api/common.js';
 import util from '@/utils/util.js';
-
-// const glabal = getApp().globalData.store;
+import {
+	Refund
+} from '@/bll/RefundBusiness/bll.js'
+import {
+	Payment
+} from '@/bll/PaymentBusiness/bll.js'
 
 export const GetPayWayList = async function() {
 	let PayWayList = [];
-	// console.log("[GetPayWayList]客户端ID:",glabal);
 	await common.GetPayWayAsync(getApp()?.globalData?.store?.KHID ?? "K200QTD005", function(res) {
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
@@ -76,4 +79,43 @@ export const GetPayWayList = async function() {
 	});
 	console.log("[PayWayList-Outer]获取到的支付方式：", PayWayList);
 	return PayWayList;
+}
+
+/**
+ * 检测 sale 数据是否正常（判断 sale1、2、3是否都有数据，其中兼容了sale1为数组的情况）
+ * @param {*} data 
+ */
+export const ErrorData = (data) => 
+		!data.sale1 || 
+		Array.isArray(data.sale1) ? data.sale1.length == 0 : Object.keys(data.sale1).length == 0 || //这里因为有可能回传入一个数组类型的sale1，所以做个判断
+		data.sale2.length == 0 ||
+		data.sale3.length == 0;
+		
+/**
+ * 生成销售中 [支付] 或 [退款] 操作所需数据源
+ * @param {*} data 
+ * xs_type [必须]
+ * bill_type [必须]
+ * products [可选] => 当 xs_type 为 支付 的时候为必须，用于生成 sale2 的数据。
+ * local_source、server_source [可选] => 当 xs_type 为 退款 的时候为必须，用于生成对应支付的 sale1、2、3 数据。
+ */
+const accept_def_params = {
+	sales:{
+		sale1:{},
+		sale2:[],
+		sale3:[],
+	},
+	products:[],
+	xs_type: "",//是 支付(1) 还是 退款(2)
+	bill_type: ""//是 支付(Z101) 还是 退款(Z151)
+}
+export const Accept = async function(params_obj = accept_def_params) {
+	let params = Object.assign(accept_def_params,params_obj);
+	if (params.xs_type == 1) { //提取操作 => 支付
+		console.log("[预定提取]结算确认!开始结算...",params)
+		return await Payment(params.products);
+	} else { //取消操作 => 退款
+		console.log("[预定取消]退单确认!开始退款...");
+		return await Refund(params.sales,params.xs_type);
+	}
 }

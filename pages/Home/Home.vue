@@ -3,13 +3,12 @@
 </style>
 <template>
 	<view class="content" style="overflow: hidden;">
-		<Page @switch="SwitchPage"></Page>
+		<Page @switch="SwitchPage" :name="selected.name" :title="selected.title"></Page>
 		<view class="right">
 			<Head></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
 			<component @Switch="SwitchPage" @Message="OpenMessage" v-for="c in router" :is="c.name" :ref="c.title"
-				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive"
-				:meta="meta_data"></component>
+				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="meta_data"></component>
 		</view>
 		<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 	</view>
@@ -60,6 +59,10 @@
 					name: "Main",
 					title: "销售"
 				},
+				selected: {
+					name: "Main",
+					title: "销售"
+				},
 				view: {
 					message: false
 				},
@@ -88,21 +91,25 @@
 			},
 			SwitchPage: function(data) {
 				console.log("[SwitchPage]页面切换:", data);
-				this.current.name = data.name;
-				this.current.title = data.title;
-				console.log("[SwitchPage]组件name:", this.current.name);
-				console.log("[SwitchPage]组件title:", this.current.title);
-				this.$set(this.meta_data, `data`, data?.meta ?? {});
-				this.$set(this.meta_data, `params`, data?.params ?? {});
-				let vue = this.$refs[data.title];
-				if (vue) {
-					if (Array.isArray(vue)) {
-						vue = vue[0];
+				this.selected.name = data.name;
+				this.selected.title = data.title;
+				if (data.switch || data.switch === undefined) {
+					this.current.name = data.name;
+					this.current.title = data.title;
+					console.log("[SwitchPage]组件name:", this.current.name);
+					console.log("[SwitchPage]组件title:", this.current.title);
+					this.$set(this.meta_data, `data`, data?.meta ?? {});
+					this.$set(this.meta_data, `params`, data?.params ?? {});
+					let vue = this.$refs[data.title];
+					if (vue) {
+						if (Array.isArray(vue)) {
+							vue = vue[0];
+						}
 					}
+					vue?.$nextTick(function() {
+						vue?.Show ? vue.Show() : undefined;
+					});
 				}
-				vue?.$nextTick(function() {
-					vue?.Show ? vue.Show() : undefined;
-				});
 			},
 			ComponentRecursion: function(tree, all) {
 				tree.forEach(util.callBind(this, function(item) {

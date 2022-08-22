@@ -463,7 +463,7 @@
 				</view>
 			</view>
 		</view>
-		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_Accept="HandleFunc" @_CloseSale="CloseSale"></ShopCart>
+		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment" @_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
 
@@ -525,7 +525,7 @@
 				MDCXDatas: [],
 				ShopCarOrder:{},
 				ShopCarProduct:[],
-				HandleFunc:null,
+				ShopCarPayment:[],
 				ZKDatas: [],
 				curZKType: "BZ",
 				RXSPDatas: [], //日销数据集合
@@ -540,7 +540,8 @@
 				if(this.meta.params){//是否存在参数
 					this.ShopCarOrder = this.meta.params.order;
 					this.ShopCarProduct = this.meta.params.goods;
-					this.HandleFunc = this.meta.params.accept;
+					this.ShopCarPayment = this.meta.params.payments;
+					this.showSale = this.meta.params.open ?? false;
 				}
 			},
 			//使用消息弹框 this.$emit("Message",{ msg:"消息提示" })

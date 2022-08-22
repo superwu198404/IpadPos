@@ -8,7 +8,7 @@
 			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
 		</view>
 		<view class="menu">
-			<view v-for="(item,index) in urls" :class="menuIndex==item.index?'curr':''" @click="ToPage(item)">
+			<view v-for="(item,index) in urls" :class="Selected(item.name,item.title)?'curr':''" @click="ToPage(item)">
 				<image class="xz" :src="item.icon" mode="widthFix"></image>
 				<image class="wx" :src="item.icon1" mode="widthFix"></image>
 				<text>{{item.title}}</text>
@@ -31,8 +31,20 @@
 
 <script>
 	import router from '@/utils/router.js'
+	import util from '@/utils/util.js';
 	export default {
 		name: "Page",
+		props: {
+			name: String,
+			title: String
+		},
+		computed: {
+			Selected: function() {
+				return util.callBind(this, function(name, title) {
+					return (this.name === name) && (this.title === title)
+				});
+			}
+		},
 		data() {
 			return {
 				urls: router,
@@ -55,13 +67,18 @@
 					// 		console.log(r);
 					// 	}
 					// })
-					this.$emit("switch", e);
+
 					this.menuIndex = e.index;
 					if (e.details)
 						this.sec_index = -1
 					else
 						this.sec_index = e.index;
 				}
+				this.$emit("switch", {
+					switch: e.url ? true : false,
+					name: e.name,
+					title: e.title
+				});
 				this.menuIndex = e.index;
 				this.urls.map((item, index) => {
 					if (item.title != e.title) {
