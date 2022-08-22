@@ -39,7 +39,7 @@
 							</label>
 							<label><text>*提货时间：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
-								<picker mode="time" @change="timeChange" :start="startTime" :end="endTime">
+								<picker mode="time" @change="timeChange">
 									<view>{{Order.TH_TIME}}</view>
 								</picker>
 							</label>
@@ -333,8 +333,10 @@
 					that.endTime = that.ETIME;
 				} else if (that.Order.THTYPE == '2') { //现卖
 					that.startTime = dateformat.getDateByParam('h') + ":" + dateformat.getDateByParam('m');
-					that.endTime = "19";
+					that.endTime = "19:00";
 				}
+				console.log("开始时间：", that.startTime);
+				console.log("开始时间1：", that.endTime);
 			},
 			//弹出预定信息录入框
 			showReserve: function() {
@@ -597,6 +599,16 @@
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date().setHours(new Date().getHours() +
 							1)) {
 						util.simpleMsg("提货时间小于一小时内", true);
+						return;
+					}
+				}
+				if (that.Order.THTYPE == '2') {//现卖限制时间不能早于当前和19点以后
+					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
+						util.simpleMsg("提货时间小于当前时间", true);
+						return;
+					}
+					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
+						util.simpleMsg("提货时间晚于19点", true);
 						return;
 					}
 				}

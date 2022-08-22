@@ -15,8 +15,9 @@
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
-					<!-- <text v-for="(item,index) in MsgData" @click="ReadMsg(item)">{{item.title}}</text> -->
-					<text>测试消息...</text>
+					<text v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
+						@click="ReadMsg(item)">{{item.title}}</text>
+					<!-- <text>测试消息...</text> -->
 				</view>
 			</view>
 			<view class="stores">
@@ -58,7 +59,10 @@
 					</view>
 				</view>
 			</view>
+			<!-- 大客户组件 -->
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
+			<!-- 业务消息组件 -->
+			<movable v-if="YW_MsgData.length>0" :_msgDatas="YW_MsgData"></movable>
 		</view>
 	</view>
 </template>
@@ -82,7 +86,9 @@
 				RYID: getApp().globalData.store.RYID,
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				dropout: false,
-				MsgData: [],
+				MsgData: [], //总的消息
+				XT_MsgData: [], //系统类
+				YW_MsgData: [], //业务类消息
 				showMsg: false,
 				showBig: false,
 				YN_PRINT_CON: getApp().globalData.YN_PRINT_CON
@@ -93,17 +99,21 @@
 		// },
 		created: function(e) {
 			that = this;
-			_msg.ShowMsg(that.KHID, "SYSTEM", res => {
-				that.MsgData = res.filter((r, i) => {
-					return i == 0;
+			_msg.ShowMsg(that.KHID, "", res => {
+				that.MsgData = res;
+				that.XT_MsgData = res.filter((r, i) => {
+					return r.type == 'SYSTEM';
 				});
-				console.log("消息数据that.MsgData：", that.MsgData);
+				that.YW_MsgData = res.filter((r, i) => {
+					return (r.type == 'PTIP' || r.type == 'JJPT' || r.type == 'XTIP'); //外卖，预定，线上
+				});
+				console.log("系统消息数据that.XT_MsgData：", that.XT_MsgData);
+				console.log("业务消息数据that.YW_MsgData：", that.YW_MsgData);
 			});
 		},
 		methods: {
-
 			//消息已读
-			ReadMsg1: function(e, i) {
+			ReadMsg: function(e, i) {
 				_msg.DelMsg(that.KHID, e, res => {
 					console.log("消息数据：", res);
 					that.MsgData.splice(i, 1);
@@ -115,13 +125,6 @@
 						})
 					}
 				});
-			},
-			ReadMsg: function(e) {
-				if (e.url) {
-					uni.redirectTo({
-						url: e.url + "?msgdata=''"
-					})
-				}
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout

@@ -32,8 +32,8 @@
 				KHZID: "03",
 				PHONE: 18171372662,
 				JGID: "K200",
-				STIME:"",
-				ETIME:""
+				STIME:"7",
+				ETIME:"19"
 			},
 			hyinfo: {
 				// hyId: "1000311640"

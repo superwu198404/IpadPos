@@ -116,22 +116,22 @@ var GetAllMsg = function(e, t, func) {
 
 //消息方法处理
 var ShowMsg = function(khid, type = "", func) {
-	// getApp().globalData.msgInt = setInterval(r => {
-	GetAllMsg(khid, type, res => {
-		if (res.code) {
-			console.log("消息数据：", res);
-			let data = JSON.parse(res.data);
-			if (func) func(data);
-			// let data = JSON.parse(res.data);
-			// let arr = [];
-			// data.forEach((item, i) => {
-			// 	let type = item.type.split('_')[2]; //消息类型
-			// 	var newData = HandleMsg(type, item.data);
-			// 	arr.push(newData);
-			// })
-		}
-	});
-	// }, 5000); //测试默认5秒
+	getApp().globalData.msgInt = setInterval(r => {
+		GetAllMsg(khid, type, res => {
+			if (res.code) {
+				console.log("消息数据：", res);
+				let data = JSON.parse(res.data);
+				if (func) func(data);
+				// let data = JSON.parse(res.data);
+				// let arr = [];
+				// data.forEach((item, i) => {
+				// 	let type = item.type.split('_')[2]; //消息类型
+				// 	var newData = HandleMsg(type, item.data);
+				// 	arr.push(newData);
+				// })
+			}
+		});
+	}, 60000); //一分钟查询一次
 }
 /**
  * 消息已读

@@ -1,29 +1,24 @@
 <template>
 	<view>
-		<movable-area>
+		<movable-area style="z-index: 999;">
 			<movable-view :x="x" :y="y" direction="all" position="position">
 				<view class="ordermes">
-					<label @click="Orderments()">
+					<label @click="Orderments()" v-if="msgDatas.length>0">
 						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>1</text>
 					</label>
-					<view class="orderlist" v-if="orderlist">
-						<view class="h2">
+					<view class="orderlist" v-if="orderlist" v-for="(item,index) in msgDatas"
+						@click="ReadMsg(item,index)">
+						<view class="h2" v-if="item.type=='XTIP'">
 							<image src="../../images/xianshangdingd.png"></image>线上订单
 						</view>
-						<view class="ul">
-							<label><span>●</span>你有一条新的订单待处理</label><text>34</text>
-						</view>
-						<view class="h2">
+						<view class="h2" v-if="item.type=='PTIP'">
 							<image src="../../images/waimaidan.png"></image>外卖单
 						</view>
-						<view class="ul">
-							<label><span>●</span>你有一条新的订单待处理</label><text>34</text>
-						</view>
-						<view class="h2">
+						<view class="h2" v-if="item.type=='JJPT'">
 							<image src="../../images/ydtq.png"></image>预定单
 						</view>
 						<view class="ul">
-							<label><span>●</span>你有一条新的订单待处理</label><text>34</text>
+							<label><span>●</span>{{item.title}}</label><text>{{item.count}}</text>
 						</view>
 					</view>
 				</view>
@@ -33,6 +28,11 @@
 </template>
 
 <script>
+	import _msg from '@/api/business/message.js';
+	import util from '@/utils/util.js';
+	import common from '@/api/common.js';
+	var that;
+
 	export default {
 		name: "movable",
 		data() {
@@ -47,24 +47,54 @@
 					x: 0,
 					y: 0
 				},
-				orderlist: false
+				orderlist: false,
+				msgDatas: [],
+				KHID: getApp().globalData.store.KHID
 			}
 		},
+		props: {
+			_msgDatas: {
+				type: Array,
+				default () {
+					return [];
+				}
+			}
+		},
+		created: function() {
+			that = this;
+			that.msgDatas = that._msgDatas; //消息数据赋值
+			console.log("传入的消息集合1：", that._msgDatas);
+		},
 		methods: {
-			Orderments: function(e) {
-				this.orderlist = !this.orderlist
-
-			},
 			mounted() {
 				this.$refs.setPlan.open()
 				var _this = this
 				uni.getSystemInfl({
 					success: function(res) {
-
 						x = res.windowWidth
 					}
 
 				})
+			},
+			Orderments: function(e) {
+				this.orderlist = !this.orderlist;
+				console.log("点击消息：", this.orderlist);
+			},
+			//消息已读
+			ReadMsg: function(e, i) {
+				uni.navigateTo({
+					url: e.url
+				})
+				return;
+				_msg.DelMsg(that.KHID, e, res => {
+					console.log("消息数据已读结果：", res);
+					that.MsgData.splice(i, 1);
+					if (e.url) {
+						uni.navigateTo({
+							url: e.url
+						})
+					}
+				});
 			}
 		}
 

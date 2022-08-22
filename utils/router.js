@@ -45,8 +45,8 @@ export default [{
 		title: "外卖预订单",
 		name: "TakeYD",
 		url: "@/pages/TakeYD/TakeYD",
-		icon: require("@/images/waimaid.png"),
-		icon1: require("@/images/waimaid-hui.png"),
+		icon: require("@/images/wmyudd.png"),
+		icon1: require("@/images/wmyudd-hui.png"),
 		index: 5
 	},
 	{
