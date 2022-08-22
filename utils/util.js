@@ -18,7 +18,7 @@ const utils = {
 	 */
 	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
-			title,
+			title: isError == "none" ? "提示：\n" + title : title,
 			icon: isError == 'none' ? "none" : (isError ? 'error' : "success") //可传入none值
 		})
 		if (errData) console.log(title, errData)
@@ -29,10 +29,21 @@ const utils = {
 	 * @param content: 内容
 	 * @returns void
 	 */
-	simpleModal: function(title, content) {
+	simpleModal: function(title, content, conFunc) {
 		uni.showModal({
 			title,
-			content
+			content,
+			success: function(res) {
+				if (res.confirm) {
+					console.log('用户点击确定');
+					if (conFunc)
+						conFunc(true);
+				} else if (res.cancel) {
+					console.log('用户点击取消');
+					if (conFunc)
+						conFunc(false);
+				}
+			}
 		});
 	},
 	/**

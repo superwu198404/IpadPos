@@ -245,6 +245,7 @@
 		box-shadow: 0px 15px 20px 1px rgba(197, 231, 200, 0.3000);
 		border-radius: 8rpx;
 		border: 2rpx solid #9bdda1;
+		background: linear-gradient(180deg, #E0F2E1 0%, #FFFFFF 100%);
 	}
 
 	.encods {

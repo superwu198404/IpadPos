@@ -128,7 +128,7 @@
 			query: function() {
 				let that = this;
 				if (!that.numbers) {
-					util.simpleMsg("提示：请输入手机号码/会员号码", "none");
+					util.simpleMsg("请输入手机号码/会员号码", "none");
 					return;
 				}
 				that.hyinfo = hy.hyinfoModel;

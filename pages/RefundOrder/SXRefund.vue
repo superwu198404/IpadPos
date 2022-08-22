@@ -348,39 +348,55 @@
 </script>
 
 <style>
-  .right {
-    height: 100%;
-  }
-  .handles button{
-    width:160rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    font-size: 28rpx;
-  }
-  .price{
-    margin-top:0;
-  }
-  .h2{
-    padding:0 3% 1%;
-    position: relative;
-  line-height:40rpx;
-  }
-  .h2 label{
-    position: absolute;
-    width:140rpx;
-    bottom:20rpx;
-    left: 3%;
-    height: 8rpx;
-    background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0) 100%);
-  border-radius: 8rpx;
-  }
-  .details .goods{
-    height: 65%;
-  }
-  .detinfo{
-    height: 85%;
-  }
-  .products .details{
-    justify-content: start;
-  }
+	.right {
+		height: 100%;
+	}
+
+	.handles button {
+		width: 160rpx;
+		height: 60rpx;
+		line-height: 60rpx;
+		font-size: 28rpx;
+	}
+
+	.price {
+		margin-top: 0;
+	}
+
+	.h2 {
+		padding: 0 3% 1%;
+		position: relative;
+		line-height: 40rpx;
+	}
+
+	.h2 label {
+		position: absolute;
+		width: 140rpx;
+		bottom: 20rpx;
+		left: 3%;
+		height: 8rpx;
+		background: linear-gradient(90deg, #006B44 0%, rgba(0, 107, 68, 0) 100%);
+		border-radius: 8rpx;
+	}
+
+	.details .goods {
+		height: 65%;
+	}
+
+	.detinfo {
+		height: 85%;
+	}
+
+	.products .details {
+		justify-content: start;
+	}
+
+	.products .procycle .li .h3 {
+		font-size: 28rpx;
+		font-weight: 600;
+	}
+
+	.products .h3 text {
+		font-weight: 600;
+	}
 </style>

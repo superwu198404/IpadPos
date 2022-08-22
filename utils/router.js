@@ -12,8 +12,8 @@ export default [{
 	},
 	{
 		title: "预定",
-		name: "Main",
-		url: "@/pages/Main/Main",//Reserve
+		name: "Reserve",
+		url: "@/pages/Reserve/Reserve",//
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
 		index: 1
@@ -22,8 +22,8 @@ export default [{
 		title: "赊销",
 		name: "Main",
 		url: "@/pages/Main/Main",
-		icon: require("@/images/yuding.png"),
-		icon1: require("@/images/yuding-hui.png"),
+		icon: require("@/images/shexiao.png"),
+		icon1: require("@/images/shexiao-hui.png"),
 		index: 2
 	},
 	{
@@ -37,16 +37,16 @@ export default [{
 		title: "外卖单",
 		name: "TakeAway",
 		url: "@/pages/TakeAway/TakeAway",
-		icon: require("@/images/yuding.png"),
-		icon1: require("@/images/yuding-hui.png"),
+		icon: require("@/images/waimaid.png"),
+		icon1: require("@/images/waimaid-hui.png"),
 		index: 4
 	},
 	{
 		title: "外卖预订单",
 		name: "TakeYD",
 		url: "@/pages/TakeYD/TakeYD",
-		icon: require("@/images/yuding.png"),
-		icon1: require("@/images/yuding-hui.png"),
+		icon: require("@/images/waimaid.png"),
+		icon1: require("@/images/waimaid-hui.png"),
 		index: 5
 	},
 	{

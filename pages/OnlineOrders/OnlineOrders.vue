@@ -540,7 +540,7 @@
 						this.GetOnlineOrders(); //刷新列表
 						util.simpleMsg("订单修改成功!", false, res)
 					}), (err) => {
-						util.simpleMsg("提示：", err.msg, "none", err);
+						util.simpleMsg(err.msg, "none", err);
 					});
 				else
 					util.simpleMsg("时间设置有误!", true)
@@ -574,7 +574,7 @@
 						this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
 						
 					}), (err) => {
-						util.simpleMsg("提示：" + err.msg, "none", err);
+						util.simpleMsg(err.msg, "none", err);
 					});
 				else {
 					if (!info_valid.state)
