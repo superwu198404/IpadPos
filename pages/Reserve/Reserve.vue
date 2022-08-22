@@ -39,7 +39,7 @@
 							</label>
 							<label><text>*提货时间：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
-								<picker mode="time" @change="timeChange" start="7" end="19">
+								<picker mode="time" @change="timeChange" :start="startTime" :end="endTime">
 									<view>{{Order.TH_TIME}}</view>
 								</picker>
 							</label>
@@ -184,6 +184,8 @@
 				GSID: app.globalData.store.GSID,
 				KHID: app.globalData.store.KHID,
 				POSID: app.globalData.store.POSID,
+				STIME: app.globalData.store.STIME,
+				ETIME: app.globalData.store.ETIME,
 				statements: false,
 				index: 0,
 				THTYPES: [],
@@ -243,6 +245,8 @@
 				THKHDATAS: [], //提货门店数据 筛选后的数据
 				YN_THTYPE: false, //是否允许更改提货方式，异店不允许
 				YDJGSJ: 10, //提货间隔时间/分钟（存储的单位为小时）
+				startTime: "7",
+				endTime: "19"
 			}
 		},
 		created() {
@@ -323,6 +327,13 @@
 					that.Order.DNET = that.Order.TNET;
 				} else {
 					that.Order.DNET = 0;
+				}
+				if (that.Order.THTYPE == '0') { //自提
+					that.startTime = that.STIME;
+					that.endTime = that.ETIME;
+				} else if (that.Order.THTYPE == '2') { //现卖
+					that.startTime = dateformat.getDateByParam('h') + ":" + dateformat.getDateByParam('m');
+					that.endTime = "19";
 				}
 			},
 			//弹出预定信息录入框

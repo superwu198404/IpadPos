@@ -357,6 +357,29 @@ const getDateByParam = (t) => {
 	// < 10 ? "0" + date.getWeek() : date.getWeek().toString();
 	return str;
 };
+/**
+ *矫正门店营业时间 
+ * @param {*} t 
+ */
+const CheckStoreTime = (t) => {
+	let str = "";
+	try {
+		if (t) {
+			if (t.indexOf(':') >= 0) {
+				str = t.split(' ')[1];
+			} else {
+				str = t.substring(0, 1) + ":" + t.substring(2, 3) + ":" + t.substring(4, 5);
+			}
+		}
+		if (t.indexOf(':') >= 0) {
+			str = t.split(':')[0] + ":" + t.split(':')[1];
+		}
+	} catch (e) {
+		//TODO handle the exception
+		str = "";
+	}
+	return str;
+};
 export default {
 	stringToDate,
 	formatDate,
@@ -376,5 +399,6 @@ export default {
 	getdate,
 	gettimes,
 	gettime,
-	getDateByParam
+	getDateByParam,
+	CheckStoreTime
 }
