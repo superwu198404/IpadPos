@@ -27,11 +27,13 @@
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-				POSCSZID: "武汉前厅",
+				POSCSZID: "018",//018、武汉前厅
 				RYNAME: "老王",
 				KHZID: "03",
 				PHONE: 18171372662,
 				JGID: "K200",
+				STIME:"",
+				ETIME:""
 			},
 			hyinfo: {
 				// hyId: "1000311640"

@@ -1019,6 +1019,15 @@ const cxZkTj = function(type) {
 	}
 }
 
+///转成string类型
+const toStr = function(data){
+	if(data == null || data == undefined){
+		return "";
+	}else{
+		return data.toString();
+	}
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -1054,5 +1063,6 @@ module.exports = {
 	retDtforConditions: retDtforConditions,
 	nnvl: nnvl,
 	cxZkType: cxZkType,
-	cxZkTj: cxZkTj
+	cxZkTj: cxZkTj,
+	toStr: toStr
 };

@@ -1957,21 +1957,14 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商品名称       价格  数量  金额  属性  ");
+		jpPrinter.setText("商品名称          价格    数量    ");
 		jpPrinter.setPrint(); //打印并换行
 		
 		//商品信息
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText(util.getComputedByteLen(data.sname, 15));
+		jpPrinter.setText(util.getComputedByteLen(data.sname, 18) + util.getComputedByteLen(data.price.toString(), 8) + util.getComputedByteLen("1", 8));
 		jpPrinter.setPrint(); //打印并换行
-		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText(util.getComputedByteLen(parseInt(data.spid).toString(), 15) + util.getComputedByteLen(data.price.toString(), 6) + util
-			.getComputedByteLen(1, 6) + util.getComputedByteLen(data.price.toString(), 6) + util.getComputedByteLen(
-				"", 6));
-		jpPrinter.setPrint(); //打印并换行		
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
@@ -1995,12 +1988,12 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左 
-		jpPrinter.setText("备注:" + data.custmcomm.toString());
+		jpPrinter.setText("备注:" + util.toStr(data.custmcomm));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("送货地址:" + data.custmaddress.toString());
+		jpPrinter.setText("送货地址:" +util.toStr(data.custmaddress));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小

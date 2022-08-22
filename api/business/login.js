@@ -95,7 +95,7 @@ var GetKHIDByRYID = function(userid, func) {
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
-		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA where KHID='" +
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("门店信息查询成功：", res);
@@ -115,6 +115,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			RYNAME: ryinfo.name,
 			RYID: ryinfo.ryid,
 			JGID: res.msg[0].JGID,
+			STIME: util.CheckStoreTime(res.msg[0].STIME),
+			ETIME: util.CheckStoreTime(res.msg[0].ETIME),
 		}
 		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
 		console.log("登录后的初始化信息：", getApp().globalData.store);
