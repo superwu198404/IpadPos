@@ -540,6 +540,7 @@
 					this.ShopCarOrder = this.meta.params.order;
 					this.ShopCarProduct = this.meta.params.goods;
 					this.ShopCarPayment = this.meta.params.payments;
+					this.showSale = this.meta.params.open ?? false;
 				}
 			},
 			//使用消息弹框 this.$emit("Message",{ msg:"消息提示" })

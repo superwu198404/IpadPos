@@ -170,8 +170,9 @@
 								title: "销售",
 								params: {
 									order: item,
-									goods: JSON.parse(res.data)
-								},
+									goods: JSON.parse(res.data),
+									open: true
+								}
 							})
 						}
 						else{//退款
@@ -192,7 +193,8 @@
 									params: {
 										order: data.sale1,
 										goods: data.sale2,
-										payments: data.sale3
+										payments: data.sale3,
+										open: true
 									},
 								})
 							}

@@ -313,7 +313,8 @@
 						params: {
 							order: sale1,
 							goods: data.sale2,
-							payments: data.sale3
+							payments: data.sale3,
+							open: true
 						},
 					})
 				}
