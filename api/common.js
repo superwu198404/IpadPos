@@ -576,7 +576,6 @@ var GetPOSCS_Local = async function(e) {
 	}
 	return str;
 }
-
 //支付行为
 var actTypeEnum = {
 	Payment: "Payment", //支付
@@ -620,6 +619,20 @@ var DelSale = function(e) { //khid
 		console.log("本地销售单删除失败：" + day, err);
 	})
 }
+
+//获取是否有未上传的单据
+var GetTXFILE = async function(e) {
+	let arr = [];
+	let sql = "select * from POS_TXFILE";
+	await db.get().executeQry(sql, "", res => {
+		console.log("查询未处理单成功:", res);
+		arr = res.msg;
+	}, err => {
+		console.log("查询未处理单失败:", err);
+	})
+	return arr;
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -642,5 +655,6 @@ export default {
 	ywTypeEnum,
 	GetDapzcs,
 	DelSale,
-	GetPOSCS_Local
+	GetPOSCS_Local,
+	GetTXFILE
 }

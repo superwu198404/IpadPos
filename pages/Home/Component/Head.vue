@@ -66,6 +66,7 @@
 <script>
 	import _msg from '@/api/business/message.js';
 	import util from '@/utils/util.js';
+	import common from '@/api/common.js';
 
 	let that;
 	export default {
@@ -125,32 +126,46 @@
 			exits: function(e) {
 				this.dropout = !this.dropout
 			},
-			//注销
+			//注销 切换登录
 			Login: function() {
-				if (getApp().globalData.stroe) {
-					getApp().globalData.stroe.RYID = "";
-					getApp().globalData.stroe.RYNAME = "";
-				}
-				util.removeStorage("hyinfo"); //清除会员信息
-				uni.redirectTo({
-					url: "/pages/Login/Login",
-					complete: r => {
-						console.log(r)
+				util.simpleModal("提示", "是否确认注销？", e => {
+					if (e) { //点击了确定
+						if (getApp().globalData.stroe) {
+							getApp().globalData.stroe.RYID = "";
+							getApp().globalData.stroe.RYNAME = "";
+						}
+						util.removeStorage("hyinfo"); //清除会员信息
+						uni.redirectTo({
+							url: "/pages/Login/Login",
+							complete: r => {
+								console.log(r)
+							}
+						})
 					}
 				})
 			},
-			//退出登录
-			LoginOut: function() {
-				if (getApp().globalData.stroe) {
-					getApp().globalData.stroe.RYID = "";
-					getApp().globalData.stroe.RYNAME = "";
+			//退出app
+			LoginOut: async function() {
+				let arr = await common.GetTXFILE();
+				console.log("未处理单据：", arr);
+				if (arr.length > 0) {
+					util.simpleMsg("当前有未处理的单据，暂无法退出", "none");
+					return;
 				}
-				util.removeStorage("hyinfo"); //清除会员信息
-				if (uni.getSystemInfoSync().platform == 'ios') {
-					plus.ios.import("UIApplication").sharedApplication().performSelector("exit")
-				} else if (uni.getSystemInfoSync().platform == 'android') {
-					plus.runtime.quit();
-				}
+				util.simpleModal("提示", "是否确认退出应用？", e => {
+					if (e) { //点击了确定
+						if (getApp().globalData.stroe) {
+							getApp().globalData.stroe.RYID = "";
+							getApp().globalData.stroe.RYNAME = "";
+						}
+						util.removeStorage("hyinfo"); //清除会员信息
+						if (uni.getSystemInfoSync().platform == 'ios') {
+							plus.ios.import("UIApplication").sharedApplication().performSelector("exit")
+						} else if (uni.getSystemInfoSync().platform == 'android') {
+							plus.runtime.quit();
+						}
+					}
+				})
 			},
 			//修改密码
 			UPPWD: function() {

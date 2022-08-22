@@ -1052,7 +1052,7 @@
 					util.simpleMsg(res.code ? "积分上传成功" : res.msg, res.code ? false : "none");
 				}, (err) => {
 					console.log("积分上传失败...", err)
-					util.simpleMsg("提示：" + err.msg, "none");
+					util.simpleMsg(err.msg, "none");
 				})
 			},
 			//生成会员积分信息请求参数列表

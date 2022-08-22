@@ -523,7 +523,7 @@
 					if (res.code) {
 						let data = JSON.parse(res.data);
 						if (data.over) {
-							util.simpleMsg("提示：", res.msg, "none");
+							util.simpleMsg(data.msg, "none");
 							that.index = 0;
 						} else {
 							util.simpleMsg("已匹配最近的配送中心", "none");

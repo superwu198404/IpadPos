@@ -85,7 +85,7 @@
 					}
 				}, err => {
 					console.log("会员信息查询失败:", err);
-					util.simpleMsg("提示：" + err.msg, "none");
+					util.simpleMsg(err.msg, "none");
 				});
 			},
 			//返回

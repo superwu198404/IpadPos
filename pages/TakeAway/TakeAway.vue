@@ -386,7 +386,7 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法同意
 					{
-						util.simpleMsg("提示：请点击“接受确认”", "none");
+						util.simpleMsg("请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("1");
@@ -399,7 +399,7 @@
 				if (that.Order && JSON.stringify(that.Order) != "{}") {
 					if (that.Order.STATUS != '20' && that.Order.STATUS != '30') //不是则无法拒绝
 					{
-						util.simpleMsg("提示：请点击“接受确认”", "none");
+						util.simpleMsg("请点击“接受确认”", "none");
 						return;
 					}
 					that.commonRefund("0");
@@ -487,7 +487,6 @@
 					}
 				}, (err) => {
 					console.log("积分上传失败...", err)
-					// util.simpleMsg("提示：积分上传失败" + err.msg, "none");
 					util.simpleModal("积分上传失败", err.msg);
 				})
 			},
