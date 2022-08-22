@@ -91,10 +91,6 @@
 							<text>结算单</text>
 							<label>«</label>
 						</view>
-						<view class="states" @click="common_sale = true">
-							<text>结算单-通用</text>
-							<label>«</label>
-						</view>
 					</view>
 					<view class="toproof">
 						<image src="../../images/dx-qdb.png" mode="widthFix"></image>
@@ -129,7 +125,6 @@
 				</view>
 			</view>
 		</view>
-		<SaleDrawer :show="common_sale" :good-list="goods"></SaleDrawer>
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="attribute">
 			<view class="popup">
@@ -467,7 +462,7 @@
 				</view>
 			</view>
 		</view>
-		<ShopCart v-if="showSale" @_CloseSale="CloseSale"></ShopCart>
+		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_Accept="HandleFunc" @_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
 
@@ -508,7 +503,6 @@
 					current: "Extract",
 					history: []
 				},
-				
 				attribute: false,
 				statements: false,
 				Alphabetical: false,
@@ -528,6 +522,9 @@
 				showZK: false, //是否展示折扣数据
 				showMDCXData: false,
 				MDCXDatas: [],
+				ShopCarOrder:{},
+				ShopCarProduct:[],
+				HandleFunc:null,
 				ZKDatas: [],
 				curZKType: "BZ",
 				RXSPDatas: [], //日销数据集合
@@ -538,10 +535,11 @@
 		},
 		methods: {
 			Show:function(){
-				console.log("[Show]SHOW触发!");
 				console.log("[Show]参数:",this.meta);
 				if(this.meta.params){//是否存在参数
-					console.log("[Show]参数:",this.meta);
+					this.ShopCarOrder = this.meta.params.order;
+					this.ShopCarProduct = this.meta.params.goods;
+					this.HandleFunc = this.meta.params.accept;
 				}
 			},
 			//使用消息弹框 this.$emit("Message",{ msg:"消息提示" })
@@ -739,7 +737,11 @@
 				console.log("[InitHandle]初始化处理:",this.meta);
 			}
 		},
+		mounted(){
+			console.log("[Main-Mounted]触发!");
+		},
 		created: function() {
+			console.log("[Main-Created]触发!");
 			this.InitHandle();
 			that = this;
 			common.DelSale(); //主动删除过期销售单

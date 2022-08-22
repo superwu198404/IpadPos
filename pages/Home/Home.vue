@@ -16,6 +16,9 @@
 </template>
 
 <script>
+	//导入 Vue 实例
+	import Vue from 'vue'
+
 	import util from '@/utils/util.js';
 	//路由数据
 	import router from '@/utils/router.js'
@@ -67,9 +70,11 @@
 		computed: {
 			show: function() {
 				return util.callBind(this, function(info) {
-					return (this.current.name === info.name) && (this.current.title === info.title)
+					// console.log("[Computed-Show]Info:", info);
+					// console.log("[Computed-Show]Info-Result:", (this.current.name === info.name) && (this.current.title === info.title));
+					return (this.current.name === info.name) && (this.current.title === info.title);
 				});
-			}
+			},
 		},
 		methods: {
 			OpenMessage: function(data) {
@@ -83,18 +88,21 @@
 			},
 			SwitchPage: function(data) {
 				console.log("[SwitchPage]页面切换:", data);
-				this.current = data;
-				this.meta_data = Object.assign(data.meta ?? {}, {
-					params: data.params
-				});
-				console.log("meta",this.meta_data);
+				this.current.name = data.name;
+				this.current.title = data.title;
+				console.log("[SwitchPage]组件name:", this.current.name);
+				console.log("[SwitchPage]组件title:", this.current.title);
+				this.$set(this.meta_data, `data`, data?.meta ?? {});
+				this.$set(this.meta_data, `params`, data?.params ?? {});
 				let vue = this.$refs[data.title];
 				if (vue) {
 					if (Array.isArray(vue)) {
 						vue = vue[0];
 					}
 				}
-				vue?.Show ? vue.Show() : undefined;
+				vue?.$nextTick(function() {
+					vue?.Show ? vue.Show() : undefined;
+				});
 			},
 			ComponentRecursion: function(tree, all) {
 				tree.forEach(util.callBind(this, function(item) {

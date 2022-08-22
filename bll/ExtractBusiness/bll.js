@@ -60,7 +60,7 @@ export const ServiceDataQuery = async function(bill) {
  * 预定提取、取消操作
  * @param {*} data 
  */
-export const Accept = function(params = {
+export const Accept = async function(params = {
 	bill: "",
 	product: [],
 	xs_type: "",//是 支付(1) 还是 退款(2)
@@ -68,21 +68,7 @@ export const Accept = function(params = {
 }) {
 	if (params.xs_type == 1) { //提取操作 => 支付
 		console.log("[预定提取]结算确认!开始结算...")
-		Payment(params.product).then(util.callBind(this, function(pay_data) { //处理退款所需的业务信息数据
-			console.log("[预定提取]处理的数据:", pay_data);
-			this.$store.commit('set-location', pay_data); //把数据传入下个页面
-			uni.navigateTo({
-				url: "../Payment/PaymentAll",
-				events: {
-					ExtractBack: util.callBind(this,function(data) {
-						console.log("[ExtractBack]支付完成!", data);
-						this.$emit("Close");
-					})
-				}
-			})
-		})).catch(util.callBind(this, function(err) {
-			console.log("退单表数据查询异常:", err);
-		}));
+		return await Payment(params.product);
 	} else { //取消操作 => 退款
 		console.log("[预定取消]退单确认!开始退款...");
 		Refund(LocalDataQuery(params.bill),ServiceDataQuery(params.bill)).then(util.callBind(this, function(refund_data) { //处理退款所需的业务信息数据

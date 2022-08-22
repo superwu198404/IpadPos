@@ -66,7 +66,8 @@
 				</view>
 			</view>
 		</view>
-		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer"></component>
+		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
+		</component>
 	</view>
 	<!-- </menu_content> -->
 </template>
@@ -74,6 +75,10 @@
 <script>
 	import util from '@/utils/util.js';
 	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
+	import _extract from '@/api/business/extract.js'
+	import {
+		Accept
+	} from '@/bll/ExtractBusiness/bll.js'
 	import {
 		getReserveOrders
 	} from '@/api/business/extract.js'
@@ -94,7 +99,7 @@
 				view: {
 					Details: false,
 					Criterias: false,
-					mode:true
+					mode: true
 				},
 				extract_order: {}, //预定订单的信息
 				extracts: []
@@ -146,14 +151,43 @@
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
 			},
-			ExtractOrder:function(item){
-				this.$emit("Switch",{
-					name:"Main",
-					title:"销售",
-					params:{
-						extract_order:item
-					}
-				})
+			ExtractOrder: function(item) {
+				_extract.getReserveOrdersDetails({ //查到商品信息后传值
+					khid: this.KHID,
+					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
+					bill: item.BILL
+				}, util.callBind(this, function(res) {
+					if (res.code) {
+						this.$emit("Switch", {
+							name: "Main",
+							title: "销售",
+							params: {
+								order: item,
+								goods: JSON.parse(res.data),
+								accept: util.callBind(this,async function() {
+									console.log(`[预定${this.view.mode?'提取':'取消'}]确认${this.view.mode?'提取':'取消'}!`);
+									let result = await Accept({
+										bill: item.BILL,
+										product: JSON.parse(res.data),
+										xs_type: 1,
+										bill_type: "Z101"
+									})
+									this.$store.commit('set-location', result); //把数据传入下个页面
+									uni.navigateTo({
+										url: "../Payment/PaymentAll",
+										events: {
+											ExtractBack: util.callBind(this,function(data) {
+												console.log(`[ExtractBack]支付完成!`, data);
+												this.$emit("Close");
+											})
+										}
+									})
+								})
+							}
+						})
+					} else
+						util.simpleMsg(res.msg, true, res);
+				}))
 			},
 			_ExtractOrder: function(item) { //提取商品
 				this.view.Details = true;
@@ -191,8 +225,8 @@
 		},
 		mounted() {
 			console.log("[Extract-Mounted]触发!");
-			if(this.meta && this.meta.mode !== undefined) this.view.mode = this.meta.mode;//跳转传值
-			console.log("[Extract-Mounted]元数据:",this.meta);
+			if (this.meta && this.meta.mode !== undefined) this.view.mode = this.meta.mode; //跳转传值
+			console.log("[Extract-Mounted]元数据:", this.meta);
 			this.GetList();
 		}
 	}

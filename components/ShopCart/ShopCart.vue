@@ -209,7 +209,7 @@
 						</view>
 					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn" @click="Comfirm">确 认</button>
 					</view>
 					<!-- <view class="states" @click="Statements()">
 					<text>结算单</text>
@@ -233,15 +233,17 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	import _extract from '@/bll/ExtractBusiness/bll.js';
 
 	var that;
 	export default {
 		name: "ShopCart",
 		props: {
-			_Order: {}, //主单
-			_Products: [], //商品数据
-			_PayDatas: [], //付款数据
-			_Others: {}, //其他数据
+			_Order: Object, //主单
+			_Products: Array, //商品数据
+			_PayDatas: Array, //付款数据
+			_Others: Object, //其他数据
+			_Accept:Function
 		},
 		data() {
 			return {
@@ -324,6 +326,10 @@
 			//触发主页的关闭事件来关闭结算页面
 			CloseSale: function() {
 				this.$emit("_CloseSale", {});
+			},
+			Comfirm:function(){
+				console.log("[Comfirm]确认!");
+				this._Accept();
 			},
 			//会员登录
 			Memberlogin: function(e) {

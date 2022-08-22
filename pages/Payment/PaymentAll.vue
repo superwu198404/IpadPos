@@ -1407,13 +1407,14 @@
 				util.removeStorage("hyinfo"); //支付完成后清除下会员信息
 			}
 		},
-		created() {
+		async created() {
 			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS);
 			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS["YN_ZFBKBQ"]);
 			if (window && !window.vue) { //把vue放到全局上，方便调试
 				window.vue = this;
 			}
 			this.paramInit();
+			if(!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common.GetZFRULE();//初始化支付规则（如果没有的话）
 		},
 		mounted() {}
 	}
