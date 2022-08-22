@@ -114,6 +114,16 @@
 		methods: {
 			//消息已读
 			ReadMsg: function(e, i) {
+
+				this.$emit("Switch", {
+					name: "Message",
+					title: "消息",
+					params: {
+						msgdatas: e,
+						open: true
+					},
+				})
+				return;
 				_msg.DelMsg(that.KHID, e, res => {
 					console.log("消息数据：", res);
 					that.MsgData.splice(i, 1);

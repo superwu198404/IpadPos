@@ -137,7 +137,8 @@
 				Shoppingbags: false,
 				Chargeback: false,
 				coupon_list: [],
-				Newaddr: false
+				Newaddr: false,
+				
 			}
 		},
 		methods: {

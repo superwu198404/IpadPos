@@ -82,10 +82,6 @@
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
-				uni.navigateTo({
-					url: e.url
-				})
-				return;
 				_msg.DelMsg(that.KHID, e, res => {
 					console.log("消息数据已读结果：", res);
 					that.MsgData.splice(i, 1);
