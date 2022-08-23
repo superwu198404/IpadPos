@@ -1,12 +1,18 @@
 import common from '@/api/common.js';
 import util from '@/utils/util.js';
 import {
-	Refund
+	Refund,
+	PaymentToRefundSALE001,
+	PaymentToRefundSALE002,
+	PaymentToRefundSALE003
 } from '@/bll/RefundBusiness/bll.js'
 import {
 	Payment
 } from '@/bll/PaymentBusiness/bll.js'
 
+/**
+ * 获取支付方式
+ */
 export const GetPayWayList = async function() {
 	let PayWayList = [];
 	await common.GetPayWayAsync(getApp()?.globalData?.store?.KHID ?? "K200QTD005", function(res) {
@@ -85,12 +91,13 @@ export const GetPayWayList = async function() {
  * 检测 sale 数据是否正常（判断 sale1、2、3是否都有数据，其中兼容了sale1为数组的情况）
  * @param {*} data 
  */
-export const ErrorData = (data) => 
-		!data.sale1 || 
-		Array.isArray(data.sale1) ? data.sale1.length == 0 : Object.keys(data.sale1).length == 0 || //这里因为有可能回传入一个数组类型的sale1，所以做个判断
-		data.sale2.length == 0 ||
-		data.sale3.length == 0;
-		
+export const ErrorData = (data) =>
+	!data.sale1 ||
+	Array.isArray(data.sale1) ? data.sale1.length == 0 : Object.keys(data.sale1).length == 0 ||
+	//这里因为有可能回传入一个数组类型的sale1，所以做个判断
+	data.sale2.length == 0 ||
+	data.sale3.length == 0;
+
 /**
  * 生成销售中 [支付] 或 [退款] 操作所需数据源
  * @param {*} data 
@@ -100,22 +107,54 @@ export const ErrorData = (data) =>
  * local_source、server_source [可选] => 当 xs_type 为 退款 的时候为必须，用于生成对应支付的 sale1、2、3 数据。
  */
 const accept_def_params = {
-	sales:{
-		sale1:{},
-		sale2:[],
-		sale3:[],
+	sales: {
+		sale1: {},
+		sale2: [],
+		sale3: [],
 	},
-	products:[],
-	xs_type: "",//是 支付(1) 还是 退款(2)
-	bill_type: ""//是 支付(Z101) 还是 退款(Z151)
+	products: [],
+	xs_type: "", //是 支付(1) 还是 退款(2)
+	bill_type: "" //是 支付(Z101) 还是 退款(Z151)
 }
 export const Accept = async function(params_obj = accept_def_params) {
-	let params = Object.assign(accept_def_params,params_obj);
+	let params = Object.assign(accept_def_params, params_obj);
 	if (params.xs_type == 1) { //提取操作 => 支付
-		console.log("[预定提取]结算确认!开始结算...",params)
+		console.log("[预定提取]结算确认!开始结算...", params)
 		return await Payment(params.products);
 	} else { //取消操作 => 退款
 		console.log("[预定取消]退单确认!开始退款...");
-		return await Refund(params.sales,params.xs_type);
+		return await Refund(params.sales, params.xs_type);
 	}
+}
+
+/**
+ * 销售单 sale1、2、3 数据生成
+ */
+const sale_order_generation_def_params = {
+	no: "", //单号
+	bill_type: "", //单据类型
+	xs_type: "", //销售类型
+	sales:{//sale单据列表
+		sale1:{},//sale1
+		sale2:[],//sale2
+		sale3:[]//sale3
+	}
+}
+export const SaleOrderGenaration = async function(params = sale_order_generation_def_params) {
+	//生成退款类的数据对象
+	let sale1 = PaymentToRefundSALE001(params.sales.sale1, params),
+		sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
+		sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
+	let sqlString = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"], [sale3, "SALE003"]);
+	console.log("[SaleOrderGenaration]生成的SQL:", sqls);
+	await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+	await db.get().executeDml(sqls, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
+		if (func) func(res);
+		this.complete = true;
+		console.log("[SaleOrderGenaration]销售单创建成功!", res);
+		util.simpleMsg("销售单创建成功!");
+	}).bind(this), function(err) {
+		console.log("[SaleOrderGenaration]销售单创建失败!", err);
+		util.simpleMsg("销售单创建失败!", false);
+	});
 }

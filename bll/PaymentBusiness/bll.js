@@ -10,8 +10,8 @@ import util from '@/utils/util.js';
  * 支付处理操作 
  * @param {*} products 商品列表 
  */
-export const Payment =async function(products) {
-	let result = PriceCount(products)//支付金额初始化
+export const Payment = async function(products) {
+	let result = PriceCount(products) //支付金额初始化
 	//预先重置
 	let sale1_obj = {}, //支付 sale1 主表数据初始对象
 		sale2_arr = [], //支付 sale2 子表数据初始对象
@@ -90,16 +90,27 @@ export const Payment =async function(products) {
 			SKYDISCOUNT: item.SKYDISCOUNT
 		}, "SKYDISCOUNT");
 	});
-	console.log("[Payment]sale1",sale1_obj);
-	console.log("[Payment]sale2",sale2_arr);
-	console.log("[Payment]sale3",sale3_arr);
+	sale3_arr = (function() { //此处甄别一些特殊的情况，如预订单有定金，所以进入支付界面时候得预先给一条支付数据
+		if(sale1_obj.DNET){//如果存在定金金额
+			Sale3Model({
+				fkid:'ZG03',
+				type:'YDJ',
+				bill:sale1_obj.BILL,
+				name:"预定金",
+				amount:sale1_obj.DNET
+			})
+		}
+	})()
+	console.log("[Payment]sale1", sale1_obj);
+	console.log("[Payment]sale2", sale2_arr);
+	console.log("[Payment]sale3", sale3_arr);
 	return await TransferForPaymentAll( //TransferForPaymentAll 简化了部分传值，下面是针对退款需要的值，根据所需也可以调整为支付所需的传值
 		{
 			sale1_obj: sale1_obj,
 			sale2_arr: sale2_arr,
 			sale3_arr: sale3_arr,
 			SKY_DISCOUNT: result.sky_discount,
-			Products:result.products,
+			Products: result.products,
 			totalAmount: result.tatal_amount,
 			//支付的类型判断类的值👇
 			BILL_TYPE: "Z101",
@@ -127,8 +138,62 @@ export const PriceCount = function(products) {
 		}
 	});
 	return {
-		products,//商品列表
-		sky_discount: SKY_DISCOUNT,//折扣金额
-		tatal_amount: totalAmount//总金额（处理后）
+		products, //商品列表
+		sky_discount: SKY_DISCOUNT, //折扣金额
+		tatal_amount: totalAmount //总金额（处理后）
 	}
+}
+
+/**
+ * 生成 sale3 的记录（预订单）
+ */
+const sale3_def = {
+	fkid:"",
+	type:"",
+	bill:"",
+	name:"",
+	amount:0,
+	no: 0
+};
+export const Sale3Model = function(init = sale3_def) {
+	return Object.assign({
+		fkid: "ZF04",
+		type: "HYK",
+		bill: "111111111111111111111111111",
+		name: "微信支付",
+		amount: 0.01,
+		no: 0,
+		is_free: "",//*卡券独有 是否是赠券
+		disc: 0,//*卡券独有 卡折扣金额折扣率
+		zklx: "",//*卡券独有 折扣类型
+		id_type: "",//*卡券独有 卡类型
+		user_id: "",//*支付宝微信独有 用户id 
+		auth_code: "",//*支付宝微信，其他的不知道
+		card_no: ""//*卡券独有卡券号码
+	},init)
+}
+
+/**
+ * 
+ * @param {*} sale3 附加额外的参数的记录对象（预订单）
+ */
+const additional_def = {
+	fail: true, //def初始和退款、支付失败的皆为true
+	pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+	paying: false, //是否在正在支付重试中
+	refunding:false, //是否在正在退款重试中
+	loading: false,//是否显示加载
+	msg: "" //操作提示信息（可以显示失败的或者成功的）
+};
+
+export const Sale3ModelAdditional = function(sale3_model,init = additional_def) {
+	return Object.assign(sale3_model,Object.assign({
+		//业务配置字段 ↓
+		fail: true, //def初始和退款、支付失败的皆为true
+		pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+		paying: false, //是否在正在支付重试中
+		refunding:false,//是否在正在退款重试中
+		loading: false,
+		msg: "" //操作提示信息（可以显示失败的或者成功的）
+	},init))
 }

@@ -80,11 +80,16 @@
 					title: e.title
 				});
 				this.menuIndex = e.index;
+				this.CloseAllChildMenu(e.title);
+			},
+			CloseAllChildMenu:function(title){
 				this.urls.map((item, index) => {
-					if (item.title != e.title) {
+					if (item.title != title) {
 						item.showDetail = false;
 					} else {
-						e.showDetail = !e.showDetail;
+						console.log("[CloseAllChildMenu]当前菜单子菜单展示!",title);
+						console.log("[CloseAllChildMenu]当前菜单子菜单信息展示!",item);
+						item.showDetail = true;
 					}
 				})
 			},

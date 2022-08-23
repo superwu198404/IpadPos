@@ -62,22 +62,22 @@ const BatchInverse = function(obj, props) {
  * 根据 sale001 中的 [支付数据] 生成对应的 [退款数据]
  */
 export const PaymentToRefundSALE001 = function(sale, config = {
-	REFUND_NO: "",
-	BILL_TYPE: "Z151",
-	XS_TYPE: "2"
+	no: "",
+	bill_type: "Z151",
+	xs_type: "2"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
 	let config_assign = Object.assign({
-		REFUND_NO: "",
-		BILL_TYPE: "Z151",
-		XS_TYPE: "2"
+		no: "",
+		bill_type: "Z151",
+		xs_type: "2"
 	}, config);
 	console.log("[PaymentToRefundSALE001]退款对象生成开始!");
 	let raw = sale; //原始数据对象
 	let sale_refund = Object.assign({}, raw);
 	BatchInverse(sale_refund, ['TNET', 'ZNET', 'BILLDISC', 'ROUND', 'TDISC', 'TLINE']);
-	sale_refund.BILL = config_assign.REFUND_NO;
+	sale_refund.BILL = config_assign.no;
 	sale_refund.SALEDATE = saledate;
 	sale_refund.SALETIME = saletime;
 	sale_refund.CLTIME = saledate;
@@ -86,8 +86,8 @@ export const PaymentToRefundSALE001 = function(sale, config = {
 	sale_refund.XS_DATE = raw.SALEDATE;
 	sale_refund.XS_KHID = raw.KHID;
 	sale_refund.XS_GSID = raw.GSID;
-	sale_refund.XSTYPE = config_assign.XS_TYPE;
-	sale_refund.BILL_TYPE = config_assign.BILL_TYPE;
+	sale_refund.XSTYPE = config_assign.xs_type;
+	sale_refund.BILL_TYPE = config_assign.bill_type;
 	console.log("[PaymentToRefundSALE001]退款对象生成完毕!", sale_refund);
 	return sale_refund;
 }
@@ -96,23 +96,23 @@ export const PaymentToRefundSALE001 = function(sale, config = {
  * 根据 sale002 中的 [支付数据] 生成对应的 [退款数据]
  */
 export const PaymentToRefundSALE002 = function(sale_arr, config = {
-	REFUND_NO: "",
-	BILL_TYPE: "Z151",
-	XS_TYPE: "2"
+	no: "",
+	bill_type: "Z151",
+	xs_type: "2"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
 	let config_assign = Object.assign({
-		REFUND_NO: "",
-		BILL_TYPE: "Z151",
-		XS_TYPE: "2"
+		no: "",
+		bill_type: "Z151",
+		xs_type: "2"
 	}, config);
 	let sale_after = [];
 	console.log("[PaymentToRefundSALE002]退款对象生成开始!");
 	sale_arr.forEach((sale_raw) => {
 		let sale = Object.assign({}, sale_raw);
 		BatchInverse(sale, ['NET', 'DISCRATE', 'DISC', 'QTY']);
-		sale.BILL = config_assign.REFUND_NO;
+		sale.BILL = config_assign.no;
 		sale.SALEDATE = saledate;
 		sale.SALETIME = saletime;
 		sale.PRICE = parseFloat(sale.PRICE).toFixed(2)
@@ -131,23 +131,23 @@ export const PaymentToRefundSALE002 = function(sale_arr, config = {
  * 根据 sale003 中的 [支付数据] 生成对应的 [退款数据]
  */
 export const PaymentToRefundSALE003 = function(sale_arr, config = {
-	REFUND_NO: "",
-	BILL_TYPE: "Z151",
-	XS_TYPE: "2"
+	no: "",
+	bill_type: "Z151",
+	xs_type: "2"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
 	let config_assign = Object.assign({
-		REFUND_NO: "",
-		BILL_TYPE: "Z151",
-		XS_TYPE: "2"
+		no: "",
+		bill_type: "Z151",
+		xs_type: "2"
 	}, config);
 	let sale_after = [];
 	console.log("[PaymentToRefundSALE003]退款对象生成开始!");
 	sale_arr.forEach((sale_raw) => {
 		let sale = Object.assign({}, sale_raw);
 		BatchInverse(sale, ['AMT', 'DISC', 'FAMT', 'RATE']);
-		sale.BILL = config_assign.REFUND_NO;
+		sale.BILL = config_assign.no;
 		sale.SALEDATE = saledate;
 		sale.SALETIME = saletime;
 		sale_after.push(sale);
