@@ -1,9 +1,9 @@
 <template>
 	<view>
-		<movable-area style="z-index: 999;">
+		<movable-area style="z-index: 999;" v-if="msgDatas.length>0">
 			<movable-view :x="x" :y="y" direction="all" position="position">
 				<view class="ordermes">
-					<label @click="Orderments()" v-if="msgDatas.length>0">
+					<label @click="Orderments()" >
 						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>1</text>
 					</label>
 					<view class="orderlist" v-if="orderlist" v-for="(item,index) in msgDatas"
@@ -37,8 +37,8 @@
 		name: "movable",
 		data() {
 			return {
-				x: 700,
-				y: 0,
+				x: 820,
+				y: 550,
 				x1: 0,
 				x2: 0,
 				y1: 0,
@@ -64,6 +64,12 @@
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			console.log("传入的消息集合1：", that._msgDatas);
+			// uni.getSystemInfo({
+			// 	success: function(res) {
+			// 		console.log("窗口信息：", res.screenWidth);
+			// 		console.log("窗口信息：", res.screenHeight);
+			// 	}
+			// })
 		},
 		methods: {
 			mounted() {
@@ -82,12 +88,44 @@
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
+				console.log("消息点击");
 				_msg.DelMsg(that.KHID, e, res => {
 					console.log("消息数据已读结果：", res);
-					that.MsgData.splice(i, 1);
+					that.msgDatas.splice(i, 1);
 					if (e.url) {
-						uni.navigateTo({
-							url: e.url
+						// uni.navigateTo({
+						// 	url: e.url
+						// })
+						let name, title;
+						if (e.type == 'XTIP') {
+							name = "OnlineOrders";
+							title = "线上订单";
+							
+							uni.$emit("Switch", {
+								// name: "name",
+								title: "线上业务",
+								params: {
+									// msgdatas: e
+								},
+							})
+						}
+						if (e.type == 'PTIP') {
+							name = "TakeAway";
+							title = "外卖单";
+						}
+						if (e.type == 'JJPT') {
+							name = "Extract";
+							title = "预定提取";
+						}
+						console.log("跳转name", name, title);
+						that.orderlist = false;
+						//home下有监听该回调事件
+						uni.$emit("Switch", {
+							name: name,
+							title: title,
+							params: {
+								// msgdatas: e
+							},
 						})
 					}
 				});
@@ -131,6 +169,7 @@
 		align-items: center;
 		justify-content: center;
 		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
+		border-radius: 16rpx;
 	}
 
 	.ordermes image {
@@ -160,6 +199,7 @@
 		box-shadow: 0px 10px 20px 1px rgba(0, 107, 68, 0.1600);
 		width: 740rpx;
 		padding: 0 30rpx 20rpx 30rpx;
+		border-radius: 16rpx;
 	}
 
 	.orderlist .h2 {

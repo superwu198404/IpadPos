@@ -5,7 +5,7 @@
 	<view class="content" style="overflow: hidden;">
 		<Page @switch="SwitchPage" :name="selected.name" :title="selected.title"></Page>
 		<view class="right">
-			<Head></Head>
+			<Head @Switch="SwitchPage"></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
 			<component @Switch="SwitchPage" @Message="OpenMessage" v-for="c in router" :is="c.name" :ref="c.title"
 				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="meta_data"></component>
@@ -117,12 +117,18 @@
 					if (item.details)
 						this.ComponentRecursion(item.details, all);
 				}));
+			},
+			MsgToPage: function() {
+				uni.$on("Switch", util.callBind(this, function(res) {
+					this.SwitchPage(res);
+				}))
 			}
 		},
 		created() {
 			let components = [];
 			this.ComponentRecursion(router, components)
 			this.router = components;
+			this.MsgToPage();
 		}
 	}
 </script>
