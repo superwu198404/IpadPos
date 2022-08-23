@@ -345,7 +345,7 @@
 							util.simpleMsg("销售单创建成功!");
 						}).bind(this), function(err) {
 							console.log("[Confirm]退款订单创建失败!", err);
-							util.simpleMsg("!销售单创建失败", false);
+							util.simpleMsg("销售单创建失败!", false);
 						});
 						this.GetOrders(this.p_bill); //刷新界面
 					} else {

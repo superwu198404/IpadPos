@@ -107,8 +107,8 @@
 				that.YW_MsgData = res.filter((r, i) => {
 					return (r.type == 'PTIP' || r.type == 'JJPT' || r.type == 'XTIP'); //外卖，预定，线上
 				});
-				console.log("系统消息数据that.XT_MsgData：", that.XT_MsgData);
-				console.log("业务消息数据that.YW_MsgData：", that.YW_MsgData);
+				console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+				console.log("[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
 			});
 		},
 		methods: {

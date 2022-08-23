@@ -363,7 +363,7 @@
 						});
 						return;//避免进入支付页面
 					} else {
-						result = await Accept({
+						result = await Accept({//其他退单
 							xs_type: this.Order.XSTYPE,
 							bill_type: this.Order.BILL_TYPE,
 							sales: {
@@ -374,6 +374,7 @@
 						})
 					}
 				}
+				
 				this.$store.commit('set-location', result); //把数据存入
 				uni.navigateTo({
 					url: "../Payment/PaymentAll",

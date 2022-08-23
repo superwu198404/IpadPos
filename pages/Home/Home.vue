@@ -3,7 +3,7 @@
 </style>
 <template>
 	<view class="content" style="overflow: hidden;">
-		<Page @switch="SwitchPage" :name="selected.name" :title="selected.title"></Page>
+		<Page ref="menu" @switch="SwitchPage" :name="selected.name" :title="selected.title"></Page>
 		<view class="right">
 			<Head></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
@@ -93,6 +93,7 @@
 				console.log("[SwitchPage]页面切换:", data);
 				this.selected.name = data.name;
 				this.selected.title = data.title;
+				this.$refs.menu.CloseAllChildMenu(data.name);//关闭子菜单
 				if (data.switch || data.switch === undefined) {
 					this.current.name = data.name;
 					this.current.title = data.title;
