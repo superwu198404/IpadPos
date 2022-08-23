@@ -24,7 +24,7 @@
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()">
 						<image src="@/images/dakehu.png" mode="widthFix"></image>大客户：{{DKFNAME}}
-						<image src="@/images/xiala.png" mode="widthFix"></image>
+						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
@@ -42,18 +42,21 @@
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text @click="exits()">{{RYID}}▼</text>
+					<text @click="exits()">{{RYID}}
+						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
+							mode="widthFix"></image>
+					</text>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="LoginOut()">
-							<image src="@/images/qiehuan.png" mode="widthFix"></image>
+							<image src="@/images/tuichu.png" mode="widthFix"></image>
 							<text>退出</text>
 						</view>
 						<view class="exit" @click="Login()">
-							<image src="@/images/tuichu.png" mode="widthFix"></image>
+							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
 							<text>注销</text>
 						</view>
 						<view class="exit" @click="UPPWD()">
-							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<image src="@/images/xgmima.png" mode="widthFix"></image>
 							<text>修改密码</text>
 						</view>
 					</view>
@@ -114,27 +117,24 @@
 		methods: {
 			//消息已读
 			ReadMsg: function(e, i) {
-
-				this.$emit("Switch", {
-					name: "Message",
-					title: "消息",
-					params: {
-						msgdatas: e,
-						open: true
-					},
-				})
-				return;
-				_msg.DelMsg(that.KHID, e, res => {
-					console.log("消息数据：", res);
-					that.MsgData.splice(i, 1);
-					// let arr = that.MsgData;
-					// that.MsgData = arr.splice(i, 1);
-					if (e.url) {
-						uni.navigateTo({
-							url: e.url
-						})
-					}
-				});
+				// _msg.DelMsg(that.KHID, e, res => {
+				// 	console.log("消息数据：", res);
+				// 	that.MsgData.splice(i, 1);
+				// let arr = that.MsgData;
+				// that.MsgData = arr.splice(i, 1);
+				if (e.url) {
+					// uni.navigateTo({
+					// 	url: e.url
+					// })
+					this.$emit("Switch", {
+						name: "Message",
+						title: "消息",
+						params: {
+							// msgdatas: e
+						},
+					})
+				}
+				// });
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout

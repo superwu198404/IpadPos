@@ -41,6 +41,8 @@
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name, title) {
+					// console.log("1111:", name + title);
+					// console.log("2222:", this.name + this.title);
 					return (this.name === name) && (this.title === title)
 				});
 			}
@@ -82,13 +84,13 @@
 				this.menuIndex = e.index;
 				this.CloseAllChildMenu(e.title);
 			},
-			CloseAllChildMenu:function(title){
+			CloseAllChildMenu: function(title) {
 				this.urls.map((item, index) => {
 					if (item.title != title) {
 						item.showDetail = false;
 					} else {
-						console.log("[CloseAllChildMenu]当前菜单子菜单展示!",title);
-						console.log("[CloseAllChildMenu]当前菜单子菜单信息展示!",item);
+						console.log("[CloseAllChildMenu]当前菜单子菜单展示!", title);
+						console.log("[CloseAllChildMenu]当前菜单子菜单信息展示!", item);
 						item.showDetail = true;
 					}
 				})

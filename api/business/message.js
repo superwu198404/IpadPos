@@ -147,5 +147,6 @@ var DelMsg = function(e, d, func) {
 export default {
 	GetAllMsg,
 	ShowMsg,
-	DelMsg
+	DelMsg,
+	_ShowMsg
 }
