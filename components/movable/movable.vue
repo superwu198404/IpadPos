@@ -3,7 +3,7 @@
 		<movable-area style="z-index: 999;" v-if="msgDatas.length>0">
 			<movable-view :x="x" :y="y" direction="all" position="position">
 				<view class="ordermes">
-					<label @click="Orderments()" >
+					<label @click="Orderments()">
 						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>1</text>
 					</label>
 					<view class="orderlist" v-if="orderlist" v-for="(item,index) in msgDatas"
@@ -100,7 +100,7 @@
 						if (e.type == 'XTIP') {
 							name = "OnlineOrders";
 							title = "线上订单";
-							
+
 							uni.$emit("Switch", {
 								// name: "name",
 								title: "线上业务",
@@ -127,6 +127,17 @@
 								// msgdatas: e
 							},
 						})
+						//必须后置，否则无法切换
+						if (e.type == 'XTIP') {
+							uni.$emit("Switch", {
+								// name: "name",
+								title: "线上业务",
+								switch: false,
+								params: {
+									// msgdatas: e
+								},
+							})
+						}
 					}
 				});
 			}

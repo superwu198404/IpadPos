@@ -117,24 +117,24 @@
 		methods: {
 			//消息已读
 			ReadMsg: function(e, i) {
-				_msg.DelMsg(that.KHID, e, res => {
-					console.log("消息数据：", res);
-					that.MsgData.splice(i, 1);
-					// let arr = that.MsgData;
-					// that.MsgData = arr.splice(i, 1);
-					if (e.url) {
-						// uni.navigateTo({
-						// 	url: e.url
-						// })
-						this.$emit("Switch", {
-							name: "Message",
-							title: "消息",
-							params: {
-								// msgdatas: e
-							},
-						})
-					}
-				});
+				// _msg.DelMsg(that.KHID, e, res => {
+				// 	console.log("消息数据：", res);
+				// 	that.MsgData.splice(i, 1);
+				// let arr = that.MsgData;
+				// that.MsgData = arr.splice(i, 1);
+				if (e.url) {
+					// uni.navigateTo({
+					// 	url: e.url
+					// })
+					this.$emit("Switch", {
+						name: "Message",
+						title: "消息",
+						params: {
+							// msgdatas: e
+						},
+					})
+				}
+				// });
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout
