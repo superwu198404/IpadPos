@@ -113,16 +113,17 @@ const accept_def_params = {
 		sale3: [],
 	},
 	products: [],
+	payments: [],
 	xs_type: "", //是 支付(1) 还是 退款(2)
 	bill_type: "" //是 支付(Z101) 还是 退款(Z151)
 }
 export const Accept = async function(params_obj = accept_def_params) {
 	let params = Object.assign(accept_def_params, params_obj);
 	if (params.xs_type == 1) { //提取操作 => 支付
-		console.log("[预定提取]结算确认!开始结算...", params)
-		return await Payment(params.products);
+		console.log("[Accept]结算确认!开始结算...", params)
+		return await Payment(params.products, params.payments);
 	} else { //取消操作 => 退款
-		console.log("[预定取消]退单确认!开始退款...");
+		console.log("[Accept]退单确认!开始退款...");
 		return await Refund(params.sales, params.xs_type);
 	}
 }

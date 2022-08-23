@@ -12,6 +12,7 @@
 		<!-- 结算 -->
 		<view class="boxs">
 			<view class="memberes">
+				<ReserveDrawer @Close="CloseReserveDrawer" :order="Order" :show="SaleFrom"></ReserveDrawer>
 				<view class="meminfo" v-if="Memberinfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -150,6 +151,9 @@
 						<!-- <text >清空</text> -->
 						<text @click="CloseSale()">关闭</text>
 					</view>
+					<view class="edit-info">
+						<button @click="EditExtract">+修改预订单信息</button>
+					</view>
 					<view class="h5"><text>单号：{{Order.BILL}}</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
@@ -223,6 +227,9 @@
 </template>
 
 <script>
+	//页面组件引入 ↓
+	import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue';
+	//页面组件引入 ↑
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
@@ -234,6 +241,10 @@
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
 	import _refund from '@/api/business/refundorder.js';
+	import {
+		Sale3Model,
+		Sale3ModelAdditional
+	} from '@/bll/PaymentBusiness/bll.js'
 	import {
 		Accept
 	} from '@/bll/Common/bll.js';
@@ -247,6 +258,9 @@
 			_Others: Object, //其他数据
 			_Accept: Function
 		},
+		components:{
+			ReserveDrawer
+		},
 		data() {
 			return {
 				KHID: getApp().globalData.store.KHID,
@@ -255,6 +269,7 @@
 				Shoppingbags: false,
 				showZK: false,
 				yn_hy: false,
+				SaleFrom:false,
 				CXDatas: [],
 				Order: {
 					BILL: common.CreateBill(getApp().globalData.store.KHID, getApp().globalData.store.POSID),
@@ -329,20 +344,44 @@
 			CloseSale: function() {
 				this.$emit("_CloseSale", {});
 			},
-			Comfirm:async function() {
+			CloseReserveDrawer:function(order_info){
+				this.SaleFrom = false;
+				if(order_info) Object.assign(this.Order,order_info);
+			},
+			EditExtract:function(){
+				console.log("[EditExtract]修改预订单...");
+				this.SaleFrom = true;
+			},
+			Comfirm: async function() {
 				console.log("[Comfirm]确认!");
 				let result = null;
-				console.log("[ShopCar-Comfirm]sale1:",this.Order);
-				console.log("[ShopCar-Comfirm]sale2:",this.Products);
-				console.log("[ShopCar-Comfirm]sale3:",this.PayDatas);
+				console.log("[ShopCar-Comfirm]sale1:", this.Order);
+				console.log("[ShopCar-Comfirm]sale2:", this.Products);
+				console.log("[ShopCar-Comfirm]sale3:", this.PayDatas);
 				if (this.Order.XSTYPE == 1) {
 					result = await Accept({
 						xs_type: this.Order.XSTYPE,
 						bill_type: this.Order.BILL_TYPE,
-						products: this.Products
-					})
+						products: this.Products,
+						payments: (util.callBind(this, function() {
+							if (this.Order.DNET) { //如果存在定金金额
+								console.log("[Comfirm]生成预定支付信息...");
+								return [Sale3ModelAdditional(Sale3Model({
+									fkid: 'ZG03',
+									type: 'YDJ',
+									bill: this.Order.BILL,
+									name: "预定金",
+									amount: this.Order.DNET
+								}),{//业务配置字段（支付状态设定为成功）
+									fail: false//定金显示为成功
+								})];
+							} else {
+								return [];
+							}
+						}))()
+					});
 				} else {
-					if(this.Order.BILL_TYPE == 'Z154'){//赊销退单需要调用api生成数据
+					if (this.Order.BILL_TYPE == 'Z154') { //赊销退单需要调用api生成数据
 						_refund.CreditOrderRefund({
 							khid: this.KHID,
 							posid: this.POSID,
@@ -361,9 +400,9 @@
 								util.simpleMsg("退单失败:" + res.msg, true);
 							}
 						});
-						return;//避免进入支付页面
+						return; //避免进入支付页面
 					} else {
-						result = await Accept({//其他退单
+						result = await Accept({ //其他退单
 							xs_type: this.Order.XSTYPE,
 							bill_type: this.Order.BILL_TYPE,
 							sales: {
@@ -374,7 +413,7 @@
 						})
 					}
 				}
-				
+
 				this.$store.commit('set-location', result); //把数据存入
 				uni.navigateTo({
 					url: "../Payment/PaymentAll",
@@ -473,5 +512,9 @@
 </script>
 
 <style>
-
+.edit-info>uni-button {
+		flex: 0.9;
+		font-size: 12px;
+		margin-bottom: 4px;
+	}
 </style>
