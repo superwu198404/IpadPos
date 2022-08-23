@@ -276,6 +276,27 @@ var hykPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+//仟吉实体卡
+var kengeePay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		_PaymentAll(pt, body, func, catchFunc);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+	},
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
 //mis银联支付
 var misPay = {
 	GetConfig:function(){//获取 mis 支付参数，款台号
@@ -442,6 +463,7 @@ var payType = {
 	WXZF: wxPay,
 	ZFB20: zfbPay,
 	PAYCARD: hykPay,
+	PAYBRUSHCARD: kengeePay,
 	SZQ: szqPay,
 	TL: misPay,
 }
