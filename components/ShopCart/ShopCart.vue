@@ -8,7 +8,7 @@
 	}
 </style>
 <template>
-	<view class="content">
+	<!-- <view class="content"> -->
 		<!-- 结算 -->
 		<view class="boxs">
 			<view class="memberes">
@@ -223,7 +223,7 @@
 			</view>
 		</view>
 
-	</view>
+	<!-- </view> -->
 </template>
 
 <script>

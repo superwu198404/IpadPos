@@ -43,7 +43,7 @@
 										<!-- <text>重要（10）</text>
 										<text>普通（15）</text> -->
 										<text v-for="(item) in JJ_Arr"
-											@click="SearchMsg({type:item.type})">{{item.type}}({{item.count}})</text>
+											@click="SearchMsg({type:item.type})">{{item.name}}({{item.count}})</text>
 									</view>
 								</view>
 								<view class="broad">
@@ -62,8 +62,8 @@
 									<text class="h7">{{item.newVal.DATE_LR}}</text>
 									<view class="liis">
 										<view class="emergs">
-											<label class="zhoyao" v-if="item.newVal.IMTYPE=='1'">重要</label>
-											<label class="putong" v-else>普通</label>
+											<label class="zhoyao" v-if="item.newVal.IMTYPE=='2'">重要</label>
+											<label class="putong" v-if="item.newVal.IMTYPE=='3'">普通</label>
 											<text>{{item.newVal.EDATE}}截止</text>
 										</view>
 										<view class="h6">{{item.newVal.TITLE}}</view>
@@ -90,8 +90,9 @@
 					</view>
 					<view class="shoppbag">
 						<view class="liis messadet">
-							<view class="emergs"><label class="zhoyao">重要</label><label class="putong"
-									v-if="putong">普通</label><text>● 进行中</text></view>
+							<view class="emergs"><label class="zhoyao">重要</label>
+								<label class="putong" v-if="putong">普通</label><text>● 进行中</text>
+							</view>
 							<view class="h6">这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字标题超出五十个字显示...</view>
 							<view class="sender"><text>质管部 · 橘子</text><text>创建时间：2022-06-13 09:00:00</text></view>
 						</view>
@@ -171,6 +172,9 @@
 						newVal: JSON.parse(r.val)[0]
 					}
 				});
+				this.XT_MsgData.sort((a, b) => b.newVal.DATE_LR.localeCompare(a.newVal.DATE_LR));//降序
+				// this.XT_MsgData.sort((a, b) => a.newVal.DATE_LR.localeCompare(b.newVal.DATE_LR));//升序
+				console.log("排序后的消息数据：", that.XT_MsgData);
 				that.Old_XT_MsgData = that.XT_MsgData;
 				let Arr = [that.XT_MsgData[0].newVal.IMTYPE];
 				let Arr1 = [that.XT_MsgData[0].newVal.YYBM];
@@ -194,6 +198,9 @@
 						count: that.XT_MsgData.filter(rr => {
 							return rr.newVal.IMTYPE == r;
 						}).length,
+						name: that.XT_MsgData.find(rr => {
+							return rr.newVal.IMTYPE == r;
+						}).newVal.IMTYPE_NAME
 					})
 				});
 				Arr1.map(r => {

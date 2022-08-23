@@ -22,7 +22,8 @@ var GetPassWord = function(khid, userid, password, func) {
 				data: {
 					ryid: userid,
 					gwid: res.msg[0].GWID,
-					name: res.msg[0].SNAME
+					name: res.msg[0].SNAME,
+					pwd: password
 				}
 			});
 		} else {
@@ -80,6 +81,7 @@ var get_mystr = function(pm_strpass) {
 	}
 }
 
+
 //根据ryid 查询khid 一对多的关系
 var GetKHIDByRYID = function(userid, func) {
 	let sql = "select password_MD,gwid,SNAME,KHID from MDRYKH where ryid='" + userid + "'";
@@ -90,7 +92,28 @@ var GetKHIDByRYID = function(userid, func) {
 		util.simpleMsg("校验异常", true);
 	});
 }
-
+//修改本地密码
+var UpdatePWD_Local = function(pwd, ryid, func) {
+	let sql = ["UPDATE MDRYKH SET PASSWORD_MD= '" + pwd + "' WHERE ryid = '" + ryid + "'",
+		"UPDATE RYDA SET PASSWORD_MD= '" + pwd + "' WHERE ryid = '" + ryid + "'"
+	]
+	db.get().executeDml(sql, "操作中...", res => {
+		console.log("用户密码修改结果：", res);
+		func(res);
+	}, err => {
+		util.simpleMsg("密码修改失败：" + err.msg, "none");
+	});
+}
+/**
+ * 修改用户密码
+ * @param {*} data 查询参数 
+ * @param {*} func 回调函数
+ */
+export const UpdatePWD = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.UpdatePWD";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 //初始化当前门店信息
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
@@ -114,6 +137,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			PHONE: res.msg[0].PHONE,
 			RYNAME: ryinfo.name,
 			RYID: ryinfo.ryid,
+			PWD: ryinfo.pwd,
 			JGID: res.msg[0].JGID,
 			STIME: util.CheckStoreTime(res.msg[0].STIME),
 			ETIME: util.CheckStoreTime(res.msg[0].ETIME),
@@ -132,5 +156,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 export default {
 	GetPassWord,
 	GetKHIDByRYID,
-	InitStore
+	InitStore,
+	UpdatePWD,
+	UpdatePWD_Local
 }

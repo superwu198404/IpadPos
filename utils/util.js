@@ -313,6 +313,17 @@ const utils = {
 			return num;
 		} else
 			return -number;
+	},
+
+	//排序
+	compare: function(prop, sort = 'desc') {
+		return function(a, b) {
+			if (sort == 'desc') {
+				return b[prop] - a[prop] // 降序
+			} else {
+				return a[prop] - b[prop] // 升序
+			}
+		}
 	}
 }
 
@@ -342,5 +353,6 @@ export default {
 	callBind: utils.callBind,
 	group: utils.group,
 	generateSQLStringArray: utils.generateSQLStringArray,
-	inverseNumber: utils.inverseNumber
+	inverseNumber: utils.inverseNumber,
+	compare: utils.compare
 }

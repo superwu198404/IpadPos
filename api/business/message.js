@@ -110,7 +110,7 @@ var GetAllMsg = function(e, t, func) {
 	let reqdata = Req.resObj(true, "查询中...", {
 		khid: e,
 		type: t
-	}, apistr);
+	}, apistr, false);//不显示加载提示
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
