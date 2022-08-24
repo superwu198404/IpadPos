@@ -22,10 +22,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="exit" @click="LoginOut()">
-			<image src="@/images/tuichu.png" mode="widthFix"></image>
-			<text>退出</text>
-		</view> -->
 	</view>
 </template>
 
@@ -62,27 +58,38 @@
 		methods: {
 			ToPage: function(e) {
 				console.log("[ToPage]切换:", e);
-				if (e.url) {
-					// uni.redirectTo({
-					// 	url: e.url,
-					// 	complete: r => {
-					// 		console.log(r);
-					// 	}
-					// })
-
+				if (e.url_type && e.url_type == 'single') {
+					if (e.name == 'Stress') {
+						util.simpleModal("提示", "重读将销毁已保存的业务数据,是否继续?", res => {
+							if (res) {
+								console.log("测试");
+								util.removeStorage("Init_Data");
+								console.log("测试1:", e.url);
+								uni.redirectTo({
+									url: e.url,
+									complete: r => {
+										console.log(r);
+									}
+								})
+							}
+						})
+					}
+				} else {
+					if (e.url) {
+						this.menuIndex = e.index;
+						if (e.details)
+							this.sec_index = -1
+						else
+							this.sec_index = e.index;
+					}
+					this.$emit("switch", {
+						switch: e.url ? true : false,
+						name: e.name,
+						title: e.title
+					});
 					this.menuIndex = e.index;
-					if (e.details)
-						this.sec_index = -1
-					else
-						this.sec_index = e.index;
+					this.CloseAllChildMenu(e.title);
 				}
-				this.$emit("switch", {
-					switch: e.url ? true : false,
-					name: e.name,
-					title: e.title
-				});
-				this.menuIndex = e.index;
-				this.CloseAllChildMenu(e.title);
 			},
 			CloseAllChildMenu: function(title) {
 				this.urls.map((item, index) => {
@@ -95,14 +102,6 @@
 					}
 				})
 			},
-			LoginOut: function() {
-				uni.redirectTo({
-					url: "@/pages/index/index",
-					complete: r => {
-						console.log(r)
-					}
-				})
-			}
 		}
 	}
 </script>

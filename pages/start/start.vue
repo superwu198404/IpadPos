@@ -1,21 +1,122 @@
 <template>
-	<view>
-		<text>{{showmsg}}</text>>
+	<view class="centre">
+		<image class="bg" src="@/images/chushihua.png" mode="widthFix"></image>
+		<view class="subject">
+			<view class="hh">
+				<view class="h1">系统初始化</view><text>Initialize</text>
+			</view>
+			<view class="infos">
+				<label>
+					<image src="../../images/dx-mendian.png" mode="widthFix"></image>
+					<!-- <input /> -->
+					<input placeholder="请输入门店的编码" v-model="khid" />
+				</label>
+				<label>
+					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
+					<!-- <input /> -->
+					<input placeholder="请输入款台号" v-model="posid" type="number" />
+				</label>
+			</view>
+			<view class="operate">
+				<button class="btn" @click="init">初始化</button>
+			</view>
+		</view>
+
+		<!-- <text>{{showmsg}}</text>>
 		<p>门店：<input placeholder="请输入门店的编码" v-model="khid" /></p>
 		<p>款台：<input placeholder="请输入款台号" v-model="posid" /></p>
 		<button @click="init">数据初始化</button>
-		<!-- <button @click="reinit">重读数据</button> -->
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
-		<button @click="toPrinter">蓝牙与打印</button>
+		<button @click="toPrinter">蓝牙与打印</button> -->
 	</view>
 </template>
+<style>
+	.centre {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+
+	.centre .bg {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+	}
+
+	.subject {
+		width: 40%;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: #fff;
+		box-shadow: 0px 20rpx 40rpx 1px rgba(66, 177, 75, 0.16);
+		border-radius: 40rpx;
+		padding: 4% 5%;
+	}
+
+	.subject .hh {
+		display: flex;
+		flex-direction: column;
+		font-size: 58rpx;
+		color: #006B44;
+	}
+
+	.subject .hh .h1 {
+		font-size: 70rpx;
+		line-height: 90rpx;
+		font-weight: 700;
+	}
+
+	.infos {
+		margin-top: 10%;
+	}
+
+	.infos label {
+		background-color: #E0EAE9;
+		height: 80rpx;
+		line-height: 80rpx;
+		border-radius: 12rpx;
+		width: 94%;
+		display: flex;
+		align-items: center;
+		margin: 5% 0;
+		padding: 0 3%;
+	}
+
+	.infos label input {
+		width: 90%;
+		height: 80rpx;
+		line-height: 80rpx;
+	}
+
+	.infos image {
+		width: 46rpx;
+		height: 36rpx;
+	}
+
+	.operate {
+		margin-top: 15%;
+	}
+
+	.operate .btn {
+		background-color: #006B44;
+		color: #fff;
+		width: 100%;
+		height: 90rpx;
+		line-height: 90rpx;
+	}
+</style>
 
 <script>
 	import Req from '@/utils/request.js';
 	import sqlLite from '@/utils/db/db_excute.js';
 	import _create_sql from '@/utils/db/create_sql.js';
 	import util from '@/utils/util.js';
+
 	var mysqlite = sqlLite.get();
 	var that = null;
 
@@ -35,25 +136,23 @@
 		methods: {
 			onLoad() {
 				that = this;
-				let store = util.getStorage("store");
-				if (store && JSON.stringify(store) != "{}") {
-					that.khid = store.KHID;
-					that.posid = store.POSID;
+				// util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
+				let Init_Data = util.getStorage("Init_Data");
+				if (Init_Data && Init_Data != '{}') { //初始化过
+					uni.navigateTo({
+						url: "/pages/Login/Login"
+					});
+				} else {
+					let store = util.getStorage("store");
+					if (store && JSON.stringify(store) != "{}") {
+						that.khid = store.KHID;
+						that.posid = store.POSID;
+					}
 				}
 			},
 			toDbqry: function() {
 				uni.navigateTo({
 					url: "/pages/sqlitetest/sqlitetest"
-				});
-			},
-			toIndex: function() {
-				uni.navigateTo({
-					url: "/pages/index/index"
-				});
-			},
-			toPrinter: function() {
-				uni.navigateTo({
-					url: "/pages/xprinter/home"
 				});
 			},
 			startx: function() {
@@ -88,6 +187,10 @@
 
 			},
 			init: async function() {
+				if (!that.khid || !that.posid) {
+					util.simpleMsg("请输入门店id和款台号", "none");
+					return;
+				}
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
 				let reqdata = Req.resObj(true, "正在进行初始化001", null, apistr);
@@ -133,8 +236,14 @@
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);
+									//储存初始化门店和款台
+									util.setStorage("Init_Data", {
+										KHID: that.khid,
+										POSID: that.posid
+									});
+									
 									uni.navigateTo({
-										url: "/pages/sqlitetest/sqlitetest" // 传递参数 id，值为1
+										url: "/pages/Login/Login"
 									});
 									let reqdata = Req.retData(true, "start创建成功")
 									return reqdata;
@@ -151,9 +260,8 @@
 						(res) => {
 							console.log("异常结果：", res);
 							that.tx001 = null;
+							util.simpleMsg(res.msg, "none");
 							console.log(JSON.stringify("start创建完成"));
-							getApp().globalData.store.KHID = that.khid; //主动赋值
-							getApp().globalData.store.POSID = that.posid;
 						}
 				)
 			},

@@ -93,6 +93,27 @@
 				</view>
 			</view>
 		</view>
+		<!-- 蓝牙弹窗 -->
+		<view class="boxs" v-if="showBle">
+			<view class="customer">
+				<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<view class="h3">设备连接 <button @click="showBle=false" class="guan">×</button></view>
+				<view class="critlist">
+					<view>
+						<label>
+							<image src="@/images/zfcg-dyj.png"></image><text>设备：KHO2345643343</text>
+						</label>
+						<button>链接</button><button v-if="conns" class="has">已连接</button>
+					</view>
+					<view>
+						<label>
+							<image src="@/images/zfcg-dyj.png"></image><text>设备：KHO2345643343</text>
+						</label>
+						<button v-if="link">链接</button><button class="has">已链接</button>
+					</view>
+				</view>
+			</view>
+		</view>
 		<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 	</view>
 </template>
@@ -196,5 +217,123 @@
 </script>
 
 <style>
+	.customer {
+		background-color: #fff;
+		width: 45%;
+		min-height: 400rpx;
+		position: relative;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 20rpx;
+		padding: 0 3% 140rpx;
+	}
 
+	.customer .bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 0;
+	}
+
+	.customer .h3 {
+		height: 100rpx;
+		line-height: 100rpx;
+		font-size: 34rpx;
+		border-bottom: 1px dashed #eee;
+		position: relative;
+		z-index: 2;
+		font-weight: 700;
+	}
+
+	.customer .h3 .guan {
+		float: right;
+		background: none;
+		font-size: 32rpx;
+		height: 100rpx;
+		line-height: 100rpx;
+		text-align: right;
+		padding: 0;
+		width: 60rpx;
+	}
+
+	.affirm {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 90%;
+		height: 140rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.affirm button {
+		width: 46%;
+		margin: 0 2%;
+	}
+
+	.affirm .btn-qk {
+		border: 1px solid #FE694B;
+		background-color: #FFF0EC;
+		color: #FE694B;
+	}
+
+	.clues {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		line-height: 300rpx;
+		fony-size: 34rpx;
+		position: relative;
+		z-index: 2;
+	}
+
+	.critlist {
+		padding: 4% 2% 4%;
+		position: relative;
+		z-index: 9;
+	}
+
+	.critlist view {
+		padding: 2% 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.critlist view image {
+		width: 50rpx;
+		height: 50rpx;
+		margin-right: 10rpx;
+	}
+
+	.critlist view label {
+		height: 60rpx;
+		line-height: 60rpx;
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.critlist view button {
+		width: 140rpx;
+		height: 60rpx;
+		border-radius: 60rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		background-color: #42B14B;
+		color: #fff;
+		font-size: 16rpx;
+		margin: 0;
+	}
+
+	.critlist view .has {
+		background-color: #B0b0b0;
+	}
 </style>

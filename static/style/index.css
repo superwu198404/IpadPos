@@ -127,7 +127,7 @@ page {
 .procycle {
 	display: flex;
 	flex-wrap: wrap;
-	margin-top: 1%;
+	/* margin-top: 1%; */
 	padding: 5px;
 	box-sizing: border-box;
 }
@@ -167,9 +167,12 @@ page {
 	margin-right: 6rpx;
 }
 .commods .uls{
-	padding:3% 0;
-	max-height: 900rpx;
+	padding:1% 0;
+	max-height: 1300rpx;
 	overflow: auto;
+	width:100%;
+	display: flex;
+	flex-wrap: wrap;
 }
 .commods .uls .lis{
 	display: flex;
@@ -178,12 +181,54 @@ page {
 	border-radius: 10rpx;
 	background-color: #fefefe;
 	padding:1% 2%;
-	margin:0 2% 3% 0;
-	width:43%;
+	margin:0 1% 2%;
+	width:43.8%;
+}
+.commods .uls .lis.curr{
+	background: linear-gradient(180deg, #E0F2E1 0%, #FFFFFF 100%);
+	border: 2rpx solid #9FD7A3;
+}
+.uls .lis .protheme{
+	display: flex;
+	align-items: center;
+	padding-bottom: 4%;
+	border-bottom: 1rpx solid #D3D3D3;
+}
+.uls .lis .protheme image{
+	width:90rpx;
+	height: 90rpx;
+	margin-right: 4%;
+}
+.uls .lis .protheme .themes label{
+	font-size: 28rpx;
+	color: #b0b0b0;
+}
+.uls .lis .protheme .themes label text{
+	display: inline-block;
+	padding:0 14rpx;
+	background-color: #EBF7EC;
+	border:1px solid #42B14B;
+	color: #42B14B;
+	height: 40rpx;
+	line-height: 40rpx;
+	margin-right: 20rpx;
+	border-radius: 6rpx;
+	font-size: 26rpx;
 }
 .commods .uls .lis .h8{
 	font-weight: 700;
-	line-height: 60rpx;
+	line-height: 70rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; 
+}
+.uls .lis .eventdate{
+	padding-top:20rpx;
+	line-height: 50rpx;
+	font-size: 26rpx;
+}
+.uls .lis .eventdate text{
+	font-weight: 600;
 }
 .boxs .promot{
 	width:80%;
@@ -400,7 +445,7 @@ page {
 }
 
 .commods {
-	padding: 60rpx 3%;
+	padding: 0 0%;
 	position: relative;
 	z-index: 99;
 }

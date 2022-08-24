@@ -36,6 +36,8 @@
 	import SXRefund from '@/pages/RefundOrder/SXRefund.vue'
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
+	import Promotion from '@/pages/Promotion/Promotion.vue'
+	
 	export default {
 		name: "Home",
 		components: {
@@ -51,7 +53,8 @@
 			RefundOrder,
 			SXRefund,
 			Message,
-			CreditSettlement
+			CreditSettlement,
+			Promotion
 		},
 		data() {
 			return {

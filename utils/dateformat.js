@@ -358,7 +358,7 @@ const getDateByParam = (t) => {
 	return str;
 };
 /**
- *矫正门店营业时间 
+ *矫正门店营业时间 返回时分秒
  * @param {*} t 
  */
 const CheckStoreTime = (t) => {
@@ -368,7 +368,7 @@ const CheckStoreTime = (t) => {
 			if (t.indexOf(':') >= 0) {
 				str = t.split(' ')[1];
 			} else {
-				str = t.substring(0, 1) + ":" + t.substring(2, 3) + ":" + t.substring(4, 5);
+				str = t.substr(0, 2) + ":" + t.substr(2, 2) + ":" + t.substr(4, 2);
 			}
 		}
 		if (t.indexOf(':') >= 0) {

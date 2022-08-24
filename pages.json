@@ -3,7 +3,8 @@
 		{
 			"path": "pages/start/start",
 			"style": {
-				"navigationBarTitleText": "开始",
+				"titleNView": false,
+				"navigationBarTitleText": "初始化",
 				"enablePullDownRefresh": false
 			}
 		},
@@ -18,7 +19,7 @@
 			"path": "pages/Home/Home",
 			"style": {
 				"titleNView": false,
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "首页",
 				"enablePullDownRefresh": false
 			}
 		},
@@ -179,10 +180,10 @@
             
         }
         ,{
-            "path" : "pages/Test/Test",
+            "path" : "pages/Admin/Admin",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "管理页",
                 "enablePullDownRefresh": false
             }
             
@@ -256,6 +257,15 @@
 		        "enablePullDownRefresh": false
 		    }
 		}
+        ,{
+            "path" : "pages/Promotion/Promotion",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -85,7 +85,7 @@
 						<view class="a-z" @click="Memberlogin(1)">
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z" @click="ShowCXData()">
+						<view class="a-z" @click="GetTSZKData()">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 						</view>
 						<view class="states" @click="ShowSale()">
@@ -469,7 +469,7 @@
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="commods" style="padding-top:26rpx;">
 					<view class="h3">
-						特殊折扣选则<button class="close" @click="showMDCXData=false">×</button>
+						特殊折扣选则<button class="close" @click="showTSZK=false">×</button>
 					</view>
 					<view class="uls">
 						<view class="lis curr">
@@ -579,7 +579,8 @@
 				curTime: require("../../images/dx-day.png"), //当前时段 早上 中午 晚上
 				PLIndex: 0, //热销品类索引
 				scrollinto: "",
-				showTSZK: false
+				showTSZK: false,
+				YN_SX: false
 			}
 		},
 		methods: {
@@ -680,13 +681,7 @@
 					})
 				}
 			},
-			//获取并展示门店促销活动
-			ShowCXData: function() {
-				_main.GetMDCXHD(res => {
-					that.MDCXDatas = res;
-					that.showMDCXData = true;
-				})
-			},
+
 			//查看更多 辅助促销
 			Bagslist: function(e) {
 				if (that.CXDatas.length > 0) {
@@ -708,6 +703,10 @@
 			ChangeZK: e => {
 				that.curZKType = e.detail.value;
 				that.GetZKDatas();
+			},
+			//展示特殊折扣
+			GetTSZKData: function() {
+				that.showTSZK = true;
 			},
 			//获取并展示门店促销活动
 			GetZKDatas: function(type) {

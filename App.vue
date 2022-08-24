@@ -11,6 +11,7 @@
 			appid: 'keengee',
 			kquser: "CSKQ",
 			brand: "KG",
+			store:{},
 			store: {
 				GSID: "K200", //027001
 				KHID: "K200QTD005", //"K0101QT2",
@@ -22,14 +23,15 @@
 				BMID: "", //对应program.xsbm pos 这个参数为空字符串
 				GCID: "K201",
 				DQID: 'K01000', //地区ID（销售地区）
-				NAME: "武汉xxx",
+				NAME: "武汉xxx涉及到了可是金克拉撒旦金克拉",
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
 				POSCSZID: "018", //018、武汉前厅
 				RYID: "10086",
-				PWD: "123",
-				RYNAME: "老王",
+				PWD: "999",
+				RYNAME: "管理员",
+				RYTYPE: "SYSTEM",
 				KHZID: "03",
 				PHONE: 18171372662,
 				JGID: "K200",
@@ -95,14 +97,15 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch')
+			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 		},
 		onShow: function() {
 			console.log('App Show')
 
 			//3min执行一次销售单传输
-			// int = setInterval(() => {
-			// common.TransLiteData();
-			// }, 1000 * 60 *3); 
+			int = setInterval(() => {
+			common.TransLiteData();
+			}, 1000 * 60 *3); 
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 			//全局混入
 			console.log("全局混入！");
