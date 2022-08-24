@@ -1,7 +1,9 @@
 import Req from '@/utils/request.js';
 import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
-
+import {
+	RequestSend
+} from '@/api/business/da.js'
 
 /**
  * 创建请求参数
@@ -299,24 +301,37 @@ var kengeePay = {
 }
 //mis银联支付
 var misPay = {
-	GetConfig:function(){//获取 mis 支付参数，款台号
-		
+	GetConfig: async function() { //获取 mis 支付参数，款台号
+		if (!util.getStorage('mis-config')) {
+			let result = await RequestSend(
+				`select * from payconfig where paytype='TL' and khid='${getApp().globalData.store.KHID}'`);
+			if (result.code && result.result.code) {
+				let config_arr = JSON.parse(result.result.data);
+				if (config_arr && config_arr.length && config_arr.length > 0)
+					util.setStorage('mis-config', config_arr[0]);
+				else
+					util.simpleMsg("[MIS-CONFIG]支付参数数据库未查询到!", true)
+			} else
+				util.simpleMsg("[MIS-CONFIG]支付参数获取失败!", true)
+		} else
+			console.log("[MIS-CONFIG][catch]Config:", util.getStorage('mis-config'));
+		return util.getStorage('mis-config');
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		// this.GetConfig().then(()=> {
-			// body.money = 1;//一分钱测试用（避免失误操作导致掉肉）
-			// body.total_money = 1;//一分钱测试用（避免失误操作导致掉肉）
-			// body.merchant_no = "990521082996000";
-			body.merchant_no = null;
-			// body.store_id = "HBTest00";
-			body.store_id = null;
+		this.GetConfig().then((config) => {
+			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
+			body.merchant_no = null;//使用全局配置（后端）
+			body.terminalCode = config.NOTE;
+			body.store_id = config.SHID;
 			_PaymentAll(pt, body, func, catchFunc);
-		// })
+		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		body.merchant_no = null; //商户号
-		body.store_id = null;
-		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		this.GetConfig().then((config) => {
+			body.terminalCode = config.NOTE;
+			body.store_id = config.SHID;
+			_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		})
 	},
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);

@@ -87,11 +87,11 @@
 			CloseAllChildMenu: function(title) {
 				this.urls.map((item, index) => {
 					if (item.title != title) {
+						console.log("title:",title);
+						console.log("item.title:",item.title);
 						item.showDetail = false;
 					} else {
-						console.log("[CloseAllChildMenu]当前菜单子菜单展示!", title);
-						console.log("[CloseAllChildMenu]当前菜单子菜单信息展示!", item);
-						item.showDetail = true;
+						item.showDetail = !item.showDetail;
 					}
 				})
 			},

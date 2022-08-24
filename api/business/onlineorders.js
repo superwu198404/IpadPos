@@ -85,20 +85,8 @@ export const ordersAccept = function(data, func, err) {
  * @param {*} data 查询参数
  * @param {*} func 回调函数
  */
-export const ordersStatusCheck = function(bill, func, err = () => {}) {
-	uni.request({
-		url:`http://58.19.103.220:8807/TestTimeOut/CenterTransRetData`,
-		method:"POST",
-		timeout:30000,
-		data:{
-			appid:"keengee",
-			apiname:"XSDD_QUERY_ORDER_STATUS",
-			paramkey:"bill",
-			data:{
-				bill
-			}
-		},
-		success:func,
-		fail:err
-	});
+export const ordersStatusCheck = function(data, func, err) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.OnlineOrderStatusCheck";
+	let reqdata = Req.resObj(true, "订单查询中", data, apistr);
+	Req.asyncFuncOne(reqdata, func, err);
 }

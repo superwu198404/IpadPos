@@ -917,6 +917,7 @@
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
+				console.log("[PayHandle]Info:",info);
 				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
@@ -934,6 +935,7 @@
 					this.authCode = '';
 					return;
 				}
+				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
 						console.log("[Payment-付款]支付结果：", result);
 						util.simpleMsg("支付成功!");
@@ -1419,3 +1421,39 @@
 		mounted() {}
 	}
 </script>
+
+<style>
+	.refund-more-box{
+		display: flex;
+	}
+	
+	.refund-reset{
+		background-color: var(--green);
+		color: white;
+		border-radius: 5px;
+		padding: 2px 4px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+	}
+	
+	.refund-text{
+		display: inline-flex;
+		align-items: center;
+	}
+	
+	.refund-icon {
+	    width: 15px;
+	    height: 15px;
+		display: inline-block;
+		background-size: cover;
+		background-image: url('@/images/loading.png');
+		filter: brightness(10);
+		margin-left: 6px;
+	}
+	
+	.refund-loading{
+		animation: 1.5s rotate infinite linear;
+	}
+</style>
