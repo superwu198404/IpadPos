@@ -47,7 +47,7 @@
 	import db from '@/utils/db/db_excute.js';
 	import Req from '@/utils/request.js';
 	import util from '@/utils/util.js';
-
+	import bleConnect from '@/utils/xprinter/bleConnect.js';
 	import {
 		mapState,
 		mapGetters,
