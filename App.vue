@@ -15,7 +15,6 @@
 				GSID: "K200", //027001
 				KHID: "K200QTD005", //"K0101QT2",
 				POSID: "1",
-				RYID: "10086",
 				KCDID: "D005",
 				DPID: "11072", // 11072
 				DKFID: '80000000',
@@ -27,13 +26,15 @@
 				MERID: "999990053990001",
 				deviceno: "13001001",
 				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-				POSCSZID: "018",//018、武汉前厅
+				POSCSZID: "018", //018、武汉前厅
+				RYID: "10086",
+				PWD: "123",
 				RYNAME: "老王",
 				KHZID: "03",
 				PHONE: 18171372662,
 				JGID: "K200",
-				STIME:"7",
-				ETIME:"19"
+				STIME: "7",
+				ETIME: "19"
 			},
 			hyinfo: {
 				// hyId: "1000311640"

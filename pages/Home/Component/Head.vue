@@ -62,6 +62,71 @@
 					</view>
 				</view>
 			</view>
+			<!-- 紧急消息弹窗 -->
+			<view class="boxs" v-if="false">
+				<view class="popup promot">
+					<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+					<view class="infor">
+						<view class="shoppbag">
+							<view class="liis messadet">
+								<view class="emergs"><label class="zhoyao">重要</label><label class="putong"
+										v-if="putong">普通</label><text>● 进行中</text></view>
+								<view class="h6">这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字标题超出五十个字显示...</view>
+								<view class="sender"><text>质管部 · 橘子</text><text>创建时间：2022-06-13 09:00:00</text></view>
+							</view>
+							<view class="matters">
+								<image src="../../images/dl-login.png" mode="widthFix"></image>
+								<text>
+									编程技术的保存失败的次数第v你说的基本上调查
+									上档次
+									十九点v你是
+								</text>
+							</view>
+							<view class="tally">
+								<label>
+									<image src="../../images/yewu-xx.png"></image><text>销售业务</text>
+								</label>
+								<view>
+									<label>
+										<image src="../../images/kaishisj-xx.png"></image><text>2022.07.01 00:00
+											开始</text>
+									</label>
+									<label>
+										<image src="../../images/jieshusj-xx.png"></image><text>2022.07.30 24:00
+											截止</text>
+									</label>
+								</view>
+							</view>
+
+						</view>
+						<view class="confirm">
+							<button class="btn">关 闭 (5s)</button>
+						</view>
+					</view>
+				</view>
+			</view>
+			<!-- 修改密码弹窗 -->
+			<view class="boxs" v-if="showPWD">
+				<view class="customer">
+					<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+					<view class="h3">修改密码 <button @click="showPWD=false" class="guan">×</button></view>
+					<view class="critlist">
+						<view>
+							<text>旧密码：</text>
+							<label><input focus="true" placeholder="请输入旧密码" password="true" v-model="oldPwd" /><button
+									@click="oldPwd=''">×</button></label>
+						</view>
+						<view><text>新密码：</text><label><input placeholder="请输入新密码" password="true"
+									v-model="newPwd" /><button @click="newPwd=''">×</button></label></view>
+						<view><text>确认密码：</text><label><input placeholder="再次输入新密码" password="true"
+									v-model="secPwd" /><button @click="secPwd=''">×</button></label></view>
+					</view>
+					<view class="affirm">
+						<button class="btn btn-qk" @click="EmptyPWD()">清空</button>
+						<button class="btn btn-qr" @click="ConfirmPWD()">确认</button>
+					</view>
+				</view>
+			</view>
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
@@ -74,6 +139,7 @@
 	import _msg from '@/api/business/message.js';
 	import util from '@/utils/util.js';
 	import common from '@/api/common.js';
+	import _login from '@/api/business/login.js';
 
 	let that;
 	export default {
@@ -94,7 +160,11 @@
 				YW_MsgData: [], //业务类消息
 				showMsg: false,
 				showBig: false,
-				YN_PRINT_CON: getApp().globalData.YN_PRINT_CON
+				YN_PRINT_CON: getApp().globalData.YN_PRINT_CON,
+				showPWD: false,
+				oldPwd: "",
+				newPwd: "",
+				secPwd: "",
 			};
 		},
 		// created: function(e) {
@@ -182,10 +252,63 @@
 			},
 			//修改密码
 			UPPWD: function() {
-				uni.redirectTo({
-					url: "/pages/index/index",
-					complete: r => {
-						console.log(r)
+				that.showPWD = true;
+				// uni.redirectTo({
+				// 	url: "/pages/index/index",
+				// 	complete: r => {
+				// 		console.log(r)
+				// 	}
+				// })
+			},
+			//密码清空
+			EmptyPWD: function() {
+				that.oldPwd = "";
+				that.newPwd = "";
+				that.secPwd = "";
+			},
+			//确定修改密码
+			ConfirmPWD: function(res) {
+				if (getApp().globalData.store.PWD != that.oldPwd) {
+					util.simpleMsg("旧密码错误", true);
+					return;
+				}
+				if (!that.newPwd) {
+					util.simpleMsg("新密码为空", true);
+					return;
+				}
+				if (that.newPwd != that.secPwd) {
+					util.simpleMsg("两次密码不一致", "none");
+					return;
+				}
+				_login.UpdatePWD({
+					ryid: that.RYID,
+					pwd: that.newPwd
+				}, res => {
+					console.log("后台修改密码的结果：", res);
+					if (res.code) {
+						_login.UpdatePWD_Local(JSON.parse(res.data), that.RYID, _res => {
+							console.log("本地密码修改结果：", _res);
+							if (res.code) {
+								util.simpleMsg("密码修改成功");
+								setTimeout(r => {
+									if (getApp().globalData.stroe) {
+										getApp().globalData.stroe.RYID = "";
+										getApp().globalData.stroe.RYNAME = "";
+									}
+									util.removeStorage("hyinfo"); //清除会员信息
+									uni.redirectTo({
+										url: "/pages/Login/Login",
+										complete: r => {
+											console.log(r)
+										}
+									})
+								}, 1200);
+							} else {
+								util.simpleMsg(res.msg, "none");
+							}
+						})
+					} else {
+						util.simpleMsg(res.msg, "none");
 					}
 				})
 			},
@@ -212,5 +335,122 @@
 </script>
 
 <style>
+	.customer {
+		background-color: #fff;
+		width: 45%;
+		min-height: 400rpx;
+		position: relative;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 20rpx;
+		padding: 0 3% 140rpx;
+	}
 
+	.customer .bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 0;
+	}
+
+	.customer .h3 {
+		height: 100rpx;
+		line-height: 100rpx;
+		font-size: 34rpx;
+		border-bottom: 1px dashed #eee;
+		position: relative;
+		z-index: 2;
+		font-weight: 700;
+	}
+
+	.customer .h3 .guan {
+		float: right;
+		background: none;
+		font-size: 32rpx;
+		height: 100rpx;
+		line-height: 100rpx;
+		text-align: right;
+		padding: 0;
+		width: 60rpx;
+	}
+
+	.affirm {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 90%;
+		height: 140rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.affirm button {
+		width: 46%;
+		margin: 0 2%;
+	}
+
+	.affirm .btn-qk {
+		border: 1px solid #FE694B;
+		background-color: #FFF0EC;
+		color: #FE694B;
+	}
+
+	.clues {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		line-height: 300rpx;
+		fony-size: 34rpx;
+		position: relative;
+		z-index: 2;
+	}
+
+	.critlist {
+		padding: 4% 2% 4%;
+		position: relative;
+		z-index: 9;
+	}
+
+	.critlist view {
+		padding: 2% 0;
+		display: flex;
+		align-items: center;
+	}
+
+	.critlist view label {
+		height: 60rpx;
+		line-height: 60rpx;
+		background: #f5f5f5;
+		border: 1px solid #EEEEEE;
+		position: relative;
+		width: 75%;
+		border-radius: 4rpx;
+		padding: 0 10rpx;
+	}
+
+	.critlist view label input {
+		height: 58rpx;
+		line-height: 58rpx;
+	}
+
+	.critlist view label button {
+		width: 30rpx;
+		height: 30rpx;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		position: absolute;
+		top: 15rpx;
+		right: 2%;
+		background-color: #98C3B3;
+		color: #fff;
+		font-size: 16rpx;
+	}
 </style>

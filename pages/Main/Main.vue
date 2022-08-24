@@ -463,7 +463,54 @@
 				</view>
 			</view>
 		</view>
-		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment" @_CloseSale="CloseSale"></ShopCart>
+		<!-- 特殊折扣 -->
+		<view class="boxs" v-if="showTSZK">
+			<view class="popup special">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<view class="commods" style="padding-top:26rpx;">
+					<view class="h3">
+						特殊折扣选则<button class="close" @click="showMDCXData=false">×</button>
+					</view>
+					<view class="uls">
+						<view class="lis curr">
+							<view class="h8">
+								<view>标准折扣<em></em></view>
+								<label>总折扣额:<text>￥566</text></label>
+								<span>已选</span>
+							</view>
+							<view class="discount">
+								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<view>
+									<label>
+										<checkbox></checkbox>临时折扣
+									</label>
+									<text>满¥1000即打9折，折扣额¥123</text>
+								</view>
+							</view>
+						</view>
+						<view class="lis">
+							<view class="h8">
+								<view>特批折扣<em></em></view>
+								<span>已选</span>
+							</view>
+							<view class="discount">
+								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+							</view>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" @click="showMDCXData=false">确 认</button>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment"
+			@_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
 
@@ -488,7 +535,7 @@
 					return this.components.current === name ? "curr" : "";
 				}).bind(this)
 			},
-			Meta:function(){
+			Meta: function() {
 				return this.meta;
 			}
 		},
@@ -523,21 +570,22 @@
 				showZK: false, //是否展示折扣数据
 				showMDCXData: false,
 				MDCXDatas: [],
-				ShopCarOrder:{},
-				ShopCarProduct:[],
-				ShopCarPayment:[],
+				ShopCarOrder: {},
+				ShopCarProduct: [],
+				ShopCarPayment: [],
 				ZKDatas: [],
 				curZKType: "BZ",
 				RXSPDatas: [], //日销数据集合
 				curTime: require("../../images/dx-day.png"), //当前时段 早上 中午 晚上
 				PLIndex: 0, //热销品类索引
-				scrollinto: ""
+				scrollinto: "",
+				showTSZK: false
 			}
 		},
 		methods: {
-			Show:function(){
-				console.log("[Show]参数:",this.meta);
-				if(this.meta.params){//是否存在参数
+			Show: function() {
+				console.log("[Show]参数:", this.meta);
+				if (this.meta.params) { //是否存在参数
 					this.ShopCarOrder = this.meta.params.order;
 					this.ShopCarProduct = this.meta.params.goods;
 					this.ShopCarPayment = this.meta.params.payments;
@@ -735,11 +783,11 @@
 					that.curTime = require("../../images/dx-night.png");
 				}
 			},
-			InitHandle(){
-				console.log("[InitHandle]初始化处理:",this.meta);
+			InitHandle() {
+				console.log("[InitHandle]初始化处理:", this.meta);
 			}
 		},
-		mounted(){
+		mounted() {
 			console.log("[Main-Mounted]触发!");
 		},
 		created: function() {

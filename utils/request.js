@@ -288,12 +288,11 @@ var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
 
 var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun) {
 	var callbacklist = [];
-
 	callbacklist = callbackfunArr;
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("http请求",res);
+			console.log("http请求", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
 			hideloding();
@@ -348,7 +347,7 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 	if (finallyfun) def(finallyfun, res);
 	//将所有回调执行结果，通过回调传递到外部
 	if (resultsFunc) def(resultsFunc, results);
-	return results;//返回总执行结果集合
+	return results; //返回总执行结果集合
 }
 
 var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
@@ -375,7 +374,6 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	if (finallyfun) def(finallyfun, res);
 }
 var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
-
 	let urlx = pm_url || '';
 	let urlArr = urlx.split('.')
 	let httpParm = null;
@@ -386,7 +384,7 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 			url: "ReqMuster/Handle",
 			title: pm_msg,
 			method: "POST",
-			load: pm_load || true,
+			load: pm_load == null ? true : pm_load,
 		};
 
 		reqData.data = pm_data ? JSON.stringify(pm_data) : null;

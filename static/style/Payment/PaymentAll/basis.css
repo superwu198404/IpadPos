@@ -177,6 +177,11 @@ page {
 	padding: 0 18rpx;
 	border-radius: 0 10px 10px 0;
 	font-size: 24rpx;
+	min-width: 200rpx;
+	max-width:400rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .account {
@@ -246,7 +251,7 @@ page {
   justify-content: flex-end;
 }
 .stores .checkout{
-  margin-right: 7%;
+  margin-right: 5%;
   display: flex;
   justify-content: end;
 }
@@ -258,10 +263,14 @@ page {
 	border:1px solid #006B44;
 	border-radius: 60rpx;
 	padding:0 20rpx;
+	max-width: 500rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .checkout .buyer .image{
-	width:20rpx;
-	height: 20rpx;
+	width:28rpx;
+	height: 28rpx;
 }
 .checkout .buyer .image:nth-child(1){
 	width:36rpx;
@@ -273,6 +282,10 @@ page {
 	color: #006B44;
 	display: flex;
 	align-items: center;
+	max-width:200rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .checkout label image{
 	width:26rpx;
