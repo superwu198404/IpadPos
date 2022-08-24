@@ -33,7 +33,8 @@
 				// console.log("重组集合：", cxCount.CreateArr(columns));
 				// console.log("重组集合1：", cxCount.CreateArr(columns1));
 
-				cxCount.Cxdict();
+				let proArr = [];
+				cxCount.Createcx(proArr);
 			},
 			CreateArr1: e => {
 				let arr = [],

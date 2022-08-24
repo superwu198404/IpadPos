@@ -3,6 +3,7 @@ import db from '@/utils/db/db_excute.js';
 import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
+import dateformat from '@/utils/dateformat.js';
 
 var GetPassWord = function(khid, userid, password, func) {
 	let sql = "select password_MD,gwid,SNAME from MDRYKH where ryid='" + userid + "' and khid='" + khid + "'";
@@ -122,6 +123,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("门店信息查询成功：", res);
+		console.log("人员信息展示：", ryinfo);
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
@@ -137,10 +139,11 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			PHONE: res.msg[0].PHONE,
 			RYNAME: ryinfo.name,
 			RYID: ryinfo.ryid,
+			RYTYPE: "PERSON",
 			PWD: ryinfo.pwd,
 			JGID: res.msg[0].JGID,
-			STIME: util.CheckStoreTime(res.msg[0].STIME),
-			ETIME: util.CheckStoreTime(res.msg[0].ETIME),
+			STIME: dateformat.CheckStoreTime(res.msg[0].STIME),
+			ETIME: dateformat.CheckStoreTime(res.msg[0].ETIME),
 		}
 		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
 		console.log("登录后的初始化信息：", getApp().globalData.store);

@@ -16,7 +16,7 @@
 				</label>
 				<label>
 					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<input type="text" v-model="khid" disabled="true"/>
+					<input type="text" v-model="khid" disabled="true" />
 					<!-- <picker :range="KHArr" :value="index" @change="ChooseKH">
 						<view style="width: 100%;">{{KHArr[index]}}</view>
 					</picker> -->
@@ -24,6 +24,7 @@
 			</view>
 			<view class="logbtn">
 				<button @click="Login()">登 录</button>
+				<button @click="Admin()" style="margin-top: 20rpx;">管理登录</button>
 			</view>
 		</view>
 	</view>
@@ -40,15 +41,16 @@
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import _checker from '@/utils/graceChecker.js';
 	import _login from '@/api/business/login.js';
-
+	import _init from '@/api/business/init.js';
+	
 	var that;
 	export default {
 		data() {
 			return {
 				userid: "",
 				password: "",
-				khid: getApp().globalData.store.KHID,
-				posid: getApp().globalData.store.POSID,
+				khid: "",
+				posid: "",
 				KHArr: [],
 				index: 0
 			}
@@ -56,6 +58,13 @@
 		methods: {
 			onLoad: function() {
 				that = this;
+				let Init_Data = util.getStorage("Init_Data");
+				if (Init_Data && Init_Data != '{}') { //赋值初始化的门店和款台
+					that.khid = Init_Data.KHID;
+					that.posid = Init_Data.POSID;
+				}
+				//初始化支付方式和全局配置参数
+				_init.InitData(that.khid);
 			},
 			GetKHIDS: function() {
 				if (that.khid) {
@@ -99,11 +108,52 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							uni.navigateTo({
+							uni.redirectTo({
 								url: "../Home/Home"
 							})
 						}, 1000);
 					});
+				})
+			},
+			Admin: function() {
+				uni.showModal({
+					editable: true,
+					content: "请输入管理密码",
+					success: function(res) {
+						console.log("确认信息:", res);
+						if (res.confirm && res.content == "999") {
+							let store = {
+								GSID: "K200", //027001
+								KHID: "K200QTD005", //"K0101QT2",
+								POSID: "1",
+								KCDID: "D005",
+								DPID: "11072", // 11072
+								DKFID: '80000000',
+								DKFNAME: '默认大客户',
+								BMID: "", //对应program.xsbm pos 这个参数为空字符串
+								GCID: "K201",
+								DQID: 'K01000', //地区ID（销售地区）
+								NAME: "武汉xxx哈吉卡号就开始",
+								MERID: "999990053990001",
+								deviceno: "13001001",
+								KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
+								POSCSZID: "018", //018、武汉前厅
+								RYID: "10086",
+								PWD: "123",
+								RYNAME: "老王",
+								RYTYPE: "SYSTEM",
+								KHZID: "03",
+								PHONE: 18171372662,
+								JGID: "K200",
+								STIME: "7",
+								ETIME: "19"
+							}
+							util.setStorage("store", store);
+							uni.navigateTo({
+								url: "/pages/index/index"
+							});
+						}
+					}
 				})
 			}
 		}

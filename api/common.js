@@ -164,7 +164,7 @@ var TransLite = function(e) {
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
 						sql: sql1
-					}, apistr);
+					}, apistr, false);
 					Req.asyncFuncOne(reqdata, function(res1) {
 						console.log("数据传输结果：", res1);
 						util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
@@ -179,6 +179,8 @@ var TransLite = function(e) {
 						}
 					});
 				}
+			} else {
+				console.log("通讯表Pos_TXFILE暂无数据", res);
 			}
 		},
 		function(err) {

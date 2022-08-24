@@ -27,7 +27,7 @@
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
 					<label>
-						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
+						<image src="@/images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
 					</label>
 					<label>
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
@@ -127,6 +127,27 @@
 					</view>
 				</view>
 			</view>
+			<!-- 蓝牙弹窗 -->
+			<view class="boxs" v-if="showBle">
+				<view class="b_customer">
+					<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
+					<view class="b_critlist">
+						<view>
+							<label>
+								<image src="@/images/zfcg-dyj.png"></image><text>设备：KHO2345643343</text>
+							</label>
+							<button>连接</button><button class="b_has">已连接</button>
+						</view>
+						<view>
+							<label>
+								<image src="@/images/zfcg-dyj.png"></image><text>设备：KHO2345643343</text>
+							</label>
+							<button>连接</button><button class="b_has">已连接</button>
+						</view>
+					</view>
+				</view>
+			</view>
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
@@ -149,11 +170,11 @@
 		},
 		data() {
 			return {
-				STORE_NAME: getApp().globalData.store.NAME,
 				KHID: getApp().globalData.store.KHID,
 				POSID: getApp().globalData.store.POSID,
 				RYID: getApp().globalData.store.RYID,
 				DKFNAME: getApp().globalData.store.DKFNAME,
+				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
@@ -165,6 +186,7 @@
 				oldPwd: "",
 				newPwd: "",
 				secPwd: "",
+				showBle: false,
 			};
 		},
 		// created: function(e) {
@@ -213,10 +235,17 @@
 			Login: function() {
 				util.simpleModal("提示", "是否确认注销？", e => {
 					if (e) { //点击了确定
-						if (getApp().globalData.stroe) {
-							getApp().globalData.stroe.RYID = "";
-							getApp().globalData.stroe.RYNAME = "";
+						let store = util.getStorage("store");
+						if (store) {
+							if (store.RYTYPE == "SYSTEM") { //管理员退出要清空一下
+								store = {};
+							} else {
+								store.RYID = "";
+								store.RYNAME = "";
+							}
+							util.setStorage("store", store);
 						}
+						console.log("门店信息:", util.getStorage("store"));
 						util.removeStorage("hyinfo"); //清除会员信息
 						uni.redirectTo({
 							url: "/pages/Login/Login",
@@ -328,7 +357,8 @@
 				console.log("新的全局变量：", getApp().globalData.store);
 			},
 			ShowPrint: function() {
-				util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
+				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
+				that.showBle = true;
 			},
 		}
 	}
@@ -452,5 +482,125 @@
 		background-color: #98C3B3;
 		color: #fff;
 		font-size: 16rpx;
+	}
+	/* 以下为蓝牙模块样式 */
+	.b_customer {
+		background-color: #fff;
+		width: 45%;
+		min-height: 400rpx;
+		position: relative;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 20rpx;
+		padding: 0 3% 140rpx;
+	}
+
+	.b_customer .b_bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 0;
+	}
+
+	.b_customer .b_h3 {
+		height: 100rpx;
+		line-height: 100rpx;
+		font-size: 34rpx;
+		border-bottom: 1px dashed #eee;
+		position: relative;
+		z-index: 2;
+		font-weight: 700;
+	}
+
+	.b_customer .b_h3 .b_guan {
+		float: right;
+		background: none;
+		font-size: 32rpx;
+		height: 100rpx;
+		line-height: 100rpx;
+		text-align: right;
+		padding: 0;
+		width: 60rpx;
+	}
+
+	.b_affirm {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 90%;
+		height: 140rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.b_affirm button {
+		width: 46%;
+		margin: 0 2%;
+	}
+
+	.b_affirm .b_btn-qk {
+		border: 1px solid #FE694B;
+		background-color: #FFF0EC;
+		color: #FE694B;
+	}
+
+	.b_clues {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		line-height: 300rpx;
+		fony-size: 34rpx;
+		position: relative;
+		z-index: 2;
+	}
+
+	.b_critlist {
+		padding: 4% 2% 4%;
+		position: relative;
+		z-index: 9;
+	}
+
+	.b_critlist view {
+		padding: 2% 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.b_critlist view image {
+		width: 50rpx;
+		height: 50rpx;
+		margin-right: 10rpx;
+	}
+
+	.b_critlist view label {
+		height: 60rpx;
+		line-height: 60rpx;
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.b_critlist view button {
+		width: 140rpx;
+		height: 60rpx;
+		border-radius: 60rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		background-color: #42B14B;
+		color: #fff;
+		font-size: 16rpx;
+		margin: 0;
+	}
+
+	.b_critlist view .has {
+		background-color: #B0b0b0;
 	}
 </style>

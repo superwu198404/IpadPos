@@ -1020,12 +1020,23 @@ const cxZkTj = function(type) {
 }
 
 ///转成string类型
-const toStr = function(data){
-	if(data == null || data == undefined){
+const toStr = function(data) {
+	if (data == null || data == undefined) {
 		return "";
-	}else{
+	} else {
 		return data.toString();
 	}
+}
+
+//
+const TryParse = function(BALANCE){
+	let hyjfnum = 0;
+	try{
+		hyjfnum=parseFloat(BALANCE);
+	}catch(e){
+		hyjfnum = 0;
+	}		
+	return hyjfnum;
 }
 
 module.exports = {
@@ -1064,5 +1075,6 @@ module.exports = {
 	nnvl: nnvl,
 	cxZkType: cxZkType,
 	cxZkTj: cxZkTj,
-	toStr: toStr
+	toStr: toStr,
+	TryParse: TryParse
 };

@@ -67,17 +67,20 @@
 		<!-- <button @click="MenuPage(2)">会员登录</button> -->
 		<!-- <button @click="MenuPage(3)">外卖处理</button>
 		<button @click="MenuPage(4)">外卖预定</button> -->
-		<button @click="MenuPage(5)">登录</button>
+		<!-- <button @click="MenuPage(5)">登录</button> -->
 		<button @click="MenuPage(6)">首页</button>
-		<!-- <button @click="MenuPage(7)">销售退单</button>
-		<button @click="MenuPage(8)">预定</button>
-		<button @click="MenuPage(9)">赊销退单</button>
-		<button @click="MenuMain()">功能主页</button> -->
+		<!-- <button @click="MenuPage(7)">销售退单</button> -->
+		<!-- <button @click="MenuPage(8)">预定</button>
+		<button @click="MenuPage(9)">赊销退单</button> -->
+		<button @click="MenuPage(10)">数据查看</button>
+		<button @click="MenuPage(11)">蓝牙与打印</button>
+		<!-- <button @click="MenuMain()">功能主页</button> -->
 		<!-- <button @click="againPrinter()">重新打印</button> -->
 		<!-- <button @click="inputAuthCode()">录入付款码</button> -->
 		<button @click="closeDB()">断开数据库链接</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
+
 		<div v-if="view.orders.showDetail"
 			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
 			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
@@ -431,6 +434,16 @@
 						}
 					});
 				}
+				else if (e == 10) {
+					uni.navigateTo({
+						url: "/pages/sqlitetest/sqlitetest"
+					});
+				}
+				else if (e == 11) {
+					uni.navigateTo({
+						url: "/pages/xprinter/home"
+					});
+				}
 			},
 			DataAssembleSaveForGlobal: function() {
 				//把数据传入下个页面
@@ -723,15 +736,15 @@
 				//生成支付规则数据
 				// await common.InitZFRULE();
 				//获取支付规则数据 在前执行
-				await common.GetZFRULE();
+				//await common.GetZFRULE();
 				//获取支付方式 在后执行
-				await that.GetPayWay(that.KHID);
+				//await that.GetPayWay(that.KHID);
 				//初始化配置参数
-				await common.GetPZCS();
+				//await common.GetPZCS();
 				//获取POS参数组数据
-				await common.GetPOSCS(that.KHID);
+				//await common.GetPOSCS(that.KHID);
 
-				console.log("POSCS", util.getStorage("POSCS"))
+				// console.log("POSCS", util.getStorage("POSCS"))
 				// console.log("Pay-SALE1、2、3：",await common.QueryRefund('K0101QT2122628193555279'))
 				// console.log("Refund-SALE1、2、3：",await common.QueryRefund('K0101QT2122628194319455'))
 			},
@@ -747,7 +760,7 @@
 		//接收上个页面传入的参数
 		onLoad(option) {
 			//console.log("单号测试：", common.CreateBill(this.KHID, this.POSID));
-			this.InitData();
+			this.InitData(); //支付类的初始化已转移到Login页初始化
 			this.first = false;
 		},
 		async onShow() {

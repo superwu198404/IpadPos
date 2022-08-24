@@ -4,7 +4,8 @@
 export default [{
 		title: "销售",
 		name: "Main",
-		keepAlive:true, /*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
+		keepAlive: true,
+		/*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
 		icon: require('@/images/xiaoshou.png'),
 		icon1: require("@/images/xiaoshou-hui.png"),
@@ -13,7 +14,7 @@ export default [{
 	{
 		title: "预定",
 		name: "Reserve",
-		url: "@/pages/Reserve/Reserve",//
+		url: "@/pages/Reserve/Reserve", //
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
 		index: 1
@@ -89,15 +90,15 @@ export default [{
 			},
 			{
 				title: "预定退单",
-				name:"Extract",
+				name: "Extract",
 				url: "@/pages/Extract/Extract",
-				meta:{//跳转的时候会向组件的 meta 传值，组件内通过 this.meta 获取传入的数据
+				meta: { //跳转的时候会向组件的 meta 传值，组件内通过 this.meta 获取传入的数据
 					mode: false
 				},
 				icon: require("@/images/ydqx.png"),
 				icon1: require("@/images/ydqx-wxz.png"),
 				index: 1
-			}, 
+			},
 			{
 				title: "赊销退单",
 				name: "SXRefund",
@@ -115,6 +116,48 @@ export default [{
 		icon: require("@/images/xz-xx.png"),
 		icon1: require("@/images/xiaoxi-hui.png"),
 		index: 8
+	},
+	{
+		title: "工具",
+		url: "",
+		icon: require("@/images/xz-th.png"),
+		icon1: require("@/images/wxz-th.png"),
+		index: 9,
+		showDetail: false,
+		details: [{
+				title: "促销活动",
+				name: "Promotion",
+				url: "@/pages/Promotion/Promotion",
+				icon: require("@/images/dqcuxiao.png"),
+				icon1: require("@/images/dqcuxiao-wxz.png"),
+				index: 0
+			},
+			{
+				title: "通讯",
+				name: "Call",
+				url: "",
+				icon: require("@/images/tongxun.png"),
+				icon1: require("@/images/tongxun-wxz.png"),
+				index: 1
+			},
+			{
+				title: "重读",
+				name: "Stress",
+				url: "/pages/start/start",
+				url_type: "single", //页面类型是内嵌(inline)的还是单个(single)
+				icon: require("@/images/chongdu.png"),
+				icon1: require("@/images/chongdu-wxz.png"),
+				index: 2
+			},
+			{
+				title: "未上传",
+				name: "UnHandle",
+				url: "",
+				icon: require("@/images/wschuan.png"),
+				icon1: require("@/images/wschuan-wxz.png"),
+				index: 3
+			}
+		]
 	}
 	//,
 	// {
