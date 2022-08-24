@@ -98,6 +98,8 @@ const _QueryRefund = function(pt, d, func, catchFunc) {
 	BasePayment(pt, "查询中...", "QueryRefund", d, func, catchFunc)
 };
 
+
+
 /**
  * 包含支付和查询以及撤销的支付体
  */
@@ -280,8 +282,40 @@ var hykPay = {
 }
 //仟吉实体卡
 var kengeePay = {
+	GetConfig: async function() { //获取 mis 支付参数，款台号
+		if (!util.getStorage('mis-config')) {
+			let result = await RequestSend(
+				`select * from payconfig where paytype='TL' and khid='${getApp().globalData.store.KHID}'`);
+			if (result.code && result.result.code) {
+				let config_arr = JSON.parse(result.result.data);
+				if (config_arr && config_arr.length && config_arr.length > 0)
+					util.setStorage('mis-config', config_arr[0]);
+				else
+					util.simpleMsg("[REAL-CONFIG]支付参数数据库未查询到!", true)
+			} else
+				util.simpleMsg("[REAL-CONFIG]支付参数获取失败!", true)
+		} else
+			console.log("[REAL-CONFIG][catch]Config:", util.getStorage('mis-config'));
+		return util.getStorage('mis-config');
+	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		_PaymentAll(pt, body, func, catchFunc);
+		this.GetConfig().then((config) => {
+			Req.asyncFuncOne(CreateData("MIS", "查询中...", "ReadCard", {
+				store_id:config.SHID,
+				terminalCode:config.NOTE
+			}),(res) => {
+				console.log("[ReadCard]读取卡信息:",res);
+				let card_info = res.data;
+				body.card_no = card_info.card_no;
+				body.auth_code = card_info.track_info;
+				body.merchant_no = 'TL22061561470300';
+				body.storeName = getApp().globalData.store.NAME;
+				console.log("[ReadCard]组装支付参数:",body);
+				_PaymentAll(pt, body, func, catchFunc);
+			},(err) => {
+				console.log("[ReadCard]读卡异常!",err);
+			});
+		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
@@ -473,7 +507,8 @@ var payType = {
 	SZQ: szqPay,
 	MIS: misPay,
 	NOPAY: noPay,
-
+	REALCARD: kengeePay,
+	
 	//仟吉使用
 	WXZF: wxPay,
 	ZFB20: zfbPay,

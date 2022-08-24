@@ -163,7 +163,7 @@
 								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
-										</image>
+										</image> 
 									</view>
 								</label>
 								<label class="poly-text">
