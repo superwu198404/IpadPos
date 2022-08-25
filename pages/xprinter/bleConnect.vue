@@ -29,7 +29,6 @@
 				isScanning: false,
 			};
 		},
-
 		/**
 		 * 生命周期函数--监听页面加载
 		 */
@@ -40,7 +39,6 @@
 			//监听蓝牙连接状态
 			bleConnect.onBLEConnectionStateChange();
 		},
-
 		/**
 		 * 生命周期函数--监听页面显示
 		 */
