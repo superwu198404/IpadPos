@@ -251,9 +251,6 @@
 					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
-		mounted() {
-			console.log("mounted!", _pay.RefundAll);
-		},
 		//方法初始化
 		methods: {
 			inputAuthCode: function() {

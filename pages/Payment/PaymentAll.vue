@@ -1114,7 +1114,12 @@
 					that = this;
 					this.Products = prev_page_param.Products;
 					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
-					this.PayWayList = prev_page_param.PayWayList; //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
+					this.PayWayList = (function(){
+						if(util.getStorage('PayWayList'))
+							return util.getStorage('PayWayList');
+						else
+							return prev_page_param.PayWayList;
+					})(); //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 					this.actType = prev_page_param.actType; //当前行为操作
 					console.log("PayWayList:", this.PayWayList)
 					this.hyinfo = prev_page_param.hyinfo;
