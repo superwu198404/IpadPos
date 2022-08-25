@@ -332,9 +332,9 @@ var GetPolyPayWay = async function(e, func) {
 }
 
 //获取档案参数
-var GetDapzcs = function(e, func) {
+var GetDapzcs =async function(e, func) {
 	let sql = "select * from  dapzcs_nr where id  ='" + e + "'";
-	db.get().executeQry(sql, "数据查询中", function(res) {
+	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("获取配置参数成功:", res);
 		if (func) func(res);
 	}, function(err) {
