@@ -11,32 +11,31 @@
 			appid: 'keengee',
 			kquser: "CSKQ",
 			brand: "KG",
-			store:{},
 			store: {
-				GSID: "K200", //027001
-				KHID: "K200QTD005", //"K0101QT2",
-				POSID: "1",
-				KCDID: "D005",
-				DPID: "11072", // 11072
+				GSID: "", 
+				KHID: "", 
+				POSID: "",
+				KCDID: "",
+				DPID: "",
 				DKFID: '80000000',
 				DKFNAME: '默认大客户',
 				BMID: "", //对应program.xsbm pos 这个参数为空字符串
-				GCID: "K201",
-				DQID: 'K01000', //地区ID（销售地区）
-				NAME: "武汉xxx涉及到了可是金克拉撒旦金克拉",
+				GCID: "",
+				DQID: '', //地区ID（销售地区）
+				NAME: "",
 				MERID: "999990053990001",
 				deviceno: "13001001",
-				KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-				POSCSZID: "018", //018、武汉前厅
-				RYID: "10086",
-				PWD: "999",
-				RYNAME: "管理员",
-				RYTYPE: "SYSTEM",
-				KHZID: "03",
-				PHONE: 18171372662,
-				JGID: "K200",
-				STIME: "7",
-				ETIME: "19"
+				KHAddress: "",
+				POSCSZID: "", 
+				RYID: "",
+				PWD: "",
+				RYNAME: "",
+				RYTYPE: "",
+				KHZID: "",
+				PHONE: "",
+				JGID: "",
+				STIME: "",
+				ETIME: ""
 			},
 			hyinfo: {
 				// hyId: "1000311640"

@@ -42,7 +42,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
-	
+
 	var that;
 	export default {
 		data() {
@@ -152,6 +152,8 @@
 							uni.navigateTo({
 								url: "/pages/index/index"
 							});
+						} else {
+							util.simpleMsg("密码错误", true);
 						}
 					}
 				})
