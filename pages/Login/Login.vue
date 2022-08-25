@@ -121,41 +121,44 @@
 				uni.showModal({
 					editable: true,
 					content: "请输入管理密码",
+					placeholderText: "测试密码：999",
 					success: function(res) {
 						console.log("确认信息:", res);
-						if (res.confirm && res.content == "999") {
-							let store = {
-								GSID: "K200", //027001
-								KHID: "K200QTD005", //"K0101QT2",
-								POSID: "1",
-								KCDID: "D005",
-								DPID: "11072", // 11072
-								DKFID: '80000000',
-								DKFNAME: '默认大客户',
-								BMID: "", //对应program.xsbm pos 这个参数为空字符串
-								GCID: "K201",
-								DQID: 'K01000', //地区ID（销售地区）
-								NAME: "武汉xxx哈吉卡号就开始",
-								MERID: "999990053990001",
-								deviceno: "13001001",
-								KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-								POSCSZID: "018", //018、武汉前厅
-								RYID: "10086",
-								PWD: "123",
-								RYNAME: "老王",
-								RYTYPE: "SYSTEM",
-								KHZID: "03",
-								PHONE: 18171372662,
-								JGID: "K200",
-								STIME: "7",
-								ETIME: "19"
+						if (res.confirm) {
+							if (res.content == "999") {
+								let store = {
+									GSID: "K200", //027001
+									KHID: "K200QTD005", //"K0101QT2",
+									POSID: "1",
+									KCDID: "D005",
+									DPID: "11072", // 11072
+									DKFID: '80000000',
+									DKFNAME: '默认大客户',
+									BMID: "", //对应program.xsbm pos 这个参数为空字符串
+									GCID: "K201",
+									DQID: 'K01000', //地区ID（销售地区）
+									NAME: "武汉xxx哈吉卡号就开始",
+									MERID: "999990053990001",
+									deviceno: "13001001",
+									KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
+									POSCSZID: "018", //018、武汉前厅
+									RYID: "10086",
+									PWD: "123",
+									RYNAME: "老王",
+									RYTYPE: "SYSTEM",
+									KHZID: "03",
+									PHONE: 18171372662,
+									JGID: "K200",
+									STIME: "7",
+									ETIME: "19"
+								}
+								util.setStorage("store", store);
+								uni.navigateTo({
+									url: "/pages/index/index"
+								});
+							} else {
+								util.simpleMsg("密码错误", true);
 							}
-							util.setStorage("store", store);
-							uni.navigateTo({
-								url: "/pages/index/index"
-							});
-						} else {
-							util.simpleMsg("密码错误", true);
 						}
 					}
 				})

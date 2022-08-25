@@ -18,8 +18,8 @@ var GetPayWay = async function(e) {
 				if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
 					return;
 				}
-				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i].SNAME);
-				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
+				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i].SNAME);
+				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
 				if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
 					continue;
 				}
@@ -94,8 +94,8 @@ var InitData = async function(khid, func) {
 	await common.GetPZCS();
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
-	if (func) 
-	func();
+	if (func)
+		func();
 }
 
 export default {
