@@ -306,15 +306,25 @@
 				this.Newaddr = true
 			},
 			ConfirmToPay: function(order) {
-				console.log("[ConfirmToPay]order:",this.Order);
-				this.Order.XSTYPE = '2';
-				this.Order.BILL_TYPE = 'Z154';
-				this.$emit("Switch", {
-					name: "Main",
-					title: "销售",
-					params: {
-						order: this.Order,
-						goods: this.Details
+				uni.showModal({
+					title: '提示',
+					content: '是否确认退货',
+					success: function(res) {
+						if (res.confirm) {
+							console.log('用户点击确定');
+							console.log("[ConfirmToPay]order:", that.Order);
+							that.Order.XSTYPE = '2';
+							that.Order.BILL_TYPE = 'Z154';
+							that.$emit("Switch", {
+								name: "Main",
+								title: "销售",
+								params: {
+									order: that.Order,
+									goods: that.Details,
+									open: true
+								}
+							})
+						}
 					}
 				})
 			},

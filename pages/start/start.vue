@@ -236,16 +236,7 @@
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);
-									//储存初始化门店和款台
-									util.setStorage("Init_Data", {
-										KHID: that.khid,
-										POSID: that.posid
-									});
-
-									uni.navigateTo({
-										url: "/pages/Login/Login"
-									});
-									let reqdata = Req.retData(true, "start创建成功")
+									let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
 									return reqdata;
 								},
 								(res) => {
@@ -258,7 +249,7 @@
 						},
 						null,
 						(res) => {
-							console.log("异常结果：", res);
+							console.log("最终结果：", res);
 							that.tx001 = null;
 							console.log(JSON.stringify("start创建完成"));
 
@@ -266,6 +257,16 @@
 								util.simpleModal("提示", res.msg)
 							} else {
 								util.simpleMsg("初始化完成");
+								//储存初始化门店和款台
+								util.setStorage("Init_Data", {
+									KHID: that.khid,
+									POSID: that.posid
+								});
+								setTimeout(r => {
+									uni.navigateTo({
+										url: "/pages/Login/Login"
+									});
+								}, 500)
 							}
 						}
 				)

@@ -60,7 +60,7 @@
 				console.log("[ToPage]切换:", e);
 				if (e.url_type && e.url_type == 'single') {
 					if (e.name == 'Stress') {
-						util.simpleModal("提示", "重读将销毁已保存的业务数据,是否继续?", res => {
+						util.simpleModal("提示", "重读将销毁已保存的业务数据，是否继续？", res => {
 							if (res) {
 								console.log("测试");
 								util.removeStorage("Init_Data");
