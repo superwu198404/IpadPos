@@ -105,14 +105,17 @@ const _QueryRefund = function(pt, d, func, catchFunc) {
  */
 const _PaymentAll = function(pt, body, func, catchFunc) {
 	let request = CreateData(pt, "支付中...", "Payment", body);
-	console.log("获取请求体：", body);
-	console.log("获取请求体(whole)：", request);
+	let show_log = true;
+	console.log("[PaymentAll]获取请求体：", body);
+	console.log("[PaymentAll]获取请求体(whole)：", request);
 	Req.asyncFuncArr1(request, [
 		function(res) {
 			// util.sleep(3000);
+			if(show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:",res);
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res);
@@ -126,6 +129,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -139,6 +143,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -152,6 +157,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -165,6 +171,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -178,6 +185,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
+			if(show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:",res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -191,7 +199,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		}
 	], function(err) {
-		console.log("支付接口返回的错误信息：", err);
+		console.log("[PaymentAll]支付接口返回的错误信息：", err);
 		if (catchFunc) catchFunc(err);
 		util.simpleMsg(res.msg, true);
 	});
@@ -199,6 +207,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 
 //查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
 const _RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+	console.log("[RefundAll]退款数据:",body);
 	return Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
 		function(res) {
 			return CreateData(pt, "退款中...", "Refund", body);
@@ -301,36 +310,36 @@ var hykPay = {
 //仟吉实体卡
 var kengeePay = {
 	GetConfig: async function() { //获取 mis 支付参数，款台号
-		if (!util.getStorage('mis-config')) {
-			let result = await RequestSend(
-				`select * from payconfig where paytype='TL' and khid='${getApp().globalData.store.KHID}'`);
+		if (!util.getStorage('ecard-config')) {
+			let result = await RequestSend(`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`);
 			if (result.code && result.result.code) {
 				let config_arr = JSON.parse(result.result.data);
 				if (config_arr && config_arr.length && config_arr.length > 0)
-					util.setStorage('mis-config', config_arr[0]);
+					util.setStorage('ecard-config', config_arr[0]);
 				else
-					util.simpleMsg("[REAL-CONFIG]支付参数数据库未查询到!", true)
+					util.simpleMsg("[ECARD-CONFIG]支付参数数据库未查询到!", true)
 			} else
-				util.simpleMsg("[REAL-CONFIG]支付参数获取失败!", true)
+				util.simpleMsg("[ECARD-CONFIG]支付参数获取失败!", true)
 		} else
-			console.log("[REAL-CONFIG][catch]Config:", util.getStorage('mis-config'));
-		return util.getStorage('mis-config');
+			console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
+		return util.getStorage('ecard-config');
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
 			Req.asyncFuncOne(CreateData("MIS", "查询中...", "ReadCard", {
-				store_id:config.SHID,
+				store_id:config.KEY,
 				terminalCode:config.NOTE
-			}),(res) => {
+			}),(res) => {//返回卡号和磁道信息
 				console.log("[ReadCard]读取卡信息:",res);
 				let card_info = res.data;
-				body.card_no = card_info.card_no;
+				body.card_no = card_info.card_no.substring(3);//去掉实体卡前缀三位
 				body.auth_code = card_info.track_info;
-				body.merchant_no = 'TL22061561470300';
+				body.merchant_no = config.SHID;
 				body.storeName = getApp().globalData.store.NAME;
 				console.log("[ReadCard]组装支付参数:",body);
 				_PaymentAll(pt, body, func, catchFunc);
 			},(err) => {
+				util.simpleMsg("读卡异常!"+err.msg,true)
 				console.log("[ReadCard]读卡异常!",err);
 			});
 		})
@@ -374,14 +383,14 @@ var misPay = {
 			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
 			body.merchant_no = null;//使用全局配置（后端）
 			body.terminalCode = config.NOTE;
-			body.store_id = config.SHID;
+			body.store_id = config.KEY;
 			_PaymentAll(pt, body, func, catchFunc);
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		this.GetConfig().then((config) => {
 			body.terminalCode = config.NOTE;
-			body.store_id = config.SHID;
+			body.store_id = config.KEY;
 			_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 		})
 	},

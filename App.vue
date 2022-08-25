@@ -24,8 +24,8 @@
 				GCID: "",
 				DQID: '', //地区ID（销售地区）
 				NAME: "",
-				MERID: "999990053990001",
-				deviceno: "13001001",
+				// MERID: "999990053990001",
+				// deviceno: "13001001",
 				KHAddress: "",
 				POSCSZID: "",
 				RYID: "",
