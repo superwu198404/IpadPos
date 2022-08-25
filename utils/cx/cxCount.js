@@ -37,6 +37,8 @@ let zdcxbill = "";
 let yn_zdcx = false;
 let zdcxsubno = "";
 
+let hymen = {};
+
 ///从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
 	console.log("CxSelectTip集合：", CreateArr(cxSelectTipColumn));
@@ -834,21 +836,21 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 			//某一行产品进行计算时进行这些计算
 			if (subx.ZkTj == "Qty") {
 				Spprice = 1;
-				if (hashqty.ContainsKey(subid)) {
+				if (hashqty.hasOwnProperty(subid)) {
 					Tjqty = hashqty[subid];
 				} else {
 					Tjqty = subx.QtyCondition[0] * Lcm;
-					hashqty.Add(subid, Tjqty);
-					Fsnet.Add(subid, 0);
+					hashqty.push(subid, Tjqty);
+					Fsnet.push(subid, 0);
 				}
 			} else {
 				Spprice = oldprice;
-				if (hashqty.ContainsKey(subid)) {
+				if (hashqty.hasOwnProperty(subid)) {
 					Tjqty = hashqty[subid];
 				} else {
 					Tjqty = subx.NetCondition[0] * Lcm;
-					hashqty.Add(subid, Tjqty);
-					Fsnet.Add(subid, 0);
+					hashqty.push(subid, Tjqty);
+					Fsnet.push(subid, 0);
 				}
 			}
 			if (Tjqty == 0) {
@@ -889,7 +891,7 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 			}
 			hashqty[subid] = Tjqty;
 			Fsnet[subid] = Fsnet[subid] + fsqty * oldprice;
-			cxbilldts.Rows[i][fscs] = fsqty;
+			cxbilldts[i][fscs] = fsqty;
 		}
 		SubCxQty(pmList, cx, Fsnet, 0, Lcm);
 	} catch (e) {
@@ -941,9 +943,9 @@ const SubCxQty = function() {
 						let getfsnet = GetOneSpNetForQty(cx, subid, fsqty, price);
 						let sublcm = 0;
 						if (cxsub.ZkTj == "Net") {
-							sublcm = (int)(getfsnet / cxsub.NetCondition[0]);
+							sublcm = parseInt(getfsnet / cxsub.NetCondition[0]);
 						} else {
-							sublcm = (int)(getfsnet / cxsub.QtyCondition[0]);
+							sublcm = parseInt(getfsnet / cxsub.QtyCondition[0]);
 						}
 						subdisc = sublcm * cxsub.discnet[level];
 					} else {
@@ -1045,12 +1047,12 @@ const SubCxQty = function() {
 				///本次促销单中，该产品的积分 = 促销单中的积分系数 * 折扣后的价格 * 商品数量
 				let currentJf = jfxs * newprice * fsqty;
 				///每次这个产品有新的促销单生效的时候，都要将这一促销单的积分累加到产品这一列上
-				cxbilldts[i][jfnum] = SqlHelper.NNVL(cxbilldts[i][jfnum], 0) + currentJf;
-				if (!fsdcx.Contains(cxsub.subno)) {
+				cxbilldts[i][jfnum] = xprinter_util.nnvl(cxbilldts[i][jfnum], 0) + currentJf;
+				if (!fsdcx.hasOwnProperty(cxsub.subno)) {
 					///积分的促销类型不在这里添加
-					if (!cx.cxtype.Equals("G") && !cx.cxtype.Equals("D") && !fsdcx.Contains(cx.CxBill) && jfxs >
+					if (cx.cxtype!=("G") && cx.cxtype!="D" && !fsdcx.hasOwnProperty(cx.CxBill) && jfxs >
 						0) {
-						fsdcx.Add(cx.CxBill);
+						fsdcx.push(cx.CxBill);
 					}
 				}
 				AddCxTable(cx, subid, i, fsqty, newprice, price, level, lcm);
@@ -1058,7 +1060,7 @@ const SubCxQty = function() {
 				
 			}
 			
-			cxbilldts[i][sysl] = SqlHelper.NNVL(cxbilldts[i][sysl], 0) - fsqty;
+			cxbilldts[i][sysl] = xprinter_util.nnvl(cxbilldts[i][sysl], 0) - fsqty;
 			cxbilldts[i][fscs] = 0;
 
 		}
@@ -1069,7 +1071,7 @@ const SubCxQty = function() {
 
 //每次计算之前先设置会员积分上限
 const setHyjfUpleve = function(num){
-	 if (null == ManClient.hymen)
+	 if (null == hymen)
 	 {
 	     return;
 	 }
@@ -1101,7 +1103,7 @@ const calculateJf = function(dsnum, jfnum, cx){
 	try
 	{
 	    ///会员为null
-	    if (null == ManClient.hymen)
+	    if (null == hymen)
 	    {
 	        return;
 	    }
@@ -1125,7 +1127,7 @@ const calculateJf = function(dsnum, jfnum, cx){
 	        ////取一个比较小的金额
 	        let min = tj > cx.upleave ? cx.upleave : tj;
 	        ///先取商，算出剩余积分还能发生几次该促销
-	        let bs = Convert.ToInt32(min - syjf) / Convert.ToInt32(cx.syjf);
+	        let bs = parseInt(min - syjf) / parseInt(cx.syjf);
 	        if (bs <= 0)
 	        {
 	            ///当商为0时，表示一次促销都不能再发生，直接返回0
@@ -1134,9 +1136,9 @@ const calculateJf = function(dsnum, jfnum, cx){
 	        else
 	        {
 	            ///当商不为0时，要取余数
-	            let ys = Convert.ToInt32(min - syjf) % Convert.ToInt32(cx.syjf);
+	            let ys = parseInt(min - syjf) % parseInt(cx.syjf);
 	            ///算出还能发生几次促销  （剩余积分 - 余数） / 发生一次促销的积分数
-	            let time = Convert.ToInt32((min - syjf - ys) / cx.syjf);
+	            let time = parseInt((min - syjf - ys) / cx.syjf);
 	            dsnum = time * cx.syjf / jfnum * dsnum;
 	            jfnum = time * cx.syjf;
 	        }
@@ -1155,7 +1157,7 @@ const setHjInfo = function(cx,jfxs,net,jfnum){
 	      return;
 	  }
 	  ///会员为null
-	  if (null == ManClient.hymen)
+	  if (null == hymen)
 	  {
 	      return;
 	  }
@@ -1188,17 +1190,17 @@ const setHjInfo = function(cx,jfxs,net,jfnum){
 	  ///累加积分
 	  jfinfo.jfnum += jfnum;
 	  ///累计单号
-	  if (!jfinfo.hdbill.Contains(cx.CxBill))
+	  if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill))
 	  {
 	      ///当这个促销单存在积分系数的时候，将单号的索引记录下来
 	      if (jfxs > 0)
 	      {
-	          jfinfo.xsIndex.Add(jfinfo.hdbill.Count);
+	          jfinfo.xsIndex.push(jfinfo.hdbill.Count);
 	      }
 	      ///累计单号
-	      jfinfo.hdbill.Add(cx.CxBill);
+	      jfinfo.hdbill.push(cx.CxBill);
 	      ///累计类型
-	      jfinfo.hdtype.Add(cx.cxtype);
+	      jfinfo.hdtype.push(cx.cxtype);
 	  }
 }
 
