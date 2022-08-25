@@ -331,10 +331,10 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 	let res = pm_data;
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("http请求" + JSON.stringify(res));
+			console.log("[AsyncFuncChain]http请求:",res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res); //发起请求
-			console.log("http请求结果：" + JSON.stringify(res));
+			console.log("[AsyncFuncChain]http请求结果:",res);
 			results.push(res); //存入执行结果
 			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
 				def(catchfun, res);
