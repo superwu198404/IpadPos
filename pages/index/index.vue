@@ -251,9 +251,6 @@
 					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
-		mounted() {
-			console.log("mounted!", _pay.RefundAll);
-		},
 		//方法初始化
 		methods: {
 			inputAuthCode: function() {
@@ -269,18 +266,19 @@
 			//获取支付方式
 			GetPayWay: async function(e) {
 				let that = this;
-				console.log("开始获取本地支付方式");
+				console.log("[GetPayWay]开始获取本地支付方式...");
 				await common.GetPayWay(e, function(res) {
 					if (res.code) {
 						that.PayWayList = [];
 						let PayInfo = util.getStorage("PayInfo");
-						console.log("支付规则信息：", PayInfo);
+						console.log("[GetPayWay]支付规则信息：", PayInfo);
+						console.log("[GetPayWay]获取到的支付方式：", res);
 						for (var i = 0; i < res.msg.length; i++) {
 							if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
 								return;
 							}
-							let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i]
-								.SNAME);
+							// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i].SNAME);
+							let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
 							if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
 								continue;
 							}

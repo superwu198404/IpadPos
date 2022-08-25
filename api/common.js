@@ -449,18 +449,20 @@ var InitZFRULE = async function(e, func) {
 	//创建表结构和测试数据 后期可挪到数据库中初始化
 	let arr = [
 		"delete from 'FKDA';",
-		create_sql.ZFRuleSql,
 		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF09','02265213591481','02265213591481','666','SZQ','6','SZQ','NEWADD','dzq','电子券','Y','Y','N','N','Y','N','Y','N','ZV09');",
-		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF04','02265213591481','02265213591481','666','HYK','8','HYK','NEWADD','qjdzk','仟吉电子卡','N','Y','Y',,'Y','N','Y','Y','Y','ZV03');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF04','02265213591481','02265213591481','666','HYK','8','HYK','NEWADD','qjdzk','仟吉电子卡','N','Y','Y','Y','N','Y','Y','Y','ZV03');",
 		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF07','02265213591481','02265213591481','022','ZFB_CLZF','8','ZFB_CLZF','NEWADD','zfb','支付宝支付','N','Y','Y','Y','N','Y','Y','Y','');",
 		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF06','02265213591481','02265213591481','022','WX_CLZF','8','WX_CLZF','NEWADD','wx','微信支付','N','Y','Y','Y','N','Y','Y','Y','');",
 		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF02','02265213591481','02265213591481','022','MIS','8','MIS','NEWADD','yl','银联支付','N','N','Y','Y','N','Y','Y','Y','ZF02');",
+		"insert into FKDA('DATE_LR','DATE_SH','DATE_XG','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','ID_RY_XG','JKSNAME','MEDIA','NBJKNO','NET_ADDTYPE','PINYIN','SNAME','YN_CEZF','YN_DBM','YN_INPUTJE','YN_JK','YN_SQ','YN_YLFH','YN_ZK','YN_ZL','ZKLX') values('2022-7-28 11:11:00','2022-7-28 11:11:00','2022-7-28 11:11:00','1','ZF03','02265213591481','02265213591481','022','REALCARD','8','REALCARD','NEWADD','qjstk','仟吉实体卡','N','N','Y','Y','N','Y','Y','Y','ZF03');",
+		create_sql.ZFRuleSql,
 		"delete from 'ZF_RULE';",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('WX_CLZF','keengee','027001','/PaymentAll/Handle','WxPay_ScanCode','Mobile_Pos','KG','10,11,12,13,14,15','Y');",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('ZFB_CLZF','keengee','027001','/PaymentAll/Handle','AliPay_ScanCode','Mobile_Pos','KG','25,26,27,28,29,30','Y');",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('HYK','keengee','027001','/PaymentAll/Handle','ECard_Payment','Mobile_Pos','KG','KG','Y');",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('SZQ','keengee','027001','/PaymentAll/Handle','ECoupon_Payment','Mobile_Pos','KG','coupon','Y');",
 		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('MIS','keengee','027001','/PaymentAll/Handle','Mis_AllinPayment','Mobile_Pos','KG','','Y');",
+		"insert into ZF_RULE('TYPE','APPID','GSID','URL','PAYTYPE','SOURCE','BRAND','CODE','YN_USE') values('REALCARD','keengee','027001','/PaymentAll/Handle','KengeeCard_Payment','Mobile_Pos','KG','','Y');",
 		"delete from dapzcs_nr where id='FKJHZF';",
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF06', '微信支付（新）', 'wxzf（x）', NULL, '10,11,12,13,14,15', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('FKJHZF', 'ZF07', '支付宝2.0', 'zfb2.0', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
@@ -499,7 +501,7 @@ var InitZFRULE = async function(e, func) {
 		"INSERT INTO dapzcs_nr VALUES ('THTYPE', '1', '宅配到家', 'shsm', NULL, '25,26,27,28,29,30', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"INSERT INTO dapzcs_nr VALUES ('THTYPE', '2', '现卖配送', 'xmps', NULL, '51', NULL, NULL, 'SYSTEM', DATETIME('2018-10-29 20:22:10'), NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);",
 		"delete from POSCSZmx where POSCS='KJGSFW';",
-		"INSERT INTO POSCSZmx (POSCSZID, POSCS, POSCSNR, NOTE, SZ, ID_RY_LR, DATE_LR, ID_RY_XG, DATE_XG) VALUES ('001', 'KJGSFW', 'K960,K900,K210,K200', NULL, '43', 'SYSTEM', DATE('2018-09-10 20:17:19'), 'SYSTEM', DATE('2020-11-30 09:27:58'));",
+		"INSERT INTO POSCSZmx (POSCSZID, POSCS, POSCSNR, NOTE, SZ, ID_RY_LR, DATE_LR, ID_RY_XG, DATE_XG) VALUES ('001', 'KJGSFW', 'K960,K900,K210,K200', NULL, '43', 'SYSTEM', DATE('2018-09-10 20:17:19'), 'SYSTEM', DATE('2020-11-30 09:27:58'));"
 	];
 	await db.get().executeDml(arr, "sql执行中", function(res) {
 		console.log("支付规则数据和聚合数据初始化成功：", res);

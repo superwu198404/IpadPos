@@ -167,7 +167,7 @@
 				</view>
 			</view>
 		</view>
-	    
+
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -258,7 +258,7 @@
 				},
 				timeRange: [ /*到货时段*/ ],
 				decorationRoom: [ /*裱花间*/ ],
-				edit: false,//开启编辑状态
+				edit: false, //开启编辑状态
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
@@ -471,17 +471,25 @@
 					this.view.check.loading = true;
 					this.view.check.bill = source?.YDBILL;
 					this.EditLoad(true, source?.YDBILL);
-					ordersStatusCheck(source?.YDBILL, util.callBind(this, function(res) {
+					ordersStatusCheck({
+						bill: source?.YDBILL
+					}, util.callBind(this, function(res) {
 						this.EditLoad(false, source?.YDBILL);
-						if (res.data.msg.DATA && res.data.msg.DATA.length && res.data.msg.DATA.length >
-							0) {
-							if (res.data.msg.DATA[0].orderStatus === 'DELIVERED')
-								this.view.search.confirm = false;
-							else
-								this.view.search.confirm = true;
-						} else
+						if(res.code){
+							let data = JSON.parse(res.data);
+							if(data.length > 0){
+								data = data[0];
+								if (data.orderStatus === 'DELIVERED')
+									this.view.search.confirm = false;
+								else
+									this.view.search.confirm = true;
+							}
+						}
+						else{
 							this.view.search.confirm = true;
-						console.log("[RenderFrom]confirm:", this.view.search.confirm);
+							util.simpleMsg(res.msg,true,res);
+						}
+						console.log("[RenderFrom]Res:", res);
 					}));
 					Object.assign(this.details.order, source);
 					this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
@@ -569,10 +577,10 @@
 						this.GetOnlineOrders(); //刷新页面
 						util.simpleMsg("接受成功!")
 						console.log("处理结果：", res)
-						
+
 						//调用打印
 						this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
-						
+
 					}), (err) => {
 						util.simpleMsg(err.msg, "none", err);
 					});

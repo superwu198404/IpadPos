@@ -122,6 +122,7 @@
 </script>
 
 <style>
+	@import url(@/static/style/common.css);
 	/* uni-toast .uni-toast {
 		width: auto !important;
 		border: 1px solid red; 
