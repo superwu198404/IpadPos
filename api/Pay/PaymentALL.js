@@ -258,8 +258,26 @@ var zfbPay = {
 }
 //仟吉电子卡支付类
 var hykPay = {
+	GetConfig: async function() { //获取 mis 支付参数，款台号
+		if (!util.getStorage('ecard-config')) {
+			let result = await RequestSend(`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`);
+			if (result.code && result.result.code) {
+				let config_arr = JSON.parse(result.result.data);
+				if (config_arr && config_arr.length && config_arr.length > 0)
+					util.setStorage('ecard-config', config_arr[0]);
+				else
+					util.simpleMsg("[ECARD-CONFIG]支付参数数据库未查询到!", true)
+			} else
+				util.simpleMsg("[ECARD-CONFIG]支付参数获取失败!", true)
+		} else
+			console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
+		return util.getStorage('ecard-config');
+	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		_PaymentAll(pt, body, func, catchFunc);
+		this.GetConfig().then((config) => {
+			body.merchant_no = config.SHID;//从数据库获取配置
+			_PaymentAll(pt, body, func, catchFunc);
+		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);

@@ -12,7 +12,7 @@
 		<!-- 结算 -->
 		<view class="boxs">
 			<view class="memberes">
-				<ReserveDrawer @Close="CloseReserveDrawer" :order="Order" :show="SaleFrom"></ReserveDrawer>
+				<ReserveDrawer @Close="CloseReserveDrawer" :show="SaleFrom"></ReserveDrawer>
 				<view class="meminfo" v-if="Memberinfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -228,7 +228,8 @@
 
 <script>
 	//页面组件引入 ↓
-	import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue';
+	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
+	// import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue';
 	//页面组件引入 ↑
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';

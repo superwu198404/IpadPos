@@ -13,8 +13,8 @@ export default [{
 	},
 	{
 		title: "预定",
-		name: "Reserve",
-		url: "@/pages/Reserve/Reserve", //
+		name: "Main",
+		url: "@/pages/Main/Main", //
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
 		index: 1
