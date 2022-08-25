@@ -137,17 +137,24 @@
 			onLoad() {
 				that = this;
 				// util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
-				let Init_Data = util.getStorage("Init_Data");
-				if (Init_Data && Init_Data != '{}') { //初始化过
-					uni.navigateTo({
-						url: "/pages/Login/Login"
-					});
-				} else {
-					let store = util.getStorage("store");
-					if (store && JSON.stringify(store) != "{}") {
-						that.khid = store.KHID;
-						that.posid = store.POSID;
-					}
+				// let Init_Data = util.getStorage("Init_Data");
+				// if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
+				// 	uni.navigateTo({
+				// 		url: "/pages/Login/Login"
+				// 	});
+				// } else {
+				// 	let store = util.getStorage("store");
+				// 	if (store && JSON.stringify(store) != "{}") {
+				// 		that.khid = store.KHID;
+				// 		that.posid = store.POSID;
+				// 	}
+				// }
+				
+				//用于重读时的赋值
+				let store = util.getStorage("Init_Data");
+				if (store && JSON.stringify(store) != "{}") {
+					that.khid = store.KHID;
+					that.posid = store.POSID;
 				}
 			},
 			toDbqry: function() {

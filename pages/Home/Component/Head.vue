@@ -63,36 +63,39 @@
 				</view>
 			</view>
 			<!-- 紧急消息弹窗 -->
-			<view class="boxs" v-if="false">
+			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
 				<view class="popup promot">
-					<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+					<image class="tchw" src="@/images/dx-tchw.png" mode="widthFix"></image>
 					<view class="infor">
 						<view class="shoppbag">
 							<view class="liis messadet">
-								<view class="emergs"><label class="zhoyao">重要</label><label class="putong"
-										v-if="putong">普通</label><text>● 进行中</text></view>
-								<view class="h6">这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字这是条关于通知的文字标题超出五十个字显示...</view>
-								<view class="sender"><text>质管部 · 橘子</text><text>创建时间：2022-06-13 09:00:00</text></view>
+								<view class="emergs">
+									<label class="zhoyao">重要</label>
+									<!-- <label class="putong" v-if="putong">普通</label> -->
+									<text>● 进行中</text>
+								</view>
+								<view class="h6">{{urgenMsg.newVal.TITLE}}</view>
+								<view class="sender"><text>{{urgenMsg.newVal.YYBM}} ·
+										{{urgenMsg.newVal.ID_RY_XG}}</text><text>创建时间：{{urgenMsg.newVal.DATE_LR}}</text>
+								</view>
 							</view>
 							<view class="matters">
-								<image src="../../images/dl-login.png" mode="widthFix"></image>
+								<image src="@/images/dl-login.png" mode="widthFix"></image>
 								<text>
-									编程技术的保存失败的次数第v你说的基本上调查
-									上档次
-									十九点v你是
+									暂无数据。。。。。。。。。。。。
 								</text>
 							</view>
 							<view class="tally">
 								<label>
-									<image src="../../images/yewu-xx.png"></image><text>销售业务</text>
+									<image src="@/images/yewu-xx.png"></image><text>{{urgenMsg.newVal.YYBM}}</text>
 								</label>
 								<view>
 									<label>
-										<image src="../../images/kaishisj-xx.png"></image><text>2022.07.01 00:00
+										<image src="@/images/kaishisj-xx.png"></image><text>{{urgenMsg.newVal.SDATE}}
 											开始</text>
 									</label>
 									<label>
-										<image src="../../images/jieshusj-xx.png"></image><text>2022.07.30 24:00
+										<image src="@/images/jieshusj-xx.png"></image><text>{{urgenMsg.newVal.EDATE}}
 											截止</text>
 									</label>
 								</view>
@@ -100,7 +103,8 @@
 
 						</view>
 						<view class="confirm">
-							<button class="btn">关 闭 (5s)</button>
+							<button class="btn" :disabled="viewTime>0" @click="CloseMsg()">关 闭 <text
+									v-if="viewTime>0">({{viewTime}}s)</text></button>
 						</view>
 					</view>
 				</view>
@@ -134,11 +138,12 @@
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
 					<view class="b_critlist">
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
-						:data-name="item.name" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap" >
+							:data-name="item.name" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap">
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button v-if="isLink[index]==3">连接</button><button class="b_has" v-if="isLink[index]==2">已连接</button>
+							<button v-if="isLink[index]==3">连接</button><button class="b_has"
+								v-if="isLink[index]==2">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -183,7 +188,7 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
-				
+
 				//蓝牙
 				list: [],
 				services: [],
@@ -193,6 +198,8 @@
 				notifyCharacter: false,
 				isScanning: false,
 				isLink: [],
+				urgenMsg: {}, //紧急信息
+				viewTime: 5, //默认5s
 			};
 		},
 		/**
@@ -202,7 +209,7 @@
 			console.log(1111111111111111111);
 			let that = this;
 			app.globalData.BLEInformation.platform = app.globalData.getPlatform();
-		
+
 			//监听蓝牙连接状态
 			bleConnect.onBLEConnectionStateChange();
 		},
@@ -219,11 +226,39 @@
 				that.YW_MsgData = res.filter((r, i) => {
 					return (r.type == 'PTIP' || r.type == 'JJPT' || r.type == 'XTIP'); //外卖，预定，线上
 				});
+				debugger;
+				if (that.XT_MsgData.length > 0) {
+					let newArr = that.XT_MsgData[0].Details.map(r => {
+						return {
+							key: r.key,
+							val: JSON.parse(r.val),
+							newVal: JSON.parse(r.val)[0]
+						}
+					})
+					console.log("分组后的消息：", newArr);
+					that.urgenMsg = newArr.find(r => {
+						return r.newVal.IMTYPE == '1'
+					})
+					if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
+						that.viewTime = that.urgenMsg.VIEWTIME || 5;
+						let id = setInterval(r => {
+							that.viewTime -= 1;
+							if (that.viewTime == 0) {
+								that.viewTime == 0;
+								clearInterval(id);
+							}
+						}, 1000);
+					}
+				}
 				console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-				console.log("[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+				console.log(
+					"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+				console.log(
+					"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
 			});
 			//搜索蓝牙
 			that.startSearch();
+
 		},
 		methods: {
 			//消息已读
@@ -246,6 +281,21 @@
 					})
 				}
 				// });
+			},
+			//关闭紧急类消息
+			CloseMsg: function() {
+				if (that.urgenMsg && JSON.stringify(that.urgenMsg)) {
+					let obj = {
+						type: "SYSTEM",
+						Details: [{
+							key: that.urgenMsg.key
+						}]
+					}
+					_msg.DelMsg(that.KHID, obj, res => {
+						console.log("消息数据已读结果：", res);
+					});
+					that.urgenMsg = null;
+				}
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout
@@ -291,7 +341,8 @@
 						}
 						util.removeStorage("hyinfo"); //清除会员信息
 						if (uni.getSystemInfoSync().platform == 'ios') {
-							plus.ios.import("UIApplication").sharedApplication().performSelector("exit")
+							plus.ios.import("UIApplication").sharedApplication()
+								.performSelector("exit")
 						} else if (uni.getSystemInfoSync().platform == 'android') {
 							plus.runtime.quit();
 						}
@@ -386,8 +437,9 @@
 					success: function(res) {
 						uni.getBluetoothAdapterState({
 							success: function(res) {
-								console.log("openBluetoothAdapter success", res);
-			
+								console.log("openBluetoothAdapter success",
+									res);
+
 								if (res.available) {
 									if (res.discovering) {
 										uni.stopBluetoothDevicesDiscovery({
@@ -421,7 +473,7 @@
 				//android 6.0以上需授权地理位置权限
 				var that = this;
 				var platform = app.globalData.BLEInformation.platform;
-			
+
 				if (platform == "ios") {
 					app.globalData.platform = "ios";
 					that.getBluetoothDevices();
@@ -431,23 +483,27 @@
 						app.globalData
 						.getSystem()
 						.substring(
-							app.globalData.getSystem().length - (app.globalData.getSystem().length - 8),
-							app.globalData.getSystem().length - (app.globalData.getSystem().length - 8) + 1
+							app.globalData.getSystem().length - (app.globalData.getSystem()
+								.length - 8),
+							app.globalData.getSystem().length - (app.globalData.getSystem()
+								.length - 8) + 1
 						)
 					);
-			
+
 					if (
 						app.globalData
 						.getSystem()
 						.substring(
-							app.globalData.getSystem().length - (app.globalData.getSystem().length - 8),
-							app.globalData.getSystem().length - (app.globalData.getSystem().length - 8) + 1
+							app.globalData.getSystem().length - (app.globalData.getSystem().length -
+								8),
+							app.globalData.getSystem().length - (app.globalData.getSystem().length -
+								8) + 1
 						) > 5
 					) {
 						uni.getSetting({
 							success: function(res) {
 								console.log(res);
-			
+
 								if (!res.authSetting["scope.userLocation"]) {
 									uni.authorize({
 										scope: "scope.userLocation",
@@ -483,32 +539,44 @@
 								success: function(res) {
 									var devices = [];
 									var num = 0;
-									for (var i = 0; i < res.devices.length; ++i) {
-										if (res.devices[i].name != "未知设备" && res
+									for (var i = 0; i < res.devices
+										.length; ++i) {
+										if (res.devices[i].name !=
+											"未知设备" && res
 											.devices[i].name != "") {
-											devices[num] = res.devices[i];
+											devices[num] = res.devices[
+												i];
 											num++;
 											//console.log("蓝牙设备",res.devices[i].name)
-											if (res.devices[i].name == app.globalData
-												.BLEInformation.deviceName && app
-												.globalData.BLEInformation
+											if (res.devices[i].name ==
+												app.globalData
+												.BLEInformation
+												.deviceName && app
+												.globalData
+												.BLEInformation
 												.deviceName != "") {
-												console.log("蓝牙打印设备", res.devices[i]
+												console.log("蓝牙打印设备",
+													res.devices[i]
 													.name)
-												app.globalData.BLEInformation
-													.deviceId = res.devices[i]
+												app.globalData
+													.BLEInformation
+													.deviceId = res
+													.devices[i]
 													.deviceId;
-												that.bindAutoTap(res.devices[i]
-													.deviceId, res.devices[i].name);
+												that.bindAutoTap(res
+													.devices[i]
+													.deviceId, res
+													.devices[i]
+													.name);
 											}
 										}
 									}
-			
+
 									that.setData({
 										list: devices,
 										isScanning: false
 									});
-									
+
 									that.isLink = []
 									var i = 0;
 									devices.forEach(e => {
@@ -518,8 +586,11 @@
 									uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
-										success: function(res) {
-											console.log("停止搜索蓝牙");
+										success: function(
+											res) {
+											console.log(
+												"停止搜索蓝牙"
+											);
 										}
 									});
 								}
@@ -541,7 +612,8 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name);
+				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset
+					.name);
 				uni.showLoading({
 					title: "正在连接"
 				});
@@ -550,9 +622,12 @@
 					success: function(res) {
 						console.log("Connection success:", res);
 						that.isLink.splice(e.currentTarget.dataset.key, 1, 2)
-						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
-						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset.name;
-						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
+						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset
+							.title;
+						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset
+							.name;
+						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget
+							.dataset.name);
 					},
 					fail: function(e) {
 						uni.showModal({
@@ -615,7 +690,7 @@
 					deviceId: app.globalData.BLEInformation.deviceId,
 					success: function(res) {
 						console.log(res);
-			
+
 						that.setData({
 							services: res.services
 						});
@@ -642,36 +717,39 @@
 					serviceId: list[num].uuid,
 					success: function(res) {
 						console.log(res);
-			
+
 						for (var i = 0; i < res.characteristics.length; ++i) {
 							var properties = res.characteristics[i].properties;
 							var item = res.characteristics[i].uuid;
-			
+
 							if (!notify) {
 								if (properties.notify) {
 									app.globalData.BLEInformation.notifyCharaterId = item;
-									app.globalData.BLEInformation.notifyServiceId = list[num].uuid;
+									app.globalData.BLEInformation.notifyServiceId = list[
+										num].uuid;
 									notify = true;
 								}
 							}
-			
+
 							if (!write) {
 								if (properties.write) {
 									app.globalData.BLEInformation.writeCharaterId = item;
-									app.globalData.BLEInformation.writeServiceId = list[num].uuid;
+									app.globalData.BLEInformation.writeServiceId = list[
+										num].uuid;
 									write = true;
 								}
 							}
-			
+
 							if (!read) {
 								if (properties.read) {
 									app.globalData.BLEInformation.readCharaterId = item;
-									app.globalData.BLEInformation.readServiceId = list[num].uuid;
+									app.globalData.BLEInformation.readServiceId = list[num]
+										.uuid;
 									read = true;
 								}
 							}
 						}
-			
+
 						if (!write || !notify || !read) {
 							num++;
 							that.setData({
@@ -680,7 +758,7 @@
 								notifyCharacter: notify,
 								serviceId: num
 							});
-			
+
 							if (num == list.length) {
 								uni.showModal({
 									title: "提示",
@@ -697,7 +775,8 @@
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
+							console.log("连接成功 deviceName", app.globalData.BLEInformation
+								.deviceName +
 								"||" + app.globalData.YN_PRINT_CON)
 							//that.openControl();
 						}
@@ -706,9 +785,12 @@
 						console.log(e);
 					},
 					complete: function(e) {
-						console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
-						console.log("read:" + app.globalData.BLEInformation.readCharaterId);
-						console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
+						console.log("write:" + app.globalData.BLEInformation
+							.writeCharaterId);
+						console.log("read:" + app.globalData.BLEInformation
+							.readCharaterId);
+						console.log("notify:" + app.globalData.BLEInformation
+							.notifyCharaterId);
 					}
 				});
 			},
@@ -859,6 +941,7 @@
 		color: #fff;
 		font-size: 16rpx;
 	}
+
 	/* 以下为蓝牙模块样式 */
 	.b_customer {
 		background-color: #fff;
@@ -976,7 +1059,13 @@
 		margin: 0;
 	}
 
-	.b_critlist view .has {
+	.b_critlist view .b_has {
 		background-color: #B0b0b0;
+	}
+
+	/* 消息 */
+	.tally label text {
+		display: inline-block;
+		width: 80%;
 	}
 </style>
