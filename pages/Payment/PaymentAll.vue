@@ -48,7 +48,7 @@
 				</view>
 				<view class="checkout">
 					<label>
-						<image src="../../images/dx-mendian.png" mode="widthFix"></image>{{NAME}}
+						<image src="../../images/dx-mendian.png" mode="widthFix"></image><text>{{NAME}}</text>
 					</label>
 					<label>
 						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}

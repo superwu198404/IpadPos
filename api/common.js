@@ -226,26 +226,31 @@ var GetPayWay = function(e, func) {
                                         AND  k2.dqid = k1.khzid \
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
-	db.get().executeQry(sql, "数据查询中", function(res) {
-		GetPolyPayWay(e, (res1) => {
-			for (var i = 0; i < res.msg.length; i++) {
-				let obj = res1.msg.find((item) => {
-					return item.ID_NR == res.msg[i].FKID;
-				})
-				if (obj) {
-					res.msg[i].POLY = 'Y';
-				} else {
-					res.msg[i].POLY = 'N';
+	db.get().executeQry(sql, "数据查询中", async function(res) {
+			let arr = res;
+			await GetPolyPayWay(e, (res1) => {
+				for (var i = 0; i < res.msg.length; i++) {
+					let obj = res1.msg.find((item) => {
+						return item.ID_NR == res.msg[i].FKID;
+					})
+					if (obj) {
+						res.msg[i].POLY = 'Y';
+					} else {
+						res.msg[i].POLY = 'N';
+					}
 				}
-			}
-			if (func) func(res);
-			return;
-		})
-		if (func) func(res);
-	}, function(err) {
-		console.log("获取付款方式出错:", err);
-		util.simpleMsg("获取付款方式出错", true);
-	});
+				arr = res;
+				// if (func) func(res);
+				// console.log("测试调用1");
+				// return res;
+			})
+			console.log("测试调用2");
+			if (func) func(arr);
+		},
+		function(err) {
+			console.log("获取付款方式出错:", err);
+			util.simpleMsg("获取付款方式出错", true);
+		});
 }
 
 //获取支付方式
@@ -288,34 +293,37 @@ var GetPayWayAsync = async function(e, func) {
                                         AND  k2.dqid = k1.khzid \
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
-	await db.get().executeQry(sql, "数据查询中", function(res) {
-		GetPolyPayWay(e, (res1) => {
-			console.log("聚合数据：", res1);
-			for (var i = 0; i < res.msg.length; i++) {
-				let obj = res1.msg.find((item) => {
-					return item.ID_NR == res.msg[i].FKID;
-				})
-				if (obj) {
-					res.msg[i].POLY = 'Y';
-				} else {
-					res.msg[i].POLY = 'N';
+	await db.get().executeQry(sql, "数据查询中", async function(res) {
+			let arr = res;
+			await GetPolyPayWay(e, (res1) => {
+				console.log("聚合数据：", res1);
+				for (var i = 0; i < res.msg.length; i++) {
+					let obj = res1.msg.find((item) => {
+						return item.ID_NR == res.msg[i].FKID;
+					})
+					if (obj) {
+						res.msg[i].POLY = 'Y';
+					} else {
+						res.msg[i].POLY = 'N';
+					}
 				}
-			}
-			if (func) func(res);
-			return res;
-		})
-		if (func) func(res);
-		return res;
-	}, function(err) {
-		console.log("获取付款方式出错:", err);
-		util.simpleMsg("获取付款方式出错", "none");
-	});
+				arr = res;
+				// if (func) func(res);
+				// return res;
+			})
+			if (func) func(arr);
+			return arr;
+		},
+		function(err) {
+			console.log("获取付款方式出错:", err);
+			util.simpleMsg("获取付款方式出错", "none");
+		});
 }
 
 //获取聚合支付
-var GetPolyPayWay = function(e, func) {
+var GetPolyPayWay = async function(e, func) {
 	let sql = "select ID_NR,ZF from  dapzcs_nr where id  ='FKJHZF'";
-	db.get().executeQry(sql, "数据查询中", function(res) {
+	await db.get().executeQry(sql, "数据查询中", function(res) {
 		if (func) func(res);
 	}, function(err) {
 		console.log("获取聚合付款方式出错:", err);
