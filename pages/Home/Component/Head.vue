@@ -138,7 +138,7 @@
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button>连接</button><button class="b_has">已连接</button>
+							<button v-if="isLink[index]==3">连接</button><button class="b_has" v-if="isLink[index]==2">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -192,6 +192,7 @@
 				readCharacter: false,
 				notifyCharacter: false,
 				isScanning: false,
+				isLink: [],
 			};
 		},
 		/**
@@ -507,6 +508,13 @@
 										list: devices,
 										isScanning: false
 									});
+									
+									that.isLink = []
+									var i = 0;
+									devices.forEach(e => {
+										that.isLink.push(3)
+										i++;
+									})
 									uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
@@ -541,6 +549,7 @@
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
 						console.log("Connection success:", res);
+						that.isLink.splice(e.currentTarget.dataset.key, 1, 2)
 						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
 						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset.name;
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
@@ -552,6 +561,7 @@
 							showCancel: false
 						});
 						console.log("Connection fail:", e);
+						that.isLink.splice(e.currentTarget.dataset.key, 1, 3)
 						uni.hideLoading();
 					},
 					complete: function(e) {
@@ -716,13 +726,13 @@
 			},
 			//断开蓝牙连接
 			closeBLEConnection(deviceId, index) {
-				const _this = this
+				const that = this
 				plus.bluetooth.closeBLEConnection({
 					deviceId: deviceId,
 					success: res => {
 						console.log('断开蓝牙连接')
 						app.globalData.YN_PRINT_CON = "N";
-						_this.isLink.splice(index, 1, 4)
+						that.isLink.splice(index, 1, 3)
 					}
 				})
 			},
