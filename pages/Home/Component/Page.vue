@@ -94,8 +94,6 @@
 			CloseAllChildMenu: function(title) {
 				this.urls.map((item, index) => {
 					if (item.title != title) {
-						console.log("title:",title);
-						console.log("item.title:",item.title);
 						item.showDetail = false;
 					} else {
 						item.showDetail = !item.showDetail;

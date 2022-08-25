@@ -343,6 +343,7 @@
 		methods: {
 			//触发主页的关闭事件来关闭结算页面
 			CloseSale: function() {
+				Object.assign(this.$data, this.$options.data());//清空数据
 				this.$emit("_CloseSale", {});
 			},
 			CloseReserveDrawer:function(order_info){
@@ -390,17 +391,15 @@
 							dkhname: this.Order.DKFNAME,
 							bill: this.Order.BILL,
 							saledata: this.Order.SALEDATE //new Date().toLocaleDateString()
-						}, res => {
-							console.log("退单结果：", res);
+						}, util.callBind(this,function(res){
+							console.log("[Comfirm]退单结果：", res);
 							if (res.code) {
-								util.simpleMsg("退单成功");
-								setTimeout(r => {
-									that.GetOrders();
-								}, 1500);
+								util.simpleMsg("[Comfirm]退单成功");
+								this.CloseSale();
 							} else {
-								util.simpleMsg("退单失败:" + res.msg, true);
+								util.simpleMsg("[Comfirm]退单失败:" + res.msg, true);
 							}
-						});
+						}));
 						return; //避免进入支付页面
 					} else {
 						result = await Accept({ //其他退单

@@ -605,6 +605,9 @@
 				that.statements = false;
 				that.Shoppingbags = false;
 				that.Memberinfo = false;
+				this.ShopCarOrder = {};
+				this.ShopCarProduct = [];
+				this.ShopCarPayment = [];
 			},
 			ShowSale: function() {
 				that.showSale = true;

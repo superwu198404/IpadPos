@@ -7,6 +7,9 @@ export default [{
 		keepAlive: true,
 		/*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
+		meta:{
+			bill_type:""
+		},
 		icon: require('@/images/xiaoshou.png'),
 		icon1: require("@/images/xiaoshou-hui.png"),
 		index: 0
@@ -15,6 +18,9 @@ export default [{
 		title: "预定",
 		name: "Main",
 		url: "@/pages/Main/Main", //
+		meta:{
+			bill_type:"Z121"
+		},
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
 		index: 1
@@ -23,6 +29,10 @@ export default [{
 		title: "赊销",
 		name: "Main",
 		url: "@/pages/Main/Main",
+		meta:{
+			bill_type:"Z154",
+			xs_type:1
+		},
 		icon: require("@/images/shexiao.png"),
 		icon1: require("@/images/shexiao-hui.png"),
 		index: 2
