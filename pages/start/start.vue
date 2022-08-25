@@ -136,7 +136,7 @@
 		methods: {
 			onLoad() {
 				that = this;
-				util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
+				// util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
 				let Init_Data = util.getStorage("Init_Data");
 				if (Init_Data && Init_Data != '{}') { //初始化过
 					uni.navigateTo({
@@ -193,7 +193,7 @@
 				}
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
-				let reqdata = Req.resObj(true, "正在进行初始化001", null, apistr);
+				let reqdata = Req.resObj(true, "正在初始化", null, apistr);
 				console.log(JSON.stringify(reqdata));
 				Req.asyncFunc(reqdata,
 					(res) => {
@@ -204,7 +204,7 @@
 							"posid": that.posid
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
-						return Req.resObj(true, "正在获取通讯数据004", reqPosData, apistr);
+						return Req.resObj(true, "正在初始化...", reqPosData, apistr);
 					},
 					(res) => {
 						debugger;
@@ -241,7 +241,7 @@
 										KHID: that.khid,
 										POSID: that.posid
 									});
-									
+
 									uni.navigateTo({
 										url: "/pages/Login/Login"
 									});
@@ -260,8 +260,13 @@
 						(res) => {
 							console.log("异常结果：", res);
 							that.tx001 = null;
-							util.simpleMsg(res.msg, "none");
 							console.log(JSON.stringify("start创建完成"));
+
+							if (res.msg != "OK") {
+								util.simpleModal("提示", res.msg)
+							} else {
+								util.simpleMsg("初始化完成");
+							}
 						}
 				)
 			},
