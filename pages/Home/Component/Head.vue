@@ -138,20 +138,11 @@
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
 					<view class="b_critlist">
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
-<<<<<<< HEAD
 						:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap" >
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
 							<button v-if="isLink[index]==0">连接</button><button class="b_has" v-if="isLink[index]==1">已连接</button>
-=======
-							:data-name="item.name" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap">
-							<label>
-								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
-							</label>
-							<button v-if="isLink[index]==3">连接</button><button class="b_has"
-								v-if="isLink[index]==2">已连接</button>
->>>>>>> bcd2e7db84073dbf06fc5cd84cbc21d6c9369026
 						</view>
 					</view>
 				</view>
@@ -595,16 +586,8 @@
 									uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
-<<<<<<< HEAD
 										success: function(res) {
 											//console.log("停止搜索蓝牙");
-=======
-										success: function(
-											res) {
-											console.log(
-												"停止搜索蓝牙"
-											);
->>>>>>> bcd2e7db84073dbf06fc5cd84cbc21d6c9369026
 										}
 									});
 								}
@@ -626,37 +609,19 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-<<<<<<< HEAD
 				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name+ "||" + e.currentTarget.dataset.key);
 				// uni.showLoading({
 				// 	title: "正在连接"
 				// });
-=======
-				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset
-					.name);
-				uni.showLoading({
-					title: "正在连接"
-				});
->>>>>>> bcd2e7db84073dbf06fc5cd84cbc21d6c9369026
 				uni.createBLEConnection({
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
 						console.log("Connection success:", res);
-<<<<<<< HEAD
 						that.isLink.splice(e.currentTarget.dataset.key, 0, 1)
 						//that.isLink[e.currentTarget.dataset.key] = 1;
 						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
 						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset.name;
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
-=======
-						that.isLink.splice(e.currentTarget.dataset.key, 1, 2)
-						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset
-							.title;
-						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset
-							.name;
-						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget
-							.dataset.name);
->>>>>>> bcd2e7db84073dbf06fc5cd84cbc21d6c9369026
 					},
 					fail: function(e) {
 						uni.showModal({
