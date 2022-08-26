@@ -78,6 +78,41 @@ var QueryHyInfo= function(loading_title, request, success, error) {
 			error(res)
 	});
 }
+
+//积分抵扣
+const PointsDeduction = function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "PointsDeduction"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+
+//积分回退
+const PointsReturn = function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "PointsReturn"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+
 export default {
 	UploadPoint,
 	CouponList,
