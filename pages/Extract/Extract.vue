@@ -61,12 +61,13 @@
 							备注:{{ item.CUSTMCOMM || '-' }}</view>
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
+						<button @click="EditOrder(item)" class="btn">编辑</button>
 						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '预定提取' : '预定取消'}} </button>
 					</view>
 				</view>
 			</view>
 		</view>
-		<component :is="'Reserve'" :mode="view.mode" :info="extract_order" v-if="view.Details" @Close="CloseDrawer">
+		<component :is="'ReserveDrawer'" :show="view.Details" :order="extract_order" @Close="CloseDrawer">
 		</component>
 	</view>
 	<!-- </menu_content> -->
@@ -155,6 +156,10 @@
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
 			},
+			EditOrder:function(item){
+				this.view.Details = true;
+				this.extract_order = item;
+			},
 			ExtractOrder: function(item) {
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
@@ -185,13 +190,13 @@
 								console.log("[ExtractOrder]服务端未查询到数据!");
 							}
 							else{
-								data.sale1.XSTYPE = '2';
-								data.sale1.BILL_TYPE = 'Z171';
+								data.sale1[0].XSTYPE = '2';//由于查询结果默认返回数组，所带索引去取
+								data.sale1[0].BILL_TYPE = 'Z171';
 								this.$emit("Switch", {
 									name: "Main",
 									title: "销售",
 									params: {
-										order: data.sale1,
+										order: data.sale1[0],
 										goods: data.sale2,
 										payments: data.sale3,
 										open: true

@@ -1,5 +1,6 @@
 import common from '@/api/common.js';
 import util from '@/utils/util.js';
+import db from '@/utils/db/db_excute.js';
 import {
 	Refund,
 	PaymentToRefundSALE001,
@@ -135,27 +136,41 @@ const sale_order_generation_def_params = {
 	no: "", //单号
 	bill_type: "", //单据类型
 	xs_type: "", //销售类型
-	sales:{//sale单据列表
-		sale1:{},//sale1
-		sale2:[],//sale2
-		sale3:[]//sale3
+	sales: { //sale单据列表
+		sale1: {}, //sale1
+		sale2: [], //sale2
+		sale3: [] //sale3
 	}
 }
-export const SaleOrderGenaration = async function(params = sale_order_generation_def_params) {
-	//生成退款类的数据对象
-	let sale1 = PaymentToRefundSALE001(params.sales.sale1, params),
-		sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
-		sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
-	let sqlString = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"], [sale3, "SALE003"]);
-	console.log("[SaleOrderGenaration]生成的SQL:", sqls);
-	await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
-	await db.get().executeDml(sqls, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
-		if (func) func(res);
-		this.complete = true;
-		console.log("[SaleOrderGenaration]销售单创建成功!", res);
-		util.simpleMsg("销售单创建成功!");
-	}).bind(this), function(err) {
-		console.log("[SaleOrderGenaration]销售单创建失败!", err);
-		util.simpleMsg("销售单创建失败!", false);
-	});
+export const SaleOrderGenaration = async function(params = sale_order_generation_def_params,callback) {
+	let result = {
+		code: false,
+		data: null
+	}; //执行结果
+	try {
+		//生成退款类的数据对象
+		let sale1 = PaymentToRefundSALE001(params.sales.sale1, params),
+			sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
+			sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
+		let sqlString = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"], [sale3, "SALE003"]);
+		console.log("[SaleOrderGenaration]生成的SQL:", sqlString);
+		await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+		await db.get().executeDml(sqlString, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
+			result.code = true;
+			result.data = res;
+			if (callback) callback(res);
+			console.log("[SaleOrderGenaration]销售单创建成功!", res);
+			util.simpleMsg("销售单创建成功!");
+		}).bind(this), function(err) {
+			result.code = false;
+			result.data = err;
+			console.log("[SaleOrderGenaration]销售单创建失败!", err);
+			util.simpleMsg("销售单创建失败!", false);
+		});
+		return result;
+	} catch (e) {
+		result.code = false;
+		result.data = e;
+		return result;
+	}
 }

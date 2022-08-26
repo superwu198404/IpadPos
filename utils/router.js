@@ -19,7 +19,7 @@ export default [{
 		name: "Main",
 		url: "@/pages/Main/Main", //
 		meta:{
-			bill_type:"Z121"
+			bill_type:"Z171"
 		},
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),

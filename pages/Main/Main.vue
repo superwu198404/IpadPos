@@ -508,7 +508,7 @@
 			</view>
 		</view>
 
-		<ShopCart v-if="showSale" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment"
+		<ShopCart v-if="showSale" :_Params="meta" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment"
 			@_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
@@ -533,9 +533,6 @@
 				return (function(name) {
 					return this.components.current === name ? "curr" : "";
 				}).bind(this)
-			},
-			Meta: function() {
-				return this.meta;
 			}
 		},
 		data() {
@@ -584,7 +581,7 @@
 		},
 		methods: {
 			Show: function() {
-				console.log("[Show]参数:", this.meta);
+				console.log("[Show]参数:",this.meta ?? {});
 				if (this.meta.params) { //是否存在参数
 					this.ShopCarOrder = this.meta.params.order;
 					this.ShopCarProduct = this.meta.params.goods;

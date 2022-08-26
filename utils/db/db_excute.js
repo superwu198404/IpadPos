@@ -33,6 +33,22 @@ var closeSqllite = function() {
 	})
 }
 
+// 检测连接状态
+var existsSqllite = function() {
+	return new Promise((resolve, reject) => {
+
+		plus.sqlite.closeDatabase({
+			name: name,
+			success(e) {
+				resolve()
+			},
+			fail(e) {
+				reject()
+			}
+		})
+	})
+}
+
 // 监听数据库是否开启 return type : Boolean
 var isOpen = function() {
 	return plus.sqlite.isOpenDatabase({
@@ -197,6 +213,8 @@ var mySqllite = function() {
 			}
 		})
 	};
+	this.exists = isopen;
+	
 	var open = function(msg) {
 		msg = msg | "正在进行操作";
 		uni.showLoading({
@@ -238,7 +256,8 @@ var mySqllite = function() {
 			})
 		};
 	};
-
+	this.open = open;
+	
 	var close = function() {
 		return new Promise((resolve, reject) => {
 			//修改表数据
@@ -270,14 +289,14 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					 // console.log("数据库执行成功：", e);
+					// console.log("数据库执行成功：", e);
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					 // console.log("数据库执行失败：", e);
+					// console.log("数据库执行失败：", e);
 					return resolve({
 						code: false,
 						msg: e
@@ -426,7 +445,7 @@ var mySqllite = function() {
 		console.log("sql执行结果：", retcode);
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);
-			 //await close();
+			//await close();
 			return callBackCloseLoading(retcode, success, pm_msg);
 		} else {
 			retcode = await tran(tranEnum.rollback);
@@ -443,5 +462,5 @@ var get = function() {
 
 export default {
 	get,
-	close:closeSqllite
+	close: closeSqllite
 }
