@@ -144,9 +144,9 @@
 				<view class="pop-r">
 					<view class="member">
 						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="Memberlogin()" v-if="!yn_hy">会员登录</button>
-							<button class="btn" @click="Memberlogin()" v-else>{{hyinfo.hyId}}</button>
+							<image class="touxiang" src="../../images/touxiang.png"></image>{{hyinfo.hyId}}
+							<!-- <button class="btn" @click="Memberlogin()" v-if="!yn_hy">会员登录</button>
+							<button class="btn" @click="Memberlogin()" v-else>{{hyinfo.hyId}}</button> -->
 						</label>
 						<!-- <text >清空</text> -->
 						<text @click="CloseSale()">关闭</text>
@@ -339,6 +339,15 @@
 			console.log("商品数据：", that.Products);
 			that.PayDatas = Object.assign(that.PayDatas, that._PayDatas);
 			that.Others = Object.assign(that.Others, that._Others);
+			
+			let hyinfo = util.getStorage("hyinfo");
+			if (hyinfo && JSON.stringify(hyinfo) != "{}") {
+				that.yn_hy = true;
+				that.hyinfo = hyinfo;
+				that.GetHyCoupons(hyinfo);
+			} else {
+				that.yn_hy = false;
+			}
 		},
 		methods: {
 			//触发主页的关闭事件来关闭结算页面

@@ -91,12 +91,10 @@
 								</label>
 								<view>
 									<label>
-										<image src="@/images/kaishisj-xx.png"></image><text>{{urgenMsg.newVal.SDATE}}
-											开始</text>
+										<image src="@/images/kaishisj-xx.png"></image><text>{{urgenMsg.newVal.SDATE}}开始</text>
 									</label>
 									<label>
-										<image src="@/images/jieshusj-xx.png"></image><text>{{urgenMsg.newVal.EDATE}}
-											截止</text>
+										<image src="@/images/jieshusj-xx.png"></image><text>{{urgenMsg.newVal.EDATE}}截止</text>
 									</label>
 								</view>
 							</view>
@@ -287,6 +285,7 @@
 				if (that.urgenMsg && JSON.stringify(that.urgenMsg)) {
 					let obj = {
 						type: "SYSTEM",
+						bill:that.urgenMsg.newVal.BILL,
 						Details: [{
 							key: that.urgenMsg.key
 						}]

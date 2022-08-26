@@ -163,7 +163,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- 结算 -->
+		<!-- 结算 废弃-->
 		<view class="boxs" v-if="false">
 			<view class="memberes">
 				<view class="meminfo" v-if="Memberinfo">
@@ -293,6 +293,7 @@
 						</view>
 					</view>
 				</view>
+
 				<view class="pop-r">
 					<view class="member">
 						<label>
@@ -670,6 +671,7 @@
 			},
 			//会员登录
 			Memberlogin: function(e) {
+				that.hyinfo = util.getStorage("hyinfo");
 				if (that.hyinfo && JSON.stringify(that.hyinfo) != "{}") {
 					if (e) {
 						that.showMember = true;

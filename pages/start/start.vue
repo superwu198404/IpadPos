@@ -149,7 +149,7 @@
 				// 		that.posid = store.POSID;
 				// 	}
 				// }
-				
+
 				//用于重读时的赋值
 				let store = util.getStorage("Init_Data");
 				if (store && JSON.stringify(store) != "{}") {
@@ -240,6 +240,7 @@
 					async (res) => {
 							console.log("数据库重建结果：", res);
 							that.tx001 = null;
+							console.log("重建数据的sql:", res.data);
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);

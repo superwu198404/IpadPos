@@ -2,7 +2,8 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
-	@import url(@/static/style/takeout.css);
+	/* @import url(@/static/style/takeout.css); */
+	@import url(@/static/style/Extract/extract.css);
 </style>
 
 <template>
@@ -52,8 +53,7 @@
 						<view class="products">
 							<view class="procycle">
 								<!-- 订单循环 -->
-								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '"
-									@click="ChooseOrder(item,index)">
+								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
 										<text class="price">￥{{item.DNET}}</text>
@@ -63,12 +63,12 @@
 										<label>客户编码: {{item.DKFID}}</label>
 										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>
-									<!-- <view class="handles"><text></text>
-										<button class="btn" @click="ConfirmToPay(item)">确定</button>
-									</view> -->
+									<view class="handles"><text></text>
+										<button class="btn" @click="GetSXOrderDetails(item)">确定</button>
+									</view>
 								</view>
 							</view>
-							<view class="details">
+							<view class="details" v-if="false">
 								<view class="detinfo">
 									<view class="member">
 										<label>
@@ -246,7 +246,7 @@
 			},
 			ChooseOrder: (e, i) => {
 				that.curIndex = i;
-				that.GetSXOrderDetails(e);
+				// that.GetSXOrderDetails(e);
 			},
 			GetSXOrderDetails: (e) => {
 				that.Order = e;
@@ -260,6 +260,7 @@
 						let data = JSON.parse(res.data);
 						that.Details = data;
 						that.statements = true;
+						that.ConfirmToPay();
 					} else {
 						that.Details = [];
 						that.statements = true;
@@ -305,7 +306,7 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
-			ConfirmToPay: function(order) {
+			ConfirmToPay: function() {
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
@@ -364,7 +365,7 @@
 		created() {
 			that = this;
 			that.GetOrders(r => {
-				that.GetSXOrderDetails(r[0]);
+				//that.GetSXOrderDetails(r[0]);
 			});
 		}
 	}
