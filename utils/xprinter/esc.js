@@ -1340,10 +1340,14 @@ var jpPrinter = {
 			jpPrinter.setText(util.getComputedByteLen(spname, 15));
 			jpPrinter.setPrint(); //打印并换行
 			
+			// console.log("data spid",item.spid);
+			// console.log("data qty",item.qty);
+			// console.log("data amount",item.amount);
+			// console.log("data discount",item.discount);
+			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(
-					item.discount.toString(), 6));
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		
@@ -1647,7 +1651,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(parseInt(item.spid).toString(), 15) + util.getComputedByteLen(item.pack.toString(), 6) + util
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.pack.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.net.toString(), 6) + util.getComputedByteLen(
 					item.unit, 6));
 			jpPrinter.setPrint(); //打印并换行		
@@ -1849,7 +1853,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(parseInt(item.spid).toString(), 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.net.toString(), 6) + util.getComputedByteLen(
 					item.unit, 6));
 			jpPrinter.setPrint(); //打印并换行		

@@ -72,7 +72,6 @@ const cxSPsql = async (storeid,date1) => {
 	return cxformd003_arr;
 }
 
-
 /**
  * 促销赠券Sql
  * @param {parmid 参数组id} 
@@ -91,9 +90,26 @@ const cxZqSql = async (gsid,storeid,date1) => {
 	return cxformd005_arr;
 }
 
+/**
+ * 促销赠券Sql
+ * @param {parmid 参数组id} 
+ */
+const cxspdaSql = async (spid) => {
+	let spda_arr = [];
+	let spda_sql = "select YN_ZS from spda where spid='" + spid + "'";
+    await db.get().executeQry(spda_sql, "执行中", function(res) {
+		console.log("spda_sql执行结果：", res.msg);
+		spda_arr = res.msg;
+	}, function(err) {
+		console.log("spda_sql执行失败：", err);
+	});
+	return spda_arr;
+}
+
 export default {
 	getCxmSql,
 	cxClassSql,
 	cxSPsql,
-	cxZqSql
+	cxZqSql,
+	cxspdaSql,
 }

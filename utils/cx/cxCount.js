@@ -254,7 +254,7 @@ const Cxdict = async () => {
 const Createcx = async (sale02) => {
 	await Cxdict();
 	let sale02_arr = [{
-			"ProCode": "1010100003",
+			"ProCode": "000000001040200053",
 			"ProName": "水果沙拉",
 			"ProNum": "1",
 			"ProPrice": "1",
@@ -368,7 +368,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				if (spdt.length > 0) {
 					for (let i = 0; i < spdt.length; i++) {
 						let bill = xprinter_util.snvl(spdt[i].BILL, "");
-						console.log("spdt bill", bill);
+						//console.log("spdt bill", bill);
 						let csno = "";
 						csno = xprinter_util.snvl(spdt[i].CLASSID, "");
 						//console.log("cxdict", cxdict);
@@ -422,27 +422,30 @@ const SaleCxCreate = async (spid, bill, saledate) => {
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
 		for (let k = 6; k < cxbilldDataKeys.length; k++) {
-			console.log("cxbilldDataKeys bill", cxbilldDataKeys[k])
+			console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
-			if (!YnjsCx(cxbill)) {
+			console.log("cxbilldDataKeys cxbill", cxbill)
+			if (!ynjsCx(cxbill)) {
 				continue;
 			}
-			if (!YnjsCxforHy(cxbill)) {
+			if (!ynjsCxforHy(cxbill,xsCust)) {
 				continue;
 			}
-			if (!XsTypeCheck(cxbill)) {
+			if (!xsTypeCheck(cxbill,is_Xstype)) {
 				continue;
 			}
 
-			let retyyslclass = RetCxClassForDtRow(cxbill, yysl);
+			let retyyslclass = retCxClassForDtRow(cxbill, "YYSL");
+			//console.log("retyyslclass 1",retyyslclass);
 			if (retyyslclass != null) {
 				testallcx(cxbill, retyyslclass);
 			}
-			let retclssid = RetCxClassForDtRow(cxbill);
+			let retclssid = retCxClassForDtRow(cxbill, "YYSL");
+			//console.log("retyyslclass 2",retyyslclass);
 			if (retclssid == null) {
 				continue;
 			}
-			CxClasCompute(cxbill, retclssid, sysl, spdt);
+			CxClasCompute(cxbill, retclssid, "SYSL", spdt);
 		}
 	}
 	return cxbilldts;
@@ -489,6 +492,7 @@ const ynjsCx = function(bill) {
 ///判断会员促销方式
 const ynjsCxforHy = function(bill, xsCust) {
 	let mcc = cxdict[bill];
+	// console.log("ynjsCxforHy mcc.CXRY",mcc.CXRY);
 	if (xsCust == null) {
 		switch (mcc.CXRY) {
 			case "all":
@@ -517,6 +521,7 @@ const ynjsCxforHy = function(bill, xsCust) {
 ///销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict[bill];
+	//console.log("xsTypeCheck",mcc);
 	if (mcc.Cxztype == "None") {
 		return true;
 	} else if (mcc.Cxztype == is_Xstype) {
@@ -529,6 +534,7 @@ const xsTypeCheck = function(bill, is_Xstype) {
 //初步判断该促销是否可以进行计算  判断类别是否满足条件
 const retCxClassForDtRow = function(bill, slttpe) {
 	let c1 = cxdict[bill];
+	console.log("retCxClassForDtRow cxbilldts",cxbilldts);
 	let ynnull = true;
 	let oldclassid = "^^^^^VVV";
 	let classnum = 0;
@@ -537,8 +543,9 @@ const retCxClassForDtRow = function(bill, slttpe) {
 		for (let i = 0; i < cxbilldts.length; i++) {
 			let classid = xprinter_util.snvl(cxbilldts[i][bill], null);
 			let syqty = xprinter_util.snvl(cxbilldts[i][slttpe], 0);
-			///发生参数是临时变量每次使用的时候要清理一下；
-			cxbilldts[i][fscs] = 0;
+			console.log("retCxClassForDtRow syqty",classid + "||" + syqty);
+			///发生参数是临时变量每次使用的时候要清理一下
+			cxbilldts[i]["FSCS"] = 0;
 			if (c1.ynzd == false) {
 				if (classid == null || syqty == 0) {
 					classidlist.push(null);
@@ -581,7 +588,7 @@ const testallcx = function(bill, pmList) {
 	if (cx.YN_JSLB) {
 		currentlv = parseInt(cx.SubList[0].sublv) - 1;
 	}
-	let subzqty = GetSubidZqty(pmList, cx, yysl);
+	let subzqty = getSubidZqty(pmList, cx, yysl);
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
 		if (Lcm > 0) {
@@ -630,7 +637,7 @@ const JustOnelbcx = function(cx, pmList, qtytype) {
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
-			let subzqty = GetSubidZqty(pmList, cx);
+			let subzqty = getSubidZqty(pmList, cx);
 			for (let lv = currentlv; lv >= 0; lv--) {
 				Lcm = getLcm(subzqty, cx, lv);
 				if (Lcm > 0) {
@@ -706,7 +713,7 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
-			let subzqty = GetSubidZqty(pmList, cx);
+			let subzqty = getSubidZqty(pmList, cx);
 			for (let lv = currentlv; lv >= 0; lv--) {
 				Lcm = getLcm(subzqty, cx, lv);
 				if (Lcm > 0) {
@@ -743,10 +750,9 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 
 				let ynzs = true;
 				let spid = xprinter_util.snvl(spdt.Rows[i]["SPID"], "");
-				let zssql = " select YN_ZS from spda where spid='" + spid + "'  ";
-				let zsds = SqlHelper.Exec_SqlStr(zssql, SqlHelper.dbtype.Sqlite);
-				if (zsds != null && zsds.Tables.Count > 0 && zsds.Tables[0].Rows.Count > 0) {
-					let iszs = xprinter_util.snvl(zsds.Tables[0].Rows[0][0], "");
+				let zsds = getCxSql_db.cxspdaSql(spid);
+				if (zsds != null && zsds.length > 0) {
+					let iszs = xprinter_util.snvl(zsds[0]["YN_ZS"], "");
 					if (iszs == "N") {
 						ynzs = false;
 					}
@@ -792,6 +798,42 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 	}
 }
 
+//获取某个级别的最小公倍数
+const getLcm = function(zqty, cx1, lv){
+	let lcm = int.MaxValue;
+	let templcm = 0;
+	if (zqty.Count != cx1.SubList.Count)
+	{
+	    return 0;
+	}
+	else
+	{
+	    for (let i = 0; i < zqty.Count; i++)
+	    {
+	        let key = zqty[i].Key;
+	        let cxqty = zqty[key];
+	        let subx = cx1.SubList[key];
+	        if (subx.ZkTj == MyCxClass.CxZkTj.Qty)
+	        {
+	            templcm = parseInt(cxqty / subx.QtyCondition[lv]);
+	        }
+	        else
+	        {
+	            templcm = parseInt(cxqty / subx.NetCondition[lv]);
+	        }
+	        if (templcm < lcm)
+	        {
+	            lcm = templcm;
+	        }
+	    }
+	}
+	if (lcm == int.MaxValue)
+	{
+	    return 0;
+	}
+	return lcm;
+}
+
 ///自由组合促销
 const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 	///最小公倍数
@@ -799,7 +841,7 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 		let Lcm = 1;
 		///保存本次运算的数量或者金额条件
 		let hashqty = {};
-		let subzqty = GetSubidZqty(pmList, cx);
+		let subzqty = getSubidZqty(pmList, cx);
 		Lcm = getLcm(subzqty, cx, 0);
 		if (Lcm == 0) {
 			return;
@@ -852,10 +894,9 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 			//这里判断商品是不是整数
 			let ynzs = true;
 			let spid = xprinter_util.snvl(spdt[i]["SPID"], "");
-			let zssql = " select YN_ZS from spda where spid='" + spid + "'  ";
-			let zsds = SqlHelper.Exec_SqlStr(zssql, SqlHelper.dbtype.Sqlite);
-			if (zsds != null && zsds.Tables.Count > 0 && zsds.Tables[0].Rows.Count > 0) {
-				let iszs = xprinter_util.snvl(zsds.Tables[0].Rows[0][0], "");
+			let zsds = getCxSql_db.cxspdaSql(spid);
+			if (zsds != null && zsds.length > 0) {
+				let iszs = xprinter_util.snvl(zsds[0]['YN_ZS'], "");
 				if (iszs == "N") {
 					ynzs = false;
 				}
@@ -1227,7 +1268,7 @@ const AddCxTable = function(cx, subid, row, fsqty, newprice, price, level, PM_LC
 }
 
 //计算在一个促销中各个类共有的数量
-const GetSubidZqty = function(pm_list, cx, sltype) {
+const getSubidZqty = function(pm_list, cx, sltype) {
 	let zqty = {};
 	for (let i = 0; i < pm_list.length; i++) {
 		let subid = pm_list[i];

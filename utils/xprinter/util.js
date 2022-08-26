@@ -258,8 +258,8 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 			spname: sale2_arr[i].SNAME, //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
-			amount: sale2_arr[i].NET, //金额
-			discount: sale2_arr[i].DISCRATE, //总折扣额
+			amount: nnvl(sale2_arr[i].NET, 0), //金额
+			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
