@@ -291,7 +291,7 @@ const Createcx = async (sale02) => {
 		//添加
 		AddRowCxbilldts(spid, price, num, i);
 		//计算
-		SaleCxCreate(spid, "10000000", dateTime_now.toString());
+		SaleCxCreate(spid, "10000000", dateTime_now.toString(),"",0);
 	}
 
 	for (let i = 0; i < cxbilldts.length; i++) {
@@ -395,7 +395,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 }
 
 ///开始计算促销的方法
-const SaleCxCreate = async (spid, bill, saledate) => {
+const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 	console.log("SaleCxCreate", cxbilldts);
 	let rowmum = cxbilldts.length;
 
@@ -445,7 +445,7 @@ const SaleCxCreate = async (spid, bill, saledate) => {
 			if (retclssid == null) {
 				continue;
 			}
-			CxClasCompute(cxbill, retclssid, "SYSL", spdt);
+			CxClasCompute(spid,bill,saledate,cxbill, retclssid, "SYSL", spdt);
 		}
 	}
 	return cxbilldts;
@@ -612,21 +612,21 @@ const testallcx = function(bill, pmList) {
 }
 
 ///参与促销计算
-const CxClasCompute = function(bill, bufflist, sltype, spdt) {
+const CxClasCompute = function(spid, salebill,saledate,bill, bufflist, sltype, spdt) {
 	let cx1 = cxdict[bill];
 	if (cx1.YN_JSLB) {
 		if (cx1.OneJs) {
-			JustOnelbcx(cx1, bufflist, sltype);
+			JustOnelbcx(spid, salebill, saledate,cx1, bufflist, sltype);
 		} else {
-			Jslbcx(cx1, bufflist, sltype, spdt);
+			Jslbcx(spid, salebill, saledate,cx1, bufflist, sltype, spdt);
 		}
 	} else {
-		FreeZhCx(cx1, bufflist, sltype, spdt);
+		FreeZhCx(spid, salebill, saledate,cx1, bufflist, sltype, spdt);
 	}
 }
 
 ///只计算一次的价随量变促销
-const JustOnelbcx = function(cx, pmList, qtytype) {
+const JustOnelbcx = function(spid, bill, saledate,cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
@@ -693,7 +693,7 @@ const JustOnelbcx = function(cx, pmList, qtytype) {
 			}
 			let fsnet = {};
 			fsnet.push(subx.subno, Fsnet);
-			SubjustJslbCx(pmList, cx, fsnet, currentlv);
+			SubjustJslbCx(spid, bill, saledate,pmList, cx, fsnet, currentlv);
 			break;
 		}
 	} catch (e) {
@@ -702,7 +702,7 @@ const JustOnelbcx = function(cx, pmList, qtytype) {
 }
 
 ///价随量变促销
-const Jslbcx = function(cx, pmList, qtytype, spdt) {
+const Jslbcx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
@@ -789,7 +789,7 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 			fsnet.push(subx.subno, Fsnet);
 
 			if (Tjqty == 0) {
-				SubCxQty(pmList, cx, fsnet, currentlv, Lcm);
+				SubCxQty(spid, bill, saledate,pmList, cx, fsnet, currentlv, Lcm);
 			}
 			currentlv--;
 		}
@@ -835,7 +835,7 @@ const getLcm = function(zqty, cx1, lv){
 }
 
 ///自由组合促销
-const FreeZhCx = function(cx, pmList, qtytype, spdt) {
+const FreeZhCx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 	///最小公倍数
 	try {
 		let Lcm = 1;
@@ -924,7 +924,7 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 			Fsnet[subid] = Fsnet[subid] + fsqty * oldprice;
 			cxbilldts[i][fscs] = fsqty;
 		}
-		SubCxQty(pmList, cx, Fsnet, 0, Lcm);
+		SubCxQty(spid,bill,saledate,pmList, cx, Fsnet, 0, Lcm);
 	} catch (e) {
 
 	}
@@ -960,7 +960,7 @@ const GetOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
 }
 
 //组合促销计算折扣和金额的方法
-const SubCxQty = function() {
+const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm) {
 	try {
 		///取出表中促销单不为空的最后一行
 		let lastIndex = 0;
@@ -1115,7 +1115,7 @@ const SubCxQty = function() {
 						fsdcx.push(cx.CxBill);
 					}
 				}
-				AddCxTable(cx, subid, i, fsqty, newprice, price, level, lcm);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm);
 			} catch {
 
 			}
@@ -1243,18 +1243,15 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 }
 
 //
-const AddCxTable = function(cx, subid, row, fsqty, newprice, price, level, PM_LCM) {
+const AddCxTable = function(spid, bill, saledate,cx, subid, row, fsqty, newprice, price, level, PM_LCM) {
 	let i = row;
-	let spid = xprinter_util.snvl(SALE002.this_dt[i][CXFS.SPID], "");
-	let xsbill = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.BILL], "");
-	let xsdate = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.SALEDATE], "");
 	let dr = {};
-	dr[SALEDATE] = xsdate;
+	dr[SALEDATE] = saledate;
 	dr[KHID] = app.globalData.store.KHID;
 	dr[GSID] = app.globalData.store.GSID;
 	dr[CXBILL] = cx.CxBill;
 	dr[CLASSID] = subid.substring(cx.CxBill.Length);
-	dr[XSBILL] = xsbill;
+	dr[XSBILL] = bill;
 	dr[SPID] = spid;
 	dr[XSQTY] = fsqty;
 	dr[OPRICE] = price;
