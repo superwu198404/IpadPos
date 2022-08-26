@@ -2,8 +2,8 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(@/style/basis.css); */
 	@import url(@/static/style/index.css);
-	/* @import url(@/static/style/Extract/extract.css); */
-	@import url(@/static/style/takeout.css);
+	@import url(@/static/style/Extract/extract.css);
+	/* @import url(@/static/style/takeout.css); */
 </style>
 
 <template>
@@ -50,7 +50,7 @@
 			-->
 						<view class="procycle">
 							<!-- 订单循环 -->
-							<view class="li" v-for="(item,index) in Orders">
+							<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
 								<view class="h3">
 									<text>单号：{{item.BILL}}</text>
 									<text class="price">￥{{item.TNET}}</text>
@@ -59,11 +59,11 @@
 									<label>{{item.SALEDATE}} {{item.SALETIME}}</label>
 									<label>订单类型 {{item.XSTYPE}}</label>
 								</view>
-								<view class="handles"><text></text><button class="btn"
-										@click="GetOrderDetails(item)">详情</button></view>
+								<view class="handles"><text></text>
+								<button class="btn" @click="GetOrderDetails(item)">详情</button></view>
 							</view>
 						</view>
-						<view class="details" v-if="statements">
+						<view class="details" v-if="false"><!-- statements -->
 							<view class="meminfo">
 								<view class="member">
 									<label>
@@ -198,7 +198,7 @@
 		LocalDataQuery,
 		ServiceDataQuery
 	} from '@/bll/SaleBusiness/bll.js';
-	
+
 	var that;
 	export default {
 		data() {
@@ -215,7 +215,8 @@
 				// p_bill: "",
 				p_date: dateformat.getYMD(),
 				Order: {},
-				Details: {}
+				Details: {},
+				curIndex:0
 			}
 		},
 		watch: {
@@ -231,6 +232,10 @@
 			},
 			onShow: function() {
 				that.GetOrders(that.p_bill);
+			},
+			ChooseOrder: (e, i) => {
+				that.curIndex = i;
+				// that.GetSXOrderDetails(e);
 			},
 			GetOrders: function(bill, date) {
 				_refund.GetOrders(this.KHID, this.GSID, this.POSID, bill, date, res => {
@@ -253,6 +258,7 @@
 					if (res.code && res.msg.length > 0) {
 						that.Details = res.msg;
 						that.statements = true;
+						that.Confirm();
 					} else {
 						that.Details = [];
 						that.statements = true;
@@ -297,16 +303,15 @@
 			newlys: function(e) {
 				this.Newaddr = true
 			},
-			Confirm:async function() {
+			Confirm: async function() {
 				let data = await LocalDataQuery(this.Order.BILL);
-				if(ErrorData(data)){
+				if (ErrorData(data)) {
 					console.log("[RefundOrder-Confirm]本地未查询到数据!");
-				}
-				else{
+				} else {
 					let sale1 = data.sale1.length && data.sale1.length > 0 ? data.sale1[0] : data.sale1;
 					sale1.XSTYPE = '2';
 					sale1.BILL_TYPE = 'Z151';
-					console.log("[Refund-Confirm]sale1数据:",data.sale1);
+					console.log("[Refund-Confirm]sale1数据:", data.sale1);
 					this.$emit("Switch", {
 						name: "Main",
 						title: "销售",
@@ -322,39 +327,40 @@
 			_Confirm: function() {
 				console.log("[Confirm]退单确认!开始退款...", this.Order.BILL);
 				//处理退款所需的业务信息数据
-				Refund(LocalDataQuery(this.Order.BILL),ServiceDataQuery(this.Order.BILL)).then(util.callBind(this, async function(refund_data) {
-					console.log("[Confirm]退单生成数据:", refund_data);
-					if (Number(refund_data.sale1_obj.TNET) === 0) {
-						let config = {
-							REFUND_NO: refund_data.out_refund_no,
-							BILL_TYPE: "Z151",
-							XS_TYPE: "2",
+				Refund(LocalDataQuery(this.Order.BILL), ServiceDataQuery(this.Order.BILL)).then(util.callBind(this,
+					async function(refund_data) {
+						console.log("[Confirm]退单生成数据:", refund_data);
+						if (Number(refund_data.sale1_obj.TNET) === 0) {
+							let config = {
+								REFUND_NO: refund_data.out_refund_no,
+								BILL_TYPE: "Z151",
+								XS_TYPE: "2",
+							}
+							let sale1 = PaymentToRefundSALE001(refund_data.sale1_obj, config),
+								sale2 = PaymentToRefundSALE002(refund_data.sale2_arr, config),
+								sale3 = PaymentToRefundSALE003(refund_data.sale3_arr, config);
+							console.log("[Confirm-Refund]退款对象数据生成完毕!");
+							let sqls = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"],
+								[sale3, "SALE003"]);
+							console.log("[Confirm-Refund]退款生成的SQL:", sqls);
+							await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+							await db.get().executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
+								if (func) func(res);
+								this.complete = true;
+								console.log("[Confirm]退款订单创建成功!", res);
+								util.simpleMsg("销售单创建成功!");
+							}).bind(this), function(err) {
+								console.log("[Confirm]退款订单创建失败!", err);
+								util.simpleMsg("销售单创建失败!", false);
+							});
+							this.GetOrders(this.p_bill); //刷新界面
+						} else {
+							this.$store.commit('set-location', refund_data); //把数据传入下个页面
+							uni.navigateTo({
+								url: "../Payment/PaymentAll"
+							})
 						}
-						let sale1 = PaymentToRefundSALE001(refund_data.sale1_obj, config),
-							sale2 = PaymentToRefundSALE002(refund_data.sale2_arr, config),
-							sale3 = PaymentToRefundSALE003(refund_data.sale3_arr, config);
-						console.log("[Confirm-Refund]退款对象数据生成完毕!");
-						let sqls = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"],
-							[sale3, "SALE003"]);
-						console.log("[Confirm-Refund]退款生成的SQL:", sqls);
-						await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
-						await db.get().executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
-							if (func) func(res);
-							this.complete = true;
-							console.log("[Confirm]退款订单创建成功!", res);
-							util.simpleMsg("销售单创建成功!");
-						}).bind(this), function(err) {
-							console.log("[Confirm]退款订单创建失败!", err);
-							util.simpleMsg("销售单创建失败!", false);
-						});
-						this.GetOrders(this.p_bill); //刷新界面
-					} else {
-						this.$store.commit('set-location', refund_data); //把数据传入下个页面
-						uni.navigateTo({
-							url: "../Payment/PaymentAll"
-						})
-					}
-				})).catch(util.callBind(this, function(err) {
+					})).catch(util.callBind(this, function(err) {
 					console.log("退单表数据查询异常:", err);
 				}));
 			}

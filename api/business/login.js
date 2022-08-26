@@ -95,13 +95,13 @@ var GetKHIDByRYID = function(userid, func) {
 }
 //修改本地密码
 var UpdatePWD_Local = function(pwd, ryid, func) {
-	let sql = ["UPDATE MDRYKH SET PASSWORD_MD= '" + pwd + "' WHERE ryid = '" + ryid + "'",
-		"UPDATE RYDA SET PASSWORD_MD= '" + pwd + "' WHERE ryid = '" + ryid + "'"
-	]
+	let sql = "UPDATE MDRYKH SET PASSWORD_MD = '" + pwd + "' WHERE ryid = '" + ryid + "'";
 	db.get().executeDml(sql, "操作中...", res => {
-		console.log("用户密码修改结果：", res);
-		func(res);
+		console.log("密码修改成功：", res);
+		if (func)
+			func(res);
 	}, err => {
+		console.log("密码修改失败：", err);
 		util.simpleMsg("密码修改失败：" + err.msg, "none");
 	});
 }

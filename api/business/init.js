@@ -11,6 +11,7 @@ var app = getApp();
 var GetPayWay = async function(e) {
 	let PayWayList = [];
 	await common.GetPayWay(e, function(res) {
+		console.log("本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
 			console.log("支付规则信息：", PayInfo);
@@ -18,7 +19,8 @@ var GetPayWay = async function(e) {
 				if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
 					return;
 				}
-				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i].SNAME);
+				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i]
+				.SNAME);
 				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
 				if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
 					continue;

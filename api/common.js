@@ -228,6 +228,7 @@ var GetPayWay = function(e, func) {
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	db.get().executeQry(sql, "数据查询中", async function(res) {
 			let arr = res;
+			console.log("本地fkda:", res);
 			await GetPolyPayWay(e, (res1) => {
 				for (var i = 0; i < res.msg.length; i++) {
 					let obj = res1.msg.find((item) => {
@@ -244,7 +245,7 @@ var GetPayWay = function(e, func) {
 				// console.log("测试调用1");
 				// return res;
 			})
-			console.log("测试调用2");
+			// console.log("聚合处理后的付款数据：",arr);
 			if (func) func(arr);
 		},
 		function(err) {
@@ -332,7 +333,7 @@ var GetPolyPayWay = async function(e, func) {
 }
 
 //获取档案参数
-var GetDapzcs =async function(e, func) {
+var GetDapzcs = async function(e, func) {
 	let sql = "select * from  dapzcs_nr where id  ='" + e + "'";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("获取配置参数成功:", res);

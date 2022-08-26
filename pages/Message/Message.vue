@@ -112,12 +112,12 @@
 							</label>
 							<view>
 								<label>
-									<image src="../../images/kaishisj-xx.png"></image><text>{{MsgDetail.newVal.SDATE}}
-										开始</text>
+									<image src="../../images/kaishisj-xx.png"></image>
+									<text>{{MsgDetail.newVal.SDATE}}开始</text>
 								</label>
 								<label>
-									<image src="../../images/jieshusj-xx.png"></image><text>{{MsgDetail.newVal.EDATE}}
-										截止</text>
+									<image src="../../images/jieshusj-xx.png"></image>
+									<text>{{MsgDetail.newVal.EDATE}}截止</text>
 								</label>
 							</view>
 						</view>
@@ -238,6 +238,7 @@
 			ReadMsg: function(e) {
 				let obj = {
 					type: "SYSTEM",
+					bill:e.newVal.BILL,
 					Details: [{
 						key: e.key
 					}]
