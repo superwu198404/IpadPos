@@ -396,7 +396,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 
 ///开始计算促销的方法
 const SaleCxCreate = async (spid, bill, saledate) => {
-	console.log("SaleCxCreate",cxbilldts);
+	console.log("SaleCxCreate", cxbilldts);
 	let rowmum = cxbilldts.length;
 
 	cxSelectTip = [];
@@ -421,8 +421,8 @@ const SaleCxCreate = async (spid, bill, saledate) => {
 		//console.log("cxbilldData first",cxbilldData);	
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
-		for(let k = 6; k < cxbilldDataKeys.length; k++){
-			console.log("cxbilldDataKeys bill",cxbilldDataKeys[k])
+		for (let k = 6; k < cxbilldDataKeys.length; k++) {
+			console.log("cxbilldDataKeys bill", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
 			if (!YnjsCx(cxbill)) {
 				continue;
@@ -433,7 +433,7 @@ const SaleCxCreate = async (spid, bill, saledate) => {
 			if (!XsTypeCheck(cxbill)) {
 				continue;
 			}
-			
+
 			let retyyslclass = RetCxClassForDtRow(cxbill, yysl);
 			if (retyyslclass != null) {
 				testallcx(cxbill, retyyslclass);
@@ -442,7 +442,7 @@ const SaleCxCreate = async (spid, bill, saledate) => {
 			if (retclssid == null) {
 				continue;
 			}
-			CxClasCompute(cxbill, retclssid, sysl, spdt);	
+			CxClasCompute(cxbill, retclssid, sysl, spdt);
 		}
 	}
 	return cxbilldts;
@@ -574,44 +574,34 @@ const retCxClassForDtRow = function(bill, slttpe) {
 }
 
 //统计大概可有多少促销发生 在销售界面上回生成小旗子
-const testallcx = function(bill, pmList){
+const testallcx = function(bill, pmList) {
 	let Lcm = 0;
-    let cx = cxdict[bill];
-    let currentlv = 0;
-    if (cx.YN_JSLB)
-    {
-        currentlv = parseInt(cx.SubList[0].sublv) - 1;
-    }
-    let subzqty = GetSubidZqty(pmList, cx, yysl);
-    for (let lv = currentlv; lv >= 0; lv--)
-    {
-        Lcm = getLcm(subzqty, cx, lv);
-        if (Lcm > 0)
-        {
-            break;
-        }
-        else
-        {
-            Lcm = 0;
-        }
-    }
-    if (Lcm > 0)
-    {
-        for (let i = 0; i < pmList.length; i++)
-        {
-            if (pmList[i] == null)
-            {
-                continue;
-            }
-            else
-            {
-                let dr = {};
-                dr[rowid] = i.ToString();
-                dr[KnCxbill] = bill;
-                CxSelectTip.push(dr);
-            }
-        }
-    }
+	let cx = cxdict[bill];
+	let currentlv = 0;
+	if (cx.YN_JSLB) {
+		currentlv = parseInt(cx.SubList[0].sublv) - 1;
+	}
+	let subzqty = GetSubidZqty(pmList, cx, yysl);
+	for (let lv = currentlv; lv >= 0; lv--) {
+		Lcm = getLcm(subzqty, cx, lv);
+		if (Lcm > 0) {
+			break;
+		} else {
+			Lcm = 0;
+		}
+	}
+	if (Lcm > 0) {
+		for (let i = 0; i < pmList.length; i++) {
+			if (pmList[i] == null) {
+				continue;
+			} else {
+				let dr = {};
+				dr[rowid] = i.ToString();
+				dr[KnCxbill] = bill;
+				CxSelectTip.push(dr);
+			}
+		}
+	}
 }
 
 ///参与促销计算
@@ -899,6 +889,35 @@ const FreeZhCx = function(cx, pmList, qtytype, spdt) {
 	}
 }
 
+//获取单行计算的促销产品的某一行的数量和结果
+const GetOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
+	let syqty = -1;
+	try {
+
+		if (cx.OneSp) {
+			let subx = cx.SubList[subid];
+			if (subx.ZkTj == "Net") {
+				let OneRowNet = cx.SubList[subid].NetCondition[0];
+				if (syqty_buff * oldprcle < OneRowNet) {
+					return -1;
+				} else {
+					let OneRowNetqty = parseInt(syqty_buff * oldprcle / OneRowNet);
+					syqty = Math.Ceiling(OneRowNetqty * OneRowNet / oldprcle);
+				}
+			} else {
+				if (syqty_buff < cx.SubList[subid].QtyCondition[0]) {
+					return -1;
+				} else {
+					syqty = syqty_buff - syqty_buff % cx.SubList[subid].QtyCondition[0];
+				}
+			}
+		}
+	} catch(e) {
+		syqty = -1;
+	}
+	return syqty;
+}
+
 //组合促销计算折扣和金额的方法
 const SubCxQty = function() {
 	try {
@@ -988,7 +1007,7 @@ const SubCxQty = function() {
 								///计算最小积分上限
 								setHyjfUpleve(cx.upleave);
 								///计算积分上限是否满足条件
-								calculateJf(dsnum,jfnum, cx);
+								calculateJf(dsnum, jfnum, cx);
 								setHjInfo(cx, jfxs, dsnum, jfnum);
 								newprice = price;
 							} catch {
@@ -1050,184 +1069,199 @@ const SubCxQty = function() {
 				cxbilldts[i][jfnum] = xprinter_util.nnvl(cxbilldts[i][jfnum], 0) + currentJf;
 				if (!fsdcx.hasOwnProperty(cxsub.subno)) {
 					///积分的促销类型不在这里添加
-					if (cx.cxtype!=("G") && cx.cxtype!="D" && !fsdcx.hasOwnProperty(cx.CxBill) && jfxs >
+					if (cx.cxtype != ("G") && cx.cxtype != "D" && !fsdcx.hasOwnProperty(cx.CxBill) && jfxs >
 						0) {
 						fsdcx.push(cx.CxBill);
 					}
 				}
 				AddCxTable(cx, subid, i, fsqty, newprice, price, level, lcm);
 			} catch {
-				
+
 			}
-			
+
 			cxbilldts[i][sysl] = xprinter_util.nnvl(cxbilldts[i][sysl], 0) - fsqty;
 			cxbilldts[i][fscs] = 0;
 
 		}
 	} catch (e) {
-		
+
 	}
 }
 
 //每次计算之前先设置会员积分上限
-const setHyjfUpleve = function(num){
-	 if (null == hymen)
-	 {
-	     return;
-	 }
-	 let tj = 0;
-	 if (null == jfinfo)
-	 {
-	     let hyjfnum = xprinter_util.TryParse(BALANCE);
-	     if (hyjfnum <= 0)
-	     {
-	         return;
-	     }
-	     ///积分加价购
-	     jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
-	 }
-	 ///第一次赋值
-	 if (jfinfo.upleve == 0)
-	 {
-	     jfinfo.upleve = num;
-	 }
-	 ///每次去最小的积分上限
-	 if (num < jfinfo.upleve)
-	 {
-	     jfinfo.upleve = num;
-	 }
+const setHyjfUpleve = function(num) {
+	if (null == hymen) {
+		return;
+	}
+	let tj = 0;
+	if (null == jfinfo) {
+		let hyjfnum = xprinter_util.TryParse(BALANCE);
+		if (hyjfnum <= 0) {
+			return;
+		}
+		///积分加价购
+		jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
+	}
+	///第一次赋值
+	if (jfinfo.upleve == 0) {
+		jfinfo.upleve = num;
+	}
+	///每次去最小的积分上限
+	if (num < jfinfo.upleve) {
+		jfinfo.upleve = num;
+	}
 }
 
 //计算本次活动可加积分和金额
-const calculateJf = function(dsnum, jfnum, cx){
-	try
-	{
-	    ///会员为null
-	    if (null == hymen)
-	    {
-	        return;
-	    }
-	    let tj = xprinter_util.TryParse(BALANCE);
-	    ///会员积分错误
-	    if (tj>=0)
-	    {
-	        return;
-	    }
-	    let syjf = 0;       ///当前已经累计的积分
-	    let dqjf = jfnum;   ///当前累计活动积分+本次活动积分
-	    ///当前活动所包含积分
-	    if (null != jfinfo)
-	    {
-	        syjf = jfinfo.jfnum;
-	        dqjf = jfnum + syjf;
-	    }
-	    ///当积分超过最小上限时
-	    if ((cx.upleave > 0 && dqjf > jfinfo.upleve) || dqjf > tj)
-	    {
-	        ////取一个比较小的金额
-	        let min = tj > cx.upleave ? cx.upleave : tj;
-	        ///先取商，算出剩余积分还能发生几次该促销
-	        let bs = parseInt(min - syjf) / parseInt(cx.syjf);
-	        if (bs <= 0)
-	        {
-	            ///当商为0时，表示一次促销都不能再发生，直接返回0
-	            dsnum = 0; jfnum = 0;
-	        }
-	        else
-	        {
-	            ///当商不为0时，要取余数
-	            let ys = parseInt(min - syjf) % parseInt(cx.syjf);
-	            ///算出还能发生几次促销  （剩余积分 - 余数） / 发生一次促销的积分数
-	            let time = parseInt((min - syjf - ys) / cx.syjf);
-	            dsnum = time * cx.syjf / jfnum * dsnum;
-	            jfnum = time * cx.syjf;
-	        }
-	    }
-	}
-	catch
-	{
-		
+const calculateJf = function(dsnum, jfnum, cx) {
+	try {
+		///会员为null
+		if (null == hymen) {
+			return;
+		}
+		let tj = xprinter_util.TryParse(BALANCE);
+		///会员积分错误
+		if (tj >= 0) {
+			return;
+		}
+		let syjf = 0; ///当前已经累计的积分
+		let dqjf = jfnum; ///当前累计活动积分+本次活动积分
+		///当前活动所包含积分
+		if (null != jfinfo) {
+			syjf = jfinfo.jfnum;
+			dqjf = jfnum + syjf;
+		}
+		///当积分超过最小上限时
+		if ((cx.upleave > 0 && dqjf > jfinfo.upleve) || dqjf > tj) {
+			////取一个比较小的金额
+			let min = tj > cx.upleave ? cx.upleave : tj;
+			///先取商，算出剩余积分还能发生几次该促销
+			let bs = parseInt(min - syjf) / parseInt(cx.syjf);
+			if (bs <= 0) {
+				///当商为0时，表示一次促销都不能再发生，直接返回0
+				dsnum = 0;
+				jfnum = 0;
+			} else {
+				///当商不为0时，要取余数
+				let ys = parseInt(min - syjf) % parseInt(cx.syjf);
+				///算出还能发生几次促销  （剩余积分 - 余数） / 发生一次促销的积分数
+				let time = parseInt((min - syjf - ys) / cx.syjf);
+				dsnum = time * cx.syjf / jfnum * dsnum;
+				jfnum = time * cx.syjf;
+			}
+		}
+	} catch {
+
 	}
 }
 
 //设置积分相关的信息
-const setHjInfo = function(cx,jfxs,net,jfnum){
-	if (net == 0 || jfnum == 0)
-	  {
-	      return;
-	  }
-	  ///会员为null
-	  if (null == hymen)
-	  {
-	      return;
-	  }
-	  let tj = xprinter_util.TryParse(BALANCE);
-	  ///会员积分错误
-	  if (tj <= 0)
-	  {
-	      return;
-	  }
-	  let yyjf = 0;
-	  ///获取当前累计的积分
-	  if (null != jfinfo)
-	  {
-	      yyjf = jfinfo.jfnum;
-	  }
-	  ///当前累计积分超过会员积分的时候，就返回
-	  if (tj < (jfnum + yyjf))
-	  {
-	      return;
-	  }
-	  ///积分超过积分上限的时候
-	  if (cx.upleave > 0 && (jfnum + yyjf) > cx.upleave)
-	  {
-	      return;
-	  }
-	  net = Math.Round(net, 2);
-	  jfnum = Math.Round(jfnum, 2);
-	  ///累加金额
-	  jfinfo.dhnet += net;
-	  ///累加积分
-	  jfinfo.jfnum += jfnum;
-	  ///累计单号
-	  if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill))
-	  {
-	      ///当这个促销单存在积分系数的时候，将单号的索引记录下来
-	      if (jfxs > 0)
-	      {
-	          jfinfo.xsIndex.push(jfinfo.hdbill.Count);
-	      }
-	      ///累计单号
-	      jfinfo.hdbill.push(cx.CxBill);
-	      ///累计类型
-	      jfinfo.hdtype.push(cx.cxtype);
-	  }
+const setHjInfo = function(cx, jfxs, net, jfnum) {
+	if (net == 0 || jfnum == 0) {
+		return;
+	}
+	///会员为null
+	if (null == hymen) {
+		return;
+	}
+	let tj = xprinter_util.TryParse(BALANCE);
+	///会员积分错误
+	if (tj <= 0) {
+		return;
+	}
+	let yyjf = 0;
+	///获取当前累计的积分
+	if (null != jfinfo) {
+		yyjf = jfinfo.jfnum;
+	}
+	///当前累计积分超过会员积分的时候，就返回
+	if (tj < (jfnum + yyjf)) {
+		return;
+	}
+	///积分超过积分上限的时候
+	if (cx.upleave > 0 && (jfnum + yyjf) > cx.upleave) {
+		return;
+	}
+	net = Math.Round(net, 2);
+	jfnum = Math.Round(jfnum, 2);
+	///累加金额
+	jfinfo.dhnet += net;
+	///累加积分
+	jfinfo.jfnum += jfnum;
+	///累计单号
+	if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill)) {
+		///当这个促销单存在积分系数的时候，将单号的索引记录下来
+		if (jfxs > 0) {
+			jfinfo.xsIndex.push(jfinfo.hdbill.Count);
+		}
+		///累计单号
+		jfinfo.hdbill.push(cx.CxBill);
+		///累计类型
+		jfinfo.hdtype.push(cx.cxtype);
+	}
 }
 
 //
-const AddCxTable = function(cx,subid,row, fsqty, newprice, price, level, PM_LCM){
-	 let i = row;
-	 let spid = xprinter_util.snvl(SALE002.this_dt[i][CXFS.SPID], "");
-	 let xsbill = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.BILL], "");
-	 let xsdate = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.SALEDATE], "");
-	 let dr = {};
-	 dr[SALEDATE] = xsdate;
-	 dr[KHID] = app.globalData.store.KHID;
-	 dr[GSID] = app.globalData.store.GSID;
-	 dr[CXBILL] = cx.CxBill;
-	 dr[CLASSID] = subid.substring(cx.CxBill.Length);
-	 dr[XSBILL] = xsbill;
-	 dr[SPID] = spid;
-	 dr[XSQTY] = fsqty;
-	 dr[OPRICE] = price;
-	 dr[ONET] = price * fsqty;
-	 dr[CXPRICE] = newprice;
-	 dr[CXNET] = newprice * fsqty;
-	 dr[CXLV] = level + 1;
-	 dr[LCM] = PM_LCM;
-	 dr[NO] = i;
-	 cxfsdt.push(dr);
+const AddCxTable = function(cx, subid, row, fsqty, newprice, price, level, PM_LCM) {
+	let i = row;
+	let spid = xprinter_util.snvl(SALE002.this_dt[i][CXFS.SPID], "");
+	let xsbill = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.BILL], "");
+	let xsdate = xprinter_util.snvl(SALE002.this_dt[i][ManClient.TSALE002.SALEDATE], "");
+	let dr = {};
+	dr[SALEDATE] = xsdate;
+	dr[KHID] = app.globalData.store.KHID;
+	dr[GSID] = app.globalData.store.GSID;
+	dr[CXBILL] = cx.CxBill;
+	dr[CLASSID] = subid.substring(cx.CxBill.Length);
+	dr[XSBILL] = xsbill;
+	dr[SPID] = spid;
+	dr[XSQTY] = fsqty;
+	dr[OPRICE] = price;
+	dr[ONET] = price * fsqty;
+	dr[CXPRICE] = newprice;
+	dr[CXNET] = newprice * fsqty;
+	dr[CXLV] = level + 1;
+	dr[LCM] = PM_LCM;
+	dr[NO] = i;
+	cxfsdt.push(dr);
 }
+
+//计算在一个促销中各个类共有的数量
+const GetSubidZqty = function(pm_list, cx, sltype) {
+	let zqty = {};
+	for (let i = 0; i < pm_list.length; i++) {
+		let subid = pm_list[i];
+		if (subid == null) {
+			continue;
+		}
+		let oldprcle = xprinter_util.nnvl(cxbilldts[i][oprice], 0);
+		let syqty = xprinter_util.nnvl(cxbilldts[i][sltype], 0);
+		let syqty_buff = syqty;
+		if (syqty == 0) {
+			continue;
+		}
+		let subx = cx.SubList[subid];
+		if (cx.OneSp) {
+			///此时返回的是发生的数量
+			syqty = GetOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
+			if (syqty < 0) {
+				continue;
+			}
+		}
+
+		if (subx.ZkTj == "Net") {
+			syqty = GetOneSpNetForQty(cx, subid, syqty, oldprcle);
+		}
+		if (zqty.hasOwnProperty(subid)) {
+			zqty[subid] = zqty[subid] + syqty;
+		} else {
+			zqty.push(subid, syqty);
+		}
+
+	}
+	return zqty;
+}
+
 
 export default {
 	Cxdict,

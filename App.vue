@@ -1,5 +1,6 @@
 <script>
 	import common from '@/api/common.js';
+	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import {
 		global
@@ -12,8 +13,8 @@
 			kquser: "CSKQ",
 			brand: "KG",
 			store: {
-				GSID: "", 
-				KHID: "", 
+				GSID: "",
+				KHID: "",
 				POSID: "",
 				KCDID: "",
 				DPID: "",
@@ -26,7 +27,7 @@
 				// MERID: "999990053990001",
 				// deviceno: "13001001",
 				KHAddress: "",
-				POSCSZID: "", 
+				POSCSZID: "",
 				RYID: "",
 				PWD: "",
 				RYNAME: "",
@@ -97,14 +98,31 @@
 		onLaunch: function() {
 			console.log('App Launch')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
+
+			// #ifdef APP-PLUS  
+			// util.removeStorage("Init_Data");
+			let Init_Data = util.getStorage("Init_Data");
+			if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
+				uni.reLaunch({
+					url: "/pages/Login/Login",
+					success: () => {
+						//跳转完页面后再关闭启动页
+						plus.navigator.closeSplashscreen();
+					}
+				})
+			} else {
+				//存在则关闭启动页进入首页
+				plus.navigator.closeSplashscreen();
+			}
+			// #endif
 		},
 		onShow: function() {
 			console.log('App Show')
 
 			//3min执行一次销售单传输
 			int = setInterval(() => {
-			common.TransLiteData();
-			}, 1000 * 60 *3); 
+				common.TransLiteData();
+			}, 1000 * 60 * 3);
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 			//全局混入
 			console.log("全局混入！");

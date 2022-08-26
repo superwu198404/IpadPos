@@ -341,24 +341,23 @@
 					</view>
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
 					<view class="shoppbag" style="flex-wrap: nowrap;">
-						<view class="hengs">
-							<view v-if="CXDatas.length>0">
-								<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
-									<view class="bag">
-										<text class="h8">{{item.SNAME}}</text>
-										<label><text>说明</text>{{item.DESCRIBE}}</label>
-									</view>
-									<view class="quantit">
-										<text>数量</text>
-										<view class="nums">
-											<text @click="Calculate(item,'-')">-</text>
-											<input type="number" v-model="item.BQTY"
-												@blur="Calculate(item,'*',$event)" />
-											<text @click="Calculate(item,'+')">+</text>
-										</view>
+						<view class="hengs" v-if="CXDatas.length>0">
+							<!-- <view v-if="CXDatas.length>0"> -->
+							<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
+								<view class="bag">
+									<text class="h8">{{item.SNAME}}</text>
+									<label><text>说明</text>{{item.DESCRIBE}}</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text @click="Calculate(item,'-')">-</text>
+										<input type="number" v-model="item.BQTY" @blur="Calculate(item,'*',$event)" />
+										<text @click="Calculate(item,'+')">+</text>
 									</view>
 								</view>
 							</view>
+							<!-- </view> -->
 						</view>
 					</view>
 					<view class="confirm">

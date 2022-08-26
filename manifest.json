@@ -71,6 +71,10 @@
             "android" : {
                 "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
             }
+        },
+        "splashscreen" : {
+            "waiting" : true,
+            "alwaysShowBeforeRender" : true
         }
     },
     "appid" : "__UNI__A407FA0",
