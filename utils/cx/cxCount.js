@@ -630,7 +630,7 @@ const JustOnelbcx = function(cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
-		if (cx.SubList.Count != 1) {
+		if (cx.SubList.length != 1) {
 			return;
 		}
 		let subx = cx.SubList[0];
@@ -657,16 +657,16 @@ const JustOnelbcx = function(cx, pmList, qtytype) {
 			}
 			///发生的总金额 或者总数量
 			let Fsnet = 0;
-			for (let i = 0; i < pmList.Count; i++) {
+			for (let i = 0; i < pmList.length; i++) {
 				if (pmList[i] == null) {
 					continue;
 				}
-				let currqty = xprinter_util.nnvl(cxbilldts.Rows[i][qtytype], 0);
+				let currqty = xprinter_util.nnvl(cxbilldts[i][qtytype], 0);
 				if (currqty == 0) {
 					///没有剩余要跳出
 					continue;
 				}
-				let oldprice = xprinter_util.nnvl(cxbilldts.Rows[i][oprice], 0);
+				let oldprice = xprinter_util.nnvl(cxbilldts[i][oprice], 0);
 				///取出条件数量
 				let fsqty = 0;
 				fsqty = currqty;
@@ -706,7 +706,7 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
-		if (cx.SubList.Count != 1) {
+		if (cx.SubList.length != 1) {
 			return;
 		}
 		let subx = cx.SubList[0];
@@ -733,23 +733,23 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 			///发生的总金额 或者总数量
 			let Fsnet = 0;
 
-			for (let i = 0; i < pmList.Count; i++) {
+			for (let i = 0; i < pmList.length; i++) {
 				if (pmList[i] == null) {
 					continue;
 				}
-				let currqty = xprinter_util.nnvl(cxbilldts.Rows[i][qtytype], 0);
+				let currqty = xprinter_util.nnvl(cxbilldts[i][qtytype], 0);
 				if (currqty == 0) {
 					///没有剩余要跳出
 					continue;
 				}
-				let oldprice = xprinter_util.nnvl(cxbilldts.Rows[i][oprice], 0);
+				let oldprice = xprinter_util.nnvl(cxbilldts[i][oprice], 0);
 				///取出售价
 				let Spprice = 0;
 				///取出条件数量
 				let fsqty = 0;
 
 				let ynzs = true;
-				let spid = xprinter_util.snvl(spdt.Rows[i]["SPID"], "");
+				let spid = xprinter_util.snvl(spdt[i]["SPID"], "");
 				let zsds = getCxSql_db.cxspdaSql(spid);
 				if (zsds != null && zsds.length > 0) {
 					let iszs = xprinter_util.snvl(zsds[0]["YN_ZS"], "");
@@ -802,13 +802,13 @@ const Jslbcx = function(cx, pmList, qtytype, spdt) {
 const getLcm = function(zqty, cx1, lv){
 	let lcm = int.MaxValue;
 	let templcm = 0;
-	if (zqty.Count != cx1.SubList.Count)
+	if (zqty.length != cx1.SubList.length)
 	{
 	    return 0;
 	}
 	else
 	{
-	    for (let i = 0; i < zqty.Count; i++)
+	    for (let i = 0; i < zqty.length; i++)
 	    {
 	        let key = zqty[i].Key;
 	        let cxqty = zqty[key];
@@ -993,7 +993,7 @@ const SubCxQty = function() {
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts.Rows[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0), 2) + Math
+					cxbilldts[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0), 2) + Math
 						.Round(((1 - cxsub.discnum[level] / 100) * price * fsqty), 2);
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
@@ -1013,7 +1013,7 @@ const SubCxQty = function() {
 					}
 					//计算积分
 					//积分相关的时候不计算折扣
-					if (cx.cxtype.Equals("G") || cx.cxtype.Equals("D")) {
+					if (cx.cxtype=="G" || cx.cxtype=="D") {
 						try {
 							if (i == lastIndex) {
 								let jfnum = cx.syjf * lcm; ///变化的积分数
@@ -1041,7 +1041,7 @@ const SubCxQty = function() {
 					} else {
 						//计算积分
 						//积分相关的时候不计算折扣
-						if (cx.cxtype.Equals("G") || cx.cxtype.Equals("D")) {
+						if (cx.cxtype=="G" || cx.cxtype=="D") {
 							try {
 								let jfnum = cx.syjf * fsqty; ///变化的积分数
 								let dsnum = (price - zjprice) * fsqty; ///变化的折扣金额
@@ -1071,8 +1071,8 @@ const SubCxQty = function() {
 					if (MinRow == null) {
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
-					if (MinRow.ContainsKey(i)) {
-						cxbilldts[i][disc] = Math.Round(SqlHelper.NNVL(cxbilldts[i][disc], 0) + MinRow[
+					if (MinRow.hasOwnProperty(i)) {
+						cxbilldts[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
 							i] * Math.Round(price * (1 - cxsub.minDisc), 2), 2);
 						if (fsqty != 0) {
 							newprice = (fsqty * price - MinRow[i] * Math.Round(price * (1 - cxsub.minDisc), 2)) /
