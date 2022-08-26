@@ -79,6 +79,12 @@ var reserveOrdersUpdate = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+var reserveOrdersStatusUpdate = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ReserveOrdersStatusUpdate";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 var getReserveOrdersDetails = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersDetails";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
@@ -159,5 +165,6 @@ export default {
 	GetPSCenter,
 	GetTHKHDA,
 	reserveOrdersUpdate,
+	reserveOrdersStatusUpdate,
 	getReserveOrdersDetails
 }

@@ -78,18 +78,18 @@ export const global = {
 	},
 	data: function() {
 		return {
-			GSID: getApp().globalData.store.GSID, //公司id
-			DPID: getApp().globalData.store.DPID, //店铺id
-			KCDID: getApp().globalData.store.KCDID, //存库点id
-			GCID: getApp().globalData.store.GCID, //工厂id
-			DKFID: getApp().globalData.store.DKFID, //大客户id
-			BMID: getApp().globalData.store.BMID, //部门id
-			BHLB: getApp().globalData.store.BHLB, //裱花类别
-			KHID: getApp().globalData.store.KHID, //客户id
-			POSID: getApp().globalData.store.POSID, //pos机id
-			RYID: getApp().globalData.store.RYID, //人员id
-			NAME: getApp().globalData.store.NAME, //店铺名称
-			MerId: getApp().globalData.store.MERID, //商户号id
+			GSID:util.getStorage('store')?.GSID, //公司id
+			DPID: util.getStorage('store')?.DPID, //店铺id
+			KCDID: util.getStorage('store')?.KCDID, //存库点id
+			GCID: util.getStorage('store')?.GCID, //工厂id
+			DKFID: util.getStorage('store')?.DKFID, //大客户id
+			BMID: util.getStorage('store')?.BMID, //部门id
+			BHLB: util.getStorage('store')?.BHLB, //裱花类别
+			KHID: util.getStorage('store')?.KHID, //客户id
+			POSID: util.getStorage('store')?.POSID, //pos机id
+			RYID: util.getStorage('store')?.RYID, //人员id
+			NAME: util.getStorage('store')?.NAME, //店铺名称
+			MerId: util.getStorage('store')?.MERID, //商户号id
 			brand: getApp().globalData.brand,
 			kquser: getApp().globalData.kquser,
 			hyinfo: getApp().globalData.hyinfo //会员卡信息,
@@ -112,7 +112,7 @@ export const print = {
 }
 
 export const TransferForPaymentAll = async function(data) {
-	let global_config = getApp().globalData.store,
+	let global_config = util.getStorage('store'),
 		pay_way_list = await GetPayWayList();
 	console.log("[TransferForPaymentAll]支付方式获取:", pay_way_list);
 	return Object.assign({

@@ -37,7 +37,7 @@
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
-	
+
 	export default {
 		name: "Home",
 		components: {
@@ -76,8 +76,6 @@
 		computed: {
 			show: function() {
 				return util.callBind(this, function(info) {
-					// console.log("[Computed-Show]Info:", info);
-					// console.log("[Computed-Show]Info-Result:", (this.current.name === info.name) && (this.current.title === info.title));
 					return (this.current.name === info.name) && (this.current.title === info.title);
 				});
 			},
@@ -96,13 +94,15 @@
 				console.log("[SwitchPage]页面切换:", data);
 				this.selected.name = data.name;
 				this.selected.title = data.title;
-				if(data.name) this.$refs.menu.CloseAllChildMenu(data.name);//关闭子菜单
+				if (data.name) this.$refs.menu.CloseAllChildMenu(data.name); //关闭子菜单
 				if (data.switch || data.switch === undefined) {
 					this.current.name = data.name;
 					this.current.title = data.title;
-					console.log("[SwitchPage]组件name:", this.current.name);
-					console.log("[SwitchPage]组件title:", this.current.title);
-					this.$set(this.meta_data, `data`, data?.meta ?? {});
+					console.log("[SwitchPage]组件Info:", data);
+					console.log("[SwitchPage]组件RouteInfo:", this.router.find(r => r.name === data.name && r.title ===
+						data.title));
+					this.$set(this.meta_data, `data`, data?.meta ?? this.router.find(r => r.name === data.name && r
+						.title === data.title)?.meta);
 					this.$set(this.meta_data, `params`, data?.params ?? {});
 					let vue = this.$refs[data.title];
 					if (vue) {
@@ -110,7 +110,9 @@
 							vue = vue[0];
 						}
 					}
+					console.log("[Refs]键列表:", Object.keys(this.$refs));
 					vue?.$nextTick(function() {
+						console.log("[NextTick]Show触发!");
 						vue?.Show ? vue.Show() : undefined;
 					});
 				}
@@ -133,6 +135,15 @@
 			this.ComponentRecursion(router, components)
 			this.router = components;
 			this.MsgToPage();
+			this.$refs = new Proxy(this.$refs, {
+				set(obj, prop, value) {
+					if(Array.isArray(value) && value.length > 0)
+						value[0]?.Show ? value[0].Show() : undefined;
+					else
+						value?.Show ? value.Show() : undefined;
+					return Reflect.set(...arguments);
+				}
+			})
 		}
 	}
 </script>

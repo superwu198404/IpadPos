@@ -9,7 +9,7 @@
 	<view class="boxs">
 		<view class="memberes">
 			<!-- v-if="Memberinfo" -->
-			<view v-if="views.Memberinfo" class="meminfo">
+			<view v-if="false" class="meminfo">
 				<view class="member">
 					<label>填写预定信息</label>
 					<button @click="views.Memberinfo = false">×</button>
@@ -83,7 +83,7 @@
 					<button class="btn" @click="Save">保 存</button>
 				</view>
 			</view>
-			<view class="pop-r">
+			<view v-if="views.Memberinfo" class="pop-r">
 				<view class="member">
 					<label>
 						<image class="touxiang" src="../../../images/touxiang.png"></image>

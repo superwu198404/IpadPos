@@ -767,7 +767,7 @@
 			this.refund_no = this.$store.state.trade;
 			if (!this.first) { //首次不执行
 				common.Close(); //先关闭连接
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001")).map(i => i.BILL).reverse();
+				this.input.bills = (await common.Query("SELECT BILL FROM SALE001"))?.map(i => i.BILL)?.reverse();
 			}
 		},
 		onReady() {

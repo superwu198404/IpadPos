@@ -136,12 +136,11 @@
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
 					<view class="b_critlist">
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
-							:data-name="item.name" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap">
+						:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap" >
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button v-if="isLink[index]==3">连接</button><button class="b_has"
-								v-if="isLink[index]==2">已连接</button>
+							<button v-if="isLink[index]==0">连接</button><button class="b_has" v-if="isLink[index]==1">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -198,18 +197,8 @@
 				isLink: [],
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
+				intervalId: null,
 			};
-		},
-		/**
-		 * 生命周期函数--监听页面加载
-		 */
-		onLoad: function(options) {
-			console.log(1111111111111111111);
-			let that = this;
-			app.globalData.BLEInformation.platform = app.globalData.getPlatform();
-
-			//监听蓝牙连接状态
-			bleConnect.onBLEConnectionStateChange();
 		},
 		// created: function(e) {
 		// 	that = this;
@@ -256,6 +245,7 @@
 			});
 			//搜索蓝牙
 			that.startSearch();
+			that.onBLEConnectionStateChange();
 
 		},
 		methods: {
@@ -429,6 +419,33 @@
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
 				that.showBle = true;
 			},
+			onBLEConnectionStateChange:function(){
+				let that = this;
+				uni.onBLEConnectionStateChange(res => {
+					console.log(`设备状态 ${res.deviceId},connected: ${res.connected}`);
+					if (res.connected == false) {
+						closeBluetoothAdapter();
+						closeBLEConnection(res.deviceId, 0);
+						app.globalData.YN_PRINT_CON = "N";
+						//选择适合需求的定时器
+						intervalId = setInterval(() => {
+							console.log("intervalId" + new Date());
+							try {
+								if (app.globalData.BLEInformation.deviceId != "" && app.globalData
+									.BLEInformation.deviceName != "") {
+									that.startSearch();
+								}
+							} catch (e) {
+							that.clearIntervalFun();
+							}
+							console.log("YN_PRINT_CON", app.globalData.YN_PRINT_CON);
+						}, 5000);
+					} else {
+						app.globalData.YN_PRINT_CON = "Y";
+					}
+					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
+				})
+			},
 			//搜索设备
 			startSearch: function() {
 				var that = this;
@@ -522,10 +539,10 @@
 				//获取蓝牙设备信息
 				var that = this;
 				console.log("start search");
-				uni.showLoading({
-					title: "正在加载",
-					icon: "loading"
-				});
+				// uni.showLoading({
+				// 	title: "正在加载",
+				// 	icon: "loading"
+				// });
 				that.setData({
 					isScanning: true
 				});
@@ -578,18 +595,16 @@
 
 									that.isLink = []
 									var i = 0;
-									devices.forEach(e => {
-										that.isLink.push(3)
+									that.list.forEach(e => {
+										that.isLink.push(0)
 										i++;
 									})
+									console.log("isLink",that.isLink)
 									uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
-										success: function(
-											res) {
-											console.log(
-												"停止搜索蓝牙"
-											);
+										success: function(res) {
+											//console.log("停止搜索蓝牙");
 										}
 									});
 								}
@@ -611,22 +626,19 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset
-					.name);
-				uni.showLoading({
-					title: "正在连接"
-				});
+				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name+ "||" + e.currentTarget.dataset.key);
+				// uni.showLoading({
+				// 	title: "正在连接"
+				// });
 				uni.createBLEConnection({
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
 						console.log("Connection success:", res);
-						that.isLink.splice(e.currentTarget.dataset.key, 1, 2)
-						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset
-							.title;
-						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset
-							.name;
-						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget
-							.dataset.name);
+						that.isLink.splice(e.currentTarget.dataset.key, 0, 1)
+						//that.isLink[e.currentTarget.dataset.key] = 1;
+						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
+						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset.name;
+						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
 						uni.showModal({
@@ -635,7 +647,7 @@
 							showCancel: false
 						});
 						console.log("Connection fail:", e);
-						that.isLink.splice(e.currentTarget.dataset.key, 1, 3)
+						that.isLink.splice(e.currentTarget.dataset.key, 0, 0)
 						uni.hideLoading();
 					},
 					complete: function(e) {
@@ -813,9 +825,13 @@
 					success: res => {
 						console.log('断开蓝牙连接')
 						app.globalData.YN_PRINT_CON = "N";
-						that.isLink.splice(index, 1, 3)
+						that.isLink.splice(index, 0, 0)
 					}
 				})
+			},
+			clearIntervalFun:function(){
+				clearInterval(that.intervalId); //清除计时器
+				that.intervalId = null; //设置为null
 			},
 		}
 	}

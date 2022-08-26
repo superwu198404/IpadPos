@@ -1219,7 +1219,8 @@
 			backPrevPage: function() {
 				if (this.CanBack) {
 					this.event.emit("ExtractBack", {
-						msg: "预订单支付完成!"
+						msg: "预订单支付完成!",
+						order: this.sale1_obj
 					});
 					uni.navigateBack()
 				} else
