@@ -676,6 +676,7 @@
 						this.Memberinfo = true;
 						this.Shoppingbags = false;
 					}
+					that.GetHyCoupons(that.hyinfo);
 				} else {
 					uni.navigateTo({
 						url: "../MemberLogin/MemberLogin"

@@ -355,7 +355,33 @@
 				that.secPwd = "";
 			},
 			//确定修改密码
-			ConfirmPWD: function(res) {
+			ConfirmPWD: function() {
+				// console.log("“hjksdhshk");
+				// let sql = ["UPDATE MDRYKH SET PASSWORD_MD = 'C07C193101A15w136ry4B25hf*39K*AA6' WHERE ryid = '999'", "UPDATE RYDA SET PASSWORD_MD = 'C07C193101A15w136ry4B25hf*39K*AA6' WHERE ryid = '9'"];
+				// console.log("“hjksdhshk",sql.length);
+				// _login.UpdatePWD_Local("C07C193101A15w136ry4B25hf*39K*AA6", "999", _res => {
+				// 	console.log("本地密码修改结果：", _res);
+				// 	if (_res.code) {
+				// 		util.simpleMsg("密码修改成功");
+				// 		setTimeout(r => {
+				// 			if (getApp().globalData.stroe) {
+				// 				getApp().globalData.stroe.RYID = "";
+				// 				getApp().globalData.stroe.RYNAME = "";
+				// 			}
+				// 			util.removeStorage("hyinfo"); //清除会员信息
+				// 			uni.redirectTo({
+				// 				url: "/pages/Login/Login",
+				// 				complete: r => {
+				// 					console.log(r)
+				// 				}
+				// 			})
+				// 		}, 1200);
+				// 	} else {
+				// 		console.log("本地密码修改结果：", _res);
+				// 		util.simpleMsg(_res.msg, "none");
+				// 	}
+				// })
+				// return;
 				if (getApp().globalData.store.PWD != that.oldPwd) {
 					util.simpleMsg("旧密码错误", true);
 					return;
@@ -376,7 +402,7 @@
 					if (res.code) {
 						_login.UpdatePWD_Local(JSON.parse(res.data), that.RYID, _res => {
 							console.log("本地密码修改结果：", _res);
-							if (res.code) {
+							if (_res.code) {
 								util.simpleMsg("密码修改成功");
 								setTimeout(r => {
 									if (getApp().globalData.stroe) {
@@ -392,7 +418,7 @@
 									})
 								}, 1200);
 							} else {
-								util.simpleMsg(res.msg, "none");
+								util.simpleMsg(_res.msg, "none");
 							}
 						})
 					} else {
