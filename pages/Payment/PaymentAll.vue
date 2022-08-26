@@ -235,6 +235,10 @@
 	var app = getApp();
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
+	import {
+		pointsDeduction,
+		pointsReturn
+	} from '@/api/business/pointpay.js';
 	import Req from '@/utils/request.js';
 	import _wx from '@/api/Pay/WxPay.js';
 	import _ali from '@/api/Pay/AliPay.js';
