@@ -199,18 +199,8 @@
 				isLink: [],
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
+				intervalId: null,
 			};
-		},
-		/**
-		 * 生命周期函数--监听页面加载
-		 */
-		onLoad: function(options) {
-			console.log(1111111111111111111);
-			let that = this;
-			app.globalData.BLEInformation.platform = app.globalData.getPlatform();
-
-			//监听蓝牙连接状态
-			bleConnect.onBLEConnectionStateChange();
 		},
 		// created: function(e) {
 		// 	that = this;
@@ -257,6 +247,7 @@
 			});
 			//搜索蓝牙
 			that.startSearch();
+			that.onBLEConnectionStateChange();
 
 		},
 		methods: {
@@ -428,6 +419,33 @@
 			ShowPrint: function() {
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
 				that.showBle = true;
+			},
+			onBLEConnectionStateChange:function(){
+				let that = this;
+				uni.onBLEConnectionStateChange(res => {
+					console.log(`设备状态 ${res.deviceId},connected: ${res.connected}`);
+					if (res.connected == false) {
+						closeBluetoothAdapter();
+						closeBLEConnection(res.deviceId, 0);
+						app.globalData.YN_PRINT_CON = "N";
+						//选择适合需求的定时器
+						intervalId = setInterval(() => {
+							console.log("intervalId" + new Date());
+							try {
+								if (app.globalData.BLEInformation.deviceId != "" && app.globalData
+									.BLEInformation.deviceName != "") {
+									that.startSearch();
+								}
+							} catch (e) {
+							that.clearIntervalFun();
+							}
+							console.log("YN_PRINT_CON", app.globalData.YN_PRINT_CON);
+						}, 5000);
+					} else {
+						app.globalData.YN_PRINT_CON = "Y";
+					}
+					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
+				})
 			},
 			//搜索设备
 			startSearch: function() {
@@ -811,6 +829,10 @@
 						that.isLink.splice(index, 0, 0)
 					}
 				})
+			},
+			clearIntervalFun:function(){
+				clearInterval(that.intervalId); //清除计时器
+				that.intervalId = null; //设置为null
 			},
 		}
 	}
