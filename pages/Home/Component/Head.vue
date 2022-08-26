@@ -91,10 +91,12 @@
 								</label>
 								<view>
 									<label>
-										<image src="@/images/kaishisj-xx.png"></image><text>{{urgenMsg.newVal.SDATE}}开始</text>
+										<image src="@/images/kaishisj-xx.png"></image>
+										<text>{{urgenMsg.newVal.SDATE}}开始</text>
 									</label>
 									<label>
-										<image src="@/images/jieshusj-xx.png"></image><text>{{urgenMsg.newVal.EDATE}}截止</text>
+										<image src="@/images/jieshusj-xx.png"></image>
+										<text>{{urgenMsg.newVal.EDATE}}截止</text>
 									</label>
 								</view>
 							</view>
@@ -136,11 +138,13 @@
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
 					<view class="b_critlist">
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
-						:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs" @tap="bindViewTap" >
+							:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
+							@tap="bindViewTap">
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button v-if="isLink[index]==0">连接</button><button class="b_has" v-if="isLink[index]==1">已连接</button>
+							<button v-if="isLink[index]==0">连接</button><button class="b_has"
+								v-if="isLink[index]==1">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -275,7 +279,7 @@
 				if (that.urgenMsg && JSON.stringify(that.urgenMsg)) {
 					let obj = {
 						type: "SYSTEM",
-						bill:that.urgenMsg.newVal.BILL,
+						bill: that.urgenMsg.newVal.BILL,
 						Details: [{
 							key: that.urgenMsg.key
 						}]
@@ -356,38 +360,16 @@
 			},
 			//确定修改密码
 			ConfirmPWD: function() {
-				// console.log("“hjksdhshk");
-				// let sql = ["UPDATE MDRYKH SET PASSWORD_MD = 'C07C193101A15w136ry4B25hf*39K*AA6' WHERE ryid = '999'", "UPDATE RYDA SET PASSWORD_MD = 'C07C193101A15w136ry4B25hf*39K*AA6' WHERE ryid = '9'"];
-				// console.log("“hjksdhshk",sql.length);
-				// _login.UpdatePWD_Local("C07C193101A15w136ry4B25hf*39K*AA6", "999", _res => {
-				// 	console.log("本地密码修改结果：", _res);
-				// 	if (_res.code) {
-				// 		util.simpleMsg("密码修改成功");
-				// 		setTimeout(r => {
-				// 			if (getApp().globalData.stroe) {
-				// 				getApp().globalData.stroe.RYID = "";
-				// 				getApp().globalData.stroe.RYNAME = "";
-				// 			}
-				// 			util.removeStorage("hyinfo"); //清除会员信息
-				// 			uni.redirectTo({
-				// 				url: "/pages/Login/Login",
-				// 				complete: r => {
-				// 					console.log(r)
-				// 				}
-				// 			})
-				// 		}, 1200);
-				// 	} else {
-				// 		console.log("本地密码修改结果：", _res);
-				// 		util.simpleMsg(_res.msg, "none");
-				// 	}
-				// })
-				// return;
 				if (getApp().globalData.store.PWD != that.oldPwd) {
 					util.simpleMsg("旧密码错误", true);
 					return;
 				}
 				if (!that.newPwd) {
 					util.simpleMsg("新密码为空", true);
+					return;
+				}
+				if (that.newPwd == that.oldPwd) {
+					util.simpleMsg("不能和旧密码相同", "none");
 					return;
 				}
 				if (that.newPwd != that.secPwd) {
@@ -445,7 +427,7 @@
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
 				that.showBle = true;
 			},
-			onBLEConnectionStateChange:function(){
+			onBLEConnectionStateChange: function() {
 				let that = this;
 				uni.onBLEConnectionStateChange(res => {
 					console.log(`设备状态 ${res.deviceId},connected: ${res.connected}`);
@@ -462,7 +444,7 @@
 									that.startSearch();
 								}
 							} catch (e) {
-							that.clearIntervalFun();
+								that.clearIntervalFun();
 							}
 							console.log("YN_PRINT_CON", app.globalData.YN_PRINT_CON);
 						}, 5000);
@@ -625,7 +607,7 @@
 										that.isLink.push(0)
 										i++;
 									})
-									console.log("isLink",that.isLink)
+									console.log("isLink", that.isLink)
 									uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
@@ -652,7 +634,8 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name+ "||" + e.currentTarget.dataset.key);
+				console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name + "||" + e
+					.currentTarget.dataset.key);
 				// uni.showLoading({
 				// 	title: "正在连接"
 				// });
@@ -855,7 +838,7 @@
 					}
 				})
 			},
-			clearIntervalFun:function(){
+			clearIntervalFun: function() {
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
