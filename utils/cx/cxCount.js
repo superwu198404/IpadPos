@@ -113,6 +113,7 @@ const Cxdict = async () => {
 			C1.YN_JSLB = xprinter_util.ynToBool(YNJSLB);
 			C1.cxtype = YNJSLB;
 			C1.upleave = cxjfup;
+			C1.OneSp = false;
 
 			try {
 				let typeArr = CxSaleStr.split('-');
@@ -285,8 +286,8 @@ const Createcx = async (sale02) => {
 
 	for (let i = 0; i < sale02_arr.length; i++) {
 		let spid = sale02_arr[i].ProCode.toString();
-		let price = parseFloat(sale02_arr[i].ProPrice.toString());
-		let num = parseFloat(sale02_arr[i].ProNum.toString());
+		let price = Math.floor(parseFloat(sale02_arr[i].ProPrice.toString())*100)/100;
+		let num = Math.floor(parseFloat(sale02_arr[i].ProNum.toString())*100)/100;
 
 		//添加
 		AddRowCxbilldts(spid, price, num, i);
@@ -585,10 +586,11 @@ const testallcx = function(bill, pmList) {
 	let Lcm = 0;
 	let cx = cxdict[bill];
 	let currentlv = 0;
-	console.log("testallcx",cx)
+
 	if (cx.YN_JSLB) {
 		currentlv = parseInt(cx.SubList[0].sublv) - 1;
 	}
+	console.log("testallcx",pmList)
 	let subzqty = getSubidZqty(pmList, cx, "YYSL");
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
@@ -801,8 +803,9 @@ const Jslbcx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 
 //获取某个级别的最小公倍数
 const getLcm = function(zqty, cx1, lv){
-	let lcm = int.MaxValue;
+	let lcm = Number.MAX_SAFE_INTEGER; //Number类型最大值
 	let templcm = 0;
+	console.log("getLcm zqty",zqty);
 	if (zqty.length != cx1.SubList.length)
 	{
 	    return 0;
@@ -811,24 +814,27 @@ const getLcm = function(zqty, cx1, lv){
 	{
 	    for (let i = 0; i < zqty.length; i++)
 	    {
-	        let key = zqty[i].Key;
-	        let cxqty = zqty[key];
-	        let subx = cx1.SubList[key];
-	        if (subx.ZkTj == MyCxClass.CxZkTj.Qty)
-	        {
-	            templcm = parseInt(cxqty / subx.QtyCondition[lv]);
-	        }
-	        else
-	        {
-	            templcm = parseInt(cxqty / subx.NetCondition[lv]);
-	        }
-	        if (templcm < lcm)
-	        {
-	            lcm = templcm;
-	        }
+			let billKeys = Object.keys(zqty);
+			for(let jj = 0; jj < billKeys.length; jj++){
+				let key = billKeys[jj];
+				let cxqty = zqty[key];
+				let subx = cx1.SubList[key];
+				if (subx.ZkTj == "Qty")
+				{
+				    templcm = parseInt(cxqty / subx.QtyCondition[lv]);
+				}
+				else
+				{
+				    templcm = parseInt(cxqty / subx.NetCondition[lv]);
+				}
+				if (templcm < lcm)
+				{
+				    lcm = templcm;
+				}
+			}
 	    }
 	}
-	if (lcm == int.MaxValue)
+	if (lcm == Number.MAX_SAFE_INTEGER)
 	{
 	    return 0;
 	}
@@ -933,23 +939,24 @@ const FreeZhCx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 
 //因为单行产品的特殊性导致  再以金额为条件  进行计算的时候  返回的数量为正常  返回的金额 只能为条件金额的倍数
 const getOneSpNetForQty = function(cx, subid, pm_fsqty, pm_price){
+	//console.log("getOneSpNetForQty cx",cx)
 	if (cx.OneSp)
 	{
 	    let subx = cx.SubList[subid];
 	    if (subx.ZkTj == "Net")
 	    {
 	        let OneRowNet = cx.SubList[subid].NetCondition[0];
-	        let LcmRowNet = (int)(pm_fsqty * pm_price / OneRowNet);
+	        let LcmRowNet = parseInt(pm_fsqty * pm_price / OneRowNet);
 	        return LcmRowNet * cx.SubList[subid].NetCondition[0];
 	    }
 	    else
 	    {
-
 	        return pm_fsqty;
 	    }
 	}
 	else
 	{
+		//console.log("getOneSpNetForQty pm_fsqty * pm_price",pm_fsqty * pm_price)
 	    return pm_fsqty * pm_price;
 	}
 }
@@ -1213,7 +1220,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 				jfnum = time * cx.syjf;
 			}
 		}
-	} catch {
+	} catch(e) {
 
 	}
 }
@@ -1255,7 +1262,7 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill)) {
 		///当这个促销单存在积分系数的时候，将单号的索引记录下来
 		if (jfxs > 0) {
-			jfinfo.xsIndex.push(jfinfo.hdbill.Count);
+			jfinfo.xsIndex.push(jfinfo.hdbill.Length);
 		}
 		///累计单号
 		jfinfo.hdbill.push(cx.CxBill);
@@ -1297,10 +1304,12 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		let oldprcle = xprinter_util.nnvl(cxbilldts[i]["OPRICE"], 0);
 		let syqty = xprinter_util.nnvl(cxbilldts[i][sltype], 0);
 		let syqty_buff = syqty;
+		//console.log("oldprcle\syqty",oldprcle+"|"+syqty)
 		if (syqty == 0) {
 			continue;
 		}
 		let subx = cx.SubList[subid];
+		//console.log("subx",subx)
 		if (cx.OneSp) {
 			///此时返回的是发生的数量
 			syqty = getOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
@@ -1312,13 +1321,15 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		if (subx.ZkTj == "Net") {
 			syqty = getOneSpNetForQty(cx, subid, syqty, oldprcle);
 		}
+		//console.log("getSubidZqty zqty.hasOwnProperty(subid)",zqty.hasOwnProperty(subid));
 		if (zqty.hasOwnProperty(subid)) {
 			zqty[subid] = zqty[subid] + syqty;
 		} else {
-			zqty.push(subid, syqty);
+			zqty[subid] = syqty;
 		}
 
 	}
+	//console.log("getSubidZqty zqty",zqty);
 	return zqty;
 }
 
