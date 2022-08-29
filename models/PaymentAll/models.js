@@ -24,6 +24,7 @@ export const orderCreated = function(obj, payload) {
 		user_id: payload?.open_id || payload?.hyid,
 		is_free: "",
 		card_no: "",
+		point:payload.point,//抵现积分数
 		auth_code: "", //用于处理从上个页面传入，但未进行支付的订单
 		//业务配置字段 ↓
 		fail: true, //def初始和退款失败的皆为true
@@ -53,6 +54,8 @@ export const PayDataAssemble = function() {
 		store_name: this.NAME,
 		merchant_no: this.MerId,
 		channel: this.channel,
+		point:this.CashOffset.Score,//抵现积分数
+		point_money:this.CashOffset.Money,//积分积分对应金额
 		memo: this.currentPayInfo?.fkid,
 		discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		product_info: this.Products.map(i => { //商品清单

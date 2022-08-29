@@ -390,8 +390,7 @@ var QueryBatch = async function(sqls) {
 
 //查询sql
 var Query = async function(sql) {
-	let data = null,db_instance = db.get();
-	if(!db_instance.exists()) db_instance.open()//如果关闭则打开连接
+	let data = null;
 	await db.get().executeQry(sql, "查询中...", function(res) {
 		data = res.msg;
 	}, function(err) {

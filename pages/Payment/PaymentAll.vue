@@ -163,7 +163,7 @@
 								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
-										</image> 
+										</image>
 									</view>
 								</label>
 								<label class="poly-text">
@@ -284,6 +284,10 @@
 				PaymentInfos: { //从上个页面传来的支付信息
 					PayList: [],
 					PayedAmount: 0, //已经完成支付的金额，主要针对从上个页面传入的订单数据的总和（解耦金额计算逻辑）
+				},
+				CashOffset:{
+					Score:1,//抵现的积分数
+					Money:1//抵现的积分数对应的实际金额
 				},
 				coupons: false, //卡券弹窗
 				prev_no: 0,
@@ -540,7 +544,8 @@
 						GCID: this.GCID, //工厂
 						DPID: this.DPID, //店铺
 						KCDID: this.KCDID, //库存点
-						BMID: this.BMID, //部门id
+						// BMID: this.BMID, //部门id
+						BMID: item.point, //部门id
 						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
 						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
 							.disc, //折扣金额(卡券消费后要记录)
@@ -834,7 +839,8 @@
 								refund_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
 									0), //退款金额
 								total_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
-									0) //退款总金额（兼容微信）
+									0), //退款总金额（兼容微信）
+								point: refundInfo.origin.BMID//兼容积分抵现返还积分
 							}, (function(err) { //如果发生异常（catch）
 								util.simpleMsg(err.msg, true, err);
 							}).bind(that),
@@ -921,7 +927,7 @@
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
-				console.log("[PayHandle]Info:",info);
+				console.log("[PayHandle]Info:", info);
 				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
@@ -950,10 +956,10 @@
 						if (this.debt > 0) {
 							this.CanBack = false;
 						}
-						console.log("序号储存！");
-						console.log("序号：", this.prev_no)
+						console.log("[PayHandle]序号储存！");
+						console.log("[PayHandle]序号：", this.prev_no)
 						this.used_no.push(this.prev_no); //存入，避免重复单号出现
-						console.log("序号列表：", this.used_no)
+						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
@@ -1118,8 +1124,8 @@
 					that = this;
 					this.Products = prev_page_param.Products;
 					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
-					this.PayWayList = (function(){
-						if(util.getStorage('PayWayList'))
+					this.PayWayList = (function() {
+						if (util.getStorage('PayWayList'))
 							return util.getStorage('PayWayList');
 						else
 							return prev_page_param.PayWayList;
@@ -1426,18 +1432,19 @@
 				window.vue = this;
 			}
 			this.paramInit();
-			if(!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common.GetZFRULE();//初始化支付规则（如果没有的话）
+			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
+				.GetZFRULE(); //初始化支付规则（如果没有的话）
 		},
 		mounted() {}
 	}
 </script>
 
 <style>
-	.refund-more-box{
+	.refund-more-box {
 		display: flex;
 	}
-	
-	.refund-reset{
+
+	.refund-reset {
 		background-color: var(--green);
 		color: white;
 		border-radius: 5px;
@@ -1447,23 +1454,23 @@
 		justify-content: center;
 		box-sizing: border-box;
 	}
-	
-	.refund-text{
+
+	.refund-text {
 		display: inline-flex;
 		align-items: center;
 	}
-	
+
 	.refund-icon {
-	    width: 15px;
-	    height: 15px;
+		width: 15px;
+		height: 15px;
 		display: inline-block;
 		background-size: cover;
 		background-image: url('@/images/loading.png');
 		filter: brightness(10);
 		margin-left: 6px;
 	}
-	
-	.refund-loading{
+
+	.refund-loading {
 		animation: 1.5s rotate infinite linear;
 	}
 </style>

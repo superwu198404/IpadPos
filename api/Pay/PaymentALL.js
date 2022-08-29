@@ -111,11 +111,11 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 	Req.asyncFuncArr1(request, [
 		function(res) {
 			// util.sleep(3000);
-			if(show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res);
@@ -129,7 +129,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -143,7 +143,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -157,7 +157,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -171,7 +171,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -185,7 +185,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if(show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:",res);
+			if (show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -207,7 +207,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 
 //查询-退款。params:body-请求参数，catchFunc-请求失败回调，finallyFunc-最终回调
 const _RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-	console.log("[RefundAll]退款数据:",body);
+	console.log("[RefundAll]退款数据:", body);
 	return Req.asyncFuncChain(CreateData(pt, "查询退款中...", "QueryPayment", body), [
 		function(res) {
 			return CreateData(pt, "退款中...", "Refund", body);
@@ -269,7 +269,9 @@ var zfbPay = {
 var hykPay = {
 	GetConfig: async function() { //获取 mis 支付参数，款台号
 		if (!util.getStorage('ecard-config')) {
-			let result = await RequestSend(`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`);
+			let result = await RequestSend(
+				`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
+			);
 			if (result.code && result.result.code) {
 				let config_arr = JSON.parse(result.result.data);
 				if (config_arr && config_arr.length && config_arr.length > 0)
@@ -284,7 +286,7 @@ var hykPay = {
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
-			body.merchant_no = config.SHID;//从数据库获取配置
+			body.merchant_no = config.SHID; //从数据库获取配置
 			_PaymentAll(pt, body, func, catchFunc);
 		})
 	},
@@ -311,7 +313,9 @@ var hykPay = {
 var kengeePay = {
 	GetConfig: async function() { //获取 mis 支付参数，款台号
 		if (!util.getStorage('ecard-config')) {
-			let result = await RequestSend(`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`);
+			let result = await RequestSend(
+				`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
+			);
 			if (result.code && result.result.code) {
 				let config_arr = JSON.parse(result.result.data);
 				if (config_arr && config_arr.length && config_arr.length > 0)
@@ -327,20 +331,20 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
 			Req.asyncFuncOne(CreateData("MIS", "查询中...", "ReadCard", {
-				store_id:config.KEY,
-				terminalCode:config.NOTE
-			}),(res) => {//返回卡号和磁道信息
-				console.log("[ReadCard]读取卡信息:",res);
+				store_id: config.KEY,
+				terminalCode: config.NOTE
+			}), (res) => { //返回卡号和磁道信息
+				console.log("[ReadCard]读取卡信息:", res);
 				let card_info = res.data;
-				body.card_no = card_info.card_no.substring(3);//去掉实体卡前缀三位
+				body.card_no = card_info.card_no.substring(3); //去掉实体卡前缀三位
 				body.auth_code = card_info.track_info;
 				body.merchant_no = config.SHID;
 				body.storeName = getApp().globalData.store.NAME;
-				console.log("[ReadCard]组装支付参数:",body);
+				console.log("[ReadCard]组装支付参数:", body);
 				_PaymentAll(pt, body, func, catchFunc);
-			},(err) => {
-				util.simpleMsg("读卡异常!"+err.msg,true)
-				console.log("[ReadCard]读卡异常!",err);
+			}, (err) => {
+				util.simpleMsg("读卡异常!" + err.msg, true)
+				console.log("[ReadCard]读卡异常!", err);
 			});
 		})
 	},
@@ -381,7 +385,7 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
 			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
-			body.merchant_no = null;//使用全局配置（后端）
+			body.merchant_no = null; //使用全局配置（后端）
 			body.terminalCode = config.NOTE;
 			body.store_id = config.KEY;
 			_PaymentAll(pt, body, func, catchFunc);
@@ -448,6 +452,37 @@ var szqPay = {
 	},
 	QueryRefund: function(pt, body, func, catchFunc) {
 		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+
+import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
+//仟吉积分抵现
+var pointPay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		member.PointsDeduction("积分抵现中...", {
+			brand: getApp().globalData?.brand,
+			data: {
+				// hyid: util.getStorage("hyinfo")?.hyId,
+				hyid: "1000311647",
+				amount: body.point,
+				trade_no: body.out_trade_no,
+				money: body.point_money
+			}
+		}, func, func);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		member.PointsReturn("积分返还中...", {
+			brand: getApp().globalData?.brand,
+			data: {
+				amount: body.point,
+				trade_no: body.out_trade_no,
+				refund_no: body.out_refund_no,
+				money: body.refund_money
+			}
+		}, (res) => {//成功回调
+			finallyFunc(res);
+			resultsFunc([,{code:true}]);//手动控制结果成功（因为积分回退没有所谓的查询，也就不存在两个返回结果：查询结果 and 退款结果）
+		}, catchFunc);
 	}
 }
 //无后端接口的处理方式
@@ -535,12 +570,13 @@ var payType = {
 	MIS: misPay,
 	NOPAY: noPay,
 	REALCARD: kengeePay,
-	
+
 	//仟吉使用
 	WXZF: wxPay,
 	ZFB20: zfbPay,
 	PAYCARD: hykPay,
 	PAYBRUSHCARD: kengeePay,
+	HyJfExchange: pointPay, //积分抵现
 	SZQ: szqPay,
 	TL: misPay,
 }
