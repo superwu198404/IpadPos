@@ -927,7 +927,7 @@ page {
 
 .coulist .uls {
 	padding: 0;
-	max-height: 1000px;
+	max-height: 1000rpx;
 	overflow: scroll;
 }
 
@@ -1118,10 +1118,11 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 }
 .special{
 	width:70%;
+	padding:0 2% 2%;
 }
 .special .commods .uls .lis{
 	width:100%;
-	margin:0;
+	margin:10rpx 0 2%;
 	padding:0 0 3%;
 	border-radius: 20rpx;
 	overflow: hidden;

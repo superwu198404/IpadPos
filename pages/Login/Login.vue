@@ -154,7 +154,10 @@
 								}
 								util.setStorage("store", store);
 								uni.navigateTo({
-									url: "/pages/index/index"
+									url: "/pages/index/index",
+									complete:res=>{
+										console.log("跳转结果：",res);
+									}
 								});
 							} else {
 								util.simpleMsg("密码错误", true);

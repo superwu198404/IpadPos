@@ -156,7 +156,7 @@
 				if (store && JSON.stringify(store) != "{}") {
 					that.khid = store.KHID;
 					that.posid = store.POSID;
-				}*/
+				}
 			},
 			toDbqry: function() {
 				uni.navigateTo({

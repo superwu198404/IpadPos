@@ -29,16 +29,16 @@ page {
 
 .navmall {
 	height: 97%;
-	    width: 10%;
-	    background-color: #fff;
-	    display: flex;
-	    flex-direction: column;
-	    justify-content: start;
-	    align-items: baseline;
-	    position: relative;
-	    color: #B0B0B0;
-	    font-size: 14px;
-	    padding-top: 3%;
+	width: 10%;
+	background-color: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: baseline;
+	position: relative;
+	color: #B0B0B0;
+	font-size: 14px;
+	padding-top: 3%;
 }
 
 .navmall .logo {
@@ -82,55 +82,65 @@ page {
 	height: 40rpx;
 	margin-bottom: 6rpx;
 }
- .menu view .xz{
+
+.menu view .xz {
 	display: none;
 }
-.menu view .wx{
+
+.menu view .wx {
 	display: block;
 }
-.menu view.curr .xz{
+
+.menu view.curr .xz {
 	display: block;
 }
-.menu view.curr .wx{
+
+.menu view.curr .wx {
 	display: none;
 }
-.menu view .chargeback{
+
+.menu view .chargeback {
 	position: absolute;
-	width:600rpx;
+	width: 600rpx;
 	height: 180rpx;
 	background-color: #fff;
-	box-shadow: 0px 5px 20px 1px rgba(0,107,68,0.2);
-	top:50%;
+	box-shadow: 0px 5px 20px 1px rgba(0, 107, 68, 0.2);
+	top: 50%;
 	left: 110%;
 	transform: translateY(-50%);
-	padding:5% 0;
+	padding: 5% 0;
 	display: flex;
 	flex-direction: row;
 	border-radius: 10rpx;
 	color: #6FAA95;
 	z-index: 999;
 }
-.menu view .chargeback label{
-	margin:0 10rpx;
-	width:30%;
+
+.menu view .chargeback label {
+	margin: 0 10rpx;
+	width: 30%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 }
-.menu view .chargeback label image{
-	width:100rpx;
+
+.menu view .chargeback label image {
+	width: 100rpx;
 	height: 100rpx;
-	margin:0 0 10rpx;
+	margin: 0 0 10rpx;
 }
-.menu view .chargeback label.currs{
+
+.menu view .chargeback label.currs {
 	color: #006B44;
 	font-weight: 700;
 }
-.menu view .chargeback label.currs .xz{
+
+.menu view .chargeback label.currs .xz {
 	display: block;
 }
-.menu view .chargeback label.currs .wx{
+
+.menu view .chargeback label.currs .wx {
 	display: none;
 }
 
@@ -146,7 +156,7 @@ page {
 	padding: 10rpx 2%;
 	background-color: #fff;
 	border-left: 1rpx solid #eee;
-	padding-top:44rpx;
+	padding-top: 44rpx;
 }
 
 .message {
@@ -178,7 +188,7 @@ page {
 	border-radius: 0 10px 10px 0;
 	font-size: 24rpx;
 	min-width: 200rpx;
-	max-width:400rpx;
+	max-width: 400rpx;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -196,17 +206,19 @@ page {
 	height: 60rpx;
 	margin-right: 10rpx;
 }
-.account .dropout{
+
+.account .dropout {
 	position: absolute;
-	top:110%;
+	top: 110%;
 	left: 0;
 	background-color: #fff;
 	border-radius: 10rpx;
-	width:105px;
+	width: 105px;
 	z-index: 9999;
-	box-shadow: 0px 10rpx 20rpx 1px rgba(0,107,68,0.1600);
+	box-shadow: 0px 10rpx 20rpx 1px rgba(0, 107, 68, 0.1600);
 }
-.account .dropout .exit{
+
+.account .dropout .exit {
 	display: flex;
 	justify-content: start;
 	align-items: center;
@@ -214,23 +226,26 @@ page {
 	line-height: 80rpx;
 	padding-left: 10%;
 }
-.account .dropout .exit image{
+
+.account .dropout .exit image {
 	width: 40rpx;
 	height: 40rpx;
 }
 
 .hh {
-	padding: 24rpx 2% ;
+	padding: 24rpx 2%;
 	font-size: 36rpx;
 	font-weight: 700;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
-.hh view{
+
+.hh view {
 	display: flex;
 	align-items: center;
 }
+
 .hh image {
 	width: 40rpx;
 	margin-right: 12rpx;
@@ -245,59 +260,70 @@ page {
 	margin: 0;
 	border-radius: 50rpx;
 }
-.stores{
-  display: flex;
-  width:70%;
-  justify-content: flex-end;
+
+.stores {
+	display: flex;
+	width: 70%;
+	justify-content: flex-end;
 }
-.stores .checkout{
-  margin-right: 5%;
-  display: flex;
-  justify-content: end;
+
+.stores .checkout {
+	margin-right: 5%;
+	display: flex;
+	justify-content: end;
 }
-.checkout{
+
+.checkout {
 	display: flex;
 }
-.checkout .buyer{
+
+.checkout .buyer {
 	background-color: #E0EAE9;
-	border:1px solid #006B44;
+	border: 1px solid #006B44;
 	border-radius: 60rpx;
-	padding:0 20rpx;
+	padding: 0 20rpx;
 	max-width: 500rpx;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.checkout .buyer .image{
-	width:28rpx;
+
+.checkout .buyer .image {
+	width: 28rpx;
 	height: 28rpx;
 }
-.checkout .buyer .image:nth-child(1){
-	width:36rpx;
+
+.checkout .buyer .image:nth-child(1) {
+	width: 36rpx;
 	height: 36rpx;
 }
-.checkout label{
+
+.checkout label {
 	margin-left: 40rpx;
 	font-size: 26rpx;
 	color: #006B44;
 	display: flex;
 	align-items: center;
-	max-width:280rpx;
+	max-width: 280rpx;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.checkout label text{
+
+.checkout label text {
 	display: inline-block;
-	max-width:250rpx;
+	max-width: 250rpx;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.checkout label image{
-	width:26rpx;
+
+.checkout label image {
+	width: 42rpx;
+	height: 42rpx;
 	margin-right: 6rpx;
 }
+
 .amounts {
 	background-color: #fff;
 	border-radius: 10px;
@@ -331,7 +357,8 @@ page {
 	line-height: 100rpx;
 	color: #333;
 }
-.amounts p .pay-center{
+
+.amounts p .pay-center {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -347,8 +374,8 @@ page {
 	text-align: center;
 	border-radius: 10px;
 	font-size: 60rpx;
-	width:80%;
-	margin:2% auto 0;
+	width: 80%;
+	margin: 2% auto 0;
 }
 
 .paydetails {
@@ -376,7 +403,8 @@ page {
 	justify-content: space-between;
 	align-items: center;
 }
-.settleds h3 button{
+
+.settleds h3 button {
 	background-color: #006B44;
 	color: #fff;
 	height: 50rpx;
@@ -385,6 +413,7 @@ page {
 	margin: 0;
 	border-radius: 50rpx;
 }
+
 .paymentlist {
 	min-height: 96%;
 	max-height: 100%;
@@ -521,9 +550,11 @@ page {
 	width: 100rpx;
 	margin: 0 2%;
 }
-.bom-zhifu .pattern:nth-child(1) label view{
-	margin:0 20rpx;
+
+.bom-zhifu .pattern:nth-child(1) label view {
+	margin: 0 20rpx;
 }
+
 .bom-zhifu .pattern:nth-child(1) text {
 	display: block;
 	font-size: 14px;
@@ -575,7 +606,7 @@ page {
 }
 
 .bom-zhifu {
-	width:100%;
+	width: 100%;
 	/* display: flex;
 	justify-content: start;
 	flex-wrap: wrap; */
@@ -583,12 +614,12 @@ page {
 
 .bom-zhifu .pattern {
 	width: 47%;
-	height:210rpx;
+	height: 210rpx;
 	padding: 1.9% 3%;
 	box-sizing: border-box;
 	float: left;
 	margin-bottom: 40rpx;
-	margin:0 1.5% 40rpx;
+	margin: 0 1.5% 40rpx;
 }
 
 .nots p {
@@ -600,26 +631,29 @@ page {
 	color: #fff;
 	font-size: 38rpx;
 	width: 98.5%;
-	margin:0 ;
+	margin: 0;
 	line-height: 90rpx;
 	height: 90rpx;
 }
-.btn-xk{
+
+.btn-xk {
 	color: #42B14B;
 	border: 1px solid #42B14B;
 	height: 90rpx;
 	line-height: 90rpx;
-	margin:0 1% ;
+	margin: 0 1%;
 	background-color: #fff;
 	font-size: 28rpx;
-	padding:0 10rpx;
+	padding: 0 10rpx;
 }
-.btn-qx{
+
+.btn-qx {
 	background-color: #EEEEEE;
 	color: #B0B0B0;
 	line-height: 90rpx;
 	height: 90rpx;
 }
+
 .pays-bj .curr.selected {
 	border-color: #338869;
 	background: linear-gradient(74deg, #f0fcf1 0%, #e2fee5 100%);
@@ -684,9 +718,9 @@ page {
 	font-size: 32rpx;
 	font-weight: 700;
 	position: absolute;
-	top:0;
+	top: 0;
 	left: 0;
-	width:96%;
+	width: 96%;
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
 	z-index: 99;
@@ -738,7 +772,7 @@ uni-button:after {
 	font-size: 60rpx;
 	line-height: 80rpx;
 	font-weight: 700;
-	letter-spacing:-2px;
+	letter-spacing: -2px;
 }
 
 .voucher view text {
@@ -809,65 +843,73 @@ uni-button:after {
 	font-size: 32rpx;
 	font-weight: 700;
 	line-height: 56rpx;
-	color:#333;
-	height: 112rpx;
+	color: #333;
+	height: 90rpx;
 	overflow: hidden;
-	text-overflow: ellipsis; 
+	text-overflow: ellipsis;
 }
-.limit .h3 text{
-	color:#333;
+
+.limit .h3 text {
+	color: #333;
 	font-size: 32rpx;
 }
+
 .limit text {
 	color: #B0B0B0;
 	font-size: 26rpx;
 }
 
-.poly-box{
+.poly-box {
 	display: inline-flex !important;
 	flex-wrap: wrap !important;
-	justify-content:center !important;
+	justify-content: center !important;
 	gap: 10px;
 	align-items: center !important;
 	width: 60% !important;
 }
 
-.poly-text{
+.poly-text {
 	position: absolute;
 	bottom: 8%;
 }
-.canvasdiv{
+
+.canvasdiv {
 	position: fixed;
-	top:50%;
+	top: 50%;
 	left: 50%;
-	transform: translate(-50%,-50%);
+	transform: translate(-50%, -50%);
 	z-index: 99;
 }
 
-.shoppbag .h8{
+.shoppbag .h8 {
 	width: 100%;
 }
-.shoppbag .h8 label{
+
+.shoppbag .h8 label {
 	margin-right: 5%;
 }
-.shoppbag .lists{
-	width:94%;
-	padding:3% 0;
+
+.shoppbag .lists {
+	width: 94%;
+	padding: 3% 0;
 }
-.shoppbag .conlst{
+
+.shoppbag .conlst {
 	display: flex;
 	flex-direction: column;
-	width:100%;
+	width: 100%;
 	height: auto;
 	margin-bottom: 2%;
 }
-.shoppbag .conlst label{
+
+.shoppbag .conlst label {
 	display: flex;
 	justify-content: space-between;
 	font-weight: 600;
 	line-height: 60rpx;
 }
-.shoppbag .conlst view{
+
+.shoppbag .conlst view {
 	display: flex;
 	justify-content: space-between;
 	color: #999;

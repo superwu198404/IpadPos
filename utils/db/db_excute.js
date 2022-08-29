@@ -50,8 +50,7 @@ var existsSqllite = function() {
 }
 
 // 监听数据库是否开启 return type : Boolean
-var isOpen = function() 
-{
+var isOpen = function() {
 	return plus.sqlite.isOpenDatabase({
 		name: name,
 		path: path
@@ -127,33 +126,33 @@ var selectSql = function(sqlCode) {
 var mySqllite = function() {
 	this.name = "ipad";
 	this.path = "_doc/ipad.db";
-	var that  =this;
+	var that = this;
 	///作为 opentran方法 pm_operation的参数选型
 	var tranEnum = {
 		commit: "commit",
 		rollback: "rollback",
 		begin: "begin"
 	}
-/* 	var dbOperTionEnum = {
-		isOpenDatabase: "isOpenDatabase",
-		openDatabase: "openDatabase",
-		selectSql: "selectSql",
-		closeDatabase: "closeDatabase",
-		executeSql: "executeSql",
-		transaction: "transaction"
-	}
-//["isOpenDatabase","openDatabase","closeDatabase","transaction","executeSql","selectSql","getCallbackIDByFunction"]
+	/* 	var dbOperTionEnum = {
+			isOpenDatabase: "isOpenDatabase",
+			openDatabase: "openDatabase",
+			selectSql: "selectSql",
+			closeDatabase: "closeDatabase",
+			executeSql: "executeSql",
+			transaction: "transaction"
+		}
+	//["isOpenDatabase","openDatabase","closeDatabase","transaction","executeSql","selectSql","getCallbackIDByFunction"]
 
-var  inputParm =function(input_pm)
-{
-    
-	//this.name ="";
-	//this.path  ="";
-	//this.operation="";
-	//this.sql ="";
-   return  plus.sqlite[input_pm+"Options"];						 
-   // Vue.set(this,'fail',failf);
-} */
+	var  inputParm =function(input_pm)
+	{
+	    
+		//this.name ="";
+		//this.path  ="";
+		//this.operation="";
+		//this.sql ="";
+	   return  plus.sqlite[input_pm+"Options"];						 
+	   // Vue.set(this,'fail',failf);
+	} */
 	/* var getOperationPromise =   function(pm_dboperation, otherParm) 
 	{
 		       
@@ -209,164 +208,163 @@ var  inputParm =function(input_pm)
 		});
 	};
 	this.exists = isopen;
-	
+
 	var open = function(msg) {
 		msg = msg | "正在进行操作";
 		uni.showLoading({
 			title: msg,
 			mask: true
 		})
-		
-		if (isopen()) 
-		{
+
+		if (isopen()) {
 			console.log("已经打开");
-			return  new Promise(
-			        (resolve, reject) => 
-					{
-						return resolve({
-							code: true,
-							msg: "已经打开了"})
-						})
-		}
-		else
-		{
+			return new Promise(
+			 (resolve, reject) => {
+					return resolve({
+						code: true,
+						msg: "已经打开了"
+					})
+				})
+		} else {
 			console.log("未打开");
 			return new Promise((resolve, reject) => {
-					      // 修改表数据
-					      plus.sqlite.openDatabase({
-					        name: that.name,
-							path:that.path,
-					        success(e) 
-							{
-						    console.log("openDatabase:ok"+JSON.stringify(e));
-					          return resolve({
-					          	code: true,
-					          	msg: e});
-					          },
-					        fail(e) 
-							{
-							   console.log("openDatabase:err"+JSON.stringify(e));
-					          return resolve({
-					          	code: false,
-					          	msg: e});
-					          }
-					        
-					    })
+				// 修改表数据
+				plus.sqlite.openDatabase({
+					name: that.name,
+					path: that.path,
+					success(e) {
+						console.log("openDatabase:ok" + JSON.stringify(e));
+						return resolve({
+							code: true,
+							msg: e
+						});
+					},
+					fail(e) {
+						console.log("openDatabase:err" + JSON.stringify(e));
+						return resolve({
+							code: false,
+							msg: e
+						});
+					}
+
+				})
 			})
 		};
 	};
 	this.open = open;
-	
-	var close =  function() 
-	{
+
+	var close = function() {
 		return new Promise((resolve, reject) => {
-				      // 修改表数据
-				      plus.sqlite.closeDatabase({
-				        name: that.name,
-				        success(e) {
-					    console.log("close:okkkk"+JSON.stringify(e));
-				          return resolve({
-				          	code: true,
-				          	msg: e});
-				          },
-				        fail(e) {
-						  console.log("close:errrrrrr"+JSON.stringify(e));
-				          return resolve({
-				          	code: false,
-				          	msg: e});
-				          }  })
+			// 修改表数据
+			plus.sqlite.closeDatabase({
+				name: that.name,
+				success(e) {
+					console.log("close:okkkk" + JSON.stringify(e));
+					return resolve({
+						code: true,
+						msg: e
+					});
+				},
+				fail(e) {
+					console.log("close:errrrrrr" + JSON.stringify(e));
+					return resolve({
+						code: false,
+						msg: e
+					});
+				}
+			})
 		})
 	};
 
-	
-	
-	var exec  =function(pm_sql){
+
+
+	var exec = function(pm_sql) {
 		return new Promise((resolve, reject) => {
-		      // 修改表数据
-		      plus.sqlite.executeSql({
-		        name: that.name,
-		        sql: pm_sql,
-		        success(e) {
-			    //console.log("executeSql:okkkk"+JSON.stringify(e));
-		          return resolve({
-		          	code: true,
-		          	msg: e});
-		          },
-		        fail(e) {
-			      console.log("executeSql:errrrrrr"+pm_sql +JSON.stringify(e));
-		          return resolve({
-		          	code: false,
-		          	msg: e});
-		          }
-		        
-		    })
-	  })
-	 }
-	var qry = function(pm_sql) 
-	{
+		 // 修改表数据
+			plus.sqlite.executeSql({
+				name: that.name,
+				sql: pm_sql,
+				success(e) {
+					//console.log("executeSql:okkkk"+JSON.stringify(e));
+					return resolve({
+						code: true,
+						msg: e
+					});
+				},
+				fail(e) {
+					console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
+					return resolve({
+						code: false,
+						msg: e
+					});
+				}
+
+			})
+		})
+	}
+	var qry = function(pm_sql) {
 		return new Promise((resolve, reject) => {
-				      // 修改表数据
-				      plus.sqlite.selectSql({
-				        name: that.name,
-				        sql: pm_sql,
-				        success(e) {
-					    console.log("selectSql:okkkk");
-				          return resolve({
-				          	code: true,
-				          	msg: e});
-				          },
-				        fail(e) {
-						  console.log("selectSql:errrrrrr"+JSON.stringify(e));
-				          return resolve({
-				          	code: false,
-				          	msg: e});
-				          }
-				        
-				    })
+			// 修改表数据
+			plus.sqlite.selectSql({
+				name: that.name,
+				sql: pm_sql,
+				success(e) {
+					console.log("selectSql:okkkk");
+					return resolve({
+						code: true,
+						msg: e
+					});
+				},
+				fail(e) {
+					console.log("selectSql:errrrrrr" + JSON.stringify(e));
+					return resolve({
+						code: false,
+						msg: e
+					});
+				}
+
+			})
 		})
 	}
 
-	var tran =  function(pm_str) 
-	{
+	var tran = function(pm_str) {
 		return new Promise((resolve, reject) => {
-		plus.sqlite.transaction({
+			plus.sqlite.transaction({
 				name: that.name,
 				operation: pm_str,
 				success(e) {
-				console.log(pm_str+JSON.stringify(e));
-				  return resolve({
-				  	code: true,
-				  	msg: e});
-				  },
+					console.log(pm_str + JSON.stringify(e));
+					return resolve({
+						code: true,
+						msg: e
+					});
+				},
 				fail(e) {
-				   console.log(pm_str+JSON.stringify(e));
-				  return resolve({
-				  	code: false,
-				  	msg: e});
-				  }
-			  });
+					console.log(pm_str + JSON.stringify(e));
+					return resolve({
+						code: false,
+						msg: e
+					});
+				}
+			});
 		})
-		
+
 	}
 
-	var callBackCloseLoading =  function(res, infun, msg) {
+	var callBackCloseLoading = function(res, infun, msg) {
 		// uni.hideLoading();
 		// return infun(res)
-		if (msg)
-		{
+		if (msg) {
 			uni.hideLoading();
 		}
 		let ret
-		if (infun) 
-		{
+		if (infun) {
 			//console.log("进入方法了" + infun)
 			return infun(res)
-		} 
-		else 
-		{
-			ret= res;
+		} else {
+			ret = res;
 		}
-		
+
 		return ret;
 	};
 
@@ -374,76 +372,65 @@ var  inputParm =function(input_pm)
 	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail) {
 		var retcode;
 
-		retcode=  await open(pm_msg);
-		   console.log("open:"+JSON.stringify( retcode));
-		 if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
-      	
-	   retcode=	 await tran(tranEnum.begin);
-	      console.log("tran:"+JSON.stringify( retcode));
-		 if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
-		for (var i = 0; i < sqlArray.length; i++) 
-		{
-			
+		retcode = await open(pm_msg);
+		console.log("open:" + JSON.stringify(retcode));
+		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
+
+		retcode = await tran(tranEnum.begin);
+		console.log("tran:" + JSON.stringify(retcode));
+		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
+		for (var i = 0; i < sqlArray.length; i++) {
+
 			retcode = await exec(sqlArray[i]);
-			
-			if (!retcode.code) 
-			{
+
+			if (!retcode.code) {
 				//console.log(i+"exec:"+JSON.stringify( retcode));
-				if(retcode.msg.code===-1404)
-				{
+				if (retcode.msg.code === -1404) {
 					continue;
 				}
 				await tran(tranEnum.rollback);
-				return  callBackCloseLoading(retcode, fail, pm_msg);
+				return callBackCloseLoading(retcode, fail, pm_msg);
 			}
 		}
-	    retcode= await tran(tranEnum.commit);
-		if (!retcode.code) 
-		{
-		    tran(tranEnum.rollback);
-			return   callBackCloseLoading(retcode, fail, pm_msg);
+		retcode = await tran(tranEnum.commit);
+		if (!retcode.code) {
+			tran(tranEnum.rollback);
+			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
 		//await close();
-	
+
 		return callBackCloseLoading(retcode, success, pm_msg);
-		 
+
 	};
 
 
-	this.executeQry = async function(sql, pm_msg, success, fail) 
-	{
+	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("executeQryOpen:"+JSON.stringify(retcode));
+		console.log("executeQryOpen:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("executeQry:"+JSON.stringify(sql));
+		console.log("executeQry:" + JSON.stringify(sql));
 		retcode = await qry(sql);
-		if (retcode.code) 
-		{
-			return  callBackCloseLoading(retcode, success,pm_msg);
-		} 
-		else 
-		{
-			return   callBackCloseLoading(retcode, fail,pm_msg);
+		if (retcode.code) {
+			return callBackCloseLoading(retcode, success, pm_msg);
+		} else {
+			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
 	}
 
-	this.executeDml = async function(sql, pm_msg, success, fail) 
-	{
-		var retcode = 
-		{
+	this.executeDml = async function(sql, pm_msg, success, fail) {
+		var retcode = {
 			code: true,
 			msg: "默认打开"
 		};
 		//console.log("数据库状态" + isopen())
 		await open(pm_msg);
-		
+
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
-		console.log("返回值="+JSON.stringify(retcode)+"[sql]"+sql);
+		console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
 		//await close();
-		if (retcode.code) 
-		{
+		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);
 			//await close();
 			return callBackCloseLoading(retcode, success, pm_msg);
@@ -455,12 +442,12 @@ var  inputParm =function(input_pm)
 	}
 }
 
-var get = function() 
-{
+var get = function() {
 	return new mySqllite();
 }
 
 
 export default {
-
+	get,
+	close: closeSqllite
 }
