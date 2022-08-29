@@ -536,7 +536,7 @@
 				console.log(that.mainSale.Storeid);
 				console.log("开始设置基础的销售类型");
 				that.mainSale.setDeftype();
-				xs_sp_init.spInit(that.khid,res=>
+				xs_sp_init.loadSaleSP.loadSp(that.khid,res=>
 				{
 					  
 					  that.mainSale.setAllSpList(res);

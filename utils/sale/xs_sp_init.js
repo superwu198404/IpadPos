@@ -29,7 +29,7 @@ var loadSaleSP  =
 		 newarrList=  pm_arr.map( 
 		 item=> {  
 			let py   =  item.pinyin;
-			console.log(item.pinyin)
+			console.log("数组的结构"+JSON.stringify(item))
 			let flag="";
 			for(let x=0;x<py.length;x++)
 			{
@@ -192,5 +192,5 @@ var loadSaleSP  =
 
 export default 
  {
- 	spInit :  loadSaleSP.loadSp
+    loadSaleSP
  }
