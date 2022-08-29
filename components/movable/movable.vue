@@ -63,7 +63,7 @@
 		created: function() {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
-			console.log("传入的消息集合1：", that._msgDatas);
+			console.log("传入的业务消息集合：", that.msgDatas);
 			// uni.getSystemInfo({
 			// 	success: function(res) {
 			// 		console.log("窗口信息：", res.screenWidth);
@@ -77,6 +77,7 @@
 				var _this = this
 				uni.getSystemInfl({
 					success: function(res) {
+						console.log("屏幕宽度：", res);
 						x = res.windowWidth
 					}
 
