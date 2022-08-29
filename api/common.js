@@ -390,8 +390,9 @@ var QueryBatch = async function(sqls) {
 
 //查询sql
 var Query = async function(sql) {
-	let data = null,db_instance = db.get();
-	if(!db_instance.exists()) db_instance.open()//如果关闭则打开连接
+	let data = null,
+		db_instance = db.get();
+	if (!db_instance.exists()) db_instance.open() //如果关闭则打开连接
 	await db.get().executeQry(sql, "查询中...", function(res) {
 		data = res.msg;
 	}, function(err) {
@@ -571,24 +572,30 @@ var GetPOSCS = async function(e, func) {
 
 //获取缓存中的POS参数
 var GetPOSCS_Local = async function(e) {
-	let str;
-	let arr = util.getStorage("POSCS");
-	console.log("缓存参数组数据:", arr);
-	if (!arr || arr.length == 0) {
-		await GetPOSCS(getApp().globalData.store.KHID, res => {
-			arr = res.msg;
-			let obj = arr.find((r) => r.POSCS == e);
-			if (obj) {
-				str = obj.POSCSNR;
-			}
-		});
-	} else {
-		let obj = arr.find((r) => r.POSCS == e);
-		if (obj) {
-			str = obj.POSCSNR;
-		}
+	// let str;
+	// let arr = util.getStorage("POSCS");
+	// console.log("缓存参数组数据:", arr);
+	// if (!arr || arr.length == 0) {
+	// 	await GetPOSCS(getApp().globalData.store.KHID, res => {
+	// 		arr = res.msg;
+	// 		let obj = arr.find((r) => r.POSCS == e);
+	// 		if (obj) {
+	// 			str = obj.POSCSNR;
+	// 		}
+	// 	});
+	// } else {
+	// 	let obj = arr.find((r) => r.POSCS == e);
+	// 	if (obj) {
+	// 		str = obj.POSCSNR;
+	// 	}
+	// }
+	//return str;
+
+	let obj = util.getStorage("sysParam");
+	if (obj) {
+		return obj[e];
 	}
-	return str;
+	return "";
 }
 //支付行为
 var actTypeEnum = {
@@ -605,14 +612,16 @@ var ywTypeEnum = {
 var DelSale = function(e) { //khid
 	let day = 10; //默认十天
 	// GetPOSCS(e, res => {
-	let arr = util.getStorage("POSCS");
-	console.log("参数组数据:", arr);
-	if (arr && arr.length > 0) {
-		let obj = arr.find((r) => r.POSCS == 'SJBLTS');
-		if (obj) {
-			day = obj.POSCSNR;
-		}
-	}
+	// let arr = util.getStorage("POSCS");
+	// console.log("参数组数据:", arr);
+	// if (arr && arr.length > 0) {
+	// 	let obj = arr.find((r) => r.POSCS == 'SJBLTS');
+	// 	if (obj) {
+	// 		day = obj.POSCSNR;
+	// 	}
+	// }
+	let obj = util.getStorage("sysParam");
+	day = obj.SJBLTS || 10; //数据保留天数
 	// })
 	let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
 	// let sql = "select * from sale002 where bill in (" + sql1 + ")";

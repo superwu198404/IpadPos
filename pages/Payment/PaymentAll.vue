@@ -163,7 +163,7 @@
 								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
-										</image> 
+										</image>
 									</view>
 								</label>
 								<label class="poly-text">
@@ -921,7 +921,7 @@
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
-				console.log("[PayHandle]Info:",info);
+				console.log("[PayHandle]Info:", info);
 				console.log("[PayHandle]判断支付信息...");
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
@@ -1118,8 +1118,8 @@
 					that = this;
 					this.Products = prev_page_param.Products;
 					this.Discount = Number(prev_page_param.Discount).toFixed(2); //折扣信息
-					this.PayWayList = (function(){
-						if(util.getStorage('PayWayList'))
+					this.PayWayList = (function() {
+						if (util.getStorage('PayWayList'))
 							return util.getStorage('PayWayList');
 						else
 							return prev_page_param.PayWayList;
@@ -1399,12 +1399,14 @@
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
-				let arr = util.getStorage("POSCS");
-				console.log("水吧商品编码:", arr);
-				let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				// let arr = util.getStorage("POSCS");
+				// console.log("水吧商品编码:", arr);
+				// let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				let obj = util.getStorage("sysParam");
 				let bmArr = [];
-				if (obj) {
-					bmArr = obj.POSCSNR.split(',');
+				if (obj && obj.SBLBBM) {
+					console.log("水吧商品编码:", obj.SBLBBM);
+					bmArr = obj.SBLBBM.split(',');
 				}
 				if (that.Products.length > 0) {
 					that.sbsp_arr = that.Products.filter((r) => {
@@ -1426,18 +1428,19 @@
 				window.vue = this;
 			}
 			this.paramInit();
-			if(!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common.GetZFRULE();//初始化支付规则（如果没有的话）
+			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
+				.GetZFRULE(); //初始化支付规则（如果没有的话）
 		},
 		mounted() {}
 	}
 </script>
 
 <style>
-	.refund-more-box{
+	.refund-more-box {
 		display: flex;
 	}
-	
-	.refund-reset{
+
+	.refund-reset {
 		background-color: var(--green);
 		color: white;
 		border-radius: 5px;
@@ -1447,23 +1450,23 @@
 		justify-content: center;
 		box-sizing: border-box;
 	}
-	
-	.refund-text{
+
+	.refund-text {
 		display: inline-flex;
 		align-items: center;
 	}
-	
+
 	.refund-icon {
-	    width: 15px;
-	    height: 15px;
+		width: 15px;
+		height: 15px;
 		display: inline-block;
 		background-size: cover;
 		background-image: url('@/images/loading.png');
 		filter: brightness(10);
 		margin-left: 6px;
 	}
-	
-	.refund-loading{
+
+	.refund-loading {
 		animation: 1.5s rotate infinite linear;
 	}
 </style>

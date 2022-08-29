@@ -101,13 +101,14 @@ var getGSKHINFO = (gsid, khid) => {
 	// await common.GetPOSCS(khid, r => {
 	// 	console.log("POSCS查询结果", r)；
 	// })
-	let arr = util.getStorage("POSCS");
-	console.log("POSCS查询结果:", arr);
-	let obj = arr.find((r) => r.POSCS == 'KJGSFW');
+	// let arr = util.getStorage("POSCS");
+	// console.log("POSCS查询结果:", arr);
+	// let obj = arr.find((r) => r.POSCS == 'KJGSFW');
+	let obj = util.getStorage("sysParam");
 	let Gskhinfo = " in ('" + gsid + "',";
 	try {
 		let addgsstr = "";
-		let strgsz = obj.POSCSNR; //QxDict[KJGSFW];
+		let strgsz = obj.KJGSFW; //QxDict[KJGSFW];
 		let arraygs = strgsz.Split(',');
 		for (let i = 0; i < arraygs.Length; i++) {
 			addgsstr += "'" + arraygs[i] + "',";

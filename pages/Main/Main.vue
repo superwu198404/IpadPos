@@ -509,8 +509,8 @@
 			</view>
 		</view>
 
-		<ShopCart v-if="showSale" :_Params="meta" :_Order="ShopCarOrder" :_Products="ShopCarProduct" :_PayDatas="ShopCarPayment"
-			@_CloseSale="CloseSale"></ShopCart>
+		<ShopCart v-if="showSale" :_Params="meta" :_Order="ShopCarOrder" :_Products="ShopCarProduct"
+			:_PayDatas="ShopCarPayment" @_CloseSale="CloseSale"></ShopCart>
 	</view>
 </template>
 
@@ -582,7 +582,7 @@
 		},
 		methods: {
 			Show: function() {
-				console.log("[Show]参数:",this.meta ?? {});
+				console.log("[Show]参数:", this.meta ?? {});
 				if (this.meta.params) { //是否存在参数
 					this.ShopCarOrder = this.meta.params.order;
 					this.ShopCarProduct = this.meta.params.goods;
@@ -808,16 +808,24 @@
 			} else {
 				that.yn_hy = false;
 			}
-			let arr = util.getStorage("POSCS");
-			if (arr && arr.length > 0) {
-				let obj1 = arr.find((r) => r.POSCS == 'YN_LRHY');
-				if (obj1 && obj1.POSCSNR && obj1.POSCSNR == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
-					setTimeout(e => {
-						uni.navigateTo({
-							url: "../MemberLogin/MemberLogin"
-						})
-					}, 1000);
-				}
+			// let arr = util.getStorage("POSCS");
+			// if (arr && arr.length > 0) {
+			// 	let obj1 = arr.find((r) => r.POSCS == 'YN_LRHY');
+			// 	if (obj1 && obj1.POSCSNR && obj1.POSCSNR == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
+			// 		setTimeout(e => {
+			// 			uni.navigateTo({
+			// 				url: "../MemberLogin/MemberLogin"
+			// 			})
+			// 		}, 1000);
+			// 	}
+			// }
+			let obj = util.getStorage("sysParam");
+			if (obj && obj.YN_LRHY == 'Y' && !that.yn_hy) { //终端参数控制了需要跳转到会员登录且没登录过会员
+				setTimeout(e => {
+					uni.navigateTo({
+						url: "../MemberLogin/MemberLogin"
+					})
+				}, 1000);
 			}
 		}
 	}
