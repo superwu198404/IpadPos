@@ -360,7 +360,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 			spname: sale2_arr[i].STR5, //商品名称
 			qty: sale2_arr[i].QTY, //商品数量
 			price: sale2_arr[i].PRICE, //商品价格
-			net: sale2_arr[i].NET, //商品金额
+			net: nnvl(sale2_arr[i].NET,0), //商品金额
 			unit: sale2_arr[i].STR7, //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
 		};
@@ -891,9 +891,24 @@ const dnvl = function(pb_obj, pm_default) {
 	return new_obj;
 }
 
+//返回string类型
+const defStr = function(pb_obj, pm_default){
+	let new_obj = "";
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || pb_obj == NaN) {
+		new_obj = pm_default;
+	} else {
+		try {
+			new_obj = pb_obj;
+		} catch (e) {
+			new_obj = "";
+		}
+	}
+	return new_obj;
+}
+
 const nnvl = function(pb_obj, pm_default) {
 	let new_obj = 0;
-	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || pb_obj == NaN) {
 		new_obj = pm_default;
 	} else {
 		try {
@@ -1076,5 +1091,6 @@ module.exports = {
 	cxZkType: cxZkType,
 	cxZkTj: cxZkTj,
 	toStr: toStr,
-	TryParse: TryParse
+	TryParse: TryParse,
+	defStr: defStr
 };
