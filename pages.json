@@ -70,6 +70,14 @@
 
 		},
 		{
+			"path": "pages/mainSale/mainSale",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		
+		},
+		{
 			"path": "pages/hyinfo/index",
 			"style": {
 				"navigationBarTitleText": "",

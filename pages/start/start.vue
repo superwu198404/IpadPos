@@ -29,6 +29,7 @@
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
 		<button @click="toPrinter">蓝牙与打印</button> -->
+		<button @click="toMainSale">进入销售界面</button>
 	</view>
 </template>
 <style>
@@ -127,7 +128,7 @@
 				initok: false,
 				errstr: "",
 				tx001: null,
-				khid: "K200QTD005", //'K0101QT2',//108通讯 测试使用
+				khid: "K210QTD003", //'K0101QT2',//108通讯 测试使用
 				posid: "1", //"8",//108通讯 测试使用
 				yninit: false,
 				showmsg: "门店基础数据初始化"
@@ -155,11 +156,27 @@
 				if (store && JSON.stringify(store) != "{}") {
 					that.khid = store.KHID;
 					that.posid = store.POSID;
-				}
+				}*/
 			},
 			toDbqry: function() {
 				uni.navigateTo({
 					url: "/pages/sqlitetest/sqlitetest"
+				});
+			},
+			toIndex: function() {
+				uni.navigateTo({
+					url: "/pages/index/index"
+				});
+			},
+			toMainSale:function()
+			{
+				uni.navigateTo({
+					url: "/pages/mainSale/mainSale"
+				});
+			},
+			toPrinter: function() {
+				uni.navigateTo({
+					url: "/pages/xprinter/home"
 				});
 			},
 			startx: function() {

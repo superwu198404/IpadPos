@@ -316,7 +316,7 @@ var  inputParm =function(input_pm)
 				          	msg: e});
 				          },
 				        fail(e) {
-						  console.log("selectSql:errrrrrr");
+						  console.log("selectSql:errrrrrr"+JSON.stringify(e));
 				          return resolve({
 				          	code: false,
 				          	msg: e});
@@ -455,7 +455,8 @@ var  inputParm =function(input_pm)
 	}
 }
 
-var get = function() {
+var get = function() 
+{
 	return new mySqllite();
 }
 

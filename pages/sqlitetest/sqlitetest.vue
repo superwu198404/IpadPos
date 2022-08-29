@@ -5,7 +5,7 @@
 			<button @click="closeVshow">关闭:{{clickRowAndcol}}</button>
 		</view>
 		<view>
-			<input style="height: 150px;width: 100%;"  v-model="sql"  placeholder="请输入SQL语句" />
+			<textarea  style="height: 150px;width: 100%;"  v-model="sql"  placeholder="请输入SQL语句" />
 			<label style="display:block;width: 100%;border: 1px solid;"  v-model="errTxt"  disabled="true" >{{errTxt}}</label>
 			<view style="display: flex;" >
 				<button class="bx"  @click="exec">查询ttt</button>
@@ -65,7 +65,7 @@
 		data() {
 			return {
 				    alldata:[],
-				    sql:"select * from dapzcs_nr where id_nr in('YN_ZFBKBQ')",
+				    sql:"",
 					sqltable:false,
 				    showAll:false,
 					OrderByType:{},
@@ -78,8 +78,24 @@
 			},
 		methods: 
 		{
+			onload()
+			{
+				 console.log("load")
+				this.sql=
+"SELECT  substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.pinyin,SM.ZLID plid,PLDA.SNAME plname, \
+	                 0 ynshowlist , '' specslist, \
+	  					 1 ynAddPro,'' addlist  \
+	                 FROM SPDA S1,SPKHDA SM,PLDA  \
+	  					WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID  \
+	  			    AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  \
+	  			    AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='K210QTD003' \
+	  				AND EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK=(select dqid from khda  where  khid ='K210QTD003') AND SM.SPID = KXPSX.MATNR )"; 
+		
+		 console.log(this.sql)
+		 },
 			adddata()
 			{
+			  
 			   let addnum =100;
 			   if(this.mydata.length >=this.alldata.length)
 			   {

@@ -10,57 +10,29 @@
 			<view class="logo">
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
-			<view class="menu">
-				<view class="curr">
-					<image class="xz" src="../../images/xiaoshou-hui.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/xiaoshou.png" mode="widthFix"></image>
-					<text>销售</text>
-				</view>
-				<view>
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-				<view>
-					<image class="xz" src="../../images/xz-ydtq.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/wxz-ydtq.png" mode="widthFix"></image>
-					<text>预定提取</text>
-				</view>
-				<view>
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>外卖单</text>
-				</view>
-				<view>
-					<image class="xz" src="../../images/yuding.png" mode="widthFix"></image>
-					<image class="wx" src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>线上订单</text>
+			<view class="menu" >
+				<view  v-for="(item, index) in saleAdd" >
+					<view  :class="mainSale.currentType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
+						<image class="xz" :src="item.iconHui" mode="widthFix"></image>
+						<image class="wx" :src="item.iconCurr" mode="widthFix"></image>
+						<text>{{item.nameSale}}</text>
+					</view>
 				</view>
 				<view>
 					<image @click="Moreand()" class="xz" src="../../images/xz-th.png" mode="widthFix"></image>
 					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
 					<text @click="Moreand()">退单业务</text>
-					<view class="chargeback" v-if="Chargeback">
-						<label class="currs">
-							<image class="xz" src="../../images/xstd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/xstd-wxz.png" mode="widthFix"></image>
-							<text>销售退单</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/ydqx.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/ydqx-wxz.png" mode="widthFix"></image>
-							<text>预订取消</text>
-						</label>
-						<label>
-							<image class="xz" src="../../images/sxtd.png" mode="widthFix"></image>
-							<image class="wx" src="../../images/sxtd-wxz.png" mode="widthFix"></image>
-							<text>赊销退单</text>
+					<view class="chargeback" v-if="(item, index) in saleSub">
+						<label :class="mainSale.currentType.xstype== item.xstype?'currs':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"  >
+							<image class="xz" :src="item.iconHui"  mode="widthFix"></image>
+							<image class="wx" :src="item.iconCurr"  mode="widthFix"></image>
+							<text>{{item.nameSale}}</text>
 						</label>
 					</view>
 									
 				</view>
 				<view>
-					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
+					<image class="xz"  src="../../images/xz-xx.png" mode="widthFix"></image>
 					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
 					<text>消息</text>
 				</view>
@@ -84,7 +56,7 @@
 				</view>
 				<view class="stores">
 					<view class="checkout">
-						<label><image src="../../images/dx-mendian.png" mode="widthFix"></image>门店名称</label>
+						<label><image src="../../images/dx-mendian.png" mode="widthFix"></image></label>
 						<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3</label>
 					</view>
 					<view class="account">
@@ -102,7 +74,7 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
+								<image src="../../images/dx-dw.png" mode="widthFix"></image> 本店热销
 								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 							</view>
 							<view class="classifys">
@@ -520,6 +492,8 @@
 </template>
 
 <script>
+	import mysale     from  '@/utils/sale/baseSale.js';
+	import xs_sp_init from  '@/utils/sale/xs_sp_init.js';
 	export default {
 		data() {
 			return {
@@ -529,17 +503,54 @@
 				Shoppingbags:false,
 				Chargeback:false,
 				coupon_list: [],
+				mainSale:null,
+				khid:"K210QTD003",
+				saleAdd:[],
+				saleSub:[]
 			}
 		},
 		methods: {
-			
-			Statements: function(e) {				
-					this.statements=!this.statements
-				
+			onLoad()
+			{
+				console.log("开始");
+				let  YnsaleAdd=true;
+			    var that  =this;
+			    for(let item  in  mysale.XsTypeObj )
+				{
+					console.log(item);
+					if(item =="seleTh")
+					{
+						YnsaleAdd =false;
+					}
+					if(YnsaleAdd)
+					{
+						 this.saleAdd.push(mysale.XsTypeObj[item])
+					}
+					else
+					{
+						 this.saleSub.push(mysale.XsTypeObj[item])
+					}
+			    }
+				console.log("开始构造函数完成");
+				that.mainSale = new mysale.GetSale(that.khid,'007',that,"mainSale");
+				console.log(that.mainSale.Storeid);
+				console.log("开始设置基础的销售类型");
+				that.mainSale.setDeftype();
+				xs_sp_init.spInit(that.khid,res=>
+				{
+					  
+					  that.mainSale.setAllSpList(res);
+				},"K01000" )
+			   
+			    
 			},
-			Letters: function(e) {
-					this.Alphabetical= true
-				
+			Statements: function(e)
+			{				
+			   this.statements=!this.statements
+			},
+			Letters: function(e)   
+			{
+				this.Alphabetical= true
 			},
 			Memberlogin: function(e) {
 				this.Memberinfo= true,

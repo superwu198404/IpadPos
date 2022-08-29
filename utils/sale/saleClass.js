@@ -1,4 +1,4 @@
- var  SALE001= function:
+ var  sale001= function()
  {
    this.CLTIME= null;
    this.CUSTID= null;
@@ -63,9 +63,10 @@
    this.CUSTMNAME= null;
    this.s002  =[];
    this.s003  =[];
+   this.s008 =[];
  }
  
- var  SALE002= function:
+ var  sale002= function()
  {this.SALEDATE= null;
    this.XPDGCOM= null;
    this.XPDGSTR= null;
@@ -122,7 +123,7 @@
    this.SALETIME= null;
  }
  
- var  SALE003= function:
+ var  sale003= function()
  {this.SALEDATE= null;
    this.DISC= 0
    this.ZKLX= null;
@@ -160,7 +161,26 @@
    this.SALETIME= null;
  }
  
- saleBillType =
+ var sale008= function()
+ {
+	  this.SALEDATE=null;
+	  this.NOTE=null;
+	  this.PRICE=0;
+	  this.QTY=0;
+	  this.OPTMAT="";
+	  this.CSTCODE="";
+	  this.OPTCODE="";
+	  this.ATTNAME="";
+	  this.ATTCODE="";
+	  this.NO=0;
+	  this.SPID="";
+	  this.BILL="";
+	  this.POSID="";
+	  this.KHID="";
+	  this.GCID="";
+	  this.SALETIME=""
+  }
+ var saleBillType =
        [
            "NONE",
            //门零现场商品销售订单
@@ -204,5 +224,6 @@
  	sale001,
  	sale002,
  	sale003,
+	sale008,
 	saleBillType
  }
