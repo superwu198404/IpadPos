@@ -231,12 +231,13 @@
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
 				let detailArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
-				let arr = util.getStorage("POSCS");
-				console.log("参数组数据:", arr);
-				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
+				// let arr = util.getStorage("POSCS");
+				// console.log("参数组数据:", arr);
+				// let obj = arr.find((r) => r.POSCS == 'BHLBBM');
+				let obj = util.getStorage("sysParam");
 				let bmArr = [];
-				if (obj) {
-					bmArr = obj.POSCSNR.split(',');
+				if (obj && obj.BHLBBM) {
+					bmArr = obj.BHLBBM.split(',');
 				}
 				if (detailArr.length > 0) {
 					detailArr.map((r) => {

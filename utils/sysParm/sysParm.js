@@ -1,4 +1,5 @@
 import sqlLite from '@/utils/db/db_excute.js';
+import util from '../util';
 /*
 参数内容如下 经过上述代码 读取参数值的是偶使用
 1	服务器指向	FWZX	1  app.globalData.$sysParm.FWZX
@@ -77,32 +78,32 @@ import sqlLite from '@/utils/db/db_excute.js';
 73	刷脸支付	SLZF	ZFB20
 74	刷脸仟吉会员卡	SLQJHYK	PAYCARD
 */
-var sysParm=
-{
-	getSysParm:function(pm_khid)
-			{
-				 let $sqlLite  =sqlLite.get();
-				 let cssql = "SELECT  D1.SNAME,P1.POSCS,P1.POSCSNR\
+var sysParam = {
+	getSysParam: function(pm_khid) {
+		let $sqlLite = sqlLite.get();
+		let cssql = "SELECT  D1.SNAME,P1.POSCS,P1.POSCSNR\
 							   FROM     POSCSZMX P1 ,DAPZCS_NR D1\
 								   WHERE         D1.ID ='POSCS'\
 							AND       D1.ID_NR =P1.POSCS\
-							AND       P1.POSCSZID =(select poscszid from khda  where  khid ='${pm_khid}' )\
+							AND       P1.POSCSZID =(select poscszid from khda  where  khid ='" + pm_khid + "' )\
 						  ORDER BY  P1.SZ";
-						  
-				$sqlLite.executeQry(cssql,"正在获取系统参数",(res)=>
-				{  
-					let app= getApp();
-					var prarmKeyValue = {}；
-					res.forEach(item=>{ prarmKeyValue[item.POSCS] = item.POSCSNR})
-					console.log(JSON.stringify(prarmKeyValue))
-					app.globalData.$sysParm=prarmKeyValue;
-				},null);
-			},	
-	
+
+		$sqlLite.executeQry(cssql, "正在获取系统参数", (res) => {
+			console.log("查询系统参数sql：", cssql);
+			console.log("查询系统参数结果：", res);
+			// let app = getApp();
+			var paramKeyValue = {};
+			res.msg.forEach(item => {
+				paramKeyValue[item.POSCS] = item.POSCSNR
+			})
+			console.log("系统参数：", JSON.stringify(paramKeyValue));
+			// app.globalData.sysParam = paramKeyValue;
+			util.setStorage("sysParam", paramKeyValue); //可以持久化存储
+		}, null);
+	},
+
 }
 
 export default {
-	init:sysParm.getSysParm
+	init: sysParam.getSysParam
 }
-
-

@@ -1405,12 +1405,14 @@
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
-				let arr = util.getStorage("POSCS");
-				console.log("水吧商品编码:", arr);
-				let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				// let arr = util.getStorage("POSCS");
+				// console.log("水吧商品编码:", arr);
+				// let obj = arr.find((r) => r.POSCS == 'SBLBBM');
+				let obj = util.getStorage("sysParam");
 				let bmArr = [];
-				if (obj) {
-					bmArr = obj.POSCSNR.split(',');
+				if (obj && obj.SBLBBM) {
+					console.log("水吧商品编码:", obj.SBLBBM);
+					bmArr = obj.SBLBBM.split(',');
 				}
 				if (that.Products.length > 0) {
 					that.sbsp_arr = that.Products.filter((r) => {

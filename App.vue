@@ -2,6 +2,7 @@
 	import common from '@/api/common.js';
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
+	import _init from '@/api/business/init.js';
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
@@ -101,8 +102,20 @@
 
 			// #ifdef APP-PLUS  
 			// util.removeStorage("Init_Data");
-			let Init_Data = util.getStorage("Init_Data");
-			if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
+			// let Init_Data = util.getStorage("Init_Data");
+			// if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
+			// 	uni.reLaunch({
+			// 		url: "/pages/Login/Login",
+			// 		success: () => {
+			// 			//跳转完页面后再关闭启动页
+			// 			plus.navigator.closeSplashscreen();
+			// 		}
+			// 	})
+			// } else {
+			// 	//存在则关闭启动页进入首页
+			// 	plus.navigator.closeSplashscreen();
+			// }
+			_init.YN_Init(res => {
 				uni.reLaunch({
 					url: "/pages/Login/Login",
 					success: () => {
@@ -110,10 +123,10 @@
 						plus.navigator.closeSplashscreen();
 					}
 				})
-			} else {
+			}, err => {
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
-			}
+			})
 			// #endif
 		},
 		onShow: function() {

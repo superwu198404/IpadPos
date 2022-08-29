@@ -436,12 +436,12 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			}
 
 			let retyyslclass = retCxClassForDtRow(cxbill, "YYSL");
-			//console.log("retyyslclass 1",retyyslclass);
+			console.log("retyyslclass 1",retyyslclass);
 			if (retyyslclass != null) {
 				testallcx(cxbill, retyyslclass);
 			}
 			let retclssid = retCxClassForDtRow(cxbill, "YYSL");
-			//console.log("retyyslclass 2",retyyslclass);
+			console.log("retyyslclass 2",retyyslclass);
 			if (retclssid == null) {
 				continue;
 			}
@@ -585,10 +585,11 @@ const testallcx = function(bill, pmList) {
 	let Lcm = 0;
 	let cx = cxdict[bill];
 	let currentlv = 0;
+	console.log("testallcx",cx)
 	if (cx.YN_JSLB) {
 		currentlv = parseInt(cx.SubList[0].sublv) - 1;
 	}
-	let subzqty = getSubidZqty(pmList, cx, yysl);
+	let subzqty = getSubidZqty(pmList, cx, "YYSL");
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
 		if (Lcm > 0) {
@@ -603,9 +604,9 @@ const testallcx = function(bill, pmList) {
 				continue;
 			} else {
 				let dr = {};
-				dr[rowid] = i.ToString();
+				dr[rowid] = i.toString();
 				dr[KnCxbill] = bill;
-				CxSelectTip.push(dr);
+				cxSelectTip.push(dr);
 			}
 		}
 	}
@@ -681,8 +682,8 @@ const JustOnelbcx = function(spid, bill, saledate,cx, pmList, qtytype) {
 					}
 				} else {
 					if (currqty * oldprice - Tjqty > 0) {
-						Fsnet += Math.Ceiling(Tjqty / oldprice) * oldprice;
-						//Fsnet += Math.Ceiling(currqty / oldprice) * oldprice;
+						Fsnet += Math.ceil(Tjqty / oldprice) * oldprice;
+						//Fsnet += Math.ceil(currqty / oldprice) * oldprice;
 						Tjqty = 0;
 					} else {
 						Fsnet += currqty * oldprice;
@@ -770,11 +771,11 @@ const Jslbcx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 					Spprice = oldprice;
 
 					if (ynzs == false && currqty * Spprice >= Tjqty) {
-						fsqty = Math.Round(Tjqty / Spprice, 2);
+						fsqty = Math.floor((Tjqty / Spprice)*100)/100;
 						Tjqty = 0;
 					} else if (currqty * Spprice >= Tjqty) //&& ynzs == true
 					{
-						fsqty = parseInt(Math.Ceiling(Tjqty / Spprice));
+						fsqty = parseInt(Math.ceil(Tjqty / Spprice));
 						Tjqty = 0;
 					} else {
 						fsqty = currqty;
@@ -902,15 +903,15 @@ const FreeZhCx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 				}
 			}
 			if (cx.OneSp) {
-				fsqty = GetOneSp_Num(pmList, cx, subid, currqty, Spprice);
+				fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
 				if (fsqty < 0) {
 					fsqty = 0;
 				}
 			} else {
 				if (currqty * Spprice >= Tjqty && ynzs == false) {
-					fsqty = Math.Round(Tjqty / Spprice, 2);
+					fsqty = Math.floor((Tjqty / Spprice)*100)/100;
 				} else if (currqty * Spprice >= Tjqty) {
-					fsqty = Math.Ceiling(Tjqty / Spprice);
+					fsqty = Math.ceil(Tjqty / Spprice);
 				} else {
 					fsqty = currqty;
 				}
@@ -930,8 +931,31 @@ const FreeZhCx = function(spid, bill,saledate,cx, pmList, qtytype, spdt) {
 	}
 }
 
+//因为单行产品的特殊性导致  再以金额为条件  进行计算的时候  返回的数量为正常  返回的金额 只能为条件金额的倍数
+const getOneSpNetForQty = function(cx, subid, pm_fsqty, pm_price){
+	if (cx.OneSp)
+	{
+	    let subx = cx.SubList[subid];
+	    if (subx.ZkTj == "Net")
+	    {
+	        let OneRowNet = cx.SubList[subid].NetCondition[0];
+	        let LcmRowNet = (int)(pm_fsqty * pm_price / OneRowNet);
+	        return LcmRowNet * cx.SubList[subid].NetCondition[0];
+	    }
+	    else
+	    {
+
+	        return pm_fsqty;
+	    }
+	}
+	else
+	{
+	    return pm_fsqty * pm_price;
+	}
+}
+
 //获取单行计算的促销产品的某一行的数量和结果
-const GetOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
+const getOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
 	let syqty = -1;
 	try {
 
@@ -943,7 +967,7 @@ const GetOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
 					return -1;
 				} else {
 					let OneRowNetqty = parseInt(syqty_buff * oldprcle / OneRowNet);
-					syqty = Math.Ceiling(OneRowNetqty * OneRowNet / oldprcle);
+					syqty = Math.ceil(OneRowNetqty * OneRowNet / oldprcle);
 				}
 			} else {
 				if (syqty_buff < cx.SubList[subid].QtyCondition[0]) {
@@ -993,14 +1017,13 @@ const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0), 2) + Math
-						.Round(((1 - cxsub.discnum[level] / 100) * price * fsqty), 2);
+					cxbilldts[i][disc] = Math.floor(xprinter_util.nnvl(cxbilldts[i][disc], 0)*100)/100 + Math.floor((((1 - cxsub.discnum[level] / 100) * price * fsqty))*100)/100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
 				case "Subnet":
 					let subdisc = 0;
 					if (cx.OneSp) {
-						let getfsnet = GetOneSpNetForQty(cx, subid, fsqty, price);
+						let getfsnet = getOneSpNetForQty(cx, subid, fsqty, price);
 						let sublcm = 0;
 						if (cxsub.ZkTj == "Net") {
 							sublcm = parseInt(getfsnet / cxsub.NetCondition[0]);
@@ -1009,7 +1032,7 @@ const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm)
 						}
 						subdisc = sublcm * cxsub.discnet[level];
 					} else {
-						subdisc = Math.Round(price * fsqty * cxsub.discnet[level] * lcm / subznet, 2);
+						subdisc = Math.floor((price * fsqty * cxsub.discnet[level] * lcm / subznet)*100)/100;
 					}
 					//计算积分
 					//积分相关的时候不计算折扣
@@ -1030,8 +1053,7 @@ const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm)
 						}
 					} else {
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0) + subdisc,
-							2);
+						cxbilldts[i][disc] = Math.floor((xprinter_util.nnvl(cxbilldts[i][disc], 0) + subdisc)*100)/100;
 					}
 					break;
 				case "zjprice":
@@ -1057,8 +1079,8 @@ const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm)
 						}
 						//计算积分
 						else {
-							cxbilldts[i][disc] = Math.Round(SqlHelper.NNVL(cxbilldts[i][disc], 0) + (
-								price - zjprice) * fsqty, 2);
+							cxbilldts[i][disc] = Math.floor((SqlHelper.NNVL(cxbilldts[i][disc], 0) + (
+								price - zjprice) * fsqty)*100)/100;
 							newprice = zjprice;
 						}
 					}
@@ -1072,10 +1094,10 @@ const SubCxQty = function(spid,  bill, saledate,pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.hasOwnProperty(i)) {
-						cxbilldts[i][disc] = Math.Round(xprinter_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
-							i] * Math.Round(price * (1 - cxsub.minDisc), 2), 2);
+						cxbilldts[i][disc] = Math.floor((xprinter_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
+							i] * Math.floor((price * (1 - cxsub.minDisc))*100)/100)*100)/100;
 						if (fsqty != 0) {
-							newprice = (fsqty * price - MinRow[i] * Math.Round(price * (1 - cxsub.minDisc), 2)) /
+							newprice = (fsqty * price - MinRow[i] * Math.floor((price * (1 - cxsub.minDisc))*100)/100) /
 								fsqty;
 						} else {
 							newprice = price;
@@ -1223,8 +1245,8 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (cx.upleave > 0 && (jfnum + yyjf) > cx.upleave) {
 		return;
 	}
-	net = Math.Round(net, 2);
-	jfnum = Math.Round(jfnum, 2);
+	net = Math.floor(net*100)/100;
+	jfnum = Math.floor(jfnum*100)/100;
 	///累加金额
 	jfinfo.dhnet += net;
 	///累加积分
@@ -1272,7 +1294,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		if (subid == null) {
 			continue;
 		}
-		let oldprcle = xprinter_util.nnvl(cxbilldts[i][oprice], 0);
+		let oldprcle = xprinter_util.nnvl(cxbilldts[i]["OPRICE"], 0);
 		let syqty = xprinter_util.nnvl(cxbilldts[i][sltype], 0);
 		let syqty_buff = syqty;
 		if (syqty == 0) {
@@ -1281,14 +1303,14 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		let subx = cx.SubList[subid];
 		if (cx.OneSp) {
 			///此时返回的是发生的数量
-			syqty = GetOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
+			syqty = getOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
 			if (syqty < 0) {
 				continue;
 			}
 		}
 
 		if (subx.ZkTj == "Net") {
-			syqty = GetOneSpNetForQty(cx, subid, syqty, oldprcle);
+			syqty = getOneSpNetForQty(cx, subid, syqty, oldprcle);
 		}
 		if (zqty.hasOwnProperty(subid)) {
 			zqty[subid] = zqty[subid] + syqty;

@@ -18,8 +18,7 @@
 					<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 				</label>
 				<label><text>*配送方式：</text>
-					<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
-						:disabled="YN_THTYPE">
+					<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index" :disabled="YN_THTYPE">
 						<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 					</picker>
 				</label>
@@ -32,8 +31,7 @@
 				<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 				</label>
 				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
-						@blur="GetAddr()" /></label>
+				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
 				<label><text>*提货日期：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
 					<picker mode="date" fields="day" @change="dateChange">
@@ -94,7 +92,7 @@
 				<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
 				</view>
 			</view>
-	
+
 			<view class="atlas">
 				<div class="map"></div>
 			</view>
@@ -117,10 +115,10 @@
 
 	var that;
 	export default {
-		props:{
+		props: {
 			show: {
-				type:Boolean,
-				default:true
+				type: Boolean,
+				default: true
 			}
 		},
 		data() {
@@ -198,7 +196,7 @@
 			this.DataInit();
 		},
 		methods: {
-			DataInit:async function() {
+			DataInit: async function() {
 				that = this;
 				await that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
@@ -210,10 +208,14 @@
 						that.THKHDATA = res.msg;
 					});
 				}
-				let arr = util.getStorage("POSCS");
-				let obj1 = arr.find((r) => r.POSCS == 'YDZXJG');
-				if (obj1 && obj1.POSCSNR) {
-					that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
+				// let arr = util.getStorage("POSCS");
+				// let obj1 = arr.find((r) => r.POSCS == 'YDZXJG');
+				// if (obj1 && obj1.POSCSNR) {
+				// 	that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
+				// }
+				let obj = util.getStorage("sysParam");
+				if (obj && obj.YDZXJG) {
+					that.YDJGSJ = obj.YDZXJG * 60; //小时化分
 				}
 				this.showReserve();
 			},
@@ -287,11 +289,12 @@
 			showReserve: function() {
 				that.Empty();
 				that.statements = true;
-				let arr = util.getStorage("POSCS");
-				let obj = arr.find((r) => r.POSCS == 'BHLBBM');
+				// let arr = util.getStorage("POSCS");
+				// let obj = arr.find((r) => r.POSCS == 'BHLBBM');
+				let obj = util.getStorage("sysParam");
 				let bmArr = [];
-				if (obj) {
-					bmArr = obj.POSCSNR.split(',');
+				if (obj && obj.BHLBBM) {
+					bmArr = obj.BHLBBM.split(',');
 				}
 				if (that.Products.length > 0) {
 					that.Products.map((r) => {
@@ -318,7 +321,7 @@
 				this.$emit("Close");
 			},
 			//获取配送类型
-			getTHTYPE:async function() {
+			getTHTYPE: async function() {
 				await common.GetDapzcs("THTYPE", res => {
 					console.log("[ReserveDrawer]提货类型数据：", res);
 					if (res.code && res.msg.length > 0) {
@@ -549,7 +552,7 @@
 						return;
 					}
 				}
-				if (that.Order.THTYPE == '2') {//现卖限制时间不能早于当前和19点以后
+				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 						util.simpleMsg("提货时间小于当前时间", true);
 						return;

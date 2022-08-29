@@ -4,8 +4,28 @@ import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 import dateformat from '@/utils/dateformat.js';
+import _sysParam from '@/utils/sysParm/sysParm.js';
 
 var app = getApp();
+
+//校验是否有初始化过
+var YN_Init = function(sucFunc, errFunc) {
+	let sql = "select count(1) count from SPKHDA"
+	db.get().executeQry(sql, "校验中...", res => {
+		console.log("SPKHDA查询结果：", res);
+		if (res.code && res.msg.length > 0 && res.msg[0].count > 0) {
+			if (sucFunc)
+				sucFunc(res);
+			return;
+		}
+		if (errFunc)
+			errFunc(res);
+	}, err => {
+		console.log("SPKHDA查询结果1：", err);
+		if (errFunc)
+			errFunc(err);
+	})
+}
 
 //获取支付方式
 var GetPayWay = async function(e) {
@@ -20,7 +40,7 @@ var GetPayWay = async function(e) {
 					return;
 				}
 				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i]
-				.SNAME);
+					.SNAME);
 				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
 				if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
 					continue;
@@ -96,10 +116,13 @@ var InitData = async function(khid, func) {
 	await common.GetPZCS();
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
+	//初始化系统参数
+	_sysParam.init(khid);
 	if (func)
 		func();
 }
 
 export default {
-	InitData
+	InitData,
+	YN_Init
 }

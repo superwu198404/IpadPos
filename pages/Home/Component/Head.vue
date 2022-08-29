@@ -1079,7 +1079,7 @@
 		padding: 0;
 		background-color: #42B14B;
 		color: #fff;
-		font-size: 16rpx;
+		font-size: 28rpx;
 		margin: 0;
 	}
 

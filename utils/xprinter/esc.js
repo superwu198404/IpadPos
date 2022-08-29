@@ -1637,7 +1637,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商品名称       数量  单价  金额  属性  ");
+		jpPrinter.setText("商品名称       数量  单价  属性  ");
 		jpPrinter.setPrint(); //打印并换行
 		
 		//console.log("外卖打印接收数据 data.goodsList", data.goodsList);
@@ -1652,7 +1652,7 @@ var jpPrinter = {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.pack.toString(), 6) + util
-				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.net.toString(), 6) + util.getComputedByteLen(
+				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(
 					item.unit, 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
