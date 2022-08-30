@@ -315,8 +315,8 @@ const Createcx = async (sale02) => {
 		//获取每个商品中的值
 		let cxdiscvalue = parseFloat(xprinter_util.nnvl(cxbilldts[i].DISC, 0)
 			.toFixed(2));
-		let spnet = parseFloat(sale02_arr[i].ProPrice.toFixed(2)) * parseFloat(sale02_arr[i].ProNum
-			.toFixed(2));
+		let spnet = parseFloat(sale02_arr[i].ProPrice).toFixed(2) * parseFloat(sale02_arr[i].ProNum
+			).toFixed(2);
 		let jfnum = xprinter_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = xprinter_util.snvl(cxbilldts[i].CXZT, "");
 		if (cxdiscvalue >= 0) {
@@ -347,6 +347,7 @@ const Createcx = async (sale02) => {
 		}
 		cxfs = cxfsdt;
 	}
+	console.log("sale02_arr new",sale02_arr);
 	return sale02_arr.sort((p1, p2) => {
 		return p1.Sort - p2.Sort; //升序
 	});
@@ -364,6 +365,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 			//增加
 			if (yn_zdcx) {
 				let dr = {};
+				dr.SPID = itemid;
 				dr.SYSL = qty;
 				dr.YYSL = qty;
 				dr.FSCS = qty;
@@ -376,6 +378,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				let spdt = xprinter_util.retDtforConditions(dscxsp, "SPID", itemid);
 				console.log("spdt", spdt);
 				let dr = {};
+				dr.SPID = itemid;
 				dr.SYSL = qty;
 				dr.YYSL = qty;
 				dr.FSCS = qty;
@@ -438,7 +441,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 		//console.log("cxbilldData first",cxbilldData);	
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
-		for (let k = 6; k < cxbilldDataKeys.length; k++) {
+		for (let k = 7; k < cxbilldDataKeys.length; k++) {
 			console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
 			console.log("cxbilldDataKeys cxbill", cxbill)
