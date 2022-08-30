@@ -3,6 +3,7 @@ import util from '@/utils/util.js';
 import db from '@/utils/db/db_excute.js';
 import sql from '@/utils/db/create_sql.js';
 import create_sql from '@/utils/db/create_sql.js';
+import dateformat from '../utils/dateformat';
 
 //初始化数据
 var InitData = function(e) {
@@ -609,30 +610,20 @@ var ywTypeEnum = {
 //删除过期的销售单
 var DelSale = function(e) { //khid
 	let day = 10; //默认十天
-	// GetPOSCS(e, res => {
-	// let arr = util.getStorage("POSCS");
-	// console.log("参数组数据:", arr);
-	// if (arr && arr.length > 0) {
-	// 	let obj = arr.find((r) => r.POSCS == 'SJBLTS');
-	// 	if (obj) {
-	// 		day = obj.POSCSNR;
-	// 	}
-	// }
 	let obj = util.getStorage("sysParam");
 	day = obj.SJBLTS || 10; //数据保留天数
-	// })
-	let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
-	// let sql = "select * from sale002 where bill in (" + sql1 + ")";
-	// db.get().executeQry(sql1, "", res => {
-	// 	console.log("查询销售单成功:", res);
-	// }, err => {
-	// 	console.log("查询销售单失败:", err);
-	// })
-	// return;
+	// let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
+	// let arr1 = [
+	// 	"delete from sale001 where date(saledate)<date('now', '-" + day + " day')",
+	// 	"delete from sale002 where bill in (" + sql1 + ")",
+	// 	"delete from sale003 where bill in (" + sql1 + ")"
+	// ];
+	console.log("业务数据保留天数：", dateformat.getYMD(-day));
 	let arr1 = [
-		"delete from sale001 where date(saledate)<date('now', '-" + day + " day')",
-		"delete from sale002 where bill in (" + sql1 + ")",
-		"delete from sale003 where bill in (" + sql1 + ")"
+		"delete from sale001 where yn_sc='Y' and saledate<" + dateformat.getYMD(-day),
+		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day),
+		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day),
+		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day)
 	];
 	db.get().executeDml(arr1, "", res => {
 		console.log("本地销售单删除成功：" + day, res);

@@ -150,7 +150,8 @@
 									PHONE: 18171372662,
 									JGID: "K200",
 									STIME: "7",
-									ETIME: "19"
+									ETIME: "19",
+									OPENFLAG: 1, //签到状态
 								}
 								util.setStorage("store", store);
 								uni.navigateTo({
