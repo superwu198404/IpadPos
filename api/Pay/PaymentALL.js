@@ -43,11 +43,13 @@ var CreateData = function(pt, t, m, d) {
 				}
 			}
 		} else {
-			console.log("PayObj为空 pt：", pt + PayInfo);
+			console.log("[CreateData]PayObj为空 pt：", pt);
+			console.log("[CreateData]PayObj为空 PayInfo：", PayInfo);
 			util.simpleMsg("抱歉，请重新扫码", true);
 		}
 	} else {
-		console.log("pt,或者PayInfo为空：", pt + PayInfo);
+		console.log("[CreateData]PayObj为空 pt：", pt);
+		console.log("[CreateData]PayObj为空 PayInfo：", PayInfo);
 		util.simpleMsg("抱歉，请重新扫码", true);
 	}
 	return data;
@@ -330,7 +332,7 @@ var kengeePay = {
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
-			Req.asyncFuncOne(CreateData("MIS", "查询中...", "ReadCard", {
+			Req.asyncFuncOne(CreateData("TL", "查询中...", "ReadCard", {//这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
 				store_id: config.KEY,
 				terminalCode: config.NOTE
 			}), (res) => { //返回卡号和磁道信息
