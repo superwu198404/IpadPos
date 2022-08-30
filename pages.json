@@ -15,6 +15,14 @@
 			}
 		},
 		{
+			"path": "pages/mainSale/mainSale",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "主销售界面",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/Home/Home",
 			"style": {
 				"titleNView": false,
