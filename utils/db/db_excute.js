@@ -407,9 +407,9 @@ var mySqllite = function() {
 	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("executeQryOpen:" + JSON.stringify(retcode));
+		console.log("executeQryOpen:",retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("executeQry:" + JSON.stringify(sql));
+		console.log("executeQry:",[sql]);
 		retcode = await qry(sql);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);

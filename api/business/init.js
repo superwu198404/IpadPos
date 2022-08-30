@@ -31,7 +31,7 @@ var YN_Init = function(sucFunc, errFunc) {
 var GetPayWay = async function(e) {
 	let PayWayList = [];
 	await common.GetPayWay(e, function(res) {
-		console.log("本地查到的付款信息：", res);
+		// console.log("本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
 			console.log("支付规则信息：", PayInfo);

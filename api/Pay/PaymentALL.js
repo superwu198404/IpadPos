@@ -466,7 +466,7 @@ var pointPay = {
 				hyid: "1000311647",
 				amount: body.point,
 				trade_no: body.out_trade_no,
-				money: body.point_money
+				money: body.point_money * 100
 			}
 		}, func, func);
 	},
