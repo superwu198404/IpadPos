@@ -42,6 +42,18 @@ let hymen = {};
 let sysl = "SYSL";
 ///某一行产品原有的数量
 let yysl = "YYSL";
+let rowid = "ROWID";
+let KnCxbill = "BILL";
+///某一个促销单发生促销的数量
+let fscs = "FSCS";
+//原始售价字段
+let oprice = "OPRICE";
+//促销后的折扣金额
+let disc = "DISC";
+let jfnum = "jfnum";
+
+//保存已经发生的促销
+let fsdcx = new Array();
 
 ///从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
@@ -259,7 +271,7 @@ const Cxdict = async () => {
 const Createcx = async (sale02) => {
 	await Cxdict();
 	let sale02_arr = [{
-			"ProCode": "000000001040200053",
+			"ProCode": "1010100001",
 			"ProName": "水果沙拉",
 			"ProNum": "1",
 			"ProPrice": "1",
@@ -271,7 +283,7 @@ const Createcx = async (sale02) => {
 		{
 			"ProCode": "1010100004",
 			"ProName": "礼盒2号",
-			"ProNum": "1",
+			"ProNum": "10",
 			"ProPrice": "2",
 			"Disc": "0",
 			"ProSalePrice": "2",
@@ -440,19 +452,20 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 				continue;
 			}
 
-			let retyyslclass = retCxClassForDtRow(cxbill, "YYSL");
+			let retyyslclass = retCxClassForDtRow(cxbill, yysl);
 			console.log("retyyslclass 1", retyyslclass);
 			if (retyyslclass != null) {
 				testallcx(cxbill, retyyslclass);
 			}
-			let retclssid = retCxClassForDtRow(cxbill, "YYSL");
+			let retclssid = retCxClassForDtRow(cxbill, sysl);
 			console.log("retyyslclass 2", retclssid);
 			if (retclssid == null) {
 				continue;
 			}
-			cxClasCompute(spid, bill, saledate,cxbill, retclssid, "SYSL");
+			cxClasCompute(spid, bill, saledate,cxbill, retclssid, sysl);
 		}
 	}
+	console.log("cxbilldts new 11111",cxbilldts);
 	return cxbilldts;
 }
 
@@ -548,7 +561,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 		for (let i = 0; i < cxbilldts.length; i++) {
 			let classid = xprinter_util.snvl(cxbilldts[i][bill], null);
 			let syqty = xprinter_util.snvl(cxbilldts[i][slttpe], 0);
-			//console.log("retCxClassForDtRow syqty",classid + "||" + syqty);
+			console.log("retCxClassForDtRow syqty",classid + "||" + syqty);
 			///发生参数是临时变量每次使用的时候要清理一下
 			cxbilldts[i]["FSCS"] = 0;
 			if (c1.ynzd == false) {
@@ -575,7 +588,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 	} catch (e) {
 
 	}
-	if (classnum < c1.SubList.length) {
+	if (classnum < Object.keys(c1.SubList).length) {
 		ynnull = true;
 	}
 	if (ynnull) {
@@ -599,6 +612,7 @@ const testallcx = function(bill, pmList) {
 	let subzqty = getSubidZqty(pmList, cx, yysl);
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
+		console.log("testallcx Lcm",Lcm);
 		if (Lcm > 0) {
 			break;
 		} else {
@@ -640,7 +654,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
-		if (cx.SubList.length != 1) {
+		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
 		let subx = cx.SubList[0];
@@ -716,7 +730,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
-		if (cx.SubList.length != 1) {
+		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
 		let subx = cx.SubList[0];
@@ -811,14 +825,15 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 const getLcm = function(zqty, cx1, lv) {
 	let lcm = Number.MAX_SAFE_INTEGER; //Number类型最大值
 	let templcm = 0;
-	console.log("getLcm size",zqty.size+"||"+cx1);
-	if (zqty.size != cx1.SubList.length) {
+	console.log("getLcm size|SubList Count|lv",zqty.size + "||" + Object.keys(cx1.SubList).length + "|" + lv);
+	if (zqty.size != Object.keys(cx1.SubList).length) {
 		return 0;
 	} else {
 		for (let [key, value] of zqty) {
 			console.log("getLcm value",key + "|" + value);
 			let cxqty = value;
 			let subx = cx1.SubList[key];
+			console.log("getLcm subx",subx);
 			if (subx.ZkTj == "Qty") {
 				templcm = parseInt(cxqty / subx.QtyCondition[lv]);
 			} else {
@@ -829,6 +844,7 @@ const getLcm = function(zqty, cx1, lv) {
 			}
 		}
 	}
+	console.log("getLcm lcm",lcm);
 	if (lcm == Number.MAX_SAFE_INTEGER) {
 		return 0;
 	}
@@ -844,6 +860,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		let hashqty = new Map();
 		let subzqty = getSubidZqty(pmList, cx,sysl);
 		Lcm = getLcm(subzqty, cx, 0);
+		console.log("FreeZhCx Lcm",Lcm)
 		if (Lcm == 0) {
 			return;
 		}
@@ -924,6 +941,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			Fsnet.set(subid,Fsnet.get(subid) + fsqty * oldprice);
 			cxbilldts[i][fscs] = fsqty;
 		}
+		console.log("FreeZhCx cxbilldts 111",cxbilldts)
 		SubCxQty(spid, bill, saledate, pmList, cx, Fsnet, 0, Lcm);
 	} catch (e) {
 
@@ -1239,7 +1257,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					}
 				}
 				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm);
-			} catch {
+			} catch(e) {
 
 			}
 
@@ -1467,21 +1485,21 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM) {
 	let i = row;
 	let dr = {};
-	dr[SALEDATE] = saledate;
-	dr[KHID] = app.globalData.store.KHID;
-	dr[GSID] = app.globalData.store.GSID;
-	dr[CXBILL] = cx.CxBill;
-	dr[CLASSID] = subid.substring(cx.CxBill.Length);
-	dr[XSBILL] = bill;
-	dr[SPID] = spid;
-	dr[XSQTY] = fsqty;
-	dr[OPRICE] = price;
-	dr[ONET] = price * fsqty;
-	dr[CXPRICE] = newprice;
-	dr[CXNET] = newprice * fsqty;
-	dr[CXLV] = level + 1;
-	dr[LCM] = PM_LCM;
-	dr[NO] = i;
+	dr["SALEDATE"] = saledate;
+	dr["KHID"] = app.globalData.store.KHID;
+	dr["GSID"] = app.globalData.store.GSID;
+	dr["CXBILL"] = cx.CxBill;
+	dr["CLASSID"] = subid.substring(cx.CxBill.Length);
+	dr["XSBILL"] = bill;
+	dr["SPID"] = spid;
+	dr["XSQTY"] = fsqty;
+	dr["OPRICE"] = price;
+	dr["ONET"] = price * fsqty;
+	dr["CXPRICE"] = newprice;
+	dr["CXNET"] = newprice * fsqty;
+	dr["CXLV"] = level + 1;
+	dr["LCM"] = PM_LCM;
+	dr["NO"] = i;
 	cxfsdt.push(dr);
 }
 
