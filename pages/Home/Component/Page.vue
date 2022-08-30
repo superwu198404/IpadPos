@@ -58,6 +58,12 @@
 		methods: {
 			ToPage: function(e) {
 				console.log("[ToPage]切换:", e);
+				let store = util.getStorage("store");
+				console.log("签到记录：", store.OPENFLAG);
+				if (store.OPENFLAG != '1') {
+					util.simpleMsg("请先进行签到", true);
+					return;
+				}
 				if (e.url_type && e.url_type == 'single') {
 					if (e.name == 'Stress') {
 						util.simpleModal("提示", "重读将销毁已保存的业务数据，是否继续？", res => {

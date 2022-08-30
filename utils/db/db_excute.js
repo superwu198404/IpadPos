@@ -219,7 +219,7 @@ var mySqllite = function() {
 		if (isopen()) {
 			console.log("已经打开");
 			return new Promise(
-			 (resolve, reject) => {
+				(resolve, reject) => {
 					return resolve({
 						code: true,
 						msg: "已经打开了"
@@ -280,7 +280,7 @@ var mySqllite = function() {
 
 	var exec = function(pm_sql) {
 		return new Promise((resolve, reject) => {
-		 // 修改表数据
+			// 修改表数据
 			plus.sqlite.executeSql({
 				name: that.name,
 				sql: pm_sql,
@@ -425,7 +425,7 @@ var mySqllite = function() {
 		};
 		//console.log("数据库状态" + isopen())
 		await open(pm_msg);
-
+		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
 		console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);

@@ -6,19 +6,20 @@
 					<label @click="Orderments()">
 						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>1</text>
 					</label>
-					<view class="orderlist" v-if="orderlist" v-for="(item,index) in msgDatas"
-						@click="ReadMsg(item,index)">
-						<view class="h2" v-if="item.type=='XTIP'">
-							<image src="../../images/xianshangdingd.png"></image>线上订单
-						</view>
-						<view class="h2" v-if="item.type=='PTIP'">
-							<image src="../../images/waimaidan.png"></image>外卖单
-						</view>
-						<view class="h2" v-if="item.type=='JJPT'">
-							<image src="../../images/ydtq.png"></image>预定单
-						</view>
-						<view class="ul">
-							<label><span>●</span>{{item.title}}</label><text>{{item.count}}</text>
+					<view class="orderlist" v-if="orderlist">
+						<view v-for="(item,index) in msgDatas" @click="ReadMsg(item,index)">
+							<view class="h2" v-if="item.type=='XTIP'">
+								<image src="../../images/xianshangdingd.png"></image>线上订单
+							</view>
+							<view class="h2" v-if="item.type=='PTIP'">
+								<image src="../../images/waimaidan.png"></image>外卖单
+							</view>
+							<view class="h2" v-if="item.type=='JJPT'">
+								<image src="../../images/ydtq.png"></image>预定单
+							</view>
+							<view class="ul">
+								<label><span>●</span>{{item.title}}</label><text>{{item.count}}</text>
+							</view>
 						</view>
 					</view>
 				</view>
@@ -37,8 +38,8 @@
 		name: "movable",
 		data() {
 			return {
-				x: 820,
-				y: 550,
+				x: 0,
+				y: 0,
 				x1: 0,
 				x2: 0,
 				y1: 0,
@@ -64,24 +65,18 @@
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			console.log("传入的业务消息集合：", that.msgDatas);
-			// uni.getSystemInfo({
-			// 	success: function(res) {
-			// 		console.log("窗口信息：", res.screenWidth);
-			// 		console.log("窗口信息：", res.screenHeight);
-			// 	}
-			// })
+			uni.getSystemInfo({
+				success: function(res) {
+					console.log("设备信息：", res);
+					that.x = res.screenWidth - 220;
+					console.log("偏移宽度：", that.x);
+				}
+			})
 		},
 		methods: {
 			mounted() {
 				this.$refs.setPlan.open()
 				var _this = this
-				uni.getSystemInfl({
-					success: function(res) {
-						console.log("屏幕宽度：", res);
-						x = res.windowWidth
-					}
-
-				})
 			},
 			Orderments: function(e) {
 				this.orderlist = !this.orderlist;
@@ -90,6 +85,11 @@
 			//消息已读
 			ReadMsg: function(e, i) {
 				console.log("消息点击");
+				let store = util.getStorage("store");
+				if (store.OPENFLAG != '1') {
+					util.simpleMsg("请先进行签到", true);
+					return;
+				}
 				_msg.DelMsg(that.KHID, e, res => {
 					console.log("消息数据已读结果：", res);
 					that.msgDatas.splice(i, 1);

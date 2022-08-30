@@ -156,6 +156,15 @@ var InitStore = function(khid, posid, ryinfo, func) {
 	})
 }
 
+var YN_Sign = function(khid, posid, func) {
+		let store = util.getStorage("store");
+		if(store.OPENFLAG=='1'){
+			util.simpleMsg("今日已签到");
+			return;
+		}
+}
+
+
 export default {
 	GetPassWord,
 	GetKHIDByRYID,
