@@ -253,6 +253,7 @@
 				that.Criterias = false;
 				that.Order = e;
 				let yw_bill = common.CreateBill(that.KHID, that.POSID);
+				console.log("[GetOrderDetails]获取订单详情:",e);
 				_refund.GetOrderDetails(yw_bill, e.BILL, e.SALEDATE, res => {
 					console.log("详情单查询结果:", res);
 					if (res.code && res.msg.length > 0) {

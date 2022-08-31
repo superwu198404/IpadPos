@@ -337,6 +337,7 @@
 				PayData: {}, //付款数据对象
 				PayDatas: [], //付款数据集合
 				Others: {}, //其他数据
+				hyinfo:{}
 			};
 		},
 		created: function() {
