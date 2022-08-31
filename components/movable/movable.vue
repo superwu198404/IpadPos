@@ -4,10 +4,10 @@
 			<movable-view :x="x" :y="y" direction="all" position="position">
 				<view class="ordermes">
 					<label @click="Orderments()">
-						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>1</text>
+						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>{{totalCount}}</text>
 					</label>
 					<view class="orderlist" v-if="orderlist">
-						<view v-for="(item,index) in msgDatas" @click="ReadMsg(item,index)">
+						<view v-for="(item,index) in msgDatas" :key="index" @click="ReadMsg(item,index)">
 							<view class="h2" v-if="item.type=='XTIP'">
 								<image src="../../images/xianshangdingd.png"></image>线上订单
 							</view>
@@ -50,7 +50,8 @@
 				},
 				orderlist: false,
 				msgDatas: [],
-				KHID: getApp().globalData.store.KHID
+				KHID: getApp().globalData.store.KHID,
+				totalCount: 0
 			}
 		},
 		props: {
@@ -59,12 +60,15 @@
 				default () {
 					return [];
 				}
-			}
+			},
 		},
 		created: function() {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			console.log("传入的业务消息集合：", that.msgDatas);
+			that._msgDatas.map(r => {
+				that.totalCount += r.count;
+			})
 			uni.getSystemInfo({
 				success: function(res) {
 					console.log("设备信息：", res);
@@ -78,13 +82,20 @@
 				this.$refs.setPlan.open()
 				var _this = this
 			},
+			doFresh: function() {
+				that.msgDatas = that._msgDatas; //消息数据赋值
+				that._msgDatas.map(r => {
+					that.totalCount += r.count;
+				})
+				console.log("主动调用成功：", that.totalCount);
+			},
 			Orderments: function(e) {
 				this.orderlist = !this.orderlist;
-				console.log("点击消息：", this.orderlist);
+				// console.log("点击消息：", this.orderlist);
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
-				console.log("消息点击");
+				// console.log("消息点击");
 				let store = util.getStorage("store");
 				if (store.OPENFLAG != '1') {
 					util.simpleMsg("请先进行签到", true);
