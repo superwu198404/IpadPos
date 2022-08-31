@@ -163,7 +163,8 @@ var YN_Sign = function(khid, posid, func) {
 		return;
 	}
 }
-var SignOrSignOut = async function(ynqd, openflag, func) {
+
+var SignOrSignOut = async function(ynqd, func) {
 	let salenum = 0,
 		salenet = 0;
 	let sql = "SELECT COUNT(*) SALENUM,SUM(TNET) SALENET FROM  SALE001  WHERE SALEDATE =DATETIME('" + dateformat
@@ -176,9 +177,14 @@ var SignOrSignOut = async function(ynqd, openflag, func) {
 	}, err => {
 
 	})
+	let store = util.getStorage("store");
 	let data = {
+		gsid: store.GSID,
+		khid: store.KHID,
+		posid: store.POSID,
+		ryid: store.RYID,
 		ynqd,
-		openflag,
+		openflag: store.OPENFLAG,
 		salenum,
 		salenet
 	}
@@ -186,7 +192,26 @@ var SignOrSignOut = async function(ynqd, openflag, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+var SignOrSignOutSql = async function(sql, func) {
+	console.log("更新签到sql:", sql);
+	let sqlArr = sql.split(';');
+	await db.get().executeDml()(sqlArr[0], "执行中...", res => {
+		console.log("更新签到sql结果：", res);
+	}, err => {
+		console.log("更新签到sql异常：", err);
+	})
+	await db.get().executeQry(sqlArr[0], "查询中...", res => {
+		if (res.code && res.msg.length > 0) {
+			let store = util.getStorage("store");
+			store.OPENFLAG = res.msg[0].RUN_STATUS;
+			console.log("新的签到数据：", store.OPENFLAG);
+			util.setStorage("store", store);
+			if (func) func(store);
+		}
+	}, err => {
 
+	})
+}
 
 export default {
 	GetPassWord,
@@ -194,5 +219,6 @@ export default {
 	InitStore,
 	UpdatePWD,
 	UpdatePWD_Local,
-	SignOrSignOut
+	SignOrSignOut,
+	SignOrSignOutSql
 }

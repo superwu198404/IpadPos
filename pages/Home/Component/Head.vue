@@ -864,7 +864,20 @@
 			},
 			//签到
 			Sign: function() {
-
+				_login.SignOrSignOut(true, res => {
+					console.log("签到结果：", res);
+					if (res.code) {
+						let store = util.getStorage("store");
+						let data = JSON.parse(res.data);
+						store.OPENFLAG = data.openflag;
+						util.setStorage("store", store);
+						if (data.sql) {
+							_login.SignOrSignOutSql(sql);
+						}
+					} else {
+						util.simpleMsg(res.msg, "none");
+					}
+				})
 			},
 		}
 	}
