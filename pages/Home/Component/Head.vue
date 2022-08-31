@@ -37,7 +37,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-<!-- 					<label>
+					<!-- 					<label>
 						<button @click="Sign()">签到</button>
 					</label> -->
 				</view>
@@ -155,7 +155,7 @@
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-if="YW_MsgData.length>0" :_msgDatas="YW_MsgData"></movable>
+			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
 		</view>
 	</view>
 </template>
@@ -166,6 +166,7 @@
 	import common from '@/api/common.js';
 	import _login from '@/api/business/login.js';
 	import bleConnect from '@/utils/xprinter/bleConnect.js';
+
 	var app = getApp();
 	let that;
 	export default {
@@ -205,6 +206,7 @@
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
+				showYWMsg: false
 			};
 		},
 		// created: function(e) {
@@ -218,8 +220,19 @@
 					return r.type == 'SYSTEM';
 				});
 				that.YW_MsgData = res.filter((r, i) => {
-					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP'); //外卖，外卖预定单，线上
+					//外卖，外卖预定单，线上
+					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
 				});
+				if (that.YW_MsgData.length > 0) {
+					that.showYWMsg = false;
+					console.log("触发没有：");
+					that.$nextTick(() => {
+						console.log("触发没有1：");
+						that.showYWMsg = true;
+					})
+				} else {
+					that.showYWMsg = false;
+				}
 				if (that.XT_MsgData.length > 0) {
 					let newArr = that.XT_MsgData[0].Details.map(r => {
 						return {
