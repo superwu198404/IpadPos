@@ -2,7 +2,7 @@ import Req from '@/utils/request.js';
 import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
 
-var global = getApp().globalData;
+var global = getApp();
 
 var requestAssemble = function(loading_title = "请求中...", options) {
 	return {
@@ -17,8 +17,8 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 			paytype: options.paytype, //"WxPay_ScanCode",
 			method: options.method, //Payment
 			param: {
-				appid: global.appid, //getApp().globalData.appid,
-				gsid: global.store.GSID, //getApp().globalData.store.GSID
+				appid: global.globalData.appid, //getApp().globalData.appid,
+				gsid: global.globalData.store.GSID, //getApp().globalData.store.GSID
 				brand: options.brand,
 				kquser:options.kquser
 				
@@ -49,7 +49,7 @@ const UploadPoint = async function(loading_title, request, success, error) {
 const CouponList = function(loading_title, request, success, error) {
 	let data = requestAssemble(loading_title, {
 		brand: request.brand,
-		kquser: global.kquser,
+		kquser: global.globalData.kquser,
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "CouponList"
@@ -65,7 +65,7 @@ const CouponList = function(loading_title, request, success, error) {
 var QueryHyInfo= function(loading_title, request, success, error) {
 	let data = requestAssemble(loading_title, {
 		brand: request.brand,
-		kquser: global.kquser,
+		kquser: global.globalData.kquser,
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "QueryHyInfo"
