@@ -62,9 +62,16 @@
 				<p><text>已收</text><text>{{isRefund ? refundView.actualAmount : Number(yPayAmount).toFixed(2)}}</text>
 				</p>
 				<p><text>欠款</text><text>{{isRefund ? refundView.debtAmount : debt}}</text></p>
-				<p><text>还需支付</text><text class="pay-center"><span
-							v-if="isRefund">{{ refundView.debtAmount }}</span><input v-if="!isRefund" type="number"
-							:disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" /></text></p>
+				<p>
+					<text>还需支付</text>
+					<text class="pay-center">
+						<span v-if="isRefund">{{ refundView.debtAmount }}</span>
+						<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
+							value="" :key="domRefresh" v-model="dPayAmount" />
+						<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
+							value="" :key="domRefresh" v-model="CashOffset.Score" />
+					</text>
+				</p>
 			</view>
 			<view class="paydetails">
 				<view class="pay-sum">
@@ -245,6 +252,9 @@
 	import _card from '@/api/Pay/ECardPay.js';
 	import _coupon from '@/api/Pay/ECoupon.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
+	import {
+		PointUpload
+	} from '@/bll/Common/bll.js';
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
@@ -285,9 +295,9 @@
 					PayList: [],
 					PayedAmount: 0, //已经完成支付的金额，主要针对从上个页面传入的订单数据的总和（解耦金额计算逻辑）
 				},
-				CashOffset:{
-					Score:1,//抵现的积分数
-					Money:1//抵现的积分数对应的实际金额
+				CashOffset: {
+					Score: 1, //抵现的积分数
+					Money: 0.01 //抵现的积分数对应的实际金额
 				},
 				coupons: false, //卡券弹窗
 				prev_no: 0,
@@ -409,13 +419,19 @@
 				console.log("当前支付类型信息：", this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
+				console.log("[Watch-CurrentPayType]当前类型:", n);
 				this.currentPayInfo = this.PayWayInfo(n); //根据 type 获取支付信息
 				if (n === "SZQ") { //如果用券，则不再允许编辑待付款金额
 					this.dPayAmount = this.toBePaidPrice();
 					this.domForceRefresh();
 					this.allowInput = true;
-				} else
+				} else if (n === "HyJfExchange") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+					this.dPayAmount = this.CashOffset.Money;
+					this.allowInput = true;
+				} else {
+					this.dPayAmount = this.toBePaidPrice();
 					this.allowInput = false;
+				}
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
@@ -481,12 +497,13 @@
 				console.log("sale2", sale2);
 				console.log("sale3", sale3);
 				console.log("sale1 封装中...");
+				console.log("[SaleDataCombine]封装参数TotalAmount:", this.totalAmount);
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
 					SALEDATE: saledate,
 					SALETIME: saletime,
-					TNET: (this.isRefund ? -1 : 1) * this.totalAmount, //总金额（重点）
-					ZNET: (this.isRefund ? -1 : 1) * this.totalAmount,
+					TNET: this.isRefund ? -sale1.TNET : this.totalAmount, //实付金额（重点）
+					ZNET: this.isRefund ? -sale1.ZNET : this.totalAmount, //总金额（重点）
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
@@ -510,10 +527,8 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: parseFloat(item.PRICE).toFixed(2),
-						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.PRICE *
-							item.QTY - item.SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.isRefund ? -item.DISCRATE : item
-							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - item.SKYDISCOUNT).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : item.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
@@ -728,7 +743,7 @@
 			//支付数据处理
 			PayDataHandle: function() {
 				if (common.actTypeEnum.Payment === this.actType) { //如果是支付
-					console.log("初始化 PayList 列表...", this.SALES)
+					console.log("[PayDataHandle]初始化 PayList 列表...", this.SALES)
 					this.PayListInit();
 					this.sale1_obj = this.SALES.sale1;
 					this.sale2_arr = this.SALES.sale2;
@@ -777,10 +792,10 @@
 							DISC: i.DISC //退款使用
 						}, i)
 					}).bind(this));
-					console.log("商品信息循环后：", this.Products);
+					console.log("[SALE2Init]商品信息循环后：", this.Products);
 					this.refundAmountCount(); //退款金额计算
 				}
-				console.log("SALE2 初始化完毕！", this.Products)
+				console.log("[SALE2Init]SALE2 初始化完毕！", this.Products)
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function() {
@@ -840,7 +855,7 @@
 									0), //退款金额
 								total_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
 									0), //退款总金额（兼容微信）
-								point: refundInfo.origin.BMID//兼容积分抵现返还积分
+								point: refundInfo.origin.BMID //兼容积分抵现返还积分
 							}, (function(err) { //如果发生异常（catch）
 								util.simpleMsg(err.msg, true, err);
 							}).bind(that),
@@ -974,26 +989,28 @@
 			orderGenarator: function(payload, type, result, fail) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				console.log("生成订单类型[payload]：", payload);
+				console.log("生成订单类型[result]：", result);
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
 				this.yPayAmount += fail ? 0 : ((function() {
 					if (result.vouchers.length > 0) {
-						console.log("券支付金额：")
+						console.log("[OrderGenarator]券支付金额：")
 						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),
 							card = result.vouchers.filter(i => i.yn_card === 'Y');
 						if (coupon.length > 0) {
-							console.log("券 payload.money：", payload.money)
+							console.log("[OrderGenarator]券 payload.money：", payload.money)
 							let fq = coupon.find(i => i.note === "EXCESS");
 							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) :
 								result
 								.vouchers[0].denomination) / 100;
 						} else {
-							console.log("卡 payload.money：", card)
+							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
 							card.map(i => num += i.pay_amount);
 							return num / 100
 						}
 					} else {
+						console.log("[OrderGenarator]非券支付金额：", payload.money / 100)
 						return (payload.money / 100)
 					}
 				}).bind(this))(); //把支付成功部分金额加上
@@ -1048,6 +1065,21 @@
 			},
 			//订单对象创建
 			orderCreated, //避免后续绑定this指向
+			_scoreConsume:function(){
+				PointUpload({
+					order_no:this.useOrderNoChoice(),
+					sale_order_no:this.sale1_obj?.XS_BILL,
+					member_id:this.isRefund ? hyinfo?.hyId : this.sale1_obj.CUID,
+					product:this.Products,
+					pay_list:this.PayList.map(item => {
+						return {
+							paymentType: item.fkid,
+							payAmount: item.amount
+						}
+					}),
+					mode:this.useOrderTypeChoice()
+				})
+			},
 			//积分操作 
 			scoreConsume: function() {
 				let hyinfo = util.getStorage("hyinfo");
@@ -1120,6 +1152,7 @@
 			//初始化
 			paramInit: function() {
 				var prev_page_param = this.$store.state.location;
+				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
 					that = this;
 					this.Products = prev_page_param.Products;
@@ -1131,20 +1164,23 @@
 							return prev_page_param.PayWayList;
 					})(); //此行注释是由于无法初始化支付途径，为了方便测试所以采用写死数据 
 					this.actType = prev_page_param.actType; //当前行为操作
-					console.log("PayWayList:", this.PayWayList)
+					console.log("[ParamInit]PayWayList:", this.PayWayList)
 					this.hyinfo = prev_page_param.hyinfo;
 					this.out_trade_no_old = prev_page_param.out_trade_no_old; //单号初始化（源代号）
 					this.out_refund_no = prev_page_param.out_refund_no; //退款单号初始化
 					this.out_trade_no = this.out_trade_no_old; //子单号
 					this.isRefund = prev_page_param.actType == common.actTypeEnum.Refund; //如果等于退款行为，则表示退款，否则是支付
-					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
-					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
-					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.PaymentInfos.PayList = prev_page_param?.PayList;
 					this.XS_TYPE = prev_page_param.XS_TYPE;
 					this.BILL_TYPE = prev_page_param.BILL_TYPE;
+					//sale 系列表数据初始化 👇
+					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
+					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
+					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
+					//sale 系列表数据初始化 👆
 					this.RefundDataHandle(); //处理上个页面传入的退单数据
-					this.PayDataHandle(); //处理上个页面传入的支付数据
+					this.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
+					this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数
 					this.GetSBData(); //筛选水吧产品
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
@@ -1161,15 +1197,14 @@
 					console.log("存入单号：", this.$store.state.trade)
 					console.log("支付宝折扣额：", this.ZFBZK)
 				}
-				this.priceCount();
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 			},
 			//总金额计算
-			priceCount: function() {
+			PriceCount: function() {
 				let total = 0;
-				console.log("[PriceCount]商品列表:", this.Products);
-				this.Products.forEach(product => total += (product.AMOUNT || product.NET));
-				// console.log("商品总金额：", this.SKY_DISCOUNT);
+				console.log("[PriceCount]商品列表(sale2):", this.sale2_arr);
+				this.sale2_arr.forEach(product => total += (product.AMOUNT || product.NET));
+				console.log("[PriceCount]商品总金额:", total);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
 				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
@@ -1177,8 +1212,8 @@
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
-				this.Products.forEach(function(item, index, arr) {
-					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
+				this.sale2_arr.forEach(function(item, index, arr) {
+					let high = parseFloat(((item.AMOUNT || item.NET) / total * that.SKY_DISCOUNT).toFixed(2));
 					item.SKYDISCOUNT = high;
 					curDis += high;
 					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
@@ -1187,7 +1222,8 @@
 						item.SKYDISCOUNT += dif;
 					}
 				});
-				console.log("处理分后的商品信息：", this.Products);
+				console.log("[PriceCount]处理分后的商品信息：", this.sale2_arr);
+				console.log("[PriceCount]SKYDISCOUNT值(由于属性被隐藏控制台打印不出来具体内容)：", this.sale2_arr.map(i => i.SKYDISCOUNT));
 			},
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {

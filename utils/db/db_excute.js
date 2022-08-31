@@ -407,9 +407,9 @@ var mySqllite = function() {
 	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("executeQryOpen:" + JSON.stringify(retcode));
+		console.log("executeQryOpen:",retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("executeQry:" + JSON.stringify(sql));
+		console.log("executeQry:",[sql]);
 		retcode = await qry(sql);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);
@@ -428,7 +428,8 @@ var mySqllite = function() {
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
-		console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
+		console.log("[ExecuteDml]返回值:",retcode);
+		console.log("[ExecuteDml]sql:",sql);
 		//await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);

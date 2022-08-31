@@ -89,14 +89,14 @@ var sysParam = {
 						  ORDER BY  P1.SZ";
 
 		$sqlLite.executeQry(cssql, "正在获取系统参数", (res) => {
-			console.log("查询系统参数sql：", cssql);
+			console.log("查询系统参数sql：", [cssql]);
 			console.log("查询系统参数结果：", res);
 			// let app = getApp();
 			var paramKeyValue = {};
 			res.msg.forEach(item => {
 				paramKeyValue[item.POSCS] = item.POSCSNR
 			})
-			console.log("系统参数：", JSON.stringify(paramKeyValue));
+			console.log("系统参数：", paramKeyValue);
 			// app.globalData.sysParam = paramKeyValue;
 			util.setStorage("sysParam", paramKeyValue); //可以持久化存储
 		}, null);

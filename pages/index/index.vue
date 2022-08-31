@@ -554,7 +554,7 @@
 						QTY: (this.isRefund ? -1 : 1) * item.QTY,
 						PRICE: item.PRICE, //payall 追加
 						OPRICE: item.OPRICE,
-						NET: 0, //payall 追加
+						NET: item.PRICE * item.QTY, //payall 追加
 						DISCRATE: 0, //payall 追加
 						YN_SKYDISC: '', //payall 追加
 						DISC: 0, //payall 追加
@@ -572,7 +572,6 @@
 					}, "SKYDISCOUNT");
 				});
 				console.log("after:", this.sale2_arr)
-				console.log("after:", JSON.stringify(this.sale2_arr))
 			},
 			Test: function(e) {
 

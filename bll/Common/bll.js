@@ -1,6 +1,8 @@
 import common from '@/api/common.js';
 import util from '@/utils/util.js';
 import db from '@/utils/db/db_excute.js';
+import dateformat from '@/utils/dateformat.js';
+import member_api from '@/api/hy/MemberInterfaces.js';
 import {
 	Refund,
 	PaymentToRefundSALE001,
@@ -142,7 +144,7 @@ const sale_order_generation_def_params = {
 		sale3: [] //sale3
 	}
 }
-export const SaleOrderGenaration = async function(params = sale_order_generation_def_params,callback) {
+export const SaleOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
 	let result = {
 		code: false,
 		data: null
@@ -173,4 +175,79 @@ export const SaleOrderGenaration = async function(params = sale_order_generation
 		result.data = e;
 		return result;
 	}
+}
+
+/**
+ * 积分上传
+ */
+const point_upload_def_params = {
+	order_no: "", //单号
+	sale_order_no:"",//销售单号，退款才会传入（[主单号]+[下划线]+[序号]，例如:100000001_0）
+	channel: "POS",//平台、渠道（基本固定）
+	member_id:"",//会员id（一般付款取当前的hyid，退单取支付单的hyid）
+	product:[],//标准的 sale2 字段对象数组
+	pay_list:[],//对象数组，对象结构：{ paymentType:"",payAmount:"" },其中 paymentType 是 fkid、payAmount 是支付金额,从 payment 中支付后 paylist 结构就包含了此格式
+	mode:"INCREASE",//积分上传模式：INCREASE-增加，DECREASE-减少
+	request:{}//积分上传参数补充对象
+};
+export const PointUpload = async function(def = point_upload_def_params) {
+	let params = Object.assign(point_upload_def_params, def);//默认参数+传入参数
+	let total_amount = 0;
+	let global = getApp().globalData;
+	let member_info = global.hyinfo;
+	let store = global.store;
+	let result = {
+		code:false,
+		data:null
+	};
+	console.log("[PointUpload]积分上传参数组装开始...",params);
+	let member_request = Object.assign(Object.assign({
+		channel: params.channel,
+		bill: params.order_no, //主订单号
+		zf_bill: params.order_child_no,//子订单号
+		date: dateformat.getYMDS(),
+		productList: params.product.map((item, i) => {
+			total_amount += (item.NET ?? item.AMOUNT);
+			return {
+				lineNumber: i,
+				product: item.BARCODE,
+				category: item.PLID,
+				quantity: item.QTY,
+				userPrice: item.PRICE,
+				basePrice: item.OPRICE,
+				netPrice: (item.NET ?? item.AMOUNT) //存在 sale2 数据传入或者 Product 数据传入，两者金额字段不同
+			}
+		}),
+		payList: params.pay_list,
+		khid: store.KHID,
+		region: store.BMID,
+		kquser: global.kquser,
+		posid: store.POSID,
+		cxbill: "",
+		hyid: params.member_id, //会员id
+		sign: "",
+		time: dateformat.gettimes(),
+		actionType: params.mode //判断积分是扣还是加,values： INCREASE(增加) or DECREASE(减少)
+	},{
+		amount: total_amount?.toFixed(0),
+		orderAmount: total_amount?.toFixed(0),
+		price: total_amount?.toFixed(0),
+		pay_amount: total_amount?.toFixed(0),
+	}), params.request);
+	console.log("[PointUpload]积分上传参数:",member_request);
+	await member_api.UploadPoint("积分上传中...", {
+		brand: global.brand,
+		data: member_request
+	}, (res) => {
+		console.log("[PointUpload]积分上传成功...", res)
+		util.simpleMsg(res.code ? "积分上传成功" : res.msg, res.code ? false : "none");
+		result.code = true;
+		result.data = res;
+	}, (err) => {
+		console.log("[PointUpload]积分上传失败...", err)
+		util.simpleMsg(err.msg, "none");
+		result.code = false;
+		result.data = err;
+	})
+	return result;
 }
