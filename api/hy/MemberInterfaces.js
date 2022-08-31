@@ -29,14 +29,14 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 }
 
 //积分上传
-const UploadPoint = function(loading_title, request, success, error) {
+const UploadPoint = async function(loading_title, request, success, error) {
 	let data = requestAssemble(loading_title, {
 		brand: request.brand,
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "ConsumeScore"
 	});
-	Req.asyncFuncOne(data, function(res) {
+	await Req.asyncFuncOne(data, function(res) {
 		if (success)
 			success(res)
 	}, function(res) {
