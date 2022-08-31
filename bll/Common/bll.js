@@ -155,9 +155,10 @@ export const SaleOrderGenaration = async function(params = sale_order_generation
 			sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
 			sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
 		let sqlString = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"], [sale3, "SALE003"]);
+		let dbo = db.get();
 		console.log("[SaleOrderGenaration]生成的SQL:", sqlString);
-		await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
-		await db.get().executeDml(sqlString, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
+		await dbo.close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+		await dbo.executeDml(sqlString, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
 			result.code = true;
 			result.data = res;
 			if (callback) callback(res);

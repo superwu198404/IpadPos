@@ -339,12 +339,13 @@
 							let sale1 = PaymentToRefundSALE001(refund_data.sale1_obj, config),
 								sale2 = PaymentToRefundSALE002(refund_data.sale2_arr, config),
 								sale3 = PaymentToRefundSALE003(refund_data.sale3_arr, config);
+							let dbo = db.get();
 							console.log("[Confirm-Refund]退款对象数据生成完毕!");
 							let sqls = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"],
 								[sale3, "SALE003"]);
 							console.log("[Confirm-Refund]退款生成的SQL:", sqls);
-							await common.Close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
-							await db.get().executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
+							await dbo.close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
+							await dbo.executeDml(sqls, "[Confirm]退款订单创建中...", (function(res) {
 								if (func) func(res);
 								this.complete = true;
 								console.log("[Confirm]退款订单创建成功!", res);

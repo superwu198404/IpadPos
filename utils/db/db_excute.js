@@ -24,9 +24,11 @@ var closeSqllite = function() {
 		plus.sqlite.closeDatabase({
 			name: name,
 			success(e) {
+				console.log("[CloseSqllite]数据库连接关闭成功!");
 				resolve()
 			},
 			fail(e) {
+				console.log("[CloseSqllite]数据库连接关闭失败!");
 				reject()
 			}
 		})
@@ -210,14 +212,10 @@ var mySqllite = function() {
 	this.exists = isopen;
 
 	var open = function(msg) {
-		msg = msg | "正在进行操作";
-		uni.showLoading({
-			title: msg,
-			mask: true
-		})
-
+		msg = msg || "正在进行操作";
+		console.log("[DBO]检查数据库是否打开...");
 		if (isopen()) {
-			console.log("已经打开");
+			console.log("[DBO]数据库已经打开!");
 			return new Promise(
 				(resolve, reject) => {
 					return resolve({
@@ -226,21 +224,21 @@ var mySqllite = function() {
 					})
 				})
 		} else {
-			console.log("未打开");
+			console.log("[DBO]数据库未打开!");
 			return new Promise((resolve, reject) => {
 				// 修改表数据
 				plus.sqlite.openDatabase({
 					name: that.name,
 					path: that.path,
 					success(e) {
-						console.log("openDatabase:ok" + JSON.stringify(e));
+						console.log("[DBO][Success]数据库打开成功:",e);
 						return resolve({
 							code: true,
 							msg: e
 						});
 					},
 					fail(e) {
-						console.log("openDatabase:err" + JSON.stringify(e));
+						console.log("[DBO][Error]数据库打开失败:",e);
 						return resolve({
 							code: false,
 							msg: e
@@ -259,14 +257,14 @@ var mySqllite = function() {
 			plus.sqlite.closeDatabase({
 				name: that.name,
 				success(e) {
-					console.log("close:okkkk" + JSON.stringify(e));
+					console.log("[DBO]数据关闭成功:",e);
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					console.log("close:errrrrrr" + JSON.stringify(e));
+					console.log("[DBO]数据关闭失败:",e);
 					return resolve({
 						code: false,
 						msg: e
@@ -275,8 +273,7 @@ var mySqllite = function() {
 			})
 		})
 	};
-
-
+	this.close = close;
 
 	var exec = function(pm_sql) {
 		return new Promise((resolve, reject) => {
@@ -309,14 +306,20 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					console.log("selectSql:okkkk");
+					console.log("[Qry]查询成功:",{
+						result:e,
+						sql:pm_sql
+					});
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					console.log("selectSql:errrrrrr" + JSON.stringify(e));
+					console.log("[Qry]查询异常:",{
+						result:e,
+						sql:pm_sql
+					});
 					return resolve({
 						code: false,
 						msg: e
@@ -407,9 +410,9 @@ var mySqllite = function() {
 	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("executeQryOpen:",retcode);
+		console.log("[ExecuteQry]打开数据库:",retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("executeQry:",[sql]);
+		console.log("[ExecuteQry]执行SQL:",[sql]);
 		retcode = await qry(sql);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);
@@ -449,6 +452,5 @@ var get = function() {
 
 
 export default {
-	get,
-	close: closeSqllite
+	get
 }

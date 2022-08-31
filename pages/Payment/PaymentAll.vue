@@ -493,10 +493,10 @@
 				let sale1 = this.SALES.sale1,
 					sale2 = this.SALES.sale2,
 					sale3 = this.SALES.sale3;
-				console.log("sale1", sale1);
-				console.log("sale2", sale2);
-				console.log("sale3", sale3);
-				console.log("sale1 封装中...");
+				console.log("[SaleDataCombine]sale1", sale1);
+				console.log("[SaleDataCombine]sale2", sale2);
+				console.log("[SaleDataCombine]sale3", sale3);
+				console.log("[SaleDataCombine]sale1 封装中...");
 				console.log("[SaleDataCombine]封装参数TotalAmount:", this.totalAmount);
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old,
@@ -519,16 +519,18 @@
 					TDISC: this.isRefund ? (-sale1?.TDISC ?? "0") : Number(this.SKY_DISCOUNT).toFixed(2),
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
 				});
-				console.log("sale1 封装完毕!", this.sale1_obj);
-				console.log("sale2 封装中...");
+				console.log("[SaleDataCombine]sale1 封装完毕!", this.sale1_obj);
+				console.log("[SaleDataCombine]sale2 封装中...");
 				this.sale2_arr = sale2.map((function(item, index) {
 					let obj = Object.assign(item, {
 						BILL: this.isRefund ? this.out_refund_no : this.out_trade_no_old, //主单号
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: parseFloat(item.PRICE).toFixed(2),
-						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - item.SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.isRefund ? -item.DISCRATE : item.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - item
+							.SKYDISCOUNT).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : item
+						.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
@@ -541,8 +543,8 @@
 					});
 					return util.hidePropety(obj, "NAME", "AMOUNT");
 				}).bind(this));
-				console.log("sale2 封装完毕!", this.sale2_arr);
-				console.log("sale3 封装中...");
+				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
+				console.log("[SaleDataCombine]sale3 封装中...");
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
 					return util.hidePropety({
 						BILL: this.isRefund ? this.out_refund_no : this
@@ -572,8 +574,8 @@
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
 				}).bind(this));
-				console.log("sale3 封装完毕!", this.sale3_arr);
-				console.log("sale8 封装中...");
+				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
+				console.log("[SaleDataCombine]sale8 封装中...");
 				this.sale8_arr = this.sale8_arr.map((function(item, index) {
 					return Object.assign(item, {
 						SALEDATE: saledate,
@@ -593,7 +595,7 @@
 						PRICE: item.PRICE
 					});
 				}).bind(this));
-				console.log("sale8 封装完毕!");
+				console.log("[SaleDataCombine]sale8 封装完毕!");
 			},
 			//集中生成 sql 指令
 			orderSQLGenarator: function() {
@@ -634,9 +636,10 @@
 					this.SaleDataCombine();
 					//生成执行sql
 					let exeSql = this.orderSQLGenarator();
+					let dbo = db.get();
 					console.log("sqlite待执行sql:", exeSql);
-					await common.Close();
-					db.get().executeDml(exeSql, "订单创建中", (function(res) {
+					await dbo.close();
+					dbo.executeDml(exeSql, "订单创建中", (function(res) {
 						if (func) func(res);
 						this.complete = true;
 						console.log("订单创建成功：", res);
@@ -1065,43 +1068,46 @@
 			},
 			//订单对象创建
 			orderCreated, //避免后续绑定this指向
-			_scoreConsume:function(){
+			_scoreConsume: function() {
 				PointUpload({
-					order_no:this.useOrderNoChoice(),
-					sale_order_no:this.sale1_obj?.XS_BILL,
-					member_id:this.isRefund ? hyinfo?.hyId : this.sale1_obj.CUID,
-					product:this.Products,
-					pay_list:this.PayList.map(item => {
+					order_no: this.useOrderNoChoice(),
+					sale_order_no: this.sale1_obj?.XS_BILL,
+					member_id: this.isRefund ? hyinfo?.hyId : this.sale1_obj.CUID,
+					product: this.Products,
+					pay_list: this.PayList.map(item => {
 						return {
 							paymentType: item.fkid,
 							payAmount: item.amount
 						}
 					}),
-					mode:this.useOrderTypeChoice()
+					mode: this.useOrderTypeChoice()
 				})
 			},
 			//积分操作 
 			scoreConsume: function() {
+				console.log("[ScoreConsume]开始积分上传...");
 				let hyinfo = util.getStorage("hyinfo");
 				if (!hyinfo || JSON.stringify(hyinfo) == '{}') { //没会员信息的话就不调用上传积分以免接口报错
+					console.log("[ScoreConsume]未检查到会员信息!");
 					return;
 				}
 				let data = this.memberGenarator();
-				console.log("积分上传参数：", data);
+				console.log("[ScoreConsume]积分上传参数：", data);
 				_member.UploadPoint("积分上传中...", {
 					brand: that.brand,
 					data
 				}, (res) => {
-					console.log("积分上传成功...", res)
+					console.log("[ScoreConsume]积分上传成功...", res)
 					util.simpleMsg(res.code ? "积分上传成功" : res.msg, res.code ? false : "none");
 				}, (err) => {
-					console.log("积分上传失败...", err)
+					console.log("[ScoreConsume]积分上传失败...", err)
 					util.simpleMsg(err.msg, "none");
 				})
 			},
 			//生成会员积分信息请求参数列表
 			memberGenarator: function(obj = {}) {
 				let hyinfo = getApp().globalData.hyinfo;
+				console.log("[MemberGenarator]会员积分请求参数:", hyinfo);
 				return Object.assign({
 					// addPoint: 0,//接口默认字段无需传值 下面的同理
 					channel: this.channel,

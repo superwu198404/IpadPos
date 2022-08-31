@@ -148,7 +148,6 @@
 		},
 		onUnload: function() {
 			console.log('App 卸载');
-
 		}
 	}
 </script>

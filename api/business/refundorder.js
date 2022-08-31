@@ -58,18 +58,30 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 		"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
 		"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
 		xs_bill + "'";
+	console.log("[GetOrderDetails]查询详情单条件参数列表:",{
+		KHID:Program.KHID,
+		GSID:Program.GSID,
+		BMID:Program.BMID,
+		RYID:Program.RYID,
+		POSID:Program.POSID,
+		REFUND_BILL:refund_bill,
+		XS_BILL:xs_bill,
+		DQID:Program.DQID,
+		KCDID:Program.KCDID,
+		GCID:Program.GCID
+	});
 	// sql = "select * FROM SALE002 S2, SPDA S1,SPTMDA T1,SPKHDA SM  WHERE  S1.SPID =T1.SPID " +
 	// 	"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
 	// 	"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
 	// 	xs_bill + "'";
 	// sql = "select * from sale002 where bill='" + xs_bill + "'";
-	console.log("查询详情单sql:", sql)
+	console.log("[GetOrderDetails]查询详情单sql:", sql)
 	db.get().executeQry(sql, "查询中...", res => {
-		console.log("退货信息查询结果：", res);
+		console.log("[GetOrderDetails]退货信息查询结果：", res);
 		if (func) func(res);
 	}, err => {
-		console.log("查询sql:", sql);
-		util.simpleMsg("查询异常:" + err.message, true);
+		console.log("[GetOrderDetails]查询sql:", sql);
+		util.simpleMsg("[GetOrderDetails]查询异常:" + err.message, true);
 	});
 }
 

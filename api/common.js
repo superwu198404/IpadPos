@@ -391,29 +391,43 @@ var QueryBatch = async function(sqls) {
 
 //查询sql
 var Query = async function(sql) {
-	let data = null;
-	await db.get().executeQry(sql, "查询中...", function(res) {
-		data = res.msg;
-	}, function(err) {
-		console.log("查询执行异常:", err);
-	});
-	return data;
+	let data = [],dbo = db.get();
+	console.log("[Query]打开连接...",sql);
+	try{
+		await dbo.open();
+		console.log("[Query]执行查询...");
+		await dbo.executeQry(sql, "查询中...", function(res) {
+			console.log("[Query]查询执行成功:", res);
+			data = res.msg;
+		}, function(err) {
+			console.log("[Query]查询执行异常:", err);
+		});
+		await dbo.close();
+		return data;
+	}catch(e){
+		console.log("[Query-Error]执行异常:", e);
+	}
 }
 
 //执行sql
 var Excute = async function(...sql) {
-	let data = null
-	await db.get().executeDml(sql, "执行中...", function(res) {
-		data = res.msg;
-	}, function(err) {
-		console.log("修改执行异常:", err);
-	});
-	return data;
-}
-
-var Close = async function() {
-	let data = null
-	await db.close();
+	let data = null,dbo = db.get();
+	console.log("[Excute]打开连接...");
+	try{
+		await dbo.open();
+		console.log("[Excute]执行操作...");
+		await dbo.executeDml(sql, "执行中...", function(res) {
+			console.log("[Excute]修改执行成功:", res);
+			data = res.msg;
+		}, function(err) {
+			console.log("[Excute]修改执行异常:", err);
+		});
+		await dbo.close();
+		return data;
+	}catch(e){
+		console.log("[Excute-Error]执行异常:", e);
+	}
+	await dbo.close();
 	return data;
 }
 
@@ -658,7 +672,6 @@ export default {
 	QueryBatch,
 	Query,
 	Excute,
-	Close,
 	GetPZCS,
 	InitZFRULE,
 	GetZFRULE,

@@ -77,7 +77,7 @@
 		<!-- <button @click="MenuMain()">功能主页</button> -->
 		<!-- <button @click="againPrinter()">重新打印</button> -->
 		<!-- <button @click="inputAuthCode()">录入付款码</button> -->
-		<button @click="closeDB()">断开数据库链接</button>
+		<!-- <button @click="closeDB()">断开数据库链接</button> -->
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
 
@@ -247,7 +247,8 @@
 					this.$forceUpdate();
 					return;
 				}
-				this.input.similar = this.input.bills.filter(bill => (bill?.toLowerCase()?.includes(n.toLowerCase()) ||
+				this.input.similar = this.input.bills?.filter(bill => (bill?.toLowerCase()?.includes(n
+				.toLowerCase()) ||
 					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
@@ -430,13 +431,11 @@
 							console.log(r);
 						}
 					});
-				}
-				else if (e == 10) {
+				} else if (e == 10) {
 					uni.navigateTo({
 						url: "/pages/sqlitetest/sqlitetest"
 					});
-				}
-				else if (e == 11) {
+				} else if (e == 11) {
 					uni.navigateTo({
 						url: "/pages/xprinter/home"
 					});
@@ -629,7 +628,7 @@
 				let products = uni.getStorageSync("products");
 				if (!products || products.length == 0) uni.setStorageSync("products", [{
 						PLID: "101",
-						SPID: "1010100004",
+						SPID: "000000007020200084",
 						UNIT: "袋",
 						BARCODE: '2222222220',
 						NAME: "超软白土司",
@@ -640,7 +639,7 @@
 					},
 					{
 						PLID: "101",
-						SPID: "1010100010",
+						SPID: "000000007020200084",
 						UNIT: "袋",
 						BARCODE: '2222222221',
 						NAME: "你好土司",
@@ -651,7 +650,7 @@
 					},
 					{
 						PLID: "101",
-						SPID: "10101022",
+						SPID: "000000007020200085",
 						UNIT: "袋",
 						BARCODE: '2222222222',
 						NAME: "黄金唱片",
@@ -662,7 +661,7 @@
 					},
 					{
 						PLID: "107",
-						SPID: "10701001",
+						SPID: "000000007020200085",
 						UNIT: "杯",
 						BARCODE: '2222222223',
 						NAME: "焦糖玛奇朵",
@@ -672,7 +671,7 @@
 						QTY: 1
 					}, {
 						PLID: "107",
-						SPID: "10701002",
+						SPID: "000000007020200085",
 						UNIT: "杯",
 						BARCODE: '2222222224',
 						NAME: "法式香草拿铁",
@@ -721,13 +720,13 @@
 				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','K03000')`);
 				//await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF51','022','022','CS01')`);
 				// await common.Excute(`insert into KHZFKDA('DATE_LR','DATE_SH','DA_STATUS','FKID','ID_RY_LR','ID_RY_SH','KHZID') values('2022-07-28 14:14:00','2022-07-28 14:14:00',1,'ZF02','022','022','K01000')`);
-				await common.Query("select * from KHZFKDA where FKID='ZF51'", (res) => {
-					console.log("查询结果：", res)
-				})
+				let result = await common.Query("select * from KHZFKDA where FKID='ZF51'");
+				console.log("[InitData]查询结果：", result)
 				var that = this;
 				//获取BILLS
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME")).map(i => i.BILL)
-					.reverse();
+				let bills = await common.Query("SELECT BILL FROM SALE001 ORDER BY SALETIME");
+				console.log("[InitData]本地单号数:", bills?.length);
+				this.input.bills = bills?.map(i => i.BILL).reverse();
 				// console.log("Client:",await common.Query("SELECT KHID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID FROM KHDA"))
 				//生成支付规则数据
 				// await common.InitZFRULE();
@@ -764,10 +763,11 @@
 			this.refreshProduct(); //获取测试用的商品列表
 			console.log("[Index-onShow]获取上一条支付单号...");
 			this.refund_no = this.$store.state.trade;
-			if (!this.first) { //首次不执行
-				common.Close(); //先关闭连接
-				this.input.bills = (await common.Query("SELECT BILL FROM SALE001"))?.map(i => i.BILL)?.reverse();
-			}
+			console.log("[Index-onShow]查询本地订单号用于自动联想提示...");
+			var bills = await common.Query("SELECT BILL FROM SALE001");
+			console.log("[Index-onShow]查询结果:", bills);
+			this.input.bills = bills?.map(i => i.BILL)?.reverse();
+			console.log("[Index-onShow]查询本地订单号完毕...", this.input.bills);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
