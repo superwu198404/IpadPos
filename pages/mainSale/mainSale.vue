@@ -1,7 +1,9 @@
 <style scopeed>
 	/* @import url(@/static/style/payment/paymentall/basis.css); */
-	@import url(@/style/basis.css);
-	@import url(@/style/index.css);
+	@import url(@/static/style/payment/paymentall/basis.css);
+	/* @import url(../../style/basis.css); */
+	@import url(@/static/style/index.css);
+  
 </style>
 
 <template>
@@ -12,7 +14,7 @@
 			</view>
 			<view class="menu" >
 				<view  v-for="(item, index) in saleAdd" >   
-					<view  :class="mainSale.currentType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
+					<view  :class="mainSale.clickSaleType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
 						<image class="xz" :src="item.iconHui" mode="widthFix"></image>
 						<image class="wx" :src="item.iconCurr" mode="widthFix"></image>
 						<text>{{item.nameSale}}</text>
@@ -23,7 +25,7 @@
 					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
 					<text @click="Moreand()">退单业务</text>
 					<view class="chargeback" v-if="(item, index) in saleSub">
-						<label :class="mainSale.currentType.xstype== item.xstype?'currs':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"  >
+						<label :class="mainSale.clickSaleType.xstype== item.xstype?'currs':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"  >
 							<image class="xz" :src="item.iconHui"  mode="widthFix"></image>
 							<image class="wx" :src="item.iconCurr"  mode="widthFix"></image>
 							<text>{{item.nameSale}}</text>
@@ -91,7 +93,7 @@
 
 									<view class="procycle">
 										<!-- 产品循环 -->
-										<view class="li"  v-for="(sptiem, spindex) in  plitem['plarr'] "  :data-spid="sptiem.SPID"  :data-price="sptiem.PRICE"    >
+										<view class="li"  v-for="(sptiem, spindex) in  plitem['plarr'] "  @click="mainSale.showSpDetails"    :data-plindex="plindex"  :data-spindex="spindex"    >
 											<view class="h3">
 												<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sptiem.SNAME}}
 											</view>
@@ -142,34 +144,34 @@
 		</view>
 	
 	<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="attribute">
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close">×</button>
+				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp' >×xxx</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
-						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>12345678</label>
-						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>10个装</label>
+						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}</label>
+						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}</label>
 					</view>
 					<view class="price">
-						<text class="jiage">￥12.9</text>
-						<view><text>–</text><input /><text>+</text></view>
+						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
+						<view><text>–</text><input  v-model="mainSale.inputSpForClick.QTY" /><text>+</text></view>
 					</view>
 					<view class="tochoose">
 						<label><text>1</text>-<text>尺寸/6寸</text></label>
 						<label><text>￥156</text><button class="del">×</button></label>
 					</view>
-					<view class="sizes">
+					<view class="sizes" >
 						<view class="h4"><text class="sgin">*</text>尺寸</view>
 						<view class="sizelist">
 							<label>6寸</label><label>8寸</label><label>10寸</label><label>12寸</label>
 						</view>						
 					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn">确认</button>
 					</view>
 				</view>
 			</view>

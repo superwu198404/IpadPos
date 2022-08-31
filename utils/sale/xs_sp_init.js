@@ -168,7 +168,7 @@ var loadSaleSP  =
 			 },null);	
 	    console.log("##############################开始获取蛋糕规格##############################")	
 	  //蛋糕规格 
-	 let  cakeSpescSql=" SELECT  spda_dgxl.SPID, IFNULL(spda_dgxl.cccz,'无尺寸')   \
+	 let  cakeSpescSql=" SELECT  spda_dgxl.SPID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
 	               from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid  \
 				     and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'";
 					 
@@ -211,7 +211,9 @@ var loadSaleSP  =
 			   
 			 if(callbackfun)
 			 {
+				 console.log(JSON.stringify(spPrice).substr(0,300));
 				 callbackfun(arrAllsp,spPrice);
+				 
 			 }
 		     return new Promise((resolve, reject) => {
 			 		          return resolve({
