@@ -118,7 +118,7 @@
 			// }
 			_init.YN_Init(res => {
 				uni.reLaunch({
-					url: "/pages/Login/Login",
+					url: "pages/start/start",// /pages/Login/Login
 					success: () => {
 						//跳转完页面后再关闭启动页
 						plus.navigator.closeSplashscreen();

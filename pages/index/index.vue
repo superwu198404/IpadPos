@@ -80,6 +80,8 @@
 		<!-- <button @click="closeDB()">断开数据库链接</button> -->
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
+		<button @click="toMainSale">主销售界面</button>
+		
 
 		<div v-if="view.orders.showDetail"
 			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
@@ -466,6 +468,12 @@
 					// totalAmount: this.totalAmount,
 					actType: this.actType,
 					PayList: this.PayList
+				});
+			},
+			toMainSale:function()
+			{
+				uni.navigateTo({
+					url: "/pages/mainSale/mainSale"
 				});
 			},
 			priceCount: function() {

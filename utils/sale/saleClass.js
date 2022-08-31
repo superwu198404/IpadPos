@@ -61,9 +61,6 @@
    this.CUSTMADDRESS= null;
    this.CUSTMPHONE= null;
    this.CUSTMNAME= null;
-   this.s002  =[];
-   this.s003  =[];
-   this.s008 =[];
  }
  
  var  sale002= function()

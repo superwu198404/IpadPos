@@ -1,7 +1,9 @@
 <style scopeed>
 	/* @import url(@/static/style/payment/paymentall/basis.css); */
-	@import url(@/style/basis.css);
-	@import url(@/style/index.css);
+	@import url(@/static/style/payment/paymentall/basis.css);
+	/* @import url(../../style/basis.css); */
+	@import url(@/static/style/index.css);
+  
 </style>
 
 <template>
@@ -11,8 +13,8 @@
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
 			<view class="menu" >
-				<view  v-for="(item, index) in saleAdd" >
-					<view  :class="mainSale.currentType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
+				<view  v-for="(item, index) in saleAdd" >   
+					<view  :class="mainSale.clickSaleType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
 						<image class="xz" :src="item.iconHui" mode="widthFix"></image>
 						<image class="wx" :src="item.iconCurr" mode="widthFix"></image>
 						<text>{{item.nameSale}}</text>
@@ -23,7 +25,7 @@
 					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
 					<text @click="Moreand()">退单业务</text>
 					<view class="chargeback" v-if="(item, index) in saleSub">
-						<label :class="mainSale.currentType.xstype== item.xstype?'currs':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"  >
+						<label :class="mainSale.clickSaleType.xstype== item.xstype?'currs':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"  >
 							<image class="xz" :src="item.iconHui"  mode="widthFix"></image>
 							<image class="wx" :src="item.iconCurr"  mode="widthFix"></image>
 							<text>{{item.nameSale}}</text>
@@ -83,63 +85,58 @@
 							</view>
 						</view>
 						<!-- 小类循环 -->
-						<view class="products">
-							<view class="h2">每日现烤 <label></label></view>
-							
-							<view class="procycle">
-								<!-- 产品循环 -->
-								<view class="li">
-									<view class="h3">
-										<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+						<view style="height:92%;flex: 1;">
+						 <scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+						  <view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">  
+
+							    <view class="h2" >{{plitem.plname}} <label></label></view>	
+
+									<view class="procycle">
+										<!-- 产品循环 -->
+										<view class="li"  v-for="(sptiem, spindex) in  plitem['plarr'] "  @click="mainSale.showSpDetails"    :data-plindex="plindex"  :data-spindex="spindex"    >
+											<view class="h3">
+												<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sptiem.SNAME}}
+											</view>
+											<view class="cods">
+												<label><image src="../../images/dx-bm.png" mode="widthFix"></image>0</label>
+												<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{sptiem.UNIT}}</label>
+											</view>
+											<view class="price">
+												<text>￥{{mainSale.spPrice[sptiem.SPID].PRICE}}</text>
+												<view><image src="../../images/dx-gd.png" mode="widthFix"></image></view>
+											</view>
+										</view>
 									</view>
-									<view class="cods">
-										<label><image src="../../images/dx-bm.png" mode="widthFix"></image>12345678</label>
-										<label><image src="../../images/dx-dw.png" mode="widthFix"></image>10个装</label>
-									</view>
-									<view class="price">
-										<text>￥12.9</text>
-										<view><image src="../../images/dx-gd.png" mode="widthFix"></image></view>
-									</view>
-								</view>
-							</view>
-						</view>
+							  </view>
+						 
+						 </scroll-view>
+					    </view>
 					</view>
 				</view>
 				<view class="operation">
 					<view class="sorting">
-						<view class="seasonal"><image src="../../images/dx-dwj.png" mode="widthFix"></image></view>
-						<view class="a-z" @click="Letters()">A <text>◀</text></view>
-						<view class="states" @click="Statements()">
+						<view class="seasonal">
+							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z" @click="Letters()">{{mainSale.selectFlag}} <image class="text" src="../../images/dx-fldw.png"
+								mode="widthFix"></image>
+						</view>
+						<view class="a-z" @click="Memberlogin(1)">
+							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z" @click="GetTSZKData()">
+							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
+						</view>
+						<view class="states" @click="ShowSale()">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
 					</view>
 					<view class="toproof"><image src="../../images/dx-qdb.png" mode="widthFix"></image></view>
 					<view class="ranks" v-if="Alphabetical">
-						<label class="curr"><text>A</text></label>
-						<label><text>B</text></label>
-						<label><text>C</text></label>
-						<label><text>D</text></label>
-						<label><text>E</text></label>
-						<label><text>F</text></label>
-						<label><text>G</text></label>
-						<label><text>H</text></label>
-						<label><text>J</text></label>
-						<label><text>K</text></label>
-						<label><text>L</text></label>
-						<label><text>M</text></label>
-						<label><text>N</text></label>
-						<label><text>O</text></label>
-						<label><text>P</text></label>
-						<label><text>Q</text></label>
-						<label><text>R</text></label>
-						<label><text>S</text></label>
-						<label><text>T</text></label>
-						<label><text>U</text></label>
-						<label><text>W</text></label>
-						<label><text>X</text></label>
-						<label><text>Y</text></label>
-						<label><text>Z</text></label>
+						<label  :class="mainSale.selectFlag==flagitem?'curr':''"  @click="mainSale.FlagClick"  :data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList" >
+							<text>{{flagitem}}</text></label>
+												
 					</view>
 				</view>
 			</view>
@@ -147,34 +144,34 @@
 		</view>
 	
 	<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="attribute">
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close">×</button>
+				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp' >×xxx</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
-						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>12345678</label>
-						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>10个装</label>
+						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}</label>
+						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}</label>
 					</view>
 					<view class="price">
-						<text class="jiage">￥12.9</text>
-						<view><text>–</text><input /><text>+</text></view>
+						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
+						<view><text>–</text><input  v-model="mainSale.inputSpForClick.QTY" /><text>+</text></view>
 					</view>
 					<view class="tochoose">
 						<label><text>1</text>-<text>尺寸/6寸</text></label>
 						<label><text>￥156</text><button class="del">×</button></label>
 					</view>
-					<view class="sizes">
+					<view class="sizes" >
 						<view class="h4"><text class="sgin">*</text>尺寸</view>
 						<view class="sizelist">
 							<label>6寸</label><label>8寸</label><label>10寸</label><label>12寸</label>
 						</view>						
 					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn">确认</button>
 					</view>
 				</view>
 			</view>
@@ -531,16 +528,16 @@
 						 this.saleSub.push(mysale.XsTypeObj[item])
 					}
 			    }
-				console.log("开始构造函数完成");
-				that.mainSale = new mysale.GetSale(that.khid,'007',that,"mainSale");
+				console.log("开始构造函数");
+				that.mainSale = new mysale.GetSale(that.khid,'009','007',that,"mainSale");
 				console.log(that.mainSale.Storeid);
 				console.log("开始设置基础的销售类型");
 				that.mainSale.setDeftype();
-				xs_sp_init.loadSaleSP.loadSp(that.khid,res=>
+				xs_sp_init.loadSaleSP.loadSp(that.khid,(res,res2)=>
 				{
-					  
-					  that.mainSale.setAllSpList(res);
-				},"K01000" )
+					  console.log( "商品实际的长度"+res.length);
+					  that.mainSale.setAllSpList(res,res2);
+				},"K01000","02" )
 			   
 			    
 			},
