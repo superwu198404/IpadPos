@@ -252,6 +252,9 @@
 	import _card from '@/api/Pay/ECardPay.js';
 	import _coupon from '@/api/Pay/ECoupon.js';
 	import _pay from '@/api/Pay/PaymentALL.js';
+	import {
+		PointUpload
+	} from '@/bll/Common/bll.js';
 	import _member from '@/api/hy/MemberInterfaces.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
@@ -1062,6 +1065,21 @@
 			},
 			//订单对象创建
 			orderCreated, //避免后续绑定this指向
+			_scoreConsume:function(){
+				PointUpload({
+					order_no:this.useOrderNoChoice(),
+					sale_order_no:this.sale1_obj?.XS_BILL,
+					member_id:this.isRefund ? hyinfo?.hyId : this.sale1_obj.CUID,
+					product:this.Products,
+					pay_list:this.PayList.map(item => {
+						return {
+							paymentType: item.fkid,
+							payAmount: item.amount
+						}
+					}),
+					mode:this.useOrderTypeChoice()
+				})
+			},
 			//积分操作 
 			scoreConsume: function() {
 				let hyinfo = util.getStorage("hyinfo");

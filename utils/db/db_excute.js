@@ -428,7 +428,8 @@ var mySqllite = function() {
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		retcode = await exec(sql);
-		console.log("返回值=" + JSON.stringify(retcode) + "[sql]" + sql);
+		console.log("[ExecuteDml]返回值:",retcode);
+		console.log("[ExecuteDml]sql:",sql);
 		//await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);

@@ -38,7 +38,7 @@
 				JGID: "",
 				STIME: "",
 				ETIME: "",
-				OPENFLAG: 0, //签到状态
+				OPENFLAG: 1, //签到状态
 			},
 			hyinfo: {
 				// hyId: "1000311640"
