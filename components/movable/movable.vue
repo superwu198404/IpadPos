@@ -14,8 +14,8 @@
 							<view class="h2" v-if="item.type=='PTIP'">
 								<image src="../../images/waimaidan.png"></image>外卖单
 							</view>
-							<view class="h2" v-if="item.type=='JJPT'">
-								<image src="../../images/ydtq.png"></image>预定单
+							<view class="h2" v-if="item.type=='WMYS'">
+								<image src="../../images/ydtq.png"></image>外卖预定单
 							</view>
 							<view class="ul">
 								<label><span>●</span>{{item.title}}</label><text>{{item.count}}</text>
@@ -114,9 +114,9 @@
 							name = "TakeAway";
 							title = "外卖单";
 						}
-						if (e.type == 'JJPT') {
-							name = "Extract";
-							title = "预定提取";
+						if (e.type == 'WMYS') {
+							name = "TakeYD";
+							title = "外卖预订单";
 						}
 						console.log("跳转name", name, title);
 						that.orderlist = false;

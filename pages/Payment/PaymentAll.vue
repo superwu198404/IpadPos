@@ -167,8 +167,8 @@
 									</view>
 								</label>
 								<label class="poly-text">
-									<text>支持</text>
-									<text>{{PayWayList.filter(i=>i.poly=='Y').map(i => i.name).join(",")}}</text>
+									<!-- <text>支持</text> -->
+									<text>支持{{PayWayList.filter(i=>i.poly=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"

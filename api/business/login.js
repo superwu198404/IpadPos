@@ -157,11 +157,34 @@ var InitStore = function(khid, posid, ryinfo, func) {
 }
 
 var YN_Sign = function(khid, posid, func) {
-		let store = util.getStorage("store");
-		if(store.OPENFLAG=='1'){
-			util.simpleMsg("今日已签到");
-			return;
+	let store = util.getStorage("store");
+	if (store.OPENFLAG == '1') {
+		util.simpleMsg("今日已签到");
+		return;
+	}
+}
+var SignOrSignOut = async function(ynqd, openflag, func) {
+	let salenum = 0,
+		salenet = 0;
+	let sql = "SELECT COUNT(*) SALENUM,SUM(TNET) SALENET FROM  SALE001  WHERE SALEDATE =DATETIME('" + dateformat
+		.getYMD(-1) + "')";
+	await db.get().executeQry(sql, "查询中...", res => {
+		if (res.code && res.msg.length > 0) {
+			salenum = res.msg[0].SALENUM;
+			salenet = res.msg[0].SALENET;
 		}
+	}, err => {
+
+	})
+	let data = {
+		ynqd,
+		openflag,
+		salenum,
+		salenet
+	}
+	let apistr = "MobilePos_API.Models.MainCLASS.SignOrSignOut";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
 }
 
 
@@ -170,5 +193,6 @@ export default {
 	GetKHIDByRYID,
 	InitStore,
 	UpdatePWD,
-	UpdatePWD_Local
+	UpdatePWD_Local,
+	SignOrSignOut
 }

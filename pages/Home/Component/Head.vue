@@ -37,7 +37,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<!-- <label>
+<!-- 					<label>
 						<button @click="Sign()">签到</button>
 					</label> -->
 				</view>
@@ -218,7 +218,7 @@
 					return r.type == 'SYSTEM';
 				});
 				that.YW_MsgData = res.filter((r, i) => {
-					return (r.type == 'PTIP' || r.type == 'JJPT' || r.type == 'XTIP'); //外卖，预定，线上
+					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP'); //外卖，外卖预定单，线上
 				});
 				if (that.XT_MsgData.length > 0) {
 					let newArr = that.XT_MsgData[0].Details.map(r => {
