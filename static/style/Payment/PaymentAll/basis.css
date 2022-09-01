@@ -288,14 +288,14 @@ page {
 	text-overflow: ellipsis;
 }
 
-.checkout .buyer .image {
-	width: 28rpx;
-	height: 28rpx;
+.checkout .buyer image {
+	width: 22rpx;
+	height: 22rpx;
 }
 
-.checkout .buyer .image:nth-child(1) {
-	width: 36rpx;
-	height: 36rpx;
+.checkout .buyer image:nth-child(1) {
+	width: 30rpx;
+	height: 30rpx;
 }
 
 .checkout label {
