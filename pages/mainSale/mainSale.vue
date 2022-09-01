@@ -13,10 +13,10 @@
 				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
 			</view>
 			<view class="menu" >
-				<view  v-for="(item, index) in saleAdd" >   
+				<view class="saleadd" v-for="(item, index) in saleAdd" >   
 					<view  :class="mainSale.clickSaleType.xstype== item.xstype?'curr':''"  :data-stype="item.clickType"   @click="mainSale.saleTypeClick"   >
-						<image class="xz" :src="item.iconHui" mode="widthFix"></image>
-						<image class="wx" :src="item.iconCurr" mode="widthFix"></image>
+						<image class="xz" :src="item.iconCurr" mode="widthFix"></image>
+						<image class="wx" :src="item.iconHui" mode="widthFix"></image>
 						<text>{{item.nameSale}}</text>
 					</view>
 				</view>
@@ -40,10 +40,7 @@
 				</view>
 			</view>
 			
-			<view class="exit">
-				<image src="../../images/tuichu.png" mode="widthFix"></image>
-				<text>退出</text>
-			</view>
+			
 		</view>
 		<view class="right">
 			<view class="nav">
@@ -62,12 +59,31 @@
 						<label><image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3</label>
 					</view>
 					<view class="account">
-						<text>员工账号</text>
 						<view>
-							<image src="../../images/touxiang.png" mode="widthFix"></image>
+							<image src="@/images/touxiang.png" mode="widthFix"></image>
+						</view>
+						<text @click="exits()">{{RYID}}
+							<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
+								mode="widthFix"></image>
+						</text>
+						<view class="dropout" v-if="dropout">
+							<view class="exit" @click="LoginOut()">
+								<image src="@/images/tuichu.png" mode="widthFix"></image>
+								<text>退出</text>
+							</view>
+							<view class="exit" @click="Login()">
+								<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+								<text>注销</text>
+							</view>
+							<view class="exit" @click="UPPWD()">
+								<image src="@/images/xgmima.png" mode="widthFix"></image>
+								<text>修改密码</text>
+							</view>
 						</view>
 					</view>
+					
 				</view>
+						
 			</view>
 			
 			<view class="listof">
@@ -76,7 +92,7 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="../../images/dx-dw.png" mode="widthFix"></image> 本店热销
+								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
 								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 							</view>
 							<view class="classifys">
@@ -499,6 +515,7 @@
 				Memberinfo:false,
 				Shoppingbags:false,
 				Chargeback:false,
+				dropout:false,
 				coupon_list: [],
 				mainSale:null,
 				khid:"K210QTD003",
@@ -541,6 +558,9 @@
 			   
 			    
 			},
+			exits: function(e) {
+				this.dropout = !this.dropout
+			},
 			Statements: function(e)
 			{				
 			   this.statements=!this.statements
@@ -567,5 +587,11 @@
 <style>
 	.right{
 		height:100%;
+	}
+	.menu .saleadd{
+		padding:0;
+	}
+	.listof{
+		height: 92%;
 	}
 </style>

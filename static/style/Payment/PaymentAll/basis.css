@@ -210,10 +210,10 @@ page {
 .account .dropout {
 	position: absolute;
 	top: 110%;
-	left: 0;
+	right: 0;
 	background-color: #fff;
 	border-radius: 10rpx;
-	width: 105px;
+	width: 210rpx;
 	z-index: 9999;
 	box-shadow: 0px 10rpx 20rpx 1px rgba(0, 107, 68, 0.1600);
 }
