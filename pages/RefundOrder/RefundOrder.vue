@@ -44,13 +44,16 @@
 							</view>
 						</view>
 					</view>
+
+					<NoData v-if="Orders.length==0"></NoData>
 					<!-- 小类循环 -->
-					<view class="products">
+					<view class="products" v-else>
 						<!-- <view class="h2">销售退单 <label></label></view>
 			-->
 						<view class="procycle">
 							<!-- 订单循环 -->
-							<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
+							<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '"
+								@click="ChooseOrder(item,index)">
 								<view class="h3">
 									<text>单号：{{item.BILL}}</text>
 									<text class="price">￥{{item.TNET}}</text>
@@ -60,10 +63,12 @@
 									<label>订单类型 {{item.XSTYPE}}</label>
 								</view>
 								<view class="handles"><text></text>
-								<button class="btn" @click="GetOrderDetails(item)">详情</button></view>
+									<button class="btn" @click="GetOrderDetails(item)">详情</button>
+								</view>
 							</view>
 						</view>
-						<view class="details" v-if="false"><!-- statements -->
+						<view class="details" v-if="false">
+							<!-- statements -->
 							<view class="meminfo">
 								<view class="member">
 									<label>
@@ -216,7 +221,7 @@
 				p_date: dateformat.getYMD(),
 				Order: {},
 				Details: {},
-				curIndex:0
+				curIndex: 0
 			}
 		},
 		watch: {
@@ -253,7 +258,7 @@
 				that.Criterias = false;
 				that.Order = e;
 				let yw_bill = common.CreateBill(that.KHID, that.POSID);
-				console.log("[GetOrderDetails]获取订单详情:",e);
+				console.log("[GetOrderDetails]获取订单详情:", e);
 				_refund.GetOrderDetails(yw_bill, e.BILL, e.SALEDATE, res => {
 					console.log("详情单查询结果:", res);
 					if (res.code && res.msg.length > 0) {

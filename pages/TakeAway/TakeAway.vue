@@ -23,7 +23,8 @@
 								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
-						<view class="products">
+						<NoData v-if="WMOrders.length==0"></NoData>
+						<view class="products" v-else>
 							<view class="procycle">
 								<!-- 外卖单循环 -->
 								<view class="li" :class="curIndex === index? 'curr':' '"

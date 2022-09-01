@@ -37,15 +37,9 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-
 					<label>
-						<button class="rijie" @click="Sign()">日结</button>
-					</label>
-
-					<!-- <label>
 						<button @click="Sign()">签到</button>
-					</label> -->
-
+					</label>
 				</view>
 				<view class="account">
 					<view>
@@ -70,7 +64,6 @@
 						</view>
 					</view>
 				</view>
-			
 			</view>
 			<!-- 紧急消息弹窗 -->
 			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
@@ -876,9 +869,6 @@
 					if (res.code) {
 						util.simpleMsg("签到成功！");
 						let data = JSON.parse(res.data);
-						// let store = util.getStorage("store");
-						// store.OPENFLAG = data.openflag;
-						// util.setStorage("store", store);
 						if (data.sql) {
 							_login.SignOrSignOutSql(data.sql);
 						}
