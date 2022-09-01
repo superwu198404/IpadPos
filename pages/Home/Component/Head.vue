@@ -37,7 +37,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<!-- 					<label>
+					<!-- <label>
 						<button @click="Sign()">签到</button>
 					</label> -->
 				</view>
@@ -156,6 +156,10 @@
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
 			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
+			<!-- 签到组件 -->
+			<qiandao></qiandao>
+			<!-- 日结组件 -->
+			<rijie></rijie>
 		</view>
 	</view>
 </template>
@@ -172,7 +176,6 @@
 	export default {
 		name: "menu_head",
 		props: {
-			data: []
 		},
 		data() {
 			return {
@@ -206,7 +209,7 @@
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
-				showYWMsg: false
+				showYWMsg: false,
 			};
 		},
 		// created: function(e) {
@@ -225,9 +228,7 @@
 				});
 				if (that.YW_MsgData.length > 0) {
 					that.showYWMsg = false;
-					console.log("触发没有：");
 					that.$nextTick(() => {
-						console.log("触发没有1：");
 						that.showYWMsg = true;
 					})
 				} else {
@@ -256,11 +257,11 @@
 						}, 1000);
 					}
 				}
-				console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-				console.log(
-					"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
-				console.log(
-					"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
+				// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+				// console.log(
+				// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+				// console.log(
+				// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
 			});
 			//搜索蓝牙
 			that.startSearch();
@@ -864,23 +865,6 @@
 			clearIntervalFun: function() {
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
-			},
-			//签到
-			Sign: function() {
-				_login.SignOrSignOut(true, res => {
-					console.log("签到结果：", res);
-					if (res.code) {
-						let store = util.getStorage("store");
-						let data = JSON.parse(res.data);
-						store.OPENFLAG = data.openflag;
-						util.setStorage("store", store);
-						if (data.sql) {
-							_login.SignOrSignOutSql(sql);
-						}
-					} else {
-						util.simpleMsg(res.msg, "none");
-					}
-				})
 			},
 		}
 	}

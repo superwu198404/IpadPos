@@ -120,7 +120,6 @@
 						<label><text>S</text></label>
 						<label><text>T</text></label>
 						<label><text>U</text></label>
-						<label><text>V</text></label>
 						<label><text>W</text></label>
 						<label><text>X</text></label>
 						<label><text>Y</text></label>

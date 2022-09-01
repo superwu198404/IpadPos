@@ -14,14 +14,7 @@
 				"enablePullDownRefresh": false
 			}
 		},
-		{
-			"path": "pages/mainSale/mainSale",
-			"style": {
-				"titleNView": false,
-				"navigationBarTitleText": "主销售界面",
-				"enablePullDownRefresh": false
-			}
-		},
+		
 		{
 			"path": "pages/Home/Home",
 			"style": {
@@ -80,8 +73,12 @@
 		{
 			"path": "pages/mainSale/mainSale",
 			"style": {
+				"titleNView": false,
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"mp-alipay":{
+					"allowsBounceVertical":"NO"
+				}
 			}
 		
 		},
@@ -282,6 +279,8 @@
 		}]
 	},
 	"usingComponents": {
-		"movable": "/components/movable/movable"
+		"movable": "/components/movable/movable",
+		"qiandao":"/components/qiandao/qiandao",
+		"rijie":"/components/rijie/rijie"
 	}
 }

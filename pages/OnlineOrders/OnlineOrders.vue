@@ -33,8 +33,10 @@
 				</view>
 			</view>
 		</view>
+		
+		<NoData v-if="Object.keys(onlineOrdersGroup).length==0"></NoData>
 		<!-- 小类循环 -->
-		<view class="products">
+		<view class="products" v-else>
 			<view class="procycle">
 				<!-- 外卖单循环 -->
 				<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item)"

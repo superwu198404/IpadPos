@@ -294,7 +294,7 @@ page {
 	top: 50%;
 	left: 50%;
 	width: 56%;
-	height: 94%;
+	height: 96%;
 	transform: translate(-50%, -50%);
 	background-color: #E0EAE9;
 	color: #006B44;
@@ -307,7 +307,13 @@ page {
 	font-size: 28rpx;
 	font-weight: 700;
 }
-
+.operation .ranks label{
+	width:60rpx;
+	height: 60rpx;	
+	display: flex;
+	justify-content:center;
+	align-items: center;
+}
 .ranks .curr text {
 	display: flex;
 	justify-content: center;
@@ -421,8 +427,11 @@ page {
 	transform: translate(-50%, -50%);
 	position: relative;
 	min-height: 30%;
+	padding:2% 3%;
 }
-
+.popup .confirm{
+	margin-top:20rpx;
+}
 .popup .tchw {
 	position: absolute;
 	top: 0;
@@ -760,6 +769,7 @@ page {
 	left: 50%;
 	transform: translateX(-50%);
 	width:96%;
+	
 }
 
 .pop-r .states {
