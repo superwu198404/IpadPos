@@ -11,12 +11,66 @@
 				<image src="@/images/qiandao.gif" mode="widthFix"></image>
 				<text>请先进行签到~</text>
 			</view>
-			<view class="affirm"><button class="btn btn-qr">签到</button></view>
+			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
 		</view>
 	</view>
 </template>
 
 <script>
+	var app = getApp();
+	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
+	import _login from '@/api/business/login.js';
+
+	var that;
+	export default {
+		name: "qiandao",
+		props: {},
+
+		data() {
+			return {
+				qd_show: false
+			};
+		},
+		methods: {
+			//签到
+			Sign: function() {
+				_login.SignOrSignOut(true, res => {
+					console.log("签到结果：", res);
+					if (res.code) {
+						util.simpleMsg("签到成功！");
+						let data = JSON.parse(res.data);
+						if (data.sql) {
+							_login.SignOrSignOutSql(data.sql, res => {
+								if (res.OPENFLAG == 1) {
+									console.log("签到成功，新状态为：", res.OPENFLAG == 1);
+									that.qd_show = false;
+								}
+							});
+						}
+					} else {
+						util.simpleMsg(res.msg, "none");
+						let store = util.getStorage("store");
+						if (store.OPENFLAG == 1) {
+							that.qd_show = false;
+						}
+					}
+				})
+			},
+		},
+		created: function() {
+			that = this;
+			let store = util.getStorage("store");
+			if (store) {
+				if (store.OPENFLAG != 1) {
+					that.qd_show = true;
+				}
+			}
+		}
+	}
 </script>
 
 <style>
@@ -69,11 +123,13 @@
 		position: relative;
 		z-index: 2;
 	}
-	.clues image{
-		width:100%;
+
+	.clues image {
+		width: 100%;
 	}
-	.clues text{
-		margin-top:-180rpx;
+
+	.clues text {
+		margin-top: -180rpx;
 		font-weight: 700;
 	}
 </style>
