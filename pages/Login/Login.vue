@@ -141,7 +141,7 @@
 									MERID: "999990053990001",
 									deviceno: "13001001",
 									KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-									POSCSZID: "018", //018、武汉前厅
+									POSCSZID: "001", 
 									RYID: "10086",
 									PWD: "123",
 									RYNAME: "老王",
@@ -151,7 +151,7 @@
 									JGID: "K200",
 									STIME: "7",
 									ETIME: "19",
-									OPENFLAG: 1, //签到状态
+									OPENFLAG: 0, //签到状态
 								}
 								util.setStorage("store", store);
 								uni.navigateTo({

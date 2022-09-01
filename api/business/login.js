@@ -171,8 +171,9 @@ var SignOrSignOut = async function(ynqd, func) {
 		.getYMD(-1) + "')";
 	await db.get().executeQry(sql, "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
-			salenum = res.msg[0].SALENUM;
-			salenet = res.msg[0].SALENET;
+			console.log("查询结果:", res);
+			salenum = res.msg[0].SALENUM || 0;
+			salenet = res.msg[0].SALENET || 0;
 		}
 	}, err => {
 
@@ -193,14 +194,16 @@ var SignOrSignOut = async function(ynqd, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 var SignOrSignOutSql = async function(sql, func) {
-	console.log("更新签到sql:", sql);
 	let sqlArr = sql.split(';');
+
+	console.log("更新签到sql:", sqlArr[0]);
 	await db.get().executeDml()(sqlArr[0], "执行中...", res => {
 		console.log("更新签到sql结果：", res);
 	}, err => {
 		console.log("更新签到sql异常：", err);
 	})
-	await db.get().executeQry(sqlArr[0], "查询中...", res => {
+	console.log("更新查询sql:", sqlArr[1]);
+	await db.get().executeQry(sqlArr[1], "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
 			let store = util.getStorage("store");
 			store.OPENFLAG = res.msg[0].RUN_STATUS;
