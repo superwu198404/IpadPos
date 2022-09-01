@@ -38,7 +38,7 @@
 				JGID: "",
 				STIME: "",
 				ETIME: "",
-				OPENFLAG: 1, //签到状态
+				OPENFLAG: 0, //签到状态
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -118,7 +118,7 @@
 			// }
 			_init.YN_Init(res => {
 				uni.reLaunch({
-					url: "pages/start/start",// /pages/Login/Login
+					url: "/pages/Login/Login",
 					success: () => {
 						//跳转完页面后再关闭启动页
 						plus.navigator.closeSplashscreen();

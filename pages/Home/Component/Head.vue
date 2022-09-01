@@ -37,9 +37,15 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
+<<<<<<< .mine
 					<label>
 						<button class="rijie" @click="Sign()">日结</button>
 					</label>
+=======
+					<label>
+						<button @click="Sign()">签到</button>
+					</label>
+>>>>>>> .theirs
 				</view>
 				<view class="account">
 					<view>
@@ -257,11 +263,11 @@
 						}, 1000);
 					}
 				}
-				console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-				console.log(
-					"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
-				console.log(
-					"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
+				// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+				// console.log(
+				// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+				// console.log(
+				// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
 			});
 			//搜索蓝牙
 			that.startSearch();
@@ -868,12 +874,13 @@
 				_login.SignOrSignOut(true, res => {
 					console.log("签到结果：", res);
 					if (res.code) {
-						let store = util.getStorage("store");
+						util.simpleMsg("签到成功！");
 						let data = JSON.parse(res.data);
-						store.OPENFLAG = data.openflag;
-						util.setStorage("store", store);
+						// let store = util.getStorage("store");
+						// store.OPENFLAG = data.openflag;
+						// util.setStorage("store", store);
 						if (data.sql) {
-							_login.SignOrSignOutSql(sql);
+							_login.SignOrSignOutSql(data.sql);
 						}
 					} else {
 						util.simpleMsg(res.msg, "none");

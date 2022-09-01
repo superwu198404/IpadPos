@@ -231,14 +231,14 @@ var mySqllite = function() {
 					name: that.name,
 					path: that.path,
 					success(e) {
-						console.log("[DBO][Success]数据库打开成功:",e);
+						console.log("[DBO][Success]数据库打开成功:", e);
 						return resolve({
 							code: true,
 							msg: e
 						});
 					},
 					fail(e) {
-						console.log("[DBO][Error]数据库打开失败:",e);
+						console.log("[DBO][Error]数据库打开失败:", e);
 						return resolve({
 							code: false,
 							msg: e
@@ -257,14 +257,14 @@ var mySqllite = function() {
 			plus.sqlite.closeDatabase({
 				name: that.name,
 				success(e) {
-					console.log("[DBO]数据关闭成功:",e);
+					console.log("[DBO]数据关闭成功:", e);
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					console.log("[DBO]数据关闭失败:",e);
+					console.log("[DBO]数据关闭失败:", e);
 					return resolve({
 						code: false,
 						msg: e
@@ -282,7 +282,7 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					//console.log("executeSql:okkkk"+JSON.stringify(e));
+					console.log("executeSql:okkkk" + JSON.stringify(e));
 					return resolve({
 						code: true,
 						msg: e
@@ -306,9 +306,9 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					console.log("[Qry]查询成功:",{
-						result:e,
-						sql:pm_sql
+					console.log("[Qry]查询成功:", {
+						result: e,
+						sql: pm_sql
 					});
 					return resolve({
 						code: true,
@@ -316,9 +316,9 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					console.log("[Qry]查询异常:",{
-						result:e,
-						sql:pm_sql
+					console.log("[Qry]查询异常:", {
+						result: e,
+						sql: pm_sql
 					});
 					return resolve({
 						code: false,
@@ -410,9 +410,9 @@ var mySqllite = function() {
 	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("[ExecuteQry]打开数据库:",retcode);
+		console.log("[ExecuteQry]打开数据库:", retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("[ExecuteQry]执行SQL:",[sql]);
+		console.log("[ExecuteQry]执行SQL:", [sql]);
 		retcode = await qry(sql);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);
@@ -430,9 +430,10 @@ var mySqllite = function() {
 		await open(pm_msg);
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		console.log("开始执行sql:", sql);
 		retcode = await exec(sql);
-		console.log("[ExecuteDml]返回值:",retcode);
-		console.log("[ExecuteDml]sql:",sql);
+		console.log("[ExecuteDml]返回值:", retcode);
+		console.log("[ExecuteDml]sql:", sql);
 		//await close();
 		if (retcode.code) {
 			retcode = await tran(tranEnum.commit);

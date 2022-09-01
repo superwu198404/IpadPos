@@ -171,13 +171,15 @@ var SignOrSignOut = async function(ynqd, func) {
 		.getYMD(-1) + "')";
 	await db.get().executeQry(sql, "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
-			salenum = res.msg[0].SALENUM;
-			salenet = res.msg[0].SALENET;
+			console.log("查询结果:", res);
+			salenum = res.msg[0].SALENUM || 0;
+			salenet = res.msg[0].SALENET || 0;
 		}
 	}, err => {
 
 	})
 	let store = util.getStorage("store");
+	// console.log("门店缓存信息：", store);
 	let data = {
 		gsid: store.GSID,
 		khid: store.KHID,
@@ -193,14 +195,13 @@ var SignOrSignOut = async function(ynqd, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 var SignOrSignOutSql = async function(sql, func) {
-	console.log("更新签到sql:", sql);
 	let sqlArr = sql.split(';');
-	await db.get().executeDml()(sqlArr[0], "执行中...", res => {
+	await db.get().executeDml(sqlArr[0], "执行中...", res => {
 		console.log("更新签到sql结果：", res);
 	}, err => {
 		console.log("更新签到sql异常：", err);
 	})
-	await db.get().executeQry(sqlArr[0], "查询中...", res => {
+	await db.get().executeQry(sqlArr[1], "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
 			let store = util.getStorage("store");
 			store.OPENFLAG = res.msg[0].RUN_STATUS;
@@ -213,6 +214,17 @@ var SignOrSignOutSql = async function(sql, func) {
 	})
 }
 
+var GetSignOutInWeek = async function(func) {
+	let store = util.getStorage("store");
+	
+	let data = {
+		khid: store.KHID
+	}
+	let apistr = "MobilePos_API.Models.MainCLASS.GetSignOutInWeek";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 export default {
 	GetPassWord,
 	GetKHIDByRYID,
@@ -220,5 +232,6 @@ export default {
 	UpdatePWD,
 	UpdatePWD_Local,
 	SignOrSignOut,
-	SignOrSignOutSql
+	SignOrSignOutSql,
+	GetSignOutInWeek
 }
