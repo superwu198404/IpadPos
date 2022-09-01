@@ -109,7 +109,7 @@ var getGSKHINFO = (gsid, khid) => {
 	try {
 		let addgsstr = "";
 		let strgsz = obj.KJGSFW; //QxDict[KJGSFW];
-		let arraygs = strgsz.Split(',');
+		let arraygs = strgsz.split(',');
 		for (let i = 0; i < arraygs.Length; i++) {
 			addgsstr += "'" + arraygs[i] + "',";
 		}

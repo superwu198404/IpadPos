@@ -35,8 +35,9 @@
 			}
 		},
 		mounted() {
+			let gsid_arr = util.getStorage("sysParam")?.KJGSFW?.split(',')
 			getRoom({
-				gsid:[this.GSID],
+				gsid:[this.GSID].concat(gsid_arr ?? []),
 				storeid:this.KHID,
 				dqid:this.DQID
 			},util.callBind(this,function(res){

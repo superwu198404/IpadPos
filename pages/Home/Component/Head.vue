@@ -49,7 +49,7 @@
 						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
 							mode="widthFix"></image>
 					</text>
-					<view class="dropout" v-if="dropout">
+					<view class="dropout" v-if="dropout" @click="Switch">
 						<view class="exit" @click="LoginOut()">
 							<image src="@/images/tuichu.png" mode="widthFix"></image>
 							<text>退出</text>
@@ -293,6 +293,9 @@
 					})
 				}
 				// });
+			},
+			Switch:function(){
+				console.log("弹窗打开!");
 			},
 			//关闭紧急类消息
 			CloseMsg: function() {

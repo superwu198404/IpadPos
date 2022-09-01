@@ -14,7 +14,7 @@
 				<text>{{item.title}}</text>
 				<view class="chargeback" v-if="item.details&&item.showDetail">
 					<label v-for="(item1,index1) in item.details" :class="sec_index==item1.index?'currs':''"
-						@click="ToPage(item1)">
+						@click.capture.stop="ToPage(item1)">
 						<image class="xz" :src="item1.icon" mode="widthFix"></image>
 						<image class="wx" :src="item1.icon1" mode="widthFix"></image>
 						<text>{{item1.title}}</text>
@@ -37,24 +37,29 @@
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name, title) {
-					// console.log("1111:", name + title);
-					// console.log("2222:", this.name + this.title);
-					return (this.name === name) && (this.title === title)
+					let child = this.urls.find(i => i.name == name && i.title == title)?.$child?.find(i => i.name == this.name && i.title == this.title);
+					return child ? true : (this.name === name) && (this.title === title)
 				});
 			}
 		},
 		data() {
 			return {
-				urls: router,
+				urls: (function(){
+					var func = (arr = [],layer = 1) => {
+						arr.forEach(i => {
+							i.$parent = "";//添加属性，方便后续监听
+							i.$layer = layer;//添加属性，方便后续监听
+							i.$child = [];//当前菜单下的子菜单
+							if(i.details && i.details.length > 0) func(i.details,layer+1);
+						})
+						return arr;
+					}
+					return func(router);
+				})(),
 				menuIndex: 0,
 				sec_index: 0
 			};
 		},
-		// props: {
-		// 	Chargeback: false,
-		// 	menuIndex: 0,
-		// 	sec_index: 0
-		// },
 		methods: {
 			ToPage: function(e) {
 				console.log("[ToPage]切换:", e);
@@ -93,18 +98,33 @@
 						title: e.title
 					});
 					this.menuIndex = e.index;
-					this.CloseAllChildMenu(e.title);
+					this.CloseAllChildMenu(e);
 				}
 			},
-			CloseAllChildMenu: function(title) {
+			CloseAllChildMenu: function(menu) {
 				this.urls.map((item, index) => {
-					if (item.title != title) {
+					if (item.title != menu.title) {
 						item.showDetail = false;
 					} else {
 						item.showDetail = !item.showDetail;
 					}
 				})
+				if(menu.$parent) menu.$parent.showDetail = false;
 			},
+		},
+		mounted() {
+			var func = (arr = [],parent = null,child) => {
+				arr.forEach(i => {
+					i.$parent = parent;
+					if(child)
+						i.$child = child;
+					else
+						i.$child = [];
+					i.$child.push(i);
+					if(i.details && i.details.length > 0) func(i.details,i,i.$child);
+				})
+			}
+			func(this.urls);
 		}
 	}
 </script>
