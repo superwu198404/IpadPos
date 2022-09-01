@@ -22,6 +22,7 @@
 			<label class="rjcg">日结成功</label>
 		</view>
 	</view>
+	
 </template>
 
 <script>
