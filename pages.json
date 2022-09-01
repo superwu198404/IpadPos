@@ -279,6 +279,8 @@
 		}]
 	},
 	"usingComponents": {
-		"movable": "/components/movable/movable"
+		"movable": "/components/movable/movable",
+		"qiandao":"/components/qiandao/qiandao",
+		"rijie":"/components/rijie/rijie"
 	}
 }

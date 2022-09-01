@@ -38,7 +38,7 @@ page {
 	position: relative;
 	color: #B0B0B0;
 	font-size: 14px;
-	padding-top: 3%;
+	padding-top: 2%;
 }
 
 .navmall .logo {
@@ -322,6 +322,13 @@ page {
 	width: 42rpx;
 	height: 42rpx;
 	margin-right: 6rpx;
+}
+.checkout .rijie{
+	background-color: #006B44;
+	color: #fff;
+	height: 50rpx;
+	line-height: 50rpx;
+	font-size: 26rpx;
 }
 
 .amounts {
@@ -652,6 +659,13 @@ page {
 	color: #B0B0B0;
 	line-height: 90rpx;
 	height: 90rpx;
+}
+.btn-hk {
+	background-color: #FFF7F5;
+	color: #FE694B;
+	line-height: 90rpx;
+	height: 90rpx;
+	border:2rpx solid #FE694B;
 }
 
 .pays-bj .curr.selected {
