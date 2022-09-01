@@ -151,7 +151,7 @@
 									JGID: "K200",
 									STIME: "7",
 									ETIME: "19",
-									OPENFLAG: 0, //签到状态
+									OPENFLAG: 1, //签到状态
 								}
 								util.setStorage("store", store);
 								uni.navigateTo({

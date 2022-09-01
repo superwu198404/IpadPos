@@ -16,8 +16,6 @@
 		<!-- <menu_page :menuIndex="0"></menu_page> -->
 		<view class="right">
 			<!-- <menu_head></menu_head> -->
-			<qiandao></qiandao>
-			<rijie></rijie>
 			<view class="listof">
 				<view class="prolist" style="overflow: hidden;">
 					<!-- <component is="credit-settlement"></component> -->

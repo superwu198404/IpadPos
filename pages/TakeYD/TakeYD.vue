@@ -23,8 +23,9 @@
 								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
+						<NoData v-if="WMOrders.length==0"></NoData>
 						<!-- 小类循环 -->
-						<view class="products">
+						<view class="products" v-else>
 							<view class="procycle">
 								<!-- 外卖单循环 -->
 

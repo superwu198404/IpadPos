@@ -22,10 +22,59 @@
 			<label class="rjcg">日结成功</label>
 		</view>
 	</view>
-	
-</template>
 
+</template>
 <script>
+	var app = getApp();
+	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
+	import _login from '@/api/business/login.js';
+
+	var that;
+	export default {
+		name: "rijie",
+		props: {
+		},
+
+		data() {
+			return {
+				sec: 3,
+				rj_show: false,
+				rj_sf: false,
+				rj_cg: false
+			};
+		},
+		methods: {
+			//签到
+			Sign: function() {
+				_login.SignOrSignOut(true, res => {
+					console.log("签到结果：", res);
+					if (res.code) {
+						util.simpleMsg("签到成功！");
+						let data = JSON.parse(res.data);
+						if (data.sql) {
+							_login.SignOrSignOutSql(data.sql);
+						}
+						that.qd_show = false;
+					} else {
+						util.simpleMsg(res.msg, "none");
+					}
+				})
+			},
+		},
+		created: function() {
+			that = this;
+			let store = util.getStorage("store");
+			if (store) {
+				if (store.OPENFLAG == 1) {
+					that.qd_show = true;
+				}
+			}
+		}
+	}
 </script>
 
 <style>
@@ -86,7 +135,7 @@
 
 	.affirm button {
 		width: 46%;
-		margin:0 2%;
+		margin: 0 2%;
 	}
 
 	.clues {
@@ -100,14 +149,16 @@
 		z-index: 2;
 		font-weight: 700;
 	}
-	.clues image{
-		margin:2% 0 0 4%;
+
+	.clues image {
+		margin: 2% 0 0 4%;
 	}
-	.rjcg{
+
+	.rjcg {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-top:100rpx;
+		margin-top: 100rpx;
 		color: #006B44;
 		font-weight: 700;
 		font-size: 40rpx;

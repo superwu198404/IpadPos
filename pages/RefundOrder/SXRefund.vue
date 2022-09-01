@@ -49,11 +49,13 @@
 							</view>
 						</view>
 						<view class="h2">赊销退单 <label></label></view>
+						<NoData v-if="Orders.length==0"></NoData>
 						<!-- 小类循环 -->
-						<view class="products">
+						<view class="products" v-else>
 							<view class="procycle">
 								<!-- 订单循环 -->
-								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '" @click="ChooseOrder(item,index)">
+								<view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '"
+									@click="ChooseOrder(item,index)">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
 										<text class="price">￥{{item.DNET}}</text>

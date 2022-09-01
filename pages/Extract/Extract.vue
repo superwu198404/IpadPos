@@ -43,8 +43,9 @@
 				</view>
 			</view>
 		</view>
+		<NoData v-if="extracts.length==0"></NoData>
 		<!-- 小类循环 -->
-		<view class="products">
+		<view class="products" v-else>
 			<view class="procycle">
 				<!-- 产品循环 -->
 				<view v-for="(item,index) in extracts" class="li">
