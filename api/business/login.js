@@ -216,6 +216,7 @@ var SignOrSignOutSql = async function(sql, func) {
 
 var GetSignOutInWeek = async function(func) {
 	let store = util.getStorage("store");
+	
 	let data = {
 		khid: store.KHID
 	}
