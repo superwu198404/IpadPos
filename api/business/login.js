@@ -179,6 +179,7 @@ var SignOrSignOut = async function(ynqd, func) {
 
 	})
 	let store = util.getStorage("store");
+	// console.log("门店缓存信息：", store);
 	let data = {
 		gsid: store.GSID,
 		khid: store.KHID,
@@ -195,14 +196,11 @@ var SignOrSignOut = async function(ynqd, func) {
 }
 var SignOrSignOutSql = async function(sql, func) {
 	let sqlArr = sql.split(';');
-
-	console.log("更新签到sql:", sqlArr[0]);
-	await db.get().executeDml()(sqlArr[0], "执行中...", res => {
+	await db.get().executeDml(sqlArr[0], "执行中...", res => {
 		console.log("更新签到sql结果：", res);
 	}, err => {
 		console.log("更新签到sql异常：", err);
 	})
-	console.log("更新查询sql:", sqlArr[1]);
 	await db.get().executeQry(sqlArr[1], "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
 			let store = util.getStorage("store");
@@ -216,6 +214,16 @@ var SignOrSignOutSql = async function(sql, func) {
 	})
 }
 
+var GetSignOutInWeek = async function(func) {
+	let store = util.getStorage("store");
+	let data = {
+		khid: store.KHID
+	}
+	let apistr = "MobilePos_API.Models.MainCLASS.GetSignOutInWeek";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 export default {
 	GetPassWord,
 	GetKHIDByRYID,
@@ -223,5 +231,6 @@ export default {
 	UpdatePWD,
 	UpdatePWD_Local,
 	SignOrSignOut,
-	SignOrSignOutSql
+	SignOrSignOutSql,
+	GetSignOutInWeek
 }

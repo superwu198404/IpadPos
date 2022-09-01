@@ -65,15 +65,15 @@
 		created: function() {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
-			console.log("传入的业务消息集合：", that.msgDatas);
+			// console.log("传入的业务消息集合：", that.msgDatas);
 			that._msgDatas.map(r => {
 				that.totalCount += r.count;
 			})
 			uni.getSystemInfo({
 				success: function(res) {
-					console.log("设备信息：", res);
+					// console.log("设备信息：", res);
 					that.x = res.screenWidth - 220;
-					console.log("偏移宽度：", that.x);
+					// console.log("偏移宽度：", that.x);
 				}
 			})
 		},
