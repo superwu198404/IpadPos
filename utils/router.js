@@ -4,11 +4,11 @@
 export default [{
 		title: "销售",
 		name: "Main",
-		keepAlive: true,
-		/*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
+		keepAlive: true, /*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
 		meta:{
-			bill_type:""
+			bill_type:"",
+			xs_type:1
 		},
 		icon: require('@/images/xiaoshou.png'),
 		icon1: require("@/images/xiaoshou-hui.png"),
@@ -19,7 +19,8 @@ export default [{
 		name: "Main",
 		url: "@/pages/Main/Main", //
 		meta:{
-			bill_type:"Z171"
+			bill_type:"Z171",
+			xs_type:3
 		},
 		icon: require("@/images/yuding.png"),
 		icon1: require("@/images/yuding-hui.png"),
@@ -31,7 +32,7 @@ export default [{
 		url: "@/pages/Main/Main",
 		meta:{
 			bill_type:"Z154",
-			xs_type:1
+			xs_type:6
 		},
 		icon: require("@/images/shexiao.png"),
 		icon1: require("@/images/shexiao-hui.png"),
@@ -43,7 +44,7 @@ export default [{
 		url: "@/pages/Extract/Extract",
 		icon: require("@/images/xz-ydtq.png"),
 		icon1: require("@/images/wxz-ydtq.png"),
-		index: 3
+		index: 5
 	}, {
 		title: "外卖单",
 		name: "TakeAway",
@@ -94,6 +95,9 @@ export default [{
 				title: "销售退单",
 				name: "RefundOrder",
 				url: "@/pages/RefundOrder/RefundOrder",
+				meta:{
+					xs_type:2
+				},
 				icon: require("@/images/xstd.png"),
 				icon1: require("@/images/xstd-wxz.png"),
 				index: 0
@@ -103,7 +107,8 @@ export default [{
 				name: "Extract",
 				url: "@/pages/Extract/Extract",
 				meta: { //跳转的时候会向组件的 meta 传值，组件内通过 this.meta 获取传入的数据
-					mode: false
+					mode: false,
+					xs_type:4
 				},
 				icon: require("@/images/ydqx.png"),
 				icon1: require("@/images/ydqx-wxz.png"),
@@ -113,6 +118,9 @@ export default [{
 				title: "赊销退单",
 				name: "SXRefund",
 				url: "@/pages/RefundOrder/SXRefund",
+				meta: {
+					xs_type:7
+				},
 				icon: require("@/images/sxtd.png"),
 				icon1: require("@/images/sxtd-wxz.png"),
 				index: 2
@@ -169,13 +177,4 @@ export default [{
 			}
 		]
 	}
-	//,
-	// {
-	// 	title: "赊销结算",
-	// 	name: "CreditSettlement",
-	// 	url: "@/pages/CreditSettlement/CreditSettlement",
-	// 	icon: require("@/images/xz-xx.png"),
-	// 	icon1: require("@/images/xiaoxi-hui.png"),
-	// 	index: 8
-	// }
 ]

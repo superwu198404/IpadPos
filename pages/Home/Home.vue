@@ -7,7 +7,7 @@
 		<view class="right">
 			<Head @Switch="SwitchPage"></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component @Switch="SwitchPage" @Message="OpenMessage" v-for="c in router" :is="c.name" :ref="c.title"
+			<component @Switch="SwitchPage" @Message="OpenMessage" @EnterSales="controller" v-for="c in router" :is="c.name" :ref="c.title"
 				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="meta_data"></component>
 		</view>
 		<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
@@ -34,7 +34,8 @@
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
-
+	//全局销售控制器
+	import SaleController from '@/utils/sale/baseSale.js';
 	export default {
 		name: "Home",
 		components: {
@@ -66,8 +67,9 @@
 				view: {
 					message: false
 				},
-				router: [],
-				meta_data: {}
+				router: [],//路由信息参数
+				meta_data: {},//路由元数据
+				controller:null
 			}
 		},
 		computed: {
@@ -113,12 +115,13 @@
 					});
 				}
 			},
-			ComponentRecursion: function(tree, all) {
+			ComponentRecursion: function(tree, all = []) {
 				tree.forEach(util.callBind(this, function(item) {
 					all.push(item);
 					if (item.details)
 						this.ComponentRecursion(item.details, all);
 				}));
+				return all;
 			},
 			MsgToPage: function() {
 				uni.$on("Switch", util.callBind(this, function(res) {
@@ -127,10 +130,9 @@
 			}
 		},
 		created() {
-			let components = [];
-			this.ComponentRecursion(router, components)
-			this.router = components;
-			this.MsgToPage();
+			this.router = this.ComponentRecursion(router, components);//路由数据
+			this.controller = new SaleController.GetSale(this.KHID,this.POSID,this.RYID,this,"Home",this.KCDID,this.DPID,this.GCID);//实例化销售控制器（主要是针对Main页面进行控制的）
+			this.MsgToPage();//开启页面事件监听
 			this.$refs = new Proxy(this.$refs, {
 				set(obj, prop, value) {
 					if(Array.isArray(value) && value.length > 0)

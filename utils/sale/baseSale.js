@@ -1,10 +1,9 @@
 import sale from '@/utils/sale/saleClass.js';
 
-//和router作用完全一致
 var XsTypeObj = {
 	sale: {//普通销售模式，最基本的模式
 		xstype: "1",
-		clickType: "sale",
+		clickType: "sale",//目前尚未用到
 		nameSale: "销售",
 		iconHui: require("@/images/xiaoshou-hui.png"),
 		iconCurr: require("@/images/xiaoshou.png"),
@@ -111,6 +110,17 @@ var XsTypeObj = {
 	},
 }
 
+/**
+ * 
+ * @param {*} pm_store 店铺ID
+ * @param {*} pm_posid POSID
+ * @param {*} pm_ryid RYID（全局可获取）
+ * @param {*} pm_page vue实例
+ * @param {*} mPageName 页面名称
+ * @param {*} pm_kcdid 
+ * @param {*} pm_dpid 
+ * @param {*} pm_gcid 
+ */
 function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_dpid, pm_gcid) {
 	var that = this;
 	this.billindex = 0;
@@ -261,7 +271,7 @@ function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_d
 	this.Allsplist = null;
 	
 	//this.oldOperation = null;
-	///当前锁定的行为多少
+	//当前锁定的行为多少
 
 	//初始化字母的列表
 	this.filterSp = function(pm_flag) {
@@ -342,6 +352,7 @@ function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_d
 		"statement": false, //购物车
 	}
 	var lastManage = null;
+	
 	///设置基础的权限
 	this.setCurrentOperation = function(pm_OperEnum) {
 		// that.log("传入权限"+ JSON.stringify( pm_OperEnum));
@@ -448,6 +459,7 @@ function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_d
 		that.update()
 		that.log("-----绑定完成++++" + qty);
 	}
+	
 	//修改销售类型
 	//参数1销售类型，参数2单据列表
 	this.setType = function(pm_type) {
@@ -476,6 +488,7 @@ function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_d
 		that.log("click" + stype)
 		that.setType.call(that, stype);
 	}
+	
 	//初始化销售的操作
 	this.$initSale = function(pm_newtype, pm_saleobj) {
 		pm_newtype = pm_newtype || this.clickSaleType;
@@ -553,7 +566,7 @@ function GetSale(pm_store, pm_posid, pm_ryid, pm_page, mPageName, pm_kcdid, pm_d
 		return parseFloat(pm_num).toFixed(pm_declen);
 	}
 
-	///汇总sale002的所有内容
+	//汇总sale002的所有内容
 	this.sale002Sum = function(pm_input) {
 		this.sale002.forEach(item => {
 			that.log(JSON.stringify(item));
