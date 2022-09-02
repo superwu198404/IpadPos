@@ -576,7 +576,7 @@
 				}).bind(this));
 				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
 				console.log("[SaleDataCombine]sale8 封装中...");
-				this.sale8_arr = this.sale8_arr.map((function(item, index) {
+				this.sale8_arr = this.sbsp_arr.map((function(item, index) {
 					return Object.assign(item, {
 						SALEDATE: saledate,
 						SALETIME: saletime,

@@ -164,7 +164,7 @@ var YN_Sign = function(khid, posid, func) {
 	}
 }
 
-var SignOrSignOut = async function(ynqd, func) {
+var SignOrSignOut = async function(ynqd,qtdate, func) {
 	let salenum = 0,
 		salenet = 0;
 	let sql = "SELECT COUNT(*) SALENUM,SUM(TNET) SALENET FROM  SALE001  WHERE SALEDATE =DATETIME('" + dateformat
@@ -188,7 +188,8 @@ var SignOrSignOut = async function(ynqd, func) {
 		ynqd,
 		openflag: store.OPENFLAG,
 		salenum,
-		salenet
+		salenet,
+		qtdate
 	}
 	let apistr = "MobilePos_API.Models.MainCLASS.SignOrSignOut";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
