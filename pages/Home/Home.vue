@@ -15,9 +15,6 @@
 </template>
 
 <script>
-	//导入 Vue 实例
-	import Vue from 'vue'
-
 	import util from '@/utils/util.js';
 	//路由数据
 	import router from '@/utils/router.js'
