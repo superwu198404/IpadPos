@@ -497,7 +497,7 @@ const Cxdict = async () => {
 			if (C1.SubList == null) {
 				continue;
 			}
-			console.log("cxdict C1 111111111", C1)
+			//console.log("cxdict C1 111111111", C1)
 			//添加促销类别
 			cxdict.set(C1.CxBill, C1);
 
@@ -526,20 +526,20 @@ const Createcx = async (sale02) => {
 			"ProCode": "000000001080100001",
 			"ProName": "水果沙拉",
 			"ProNum": 3,
-			"ProPrice": 1,
+			"ProPrice": 9,
 			"Disc": 0,
-			"ProSalePrice": 3,
-			"ProOPrice": 1,
+			"ProSalePrice": 27,
+			"ProOPrice": 9,
 			"Sort": 1
 		},
 		{
-			"ProCode": "000000001080100004",
+			"ProCode": "000000001080100003",
 			"ProName": "礼盒2号",
 			"ProNum": 10,
-			"ProPrice": 2,
+			"ProPrice": 8.5,
 			"Disc": 0,
-			"ProSalePrice": 2,
-			"ProOPrice": 2,
+			"ProSalePrice": 25.5,
+			"ProOPrice": 8.5,
 			"Sort": 2
 		}
 	];
@@ -554,8 +554,8 @@ const Createcx = async (sale02) => {
 
 	for (let i = 0; i < sale02_arr.length; i++) {
 		let spid = sale02_arr[i].ProCode.toString();
-		let price = Math.floor(parseFloat(sale02_arr[i].ProPrice.toString()) * 100) / 100;
-		let num = Math.floor(parseFloat(sale02_arr[i].ProNum.toString()) * 100) / 100;
+		let price = Math.round(parseFloat(sale02_arr[i].ProPrice.toString()) * 100) / 100;
+		let num = Math.round(parseFloat(sale02_arr[i].ProNum.toString()) * 100) / 100;
 
 		//添加
 		AddRowCxbilldts(spid, price, num, i);
@@ -565,8 +565,8 @@ const Createcx = async (sale02) => {
 
 	for (let i = 0; i < cxbilldts.length; i++) {
 		//获取每个商品中的值
-		let cxdiscvalue = parseFloat(cx_util.nnvl(cxbilldts[i].DISC, 0).toFixed(2));
-		let spnet = parseFloat(sale02_arr[i].ProPrice).toFixed(2) * parseFloat(sale02_arr[i].ProNum).toFixed(2);
+		let cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0)*100))/100;
+		let spnet =Math.round((parseFloat(sale02_arr[i].ProPrice) * parseFloat(sale02_arr[i].ProNum))*100)/100;
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
 		if (cxdiscvalue >= 0) {
@@ -595,7 +595,7 @@ const Createcx = async (sale02) => {
 		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].ProOPrice, 0));
 		
 		sale02_arr[i].ProSalePrice = parseFloat(ProPrice * ProNum - cxdiscvalue);
-		sale02_arr[i].ProOPrice = parseFloat(sale02_arr[i].ProSalePrice / ProNum).toFixed(2);
+		sale02_arr[i].ProOPrice = Math.round((sale02_arr[i].ProSalePrice / ProNum)*100)/100;
 		sale02_arr[i].SPJF = jfnum;
 		sale02_arr[i].CXZT = cxztStr;
 		sale02_arr[i].CxBill = cxbillStr;
@@ -870,7 +870,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 //统计大概可有多少促销发生 在销售界面上回生成小旗子
 const testallcx = function(bill, pmList) {
 	let Lcm = 0;
-	console.log("testallcx cx", cxdict.get(bill));
+	//console.log("testallcx cx", cxdict.get(bill));
 	let cx = cxdict.get(bill); 
 	let currentlv = 0;
 
@@ -881,7 +881,7 @@ const testallcx = function(bill, pmList) {
 	let subzqty = getSubidZqty(pmList, cx, yysl);
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
-		console.log("testallcx Lcm",Lcm);
+		//console.log("testallcx Lcm",Lcm);
 		if (Lcm > 0) {
 			break;
 		} else {
@@ -905,7 +905,7 @@ const testallcx = function(bill, pmList) {
 ///参与促销计算
 const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype) {
 	console.log("CxClasCompute", spid + "||" + salebill + "|" + saledate)
-	console.log("CxClasCompute cx1", cxdict.get(bill))
+	//console.log("CxClasCompute cx1", cxdict.get(bill))
 	let cx1 = cxdict.get(bill);
 	if (cx1.YN_JSLB) {
 		if (cx1.OneJs) {
@@ -1063,7 +1063,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 					Spprice = oldprice;
 
 					if (ynzs == false && currqty * Spprice >= Tjqty) {
-						fsqty = Math.floor((Tjqty / Spprice) * 100) / 100;
+						fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
 						Tjqty = 0;
 					} else if (currqty * Spprice >= Tjqty) //&& ynzs == true
 					{
@@ -1100,10 +1100,10 @@ const getLcm = function(zqty, cx1, lv) {
 		return 0;
 	} else {
 		for (let [key, value] of zqty) {
-			console.log("getLcm value",key + "|" + value);
+			//console.log("getLcm value",key + "|" + value);
 			let cxqty = value;
 			let subx = cx1.SubList[key];
-			console.log("getLcm subx",subx);
+			//console.log("getLcm subx",subx);
 			if (subx.ZkTj == "Qty") {
 				templcm = parseInt(cxqty / subx.QtyCondition[lv]);
 			} else {
@@ -1114,7 +1114,7 @@ const getLcm = function(zqty, cx1, lv) {
 			}
 		}
 	}
-	console.log("getLcm lcm",lcm);
+	//console.log("getLcm lcm",lcm);
 	if (lcm == Number.MAX_SAFE_INTEGER) {
 		return 0;
 	}
@@ -1130,7 +1130,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		let hashqty = new Map();
 		let subzqty = getSubidZqty(pmList, cx,sysl);
 		Lcm = getLcm(subzqty, cx, 0);
-		console.log("FreeZhCx Lcm",Lcm)
+		//console.log("FreeZhCx Lcm",Lcm)
 		if (Lcm == 0) {
 			return;
 		}
@@ -1196,7 +1196,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				}
 			} else {
 				if (currqty * Spprice >= Tjqty && ynzs == false) {
-					fsqty = Math.floor((Tjqty / Spprice) * 100) / 100;
+					fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
 				} else if (currqty * Spprice >= Tjqty) {
 					fsqty = Math.ceil(Tjqty / Spprice);
 				} else {
@@ -1212,7 +1212,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			Fsnet.set(subid,Fsnet.get(subid) + fsqty * oldprice);
 			cxbilldts[i][fscs] = fsqty;
 		}
-		console.log("FreeZhCx cxbilldts 111",cxbilldts)
+		//console.log("FreeZhCx cxbilldts 111",cxbilldts)
 		SubCxQty(spid, bill, saledate, pmList, cx, Fsnet, 0, Lcm);
 	} catch (e) {
 
@@ -1404,7 +1404,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.floor(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math
+					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math
 						.floor((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
@@ -1420,7 +1420,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 						subdisc = sublcm * cxsub.discnet[level];
 					} else {
-						subdisc = Math.floor((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) / 100;
+						subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) / 100;
 					}
 					//计算积分
 					//积分相关的时候不计算折扣
@@ -1441,7 +1441,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 					} else {
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.floor((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
 							100) / 100;
 					}
 					break;
@@ -1468,7 +1468,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 						//计算积分
 						else {
-							cxbilldts[i][disc] = Math.floor((SqlHelper.NNVL(cxbilldts[i][disc], 0) + (
+							cxbilldts[i][disc] = Math.round((SqlHelper.NNVL(cxbilldts[i][disc], 0) + (
 								price - zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
@@ -1483,10 +1483,10 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.hasOwnProperty(i)) {
-						cxbilldts[i][disc] = Math.floor((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
-							i] * Math.floor((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
+							i] * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
-							newprice = (fsqty * price - MinRow[i] * Math.floor((price * (1 - cxsub.minDisc)) *
+							newprice = (fsqty * price - MinRow[i] * Math.round((price * (1 - cxsub.minDisc)) *
 									100) / 100) /
 								fsqty;
 						} else {
@@ -1635,8 +1635,8 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (cx.upleave > 0 && (jfnum + yyjf) > cx.upleave) {
 		return;
 	}
-	net = Math.floor(net * 100) / 100;
-	jfnum = Math.floor(jfnum * 100) / 100;
+	net = Math.round(net * 100) / 100;
+	jfnum = Math.round(jfnum * 100) / 100;
 	///累加金额
 	jfinfo.dhnet += net;
 	///累加积分
@@ -1711,15 +1711,15 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			if (fsqty > 0) {
 				switch (cxsub.SubZktype) {
 					case "Subdisc":
-						cxbilldts[i][disc] = Math.floor((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub
 							.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 						newprice = price * cxsub.discnum[level] / 100;
 						break;
 					case "Subnet":
-						let subdisc = Math.floor((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) /
+						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) /
 							100;
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.floor((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
 							100) / 100;
 						break;
 					case "zjprice":
@@ -1727,7 +1727,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 						if (zjprice > price) {
 							//cxbilldts[i][disc] = 0;
 						} else {
-							cxbilldts[i][disc] = Math.floor((cx_util.nnvl(cxbilldts[i][disc], 0) + (price -
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price -
 								zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
@@ -1790,7 +1790,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 			continue;
 		}
 		let subx = cx.SubList[subid];
-		console.log("subx",subx)
+		//console.log("subx",subx)
 		if (cx.OneSp) {
 			///此时返回的是发生的数量
 			syqty = getOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
@@ -1802,7 +1802,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		if (subx.ZkTj == "Net") {
 			syqty = getOneSpNetForQty(cx, subid, syqty, oldprcle);
 		}
-		console.log("getSubidZqty zqty.hasOwnProperty(subid)",zqty.has(subid));
+		//console.log("getSubidZqty zqty.hasOwnProperty(subid)",zqty.has(subid));
 		if (zqty.has(subid)) {
 			zqty.set(subid, zqty.get(subid) + syqty);
 		} else {
