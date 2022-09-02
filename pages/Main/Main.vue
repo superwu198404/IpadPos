@@ -614,6 +614,7 @@
 			},
 			//切换登录
 			ChangeMember: function() {
+				util.removeStorage("hyinfo");
 				uni.navigateTo({
 					url: "../MemberLogin/MemberLogin"
 				})
