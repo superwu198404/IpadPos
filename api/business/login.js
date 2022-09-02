@@ -213,7 +213,7 @@ var SignOrSignOutSql = async function(sql, func) {
 
 	})
 }
-
+//获取一周能是否有未日结的数据
 var GetSignOutInWeek = async function(func) {
 	let store = util.getStorage("store");
 	

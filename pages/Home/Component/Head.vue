@@ -37,9 +37,9 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<!-- <label>
-						<button @click="Sign()">签到</button>
-					</label> -->
+					<label>
+						<button class="rijie" @click="ToSignOut()">日结</button>
+					</label>
 				</view>
 				<view class="account">
 					<view>
@@ -159,7 +159,7 @@
 			<!-- 签到组件 -->
 			<qiandao></qiandao>
 			<!-- 日结组件 -->
-			<rijie></rijie>
+			<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
 		</view>
 	</view>
 </template>
@@ -175,8 +175,7 @@
 	let that;
 	export default {
 		name: "menu_head",
-		props: {
-		},
+		props: {},
 		data() {
 			return {
 				KHID: getApp().globalData.store.KHID,
@@ -210,6 +209,8 @@
 				viewTime: 5, //默认5s
 				intervalId: null,
 				showYWMsg: false,
+				showSignOut: false,
+				signOutDate: []
 			};
 		},
 		// created: function(e) {
@@ -217,58 +218,64 @@
 		// },
 		created: function(e) {
 			that = this;
-			_msg.ShowMsg(that.KHID, "", res => {
-				that.MsgData = res;
-				that.XT_MsgData = res.filter((r, i) => {
-					return r.type == 'SYSTEM';
-				});
-				that.YW_MsgData = res.filter((r, i) => {
-					//外卖，外卖预定单，线上
-					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
-				});
-				if (that.YW_MsgData.length > 0) {
-					that.showYWMsg = false;
-					that.$nextTick(() => {
-						that.showYWMsg = true;
-					})
-				} else {
-					that.showYWMsg = false;
-				}
-				if (that.XT_MsgData.length > 0) {
-					let newArr = that.XT_MsgData[0].Details.map(r => {
-						return {
-							key: r.key,
-							val: JSON.parse(r.val),
-							newVal: JSON.parse(r.val)[0]
-						}
-					})
-					console.log("分组后的消息：", newArr);
-					that.urgenMsg = newArr.find(r => {
-						return r.newVal.IMTYPE == '1'
-					})
-					if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
-						that.viewTime = that.urgenMsg.VIEWTIME || 5;
-						let id = setInterval(r => {
-							that.viewTime -= 1;
-							if (that.viewTime == 0) {
-								that.viewTime == 0;
-								clearInterval(id);
-							}
-						}, 1000);
-					}
-				}
-				// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-				// console.log(
-				// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
-				// console.log(
-				// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
-			});
+			//获取消息数据
+			that.GetMsg();
 			//搜索蓝牙
 			that.startSearch();
 			that.onBLEConnectionStateChange();
-
+			//查询一周内是否有未日结的数据
+			that.GetSignOutInWeek();
 		},
 		methods: {
+			//获取消息数据
+			GetMsg: function() {
+				_msg.ShowMsg(that.KHID, "", res => {
+					that.MsgData = res;
+					that.XT_MsgData = res.filter((r, i) => {
+						return r.type == 'SYSTEM';
+					});
+					that.YW_MsgData = res.filter((r, i) => {
+						//外卖，外卖预定单，线上
+						return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
+					});
+					if (that.YW_MsgData.length > 0) {
+						that.showYWMsg = false;
+						that.$nextTick(() => {
+							that.showYWMsg = true;
+						})
+					} else {
+						that.showYWMsg = false;
+					}
+					if (that.XT_MsgData.length > 0) {
+						let newArr = that.XT_MsgData[0].Details.map(r => {
+							return {
+								key: r.key,
+								val: JSON.parse(r.val),
+								newVal: JSON.parse(r.val)[0]
+							}
+						})
+						console.log("分组后的消息：", newArr);
+						that.urgenMsg = newArr.find(r => {
+							return r.newVal.IMTYPE == '1'
+						})
+						if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
+							that.viewTime = that.urgenMsg.VIEWTIME || 5;
+							let id = setInterval(r => {
+								that.viewTime -= 1;
+								if (that.viewTime == 0) {
+									that.viewTime == 0;
+									clearInterval(id);
+								}
+							}, 1000);
+						}
+					}
+					// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+					// console.log(
+					// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+					// console.log(
+					// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
+				});
+			},
 			//消息已读
 			ReadMsg: function(e, i) {
 				let store = util.getStorage("store");
@@ -863,6 +870,29 @@
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
+			//获取一周内是否有未日结的数据
+			GetSignOutInWeek: function() {
+				_login.GetSignOutInWeek(res => {
+					console.log("是否有日结数据：", res);
+					if (!res.code) {
+						util.simpleModal("提示", res.msg, code => {
+							if (code) { //点击了确定
+								that.showSignOut = true;
+								that.signOutDate = JSON.parse(res.data);
+							}
+						})
+					}
+				})
+			},
+			//去日结
+			ToSignOut: () => {
+				that.showSignOut = true;
+			},
+			//关闭日结框
+			CloseSignOut: function(res) {
+				console.log("父组件被通知事件");
+				that.showSignOut = false;
+			}
 		}
 	}
 </script>
