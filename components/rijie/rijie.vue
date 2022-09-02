@@ -59,6 +59,12 @@
 		watch: {
 			_rj_show: (n, o) => {
 
+			},
+			_signOutDate: (n, o) => {
+				console.log("日结数据变化：",n);
+				if (n.length > 0) {
+					that.signOutDate = that._signOutDate;
+				}
 			}
 		},
 		methods: {
