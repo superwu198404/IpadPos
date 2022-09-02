@@ -2,10 +2,10 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(../../style/basis.css); */
 	@import url(@/static/style/index.css);
-  
-  
 
- 
+
+
+
 	.prolist {
 		width: 100%;
 	}
@@ -140,7 +140,7 @@
 				</view>
 			</view>
 		</view>
-		
+
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="controller.ComponentsManage.inputsp">
 			<view class="popup">
@@ -550,8 +550,8 @@
 					return this.components.current === name ? "curr" : "";
 				}).bind(this)
 			},
-			Price: function(){
-				return util.callBind(this,function(spid){
+			Price: function() {
+				return util.callBind(this, function(spid) {
 					return this.controller.spPrice[spid]?.PRICE ?? "-";
 				})
 			}
@@ -599,23 +599,23 @@
 				showTSZK: false,
 				YN_SX: false,
 				controller: { //controller 销售页控制器-从 Home 页进行赋值设置
-					ComponentsManage:{
-						inputsp:[]
+					ComponentsManage: {
+						inputsp: []
 					},
-					selectFlagList:[],
-					clikSpItem:{
-						SNAME:"",
-						SPID:"",
-						UNIT:"",
-						PRICE:""
+					selectFlagList: [],
+					clikSpItem: {
+						SNAME: "",
+						SPID: "",
+						UNIT: "",
+						PRICE: ""
 					},
-					spPrice:{},
-					inputSpForClick:{
-						QTY:""
+					spPrice: {},
+					inputSpForClick: {
+						QTY: ""
 					},
-					setComponentsManage:() => {}
+					setComponentsManage: () => {}
 				},
-				Main:{}//controller=>外层控制对象
+				Main: {} //controller=>外层控制对象
 			}
 		},
 		methods: {
@@ -650,6 +650,7 @@
 			},
 			//切换登录
 			ChangeMember: function() {
+				that.showMember = false;
 				util.removeStorage("hyinfo");
 				uni.navigateTo({
 					url: "../MemberLogin/MemberLogin"
