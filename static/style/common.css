@@ -23,3 +23,7 @@
 	transform-origin: center;
 	margin-left: 14px;
 }
+
+page {
+	overflow: hidden;
+}

@@ -7,7 +7,7 @@
 </style>
 <template>
 	<view>
-		<view class="nav">
+		<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
 				<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
 				<view class="message">
@@ -20,7 +20,7 @@
 					<!-- <text>测试消息...</text> -->
 				</view>
 			</view>
-			<view class="stores">
+			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()">
 						<image src="@/images/dakehu.png" mode="widthFix"></image>大客户：{{DKFNAME}}
@@ -45,10 +45,11 @@
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text @click="exits()">{{RYID}}
+					<view @click="exits()" style="display:flex;flex-wrap: nowrap;align-items: center;">
+						<text>{{RYID}}</text>
 						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
 							mode="widthFix"></image>
-					</text>
+					</view>
 					<view class="dropout" v-if="dropout" @click="Switch">
 						<view class="exit" @click="LoginOut()">
 							<image src="@/images/tuichu.png" mode="widthFix"></image>
