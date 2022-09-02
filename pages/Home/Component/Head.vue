@@ -302,7 +302,7 @@
 				}
 				// });
 			},
-			Switch:function(){
+			Switch: function() {
 				console.log("弹窗打开!");
 			},
 			//关闭紧急类消息
@@ -877,11 +877,11 @@
 			GetSignOutInWeek: function() {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
-					if (!res.code) {
+					if (res.code) {
 						util.simpleModal("提示", res.msg, code => {
 							if (code) { //点击了确定
 								that.showSignOut = true;
-								that.signOutDate = JSON.parse(res.data);
+								that.signOutDate = ["2022/9/1", "2022/8/31"]; //JSON.parse(res.data);
 							}
 						})
 					}

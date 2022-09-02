@@ -144,6 +144,7 @@ const sale_order_generation_def_params = {
 		sale3: [] //sale3
 	}
 }
+
 //统一生成销售单数据
 export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, sale8_arr, func) {
 	//执行结果
@@ -174,8 +175,7 @@ export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, s
 		};
 		let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
 		let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr)
-			.concat(
-				sql8.sqlliteArr);
+			.concat(sql8.sqlliteArr);
 		await db.get().executeDml(exeSql, "订单创建中", res => {
 			if (func) func(res);
 			result.code = true;
