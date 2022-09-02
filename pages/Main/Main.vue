@@ -18,8 +18,6 @@
 			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist" style="overflow: hidden;">
-					<!-- <component is="credit-settlement"></component> -->
-					<!-- <component :is="components.current"></component> -->
 					<!-- 大类循环 -->
 					<view class="commodity">
 						<view class="hh">
@@ -37,8 +35,8 @@
 								</label>
 							</view>
 						</view>
-						<!-- 品类循环 -->
-						<view style="height:92%;flex: 1;">
+						<!-- 品类循环:废弃-->
+						<view style="height:92%;flex: 1;" v-show="false">
 							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
 								<view class="products" v-for="(item1,index1) in RXSPDatas" :id="'tab'+index1">
 									<view class="h2">{{item1.PLNAME}}<label></label></view>
@@ -75,6 +73,40 @@
 								</view>
 							</scroll-view>
 						</view>
+						<!-- 品类循环-->
+						<view style="height:92%;flex: 1;">
+							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+								<view class="products" v-for="(plitem, plindex) in controller.selectFlagList">
+									<view class="h2">{{plitem.plname}} <label></label></view>
+									<view class="procycle">
+										<!-- 产品循环 -->
+										<view class="li" v-for="(sptiem, spindex) in  plitem['plarr']"
+											@click="controller.showSpDetails" :data-plindex="plindex"
+											:data-spindex="spindex">
+											<view class="h3">
+												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+												{{sptiem.SNAME}}
+											</view>
+											<view class="cods">
+												<label>
+													<image src="../../images/dx-bm.png" mode="widthFix"></image>0
+												</label>
+												<label>
+													<image src="../../images/dx-dw.png" mode="widthFix"></image>
+													{{sptiem.UNIT}}
+												</label>
+											</view>
+											<view class="price">
+												<text>￥{{ Price(sptiem.SPID) }}</text>
+												<view>
+													<image src="../../images/dx-gd.png" mode="widthFix"></image>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
+							</scroll-view>
+						</view>
 					</view>
 				</view>
 				<view class="operation">
@@ -82,8 +114,8 @@
 						<view class="seasonal">
 							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z" @click="Letters()">A <image class="text" src="../../images/dx-fldw.png"
-								mode="widthFix"></image>
+						<view class="a-z" @click="Letters()">{{controller.selectFlag}}
+							<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z" @click="Memberlogin(1)">
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
@@ -100,54 +132,35 @@
 						<image src="../../images/dx-qdb.png" mode="widthFix"></image>
 					</view>
 					<view class="ranks" v-if="Alphabetical">
-						<label class="curr"><text>A</text></label>
-						<label><text>B</text></label>
-						<label><text>C</text></label>
-						<label><text>D</text></label>
-						<label><text>E</text></label>
-						<label><text>F</text></label>
-						<label><text>G</text></label>
-						<label><text>H</text></label>
-						<label><text>J</text></label>
-						<label><text>K</text></label>
-						<label><text>L</text></label>
-						<label><text>M</text></label>
-						<label><text>N</text></label>
-						<label><text>O</text></label>
-						<label><text>P</text></label>
-						<label><text>Q</text></label>
-						<label><text>R</text></label>
-						<label><text>S</text></label>
-						<label><text>T</text></label>
-						<label><text>U</text></label>
-						<label><text>W</text></label>
-						<label><text>X</text></label>
-						<label><text>Y</text></label>
-						<label><text>Z</text></label>
+						<label :class="controller.selectFlag==flagitem?'curr':''" @click="controller.FlagClick"
+							:data-flag="flagitem" v-for="(flagitem, flagindex) in  controller.flagList">
+							<text>{{flagitem}}</text>
+						</label>
 					</view>
 				</view>
 			</view>
 		</view>
+		
 		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="attribute">
+		<view class="boxs" v-if="controller.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close">×</button>
+				<button class="close" @click="controller.setComponentsManage" data-mtype='inputsp'>×xxx</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{controller.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
 						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{controller.clikSpItem.SPID}}
 						</label>
 						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{controller.clikSpItem.UNIT}}
 						</label>
 					</view>
 					<view class="price">
-						<text class="jiage">￥12.9</text>
-						<view><text>–</text><input /><text>+</text></view>
+						<text class="jiage">{{controller.clikSpItem.PRICE}}</text>
+						<view><text>–</text><input v-model="controller.inputSpForClick.QTY" /><text>+</text></view>
 					</view>
 					<view class="tochoose">
 						<label><text>1</text>-<text>尺寸/6寸</text></label>
@@ -160,7 +173,7 @@
 						</view>
 					</view>
 					<view class="confirm">
-						<button class="btn">确 认</button>
+						<button class="btn">确认</button>
 					</view>
 				</view>
 			</view>
@@ -510,7 +523,7 @@
 				</view>
 			</view>
 		</view>
-
+		<!-- 购物车 -->
 		<ShopCart v-if="showSale" :_Params="meta" :_Order="ShopCarOrder" :_Products="ShopCarProduct"
 			:_PayDatas="ShopCarPayment" @_CloseSale="CloseSale"></ShopCart>
 	</view>
@@ -536,6 +549,11 @@
 				return (function(name) {
 					return this.components.current === name ? "curr" : "";
 				}).bind(this)
+			},
+			Price: function(){
+				return util.callBind(this,function(spid){
+					return this.controller.spPrice[spid]?.PRICE ?? "-";
+				})
 			}
 		},
 		data() {
@@ -579,7 +597,25 @@
 				PLIndex: 0, //热销品类索引
 				scrollinto: "",
 				showTSZK: false,
-				YN_SX: false
+				YN_SX: false,
+				controller: { //controller 销售页控制器-从 Home 页进行赋值设置
+					ComponentsManage:{
+						inputsp:[]
+					},
+					selectFlagList:[],
+					clikSpItem:{
+						SNAME:"",
+						SPID:"",
+						UNIT:"",
+						PRICE:""
+					},
+					spPrice:{},
+					inputSpForClick:{
+						QTY:""
+					},
+					setComponentsManage:() => {}
+				},
+				Main:{}//controller=>外层控制对象
 			}
 		},
 		methods: {
@@ -685,7 +721,6 @@
 					})
 				}
 			},
-
 			//查看更多 辅助促销
 			Bagslist: function(e) {
 				if (that.CXDatas.length > 0) {
