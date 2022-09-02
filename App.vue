@@ -39,6 +39,7 @@
 				STIME: "",
 				ETIME: "",
 				OPENFLAG: 0, //签到状态
+				
 			},
 			hyinfo: {
 				// hyId: "1000311640"

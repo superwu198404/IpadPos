@@ -3,8 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	 <!-- v-if="rj_show" -->
-	<view class="boxs">
+	<view class="boxs" v-if="rj_show">
 		<view class="customer" v-if="rj_sf">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -12,7 +11,10 @@
 				<image src="@/images/rijie.png" mode="widthFix"></image>
 				<text>您确定当前要进行日结操作吗？</text>
 			</view>
-			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
+			<view class="affirm">
+				<button class="btn btn-hk" @click="Close()">取消</button>
+				<button class="btn" @click="ToSignOut()">确定</button>
+			</view>
 		</view>
 		<!-- 选择日结 -->
 		<view class="customer">
@@ -52,20 +54,41 @@
 	export default {
 		name: "rijie",
 		props: {
+			_rj_show: Boolean,
+			_signOutDate: {
+				type: Array,
+				default () {
+					return [];
+				}
+			}
 		},
-
 		data() {
 			return {
-				sec: 3,
 				rj_show: false,
-				rj_sf: false,
-				rj_cg: false
+				rj_sf: true,
+				rj_cg: false,
+				signOutDate: []
 			};
 		},
+		watch: {
+			_rj_show: (n, o) => {
+
+			}
+		},
 		methods: {
+			Close: function() {
+				//通知父组件关闭日结
+				console.log("通知父组件关闭日结事件");
+				that.$emit("CloseRJ", {});
+			},
+			//去签退
+			ToSignOut: function(e) {
+				that.rj_sf = false;
+				that.rj_cg = true;
+			},
 			//签到
 			Sign: function() {
-				_login.SignOrSignOut(true, res => {
+				_login.SignOrSignOut(false, res => {
 					console.log("签到结果：", res);
 					if (res.code) {
 						util.simpleMsg("签到成功！");
@@ -82,12 +105,9 @@
 		},
 		created: function() {
 			that = this;
-			let store = util.getStorage("store");
-			if (store) {
-				if (store.OPENFLAG == 1) {
-					that.qd_show = true;
-				}
-			}
+			that.rj_show = that._rj_show;
+			that.signOutDate = that._signOutDate;
+			console.log("进入日结组件")
 		}
 	}
 </script>
