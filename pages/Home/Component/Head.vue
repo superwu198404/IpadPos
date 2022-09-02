@@ -877,7 +877,7 @@
 			GetSignOutInWeek: function(t, func) {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
-					if (!res.code) {
+					if (res.code) {
 						if (t) { //主动触发
 							that.showSignOut = true;
 							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
@@ -885,9 +885,14 @@
 							util.simpleModal("提示", res.msg, code => {
 								if (code) { //点击了确定
 									that.showSignOut = true;
-									that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+									that.signOutDate = JSON.parse(res
+										.data); // ["2022/9/1","2022/8/31"]; 
 								}
 							})
+						}
+					} else {
+						if (t) {
+							util.simpleMsg("暂无日结数据", true);
 						}
 					}
 				})
