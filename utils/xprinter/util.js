@@ -942,8 +942,9 @@ const retDtforConditions = function(data, where_al, where_val) {
 				return ev.BILL.indexOf(where_val) != -1;
 				break;
 			case "SPID":
-				//console.log("ev",parseInt(ev.SPID).toString().indexOf(where_val));
-				return parseInt(ev.SPID).toString().indexOf(where_val) != -1;
+				//console.log("ev",ev.SPID.toString().indexOf(where_val));
+				//return parseInt(ev.SPID).toString().indexOf(where_val) != -1;
+				return ev.SPID.toString().indexOf(where_val) != -1;
 				break;
 		}
 	});

@@ -11,8 +11,24 @@
 				<image src="@/images/rijie.png" mode="widthFix"></image>
 				<text>您确定当前要进行日结操作吗？</text>
 			</view>
+			<view class="affirm">
+				<button class="btn btn-hk" @click="Close()">取消</button>
+				<button class="btn" @click="ToSignOut()">确定</button>
+			</view>
+		</view>
+		<!-- 选择日结 -->
+		<view class="customer">
+			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
+			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<view class="h6">当前你有以下日期没有做日结操作</view>
+			<view class="cluelist">
+				<view class="list curr"><label>2022-09-02</label><text>未日结</text></view>
+				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
+				
+			</view>
 			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
 		</view>
+		
 		<view class="customer" v-if="rj_cg">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -21,6 +37,7 @@
 			</view>
 			<label class="rjcg">日结成功</label>
 		</view>
+		
 	</view>
 
 </template>
@@ -37,20 +54,47 @@
 	export default {
 		name: "rijie",
 		props: {
+			_rj_show: Boolean,
+			_signOutDate: {
+				type: Array,
+				default () {
+					return [];
+				}
+			}
 		},
-
 		data() {
 			return {
-				sec: 3,
 				rj_show: false,
-				rj_sf: false,
-				rj_cg: false
+				rj_sf: true,
+				rj_cg: false,
+				signOutDate: []
 			};
 		},
+		watch: {
+			_rj_show: (n, o) => {
+
+			},
+			_signOutDate: (n, o) => {
+				console.log("日结数据变化：",n);
+				if (n.length > 0) {
+					that.signOutDate = that._signOutDate;
+				}
+			}
+		},
 		methods: {
+			Close: function() {
+				//通知父组件关闭日结
+				console.log("通知父组件关闭日结事件");
+				that.$emit("CloseRJ", {});
+			},
+			//去签退
+			ToSignOut: function(e) {
+				that.rj_sf = false;
+				that.rj_cg = true;
+			},
 			//签到
 			Sign: function() {
-				_login.SignOrSignOut(true, res => {
+				_login.SignOrSignOut(false, res => {
 					console.log("签到结果：", res);
 					if (res.code) {
 						util.simpleMsg("签到成功！");
@@ -67,12 +111,9 @@
 		},
 		created: function() {
 			that = this;
-			let store = util.getStorage("store");
-			if (store) {
-				if (store.OPENFLAG == 1) {
-					that.qd_show = true;
-				}
-			}
+			that.rj_show = that._rj_show;
+			that.signOutDate = that._signOutDate;
+			console.log("进入日结组件")
 		}
 	}
 </script>
@@ -80,7 +121,7 @@
 <style>
 	.customer {
 		background-color: #fff;
-		width: 40%;
+		width: 48%;
 		min-height: 400rpx;
 		position: relative;
 		position: fixed;
@@ -88,7 +129,7 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
-		padding: 0 3% 140rpx;
+		padding: 0 2% 140rpx;
 	}
 
 	.customer .bg {
@@ -119,7 +160,45 @@
 		padding: 0;
 		width: 60rpx;
 	}
-
+	.customer .h6{
+		color: #FE694B;
+		line-height:80rpx ;
+		font-size: 32rpx;
+		font-weight: 600;
+		position: relative;
+		z-index: 9;
+	}
+	.cluelist{
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.cluelist .list{
+		width:22.5%;
+		margin:0 1% 2%;
+		display: flex;
+		flex-direction: column;		
+		justify-content: center;
+		align-items: center;
+		padding:2% 0;
+		font-weight: 600;
+		border:2rpx solid #98C3B3;
+		border-radius: 14rpx;
+		font-size: 28rpx;
+		line-height: 50rpx;
+	}
+	.cluelist .list.curr{
+		border-color: #006B44;
+		color: #006B44;
+	}
+	.cluelist .list.curr text{
+		color: #006B44;
+	}
+	.cluelist .list text{
+		font-size: 26rpx;
+		color: #B0b0b0;
+		line-height: 50rpx;
+		font-weight: 400;
+	}
 	.affirm {
 		position: absolute;
 		bottom: 0;
@@ -130,7 +209,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding-bottom: 2%;
+		padding: 1% 0;
 	}
 
 	.affirm button {
