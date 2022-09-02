@@ -332,7 +332,12 @@ const Cxdict = async () => {
 
 // dscxsp = [
 // 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100001"},
-// 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100004"},
+// 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100003"}
+// ];
+
+// dscxsp = [
+// 	{"BILL":"FZCX2208110004","CLASSID":"FZCX22081100041","KHID":"K200QTD005","SPID":"000000001030200001"},
+// 	{"BILL":"FZCX2208110004","CLASSID":"FZCX22081100041","KHID":"K200QTD005","SPID":"000000001030200002"}
 // ];
 
 // dszqda =[];
@@ -520,15 +525,15 @@ const Cxdict = async () => {
 }
 
 ///计算促销的方法
-const Createcx = async (sale02) => {
+const Createcx = async (goods_arry) => {
 	await Cxdict();
 	let sale02_arr = [{
 			"ProCode": "000000001080100001",
 			"ProName": "水果沙拉",
-			"ProNum": 3,
+			"ProNum": 5,
 			"ProPrice": 9,
 			"Disc": 0,
-			"ProSalePrice": 27,
+			"ProSalePrice": 45,
 			"ProOPrice": 9,
 			"Sort": 1
 		},
@@ -536,10 +541,10 @@ const Createcx = async (sale02) => {
 			"ProCode": "000000001080100003",
 			"ProName": "礼盒2号",
 			"ProNum": 10,
-			"ProPrice": 8.5,
+			"ProPrice": 5,
 			"Disc": 0,
-			"ProSalePrice": 25.5,
-			"ProOPrice": 8.5,
+			"ProSalePrice": 50,
+			"ProOPrice": 5,
 			"Sort": 2
 		}
 	];
@@ -677,7 +682,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 
 ///开始计算促销的方法
 const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
-	console.log("SaleCxCreate", cxbilldts);
+	//console.log("SaleCxCreate", cxbilldts);
 	let rowmum = cxbilldts.length;
 
 	cxSelectTip = [];
@@ -734,7 +739,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			cxClasCompute(spid, bill, saledate,cxbill, retclssid, sysl);
 		}
 	}
-	console.log("cxbilldts new 11111",cxbilldts);
+	console.log("SaleCxCreate cxbilldts new",cxbilldts);
 	return cxbilldts;
 }
 
@@ -784,8 +789,8 @@ const ynjsCxforHy = function(bill) {
 		switch (mcc.CXRY) {
 			case "all":
 				return true;
-			case "Hy":
-				return false;
+			case "Hy": //测试改为true
+				return true;
 			case "Nhy":
 				return true;
 			default:
@@ -1404,8 +1409,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math
-						.floor((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
 				case "Subnet":
@@ -1468,7 +1472,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 						//计算积分
 						else {
-							cxbilldts[i][disc] = Math.round((SqlHelper.NNVL(cxbilldts[i][disc], 0) + (
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (
 								price - zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
@@ -1543,17 +1547,19 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 
 //每次计算之前先设置会员积分上限
 const setHyjfUpleve = function(num) {
+	//会员信息
 	if (null == hymen) {
 		return;
 	}
 	let tj = 0;
 	if (null == jfinfo) {
-		let hyjfnum = cx_util.TryParse(BALANCE);
+		let hyjfnum = cx_util.TryParse(hymen.BALANCE);//当前积分
 		if (hyjfnum <= 0) {
 			return;
 		}
 		///积分加价购
-		jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
+		//jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
+		jfinfo = {"jfnum":0, "dhnet":0, "hyid": hymen.PARTNER, "fznet": tj,"hyojf": hyjfnum, "upleve": 0};
 	}
 	///第一次赋值
 	if (jfinfo.upleve == 0) {
@@ -1572,7 +1578,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 		if (null == hymen) {
 			return;
 		}
-		let tj = cx_util.TryParse(BALANCE);
+		let tj = cx_util.TryParse(hymen.BALANCE);
 		///会员积分错误
 		if (tj >= 0) {
 			return;
@@ -1617,7 +1623,7 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (null == hymen) {
 		return;
 	}
-	let tj = cx_util.TryParse(BALANCE);
+	let tj = cx_util.TryParse(hymen.BALANCE);
 	///会员积分错误
 	if (tj <= 0) {
 		return;
