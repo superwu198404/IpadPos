@@ -874,22 +874,28 @@
 				that.intervalId = null; //设置为null
 			},
 			//获取一周内是否有未日结的数据
-			GetSignOutInWeek: function() {
+			GetSignOutInWeek: function(t, func) {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
-					if (res.code) {
-						util.simpleModal("提示", res.msg, code => {
-							if (code) { //点击了确定
-								that.showSignOut = true;
-								that.signOutDate = ["2022/9/1", "2022/8/31"]; //JSON.parse(res.data);
-							}
-						})
+					if (!res.code) {
+						if (t) { //主动触发
+							that.showSignOut = true;
+							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+						} else { //自动触发
+							util.simpleModal("提示", res.msg, code => {
+								if (code) { //点击了确定
+									that.showSignOut = true;
+									that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+								}
+							})
+						}
 					}
 				})
 			},
 			//去日结
 			ToSignOut: () => {
-				that.showSignOut = true;
+				//查询一周内是否有未日结的数据
+				that.GetSignOutInWeek(1);
 			},
 			//关闭日结框
 			CloseSignOut: function(res) {

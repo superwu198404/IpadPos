@@ -92,6 +92,10 @@
 				//通知父组件关闭日结
 				console.log("通知父组件关闭日结事件");
 				that.curIndex = 0;
+				that.rj_sf = true;
+				that.rj_xz = false;
+				that.rj_cg = false;
+				that.signOutDate = [];
 				that.$emit("CloseRJ", {});
 			},
 			//去签退
@@ -117,7 +121,16 @@
 							if (data.sql) {
 								_login.SignOrSignOutSql(data.sql);
 							}
-							that.qd_show = false;
+							that.signOutDate.splice(that.curIndex, 1); //删除日结了日期
+							if (that.signOutDate.length > 0) {
+								util.simpleMsg("日结成功！");
+								that.curIndex = 0; //归0
+								that.qtdate = that.signOutDate[that.curIndex];
+							} else {
+								that.rj_sf = false;
+								that.rj_xz = false;
+								that.rj_cg = true;
+							}
 						} else {
 							util.simpleModal("提示", res.msg);
 						}
@@ -151,7 +164,7 @@
 	}
 
 	.customer .bg {
-		position: absolute;
+		position: absolute !important;
 		top: 0;
 		left: 0;
 		width: 100%;
