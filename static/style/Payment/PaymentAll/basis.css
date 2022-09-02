@@ -38,6 +38,7 @@ page {
 	position: relative;
 	color: #B0B0B0;
 	font-size: 14px;
+	padding-top: 3%;
 	padding-top: 2%;
 }
 
@@ -214,7 +215,7 @@ page {
 	background-color: #fff;
 	border-radius: 10rpx;
 	width: 210rpx;
-	z-index: 9999;
+	z-index: 999;
 	box-shadow: 0px 10rpx 20rpx 1px rgba(0, 107, 68, 0.1600);
 }
 
