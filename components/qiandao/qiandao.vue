@@ -5,7 +5,7 @@
 <template>
 	<view class="boxs" v-if="qd_show">
 		<view class="customer">
-			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
+			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="clues">
 				<image src="@/images/qiandao.gif" mode="widthFix"></image>
