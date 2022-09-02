@@ -289,7 +289,7 @@
 								});
 								setTimeout(r => {
 									uni.navigateTo({
-										url: "/pages/Login/Login"
+									//	url: "/pages/Login/Login"
 									});
 								}, 500)
 							}

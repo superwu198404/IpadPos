@@ -1,4 +1,4 @@
- var  sale001= function()
+ var  sale001= function(pm_obj)
  {
    this.CLTIME= null;
    this.CUSTID= null;
@@ -15,25 +15,25 @@
    this.STR1= null;
    this.ERRINO= null;
    this.ERRID= null;
-   this.TIME= 0
-   this.WEEK= 0
+   this.TIME=  0
+   this.WEEK=  0
    this.MONTH= 0
-   this.YAER= 0
+   this.YAER=  0
    this.YN_SC= null;
    this.REASON= null;
-   this.TDISC= 0
+   this.TDISC=   0
    this.TLSDISC= 0
    this.TTPDISC= 0
    this.TBZDISC= 0
    this.THYDISC= 0
-   this.HYJF= 0
-   this.CARDID= null;
-   this.CUID= null;
-   this.TCXDISC= 0
-   this.CXTNET= 0
+   this.HYJF   = 0
+   this.CARDID = null;
+   this.CUID   = null;
+   this.TCXDISC  = 0
+   this.CXTNET   = 0
    this.CHANGENET= 0
-   this.ROUND= 0
-   this.BILLDISC= null;
+   this.ROUND    = 0
+   this.BILLDISC = null;
    this.ZNET= 0
    this.DNET= 0
    this.TNET= 0
@@ -61,9 +61,13 @@
    this.CUSTMADDRESS= null;
    this.CUSTMPHONE= null;
    this.CUSTMNAME= null;
+   for(var item in  pm_obj)
+   {
+	   this[item] = pm_obj[item];
+   }
  }
  
- var  sale002= function()
+ var  sale002= function( pm_obj)
  {this.SALEDATE= null;
    this.XPDGCOM= null;
    this.XPDGSTR= null;
@@ -118,6 +122,10 @@
    this.POSID= null;
    this.KHID= null;
    this.SALETIME= null;
+   for(var item in  pm_obj)
+   {
+   	   this[item] = pm_obj[item];
+   }
  }
  
  var  sale003= function()
