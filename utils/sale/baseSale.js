@@ -548,6 +548,7 @@ function   GetSale(pm_store,pm_posid,pm_ryid,pm_page,mPageName,pm_kcdid,pm_dpid,
  //初始化销售的操作
  this.$initSale =function(pm_newtype,pm_saleobj)
  {
+	  pm_newtype=pm_newtype||this.clickSaleType;
  	  this.currentType = pm_newtype;
  	  this.currentTypeCall("$initSale",pm_saleobj)
  	  //this.currentType.$initSale.call(this,pm_saleobj);
