@@ -144,6 +144,55 @@ const sale_order_generation_def_params = {
 		sale3: [] //sale3
 	}
 }
+
+//统一生成销售单数据
+export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, sale8_arr, func) {
+	//执行结果
+	let result = {
+		code: false,
+		data: null
+	};
+	try {
+		let saledate = dateformat.getYMD();
+		let saletime = dateformat.getYMDS();
+		let sql1 = common.CreateSQL(sale1_obj, 'SALE001');
+		let sql2 = common.CreateSQL(sale2_arr, 'SALE002');
+		let sql3 = common.CreateSQL(sale3_arr, 'SALE003');
+		let sql8 = common.CreateSQL(sale8_arr, 'SALE008');
+		console.log("[orderSQLGenarator]sql1生成：", sql1)
+		console.log("[orderSQLGenarator]sql2生成：", sql2)
+		console.log("[orderSQLGenarator]sql3生成：", sql3)
+		console.log("[orderSQLGenarator]sql8生成：", sql8)
+		let tx_obj = {
+			TX_SQL: sql1.oracleSql + sql2.oracleSql + sql3.oracleSql + sql8.oracleSql,
+			STOREID: sale1_obj.KHID,
+			POSID: sale1_obj.POSID,
+			TAB_NAME: 'XS',
+			STR1: sale1_obj.BILL,
+			BDATE: saletime, //增加时分秒的操作
+			YW_NAME: "销售单据",
+			CONNSTR: 'CONNSTRING'
+		};
+		let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
+		let exeSql = sql1.sqlliteArr.concat(sql2.sqlliteArr).concat(sql3.sqlliteArr).concat(sql4.sqlliteArr)
+			.concat(sql8.sqlliteArr);
+		await db.get().executeDml(exeSql, "订单创建中", res => {
+			if (func) func(res);
+			result.code = true;
+			result.data = res;
+		}, err => {
+			if (func) func(err);
+			result.code = false;
+			result.data = err;
+		});
+	} catch (e) {
+		//TODO handle the exception
+		result.code = false;
+		result.data = e;
+	}
+	return result;
+}
+
 export const SaleOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
 	let result = {
 		code: false,
@@ -183,29 +232,29 @@ export const SaleOrderGenaration = async function(params = sale_order_generation
  */
 const point_upload_def_params = {
 	order_no: "", //单号
-	sale_order_no:"",//销售单号，退款才会传入（[主单号]+[下划线]+[序号]，例如:100000001_0）
-	channel: "POS",//平台、渠道（基本固定）
-	member_id:"",//会员id（一般付款取当前的hyid，退单取支付单的hyid）
-	product:[],//标准的 sale2 字段对象数组
-	pay_list:[],//对象数组，对象结构：{ paymentType:"",payAmount:"" },其中 paymentType 是 fkid、payAmount 是支付金额,从 payment 中支付后 paylist 结构就包含了此格式
-	mode:"INCREASE",//积分上传模式：INCREASE-增加，DECREASE-减少
-	request:{}//积分上传参数补充对象
+	sale_order_no: "", //销售单号，退款才会传入（[主单号]+[下划线]+[序号]，例如:100000001_0）
+	channel: "POS", //平台、渠道（基本固定）
+	member_id: "", //会员id（一般付款取当前的hyid，退单取支付单的hyid）
+	product: [], //标准的 sale2 字段对象数组
+	pay_list: [], //对象数组，对象结构：{ paymentType:"",payAmount:"" },其中 paymentType 是 fkid、payAmount 是支付金额,从 payment 中支付后 paylist 结构就包含了此格式
+	mode: "INCREASE", //积分上传模式：INCREASE-增加，DECREASE-减少
+	request: {} //积分上传参数补充对象
 };
 export const PointUpload = async function(def = point_upload_def_params) {
-	let params = Object.assign(point_upload_def_params, def);//默认参数+传入参数
+	let params = Object.assign(point_upload_def_params, def); //默认参数+传入参数
 	let total_amount = 0;
 	let global = getApp().globalData;
 	let member_info = global.hyinfo;
 	let store = global.store;
 	let result = {
-		code:false,
-		data:null
+		code: false,
+		data: null
 	};
-	console.log("[PointUpload]积分上传参数组装开始...",params);
+	console.log("[PointUpload]积分上传参数组装开始...", params);
 	let member_request = Object.assign(Object.assign({
 		channel: params.channel,
 		bill: params.order_no, //主订单号
-		zf_bill: params.order_child_no,//子订单号
+		zf_bill: params.order_child_no, //子订单号
 		date: dateformat.getYMDS(),
 		productList: params.product.map((item, i) => {
 			total_amount += (item.NET ?? item.AMOUNT);
@@ -229,13 +278,13 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		sign: "",
 		time: dateformat.gettimes(),
 		actionType: params.mode //判断积分是扣还是加,values： INCREASE(增加) or DECREASE(减少)
-	},{
+	}, {
 		amount: total_amount?.toFixed(0),
 		orderAmount: total_amount?.toFixed(0),
 		price: total_amount?.toFixed(0),
 		pay_amount: total_amount?.toFixed(0),
 	}), params.request);
-	console.log("[PointUpload]积分上传参数:",member_request);
+	console.log("[PointUpload]积分上传参数:", member_request);
 	await member_api.UploadPoint("积分上传中...", {
 		brand: global.brand,
 		data: member_request

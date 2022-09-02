@@ -4,6 +4,7 @@
 </style>
 <template>
 	<view class="boxs" v-if="qd_show">
+		<image src="@/images/qiandao.gif" mode="widthFix"><image>
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
@@ -88,7 +89,7 @@
 	}
 
 	.customer .bg {
-		position: absolute;
+		position: absolute !important;
 		top: 0;
 		left: 0;
 		width: 100%;

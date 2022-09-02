@@ -365,7 +365,7 @@
 						this.sale2_arr = data.sale2.map(i => util.hidePropety(i, "SKYDISCOUNT", "NAME"));
 						console.log("private-after:", data.sale2)
 						this.sale3_arr = data.sale3;
-						this.Products = this.sale3_arr?.map((function(i) {
+						this.Products = this.sale2_arr?.map((function(i) {
 							return Object.assign({
 								PLID: i.PLID,
 								SPID: i.SPID,
