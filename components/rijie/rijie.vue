@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs">
+	<view class="boxs" v-if="rj_show">
 		<view class="customer" v-if="rj_sf">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -16,6 +16,19 @@
 				<button class="btn" @click="ToSignOut()">确定</button>
 			</view>
 		</view>
+		<!-- 选择日结 -->
+		<view class="customer">
+			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
+			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<view class="h6">当前你有以下日期没有做日结操作</view>
+			<view class="cluelist">
+				<view class="list curr"><label>2022-09-02</label><text>未日结</text></view>
+				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
+				
+			</view>
+			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
+		</view>
+		
 		<view class="customer" v-if="rj_cg">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -24,6 +37,7 @@
 			</view>
 			<label class="rjcg">日结成功</label>
 		</view>
+		
 	</view>
 
 </template>
@@ -107,7 +121,7 @@
 <style>
 	.customer {
 		background-color: #fff;
-		width: 40%;
+		width: 48%;
 		min-height: 400rpx;
 		position: relative;
 		position: fixed;
@@ -115,7 +129,7 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
-		padding: 0 3% 140rpx;
+		padding: 0 2% 140rpx;
 	}
 
 	.customer .bg {
@@ -146,7 +160,45 @@
 		padding: 0;
 		width: 60rpx;
 	}
-
+	.customer .h6{
+		color: #FE694B;
+		line-height:80rpx ;
+		font-size: 32rpx;
+		font-weight: 600;
+		position: relative;
+		z-index: 9;
+	}
+	.cluelist{
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.cluelist .list{
+		width:22.5%;
+		margin:0 1% 2%;
+		display: flex;
+		flex-direction: column;		
+		justify-content: center;
+		align-items: center;
+		padding:2% 0;
+		font-weight: 600;
+		border:2rpx solid #98C3B3;
+		border-radius: 14rpx;
+		font-size: 28rpx;
+		line-height: 50rpx;
+	}
+	.cluelist .list.curr{
+		border-color: #006B44;
+		color: #006B44;
+	}
+	.cluelist .list.curr text{
+		color: #006B44;
+	}
+	.cluelist .list text{
+		font-size: 26rpx;
+		color: #B0b0b0;
+		line-height: 50rpx;
+		font-weight: 400;
+	}
 	.affirm {
 		position: absolute;
 		bottom: 0;
@@ -157,7 +209,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding-bottom: 2%;
+		padding: 1% 0;
 	}
 
 	.affirm button {

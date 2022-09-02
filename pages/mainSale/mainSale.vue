@@ -143,15 +143,16 @@
 						<view class="a-z" @click="GetTSZKData()">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="states" @click="mainSale.showStatement">
+						<view class="states" @click="ShowSale()">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
 					</view>
 					<view class="toproof"><image src="../../images/dx-qdb.png" mode="widthFix"></image></view>
 					<view class="ranks" v-if="Alphabetical">
-						<label  :class="mainSale.selectFlag==flagitem?'curr':''"  @click="mainSale.FlagClick"  :data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList" >
-							<text>{{flagitem}}</text></label>
+						<label :class="mainSale.selectFlag==flagitem?'curr':''"  @click="mainSale.FlagClick"  :data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList" >
+							<text>{{flagitem}}</text>
+						</label>
 												
 					</view>
 				</view>
@@ -163,7 +164,7 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp' >×xxx</button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
@@ -174,56 +175,55 @@
 					</view>
 					<view class="price">
 						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
-						<view> <button @click="mainSale.chengedQty" data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button @click="mainSale.chengedQty" data-qty="1">+</button></view>
+						<view><text>–</text><input  v-model="mainSale.inputSpForClick.QTY" /><text>+</text></view>
 					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID" >
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
-						</view>
+					<view class="tochoose">
+						<label><text>1</text>-<text>尺寸/6寸</text></label>
+						<label><text>￥156</text><button class="del">×</button></label>
 					</view>
-					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist" >
+					<view class="sizes" >
+						<view class="h4"><text class="sgin">*</text>尺寸</view>
 						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''" v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"  :data-spid="specs.SPID"  >{{specs.SPECS}}</label>
+							<label>6寸</label><label>8寸</label><label>10寸</label><label>12寸</label>
 						</view>						
 					</view>
 					<view class="confirm">
-						<button class="btn" data-yndgxp='N'  @click="mainSale.getSp" >确认</button>
+						<button class="btn">确认</button>
 					</view>
 				</view>
 			</view>
 		</view>
 	<!-- 未登录结算单 -->
-	 <view class="boxs" v-if="mainSale.ComponentsManage.statement">	
+	 <view class="boxs" v-if="statement">	
 	 		<view class="pop-r pop-rs">
 	 		<view class="member">
 	 			<label><image class="touxiang" src="../../images/touxiang.png"></image><button class="btn">会员登录</button></label>
-				<text  @click="mainSale.resetSaleBill">清空</text>
+				<text>清空</text>
 			</view>
 	 		<view class="h5"><text>账单</text></view>
 	 		<view class="goods">
 	 			<!-- 商品循环 -->
-	 			<view class="prolist" v-for="(sp, spinx) in mainSale.sale002 " >
+	 			<view class="prolist">
 	 				<view class="h3">
-	 					<label><image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}</label>
-	 					<text>{{sp.QTY}}</text>
+	 					<label><image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕</label>
+	 					<text>X2</text>
 	 				</view>
 	 				<view class="cods">
 	 					<view>
-	 					<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{ sp.SPID.substr(8)}}</label>
-	 					<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}</label>
+	 					<label><image src="../../images/dx-bm.png" mode="widthFix"></image>12345678</label>
+	 					<label><image src="../../images/dx-dw.png" mode="widthFix"></image>10个装</label>
 	 					</view>
-	 					<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
+	 					<text>￥56</text>
 	 				</view>
 	 			</view>
 	 			
 	 		</view>
 	 	
 	 		<view class="ul">
-	 			<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
-	 			<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
-	 			<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
-	 			<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
+	 			<view class="li"><text>总金额</text><text>￥567</text></view>
+	 			<view class="li"><text>件数</text><text>7</text></view>
+	 			<view class="li"><text>折扣</text><text>-￥5</text></view>
+	 			<view class="li"><text>应收金额</text><text>￥560</text></view>
 	 		</view>
 	 		<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
 	 		
@@ -279,7 +279,7 @@
 	 			<button class="btn">确 认</button>
 	 		</view>
 	 		
-	 		<view class="states" @click="mainSale.setComponentsManage"  data-mtype='statement'>
+	 		<view class="states" @click="Statements()">
 	 			<text>结算单</text>
 	 			<label>»</label>
 	 		</view>
