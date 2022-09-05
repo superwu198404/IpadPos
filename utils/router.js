@@ -3,7 +3,7 @@
 */
 export default [{
 		title: "销售",
-		name: "Main",
+		name: "MainSale",
 		type:"sale",
 		keepAlive: true, /*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
@@ -15,32 +15,32 @@ export default [{
 		icon1: require("@/images/xiaoshou-hui.png"),
 		index: 0
 	},
-	{
-		title: "预定",
-		name: "Main",
-		type:"sale_reserve",
-		url: "@/pages/Main/Main", //
-		meta:{
-			bill_type:"Z171",
-			xs_type:3
-		},
-		icon: require("@/images/yuding.png"),
-		icon1: require("@/images/yuding-hui.png"),
-		index: 1
-	},
-	{
-		title: "赊销",
-		name: "Main",
-		type:"sale_credit",
-		url: "@/pages/Main/Main",
-		meta:{
-			bill_type:"Z154",
-			xs_type:6
-		},
-		icon: require("@/images/shexiao.png"),
-		icon1: require("@/images/shexiao-hui.png"),
-		index: 2
-	},
+	// {
+	// 	title: "预定",
+	// 	name: "SaleMain",
+	// 	type:"sale_reserve",
+	// 	url: "@/pages/Main/Main", //
+	// 	meta:{
+	// 		bill_type:"Z171",
+	// 		xs_type:3
+	// 	},
+	// 	icon: require("@/images/yuding.png"),
+	// 	icon1: require("@/images/yuding-hui.png"),
+	// 	index: 1
+	// },
+	// {
+	// 	title: "赊销",
+	// 	name: "SaleMain",
+	// 	type:"sale_credit",
+	// 	url: "@/pages/Main/Main",
+	// 	meta:{
+	// 		bill_type:"Z154",
+	// 		xs_type:6
+	// 	},
+	// 	icon: require("@/images/shexiao.png"),
+	// 	icon1: require("@/images/shexiao-hui.png"),
+	// 	index: 2
+	// },
 	{
 		title: "预定提取",
 		name: "Extract",
