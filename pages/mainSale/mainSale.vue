@@ -40,8 +40,7 @@
 					<text>消息</text>
 				</view>
 			</view>
-
-
+			
 		</view>
 		<view class="right">
 			<view class="nav">
@@ -85,12 +84,9 @@
 								<text>修改密码</text>
 							</view>
 						</view>
-					</view>
-
+					</view>	
 				</view>
-
 			</view>
-
 			<view class="listof">
 				<view class="prolist">
 					<!-- 大类循环 -->
