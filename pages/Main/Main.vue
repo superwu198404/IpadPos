@@ -13,6 +13,7 @@
 
 <template>
 	<view class="content">
+		<rijie></rijie>
 		<!-- <menu_page :menuIndex="0"></menu_page> -->
 		<view class="right">
 			<!-- <menu_head></menu_head> -->
@@ -129,7 +130,8 @@
 			</view>
 		</view>
 		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="attribute">
+		 <!-- v-if="attribute" -->
+		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close">×</button>
@@ -147,7 +149,7 @@
 					</view>
 					<view class="price">
 						<text class="jiage">￥12.9</text>
-						<view><text>–</text><input /><text>+</text></view>
+						<view><button>–</button><input /><button>+</button></view>
 					</view>
 					<view class="tochoose">
 						<label><text>1</text>-<text>尺寸/6寸</text></label>
