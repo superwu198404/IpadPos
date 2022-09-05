@@ -86,7 +86,6 @@
 		border-radius: 20rpx;
 		padding: 0 0 180rpx;
 	}
-
 	.customer .bg {
 		position: absolute;
 		top: 0;
@@ -94,7 +93,6 @@
 		width: 100%;
 		z-index: 0;
 	}
-
 	.affirm {
 		position: absolute;
 		bottom: 0;
@@ -106,14 +104,13 @@
 		align-items: center;
 		justify-content: center;
 		padding-bottom: 20rpx;
+		z-index: 99;
 	}
-
 	.affirm button {
 		width: 50%;
 		background-color: #42B14B;
 		color: #fff;
 	}
-
 	.clues {
 		display: flex;
 		flex-direction: column;
@@ -123,11 +120,12 @@
 		position: relative;
 		z-index: 2;
 	}
-
 	.clues image {
 		width: 100%;
 	}
-
+	.clues image:nth-child(2){
+		display: none;
+	}
 	.clues text {
 		margin-top: -180rpx;
 		font-weight: 700;
