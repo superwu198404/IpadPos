@@ -7,7 +7,86 @@
 
 <template>
 	<view class="content">
+		<view class="navmall">
+			<view class="logo">
+				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
+			</view>
+			<view class="menu">
+				<view class="saleadd" v-for="(item, index) in saleAdd">
+					<view :class="mainSale.clickSaleType.xstype== item.xstype?'curr':''" :data-stype="item.clickType"
+						@click="mainSale.saleTypeClick">
+						<image class="xz" :src="item.iconCurr" mode="widthFix"></image>
+						<image class="wx" :src="item.iconHui" mode="widthFix"></image>
+						<text>{{item.nameSale}}</text>
+					</view>
+				</view>
+				<view>
+					<image @click="Moreand()" class="xz" src="../../images/xz-th.png" mode="widthFix"></image>
+					<image @click="Moreand()" class="wx" src="../../images/wxz-th.png" mode="widthFix"></image>
+					<text @click="Moreand()">退单业务</text>
+					<view class="chargeback" v-if="(item, index) in saleSub">
+						<label :class="mainSale.clickSaleType.xstype== item.xstype?'currs':''"
+							:data-stype="item.clickType" @click="mainSale.saleTypeClick">
+							<image class="xz" :src="item.iconHui" mode="widthFix"></image>
+							<image class="wx" :src="item.iconCurr" mode="widthFix"></image>
+							<text>{{item.nameSale}}</text>
+						</label>
+					</view>
+
+				</view>
+				<view>
+					<image class="xz" src="../../images/xz-xx.png" mode="widthFix"></image>
+					<image class="wx" src="../../images/xiaoxi-hui.png" mode="widthFix"></image>
+					<text>消息</text>
+				</view>
+			</view>
+			
+		</view>
 		<view class="right">
+			<view class="nav">
+				<view class="getback">
+					<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
+					<view class="message">
+						<view class="imgs">
+							<image src="../../images/tongzhi.png" mode="widthFix"></image>
+						</view>
+						<text>门店有一条新的外卖配送单消息来啦...</text>
+					</view>
+				</view>
+				<view class="stores">
+					<view class="checkout">
+						<label>
+							<image src="../../images/dx-mendian.png" mode="widthFix"></image>
+						</label>
+						<label>
+							<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：3
+						</label>
+					</view>
+					<view class="account">
+						<view>
+							<image src="@/images/touxiang.png" mode="widthFix"></image>
+						</view>
+						<text @click="exits()">{{RYID}}
+							<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
+								mode="widthFix"></image>
+						</text>
+						<view class="dropout" v-if="dropout">
+							<view class="exit" @click="LoginOut()">
+								<image src="@/images/tuichu.png" mode="widthFix"></image>
+								<text>退出</text>
+							</view>
+							<view class="exit" @click="Login()">
+								<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+								<text>注销</text>
+							</view>
+							<view class="exit" @click="UPPWD()">
+								<image src="@/images/xgmima.png" mode="widthFix"></image>
+								<text>修改密码</text>
+							</view>
+						</view>
+					</view>	
+				</view>
+			</view>
 			<view class="listof">
 				<view class="prolist">
 					<!-- 大类循环 -->
@@ -18,7 +97,8 @@
 								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 							</view>
 							<view class="classifys">
-								<text class="curr">每日现烤</text><text>土司餐包</text>
+								
+								<text  v-for="(xplitem, xplindex) in mainSale.selectFlagList"  :class="mainSale.selectPlid==xplitem.plid?'curr':''"  @click="mainSale.selectPlidChenged"    :data-plid="xplitem.plid" >{{xplitem.plname}}</text>
 								<label>
 									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 								</label>
@@ -26,10 +106,10 @@
 						</view>
 						<!-- 小类循环 -->
 						<view style="height:92%;flex: 1;">
-							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="scrollinto">
+							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="mainSale.scrollinto">
 								<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 
-									<view class="h2">{{plitem.plname}} <label></label></view>
+									<view :id="mainSale.selectFlag+plitem.plid"  class="h2">{{plitem.plname}} <label></label></view>
 
 									<view class="procycle">
 										<!-- 产品循环 -->
@@ -50,7 +130,7 @@
 												</label>
 											</view>
 											<view class="price">
-												<text>￥{{ Price(sptiem.SPID) }}</text>
+												<text>￥{{mainSale.spPrice[sptiem.SPID].PRICE}}</text>
 												<view>
 													<image src="../../images/dx-gd.png" mode="widthFix"></image>
 												</view>
@@ -76,7 +156,7 @@
 						<view class="a-z" @click="GetTSZKData()">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="states" @click="ShowSale()">
+						<view class="states" @click="mainSale.showStatement">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
@@ -100,117 +180,161 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×xxx</button>
+				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp'>×xxx </button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
+						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}</label>
+						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}</label>
 					</view>
 					<view class="price">
 						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
-						<view><text>–</text><input v-model="mainSale.inputSpForClick.QTY" /><text>+</text></view>
+						<view> <button @click="mainSale.chengedQty" data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button @click="mainSale.chengedQty" data-qty="1">+</button></view>
 					</view>
-					<view class="tochoose">
-						<label><text>1</text>-<text>尺寸/6寸</text></label>
-						<label><text>￥156</text><button class="del">×</button></label>
-					</view>
-					<view class="sizes">
-						<view class="h4"><text class="sgin">*</text>尺寸</view>
-						<view class="sizelist">
-							<label>6寸</label><label>8寸</label><label>10寸</label><label>12寸</label>
+					<view>
+						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID" >
+							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
+							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
 						</view>
 					</view>
+					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist" >
+						<view class="sizelist">
+							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''" v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"  :data-spid="specs.SPID"  >{{specs.SPECS}}</label>
+						</view>						
+					</view>
 					<view class="confirm">
-						<button class="btn">确认</button>
+						<button class="btn" data-yndgxp='N'  @click="mainSale.getSp" >确认</button>
 					</view>
 				</view>
 			</view>
 		</view>
 		
-		<!-- 特殊折扣 -->
-		<view class="boxs" v-if="show_special_discount">
-			<view class="popup special">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<view class="commods" style="padding-top:26rpx;">
-					<view class="h3">
-						特殊折扣选则<button class="close" @click="show_special_discount = false">×</button>
+		<!-- 未登录结算单 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+				<view class="pop-r pop-rs">
+				<view class="member">
+					<label><image class="touxiang" src="../../images/touxiang.png"></image><button class="btn">会员登录</button></label>
+						<text  @click="mainSale.resetSaleBill">清空</text>
 					</view>
-					<view class="uls">
-						<view class="lis curr">
-							<view class="h8">
-								<view>标准折扣<em></em></view>
-								<label>总折扣额:<text>￥566</text></label>
-								<span>已选</span>
+				<view class="h5"><text>账单</text></view>
+				<view class="goods">
+					<!-- 商品循环 -->
+					<view class="prolist" v-for="(sp, spinx) in mainSale.sale002 " >
+						<view class="h3">
+							<label><image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}</label>
+							<text>{{sp.QTY}}</text>
+						</view>
+						<view class="cods">
+							<view>
+							<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{ sp.SPID.substr(8)}}</label>
+							<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}</label>
 							</view>
-							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<view>
-									<label>
-										<checkbox></checkbox>临时折扣
-									</label>
-									<text>满¥1000即打9折，折扣额¥123</text>
+							<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
+						</view>
+					</view>
+					
+				</view>
+			
+				<view class="ul">
+					<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
+					<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
+					<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
+					<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
+				</view>
+				<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
+				
+				<view class="shoppbag">
+					<view class="hengs">
+					<view class="baglist curr">
+						<view class="bag">					
+							<text class="h8">小号手提袋</text>
+							<label><text>说明</text>已满80元，可赠4个</label>
+						</view>
+						<view class="quantit">
+								<text>数量</text>
+								<view class="nums">
+									<text>-</text>
+									<input type="number"/>
+									<text>+</text>
 								</view>
 							</view>
+					</view>
+					<view class="baglist">
+						<view class="bag">					
+							<text class="h8">小号手提袋</text>
+							<label><text>说明</text>已满80元，可赠4个</label>
 						</view>
-						<view class="lis">
-							<view class="h8">
-								<view>特批折扣<em></em></view>
-								<span>已选</span>
-							</view>
-							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+						<view class="quantit">
+							<text>数量</text>
+							<view class="nums">
+								<text>-</text>
+								<input type="number"/>
+								<text>+</text>
 							</view>
 						</view>
 					</view>
-					<view class="confirm">
-						<button class="btn" @click="showMDCXData=false">确 认</button>
+					<view class="baglist">
+						<view class="bag">					
+							<text class="h8">小号手提袋</text>
+							<label><text>说明</text>已满80元，可赠4个</label>
+						</view>
+						<view class="quantit">
+							<text>数量</text>
+							<view class="nums">
+								<text>-</text>
+								<input type="number"/>
+								<text>+</text>
+							</view>
+						</view>
 					</view>
+					
+						</view>
 				</view>
+				
+				<view class="confirm">
+					<button class="btn">确 认</button>
+				</view>
+				
+				<view class="states" @click="mainSale.setComponentsManage"  data-mtype='statement'>
+					<text>结算单</text>
+					<label>»</label>
+				</view>
+			
 			</view>
 		</view>
-
 		<!-- 会员登陆结算 -->
-		<view class="boxs" v-if="show_shop_car">
+		<view class="boxs" v-if="statements">
 			<view class="memberes">
-				<view class="meminfo" v-if="member_info">
+				<view class="meminfo" v-if="Memberinfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<label class="meminfo"><text>{{hyinfo.NickName}}</text><text>{{hyinfo.hyId}}</text></label>
+							<label class="meminfo"><text>会员名称</text><text>13012341234</text></label>
 						</label>
-						<button @click="member_info=false">×</button>
+						<button>×</button>
 					</view>
 					<view class="nom">
 						<label>
-							<text>￥{{hyinfo.Balance/100}}</text>
+							<text>￥123</text>
 							<text>余额</text>
 						</label>
 						<label>
-							<text>{{hyinfo.JFBalance/100}}</text>
+							<text>6123</text>
 							<text>积分</text>
 						</label>
 						<label>
-							<text>{{coupon_list.length}}</text>
+							<text>23</text>
 							<text>优惠券</text>
 						</label>
 						<label>
-							<text>{{hyinfo.hy_Assets.GiftAmt/100}}</text>
+							<text>12</text>
 							<text>礼品卡</text>
 						</label>
 					</view>
-					<view class="rests" v-if="false">
+					<view class="rests">
 						<view class="h2">其他</view>
 						<view class="restlist">
 							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
@@ -239,269 +363,217 @@
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
-										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-													mode="widthFix"></image></button> -->
+										<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button>
 									</view>
 								</view>
 							</view>
 						</view>
+
 					</view>
 				</view>
-				<!-- 辅助促销数据 -->
-				<view class="meminfo" v-if="shop_bag">
+				<view class="meminfo" v-if="Shoppingbags">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view v-for="(item,index) in CXDatas">
+					<view>
 						<view class="member">
-							<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
-							<button @click="shop_bag=false">×</button>
+							<label class="h9">武汉满20元赠小号手提袋</label>
+							<button>×</button>
 						</view>
 						<view class="shoppbag">
-							<view class="baglist curr" v-for="(item1,index1) in item.Details">
+							<view class="baglist curr">
 								<view class="bag">
-									<text class="h8">{{item1.SNAME}}</text>
-									<label><text>{{item1.DESCRIBE}}</text></label>
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
 								</view>
 								<view class="quantit">
 									<text>数量</text>
 									<view class="nums">
-										<text @click="Calculate(item1,'-')">-</text>
-										<input type="number" v-model="item1.BQTY" @blur="Calculate(item1,'*',$event)" />
-										<text @click="Calculate(item1,'+')">+</text>
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
 									</view>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
-				<!-- 折扣列表 -->
-				<view class="meminfo" v-if="show_discount">
-					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view>
-						<view class="member">
-							<label class="h9">折扣<text>（根据商品类型和满足金额自动匹配折扣率）</text></label>
-							<button @click="show_discount=false">×</button>
-						</view>
-						<view class="shoppbag">
-							<radio-group @change="ChangeZK">
-								<view class="h8">
-									<label>
-										<radio name="zhe" value="BZ" :checked="curZKType=='BZ'"></radio> 可用标准折扣
-									</label>
-									<label>
-										<radio name="zhe" value="LS" :checked="curZKType=='LS'"></radio> 选择临时降点
-									</label>
-									<label>
-										<radio name="zhe" value="TP" :checked="curZKType=='TP'"></radio> 选择特批折扣
-									</label>
-								</view>
-							</radio-group>
-							<view class="lists">
-								<view class="conlst" v-if="curZKType=='TP'" v-for="(item,index) in ZKDatas"
-									@click="ChooseZK(item)">
-									<label>{{item.SPJGZ}}<text>折扣率：{{item.BFB}}</text></label>
-									<view><text>商品分组：{{item.KONDM}}</text><!-- <text>满足金额：{{item.KBETR}}</text> -->
-									</view>
-								</view>
-								<view class="conlst" v-else v-for="(item,index) in ZKDatas" @click="ChooseZK(item)">
-									<label>{{item.ZKNAME}}<text>折扣率：{{item.ZKQTY_JS}}</text></label>
-									<view><text>商品分组：{{item.ZKSTR}}</text><text>满足金额：{{item.MZNET}}</text></view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-				<!-- 商品信息 -->
+
 				<view class="pop-r">
 					<view class="member">
 						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image>{{hyinfo.hyId}}
+							<image class="touxiang" src="../../images/touxiang.png"></image>
+							<button class="btn" @click="Memberlogin()">会员登录</button>
 						</label>
-						<text @click="CloseSale()">关闭</text>
+						<text>清空</text>
 					</view>
-					<view class="edit-info" v-if="Mode('Z171')">
-						<button @click="EditExtract">+录入预定信息</button>
-					</view>
-					<view class="h5"><text>单号：{{Order.BILL}}</text></view>
+					<view class="h5"><text>账单</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
-						<view class="prolist" v-for="(item,index) in Products">
+						<view class="prolist">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image>{{item.SNAME}}
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
 								</label>
-								<text>X{{item.QTY}}</text>
+								<text>X2</text>
 							</view>
 							<view class="cods">
 								<view>
 									<label>
-										<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
+										<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
 									</label>
 									<label>
-										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
+										<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
 									</label>
 								</view>
-								<text>￥{{item.PRICE}}</text>
+								<text>￥56</text>
 							</view>
 						</view>
+
 					</view>
+
 					<view class="ul">
-						<view class="li"><text>总金额</text><text>￥{{Order.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{Order.TLINE}}</text></view>
-						<view class="li" @click="Discounts()">
-							<label>
-								<text>折扣</text>
-								<image src="../../images/dx-zhekou.png" mode="widthFix"></image>
-							</label>
-							<text>-￥{{Order.BILLDISC}}</text>
-						</view>
-						<!-- <view class="li"><text>折扣</text><text>-￥5</text></view> -->
-						<view class="li"><text>应收金额</text><text>￥{{Order.TNET}}</text></view>
+						<view class="li"><text>总金额</text><text>￥567</text></view>
+						<view class="li"><text>件数</text><text>7</text></view>
+						<view class="li"><text>折扣</text><text>-￥5</text></view>
+						<view class="li"><text>应收金额</text><text>￥560</text></view>
 					</view>
 					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
-					<view class="shoppbag" style="flex-wrap: nowrap;">
+
+					<view class="shoppbag">
 						<view class="hengs">
-							<view v-if="CXDatas.length>0">
-								<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
-									<view class="bag">
-										<text class="h8">{{item.SNAME}}</text>
-										<label><text>说明</text>{{item.DESCRIBE}}</label>
-									</view>
-									<view class="quantit">
-										<text>数量</text>
-										<view class="nums">
-											<text @click="Calculate(item,'-')">-</text>
-											<input type="number" v-model="item.BQTY"
-												@blur="Calculate(item,'*',$event)" />
-											<text @click="Calculate(item,'+')">+</text>
-										</view>
+							<view class="baglist curr">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
 									</view>
 								</view>
 							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+
 						</view>
 					</view>
 					<view class="confirm">
-						<button class="btn" @click="Comfirm">确 认</button>
+						<button class="btn">确 认</button>
 					</view>
+
 					<!-- <view class="states" @click="Statements()">
-						<text>结算单</text>
-						<label>»</label>
-					</view> -->
+					<text>结算单</text>
+					<label>»</label>
+				</view> -->
+
 				</view>
 			</view>
 		</view>
+
 	</view>
 </template>
 
 <script>
-	import mysale from '@/utils/sale/base_sale.js';
+	import mysale from '@/utils/sale/baseSale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
-	import util from '@/utils/util.js';
-	import common from '@/api/common.js';
-	import _take from '@/api/business/takeaway.js';
-	import _member from '@/api/hy/MemberInterfaces.js';
-	import _checker from '@/utils/graceChecker.js';
-	import _msg from '@/api/business/message.js';
-	import _main from '@/api/business/main.js';
 	export default {
-		name: "MainSale",
 		data() {
 			return {
 				statements: false,
 				Alphabetical: false,
+				Memberinfo: false,
+				Shoppingbags: false,
 				Chargeback: false,
 				dropout: false,
-				mainSale: {},
-				hyinfo: {
-					NickName: "",
-					hyId: "",
-					Balance: 0,
-					JFBalance: 0,
-					hy_Assets: {
-						GiftAmt: 0
-					}
-				},
-				MainSale: {}, //controller=>外层控制对象
+				coupon_list: [],
+				mainSale: null,
+				khid: "K210QTD003",
 				saleAdd: [],
-				saleSub: [],
-				scrollinto: "",
-
-				show_shop_car: false, //是否展示购物车
-				member_info: false, //购物车 => 是否展示会员信息
-				shop_bag: false, //购物车 => 是否展示购物袋
-				show_discount: false, //购物车 => 是否展示折扣信息
-				show_special_discount: false, //显示特殊折扣（未从 Main 中移植）
-				CXDatas: [],
-				Order: {
-					BILL: common.CreateBill(getApp().globalData.store.KHID, getApp().globalData.store.POSID),
-					SALEDATE: "",
-					SALETIME: "",
-					TNET: 0, //应付金额
-					ZNET: 0, //整单金额
-					BILLDISC: 0, //整单折扣需要加上手工折扣,
-					ROUND: 0, //取整差值（手工折扣总额）
-					CUID: "",
-					CLTIME: "",
-					XS_BILL: "", //退款时记录原单号（重点）
-					XS_POSID: "", //退款时记录原posid（重点）
-					XS_DATE: "", //退款时记录原销售日期（重点）
-					XS_KHID: "", //退款时记录原khid（重点）
-					XS_GSID: "", //退款时记录原GSID（重点）
-					XSTYPE: "", //1，2 业务方向类型（支付还是退款）
-					BILL_TYPE: "", //Z151,Z152....业务类型（销售还是预定还是赊销）
-					TDISC: 0, //SKY_DISCOUNT 手工折扣额,
-					TLINE: 0 //数量
-				},
-				Products: [], //商品数据集合
-				PayDatas: [], //付款数据集合
-				hyinfo: {},
-				current_discount_type:"BZ",//当前折扣类型
-			}
-		},
-		computed: {
-			Price: function() {
-				return util.callBind(this, function(spid) {
-					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
-				})
+				saleSub: []
 			}
 		},
 		methods: {
-			ShowSale: function() {
-				this.show_shop_car = true;
-			},
-			CloseSale: function() {
-				this.show_shop_car = false;
-			},
-			//获取辅助促销
-			GetFZCX: function() {
-				_main.GetFZCX(this.KHID, util.callBind(this, function(res) {
-					console.log("[GetFZCX]辅助促销查询结果:", res);
-					this.CXDatas = res;
-				}))
-			},
-			//展示特殊折扣
-			GetTSZKData: function() {
-				this.show_special_discount = true;
-			},
-			//获取并展示门店促销活动
-			GetZKDatas: function() {
-				_main.GetZKDatas({
-					zktype: this.current_discount_type,
-					dqid: this.DQID,
-					spjgz: "",
-					dkhid: this.DKFID, //"0020004824", //测试使用
-					jgid: this.JGID
-				}, util.callBind(this,function(res){
-					if (res.code) {
-						if (this.current_discount_type == 'TP') {
-							this.ZKDatas = JSON.parse(res.data);
-						} else {
-							this.ZKDatas = res.msg;
+			onLoad() 
+			{
+					let YnsaleAdd = true;
+					var that = this;
+					for (let item in mysale.XsTypeObj) {
+						console.log(item);
+						if (item == "seleTh") {
+							YnsaleAdd = false;
 						}
-					} else {
-						this.ZKDatas = [];
-						util.simpleMsg("暂无数据", true);
+						if (YnsaleAdd) {
+							this.saleAdd.push(mysale.XsTypeObj[item])
+						} else {
+							this.saleSub.push(mysale.XsTypeObj[item])
+						}
 					}
-				}))
+					console.log("开始构造函数");
+					that.mainSale = new mysale.GetSale(that.khid, '009', '007', that, "mainSale");
+					console.log(that.mainSale.Storeid);
+					console.log("开始设置基础的销售类型");
+					that.mainSale.setDeftype();
+					xs_sp_init.loadSaleSP.loadSp(that.khid, (res, res2) => {
+						console.log("商品实际的长度" + res.length);
+						that.mainSale.setAllSpList(res, res2);
+					}, "K01000", "02")
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout
@@ -513,32 +585,16 @@
 				this.Alphabetical = true
 			},
 			Memberlogin: function(e) {
-				this.member_info = true,
-					this.shop_bag = false
+				this.Memberinfo = true,
+					this.Shoppingbags = false
 			},
 			Bagslist: function(e) {
-				this.shop_bag = true,
-					this.member_info = false
+				this.Shoppingbags = true,
+					this.Memberinfo = false
 			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
-			Init: function() {
-				this.GetFZCX();
-			}
-		},
-		created() {
-			console.log("[MainSale-Created]开始构造函数...");
-			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale");
-			console.log("[MainSale-Created]开始设置基础的销售类型...");
-			this.mainSale.SetDefaultType();
-			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
-				console.log("[MainSale-Created]商品实际的长度:", products.length);
-				this.mainSale.SetAllGoods(products, prices);
-			}), this.DQID, this.KHZID);
-			console.log("[MainSale-Created]将控制对象传入Home中...");
-			this.$emit("Controller", this.mainSale);
-			Init(); //集中初始化
 		}
 	}
 </script>
