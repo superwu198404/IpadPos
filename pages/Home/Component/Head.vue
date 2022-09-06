@@ -201,8 +201,8 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
-				showSignOut: false,
-				signOutDate: [],
+				showSignOut:false,
+				signOutDate:[],
 				//蓝牙
 				list: [],
 				services: [],
@@ -905,20 +905,20 @@
 							})
 						}
 					} else {
-						// if (t) {
-						// 	util.simpleMsg("暂无日结数据", true);
-						// }
+						if (t) {
+							util.simpleMsg("暂无日结数据", true);
+						}
 						util.simpleMsg("签到成功！");
 						let data = JSON.parse(res.data);
-						// let store = util.getStorage("store");
-						// store.OPENFLAG = data.openflag;
-						// util.setStorage("store", store);
-						// 	if (data.sql) {
-						// 		_login.SignOrSignOutSql(data.sql);						
-						// } 
-						// else {
-						// 	util.simpleMsg(res.msg, "none");
-						// }
+						let store = util.getStorage("store");
+						store.OPENFLAG = data.openflag;
+						util.setStorage("store", store);
+							if (data.sql) {
+								_login.SignOrSignOutSql(data.sql);						
+						} 
+						else {
+							util.simpleMsg(res.msg, "none");
+						}
 					}
 
 				})
