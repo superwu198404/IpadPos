@@ -37,6 +37,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
+					
 					<label>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
 					</label>
