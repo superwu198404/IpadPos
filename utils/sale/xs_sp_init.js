@@ -60,7 +60,7 @@ var loadSaleSP  =
 	arrListGroupBy:function(pm_arr,cake_arr,drinkP_arr)
 	{   
 		//{"FSTR":"z","PINYIN":"zjpbtzw（x）8-qj","SNAME":"竹节排包提子味（型）8-仟吉","SPID":"000000001010100002","addlist":"","plid":"308","plname":"三明治用半成品","specslist":"","ynAddPro":0,"ynshowlist":0}
-		console.log(pm_arr.length+"#"+cake_arr.length+"#"+drinkP_arr.length+"#")
+		//console.log(pm_arr.length+"#"+cake_arr.length+"#"+drinkP_arr.length+"#")
 		let  pkey ="";
 		let retArr  =[];
 		pm_arr  =  this.getFstrAndSort(pm_arr);

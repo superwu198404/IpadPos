@@ -3,7 +3,8 @@
 */
 export default [{
 		title: "销售",
-		name: "Main",
+		name: "MainSale",
+		type:"sale",
 		keepAlive: true, /*保持组件状态，此处因小程序中不兼容原生vue的keep-alive功能，而手动实现的效果（百度不到的）*/
 		url: "@/pages/Main/Main",
 		meta:{
@@ -14,33 +15,36 @@ export default [{
 		icon1: require("@/images/xiaoshou-hui.png"),
 		index: 0
 	},
-	{
-		title: "预定",
-		name: "Main",
-		url: "@/pages/Main/Main", //
-		meta:{
-			bill_type:"Z171",
-			xs_type:3
-		},
-		icon: require("@/images/yuding.png"),
-		icon1: require("@/images/yuding-hui.png"),
-		index: 1
-	},
-	{
-		title: "赊销",
-		name: "Main",
-		url: "@/pages/Main/Main",
-		meta:{
-			bill_type:"Z154",
-			xs_type:6
-		},
-		icon: require("@/images/shexiao.png"),
-		icon1: require("@/images/shexiao-hui.png"),
-		index: 2
-	},
+	// {
+	// 	title: "预定",
+	// 	name: "SaleMain",
+	// 	type:"sale_reserve",
+	// 	url: "@/pages/Main/Main", //
+	// 	meta:{
+	// 		bill_type:"Z171",
+	// 		xs_type:3
+	// 	},
+	// 	icon: require("@/images/yuding.png"),
+	// 	icon1: require("@/images/yuding-hui.png"),
+	// 	index: 1
+	// },
+	// {
+	// 	title: "赊销",
+	// 	name: "SaleMain",
+	// 	type:"sale_credit",
+	// 	url: "@/pages/Main/Main",
+	// 	meta:{
+	// 		bill_type:"Z154",
+	// 		xs_type:6
+	// 	},
+	// 	icon: require("@/images/shexiao.png"),
+	// 	icon1: require("@/images/shexiao-hui.png"),
+	// 	index: 2
+	// },
 	{
 		title: "预定提取",
 		name: "Extract",
+		type:"sale_reserve_extract",
 		url: "@/pages/Extract/Extract",
 		icon: require("@/images/xz-ydtq.png"),
 		icon1: require("@/images/wxz-ydtq.png"),
@@ -78,6 +82,7 @@ export default [{
 		}, {
 			title: "线上提取",
 			name: "OnlinePick",
+			type:"sale_online_order_extract",
 			url: "@/pages/OnlinePick/OnlinePick",
 			icon: require("@/images/xsddtiqu.png"),
 			icon1: require("@/images/xsddtiqu-wxz.png"),
@@ -94,6 +99,7 @@ export default [{
 		details: [{
 				title: "销售退单",
 				name: "RefundOrder",
+				type:"sale_return_good",
 				url: "@/pages/RefundOrder/RefundOrder",
 				meta:{
 					xs_type:2
@@ -105,6 +111,7 @@ export default [{
 			{
 				title: "预定退单",
 				name: "Extract",
+				type:"sale_reserve_cancel",
 				url: "@/pages/Extract/Extract",
 				meta: { //跳转的时候会向组件的 meta 传值，组件内通过 this.meta 获取传入的数据
 					mode: false,
@@ -117,6 +124,7 @@ export default [{
 			{
 				title: "赊销退单",
 				name: "SXRefund",
+				type:"sale_credit_return_good",
 				url: "@/pages/RefundOrder/SXRefund",
 				meta: {
 					xs_type:7

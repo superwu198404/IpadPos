@@ -7,8 +7,9 @@
 		<view class="right">
 			<Head @Switch="SwitchPage"></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component @Switch="SwitchPage" @Message="OpenMessage" @EnterSales="controller" v-for="c in router" :is="c.name" :ref="c.title"
-				v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive" :meta="meta_data"></component>
+			<component @Switch="SwitchPage" @Controller="MainSaleLoad" @Message="OpenMessage" v-for="c in router"
+				:is="c.name" :ref="c.title" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive"
+				:meta="meta_data"></component>
 		</view>
 		<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 	</view>
@@ -22,7 +23,8 @@
 	import Head from '@/pages/Home/Component/Head.vue'
 	import Page from '@/pages/Home/Component/Page.vue'
 	//页面组件导入
-	import Main from '@/pages/Main/Main.vue'
+	// import Main from '@/pages/Main/Main.vue'
+	import MainSale from '@/pages/mainSale/mainSale.vue'
 	import Reserve from '@/pages/Reserve/Reserve.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
@@ -35,11 +37,14 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	//全局销售控制器
-	import SaleController from '@/utils/sale/baseSale.js';
+	import SaleController from '@/utils/sale/base_sale.js';
+	//销售页商品初始化方法
+	import SaleGoodsInit from '@/utils/sale/xs_sp_init.js';
 	export default {
 		name: "Home",
 		components: {
-			Main,
+			// Main,
+			MainSale,
 			Head,
 			Page,
 			Reserve,
@@ -57,19 +62,20 @@
 		data() {
 			return {
 				current: {
-					name: "Main",
-					title: "销售"
+					name: "MainSale",
+					title: "销售",
+					info:null
 				},
 				selected: {
-					name: "Main",
+					name: "MainSale",
 					title: "销售"
 				},
 				view: {
 					message: false
 				},
-				router: [],//路由信息参数
-				meta_data: {},//路由元数据
-				controller:null
+				router: [], //路由信息参数
+				meta_data: {}, //路由元数据
+				controller: null
 			}
 		},
 		computed: {
@@ -96,9 +102,9 @@
 				if (data.switch || data.switch === undefined) {
 					this.current.name = data.name;
 					this.current.title = data.title;
+					this.current.info = this.router.find(r => r.name === data.name && r.title === data.title);
 					console.log("[SwitchPage]组件Info:", data);
-					console.log("[SwitchPage]组件RouteInfo:", this.router.find(r => r.name === data.name && r.title ===
-						data.title));
+					console.log("[SwitchPage]组件RouteInfo:", );
 					this.$set(this.meta_data, `data`, data?.meta ?? this.router.find(r => r.name === data.name && r
 						.title === data.title)?.meta);
 					this.$set(this.meta_data, `params`, data?.params ?? {});
@@ -108,11 +114,11 @@
 							vue = vue[0];
 						}
 					}
-					console.log("[Refs]键列表:", Object.keys(this.$refs));
 					vue?.$nextTick(function() {
 						console.log("[NextTick]Show触发!");
 						vue?.Show ? vue.Show() : undefined;
 					});
+					if(this.controller) this.controller.SaleTypeClick(this.current.info.type);//给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
 				}
 			},
 			ComponentRecursion: function(tree, all = []) {
@@ -127,21 +133,15 @@
 				uni.$on("Switch", util.callBind(this, function(res) {
 					this.SwitchPage(res);
 				}))
+			},
+			MainSaleLoad: function(sale_controller) {
+				console.log("[MainSaleLoad]已获取MainSale控制器对象...");
+				this.controller = sale_controller;
 			}
 		},
 		created() {
-			this.router = this.ComponentRecursion(router, components);//路由数据
-			this.controller = new SaleController.GetSale(this.KHID,this.POSID,this.RYID,this,"Home",this.KCDID,this.DPID,this.GCID);//实例化销售控制器（主要是针对Main页面进行控制的）
-			this.MsgToPage();//开启页面事件监听
-			this.$refs = new Proxy(this.$refs, {
-				set(obj, prop, value) {
-					if(Array.isArray(value) && value.length > 0)
-						value[0]?.Show ? value[0].Show() : undefined;
-					else
-						value?.Show ? value.Show() : undefined;
-					return Reflect.set(...arguments);
-				}
-			})
+			this.router = this.ComponentRecursion(router); //路由数据
+			this.MsgToPage(); //开启页面事件监听
 		}
 	}
 </script>

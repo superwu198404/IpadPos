@@ -63,7 +63,53 @@
 				rj_cg: false
 			};
 		},
+			},
 		methods: {
+			Close: function() {
+				//通知父组件关闭日结
+				console.log("通知父组件关闭日结事件");
+				that.curIndex = 0;
+				that.rj_sf = true;
+				that.rj_xz = false;
+				that.rj_cg = false;
+				that.signOutDate = [];
+				that.$emit("CloseRJ", {});
+			},
+			//去签退
+			ToSignOut: function(e) {
+				that.rj_sf = false;
+				that.rj_xz = true;
+				that.rj_cg = false;
+			},
+			//选择日结日期
+			ChooseRJ: (e, i) => {
+				that.qtdate = e;
+				that.curIndex = i;
+			},
+			//选中日结日期
+			ConfirmRJ: e => {
+				console.log("即将日结的数据：", that.qtdate);
+				if (that.qtdate) {
+					_login.SignOrSignOut(false, that.qtdate, res => {
+						console.log("日结结果：", res);
+						if (res.code) {
+							util.simpleMsg("日结成功！");
+							let data = JSON.parse(res.data);
+							if (data.sql) {
+								_login.SignOrSignOutSql(data.sql);
+							}
+							that.signOutDate.splice(that.curIndex, 1); //删除日结了日期
+							if (that.signOutDate.length > 0) {
+								util.simpleMsg("日结成功！");
+								that.curIndex = 0; //归0
+								that.qtdate = that.signOutDate[that.curIndex];
+							} else {
+								that.rj_sf = false;
+								that.rj_xz = false;
+								that.rj_cg = true;
+							}
+						} else {
+							util.simpleModal("提示", res.msg);
 			//签到
 			Sign: function() {
 				_login.SignOrSignOut(true, res => {

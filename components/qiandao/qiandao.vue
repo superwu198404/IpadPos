@@ -4,15 +4,18 @@
 </style>
 <template>
 	<view class="boxs" v-if="qd_show">
-		<view class="customer">
-			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
-			<view class="clues">
-				<image src="@/images/qiandao.gif" mode="widthFix"><image>
-				<text>请先进行签到~</text>
-			</view>
-			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
-		</view>
+		<image src="@/images/qiandao.gif" mode="widthFix">
+			<image>
+				<view class="customer">
+					<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+					<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
+					<view class="clues">
+						<image src="@/images/qiandao.gif" mode="widthFix">
+							<image>
+								<text>请先进行签到~</text>
+					</view>
+					<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
+				</view>
 	</view>
 </template>
 
@@ -86,13 +89,15 @@
 		border-radius: 20rpx;
 		padding: 0 0 180rpx;
 	}
+
 	.customer .bg {
-		position: absolute;
+		position: absolute !important;
 		top: 0;
 		left: 0;
 		width: 100%;
 		z-index: 0;
 	}
+
 	.affirm {
 		position: absolute;
 		bottom: 0;
@@ -104,13 +109,14 @@
 		align-items: center;
 		justify-content: center;
 		padding-bottom: 20rpx;
-		z-index: 99;
 	}
+
 	.affirm button {
 		width: 50%;
 		background-color: #42B14B;
 		color: #fff;
 	}
+
 	.clues {
 		display: flex;
 		flex-direction: column;
@@ -120,12 +126,15 @@
 		position: relative;
 		z-index: 2;
 	}
+
 	.clues image {
 		width: 100%;
 	}
-	.clues image:nth-child(2){
+
+	.clues image:nth-child(2) {
 		display: none;
 	}
+
 	.clues text {
 		margin-top: -180rpx;
 		font-weight: 700;

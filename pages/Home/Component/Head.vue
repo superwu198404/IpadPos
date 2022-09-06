@@ -7,7 +7,7 @@
 </style>
 <template>
 	<view>
-		<view class="nav">
+		<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
 				<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
 				<view class="message">
@@ -20,7 +20,7 @@
 					<!-- <text>测试消息...</text> -->
 				</view>
 			</view>
-			<view class="stores">
+			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()">
 						<image src="@/images/dakehu.png" mode="widthFix"></image>大客户：{{DKFNAME}}
@@ -51,10 +51,11 @@
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
-					<text @click="exits()">{{RYID}}
+					<view @click="exits()" style="display:flex;flex-wrap: nowrap;align-items: center;">
+						<text>{{RYID}}</text>
 						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
 							mode="widthFix"></image>
-					</text>
+					</view>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="LoginOut()">
 							<image src="@/images/tuichu.png" mode="widthFix"></image>
@@ -869,24 +870,58 @@
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
+			//获取一周内是否有未日结的数据
+			GetSignOutInWeek: function(t, func) {
+				_login.GetSignOutInWeek(res => {
+					console.log("是否有日结数据：", res);
+					
 			//签到
 			Sign: function() {
 				_login.SignOrSignOut(true, res => {
 					console.log("签到结果：", res);
 					if (res.code) {
+						if (t) { //主动触发
+							that.showSignOut = true;
+							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+						} else { //自动触发
+							util.simpleModal("提示", res.msg, code => {
+								if (code) { //点击了确定
+									that.showSignOut = true;
+									that.signOutDate = JSON.parse(res
+										.data); // ["2022/9/1","2022/8/31"]; 
+								}
+							})
+						}
+					} 
+					else {
+						// if (t) {
+						// 	util.simpleMsg("暂无日结数据", true);
+						// }
 						util.simpleMsg("签到成功！");
 						let data = JSON.parse(res.data);
 						// let store = util.getStorage("store");
 						// store.OPENFLAG = data.openflag;
 						// util.setStorage("store", store);
-						if (data.sql) {
-							_login.SignOrSignOutSql(data.sql);
-						}
-					} else {
-						util.simpleMsg(res.msg, "none");
-					}
+					// 	if (data.sql) {
+					// 		_login.SignOrSignOutSql(data.sql);						
+					// } 
+					// else {
+					// 	util.simpleMsg(res.msg, "none");
+					// }
+				}
+				
 				})
 			},
+			//去日结
+			ToSignOut: () => {
+				//查询一周内是否有未日结的数据
+				that.GetSignOutInWeek(1);
+			},
+			//关闭日结框
+			CloseSignOut: function(res) {
+				console.log("父组件被通知事件");
+				that.showSignOut = false;
+			}
 		}
 	}
 </script>
