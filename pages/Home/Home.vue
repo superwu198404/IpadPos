@@ -23,7 +23,7 @@
 	import Head from '@/pages/Home/Component/Head.vue'
 	import Page from '@/pages/Home/Component/Page.vue'
 	//页面组件导入
-	// import Main from '@/pages/Main/Main.vue'
+	import Main from '@/pages/Main/Main.vue'
 	import MainSale from '@/pages/MainSale/MainSale.vue'
 	import Reserve from '@/pages/Reserve/Reserve.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
@@ -43,8 +43,8 @@
 	export default {
 		name: "Home",
 		components: {
-			// Main,
-			MainSale,
+			Main,
+			// MainSale,
 			Head,
 			Page,
 			Reserve,
@@ -61,18 +61,32 @@
 		},
 		data() {
 			return {
+				// current: {
+				// 	name: "MainSale",
+				// 	title: "销售",
+				// 	info:null
+				// },
+				// previous:{
+				// 	name: "MainSale",
+				// 	title: "销售",
+				// 	info:null
+				// },
+				// selected: {
+				// 	name: "MainSale",
+				// 	title: "销售"
+				// },
 				current: {
-					name: "MainSale",
+					name: "Main",
 					title: "销售",
 					info:null
 				},
 				previous:{
-					name: "MainSale",
+					name: "Main",
 					title: "销售",
 					info:null
 				},
 				selected: {
-					name: "MainSale",
+					name: "Main",
 					title: "销售"
 				},
 				view: {
@@ -114,7 +128,7 @@
 					this.current.title = data.title;
 					this.current.info = this.router.find(r => r.name === data.name && r.title === data.title);
 					console.log("[SwitchPage]组件Info:", data);
-					console.log("[SwitchPage]组件RouteInfo:", );
+					console.log("[SwitchPage]组件RouteInfo:", this.current.info);
 					this.$set(this.meta_data, `data`, data?.meta ?? this.router.find(r => r.name === data.name && r
 						.title === data.title)?.meta);
 					this.$set(this.meta_data, `params`, data?.params ?? {});
@@ -160,7 +174,7 @@
 					this.SwitchPage(res);
 				}))
 			},
-			MainSaleLoad: function(sale_controller) {
+			MainSaleLoad: function(sale_controller) {//只有 MainSale 会触发
 				console.log("[MainSaleLoad]已获取MainSale控制器对象...");
 				this.controller = sale_controller;
 			}

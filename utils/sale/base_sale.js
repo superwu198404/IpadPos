@@ -15,16 +15,16 @@ var XsTypeObj = {
 			"Disc": true, //是否可以打开录入折扣
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
-			
+
 			"sale": true, //从这里开始都是销售模式
-			"sale_reserve": true,//预定
-			"sale_reserve_extract": true,//预定提取
+			"sale_reserve": true, //预定
+			"sale_reserve_extract": true, //预定提取
 			"seleWebWeb": true,
-			"sale_credit": true,//赊销
+			"sale_credit": true, //赊销
 			"sale_return_good": true,
-			"sale_reserve_cancel": true,//预定退单（取消）
-			"sale_credit_return_good": true,//赊销退单
-			
+			"sale_reserve_cancel": true, //预定退单（取消）
+			"sale_credit_return_good": true, //赊销退单
+
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -32,8 +32,8 @@ var XsTypeObj = {
 		$click() {
 			return true;
 		},
-		$initSale: function(type ,params) {
-			
+		$initSale: function(type, params) {
+
 		},
 		///对打印的控制
 		$print: function() {
@@ -66,11 +66,11 @@ var XsTypeObj = {
 		clickType: "sale_return_good",
 		nameSale: "销售退货",
 		$initSale: function(params) {
-			console.log("[sale_return_good]SALE001:",params.sale1);
+			console.log("[sale_return_good]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
-			console.log("[sale_return_good]SALE002:",params.sale2);
+			console.log("[sale_return_good]SALE002:", params.sale2);
 			this.sale002 = params.sale2 ?? {};
-			console.log("[sale_return_good]SALE003:",params.sale3);
+			console.log("[sale_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
 		}
 	},
@@ -85,11 +85,11 @@ var XsTypeObj = {
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
 		$initSale: function(params) {
-			console.log("[sale_reserve_extract]SALE001:",params.sale1);
+			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
-			console.log("[sale_reserve_extract]SALE002:",params.sale2);
+			console.log("[sale_reserve_extract]SALE002:", params.sale2);
 			this.sale002 = params.sale2 ?? {};
-			console.log("[sale_reserve_extract]SALE003:",params.sale3);
+			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
 		}
 	},
@@ -98,11 +98,11 @@ var XsTypeObj = {
 		clickType: "sale_reserve_cancel",
 		nameSale: "预定取消",
 		$initSale: function(params) {
-			console.log("[sale_reserve_cancel]SALE001:",params.sale1);
+			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
-			console.log("[sale_reserve_cancel]SALE002:",params.sale2);
+			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
 			this.sale002 = params.sale2 ?? {};
-			console.log("[sale_reserve_cancel]SALE003:",params.sale3);
+			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
 		}
 	},
@@ -124,11 +124,11 @@ var XsTypeObj = {
 		clickType: "sale_credit_return_good",
 		nameSale: "赊销退货",
 		$initSale: function(params) {
-			console.log("[sale_credit_return_good]SALE001:",params.sale1);
+			console.log("[sale_credit_return_good]SALE001:", params.sale1);
 			this.sale001 = params.sale1;
-			console.log("[sale_credit_return_good]SALE002:",params.sale2);
+			console.log("[sale_credit_return_good]SALE002:", params.sale2);
 			this.sale002 = params.sale2;
-			console.log("[sale_credit_return_good]SALE003:",params.sale3);
+			console.log("[sale_credit_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3;
 		}
 	},
@@ -304,7 +304,7 @@ function GetSale(global, vue, target_name) {
 		this.selectFlagList = this.Allsplist.filter(item => {
 			return item.FSTR == pm_flag
 		});
-		that.log("[FilterSp]筛选出来的长度",this.selectFlagList.length)
+		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
 		this.Page.$set(this.Page, "Alphabetical", false);
@@ -316,7 +316,7 @@ function GetSale(global, vue, target_name) {
 		this.Page.$set(this.Page[this.pageName], "spPrice", this.spPrice);
 		this.Allsplist = pm_list;
 		this.filterSp("A");
-		that.log("[SetAllGoods]绑定完成！",this.Page[this.pageName].selectFlagList[0]);
+		that.log("[SetAllGoods]绑定完成！", this.Page[this.pageName].selectFlagList[0]);
 		this.Allsplist.forEach(item => {
 			if (that.flagList.indexOf(item.FSTR) < 0) {
 				that.flagList.push(item.FSTR)
@@ -377,7 +377,7 @@ function GetSale(global, vue, target_name) {
 
 	///设置基础的权限
 	this.SetCurrentOperation = function(pm_OperEnum) {
-		console.log("[SetCurrentOperation]传入权限:",pm_OperEnum);
+		console.log("[SetCurrentOperation]传入权限:", pm_OperEnum);
 		//所有模式都具有的默认权限 在这里直接初始化好 ，
 		this.currentOperation = {
 			"statement": false
@@ -400,25 +400,25 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
-	this.setManage = function(pm_mtype) {
-		that.log(lastManage);
+	this.SetManage = function(pm_mtype) {
+		console.log("[SetManage]LastManage:",lastManage);
 		if (lastManage != null && pm_mtype != lastManage) {
 			that.ComponentsManage[lastManage] = false;
 		}
-		that.log("点击的类型" + pm_mtype);
+		that.log("[SetManage]点击的类型:",pm_mtype);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
 		that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		that.update();
-		that.log("绑定完成" + that.ComponentsManage[pm_mtype]);
+		that.log("[SetManage]绑定完成:",that.ComponentsManage[pm_mtype]);
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
-	this.setComponentsManage = function(e) {
+	this.SetComponentsManage = function(e) {
 		let mtype = e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			that.setManage(mtype);
+			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
 		}
@@ -426,8 +426,8 @@ function GetSale(global, vue, target_name) {
 
 	//调用各个销售类型的方法名称,参数列表
 	this.CurrentTypeCall = function(pm_fun) {
-		console.log("[CurrentTypeCall]当前销售类型:",this.current_type);
-		console.log("[CurrentTypeCall]当前销售类型调用:",pm_fun);
+		console.log("[CurrentTypeCall]当前销售类型:", this.current_type);
+		console.log("[CurrentTypeCall]当前销售类型调用:", pm_fun);
 		let defstr = "def"
 		let arr = [];
 		for (var i = 1; i < arguments.length; i++) {
@@ -457,11 +457,9 @@ function GetSale(global, vue, target_name) {
 		that.log("当前显示的商品集合" + JSON.stringify(that.selectFlagList[plindex]));
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
-
 		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 0;
-		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
-		{
+		if (that.clikSpItem.ynshowlist) { //如果是蛋糕默认选择一个商品id
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
@@ -469,7 +467,7 @@ function GetSale(global, vue, target_name) {
 
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.setManage("inputsp")
+		that.SetManage("inputsp")
 	}
 
 	//商品详情页的加号和 减号
@@ -488,7 +486,7 @@ function GetSale(global, vue, target_name) {
 	//修改销售类型
 	//参数1销售类型，参数2单据列表
 	this.SetType = function(pm_type) {
-		console.log("[SetType]设置销售类型:",pm_type);
+		console.log("[SetType]设置销售类型:", pm_type);
 		if (XsTypeObj[pm_type]) {
 			this.clickSaleType = XsTypeObj[pm_type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
@@ -499,35 +497,35 @@ function GetSale(global, vue, target_name) {
 				return;
 			}
 			that.log(JSON.stringify(this.current_type));
-			if (this.clickSaleType.$click.call(this)) {
+			if (this.clickSaleType.$click && this.clickSaleType.$click.call(this)) {
 				this.$initSale(this.clickSaleType);
 			}
 		} else {
 			this.myAlert("没有此种操作模式" + pm_type);
 		}
 	}
-	
+
 	/**
 	 * 修改销售类型(SetType 修改版本)
 	 * @param {*} type 销售类型
 	 * @param {*} direct 是否选择直接初始化
 	 */
-	this.SetSaleType = function(type,init_params = null,direct = false) {
-		console.log("[SetSaleType]设置销售类型:",type);
+	this.SetSaleType = function(type, init_params = null, direct = false) {
+		console.log("[SetSaleType]设置销售类型:", type);
 		if (XsTypeObj[type]) {
 			this.clickSaleType = XsTypeObj[type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
-			console.log("[SetSaleType]销售类型:",type);
+			console.log("[SetSaleType]销售类型:", type);
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
 					.sale002Rows)) {
 				this.myAlert("[SetSaleType]已经输入了商品不能进行此操作!")
 				return;
 			}
-			console.log("[SetSaleType]设置销售类型信息:",this.current_type);
-			if (direct || this.clickSaleType.$click.call(this)) {
-				console.log("[MainSale]开始初始化...",{
-					params:init_params,
-					type_info:this.clickSaleType,
+			console.log("[SetSaleType]设置销售类型信息:", this.current_type);
+			if (direct || (this.clickSaleType.$click && this.clickSaleType.$click.call(this))) {
+				console.log("[MainSale]开始初始化...", {
+					params: init_params,
+					type_info: this.clickSaleType,
 					type
 				});
 				this.$initSale(this.clickSaleType, init_params);
@@ -537,7 +535,20 @@ function GetSale(global, vue, target_name) {
 			this.myAlert("[SetSaleType]没有此种操作模式:" + type);
 		}
 	}
-	
+
+	/**
+	 * 品类选择（原名 SelectPlidChenged）
+	 * @param {*} e 
+	 */
+	this.SelectClassChenged = function(e) {
+		var plid = e.currentTarget.dataset.plid;
+		that.selectPlid = plid;
+		that.scrollinto = that.selectFlag + plid;
+		that.log("切换到的品类" + that.scrollinto)
+		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
+		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
+	}
+
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
 	this.SaleTypeClick = function(type) {
 		console.log("[SaleTypeClick]销售页面切换类型:", type);
@@ -546,14 +557,14 @@ function GetSale(global, vue, target_name) {
 
 	//初始化销售的操作
 	this.$initSale = function(pm_newtype, pm_saleobj) {
-		console.log("[$initSale]销售初始化开始!",{
+		console.log("[$initSale]销售初始化开始!", {
 			type: pm_newtype || this.clickSaleType
 		});
 		pm_newtype = pm_newtype || this.clickSaleType;
 		this.current_type = pm_newtype;
 		this.CurrentTypeCall("$initSale", pm_saleobj);
 		this.bill_type = sale.saleBillType[this.current_type.xstype];
-		console.log("[$InitSale]bill_type:",this.bill_type);
+		console.log("[$InitSale]bill_type:", this.bill_type);
 		this.xsType = this.current_type.xstype;
 		//设置权限生效
 		this.SetCurrentOperation(this.current_type.operation);
@@ -626,8 +637,11 @@ function GetSale(global, vue, target_name) {
 		return pm_input;
 	}
 
-	//点击商品的详情触发的事件
-	this.getSp = function(e) {
+	/**
+	 * 点击商品的详情触发的事件（原名:GetSp）
+	 * @param {*} e 
+	 */
+	this.GetGoods = function(e) {
 		console.log("[GetSp]获取商品详情:");
 		let pm_spid = that.clikSpItem.selectSPID;
 		let pm_yndgxp = e.currentTarget.dataset.yndgxp; //是否是改胚蛋糕
@@ -662,10 +676,10 @@ function GetSale(global, vue, target_name) {
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
 			that.sale002.push(new002);
-			that.log("[GetSp]添加了商品",new002);
-			that.log("[GetSp]商品价格",that.spPrice);
+			that.log("[GetSp]添加了商品", new002);
+			that.log("[GetSp]商品价格", that.spPrice);
 		}
-		that.setManage("inputsp");
+		that.SetManage("inputsp");
 	}
 
 	//大于0的时候修改,小于等于0删除
@@ -683,15 +697,20 @@ function GetSale(global, vue, target_name) {
 		return true;
 	}
 
-	//显示购物车呢 
-	this.showStatement = function(e) {
-		console.log("[ShowStatement]商品信息:",that.sale001);
-		that.saleNetAndDisc();
-		that.setManage("statement")
+	/**
+	 * 显示购物车
+	 * @param {*} e 
+	 */
+	this.ShowStatement = function(e) {
+		console.log("[ShowStatement]商品信息:", that.sale001);
+		that.SaleNetAndDisc();
+		that.SetManage("statement")
 	}
 
-	//计算sale002
-	this.saleNetAndDisc = function() {
+	/**
+	 * 计算sale002
+	 */
+	this.SaleNetAndDisc = function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			that.computeCx();
@@ -729,7 +748,7 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//重置销售单据
-	this.resetSaleBill = function() {
+	this.ResetSaleBill = function() {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;

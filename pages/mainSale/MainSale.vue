@@ -21,7 +21,7 @@
 
 								<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 									:class="mainSale.selectPlid==xplitem.plid?'curr':''"
-									@click="mainSale.selectPlidChenged"
+									@click="mainSale.SelectClassChenged"
 									:data-plid="xplitem.plid">{{xplitem.plname}}</text>
 								<label>
 									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
@@ -34,7 +34,8 @@
 								<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 
 									<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
-										<label></label></view>
+										<label></label>
+									</view>
 
 									<view class="procycle">
 										<!-- 产品循环 -->
@@ -81,7 +82,7 @@
 						<view class="a-z" @click="GetTSZKData()">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="states" @click="mainSale.showStatement">
+						<view class="states" @click="mainSale.ShowStatement">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
@@ -105,7 +106,7 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.SetComponentsManage" data-mtype='inputsp'>×xxx </button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
@@ -139,7 +140,7 @@
 						</view>
 					</view>
 					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+						<button class="btn" data-yndgxp='N' @click="mainSale.GetGoods">确认</button>
 					</view>
 				</view>
 			</view>
@@ -153,7 +154,7 @@
 						<image class="touxiang" src="../../images/touxiang.png"></image><button
 							class="btn">会员登录</button>
 					</label>
-					<text @click="mainSale.resetSaleBill">清空</text>
+					<text @click="mainSale.ResetSaleBill">清空</text>
 				</view>
 				<view class="h5"><text>账单</text></view>
 				<view class="goods">
@@ -177,9 +178,7 @@
 							<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
 						</view>
 					</view>
-
 				</view>
-
 				<view class="ul">
 					<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 					<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
@@ -239,8 +238,7 @@
 				<view class="confirm">
 					<button class="btn">确 认</button>
 				</view>
-
-				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
+				<view class="states" @click="mainSale.SetComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
 					<label>»</label>
 				</view>
@@ -307,7 +305,9 @@
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
-										<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button> -->
+										<button>点击使用<image src="../../images/ewm.png"
 												mode="widthFix"></image></button>
 									</view>
 								</view>
@@ -498,7 +498,9 @@
 				mainSale: null,
 				saleAdd: [],
 				saleSub: [],
-				MainSale:{}
+				MainSale: {},
+				
+				show_special_discount: false
 			}
 		},
 		computed: {
@@ -511,6 +513,10 @@
 		methods: {
 			exits: function(e) {
 				this.dropout = !this.dropout
+			},
+			//展示特殊折扣
+			GetTSZKData: function() {
+				this.show_special_discount = true;
 			},
 			Statements: function(e) {
 				this.statements = !this.statements
@@ -540,7 +546,7 @@
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
 			console.log("[MainSale]将控制对象传入Home中...");
-			this.$emit("Controller",this.mainSale);
+			this.$emit("Controller", this.mainSale);
 		}
 	}
 </script>
