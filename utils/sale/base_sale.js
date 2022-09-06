@@ -1,4 +1,6 @@
 import sale from '@/utils/sale/saleClass.js';
+import util from '@/utils/util.js';
+import cx from '@/utils/cx/cxCount.js';
 
 /**
  * 销售类型列表，此列表对应 router.js 中，路由信息的 type 字段，进入销售页面之后会根据此列表配置进行初始化
@@ -415,11 +417,11 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
-	this.SetComponentsManage = function(e) {
+	this.setComponentsManage = function(e) {
 		let mtype = e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			that.SetManage(mtype);
+			that.setManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
 		}
@@ -458,9 +460,11 @@ function GetSale(global, vue, target_name) {
 		that.log("当前显示的商品集合" + JSON.stringify(that.selectFlagList[plindex]));
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
+
 		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 0;
-		if (that.clikSpItem.ynshowlist) { //如果是蛋糕默认选择一个商品id
+		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
+		{
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
@@ -468,7 +472,7 @@ function GetSale(global, vue, target_name) {
 
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.SetManage("inputsp")
+		that.setManage("inputsp")
 	}
 
 	//商品详情页的加号和 减号
@@ -498,7 +502,7 @@ function GetSale(global, vue, target_name) {
 				return;
 			}
 			that.log(JSON.stringify(this.current_type));
-			if (this.clickSaleType.$click && this.clickSaleType.$click.call(this)) {
+			if (this.clickSaleType.$click.call(this)) {
 				this.$initSale(this.clickSaleType);
 			}
 		} else {
@@ -549,7 +553,7 @@ function GetSale(global, vue, target_name) {
 				return;
 			}
 			console.log("[SetSaleType]设置销售类型信息:", this.current_type);
-			if (direct || (this.clickSaleType.$click && this.clickSaleType.$click.call(this))) {
+			if (direct || this.clickSaleType.$click.call(this)) {
 				console.log("[MainSale]开始初始化...", {
 					params: init_params,
 					type_info: this.clickSaleType,
@@ -561,19 +565,6 @@ function GetSale(global, vue, target_name) {
 		} else {
 			this.myAlert("[SetSaleType]没有此种操作模式:" + type);
 		}
-	}
-
-	/**
-	 * 品类选择（原名 SelectPlidChenged）
-	 * @param {*} e 
-	 */
-	this.SelectClassChenged = function(e) {
-		var plid = e.currentTarget.dataset.plid;
-		that.selectPlid = plid;
-		that.scrollinto = that.selectFlag + plid;
-		that.log("切换到的品类" + that.scrollinto)
-		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
-		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
 	}
 
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
@@ -664,11 +655,8 @@ function GetSale(global, vue, target_name) {
 		return pm_input;
 	}
 
-	/**
-	 * 点击商品的详情触发的事件（原名:GetSp）
-	 * @param {*} e 
-	 */
-	this.GetGoods = function(e) {
+	//点击商品的详情触发的事件
+	this.getSp = function(e) {
 		console.log("[GetSp]获取商品详情:");
 		let pm_spid = that.clikSpItem.selectSPID;
 		let pm_yndgxp = e.currentTarget.dataset.yndgxp; //是否是改胚蛋糕
@@ -706,7 +694,7 @@ function GetSale(global, vue, target_name) {
 			that.log("[GetSp]添加了商品", new002);
 			that.log("[GetSp]商品价格", that.spPrice);
 		}
-		that.SetManage("inputsp");
+		that.setManage("inputsp");
 	}
 
 	//大于0的时候修改,小于等于0删除
@@ -735,10 +723,8 @@ function GetSale(global, vue, target_name) {
 		that.SetManage("statement")
 	}
 
-	/**
-	 * 计算sale002
-	 */
-	this.SaleNetAndDisc = function() {
+	//计算sale002
+	this.saleNetAndDisc = function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			that.computeCx();
@@ -776,7 +762,7 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//重置销售单据
-	this.ResetSaleBill = function() {
+	this.resetSaleBill = function() {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;

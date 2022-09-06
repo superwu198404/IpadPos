@@ -68,8 +68,7 @@
 				signOutDate: [],
 				curIndex: 0,
 				qtdate: "",
-				rj_sf: false,
-				rj_cg: false
+			
 			};
 		},
 		methods: {
@@ -118,10 +117,12 @@
 							}
 						} else {
 							util.simpleModal("提示", res.msg);
-						}
-					})
+							}
+					});
 				}
 			},
+							
+						
 			//签到
 			Sign: function() {
 				_login.SignOrSignOut(true, res => {
@@ -136,18 +137,19 @@
 					} else {
 						util.simpleMsg(res.msg, "none");
 					}
-				})
+				});
 			},
-		},
-		created: function() {
-			that = this;
-			let store = util.getStorage("store");
-			if (store) {
-				if (store.OPENFLAG == 1) {
-					that.qd_show = true;
+			created: function() {
+				that = this;
+				let store = util.getStorage("store");
+				if (store) {
+					if (store.OPENFLAG == 1) {
+						that.qd_show = true;
+					}
 				}
 			}
-		}
+
+	}
 	}
 </script>
 

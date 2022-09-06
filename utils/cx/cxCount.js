@@ -270,32 +270,8 @@ const Cxdict = async () => {
 //计算促销的方法
 const Createcx = async (sale02_arr) => {
 	//计算时无生效的促销，再次请求初始化一次
-	if(cxdict == null || cxdict.size <= 0){
+	if(cxdict == null || cxdict.size < 1){
 		await Cxdict();
-	}
-	
-	if(sale02_arr == null || sale02_arr.length <= 0){
-	    sale02_arr = [{
-					"SPID": "000000001040200004", //商品编码
-					"SNAME": "水果沙拉", //商品名称
-					"QTY": 5, //数量
-					"OPRICE": 18.8, //商品原单价
-					"DISCRATE": 0,//单商品折扣价
-					"NET": 56.4, //单商品折扣后的总价
-					"PRICE": 11.28, //单个商品折扣后的价
-					"NO": 1 //排序
-				},
-				{
-					"SPID": "000000001040200003",
-					"SNAME": "礼盒2号",
-					"QTY": 10,
-					"OPRICE": 19.8,
-					"DISCRATE": 0,
-					"NET": 174.24,
-					"PRICE": 17.42,
-					"NO": 2
-				}
-			];
 	}
 	
 	let spid = "";
