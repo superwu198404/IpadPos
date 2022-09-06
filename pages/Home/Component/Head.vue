@@ -37,16 +37,9 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-
 					<label>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
-						<button class="rijie" @click="Sign()">日结</button>
 					</label>
-
-					<!-- <label>
-						<button @click="Sign()">签到</button>
-					</label> -->
-
 				</view>
 				<view class="account">
 					<view>
@@ -207,8 +200,8 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
-				showSignOut:false,
-				signOutDate:[],
+				showSignOut: false,
+				signOutDate: [],
 				//蓝牙
 				list: [],
 				services: [],
