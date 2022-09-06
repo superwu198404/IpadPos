@@ -24,7 +24,7 @@
 	import Page from '@/pages/Home/Component/Page.vue'
 	//页面组件导入
 	import Main from '@/pages/Main/Main.vue'
-	import MainSale from '@/pages/MainSale/MainSale.vue'
+	import MainSale from '@/pages/mainSale/mainSale.vue'
 	import Reserve from '@/pages/Reserve/Reserve.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
