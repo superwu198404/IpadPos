@@ -64,7 +64,15 @@ var XsTypeObj = {
 	sale_return_good: {
 		xstype: "2",
 		clickType: "sale_return_good",
-		nameSale: "销售退货"
+		nameSale: "销售退货",
+		$initSale: function(params) {
+			console.log("[sale_return_good]SALE001:",params.sale1);
+			this.sale001 = params.sale1 ?? {};
+			console.log("[sale_return_good]SALE002:",params.sale2);
+			this.sale002 = params.sale2 ?? {};
+			console.log("[sale_return_good]SALE003:",params.sale3);
+			this.sale003 = params.sale3 ?? {};
+		}
 	},
 	//预订单+提取+取消
 	sale_reserve: {
@@ -78,17 +86,25 @@ var XsTypeObj = {
 		nameSale: "预定提取",
 		$initSale: function(params) {
 			console.log("[sale_reserve_extract]SALE001:",params.sale1);
-			this.sale001 = params.sale1;
+			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_reserve_extract]SALE002:",params.sale2);
-			this.sale002 = params.sale2;
+			this.sale002 = params.sale2 ?? {};
 			console.log("[sale_reserve_extract]SALE003:",params.sale3);
-			this.sale003 = params.sale3;
+			this.sale003 = params.sale3 ?? {};
 		}
 	},
 	sale_reserve_cancel: {
 		xstype: "4",
 		clickType: "sale_reserve_cancel",
-		nameSale: "预定取消"
+		nameSale: "预定取消",
+		$initSale: function(params) {
+			console.log("[sale_reserve_cancel]SALE001:",params.sale1);
+			this.sale001 = params.sale1 ?? {};
+			console.log("[sale_reserve_cancel]SALE002:",params.sale2);
+			this.sale002 = params.sale2 ?? {};
+			console.log("[sale_reserve_cancel]SALE003:",params.sale3);
+			this.sale003 = params.sale3 ?? {};
+		}
 	},
 	//线上订单提取
 	sale_online_order_extract: {
@@ -106,7 +122,15 @@ var XsTypeObj = {
 	sale_credit_return_good: {
 		xstype: "7",
 		clickType: "sale_credit_return_good",
-		nameSale: "赊销退货"
+		nameSale: "赊销退货",
+		$initSale: function(params) {
+			console.log("[sale_credit_return_good]SALE001:",params.sale1);
+			this.sale001 = params.sale1;
+			console.log("[sale_credit_return_good]SALE002:",params.sale2);
+			this.sale002 = params.sale2;
+			console.log("[sale_credit_return_good]SALE003:",params.sale3);
+			this.sale003 = params.sale3;
+		}
 	},
 }
 
