@@ -2,10 +2,6 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	/* @import url(../../style/basis.css); */
 	@import url(@/static/style/index.css);
-
-
-
-
 	.prolist {
 		width: 100%;
 	}
