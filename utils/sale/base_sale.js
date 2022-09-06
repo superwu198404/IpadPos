@@ -356,6 +356,7 @@ function GetSale(global, vue, target_name) {
 		"lockRows": 0, //是否存在锁定的行数
 		"inputsp": false,
 		"statement": true, //购物车
+		"actType": false
 	}
 	//插件的显示在这里控制
 	this.ComponentsManage = {
@@ -401,16 +402,16 @@ function GetSale(global, vue, target_name) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
-		console.log("[SetManage]LastManage:",lastManage);
+		console.log("[SetManage]LastManage:", lastManage);
 		if (lastManage != null && pm_mtype != lastManage) {
 			that.ComponentsManage[lastManage] = false;
 		}
-		that.log("[SetManage]点击的类型:",pm_mtype);
+		that.log("[SetManage]点击的类型:", pm_mtype);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
 		that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		that.update();
-		that.log("[SetManage]绑定完成:",that.ComponentsManage[pm_mtype]);
+		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
@@ -503,6 +504,32 @@ function GetSale(global, vue, target_name) {
 		} else {
 			this.myAlert("没有此种操作模式" + pm_type);
 		}
+	}
+
+	/**
+	 * 支付结果
+	 * @param {*} e 
+	 */
+	this.PayedResult = function(e) {
+		that.log("----------支付完成查看返回结果---------");
+		that.log(e);
+	}
+
+	//跳转到支付页面
+	this.ToPay = function(e) {
+		that.$store.commit('set-location', {
+			sale1_obj: that.sale001, //001 主单 数据对象
+			sale2_arr: that.sale002, //002 商品 数据对象集合
+			sale3_arr: that.sale003, //003 支付数据集合
+			sale8_arr: that.sale008, //008水吧商品
+			actType: that.allOperation.actType
+		});
+		uni.navigateTo({
+			url: "../Payment/Payment",
+			events: {
+				FinishOrder: util.callBind(that, that.payRef)
+			}
+		})
 	}
 
 	/**
@@ -701,8 +728,9 @@ function GetSale(global, vue, target_name) {
 	 * 显示购物车
 	 * @param {*} e 
 	 */
-	this.ShowStatement = function(e) {
+	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale001);
+		await cx.Createcx(that.sale002);
 		that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
