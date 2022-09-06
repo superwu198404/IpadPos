@@ -72,7 +72,7 @@
 						</view>
 					</view>
 				</view>
-			
+
 			</view>
 			<!-- 紧急消息弹窗 -->
 			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
@@ -885,7 +885,8 @@
 			GetSignOutInWeek: function(t, func) {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
-					
+				})
+			},
 			//签到
 			Sign: function() {
 				_login.SignOrSignOut(true, res => {
@@ -908,8 +909,7 @@
 								}
 							})
 						}
-					} 
-					else {
+					} else {
 						// if (t) {
 						// 	util.simpleMsg("暂无日结数据", true);
 						// }
@@ -918,14 +918,14 @@
 						// let store = util.getStorage("store");
 						// store.OPENFLAG = data.openflag;
 						// util.setStorage("store", store);
-					// 	if (data.sql) {
-					// 		_login.SignOrSignOutSql(data.sql);						
-					// } 
-					// else {
-					// 	util.simpleMsg(res.msg, "none");
-					// }
-				}
-				
+						// 	if (data.sql) {
+						// 		_login.SignOrSignOutSql(data.sql);						
+						// } 
+						// else {
+						// 	util.simpleMsg(res.msg, "none");
+						// }
+					}
+
 				})
 			},
 			//去日结 废弃
