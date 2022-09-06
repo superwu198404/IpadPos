@@ -37,7 +37,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					
+
 					<label>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
 					</label>
@@ -201,8 +201,8 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
-				showSignOut:false,
-				signOutDate:[],
+				showSignOut: false,
+				signOutDate: [],
 				//蓝牙
 				list: [],
 				services: [],
@@ -893,7 +893,8 @@
 									if (e.confirm) {
 										console.log("点击了确定");
 										that.showSignOut = true;
-										that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+										that.signOutDate = JSON.parse(res
+										.data); // ["2022/9/1","2022/8/31"]; 
 									}
 								}
 							})
@@ -917,23 +918,27 @@
 			},
 			//直接发起日结
 			ConfirmRJ: e => {
-				let qtdate = dateformat.getYMD();
-				if (qtdate) {
-					_login.SignOrSignOut(false, qtdate, res => {
-						console.log("日结结果：", res);
-						if (res.code) {
-							util.simpleMsg("日结成功！");
-							let data = JSON.parse(res.data);
-							if (data.sql) {
-								_login.SignOrSignOutSql(data.sql);
-							}
+				util.simpleModal("提示", "是否进行今日日结？", res => {
+					if (res) {
+						let qtdate = dateformat.getYMD();
+						if (qtdate) {
+							_login.SignOrSignOut(false, qtdate, res => {
+								console.log("日结结果：", res);
+								if (res.code) {
+									util.simpleMsg("日结成功！");
+									let data = JSON.parse(res.data);
+									if (data.sql) {
+										_login.SignOrSignOutSql(data.sql);
+									}
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+							})
 						} else {
-							util.simpleModal("提示", res.msg);
+							util.simpleMsg("日结日期为空", true);
 						}
-					})
-				} else {
-					util.simpleMsg("日结日期为空", true);
-				}
+					}
+				})
 			},
 		}
 	}
