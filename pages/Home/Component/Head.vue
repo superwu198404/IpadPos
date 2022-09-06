@@ -207,7 +207,8 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
-
+				showSignOut:false,
+				signOutDate:[],
 				//蓝牙
 				list: [],
 				services: [],
