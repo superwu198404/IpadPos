@@ -78,8 +78,11 @@ var XsTypeObj = {
 		nameSale: "预定提取",
 		$initSale: function(params) {
 			console.log("[sale_reserve_extract]SALE001:",params.sale1);
+			this.sale001 = params.sale1;
 			console.log("[sale_reserve_extract]SALE002:",params.sale2);
+			this.sale002 = params.sale2;
 			console.log("[sale_reserve_extract]SALE003:",params.sale3);
+			this.sale003 = params.sale3;
 		}
 	},
 	sale_reserve_cancel: {
@@ -658,6 +661,7 @@ function GetSale(global, vue, target_name) {
 
 	//显示购物车呢 
 	this.showStatement = function(e) {
+		console.log("[ShowStatement]商品信息:",that.sale001);
 		that.saleNetAndDisc();
 		that.setManage("statement")
 	}

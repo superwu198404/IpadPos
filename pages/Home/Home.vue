@@ -131,7 +131,7 @@
 					//以下对销售控制器的操作 👇
 					if(this.controller){
 						console.log("[SetType]当前模块的销售类型:",this.current);
-						 this.controller.SetSaleType(this.previous.info.type, data.load_params, data.load_sale); //给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
+						 this.controller.SetSaleType(this.previous.info?.type, data.load_params, data.load_sale); //给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
 					}
 				}
 			},
