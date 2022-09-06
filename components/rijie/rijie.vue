@@ -4,7 +4,7 @@
 </style>
 <template>
 	<view class="boxs">
-		<view class="customer" v-if="rj_sf">
+		<!-- <view class="customer" v-if="rj_sf">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
 			<view class="clues">
@@ -15,7 +15,7 @@
 				<button class="btn btn-hk" @click="Close()">取消</button>
 				<button class="btn" @click="ToSignOut()">确定</button>
 			</view>
-		</view>
+		</view> -->
 		<!-- 选择日结 -->
 		<view class="customer" v-if="rj_xz">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
@@ -67,8 +67,8 @@
 		data() {
 			return {
 				rj_show: false,
-				rj_sf: true,
-				rj_xz: false,
+				rj_sf: false,
+				rj_xz: true,
 				rj_cg: false,
 				signOutDate: [],
 				curIndex: 0,
@@ -92,8 +92,8 @@
 				//通知父组件关闭日结
 				console.log("通知父组件关闭日结事件");
 				that.curIndex = 0;
-				that.rj_sf = true;
-				that.rj_xz = false;
+				that.rj_sf = false;
+				that.rj_xz = true;
 				that.rj_cg = false;
 				that.signOutDate = [];
 				that.$emit("CloseRJ", {});
