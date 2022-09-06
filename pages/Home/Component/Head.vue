@@ -887,11 +887,16 @@
 							that.showSignOut = true;
 							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
 						} else { //自动触发
-							util.simpleModal("提示", res.msg, code => {
-								if (code) { //点击了确定
-									that.showSignOut = true;
-									that.signOutDate = JSON.parse(res
-										.data); // ["2022/9/1","2022/8/31"]; 
+							uni.showModal({
+								title: "提示",
+								content: res.msg,
+								showCancel: false,
+								success: e => {
+									if (e.confirm) {
+										that.showSignOut = true;
+										that.signOutDate = JSON.parse(res
+											.data); // ["2022/9/1","2022/8/31"]; 
+									}
 								}
 							})
 						}
@@ -914,23 +919,27 @@
 			},
 			//直接发起日结
 			ConfirmRJ: e => {
-				let qtdate = dateformat.getYMD();
-				if (qtdate) {
-					_login.SignOrSignOut(false, qtdate, res => {
-						console.log("日结结果：", res);
-						if (res.code) {
-							util.simpleMsg("日结成功！");
-							let data = JSON.parse(res.data);
-							if (data.sql) {
-								_login.SignOrSignOutSql(data.sql);
-							}
+				util.simpleModal("提示", "确定要进行今日日结吗？", res => {
+					if (res) {
+						let qtdate = dateformat.getYMD();
+						if (qtdate) {
+							_login.SignOrSignOut(false, qtdate, res => {
+								console.log("日结结果：", res);
+								if (res.code) {
+									util.simpleMsg("日结成功！");
+									let data = JSON.parse(res.data);
+									if (data.sql) {
+										_login.SignOrSignOutSql(data.sql);
+									}
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+							})
 						} else {
-							util.simpleModal("提示", res.msg);
+							util.simpleMsg("日结日期为空", true);
 						}
-					})
-				} else {
-					util.simpleMsg("日结日期为空", true);
-				}
+					}
+				})
 			},
 		}
 	}
