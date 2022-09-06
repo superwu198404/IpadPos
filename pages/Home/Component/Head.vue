@@ -880,12 +880,6 @@
 			GetSignOutInWeek: function(t, func) {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
-				})
-			},
-			//签到
-			Sign: function() {
-				_login.SignOrSignOut(true, res => {
-					console.log("签到结果：", res);
 					if (res.code) {
 						if (t) { //主动触发
 							that.showSignOut = true;
@@ -897,9 +891,9 @@
 								showCancel: false,
 								success: e => {
 									if (e.confirm) {
+										console.log("点击了确定");
 										that.showSignOut = true;
-										that.signOutDate = JSON.parse(res
-											.data); // ["2022/9/1","2022/8/31"]; 
+										that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
 									}
 								}
 							})
@@ -908,19 +902,7 @@
 						if (t) {
 							util.simpleMsg("暂无日结数据", true);
 						}
-						util.simpleMsg("签到成功！");
-						let data = JSON.parse(res.data);
-						let store = util.getStorage("store");
-						store.OPENFLAG = data.openflag;
-						util.setStorage("store", store);
-							if (data.sql) {
-								_login.SignOrSignOutSql(data.sql);						
-						} 
-						else {
-							util.simpleMsg(res.msg, "none");
-						}
 					}
-
 				})
 			},
 			//去日结 废弃
@@ -935,27 +917,23 @@
 			},
 			//直接发起日结
 			ConfirmRJ: e => {
-				util.simpleModal("提示", "确定要进行今日日结吗？", res => {
-					if (res) {
-						let qtdate = dateformat.getYMD();
-						if (qtdate) {
-							_login.SignOrSignOut(false, qtdate, res => {
-								console.log("日结结果：", res);
-								if (res.code) {
-									util.simpleMsg("日结成功！");
-									let data = JSON.parse(res.data);
-									if (data.sql) {
-										_login.SignOrSignOutSql(data.sql);
-									}
-								} else {
-									util.simpleModal("提示", res.msg);
-								}
-							})
+				let qtdate = dateformat.getYMD();
+				if (qtdate) {
+					_login.SignOrSignOut(false, qtdate, res => {
+						console.log("日结结果：", res);
+						if (res.code) {
+							util.simpleMsg("日结成功！");
+							let data = JSON.parse(res.data);
+							if (data.sql) {
+								_login.SignOrSignOutSql(data.sql);
+							}
 						} else {
-							util.simpleMsg("日结日期为空", true);
+							util.simpleModal("提示", res.msg);
 						}
-					}
-				})
+					})
+				} else {
+					util.simpleMsg("日结日期为空", true);
+				}
 			},
 		}
 	}

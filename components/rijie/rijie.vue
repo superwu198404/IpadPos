@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs" v-if="rj_show">
+	<view class="boxs">
 		<!-- <view class="customer" v-if="rj_sf">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -19,17 +19,13 @@
 			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="h6">当前你有以下日期没有做日结操作</view>
 			<view class="cluelist">
-				<view class="list curr"><label>2022-09-02</label><text>未日结</text></view>
-				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
-				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
-				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
-				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
+				<view :class="index==curIndex?'list curr':'list'" v-for="(item,index) in signOutDate"
+					@click="ChooseRJ(item,index)"><label>{{item}}</label><text>未日结</text></view>
 			</view>
 			<view class="affirm">
 				<!-- <button class="btn btn-hk" @click="Close()">取消</button> -->
 				<button class="btn" @click="ConfirmRJ()">确定</button>
 			</view>
-			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
 		</view>
 
 		<view class="customer" v-if="rj_cg">
@@ -56,28 +52,45 @@
 	var that;
 	export default {
 		name: "rijie",
-		props: {},
-
+		props: {
+			_rj_show: Boolean,
+			_signOutDate: {
+				type: Array,
+				default () {
+					return [];
+				}
+			}
+		},
 		data() {
 			return {
-				sec: 3,
 				rj_show: false,
-				rj_sf: false,
-				rj_xz: true,
+				rj_sf: true,
+				rj_xz: false,
 				rj_cg: false,
 				signOutDate: [],
 				curIndex: 0,
-				qtdate: "",
-			
+				qtdate: ""
 			};
+		},
+		watch: {
+			_rj_show: (n, o) => {
+
+			},
+			_signOutDate: (n, o) => {
+				console.log("日结数据变化：", n);
+				if (n.length > 0) {
+					that.signOutDate = that._signOutDate;
+					that.qtdate = that.signOutDate[that.curIndex];
+				}
+			}
 		},
 		methods: {
 			Close: function() {
 				//通知父组件关闭日结
 				console.log("通知父组件关闭日结事件");
 				that.curIndex = 0;
-				that.rj_sf = false;
-				that.rj_xz = true;
+				that.rj_sf = true;
+				that.rj_xz = false;
 				that.rj_cg = false;
 				that.signOutDate = [];
 				that.$emit("CloseRJ", {});
@@ -117,39 +130,19 @@
 							}
 						} else {
 							util.simpleModal("提示", res.msg);
-							}
-					});
-				}
-			},
-							
-						
-			//签到
-			Sign: function() {
-				_login.SignOrSignOut(true, res => {
-					console.log("签到结果：", res);
-					if (res.code) {
-						util.simpleMsg("签到成功！");
-						let data = JSON.parse(res.data);
-						if (data.sql) {
-							_login.SignOrSignOutSql(data.sql);
 						}
-						that.qd_show = false;
-					} else {
-						util.simpleMsg(res.msg, "none");
-					}
-				});
-			},
-			created: function() {
-				that = this;
-				let store = util.getStorage("store");
-				if (store) {
-					if (store.OPENFLAG == 1) {
-						that.qd_show = true;
-					}
+					})
+				} else {
+					util.simpleMsg("请选择日期", true);
 				}
-			}
-
-	}
+			},
+		},
+		created: function() {
+			that = this;
+			that.rj_show = that._rj_show;
+			that.signOutDate = that._signOutDate;
+			console.log("进入日结组件")
+		}
 	}
 </script>
 
