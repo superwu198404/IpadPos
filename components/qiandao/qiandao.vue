@@ -4,12 +4,11 @@
 </style>
 <template>
 	<view class="boxs" v-if="qd_show">
-		<image src="@/images/qiandao.gif" mode="widthFix"><image>
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="clues">
-				<image src="@/images/qiandao.gif" mode="widthFix"><image>
+				<image src="@/images/qiandao.gif" mode="widthFix"></image>
 				<text>请先进行签到~</text>
 			</view>
 			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
@@ -49,6 +48,7 @@
 								if (res.OPENFLAG == 1) {
 									console.log("签到成功，新状态为：", res.OPENFLAG == 1);
 									that.qd_show = false;
+									that.$emit("@GetSignOut", {}); //触发首页的日结数据 搜搜
 								}
 							});
 						}
@@ -127,6 +127,10 @@
 
 	.clues image {
 		width: 100%;
+	}
+
+	.clues image:nth-child(2) {
+		display: none;
 	}
 
 	.clues text {
