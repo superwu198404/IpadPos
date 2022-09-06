@@ -33,7 +33,7 @@
 		</view>
 		<view class="customer" v-if="rj_cg">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
+			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
 			<view class="clues">
 				<image src="@/images/rijie.png" mode="widthFix"></image>
 			</view>
