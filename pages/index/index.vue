@@ -498,7 +498,7 @@
 			},
 			toMainSale: function() {
 				uni.navigateTo({
-					url: "/pages/mainSale/mainSale"
+					url: "/pages/mainSale/MainSale"
 				});
 			},
 			priceCount: function() {

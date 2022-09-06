@@ -348,6 +348,8 @@ function GetSale(global, vue, target_name) {
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
+		"sale_online_order":false,
+		"sale_online_order_extract":false,
 		"seleWebWeb": false,
 		"sale_credit": false,
 		"sale_return_good": false,
@@ -365,13 +367,20 @@ function GetSale(global, vue, target_name) {
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
+		"sale": true, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
+		"sale_online_order":false,
+		"sale_online_order_extract":false,
 		"seleWebWeb": false,
 		"sale_credit": false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
-		"saleSxth": false,
+		"sale_credit": false,
+		"sale_credit_return_good": false,
+		"sale_takeaway":false,
+		"sale_takeaway_reserve":false,
+		"tools":false,
 		"openydCustmInput": false, //预定输入客户的信息
 		"inputsp": false,
 		"statement": false, //购物车
@@ -811,6 +820,6 @@ function GetSale(global, vue, target_name) {
 	}
 }
 export default {
-	// XsTypeObj,
+	XsTypeObj,
 	GetSale
 }

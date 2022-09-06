@@ -7,99 +7,113 @@
 
 <template>
 	<view class="content">
-		<view class="right">
-			<view class="listof">
-				<view class="prolist">
-					<!-- 大类循环 -->
-					<view class="commodity">
-						<view class="hh">
-							<view class="hotcakes">
-								<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
-								<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
+		<view class="content" style="overflow: hidden;">
+			<Page ref="menu" @switch="SwitchPage" :name="'Main'" :title="'销售'"></Page>
+			<view class="right">
+				<Head @Switch="SwitchPage"></Head>
+				<view class="listof" v-show="true">
+					<view class="prolist">
+						<!-- 大类循环 -->
+						<view class="commodity">
+							<view class="hh">
+								<view class="hotcakes">
+									<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
+									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
+								</view>
+								<view class="classifys">
+				
+									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
+										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
+										@click="mainSale.selectPlidChenged"
+										:data-plid="xplitem.plid">{{xplitem.plname}}</text>
+									<label>
+										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
+									</label>
+								</view>
 							</view>
-							<view class="classifys">
-
-								<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
-									:class="mainSale.selectPlid==xplitem.plid?'curr':''"
-									@click="mainSale.selectPlidChenged"
-									:data-plid="xplitem.plid">{{xplitem.plname}}</text>
-								<label>
-									<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
-								</label>
-							</view>
-						</view>
-						<!-- 小类循环 -->
-						<view style="height:92%;flex: 1;">
-							<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="mainSale.scrollinto">
-								<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
-
-									<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
-										<label></label>
-									</view>
-
-									<view class="procycle">
-										<!-- 产品循环 -->
-										<view class="li" v-for="(sptiem, spindex) in  plitem['plarr'] "
-											@click="mainSale.showSpDetails" :data-plindex="plindex"
-											:data-spindex="spindex">
-											<view class="h3">
-												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
-												{{sptiem.SNAME}}
-											</view>
-											<view class="cods">
-												<label>
-													<image src="../../images/dx-bm.png" mode="widthFix"></image>0
-												</label>
-												<label>
-													<image src="../../images/dx-dw.png" mode="widthFix"></image>
-													{{sptiem.UNIT}}
-												</label>
-											</view>
-											<view class="price">
-												<text>￥{{ Price(sptiem.SPID) }}</text>
-												<view>
-													<image src="../../images/dx-gd.png" mode="widthFix"></image>
+							<!-- 小类循环 -->
+							<view style="height:92%;flex: 1;">
+								<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="mainSale.scrollinto">
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
+				
+										<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
+											<label></label>
+										</view>
+				
+										<view class="procycle">
+											<!-- 产品循环 -->
+											<view class="li" v-for="(sptiem, spindex) in  plitem['plarr'] "
+												@click="mainSale.showSpDetails" :data-plindex="plindex"
+												:data-spindex="spindex">
+												<view class="h3">
+													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+													{{sptiem.SNAME}}
+												</view>
+												<view class="cods">
+													<label>
+														<image src="../../images/dx-bm.png" mode="widthFix"></image>0
+													</label>
+													<label>
+														<image src="../../images/dx-dw.png" mode="widthFix"></image>
+														{{sptiem.UNIT}}
+													</label>
+												</view>
+												<view class="price">
+													<text>￥{{ Price(sptiem.SPID) }}</text>
+													<view>
+														<image src="../../images/dx-gd.png" mode="widthFix"></image>
+													</view>
 												</view>
 											</view>
 										</view>
 									</view>
-								</view>
-							</scroll-view>
+								</scroll-view>
+							</view>
+						</view>
+					</view>
+					<view class="operation">
+						<view class="sorting">
+							<view class="seasonal">
+								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
+							</view>
+							<view class="a-z" @click="Letters()">{{mainSale.selectFlag}}
+								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
+							</view>
+							<view class="a-z" @click="Memberlogin(1)">
+								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+							</view>
+							<view class="a-z" @click="GetTSZKData()">
+								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
+							</view>
+							<view class="states" @click="mainSale.ShowStatement">
+								<text>结算单</text>
+								<label>«</label>
+							</view>
+						</view>
+						<view class="toproof">
+							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
+						</view>
+						<view class="ranks" v-if="Alphabetical">
+							<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
+								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
+								<text>{{flagitem}}</text>
+							</label>
+				
 						</view>
 					</view>
 				</view>
-				<view class="operation">
-					<view class="sorting">
-						<view class="seasonal">
-							<image src="../../images/dx-dwj.png" mode="widthFix"></image>
-						</view>
-						<view class="a-z" @click="Letters()">{{mainSale.selectFlag}}
-							<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
-						</view>
-						<view class="a-z" @click="Memberlogin(1)">
-							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
-						</view>
-						<view class="a-z" @click="GetTSZKData()">
-							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
-						</view>
-						<view class="states" @click="mainSale.ShowStatement">
-							<text>结算单</text>
-							<label>«</label>
-						</view>
-					</view>
-					<view class="toproof">
-						<image src="../../images/dx-qdb.png" mode="widthFix"></image>
-					</view>
-					<view class="ranks" v-if="Alphabetical">
-						<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
-							:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
-							<text>{{flagitem}}</text>
-						</label>
-
-					</view>
-				</view>
+				<!-- 在这插入组件 -->
+				<Reserve v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
+				<Extract v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<TakeAway v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
+				<TakeYD v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<Promotion v-if="mainSale.ComponentsManage.tools"></Promotion>
 			</view>
-
+			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
 
 		<!-- 蛋糕属性选择 -->
@@ -473,6 +487,22 @@
 </template>
 
 <script>
+	//基础组件
+	import Head from '@/pages/Home/Component/Head.vue'
+	import Page from '@/pages/Home/Component/Page.vue'
+	//页面组件导入 👇
+	import Reserve from '@/pages/Reserve/Reserve.vue'
+	import Extract from '@/pages/Extract/Extract.vue'
+	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
+	import TakeYD from '@/pages/TakeYD/TakeYD.vue'
+	import OnlineOrders from '@/pages/OnlineOrders/OnlineOrders.vue'
+	import OnlinePick from '@/pages/OnlinePick/OnlinePick.vue'
+	import RefundOrder from '@/pages/RefundOrder/RefundOrder.vue'
+	import SXRefund from '@/pages/RefundOrder/SXRefund.vue'
+	import Message from '@/pages/Message/Message.vue'
+	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
+	import Promotion from '@/pages/Promotion/Promotion.vue'
+	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
 	import common from '@/api/common.js';
@@ -500,6 +530,21 @@
 				MainSale: {}
 			}
 		},
+		components:{
+			Head,
+			Page,
+			Reserve,
+			Extract,
+			TakeAway,
+			TakeYD,
+			OnlineOrders,
+			OnlinePick,
+			RefundOrder,
+			SXRefund,
+			Message,
+			CreditSettlement,
+			Promotion
+		},
 		computed: {
 			Price: function() {
 				return util.callBind(this, function(spid) {
@@ -508,6 +553,13 @@
 			}
 		},
 		methods: {
+			SwitchPage:function(){
+				
+			},
+			//展示特殊折扣
+			GetTSZKData: function() {
+				that.showTSZK = true;
+			},
 			exits: function(e) {
 				this.dropout = !this.dropout
 			},
