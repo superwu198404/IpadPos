@@ -338,7 +338,7 @@
 					</view>
 				</view>
 				<view class="confirm">
-					<button class="btn">确 认</button>
+					<button  @click="mainSale.toPay"  class="btn">确 认</button>
 				</view>
 				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
