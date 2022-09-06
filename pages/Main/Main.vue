@@ -671,6 +671,7 @@
 					that.hyinfo = hyinfo;
 					that.GetHyCoupons(hyinfo);
 				} else {
+					that.coupon_list = [];
 					that.yn_hy = false;
 				}
 				that.GetRXSPDatas();

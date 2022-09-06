@@ -32,7 +32,7 @@
 			</div>
 			<div class="product">
 				<div>商品金额：</div>
-				<div>{{ input.fromData.AMOUNT }}</div>
+				<div>{{ input.fromData.NET }}</div>
 			</div>
 			<div class="product">
 				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;"
@@ -43,7 +43,7 @@
 		<view style="max-height: 180px;border: 1px solid gray;overflow-y:auto;">
 			<view v-for="(item,index) in Products" style="margin: 14px 2px;">
 				<text>{{item.NAME}}</text>-
-				<text>￥{{item.AMOUNT}}</text>-
+				<text>￥{{item.NET}}</text>-
 				<text>{{item.PRICE}}元/kg</text>-
 				<text>x{{item.QTY}}</text>
 				<text><span
@@ -81,7 +81,7 @@
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
 		<button @click="toMainSale">主销售界面</button>
-		
+
 
 		<div v-if="view.orders.showDetail"
 			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
@@ -163,7 +163,7 @@
 						NAME: "",
 						PRICE: 1.00,
 						OPRICE: 1.00,
-						AMOUNT: 1.00,
+						NET: 1.00,
 						QTY: 1
 					},
 					bills: [], //整集合
@@ -195,6 +195,7 @@
 				sale2_obj: {},
 				sale2_arr: [],
 				sale3_arr: [],
+				sale8_arr: [],
 				hyinfo: getApp().globalData.hyinfo,
 				Products: [], //商品信息
 				PayWayList: [],
@@ -233,15 +234,16 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				actType: common.actTypeEnum.Payment //当前行为 代表是支付还是退款 默认支付行为
+				actType: common.actTypeEnum.Payment, //当前行为 代表是支付还是退款 默认支付行为
+				BILL: common.CreateBill(getApp().globalData.store.GSID, getApp().globalData.store.POSID)
 			}
 		},
 		watch: {
 			'input.fromData.QTY': function(n, o) {
-				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
+				this.input.fromData.NET = this.input.fromData.PRICE * this.input.fromData.QTY;
 			},
 			'input.fromData.PRICE': function(n, o) {
-				this.input.fromData.AMOUNT = this.input.fromData.PRICE * this.input.fromData.QTY;
+				this.input.fromData.NET = this.input.fromData.PRICE * this.input.fromData.QTY;
 			},
 			'refund_no': function(n, o) {
 				if (!n) {
@@ -250,7 +252,7 @@
 					return;
 				}
 				this.input.similar = this.input.bills?.filter(bill => (bill?.toLowerCase()?.includes(n
-				.toLowerCase()) ||
+						.toLowerCase()) ||
 					false) || (bill?.toUpperCase()?.includes(n.toUpperCase()) || false));
 			}
 		},
@@ -374,7 +376,7 @@
 								NAME: i.NAME,
 								PRICE: i.PRICE,
 								OPRICE: i.OPRICE,
-								AMOUNT: i.NET,
+								NET: i.NET,
 								QTY: i.QTY,
 								DISCRATE: i.DISCRATE, //退款使用
 								YN_SKYDISC: i.YN_SKYDISC, //退款使用
@@ -392,8 +394,17 @@
 						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
+					// uni.navigateTo({
+					// 	url: "../Payment/PaymentAll"
+					// })
 					uni.navigateTo({
-						url: "../Payment/PaymentAll"
+						url: "../Payment/Payment",
+						events: {
+							FinishOrder: util.callBind(this, function(res) {
+								console.log("支付完跳转回来的结果：", res);
+								//res.sale1_obj 
+							})
+						}
 					})
 				} else if (e == 2) {
 					uni.navigateTo({
@@ -443,7 +454,22 @@
 					});
 				}
 			},
+			//新版
 			DataAssembleSaveForGlobal: function() {
+				console.log("进入支付传参");
+				//把数据传入下个页面
+				this.$store.commit('set-location', {
+					sale1_obj: this.sale1_obj, //001 主单 数据对象
+					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
+					sale3_arr: this.sale3_arr, //003 支付数据集合
+					sale8_arr: this.sale8_arr, //008水吧商品
+					actType: this.actType,
+
+					PayList: this.PayList //预留 用作已支付部分的业务
+				});
+			},
+			//旧版
+			_DataAssembleSaveForGlobal: function() {
 				//把数据传入下个页面
 				this.$store.commit('set-location', {
 					allow_discount_amount: "", //允许折扣金额
@@ -470,8 +496,7 @@
 					PayList: this.PayList
 				});
 			},
-			toMainSale:function()
-			{
+			toMainSale: function() {
 				uni.navigateTo({
 					url: "/pages/mainSale/mainSale"
 				});
@@ -479,7 +504,7 @@
 			priceCount: function() {
 				let total = 0;
 				let that = this;
-				this.Products.forEach(product => total += product.AMOUNT);
+				this.Products.forEach(product => total += product.NET);
 				// console.log("商品总金额：", this.SKY_DISCOUNT);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
@@ -487,7 +512,7 @@
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				let curDis = 0;
 				this.Products.forEach(function(item, index, arr) {
-					let high = parseFloat((item.AMOUNT / total * that.SKY_DISCOUNT).toFixed(2));
+					let high = parseFloat((item.NET / total * that.SKY_DISCOUNT).toFixed(2));
 					item.SKYDISCOUNT = high;
 					curDis += high;
 					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
@@ -504,10 +529,11 @@
 				this.sale1_obj = {};
 				this.sale2_arr = [];
 				this.sale3_arr = [];
+				this.sale8_arr = [];
 				//创建基本结构
 				//sale 001:
 				this.sale1_obj = {
-					BILL: "", //payall 追加
+					BILL: this.BILL, //payall 追加
 					SALEDATE: "", //payall 追加
 					SALETIME: "", //payall 追加
 					KHID: this.KHID,
@@ -548,7 +574,7 @@
 				//sale 002:
 				this.sale2_arr = this.Products.map((item, index) => {
 					return util.hidePropety({
-						BILL: "", //payall 追加
+						BILL:this.BILL, //payall 追加
 						SALEDATE: "", //payall 追加
 						SALETIME: "", //payall 追加
 						KHID: this.KHID,
@@ -578,6 +604,23 @@
 						SKYDISCOUNT: item.SKYDISCOUNT
 					}, "SKYDISCOUNT");
 				});
+				this.sale8_arr = [{
+					SALEDATE: "2022-09-02",
+					SALETIME: "2022-09-02 14:20:17",
+					GCID: "123",
+					KHID: "K200QTD005",
+					POSID: "1",
+					BILL: this.BILL,
+					SPID: "4534534354",
+					NO: 0,
+					ATTCODE: "1",
+					ATTNAME: "糖",
+					OPTCODE: "1",
+					CSTCODE: "1",
+					OPTMAT: "123456",
+					QTY: "1",
+					PRICE: "0.2"
+				}]
 				console.log("after:", this.sale2_arr)
 			},
 			Test: function(e) {
@@ -642,7 +685,7 @@
 						NAME: "超软白土司",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 0.01,
+						NET: 0.01,
 						QTY: 1
 					},
 					{
@@ -653,7 +696,7 @@
 						NAME: "你好土司",
 						PRICE: 0.5,
 						OPRICE: 0.5,
-						AMOUNT: 1,
+						NET: 1,
 						QTY: 2
 					},
 					{
@@ -664,7 +707,7 @@
 						NAME: "黄金唱片",
 						PRICE: 0.01,
 						OPRICE: 0.01,
-						AMOUNT: 0.01,
+						NET: 0.01,
 						QTY: 1
 					},
 					{
@@ -675,7 +718,7 @@
 						NAME: "焦糖玛奇朵",
 						PRICE: 1,
 						OPRICE: 1,
-						AMOUNT: 1,
+						NET: 1,
 						QTY: 1
 					}, {
 						PLID: "107",
@@ -685,7 +728,7 @@
 						NAME: "法式香草拿铁",
 						PRICE: 1,
 						OPRICE: 1,
-						AMOUNT: 1,
+						NET: 1,
 						QTY: 1
 					}
 				]);

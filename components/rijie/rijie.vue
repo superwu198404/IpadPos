@@ -19,7 +19,7 @@
 		<!-- 选择日结 -->
 		<view class="customer" v-if="rj_xz">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="h6">当前你有以下日期没有做日结操作</view>
 			<view class="cluelist">
 				<view :class="index==curIndex?'list curr':'list'" v-for="(item,index) in signOutDate"
@@ -27,13 +27,13 @@
 				<!-- <view class="list"><label>2022-09-02</label><text>未日结</text></view> -->
 			</view>
 			<view class="affirm">
-				<button class="btn btn-hk" @click="Close()">取消</button>
+				<!-- <button class="btn btn-hk" @click="Close()">取消</button> -->
 				<button class="btn" @click="ConfirmRJ()">确定</button>
 			</view>
 		</view>
 		<view class="customer" v-if="rj_cg">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="clues">
 				<image src="@/images/rijie.png" mode="widthFix"></image>
 			</view>
