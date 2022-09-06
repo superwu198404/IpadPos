@@ -394,18 +394,18 @@
 						this.SaleBaseInit();
 					}
 					this.DataAssembleSaveForGlobal();
-					// uni.navigateTo({
-					// 	url: "../Payment/PaymentAll"
-					// })
 					uni.navigateTo({
-						url: "../Payment/Payment",
-						events: {
-							FinishOrder: util.callBind(this, function(res) {
-								console.log("支付完跳转回来的结果：", res);
-								//res.sale1_obj 
-							})
-						}
+						url: "../Payment/PaymentAll"
 					})
+					// uni.navigateTo({
+					// 	url: "../Payment/Payment",
+					// 	events: {
+					// 		FinishOrder: util.callBind(this, function(res) {
+					// 			console.log("支付完跳转回来的结果：", res);
+					// 			//res.sale1_obj 
+					// 		})
+					// 	}
+					// })
 				} else if (e == 2) {
 					uni.navigateTo({
 						// url: "../hyinfo/index"
@@ -455,7 +455,7 @@
 				}
 			},
 			//新版
-			DataAssembleSaveForGlobal: function() {
+			_DataAssembleSaveForGlobal: function() {
 				console.log("进入支付传参");
 				//把数据传入下个页面
 				this.$store.commit('set-location', {
@@ -469,7 +469,7 @@
 				});
 			},
 			//旧版
-			_DataAssembleSaveForGlobal: function() {
+			DataAssembleSaveForGlobal: function() {
 				//把数据传入下个页面
 				this.$store.commit('set-location', {
 					allow_discount_amount: "", //允许折扣金额

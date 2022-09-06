@@ -37,9 +37,16 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
+
 					<label>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
+						<button class="rijie" @click="Sign()">日结</button>
 					</label>
+
+					<!-- <label>
+						<button @click="Sign()">签到</button>
+					</label> -->
+
 				</view>
 				<view class="account">
 					<view>
@@ -50,7 +57,7 @@
 						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
 							mode="widthFix"></image>
 					</view>
-					<view class="dropout" v-if="dropout" @click="Switch">
+					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="LoginOut()">
 							<image src="@/images/tuichu.png" mode="widthFix"></image>
 							<text>退出</text>
@@ -65,6 +72,7 @@
 						</view>
 					</view>
 				</view>
+			
 			</view>
 			<!-- 紧急消息弹窗 -->
 			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
@@ -177,7 +185,9 @@
 	let that;
 	export default {
 		name: "menu_head",
-		props: {},
+		props: {
+			data: []
+		},
 		data() {
 			return {
 				KHID: getApp().globalData.store.KHID,
@@ -210,9 +220,7 @@
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
-				showYWMsg: false,
-				showSignOut: false,
-				signOutDate: []
+				showYWMsg: false
 			};
 		},
 		// created: function(e) {
@@ -220,8 +228,54 @@
 		// },
 		created: function(e) {
 			that = this;
-			//获取消息数据
-			that.GetMsg();
+			_msg.ShowMsg(that.KHID, "", res => {
+				that.MsgData = res;
+				that.XT_MsgData = res.filter((r, i) => {
+					return r.type == 'SYSTEM';
+				});
+				that.YW_MsgData = res.filter((r, i) => {
+					//外卖，外卖预定单，线上
+					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
+				});
+				if (that.YW_MsgData.length > 0) {
+					that.showYWMsg = false;
+					console.log("触发没有：");
+					that.$nextTick(() => {
+						console.log("触发没有1：");
+						that.showYWMsg = true;
+					})
+				} else {
+					that.showYWMsg = false;
+				}
+				if (that.XT_MsgData.length > 0) {
+					let newArr = that.XT_MsgData[0].Details.map(r => {
+						return {
+							key: r.key,
+							val: JSON.parse(r.val),
+							newVal: JSON.parse(r.val)[0]
+						}
+					})
+					console.log("分组后的消息：", newArr);
+					that.urgenMsg = newArr.find(r => {
+						return r.newVal.IMTYPE == '1'
+					})
+					if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
+						that.viewTime = that.urgenMsg.VIEWTIME || 5;
+						let id = setInterval(r => {
+							that.viewTime -= 1;
+							if (that.viewTime == 0) {
+								that.viewTime == 0;
+								clearInterval(id);
+							}
+						}, 1000);
+					}
+				}
+				// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+				// console.log(
+				// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+				// console.log(
+				// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
+			});
 			//搜索蓝牙
 			that.startSearch();
 			that.onBLEConnectionStateChange();
@@ -230,57 +284,9 @@
 				//查询一周内是否有未日结的数据
 				that.GetSignOutInWeek();
 			}
+
 		},
 		methods: {
-			//获取消息数据
-			GetMsg: function() {
-				_msg.ShowMsg(that.KHID, "", res => {
-					that.MsgData = res;
-					that.XT_MsgData = res.filter((r, i) => {
-						return r.type == 'SYSTEM';
-					});
-					that.YW_MsgData = res.filter((r, i) => {
-						//外卖，外卖预定单，线上
-						return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
-					});
-					if (that.YW_MsgData.length > 0) {
-						that.showYWMsg = false;
-						that.$nextTick(() => {
-							that.showYWMsg = true;
-						})
-					} else {
-						that.showYWMsg = false;
-					}
-					if (that.XT_MsgData.length > 0) {
-						let newArr = that.XT_MsgData[0].Details.map(r => {
-							return {
-								key: r.key,
-								val: JSON.parse(r.val),
-								newVal: JSON.parse(r.val)[0]
-							}
-						})
-						console.log("分组后的消息：", newArr);
-						that.urgenMsg = newArr.find(r => {
-							return r.newVal.IMTYPE == '1'
-						})
-						if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
-							that.viewTime = that.urgenMsg.VIEWTIME || 5;
-							let id = setInterval(r => {
-								that.viewTime -= 1;
-								if (that.viewTime == 0) {
-									that.viewTime == 0;
-									clearInterval(id);
-								}
-							}, 1000);
-						}
-					}
-					// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-					// console.log(
-					// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
-					// console.log(
-					// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
-				});
-			},
 			//消息已读
 			ReadMsg: function(e, i) {
 				let store = util.getStorage("store");
@@ -306,9 +312,6 @@
 					})
 				}
 				// });
-			},
-			Switch: function() {
-				console.log("弹窗打开!");
 			},
 			//关闭紧急类消息
 			CloseMsg: function() {
@@ -882,24 +885,47 @@
 			GetSignOutInWeek: function(t, func) {
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
+					
+			//签到
+			Sign: function() {
+				_login.SignOrSignOut(true, res => {
+					console.log("签到结果：", res);
 					if (res.code) {
 						if (t) { //主动触发
 							that.showSignOut = true;
 							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
 						} else { //自动触发
-							util.simpleModal("提示", res.msg, code => {
-								if (code) { //点击了确定
-									that.showSignOut = true;
-									that.signOutDate = JSON.parse(res
-										.data); // ["2022/9/1","2022/8/31"]; 
+							uni.showModal({
+								title: "提示",
+								content: res.msg,
+								showCancel: false,
+								success: e => {
+									if (e.confirm) {
+										that.showSignOut = true;
+										that.signOutDate = JSON.parse(res
+											.data); // ["2022/9/1","2022/8/31"]; 
+									}
 								}
 							})
 						}
-					} else {
-						if (t) {
-							util.simpleMsg("暂无日结数据", true);
-						}
-					}
+					} 
+					else {
+						// if (t) {
+						// 	util.simpleMsg("暂无日结数据", true);
+						// }
+						util.simpleMsg("签到成功！");
+						let data = JSON.parse(res.data);
+						// let store = util.getStorage("store");
+						// store.OPENFLAG = data.openflag;
+						// util.setStorage("store", store);
+					// 	if (data.sql) {
+					// 		_login.SignOrSignOutSql(data.sql);						
+					// } 
+					// else {
+					// 	util.simpleMsg(res.msg, "none");
+					// }
+				}
+				
 				})
 			},
 			//去日结 废弃
@@ -914,23 +940,27 @@
 			},
 			//直接发起日结
 			ConfirmRJ: e => {
-				let qtdate = dateformat.getYMD();
-				if (qtdate) {
-					_login.SignOrSignOut(false, qtdate, res => {
-						console.log("日结结果：", res);
-						if (res.code) {
-							util.simpleMsg("日结成功！");
-							let data = JSON.parse(res.data);
-							if (data.sql) {
-								_login.SignOrSignOutSql(data.sql);
-							}
+				util.simpleModal("提示", "确定要进行今日日结吗？", res => {
+					if (res) {
+						let qtdate = dateformat.getYMD();
+						if (qtdate) {
+							_login.SignOrSignOut(false, qtdate, res => {
+								console.log("日结结果：", res);
+								if (res.code) {
+									util.simpleMsg("日结成功！");
+									let data = JSON.parse(res.data);
+									if (data.sql) {
+										_login.SignOrSignOutSql(data.sql);
+									}
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+							})
 						} else {
-							util.simpleModal("提示", res.msg);
+							util.simpleMsg("日结日期为空", true);
 						}
-					})
-				} else {
-					util.simpleMsg("日结日期为空", true);
-				}
+					}
+				})
 			},
 		}
 	}

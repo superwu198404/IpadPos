@@ -79,7 +79,7 @@
 
 		},
 		{
-			"path": "pages/MainSale/MainSale",
+			"path": "pages/mainSale/mainSale",
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",

@@ -161,6 +161,8 @@
 					<view class="price">
 						<text class="jiage">{{controller.clikSpItem.PRICE}}</text>
 						<view><text>–</text><input v-model="controller.inputSpForClick.QTY" /><text>+</text></view>
+						<text class="jiage">￥12.9</text>
+						<view><button>–</button><input /><button>+</button></view>
 					</view>
 					<view class="tochoose">
 						<label><text>1</text>-<text>尺寸/6寸</text></label>

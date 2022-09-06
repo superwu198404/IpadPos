@@ -107,11 +107,17 @@
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="mainSale.SetComponentsManage" data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.SetComponentsManage"  data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.SetComponentsManage"  data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.SetComponentsManage" data-mtype='inputsp'>×xxx </button>
+				<button class="close" @click="mainSale.SetComponentsManage"  data-mtype='inputsp'>x </button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
+						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}</label>
+						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}</label>
 						<label>
 							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
 						</label>
