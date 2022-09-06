@@ -74,261 +74,266 @@ const Cxdict = async () => {
 	dscxsp = [];
 	dszqda = [];
 	
-	//获取主单的Sql
-	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-	console.log("dscxm集合：", dscxm);
+	// //获取主单的Sql
+	// dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
+	// console.log("dscxm集合：", dscxm);
 
-	//促销规则Sql
-	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-	console.log("dscxclass集合：", dscxclass);
+	// //促销规则Sql
+	// dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
+	// console.log("dscxclass集合：", dscxclass);
 
-	//促销内容对应的产品Sql
-	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
-	console.log("dscxsp集合：", dscxsp);
+	// //促销内容对应的产品Sql
+	// dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
+	// console.log("dscxsp集合：", dscxsp);
 
-	//促销赠券
-	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	console.log("dszqda集合：", dszqda);
+	// //促销赠券
+	// dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
+	// console.log("dszqda集合：", dszqda);
 
-// 	dscxm = [{
-// 	"BILL": "FZCX2208110002",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "2",
-// 	"CXZT": "测试积分抵现，购买吐司满30元可使用5积分减5元",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "D",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110003",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "2",
-// 	"CXZT": "积分加价购",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "1",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "G",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110004",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "2",
-// 	"CXZT": "测试，购买脆性干点满35，可使用5积分抵现5元",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "D",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110005",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "2",
-// 	"CXZT": "测试积分加价购",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "1",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "G",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110006",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "1",
-// 	"CXZT": "测试阶梯促销",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "J",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110008",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "1",
-// 	"CXZT": "测试普通促销，购买四个送一个",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "N",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110009",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "1",
-// 	"CXZT": "测试组合促销，购买干点商品满40元送饮品一杯",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "N",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }, {
-// 	"BILL": "FZCX2208110010",
-// 	"BILL_STATUS": "1",
-// 	"CXRY": "1",
-// 	"CXZT": "测试同种商品促销，吐司类商品大降价",
-// 	"CX_WEEK": "1,2,3,4,5,6,7",
-// 	"EDATE": "2022-09-30 00:00:00",
-// 	"HYLV": "0",
-// 	"KHID": "K200QTD005",
-// 	"SDATE": "2022-08-11 00:00:00",
-// 	"YN_JSLB": "T",
-// 	"YN_TIME": "N",
-// 	"YN_ZD": "N"
-// }];
+	dscxm = [{
+	"BILL": "FZCX2208110002",
+	"BILL_STATUS": "1",
+	"CXRY": "2",
+	"CXZT": "测试积分抵现，购买吐司满30元可使用5积分减5元",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "D",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110003",
+	"BILL_STATUS": "1",
+	"CXRY": "2",
+	"CXZT": "积分加价购",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "1",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "G",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110004",
+	"BILL_STATUS": "1",
+	"CXRY": "2",
+	"CXZT": "测试，购买脆性干点满35，可使用5积分抵现5元",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "D",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110005",
+	"BILL_STATUS": "1",
+	"CXRY": "2",
+	"CXZT": "测试积分加价购",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "1",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "G",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110006",
+	"BILL_STATUS": "1",
+	"CXRY": "1",
+	"CXZT": "测试阶梯促销",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "J",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110008",
+	"BILL_STATUS": "1",
+	"CXRY": "1",
+	"CXZT": "测试普通促销，购买四个送一个",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "N",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110009",
+	"BILL_STATUS": "1",
+	"CXRY": "1",
+	"CXZT": "测试组合促销，购买干点商品满40元送饮品一杯",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "N",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}, {
+	"BILL": "FZCX2208110010",
+	"BILL_STATUS": "1",
+	"CXRY": "1",
+	"CXZT": "测试同种商品促销，吐司类商品大降价",
+	"CX_WEEK": "1,2,3,4,5,6,7",
+	"EDATE": "2022-09-30 00:00:00",
+	"HYLV": "0",
+	"KHID": "K200QTD005",
+	"SDATE": "2022-08-11 00:00:00",
+	"YN_JSLB": "T",
+	"YN_TIME": "N",
+	"YN_ZD": "N"
+}];
 
-// dscxclass = [{
-// 	"BILL": "FZCX2208110010",
-// 	"CHANGELV": "4",
-// 	"CLASSID": "FZCX22081100101",
-// 	"DISCTYPE": "2",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_DISC1": 90,
-// 	"MJ_DISC2": 80,
-// 	"MJ_DISC3": 70,
-// 	"MJ_DISC4": 50,
-// 	"XX_QTY1": 3,
-// 	"XX_QTY2": 5,
-// 	"XX_QTY3": 7,
-// 	"XX_QTY4": 10,
-// 	"ZKTYPE": "1"
-// }, {
-// 	"BILL": "FZCX2208110009",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100091",
-// 	"DISCTYPE": "1",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_NET1": 0,
-// 	"XX_NET1": 40,
-// 	"ZKTYPE": "2"
-// }, {
-// 	"BILL": "FZCX2208110008",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100081",
-// 	"DISCTYPE": "4",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_NET1": 1,
-// 	"MJ_NET2": 0,
-// 	"XX_QTY1": 5,
-// 	"ZKTYPE": "1"
-// }, {
-// 	"BILL": "FZCX2208110006",
-// 	"CHANGELV": "3",
-// 	"CLASSID": "FZCX22081100061",
-// 	"DISCTYPE": "2",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_DISC1": 90,
-// 	"MJ_DISC2": 80,
-// 	"MJ_DISC3": 60,
-// 	"XX_QTY1": 2,
-// 	"XX_QTY2": 5,
-// 	"XX_QTY3": 8,
-// 	"ZKTYPE": "1"
-// }, {
-// 	"BILL": "FZCX2208110005",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100051",
-// 	"DISCTYPE": "3",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"SYJF": 5,
-// 	"XX_QTY1": 2,
-// 	"ZJPRICE1": 10,
-// 	"ZKTYPE": "1"
-// }, {
-// 	"BILL": "FZCX2208110004",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100041",
-// 	"DISCTYPE": "1",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_NET1": 5,
-// 	"SYJF": 5,
-// 	"XX_NET1": 35,
-// 	"ZKTYPE": "2"
-// }, {
-// 	"BILL": "FZCX2208110003",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100031",
-// 	"DISCTYPE": "3",
-// 	"JFFACTOR1": 3,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"SYJF": 5,
-// 	"XX_QTY1": 2,
-// 	"ZJPRICE1": 10,
-// 	"ZKTYPE": "1"
-// }, {
-// 	"BILL": "FZCX2208110002",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100021",
-// 	"DISCTYPE": "1",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"MJ_NET1": 5,
-// 	"SYJF": 5,
-// 	"XX_NET1": 30,
-// 	"ZKTYPE": "2"
-// }, {
-// 	"BILL": "FZCX2208110009",
-// 	"CHANGELV": "1",
-// 	"CLASSID": "FZCX22081100092",
-// 	"DISCTYPE": "3",
-// 	"JFFACTOR1": 1,
-// 	"JFFACTOR2": 1,
-// 	"JFFACTOR3": 1,
-// 	"JFFACTOR4": 1,
-// 	"KHID": "K200QTD005",
-// 	"XX_QTY1": 1,
-// 	"ZJPRICE1": 0,
-// 	"ZKTYPE": "1"
-// }];
+dscxclass = [{
+	"BILL": "FZCX2208110010",
+	"CHANGELV": "4",
+	"CLASSID": "FZCX22081100101",
+	"DISCTYPE": "2",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_DISC1": 90,
+	"MJ_DISC2": 80,
+	"MJ_DISC3": 70,
+	"MJ_DISC4": 50,
+	"XX_QTY1": 3,
+	"XX_QTY2": 5,
+	"XX_QTY3": 7,
+	"XX_QTY4": 10,
+	"ZKTYPE": "1"
+}, {
+	"BILL": "FZCX2208110009",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100091",
+	"DISCTYPE": "1",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_NET1": 0,
+	"XX_NET1": 40,
+	"ZKTYPE": "2"
+}, {
+	"BILL": "FZCX2208110008",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100081",
+	"DISCTYPE": "4",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_NET1": 1,
+	"MJ_NET2": 0,
+	"XX_QTY1": 5,
+	"ZKTYPE": "1"
+}, {
+	"BILL": "FZCX2208110006",
+	"CHANGELV": "3",
+	"CLASSID": "FZCX22081100061",
+	"DISCTYPE": "2",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_DISC1": 90,
+	"MJ_DISC2": 80,
+	"MJ_DISC3": 60,
+	"XX_QTY1": 2,
+	"XX_QTY2": 5,
+	"XX_QTY3": 8,
+	"ZKTYPE": "1"
+}, {
+	"BILL": "FZCX2208110005",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100051",
+	"DISCTYPE": "3",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"SYJF": 5,
+	"XX_QTY1": 2,
+	"ZJPRICE1": 10,
+	"ZKTYPE": "1"
+}, {
+	"BILL": "FZCX2208110004",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100041",
+	"DISCTYPE": "1",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_NET1": 5,
+	"SYJF": 5,
+	"XX_NET1": 35,
+	"ZKTYPE": "2"
+}, {
+	"BILL": "FZCX2208110003",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100031",
+	"DISCTYPE": "3",
+	"JFFACTOR1": 3,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"SYJF": 5,
+	"XX_QTY1": 2,
+	"ZJPRICE1": 10,
+	"ZKTYPE": "1"
+}, {
+	"BILL": "FZCX2208110002",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100021",
+	"DISCTYPE": "1",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"MJ_NET1": 5,
+	"SYJF": 5,
+	"XX_NET1": 30,
+	"ZKTYPE": "2"
+}, {
+	"BILL": "FZCX2208110009",
+	"CHANGELV": "1",
+	"CLASSID": "FZCX22081100092",
+	"DISCTYPE": "3",
+	"JFFACTOR1": 1,
+	"JFFACTOR2": 1,
+	"JFFACTOR3": 1,
+	"JFFACTOR4": 1,
+	"KHID": "K200QTD005",
+	"XX_QTY1": 1,
+	"ZJPRICE1": 0,
+	"ZKTYPE": "1"
+}];
+
+dscxsp = [
+	{"BILL":"FZCX2208110006","CLASSID":"FZCX22081100061","KHID":"K200QTD005","SPID":"000000001040200003"},
+	{"BILL":"FZCX2208110006","CLASSID":"FZCX22081100061","KHID":"K200QTD005","SPID":"000000001040200004"}
+];
 
 // dscxsp = [
 // 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100001"},
@@ -340,7 +345,7 @@ const Cxdict = async () => {
 // 	{"BILL":"FZCX2208110004","CLASSID":"FZCX22081100041","KHID":"K200QTD005","SPID":"000000001030200002"}
 // ];
 
-// dszqda =[];
+dszqda =[];
 
 	//循环主单数据处理
 	if (dscxm.length < 1) {
@@ -528,23 +533,23 @@ const Cxdict = async () => {
 const Createcx = async (goods_arry) => {
 	await Cxdict();
 	let sale02_arr = [{
-			"ProCode": "000000001080100001",
+			"ProCode": "000000001040200004",
 			"ProName": "水果沙拉",
 			"ProNum": 5,
-			"ProPrice": 9,
+			"ProPrice": 18.8,
 			"Disc": 0,
-			"ProSalePrice": 45,
-			"ProOPrice": 9,
+			"ProSalePrice": 56.4,
+			"ProOPrice": 11.28,
 			"Sort": 1
 		},
 		{
-			"ProCode": "000000001080100003",
+			"ProCode": "000000001040200003",
 			"ProName": "礼盒2号",
 			"ProNum": 10,
-			"ProPrice": 5,
+			"ProPrice": 19.8,
 			"Disc": 0,
-			"ProSalePrice": 50,
-			"ProOPrice": 5,
+			"ProSalePrice": 174.24,
+			"ProOPrice": 17.42,
 			"Sort": 2
 		}
 	];
@@ -880,7 +885,7 @@ const testallcx = function(bill, pmList) {
 	let currentlv = 0;
 
 	if (cx.YN_JSLB) {
-		currentlv = parseInt(cx.SubList[0].sublv) - 1;
+		currentlv = parseInt(cx.SubList[pmList[0]].sublv) - 1;
 	}
 	//console.log("testallcx",pmList)
 	let subzqty = getSubidZqty(pmList, cx, yysl);
@@ -931,7 +936,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
-		let subx = cx.SubList[0];
+		let subx = cx.SubList[pmList[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
@@ -968,7 +973,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				///取出条件数量
 				let fsqty = 0;
 				fsqty = currqty;
-				if (subx.ZkTj == CxZkTj.Qty) {
+				if (subx.ZkTj == "Qty") {
 					if (currqty - Tjqty > 0) {
 						Fsnet += Fsnet + Tjqty * oldprice;
 						// Fsnet += Fsnet + currqty * oldprice;
@@ -1007,7 +1012,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		if (Object.keys(cx.SubList).length != 1) { 
 			return;
 		}
-		let subx = cx.SubList[0];
+		let subx = cx.SubList[pmList[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别

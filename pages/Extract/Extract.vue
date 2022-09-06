@@ -161,7 +161,54 @@
 				this.view.Details = true;
 				this.extract_order = item;
 			},
-			ExtractOrder: function(item) {
+			ExtractOrder:function(item){
+				_extract.getReserveOrdersDetails({ //查到商品信息后传值
+					khid: this.KHID,
+					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
+					bill: item.BILL
+				}, util.callBind(this,async function(res) {
+					if (res.code) {
+						if(this.view.mode){//结算
+							item.XSTYPE = '1';
+							item.BILL_TYPE = 'Z121';
+							this.$emit("Switch", {
+								name: "MainSale",
+								title: "销售",
+								load_sale: true,
+								load_params:{
+									sale1:item,
+									sale2:JSON.parse(res.data)
+								}
+							})
+						}
+						else{//退款
+							let data = await LocalDataQuery(item.BILL);
+							if(ErrorData(data)){
+								console.log("[ExtractOrder]本地未查询到数据!");
+								data = await ServiceDataQuery(item.BILL);//从服务器查询
+							}
+							if(ErrorData(data)){
+								console.log("[ExtractOrder]服务端未查询到数据!");
+							}
+							else{
+								data.sale1[0].XSTYPE = '2';//由于查询结果默认返回数组，所带索引去取
+								data.sale1[0].BILL_TYPE = 'Z171';
+								this.$emit("Switch", {
+									name: "MainSale",
+									title: "销售",
+									load_params:{
+										sale1:data.sale1[0],
+										sale2:data.sale2,
+										sale3:data.sale3
+									}
+								})
+							}
+						}
+					} else
+						util.simpleMsg(res.msg, true, res);
+				}))
+			},
+			ExtractOrder_version2: function(item) {
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
 					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,

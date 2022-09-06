@@ -1,7 +1,7 @@
 import sale from '@/utils/sale/saleClass.js';
 
 /**
- * 销售类型列表
+ * 销售类型列表，此列表对应 router.js 中，路由信息的 type 字段，进入销售页面之后会根据此列表配置进行初始化
  */
 var XsTypeObj = {
 	//销售+退货
@@ -14,15 +14,17 @@ var XsTypeObj = {
 			"DKF": true, //是否可以打开录入大客户
 			"Disc": true, //是否可以打开录入折扣
 			"ynFzCx": true, //是否可以辅助促销
-			"ynCx": true, //是否进行可以进行促销    
+			"ynCx": true, //是否进行可以进行促销
+			
 			"sale": true, //从这里开始都是销售模式
-			"saleYd": true,
-			"seleYdtq": true,
+			"sale_reserve": true,//预定
+			"sale_reserve_extract": true,//预定提取
 			"seleWebWeb": true,
-			"seleSx": true,
-			"seleTh": true,
-			"saleYdqx": true,
-			"saleSxth": true,
+			"sale_credit": true,//赊销
+			"sale_return_good": true,
+			"sale_reserve_cancel": true,//预定退单（取消）
+			"sale_credit_return_good": true,//赊销退单
+			
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -30,8 +32,8 @@ var XsTypeObj = {
 		$click() {
 			return true;
 		},
-		$initSale: function(pm_Operation) {
-
+		$initSale: function(type ,params) {
+			
 		},
 		///对打印的控制
 		$print: function() {
@@ -73,7 +75,12 @@ var XsTypeObj = {
 	sale_reserve_extract: {
 		xstype: "5",
 		clickType: "sale_reserve_extract",
-		nameSale: "预定提取"
+		nameSale: "预定提取",
+		$initSale: function(params) {
+			console.log("[sale_reserve_extract]SALE001:",params.sale1);
+			console.log("[sale_reserve_extract]SALE002:",params.sale2);
+			console.log("[sale_reserve_extract]SALE003:",params.sale3);
+		}
 	},
 	sale_reserve_cancel: {
 		xstype: "4",
@@ -175,7 +182,7 @@ function GetSale(global, vue, target_name) {
 	//销售页面
 	this.Page = vue; //销售页面实例
 	this.pageName = target_name; //页面名称(这个控制器所控制的页面名称)
-
+	//销售页面销售类型
 	this.xsType = "sale"
 	this.bill_type = null; //sale.saleBillType[this.xsType];
 	this.bill = null;
@@ -270,8 +277,7 @@ function GetSale(global, vue, target_name) {
 		this.selectFlagList = this.Allsplist.filter(item => {
 			return item.FSTR == pm_flag
 		});
-		that.log("筛选出来的长度" + this.selectFlagList.length)
-		debugger
+		that.log("[FilterSp]筛选出来的长度",this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
 		this.Page.$set(this.Page, "Alphabetical", false);
@@ -285,11 +291,9 @@ function GetSale(global, vue, target_name) {
 		this.filterSp("A");
 		that.log("[SetAllGoods]绑定完成！",this.Page[this.pageName].selectFlagList[0]);
 		this.Allsplist.forEach(item => {
-
 			if (that.flagList.indexOf(item.FSTR) < 0) {
 				that.flagList.push(item.FSTR)
 			}
-
 		})
 		that.log("[SetAllGoods]初始化字母列表" + JSON.stringify(this.flagList));
 		this.Page.$set(this.Page[this.pageName], "flagList", this.flagList);
@@ -313,12 +317,12 @@ function GetSale(global, vue, target_name) {
 		"ynFzCx": false, //是否可以辅助促销
 		"ynCx": false, //是否进行可以进行促销    
 		"sale": false, //从这里开始都是销售模式
-		"saleYd": false,
-		"seleYdtq": false,
+		"sale_reserve": false,
+		"sale_reserve_extract": false,
 		"seleWebWeb": false,
-		"seleSx": false,
-		"seleTh": false,
-		"saleYdqx": false,
+		"sale_credit": false,
+		"sale_return_good": false,
+		"sale_reserve_cancel": false,
 		"saleSxth": false,
 		"openydCustmInput": false, //预定输入客户的信息
 		"sale002Rows": false, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -331,12 +335,12 @@ function GetSale(global, vue, target_name) {
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
-		"saleYd": false,
-		"seleYdtq": false,
+		"sale_reserve": false,
+		"sale_reserve_extract": false,
 		"seleWebWeb": false,
-		"seleSx": false,
-		"seleTh": false,
-		"saleYdqx": false,
+		"sale_credit": false,
+		"sale_return_good": false,
+		"sale_reserve_cancel": false,
 		"saleSxth": false,
 		"openydCustmInput": false, //预定输入客户的信息
 		"inputsp": false,
@@ -346,7 +350,7 @@ function GetSale(global, vue, target_name) {
 
 	///设置基础的权限
 	this.SetCurrentOperation = function(pm_OperEnum) {
-		// that.log("传入权限"+ JSON.stringify( pm_OperEnum));
+		console.log("[SetCurrentOperation]传入权限:",pm_OperEnum);
 		//所有模式都具有的默认权限 在这里直接初始化好 ，
 		this.currentOperation = {
 			"statement": false
@@ -365,6 +369,7 @@ function GetSale(global, vue, target_name) {
 			}
 			this.update();
 		}
+		console.log("[SetCurrentOperation]权限设置完毕!");
 	}
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
@@ -394,17 +399,19 @@ function GetSale(global, vue, target_name) {
 
 	//调用各个销售类型的方法名称,参数列表
 	this.CurrentTypeCall = function(pm_fun) {
+		console.log("[CurrentTypeCall]当前销售类型:",this.current_type);
+		console.log("[CurrentTypeCall]当前销售类型调用:",pm_fun);
 		let defstr = "def"
 		let arr = [];
 		for (var i = 1; i < arguments.length; i++) {
 			arr.push(arguments[i])
 		};
 		if (that.current_type[pm_fun]) {
-			that.current_type[pm_fun].call(that, arr);
+			that.current_type[pm_fun].apply(that, arr);
 		} else {
 			//方便定义公用的处理方法，如果销售类型里没有这个方法则调用这个
 			if (that[defstr + pm_fun]) {
-				that[defstr + pm_fun].call(that, arr);
+				that[defstr + pm_fun].apply(that, arr);
 			}
 		}
 	}
@@ -456,7 +463,6 @@ function GetSale(global, vue, target_name) {
 	this.SetType = function(pm_type) {
 		console.log("[SetType]设置销售类型:",pm_type);
 		if (XsTypeObj[pm_type]) {
-			debugger
 			this.clickSaleType = XsTypeObj[pm_type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			that.log("销售类型" + pm_type);
@@ -474,6 +480,37 @@ function GetSale(global, vue, target_name) {
 		}
 	}
 	
+	/**
+	 * 修改销售类型(SetType 修改版本)
+	 * @param {*} type 销售类型
+	 * @param {*} direct 是否选择直接初始化
+	 */
+	this.SetSaleType = function(type,init_params = null,direct = false) {
+		console.log("[SetSaleType]设置销售类型:",type);
+		if (XsTypeObj[type]) {
+			this.clickSaleType = XsTypeObj[type];
+			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
+			console.log("[SetSaleType]销售类型:",type);
+			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
+					.sale002Rows)) {
+				this.myAlert("[SetSaleType]已经输入了商品不能进行此操作!")
+				return;
+			}
+			console.log("[SetSaleType]设置销售类型信息:",this.current_type);
+			if (direct || this.clickSaleType.$click.call(this)) {
+				console.log("[MainSale]开始初始化...",{
+					params:init_params,
+					type_info:this.clickSaleType,
+					type
+				});
+				this.$initSale(this.clickSaleType, init_params);
+				console.log("[MainSale]初始化完毕!");
+			}
+		} else {
+			this.myAlert("[SetSaleType]没有此种操作模式:" + type);
+		}
+	}
+	
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
 	this.SaleTypeClick = function(type) {
 		console.log("[SaleTypeClick]销售页面切换类型:", type);
@@ -482,16 +519,19 @@ function GetSale(global, vue, target_name) {
 
 	//初始化销售的操作
 	this.$initSale = function(pm_newtype, pm_saleobj) {
+		console.log("[$initSale]销售初始化开始!",{
+			type: pm_newtype || this.clickSaleType
+		});
 		pm_newtype = pm_newtype || this.clickSaleType;
 		this.current_type = pm_newtype;
 		this.CurrentTypeCall("$initSale", pm_saleobj);
 		this.bill_type = sale.saleBillType[this.current_type.xstype];
-		that.log(JSON.stringify(this.bill_type));
+		console.log("[$InitSale]bill_type:",this.bill_type);
 		this.xsType = this.current_type.xstype;
 		//设置权限生效
-		that.log("开始设置权限" + JSON.stringify(this.current_type.operation));
 		this.SetCurrentOperation(this.current_type.operation);
 		this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
+		console.log("[$initSale]销售初始化完毕!");
 	}
 
 	this.cxBillinit = function() {

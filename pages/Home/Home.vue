@@ -7,7 +7,7 @@
 		<view class="right">
 			<Head @Switch="SwitchPage"></Head>
 			<!-- 利用 v-if 和 v-show 来手动达到 "keep-alive" 的效果 -->
-			<component @Switch="SwitchPage" @Message="OpenMessage" v-for="c in router"
+			<component @Switch="SwitchPage" @Controller="MainSaleLoad" @Message="OpenMessage" v-for="c in router"
 				:is="c.name" :ref="c.title" v-show="show(c) || !c.keepAlive" v-if="show(c) || c.keepAlive"
 				:meta="meta_data"></component>
 		</view>
@@ -23,7 +23,8 @@
 	import Head from '@/pages/Home/Component/Head.vue'
 	import Page from '@/pages/Home/Component/Page.vue'
 	//页面组件导入
-	import Main from '@/pages/Main/Main.vue'
+	// import Main from '@/pages/Main/Main.vue'
+	import MainSale from '@/pages/MainSale/MainSale.vue'
 	import Reserve from '@/pages/Reserve/Reserve.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
 	import TakeAway from '@/pages/TakeAway/TakeAway.vue'
@@ -42,7 +43,8 @@
 	export default {
 		name: "Home",
 		components: {
-			Main,
+			// Main,
+			MainSale,
 			Head,
 			Page,
 			Reserve,
@@ -60,12 +62,17 @@
 		data() {
 			return {
 				current: {
-					name: "Main",
+					name: "MainSale",
+					title: "销售",
+					info:null
+				},
+				previous:{
+					name: "MainSale",
 					title: "销售",
 					info:null
 				},
 				selected: {
-					name: "Main",
+					name: "MainSale",
 					title: "销售"
 				},
 				view: {
@@ -98,6 +105,11 @@
 				this.selected.name = data.name;
 				this.selected.title = data.title;
 				if (data.switch || data.switch === undefined) {
+					//存入上一个页面
+					this.previous.name = this.current.name;
+					this.previous.title = this.current.title;
+					this.previous.info = this.current.info;
+					//存入当前页面
 					this.current.name = data.name;
 					this.current.title = data.title;
 					this.current.info = this.router.find(r => r.name === data.name && r.title === data.title);
@@ -116,7 +128,11 @@
 						console.log("[NextTick]Show触发!");
 						vue?.Show ? vue.Show() : undefined;
 					});
-					this.controller.SaleTypeClick(this.current.info.type);//给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
+					//以下对销售控制器的操作 👇
+					if(this.controller){
+						console.log("[SetType]当前模块的销售类型:",this.current);
+						 this.controller.SetSaleType(this.previous.info.type, data.load_params, data.load_sale); //给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
+					}
 				}
 			},
 			ComponentRecursion: function(tree, all = []) {
@@ -132,37 +148,14 @@
 					this.SwitchPage(res);
 				}))
 			},
-			ShowSale: function(sale_vue) {
-				let vue = Array.isArray(sale_vue) && sale_vue.length > 0 ? sale_vue[0] : null;
-				console.log("[ShowSale]销售界面完成加载!");
-				if(vue){
-					console.log("[ShowSale][Success]已获取销售页实例!");
-					this.controller = new SaleController.GetSale(getApp().globalData,vue,"Main");//实例化销售控制器（主要是针对Main页面进行控制的）
-					this.controller.SetDefaultType();//设置默认销售类型
-					SaleGoodsInit.loadSaleSP.loadSp(this.KHID, util.callBind(this,function(goods, prices){//加载销售商品
-						console.log("[ShowSale]商品数:",goods.length);
-						this.controller.SetAllGoods(goods, prices);
-					}),this.DQID, this.KHZID);
-					vue.$set(vue,"controller",this.controller);//将销售控制对象给到销售页的 controller 属性
-				}
-				else{
-					console.log("[ShowSale][Error]未获取销售页实例!");
-				}
+			MainSaleLoad: function(sale_controller) {
+				console.log("[MainSaleLoad]已获取MainSale控制器对象...");
+				this.controller = sale_controller;
 			}
 		},
 		created() {
 			this.router = this.ComponentRecursion(router); //路由数据
 			this.MsgToPage(); //开启页面事件监听
-			this.$refs = new Proxy(this.$refs, {
-				set: util.callBind(this, function(obj, prop, value) {
-					if (prop == "销售") this.ShowSale(value);
-					if (Array.isArray(value) && value.length > 0)
-						value[0]?.Show ? value[0].Show() : undefined;
-					else
-						value?.Show ? value.Show() : undefined;
-					return Reflect.set(...arguments);
-				})
-			})
 		}
 	}
 </script>
