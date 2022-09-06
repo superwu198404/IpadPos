@@ -31,7 +31,7 @@
 			</view>
 			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
 		</view>
-		
+
 		<view class="customer" v-if="rj_cg">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
@@ -40,7 +40,7 @@
 			</view>
 			<label class="rjcg">日结成功</label>
 		</view>
-		
+
 	</view>
 
 </template>
@@ -56,8 +56,7 @@
 	var that;
 	export default {
 		name: "rijie",
-		props: {
-		},
+		props: {},
 
 		data() {
 			return {
@@ -68,10 +67,10 @@
 				rj_cg: false,
 				signOutDate: [],
 				curIndex: 0,
-				qtdate: ""
+				qtdate: "",
 			
 			};
-			},
+		},
 		methods: {
 			Close: function() {
 				//通知父组件关闭日结
@@ -123,6 +122,7 @@
 				}
 			},
 							
+						
 			//签到
 			Sign: function() {
 				_login.SignOrSignOut(true, res => {
@@ -138,8 +138,7 @@
 						util.simpleMsg(res.msg, "none");
 					}
 				});
-			}
-		},
+			},
 			created: function() {
 				that = this;
 				let store = util.getStorage("store");
@@ -150,6 +149,7 @@
 				}
 			}
 
+	}
 	}
 </script>
 
@@ -195,45 +195,52 @@
 		padding: 0;
 		width: 60rpx;
 	}
-	.customer .h6{
+
+	.customer .h6 {
 		color: #FE694B;
-		line-height:80rpx ;
+		line-height: 80rpx;
 		font-size: 32rpx;
 		font-weight: 600;
 		position: relative;
 		z-index: 9;
 	}
-	.cluelist{
+
+	.cluelist {
 		display: flex;
 		flex-wrap: wrap;
 	}
-	.cluelist .list{
-		width:22.5%;
-		margin:0 1% 2%;
+
+	.cluelist .list {
+		width: 22.5%;
+		margin: 0 1% 2%;
 		display: flex;
-		flex-direction: column;		
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		padding:2% 0;
+		padding: 2% 0;
 		font-weight: 600;
-		border:2rpx solid #98C3B3;
+		border: 2rpx solid #98C3B3;
 		border-radius: 14rpx;
 		font-size: 28rpx;
 		line-height: 50rpx;
 	}
-	.cluelist .list.curr{
+
+	.cluelist .list.curr {
 		border-color: #006B44;
 		color: #006B44;
 	}
-	.cluelist .list.curr text{
+
+	.cluelist .list.curr text {
 		color: #006B44;
 	}
-	.cluelist .list text{
+
+	.cluelist .list text {
 		font-size: 26rpx;
 		color: #B0b0b0;
 		line-height: 50rpx;
 		font-weight: 400;
 	}
+
 	.affirm {
 		position: absolute;
 		bottom: 0;
