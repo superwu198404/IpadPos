@@ -43,8 +43,8 @@
 	export default {
 		name: "Home",
 		components: {
-			Main,
-			// MainSale,
+			// Main,
+			MainSale,
 			Head,
 			Page,
 			Reserve,
@@ -61,34 +61,34 @@
 		},
 		data() {
 			return {
-				// current: {
-				// 	name: "MainSale",
-				// 	title: "销售",
-				// 	info:null
-				// },
-				// previous:{
-				// 	name: "MainSale",
-				// 	title: "销售",
-				// 	info:null
-				// },
-				// selected: {
-				// 	name: "MainSale",
-				// 	title: "销售"
-				// },
 				current: {
-					name: "Main",
+					name: "MainSale",
 					title: "销售",
 					info:null
 				},
 				previous:{
-					name: "Main",
+					name: "MainSale",
 					title: "销售",
 					info:null
 				},
 				selected: {
-					name: "Main",
+					name: "MainSale",
 					title: "销售"
 				},
+				// current: {
+				// 	name: "Main",
+				// 	title: "销售",
+				// 	info:null
+				// },
+				// previous:{
+				// 	name: "Main",
+				// 	title: "销售",
+				// 	info:null
+				// },
+				// selected: {
+				// 	name: "Main",
+				// 	title: "销售"
+				// },
 				view: {
 					message: false
 				},

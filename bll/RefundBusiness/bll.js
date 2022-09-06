@@ -63,8 +63,8 @@ const BatchInverse = function(obj, props) {
  */
 export const PaymentToRefundSALE001 = function(sale, config = {
 	no: "",
-	bill_type: "Z151",
-	xs_type: "2"
+	bill_type: "undefined-bill-type",
+	xs_type: "undefined-bill-type"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
@@ -97,8 +97,8 @@ export const PaymentToRefundSALE001 = function(sale, config = {
  */
 export const PaymentToRefundSALE002 = function(sale_arr, config = {
 	no: "",
-	bill_type: "Z151",
-	xs_type: "2"
+	bill_type: "undefined-bill-type",
+	xs_type: "undefined-bill-type"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
@@ -132,15 +132,15 @@ export const PaymentToRefundSALE002 = function(sale_arr, config = {
  */
 export const PaymentToRefundSALE003 = function(sale_arr, config = {
 	no: "",
-	bill_type: "Z151",
-	xs_type: "2"
+	bill_type: "undefined-bill-type",
+	xs_type: "undefined-bill-type"
 }) {
 	let saledate = dateformat.getYMD(),
 		saletime = dateformat.getYMDS();
 	let config_assign = Object.assign({
 		no: "",
-		bill_type: "Z151",
-		xs_type: "2"
+		bill_type: "undefined-bill-type",
+		xs_type: "undefined-bill-type"
 	}, config);
 	let sale_after = [];
 	console.log("[PaymentToRefundSALE003]退款对象生成开始!");
@@ -153,5 +153,34 @@ export const PaymentToRefundSALE003 = function(sale_arr, config = {
 		sale_after.push(sale);
 	})
 	console.log("[PaymentToRefundSALE003]退款对象生成完毕!", sale_after);
+	return sale_after;
+}
+
+/**
+ * 根据 sale008 中的 [支付数据] 生成对应的 [退款数据]
+ */
+export const PaymentToRefundSALE008 = function(sale_arr, config = {
+	no: "",
+	bill_type: "undefined-bill-type",
+	xs_type: "undefined-bill-type"
+}) {
+	let saledate = dateformat.getYMD(),
+		saletime = dateformat.getYMDS();
+	let config_assign = Object.assign({
+		no: "",
+		bill_type: "undefined-bill-type",
+		xs_type: "undefined-bill-type"
+	}, config);
+	let sale_after = [];
+	console.log("[PaymentToRefundSALE008]退款对象生成开始!");
+	sale_arr.forEach((sale_raw) => {
+		let sale = Object.assign({}, sale_raw);
+		BatchInverse(sale, ['QTY', 'PRICE']);
+		sale.SALEDATE = saledate;
+		sale.SALETIME = saletime;
+		sale.BILL = config_assign.no;
+		sale_after.push(sale);
+	})
+	console.log("[PaymentToRefundSALE008]退款对象生成完毕!", sale_after);
 	return sale_after;
 }

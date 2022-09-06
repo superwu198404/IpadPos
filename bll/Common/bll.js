@@ -7,7 +7,8 @@ import {
 	Refund,
 	PaymentToRefundSALE001,
 	PaymentToRefundSALE002,
-	PaymentToRefundSALE003
+	PaymentToRefundSALE003,
+	PaymentToRefundSALE008
 } from '@/bll/RefundBusiness/bll.js'
 import {
 	Payment
@@ -180,10 +181,12 @@ export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, s
 			if (func) func(res);
 			result.code = true;
 			result.data = res;
+			console.log("[SaleOrderGenaration]销售单创建成功!", res);
 		}, err => {
 			if (func) func(err);
 			result.code = false;
 			result.data = err;
+			console.log("[SaleOrderGenaration]销售单创建失败!", err);
 		});
 	} catch (e) {
 		//TODO handle the exception
@@ -193,7 +196,7 @@ export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, s
 	return result;
 }
 
-export const SaleOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
+export const SaleRefundOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
 	let result = {
 		code: false,
 		data: null
@@ -203,22 +206,8 @@ export const SaleOrderGenaration = async function(params = sale_order_generation
 		let sale1 = PaymentToRefundSALE001(params.sales.sale1, params),
 			sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
 			sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
-		let sqlString = util.generateSQLStringArray([sale1, "SALE001"], [sale2, "SALE002"], [sale3, "SALE003"]);
-		let dbo = db.get();
-		console.log("[SaleOrderGenaration]生成的SQL:", sqlString);
-		await dbo.close(); //预先关闭连接（断开后下面语句也会自动重连避免生成失败的问题-失败目前推断为测试环境独有）
-		await dbo.executeDml(sqlString, "[SaleOrderGenaration]退款订单创建中...", (function(res) {
-			result.code = true;
-			result.data = res;
-			if (callback) callback(res);
-			console.log("[SaleOrderGenaration]销售单创建成功!", res);
-			util.simpleMsg("销售单创建成功!");
-		}).bind(this), function(err) {
-			result.code = false;
-			result.data = err;
-			console.log("[SaleOrderGenaration]销售单创建失败!", err);
-			util.simpleMsg("销售单创建失败!", false);
-		});
+			sale8 = PaymentToRefundSALE008(params.sales.sale8, params);
+		result = await CreateSaleOrder(sale1,sale2,sale3,sale8);
 		return result;
 	} catch (e) {
 		result.code = false;

@@ -34,7 +34,8 @@
 								<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 
 									<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
-										<label></label></view>
+										<label></label>
+									</view>
 
 									<view class="procycle">
 										<!-- 产品循环 -->
@@ -81,7 +82,7 @@
 						<view class="a-z" @click="GetTSZKData()">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="states" @click="mainSale.showStatement">
+						<view class="states" @click="mainSale.ShowStatement">
 							<text>结算单</text>
 							<label>«</label>
 						</view>
@@ -105,17 +106,18 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp'>×xxx </button>
-				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp'>×xxx </button>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×xxx </button>
-				<button class="close" @click="mainSale.setComponentsManage"  data-mtype='inputsp'>x </button>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
-						<label><image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}</label>
-						<label><image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}</label>
+						<label>
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+						</label>
+						<label>
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
+						</label>
 						<label>
 							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
 						</label>
@@ -240,16 +242,13 @@
 
 					</view>
 				</view>
-
 				<view class="confirm">
 					<button class="btn">确 认</button>
 				</view>
-
 				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
 					<label>»</label>
 				</view>
-
 			</view>
 		</view>
 
@@ -312,8 +311,9 @@
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
-										<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-												mode="widthFix"></image></button>
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button> -->
+										<button>点击使用<image src="../../images/ewm.png" mode="widthFix"></image></button>
 									</view>
 								</view>
 							</view>
@@ -466,12 +466,6 @@
 					<view class="confirm">
 						<button class="btn">确 认</button>
 					</view>
-
-					<!-- <view class="states" @click="Statements()">
-					<text>结算单</text>
-					<label>»</label>
-				</view> -->
-
 				</view>
 			</view>
 		</view>
@@ -503,7 +497,7 @@
 				mainSale: null,
 				saleAdd: [],
 				saleSub: [],
-				MainSale:{}
+				MainSale: {}
 			}
 		},
 		computed: {
@@ -545,7 +539,7 @@
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
 			console.log("[MainSale]将控制对象传入Home中...");
-			this.$emit("Controller",this.mainSale);
+			this.$emit("Controller", this.mainSale);
 		}
 	}
 </script>

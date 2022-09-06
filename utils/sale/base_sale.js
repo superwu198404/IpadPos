@@ -421,7 +421,7 @@ function GetSale(global, vue, target_name) {
 		let mtype = e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			that.setManage(mtype);
+			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
 		}
@@ -445,7 +445,17 @@ function GetSale(global, vue, target_name) {
 			}
 		}
 	}
-
+	
+	this.selectPlidChenged =function(e)
+	  {
+		   var plid  =  e.currentTarget.dataset.plid;
+		   that.selectPlid = plid;
+		   that.scrollinto = that.selectFlag + plid;
+		   that.log("切换到的品类"+that.scrollinto)
+		   that.Page.$set(that.Page[that.pageName],"selectPlid" , that.selectPlid );
+		   that.Page.$set(that.Page[that.pageName],"scrollinto" , that.scrollinto );
+	  }
+	
 	//展示商品的详情的事件
 	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
@@ -472,7 +482,7 @@ function GetSale(global, vue, target_name) {
 
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.setManage("inputsp")
+		that.SetManage("inputsp")
 	}
 
 	//商品详情页的加号和 减号
@@ -694,7 +704,7 @@ function GetSale(global, vue, target_name) {
 			that.log("[GetSp]添加了商品", new002);
 			that.log("[GetSp]商品价格", that.spPrice);
 		}
-		that.setManage("inputsp");
+		that.SetManage("inputsp");
 	}
 
 	//大于0的时候修改,小于等于0删除
@@ -724,7 +734,7 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//计算sale002
-	this.saleNetAndDisc = function() {
+	this.SaleNetAndDisc = function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			that.computeCx();

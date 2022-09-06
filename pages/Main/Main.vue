@@ -145,7 +145,7 @@
 		<view class="boxs" v-if="controller.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="controller.setComponentsManage" data-mtype='inputsp'>×xxx</button>
+				<button class="close" @click="controller.setComponentsManage" data-mtype='inputsp'>×</button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{controller.clikSpItem.SNAME}}
@@ -543,7 +543,8 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
-
+	import controller from '@/utils/sale/base_sale.js';
+	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
 	var that;
 	export default {
 		computed: {
@@ -828,6 +829,16 @@
 			},
 			InitHandle() {
 				console.log("[InitHandle]初始化处理:", this.meta);
+				console.log("[InitHandle]开始构造函数");
+				this.controller = new controller.GetSale(getApp().globalData, this, "Main");
+				console.log("[InitHandle]开始设置基础的销售类型");
+				this.controller.SetDefaultType();
+				xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
+					console.log("[InitHandle]商品实际的长度:", products.length);
+					this.controller.SetAllGoods(products, prices);
+				}), this.DQID, this.KHZID);
+				console.log("[InitHandle]将控制对象传入Home中...");
+				this.$emit("Controller",this.controller);
 			}
 		},
 		mounted() {
