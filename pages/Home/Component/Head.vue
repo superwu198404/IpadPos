@@ -39,6 +39,7 @@
 					</label>
 
 					<label>
+						<button class="rijie" @click="ConfirmRJ()">日结</button>
 						<button class="rijie" @click="Sign()">日结</button>
 					</label>
 
@@ -164,6 +165,10 @@
 			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
 			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
+			<!-- 签到组件 -->
+			<qiandao @GetSignOut="GetSignOutInWeek"></qiandao>
+			<!-- 日结组件 -->
+			<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
 		</view>
 	</view>
 </template>
@@ -174,6 +179,7 @@
 	import common from '@/api/common.js';
 	import _login from '@/api/business/login.js';
 	import bleConnect from '@/utils/xprinter/bleConnect.js';
+	import dateformat from '@/utils/dateformat.js';
 
 	var app = getApp();
 	let that;
@@ -273,6 +279,11 @@
 			//搜索蓝牙
 			that.startSearch();
 			that.onBLEConnectionStateChange();
+			let store = util.getStorage("store");
+			if (store.OPENFLAG == 1) { //已签到才进行日结的提示 未签到的等到 签到后再做日结
+				//查询一周内是否有未日结的数据
+				that.GetSignOutInWeek();
+			}
 
 		},
 		methods: {
@@ -884,11 +895,16 @@
 							that.showSignOut = true;
 							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
 						} else { //自动触发
-							util.simpleModal("提示", res.msg, code => {
-								if (code) { //点击了确定
-									that.showSignOut = true;
-									that.signOutDate = JSON.parse(res
-										.data); // ["2022/9/1","2022/8/31"]; 
+							uni.showModal({
+								title: "提示",
+								content: res.msg,
+								showCancel: false,
+								success: e => {
+									if (e.confirm) {
+										that.showSignOut = true;
+										that.signOutDate = JSON.parse(res
+											.data); // ["2022/9/1","2022/8/31"]; 
+									}
 								}
 							})
 						}
@@ -912,7 +928,7 @@
 				
 				})
 			},
-			//去日结
+			//去日结 废弃
 			ToSignOut: () => {
 				//查询一周内是否有未日结的数据
 				that.GetSignOutInWeek(1);
@@ -921,7 +937,31 @@
 			CloseSignOut: function(res) {
 				console.log("父组件被通知事件");
 				that.showSignOut = false;
-			}
+			},
+			//直接发起日结
+			ConfirmRJ: e => {
+				util.simpleModal("提示", "确定要进行今日日结吗？", res => {
+					if (res) {
+						let qtdate = dateformat.getYMD();
+						if (qtdate) {
+							_login.SignOrSignOut(false, qtdate, res => {
+								console.log("日结结果：", res);
+								if (res.code) {
+									util.simpleMsg("日结成功！");
+									let data = JSON.parse(res.data);
+									if (data.sql) {
+										_login.SignOrSignOutSql(data.sql);
+									}
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+							})
+						} else {
+							util.simpleMsg("日结日期为空", true);
+						}
+					}
+				})
+			},
 		}
 	}
 </script>

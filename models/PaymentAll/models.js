@@ -63,7 +63,7 @@ export const PayDataAssemble = function() {
 				spid: i.SPID,
 				name: i.NAME,
 				price: (Number(i.PRICE) * 100).toFixed(0), //单价
-				amount: (Number(i.AMOUNT || i.NET) * 100).toFixed(0), //总金额
+				amount: (Number(i.NET) * 100).toFixed(0), //总金额
 				num: i.QTY
 			}
 		})

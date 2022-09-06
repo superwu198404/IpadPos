@@ -4,7 +4,7 @@
 </style>
 <template>
 	<view class="boxs" v-if="rj_show">
-		<view class="customer" v-if="rj_sf">
+		<!-- <view class="customer" v-if="rj_sf">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
 			<view class="clues">
@@ -12,11 +12,11 @@
 				<text>您确定当前要进行日结操作吗？</text>
 			</view>
 			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
-		</view>
+		</view> -->
 		<!-- 选择日结 -->
 		<view class="customer">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="h6">当前你有以下日期没有做日结操作</view>
 			<view class="cluelist">
 				<view class="list curr"><label>2022-09-02</label><text>未日结</text></view>
@@ -24,6 +24,10 @@
 				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
 				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
 				<view class="list"><label>2022-09-02</label><text>未日结</text></view>
+			</view>
+			<view class="affirm">
+				<!-- <button class="btn btn-hk" @click="Close()">取消</button> -->
+				<button class="btn" @click="ConfirmRJ()">确定</button>
 			</view>
 			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
 		</view>
@@ -60,6 +64,12 @@
 				sec: 3,
 				rj_show: false,
 				rj_sf: false,
+				rj_xz: true,
+				rj_cg: false,
+				signOutDate: [],
+				curIndex: 0,
+				qtdate: ""
+				rj_sf: false,
 				rj_cg: false
 			};
 		},
@@ -69,8 +79,8 @@
 				//通知父组件关闭日结
 				console.log("通知父组件关闭日结事件");
 				that.curIndex = 0;
-				that.rj_sf = true;
-				that.rj_xz = false;
+				that.rj_sf = false;
+				that.rj_xz = true;
 				that.rj_cg = false;
 				that.signOutDate = [];
 				that.$emit("CloseRJ", {});

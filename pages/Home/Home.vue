@@ -66,6 +66,11 @@
 					title: "销售",
 					info:null
 				},
+				previous:{
+					name: "MainSale",
+					title: "销售",
+					info:null
+				},
 				selected: {
 					name: "MainSale",
 					title: "销售"
@@ -100,6 +105,11 @@
 				this.selected.name = data.name;
 				this.selected.title = data.title;
 				if (data.switch || data.switch === undefined) {
+					//存入上一个页面
+					this.previous.name = this.current.name;
+					this.previous.title = this.current.title;
+					this.previous.info = this.current.info;
+					//存入当前页面
 					this.current.name = data.name;
 					this.current.title = data.title;
 					this.current.info = this.router.find(r => r.name === data.name && r.title === data.title);
@@ -118,7 +128,23 @@
 						console.log("[NextTick]Show触发!");
 						vue?.Show ? vue.Show() : undefined;
 					});
-					if(this.controller) this.controller.SaleTypeClick(this.current.info.type);//给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
+					//以下对销售控制器的操作 👇
+					if(this.controller){
+						console.log("[SetType]当前模块的销售类型:",this.current);
+						/*
+							Home 下的子组件（直接子集），需要通过进入销售页面统一写法：
+							this.$emit("Switch", {
+								name: "MainSale",//销售页面组件名（必须与 router 中信息对应，且与 title 皆为必填项）
+								title: "销售",//销售页面组件名（必须与 router 中信息对应，且与 name 皆为必填项）
+								load_sale: true,//是否初始化 sale 销售主页模式
+								load_params:{//初始化方法参数
+									sale1:item,
+									sale2:JSON.parse(res.data)
+								}
+							})
+						*/
+						this.controller.SetSaleType(this.previous.info?.type, data.load_params, data.load_sale); //给销售控制器传入当前菜单类型信息，以便对销售界面进行切换控制
+					}
 				}
 			},
 			ComponentRecursion: function(tree, all = []) {

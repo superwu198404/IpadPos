@@ -14,7 +14,7 @@
 				"enablePullDownRefresh": false
 			}
 		},
-		
+
 		{
 			"path": "pages/Home/Home",
 			"style": {
@@ -34,6 +34,14 @@
 			"path": "pages/TestDemon/CxCount",
 			"style": {
 				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Payment/Payment",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "订单支付",
 				"enablePullDownRefresh": false
 			}
 		},
@@ -76,11 +84,11 @@
 				"titleNView": false,
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
-				"mp-alipay":{
-					"allowsBounceVertical":"NO"
+				"mp-alipay": {
+					"allowsBounceVertical": "NO"
 				}
 			}
-		
+
 		},
 		{
 			"path": "pages/hyinfo/index",
@@ -280,7 +288,7 @@
 	},
 	"usingComponents": {
 		"movable": "/components/movable/movable",
-		"qiandao":"/components/qiandao/qiandao",
-		"rijie":"/components/rijie/rijie"
+		"qiandao": "/components/qiandao/qiandao",
+		"rijie": "/components/rijie/rijie"
 	}
 }

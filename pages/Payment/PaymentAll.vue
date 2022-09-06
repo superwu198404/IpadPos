@@ -541,7 +541,7 @@
 							new Date().getDay()),
 						TIME: new Date().getHours()
 					});
-					return util.hidePropety(obj, "NAME", "AMOUNT");
+					return util.hidePropety(obj, "NAME");
 				}).bind(this));
 				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
 				console.log("[SaleDataCombine]sale3 封装中...");
@@ -788,7 +788,7 @@
 							NAME: i.NAME,
 							PRICE: i.PRICE,
 							OPRICE: i.OPRICE,
-							AMOUNT: i.NET,
+							NET: i.NET,
 							QTY: i.QTY,
 							DISCRATE: i.DISCRATE, //退款使用
 							YN_SKYDISC: i.YN_SKYDISC, //退款使用
@@ -1124,7 +1124,7 @@
 							quantity: item.QTY,
 							userPrice: item.PRICE,
 							basePrice: item.OPRICE,
-							netPrice: item.AMOUNT
+							netPrice: item.NET
 						}
 					}),
 					amount: this.totalAmount, //netAmount: that.totalAmount,
@@ -1209,7 +1209,7 @@
 			PriceCount: function() {
 				let total = 0;
 				console.log("[PriceCount]商品列表(sale2):", this.sale2_arr);
-				this.sale2_arr.forEach(product => total += (product.AMOUNT || product.NET));
+				this.sale2_arr.forEach(product => total += product.NET);
 				console.log("[PriceCount]商品总金额:", total);
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
@@ -1219,7 +1219,7 @@
 				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.sale2_arr.forEach(function(item, index, arr) {
-					let high = parseFloat(((item.AMOUNT || item.NET) / total * that.SKY_DISCOUNT).toFixed(2));
+					let high = parseFloat((item.NET/total * that.SKY_DISCOUNT).toFixed(2));
 					item.SKYDISCOUNT = high;
 					curDis += high;
 					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
