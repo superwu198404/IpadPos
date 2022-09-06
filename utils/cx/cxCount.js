@@ -3,12 +3,9 @@ import getCxSql_db from '@/utils/cx/getCxSql.js'
 import cx_util from '@/utils/cx/cx_common.js';
 
 var app = getApp();
-let cxSelectTipColumn = ["ROWID", "BILL"];
-let cxbilldtsColumn = ["SYSL", "YYSL", "FSCS", "DISC", "OPRICE", "jfnum"];
-let cxfsdtColumn = ["CXBILL", "CXLV", "CXJF", "CXNET", "ONET", "CXPRICE", "OPRICE", "XSQTY", "XSBILL", "GSID", "KHID","SALEDATE", "SPID", "CLASSID", "NO", "LCM"];
 //为选择提供依据
 let cxSelectTip = [];
-////保存促销阵列的dt
+//保存促销阵列的dt
 let cxbilldts = [];
 //保存促销发生的dt
 let cxfsdt = [];
@@ -54,16 +51,12 @@ let jfnum = "jfnum";
 //保存已经发生的促销
 let fsdcx = new Array();
 
-///从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
+//从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
-	// console.log("CxSelectTip集合：", CreateArr(cxSelectTipColumn));
-	// console.log("cxbilldts集合：", CreateArr(cxbilldtsColumn));
-	// console.log("cxfsdt集合：", CreateArr(cxfsdtColumn));
-
-	let storeDqid = getApp().globalData.store.DQID;
+	let storeDqid = app.globalData.store.DQID;
 	let dateTime = cx_util.getTime(0);
-	let storeid = getApp().globalData.store.KHID;
-	let gsid = getApp().globalData.store.GSID;
+	let storeid = app.globalData.store.KHID;
+	let gsid = app.globalData.store.GSID;
 	
 	cxSelectTip = [];
 	cxbilldts = [];
@@ -74,278 +67,21 @@ const Cxdict = async () => {
 	dscxsp = [];
 	dszqda = [];
 	
-	// //获取主单的Sql
-	// dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-	// console.log("dscxm集合：", dscxm);
+	//获取主单的Sql
+	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
+	console.log("dscxm集合：", dscxm);
 
-	// //促销规则Sql
-	// dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-	// console.log("dscxclass集合：", dscxclass);
+	//促销规则Sql
+	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
+	console.log("dscxclass集合：", dscxclass);
 
-	// //促销内容对应的产品Sql
-	// dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
-	// console.log("dscxsp集合：", dscxsp);
+	//促销内容对应的产品Sql
+	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
+	console.log("dscxsp集合：", dscxsp);
 
-	// //促销赠券
-	// dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	// console.log("dszqda集合：", dszqda);
-
-	dscxm = [{
-	"BILL": "FZCX2208110002",
-	"BILL_STATUS": "1",
-	"CXRY": "2",
-	"CXZT": "测试积分抵现，购买吐司满30元可使用5积分减5元",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "D",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110003",
-	"BILL_STATUS": "1",
-	"CXRY": "2",
-	"CXZT": "积分加价购",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "1",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "G",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110004",
-	"BILL_STATUS": "1",
-	"CXRY": "2",
-	"CXZT": "测试，购买脆性干点满35，可使用5积分抵现5元",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "D",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110005",
-	"BILL_STATUS": "1",
-	"CXRY": "2",
-	"CXZT": "测试积分加价购",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "1",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "G",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110006",
-	"BILL_STATUS": "1",
-	"CXRY": "1",
-	"CXZT": "测试阶梯促销",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "J",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110008",
-	"BILL_STATUS": "1",
-	"CXRY": "1",
-	"CXZT": "测试普通促销，购买四个送一个",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "N",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110009",
-	"BILL_STATUS": "1",
-	"CXRY": "1",
-	"CXZT": "测试组合促销，购买干点商品满40元送饮品一杯",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "N",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}, {
-	"BILL": "FZCX2208110010",
-	"BILL_STATUS": "1",
-	"CXRY": "1",
-	"CXZT": "测试同种商品促销，吐司类商品大降价",
-	"CX_WEEK": "1,2,3,4,5,6,7",
-	"EDATE": "2022-09-30 00:00:00",
-	"HYLV": "0",
-	"KHID": "K200QTD005",
-	"SDATE": "2022-08-11 00:00:00",
-	"YN_JSLB": "T",
-	"YN_TIME": "N",
-	"YN_ZD": "N"
-}];
-
-dscxclass = [{
-	"BILL": "FZCX2208110010",
-	"CHANGELV": "4",
-	"CLASSID": "FZCX22081100101",
-	"DISCTYPE": "2",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_DISC1": 90,
-	"MJ_DISC2": 80,
-	"MJ_DISC3": 70,
-	"MJ_DISC4": 50,
-	"XX_QTY1": 3,
-	"XX_QTY2": 5,
-	"XX_QTY3": 7,
-	"XX_QTY4": 10,
-	"ZKTYPE": "1"
-}, {
-	"BILL": "FZCX2208110009",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100091",
-	"DISCTYPE": "1",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_NET1": 0,
-	"XX_NET1": 40,
-	"ZKTYPE": "2"
-}, {
-	"BILL": "FZCX2208110008",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100081",
-	"DISCTYPE": "4",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_NET1": 1,
-	"MJ_NET2": 0,
-	"XX_QTY1": 5,
-	"ZKTYPE": "1"
-}, {
-	"BILL": "FZCX2208110006",
-	"CHANGELV": "3",
-	"CLASSID": "FZCX22081100061",
-	"DISCTYPE": "2",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_DISC1": 90,
-	"MJ_DISC2": 80,
-	"MJ_DISC3": 60,
-	"XX_QTY1": 2,
-	"XX_QTY2": 5,
-	"XX_QTY3": 8,
-	"ZKTYPE": "1"
-}, {
-	"BILL": "FZCX2208110005",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100051",
-	"DISCTYPE": "3",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"SYJF": 5,
-	"XX_QTY1": 2,
-	"ZJPRICE1": 10,
-	"ZKTYPE": "1"
-}, {
-	"BILL": "FZCX2208110004",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100041",
-	"DISCTYPE": "1",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_NET1": 5,
-	"SYJF": 5,
-	"XX_NET1": 35,
-	"ZKTYPE": "2"
-}, {
-	"BILL": "FZCX2208110003",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100031",
-	"DISCTYPE": "3",
-	"JFFACTOR1": 3,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"SYJF": 5,
-	"XX_QTY1": 2,
-	"ZJPRICE1": 10,
-	"ZKTYPE": "1"
-}, {
-	"BILL": "FZCX2208110002",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100021",
-	"DISCTYPE": "1",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"MJ_NET1": 5,
-	"SYJF": 5,
-	"XX_NET1": 30,
-	"ZKTYPE": "2"
-}, {
-	"BILL": "FZCX2208110009",
-	"CHANGELV": "1",
-	"CLASSID": "FZCX22081100092",
-	"DISCTYPE": "3",
-	"JFFACTOR1": 1,
-	"JFFACTOR2": 1,
-	"JFFACTOR3": 1,
-	"JFFACTOR4": 1,
-	"KHID": "K200QTD005",
-	"XX_QTY1": 1,
-	"ZJPRICE1": 0,
-	"ZKTYPE": "1"
-}];
-
-dscxsp = [
-	{"BILL":"FZCX2208110006","CLASSID":"FZCX22081100061","KHID":"K200QTD005","SPID":"000000001040200003"},
-	{"BILL":"FZCX2208110006","CLASSID":"FZCX22081100061","KHID":"K200QTD005","SPID":"000000001040200004"}
-];
-
-// dscxsp = [
-// 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100001"},
-// 	{"BILL":"FZCX2208110010","CLASSID":"FZCX22081100101","KHID":"K200QTD005","SPID":"000000001080100003"}
-// ];
-
-// dscxsp = [
-// 	{"BILL":"FZCX2208110004","CLASSID":"FZCX22081100041","KHID":"K200QTD005","SPID":"000000001030200001"},
-// 	{"BILL":"FZCX2208110004","CLASSID":"FZCX22081100041","KHID":"K200QTD005","SPID":"000000001030200002"}
-// ];
-
-dszqda =[];
+	//促销赠券
+	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
+	console.log("dszqda集合：", dszqda);
 
 	//循环主单数据处理
 	if (dscxm.length < 1) {
@@ -430,6 +166,7 @@ dszqda =[];
 				C1.Tstop3 = cx_util.timeTodec(e1);
 			}
 			C1.SubList = {};
+			C1.dictZslq = {};
 			//添加促销曾券
 			try {
 				let dtzq = cx_util.retDtforConditions(dszqda, "BILL", bill);
@@ -440,7 +177,7 @@ dszqda =[];
 						struZslq.zqty = cx_util.nnvl(dtzq[zz].ZQTY, 0);
 						struZslq.hqty = cx_util.nnvl(dtzq[zz].HQTY, 0);
 						struZslq.aqty = cx_util.nnvl(dtzq[zz].AQTY, 0);
-						C1.dictZslq.push(struZslq.lqtype, struZslq);
+						C1.dictZslq[struZslq.lqtype] = struZslq;
 					}
 				}
 			} catch (e) {
@@ -524,48 +261,31 @@ dszqda =[];
 			}
 		} catch (e) {
 			//异常提示信息
+			console.log("Cxdict 创建促销数据发生错误",e);
 		}
 
 	}
 }
 
-///计算促销的方法
-const Createcx = async (goods_arry) => {
-	await Cxdict();
-	let sale02_arr = [{
-			"ProCode": "000000001040200004",
-			"ProName": "水果沙拉",
-			"ProNum": 5,
-			"ProPrice": 18.8,
-			"Disc": 0,
-			"ProSalePrice": 56.4,
-			"ProOPrice": 11.28,
-			"Sort": 1
-		},
-		{
-			"ProCode": "000000001040200003",
-			"ProName": "礼盒2号",
-			"ProNum": 10,
-			"ProPrice": 19.8,
-			"Disc": 0,
-			"ProSalePrice": 174.24,
-			"ProOPrice": 17.42,
-			"Sort": 2
-		}
-	];
-
+//计算促销的方法
+const Createcx = async (sale02_arr) => {
+	//计算时无生效的促销，再次请求初始化一次
+	if(cxdict == null || cxdict.size < 1){
+		await Cxdict();
+	}
+	
 	let spid = "";
 	let dateTime_now = cx_util.getTime(3);
 	if (sale02_arr.length <= 0) {
 		return sale02_arr.sort((p1, p2) => {
-			return p1.Sort - p2.Sort; //升序
+			return p1.NO - p2.NO; //升序
 		});
 	}
 
 	for (let i = 0; i < sale02_arr.length; i++) {
-		let spid = sale02_arr[i].ProCode.toString();
-		let price = Math.round(parseFloat(sale02_arr[i].ProPrice.toString()) * 100) / 100;
-		let num = Math.round(parseFloat(sale02_arr[i].ProNum.toString()) * 100) / 100;
+		let spid = sale02_arr[i].SPID.toString();
+		let price = Math.round(parseFloat(sale02_arr[i].OPRICE.toString()) * 100) / 100;
+		let num = Math.round(parseFloat(sale02_arr[i].QTY.toString()) * 100) / 100;
 
 		//添加
 		AddRowCxbilldts(spid, price, num, i);
@@ -576,7 +296,7 @@ const Createcx = async (goods_arry) => {
 	for (let i = 0; i < cxbilldts.length; i++) {
 		//获取每个商品中的值
 		let cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0)*100))/100;
-		let spnet =Math.round((parseFloat(sale02_arr[i].ProPrice) * parseFloat(sale02_arr[i].ProNum))*100)/100;
+		let spnet =Math.round((parseFloat(sale02_arr[i].OPRICE) * parseFloat(sale02_arr[i].QTY))*100)/100;
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
 		if (cxdiscvalue >= 0) {
@@ -584,7 +304,7 @@ const Createcx = async (goods_arry) => {
 				cxdiscvalue = spnet;
 			}
 			//把促销值写入
-			sale02_arr[i].Disc = cxdiscvalue;
+			sale02_arr[i].DISCRATE = cxdiscvalue;
 		}
 		let cxztStr = "";
 		let cxbillStr = "";
@@ -596,31 +316,31 @@ const Createcx = async (goods_arry) => {
 			}
 		}
 		//商品原单价
-		let ProPrice = parseFloat(cx_util.nnvl(sale02_arr[i].ProPrice, 0));
+		let ProPrice = parseFloat(cx_util.nnvl(sale02_arr[i].OPRICE, 0));
 		//数量
-		let ProNum = parseFloat(cx_util.nnvl(sale02_arr[i].ProNum, 0));
+		let ProNum = parseFloat(cx_util.nnvl(sale02_arr[i].QTY, 0));
 		//单商品折扣后的总价
-		let ProSalePrice = parseFloat(cx_util.nnvl(sale02_arr[i].ProSalePrice, 0));
+		let ProSalePrice = parseFloat(cx_util.nnvl(sale02_arr[i].NET, 0));
 		//单个商品折扣后的单价
-		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].ProOPrice, 0));
+		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].PRICE, 0));
 		
-		sale02_arr[i].ProSalePrice = parseFloat(ProPrice * ProNum - cxdiscvalue);
-		sale02_arr[i].ProOPrice = Math.round((sale02_arr[i].ProSalePrice / ProNum)*100)/100;
+		sale02_arr[i].NET = parseFloat(ProPrice * ProNum - cxdiscvalue);
+		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum)*100)/100;
 		sale02_arr[i].SPJF = jfnum;
 		sale02_arr[i].CXZT = cxztStr;
-		sale02_arr[i].CxBill = cxbillStr;
+		sale02_arr[i].CXBILL = cxbillStr;
 	}
 	if (cxfsdt != null && cxfsdt.length > 0) {
 		//修改其中的SPID编码，通过行数
 		for (let i = 0; i < cxfsdt.length; i++) {
 			let row = parseInt(cxfsdt[i]["SPID"].toString());
-			//cxfsdt[i]["SPID"] = sale02_arr[row].ProCode;
+			//cxfsdt[i]["SPID"] = sale02_arr[row].SPID;
 		}
 		let cxfs = cxfsdt;
 	}
 	console.log("sale02_arr new",sale02_arr);
 	return sale02_arr.sort((p1, p2) => {
-		return p1.Sort - p2.Sort; //升序
+		return p1.NO - p2.NO; //升序
 	});
 }
 
@@ -860,7 +580,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 				} else {
 					ynnull = false;
 					classnum++;
-					classidlist.push(classid == null ? c1.SubList[0].subno : classid);
+					classidlist.push(classid == null ? c1.SubList[bill + "1"].subno : classid);
 				}
 			}
 		}
