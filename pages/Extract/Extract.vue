@@ -90,6 +90,9 @@
 	} from '@/api/business/extract.js'
 	export default {
 		mixins: [global],
+		props:{
+			mode:Boolean
+		},
 		components: {
 			Reserve
 		},
@@ -292,7 +295,7 @@
 		},
 		mounted() {
 			console.log("[Extract-Mounted]触发!");
-			if (this.meta.data && this.meta.data.mode !== undefined) this.view.mode = this.meta.data.mode; //跳转传值
+			this.view.mode = this.mode; //跳转传值
 			console.log("[Extract-Mounted]元数据:", this.meta);
 			this.GetList();
 		}

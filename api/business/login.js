@@ -205,15 +205,17 @@ var SignOrSignOutSql = async function(sql, func) {
 	})
 	await db.get().executeQry(sqlArr[1], "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
-			
 			let store = util.getStorage("store");
 			store.OPENFLAG = res.msg[0].RUN_STATUS;
 			console.log("新的签到数据：", store.OPENFLAG);
 			util.setStorage("store", store);
 			if (func) func(store);
 		}
+		else{
+			console.log("未查询到签到数据：", res);
+		}
 	}, err => {
-
+		console.log("签到sql查询异常:",err);
 	})
 }
 //获取一周能是否有未日结的数据

@@ -3,7 +3,7 @@ import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
 
 /**
- * 销售类型列表，此列表对应 router.js 中，路由信息的 type 字段，进入销售页面之后会根据此列表配置进行初始化
+ * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
 var XsTypeObj = {
 	//销售+退货
@@ -137,6 +137,38 @@ var XsTypeObj = {
 		}
 	},
 	//线上订单提取
+	sale_online_order: {
+		xstype: "8",
+		clickType: "sale_online_order",
+		nameSale: "线上订单",
+		icon_open: require("@/images/xsdingdan.png"),
+		icon_close: require("@/images/xsdingdan-wxz.png"),
+		operation:{
+			"sale_online_order": true
+		},
+	},
+	//外卖单
+	sale_takeaway: {
+		xstype: "8",
+		clickType: "sale_takeaway",
+		nameSale: "外卖单",
+		icon_open: require("@/images/waimaid.png"),
+		icon_close: require("@/images/waimaid-hui.png"),
+		operation:{
+			"sale_takeaway": true
+		},
+	},
+	//外卖单预定
+	sale_takeaway_reserve: {
+		xstype: "8",
+		clickType: "sale_takeaway_reserve",
+		nameSale: "外卖预定单",
+		icon_open: require("@/images/wmyudd.png"),
+		icon_close: require("@/images/wmyudd-hui.png"),
+		operation:{
+			"sale_takeaway_reserve": true
+		},
+	},
 	sale_online_order_extract: {
 		xstype: "8",
 		clickType: "sale_online_order_extract",
@@ -145,6 +177,17 @@ var XsTypeObj = {
 		icon_close: require("@/images/xsddtiqu-wxz.png"),
 		operation:{
 			"sale_online_order_extract": true
+		},
+	},
+	//消息
+	sale_message: {
+		xstype: "6",
+		clickType: "sale_message",
+		nameSale: "消息",
+		icon_open: require("@/images/xz-xx.png"),
+		icon_close: require("@/images/xiaoxi-hui.png"),
+		operation:{
+			"sale_message": true
 		},
 	},
 	//赊销+退货
@@ -465,10 +508,12 @@ function GetSale(global, vue, target_name) {
 			that.ComponentsManage[lastManage] = false;
 		}
 		that.log("[SetManage]点击的类型:", pm_mtype);
-		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		that.ComponentsManage[pm_mtype] = true;
+		// that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
-		that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
+		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		that.update();
+		that.log("[SetManage]组件控制对象:", that.ComponentsManage);
 		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 	}
 

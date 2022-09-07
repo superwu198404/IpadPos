@@ -7,7 +7,7 @@
 		<view class="logo">
 			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
 		</view>
-		<view class="menu">
+		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
@@ -59,4 +59,7 @@
 </script>
 
 <style>
+	.menu{
+		padding: 0px;
+	}
 </style>
