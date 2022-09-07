@@ -301,12 +301,11 @@
 					// uni.navigateTo({
 					// 	url: e.url
 					// })
-					this.$emit("Switch", {
-						name: "Message",
-						title: "消息",
+					uni.$emit("change", {
+						name: "sale_message",
 						params: {
 							// msgdatas: e
-						},
+						}
 					})
 				}
 				// });

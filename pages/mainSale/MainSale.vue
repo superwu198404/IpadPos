@@ -8,9 +8,9 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" @switch="SwitchPage" :name="'Main'" :title="'销售'"></Page>
+			<Page ref="menu"></Page>
 			<view class="right">
-				<Head @Switch="SwitchPage"></Head>
+				<Head></Head>
 				<view class="listof" v-show="true">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -21,7 +21,7 @@
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
 								<view class="classifys">
-				
+
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
 										@click="mainSale.selectPlidChenged"
@@ -35,11 +35,11 @@
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="mainSale.scrollinto">
 									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
-				
+
 										<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
 											<label></label>
 										</view>
-				
+
 										<view class="procycle">
 											<!-- 产品循环 -->
 											<view class="li" v-for="(sptiem, spindex) in  plitem['plarr'] "
@@ -98,7 +98,7 @@
 								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
 								<text>{{flagitem}}</text>
 							</label>
-				
+
 						</view>
 					</view>
 				</view>
@@ -109,6 +109,7 @@
 				<TakeYD v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
 				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
 				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<Message v-if="mainSale.ComponentsManage.sale_message"></Message>
 				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
 				<SXRefund v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
 				<Promotion v-if="mainSale.ComponentsManage.tools"></Promotion>
@@ -530,7 +531,7 @@
 				MainSale: {}
 			}
 		},
-		components:{
+		components: {
 			Head,
 			Page,
 			Reserve,
@@ -553,8 +554,14 @@
 			}
 		},
 		methods: {
-			SwitchPage:function(){
-				
+			Change: function(menu) {
+				console.log("[Change]菜单点击触发!",menu);
+				this.mainSale.SetManage(menu.info.clickType);
+			},
+			Redirect: function(info) {
+				console.log("[Redirect]重定向!",info);
+				let menu_info = this.mysale.XsTypeObj[info.name];
+				if (menu_info) this.mainSale.SetSaleType(menu_info.clickType, info.params, true);
 			},
 			//展示特殊折扣
 			GetTSZKData: function() {
@@ -580,6 +587,10 @@
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
+			Bind: function() {
+				uni.$on("change", this.Change);
+				uni.$on("redirect", this.Redirect);
+			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数");
@@ -590,8 +601,7 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
-			console.log("[MainSale]将控制对象传入Home中...");
-			this.$emit("Controller", this.mainSale);
+			this.Bind();
 		}
 	}
 </script>
