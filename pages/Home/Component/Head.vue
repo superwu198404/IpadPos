@@ -885,6 +885,7 @@
 			},
 			//获取一周内是否有未日结的数据
 			GetSignOutInWeek: function(t, func) {
+				
 				console.log("进入日结搜索方法");
 				that.showSign = false; //关闭签到组件
 				_login.GetSignOutInWeek(res => {
