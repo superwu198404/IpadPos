@@ -644,7 +644,7 @@
 										i++;
 									})
 									console.log("isLink", that.isLink)
-									uni.hideLoading();
+									// uni.hideLoading();
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
 										success: function(res) {
