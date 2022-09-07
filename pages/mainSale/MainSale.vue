@@ -656,7 +656,11 @@
 				mainSale: null,
 				saleAdd: [],
 				saleSub: [],
-				MainSale: {}
+				MainSale: {},
+				KHID:"K210QTD003",
+				DQID:"K01000",
+				KHZID:"02"
+				
 			}
 		},
 		components: {

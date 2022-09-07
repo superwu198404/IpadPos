@@ -5,7 +5,8 @@ import cx from '@/utils/cx/cxCount.js';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
-var XsTypeObj = {
+var XsTypeObj = 
+{
 	//销售+退货
 	sale: { //普通销售模式，最基本的模式
 		xstype: "1",
@@ -39,7 +40,8 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$click() {
+		$click() 
+		{
 			return true;
 		},
 		$initSale: function(type, params) {
@@ -59,19 +61,23 @@ var XsTypeObj = {
 			//可以使用的支付方式 
 		},
 		//支付完成之前销售单之前
-		$SaleBefor: function() {
+		$SaleBefor: function() 
+		{
 			//一些特殊的设置
 		},
 		//支付完成中
-		$saleFinishing: function() {
+		$saleFinishing: function() 
+		{
 			//一些特殊的设置
 		},
 		//支付完成以后
-		$saleFinied: function() {
+		$saleFinied: function() 
+		{
 			//一些特殊的设置
 		},
 	},
-	sale_return_good: {
+	sale_return_good: 
+	{
 		xstype: "2",
 		clickType: "sale_return_good",
 		nameSale: "销售退货",
@@ -425,7 +431,8 @@ function GetSale(global, vue, target_name) {
 		"statement": false
 	};
 	///销售界面可以进行操作功能 ，
-	this.allOperation = {
+	this.allOperation = 
+	{
 		"HY": false, //是否可以录入会员
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
@@ -453,7 +460,8 @@ function GetSale(global, vue, target_name) {
 		"actType": false
 	}
 	//插件的显示在这里控制
-	this.ComponentsManage = {
+	this.ComponentsManage =
+	{
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
@@ -558,7 +566,8 @@ function GetSale(global, vue, target_name) {
 	//展示商品的详情的事件
 	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
-		if (!that.currentOperation.inputsp) {
+		if (!that.currentOperation.inputsp) 
+		{
 			that.myAlert("当前模式下不可录入商品")
 			return;
 		}
