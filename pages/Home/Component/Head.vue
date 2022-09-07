@@ -235,9 +235,9 @@
 				});
 				if (that.YW_MsgData.length > 0) {
 					that.showYWMsg = false;
-					console.log("触发没有：");
+					// console.log("触发没有：");
 					that.$nextTick(() => {
-						console.log("触发没有1：");
+						// console.log("触发没有1：");
 						that.showYWMsg = true;
 					})
 				} else {
