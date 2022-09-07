@@ -23,17 +23,17 @@ var XsTypeObj = {
 			"sale": false, //从这里开始都是销售模式
 			"sale_reserve": false,
 			"sale_reserve_extract": false,
-			"sale_online_order":false,
-			"sale_online_order_extract":false,
+			"sale_online_order": false,
+			"sale_online_order_extract": false,
 			"sale_credit": false,
 			"sale_return_good": false,
 			"sale_reserve_cancel": false,
 			"sale_credit": false,
 			"sale_credit_return_good": false,
-			"sale_takeaway":false,
-			"sale_takeaway_reserve":false,
-			"sale_message":false,
-			"tools":false,
+			"sale_takeaway": false,
+			"sale_takeaway_reserve": false,
+			"sale_message": false,
+			"tools": false,
 
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
@@ -77,7 +77,7 @@ var XsTypeObj = {
 		nameSale: "销售退货",
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
-		operation:{
+		operation: {
 			"sale_return_good": true
 		},
 		$initSale: function(params) {
@@ -96,7 +96,7 @@ var XsTypeObj = {
 		nameSale: "预定",
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
-		operation:{
+		operation: {
 			"sale_reserve": true
 		},
 	},
@@ -106,7 +106,7 @@ var XsTypeObj = {
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),
 		icon_close: require("@/images/wxz-ydtq.png"),
-		operation:{
+		operation: {
 			"sale_reserve_extract": true
 		},
 		$initSale: function(params) {
@@ -124,7 +124,7 @@ var XsTypeObj = {
 		nameSale: "预定取消",
 		icon_open: require("@/images/ydqx.png"),
 		icon_close: require("@/images/ydqx-wxz.png"),
-		operation:{
+		operation: {
 			"sale_reserve_cancel": true
 		},
 		$initSale: function(params) {
@@ -136,15 +136,25 @@ var XsTypeObj = {
 			this.sale003 = params.sale3 ?? {};
 		}
 	},
-	//线上订单提取
+	//线上订单+线上提取
 	sale_online_order: {
 		xstype: "8",
 		clickType: "sale_online_order",
 		nameSale: "线上订单",
 		icon_open: require("@/images/xsdingdan.png"),
 		icon_close: require("@/images/xsdingdan-wxz.png"),
-		operation:{
+		operation: {
 			"sale_online_order": true
+		},
+	},
+	sale_online_order_extract: {
+		xstype: "8",
+		clickType: "sale_online_order_extract",
+		nameSale: "线上订单提取",
+		icon_open: require("@/images/xsddtiqu.png"),
+		icon_close: require("@/images/xsddtiqu-wxz.png"),
+		operation: {
+			"sale_online_order_extract": true
 		},
 	},
 	//外卖单
@@ -154,7 +164,7 @@ var XsTypeObj = {
 		nameSale: "外卖单",
 		icon_open: require("@/images/waimaid.png"),
 		icon_close: require("@/images/waimaid-hui.png"),
-		operation:{
+		operation: {
 			"sale_takeaway": true
 		},
 	},
@@ -165,18 +175,8 @@ var XsTypeObj = {
 		nameSale: "外卖预定单",
 		icon_open: require("@/images/wmyudd.png"),
 		icon_close: require("@/images/wmyudd-hui.png"),
-		operation:{
+		operation: {
 			"sale_takeaway_reserve": true
-		},
-	},
-	sale_online_order_extract: {
-		xstype: "8",
-		clickType: "sale_online_order_extract",
-		nameSale: "线上订单提取",
-		icon_open: require("@/images/xsddtiqu.png"),
-		icon_close: require("@/images/xsddtiqu-wxz.png"),
-		operation:{
-			"sale_online_order_extract": true
 		},
 	},
 	//消息
@@ -186,7 +186,7 @@ var XsTypeObj = {
 		nameSale: "消息",
 		icon_open: require("@/images/xz-xx.png"),
 		icon_close: require("@/images/xiaoxi-hui.png"),
-		operation:{
+		operation: {
 			"sale_message": true
 		},
 	},
@@ -197,7 +197,7 @@ var XsTypeObj = {
 		nameSale: "赊销",
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
-		operation:{
+		operation: {
 			"sale_credit": true
 		},
 	},
@@ -207,7 +207,7 @@ var XsTypeObj = {
 		nameSale: "赊销退货",
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
-		operation:{
+		operation: {
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
@@ -334,6 +334,7 @@ function GetSale(global, vue, target_name) {
 		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
 			this.cval = newval;
+			that.update();
 		}
 	}
 	this.HY.base = this;
@@ -433,17 +434,17 @@ function GetSale(global, vue, target_name) {
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
-		"sale_online_order":false,
-		"sale_online_order_extract":false,
+		"sale_online_order": false,
+		"sale_online_order_extract": false,
 		"sale_credit": false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
 		"sale_credit_return_good": false,
-		"sale_takeaway":false,
-		"sale_takeaway_reserve":false,
-		"sale_message":false,
-		"tools":false,
+		"sale_takeaway": false,
+		"sale_takeaway_reserve": false,
+		"sale_message": false,
+		"tools": false,
 		"openydCustmInput": false, //预定输入客户的信息
 		"sale002Rows": false, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		"lockRows": 0, //是否存在锁定的行数
@@ -456,20 +457,21 @@ function GetSale(global, vue, target_name) {
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
+		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
-		"sale_online_order":false,
-		"sale_online_order_extract":false,
+		"sale_online_order": false,
+		"sale_online_order_extract": false,
 		"sale_credit": false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
 		"sale_credit_return_good": false,
-		"sale_takeaway":false,
-		"sale_takeaway_reserve":false,
-		"sale_message":false,
-		"tools":false,
+		"sale_takeaway": false,
+		"sale_takeaway_reserve": false,
+		"sale_message": false,
+		"tools": false,
 		"openydCustmInput": false, //预定输入客户的信息
 		"inputsp": false,
 		"statement": false, //购物车
@@ -503,13 +505,13 @@ function GetSale(global, vue, target_name) {
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
 		console.log("[SetManage]LastManage:", lastManage);
+		if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
 			console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;
 		}
 		that.log("[SetManage]点击的类型:", pm_mtype);
-		that.ComponentsManage[pm_mtype] = true;
-		// that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		that.update();
@@ -533,30 +535,26 @@ function GetSale(global, vue, target_name) {
 		console.log("[CurrentTypeCall]当前销售类型:", this.current_type);
 		console.log("[CurrentTypeCall]当前销售类型调用:", pm_fun);
 		let defstr = "def"
-		let arr = [];
-		for (var i = 1; i < arguments.length; i++) {
-			arr.push(arguments[i])
-		};
+		let arr = Array.from(arguments).slice(1);
 		if (that.current_type[pm_fun]) {
-			that.current_type[pm_fun].apply(that, arr);
+			return that.current_type[pm_fun].apply(that, arr);
 		} else {
 			//方便定义公用的处理方法，如果销售类型里没有这个方法则调用这个
 			if (that[defstr + pm_fun]) {
-				that[defstr + pm_fun].apply(that, arr);
+				return that[defstr + pm_fun].apply(that, arr);
 			}
 		}
 	}
-	
-	this.selectPlidChenged =function(e)
-	  {
-		   var plid  =  e.currentTarget.dataset.plid;
-		   that.selectPlid = plid;
-		   that.scrollinto = that.selectFlag + plid;
-		   that.log("切换到的品类"+that.scrollinto)
-		   that.Page.$set(that.Page[that.pageName],"selectPlid" , that.selectPlid );
-		   that.Page.$set(that.Page[that.pageName],"scrollinto" , that.scrollinto );
-	  }
-	
+
+	this.selectPlidChenged = function(e) {
+		var plid = e.currentTarget.dataset.plid;
+		that.selectPlid = plid;
+		that.scrollinto = that.selectFlag + plid;
+		that.log("切换到的品类" + that.scrollinto)
+		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
+		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
+	}
+
 	//展示商品的详情的事件
 	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
@@ -613,7 +611,7 @@ function GetSale(global, vue, target_name) {
 				return;
 			}
 			that.log(JSON.stringify(this.current_type));
-			if (this.clickSaleType.$click.call(this)) {
+			if (this.CurrentTypeCall("$click")) {
 				this.$initSale(this.clickSaleType);
 			}
 		} else {
@@ -672,9 +670,8 @@ function GetSale(global, vue, target_name) {
 				});
 				this.$initSale(this.clickSaleType, init_params);
 				console.log("[MainSale]初始化完毕!");
-			}
-			else{
-				console.log("[SetSaleType]页面切换:",this.current_type.operation);
+			} else {
+				console.log("[SetSaleType]页面切换:", this.current_type.operation);
 				this.SetCurrentOperation(this.current_type.operation);
 			}
 		} else {

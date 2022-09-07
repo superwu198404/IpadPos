@@ -9,7 +9,7 @@
 			<!-- <menu_head></menu_head> -->
 			<!-- <Head></Head> -->
 			<view class="mem-bg">
-				<button class="skip" @click="ReBack()">返回</button>
+				<!-- <button class="skip" @click="ReBack()">返回</button> -->
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
 					<label>
@@ -42,7 +42,7 @@
 		},
 		data() {
 			return {
-				numbers: "",
+				numbers: "13597696131",
 				brand: app.globalData.brand,
 				kquser: app.globalData.kquser,
 			}
@@ -73,15 +73,17 @@
 						let hyinfo = JSON.parse(res.data);
 						util.setStorage("hyinfo", hyinfo);
 						util.simpleMsg("登录成功");
-						setTimeout(r => {
-							uni.navigateBack({
-								success: function() {
-									eventChannel.emit('refreshHY', {
-										data: '会员登录页面返回'
-									})
-								}
-							})
-						}, 1000);
+						uni.$emit("member-close",hyinfo);
+						// setTimeout(r => {
+						// 	uni.navigateBack({
+						// 		success: function() {
+						// 			eventChannel.emit('refreshHY', {
+						// 				data: hyinfo,
+						// 				msg: '会员登录页面返回'
+						// 			})
+						// 		}
+						// 	})
+						// }, 1000);
 					}
 				}, err => {
 					console.log("会员信息查询失败:", err);
@@ -98,6 +100,9 @@
 					}
 				});
 			}
+		},
+		created() {
+			that = this;
 		}
 	}
 </script>

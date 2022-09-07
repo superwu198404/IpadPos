@@ -11,7 +11,7 @@
 			<Page ref="menu"></Page>
 			<view class="right">
 				<Head></Head>
-				<view class="listof" v-show="mainSale.ComponentsManage.sale">
+				<view class="listof">
 					<view class="prolist">
 						<!-- 大类循环 -->
 						<view class="commodity">
@@ -79,7 +79,7 @@
 							<view class="a-z" @click="Letters()">{{mainSale.selectFlag}}
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="Memberlogin(1)">
+							<view class="a-z" @click="MemberLogin(1)">
 								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="GetTSZKData()">
@@ -116,6 +116,79 @@
 				<Promotion v-if="mainSale.ComponentsManage.tools"></Promotion>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
+		</view>
+
+		<MemberLogin v-if="mainSale.ComponentsManage.member_login" style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
+
+		<!-- 会员弹框 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.HY">
+			<view class="memberes">
+				<view class="meminfo">
+					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+					<view class="member">
+						<label>
+							<image class="touxiang" src="../../images/touxiang.png"></image>
+							<label class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
+							<label @click="ChangeMember()">切换</label>
+						</label>
+						<button @click="mainSale.ComponentsManage.HY = false">×</button>
+					</view>
+					<view class="nom">
+						<label>
+							<text>￥{{mainSale.HY.val.Balance/100}}</text>
+							<text>余额</text>
+						</label>
+						<label>
+							<text>{{mainSale.HY.val.JFBalance/100}}</text>
+							<text>积分</text>
+						</label>
+						<label>
+							<text>{{mainSale.HY.val.coupons.length}}</text>
+							<text>优惠券</text>
+						</label>
+						<label>
+							<text>{{mainSale.HY.val.hy_Assets.GiftAmt/100}}</text>
+							<text>礼品卡</text>
+						</label>
+					</view>
+					<view class="rests" v-if="false">
+						<view class="h2">其他</view>
+						<view class="restlist">
+							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
+							<label><text>是否推送活动信息：</text><text>是</text></label>
+							<label><text>上次购买金额：</text><text>￥56</text></label>
+							<label><text>是否参与上次活动：</text><text>否</text></label>
+						</view>
+					</view>
+					<view class="coulist">
+						<view class="h2">优惠券</view>
+						<view class="uls">
+							<view class="lis" v-for="(item,index) in mainSale.HY.val.coupons">
+								<view class="voucher">
+									<view><text>￥</text>{{item.money}}</view>
+									<text>满{{item.limitmoney}}可用</text>
+								</view>
+								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+								<view class="coupon-dets">
+									<view class="limit">
+										<view class="h3" v-for="(item1,index1) in item.limitDesc">
+											<text>{{item1}}</text>
+										</view>
+										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
+									</view>
+									<view class="directions">
+										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+										</view>
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+												mode="widthFix"></image></button> -->
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 
 		<!-- 蛋糕属性选择 -->
@@ -395,7 +468,7 @@
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="Memberlogin()">会员登录</button>
+							<button class="btn" @click="MemberLogin()">会员登录</button>
 						</label>
 						<text>清空</text>
 					</view>
@@ -504,6 +577,7 @@
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
+	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -545,13 +619,28 @@
 			SXRefund,
 			Message,
 			CreditSettlement,
-			Promotion
+			Promotion,
+			MemberLogin
 		},
 		computed: {
 			Price: function() {
 				return util.callBind(this, function(spid) {
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
+			},
+			MemberInfo:function(){
+				console.log("[MemberInfo]会员信息:",this.mainSale.HY.val);
+				return Object.keys(this.mainSale.HY.val) > 0 ? this.mainSale.HY.val : {
+					coupons:[],
+					hyId:"",
+					NickName:"",
+					Balance:0,
+					Phone:"",
+					JFBalance:0,
+					hy_Assets:{
+						GiftAmt:0
+					}
+				}
 			}
 		},
 		methods: {
@@ -564,12 +653,22 @@
 				let menu_info = this.mysale.XsTypeObj[info.name];
 				if (menu_info) this.mainSale.SetSaleType(menu_info.clickType, info.params, true);
 			},
-			//展示特殊折扣
-			GetTSZKData: function() {
+			CloseMember: function(member_info) {
+				this.mainSale.ComponentsManage.member_login = false;
+				console.log("[CloseMember]会员页关闭!", member_info);
+				this.mainSale.HY.val = member_info;
+				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
+				this.GetHyCoupons(member_info);
+			},
+			//切换登录
+			ChangeMember: function() {
+				this.mainSale.ComponentsManage.member_login = true;
+			},
+			GetTSZKData: function() { //展示特殊折扣
 				that.showTSZK = true;
 			},
 			exits: function(e) {
-				this.dropout = !this.dropout
+				this.dropout = !this.dropout;
 			},
 			Statements: function(e) {
 				this.statements = !this.statements
@@ -577,9 +676,36 @@
 			Letters: function(e) {
 				this.Alphabetical = true
 			},
-			Memberlogin: function(e) {
-				this.Memberinfo = true,
-					this.Shoppingbags = false
+			GetHyCoupons: function(hyinfo) {
+				if (hyinfo?.hyId) {
+					_member.CouponList("获取中...", {
+						brand: this.brand,
+						data: {
+							hyid: this.MemberInfo.hyId,
+							phone: this.MemberInfo.Phone
+						}
+					}, util.callBind(this,function(res){
+						if (res.code) {
+							this.mainSale.HY.val.coupons = res.data;
+							this.mainSale.update();
+							this.mainSale.HY.val.hyId = this.mainSale.HY.val.hyId;
+							this.mainSale.ComponentsManage.HY = true;
+							console.log("[GetHyCoupons]会员信息-computed:",this.MemberInfo);
+							console.log("[GetHyCoupons]会员信息-control:",this.mainSale.HY.val);
+						}
+					}), (err) => {
+						console.log("异常数据：", res)
+					})
+				}
+			},
+			MemberLogin: function(e) { //会员登录
+				console.log("[MemberLogin]会员登录!");
+				if(Object.keys(this.mainSale.HY.val).length > 0){
+					this.GetHyCoupons(this.mainSale.HY.val);
+				}
+				else
+					this.mainSale.ComponentsManage.member_login = true;
+				console.log("[MemberLogin]状态信息:",this.mainSale.ComponentsManage.member_login);
 			},
 			Bagslist: function(e) {
 				this.Shoppingbags = true,
@@ -591,6 +717,7 @@
 			Bind: function() {
 				uni.$on("change", this.Change);
 				uni.$on("redirect", this.Redirect);
+				uni.$on("member-close", this.CloseMember);
 			}
 		},
 		created() {
@@ -611,6 +738,7 @@
 	page {
 		overflow: hidden;
 	}
+
 	.right {
 		height: 100%;
 	}
