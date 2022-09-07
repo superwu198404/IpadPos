@@ -11,7 +11,7 @@
 			<Page ref="menu"></Page>
 			<view class="right">
 				<Head></Head>
-				<view class="listof" v-show="true">
+				<view class="listof" v-show="mainSale.ComponentsManage.sale">
 					<view class="prolist">
 						<!-- 大类循环 -->
 						<view class="commodity">
@@ -104,7 +104,8 @@
 				</view>
 				<!-- 在这插入组件 -->
 				<Reserve v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
-				<Extract v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
 				<TakeAway v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
 				<TakeYD v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
 				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
@@ -555,11 +556,11 @@
 		},
 		methods: {
 			Change: function(menu) {
-				console.log("[Change]菜单点击触发!",menu);
+				console.log("[Change]菜单点击触发!", menu);
 				this.mainSale.SetManage(menu.info.clickType);
 			},
 			Redirect: function(info) {
-				console.log("[Redirect]重定向!",info);
+				console.log("[Redirect]重定向!", info);
 				let menu_info = this.mysale.XsTypeObj[info.name];
 				if (menu_info) this.mainSale.SetSaleType(menu_info.clickType, info.params, true);
 			},
@@ -607,6 +608,9 @@
 </script>
 
 <style>
+	page {
+		overflow: hidden;
+	}
 	.right {
 		height: 100%;
 	}

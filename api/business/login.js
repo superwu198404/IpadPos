@@ -212,8 +212,11 @@ var SignOrSignOutSql = async function(sql, func) {
 			util.setStorage("store", store);
 			if (func) func(store);
 		}
+		else{
+			console.log("未查询到签到数据：", res);
+		}
 	}, err => {
-
+		console.log("签到sql查询异常:",err);
 	})
 }
 //获取一周能是否有未日结的数据
