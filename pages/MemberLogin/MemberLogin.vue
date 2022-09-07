@@ -9,7 +9,7 @@
 			<!-- <menu_head></menu_head> -->
 			<!-- <Head></Head> -->
 			<view class="mem-bg">
-				<!-- <button class="skip" @click="ReBack()">返回</button> -->
+				<button class="skip" @click="ReBack()">返回</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
 					<label>
@@ -42,7 +42,7 @@
 		},
 		data() {
 			return {
-				numbers: "13597696131",
+				numbers: "",
 				brand: app.globalData.brand,
 				kquser: app.globalData.kquser,
 			}
@@ -73,7 +73,7 @@
 						let hyinfo = JSON.parse(res.data);
 						util.setStorage("hyinfo", hyinfo);
 						util.simpleMsg("登录成功");
-						uni.$emit("member-close",hyinfo);
+						uni.$emit("member-close", hyinfo);
 						// setTimeout(r => {
 						// 	uni.navigateBack({
 						// 		success: function() {
@@ -92,6 +92,8 @@
 			},
 			//返回
 			ReBack: function() {
+				uni.$emit("member-close", {});
+				return;
 				uni.navigateBack({
 					success: function() {
 						eventChannel.emit('refreshHY', {

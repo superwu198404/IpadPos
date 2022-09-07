@@ -205,9 +205,9 @@ export const SaleRefundOrderGenaration = async function(params = sale_order_gene
 		//生成退款类的数据对象
 		let sale1 = PaymentToRefundSALE001(params.sales.sale1, params),
 			sale2 = PaymentToRefundSALE002(params.sales.sale2, params),
-			sale3 = PaymentToRefundSALE003(params.sales.sale3, params);
+			sale3 = PaymentToRefundSALE003(params.sales.sale3, params),
 			sale8 = PaymentToRefundSALE008(params.sales.sale8, params);
-		result = await CreateSaleOrder(sale1,sale2,sale3,sale8);
+		result = await CreateSaleOrder(sale1, sale2, sale3, sale8);
 		return result;
 	} catch (e) {
 		result.code = false;
@@ -215,9 +215,26 @@ export const SaleRefundOrderGenaration = async function(params = sale_order_gene
 		return result;
 	}
 }
-
+//新积分上传 适配 sale123
+export const PointUploadNew = async function(sale1, sale2, sale3) {
+	let obj = {};
+	let mode = common.GetPayOrRefund(sale1) == common.actTypeEnum.Payment ? "INCREASE" : "DECREASE";
+	obj.order_no = sale1.BILL;
+	obj.sale_order_no = sale1.XS_BILL;
+	obj.member_id = sale1.CUID;
+	obj.mode = mode;
+	obj.product = sale2;
+	obj.pay_list = sale3.map(r => {
+		return {
+			paymentType: r.FKID,
+			payAmount: r.AMT
+		}
+	})
+	console.log("传入积分的参数：", obj);
+	await PointUpload(obj);
+}
 /**
- * 积分上传
+ * 积分上传参数
  */
 const point_upload_def_params = {
 	order_no: "", //单号
@@ -246,7 +263,7 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		zf_bill: params.order_child_no, //子订单号
 		date: dateformat.getYMDS(),
 		productList: params.product.map((item, i) => {
-			total_amount += (item.NET ?? item.AMOUNT);
+			total_amount += item.NET;
 			return {
 				lineNumber: i,
 				product: item.BARCODE,
@@ -254,7 +271,7 @@ export const PointUpload = async function(def = point_upload_def_params) {
 				quantity: item.QTY,
 				userPrice: item.PRICE,
 				basePrice: item.OPRICE,
-				netPrice: (item.NET ?? item.AMOUNT) //存在 sale2 数据传入或者 Product 数据传入，两者金额字段不同
+				netPrice: item.NET //存在 sale2 数据传入或者 Product 数据传入，两者金额字段不同
 			}
 		}),
 		payList: params.pay_list,

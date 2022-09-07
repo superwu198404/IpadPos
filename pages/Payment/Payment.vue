@@ -356,7 +356,8 @@
 				},
 				sbsp_arr: [], //水吧产品初始集合
 				sale8_arr: [], //水吧产品集合
-				actType: "" //当前操作行为 用以定义是支付还是退款
+				actType: "", //当前操作行为 用以定义是支付还是退款
+				hyinfo: {} //当前会员信息
 			}
 		},
 		watch: {
@@ -490,7 +491,7 @@
 			SaleDataCombine: function() {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
-				let hyinfo = getApp().globalData.hyinfo;
+				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
 				let sale1 = this.SALES.sale1,
 					sale2 = this.SALES.sale2,
 					sale3 = this.SALES.sale3,
@@ -509,7 +510,7 @@
 					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (Number(this.Discount) + Number(this
 						.SKY_DISCOUNT)).toFixed(2), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
-					CUID: this.isRefund ? sale1.CUID : getApp().globalData?.hyinfo?.hyId,
+					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
 					CLTIME: saletime,
 					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
 					XS_POSID: this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
@@ -1103,7 +1104,7 @@
 			//积分操作 
 			scoreConsume: function() {
 				console.log("[ScoreConsume]开始积分上传...");
-				let hyinfo = util.getStorage("hyinfo");
+				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
 				if (!hyinfo || JSON.stringify(hyinfo) == '{}') { //没会员信息的话就不调用上传积分以免接口报错
 					console.log("[ScoreConsume]未检查到会员信息!");
 					return;
@@ -1123,7 +1124,7 @@
 			},
 			//生成会员积分信息请求参数列表
 			memberGenarator: function(obj = {}) {
-				let hyinfo = getApp().globalData.hyinfo;
+				let hyinfo = this.hyinfo || getApp().globalData.hyinfo;
 				console.log("[MemberGenarator]会员积分请求参数:", hyinfo);
 				return Object.assign({
 					// addPoint: 0,//接口默认字段无需传值 下面的同理
@@ -1178,8 +1179,8 @@
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
 				console.log("支付初始化——可用的支付方式:", this.PayWayList)
 
-				this.hyinfo = util.getStorage('hyinfo');
-				console.log("支付初始化——会员信息:", this.hyinfo);
+				// this.hyinfo = util.getStorage('hyinfo');
+				// console.log("支付初始化——会员信息:", this.hyinfo);
 
 				var prev_page_param = this.$store.state.location;
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
@@ -1189,6 +1190,9 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
+					this.hyinfo = prev_page_param?.hyinfo; //会员信息采用传入
+					console.log("支付初始化——会员信息:", this.hyinfo);
+
 					//sale 系列表数据初始化 👆
 					this.actType = prev_page_param.actType; //当前行为操作
 					if (this.actType == common.actTypeEnum.Payment) { //支付
@@ -1320,7 +1324,7 @@
 			},
 			//获取会员卡券	
 			GetHyCoupons: function() {
-				let hyinfo = util.getStorage("hyinfo");
+				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
 				// console.log("会员信息：", JSON.stringify(hyinfo));
 				if (hyinfo?.hyId) {
 					_member.CouponList("获取中...", {
