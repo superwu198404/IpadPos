@@ -8,123 +8,52 @@
 			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
 		</view>
 		<view class="menu">
-			<view v-for="(item,index) in urls" :class="Selected(item.name,item.title)?'curr':''" @click="ToPage(item)">
-				<image class="xz" :src="item.icon" mode="widthFix"></image>
-				<image class="wx" :src="item.icon1" mode="widthFix"></image>
-				<text>{{item.title}}</text>
-				<view class="chargeback" v-if="item.details&&item.showDetail">
-					<label v-for="(item1,index1) in item.details" :class="sec_index==item1.index?'currs':''"
-						@click.capture.stop="ToPage(item1)">
-						<image class="xz" :src="item1.icon" mode="widthFix"></image>
-						<image class="wx" :src="item1.icon1" mode="widthFix"></image>
-						<text>{{item1.title}}</text>
-					</label>
-				</view>
+			<view v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
+				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import router from '@/utils/router.js'
+	import base_sale from '@/utils/sale/base_sale.js'
 	import util from '@/utils/util.js';
 	export default {
 		name: "Page",
-		props: {
-			name: String,
-			title: String
-		},
 		computed: {
 			Selected: function() {
-				return util.callBind(this, function(name, title) {
-					let child = this.urls.find(i => i.name == name && i.title == title)?.$child?.find(i => i.name == this.name && i.title == this.title);
-					return child ? true : (this.name === name) && (this.title === title)
+				return util.callBind(this, function(name) {
+					return name === this.current_info?.name;
 				});
 			}
 		},
 		data() {
 			return {
-				urls: (function(){
-					var func = (arr = [],layer = 1) => {
-						arr.forEach(i => {
-							i.$parent = "";//添加属性，方便后续监听
-							i.$layer = layer;//添加属性，方便后续监听
-							i.$child = [];//当前菜单下的子菜单
-							if(i.details && i.details.length > 0) func(i.details,layer+1);
-						})
-						return arr;
-					}
-					return func(router);
-				})(),
-				menuIndex: 0,
-				sec_index: 0
+				previous_info: null, //上一个菜单信息
+				current_info: null, //当前菜单信息
+				menu_info: null
 			};
 		},
 		methods: {
-			ToPage: function(e) {
-				console.log("[ToPage]切换:", e);
-				let store = util.getStorage("store");
-				if (store.OPENFLAG != '1') {
-					util.simpleMsg("请先进行签到", true);
-					return;
-				}
-				if (e.url_type && e.url_type == 'single') {
-					if (e.name == 'Stress') {
-						util.simpleModal("提示", "重读将销毁已保存的业务数据，是否继续？", res => {
-							if (res) {
-								console.log("测试");
-								util.removeStorage("Init_Data");
-								console.log("测试1:", e.url);
-								uni.redirectTo({
-									url: e.url,
-									complete: r => {
-										console.log(r);
-									}
-								})
-							}
-						})
-					}
-				} else {
-					if (e.url) {
-						this.menuIndex = e.index;
-						if (e.details)
-							this.sec_index = -1
-						else
-							this.sec_index = e.index;
-					}
-					this.$emit("switch", {
-						switch: e.url ? true : false,
-						name: e.name,
-						title: e.title
-					});
-					this.menuIndex = e.index;
-					this.CloseAllChildMenu(e);
-				}
-			},
-			CloseAllChildMenu: function(menu) {
-				this.urls.map((item, index) => {
-					if (item.title != menu.title) {
-						item.showDetail = false;
-					} else {
-						item.showDetail = !item.showDetail;
-					}
-				})
-				if(menu.$parent) menu.$parent.showDetail = false;
-			},
-		},
-		mounted() {
-			var func = (arr = [],parent = null,child) => {
-				arr.forEach(i => {
-					i.$parent = parent;
-					if(child)
-						i.$child = child;
-					else
-						i.$child = [];
-					i.$child.push(i);
-					if(i.details && i.details.length > 0) func(i.details,i,i.$child);
-				})
+			MenuSelect(menu_name, menu_info) {
+				this.previous_info = this.current_info;
+				this.current_info = {
+					name: menu_name,
+					info: menu_info
+				};
+				uni.$emit("change",this.current_info);
 			}
-			func(this.urls);
+		},
+		created() {
+			console.log("[Page-Mounted]菜单初始化开始...");
+			this.menu_info = base_sale.XsTypeObj;
+			this.current_info = {
+				name:'sale',
+				info:this.menu_info.sale
+			}
+			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
 		}
 	}
 </script>
