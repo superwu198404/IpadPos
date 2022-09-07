@@ -191,6 +191,7 @@ var SignOrSignOut = async function(ynqd,qtdate, func) {
 		salenet,
 		qtdate
 	}
+	
 	let apistr = "MobilePos_API.Models.MainCLASS.SignOrSignOut";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);

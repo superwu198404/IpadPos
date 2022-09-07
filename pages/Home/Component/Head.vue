@@ -37,8 +37,8 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-
 					<label>
+						<button class="rijie" @click="Sign()">签到</button>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
 					</label>
 				</view>
@@ -160,7 +160,7 @@
 			<!-- 业务消息组件 -->
 			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
-			<qiandao @GetSignOut="GetSignOutInWeek"></qiandao>
+			<qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao>
 			<!-- 日结组件 -->
 			<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
 		</view>
@@ -201,6 +201,7 @@
 				newPwd: "",
 				secPwd: "",
 				showBle: false,
+				showSign: false,
 				showSignOut: false,
 				signOutDate: [],
 				//蓝牙
@@ -278,6 +279,8 @@
 			if (store.OPENFLAG == 1) { //已签到才进行日结的提示 未签到的等到 签到后再做日结
 				//查询一周内是否有未日结的数据
 				that.GetSignOutInWeek();
+			} else {
+				that.showSign = true;
 			}
 
 		},
@@ -876,8 +879,14 @@
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
+			//去签到
+			Sign: function() {
+				that.showSign = true;
+			},
 			//获取一周内是否有未日结的数据
 			GetSignOutInWeek: function(t, func) {
+				console.log("进入日结搜索方法");
+				that.showSign = false; //关闭签到组件
 				_login.GetSignOutInWeek(res => {
 					console.log("是否有日结数据：", res);
 					if (res.code) {
@@ -894,7 +903,7 @@
 										console.log("点击了确定");
 										that.showSignOut = true;
 										that.signOutDate = JSON.parse(res
-										.data); // ["2022/9/1","2022/8/31"]; 
+											.data); // ["2022/9/1","2022/8/31"]; 
 									}
 								}
 							})
@@ -923,6 +932,7 @@
 						let qtdate = dateformat.getYMD();
 						if (qtdate) {
 							_login.SignOrSignOut(false, qtdate, res => {
+								console.log("时间4");
 								console.log("日结结果：", res);
 								if (res.code) {
 									util.simpleMsg("日结成功！");

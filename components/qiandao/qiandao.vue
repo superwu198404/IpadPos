@@ -3,7 +3,8 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs" v-if="qd_show">
+	<view class="boxs">
+		<!-- v-if="qd_show" -->
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
@@ -13,18 +14,6 @@
 			</view>
 			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
 		</view>
-		<image src="@/images/qiandao.gif" mode="widthFix">
-			<image>
-				<view class="customer">
-					<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-					<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
-					<view class="clues">
-						<image src="@/images/qiandao.gif" mode="widthFix">
-							<image>
-								<text>请先进行签到~</text>
-					</view>
-					<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
-				</view>
 	</view>
 </template>
 
@@ -50,7 +39,7 @@
 		methods: {
 			//签到
 			Sign: function() {
-				_login.SignOrSignOut(true, res => {
+				_login.SignOrSignOut(true, "", res => {
 					console.log("签到结果：", res);
 					if (res.code) {
 						util.simpleMsg("签到成功！");
@@ -58,17 +47,23 @@
 						if (data.sql) {
 							_login.SignOrSignOutSql(data.sql, res => {
 								if (res.OPENFLAG == 1) {
-									console.log("签到成功，新状态为：", res.OPENFLAG == 1);
+									console.log("签到成功，新状态为：", res.OPENFLA);
 									that.qd_show = false;
-									that.$emit("@GetSignOut", {}); //触发首页的日结数据 搜搜
+									setTimeout(r => {
+										that.$emit("GetSignOut"); //触发首页的日结数据 搜搜
+									}, 1500)
 								}
 							});
 						}
 					} else {
 						util.simpleMsg(res.msg, "none");
 						let store = util.getStorage("store");
+						console.log("签到错误的信息：", store.OPENFLAG);
 						if (store.OPENFLAG == 1) {
 							that.qd_show = false;
+							setTimeout(r => {
+								that.$emit("GetSignOut"); //触发首页的日结数据 搜搜
+							}, 1500)
 						}
 					}
 				})
@@ -76,12 +71,12 @@
 		},
 		created: function() {
 			that = this;
-			let store = util.getStorage("store");
-			if (store) {
-				if (store.OPENFLAG != 1) {
-					that.qd_show = true;
-				}
-			}
+			// let store = util.getStorage("store");
+			// if (store) {
+			// 	if (store.OPENFLAG != 1) {
+			// 		that.qd_show = true;
+			// 	}
+			// }
 		}
 	}
 </script>
