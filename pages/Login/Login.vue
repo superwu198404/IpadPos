@@ -126,38 +126,38 @@
 						console.log("确认信息:", res);
 						if (res.confirm) {
 							if (res.content == "999") {
-								let store = {
-									GSID: "K200", //027001
-									KHID: "K200QTD005", //"K0101QT2",
-									POSID: "1",
-									KCDID: "D005",
-									DPID: "11072", // 11072
-									DKFID: '80000000',
-									DKFNAME: '默认大客户',
-									BMID: "", //对应program.xsbm pos 这个参数为空字符串
-									GCID: "K201",
-									DQID: 'K01000', //地区ID（销售地区）
-									NAME: "武汉xxx哈吉卡号就开始",
-									MERID: "999990053990001",
-									deviceno: "13001001",
-									KHAddress: "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园",
-									POSCSZID: "001", 
-									RYID: "10086",
-									PWD: "123",
-									RYNAME: "老王",
-									RYTYPE: "SYSTEM",
-									KHZID: "03",
-									PHONE: 18171372662,
-									JGID: "K200",
-									STIME: "7",
-									ETIME: "19",
-									OPENFLAG: 1, //签到状态
-								}
+								let store = util.getStorage("store");
+								store.GSID = "K200"; //027001
+								store.KHID = "K200QTD005"; //"K0101QT2",
+								store.POSID = "1";
+								store.KCDID = "D005";
+								store.DPID = "11072"; // 11072
+								store.DKFID = '80000000';
+								store.DKFNAME = '默认大客户';
+								store.BMID = ""; //对应program.xsbm pos 这个参数为空字符串
+								store.GCID = "K201";
+								store.DQID = 'K01000'; //地区ID（销售地区）
+								store.NAME = "武汉xxx哈吉卡号就开始";
+								store.MERID = "999990053990001";
+								store.deviceno = "13001001";
+								store.KHAddress = "湖北省武汉市江汉区青年路与后襄河北路交汇处海马公园";
+								store.POSCSZID = "001";
+								store.RYID = "10086";
+								store.PWD = "123";
+								store.RYNAME = "老王";
+								store.RYTYPE = "SYSTEM";
+								store.KHZID = "03";
+								store.PHONE = 18171372662;
+								store.JGID = "K200";
+								store.STIME = "7";
+								store.ETIME = "19";
+								// OPENFLAG: 0, //签到状态
+								console.log("管理登录的门店信息：", store);
 								util.setStorage("store", store);
 								uni.navigateTo({
 									url: "/pages/index/index",
-									complete:res=>{
-										console.log("跳转结果：",res);
+									complete: res => {
+										console.log("跳转结果：", res);
 									}
 								});
 							} else {

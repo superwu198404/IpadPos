@@ -164,7 +164,7 @@ var YN_Sign = function(khid, posid, func) {
 	}
 }
 
-var SignOrSignOut = async function(ynqd,qtdate, func) {
+var SignOrSignOut = async function(ynqd, qtdate, func) {
 	let salenum = 0,
 		salenet = 0;
 	let sql = "SELECT COUNT(*) SALENUM,SUM(TNET) SALENET FROM  SALE001  WHERE SALEDATE =DATETIME('" + dateformat
@@ -186,12 +186,12 @@ var SignOrSignOut = async function(ynqd,qtdate, func) {
 		posid: store.POSID,
 		ryid: store.RYID,
 		ynqd,
-		openflag: store.OPENFLAG,
+		openflag: store.OPENFLAG || 0,
 		salenum,
 		salenet,
 		qtdate
 	}
-	
+
 	let apistr = "MobilePos_API.Models.MainCLASS.SignOrSignOut";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
@@ -205,7 +205,7 @@ var SignOrSignOutSql = async function(sql, func) {
 	})
 	await db.get().executeQry(sqlArr[1], "查询中...", res => {
 		if (res.code && res.msg.length > 0) {
-			
+
 			let store = util.getStorage("store");
 			store.OPENFLAG = res.msg[0].RUN_STATUS;
 			console.log("新的签到数据：", store.OPENFLAG);
@@ -219,7 +219,7 @@ var SignOrSignOutSql = async function(sql, func) {
 //获取一周能是否有未日结的数据
 var GetSignOutInWeek = async function(func) {
 	let store = util.getStorage("store");
-	
+
 	let data = {
 		khid: store.KHID
 	}

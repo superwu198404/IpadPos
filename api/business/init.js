@@ -114,6 +114,8 @@ var GetMDQD = function(khid, func) {
 			let obj = util.getStorage("store");
 			obj.OPENFLAG = res.msg[0].RUN_STATUS;
 			util.setStorage("store", obj);
+		} else {
+			obj.OPENFLAG = 0;
 		}
 		if (func) func(res);
 	}, err => {
