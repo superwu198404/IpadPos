@@ -348,6 +348,7 @@
 				uni.navigateTo({
 					url: "../Main/Main"
 				});
+				
 			},
 			MenuPage: async function(e) {
 				if (e == 0 || e == 1) {
@@ -430,6 +431,9 @@
 							console.log(r);
 						}
 					});
+					// uni.navigateTo({
+					// 	url: "/pages/mainSale/MainSale"
+					// });
 				} else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",

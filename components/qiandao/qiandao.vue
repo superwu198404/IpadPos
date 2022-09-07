@@ -45,9 +45,10 @@
 						util.simpleMsg("签到成功！");
 						let data = JSON.parse(res.data);
 						if (data.sql) {
-							_login.SignOrSignOutSql(data.sql, res => {
-								if (res.OPENFLAG == 1) {
-									console.log("签到成功，新状态为：", res.OPENFLA);
+							_login.SignOrSignOutSql(data.sql, res1 => {
+								if (res1.OPENFLAG == 1) {
+									console.log("签到成功，新状态为：", res1.OPENFLA);
+									
 									that.qd_show = false;
 									setTimeout(r => {
 										that.$emit("GetSignOut"); //触发首页的日结数据 搜搜
