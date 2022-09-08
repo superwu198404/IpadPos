@@ -132,6 +132,7 @@
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
 
+		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY"
 			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
 
@@ -342,7 +343,21 @@
 
 				<view class="shoppbag">
 					<view class="hengs">
-						<view class="baglist curr">
+						<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
+							<view class="bag">
+								<text class="h8">{{item.SNAME}}</text>
+								<label><text>说明</text>{{item.DESCRIBE}}</label>
+							</view>
+							<view class="quantit">
+								<text>数量</text>
+								<view class="nums">
+									<text>-</text>
+									<input type="number" v-model="item.BQTY"/>
+									<text>+</text>
+								</view>
+							</view>
+						</view>
+						<!-- <view class="baglist">
 							<view class="bag">
 								<text class="h8">小号手提袋</text>
 								<label><text>说明</text>已满80元，可赠4个</label>
@@ -369,21 +384,7 @@
 									<text>+</text>
 								</view>
 							</view>
-						</view>
-						<view class="baglist">
-							<view class="bag">
-								<text class="h8">小号手提袋</text>
-								<label><text>说明</text>已满80元，可赠4个</label>
-							</view>
-							<view class="quantit">
-								<text>数量</text>
-								<view class="nums">
-									<text>-</text>
-									<input type="number" />
-									<text>+</text>
-								</view>
-							</view>
-						</view>
+						</view> -->
 
 					</view>
 				</view>
@@ -616,7 +617,7 @@
 		</view>
 
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID"></SpecialDisc>
 	</view>
 </template>
 
@@ -667,7 +668,7 @@
 				KHID: app.globalData.store.KHID, //"K210QTD003"
 				DQID: app.globalData.store.DQID, //"K01000"
 				KHZID: app.globalData.store.KHZID, //"02"
-
+				CXDatas: [],
 			}
 		},
 		components: {
@@ -794,6 +795,14 @@
 				this.Shoppingbags = true,
 					this.Memberinfo = false
 			},
+
+			//获取辅助促销
+			GetFZCX: function() {
+				_main.GetFZCX(this.KHID, res => {
+					console.log("辅助促销查询结果:", res);
+					this.CXDatas = res;
+				})
+			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},
@@ -824,6 +833,8 @@
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
 			this.Bind();
+			//获取辅助促销
+			// this.GetFZCX();
 		}
 	}
 </script>

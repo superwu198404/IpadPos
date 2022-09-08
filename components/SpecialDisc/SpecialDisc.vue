@@ -70,6 +70,9 @@
 	var that;
 	export default {
 		name: "SpecialDisc",
+		props: {
+			dkhid: String
+		},
 		data() {
 			return {
 				curZKType: "", //BZ lS TP
@@ -85,7 +88,9 @@
 			that = this;
 			that.GetZKDatas(that.curZKType);
 			let store = util.getStorage("store");
-			if (store.DKFID && store.DKFID != '80000000') {
+			// if (store.DKFID && store.DKFID != '80000000') {
+			if (that.dkhid) {
+				that.DKFID = that.dkhid;
 				that.GetZKDatas('TP');
 			}
 		},
@@ -123,7 +128,6 @@
 						}
 						util.simpleMsg("暂无数据", true);
 					}
-
 					console.log("页面折扣数据：", that.ZKDatas);
 					console.log("页面折扣数据1：", that.DKFZKDatas);
 				})
