@@ -128,7 +128,7 @@
 				uni.showModal({
 					editable: true,
 					content: "请输入管理密码",
-					placeholderText: "测试密码：999",
+					// placeholderText: "测试密码：999",
 					success: function(res) {
 						console.log("确认信息:", res);
 						if (res.confirm) {
