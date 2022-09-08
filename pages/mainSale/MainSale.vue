@@ -703,8 +703,9 @@
 			},
 			Redirect: function(info) {
 				console.log("[Redirect]重定向至销售主页!", info);
-				let menu_info = this.mysale.XsTypeObj[info.name];
-				this.mainSale.$initSale(menu_info.clickType, info.params);
+				let menu_info = mysale.XsTypeObj[info.name];
+				console.log("[Redirect]模式信息:", menu_info);
+				this.mainSale.$initSale(menu_info, info.params);
 				this.mainSale.SetManage('sale');
 			},
 			CloseMember: function(member_info) {

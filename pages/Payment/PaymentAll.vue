@@ -530,7 +530,7 @@
 						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - item
 							.SKYDISCOUNT).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
-						.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
@@ -1219,7 +1219,7 @@
 				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
 				this.sale2_arr.forEach(function(item, index, arr) {
-					let high = parseFloat((item.NET/total * that.SKY_DISCOUNT).toFixed(2));
+					let high = parseFloat((item.NET / total * that.SKY_DISCOUNT).toFixed(2));
 					item.SKYDISCOUNT = high;
 					curDis += high;
 					// console.log("几个值：", [high, curDis, index, arr.length, that.SKY_DISCOUNT]);
@@ -1270,9 +1270,11 @@
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					this.event.emit("ExtractBack", {
+					this.event.emit("FinishOrder", {
 						msg: "预订单支付完成!",
-						order: this.sale1_obj
+						order: this.sale1_obj,
+						product: this.sale2_arr,
+						payed: this.sale3_arr
 					});
 					uni.navigateBack()
 				} else

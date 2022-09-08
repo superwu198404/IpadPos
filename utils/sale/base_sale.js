@@ -34,7 +34,6 @@ var XsTypeObj = {
 			"sale_takeaway_reserve": false,
 			"sale_message": false,
 			"tools": false,
-
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -42,8 +41,8 @@ var XsTypeObj = {
 		$click() {
 			return true;
 		},
-		$initSale: function(type, params) {
-
+		$initSale: function(params) {
+			console.log("[sale-$initSale]params:",params);
 		},
 		///对打印的控制
 		$print: function() {
@@ -101,7 +100,7 @@ var XsTypeObj = {
 		},
 	},
 	sale_reserve_extract: {
-		xstype: "5",
+		xstype: "4",
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),

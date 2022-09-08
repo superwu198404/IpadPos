@@ -181,7 +181,7 @@
 							// 		sale2:JSON.parse(res.data)
 							// 	}
 							// })
-							this.$to_sale_pages({
+							this.$to_sale_pages('sale_reserve_extract',{
 								sale1: item,
 								sale2: JSON.parse(res.data)
 							})
