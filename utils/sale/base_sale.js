@@ -907,6 +907,7 @@ function GetSale(global, vue, target_name) {
 			let price = that.spPrice[pm_spid].PRICE;
 			pm_qty = that.float(pm_qty, 3);
 			price = that.float(price, 2);
+			new002.OPRICE = price;
 			new002.PRICE = price;
 			new002.OPRICE = price;
 			new002.QTY = pm_qty;
