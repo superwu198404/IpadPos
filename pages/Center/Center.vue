@@ -26,7 +26,7 @@
 			},
 			GetSignOutInWeek: function() {
 				let store = util.getStorage("store");
-				if (store.OPENFLAG == 1) {
+				if (store.OPENFLAG== 1) {
 					if (store.RYTYPE != "SYSTEM") {
 						uni.redirectTo({
 							url: "/pages/mainSale/MainSale"

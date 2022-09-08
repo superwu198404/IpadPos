@@ -12,7 +12,7 @@
 				<image src="@/images/qiandao.png" mode="widthFix"></image>
 				<text>请先进行签到~</text>
 			</view>
-			<view class="affirm" style="position:relative;z-index: 9999;"><button class="btn btn-qr" @click="Sign()">签到</button></view>
+			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
 		</view>
 	</view>
 </template>
@@ -117,6 +117,7 @@
 		align-items: center;
 		justify-content: center;
 		padding-bottom: 20rpx;
+		z-index: 999;
 	}
 
 	.affirm button {
