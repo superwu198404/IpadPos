@@ -1,6 +1,7 @@
 import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
+import { Accept } from '@/bll/Common/bll.js';
 
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
@@ -43,8 +44,8 @@ var XsTypeObj =
 		{
 			return true;
 		},
-		$initSale: function(type, params) {
-
+		$initSale: function(params) {
+			console.log("[sale-$initSale]params:",params);
 		},
 		///对打印的控制
 		$print: function() 
@@ -119,7 +120,7 @@ var XsTypeObj =
 		},
 	},
 	sale_reserve_extract: {
-		xstype: "5",
+		xstype: "4",
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),
@@ -128,12 +129,14 @@ var XsTypeObj =
 			"sale_reserve_extract": true
 		},
 		$initSale: function(params) {
+			this.allOperation.actType = true;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
+			this.InitSale001();
 			console.log("[sale_reserve_extract]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? {};
+			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? {};
+			this.sale003 = params.sale3 ?? [];
 		}
 	},
 	sale_reserve_cancel: {
@@ -149,12 +152,13 @@ var XsTypeObj =
 		{
 			
 		     this.actType  ="Refund";
+			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? {};
+			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? {};
+			this.sale003 = params.sale3 ?? [];
 		}
 	},
 	//线上订单+线上提取
@@ -685,6 +689,7 @@ function GetSale(global, vue, target_name) {
 		that.$beforeFk(inputParm);
 		that.log(JSON.stringify( inputParm));
 		that.Page.$store.commit('set-location',inputParm );
+		console.log("[ToPay]控制对象:",that.allOperation.actType);
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
@@ -779,7 +784,28 @@ function GetSale(global, vue, target_name) {
 	{
 
 	}
-
+	
+	this.InitSale001 = function() {
+		var is_new = Object.keys(this.sale001).length == 0;
+		var commonSaleParm = {
+			KHID: this.Storeid,
+			SALEDATE: this.SALEDATE,
+			POSID: this.POSID,
+			RYID: this.ryid,
+			KCDID: this.KCDID,
+			GCID: this.GCID,
+		};
+		if(is_new){
+			commonSaleParm.BILL = this.getBill();//创建新订单号
+			commonSaleParm.SALETIME = this.getTime();//创建新的销售时间
+			this.sale001 = new sale.sale001(commonSaleParm)
+		}
+		else{
+			Object.assign(this.sale001,new sale.sale001(commonSaleParm));
+		}
+		return commonSaleParm;
+	}
+	
 	this.createNewBill = function() {
 		var commonSaleParm = {}
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID

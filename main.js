@@ -4,6 +4,7 @@ import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
 import store from '@/utils/store.js';
 import extend from '@/utils/extend.js';
+import vue_extend from '@/utils/vue-extend.js';
 
 // #ifdef VUE2
 import Vue from 'vue'
@@ -25,13 +26,6 @@ Vue.mixin(Mixin);
 Vue.config.productionTip = false
 Vue.config.$ = $
 Vue.prototype.tui = tui
-Vue.prototype.$to_sale_pages = (params) => {
-	console.log("[$to_sale_pages]重定向至销售主页!");
-	this.$emit("redirect", {
-		name: "sale",
-		params
-	})
-}
 App.mpType = 'app'
 
 const app = new Vue({

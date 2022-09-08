@@ -649,6 +649,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	var app = getApp();
 	export default {
 		data() {
 			return {
@@ -663,9 +664,9 @@
 				saleAdd: [],
 				saleSub: [],
 				MainSale: {},
-				KHID:"K210QTD003",
-				DQID:"K01000",
-				KHZID:"02"
+				KHID:app.globalData.store.KHID, //"K210QTD003"
+				DQID:app.globalData.store.DQID, //"K01000"
+				KHZID:app.globalData.store.KHZID, //"02"
 				
 			}
 		},
@@ -715,8 +716,9 @@
 			Redirect: function(info)
 			{
 				console.log("[Redirect]重定向至销售主页!", info);
-				let menu_info = this.mysale.XsTypeObj[info.name];
-				this.mainSale.$initSale(menu_info.clickType, info.params);
+				let menu_info = mysale.XsTypeObj[info.name];
+				console.log("[Redirect]模式信息:", menu_info);
+				this.mainSale.$initSale(menu_info, info.params);
 				this.mainSale.SetManage('sale');
 			},
 			CloseMember: function(member_info) {
