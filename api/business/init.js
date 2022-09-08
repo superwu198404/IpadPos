@@ -138,9 +138,9 @@ var InitData = async function(khid, func) {
 	await common.GetPOSCS(khid);
 	//初始化系统参数
 	_sysParam.init(khid);
+	console.log("初始化完毕");
 	//签到状态
 	GetMDQD(khid);
-
 	if (func)
 		func();
 }

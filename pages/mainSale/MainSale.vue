@@ -59,7 +59,7 @@
 													</label>
 												</view>
 												<view class="price">
-													<text>￥{{ Price(sptiem.SPID) }}</text>
+													<text>￥{{ mainSale.spPrice[sptiem.SPID].PRICE }}</text>
 													<view>
 														<image src="../../images/dx-gd.png" mode="widthFix"></image>
 													</view>
@@ -249,6 +249,56 @@
 					</view>
 				</view>
 			</view>
+		</view>
+
+		<!-- 蛋糕属性选择 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+			<view class="popup">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
+				<view class="commods">
+					<view class="h3">
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+					</view>
+					<view class="cods">
+						<label>
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+						</label>
+						<label>
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
+						</label>
+					</view>
+					<view class="price">
+						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
+						   <view> 
+						     <button @click="mainSale.chengedQty"  data-qty="-1">–</button>
+						     <label>{{mainSale.clikSpItem.inputQty}}</label>
+						     <button @click="mainSale.chengedQty" data-qty="1">+</button>
+						  </view>
+					</view>
+					<view>
+						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
+							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
+							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
+						</view>
+					</view>
+					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
+						<view class="sizelist">
+							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
+								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-spid="specs.SPID">{{specs.SPECS}}</label>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 未登录结算单 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="pop-r pop-rs">
 				<view class="member">
 					<label>
@@ -337,8 +387,8 @@
 
 					</view>
 				</view>
-				<view class="confirm">
-					<button class="btn" @click="mainSale.ToPay">确 认</button>
+				<view >
+					<button  @click="mainSale.pay"  class="btn">去支付</button>
 				</view>
 				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
@@ -566,50 +616,7 @@
 		</view>
 
 		<!-- 特殊折扣 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.Disc">
-			<view class="popup special">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<view class="commods" style="padding-top:26rpx;">
-					<view class="h3">
-						特殊折扣选则<button class="close" @click="mainSale.ComponentsManage.Disc=false">×</button>
-					</view>
-					<view class="uls">
-						<view class="lis curr">
-							<view class="h8">
-								<view>标准折扣<em></em></view>
-								<label>总折扣额:<text>￥566</text></label>
-								<span>已选</span>
-							</view>
-							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<view>
-									<label>
-										<checkbox></checkbox>临时折扣
-									</label>
-									<text>满¥1000即打9折，折扣额¥123</text>
-								</view>
-							</view>
-						</view>
-						<view class="lis">
-							<view class="h8">
-								<view>特批折扣<em></em></view>
-								<span>已选</span>
-							</view>
-							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-							</view>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" @click="showMDCXData=false">确 认</button>
-					</view>
-				</view>
-			</view>
-		</view>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc"></SpecialDisc>
 	</view>
 </template>
 
@@ -655,7 +662,11 @@
 				mainSale: null,
 				saleAdd: [],
 				saleSub: [],
-				MainSale: {}
+				MainSale: {},
+				KHID:"K210QTD003",
+				DQID:"K01000",
+				KHZID:"02"
+				
 			}
 		},
 		components: {
@@ -696,11 +707,13 @@
 			}
 		},
 		methods: {
-			Change: function(menu) {
+			Change: function(menu) 
+			{
 				console.log("[Change]菜单点击触发!", menu);
 				this.mainSale.SetManage(menu.info.clickType);
 			},
-			Redirect: function(info) {
+			Redirect: function(info)
+			{
 				console.log("[Redirect]重定向至销售主页!", info);
 				let menu_info = mysale.XsTypeObj[info.name];
 				console.log("[Redirect]模式信息:", menu_info);
@@ -737,6 +750,9 @@
 			GetTSZKData: function() { //展示特殊折扣
 				// that.showTSZK = true;
 				this.mainSale.ComponentsManage.Disc = true;
+			},
+			CloseTSZK: function(data) {
+				this.mainSale.ComponentsManage.Disc = false;
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout;
@@ -787,12 +803,14 @@
 				uni.$off("member-close");
 				uni.$off("close-big-customer");
 				uni.$off("open-big-customer");
+				uni.$off("close-tszk");
 				console.log("[Bind]BIND!");
 				uni.$on("change", this.Change);
 				uni.$on("redirect", this.Redirect);
 				uni.$on("member-close", this.CloseMember);
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
+				uni.$on("close-tszk", this.CloseTSZK);
 			}
 		},
 		created() {

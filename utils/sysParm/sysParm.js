@@ -1,5 +1,5 @@
 import sqlLite from '@/utils/db/db_excute.js';
-import util from '../util';
+import util from '@/utils/util.js';
 /*
 参数内容如下 经过上述代码 读取参数值的是偶使用
 1	服务器指向	FWZX	1  app.globalData.$sysParm.FWZX

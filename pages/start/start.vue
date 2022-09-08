@@ -171,12 +171,12 @@
 			toMainSale:function()
 			{
 				uni.navigateTo({
-					url: "/pages/mainSale/mainSale"
+					url: "/pages/mainSale/MainSale"
 				});
 			},
 			toPrinter: function() {
 				uni.navigateTo({
-					url: "/pages/xprinter/home"
+					url: "pages/mainSale/MainSale"
 				});
 			},
 			startx: function() {
@@ -288,8 +288,8 @@
 									POSID: that.posid
 								});
 								setTimeout(r => {
-									uni.navigateTo({
-									//	url: "/pages/Login/Login"
+									uni.redirectTo({
+										url: "/pages/Login/Login"
 									});
 								}, 500)
 							}

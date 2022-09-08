@@ -173,7 +173,7 @@
 	import common from '@/api/common.js';
 	import _login from '@/api/business/login.js';
 	import bleConnect from '@/utils/xprinter/bleConnect.js';
-	import dateformat from '@/utils/dateformat.js';
+	import dateformat from '@/utils/dateformat.js'; 
 
 	var app = getApp();
 	let that;

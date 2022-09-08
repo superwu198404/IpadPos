@@ -24,8 +24,6 @@ var loadSaleSP  =
 {    
 	getFstrAndSort:function(pm_arr)  //将当前数组的拼音的第一位截取出来
 	{
-		
-		
 		//{"FSTR":"z","PINYIN":"zjpbtzw（x）8-qj","SNAME":"竹节排包提子味（型）8-仟吉","SPID":"000000001010100002","addlist":"","plid":"308","plname":"三明治用半成品","specslist":"","ynAddPro":0,"ynshowlist":0}
 		let newarrList  ;
 	    console.log("开始获取拼音首字母");
@@ -146,23 +144,23 @@ var loadSaleSP  =
 		
 		 await  $sqlLite.executeQry(msplistSql,"正在获取主数据",(res)=>
 		 {  
-			 //console.log(JSON.stringify(res).substring(0,2000));
+			 console.log(JSON.stringify(res).substring(0,2000));
 			  mainArr = res.msg;   
 			  console.log(JSON.stringify(mainArr.length));
 		 },null);	
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT, ,dgxlda.PINYIN,dgxlda.plid,PLDA.SNAME plname,\
-	                   1 ynshowlist , '' specslist,0 ynAddPro,'' addlist  \
-				     from  dgxlda,plda where dgxlda.plid=plda.plid \
-					 and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid \
-				     and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"' \
-				     and spda_dgxl.dgxlid =dgxlda.dgxlid)";
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT, ,dgxlda.PINYIN,dgxlda.plid,PLDA.SNAME plname," +
+	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
+				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
+					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid "
+				    " and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'" +
+				    " and spda_dgxl.dgxlid =dgxlda.dgxlid) ";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 			 await  $sqlLite.executeQry(drinksAddSql,"正在获取蛋糕数据",(res)=>
 			 {  
 						
-		       	//console.log(JSON.stringify(res).substring(0,2000));
+		       	console.log(JSON.stringify(res).substring(0,2000));
 			    mainArr=	mainArr.concat(res.msg);    
 			    console.log(JSON.stringify(mainArr.length));
 			 },null);	
@@ -174,7 +172,7 @@ var loadSaleSP  =
 					 
 			await  $sqlLite.executeQry(cakeSpescSql,"正在获取蛋糕数据",(res)=>
 			{  				
-			  	//console.log(JSON.stringify(res).substring(0,2000));
+			  	console.log(JSON.stringify(res).substring(0,2000));
 							cakeSpesc=res.msg;    
 			},null);			 
 	  //水吧sql	3		 
@@ -190,7 +188,7 @@ var loadSaleSP  =
 	  			await  $sqlLite.executeQry(msDrinksql,"开始获取水吧商品",(res)=>
 	  			{  
 	  									
-	  			 // 	console.log(JSON.stringify(res).substring(0,2000));
+	  			  	console.log(JSON.stringify(res).substring(0,2000));
 	  			     mainArr=	mainArr.concat(res.msg);     
 	  			 
 	  			},null);						 
@@ -211,7 +209,8 @@ var loadSaleSP  =
 			   
 			 if(callbackfun)
 			 {
-				 console.log(JSON.stringify(spPrice).substr(0,300));
+				 console.log("售价"+JSON.stringify(spPrice).substr(0,300));
+				  console.log("商品"+JSON.stringify(arrAllsp).substr(0,300));
 				 callbackfun(arrAllsp,spPrice);
 				 
 			 }

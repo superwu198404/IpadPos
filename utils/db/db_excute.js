@@ -282,7 +282,7 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					console.log("executeSql:okkkk" + JSON.stringify(e));
+					// console.log("executeSql:okkkk" + JSON.stringify(e));
 					return resolve({
 						code: true,
 						msg: e
