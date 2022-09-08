@@ -889,6 +889,7 @@ function GetSale(global, vue, target_name) {
 			pm_qty = that.float(pm_qty, 3);
 			price = that.float(price, 2);
 			new002.PRICE = price;
+			new002.OPRICE = price;
 			new002.QTY = pm_qty;
 			new002.NET = that.float(pm_qty * price, 2);
 			new002.DISCRATE = 0;
@@ -923,7 +924,7 @@ function GetSale(global, vue, target_name) {
 	this.ShowStatement = async function(e) 
 	{
 		console.log("[ShowStatement]商品信息:", that.sale002);
-	    //await cx.Createcx(that.sale002);
+	    await cx.Createcx(that.sale002);
 		that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
