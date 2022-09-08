@@ -117,7 +117,7 @@
 								})
 							} else {
 								uni.redirectTo({
-									url: "../Center/Center"
+									url: "../mainSale/MainSale"
 								})
 							}
 						}, 1000);

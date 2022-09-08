@@ -118,13 +118,13 @@
 			// 	plus.navigator.closeSplashscreen();
 			// }
 			_init.YN_Init(res => {
-				uni.reLaunch({
-					url: "/pages/Login/Login",
+				/* uni.reLaunch({
+					url: "/pages/Login/Login", 
 					success: () => {
 						//跳转完页面后再关闭启动页
 						plus.navigator.closeSplashscreen();
 					}
-				})
+				}) */
 			}, err => {
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
