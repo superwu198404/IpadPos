@@ -142,7 +142,8 @@
 		</view>
 
 		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="controller.ComponentsManage.inputsp">
+		 <!-- v-if="controller.ComponentsManage.inputsp" -->
+		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="controller.setComponentsManage" data-mtype='inputsp'>×</button>

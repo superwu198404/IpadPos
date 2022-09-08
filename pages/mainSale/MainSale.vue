@@ -9,9 +9,9 @@
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu"></Page>
-			<view class="right">
+			<view class="right" style="position: relative;">
 				<Head></Head>
-				<view class="listof">
+				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
 						<view class="commodity">
@@ -103,17 +103,17 @@
 					</view>
 				</view>
 				<!-- 在这插入组件 -->
-				<Reserve v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
-				<Extract key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
-				<TakeYD v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
-				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
-				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
-				<Message v-if="mainSale.ComponentsManage.sale_message"></Message>
-				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
-				<SXRefund v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<Promotion v-if="mainSale.ComponentsManage.tools"></Promotion>
+				<Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
+				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
+				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
+				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<Promotion style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.tools"></Promotion>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -209,12 +209,7 @@
 						<label>
 							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
 						</label>
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
+						
 					</view>
 					<view class="price">
 						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
@@ -791,6 +786,11 @@
 
 	.right {
 		height: 100%;
+	}
+	
+	.right > * {
+	    width: 100%;
+		background-color: #f5f4f8;
 	}
 
 	.menu .saleadd {
