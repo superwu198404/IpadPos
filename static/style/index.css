@@ -439,6 +439,7 @@ page {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width:100%;
 }
 .popup .confirm button{
 	width:50%;

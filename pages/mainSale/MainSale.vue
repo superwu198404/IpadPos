@@ -270,11 +270,11 @@
 					</view>
 					<view class="price">
 						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
-						   <view> 
-						     <button @click="mainSale.chengedQty"  data-qty="-1">–</button>
-						     <label>{{mainSale.clikSpItem.inputQty}}</label>
-						     <button @click="mainSale.chengedQty" data-qty="1">+</button>
-						  </view>
+						<view>
+							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
+							<label>{{mainSale.clikSpItem.inputQty}}</label>
+							<button @click="mainSale.chengedQty" data-qty="1">+</button>
+						</view>
 					</view>
 					<view>
 						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
@@ -387,8 +387,8 @@
 
 					</view>
 				</view>
-				<view >
-					<button  @click="mainSale.pay"  class="btn">去支付</button>
+				<view>
+					<button @click="mainSale.pay" class="btn">去支付</button>
 				</view>
 				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
@@ -664,10 +664,10 @@
 				saleAdd: [],
 				saleSub: [],
 				MainSale: {},
-				KHID:app.globalData.store.KHID, //"K210QTD003"
-				DQID:app.globalData.store.DQID, //"K01000"
-				KHZID:app.globalData.store.KHZID, //"02"
-				
+				KHID: app.globalData.store.KHID, //"K210QTD003"
+				DQID: app.globalData.store.DQID, //"K01000"
+				KHZID: app.globalData.store.KHZID, //"02"
+
 			}
 		},
 		components: {
@@ -708,13 +708,11 @@
 			}
 		},
 		methods: {
-			Change: function(menu) 
-			{
+			Change: function(menu) {
 				console.log("[Change]菜单点击触发!", menu);
 				this.mainSale.SetManage(menu.info.clickType);
 			},
-			Redirect: function(info)
-			{
+			Redirect: function(info) {
 				console.log("[Redirect]重定向至销售主页!", info);
 				let menu_info = mysale.XsTypeObj[info.name];
 				console.log("[Redirect]模式信息:", menu_info);
@@ -765,12 +763,13 @@
 				this.Alphabetical = true
 			},
 			GetHyCoupons: function(hyinfo) {
+				console.log("打印会员信息：", this.mainSale.HY.val);
 				if (hyinfo?.hyId) {
 					_member.CouponList("获取中...", {
 						brand: this.brand,
 						data: {
-							hyid: this.MemberInfo.hyId,
-							phone: this.MemberInfo.Phone
+							hyid: this.mainSale.HY.val.hyId,
+							phone: this.mainSale.HY.val.Phone
 						}
 					}, util.callBind(this, function(res) {
 						if (res.code) {
