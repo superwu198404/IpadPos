@@ -580,7 +580,7 @@ page {
 	height: 100%;
 	position: fixed;
 	top: 0;
-	right: 0;
+	right: 35%;
 	width: 92%;
 	/* text-align: right; */
 	display: flex;

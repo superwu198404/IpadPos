@@ -183,6 +183,56 @@
 
 		<!-- 未登录结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		</view>
+
+		<!-- 蛋糕属性选择 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+			<view class="popup">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
+				<view class="commods">
+					<view class="h3">
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+					</view>
+					<view class="cods">
+						<label>
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+						</label>
+						<label>
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
+						</label>
+					</view>
+					<view class="price">
+						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
+						<view>
+							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
+							<label>{{mainSale.clikSpItem.inputQty}}</label>
+							<button @click="mainSale.chengedQty" data-qty="1">+</button>
+						</view>
+					</view>
+					<view>
+						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
+							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
+							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
+						</view>
+					</view>
+					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
+						<view class="sizelist">
+							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
+								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-spid="specs.SPID">{{specs.SPECS}}</label>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 未登录结算单 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement" style="border: 1px solid red;">
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -192,7 +242,7 @@
 							<label
 								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
 						</label>
-						<button @click="mainSale.ComponentsManage.HY = false">×</button>
+						<!-- <button @click="mainSale.ComponentsManage.HY = false">×</button> -->
 					</view>
 					<view class="nom">
 						<label>
@@ -242,7 +292,7 @@
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
 										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-													mode="widthFix"></image></button> -->
+														mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
