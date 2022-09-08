@@ -58,6 +58,7 @@ const Cxdict = async () => {
 	let storeid = app.globalData.store.KHID;
 	let gsid = app.globalData.store.GSID;
 	
+	//初始化，全局变量先清除
 	cxSelectTip = [];
 	cxbilldts = [];
 	cxdict = new Map();
@@ -269,6 +270,7 @@ const Cxdict = async () => {
 
 //计算促销的方法
 const Createcx = async (sale02_arr) => {
+	console.log("Createcx计算促销传入的商品sale02_arr",sale02_arr)
 	//计算时无生效的促销，再次请求初始化一次
 	if(cxdict == null || cxdict.size < 1){
 		await Cxdict();
@@ -282,6 +284,7 @@ const Createcx = async (sale02_arr) => {
 		});
 	}
 
+	//循环传入的购物车商品
 	for (let i = 0; i < sale02_arr.length; i++) {
 		let spid = sale02_arr[i].SPID.toString();
 		let price = Math.round(parseFloat(sale02_arr[i].OPRICE.toString()) * 100) / 100;
@@ -366,8 +369,9 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.zdcxbill = zdcxsubno;
 				cxbilldts.push(dr);
 			} else {
+				//查询促销单对应的商品
 				let spdt = cx_util.retDtforConditions(dscxsp, "SPID", itemid);
-				console.log("spdt", spdt);
+				//console.log("spdt", spdt);
 				let dr = {};
 				dr.SPID = itemid;
 				dr.SYSL = qty;
@@ -461,6 +465,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (retclssid == null) {
 				continue;
 			}
+			//校验通过满足条件的促销单，去计算促销
 			cxClasCompute(spid, bill, saledate,cxbill, retclssid, sysl);
 		}
 	}
@@ -779,6 +784,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				// 		ynzs = false;
 				// 	}
 				// }
+				
 				let ynzs = false; //测试使用，正式注释，使用上面注释的代码
 
 				if (subx.ZkTj == "Qty") {
@@ -1547,7 +1553,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 
 
 export default {
-	Cxdict,
-	CreateArr,
-	Createcx
+	Cxdict, //从数据库中取出所有的促销信息，初始化
+	CreateArr, 
+	Createcx //计算促销的方法
 }
