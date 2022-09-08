@@ -394,19 +394,19 @@
 					} else {
 						this.SaleBaseInit();
 					}
-					this.DataAssembleSaveForGlobal();
-					uni.navigateTo({
-						url: "../Payment/PaymentAll"
-					})
+					this._DataAssembleSaveForGlobal();
 					// uni.navigateTo({
-					// 	url: "../Payment/Payment",
-					// 	events: {
-					// 		FinishOrder: util.callBind(this, function(res) {
-					// 			console.log("支付完跳转回来的结果：", res);
-					// 			//res.data.sale1_obj 
-					// 		})
-					// 	}
+					// 	url: "../Payment/PaymentAll"
 					// })
+					uni.navigateTo({
+						url: "../Payment/Payment",
+						events: {
+							FinishOrder: util.callBind(this, function(res) {
+								console.log("支付完跳转回来的结果：", res);
+								//res.data.sale1_obj 
+							})
+						}
+					})
 				} else if (e == 2) {
 					uni.navigateTo({
 						// url: "../hyinfo/index"
@@ -459,12 +459,290 @@
 				}
 			},
 			//新版
-			_DataAssembleSaveForGlobal: function() {
+			XS_POSID: function() {
 				console.log("进入支付传参");
 				//把数据传入下个页面
 				this.$store.commit('set-location', {
 					sale1_obj: this.sale1_obj, //001 主单 数据对象
 					sale2_arr: this.sale2_arr, //002 商品 数据对象集合
+					sale3_arr: this.sale3_arr, //003 支付数据集合
+					sale8_arr: this.sale8_arr, //008水吧商品
+					actType: this.actType,
+					hyinfo: {},
+					PayList: this.PayList //预留 用作已支付部分的业务
+				});
+			},
+			_DataAssembleSaveForGlobal: function() {
+				console.log("进入支付传参");
+				let str1 = {
+					CLTIME: null,
+					CUSTID: null,
+					XSPTID: null,
+					YN_DCDG: null,
+					YN_HH: null,
+					DKFID: null,
+					BMID: null,
+					KCDID: "",
+					DPID: null,
+					GCID: "",
+					GSID: null,
+					STR2: null,
+					STR1: null,
+					ERRINO: null,
+					ERRID: null,
+					TIME: 0,
+					WEEK: 0,
+					MONTH: 0,
+					YAER: 0,
+					YN_SC: null,
+					REASON: null,
+					TDISC: 0,
+					TLSDISC: 0,
+					TTPDISC: 0,
+					TBZDISC: 0,
+					THYDISC: 0,
+					HYJF: 0,
+					CARDID: null,
+					CUID: null,
+					TCXDISC: 0,
+					CXTNET: 0,
+					CHANGENET: 0,
+					ROUND: 0,
+					BILLDISC: null,
+					ZNET: "29.80",
+					DNET: 0,
+					TNET: 0,
+					TLINE: 4,
+					XS_GSID: null,
+					XS_KHID: null,
+					XS_DATE: null,
+					XS_POSID: null,
+					XS_BILL: null,
+					BILL_TYPE: "Z101",
+					RYID: "",
+					BILL: "2298840210",
+					KHID: "K200QTD005",
+					SALETIME: "2022-09-08T00:40:21.147Z",
+					THTYPE: null,
+					ZTMSTR: null,
+					KQXSTYPE: null,
+					YN_JLTH: null,
+					YN_OK: null,
+					CUSTMTIME: null,
+					CUSTMCOMM: null,
+					CUSTMADDRESS: null,
+					CUSTMPHONE: null,
+					CUSTMNAME: null,
+					DISC: "0.00"
+				};
+				let str2 = [{
+						"XPDGCOM": null,
+						"XPDGSTR": null,
+						"SBERR": null,
+						"YN_SB": null,
+						"MYSTR": null,
+						"YN_XPDG": "N",
+						"BMID": null,
+						"RYID": "",
+						"KCDID": "",
+						"DPID": null,
+						"GCID": "",
+						"STR2": "",
+						"STR1": "爱心莓",
+						"TIME": 0,
+						"WEEK": 0,
+						"MONTH": 0,
+						"YAER": 0,
+						"HYJFCD": 0,
+						"JFDISC": 0,
+						"HYJF": 0,
+						"LSDISC": 0,
+						"TPDISC": 0,
+						"BZDISC": 0,
+						"HYDISC": 0,
+						"YN_HYDISC": null,
+						"CXID": null,
+						"CXDISC": 0,
+						"YN_CXDISC": null,
+						"BILLDISC": 0,
+						"DISC_TYPE": null,
+						"DISC": 0,
+						"YN_SKYDISC": null,
+						"HYBL": 0,
+						"DISCRATE": 0,
+						"BRANDID": null,
+						"HTID": null,
+						"GYSID": null,
+						"NET": 29.80,
+						"OPRICE": 0,
+						"PRICE": "14.90",
+						"MINSQTY": 0,
+						"QTY": "2.000",
+						"UNIT": "个",
+						"SERIAL": null,
+						"BARCODE": "000000001040200008",
+						"PLID": null,
+						"NO": 0,
+						"SPID": "000000001040200008",
+						"BILL": "2298840210",
+						"KHID": "",
+						"SALETIME": "2022-09-08T00:40:21.147Z"
+					},
+					{
+						"XPDGCOM": null,
+						"XPDGSTR": null,
+						"SBERR": null,
+						"YN_SB": null,
+						"MYSTR": null,
+						"YN_XPDG": "N",
+						"BMID": null,
+						"KCDID": "",
+						"DPID": null,
+						"GCID": "",
+						"STR2": "",
+						"STR1": "(10盎司)醇味酸奶",
+						"TIME": 0,
+						"WEEK": 0,
+						"MONTH": 0,
+						"YAER": 0,
+						"HYJFCD": 0,
+						"JFDISC": 0,
+						"HYJF": 0,
+						"LSDISC": 0,
+						"TPDISC": 0,
+						"BZDISC": 0,
+						"HYDISC": 0,
+						"YN_HYDISC": null,
+						"CXID": null,
+						"CXDISC": 0,
+						"YN_CXDISC": null,
+						"BILLDISC": 0,
+						"DISC_TYPE": null,
+						"DISC": 0,
+						"YN_SKYDISC": null,
+						"HYBL": 0,
+						"DISCRATE": 0,
+						"BRANDID": null,
+						"HTID": null,
+						"GYSID": null,
+						"NET": "0.00",
+						"OPRICE": 0,
+						"PRICE": "12.50",
+						"MINSQTY": 0,
+						"QTY": "0.000",
+						"UNIT": "杯",
+						"SERIAL": null,
+						"BARCODE": "000000001070600007",
+						"PLID": null,
+						"NO": 1,
+						"SPID": "000000001070600007",
+						"SALETIME": "2022-09-08T00:40:21.147Z"
+					},
+					{
+						"XPDGCOM": null,
+						"XPDGSTR": null,
+						"SBERR": null,
+						"YN_SB": null,
+						"MYSTR": null,
+						"YN_XPDG": "N",
+						"BMID": null,
+						"KCDID": "",
+						"DPID": null,
+						"GCID": "",
+						"STR2": "",
+						"STR1": "(10盎司)芒果酸奶",
+						"TIME": 0,
+						"WEEK": 0,
+						"MONTH": 0,
+						"YAER": 0,
+						"HYJFCD": 0,
+						"JFDISC": 0,
+						"HYJF": 0,
+						"LSDISC": 0,
+						"TPDISC": 0,
+						"BZDISC": 0,
+						"HYDISC": 0,
+						"YN_HYDISC": null,
+						"CXID": null,
+						"CXDISC": 0,
+						"YN_CXDISC": null,
+						"BILLDISC": 0,
+						"DISC_TYPE": null,
+						"DISC": 0,
+						"YN_SKYDISC": null,
+						"HYBL": 0,
+						"DISCRATE": 0,
+						"BRANDID": null,
+						"HTID": null,
+						"GYSID": null,
+						"NET": "15.00",
+						"OPRICE": 0,
+						"PRICE": "15.00",
+						"MINSQTY": 0,
+						"QTY": "1.000",
+						"UNIT": "杯",
+						"SERIAL": null,
+						"BARCODE": "000000001070600008",
+						"PLID": null,
+						"NO": 2,
+						"SPID": "000000001070600008",
+						"SALETIME": "2022-09-08T00:40:21.147Z"
+					},
+					{
+						"XPDGCOM": null,
+						"XPDGSTR": null,
+						"SBERR": null,
+						"YN_SB": null,
+						"MYSTR": null,
+						"YN_XPDG": "N",
+						"BMID": null,
+						"KCDID": "",
+						"DPID": null,
+						"GCID": "",
+						"STR2": "",
+						"STR1": "棒棒餐包(牛奶味)",
+						"TIME": 0,
+						"WEEK": 0,
+						"MONTH": 0,
+						"YAER": 0,
+						"HYJFCD": 0,
+						"JFDISC": 0,
+						"HYJF": 0,
+						"LSDISC": 0,
+						"TPDISC": 0,
+						"BZDISC": 0,
+						"HYDISC": 0,
+						"YN_HYDISC": null,
+						"CXID": null,
+						"CXDISC": 0,
+						"YN_CXDISC": null,
+						"BILLDISC": 0,
+						"DISC_TYPE": null,
+						"DISC": 0,
+						"YN_SKYDISC": null,
+						"HYBL": 0,
+						"DISCRATE": 0,
+						"BRANDID": null,
+						"HTID": null,
+						"GYSID": null,
+						"NET": "11.90",
+						"OPRICE": 0,
+						"PRICE": "11.90",
+						"MINSQTY": 0,
+						"QTY": "1.000",
+						"UNIT": "袋",
+						"SERIAL": null,
+						"BARCODE": "000000001010200006",
+						"PLID": null,
+						"NO": 3,
+						"SPID": "000000001010200006",
+						"SALETIME": "2022-09-08T00:40:21.147Z"
+					}
+				]
+				//把数据传入下个页面
+				this.$store.commit('set-location', {
+					sale1_obj: str1, //001 主单 数据对象
+					sale2_arr: str2, //002 商品 数据对象集合
 					sale3_arr: this.sale3_arr, //003 支付数据集合
 					sale8_arr: this.sale8_arr, //008水吧商品
 					actType: this.actType,

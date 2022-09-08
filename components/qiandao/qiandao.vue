@@ -9,7 +9,7 @@
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
 			<view class="clues">
-				<image src="@/images/qiandao.gif" mode="widthFix"></image>
+				<image src="@/images/qiandao.png" mode="widthFix"></image>
 				<text>请先进行签到~</text>
 			</view>
 			<view class="affirm"><button class="btn btn-qr" @click="Sign()">签到</button></view>
@@ -39,6 +39,7 @@
 		methods: {
 			//签到
 			Sign: function() {
+				console.log("签到事件触发没有");
 				_login.SignOrSignOut(true, "", res => {
 					console.log("签到结果：", res);
 					if (res.code) {
@@ -71,6 +72,8 @@
 		},
 		created: function() {
 			that = this;
+
+			console.log("创建事件触发没有");
 			// let store = util.getStorage("store");
 			// if (store) {
 			// 	if (store.OPENFLAG != 1) {
@@ -114,6 +117,7 @@
 		align-items: center;
 		justify-content: center;
 		padding-bottom: 20rpx;
+		z-index: 999;
 	}
 
 	.affirm button {
