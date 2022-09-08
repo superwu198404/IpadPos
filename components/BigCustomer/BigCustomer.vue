@@ -73,7 +73,7 @@
 		},
 		methods: {
 			Close: function() {
-				this.$emit('ClosePopup', this.big_client_info);
+				uni.$emit('close-big-customer', this.big_client_info);
 			},
 			GetBigClients: function() {
 				getBigClients({
@@ -97,6 +97,8 @@
 			ConfimrBig: function(e, i) {
 				this.curIndex = i;
 				this.big_client_info = e;
+				this.$emit('ClosePopup', this.big_client_info);
+				uni.$emit('close-big-customer', this.big_client_info);
 			},
 			SelectedBigCustomer: function(evt) {
 				for (let i = 0; i < this.big_customers.length; i++) {
