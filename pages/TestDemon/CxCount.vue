@@ -48,7 +48,17 @@
 							"NET": 174.24,
 							"PRICE": 17.42,
 							"NO": 2
-						}
+						},
+						{
+							"SPID": "000000001080100005",
+							"SNAME": "礼盒2号",
+							"QTY": 10,
+							"OPRICE": 19.8,
+							"DISCRATE": 0,
+							"NET": 174.24,
+							"PRICE": 17.42,
+							"NO": 3
+						},
 					];
 				cxCount.Createcx(sale02_arr);
 			},
