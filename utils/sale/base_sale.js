@@ -693,7 +693,7 @@ function GetSale(global, vue, target_name) {
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
-				FinishOrder: that.payRef
+				FinishOrder: that.PayedResult
 			}
 		})
 	}
