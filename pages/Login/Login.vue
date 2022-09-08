@@ -161,12 +161,6 @@
 								// OPENFLAG: 0, //签到状态
 								console.log("管理登录的门店信息：", store);
 								util.setStorage("store", store);
-								// uni.navigateTo({
-								// 	url: "/pages/index/index",
-								// 	complete: res => {
-								// 		console.log("跳转结果：", res);
-								// 	}
-								// });
 								if (store.OPENFLAG == "1") {
 									uni.redirectTo({
 										url: "../index/index"

@@ -118,7 +118,9 @@
 			// 	plus.navigator.closeSplashscreen();
 			// }
 			_init.YN_Init(res => {
+				console.log("进入到跳转：");
 				uni.reLaunch({
+					// url: "/pages/start/start",
 					url: "/pages/Login/Login",
 					success: () => {
 						//跳转完页面后再关闭启动页

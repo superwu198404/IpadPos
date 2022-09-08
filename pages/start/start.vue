@@ -288,8 +288,8 @@
 									POSID: that.posid
 								});
 								setTimeout(r => {
-									uni.navigateTo({
-									//	url: "/pages/Login/Login"
+									uni.redirectTo({
+										url: "/pages/Login/Login"
 									});
 								}, 500)
 							}
