@@ -649,6 +649,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	var app = getApp();
 	export default {
 		data() {
 			return {
@@ -663,9 +664,9 @@
 				saleAdd: [],
 				saleSub: [],
 				MainSale: {},
-				KHID:"K210QTD003",
-				DQID:"K01000",
-				KHZID:"02"
+				KHID:app.globalData.store.KHID, //"K210QTD003"
+				DQID:app.globalData.store.DQID, //"K01000"
+				KHZID:app.globalData.store.KHZID, //"02"
 				
 			}
 		},
