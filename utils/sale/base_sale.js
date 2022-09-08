@@ -35,7 +35,6 @@ var XsTypeObj =
 			"sale_takeaway_reserve": false,
 			"sale_message": false,
 			"tools": false,
-
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -113,6 +112,11 @@ var XsTypeObj =
 		operation: {
 			"sale_reserve": true
 		},
+		$click()
+		{
+			
+			return true;
+		},
 	},
 	sale_reserve_extract: {
 		xstype: "5",
@@ -141,7 +145,10 @@ var XsTypeObj =
 		operation: {
 			"sale_reserve_cancel": true
 		},
-		$initSale: function(params) {
+		$initSale: function(params) 
+		{
+			
+		     this.actType  ="Refund";
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
@@ -331,6 +338,8 @@ function GetSale(global, vue, target_name) {
 	//商品档案002 以商品id为键值的结构
 	this.spSelectArr = {};
 	//更新（根据代码应该是强制刷新页面）
+	this.actType  ="Payment";
+
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
@@ -472,7 +481,6 @@ function GetSale(global, vue, target_name) {
 		"lockRows": 0, //是否存在锁定的行数
 		"inputsp": false,
 		"statement": true, //购物车
-		"actType": false
 	}
 	//插件的显示在这里控制
 	this.ComponentsManage =
@@ -665,15 +673,16 @@ function GetSale(global, vue, target_name) {
     this.pay  =function()
 	{
 		that.log("开始进入销售页面")
-		that.beforeFk()
+		
 		that.log("------------------------------")
 		let inputParm ={
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
-			actType: that.allOperation.actType
+			actType:  that.actType
 		}
+		that.$beforeFk()
 		that.log(JSON.stringify( inputParm));
 		that.Page.$store.commit('set-location',inputParm );
 		uni.navigateTo({
@@ -761,11 +770,13 @@ function GetSale(global, vue, target_name) {
 
 	}
 
-	this.initcxSpRow = function() {
+	this.initcxSpRow = function() 
+	{
 
 	}
 
-	this.cxBillinit = function() {
+	this.cxBillinit = function() 
+	{
 
 	}
 
@@ -820,7 +831,6 @@ function GetSale(global, vue, target_name) {
 
 		return pm_input;
 	}
-
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
 		console.log("[GetSp]获取商品详情:");
@@ -867,7 +877,8 @@ function GetSale(global, vue, target_name) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_qty > 0) {
+		if (pm_qty > 0)
+		{
 			this.sale002[pm_row].QTY = pm_qty;
 			let price = this.float(this.sale002[pm_row].PRICE);
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
@@ -910,6 +921,7 @@ function GetSale(global, vue, target_name) {
 		that.log(retx)
 		that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
+		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.DISC = this.float(retx.DISCRATE, 2);
 		//this.update();
 	}
@@ -925,12 +937,12 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//付款之前触发
-	this.beforeFk = function() 
+	this.$beforeFk = function(pm_inputParm) 
 	{
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type //
-		this.CurrentTypeCall("$beforeFk");
+		this.CurrentTypeCall("$beforeFk",pm_inputParm);
 		//可以使用的支付方式 
 	}
 
