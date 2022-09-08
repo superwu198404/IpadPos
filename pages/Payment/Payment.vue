@@ -746,7 +746,6 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				this.logs = true;
 				console.log("[RefundDataHandle]SALE1 初始化开始：", this.sale1_obj);
 				this.SALE1Init(this.sale1_obj); //sale1 初始化
 				console.log("[RefundDataHandle]SALE2 初始化开始：", this.sale2_arr);

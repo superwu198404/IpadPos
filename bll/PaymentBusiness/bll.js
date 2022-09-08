@@ -8,10 +8,11 @@ import common from '@/api/common.js';
 import util from '@/utils/util.js';
 /**
  * 支付处理操作 
+ * @param {*} bill_type 订单类型 
  * @param {*} products 商品列表 
  * @param {*} payments 支付信息列表 
  */
-export const Payment = async function(products,payments) {
+export const Payment = async function(bill_type,products,payments) {
 	let result = PriceCount(products) //支付金额初始化
 	//预先重置
 	let sale1_obj = {}, //支付 sale1 主表数据初始对象

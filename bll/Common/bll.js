@@ -125,7 +125,7 @@ export const Accept = async function(params_obj = accept_def_params) {
 	let params = Object.assign(accept_def_params, params_obj);
 	if (params.xs_type == 1) { //提取操作 => 支付
 		console.log("[Accept]结算确认!开始结算...", params)
-		return await Payment(params.products, params.payments);
+		return await Payment(params.bill_type,params.products, params.payments);
 	} else { //取消操作 => 退款
 		console.log("[Accept]退单确认!开始退款...");
 		return await Refund(params.sales, params.xs_type);

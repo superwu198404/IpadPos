@@ -1,6 +1,7 @@
 import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
+import { Accept } from '@/bll/Common/bll.js';
 
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
@@ -109,12 +110,14 @@ var XsTypeObj = {
 			"sale_reserve_extract": true
 		},
 		$initSale: function(params) {
+			this.allOperation.actType = true;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
+			this.InitSale001();
 			console.log("[sale_reserve_extract]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? {};
+			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? {};
+			this.sale003 = params.sale3 ?? [];
 		}
 	},
 	sale_reserve_cancel: {
@@ -127,12 +130,13 @@ var XsTypeObj = {
 			"sale_reserve_cancel": true
 		},
 		$initSale: function(params) {
+			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? {};
+			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? {};
+			this.sale003 = params.sale3 ?? [];
 		}
 	},
 	//线上订单+线上提取
@@ -629,17 +633,18 @@ function GetSale(global, vue, target_name) {
 
 	//跳转到支付页面
 	this.ToPay = function(e) {
-		that.$store.commit('set-location', {
+		that.Page.$store.commit('set-location', {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
 			actType: that.allOperation.actType
 		});
+		console.log("[ToPay]控制对象:",that.allOperation.actType);
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
-				FinishOrder: util.callBind(that, that.payRef)
+				FinishOrder: util.callBind(that, that.PayedResult)
 			}
 		})
 	}
@@ -717,7 +722,28 @@ function GetSale(global, vue, target_name) {
 	this.cxBillinit = function() {
 
 	}
-
+	
+	this.InitSale001 = function() {
+		var is_new = Object.keys(this.sale001).length == 0;
+		var commonSaleParm = {
+			KHID: this.Storeid,
+			SALEDATE: this.SALEDATE,
+			POSID: this.POSID,
+			RYID: this.ryid,
+			KCDID: this.KCDID,
+			GCID: this.GCID,
+		};
+		if(is_new){
+			commonSaleParm.BILL = this.getBill();//创建新订单号
+			commonSaleParm.SALETIME = this.getTime();//创建新的销售时间
+			this.sale001 = new sale.sale001(commonSaleParm)
+		}
+		else{
+			Object.assign(this.sale001,new sale.sale001(commonSaleParm));
+		}
+		return commonSaleParm;
+	}
+	
 	this.createNewBill = function() {
 		var commonSaleParm = {}
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
