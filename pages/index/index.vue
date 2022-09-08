@@ -348,7 +348,7 @@
 				uni.navigateTo({
 					url: "../Main/Main"
 				});
-				
+
 			},
 			MenuPage: async function(e) {
 				if (e == 0 || e == 1) {
@@ -403,7 +403,7 @@
 					// 	events: {
 					// 		FinishOrder: util.callBind(this, function(res) {
 					// 			console.log("支付完跳转回来的结果：", res);
-					// 			//res.sale1_obj 
+					// 			//res.data.sale1_obj 
 					// 		})
 					// 	}
 					// })
@@ -425,15 +425,15 @@
 						url: "../Login/Login"
 					});
 				} else if (e == 6) {
-					uni.navigateTo({
-						url: "../Home/Home",
-						complete: r => {
-							console.log(r);
-						}
-					});
 					// uni.navigateTo({
-					// 	url: "/pages/mainSale/MainSale"
+					// 	url: "../Home/Home",
+					// 	complete: r => {
+					// 		console.log(r);
+					// 	}
 					// });
+					uni.navigateTo({
+						url: "/pages/mainSale/MainSale"
+					});
 				} else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",
@@ -468,7 +468,7 @@
 					sale3_arr: this.sale3_arr, //003 支付数据集合
 					sale8_arr: this.sale8_arr, //008水吧商品
 					actType: this.actType,
-
+					hyinfo: {},
 					PayList: this.PayList //预留 用作已支付部分的业务
 				});
 			},
@@ -578,7 +578,7 @@
 				//sale 002:
 				this.sale2_arr = this.Products.map((item, index) => {
 					return util.hidePropety({
-						BILL:this.BILL, //payall 追加
+						BILL: this.BILL, //payall 追加
 						SALEDATE: "", //payall 追加
 						SALETIME: "", //payall 追加
 						KHID: this.KHID,

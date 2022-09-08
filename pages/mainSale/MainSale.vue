@@ -118,7 +118,8 @@
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
 
-		<MemberLogin v-if="mainSale.ComponentsManage.member_login" style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
+		<MemberLogin v-if="mainSale.ComponentsManage.member_login"
+			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
 
 		<!-- 会员弹框 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.HY">
@@ -128,7 +129,8 @@
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<label class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
+							<label
+								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
 							<label @click="ChangeMember()">切换</label>
 						</label>
 						<button @click="mainSale.ComponentsManage.HY = false">×</button>
@@ -558,6 +560,53 @@
 				</view>
 			</view>
 		</view>
+
+		<!-- 特殊折扣 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.Disc">
+			<view class="popup special">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<view class="commods" style="padding-top:26rpx;">
+					<view class="h3">
+						特殊折扣选则<button class="close" @click="mainSale.ComponentsManage.Disc=false">×</button>
+					</view>
+					<view class="uls">
+						<view class="lis curr">
+							<view class="h8">
+								<view>标准折扣<em></em></view>
+								<label>总折扣额:<text>￥566</text></label>
+								<span>已选</span>
+							</view>
+							<view class="discount">
+								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<view>
+									<label>
+										<checkbox></checkbox>临时折扣
+									</label>
+									<text>满¥1000即打9折，折扣额¥123</text>
+								</view>
+							</view>
+						</view>
+						<view class="lis">
+							<view class="h8">
+								<view>特批折扣<em></em></view>
+								<span>已选</span>
+							</view>
+							<view class="discount">
+								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+							</view>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" @click="showMDCXData=false">确 认</button>
+					</view>
+				</view>
+			</view>
+		</view>
+
 	</view>
 </template>
 
@@ -628,17 +677,17 @@
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
 			},
-			MemberInfo:function(){
-				console.log("[MemberInfo]会员信息:",this.mainSale.HY.val);
+			MemberInfo: function() {
+				console.log("[MemberInfo]会员信息:", this.mainSale.HY.val);
 				return Object.keys(this.mainSale.HY.val) > 0 ? this.mainSale.HY.val : {
-					coupons:[],
-					hyId:"",
-					NickName:"",
-					Balance:0,
-					Phone:"",
-					JFBalance:0,
-					hy_Assets:{
-						GiftAmt:0
+					coupons: [],
+					hyId: "",
+					NickName: "",
+					Balance: 0,
+					Phone: "",
+					JFBalance: 0,
+					hy_Assets: {
+						GiftAmt: 0
 					}
 				}
 			}
@@ -663,9 +712,11 @@
 			//切换登录
 			ChangeMember: function() {
 				this.mainSale.ComponentsManage.member_login = true;
+				this.mainSale.ComponentsManage.HY = false;
 			},
 			GetTSZKData: function() { //展示特殊折扣
-				that.showTSZK = true;
+				// that.showTSZK = true;
+				this.mainSale.ComponentsManage.Disc = true;
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout;
@@ -684,14 +735,14 @@
 							hyid: this.MemberInfo.hyId,
 							phone: this.MemberInfo.Phone
 						}
-					}, util.callBind(this,function(res){
+					}, util.callBind(this, function(res) {
 						if (res.code) {
 							this.mainSale.HY.val.coupons = res.data;
 							this.mainSale.update();
 							this.mainSale.HY.val.hyId = this.mainSale.HY.val.hyId;
 							this.mainSale.ComponentsManage.HY = true;
-							console.log("[GetHyCoupons]会员信息-computed:",this.MemberInfo);
-							console.log("[GetHyCoupons]会员信息-control:",this.mainSale.HY.val);
+							console.log("[GetHyCoupons]会员信息-computed:", this.MemberInfo);
+							console.log("[GetHyCoupons]会员信息-control:", this.mainSale.HY.val);
 						}
 					}), (err) => {
 						console.log("异常数据：", res)
@@ -700,12 +751,11 @@
 			},
 			MemberLogin: function(e) { //会员登录
 				console.log("[MemberLogin]会员登录!");
-				if(Object.keys(this.mainSale.HY.val).length > 0){
+				if (Object.keys(this.mainSale.HY.val).length > 0) {
 					this.GetHyCoupons(this.mainSale.HY.val);
-				}
-				else
+				} else
 					this.mainSale.ComponentsManage.member_login = true;
-				console.log("[MemberLogin]状态信息:",this.mainSale.ComponentsManage.member_login);
+				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.member_login);
 			},
 			Bagslist: function(e) {
 				this.Shoppingbags = true,

@@ -391,9 +391,10 @@ var QueryBatch = async function(sqls) {
 
 //查询sql
 var Query = async function(sql) {
-	let data = [],dbo = db.get();
-	console.log("[Query]打开连接...",sql);
-	try{
+	let data = [],
+		dbo = db.get();
+	console.log("[Query]打开连接...", sql);
+	try {
 		await dbo.open();
 		console.log("[Query]执行查询...");
 		await dbo.executeQry(sql, "查询中...", function(res) {
@@ -404,16 +405,17 @@ var Query = async function(sql) {
 		});
 		await dbo.close();
 		return data;
-	}catch(e){
+	} catch (e) {
 		console.log("[Query-Error]执行异常:", e);
 	}
 }
 
 //执行sql
 var Excute = async function(...sql) {
-	let data = null,dbo = db.get();
+	let data = null,
+		dbo = db.get();
 	console.log("[Excute]打开连接...");
-	try{
+	try {
 		await dbo.open();
 		console.log("[Excute]执行操作...");
 		await dbo.executeDml(sql, "执行中...", function(res) {
@@ -424,7 +426,7 @@ var Excute = async function(...sql) {
 		});
 		await dbo.close();
 		return data;
-	}catch(e){
+	} catch (e) {
 		console.log("[Excute-Error]执行异常:", e);
 	}
 	await dbo.close();
@@ -635,9 +637,12 @@ var DelSale = function(e) { //khid
 	console.log("业务数据保留天数：", dateformat.getYMD(-day));
 	let arr1 = [
 		"delete from sale001 where yn_sc='Y' and saledate<" + dateformat.getYMD(-day),
-		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day),
-		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day),
-		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<"+ dateformat.getYMD(-day)
+		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
+		dateformat.getYMD(-day),
+		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
+		dateformat.getYMD(-day),
+		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
+		dateformat.getYMD(-day)
 	];
 	db.get().executeDml(arr1, "", res => {
 		console.log("本地销售单删除成功：" + day, res);
@@ -657,6 +662,17 @@ var GetTXFILE = async function(e) {
 		console.log("查询未处理单失败:", err);
 	})
 	return arr;
+}
+//确定是支付业务还是退款业务
+var GetPayOrRefund = async function(sale1) {
+	if (sale1) {
+		if (sale1.XSTYPE == '1' || sale1.XSTYPE == '3' || sale1.XSTYPE == '5' || sale1.XSTYPE == '6' || sale1
+			.XSTYPE == '8') {
+			return actTypeEnum.Payment
+		} else {
+			return actTypeEnum.Refund
+		}
+	}
 }
 
 export default {
@@ -681,5 +697,6 @@ export default {
 	GetDapzcs,
 	DelSale,
 	GetPOSCS_Local,
-	GetTXFILE
+	GetTXFILE,
+	GetPayOrRefund
 }
