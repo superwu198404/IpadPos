@@ -80,33 +80,32 @@ var GetMDCXHD = function(func) {
  * @param {} khid 
  */
 var GetZKDatas = function(data, func) {
-
-	if (data.zktype == 'BZ' || data.zktype == 'LS') {
-		let pm_zktype = data.zktype == 'BZ' ? "ZD02" : "ZD03";
+	if (data.zktype == 'TP') {
+		//data:{dkhid:"",jgid:""}
+		let apistr = "MobilePos_API.Models.SALE001CLASS.GetZKDatas";
+		let reqdata = Req.resObj(true, "查询中...", data, apistr);
+		Req.asyncFuncOne(reqdata, func, func);
+	} else {
+		let pm_zktype = "ZD02','ZD03";
+		if (data.zktype == 'BZ') {
+			pm_zktype = "ZD02"
+		}
+		if (data.zktype == 'LS') {
+			pm_zktype = "ZD03"
+		}
 		let sql = "SELECT SPJGZ ZKSTR ,(CASE SPJGZ WHEN  '01' THEN  '商品' WHEN  '02' THEN  '商品类卡券（包括节令商品）' WHEN  '03' THEN  '现金类卡券' END) ZKNAME,\
               SPJGZ  TJBILL,TJSEQ,ZKTYPE,MZNET,ZKQTY,(100+ZKQTY)/100 ZKQTY_JS  FROM  BZDISC WHERE DQID  ='" + data
-			.dqid + "' AND \
-                 ifnull( DELBZ,'#') <>'X'   AND DATE(SDATE) <=DATE('" + dateformat.getYMD() +
+			.dqid + "' AND ifnull( DELBZ,'#') <>'X'   AND DATE(SDATE) <=DATE('" + dateformat.getYMD() +
 			"')  and  MZNET  >-100 AND   ZKTYPE  IN ('" + pm_zktype + "')\
                AND  DATE(EDATE) >= DATE('" + dateformat.getYMD() + "') " + data.spjgz + " order by SPJGZ,MZNET desc";
 		console.log("折扣查询sql：", sql);
 		db.get().executeQry(sql, "查询中...", res => {
 			console.log("门店折扣数据查询结果：", res);
-			if (func) func(res.msg);
-			// if (res.code && res.msg.length > 0) {
-			// 	if (func) func(res.msg);
-			// } else {
-			// 	util.simpleMsg("暂无数据", true);
-			// }
+			if (func) func(res);
 		}, err => {
 			util.simpleMsg("异常：" + err, true);
 			console.log("查询折扣异常：", err);
 		})
-	} else { //zktype='TP'
-		//data:{dkhid:"",jgid:""}
-		let apistr = "MobilePos_API.Models.SALE001CLASS.GetZKDatas";
-		let reqdata = Req.resObj(true, "查询中...", data, apistr);
-		Req.asyncFuncOne(reqdata, func, func);
 	}
 }
 

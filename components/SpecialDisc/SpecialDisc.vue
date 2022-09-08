@@ -12,46 +12,48 @@
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="commods" style="padding-top:26rpx;">
 					<view class="h3">
-						特殊折扣选则<button class="close" @click="CloseZK()">×</button>
+						特殊折扣选择<button class="close" @click="CloseZK()">×</button>
 					</view>
 					<view class="uls">
 						<view class="lis curr">
 							<view class="h8">
 								<view>标准折扣<em></em></view>
-								<label>总折扣额:<text>￥566</text></label>
+								<!-- <label>总折扣额:<text>￥566</text></label> -->
 								<span>已选</span>
 							</view>
 							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<view>
+								<label
+									v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折</span></label>
+								<!-- <label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label> -->
+								<view v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
 									<label>
 										<checkbox></checkbox>临时折扣
 									</label>
-									<text>满¥1000即打9折，折扣额¥123</text>
+									<text>满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折</text>
+
 								</view>
 							</view>
 						</view>
-						<view class="lis">
+						<view class="lis" v-if="DKFZKDatas.length>0">
 							<view class="h8">
 								<view>特批折扣<em></em></view>
 								<span>已选</span>
 							</view>
 							<view class="discount">
-								<label>·01 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·02 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
-								<label>·03 5个商品，满<span>1000</span>打<span>9折</span>，折扣额<text>￥345</text></label>
+								<view>
+									<label
+										v-for="(item,index) in DKFZKDatas">{{item.SPJGZ}}，打<span>{{(item.BFB*10).toFixed(1)}}折</span></label>
+								</view>
 							</view>
 						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" @click="ConfirmZK()">确 认</button>
+						<view class="confirm">
+							<button class="btn" @click="ConfirmZK()">确 认</button>
+						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-
 	</view>
 </template>
 
@@ -70,17 +72,22 @@
 		name: "SpecialDisc",
 		data() {
 			return {
-				curZKType: "BZ",//BZ lS TP
+				curZKType: "", //BZ lS TP
 				DQID: util.getStorage("store").DQID,
 				DKFID: util.getStorage("store").DKFID,
 				JGID: util.getStorage("store").JGID,
 				ZKDatas: [],
+				DKFZKDatas: [],
 				curZK: {}
 			};
 		},
 		created: function() {
 			that = this;
-			that.GetZKDatas();
+			that.GetZKDatas(that.curZKType);
+			let store = util.getStorage("store");
+			if (store.DKFID && store.DKFID != '80000000') {
+				that.GetZKDatas('TP');
+			}
 		},
 		methods: {
 			CloseZK: function() {
@@ -94,24 +101,31 @@
 			//获取并展示门店促销活动
 			GetZKDatas: function(type) {
 				let data = {
-					zktype: that.curZKType,
+					zktype: type,
 					dqid: that.DQID,
 					spjgz: "",
-					dkhid: that.DKFID, //"0020004824", //测试使用
+					dkhid: that.DKFID, //测试使用 "0020004824"
 					jgid: that.JGID
 				};
 				_main.GetZKDatas(data, res => {
-					console.log("折扣数据获取结果：");
+					console.log("折扣数据获取结果：", res);
 					if (res.code) {
-						if (that.curZKType == 'TP') {
-							that.ZKDatas = JSON.parse(res.data);
+						if (type == 'TP') {
+							that.DKFZKDatas = JSON.parse(res.data);
 						} else {
 							that.ZKDatas = res.msg;
 						}
 					} else {
-						that.ZKDatas = [];
+						if (type == 'TP') {
+							that.DKFZKDatas = [];
+						} else {
+							that.ZKDatas = [];
+						}
 						util.simpleMsg("暂无数据", true);
 					}
+
+					console.log("页面折扣数据：", that.ZKDatas);
+					console.log("页面折扣数据1：", that.DKFZKDatas);
 				})
 			},
 			//确认折扣
