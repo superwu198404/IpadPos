@@ -431,6 +431,8 @@ page {
 	position: relative;
 	min-height: 30%;
 	padding:2% 3%;
+	max-height: 90%;
+	overflow: auto;
 }
 .popup .confirm{
 	margin-top:20rpx;
@@ -509,14 +511,16 @@ page {
 	text-align: center;
 	font-size: 40rpx;
 	background:none;
+	border-radius: 4rpx;
 }
 
 .commods .price view button {
 	display: inline-block;
 	font-size: 50rpx;
 	margin: 10rpx;
-	width:60rpx;
-	height:60rpx;
+	width:66rpx;
+	height:66rpx;
+	line-height: 66rpx;
 	padding:0;
 }
 
@@ -549,7 +553,7 @@ page {
 .sizes .sizelist label {
 	display: block;
 	background-color: #fff;
-	border: 1px solid #42B14B;
+	border: 1px solid #C5E7C8;
 	height: 70rpx;
 	line-height: 70rpx;
 	width: 16%;
@@ -564,6 +568,11 @@ page {
 
 .sizes .sizelist label:nth-child(5n+1) {
 	margin-left: 0;
+}
+.sizes .sizelist .curr{
+	border: 1px solid #42B14B;
+	background: rgba(66,177,75,0.15);
+	color: #42B14B;
 }
 
 .memberes {
@@ -851,6 +860,7 @@ page {
 	height: 50rpx;
 	border: 1px solid #EEEEEE;
 	background-color: #fff;
+	border-radius: 6rpx;
 }
 
 .shoppbag .baglist.curr {

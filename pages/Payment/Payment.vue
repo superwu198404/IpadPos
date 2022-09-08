@@ -347,7 +347,7 @@
 				complete: false,
 				BILL_TYPE: "",
 				SKY_DISCOUNT: 0, //总手工折扣额（就是支付舍弃的分）
-				XS_TYPE: "",
+				XSTYPE: "",
 				ZFBZK: 0, //支付宝折扣额
 				refundView: {
 					totalAmount: 0,
@@ -517,7 +517,7 @@
 					XS_DATE: this.isRefund ? (sale1?.SALEDATE ?? "") : "", //退款时记录原销售日期（重点）
 					XS_KHID: this.isRefund ? (sale1?.KHID ?? "") : "", //退款时记录原khid（重点）
 					XS_GSID: this.isRefund ? (sale1?.GSID ?? "") : "", //退款时记录原GSID（重点）
-					XSTYPE: this.XS_TYPE,
+					XSTYPE: this.XSTYPE,
 					BILL_TYPE: this.BILL_TYPE,
 					TDISC: this.isRefund ? (-sale1?.TDISC ?? "0") : Number(this.SKY_DISCOUNT).toFixed(2),
 					TLINE: (this.isRefund ? -sale1.TLINE : sale1.TLINE)
@@ -1216,7 +1216,7 @@
 							PRICE: r.PRICE,
 							OPRICE: r.OPRICE,
 							NET: r.NET,
-							QTY: r.QTY
+							QTY: parseInt(r.QTY)
 						}
 					});
 					this.Discount = Number(prev_page_param.sale1_obj.BILLDISC).toFixed(2); //折扣信息
@@ -1224,7 +1224,7 @@
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
 					this.GetHyCoupons(); //获取会员的优惠券用以支付使用
 
-					this.XS_TYPE = this.SALES.sale1.XS_TYPE;
+					this.XSTYPE = this.SALES.sale1.XSTYPE;
 					this.BILL_TYPE = this.SALES.sale1.BILL_TYPE;
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
@@ -1234,13 +1234,20 @@
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
+				console.log("门店编码和名称", this.NAME);
 			},
 			//总金额计算 舍弃分的处理
 			PriceCount: function() {
 				let total = 0;
-				this.sale2_arr.forEach(product => total += product.NET);
+				this.sale2_arr.forEach(product => {
+					total += parseFloat(product.NET);
+					// console.log("商品金额：" + product.NET)
+				});
+				total = parseFloat(total.toFixed(2));
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
+				console.log("总金额判断：", total);
+				console.log("手工折扣额：", this.SKY_DISCOUNT);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;
