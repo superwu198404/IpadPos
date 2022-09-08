@@ -349,7 +349,10 @@ function GetSale(global, vue, target_name) {
 	this.spSelectArr = {};
 	//更新（根据代码应该是强制刷新页面）
 	this.actType  ="Payment";
-
+    //筛选的品类
+	this.selectPlid="";
+	   
+	   
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
@@ -429,11 +432,21 @@ function GetSale(global, vue, target_name) {
 		this.selectFlagList = this.Allsplist.filter(item => {
 			return item.FSTR == pm_flag
 		});
+		if( this.selectFlagList.length>0 )
+		{
+			this.selectPlid =this.selectFlagList[0].plid;
+		}
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
 		this.Page.$set(this.Page, "Alphabetical", false);
 		//筛选字母的列表
+	}
+	
+	this.selectPlidChenged =function(e)
+	{
+		that.selectPlid =e.currentTarget.dataset.plid;
+    	that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 	}
 	//设置所有商品列表数据
 	this.SetAllGoods = function(pm_list, pm_price) 
