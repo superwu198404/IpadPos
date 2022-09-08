@@ -174,13 +174,6 @@
 						if (this.view.mode) { //结算
 							item.XSTYPE = '1';
 							item.BILL_TYPE = 'Z121';
-							// this.$emit("redirect", {
-							// 	name: "sale",
-							// 	params:{
-							// 		sale1:item,
-							// 		sale2:JSON.parse(res.data)
-							// 	}
-							// })
 							this.$to_sale_pages('sale_reserve_extract',{
 								sale1: item,
 								sale2: JSON.parse(res.data)
@@ -196,7 +189,7 @@
 							} else {
 								data.sale1[0].XSTYPE = '2'; //由于查询结果默认返回数组，所带索引去取
 								data.sale1[0].BILL_TYPE = 'Z171';
-								this.$to_sale_pages({
+								this.$to_sale_pages('sale_reserve_extract',{
 									sale1: data.sale1[0],
 									sale2: data.sale2,
 									sale3: data.sale3

@@ -318,6 +318,22 @@
 					sale1.XSTYPE = '2';
 					sale1.BILL_TYPE = 'Z151';
 					console.log("[Refund-Confirm]sale1数据:", data.sale1);
+					this.$to_sale_pages('sale_return_good',{
+						sale1:sale1,
+						sale2:data.sale2,
+						sale3:data.sale3
+					});
+				}
+			},
+			Confirm_version2: async function() {
+				let data = await LocalDataQuery(this.Order.BILL);
+				if (ErrorData(data)) {
+					console.log("[RefundOrder-Confirm]本地未查询到数据!");
+				} else {
+					let sale1 = data.sale1.length && data.sale1.length > 0 ? data.sale1[0] : data.sale1;
+					sale1.XSTYPE = '2';
+					sale1.BILL_TYPE = 'Z151';
+					console.log("[Refund-Confirm]sale1数据:", data.sale1);
 					this.$emit("Switch", {
 						name: "MainSale",//销售页面组件名（必须与 router 中信息对应，且与 title 皆为必填项）
 						title: "销售",//销售页面组件名（必须与 router 中信息对应，且与 name 皆为必填项）
