@@ -28,11 +28,11 @@
 				let store = util.getStorage("store");
 				if (store.OPENFLAG == 1) {
 					if (store.RYTYPE != "SYSTEM") {
-						uni.navigateTo({
+						uni.redirectTo({
 							url: "/pages/mainSale/MainSale"
 						});
 					} else {
-						uni.navigateTo({
+						uni.redirectTo({
 							url: "/pages/index/index"
 						});
 					}

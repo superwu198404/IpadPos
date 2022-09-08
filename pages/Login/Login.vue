@@ -167,7 +167,7 @@
 								// 		console.log("跳转结果：", res);
 								// 	}
 								// });
-								if (store.OPENFLAG != "1") {
+								if (store.OPENFLAG == "1") {
 									uni.redirectTo({
 										url: "../index/index"
 									})
