@@ -52,7 +52,8 @@
 				khid: "",
 				posid: "",
 				KHArr: [],
-				index: 0
+				index: 0,
+				store: util.getStorage("store")
 			}
 		},
 		methods: {
@@ -110,9 +111,15 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							uni.redirectTo({
-								url: "../Home/Home"
-							})
+							if (that.store.OPENFLAG == "1") {
+								uni.redirectTo({
+									url: "../mainSale/MainSale"
+								})
+							} else {
+								uni.redirectTo({
+									url: "../Center/Center"
+								})
+							}
 						}, 1000);
 					});
 				})
@@ -154,12 +161,21 @@
 								// OPENFLAG: 0, //签到状态
 								console.log("管理登录的门店信息：", store);
 								util.setStorage("store", store);
-								uni.navigateTo({
-									url: "/pages/index/index",
-									complete: res => {
-										console.log("跳转结果：", res);
-									}
-								});
+								// uni.navigateTo({
+								// 	url: "/pages/index/index",
+								// 	complete: res => {
+								// 		console.log("跳转结果：", res);
+								// 	}
+								// });
+								if (store.OPENFLAG != "1") {
+									uni.redirectTo({
+										url: "../index/index"
+									})
+								} else {
+									uni.redirectTo({
+										url: "../Center/Center"
+									})
+								}
 							} else {
 								util.simpleMsg("密码错误", true);
 							}

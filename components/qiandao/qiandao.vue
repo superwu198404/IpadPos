@@ -39,6 +39,7 @@
 		methods: {
 			//签到
 			Sign: function() {
+				console.log("签到事件触发没有");
 				_login.SignOrSignOut(true, "", res => {
 					console.log("签到结果：", res);
 					if (res.code) {
@@ -71,6 +72,8 @@
 		},
 		created: function() {
 			that = this;
+
+			console.log("创建事件触发没有");
 			// let store = util.getStorage("store");
 			// if (store) {
 			// 	if (store.OPENFLAG != 1) {

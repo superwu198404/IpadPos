@@ -160,7 +160,7 @@
 			<!-- 业务消息组件 -->
 			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
-			<qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao>
+			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
 			<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
 		</view>
@@ -878,13 +878,29 @@
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
-			//去签到
+			//手动直接发起签到
 			Sign: function() {
-				that.showSign = true;
+				// that.showSign = true;
+				util.simpleModal("提示", "是否确认签到？", res => {
+					if (res) {
+						_login.SignOrSignOut(true, "", res => {
+							console.log("手动签到结果：", res);
+							if (res.code) {
+								util.simpleMsg("签到成功！");
+								let data = JSON.parse(res.data);
+								if (data.sql) {
+									_login.SignOrSignOutSql(data.sql);
+								}
+							} else {
+								util.simpleModal("提示", res.msg);
+							}
+						})
+					}
+				})
 			},
 			//获取一周内是否有未日结的数据
 			GetSignOutInWeek: function(t, func) {
-				
+
 				console.log("进入日结搜索方法");
 				that.showSign = false; //关闭签到组件
 				_login.GetSignOutInWeek(res => {
