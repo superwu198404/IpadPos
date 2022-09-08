@@ -529,7 +529,7 @@ function GetSale(global, vue, target_name) {
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
 		console.log("[SetManage]LastManage:", lastManage);
-		// if (pm_mtype === lastManage) return;
+		//if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
 			console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;
@@ -666,39 +666,24 @@ function GetSale(global, vue, target_name) {
 	{
 		that.log("开始进入销售页面")
 		that.beforeFk()
-		that.$store.commit('set-location', {
+		that.log("------------------------------")
+		let inputParm ={
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
 			actType: that.allOperation.actType
-		});
+		}
+		that.log(JSON.stringify( inputParm));
+		that.Page.$store.commit('set-location',inputParm );
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
-				FinishOrder: util.callBind(that, that.payRef)
+				FinishOrder: that.payRef
 			}
 		})
 	}
-	//跳转到支付页面
-	this.ToPay = function(e) 
-	{
-		that.log("开始进入销售页面")
-		that.beforeFk()
-		that.Page.$store.commit('set-location', {
-			sale1_obj: that.sale001, //001 主单 数据对象
-			sale2_arr: that.sale002, //002 商品 数据对象集合
-			sale3_arr: that.sale003, //003 支付数据集合
-			sale8_arr: that.sale008, //008水吧商品
-			actType: that.allOperation.actType
-		});
-		uni.navigateTo({
-			url: "../Payment/Payment",
-			events: {
-				FinishOrder: util.callBind(that, that.payRef)
-			}
-		})
-	}
+	
 
 	/**
 	 * 修改销售类型(SetType 修改版本)
@@ -787,6 +772,7 @@ function GetSale(global, vue, target_name) {
 	this.createNewBill = function() {
 		var commonSaleParm = {}
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
+		    this.log("**************创建新的sale001*************")
 			let newbill = this.getBill();
 			let stime = this.getTime();
 			commonSaleParm = {
@@ -800,6 +786,7 @@ function GetSale(global, vue, target_name) {
 				SALETIME: stime
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
+			console.log( JSON.stringify( this.sale001))
 
 		} else {
 			commonSaleParm = {
@@ -820,9 +807,11 @@ function GetSale(global, vue, target_name) {
 	//汇总sale002的所有内容
 	this.sale002Sum = function(pm_input) {
 		this.sale002.forEach(item => {
+	    	that.log("循环中查看002");
 			that.log(JSON.stringify(item));
 			let keys = Object.keys(pm_input);
-			for (var i = 0; i < keys.length; i++) {
+			for (var i = 0; i < keys.length; i++) 
+			{
 				that.log(JSON.stringify(keys[i]));
 				pm_input[keys[i]] += that.float(item[keys[i]], 2);
 				that.log(JSON.stringify(pm_input));
@@ -852,6 +841,7 @@ function GetSale(global, vue, target_name) {
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
 			let newprm = that.createNewBill.call(that);
 			let new002 = new sale.sale002(newprm);
+			console.log(new002);
 			new002.SPID = pm_spid;
 			new002.NO = that.sale002.length;
 			new002.STR1 = that.clikSpItem.SNAME;
@@ -869,7 +859,7 @@ function GetSale(global, vue, target_name) {
 			new002.BARCODE = that.clikSpItem.SPID;
 			that.sale002.push(new002);
 			that.log("[GetSp]添加了商品", new002);
-			that.log("[GetSp]商品价格", that.spPrice);
+			//that.log("[GetSp]商品价格", that.spPrice);
 		}
 		that.SetManage("inputsp");
 	}
@@ -895,8 +885,8 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) 
 	{
-		console.log("[ShowStatement]商品信息:", that.sale001);
-		await cx.Createcx(that.sale002);
+		console.log("[ShowStatement]商品信息:", that.sale002);
+	    //await cx.Createcx(that.sale002);
 		that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
@@ -916,6 +906,9 @@ function GetSale(global, vue, target_name) {
 			NET: 0,
 			DISCRATE: 0
 		});
+		that.log("***************计算结果展示******************")
+		that.log(retx)
+		that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.DISC = this.float(retx.DISCRATE, 2);
 		//this.update();

@@ -59,7 +59,7 @@
 													</label>
 												</view>
 												<view class="price">
-													<text>￥{{ Price(sptiem.SPID) }}</text>
+													<text>￥{{ mainSale.spPrice[sptiem.SPID].PRICE }}</text>
 													<view>
 														<image src="../../images/dx-gd.png" mode="widthFix"></image>
 													</view>
@@ -269,7 +269,7 @@
 						</label>
 					</view>
 					<view class="price">
-						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
+						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
 						   <view> 
 						     <button @click="mainSale.chengedQty"  data-qty="-1">–</button>
 						     <label>{{mainSale.clikSpItem.inputQty}}</label>
@@ -388,7 +388,7 @@
 					</view>
 				</view>
 				<view >
-					<button  @click="mainSale.toPay"  class="btn">去支付</button>
+					<button  @click="mainSale.pay"  class="btn">去支付</button>
 				</view>
 				<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 					<text>结算单</text>
