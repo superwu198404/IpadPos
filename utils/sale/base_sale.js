@@ -682,7 +682,7 @@ function GetSale(global, vue, target_name) {
 			sale8_arr: that.sale008, //008水吧商品
 			actType:  that.actType
 		}
-		that.$beforeFk()
+		that.$beforeFk(inputParm);
 		that.log(JSON.stringify( inputParm));
 		that.Page.$store.commit('set-location',inputParm );
 		uni.navigateTo({
@@ -942,6 +942,8 @@ function GetSale(global, vue, target_name) {
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type //
+		//写大客户
+		//写会员
 		this.CurrentTypeCall("$beforeFk",pm_inputParm);
 		//可以使用的支付方式 
 	}
