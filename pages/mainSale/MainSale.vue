@@ -732,6 +732,7 @@
 			},
 			CloseBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户关闭!", data);
+				this.mainSale.DKF.val = data;
 				this.mainSale.ComponentsManage.DKF = false;
 			},
 			SignIn: function() {

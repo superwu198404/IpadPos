@@ -43,15 +43,15 @@
 					name: menu_name,
 					info: menu_info
 				};
-				uni.$emit("change",this.current_info);
+				uni.$emit("change", this.current_info);
 			}
 		},
 		created() {
 			console.log("[Page-Mounted]菜单初始化开始...");
 			this.menu_info = base_sale.XsTypeObj;
 			this.current_info = {
-				name:'sale',
-				info:this.menu_info.sale
+				name: 'sale',
+				info: this.menu_info.sale
 			}
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
 		}
@@ -59,7 +59,7 @@
 </script>
 
 <style>
-	.menu{
+	.menu {
 		padding: 0px;
 	}
 </style>
