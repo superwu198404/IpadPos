@@ -37,10 +37,10 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<label>
+					<!-- <label>
 						<button class="rijie" @click="Sign()">签到</button>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
-					</label>
+					</label> -->
 				</view>
 				<view class="account">
 					<view>
@@ -282,9 +282,18 @@
 			} else {
 				that.showSign = true;
 			}
-
+			this.Bind();
 		},
 		methods: {
+			Bind:function(){
+				console.log("[Head-Bind]执行开始!");
+				uni.$on('head-action',util.callBind(this,function(data){
+					console.log("[Head]动作执行!");
+					if(Object.existsKey(this,data.name)){
+						this[data.name]();
+					}
+				}))
+			},
 			//消息已读
 			ReadMsg: function(e, i) {
 				let store = util.getStorage("store");

@@ -85,6 +85,12 @@
 							<view class="a-z" @click="GetTSZKData()">
 								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
+							<view class="a-z" @click="SignIn()">
+								<span class="mini-text">签到</span>
+							</view>
+							<view class="a-z" @click="DailySettlement()">
+								<span class="mini-text">日结</span>
+							</view>
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
@@ -698,9 +704,10 @@
 				this.mainSale.SetManage(menu.info.clickType);
 			},
 			Redirect: function(info) {
-				console.log("[Redirect]重定向!", info);
+				console.log("[Redirect]重定向至销售主页!", info);
 				let menu_info = this.mysale.XsTypeObj[info.name];
-				if (menu_info) this.mainSale.SetSaleType(menu_info.clickType, info.params, true);
+				this.mainSale.$initSale(menu_info.clickType,info.params);
+				this.mainSale.SetManage('sale');
 			},
 			CloseMember: function(member_info) {
 				this.mainSale.ComponentsManage.member_login = false;
@@ -708,6 +715,18 @@
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
 				this.GetHyCoupons(member_info);
+			},
+			SignIn:function(){
+				console.log("[SignIn]签到!");
+				uni.$emit('head-action',{
+					name:'Sign'
+				})
+			},
+			DailySettlement:function(){
+				console.log("[DailySettlement]日结!");
+				uni.$emit('head-action',{
+					name:'ConfirmRJ'
+				})
 			},
 			//切换登录
 			ChangeMember: function() {
@@ -788,11 +807,15 @@
 	page {
 		overflow: hidden;
 	}
-
+	.a-z{
+		min-height: 2em;
+	}
 	.right {
 		height: 100%;
 	}
-	
+	.mini-text {
+	    font-size: x-small;
+	}
 	.right > * {
 	    width: 100%;
 		background-color: #f5f4f8;
