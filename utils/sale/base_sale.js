@@ -505,7 +505,7 @@ function GetSale(global, vue, target_name) {
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
 		console.log("[SetManage]LastManage:", lastManage);
-		if (pm_mtype === lastManage) return;
+		// if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
 			console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;

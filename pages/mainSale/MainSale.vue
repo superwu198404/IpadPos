@@ -10,7 +10,7 @@
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu"></Page>
 			<view class="right" style="position: relative;">
-				<Head></Head>
+				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -85,6 +85,12 @@
 							<view class="a-z" @click="GetTSZKData()">
 								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
+							<view class="a-z" @click="SignIn()">
+								<span class="mini-text">签到</span>
+							</view>
+							<view class="a-z" @click="DailySettlement()">
+								<span class="mini-text">日结</span>
+							</view>
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
@@ -104,26 +110,79 @@
 				</view>
 				<!-- 在这插入组件 -->
 				<Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
-				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
-				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
-				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
-				<OnlinePick style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true"
+					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
+					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
+				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway">
+				</TakeAway>
+				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
+				</TakeYD>
+				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order">
+				</OnlineOrders>
+				<OnlinePick style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
 				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message"></Message>
-				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
-				<SXRefund style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
+				</RefundOrder>
+				<SXRefund style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
 				<Promotion style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.tools"></Promotion>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
 
-		<MemberLogin v-if="mainSale.ComponentsManage.member_login"
+		<MemberLogin v-if="mainSale.ComponentsManage.HY"
 			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
 
-		<!-- 会员弹框 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.HY">
-			<view class="memberes">
+		<!-- 蛋糕属性选择 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+			<view class="popup">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
+				<view class="commods">
+					<view class="h3">
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+					</view>
+					<view class="cods">
+						<label>
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+						</label>
+						<label>
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
+						</label>
+
+					</view>
+					<view class="price">
+						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
+						<view> <button @click="mainSale.chengedQty"
+								data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button
+								@click="mainSale.chengedQty" data-qty="1">+</button></view>
+					</view>
+					<view>
+						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
+							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
+							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
+						</view>
+					</view>
+					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
+						<view class="sizelist">
+							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
+								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-spid="specs.SPID">{{specs.SPECS}}</label>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- 未登录结算单 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -131,7 +190,6 @@
 							<image class="touxiang" src="../../images/touxiang.png"></image>
 							<label
 								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
-							<label @click="ChangeMember()">切换</label>
 						</label>
 						<button @click="mainSale.ComponentsManage.HY = false">×</button>
 					</view>
@@ -183,7 +241,7 @@
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
 										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-												mode="widthFix"></image></button> -->
+													mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
@@ -191,55 +249,6 @@
 					</view>
 				</view>
 			</view>
-		</view>
-
-		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
-			<view class="popup">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
-				<view class="commods">
-					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
-					</view>
-					<view class="cods">
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
-						
-					</view>
-					<view class="price">
-						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
-						<view> <button @click="mainSale.chengedQty"
-								data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button
-								@click="mainSale.chengedQty" data-qty="1">+</button></view>
-					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
-							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
-						</view>
-					</view>
-					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
-						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
-								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID">{{specs.SPECS}}</label>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
-				</view>
-			</view>
-		</view>
-
-		<!-- 未登录结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="pop-r pop-rs">
 				<view class="member">
 					<label>
@@ -693,21 +702,37 @@
 				this.mainSale.SetManage(menu.info.clickType);
 			},
 			Redirect: function(info) {
-				console.log("[Redirect]重定向!", info);
+				console.log("[Redirect]重定向至销售主页!", info);
 				let menu_info = this.mysale.XsTypeObj[info.name];
-				if (menu_info) this.mainSale.SetSaleType(menu_info.clickType, info.params, true);
+				this.mainSale.$initSale(menu_info.clickType, info.params);
+				this.mainSale.SetManage('sale');
 			},
 			CloseMember: function(member_info) {
-				this.mainSale.ComponentsManage.member_login = false;
+				this.mainSale.ComponentsManage.HY = false;
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
 				this.GetHyCoupons(member_info);
 			},
-			//切换登录
-			ChangeMember: function() {
-				this.mainSale.ComponentsManage.member_login = true;
-				this.mainSale.ComponentsManage.HY = false;
+			OpenBigCustomer: function(data) {
+				console.log("[CloseBigCustomer]大客户打开!", data);
+				this.mainSale.ComponentsManage.DKF = true;
+			},
+			CloseBigCustomer: function(data) {
+				console.log("[CloseBigCustomer]大客户关闭!", data);
+				this.mainSale.ComponentsManage.DKF = false;
+			},
+			SignIn: function() {
+				console.log("[SignIn]签到!");
+				uni.$emit('head-action', {
+					name: 'Sign'
+				})
+			},
+			DailySettlement: function() {
+				console.log("[DailySettlement]日结!");
+				uni.$emit('head-action', {
+					name: 'ConfirmRJ'
+				})
 			},
 			GetTSZKData: function() { //展示特殊折扣
 				// that.showTSZK = true;
@@ -734,8 +759,7 @@
 						if (res.code) {
 							this.mainSale.HY.val.coupons = res.data;
 							this.mainSale.update();
-							this.mainSale.HY.val.hyId = this.mainSale.HY.val.hyId;
-							this.mainSale.ComponentsManage.HY = true;
+							this.mainSale.ShowStatement();
 							console.log("[GetHyCoupons]会员信息-computed:", this.MemberInfo);
 							console.log("[GetHyCoupons]会员信息-control:", this.mainSale.HY.val);
 						}
@@ -746,11 +770,8 @@
 			},
 			MemberLogin: function(e) { //会员登录
 				console.log("[MemberLogin]会员登录!");
-				if (Object.keys(this.mainSale.HY.val).length > 0) {
-					this.GetHyCoupons(this.mainSale.HY.val);
-				} else
-					this.mainSale.ComponentsManage.member_login = true;
-				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.member_login);
+				this.mainSale.ComponentsManage.HY = true;
+				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.HY);
 			},
 			Bagslist: function(e) {
 				this.Shoppingbags = true,
@@ -760,9 +781,18 @@
 				this.Chargeback = !this.Chargeback
 			},
 			Bind: function() {
+				console.log("[Bind]UNBIND!");
+				uni.$off("change");
+				uni.$off("redirect");
+				uni.$off("member-close");
+				uni.$off("close-big-customer");
+				uni.$off("open-big-customer");
+				console.log("[Bind]BIND!");
 				uni.$on("change", this.Change);
 				uni.$on("redirect", this.Redirect);
 				uni.$on("member-close", this.CloseMember);
+				uni.$on("close-big-customer", this.CloseBigCustomer);
+				uni.$on("open-big-customer", this.OpenBigCustomer);
 			}
 		},
 		created() {
@@ -784,12 +814,20 @@
 		overflow: hidden;
 	}
 
+	.a-z {
+		min-height: 2em;
+	}
+
 	.right {
 		height: 100%;
 	}
-	
-	.right > * {
-	    width: 100%;
+
+	.mini-text {
+		font-size: x-small;
+	}
+
+	.right>* {
+		width: 100%;
 		background-color: #f5f4f8;
 	}
 

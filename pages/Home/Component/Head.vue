@@ -37,10 +37,10 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<label>
+					<!-- <label>
 						<button class="rijie" @click="Sign()">签到</button>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
-					</label>
+					</label> -->
 				</view>
 				<view class="account">
 					<view>
@@ -156,7 +156,7 @@
 				</view>
 			</view>
 			<!-- 大客户组件 -->
-			<BigCustomer v-if="showBig" @ClosePopup="ClosePopup"></BigCustomer>
+			<BigCustomer v-if="custom" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
 			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
@@ -180,7 +180,8 @@
 	export default {
 		name: "menu_head",
 		props: {
-			data: []
+			data: [],
+			custom:Boolean
 		},
 		data() {
 			return {
@@ -282,9 +283,19 @@
 			} else {
 				that.showSign = true;
 			}
-
+			this.Bind();
 		},
 		methods: {
+			Bind:function(){
+				console.log("[Head-Bind]执行开始!");
+				uni.$off('head-action');
+				uni.$on('head-action',util.callBind(this,function(data){
+					console.log("[Head]动作执行!");
+					if(Object.existsKey(this,data.name)){
+						this[data.name]();
+					}
+				}))
+			},
 			//消息已读
 			ReadMsg: function(e, i) {
 				let store = util.getStorage("store");
@@ -446,18 +457,21 @@
 			},
 			//选择大客户
 			ShowDKF: function() {
-				this.showBig = true;
+				// this.showBig = true;
+				console.log("[ShowDKF]选择大客户!");
+				uni.$emit('open-big-customer');
 			},
 			//选择大客户
 			ClosePopup: function(data) {
-				this.showBig = false;
-				console.log("选中的大客户：", data);
+				console.log("[ClosePopup]大客户信息:",data);
+				// this.showBig = false;
 				if (data && JSON.stringify(data) != "{}") {
 					getApp().globalData.store.DKFID = data.DKHID;
 					getApp().globalData.store.DKFNAME = data.NAME;
 					this.DKFNAME = data.NAME;
 				}
-				console.log("新的全局变量：", getApp().globalData.store);
+				this.$forceUpdate();
+				console.log("[ClosePopup]新的全局变量:", getApp().globalData.store);
 			},
 			ShowPrint: function() {
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
