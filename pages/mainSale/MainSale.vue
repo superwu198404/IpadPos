@@ -209,12 +209,7 @@
 						<label>
 							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
 						</label>
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
+						
 					</view>
 					<view class="price">
 						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>

@@ -54,7 +54,7 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 76%;
+	height: 90%;
 	padding-bottom: 50%;
 }
 
@@ -300,7 +300,7 @@ page {
 }
 
 .checkout label {
-	margin-left: 40rpx;
+	margin-left: 20rpx;
 	font-size: 26rpx;
 	color: #006B44;
 	display: flex;
@@ -330,6 +330,7 @@ page {
 	height: 50rpx;
 	line-height: 50rpx;
 	font-size: 26rpx;
+	margin-left: 12rpx;
 }
 
 .amounts {
