@@ -1,13 +1,18 @@
 import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
-import { Accept } from '@/bll/Common/bll.js';
-
+import {
+	Sale3Model,
+	Sale3ModelAdditional
+} from '@/bll/PaymentBusiness/bll.js'
+import {
+	CreateSaleOrder,
+	PointUploadNew
+} from '@/bll/Common/bll.js'
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
-var XsTypeObj = 
-{
+var XsTypeObj = {
 	//销售+退货
 	sale: { //普通销售模式，最基本的模式
 		xstype: "1",
@@ -40,16 +45,14 @@ var XsTypeObj =
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$click() 
-		{
+		$click() {
 			return true;
 		},
 		$initSale: function(params) {
-			console.log("[sale-$initSale]params:",params);
+			console.log("[sale-$initSale]params:", params);
 		},
 		///对打印的控制
-		$print: function() 
-		{
+		$print: function() {
 
 		},
 		//在此模式下添加商品是否所有限制
@@ -58,28 +61,23 @@ var XsTypeObj =
 			return true;
 		},
 		///在付款之前的操作
-		$beforeFk: function() 
-		{
+		$beforeFk: function() {
 			//可以使用的支付方式 
 		},
 		//支付完成之前销售单之前
-		$SaleBefor: function() 
-		{
+		$SaleBefor: function() {
 			//一些特殊的设置
 		},
 		//支付完成中
-		$saleFinishing: function() 
-		{
+		$saleFinishing: function() {
 			//一些特殊的设置
 		},
 		//支付完成以后
-		$saleFinied: function() 
-		{
+		$saleFinied: function() {
 			//一些特殊的设置
 		},
 	},
-	sale_return_good: 
-	{
+	sale_return_good: {
 		xstype: "2",
 		clickType: "sale_return_good",
 		nameSale: "销售退货",
@@ -88,8 +86,7 @@ var XsTypeObj =
 		operation: {
 			"sale_return_good": true
 		},
-		$initSale: function(params) 
-		{
+		$initSale: function(params) {
 			console.log("[sale_return_good]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_return_good]SALE002:", params.sale2);
@@ -97,8 +94,7 @@ var XsTypeObj =
 			console.log("[sale_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
 		},
-		$click()
-		{
+		$click() {
 			this.SetManage("sale_return_good");
 			return false;
 		},
@@ -113,11 +109,10 @@ var XsTypeObj =
 		operation: {
 			"sale_reserve": true
 		},
-		$click()
-		{
-			
-			return true;
-		},
+		$click() {
+			this.SetManage("sale_reserve");
+			return false;
+		}
 	},
 	sale_reserve_extract: {
 		xstype: "4",
@@ -137,6 +132,47 @@ var XsTypeObj =
 			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? [];
+		},
+		$click() {
+			console.log("[sale_reserve_extract]切换预定提取界面!");
+			this.SetManage("sale_reserve_extract");
+			return false;
+		},
+		$beforeFk(sales) {
+			console.log("[SaleReserve]预定支付金额:", sales.sale1_obj.DNET);
+			util.hidePropety(sales.sale1_obj, "YD_STATUS", "THDATE", "THKHID",
+				"SJTHDATE", "SJTHGSID", "SJTHGCID", "SJTHDPID", "SJTHKCDID",
+				"SJTHKHID", "SJTHPOSID", "SJTHBILL", "ID_RY_TH", "NOTE1", "NOTE2",
+				"PLATTYPE", "YDSPTYPE");
+			console.log("[HidePropety]操作完毕!");
+			sales.sale1_obj.DNET = 188; //测试
+			if (sales.sale1_obj.DNET) {
+				console.log("[SaleReserve]生成预定支付信息...");
+				sales.PayList.push(Sale3ModelAdditional(Sale3Model({
+					fkid: 'ZG03',
+					type: 'YDJ',
+					bill: sales.sale1_obj.BILL,
+					name: "预定金",
+					amount: sales.sale1_obj.DNET
+				}), { //业务配置字段（支付状态设定为成功）
+					fail: false //定金显示为成功
+				}));
+				console.log("[SaleReserve]生成预定支付信息成功:", sales);
+			}
+		},
+		$saleFinied(sales) {
+			console.log("[$SaleFinied]预订单状态变更...");
+			_extract.reserveOrdersStatusUpdate({
+				khid: this.Storeid,
+				gsid: this.GSID,
+				bill: sales.sale1_obj.BILL,
+				is_pay: true
+			}, util.callBind(this, function(res) {
+				if (res.code)
+					console.log("[$SaleFinied]订单状态修改成功!", res);
+				else
+					console.log("[$SaleFinied]订单状态修改失败!", res);
+			}));
 		}
 	},
 	sale_reserve_cancel: {
@@ -148,10 +184,9 @@ var XsTypeObj =
 		operation: {
 			"sale_reserve_cancel": true
 		},
-		$initSale: function(params) 
-		{
-			
-		     this.actType  ="Refund";
+		$initSale: function(params) {
+
+			this.actType = "Refund";
 			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
@@ -159,7 +194,11 @@ var XsTypeObj =
 			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? [];
-		}
+		},
+		$click() {
+			this.SetManage("sale_reserve_cancel");
+			return false;
+		},
 	},
 	//线上订单+线上提取
 	sale_online_order: {
@@ -171,6 +210,10 @@ var XsTypeObj =
 		operation: {
 			"sale_online_order": true
 		},
+		$click() {
+			this.SetManage("sale_online_order");
+			return false;
+		},
 	},
 	sale_online_order_extract: {
 		xstype: "8",
@@ -180,6 +223,10 @@ var XsTypeObj =
 		icon_close: require("@/images/xsddtiqu-wxz.png"),
 		operation: {
 			"sale_online_order_extract": true
+		},
+		$click() {
+			this.SetManage("sale_online_order_extract");
+			return false;
 		},
 	},
 	//外卖单
@@ -192,6 +239,10 @@ var XsTypeObj =
 		operation: {
 			"sale_takeaway": true
 		},
+		$click() {
+			this.SetManage("sale_takeaway");
+			return false;
+		},
 	},
 	//外卖单预定
 	sale_takeaway_reserve: {
@@ -202,6 +253,10 @@ var XsTypeObj =
 		icon_close: require("@/images/wmyudd-hui.png"),
 		operation: {
 			"sale_takeaway_reserve": true
+		},
+		$click() {
+			this.SetManage("sale_takeaway_reserve");
+			return false;
 		},
 	},
 	//消息
@@ -214,6 +269,10 @@ var XsTypeObj =
 		operation: {
 			"sale_message": true
 		},
+		$click() {
+			this.SetManage("sale_message");
+			return false;
+		},
 	},
 	//赊销+退货
 	sale_credit: {
@@ -224,6 +283,11 @@ var XsTypeObj =
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
 			"sale_credit": true
+		},
+		$click() {
+			this.SetManage("sale_credit");
+			this.ComponentsManage.DKF = true;//打开大客户弹窗
+			return false;
 		},
 	},
 	sale_credit_return_good: {
@@ -242,7 +306,11 @@ var XsTypeObj =
 			this.sale002 = params.sale2;
 			console.log("[sale_credit_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3;
-		}
+		},
+		$click() {
+			this.SetManage("sale_credit_return_good");
+			return false;
+		},
 	},
 }
 
@@ -311,10 +379,12 @@ function GetSale(global, vue, target_name) {
 	this.KCDID = store.KCDID;
 	this.DPID = store.DPID;
 	this.GCID = store.GCID;
+	this.GSID = store.GSID;
 	//销售系列主要数据对象
 	this.sale001 = {}; //sale001 主单
 	this.sale002 = []; //sale002 子单1：记录商品信息
 	this.sale003 = []; //sale003 子单2：记录支付信息
+	this.payed = []; //已支付信息
 	this.sale008 = []; //sale008
 	//销售时间（默认当前）
 	this.saledate = this.getDate();
@@ -342,7 +412,7 @@ function GetSale(global, vue, target_name) {
 	//商品档案002 以商品id为键值的结构
 	this.spSelectArr = {};
 	//更新（根据代码应该是强制刷新页面）
-	this.actType  ="Payment";
+	this.actType = "Payment";
 
 	this.update = function() {
 		if (that.Page) {
@@ -370,8 +440,7 @@ function GetSale(global, vue, target_name) {
 		base: {},
 		cval: {},
 		Defval: "80000000",
-		get val() 
-		{
+		get val() {
 			/*
 			  这里要根据大客户ID是否为空 如果为空 返回一个默认的大客户
 			*/
@@ -430,8 +499,7 @@ function GetSale(global, vue, target_name) {
 		//筛选字母的列表
 	}
 	//设置所有商品列表数据
-	this.SetAllGoods = function(pm_list, pm_price) 
-	{
+	this.SetAllGoods = function(pm_list, pm_price) {
 		cx.Cxdict();
 		this.spPrice = pm_price;
 		this.Page.$set(this.Page[this.pageName], "spPrice", this.spPrice);
@@ -448,8 +516,7 @@ function GetSale(global, vue, target_name) {
 		console.log("[SetAllGoods]绑定字母表！");
 	}
 	//点击后获取数据（字母）
-	this.FlagClick = function(e) 
-	{
+	this.FlagClick = function(e) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
@@ -459,8 +526,7 @@ function GetSale(global, vue, target_name) {
 		"statement": false
 	};
 	///销售界面可以进行操作功能 ，
-	this.allOperation = 
-	{
+	this.allOperation = {
 		"HY": false, //是否可以录入会员
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
@@ -487,8 +553,7 @@ function GetSale(global, vue, target_name) {
 		"statement": true, //购物车
 	}
 	//插件的显示在这里控制
-	this.ComponentsManage =
-	{
+	this.ComponentsManage = {
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
@@ -511,7 +576,9 @@ function GetSale(global, vue, target_name) {
 		"inputsp": false,
 		"statement": false, //购物车
 	}
+
 	var lastManage = null;
+	this.previous = null;
 
 	///设置基础的权限
 	this.SetCurrentOperation = function(pm_OperEnum) {
@@ -529,8 +596,7 @@ function GetSale(global, vue, target_name) {
 				this.currentOperation[item] = false;
 			}
 			//切换的时候关闭所有插件
-			for (item in this.ComponentsManage) 
-			{
+			for (item in this.ComponentsManage) {
 				that.ComponentsManage[item] = false;
 			}
 			this.update();
@@ -540,6 +606,7 @@ function GetSale(global, vue, target_name) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
+		this.previous = this.current_type.clickType;
 		console.log("[SetManage]LastManage:", lastManage);
 		//if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
@@ -548,10 +615,10 @@ function GetSale(global, vue, target_name) {
 		}
 		that.log("[SetManage]点击的类型:", pm_mtype);
 		//that.ComponentsManage[pm_mtype] = true;
-		 that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
-		 lastManage = pm_mtype;
+		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
-		
+
 		that.log("[SetManage]组件控制对象:", that.ComponentsManage);
 		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
@@ -569,39 +636,34 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//调用各个销售类型的方法名称,参数列表
-	this.CurrentTypeCall = function(pm_fun) 
-	{
+	this.CurrentTypeCall = function(pm_fun) {
 		console.log("[CurrentTypeCall]当前销售类型:", this.current_type);
 		console.log("[CurrentTypeCall]当前销售类型调用:", pm_fun);
 		let defstr = "def"
 		let arr = Array.from(arguments).slice(1);
 		if (that.current_type[pm_fun]) {
 			return that.current_type[pm_fun].apply(that, arr);
-		} 
-		else 
-		{
+		} else {
 			//方便定义公用的处理方法，如果销售类型里没有这个方法则调用这个
 			if (that[defstr + pm_fun]) {
 				return that[defstr + pm_fun].apply(that, arr);
 			}
 		}
 	}
-	 //选择的商品进行品类的切换
-	 this.selectPlidChenged =function(e)
-	  {
-		   var plid  =  e.currentTarget.dataset.plid;
-		   that.selectPlid = plid;
-		   that.scrollinto = that.selectFlag + plid;
-		   that.log("切换到的品类"+that.scrollinto)
-		   that.Page.$set(that.Page[that.pageName],"selectPlid" , that.selectPlid );
-		   that.Page.$set(that.Page[that.pageName],"scrollinto" , that.scrollinto );
-	  }
-	
+	//选择的商品进行品类的切换
+	this.selectPlidChenged = function(e) {
+		var plid = e.currentTarget.dataset.plid;
+		that.selectPlid = plid;
+		that.scrollinto = that.selectFlag + plid;
+		that.log("切换到的品类" + that.scrollinto)
+		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
+		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
+	}
+
 	//展示商品的详情的事件
 	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
-		if (!that.currentOperation.inputsp) 
-		{
+		if (!that.currentOperation.inputsp) {
 			that.myAlert("当前模式下不可录入商品")
 			return;
 		}
@@ -642,25 +704,50 @@ function GetSale(global, vue, target_name) {
 
 	//修改销售类型
 	//参数1销售类型，参数2单据列表
-	this.SetType = function(pm_type) 
-	{
+	this.SetType = function(pm_type) {
 		console.log("[SetType]设置销售类型:", pm_type);
+		this.previous = this.clickSaleType?.clickType;
+		console.log("[SetType]上一个类型:", this.previous);
+		this.Pub(pm_type);
 		if (XsTypeObj[pm_type]) {
 			this.clickSaleType = XsTypeObj[pm_type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
-			that.log("销售类型" + pm_type);
+			console.log("[SetType]销售类型:", pm_type);
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
 					.sale002Rows)) {
 				this.myAlert("已经输入了商品不能进行此操作")
 				return;
 			}
 			that.log(JSON.stringify(this.current_type));
-			if (this.clickSaleType.$click.call(this)) 
-			{
+			if (this.clickSaleType.$click.call(this)) {
 				this.$initSale(this.clickSaleType);
 			}
+
 		} else {
 			this.myAlert("没有此种操作模式" + pm_type);
+		}
+	}
+
+	this.SubList = {};
+
+	this.Pub = function(type) {
+		if (this.SubList[type] && Array.isArray(this.SubList[type])) {
+			this.SubList[type].forEach(util.callBind(this, function(func) {
+				try {
+					func.call(this);
+				} catch (e) {
+					console.log("[PubPageSwitch]发生异常!异常:", e);
+				}
+			}));
+		}
+	}
+
+	this.Sub = function(type, func) {
+		if (this.SubList[type] && Array.isArray(this.SubList[type])) {
+			if (this.SubList[type].indexOf(i => i === func) === -1)
+				this.SubList[type].push(func);
+		} else {
+			this.SubList[type] = [func];
 		}
 	}
 
@@ -668,28 +755,38 @@ function GetSale(global, vue, target_name) {
 	 * 支付结果
 	 * @param {*} e 
 	 */
-	this.PayedResult = function(e) {
-		that.log("----------支付完成查看返回结果---------");
-		that.log(e);
+	this.PayedResult = async function(result) {
+		console.log("[PayedResult]支付结果:", result);
+		let sale1 = result.data.sale1_obj,
+			sale2 = result.data.sale2_arr,
+			sale3 = result.data.sale3_arr,
+			sale8 = result.data.sale8_arr
+		if (result.code) {
+			util.simpleMsg(result.msg);
+			let create_result = await CreateSaleOrder(sale1, sale2, sale3, sale8);
+			util.simpleMsg(create_result.msg, !create_result.code);
+			let upload_result = await PointUploadNew(sale1, sale2, sale3);
+			util.simpleMsg(upload_result.msg, !upload_result.code);
+			this.$saleFinied(result.data);
+		} else
+			util.simpleMsg(result.msg, true)
 	}
 
 
-    this.pay  =function()
-	{
-		that.log("开始进入销售页面")
-		
-		that.log("------------------------------")
-		let inputParm ={
+	this.pay = function() {
+		that.log("[Pay]开始进入销售页面...")
+		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
+			PayList: that.payed,
 			sale8_arr: that.sale008, //008水吧商品
-			actType:  that.actType
+			PayList: [],
+			actType: that.actType
 		}
 		that.$beforeFk(inputParm);
-		that.log(JSON.stringify( inputParm));
-		that.Page.$store.commit('set-location',inputParm );
-		console.log("[ToPay]控制对象:",that.allOperation.actType);
+		that.Page.$store.commit('set-location', inputParm);
+		console.log("[ToPay]控制对象:", that.allOperation.actType);
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
@@ -697,19 +794,17 @@ function GetSale(global, vue, target_name) {
 			}
 		})
 	}
-	
+
 
 	/**
 	 * 修改销售类型(SetType 修改版本)
 	 * @param {*} type 销售类型
 	 * @param {*} direct 是否选择直接初始化
 	 */
-	this.SetSaleType = function(type, init_params = null, direct = false) 
-	{
+	this.SetSaleType = function(type, init_params = null, direct = false) {
 		console.log("[SetSaleType]设置销售类型:", type);
-		if(type== that.clickSaleType.xstype )
-		{
-			return 
+		if (type == that.clickSaleType.xstype) {
+			return
 		}
 		if (XsTypeObj[type]) {
 			this.clickSaleType = XsTypeObj[type];
@@ -721,8 +816,7 @@ function GetSale(global, vue, target_name) {
 				return;
 			}
 			console.log("[SetSaleType]设置销售类型信息:", this.current_type);
-			if (direct) 
-			{
+			if (direct) {
 				console.log("[MainSale]开始初始化...", {
 					params: init_params,
 					type_info: this.clickSaleType,
@@ -746,11 +840,9 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//初始化销售的操作
-	this.$initSale = function(pm_newtype, pm_saleobj)
-	{
+	this.$initSale = function(pm_newtype, pm_saleobj) {
 		//在这里需要关闭 打开的插件
-		console.log("[$initSale]销售初始化开始!",
-		{
+		console.log("[$initSale]销售初始化开始!", {
 			type: pm_newtype || this.clickSaleType
 		});
 		pm_newtype = pm_newtype || this.clickSaleType;
@@ -765,8 +857,7 @@ function GetSale(global, vue, target_name) {
 		console.log("[$initSale]销售初始化完毕!");
 	}
 
-	this.cxBillinit = function() 
-	{
+	this.cxBillinit = function() {
 
 	}
 
@@ -775,16 +866,14 @@ function GetSale(global, vue, target_name) {
 
 	}
 
-	this.initcxSpRow = function() 
-	{
+	this.initcxSpRow = function() {
 
 	}
 
-	this.cxBillinit = function() 
-	{
+	this.cxBillinit = function() {
 
 	}
-	
+
 	this.InitSale001 = function() {
 		var is_new = Object.keys(this.sale001).length == 0;
 		var commonSaleParm = {
@@ -795,21 +884,20 @@ function GetSale(global, vue, target_name) {
 			KCDID: this.KCDID,
 			GCID: this.GCID,
 		};
-		if(is_new){
-			commonSaleParm.BILL = this.getBill();//创建新订单号
-			commonSaleParm.SALETIME = this.getTime();//创建新的销售时间
+		if (is_new) {
+			commonSaleParm.BILL = this.getBill(); //创建新订单号
+			commonSaleParm.SALETIME = this.getTime(); //创建新的销售时间
 			this.sale001 = new sale.sale001(commonSaleParm)
-		}
-		else{
-			Object.assign(this.sale001,new sale.sale001(commonSaleParm));
+		} else {
+			Object.assign(this.sale001, new sale.sale001(commonSaleParm));
 		}
 		return commonSaleParm;
 	}
-	
+
 	this.createNewBill = function() {
 		var commonSaleParm = {}
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
-		    this.log("**************创建新的sale001*************")
+			this.log("**************创建新的sale001*************")
 			let newbill = this.getBill();
 			let stime = this.getTime();
 			commonSaleParm = {
@@ -823,7 +911,7 @@ function GetSale(global, vue, target_name) {
 				SALETIME: stime
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
-			console.log( JSON.stringify( this.sale001))
+			console.log(JSON.stringify(this.sale001))
 
 		} else {
 			commonSaleParm = {
@@ -844,11 +932,10 @@ function GetSale(global, vue, target_name) {
 	//汇总sale002的所有内容
 	this.sale002Sum = function(pm_input) {
 		this.sale002.forEach(item => {
-	    	that.log("循环中查看002");
+			that.log("循环中查看002");
 			that.log(JSON.stringify(item));
 			let keys = Object.keys(pm_input);
-			for (var i = 0; i < keys.length; i++) 
-			{
+			for (var i = 0; i < keys.length; i++) {
 				that.log(JSON.stringify(keys[i]));
 				pm_input[keys[i]] += that.float(item[keys[i]], 2);
 				that.log(JSON.stringify(pm_input));
@@ -904,8 +991,7 @@ function GetSale(global, vue, target_name) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_qty > 0)
-		{
+		if (pm_qty > 0) {
 			this.sale002[pm_row].QTY = pm_qty;
 			let price = this.float(this.sale002[pm_row].PRICE);
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
@@ -921,17 +1007,15 @@ function GetSale(global, vue, target_name) {
 	 * 显示购物车
 	 * @param {*} e 
 	 */
-	this.ShowStatement = async function(e) 
-	{
+	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-	    await cx.Createcx(that.sale002);
+		await cx.Createcx(that.sale002);
 		that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = function() 
-	{
+	this.SaleNetAndDisc = function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			that.computeCx();
@@ -964,20 +1048,25 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//付款之前触发
-	this.$beforeFk = function(pm_inputParm) 
-	{
+	this.$beforeFk = function(pm_inputParm) {
+		console.log("[$BeforeFk]支付前触发:", pm_inputParm);
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type //
 		//写大客户
 		//写会员
-		this.CurrentTypeCall("$beforeFk",pm_inputParm);
+		this.CurrentTypeCall("$beforeFk", pm_inputParm);
 		//可以使用的支付方式 
 	}
 
+	//付款之后触发
+	this.$saleFinied = function(sales) {
+		console.log("[$SaleFinied]支付完毕后触发:", sales);
+		this.CurrentTypeCall("$saleFinied", sales);
+	}
+
 	//重置销售单据
-	this.resetSaleBill = function() 
-	{
+	this.resetSaleBill = function() {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;

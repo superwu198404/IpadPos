@@ -42,6 +42,14 @@
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
 					</label> -->
 				</view>
+				<view class="account" v-if="member_name">
+					<view>
+						<image src="@/images/touxiang.png" mode="widthFix"></image>
+					</view>
+					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
+						<text>{{ member_name }}</text>
+					</view>
+				</view>
 				<view class="account">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -66,7 +74,6 @@
 						</view>
 					</view>
 				</view>
-
 			</view>
 			<!-- 紧急消息弹窗 -->
 			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
@@ -191,6 +198,7 @@
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
+				member_name:'',
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
 				YW_MsgData: [], //业务类消息
@@ -225,6 +233,11 @@
 		// },
 		created: function(e) {
 			that = this;
+			uni.$off('set-member');
+			uni.$on('set-member', util.callBind(this, function(info) {
+				console.log("[Head]设置会员名称!",info);
+				this.member_name = info.hyId;
+			}))
 			_msg.ShowMsg(that.KHID, "", res => {
 				that.MsgData = res;
 				that.XT_MsgData = res.filter((r, i) => {

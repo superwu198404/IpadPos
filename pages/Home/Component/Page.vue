@@ -22,6 +22,9 @@
 	import util from '@/utils/util.js';
 	export default {
 		name: "Page",
+		props: {
+			current: String
+		},
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name) {
@@ -54,6 +57,14 @@
 				info: this.menu_info.sale
 			}
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
+			uni.$off('set-menu');
+			uni.$on('set-menu', util.callBind(this, function(data) {
+				console.log("[Page]手动切换菜单!",data);
+				this.current_info.name = data;
+				this.current_info.info = this.menu_info[data];
+				console.log("[Page]当前菜单:",this.current_info);
+				this.$forceUpdate();
+			}))
 		}
 	}
 </script>

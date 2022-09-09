@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu"></Page>
+			<Page :current="mainSale.current_type" ref="menu"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -337,7 +337,7 @@
 				<view class="member">
 					<label>
 						<image class="touxiang" src="../../images/touxiang.png"></image><button
-							class="btn">会员登录</button>
+							class="btn">{{ mainSale.HY.val.hyId ? mainSale.HY.val.hyId : '会员登录'}}</button>
 					</label>
 					<text @click="mainSale.resetSaleBill">清空</text>
 				</view>
@@ -748,22 +748,23 @@
 					return [];
 			},
 			MemberBalance:function(){
-				return (mainSale.HY.val?.Balance ?? 0)/100;
+				return (this.mainSale.HY.val?.Balance ?? 0)/100;
 			},
 			MemberPoint:function(){
-				return (mainSale.HY.val?.JFBalance ?? 0)/100;
+				return (this.mainSale.HY.val?.JFBalance ?? 0)/100;
 			},
 			MemberGiftCard:function(){
-				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0)/100;
+				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0)/100;
 			},
 			MemberCoupons:function(){
-				return mainSale.HY.val.coupons ?? [];
+				return this.mainSale.HY.val.coupons ?? [];
 			}
 		},
 		methods: {
 			Change: function(menu) {
 				console.log("[Change]菜单点击触发!", menu);
-				this.mainSale.SetManage(menu.info.clickType);
+				// this.mainSale.SetManage(menu.info.clickType);
+				this.mainSale.SetType(menu.info.clickType);
 			},
 			Redirect: function(info) {
 				console.log("[Redirect]重定向至销售主页!", info);
@@ -777,6 +778,7 @@
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
+				uni.$emit('set-member',this.mainSale.HY.val);
 				this.GetHyCoupons(member_info);
 			},
 			OpenBigCustomer: function(data) {
@@ -887,6 +889,7 @@
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
 			this.Bind();
+			this.Subscribe();
 			//获取辅助促销
 			// this.GetFZCX();
 		}

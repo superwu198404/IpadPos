@@ -762,23 +762,25 @@
 					this.sale1_obj = this.SALES.sale1;
 					this.sale2_arr = this.SALES.sale2;
 					this.sale3_arr = this.SALES.sale3;
+					console.log("[PayDataHandle]初始化完毕!");
 				}
 			},
 			//计算从上个页面传入的已完成的支付金额
 			PayedCount: function() {
 				let count = 0;
-				this.PaymentInfos.PayList.filter(i => !i.fail).map(pay => { //总和计算上个页面已经支付成功的订单的金额
+				this.PaymentInfos.PayList?.filter(i => !i.fail).map(pay => { //总和计算上个页面已经支付成功的订单的金额
 					count += pay.amount;
 				});
+				console.log("[PayedCount]已支付金额(已完成支付的记录计算金额):", count);
 				return count;
 			},
 			//PayList 初始化
 			PayListInit: function() { //由于存在计算已支付金额的操作，所以此操作必须要在进行待支付金额计算前调用，否则会导致待支付金额误差的问题
 				let pays = this.PaymentInfos.PayList;
-				this.PayList = JSON.parse(JSON.stringify(this.PaymentInfos.PayList));
+				this.PayList = JSON.parse(JSON.stringify(this.PaymentInfos.PayList ?? []));
 				// this.PayList = this.PaymentInfos.PayList;
 				this.PaymentInfos.PayedAmount = this.PayedCount();
-				console.log("PayList列表初始化完毕！", this.PayList)
+				console.log("[PayListInit]PayList列表初始化完毕！", this.PayList)
 			},
 			//SALE001 初始化
 			SALE1Init: function() {
@@ -938,11 +940,8 @@
 			PayTypeJudgment: function() {
 				let curPayType = "";
 				let startCode = this.authCode.substring(0, 2);
-				console.log("[PayTypeJudgment]开始片段：", startCode);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
-					console.log("[PayTypeJudgment]全局数据：", getApp().globalData);
-					console.log("[PayTypeJudgment]片段规则：", CodeRule);
 					if (this.currentPayType === "SZQ") //券
 						startCode = "coupon";
 					//取出当前是何种类型的支付方式
@@ -1229,7 +1228,7 @@
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
-					this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
+					// this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
@@ -1301,16 +1300,24 @@
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					this.event.emit("FinishOrder", {
-						code: true,
-						msg: "订单支付完成!",
-						data: {
-							sale1_obj: this.sale1_obj,
-							sale2_arr: this.sale2_arr,
-							sale3_arr: this.sale3_arr,
-							sale8_arr: this.sale8_arr
-						}
-					});
+					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
+					if (Number(this.dPayAmount) === 0) {
+						this.event.emit("FinishOrder", {
+							code: true,
+							msg: "支付完成!",
+							data: {
+								sale1_obj: this.sale1_obj,
+								sale2_arr: this.sale2_arr,
+								sale3_arr: this.sale3_arr,
+								sale8_arr: this.sale8_arr
+							}
+						});
+					} else {
+						this.event.emit("FinishOrder", {
+							code: false,
+							msg: "支付取消!"
+						});
+					}
 					uni.navigateBack()
 				} else
 					util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
