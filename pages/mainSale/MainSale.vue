@@ -85,12 +85,12 @@
 							<view class="a-z" @click="GetTSZKData()">
 								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="SignIn()">
+							<!-- <view class="a-z" @click="SignIn()">
 								<span class="mini-text">签到</span>
 							</view>
 							<view class="a-z" @click="DailySettlement()">
 								<span class="mini-text">日结</span>
-							</view>
+							</view> -->
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
@@ -391,7 +391,7 @@
 				</view>
 				<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
 
-				<view class="shoppbag">
+				<view class="shoppbag" v-if="CXDatas.length>0">
 					<view class="hengs">
 						<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
 							<view class="bag">
@@ -402,7 +402,7 @@
 								<text>数量</text>
 								<view class="nums">
 									<text>-</text>
-									<input type="number" v-model="item.BQTY"/>
+									<input type="number" v-model="item.BQTY" />
 									<text>+</text>
 								</view>
 							</view>
