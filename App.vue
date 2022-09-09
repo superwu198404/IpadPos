@@ -117,6 +117,12 @@
 			// 	//存在则关闭启动页进入首页
 			// 	plus.navigator.closeSplashscreen();
 			// }
+			if(uni.getStorageSync('store').KHID){//没放下面是因为这没等待异步，导致注入晚了页面部分地方没内容就加载了
+				//全局混入
+				console.log("[APP-LAUNCH]全局混入客户端信息！");
+				Vue.mixin(global); 
+				getApp().globalData.store = uni.getStorageSync('store');
+			}
 			_init.YN_Init(util.callBind(this, function(res) {
 				console.log("[APP-LAUNCH]APP:",uni.getStorageSync('store'));
 				if (!uni.getStorageSync('store').KHID) {
@@ -127,12 +133,7 @@
 							plus.navigator.closeSplashscreen();
 						}
 					})
-				} else{
-					//全局混入
-					console.log("[APP-LAUNCH]全局混入客户端信息！");
-					Vue.mixin(global);
 				}
-					
 			}), err => {
 				console.log("[APP-LAUNCH]失败:",err);
 				//存在则关闭启动页进入首页
