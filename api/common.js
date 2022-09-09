@@ -634,15 +634,16 @@ var DelSale = function(e) { //khid
 	// 	"delete from sale002 where bill in (" + sql1 + ")",
 	// 	"delete from sale003 where bill in (" + sql1 + ")"
 	// ];
-	console.log("业务数据保留天数：", dateformat.getYMD(-day));
+	let curDay = dateformat.getYMD(-day);
+	console.log("业务数据保留天数：", curDay);
 	let arr1 = [
-		"delete from sale001 where yn_sc='Y' and saledate<" + dateformat.getYMD(-day),
+		"delete from sale001 where yn_sc='Y' and saledate<" + curDay,
 		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		dateformat.getYMD(-day),
+		curDay,
 		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		dateformat.getYMD(-day),
+		curDay,
 		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		dateformat.getYMD(-day)
+		curDay
 	];
 	db.get().executeDml(arr1, "", res => {
 		console.log("本地销售单删除成功：" + day, res);
