@@ -42,21 +42,26 @@
 			//跳转到销售页面
 			ToSale: function(e) {
 				let store = util.getStorage("store");
+				if (store.OPENFLAG != 1) {
+					util.simpleMsg("请先进行签到", true);
+					return;
+				}
 				if (e) {
-					if (store.OPENFLAG == 1 && that.signOutDates.length == 0) { //签到了 且没有日结数据
-						if (store.RYTYPE != "SYSTEM") {
-							uni.redirectTo({
-								url: "/pages/mainSale/MainSale"
-							});
-						} else {
-							uni.redirectTo({
-								url: "/pages/index/index"
-							});
-						}
-					} else {
+					if (that.signOutDates.length > 0) { //有日结数据
 						// util.simpleMsg("请先日结", true);
 						that.SignOut(); //发起日结
+						return;
 					}
+					if (store.RYTYPE != "SYSTEM") {
+						uni.redirectTo({
+							url: "/pages/mainSale/MainSale"
+						});
+					} else {
+						uni.redirectTo({
+							url: "/pages/index/index"
+						});
+					}
+
 				} else {
 					if (store.RYTYPE != "SYSTEM") {
 						uni.redirectTo({

@@ -7,8 +7,10 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page :current="mainSale.current_type" ref="menu"></Page>
+			<!-- <Page :current="mainSale.current_type" ref="menu"></Page> -->
+			<Page ref="menu"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -386,7 +388,7 @@
 									<text>+</text>
 								</view>
 							</view>
-						</view>
+						</view> -->
 						<!-- <view class="baglist">
 							<view class="bag">
 								<text class="h8">小号手提袋</text>
@@ -644,10 +646,20 @@
 					</view>
 				</view>
 			</view>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			</view>
 		</view>
 
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
+		</SpecialDisc>
 	</view>
 </template>
 
@@ -668,6 +680,9 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -715,7 +730,8 @@
 			Message,
 			CreditSettlement,
 			Promotion,
-			MemberLogin
+			MemberLogin,
+			PrinterPage
 		},
 		computed: {
 			Price: function() {
@@ -747,16 +763,16 @@
 				} else
 					return [];
 			},
-			MemberBalance:function(){
-				return (this.mainSale.HY.val?.Balance ?? 0)/100;
+			MemberBalance: function() {
+				return (mainSale.HY.val?.Balance ?? 0) / 100;
 			},
-			MemberPoint:function(){
-				return (this.mainSale.HY.val?.JFBalance ?? 0)/100;
+			MemberPoint: function() {
+				return (mainSale.HY.val?.JFBalance ?? 0) / 100;
 			},
-			MemberGiftCard:function(){
-				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0)/100;
+			MemberGiftCard: function() {
+				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
 			},
-			MemberCoupons:function(){
+			MemberCoupons: function() {
 				return this.mainSale.HY.val.coupons ?? [];
 			}
 		},
@@ -805,9 +821,27 @@
 			GetTSZKData: function() { //展示特殊折扣
 				// that.showTSZK = true;
 				this.mainSale.ComponentsManage.Disc = true;
+				[{
+					SPJGZ: "01",
+					NET: 2000,
+					SPID: "123456"
+				}, {
+					SPJGZ: "01",
+					NET: 1250,
+					SPID: "123457"
+				}, {
+					SPJGZ: "02",
+					NET: 5000,
+					SPID: "12345678"
+				}, {
+					SPJGZ: "03",
+					NET: 3000,
+					SPID: "123456789"
+				}]
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
+				console.log("特殊折扣返回的商品数据：", data);
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout;
@@ -856,7 +890,14 @@
 			GetFZCX: function() {
 				_main.GetFZCX(this.KHID, res => {
 					console.log("辅助促销查询结果:", res);
-					this.CXDatas = res;
+					if(res)
+					{
+						this.CXDatas = res;
+					}
+					else
+					{
+					this.CXDatas = [];
+					}
 				})
 			},
 			Moreand: function(e) {
@@ -877,6 +918,10 @@
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
+			},
+			//销售打印小票
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
+				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			}
 		},
 		created() {

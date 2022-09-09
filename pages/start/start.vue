@@ -30,6 +30,7 @@
 		<button @click="toIndex">去结算</button>
 		<button @click="toPrinter">蓝牙与打印</button> 
 		<button @click="toMainSale">进入销售界面</button>
+		<button @click="toLogin">登录</button>
 	</view>
 </template>
 <style>
@@ -174,6 +175,11 @@
 					url: "/pages/mainSale/MainSale"
 				});
 			},
+			tologin:function() {
+				uni.navigateTo({
+					url: "/pages/Login/Login"
+				});
+				},
 			toPrinter: function() {
 				uni.navigateTo({
 					url: "pages/mainSale/MainSale"
