@@ -32,7 +32,7 @@
 					<label>
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
-					<label style="margin-right: 40rpx;" @click="ShowPrint()">
+					<label @click="ShowPrint()">
 						<!-- ：{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼ -->
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
