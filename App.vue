@@ -3,10 +3,10 @@
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import _init from '@/api/business/init.js';
+	import Vue from 'vue'
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
-	import Vue from 'vue'
 	let int;
 	export default {
 		globalData: {
@@ -39,7 +39,7 @@
 				STIME: "",
 				ETIME: "",
 				OPENFLAG: 0, //签到状态
-				
+
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -99,7 +99,7 @@
 			msgInt: 0, //消息定时id
 		},
 		onLaunch: function() {
-			console.log('App Launch')
+			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 
 			// #ifdef APP-PLUS  
@@ -117,15 +117,25 @@
 			// 	//存在则关闭启动页进入首页
 			// 	plus.navigator.closeSplashscreen();
 			// }
-			_init.YN_Init(res => {
-				uni.reLaunch({
-					url: "/pages/Login/Login", 
-					success: () => {
-						//跳转完页面后再关闭启动页
-						plus.navigator.closeSplashscreen();
-					}
-				})
-			}, err => {
+			if(uni.getStorageSync('store').KHID){//没放下面是因为这没等待异步，导致注入晚了页面部分地方没内容就加载了
+				//全局混入
+				console.log("[APP-LAUNCH]全局混入客户端信息！");
+				Vue.mixin(global); 
+				getApp().globalData.store = uni.getStorageSync('store');
+			}
+			_init.YN_Init(util.callBind(this, function(res) {
+				console.log("[APP-LAUNCH]APP:",uni.getStorageSync('store'));
+				if (!uni.getStorageSync('store').KHID) {
+					uni.reLaunch({
+						url: "/pages/Login/Login",
+						success: () => {
+							//跳转完页面后再关闭启动页
+							plus.navigator.closeSplashscreen();
+						}
+					})
+				}
+			}), err => {
+				console.log("[APP-LAUNCH]失败:",err);
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
 			})
@@ -139,9 +149,6 @@
 				common.TransLiteData();
 			}, 1000 * 60 * 3);
 			this.globalData.sysinfo = uni.getSystemInfoSync();
-			//全局混入
-			console.log("全局混入！");
-			Vue.mixin(global);
 		},
 		onHide: function() {
 			console.log('App Hide');

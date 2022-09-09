@@ -262,14 +262,12 @@ const utils = {
 		let val = null;
 		if (key) {
 			val = getApp().globalData[key];
-			// console.log("key：val", key + val);
 			if (!val || Object.keys(val).length == 0) {
 				val = uni.getStorageSync(key);
 			}
 		}
 		return val;
 	},
-
 	/**
 	 * 清除全局存储值
 	 * @param key: 键

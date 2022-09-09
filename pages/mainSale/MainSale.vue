@@ -874,7 +874,7 @@
 			}
 		},
 		created() {
-			console.log("[MainSale]开始构造函数");
+			console.log("[MainSale]开始构造函数!");
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale");
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();

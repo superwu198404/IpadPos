@@ -42,7 +42,10 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
-
+	import Vue from 'vue'
+	import {
+		global
+	} from '@/models/PaymentAll/models.js';
 	var that;
 	export default {
 		data() {
@@ -161,6 +164,10 @@
 								// OPENFLAG: 0, //签到状态
 								console.log("管理登录的门店信息：", store);
 								util.setStorage("store", store);
+
+								//全局混入
+								console.log("全局混入客户端信息！");
+								Vue.mixin(global)
 								// if (store.OPENFLAG == "1") {
 								// 	uni.redirectTo({
 								// 		url: "../index/index"
