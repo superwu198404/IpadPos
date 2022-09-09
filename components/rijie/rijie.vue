@@ -108,18 +108,6 @@
 			},
 			//选中日结日期
 			ConfirmRJ: e => {
-				console.log("即将日结的数据：", that.qtdate);
-				that.signOutDate.splice(that.curIndex, 1); //删除日结了日期
-				if (that.signOutDate.length > 0) {
-					util.simpleMsg("日结成功！");
-					that.curIndex = 0; //归0
-					that.qtdate = that.signOutDate[that.curIndex];
-				} else {
-					that.rj_sf = false;
-					that.rj_xz = false;
-					that.rj_cg = true;
-				}
-				return;
 				if (that.qtdate) {
 					_login.SignOrSignOut(false, that.qtdate, res => {
 						console.log("日结结果：", res);
