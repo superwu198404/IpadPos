@@ -130,20 +130,23 @@ var InitData = async function(khid, func) {
 	// await common.InitZFRULE();
 	//获取支付规则数据 在前执行
 	await common.GetZFRULE();
-	console.log("初始化1");
+	
 	//获取支付方式 在后执行
 	await GetPayWay(khid);
-	console.log("初始化2");
+	
 	//初始化配置参数
 	await common.GetPZCS();
-	console.log("初始化3");
+	
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
-	console.log("初始化4");
+	
 	//初始化系统参数
 	_sysParam.init(khid);
 	//签到状态
 	GetMDQD(khid);
+	
+	//主动删除过期的销售数据
+	common.DelSale(); //主动删除销售单
 	if (func)
 		func();
 }

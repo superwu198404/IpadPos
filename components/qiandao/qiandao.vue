@@ -52,7 +52,7 @@
 									that.qd_show = false;
 									setTimeout(r => {
 										that.$emit("GetSignOut"); //触发首页的日结数据 搜搜
-									}, 1500)
+									}, 1000)
 								}
 							});
 						}
@@ -64,7 +64,7 @@
 							that.qd_show = false;
 							setTimeout(r => {
 								that.$emit("GetSignOut"); //触发首页的日结数据 搜搜
-							}, 1500)
+							}, 1000)
 						}
 					}
 				})
