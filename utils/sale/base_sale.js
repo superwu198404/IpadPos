@@ -50,7 +50,13 @@ var XsTypeObj =
 		///对打印的控制
 		$print: function() 
 		{
-
+			return {
+              tName : "销售小票",   // 名称
+              ynPrintFp :true,//是否打印发票二维码
+              ynPintCustem :false,  // 是否打印客户信息
+              ynPintDisc : true,  //是否打印折扣  
+              payOrRet :"",   //支付还是退款
+             }
 		},
 		//在此模式下添加商品是否所有限制
 		$addSp: function(pm_input) {

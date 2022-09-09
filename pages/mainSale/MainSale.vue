@@ -645,6 +645,15 @@
 					</view>
 				</view>
 			</view>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			</view>
 		</view>
 
 		<!-- 特殊折扣 -->
