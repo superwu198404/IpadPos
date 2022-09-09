@@ -145,4 +145,7 @@
 	width:30%;
 	margin:0 2%;
 }
+.commods .uls .lis.curr{
+	background: #fff;
+}
 </style>

@@ -1207,6 +1207,8 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 	padding:0 3%;
 	display: flex;
 	flex-direction: column;
+	max-height: 400rpx;
+	overflow: auto;
 }
 .special .discount label{
 	line-height: 80rpx;
