@@ -7,7 +7,7 @@
 		<!-- v-if="qd_show" -->
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<!-- <view class="h3">提示 <button @click="Close()" class="guan">×</button></view> -->
+			<view class="h3">提示 <button @click="Close()" class="guan">×</button></view>
 			<view class="clues">
 				<image src="@/images/qiandao.png" mode="widthFix"></image>
 				<text>请先进行签到~</text>
@@ -69,6 +69,10 @@
 					}
 				})
 			},
+			//关闭签到
+			Close:function(){
+				
+			}
 		},
 		created: function() {
 			that = this;

@@ -108,7 +108,6 @@
 			},
 			//选中日结日期
 			ConfirmRJ: e => {
-				console.log("即将日结的数据：", that.qtdate);
 				if (that.qtdate) {
 					_login.SignOrSignOut(false, that.qtdate, res => {
 						console.log("日结结果：", res);
