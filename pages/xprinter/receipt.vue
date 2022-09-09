@@ -42,7 +42,7 @@
 	import esc from '@/utils/xprinter/esc.js';
 	import xprinter_util from '@/utils/xprinter/util.js';
 	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
-	import vm from '@/utils/xprinter/MiddleUtil.js';
+
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import Req from '@/utils/request.js';
@@ -115,12 +115,6 @@
 			});
 			//初始化画布
 			this.initPhoto();
-		},
-		mounted() {
-			var that = this;
-			vm.$on('bluePrinter', function(sale1_obj, sale2_arr, sale3_arr) {
-				that.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
-			})
 		},
 		methods: {
 			// 二维码生成工具

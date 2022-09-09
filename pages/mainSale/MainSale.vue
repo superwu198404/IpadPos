@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu"></Page>
 			<view class="right" style="position: relative;">
@@ -386,7 +387,7 @@
 									<text>+</text>
 								</view>
 							</view>
-						</view>
+						</view> -->
 						<!-- <view class="baglist">
 							<view class="bag">
 								<text class="h8">小号手提袋</text>
@@ -644,6 +645,15 @@
 					</view>
 				</view>
 			</view>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			</view>
 		</view>
 
 		<!-- 特殊折扣 -->
@@ -669,6 +679,9 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -716,7 +729,8 @@
 			Message,
 			CreditSettlement,
 			Promotion,
-			MemberLogin
+			MemberLogin,
+			PrinterPage
 		},
 		computed: {
 			Price: function() {
@@ -873,7 +887,14 @@
 			GetFZCX: function() {
 				_main.GetFZCX(this.KHID, res => {
 					console.log("辅助促销查询结果:", res);
-					this.CXDatas = res;
+					if(res)
+					{
+						this.CXDatas = res;
+					}
+					else
+					{
+					this.CXDatas = [];
+					}
 				})
 			},
 			Moreand: function(e) {
@@ -894,6 +915,10 @@
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
+			},
+			//销售打印小票
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
+				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			}
 		},
 		created() {

@@ -270,7 +270,6 @@
 		retrySinglePay
 	} from '@/bll/PaymentAll/bll.js'
 	//打印相关
-	import vm from '@/utils/xprinter/MiddleUtil.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that, is_log = true;
 	var log = console.log;
