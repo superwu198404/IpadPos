@@ -114,15 +114,15 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							if (that.store.OPENFLAG == "1") {
-								uni.redirectTo({
-									url: "../mainSale/MainSale"
-								})
-							} else {
-								uni.redirectTo({
-									url: "../mainSale/MainSale"
-								})
-							}
+							// if (that.store.OPENFLAG == "1") {
+							// 	uni.redirectTo({
+							// 		url: "../mainSale/MainSale"
+							// 	})
+							// } else {
+							uni.redirectTo({
+								url: "../Center/Center"
+							})
+							// }
 						}, 1000);
 					});
 				})
@@ -164,18 +164,19 @@
 								// OPENFLAG: 0, //签到状态
 								console.log("管理登录的门店信息：", store);
 								util.setStorage("store", store);
+
 								//全局混入
 								console.log("全局混入客户端信息！");
-								Vue.mixin(global);
-								if (store.OPENFLAG == "1") {
-									uni.redirectTo({
-										url: "../index/index"
-									})
-								} else {
-									uni.redirectTo({
-										url: "../Center/Center"
-									})
-								}
+								Vue.mixin(global)
+								// if (store.OPENFLAG == "1") {
+								// 	uni.redirectTo({
+								// 		url: "../index/index"
+								// 	})
+								// } else {
+								uni.redirectTo({
+									url: "../Center/Center"
+								})
+								// }
 							} else {
 								util.simpleMsg("密码错误", true);
 							}

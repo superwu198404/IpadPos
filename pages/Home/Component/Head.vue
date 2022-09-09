@@ -162,7 +162,7 @@
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
-			<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
+			<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
 		</view>
 	</view>
 </template>
@@ -173,7 +173,7 @@
 	import common from '@/api/common.js';
 	import _login from '@/api/business/login.js';
 	import bleConnect from '@/utils/xprinter/bleConnect.js';
-	import dateformat from '@/utils/dateformat.js'; 
+	import dateformat from '@/utils/dateformat.js';
 
 	var app = getApp();
 	let that;
@@ -181,7 +181,7 @@
 		name: "menu_head",
 		props: {
 			data: [],
-			custom:Boolean
+			custom: Boolean
 		},
 		data() {
 			return {
@@ -276,22 +276,23 @@
 			//搜索蓝牙
 			that.startSearch();
 			that.onBLEConnectionStateChange();
-			let store = util.getStorage("store");
-			if (store.OPENFLAG == 1) { //已签到才进行日结的提示 未签到的等到 签到后再做日结
-				//查询一周内是否有未日结的数据
-				that.GetSignOutInWeek();
-			} else {
-				that.showSign = true;
-			}
+			//去除日结的判断
+			// let store = util.getStorage("store");
+			// if (store.OPENFLAG == 1) { //已签到才进行日结的提示 未签到的等到 签到后再做日结
+			// 	//查询一周内是否有未日结的数据
+			// 	that.GetSignOutInWeek();
+			// } else {
+			// 	that.showSign = true;
+			// }
 			this.Bind();
 		},
 		methods: {
-			Bind:function(){
+			Bind: function() {
 				console.log("[Head-Bind]执行开始!");
 				uni.$off('head-action');
-				uni.$on('head-action',util.callBind(this,function(data){
+				uni.$on('head-action', util.callBind(this, function(data) {
 					console.log("[Head]动作执行!");
-					if(Object.existsKey(this,data.name)){
+					if (Object.existsKey(this, data.name)) {
 						this[data.name]();
 					}
 				}))
@@ -299,10 +300,6 @@
 			//消息已读
 			ReadMsg: function(e, i) {
 				let store = util.getStorage("store");
-				if (store.OPENFLAG != '1') {
-					util.simpleMsg("请先进行签到", true);
-					return;
-				}
 				// _msg.DelMsg(that.KHID, e, res => {
 				// 	console.log("消息数据：", res);
 				// 	that.MsgData.splice(i, 1);
@@ -375,17 +372,22 @@
 				}
 				util.simpleModal("提示", "是否确认退出应用？", e => {
 					if (e) { //点击了确定
-						if (getApp().globalData.stroe) {
-							getApp().globalData.stroe.RYID = "";
-							getApp().globalData.stroe.RYNAME = "";
-						}
-						util.removeStorage("hyinfo"); //清除会员信息
-						if (uni.getSystemInfoSync().platform == 'ios') {
-							plus.ios.import("UIApplication").sharedApplication()
-								.performSelector("exit")
-						} else if (uni.getSystemInfoSync().platform == 'android') {
-							plus.runtime.quit();
-						}
+						// let store = util.getStorage("store");
+						// if (store) {
+						// 	store.RYID = "";
+						// 	store.RYNAME = "";
+						// 	util.setStorage("store", store);
+						// }
+						// util.removeStorage("hyinfo"); //清除会员信息
+						// if (uni.getSystemInfoSync().platform == 'ios') {
+						// 	plus.ios.import("UIApplication").sharedApplication()
+						// 		.performSelector("exit")
+						// } else if (uni.getSystemInfoSync().platform == 'android') {
+						// 	plus.runtime.quit();
+						// }
+						uni.redirectTo({
+							url: "../Center/Center"
+						})
 					}
 				})
 			},
@@ -463,7 +465,7 @@
 			},
 			//选择大客户
 			ClosePopup: function(data) {
-				console.log("[ClosePopup]大客户信息:",data);
+				console.log("[ClosePopup]大客户信息:", data);
 				// this.showBig = false;
 				if (data && JSON.stringify(data) != "{}") {
 					getApp().globalData.store.DKFID = data.DKHID;
