@@ -3,10 +3,6 @@
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import _init from '@/api/business/init.js';
-	import {
-		global
-	} from '@/models/PaymentAll/models.js';
-	import Vue from 'vue'
 	let int;
 	export default {
 		globalData: {
@@ -39,7 +35,7 @@
 				STIME: "",
 				ETIME: "",
 				OPENFLAG: 0, //签到状态
-				
+
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -117,15 +113,18 @@
 			// 	//存在则关闭启动页进入首页
 			// 	plus.navigator.closeSplashscreen();
 			// }
-			_init.YN_Init(res => {
-				uni.reLaunch({
-					url: "/pages/Login/Login", 
-					success: () => {
-						//跳转完页面后再关闭启动页
-						plus.navigator.closeSplashscreen();
-					}
-				})
-			}, err => {
+			_init.YN_Init(util.callBind(this, function(res) {
+				if (!this.KHID) {
+					uni.reLaunch({
+						url: "/pages/Login/Login",
+						success: () => {
+							//跳转完页面后再关闭启动页
+							plus.navigator.closeSplashscreen();
+						}
+					})
+				} else
+					console.log("[APP-LAUNCH]KHID:", this.KHID);
+			}), err => {
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
 			})
@@ -139,9 +138,6 @@
 				common.TransLiteData();
 			}, 1000 * 60 * 3);
 			this.globalData.sysinfo = uni.getSystemInfoSync();
-			//全局混入
-			console.log("全局混入！");
-			Vue.mixin(global);
 		},
 		onHide: function() {
 			console.log('App Hide');
