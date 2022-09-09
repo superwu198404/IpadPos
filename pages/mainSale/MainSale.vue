@@ -647,7 +647,8 @@
 		</view>
 
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
+		</SpecialDisc>
 	</view>
 </template>
 
@@ -747,16 +748,16 @@
 				} else
 					return [];
 			},
-			MemberBalance:function(){
-				return (mainSale.HY.val?.Balance ?? 0)/100;
+			MemberBalance: function() {
+				return (mainSale.HY.val?.Balance ?? 0) / 100;
 			},
-			MemberPoint:function(){
-				return (mainSale.HY.val?.JFBalance ?? 0)/100;
+			MemberPoint: function() {
+				return (mainSale.HY.val?.JFBalance ?? 0) / 100;
 			},
-			MemberGiftCard:function(){
-				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0)/100;
+			MemberGiftCard: function() {
+				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
 			},
-			MemberCoupons:function(){
+			MemberCoupons: function() {
 				return mainSale.HY.val.coupons ?? [];
 			}
 		},
@@ -803,9 +804,27 @@
 			GetTSZKData: function() { //展示特殊折扣
 				// that.showTSZK = true;
 				this.mainSale.ComponentsManage.Disc = true;
+				[{
+					SPJGZ: "01",
+					NET: 2000,
+					SPID: "123456"
+				}, {
+					SPJGZ: "01",
+					NET: 1250,
+					SPID: "123457"
+				}, {
+					SPJGZ: "02",
+					NET: 5000,
+					SPID: "12345678"
+				}, {
+					SPJGZ: "03",
+					NET: 3000,
+					SPID: "123456789"
+				}]
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
+				console.log("特殊折扣返回的商品数据：", data);
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout;
