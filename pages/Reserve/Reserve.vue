@@ -157,6 +157,56 @@
 						<view class="li"><text>折扣</text><text>-￥{{Order.DISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{Order.TNET}}</text></view>
 					</view>
+					<view class="h5"><text>赠品</text></view>
+					<!-- <text @click="Bagslist()">查看全部 ></text> -->
+					<view class="shoppbag">
+						<view class="hengs">
+							<view class="baglist curr">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+							<view class="baglist">
+								<view class="bag">
+									<text class="h8">小号手提袋</text>
+									<label><text>说明</text>已满80元，可赠4个</label>
+								</view>
+								<view class="quantit">
+									<text>数量</text>
+									<view class="nums">
+										<text>-</text>
+										<input type="number" />
+										<text>+</text>
+									</view>
+								</view>
+							</view>
+					
+						</view>
+					</view>
+					
 					<view class="confirm">
 						<button class="btn btn-qx">返 回</button>
 						<button class="btn" @click="Show()">确 认</button>
@@ -685,5 +735,11 @@
 </script>
 
 <style>
-
+.goods{
+	height: 36%;
+}
+.h5{
+	height: 80rpx;
+	line-height: 80rpx;
+}
 </style>
