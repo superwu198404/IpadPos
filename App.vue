@@ -3,6 +3,10 @@
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import _init from '@/api/business/init.js';
+	import Vue from 'vue'
+	import {
+		global
+	} from '@/models/PaymentAll/models.js';
 	let int;
 	export default {
 		globalData: {
@@ -95,7 +99,7 @@
 			msgInt: 0, //消息定时id
 		},
 		onLaunch: function() {
-			console.log('App Launch')
+			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 
 			// #ifdef APP-PLUS  
@@ -114,7 +118,8 @@
 			// 	plus.navigator.closeSplashscreen();
 			// }
 			_init.YN_Init(util.callBind(this, function(res) {
-				if (!this.KHID) {
+				console.log("[APP-LAUNCH]APP:",uni.getStorageSync('store'));
+				if (!uni.getStorageSync('store').KHID) {
 					uni.reLaunch({
 						url: "/pages/Login/Login",
 						success: () => {
@@ -122,9 +127,14 @@
 							plus.navigator.closeSplashscreen();
 						}
 					})
-				} else
-					console.log("[APP-LAUNCH]KHID:", this.KHID);
+				} else{
+					//全局混入
+					console.log("[APP-LAUNCH]全局混入客户端信息！");
+					Vue.mixin(global);
+				}
+					
 			}), err => {
+				console.log("[APP-LAUNCH]失败:",err);
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
 			})
