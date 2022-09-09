@@ -114,15 +114,18 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							if (that.store.OPENFLAG == "1") {
-								uni.redirectTo({
-									url: "../mainSale/MainSale"
-								})
-							} else {
-								uni.redirectTo({
-									url: "/pages/Center/Center"
-								})
-							}
+							// if (that.store.OPENFLAG == "1") {
+							// 	uni.redirectTo({
+							// 		url: "../mainSale/MainSale"
+							// 	})
+							// } else {
+							// 	uni.redirectTo({
+							// 		url: "/pages/Center/Center"
+							// 	})
+							// }
+							uni.redirectTo({
+								url: "/pages/Center/Center"
+							})
 						}, 1000);
 					});
 				})
