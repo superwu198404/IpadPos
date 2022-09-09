@@ -42,7 +42,7 @@
 		},
 		data() {
 			return {
-				numbers: "",
+				numbers: "18672326939",
 				brand: app.globalData.brand,
 				kquser: app.globalData.kquser,
 			}
