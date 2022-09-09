@@ -12,7 +12,7 @@
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="commods" style="padding-top:26rpx;">
 					<view class="h3">
-						特殊折扣选择<button class="close" @click="CloseZK()">×</button>
+						特殊折扣选择
 					</view>
 					<view class="uls">
 						<view class="lis curr">
@@ -48,7 +48,7 @@
 							</view>
 						</view>
 						<view class="confirm">
-							<button class="btn" @click="ConfirmZK()">确 认</button>
+							<button class="btn btn-qx" @click="CloseZK()">取消</button><button class="btn" @click="ConfirmZK()">确 认</button>
 						</view>
 					</view>
 				</view>
@@ -141,5 +141,8 @@
 </script>
 
 <style>
-
+.special .confirm .btn{
+	width:30%;
+	margin:0 2%;
+}
 </style>
