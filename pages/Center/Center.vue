@@ -3,11 +3,57 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view>
-		<button @click="ToSale(1)">去销售（判断日结）</button>
+	<view class="centre">
+		<image class="bg" src="@/images/chushihua.png" mode="widthFix"></image>
+		<view class="tranlist">
+			<view class="leftlist">
+				<view class="logos">
+					<image src="@/images/hello-card.png" mode="widthFix"></image>
+				</view>
+				<view class="sginout">
+					<view @click="Sign()"><label>签到</label><text>SIGN IN</text></view>
+					<view @click="SignOut()"><label>签退</label><text>CHECK OUT</text></view>
+				</view>
+				<view class="dates">
+					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
+					<view>
+						<label><text>{{curWeek}}</text><text>{{curDate}}</text></label>
+						<image src="@/images/day-icon.png" mode="widthFix"></image>
+					</view>
+				</view>
+			</view>
+			<view class="rightlist">
+				<view class="market">
+					<view class="prods">
+						<view>
+							<image src="@/images/xstu2-1.png" mode="widthFix"></image>
+						</view>
+						<view>
+							<image src="@/images/xstu2-2.png" mode="widthFix"></image>
+						</view>
+						<view>
+							<image src="@/images/xstu2-3.png" mode="widthFix"></image>
+						</view>
+					</view>
+					<view class="dates" @click="ToSale(1)">
+						<view >
+							<label><text>销售</text><text>SALES</text></label>
+							<image src="@/images/jinruxs-jt.png" mode="widthFix"></image>
+						</view>
+					</view>
+				</view>
+				<view class="dates tuichu" @click="ToOut()">
+					<view>
+						<label><text>退出</text><text>LOG OUT</text></label>
+						<image src="@/images/logout.png" mode="widthFix"></image>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>
 		<button @click="ToSale()">去销售（不判断日结）</button>
 		<button @click="Sign()">签到</button>
-		<button @click="SignOut()">日结</button>
+		<button @click="SignOut()">日结</button> -->
 		<!-- 签到组件 -->
 		<!-- <qiandao @CloseSign="CloseSignIn" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
@@ -31,7 +77,9 @@
 				showSign: false,
 				showSignOut: false,
 				signOutDate: [],
-				signOutDates: []
+				signOutDates: [],
+				curWeek: dateformat.getWeekDate(),
+				curDate: dateformat.getYMD(),
 			};
 		},
 		methods: {
@@ -182,75 +230,198 @@
 					}
 				})
 			},
+			//退出
+			ToOut: function() {
+				util.simpleModal("提示", "是否确认退出应用？", e => {
+					if (e) { //点击了确定
+						util.removeStorage("hyinfo"); //清除会员信息
+						if (uni.getSystemInfoSync().platform == 'ios') {
+							plus.ios.import("UIApplication").sharedApplication()
+								.performSelector("exit")
+						} else if (uni.getSystemInfoSync().platform == 'android') {
+							plus.runtime.quit();
+						}
+					}
+				})
+			}
 		},
 	}
 </script>
 
 <style>
-	.customer {
-		background-color: #fff;
-		width: 45%;
-		min-height: 400rpx;
-		position: relative;
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		border-radius: 20rpx;
-		padding: 0 0 180rpx;
+	page-body,
+	page-refresh,
+	page {
+		height: 100%;
 	}
 
-	.customer .bg {
-		position: absolute !important;
+	.centre {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+
+	.centre .bg {
+		position: absolute;
+		width: 100%;
+		height: 100%;
 		top: 0;
 		left: 0;
-		width: 100%;
-		z-index: 0;
 	}
 
-	.affirm {
-		position: absolute;
-		bottom: 0;
-		left: 50%;
-		transform: translateX(-50%);
+	.tranlist {
+		position: relative;
+		z-index: 99;
 		width: 80%;
-		height: 140rpx;
+		height: 86%;
+		padding: 7% 10%;
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding-bottom: 20rpx;
 	}
 
-	.affirm button {
-		width: 50%;
-		background-color: #42B14B;
-		color: #fff;
+	.leftlist {
+		width: 42%;
+		margin-right: 5%;
 	}
 
-	.clues {
+	.leftlist .logos {
+		width: 100%;
+		/* border-radius: 30rpx;
+		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1); */
+	}
+
+	.leftlist .logos image {
+		width: 100%;
+	}
+
+	.leftlist .sginout {
+		display: flex;
+		margin: 8% 0;
+	}
+
+	.leftlist .sginout view {
+		width: 45%;
+		background-color: #fff;
+		border-radius: 30rpx;
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		fony-size: 34rpx;
-		position: relative;
-		z-index: 2;
+		color: #006B44;
+		padding: 50rpx 0;
 	}
 
-	.clues image {
+	.leftlist .sginout view label {
+		font-size: 44rpx;
+		font-weight: 700;
+		margin-bottom: 20rpx;
+	}
+
+	.leftlist .sginout view text,
+	.leftlist .sginout view label {
+		display: block;
+		padding-left: 20%;
+	}
+
+	.leftlist .sginout view:nth-child(1) {
+		margin-right: 10%;
+	}
+
+	.dates {
+		width: 100%;
+		background-color: #fff;
+		border-radius: 30rpx;
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+		position: relative;
+		padding: 120rpx 0;
+	}
+
+	.dates .datebg {
+		position: absolute;
+		bottom: 0;
+		left: 0;
 		width: 100%;
 	}
 
-	.clues image:nth-child(2) {
-		display: none;
+	.dates view {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 15%;
 	}
 
-	.clues image:nth-child(2) {
-		display: none;
+	.dates view label {
+		display: flex;
+		flex-direction: column;
+		color: #006B44;
+		font-size: 44rpx;
+		font-weight: 600;
 	}
 
-	.clues text {
-		margin-top: -180rpx;
-		font-weight: 700;
+	.dates view label text:nth-child(2) {
+		font-weight: 400;
+		font-size: 34rpx;
+		margin-top: 20rpx;
+	}
+
+	.dates view image {
+		width: 140rpx;
+		height: 140rpx;
+	}
+
+	.rightlist {
+		width: 53%;
+	}
+
+	.rightlist .market {
+		background-color: #fff;
+		border-radius: 30rpx;
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+	}
+
+	.rightlist .market .prods {
+		display: flex;
+		padding: 5% 5% 0;
+	}
+
+	.rightlist .market .prods view {
+		border-radius: 30rpx;
+		height: 540rpx;
+		overflow: hidden;
+	}
+
+	.rightlist .market .prods view image {
+		width: 100%;
+
+	}
+
+	.rightlist .market .prods view:nth-child(1) {
+		width: 23%;
+		margin-right: 2%;
+	}
+
+	.rightlist .market .prods view:nth-child(2) {
+		width: 33%;
+		margin-right: 2%;
+	}
+
+	.rightlist .market .prods view:nth-child(3) {
+		width: 40%;
+	}
+
+	.market .dates {
+		padding: 80rpx 0;
+		box-shadow: none;
+	}
+
+	.rightlist .dates view {
+		padding: 0 6%;
+	}
+
+	.rightlist .dates view image {
+		width: 100rpx;
+	}
+
+	.tuichu {
+		padding: 60rpx 0;
+		margin-top: 7%;
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 	}
 </style>
