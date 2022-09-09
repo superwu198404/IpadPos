@@ -387,7 +387,7 @@
 									<text>+</text>
 								</view>
 							</view>
-						</view>
+						</view> -->
 						<!-- <view class="baglist">
 							<view class="bag">
 								<text class="h8">小号手提袋</text>
@@ -868,7 +868,14 @@
 			GetFZCX: function() {
 				_main.GetFZCX(this.KHID, res => {
 					console.log("辅助促销查询结果:", res);
-					this.CXDatas = res;
+					if(res)
+					{
+						this.CXDatas = res;
+					}
+					else
+					{
+					this.CXDatas = [];
+					}
 				})
 			},
 			Moreand: function(e) {
