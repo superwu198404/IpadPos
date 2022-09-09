@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu"></Page>
 			<view class="right" style="position: relative;">
@@ -668,6 +669,9 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -715,7 +719,8 @@
 			Message,
 			CreditSettlement,
 			Promotion,
-			MemberLogin
+			MemberLogin,
+			PrinterPage
 		},
 		computed: {
 			Price: function() {
@@ -875,6 +880,10 @@
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
+			},
+			//销售打印小票
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr) {
+				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr);
 			}
 		},
 		created() {
