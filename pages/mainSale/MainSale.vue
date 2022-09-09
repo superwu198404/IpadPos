@@ -181,8 +181,50 @@
 			</view>
 		</view>
 
-		<!-- 未登录结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		<!-- 蛋糕属性选择 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+			<view class="popup">
+				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
+				<view class="commods">
+					<view class="h3">
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+					</view>
+					<view class="cods">
+						<label>
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+						</label>
+						<label>
+							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
+						</label>
+					</view>
+					<view class="price">
+						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
+						<view>
+							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
+							<label>{{mainSale.clikSpItem.inputQty}}</label>
+							<button @click="mainSale.chengedQty" data-qty="1">+</button>
+						</view>
+					</view>
+					<view>
+						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
+							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
+							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
+						</view>
+					</view>
+					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
+						<view class="sizelist">
+							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
+								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-spid="specs.SPID">{{specs.SPECS}}</label>
+						</view>
+					</view>
+					<view class="confirm">
+						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+					</view>
+				</view>
+			</view>
 		</view>
 
 		<!-- 蛋糕属性选择 -->
@@ -232,7 +274,7 @@
 		</view>
 
 		<!-- 未登录结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement" style="border: 1px solid red;">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -246,35 +288,26 @@
 					</view>
 					<view class="nom">
 						<label>
-							<text>￥{{mainSale.HY.val.Balance/100}}</text>
+							<text>￥{{ MemberBalance }}</text>
 							<text>余额</text>
 						</label>
 						<label>
-							<text>{{mainSale.HY.val.JFBalance/100}}</text>
+							<text>{{ MemberPoint }}</text>
 							<text>积分</text>
 						</label>
 						<label>
-							<text>{{mainSale.HY.val.coupons.length}}</text>
+							<text>{{ MemberCoupons.length}}</text>
 							<text>优惠券</text>
 						</label>
 						<label>
-							<text>{{mainSale.HY.val.hy_Assets.GiftAmt/100}}</text>
+							<text>{{ MemberGiftCard }}</text>
 							<text>礼品卡</text>
 						</label>
-					</view>
-					<view class="rests" v-if="false">
-						<view class="h2">其他</view>
-						<view class="restlist">
-							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
-							<label><text>是否推送活动信息：</text><text>是</text></label>
-							<label><text>上次购买金额：</text><text>￥56</text></label>
-							<label><text>是否参与上次活动：</text><text>否</text></label>
-						</view>
 					</view>
 					<view class="coulist">
 						<view class="h2">优惠券</view>
 						<view class="uls">
-							<view class="lis" v-for="(item,index) in mainSale.HY.val.coupons">
+							<view class="lis" v-for="(item,index) in MemberCoupons">
 								<view class="voucher">
 									<view><text>￥</text>{{item.money}}</view>
 									<text>满{{item.limitmoney}}可用</text>
@@ -292,7 +325,7 @@
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
 										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-														mode="widthFix"></image></button> -->
+															mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
@@ -300,56 +333,6 @@
 					</view>
 				</view>
 			</view>
-		</view>
-
-		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
-			<view class="popup">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
-				<view class="commods">
-					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
-					</view>
-					<view class="cods">
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
-					</view>
-					<view class="price">
-						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
-						<view>
-							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
-							<label>{{mainSale.clikSpItem.inputQty}}</label>
-							<button @click="mainSale.chengedQty" data-qty="1">+</button>
-						</view>
-					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
-							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
-						</view>
-					</view>
-					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
-						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
-								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID">{{specs.SPECS}}</label>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
-				</view>
-			</view>
-		</view>
-
-		<!-- 未登录结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="pop-r pop-rs">
 				<view class="member">
 					<label>
@@ -380,9 +363,7 @@
 							<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
 						</view>
 					</view>
-
 				</view>
-
 				<view class="ul">
 					<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 					<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
@@ -390,10 +371,9 @@
 					<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
 				</view>
 				<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
-
 				<view class="shoppbag" v-if="CXDatas.length>0">
 					<view class="hengs">
-						<view class="baglist curr" v-for="(item,index) in CXDatas[0].Details">
+						<view class="baglist curr" v-for="(item,index) in PromotionDetails">
 							<view class="bag">
 								<text class="h8">{{item.SNAME}}</text>
 								<label><text>说明</text>{{item.DESCRIBE}}</label>
@@ -756,6 +736,28 @@
 						GiftAmt: 0
 					}
 				}
+			},
+			PromotionDetails: function() {
+				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
+					if (this.CXDatas[0].Details && Array.isArray(this.CXDatas[0].Details)) {
+						return this.CXDatas[0].Details;
+					} else {
+						return [];
+					}
+				} else
+					return [];
+			},
+			MemberBalance:function(){
+				return (mainSale.HY.val?.Balance ?? 0)/100;
+			},
+			MemberPoint:function(){
+				return (mainSale.HY.val?.JFBalance ?? 0)/100;
+			},
+			MemberGiftCard:function(){
+				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0)/100;
+			},
+			MemberCoupons:function(){
+				return mainSale.HY.val.coupons ?? [];
 			}
 		},
 		methods: {
@@ -815,8 +817,10 @@
 				this.Alphabetical = true
 			},
 			GetHyCoupons: function(hyinfo) {
-				console.log("打印会员信息：", this.mainSale.HY.val);
+				console.log("[GetHyCoupons]打印会员信息：", this.mainSale.HY.val);
 				if (hyinfo?.hyId) {
+					this.mainSale.HY.val.coupons = [];
+					this.mainSale.update();
 					_member.CouponList("获取中...", {
 						brand: this.brand,
 						data: {
@@ -825,14 +829,14 @@
 						}
 					}, util.callBind(this, function(res) {
 						if (res.code) {
-							this.mainSale.HY.val.coupons = res.data;
-							this.mainSale.update();
+							if (res.data && Array.isArray(res.data)) {
+								this.mainSale.HY.val.coupons = res.data;
+								this.mainSale.update();
+							}
 							this.mainSale.ShowStatement();
-							console.log("[GetHyCoupons]会员信息-computed:", this.MemberInfo);
-							console.log("[GetHyCoupons]会员信息-control:", this.mainSale.HY.val);
 						}
 					}), (err) => {
-						console.log("异常数据：", res)
+						console.log("[GetHyCoupons]异常数据：", res)
 					})
 				}
 			},
