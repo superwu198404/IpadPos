@@ -383,7 +383,7 @@
 					util.simpleMsg("当前有未处理的单据，暂无法退出", "none");
 					return;
 				}
-				util.simpleModal("提示", "是否确认退出应用？", e => {
+				util.simpleModal("提示", "是否确认退出销售？", e => {
 					if (e) { //点击了确定
 						// let store = util.getStorage("store");
 						// if (store) {

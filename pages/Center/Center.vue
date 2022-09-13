@@ -36,7 +36,7 @@
 						</view>
 					</view>
 					<view class="dates" @click="ToSale(1)">
-						<view >
+						<view>
 							<label><text>销售</text><text>SALES</text></label>
 							<image src="@/images/jinruxs-jt.png" mode="widthFix"></image>
 						</view>
@@ -94,33 +94,34 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				if (e) {
-					if (that.signOutDates.length > 0) { //有日结数据
-						// util.simpleMsg("请先日结", true);
-						that.SignOut(); //发起日结
-						return;
-					}
-					if (store.RYTYPE != "SYSTEM") {
-						uni.redirectTo({
-							url: "/pages/mainSale/MainSale"
-						});
-					} else {
-						uni.redirectTo({
-							url: "/pages/index/index"
-						});
-					}
+				util.simpleModal("提示", "是否验证日结后进入销售？", e => {
+					if (e) {
+						if (that.signOutDates.length > 0) { //有日结数据
+							that.SignOut(); //发起日结
+							return;
+						}
+						if (store.RYTYPE != "SYSTEM") {
+							uni.redirectTo({
+								url: "/pages/mainSale/MainSale"
+							});
+						} else {
+							uni.redirectTo({
+								url: "/pages/index/index"
+							});
+						}
 
-				} else {
-					if (store.RYTYPE != "SYSTEM") {
-						uni.redirectTo({
-							url: "/pages/mainSale/MainSale"
-						});
 					} else {
-						uni.redirectTo({
-							url: "/pages/index/index"
-						});
+						if (store.RYTYPE != "SYSTEM") {
+							uni.redirectTo({
+								url: "/pages/mainSale/MainSale"
+							});
+						} else {
+							uni.redirectTo({
+								url: "/pages/index/index"
+							});
+						}
 					}
-				}
+				})
 			},
 			//手动直接发起签到
 			Sign: function() {
