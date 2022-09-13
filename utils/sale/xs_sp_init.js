@@ -132,7 +132,7 @@ var loadSaleSP  =
 	    console.log("##############################开始获取主商品##############################")
 	 //z主商品sql 1
 	  let  msplistSql=
-	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname, \
+	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ \
 	                 0 ynshowlist , '' specslist, \
 					 0 ynAddPro,'' addlist  \
 	                 FROM SPDA S1,SPKHDA SM,PLDA \
@@ -151,7 +151,7 @@ var loadSaleSP  =
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT, ,dgxlda.PINYIN,dgxlda.plid,PLDA.SNAME plname," +
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT, ,dgxlda.PINYIN,dgxlda.plid,'01' SPJGZ,PLDA.SNAME plname," +
 	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
 					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid "
@@ -178,7 +178,7 @@ var loadSaleSP  =
 	  //水吧sql	3		 
 	  
 	   console.log("##############################开始获取水吧商品##############################")
-	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname, "  +
+	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ  "  +
 	" 0 ynshowlist , '' specslist, 1 ynAddPro,'' addlist "  +
     "FROM SPDA S1,SPKHDA SM,PLDA " +
 	"WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID "+
@@ -203,9 +203,9 @@ var loadSaleSP  =
 								dinkP=res.msg;    
 				 
 				},null);	
-		console.log("##############################开始进行数组整合##############################")  
+	     	console.log("##############################开始进行数组整合##############################")  
 	         let  arrAllsp=   this.arrListGroupBy(mainArr,cakeSpesc,dinkP);
-	    console.log("##############################调用完成进入回调函数##############################")
+	        console.log("##############################调用完成进入回调函数##########################")
 			   
 			 if(callbackfun)
 			 {
