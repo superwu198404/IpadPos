@@ -73,7 +73,7 @@ page {
 .menu .curr {
 	background-color: #006B44;
 	color: #fff;
-	width: 80%;
+	width: 88%;
 	margin: 0 auto;
 	border-radius: 30rpx;
 }
@@ -82,6 +82,11 @@ page {
 	width: 40rpx;
 	height: 40rpx;
 	margin-bottom: 6rpx;
+}
+.menu view text{
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .menu view .xz {
