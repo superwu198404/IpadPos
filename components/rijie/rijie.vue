@@ -16,7 +16,7 @@
 		<!-- 选择日结 -->
 		<view class="customer">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<!-- <view class="h3">日结 <button @click="Close()" class="guan">×</button></view> -->
+			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
 			<view class="h6">当前你有以下日期没有做日结操作</view>
 			<view class="cluelist">
 				<view :class="index==curIndex?'list curr':'list'" v-for="(item,index) in signOutDate"

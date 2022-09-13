@@ -167,8 +167,7 @@
 			</view>
 		</view>
 		<!-- 外卖袋 -->
-		 <!-- v-if="yn_wmd" -->
-		<view class="boxs">
+		<view class="boxs" v-if="yn_wmd">
 			<!-- v-if="Shoppingbags" -->
 			<view class="meminfo">
 				<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -721,12 +720,14 @@
 	.right {
 		height: 100%;
 	}
-	.meminfo{
-		width:70%;
+
+	.meminfo {
+		width: 70%;
 	}
-	.meminfo .confirm{
+
+	.meminfo .confirm {
 		position: absolute;
-		bottom:1%;
+		bottom: 1%;
 		left: 0;
 	}
 </style>
