@@ -934,7 +934,6 @@
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
 			this.Bind();
-			this.Subscribe();
 			//获取辅助促销
 			// this.GetFZCX();
 		}

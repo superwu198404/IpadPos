@@ -514,7 +514,6 @@ function GetSale(global, vue, target_name) {
 	//筛选的品类
 	this.selectPlid = "";
 
-
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
@@ -635,7 +634,8 @@ function GetSale(global, vue, target_name) {
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
-		"statement": false
+		"statement": false,
+		"sale":true
 	};
 	///销售界面可以进行操作功能 ，
 	this.allOperation = {
@@ -824,6 +824,7 @@ function GetSale(global, vue, target_name) {
 			this.myAlert("请完成当前模式再进行切换！");
 			return;
 		}
+		
 		if (XsTypeObj[pm_type]) {
 			this.clickSaleType = XsTypeObj[pm_type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
@@ -1237,6 +1238,7 @@ function GetSale(global, vue, target_name) {
 
 	//
 	this.SetDefaultType = function(type = "sale") {
+		console.log("[SetDefaultType]设置默认类型:",type);
 		this.SetType(type);
 	}
 
