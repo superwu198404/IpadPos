@@ -132,7 +132,7 @@ var loadSaleSP  =
 	    console.log("##############################开始获取主商品##############################")
 	 //z主商品sql 1
 	  let  msplistSql=
-	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ \
+	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ, \
 	                 0 ynshowlist , '' specslist, \
 					 0 ynAddPro,'' addlist  \
 	                 FROM SPDA S1,SPKHDA SM,PLDA \
@@ -178,7 +178,7 @@ var loadSaleSP  =
 	  //水吧sql	3		 
 	  
 	   console.log("##############################开始获取水吧商品##############################")
-	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ  "  +
+	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ,  "  +
 	" 0 ynshowlist , '' specslist, 1 ynAddPro,'' addlist "  +
     "FROM SPDA S1,SPKHDA SM,PLDA " +
 	"WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID "+
