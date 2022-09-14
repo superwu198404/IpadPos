@@ -128,6 +128,7 @@
 				// if (!uni.getStorageSync('store').KHID) {
 				uni.reLaunch({
 					url: "/pages/Login/Login",
+					// url: "/pages/start/start",
 					success: () => {
 						//跳转完页面后再关闭启动页
 						plus.navigator.closeSplashscreen();

@@ -307,13 +307,13 @@ var mySqllite = function() {
 				sql: pm_sql,
 				success(e) {
 					console.log("[Qry]查询成功:", {
-						result: (function(){
-							if(e.length > 30){
-								return e.slice(0,30);
+						result: (function() {
+							if (e.length > 30) {
+								return e.slice(0, 30);
 							}
 						})(),
 						sql: pm_sql,
-						count:e.length
+						count: e.length
 					});
 					return resolve({
 						code: true,
@@ -441,11 +441,13 @@ var mySqllite = function() {
 		console.log("[ExecuteDml]sql:", sql);
 		//await close();
 		if (retcode.code) {
-			retcode = await tran(tranEnum.commit);
+			// retcode = await tran(tranEnum.commit);
+			await tran(tranEnum.commit); //不采用事务提交的结果通知外部
 			//await close();
 			return callBackCloseLoading(retcode, success, pm_msg);
 		} else {
-			retcode = await tran(tranEnum.rollback);
+			// retcode = await tran(tranEnum.rollback);
+			await tran(tranEnum.rollback); //不采用事务回滚的结果通知外部
 			//await close();
 			return callBackCloseLoading(retcode, fail, pm_msg);
 		}

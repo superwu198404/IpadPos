@@ -13,12 +13,12 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 	let cxkey = "";
 	let dapzcs_nr_sql = "select sname from dapzcs_nr where id='JRCXGJZ' and id_nr ='" + storeDqid + "'	and date(zf)<=DATE('" + dateTime + "')  and rq>=DATE('" + dateTime + "') ";
     await db.get().executeQry(dapzcs_nr_sql, "执行中", function(res) {
-		console.log("dapzcs_nr_sql执行结果：", res.msg);
+		//console.log("getCxmSql dapzcs_nr_sql执行结果：", res.msg);
 		dapzcs_nr_arr = res.msg;
 		cxkey = res.msg.length > 0 ? res.msg[0].SNAME : "";
-		console.log("SNAME结果：", cxkey);
+		//console.log("getCxmSql SNAME结果：", cxkey);
 	}, function(err) {
-		console.log("dapzcs_nr_sql执行失败：", err);
+		console.log("getCxmSql dapzcs_nr_sql执行失败：", err);
 	});
 	
 	let cxformd001_sql = "SELECT KHID,BILL,YN_ZD,YN_JSLB,CXRY,HYLV,CXZT,CX_WEEK,SDATE,EDATE,YN_TIME,\

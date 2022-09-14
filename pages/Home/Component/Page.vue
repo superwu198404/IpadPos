@@ -9,6 +9,7 @@
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
+				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>

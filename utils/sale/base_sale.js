@@ -1,6 +1,8 @@
 import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
+import _main from '@/api/business/main.js';
+
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -432,7 +434,7 @@ function GetSale(global, vue, target_name) {
 	 */
 	//转换为小数，并保留2位
 	this.float = function(pm_num, pm_declen) {
-		return parseFloat(pm_num).toFixed(pm_declen);
+		return Number(parseFloat(pm_num).toFixed(pm_declen));
 	}
 	//获取当前时间：年月日-yyyy-mm-dd
 	this.getDate = function() {
@@ -1117,16 +1119,18 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-		await cx.Createcx(that.sale002);
-		that.SaleNetAndDisc();
+		await that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = function() {
+	this.SaleNetAndDisc = async function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
-			that.computeCx();
+			await cx.Createcx(that.sale002);
+		}
+		if (that.currentOperation.ynFzCx) {
+			this.computeFzCx();
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
@@ -1136,23 +1140,26 @@ function GetSale(global, vue, target_name) {
 			NET: 0,
 			DISCRATE: 0
 		});
-		that.log("***************计算结果展示******************")
-		that.log(retx)
-		that.log("***************计算结果展示******************")
+		// that.log("***************计算结果展示******************")
+		// that.log(retx)
+		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.DISC = this.float(retx.DISCRATE, 2);
 		//this.update();
 	}
 
-	//实际计算促销需要在这个方法里进行
-	this.computeCx = function() {
+	//实际计算辅助促销需要在这个方法里进行
+	this.computeFzCx = function() {
 
 	}
 
-	//计算促销的折扣
+	//使用特殊折扣进行计算
 	this.discCompute = function() {
-
+		// 计算商品的折扣值
+		// console.log("002旧数据：", that.sale002);
+		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 
 	//付款之前触发
