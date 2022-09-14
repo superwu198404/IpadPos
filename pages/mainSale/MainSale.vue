@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
+			<Page ref="menu" :current="mainSale.clickSaleType.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -109,7 +109,7 @@
 					</view>
 				</view>
 				<!-- 在这插入组件 -->
-				<Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve>
+				<!-- <Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve> -->
 				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true"
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
 				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
@@ -133,8 +133,7 @@
 		</view>
 
 		<!-- 会员登录 -->
-		<MemberLogin v-if="mainSale.ComponentsManage.HY"
-			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
+		<MemberLogin v-if="mainSale.ComponentsManage.HY" style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
 
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
@@ -180,7 +179,6 @@
 				</view>
 			</view>
 		</view>
-
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
@@ -275,6 +273,8 @@
 
 		<!-- 未登录结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
+			<ReserveEditDrawer :show="mainSale.ComponentsManage.openydCustmEdit" :order="mainSale.sale001" :confirm="ReserveInfoEdit"></ReserveEditDrawer>
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -337,7 +337,7 @@
 				<view class="member">
 					<label>
 						<image class="touxiang" src="../../images/touxiang.png"></image><button
-							class="btn">会员登录</button>
+							class="btn">{{ mainSale.HY.val.hyId ? mainSale.HY.val.hyId:'未登录...'}}</button>
 					</label>
 					<text @click="mainSale.resetSaleBill">清空</text>
 				</view>
@@ -497,6 +497,7 @@
 
 					</view>
 				</view>
+
 				<view class="meminfo" v-if="Shoppingbags">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view>
@@ -643,6 +644,10 @@
 						<button class="btn">确 认</button>
 					</view>
 				</view>
+
+				<!-- 特殊折扣 -->
+				<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID"
+					:product="mainSale.sale002"></SpecialDisc>
 			</view>
 		</view>
 
@@ -670,6 +675,8 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
+	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
+	import ReserveEditDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -697,9 +704,9 @@
 				saleAdd: [],
 				saleSub: [],
 				MainSale: {},
-				// KHID: app.globalData.store.KHID, //"K210QTD003"
-				// DQID: app.globalData.store.DQID, //"K01000"
-				// KHZID: app.globalData.store.KHZID, //"02"
+				KHID: app.globalData.store.KHID, //"K210QTD003"
+				DQID: app.globalData.store.DQID, //"K01000"
+				KHZID: app.globalData.store.KHZID, //"02"
 				CXDatas: [],
 				page_info: {}
 			}
@@ -718,7 +725,9 @@
 			Message,
 			CreditSettlement,
 			Promotion,
-			MemberLogin
+			MemberLogin,
+			ReserveDrawer,
+			ReserveEditDrawer
 		},
 		computed: {
 			Price: function() {
@@ -751,19 +760,19 @@
 					return [];
 			},
 			MemberBalance: function() {
-				return (mainSale.HY.val?.Balance ?? 0) / 100;
+				return (this.mainSale.HY.val?.Balance ?? 0) / 100;
 			},
 			MemberPoint: function() {
-				return (mainSale.HY.val?.JFBalance ?? 0) / 100;
+				return (this.mainSale.HY.val?.JFBalance ?? 0) / 100;
 			},
 			MemberGiftCard: function() {
-				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
+				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
 			},
 			MemberCoupons: function() {
-				return mainSale.HY.val.coupons ?? [];
+				return this.mainSale.HY.val.coupons ?? [];
 			},
 			MenuName: function() {
-				return mainSale?.current_type?.clickType ?? ""
+				return this.mainSale?.current_type?.clickType ?? ""
 			}
 		},
 		methods: {
@@ -771,10 +780,10 @@
 				console.log("[Change]菜单点击触发!", menu);
 				if (menu.info.clickType === 'sale_credit') {
 					uni.$once('select-credit', util.callBind(this, function(data) {
-						if(Object.keys(data ?? {}).length > 0){
+						if (Object.keys(data ?? {}).length > 0) {
 							console.log("[Change]切换到赊销!");
-							this.mainSale.SetManage('sale_credit');//切换到赊销
-							this.mainSale.$initSale('sale_credit');//切换到赊销
+							this.mainSale.SetManage('sale_credit'); //切换到赊销
+							this.mainSale.$initSale('sale_credit'); //切换到赊销
 							// uni.$emit('set-menu','sale_credit');
 						}
 					}));
@@ -824,6 +833,13 @@
 				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
 				this.mainSale.ComponentsManage.Disc = true;
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
+			},
+			ReserveInfoInput:function(sale1){
+				this.mainSale.sale001 = sale1;
+				this.mainSale.PayParamAssemble();
+			},
+			ReserveInfoEdit:function(){
+				
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
@@ -902,12 +918,6 @@
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
 			},
-			MainSaleEvent:function(){
-				this.mainSale.SettingCurrent.push(util.callBind(this,function(type){
-					console.log("[MainSaleEvent]正在切换中...");
-					uni.$emit('set-menu',type);
-				}))
-			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
@@ -923,7 +933,6 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
-			this.MainSaleEvent();
 			//获取辅助促销
 			// this.GetFZCX();
 		}

@@ -140,13 +140,18 @@ var XsTypeObj = {
 			"inputsp": true //是否可以输入商品
 		},
 		$click() {
+			console.log("[sale_reserve]预定信息录入操作!");
 			this.SetManage("sale_reserve");
-			return false;
+			this.$initSale(this.clickSaleType);
+			return true;
 		},
 		$beforeFk: function() {
 			//品诺
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
+			console.log("[sale_reserve-$BeforeFk]支付前调用!");
+			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
+			return false;
 		},
 	},
 	sale_reserve_extract: {
@@ -182,26 +187,27 @@ var XsTypeObj = {
 			return false;
 		},
 		$beforeFk(sales) {
-			console.log("[SaleReserve]预定支付金额:", sales.sale1_obj.DNET);
-			util.hidePropety(sales.sale1_obj, "YD_STATUS", "THDATE", "THKHID",
+			console.log("[SaleReserve]预定支付金额:", this.sale001.DNET);
+			util.hidePropety(this.sale001, "YD_STATUS", "THDATE", "THKHID",
 				"SJTHDATE", "SJTHGSID", "SJTHGCID", "SJTHDPID", "SJTHKCDID",
 				"SJTHKHID", "SJTHPOSID", "SJTHBILL", "ID_RY_TH", "NOTE1", "NOTE2",
 				"PLATTYPE", "YDSPTYPE");
 			console.log("[HidePropety]操作完毕!");
-			sales.sale1_obj.DNET = 188; //测试
-			if (sales.sale1_obj.DNET) {
+			// this.sale001.DNET = 188; //测试
+			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				sales.PayList.push(Sale3ModelAdditional(Sale3Model({
 					fkid: 'ZG03',
 					type: 'YDJ',
-					bill: sales.sale1_obj.BILL,
+					bill: this.sale001.BILL,
 					name: "预定金",
-					amount: sales.sale1_obj.DNET
+					amount: this.sale001.DNET
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false //定金显示为成功
 				}));
 				console.log("[SaleReserve]生成预定支付信息成功:", sales);
 			}
+			return true;
 		},
 		$saleFinied(sales) {
 			console.log("[$SaleFinied]预订单状态变更...");
@@ -710,6 +716,7 @@ function GetSale(global, vue, target_name) {
 		"sale_message": false,
 		"tools": false,
 		"openydCustmInput": false, //预定输入客户的信息
+		"openydCustmEdit": false, //预定修改客户的信息
 		"inputsp": false,
 		"statement": false, //购物车
 	}
@@ -733,9 +740,10 @@ function GetSale(global, vue, target_name) {
 				this.currentOperation[item] = false;
 			}
 			//切换的时候关闭所有插件
-			for (item in this.ComponentsManage) {
-				that.ComponentsManage[item] = false;
-			}
+			// for (item in this.ComponentsManage) {
+			// 	that.ComponentsManage[item] = false;
+			// }
+			this.SetManage(this.clickSaleType.clickType);
 			this.update();
 		}
 		console.log("[SetCurrentOperation]权限设置完毕!");
@@ -745,6 +753,7 @@ function GetSale(global, vue, target_name) {
 	this.SetManage = function(pm_mtype) {
 		this.previous = this.current_type.clickType;
 		console.log("[SetManage]LastManage:", lastManage);
+		console.log("[SetManage]CurrentManage:", pm_mtype);
 		//if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
 			console.log("[SetManage]关闭上一个组件!");
@@ -756,20 +765,7 @@ function GetSale(global, vue, target_name) {
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		that.log("[SetManage]组件控制对象:", that.ComponentsManage);
 		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
-		that.Pub_SettingCurrent(pm_mtype);
 		that.update();
-	}
-
-	this.SettingCurrent = [];
-
-	this.Pub_SettingCurrent = function(type) {
-		this.SettingCurrent.forEach(func => {
-			try {
-				func(type);
-			} catch (e) {
-				console.log("[Pub_SettingCurrent]执行失败!");
-			}
-		})
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
@@ -865,7 +861,9 @@ function GetSale(global, vue, target_name) {
 		}
 
 		if (XsTypeObj[pm_type]) {
-			this.clickSaleType = XsTypeObj[pm_type];
+			// this.clickSaleType = XsTypeObj[pm_type];
+			Object.assign(this.clickSaleType,XsTypeObj[pm_type])
+			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
@@ -903,9 +901,17 @@ function GetSale(global, vue, target_name) {
 			util.simpleMsg(result.msg, true)
 	}
 
-
 	this.pay = function() {
-		that.log("[Pay]开始进入销售页面...")
+		if (that.$beforeFk()) {
+			console.log("[Pay]已进入支付!");
+			that.PayParamAssemble();
+		} else {
+			console.log("[Pay]未进入支付!");
+		}
+	}
+
+	this.PayParamAssemble = function(sales) {
+		that.log("[PayParamAssemble]支付参数组装...")
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
@@ -915,17 +921,14 @@ function GetSale(global, vue, target_name) {
 			PayList: [],
 			actType: that.actType
 		}
-		let callback = util.callBind(this, function() {
-			that.Page.$store.commit('set-location', inputParm);
-			console.log("[ToPay]控制对象:", that.actType);
-			uni.navigateTo({
-				url: "../Payment/Payment",
-				events: {
-					FinishOrder: that.PayedResult
-				}
-			})
-		});
-		that.$beforeFk(inputParm, callback);
+		that.Page.$store.commit('set-location', inputParm);
+		console.log("[PayParamAssemble]动作类型:", that.actType);
+		uni.navigateTo({
+			url: "../Payment/Payment",
+			events: {
+				FinishOrder: that.PayedResult
+			}
+		})
 	}
 
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
@@ -937,11 +940,11 @@ function GetSale(global, vue, target_name) {
 	//初始化销售的操作
 	this.$initSale = function(pm_newtype, pm_saleobj) {
 		//在这里需要关闭 打开的插件
-		console.log("[$initSale]销售初始化开始!", {
+		console.log("[$InitSale]销售初始化开始!", {
 			type: pm_newtype || this.clickSaleType
 		});
 		pm_newtype = pm_newtype || this.clickSaleType;
-		this.current_type = pm_newtype;
+		Object.assign(this.current_type, pm_newtype);
 		console.log("[$InitSale]设置当前销售类型:", this.current_type);
 		this.bill_type = sale.saleBillType[this.current_type.xstype];
 		console.log("[$InitSale]bill_type:", this.bill_type);
@@ -1193,9 +1196,12 @@ function GetSale(global, vue, target_name) {
 		this.sale001.DKFID = this.DKF.cval.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyid; //写会员编码
 		//写大客户
+		//code...
 		//写会员
-		this.CurrentTypeCall("$beforeFk", pm_inputParm);
+		//code...
 		//可以使用的支付方式 
+		//code...
+		return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 	}
 
 	//付款之后触发

@@ -19,7 +19,23 @@
 			<view class="rightlist">
 				<view class="market">
 					<view class="prods">
-						<view><image src="@/images/xstu2-1.png" mode="widthFix"></image></view>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png" mode="heightFix"></image>
+						    <image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png" mode="heightFix"></image>
+
+						</view>
+						<!-- <view class="flip-container" ontouchstart="this.classList.toggle('hover');">
+							<view class="flipper">
+								<view class="front">
+									<image src="@/images/xstu2-1.png" mode="widthFix"></image>
+								</view>
+								<view class="back">
+									<image src="@/images/xstu1-1.png" mode="widthFix"></image>
+								</view>
+							</view>
+						</view> -->
+						
+						<!-- <view><image src="@/images/xstu2-1.png" mode="widthFix"></image></view> -->
 						<view><image src="@/images/xstu2-2.png" mode="widthFix"></image></view>
 						<view><image src="@/images/xstu2-3.png" mode="widthFix"></image></view>
 					</view>
@@ -42,6 +58,31 @@
 </template>
 
 <script>
+	export default {
+	
+		data() {
+			return {
+				timer: null,
+				angle:0
+			}
+		},
+		onShow() {
+		    // console.log('onshow');
+		     this.timer = setInterval(function() {
+		        // 放入你自己的业务逻辑代码
+				this.angle +=180;
+				// console.log(this.angle)
+		    }, 3000);
+		},
+		//uniapp中onHide()能监听到页面离开
+		onHide() {//离开页面前清除计时器
+		    // console.log('onHide');
+		    clearInterval(this.timer);
+		    this.timer = null;
+		},
+		methods: {
+		},
+	}
 </script>
 
 <style>
@@ -190,4 +231,33 @@
 		margin-top:7%;
 		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
 	}
+	.prods {
+	            perspective: 400px;
+	        }
+	
+	.div {
+	    width: 100;
+	    height: 450px;
+	    margin: 0 auto;
+	    position: relative;
+	}
+	.div image{
+	    width: 100%;
+	    height: 100%;
+	    position: absolute;
+		top: 0;
+	    left: 0;
+	    /* transition: all 1s; */
+	}
+	
+	.div image:first-child{
+	    z-index: 1;
+	            /*不对向屏幕就隐藏*/
+	    backface-visibility: hidden;
+	}
+	
+	        /* .div:hover image{
+	            transform: rotateY(180deg);
+	        } */
+		
 </style>
