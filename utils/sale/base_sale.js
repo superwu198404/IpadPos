@@ -945,7 +945,8 @@ function GetSale(global, vue, target_name) {
 
 	}
 
-	this.InitSale001 = function() {
+	this.InitSale001 = function() 
+	{
 		var is_new = Object.keys(this.sale001).length == 0;
 		var commonSaleParm = {
 			KHID: this.Storeid,
@@ -985,7 +986,8 @@ function GetSale(global, vue, target_name) {
 		inputParm.sale003.forEach(item003 => {
 			Object.assign(item003, retparm);
 		})
-		if (pm_actType == common.actTypeEnum.Refund) {
+		if (pm_actType == common.actTypeEnum.Refund) 
+		{
 
 			inputParm.sale001.XS_GSID = savaSale001.XS_GSID;
 			inputParm.sale001.XS_KHID = savaSale001.XS_KHID;
@@ -1116,18 +1118,24 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-		await cx.Createcx(that.sale002);
-		that.SaleNetAndDisc();
+	    await that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = function() {
+	this.SaleNetAndDisc =async function()
+	{
 		let znet = 0
-		if (that.currentOperation.ynCx) {
-			that.computeCx();
+		if (that.currentOperation.ynCx) 
+		{
+			await cx.Createcx(that.sale002);
 		}
-		if (that.currentOperation.Disc) {
+		if (that.currentOperation.ynFzCx)
+		{
+			this.computeFzCx();
+		}
+		if (that.currentOperation.Disc) 
+		{
 			that.discCompute();
 		}
 		that.sale001.TLINE = that.sale002.length;
@@ -1144,13 +1152,15 @@ function GetSale(global, vue, target_name) {
 		//this.update();
 	}
 
-	//实际计算促销需要在这个方法里进行
-	this.computeCx = function() {
+	//实际计算辅助促销需要在这个方法里进行
+	this.computeFzCx = function() 
+	{
 
 	}
 
-	//计算促销的折扣
-	this.discCompute = function() {
+	//使用特殊折扣进行计算
+	this.discCompute = function() 
+	{
 
 	}
 
