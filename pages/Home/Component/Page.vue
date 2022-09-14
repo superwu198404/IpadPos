@@ -22,15 +22,12 @@
 	import util from '@/utils/util.js';
 	export default {
 		name: "Page",
-		props: {
-			current: String
-		},
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name) {
 					return name === this.current_info?.name;
 				});
-			}
+			},
 		},
 		data() {
 			return {
@@ -42,11 +39,15 @@
 		methods: {
 			MenuSelect(menu_name, menu_info) {
 				this.previous_info = this.current_info;
-				this.current_info = {
+				// this.current_info = {
+				// 	name: menu_name,
+				// 	info: menu_info
+				// };
+				console.log("[MenuSelect]切换页面...");
+				uni.$emit("change", {
 					name: menu_name,
 					info: menu_info
-				};
-				uni.$emit("change", this.current_info);
+				});
 			}
 		},
 		created() {
@@ -59,10 +60,10 @@
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
 			uni.$off('set-menu');
 			uni.$on('set-menu', util.callBind(this, function(data) {
-				console.log("[Page]手动切换菜单!",data);
+				console.log("[Page]手动切换菜单!", data);
 				this.current_info.name = data;
 				this.current_info.info = this.menu_info[data];
-				console.log("[Page]当前菜单:",this.current_info);
+				console.log("[Page]当前菜单:", this.current_info);
 				this.$forceUpdate();
 			}))
 		}

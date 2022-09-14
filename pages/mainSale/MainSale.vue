@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu"></Page>
+			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -59,7 +59,7 @@
 													</label>
 												</view>
 												<view class="price">
-													<text>￥{{ mainSale.spPrice[sptiem.SPID].PRICE }}</text>
+													<text>￥{{ Price(sptiem.SPID) }}</text>
 													<view>
 														<image src="../../images/dx-gd.png" mode="widthFix"></image>
 													</view>
@@ -697,10 +697,11 @@
 				saleAdd: [],
 				saleSub: [],
 				MainSale: {},
-				KHID: app.globalData.store.KHID, //"K210QTD003"
-				DQID: app.globalData.store.DQID, //"K01000"
-				KHZID: app.globalData.store.KHZID, //"02"
+				// KHID: app.globalData.store.KHID, //"K210QTD003"
+				// DQID: app.globalData.store.DQID, //"K01000"
+				// KHZID: app.globalData.store.KHZID, //"02"
 				CXDatas: [],
+				page_info: {}
 			}
 		},
 		components: {
@@ -760,12 +761,25 @@
 			},
 			MemberCoupons: function() {
 				return mainSale.HY.val.coupons ?? [];
+			},
+			MenuName: function() {
+				return mainSale?.current_type?.clickType ?? ""
 			}
 		},
 		methods: {
 			Change: function(menu) {
 				console.log("[Change]菜单点击触发!", menu);
-				this.mainSale.SetManage(menu.info.clickType);
+				if (menu.info.clickType === 'sale_credit') {
+					uni.$once('select-credit', util.callBind(this, function(data) {
+						if(Object.keys(data ?? {}).length > 0){
+							console.log("[Change]切换到赊销!");
+							this.mainSale.SetManage('sale_credit');//切换到赊销
+							this.mainSale.$initSale('sale_credit');//切换到赊销
+							// uni.$emit('set-menu','sale_credit');
+						}
+					}));
+				}
+				this.mainSale.SetType(menu.info.clickType);
 			},
 			Redirect: function(info) {
 				console.log("[Redirect]重定向至销售主页!", info);
@@ -779,6 +793,7 @@
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
+				uni.$emit('set-member', this.mainSale.HY.val);
 				this.GetHyCoupons(member_info);
 			},
 			OpenBigCustomer: function(data) {
@@ -788,7 +803,7 @@
 			CloseBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户关闭!", data);
 				this.mainSale.DKF.val = data;
-				this.mainSale.ComponentsManage.DKF = false;
+				uni.$emit('select-credit', data);
 			},
 			SignIn: function() {
 				console.log("[SignIn]签到!");
@@ -857,12 +872,15 @@
 				this.Shoppingbags = true,
 					this.Memberinfo = false
 			},
-
 			//获取辅助促销
 			GetFZCX: function() {
 				_main.GetFZCX(this.KHID, res => {
 					console.log("辅助促销查询结果:", res);
-					this.CXDatas = res;
+					if (res) {
+						this.CXDatas = res;
+					} else {
+						this.CXDatas = [];
+					}
 				})
 			},
 			Moreand: function(e) {
@@ -883,10 +901,21 @@
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
+			},
+			MainSaleEvent:function(){
+				this.mainSale.SettingCurrent.push(util.callBind(this,function(type){
+					console.log("[MainSaleEvent]正在切换中...");
+					uni.$emit('set-menu',type);
+				}))
+			},
+			//销售打印小票
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
+				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
+			this.Bind();
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale");
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
@@ -894,7 +923,7 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
-			this.Bind();
+			this.MainSaleEvent();
 			//获取辅助促销
 			// this.GetFZCX();
 		}

@@ -15,7 +15,7 @@
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
-							<image src="../../images/tuihuo.png" mode="widthFix"></image> 退单业务
+							<image src="../../images/tuidan.png" mode="widthFix"></image> 退单业务
 							<!-- <view class="classifys">
 												<text class="curr">全部</text><text>今日</text><text>近三天</text>
 											</view> -->
