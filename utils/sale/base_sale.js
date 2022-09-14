@@ -428,7 +428,7 @@ function GetSale(global, vue, target_name) {
 	 */
 	//转换为小数，并保留2位
 	this.float = function(pm_num, pm_declen) {
-		return parseFloat(pm_num).toFixed(pm_declen);
+		return Number(parseFloat(pm_num).toFixed(pm_declen));
 	}
 	//获取当前时间：年月日-yyyy-mm-dd
 	this.getDate = function() {

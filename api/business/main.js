@@ -273,11 +273,14 @@ var CalProduct = function(curData, Product) {
 		})
 		arr.forEach(r2 => {
 			if (r2.ZKTYPE == 'ZD02') { //标准折扣
-				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+				r.DISCRATE += parseFloat(r.BZDISC);
 			} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
-				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+				r.DISCRATE += parseFloat(r.LSDISC);
 			} else { //特批折扣
-				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+				r.DISCRATE += parseFloat(r.TPDISC);
 			}
 		})
 	});
@@ -290,21 +293,25 @@ var MatchZKDatas = function(ZKObj, products) {
 	// products = [{
 	// 		SPJGZ: "01",
 	// 		NET: 2000,
-	// 		SPID: "123456"
+	// 		SPID: "123456",
+	// 		DISCRATE: 10
 	// 	},
 	// 	{
 	// 		SPJGZ: "01",
 	// 		NET: 1250,
-	// 		SPID: "123457"
+	// 		SPID: "123457",
+	// 		DISCRATE: 6
 	// 	},
 	// 	{
 	// 		SPJGZ: "02",
 	// 		NET: 5000,
-	// 		SPID: "12345678"
+	// 		SPID: "12345678",
+	// 		DISCRATE: 100
 	// 	}, {
 	// 		SPJGZ: "03",
 	// 		NET: 3000,
-	// 		SPID: "123456789"
+	// 		SPID: "123456789",
+	// 		DISCRATE: 80
 	// 	}
 	// ];
 	console.log("计算商品折扣传入的折扣数据：", ZKObj);
