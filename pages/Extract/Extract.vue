@@ -68,16 +68,14 @@
 				</view>
 			</view>
 		</view>
-		<!-- <component :is="'ReserveDrawer'" :show="view.Details" :order="extract_order" @Close="CloseDrawer">
-		</component> -->
+		<ReserveDrawer v-if="view.Details" :order="extract_order" @Close="CloseDrawer"></ReserveDrawer>
 	</view>
 	<!-- </menu_content> -->
 </template>
 
 <script>
 	import util from '@/utils/util.js';
-	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
-	import ReserveDrawer from '@/pages/Extract/Reserve/Reserve.vue'
+	import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue'
 	import _extract from '@/api/business/extract.js'
 	import {
 		ErrorData
@@ -95,7 +93,7 @@
 			mode: Boolean
 		},
 		components: {
-			Reserve
+			ReserveDrawer
 		},
 		data() {
 			return {
@@ -162,13 +160,16 @@
 				this.view.Criterias = !this.view.Criterias
 			},
 			EditOrder: function(item) {
-				this.view.Details = true;
+				console.log("[EditOrder]订单编辑:",item);
 				this.extract_order = item;
+				this.view.Details = true;
 			},
 			ExtractOrder: function(item) {
+				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109";
+				console.log("[ExtractOrder]预定订单:",bhlb);
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
-					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
+					bhlb: `(${bhlb})`,
 					bill: item.BILL
 				}, util.callBind(this, async function(res) {
 					if (res.code) {
@@ -202,9 +203,11 @@
 				}))
 			},
 			ExtractOrder_version2: function(item) {
+				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109";
+				console.log("[ExtractOrder]预定订单:",bhlb);
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
-					bhlb: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
+					bhlb: `(${bhlb})`,
 					bill: item.BILL
 				}, util.callBind(this, async function(res) {
 					if (res.code) {

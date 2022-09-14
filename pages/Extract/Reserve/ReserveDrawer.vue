@@ -4,78 +4,80 @@
 	@import url(@/static/style/Extract/Extract.css);
 </style>
 <template>
-	<view v-if="show" class="meminfo">
-		<view class="member">
-			<label>填写预定信息</label>
-			<button @click="Close">×</button>
-		</view>
-		<view class="middle">
-			<view class="restlist">
-				<label><text>收货人：</text><input type="text" v-model="details.info.CUSTMNAME" /></label>
-				<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE"
-						v-on:blur="QueryAddress()" /></label>
-				<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
-				<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
-				<label><text>提货门店：</text>
-					<StorePicker @change="StoreChange" :init="details.info.THKHID"
-						style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;"
-						class="uni-input-input"></StorePicker>
-				</label>
-				<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
-				<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
-				<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
+	<view class="boxs">
+		<view class="meminfo" style="display: flex;flex-direction: column;position: absolute;right: 0px;">
+			<view class="member">
+				<label>填写预定信息</label>
+				<button @click="Close">×</button>
 			</view>
-			<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
-				<view class="h6"><text>新增地址</text></view>
+			<view class="middle" style="flex: 1 0px;">
 				<view class="restlist">
-					<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
-					<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
-					<label class="long"><text>收货地址：</text>
-						<AddressPicker @change="AddressChange"></AddressPicker>
+					<label><text>收货人：</text><input type="text" v-model="details.info.CUSTMNAME" /></label>
+					<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE"
+							v-on:blur="QueryAddress()" /></label>
+					<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
+					<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
+					<label><text>提货门店：</text>
+						<StorePicker @change="StoreChange" :init="details.info.THKHID"
+							style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;"
+							class="uni-input-input"></StorePicker>
 					</label>
-					<view class="note">
-						<!-- <label><text>备注：</text><textarea></textarea></label> -->
-						<view class="caozuo"><button class="btn-xg"
-								@click="ChangeCustomerAddress">{{ view.address_edit ? "保存" : "添加" }}</button><button
-								class="btn-sc" @click="view.add_address = false">关闭</button></view>
+					<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
+					<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
+					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
+				</view>
+				<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
+					<view class="h6"><text>新增地址</text></view>
+					<view class="restlist">
+						<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
+						<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
+						<label class="long"><text>收货地址：</text>
+							<AddressPicker @change="AddressChange"></AddressPicker>
+						</label>
+						<view class="note">
+							<!-- <label><text>备注：</text><textarea></textarea></label> -->
+							<view class="caozuo"><button class="btn-xg"
+									@click="ChangeCustomerAddress">{{ view.address_edit ? "保存" : "添加" }}</button><button
+									class="btn-sc" @click="view.add_address = false">关闭</button></view>
+						</view>
+					</view>
+				</view>
+				<view class='rests'>
+					<view class="h6"><text>地址</text> <button @click="AddAddress()">+ 新增地址</button></view>
+					<view class="location">
+						<radio-group @change="RadioChange">
+							<view class="site" v-for="(i,index) in details.address"
+								v-show="view.more?true:(index===1?true:false)">
+								<view class="sitelist">
+									<radio :value="i.ADDRID" :checked="index === details.current"></radio>
+									<view>
+										<text>{{ i.CNAME }}，{{ i.PHONE }}</text>
+										<label>{{ i.ADDRESS }}</label>
+									</view>
+								</view>
+								<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">
+										修改</button><button class="btn-sc"
+										@click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
+							</view>
+						</radio-group>
+					</view>
+					<view class="more" @click="view.more = !view.more">{{ view.more?"折叠全部地址":"显示全部地址" }}
+						<image style="transition: .8s all;" :class="view.more?'arrow-direction':''"
+							src="../../../images/zhankaiqb-dt.png"></image>
+					</view>
+				</view>
+				<view v-show="!view.add_address" class="map-content">
+					<view style="width: 90%; height: 290px;">
+						<map style="width: 100%; height: 100%;" :latitude="map.latitude" :longitude="map.longitude"
+							:scale="map.scale">
+						</map>
 					</view>
 				</view>
 			</view>
-			<view class='rests'>
-				<view class="h6"><text>地址</text> <button @click="AddAddress()">+ 新增地址</button></view>
-				<view class="location">
-					<radio-group @change="RadioChange">
-						<view class="site" v-for="(i,index) in details.address"
-							v-show="view.more?true:(index===1?true:false)">
-							<view class="sitelist">
-								<radio :value="i.ADDRID" :checked="index === details.current"></radio>
-								<view>
-									<text>{{ i.CNAME }}，{{ i.PHONE }}</text>
-									<label>{{ i.ADDRESS }}</label>
-								</view>
-							</view>
-							<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">
-									修改</button><button class="btn-sc"
-									@click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
-						</view>
-					</radio-group>
-				</view>
-				<view class="more" @click="view.more = !view.more">{{ view.more?"折叠全部地址":"显示全部地址" }}
-					<image style="transition: .8s all;" :class="view.more?'arrow-direction':''"
-						src="../../../images/zhankaiqb-dt.png"></image>
-				</view>
+			<view class="operat" style="display: flex;height: 60px;align-items: center;">
+				<button class="btn btn-qx" @click="Close">取 消</button>
+				<button class="btn" @click="Save">保 存</button>
 			</view>
-			<view v-show="!view.add_address" class="map-content">
-				<view style="width: 90%; height: 290px;">
-					<map style="width: 100%; height: 100%;" :latitude="map.latitude" :longitude="map.longitude"
-						:scale="map.scale">
-					</map>
-				</view>
-			</view>
-		</view>
-		<view class="operat">
-			<button class="btn btn-qx" @click="Close">取 消</button>
-			<button class="btn" @click="Save">保 存</button>
 		</view>
 	</view>
 </template>
@@ -86,14 +88,9 @@
 	export default {
 		name: "ReserveDrawer",
 		props: {
-			show: Boolean,
 			order: {
 				type: Object,
-				default:() => ({})
-			},
-			confirm: {
-				type: Function,
-				default:null
+				default: () => ({})
 			}
 		},
 		data() {
@@ -147,7 +144,7 @@
 			}
 		},
 		methods: {
-			Close:function(){
+			Close: function() {
 				this.$emit("Close");
 			},
 			AddAddress: function(e) {
@@ -273,7 +270,7 @@
 		},
 		mounted() {
 			Object.assign(this.details.info, this.order);
-			console.log("[Reserve]预订单信息:", this.details.info);
+			console.log("[Extract-Reserve]预订单修改信息:", this.details.info);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
 			this.GetCustomerAddress(this.details.info.CUSTMPHONE);
 		}
