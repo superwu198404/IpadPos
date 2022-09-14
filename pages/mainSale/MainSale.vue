@@ -274,7 +274,6 @@
 		<!-- 未登录结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
-			<ReserveEditDrawer :show="mainSale.ComponentsManage.openydCustmEdit" :order="mainSale.sale001" :confirm="ReserveInfoEdit"></ReserveEditDrawer>
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -676,7 +675,6 @@
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
-	import ReserveEditDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -726,8 +724,7 @@
 			CreditSettlement,
 			Promotion,
 			MemberLogin,
-			ReserveDrawer,
-			ReserveEditDrawer
+			ReserveDrawer
 		},
 		computed: {
 			Price: function() {
