@@ -22,12 +22,21 @@
 	import util from '@/utils/util.js';
 	export default {
 		name: "Page",
+		props: {
+			current: String
+		},
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name) {
 					return name === this.current_info?.name;
 				});
 			},
+		},
+		watch:{
+			current:function(n,o){
+				this.current_info.name = n;
+				this.current_info.info = this.menu_info[n];
+			}
 		},
 		data() {
 			return {

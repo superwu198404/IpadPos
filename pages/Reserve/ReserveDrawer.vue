@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="meminfo" v-if="show">
+	<view class="meminfo" v-if="show" style="border: 1px solid red;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
@@ -119,6 +119,10 @@
 			show: {
 				type: Boolean,
 				default: true
+			},
+			confirm: {
+				type: Function,
+				default:null
 			}
 		},
 		data() {
@@ -248,7 +252,6 @@
 				that.RefreshData(); //刷新一下数据
 			},
 			Show: function() {
-				debugger;
 				let pages = getCurrentPages(); //当前页面栈
 				if (pages.length > 0) {
 					let prevPage = pages[pages.length - 2]; //上一页面
@@ -586,12 +589,15 @@
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				that.YDDATA = JSON.stringify(that.Order);
+				if(that.confirm){
+					console.log("[Confirm]外部传入事件触发!");
+					that.confirm(that.Order);
+				}
 				that.statements = false;
 				that.yn_add = false;
 				that.Empty();
 				console.log("待提交的顾客信息:", that.YDDATA);
 			},
-
 			//清空
 			Empty: function() {
 				that.Order = {
