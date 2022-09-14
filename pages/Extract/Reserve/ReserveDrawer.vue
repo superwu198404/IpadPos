@@ -90,6 +90,10 @@
 			order: {
 				type: Object,
 				default:() => ({})
+			},
+			confirm: {
+				type: Function,
+				default:null
 			}
 		},
 		data() {
