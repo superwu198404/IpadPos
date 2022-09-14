@@ -1124,10 +1124,10 @@ function GetSale(global, vue, target_name) {
 	this.SaleNetAndDisc = async function() {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
-			//await cx.Createcx(that.sale002);
+			await cx.Createcx(that.sale002);
 		}
 		if (that.currentOperation.ynFzCx) {
-			//this.computeFzCx();
+			this.computeFzCx();
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
@@ -1154,10 +1154,9 @@ function GetSale(global, vue, target_name) {
 	//使用特殊折扣进行计算
 	this.discCompute = function() {
 		// 计算商品的折扣值
-		console.log("002旧数据：", that.sale002);
-		let newSale2 = _main.MatchZKDatas(this.Disc.val, that.sale002);
-		that.sale002 = newSale2;
-		console.log("002新数据：", that.sale002);
+		// console.log("002旧数据：", that.sale002);
+		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 
 	//付款之前触发
