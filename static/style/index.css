@@ -812,7 +812,10 @@ page {
 	transform: translateX(-50%);
 	width:96%;	
 }
-
+.pop-r .confirm button{
+	width:90%;
+	margin:0 auto;
+}
 .pop-r .states {
 	position: absolute;
 	bottom: 30%;
