@@ -11,36 +11,38 @@ var app = getApp();
  * 获取辅助促销信息
  * @param {} khid 
  */
-var GetFZCX = function(khid, func) {
-	//khid = "K0101QT2" //测试使用
+var GetFZCX = async function(khid, func) {
+	//Yn_Jslb='D' //测试使用 正式使用 F
 	let cxArr = [];
 	let sql = "select BILL,CXZT from cxformd001 cx where cx.Yn_Jslb='F' order by CXZT";
-	db.get().executeQry(sql, "查询中...", res => {
-		console.log("辅助促销查询结果：", res);
+	await db.get().executeQry(sql, "查询中...", res => {
+		console.log("辅助促销主单查询结果：", res);
 		if (res.code && res.msg.length > 0) {
-			res.msg.forEach((item, index) => {
+			res.msg.forEach(async (item, index) => {
 				sql = "select cx2.bill, cx2.classid, sp.sname, '' CZQTY, '' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE , '满'||cx2.XX_NET1||'可售'||cx2.MJ_DISC1||'%' describe \
-                 from cxformd002 cx2, spda sp, spkhda sk  where  cx2.bill='" + item.BILL + "' and cx2.classid=sp.spid  and sp.spid=sk.spid  and  sp.PINYIN IS NOT NULL \
-                 AND  sk.YN_XS='Y' \
-                 AND  sp.PRODUCT_TYPE IN ( 'Z001','Z004','Z005') \
-                 AND  sp.PINYIN IS NOT NULL \
-                 AND  sk.KHID ='" + khid + "'";
-				db.get().executeQry(sql, "查询中...", res1 => {
+                 from cxformd002 cx2, spda sp, spkhda sk  where  cx2.bill='" + item.BILL +
+					"' and cx2.classid=sp.spid  and sp.spid=sk.spid  and  sp.PINYIN IS NOT NULL \
+                 AND  sk.YN_XS='Y' AND  sp.PRODUCT_TYPE IN ( 'Z001','Z004','Z005') AND  sp.PINYIN IS NOT NULL  AND  sk.KHID ='" +
+					khid + "'";
+				await db.get().executeQry(sql, "查询中...", res1 => {
 					let obj = {
 						BILL: item.BILL,
 						CXZT: item.CXZT,
 						Details: res1.msg
 					};
 					cxArr.push(obj);
-					if (func) func(cxArr);
 				}, err1 => {
-					console.log("查询促销异常：", err1);
+					console.log("查询辅助促销异常：", err1);
 				});
 			})
+			// if (func) func(cxArr);
 		}
 	}, err => {
 		console.log("查询促销异常：", err);
+		// if (func) func([]);
 	})
+	console.log("辅助促销详情：", cxArr);
+	return cxArr;
 }
 
 /**
@@ -257,9 +259,9 @@ var SortData = (type, data, pro) => {
 		})
 	}
 	console.log("筛选后的折扣数据：", zkData);
-	// if (zkData.length == 0) {
-	// 	util.simpleMsg("暂未有效折扣", true);
-	// }
+	if (zkData.length == 0) {
+		util.simpleMsg("暂无符合条件的特殊折扣", true);
+	}
 	return zkData;
 }
 //计算商品信息折扣信息
@@ -336,11 +338,18 @@ var MatchZKDatas = function(ZKObj, products) {
 	return products;
 }
 
+//获取辅助促销
+var GetFZCXAll = async function(khid) {
+	let FZCXDatas = await GetFZCX(khid);
+	console.log("辅助促销查询结果:", FZCXDatas);
+	return FZCXDatas;
+}
 export default {
 	GetFZCX,
 	GetMDCXHD,
 	GetZKDatas,
 	GetRXSPDatas,
 	GetZKDatasAll,
-	MatchZKDatas
+	MatchZKDatas,
+	GetFZCXAll
 }

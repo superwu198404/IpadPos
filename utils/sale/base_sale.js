@@ -598,6 +598,29 @@ function GetSale(global, vue, target_name) {
 		}
 	};
 	this.Disc.base = this;
+	//辅助促销
+	this.FZCX = {
+		base: {},
+		cval: {},
+		get val() {
+			return this.cval;
+		},
+		set val(newval) {
+			//赋值的时候进行计算
+			this.cval = newval;
+			this.base.ComponentsManage["FZCX"] = true;
+			// if (this.cval >= 100) {
+			// 	this.base.allOperation["Disc"] = false;
+			// 	this.base.allOperation["ynFzCx"] = true;
+			// 	this.base.allOperation["ynCx"] = true;
+			// } else {
+			// 	this.base.allOperation["Disc"] = true;
+			// 	this.base.allOperation["ynFzCx"] = false;
+			// 	this.base.allOperation["ynCx"] = false;
+			// }
+		}
+	};
+	this.FZCX.base = this;
 	///所有商品的列表,具体参考 utils.sale.xs_sp_init.js
 	this.Allsplist = null;
 
@@ -683,6 +706,7 @@ function GetSale(global, vue, target_name) {
 		"HY": false, //会员插件是否打开
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
+		"FZCX": false, //辅助促销插件是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
 		"sale_reserve": false,
@@ -1157,7 +1181,8 @@ function GetSale(global, vue, target_name) {
 
 	//实际计算辅助促销需要在这个方法里进行
 	this.computeFzCx = function() {
-
+		this.FZCX.cval = _main.GetFZCXAll(this.Storeid);
+		console.log("获取辅助促销数据：", this.FZCX.cval);
 	}
 
 	//使用特殊折扣进行计算
