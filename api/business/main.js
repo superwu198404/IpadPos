@@ -8,23 +8,24 @@ import dateformat from '@/utils/dateformat.js';
 var app = getApp();
 
 /**
- * 获取辅助促销信息
+ * 获取辅助促销信息 废弃
  * @param {} khid 
  */
-var GetFZCX = async function(khid, func) {
+var _GetFZCX = function(khid, func) {
 	//Yn_Jslb='D' //测试使用 正式使用 F
 	let cxArr = [];
 	let sql = "select BILL,CXZT from cxformd001 cx where cx.Yn_Jslb='F' order by CXZT";
-	await db.get().executeQry(sql, "查询中...", res => {
+	db.get().executeQry(sql, "查询中...", res => {
 		console.log("辅助促销主单查询结果：", res);
 		if (res.code && res.msg.length > 0) {
-			res.msg.forEach(async (item, index) => {
+			res.msg.forEach((item, index) => {
 				sql = "select cx2.bill, cx2.classid, sp.sname, '' CZQTY, '' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE , '满'||cx2.XX_NET1||'可售'||cx2.MJ_DISC1||'%' describe \
                  from cxformd002 cx2, spda sp, spkhda sk  where  cx2.bill='" + item.BILL +
 					"' and cx2.classid=sp.spid  and sp.spid=sk.spid  and  sp.PINYIN IS NOT NULL \
                  AND  sk.YN_XS='Y' AND  sp.PRODUCT_TYPE IN ( 'Z001','Z004','Z005') AND  sp.PINYIN IS NOT NULL  AND  sk.KHID ='" +
 					khid + "'";
-				await db.get().executeQry(sql, "查询中...", res1 => {
+				db.get().executeQry(sql, "查询中...", res1 => {
+					console.log("当前单详情：", res1);
 					let obj = {
 						BILL: item.BILL,
 						CXZT: item.CXZT,
@@ -35,16 +36,50 @@ var GetFZCX = async function(khid, func) {
 					console.log("查询辅助促销异常：", err1);
 				});
 			})
-			// if (func) func(cxArr);
+			if (func) func(cxArr);
 		}
 	}, err => {
 		console.log("查询促销异常：", err);
-		// if (func) func([]);
+		if (func) func([]);
 	})
-	console.log("辅助促销详情：", cxArr);
-	return cxArr;
+	// console.log("辅助促销详情：", cxArr);
+	// return cxArr;
 }
-
+/**
+ * 获取辅助促销信息
+ * @param {} khid 
+ */
+var GetFZCX = function(khid, func) {
+	let cxArr = [];
+	let sql = "SELECT cx1.CXZT, cx2.bill, cx2.classid, sp.sname, '0' CZQTY, '0' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE, '满' || cx2.XX_NET1 || '可售' || cx2.MJ_DISC1 || '%' describe \
+				FROM  cxformd001 cx1 LEFT JOIN cxformd002 cx2  ON cx1.bill = cx2.bill AND cx1.khid = cx2.khid LEFT JOIN spda sp ON cx2.classid = sp.spid LEFT JOIN spkhda sk ON sp.spid = sk.spid AND cx1.KHID = sk.KHID \
+				WHERE cx1.KHID = '" + khid +
+		"'  AND cx1.Yn_Jslb = 'F' AND sp.PINYIN IS NOT NULL  AND sk.YN_XS = 'Y' AND sp.PRODUCT_TYPE IN ( 'Z001', 'Z004', 'Z005' )  AND sp.PINYIN IS NOT NULL Order by cx1.CXZT";
+	console.log("辅助促查询sql：", cxArr);
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("辅助促销主单查询结果：", res);
+		res.msg.forEach((item, index) => {
+			let cxobj = cxArr.find(r => {
+				r.BILL == item.BILL
+			});
+			if (!cxobj) {
+				let obj = {
+					BILL: item.BILL,
+					CXZT: item.CXZT,
+					Details: res.msg.filter(r1 => {
+						return r1.BILL == item.BILL
+					})
+				};
+				cxArr.push(obj);
+			}
+		})
+		console.log("辅助促销分组数据：", cxArr);
+		if (func) func(cxArr);
+	}, err => {
+		console.log("查询辅助促销异常：", err);
+		if (func) func([]);
+	})
+}
 /**
  * 获取门店促销活动信息
  * @param {} khid 
@@ -97,7 +132,8 @@ var GetZKDatas = async function(data, func) {
 		}
 		let sql = "SELECT SPJGZ ZKSTR ,(CASE SPJGZ WHEN  '01' THEN  '商品' WHEN  '02' THEN  '商品类卡券（包括节令商品）' WHEN  '03' THEN  '现金类卡券' END) ZKNAME,\
               SPJGZ  TJBILL,TJSEQ,ZKTYPE,MZNET,ZKQTY,(100+ZKQTY)/100 ZKQTY_JS  FROM  BZDISC WHERE DQID  ='" + data
-			.dqid + "' AND ifnull( DELBZ,'#') <>'X'   AND DATE(SDATE) <=DATE('" + dateformat.getYMD() +
+			.dqid + "' AND ifnull( DELBZ,'#') <>'X'   AND DATE(SDATE) <=DATE('" + dateformat
+			.getYMD() +
 			"')  and  MZNET  >-100 AND   ZKTYPE  IN ('" + pm_zktype + "')\
                AND  DATE(EDATE) >= DATE('" + dateformat.getYMD() + "') " + data.spjgz + " order by SPJGZ,MZNET desc";
 		console.log("折扣查询sql：", sql);
@@ -338,18 +374,11 @@ var MatchZKDatas = function(ZKObj, products) {
 	return products;
 }
 
-//获取辅助促销
-var GetFZCXAll = async function(khid) {
-	let FZCXDatas = await GetFZCX(khid);
-	console.log("辅助促销查询结果:", FZCXDatas);
-	return FZCXDatas;
-}
 export default {
 	GetFZCX,
 	GetMDCXHD,
 	GetZKDatas,
 	GetRXSPDatas,
 	GetZKDatasAll,
-	MatchZKDatas,
-	GetFZCXAll
+	MatchZKDatas
 }

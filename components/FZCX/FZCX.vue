@@ -18,14 +18,14 @@
 					<view class="baglist curr" v-for="(item1,index1) in item.Details">
 						<view class="bag">
 							<text class="h8">{{item1.SNAME}}</text>
-							<label><text>{{item1.DESCRIBE}}</text></label>
+							<label>说明<text>{{item1.DESCRIBE}}</text></label>
 						</view>
 						<view class="quantit">
 							<text>数量</text>
 							<view class="nums">
-								<text @click="Calculate(item1,'-')">-</text>
-								<input type="number" v-model="item1.BQTY" @blur="Calculate(item1,'*',$event)" />
-								<text @click="Calculate(item1,'+')">+</text>
+								<text @click="Calculate(item1,-1)">-</text>
+								<input disabled="true" v-model="item1.BQTY" />
+								<text @click="Calculate(item1,1)">+</text>
 							</view>
 						</view>
 					</view>
@@ -48,9 +48,9 @@
 	var that;
 	export default {
 		name: "FZCX",
-		props:{
-			_FZCXDatas:Array,
-		}
+		props: {
+			_FZCXDatas: Array,
+		},
 		data() {
 			return {
 				FZCXDatas: []
@@ -58,10 +58,19 @@
 		},
 		created: function() {
 			that = this;
+			that.FZCXDatas = that._FZCXDatas;
 		},
 		methods: {
-			Calculate: function() {
-
+			Calculate: function(item, type) {
+				item.BQTY = Number(item.BQTY) + type;
+				if (item.BQTY < 0) {
+					item.BQTY = 0;
+				}
+				console.log("数量给变化", item);
+			},
+			Close: function() {
+				//关闭
+				// that.FZCXDatas.map()
 			}
 		}
 	}

@@ -133,7 +133,8 @@
 		</view>
 
 		<!-- 会员登录 -->
-		<MemberLogin v-if="mainSale.ComponentsManage.HY" style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
+		<MemberLogin v-if="mainSale.ComponentsManage.HY"
+			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
 
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
@@ -273,8 +274,10 @@
 
 		<!-- 未登录结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
-			<ReserveEditDrawer :show="mainSale.ComponentsManage.openydCustmEdit" :order="mainSale.sale001" :confirm="ReserveInfoEdit"></ReserveEditDrawer>
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput">
+			</ReserveDrawer>
+			<ReserveEditDrawer :show="mainSale.ComponentsManage.openydCustmEdit" :order="mainSale.sale001"
+				:confirm="ReserveInfoEdit"></ReserveEditDrawer>
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -370,10 +373,13 @@
 					<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
 					<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
 				</view>
-				<view class="h5"><text>赠品</text><text>查看全部 ></text></view>
-				<view class="shoppbag" v-if="CXDatas.length>0">
+				<view class="h5">
+					<text>赠品</text><text @click="MoreFZCX()">查看全部 ></text>
+				</view>
+				<view class="shoppbag">
+					<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 					<view class="hengs">
-						<view class="baglist curr" v-for="(item,index) in PromotionDetails">
+						<view class="baglist curr" v-for="(item,index) in mainSale.FZCX.cval[0].Details">
 							<view class="bag">
 								<text class="h8">{{item.SNAME}}</text>
 								<label><text>说明</text>{{item.DESCRIBE}}</label>
@@ -381,9 +387,9 @@
 							<view class="quantit">
 								<text>数量</text>
 								<view class="nums">
-									<text>-</text>
-									<input type="number" v-model="item.BQTY" />
-									<text>+</text>
+									<text @click="Calculate(item,-1)">-</text>
+									<input disabled="true" v-model="item.BQTY" />
+									<text @click="Calculate(item,1)">+</text>
 								</view>
 							</view>
 						</view>
@@ -428,7 +434,7 @@
 			</view>
 		</view>
 
-		<!-- 会员登陆结算 -->
+		<!-- 会员登陆结算 废弃？ -->
 		<view class="boxs" v-if="statements">
 			<view class="memberes">
 				<view class="meminfo" v-if="Memberinfo">
@@ -652,9 +658,9 @@
 		</view>
 
 		<!-- 特殊折扣 -->
-		<!-- <SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
-		</SpecialDisc> -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
+		<!-- 辅助促销插件 -->
+		<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val"></FZCX>
 	</view>
 </template>
 
@@ -834,12 +840,12 @@
 				this.mainSale.ComponentsManage.Disc = true;
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
-			ReserveInfoInput:function(sale1){
+			ReserveInfoInput: function(sale1) {
 				this.mainSale.sale001 = sale1;
 				this.mainSale.PayParamAssemble();
 			},
-			ReserveInfoEdit:function(){
-				
+			ReserveInfoEdit: function() {
+
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
@@ -898,6 +904,15 @@
 						this.CXDatas = [];
 					}
 				})
+			},
+			MoreFZCX: function(e) {
+				this.mainSale.ComponentsManage.FZCX = true;
+			},
+			Calculate: function(item, type) {
+				item.BQTY = Number(item.BQTY) + type;
+				if (item.BQTY < 0) {
+					item.BQTY = 0;
+				}
 			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
