@@ -309,8 +309,8 @@ page {
 	border-radius: 6rpx;
 	font-size: 28rpx;
 	font-weight: 700;
-	animation: scales 0.8s ease;
-		-webkit-animation: scales 0.8s ease;
+	animation: scales 0.5s ease;
+		-webkit-animation: scales 0.5s ease;
 	}
 	@keyframes scales {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
 		0%{
