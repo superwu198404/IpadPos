@@ -294,11 +294,11 @@ page {
 
 .operation .ranks {
 	position: absolute;
-	top: 50%;
-	left: 50%;
+	top: 2%;
+	left: 22%;
 	width: 56%;
 	height: 96%;
-	transform: translate(-50%, -50%);
+	/* transform: translate(-50%, -50%); */
 	background-color: #E0EAE9;
 	color: #006B44;
 	display: flex;
@@ -309,7 +309,23 @@ page {
 	border-radius: 6rpx;
 	font-size: 28rpx;
 	font-weight: 700;
-}
+	animation: scales 0.8s ease;
+		-webkit-animation: scales 0.8s ease;
+	}
+	@keyframes scales {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+		0%{
+			transform: scale(0.1);
+			top: 5%;
+			left:20%;
+
+	        }
+	    100%{
+	        transform: scale(1);
+			top: 2%;
+			left: 22%;
+			/* transform: translate(-50%, -50%); */
+	        }
+	        }
 .operation .ranks label{
 	width:60rpx;
 	height: 60rpx;	
@@ -587,6 +603,10 @@ page {
 	justify-content: flex-end;
 }
 
+.boxs .memberes{
+	right:0;
+	transition: all 1s;
+}
 .meminfo {
 	width: 70%;
 	position: relative;
