@@ -68,8 +68,8 @@
 				</view>
 			</view>
 		</view>
-		<component :is="'ReserveDrawer'" :show="view.Details" :order="extract_order" @Close="CloseDrawer">
-		</component>
+		<!-- <component :is="'ReserveDrawer'" :show="view.Details" :order="extract_order" @Close="CloseDrawer">
+		</component> -->
 	</view>
 	<!-- </menu_content> -->
 </template>
@@ -77,6 +77,7 @@
 <script>
 	import util from '@/utils/util.js';
 	import Reserve from '@/pages/Extract/Reserve/Reserve.vue'
+	import ReserveDrawer from '@/pages/Extract/Reserve/Reserve.vue'
 	import _extract from '@/api/business/extract.js'
 	import {
 		ErrorData

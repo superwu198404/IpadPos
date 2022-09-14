@@ -383,7 +383,7 @@ var XsTypeObj = {
 			//加入支付方式
 		},
 		$click() {
-			this.SetManage("sale_credit");
+			console.log("[sale_credit]赊销点击...");
 			this.ComponentsManage.DKF = true; //打开大客户弹窗
 			return false;
 		}
@@ -634,8 +634,7 @@ function GetSale(global, vue, target_name) {
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
-		"statement": false,
-		"sale":true
+		"statement": false
 	};
 	///销售界面可以进行操作功能 ，
 	this.allOperation = {
@@ -701,7 +700,7 @@ function GetSale(global, vue, target_name) {
 		};
 		for (var item in this.allOperation) {
 			//that.log("开始设置权限"+item);
-			if (pm_OperEnum[item]) {
+			if (pm_OperEnum && pm_OperEnum[item]) {
 				//普通销售具有所有的权限
 				this.currentOperation[item] = pm_OperEnum[item]
 			} else {
@@ -726,14 +725,25 @@ function GetSale(global, vue, target_name) {
 			that.ComponentsManage[lastManage] = false;
 		}
 		that.log("[SetManage]点击的类型:", pm_mtype);
-		//that.ComponentsManage[pm_mtype] = true;
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
-
 		that.log("[SetManage]组件控制对象:", that.ComponentsManage);
 		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
+		that.Pub_SettingCurrent(pm_mtype);
 		that.update();
+	}
+	
+	this.SettingCurrent = [];
+	
+	this.Pub_SettingCurrent = function (type) {
+		this.SettingCurrent.forEach(func => {
+			try{
+				func(type);
+			}catch(e){
+				console.log("[Pub_SettingCurrent]执行失败!");
+			}
+		})
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
@@ -814,8 +824,11 @@ function GetSale(global, vue, target_name) {
 		that.log("-----绑定完成++++" + qty);
 	}
 
-	//修改销售类型
-	//参数1销售类型，参数2单据列表
+	/*
+	 * 修改销售类型
+	 * @param {*} pm_type 销售类型
+	 * @param {*} switch_callback 页面切换时的回调
+	 */
 	this.SetType = function(pm_type) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
@@ -834,36 +847,12 @@ function GetSale(global, vue, target_name) {
 				this.myAlert("已经输入了商品不能进行此操作")
 				return;
 			}
-			that.log(JSON.stringify(this.current_type));
 			if (this.clickSaleType.$click.call(this)) {
 				this.$initSale(this.clickSaleType);
 			}
 
 		} else {
 			this.myAlert("没有此种操作模式" + pm_type);
-		}
-	}
-
-	this.SubList = {};
-
-	this.Pub = function(type) {
-		if (this.SubList[type] && Array.isArray(this.SubList[type])) {
-			this.SubList[type].forEach(util.callBind(this, function(func) {
-				try {
-					func.call(this);
-				} catch (e) {
-					console.log("[PubPageSwitch]发生异常!异常:", e);
-				}
-			}));
-		}
-	}
-
-	this.Sub = function(type, func) {
-		if (this.SubList[type] && Array.isArray(this.SubList[type])) {
-			if (this.SubList[type].indexOf(i => i === func) === -1)
-				this.SubList[type].push(func);
-		} else {
-			this.SubList[type] = [func];
 		}
 	}
 
@@ -900,56 +889,17 @@ function GetSale(global, vue, target_name) {
 			PayList: [],
 			actType: that.actType
 		}
-		that.$beforeFk(inputParm);
-		that.log("--------------------------------------------------------------------")
-		console.log(JSON.stringify(inputParm));
-		that.log("--------------------------------------------------------------------")
-		that.Page.$store.commit('set-location', inputParm);
-		console.log("[ToPay]控制对象:", that.actType);
-		uni.navigateTo({
-			url: "../Payment/Payment",
-			events: {
-				FinishOrder: that.PayedResult
-			}
-		})
-	}
-
-
-	/**
-	 * 修改销售类型(SetType 修改版本)
-	 * @param {*} type 销售类型
-	 * @param {*} direct 是否选择直接初始化
-	 */
-	this.SetSaleType = function(type, init_params = null, direct = false) {
-		console.log("[SetSaleType]设置销售类型:", type);
-		if (type == that.clickSaleType.xstype) {
-			return
-		}
-		if (XsTypeObj[type]) {
-			this.clickSaleType = XsTypeObj[type];
-			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
-			console.log("[SetSaleType]销售类型:", type);
-			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
-					.sale002Rows)) {
-				this.myAlert("[SetSaleType]已经输入了商品不能进行此操作!")
-				return;
-			}
-			console.log("[SetSaleType]设置销售类型信息:", this.current_type);
-			if (direct) {
-				console.log("[MainSale]开始初始化...", {
-					params: init_params,
-					type_info: this.clickSaleType,
-					type
-				});
-				this.$initSale(this.clickSaleType, init_params);
-				console.log("[MainSale]初始化完毕!");
-			} else {
-				console.log("[SetSaleType]页面切换:", this.current_type.operation);
-				this.SetCurrentOperation(this.current_type.operation);
-			}
-		} else {
-			this.myAlert("[SetSaleType]没有此种操作模式:" + type);
-		}
+		let callback = util.callBind(this,function(){
+			that.Page.$store.commit('set-location', inputParm);
+			console.log("[ToPay]控制对象:", that.actType);
+			uni.navigateTo({
+				url: "../Payment/Payment",
+				events: {
+					FinishOrder: that.PayedResult
+				}
+			})
+		});
+		that.$beforeFk(inputParm,callback);
 	}
 
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
@@ -966,17 +916,17 @@ function GetSale(global, vue, target_name) {
 		});
 		pm_newtype = pm_newtype || this.clickSaleType;
 		this.current_type = pm_newtype;
+		console.log("[$InitSale]设置当前销售类型:",this.current_type);
 		this.bill_type = sale.saleBillType[this.current_type.xstype];
 		console.log("[$InitSale]bill_type:", this.bill_type);
 		this.xsType = this.current_type.xstype;
 		//设置权限生效
 		this.SetCurrentOperation(this.current_type.operation);
-
 		this.CurrentTypeCall("$initSale", pm_saleobj);
 		this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
 		console.log("[$initSale]销售初始化完毕!");
 	}
-
+	
 	this.cxBillinit = function() {
 
 	}
@@ -1013,7 +963,12 @@ function GetSale(global, vue, target_name) {
 		}
 		return commonSaleParm;
 	}
-
+	
+	/**
+	 * 设置新的销售参数
+	 * @param {*} inputParm sale123 数据对象，格式:{ sale001:{},sale002:[],sale003:[] }
+	 * @param {*} pm_actType 销售模式 common.actTypeEnum 中的一种
+	 */
 	this.setNewParmSale = function(inputParm, pm_actType) {
 		this.sale001 = {};
 		var retparm = this.createNewBill();
@@ -1240,6 +1195,8 @@ function GetSale(global, vue, target_name) {
 	this.SetDefaultType = function(type = "sale") {
 		console.log("[SetDefaultType]设置默认类型:",type);
 		this.SetType(type);
+		console.log("[SetDefaultType]初始化销售单...");
+		this.$initSale(XsTypeObj[type]);
 	}
 
 	//计算积分
