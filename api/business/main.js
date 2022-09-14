@@ -262,18 +262,71 @@ var SortData = (type, data, pro) => {
 	// }
 	return zkData;
 }
+//计算商品信息折扣信息
+var CalProduct = function(curData, Product) {
+	Product.forEach(r => {
+		let discArr = [],
+			discObj = {},
+			DiscNet = 0;
+		let arr = curData.filter(r1 => {
+			return r1.ZKSTR == r.SPJGZ
+		})
+		arr.forEach(r2 => {
+			if (r2.ZKTYPE == 'ZD02') { //标准折扣
+				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+			} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
+				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+			} else { //特批折扣
+				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+			}
+		})
+	});
+	console.log("添加折扣后的商品数据：", Product);
+	return Product;
+}
+
 //匹配商品的有效规则 包含标准临时和特批
-var MatchZKDatas = async function(dkhid, products) {
-	let ZKObj = await GetZKDatasAll(dkhid);
-	let Res = {};
-	if (ZKObj.ZKDatas.length > 0) {
-		Res.ZKDatas = SortData("", ZKObj.ZKDatas);
+var MatchZKDatas = function(ZKObj, products) {
+	// products = [{
+	// 		SPJGZ: "01",
+	// 		NET: 2000,
+	// 		SPID: "123456"
+	// 	},
+	// 	{
+	// 		SPJGZ: "01",
+	// 		NET: 1250,
+	// 		SPID: "123457"
+	// 	},
+	// 	{
+	// 		SPJGZ: "02",
+	// 		NET: 5000,
+	// 		SPID: "12345678"
+	// 	}, {
+	// 		SPJGZ: "03",
+	// 		NET: 3000,
+	// 		SPID: "123456789"
+	// 	}
+	// ];
+	console.log("计算商品折扣传入的折扣数据：", ZKObj);
+	console.log("计算商品折扣传入的商品信息：", products);
+	let CurData;
+	if (ZKObj.ZKData && ZKObj.ZKType) {
+		if (ZKObj.ZKType == "BZ") {
+			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
+			if (CurData.length > 0) {
+				CurData = CurData.filter(r => {
+					return r.ZKTYPE == 'ZD02'
+				})
+			}
+		} else if (ZKObj.ZKType == "LS") {
+			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
+		} else {
+			CurData = SortData("TP", ZKObj.ZKData.DKFZKDatas, products);
+		}
+		console.log("当前商品匹配到的有效折扣规则：", CurData);
+		products = CalProduct(CurData, products);
 	}
-	if (ZKObj.DKFZKDatas.length > 0) {
-		Res.DKFZKDatas = SortData("TP", ZKObj.DKFZKDatas);
-	}
-	console.log("当前商品匹配到的有效折扣规则：", ZKObj);
-	return ZKObj;
+	return products;
 }
 
 export default {

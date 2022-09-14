@@ -18,17 +18,17 @@
 						<view :class="curZKType!='TP'?'lis curr':'lis'" @click="ChooseZK('BZ')">
 							<view class="h8">
 								<view>标准折扣<em></em></view>
-								<label>总折扣额:￥{{totalDisc}}<text></text></label>
+								<!-- <label>总折扣额:￥{{totalDisc}}<text></text></label> -->
 								<span>已选</span>
 							</view>
 							<view class="discount">
 								<label
 									v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span></label>
 								<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
-								<view>
+								<view @click.stop="Def">
 									<label>
 										<checkbox-group @change="ChooseLS">
-											<checkbox value="LS"></checkbox>临时折扣
+											<checkbox :checked="curZKType=='LS'"></checkbox>临时折扣
 										</checkbox-group>
 									</label>
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
@@ -42,7 +42,7 @@
 							@click="ChooseZK('TP')">
 							<view class="h8">
 								<view>特批折扣<em></em></view>
-								<label>总折扣额:￥{{totalDiscDKF}}<text></text></label>
+								<!-- <label>总折扣额:￥{{totalDiscDKF}}<text></text></label> -->
 								<span>已选</span>
 							</view>
 							<view class="discount">
@@ -93,9 +93,8 @@
 				curZK: {},
 				totalDisc: 0,
 				totalDiscDKF: 0,
-				Product1: [],
-				Product: [
-						{
+				Product: [],
+				Product1: [{
 						SPJGZ: "01",
 						NET: 2000,
 						SPID: "123456"
@@ -116,7 +115,7 @@
 					}
 				],
 				ProductOld: [],
-				YN_LSZK: false,
+				YN_LSZK: false
 			};
 		},
 		created: function() {
@@ -132,33 +131,45 @@
 			// 		that.GetZKDatas('TP');
 			// 	}
 			// }
-			console.log("传入的商品数据：", that.product);
+			// console.log("传入的商品数据：", that.product);
 			// that.Product = that.product;
-			that.ProductOld = that.Product;
+			// that.ProductOld = that.Product;
 		},
 		methods: {
+			Def: function() {
+				console.log("冒泡事件：", that.curZKType);
+				if (that.curZKType == 'LS') {
+					that.curZKType = "LS";
+				}
+			},
 			ChooseZK: function(e) {
+				console.log("测试：", that.curZKType);
 				that.curZKType = e;
 			},
 			Cancel: function() {
-				// that.ProductOld;
-				uni.$emit('close-tszk', that.ProductOld);
+				// uni.$emit('close-tszk', that.ProductOld);
+				uni.$emit('close-tszk', that.curZKType);
 			},
 			//确认折扣
 			ConfirmZK: function() {
-				that.CalProduct();
+				// that.CalProduct();
 				// that.Product
-				uni.$emit('close-tszk', that.Product);
+				// uni.$emit('close-tszk', that.Product);
+				console.log("选择的折扣类型：", that.curZKType);
+				uni.$emit('close-tszk', that.curZKType);
 			},
 			ChooseLS: e => {
-				console.log("临时折扣选中事件：", e.detail.value);
-				if (e.detail.value.length > 0) { //勾选了说明
-					that.YN_LSZK = true;
-					that.CalDisc("", 1);
+				if (e.detail.value.length > 0) { //勾选了临时
+					// that.YN_LSZK = true;
+					that.curZKType = "LS";
+					// that.CalDisc("", 1);
 				} else {
-					that.YN_LSZK = false;
-					that.CalDisc();
+					// that.YN_LSZK = false;
+					that.curZKType = "BZ";
+					// that.CalDisc();
 				}
+
+				console.log("折扣类型切换：", that.curZKType);
 			},
 
 			//计算商品信息折扣信息
@@ -230,7 +241,8 @@
 				console.log("总折扣额：", that.totalDisc);
 			},
 			CloseZK: function() {
-				uni.$emit('close-tszk', that.ProductOld);
+				// uni.$emit('close-tszk', that.ProductOld);
+				uni.$emit('close-tszk', that.curZKType);
 			},
 			//数据筛选
 			SortData: (type, data, pro) => {

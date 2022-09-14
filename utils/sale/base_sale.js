@@ -735,14 +735,14 @@ function GetSale(global, vue, target_name) {
 		that.Pub_SettingCurrent(pm_mtype);
 		that.update();
 	}
-	
+
 	this.SettingCurrent = [];
-	
-	this.Pub_SettingCurrent = function (type) {
+
+	this.Pub_SettingCurrent = function(type) {
 		this.SettingCurrent.forEach(func => {
-			try{
+			try {
 				func(type);
-			}catch(e){
+			} catch (e) {
 				console.log("[Pub_SettingCurrent]执行失败!");
 			}
 		})
@@ -891,7 +891,7 @@ function GetSale(global, vue, target_name) {
 			PayList: [],
 			actType: that.actType
 		}
-		let callback = util.callBind(this,function(){
+		let callback = util.callBind(this, function() {
 			that.Page.$store.commit('set-location', inputParm);
 			console.log("[ToPay]控制对象:", that.actType);
 			uni.navigateTo({
@@ -901,7 +901,7 @@ function GetSale(global, vue, target_name) {
 				}
 			})
 		});
-		that.$beforeFk(inputParm,callback);
+		that.$beforeFk(inputParm, callback);
 	}
 
 	//点击了菜单后获取到对应的 TYPE 然后根据 TYPE 切换销售页为对应模式
@@ -918,7 +918,7 @@ function GetSale(global, vue, target_name) {
 		});
 		pm_newtype = pm_newtype || this.clickSaleType;
 		this.current_type = pm_newtype;
-		console.log("[$InitSale]设置当前销售类型:",this.current_type);
+		console.log("[$InitSale]设置当前销售类型:", this.current_type);
 		this.bill_type = sale.saleBillType[this.current_type.xstype];
 		console.log("[$InitSale]bill_type:", this.bill_type);
 		this.xsType = this.current_type.xstype;
@@ -928,7 +928,7 @@ function GetSale(global, vue, target_name) {
 		this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
 		console.log("[$initSale]销售初始化完毕!");
 	}
-	
+
 	this.cxBillinit = function() {
 
 	}
@@ -946,8 +946,7 @@ function GetSale(global, vue, target_name) {
 
 	}
 
-	this.InitSale001 = function() 
-	{
+	this.InitSale001 = function() {
 		var is_new = Object.keys(this.sale001).length == 0;
 		var commonSaleParm = {
 			KHID: this.Storeid,
@@ -966,7 +965,7 @@ function GetSale(global, vue, target_name) {
 		}
 		return commonSaleParm;
 	}
-	
+
 	/**
 	 * 设置新的销售参数
 	 * @param {*} inputParm sale123 数据对象，格式:{ sale001:{},sale002:[],sale003:[] }
@@ -987,8 +986,7 @@ function GetSale(global, vue, target_name) {
 		inputParm.sale003.forEach(item003 => {
 			Object.assign(item003, retparm);
 		})
-		if (pm_actType == common.actTypeEnum.Refund) 
-		{
+		if (pm_actType == common.actTypeEnum.Refund) {
 
 			inputParm.sale001.XS_GSID = savaSale001.XS_GSID;
 			inputParm.sale001.XS_KHID = savaSale001.XS_KHID;
@@ -1118,24 +1116,20 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-	    await that.SaleNetAndDisc();
+		await that.SaleNetAndDisc();
 		that.SetManage("statement")
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc =async function()
-	{
+	this.SaleNetAndDisc = async function() {
 		let znet = 0
-		if (that.currentOperation.ynCx) 
-		{
-			await cx.Createcx(that.sale002);
+		if (that.currentOperation.ynCx) {
+			//await cx.Createcx(that.sale002);
 		}
-		if (that.currentOperation.ynFzCx)
-		{
-			this.computeFzCx();
+		if (that.currentOperation.ynFzCx) {
+			//this.computeFzCx();
 		}
-		if (that.currentOperation.Disc) 
-		{
+		if (that.currentOperation.Disc) {
 			that.discCompute();
 		}
 		that.sale001.TLINE = that.sale002.length;
@@ -1143,9 +1137,9 @@ function GetSale(global, vue, target_name) {
 			NET: 0,
 			DISCRATE: 0
 		});
-		that.log("***************计算结果展示******************")
-		that.log(retx)
-		that.log("***************计算结果展示******************")
+		// that.log("***************计算结果展示******************")
+		// that.log(retx)
+		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.DISC = this.float(retx.DISCRATE, 2);
@@ -1153,15 +1147,17 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//实际计算辅助促销需要在这个方法里进行
-	this.computeFzCx = function() 
-	{
+	this.computeFzCx = function() {
 
 	}
 
 	//使用特殊折扣进行计算
-	this.discCompute = function() 
-	{
-		// this.sale002 = _main.MatchZKDatas(this.DKF.cval.DKFID, this.sale002);
+	this.discCompute = function() {
+		// 计算商品的折扣值
+		console.log("002旧数据：", that.sale002);
+		let newSale2 = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		that.sale002 = newSale2;
+		console.log("002新数据：", that.sale002);
 	}
 
 	//付款之前触发

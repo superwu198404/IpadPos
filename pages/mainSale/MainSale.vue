@@ -649,7 +649,7 @@
 		<!-- 特殊折扣 -->
 		<!-- <SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
 		</SpecialDisc> -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKDatas"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
 	</view>
 </template>
 
@@ -820,10 +820,10 @@
 			//展示特殊折扣
 			GetTSZKData: async function() {
 				//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
-				this.mainSale.ComponentsManage.Disc = true;
 				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
-				this.mainSale.Disc.val.ZKDatas = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
-				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKDatas);
+				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
+				this.mainSale.ComponentsManage.Disc = true;
+				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
