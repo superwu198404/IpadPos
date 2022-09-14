@@ -337,7 +337,7 @@
 				<view class="member">
 					<label>
 						<image class="touxiang" src="../../images/touxiang.png"></image><button
-							class="btn">会员登录</button>
+							class="btn">{{ mainSale.HY.val.hyId ? mainSale.HY.val.hyId:'未登录...'}}</button>
 					</label>
 					<text @click="mainSale.resetSaleBill">清空</text>
 				</view>
@@ -760,19 +760,19 @@
 					return [];
 			},
 			MemberBalance: function() {
-				return (mainSale.HY.val?.Balance ?? 0) / 100;
+				return (this.mainSale.HY.val?.Balance ?? 0) / 100;
 			},
 			MemberPoint: function() {
-				return (mainSale.HY.val?.JFBalance ?? 0) / 100;
+				return (this.mainSale.HY.val?.JFBalance ?? 0) / 100;
 			},
 			MemberGiftCard: function() {
-				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
+				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
 			},
 			MemberCoupons: function() {
-				return mainSale.HY.val.coupons ?? [];
+				return this.mainSale.HY.val.coupons ?? [];
 			},
 			MenuName: function() {
-				return mainSale?.current_type?.clickType ?? ""
+				return this.mainSale?.current_type?.clickType ?? ""
 			}
 		},
 		methods: {
@@ -837,6 +837,9 @@
 			ReserveInfoInput:function(sale1){
 				this.mainSale.sale001 = sale1;
 				this.mainSale.PayParamAssemble();
+			},
+			ReserveInfoEdit:function(){
+				
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
