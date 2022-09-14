@@ -235,7 +235,7 @@ const Cxdict = async () => {
 					try {
 						sub1.minMaxQty = cx_util.nnvl(cxclass[j]["MJ_NET1"], 0);
 						sub1.minDisc = cx_util.nnvl(cxclass[j]["MJ_NET2"], 0) / 100;
-					} catch {
+					} catch(e) {
 
 					}
 				}
@@ -258,7 +258,7 @@ const Cxdict = async () => {
 				zdcxbill = C1.CxBill;
 				yn_zdcx = true;
 				zdcxsubno = zdcxsubno;
-				console.log("zdcxsubno", zdcxsubno)
+				//console.log("zdcxsubno", zdcxsubno)
 				break;
 			}
 		} catch (e) {
@@ -273,7 +273,7 @@ const Cxdict = async () => {
 const Createcx = async (sale02_arr) => {
 	console.log("Createcx计算促销传入的商品sale02_arr",sale02_arr)
 	//计算时无生效的促销，再次请求初始化一次
-	if(cxdict == null || cxdict.size < 1){
+	if(cxdict == null || cxdict.size <= 0){
 		await Cxdict();
 	}
 	
@@ -291,9 +291,9 @@ const Createcx = async (sale02_arr) => {
 		let price = Math.round(parseFloat(sale02_arr[i].OPRICE.toString()) * 100) / 100;
 		let num = Math.round(parseFloat(sale02_arr[i].QTY.toString()) * 100) / 100;
 
-		//添加
+		//添加商品到促销计算数组
 		AddRowCxbilldts(spid, price, num, i);
-		//计算
+		//去计算促销
 		SaleCxCreate(spid, "10000000", dateTime_now.toString(), "", 0);
 	}
 
@@ -434,7 +434,6 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 	cxfsdt = [];
 	for (let col = 0; col < cxbilldts.length; col++) {
 		let cxbilldData = cxbilldts[col];
-		//console.log("cxbilldData first",cxbilldData);	
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
 		for (let k = 7; k < cxbilldDataKeys.length; k++) {
@@ -568,7 +567,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 			let syqty = cx_util.snvl(cxbilldts[i][slttpe], 0);
 			//console.log("retCxClassForDtRow syqty",classid + "||" + syqty);
 			///发生参数是临时变量每次使用的时候要清理一下
-			cxbilldts[i]["FSCS"] = 0;
+			cxbilldts[i][fscs] = 0;
 			if (c1.ynzd == false) {
 				if (classid == null || syqty == 0) {
 					classidlist.push(null);
