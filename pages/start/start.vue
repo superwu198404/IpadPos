@@ -22,13 +22,13 @@
 			</view>
 		</view>
 
-	   <text>{{showmsg}}</text>>
+		<text>{{showmsg}}</text>>
 		<p>门店：<input placeholder="请输入门店的编码" v-model="khid" /></p>
 		<p>款台：<input placeholder="请输入款台号" v-model="posid" /></p>
 		<button @click="init">数据初始化</button>
 		<button @click="toDbqry">数据查看</button>
 		<button @click="toIndex">去结算</button>
-		<button @click="toPrinter">蓝牙与打印</button> 
+		<button @click="toPrinter">蓝牙与打印</button>
 		<button @click="toMainSale">进入销售界面</button>
 		<button @click="toLogin">登录</button>
 	</view>
@@ -169,17 +169,16 @@
 					url: "/pages/index/index"
 				});
 			},
-			toMainSale:function()
-			{
+			toMainSale: function() {
 				uni.navigateTo({
 					url: "/pages/mainSale/MainSale"
 				});
 			},
-			tologin:function() {
+			tologin: function() {
 				uni.navigateTo({
 					url: "/pages/Login/Login"
 				});
-				},
+			},
 			toPrinter: function() {
 				uni.navigateTo({
 					url: "pages/mainSale/MainSale"

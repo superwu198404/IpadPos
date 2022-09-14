@@ -1,6 +1,8 @@
 import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
+import _main from '@/api/business/main.js';
+
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -635,7 +637,7 @@ function GetSale(global, vue, target_name) {
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
 		"statement": false,
-		"sale":true
+		"sale": true
 	};
 	///销售界面可以进行操作功能 ，
 	this.allOperation = {
@@ -737,9 +739,8 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
-	this.setComponentsManage = function(e,pm_mtype) 
-	{
-		let mtype  = pm_mtype||e.currentTarget.dataset.mtype;
+	this.setComponentsManage = function(e, pm_mtype) {
+		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
 			that.SetManage(mtype);
@@ -825,7 +826,7 @@ function GetSale(global, vue, target_name) {
 			this.myAlert("请完成当前模式再进行切换！");
 			return;
 		}
-		
+
 		if (XsTypeObj[pm_type]) {
 			this.clickSaleType = XsTypeObj[pm_type];
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
@@ -1148,8 +1149,7 @@ function GetSale(global, vue, target_name) {
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
-		if (pm_qty <= 0) 
-		{
+		if (pm_qty <= 0) {
 			this.sale002.splice(pm_row, 1);
 		}
 		return true;
@@ -1196,7 +1196,7 @@ function GetSale(global, vue, target_name) {
 
 	//计算促销的折扣
 	this.discCompute = function() {
-
+		// this.sale002 = _main.MatchZKDatas(this.DKF.cval.DKFID, this.sale002);
 	}
 
 	//付款之前触发
@@ -1240,7 +1240,7 @@ function GetSale(global, vue, target_name) {
 
 	//
 	this.SetDefaultType = function(type = "sale") {
-		console.log("[SetDefaultType]设置默认类型:",type);
+		console.log("[SetDefaultType]设置默认类型:", type);
 		this.SetType(type);
 	}
 

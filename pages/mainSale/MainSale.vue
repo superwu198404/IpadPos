@@ -647,8 +647,9 @@
 		</view>
 
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
-		</SpecialDisc>
+		<!-- <SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID" :product="mainSale.sale002">
+		</SpecialDisc> -->
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKDatas"></SpecialDisc>
 	</view>
 </template>
 
@@ -801,13 +802,18 @@
 					name: 'ConfirmRJ'
 				})
 			},
-			GetTSZKData: function() { //展示特殊折扣
-				// that.showTSZK = true;
+			//展示特殊折扣
+			GetTSZKData: async function() {
+				//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
 				this.mainSale.ComponentsManage.Disc = true;
+				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
+				this.mainSale.Disc.val.ZKDatas = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
+				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKDatas);
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;
-				console.log("特殊折扣返回的商品数据：", data);
+				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				this.mainSale.Disc.val.ZKType = data;
 			},
 			exits: function(e) {
 				this.dropout = !this.dropout;

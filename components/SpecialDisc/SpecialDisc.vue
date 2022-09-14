@@ -23,8 +23,8 @@
 							</view>
 							<view class="discount">
 								<label
-									v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折，折扣额<text>￥{{item.ZKNET}};</text></span></label>
-
+									v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span></label>
+								<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 								<view>
 									<label>
 										<checkbox-group @change="ChooseLS">
@@ -32,7 +32,8 @@
 										</checkbox-group>
 									</label>
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-										<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折，折扣额<text>￥{{item.ZKNET}};</text></text>
+										<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
+										<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 									</label>
 								</view>
 							</view>
@@ -47,12 +48,14 @@
 							<view class="discount">
 								<view>
 									<label
-										v-for="(item,index) in DKFZKDatas">{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折，，折扣额<text>￥{{item.ZKNET}};</text></label>
+										v-for="(item,index) in DKFZKDatas">{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
+									<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 								</view>
 							</view>
 						</view>
 						<view class="confirm">
-							<button class="btn btn-qx" @click="CloseZK()">取 消</button><button class="btn" @click="ConfirmZK()">确 认</button>
+							<button class="btn btn-qx" @click="CloseZK()">取 消</button><button class="btn"
+								@click="ConfirmZK()">确 认</button>
 						</view>
 					</view>
 				</view>
@@ -77,6 +80,7 @@
 		props: {
 			dkhid: String,
 			product: Array,
+			zkdatas: Object
 		},
 		data() {
 			return {
@@ -89,42 +93,48 @@
 				curZK: {},
 				totalDisc: 0,
 				totalDiscDKF: 0,
-				Product: [],
-				Product1: [{
-					SPJGZ: "01",
-					NET: 2000,
-					SPID: "123456"
-				}, {
-					SPJGZ: "01",
-					NET: 1250,
-					SPID: "123457"
-				}, {
-					SPJGZ: "02",
-					NET: 5000,
-					SPID: "12345678"
-				}, {
-					SPJGZ: "03",
-					NET: 3000,
-					SPID: "123456789"
-				}],
+				Product1: [],
+				Product: [
+						{
+						SPJGZ: "01",
+						NET: 2000,
+						SPID: "123456"
+					},
+					{
+						SPJGZ: "01",
+						NET: 1250,
+						SPID: "123457"
+					},
+					{
+						SPJGZ: "02",
+						NET: 5000,
+						SPID: "12345678"
+					}, {
+						SPJGZ: "03",
+						NET: 3000,
+						SPID: "123456789"
+					}
+				],
 				ProductOld: [],
 				YN_LSZK: false,
 			};
 		},
 		created: function() {
 			that = this;
-			that.GetZKDatas();
-			// let store = util.getStorage("store");
-			if (that.dkhid && that.dkhid != '80000000') {
-				// that.dkhid = '0020004289';
-				if (that.dkhid) {
-					that.DKFID = that.dkhid;
-					that.GetZKDatas('TP');
-				}
-			}
+			console.log("传入的折扣数据：", that.zkdatas);
+			that.ZKDatas = that.zkdatas.ZKDatas;
+			that.DKFZKDatas = that.zkdatas.DKFZKDatas;
+			// that.GetZKDatas();
+			// if (that.dkhid && that.dkhid != '80000000') {
+			// 	// that.dkhid = '0020004289';
+			// 	if (that.dkhid) {
+			// 		that.DKFID = that.dkhid;
+			// 		that.GetZKDatas('TP');
+			// 	}
+			// }
 			console.log("传入的商品数据：", that.product);
-			that.Product = that.product;
-			that.ProductOld = that.product;
+			// that.Product = that.product;
+			that.ProductOld = that.Product;
 		},
 		methods: {
 			ChooseZK: function(e) {
@@ -167,18 +177,28 @@
 				}
 				that.Product.forEach(r => {
 					let discArr = [],
-						discObj = {};
+						discObj = {},
+						DiscNet = 0;
 					let arr = curData.filter(r1 => {
 						return r1.ZKSTR == r.SPJGZ
 					})
+					// arr.forEach(r2 => {
+					// discObj = {
+					// 	ZKTYPT: r2.ZKTYPE || "TP",
+					// 	ZKNET: (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+					// };
+					// discArr.push(discObj);
+					// })
+					// r.ZKDATA = discArr;
 					arr.forEach(r2 => {
-						discObj = {
-							ZKTYPT: r2.ZKTYPE || "TP",
-							ZKNET: (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
-						};
-						discArr.push(discObj);
+						if (r2.ZKTYPE == 'ZD02') { //标准折扣
+							r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+						} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
+							r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+						} else { //特批折扣
+							r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2)
+						}
 					})
-					r.ZKDATA = discArr;
 				});
 				console.log("最终的商品数据：", that.Product);
 			},
@@ -330,11 +350,12 @@
 </script>
 
 <style>
-.special .confirm .btn{
-	width:30%;
-	margin:0 2%;
-}
-.commods .uls .lis.curr{
-	background: #fff;
-}
+	.special .confirm .btn {
+		width: 30%;
+		margin: 0 2%;
+	}
+
+	.commods .uls .lis.curr {
+		background: #fff;
+	}
 </style>

@@ -149,7 +149,7 @@ var TransLiteData = function(e) {
 }
 
 //传输本地缓存的数据
-var TransLite = function(e) {
+var TransLite = function(e, func) {
 	let sql = "select * from POS_TXFILE where BDATE<=datetime('now','-5 minute')"; //五分钟前 
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
@@ -403,7 +403,7 @@ var Query = async function(sql) {
 		}, function(err) {
 			console.log("[Query]查询执行异常:", err);
 		});
-		await dbo.close();
+		// await dbo.close();
 		return data;
 	} catch (e) {
 		console.log("[Query-Error]执行异常:", e);
@@ -424,12 +424,12 @@ var Excute = async function(...sql) {
 		}, function(err) {
 			console.log("[Excute]修改执行异常:", err);
 		});
-		await dbo.close();
+		// await dbo.close();
 		return data;
 	} catch (e) {
 		console.log("[Excute-Error]执行异常:", e);
 	}
-	await dbo.close();
+	// await dbo.close();
 	return data;
 }
 
@@ -637,13 +637,13 @@ var DelSale = function(e) { //khid
 	let curDay = dateformat.getYMD(-day);
 	console.log("业务数据保留天数：", curDay);
 	let arr1 = [
-		"delete from sale001 where yn_sc='Y' and saledate<" + curDay,
-		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		curDay,
-		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		curDay,
-		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate<" +
-		curDay
+		"delete from sale001 where yn_sc='Y' and saledate < date('" + curDay + "')",
+		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
+		curDay + "')",
+		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
+		curDay + "')",
+		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
+		curDay + "')"
 	];
 	db.get().executeDml(arr1, "", res => {
 		console.log("本地销售单删除成功：" + day, res);
