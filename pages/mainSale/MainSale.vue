@@ -7,9 +7,7 @@
 
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<!-- <Page :current="mainSale.current_type" ref="menu"></Page> -->
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
@@ -339,7 +337,7 @@
 				<view class="member">
 					<label>
 						<image class="touxiang" src="../../images/touxiang.png"></image><button
-							class="btn">{{ mainSale.HY.val.hyId ? mainSale.HY.val.hyId : '会员登录'}}</button>
+							class="btn">会员登录</button>
 					</label>
 					<text @click="mainSale.resetSaleBill">清空</text>
 				</view>
@@ -388,7 +386,7 @@
 									<text>+</text>
 								</view>
 							</view>
-						</view> -->
+						</view>
 						<!-- <view class="baglist">
 							<view class="bag">
 								<text class="h8">小号手提袋</text>
@@ -646,15 +644,6 @@
 					</view>
 				</view>
 			</view>
-			<!-- 画布 -->
-			<view class="canvasdiv" :style="'visibility:hidden;'">
-				<canvas canvas-id="couponQrcode" class="canvas"
-					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-				<canvas canvas-id="canvasLogo" class="canvas"
-					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-				<canvas canvas-id="canvasXPEWM" class="canvas"
-					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-			</view>
 		</view>
 
 		<!-- 特殊折扣 -->
@@ -680,9 +669,6 @@
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
-	//打印相关
-	import PrinterPage from '@/pages/xprinter/receipt';
-
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -731,8 +717,7 @@
 			Message,
 			CreditSettlement,
 			Promotion,
-			MemberLogin,
-			PrinterPage
+			MemberLogin
 		},
 		computed: {
 			Price: function() {
@@ -774,7 +759,7 @@
 				return (mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
 			},
 			MemberCoupons: function() {
-				return this.mainSale.HY.val.coupons ?? [];
+				return mainSale.HY.val.coupons ?? [];
 			},
 			MenuName: function() {
 				return mainSale?.current_type?.clickType ?? ""
@@ -834,23 +819,6 @@
 			GetTSZKData: function() { //展示特殊折扣
 				// that.showTSZK = true;
 				this.mainSale.ComponentsManage.Disc = true;
-				[{
-					SPJGZ: "01",
-					NET: 2000,
-					SPID: "123456"
-				}, {
-					SPJGZ: "01",
-					NET: 1250,
-					SPID: "123457"
-				}, {
-					SPJGZ: "02",
-					NET: 5000,
-					SPID: "12345678"
-				}, {
-					SPJGZ: "03",
-					NET: 3000,
-					SPID: "123456789"
-				}]
 			},
 			CloseTSZK: function(data) {
 				this.mainSale.ComponentsManage.Disc = false;

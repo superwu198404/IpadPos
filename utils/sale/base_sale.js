@@ -747,8 +747,9 @@ function GetSale(global, vue, target_name) {
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
-	this.setComponentsManage = function(e) {
-		let mtype = e.currentTarget.dataset.mtype;
+	this.setComponentsManage = function(e,pm_mtype) 
+	{
+		let mtype  = pm_mtype||e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
 			that.SetManage(mtype);
@@ -1102,7 +1103,8 @@ function GetSale(global, vue, target_name) {
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
-		if (pm_qty <= 0) {
+		if (pm_qty <= 0) 
+		{
 			this.sale002.splice(pm_row, 1);
 		}
 		return true;

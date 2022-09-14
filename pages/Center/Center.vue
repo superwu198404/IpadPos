@@ -94,34 +94,66 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				util.simpleModal("提示", "是否验证日结后进入销售？", e => {
-					if (e) {
-						if (that.signOutDates.length > 0) { //有日结数据
-							that.SignOut(); //发起日结
-							return;
-						}
-						if (store.RYTYPE != "SYSTEM") {
-							uni.redirectTo({
-								url: "/pages/mainSale/MainSale"
-							});
-						} else {
-							uni.redirectTo({
-								url: "/pages/index/index"
-							});
-						}
+				uni.showModal({
+					title: "提示",
+					content: "是否要验证日结后进入销售？",
+					cancelText: "否",
+					confirmText: "是",
+					success: res => {
+						if (res.confirm) {
+							if (that.signOutDates.length > 0) { //有日结数据
+								that.SignOut(); //发起日结
+								return;
+							}
+							if (store.RYTYPE != "SYSTEM") {
+								uni.redirectTo({
+									url: "/pages/mainSale/MainSale"
+								});
+							} else {
+								uni.redirectTo({
+									url: "/pages/index/index"
+								});
+							}
 
-					} else {
-						if (store.RYTYPE != "SYSTEM") {
-							uni.redirectTo({
-								url: "/pages/mainSale/MainSale"
-							});
 						} else {
-							uni.redirectTo({
-								url: "/pages/index/index"
-							});
+							if (store.RYTYPE != "SYSTEM") {
+								uni.redirectTo({
+									url: "/pages/mainSale/MainSale"
+								});
+							} else {
+								uni.redirectTo({
+									url: "/pages/index/index"
+								});
+							}
 						}
 					}
 				})
+				// if (e) {
+				// 	if (that.signOutDates.length > 0) { //有日结数据
+				// 		that.SignOut(); //发起日结
+				// 		return;
+				// 	}
+				// 	if (store.RYTYPE != "SYSTEM") {
+				// 		uni.redirectTo({
+				// 			url: "/pages/mainSale/MainSale"
+				// 		});
+				// 	} else {
+				// 		uni.redirectTo({
+				// 			url: "/pages/index/index"
+				// 		});
+				// 	}
+
+				// } else {
+				// 	if (store.RYTYPE != "SYSTEM") {
+				// 		uni.redirectTo({
+				// 			url: "/pages/mainSale/MainSale"
+				// 		});
+				// 	} else {
+				// 		uni.redirectTo({
+				// 			url: "/pages/index/index"
+				// 		});
+				// 	}
+				// }
 			},
 			//手动直接发起签到
 			Sign: function() {
