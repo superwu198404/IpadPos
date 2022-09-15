@@ -332,7 +332,6 @@
 						</view>
 					</view>
 				</view>
-			</view>
 			<view class="pop-r pop-rs">
 				<view class="member">
 					<label>
@@ -418,7 +417,7 @@
 								</view>
 							</view>
 						</view> -->
-
+			
 					</view>
 				</view>
 				<view>
@@ -429,6 +428,9 @@
 					<label>»</label>
 				</view>
 			</view>
+					
+			</view>
+			
 		</view>
 
 		<!-- 会员登陆结算 废弃？ -->

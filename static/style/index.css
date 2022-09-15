@@ -85,7 +85,19 @@ page {
 	font-size: 28rpx;
 	padding: 2rpx;
 	border: 2rpx solid #006B44;
-}
+	animation: classy 0.5s ease;
+		-webkit-animation: classy 0.5s ease;
+	}
+	@keyframes classy { 
+			0%{
+				width:0
+	
+		        }
+		    100%{
+		        width:auto;
+			
+		        }
+	}
 
 .classifys text {
 	display: inline-block;
@@ -605,8 +617,17 @@ page {
 
 .boxs .memberes{
 	right:0;
-	transition: all 1s;
-}
+	animation: memb 0.5s ease;
+		-webkit-animation: memb 0.5s ease;
+	}
+	@keyframes memb {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+		0%{
+			width:0	
+	        }
+	    100%{
+	        width:100%
+	        }
+	}
 .meminfo {
 	width: 65%;
 	position: relative;
