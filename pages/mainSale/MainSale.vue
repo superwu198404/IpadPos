@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.clickSaleType.clickType"></Page>
+			<Page ref="menu" :current="mainSale.current.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -378,7 +378,7 @@
 				<view class="shoppbag" v-if="false">
 					<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 					<view class="hengs">
-						<view class="baglist curr" v-for="(item,index) in mainSale.FZCX.cval[0].Details">
+						<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
 							<view class="bag">
 								<text class="h8">{{item.SNAME}}</text>
 								<label><text>说明</text>{{item.DESCRIBE}}</label>
@@ -758,6 +758,26 @@
 				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
 					if (this.CXDatas[0].Details && Array.isArray(this.CXDatas[0].Details)) {
 						return this.CXDatas[0].Details;
+					} else {
+						return [];
+					}
+				} else
+					return [];
+			},
+			PromotionDetails: function() {
+				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
+					if (this.CXDatas[0].Details && Array.isArray(this.CXDatas[0].Details)) {
+						return this.CXDatas[0].Details;
+					} else {
+						return [];
+					}
+				} else
+					return [];
+			},
+			AuxiliaryPromotion: function() {
+				if (this.mainSale.FZCX.val && Array.isArray(this.mainSale.FZCX.val) && this.mainSale.FZCX.val.length > 0) {
+					if (this.mainSale.FZCX.val[0].Details && Array.isArray(this.mainSale.FZCX.val[0].Details)) {
+						return this.mainSale.FZCX.val[0].Details;
 					} else {
 						return [];
 					}

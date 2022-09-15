@@ -142,7 +142,6 @@ var XsTypeObj = {
 		$click() {
 			console.log("[sale_reserve]预定信息录入操作!");
 			this.SetManage("sale_reserve");
-			this.$initSale(this.clickSaleType);
 			return true;
 		},
 		$beforeFk: function() {
@@ -167,19 +166,19 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$click() {
-			this.SetManage('sale_reserve_extract');
-			return false;
-		},
 		$initSale: function(params) {
 			this.allOperation.actType = common.actTypeEnum.Payment;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
-			this.sale001 = params.sale1 ?? {};
-			this.InitSale001();
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			console.log("[sale_reserve_extract]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? [];
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? [];
+			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			console.log("[sale_reserve_extract]SALES:",{
+				sale1:this.sale001,
+				sale2:this.sale002,
+				sale3:this.sale003
+			});
 		},
 		$click() {
 			console.log("[sale_reserve_extract]切换预定提取界面!");
@@ -729,6 +728,7 @@ function GetSale(global, vue, target_name) {
 
 	var lastManage = null;
 	this.previous = null;
+	this.current = null;
 
 	///设置基础的权限
 	this.SetCurrentOperation = function(pm_OperEnum) {
@@ -758,6 +758,7 @@ function GetSale(global, vue, target_name) {
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
 		this.previous = this.current_type.clickType;
+		this.current = XsTypeObj[pm_mtype] ?? this.current;
 		console.log("[SetManage]LastManage:", lastManage);
 		console.log("[SetManage]CurrentManage:", pm_mtype);
 		//if (pm_mtype === lastManage) return;
@@ -976,26 +977,6 @@ function GetSale(global, vue, target_name) {
 
 	this.cxBillinit = function() {
 
-	}
-
-	this.InitSale001 = function() {
-		var is_new = Object.keys(this.sale001).length == 0;
-		var commonSaleParm = {
-			KHID: this.Storeid,
-			SALEDATE: this.SALEDATE,
-			POSID: this.POSID,
-			RYID: this.ryid,
-			KCDID: this.KCDID,
-			GCID: this.GCID,
-		};
-		if (is_new) {
-			commonSaleParm.BILL = this.getBill(); //创建新订单号
-			commonSaleParm.SALETIME = this.getTime(); //创建新的销售时间
-			this.sale001 = new sale.sale001(commonSaleParm)
-		} else {
-			Object.assign(this.sale001, new sale.sale001(commonSaleParm));
-		}
-		return commonSaleParm;
 	}
 
 	/**
@@ -1245,6 +1226,8 @@ function GetSale(global, vue, target_name) {
 		this.SetType(type);
 		console.log("[SetDefaultType]初始化销售单...");
 		this.$initSale(XsTypeObj[type]);
+		console.log("[SetDefaultType]设置默认展示组件...");
+		this.SetManage(type);
 	}
 
 	//计算积分
