@@ -65,19 +65,29 @@
     },
     "app-plus" : {
         "modules" : {
-            "SQLite" : {}
+            "SQLite" : {},
+            "Bluetooth" : {}
         },
         "distribute" : {
             "android" : {
                 "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
+            },
+            "sdkConfigs" : {
+                "ad" : {}
             }
         },
+        "orientation" : [
+            "portrait-primary",
+            "landscape-primary",
+            "portrait-secondary",
+            "landscape-secondary"
+        ],
         "splashscreen" : {
             "waiting" : true,
             "alwaysShowBeforeRender" : true
         }
     },
-    "appid" : "__UNI__A407FA0",
+    "appid" : "__UNI__A6034C6",
     "name" : "POS",
     "versionName" : "1.0.0.0"
 }
