@@ -272,9 +272,12 @@
 			</view>
 		</view>
 
-		<!-- 未登录结算单 -->
+		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
+			<!-- 辅助促销插件 -->
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val"></FZCX>
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput">
+			</ReserveDrawer>
 			<view class="memberes" v-if="mainSale.HY.val.hyId">
 				<view class="meminfo">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -373,7 +376,7 @@
 				<view class="h5">
 					<text>赠品</text><text @click="MoreFZCX()">查看全部 ></text>
 				</view>
-				<view class="shoppbag">
+				<view class="shoppbag" v-if="false">
 					<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 					<view class="hengs">
 						<view class="baglist curr" v-for="(item,index) in mainSale.FZCX.cval[0].Details">
@@ -656,8 +659,7 @@
 
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
-		<!-- 辅助促销插件 -->
-		<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val"></FZCX>
+
 	</view>
 </template>
 
@@ -889,24 +891,24 @@
 				this.Shoppingbags = true,
 					this.Memberinfo = false
 			},
-			//获取辅助促销
-			GetFZCX: function() {
-				_main.GetFZCX(this.KHID, res => {
-					console.log("辅助促销查询结果:", res);
-					if (res) {
-						this.CXDatas = res;
-					} else {
-						this.CXDatas = [];
-					}
-				})
-			},
 			MoreFZCX: function(e) {
 				this.mainSale.ComponentsManage.FZCX = true;
+
 			},
 			Calculate: function(item, type) {
 				item.BQTY = Number(item.BQTY) + type;
 				if (item.BQTY < 0) {
 					item.BQTY = 0;
+				}
+			},
+			//辅助促销回调
+			CloseFZCX: function(e) {
+				console.log("源辅助促销数据：", this.mainSale.FZCX.val);
+				this.mainSale.ComponentsManage.FZCX = false;
+				console.log("辅助促销回调结果：", e);
+				if (e.length) {
+					let TNET = this.sale001.TNET;//原应付金额
+
 				}
 			},
 			Moreand: function(e) {
@@ -920,6 +922,7 @@
 				uni.$off("close-big-customer");
 				uni.$off("open-big-customer");
 				uni.$off("close-tszk");
+				uni.$off("close-FZCX");
 				console.log("[Bind]BIND!");
 				uni.$on("change", this.Change);
 				uni.$on("redirect", this.Redirect);
@@ -927,6 +930,8 @@
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
 				uni.$on("close-tszk", this.CloseTSZK);
+				uni.$on("close-FZCX", this.CloseFZCX);
+
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
@@ -943,8 +948,6 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
-			//获取辅助促销
-			// this.GetFZCX();
 		}
 	}
 </script>

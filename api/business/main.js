@@ -373,6 +373,63 @@ var MatchZKDatas = function(ZKObj, products) {
 	}
 	return products;
 }
+var getPrice = async function(spid, dqid, khzid) {
+	let price = 0;
+	let sql = "SELECT PRICE / (CASE UQTY \
+	                   WHEN 0 THEN \
+	                    1 \
+	                   else \
+	                    UQTY \
+	                 end) price, \
+	                 PRICETYPE, \
+	                 khzid, \
+	                 dqid \
+	                 FROM PRICDA \
+	             WHERE DATE(SDATE) <= DATE('" + dateformat.getYMD() + "') \
+	             AND DATE(EDATE) >= DATE('" + dateformat.getYMD() + "') \
+	             and (dqid is null or dqid = '" + dqid + "') \
+	             and (khzid is null or khzid = '" + khzid + "') \
+	             and  QYSTAT  ='1' \
+	             AND (SPID = '" + spid + "' OR \
+	                  SPID IN (select TM.spid \
+	                             from sptmda tm \
+	                            where tm.yn_main = 'Y' \
+	                              and tm.BARCODE = '" + spid + "')) \
+	           ORDER BY PRICETYPE DESC";
+	await db.get().executeQry(sql, "", res => {
+		console.log("查出的商品价格：", res);
+		price = res.msg[0].price;
+	}, err => {})
+	return price;
+}
+
+var GetFZCXNew = function(arr, sale1, spPrice) {
+	// let spArr = "";
+	// if (arr.length > 0) {
+	// 	arr.forEach(r => {
+	// 		r.Details.forEach(async r1 => {
+	// 			spArr += "'" + r.CLASSID + "',";
+	// 		})
+	// 	})
+	// 	spArr = spArr.substr(0, spArr.length - 1);
+	// 	let priceArr = await getPrice(spArr, dqid, khzid);
+	// console.log("商品集合：", spArr);
+	// console.log("商品价格集合：", priceArr);
+	// return;
+	// console.log("新促销传入的数据：", arr);
+	// console.log("新促销传入的数据1：", sale1);
+	// console.log("新促销传入的数据2：", spPrice);
+	arr.forEach(r => {
+		r.Details.forEach(r1 => {
+			r1.CZQTY = Math.floor((sale1.TNET || 0) / r1.XX_NET1);
+			let price = spPrice[r1.CLASSID].PRICE;
+			r1.PRICE = price;
+			r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);
+		})
+	})
+	console.log("重组后的辅助促销商品：", arr);
+	return arr;
+}
 
 export default {
 	GetFZCX,
@@ -380,5 +437,6 @@ export default {
 	GetZKDatas,
 	GetRXSPDatas,
 	GetZKDatasAll,
-	MatchZKDatas
+	MatchZKDatas,
+	GetFZCXNew
 }
