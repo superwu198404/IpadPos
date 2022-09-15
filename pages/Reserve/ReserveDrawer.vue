@@ -6,12 +6,12 @@
 </style>
 
 <template>
-	<view class="meminfo" v-if="show" style="border: 1px solid red;">
+	<view class="meminfo" style="display: flex;flex-direction: column;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
 		</view>
-		<view class="middle">
+		<view class="middle" style="flex: 1 0px;">
 			<view class="restlist">
 				<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 						:disabled="!YN_YDTH" />
@@ -97,7 +97,7 @@
 				<div class="map"></div>
 			</view>
 		</view>
-		<view class="operat">
+		<view class="operat" style="display: flex;">
 			<button class="btn btn-qx" @click="Close()">取 消</button>
 			<button class="btn" @click="Confirm">确 定</button>
 		</view>
@@ -116,10 +116,6 @@
 	var that;
 	export default {
 		props: {
-			show: {
-				type: Boolean,
-				default: true
-			},
 			confirm: {
 				type: Function,
 				default:null

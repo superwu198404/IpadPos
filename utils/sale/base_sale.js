@@ -174,10 +174,10 @@ var XsTypeObj = {
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_reserve_extract]SALES:",{
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+			console.log("[sale_reserve_extract]SALES:", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
 		},
 		$click() {
@@ -757,6 +757,7 @@ function GetSale(global, vue, target_name) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
+		if (!pm_mtype) return;
 		this.previous = this.current_type.clickType;
 		this.current = XsTypeObj[pm_mtype] ?? this.current;
 		console.log("[SetManage]LastManage:", lastManage);
@@ -780,7 +781,7 @@ function GetSale(global, vue, target_name) {
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			console.log("[SetComponentsManage]设置弹窗类组件切换!");
+			console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
