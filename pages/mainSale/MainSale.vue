@@ -378,7 +378,7 @@
 				<view class="shoppbag" v-if="false">
 					<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 					<view class="hengs">
-						<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
+						<view class="baglist curr" v-for="(item,index) in []">
 							<view class="bag">
 								<text class="h8">{{item.SNAME}}</text>
 								<label><text>说明</text>{{item.DESCRIBE}}</label>
@@ -753,16 +753,6 @@
 						GiftAmt: 0
 					}
 				}
-			},
-			PromotionDetails: function() {
-				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
-					if (this.CXDatas[0].Details && Array.isArray(this.CXDatas[0].Details)) {
-						return this.CXDatas[0].Details;
-					} else {
-						return [];
-					}
-				} else
-					return [];
 			},
 			PromotionDetails: function() {
 				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
