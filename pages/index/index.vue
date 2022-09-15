@@ -906,7 +906,9 @@
 				console.log("after:", this.sale2_arr)
 			},
 			Test: function(e) {
-				let sql = "select * from BZDISC";
+				let sql = "select cx2.bill, cx2.classid, sp.sname, '' CZQTY, '' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE , '满'||cx2.XX_NET1||'可售'||cx2.MJ_DISC1||'%' describe \
+					       from cxformd002 cx2, spda sp, spkhda sk  where  cx2.bill='FZCX2209140004' and cx2.classid=sp.spid  and sp.spid=sk.spid  and  sp.PINYIN IS NOT NULL \
+						   AND  sk.YN_XS='Y' AND  sp.PRODUCT_TYPE IN ( 'Z001','Z004','Z005') AND  sp.PINYIN IS NOT NULL  AND  sk.KHID ='K200QTD005'";
 				db.get().executeQry(sql, "数据操作中", function(res2) {
 					console.log("成功:", res2);
 				}, function(err1) {

@@ -186,17 +186,24 @@ var XsTypeObj = {
 			this.SetManage("sale_reserve_extract");
 			return false;
 		},
-		$beforeFk(sales) {
+		$beforeFk() {
 			console.log("[SaleReserve]预定支付金额:", this.sale001.DNET);
-			util.hidePropety(this.sale001, "YD_STATUS", "THDATE", "THKHID",
-				"SJTHDATE", "SJTHGSID", "SJTHGCID", "SJTHDPID", "SJTHKCDID",
-				"SJTHKHID", "SJTHPOSID", "SJTHBILL", "ID_RY_TH", "NOTE1", "NOTE2",
-				"PLATTYPE", "YDSPTYPE");
-			console.log("[HidePropety]操作完毕!");
-			// this.sale001.DNET = 188; //测试
+			let keys = Object.keys(new sale.sale001());
+			let reserve_key = Object.keys(this.sale001);
+			let hide_key = [];
+			reserve_key.forEach(key => {
+				if(keys.indexOf(key) === -1)
+					hide_key.push(key);
+			})
+			console.log("[SaleReserve]隐藏属性列表:",hide_key);
+			console.log("[SaleReserve]隐藏前:",this.sale001);
+			util.hidePropety(this.sale001,...hide_key);
+			console.log("[SaleReserve]隐藏后:",this.sale001);
+			this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
+			console.log("[SaleReserve]定金:", this.sale001);
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
-				sales.PayList.push(Sale3ModelAdditional(Sale3Model({
+				this.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: 'ZG03',
 					type: 'YDJ',
 					bill: this.sale001.BILL,
@@ -205,7 +212,7 @@ var XsTypeObj = {
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false //定金显示为成功
 				}));
-				console.log("[SaleReserve]生成预定支付信息成功:", sales);
+				console.log("[SaleReserve]生成预定支付信息成功!");
 			}
 			return true;
 		},
@@ -591,6 +598,28 @@ function GetSale(global, vue, target_name) {
 		}
 	};
 	this.Disc.base = this;
+	//辅助促销
+	this.FZCX = {
+		base: {},
+		cval: [],
+		get val() {
+			return this.cval;
+		},
+		set val(newval) {
+			//赋值的时候进行计算
+			this.cval = newval;
+			if (this.cval.length >0) {
+			// 	this.base.allOperation["Disc"] = false;
+				this.base.allOperation["ynFzCx"] = true;
+			// 	this.base.allOperation["ynCx"] = true;
+			} else {
+			// 	this.base.allOperation["Disc"] = true;
+				this.base.allOperation["ynFzCx"] = false;
+			// 	this.base.allOperation["ynCx"] = false;
+			}
+		}
+	};
+	this.FZCX.base = this;
 	///所有商品的列表,具体参考 utils.sale.xs_sp_init.js
 	this.Allsplist = null;
 
@@ -838,7 +867,7 @@ function GetSale(global, vue, target_name) {
 
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
-			Object.assign(this.clickSaleType,XsTypeObj[pm_type])
+			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
@@ -894,7 +923,6 @@ function GetSale(global, vue, target_name) {
 			sale3_arr: that.sale003, //003 支付数据集合
 			PayList: that.payed,
 			sale8_arr: that.sale008, //008水吧商品
-			PayList: [],
 			actType: that.actType
 		}
 		that.Page.$store.commit('set-location', inputParm);
@@ -1151,7 +1179,11 @@ function GetSale(global, vue, target_name) {
 
 	//实际计算辅助促销需要在这个方法里进行
 	this.computeFzCx = function() {
-
+		// 先获取辅助促销数据
+		_main.GetFZCX(this.Storeid, res => {
+			this.FZCX.val = res;
+			console.log("获取辅助促销数据：", this.FZCX.val);
+		});
 	}
 
 	//使用特殊折扣进行计算
