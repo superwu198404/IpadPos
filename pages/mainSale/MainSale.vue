@@ -734,16 +734,6 @@
 				} else
 					return [];
 			},
-			PromotionDetails: function() {
-				if (this.CXDatas && Array.isArray(this.CXDatas) && this.CXDatas.length > 0) {
-					if (this.CXDatas[0].Details && Array.isArray(this.CXDatas[0].Details)) {
-						return this.CXDatas[0].Details;
-					} else {
-						return [];
-					}
-				} else
-					return [];
-			},
 			AuxiliaryPromotion: function() {
 				if (this.mainSale.FZCX.val && Array.isArray(this.mainSale.FZCX.val) && this.mainSale.FZCX.val.length >
 					0) {
