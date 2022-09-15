@@ -576,7 +576,7 @@ var GetPOSCS = async function(e, func) {
 					ORDER BY
 						P1.SZ`;
 		await db.get().executeQry(sql, "数据查询中", function(res) {
-			console.log("获取POS参数成功:", res);
+			// console.log("获取POS参数成功:", res);
 			util.setStorage("POSCS", res.msg);
 			if (func) func(res);
 		}, function(err) {

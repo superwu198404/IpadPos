@@ -22,7 +22,7 @@
 			</view>
 		</view>
 
-		<text>{{showmsg}}</text>>
+		<!-- <text>{{showmsg}}</text>>
 		<p>门店：<input placeholder="请输入门店的编码" v-model="khid" /></p>
 		<p>款台：<input placeholder="请输入款台号" v-model="posid" /></p>
 		<button @click="init">数据初始化</button>
@@ -30,7 +30,7 @@
 		<button @click="toIndex">去结算</button>
 		<button @click="toPrinter">蓝牙与打印</button>
 		<button @click="toMainSale">进入销售界面</button>
-		<button @click="toLogin">登录</button>
+		<button @click="toLogin">登录</button> -->
 	</view>
 </template>
 <style>
@@ -236,9 +236,9 @@
 						return Req.resObj(true, "正在初始化...", reqPosData, apistr);
 					},
 					(res) => {
-						debugger;
 						let sql = [];
-						console.log("004回调：", res);
+						// console.log("004回调：", res);
+						console.log("004回调成功");
 						let tx004 = Req.getResData(res);
 						//根据001循环创建表，并生成初始化语句
 						this.tx001.forEach(function(item) {
@@ -260,9 +260,9 @@
 						return Req.resObj(true, "正在开始重建数据库", sql);
 					},
 					async (res) => {
-							console.log("数据库重建结果：", res);
+							console.log("数据库重建结果：", res.code);
 							that.tx001 = null;
-							console.log("重建数据的sql:", res.data);
+							// console.log("重建数据的sql:", res.data);
 							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);

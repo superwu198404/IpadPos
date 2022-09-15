@@ -427,7 +427,6 @@ var GetFZCXNew = function(arr, sale1, spPrice) {
 			r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);
 		})
 	})
-	console.log("重组后的辅助促销商品：", arr);
 	return arr;
 }
 
