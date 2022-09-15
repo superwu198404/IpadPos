@@ -12,7 +12,7 @@
 			<view v-for="(item,index) in FZCXDatas">
 				<view class="member">
 					<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
-					<button @click="Close">×</button>
+					<!-- <button @click="Close">×</button> -->
 				</view>
 				<view class="shoppbag">
 					<view class="baglist curr" v-for="(item1,index1) in item.Details">
@@ -30,6 +30,10 @@
 						</view>
 					</view>
 				</view>
+			</view>
+			<view class="affirm">
+				<button class="btn btn-hk" @click="Close()">取消</button>
+				<button class="btn" @click="Confirm()">确定</button>
 			</view>
 		</view>
 	</view>
@@ -53,12 +57,14 @@
 		},
 		data() {
 			return {
-				FZCXDatas: []
+				FZCXDatas: [],
+				FZCXDatasOld: [],
 			}
 		},
 		created: function() {
 			that = this;
 			that.FZCXDatas = that._FZCXDatas;
+			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas));
 		},
 		methods: {
 			Calculate: function(item, type) {
@@ -68,9 +74,27 @@
 				}
 				console.log("数量给变化", item);
 			},
+			//关闭辅助促销
 			Close: function() {
-				//关闭
-				// that.FZCXDatas.map()
+				console.log("旧版本数据：", that.FZCXDatasOld);
+				that.FZCXDatas = that.FZCXDatasOld;
+				uni.$emit("close-FZCX", []);
+			},
+			//确认辅助促销
+			Confirm: function() {
+				let Arr = [];
+				that.FZCXDatas.forEach(r => {
+					let arr = r.Details.filter(r1 => {
+						return r1.BQTY > 0;
+					})
+					Arr = Arr.concat(arr);
+				})
+				let sortArr = Arr;
+				// .sort((a, b) => {
+				// 	return b. - a
+				// });
+				console.log("筛选后的促销商品：", sortArr);
+				uni.$emit("close-FZCX", sortArr);
 			}
 		}
 	}

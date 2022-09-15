@@ -99,33 +99,10 @@
 			msgInt: 0, //消息定时id
 		},
 		onLaunch: function() {
-			console.log('[APP-LAUNCH]APP启动!')
+			console.log('[APP-LAUNCH]APP启动!') 
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
-
 			// #ifdef APP-PLUS  
-			// util.removeStorage("Init_Data");
-			// let Init_Data = util.getStorage("Init_Data");
-			// if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
-			// 	uni.reLaunch({
-			// 		url: "/pages/Login/Login",
-			// 		success: () => {
-			// 			//跳转完页面后再关闭启动页
-			// 			plus.navigator.closeSplashscreen();
-			// 		}
-			// 	})
-			// } else {
-			// 	//存在则关闭启动页进入首页
-			// 	plus.navigator.closeSplashscreen();
-			// }
-			// if (uni.getStorageSync('store').KHID) { //没放下面是因为这没等待异步，导致注入晚了页面部分地方没内容就加载了
-			// 	//全局混入
-			// 	console.log("[APP-LAUNCH]全局混入客户端信息！");
-			// 	Vue.mixin(global);
-			// 	getApp().globalData.store = uni.getStorageSync('store');
-			// }
-			_init.YN_Init(util.callBind(this, function(res) {
-				// console.log("[APP-LAUNCH]APP:",uni.getStorageSync('store'));
-				// if (!uni.getStorageSync('store').KHID) {
+			_init.YN_Init(function(res) {
 				uni.reLaunch({
 					url: "/pages/Login/Login",
 					// url: "/pages/start/start",
@@ -134,9 +111,7 @@
 						plus.navigator.closeSplashscreen();
 					}
 				})
-				// }
-			}), err => {
-				console.log("[APP-LAUNCH]失败:", err);
+			}, err => {
 				//存在则关闭启动页进入首页
 				plus.navigator.closeSplashscreen();
 			})

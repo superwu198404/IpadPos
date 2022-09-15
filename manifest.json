@@ -74,6 +74,9 @@
             },
             "sdkConfigs" : {
                 "ad" : {}
+            },
+            "ios" : {
+                "dSYMs" : false
             }
         },
         "orientation" : [
@@ -85,7 +88,13 @@
         "splashscreen" : {
             "waiting" : true,
             "alwaysShowBeforeRender" : true
-        }
+        },
+        "screenOrientation" : [
+            "portrait-primary",
+            "landscape-primary",
+            "portrait-secondary",
+            "landscape-secondary"
+        ]
     },
     "appid" : "__UNI__A6034C6",
     "name" : "POS",
