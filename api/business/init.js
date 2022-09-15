@@ -6,8 +6,6 @@ import util from '../../utils/util';
 import dateformat from '@/utils/dateformat.js';
 import _sysParam from '@/utils/sysParm/sysParm.js';
 
-var app = getApp();
-
 //校验是否有初始化过
 var YN_Init = function(sucFunc, errFunc) {
 	let sql = "select count(1) count from SPKHDA"

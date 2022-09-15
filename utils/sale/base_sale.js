@@ -818,9 +818,9 @@ function GetSale(global, vue, target_name) {
 			// for (item in this.ComponentsManage) {
 			// 	that.ComponentsManage[item] = false;
 			// }
-			this.SetManage(this.clickSaleType.clickType);
-			this.update();
 		}
+		this.SetManage(this.clickSaleType.clickType);
+		this.update();
 		console.log("[SetCurrentOperation]权限设置完毕!");
 	}
 
@@ -849,6 +849,7 @@ function GetSale(global, vue, target_name) {
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
+			console.log("[SetComponentsManage]设置弹窗类组件切换!");
 			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
@@ -1026,7 +1027,7 @@ function GetSale(global, vue, target_name) {
 		this.xsType = this.current_type.xstype;
 		//设置权限生效
 		this.SetCurrentOperation(this.current_type.operation);
-		this.CurrentTypeCall("$initSale", pm_saleobj);
+		this.CurrentTypeCall("$initSale", pm_saleobj ?? {});
 		this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
 		console.log("[$initSale]销售初始化完毕!");
 	}
@@ -1198,7 +1199,8 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-		await that.SaleNetAndDisc();
+		// await that.SaleNetAndDisc();
+		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement")
 	}
 

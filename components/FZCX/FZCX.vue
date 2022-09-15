@@ -89,12 +89,13 @@
 					})
 					Arr = Arr.concat(arr);
 				})
-				let sortArr = Arr;
-				// .sort((a, b) => {
-				// 	return b. - a
-				// });
-				console.log("筛选后的促销商品：", sortArr);
-				uni.$emit("close-FZCX", sortArr);
+				if (Arr.length > 0) {
+					Arr = Arr.sort((a, b) => {
+						return b.PRICE - a.PRICE
+					});
+				}
+				console.log("售价排序后的促销商品：", Arr);
+				uni.$emit("close-FZCX", Arr);
 			}
 		}
 	}
