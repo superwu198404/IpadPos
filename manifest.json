@@ -79,10 +79,12 @@
                     "NSLocalNetworkUsageDescription" : "使用wifi链接后台接口",
                     "NSLocationAlwaysAndWhenInUseUsageDescription" : "对店铺的位置进行定位",
                     "NSCameraUsageDescription" : "识别二维码"
-                }
+                },
+                "dSYMs" : false
             },
             "sdkConfigs" : {
-                "geolocation" : {}
+                "geolocation" : {},
+                "ad" : {}
             }
         },
         "orientation" : [
@@ -95,12 +97,7 @@
             "waiting" : true,
             "alwaysShowBeforeRender" : true
         },
-        "screenOrientation" : [
-            "portrait-primary",
-            "landscape-primary",
-            "portrait-secondary",
-            "landscape-secondary"
-        ]
+        "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
     "appid" : "__UNI__DBF626B",
     "name" : "com.zczy.ipadpos",
