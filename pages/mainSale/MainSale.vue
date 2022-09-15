@@ -886,15 +886,16 @@
 				}
 			},
 			//辅助促销回调
-			CloseFZCX: function(e) {
+			CloseFZCX: function(fzcxArr) {
 				console.log("源辅助促销数据：", this.mainSale.FZCX.val);
 				this.mainSale.ComponentsManage.FZCX = false;
-				console.log("辅助促销回调结果：", e);
-				if (e.length) {
-					let TNET = this.sale001.TNET; //原应付金额
-
+				console.log("辅助促销回调结果：", fzcxArr);
+				if (fzcxArr.length) {
+					let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);
+					console.log("辅助促销计算结果:", res);
 				}
 			},
+
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
 			},

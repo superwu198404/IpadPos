@@ -174,10 +174,10 @@ var XsTypeObj = {
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_reserve_extract]SALES:",{
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+			console.log("[sale_reserve_extract]SALES:", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
 		},
 		$click() {
@@ -1130,7 +1130,7 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-		// await that.SaleNetAndDisc();
+		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement")
 	}

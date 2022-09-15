@@ -429,6 +429,107 @@ var GetFZCXNew = function(arr, sale1, spPrice) {
 	})
 	return arr;
 }
+//计算促销价格
+var CalFZCX = function(fzcxArr, sale1) {
+	let yjnet = 0,
+		tsnum = 0,
+		sparr = [],
+		syjsnet = sale1.TNET,
+		khid = sale1.KHID,
+		gsid = sale1.GSID;
+	///开始计算了
+	fzcxArr.forEach((r, i) => {
+		tsnum += Number(r.BQTY);
+		let Onexxnum = r.XX_NET1 || 0; //下限金额
+		let cxbill = r.BILL || ""; //单号
+		let price = r.PRICE || 0; //单价
+		let qty = r.BQTY || 0; //数量
+		let MJ_DISC1 = r.MJ_DISC1 || 0; //折扣率
+		let spid = r.CLASSID || ""; //商品ID
+		if (syjsnet >= Onexxnum) {
+			//进行折扣计算
+			if (syjsnet / Onexxnum >= qty) {
+				let cxprice = price * (MJ_DISC1 / 100);
+				let obj = {};
+				obj.cxbill = cxbill;
+				obj.spid = spid;
+				obj.qty = qty;
+				obj.price = price;
+				obj.cxprice = cxprice;
+				obj.zprice = cxprice * qty;
+				obj.i = i;
+				obj.storeid = khid;
+				obj.gsid = gsid;
+				sparr.push(addfzcxdtinfo(obj));
+				syjsnet = syjsnet - Onexxnum * qty;
+				yjnet += cxprice * qty;
+			} else {
+				let cxprice = price * (MJ_DISC1 / 100);
+				let cxnet = cxprice * Math.floor(syjsnet / Onexxnum);
+
+				//超出数量的价格计算
+				let synet = (qty - Math.floor(syjsnet / Onexxnum)) * price;
+				// addfzcxdtinfo(cxbill, spid, qty, price, cxprice, synet + cxnet, i);
+				let obj = {};
+				obj.cxbill = cxbill;
+				obj.spid = spid;
+				obj.qty = qty;
+				obj.price = price;
+				obj.cxprice = cxprice;
+				obj.zprice = synet + cxnet;
+				obj.i = i;
+				obj.storeid = khid;
+				obj.gsid = gsid;
+				sparr.push(addfzcxdtinfo(obj));
+				syjsnet = syjsnet - Math.floor(syjsnet / Onexxnum) * Onexxnum;
+				yjnet += synet + cxnet;
+			}
+		} else {
+			//进行单价计算
+			//jsnet
+			// addfzcxdtinfo(cxbill, spid, qty, price, price, price * qty, i);
+			let obj = {};
+			obj.cxbill = cxbill;
+			obj.spid = spid;
+			obj.qty = qty;
+			obj.price = price;
+			obj.cxprice = price;
+			obj.zprice = price + qty;
+			obj.i = i;
+			obj.storeid = khid;
+			obj.gsid = gsid;
+			sparr.push(addfzcxdtinfo(obj));
+			yjnet += price * qty;
+		}
+
+	})
+	// jsnet = yjnet;
+	let text = "已添加" + tsnum + "个特殊商品预计额外支付：" + yjnet + "元";
+	return {
+		msg: text,
+		data: sparr
+	}
+}
+//整理辅助促销商品
+var addfzcxdtinfo = function(cxobj) {
+	let obj = {};
+	obj.SALEDATE = "";
+	obj.KHID = cxobj.storeid;
+	obj.GSID = cxobj.gsid;
+	obj.CXBILL = cxobj.cxbill;
+	obj.CLASSID = cxobj.spid;
+	obj.XSBILL = "";
+	obj.SPID = cxobj.spid;
+	obj.XSQTY = cxobj.qty;
+	obj.OPRICE = cxobj.price;
+	obj.ONET = cxobj.price * cxobj.qty;
+	obj.CXPRICE = cxobj.MJ_DISC1;
+	obj.CXNET = cxobj.zprice;
+	obj.CXLV = "1";
+	obj.LCM = "";
+	obj.NO = cxobj.i;
+	return obj;
+}
 
 export default {
 	GetFZCX,
@@ -437,5 +538,6 @@ export default {
 	GetRXSPDatas,
 	GetZKDatasAll,
 	MatchZKDatas,
-	GetFZCXNew
+	GetFZCXNew,
+	CalFZCX
 }
