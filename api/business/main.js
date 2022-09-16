@@ -494,7 +494,7 @@ var CalFZCX = function(fzcxArr, sale1) {
 			obj.qty = qty;
 			obj.price = price;
 			obj.cxprice = price;
-			obj.zprice = price + qty;
+			obj.zprice = price * qty;
 			obj.i = i;
 			obj.storeid = khid;
 			obj.gsid = gsid;
@@ -507,6 +507,8 @@ var CalFZCX = function(fzcxArr, sale1) {
 	let text = "已添加" + tsnum + "个特殊商品预计额外支付：" + yjnet + "元";
 	return {
 		msg: text,
+		count: tsnum,
+		payAmount: yjnet,
 		data: sparr
 	}
 }
