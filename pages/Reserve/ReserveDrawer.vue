@@ -6,12 +6,12 @@
 </style>
 
 <template>
-	<view class="meminfo" v-if="show" style="border: 1px solid red;">
+	<view class="meminfo" style="display: inline-flex;flex-direction: column;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
 		</view>
-		<view class="middle">
+		<view class="middle" style="flex: 1 0px;">
 			<view class="restlist">
 				<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 						:disabled="!YN_YDTH" />
@@ -92,12 +92,11 @@
 				<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
 				</view>
 			</view>
-
 			<view class="atlas">
 				<div class="map"></div>
 			</view>
 		</view>
-		<view class="operat">
+		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
 			<button class="btn btn-qx" @click="Close()">取 消</button>
 			<button class="btn" @click="Confirm">确 定</button>
 		</view>
@@ -116,10 +115,6 @@
 	var that;
 	export default {
 		props: {
-			show: {
-				type: Boolean,
-				default: true
-			},
 			confirm: {
 				type: Function,
 				default:null
@@ -166,7 +161,8 @@
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "" //蛋糕类型
+					CARDID: "", //蛋糕类型
+					YD_STATUS:"1"
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -321,7 +317,7 @@
 			Close: function() {
 				that.statements = false;
 				that.yn_add = false;
-				this.$emit("Close");
+				uni.$emit("reserve-drawer-close");
 			},
 			//获取配送类型
 			getTHTYPE: async function() {

@@ -12,7 +12,6 @@ Object.defineProperty(Object.prototype, 'cover', {
 	value: function(target, orgin) {
 		if (target && orgin) {
 			let target_keys = Object.keys(target);
-			console.log("[Object-cover]Keys:", target_keys);
 			target_keys.forEach(key => {
 				if (orgin[key] !== undefined)
 					target[key] = orgin[key];

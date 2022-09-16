@@ -164,14 +164,48 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
-		$beforeFk: function() {
+		$beforeFk: function() { //支付打开预定信息录入
 			//品诺
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[sale_reserve-$BeforeFk]支付前调用!");
+			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
+			this.sale001 = new sale.sale001(); //生成sale001对象
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			console.log("[sale_reserve-$BeforeFk]预定信息生成:",{
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			});
 			return false;
 		},
+		//支付完成中
+		$saleFinishing: function(result) {//生成yd
+			this.ydsale001 = Object.cover(this.ydsale001,result.sale001);
+			this.ydsale002 = (result.sale002 ?? []).map(sale2 => {
+				let res = Object.cover(new sale.ydsale002(),sale2);
+				res.SCQTY = "";
+				return res;
+			});
+			this.ydsale003 = (result.sale003 ?? []).map(sale3 => {
+				let res = Object.cover(new sale.ydsale003(),sale3);
+				res.SPIDNR = "";
+				res.ZQTY = "";
+				res.XPSTR = "";
+				res.XPSCOM = "";
+				res.DQTY = "";
+				return res;
+			});
+		},
+		//支付完成以后
+		$saleFinied: function() {
+			//一些特殊的设置
+		}
 	},
 	sale_reserve_extract: {
 		xstype: "4",
@@ -341,7 +375,6 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$initSale: function(params) {
-
 			this.actType = common.actTypeEnum.Refund;
 			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
@@ -565,6 +598,10 @@ function GetSale(global, vue, target_name) {
 	this.sale001 = {}; //sale001 主单
 	this.sale002 = []; //sale002 子单1：记录商品信息
 	this.sale003 = []; //sale003 子单2：记录支付信息
+	//预定
+	this.ydsale001 = {}; //sale001 主单
+	this.ydsale002 = []; //sale002 子单1：记录商品信息
+	this.ydsale003 = []; //sale003 子单2：记录支付信息
 	this.payed = []; //已支付信息
 	this.sale008 = []; //sale008
 	//销售时间（默认当前）
@@ -826,6 +863,7 @@ function GetSale(global, vue, target_name) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
+		if (!pm_mtype) return;
 		this.previous = this.current_type.clickType;
 		this.current = XsTypeObj[pm_mtype] ?? this.current;
 		console.log("[SetManage]LastManage:", lastManage);
@@ -849,7 +887,7 @@ function GetSale(global, vue, target_name) {
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		that.log("mtype=" + mtype + "#" + JSON.stringify(that.currentOperation))
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			console.log("[SetComponentsManage]设置弹窗类组件切换!");
+			console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式下进行此操作")
@@ -962,6 +1000,7 @@ function GetSale(global, vue, target_name) {
 	 * @param {*} e 
 	 */
 	this.PayedResult = async function(result) {
+		this.$saleFinishing(result.data);
 		console.log("[PayedResult]支付结果:", result);
 		let sale1 = result.data.sale1_obj,
 			sale2 = result.data.sale2_arr,
@@ -1266,12 +1305,18 @@ function GetSale(global, vue, target_name) {
 		return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 	}
 
-	//付款之后触发
+	//付款之后生成订单前触发
+	this.$saleFinishing = function(sales) {
+		console.log("[$SaleFinishing]支付完毕后触发:", sales);
+		this.CurrentTypeCall("$saleFinishing", sales);
+	}
+	
+	//付款之后生成订单后触发
 	this.$saleFinied = function(sales) {
 		console.log("[$SaleFinied]支付完毕后触发:", sales);
 		this.CurrentTypeCall("$saleFinied", sales);
 	}
-
+	
 	//重置销售单据
 	this.resetSaleBill = function() {
 		this.HY.cval = null;
