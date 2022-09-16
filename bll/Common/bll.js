@@ -125,7 +125,7 @@ export const Accept = async function(params_obj = accept_def_params) {
 	let params = Object.assign(accept_def_params, params_obj);
 	if (params.xs_type == 1) { //提取操作 => 支付
 		console.log("[Accept]结算确认!开始结算...", params)
-		return await Payment(params.bill_type,params.products, params.payments);
+		return await Payment(params.bill_type, params.products, params.payments);
 	} else { //取消操作 => 退款
 		console.log("[Accept]退单确认!开始退款...");
 		return await Refund(params.sales, params.xs_type);
@@ -147,7 +147,7 @@ const sale_order_generation_def_params = {
 }
 
 //统一生成销售单数据
-export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, sale8_arr, func) {
+export const _CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, sale8_arr, func) {
 	//执行结果
 	let result = {
 		code: false,
@@ -196,6 +196,57 @@ export const CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, s
 	return result;
 }
 
+//统一生成销售单数据
+export const CreateSaleOrder = async function(dataObj, func) {
+	//执行结果
+	let result = {
+		code: false,
+		data: null
+	};
+	try {
+		let saledate = dateformat.getYMD();
+		let saletime = dateformat.getYMDS();
+
+		let OracleSql = "",
+			SqliteSql = ""
+		for (let key in dataObj) {
+			let sqlObj = common.CreateSQL(dataObj[key], key);
+			OracleSql += sqlObj.oracleSql;
+			SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
+		}
+		console.log("循环生成OracleSql：", OracleSql);
+		console.log("循环生成SqliteSql：", SqliteSql)
+	
+		let tx_obj = {
+			TX_SQL: OracleSql,
+			STOREID: sqlObj["SALE001"].KHID,
+			POSID: sqlObj["SALE001"].POSID,
+			TAB_NAME: 'XS',
+			STR1: sqlObj["SALE001"].BILL,
+			BDATE: saletime, //增加时分秒的操作
+			YW_NAME: "销售单据",
+			CONNSTR: 'CONNSTRING'
+		};
+		let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
+		let exeSql = SqliteSql.concat(sql4.sqlliteArr);
+		await db.get().executeDml(exeSql, "订单创建中", res => {
+			if (func) func(res);
+			result.code = true;
+			result.data = res;
+			console.log("销售单创建成功!", res);
+		}, err => {
+			if (func) func(err);
+			result.code = false;
+			result.data = err;
+			console.log("销售单创建失败!", err);
+		});
+	} catch (e) {
+		//TODO handle the exception
+		result.code = false;
+		result.data = e;
+	}
+	return result;
+}
 export const SaleRefundOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
 	let result = {
 		code: false,
