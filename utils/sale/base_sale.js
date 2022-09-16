@@ -106,6 +106,16 @@ var XsTypeObj = {
 			console.log("[sale_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
 		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "退款小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 		$click() {
 			this.SetManage('sale_return_good');
 			return false;
@@ -144,6 +154,16 @@ var XsTypeObj = {
 			this.SetManage("sale_reserve");
 			return true;
 		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "预定小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 		$beforeFk: function() {
 			//品诺
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
@@ -180,6 +200,16 @@ var XsTypeObj = {
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "提取小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 		$click() {
 			console.log("[sale_reserve_extract]切换预定提取界面!");
@@ -262,7 +292,16 @@ var XsTypeObj = {
 			this.SetManage("sale_reserve_cancel");
 			return false;
 		},
-
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "预定小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 	},
 	//线上订单+线上提取
 	sale_online_order: {
@@ -279,6 +318,16 @@ var XsTypeObj = {
 		$click() {
 			this.SetManage("sale_online_order");
 			return false;
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "线上小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 	},
 	sale_online_order_extract: {
@@ -301,6 +350,16 @@ var XsTypeObj = {
 			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? [];
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "提取小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 		$click() {
 			this.SetManage("sale_online_order_extract");
@@ -349,6 +408,16 @@ var XsTypeObj = {
 		$click() {
 			this.SetManage("sale_takeaway_reserve");
 			return false;
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "外卖小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 	},
 	//消息
@@ -1131,7 +1200,7 @@ function GetSale(global, vue, target_name) {
 	 */
 	this.ShowStatement = async function(e) {
 		console.log("[ShowStatement]商品信息:", that.sale002);
-		// await that.SaleNetAndDisc();
+		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement")
 	}
