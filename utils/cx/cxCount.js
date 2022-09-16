@@ -2,7 +2,6 @@ import util from '@/utils/util.js';
 import getCxSql_db from '@/utils/cx/getCxSql.js'
 import cx_util from '@/utils/cx/cx_common.js';
 
-var app = getApp();
 //为选择提供依据
 let cxSelectTip = [];
 //保存促销阵列的dt
@@ -54,11 +53,11 @@ let fsdcx = new Array();
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
 	console.log("有进入初始化方法Cxdict")
-	let storeDqid = app.globalData.store.DQID;
+	let storeDqid = getApp().globalData.store.DQID;
 	let dateTime = cx_util.getTime(0);
-	let storeid = app.globalData.store.KHID;
-	let gsid = app.globalData.store.GSID;
-	
+	let storeid = getApp().globalData.store.KHID;
+	let gsid = getApp().globalData.store.GSID;
+
 	//初始化，全局变量先清除
 	cxSelectTip = [];
 	cxbilldts = [];
@@ -68,14 +67,14 @@ const Cxdict = async () => {
 	dscxclass = [];
 	dscxsp = [];
 	dszqda = [];
-	
+
 	//获取主单的Sql
 	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-	console.log("dscxm集合：", dscxm);
+	//console.log("dscxm集合：", dscxm);
 
 	//促销规则Sql
 	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-	console.log("dscxclass集合：", dscxclass);
+	//console.log("dscxclass集合：", dscxclass);
 
 	//促销内容对应的产品Sql
 	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
@@ -84,7 +83,7 @@ const Cxdict = async () => {
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
 	//console.log("dszqda集合：", dszqda);
-	
+
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -235,7 +234,7 @@ const Cxdict = async () => {
 					try {
 						sub1.minMaxQty = cx_util.nnvl(cxclass[j]["MJ_NET1"], 0);
 						sub1.minDisc = cx_util.nnvl(cxclass[j]["MJ_NET2"], 0) / 100;
-					} catch(e) {
+					} catch (e) {
 
 					}
 				}
@@ -263,7 +262,7 @@ const Cxdict = async () => {
 			}
 		} catch (e) {
 			//异常提示信息
-			console.log("Cxdict 创建促销数据发生错误",e);
+			console.log("Cxdict 创建促销数据发生错误", e);
 		}
 
 	}
@@ -271,12 +270,12 @@ const Cxdict = async () => {
 
 //计算促销的方法
 const Createcx = async (sale02_arr) => {
-	console.log("Createcx计算促销传入的商品sale02_arr",sale02_arr)
+	console.log("Createcx计算促销传入的商品sale02_arr", sale02_arr)
 	//计算时无生效的促销，再次请求初始化一次
-	if(cxdict == null || cxdict.size <= 0){
+	if (cxdict == null || cxdict.size <= 0) {
 		await Cxdict();
 	}
-	
+
 	let spid = "";
 	let dateTime_now = cx_util.getTime(3);
 	if (sale02_arr.length <= 0) {
@@ -299,8 +298,8 @@ const Createcx = async (sale02_arr) => {
 
 	for (let i = 0; i < cxbilldts.length; i++) {
 		//获取每个商品中的值
-		let cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0)*100))/100;
-		let spnet =Math.round((parseFloat(sale02_arr[i].OPRICE) * parseFloat(sale02_arr[i].QTY))*100)/100;
+		let cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0) * 100)) / 100;
+		let spnet = Math.round((parseFloat(sale02_arr[i].OPRICE) * parseFloat(sale02_arr[i].QTY)) * 100) / 100;
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
 		if (cxdiscvalue >= 0) {
@@ -327,9 +326,10 @@ const Createcx = async (sale02_arr) => {
 		let ProSalePrice = parseFloat(cx_util.nnvl(sale02_arr[i].NET, 0));
 		//单个商品折扣后的单价
 		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].PRICE, 0));
-		
-		sale02_arr[i].NET = parseFloat(ProPrice * ProNum - cxdiscvalue);
-		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum)*100)/100;
+
+		sale02_arr[i].NET = Math.round((ProPrice * ProNum - cxdiscvalue) * 100) / 100;
+		sale02_arr[i].QTY = ProNum;
+		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum) * 100) / 100;
 		sale02_arr[i].SPJF = jfnum;
 		sale02_arr[i].CXZT = cxztStr;
 		sale02_arr[i].CXBILL = cxbillStr;
@@ -342,7 +342,7 @@ const Createcx = async (sale02_arr) => {
 		}
 		let cxfs = cxfsdt;
 	}
-	console.log("sale02_arr new",sale02_arr);
+	console.log("sale02_arr new", sale02_arr);
 	return sale02_arr.sort((p1, p2) => {
 		return p1.NO - p2.NO; //升序
 	});
@@ -442,7 +442,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			//console.log("cxbilldDataKeys cxbill", cxbill)
 			let cxbill_val = cxbilldData[cxbill];
 			//console.log("cxbilldData[cxbill]", cxbill_val)
-			if(cxbill_val == null || cxbill_val ==""){
+			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
 			if (!ynjsCx(cxbill)) {
@@ -466,10 +466,10 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 				continue;
 			}
 			//校验通过满足条件的促销单，去计算促销
-			cxClasCompute(spid, bill, saledate,cxbill, retclssid, sysl);
+			cxClasCompute(spid, bill, saledate, cxbill, retclssid, sysl);
 		}
 	}
-	console.log("SaleCxCreate cxbilldts new",cxbilldts);
+	console.log("SaleCxCreate cxbilldts new", cxbilldts);
 	return cxbilldts;
 }
 
@@ -606,7 +606,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 const testallcx = function(bill, pmList) {
 	let Lcm = 0;
 	//console.log("testallcx cx", cxdict.get(bill));
-	let cx = cxdict.get(bill); 
+	let cx = cxdict.get(bill);
 	let currentlv = 0;
 
 	if (cx.YN_JSLB) {
@@ -665,7 +665,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
-			let subzqty = getSubidZqty(pmList, cx,sysl);
+			let subzqty = getSubidZqty(pmList, cx, sysl);
 			for (let lv = currentlv; lv >= 0; lv--) {
 				Lcm = getLcm(subzqty, cx, lv);
 				if (Lcm > 0) {
@@ -720,7 +720,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				cxbilldts[i][fscs] = fsqty;
 			}
 			let fsnet = new Map();
-			fsnet.set(subx.subno,Fsnet);
+			fsnet.set(subx.subno, Fsnet);
 			SubjustJslbCx(spid, bill, saledate, pmList, cx, fsnet, currentlv);
 			break;
 		}
@@ -734,14 +734,14 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
 		let currentlv = 0;
-		if (Object.keys(cx.SubList).length != 1) { 
+		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
 		let subx = cx.SubList[pmList[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
-			let subzqty = getSubidZqty(pmList, cx,sysl);
+			let subzqty = getSubidZqty(pmList, cx, sysl);
 			for (let lv = currentlv; lv >= 0; lv--) {
 				Lcm = getLcm(subzqty, cx, lv);
 				if (Lcm > 0) {
@@ -784,7 +784,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				// 		ynzs = false;
 				// 	}
 				// }
-				
+
 				let ynzs = false; //测试使用，正式注释，使用上面注释的代码
 
 				if (subx.ZkTj == "Qty") {
@@ -815,7 +815,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			}
 
 			let fsnet = new Map();
-			fsnet.get(subx.subno,Fsnet);
+			fsnet.get(subx.subno, Fsnet);
 
 			if (Tjqty == 0) {
 				SubCxQty(spid, bill, saledate, pmList, cx, fsnet, currentlv, Lcm);
@@ -864,7 +864,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		let Lcm = 1;
 		///保存本次运算的数量或者金额条件
 		let hashqty = new Map();
-		let subzqty = getSubidZqty(pmList, cx,sysl);
+		let subzqty = getSubidZqty(pmList, cx, sysl);
 		Lcm = getLcm(subzqty, cx, 0);
 		//console.log("FreeZhCx Lcm",Lcm)
 		if (Lcm == 0) {
@@ -896,8 +896,8 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 					Tjqty = hashqty.get(subid);
 				} else {
 					Tjqty = subx.QtyCondition[0] * Lcm;
-					hashqty.set(subid,Tjqty);
-					Fsnet.set(subid,0);
+					hashqty.set(subid, Tjqty);
+					Fsnet.set(subid, 0);
 				}
 			} else {
 				Spprice = oldprice;
@@ -905,8 +905,8 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 					Tjqty = hashqty.get(subid);
 				} else {
 					Tjqty = subx.NetCondition[0] * Lcm;
-					hashqty.set(subid,Tjqty);
-					Fsnet.set(subid,0);
+					hashqty.set(subid, Tjqty);
+					Fsnet.set(subid, 0);
 				}
 			}
 			if (Tjqty == 0) {
@@ -924,7 +924,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			// 		ynzs = false;
 			// 	}
 			// }
-			let ynzs = false;//测试使用，正式使用，上面注释代码
+			let ynzs = false; //测试使用，正式使用，上面注释代码
 			if (cx.OneSp) {
 				fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
 				if (fsqty < 0) {
@@ -944,8 +944,8 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			if (Tjqty <= 0) {
 				Tjqty = 0;
 			}
-			hashqty.set(subid,Tjqty);
-			Fsnet.set(subid,Fsnet.get(subid) + fsqty * oldprice);
+			hashqty.set(subid, Tjqty);
+			Fsnet.set(subid, Fsnet.get(subid) + fsqty * oldprice);
 			cxbilldts[i][fscs] = fsqty;
 		}
 		//console.log("FreeZhCx cxbilldts 111",cxbilldts)
@@ -1013,14 +1013,14 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 	/*
 	 * 第一循环取出有多少个类别和 免单数量
 	 */
-	for (let i = 0; i < pm_list.Length; i++) {
+	for (let i = 0; i < pm_list.length; i++) {
 		if (pm_list[i] == null) {
 			continue;
 		}
 		let subid = pm_list[i];
 		let cxsub = cx.SubList[subid];
 		let Mdqty = cxsub.discnet[level] * lcm;
-		let fsqty = cx_util.nnvl(cxbilldts[i]["FSCS"], 0);
+		let fsqty = cx_util.nnvl(cxbilldts[i][fscs], 0);
 		cxbilldts[i][fscs] = 0;
 		if (!MinFreeClassQty.has(subid)) {
 			MinFreeClassQty.set(subid, Mdqty);
@@ -1039,7 +1039,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 		while (Clqty > 0) {
 			let minrow = -1;
 			let minprice = Number.MAX_SAFE_INTEGER;
-			for (let xx = 0; xx < pm_list.Length; xx++) {
+			for (let xx = 0; xx < pm_list.length; xx++) {
 				if (pm_list[xx] == null) {
 					continue;
 				}
@@ -1049,7 +1049,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 				if (Rowlist.hasOwnProperty(xx)) {
 					continue;
 				}
-				let price = cx_util.nnvl(cxbilldts[xx]["OPRICE"], 0);
+				let price = cx_util.nnvl(cxbilldts[xx][oprice], 0);
 				if (price < minprice) {
 					minprice = price;
 					minrow = xx;
@@ -1058,7 +1058,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 			if (minrow < 0) {
 				break;
 			} else {
-				let fsqty = cx_util.nnvl(cxbilldts[minrow]["SYSL"], 0);
+				let fsqty = cx_util.nnvl(cxbilldts[minrow][sysl], 0);
 				if (fsqty <= 0) {
 					continue;
 				}
@@ -1074,7 +1074,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 			}
 		}
 		for (let [skey, svalue] of aRow) {
-			cxbilldts[skey]["FSCS"] = svalue;
+			cxbilldts[skey][fscs] = svalue;
 			Row.set(skey, svalue);
 			Zfsqty.set(key, Zfsqty.get(key) - svalue);
 		}
@@ -1091,14 +1091,14 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 			if (pm_list[xx] != key) {
 				continue;
 			}
-			let syqty = cx_util.nnvl(cxbilldts[xx]["SYSL"], 0);
-			let fsqty = cx_util.nnvl(cxbilldts[xx]["FSCS"], 0);
+			let syqty = cx_util.nnvl(cxbilldts[xx][sysl], 0);
+			let fsqty = cx_util.nnvl(cxbilldts[xx][fscs], 0);
 			let kyqty = syqty - fsqty;
 			if (kyqty < Zfsqty.get(key)) {
 				Zfsqty.set(key, Zfsqty.get(key) - kyqty);
-				cxbilldts[xx]["FSCS"] = fsqty + kyqty;
+				cxbilldts[xx][fscs] = fsqty + kyqty;
 			} else {
-				cxbilldts[xx]["FSCS"] = fsqty + Zfsqty.get(key);
+				cxbilldts[xx][fscs] = fsqty + Zfsqty.get(key);
 				Zfsqty.set(key, 0);
 			}
 		}
@@ -1140,7 +1140,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round(((
+						(1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
 				case "Subnet":
@@ -1217,11 +1218,10 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					if (MinRow == null) {
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
-					if (MinRow.hasOwnProperty(i)) {
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow[
-							i] * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+					if (MinRow.has(i)) {
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i)* Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
-							newprice = (fsqty * price - MinRow[i] * Math.round((price * (1 - cxsub.minDisc)) *
+							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) *
 									100) / 100) /
 								fsqty;
 						} else {
@@ -1263,7 +1263,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					}
 				}
 				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm);
-			} catch(e) {
+			} catch (e) {
 
 			}
 
@@ -1284,13 +1284,20 @@ const setHyjfUpleve = function(num) {
 	}
 	let tj = 0;
 	if (null == jfinfo) {
-		let hyjfnum = cx_util.TryParse(hymen.BALANCE);//当前积分
+		let hyjfnum = cx_util.TryParse(hymen.BALANCE); //当前积分
 		if (hyjfnum <= 0) {
 			return;
 		}
 		///积分加价购
 		//jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
-		jfinfo = {"jfnum":0, "dhnet":0, "hyid": hymen.PARTNER, "fznet": tj,"hyojf": hyjfnum, "upleve": 0};
+		jfinfo = {
+			"jfnum": 0,
+			"dhnet": 0,
+			"hyid": hymen.PARTNER,
+			"fznet": tj,
+			"hyojf": hyjfnum,
+			"upleve": 0
+		};
 	}
 	///第一次赋值
 	if (jfinfo.upleve == 0) {
@@ -1382,7 +1389,7 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill)) {
 		///当这个促销单存在积分系数的时候，将单号的索引记录下来
 		if (jfxs > 0) {
-			jfinfo.xsIndex.push(jfinfo.hdbill.Length);
+			jfinfo.xsIndex.push(jfinfo.hdbill.length);
 		}
 		///累计单号
 		jfinfo.hdbill.push(cx.CxBill);
@@ -1494,10 +1501,10 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	let i = row;
 	let dr = {};
 	dr["SALEDATE"] = saledate;
-	dr["KHID"] = app.globalData.store.KHID;
-	dr["GSID"] = app.globalData.store.GSID;
+	dr["KHID"] = getApp().globalData.store.KHID;
+	dr["GSID"] = getApp().globalData.store.GSID;
 	dr["CXBILL"] = cx.CxBill;
-	dr["CLASSID"] = subid.substring(cx.CxBill.Length);
+	dr["CLASSID"] = subid.substring(cx.CxBill.length);
 	dr["XSBILL"] = bill;
 	dr["SPID"] = spid;
 	dr["XSQTY"] = fsqty;
@@ -1519,7 +1526,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		if (subid == null) {
 			continue;
 		}
-		let oldprcle = cx_util.nnvl(cxbilldts[i]["OPRICE"], 0);
+		let oldprcle = cx_util.nnvl(cxbilldts[i][oprice], 0);
 		let syqty = cx_util.nnvl(cxbilldts[i][sltype], 0);
 		let syqty_buff = syqty;
 		//console.log("oldprcle\syqty",oldprcle+"|"+cxbilldts[i][sltype])
@@ -1554,6 +1561,6 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 
 export default {
 	Cxdict, //从数据库中取出所有的促销信息，初始化
-	CreateArr, 
+	CreateArr,
 	Createcx //计算促销的方法
 }

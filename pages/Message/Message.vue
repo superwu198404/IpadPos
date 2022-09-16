@@ -51,6 +51,7 @@
 									<view class="genres">
 										<!-- <text>管理部（10）</text>
 										<text>运营部（15）</text> -->
+										
 										<text v-for="(item) in Dep_Arr"
 											@click="SearchMsg({name:item.name})">{{item.name}}({{item.count}})</text>
 									</view>
@@ -75,6 +76,7 @@
 									</view>
 								</view>
 							</view>
+							<NoData v-else></NoData>
 						</view>
 					</view>
 				</view>
@@ -238,7 +240,7 @@
 			ReadMsg: function(e) {
 				let obj = {
 					type: "SYSTEM",
-					bill:e.newVal.BILL,
+					bill: e.newVal.BILL,
 					Details: [{
 						key: e.key
 					}]
