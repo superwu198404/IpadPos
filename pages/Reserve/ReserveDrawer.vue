@@ -161,7 +161,8 @@
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "" //蛋糕类型
+					CARDID: "", //蛋糕类型
+					YD_STATUS:"1"
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,

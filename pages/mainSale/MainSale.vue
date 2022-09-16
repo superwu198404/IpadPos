@@ -382,7 +382,7 @@
 					<view class="shoppbag" v-if="false">
 						<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 						<view class="hengs">
-							<view class="baglist curr" v-for="(item,index) in []">
+							<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
 								<view class="bag">
 									<text class="h8">{{item.SNAME}}</text>
 									<label><text>说明</text>{{item.DESCRIBE}}</label>
@@ -830,7 +830,8 @@
 			},
 			ReserveInfoInput: function(sale1) {
 				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...");
-				this.mainSale.sale001 = sale1;
+				Object.cover(this.mainSale.sale001,sale1);//用于 sale001
+				Object.cover(this.mainSale.ydsale001,sale1);//用于 ydsale001
 				this.mainSale.PayParamAssemble();
 			},
 			ReserveInfoEdit: function() {
