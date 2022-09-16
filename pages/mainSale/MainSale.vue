@@ -133,8 +133,7 @@
 		</view>
 
 		<!-- 会员登录 -->
-		<MemberLogin v-if="mainSale.ComponentsManage.HY"
-			style="position: absolute;top: 0px;width: 100%;height: 100%;z-index: 100;"></MemberLogin>
+		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
 
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
@@ -273,11 +272,15 @@
 			</view>
 		</view>
 
+		<!-- 预定信息录入 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
+		</view>
+		
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<!-- 辅助促销插件 -->
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val"></FZCX>
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -631,7 +634,6 @@
 
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
-
 	</view>
 </template>
 
@@ -800,6 +802,12 @@
 				this.mainSale.DKF.val = data;
 				uni.$emit('select-credit', data);
 			},
+			CloseReserveDrawer:function(){
+				console.log("[CloseReserveDrawer]预定录入关闭...");
+				this.mainSale.ComponentsManage.openydCustmInput = false;
+				console.log("[CloseReserveDrawer]结算单打开...");
+				this.mainSale.ComponentsManage.statement = true;
+			},
 			SignIn: function() {
 				console.log("[SignIn]签到!");
 				uni.$emit('head-action', {
@@ -821,6 +829,7 @@
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			ReserveInfoInput: function(sale1) {
+				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...");
 				this.mainSale.sale001 = sale1;
 				this.mainSale.PayParamAssemble();
 			},
@@ -904,6 +913,7 @@
 				uni.$off("member-close");
 				uni.$off("close-big-customer");
 				uni.$off("open-big-customer");
+				uni.$off("reserve-drawer-close");
 				uni.$off("close-tszk");
 				uni.$off("close-FZCX");
 				console.log("[Bind]BIND!");
@@ -912,9 +922,9 @@
 				uni.$on("member-close", this.CloseMember);
 				uni.$on("close-big-customer", this.CloseBigCustomer);
 				uni.$on("open-big-customer", this.OpenBigCustomer);
+				uni.$on("reserve-drawer-close", this.CloseReserveDrawer);
 				uni.$on("close-tszk", this.CloseTSZK);
 				uni.$on("close-FZCX", this.CloseFZCX);
-
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
@@ -967,5 +977,13 @@
 
 	.catecyc {
 		height: 100%;
+	}
+
+	.member-login-box {
+		position: absolute;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		z-index: 100;
 	}
 </style>

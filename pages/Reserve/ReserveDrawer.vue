@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="meminfo" style="display: flex;flex-direction: column;">
+	<view class="meminfo" style="display: inline-flex;flex-direction: column;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
@@ -92,12 +92,11 @@
 				<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
 				</view>
 			</view>
-
 			<view class="atlas">
 				<div class="map"></div>
 			</view>
 		</view>
-		<view class="operat" style="display: flex;">
+		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
 			<button class="btn btn-qx" @click="Close()">取 消</button>
 			<button class="btn" @click="Confirm">确 定</button>
 		</view>
@@ -317,7 +316,7 @@
 			Close: function() {
 				that.statements = false;
 				that.yn_add = false;
-				this.$emit("Close");
+				uni.$emit("reserve-drawer-close");
 			},
 			//获取配送类型
 			getTHTYPE: async function() {

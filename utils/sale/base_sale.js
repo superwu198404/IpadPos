@@ -149,6 +149,7 @@ var XsTypeObj = {
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[sale_reserve-$BeforeFk]支付前调用!");
+			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			return false;
 		},
@@ -292,7 +293,6 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$initSale: function(params) {
-
 			this.actType = common.actTypeEnum.Refund;
 			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
