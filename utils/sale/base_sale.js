@@ -109,7 +109,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "退款小票", // 名称
+				tName: "退单小票", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
@@ -428,6 +428,16 @@ var XsTypeObj = {
 			this.SetManage("sale_takeaway");
 			return false;
 		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "外卖销售单", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 	},
 	//外卖单预定
 	sale_takeaway_reserve: {
@@ -453,7 +463,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "外卖小票", // 名称
+				tName: "外卖预订单", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
