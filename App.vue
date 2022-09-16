@@ -104,8 +104,8 @@
 			// #ifdef APP-PLUS  
 			_init.YN_Init(function(res) {
 				uni.reLaunch({
-					// url: "/pages/Login/Login",
-					url: "/pages/start/start",
+					url: "/pages/Login/Login",
+					// url: "/pages/start/start",
 					success: () => {
 						//跳转完页面后再关闭启动页
 						plus.navigator.closeSplashscreen();

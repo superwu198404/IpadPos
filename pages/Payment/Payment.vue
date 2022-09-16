@@ -1235,16 +1235,14 @@
 			},
 			//总金额计算 舍弃分的处理
 			PriceCount: function() {
-				let total = 0;
-				this.sale2_arr.forEach(product => {
-					total += parseFloat(product.NET);
-					// console.log("商品金额：" + product.NET)
-				});
-				total = parseFloat(total.toFixed(2));
+				let total = parseFloat((util.callBind(this, function() {
+					let total_amount = Number(this.sale1_obj.TNET);
+					console.log("[PriceCount]商品总金额:",total_amount);
+					return isNaN(total_amount) ? 0 : total_amount;
+				}))().toFixed(2));
 				//舍弃分的处理
 				this.SKY_DISCOUNT = parseFloat((total % 1).toFixed(2));
-				console.log("总金额判断：", total);
-				console.log("手工折扣额：", this.SKY_DISCOUNT);
+				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				// this.totalAmount = 0.01; //舍弃分数位
 				let curDis = 0;

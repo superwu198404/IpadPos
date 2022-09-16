@@ -77,7 +77,7 @@
 		<!-- <button @click="MenuMain()">功能主页</button> -->
 		<!-- <button @click="againPrinter()">重新打印</button> -->
 		<!-- <button @click="inputAuthCode()">录入付款码</button> -->
-		<!-- <button @click="closeDB()">断开数据库链接</button> -->
+		<button @click="closeDB()">断开数据库链接</button>
 		<!-- <button @click="MenuPage(3)">返回调试</button>-->
 		<button @click="Test(2)">测试一下</button>
 		<button @click="toMainSale">主销售界面</button>
@@ -1089,7 +1089,7 @@
 				that.$refs.printerPage.againPrinter(that.refund_no);
 			},
 			closeDB: async function() {
-				await common.Close();
+				await db.get().close();
 			}
 		},
 		//接收上个页面传入的参数
