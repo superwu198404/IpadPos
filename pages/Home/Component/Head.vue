@@ -23,7 +23,7 @@
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()">
-						<image src="@/images/dakehu.png" mode="widthFix"></image>大客户：{{DKFNAME}}
+						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
 					<label>

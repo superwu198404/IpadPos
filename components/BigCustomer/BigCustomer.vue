@@ -120,7 +120,7 @@
 	.customer {
 		background-color: #fff;
 		width: 75%;
-		min-height: 700rpx;
+		min-height: 800rpx;
 		max-height: 88%;
 		border-radius: 20rpx;
 		position: fixed;
