@@ -2,6 +2,7 @@ import sale from '@/utils/sale/saleClass.js';
 import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
 import _main from '@/api/business/main.js';
+import _refund from '@/api/business/refundorder.js';
 
 import {
 	Sale3Model,
@@ -593,18 +594,19 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
-			console.log("[InitSale]赊销退货单据信息:",params);
+			console.log("[InitSale]赊销退货单据信息:", params);
 			this.sale001 = Object.cover(new sale.sale001(), params.sale1);
 			console.log("[sale_credit_return_good]SALE001:", this.sale001);
-			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(),sale2));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			console.log("[sale_credit_return_good]SALE002:", this.sale002);
-			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(),sale3));
+			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			console.log("[sale_credit_return_good]SALE003:", this.sale003);
-			console.log("[InitSale]赊销退货单据生成完毕!",{
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+			console.log("[InitSale]赊销退货单据生成完毕!", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
+			this.credit_sales = params;
 		},
 		$click() {
 			this.SetManage("sale_credit_return_good");
@@ -624,6 +626,27 @@ var XsTypeObj = {
 				sale003: this.sale003
 			});
 			return true;
+		},
+		$saleFinied: function(sales) {
+			console.log("[SaleFinied]赊销退单...",sales);
+			_refund.CreditOrderRefund({
+				khid: this.Storeid,
+				posid: this.POSID,
+				ryid: this.ryid,
+				dkhname: this.credit_sales.DKFNAME,
+				bill: this.credit_sales.BILL,
+				saledata: this.credit_sales.SALEDATE //new Date().toLocaleDateString()
+			}, res => {
+				console.log("退单结果：", res);
+				if (res.code) {
+					util.simpleMsg("退单成功");
+					setTimeout(r => {
+						that.GetOrders();
+					}, 1500);
+				} else {
+					util.simpleMsg("退单失败:" + res.msg, true);
+				}
+			})
 		},
 	},
 }
