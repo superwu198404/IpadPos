@@ -212,11 +212,14 @@ export const CreateSaleOrder = async function(dataObj, func) {
 		for (let key in dataObj) {
 			let sqlObj = common.CreateSQL(dataObj[key], key);
 			OracleSql += sqlObj.oracleSql;
-			SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
+			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
+				"YDSALE001") {
+				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
+			}
 		}
 		console.log("循环生成OracleSql：", OracleSql);
 		console.log("循环生成SqliteSql：", SqliteSql)
-	
+
 		let tx_obj = {
 			TX_SQL: OracleSql,
 			STOREID: sqlObj["SALE001"].KHID,
