@@ -201,7 +201,8 @@ export const CreateSaleOrder = async function(dataObj, func) {
 	//执行结果
 	let result = {
 		code: false,
-		data: null
+		data: null,
+		msg:""
 	};
 	try {
 		let saledate = dateformat.getYMD();
@@ -214,8 +215,8 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			OracleSql += sqlObj.oracleSql;
 			SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
 		}
-		console.log("循环生成OracleSql：", OracleSql);
-		console.log("循环生成SqliteSql：", SqliteSql)
+		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
+		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 	
 		let tx_obj = {
 			TX_SQL: OracleSql,
@@ -232,13 +233,15 @@ export const CreateSaleOrder = async function(dataObj, func) {
 		await db.get().executeDml(exeSql, "订单创建中", res => {
 			if (func) func(res);
 			result.code = true;
+			result.msg = "销售单创建成功!"
 			result.data = res;
-			console.log("销售单创建成功!", res);
+			console.log("[CreateSaleOrder]销售单创建成功!", res);
 		}, err => {
 			if (func) func(err);
 			result.code = false;
+			result.msg = "销售单创建失败!"
 			result.data = err;
-			console.log("销售单创建失败!", err);
+			console.log("[CreateSaleOrder]销售单创建失败!", err);
 		});
 	} catch (e) {
 		//TODO handle the exception
