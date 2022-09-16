@@ -53,6 +53,10 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Payment
 			console.log("[sale-$initSale]params:", params);
+			if (this.actType != common.actTypeEnum.Payment) {
+				this.operation.ynFzCx = false;
+				this.ComponentsManage.FZCX = false;
+			}
 		},
 		///对打印的控制
 		$print: function() {
@@ -84,7 +88,36 @@ var XsTypeObj = {
 		},
 		//支付完成中
 		$saleFinishing: function(result) {
+			console.log("所有的商品信息长度：", this.Allsplist.length);
 			//一些特殊的设置
+			console.log("[sale-$initSale]params:", pa)
+			//如果允许辅助促销
+			if (this.operation.ynFzCx) {
+				let FZCXVal = this.FZCX.val;
+				this.sale001.TNET += Number(FZCX.payAmount); //加上辅助促销的差价
+				console.log("辅助促销的结果：", FZCXVal);
+				if (Object.keys(FZCXVal).length != 0) {
+					FZCXVal.data.forEach(r => {
+						let SPObj = this.FindSP(this.Allsplist, r.SPID);
+						// this.sale002.push(this.CreateSale2(r, this.sale001, SPObj));
+					})
+				}
+			}
+		},
+		//查找辅助商品的完整信息
+		FindSP: function(spArr, spid) {
+			let spObj;
+			if (spArr.length > 0) {
+				spArr.forEach(r => {
+					spObj = r.plarr.find(r1 => {
+						return r1.SPID == spid
+					})
+					if (spObj) {
+						return;
+					}
+				})
+			}
+			return spObj;
 		},
 		//支付完成以后
 		$saleFinied: function() {
@@ -757,16 +790,16 @@ function GetSale(global, vue, target_name) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
-			this.base.ComponentsManage["Disc"] = false;
-			if (this.cval >= 100) {
-				this.base.allOperation["Disc"] = false;
-				this.base.allOperation["ynFzCx"] = true;
-				this.base.allOperation["ynCx"] = true;
-			} else {
-				this.base.allOperation["Disc"] = true;
-				this.base.allOperation["ynFzCx"] = false;
-				this.base.allOperation["ynCx"] = false;
-			}
+			// this.base.ComponentsManage["Disc"] = false;
+			// if (this.cval >= 100) {
+			// 	this.base.allOperation["Disc"] = false;
+			// 	this.base.allOperation["ynFzCx"] = true;
+			// 	this.base.allOperation["ynCx"] = true;
+			// } else {
+			// 	this.base.allOperation["Disc"] = true;
+			// 	this.base.allOperation["ynFzCx"] = false;
+			// 	this.base.allOperation["ynCx"] = false;
+			// }
 		}
 	};
 	this.Disc.base = this;
@@ -780,14 +813,8 @@ function GetSale(global, vue, target_name) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
-			if (this.cval.length > 0) {
-				// 	this.base.allOperation["Disc"] = false;
-				this.base.allOperation["ynFzCx"] = true;
-				// 	this.base.allOperation["ynCx"] = true;
-			} else {
-				// 	this.base.allOperation["Disc"] = true;
-				this.base.allOperation["ynFzCx"] = false;
-				// 	this.base.allOperation["ynCx"] = false;
+			if (newval.length > 0) {
+				this.base.ComponentsManage["FZCX"] = true;
 			}
 		}
 	};
