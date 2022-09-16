@@ -396,7 +396,7 @@
 							</view>
 						</view>
 					</view>
-					<view>
+					<view class="confirm">
 						<button @click="mainSale.pay" class="btn">去支付</button>
 					</view>
 					<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
