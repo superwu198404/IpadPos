@@ -277,13 +277,10 @@
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput">
 			</ReserveDrawer>
 		</view>
-
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<!-- 辅助促销插件 -->
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val" :_sale="mainSale.sale001"
-				style="z-index: 999;">
-			</FZCX>
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -377,7 +374,7 @@
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
 						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
-						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
+						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
 					<!-- <view class="h5" v-if="mainSale.operation.ynFzCx">
 						<text>赠品</text><text @click="MoreFZCX()">点击查看 ></text>
@@ -837,7 +834,10 @@
 				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...");
 				Object.cover(this.mainSale.sale001, sale1); //用于 sale001
 				Object.cover(this.mainSale.ydsale001, sale1); //用于 ydsale001
-				console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!",{ ydsale1:this.mainSale.ydsale001,sale1:this.mainSale.sale001 });
+				console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+					ydsale1: this.mainSale.ydsale001,
+					sale1: this.mainSale.sale001
+				});
 				this.mainSale.PayParamAssemble();
 			},
 			ReserveInfoEdit: function() {
@@ -909,7 +909,7 @@
 					// let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);
 					// this.mainSale.FZCX.val.chooseMsg = res.msg; //选择商品后的提示信息
 					// this.mainSale.FZCX.val.chooseData = res.data; //选择的商品
-					this.mainSale.FZCX.val= res; //选择商品后的提示信息
+					this.mainSale.FZCX.val = res; //选择商品后的提示信息
 					// console.log("辅助促销计算结果:", res);
 				}
 			},

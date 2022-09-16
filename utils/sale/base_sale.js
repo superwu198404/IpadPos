@@ -75,7 +75,12 @@ var XsTypeObj = {
 		},
 		///在付款之前的操作
 		$beforeFk: function() {
-			//可以使用的支付方式 
+			console.log("所有的商品信息长度：", this.Allsplist.length);
+			//可以使用的支付方式 //如果允许辅助促销
+
+			if (this.currentOperation.ynFzCx) {
+				this.sale001.TNET += this.FZCX.val.payAmount; //加上辅助促销的的差价
+			}
 		},
 		//支付完成之前销售单之前
 		$SaleBefor: function() {
@@ -87,33 +92,24 @@ var XsTypeObj = {
 			//一些特殊的设置
 			console.log("[sale-$initSale]params:", pa)
 			//如果允许辅助促销
-			if (this.operation.ynFzCx) {
+			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.val;
-				this.sale001.TNET += Number(FZCX.payAmount); //加上辅助促销的差价
 				console.log("辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
-						let SPObj = this.FindSP(this.Allsplist, r.SPID);
-						// this.sale002.push(this.CreateSale2(r, this.sale001, SPObj));
+						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
+						if (Object.keys(SPObj).length > 0) {
+							let NO = this.sale002.length;
+							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
+							s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
+							this.sale002.push(s2); //追加s2
+						}
 					})
+					console.log("追加辅助促销后的商品：", this.sale002);
 				}
 			}
 		},
-		//查找辅助商品的完整信息
-		FindSP: function(spArr, spid) {
-			let spObj;
-			if (spArr.length > 0) {
-				spArr.forEach(r => {
-					spObj = r.plarr.find(r1 => {
-						return r1.SPID == spid
-					})
-					if (spObj) {
-						return;
-					}
-				})
-			}
-			return spObj;
-		},
+
 		//支付完成以后
 		$saleFinied: function() {
 			//一些特殊的设置
@@ -595,7 +591,8 @@ function GetSale(global, vue, target_name) {
 	//获取当前时间：时分秒-hh:mm:ss
 	this.getTime = function() {
 		let d = new Date();
-		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d
+		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" +
+			d
 			.getMinutes() + ":" + d.getSeconds();
 		return d;
 	}
@@ -604,7 +601,8 @@ function GetSale(global, vue, target_name) {
 		var newbill = "";
 		if (this.bill == null) {
 			let d = new Date();
-			newbill = this.Storeid + this.Posid + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
+			newbill = this.Storeid + this.Posid + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d
+				.getDate() + d
 				.getHours() + d.getMinutes() + d.getSeconds();
 			//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
 			newbill = newbill + "" + this.billindex;
@@ -1019,7 +1017,8 @@ function GetSale(global, vue, target_name) {
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
-			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
+			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType
+					.operation
 					.sale002Rows)) {
 				this.myAlert("已经输入了商品不能进行此操作")
 				return;
