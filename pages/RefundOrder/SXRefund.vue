@@ -312,23 +312,16 @@
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
-					success: function(res) {
+					success: util.callBind(this,function(res) {
 						if (res.confirm) {
 							console.log('用户点击确定');
 							console.log("[ConfirmToPay]order:", that.Order);
-							that.Order.XSTYPE = '2';
-							that.Order.BILL_TYPE = 'Z154';
-							that.$emit("Switch", {
-								name: "MainSale", //销售页面组件名（必须与 router 中信息对应，且与 title 皆为必填项）
-								title: "销售", //销售页面组件名（必须与 router 中信息对应，且与 name 皆为必填项）
-								load_sale: true, //是否初始化 sale 销售主页模式
-								load_params: { //初始化方法参数
-									sale1: that.Order,
-									sale2: that.Details
-								}
+							this.$to_sale_pages('sale_credit_return_good',{
+								sale1: that.Order,
+								sale2: that.Details
 							})
 						}
-					}
+					})
 				})
 			},
 			//确认去退货

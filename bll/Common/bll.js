@@ -215,7 +215,7 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
 				"YDSALE001") {
-				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
+				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr ?? []);
 			}
 		}
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
