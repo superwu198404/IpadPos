@@ -585,6 +585,8 @@
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				that.YDDATA = JSON.stringify(that.Order);
+				that.Order.TNET = that.Order.DNET;
+				that.Order.ZNET = that.Order.DNET;
 				if(that.confirm){
 					console.log("[Confirm]外部传入事件触发!");
 					that.confirm(that.Order);

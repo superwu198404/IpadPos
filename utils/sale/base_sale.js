@@ -210,22 +210,25 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Payment);
+			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
 				sale002: this.sale002,
-				sale003: this.sale003
+				sale003: this.sale003,
+				ydsale001: this.ydsale001
 			});
 			return false;
 		},
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
-			this.ydsale001 = Object.cover(this.ydsale001, result.sale001);
-			this.ydsale002 = (result.sale002 ?? []).map(sale2 => {
+			console.log("[SaleFinishing]预订单生成中...");
+			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
+			this.ydsale002 = (result.sale2_arr ?? []).map(sale2 => {
 				let res = Object.cover(new sale.ydsale002(), sale2);
 				res.SCQTY = "";
 				return res;
 			});
-			this.ydsale003 = (result.sale003 ?? []).map(sale3 => {
+			this.ydsale003 = (result.sale3_arr ?? []).map(sale3 => {
 				let res = Object.cover(new sale.ydsale003(), sale3);
 				res.SPIDNR = "";
 				res.ZQTY = "";
@@ -233,6 +236,11 @@ var XsTypeObj = {
 				res.XPSCOM = "";
 				res.DQTY = "";
 				return res;
+			});
+			console.log("[SaleFinishing]预订单生成完毕!", {
+				ydsale1: this.ydsale001,
+				ydsale2: this.ydsale002,
+				ydsale3: this.ydsale003,
 			});
 		},
 		//支付完成以后
@@ -811,7 +819,9 @@ function GetSale(global, vue, target_name) {
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
 		"ynFzCx": false, //是否可以辅助促销
-		"ynCx": false, //是否进行可以进行促销    
+		"ynCx": false, //是否进行可以进行促销  
+		"member_login": false, //是否打开会员登录界面
+		"upload_point": false, //支付完毕后是否进行积分上传
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
@@ -827,6 +837,7 @@ function GetSale(global, vue, target_name) {
 		"sale_message": false,
 		"tools": false,
 		"openydCustmInput": false, //预定输入客户的信息
+		"openydCustmEdit": false, //预定修改客户的信息
 		"sale002Rows": false, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		"lockRows": 0, //是否存在锁定的行数
 		"inputsp": false,
@@ -1027,18 +1038,38 @@ function GetSale(global, vue, target_name) {
 	 * @param {*} e 
 	 */
 	this.PayedResult = async function(result) {
+		console.log("[PayedResult]调用saleFinishing!", result);
 		this.$saleFinishing(result.data);
 		console.log("[PayedResult]支付结果:", result);
-		let sale1 = result.data.sale1_obj,
-			sale2 = result.data.sale2_arr,
-			sale3 = result.data.sale3_arr,
-			sale8 = result.data.sale8_arr
+		let sale1 = Object.cover(new sale.sale001(), result.data.sale1_obj),
+			sale2 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2)),
+			sale3 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3)),
+			sale8 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8))
 		if (result.code) {
 			util.simpleMsg(result.msg);
-			let create_result = await CreateSaleOrder(sale1, sale2, sale3, sale8);
+			console.log("[PayedResult]准备创建销售单记录...", {
+				sale1,
+				sale2,
+				sale3,
+				sale8
+			});
+			let create_result = await CreateSaleOrder({
+				SALE001: sale1,
+				SALE002: sale2,
+				SALE003: sale3,
+				SALE008: sale8,
+				YDSALE001: this.ydsale001,
+				YDSALE002: this.ydsale002,
+				YDSALE003: this.ydsale003,
+			});
+			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
-			let upload_result = await PointUploadNew(sale1, sale2, sale3);
-			util.simpleMsg(upload_result.msg, !upload_result.code);
+			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(sale1, sale2, sale3);
+				util.simpleMsg(upload_result.msg, !upload_result.code);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 			this.$saleFinied(result.data);
 		} else
 			util.simpleMsg(result.msg, true)
@@ -1068,7 +1099,7 @@ function GetSale(global, vue, target_name) {
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {
-				FinishOrder: that.PayedResult
+				FinishOrder: util.callBind(that, that.PayedResult)
 			}
 		})
 	}
