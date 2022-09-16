@@ -1047,7 +1047,8 @@ function GetSale(global, vue, target_name, uni) {
 		get val() {
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval) 
+		{
 			//赋值的时候进行计算
 			this.cval = newval;
 			// if (newval.length > 0) {
@@ -1733,7 +1734,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//付款之后生成订单后触发
-	this.$saleFinied = function(sales) {
+	this.$saleFinied = function(sales) 
+	{
 		console.log("[$SaleFinied]支付完毕后触发:", sales);
 		this.CurrentTypeCall("$saleFinied", sales);
 	}
@@ -1752,6 +1754,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale008 = [];
 		this.ydsale001 = {};
 		this.clikSpItem = {};
+		this.payed = []; 
 		this.SetDefaultType();
 		that.update()
 	}
