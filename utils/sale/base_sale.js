@@ -112,8 +112,14 @@ var XsTypeObj = {
 		},
 
 		//支付完成以后
-		$saleFinied: function() {
-			//一些特殊的设置
+		$saleFinied: async function() {
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				util.simpleMsg(upload_result.msg, !upload_result.code);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 		},
 	},
 	sale_return_good: {
@@ -1139,12 +1145,6 @@ function GetSale(global, vue, target_name) {
 			});
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
-			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
-				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(sale1, sale2, sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
-			}
 			this.$saleFinied(result.data);
 		} else
 			util.simpleMsg(result.msg, true)
