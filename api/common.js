@@ -51,7 +51,7 @@ var CreateBill = function(khid, posid, seq) {
 
 //传入集合数组，和表名字，返回包含oracle 和sqllite得sql 数组
 var CreateSQL = function(e, t) {
-	if (!e || !t) {
+	if (!e || !t || Object.keys(e).length === 0) {
 		return [];
 	}
 	let oracle_sql = "",

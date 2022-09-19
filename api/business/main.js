@@ -532,7 +532,58 @@ var addfzcxdtinfo = function(cxobj) {
 	obj.NO = cxobj.i;
 	return obj;
 }
-
+//查找辅助商品的完整信息
+var FindSP = function(spArr, spid) {
+	let spObj;
+	if (spArr.length > 0) {
+		for (var i = 0; i < spArr.length; i++) {
+			spObj = spArr[i].plarr.find(r1 => {
+				return r1.SPID == spid
+			})
+			if (spObj && Object.keys(spObj).length > 0) {
+				break;
+			}
+		}
+	}
+	return spObj;
+}
+//创建sale2商品
+var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
+	let obj = {};
+	obj.SALEDATE = sale1.SALEDATE;
+	obj.SPJGZ = spobj.SPJGZ;
+	obj.BMID = sale1.BMID;
+	obj.RYID = sale1.RYID;
+	obj.KCDID = sale1.KCDID;
+	obj.DPID = sale1.DPID;
+	obj.GCID = sale1.GCID;
+	obj.TIME = sale1.TIME;
+	obj.WEEK = sale1.WEEK;
+	obj.MONTH = sale1.MONTH;
+	obj.YAER = sale1.YAER;
+	obj.YN_HYDISC = 'N';
+	obj.CXDISC = fzcxobj.CXNET;
+	obj.YN_CXDISC = 'F';
+	obj.BILLDISC = 0;
+	obj.DISC = 0;
+	obj.YN_SKYDISC = 'N';
+	obj.HYBL = 0;
+	obj.DISCRATE = fzcxobj.CXNET;
+	obj.NET = fzcxobj.ONET;
+	obj.OPRICE = fzcxobj.OPRICE;
+	obj.PRICE = fzcxobj.OPRICE;
+	obj.QTY = fzcxobj.XSQTY;
+	obj.UNIT = spobj.UNIT;
+	obj.BARCODE = spobj.BARCODE;
+	obj.PLID = spobj.plid;
+	obj.NO = NO;
+	obj.SPID = spobj.SPID;
+	obj.BILL = sale1.BILL;
+	obj.POSID = sale1.POSID;
+	obj.KHID = sale1.KHID;
+	obj.SALETIME = sale1.SALETIME;
+	return obj;
+}
 export default {
 	GetFZCX,
 	GetMDCXHD,
@@ -541,5 +592,7 @@ export default {
 	GetZKDatasAll,
 	MatchZKDatas,
 	GetFZCXNew,
-	CalFZCX
+	CalFZCX,
+	FindSP,
+	CreateSale2
 }

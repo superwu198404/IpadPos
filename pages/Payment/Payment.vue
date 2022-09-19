@@ -317,6 +317,7 @@
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
+				RefundFinish:false,
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -511,7 +512,7 @@
 					ROUND: this.isRefund ? -sale1.ROUND : Number(this.SKY_DISCOUNT).toFixed(2), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
 					CLTIME: saletime,
-					XS_BILL: sale1?.BILL ?? "", //退款时记录原单号（重点）
+					XS_BILL: this.isRefund ? sale1?.BILL : "", //退款时记录原单号（重点）
 					XS_POSID: this.isRefund ? (sale1?.POSID ?? "") : "", //退款时记录原posid（重点）
 					XS_DATE: this.isRefund ? (sale1?.SALEDATE ?? "") : "", //退款时记录原销售日期（重点）
 					XS_KHID: this.isRefund ? (sale1?.KHID ?? "") : "", //退款时记录原khid（重点）
@@ -814,12 +815,13 @@
 			},
 			//SALE003 初始化、处理
 			SALE3Init: function() {
+				let that = this;
 				if (this.isRefund) {
 					console.log("[SALE3Init]PayWayList:", this.PayWayList);
 					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
 						return {
 							fkid: i.FKID,
-							bill: `${i.BILL}_${i.NO}`,
+							bill: `${that.SALES.sale1.XS_BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
 							amount: Number(i.AMT).toFixed(2),
 							no: i.NO,
@@ -850,7 +852,10 @@
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
-					util.simpleMsg("已完成退款!");
+					util.simpleMsg("已完成退款!"); 
+					this.CanBack = true;
+					this.RefundFinish = true;
+					this.backPrevPage();
 					return;
 				}
 				console.log("RefundList-Before:", this.RefundList);
@@ -1301,7 +1306,7 @@
 					if (Number(this.dPayAmount) === 0) {
 						this.event.emit("FinishOrder", {
 							code: true,
-							msg: "支付完成!",
+							msg: this.isRefund ? "退款成功!" : "支付完成!",
 							data: {
 								sale1_obj: this.sale1_obj,
 								sale2_arr: this.sale2_arr,
