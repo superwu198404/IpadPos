@@ -5,35 +5,37 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<!-- 辅助促销数据 -->
-	<view class="meminfo" style="padding-top: 30px;">
-		<text>提示：{{FZCXRes.msg}}</text>
-		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-		<view v-for="(item,index) in FZCXDatas">
-			<view class="member">
-				<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
-				<!-- <button @click="Close">×</button> -->
-			</view>
-			<view class="shoppbag">
-				<view class="baglist curr" v-for="(item1,index1) in item.Details">
-					<view class="bag">
-						<text class="h8">{{item1.SNAME}}</text>
-						<label>说明<text>{{item1.DESCRIBE}}</text></label>
-					</view>
-					<view class="quantit">
-						<text>数量</text>
-						<view class="nums">
-							<text @click="Calculate(item1,-1)">-</text>
-							<input disabled="true" v-model="item1.BQTY" />
-							<text @click="Calculate(item1,1)">+</text>
+	<view class="boxs">
+		<!-- 辅助促销数据 -->
+		<view class="meminfo" style="padding-top: 30px;">
+			<text>提示：{{FZCXRes.msg}}</text>
+			<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+			<view v-for="(item,index) in FZCXDatas">
+				<view class="member">
+					<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
+					<!-- <button @click="Close">×</button> -->
+				</view>
+				<view class="shoppbag">
+					<view class="baglist curr" v-for="(item1,index1) in item.Details">
+						<view class="bag">
+							<text class="h8">{{item1.SNAME}}</text>
+							<label>说明<text>{{item1.DESCRIBE}}</text></label>
 						</view>
+						<view class="quantit">
+							<text>数量</text>
+							<view class="nums">
+								<text @click="Calculate(item1,-1)">-</text>
+								<input disabled="true" v-model="item1.BQTY" />
+								<text @click="Calculate(item1,1)">+</text>
+						</view>
+							</view>
 					</view>
 				</view>
 			</view>
-		</view>
-		<view>
-			<button class="btn btn-hk" @click="Close()">取消</button>
-			<button class="btn" @click="Confirm()">确定</button>
+			<view>
+				<button class="btn btn-hk" @click="Close()">取消</button>
+				<button class="btn" @click="Confirm()">确定</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -61,7 +63,9 @@
 				FZCXDatasOld: [],
 				FZCXRes: {
 					msg: "已添加0个特殊商品预计额外支付：0元",
-					data: []
+					data: [],
+					count: 0,
+					payAmount: 0
 				}
 			}
 		},
@@ -97,7 +101,9 @@
 				} else {
 					that.FZCXRes = {
 						msg: "已添加0个特殊商品预计额外支付：0元",
-						data: []
+						data: [],
+						count: 0,
+						payAmount: 0
 					};
 				}
 				console.log("售价排序后的促销商品：", that.FZCXRes);

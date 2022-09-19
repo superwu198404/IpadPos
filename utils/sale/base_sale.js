@@ -93,36 +93,33 @@ var XsTypeObj = {
 			//一些特殊的设置
 			console.log("[sale-$initSale]params:", pa)
 			//如果允许辅助促销
-			if (this.operation.ynFzCx) {
+			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.val;
-				this.sale001.TNET += Number(FZCX.payAmount); //加上辅助促销的差价
 				console.log("辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
-						let SPObj = this.FindSP(this.Allsplist, r.SPID);
-						// this.sale002.push(this.CreateSale2(r, this.sale001, SPObj));
+						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
+						if (Object.keys(SPObj).length > 0) {
+							let NO = this.sale002.length;
+							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
+							s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
+							this.sale002.push(s2); //追加s2
+						}
 					})
+					console.log("追加辅助促销后的商品：", this.sale002);
 				}
 			}
 		},
-		//查找辅助商品的完整信息
-		FindSP: function(spArr, spid) {
-			let spObj;
-			if (spArr.length > 0) {
-				spArr.forEach(r => {
-					spObj = r.plarr.find(r1 => {
-						return r1.SPID == spid
-					})
-					if (spObj) {
-						return;
-					}
-				})
-			}
-			return spObj;
-		},
+
 		//支付完成以后
-		$saleFinied: function() {
-			//一些特殊的设置
+		$saleFinied: async function() {
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				util.simpleMsg(upload_result.msg, !upload_result.code);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 		},
 	},
 	sale_return_good: {
@@ -677,7 +674,8 @@ function GetSale(global, vue, target_name) {
 	//获取当前时间：时分秒-hh:mm:ss
 	this.getTime = function() {
 		let d = new Date();
-		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d
+		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" +
+			d
 			.getMinutes() + ":" + d.getSeconds();
 		return d;
 	}
@@ -1101,7 +1099,8 @@ function GetSale(global, vue, target_name) {
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
-			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType.operation
+			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType
+					.operation
 					.sale002Rows)) {
 				this.myAlert("已经输入了商品不能进行此操作")
 				return;
@@ -1146,12 +1145,6 @@ function GetSale(global, vue, target_name) {
 			});
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
-			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
-				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(sale1, sale2, sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
-			}
 			this.$saleFinied(result.data);
 		} else
 			util.simpleMsg(result.msg, true)
