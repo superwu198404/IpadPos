@@ -627,22 +627,22 @@ var XsTypeObj = {
 			});
 			return true;
 		},
+		$saleFinishing:function(){
+			console.log("[SaleFinishing]赊销退货结算单信息生成...");
+		},
 		$saleFinied: function(sales) {
-			console.log("[SaleFinied]赊销退单...",sales);
+			console.log("[SaleFinied]赊销退单...",this.credit_sales);
 			_refund.CreditOrderRefund({
 				khid: this.Storeid,
 				posid: this.POSID,
 				ryid: this.ryid,
-				dkhname: this.credit_sales.DKFNAME,
-				bill: this.credit_sales.BILL,
-				saledata: this.credit_sales.SALEDATE //new Date().toLocaleDateString()
+				dkhname: this.credit_sales.sale1.DKFNAME,
+				bill: this.credit_sales.sale1.BILL,
+				saledata: this.credit_sales.sale1.SALEDATE //new Date().toLocaleDateString()
 			}, res => {
-				console.log("退单结果：", res);
+				console.log("[SaleFinied]赊销退单结果:", res);
 				if (res.code) {
-					util.simpleMsg("退单成功");
-					setTimeout(r => {
-						that.GetOrders();
-					}, 1500);
+					util.simpleMsg("赊销退单成功!");
 				} else {
 					util.simpleMsg("退单失败:" + res.msg, true);
 				}
