@@ -168,7 +168,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "退款小票", // 名称
+				tName: "退单小票", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
@@ -518,6 +518,16 @@ var XsTypeObj = {
 			this.SetManage("sale_takeaway");
 			return false;
 		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "外卖销售单", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 	},
 	//外卖单预定
 	sale_takeaway_reserve: {
@@ -543,7 +553,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "外卖小票", // 名称
+				tName: "外卖预订单", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
@@ -647,22 +657,22 @@ var XsTypeObj = {
 			});
 			return true;
 		},
+		$saleFinishing:function(){
+			console.log("[SaleFinishing]赊销退货结算单信息生成...");
+		},
 		$saleFinied: function(sales) {
-			console.log("[SaleFinied]赊销退单...", sales);
+			console.log("[SaleFinied]赊销退单...",this.credit_sales);
 			_refund.CreditOrderRefund({
 				khid: this.Storeid,
 				posid: this.POSID,
 				ryid: this.ryid,
-				dkhname: this.credit_sales.DKFNAME,
-				bill: this.credit_sales.BILL,
-				saledata: this.credit_sales.SALEDATE //new Date().toLocaleDateString()
+				dkhname: this.credit_sales.sale1.DKFNAME,
+				bill: this.credit_sales.sale1.BILL,
+				saledata: this.credit_sales.sale1.SALEDATE //new Date().toLocaleDateString()
 			}, res => {
-				console.log("退单结果：", res);
+				console.log("[SaleFinied]赊销退单结果:", res);
 				if (res.code) {
-					util.simpleMsg("退单成功");
-					setTimeout(r => {
-						that.GetOrders();
-					}, 1500);
+					util.simpleMsg("赊销退单成功!");
 				} else {
 					util.simpleMsg("退单失败:" + res.msg, true);
 				}

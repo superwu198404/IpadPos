@@ -940,6 +940,14 @@
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
+			},
+			//线上订单打印小票
+			xsBluePrinter: function(order, type, print) {
+				this.$refs.printerPage.xsBluePrinter(order, type, print);
+			},
+			//外卖打印小票
+			wmBluePrinter: function(order, datails, type, print) {
+				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			}
 		},
 		created() {
