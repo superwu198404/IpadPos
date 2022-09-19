@@ -143,7 +143,6 @@ var XsTypeObj = {
 				util.simpleMsg(upload_result.msg, !upload_result.code);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
-			this.resetSaleBill();
 		},
 	},
 	sale_return_good: {
@@ -1208,8 +1207,8 @@ function GetSale(global, vue, target_name) {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
-			PayList: that.payed,
 			sale8_arr: that.sale008, //008水吧商品
+			PayList: that.payed,
 			actType: that.actType
 		}
 		that.Page.$store.commit('set-location', inputParm);
