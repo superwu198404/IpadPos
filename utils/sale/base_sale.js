@@ -143,6 +143,7 @@ var XsTypeObj = {
 				util.simpleMsg(upload_result.msg, !upload_result.code);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
+			this.resetSaleBill();
 		},
 	},
 	sale_return_good: {
@@ -1195,8 +1196,8 @@ function GetSale(global, vue, target_name) {
 			this.$saleFinied(result.data);
 		} else {
 			util.simpleMsg(result.msg, true);
-			this.resetSaleBill();
 		}
+		this.resetSaleBill();
 	}
 
 	this.pay = function() {
