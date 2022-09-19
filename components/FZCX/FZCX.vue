@@ -27,8 +27,8 @@
 								<text @click="Calculate(item1,-1)">-</text>
 								<input disabled="true" v-model="item1.BQTY" />
 								<text @click="Calculate(item1,1)">+</text>
-						</view>
 							</view>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -54,7 +54,7 @@
 	export default {
 		name: "FZCX",
 		props: {
-			_FZCXDatas: Array,
+			_FZCXDatas: Object,
 			_sale: Object
 		},
 		data() {
@@ -71,8 +71,12 @@
 		},
 		created: function() {
 			that = this;
-			that.FZCXDatas = that._FZCXDatas;
-			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas));
+			that.FZCXDatas = that._FZCXDatas.oval;
+			//如果之前选择过 则再赋值
+			if (that._FZCXDatas && that._FZCXDatas.cval) {
+				this.FZCXRes = that._FZCXDatas.cval;
+			}
+			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas.oval));
 		},
 		methods: {
 			Calculate: function(item, type) {

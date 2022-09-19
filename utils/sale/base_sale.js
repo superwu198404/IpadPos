@@ -78,7 +78,28 @@ var XsTypeObj = {
 		$beforeFk: function() {
 			console.log("[Sale]新单据生成中...");
 			this.createNewBill(); //创建新的sale001
+
 			this.sale001.XSTYPE = 1;
+			//追加辅助促销的差价和折扣
+			if (this.currentOperation.ynFzCx) {
+				if (Object.keys(this.FZCX.cval).length > 0) {
+					this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX.cval.payAmount,
+						2); //加上辅助促销的的差价
+					this.FZCX.cval.data.forEach(r => {
+						this.sale001.BILLDISC = this.float((this.sale001.BILLDISC || 0) + (r.ONET - r
+								.CXNET),
+							2);
+					})
+				}
+			}
+			//手工折扣额的处理
+			let SKY_DISCOUNT = this.float(this.sale001.TNET % 1, 2);
+			console.log("手工折扣额：", SKY_DISCOUNT);
+			this.sale001.TNET = this.sale001.TNET - SKY_DISCOUNT;
+			this.sale001.BILLDISC += SKY_DISCOUNT;
+			this.sale001.ROUND += SKY_DISCOUNT;
+			this.sale001.TDISC += SKY_DISCOUNT;
+
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
 			return true;
@@ -89,12 +110,11 @@ var XsTypeObj = {
 		},
 		//支付完成中
 		$saleFinishing: function(result) {
-			console.log("所有的商品信息长度：", this.Allsplist.length);
 			//一些特殊的设置
-			console.log("[sale-$initSale]params:", pa)
+			console.log("[sale-$saleFinishing]:", result)
 			//如果允许辅助促销
 			if (this.currentOperation.ynFzCx) {
-				let FZCXVal = this.FZCX.val;
+				let FZCXVal = this.FZCX.cval;
 				console.log("辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
@@ -109,6 +129,9 @@ var XsTypeObj = {
 					console.log("追加辅助促销后的商品：", this.sale002);
 				}
 			}
+			//手工折扣额分摊
+			this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
+			console.log("分摊后的商品信息：", this.sale002);
 		},
 
 		//支付完成以后
@@ -145,7 +168,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "退款小票", // 名称
+				tName: "退单小票", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
@@ -505,6 +528,16 @@ var XsTypeObj = {
 			this.SetManage("sale_takeaway");
 			return false;
 		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "外卖销售单", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 	},
 	//外卖单预定
 	sale_takeaway_reserve: {
@@ -530,7 +563,7 @@ var XsTypeObj = {
 		///对打印的控制
 		$print: function() {
 			return {
-				tName: "外卖小票", // 名称
+				tName: "外卖预订单", // 名称
 				ynPrintFp: true, //是否打印发票二维码
 				ynPintCustem: false, // 是否打印客户信息
 				ynPintDisc: true, //是否打印折扣  
@@ -779,6 +812,7 @@ function GetSale(global, vue, target_name) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
+			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
 			that.update();
 		}
@@ -800,6 +834,7 @@ function GetSale(global, vue, target_name) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
+			this.base.allOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
 			if (newval == null || newval == this.Defval) {
 				this.cval = this.Defval;
 				return;
@@ -827,7 +862,7 @@ function GetSale(global, vue, target_name) {
 			// } else {
 			// 	this.base.allOperation["Disc"] = true;
 			// 	this.base.allOperation["ynFzCx"] = false;
-			// 	this.base.allOperation["ynCx"] = false;
+			this.base.allOperation["ynCx"] = false; //特殊折扣和普通促销互斥
 			// }
 		}
 	};
@@ -835,7 +870,8 @@ function GetSale(global, vue, target_name) {
 	//辅助促销
 	this.FZCX = {
 		base: {},
-		cval: [],
+		cval: [], //选中的数据
+		oval: [], //初始数据
 		get val() {
 			return this.cval;
 		},
@@ -1128,9 +1164,11 @@ function GetSale(global, vue, target_name) {
 	 * @param {*} e 
 	 */
 	this.PayedResult = async function(result) {
-		console.log("[PayedResult]调用saleFinishing!", result);
-		this.$saleFinishing(result.data);
 		console.log("[PayedResult]支付结果:", result);
+		if (!result.code) { //取消或者失败了 不走后续的处理
+			return;
+		}
+		this.$saleFinishing(result.data);
 		let sale1 = Object.cover(new sale.sale001(), result.data.sale1_obj),
 			sale2 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2)),
 			sale3 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3)),
@@ -1162,6 +1200,10 @@ function GetSale(global, vue, target_name) {
 	}
 
 	this.pay = function() {
+		if (!that.sale002 || that.sale002.length == 0) {
+			util.simpleMsg("请先加购商品", true);
+			return;
+		}
 		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
 			that.PayParamAssemble();
@@ -1412,6 +1454,7 @@ function GetSale(global, vue, target_name) {
 		that.sale001.TLINE = that.sale002.length;
 		var retx = that.sale002Sum({
 			NET: 0,
+			QTY: 0,
 			DISCRATE: 0
 		});
 		// that.log("***************计算结果展示******************")
@@ -1420,6 +1463,7 @@ function GetSale(global, vue, target_name) {
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.DISC = this.float(retx.DISCRATE, 2);
+		that.sale001.TLINE = this.float(retx.QTY, 2);
 		//this.update();
 	}
 
@@ -1429,8 +1473,8 @@ function GetSale(global, vue, target_name) {
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
 		_main.GetFZCX(this.Storeid, res => {
-			that.FZCX.val = _main.GetFZCXNew(res, that.sale001, that.spPrice);
-			console.log("重组后的辅助促销商品：", that.FZCX.val);
+			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.spPrice);
+			console.log("重组后的辅助促销商品：", that.FZCX.oval);
 		});
 	}
 
@@ -1476,10 +1520,14 @@ function GetSale(global, vue, target_name) {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;
+		this.FZCX.oval = null;
+		this.FZCX.cval = null;
 		this.bill = null;
 		this.sale001 = {};
 		this.sale002 = [];
 		this.sale003 = [];
+		this.sale008 = [];
+		this.ydsale001 = [];
 		this.clikSpItem = {};
 		this.SetDefaultType();
 		that.update()

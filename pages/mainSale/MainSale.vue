@@ -280,7 +280,7 @@
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<!-- 辅助促销插件 -->
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -376,12 +376,12 @@
 						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
-					<!-- <view class="h5" v-if="mainSale.operation.ynFzCx">
+					<view class="h5" v-if="mainSale.currentOperation.ynFzCx">
 						<text>赠品</text><text @click="MoreFZCX()">点击查看 ></text>
 					</view>
-					<view class="h5" v-if="mainSale.FZCX.val.chooseMsg">
-						<text>提示：{{mainSale.FZCX.val.chooseMsg}}</text>
-					</view> -->
+					<view class="h5" v-if="mainSale.FZCX.cval.msg">
+						<text>提示：{{mainSale.FZCX.cval.msg}}</text>
+					</view>
 					<view class="shoppbag" v-if="false">
 						<view class="hengs">
 							<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
@@ -948,6 +948,14 @@
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
+			},
+			//线上订单打印小票
+			xsBluePrinter: function(order, type, print) {
+				this.$refs.printerPage.xsBluePrinter(order, type, print);
+			},
+			//外卖打印小票
+			wmBluePrinter: function(order, datails, type, print) {
+				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			}
 		},
 		created() {

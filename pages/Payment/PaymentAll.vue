@@ -1216,6 +1216,8 @@
 				console.log("[PriceCount]总金额：", total);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				// this.totalAmount = 0.01; //舍弃分数位
+				
+				//手工折扣分摊 已转移到base_sale
 				let curDis = 0;
 				this.sale2_arr.forEach(function(item, index, arr) {
 					let high = parseFloat((item.NET / total * that.SKY_DISCOUNT).toFixed(2));

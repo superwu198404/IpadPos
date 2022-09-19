@@ -449,7 +449,8 @@ var CalFZCX = function(fzcxArr, sale1) {
 		if (syjsnet >= Onexxnum) {
 			//进行折扣计算
 			if (syjsnet / Onexxnum >= qty) {
-				let cxprice = price * (MJ_DISC1 / 100);
+				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
+				// console.log("精度计算1", cxprice);
 				let obj = {};
 				obj.cxbill = cxbill;
 				obj.spid = spid;
@@ -464,11 +465,10 @@ var CalFZCX = function(fzcxArr, sale1) {
 				syjsnet = syjsnet - Onexxnum * qty;
 				yjnet += cxprice * qty;
 			} else {
-				let cxprice = price * (MJ_DISC1 / 100);
+				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
 				let cxnet = cxprice * Math.floor(syjsnet / Onexxnum);
-
 				//超出数量的价格计算
-				let synet = (qty - Math.floor(syjsnet / Onexxnum)) * price;
+				let synet = Number(parseFloat((qty - Math.floor(syjsnet / Onexxnum)) * price).toFixed(2));
 				// addfzcxdtinfo(cxbill, spid, qty, price, cxprice, synet + cxnet, i);
 				let obj = {};
 				obj.cxbill = cxbill;
@@ -494,14 +494,13 @@ var CalFZCX = function(fzcxArr, sale1) {
 			obj.qty = qty;
 			obj.price = price;
 			obj.cxprice = price;
-			obj.zprice = price * qty;
+			obj.zprice = Number(parseFloat(price * qty).toFixed(2));
 			obj.i = i;
 			obj.storeid = khid;
 			obj.gsid = gsid;
 			sparr.push(addfzcxdtinfo(obj));
-			yjnet += price * qty;
+			yjnet += Number(parseFloat(price * qty).toFixed(2));
 		}
-
 	})
 	// jsnet = yjnet;
 	let text = "已添加" + tsnum + "个特殊商品预计额外支付：" + yjnet + "元";
@@ -562,13 +561,13 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 	obj.MONTH = sale1.MONTH;
 	obj.YAER = sale1.YAER;
 	obj.YN_HYDISC = 'N';
-	obj.CXDISC = fzcxobj.CXNET;
+	obj.CXDISC = fzcxobj.ONET - fzcxobj.CXNET;
 	obj.YN_CXDISC = 'F';
 	obj.BILLDISC = 0;
 	obj.DISC = 0;
 	obj.YN_SKYDISC = 'N';
 	obj.HYBL = 0;
-	obj.DISCRATE = fzcxobj.CXNET;
+	obj.DISCRATE = fzcxobj.ONET - fzcxobj.CXNET;
 	obj.NET = fzcxobj.ONET;
 	obj.OPRICE = fzcxobj.OPRICE;
 	obj.PRICE = fzcxobj.OPRICE;
@@ -584,6 +583,25 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 	obj.SALETIME = sale1.SALETIME;
 	return obj;
 }
+
+/**
+ * 手工折扣分摊 
+ * @param {*} sale1 
+ * @param {*} sale2_arr 
+ */
+var ManualDiscount = function(sale1, sale2_arr) {
+	let curDis = 0;
+	sale2_arr.forEach(function(item, index, arr) {
+		let high = parseFloat((item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
+		item.SKYDISCOUNT = high;
+		curDis += high;
+		if (index == arr.length - 1) {
+			let dif = parseFloat((sale1.ROUND - curDis).toFixed(2)); //实际的差值
+			item.SKYDISCOUNT += dif;
+		}
+	});
+	return sale2_arr;
+}
 export default {
 	GetFZCX,
 	GetMDCXHD,
@@ -594,5 +612,6 @@ export default {
 	GetFZCXNew,
 	CalFZCX,
 	FindSP,
-	CreateSale2
+	CreateSale2,
+	ManualDiscount
 }

@@ -317,7 +317,7 @@
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
-				RefundFinish:false,
+				RefundFinish: false,
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
 				totalAmount: 0, //应付总金额
@@ -487,8 +487,69 @@
 					}
 				}
 			},
-			//合并 index 中已经初始化一部分的 数据对象
+			//合并重构sale123数据对象 缩减版
 			SaleDataCombine: function() {
+				let saledate = dateformat.getYMD();
+				let saletime = dateformat.getYMDS();
+				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
+				let sale1 = this.SALES.sale1,
+					sale2 = this.SALES.sale2,
+					sale3 = this.SALES.sale3,
+					sale8 = this.SALES.sale8;
+				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
+					TNET: this.isRefund ? -sale1.TNET : sale1.TNET, //实付金额（重点）
+					ZNET: this.isRefund ? -sale1.ZNET : sale1.ZNET, //总金额（重点）
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : sale1?.BILLDISC, //整单折扣需要加上手工折扣,
+					ROUND: this.isRefund ? -sale1.ROUND : sale1.ROUND, //取整差值（手工折扣总额）
+					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
+					TDISC: this.isRefund ? -sale1.TDISC : sale1.TDISC,
+					TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
+				});
+				console.log("[SaleDataCombine]sale1 封装完毕!", this.sale1_obj);
+				this.sale2_arr = sale2.map((function(item, index) {
+					let obj = Object.assign(item, {
+						NET: this.isRefund ? -item.NET : item.NET,
+						DISCRATE: this.isRefund ? -item.DISCRATE : item
+							.DISCRATE, //当前商品的折扣额 后续可能有促销折扣
+						DISC: this.isRefund ? -item.DISC : item.DISC, //手工折扣额
+						QTY: this.isRefund ? -item.QTY : item.QTY
+					});
+					return util.hidePropety(obj, "NAME");
+				}).bind(this));
+				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
+				this.sale3_arr = this.Sale3Source().map((function(item, index) {
+					return util.hidePropety({
+						BILL: sale1.BILL, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
+						SALEDATE: sale1.SALEDATE,
+						SALETIME: sale1.SALETIME,
+						KHID: sale1.KHID,
+						POSID: sale1.POSID,
+						NO: item.no, //付款序号
+						FKID: item.fkid, //付款类型id
+						AMT: this.isRefund ? -(Number(item.amount)) : item.amount, //付款金额(退款记录为负额)
+						ID: this.isRefund ? (item.origin?.ID || "") : item.card_no, //卡号或者券号
+						RYID: sale1.RYID, //人员
+						GCID: sale1.GCID, //工厂
+						DPID: sale1.DPID, //店铺
+						KCDID: sale1.KCDID, //库存点
+						// BMID: this.BMID, //部门id
+						BMID: item.point, //部门id
+						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
+						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
+							.disc, //折扣金额(卡券消费后要记录)
+						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item
+							.disc, //折扣金额(卡消费后要记录)
+						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
+						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
+						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
+						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
+					}, "balance", "balance_old");;
+				}).bind(this));
+				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
+				this.sale8_arr = sale8; //使用直接传入的水吧商品
+			},
+			//合并 index 中已经初始化一部分的 数据对象
+			_SaleDataCombine: function() {
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
@@ -577,7 +638,6 @@
 					}, "balance", "balance_old");;
 				}).bind(this));
 				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
-				console.log("[SaleDataCombine]sale8 封装中...");
 				this.sale8_arr = sale8; //使用直接传入的水吧商品
 				//sale8 由销售页面传入 无需再处理
 				// this.sale8_arr = this.sbsp_arr.map((function(item, index) {
@@ -644,7 +704,7 @@
 							msg: "支付完成，数据整合完成"
 						});
 					return;
-					//从这开始中止
+					//从这开始中止 后续处理在外部进行
 					//生成执行sql
 					let exeSql = this.orderSQLGenarator();
 					let dbo = db.get();
@@ -851,7 +911,7 @@
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
-					util.simpleMsg("已完成退款!"); 
+					util.simpleMsg("已完成退款!");
 					this.CanBack = true;
 					this.RefundFinish = true;
 					this.backPrevPage();
@@ -1220,8 +1280,9 @@
 							QTY: parseInt(r.QTY)
 						}
 					});
+					this.totalAmount = prev_page_param.sale1_obj.TNET; //实际付款金额
 					this.Discount = Number(prev_page_param.sale1_obj.BILLDISC).toFixed(2); //折扣信息
-					this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数
+					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
 					this.GetHyCoupons(); //获取会员的优惠券用以支付使用
 
@@ -1237,11 +1298,11 @@
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
 				console.log("门店编码和名称", this.NAME);
 			},
-			//总金额计算 舍弃分的处理
+			//总金额计算 舍弃分的处理 ***已废弃***
 			PriceCount: function() {
 				let total = parseFloat((util.callBind(this, function() {
 					let total_amount = Number(this.sale1_obj.TNET);
-					console.log("[PriceCount]商品总金额:",total_amount);
+					console.log("[PriceCount]商品总金额:", total_amount);
 					return isNaN(total_amount) ? 0 : total_amount;
 				}))().toFixed(2));
 				//舍弃分的处理
@@ -1249,6 +1310,8 @@
 				console.log("[PriceCount]手工折扣额：", this.SKY_DISCOUNT);
 				this.totalAmount = parseFloat((total - this.SKY_DISCOUNT).toFixed(2)); //舍弃分数位
 				// this.totalAmount = 0.01; //舍弃分数位
+
+				//手工折扣分摊已转移到base_sale
 				let curDis = 0;
 				this.sale2_arr.forEach(function(item, index, arr) {
 					let high = parseFloat((item.NET / total * that.SKY_DISCOUNT).toFixed(2));
@@ -1279,8 +1342,10 @@
 			},
 			//计算待支付(欠款)金额(总金额 - 折扣金额 - 已支付金额 - 上个页面已经完成的订单金额),判断:如果小于0时候，便只返回0
 			toBePaidPrice: function() {
-				let amount = (Number(this.totalAmount - this.Discount - this.yPayAmount - this.PaymentInfos
-					.PayedAmount)).toFixed(2);
+				// let amount = (Number(this.totalAmount - this.Discount - this.yPayAmount - this.PaymentInfos
+				// 	.PayedAmount)).toFixed(2);
+				//进入支付页面后TNET已经是折扣后的金额
+				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
 				let price = amount >= 0 ? amount : 0;
 				return price;
 			},
