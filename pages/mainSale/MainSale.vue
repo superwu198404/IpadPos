@@ -26,9 +26,9 @@
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
 										@click="mainSale.selectPlidChenged"
 										:data-plid="xplitem.plid">{{xplitem.plname}}</text>
-									<label>
+									<!-- <label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
-									</label>
+									</label> -->
 								</view>
 							</view>
 							<!-- 小类循环 -->

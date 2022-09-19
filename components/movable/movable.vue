@@ -251,6 +251,7 @@
 	.orderlist .ul span {
 		color: #FE694B;
 		margin-right: 8rpx;
+		font-size: 10rpx;
 	}
 
 	.orderlist .ul text {
