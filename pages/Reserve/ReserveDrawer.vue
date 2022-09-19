@@ -118,6 +118,10 @@
 			confirm: {
 				type: Function,
 				default:null
+			},
+			sale:{
+				type:Object,
+				default:null
 			}
 		},
 		data() {
@@ -145,8 +149,8 @@
 					BILL: "",
 					QTY: 1,
 					DISC: 2,
-					ZNET: 12,
-					TNET: 10,
+					ZNET: 0,
+					TNET: 0,
 					DNET: 0,
 					CUSTMNAME: "",
 					CUSTMPHONE: "",
@@ -218,6 +222,8 @@
 					that.YDJGSJ = obj.YDZXJG * 60; //小时化分
 				}
 				this.showReserve();
+				this.Order.ZNET = this.sale?.ZNET || 0;//从外部接收整单金额
+				console.log("[DataInit]数据初始化!",this.sale);
 			},
 			onLoad: function() {
 				this.DataInit();
@@ -551,16 +557,16 @@
 						return;
 					}
 				}
-				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
-					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
-						util.simpleMsg("提货时间小于当前时间", true);
-						return;
-					}
-					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
-						util.simpleMsg("提货时间晚于19点", true);
-						return;
-					}
-				}
+				// if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
+				// 	if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
+				// 		util.simpleMsg("提货时间小于当前时间", true);
+				// 		return;
+				// 	}
+				// 	if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
+				// 		util.simpleMsg("提货时间晚于19点", true);
+				// 		return;
+				// 	}
+				// }
 				if (that.Order.DNET == null || that.Order.DNET == undefined) {
 					util.simpleMsg("定金为空", true);
 					return;
@@ -600,10 +606,10 @@
 			Empty: function() {
 				that.Order = {
 					BILL: "",
-					QTY: 1,
+					QTY: 0,
 					DISC: 2,
-					ZNET: 12,
-					TNET: 10,
+					ZNET: 0,
+					TNET: 0,
 					DNET: 0,
 					CUSTMNAME: "",
 					CUSTMPHONE: "",

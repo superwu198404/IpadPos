@@ -52,7 +52,7 @@ var CreateBill = function(khid, posid, seq) {
 //传入集合数组，和表名字，返回包含oracle 和sqllite得sql 数组
 var CreateSQL = function(e, t) {
 	if (!e || !t || Object.keys(e).length === 0) {
-		return [];
+		return {};
 	}
 	let oracle_sql = "",
 		lite_sql = "",
@@ -138,6 +138,7 @@ var CreateSQL = function(e, t) {
 
 //传输支付数据
 var TransLiteData = function(e) {
+	console.log("[TransLiteData]数据传输中...");
 	TransLite(e, r => {
 		let delArr = ["update SALE001 set yn_sc='Y' where bill='" + delVal + "'"];
 		db.get().executeDml(delArr, "数据删除中", function(res2) {
@@ -167,7 +168,7 @@ var TransLite = function(e, func) {
 						sql: sql1
 					}, apistr, false);
 					Req.asyncFuncOne(reqdata, function(res1) {
-						console.log("数据传输结果：", res1);
+						console.log("[TransLite-Success]数据传输结果：", res1);
 						util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
 						if (res1.code) {
 							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
@@ -178,6 +179,8 @@ var TransLite = function(e, func) {
 								console.log("缓存数据删除失败:", err1);
 							});
 						}
+					},function(err){
+						console.log("[TransLite-Error]数据传输结果:", err1);
 					});
 				}
 			} else {

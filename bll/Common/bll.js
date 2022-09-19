@@ -212,6 +212,7 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			SqliteSql = []
 		for (let key in dataObj) {
 			let sqlObj = common.CreateSQL(dataObj[key], key);
+			if(Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
 				"YDSALE001") {

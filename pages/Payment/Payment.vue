@@ -499,6 +499,7 @@
 				console.log("[SaleDataCombine]sale1", sale1);
 				console.log("[SaleDataCombine]sale2", sale2);
 				console.log("[SaleDataCombine]sale3", sale3);
+				console.log("[SaleDataCombine]当前模式:", this.isRefund);
 				console.log("[SaleDataCombine]sale1 封装中...");
 				console.log("[SaleDataCombine]封装参数TotalAmount:", this.totalAmount);
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
@@ -530,13 +531,11 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: parseFloat(item.PRICE).toFixed(2),
-						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - item
-							.SKYDISCOUNT).toFixed(2),
-						DISCRATE: this.isRefund ? -item.DISCRATE : item
-							.SKYDISCOUNT, //当前商品的折扣额 后续可能有促销折扣
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - (item.SKYDISCOUNT || 0)).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : (item.SKYDISCOUNT || 0), //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
-						DISC: this.isRefund ? -item.DISC : item.SKYDISCOUNT, //手工折扣额
+						DISC: this.isRefund ? -item.DISC : (item.SKYDISCOUNT || 0), //手工折扣额
 						MONTH: new Date().getMonth() + 1,
 						QTY: (this.isRefund ? -1 : 1) * item.QTY,
 						WEEK: dateformat.getYearWeek(new Date().getFullYear(), new Date()

@@ -9,7 +9,9 @@
 			<view class="search">
 				<label>
 					是否赊销：
-					<view class="classifys"><text class="curr">是</text><text>否</text></view>
+					<view class="classifys">
+						<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
+						<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text></view>
 				</label>
 				<view class="client">
 					<label>
@@ -58,6 +60,7 @@
 					client_no: "", //大客户编号 0020000955
 					client_name: ""
 				},
+				exists_credit:false,
 				big_customers: [],
 				big_client_info: {},
 				current: -1,
@@ -74,6 +77,9 @@
 		methods: {
 			Close: function() {
 				uni.$emit('close-big-customer', this.big_client_info);
+			},
+			CreditMode:function(is_credit){
+				this.exists_credit = is_credit;
 			},
 			GetBigClients: function() {
 				getBigClients({
