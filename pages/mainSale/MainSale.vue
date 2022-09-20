@@ -21,7 +21,6 @@
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
 								<view class="classifys">
-
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
 										@click="mainSale.selectPlidChenged"
@@ -400,7 +399,7 @@
 							</view>
 						</view>
 					</view>
-					<view>
+					<view class="confirm">
 						<button @click="mainSale.pay" class="btn">去支付</button>
 					</view>
 					<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>

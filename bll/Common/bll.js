@@ -202,7 +202,7 @@ export const CreateSaleOrder = async function(dataObj, func) {
 	let result = {
 		code: false,
 		data: null,
-		msg:"default-msg"
+		msg: "default-msg"
 	};
 	try {
 		let saledate = dateformat.getYMD();
@@ -212,7 +212,7 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			SqliteSql = []
 		for (let key in dataObj) {
 			let sqlObj = common.CreateSQL(dataObj[key], key);
-			if(Object.keys(sqlObj).length === 0) continue;
+			if (Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
 				"YDSALE001") {
@@ -231,7 +231,7 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			YW_NAME: "销售单据",
 			CONNSTR: 'CONNSTRING'
 		};
-		console.log("[CreateSaleOrder]生成通信表记录:",tx_obj);
+		console.log("[CreateSaleOrder]生成通信表记录:", tx_obj);
 		let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
 		let exeSql = SqliteSql.concat(sql4.sqlliteArr);
 		console.log("[CreateSaleOrder]准备执行SQL...");
@@ -279,6 +279,9 @@ export const SaleRefundOrderGenaration = async function(params = sale_order_gene
 }
 //新积分上传 适配 sale123
 export const PointUploadNew = async function(sale1, sale2, sale3) {
+	if (!sale1 || !sale1.CUID) { //为空或者hyid为空则跳出
+		return;
+	}
 	let obj = {};
 	let mode = common.GetPayOrRefund(sale1) == common.actTypeEnum.Payment ? "INCREASE" : "DECREASE";
 	obj.order_no = sale1.BILL;

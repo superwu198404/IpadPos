@@ -5,10 +5,11 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs">
+	<!-- <view class="boxs"> -->
 		<!-- 辅助促销数据 -->
 		<view class="meminfo" style="padding-top: 30px;">
 			<text>提示：{{FZCXRes.msg}}</text>
+			<button class="close" @click="Close()">×</button>
 			<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 			<view v-for="(item,index) in FZCXDatas">
 				<view class="member">
@@ -37,7 +38,7 @@
 				<button class="btn" @click="Confirm()">确定</button>
 			</view>
 		</view>
-	</view>
+	<!-- </view> -->
 </template>
 
 <script>
@@ -127,5 +128,27 @@
 </script>
 
 <style>
-
+	.meminfo{
+		position: fixed;
+		right:0;
+		width:60%;
+		right: 35% !important;
+	}
+	.meminfo .close{
+		position: absolute;
+		top:2%;
+		right:1%;
+	}
+	.affirm{
+		width:90%;
+		margin:0 auto;
+		display: flex;
+		position: absolute;
+		bottom:2%;
+		left: 5%;
+	}
+	.affirm button{
+		width:48%;
+		margin:0 1%;
+	}
 </style>

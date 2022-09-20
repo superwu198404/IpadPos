@@ -65,7 +65,7 @@ page {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding: 10% 0;
+	padding: 12% 0;
 	position: relative;
 	/* margin-bottom: 1%; */
 }
@@ -346,7 +346,10 @@ page {
 	width: 22rpx;
 	height: 22rpx;
 }
-
+.checkout .buyer text{
+	display: block;
+	max-width: 460rpx;
+}
 .checkout .buyer image:nth-child(1) {
 	width: 30rpx;
 	height: 30rpx;
