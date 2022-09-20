@@ -592,8 +592,10 @@
 						SALEDATE: saledate,
 						SALETIME: saletime,
 						PRICE: parseFloat(item.PRICE).toFixed(2),
-						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - (item.SKYDISCOUNT || 0)).toFixed(2),
-						DISCRATE: this.isRefund ? -item.DISCRATE : (item.SKYDISCOUNT || 0), //当前商品的折扣额 后续可能有促销折扣
+						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - (item
+							.SKYDISCOUNT || 0)).toFixed(2),
+						DISCRATE: this.isRefund ? -item.DISCRATE : (item.SKYDISCOUNT ||
+						0), //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : (item.SKYDISCOUNT || 0), //手工折扣额
@@ -1296,7 +1298,8 @@
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
-				console.log("门店编码和名称", this.NAME);
+				let store = uni.getStorageSync('store');
+				console.log("门店编码和名称（缓存）", store);
 			},
 			//总金额计算 舍弃分的处理 ***已废弃***
 			PriceCount: function() {
