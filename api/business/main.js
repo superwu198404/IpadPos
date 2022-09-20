@@ -355,7 +355,7 @@ var MatchZKDatas = function(ZKObj, products) {
 	console.log("计算商品折扣传入的折扣数据：", ZKObj);
 	console.log("计算商品折扣传入的商品信息：", products);
 	let CurData;
-	if (ZKObj.ZKData && ZKObj.ZKType) {
+	if (ZKObj && ZKObj.ZKData && ZKObj.ZKType) {
 		if (ZKObj.ZKType == "BZ") {
 			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
 			if (CurData.length > 0) {
@@ -592,13 +592,17 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 var ManualDiscount = function(sale1, sale2_arr) {
 	let curDis = 0;
 	sale2_arr.forEach(function(item, index, arr) {
-		let high = parseFloat((item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
-		item.SKYDISCOUNT = high;
+		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
+		let SKYDISCOUNT = high;
 		curDis += high;
 		if (index == arr.length - 1) {
-			let dif = parseFloat((sale1.ROUND - curDis).toFixed(2)); //实际的差值
-			item.SKYDISCOUNT += dif;
+			let dif = Number(parseFloat((sale1.ROUND - curDis).toFixed(2))); //实际的差值
+			SKYDISCOUNT += dif;
 		}
+		item.NET = Number(item.NET) - SKYDISCOUNT;
+		item.DISCRATE = Number(item.DISCRATE) + SKYDISCOUNT;
+		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
+		item.DISC = SKYDISCOUNT;
 	});
 	return sale2_arr;
 }
