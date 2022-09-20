@@ -1273,7 +1273,7 @@
 							SPID: r.SPID,
 							UNIT: r.UNIT,
 							BARCODE: r.BARCODE,
-							NAME: r.NAME,
+							NAME: r.STR1,
 							PRICE: r.PRICE,
 							OPRICE: r.OPRICE,
 							NET: r.NET,

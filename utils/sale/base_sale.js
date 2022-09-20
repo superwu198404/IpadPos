@@ -1502,7 +1502,7 @@ function GetSale(global, vue, target_name) {
 		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
-		that.sale001.DISC = this.float(retx.DISCRATE, 2);
+		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
 		that.sale001.TLINE = this.float(retx.QTY, 2);
 		//this.update();
 	}
