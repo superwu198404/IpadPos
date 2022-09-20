@@ -21,3 +21,22 @@ Object.defineProperty(Object.prototype, 'cover', {
 			throw Error("target or orgin is not defined.")
 	}
 })
+
+Object.defineProperty(Object.prototype, 'remove', {
+	value: function(callback) {
+		if (callback) {
+			let old_array = this;
+			let delete_array = [];
+			for (let index = 0; index < old_array.length; index++) {
+				if(callback(old_array[index])){
+					delete_array.push(old_array[index]);
+				}
+			}
+			for(let item of delete_array){
+				this.splice(this.indexOf(item),1);
+			}
+			return delete_array;
+		} else
+			throw Error("callback is not defined.")
+	}
+})

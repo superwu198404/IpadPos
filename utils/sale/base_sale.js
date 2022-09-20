@@ -3,7 +3,7 @@ import util from '@/utils/util.js';
 import cx from '@/utils/cx/cxCount.js';
 import _main from '@/api/business/main.js';
 import _refund from '@/api/business/refundorder.js';
-
+import _extract from '@/api/business/extract.js';
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -274,19 +274,8 @@ var XsTypeObj = {
 		},
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
-			console.log("[SaleFinishing]预订单生成中...",result);
+			console.log("[SaleFinishing]预订单生成中...", result);
 			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
-			let combine = result.sale3_arr.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
-			let list = result.sale3_arr.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
-			if (combine.length > 0) {
-				let sale3 = combine[0]; //取出第一位
-				let total = 0;
-				combine.forEach(i => total += Number(i.AMT));
-				sale3.AMT = total; //合并金额部分
-				list.push(sale3);
-				this.sale003 = list;
-			}
-			this.sale003.map(s3 => s3.ZKLX === 'ZG03')//预定金类型
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
 				sale003: this.sale003
@@ -311,7 +300,7 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$initSale: function(params) {
+		$initSale: function(params) {//预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -319,7 +308,25 @@ var XsTypeObj = {
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_reserve_extract]SALES:", {
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			//合并 sale3 不含 ZKLX 的 记录
+			let combine = this.sale003.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
+			let list = this.sale003.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
+			if (combine.length > 0) {
+				let sale3 = combine[0]; //取出第一位
+				let total = 0;
+				combine.forEach(i => total += Number(i.AMT));
+				sale3.AMT = total; //合并金额部分
+				list.push(sale3);
+				result.sale3_arr = list;
+			}
+			
+			result.sale3_arr.forEach(s3 => s3.ZKLX = 'ZG03') //预定金类型
+			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
 				sale3: this.sale003
@@ -349,12 +356,10 @@ var XsTypeObj = {
 				if (keys.indexOf(key) === -1)
 					hide_key.push(key);
 			})
-			console.log("[SaleReserve]隐藏属性列表:", hide_key);
-			console.log("[SaleReserve]隐藏前:", this.sale001);
 			util.hidePropety(this.sale001, ...hide_key);
-			console.log("[SaleReserve]隐藏后:", this.sale001);
-			this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
+			// this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
 			console.log("[SaleReserve]定金:", this.sale001);
+			
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -369,6 +374,10 @@ var XsTypeObj = {
 				console.log("[SaleReserve]生成预定支付信息成功!");
 			}
 			return true;
+		},
+		$saleFinishing: function(result) { //生成yd
+			this.sale003.remove(i => i.ZKLX === 'ZG03');//删除 $beforeFk 中生成的 zg03 的信息
+			
 		},
 		async $saleFinied(sales) {
 			console.log("[$SaleFinied]预订单状态变更...");
@@ -413,6 +422,16 @@ var XsTypeObj = {
 			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? [];
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			console.log("[BeforeFk]预定提取信息初始化:", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
+			});
 		},
 		$beforeFk: function() {
 			//品诺
