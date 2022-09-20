@@ -154,6 +154,18 @@ var GetPSCenter = function(gsid, khid, func) {
 		console.log("配送中心查询失败：", err);
 	})
 }
+
+/**
+ * 更新预订单提取后的信息（SJ类属性的信息）
+ * @param {*} data 
+ * @param {*} func 
+ */
+export const updateReserveOrder = function(data, func) {
+	let apistr = "MobilePos_API.Models.YDSALE001CLASS.UpdateReserveOrder";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 export default {
 	GetAddr,
 	AddressQuery,
@@ -167,5 +179,6 @@ export default {
 	GetTHKHDA,
 	reserveOrdersUpdate,
 	reserveOrdersStatusUpdate,
-	getReserveOrdersDetails
+	getReserveOrdersDetails,
+	updateReserveOrder
 }
