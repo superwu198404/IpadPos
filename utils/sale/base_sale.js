@@ -388,11 +388,9 @@ var XsTypeObj = {
 					console.log("[$SaleFinied]订单状态修改失败!", res);
 			}));
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point && this.sale1.CUID) { //判断是否又上传积分的操作且有会员id
-				console.log("[PayedResult]准备上传会员积分数据...");
+			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作且有会员id
+				console.log("[PayedResult]准备上传会员积分...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
 	},
@@ -871,6 +869,7 @@ function GetSale(global, vue, target_name) {
 			this.cval = newval;
 			// this.base.ComponentsManage["Disc"] = false;
 			// if (this.cval>= 100) {
+			console.log("选择得折扣类型为：", this.cval.ZKType);
 			if (!this.cval.ZKType) { //如果未选择 折扣类型 则说明可以进行促销操作 反之
 				this.base.allOperation["Disc"] = false;
 				this.base.allOperation["ynFzCx"] = true;
