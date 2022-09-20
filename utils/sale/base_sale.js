@@ -1083,12 +1083,25 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.$set(this.Page, "Alphabetical", false);
 		//筛选字母的列表
 	}
-
+    
+	///当出现一些互斥的操作的时候  恢复默认值的时候试用
+    this.setSaleTypeDefval(pm_key)
+	{
+	   if(that.currentOperation.hasOwnProperty(pm_key))
+	   {
+		   this.ComponentsManage[pm_key] =  that.currentOperation[pm_key];
+	   }
+	   else
+	   {
+		   this.ComponentsManage[pm_key] =false;
+	   }
+	}
+   
 	this.selectPlidChenged = function(e) {
 		that.selectPlid = e.currentTarget.dataset.plid;
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 	}
-	//设置所有商品列表数据
+	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表
 	this.SetAllGoods = function(pm_list, pm_price) {
 		cx.Cxdict();
 		this.spPrice = pm_price;
