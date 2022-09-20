@@ -280,7 +280,8 @@ var XsTypeObj = {
 			});
 		},
 		//支付完成以后
-		$saleFinied: function() {
+		$saleFinied: function() 
+		{
 
 		},
 		CloseReserveDrawer: function() {
@@ -538,7 +539,8 @@ var XsTypeObj = {
 		nameSale: "外卖单",
 		icon_open: require("@/images/waimaid.png"),
 		icon_close: require("@/images/waimaid-hui.png"),
-		operation: {
+		operation: 
+		{
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -911,7 +913,8 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//由于未知弹窗所以暂时用这个	 
-	this.myAlert = function(pm_str1, pm_str2) {
+	this.myAlert = function(pm_str1, pm_str2) 
+	{
 		that.log("--------------看到这个说明弹窗功能还没有做！--------------")
 	}
 	//基础配置参数本地化
@@ -930,7 +933,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.sale008 = []; //sale008
 	//预定
 	this.ydsale001 = {}; //sale001 主单
-	this.payed = []; //已支付信息
+	
 	//销售时间（默认当前）
 	this.saledate = this.getDate();
 	//销售页面
@@ -946,6 +949,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.selectFlag = "A";
 	//不支持的付款方式
 	this.notFayType = [];
+	this.payed = []; //已支付信息
 	//商品售价的信息列表
 	this.spPrice = {};
 	//字母的列表
@@ -1303,7 +1307,8 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} pm_type 销售类型
 	 * @param {*} switch_callback 页面切换时的回调
 	 */
-	this.SetType = function(pm_type) {
+	this.SetType = function(pm_type) 
+	{
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
@@ -1312,7 +1317,8 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 
-		if (XsTypeObj[pm_type]) {
+		if (XsTypeObj[pm_type]) 
+		{
 			// this.clickSaleType = XsTypeObj[pm_type];
 			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
@@ -1741,7 +1747,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//重置销售单据
-	this.resetSaleBill = function() {
+	this.resetSaleBill = function() 
+	{
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;
@@ -1755,6 +1762,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.ydsale001 = {};
 		this.clikSpItem = {};
 		this.payed = []; 
+		this.notFayType = [];
 		this.SetDefaultType();
 		that.update()
 	}
