@@ -1231,6 +1231,7 @@ function GetSale(global, vue, target_name) {
 			PayList: that.payed,
 			actType: that.actType
 		}
+		console.log("sale001:", that.sale001);
 		that.Page.$store.commit('set-location', inputParm);
 		console.log("[PayParamAssemble]动作类型:", that.actType);
 		uni.navigateTo({
