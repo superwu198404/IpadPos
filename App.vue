@@ -41,6 +41,7 @@
 				OPENFLAG: 0, //签到状态
 
 			},
+			start:null,
 			hyinfo: {
 				// hyId: "1000311640"
 			},
@@ -98,6 +99,15 @@
 			YN_PRINT_CON: "N", //打印机连接状态
 			msgInt: 0, //消息定时id
 		},
+		start:function()
+		{
+		
+			console.log('开始进行定时通讯')
+			//3min执行一次销售单传输
+			int = setInterval(() => {
+				common.TransLiteData();
+			}, 1000 * 60 * 3);
+		},
 		onLaunch: function() {
 			console.log('[APP-LAUNCH]APP启动!') 
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
@@ -120,10 +130,7 @@
 		onShow: function() {
 			console.log('App Show')
 
-			//3min执行一次销售单传输
-			int = setInterval(() => {
-				common.TransLiteData();
-			}, 1000 * 60 * 3);
+			this.globalData.start   = this.start;
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {

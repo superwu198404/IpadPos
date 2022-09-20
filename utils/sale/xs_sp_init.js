@@ -81,7 +81,8 @@ var loadSaleSP  =
 				}
 				if(item.ynshowlist == "1")
 				{
-	        		item.specslist= cake_arr.filter(cakeitem=>{return  cakeitem.SPID ==item.SPID })
+	        		item.specslist= cake_arr.filter(cakeitem=>{return  cakeitem.DGXLID ==item.SPID })
+					item.SPID  = cake_arr[0].SPID;
 					//console.log( JSON.stringify(item.specslist)  );
 				}
 				if( item.ynAddPro=="1")
@@ -151,10 +152,10 @@ var loadSaleSP  =
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT, ,dgxlda.PINYIN,dgxlda.plid,'01' SPJGZ,PLDA.SNAME plname," +
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,'01' SPJGZ,PLDA.SNAME plname," +
 	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
-					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid "
+					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
 				    " and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'" +
 				    " and spda_dgxl.dgxlid =dgxlda.dgxlid) ";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 			 await  $sqlLite.executeQry(drinksAddSql,"正在获取蛋糕数据",(res)=>
@@ -166,7 +167,7 @@ var loadSaleSP  =
 			 },null);	
 	    console.log("##############################开始获取蛋糕规格##############################")	
 	  //蛋糕规格 
-	 let  cakeSpescSql=" SELECT  spda_dgxl.SPID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
+	 let  cakeSpescSql=" SELECT  spda_dgxl.DGXLID, spda_dgxl.SPID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
 	               from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid  \
 				     and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'";
 					 

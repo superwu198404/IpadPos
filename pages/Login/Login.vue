@@ -24,6 +24,7 @@
 			</view>
 			<view class="logbtn">
 				<button @click="Login()">登 录</button>
+				<button @click="reset()" style="margin-top: 20rpx;">重新初始化</button>
 				<button @click="Admin()" style="margin-top: 20rpx;">管理登录</button>
 			</view>
 		</view>
@@ -128,6 +129,12 @@
 							})
 						}, 1000);
 					});
+				})
+			},
+			reset:function()
+			{
+				uni.redirectTo({
+					url: "/pages/start/start"
 				})
 			},
 			Admin: function() {

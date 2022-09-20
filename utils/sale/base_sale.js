@@ -307,11 +307,11 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) { //预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
-			console.log("[sale_reserve_extract]SALE001:", params.sale1);
+			  console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			console.log("[sale_reserve_extract]SALE002:", params.sale2);
+			  console.log("[sale_reserve_extract]SALE002:", params.sale2);
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			console.log("[sale_reserve_extract]SALE003:", params.sale3);
+			  console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -338,6 +338,9 @@ var XsTypeObj = {
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
+			//已经支付的信息
+			
+			//会员
 		},
 		///对打印的控制
 		$print: function() {
@@ -406,7 +409,8 @@ var XsTypeObj = {
 			}
 		},
 	},
-	sale_reserve_cancel: {
+	sale_reserve_cancel: 
+	{
 		xstype: "4",
 		clickType: "sale_reserve_cancel",
 		nameSale: "预定取消",
@@ -965,7 +969,8 @@ function GetSale(global, vue, target_name, uni) {
 	//筛选的品类
 	this.selectPlid = "";
 
-	this.update = function() {
+	this.update = function() 
+	{
 		if (that.Page) {
 			that.Page.$forceUpdate()
 		} else {
@@ -973,14 +978,16 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//初始化所有可以点击的商品，会员的结构
-	this.HY = {
+   this.HY = 
+   {
 		cval: {},
 		base: {},
 		open: false,
 		get val() {
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval)
+		{
 			this.base.ComponentsManage["HY"] = false;
 			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
@@ -1085,11 +1092,11 @@ function GetSale(global, vue, target_name, uni) {
 	}
     
 	///当出现一些互斥的操作的时候  恢复默认值的时候试用
-    this.setSaleTypeDefval(pm_key)
+    this.setSaleTypeDefval=function(pm_key)
 	{
-	   if(that.currentOperation.hasOwnProperty(pm_key))
+	   if(this.currentOperation.hasOwnProperty(pm_key))
 	   {
-		   this.ComponentsManage[pm_key] =  that.currentOperation[pm_key];
+		   this.ComponentsManage[pm_key] =  this.currentOperation[pm_key];
 	   }
 	   else
 	   {
@@ -1293,6 +1300,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
+			that.clikSpItem.PRICE   =  that.spPrice(that.clikSpItem.selectSPID);
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
 		}
@@ -1301,7 +1309,14 @@ function GetSale(global, vue, target_name, uni) {
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
 	}
-
+    this.selectSPID_Chenged = function(e)
+	{
+		let spid = e.currentTarget.dataset.spid;
+		that.clikSpItem.selectSPID = that.clikSpItem.spid;
+		that.clikSpItem.PRICE   =  that.spPrice(spid);
+		that.log("" + JSON.stringify(that.clikSpItem));
+		that.update();
+	}
 	//商品详情页的加号和 减号
 	this.chengedQty = function(e) {
 		let qty = e.currentTarget.dataset.qty;
