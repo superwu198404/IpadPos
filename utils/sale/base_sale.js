@@ -727,7 +727,7 @@ function GetSale(global, vue, target_name) {
 		let d = new Date();
 		var x = d.getFullYear() + "-" + ((d.getMonth() + 1) < 10 ? "0" : "") + (d.getMonth() + 1) + "-" + (d
 			.getDate() < 10 ? "0" : "") + d.getDate();
-		return d;
+		return x;
 	}
 	//获取当前时间：时分秒-hh:mm:ss
 	this.getTime = function() {
@@ -735,7 +735,7 @@ function GetSale(global, vue, target_name) {
 		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" +
 			d
 			.getMinutes() + ":" + d.getSeconds();
-		return d;
+		return x;
 	}
 	//创建订单号
 	this.getBill = function() {
@@ -1363,17 +1363,17 @@ function GetSale(global, vue, target_name) {
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
 			console.log("[CreateNewBill]创建新单!");
 			let newbill = this.getBill();
-			let stime = this.getTime().toJSON();
+			let stime = this.getTime();
 			commonSaleParm = {
 				KHID: this.Storeid,
-				SALEDATE: this.saledate?.toJSON()?.replace("T"," ")?.split('.')?.first(),
+				SALEDATE: this.saledate,
 				POSID: this.POSID,
 				RYID: this.ryid,
 				BILL: newbill,
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime?.replace("T"," ")?.split('.')?.first()
+				SALETIME: stime
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
