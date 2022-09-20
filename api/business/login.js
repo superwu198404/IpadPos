@@ -145,8 +145,10 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			STIME: dateformat.CheckStoreTime(res.msg[0].STIME),
 			ETIME: dateformat.CheckStoreTime(res.msg[0].ETIME),
 		}
-		getApp().globalData.store = Object.assign(getApp().globalData.store, store);
-		console.log("登录后的初始化信息：", getApp().globalData.store);
+		let store1 = util.getStorage("store");
+		store1 = Object.assign(store1, store);
+		util.setStorage("store", store1);
+		console.log("登录后的初始化信息：", store1);
 		if (func) func({
 			code: true,
 			msg: "初始化成功"
@@ -210,12 +212,11 @@ var SignOrSignOutSql = async function(sql, func) {
 			console.log("新的签到数据：", store);
 			util.setStorage("store", store);
 			if (func) func(store);
-		}
-		else{
+		} else {
 			console.log("未查询到签到数据：", res);
 		}
 	}, err => {
-		console.log("签到sql查询异常:",err);
+		console.log("签到sql查询异常:", err);
 	})
 }
 //获取一周能是否有未日结的数据

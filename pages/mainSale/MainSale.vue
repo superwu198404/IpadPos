@@ -372,7 +372,7 @@
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
-						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
+						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
 					<view class="h5" v-if="mainSale.currentOperation.ynFzCx">

@@ -96,9 +96,9 @@ var XsTypeObj = {
 			let SKY_DISCOUNT = this.float(this.sale001.TNET % 1, 2);
 			console.log("手工折扣额：", SKY_DISCOUNT);
 			this.sale001.TNET = this.sale001.TNET - SKY_DISCOUNT;
-			this.sale001.BILLDISC += SKY_DISCOUNT;
-			this.sale001.ROUND += SKY_DISCOUNT;
-			this.sale001.TDISC += SKY_DISCOUNT;
+			this.sale001.BILLDISC = this.float(this.sale001.BILLDISC + SKY_DISCOUNT, 2);
+			this.sale001.ROUND = this.float(this.sale001.ROUND + SKY_DISCOUNT, 2);
+			this.sale001.TDISC = this.float(this.sale001.TDISC + SKY_DISCOUNT, 2);
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
@@ -1217,10 +1217,10 @@ function GetSale(global, vue, target_name) {
 				console.log("[PayedResult]调用执行 SaleFinishing 异常:", err);
 			}
 			console.log("[PayedResult]准备创建销售单记录...", {
-				sale1: this.sale001,
-				sale2: this.sale002,
-				sale3: this.sale003,
-				sale8: this.sale008,
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003,
+				sale008: this.sale008,
 				ydsale001: this.ydsale001
 			});
 			let create_result = await CreateSaleOrder({
@@ -1263,6 +1263,7 @@ function GetSale(global, vue, target_name) {
 			PayList: that.payed,
 			actType: that.actType
 		}
+		console.log("sale001:", that.sale001);
 		that.Page.$store.commit('set-location', inputParm);
 		console.log("[PayParamAssemble]动作类型:", that.actType);
 		uni.navigateTo({
@@ -1503,7 +1504,7 @@ function GetSale(global, vue, target_name) {
 		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
-		that.sale001.DISC = this.float(retx.DISCRATE, 2);
+		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
 		that.sale001.TLINE = this.float(retx.QTY, 2);
 		//this.update();
 	}
