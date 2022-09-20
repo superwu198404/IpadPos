@@ -241,17 +241,13 @@ var XsTypeObj = {
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[BeforeFk]预订单录入:", this.sale001);
-			let raw = this.sale001;
-			this.sale001 = {};
+			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
+			this.sale001.YN_OK = 'N'; //默认为 N
+			this.sale001.YN_SC = 'X'; //默认为 X
 			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
-			this.ydsale001 = Object.cover(new sale.ydsale001(), Object.assign(this.sale001, raw));
+			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -286,7 +282,7 @@ var XsTypeObj = {
 		}
 	},
 	sale_reserve_extract: {
-		xstype: "4",
+		xstype: "5",
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),
@@ -299,7 +295,7 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$initSale: function(params) {//预定提取需要传入 ydsale001、syssale002，syssale003 信息
+		$initSale: function(params) { //预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -323,7 +319,7 @@ var XsTypeObj = {
 				list.push(sale3);
 				result.sale3_arr = list;
 			}
-			
+
 			result.sale3_arr.forEach(s3 => s3.ZKLX = 'ZG03') //预定金类型
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
@@ -358,7 +354,7 @@ var XsTypeObj = {
 			util.hidePropety(this.sale001, ...hide_key);
 			// this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
 			console.log("[SaleReserve]定金:", this.sale001);
-			
+
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -375,8 +371,8 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
-			this.sale003.remove(i => i.ZKLX === 'ZG03');//删除 $beforeFk 中生成的 zg03 的信息
-			
+			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
+
 		},
 		async $saleFinied(sales) {
 			console.log("[$SaleFinied]预订单状态变更...");
@@ -1196,10 +1192,11 @@ function GetSale(global, vue, target_name) {
 
 		if (result.code) {
 			util.simpleMsg(result.msg);
+			console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
 			//如果允许辅助促销
 			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.cval;
-				console.log("辅助促销的结果：", FZCXVal);
+				console.log("[PayedResult]辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
@@ -1210,25 +1207,30 @@ function GetSale(global, vue, target_name) {
 							this.sale002.push(s2); //追加s2
 						}
 					})
-					console.log("追加辅助促销后的商品：", this.sale002);
+					console.log("[PayedResult]追加辅助促销后的商品：", this.sale002);
 				}
 			}
-			this.$saleFinishing(result.data);
+			console.log("[PayedResult]调用执行 SaleFinishing 中...");
+			try {
+				this.$saleFinishing(result.data);
+			} catch (err) {
+				console.log("[PayedResult]调用执行 SaleFinishing 异常:", err);
+			}
 			console.log("[PayedResult]准备创建销售单记录...", {
-				sale1,
-				sale2,
-				sale3,
-				sale8,
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003,
+				sale8: this.sale008,
 				ydsale001: this.ydsale001
 			});
 			let create_result = await CreateSaleOrder({
-				SALE001: sale1,
-				SALE002: sale2,
-				SALE003: sale3,
-				SALE008: sale8,
+				SALE001: this.sale001,
+				SALE002: this.sale002,
+				SALE003: this.sale003,
+				SALE008: this.sale008,
 				YDSALE001: this.ydsale001
 			});
-			common.TransLiteData(sale1.BILL); //上传至服务端
+			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
 			this.$saleFinied(result.data);
@@ -1360,21 +1362,21 @@ function GetSale(global, vue, target_name) {
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
 			console.log("[CreateNewBill]创建新单!");
 			let newbill = this.getBill();
-			let stime = this.getTime();
+			let stime = this.getTime().toJSON();
 			commonSaleParm = {
 				KHID: this.Storeid,
-				SALEDATE: this.SALEDATE,
+				SALEDATE: this.saledate?.toJSON()?.replace("T"," ")?.split('.')?.first(),
 				POSID: this.POSID,
 				RYID: this.ryid,
 				BILL: newbill,
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime
+				SALETIME: stime?.replace("T"," ")?.split('.')?.first()
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
-
+			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		} else {
 			console.log("[CreateNewBill]创建新单参数!");
 			commonSaleParm = {

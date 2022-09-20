@@ -835,8 +835,11 @@
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			ReserveInfoInput: function(sale1) {
-				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...");
-				Object.cover(this.mainSale.sale001, sale1); //用于 sale001
+				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...",{
+					ydsale1: this.mainSale.ydsale001,
+					sale1: this.mainSale.sale001
+				});
+				Object.cover(this.mainSale.sale001, sale1); //用于 sale001,如 DNET 赋值
 				Object.cover(this.mainSale.ydsale001, sale1); //用于 ydsale001
 				console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
 					ydsale1: this.mainSale.ydsale001,

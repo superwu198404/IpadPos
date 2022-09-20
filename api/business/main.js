@@ -355,7 +355,7 @@ var MatchZKDatas = function(ZKObj, products) {
 	console.log("计算商品折扣传入的折扣数据：", ZKObj);
 	console.log("计算商品折扣传入的商品信息：", products);
 	let CurData;
-	if (ZKObj.ZKData && ZKObj.ZKType) {
+	if (ZKObj && ZKObj.ZKData && ZKObj.ZKType) {
 		if (ZKObj.ZKType == "BZ") {
 			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
 			if (CurData.length > 0) {

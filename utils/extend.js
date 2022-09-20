@@ -40,3 +40,13 @@ Object.defineProperty(Object.prototype, 'remove', {
 			throw Error("callback is not defined.")
 	}
 })
+
+Object.defineProperty(Object.prototype, 'first', {
+	value: function() {
+		if(this.length > 0){
+			return this[0];
+		}
+		else
+			return null;
+	}
+})

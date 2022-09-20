@@ -146,9 +146,7 @@
 					QTY: 1
 				}],
 				Order: {
-					BILL: "",
-					QTY: 1,
-					DISC: 2,
+					DISC: 0,
 					ZNET: 0,
 					TNET: 0,
 					DNET: 0,
@@ -157,7 +155,7 @@
 					THDATE: "",
 					TH_DATE: "",
 					TH_TIME: "",
-					THTYPE: "",
+					THTYPE: "1",
 					NOTE: "",
 					CUSTMADDRESS: "",
 					THKHID: app.globalData.store.KHID,
