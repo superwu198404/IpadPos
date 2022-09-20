@@ -112,23 +112,6 @@ var XsTypeObj = {
 		$saleFinishing: function(result) {
 			//一些特殊的设置
 			console.log("[sale-$saleFinishing]:", result)
-			//如果允许辅助促销
-			if (this.currentOperation.ynFzCx) {
-				let FZCXVal = this.FZCX.cval;
-				console.log("辅助促销的结果：", FZCXVal);
-				if (Object.keys(FZCXVal).length != 0) {
-					FZCXVal.data.forEach(r => {
-						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
-						if (Object.keys(SPObj).length > 0) {
-							let NO = this.sale002.length;
-							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
-							s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
-							this.sale002.push(s2); //追加s2
-						}
-					})
-					console.log("追加辅助促销后的商品：", this.sale002);
-				}
-			}
 			//手工折扣额分摊
 			this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
 			console.log("分摊后的商品信息：", this.sale002);
@@ -861,15 +844,16 @@ function GetSale(global, vue, target_name) {
 			//赋值的时候进行计算
 			this.cval = newval;
 			// this.base.ComponentsManage["Disc"] = false;
-			// if (this.cval >= 100) {
-			// 	this.base.allOperation["Disc"] = false;
-			// 	this.base.allOperation["ynFzCx"] = true;
-			// 	this.base.allOperation["ynCx"] = true;
-			// } else {
-			// 	this.base.allOperation["Disc"] = true;
-			// 	this.base.allOperation["ynFzCx"] = false;
-			this.base.allOperation["ynCx"] = false; //特殊折扣和普通促销互斥
-			// }
+			// if (this.cval>= 100) {
+			if (!this.cval.ZKType) { //如果未选择 折扣类型 则说明可以进行促销操作 反之
+				this.base.allOperation["Disc"] = false;
+				this.base.allOperation["ynFzCx"] = true;
+				this.base.allOperation["ynCx"] = true;
+			} else {
+				this.base.allOperation["Disc"] = true;
+				this.base.allOperation["ynFzCx"] = false;
+				this.base.allOperation["ynCx"] = false; //特殊折扣和普通促销互斥
+			}
 		}
 	};
 	this.Disc.base = this;
@@ -884,10 +868,10 @@ function GetSale(global, vue, target_name) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
-			if (newval.length > 0) {
-				// this.base.ComponentsManage["FZCX"] = true;
-				this.base.ComponentsManage["FZCX"] = false;
-			}
+			// if (newval.length > 0) {
+			// 	// this.base.ComponentsManage["FZCX"] = true;
+			// 	this.base.ComponentsManage["FZCX"] = false;
+			// }
 		}
 	};
 	this.FZCX.base = this;
@@ -1172,15 +1156,34 @@ function GetSale(global, vue, target_name) {
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
 		if (!result.code) { //取消或者失败了 不走后续的处理
+			util.simpleMsg(result.msg, !result.code);
 			return;
 		}
-		this.$saleFinishing(result.data);
-		let sale1 = Object.cover(new sale.sale001(), result.data.sale1_obj),
-			sale2 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2)),
-			sale3 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3)),
-			sale8 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8))
+		this.sale001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
+		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8));
+
 		if (result.code) {
 			util.simpleMsg(result.msg);
+			//如果允许辅助促销
+			if (this.currentOperation.ynFzCx) {
+				let FZCXVal = this.FZCX.cval;
+				console.log("辅助促销的结果：", FZCXVal);
+				if (Object.keys(FZCXVal).length != 0) {
+					FZCXVal.data.forEach(r => {
+						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
+						if (Object.keys(SPObj).length > 0) {
+							let NO = this.sale002.length;
+							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
+							s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
+							this.sale002.push(s2); //追加s2
+						}
+					})
+					console.log("追加辅助促销后的商品：", this.sale002);
+				}
+			}
+			this.$saleFinishing(result.data);
 			console.log("[PayedResult]准备创建销售单记录...", {
 				sale1,
 				sale2,
@@ -1533,7 +1536,7 @@ function GetSale(global, vue, target_name) {
 		this.sale002 = [];
 		this.sale003 = [];
 		this.sale008 = [];
-		this.ydsale001 = [];
+		this.ydsale001 = {};
 		this.clikSpItem = {};
 		this.SetDefaultType();
 		that.update()
