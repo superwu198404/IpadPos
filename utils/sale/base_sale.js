@@ -4,6 +4,8 @@ import cx from '@/utils/cx/cxCount.js';
 import _main from '@/api/business/main.js';
 import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
+import _date from '@/utils/dateformat.js';
+
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -242,8 +244,6 @@ var XsTypeObj = {
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
-			this.sale001.YN_OK = 'N'; //默认为 N
-			this.sale001.YN_SC = 'X'; //默认为 X
 			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
@@ -1374,7 +1374,13 @@ function GetSale(global, vue, target_name) {
 				DPID: this.DPID,
 				GCID: this.GCID,
 				SALETIME: stime,
-				CLTIME: stime
+				CLTIME: stime,
+				YN_OK: 'N', //默认为 N
+				YN_SC: 'X', //默认为 X
+				YAER: _date.getDateByParam("Y"),
+				MONTH: _date.getDateByParam("M"),
+				WEEK: _date.getDateByParam("w"),
+				TIME: _date.getDateByParam("h")
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1391,7 +1397,13 @@ function GetSale(global, vue, target_name) {
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,
 				SALETIME: this.sale001.SALETIME,
-				CLTIME: this.sale001.SALETIME
+				CLTIME: this.sale001.SALETIME,
+				YN_OK: this.sale001.YN_OK, //默认为 N
+				YN_SC: this.sale001.YN_SC, //默认为 X
+				YAER: this.sale001.YAER,
+				MONTH: this.sale001.MONTH,
+				WEEK: this.sale001.WEEK,
+				TIME: this.sale001.TIME
 			}
 		}
 		return commonSaleParm;
