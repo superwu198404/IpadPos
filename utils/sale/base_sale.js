@@ -199,8 +199,14 @@ var XsTypeObj = {
 
 		},
 		//支付完成以后
-		$saleFinied: function() {
-			//一些特殊的设置
+		$saleFinied: async function() {
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				util.simpleMsg(upload_result.msg, !upload_result.code);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 		},
 	},
 	//预订单+提取+取消
@@ -273,7 +279,7 @@ var XsTypeObj = {
 		},
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
-			console.log("[SaleFinishing]预订单生成中...",result);
+			console.log("[SaleFinishing]预订单生成中...", result);
 			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
 			let combine = result.sale3_arr.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
 			let list = result.sale3_arr.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
@@ -285,7 +291,7 @@ var XsTypeObj = {
 				list.push(sale3);
 				this.sale003 = list;
 			}
-			this.sale003.map(s3 => s3.ZKLX === 'ZG03')//预定金类型
+			this.sale003.map(s3 => s3.ZKLX === 'ZG03') //预定金类型
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
 				sale003: this.sale003
@@ -293,7 +299,7 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: function() {
-			//一些特殊的设置
+
 		}
 	},
 	sale_reserve_extract: {
@@ -383,7 +389,7 @@ var XsTypeObj = {
 					console.log("[$SaleFinied]订单状态修改失败!", res);
 			}));
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+			if (this.currentOperation.upload_point && this.sale1.CUID) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
 				util.simpleMsg(upload_result.msg, !upload_result.code);
