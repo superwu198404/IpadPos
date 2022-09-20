@@ -1373,7 +1373,8 @@ function GetSale(global, vue, target_name) {
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime
+				SALETIME: stime,
+				CLTIME: stime
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1381,15 +1382,16 @@ function GetSale(global, vue, target_name) {
 		} else {
 			console.log("[CreateNewBill]创建新单参数!");
 			commonSaleParm = {
-				KHID: this.sale001.Storeid,
+				KHID: this.sale001.KHID,
 				SALEDATE: this.sale001.SALEDATE,
 				POSID: this.sale001.POSID,
-				RYID: this.sale001.ryid,
-				BILL: this.sale001.bill,
+				RYID: this.sale001.RYID,
+				BILL: this.sale001.BILL,
 				KCDID: this.sale001.KCDID,
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,
-				SALETIME: this.sale001.SALETIME
+				SALETIME: this.sale001.SALETIME,
+				CLTIME: this.sale001.SALETIME
 			}
 		}
 		return commonSaleParm;
