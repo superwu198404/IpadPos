@@ -96,9 +96,9 @@ var XsTypeObj = {
 			let SKY_DISCOUNT = this.float(this.sale001.TNET % 1, 2);
 			console.log("手工折扣额：", SKY_DISCOUNT);
 			this.sale001.TNET = this.sale001.TNET - SKY_DISCOUNT;
-			this.sale001.BILLDISC += SKY_DISCOUNT;
-			this.sale001.ROUND += SKY_DISCOUNT;
-			this.sale001.TDISC += SKY_DISCOUNT;
+			this.sale001.BILLDISC = this.float(this.sale001.BILLDISC + SKY_DISCOUNT, 2);
+			this.sale001.ROUND = this.float(this.sale001.ROUND + SKY_DISCOUNT, 2);
+			this.sale001.TDISC = this.float(this.sale001.TDISC + SKY_DISCOUNT, 2);
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
@@ -299,7 +299,7 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
-		$initSale: function(params) {//预定提取需要传入 ydsale001、syssale002，syssale003 信息
+		$initSale: function(params) { //预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -323,7 +323,7 @@ var XsTypeObj = {
 				list.push(sale3);
 				result.sale3_arr = list;
 			}
-			
+
 			result.sale3_arr.forEach(s3 => s3.ZKLX = 'ZG03') //预定金类型
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
@@ -358,7 +358,7 @@ var XsTypeObj = {
 			util.hidePropety(this.sale001, ...hide_key);
 			// this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
 			console.log("[SaleReserve]定金:", this.sale001);
-			
+
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -375,8 +375,8 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
-			this.sale003.remove(i => i.ZKLX === 'ZG03');//删除 $beforeFk 中生成的 zg03 的信息
-			
+			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
+
 		},
 		async $saleFinied(sales) {
 			console.log("[$SaleFinied]预订单状态变更...");
@@ -1215,20 +1215,20 @@ function GetSale(global, vue, target_name) {
 			}
 			this.$saleFinishing(result.data);
 			console.log("[PayedResult]准备创建销售单记录...", {
-				sale1,
-				sale2,
-				sale3,
-				sale8,
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003,
+				sale008: this.sale008,
 				ydsale001: this.ydsale001
 			});
 			let create_result = await CreateSaleOrder({
-				SALE001: sale1,
-				SALE002: sale2,
-				SALE003: sale3,
-				SALE008: sale8,
+				SALE001: this.sale001,
+				SALE002: this.sale002,
+				SALE003: this.sale003,
+				SALE008: this.sale008,
 				YDSALE001: this.ydsale001
 			});
-			common.TransLiteData(sale1.BILL); //上传至服务端
+			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
 			this.$saleFinied(result.data);
