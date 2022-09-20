@@ -547,6 +547,7 @@
 				}).bind(this));
 				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
 				this.sale8_arr = sale8; //使用直接传入的水吧商品
+				console.log("[SaleDataCombine]sale8 封装完毕!", this.sale8_arr);
 			},
 			//合并 index 中已经初始化一部分的 数据对象
 			_SaleDataCombine: function() {
@@ -595,7 +596,7 @@
 						NET: this.isRefund ? (-1 * item.NET).toFixed(2) : (item.NET - (item
 							.SKYDISCOUNT || 0)).toFixed(2),
 						DISCRATE: this.isRefund ? -item.DISCRATE : (item.SKYDISCOUNT ||
-						0), //当前商品的折扣额 后续可能有促销折扣
+							0), //当前商品的折扣额 后续可能有促销折扣
 						YN_SKYDISC: this.isRefund ? item.YN_SKYDISC : item.SKYDISCOUNT >
 							0 ? "Y" : "N", //是否有手工折扣
 						DISC: this.isRefund ? -item.DISC : (item.SKYDISCOUNT || 0), //手工折扣额
@@ -938,7 +939,8 @@
 									0), //退款总金额（兼容微信）
 								point: refundInfo.origin.BMID //兼容积分抵现返还积分
 							}, (function(err) { //如果发生异常（catch）
-								util.simpleMsg(err.msg, true, err);
+								// util.simpleMsg(err.msg, true, err);
+								util.simpleModal("退款失败", err.msg);
 							}).bind(that),
 							(function(res) { //执行完毕（finally），退款次数 +1
 								console.log("[Refund-退款]Finally:", res);

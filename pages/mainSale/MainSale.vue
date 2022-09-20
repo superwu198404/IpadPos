@@ -273,13 +273,16 @@
 
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput" :sale="mainSale.sale001">
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"
+				:sale="mainSale.sale001">
 			</ReserveDrawer>
+		</view>
+		<!-- 辅助促销插件 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX" style="text-align: right;">
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-			<!-- 辅助促销插件 -->
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -564,7 +567,7 @@
 			},
 			CloseMember: function(member_info) {
 				// this.mainSale.ComponentsManage.HY = false;
-				this.mainSale.setComponentsManage(null,"HY");
+				this.mainSale.setComponentsManage(null, "HY");
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
@@ -574,7 +577,7 @@
 			OpenBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户打开!", data);
 				// this.mainSale.ComponentsManage.DKF = true;
-				this.mainSale.setComponentsManage(null,"DKF");
+				this.mainSale.setComponentsManage(null, "DKF");
 			},
 			CloseBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户关闭!", data);
@@ -584,10 +587,10 @@
 			CloseReserveDrawer: function() {
 				console.log("[CloseReserveDrawer]预定录入关闭...");
 				// this.mainSale.ComponentsManage.openydCustmInput = false;
-				this.mainSale.setComponentsManage(null,"openydCustmInput");
+				this.mainSale.setComponentsManage(null, "openydCustmInput");
 				console.log("[CloseReserveDrawer]结算单打开...");
 				// this.mainSale.ComponentsManage.statement = true;
-				this.mainSale.setComponentsManage(null,"statement");
+				this.mainSale.setComponentsManage(null, "statement");
 			},
 			//展示特殊折扣
 			GetTSZKData: async function() {
@@ -595,11 +598,11 @@
 				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
 				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
 				// this.mainSale.ComponentsManage.Disc = true;
-				this.mainSale.setComponentsManage(null,"Disc");
+				this.mainSale.setComponentsManage(null, "Disc");
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			ReserveInfoInput: function(sale1) {
-				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...",{
+				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
 					ydsale1: this.mainSale.ydsale001,
 					sale1: this.mainSale.sale001
 				});
@@ -616,7 +619,7 @@
 			},
 			CloseTSZK: function(data) {
 				// this.mainSale.ComponentsManage.Disc = false;
-				this.mainSale.setComponentsManage(null,"Disc");
+				this.mainSale.setComponentsManage(null, "Disc");
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
 				this.mainSale.Disc.val.ZKType = data;
 			},
@@ -655,7 +658,7 @@
 			},
 			MemberLogin: function(e) { //会员登录
 				console.log("[MemberLogin]会员登录!");
-				this.mainSale.setComponentsManage(null,"HY");
+				this.mainSale.setComponentsManage(null, "HY");
 				// this.mainSale.ComponentsManage.HY = true;
 				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.HY);
 			},
@@ -665,7 +668,7 @@
 			},
 			MoreFZCX: function(e) {
 				// this.mainSale.ComponentsManage.FZCX = true;
-				this.mainSale.setComponentsManage(null,"FZCX");
+				this.mainSale.setComponentsManage(null, "FZCX");
 			},
 			Calculate: function(item, type) {
 				item.BQTY = Number(item.BQTY) + type;
@@ -677,7 +680,7 @@
 			CloseFZCX: function(res) {
 				// console.log("源辅助促销数据：", this.mainSale.FZCX.val);
 				// this.mainSale.ComponentsManage.FZCX = false;
-				this.mainSale.setComponentsManage(null,"FZCX");
+				this.mainSale.setComponentsManage(null, "FZCX");
 				console.log("辅助促销回调结果：", res);
 				if (res) {
 					// let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);

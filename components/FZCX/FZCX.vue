@@ -6,38 +6,38 @@
 </style>
 <template>
 	<!-- <view class="boxs"> -->
-		<!-- 辅助促销数据 -->
-		<view class="meminfo" style="padding-top: 30px;">
-			<text>提示：{{FZCXRes.msg}}</text>
-			<button class="close" @click="Close()">×</button>
-			<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-			<view v-for="(item,index) in FZCXDatas">
-				<view class="member">
-					<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
-					<!-- <button @click="Close">×</button> -->
-				</view>
-				<view class="shoppbag">
-					<view class="baglist curr" v-for="(item1,index1) in item.Details">
-						<view class="bag">
-							<text class="h8">{{item1.SNAME}}</text>
-							<label>说明<text>{{item1.DESCRIBE}}</text></label>
-						</view>
-						<view class="quantit">
-							<text>数量</text>
-							<view class="nums">
-								<text @click="Calculate(item1,-1)">-</text>
-								<input disabled="true" v-model="item1.BQTY" />
-								<text @click="Calculate(item1,1)">+</text>
-							</view>
+	<!-- 辅助促销数据 -->
+	<view class="meminfo" style="padding-top: 30px;">
+		<text>提示：{{FZCXRes.msg}}</text>
+		<button class="close" @click="Close()">×</button>
+		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+		<view v-for="(item,index) in FZCXDatas">
+			<view class="member">
+				<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
+				<!-- <button @click="Close">×</button> -->
+			</view>
+			<view class="shoppbag">
+				<view class="baglist curr" v-for="(item1,index1) in item.Details">
+					<view class="bag">
+						<text class="h8">{{item1.SNAME}}</text>
+						<label>说明<text>{{item1.DESCRIBE}}</text></label>
+					</view>
+					<view class="quantit">
+						<text>数量</text>
+						<view class="nums">
+							<text @click="Calculate(item1,-1)">-</text>
+							<input disabled="true" v-model="item1.BQTY" />
+							<text @click="Calculate(item1,1)">+</text>
 						</view>
 					</view>
 				</view>
 			</view>
-			<view>
-				<button class="btn btn-hk" @click="Close()">取消</button>
-				<button class="btn" @click="Confirm()">确定</button>
-			</view>
 		</view>
+		<view>
+			<button class="btn btn-hk" @click="Close()">取消</button>
+			<button class="btn" @click="Confirm()">确定</button>
+		</view>
+	</view>
 	<!-- </view> -->
 </template>
 
@@ -128,27 +128,30 @@
 </script>
 
 <style>
-	.meminfo{
+	.meminfo {
 		position: fixed;
-		right:0;
-		width:60%;
+		right: 0;
+		width: 60%;
 		right: 35% !important;
 	}
-	.meminfo .close{
+
+	.meminfo .close {
 		position: absolute;
-		top:2%;
-		right:1%;
+		top: 2%;
+		right: 1%;
 	}
-	.affirm{
-		width:90%;
-		margin:0 auto;
+
+	.affirm {
+		width: 90%;
+		margin: 0 auto;
 		display: flex;
 		position: absolute;
-		bottom:2%;
+		bottom: 2%;
 		left: 5%;
 	}
-	.affirm button{
-		width:48%;
-		margin:0 1%;
+
+	.affirm button {
+		width: 48%;
+		margin: 0 1%;
 	}
 </style>
