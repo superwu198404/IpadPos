@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current.clickType"></Page>
+			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
@@ -273,13 +273,13 @@
 
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"></ReserveDrawer>
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput" :sale="mainSale.sale001">
+			</ReserveDrawer>
 		</view>
-		
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<!-- 辅助促销插件 -->
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX.val"></FZCX>
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -373,13 +373,15 @@
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
 						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.DISC}}</text></view>
-						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
+						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
-					<view class="h5">
-						<text>赠品</text><text @click="MoreFZCX()">查看全部 ></text>
+					<view class="h5" v-if="mainSale.currentOperation.ynFzCx">
+						<text>赠品</text><text @click="MoreFZCX()">点击查看 ></text>
+					</view>
+					<view class="h5" v-if="mainSale.FZCX.cval.msg">
+						<text>提示：{{mainSale.FZCX.cval.msg}}</text>
 					</view>
 					<view class="shoppbag" v-if="false">
-						<!-- v-if="mainSale.ComponentsManage.ynFzCx" -->
 						<view class="hengs">
 							<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
 								<view class="bag">
@@ -785,7 +787,8 @@
 				this.mainSale.SetManage('sale');
 			},
 			CloseMember: function(member_info) {
-				this.mainSale.ComponentsManage.HY = false;
+				// this.mainSale.ComponentsManage.HY = false;
+				this.mainSale.setComponentsManage(null,"HY");
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
@@ -794,18 +797,21 @@
 			},
 			OpenBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户打开!", data);
-				this.mainSale.ComponentsManage.DKF = true;
+				// this.mainSale.ComponentsManage.DKF = true;
+				this.mainSale.setComponentsManage(null,"DKF");
 			},
 			CloseBigCustomer: function(data) {
 				console.log("[CloseBigCustomer]大客户关闭!", data);
 				this.mainSale.DKF.val = data;
 				uni.$emit('select-credit', data);
 			},
-			CloseReserveDrawer:function(){
+			CloseReserveDrawer: function() {
 				console.log("[CloseReserveDrawer]预定录入关闭...");
-				this.mainSale.ComponentsManage.openydCustmInput = false;
+				// this.mainSale.ComponentsManage.openydCustmInput = false;
+				this.mainSale.setComponentsManage(null,"openydCustmInput");
 				console.log("[CloseReserveDrawer]结算单打开...");
-				this.mainSale.ComponentsManage.statement = true;
+				// this.mainSale.ComponentsManage.statement = true;
+				this.mainSale.setComponentsManage(null,"statement");
 			},
 			SignIn: function() {
 				console.log("[SignIn]签到!");
@@ -824,20 +830,26 @@
 				//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
 				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
 				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
-				this.mainSale.ComponentsManage.Disc = true;
+				// this.mainSale.ComponentsManage.Disc = true;
+				this.mainSale.setComponentsManage(null,"Disc");
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			ReserveInfoInput: function(sale1) {
 				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...");
-				Object.cover(this.mainSale.sale001,sale1);//用于 sale001
-				Object.cover(this.mainSale.ydsale001,sale1);//用于 ydsale001
+				Object.cover(this.mainSale.sale001, sale1); //用于 sale001
+				Object.cover(this.mainSale.ydsale001, sale1); //用于 ydsale001
+				console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+					ydsale1: this.mainSale.ydsale001,
+					sale1: this.mainSale.sale001
+				});
 				this.mainSale.PayParamAssemble();
 			},
 			ReserveInfoEdit: function() {
 
 			},
 			CloseTSZK: function(data) {
-				this.mainSale.ComponentsManage.Disc = false;
+				// this.mainSale.ComponentsManage.Disc = false;
+				this.mainSale.setComponentsManage(null,"Disc");
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
 				this.mainSale.Disc.val.ZKType = data;
 			},
@@ -876,7 +888,8 @@
 			},
 			MemberLogin: function(e) { //会员登录
 				console.log("[MemberLogin]会员登录!");
-				this.mainSale.ComponentsManage.HY = true;
+				this.mainSale.setComponentsManage(null,"HY");
+				// this.mainSale.ComponentsManage.HY = true;
 				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.HY);
 			},
 			Bagslist: function(e) {
@@ -884,8 +897,8 @@
 					this.Memberinfo = false
 			},
 			MoreFZCX: function(e) {
-				this.mainSale.ComponentsManage.FZCX = true;
-
+				// this.mainSale.ComponentsManage.FZCX = true;
+				this.mainSale.setComponentsManage(null,"FZCX");
 			},
 			Calculate: function(item, type) {
 				item.BQTY = Number(item.BQTY) + type;
@@ -894,13 +907,17 @@
 				}
 			},
 			//辅助促销回调
-			CloseFZCX: function(fzcxArr) {
-				console.log("源辅助促销数据：", this.mainSale.FZCX.val);
-				this.mainSale.ComponentsManage.FZCX = false;
-				console.log("辅助促销回调结果：", fzcxArr);
-				if (fzcxArr.length) {
-					let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);
-					console.log("辅助促销计算结果:", res);
+			CloseFZCX: function(res) {
+				// console.log("源辅助促销数据：", this.mainSale.FZCX.val);
+				// this.mainSale.ComponentsManage.FZCX = false;
+				this.mainSale.setComponentsManage(null,"FZCX");
+				console.log("辅助促销回调结果：", res);
+				if (res) {
+					// let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);
+					// this.mainSale.FZCX.val.chooseMsg = res.msg; //选择商品后的提示信息
+					// this.mainSale.FZCX.val.chooseData = res.data; //选择的商品
+					this.mainSale.FZCX.val = res; //选择商品后的提示信息
+					// console.log("辅助促销计算结果:", res);
 				}
 			},
 
@@ -930,6 +947,14 @@
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
+			},
+			//线上订单打印小票
+			xsBluePrinter: function(order, type, print) {
+				this.$refs.printerPage.xsBluePrinter(order, type, print);
+			},
+			//外卖打印小票
+			wmBluePrinter: function(order, datails, type, print) {
+				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			}
 		},
 		created() {

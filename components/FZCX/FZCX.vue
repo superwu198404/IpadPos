@@ -7,7 +7,8 @@
 <template>
 	<!-- <view class="boxs"> -->
 		<!-- 辅助促销数据 -->
-		<view class="meminfo">
+		<view class="meminfo" style="padding-top: 30px;">
+			<text>提示：{{FZCXRes.msg}}</text>
 			<button class="close" @click="Close()">×</button>
 			<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 			<view v-for="(item,index) in FZCXDatas">
@@ -32,7 +33,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="affirm">
+			<view>
 				<button class="btn btn-hk" @click="Close()">取消</button>
 				<button class="btn" @click="Confirm()">确定</button>
 			</view>
@@ -54,18 +55,29 @@
 	export default {
 		name: "FZCX",
 		props: {
-			_FZCXDatas: Array,
+			_FZCXDatas: Object,
+			_sale: Object
 		},
 		data() {
 			return {
 				FZCXDatas: [],
 				FZCXDatasOld: [],
+				FZCXRes: {
+					msg: "已添加0个特殊商品预计额外支付：0元",
+					data: [],
+					count: 0,
+					payAmount: 0
+				}
 			}
 		},
 		created: function() {
 			that = this;
-			that.FZCXDatas = that._FZCXDatas;
-			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas));
+			that.FZCXDatas = that._FZCXDatas.oval;
+			//如果之前选择过 则再赋值
+			if (that._FZCXDatas && that._FZCXDatas.cval) {
+				this.FZCXRes = that._FZCXDatas.cval;
+			}
+			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas.oval));
 		},
 		methods: {
 			Calculate: function(item, type) {
@@ -73,16 +85,12 @@
 				if (item.BQTY < 0) {
 					item.BQTY = 0;
 				}
+				that.CalFZCX(); //实时计算促销结果
+
 				console.log("数量给变化", item);
 			},
-			//关闭辅助促销
-			Close: function() {
-				console.log("旧版本数据：", that.FZCXDatasOld);
-				that.FZCXDatas = that.FZCXDatasOld;
-				uni.$emit("close-FZCX", []);
-			},
-			//确认辅助促销
-			Confirm: function() {
+			//计算促销的应付金额和折扣额
+			CalFZCX: function() {
 				let Arr = [];
 				that.FZCXDatas.forEach(r => {
 					let arr = r.Details.filter(r1 => {
@@ -94,9 +102,26 @@
 					Arr = Arr.sort((a, b) => {
 						return b.PRICE - a.PRICE
 					});
+					that.FZCXRes = _main.CalFZCX(Arr, that._sale);
+				} else {
+					that.FZCXRes = {
+						msg: "已添加0个特殊商品预计额外支付：0元",
+						data: [],
+						count: 0,
+						payAmount: 0
+					};
 				}
-				console.log("售价排序后的促销商品：", Arr);
-				uni.$emit("close-FZCX", Arr);
+				console.log("售价排序后的促销商品：", that.FZCXRes);
+			},
+			//关闭辅助促销
+			Close: function() {
+				console.log("取消辅助促销");
+				uni.$emit("close-FZCX");
+			},
+			//确认辅助促销
+			Confirm: function() {
+				console.log("确认辅助促销");
+				uni.$emit("close-FZCX", that.FZCXRes);
 			}
 		}
 	}

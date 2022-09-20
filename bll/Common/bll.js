@@ -202,38 +202,41 @@ export const CreateSaleOrder = async function(dataObj, func) {
 	let result = {
 		code: false,
 		data: null,
-		msg:""
+		msg:"default-msg"
 	};
 	try {
 		let saledate = dateformat.getYMD();
 		let saletime = dateformat.getYMDS();
 
 		let OracleSql = "",
-			SqliteSql = ""
+			SqliteSql = []
 		for (let key in dataObj) {
 			let sqlObj = common.CreateSQL(dataObj[key], key);
+			if(Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
 				"YDSALE001") {
-				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr);
+				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr ?? []);
 			}
 		}
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
-
 		let tx_obj = {
 			TX_SQL: OracleSql,
-			STOREID: sqlObj["SALE001"].KHID,
-			POSID: sqlObj["SALE001"].POSID,
+			STOREID: dataObj["SALE001"].KHID,
+			POSID: dataObj["SALE001"].POSID,
 			TAB_NAME: 'XS',
-			STR1: sqlObj["SALE001"].BILL,
+			STR1: dataObj["SALE001"].BILL,
 			BDATE: saletime, //增加时分秒的操作
 			YW_NAME: "销售单据",
 			CONNSTR: 'CONNSTRING'
 		};
+		console.log("[CreateSaleOrder]生成通信表记录:",tx_obj);
 		let sql4 = common.CreateSQL(tx_obj, 'POS_TXFILE');
 		let exeSql = SqliteSql.concat(sql4.sqlliteArr);
-		await db.get().executeDml(exeSql, "订单创建中", res => {
+		console.log("[CreateSaleOrder]准备执行SQL...");
+		let dbo = db.get();
+		await dbo.executeDml(exeSql, "订单创建中", res => {
 			if (func) func(res);
 			result.code = true;
 			result.msg = "销售单创建成功!"
@@ -246,10 +249,12 @@ export const CreateSaleOrder = async function(dataObj, func) {
 			result.data = err;
 			console.log("[CreateSaleOrder]销售单创建失败!", err);
 		});
+		console.log("[CreateSaleOrder]SQL执行完毕!");
 	} catch (e) {
 		//TODO handle the exception
 		result.code = false;
 		result.data = e;
+		result.msg = "销售单创建异常!"
 	}
 	return result;
 }

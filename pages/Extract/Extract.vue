@@ -191,7 +191,7 @@
 							} else {
 								data.sale1[0].XSTYPE = '2'; //由于查询结果默认返回数组，所带索引去取
 								data.sale1[0].BILL_TYPE = 'Z171';
-								this.$to_sale_pages('sale_reserve_extract',{
+								this.$to_sale_pages('sale_reserve_cancel',{
 									sale1: data.sale1[0],
 									sale2: data.sale2,
 									sale3: data.sale3
