@@ -21,14 +21,13 @@
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
 								<view class="classifys">
-
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
 										@click="mainSale.selectPlidChenged"
 										:data-plid="xplitem.plid">{{xplitem.plname}}</text>
-									<!-- <label>
+									<label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
-									</label> -->
+									</label>
 								</view>
 							</view>
 							<!-- 小类循环 -->
