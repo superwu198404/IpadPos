@@ -241,17 +241,13 @@ var XsTypeObj = {
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[BeforeFk]预订单录入:", this.sale001);
-			let raw = this.sale001;
-			this.sale001 = {};
+			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
+			this.sale001.YN_OK = 'N'; //默认为 N
+			this.sale001.YN_SC = 'X'; //默认为 X
 			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
-			this.ydsale001 = Object.cover(new sale.ydsale001(), Object.assign(this.sale001, raw));
+			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -286,7 +282,7 @@ var XsTypeObj = {
 		}
 	},
 	sale_reserve_extract: {
-		xstype: "4",
+		xstype: "5",
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),
@@ -1196,10 +1192,11 @@ function GetSale(global, vue, target_name) {
 
 		if (result.code) {
 			util.simpleMsg(result.msg);
+			console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
 			//如果允许辅助促销
 			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.cval;
-				console.log("辅助促销的结果：", FZCXVal);
+				console.log("[PayedResult]辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
@@ -1210,10 +1207,15 @@ function GetSale(global, vue, target_name) {
 							this.sale002.push(s2); //追加s2
 						}
 					})
-					console.log("追加辅助促销后的商品：", this.sale002);
+					console.log("[PayedResult]追加辅助促销后的商品：", this.sale002);
 				}
 			}
-			this.$saleFinishing(result.data);
+			console.log("[PayedResult]调用执行 SaleFinishing 中...");
+			try {
+				this.$saleFinishing(result.data);
+			} catch (err) {
+				console.log("[PayedResult]调用执行 SaleFinishing 异常:", err);
+			}
 			console.log("[PayedResult]准备创建销售单记录...", {
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -1361,21 +1363,21 @@ function GetSale(global, vue, target_name) {
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
 			console.log("[CreateNewBill]创建新单!");
 			let newbill = this.getBill();
-			let stime = this.getTime();
+			let stime = this.getTime().toJSON();
 			commonSaleParm = {
 				KHID: this.Storeid,
-				SALEDATE: this.SALEDATE,
+				SALEDATE: this.saledate?.toJSON()?.replace("T"," ")?.split('.')?.first(),
 				POSID: this.POSID,
 				RYID: this.ryid,
 				BILL: newbill,
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime
+				SALETIME: stime?.replace("T"," ")?.split('.')?.first()
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
-
+			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		} else {
 			console.log("[CreateNewBill]创建新单参数!");
 			commonSaleParm = {

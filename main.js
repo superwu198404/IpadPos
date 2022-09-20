@@ -3,8 +3,8 @@ import * as request from '@/utils/request.js';
 import * as $ from '@/utils/common.js'
 import tui from './common/httpRequest'
 import store from '@/utils/store.js';
-import extend from '@/utils/extend.js';
-import vue_extend from '@/utils/vue-extend.js';
+import '@/utils/extend.js';
+import '@/utils/vue-extend.js';
 
 // #ifdef VUE2
 import Vue from 'vue'
