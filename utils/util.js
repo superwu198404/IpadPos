@@ -98,7 +98,8 @@ const utils = {
 		let keys = Object.keys(obj);
 		props.forEach(p => {
 			if (keys.indexOf(p) !== -1)
-				configs[p] = {
+				configs[p] = 
+				{
 					configurable: true,
 					enumerable: false,
 					writable: true

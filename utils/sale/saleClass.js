@@ -64,7 +64,72 @@ var sale001 = function(pm_obj) {
 		this[item] = pm_obj[item];
 	}
 }
-
+var ydsale001 = function(pm_obj) {
+	this.CLTIME = null;
+	this.CUSTID = null;
+	this.XSPTID = null;
+	this.YN_DCDG = null;
+	this.YN_HH = null;
+	this.DKFID = null;
+	this.BMID = null;
+	this.KCDID = null;
+	this.DPID = null;
+	this.GCID = null;
+	this.GSID = null;
+	this.STR2 = null;
+	this.STR1 = null;
+	this.ERRINO = null;
+	this.ERRID = null;
+	this.TIME = 0
+	this.WEEK = 0
+	this.MONTH = 0
+	this.YAER = 0
+	this.YN_SC = null;
+	this.REASON = null;
+	this.TDISC = 0
+	this.TLSDISC = 0
+	this.TTPDISC = 0
+	this.TBZDISC = 0
+	this.THYDISC = 0
+	this.HYJF = 0
+	this.CARDID = null;
+	this.CUID = null;
+	this.TCXDISC = 0
+	this.CXTNET = 0
+	this.CHANGENET = 0
+	this.ROUND = 0
+	this.BILLDISC = null;
+	this.ZNET = 0
+	this.DNET = 0
+	this.TNET = 0
+	this.TLINE = 0
+	this.XS_GSID = null;
+	this.XS_KHID = null;
+	this.XS_DATE = null;
+	this.XS_POSID = null;
+	this.XS_BILL = null;
+	this.XSTYPE = null;
+	this.BILL_TYPE = null;
+	this.RYID = null;
+	this.BILL = null;
+	this.POSID = null;
+	this.KHID = null;
+	this.SALETIME = null;
+	this.SALEDATE = null;
+	this.THTYPE = null;
+	this.ZTMSTR = null;
+	this.KQXSTYPE = null;
+	this.YN_JLTH = null;
+	this.YN_OK = null;
+	this.CUSTMTIME = null;
+	this.CUSTMCOMM = null;
+	this.CUSTMADDRESS = null;
+	this.CUSTMPHONE = null;
+	this.CUSTMNAME = null;
+	for (var item in pm_obj) {
+		this[item] = pm_obj[item];
+	}
+}
 var sale002 = function(pm_obj) {
 	this.SALEDATE = null;
 	this.XPDGCOM = null;
@@ -121,7 +186,9 @@ var sale002 = function(pm_obj) {
 	this.KHID = null;
 	this.SALETIME = null;
 	for (var item in pm_obj) {
-		this[item] = pm_obj[item];
+		if (this[item]) {//存在即赋值
+			this[item] = pm_obj[item];
+		}
 	}
 }
 
@@ -254,34 +321,34 @@ var ydsale003 = function() {
 
 var saleBillType = [
 	"NONE",
-	
-	"Z101",//门零现场商品销售订单
-	
-	"Z151",//现场退货
-	
-	"Z121",//门零预订单
-	
-	"Z171",//门零预订单退单
-	
+
+	"Z101", //门零现场商品销售订单
+
+	"Z151", //现场退货
+
+	"Z121", //门零预订单
+
+	"Z171", //门零预订单退单
+
 	"Z101",
-	
-	"Z104",//门零现场商品赊销订单
-	
-	"Z104",//门零现场商品赊销订单
-	
-	"Z112",//门零现场卡券赊销订单
-	
-	"Z123",//门零电商商品预订单
-	
-	"Z111",//门零现场卡券销售订单
-	
-	"Z301",//区域渠道商品销售订单
-	
-	"Z351",// 赊销预定取消
-	
-	"Z102",// 外卖预订单
-	
-	"Z152"// 外卖退货单
+
+	"Z104", //门零现场商品赊销订单
+
+	"Z104", //门零现场商品赊销订单
+
+	"Z112", //门零现场卡券赊销订单
+
+	"Z123", //门零电商商品预订单
+
+	"Z111", //门零现场卡券销售订单
+
+	"Z301", //区域渠道商品销售订单
+
+	"Z351", // 赊销预定取消
+
+	"Z102", // 外卖预订单
+
+	"Z152" // 外卖退货单
 ]
 
 export default {

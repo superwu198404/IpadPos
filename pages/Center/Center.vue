@@ -111,11 +111,13 @@
 							console.log("本次单据传输定时ID:", int);
 						}
 						if (res.confirm) {
-							if (that.signOutDates.length > 0) { //有日结数据
+							if (that.signOutDates.length > 0) 
+							{ //有日结数据
 								that.SignOut(); //发起日结
 								return;
 							}
-							if (store.RYTYPE != "SYSTEM") {
+							if (store.RYTYPE != "SYSTEM") 
+							{
 								uni.redirectTo({
 									url: "/pages/mainSale/MainSale"
 								});

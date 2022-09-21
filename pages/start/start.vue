@@ -19,6 +19,7 @@
 			</view>
 			<view class="operate">
 				<button class="btn" @click="init">初始化</button>
+				<button @click="toDbqry">数据查看</button>
 			</view>
 		</view>
 
@@ -272,7 +273,7 @@
 								(res) => {
 									that.initok = false;
 									that.errstr = res;
-									return Req.retData(false, "start创建失败")
+									return Req.retData(false, "start创建失败"+JSON.stringify(errstr))
 								}
 							);
 							return x;

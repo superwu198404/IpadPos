@@ -8,7 +8,7 @@
 	<!-- <view class="boxs"> -->
 	<!-- 辅助促销数据 -->
 	<view class="meminfo" style="padding-top: 30px;">
-		<text>提示：{{FZCXRes.msg}}</text>
+		<text class="tishi">提示：{{FZCXRes.msg}}</text>
 		<button class="close" @click="Close()" style="z-index: 99;">×</button>
 		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 		<view v-for="(item,index) in FZCXDatas">
@@ -20,7 +20,7 @@
 				<view class="baglist curr" v-for="(item1,index1) in item.Details">
 					<view class="bag">
 						<text class="h8">{{item1.SNAME}}</text>
-						<label>说明<text>{{item1.DESCRIBE}}</text></label>
+						<label><text>说明</text>{{item1.DESCRIBE}}</label>
 					</view>
 					<view class="quantit">
 						<text>数量</text>
@@ -33,7 +33,7 @@
 				</view>
 			</view>
 		</view>
-		<view>
+		<view class="affirm">
 			<button class="btn btn-hk" @click="Close()">取消</button>
 			<button class="btn" @click="Confirm()">确定</button>
 		</view>
@@ -133,6 +133,8 @@
 		right: 0;
 		width: 60%;
 		right: 35% !important;
+		z-index: 9889;
+		height: 95%;
 	}
 
 	.meminfo .close {
@@ -140,7 +142,9 @@
 		top: 2%;
 		right: 1%;
 	}
-
+	.member{
+		padding:1% 4%;
+	}
 	.affirm {
 		width: 90%;
 		margin: 0 auto;
@@ -153,5 +157,11 @@
 	.affirm button {
 		width: 48%;
 		margin: 0 1%;
+	}
+	.tishi{
+		font-size: 26rpx;
+		font-weight: 700;
+		color: #ff0000;
+		padding:0 4%;
 	}
 </style>

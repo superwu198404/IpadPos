@@ -155,15 +155,15 @@
 					THDATE: "",
 					TH_DATE: "",
 					TH_TIME: "",
-					THTYPE: "1",
+					THTYPE: "1", //自提 和宅配
 					NOTE: "",
 					CUSTMADDRESS: "",
-					THKHID: app.globalData.store.KHID,
+					THKHID: app.globalData.store.KHID,  
 					THNAME: app.globalData.store.NAME,
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "", //蛋糕类型
+					CARDID: "", //蛋糕类型  
 					YD_STATUS:"1"
 				},
 				hyinfo: util.getStorage("hyinfo"),

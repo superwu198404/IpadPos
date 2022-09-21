@@ -8,20 +8,23 @@
 			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
-			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
+			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
+				:class="Selected(key) ? 'curr' : ''">
 				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<!-- <view class="menu">
+		<view class="menu gongju">
 			<view class="bills">
 				<label></label>
-				<image class="xz" src="@/images/gongju-hui.png" mode="widthFix"></image>
-				<image class="wx" src="@/images/gongju.png" mode="widthFix"></image>
-				<text>工具</text>
-				<view class="chargeback">
+				<view @click="ShowGJ=!ShowGJ">
+					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
+					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
+					<text>工具</text>
+				</view>
+				<view class="chargeback" v-if="ShowGJ">
 					<view class="currs">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
@@ -44,7 +47,7 @@
 					</view>
 				</view>
 			</view>
-		</view> -->
+		</view>
 	</view>
 </template>
 
@@ -63,8 +66,8 @@
 				});
 			},
 		},
-		watch:{
-			current:function(n,o){
+		watch: {
+			current: function(n, o) {
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
 			}
@@ -73,7 +76,8 @@
 			return {
 				previous_info: null, //上一个菜单信息
 				current_info: null, //当前菜单信息
-				menu_info: null
+				menu_info: null,
+				ShowGJ: false
 			};
 		},
 		methods: {
