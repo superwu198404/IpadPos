@@ -129,7 +129,7 @@
 		},
 		onShow: function() {
 			console.log('App Show')
-			console.log('定时ID:', this.globalData.Int);
+
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {
