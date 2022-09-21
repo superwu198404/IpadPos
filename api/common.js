@@ -156,7 +156,7 @@ var TransLite = function(e, func) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
 	}
 	db.get().executeQry(sql, "数据查询中", function(res) {
-			console.log("传输数据查询成功", res);
+			console.log("[TransLite]传输数据查询成功", res);
 			if (res.code && res.msg.length > 0) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
@@ -173,10 +173,10 @@ var TransLite = function(e, func) {
 						if (res1.code) {
 							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
 							db.get().executeDml(delStr, "数据删除中", function(res2) {
-								console.log("缓存数据删除成功:", res2);
+								console.log("[TransLite]缓存数据删除成功:", res2);
 								if (func) func(res2);
 							}, function(err1) {
-								console.log("缓存数据删除失败:", err1);
+								console.log("[TransLite]缓存数据删除失败:", err1);
 							});
 						}
 					},function(err){
@@ -184,11 +184,11 @@ var TransLite = function(e, func) {
 					});
 				}
 			} else {
-				console.log("通讯表Pos_TXFILE暂无数据", res);
+				console.log("[TransLite]通讯表Pos_TXFILE暂无数据", res);
 			}
 		},
 		function(err) {
-			console.log("传输数据查询失败", err);
+			console.log("[TransLite]传输数据查询失败", err);
 		});
 }
 

@@ -263,25 +263,13 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
 			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
-			let combine = result.sale3_arr.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
-			let list = result.sale3_arr.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
-			if (combine.length > 0) {
-				let sale3 = combine[0]; //取出第一位
-				let total = 0;
-				combine.forEach(i => total += Number(i.AMT));
-				sale3.AMT = total; //合并金额部分
-				list.push(sale3);
-				this.sale003 = list;
-			}
-			this.sale003.map(s3 => s3.ZKLX === 'ZG03') //预定金类型
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
 				sale003: this.sale003
 			});
 		},
 		//支付完成以后
-		$saleFinied: function() 
-		{
+		$saleFinied: function() {
 
 		},
 		CloseReserveDrawer: function() {
@@ -310,9 +298,9 @@ var XsTypeObj = {
 			this.old_bill = params.sale1.BILL;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			  console.log("[sale_reserve_extract]SALE002:", params.sale2);
+			console.log("[sale_reserve_extract]SALE002:", params.sale2);
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			  console.log("[sale_reserve_extract]SALE003:", params.sale3);
+			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -341,7 +329,7 @@ var XsTypeObj = {
 				sale3_raw: this.raw_order
 			});
 			//已经支付的信息
-			
+
 			//会员
 		},
 		///对打印的控制
@@ -390,30 +378,12 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
 			this.sale003.concat(this.raw_order);
+			this.communication_for_oracle.push(`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`);
+			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:", `UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`);
 		},
 		async $saleFinied(sales) {
-			console.log("[$SaleFinied]预订单状态变更...");
-			_extract.reserveOrdersStatusUpdate({
-				khid: this.Storeid,
-				gsid: this.GSID,
-				bill: this.old_bill,
-				is_pay: true,
-				thdate: this.getDate,
-				thgsid: this.GSID,
-				thgcid: this.GCID,
-				thdpid: this.DPID,
-				thkcdid: this.KCDID,
-				thkhid: this.KHID,
-				thposid: this.POSID,
-				new_order_bill: sales.sale1_obj.BILL,
-			}, util.callBind(this, function(res) {
-				if (res.code)
-					console.log("[$SaleFinied]订单状态修改成功!", res);
-				else
-					console.log("[$SaleFinied]订单状态修改失败!", res);
-			}));
-			delete this.old_bill;
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -421,8 +391,7 @@ var XsTypeObj = {
 			}
 		},
 	},
-	sale_reserve_cancel: 
-	{
+	sale_reserve_cancel: {
 		xstype: "4",
 		clickType: "sale_reserve_cancel",
 		nameSale: "预定取消",
@@ -555,8 +524,7 @@ var XsTypeObj = {
 		nameSale: "外卖单",
 		icon_open: require("@/images/waimaid.png"),
 		icon_close: require("@/images/waimaid-hui.png"),
-		operation: 
-		{
+		operation: {
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -929,8 +897,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//由于未知弹窗所以暂时用这个	 
-	this.myAlert = function(pm_str1, pm_str2) 
-	{
+	this.myAlert = function(pm_str1, pm_str2) {
 		that.log("--------------看到这个说明弹窗功能还没有做！--------------")
 	}
 	//基础配置参数本地化
@@ -949,7 +916,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.sale008 = []; //sale008
 	//预定
 	this.ydsale001 = {}; //sale001 主单
-	
+	// 通讯表\sqlite 额外sql
+	this.communication_for_oracle = [];
+	this.communication_for_sqlite = [];
 	//销售时间（默认当前）
 	this.saledate = this.getDate();
 	//销售页面
@@ -981,8 +950,7 @@ function GetSale(global, vue, target_name, uni) {
 	//筛选的品类
 	this.selectPlid = "";
 
-	this.update = function() 
-	{
+	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
 		} else {
@@ -990,16 +958,14 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//初始化所有可以点击的商品，会员的结构
-   this.HY = 
-   {
+	this.HY = {
 		cval: {},
 		base: {},
 		open: false,
 		get val() {
 			return this.cval;
 		},
-		set val(newval)
-		{
+		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
 			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
@@ -1070,12 +1036,10 @@ function GetSale(global, vue, target_name, uni) {
 		get val() {
 			return this.cval;
 		},
-		set val(newval) 
-		{
+		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
-			// if (newval.length > 0) {
-			// 	// this.base.ComponentsManage["FZCX"] = true;
+			// if (newval.length > 0) {\"FZCX"] = true;
 			// 	this.base.ComponentsManage["FZCX"] = false;
 			// }
 		}
@@ -1102,20 +1066,16 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.$set(this.Page, "Alphabetical", false);
 		//筛选字母的列表
 	}
-    
+
 	///当出现一些互斥的操作的时候  恢复默认值的时候试用
-    this.setSaleTypeDefval=function(pm_key)
-	{
-	   if(this.currentOperation.hasOwnProperty(pm_key))
-	   {
-		   this.ComponentsManage[pm_key] =  this.currentOperation[pm_key];
-	   }
-	   else
-	   {
-		   this.ComponentsManage[pm_key] =false;
-	   }
+	this.setSaleTypeDefval = function(pm_key) {
+		if (this.currentOperation.hasOwnProperty(pm_key)) {
+			this.ComponentsManage[pm_key] = this.currentOperation[pm_key];
+		} else {
+			this.ComponentsManage[pm_key] = false;
+		}
 	}
-   
+
 	this.selectPlidChenged = function(e) {
 		that.selectPlid = e.currentTarget.dataset.plid;
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
@@ -1312,7 +1272,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
-			that.clikSpItem.PRICE   =  that.spPrice(that.clikSpItem.selectSPID);
+			that.clikSpItem.PRICE = that.spPrice(that.clikSpItem.selectSPID);
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
 		}
@@ -1321,11 +1281,10 @@ function GetSale(global, vue, target_name, uni) {
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
 	}
-    this.selectSPID_Chenged = function(e)
-	{
+	this.selectSPID_Chenged = function(e) {
 		let spid = e.currentTarget.dataset.spid;
 		that.clikSpItem.selectSPID = that.clikSpItem.spid;
-		that.clikSpItem.PRICE   =  that.spPrice(spid);
+		that.clikSpItem.PRICE = that.spPrice(spid);
 		that.log("" + JSON.stringify(that.clikSpItem));
 		that.update();
 	}
@@ -1347,8 +1306,7 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} pm_type 销售类型
 	 * @param {*} switch_callback 页面切换时的回调
 	 */
-	this.SetType = function(pm_type) 
-	{
+	this.SetType = function(pm_type) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
@@ -1357,8 +1315,7 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 
-		if (XsTypeObj[pm_type]) 
-		{
+		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
 			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
@@ -1438,6 +1395,9 @@ function GetSale(global, vue, target_name, uni) {
 				SALE003: this.sale003,
 				SALE008: this.sale008,
 				YDSALE001: this.ydsale001
+			}, {
+				sqlite: this.communication_for_sqlite,
+				oracle: this.communication_for_oracle
 			});
 			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
@@ -1780,15 +1740,13 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//付款之后生成订单后触发
-	this.$saleFinied = function(sales) 
-	{
+	this.$saleFinied = function(sales) {
 		console.log("[$SaleFinied]支付完毕后触发:", sales);
 		this.CurrentTypeCall("$saleFinied", sales);
 	}
 
 	//重置销售单据
-	this.resetSaleBill = function() 
-	{
+	this.resetSaleBill = function() {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;
@@ -1801,8 +1759,10 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale008 = [];
 		this.ydsale001 = {};
 		this.clikSpItem = {};
-		this.payed = []; 
+		this.payed = [];
 		this.notFayType = [];
+		this.communication_for_oracle = [];
+		this.communication_for_sqlite = [];
 		this.SetDefaultType();
 		that.update()
 	}

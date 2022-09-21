@@ -196,14 +196,20 @@ export const _CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, 
 	return result;
 }
 
+const additional_def_params = {
+	oracle:[],
+	sqlite:[]
+};
 //统一生成销售单数据
-export const CreateSaleOrder = async function(dataObj, func) {
+export const CreateSaleOrder = async function(dataObj, additional = additional_def_params, func) {
 	//执行结果
 	let result = {
 		code: false,
 		data: null,
 		msg: "default-msg"
 	};
+	let oracle_addition_sqls = additional?.oracle || [];
+	let sqlite_addition_sqls = additional?.sqlite || [];
 	try {
 		let saledate = dateformat.getYMD();
 		let saletime = dateformat.getYMDS();
@@ -219,6 +225,8 @@ export const CreateSaleOrder = async function(dataObj, func) {
 				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr ?? []);
 			}
 		}
+		SqliteSql.concat(sqlite_addition_sqls);
+		OracleSql += oracle_addition_sqls.join(';');
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 		let tx_obj = {

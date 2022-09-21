@@ -4,7 +4,7 @@ Object.defineProperty(Object.prototype, 'existsKey', {
 			let keys = Object.keys(obj);
 			return keys.indexOf(key) >= 0;
 		} else
-			throw Error("param_1 is not defined.")
+			throw Error("obj is not defined.")
 	}
 })
 
