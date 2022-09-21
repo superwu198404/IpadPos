@@ -277,16 +277,13 @@
 				:sale="mainSale.sale001">
 			</ReserveDrawer>
 		</view>
-		<!-- 辅助促销插件 -->
-		<view class="boxs" v-if="false" style="text-align: right;">
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
-		</view>
+
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 				<FZCX v-if="Object.keys(mainSale.FZCX.oval).length&&mainSale.FZCX.open" :_FZCXDatas="mainSale.FZCX"
 					:_sale="mainSale.sale001"></FZCX>
-				<view class="meminfo" v-if="mainSale.HY.val.hyId">
+				<view class="meminfo" v-if="mainSale.HY.val.hyId&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label>
@@ -294,7 +291,7 @@
 							<label
 								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
 						</label>
-						<!-- <button @click="mainSale.ComponentsManage.HY = false">×</button> -->
+						<button @click="mainSale.HY.open = false">×</button>
 					</view>
 					<view class="nom">
 						<label>
@@ -345,8 +342,10 @@
 				<view class="pop-r pop-rs">
 					<view class="member">
 						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image><button
-								class="btn">{{ mainSale.HY.val.hyId ? mainSale.HY.val.hyId:'未登录...'}}</button>
+							<image class="touxiang" src="../../images/touxiang.png"></image>
+							<button class="btn" @click="mainSale.HY.open=true"
+								v-if="mainSale.HY.val.hyId">{{mainSale.HY.val.hyId}}</button>
+							<button class="btn" v-else>'未登录...'</button>
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
 					</view>
