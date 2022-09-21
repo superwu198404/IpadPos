@@ -82,7 +82,10 @@ var loadSaleSP  =
 				if(item.ynshowlist == "1")
 				{
 	        		item.specslist= cake_arr.filter(cakeitem=>{return  cakeitem.DGXLID ==item.SPID })
-					item.SPID  = cake_arr[0].SPID;
+					if( item.specslist.length>0 )
+					{
+				    	item.SPID  = item.specslist[0].SPID;
+					}
 					//console.log( JSON.stringify(item.specslist)  );
 				}
 				if( item.ynAddPro=="1")

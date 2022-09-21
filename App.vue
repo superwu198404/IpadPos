@@ -7,7 +7,7 @@
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
-	let int;
+
 	export default {
 		globalData: {
 			appid: 'keengee',
@@ -97,6 +97,7 @@
 			},
 			YN_PRINT_CON: "N", //打印机连接状态
 			msgInt: 0, //消息定时id
+			Int: null //单据定时传输的定时器
 		},
 		start:function()
 		{
@@ -108,7 +109,7 @@
 			}, 1000 * 60 * 3);
 		},
 		onLaunch: function() {
-			console.log('[APP-LAUNCH]APP启动!') 
+			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
 			_init.YN_Init(function(res) {
@@ -129,12 +130,10 @@
 		onShow: function() {
 			console.log('App Show')
 
-			this.globalData.start   = this.start;
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {
 			console.log('App Hide');
-			clearInterval(int);
 		},
 		onUnload: function() {
 			console.log('App 卸载');

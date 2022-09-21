@@ -9,7 +9,7 @@
 	<!-- 辅助促销数据 -->
 	<view class="meminfo" style="padding-top: 30px;">
 		<text class="tishi">提示：{{FZCXRes.msg}}</text>
-		<button class="close" @click="Close()">×</button>
+		<button class="close" @click="Close()" style="z-index: 99;">×</button>
 		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 		<view v-for="(item,index) in FZCXDatas">
 			<view class="member">
@@ -132,9 +132,8 @@
 		position: fixed;
 		right: 0;
 		width: 60%;
-		right: 35% !important;
 		z-index: 9889;
-		height: 95%;
+		height: 96%;
 	}
 
 	.meminfo .close {
@@ -146,7 +145,7 @@
 		padding:1% 4%;
 	}
 	.affirm {
-		width: 90%;
+		width: 94%;
 		margin: 0 auto;
 		display: flex;
 		position: absolute;
@@ -155,8 +154,8 @@
 	}
 
 	.affirm button {
-		width: 48%;
-		margin: 0 1%;
+		width: 46%;
+		margin: 0 2%;
 	}
 	.tishi{
 		font-size: 26rpx;
