@@ -279,6 +279,12 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: function() {
 
+		},
+		CloseReserveDrawer: function() {
+			console.log("[CloseReserveDrawer]预定录入关闭...");
+			this.setComponentsManage(null, "openydCustmInput");
+			console.log("[CloseReserveDrawer]结算单打开...");
+			this.setComponentsManage(null, "statement");
 		}
 	},
 	sale_reserve_extract: {
@@ -308,6 +314,8 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Payment);
+			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
+			this.currentOperation.lockRows = this.sale002.length;
 			//合并 sale3 不含 ZKLX 的 记录
 			let combine = this.sale003.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
 			let list = this.sale003.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
@@ -636,6 +644,16 @@ var XsTypeObj = {
 			console.log("[sale_credit]赊销点击...");
 			this.ComponentsManage.DKF = true; //打开大客户弹窗
 			return false;
+		},
+		OpenBigCustomer: function(data) {
+			console.log("[CloseBigCustomer]大客户打开!", data);
+			// this.mainSale.ComponentsManage.DKF = true;
+			this.setComponentsManage(null, "DKF");
+		},
+		CloseBigCustomer: function(data) {
+			console.log("[CloseBigCustomer]大客户关闭!", data);
+			this.DKF.val = data;
+			uni.$emit('select-credit', data);
 		}
 	},
 	sale_credit_return_good: {
@@ -708,12 +726,15 @@ var XsTypeObj = {
 
 /**
  * 
- * @param {*} pm_store 店铺ID
- * @param {*} pm_page vue实例
+ * @param {*} global 配置参数
+ * @param {*} vue vue实例
+ * @param {*} target_name 目标名称
+ * @param {*} uni uni实例
  */
-function GetSale(global, vue, target_name) {
+function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
 	var that = this;
+	var uni = uni;
 	this.billindex = 0;
 	/*
 	 * 工具方法 
@@ -752,6 +773,29 @@ function GetSale(global, vue, target_name) {
 		}
 		return newbill;
 	}
+
+	this.GetTSZKData = util.callBind(this,async function() {
+		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
+		console.log("传入折扣的大客户数据：", this.DKF.val.DKHID);
+		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKHID); //传入大客户值
+		this.setComponentsManage(null, "Disc");
+		console.log("首页初始化的折扣数据：", this.Disc.val.ZKData);
+	})
+	
+	this.CloseTSZK = util.callBind(this,function(data) {
+		this.setComponentsManage(null,"Disc");
+		console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+		this.Disc.val.ZKType = data;
+	})
+	
+	this.CloseFZCX = util.callBind(this,function(res) {
+		this.setComponentsManage(null,"FZCX");
+		console.log("辅助促销回调结果：", res);
+		if (res) {
+			this.FZCX.val = res; //选择商品后的提示信息
+		}
+	})
+
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -1366,14 +1410,14 @@ function GetSale(global, vue, target_name) {
 			let stime = this.getTime().toJSON();
 			commonSaleParm = {
 				KHID: this.Storeid,
-				SALEDATE: this.saledate?.toJSON()?.replace("T"," ")?.split('.')?.first(),
+				SALEDATE: this.saledate?.toJSON()?.replace("T", " ")?.split('.')?.first(),
 				POSID: this.POSID,
 				RYID: this.ryid,
 				BILL: newbill,
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime?.replace("T"," ")?.split('.')?.first()
+				SALETIME: stime?.replace("T", " ")?.split('.')?.first()
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1430,7 +1474,7 @@ function GetSale(global, vue, target_name) {
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
 			let newprm = that.createNewBill.call(that);
 			let new002 = new sale.sale002(newprm);
-			console.log(new002);
+			console.log("[GetSp]生成新 sale002:", new002);
 			new002.SPID = pm_spid;
 			new002.NO = that.sale002.length;
 			new002.STR1 = that.clikSpItem.SNAME;
@@ -1458,6 +1502,11 @@ function GetSale(global, vue, target_name) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
+		if (pm_row < this.currentOperation.lockRows) {
+			util.simpleMsg("该商品已被锁定!", true)
+			console.log("[UpdateSp]商品处于被锁定行，无法删除!");
+			return;
+		}
 		if (pm_qty > 0) {
 			this.sale002[pm_row].QTY = pm_qty;
 			let price = this.float(this.sale002[pm_row].PRICE);

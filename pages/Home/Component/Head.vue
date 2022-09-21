@@ -72,6 +72,10 @@
 							<image src="@/images/xgmima.png" mode="widthFix"></image>
 							<text>修改密码</text>
 						</view>
+						<view class="exit" @click="Back()">
+							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<text>返回上级</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -198,7 +202,7 @@
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
-				member_name:'',
+				member_name: '',
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
 				YW_MsgData: [], //业务类消息
@@ -235,7 +239,7 @@
 			that = this;
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
-				console.log("[Head]设置会员名称!",info);
+				console.log("[Head]设置会员名称!", info);
 				this.member_name = info.hyId;
 			}))
 			_msg.ShowMsg(that.KHID, "", res => {
@@ -300,6 +304,12 @@
 			this.Bind();
 		},
 		methods: {
+			Back: function() {
+				console.log("[Back]返回上一级...");
+				uni.navigateTo({
+					url:"../index/index"
+				})
+			},
 			Bind: function() {
 				console.log("[Head-Bind]执行开始!");
 				uni.$off('head-action');

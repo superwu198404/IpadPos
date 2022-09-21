@@ -91,6 +91,12 @@ var getReserveOrdersDetails = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+var getReserveOrdersPayed = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersPayed";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 var searchMapAddr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.searchMapAddr";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
@@ -178,6 +184,7 @@ export default {
 	GetPSCenter,
 	GetTHKHDA,
 	reserveOrdersUpdate,
+	getReserveOrdersPayed,
 	reserveOrdersStatusUpdate,
 	getReserveOrdersDetails,
 	updateReserveOrder

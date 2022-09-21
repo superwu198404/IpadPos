@@ -160,13 +160,13 @@
 				this.view.Criterias = !this.view.Criterias
 			},
 			EditOrder: function(item) {
-				console.log("[EditOrder]订单编辑:",item);
+				console.log("[EditOrder]订单编辑:", item);
 				this.extract_order = item;
 				this.view.Details = true;
 			},
 			ExtractOrder: function(item) {
 				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109";
-				console.log("[ExtractOrder]预定订单:",bhlb);
+				console.log("[ExtractOrder]预定订单:", bhlb);
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
 					bhlb: `(${bhlb})`,
@@ -176,10 +176,25 @@
 						if (this.view.mode) { //结算
 							item.XSTYPE = '1';
 							item.BILL_TYPE = 'Z121';
-							this.$to_sale_pages('sale_reserve_extract',{
-								sale1: item,
-								sale2: JSON.parse(res.data)
-							})
+							_extract.getReserveOrdersPayed({
+								bill: item.BILL
+							}, util.callBind(this, function(payeds) {
+								let payed = payeds.data;
+								console.log("[ExtractOrder]sale3获取结果:",payeds);
+								this.$to_sale_pages('sale_reserve_extract', {
+									sale1: item,
+									sale2: (function() {
+										let sale2 = JSON.parse(res.data);
+										sale2?.forEach(i => i.STR1 = i
+											.SNAME);
+										console.log(
+											"[ExtractOrder]预定提取 sale2 处理:",
+											sale2);
+										return sale2;
+									})(),
+									sale3: JSON.parse(payed)
+								})
+							}))
 						} else { //退款
 							let data = await LocalDataQuery(item.BILL);
 							if (ErrorData(data)) {
@@ -191,9 +206,17 @@
 							} else {
 								data.sale1[0].XSTYPE = '2'; //由于查询结果默认返回数组，所带索引去取
 								data.sale1[0].BILL_TYPE = 'Z171';
-								this.$to_sale_pages('sale_reserve_cancel',{
+								this.$to_sale_pages('sale_reserve_cancel', {
 									sale1: data.sale1[0],
-									sale2: data.sale2,
+									sale2: (function() {
+										let sale2 = data.sale2;
+										sale2?.forEach(i => i.STR1 = i
+											.SNAME);
+										console.log(
+											"[ExtractOrder]预定取消 sale2 处理:",
+											sale2);
+										return sale2;
+									})(),
 									sale3: data.sale3
 								})
 							}
@@ -204,7 +227,7 @@
 			},
 			ExtractOrder_version2: function(item) {
 				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109";
-				console.log("[ExtractOrder]预定订单:",bhlb);
+				console.log("[ExtractOrder]预定订单:", bhlb);
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
 					bhlb: `(${bhlb})`,

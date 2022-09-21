@@ -81,7 +81,7 @@
 							<view class="a-z" @click="MemberLogin(1)">
 								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="GetTSZKData()">
+							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
 							<!-- <view class="a-z" @click="SignIn()">
@@ -795,36 +795,6 @@
 				uni.$emit('set-member', this.mainSale.HY.val);
 				this.GetHyCoupons(member_info);
 			},
-			OpenBigCustomer: function(data) {
-				console.log("[CloseBigCustomer]大客户打开!", data);
-				// this.mainSale.ComponentsManage.DKF = true;
-				this.mainSale.setComponentsManage(null,"DKF");
-			},
-			CloseBigCustomer: function(data) {
-				console.log("[CloseBigCustomer]大客户关闭!", data);
-				this.mainSale.DKF.val = data;
-				uni.$emit('select-credit', data);
-			},
-			CloseReserveDrawer: function() {
-				console.log("[CloseReserveDrawer]预定录入关闭...");
-				// this.mainSale.ComponentsManage.openydCustmInput = false;
-				this.mainSale.setComponentsManage(null,"openydCustmInput");
-				console.log("[CloseReserveDrawer]结算单打开...");
-				// this.mainSale.ComponentsManage.statement = true;
-				this.mainSale.setComponentsManage(null,"statement");
-			},
-			SignIn: function() {
-				console.log("[SignIn]签到!");
-				uni.$emit('head-action', {
-					name: 'Sign'
-				})
-			},
-			DailySettlement: function() {
-				console.log("[DailySettlement]日结!");
-				uni.$emit('head-action', {
-					name: 'ConfirmRJ'
-				})
-			},
 			//展示特殊折扣
 			GetTSZKData: async function() {
 				//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
@@ -941,11 +911,20 @@
 				uni.$on("change", this.Change);
 				uni.$on("redirect", this.Redirect);
 				uni.$on("member-close", this.CloseMember);
-				uni.$on("close-big-customer", this.CloseBigCustomer);
-				uni.$on("open-big-customer", this.OpenBigCustomer);
-				uni.$on("reserve-drawer-close", this.CloseReserveDrawer);
-				uni.$on("close-tszk", this.CloseTSZK);
-				uni.$on("close-FZCX", this.CloseFZCX);
+				
+				uni.$on("close-big-customer", (mysale.XsTypeObj.sale_credit.CloseBigCustomer).bind(this.mainSale));
+				uni.$on("open-big-customer", (mysale.XsTypeObj.sale_credit.OpenBigCustomer).bind(this.mainSale));
+				// uni.$on("close-big-customer", this.CloseBigCustomer);
+				// uni.$on("open-big-customer", this.OpenBigCustomer);
+				
+				uni.$on("reserve-drawer-close", (mysale.XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this.mainSale));
+				// uni.$on("reserve-drawer-close", this.CloseReserveDrawer);
+				
+				uni.$on("close-tszk", this.mainSale.CloseTSZK);
+				// uni.$on("close-tszk", this.CloseTSZK);
+				
+				uni.$on("close-FZCX", this.mainSale.CloseFZCX);
+				// uni.$on("close-FZCX", this.CloseFZCX);
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
@@ -962,8 +941,8 @@
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
+			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			this.Bind();
-			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale");
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
