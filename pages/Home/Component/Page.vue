@@ -15,11 +15,11 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu">
+		<view class="menu gongju">
 			<view class="bills">
 				<label></label>
-				<image class="xz" src="@/images/gongju-hui.png" mode="widthFix"></image>
-				<image class="wx" src="@/images/gongju.png" mode="widthFix"></image>
+				<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
+				<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 				<text>工具</text>
 				<view class="chargeback">
 					<view class="currs">
