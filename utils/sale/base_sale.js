@@ -410,6 +410,7 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			console.log("[InitSale]预定取消初始化开始!");
 			this.actType = common.actTypeEnum.Refund;
+			this.old_bill = params.sale1.BILL;
 			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
@@ -457,6 +458,18 @@ var XsTypeObj = {
 				ynPintDisc: true, //是否打印折扣  
 				payOrRet: "", //支付还是退款
 			}
+		},
+		$saleFinishing: function(result) { //生成yd
+			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
+			this.sale003.concat(this.raw_order);
+			this.communication_for_oracle.push(
+				`UPDATE ydsale001 set YD_STATUS ='3' WHERE bill ='${this.old_bill}';"`
+			);
+			delete this.old_bill;
+			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:",
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`
+			);
 		},
 	},
 	//线上订单+线上提取
