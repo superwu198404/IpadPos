@@ -770,8 +770,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*辅助促销关闭回调
 	this.CloseFZCX = util.callBind(this, function(res) {
-		// this.setComponentsManage(null, "FZCX");
-		this.FZCX.open = false;
+		this.setComponentsManage(null, "FZCX");
+		// this.FZCX.open = false;
 		console.log("辅助促销回调结果：", res);
 		if (res) {
 			this.FZCX.val = res; //选择商品后的提示信息
@@ -1605,7 +1605,9 @@ function GetSale(global, vue, target_name, uni) {
 		if (!find) {
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
 			let newprm = that.createNewBill.call(that);
-			let new002 = new sale.sale002(newprm);
+			// let new002 = new sale.sale002(newprm);
+			let new002 = new sale.sale002();
+			new002 = Object.cover(new002, newprm);
 			console.log("[GetSp]生成新 sale002:", new002);
 			new002.SPID = pm_spid;
 			new002.NO = that.sale002.length;
@@ -1725,17 +1727,21 @@ function GetSale(global, vue, target_name, uni) {
 		//code...
 		//如果 operation 中包含就弹出
 		return new Promise(util.callBind(this, function(reslove, reject) {
-			if (this.currentOperation.FZCX) {
+			if (this.currentOperation.ynFzCx) {
 				console.log("[BeforeFk]此模式包含辅助促销操作...");
-				this.FZCX.open = true; //打开辅助促销
+				this.setComponentsManage(null, 'FZCX');
 				console.log("[BeforeFk]辅助促销:", {
-					open: this.FZCX.open,
 					count: Object.keys(this.FZCX.oval).length
 				});
-				uni.$once('close-FZCX', util.callBind(this, function() {
+				uni.$once('close-FZCX', util.callBind(this, function(e) {
 					console.log("[BeforeFk]辅助促销窗口关闭...");
-					return reslove(this.CurrentTypeCall("$beforeFk",
-						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+					if (e) {
+						return reslove(this.CurrentTypeCall("$beforeFk",
+							pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+
+					} else {
+						return reslove(false);
+					}
 				}))
 			} else {
 				console.log("[BeforeFk]此模式不包含辅助促销操作...");

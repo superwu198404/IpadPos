@@ -279,7 +279,7 @@
 			</ReserveDrawer>
 		</view>
 		<!-- 辅助促销 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX" style="text-align: right;">
+		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
@@ -382,12 +382,12 @@
 						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
-					<view class="h5" v-if="mainSale.currentOperation.ynFzCx">
+					<!-- <view class="h5" v-if="mainSale.currentOperation.ynFzCx">
 						<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>
 					</view>
 					<view class="h5" v-if="mainSale.FZCX.cval.msg">
 						<text>提示：{{mainSale.FZCX.cval.msg}}</text>
-					</view>
+					</view> -->
 					<view class="shoppbag" v-if="false">
 						<view class="hengs">
 							<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
@@ -407,7 +407,7 @@
 						</view>
 					</view>
 					<view class="confirm">
-						<button @click="mainSale.pay" class="btn">去支付</button>
+						<button @click="mainSale.pay" class="btn">下一步</button>
 					</view>
 					<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 						<text>结算单</text>
