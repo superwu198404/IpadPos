@@ -285,7 +285,7 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 
-				<view class="meminfo" v-if="mainSale.HY.val.hyId&&mainSale.HY.open">
+				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label>
@@ -346,7 +346,7 @@
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
 							<button class="btn" @click="mainSale.HY.open=true"
-								v-if="mainSale.HY.val.hyId">{{mainSale.HY.val.hyId}}</button>
+								v-if="ShowHY">{{mainSale.HY.val.hyId}}</button>
 							<button class="btn" v-else>未登录...</button>
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
@@ -519,16 +519,8 @@
 				} else
 					return [];
 			},
-			AuxiliaryPromotion: function() {
-				if (this.mainSale.FZCX.val && Array.isArray(this.mainSale.FZCX.val) && this.mainSale.FZCX.val.length >
-					0) {
-					if (this.mainSale.FZCX.val[0].Details && Array.isArray(this.mainSale.FZCX.val[0].Details)) {
-						return this.mainSale.FZCX.val[0].Details;
-					} else {
-						return [];
-					}
-				} else
-					return [];
+			ShowHY: function() {
+				return this.mainSale.HY.val?.hyId;
 			},
 			MemberBalance: function() {
 				return (this.mainSale.HY.val?.Balance ?? 0) / 100;

@@ -85,12 +85,13 @@ var XsTypeObj = {
 
 			this.sale001.XSTYPE = 1;
 			//手工折扣额的处理
-			let SKY_DISCOUNT = this.float(this.sale001.TNET % 1, 2);
+			console.log("原金额：", this.sale001.TNET);
+			let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
 			console.log("手工折扣额：", SKY_DISCOUNT);
-			this.sale001.TNET = this.sale001.TNET - SKY_DISCOUNT;
-			this.sale001.BILLDISC = this.float(this.sale001.BILLDISC + SKY_DISCOUNT, 2);
-			this.sale001.ROUND = this.float(this.sale001.ROUND + SKY_DISCOUNT, 2);
-			this.sale001.TDISC = this.float(this.sale001.TDISC + SKY_DISCOUNT, 2);
+			this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
+			this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+			this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
+			this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
@@ -1337,6 +1338,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[PayedResult]支付结果:", result);
 		if (!result.code) { //取消或者失败了 不走后续的处理
 			util.simpleMsg(result.msg, !result.code);
+			//清除一下辅助促销
+			this.FZCX.cval = null;
 			return;
 		}
 		this.sale001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
@@ -1736,6 +1739,17 @@ function GetSale(global, vue, target_name, uni) {
 				uni.$once('close-FZCX', util.callBind(this, function(e) {
 					console.log("[BeforeFk]辅助促销窗口关闭...");
 					if (e) {
+						//追加辅助促销的差价和折扣
+						if (Object.keys(this.FZCX.cval).length > 0) {
+							this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX
+								.cval.payAmount, 2); //加上辅助促销的的差价
+							this.FZCX.cval.data.forEach(r => {
+								this.sale001.BILLDISC = this.float((this.sale001
+										.BILLDISC || 0) + (r.ONET - r
+										.CXNET),
+									2);
+							})
+						}
 						return reslove(this.CurrentTypeCall("$beforeFk",
 							pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 
@@ -1763,7 +1777,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//重置销售单据
-	this.resetSaleBill = function() {
+	this.resetSaleBill = util.callBind(this, function() {
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;
@@ -1782,7 +1796,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_sqlite = [];
 		this.SetDefaultType();
 		that.update()
-	}
+		console.log("清空后的：", this.sale001);
+	})
 
 	//打印的方法
 	this.$print = function(e) {

@@ -74,9 +74,9 @@
 			that = this;
 			that.FZCXDatas = that._FZCXDatas.oval;
 			//如果之前选择过 则再赋值
-			if (that._FZCXDatas && that._FZCXDatas.cval) {
-				this.FZCXRes = that._FZCXDatas.cval;
-			}
+			// if (that._FZCXDatas && that._FZCXDatas.cval) {
+			// 	this.FZCXRes = that._FZCXDatas.cval;
+			// }
 			that.FZCXDatasOld = JSON.parse(JSON.stringify(that._FZCXDatas.oval));
 		},
 		methods: {

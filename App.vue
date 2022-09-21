@@ -99,15 +99,6 @@
 			msgInt: 0, //消息定时id
 			Int: null //单据定时传输的定时器
 		},
-		start:function()
-		{
-		
-			console.log('开始进行定时通讯')
-			//3min执行一次销售单传输
-			int = setInterval(() => {
-				common.TransLiteData();
-			}, 1000 * 60 * 3);
-		},
 		onLaunch: function() {
 			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
@@ -128,8 +119,7 @@
 			// #endif
 		},
 		onShow: function() {
-			console.log('App Show')
-			console.log('定时ID:', this.globalData.Int);
+			console.log('App Show');
 			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {
