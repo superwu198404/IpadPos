@@ -15,6 +15,36 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
+		<view class="menu">
+			<view>
+				<label></label>
+				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+				<text>工具</text>
+				<view class="chargeback">
+					<view class="currs">
+						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<text>当前促销活动</text>
+					</view>
+					<view>
+						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<text>通讯</text>
+					</view>
+					<view>
+						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<text>重读</text>
+					</view>
+					<view>
+						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
+						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<text>未上传</text>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 

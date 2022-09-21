@@ -169,7 +169,7 @@ page {
 	z-index: 999;
 }
 
-.menu view .chargeback label {
+.menu view .chargeback view {
 	margin: 0 10rpx;
 	width: 30%;
 	display: flex;
@@ -178,22 +178,22 @@ page {
 	flex-direction: column;
 }
 
-.menu view .chargeback label image {
+.menu view .chargeback view image {
 	width: 100rpx;
 	height: 100rpx;
 	margin: 0 0 10rpx;
 }
 
-.menu view .chargeback label.currs {
+.menu view .chargeback view.currs {
 	color: #006B44;
 	font-weight: 700;
 }
 
-.menu view .chargeback label.currs .xz {
+.menu view .chargeback view.currs .xz {
 	display: block;
 }
 
-.menu view .chargeback label.currs .wx {
+.menu view .chargeback view.currs .wx {
 	display: none;
 }
 
@@ -764,7 +764,7 @@ page {
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.4);
 	width: 100%;
 	height: 100%;
 	z-index: 999;
