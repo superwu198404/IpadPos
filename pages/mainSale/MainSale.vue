@@ -75,10 +75,10 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="Letters()">{{mainSale.selectFlag}}
+							<view class="a-z" @click="mainSale.Letters()">{{mainSale.selectFlag}}
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="MemberLogin(1)">
+							<view class="a-z" @click="mainSale.MemberLogin(1)">
 								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.GetTSZKData">
@@ -273,17 +273,19 @@
 
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mainSale.ReserveInfoInput"
 				:sale="mainSale.sale001">
 			</ReserveDrawer>
 		</view>
 		<!-- 辅助促销插件 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX" style="text-align: right;">
+		<view class="boxs" v-if="false" style="text-align: right;">
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
+				<FZCX v-if="Object.keys(mainSale.FZCX.oval).length&&mainSale.FZCX.open" :_FZCXDatas="mainSale.FZCX"
+					:_sale="mainSale.sale001"></FZCX>
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -379,7 +381,7 @@
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
 					<view class="h5" v-if="mainSale.currentOperation.ynFzCx">
-						<text>赠品</text><text @click="MoreFZCX()">点击查看 ></text>
+						<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>
 					</view>
 					<view class="h5" v-if="mainSale.FZCX.cval.msg">
 						<text>提示：{{mainSale.FZCX.cval.msg}}</text>
@@ -544,167 +546,6 @@
 			}
 		},
 		methods: {
-			Change: function(menu) {
-				console.log("[Change]菜单点击触发!", menu);
-				if (menu.info.clickType === 'sale_credit') {
-					uni.$once('select-credit', util.callBind(this, function(data) {
-						if (Object.keys(data ?? {}).length > 0) {
-							console.log("[Change]切换到赊销!");
-							this.mainSale.SetManage('sale_credit'); //切换到赊销
-							this.mainSale.$initSale('sale_credit'); //切换到赊销
-							// uni.$emit('set-menu','sale_credit');
-						}
-					}));
-				}
-				this.mainSale.SetType(menu.info.clickType);
-			},
-			Redirect: function(info) {
-				console.log("[Redirect]重定向至销售主页!", info);
-				let menu_info = mysale.XsTypeObj[info.name];
-				console.log("[Redirect]模式信息:", menu_info);
-				this.mainSale.$initSale(menu_info, info.params);
-				this.mainSale.SetManage('sale');
-			},
-			CloseMember: function(member_info) {
-				// this.mainSale.ComponentsManage.HY = false;
-				this.mainSale.setComponentsManage(null, "HY");
-				console.log("[CloseMember]会员页关闭!", member_info);
-				this.mainSale.HY.val = member_info;
-				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
-				uni.$emit('set-member', this.mainSale.HY.val);
-				this.GetHyCoupons(member_info);
-			},
-			//展示特殊折扣
-			GetTSZKData: async function() {
-				//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
-				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
-				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
-				// this.mainSale.ComponentsManage.Disc = true;
-				this.mainSale.setComponentsManage(null, "Disc");
-				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
-			},
-			ReserveInfoInput: function(sale1) {
-				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
-					ydsale1: this.mainSale.ydsale001,
-					sale1: this.mainSale.sale001
-				});
-				Object.cover(this.mainSale.sale001, sale1); //用于 sale001,如 DNET 赋值
-				Object.cover(this.mainSale.ydsale001, sale1); //用于 ydsale001
-				console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
-					ydsale1: this.mainSale.ydsale001,
-					sale1: this.mainSale.sale001
-				});
-				this.mainSale.PayParamAssemble();
-			},
-			ReserveInfoEdit: function() {
-
-			},
-			CloseTSZK: function(data) {
-				// this.mainSale.ComponentsManage.Disc = false;
-				this.mainSale.setComponentsManage(null, "Disc");
-				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
-				this.mainSale.Disc.val.ZKType = data;
-			},
-			exits: function(e) {
-				this.dropout = !this.dropout;
-			},
-			Statements: function(e) {
-				this.statements = !this.statements
-			},
-			Letters: function(e) {
-				this.Alphabetical = true
-			},
-			GetHyCoupons: function(hyinfo) {
-				console.log("[GetHyCoupons]打印会员信息：", this.mainSale.HY.val);
-				if (hyinfo?.hyId) {
-					this.mainSale.HY.val.coupons = [];
-					this.mainSale.update();
-					_member.CouponList("获取中...", {
-						brand: this.brand,
-						data: {
-							hyid: this.mainSale.HY.val.hyId,
-							phone: this.mainSale.HY.val.Phone
-						}
-					}, util.callBind(this, function(res) {
-						if (res.code) {
-							if (res.data && Array.isArray(res.data)) {
-								this.mainSale.HY.val.coupons = res.data;
-								this.mainSale.update();
-							}
-							this.mainSale.ShowStatement();
-						}
-					}), (err) => {
-						console.log("[GetHyCoupons]异常数据：", res)
-					})
-				}
-			},
-			MemberLogin: function(e) { //会员登录
-				console.log("[MemberLogin]会员登录!");
-				this.mainSale.setComponentsManage(null, "HY");
-				// this.mainSale.ComponentsManage.HY = true;
-				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.HY);
-			},
-			Bagslist: function(e) {
-				this.Shoppingbags = true,
-					this.Memberinfo = false
-			},
-			MoreFZCX: function(e) {
-				// this.mainSale.ComponentsManage.FZCX = true;
-				this.mainSale.setComponentsManage(null, "FZCX");
-			},
-			Calculate: function(item, type) {
-				item.BQTY = Number(item.BQTY) + type;
-				if (item.BQTY < 0) {
-					item.BQTY = 0;
-				}
-			},
-			//辅助促销回调
-			CloseFZCX: function(res) {
-				// console.log("源辅助促销数据：", this.mainSale.FZCX.val);
-				// this.mainSale.ComponentsManage.FZCX = false;
-				this.mainSale.setComponentsManage(null, "FZCX");
-				console.log("辅助促销回调结果：", res);
-				if (res) {
-					// let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);
-					// this.mainSale.FZCX.val.chooseMsg = res.msg; //选择商品后的提示信息
-					// this.mainSale.FZCX.val.chooseData = res.data; //选择的商品
-					this.mainSale.FZCX.val = res; //选择商品后的提示信息
-					// console.log("辅助促销计算结果:", res);
-				}
-			},
-
-			Moreand: function(e) {
-				this.Chargeback = !this.Chargeback
-			},
-			Bind: function() {
-				console.log("[Bind]UNBIND!");
-				uni.$off("change");
-				uni.$off("redirect");
-				uni.$off("member-close");
-				uni.$off("close-big-customer");
-				uni.$off("open-big-customer");
-				uni.$off("reserve-drawer-close");
-				uni.$off("close-tszk");
-				uni.$off("close-FZCX");
-				console.log("[Bind]BIND!");
-				uni.$on("change", this.Change);
-				uni.$on("redirect", this.Redirect);
-				uni.$on("member-close", this.CloseMember);
-				
-				uni.$on("close-big-customer", (mysale.XsTypeObj.sale_credit.CloseBigCustomer).bind(this.mainSale));
-				uni.$on("open-big-customer", (mysale.XsTypeObj.sale_credit.OpenBigCustomer).bind(this.mainSale));
-				// uni.$on("close-big-customer", this.CloseBigCustomer);
-				// uni.$on("open-big-customer", this.OpenBigCustomer);
-				
-				uni.$on("reserve-drawer-close", (mysale.XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this.mainSale));
-				// uni.$on("reserve-drawer-close", this.CloseReserveDrawer);
-				
-				uni.$on("close-tszk", this.mainSale.CloseTSZK);
-				// uni.$on("close-tszk", this.CloseTSZK);
-				
-				uni.$on("close-FZCX", this.mainSale.CloseFZCX);
-				// uni.$on("close-FZCX", this.CloseFZCX);
-			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
@@ -721,7 +562,7 @@
 		created() {
 			console.log("[MainSale]开始构造函数!");
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
-			this.Bind();
+			this.mainSale.Bind();
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
