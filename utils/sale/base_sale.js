@@ -5,6 +5,7 @@ import _main from '@/api/business/main.js';
 import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
+import _member from '@/api/hy/MemberInterfaces.js';
 
 import {
 	Sale3Model,
@@ -206,7 +207,7 @@ var XsTypeObj = {
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
-			"FZCX": true,//是否可以打开辅助促销组件
+			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"sale": true, //从这里开始都是销售模式
@@ -733,6 +734,7 @@ var XsTypeObj = {
  */
 function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
+	let brand = global.brand;
 	var that = this;
 	var uni = uni;
 	this.billindex = 0;
@@ -773,29 +775,133 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return newbill;
 	}
-
-	this.GetTSZKData = util.callBind(this,async function() {
+	//*func*特殊折扣初始化数据
+	this.GetTSZKData = util.callBind(this, async function() {
 		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
 		console.log("传入折扣的大客户数据：", this.DKF.val.DKHID);
 		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKHID); //传入大客户值
 		this.setComponentsManage(null, "Disc");
 		console.log("首页初始化的折扣数据：", this.Disc.val.ZKData);
 	})
-	
-	this.CloseTSZK = util.callBind(this,function(data) {
-		this.setComponentsManage(null,"Disc");
+	//*func*特殊折扣关闭回调
+	this.CloseTSZK = util.callBind(this, function(data) {
+		this.setComponentsManage(null, "Disc");
 		console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
 		this.Disc.val.ZKType = data;
 	})
-	
-	this.CloseFZCX = util.callBind(this,function(res) {
-		this.setComponentsManage(null,"FZCX");
+	//*func*辅助促销关闭回调
+	this.CloseFZCX = util.callBind(this, function(res) {
+		// this.setComponentsManage(null, "FZCX");
+		this.FZCX.open = false;
 		console.log("辅助促销回调结果：", res);
 		if (res) {
 			this.FZCX.val = res; //选择商品后的提示信息
 		}
 	})
+	//*func*获取会员优惠券
+	this.GetHyCoupons = util.callBind(this, function() {
+		console.log("[GetHyCoupons]打印会员信息：", this.HY.val);
+		if (hyinfo?.hyId) {
+			this.HY.val.coupons = [];
+			this.update();
+			_member.CouponList("获取中...", {
+				brand: brand,
+				data: {
+					hyid: this.HY.val.hyId,
+					phone: this.HY.val.Phone
+				}
+			}, util.callBind(this, function(res) {
+				if (res.code) {
+					if (res.data && Array.isArray(res.data)) {
+						this.HY.val.coupons = res.data;
+						this.update();
+					}
+					// this.ShowStatement();
+				}
+			}), (err) => {
+				console.log("[GetHyCoupons]异常数据：", res)
+			})
+		}
+	})
 
+	//*func*会员登录关闭回调
+	this.CloseMember = util.callBind(this, function(member_info) {
+		this.setComponentsManage(null, "HY");
+		console.log("[CloseMember]会员页关闭!", member_info);
+		this.HY.val = member_info;
+		console.log("[CloseMember]会员信息:", this.HY.val);
+		uni.$emit('set-member', this.HY.val);
+	})
+	//*func*会员登录
+	this.MemberLogin = util.callBind(this, function(e) { //会员登录
+		console.log("[MemberLogin]会员登录!");
+		this.setComponentsManage(null, "HY");
+		console.log("[MemberLogin]状态信息:", this.ComponentsManage.HY);
+	})
+	//*func*菜单切换
+	this.Change = util.callBind(this, function(menu) {
+		console.log("[Change]菜单点击触发!", menu);
+		if (menu.info.clickType === 'sale_credit') {
+			uni.$once('select-credit', util.callBind(this, function(data) {
+				if (Object.keys(data ?? {}).length > 0) {
+					console.log("[Change]切换到赊销!");
+					this.SetManage('sale_credit'); //切换到赊销
+					this.$initSale('sale_credit'); //切换到赊销
+					// uni.$emit('set-menu','sale_credit');
+				}
+			}));
+		}
+		this.SetType(menu.info.clickType);
+	})
+	//*func*菜单切换
+	this.Redirect = util.callBind(this, function(info) {
+		console.log("[Redirect]重定向至销售主页!", info);
+		let menu_info = mysale.XsTypeObj[info.name];
+		console.log("[Redirect]模式信息:", menu_info);
+		this.$initSale(menu_info, info.params);
+		this.SetManage('sale');
+	})
+	//*func*预定录入回调
+	this.ReserveInfoInput = util.callBind(this, function(sale1) {
+		console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
+			ydsale1: this.ydsale001,
+			sale1: this.sale001
+		});
+		Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
+		Object.cover(this.ydsale001, sale1); //用于 ydsale001
+		console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+			ydsale1: this.ydsale001,
+			sale1: this.sale001
+		});
+		this.PayParamAssemble();
+	})
+	//*func*商品字母筛选
+	this.Letters = util.callBind(this, function(e) {
+		this.Page.Alphabetical = true
+	})
+	//*func*回调绑定监听
+	this.Bind = util.callBind(this, function() {
+		console.log("[Bind]UNBIND!");
+		uni.$off("change");
+		uni.$off("redirect");
+		uni.$off("member-close");
+		uni.$off("close-big-customer");
+		uni.$off("open-big-customer");
+		uni.$off("reserve-drawer-close");
+		uni.$off("close-tszk");
+		uni.$off("close-FZCX");
+		console.log("[Bind]BIND!");
+		uni.$on("change", this.Change);
+		uni.$on("redirect", this.Redirect);
+		uni.$on("member-close", this.CloseMember);
+
+		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
+		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
+		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
+
+		uni.$on("close-tszk", this.CloseTSZK);
+		uni.$on("close-FZCX", this.CloseFZCX);
+	})
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -873,6 +979,9 @@ function GetSale(global, vue, target_name, uni) {
 			this.base.ComponentsManage["HY"] = false;
 			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
+			if (this.cval) {
+				this.GetHyCoupons();
+			}
 			that.update();
 		}
 	}
@@ -933,6 +1042,7 @@ function GetSale(global, vue, target_name, uni) {
 		base: {},
 		cval: [], //选中的数据
 		oval: [], //初始数据
+		open: false,
 		get val() {
 			return this.cval;
 		},
@@ -1675,6 +1785,8 @@ function GetSale(global, vue, target_name, uni) {
 
 	}
 }
+
+
 export default {
 	XsTypeObj,
 	GetSale
