@@ -133,57 +133,11 @@
 
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
-
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
-				<view class="commods">
-					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
-					</view>
-					<view class="cods">
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
-
-					</view>
-					<view class="price">
-						<text class="jiage">{{mainSale.clikSpItem.PRICE}}</text>
-						<view> <button @click="mainSale.chengedQty"
-								data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button
-								@click="mainSale.chengedQty" data-qty="1">+</button></view>
-					</view>
-					<view class="selectlist">
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
-							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
-						</view>
-					</view>
-					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
-						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
-								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID">{{specs.SPECS}}</label>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
-				</view>
-			</view>
-		</view>
-
-		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
-			<view class="popup">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×</button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
@@ -197,7 +151,7 @@
 						</label>
 					</view>
 					<view class="price">
-						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
+						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
 							<label>{{mainSale.clikSpItem.inputQty}}</label>
@@ -208,14 +162,13 @@
 						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
 							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
+							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"  @click="mainSale.updateSp(spinx,sp.SPID,0)"  class="del">×</button></label>
 						</view>
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
-								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID">{{specs.SPECS}}</label>
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-spid="specs.SPID"  :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"   @click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
 					<view class="confirm">
@@ -225,52 +178,7 @@
 			</view>
 		</view>
 
-		<!-- 蛋糕属性选择 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
-			<view class="popup">
-				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
-				<view class="commods">
-					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
-					</view>
-					<view class="cods">
-						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
-						</label>
-						<label>
-							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
-						</label>
-					</view>
-					<view class="price">
-						<text class="jiage">{{mainSale.spPrice[mainSale.clikSpItem.SPID].PRICE}}</text>
-						<view>
-							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
-							<label>{{mainSale.clikSpItem.inputQty}}</label>
-							<button @click="mainSale.chengedQty" data-qty="1">+</button>
-						</view>
-					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
-							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button class="del">×</button></label>
-						</view>
-					</view>
-					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
-						<view class="sizelist">
-							<label :class="specs.SPID==mainSale.clikSpItem.selectSPID?curr:''"
-								v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID">{{specs.SPECS}}</label>
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
-				</view>
-			</view>
-		</view>
-
+		
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mainSale.ReserveInfoInput"
@@ -606,5 +514,17 @@
 		width: 100%;
 		height: 100%;
 		z-index: 100;
+	}
+	.popup{
+		position: relative;
+		padding-bottom: 140rpx;
+	}
+	.popup .confirm{
+		position: absolute;
+		bottom:0;
+		padding:20rpx 0 40rpx;
+		width:90%;
+		left: 5%;
+		text-align: center;
 	}
 </style>

@@ -576,13 +576,13 @@ page {
 }
 .commods .sizes{
 	min-height: 300rpx;
-	margin-top:20rpx;
+	
 }
 .sizes .sizelist {
 	display: flex;
 	flex-wrap: wrap;
+	margin-bottom:30rpx;
 }
-
 .sizes .sizelist label {
 	display: block;
 	background-color: #fff;

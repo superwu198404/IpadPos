@@ -55,10 +55,12 @@ var XsTypeObj = {
 		$click() {
 			return true;
 		},
-		$initSale: function(params) {
+		$initSale: function(params) 
+		{
 			this.actType = common.actTypeEnum.Payment
 			console.log("[sale-$initSale]params:", params);
-			if (this.actType != common.actTypeEnum.Payment) {
+			if (this.actType != common.actTypeEnum.Payment) 
+			{
 				this.operation.ynFzCx = false;
 				this.ComponentsManage.FZCX = false;
 			}
@@ -399,6 +401,7 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			console.log("[InitSale]预定取消初始化开始!");
 			this.actType = common.actTypeEnum.Refund;
+			this.old_bill = params.sale1.BILL;
 			this.allOperation.actType = false;
 			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
 			this.sale001 = params.sale1 ?? {};
@@ -446,6 +449,18 @@ var XsTypeObj = {
 				ynPintDisc: true, //是否打印折扣  
 				payOrRet: "", //支付还是退款
 			}
+		},
+		$saleFinishing: function(result) { //生成yd
+			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
+			this.sale003.concat(this.raw_order);
+			this.communication_for_oracle.push(
+				`UPDATE ydsale001 set YD_STATUS ='3' WHERE bill ='${this.old_bill}';"`
+			);
+			delete this.old_bill;
+			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:",
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`
+			);
 		},
 	},
 	//线上订单+线上提取
@@ -560,7 +575,8 @@ var XsTypeObj = {
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
 		},
-		$click() {
+		$click() 
+		{
 			this.SetManage("sale_takeaway_reserve");
 			return false;
 		},
@@ -1074,9 +1090,9 @@ function GetSale(global, vue, target_name, uni) {
 		that.selectPlid = e.currentTarget.dataset.plid;
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 	}
-	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表
+	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表  ，初始化促销单 
 	this.SetAllGoods = function(pm_list, pm_price) {
-		cx.Cxdict();
+		cx.Cxdict(); 
 		this.spPrice = pm_price;
 		this.Page.$set(this.Page[this.pageName], "spPrice", this.spPrice);
 		this.Allsplist = pm_list;
@@ -1265,20 +1281,25 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.inputQty = 0;
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
+			
+			that.log("查看蛋糕包含的品类" + JSON.stringify(that.clikSpItem.specslist));
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
-			that.clikSpItem.PRICE = that.spPrice(that.clikSpItem.selectSPID);
+			
+			
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
 		}
-
+        that.clikSpItem.PRICE   =  that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
 	}
 	this.selectSPID_Chenged = function(e) {
+		that.log("进入事件：" + JSON.stringify(e.currentTarget.dataset));
 		let spid = e.currentTarget.dataset.spid;
-		that.clikSpItem.selectSPID = that.clikSpItem.spid;
-		that.clikSpItem.PRICE = that.spPrice(spid);
+		that.log("选择的商品编码：" + JSON.stringify(spid));
+		that.clikSpItem.selectSPID = spid;
+		that.clikSpItem.PRICE   =  that.spPrice[spid].PRICE;
 		that.log("" + JSON.stringify(that.clikSpItem));
 		that.update();
 	}
@@ -1350,13 +1371,15 @@ function GetSale(global, vue, target_name, uni) {
 		if (result.code) {
 			util.simpleMsg(result.msg);
 			//反写一下会员id
-			if (this.sale001.CUID) {
+			if (this.sale001.CUID) 
+			{
 				this.HY.cval = {};
 				this.HY.cval.hyId = this.sale001.CUID;
 			}
 			console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
 			//如果允许辅助促销
-			if (this.currentOperation.ynFzCx) {
+			if (this.currentOperation.ynFzCx) 
+			{
 				let FZCXVal = this.FZCX.cval;
 				console.log("[PayedResult]辅助促销的结果：", FZCXVal);
 				if (Object.keys(FZCXVal).length != 0) {
@@ -1375,7 +1398,9 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[PayedResult]调用执行 SaleFinishing 中...");
 			try {
 				this.$saleFinishing(result.data);
-			} catch (err) {
+			} 
+			catch (err) 
+			{
 				console.log("[PayedResult]调用执行 SaleFinishing 异常:", err);
 			}
 			console.log("[PayedResult]准备创建销售单记录...", {
@@ -1539,7 +1564,6 @@ function GetSale(global, vue, target_name, uni) {
 				DPID: this.DPID,
 				GCID: this.GCID,
 				SALETIME: stime,
-				CLTIME: stime,
 				YN_OK: 'N', //默认为 N
 				YN_SC: 'X', //默认为 X
 				YAER: _date.getDateByParam("Y"),
@@ -1589,6 +1613,7 @@ function GetSale(global, vue, target_name, uni) {
 
 		return pm_input;
 	}
+	
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
 		console.log("[GetSp]获取商品详情:");
@@ -1624,7 +1649,6 @@ function GetSale(global, vue, target_name, uni) {
 			price = that.float(price, 2);
 			new002.OPRICE = price;
 			new002.PRICE = price;
-			new002.OPRICE = price;
 			new002.QTY = pm_qty;
 			new002.NET = that.float(pm_qty * price, 2);
 			new002.DISCRATE = 0;
@@ -1639,7 +1663,8 @@ function GetSale(global, vue, target_name, uni) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_row < this.currentOperation.lockRows) {
+		if (pm_row < this.currentOperation.lockRows) 
+		{
 			util.simpleMsg("该商品已被锁定!", true)
 			console.log("[UpdateSp]商品处于被锁定行，无法删除!");
 			return;
@@ -1668,12 +1693,14 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = async function() {
+	this.SaleNetAndDisc = async function() 
+	{
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
 		}
-		if (that.currentOperation.ynFzCx) {
+		if (that.currentOperation.ynFzCx) 
+		{
 			this.computeFzCx();
 		}
 		if (that.currentOperation.Disc) {
@@ -1765,7 +1792,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//付款之后生成订单前触发
-	this.$saleFinishing = function(sales) {
+	this.$saleFinishing = function(sales) 
+	{
 		console.log("[$SaleFinishing]支付完毕后触发:", sales);
 		this.CurrentTypeCall("$saleFinishing", sales);
 	}
