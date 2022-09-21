@@ -207,7 +207,6 @@ var XsTypeObj = {
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
-			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"sale": true, //从这里开始都是销售模式
@@ -288,6 +287,8 @@ var XsTypeObj = {
 		operation: {
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"FZCX": true, //是否可以打开辅助促销组件
+			"ynFzCx": true, //是否可以辅助促销
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -378,10 +379,14 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
 			this.sale003.concat(this.raw_order);
-			this.communication_for_oracle.push(`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`);
+			this.communication_for_oracle.push(
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`
+			);
 			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:", `UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`);
+			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:",
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`
+			);
 		},
 		async $saleFinied(sales) {
 			//一些特殊的设置 如积分上传
@@ -1409,12 +1414,12 @@ function GetSale(global, vue, target_name, uni) {
 		this.resetSaleBill();
 	}
 
-	this.pay = function() {
+	this.pay = async function() {
 		if (!that.sale002 || that.sale002.length == 0) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
-		if (that.$beforeFk()) {
+		if (await that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
 			that.PayParamAssemble();
 		} else {
@@ -1718,7 +1723,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//付款之前触发
 	this.$beforeFk = function(pm_inputParm) {
-		console.log("[$BeforeFk]支付前触发:", pm_inputParm);
+		console.log("[BeforeFk]支付前触发:", pm_inputParm);
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
@@ -1730,7 +1735,25 @@ function GetSale(global, vue, target_name, uni) {
 		//code...
 		//可以使用的支付方式 
 		//code...
-		return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+		//如果 operation 中包含就弹出
+		return new Promise(util.callBind(this, function(reslove, reject) {
+			if (this.currentOperation.FZCX) {
+				console.log("[BeforeFk]此模式包含辅助促销操作...");
+				this.FZCX.open = true; //打开辅助促销
+				console.log("[BeforeFk]辅助促销:", {
+					open: this.FZCX.open,
+					count: Object.keys(this.FZCX.oval).length
+				});
+				uni.$once('close-FZCX', util.callBind(this, function() {
+					console.log("[BeforeFk]辅助促销窗口关闭...");
+					return reslove(this.CurrentTypeCall("$beforeFk",
+						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+				}))
+			} else {
+				console.log("[BeforeFk]此模式不包含辅助促销操作...");
+				return reslove(this.CurrentTypeCall("$beforeFk", pm_inputParm));
+			}
+		}));
 	}
 
 	//付款之后生成订单前触发
