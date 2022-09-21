@@ -100,6 +100,16 @@
 					cancelText: "否",
 					confirmText: "是",
 					success: res => {
+						let int = getApp().globalData.Int;
+						console.log("传输定时ID:", int);
+						if (!int) {
+							//3min执行一次销售单传输
+							int = setInterval(() => {
+								common.TransLiteData();
+							}, 1000 * 60 * 3);
+							getApp().globalData.Int = int;
+							console.log("本次单据传输定时ID:", int);
+						}
 						if (res.confirm) {
 							if (that.signOutDates.length > 0) { //有日结数据
 								that.SignOut(); //发起日结
@@ -114,7 +124,6 @@
 									url: "/pages/index/index"
 								});
 							}
-
 						} else {
 							if (store.RYTYPE != "SYSTEM") {
 								uni.redirectTo({

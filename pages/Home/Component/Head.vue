@@ -307,7 +307,7 @@
 			Back: function() {
 				console.log("[Back]返回上一级...");
 				uni.navigateTo({
-					url:"../index/index"
+					url: "../index/index"
 				})
 			},
 			Bind: function() {
@@ -376,6 +376,8 @@
 						}
 						console.log("门店信息:", util.getStorage("store"));
 						util.removeStorage("hyinfo"); //清除会员信息
+						clearInterval(getApp().globalData.Int); //取消定时传输
+						getApp().globalData.Int = null;
 						uni.redirectTo({
 							url: "/pages/Login/Login",
 							complete: r => {
@@ -408,6 +410,8 @@
 						// } else if (uni.getSystemInfoSync().platform == 'android') {
 						// 	plus.runtime.quit();
 						// }
+						clearInterval(getApp().globalData.Int); //取消定时传输
+						getApp().globalData.Int = null;
 						uni.redirectTo({
 							url: "../Center/Center"
 						})
