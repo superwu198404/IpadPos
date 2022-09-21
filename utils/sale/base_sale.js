@@ -801,7 +801,7 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*获取会员优惠券
 	this.GetHyCoupons = util.callBind(this, function() {
 		console.log("[GetHyCoupons]打印会员信息：", this.HY.val);
-		if (hyinfo?.hyId) {
+		if (this.HY.val.hyId) {
 			this.HY.val.coupons = [];
 			this.update();
 			_member.CouponList("获取中...", {
@@ -972,6 +972,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.HY = {
 		cval: {},
 		base: {},
+		open: false,
 		get val() {
 			return this.cval;
 		},
@@ -980,7 +981,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
 			if (this.cval) {
-				this.GetHyCoupons();
+				this.base.GetHyCoupons();
 			}
 			that.update();
 		}
