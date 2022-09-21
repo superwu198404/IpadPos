@@ -66,6 +66,7 @@ page {
 	position: absolute;
 	bottom:0;
 	background-color: #fff;
+	border-top: 1rpx gray solid;
 }
 .menu .bills {
 	width: 100%;
