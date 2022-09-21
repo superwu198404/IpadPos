@@ -57,8 +57,13 @@ page {
 	height: 90%;
 	padding-bottom: 50%;
 }
-
-.menu view {
+.gongju{
+	height:160rpx;
+	padding:0;
+	display: flex;
+	align-items: center;
+}
+.menu .bills {
 	width: 100%;
 	text-align: center;
 	display: flex;
@@ -69,8 +74,10 @@ page {
 	position: relative;
 	/* margin-bottom: 1%; */
 }
-
-.menu view label {
+.menu .bills{
+	position: relative;
+}
+.menu .bills label {
 	animation: scaleDs 0.5s ease-in-out;
 	-webkit-animation: scaleDs 0.5s ease;
 }

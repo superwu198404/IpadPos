@@ -280,7 +280,8 @@ var XsTypeObj = {
 			});
 		},
 		//支付完成以后
-		$saleFinied: function() {
+		$saleFinied: function() 
+		{
 
 		},
 		CloseReserveDrawer: function() {
@@ -309,9 +310,9 @@ var XsTypeObj = {
 			this.old_bill = params.sale1.BILL;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			console.log("[sale_reserve_extract]SALE002:", params.sale2);
+			  console.log("[sale_reserve_extract]SALE002:", params.sale2);
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			console.log("[sale_reserve_extract]SALE003:", params.sale3);
+			  console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -339,6 +340,9 @@ var XsTypeObj = {
 				sale3: this.sale003,
 				sale3_raw: this.raw_order
 			});
+			//已经支付的信息
+			
+			//会员
 		},
 		///对打印的控制
 		$print: function() {
@@ -417,7 +421,8 @@ var XsTypeObj = {
 			}
 		},
 	},
-	sale_reserve_cancel: {
+	sale_reserve_cancel: 
+	{
 		xstype: "4",
 		clickType: "sale_reserve_cancel",
 		nameSale: "预定取消",
@@ -550,7 +555,8 @@ var XsTypeObj = {
 		nameSale: "外卖单",
 		icon_open: require("@/images/waimaid.png"),
 		icon_close: require("@/images/waimaid-hui.png"),
-		operation: {
+		operation: 
+		{
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -813,7 +819,7 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*获取会员优惠券
 	this.GetHyCoupons = util.callBind(this, function() {
 		console.log("[GetHyCoupons]打印会员信息：", this.HY.val);
-		if (hyinfo?.hyId) {
+		if (this.HY.val.hyId) {
 			this.HY.val.coupons = [];
 			this.update();
 			_member.CouponList("获取中...", {
@@ -923,7 +929,8 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//由于未知弹窗所以暂时用这个	 
-	this.myAlert = function(pm_str1, pm_str2) {
+	this.myAlert = function(pm_str1, pm_str2) 
+	{
 		that.log("--------------看到这个说明弹窗功能还没有做！--------------")
 	}
 	//基础配置参数本地化
@@ -942,7 +949,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.sale008 = []; //sale008
 	//预定
 	this.ydsale001 = {}; //sale001 主单
-	this.payed = []; //已支付信息
+	
 	//销售时间（默认当前）
 	this.saledate = this.getDate();
 	//销售页面
@@ -958,6 +965,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.selectFlag = "A";
 	//不支持的付款方式
 	this.notFayType = [];
+	this.payed = []; //已支付信息
 	//商品售价的信息列表
 	this.spPrice = {};
 	//字母的列表
@@ -973,7 +981,8 @@ function GetSale(global, vue, target_name, uni) {
 	//筛选的品类
 	this.selectPlid = "";
 
-	this.update = function() {
+	this.update = function() 
+	{
 		if (that.Page) {
 			that.Page.$forceUpdate()
 		} else {
@@ -981,18 +990,21 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//初始化所有可以点击的商品，会员的结构
-	this.HY = {
+   this.HY = 
+   {
 		cval: {},
 		base: {},
+		open: false,
 		get val() {
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval)
+		{
 			this.base.ComponentsManage["HY"] = false;
 			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
 			if (this.cval) {
-				this.GetHyCoupons();
+				this.base.GetHyCoupons();
 			}
 			that.update();
 		}
@@ -1058,7 +1070,8 @@ function GetSale(global, vue, target_name, uni) {
 		get val() {
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval) 
+		{
 			//赋值的时候进行计算
 			this.cval = newval;
 			// if (newval.length > 0) {
@@ -1089,12 +1102,25 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.$set(this.Page, "Alphabetical", false);
 		//筛选字母的列表
 	}
-
+    
+	///当出现一些互斥的操作的时候  恢复默认值的时候试用
+    this.setSaleTypeDefval=function(pm_key)
+	{
+	   if(this.currentOperation.hasOwnProperty(pm_key))
+	   {
+		   this.ComponentsManage[pm_key] =  this.currentOperation[pm_key];
+	   }
+	   else
+	   {
+		   this.ComponentsManage[pm_key] =false;
+	   }
+	}
+   
 	this.selectPlidChenged = function(e) {
 		that.selectPlid = e.currentTarget.dataset.plid;
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 	}
-	//设置所有商品列表数据
+	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表
 	this.SetAllGoods = function(pm_list, pm_price) {
 		cx.Cxdict();
 		this.spPrice = pm_price;
@@ -1286,6 +1312,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
+			that.clikSpItem.PRICE   =  that.spPrice(that.clikSpItem.selectSPID);
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
 		}
@@ -1294,7 +1321,14 @@ function GetSale(global, vue, target_name, uni) {
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
 	}
-
+    this.selectSPID_Chenged = function(e)
+	{
+		let spid = e.currentTarget.dataset.spid;
+		that.clikSpItem.selectSPID = that.clikSpItem.spid;
+		that.clikSpItem.PRICE   =  that.spPrice(spid);
+		that.log("" + JSON.stringify(that.clikSpItem));
+		that.update();
+	}
 	//商品详情页的加号和 减号
 	this.chengedQty = function(e) {
 		let qty = e.currentTarget.dataset.qty;
@@ -1313,7 +1347,8 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} pm_type 销售类型
 	 * @param {*} switch_callback 页面切换时的回调
 	 */
-	this.SetType = function(pm_type) {
+	this.SetType = function(pm_type) 
+	{
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
@@ -1322,7 +1357,8 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 
-		if (XsTypeObj[pm_type]) {
+		if (XsTypeObj[pm_type]) 
+		{
 			// this.clickSaleType = XsTypeObj[pm_type];
 			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
@@ -1744,13 +1780,15 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//付款之后生成订单后触发
-	this.$saleFinied = function(sales) {
+	this.$saleFinied = function(sales) 
+	{
 		console.log("[$SaleFinied]支付完毕后触发:", sales);
 		this.CurrentTypeCall("$saleFinied", sales);
 	}
 
 	//重置销售单据
-	this.resetSaleBill = function() {
+	this.resetSaleBill = function() 
+	{
 		this.HY.cval = null;
 		this.DKF.cval = null;
 		this.Disc.cval = null;
@@ -1763,6 +1801,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale008 = [];
 		this.ydsale001 = {};
 		this.clikSpItem = {};
+		this.payed = []; 
+		this.notFayType = [];
 		this.SetDefaultType();
 		that.update()
 	}
