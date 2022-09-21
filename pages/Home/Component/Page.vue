@@ -15,7 +15,7 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu">
+		<!-- <view class="menu">
 			<view>
 				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
@@ -44,7 +44,7 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 
