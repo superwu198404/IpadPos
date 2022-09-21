@@ -306,6 +306,7 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) { //预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
+			this.old_bill = params.sale1.BILL;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			console.log("[sale_reserve_extract]SALE002:", params.sale2);
@@ -319,6 +320,7 @@ var XsTypeObj = {
 			}, common.actTypeEnum.Payment);
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
+
 			//合并 sale3 不含 ZKLX 的 记录
 			let combine = this.sale003.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
 			let list = this.sale003.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
@@ -328,14 +330,14 @@ var XsTypeObj = {
 				combine.forEach(i => total += Number(i.AMT));
 				sale3.AMT = total; //合并金额部分
 				list.push(sale3);
-				result.sale3_arr = list;
+				this.raw_order = list;
 			}
-
-			result.sale3_arr.forEach(s3 => s3.ZKLX = 'ZG03') //预定金类型
+			this.raw_order.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
-				sale3: this.sale003
+				sale3: this.sale003,
+				sale3_raw: this.raw_order
 			});
 		},
 		///对打印的控制
@@ -383,21 +385,31 @@ var XsTypeObj = {
 		},
 		$saleFinishing: function(result) { //生成yd
 			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
-
+			this.sale003.concat(this.raw_order);
+			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 		},
 		async $saleFinied(sales) {
 			console.log("[$SaleFinied]预订单状态变更...");
 			_extract.reserveOrdersStatusUpdate({
 				khid: this.Storeid,
 				gsid: this.GSID,
-				bill: sales.sale1_obj.BILL,
-				is_pay: true
+				bill: this.old_bill,
+				is_pay: true,
+				thdate: this.getDate,
+				thgsid: this.GSID,
+				thgcid: this.GCID,
+				thdpid: this.DPID,
+				thkcdid: this.KCDID,
+				thkhid: this.KHID,
+				thposid: this.POSID,
+				new_order_bill: sales.sale1_obj.BILL,
 			}, util.callBind(this, function(res) {
 				if (res.code)
 					console.log("[$SaleFinied]订单状态修改成功!", res);
 				else
 					console.log("[$SaleFinied]订单状态修改失败!", res);
 			}));
+			delete this.old_bill;
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -856,7 +868,7 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*菜单切换
 	this.Redirect = util.callBind(this, function(info) {
 		console.log("[Redirect]重定向至销售主页!", info);
-		let menu_info = mysale.XsTypeObj[info.name];
+		let menu_info = XsTypeObj[info.name];
 		console.log("[Redirect]模式信息:", menu_info);
 		this.$initSale(menu_info, info.params);
 		this.SetManage('sale');
