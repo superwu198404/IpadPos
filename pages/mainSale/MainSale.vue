@@ -158,7 +158,7 @@
 								data-qty="-1">–</button><label>{{mainSale.clikSpItem.inputQty}}</label><button
 								@click="mainSale.chengedQty" data-qty="1">+</button></view>
 					</view>
-					<view>
+					<view class="selectlist">
 						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
 							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>

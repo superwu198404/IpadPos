@@ -24,20 +24,14 @@
 						    <image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png" mode="heightFix"></image>
 
 						</view>
-						<!-- <view class="flip-container" ontouchstart="this.classList.toggle('hover');">
-							<view class="flipper">
-								<view class="front">
-									<image src="@/images/xstu2-1.png" mode="widthFix"></image>
-								</view>
-								<view class="back">
-									<image src="@/images/xstu1-1.png" mode="widthFix"></image>
-								</view>
-							</view>
-						</view> -->
-						
-						<!-- <view><image src="@/images/xstu2-1.png" mode="widthFix"></image></view> -->
-						<view><image src="@/images/xstu2-2.png" mode="widthFix"></image></view>
-						<view><image src="@/images/xstu2-3.png" mode="widthFix"></image></view>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png" mode="heightFix"></image>
+						    <image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png" mode="heightFix"></image>			
+						</view>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png" mode="heightFix"></image>
+						    <image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png" mode="heightFix"></image>			
+						</view>
 					</view>
 					<view class="dates">
 						<view>
@@ -66,13 +60,18 @@
 				angle:0
 			}
 		},
-		onShow() {
-		    // console.log('onshow');
-		     this.timer = setInterval(function() {
-		        // 放入你自己的业务逻辑代码
-				this.angle +=180;
-				// console.log(this.angle)
-		    }, 3000);
+	
+		onShow(e) {
+		
+			this.timer = setInterval(() => {
+			   if (this.angle == 0) {
+			       this.angle  = 180;
+			   }
+			   else if (this.angle == 180){
+			   	this.angle = 0;
+			   }
+			}, 6000);
+		   
 		},
 		//uniapp中onHide()能监听到页面离开
 		onHide() {//离开页面前清除计时器
@@ -200,21 +199,35 @@
 		border-radius: 30rpx;
 		height: 540rpx;
 		overflow: hidden;
+		position: relative;
 	}
 	.rightlist .market .prods view image{
 		width:100%;
 		
 	}
-	.rightlist .market .prods view:nth-child(1){
+	.rightlist .market .prods .div:nth-child(1){
 		width:23%;
 		margin-right: 2%;
 	}
-	.rightlist .market .prods view:nth-child(2){
+	.rightlist .market .prods .div:nth-child(2){
 		width:33%;
 		margin-right: 2%;
 	}
-	.rightlist .market .prods view:nth-child(3){
+	.rightlist .market .prods .div:nth-child(3){
 		width:40%;
+	}
+	.rightlist .market .prods .div image{
+		position: absolute;
+		top:0;
+	}
+	.rightlist .market .prods .div:nth-child(1) image{
+		left: 0;
+	}
+	.rightlist .market .prods .div:nth-child(2) image{
+		left:-53%;
+	}
+	.rightlist .market .prods .div:nth-child(3) image{
+		right:0;
 	}
 	.market .dates{
 		padding:80rpx 0;
@@ -246,8 +259,8 @@
 	    height: 100%;
 	    position: absolute;
 		top: 0;
-	    left: 0;
-	    /* transition: all 1s; */
+	    /* left: 0; */
+	    transition: all 1s;
 	}
 	
 	.div image:first-child{

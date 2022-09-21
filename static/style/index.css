@@ -574,7 +574,10 @@ page {
 	line-height: 140rpx;
 	font-size: 36rpx;
 }
-
+.sizes{
+	min-height: 300rpx;
+	margin-top:20rpx;
+}
 .sizes .sizelist {
 	display: flex;
 	flex-wrap: wrap;
@@ -604,7 +607,9 @@ page {
 	background: rgba(66,177,75,0.15);
 	color: #42B14B;
 }
-
+.selectlist{
+	margin-top:10rpx;
+}
 .memberes {
 	height: 100%;
 	position: fixed;
