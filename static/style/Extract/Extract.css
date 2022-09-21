@@ -80,6 +80,7 @@
 	border-radius: 4rpx;
 	border:1px solid #eee;
 	width:65%;
+	text-align: left;
 }
 .meminfo .restlist label:nth-last-child(1){
 	width:100%;
@@ -154,6 +155,8 @@
 .sitelist{
 	display: flex;
 	align-items: center;
+	text-align: left;
+	width:80%;
 }
 .sitelist label{
 	display: block;

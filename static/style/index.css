@@ -574,7 +574,7 @@ page {
 	line-height: 140rpx;
 	font-size: 36rpx;
 }
-.sizes{
+.commods .sizes{
 	min-height: 300rpx;
 	margin-top:20rpx;
 }
@@ -909,6 +909,7 @@ page {
 	border: 1px solid #EEEEEE;
 	background-color: #fff;
 	border-radius: 6rpx;
+	text-align: center;
 }
 
 .shoppbag .baglist.curr {
