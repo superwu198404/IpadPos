@@ -181,7 +181,7 @@
 		</view>
 
 		<!-- 蛋糕属性选择 -->
-		<!-- <view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
@@ -225,9 +225,10 @@
 				</view>
 			</view>
 		</view>
- -->
+
+		
 		<!-- 蛋糕属性选择 -->
-		<!-- <view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>x </button>
@@ -271,7 +272,8 @@
 				</view>
 			</view>
 		</view>
- -->
+
+		
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mainSale.ReserveInfoInput"
