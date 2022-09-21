@@ -4,6 +4,8 @@ import cx from '@/utils/cx/cxCount.js';
 import _main from '@/api/business/main.js';
 import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
+import _date from '@/utils/dateformat.js';
+
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -29,6 +31,7 @@ var XsTypeObj = {
 			"DKF": true, //是否可以打开录入大客户
 			"Disc": true, //是否可以打开录入折扣
 			"ynFzCx": true, //是否可以辅助促销
+			"FZCX": true, //是否可以打开辅助促销组件
 			"ynCx": true, //是否进行可以进行促销
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -120,10 +123,9 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
@@ -147,6 +149,9 @@ var XsTypeObj = {
 			this.sale002 = params.sale2 ?? {};
 			console.log("[sale_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
+			console.log("退款初始化：123123313");
+			this.operation.ynFzCx = false;
+			this.ComponentsManage.FZCX = false;
 		},
 		///对打印的控制
 		$print: function() {
@@ -184,10 +189,9 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point) { //判断是否又上传积分的操作
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
@@ -202,7 +206,7 @@ var XsTypeObj = {
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
-			"FZCX": true,
+			"FZCX": true,//是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"sale": true, //从这里开始都是销售模式
@@ -242,8 +246,6 @@ var XsTypeObj = {
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
-			this.sale001.YN_OK = 'N'; //默认为 N
-			this.sale001.YN_SC = 'X'; //默认为 X
 			this.setComponentsManage(null, 'statement'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
@@ -396,11 +398,9 @@ var XsTypeObj = {
 					console.log("[$SaleFinied]订单状态修改失败!", res);
 			}));
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point && this.sale1.CUID) { //判断是否又上传积分的操作且有会员id
-				console.log("[PayedResult]准备上传会员积分数据...");
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
+				console.log("[PayedResult]准备上传会员积分...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
-				util.simpleMsg(upload_result.msg, !upload_result.code);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
 	},
@@ -748,7 +748,7 @@ function GetSale(global, vue, target_name, uni) {
 		let d = new Date();
 		var x = d.getFullYear() + "-" + ((d.getMonth() + 1) < 10 ? "0" : "") + (d.getMonth() + 1) + "-" + (d
 			.getDate() < 10 ? "0" : "") + d.getDate();
-		return d;
+		return x;
 	}
 	//获取当前时间：时分秒-hh:mm:ss
 	this.getTime = function() {
@@ -756,7 +756,7 @@ function GetSale(global, vue, target_name, uni) {
 		var x = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" +
 			d
 			.getMinutes() + ":" + d.getSeconds();
-		return d;
+		return x;
 	}
 	//创建订单号
 	this.getBill = function() {
@@ -915,6 +915,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.cval = newval;
 			// this.base.ComponentsManage["Disc"] = false;
 			// if (this.cval>= 100) {
+			console.log("选择得折扣类型为：", this.cval.ZKType);
 			if (!this.cval.ZKType) { //如果未选择 折扣类型 则说明可以进行促销操作 反之
 				this.base.allOperation["Disc"] = false;
 				this.base.allOperation["ynFzCx"] = true;
@@ -1004,6 +1005,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
 		"ynFzCx": false, //是否可以辅助促销
+		"FZCX": false, //是否可以打开辅助促销组件
 		"ynCx": false, //是否进行可以进行促销  
 		"member_login": false, //是否打开会员登录界面
 		"upload_point": false, //支付完毕后是否进行积分上传
@@ -1236,6 +1238,11 @@ function GetSale(global, vue, target_name, uni) {
 
 		if (result.code) {
 			util.simpleMsg(result.msg);
+			//反写一下会员id
+			if (this.sale001.CUID) {
+				this.HY.cval = {};
+				this.HY.cval.hyId = this.sale001.CUID;
+			}
 			console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
 			//如果允许辅助促销
 			if (this.currentOperation.ynFzCx) {
@@ -1407,17 +1414,24 @@ function GetSale(global, vue, target_name, uni) {
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
 			console.log("[CreateNewBill]创建新单!");
 			let newbill = this.getBill();
-			let stime = this.getTime().toJSON();
+			let stime = this.getTime();
 			commonSaleParm = {
 				KHID: this.Storeid,
-				SALEDATE: this.saledate?.toJSON()?.replace("T", " ")?.split('.')?.first(),
+				SALEDATE: this.saledate,
 				POSID: this.POSID,
 				RYID: this.ryid,
 				BILL: newbill,
 				KCDID: this.KCDID,
 				DPID: this.DPID,
 				GCID: this.GCID,
-				SALETIME: stime?.replace("T", " ")?.split('.')?.first()
+				SALETIME: stime,
+				CLTIME: stime,
+				YN_OK: 'N', //默认为 N
+				YN_SC: 'X', //默认为 X
+				YAER: _date.getDateByParam("Y"),
+				MONTH: _date.getDateByParam("M"),
+				WEEK: _date.getDateByParam("w"),
+				TIME: _date.getDateByParam("h")
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1425,15 +1439,22 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			console.log("[CreateNewBill]创建新单参数!");
 			commonSaleParm = {
-				KHID: this.sale001.Storeid,
+				KHID: this.sale001.KHID,
 				SALEDATE: this.sale001.SALEDATE,
 				POSID: this.sale001.POSID,
-				RYID: this.sale001.ryid,
-				BILL: this.sale001.bill,
+				RYID: this.sale001.RYID,
+				BILL: this.sale001.BILL,
 				KCDID: this.sale001.KCDID,
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,
-				SALETIME: this.sale001.SALETIME
+				SALETIME: this.sale001.SALETIME,
+				CLTIME: this.sale001.SALETIME,
+				YN_OK: this.sale001.YN_OK, //默认为 N
+				YN_SC: this.sale001.YN_SC, //默认为 X
+				YAER: this.sale001.YAER,
+				MONTH: this.sale001.MONTH,
+				WEEK: this.sale001.WEEK,
+				TIME: this.sale001.TIME
 			}
 		}
 		return commonSaleParm;
@@ -1584,7 +1605,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.cval.DKFID; //当前选择的大客户的编码
-		this.sale001.CUID = this.HY.cval.hyid; //写会员编码
+		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
 		//写大客户
 		//code...
 		//写会员

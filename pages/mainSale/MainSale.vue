@@ -273,13 +273,16 @@
 
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput" :sale="mainSale.sale001">
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="ReserveInfoInput"
+				:sale="mainSale.sale001">
 			</ReserveDrawer>
+		</view>
+		<!-- 辅助促销插件 -->
+		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX" style="text-align: right;">
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-			<!-- 辅助促销插件 -->
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001" style="z-index: 99;"></FZCX>
 			<view class="memberes">
 				<view class="meminfo" v-if="mainSale.HY.val.hyId">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -409,230 +412,6 @@
 				</view>
 			</view>
 		</view>
-
-		<!-- 会员登陆结算 废弃？ -->
-		<view class="boxs" v-if="statements">
-			<view class="memberes">
-				<view class="meminfo" v-if="Memberinfo">
-					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view class="member">
-						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<label class="meminfo"><text>会员名称</text><text>13012341234</text></label>
-						</label>
-						<button>×</button>
-					</view>
-					<view class="nom">
-						<label>
-							<text>￥123</text>
-							<text>余额</text>
-						</label>
-						<label>
-							<text>6123</text>
-							<text>积分</text>
-						</label>
-						<label>
-							<text>23</text>
-							<text>优惠券</text>
-						</label>
-						<label>
-							<text>12</text>
-							<text>礼品卡</text>
-						</label>
-					</view>
-					<view class="rests">
-						<view class="h2">其他</view>
-						<view class="restlist">
-							<label><text>上次购买时间：</text><text>03-23 19:23:47</text></label>
-							<label><text>是否推送活动信息：</text><text>是</text></label>
-							<label><text>上次购买金额：</text><text>￥56</text></label>
-							<label><text>是否参与上次活动：</text><text>否</text></label>
-						</view>
-					</view>
-					<view class="coulist">
-						<view class="h2">优惠券</view>
-						<view class="uls">
-							<view class="lis" v-for="(item,index) in coupon_list">
-								<view class="voucher">
-									<view><text>￥</text>{{item.money}}</view>
-									<text>满{{item.limitmoney}}可用</text>
-								</view>
-								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
-								<view class="coupon-dets">
-									<view class="limit">
-										<view class="h3" v-for="(item1,index1) in item.limitDesc">
-											<text>{{item1}}</text>
-										</view>
-										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
-									</view>
-									<view class="directions">
-										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
-										</view>
-										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-												mode="widthFix"></image></button> -->
-										<button>点击使用<image src="../../images/ewm.png" mode="widthFix"></image></button>
-									</view>
-								</view>
-							</view>
-						</view>
-
-					</view>
-				</view>
-
-				<view class="meminfo" v-if="Shoppingbags">
-					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view>
-						<view class="member">
-							<label class="h9">武汉满20元赠小号手提袋</label>
-							<button>×</button>
-						</view>
-						<view class="shoppbag">
-							<view class="baglist curr">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-
-				<view class="pop-r">
-					<view class="member">
-						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="MemberLogin()">会员登录</button>
-						</label>
-						<text>清空</text>
-					</view>
-					<view class="h5"><text>账单</text></view>
-					<view class="goods">
-						<!-- 商品循环 -->
-						<view class="prolist">
-							<view class="h3">
-								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 芝士绵绵绿豆糕
-								</label>
-								<text>X2</text>
-							</view>
-							<view class="cods">
-								<view>
-									<label>
-										<image src="../../images/dx-bm.png" mode="widthFix"></image>12345678
-									</label>
-									<label>
-										<image src="../../images/dx-dw.png" mode="widthFix"></image>10个装
-									</label>
-								</view>
-								<text>￥56</text>
-							</view>
-						</view>
-
-					</view>
-
-					<view class="ul">
-						<view class="li"><text>总金额</text><text>￥567</text></view>
-						<view class="li"><text>件数</text><text>7</text></view>
-						<view class="li"><text>折扣</text><text>-￥5</text></view>
-						<view class="li"><text>应收金额</text><text>￥560</text></view>
-					</view>
-					<view class="h5"><text>赠品</text><text @click="Bagslist()">查看全部 ></text></view>
-
-					<view class="shoppbag">
-						<view class="hengs">
-							<view class="baglist curr">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-							<view class="baglist">
-								<view class="bag">
-									<text class="h8">小号手提袋</text>
-									<label><text>说明</text>已满80元，可赠4个</label>
-								</view>
-								<view class="quantit">
-									<text>数量</text>
-									<view class="nums">
-										<text>-</text>
-										<input type="number" />
-										<text>+</text>
-									</view>
-								</view>
-							</view>
-
-						</view>
-					</view>
-					<view class="confirm">
-						<button class="btn">确 认</button>
-					</view>
-				</view>
-
-				<!-- 特殊折扣 -->
-				<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKHID"
-					:product="mainSale.sale002"></SpecialDisc>
-			</view>
-		</view>
-
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
 	</view>
@@ -788,7 +567,7 @@
 			},
 			CloseMember: function(member_info) {
 				// this.mainSale.ComponentsManage.HY = false;
-				this.mainSale.setComponentsManage(null,"HY");
+				this.mainSale.setComponentsManage(null, "HY");
 				console.log("[CloseMember]会员页关闭!", member_info);
 				this.mainSale.HY.val = member_info;
 				console.log("[CloseMember]会员信息:", this.mainSale.HY.val);
@@ -801,11 +580,11 @@
 				console.log("传入折扣的大客户数据：", this.mainSale.DKF.val.DKHID);
 				this.mainSale.Disc.val.ZKData = await _main.GetZKDatasAll(this.mainSale.DKF.val.DKHID); //传入大客户值
 				// this.mainSale.ComponentsManage.Disc = true;
-				this.mainSale.setComponentsManage(null,"Disc");
+				this.mainSale.setComponentsManage(null, "Disc");
 				console.log("首页初始化的折扣数据：", this.mainSale.Disc.val.ZKData);
 			},
 			ReserveInfoInput: function(sale1) {
-				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...",{
+				console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
 					ydsale1: this.mainSale.ydsale001,
 					sale1: this.mainSale.sale001
 				});
@@ -822,7 +601,7 @@
 			},
 			CloseTSZK: function(data) {
 				// this.mainSale.ComponentsManage.Disc = false;
-				this.mainSale.setComponentsManage(null,"Disc");
+				this.mainSale.setComponentsManage(null, "Disc");
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
 				this.mainSale.Disc.val.ZKType = data;
 			},
@@ -861,7 +640,7 @@
 			},
 			MemberLogin: function(e) { //会员登录
 				console.log("[MemberLogin]会员登录!");
-				this.mainSale.setComponentsManage(null,"HY");
+				this.mainSale.setComponentsManage(null, "HY");
 				// this.mainSale.ComponentsManage.HY = true;
 				console.log("[MemberLogin]状态信息:", this.mainSale.ComponentsManage.HY);
 			},
@@ -871,7 +650,7 @@
 			},
 			MoreFZCX: function(e) {
 				// this.mainSale.ComponentsManage.FZCX = true;
-				this.mainSale.setComponentsManage(null,"FZCX");
+				this.mainSale.setComponentsManage(null, "FZCX");
 			},
 			Calculate: function(item, type) {
 				item.BQTY = Number(item.BQTY) + type;
@@ -883,7 +662,7 @@
 			CloseFZCX: function(res) {
 				// console.log("源辅助促销数据：", this.mainSale.FZCX.val);
 				// this.mainSale.ComponentsManage.FZCX = false;
-				this.mainSale.setComponentsManage(null,"FZCX");
+				this.mainSale.setComponentsManage(null, "FZCX");
 				console.log("辅助促销回调结果：", res);
 				if (res) {
 					// let res = _main.CalFZCX(fzcxArr, this.mainSale.sale001);

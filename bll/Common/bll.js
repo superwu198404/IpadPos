@@ -280,6 +280,7 @@ export const SaleRefundOrderGenaration = async function(params = sale_order_gene
 //新积分上传 适配 sale123
 export const PointUploadNew = async function(sale1, sale2, sale3) {
 	if (!sale1 || !sale1.CUID) { //为空或者hyid为空则跳出
+		util.simpleMsg("积分上传失败：会员ID为空", "none");
 		return;
 	}
 	let obj = {};
@@ -296,7 +297,7 @@ export const PointUploadNew = async function(sale1, sale2, sale3) {
 		}
 	})
 	console.log("传入积分的参数：", obj);
-	await PointUpload(obj);
+	return await PointUpload(obj);
 }
 /**
  * 积分上传参数
