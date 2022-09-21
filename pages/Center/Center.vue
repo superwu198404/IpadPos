@@ -102,7 +102,7 @@
 					success: res => {
 						
 						
-						//app.globalData.start();
+						//app.start();
 						if (res.confirm) {
 							if (that.signOutDates.length > 0) 
 							{ //有日结数据

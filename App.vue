@@ -41,7 +41,6 @@
 				OPENFLAG: 0, //签到状态
 
 			},
-			start:null,
 			hyinfo: {
 				// hyId: "1000311640"
 			},
