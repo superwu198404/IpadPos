@@ -8,7 +8,7 @@
 			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
-			<view v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
+			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)" :class="Selected(key) ? 'curr' : ''">
 				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
@@ -16,30 +16,30 @@
 			</view>
 		</view>
 		<view class="menu">
-			<view>
+			<view class="bills">
 				<label></label>
-				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+				<image class="xz" src="@/images/gongju-hui.png" mode="widthFix"></image>
+				<image class="wx" src="@/images/gongju.png" mode="widthFix"></image>
 				<text>工具</text>
 				<view class="chargeback">
 					<view class="currs">
-						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
 					</view>
 					<view>
-						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<image class="xz" src="@/images/tongxun.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
 					</view>
 					<view>
-						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view>
 					<view>
-						<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-						<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
 					</view>
 				</view>
