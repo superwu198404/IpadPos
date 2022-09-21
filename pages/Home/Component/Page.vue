@@ -19,28 +19,28 @@
 		<view class="menu gongju">
 			<view class="bills">
 				<label></label>
-				<view @click="ShowGJ=!ShowGJ">
+				<view @click="showGJ=!showGJ">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
 				</view>
-				<view class="chargeback" v-if="ShowGJ">
-					<view class="currs">
+				<view class="chargeback" v-if="showGJ">
+					<view class="currs" @click="ShowTool('CX')">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
 					</view>
-					<view>
+					<view @click="ShowTool('TX')">
 						<image class="xz" src="@/images/tongxun.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
 					</view>
-					<view>
+					<view @click="ShowTool('CD')">
 						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view>
-					<view>
+					<view @click="ShowTool('SC')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
@@ -54,7 +54,13 @@
 <script>
 	import base_sale from '@/utils/sale/base_sale.js'
 	import util from '@/utils/util.js';
+
+
+	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
 	export default {
+		components: {
+			Promotion
+		},
 		name: "Page",
 		props: {
 			current: String
@@ -77,7 +83,8 @@
 				previous_info: null, //上一个菜单信息
 				current_info: null, //当前菜单信息
 				menu_info: null,
-				ShowGJ: false
+				showGJ: false,
+				showCX: false
 			};
 		},
 		methods: {
@@ -92,6 +99,19 @@
 					name: menu_name,
 					info: menu_info
 				});
+			},
+			//工具
+			ShowTool: function(e) {
+				util.simpleMsg("暂未开放", true);
+				return;
+				if (!e) {
+					this.showGJ = !this.showGJ;
+					this.showCX = false;
+					return;
+				}
+				if (e == 'CX') {
+					this.showCX = !this.showCX;
+				}
 			}
 		},
 		created() {

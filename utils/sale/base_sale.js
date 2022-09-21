@@ -1309,6 +1309,9 @@ function GetSale(global, vue, target_name, uni) {
 		qty = parseFloat(qty)
 		let oldqty = parseFloat(that.clikSpItem.inputQty)
 		qty = qty + oldqty;
+		if (qty < 0) {
+			qty = 0;
+		}
 		that.clikSpItem.inputQty = qty;
 		//that.Page.$set(that.Page[that.pageName].clikSpItem,"inputQty",qty);
 		that.update()
@@ -1757,24 +1760,24 @@ function GetSale(global, vue, target_name, uni) {
 				});
 				uni.$once('close-FZCX', util.callBind(this, function(e) {
 					console.log("[BeforeFk]辅助促销窗口关闭...");
-					if (e) {
-						//追加辅助促销的差价和折扣
-						if (Object.keys(this.FZCX.cval).length > 0) {
-							this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX
-								.cval.payAmount, 2); //加上辅助促销的的差价
-							this.FZCX.cval.data.forEach(r => {
-								this.sale001.BILLDISC = this.float((this.sale001
-										.BILLDISC || 0) + (r.ONET - r
-										.CXNET),
-									2);
-							})
-						}
-						return reslove(this.CurrentTypeCall("$beforeFk",
-							pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
-
-					} else {
-						return reslove(false);
+					// if (e) {
+					//追加辅助促销的差价和折扣
+					if (Object.keys(this.FZCX.cval).length > 0) {
+						this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX
+							.cval.payAmount, 2); //加上辅助促销的的差价
+						this.FZCX.cval.data.forEach(r => {
+							this.sale001.BILLDISC = this.float((this.sale001
+									.BILLDISC || 0) + (r.ONET - r
+									.CXNET),
+								2);
+						})
 					}
+					return reslove(this.CurrentTypeCall("$beforeFk",
+						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+
+					// } else {
+					// 	return reslove(false);
+					// }
 				}))
 			} else {
 				console.log("[BeforeFk]此模式不包含辅助促销操作...");

@@ -25,14 +25,24 @@
 			<view class="rightlist">
 				<view class="market">
 					<view class="prods">
-						<view>
-							<image src="@/images/xstu2-1.png" mode="widthFix"></image>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+								mode="heightFix"></image>
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+								mode="heightFix"></image>
+
 						</view>
-						<view>
-							<image src="@/images/xstu2-2.png" mode="widthFix"></image>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+								mode="heightFix"></image>
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+								mode="heightFix"></image>
 						</view>
-						<view>
-							<image src="@/images/xstu2-3.png" mode="widthFix"></image>
+						<view class="div">
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+								mode="heightFix"></image>
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+								mode="heightFix"></image>
 						</view>
 					</view>
 					<view class="dates" @click="ToSale(1)">
@@ -80,12 +90,29 @@
 				signOutDates: [],
 				curWeek: dateformat.getWeekDate(),
 				curDate: dateformat.getYMD(),
+				timer: null,
+				angle: 0
 			};
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
 				that.GetSignOutInWeeks();
+			},
+			onShow: function() {
+				this.timer = setInterval(() => {
+					if (this.angle == 0) {
+						this.angle = 180;
+					} else if (this.angle == 180) {
+						this.angle = 0;
+					}
+				}, 6000);
+			},
+			//uniapp中onHide()能监听到页面离开
+			onHide() { //离开页面前清除计时器
+				// console.log('onHide');
+				clearInterval(this.timer);
+				this.timer = null;
 			},
 			//跳转到销售页面
 			ToSale: function(e) {
@@ -111,13 +138,11 @@
 							console.log("本次单据传输定时ID:", int);
 						}
 						if (res.confirm) {
-							if (that.signOutDates.length > 0) 
-							{ //有日结数据
+							if (that.signOutDates.length > 0) { //有日结数据
 								that.SignOut(); //发起日结
 								return;
 							}
-							if (store.RYTYPE != "SYSTEM") 
-							{
+							if (store.RYTYPE != "SYSTEM") {
 								uni.redirectTo({
 									url: "/pages/mainSale/MainSale"
 								});

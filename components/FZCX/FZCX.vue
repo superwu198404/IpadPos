@@ -23,6 +23,8 @@
 						<label><text>说明</text>{{item1.DESCRIBE}}</label>
 					</view>
 					<view class="quantit">
+						<text>售价：￥{{item1.PRICE}}</text>
+						<text>可赠数量：{{item1.CZQTY}}</text>
 						<text>数量</text>
 						<view class="nums">
 							<text @click="Calculate(item1,-1)">-</text>

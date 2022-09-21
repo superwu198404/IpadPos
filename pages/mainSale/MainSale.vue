@@ -162,13 +162,15 @@
 						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
 							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"  @click="mainSale.updateSp(spinx,sp.SPID,0)"  class="del">×</button></label>
+							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
+									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
 						</view>
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-spid="specs.SPID"  :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"   @click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist" :data-spid="specs.SPID"
+								:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
+								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
 					<view class="confirm">
@@ -177,8 +179,6 @@
 				</view>
 			</view>
 		</view>
-
-		
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mainSale.ReserveInfoInput"
@@ -515,15 +515,17 @@
 		height: 100%;
 		z-index: 100;
 	}
-	.popup{
+
+	.popup {
 		position: relative;
 		padding-bottom: 140rpx;
 	}
-	.popup .confirm{
+
+	.popup .confirm {
 		position: absolute;
-		bottom:0;
-		padding:20rpx 0 40rpx;
-		width:90%;
+		bottom: 0;
+		padding: 20rpx 0 40rpx;
+		width: 90%;
 		left: 5%;
 		text-align: center;
 	}
