@@ -52,10 +52,13 @@
 						</view>
 					</view>
 				</view>
-				<view class="dates tuichu" @click="ToOut()">
-					<view>
-						<label><text>退出</text><text>LOG OUT</text></label>
+				<view class="chongdu">
+					<view class="dates" >
+						<label><text>重读</text><text>LOG OUT</text></label>
+					</view>
+					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
+						退出
 					</view>
 				</view>
 			</view>
@@ -400,7 +403,7 @@
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
-		padding: 120rpx 0;
+		padding: 110rpx 0;
 	}
 
 	.dates .datebg {
@@ -416,7 +419,7 @@
 		padding: 0 15%;
 	}
 
-	.dates view label {
+	.dates label {
 		display: flex;
 		flex-direction: column;
 		color: #006B44;
@@ -424,7 +427,7 @@
 		font-weight: 600;
 	}
 
-	.dates view label text:nth-child(2) {
+	.dates label text:nth-child(2) {
 		font-weight: 400;
 		font-size: 34rpx;
 		margin-top: 20rpx;
@@ -487,10 +490,33 @@
 	.rightlist .dates view image {
 		width: 100rpx;
 	}
-
-	.tuichu {
-		padding: 60rpx 0;
-		margin-top: 7%;
+	.chongdu{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 7%;		
+	}
+	.chongdu .dates{
+		width:70%;
+		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+		padding:60rpx 5%;
+	}
+	.chongdu .tuichu{
+		width:25%;
+		background-color: #006B44;
+		border-radius: 20rpx;
+		color: #fff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		padding:3% 0;
+	}
+	.chongdu .tuichu image{
+		width:70%;
+	}
+	.tuichu {
+		
 	}
 </style>
