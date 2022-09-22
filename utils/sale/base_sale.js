@@ -1693,9 +1693,6 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
 		}
-		if (that.currentOperation.ynFzCx) {
-			this.computeFzCx();
-		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
 		}
@@ -1712,6 +1709,10 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
 		that.sale001.TLINE = this.float(retx.QTY, 2);
+
+		if (that.currentOperation.ynFzCx) {
+			this.computeFzCx();
+		}
 		//this.update();
 	}
 
@@ -1737,6 +1738,7 @@ function GetSale(global, vue, target_name, uni) {
 	//付款之前触发
 	this.$beforeFk = function(pm_inputParm) {
 		console.log("[BeforeFk]支付前触发:", pm_inputParm);
+		console.log("sale001：", this.sale001);
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
@@ -1760,7 +1762,7 @@ function GetSale(global, vue, target_name, uni) {
 					console.log("[BeforeFk]辅助促销窗口关闭...");
 					// if (e) {
 					//追加辅助促销的差价和折扣
-					if (Object.keys(this.FZCX.cval).length > 0) {
+					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0) {
 						this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX
 							.cval.payAmount, 2); //加上辅助促销的的差价
 						this.FZCX.cval.data.forEach(r => {
