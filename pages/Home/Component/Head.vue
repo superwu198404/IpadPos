@@ -41,6 +41,7 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
+					<button class="rijie" v-if="showSale" @click="ReturnSale()">返回销售</button>
 					<!-- <label>
 						<button class="rijie" @click="Sign()">签到</button>
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
@@ -196,7 +197,8 @@
 		name: "menu_head",
 		props: {
 			data: [],
-			custom: Boolean
+			custom: Boolean,
+			_showSale: Boolean
 		},
 		data() {
 			return {
@@ -217,6 +219,7 @@
 				oldPwd: "",
 				newPwd: "",
 				secPwd: "",
+				showSale: false,
 				showBle: false,
 				showSign: false,
 				showSignOut: false,
@@ -236,9 +239,11 @@
 				showYWMsg: false
 			};
 		},
-		// created: function(e) {
-		// 	that = this;
-		// },
+		watch: {
+			_showSale: function(n, o) {
+				this.showSale = this._showSale;
+			}
+		},
 		created: function(e) {
 			that = this;
 			uni.$off('set-member');
@@ -505,6 +510,10 @@
 				}
 				this.$forceUpdate();
 				console.log("[ClosePopup]新的全局变量:", getApp().globalData.store);
+			},
+			//通知外部返回销售
+			ReturnSale:function(){
+				uni.$emit('ReturnSale');
 			},
 			ShowPrint: function() {
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');

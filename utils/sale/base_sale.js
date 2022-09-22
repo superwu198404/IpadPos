@@ -936,6 +936,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("reserve-drawer-close");
 		uni.$off("close-tszk");
 		uni.$off("close-FZCX");
+		uni.$off("CancelSale");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -947,6 +948,8 @@ function GetSale(global, vue, target_name, uni) {
 
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
+		uni.$on("CancelSale", this.CancelSale);
+		
 	})
 	//退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
