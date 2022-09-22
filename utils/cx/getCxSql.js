@@ -22,7 +22,7 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 	});
 	
 	let cxformd001_sql = "SELECT KHID,BILL,YN_ZD,YN_JSLB,CXRY,HYLV,CXZT,CX_WEEK,SDATE,EDATE,YN_TIME,\
-						 STIME1,ETIME1,STIME2,ETIME2,STIME3,ETIME3,NOTFKID,BILL_STATUS ,JFSX\
+						 STIME1,ETIME1,STIME2,ETIME2,STIME3,ETIME3,NOTFKID,BILL_STATUS,JFSX\
 						 FROM   cxformd001 WHERE BILL_STATUS ='1' AND khid ='" + storeid + "' and YN_JSLB!='F'\
 						 AND SDATE<= DATETIME('" + dateTime + "') AND EDATE>= DATETIME('" + dateTime + "')  AND  cxformd001.cxzt like  '%" + cxkey + "%' order by YN_ZD desc ";
 	await db.get().executeQry(cxformd001_sql, "执行中", function(res1) {
