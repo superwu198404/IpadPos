@@ -26,6 +26,10 @@
 						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
+					<label class="buyer" @click="ShowDKF()">
+						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{DKFNAME}}</text>
+						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
 					</label>
