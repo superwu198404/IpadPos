@@ -534,4 +534,13 @@
 	.pop-rs .goods{
 		height: 51%;
 	}
+	.prolist .h3 label text{
+		color: #FE694B;
+		font-weight: 400;
+		font-size: 20rpx;
+		padding:2rpx 8rpx;
+		border:1rpx solid #FE694B;
+		margin-left: 12rpx;
+		border-radius: 4rpx;
+	}
 </style>
