@@ -158,8 +158,8 @@
 							<button @click="mainSale.chengedQty" data-qty="1">+</button>
 						</view>
 					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
+					<view class="tochoose">
+						<view v-for=" (sp, spinx) in mainSale.sale002"
 							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
 							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
@@ -267,8 +267,9 @@
 							<view class="h3">
 								<label>
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
+									<text>总折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<text>{{sp.QTY}}</text>
+								<text>×{{sp.QTY}}</text>
 							</view>
 							<view class="cods">
 								<view>
@@ -280,7 +281,7 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
+								<text>总金额￥{{sp.NET}}</text>
 							</view>
 						</view>
 					</view>
@@ -529,5 +530,8 @@
 		width: 90%;
 		left: 5%;
 		text-align: center;
+	}
+	.pop-rs .goods{
+		height: 51%;
 	}
 </style>

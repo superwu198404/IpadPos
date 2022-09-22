@@ -111,6 +111,7 @@
 		width: 100%;
 		height: 90rpx;
 		line-height: 90rpx;
+		margin-bottom: 20rpx;
 	}
 </style>
 

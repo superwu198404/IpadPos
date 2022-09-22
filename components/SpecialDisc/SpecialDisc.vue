@@ -53,11 +53,12 @@
 								</view>
 							</view>
 						</view>
-						<view class="confirm">
-							<button class="btn btn-qx" @click="CloseZK()">取 消</button><button class="btn"
-								@click="ConfirmZK()">确 认</button>
-						</view>
+						
 					</view>
+				</view>
+				<view class="confirm">
+					<button class="btn btn-qx" @click="CloseZK()">取 消</button><button class="btn"
+						@click="ConfirmZK()">确 认</button>
 				</view>
 			</view>
 		</view>
