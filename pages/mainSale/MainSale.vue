@@ -173,9 +173,10 @@
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
+					
+				</view>
+				<view class="confirm">
+					<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
 				</view>
 			</view>
 		</view>
