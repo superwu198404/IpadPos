@@ -28,6 +28,7 @@
 									<label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 									</label>
+									<button v-if="mainSale.currentOperation.ynCancel" @click="mainSale.CancelSale">返回销售</button>
 								</view>
 							</view>
 							<!-- 小类循环 -->
@@ -173,9 +174,10 @@
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
+
+				</view>
+				<view class="confirm">
+					<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
 				</view>
 			</view>
 		</view>
@@ -279,7 +281,7 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
+								<text>金额￥{{sp.OPRICE}}</text><text>折扣￥{{sp.DISCRATE}}</text>
 							</view>
 						</view>
 					</view>

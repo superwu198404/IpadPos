@@ -186,7 +186,7 @@ var sale002 = function(pm_obj) {
 	this.KHID = null;
 	this.SALETIME = null;
 	for (var item in pm_obj) {
-		if (this[item]) {//存在即赋值
+		if (this[item]) { //存在即赋值
 			this[item] = pm_obj[item];
 		}
 	}
@@ -318,7 +318,53 @@ var ydsale003 = function() {
 	this.XPSCOM = "";
 	this.DQTY = "";
 }
+var sxsale001 = function(pm_obj) {
+	this.SALETIME = null;
+	this.SALEDATE = null;
+	this.RYID = null;
+	this.BILL = null;
+	this.POSID = null;
+	this.KHID = null;
+	this.SX_STATUS = 0;
+	this.CUID = null;
+	this.TCXDISC = 0;
+	this.CXTNET = 0;
+	this.CHANGENET = 0;
+	this.ROUND = 0;
+	this.BILLDISC = 0;
+	this.ZNET = 0;
+	this.DNET = 0;
+	this.TNET = 0;
+	this.TLINE = 0;
+	this.CARDID = null;
+	this.THYDISC = 0;
+	this.HYJF = 0;
+	this.CARDID = null;
+	this.TDISC = 0;
+	this.CUSTMADDRESS = null;
+	this.CUSTMPHONE = null;
+	this.CUSTMNAME = null;
+	this.THDATE = null;
+	this.ID_RY_TH = null;
+	this.DKFID = null;
+	this.DKFNAME = null;
+	this.STR1 = null;
+	this.STR2 = null;
+	this.KCDID = null;
+	this.DPID = null;
+	this.GCID = null;
+	this.GSID = null;
+	this.NOTE1 = null;
+	this.NOTE2 = null;
+	this.PLATTYPE = null;
+	this.YDSPTYPE = null;
 
+	for (var item in pm_obj) {
+		if (this[item]) {
+			this[item] = pm_obj[item];
+		}
+	}
+}
 var saleBillType = [
 	"NONE",
 
@@ -358,6 +404,7 @@ export default {
 	ydsale001,
 	ydsale002,
 	ydsale003,
+	sxsale001,
 	sale008,
 	saleBillType
 }

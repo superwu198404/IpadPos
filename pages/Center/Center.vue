@@ -52,10 +52,13 @@
 						</view>
 					</view>
 				</view>
-				<view class="dates tuichu" @click="ToOut()">
-					<view>
-						<label><text>退出</text><text>LOG OUT</text></label>
+				<view class="chongdu">
+					<view class="dates" >
+						<label><text>重读基础数据</text><text>REREAD DATA</text></label>
+					</view>
+					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
+						退出
 					</view>
 				</view>
 			</view>
@@ -386,7 +389,7 @@
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
 		position: relative;
-		padding:120rpx 0; 
+		padding: 110rpx 0;
 	}
 	.dates .datebg{
 		position: absolute;
@@ -399,14 +402,16 @@
 		justify-content: space-between;
 		padding:0 15%;
 	}
-	.dates view label{
+
+	.dates label {
 		display: flex;
 		flex-direction: column;
 		color: #006B44;
 		font-size: 44rpx;
 		font-weight: 600;
 	}
-	.dates view label text:nth-child(2){
+
+	.dates label text:nth-child(2) {
 		font-weight: 400;
 		font-size: 34rpx;
 		margin-top:20rpx;
@@ -472,38 +477,33 @@
 	.rightlist .dates view image{
 		width:100rpx;
 	}
-	.tuichu{
-		padding:60rpx 0;
-		margin-top:7%;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+	.chongdu{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 7%;		
 	}
-	.prods {
-	            perspective: 400px;
-	        }
-	
-	.div {
-	    width: 100;
-	    height: 450px;
-	    margin: 0 auto;
-	    position: relative;
+	.chongdu .dates{
+		width:70%;
+		margin-right: 5%;
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+		padding:60rpx 5%;
 	}
-	.div image{
-	    width: 100%;
-	    height: 100%;
-	    position: absolute;
-		top: 0;
-	    /* left: 0; */
-	    transition: all 1s;
+	.chongdu .tuichu{
+		width:25%;
+		background-color: #006B44;
+		border-radius: 20rpx;
+		color: #fff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		padding:3% 0;
 	}
-	
-	.div image:first-child{
-	    z-index: 1;
-	            /*不对向屏幕就隐藏*/
-	    backface-visibility: hidden;
+	.chongdu .tuichu image{
+		width:70%;
 	}
-	
-	        /* .div:hover image{
-	            transform: rotateY(180deg);
-	        } */
+	.tuichu {
 		
+	}
 </style>

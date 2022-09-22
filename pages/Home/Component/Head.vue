@@ -26,6 +26,10 @@
 						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
+					<label class="buyer" v-if="hyinfo">
+						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
+						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
 					</label>
@@ -42,14 +46,14 @@
 						<button class="rijie" @click="ConfirmRJ()">日结</button>
 					</label> -->
 				</view>
-				<view class="account" v-if="member_name">
+				<!-- <view class="account" v-if="hyinfo">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
 					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
-						<text>{{ member_name }}</text>
+						<text>{{ hyinfo.hyId}}</text>
 					</view>
-				</view>
+				</view> -->
 				<view class="account">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -202,7 +206,7 @@
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
-				member_name: '',
+				hyinfo: '',
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
 				YW_MsgData: [], //业务类消息
@@ -240,7 +244,7 @@
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
 				console.log("[Head]设置会员名称!", info);
-				this.member_name = info.hyId;
+				this.hyinfo = info;
 			}))
 			_msg.ShowMsg(that.KHID, "", res => {
 				that.MsgData = res;
