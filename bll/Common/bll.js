@@ -197,8 +197,8 @@ export const _CreateSaleOrder = async function(sale1_obj, sale2_arr, sale3_arr, 
 }
 
 const additional_def_params = {
-	oracle:[],
-	sqlite:[]
+	oracle: [],
+	sqlite: []
 };
 //统一生成销售单数据
 export const CreateSaleOrder = async function(dataObj, additional = additional_def_params, func) {
@@ -292,7 +292,13 @@ export const PointUploadNew = async function(sale1, sale2, sale3) {
 		return;
 	}
 	let obj = {};
-	let mode = common.GetPayOrRefund(sale1) == common.actTypeEnum.Payment ? "INCREASE" : "DECREASE";
+	console.log("sale1参数：", sale1);
+	let type1 = common.GetPayOrRefund(sale1);
+	let mode = (type1 == common.actTypeEnum.Payment) ? "INCREASE" : "DECREASE";
+	console.log("积分上传类型：", common.actTypeEnum.Payment);
+	console.log("积分上传类型1：", type1);
+	console.log("积分上传类型2：", mode);
+	console.log("积分上传类型3：", typeof(type1) + typeof(common.actTypeEnum.Payment));
 	obj.order_no = sale1.BILL;
 	obj.sale_order_no = sale1.XS_BILL;
 	obj.member_id = sale1.CUID;
@@ -350,7 +356,7 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		}),
 		payList: params.pay_list,
 		khid: store.KHID,
-		region: store.BMID,
+		region: store.DQID,
 		kquser: global.kquser,
 		posid: store.POSID,
 		cxbill: "",

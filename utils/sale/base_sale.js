@@ -117,9 +117,10 @@ var XsTypeObj = {
 			//一些特殊的设置 如积分上传
 			console.log("检测积分上传参数：",this.currentOperation.upload_point);
 			console.log("检测积分上传参数1：",this.HY.cval.hyId);
+			console.log("检测积分上传参数2：",this.sale001);
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
@@ -132,6 +133,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
+			"upload_point":true,//允许积分上传
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -186,7 +188,7 @@ var XsTypeObj = {
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
@@ -391,7 +393,7 @@ var XsTypeObj = {
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
-				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 			}
 		},
 	},
@@ -1723,8 +1725,10 @@ function GetSale(global, vue, target_name, uni) {
 			new002.NET = that.float(pm_qty * price, 2);
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
+			new002.PLID = that.clikSpItem.plid;
 			that.sale002.push(new002);
 			that.log("[GetSp]添加了商品", new002);
+			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
 		}
 		that.SetManage("inputsp");
