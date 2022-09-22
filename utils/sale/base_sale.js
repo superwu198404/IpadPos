@@ -35,6 +35,8 @@ var XsTypeObj = {
 			"ynCancel": false, //是否可以退出当前销售模式
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynCx": true, //是否进行可以进行促销
+			"upload_point":true,//允许积分上传
+			"inputsp": true, //是否可以输入商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -50,8 +52,7 @@ var XsTypeObj = {
 			"sale_message": true,
 			"tools": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
-			"lockRows": 0, //是否存在锁定行数
-			"inputsp": true //是否可以输入商品
+			"lockRows": 0 //是否存在锁定行数
 		},
 		$click() {
 			return true;
@@ -114,6 +115,8 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
+			console.log("检测积分上传参数：",this.currentOperation.upload_point);
+			console.log("检测积分上传参数1：",this.HY.cval.hyId);
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale1, this.sale2, this.sale3);
@@ -936,7 +939,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("reserve-drawer-close");
 		uni.$off("close-tszk");
 		uni.$off("close-FZCX");
-		uni.$off("CancelSale");
+		uni.$off("ReturnSale");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -948,7 +951,7 @@ function GetSale(global, vue, target_name, uni) {
 
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
-		uni.$on("CancelSale", this.CancelSale);
+		uni.$on("ReturnSale", this.CancelSale);
 		
 	})
 	//退出当前销售模式 返回到默认的销售模式

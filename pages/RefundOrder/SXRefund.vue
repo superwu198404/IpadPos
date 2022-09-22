@@ -61,7 +61,7 @@
 										<text class="price">￥{{item.DNET}}</text>
 									</view>
 									<view class="cods">
-										<label>下单时间：{{item.SALETIME}}</label>
+										<label>下单时间：{{item.SALEDATE}}</label>
 										<label>客户编码: {{item.DKFID}}</label>
 										<label>客户名称: {{item.DKFNAME}}</label>
 									</view>

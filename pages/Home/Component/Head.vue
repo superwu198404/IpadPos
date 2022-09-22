@@ -41,11 +41,9 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<button class="rijie" v-if="showSale" @click="ReturnSale()">返回销售</button>
-					<!-- <label>
-						<button class="rijie" @click="Sign()">签到</button>
-						<button class="rijie" @click="ConfirmRJ()">日结</button>
-					</label> -->
+					<label>
+						<button class="rijie" v-if="showSale" @click="ReturnSale()">返回销售</button>
+					</label>
 				</view>
 				<!-- <view class="account" v-if="hyinfo">
 					<view>
@@ -504,15 +502,17 @@
 				console.log("[ClosePopup]大客户信息:", data);
 				// this.showBig = false;
 				if (data && JSON.stringify(data) != "{}") {
-					getApp().globalData.store.DKFID = data.DKHID;
-					getApp().globalData.store.DKFNAME = data.NAME;
+					let store = util.getStorage("store");
+					store.DKFID = data.DKHID;
+					store.DKFNAME = data.NAME;
+					util.setStorage("store", store);
 					this.DKFNAME = data.NAME;
 				}
 				this.$forceUpdate();
-				console.log("[ClosePopup]新的全局变量:", getApp().globalData.store);
+				console.log("[ClosePopup]新的全局变量:", store);
 			},
 			//通知外部返回销售
-			ReturnSale:function(){
+			ReturnSale: function() {
 				uni.$emit('ReturnSale');
 			},
 			ShowPrint: function() {
@@ -1271,5 +1271,9 @@
 	.tally label text {
 		display: inline-block;
 		width: 80%;
+	}
+
+	.checkout .rijie {
+		background-color: #FE694B;
 	}
 </style>
