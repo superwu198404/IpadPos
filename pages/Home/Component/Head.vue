@@ -887,6 +887,7 @@
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
+							that.YN_PRINT_CON = "Y";
 							console.log("连接成功 deviceName", app.globalData.BLEInformation
 								.deviceName +
 								"||" + app.globalData.YN_PRINT_CON)

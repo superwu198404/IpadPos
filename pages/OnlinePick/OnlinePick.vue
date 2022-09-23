@@ -5,56 +5,61 @@
 </style>
 
 <template>
-	<!-- <menu_content :index="5" :_index="5"></menu_content> -->
-	<view>
-		<view class="commodity" style="height: 100%;">
-			<view class="hh">
-				<view class="hotcakes">
-					<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
-				</view>
-				<view>
-					<view class="prints">
-						<view class="sousuo">
-							<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-						</view>
-						<view class="sousuo">
-							<label @click="Search">
-								<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
-							</label>
-							<view class="criterias" v-if="view.Criterias">
-								<view class="critlist"><text>订单号：</text><input type="text" v-model="form.search.bill" />
-								</view>
-								<view class="critlist"><text>自提码：</text><input type="text" v-model="form.search.code" />
-								</view>
-								<view class="confs"><button class="btn btn-qx" @click="ClearSearch()">清空</button><button
-										class="btn" @click="QueryOrder()">查询</button>
-								</view>
+	<view class="commodity" style="position: relative;">
+		<view class="hh">
+			<view class="hotcakes">
+				<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
+			</view>
+			<view>
+				<view class="prints">
+					<view class="sousuo">
+						<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
+					</view>
+					<view class="sousuo">
+						<label @click="Search">
+							<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
+						</label>
+						<view class="criterias" v-if="view.Criterias">
+							<view class="critlist"><text>订单号：</text><input type="text" v-model="form.search.bill" />
+							</view>
+							<view class="critlist"><text>自提码：</text><input type="text" v-model="form.search.code" />
+							</view>
+							<view class="confs"><button class="btn btn-qx" @click="ClearSearch()">清空</button><button
+									class="btn" @click="QueryOrder()">查询</button>
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-			<!-- 小类循环 -->
-			<view class="products">
-				<view class="procycle">
-					<!-- 产品循环 -->
-					<view class="li" v-if="view.Order">
-						<view class="title-box">
-							<view class="price">{{ main.otoCode || '-' }}</view>
-							<view class="price">{{ extracts.SALEDATE || '-' }}</view>
-						</view>
-						<view class="cods">
-							<view>定金:{{ extracts.DNET || '-' }}</view>
-							<view>折扣金额:{{ main.discount || '-' }}</view>
-						</view>
-						<button @click="OpenReserve" class="btn">提取</button>
+		</view>
+		<NoData v-if="!view.Order"></NoData>
+		<!-- 小类循环 -->
+		<view class="products" v-else>
+			<view class="procycle">
+				<!-- 产品循环 -->
+				<view v-for="(item,index) in [extracts]" class="li">
+					<view class="title-box">
+						<view class="price">{{ item.BILL || '-' }}</view>
+						<!-- <view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view> -->
+						<view class="price" style="width: auto;">{{ item.SALEDATE || '-' }}</view>
+					</view>
+					<view class="cods">
+						<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
+						<view>定金:{{ item.DNET || '-' }}</view>
+						<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
+						<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+							备注:{{ item.CUSTMCOMM || '-' }}</view>
+					</view>
+					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
+						<button class="btn" @click="OpenReserve">提取</button>
 					</view>
 				</view>
 			</view>
 		</view>
-		<component v-if="view.Details" :details="details" is="Extract" @Close="CloseReserve" @Reset="Reset"></component>
+	</view>
 	</view>
 </template>
+
 
 <script>
 	import util from '@/utils/util.js';
@@ -62,7 +67,8 @@
 		global
 	} from '@/models/PaymentAll/models.js';
 	import {
-		getReserveOnlineOrders
+		getReserveOnlineOrders,
+		getReserveOnlineRawOrderInfo
 	} from '@/api/business/onlineorders.js'
 	import Extract from '@/pages/OnlinePick/Extract/Extract.vue'
 	export default {
@@ -70,13 +76,18 @@
 		components: {
 			Extract
 		},
+		computed: {
+			ShowInfo: function() {
+				return this.$data.extracts === this.extracts;
+			}
+		},
 		data() {
 			return {
 				condition: "今日",
 				form: {
 					search: {
 						code: "",
-						bill: "" //LH2022080
+						bill: "LH202209220002" //LH2022080
 						// bill: ""
 					},
 					code: "", //自提码
@@ -119,6 +130,7 @@
 				this.view.Criterias = !this.view.Criterias;
 			},
 			QueryOrder: function() {
+				console.log("[QueryOrder]查询线上订单...", this.KHID);
 				getReserveOnlineOrders({
 					bill: this.form.search.bill,
 					code: this.form.search.code,
@@ -126,7 +138,7 @@
 					isBill: this.form.search.code ? false : true
 				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
-					console.log("查询 线上取货 结果：", data);
+					console.log("[QueryOrder]查询 线上取货 结果:", data);
 					this.extracts = data.details;
 					this.main = data.result;
 					this.details = {
@@ -134,6 +146,7 @@
 						main: this.main,
 						code: this.form.code
 					};
+					this.$forceUpdate();
 					this.view.Order = true;
 				}), util.callBind(this, (err) => {
 					util.simpleMsg(err.msg, true, err);
@@ -149,7 +162,42 @@
 				return true;
 			},
 			OpenReserve: function() {
-				this.view.Details = true;
+				// this.view.Details = true;
+				getReserveOnlineRawOrderInfo({
+					khid: this.KHID,
+					bill: this.extracts.BILL
+				}, util.callBind(this, function(data) {
+					if (data.code) {
+						let sales = JSON.parse(data.data), allow_cancel = false;
+						console.log("[OpenReserve]获取到的原单数据:", sales);
+						this.extracts.Products.forEach(p => {
+							if(!(p.QTY - p.QXQTY > 0)){//如果出现退货商品数量大于商品预定数则不允许提取
+								allow_cancel = true;
+							}
+						})
+						if(allow_cancel){
+							util.simpleMsg("此单商品已全部取消，无法进行提取!",true)
+						}
+						else {
+							this.$to_sale_pages('sale_online_order_extract', {
+								sale1: sales.jk_sys_sale001.first(),
+								sale2: (function() {
+									sales.jk_sys_sale002?.forEach(i => i.STR1 = i
+										.SNAME);
+									return sales.jk_sys_sale002;
+								})(),
+								sale3: sales.jk_sys_sale003,
+								reserve_params: {
+									khid: this.KHID,
+									bill: this.extracts.BILL,
+									code: this.form.code,
+									isBill: this.extracts.THTYPE !== "0",
+									details: this.extracts
+								}
+							})
+						}
+					}
+				}));
 			},
 			CloseReserve: function() {
 				this.view.Details = false;
@@ -170,18 +218,136 @@
 		}
 	}
 </script>
-
 <style>
-	.picker,
-	.input {
-		border: 1px solid #70c477;
-		height: 25px;
+	.right {
+		height: 100%;
+	}
+
+	.classifys {
+		display: inline-flex !important;
+		width: unset;
+	}
+
+	.handles uni-button {
+		width: auto;
 		display: inline-block;
-		border-radius: 5px;
-		padding: 2px 3px;
+	}
+
+	.handles uni-text {
+		color: black;
+		flex: 0.94;
+		overflow: hidden;
+		text-overflow: -o-ellipsis-lastline;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+
+	.state {
+		color: #b0b0b0;
+		font-size: 12px;
+		display: inline-flex;
+		gap: 12rpx;
+		align-items: center;
+		padding: 0px 10px;
+	}
+
+	.state::before {
+		content: "";
+		display: inline-block;
+		width: 20rpx;
+		height: 20rpx;
+		background-color: #b0b0b0;
+		border-radius: 50%;
+	}
+
+	.delivery::before {
+		background-color: #fdb402;
+	}
+
+	.youself::before {
+		background-color: #41b44d;
+	}
+
+	.home::before {
+		background-color: #FF8367;
+	}
+
+	.cods {
+		margin: unset !important;
+		padding: 18rpx 0px;
+	}
+
+	.products .procycle .li {
+		width: calc(50% - 6px) !important;
+		box-sizing: border-box;
+		margin: unset;
+		height: auto;
+		align-items: center;
+		padding: 1.5%;
+	}
+
+	.prolist .cods uni-view {
+		width: 100%;
+	}
+
+	.products {
+		flex: 1 0px;
+		overflow-y: auto;
+		padding: 0px 2% 2% 2% !important;
+	}
+
+	.procycle {
+		gap: 10px;
+		width: 100% !important;
+		box-sizing: border-box !important;
+		display: flex !important;
+		flex-direction: row !important;
+		height: unset !important;
+		overflow-y: auto;
+	}
+
+	.commodity {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.price {
-		margin: 0px;
+		font-size: 16px;
+		margin-top: 0px;
+	}
+
+	.title-box {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-weight: 600;
+	}
+
+	.criterias {
+		z-index: 10;
+	}
+
+	.handles uni-button {
+		width: 6rem;
+	}
+
+	.title-box .price {}
+
+	.title-box>.state {
+		flex-shrink: 0;
+	}
+
+	.title-box>.price:nth-child(1) {
+		width: 50% !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+	}
+
+	.title-box>.price:nth-child(3) {
+		justify-content: right;
+		flex-shrink: 0;
 	}
 </style>

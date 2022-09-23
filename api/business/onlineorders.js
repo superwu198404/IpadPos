@@ -25,6 +25,18 @@ export const getReserveOnlineOrders = function(data, func, catchFunc) {
 }
 
 /**
+ * 线上订单原单信息查询
+ * @param {*} data 
+ * @param {*} func 
+ * @param {*} catchFunc 
+ */
+export const getReserveOnlineRawOrderInfo = function(data, func, catchFunc) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOnlineRawOrderInfo";
+	let reqdata = Req.resObj(true, "线上订单信息查询中", data, apistr);
+	Req.asyncFuncOne(reqdata, func, catchFunc);
+}
+
+/**
  * 提取 提取码/订单号 的线上取货单
  * @param {*} data 
  * @param {*} func 

@@ -35,7 +35,7 @@ var XsTypeObj = {
 			"ynCancel": false, //是否可以退出当前销售模式
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynCx": true, //是否进行可以进行促销
-			"upload_point":true,//允许积分上传
+			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -114,9 +114,9 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
-			console.log("检测积分上传参数：",this.currentOperation.upload_point);
-			console.log("检测积分上传参数1：",this.HY.cval.hyId);
-			console.log("检测积分上传参数2：",this.sale001);
+			console.log("检测积分上传参数：", this.currentOperation.upload_point);
+			console.log("检测积分上传参数1：", this.HY.cval.hyId);
+			console.log("检测积分上传参数2：", this.sale001);
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
@@ -132,7 +132,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
-			"upload_point":true,//允许积分上传
+			"upload_point": true, //允许积分上传
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -395,9 +395,6 @@ var XsTypeObj = {
 				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:",
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
-			);
 			delete this.old_bill;
 		},
 		async $saleFinied(sales) {
@@ -480,9 +477,6 @@ var XsTypeObj = {
 			);
 			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			console.log("[SaleFinishing]生成状态更新 ydsale001 的sql:",
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${sales.sale1_obj.BILL}' WHERE bill ='${this.old_bill}';"`
-			);
 		},
 	},
 	//赊销
@@ -678,14 +672,47 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$initSale: function(params) {
-			this.actType = common.actTypeEnum.Refund;
-			this.allOperation.actType = false;
-			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
-			this.sale001 = params.sale1 ?? {};
-			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? [];
-			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? [];
+			this.actType = common.actTypeEnum.Payment;
+			this.old_bill = params.sale1.BILL;
+			this.createNewBill();
+			console.log("[sale_online_order_extract]SALE001:", params.sale1);
+			Object.cover(this.sale001, Object.cover(params.sale1, this.sale001));
+			console.log("[sale_online_order_extract]SALE002:", params.sale2);
+			this.sale002 = params.sale2.map(s2 => {
+				let new_s2 = Object.cover(new sale.sale002(), s2);
+				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
+				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
+				return new_s2;
+			});
+			console.log("[sale_online_order_extract]SALE003:", params.sale3);
+			this.sale003 = params.sale3.map(s3 => {
+				let new_s3 = Object.cover(new sale.sale003(), s3)
+				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
+				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
+				return new_s3
+			});
+			this.reserve_param = params.reserve_params;
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			for (let s3 of this.sale003) {
+				this.payed.push(Sale3ModelAdditional(Sale3Model({
+					fkid: s3.FKID,
+					type: '',
+					bill: s3.BILL,
+					name: s3.SNAME,
+					amount: s3.AMT
+				}), { //业务配置字段（支付状态设定为成功）
+					fail: false //定金显示为成功
+				}));
+			}
+			console.log("[sale_online_order_extract]线上订单初始化完毕:", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
+			});
 		},
 		///对打印的控制
 		$print: function() {
@@ -700,6 +727,29 @@ var XsTypeObj = {
 		$click() {
 			this.SetManage("sale_online_order_extract");
 			return false;
+		},
+		$beforeFk: function() {
+			return true;
+		},
+		$saleFinishing: function(result) { //生成yd
+			console.log("[SaleFinishing]预定生成中...", this.sale003);
+			this.communication_for_oracle.push(
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+			);
+			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+			delete this.old_bill;
+		},
+		async $saleFinied(sales) {
+			onlineOrderReserve(this.reserve_param , util.callBind(this, function(res) {
+				console.log("[SaleFinied]提取成功！", res);
+			}), util.callBind(this, function(err) {
+				util.simpleMsg(err.msg, true);
+			}))
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
+				console.log("[PayedResult]准备上传会员积分...");
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+			}
 		},
 	},
 	//外卖单
@@ -951,7 +1001,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
-		
+
 	})
 	//退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1669,17 +1719,14 @@ function GetSale(global, vue, target_name, uni) {
 
 	//汇总sale002的所有内容
 	this.sale002Sum = function(pm_input) {
+		console.log("[Sale002Sum]汇总sale002的所有内容...", this.sale002);
 		this.sale002.forEach(item => {
-			that.log("循环中查看002");
-			that.log(JSON.stringify(item));
+			console.log("[Sale002Sum]循环中查看002:", item);
 			let keys = Object.keys(pm_input);
 			for (var i = 0; i < keys.length; i++) {
-				that.log(JSON.stringify(keys[i]));
 				pm_input[keys[i]] += that.float(item[keys[i]], 2);
-				that.log(JSON.stringify(pm_input));
 			}
 		})
-
 		return pm_input;
 	}
 
@@ -1926,7 +1973,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.InputDkf = function() {
 
 	}
-	
+
 	this.Bind()
 }
 

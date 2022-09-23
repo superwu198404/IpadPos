@@ -110,7 +110,7 @@
 					return;
 				}
 				_login.GetPassWord(that.khid, that.userid, that.password, res => {
-					console.log("登录成功：", res);
+					console.log("[Login]登录成功:", res);
 					util.simpleMsg("登录成功");
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
