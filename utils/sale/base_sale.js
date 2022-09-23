@@ -218,6 +218,7 @@ var XsTypeObj = {
 			"inputsp": true //是否可以输入商品
 		},
 		$click() {
+			///******如果sale008.length>0 这里不能进行切换
 			console.log("[sale_reserve]预定信息录入操作!");
 			this.SetManage("sale_reserve");
 			return true;
@@ -268,7 +269,7 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: function() {
-
+			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]预定录入关闭...");
@@ -1230,6 +1231,7 @@ function GetSale(global, vue, target_name, uni) {
 		"lockRows": 0, //是否存在锁定的行数
 		"inputsp": false,
 		"statement": true, //购物车
+		"inputDrinkSp": false, ///******是否可以录入带有选配属性的水吧商品  //预定和赊销  都不行
 	}
 	//插件的显示在这里控制
 	this.ComponentsManage = {
@@ -1787,7 +1789,6 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.currentOperation.Disc) {
 			that.discCompute();
 		}
-		that.sale001.TLINE = that.sale002.length;
 		var retx = that.sale002Sum({
 			NET: 0,
 			QTY: 0,
@@ -1799,10 +1800,10 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
-		that.sale001.TLINE = this.float(retx.QTY, 2);
-
+		// that.sale001.TLINE = this.float(retx.QTY, 2);
+		that.sale001.TLINE = that.sale002.length;
+		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {
-			//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 			this.computeFzCx();
 		}
 		//this.update();
