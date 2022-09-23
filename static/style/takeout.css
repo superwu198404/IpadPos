@@ -72,7 +72,6 @@
 
 .products .procycle .li .h3 .jiedan text {
 	color: #42B14B;
-	margin-right: 4rpx;
 }
 
 .procycle .li .danhao {
@@ -101,7 +100,9 @@
 	display: flex;
 	align-items: center;
 }
-
+.platform label text{
+	font-size: 16rpx;
+}
 .products .cods {
 	flex-wrap: wrap;
 	margin:0 0 2%;
@@ -184,6 +185,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 	padding-bottom: 20rpx;
+	border-radius: 10rpx;
 }
 
 .details .goods {

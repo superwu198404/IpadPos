@@ -55,7 +55,7 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 76%;
+	height: 79%;
 	padding-bottom: 50%;
 }
 .navmall .gongju{
@@ -67,6 +67,7 @@ page {
 	bottom:0;
 	background-color: #fff;
 	border-top: 1rpx #eee solid;
+	z-index: 99;
 }
 .menu .bills {
 	width: 100%;
@@ -480,6 +481,7 @@ page {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 34rpx;
 }
 
 .settleds h3 button {
@@ -544,7 +546,7 @@ page {
 }
 
 .payicon image {
-	width: 70rpx;
+	width: 60rpx;
 	margin-right: 10px;
 }
 
@@ -560,7 +562,7 @@ page {
 }
 
 .stills .payicon image {
-	width: 60rpx;
+	width: 50rpx;
 }
 
 .choosepays {

@@ -279,7 +279,7 @@ var showloding = function(yn_show, pm_txt) {
 }
 
 var hideloding = function(yn_show, pm_txt) {
-	uni.hideLoading();
+		uni.hideLoading();
 }
 
 var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
@@ -295,7 +295,8 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			console.log("http请求", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
-			hideloding();
+			// console.log("http返回值", res);
+			hideloding(); 
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
@@ -304,7 +305,6 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res)
 		// console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0, 100));
-
 		if (res && !res.code) {
 			console.log("回调函数异常了" + i.toString() + JSON.stringify(res));
 			def(catchfun, res);
@@ -331,10 +331,10 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 	let res = pm_data;
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("[AsyncFuncChain]http请求:",res);
+			console.log("[AsyncFuncChain]http请求:", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res); //发起请求
-			console.log("[AsyncFuncChain]http请求结果:",res);
+			console.log("[AsyncFuncChain]http请求结果:", res);
 			results.push(res); //存入执行结果
 			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
 				def(catchfun, res);

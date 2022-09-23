@@ -37,6 +37,7 @@ var XsTypeObj = {
 			"ynCx": true, //是否进行可以进行促销
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
+			"ynSKDisc": true, //是否可以计算特殊折扣
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -84,16 +85,7 @@ var XsTypeObj = {
 		$beforeFk: function() {
 			console.log("[Sale]新单据生成中...");
 			this.createNewBill(); //创建新的sale001
-
 			this.sale001.XSTYPE = 1;
-			//手工折扣额的处理
-			console.log("原金额：", this.sale001.TNET);
-			let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
-			console.log("手工折扣额：", SKY_DISCOUNT);
-			this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
-			this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
-			this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
-			this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
@@ -205,6 +197,8 @@ var XsTypeObj = {
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
+			"ynSKDisc": true, //是否可以计算特殊折扣
+
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -219,6 +213,7 @@ var XsTypeObj = {
 			"inputsp": true //是否可以输入商品
 		},
 		$click() {
+			///******如果sale008.length>0 这里不能进行切换
 			console.log("[sale_reserve]预定信息录入操作!");
 			this.SetManage("sale_reserve");
 			return true;
@@ -265,7 +260,7 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: function() {
-
+			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]预定录入关闭...");
@@ -299,6 +294,8 @@ var XsTypeObj = {
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
+			"ynSKDisc": true, //是否可以计算特殊折扣
+
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -494,6 +491,7 @@ var XsTypeObj = {
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
 			"ynCx": false, //是否进行可以进行促销
+			"ynSKDisc": true, //是否可以计算特殊折扣
 
 			"sale": true,
 			"sale_takeaway_reserve": true,
@@ -874,8 +872,15 @@ function GetSale(global, vue, target_name, uni) {
 		var newbill = "";
 		if (this.bill == null) {
 			let d = new Date();
-			newbill = this.Storeid + this.POSID + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
-				.getHours() + d.getMinutes() + d.getSeconds();
+			let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() % 100);
+			let month = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1);
+			let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
+			let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+			let min = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+			let sec = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
+			// newbill = this.Storeid + this.POSID + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
+			// 	.getHours() + d.getMinutes() + d.getSeconds();
+			newbill = this.Storeid + this.POSID + year + month + day + hour + min + sec;
 			//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
 			newbill = newbill + "" + this.billindex;
 			this.billindex++;
@@ -1032,7 +1037,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.POSID = store.POSID;
 	this.ryid = store.RYID;
 	this.KCDID = store.KCDID;
-	this.DPID = store.DPID;
+	this.DPID = store.DQID; //测试要求按照ｐｏｓ记录
 	this.GCID = store.GCID;
 	this.GSID = store.GSID;
 	//销售系列主要数据对象
@@ -1107,6 +1112,15 @@ function GetSale(global, vue, target_name, uni) {
 		base: {},
 		cval: {},
 		Defval: "80000000",
+		get cval() {//防止清空cval后 获取cval 取不到默认值的问题
+			if (!this.cval.DKFID) {
+				this.cval.DKFID = this.Defval;
+			}
+			/*
+			  这里要根据大客户ID是否为空 如果为空 返回一个默认的大客户
+			*/
+			return this.cval;
+		},
 		get val() {
 			if (!this.cval.DKFID) {
 				this.cval.DKFID = this.Defval;
@@ -1240,6 +1254,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
 		"ynFzCx": false, //是否可以辅助促销
+		"ynSKDisc": false, //是否要计算特殊折扣
 		"ynCancel": false, //是否可以退出当前销售模式
 		"FZCX": false, //是否可以打开辅助促销组件
 		"ynCx": false, //是否进行可以进行促销  
@@ -1265,6 +1280,7 @@ function GetSale(global, vue, target_name, uni) {
 		"lockRows": 0, //是否存在锁定的行数
 		"inputsp": false,
 		"statement": true, //购物车
+		"inputDrinkSp": false, ///******是否可以录入带有选配属性的水吧商品  //预定和赊销  都不行
 	}
 	//插件的显示在这里控制
 	this.ComponentsManage = {
@@ -1549,6 +1565,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.resetSaleBill();
 	}
 
+	//去支付
 	this.pay = async function() {
 		if (!that.sale002 || that.sale002.length == 0) {
 			util.simpleMsg("请先加购商品", true);
@@ -1683,12 +1700,13 @@ function GetSale(global, vue, target_name, uni) {
 				DPID: this.DPID,
 				GCID: this.GCID,
 				SALETIME: stime,
-				YN_OK: 'N', //默认为 N
-				YN_SC: 'X', //默认为 X
+				YN_OK: 'X', //默认为 X
+				YN_SC: 'N', //默认为 N
 				YAER: _date.getDateByParam("Y"),
 				MONTH: _date.getDateByParam("M"),
 				WEEK: _date.getDateByParam("w"),
-				TIME: _date.getDateByParam("h")
+				TIME: _date.getDateByParam("h"),
+				DKFID: this.DKF.val.DKFID
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1711,7 +1729,8 @@ function GetSale(global, vue, target_name, uni) {
 				YAER: this.sale001.YAER,
 				MONTH: this.sale001.MONTH,
 				WEEK: this.sale001.WEEK,
-				TIME: this.sale001.TIME
+				TIME: this.sale001.TIME,
+				DKFID: this.sale001.DKFID
 			}
 		}
 		return commonSaleParm;
@@ -1814,11 +1833,16 @@ function GetSale(global, vue, target_name, uni) {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
+			let TCXDISC = 0;
+			this.sale002.map(r => {
+				TCXDISC += r.CXDISC
+			});
+			this.sale001.TCXDISC = TCXDISC;
 		}
+		console.log("促销计算后的商品:", this.sale002);
 		if (that.currentOperation.Disc) {
 			that.discCompute();
 		}
-		that.sale001.TLINE = that.sale002.length;
 		var retx = that.sale002Sum({
 			NET: 0,
 			QTY: 0,
@@ -1829,12 +1853,15 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
-		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
-		that.sale001.TLINE = this.float(retx.QTY, 2);
-
+		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
+		// that.sale001.TLINE = this.float(retx.QTY, 2);
+		that.sale001.TLINE = that.sale002.length;
+		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {
 			this.computeFzCx();
 		}
+		console.log("计算过促销和折扣后的主单001：", that.sale001);
+		console.log("计算过促销和折扣后的商品002：", that.sale002);
 		//this.update();
 	}
 
@@ -1857,6 +1884,21 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 
+	//使用手工折扣进行计算
+	this.SKdiscCompute = function() {
+		// 计算商品的手工折扣值 也就是舍去分的处理
+		//手工折扣额的处理
+		console.log("原金额：", this.sale001.TNET);
+		let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
+		console.log("手工折扣额：", SKY_DISCOUNT);
+		this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
+		this.sale001.ZNET = this.float(Number(this.sale001.ZNET) - SKY_DISCOUNT, 2);
+		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+		this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
+		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
+		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
+	}
+
 	//付款之前触发
 	this.$beforeFk = function(pm_inputParm) {
 		console.log("[BeforeFk]支付前触发:", pm_inputParm);
@@ -1864,7 +1906,7 @@ function GetSale(global, vue, target_name, uni) {
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
-		this.sale001.DKFID = this.DKF.cval.DKFID; //当前选择的大客户的编码
+		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
 		//写大客户
 		//code...
@@ -1873,6 +1915,11 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
+		
+		//计算手工折扣
+		if (that.currentOperation.ynSKDisc) {
+			this.SKdiscCompute();
+		}
 		return new Promise(util.callBind(this, function(reslove, reject) {
 			if (this.currentOperation.ynFzCx) {
 				console.log("[BeforeFk]此模式包含辅助促销操作...");

@@ -377,7 +377,7 @@ var mySqllite = function() {
 	};
 
 
-	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail) {
+	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail, hideloading) {
 		var retcode;
 
 		retcode = await open(pm_msg);
@@ -388,9 +388,7 @@ var mySqllite = function() {
 		console.log("tran:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
-
 			retcode = await exec(sqlArray[i]);
-
 			if (!retcode.code) {
 				//console.log(i+"exec:"+JSON.stringify( retcode));
 				if (retcode.msg.code === -1404) {
@@ -406,7 +404,7 @@ var mySqllite = function() {
 			return callBackCloseLoading(retcode, fail, pm_msg);
 		}
 		//await close();
-
+		console.log("检测是否加载框关闭：", pm_msg)
 		return callBackCloseLoading(retcode, success, pm_msg);
 
 	};

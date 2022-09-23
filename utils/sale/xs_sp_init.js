@@ -63,7 +63,7 @@ var loadSaleSP  =
 		let retArr  =[];
 		pm_arr  =  this.getFstrAndSort(pm_arr);
 		console.log("##############################"+pm_arr.length+"##############################")
-		retArr= pm_arr.sort((a,b)=>{ let x=0;  if( (a.FSTR< b.FSTR) ||( a.FSTR ==b.FSTR   &&  a.plid<b.plid) ) { x=-1} else{x=1}  return x});
+		retArr= pm_arr.sort((a,b)=>{ let x=0;  if( (a.FSTR< b.FSTR) ||( a.FSTR ==b.FSTR   &&  a.plid<b.plid)|| ( a.FSTR ==b.FSTR   &&  a.plid==b.plid && a.SNAME<b.SNAME)) { x=-1} else{x=1}  return x});
 		let  plarr;  //品类的子集
 		let  fsArr=[];  //字符的总集集
 			retArr.forEach( item =>{

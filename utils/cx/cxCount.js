@@ -310,6 +310,8 @@ const Createcx = async (sale02_arr) => {
 			}
 			//把促销值写入
 			sale02_arr[i].DISCRATE = cxdiscvalue;
+			sale02_arr[i].CXDISC = cxdiscvalue;
+			sale02_arr[i].YN_CXDISC = (cxdiscvalue > 0 ? 'Y' : 'N');
 		}
 		let cxztStr = "";
 		let cxbillStr = "";
@@ -641,7 +643,7 @@ const testallcx = function(bill, pmList) {
 	}
 }
 
-///参与促销计算
+//参与促销计算
 const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype) {
 	console.log("CxClasCompute", spid + "||" + salebill + "|" + saledate)
 	//console.log("CxClasCompute cx1", cxdict.get(bill))
@@ -657,7 +659,7 @@ const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype)
 	}
 }
 
-///只计算一次的价随量变促销
+//只计算一次的价随量变促销
 const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
@@ -687,7 +689,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			} else {
 				Tjqty = subx.NetCondition[currentlv];
 			}
-			///发生的总金额 或者总数量
+			//发生的总金额 或者总数量
 			let Fsnet = 0;
 			for (let i = 0; i < pmList.length; i++) {
 				if (pmList[i] == null) {
@@ -735,7 +737,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	}
 }
 
-///价随量变促销
+//价随量变促销
 const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
 		let Lcm = 1;
@@ -746,7 +748,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		let subx = cx.SubList[pmList[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
-			///当前级别
+			//当前级别
 			let subzqty = getSubidZqty(pmList, cx, sysl);
 			for (let lv = currentlv; lv >= 0; lv--) {
 				Lcm = getLcm(subzqty, cx, lv);
@@ -764,7 +766,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			} else {
 				Tjqty = subx.NetCondition[currentlv] * Lcm;
 			}
-			///发生的总金额 或者总数量
+			//发生的总金额 或者总数量
 			let Fsnet = 0;
 
 			for (let i = 0; i < pmList.length; i++) {
@@ -773,13 +775,13 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				}
 				let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
 				if (currqty == 0) {
-					///没有剩余要跳出
+					//没有剩余要跳出
 					continue;
 				}
 				let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
-				///取出售价
+				//取出售价
 				let Spprice = 0;
-				///取出条件数量
+				//取出条件数量
 				let fsqty = 0;
 
 				//let ynzs = true;
@@ -865,12 +867,12 @@ const getLcm = function(zqty, cx1, lv) {
 	return lcm;
 }
 
-///自由组合促销
+//自由组合促销
 const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
-	///最小公倍数
+	//最小公倍数
 	try {
 		let Lcm = 1;
-		///保存本次运算的数量或者金额条件
+		//保存本次运算的数量或者金额条件
 		let hashqty = new Map();
 		let subzqty = getSubidZqty(pmList, cx, sysl);
 		Lcm = getLcm(subzqty, cx, 0);
@@ -878,23 +880,23 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		if (Lcm == 0) {
 			return;
 		}
-		///发生促销的时候按类别的总售价金额
+		//发生促销的时候按类别的总售价金额
 		let Fsnet = new Map();
 		for (let i = 0; i < pmList.length; i++) {
 			if (pmList[i] == null) {
-				///无效的行数 要跳出
+				//无效的行数 要跳出
 				continue;
 			}
 			let subid = pmList[i];
 			let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
 			if (currqty == 0) {
-				///没有剩余要跳出
+				//没有剩余要跳出
 				continue;
 			}
 			let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
-			///取出售价
+			//取出售价
 			let Spprice = 0;
-			///取出条件数量
+			//取出条件数量
 			let Tjqty = 0;
 			let subx = cx.SubList[subid];
 			//某一行产品进行计算时进行这些计算
@@ -918,10 +920,10 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				}
 			}
 			if (Tjqty == 0) {
-				///条件数量用尽要退出
+				//条件数量用尽要退出
 				continue;
 			}
-			///发生数量
+			//发生数量
 			let fsqty = 0;
 			//这里判断商品是不是整数
 			// let ynzs = true;
@@ -1014,11 +1016,11 @@ const getOneSp_Num = function(pm_list, cx, subid, syqty_buff, oldprcle) {
 
 //用于计算本次促销计算中的  需要减少金额的行数
 const MinComputedRow = function(pm_list, cx, lcm, level) {
-	///本次促销计算中所实用的类别
+	//本次促销计算中所实用的类别
 	let MinFreeClassQty = new Map();
 	let Zfsqty = new Map();
 	let Row = new Map();
-	///已经使用过的行
+	//已经使用过的行
 	let Rowlist = new Array();
 	/*
 	 * 第一循环取出有多少个类别和 免单数量
@@ -1119,18 +1121,18 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 //组合促销计算折扣和金额的方法
 const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm) {
 	try {
-		///取出表中促销单不为空的最后一行
+		//取出表中促销单不为空的最后一行
 		let lastIndex = 0;
 		for (let n = pm_list.length - 1; n >= 0; n--) {
-			///取出促销单不为null且有促销发生的那一行
+			//取出促销单不为null且有促销发生的那一行
 			if (pm_list[n] != null && cx_util.nnvl(cxbilldts[n][fscs], 0) > 0) {
 				lastIndex = n;
 				break;
 			}
-		}
+		} 
 		let MinRow = null;
 		for (let i = 0; i < pm_list.length; i++) {
-			///累计的分摊的积分
+			//累计的分摊的积分
 			if (pm_list[i] == null) {
 				continue;
 			}
@@ -1139,14 +1141,14 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			}
 			//产品在当前促销单下所属的类别
 			let subid = pm_list[i];
-			///原售价
+			//原售价
 			let price = cx_util.nnvl(cxbilldts[i][oprice], 0);
 			//表示此行单品 在当前促销单下 发生的数量
 			let fsqty = cx_util.nnvl(cxbilldts[i][fscs], 0);
 			let subznet = fsznet.get(subid);
 			let cxsub = cx.SubList[subid];
 			let jfxs = cxsub.jfxs[level]; ///产品的积分系数
-			///促销后金额/数量的  售价
+			//促销后金额/数量的  售价
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
@@ -1175,9 +1177,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 							if (i == lastIndex) {
 								let jfnum = cx.syjf * lcm; ///变化的积分数
 								let dsnum = cxsub.discnet[level] * lcm; ///变化的折扣金额
-								///计算最小积分上限
+								//计算最小积分上限
 								setHyjfUpleve(cx.upleave);
-								///计算积分上限是否满足条件
+								//计算积分上限是否满足条件
 								calculateJf(dsnum, jfnum, cx);
 								setHjInfo(cx, jfxs, dsnum, jfnum);
 							}
@@ -1202,9 +1204,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 							try {
 								let jfnum = cx.syjf * fsqty; ///变化的积分数
 								let dsnum = (price - zjprice) * fsqty; ///变化的折扣金额
-								///计算最小积分上限
+								//计算最小积分上限
 								setHyjfUpleve(cx.upleave);
-								///计算积分上限是否满足条件
+								//计算积分上限是否满足条件
 								calculateJf(dsnum, jfnum, cx);
 								setHjInfo(cx, jfxs, dsnum, jfnum);
 								newprice = price;
@@ -1229,7 +1231,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i)* Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math
+							.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
 							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) *
 									100) / 100) /
@@ -1261,9 +1264,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 				if (jfxs >= 1) {
 					jfxs = jfxs - 1;
 				}
-				///本次促销单中，该产品的积分 = 促销单中的积分系数 * 折扣后的价格 * 商品数量
+				//本次促销单中，该产品的积分 = 促销单中的积分系数 * 折扣后的价格 * 商品数量
 				let currentJf = jfxs * newprice * fsqty;
-				///每次这个产品有新的促销单生效的时候，都要将这一促销单的积分累加到产品这一列上
+				//每次这个产品有新的促销单生效的时候，都要将这一促销单的积分累加到产品这一列上
 				cxbilldts[i][jfnum] = cx_util.nnvl(cxbilldts[i][jfnum], 0) + currentJf;
 				if (!fsdcx.hasOwnProperty(cxsub.subno)) {
 					///积分的促销类型不在这里添加
@@ -1298,7 +1301,7 @@ const setHyjfUpleve = function(num) {
 		if (hyjfnum <= 0) {
 			return;
 		}
-		///积分加价购
+		//积分加价购 
 		//jfinfo = new JfSaleInfo(0, 0, PARTNER, hyjfnum, tj);
 		jfinfo = {
 			"jfnum": 0,
@@ -1309,11 +1312,11 @@ const setHyjfUpleve = function(num) {
 			"upleve": 0
 		};
 	}
-	///第一次赋值
+	//第一次赋值
 	if (jfinfo.upleve == 0) {
 		jfinfo.upleve = num;
 	}
-	///每次去最小的积分上限
+	//每次去最小的积分上限
 	if (num < jfinfo.upleve) {
 		jfinfo.upleve = num;
 	}
@@ -1322,36 +1325,36 @@ const setHyjfUpleve = function(num) {
 //计算本次活动可加积分和金额
 const calculateJf = function(dsnum, jfnum, cx) {
 	try {
-		///会员为null
+		//会员为null
 		if (null == hymen) {
 			return;
 		}
 		let tj = cx_util.TryParse(hymen.BALANCE);
-		///会员积分错误
+		//会员积分错误
 		if (tj >= 0) {
 			return;
 		}
-		let syjf = 0; ///当前已经累计的积分
-		let dqjf = jfnum; ///当前累计活动积分+本次活动积分
-		///当前活动所包含积分
+		let syjf = 0; //当前已经累计的积分
+		let dqjf = jfnum; //当前累计活动积分+本次活动积分
+		//当前活动所包含积分
 		if (null != jfinfo) {
 			syjf = jfinfo.jfnum;
 			dqjf = jfnum + syjf;
 		}
-		///当积分超过最小上限时
+		//当积分超过最小上限时
 		if ((cx.upleave > 0 && dqjf > jfinfo.upleve) || dqjf > tj) {
-			////取一个比较小的金额
+			//取一个比较小的金额
 			let min = tj > cx.upleave ? cx.upleave : tj;
-			///先取商，算出剩余积分还能发生几次该促销
+			//先取商，算出剩余积分还能发生几次该促销
 			let bs = parseInt(min - syjf) / parseInt(cx.syjf);
 			if (bs <= 0) {
-				///当商为0时，表示一次促销都不能再发生，直接返回0
+				//当商为0时，表示一次促销都不能再发生，直接返回0
 				dsnum = 0;
 				jfnum = 0;
 			} else {
-				///当商不为0时，要取余数
+				//当商不为0时，要取余数
 				let ys = parseInt(min - syjf) % parseInt(cx.syjf);
-				///算出还能发生几次促销  （剩余积分 - 余数） / 发生一次促销的积分数
+				//算出还能发生几次促销  （剩余积分 - 余数） / 发生一次促销的积分数
 				let time = parseInt((min - syjf - ys) / cx.syjf);
 				dsnum = time * cx.syjf / jfnum * dsnum;
 				jfnum = time * cx.syjf;
@@ -1367,43 +1370,43 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (net == 0 || jfnum == 0) {
 		return;
 	}
-	///会员为null
+	//会员为null
 	if (null == hymen) {
 		return;
 	}
 	let tj = cx_util.TryParse(hymen.BALANCE);
-	///会员积分错误
+	//会员积分错误
 	if (tj <= 0) {
 		return;
 	}
 	let yyjf = 0;
-	///获取当前累计的积分
+	//获取当前累计的积分
 	if (null != jfinfo) {
 		yyjf = jfinfo.jfnum;
 	}
-	///当前累计积分超过会员积分的时候，就返回
+	//当前累计积分超过会员积分的时候，就返回
 	if (tj < (jfnum + yyjf)) {
 		return;
 	}
-	///积分超过积分上限的时候
+	//积分超过积分上限的时候
 	if (cx.upleave > 0 && (jfnum + yyjf) > cx.upleave) {
 		return;
 	}
 	net = Math.round(net * 100) / 100;
 	jfnum = Math.round(jfnum * 100) / 100;
-	///累加金额
+	//累加金额
 	jfinfo.dhnet += net;
-	///累加积分
+	//累加积分
 	jfinfo.jfnum += jfnum;
-	///累计单号
+	//累计单号
 	if (!jfinfo.hdbill.hasOwnProperty(cx.CxBill)) {
-		///当这个促销单存在积分系数的时候，将单号的索引记录下来
+		//当这个促销单存在积分系数的时候，将单号的索引记录下来
 		if (jfxs > 0) {
 			jfinfo.xsIndex.push(jfinfo.hdbill.length);
 		}
-		///累计单号
+		//累计单号
 		jfinfo.hdbill.push(cx.CxBill);
-		///累计类型
+		//累计类型
 		jfinfo.hdtype.push(cx.cxtype);
 	}
 }
@@ -1436,7 +1439,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 						break;
 				}
 			}
-			///判断当前产品的数量和条件之间的差异关系
+			//判断当前产品的数量和条件之间的差异关系
 			if (TjQty > 0) {
 				switch (cxsub.ZkTj) {
 					case "Net":
@@ -1460,7 +1463,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			} else {
 				fsqty = 0
 			}
-			///促销后金额/数量的  售价
+			//促销后金额/数量的  售价
 			let newprice = 0;
 			if (fsqty > 0) {
 				switch (cxsub.SubZktype) {
@@ -1488,7 +1491,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 						break;
 				}
 			}
-			///一次计算促销但是 所有的数量都要计算进 
+			//一次计算促销但是 所有的数量都要计算进 
 			//生成促销的结果
 			try {
 				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm);
@@ -1546,7 +1549,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		let subx = cx.SubList[subid];
 		//console.log("subx",subx)
 		if (cx.OneSp) {
-			///此时返回的是发生的数量
+			//此时返回的是发生的数量
 			syqty = getOneSp_Num(pm_list, cx, subid, syqty_buff, oldprcle);
 			if (syqty < 0) {
 				continue;

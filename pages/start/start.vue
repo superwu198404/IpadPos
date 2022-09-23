@@ -91,13 +91,14 @@
 	}
 
 	.infos label input {
-		width: 90%;
+		width: 86%;
 		height: 80rpx;
 		line-height: 80rpx;
+		padding:0 20rpx;
 	}
 
 	.infos image {
-		width: 46rpx;
+		width: 38rpx;
 		height: 36rpx;
 	}
 
@@ -224,7 +225,7 @@
 				}
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
-				let reqdata = Req.resObj(true, "正在初始化", null, apistr);
+				let reqdata = Req.resObj(true, "开始初始化...", null, apistr);
 				console.log(JSON.stringify(reqdata));
 				Req.asyncFunc(reqdata,
 					(res) => {
@@ -235,12 +236,16 @@
 							"posid": that.posid
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
-						return Req.resObj(true, "正在初始化...", reqPosData, apistr);
+						return Req.resObj(true, "初始化中...", reqPosData, apistr);
 					},
 					(res) => {
 						let sql = [];
 						// console.log("004回调：", res);
 						console.log("004回调成功");
+						uni.showLoading({
+							title: "表结构创建中...",
+							mask: true
+						});
 						let tx004 = Req.getResData(res);
 						//根据001循环创建表，并生成初始化语句
 						this.tx001.forEach(function(item) {
@@ -259,7 +264,7 @@
 							sql = sql.concat(new004);
 						});
 						sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
-						return Req.resObj(true, "正在开始重建数据库", sql);
+						return Req.resObj(true, "即将完成...", sql);
 					},
 					async (res) => {
 							console.log("数据库重建结果：", res.code);
@@ -272,9 +277,10 @@
 									return reqdata;
 								},
 								(res) => {
+									cconsole.log("初始化失败了：", res);
 									that.initok = false;
 									that.errstr = res;
-									return Req.retData(false, "start创建失败"+JSON.stringify(errstr))
+									return Req.retData(false, "start创建失败" + JSON.stringify(errstr))
 								}
 							);
 							return x;
