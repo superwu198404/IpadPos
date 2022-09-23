@@ -55,7 +55,7 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 80%;
+	height: 79%;
 	padding-bottom: 50%;
 }
 .navmall .gongju{
@@ -67,6 +67,7 @@ page {
 	bottom:0;
 	background-color: #fff;
 	border-top: 1rpx #eee solid;
+	z-index: 99;
 }
 .menu .bills {
 	width: 100%;

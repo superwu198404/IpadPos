@@ -4,6 +4,10 @@ import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 import dateformat from '@/utils/dateformat.js';
+import Vue from 'vue'
+import {
+	global
+} from '@/models/PaymentAll/models.js';
 
 var GetPassWord = function(khid, userid, password, func) {
 	let sql = "select password_MD,gwid,SNAME from MDRYKH where ryid='" + userid + "' and khid='" + khid + "'";
@@ -152,6 +156,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
+		console.log("[InitStore]全局混入客户端信息！");
+		Vue.mixin(global);
 		console.log("登录后的初始化信息：", store1);
 		if (func) func({
 			code: true,

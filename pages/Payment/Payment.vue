@@ -830,6 +830,7 @@
 			//计算从上个页面传入的已完成的支付金额
 			PayedCount: function() {
 				let count = 0;
+				console.log("[PayedCount]已支付记录:", this.PaymentInfos.PayList);
 				this.PaymentInfos.PayList?.filter(i => !i.fail).map(pay => { //总和计算上个页面已经支付成功的订单的金额
 					count += pay.amount;
 				});
