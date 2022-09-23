@@ -101,7 +101,7 @@
 	align-items: center;
 }
 .platform label text{
-	font-size: 20rpx;
+	font-size: 16rpx;
 }
 .products .cods {
 	flex-wrap: wrap;

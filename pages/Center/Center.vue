@@ -33,15 +33,15 @@
 
 						</view>
 						<view class="div">
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="@/images/xstu2-1.png"
 								mode="heightFix"></image>
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="@/images/xstu1-1.png"
 								mode="heightFix"></image>
 						</view>
 						<view class="div">
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="@/images/xstu2-1.png"
 								mode="heightFix"></image>
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="@/images/xstu1-1.png"
 								mode="heightFix"></image>
 						</view>
 					</view>
@@ -94,7 +94,9 @@
 				curWeek: dateformat.getWeekDate(),
 				curDate: dateformat.getYMD(),
 				timer: null,
-				angle: 0
+				angle: 0,
+				angles: 0,
+				angless: 0
 			};
 		},
 		methods: {
@@ -104,12 +106,29 @@
 			},
 			onShow: function() {
 				this.timer = setInterval(() => {
-					if (this.angle == 0) {
-						this.angle = 180;
-					} else if (this.angle == 180) {
-						this.angle = 0;
-					}
-				}, 6000);
+					this.timer = setTimeout(() => {
+						if (this.angle == 0) {
+							this.angle = 180;
+						} else if (this.angle == 180) {
+							this.angle = 0;
+						}
+					}, 4000);
+					this.timers = setTimeout(() => {
+						if (this.angles == 0) {
+							this.angles = 180;
+						} else if (this.angles == 180) {
+							this.angles = 0;
+						}
+					}, 4500);
+					this.timerss = setTimeout(() => {
+						if (this.angless == 0) {
+							this.angless = 180;
+						} else if (this.angless == 180) {
+							this.angless = 0;
+						}
+					}, 5000);
+				}, 5500);
+				
 			},
 			//uniapp中onHide()能监听到页面离开
 			onHide() { //离开页面前清除计时器
@@ -342,7 +361,7 @@
 		z-index: 99;
 		width:80%;
 		height: 86%;
-		padding:7% 10%;
+		padding:4% 10%;
 		display: flex;
 	}
 	.leftlist{
@@ -503,7 +522,70 @@
 	.chongdu .tuichu image{
 		width:70%;
 	}
-	.tuichu {
-		
+	.tuichu{
+	
+	padding:60rpx 0;
+	
+	margin-top:7%;
+	
+	box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+	
 	}
+	
+	.prods {
+	
+	            perspective: 400px;
+	
+	        }
+	
+	
+	
+	.div {
+	
+	    width: 100;
+	
+	    height: 450px;
+	
+	    margin: 0 auto;
+	
+	    position: relative;
+	
+	}
+	
+	.div image{
+	
+	    width: 100%;
+	
+	    height: 100%;
+	
+	    position: absolute;
+	
+	top: 0;
+	
+	    /* left: 0; */
+	
+	    transition: all 1s;
+	
+	}
+	
+	
+	
+	.div image:first-child{
+	
+	    z-index: 1;
+	
+	            /*不对向屏幕就隐藏*/
+	
+	    backface-visibility: hidden;
+	
+	}
+	
+	
+	
+	        /* .div:hover image{
+	
+	            transform: rotateY(180deg);
+	
+	        } */
+
 </style>
