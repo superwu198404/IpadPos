@@ -676,6 +676,9 @@
 		align-items: center;
 		justify-content: center;
 	}
+	.meminfo .goods{
+		height: 52%;
+	}
 </style>
 <style>
 	.search-shadow {

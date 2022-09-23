@@ -43,7 +43,9 @@
 
 				<!-- </radio-group> -->
 			</view>
-			<button class="btn btn-qx" @click="Close()">取消</button>
+			<view class="confirm">
+				<button class="btn btn-qx" @click="Close()">取消</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -166,7 +168,7 @@
 
 	.search {
 		display: flex;
-		padding: 1% 0;
+		padding: 1% 1% 0 0;
 		justify-content: space-between;
 	}
 
@@ -311,5 +313,12 @@
 		bottom: 30rpx;
 		left: 50%;
 		transform: translateX(-50%);
+	}
+	.customer .confirm{
+		position: absolute;
+		bottom:0;
+		left: 10%;
+		width:80%;
+		padding:2% 0 3%;
 	}
 </style>
