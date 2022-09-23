@@ -155,7 +155,7 @@
 					<view class="price">
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
 						<view>
-							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
+							<button @click="mainSale.chengedQty" data-qty="-1">-</button>
 							<label>{{mainSale.clikSpItem.inputQty}}</label>
 							<button @click="mainSale.chengedQty" data-qty="1">+</button>
 						</view>
@@ -163,7 +163,7 @@
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
+							<label><text>￥{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
 						</view>
 					</view>

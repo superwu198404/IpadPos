@@ -554,16 +554,19 @@ page {
 	padding:0;
 }
 
-.tochoose {	
-	background-color: #f9f9f9;
-	border: 1rpx solid #eee;
-	padding: 0 2%;
+.tochoose {		
+	padding:0;
 	margin-bottom: 3%;
+	margin-top:2%;
+	background-color: #f9f9f9;
+	border-radius: 10rpx;
 }
 .tochoose view{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding:1.5% 2%;	
+	
 }
 .tochoose label {
 	display: flex;
@@ -574,9 +577,11 @@ page {
 	background-color: #FFE1DB;
 	color: #FE694B;
 	border-radius: 50%;
-	width:22rpx;
-	height: 22rpx;
+	width:26rpx;
+	height: 26rpx;
 	display: flex;
+	padding:0;
+	margin-left: 20rpx;
 	justify-content: center;
 	align-items: center;
 }
@@ -896,7 +901,7 @@ page {
 }
 
 .quantit text {
-	color: #B0B0B0;
+	color: #333;
 	font-size: 24rpx;
 }
 
@@ -909,7 +914,6 @@ page {
 
 .quantit .nums text {
 	font-size: 50rpx;
-	font-weight: 700;
 	display: inline-block;
 	width: 50rpx;
 	color: #333;
@@ -956,7 +960,11 @@ page {
 	border-radius: 4rpx;
 	margin: 0 6rpx 0 0;
 }
-
+.baglist .bag label em{
+	font-size: 24rpx;
+	font-style: normal;
+	text-decoration: none;
+}
 .nom {
 	display: flex;
 	padding: 2% 1% 1%;

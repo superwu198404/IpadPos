@@ -91,13 +91,14 @@
 	}
 
 	.infos label input {
-		width: 90%;
+		width: 86%;
 		height: 80rpx;
 		line-height: 80rpx;
+		padding:0 20rpx;
 	}
 
 	.infos image {
-		width: 46rpx;
+		width: 38rpx;
 		height: 36rpx;
 	}
 

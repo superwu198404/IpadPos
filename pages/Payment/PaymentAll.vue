@@ -4,43 +4,7 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<view class="navmall" v-if="navmall">
-			<view class="logo">
-				<image src="../../images/kengee-logo.png" mode="widthFix"></image>
-			</view>
-			<view class="menu">
-				<view class="curr">
-					<image src="../../images/xiaoshou.png" mode="widthFix"></image>
-					<text>销售</text>
-				</view>
-				<view>
-					<image v-if="xuanzhong" src="../../images/yuding.png" mode="widthFix"></image>
-					<image src="../../images/yuding-hui.png" mode="widthFix"></image>
-					<text>预定</text>
-				</view>
-			</view>
-			<view class="exit">
-				<image src="../../images/tuichu.png" mode="widthFix"></image>
-				<text>退出</text>
-			</view>
-		</view>
 		<view class="right">
-			<view class="nav" style="display: none;">
-				<view class="getback">
-					<view class="message">
-						<view class="imgs">
-							<image src="../../images/tongzhi.png" mode="widthFix"></image>
-						</view>
-						<text>门店有一条新的外卖配送单消息来啦...</text>
-					</view>
-				</view>
-				<view class="account">
-					<text>{{RYID}}</text>
-					<view>
-						<image src="../../images/touxiang.png" mode="widthFix"></image>
-					</view>
-				</view>
-			</view>
 			<view class="hh" style="padding-top:56rpx;">
 				<view>
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
@@ -190,7 +154,9 @@
 
 					</view>
 					</p>
+					<view class="confirm">
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -1487,6 +1453,9 @@
 </script>
 
 <style>
+	.right{
+		height:86%;
+	}
 	.refund-more-box {
 		display: flex;
 	}
