@@ -295,10 +295,6 @@ export const PointUploadNew = async function(sale1, sale2, sale3) {
 	console.log("sale1参数：", sale1);
 	let type1 = common.GetPayOrRefund(sale1);
 	let mode = (type1 == common.actTypeEnum.Payment) ? "INCREASE" : "DECREASE";
-	console.log("积分上传类型：", common.actTypeEnum.Payment);
-	console.log("积分上传类型1：", type1);
-	console.log("积分上传类型2：", mode);
-	console.log("积分上传类型3：", typeof(type1) + typeof(common.actTypeEnum.Payment));
 	obj.order_no = sale1.BILL;
 	obj.sale_order_no = sale1.XS_BILL;
 	obj.member_id = sale1.CUID;
