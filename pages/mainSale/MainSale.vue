@@ -270,7 +270,11 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<text>×{{sp.QTY}}</text>
+								<view class="danjia">
+									<text>单价￥{{sp.OPRICE}}/</text>
+									<text><em>×</em>{{sp.QTY}}</text>
+									
+								</view>							
 							</view>
 							<view class="cods">
 								<view>
@@ -282,7 +286,7 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text>商品金额￥{{sp.OPRICE}}</text>
+								
 							</view>
 						</view>
 					</view>
@@ -540,8 +544,8 @@
 	.prolist .h3 label text {
 		color: #FE694B;
 		font-weight: 400;
-		font-size: 20rpx;
-		padding: 2rpx 8rpx;
+		font-size: 18rpx;
+		padding: 0 4rpx;
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
 		border-radius: 4rpx;
