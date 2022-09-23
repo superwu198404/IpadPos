@@ -26,6 +26,10 @@
 						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
+					<label class="buyer" v-if="hyinfo">
+						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
+						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+					</label>
 					<label>
 						<image src="@/images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
 					</label>
@@ -37,19 +41,18 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
-					<!-- <label>
-						<button class="rijie" @click="Sign()">签到</button>
-						<button class="rijie" @click="ConfirmRJ()">日结</button>
-					</label> -->
+					<label>
+						<button class="rijie" v-if="showSale" @click="ReturnSale()">返回销售</button>
+					</label>
 				</view>
-				<view class="account" v-if="member_name">
+				<!-- <view class="account" v-if="hyinfo">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
 					</view>
 					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
-						<text>{{ member_name }}</text>
+						<text>{{ hyinfo.hyId}}</text>
 					</view>
-				</view>
+				</view> -->
 				<view class="account">
 					<view>
 						<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -192,7 +195,8 @@
 		name: "menu_head",
 		props: {
 			data: [],
-			custom: Boolean
+			custom: Boolean,
+			_showSale: Boolean
 		},
 		data() {
 			return {
@@ -202,7 +206,7 @@
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
-				member_name: '',
+				hyinfo: '',
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
 				YW_MsgData: [], //业务类消息
@@ -213,6 +217,7 @@
 				oldPwd: "",
 				newPwd: "",
 				secPwd: "",
+				showSale: false,
 				showBle: false,
 				showSign: false,
 				showSignOut: false,
@@ -232,15 +237,17 @@
 				showYWMsg: false
 			};
 		},
-		// created: function(e) {
-		// 	that = this;
-		// },
+		watch: {
+			_showSale: function(n, o) {
+				this.showSale = this._showSale;
+			}
+		},
 		created: function(e) {
 			that = this;
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
 				console.log("[Head]设置会员名称!", info);
-				this.member_name = info.hyId;
+				this.hyinfo = info;
 			}))
 			_msg.ShowMsg(that.KHID, "", res => {
 				that.MsgData = res;
@@ -495,12 +502,18 @@
 				console.log("[ClosePopup]大客户信息:", data);
 				// this.showBig = false;
 				if (data && JSON.stringify(data) != "{}") {
-					getApp().globalData.store.DKFID = data.DKHID;
-					getApp().globalData.store.DKFNAME = data.NAME;
+					let store = util.getStorage("store");
+					store.DKFID = data.DKHID;
+					store.DKFNAME = data.NAME;
+					util.setStorage("store", store);
 					this.DKFNAME = data.NAME;
 				}
 				this.$forceUpdate();
-				console.log("[ClosePopup]新的全局变量:", getApp().globalData.store);
+				console.log("[ClosePopup]新的全局变量:", store);
+			},
+			//通知外部返回销售
+			ReturnSale: function() {
+				uni.$emit('ReturnSale');
 			},
 			ShowPrint: function() {
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
@@ -1258,5 +1271,9 @@
 	.tally label text {
 		display: inline-block;
 		width: 80%;
+	}
+
+	.checkout .rijie {
+		background-color: #FE694B;
 	}
 </style>

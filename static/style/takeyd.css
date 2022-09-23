@@ -58,10 +58,12 @@
 }
 .products .procycle .li .h3 .quxiao text{
 	color: #FF8367;
+	border:none;
 }
 .products .procycle .li .h3 .jiedan text{
 	color: #42B14B;
 	margin-right: 4rpx;
+	border:none;
 }
 .procycle .li .danhao{
 	color: #999;

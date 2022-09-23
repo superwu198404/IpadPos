@@ -668,7 +668,7 @@ var GetTXFILE = async function(e) {
 	return arr;
 }
 //确定是支付业务还是退款业务
-var GetPayOrRefund = async function(sale1) {
+var GetPayOrRefund = function(sale1) {
 	if (sale1) {
 		if (sale1.XSTYPE == '1' || sale1.XSTYPE == '3' || sale1.XSTYPE == '5' || sale1.XSTYPE == '6' || sale1
 			.XSTYPE == '8') {

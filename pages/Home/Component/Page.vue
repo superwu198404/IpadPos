@@ -35,11 +35,11 @@
 						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
 					</view>
-					<view @click="ShowTool('CD')">
+					<!-- <view @click="ShowTool('CD')">
 						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
-					</view>
+					</view> -->
 					<view @click="ShowTool('SC')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>

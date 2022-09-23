@@ -10,7 +10,7 @@
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
-				<Head :custom="mainSale.ComponentsManage.DKF"></Head>
+				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -28,6 +28,8 @@
 									<label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 									</label>
+									<!-- <button v-if="mainSale.currentOperation.ynCancel"
+										@click="mainSale.CancelSale">返回销售</button> -->
 								</view>
 							</view>
 							<!-- 小类循环 -->
@@ -158,9 +160,8 @@
 							<button @click="mainSale.chengedQty" data-qty="1">+</button>
 						</view>
 					</view>
-					<view>
-						<view class="tochoose" v-for=" (sp, spinx) in mainSale.sale002"
-							v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+					<view class="tochoose">
+						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
 							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
@@ -173,9 +174,10 @@
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
-					<view class="confirm">
-						<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
-					</view>
+
+				</view>
+				<view class="confirm">
+					<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
 				</view>
 			</view>
 		</view>
@@ -266,8 +268,9 @@
 							<view class="h3">
 								<label>
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
+									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<text>{{sp.QTY}}</text>
+								<text>×{{sp.QTY}}</text>
 							</view>
 							<view class="cods">
 								<view>
@@ -279,7 +282,7 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text>总金额￥{{sp.NET}}</text><text>总折扣￥{{sp.DISCRATE}}</text>
+								<text>商品金额￥{{sp.OPRICE}}</text>
 							</view>
 						</view>
 					</view>
@@ -528,5 +531,19 @@
 		width: 90%;
 		left: 5%;
 		text-align: center;
+	}
+
+	.pop-rs .goods {
+		height: 51%;
+	}
+
+	.prolist .h3 label text {
+		color: #FE694B;
+		font-weight: 400;
+		font-size: 20rpx;
+		padding: 2rpx 8rpx;
+		border: 1rpx solid #FE694B;
+		margin-left: 12rpx;
+		border-radius: 4rpx;
 	}
 </style>

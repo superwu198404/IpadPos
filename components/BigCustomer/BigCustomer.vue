@@ -7,12 +7,13 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan">×</button></view>
 			<view class="search">
-				<label>
+				<!-- <label>
 					是否赊销：
 					<view class="classifys">
 						<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
-						<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text></view>
-				</label>
+						<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text>
+					</view>
+				</label> -->
 				<view class="client">
 					<label>
 						<image src="../../images/dakehu.png" mode="widthFix"></image><input v-model="search.client_name"
@@ -42,7 +43,7 @@
 
 				<!-- </radio-group> -->
 			</view>
-			<button class="btn btn-qr" @click="Close()">确定</button>
+			<button class="btn btn-qx" @click="Close()">取消</button>
 		</view>
 	</view>
 </template>
@@ -60,7 +61,7 @@
 					client_no: "", //大客户编号 0020000955
 					client_name: ""
 				},
-				exists_credit:false,
+				exists_credit: false,
 				big_customers: [],
 				big_client_info: {},
 				current: -1,
@@ -76,18 +77,24 @@
 		},
 		methods: {
 			Close: function() {
+				// if (Object.keys(this.big_client_info).length == 0) {
+				// 	util.simpleMsg("请选择大客户", true);
+				// 	return;
+				// }
 				uni.$emit('close-big-customer', this.big_client_info);
 			},
-			CreditMode:function(is_credit){
+			CreditMode: function(is_credit) {
 				this.exists_credit = is_credit;
 			},
 			GetBigClients: function() {
+				console.log("查看门店信心：", this.GSID + this.KHID);
+				let store = getApp().globalData.store;
 				getBigClients({
-					gsid: this.GSID,
+					gsid: store.GSID,
 					client_type: '1',
 					khid: this.search.client_no,
 					name: this.search.client_name,
-					storeid: this.KHID
+					storeid: store.KHID
 				}, util.callBind(this, function(res) {
 					this.big_customers = JSON.parse(res.data);
 					console.log("查询出的大客户信息：", res);
