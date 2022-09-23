@@ -526,8 +526,6 @@
 	
 	padding:60rpx 0;
 	
-	margin-top:7%;
-	
 	box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
 	
 	}
