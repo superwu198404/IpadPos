@@ -156,7 +156,7 @@
 					<view class="price">
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
 						<view>
-							<button @click="mainSale.chengedQty" data-qty="-1">–</button>
+							<button @click="mainSale.chengedQty" data-qty="-1">-</button>
 							<label>{{mainSale.clikSpItem.inputQty}}</label>
 							<button @click="mainSale.chengedQty" data-qty="1">+</button>
 						</view>
@@ -164,7 +164,7 @@
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
+							<label><text>￥{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
 						</view>
 					</view>
@@ -271,7 +271,11 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<text>×{{sp.QTY}}</text>
+								<view class="danjia">
+									<text>单价￥{{sp.OPRICE}}/</text>
+									<text><em>×</em>{{sp.QTY}}</text>
+									
+								</view>							
 							</view>
 							<view class="cods">
 								<view>
@@ -542,8 +546,8 @@
 	.prolist .h3 label text {
 		color: #FE694B;
 		font-weight: 400;
-		font-size: 20rpx;
-		padding: 2rpx 8rpx;
+		font-size: 18rpx;
+		padding: 0 4rpx;
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
 		border-radius: 4rpx;

@@ -480,6 +480,7 @@ page {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 34rpx;
 }
 
 .settleds h3 button {
@@ -544,7 +545,7 @@ page {
 }
 
 .payicon image {
-	width: 70rpx;
+	width: 60rpx;
 	margin-right: 10px;
 }
 
@@ -560,7 +561,7 @@ page {
 }
 
 .stills .payicon image {
-	width: 60rpx;
+	width: 50rpx;
 }
 
 .choosepays {

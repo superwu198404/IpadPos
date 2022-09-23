@@ -11,16 +11,17 @@
 		<text class="tishi">提示：{{FZCXRes.msg}}</text>
 		<!-- <button class="close" @click="Close()" style="z-index: 99;">×</button> -->
 		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+		<view class="fuzhu">
 		<view v-for="(item,index) in FZCXDatas">
 			<view class="member">
 				<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
 				<!-- <button @click="Close">×</button> -->
 			</view>
 			<view class="shoppbag">
-				<view class="baglist curr" v-for="(item1,index1) in item.Details">
+				<view class="baglist" v-for="(item1,index1) in item.Details">
 					<view class="bag">
 						<text class="h8">{{item1.SNAME}}</text>
-						<label><text>说明</text>{{item1.DESCRIBE}}</label>
+						<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
 					</view>
 					<view class="quantit">
 						<text>售价：￥{{item1.PRICE}}</text>
@@ -34,6 +35,7 @@
 					</view>
 				</view>
 			</view>
+		</view>
 		</view>
 		<view class="affirm">
 			<button class="btn btn-hk" @click="Close()">取消</button>
@@ -137,7 +139,10 @@
 		z-index: 9889;
 		height: 96%;
 	}
-
+	.fuzhu{
+		height: 84%;
+		overflow: auto;
+	}
 	.meminfo .close {
 		position: absolute;
 		top: 2%;
@@ -148,11 +153,14 @@
 	}
 	.affirm {
 		width: 94%;
+		padding:2% 3%;
 		margin: 0 auto;
 		display: flex;
 		position: absolute;
-		bottom: 2%;
-		left: 5%;
+		bottom: 0;
+		left: 0;
+		z-index: 9999;
+		background-color: #fff;
 	}
 
 	.affirm button {
@@ -162,7 +170,7 @@
 	.tishi{
 		font-size: 26rpx;
 		font-weight: 700;
-		color: #ff0000;
+		color: #FE694B;
 		padding:0 4%;
 	}
 </style>
