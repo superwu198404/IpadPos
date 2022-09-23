@@ -87,11 +87,6 @@ var XsTypeObj = {
 			this.createNewBill(); //创建新的sale001
 			this.sale001.XSTYPE = 1;
 
-			console.log("准备计算特殊折扣:");
-			if (that.currentOperation.ynSKDisc) {
-				console.log("准备计算特殊折扣:Y");
-				this.SKdiscCompute();
-			}
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
 			return true;
@@ -252,10 +247,6 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
-			//计算特殊折扣
-			if (that.currentOperation.ynSKDisc) {
-				this.SKdiscCompute();
-			}
 			return false;
 		},
 		//支付完成中
@@ -390,10 +381,6 @@ var XsTypeObj = {
 					fail: false //定金显示为成功
 				}));
 				console.log("[SaleReserve]生成预定支付信息成功!");
-			}
-			//计算特殊折扣
-			if (that.currentOperation.ynSKDisc) {
-				this.SKdiscCompute();
 			}
 			return true;
 		},
@@ -553,10 +540,6 @@ var XsTypeObj = {
 					fail: false //定金显示为成功
 				}));
 				console.log("[SaleReserve]生成预定支付信息成功!");
-			}
-			//计算特殊折扣
-			if (that.currentOperation.ynSKDisc) {
-				this.SKdiscCompute();
 			}
 			return true;
 		},
@@ -1079,6 +1062,15 @@ function GetSale(global, vue, target_name, uni) {
 		base: {},
 		cval: {},
 		Defval: "80000000",
+		get cval() {//防止清空cval后 获取cval 取不到默认值的问题
+			if (!this.cval.DKFID) {
+				this.cval.DKFID = this.Defval;
+			}
+			/*
+			  这里要根据大客户ID是否为空 如果为空 返回一个默认的大客户
+			*/
+			return this.cval;
+		},
 		get val() {
 			if (!this.cval.DKFID) {
 				this.cval.DKFID = this.Defval;
@@ -1664,7 +1656,7 @@ function GetSale(global, vue, target_name, uni) {
 				MONTH: _date.getDateByParam("M"),
 				WEEK: _date.getDateByParam("w"),
 				TIME: _date.getDateByParam("h"),
-				DKFID: this.DKF.cval.DKFID
+				DKFID: this.DKF.val.DKFID
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1867,7 +1859,7 @@ function GetSale(global, vue, target_name, uni) {
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
-		this.sale001.DKFID = this.DKF.cval.DKFID; //当前选择的大客户的编码
+		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
 		//写大客户
 		//code...
@@ -1876,6 +1868,11 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
+		
+		//计算手工折扣
+		if (that.currentOperation.ynSKDisc) {
+			this.SKdiscCompute();
+		}
 		return new Promise(util.callBind(this, function(reslove, reject) {
 			if (this.currentOperation.ynFzCx) {
 				console.log("[BeforeFk]此模式包含辅助促销操作...");
