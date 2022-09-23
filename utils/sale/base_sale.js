@@ -257,7 +257,8 @@ var XsTypeObj = {
 			return false;
 		},
 		//支付完成中
-		$saleFinishing: function(result) { //生成yd
+		$saleFinishing: function(result) 
+		{ //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
 			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
 			console.log("[SaleFinishing]预订单生成完毕!", {
@@ -1252,10 +1253,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.SetCurrentOperation = function(pm_OperEnum) {
 		console.log("[SetCurrentOperation]传入权限:", pm_OperEnum);
 		//所有模式都具有的默认权限 在这里直接初始化好 ，
-		this.currentOperation = {
+		this.currentOperation = 
+		{
 			"statement": false
 		};
-		for (var item in this.allOperation) {
+		for (var item in this.allOperation) 
+		{
 			//that.log("开始设置权限"+item);
 			if (pm_OperEnum && pm_OperEnum[item]) {
 				//普通销售具有所有的权限
@@ -1768,10 +1771,12 @@ function GetSale(global, vue, target_name, uni) {
 	//计算sale002
 	this.SaleNetAndDisc = async function() {
 		let znet = 0
-		if (that.currentOperation.ynCx) {
+		if (that.currentOperation.ynCx) 
+		{
 			await cx.Createcx(that.sale002);
 		}
-		if (that.currentOperation.Disc) {
+		if (that.currentOperation.Disc) 
+		{
 			that.discCompute();
 		}
 		that.sale001.TLINE = that.sale002.length;
@@ -1787,8 +1792,8 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
 		that.sale001.TLINE = this.float(retx.QTY, 2);
-
-		if (that.currentOperation.ynFzCx) {
+		if (that.currentOperation.ynFzCx)
+		{
 			this.computeFzCx();
 		}
 		//this.update();
