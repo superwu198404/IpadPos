@@ -52,7 +52,7 @@
 												</view>
 												<view class="cods">
 													<label>
-														<image src="../../images/dx-bm.png" mode="widthFix"></image>0
+														<image src="../../images/dx-bm.png" mode="widthFix"></image>{{sptiem.SPID.substr(8)}}
 													</label>
 													<label>
 														<image src="../../images/dx-dw.png" mode="widthFix"></image>
