@@ -52,7 +52,8 @@
 												</view>
 												<view class="cods">
 													<label>
-														<image src="../../images/dx-bm.png" mode="widthFix"></image>{{sptiem.SPID.substr(8)}}
+														<image src="../../images/dx-bm.png" mode="widthFix"></image>
+														{{sptiem.SPID.substr(8)}}
 													</label>
 													<label>
 														<image src="../../images/dx-dw.png" mode="widthFix"></image>
@@ -183,8 +184,8 @@
 		</view>
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mysale.XsTypeObj.sale_reserve.ReserveInfoInput"
-				:sale="mainSale.sale001">
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput"
+				:confirm="mysale.XsTypeObj.sale_reserve.ReserveInfoInput" :sale="mainSale.sale001">
 			</ReserveDrawer>
 		</view>
 		<!-- 辅助促销 -->
@@ -286,14 +287,15 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								
+								<text>售价￥{{sp.PRICE}}</text>
+								<text>销售金额￥{{sp.PRICE*sp.QTY}}</text>
 							</view>
 						</view>
 					</view>
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
-						<view class="li"><text>折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
+						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
 					<!-- <view class="h5" v-if="mainSale.currentOperation.ynFzCx">
@@ -470,7 +472,7 @@
 		created() {
 			console.log("[MainSale]开始构造函数!");
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
-			console.log("[MainSale]原型:",this.mainSale.sale003.remove);
+			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
