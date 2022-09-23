@@ -1115,7 +1115,24 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 	background: #fff;
 	border-radius: 50%;
 }
-
+checkbox.mycheck .wx-checkbox-input,
+	checkbox.mycheck .uni-checkbox-input {
+		width: 36rpx !important;
+		height: 36rpx !important;
+		background-color: #eeeeee !important;
+		border-radius: 50% !important;
+		border: solid 1rpx #42B14B !important;
+	}
+	
+	
+	// 选中后的 对勾样式 
+	checkbox.mycheck .uni-checkbox-input-checked::before,
+	checkbox.mycheck .wx-checkbox-input-checked::before{
+		width: 36rpx;
+		height: 36rpx;
+		font-size: 36rpx !important; // 对勾大小 30rpx /
+		color: #42B14B;
+	}
 .harvest {
 	padding: 0 4% 2%;
 	display: flex;
@@ -1288,10 +1305,9 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 .special .discount{
 	padding:0 3%;
 	display: flex;
-	flex-direction: column;
-	max-height: 400rpx;
-	overflow: auto;
+	flex-direction: column;	
 }
+
 .special .discount label{
 	line-height: 80rpx;
 	color: #B0B0B0;
@@ -1309,6 +1325,15 @@ checkbox .uni-checkbox-input.uni-checkbox-input-checked::before {
 	border-radius: 10rpx;
 	padding:0 1%;
 	margin-top:2%;
+}
+.special .discount .zhekou{
+	max-height: 400rpx;
+	overflow: scroll;
+	display: flex;
+	flex-direction: column;
+	background-color: #fff;
+	border:none;
+	
 }
 .special .curr .discount label{
 	color: #006B44;
