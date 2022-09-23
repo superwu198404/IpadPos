@@ -122,6 +122,10 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
+		if (!res.code || res.msg.length == 0) {
+			util.simpleMsg("门店信息查询失败，请重新初始化", "none");
+			return;
+		}
 		console.log("门店信息查询成功：", res);
 		console.log("人员信息展示：", ryinfo);
 		store = {

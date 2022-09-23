@@ -35,8 +35,9 @@ var XsTypeObj = {
 			"ynCancel": false, //是否可以退出当前销售模式
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynCx": true, //是否进行可以进行促销
-			"upload_point":true,//允许积分上传
+			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
+			"ynSKDisc": true, //是否可以计算特殊折扣
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -84,17 +85,13 @@ var XsTypeObj = {
 		$beforeFk: function() {
 			console.log("[Sale]新单据生成中...");
 			this.createNewBill(); //创建新的sale001
-
 			this.sale001.XSTYPE = 1;
-			//手工折扣额的处理
-			console.log("原金额：", this.sale001.TNET);
-			let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
-			console.log("手工折扣额：", SKY_DISCOUNT);
-			this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
-			this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
-			this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
-			this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 
+			console.log("准备计算特殊折扣:");
+			if (that.currentOperation.ynSKDisc) {
+				console.log("准备计算特殊折扣:Y");
+				this.SKdiscCompute();
+			}
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			//可以使用的支付方式 
 			return true;
@@ -114,9 +111,9 @@ var XsTypeObj = {
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
-			console.log("检测积分上传参数：",this.currentOperation.upload_point);
-			console.log("检测积分上传参数1：",this.HY.cval.hyId);
-			console.log("检测积分上传参数2：",this.sale001);
+			console.log("检测积分上传参数：", this.currentOperation.upload_point);
+			console.log("检测积分上传参数1：", this.HY.cval.hyId);
+			console.log("检测积分上传参数2：", this.sale001);
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
@@ -132,7 +129,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
-			"upload_point":true,//允许积分上传
+			"upload_point": true, //允许积分上传
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -205,6 +202,8 @@ var XsTypeObj = {
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
+			"ynSKDisc": true, //是否可以计算特殊折扣
+
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -252,6 +251,10 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
+			//计算特殊折扣
+			if (that.currentOperation.ynSKDisc) {
+				this.SKdiscCompute();
+			}
 			return false;
 		},
 		//支付完成中
@@ -299,6 +302,8 @@ var XsTypeObj = {
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
+			"ynSKDisc": true, //是否可以计算特殊折扣
+
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -384,6 +389,10 @@ var XsTypeObj = {
 					fail: false //定金显示为成功
 				}));
 				console.log("[SaleReserve]生成预定支付信息成功!");
+			}
+			//计算特殊折扣
+			if (that.currentOperation.ynSKDisc) {
+				this.SKdiscCompute();
 			}
 			return true;
 		},
@@ -500,6 +509,7 @@ var XsTypeObj = {
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
 			"ynCx": false, //是否进行可以进行促销
+			"ynSKDisc": true, //是否可以计算特殊折扣
 
 			"sale": true,
 			"sale_takeaway_reserve": true,
@@ -542,6 +552,10 @@ var XsTypeObj = {
 					fail: false //定金显示为成功
 				}));
 				console.log("[SaleReserve]生成预定支付信息成功!");
+			}
+			//计算特殊折扣
+			if (that.currentOperation.ynSKDisc) {
+				this.SKdiscCompute();
 			}
 			return true;
 		},
@@ -951,7 +965,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
-		
+
 	})
 	//退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1190,6 +1204,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //是否可以打开录入大客户
 		"Disc": false, //是否可以打开录入折扣
 		"ynFzCx": false, //是否可以辅助促销
+		"ynSKDisc": false, //是否要计算特殊折扣
 		"ynCancel": false, //是否可以退出当前销售模式
 		"FZCX": false, //是否可以打开辅助促销组件
 		"ynCx": false, //是否进行可以进行促销  
@@ -1499,6 +1514,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.resetSaleBill();
 	}
 
+	//去支付
 	this.pay = async function() {
 		if (!that.sale002 || that.sale002.length == 0) {
 			util.simpleMsg("请先加购商品", true);
@@ -1633,8 +1649,8 @@ function GetSale(global, vue, target_name, uni) {
 				DPID: this.DPID,
 				GCID: this.GCID,
 				SALETIME: stime,
-				YN_OK: 'N', //默认为 N
-				YN_SC: 'X', //默认为 X
+				YN_OK: 'X', //默认为 X
+				YN_SC: 'N', //默认为 N
 				YAER: _date.getDateByParam("Y"),
 				MONTH: _date.getDateByParam("M"),
 				WEEK: _date.getDateByParam("w"),
@@ -1786,6 +1802,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.TLINE = this.float(retx.QTY, 2);
 
 		if (that.currentOperation.ynFzCx) {
+			//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 			this.computeFzCx();
 		}
 		//this.update();
@@ -1808,6 +1825,20 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("002旧数据：", that.sale002);
 		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
 		console.log("002增加折扣后的新数据：", that.sale002);
+	}
+
+	//使用手工折扣进行计算
+	this.SKdiscCompute = function() {
+		// 计算商品的手工折扣值 也就是舍去分的处理
+		//手工折扣额的处理
+		console.log("原金额：", this.sale001.TNET);
+		let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
+		console.log("手工折扣额：", SKY_DISCOUNT);
+		this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
+		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+		this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
+		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
+		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
 	}
 
 	//付款之前触发
@@ -1926,7 +1957,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.InputDkf = function() {
 
 	}
-	
+
 	this.Bind()
 }
 
