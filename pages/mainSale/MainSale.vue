@@ -272,7 +272,7 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia">
-									<text>单价￥{{sp.OPRICE}}/</text>
+									<text>售价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 									
 								</view>							
@@ -287,7 +287,7 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text>售价￥{{sp.PRICE}}</text>
+								<!-- <text>售价￥{{sp.PRICE}}</text> -->
 								<text>销售金额￥{{sp.PRICE*sp.QTY}}</text>
 							</view>
 						</view>
