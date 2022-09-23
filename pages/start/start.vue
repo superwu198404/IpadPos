@@ -243,7 +243,7 @@
 						// console.log("004回调：", res);
 						console.log("004回调成功");
 						uni.showLoading({
-							title:"表结构创建中...",
+							title: "表结构创建中...",
 							mask: true
 						});
 						let tx004 = Req.getResData(res);
@@ -270,13 +270,14 @@
 							console.log("数据库重建结果：", res.code);
 							that.tx001 = null;
 							// console.log("重建数据的sql:", res.data);
-							let x = await mysqlite.executeSqlArray(res.data, "", //开始创建数据库
+							let x = await mysqlite.executeSqlArray(res.data, "开始创建数据库",
 								(resks) => {
 									console.log("执行语句成功" + res.data.length);
 									let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
 									return reqdata;
 								},
 								(res) => {
+									cconsole.log("初始化失败了：", res);
 									that.initok = false;
 									that.errstr = res;
 									return Req.retData(false, "start创建失败" + JSON.stringify(errstr))

@@ -839,8 +839,15 @@ function GetSale(global, vue, target_name, uni) {
 		var newbill = "";
 		if (this.bill == null) {
 			let d = new Date();
-			newbill = this.Storeid + this.POSID + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
-				.getHours() + d.getMinutes() + d.getSeconds();
+			let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() % 100);
+			let month = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1);
+			let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
+			let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+			let min = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+			let sec = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
+			// newbill = this.Storeid + this.POSID + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
+			// 	.getHours() + d.getMinutes() + d.getSeconds();
+			newbill = this.Storeid + this.POSID + year + month + day + hour + min + sec;
 			//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
 			newbill = newbill + "" + this.billindex;
 			this.billindex++;
@@ -997,7 +1004,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.POSID = store.POSID;
 	this.ryid = store.RYID;
 	this.KCDID = store.KCDID;
-	this.DPID = store.DPID;
+	this.DPID = store.DQID; //测试要求按照ｐｏｓ记录
 	this.GCID = store.GCID;
 	this.GSID = store.GSID;
 	//销售系列主要数据对象
@@ -1656,7 +1663,8 @@ function GetSale(global, vue, target_name, uni) {
 				YAER: _date.getDateByParam("Y"),
 				MONTH: _date.getDateByParam("M"),
 				WEEK: _date.getDateByParam("w"),
-				TIME: _date.getDateByParam("h")
+				TIME: _date.getDateByParam("h"),
+				DKFID: this.DKF.cval.DKFID
 			};
 			this.sale001 = new sale.sale001(commonSaleParm)
 			this.sale001.GSID = this.GSID;
@@ -1679,7 +1687,8 @@ function GetSale(global, vue, target_name, uni) {
 				YAER: this.sale001.YAER,
 				MONTH: this.sale001.MONTH,
 				WEEK: this.sale001.WEEK,
-				TIME: this.sale001.TIME
+				TIME: this.sale001.TIME,
+				DKFID: this.sale001.DKFID
 			}
 		}
 		return commonSaleParm;
@@ -1785,7 +1794,13 @@ function GetSale(global, vue, target_name, uni) {
 		let znet = 0
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
+			let TCXDISC = 0;
+			this.sale002.map(r => {
+				TCXDISC += r.CXDISC
+			});
+			this.sale001.TCXDISC = TCXDISC;
 		}
+		console.log("促销计算后的商品:", this.sale002);
 		if (that.currentOperation.Disc) {
 			that.discCompute();
 		}
@@ -1799,13 +1814,15 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET, 2);
-		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2);
+		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length;
 		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {
 			this.computeFzCx();
 		}
+		console.log("计算过促销和折扣后的主单001：", that.sale001);
+		console.log("计算过促销和折扣后的商品002：", that.sale002);
 		//this.update();
 	}
 
@@ -1836,6 +1853,7 @@ function GetSale(global, vue, target_name, uni) {
 		let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
 		console.log("手工折扣额：", SKY_DISCOUNT);
 		this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
+		this.sale001.ZNET = this.float(Number(this.sale001.ZNET) - SKY_DISCOUNT, 2);
 		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
 		this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
 		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
