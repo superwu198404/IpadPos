@@ -388,9 +388,7 @@ var mySqllite = function() {
 		console.log("tran:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
-
 			retcode = await exec(sqlArray[i]);
-
 			if (!retcode.code) {
 				//console.log(i+"exec:"+JSON.stringify( retcode));
 				if (retcode.msg.code === -1404) {

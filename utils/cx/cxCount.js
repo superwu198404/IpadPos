@@ -310,6 +310,8 @@ const Createcx = async (sale02_arr) => {
 			}
 			//把促销值写入
 			sale02_arr[i].DISCRATE = cxdiscvalue;
+			sale02_arr[i].CXDISC = cxdiscvalue;
+			sale02_arr[i].YN_CXDISC = (cxdiscvalue > 0 ? 'Y' : 'N');
 		}
 		let cxztStr = "";
 		let cxbillStr = "";
@@ -1229,7 +1231,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i)* Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math
+							.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
 							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) *
 									100) / 100) /
