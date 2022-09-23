@@ -181,7 +181,7 @@
 		</view>
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mainSale.ReserveInfoInput"
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :confirm="mysale.XsTypeObj.sale_reserve.ReserveInfoInput"
 				:sale="mainSale.sale001">
 			</ReserveDrawer>
 		</view>
@@ -463,7 +463,7 @@
 		created() {
 			console.log("[MainSale]开始构造函数!");
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
-			this.mainSale.Bind();
+			console.log("[MainSale]原型:",this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {

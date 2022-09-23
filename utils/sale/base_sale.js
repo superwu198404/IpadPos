@@ -109,7 +109,6 @@ var XsTypeObj = {
 			this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
 			console.log("分摊后的商品信息：", this.sale002);
 		},
-
 		//支付完成以后
 		$saleFinied: async function() {
 			//一些特殊的设置 如积分上传
@@ -139,7 +138,7 @@ var XsTypeObj = {
 			this.sale002 = params.sale2 ?? {};
 			console.log("[sale_return_good]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? {};
-			console.log("退款初始化：123123313");
+			console.log("[sale_return_good]退款初始化：");
 			this.operation.ynFzCx = false;
 			this.ComponentsManage.FZCX = false;
 		},
@@ -265,6 +264,19 @@ var XsTypeObj = {
 			this.setComponentsManage(null, "openydCustmInput");
 			console.log("[CloseReserveDrawer]结算单打开...");
 			this.setComponentsManage(null, "statement");
+		},
+		ReserveInfoInput: function(sale1) {
+			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
+				ydsale1: this.ydsale001,
+				sale1: this.sale001
+			});
+			Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
+			Object.cover(this.ydsale001, sale1); //用于 ydsale001
+			console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+				ydsale1: this.ydsale001,
+				sale1: this.sale001
+			});
+			this.PayParamAssemble();
 		}
 	},
 	sale_reserve_extract: {
@@ -285,9 +297,8 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) { //预定提取需要传入 ydsale001、syssale002，syssale003 信息
 			this.allOperation.actType = common.actTypeEnum.Payment;
-			console.log("[sale_reserve_extract]PARAMS:",params);
+			console.log("[sale_reserve_extract]PARAMS:", params);
 			this.old_bill = params.sale1.BILL;
-			console.log("[sale_reserve_extract]BILL:",params.sale1.BILL);
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			console.log("[sale_reserve_extract]SALE002:", params.sale2);
@@ -368,8 +379,9 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
-			console.log("[SaleFinishing]预定生成中...",this.sale003);
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order); //删除 $beforeFk 中生成的 zg03 的信息
+			console.log("[SaleFinishing]预定生成中...", this.sale003);
+			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this
+			.raw_order); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
@@ -855,20 +867,6 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[Redirect]模式信息:", menu_info);
 		this.$initSale(menu_info, info.params);
 		this.SetManage('sale');
-	})
-	//*func*预定录入回调
-	this.ReserveInfoInput = util.callBind(this, function(sale1) {
-		console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
-			ydsale1: this.ydsale001,
-			sale1: this.sale001
-		});
-		Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
-		Object.cover(this.ydsale001, sale1); //用于 ydsale001
-		console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
-			ydsale1: this.ydsale001,
-			sale1: this.sale001
-		});
-		this.PayParamAssemble();
 	})
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
@@ -1850,6 +1848,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.InputDkf = function() {
 
 	}
+	
+	this.Bind()
 }
 
 

@@ -24,16 +24,17 @@ Object.defineProperty(Object.prototype, 'cover', {
 
 Object.defineProperty(Array.prototype, 'remove', {
 	value: function(callback) {
+		if(!Array.isArray(this)) return;
 		if (callback) {
 			let old_array = this;
 			let delete_array = [];
 			for (let index = 0; index < old_array.length; index++) {
-				if(callback(old_array[index])){
+				if (callback(old_array[index])) {
 					delete_array.push(old_array[index]);
 				}
 			}
-			for(let item of delete_array){
-				this.splice(this.indexOf(item),1);
+			for (let item of delete_array) {
+				this.splice(this.indexOf(item), 1);
 			}
 			return delete_array;
 		} else
@@ -43,10 +44,9 @@ Object.defineProperty(Array.prototype, 'remove', {
 
 Object.defineProperty(Array.prototype, 'first', {
 	value: function() {
-		if(this.length > 0){
+		if (this.length > 0) {
 			return this[0];
-		}
-		else
+		} else
 			return null;
 	}
 })
