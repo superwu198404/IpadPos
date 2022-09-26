@@ -318,6 +318,60 @@ var ydsale003 = function() {
 	this.XPSCOM = "";
 	this.DQTY = "";
 }
+
+var ywbhqh = function(pm_obj) {
+	this.BILL = "";
+	this.GSID = "";
+	this.KHID = "";
+	this.GSID_BH = "";
+	this.KHID_BH = "";
+	this.DATE_DH = "";
+	this.DHSJD = "";
+	this.SPID = "";
+	this.PRICE = 0;
+	this.ZQTY_SQ = 0;
+	this.SCDATE = "";
+	this.ZQTY_SC = "";
+	this.BHPS_STATUS = "";
+	this.PSDATE = "";
+	this.ZQTY_PS = "";
+	this.QXDATE = "";
+	this.ZQTY_QX = "";
+	this.YN_YD = "";
+	this.BILL_YD = "";
+	this.DATE_YD = "";
+	this.YN_PRINT = "";
+	this.BILL_STATUS = "";
+	this.NOTE = "";
+	this.ID_RY_LR = "";
+	this.DATE_LR = "";
+	this.ID_RY_XG = "";
+	this.DATE_XG = "";
+	this.RYNAME_LR = "";
+	this.RYNAME_XG = "";
+	this.DATE_QT = "";
+	this.POSID = "";
+	this.BILL_QT = "";
+	this.PSTYPE = "";
+	this.YN_PUSH = "";
+	this.QH_NOTE = "";
+	this.GCID = "";
+	this.DPID = "";
+	this.KCDID = "";
+	this.GCID_BH = "";
+	this.DPID_BH = "";
+	this.KCDID_BH = "";
+	this.ID_RY_QX = "";
+	this.YN_TX = "";
+	this.NO = "";
+	this.YN_JJ = "";
+	for (var item in pm_obj) {
+		if (this[item]) {
+			this[item] = pm_obj[item];
+		}
+	}
+}
+
 var sxsale001 = function(pm_obj) {
 	this.SALETIME = null;
 	this.SALEDATE = null;
@@ -404,6 +458,7 @@ export default {
 	ydsale001,
 	ydsale002,
 	ydsale003,
+	ywbhqh,
 	sxsale001,
 	sale008,
 	saleBillType

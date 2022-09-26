@@ -254,8 +254,30 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
 			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
+			let sys_param = util.getStorage("sysParam");
+			console.log("[SaleFinishing]系统参数信息:", sys_param);
+			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
+				console.log("[SaleFinishing]存在裱花参数!");
+				let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
+				this.sale002.forEach(util.callBind(this, function(s2) {
+					if (bh_support_id.find(id => id === s2.PLID) || true) {
+						console.log("[SaleFinishing]裱花维护商品:", s2);
+						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
+						ywbhqh.GSID_BH = this.GSID;//测试数据
+						ywbhqh.KHID_BH = this.Storeid;//测试数据
+						ywbhqh.DATE_DH = this.getDate();//测试数据
+						ywbhqh.DHSJD = '0';//测试数据
+						ywbhqh.ID_RY_LR = '01100040';//测试数据
+						ywbhqh.DATE_LR = this.getDate();//测试数据
+						this.ywbhqh.push(ywbhqh);
+					}
+				}))
+				console.log("[SaleFinishing]YWBHQH列表:", this.ywbhqh);
+			}
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
+				sale001: this.sale001,
+				sale002: this.sale002,
 				sale003: this.sale003
 			});
 		},
@@ -270,10 +292,7 @@ var XsTypeObj = {
 			this.setComponentsManage(null, "statement");
 		},
 		ReserveInfoInput: function(sale1) {
-			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", {
-				ydsale1: this.ydsale001,
-				sale1: this.sale001
-			});
+			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", sale1);
 			Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
 			Object.cover(this.ydsale001, sale1); //用于 ydsale001
 			console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
@@ -739,7 +758,7 @@ var XsTypeObj = {
 			delete this.old_bill;
 		},
 		async $saleFinied(sales) {
-			onlineOrderReserve(this.reserve_param , util.callBind(this, function(res) {
+			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinied]提取成功！", res);
 			}), util.callBind(this, function(err) {
 				util.simpleMsg(err.msg, true);
@@ -1047,6 +1066,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.sale002 = []; //sale002 子单1：记录商品信息
 	this.sale003 = []; //sale003 子单2：记录支付信息
 	this.sale008 = []; //sale008
+	this.ywbhqh = []; //裱花请货单
 	this.ydsale001 = {}; //预定主单
 	this.sxsale001 = {}; //赊销主单
 	// 通讯表\sqlite 额外sql
@@ -1527,7 +1547,7 @@ function GetSale(global, vue, target_name, uni) {
 			try {
 				this.$saleFinishing(result.data);
 			} catch (err) {
-				console.log("[PayedResult]调用执行 SaleFinishing 异常:", err);
+				console.warn("[PayedResult]调用执行 SaleFinishing 异常:", err);
 			}
 			console.log("[PayedResult]准备创建销售单记录...", {
 				sale001: this.sale001,
@@ -1535,6 +1555,7 @@ function GetSale(global, vue, target_name, uni) {
 				sale003: this.sale003,
 				sale008: this.sale008,
 				ydsale001: this.ydsale001,
+				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
 			let create_result = await CreateSaleOrder({
@@ -1542,6 +1563,7 @@ function GetSale(global, vue, target_name, uni) {
 				SALE002: this.sale002,
 				SALE003: this.sale003,
 				SALE008: this.sale008,
+				YWBHQH: this.ywbhqh,
 				YDSALE001: this.ydsale001,
 				SXSALE001: this.sxsale001
 			}, {
@@ -1634,7 +1656,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.cxBillinit = function() {
 
 	}
-	
+
 	/**
 	 * 设置新的销售参数
 	 * @param {*} inputParm sale123 数据对象，格式:{ sale001:{},sale002:[],sale003:[] }
@@ -1716,7 +1738,7 @@ function GetSale(global, vue, target_name, uni) {
 				DPID: this.sale001.DPID,
 				SALEDATE: this.sale001.SALEDATE, //退款应该采用新的值
 				SALETIME: this.sale001.SALETIME, //退款应该采用新的值
-				CLTIME: this.sale001.SALETIME,  //退款应该采用新的值
+				CLTIME: this.sale001.SALETIME, //退款应该采用新的值
 				YN_OK: this.sale001.YN_OK, //默认为 N
 				YN_SC: this.sale001.YN_SC, //默认为 X
 				YAER: this.sale001.YAER,
