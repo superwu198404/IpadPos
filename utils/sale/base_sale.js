@@ -1910,6 +1910,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.currentOperation.ynSKDisc) {
 			this.SKdiscCompute();
 		}
+		console.log("辅助促销计算完毕");
 		return new Promise(util.callBind(this, function(reslove, reject) {
 			if (this.currentOperation.ynFzCx) {
 				console.log("[BeforeFk]此模式包含辅助促销操作...");
