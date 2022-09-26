@@ -263,12 +263,12 @@ var XsTypeObj = {
 					if (bh_support_id.find(id => id === s2.PLID) || true) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
-						ywbhqh.GSID_BH = this.GSID;//测试数据 *勿删
-						ywbhqh.KHID_BH = this.Storeid;//测试数据 *勿删
-						ywbhqh.DATE_DH = this.getDate();//测试数据 *勿删
-						ywbhqh.DHSJD = '0';//测试数据 *勿删
-						ywbhqh.ID_RY_LR = '01100040';//测试数据 *勿删
-						ywbhqh.DATE_LR = this.getDate();//测试数据 *勿删
+						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
+						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
+						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
+						ywbhqh.DHSJD = '0'; //测试数据 *勿删
+						ywbhqh.ID_RY_LR = '01100040'; //测试数据 *勿删
+						ywbhqh.DATE_LR = this.getDate(); //测试数据 *勿删
 						this.ywbhqh.push(ywbhqh);
 					}
 				}))
@@ -1803,7 +1803,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.NET = that.float(pm_qty * price, 2);
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
-			new002.PLID = that.clikSpItem.plid;
+			new002.PLID = pm_spid.substr(8, 5); //记录小类
 			that.sale002.push(new002);
 			that.log("[GetSp]添加了商品", new002);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
@@ -1853,6 +1853,7 @@ function GetSale(global, vue, target_name, uni) {
 				TCXDISC += r.CXDISC
 			});
 			this.sale001.TCXDISC = TCXDISC;
+			this.sale001.TDISC += TCXDISC;
 		}
 		console.log("促销计算后的商品:", this.sale002);
 		if (that.currentOperation.Disc) {
@@ -1931,32 +1932,33 @@ function GetSale(global, vue, target_name, uni) {
 		//code...
 		//如果 operation 中包含就弹出
 
-		//计算手工折扣
-		if (that.currentOperation.ynSKDisc) {
-			this.SKdiscCompute();
-		}
-		console.log("辅助促销计算完毕");
 		return new Promise(util.callBind(this, function(reslove, reject) {
 			if (this.currentOperation.ynFzCx) {
 				console.log("[BeforeFk]此模式包含辅助促销操作...");
 				this.setComponentsManage(null, 'FZCX');
-				console.log("[BeforeFk]辅助促销:", {
-					count: Object.keys(this.FZCX.oval).length
-				});
+				console.log("[BeforeFk]辅助促销:", this.FZCX.cval);
 				uni.$once('close-FZCX', util.callBind(this, function(e) {
-					console.log("[BeforeFk]辅助促销窗口关闭...");
+					console.log("[BeforeFk]辅助促销确认后回调...");
 					// if (e) {
 					//追加辅助促销的差价和折扣
 					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0) {
-						this.sale001.TNET = this.float(this.sale001.TNET + this.FZCX
-							.cval.payAmount, 2); //加上辅助促销的的差价
+						this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+						this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+						let allDisc = 0;
 						this.FZCX.cval.data.forEach(r => {
-							this.sale001.BILLDISC = this.float((this.sale001
-									.BILLDISC || 0) + (r.ONET - r
-									.CXNET),
-								2);
+							allDisc += (r.ONET - r.CXNET);
 						})
+						this.sale001.BILLDISC += allDisc;
+						this.sale001.TCXDISC += allDisc;
+						this.sale001.TDISC += allDisc;
+						this.sale001.TLINE += this.FZCX.cval.data.length;
+						console.log("[BeforeFk] 追加辅助促销后的sale001：", this.sale001);
 					}
+					//计算手工折扣
+					if (that.currentOperation.ynSKDisc) {
+						this.SKdiscCompute();
+					}
+					console.log("手工折扣计算完毕");
 					return reslove(this.CurrentTypeCall("$beforeFk",
 						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 
@@ -1966,6 +1968,10 @@ function GetSale(global, vue, target_name, uni) {
 				}))
 			} else {
 				console.log("[BeforeFk]此模式不包含辅助促销操作...");
+				//计算手工折扣
+				if (that.currentOperation.ynSKDisc) {
+					this.SKdiscCompute();
+				}
 				return reslove(this.CurrentTypeCall("$beforeFk", pm_inputParm));
 			}
 		}));
