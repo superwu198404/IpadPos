@@ -238,6 +238,7 @@ var XsTypeObj = {
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
 			this.setComponentsManage(null, 'statement'); //关闭购物车
+			this.setComponentsManage(null, 'FZCX'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
@@ -845,6 +846,8 @@ function GetSale(global, vue, target_name, uni) {
 	var that = this;
 	var uni = uni;
 	this.billindex = 0;
+	//储存模式信息（用于界面行为绑定）
+	this.mode_info = XsTypeObj;
 	/*
 	 * 工具方法 
 	 */
