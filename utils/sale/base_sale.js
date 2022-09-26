@@ -1711,11 +1711,11 @@ function GetSale(global, vue, target_name, uni) {
 				KCDID: this.sale001.KCDID,
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,
-				// SALEDATE: this.sale001.SALEDATE, //退款应该采用新的值
-				// SALETIME: this.sale001.SALETIME, //退款应该采用新的值
-				// CLTIME: this.sale001.SALETIME,  //退款应该采用新的值
-				// YN_OK: this.sale001.YN_OK, //默认为 N
-				// YN_SC: this.sale001.YN_SC, //默认为 X
+				SALEDATE: this.sale001.SALEDATE, //退款应该采用新的值
+				SALETIME: this.sale001.SALETIME, //退款应该采用新的值
+				CLTIME: this.sale001.SALETIME,  //退款应该采用新的值
+				YN_OK: this.sale001.YN_OK, //默认为 N
+				YN_SC: this.sale001.YN_SC, //默认为 X
 				YAER: this.sale001.YAER,
 				MONTH: this.sale001.MONTH,
 				WEEK: this.sale001.WEEK,
