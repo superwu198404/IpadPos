@@ -168,17 +168,26 @@
 					bill: this.extracts.BILL
 				}, util.callBind(this, function(data) {
 					if (data.code) {
-						let sales = JSON.parse(data.data), allow_cancel = false;
+						let sales = JSON.parse(data.data),
+							allow_cancel = false,
+							cancel_total = 0;
 						console.log("[OpenReserve]获取到的原单数据:", sales);
 						this.extracts.Products.forEach(p => {
-							if(!(p.QTY - p.QXQTY > 0)){//如果出现退货商品数量大于商品预定数则不允许提取
+							cancel_total += (function() {
+								let num = Number(p.QXQTY);
+								if (isNaN(num)) {
+									console.log("[OpenReserve]当前取消数量异常:", p)
+									return 0;
+								} else
+									return num;
+							})()
+							if (!(p.QTY - p.QXQTY > 0)) { //如果出现退货商品数量大于商品预定数则不允许提取
 								allow_cancel = true;
 							}
 						})
-						if(allow_cancel){
-							util.simpleMsg("此单商品已全部取消，无法进行提取!",true)
-						}
-						else {
+						if (allow_cancel) {
+							util.simpleMsg("此单商品已全部取消，无法进行提取!", true)
+						} else {
 							this.$to_sale_pages('sale_online_order_extract', {
 								sale1: sales.jk_sys_sale001.first(),
 								sale2: (function() {
