@@ -445,6 +445,8 @@ var XsTypeObj = {
 			this.sale002 = params.sale2 ?? [];
 			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
 			this.sale003 = params.sale3 ?? [];
+			console.log("[InitSale]预定取消，已设置锁定行...", this.sale002.length);
+			this.currentOperation.lockRows = this.sale002.length;
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -487,10 +489,9 @@ var XsTypeObj = {
 			}
 		},
 		$saleFinishing: function(result) { //生成yd
-			this.sale003.remove(i => i.ZKLX === 'ZG03'); //删除 $beforeFk 中生成的 zg03 的信息
-			this.sale003.concat(this.raw_order);
+			console.log("[SaleFinishing]预定取消旧单更新:", this.old_bill);
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='3' WHERE bill ='${this.old_bill}';"`
+				`UPDATE ydsale001 set YD_STATUS ='3' WHERE bill ='${this.old_bill}';`
 			);
 			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
@@ -849,7 +850,6 @@ var XsTypeObj = {
 			return false;
 		},
 	},
-
 }
 
 /**
@@ -2018,6 +2018,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale003 = [];
 		this.sale008 = [];
 		this.ydsale001 = {};
+		this.ywbhqh = [];
 		this.sxsale001 = {};
 		this.clikSpItem = {};
 		this.payed = [];
