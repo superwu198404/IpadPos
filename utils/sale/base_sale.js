@@ -132,10 +132,10 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
 			console.log("[sale_return_good]SALE001:", params.sale1);
-			this.sale001 = params.sale1 ?? {};
 			console.log("[sale_return_good]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? {};
 			console.log("[sale_return_good]SALE003:", params.sale3);
+			this.sale001 = params.sale1 ?? {};
+			this.sale002 = params.sale2 ?? {};
 			this.sale003 = params.sale3 ?? {};
 			console.log("[sale_return_good]退款初始化：");
 			this.operation.ynFzCx = false;
@@ -1006,7 +1006,6 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
-
 	})
 	//退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1112,15 +1111,6 @@ function GetSale(global, vue, target_name, uni) {
 		base: {},
 		cval: {},
 		Defval: "80000000",
-		get cval() {//防止清空cval后 获取cval 取不到默认值的问题
-			if (!this.cval.DKFID) {
-				this.cval.DKFID = this.Defval;
-			}
-			/*
-			  这里要根据大客户ID是否为空 如果为空 返回一个默认的大客户
-			*/
-			return this.cval;
-		},
 		get val() {
 			if (!this.cval.DKFID) {
 				this.cval.DKFID = this.Defval;
@@ -1641,7 +1631,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.cxBillinit = function() {
 
 	}
-
+	
 	/**
 	 * 设置新的销售参数
 	 * @param {*} inputParm sale123 数据对象，格式:{ sale001:{},sale002:[],sale003:[] }
@@ -1715,15 +1705,15 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[CreateNewBill]创建新单参数!");
 			commonSaleParm = {
 				KHID: this.sale001.KHID,
-				SALEDATE: this.sale001.SALEDATE,
 				POSID: this.sale001.POSID,
 				RYID: this.sale001.RYID,
 				BILL: this.sale001.BILL,
 				KCDID: this.sale001.KCDID,
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,
-				SALETIME: this.sale001.SALETIME,
-				CLTIME: this.sale001.SALETIME,
+				SALEDATE: this.sale001.SALEDATE, //退款应该采用新的值
+				SALETIME: this.sale001.SALETIME, //退款应该采用新的值
+				CLTIME: this.sale001.SALETIME,  //退款应该采用新的值
 				YN_OK: this.sale001.YN_OK, //默认为 N
 				YN_SC: this.sale001.YN_SC, //默认为 X
 				YAER: this.sale001.YAER,
@@ -1915,7 +1905,7 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
-		
+
 		//计算手工折扣
 		if (that.currentOperation.ynSKDisc) {
 			this.SKdiscCompute();
