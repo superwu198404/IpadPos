@@ -243,7 +243,7 @@
 						// console.log("004回调：", res);
 						console.log("004回调成功");
 						uni.showLoading({
-							title: "表结构创建中...",
+							title: "数据重建中...",
 							mask: true
 						});
 						let tx004 = Req.getResData(res);

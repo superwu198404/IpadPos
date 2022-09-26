@@ -271,10 +271,10 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia">
-									<text>售价￥{{sp.PRICE}}/</text>
+									<text>售价￥{{Price(sp.SPID)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
-									
-								</view>							
+
+								</view>
 							</view>
 							<view class="cods">
 								<view>
@@ -287,7 +287,7 @@
 									</label>
 								</view>
 								<!-- <text>售价￥{{sp.PRICE}}</text> -->
-								<text>销售金额￥{{sp.PRICE*sp.QTY}}</text>
+								<text>销售金额￥{{Price(sp.SPID)*sp.QTY}}</text>
 							</view>
 						</view>
 					</view>
