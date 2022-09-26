@@ -538,7 +538,13 @@ page {
 	position: relative;
 	right: -10px;
 }
-
+.Methods .refund-more-box{
+	width: 94%;
+	padding:0 3%;
+}
+.Methods .refund-reset{
+	font-size: 26rpx;
+}
 .payicon {
 	display: flex;
 	justify-content: start;
