@@ -263,12 +263,12 @@ var XsTypeObj = {
 					if (bh_support_id.find(id => id === s2.PLID) || true) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
-						ywbhqh.GSID_BH = this.GSID;//测试数据
-						ywbhqh.KHID_BH = this.Storeid;//测试数据
-						ywbhqh.DATE_DH = this.getDate();//测试数据
-						ywbhqh.DHSJD = '0';//测试数据
-						ywbhqh.ID_RY_LR = '01100040';//测试数据
-						ywbhqh.DATE_LR = this.getDate();//测试数据
+						ywbhqh.GSID_BH = this.GSID;//测试数据 *勿删
+						ywbhqh.KHID_BH = this.Storeid;//测试数据 *勿删
+						ywbhqh.DATE_DH = this.getDate();//测试数据 *勿删
+						ywbhqh.DHSJD = '0';//测试数据 *勿删
+						ywbhqh.ID_RY_LR = '01100040';//测试数据 *勿删
+						ywbhqh.DATE_LR = this.getDate();//测试数据 *勿删
 						this.ywbhqh.push(ywbhqh);
 					}
 				}))
