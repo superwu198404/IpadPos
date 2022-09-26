@@ -60,9 +60,9 @@ var GetFZCX = function(khid, func) {
 		console.log("辅助促销主单查询结果：", res);
 		res.msg.forEach((item, index) => {
 			let cxobj = cxArr.find(r => {
-				r.BILL == item.BILL
+				return r.BILL == item.BILL
 			});
-			if (!cxobj) {
+			if (!cxobj) { //没有才追加
 				let obj = {
 					BILL: item.BILL,
 					CXZT: item.CXZT,
@@ -561,16 +561,16 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 	obj.MONTH = sale1.MONTH;
 	obj.YAER = sale1.YAER;
 	obj.YN_HYDISC = 'N';
-	obj.CXDISC = fzcxobj.ONET - fzcxobj.CXNET;
+	obj.CXDISC = fzcxobj.ONET - fzcxobj.CXNET; //CXNET 为应付金额  单价10 五个商品两个可赠 那就是 10*3 折扣为10*2
 	obj.YN_CXDISC = 'F';
 	obj.BILLDISC = 0;
 	obj.DISC = 0;
 	obj.YN_SKYDISC = 'N';
 	obj.HYBL = 0;
 	obj.DISCRATE = fzcxobj.ONET - fzcxobj.CXNET;
-	obj.NET = fzcxobj.ONET;
+	obj.NET = fzcxobj.CXNET;
 	obj.OPRICE = fzcxobj.OPRICE;
-	obj.PRICE = fzcxobj.OPRICE;
+	obj.PRICE = (Number(fzcxobj.CXNET / fzcxobj.XSQTY)).toFixed(2);
 	obj.QTY = fzcxobj.XSQTY;
 	obj.UNIT = spobj.UNIT;
 	obj.BARCODE = spobj.BARCODE;
