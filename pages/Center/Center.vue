@@ -361,7 +361,7 @@
 		z-index: 99;
 		width:80%;
 		height: 86%;
-		padding:4% 10%;
+		padding:6% 10%;
 		display: flex;
 	}
 	.leftlist{
@@ -449,7 +449,7 @@
 	}
 	.rightlist .market .prods{
 		display: flex;
-		padding:5% 5% 0;		
+		padding:6% 5% 0;		
 	}
 	
 	.rightlist .market .prods view{
@@ -517,7 +517,7 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		padding:3% 0;
+		padding:2.8% 0;
 	}
 	.chongdu .tuichu image{
 		width:70%;
