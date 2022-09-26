@@ -81,6 +81,7 @@
 	border:1px solid #eee;
 	width:65%;
 	text-align: left;
+	padding:0 10rpx;
 }
 .meminfo .restlist label:nth-last-child(1){
 	width:100%;
@@ -98,6 +99,7 @@
 }
 .meminfo .restlist .long input{
 	width:83%;
+	padding:0 10rpx;
 }
 .meminfo .restlist .note{
 	display: flex;
