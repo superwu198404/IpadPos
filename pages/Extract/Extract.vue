@@ -165,7 +165,8 @@
 				this.view.Details = true;
 			},
 			ExtractOrder: function(item) {
-				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109";
+				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR;
+				console.log("[ExtractOrder]裱花类别(POSCS):", util.getStorage("POSCS"));
 				console.log("[ExtractOrder]预定订单:", bhlb);
 				_extract.getReserveOrdersDetails({ //查到商品信息后传值
 					khid: this.KHID,
