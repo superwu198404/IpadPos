@@ -76,6 +76,7 @@
 <script>
 	import util from '@/utils/util.js';
 	import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue'
+	import common from '@/api/common.js'
 	import _extract from '@/api/business/extract.js'
 	import {
 		ErrorData
@@ -165,62 +166,52 @@
 				this.view.Details = true;
 			},
 			ExtractOrder: function(item) {
-				let bhlb = util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR;
-				console.log("[ExtractOrder]裱花类别(POSCS):", util.getStorage("POSCS"));
-				console.log("[ExtractOrder]预定订单:", bhlb);
-				_extract.getReserveOrdersDetails({ //查到商品信息后传值
+				let callback = util.callBind(this, function(sale1, sale2, sale3) {
+					// IF 条件含义:
+					//    ①如果当前模式为提取(mode === true)且获取的 sale3 信息为空(sale3_res)，
+					//    ②且整单金额(ZNET)不等于 0，
+					//    ③且定金(DNET)不为 0，
+					//    则提示信息异常(其中②、③含义：这部分意思是要支付的完整金额不是 0 元，且预先付过定金，那么查不到sale3就是异常情况了)
+					console.log("[ExtractOrder]销售信息:",{ sale1,sale2,sale3 });
+					if (sale3.length === 0 && !this.view.mode && Number(sale1.ZNET) !== 0 && Number(sale1.DNET) !== 0) {
+						console.log("[ExtractOrder]sale3信息异常...")
+						util.simpleMsg("未查到交易记录[SALE3]!");
+					} else{
+						console.log("[ExtractOrder]预定信息:", { sale1, sale2, sale3 });
+						this.$to_sale_pages(this.view.mode ? 'sale_reserve_extract' : 'sale_reserve_cancel', {
+							sale1,
+							sale2: (function() {
+								sale2?.forEach(i => i.STR1 = i.SNAME);
+								console.log("[ExtractOrder]预定 sale2 处理:", sale2);
+								return sale2;
+							})(),
+							sale3
+						});
+					}
+				})
+				_extract.getReserveOrderInfos({ //查到商品信息后传值
 					khid: this.KHID,
-					bhlb: `(${bhlb})`,
-					bill: item.BILL
-				}, util.callBind(this, async function(res) {
+					posid: this.POSID,
+					bill: item.BILL,
+					saledate: item.SALEDATE
+				}, util.callBind(this, function(res) {
 					if (res.code) {
-						if (this.view.mode) { //结算
-							item.XSTYPE = '1';
-							item.BILL_TYPE = 'Z121';
-							_extract.getReserveOrdersPayed({
-								bill: item.BILL
-							}, util.callBind(this, function(payeds) {
-								let payed = payeds.data;
-								console.log("[ExtractOrder]sale3获取结果:",payeds);
-								this.$to_sale_pages('sale_reserve_extract', {
-									sale1: item,
-									sale2: (function() {
-										let sale2 = JSON.parse(res.data);
-										sale2?.forEach(i => i.STR1 = i
-											.SNAME);
-										console.log(
-											"[ExtractOrder]预定提取 sale2 处理:",
-											sale2);
-										return sale2;
-									})(),
-									sale3: JSON.parse(payed)
-								})
-							}))
-						} else { //退款
-							let data = await LocalDataQuery(item.BILL);
-							if (ErrorData(data)) {
-								console.log("[ExtractOrder]本地未查询到数据!");
-								data = await ServiceDataQuery(item.BILL); //从服务器查询
-							}
-							if (ErrorData(data)) {
-								console.log("[ExtractOrder]服务端未查询到数据!");
-							} else {
-								data.sale1[0].XSTYPE = '2'; //由于查询结果默认返回数组，所带索引去取
-								data.sale1[0].BILL_TYPE = 'Z171';
-								this.$to_sale_pages('sale_reserve_cancel', {
-									sale1: data.sale1[0],
-									sale2: (function() {
-										let sale2 = data.sale2;
-										sale2?.forEach(i => i.STR1 = i
-											.SNAME);
-										console.log(
-											"[ExtractOrder]预定取消 sale2 处理:",
-											sale2);
-										return sale2;
-									})(),
-									sale3: data.sale3
-								})
-							}
+						let sales = JSON.parse(res.data),
+							sale2 = sales.sale2,
+							sale3 = sales.sale3 || [];
+						if (!sale3 || !sale3.length)
+							sale3 = common.QueryBatch([{
+								name: "sale3",
+								sql: `select * from sale003 where bill='${item.BILL}'`
+							}]).then((sale3_res) => {
+								console.log("[ExtractOrder]sale3查询调用完毕:", sale3_res);
+								callback(item, sale2, sale3_res?.sale3);
+							}).catch((err) => {
+								console.warn("[ExtractOrder]获取到本地sale3数据异常:", err);
+								callback(item, sale2, []);
+							})
+						else {
+							callback(item, sale2, sale3);
 						}
 					} else
 						util.simpleMsg(res.msg, true, res);

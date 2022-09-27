@@ -1,125 +1,126 @@
 {
-	"pages": [{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/BTDemo",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		},
-		{
-			"path": "pages/index/PopupDemon",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/ScanCodeDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/RquestDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/popup/ShowPopup",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false,
-				"disableScroll": true,
-				"backgroundColorTop": "transparent",
-				"background": "transparent",
-				"titleNView": false,
-				"scrollIndicator": false,
-				"popGesture": "none",
-				"animationType": "fade-in",
-				"animationDuration": 300
-			}
-		},
-		{
-			"path": "pages/test/test",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"app-plus": {
-		"modules": {
-			"SQLite": {},
-			"Bluetooth": {}
-		},
-		"distribute": {
-			"android": {
-				"abiFilters": ["armeabi-v7a", "arm64-v8a", "x86"]
-			},
-			"ios": {
-				"privacyDescription": {
-					"NSBluetoothPeripheralUsageDescription": "使用蓝牙驱动打印机",
-					"NSBluetoothAlwaysUsageDescription": "使用蓝牙驱动打印机",
-					"NSLocalNetworkUsageDescription": "使用wifi链接后台接口",
-					"NSLocationAlwaysAndWhenInUseUsageDescription": "对店铺的位置进行定位",
-					"NSCameraUsageDescription": "识别二维码"
-				},
-				"dSYMs": false
-			},
-			"sdkConfigs": {
-				"geolocation": {},
-				"ad": {}
-			},
-			"icons": {
-				"ios": {
-					"appstore": "icon/KENGEE-1024.png",
-					"ipad": {
-						"app": "icon/KENGEE-80.png",
-						"app@2x": "icon/KENGEE-120.png",
-						"proapp@2x": "icon/KENGEE-180.png",
-						"spotlight": "icon/KENGEE-40.png",
-						"spotlight@2x": "icon/KENGEE-80.png",
-						"settings": "icon/KENGEE-40.png",
-						"settings@2x": "icon/KENGEE-58.png",
-						"notification": "icon/KENGEE-40.png",
-						"notification@2x": "icon/KENGEE-40.png"
-					}
-				}
-			}
-		},
-		"orientation": [
-			"portrait-primary",
-			"landscape-primary",
-			"portrait-secondary",
-			"landscape-secondary"
-		],
-		"splashscreen": {
-			"waiting": true,
-			"alwaysShowBeforeRender": true
-		},
-		"screenOrientation": ["portrait-primary", "landscape-primary"]
-	},
-	"appid": "__UNI__D975D37",
-	"name": "com.zczy.ipadpos",
-	"versionName": "1.0.0.0",
-	"description": "ipad上运行的收银软件",
-	"versionCode": 3,
-	"locale": "zh-Hans"
+    "pages" : [
+        {
+            "path" : "pages/index/index",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/BTDemo",
+            "style" : {
+                "navigationBarTitleText" : "uni-app"
+            }
+        },
+        {
+            "path" : "pages/index/PopupDemon",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/ScanCodeDemo",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/RquestDemo",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/popup/ShowPopup",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false,
+                "disableScroll" : true,
+                "backgroundColorTop" : "transparent",
+                "background" : "transparent",
+                "titleNView" : false,
+                "scrollIndicator" : false,
+                "popGesture" : "none",
+                "animationType" : "fade-in",
+                "animationDuration" : 300
+            }
+        },
+        {
+            "path" : "pages/test/test",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        }
+    ],
+    "globalStyle" : {
+        "navigationBarTextStyle" : "black",
+        "navigationBarTitleText" : "uni-app",
+        "navigationBarBackgroundColor" : "#F8F8F8",
+        "backgroundColor" : "#F8F8F8"
+    },
+    "app-plus" : {
+        "modules" : {
+            "SQLite" : {},
+            "Bluetooth" : {}
+        },
+        "distribute" : {
+            "android" : {
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
+            },
+            "ios" : {
+                "privacyDescription" : {
+                    "NSBluetoothPeripheralUsageDescription" : "使用蓝牙驱动打印机",
+                    "NSBluetoothAlwaysUsageDescription" : "使用蓝牙驱动打印机",
+                    "NSLocalNetworkUsageDescription" : "使用wifi链接后台接口",
+                    "NSLocationAlwaysAndWhenInUseUsageDescription" : "对店铺的位置进行定位",
+                    "NSCameraUsageDescription" : "识别二维码"
+                },
+                "dSYMs" : false
+            },
+            "sdkConfigs" : {
+                "geolocation" : {},
+                "ad" : {}
+            },
+            "icons" : {
+                "ios" : {
+                    "appstore" : "icon/KENGEE-1024.png",
+                    "ipad" : {
+                        "app" : "icon/KENGEE-80.png",
+                        "app@2x" : "icon/KENGEE-120.png",
+                        "proapp@2x" : "icon/KENGEE-180.png",
+                        "spotlight" : "icon/KENGEE-40.png",
+                        "spotlight@2x" : "icon/KENGEE-80.png",
+                        "settings" : "icon/KENGEE-40.png",
+                        "settings@2x" : "icon/KENGEE-58.png",
+                        "notification" : "icon/KENGEE-40.png",
+                        "notification@2x" : "icon/KENGEE-40.png"
+                    }
+                }
+            }
+        },
+        "orientation" : [
+            "portrait-primary",
+            "landscape-primary",
+            "portrait-secondary",
+            "landscape-secondary"
+        ],
+        "splashscreen" : {
+            "waiting" : true,
+            "alwaysShowBeforeRender" : true
+        },
+        "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
+    },
+    "appid" : "__UNI__A6034C6",
+    "name" : "com.zczy.ipadpos",
+    "versionName" : "1.0.0.0",
+    "description" : "ipad上运行的收银软件",
+    "versionCode" : 3,
+    "locale" : "zh-Hans"
 }
 // ,
 // "condition": { //模式配置，仅开发期间生效
@@ -130,3 +131,4 @@
 // 		"query": "" //启动参数，在页面的onLoad函数里面得到
 // 	}]
 // }
+

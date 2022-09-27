@@ -223,6 +223,9 @@
 				this.showReserve();
 				this.Order.ZNET = this.sale?.ZNET || 0; //从外部接收整单金额
 				console.log("[DataInit]数据初始化!", this.sale);
+				this.Order.ZNET = this.sale.ZNET;
+				this.Order.DNET = this.sale.DNET;
+				this.Order.TNET = this.sale.TNET;
 			},
 			onLoad: function() {
 				this.DataInit();
