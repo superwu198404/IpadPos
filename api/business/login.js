@@ -191,6 +191,7 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 
 	})
 	let store = util.getStorage("store");
+
 	// console.log("门店缓存信息：", store);
 	let data = {
 		gsid: store.GSID,
