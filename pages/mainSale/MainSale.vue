@@ -293,7 +293,7 @@
 					</view>
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
+						<view class="li"><text>件数</text><text>{{TotalNum}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
@@ -452,6 +452,14 @@
 			},
 			MenuName: function() {
 				return this.mainSale?.current_type?.clickType ?? ""
+			},
+			//商品总数量
+			TotalNum: function() {
+				let total = 0;
+				this.mainSale.sale002.map(r => {
+					total += r.QTY;
+				})
+				return total;
 			}
 		},
 		methods: {

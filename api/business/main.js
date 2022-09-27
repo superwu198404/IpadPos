@@ -585,7 +585,7 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 }
 
 /**
- * 手工折扣分摊 
+ * 手工折扣分摊 (pos 是默认将总的手工折扣 记录在第一个商品上)
  * @param {*} sale1 
  * @param {*} sale2_arr 
  */
@@ -600,9 +600,10 @@ var ManualDiscount = function(sale1, sale2_arr) {
 			SKYDISCOUNT += dif;
 		}
 		item.NET = Number(item.NET) - SKYDISCOUNT;
+		item.PRICE = Number(item.NET / item.QTY).toFixed(2);
 		item.DISCRATE = Number(item.DISCRATE) + SKYDISCOUNT;
 		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
-		item.DISC = SKYDISCOUNT;
+		item.DISC = Number(item.DISC) + SKYDISCOUNT;
 	});
 	return sale2_arr;
 }
