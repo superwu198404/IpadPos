@@ -910,10 +910,10 @@ page {
 	margin-top: 20rpx;
 	padding: 10rpx 0;
 }
-
-.quantit text {
+.quantit .hhs text {
 	color: #333;
 	font-size: 24rpx;
+	margin-right: 20rpx;
 }
 
 .quantit .nums {

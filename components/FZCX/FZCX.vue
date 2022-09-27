@@ -20,13 +20,14 @@
 				<view class="shoppbag">
 					<view class="baglist" v-for="(item1,index1) in item.Details">
 						<view class="bag">
-							<text class="h8">{{item1.SNAME}}</text>
+							<view class="h8">{{item1.SNAME}} <text>售价：￥{{item1.PRICE}}</text></view>
 							<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
 						</view>
 						<view class="quantit">
-							<text>售价：￥{{item1.PRICE}}</text>
+							<view>
 							<text>可赠数量：{{item1.CZQTY}}</text>
 							<text>数量</text>
+							</view>
 							<view class="nums">
 								<text @click="Calculate(item1,-1)">-</text>
 								<input disabled="true" v-model="item1.BQTY" />
@@ -178,5 +179,14 @@
 		font-weight: 700;
 		color: #FE694B;
 		padding: 0 4%;
+	}
+	.bag .h8{
+		width:100%;
+		justify-content: space-between;
+		align-items: center;
+		display: flex;
+	}
+	.bag .h8 text{
+		font-weight: 400;
 	}
 </style>

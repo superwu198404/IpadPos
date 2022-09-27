@@ -296,4 +296,8 @@
 </script>
 
 <style>
+	NoData{
+		margin:6%;
+		width:80%;
+	}
 </style>
