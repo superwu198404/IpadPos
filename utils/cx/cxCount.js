@@ -281,6 +281,9 @@ const Createcx = async (sale02_arr) => {
 	if (cxdict == null || cxdict.size <= 0) {
 		await Cxdict();
 	}
+	
+	//清除计算过的集合
+	ClearResult();
 
 	let spid = "";
 	let dateTime_now = cx_util.getTime(3);
