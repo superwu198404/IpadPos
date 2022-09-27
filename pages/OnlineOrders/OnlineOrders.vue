@@ -615,11 +615,10 @@
 
 	.picker {
 		border: 1px solid #70c477;
-		border-radius: 5px;
+		border-radius: 6rpx;
 		margin-right: 5px;
-		padding: .5px 3px;
+		padding: 0px 3px;
 	}
-
 	.harvest uni-label {
 		display: flex;
 		align-items: center;
@@ -677,7 +676,10 @@
 		justify-content: center;
 	}
 	.meminfo .goods{
-		height: 52%;
+		height: 50%;
+	}
+	.from-label{
+		margin-bottom: 6rpx;
 	}
 </style>
 <style>

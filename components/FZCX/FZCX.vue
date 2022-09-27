@@ -18,7 +18,7 @@
 					<!-- <button @click="Close">×</button> -->
 				</view>
 				<view class="shoppbag">
-					<view class="baglist" :class="Baglist(key) ? 'curr' : ''" v-for="(item1,index1) in item.Details">
+					<view class="baglist" v-for="(item1,index1) in item.Details">
 						<view class="bag">
 							<view class="h8">{{item1.SNAME}} <text>售价：￥{{item1.PRICE}}</text></view>
 							<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
