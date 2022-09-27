@@ -50,7 +50,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
 										</view>
-										<text>{{pay.amount}}￥</text>
+										<text>￥{{pay.amount}}</text>
 									</view>
 								</view>
 								<view class="stills">
@@ -59,7 +59,7 @@
 											<image src="../../images/shouyintai.png" mode="widthFix"></image>
 											还需支付
 										</view>
-										<text>{{ debt }}￥</text>
+										<text>￥{{ debt }}</text>
 									</view>
 								</view>
 							</view>
@@ -74,7 +74,7 @@
 											{{ pay.name }}
 										</view>
 										<div class="refund-more-box">
-											<text class="refund-text">{{pay.amount}}￥</text>
+											<text class="refund-text">￥{{pay.amount}}</text>
 											<div class="refund-reset" @click="singlePayRetry(pay.fkid,pay.bill)">
 												{{ pay.auth_code?"支付":"重试" }}
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
@@ -93,7 +93,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>{{(-refund.amount).toFixed(2)}}￥</text>
+										<text>￥{{(-refund.amount).toFixed(2)}}</text>
 									</view>
 								</view>
 							</view>
