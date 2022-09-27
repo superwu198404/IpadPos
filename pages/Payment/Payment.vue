@@ -86,7 +86,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
 										</view>
-										<text>{{pay.amount}}￥</text>
+										<text>￥{{pay.amount}}</text>
 									</view>
 								</view>
 								<view class="stills">
@@ -95,7 +95,7 @@
 											<image src="../../images/shouyintai.png" mode="widthFix"></image>
 											还需支付
 										</view>
-										<text>{{ debt }}￥</text>
+										<text>￥{{ debt }}</text>
 									</view>
 								</view>
 							</view>
@@ -129,7 +129,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>{{(-refund.amount).toFixed(2)}}￥</text>
+										<text>￥{{(-refund.amount).toFixed(2)}}</text>
 									</view>
 								</view>
 							</view>
@@ -144,7 +144,7 @@
 											{{ refund.name }}
 										</view>
 										<div class="refund-more-box" @click="singleRetry(refund.bill)">
-											<text class="refund-text">{{(-refund.amount).toFixed(2)}}￥</text>
+											<text class="refund-text">￥{{(-refund.amount).toFixed(2)}}</text>
 											<div class="refund-reset">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
@@ -1632,5 +1632,8 @@
 
 	.refund-loading {
 		animation: 1.5s rotate infinite linear;
+	}
+	.coupons{
+		width:70%;
 	}
 </style>

@@ -24,9 +24,14 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" @change="timeChange">
+					<!-- <picker mode="time" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
-					</picker>
+					</picker> -->
+					<hTimePicker sTime="15" cTime="15" interval="1" @changeTime="changeTime">
+					            <view slot="pCon" class="changeTime">
+					                点击选择时间
+					            </view>
+					        </hTimePicker>
 				</label>
 				<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 				</label>

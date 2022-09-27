@@ -52,7 +52,7 @@
 					<view class="title-box">
 						<view class="price">{{ item.BILL || '-' }}</view>
 						<view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view>
-						<view class="price">{{ item.THDATE || '-' }}</view>
+						<view class="price" style="font-weight: 400;">{{ item.THDATE || '-' }}</view>
 					</view>
 					<view class="cods">
 						<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
@@ -62,7 +62,7 @@
 							备注:{{ item.CUSTMCOMM || '-' }}</view>
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
-						<button @click="EditOrder(item)" class="btn">编辑</button>
+						<button @click="EditOrder(item)" class="btn btn-hk">编辑</button>
 						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '预定提取' : '预定取消'}} </button>
 					</view>
 				</view>

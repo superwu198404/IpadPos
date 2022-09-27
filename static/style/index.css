@@ -550,7 +550,7 @@ page {
 	margin: 10rpx;
 	width:66rpx;
 	height:66rpx;
-	line-height: 66rpx;
+	line-height:58rpx;
 	padding:0;
 }
 
@@ -910,10 +910,10 @@ page {
 	margin-top: 20rpx;
 	padding: 10rpx 0;
 }
-
-.quantit text {
+.quantit .hhs text {
 	color: #333;
 	font-size: 24rpx;
+	margin-right: 20rpx;
 }
 
 .quantit .nums {
@@ -1255,6 +1255,10 @@ checkbox.mycheck .wx-checkbox-input,
 	width:70%;
 	padding:0 2% 5%;
 }
+.special .commods .uls{
+	max-height: 80%;
+	overflow: auto;
+}
 .special .commods .uls .lis{
 	width:100%;
 	margin:10rpx 0 2%;
@@ -1267,6 +1271,7 @@ checkbox.mycheck .wx-checkbox-input,
 	color: #006B44;
 	background-color: #EEEEEE;
 	position: relative;
+	border-radius: 20rpx 20rpx 0 0;
 }
 .special .commods .uls .lis .h8 view{
 	position: relative;
@@ -1330,7 +1335,7 @@ checkbox.mycheck .wx-checkbox-input,
 	padding:0 1%;
 	margin-top:2%;
 }
-.special .discount .zhekou{
+.special .zhekou{
 	max-height: 400rpx;
 	overflow: scroll;
 	display: flex;

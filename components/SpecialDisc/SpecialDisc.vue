@@ -23,8 +23,8 @@
 							</view>
 							<view class="discount">
 								<view class="zhekou">
-								<label
-									v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span>
+									<label
+										v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">· {{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span>
 									</label>
 								</view>
 								<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
@@ -34,10 +34,12 @@
 											<checkbox :checked="curZKType=='LS'"></checkbox>临时折扣
 										</checkbox-group>
 									</label>
+									<view class="zhekou">
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
 										<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
 										<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 									</label>
+									</view>
 								</view>
 							</view>
 						</view>
@@ -49,18 +51,18 @@
 								<span>已选</span>
 							</view>
 							<view class="discount">
-								<view>
+								<view class="zhekou">
 									<label
-										v-for="(item,index) in DKFZKDatas">{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
+										v-for="(item,index) in DKFZKDatas">· {{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
 									<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 								</view>
 							</view>
 						</view>
-						
+
 					</view>
 				</view>
 				<view class="confirm">
-					<button class="btn btn-qx" @click="CloseZK()">取 消</button><button class="btn"
+					<button class="btn btn-qx" @click="CloseZK()">清除折扣</button><button class="btn"
 						@click="ConfirmZK()">确 认</button>
 				</view>
 			</view>
@@ -246,7 +248,7 @@
 			},
 			CloseZK: function() {
 				// uni.$emit('close-tszk', that.ProductOld);
-				uni.$emit('close-tszk', that.curZKType);
+				uni.$emit('close-tszk', "NO");
 			},
 			//数据筛选
 			SortData: (type, data, pro) => {

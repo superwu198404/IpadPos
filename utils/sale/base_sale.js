@@ -30,11 +30,11 @@ var XsTypeObj = {
 		operation: { //只设置为true的就好 其他的默认设置为false
 			"HY": true, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
-			"Disc": true, //是否可以打开录入折扣
+			"ynCx": true, //是否进行可以进行促销  (默认可以促销)
+			"Disc": false, //是否可以打开录入折扣 (默认可以促销就不能特殊折扣)
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCancel": false, //是否可以退出当前销售模式
 			"FZCX": true, //是否可以打开辅助促销组件
-			"ynCx": true, //是否进行可以进行促销
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
@@ -131,15 +131,27 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
-			console.log("[sale_return_good]SALE001:", params.sale1);
-			console.log("[sale_return_good]SALE002:", params.sale2);
-			console.log("[sale_return_good]SALE003:", params.sale3);
-			this.sale001 = params.sale1 ?? {};
-			this.sale002 = params.sale2 ?? {};
-			this.sale003 = params.sale3 ?? {};
-			console.log("[sale_return_good]退款初始化：");
+			// console.log("[sale_return_good]SALE001:", params.sale1);
+			// console.log("[sale_return_good]SALE002:", params.sale2);
+			// console.log("[sale_return_good]SALE003:", params.sale3);
+			// this.sale001 = params.sale1 ?? {};
+			// this.sale002 = params.sale2 ?? {};
+			// this.sale003 = params.sale3 ?? {};
+			// console.log("[sale_return_good]退款初始化：");
 			this.operation.ynFzCx = false;
 			this.ComponentsManage.FZCX = false;
+
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			console.log("[sale_return_good]SALE001:", this.sale001);
+			console.log("[sale_return_good]SALE002:", this.sale002);
+			console.log("[sale_return_good]SALE003:", this.sale003);
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Refund);
 		},
 		///对打印的控制
 		$print: function() {
@@ -158,16 +170,16 @@ var XsTypeObj = {
 		$beforeFk: function() {
 			//自动退货预处理，把支付方式准备写入进行预退货
 			//一些特殊的设置
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Refund)
-			console.log("[SaleFinishing]销售退货处理完毕!", {
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			});
+			// this.setNewParmSale({
+			// 	sale001: this.sale001,
+			// 	sale002: this.sale002,
+			// 	sale003: this.sale003
+			// }, common.actTypeEnum.Refund)
+			// console.log("[SaleFinishing]销售退货处理完毕!", {
+			// 	sale001: this.sale001,
+			// 	sale002: this.sale002,
+			// 	sale003: this.sale003
+			// });
 			return true;
 		},
 		//支付完成中
@@ -197,7 +209,7 @@ var XsTypeObj = {
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
-			"ynSKDisc": true, //是否可以计算特殊折扣
+			"ynSKDisc": true, //是否可以计算手工折扣
 
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -331,7 +343,7 @@ var XsTypeObj = {
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
-			"ynSKDisc": true, //是否可以计算特殊折扣
+			"ynSKDisc": true, //是否可以计算手工折扣
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -512,7 +524,7 @@ var XsTypeObj = {
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
 			"ynCx": false, //是否进行可以进行促销
-			"ynSKDisc": true, //是否可以计算特殊折扣
+			"ynSKDisc": true, //是否可以计算手工折扣
 
 			"sale": true,
 			"sale_takeaway_reserve": true,
@@ -597,18 +609,29 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
 			console.log("[InitSale]赊销退货单据信息:", params);
-			this.sale001 = Object.cover(new sale.sale001(), params.sale1);
-			console.log("[sale_credit_return_good]SALE001:", this.sale001);
-			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			console.log("[sale_credit_return_good]SALE002:", this.sale002);
-			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_credit_return_good]SALE003:", this.sale003);
-			console.log("[InitSale]赊销退货单据生成完毕!", {
-				sale1: this.sale001,
-				sale2: this.sale002,
-				sale3: this.sale003
-			});
+			// this.sale001 = Object.cover(new sale.sale001(), params.sale1);
+			// console.log("[sale_credit_return_good]SALE001:", this.sale001);
+			// this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			// console.log("[sale_credit_return_good]SALE002:", this.sale002);
+			// this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			// console.log("[sale_credit_return_good]SALE003:", this.sale003);
+			// console.log("[InitSale]赊销退货单据生成完毕!", {
+			// 	sale1: this.sale001,
+			// 	sale2: this.sale002,
+			// 	sale3: this.sale003
+			// });
 			this.credit_sales = params;
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			console.log("[sale_credit_return_good]SALE001:", this.sale001);
+			console.log("[sale_credit_return_good]SALE002:", this.sale002);
+			console.log("[sale_credit_return_good]SALE003:", this.sale003);
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Refund);
 		},
 		$click() {
 			this.SetManage("sale_credit_return_good");
@@ -617,16 +640,16 @@ var XsTypeObj = {
 		$beforeFk: function() {
 			//可以使用的支付方式 
 			//加入支付方式
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Refund)
-			console.log("[SaleFinishing]赊销退货处理完毕!", {
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			});
+			// this.setNewParmSale({
+			// 	sale001: this.sale001,
+			// 	sale002: this.sale002,
+			// 	sale003: this.sale003
+			// }, common.actTypeEnum.Refund)
+			// console.log("[SaleFinishing]赊销退货处理完毕!", {
+			// 	sale001: this.sale001,
+			// 	sale002: this.sale002,
+			// 	sale003: this.sale003
+			// });
 			return true;
 		},
 		$saleFinishing: function() {
@@ -923,7 +946,32 @@ function GetSale(global, vue, target_name, uni) {
 	this.CloseTSZK = util.callBind(this, function(data) {
 		this.setComponentsManage(null, "Disc");
 		console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
-		this.Disc.val.ZKType = data;
+		if (data == "NO") { //清除折扣
+			this.Disc.val = {};
+			//如果未选择 折扣类型 则说明可以进行促销操作 反之
+			this.currentOperation["Disc"] = false;
+			// this.currentOperation["ynFzCx"] = true;
+			this.currentOperation["ynCx"] = true;
+		} else {
+			this.Disc.val.ZKType = data;
+			this.currentOperation["Disc"] = true;
+			// this.currentOperation["ynFzCx"] = false;
+			this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
+		}
+		//切换折扣或者促销后 清空一下原来计算的折扣值
+		this.sale001.BZDISC = 0; //zk
+		this.sale001.BZDISC = 0; //zk
+		this.sale001.BZDISC = 0; //zk
+
+		this.sale001.TCXDISC = 0; //cx
+		this.sale001.TDISC = 0; //cx
+		this.sale002.map(r => {
+			r.DISCRATE = 0; //zk，cx
+			r.CXDISC = 0; //cx
+			r.YN_CXDISC = "N"; //cx
+		})
+		console.log("特殊折扣的操作权限：", this.currentOperation.Disc);
+		console.log("促销的操作权限：", this.currentOperation.ynCx);
 	})
 	//*func*辅助促销关闭回调
 	this.CloseFZCX = util.callBind(this, function(res) {
@@ -1062,21 +1110,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.GCID = store.GCID;
 	this.GSID = store.GSID;
 	//销售系列主要数据对象
-	this.raw_sale_no = ""; //原单号
-	this.sale1 = {}; //sale001 主单
-	Object.defineProperty(this, 'sale001', {
-		get: util.callBind(this, function() {
-			return this.sale1;
-		}),
-		set: util.callBind(this, function(v) {
-			this.sale1 = v;
-			if (!this.sale1.$row_sale_no) { //如果未标记原单字段，则进行单号标记，否则不变
-				this.sale1.$row_sale_no = v.BILL;
-				util.hidePropety(this.sale1, '$row_sale_no');
-			}
-			this.update();
-		})
-	})
+	this.sale001 = {}; //sale001 主单
 	this.sale002 = []; //sale002 子单1：记录商品信息
 	this.sale003 = []; //sale003 子单2：记录支付信息
 	this.sale008 = []; //sale008
@@ -1179,18 +1213,6 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
-			// this.base.ComponentsManage["Disc"] = false;
-			// if (this.cval>= 100) {
-			console.log("选择得折扣类型为：", this.cval.ZKType);
-			if (!this.cval.ZKType) { //如果未选择 折扣类型 则说明可以进行促销操作 反之
-				this.base.allOperation["Disc"] = false;
-				this.base.allOperation["ynFzCx"] = true;
-				this.base.allOperation["ynCx"] = true;
-			} else {
-				this.base.allOperation["Disc"] = true;
-				this.base.allOperation["ynFzCx"] = false;
-				this.base.allOperation["ynCx"] = false; //特殊折扣和普通促销互斥
-			}
 		}
 	};
 	this.Disc.base = this;
@@ -1206,6 +1228,7 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval;
+			this.currentOperation.ynCx = false; //选了特殊折扣后 就不计算普通促销
 			// if (newval.length > 0) {\"FZCX"] = true;
 			// 	this.base.ComponentsManage["FZCX"] = false;
 			// }
@@ -1366,32 +1389,32 @@ function GetSale(global, vue, target_name, uni) {
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
 		if (!pm_mtype) return;
-		console.log("[SetManage]LastManage:", lastManage);
-		console.log("[SetManage]CurrentManage:", pm_mtype);
+		// console.log("[SetManage]LastManage:", lastManage);
+		// console.log("[SetManage]CurrentManage:", pm_mtype);
 		//if (pm_mtype === lastManage) return;
 		if (lastManage != null && pm_mtype != lastManage) {
-			console.log("[SetManage]关闭上一个组件!");
+			// console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;
 		}
-		that.log("[SetManage]点击的类型:", pm_mtype);
+		// that.log("[SetManage]点击的类型:", pm_mtype);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
-		that.log("[SetManage]组件控制对象:", that.ComponentsManage);
-		that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
+		// that.log("[SetManage]组件控制对象:", that.ComponentsManage);
+		// that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
 	}
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
 	this.setComponentsManage = function(e, pm_mtype) {
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
-		console.log("[SetComponentsManage]设置组件切换:", {
-			type: mtype,
-			mode: that.current_type,
-			current: that.currentOperation
-		});
+		// console.log("[SetComponentsManage]设置组件切换:", {
+		// 	type: mtype,
+		// 		mode: that.current_type,
+		// 		current: that.currentOperation
+		// });
 		if (that.currentOperation.hasOwnProperty(mtype)) {
-			console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
+			// console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
 		} else {
 			that.myAlert("当前模式不支持此操作")
@@ -1814,6 +1837,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.YN_XPDG = pm_yndgxp;
 			new002.SPJGZ = that.clikSpItem.SPJGZ;
 			let price = that.spPrice[pm_spid].PRICE;
+			console.log("商品的动态价格：", price);
 			pm_qty = that.float(pm_qty, 3);
 			price = that.float(price, 2);
 			new002.OPRICE = price;
@@ -1873,10 +1897,11 @@ function GetSale(global, vue, target_name, uni) {
 			});
 			this.sale001.TCXDISC = TCXDISC;
 			this.sale001.TDISC += TCXDISC;
+			console.log("普通促销计算后的销售单:", this.sale001);
 		}
-		console.log("促销计算后的商品:", this.sale002);
 		if (that.currentOperation.Disc) {
 			that.discCompute();
+			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
 			NET: 0,

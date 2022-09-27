@@ -271,7 +271,7 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia">
-									<text>售价￥{{Price(sp.SPID)}}/</text>
+									<text>单价￥{{Price(sp.SPID)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 
 								</view>
@@ -287,12 +287,12 @@
 									</label>
 								</view>
 								<!-- <text>售价￥{{sp.PRICE}}</text> -->
-								<text>销售金额￥{{Price(sp.SPID)*sp.QTY}}</text>
+								<text>总价￥{{Price(sp.SPID)*sp.QTY}}</text>
 							</view>
 						</view>
 					</view>
 					<view class="ul">
-						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
+						<view class="li"><text>总金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
