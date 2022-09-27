@@ -49,7 +49,7 @@
 								<span>已选</span>
 							</view>
 							<view class="discount">
-								<view>
+								<view class="zhekou">
 									<label
 										v-for="(item,index) in DKFZKDatas">{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
 									<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
