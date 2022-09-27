@@ -24,7 +24,7 @@
 							<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
 						</view>
 						<view class="quantit">
-							<view>
+							<view class="hhs">
 								<text>可赠数量：{{item1.CZQTY}}</text>
 								<text>数量</text>
 							</view>
@@ -137,7 +137,7 @@
 	.meminfo {
 		position: fixed;
 		right: 0;
-		width: 60%;
+		width: 61%;
 		z-index: 9889;
 		height: 96%;
 	}

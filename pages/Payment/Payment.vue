@@ -129,7 +129,7 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<text>{{(-refund.amount).toFixed(2)}}￥</text>
+										<text>￥{{(-refund.amount).toFixed(2)}}</text>
 									</view>
 								</view>
 							</view>
@@ -144,7 +144,7 @@
 											{{ refund.name }}
 										</view>
 										<div class="refund-more-box" @click="singleRetry(refund.bill)">
-											<text class="refund-text">{{(-refund.amount).toFixed(2)}}￥</text>
+											<text class="refund-text">￥{{(-refund.amount).toFixed(2)}}</text>
 											<div class="refund-reset">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
@@ -500,10 +500,10 @@
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
 					TNET: this.isRefund ? -sale1.TNET : sale1.TNET, //实付金额（重点）
 					ZNET: this.isRefund ? -sale1.ZNET : sale1.ZNET, //总金额（重点）
-					BILLDISC: this.isRefund ? -sale1?.BILLDISC : sale1?.BILLDISC, //整单折扣需要加上手工折扣,
-					ROUND: this.isRefund ? -sale1.ROUND : sale1.ROUND, //取整差值（手工折扣总额）
+					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (sale1?.BILLDISC || 0), //整单折扣需要加上手工折扣,
+					ROUND: this.isRefund ? -sale1.ROUND : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
-					TDISC: this.isRefund ? -sale1.TDISC : sale1.TDISC,
+					TDISC: this.isRefund ? -sale1.TDISC : (sale1?.TDISC || 0),
 					TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
 				});
 				console.log("[SaleDataCombine]sale1 封装完毕!", this.sale1_obj);
@@ -1288,7 +1288,7 @@
 						}
 					});
 					this.totalAmount = prev_page_param.sale1_obj.TNET; //实际付款金额
-					this.Discount = Number(prev_page_param.sale1_obj.BILLDISC).toFixed(2); //折扣信息
+					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
 					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
 					this.GetHyCoupons(); //获取会员的优惠券用以支付使用
@@ -1633,5 +1633,8 @@
 
 	.refund-loading {
 		animation: 1.5s rotate infinite linear;
+	}
+	.coupons{
+		width:70%;
 	}
 </style>

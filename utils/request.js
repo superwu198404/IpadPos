@@ -292,10 +292,10 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("http请求", res);
+			console.log("[AsyncFuncArr]http请求:", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
-			// console.log("http返回值", res);
+			console.log("[AsyncFuncArr]http返回值:", res);
 			hideloding(); 
 			if (res && !res.code) {
 				def(catchfun, res);

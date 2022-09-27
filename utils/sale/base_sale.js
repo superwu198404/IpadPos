@@ -253,6 +253,18 @@ var XsTypeObj = {
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
+			console.log("[SaleReserve]生成预定支付信息...");
+			// this.payed.push(Sale3ModelAdditional(Sale3Model({
+			// 	fkid: 'ZF01',
+			// 	type: 'XJ',
+			// 	bill: this.sale001.BILL,
+			// 	name: "现金",
+			// 	amount: 0
+			// }), { //业务配置字段（支付状态设定为成功）
+			// 	fail: false, //定金显示为成功
+			// 	paying: true
+			// }));
+			console.log("[SaleReserve]生成预定支付信息成功!");
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -285,6 +297,11 @@ var XsTypeObj = {
 				}))
 				console.log("[SaleFinishing]YWBHQH列表:", this.ywbhqh);
 			}
+			if (result.sale1_obj.DNET !== 0) {//定金为 0
+				console.log("[SaleFinishing]过滤掉现金为 0 的记录:",this.sale003);
+				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
+				console.log("[SaleFinishing]过滤后的记录:",this.sale003);
+			}
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
 				sale001: this.sale001,
@@ -311,7 +328,7 @@ var XsTypeObj = {
 				sale1: this.sale001
 			});
 			this.PayParamAssemble();
-		}
+		} 
 	},
 	//预订单提取
 	sale_reserve_extract: {
@@ -326,7 +343,6 @@ var XsTypeObj = {
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynSKDisc": true, //是否可以计算手工折扣
-
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -338,9 +354,7 @@ var XsTypeObj = {
 			this.old_bill = params.sale1.BILL;
 			console.log("[sale_reserve_extract]SALE001:", params.sale1);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			console.log("[sale_reserve_extract]SALE002:", params.sale2);
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			console.log("[sale_reserve_extract]SALE003:", params.sale3);
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -349,10 +363,15 @@ var XsTypeObj = {
 			}, common.actTypeEnum.Payment);
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
-
 			//合并 sale3 不含 ZKLX 的 记录
 			let combine = this.sale003.filter(s2 => !s2.ZKLX); //筛选需要被合并的类型
 			let list = this.sale003.filter(s2 => s2.ZKLX); //筛选不需要被合并的类型
+			console.log("[InitSale]预定提取支付记录合并:", {
+				sale3: this.sale003,
+				combine,
+				list
+			});
+			this.raw_order = []
 			if (combine.length > 0) {
 				let sale3 = combine[0]; //取出第一位
 				let total = 0;
@@ -361,7 +380,7 @@ var XsTypeObj = {
 				list.push(sale3);
 				this.raw_order = list;
 			}
-			this.raw_order.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
+			this.raw_order?.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -415,7 +434,7 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预定生成中...", this.sale003);
 			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this
-				.raw_order); //删除 $beforeFk 中生成的 zg03 的信息
+				.raw_order || []); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
@@ -443,44 +462,25 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$initSale: function(params) {
-			console.log("[InitSale]预定取消初始化开始!");
+			console.log("[InitSale]预定取消初始化开始!", params);
 			this.actType = common.actTypeEnum.Refund;
 			this.old_bill = params.sale1.BILL;
 			this.allOperation.actType = false;
-			console.log("[sale_reserve_cancel]SALE001:", params.sale1);
-			this.sale001 = params.sale1 ?? {};
-			console.log("[sale_reserve_cancel]SALE002:", params.sale2);
-			this.sale002 = params.sale2 ?? [];
-			console.log("[sale_reserve_cancel]SALE003:", params.sale3);
-			this.sale003 = params.sale3 ?? [];
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			console.log("[InitSale]预定取消，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
-			console.log("[BeforeFk]预定提取信息初始化:", {
+			}, common.actTypeEnum.Refund);
+			console.log("[BeforeFk]预定取消信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
-		},
-		$beforeFk: function() {
-			//品诺
-			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
-			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Refund)
-			console.log("[SaleFinishing]销售退货处理完毕!", {
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			});
-			return true;
 		},
 		$click() {
 			this.SetManage("sale_reserve_cancel");
@@ -1664,22 +1664,25 @@ function GetSale(global, vue, target_name, uni) {
 
 	//初始化销售的操作
 	this.$initSale = function(pm_newtype, pm_saleobj) {
-		//在这里需要关闭 打开的插件
-		console.log("[$InitSale]销售初始化开始!", {
-			type: pm_newtype || this.clickSaleType
-		});
-
-		pm_newtype = pm_newtype || this.clickSaleType;
-		Object.assign(this.current_type, pm_newtype);
-		console.log("[$InitSale]设置当前销售类型:", this.current_type);
-		this.bill_type = sale.saleBillType[this.current_type.xstype];
-		console.log("[$InitSale]bill_type:", this.bill_type);
-		this.xsType = this.current_type.xstype;
-		//设置权限生效
-		this.SetCurrentOperation(this.current_type.operation);
-		this.CurrentTypeCall("$initSale", pm_saleobj ?? {});
-		this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
-		console.log("[$initSale]销售初始化完毕!");
+		try {
+			//在这里需要关闭 打开的插件
+			console.log("[$InitSale]销售初始化开始!", {
+				type: pm_newtype || this.clickSaleType
+			});
+			pm_newtype = pm_newtype || this.clickSaleType;
+			Object.assign(this.current_type, pm_newtype);
+			console.log("[$InitSale]设置当前销售类型:", this.current_type);
+			this.bill_type = sale.saleBillType[this.current_type.xstype];
+			console.log("[$InitSale]bill_type:", this.bill_type);
+			this.xsType = this.current_type.xstype;
+			//设置权限生效
+			this.SetCurrentOperation(this.current_type.operation);
+			this.CurrentTypeCall("$initSale", pm_saleobj ?? {});
+			this.Page.$set(this.Page[this.pageName], "currentType", this.current_type);
+			console.log("[$initSale]销售初始化完毕!");
+		} catch (e) {
+			console.warn("[InitSale]发生异常:", e);
+		}
 
 	}
 
@@ -1712,16 +1715,17 @@ function GetSale(global, vue, target_name, uni) {
 		//将001缓存一份 在退货的时候进行使用
 		var savaSale001 = {};
 		Object.assign(savaSale001, inputParm.sale001)
-		console.log("[SetNewParmSale]SALE001合并前:", retparm);
 		Object.assign(inputParm.sale001, retparm);
-		console.log("[SetNewParmSale]SALE001合并后:", retparm);
+		console.log("[SetNewParmSale]SALE001合并后:", inputParm.sale001);
 		inputParm.sale001.GSID = this.GSID;
 		inputParm.sale002.forEach(item002 => {
 			Object.cover(item002, retparm);
 		})
+		console.log("[SetNewParmSale]SALE002合并后:", inputParm.sale002);
 		inputParm.sale003.forEach(item003 => {
 			Object.cover(item003, retparm);
 		})
+		console.log("[SetNewParmSale]SALE003合并后:", inputParm.sale003);
 		if (pm_actType == common.actTypeEnum.Refund) {
 			console.log("[SetNewParmSale]原单信息:", savaSale001);
 			inputParm.sale001.XS_GSID = savaSale001.GSID;
@@ -1775,7 +1779,7 @@ function GetSale(global, vue, target_name, uni) {
 				KHID: this.sale001.KHID,
 				POSID: this.sale001.POSID,
 				RYID: this.sale001.RYID,
-				BILL: this.sale001.BILL,
+				BILL: this.getBill(),
 				KCDID: this.sale001.KCDID,
 				GCID: this.sale001.GCID,
 				DPID: this.sale001.DPID,

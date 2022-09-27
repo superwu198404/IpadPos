@@ -73,7 +73,7 @@
 	font-size: 26rpx;
 	color: #B0b0b0;
 }
-.meminfo .restlist input{
+.meminfo .restlist input,.meminfo .restlist StorePicker{
 	height: 60rpx;
 	background-color: #F5F5F5;
 	line-height: 60rpx;
@@ -91,7 +91,7 @@
 	border-radius: 4rpx;
 	height: 80rpx;
 	line-height: 40rpx;
-	width:83%;
+	width:84%;
 	border:1px solid #eee;
 }
 .meminfo .restlist .long {
