@@ -34,10 +34,12 @@
 											<checkbox :checked="curZKType=='LS'"></checkbox>临时折扣
 										</checkbox-group>
 									</label>
+									<view class="zhekou">
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
 										<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
 										<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 									</label>
+									</view>
 								</view>
 							</view>
 						</view>
