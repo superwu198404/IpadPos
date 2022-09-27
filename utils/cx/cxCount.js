@@ -61,10 +61,11 @@ const Cxdict = async () => {
 	let gsid = getApp().globalData.store.GSID;
 
 	//初始化，全局变量先清除
+	cxfsdt = [];
 	cxSelectTip = [];
 	cxbilldts = [];
+	
 	cxdict = new Map();
-	cxfsdt = [];
 	dscxm = [];
 	dscxclass = [];
 	dscxsp = [];
@@ -142,6 +143,9 @@ const Cxdict = async () => {
 				C1.Cxztype = "None";
 				C1.YdminTimeOut = 6;
 			}
+			
+			C1.OneJs = false;
+			C1.OneSp = false;
 			if (YNJSLB == "J") {
 				C1.YN_JSLB = true;
 				C1.OneJs = true;
@@ -616,9 +620,9 @@ const testallcx = function(bill, pmList) {
 	let currentlv = 0;
 
 	if (cx.YN_JSLB) {
-		currentlv = parseInt(cx.SubList[pmList[0]].sublv) - 1;
+		currentlv = parseInt(cx.SubList[Object.keys(cx.SubList)[0]].sublv) - 1;
 	}
-	//console.log("testallcx",pmList)
+    //console.log("testallcx",cx.SubList)
 	let subzqty = getSubidZqty(pmList, cx, yysl);
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
@@ -667,7 +671,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
-		let subx = cx.SubList[pmList[0]];
+		let subx = cx.SubList[Object.keys(cx.SubList)[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			///当前级别
@@ -745,7 +749,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		if (Object.keys(cx.SubList).length != 1) {
 			return;
 		}
-		let subx = cx.SubList[pmList[0]];
+		let subx = cx.SubList[Object.keys(cx.SubList)[0]];
 		currentlv = parseInt(subx.sublv - 1);
 		while (currentlv >= 0) {
 			//当前级别
@@ -1571,9 +1575,17 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 	return zqty;
 }
 
+//清除集合数据
+const ClearResult = function(){
+	cxfsdt = [];
+	cxSelectTip = [];
+	cxbilldts = [];
+}
+
 
 export default {
 	Cxdict, //从数据库中取出所有的促销信息，初始化
 	CreateArr,
-	Createcx //计算促销的方法
+	Createcx, //计算促销的方法
+	ClearResult //清除集合数据
 }
