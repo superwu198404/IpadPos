@@ -108,7 +108,7 @@
 											{{ refund.name }}
 										</view>
 										<div class="refund-more-box" @click="singleRetry(refund.bill)">
-											<text class="refund-text">{{(-refund.amount).toFixed(2)}}￥</text>
+											<text class="refund-text">￥{{(-refund.amount).toFixed(2)}}</text>
 											<div class="refund-reset">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
