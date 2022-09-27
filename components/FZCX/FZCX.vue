@@ -12,30 +12,30 @@
 		<!-- <button class="close" @click="Close()" style="z-index: 99;">×</button> -->
 		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 		<view class="fuzhu">
-		<view v-for="(item,index) in FZCXDatas">
-			<view class="member">
-				<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
-				<!-- <button @click="Close">×</button> -->
-			</view>
-			<view class="shoppbag">
-				<view class="baglist" v-for="(item1,index1) in item.Details">
-					<view class="bag">
-						<text class="h8">{{item1.SNAME}}</text>
-						<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
-					</view>
-					<view class="quantit">
-						<text>售价：￥{{item1.PRICE}}</text>
-						<text>可赠数量：{{item1.CZQTY}}</text>
-						<text>数量</text>
-						<view class="nums">
-							<text @click="Calculate(item1,-1)">-</text>
-							<input disabled="true" v-model="item1.BQTY" />
-							<text @click="Calculate(item1,1)">+</text>
+			<view v-for="(item,index) in FZCXDatas">
+				<view class="member">
+					<label class="h9">{{item.CXZT}}<!-- 武汉满20元赠小号手提袋 --></label>
+					<!-- <button @click="Close">×</button> -->
+				</view>
+				<view class="shoppbag">
+					<view class="baglist" v-for="(item1,index1) in item.Details">
+						<view class="bag">
+							<text class="h8">{{item1.SNAME}}</text>
+							<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
+						</view>
+						<view class="quantit">
+							<text>售价：￥{{item1.PRICE}}</text>
+							<text>可赠数量：{{item1.CZQTY}}</text>
+							<text>数量</text>
+							<view class="nums">
+								<text @click="Calculate(item1,-1)">-</text>
+								<input disabled="true" v-model="item1.BQTY" />
+								<text @click="Calculate(item1,1)">+</text>
+							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-		</view>
 		</view>
 		<view class="affirm">
 			<button class="btn btn-hk" @click="Close()">取消</button>
@@ -77,6 +77,7 @@
 		created: function() {
 			that = this;
 			that.FZCXDatas = that._FZCXDatas.oval;
+			console.log("传入的辅助促销数据：", that.FZCXDatas);
 			//如果之前选择过 则再赋值
 			// if (that._FZCXDatas && that._FZCXDatas.cval) {
 			// 	this.FZCXRes = that._FZCXDatas.cval;
@@ -139,21 +140,25 @@
 		z-index: 9889;
 		height: 96%;
 	}
-	.fuzhu{
+
+	.fuzhu {
 		height: 84%;
 		overflow: auto;
 	}
+
 	.meminfo .close {
 		position: absolute;
 		top: 2%;
 		right: 1%;
 	}
-	.member{
-		padding:1% 4%;
+
+	.member {
+		padding: 1% 4%;
 	}
+
 	.affirm {
 		width: 94%;
-		padding:2% 3%;
+		padding: 2% 3%;
 		margin: 0 auto;
 		display: flex;
 		position: absolute;
@@ -167,10 +172,11 @@
 		width: 46%;
 		margin: 0 2%;
 	}
-	.tishi{
+
+	.tishi {
 		font-size: 26rpx;
 		font-weight: 700;
 		color: #FE694B;
-		padding:0 4%;
+		padding: 0 4%;
 	}
 </style>

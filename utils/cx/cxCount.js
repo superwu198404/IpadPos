@@ -416,7 +416,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 	console.log("cxbilldts 数据", cxbilldts);
 }
 
-///开始计算促销的方法
+//开始计算促销的方法
 const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 	//console.log("SaleCxCreate", cxbilldts);
 	let rowmum = cxbilldts.length;
@@ -479,7 +479,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 	return cxbilldts;
 }
 
-///删除一个缓存信息
+//删除一个缓存信息
 const CxdtReMoveRow = async (row) => {
 	if (row < cxbilldts.length) {
 		delete cxbilldts[row];
@@ -497,7 +497,7 @@ const CreateArr = cols => {
 	return arr;
 }
 
-///如果是时段促销  是否满足时段要求
+//如果是时段促销  是否满足时段要求
 const ynjsCx = function(bill) {
 	let mcc = cxdict.get(bill);
 	if (!mcc.yntime) {
@@ -517,7 +517,7 @@ const ynjsCx = function(bill) {
 	}
 }
 
-///判断会员促销方式
+//判断会员促销方式
 const ynjsCxforHy = function(bill) {
 	let mcc = cxdict.get(bill);
 	// console.log("ynjsCxforHy mcc.CXRY",mcc.CXRY);
@@ -546,7 +546,7 @@ const ynjsCxforHy = function(bill) {
 	}
 }
 
-///销售方式的转变
+//销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict.get(bill);
 	//console.log("xsTypeCheck",mcc);
@@ -572,7 +572,7 @@ const retCxClassForDtRow = function(bill, slttpe) {
 			let classid = cx_util.snvl(cxbilldts[i][bill], null);
 			let syqty = cx_util.snvl(cxbilldts[i][slttpe], 0);
 			//console.log("retCxClassForDtRow syqty",classid + "||" + syqty);
-			///发生参数是临时变量每次使用的时候要清理一下
+			//发生参数是临时变量每次使用的时候要清理一下
 			cxbilldts[i][fscs] = 0;
 			if (c1.ynzd == false) {
 				if (classid == null || syqty == 0) {

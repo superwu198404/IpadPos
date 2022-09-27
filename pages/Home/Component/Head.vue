@@ -527,6 +527,7 @@
 						closeBluetoothAdapter();
 						closeBLEConnection(res.deviceId, 0);
 						app.globalData.YN_PRINT_CON = "N";
+						that.YN_PRINT_CON = "N";
 						//选择适合需求的定时器
 						intervalId = setInterval(() => {
 							console.log("intervalId" + new Date());
@@ -542,6 +543,7 @@
 						}, 5000);
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
+						that.YN_PRINT_CON = "Y";
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -909,9 +911,11 @@
 			},
 			//断开所有已经建立的连接，释放系统资源，要求在蓝牙功能使用完成后调用
 			closeBluetoothAdapter() {
+				let that = this;
 				plus.bluetooth.closeBluetoothAdapter({
 					success: function(e) {
 						app.globalData.YN_PRINT_CON = "N";
+						that.YN_PRINT_CON = "N";
 						console.log('close success: ' + JSON.stringify(e));
 					},
 					fail: function(e) {
@@ -927,6 +931,7 @@
 					success: res => {
 						console.log('断开蓝牙连接')
 						app.globalData.YN_PRINT_CON = "N";
+						that.YN_PRINT_CON = "N";
 						that.isLink.splice(index, 0, 0)
 					}
 				})

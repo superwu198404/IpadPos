@@ -122,11 +122,11 @@
 		props: {
 			confirm: {
 				type: Function,
-				default:null
+				default: null
 			},
-			sale:{
-				type:Object,
-				default:null
+			sale: {
+				type: Object,
+				default: null
 			}
 		},
 		data() {
@@ -163,13 +163,14 @@
 					THTYPE: "1", //自提 和宅配
 					NOTE: "",
 					CUSTMADDRESS: "",
-					THKHID: app.globalData.store.KHID,  
+					ADDRID: "",
+					THKHID: app.globalData.store.KHID,
 					THNAME: app.globalData.store.NAME,
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
 					CARDID: "", //蛋糕类型  
-					YD_STATUS:"1"
+					YD_STATUS: "1"
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -225,8 +226,8 @@
 					that.YDJGSJ = obj.YDZXJG * 60; //小时化分
 				}
 				this.showReserve();
-				this.Order.ZNET = this.sale?.ZNET || 0;//从外部接收整单金额
-				console.log("[DataInit]数据初始化!",this.sale);
+				this.Order.ZNET = this.sale?.ZNET || 0; //从外部接收整单金额
+				console.log("[DataInit]数据初始化!", this.sale);
 			},
 			onLoad: function() {
 				this.DataInit();
@@ -470,6 +471,7 @@
 				that.AddrArr = []; //清空一下
 				that.Order.CUSTMNAME = e.CNAME; //默认赋值
 				that.Order.CUSTMADDRESS = e.ADDRESS;
+				that.Order.ADDRID = e.ADDRID;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
 				//宅配到家需要匹配最近的配送中心
@@ -593,10 +595,13 @@
 					}
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
+				that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
 				that.YDDATA = JSON.stringify(that.Order);
 				that.Order.TNET = that.Order.DNET;
 				that.Order.ZNET = that.Order.DNET;
-				if(that.confirm){
+				that.Order.YD_STATUS = "1";
+				that.Order.BMID = that.BMID;
+				if (that.confirm) {
 					console.log("[Confirm]外部传入事件触发!");
 					that.confirm(that.Order);
 				}

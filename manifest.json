@@ -85,6 +85,22 @@
             "sdkConfigs" : {
                 "geolocation" : {},
                 "ad" : {}
+            },
+            "icons" : {
+                "ios" : {
+                    "appstore" : "icon/KENGEE-1024.png",
+                    "ipad" : {
+                        "app" : "icon/KENGEE-80.png",
+                        "app@2x" : "icon/KENGEE-120.png",
+                        "proapp@2x" : "icon/KENGEE-180.png",
+                        "spotlight" : "icon/KENGEE-40.png",
+                        "spotlight@2x" : "icon/KENGEE-80.png",
+                        "settings" : "icon/KENGEE-40.png",
+                        "settings@2x" : "icon/KENGEE-58.png",
+                        "notification" : "icon/KENGEE-40.png",
+                        "notification@2x" : "icon/KENGEE-40.png"
+                    }
+                }
             }
         },
         "orientation" : [
@@ -99,7 +115,7 @@
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
-    "appid" : "__UNI__DBF626B",
+    "appid" : "__UNI__D975D37",
     "name" : "com.zczy.ipadpos",
     "versionName" : "1.0.0.0",
     "description" : "ipad上运行的收银软件",
