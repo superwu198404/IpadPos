@@ -668,8 +668,11 @@
 		background-color: #fff;
 		border-radius: 6rpx;
 		width:65%;
+		text-align: left;
 	}
 	.thmd text{
+		display: block;
+		text-align: left;
 		line-height: 50rpx;
 	}
 </style>

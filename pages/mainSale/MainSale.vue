@@ -294,12 +294,12 @@
 							<!-- 数量编辑 -->
 							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 								<text @click="mainSale.Calculate(sp,-1)">
-									<image style="width: 60rpx; height: 60rpx;" src="@/images/dx-jian.png"
+									<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
 										mode="widthFix"></image>
 								</text>
 								<label>{{sp.QTY}}</label>
 								<text @click="mainSale.Calculate(sp,1)">
-									<image style="width: 60rpx; height: 60rpx;" src="@/images/dx-jia.png"
+									<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
 										mode="widthFix"></image>
 								</text>
 							</view>
@@ -586,7 +586,7 @@
 		padding: 0 20rpx;
 	}
 
-	.biaoji {
+	.prolist .bianji {
 		width: 220rpx;
 		display: flex;
 		justify-content: center;
@@ -597,29 +597,29 @@
 		transform: translateY(-50%);
 	}
 
-	.biaoji label {
-		height: 60rpx;
+	.bianji label {
+		height: 50rpx;
+		line-height: 50rpx;
 		width: 160rpx;
 		border: 1px solid #D3D3D3;
 		background-color: #f5f5f5;
 		text-align: center;
-		font-size: 40rpx;
+		font-size: 30rpx;
 		background: none;
 		border-radius: 4rpx;
 	}
 
-	.biaoji button {
+	.bianji text {
 		display: inline-block;
 		font-size: 50rpx;
 		margin: 10rpx;
-		width: 60rpx;
-		height: 60rpx;
-		line-height: 58rpx;
+		width: 50rpx;
+		height: 50rpx;
 		padding: 0;
 	}
 
-	/* .biaoji image {
-		width: 60rpx;
-		height: 60rpx;
-	} */
+	.bianji image {
+		width: 50rpx;
+		height: 50rpx;
+	}
 </style>

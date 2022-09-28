@@ -53,6 +53,7 @@ page {
 	width: 92%;
 	margin: 0 auto;
 	height: 98%;
+	position: relative;
 }
 .goods .prolist{
 	height: auto;
