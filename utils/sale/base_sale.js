@@ -38,7 +38,7 @@ var XsTypeObj = {
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
-			"showEdit": true, //编辑商品
+			"showEdit": false, //编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -1052,8 +1052,25 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.Alphabetical = true
 	})
 	//展开商品编辑
-	this.showEdit = util.callBind(this, function(e) {
-		this.setComponentsManage(null, "showEdit");
+	this.showEditFunc = util.callBind(this, function(e) {
+		console.log("点击编辑");
+		this.currentOperation["showEdit"] = true;
+		this.update();
+		// this.setComponentsManage(null, "showEdit");
+	})
+	//sale002商品详情页的加号和 减号
+	this.Calculate = function(item, type) {
+		item.QTY = Number(item.QTY) + type;
+		if (item.QTY < 0) {
+			item.QTY = 0;
+		}
+		console.log("数量给变化", item);
+	}
+	//完成编辑
+	this.completeEdit = util.callBind(this, function(e) {
+		this.currentOperation["showEdit"] = false;
+		this.update();
+		// this.setComponentsManage(null, "showEdit");
 	})
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
@@ -1343,7 +1360,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
 		"FZCX": false, //辅助促销插件是否打开
-		"showEdit": false, //商品数量编辑是否打开
+		// "showEdit": false, //商品数量编辑是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
 		"sale_reserve": false,
@@ -1508,15 +1525,6 @@ function GetSale(global, vue, target_name, uni) {
 		that.update()
 		that.log("-----绑定完成++++" + qty);
 	}
-	//sale002商品详情页的加号和 减号
-	this.Calculate = function(item, type) {
-		item.QTY = Number(item.QTY) + type;
-		if (item.QTY < 0) {
-			item.QTY = 0;
-		}
-		console.log("数量给变化", item);
-	}
-
 	/*
 	 * 修改销售类型
 	 * @param {*} pm_type 销售类型

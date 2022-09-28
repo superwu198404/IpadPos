@@ -261,8 +261,10 @@
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
 					</view>
-					<view class="h5"><text>账单</text> <button @click="mainSale.showEdit">编辑</button><button
-							v-if="wancheng">完成</button></view>
+					<view class="h5"><text>账单</text> <button v-if="!mainSale.currentOperation.showEdit"
+							@click="mainSale.showEditFunc">编辑</button>
+						<button v-if="mainSale.currentOperation.showEdit" @click="mainSale.completeEdit">完成</button>
+					</view>
 					<view class="goods">
 						<!-- 商品循环 -->
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
@@ -271,7 +273,7 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<view class="danjia" v-if="!showEdit">
+								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<text>单价￥{{Price(sp.SPID)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
@@ -287,10 +289,10 @@
 									</label>
 								</view>
 								<!-- <text>售价￥{{sp.PRICE}}</text> -->
-								<text v-if="!showEdit">总价￥{{Price(sp.SPID)*sp.QTY}}</text>
+								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{Price(sp.SPID)*sp.QTY}}</text>
 							</view>
 							<!-- 数量编辑 -->
-							<view class="bianji" v-if="showEdit">
+							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 								<button @click="mainSale.Calculate(sp,-1)">
 									<image src="@/images/dx-jian.png"></image>
 								</button>
