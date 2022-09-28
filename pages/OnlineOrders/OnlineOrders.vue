@@ -226,7 +226,7 @@
 						title: "提取商品",
 						form: {
 							code: "",
-							bill: ""
+							bill: "LH202209220005"
 						},
 						confirm: false
 					},
