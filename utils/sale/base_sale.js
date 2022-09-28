@@ -255,16 +255,16 @@ var XsTypeObj = {
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[SaleReserve]生成预定支付信息...");
-			// this.payed.push(Sale3ModelAdditional(Sale3Model({
-			// 	fkid: 'ZF01',
-			// 	type: 'XJ',
-			// 	bill: this.sale001.BILL,
-			// 	name: "现金",
-			// 	amount: 0
-			// }), { //业务配置字段（支付状态设定为成功）
-			// 	fail: false, //定金显示为成功
-			// 	paying: true
-			// }));
+			this.payed.push(Sale3ModelAdditional(Sale3Model({
+				fkid: 'ZF01',
+				type: 'XJ',
+				bill: this.sale001.BILL,
+				name: "现金",
+				amount: 0
+			}), { //业务配置字段（支付状态设定为成功）
+				fail: false, //定金显示为成功
+				paying: true
+			}));
 			console.log("[SaleReserve]生成预定支付信息成功!");
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
