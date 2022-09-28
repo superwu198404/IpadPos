@@ -15,7 +15,9 @@
 			<view class="restlist">
 				<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 						:disabled="!YN_YDTH" />
+					<view class="thmd">
 					<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
+					</view>
 				</label>
 				<label><text>*配送方式：</text>
 					<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index" :disabled="YN_THTYPE">
@@ -659,5 +661,15 @@
 </script>
 
 <style>
-
+	.thmd{
+		position: absolute;
+		left: 150rpx;
+		top:100%;
+		background-color: #fff;
+		border-radius: 6rpx;
+		width:65%;
+	}
+	.thmd text{
+		line-height: 50rpx;
+	}
 </style>

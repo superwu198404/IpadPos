@@ -294,11 +294,11 @@
 							<!-- 数量编辑 -->
 							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 								<button @click="mainSale.Calculate(sp,-1)">
-									<image src="@/images/dx-jian.png"></image>
+									<image src="@/images/dx-jian.png" mode="widthFix"></image>
 								</button>
 								<label>{{sp.QTY}}</label>
 								<button @click="mainSale.Calculate(sp,1)">
-									<image src="@/images/dx-jia.png"></image>
+									<image src="@/images/dx-jia.png"  mode="widthFix"></image>
 								</button>
 							</view>
 						</view>
@@ -561,7 +561,9 @@
 	.pop-rs .goods {
 		height: 51%;
 	}
-
+	.prolist{
+		position: relative;
+	}
 	.prolist .h3 label text {
 		color: #FE694B;
 		font-weight: 400;
