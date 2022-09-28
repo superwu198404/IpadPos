@@ -1509,7 +1509,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("-----绑定完成++++" + qty);
 	}
 	//sale002商品详情页的加号和 减号
-	this.Calculate: function(item, type) {
+	this.Calculate = function(item, type) {
 		item.QTY = Number(item.QTY) + type;
 		if (item.QTY < 0) {
 			item.QTY = 0;
