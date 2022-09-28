@@ -668,8 +668,13 @@
 		background-color: #fff;
 		border-radius: 6rpx;
 		width:65%;
+		text-align: left;
+		z-index: 999999999;
 	}
-	.thmd text{
+	.restlist .thmd text{
+		width: 100%;
+		display: block;
+		text-align: left;
 		line-height: 50rpx;
 	}
 </style>
