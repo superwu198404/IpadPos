@@ -38,6 +38,7 @@ var XsTypeObj = {
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
+			"ynEdit": true, //编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -1050,6 +1051,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = true
 	})
+
+	this.showEdit = util.callBind(this, function(e) {
+		this.setComponentsManage(null, "showEdit");
+	})
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -1308,6 +1313,8 @@ function GetSale(global, vue, target_name, uni) {
 		"ynCx": false, //是否进行可以进行促销  
 		"member_login": false, //是否打开会员登录界面
 		"upload_point": false, //支付完毕后是否进行积分上传
+		"ynEdit": false, //能否编辑商品
+
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
@@ -1336,6 +1343,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
 		"FZCX": false, //辅助促销插件是否打开
+		"showEdit": false, //商品数量编辑是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
 		"sale_reserve": false,

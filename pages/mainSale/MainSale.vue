@@ -288,10 +288,15 @@
 								<!-- <text>售价￥{{sp.PRICE}}</text> -->
 								<text>总价￥{{Price(sp.SPID)*sp.QTY}}</text>
 							</view>
+							<!-- 数量编辑 -->
 							<view class="bianji">
-								<button @click="mainSale.chengedQty" data-qty="-1"><image src="@/images/dx-jian.png"></image></button>
-								<label>{{mainSale.clikSpItem.inputQty}}</label>
-								<button @click="mainSale.chengedQty" data-qty="1"><image src="@/images/dx-jia.png"></image></button>
+								<button @click="mainSale.Calculate(sp,-1)">
+									<image src="@/images/dx-jian.png"></image>
+								</button>
+								<label>{{sp.QTY}}</label>
+								<button @click="mainSale.Calculate(sp,1)">
+									<image src="@/images/dx-jia.png"></image>
+								</button>
 							</view>
 						</view>
 					</view>
@@ -563,24 +568,26 @@
 		margin-left: 12rpx;
 		border-radius: 4rpx;
 	}
-	.h5 button{
+
+	.h5 button {
 		color: #42B14B;
-		background:none;
+		background: none;
 		font-size: 28rpx;
-		margin:0;
-		padding:0 20rpx;
+		margin: 0;
+		padding: 0 20rpx;
 	}
+
 	.biaoji {
-		width:220rpx;
+		width: 220rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: absolute;
-		top:50%;
-		right:0;
+		top: 50%;
+		right: 0;
 		transform: translateY(-50%);
 	}
-	
+
 	.biaoji label {
 		height: 60rpx;
 		width: 160rpx;
@@ -588,21 +595,22 @@
 		background-color: #f5f5f5;
 		text-align: center;
 		font-size: 40rpx;
-		background:none;
+		background: none;
 		border-radius: 4rpx;
 	}
-	
+
 	.biaoji button {
 		display: inline-block;
 		font-size: 50rpx;
 		margin: 10rpx;
-		width:60rpx;
-		height:60rpx;
-		line-height:58rpx;
-		padding:0;
+		width: 60rpx;
+		height: 60rpx;
+		line-height: 58rpx;
+		padding: 0;
 	}
-	.biaoji button image{
-		width:60rpx;
-		height:60rpx;
+
+	.biaoji button image {
+		width: 60rpx;
+		height: 60rpx;
 	}
 </style>
