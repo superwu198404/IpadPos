@@ -472,9 +472,11 @@
 			//商品总数量
 			TotalNum: function() {
 				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
 				this.mainSale.sale002.map(r => {
 					total += r.QTY;
 				})
+				// }
 				return total;
 			}
 		},
