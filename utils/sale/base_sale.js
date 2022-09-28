@@ -1053,10 +1053,12 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
-		console.log("点击编辑");
+		if (this.sale002.length == 0) {
+			util.simpleMsg("请先加购商品", true);
+			return;
+		}
 		this.currentOperation["showEdit"] = true;
 		this.update();
-		// this.setComponentsManage(null, "showEdit");
 	})
 	//*func*sale002商品详情页的加号和 减号
 	this.Calculate = function(item, type) {
@@ -1603,6 +1605,8 @@ function GetSale(global, vue, target_name, uni) {
 				if (Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
+						console.log("当前匹配到的商品对象:", SPObj);
+						console.log("当前辅助促销商品对象:", r);
 						if (Object.keys(SPObj).length > 0) {
 							let NO = this.sale002.length;
 							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
@@ -1654,6 +1658,10 @@ function GetSale(global, vue, target_name, uni) {
 
 	//去支付
 	this.pay = async function() {
+		if (that.currentOperation.showEdit) {
+			util.simpleMsg("请先完成商品编辑", "none");
+			return;
+		}
 		if (!that.sale002 || that.sale002.length == 0) {
 			util.simpleMsg("请先加购商品", true);
 			return;

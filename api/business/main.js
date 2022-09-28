@@ -591,28 +591,27 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
  */
 var ManualDiscount = function(sale1, sale2_arr) {
 	console.log("[ManualDiscount]ManualDiscount:", {
-			sale1,
-			sale2: sale2_arr
+		sale1,
+		sale2: sale2_arr
+	});
+	let curDis = 0;
+	sale2_arr.forEach(function(item, index, arr) {
+		if (!sale1.ROUND) return; //round 为 0 就不进行分摊
+		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
+		console.log("[ManualDiscount]ManualDiscount:", high);
+		let SKYDISCOUNT = high;
+		curDis += high;
+		if (index == arr.length - 1) {
+			let dif = Number(parseFloat((sale1.ROUND - curDis).toFixed(2))); //实际的差值
+			SKYDISCOUNT += dif;
 		}
-	);
-let curDis = 0;
-sale2_arr.forEach(function(item, index, arr) {
-	if(!sale1.ROUND) return;//round 为 0 就不进行分摊
-	let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
-	console.log("[ManualDiscount]ManualDiscount:", high);
-	let SKYDISCOUNT = high;
-	curDis += high;
-	if (index == arr.length - 1) {
-		let dif = Number(parseFloat((sale1.ROUND - curDis).toFixed(2))); //实际的差值
-		SKYDISCOUNT += dif;
-	}
-	item.NET = Number(item.NET) - SKYDISCOUNT;
-	item.PRICE = Number(item.NET / item.QTY).toFixed(2);
-	item.DISCRATE = Number(item.DISCRATE) + SKYDISCOUNT;
-	item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
-	item.DISC = Number(item.DISC) + SKYDISCOUNT;
-});
-return sale2_arr;
+		item.NET = Number(item.NET) - SKYDISCOUNT;
+		item.PRICE = Number(item.NET / item.QTY).toFixed(2);
+		item.DISCRATE = Number(item.DISCRATE) + SKYDISCOUNT;
+		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
+		item.DISC = Number(item.DISC) + SKYDISCOUNT;
+	});
+	return sale2_arr;
 }
 export default {
 	GetFZCX,
