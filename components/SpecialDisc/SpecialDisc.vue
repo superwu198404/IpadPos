@@ -368,6 +368,20 @@
 </script>
 
 <style>
+	.special{
+		position: relative;
+		padding-bottom: 100rpx;
+	}
+	.special .confirm{
+		position: absolute;
+		left: 0;
+		bottom:0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: #fff;
+		width:100%;
+	}
 	.special .confirm .btn {
 		width: 30%;
 		margin: 0 2%;
