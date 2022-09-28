@@ -113,6 +113,17 @@ var XsTypeObj = {
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3,"");	
+			//this.Page.testPrinter();
 		},
 	},
 	//销售退单
@@ -196,6 +207,16 @@ var XsTypeObj = {
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3,"");
 		},
 	},
 	//预订单下单

@@ -117,6 +117,9 @@
 			this.initPhoto();
 		},
 		methods: {
+			testPrinter: async function(){
+				util.simpleMsg("testPrinter");
+			},
 			// 二维码生成工具
 			couponQrCode: function() {
 				let that = this;
