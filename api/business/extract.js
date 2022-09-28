@@ -91,6 +91,12 @@ var getReserveOrdersDetails = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+var getReserveOrderInfos = function(data, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrderInfos";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 var getReserveOrdersPayed = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersPayed";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
@@ -187,5 +193,6 @@ export default {
 	getReserveOrdersPayed,
 	reserveOrdersStatusUpdate,
 	getReserveOrdersDetails,
+	getReserveOrderInfos,
 	updateReserveOrder
 }

@@ -135,7 +135,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
-			POSID: posid,
+			// POSID: posid,
+			POSID: 3,
 			KCDID: res.msg[0].KCDID,
 			DPID: res.msg[0].DPID,
 			GCID: res.msg[0].GCID,
