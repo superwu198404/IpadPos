@@ -6,7 +6,9 @@ import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
-
+import {
+	updateOrderInfo //更新表接口
+} from '@/api/business/onlineorders.js';
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -113,6 +115,17 @@ var XsTypeObj = {
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3,"");	
+			//this.Page.testPrinter();
 		},
 	},
 	//销售退单
@@ -196,6 +209,16 @@ var XsTypeObj = {
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = "";
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3,"");
 		},
 	},
 	//预订单下单
@@ -785,19 +808,20 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
-			console.log("[SaleFinishing]预定生成中...", this.sale003);
-			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
-			);
-			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			delete this.old_bill;
-		},
-		async $saleFinied(sales) {
+			console.log("[SaleFinishing]预定提取!");
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
-				console.log("[SaleFinied]提取成功！", res);
+				console.log("[SaleFinishing]提取成功！", res);
+				console.log("[SaleFinishing]预定生成中...", this.sale003);
+				this.communication_for_oracle.push(
+					`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				);
+				console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+				delete this.old_bill;
 			}), util.callBind(this, function(err) {
 				util.simpleMsg(err.msg, true);
-			}))
+			}));
+		},
+		async $saleFinied(sales) {
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -1684,7 +1708,7 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
-		if (await that.$beforeFk()) {
+		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
 			that.PayParamAssemble();
 		} else {
@@ -2104,7 +2128,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
-		console.log("[$beforeFk]sale001：", this.sale001);
+		console.log("[BeforeFk]sale001：", this.sale001);
 		//写大客户
 		//code...
 		//写会员
@@ -2112,50 +2136,39 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
-
-		return new Promise(util.callBind(this, function(reslove, reject) {
-			if (this.currentOperation.ynFzCx) {
-				this.setComponentsManage(null, 'FZCX');
-				uni.$once('close-FZCX', util.callBind(this, function(e) {
-					// if (e) {
-					console.log("this.FZCX.cval", this.FZCX.cval);
-					//追加辅助促销的差价和折扣
-					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length && Object
-						.keys(
-							this.FZCX.cval.data).length > 0) {
-						this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
-						this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
-						let allDisc = 0;
-						this.FZCX.cval.data.forEach(r => {
-							allDisc += (r.ONET - r.CXNET);
-						})
-						this.sale001.BILLDISC += allDisc;
-						this.sale001.TCXDISC += allDisc;
-						this.sale001.TDISC += allDisc;
-						this.sale001.TLINE += this.FZCX.cval.data.length;
-						console.log("[BeforeFk] 追加辅助促销后的sale001：", this.sale001);
-					}
-					//计算手工折扣
-					if (that.currentOperation.ynSKDisc) {
-						this.SKdiscCompute();
-					}
-					console.log("手工折扣计算完毕");
-					return reslove(this.CurrentTypeCall("$beforeFk",
-						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
-
-					// } else {
-					// 	return reslove(false);
-					// }
-				}))
-			} else {
-				console.log("[BeforeFk]此模式不包含辅助促销操作...");
+		if (this.currentOperation.ynFzCx) {
+			this.setComponentsManage(null, 'FZCX');
+			uni.$once('close-FZCX', util.callBind(this, function(e) {
+				//追加辅助促销的差价和折扣
+				if (this.FZCX.cval && Object.keys(this.FZCX.cval.data).length > 0) {
+					this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+					this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+					let allDisc = 0;
+					this.FZCX.cval.data.forEach(r => {
+						allDisc += (r.ONET - r.CXNET);
+					})
+					this.sale001.BILLDISC += allDisc;
+					this.sale001.TCXDISC += allDisc;
+					this.sale001.TDISC += allDisc;
+					this.sale001.TLINE += this.FZCX.cval.data.length;
+					console.log("[BeforeFk] 追加辅助促销后的sale001：", this.sale001);
+				}
 				//计算手工折扣
 				if (that.currentOperation.ynSKDisc) {
 					this.SKdiscCompute();
 				}
-				return reslove(this.CurrentTypeCall("$beforeFk", pm_inputParm));
+				console.log("手工折扣计算完毕");
+				return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+			}))
+			return false;
+		} else {
+			console.log("[BeforeFk]此模式不包含辅助促销操作...");
+			//计算手工折扣
+			if (that.currentOperation.ynSKDisc) {
+				this.SKdiscCompute();
 			}
-		}));
+			return this.CurrentTypeCall("$beforeFk", pm_inputParm);
+		}
 	}
 
 	//付款之后生成订单前触发

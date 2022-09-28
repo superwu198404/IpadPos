@@ -81,7 +81,7 @@
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.payding)">
+										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.paying)">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
