@@ -66,6 +66,7 @@
 .meminfo .restlist label{
 	display: flex;
 	margin:1% 0;
+	position: relative;
 }
 .meminfo .restlist label text{
 	display: inline-block;
