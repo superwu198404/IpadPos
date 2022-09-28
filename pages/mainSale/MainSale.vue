@@ -261,7 +261,7 @@
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
 					</view>
-					<view class="h5"><text>账单</text></view>
+					<view class="h5"><text>账单</text> <button>编辑</button><button v-if="wancheng">完成</button></view>
 					<view class="goods">
 						<!-- 商品循环 -->
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
@@ -273,7 +273,6 @@
 								<view class="danjia">
 									<text>单价￥{{Price(sp.SPID)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
-
 								</view>
 							</view>
 							<view class="cods">
@@ -288,6 +287,11 @@
 								</view>
 								<!-- <text>售价￥{{sp.PRICE}}</text> -->
 								<text>总价￥{{Price(sp.SPID)*sp.QTY}}</text>
+							</view>
+							<view class="bianji">
+								<button @click="mainSale.chengedQty" data-qty="-1"><image src="@/images/dx-jian.png"></image></button>
+								<label>{{mainSale.clikSpItem.inputQty}}</label>
+								<button @click="mainSale.chengedQty" data-qty="1"><image src="@/images/dx-jia.png"></image></button>
 							</view>
 						</view>
 					</view>
@@ -550,5 +554,47 @@
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
 		border-radius: 4rpx;
+	}
+	.h5 button{
+		color: #42B14B;
+		background:none;
+		font-size: 28rpx;
+		margin:0;
+		padding:0 20rpx;
+	}
+	.biaoji {
+		width:220rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: absolute;
+		top:50%;
+		right:0;
+		transform: translateY(-50%);
+	}
+	
+	.biaoji label {
+		height: 60rpx;
+		width: 160rpx;
+		border: 1px solid #D3D3D3;
+		background-color: #f5f5f5;
+		text-align: center;
+		font-size: 40rpx;
+		background:none;
+		border-radius: 4rpx;
+	}
+	
+	.biaoji button {
+		display: inline-block;
+		font-size: 50rpx;
+		margin: 10rpx;
+		width:60rpx;
+		height:60rpx;
+		line-height:58rpx;
+		padding:0;
+	}
+	.biaoji button image{
+		width:60rpx;
+		height:60rpx;
 	}
 </style>
