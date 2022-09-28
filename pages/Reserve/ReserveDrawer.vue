@@ -27,11 +27,11 @@
 					<!-- <picker mode="time" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
 					</picker> -->
-					<hTimePicker sTime="15" cTime="15" interval="1" @changeTime="changeTime">
-					            <view slot="pCon" class="changeTime">
-					                点击选择时间
-					            </view>
-					        </hTimePicker>
+					<hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
+						<view slot="pCon" class="changeTime">
+							点击选择时间
+						</view>
+					</hTimePicker>
 				</label>
 				<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 				</label>
@@ -229,8 +229,9 @@
 				this.Order.ZNET = this.sale?.ZNET || 0; //从外部接收整单金额
 				console.log("[DataInit]数据初始化!", this.sale);
 				this.Order.ZNET = this.sale.ZNET;
-				this.Order.DNET = this.sale.DNET;
-				this.Order.TNET = this.sale.TNET;
+				this.Order.DNET = this.sale.ZNET;
+				this.Order.TNET = this.sale.ZNET;
+				console.log("[DataInit]预订单初始化完毕!", this.Order);
 			},
 			onLoad: function() {
 				this.DataInit();
@@ -565,16 +566,16 @@
 						return;
 					}
 				}
-				// if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
-				// 	if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
-				// 		util.simpleMsg("提货时间小于当前时间", true);
-				// 		return;
-				// 	}
-				// 	if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
-				// 		util.simpleMsg("提货时间晚于19点", true);
-				// 		return;
-				// 	}
-				// }
+				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
+					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
+						util.simpleMsg("提货时间小于当前时间", true);
+						return;
+					}
+					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
+						util.simpleMsg("提货时间晚于19点", true);
+						return;
+					}
+				}
 				if (that.Order.DNET == null || that.Order.DNET == undefined) {
 					util.simpleMsg("定金为空", true);
 					return;
