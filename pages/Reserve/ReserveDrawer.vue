@@ -606,7 +606,6 @@
 				that.YDDATA = JSON.stringify(that.Order);
 				that.Order.DNET = Number(that.Order.DNET);
 				that.Order.TNET = that.Order.DNET;
-				that.Order.ZNET = that.Order.DNET;
 				that.Order.YD_STATUS = "1";
 				that.Order.BMID = that.BMID;
 				if (that.confirm) {
