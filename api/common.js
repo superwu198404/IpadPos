@@ -589,7 +589,7 @@ var GetPOSCS = async function(e, func) {
 }
 
 //获取缓存中的POS参数
-var GetPOSCS_Local = async function(e) {
+var GetPOSCS_Local = function(e) {
 	// let str;
 	// let arr = util.getStorage("POSCS");
 	// console.log("缓存参数组数据:", arr);

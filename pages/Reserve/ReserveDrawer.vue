@@ -24,10 +24,10 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<!-- <picker mode="time" @change="timeChange">
+					<picker mode="time" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
-					</picker> -->
-					<hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
+					</picker>
+					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
 						<view slot="pCon" class="changeTime">
 							点击选择时间
 						</view>
@@ -209,6 +209,7 @@
 				await that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
 				that.Order.CARDID = that.GGDatas[0];
+				console.log("[DataInit]是否支持异店提货:",common.GetPOSCS_Local("YN_YDTH"));
 				that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
 				if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
 					_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
@@ -601,6 +602,7 @@
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
 				that.YDDATA = JSON.stringify(that.Order);
+				that.Order.DNET = Number(that.Order.DNET);
 				that.Order.TNET = that.Order.DNET;
 				that.Order.ZNET = that.Order.DNET;
 				that.Order.YD_STATUS = "1";
