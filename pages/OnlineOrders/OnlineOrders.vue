@@ -33,7 +33,7 @@
 				</view>
 			</view>
 		</view>
-		
+
 		<NoData v-if="Object.keys(onlineOrdersGroup).length==0"></NoData>
 		<!-- 小类循环 -->
 		<view class="products" v-else>
@@ -219,6 +219,7 @@
 				onlineOrders: [],
 				onlineOrdersGroup: [],
 				BHLB: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'BHLBBM')?.POSCSNR || "109"})`,
+				EndTime: `(${util.getStorage("POSCS")?.find(i => i.POSCS === 'QHJZSJ')?.POSCSNR || "18:00"})`,
 				view: {
 					search: {
 						open: false,
@@ -477,19 +478,18 @@
 						bill: source?.YDBILL
 					}, util.callBind(this, function(res) {
 						this.EditLoad(false, source?.YDBILL);
-						if(res.code){
+						if (res.code) {
 							let data = JSON.parse(res.data);
-							if(data.length > 0){
+							if (data.length > 0) {
 								data = data[0];
 								if (data.orderStatus === 'DELIVERED')
 									this.view.search.confirm = false;
 								else
 									this.view.search.confirm = true;
 							}
-						}
-						else{
+						} else {
 							this.view.search.confirm = true;
-							util.simpleMsg(res.msg,true,res);
+							util.simpleMsg(res.msg, true, res);
 						}
 						console.log("[RenderFrom]Res:", res);
 					}));
@@ -509,6 +509,7 @@
 				} else
 					util.simpleMsg("请确认保存信息！")
 			},
+			//门店选择
 			StoreChange: function(data) {
 				console.log("[StoreChange]门店选择:", data);
 				this.details.order.KHID_BH = data.KHID;
@@ -574,6 +575,7 @@
 					ordersAccept({
 						storeid: this.KHID, //店铺id
 						gcid: this.GCID, //工厂id
+						end_time: this.EndTime,
 						orders: [this.details.order]
 					}, util.callBind(this, function(res) {
 						this.GetOnlineOrders(); //刷新页面
@@ -619,6 +621,7 @@
 		margin-right: 5px;
 		padding: 0px 3px;
 	}
+
 	.harvest uni-label {
 		display: flex;
 		align-items: center;
@@ -675,10 +678,12 @@
 		align-items: center;
 		justify-content: center;
 	}
-	.meminfo .goods{
+
+	.meminfo .goods {
 		height: 50%;
 	}
-	.from-label{
+
+	.from-label {
 		margin-bottom: 6rpx;
 	}
 </style>
