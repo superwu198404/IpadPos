@@ -124,7 +124,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3,"");	
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//this.Page.testPrinter();
 		},
 	},
@@ -136,6 +136,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
+			"sale": true, //可以跳转到销售模式
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
@@ -218,7 +219,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3,"");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 		},
 	},
 	//预订单下单
@@ -2158,7 +2159,8 @@ function GetSale(global, vue, target_name, uni) {
 					this.SKdiscCompute();
 				}
 				console.log("手工折扣计算完毕");
-				return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+				return this.CurrentTypeCall("$beforeFk",
+				pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 			}))
 			return false;
 		} else {
