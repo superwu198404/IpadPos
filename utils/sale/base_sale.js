@@ -208,7 +208,7 @@ var XsTypeObj = {
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
-			"ynFzCx": true, //是否可以辅助促销
+			"ynFzCx": false, //是否可以辅助促销 预定不开启
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynSKDisc": true, //是否可以计算手工折扣
@@ -1105,6 +1105,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("close-tszk");
 		uni.$off("close-FZCX");
 		uni.$off("ReturnSale");
+		uni.$off("Switch");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1117,6 +1118,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
+		uni.$on("Switch", this.SetManage);
 	})
 	//退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1145,7 +1147,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.Storeid = store.KHID;
 	this.storeName = store.NAME;
 	this.POSID = store.POSID;
-	this.ryid = store.RYID;
+	this.ryid = store
+		.RYID;
 	this.KCDID = store.KCDID;
 	this.DPID = store.DQID; //测试要求按照ｐｏｓ记录
 	this.GCID = store.GCID;
@@ -1211,7 +1214,8 @@ function GetSale(global, vue, target_name, uni) {
 			this.base.ComponentsManage["HY"] = false;
 			this.cval = newval;
 			if (this.cval) {
-				this.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
+				//使用that
+				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
 			}
 			that.update();
@@ -1234,11 +1238,12 @@ function GetSale(global, vue, target_name, uni) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
-			this.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
-			if (newval == null || newval == this.Defval) {
+			if (!newval || Object.keys(newval).length == 0) {
 				this.cval = this.Defval;
 				return;
 			}
+			//使用that
+			that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
 			this.cval = newval;
 		}
 	}
@@ -2115,7 +2120,8 @@ function GetSale(global, vue, target_name, uni) {
 					// if (e) {
 					console.log("this.FZCX.cval", this.FZCX.cval);
 					//追加辅助促销的差价和折扣
-					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length && Object.keys(
+					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length && Object
+						.keys(
 							this.FZCX.cval.data).length > 0) {
 						this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
 						this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价

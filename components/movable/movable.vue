@@ -97,6 +97,35 @@
 			//消息已读
 			ReadMsg: function(e, i) {
 				// console.log("消息点击");
+				_msg.DelMsg(that.KHID, e, res => {
+					console.log("消息数据已读结果：", res);
+					that.msgDatas.splice(i, 1);
+					if (e.url) {
+						let name, title, xstype;
+						if (e.type == 'XTIP') {
+							name = "OnlineOrders";
+							title = "线上订单";
+							xstype = "sale_online_order";
+						}
+						if (e.type == 'PTIP') {
+							name = "TakeAway";
+							title = "外卖单";
+							xstype = "sale_takeaway";
+						}
+						if (e.type == 'WMYS') {
+							name = "TakeYD";
+							title = "外卖预订单";
+							xstype = "sale_takeaway_reserve";
+						}
+						that.orderlist = false; //关闭消息框
+						//home下有监听该回调事件
+						uni.$emit("Switch", xstype)
+					}
+				});
+			},
+			//消息已读
+			_ReadMsg: function(e, i) {
+				// console.log("消息点击");
 				let store = util.getStorage("store");
 				if (store.OPENFLAG != '1') {
 					util.simpleMsg("请先进行签到", true);

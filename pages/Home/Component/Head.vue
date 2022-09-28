@@ -515,9 +515,9 @@
 					store.DKFNAME = data.NAME;
 					util.setStorage("store", store);
 					this.DKFNAME = data.NAME;
+					console.log("[ClosePopup]新的门店信息:", store);
 				}
 				this.$forceUpdate();
-				console.log("[ClosePopup]新的全局变量:", store);
 			},
 			//通知外部返回销售
 			ReturnSale: function() {
@@ -894,7 +894,8 @@
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +"||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
+								"||" + app.globalData.YN_PRINT_CON)
 							//that.openControl();
 						}
 					},
