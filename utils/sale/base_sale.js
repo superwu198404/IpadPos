@@ -63,7 +63,7 @@ var XsTypeObj = {
 			this.actType = common.actTypeEnum.Payment
 			console.log("[sale-$initSale]params:", params);
 			if (this.actType != common.actTypeEnum.Payment) {
-				this.operation.ynFzCx = false;
+				this.currentOperation["ynFzCx"] = false; //退款不允许辅助促销
 				this.ComponentsManage.FZCX = false;
 			}
 		},
@@ -138,7 +138,7 @@ var XsTypeObj = {
 			// this.sale002 = params.sale2 ?? {};
 			// this.sale003 = params.sale3 ?? {};
 			// console.log("[sale_return_good]退款初始化：");
-			this.operation.ynFzCx = false;
+			this.currentOperation["ynFzCx"] = false; //退款不允许辅助促销
 			this.ComponentsManage.FZCX = false;
 
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -1051,14 +1051,14 @@ function GetSale(global, vue, target_name, uni) {
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = true
 	})
-	//展开商品编辑
+	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
 		console.log("点击编辑");
 		this.currentOperation["showEdit"] = true;
 		this.update();
 		// this.setComponentsManage(null, "showEdit");
 	})
-	//sale002商品详情页的加号和 减号
+	//*func*sale002商品详情页的加号和 减号
 	this.Calculate = function(item, type) {
 		item.QTY = Number(item.QTY) + type;
 		if (item.QTY < 0) {
@@ -1066,11 +1066,18 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		console.log("数量给变化", item);
 	}
-	//完成编辑
+	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
 		this.currentOperation["showEdit"] = false;
 		this.update();
-		// this.setComponentsManage(null, "showEdit");
+
+		//筛选一下商品
+		let sale2 = this.sale002.filter(r => {
+			return r.QTY > 0;
+		})
+		this.sale002 = sale2;
+		//重新计算一下 促销啊 折扣啊 
+		this.SaleNetAndDisc();
 	})
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
@@ -1188,9 +1195,9 @@ function GetSale(global, vue, target_name, uni) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
-			this.base.allOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 			this.cval = newval;
 			if (this.cval) {
+				this.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
 			}
 			that.update();
@@ -1213,7 +1220,7 @@ function GetSale(global, vue, target_name, uni) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
-			this.base.allOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
+			this.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
 			if (newval == null || newval == this.Defval) {
 				this.cval = this.Defval;
 				return;
