@@ -38,7 +38,8 @@ var XsTypeObj = {
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
-			"showEdit": false, //编辑商品
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -122,6 +123,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
+			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
@@ -210,7 +212,8 @@ var XsTypeObj = {
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynSKDisc": true, //是否可以计算手工折扣
-
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -339,11 +342,16 @@ var XsTypeObj = {
 		icon_open: require("@/images/xz-ydtq.png"),
 		icon_close: require("@/images/wxz-ydtq.png"),
 		operation: {
+			"sale": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynCancel": true, //是否可以退出当前销售模式
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -458,6 +466,8 @@ var XsTypeObj = {
 		icon_open: require("@/images/ydqx.png"),
 		icon_close: require("@/images/ydqx-wxz.png"),
 		operation: {
+			"sale": true,
+			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -522,6 +532,8 @@ var XsTypeObj = {
 			"FZCX": false, //是否可以打开辅助促销组件
 			"ynCx": false, //是否进行可以进行促销
 			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 
 			"sale": true,
 			"sale_takeaway_reserve": true,
@@ -601,6 +613,8 @@ var XsTypeObj = {
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
 		operation: {
+			"sale": true,
+			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
@@ -1339,7 +1353,8 @@ function GetSale(global, vue, target_name, uni) {
 		"ynCx": false, //是否进行可以进行促销  
 		"member_login": false, //是否打开会员登录界面
 		"upload_point": false, //支付完毕后是否进行积分上传
-		"showEdit": false, //能否编辑商品
+		"showEdit": false, //展开编辑商品
+		"ynEdit": false, //当前业务能否编辑商品
 
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
