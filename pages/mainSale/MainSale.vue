@@ -261,9 +261,11 @@
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
 					</view>
-					<view class="h5"><text>账单</text> <button v-if="!mainSale.currentOperation.showEdit"
+					<view class="h5"><text>账单</text> <button
+							v-if="mainSale.currentOperation.ynEdit&&!mainSale.currentOperation.showEdit"
 							@click="mainSale.showEditFunc">编辑</button>
-						<button v-if="mainSale.currentOperation.showEdit" @click="mainSale.completeEdit">完成</button>
+						<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
+							@click="mainSale.completeEdit">完成</button>
 					</view>
 					<view class="goods">
 						<!-- 商品循环 -->
@@ -470,9 +472,11 @@
 			//商品总数量
 			TotalNum: function() {
 				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
 				this.mainSale.sale002.map(r => {
 					total += r.QTY;
 				})
+				// }
 				return total;
 			}
 		},

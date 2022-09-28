@@ -130,13 +130,14 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			util.simpleMsg("门店信息查询失败，请重新初始化", "none");
 			return;
 		}
+
+
 		console.log("门店信息查询成功：", res);
 		console.log("人员信息展示：", ryinfo);
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
-			// POSID: posid,
-			POSID: 3,
+			POSID: posid,
 			KCDID: res.msg[0].KCDID,
 			DPID: res.msg[0].DPID,
 			GCID: res.msg[0].GCID,

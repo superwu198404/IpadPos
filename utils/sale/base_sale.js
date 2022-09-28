@@ -38,7 +38,8 @@ var XsTypeObj = {
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
-			"showEdit": false, //编辑商品
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
@@ -122,6 +123,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
+			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
@@ -210,7 +212,8 @@ var XsTypeObj = {
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynSKDisc": true, //是否可以计算手工折扣
-
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			"sale_credit": true,
@@ -339,11 +342,16 @@ var XsTypeObj = {
 		icon_open: require("@/images/xz-ydtq.png"),
 		icon_close: require("@/images/wxz-ydtq.png"),
 		operation: {
+			"sale": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
 			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynCancel": true, //是否可以退出当前销售模式
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+
 			"tools": true,
 			"upload_point": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -458,6 +466,8 @@ var XsTypeObj = {
 		icon_open: require("@/images/ydqx.png"),
 		icon_close: require("@/images/ydqx-wxz.png"),
 		operation: {
+			"sale": true,
+			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -522,6 +532,8 @@ var XsTypeObj = {
 			"FZCX": false, //是否可以打开辅助促销组件
 			"ynCx": false, //是否进行可以进行促销
 			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
 
 			"sale": true,
 			"sale_takeaway_reserve": true,
@@ -601,6 +613,8 @@ var XsTypeObj = {
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
 		operation: {
+			"sale": true,
+			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
@@ -1339,7 +1353,8 @@ function GetSale(global, vue, target_name, uni) {
 		"ynCx": false, //是否进行可以进行促销  
 		"member_login": false, //是否打开会员登录界面
 		"upload_point": false, //支付完毕后是否进行积分上传
-		"showEdit": false, //能否编辑商品
+		"showEdit": false, //展开编辑商品
+		"ynEdit": false, //当前业务能否编辑商品
 
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
@@ -1769,10 +1784,12 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[SetNewParmSale]原单信息:", savaSale001);
 			inputParm.sale001.XS_GSID = savaSale001.GSID;
 			inputParm.sale001.XS_KHID = savaSale001.KHID;
-			inputParm.sale001.XS_DATE = savaSale001.DATE;
+			inputParm.sale001.XS_DATE = savaSale001.SALEDATE;
 			inputParm.sale001.XS_POSID = savaSale001.POSID;
 			inputParm.sale001.XS_BILL = savaSale001.BILL;
-			inputParm.sale001.BILL = this.getBill();
+			// inputParm.sale001.BILL = this.getBill();
+			// inputParm.sale001.SALEDATE = this.getDate();
+			// inputParm.sale001.SALETIME = this.getTime();
 			console.log("[SetNewParmSale]设置完毕!", {
 				param: inputParm,
 				sales: {
@@ -1784,8 +1801,64 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return inputParm;
 	}
-
 	this.createNewBill = function() {
+		var commonSaleParm = {};
+		let newbill = this.getBill();
+		let stime = this.getTime();
+		console.log("[CreateNewBill]创建新单!");
+		commonSaleParm = {
+			GSID: this.GSID,
+			KHID: this.Storeid,
+			SALEDATE: this.saledate,
+			POSID: this.POSID,
+			RYID: this.ryid,
+			BILL: newbill,
+			KCDID: this.KCDID,
+			DPID: this.DPID,
+			GCID: this.GCID,
+			SALETIME: stime,
+			YN_OK: 'X', //默认为 X
+			YN_SC: 'N', //默认为 N
+			YAER: _date.getDateByParam("Y"),
+			MONTH: _date.getDateByParam("M"),
+			WEEK: _date.getDateByParam("w"),
+			TIME: _date.getDateByParam("h"),
+			DKFID: this.DKF.val.DKFID
+		};
+		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
+			this.sale001 = new sale.sale001(commonSaleParm)
+			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
+		}
+		return commonSaleParm;
+		// else {
+		// 	console.log("[CreateNewBill]创建新单参数!");
+		// 	commonSaleParm = {
+		// 		KHID: this.sale001.KHID,
+		// 		POSID: this.sale001.POSID,
+		// 		RYID: this.sale001.RYID,
+		// 		BILL: this.getBill(),
+		// 		KCDID: this.sale001.KCDID,
+		// 		GCID: this.sale001.GCID,
+		// 		DPID: this.sale001.DPID,
+		// 		// SALEDATE: this.sale001.SALEDATE, //应该采用新的值
+		// 		// SALETIME: this.sale001.SALETIME, //应该采用新的值
+		// 		SALEDATE: this.getDate(), //应该采用新的值
+		// 		SALETIME: this.getTime(), //应该采用新的值
+		// 		// CLTIME: this.sale001.SALETIME, //应该采用新的值
+		// 		// YN_OK: this.sale001.YN_OK, //默认为 X
+		// 		// YN_SC: this.sale001.YN_SC, //默认为 N
+		// 		YN_OK: "X", //默认为 X
+		// 		YN_SC: "N", //默认为 N
+		// 		YAER: this.sale001.YAER,
+		// 		MONTH: this.sale001.MONTH,
+		// 		WEEK: this.sale001.WEEK,
+		// 		TIME: this.sale001.TIME,
+		// 		DKFID: this.sale001.DKFID
+		// 	}
+		// }
+		//return commonSaleParm;
+	}
+	this._createNewBill = function() {
 		var commonSaleParm = {};
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
 			console.log("[CreateNewBill]创建新单!");
@@ -1825,8 +1898,8 @@ function GetSale(global, vue, target_name, uni) {
 				SALEDATE: this.sale001.SALEDATE, //退款应该采用新的值
 				SALETIME: this.sale001.SALETIME, //退款应该采用新的值
 				CLTIME: this.sale001.SALETIME, //退款应该采用新的值
-				YN_OK: this.sale001.YN_OK, //默认为 N
-				YN_SC: this.sale001.YN_SC, //默认为 X
+				YN_OK: this.sale001.YN_OK, //默认为 X
+				YN_SC: this.sale001.YN_SC, //默认为 N
 				YAER: this.sale001.YAER,
 				MONTH: this.sale001.MONTH,
 				WEEK: this.sale001.WEEK,
@@ -2007,12 +2080,12 @@ function GetSale(global, vue, target_name, uni) {
 	//付款之前触发
 	this.$beforeFk = function(pm_inputParm) {
 		console.log("[BeforeFk]支付前触发:", pm_inputParm);
-		console.log("sale001：", this.sale001);
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xstype //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
+		console.log("[$beforeFk]sale001：", this.sale001);
 		//写大客户
 		//code...
 		//写会员
