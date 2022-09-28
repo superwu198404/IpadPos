@@ -492,6 +492,9 @@
 			//外卖打印小票
 			wmBluePrinter: function(order, datails, type, print) {
 				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
+			},
+			testPrinter: function(){
+				this.$refs.printerPage.testPrinter();
 			}
 		},
 		created() {

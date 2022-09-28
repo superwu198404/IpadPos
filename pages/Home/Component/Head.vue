@@ -242,6 +242,14 @@
 				this.showSale = this._showSale;
 			}
 		},
+		/**
+		 * 生命周期函数--监听页面显示
+		 */
+		onShow: function() {
+			let that = this;
+			//搜索蓝牙
+			that.startSearch();
+		},
 		created: function(e) {
 			that = this;
 			uni.$off('set-member');
