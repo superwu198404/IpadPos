@@ -33,7 +33,7 @@
 						<view slot="pCon" class="changeTime">
 							点击选择时间
 						</view>
-					</hTimePicker>
+					</hTimePicker> -->
 				</label>
 				<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 				</label>
