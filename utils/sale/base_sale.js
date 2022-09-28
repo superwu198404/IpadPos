@@ -991,8 +991,6 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("辅助促销回调结果：", res);
 		if (res) {
 			this.FZCX.val = res; //选择商品后的提示信息
-			console.log("检测回调后的新值：", this.FZCX.val);
-			console.log("检测回调后的新值：", this.FZCX.cval);
 		}
 	})
 	//*func*获取会员优惠券
@@ -1262,7 +1260,7 @@ function GetSale(global, vue, target_name, uni) {
 	//辅助促销
 	this.FZCX = {
 		base: {},
-		cval: [], //选中的数据
+		cval: {}, //选中的数据
 		oval: [], //初始数据
 		open: false,
 		get val() {
@@ -1801,6 +1799,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return inputParm;
 	}
+	//创建新单 测试版
 	this.createNewBill = function() {
 		var commonSaleParm = {};
 		let newbill = this.getBill();
@@ -2061,9 +2060,24 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
-
-	//使用手工折扣进行计算
+	//使用手工折扣进行计算 新版四舍五入的逻辑
 	this.SKdiscCompute = function() {
+		//手工折扣额的处理
+		let oldTNET = Number(this.sale001.TNET);
+		console.log("[SKdiscCompute]原金额：", oldTNET);
+		let newTnet = Math.round(oldTNET * 10) / 10;
+		console.log("[SKdiscCompute]新金额：", oldTNET);
+		let SKY_DISCOUNT = oldTNET - newTnet;
+		console.log("[SKdiscCompute]手工折扣额：", SKY_DISCOUNT);
+		this.sale001.TNET = newTnet;
+		this.sale001.ZNET = this.float(oldTNET - SKY_DISCOUNT, 2);
+		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+		this.sale001.ROUND = SKY_DISCOUNT;
+		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
+		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
+	}
+	//使用手工折扣进行计算 旧版舍弃分的逻辑
+	this._SKdiscCompute = function() {
 		// 计算商品的手工折扣值 也就是舍去分的处理
 		//手工折扣额的处理
 		console.log("原金额：", this.sale001.TNET);
@@ -2081,7 +2095,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.$beforeFk = function(pm_inputParm) {
 		console.log("[BeforeFk]支付前触发:", pm_inputParm);
 		//在付款前写这个防止左右更改！
-		this.sale001.XSTYPE = this.xstype //付款的时候写
+		this.sale001.XSTYPE = this.xsType //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
@@ -2099,8 +2113,10 @@ function GetSale(global, vue, target_name, uni) {
 				this.setComponentsManage(null, 'FZCX');
 				uni.$once('close-FZCX', util.callBind(this, function(e) {
 					// if (e) {
+					console.log("this.FZCX.cval", this.FZCX.cval);
 					//追加辅助促销的差价和折扣
-					if (this.FZCX.cval && Object.keys(this.FZCX.cval.data).length > 0) {
+					if (this.FZCX.cval && Object.keys(this.FZCX.cval).length && Object.keys(
+							this.FZCX.cval.data).length > 0) {
 						this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
 						this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
 						let allDisc = 0;
