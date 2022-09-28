@@ -293,13 +293,15 @@
 							</view>
 							<!-- 数量编辑 -->
 							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
-								<button @click="mainSale.Calculate(sp,-1)">
-									<image src="@/images/dx-jian.png" mode="widthFix"></image>
-								</button>
+								<text @click="mainSale.Calculate(sp,-1)">
+									<image style="width: 60rpx; height: 60rpx;" src="@/images/dx-jian.png"
+										mode="widthFix"></image>
+								</text>
 								<label>{{sp.QTY}}</label>
-								<button @click="mainSale.Calculate(sp,1)">
-									<image src="@/images/dx-jia.png"  mode="widthFix"></image>
-								</button>
+								<text @click="mainSale.Calculate(sp,1)">
+									<image style="width: 60rpx; height: 60rpx;" src="@/images/dx-jia.png"
+										mode="widthFix"></image>
+								</text>
 							</view>
 						</view>
 					</view>
@@ -561,9 +563,11 @@
 	.pop-rs .goods {
 		height: 51%;
 	}
-	.prolist{
+
+	.prolist {
 		position: relative;
 	}
+
 	.prolist .h3 label text {
 		color: #FE694B;
 		font-weight: 400;
@@ -614,8 +618,8 @@
 		padding: 0;
 	}
 
-	.biaoji button image {
+	/* .biaoji image {
 		width: 60rpx;
 		height: 60rpx;
-	}
+	} */
 </style>
