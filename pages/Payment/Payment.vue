@@ -1021,7 +1021,7 @@
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
 					this.authCode = '';
 				}
-				console.log("[PayTypeJudgment]支付类型：", curPayType);
+				// console.log("[PayTypeJudgment]支付类型：", curPayType);
 				return curPayType;
 			},
 			//支付 data 对象组装
@@ -1634,7 +1634,8 @@
 	.refund-loading {
 		animation: 1.5s rotate infinite linear;
 	}
-	.coupons{
-		width:70%;
+
+	.coupons {
+		width: 70%;
 	}
 </style>
