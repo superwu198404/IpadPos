@@ -64,7 +64,7 @@ const Cxdict = async () => {
 	cxfsdt = [];
 	cxSelectTip = [];
 	cxbilldts = [];
-	
+
 	cxdict = new Map();
 	dscxm = [];
 	dscxclass = [];
@@ -143,7 +143,7 @@ const Cxdict = async () => {
 				C1.Cxztype = "None";
 				C1.YdminTimeOut = 6;
 			}
-			
+
 			C1.OneJs = false;
 			C1.OneSp = false;
 			if (YNJSLB == "J") {
@@ -281,7 +281,7 @@ const Createcx = async (sale02_arr) => {
 	if (cxdict == null || cxdict.size <= 0) {
 		await Cxdict();
 	}
-	
+
 	//清除计算过的集合
 	ClearResult();
 
@@ -625,7 +625,7 @@ const testallcx = function(bill, pmList) {
 	if (cx.YN_JSLB) {
 		currentlv = parseInt(cx.SubList[Object.keys(cx.SubList)[0]].sublv) - 1;
 	}
-    //console.log("testallcx",cx.SubList)
+	//console.log("testallcx",cx.SubList)
 	let subzqty = getSubidZqty(pmList, cx, yysl);
 	for (let lv = currentlv; lv >= 0; lv--) {
 		Lcm = getLcm(subzqty, cx, lv);
@@ -1136,7 +1136,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 				lastIndex = n;
 				break;
 			}
-		} 
+		}
 		let MinRow = null;
 		for (let i = 0; i < pm_list.length; i++) {
 			//累计的分摊的积分
@@ -1563,6 +1563,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 			}
 		}
 
+
 		if (subx.ZkTj == "Net") {
 			syqty = getOneSpNetForQty(cx, subid, syqty, oldprcle);
 		}
@@ -1579,7 +1580,7 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 }
 
 //清除集合数据
-const ClearResult = function(){
+const ClearResult = function() {
 	cxfsdt = [];
 	cxSelectTip = [];
 	cxbilldts = [];

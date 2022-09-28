@@ -53,7 +53,7 @@
 					</view>
 				</view>
 				<view class="chongdu">
-					<view class="dates" >
+					<view class="dates">
 						<label><text>重读基础数据</text><text>REREAD DATA</text></label>
 					</view>
 					<view class="tuichu" @click="ToOut()">
@@ -128,7 +128,7 @@
 						}
 					}, 5000);
 				}, 5500);
-				
+
 			},
 			//uniapp中onHide()能监听到页面离开
 			onHide() { //离开页面前清除计时器
@@ -164,54 +164,16 @@
 								that.SignOut(); //发起日结
 								return;
 							}
-							if (store.RYTYPE != "SYSTEM") {
-								uni.redirectTo({
-									url: "/pages/mainSale/MainSale"
-								});
-							} else {
-								uni.redirectTo({
-									url: "/pages/index/index"
-								});
-							}
+							uni.redirectTo({
+								url: "/pages/mainSale/MainSale"
+							});
 						} else {
-							if (store.RYTYPE != "SYSTEM") {
-								uni.redirectTo({
-									url: "/pages/mainSale/MainSale"
-								});
-							} else {
-								uni.redirectTo({
-									url: "/pages/index/index"
-								});
-							}
+							uni.redirectTo({
+								url: "/pages/mainSale/MainSale"
+							});
 						}
 					}
 				})
-				// if (e) {
-				// 	if (that.signOutDates.length > 0) { //有日结数据
-				// 		that.SignOut(); //发起日结
-				// 		return;
-				// 	}
-				// 	if (store.RYTYPE != "SYSTEM") {
-				// 		uni.redirectTo({
-				// 			url: "/pages/mainSale/MainSale"
-				// 		});
-				// 	} else {
-				// 		uni.redirectTo({
-				// 			url: "/pages/index/index"
-				// 		});
-				// 	}
-
-				// } else {
-				// 	if (store.RYTYPE != "SYSTEM") {
-				// 		uni.redirectTo({
-				// 			url: "/pages/mainSale/MainSale"
-				// 		});
-				// 	} else {
-				// 		uni.redirectTo({
-				// 			url: "/pages/index/index"
-				// 		});
-				// 	}
-				// }
 			},
 			//手动直接发起签到
 			Sign: function() {
@@ -221,10 +183,18 @@
 						_login.SignOrSignOut(true, "", res => {
 							console.log("手动签到结果：", res);
 							if (res.code) {
-								util.simpleMsg("签到成功！");
 								let data = JSON.parse(res.data);
 								if (data.sql) {
-									_login.SignOrSignOutSql(data.sql);
+									_login.SignOrSignOutSql(data.sql, store => {
+										console.log("签到结果回调：", store);
+										if (store.OPENFLAG == 1) {
+											util.simpleMsg("签到成功！");
+										} else {
+											util.simpleMsg("签到失败！", true);
+										}
+									});
+								} else {
+									util.simpleMsg("签到失败：签到数据异常！", "none");
 								}
 							} else {
 								util.simpleModal("提示", res.msg);
@@ -340,15 +310,18 @@
 </script>
 
 <style>
-	page-body, page-refresh,page{
+	page-body,
+	page-refresh,
+	page {
 		height: 100%;
 	}
+
 	.centre {
 		width: 100%;
 		height: 100%;
 		position: relative;
 	}
-	
+
 	.centre .bg {
 		position: absolute;
 		width: 100%;
@@ -356,70 +329,83 @@
 		top: 0;
 		left: 0;
 	}
-	.tranlist{
+
+	.tranlist {
 		position: relative;
 		z-index: 99;
-		width:80%;
+		width: 80%;
 		height: 86%;
-		padding:6% 10%;
+		padding: 6% 10%;
 		display: flex;
 	}
-	.leftlist{
-		width:42%;
+
+	.leftlist {
+		width: 42%;
 		margin-right: 5%;
 	}
-	.leftlist .logos{
-		width:100%;	
+
+	.leftlist .logos {
+		width: 100%;
 		/* border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1); */
 	}
-	.leftlist .logos image{
-		width:100%;
+
+	.leftlist .logos image {
+		width: 100%;
 	}
-	.leftlist .sginout{
+
+	.leftlist .sginout {
 		display: flex;
-		margin:8% 0;
+		margin: 8% 0;
 	}
-	.leftlist .sginout view{
-		width:45%;
+
+	.leftlist .sginout view {
+		width: 45%;
 		background-color: #fff;
 		border-radius: 30rpx;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		display: flex;
 		flex-direction: column;
 		color: #006B44;
-		padding:50rpx 0;
+		padding: 50rpx 0;
 	}
-	.leftlist .sginout view label{
+
+	.leftlist .sginout view label {
 		font-size: 44rpx;
 		font-weight: 700;
 		margin-bottom: 20rpx;
 	}
-	.leftlist .sginout view text,.leftlist .sginout view label{
+
+	.leftlist .sginout view text,
+	.leftlist .sginout view label {
 		display: block;
 		padding-left: 20%;
 	}
-	.leftlist .sginout view:nth-child(1){
+
+	.leftlist .sginout view:nth-child(1) {
 		margin-right: 10%;
 	}
-	.dates{
-		width:100%;
+
+	.dates {
+		width: 100%;
 		background-color: #fff;
 		border-radius: 30rpx;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
 		padding: 110rpx 0;
 	}
-	.dates .datebg{
+
+	.dates .datebg {
 		position: absolute;
-		bottom:0;
+		bottom: 0;
 		left: 0;
 		width: 100%;
 	}
-	.dates view{
+
+	.dates view {
 		display: flex;
 		justify-content: space-between;
-		padding:0 15%;
+		padding: 0 15%;
 	}
 
 	.dates label {
@@ -433,83 +419,101 @@
 	.dates label text:nth-child(2) {
 		font-weight: 400;
 		font-size: 34rpx;
-		margin-top:20rpx;
+		margin-top: 20rpx;
 	}
-	.dates view image{
-		width:140rpx;
+
+	.dates view image {
+		width: 140rpx;
 		height: 140rpx;
 	}
-	.rightlist{
-		width:53%;
+
+	.rightlist {
+		width: 53%;
 	}
-	.rightlist .market{
+
+	.rightlist .market {
 		background-color: #fff;
 		border-radius: 30rpx;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 	}
-	.rightlist .market .prods{
+
+	.rightlist .market .prods {
 		display: flex;
-		padding:6% 5% 0;		
+		padding: 6% 5% 0;
 	}
-	
-	.rightlist .market .prods view{
+
+	.rightlist .market .prods view {
 		border-radius: 30rpx;
 		height: 540rpx;
 		overflow: hidden;
 		position: relative;
 	}
-	.rightlist .market .prods view image{
-		width:100%;
-		
+
+	.rightlist .market .prods view image {
+		width: 100%;
+
 	}
-	.rightlist .market .prods .div:nth-child(1){
-		width:23%;
+
+	.rightlist .market .prods .div:nth-child(1) {
+		width: 23%;
 		margin-right: 2%;
 	}
-	.rightlist .market .prods .div:nth-child(2){
-		width:33%;
+
+	.rightlist .market .prods .div:nth-child(2) {
+		width: 33%;
 		margin-right: 2%;
 	}
-	.rightlist .market .prods .div:nth-child(3){
-		width:40%;
+
+	.rightlist .market .prods .div:nth-child(3) {
+		width: 40%;
 	}
-	.rightlist .market .prods .div image{
+
+	.rightlist .market .prods .div image {
 		position: absolute;
-		top:0;
+		top: 0;
 	}
-	.rightlist .market .prods .div:nth-child(1) image{
+
+	.rightlist .market .prods .div:nth-child(1) image {
 		left: 0;
 	}
-	.rightlist .market .prods .div:nth-child(2) image{
-		left:-53%;
+
+	.rightlist .market .prods .div:nth-child(2) image {
+		left: -53%;
 	}
-	.rightlist .market .prods .div:nth-child(3) image{
-		right:0;
+
+	.rightlist .market .prods .div:nth-child(3) image {
+		right: 0;
 	}
-	.market .dates{
-		padding:80rpx 0;
+
+	.market .dates {
+		padding: 80rpx 0;
 		box-shadow: none;
 	}
-	.rightlist .dates view{
-		padding:0 6%;
+
+	.rightlist .dates view {
+		padding: 0 6%;
 	}
-	.rightlist .dates view image{
-		width:100rpx;
+
+	.rightlist .dates view image {
+		width: 100rpx;
 	}
-	.chongdu{
+
+	.chongdu {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-top: 7%;		
+		margin-top: 7%;
 	}
-	.chongdu .dates{
-		width:70%;
+
+	.chongdu .dates {
+		width: 70%;
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		padding:60rpx 5%;
+		padding: 60rpx 5%;
 	}
-	.chongdu .tuichu{
-		width:25%;
+
+	.chongdu .tuichu {
+		width: 25%;
 		background-color: #006B44;
 		border-radius: 20rpx;
 		color: #fff;
@@ -517,73 +521,74 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		padding:2.8% 0;
+		padding: 2.8% 0;
 	}
-	.chongdu .tuichu image{
-		width:70%;
+
+	.chongdu .tuichu image {
+		width: 70%;
 	}
-	.tuichu{
-	
-	padding:60rpx 0;
-	
-	box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
-	
+
+	.tuichu {
+
+		padding: 60rpx 0;
+
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+
 	}
-	
+
 	.prods {
-	
-	            perspective: 400px;
-	
-	        }
-	
-	
-	
+
+		perspective: 400px;
+
+	}
+
+
+
 	.div {
-	
-	    width: 100;
-	
-	    height: 450px;
-	
-	    margin: 0 auto;
-	
-	    position: relative;
-	
+
+		width: 100;
+
+		height: 450px;
+
+		margin: 0 auto;
+
+		position: relative;
+
 	}
-	
-	.div image{
-	
-	    width: 100%;
-	
-	    height: 100%;
-	
-	    position: absolute;
-	
-	top: 0;
-	
-	    /* left: 0; */
-	
-	    transition: all 1s;
-	
+
+	.div image {
+
+		width: 100%;
+
+		height: 100%;
+
+		position: absolute;
+
+		top: 0;
+
+		/* left: 0; */
+
+		transition: all 1s;
+
 	}
-	
-	
-	
-	.div image:first-child{
-	
-	    z-index: 1;
-	
-	            /*不对向屏幕就隐藏*/
-	
-	    backface-visibility: hidden;
-	
+
+
+
+	.div image:first-child {
+
+		z-index: 1;
+
+		/*不对向屏幕就隐藏*/
+
+		backface-visibility: hidden;
+
 	}
-	
-	
-	
-	        /* .div:hover image{
+
+
+
+	/* .div:hover image{
 	
 	            transform: rotateY(180deg);
 	
 	        } */
-
 </style>

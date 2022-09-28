@@ -509,7 +509,7 @@
 				console.log("[SaleDataCombine]sale1 封装完毕!", this.sale1_obj);
 				this.sale2_arr = sale2.map((function(item, index) {
 					let obj = Object.assign(item, {
-						BILL: sale1.BILL,//取最新的单号
+						BILL: sale1.BILL, //取最新的单号
 						NET: this.isRefund ? -item.NET : item.NET,
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
 							.DISCRATE, //当前商品的折扣额 后续可能有促销折扣
@@ -1376,7 +1376,8 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.dPayAmount) === 0 || this.RefundFinish) {//完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.dPayAmount) === 0 || this
+						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.event.emit("FinishOrder", {
 							code: true,
 							msg: this.isRefund ? "退款成功!" : "支付完成!",
