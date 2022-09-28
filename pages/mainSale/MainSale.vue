@@ -136,7 +136,7 @@
 
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
-		<!-- 蛋糕属性选择 -->
+		<!-- 商品数量属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
@@ -273,7 +273,10 @@
 								<view class="danjia">
 									<text>单价￥{{Price(sp.SPID)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
-
+									<text @click="mainSale.Calculate(sp,-1)">-</text>
+									<!-- <input disabled="true" v-model="sp.QTY" /> -->
+									<text><em>×</em>{{sp.QTY}}</text>
+									<text @click="mainSale.Calculate(sp,1)">+</text>
 								</view>
 							</view>
 							<view class="cods">
