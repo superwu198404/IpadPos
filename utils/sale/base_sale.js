@@ -1705,7 +1705,7 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
-		if (await that.$beforeFk()) {
+		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
 			that.PayParamAssemble();
 		} else {
@@ -2117,47 +2117,39 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
-
-		return new Promise(util.callBind(this, function(reslove, reject) {
-			if (this.currentOperation.ynFzCx) {
-				this.setComponentsManage(null, 'FZCX');
-				uni.$once('close-FZCX', util.callBind(this, function(e) {
-					// if (e) {
-					//追加辅助促销的差价和折扣
-					if (this.FZCX.cval && Object.keys(this.FZCX.cval.data).length > 0) {
-						this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
-						this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
-						let allDisc = 0;
-						this.FZCX.cval.data.forEach(r => {
-							allDisc += (r.ONET - r.CXNET);
-						})
-						this.sale001.BILLDISC += allDisc;
-						this.sale001.TCXDISC += allDisc;
-						this.sale001.TDISC += allDisc;
-						this.sale001.TLINE += this.FZCX.cval.data.length;
-						console.log("[BeforeFk] 追加辅助促销后的sale001：", this.sale001);
-					}
-					//计算手工折扣
-					if (that.currentOperation.ynSKDisc) {
-						this.SKdiscCompute();
-					}
-					console.log("手工折扣计算完毕");
-					return reslove(this.CurrentTypeCall("$beforeFk",
-						pm_inputParm)); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
-
-					// } else {
-					// 	return reslove(false);
-					// }
-				}))
-			} else {
-				console.log("[BeforeFk]此模式不包含辅助促销操作...");
+		if (this.currentOperation.ynFzCx) {
+			this.setComponentsManage(null, 'FZCX');
+			uni.$once('close-FZCX', util.callBind(this, function(e) {
+				//追加辅助促销的差价和折扣
+				if (this.FZCX.cval && Object.keys(this.FZCX.cval.data).length > 0) {
+					this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+					this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
+					let allDisc = 0;
+					this.FZCX.cval.data.forEach(r => {
+						allDisc += (r.ONET - r.CXNET);
+					})
+					this.sale001.BILLDISC += allDisc;
+					this.sale001.TCXDISC += allDisc;
+					this.sale001.TDISC += allDisc;
+					this.sale001.TLINE += this.FZCX.cval.data.length;
+					console.log("[BeforeFk] 追加辅助促销后的sale001：", this.sale001);
+				}
 				//计算手工折扣
 				if (that.currentOperation.ynSKDisc) {
 					this.SKdiscCompute();
 				}
-				return reslove(this.CurrentTypeCall("$beforeFk", pm_inputParm));
+				console.log("手工折扣计算完毕");
+				return this.CurrentTypeCall("$beforeFk", pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+			}))
+			return false;
+		} else {
+			console.log("[BeforeFk]此模式不包含辅助促销操作...");
+			//计算手工折扣
+			if (that.currentOperation.ynSKDisc) {
+				this.SKdiscCompute();
 			}
-		}));
+			return this.CurrentTypeCall("$beforeFk", pm_inputParm);
+		}
 	}
 
 	//付款之后生成订单前触发
