@@ -297,10 +297,10 @@ var XsTypeObj = {
 				}))
 				console.log("[SaleFinishing]YWBHQH列表:", this.ywbhqh);
 			}
-			if (result.sale1_obj.DNET !== 0) {//定金为 0
-				console.log("[SaleFinishing]过滤掉现金为 0 的记录:",this.sale003);
+			if (result.sale1_obj.DNET !== 0) { //定金为 0
+				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
 				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
-				console.log("[SaleFinishing]过滤后的记录:",this.sale003);
+				console.log("[SaleFinishing]过滤后的记录:", this.sale003);
 			}
 			console.log("[SaleFinishing]预订单生成完毕!", {
 				ydsale1: this.ydsale001,
@@ -328,7 +328,7 @@ var XsTypeObj = {
 				sale1: this.sale001
 			});
 			this.PayParamAssemble();
-		} 
+		}
 	},
 	//预订单提取
 	sale_reserve_extract: {
@@ -1499,6 +1499,14 @@ function GetSale(global, vue, target_name, uni) {
 		//that.Page.$set(that.Page[that.pageName].clikSpItem,"inputQty",qty);
 		that.update()
 		that.log("-----绑定完成++++" + qty);
+	}
+	//sale002商品详情页的加号和 减号
+	this.Calculate: function(item, type) {
+		item.QTY = Number(item.QTY) + type;
+		if (item.QTY < 0) {
+			item.QTY = 0;
+		}
+		console.log("数量给变化", item);
 	}
 
 	/*
