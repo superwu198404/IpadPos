@@ -6,7 +6,9 @@ import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
-
+import {
+	updateOrderInfo //更新表接口
+} from '@/api/business/onlineorders.js';
 import {
 	Sale3Model,
 	Sale3ModelAdditional
@@ -785,19 +787,20 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
-			console.log("[SaleFinishing]预定生成中...", this.sale003);
-			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
-			);
-			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			delete this.old_bill;
-		},
-		async $saleFinied(sales) {
+			console.log("[SaleFinishing]预定提取!");
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
-				console.log("[SaleFinied]提取成功！", res);
+				console.log("[SaleFinishing]提取成功！", res);
+				console.log("[SaleFinishing]预定生成中...", this.sale003);
+				this.communication_for_oracle.push(
+					`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				);
+				console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+				delete this.old_bill;
 			}), util.callBind(this, function(err) {
 				util.simpleMsg(err.msg, true);
-			}))
+			}));
+		},
+		async $saleFinied(sales) {
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -2085,7 +2088,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
-		console.log("[$beforeFk]sale001：", this.sale001);
+		console.log("[BeforeFk]sale001：", this.sale001);
 		//写大客户
 		//code...
 		//写会员
