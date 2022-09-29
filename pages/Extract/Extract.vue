@@ -52,7 +52,7 @@
 					<view class="title-box">
 						<view class="price">{{ item.BILL || '-' }}</view>
 						<view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view>
-						<view class="price" style="font-weight: 400;">{{ item.THDATE || '-' }}</view>
+						<view class="price" style="font-weight: 400;font-size:24rpx;">{{ item.THDATE || '-' }}</view>
 					</view>
 					<view class="cods">
 						<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>

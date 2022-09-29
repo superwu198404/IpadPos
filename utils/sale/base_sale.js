@@ -123,9 +123,11 @@ var XsTypeObj = {
 			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//一些特殊的设置 如积分上传
-			console.log("检测积分上传参数：", this.currentOperation.upload_point);
-			console.log("检测积分上传参数1：", this.HY.cval.hyId);
-			console.log("检测积分上传参数2：", this.sale001);
+			console.log("检测积分上传参数：", {
+				upload_point:this.currentOperation.upload_point,
+				hyid:this.HY.cval.hyId,
+				sale1:this.sale001
+			});
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
@@ -311,7 +313,9 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
-			this.ydsale001 = Object.cover(this.ydsale001, result.sale1_obj);
+			this.sale001.ZNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
+			this.sale001.TNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
+			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
 			let sys_param = util.getStorage("sysParam");
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
@@ -323,6 +327,7 @@ var XsTypeObj = {
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
 						ywbhqh.BILL = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
+						ywbhqh.BMID = ywbhqh.BMID || "80000000";//默认
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
 						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
@@ -363,6 +368,7 @@ var XsTypeObj = {
 				sale1: this.sale001
 			});
 			this.sale001.$total_amount = this.sale001.DNET;
+			this.$total_amount = this.sale001.DNET;
 			console.log("[CloseReserveDrawer]预定录入关闭...");
 			this.setComponentsManage(null, "statement");
 			this.PayParamAssemble();
@@ -656,20 +662,8 @@ var XsTypeObj = {
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
-			this.ShowStatement();
 			this.actType = common.actTypeEnum.Refund;
 			console.log("[InitSale]赊销退货单据信息:", params);
-			// this.sale001 = Object.cover(new sale.sale001(), params.sale1);
-			// console.log("[sale_credit_return_good]SALE001:", this.sale001);
-			// this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-			// console.log("[sale_credit_return_good]SALE002:", this.sale002);
-			// this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			// console.log("[sale_credit_return_good]SALE003:", this.sale003);
-			// console.log("[InitSale]赊销退货单据生成完毕!", {
-			// 	sale1: this.sale001,
-			// 	sale2: this.sale002,
-			// 	sale3: this.sale003
-			// });
 			this.credit_sales = params;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
@@ -682,6 +676,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ShowStatement();
 		},
 		$click() {
 			this.SetManage("sale_credit_return_good");
