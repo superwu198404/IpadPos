@@ -382,7 +382,7 @@
 				console.log(`newValue:${n},amount:${amount}`);
 				if (amount > 0) { //未完成支付，仍然存在欠款
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
-					else this.CanBack = false;
+					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						if (Number(n) - this.toBePaidPrice() > 0.1)
@@ -1245,7 +1245,7 @@
 			paramInit: function() {
 				that = this;
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
-				console.log("支付初始化——可用的支付方式:", this.PayWayList)
+				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
 
 				// this.hyinfo = util.getStorage('hyinfo');
 				// console.log("支付初始化——会员信息:", this.hyinfo);
@@ -1259,7 +1259,7 @@
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
 					this.hyinfo = prev_page_param?.hyinfo; //会员信息采用传入
-					console.log("支付初始化——会员信息:", this.hyinfo);
+					console.log("[ParamInit]支付初始化——会员信息:", this.hyinfo);
 
 					//sale 系列表数据初始化 👆
 					this.actType = prev_page_param.actType; //当前行为操作
@@ -1287,7 +1287,11 @@
 							QTY: parseInt(r.QTY)
 						}
 					});
-					this.totalAmount = prev_page_param.sale1_obj.TNET; //实际付款金额
+					console.log("[ParamInit]手动设置待支付金额:", this.sale1_obj.$total_amount);
+					if(this.sale1_obj.$total_amount !== undefined)
+						this.totalAmount = prev_page_param.sale1_obj.DNET;
+					else
+						this.totalAmount = prev_page_param.sale1_obj.TNET
 					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
 					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
@@ -1376,8 +1380,7 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.dPayAmount) === 0 || this
-						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.dPayAmount) === 0 || this.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.event.emit("FinishOrder", {
 							code: true,
 							msg: this.isRefund ? "退款成功!" : "支付完成!",

@@ -407,6 +407,7 @@
 	.products {
 		height: 84%;
 	}
+
 	.products .details {
 		justify-content: start;
 	}
