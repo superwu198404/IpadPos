@@ -504,7 +504,8 @@
 					ROUND: this.isRefund ? -sale1.ROUND : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
 					TDISC: this.isRefund ? -sale1.TDISC : (sale1?.TDISC || 0),
-					TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
+					// TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
+					TLINE: sale1.TLINE
 				});
 				console.log("[SaleDataCombine]sale1 封装完毕!", this.sale1_obj);
 				this.sale2_arr = sale2.map((function(item, index) {
@@ -1287,18 +1288,21 @@
 							QTY: parseInt(r.QTY)
 						}
 					});
-					this.totalAmount = prev_page_param.sale1_obj.DNET || prev_page_param.sale1_obj.TNET; //实际付款金额(如果存在定金那么就使用定金金额)
+					this.totalAmount = prev_page_param.sale1_obj.DNET || prev_page_param.sale1_obj
+						.TNET; //实际付款金额(如果存在定金那么就使用定金金额)
 					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
 					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
 					this.GetHyCoupons(); //获取会员的优惠券用以支付使用
 
+					util.simpleModal("门店检测", this.KHID);
 					this.XSTYPE = this.SALES.sale1.XSTYPE;
 					this.BILL_TYPE = this.SALES.sale1.BILL_TYPE;
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
+					util.simpleModal("门店检测1", this.SALES.sale1.KHID);
 					// this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
@@ -1376,7 +1380,8 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.dPayAmount) === 0 || this.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.dPayAmount) === 0 || this
+						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.event.emit("FinishOrder", {
 							code: true,
 							msg: this.isRefund ? "退款成功!" : "支付完成!",

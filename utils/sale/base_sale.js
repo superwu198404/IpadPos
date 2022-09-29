@@ -18,6 +18,7 @@ import {
 	PointUploadNew
 } from '@/bll/Common/bll.js'
 import common from '@/api/common.js';
+import saleClass from '@/utils/sale/saleClass.js';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -313,7 +314,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
 				let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
-				console.log("[SaleFinishing]存在裱花参数!",bh_support_id);
+				console.log("[SaleFinishing]存在裱花参数!", bh_support_id);
 				this.sale002.forEach(util.callBind(this, function(s2) {
 					if (bh_support_id.find(id => id === s2.PLID)) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
@@ -1534,8 +1535,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//展示商品的详情的事件
-	this.showSpDetails = function(e) 
-	{
+	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
 		if (!that.currentOperation.inputsp) {
 			that.myAlert("当前模式下不可录入商品")
@@ -1577,33 +1577,27 @@ function GetSale(global, vue, target_name, uni) {
 		that.update();
 	}
 	//选择水吧属性的操作
-	this.selectSxitem_Chenged = function(e) 
-	{
+	this.selectSxitem_Chenged = function(e) {
 		that.log("进入事件：" + JSON.stringify(e.currentTarget.dataset));
 		let dinx = e.currentTarget.dataset.dinx;
 		let sxinx = e.currentTarget.dataset.sxinx;
 		that.log("选择的属性列表：" + JSON.stringify(that.clikSpItem.addlist[dinx]));
-	    let lqty = that.clikSpItem.addlist[dinx].Darr[sxinx].QTY ;  //表示选中
-		let CSTCODE= that.clikSpItem.addlist[dinx].Darr[sxinx].CSTCODE ;
-		if( CSTCODE =='1' )  //等于1表示免费是互斥的  等于2是多选的
+		let lqty = that.clikSpItem.addlist[dinx].Darr[sxinx].QTY; //表示选中
+		let CSTCODE = that.clikSpItem.addlist[dinx].Darr[sxinx].CSTCODE;
+		if (CSTCODE == '1') //等于1表示免费是互斥的  等于2是多选的
 		{
-			for(var i=0;i< that.clikSpItem.addlist[dinx].Darr.length;i++)
-			{
-				if( i == sxinx)
-				{
-					 that.clikSpItem.addlist[dinx].Darr[i].SELECTED ="X";
-				}
-				else
-				{
-					that.clikSpItem.addlist[dinx].Darr[i].SELECTED ="";
+			for (var i = 0; i < that.clikSpItem.addlist[dinx].Darr.length; i++) {
+				if (i == sxinx) {
+					that.clikSpItem.addlist[dinx].Darr[i].SELECTED = "X";
+				} else {
+					that.clikSpItem.addlist[dinx].Darr[i].SELECTED = "";
 				}
 			}
-		}
-		else  //此种情况下为付费的 可以多选
+		} else //此种情况下为付费的 可以多选
 		{
-			that.clikSpItem.addlist[dinx].Darr[sxinx].SELECTED ="X"
-			lqty =lqty+1;
-			that.clikSpItem.addlist[dinx].Darr[sxinx].QTY =lqty;
+			that.clikSpItem.addlist[dinx].Darr[sxinx].SELECTED = "X"
+			lqty = lqty + 1;
+			that.clikSpItem.addlist[dinx].Darr[sxinx].QTY = lqty;
 		}
 		that.update();
 	}
@@ -1690,7 +1684,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.cval;
 				console.log("[PayedResult]辅助促销的结果：", FZCXVal);
-				if (Object.keys(FZCXVal).length != 0) {
+				if (FZCXVal && Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
 						console.log("当前匹配到的商品对象:", SPObj);
@@ -1879,6 +1873,7 @@ function GetSale(global, vue, target_name, uni) {
 		let newbill = this.getBill();
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
+		console.log("[CreateNewBill]sale001：", this.sale001);
 		console.log("创建新单的大客户信息：", this.DKF.val);
 		commonSaleParm = {
 			GSID: this.GSID,
@@ -1899,7 +1894,11 @@ function GetSale(global, vue, target_name, uni) {
 			TIME: _date.getDateByParam("h"),
 			DKFID: this.DKF.val.DKFID
 		};
+		console.log("旧的sale001：", this.sale001);
+		// let oldSale1 = new saleClass.sale001();
+
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
+			// if (Object.keys(this.sale001).length != Object.keys(oldSale1).length) { //
 			this.sale001 = new sale.sale001(commonSaleParm)
 			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		}
@@ -2006,27 +2005,27 @@ function GetSale(global, vue, target_name, uni) {
 		let find = false;
 		let inqty = parseFloat(pm_qty);
 		that.log(pm_spid + "#" + pm_qty + "pm_yndgxp")
-		var drink= that.sale008.filter(item=>{return  item.SPID =pm_spid });
+		var drink = that.sale008.filter(item => {
+			return item.SPID = pm_spid
+		});
 		///检查是否已经添加过  如果已经添加过 直接修改某一行
-		if(drink.length ==0) //如果有水吧商品的信息这里直接跳过
+		if (drink.length == 0) //如果有水吧商品的信息这里直接跳过
 		{
-			for (var row = 0; row < that.sale002.length; row++) 
-			{
+			for (var row = 0; row < that.sale002.length; row++) {
 				if (that.sale002[row].SPID == pm_spid) {
 					find = that.updateSp(row, pm_spid, inqty)
 					break;
 				}
 			}
 		}
-		if (!find)
-		{
+		if (!find) {
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
 			let newprm = that.createNewBill.call(that);
 			// let new002 = new sale.sale002(newprm);
 			let new002 = new sale.sale002();
 			new002 = Object.cover(new002, newprm);
 			console.log("[GetSp]生成新 sale002:", new002);
-			var timeNo= new Date().getTime().toString().substr(4)
+			var timeNo = new Date().getTime().toString().substr(4)
 			new002.SPID = pm_spid;
 			new002.NO = timeNo;
 			new002.STR1 = that.clikSpItem.SNAME;
@@ -2038,96 +2037,83 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("商品的动态价格：", price);
 			pm_qty = that.float(pm_qty, 3);
 			price = that.float(price, 2);
-		
+
 			//添加水吧商品  水吧商品的
-			 if (that.clikSpItem.ynAddPro)
-			 {
-				
-				  that.clikSpItem.addlist.forEach( 
-				      item=>
-					  {
-						  item.Darr.forEach
-						  (
-						      drinkitem=>
-							  {
-//gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
-										  if( drinkitem.SELECTED =="X" )
-										  {
-											   let new008 = new sale.sale008();
-											   new008 = Object.cover(new008, newprm);
-											   new008.NO=timeNo;
-											   new008.SPID = drinkitem.MATNR;
-											   new008.OPTCODE  = drinkitem.OPTCODE;
-											   new008.OPTMAT  = drinkitem.OPTMAT
-											   new008.ATTCODE  = drinkitem.ATTCODE;
-											   new008.ATTNAME  = drinkitem.ATTNAME;
-											   new008.QTY     =drinkitem.CSTCODE =='1'?0:drinkitem.QTY;
-											   new008.PRICE = that.spPrice[drinkitem.OPTMAT]?.PRICE??0;
-											   that.sale008.push(new008);
-											   //就是这里售价要累加
-											   price += that.float(drinkitem.QTY, 2)* that.float(new008.PRICE);
-										   }
-									 drinkitem.QTY =0;//添加完产品后qty清零
-									 drinkitem.SELECTED = drinkitem.RECMARK;//回复为默认选项
-							  }
-						  )
-					  }
-				   )
-				 //添加水吧商品
-			 }
-			 new002.OPRICE = price;
-			 new002.PRICE = price;
-			 new002.QTY = pm_qty;
-			 new002.NET = that.float(pm_qty * price, 2);
-			 new002.DISCRATE = 0;
-			 new002.BARCODE = that.clikSpItem.SPID;
-			 new002.PLID = that.clikSpItem.plid;
-			 that.sale002.push(new002);
-			 that.log("[GetSp]添加了商品", new002);
-			 that.log("[GetSp]添加商品对象", that.clikSpItem);
+			if (that.clikSpItem.ynAddPro) {
+
+				that.clikSpItem.addlist.forEach(
+					item => {
+						item.Darr.forEach(
+							drinkitem => {
+								//gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
+								if (drinkitem.SELECTED == "X") {
+									let new008 = new sale.sale008();
+									new008 = Object.cover(new008, newprm);
+									new008.NO = timeNo;
+									new008.SPID = drinkitem.MATNR;
+									new008.OPTCODE = drinkitem.OPTCODE;
+									new008.OPTMAT = drinkitem.OPTMAT
+									new008.ATTCODE = drinkitem.ATTCODE;
+									new008.ATTNAME = drinkitem.ATTNAME;
+									new008.QTY = drinkitem.CSTCODE == '1' ? 0 : drinkitem.QTY;
+									new008.PRICE = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
+									that.sale008.push(new008);
+									//就是这里售价要累加
+									price += that.float(drinkitem.QTY, 2) * that.float(new008.PRICE);
+								}
+								drinkitem.QTY = 0; //添加完产品后qty清零
+								drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+							}
+						)
+					}
+				)
+				//添加水吧商品
+			}
+			new002.OPRICE = price;
+			new002.PRICE = price;
+			new002.QTY = pm_qty;
+			new002.NET = that.float(pm_qty * price, 2);
+			new002.DISCRATE = 0;
+			new002.BARCODE = that.clikSpItem.SPID;
+			new002.PLID = that.clikSpItem.plid;
+			that.sale002.push(new002);
+			that.log("[GetSp]添加了商品", new002);
+			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
 		}
 		that.SetManage("inputsp");
 	}
-    ///清楚水吧产品的所有选择
-    this.clearDrinkSx=function(pm_inx)
-	{
-		var maddr   =  that.clikSpItem.addlist[pm_inx].Darr;
-		item.Darr.forEach
-		  (
-			  drinkitem=>
-			  {
-					 drinkitem.QTY =0;//添加完产品后qty清零
-					 drinkitem.SELECTED = drinkitem.RECMARK;//回复为默认选项
-			  }
-		  )
+	///清楚水吧产品的所有选择
+	this.clearDrinkSx = function(pm_inx) {
+		var maddr = that.clikSpItem.addlist[pm_inx].Darr;
+		item.Darr.forEach(
+			drinkitem => {
+				drinkitem.QTY = 0; //添加完产品后qty清零
+				drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+			}
+		)
 		that.update()
 	}
 
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_row < this.currentOperation.lockRows)
-		{
+		if (pm_row < this.currentOperation.lockRows) {
 			util.simpleMsg("该商品已被锁定!", true)
 			console.log("[UpdateSp]商品处于被锁定行，无法删除!");
 			return;
 		}
-		if (pm_qty > 0) 
-		{
+		if (pm_qty > 0) {
 			this.sale002[pm_row].QTY = pm_qty;
 			let price = this.float(this.sale002[pm_row].PRICE);
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
-		if (pm_qty <= 0) 
-		{
+		if (pm_qty <= 0) {
 			this.sale002.splice(pm_row, 1);
 			//删除水吧相关的产品 
-			for(var i=this.sale008.length -1;i>=0;i-- )
-			{
-				if(this.sale008[i].NO == this.sale002[pm_row].NO  )
-				{
+			for (var i = this.sale008.length - 1; i >= 0; i--) {
+				if (this.sale008[i].NO == this.sale002[pm_row].NO) {
 					this.sale008.splice(i, 1);
 				}
 			}
@@ -2149,6 +2135,10 @@ function GetSale(global, vue, target_name, uni) {
 	//计算sale002
 	this.SaleNetAndDisc = async function() {
 		let znet = 0
+		if (Object.keys(that.sale002).length == 0) {
+			//如果没有加购商品 则sale1可能未初始化 导致一些默认值KHID 无法初始化到sale001上 导致传输到支付页面KHID 为空
+			return;
+		}
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
 			let TCXDISC = 0;
@@ -2208,8 +2198,8 @@ function GetSale(global, vue, target_name, uni) {
 		//手工折扣额的处理
 		let oldTNET = Number(this.sale001.TNET);
 		console.log("[SKdiscCompute]原金额：", oldTNET);
-		let newTnet = Math.round(oldTNET * 10) / 10;
-		console.log("[SKdiscCompute]新金额：", oldTNET);
+		let newTnet = this.float(Math.round(oldTNET * 10) / 10, 2);
+		console.log("[SKdiscCompute]新金额：", newTnet);
 		let SKY_DISCOUNT = oldTNET - newTnet;
 		console.log("[SKdiscCompute]手工折扣额：", SKY_DISCOUNT);
 		this.sale001.TNET = newTnet;
