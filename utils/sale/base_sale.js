@@ -1545,11 +1545,9 @@ function GetSale(global, vue, target_name, uni) {
 		let plindex = e.currentTarget.dataset.plindex;
 		that.log("开始点击plindex" + plindex);
 		let spindex = e.currentTarget.dataset.spindex;
-		that.log("开始点击spindex" + plindex);
-		that.log("当前显示的商品集合" + JSON.stringify(that.selectFlagList[plindex]));
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
-
+         that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
 		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 0;
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
@@ -1579,6 +1577,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//选择水吧属性的操作
 	this.selectSxitem_Chenged = function(e) {
+		
 		that.log("进入事件：" + JSON.stringify(e.currentTarget.dataset));
 		let dinx = e.currentTarget.dataset.dinx;
 		let sxinx = e.currentTarget.dataset.sxinx;
@@ -2084,15 +2083,18 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		that.SetManage("inputsp");
 	}
-	///清楚水吧产品的所有选择
-	this.clearDrinkSx = function(pm_inx) {
-		var maddr = that.clikSpItem.addlist[pm_inx].Darr;
-		item.Darr.forEach(
-			drinkitem => {
-				drinkitem.QTY = 0; //添加完产品后qty清零
-				drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
-			}
-		)
+    ///清除水吧产品的所有选择
+    this.clearDrinkSx=function(pm_inx)
+	{
+		var maddr   =  that.clikSpItem.addlist[pm_inx].Darr;
+		maddr.forEach
+		  (
+			  drinkitem=>
+			  {
+					 drinkitem.QTY =0;//添加完产品后qty清零
+					 drinkitem.SELECTED = drinkitem.RECMARK;//回复为默认选项
+			  }
+		  )
 		that.update()
 	}
 

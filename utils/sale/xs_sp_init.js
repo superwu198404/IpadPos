@@ -99,6 +99,7 @@ var loadSaleSP  =
 						   let newdk  =retd.CSTCODE  +   retd.ATTCODE ;
 						   if(  newdk!= dpk )
 						   {
+							   dpk=newdk;
 							   gtoupDarr  =[] 
 							   retDrr_arr.push({CSTCODE:retd.CSTCODE==1?"免费":"收费",ATTCODE:retd.ATTNAME,Darr: gtoupDarr})
 						   }
@@ -170,7 +171,7 @@ var loadSaleSP  =
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,'01' SPJGZ,PLDA.SNAME plname," +
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,s1.plid XPLID,'01' SPJGZ,PLDA.SNAME plname," +
 	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
 					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
@@ -197,7 +198,7 @@ var loadSaleSP  =
 	  //水吧sql	3		 
 	  
 	   console.log("##############################开始获取水吧商品##############################")
-	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ,  "  +
+	  let  msDrinksql="SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,s1.plid XPLID,S1.SPJGZ,  "  +
 	" 0 ynshowlist , '' specslist, 1 ynAddPro,'' addlist "  +
     "FROM SPDA S1,SPKHDA SM,PLDA " +
 	"WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID "+
