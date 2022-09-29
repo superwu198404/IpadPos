@@ -92,6 +92,7 @@ var XsTypeObj = {
 			this.sale001.XSTYPE = 1;
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
+			this.PayParamAssemble();
 			//可以使用的支付方式 
 			return true;
 		},
@@ -124,7 +125,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			console.log("销售下单开始调用打印",arr2)
+			console.log("销售下单开始调用打印", arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//this.Page.testPrinter();
 		},
@@ -221,7 +222,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			console.log("销售退单开始调用打印",arr2)
+			console.log("销售退单开始调用打印", arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 		},
 	},
