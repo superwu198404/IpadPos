@@ -611,7 +611,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
-			this.sxsale001.DKFNAME = this.DKF.DKFNAME; //赊销追加一下 大客户名称
+			this.sxsale001.DKFNAME = this.DKF.val.DKFNAME; //赊销追加一下 大客户名称
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
