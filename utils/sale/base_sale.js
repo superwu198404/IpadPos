@@ -316,6 +316,7 @@ var XsTypeObj = {
 			this.sale001.ZNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
 			this.sale001.TNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
+			this.ydsale001.BMID = this.ydsale001.BMID || "80000000";//默认
 			let sys_param = util.getStorage("sysParam");
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
@@ -327,7 +328,6 @@ var XsTypeObj = {
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
 						ywbhqh.BILL = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
-						ywbhqh.BMID = ywbhqh.BMID || "80000000";//默认
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
 						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
