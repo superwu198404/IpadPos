@@ -329,7 +329,7 @@ var XsTypeObj = {
 					if (bh_support_id.find(id => id === s2.PLID)) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
-						ywbhqh.BILL = result.sale1_obj.BILL;
+						ywbhqh.BILL_YD = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
