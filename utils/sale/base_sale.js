@@ -2145,6 +2145,7 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		if (that.currentOperation.ynCx) {
+			console.log("[SaleNetAndDisc]促销前:",that.sale002);
 			await cx.Createcx(that.sale002);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
@@ -2156,6 +2157,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
+			console.log("[SaleNetAndDisc]促销后:",that.sale002);
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
