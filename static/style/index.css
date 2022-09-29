@@ -11,7 +11,7 @@ page {
 	height: 60rpx;
 	line-height: 60rpx;
 	margin: 0 1%;
-	background-color: #F5F5F5;
+	background-color: #E3F3E4;
 	font-size: 28rpx;
 	padding: 0 10rpx;
 }
@@ -22,7 +22,7 @@ page {
 	height: 60rpx;
 	line-height: 60rpx;
 	margin: 0 1%;
-	background-color: #F5F5F5;
+	background-color: #FFE1DB;
 	font-size: 28rpx;
 	padding: 0 10rpx;
 }
@@ -170,9 +170,13 @@ page {
 .prolist .h3 {
 	font-size: 30rpx;
 	font-weight: 700;
-	display: flex;
+	display: block;
 	align-items: center;
 	justify-content: start;
+}
+.procycle .li>.h3:first-letter{
+	color: #42B14B;
+	font-size: 40rpx;
 }
 
 .procycle .li .h3 image,

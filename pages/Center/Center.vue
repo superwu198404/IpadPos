@@ -14,7 +14,7 @@
 					<view @click="Sign()"><label>签到</label><text>SIGN IN</text></view>
 					<view @click="SignOut()"><label>签退</label><text>CHECK OUT</text></view>
 				</view>
-				<view class="dates">
+				<view class="dates" style="padding:100rpx 0;">
 					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
 					<view>
 						<label><text>{{curWeek}}</text><text>{{curDate}}</text></label>

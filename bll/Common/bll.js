@@ -372,12 +372,12 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		data: member_request
 	}, (res) => {
 		console.log("[PointUpload]积分上传成功...", res)
-		util.simpleMsg(res.code ? "积分上传成功" : res.msg, res.code ? false : "none");
+		util.simpleMsg(res.code ? "积分上传成功" : "积分上传失败：" + res.msg, res.code ? false : "none");
 		result.code = true;
 		result.data = res;
 	}, (err) => {
 		console.log("[PointUpload]积分上传失败...", err)
-		util.simpleMsg(err.msg, "none");
+		util.simpleMsg("积分上传失败：" + err.msg, "none");
 		result.code = false;
 		result.data = err;
 	})

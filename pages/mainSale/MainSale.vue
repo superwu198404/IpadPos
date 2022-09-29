@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
@@ -47,7 +48,7 @@
 												@click="mainSale.showSpDetails" :data-plindex="plindex"
 												:data-spindex="spindex">
 												<view class="h3">
-													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+													<!-- <image src="../../images/dx-mrxk.png" mode="widthFix"></image> -->
 													{{sptiem.SNAME}}
 												</view>
 												<view class="cods">
@@ -277,6 +278,7 @@
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<text>单价￥{{Price(sp.SPID)}}/</text>
+									<!-- <text>单价￥{{sp.PRICE}}</text> -->
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -290,8 +292,9 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<!-- <text>售价￥{{sp.PRICE}}</text> -->
-								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{Price(sp.SPID)*sp.QTY}}</text>
+								<text
+									v-if="!mainSale.currentOperation.showEdit">总价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text>
+								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 							</view>
 							<!-- 数量编辑 -->
 							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
@@ -382,6 +385,8 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
 	var app = getApp();
 	export default {
 		data() {
@@ -419,7 +424,8 @@
 			CreditSettlement,
 			Promotion,
 			MemberLogin,
-			ReserveDrawer
+			ReserveDrawer,
+			PrinterPage
 		},
 		computed: {
 			Price: function() {
@@ -481,6 +487,10 @@
 			}
 		},
 		methods: {
+			onShow: function(e) {
+				let str = e.target.value;
+				console.log(this.sptiem.SNAME)
+			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
@@ -493,7 +503,7 @@
 			wmBluePrinter: function(order, datails, type, print) {
 				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			},
-			testPrinter: function(){
+			testPrinter: function() {
 				this.$refs.printerPage.testPrinter();
 			}
 		},
