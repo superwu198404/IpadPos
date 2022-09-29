@@ -401,16 +401,20 @@
 	.details .goods {
 		height: 65%;
 	}
-
 	.detinfo {
 		height: 85%;
 	}
-
+	.products {
+		height: 84%;
+	}
 
 	.products .details {
 		justify-content: start;
 	}
-
+	.products .procycle{
+		height: 100%;
+		overflow: auto;
+	}
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
 		font-weight: 600;
