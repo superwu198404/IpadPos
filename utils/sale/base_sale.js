@@ -7,7 +7,7 @@ import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import {
-	updateOrderInfo //更新表接口
+	onlineOrderReserve //更新表接口
 } from '@/api/business/onlineorders.js';
 import {
 	Sale3Model,
@@ -308,12 +308,13 @@ var XsTypeObj = {
 			let sys_param = util.getStorage("sysParam");
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
-				console.log("[SaleFinishing]存在裱花参数!");
 				let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
+				console.log("[SaleFinishing]存在裱花参数!",bh_support_id);
 				this.sale002.forEach(util.callBind(this, function(s2) {
-					if (bh_support_id.find(id => id === s2.PLID) || true) {
+					if (bh_support_id.find(id => id === s2.PLID)) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
+						ywbhqh.BILL = this.getBill();
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
 						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
@@ -756,16 +757,14 @@ var XsTypeObj = {
 			this.actType = common.actTypeEnum.Payment;
 			this.old_bill = params.sale1.BILL;
 			this.createNewBill();
-			console.log("[sale_online_order_extract]SALE001:", params.sale1);
+			console.log("[sale_online_order_extract]线上订单sale信息:", params);
 			Object.cover(this.sale001, Object.cover(params.sale1, this.sale001));
-			console.log("[sale_online_order_extract]SALE002:", params.sale2);
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
 				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
 				return new_s2;
 			});
-			console.log("[sale_online_order_extract]SALE003:", params.sale3);
 			this.sale003 = params.sale3.map(s3 => {
 				let new_s3 = Object.cover(new sale.sale003(), s3)
 				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
@@ -773,6 +772,7 @@ var XsTypeObj = {
 				return new_s3
 			});
 			this.reserve_param = params.reserve_params;
+			console.log("[InitSale]线上订单提货参数:", this.reserve_param);
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -827,6 +827,7 @@ var XsTypeObj = {
 			}), util.callBind(this, function(err) {
 				util.simpleMsg(err.msg, true);
 			}));
+			console.log("[SaleFinied]线上提取积分上传...");
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -2165,7 +2166,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 				console.log("手工折扣计算完毕");
 				return this.CurrentTypeCall("$beforeFk",
-				pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+					pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 			}))
 			return false;
 		} else {

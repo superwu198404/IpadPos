@@ -499,6 +499,8 @@
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
+			let log = console.log;
+			console.log = ()=>{};
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
@@ -507,6 +509,7 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
+			console.log = log;
 		}
 	}
 </script>

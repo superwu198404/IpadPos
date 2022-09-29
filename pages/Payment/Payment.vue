@@ -382,7 +382,7 @@
 				console.log(`newValue:${n},amount:${amount}`);
 				if (amount > 0) { //未完成支付，仍然存在欠款
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
-					else this.CanBack = false;
+					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						if (Number(n) - this.toBePaidPrice() > 0.1)
@@ -1376,8 +1376,7 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.dPayAmount) === 0 || this
-						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.dPayAmount) === 0 || this.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.event.emit("FinishOrder", {
 							code: true,
 							msg: this.isRefund ? "退款成功!" : "支付完成!",
