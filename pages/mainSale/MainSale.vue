@@ -47,7 +47,7 @@
 												@click="mainSale.showSpDetails" :data-plindex="plindex"
 												:data-spindex="spindex">
 												<view class="h3">
-													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+													<!-- <image src="../../images/dx-mrxk.png" mode="widthFix"></image> -->
 													{{sptiem.SNAME}}
 												</view>
 												<view class="cods">
