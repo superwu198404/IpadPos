@@ -44,7 +44,6 @@
 					<view class="h3">
 						<view class="platform">
 							<label>
-								<image src="@/images/wmd-meituan.png" mode="widthFix"></image>
 								{{ item }}
 							</label>
 							<label
@@ -150,26 +149,6 @@
 				</view>
 			</view>
 		</view>
-		<view class="search-shadow" v-if="view.search.open">
-			<view class="search-panel">
-				<view class="search-top">
-					<text class="search-title">{{ view.search.title }}</text>
-					<text class="search-close" @click="view.search.open = false">×</text>
-				</view>
-				<view class="search-content">
-					<view class="search-toolbar">
-						<view class="search-label">订单号:<input class="search-input" type="text"
-								v-model="view.search.form.bill" /></view>
-						<view class="search-label">自提码:<input class="search-input" type="text"
-								v-model="view.search.form.code" /></view>
-						<view class="search-btn-group">
-							<button class="btn btn-qx">清空</button><button class="btn">查询</button>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
-
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
