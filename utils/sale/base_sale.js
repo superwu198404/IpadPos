@@ -465,7 +465,9 @@ var XsTypeObj = {
 			util.hidePropety(this.sale001, ...hide_key);
 			// this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
 			console.log("[SaleReserve]定金:", this.sale001);
-
+			this.sale001.$total_amount = 0;
+			this.sale002.forEach(i => this.sale001.$total_amount+= (Number(i.NET) || 0));
+			console.log("[SaleReserve]预定提取整单金额为:",this.sale001.$total_amount);
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
