@@ -118,6 +118,7 @@
 		},
 		methods: {
 			testPrinter: async function(){
+				console.log("==========================================================================================testPrinter");
 				util.simpleMsg("testPrinter");
 			},
 			// 二维码生成工具
