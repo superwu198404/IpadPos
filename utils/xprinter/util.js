@@ -230,14 +230,14 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = sale1_obj.POSID;
-	var posUser = sale1_obj.RYID;
+	var posId = snvl(sale1_obj.POSID,"");
+	var posUser = snvl(sale1_obj.RYID,"");
 	var lineNum = sale2_arr.length;
 	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = sale1_obj.BILLDISC;
 	var originalAmount = sale1_obj.ZNET;
-	var cuid = sale1_obj.CUID;
+	var cuid = snvl(sale1_obj.CUID);
 	var hdnet = 0;
 	var ggy = ggyContent;
 	//商品数据
@@ -856,6 +856,16 @@ const gzhQrCodeGenerate = function(is_xpewm, url) {
 	});
 }
 
+const snvl = function(pb_obj, pm_default) {
+	let new_obj = "";
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = pm_default;
+	} else {
+		new_obj = pb_obj.toString();
+	}
+	return new_obj;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -882,4 +892,5 @@ module.exports = {
 	gzhQrCodeAction: gzhQrCodeAction,
 	wmPrinterData: wmPrinterData,
 	xsPrinterData: xsPrinterData,
+	snvl: snvl
 };

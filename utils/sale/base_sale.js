@@ -116,6 +116,7 @@ var XsTypeObj = {
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
+				item.balance = 0;
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -212,12 +213,6 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: async function() {
-			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
-				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
-			}
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
@@ -226,11 +221,19 @@ var XsTypeObj = {
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
+				item.balance = 0;
 			})
-			console.log("销售退单开始调用打印 this.sale001", this.sale001)
-			console.log("销售退单开始调用打印 this.sale002", this.sale002)
-			console.log("销售退单开始调用打印 this.sale003", this.sale003)
+			console.log("销售退单开始调用打印", {
+				arr2,
+				arr3
+			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 		},
 	},
 	//预订单下单
