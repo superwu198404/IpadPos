@@ -241,13 +241,13 @@
 			},
 			//提货门店输入事件
 			inputTHKH: e => {
+				console.log("[InputTHKH]门店数据:",that.THKHDATAS);
 				let str = e.detail.value;
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
 						return item.ADDR.indexOf(str) >= 0;
 					})
-					console.log("筛选后的门店数据：", that.THKHDATAS);
 				}
 			},
 			//手选提货门店
