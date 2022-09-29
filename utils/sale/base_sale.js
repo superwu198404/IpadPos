@@ -124,6 +124,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
+			console.log("销售下单开始调用打印",arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//this.Page.testPrinter();
 		},
@@ -220,6 +221,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
+			console.log("销售退单开始调用打印",arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 		},
 	},
