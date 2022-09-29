@@ -102,7 +102,8 @@ var loadSaleSP  =
 							   gtoupDarr  =[] 
 							   retDrr_arr.push({CSTCODE:retd.CSTCODE==1?"免费":"收费",ATTCODE:retd.ATTNAME,Darr: gtoupDarr})
 						   }
-						   gtoupDarr.push( {OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0} )
+						   
+		gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
 					   })
 				  item.addlist =retDrr_arr;
 				  //console.log( JSON.stringify(item.addlist)  );
