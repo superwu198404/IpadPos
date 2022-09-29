@@ -611,6 +611,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
+			this.sxsale001.DKFNAME = this.DKF.DKFNAME; //赊销追加一下 大客户名称
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
@@ -629,6 +630,7 @@ var XsTypeObj = {
 		CloseBigCustomer: function(data) {
 			console.log("[CloseBigCustomer]大客户关闭!", data);
 			this.DKF.val = data;
+			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
 		}
 	},
@@ -978,8 +980,8 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
 		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
-		console.log("传入折扣的大客户数据：", this.DKF.val.DKHID);
-		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKHID); //传入大客户值
+		console.log("传入折扣的大客户数据：", this.DKF.val.DKFID);
+		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKFID); //传入大客户值
 		this.setComponentsManage(null, "Disc");
 		console.log("首页初始化的折扣数据：", this.Disc.val.ZKData);
 	})
@@ -1269,7 +1271,7 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
 			if (!newval || Object.keys(newval).length == 0) {
-				this.cval = this.Defval;
+				this.cval.DKFID = this.Defval;
 				return;
 			}
 			//使用that
@@ -1840,6 +1842,7 @@ function GetSale(global, vue, target_name, uni) {
 		let newbill = this.getBill();
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
+		console.log("创建新单的大客户信息：", this.DKF.val);
 		commonSaleParm = {
 			GSID: this.GSID,
 			KHID: this.Storeid,
