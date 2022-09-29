@@ -620,7 +620,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
-			this.sxsale001.DKFNAME = this.DKF.val.DKFNAME; //赊销追加一下 大客户名称
+			this.sxsale001.DKFNAME = this.DKF.val.NAME; //赊销追加一下 大客户名称
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
@@ -1674,7 +1674,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8));
-		console.log("[PayedResult]支付结果状态判断...",result.code);
+		console.log("[PayedResult]支付结果状态判断...", result.code);
 		if (result.code) {
 			util.simpleMsg(result.msg);
 			//反写一下会员id
