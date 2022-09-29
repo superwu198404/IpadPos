@@ -226,6 +226,7 @@ var SignOrSignOutSql = async function(sql, func) {
 			if (func) func(store);
 		} else {
 			console.log("未查询到签到数据：", res);
+			util.simpleMsg("签到异常，请退出后重试", "none");
 		}
 	}, err => {
 		console.log("签到sql查询异常:", err);

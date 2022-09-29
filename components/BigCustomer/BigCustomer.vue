@@ -112,6 +112,7 @@
 			ConfimrBig: function(e, i) {
 				this.curIndex = i;
 				this.big_client_info = e;
+				this.big_client_info.DKFID = e.DKHID;
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 			},
@@ -314,11 +315,12 @@
 		left: 50%;
 		transform: translateX(-50%);
 	}
-	.customer .confirm{
+
+	.customer .confirm {
 		position: absolute;
-		bottom:0;
+		bottom: 0;
 		left: 10%;
-		width:80%;
-		padding:2% 0 3%;
+		width: 80%;
+		padding: 2% 0 3%;
 	}
 </style>

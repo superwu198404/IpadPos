@@ -1256,8 +1256,11 @@ checkbox.mycheck .wx-checkbox-input,
 	width:70%;
 	padding:0 2% 5%;
 }
+.special .commods {
+	max-height: 75%;
+}
 .special .commods .uls{
-	max-height: 80%;
+	max-height: 1000rpx;
 	overflow: auto;
 }
 .special .commods .uls .lis{

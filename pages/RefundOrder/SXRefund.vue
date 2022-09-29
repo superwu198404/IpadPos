@@ -312,11 +312,11 @@
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
-					success: util.callBind(this,function(res) {
+					success: util.callBind(this, function(res) {
 						if (res.confirm) {
 							console.log('用户点击确定');
 							console.log("[ConfirmToPay]order:", that.Order);
-							this.$to_sale_pages('sale_credit_return_good',{
+							this.$to_sale_pages('sale_credit_return_good', {
 								sale1: that.Order,
 								sale2: that.Details
 							})
@@ -401,15 +401,20 @@
 	.details .goods {
 		height: 65%;
 	}
-
 	.detinfo {
 		height: 85%;
+	}
+	.products {
+		height: 84%;
 	}
 
 	.products .details {
 		justify-content: start;
 	}
-
+	.products .procycle{
+		height: 100%;
+		overflow: auto;
+	}
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
 		font-weight: 600;

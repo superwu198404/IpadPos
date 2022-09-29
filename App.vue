@@ -99,11 +99,11 @@
 			msgInt: 0, //消息定时id
 			Int: null //单据定时传输的定时器
 		},
-		onLaunch: function() {
+		onLaunch: async function() {
 			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
-			_init.YN_Init(function(res) {
+			await _init.YN_Init(function(res) {
 				uni.reLaunch({
 					url: "/pages/Login/Login",
 					// url: "/pages/start/start",

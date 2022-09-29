@@ -92,6 +92,7 @@ var XsTypeObj = {
 			this.sale001.XSTYPE = 1;
 
 			console.log("[Sale]新单据生成完毕!", this.sale001);
+			this.PayParamAssemble();
 			//可以使用的支付方式 
 			return true;
 		},
@@ -124,6 +125,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
+			console.log("销售下单开始调用打印", arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//this.Page.testPrinter();
 		},
@@ -136,6 +138,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
+			"sale": true, //可以跳转到销售模式
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
@@ -219,6 +222,7 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
+			console.log("销售退单开始调用打印", arr2)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 		},
 	},
@@ -611,6 +615,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
+			this.sxsale001.DKFNAME = this.DKF.val.DKFNAME; //赊销追加一下 大客户名称
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
@@ -629,6 +634,7 @@ var XsTypeObj = {
 		CloseBigCustomer: function(data) {
 			console.log("[CloseBigCustomer]大客户关闭!", data);
 			this.DKF.val = data;
+			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
 		}
 	},
@@ -978,8 +984,8 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
 		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
-		console.log("传入折扣的大客户数据：", this.DKF.val.DKHID);
-		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKHID); //传入大客户值
+		console.log("传入折扣的大客户数据：", this.DKF.val.DKFID);
+		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKFID); //传入大客户值
 		this.setComponentsManage(null, "Disc");
 		console.log("首页初始化的折扣数据：", this.Disc.val.ZKData);
 	})
@@ -1269,7 +1275,7 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
 			if (!newval || Object.keys(newval).length == 0) {
-				this.cval = this.Defval;
+				this.cval.DKFID = this.Defval;
 				return;
 			}
 			//使用that
@@ -1840,6 +1846,7 @@ function GetSale(global, vue, target_name, uni) {
 		let newbill = this.getBill();
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
+		console.log("创建新单的大客户信息：", this.DKF.val);
 		commonSaleParm = {
 			GSID: this.GSID,
 			KHID: this.Storeid,
@@ -2066,7 +2073,6 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.TNET = this.float(retx.NET, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
-		that.sale001.TLINE = that.sale002.length; //这个是存商品行
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
 		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {

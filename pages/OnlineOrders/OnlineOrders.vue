@@ -680,7 +680,7 @@
 	}
 
 	.meminfo .goods {
-		height: 50%;
+		height: 48%;
 	}
 
 	.from-label {
