@@ -125,9 +125,9 @@ var XsTypeObj = {
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 			//一些特殊的设置 如积分上传
 			console.log("检测积分上传参数：", {
-				upload_point:this.currentOperation.upload_point,
-				hyid:this.HY.cval.hyId,
-				sale1:this.sale001
+				upload_point: this.currentOperation.upload_point,
+				hyid: this.HY.cval.hyId,
+				sale1: this.sale001
 			});
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
@@ -316,8 +316,8 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
-			this.sale001.ZNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
-			this.sale001.TNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
+			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
+			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
 			this.ydsale001.BMID = this.ydsale001.BMID || "80000000";//默认
 			let sys_param = util.getStorage("sysParam");
@@ -329,7 +329,7 @@ var XsTypeObj = {
 					if (bh_support_id.find(id => id === s2.PLID)) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
-						ywbhqh.BILL = result.sale1_obj.BILL;
+						ywbhqh.BILL_YD = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
@@ -1070,6 +1070,10 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*会员登录
 	this.MemberLogin = util.callBind(this, function(e) { //会员登录
+		if (!this.currentOperation.HY) {
+			util.simpleMsg("当前模式不允许录入会员", "none");
+			return;
+		}
 		console.log("[MemberLogin]会员登录!");
 		this.setComponentsManage(null, "HY");
 		console.log("[MemberLogin]状态信息:", this.ComponentsManage.HY);
@@ -2145,6 +2149,7 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		if (that.currentOperation.ynCx) {
+			console.log("[SaleNetAndDisc]促销前:",that.sale002);
 			await cx.Createcx(that.sale002);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
@@ -2156,6 +2161,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
+			console.log("[SaleNetAndDisc]促销后:",that.sale002);
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
@@ -2210,6 +2216,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TNET = newTnet;
 		this.sale001.ZNET = this.float(oldTNET - SKY_DISCOUNT, 2);
 		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+		this.sale001.TCXDISC = this.float(Number(this.sale001.TCXDISC) + SKY_DISCOUNT, 2);
 		this.sale001.ROUND = SKY_DISCOUNT;
 		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
@@ -2224,6 +2231,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TNET = this.float(Number(this.sale001.TNET) - SKY_DISCOUNT, 2);
 		this.sale001.ZNET = this.float(Number(this.sale001.ZNET) - SKY_DISCOUNT, 2);
 		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+		this.sale001.TCXDISC = this.float(Number(this.sale001.TCXDISC) + SKY_DISCOUNT, 2);
 		this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
 		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);

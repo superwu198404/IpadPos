@@ -317,6 +317,8 @@ const Createcx = async (sale02_arr) => {
 			}
 			//把促销值写入
 			sale02_arr[i].DISCRATE = cxdiscvalue;
+			sale02_arr[i].$DISCRATE = cxdiscvalue;
+			util.hidePropety(sale02_arr[i], '$DISCRATE');
 			sale02_arr[i].CXDISC = cxdiscvalue;
 			sale02_arr[i].YN_CXDISC = (cxdiscvalue > 0 ? 'Y' : 'N');
 		}
