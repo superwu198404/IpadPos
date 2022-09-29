@@ -26,7 +26,7 @@
 						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
-					<label class="buyer" v-if="hyinfo">
+					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
 						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
 					</label>
@@ -206,7 +206,7 @@
 				DKFNAME: getApp().globalData.store.DKFNAME,
 				STORE_NAME: getApp().globalData.store.NAME,
 				dropout: false,
-				hyinfo: '',
+				hyinfo: {},
 				MsgData: [], //总的消息
 				XT_MsgData: [], //系统类
 				YW_MsgData: [], //业务类消息

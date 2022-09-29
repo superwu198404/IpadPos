@@ -47,7 +47,7 @@
 												@click="mainSale.showSpDetails" :data-plindex="plindex"
 												:data-spindex="spindex">
 												<view class="h3">
-													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+													<!-- <image src="../../images/dx-mrxk.png" mode="widthFix"></image> -->
 													{{sptiem.SNAME}}
 												</view>
 												<view class="cods">
@@ -277,6 +277,7 @@
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<text>单价￥{{Price(sp.SPID)}}/</text>
+									<!-- <text>单价￥{{sp.PRICE}}</text> -->
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -290,8 +291,9 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<!-- <text>售价￥{{sp.PRICE}}</text> -->
-								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{Price(sp.SPID)*sp.QTY}}</text>
+								<text
+									v-if="!mainSale.currentOperation.showEdit">总价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text>
+								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 							</view>
 							<!-- 数量编辑 -->
 							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
@@ -493,7 +495,7 @@
 			wmBluePrinter: function(order, datails, type, print) {
 				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			},
-			testPrinter: function(){
+			testPrinter: function() {
 				this.$refs.printerPage.testPrinter();
 			}
 		},

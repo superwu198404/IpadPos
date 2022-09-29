@@ -419,7 +419,6 @@
 		font-size: 28rpx;
 		font-weight: 600;
 	}
-
 	.products .h3 text {
 		font-weight: 600;
 	}

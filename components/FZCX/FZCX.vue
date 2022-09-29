@@ -122,7 +122,7 @@
 			//关闭辅助促销
 			Close: function() {
 				console.log("取消辅助促销");
-				uni.$emit("close-FZCX");
+				uni.$emit("close-FZCX", {}); //返回一个空对象
 			},
 			//确认辅助促销
 			Confirm: function() {

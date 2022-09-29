@@ -26,7 +26,7 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" @change="timeChange">
+					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
 					</picker>
 					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -605,6 +605,7 @@
 				that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
 				that.YDDATA = JSON.stringify(that.Order);
 				that.Order.DNET = Number(that.Order.DNET);
+				console.log("[Confirm]已设置定金金额:",that.Order);
 				that.Order.YD_STATUS = "1";
 				that.Order.BMID = that.BMID;
 				if (that.confirm) {
@@ -665,14 +666,17 @@
 		top:100%;
 		background-color: #fff;
 		border-radius: 6rpx;
-		width:65%;
+		width:66%;
 		text-align: left;
 		z-index: 999999999;
+		box-shadow: 0px 10rpx 20rpx 1px rgba(66,177,75,0.06);
+		padding:1%;
 	}
 	.restlist .thmd text{
 		width: 100%;
 		display: block;
 		text-align: left;
 		line-height: 50rpx;
+		white-space: nowrap;
 	}
 </style>
