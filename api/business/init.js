@@ -7,9 +7,10 @@ import dateformat from '@/utils/dateformat.js';
 import _sysParam from '@/utils/sysParm/sysParm.js';
 
 //校验是否有初始化过
-var YN_Init = function(sucFunc, errFunc) {
+var YN_Init = async function(sucFunc, errFunc) {
+	await db.get().close(); //为了解决热更新 数据库写入会失败的问题 首次关闭数据库
 	let sql = "select count(1) count from SPKHDA"
-	db.get().executeQry(sql, "校验中...", res => {
+	await db.get().executeQry(sql, "校验中...", res => {
 		console.log("SPKHDA查询结果：", res);
 		if (res.code && res.msg.length > 0 && res.msg[0].count > 0) {
 			if (sucFunc)
@@ -128,21 +129,21 @@ var InitData = async function(khid, func) {
 	// await common.InitZFRULE();
 	//获取支付规则数据 在前执行
 	await common.GetZFRULE();
-	
+
 	//获取支付方式 在后执行
 	await GetPayWay(khid);
-	
+
 	//初始化配置参数
 	await common.GetPZCS();
-	
+
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
-	
+
 	//初始化系统参数
 	_sysParam.init(khid);
 	//签到状态
 	GetMDQD(khid);
-	
+
 	//主动删除过期的销售数据
 	common.DelSale(); //主动删除销售单
 	if (func)
