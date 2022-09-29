@@ -1246,7 +1246,7 @@
 			paramInit: function() {
 				that = this;
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
-				console.log("支付初始化——可用的支付方式:", this.PayWayList)
+				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
 
 				// this.hyinfo = util.getStorage('hyinfo');
 				// console.log("支付初始化——会员信息:", this.hyinfo);
@@ -1260,7 +1260,7 @@
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
 					this.hyinfo = prev_page_param?.hyinfo; //会员信息采用传入
-					console.log("支付初始化——会员信息:", this.hyinfo);
+					console.log("[ParamInit]支付初始化——会员信息:", this.hyinfo);
 
 					//sale 系列表数据初始化 👆
 					this.actType = prev_page_param.actType; //当前行为操作
@@ -1288,8 +1288,11 @@
 							QTY: parseInt(r.QTY)
 						}
 					});
-					this.totalAmount = prev_page_param.sale1_obj.DNET || prev_page_param.sale1_obj
-						.TNET; //实际付款金额(如果存在定金那么就使用定金金额)
+					console.log("[ParamInit]手动设置待支付金额:", this.sale1_obj.$total_amount);
+					if(this.sale1_obj.$total_amount !== undefined)
+						this.totalAmount = prev_page_param.sale1_obj.DNET;
+					else
+						this.totalAmount = prev_page_param.sale1_obj.TNET
 					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
 					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理

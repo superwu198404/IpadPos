@@ -108,15 +108,6 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: async function() {
-			//一些特殊的设置 如积分上传
-			console.log("检测积分上传参数：", this.currentOperation.upload_point);
-			console.log("检测积分上传参数1：", this.HY.cval.hyId);
-			console.log("检测积分上传参数2：", this.sale001);
-			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
-				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
-				console.log("[PayedResult]上传会员积分结果:", upload_result);
-			}
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
@@ -126,9 +117,20 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			console.log("销售下单开始调用打印", arr2)
+			console.log("销售下单开始调用打印", {
+				arr2,
+				arr3
+			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
-			//this.Page.testPrinter();
+			//一些特殊的设置 如积分上传
+			console.log("检测积分上传参数：", this.currentOperation.upload_point);
+			console.log("检测积分上传参数1：", this.HY.cval.hyId);
+			console.log("检测积分上传参数2：", this.sale001);
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
+				console.log("[PayedResult]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+				console.log("[PayedResult]上传会员积分结果:", upload_result);
+			}
 		},
 	},
 	//销售退单
@@ -223,7 +225,9 @@ var XsTypeObj = {
 			arr3.forEach(function(item, index) {
 				item.SNAME = "";
 			})
-			console.log("销售退单开始调用打印", arr2)
+			console.log("销售退单开始调用打印 this.sale001", this.sale001)
+			console.log("销售退单开始调用打印 this.sale002", this.sale002)
+			console.log("销售退单开始调用打印 this.sale003", this.sale003)
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
 		},
 	},
@@ -281,8 +285,6 @@ var XsTypeObj = {
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
-			this.setComponentsManage(null, 'statement'); //关闭购物车
-			this.setComponentsManage(null, 'FZCX'); //关闭购物车
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
@@ -349,8 +351,6 @@ var XsTypeObj = {
 			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷
 		},
 		CloseReserveDrawer: function() {
-			console.log("[CloseReserveDrawer]预定录入关闭...");
-			this.setComponentsManage(null, "openydCustmInput");
 			console.log("[CloseReserveDrawer]结算单打开...");
 			this.setComponentsManage(null, "statement");
 		},
@@ -362,6 +362,9 @@ var XsTypeObj = {
 				ydsale1: this.ydsale001,
 				sale1: this.sale001
 			});
+			this.sale001.$total_amount = this.sale001.DNET;
+			console.log("[CloseReserveDrawer]预定录入关闭...");
+			this.setComponentsManage(null, "statement");
 			this.PayParamAssemble();
 		}
 	},
@@ -1671,7 +1674,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8));
-
+		console.log("[PayedResult]支付结果状态判断...",result.code);
 		if (result.code) {
 			util.simpleMsg(result.msg);
 			//反写一下会员id
