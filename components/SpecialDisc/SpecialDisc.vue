@@ -370,7 +370,7 @@
 <style>
 	.special{
 		position: relative;
-		padding-bottom: 160rpx;
+		padding-bottom: 150rpx;
 	}
 	.special .confirm{
 		position: absolute;
