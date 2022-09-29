@@ -406,6 +406,7 @@
 		height: 85%;
 	}
 
+
 	.products .details {
 		justify-content: start;
 	}
