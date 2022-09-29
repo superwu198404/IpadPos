@@ -90,8 +90,23 @@ var loadSaleSP  =
 				}
 				if( item.ynAddPro=="1")
 				{
-					item.addlist = drinkP_arr.filter(drinkitem=>{return drinkitem.MATNR == item.SPID } )
-					//console.log( JSON.stringify(item.addlist)  );
+				  var  retDarr    = drinkP_arr.filter(drinkitem=>{return drinkitem.MATNR == item.SPID } )
+				  var  retDrr_arr = []  //根据retd.CSTCODE  +   retd.ATTCODE  +  retd.OPTCODE;  汇总后的数组
+				  var gtoupDarr   = []  
+				  let dpk ="";
+				  retDarr.forEach(retd=>
+					   {
+						   let newdk  =retd.CSTCODE  +   retd.ATTCODE ;
+						   if(  newdk!= dpk )
+						   {
+							   gtoupDarr  =[] 
+							   retDrr_arr.push({CSTCODE:retd.CSTCODE==1?"免费":"收费",ATTCODE:retd.ATTNAME,Darr: gtoupDarr})
+						   }
+						   
+		gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
+					   })
+				  item.addlist =retDrr_arr;
+				  //console.log( JSON.stringify(item.addlist)  );
 				}
 				plarr.push(item);
 			})
@@ -190,11 +205,9 @@ var loadSaleSP  =
 	"AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='"+pm_storeid+"' AND  "+
 	"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='"+pm_dqid+"' AND SM.SPID = KXPSX.MATNR )";
 	  			await  $sqlLite.executeQry(msDrinksql,"开始获取水吧商品",(res)=>
-	  			{  
-	  									
+	  			{  					
 	  			  	console.log(JSON.stringify(res).substring(0,2000));
-	  			     mainArr=	mainArr.concat(res.msg);     
-	  			 
+	  			    mainArr=	mainArr.concat(res.msg);     
 	  			},null);						 
 			 console.log("##############################开始获取水吧属性##############################")		 
      //水吧属性	 
