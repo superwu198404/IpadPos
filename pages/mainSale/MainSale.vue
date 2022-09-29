@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
@@ -384,6 +385,8 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
 	var app = getApp();
 	export default {
 		data() {
@@ -421,7 +424,8 @@
 			CreditSettlement,
 			Promotion,
 			MemberLogin,
-			ReserveDrawer
+			ReserveDrawer,
+			PrinterPage
 		},
 		computed: {
 			Price: function() {
