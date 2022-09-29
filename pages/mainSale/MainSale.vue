@@ -137,7 +137,7 @@
 
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
-		<!-- 商品数量属性选择 -->
+		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
@@ -157,15 +157,18 @@
 					<view class="price">
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
 						<view>
-							<button @click="mainSale.chengedQty" data-qty="-1">-</button>
-							<label>{{mainSale.clikSpItem.inputQty}}</label>
-							<button @click="mainSale.chengedQty" data-qty="1">+</button>
+							<button @click="mainSale.chengedQty" data-qty="-1" :disabled="mainSale.clikSpItem.ynAddPro" >-</button>
+							<label>{{mainSale.clikSpItem.ynAddPro?1:mainSale.clikSpItem.inputQty}}</label>
+							<button @click="mainSale.chengedQty" data-qty="1"  :disabled="mainSale.clikSpItem.ynAddPro" >+</button>
 						</view>
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text></label>
-							<label><text>￥{{sp.PRICE}}</text><button :data-spid="sp.SPID" :data-row="spinx"
+						  <label><text>X{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.PRICE?(""):""}}]</text>
+						  </label>
+							<label><text>￥{{sp.PRICE}}</text>
+							<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
 						</view>
 					</view>
@@ -176,7 +179,16 @@
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
-
+					<view class="sizes" v-if="mainSale.clikSpItem.ynAddPro"  >
+						<view v-for=" (ditem, dinx) in mainSale.clikSpItem.addlist">
+							 <view>{{ditem.ATTCODE}}</view>
+							 <view class="sizelist" >
+								<label v-for=" (sxitem, sxinx) in ditem.Darr"   :data-dinx="dinx"  :data-sxinx="sxinx"
+								  :class="sxitem.SELECTED=='X'?'curr':''"  @click="mainSale.selectSxitem_Chenged">{{sxitem.CSTCODE==2?("￥"+Price(sxitem.OPTMAT)):""}}{{" "+sxitem.OPTNAME+(sxitem.CSTCODE==2?"+"+sxitem.QTY:"")}}</label>
+								  <button  :data-dinx="dinx" @click="mainSale.clearDrinkSx(dinx)" class="del">×</button>
+							 </view>
+						 </view>
+					</view>
 				</view>
 				<view class="confirm">
 					<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
@@ -262,12 +274,7 @@
 						</label>
 						<text @click="mainSale.resetSaleBill">清空</text>
 					</view>
-					<view class="h5"><text>账单</text> <button
-							v-if="mainSale.currentOperation.ynEdit&&!mainSale.currentOperation.showEdit"
-							@click="mainSale.showEditFunc">编辑</button>
-						<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
-							@click="mainSale.completeEdit">完成</button>
-					</view>
+					<view class="h5"><text>账单</text></view>
 					<view class="goods">
 						<!-- 商品循环 -->
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
@@ -276,11 +283,12 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
-									<text>单价￥{{Price(sp.SPID)}}/</text>
+								<view class="danjia">
+									<text>售价￥{{sp.PRICE}}/</text>
 									<!-- <text>单价￥{{sp.PRICE}}</text> -->
 									<text><em>×</em>{{sp.QTY}}</text>
-								</view>
+									
+								</view>							
 							</view>
 							<view class="cods">
 								<view>
@@ -296,23 +304,11 @@
 									v-if="!mainSale.currentOperation.showEdit">总价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text>
 								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 							</view>
-							<!-- 数量编辑 -->
-							<view class="bianji" v-if="mainSale.currentOperation.showEdit">
-								<text @click="mainSale.Calculate(sp,-1)">
-									<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
-										mode="widthFix"></image>
-								</text>
-								<label>{{sp.QTY}}</label>
-								<text @click="mainSale.Calculate(sp,1)">
-									<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
-										mode="widthFix"></image>
-								</text>
-							</view>
 						</view>
 					</view>
 					<view class="ul">
-						<view class="li"><text>总金额</text><text>￥{{mainSale.sale001.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{TotalNum}}</text></view>
+						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
+						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
 					</view>
@@ -474,16 +470,6 @@
 			},
 			MenuName: function() {
 				return this.mainSale?.current_type?.clickType ?? ""
-			},
-			//商品总数量
-			TotalNum: function() {
-				let total = 0;
-				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
-				this.mainSale.sale002.map(r => {
-					total += r.QTY;
-				})
-				// }
-				return total;
 			}
 		},
 		methods: {
@@ -584,10 +570,6 @@
 		height: 51%;
 	}
 
-	.prolist {
-		position: relative;
-	}
-
 	.prolist .h3 label text {
 		color: #FE694B;
 		font-weight: 400;
@@ -596,50 +578,5 @@
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
 		border-radius: 4rpx;
-	}
-
-	.h5 button {
-		color: #42B14B;
-		background: none;
-		font-size: 28rpx;
-		margin: 0;
-		padding: 0 20rpx;
-	}
-
-	.prolist .bianji {
-		width: 220rpx;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		position: absolute;
-		top: 50%;
-		right: 0;
-		transform: translateY(-50%);
-	}
-
-	.bianji label {
-		height: 50rpx;
-		line-height: 50rpx;
-		width: 160rpx;
-		border: 1px solid #D3D3D3;
-		background-color: #f5f5f5;
-		text-align: center;
-		font-size: 30rpx;
-		background: none;
-		border-radius: 4rpx;
-	}
-
-	.bianji text {
-		display: inline-block;
-		font-size: 50rpx;
-		margin: 10rpx;
-		width: 50rpx;
-		height: 50rpx;
-		padding: 0;
-	}
-
-	.bianji image {
-		width: 50rpx;
-		height: 50rpx;
 	}
 </style>

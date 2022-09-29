@@ -230,14 +230,14 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = sale1_obj.POSID;
-	var posUser = sale1_obj.RYID;
+	var posId = snvl(sale1_obj.POSID,"");
+	var posUser = snvl(sale1_obj.RYID,"");
 	var lineNum = sale2_arr.length;
 	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = sale1_obj.BILLDISC;
 	var originalAmount = sale1_obj.ZNET;
-	var cuid = sale1_obj.CUID;
+	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
 	//商品数据
@@ -248,14 +248,14 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 			saleDate: sale2_arr[i].SALEDATE,
 			saleTime: sale2_arr[i].SALETIME,
 			khid: sale2_arr[i].KHID,
-			posId: sale2_arr[i].POSID,
+			posId: snvl(sale2_arr[i].POSID,""),
 			no: i,
-			plid: sale2_arr[i].PLID,
+			plid: snvl(sale2_arr[i].PLID,""),
 			barCode: sale2_arr[i].BARCODE,
 			unit: sale2_arr[i].UNIT, //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
-			spname: sale2_arr[i].SNAME, //商品名称
+			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
@@ -274,18 +274,18 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 			bill: sale3_arr[j].BILL,
 			saleDate: sale3_arr[j].SALEDATE,
 			saleTime: sale3_arr[j].SALETIME,
-			khid: sale3_arr[j].KHID,
-			posId: sale3_arr[j].POSID,
+			khid: snvl(sale3_arr[j].KHID,""),
+			posId: snvl(sale3_arr[j].POSID,""),
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
 			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: sale3_arr[j].RYID, //人员
+			ryid: snvl(sale3_arr[j].RYID,""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
 			zklx: sale3_arr[j].ZKLX, //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: sale3_arr[j].SNAME,
-			save_je: sale3_arr[j].balance, // 余额
+			fkName: snvl(sale3_arr[j].SNAME,""),
+			save_je: nnvl(sale3_arr[j].balance,0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
@@ -329,12 +329,12 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 	var wdate = sale1_obj.WDATE;
 	var wtime = sale1_obj.WTIME;
 	var xsBill = sale1_obj.XS_BILL;
-	var custmtime = sale1_obj.CUSTMTIME;
+	var custmtime = snvl(sale1_obj.CUSTMTIME,"");
 	var daysn = sale1_obj.DAYSN;
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var gsid = sale1_obj.GSID;
+	var gsid = snvl(sale1_obj.GSID,"");
 	var status = sale1_obj.STATUS;
 	var remark = sale1_obj.STR1 == null ? "" : sale1_obj.STR1;
 	var payableAmount = sale1_obj.STR2;
@@ -415,10 +415,10 @@ const xsPrinterData = (sale1_obj, ggyContent, type) => {
 	var date_dh = sale1_obj.DATE_DH;
 	var saletime = sale1_obj.SALETIME;
 	var thtype = sale1_obj.THTYPE;
-	var custmname = sale1_obj.CUSTMNAME;
-	var custmaddress = sale1_obj.CUSTMADDRESS;
-	var custmphone = sale1_obj.CUSTMPHONE;
-	var custmcomm = sale1_obj.CUSTMCOMM;
+	var custmname = snvl(sale1_obj.CUSTMNAME,"");
+	var custmaddress = snvl(sale1_obj.CUSTMADDRESS,"");
+	var custmphone = snvl(sale1_obj.CUSTMPHONE,"");
+	var custmcomm = snvl(sale1_obj.CUSTMCOMM,"");
 
 	var spid = sale1_obj.SPID;
 	var sname = sale1_obj.SNAME;
@@ -856,6 +856,30 @@ const gzhQrCodeGenerate = function(is_xpewm, url) {
 	});
 }
 
+const snvl = function(pb_obj, pm_default) {
+	let new_obj = "";
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = pm_default;
+	} else {
+		new_obj = pb_obj.toString();
+	}
+	return new_obj;
+}
+
+const nnvl = function(pb_obj, pm_default) {
+	let new_obj = 0;
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || pb_obj == NaN) {
+		new_obj = pm_default;
+	} else {
+		try {
+			new_obj = parseFloat(pb_obj);
+		} catch (e) {
+			new_obj = -1;
+		}
+	}
+	return new_obj;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -882,4 +906,6 @@ module.exports = {
 	gzhQrCodeAction: gzhQrCodeAction,
 	wmPrinterData: wmPrinterData,
 	xsPrinterData: xsPrinterData,
+	snvl: snvl,
+	nnvl: nnvl
 };
