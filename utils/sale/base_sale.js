@@ -319,6 +319,7 @@ var XsTypeObj = {
 			this.sale001.ZNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
 			this.sale001.TNET = this.$total_amount;//支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
+			this.ydsale001.BMID = this.ydsale001.BMID || "80000000";//默认
 			let sys_param = util.getStorage("sysParam");
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
@@ -330,7 +331,6 @@ var XsTypeObj = {
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
 						ywbhqh.BILL = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
-						ywbhqh.BMID = ywbhqh.BMID || "80000000";//默认
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
 						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
@@ -629,7 +629,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
-			this.sxsale001.DKFNAME = this.DKF.val.DKFNAME; //赊销追加一下 大客户名称
+			this.sxsale001.DKFNAME = this.DKF.val.NAME; //赊销追加一下 大客户名称
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
@@ -1672,7 +1672,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8));
-		console.log("[PayedResult]支付结果状态判断...",result.code);
+		console.log("[PayedResult]支付结果状态判断...", result.code);
 		if (result.code) {
 			util.simpleMsg(result.msg);
 			//反写一下会员id

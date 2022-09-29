@@ -1289,7 +1289,7 @@
 						}
 					});
 					console.log("[ParamInit]手动设置待支付金额:", this.sale1_obj.$total_amount);
-					if(this.sale1_obj.$total_amount !== undefined)
+					if (this.sale1_obj.$total_amount !== undefined)
 						this.totalAmount = prev_page_param.sale1_obj.DNET;
 					else
 						this.totalAmount = prev_page_param.sale1_obj.TNET
@@ -1298,14 +1298,14 @@
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
 					this.GetHyCoupons(); //获取会员的优惠券用以支付使用
 
-					util.simpleModal("门店检测", this.KHID);
+					// util.simpleModal("门店检测", this.KHID);
 					this.XSTYPE = this.SALES.sale1.XSTYPE;
 					this.BILL_TYPE = this.SALES.sale1.BILL_TYPE;
 					this.KHID = this.SALES.sale1.KHID; //重新赋值KHID
 					this.GSID = this.SALES.sale1.GSID; //重新赋值GSID
 					this.POSID = this.SALES.sale1.POSID; //重新赋值RYID
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
-					util.simpleModal("门店检测1", this.SALES.sale1.KHID);
+					// util.simpleModal("门店检测1", this.SALES.sale1.KHID);
 					// this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
