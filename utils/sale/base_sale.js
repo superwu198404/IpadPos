@@ -2198,6 +2198,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function() {
+		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		this.HY.cval = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};

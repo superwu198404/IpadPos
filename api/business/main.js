@@ -581,6 +581,7 @@ var CreateSale2 = function(fzcxobj, sale1, spobj, NO) {
 	obj.POSID = sale1.POSID;
 	obj.KHID = sale1.KHID;
 	obj.SALETIME = sale1.SALETIME;
+	obj.STR1 = spobj.SNAME;
 	return obj;
 }
 
