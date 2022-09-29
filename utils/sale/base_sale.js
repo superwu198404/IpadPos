@@ -2069,7 +2069,6 @@ function GetSale(global, vue, target_name, uni) {
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
-		that.sale001.TLINE = that.sale002.length; //这个是存商品行
 		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {
 			this.computeFzCx();
@@ -2168,7 +2167,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 				console.log("手工折扣计算完毕");
 				return this.CurrentTypeCall("$beforeFk",
-				pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+					pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
 			}))
 			return false;
 		} else {
