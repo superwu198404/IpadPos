@@ -118,6 +118,7 @@
 		},
 		methods: {
 			testPrinter: async function(){
+				console.log("==========================================================================================testPrinter");
 				util.simpleMsg("testPrinter");
 			},
 			// 二维码生成工具
@@ -187,7 +188,7 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if (is_dzfpewmdz || is_xpewm) {
+				if (is_dzfpewmdz) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
@@ -247,7 +248,7 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if (is_dzfpewmdz || is_xpewm) {
+				if (is_dzfpewmdz) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
@@ -303,7 +304,7 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
-				if (is_dzfpewmdz || is_xpewm) {
+				if (is_dzfpewmdz) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,

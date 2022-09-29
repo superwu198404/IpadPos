@@ -18,6 +18,7 @@ import {
 	PointUploadNew
 } from '@/bll/Common/bll.js'
 import common from '@/api/common.js';
+import saleClass from '@/utils/sale/saleClass.js';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -1686,7 +1687,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (this.currentOperation.ynFzCx) {
 				let FZCXVal = this.FZCX.cval;
 				console.log("[PayedResult]辅助促销的结果：", FZCXVal);
-				if (Object.keys(FZCXVal).length != 0) {
+				if (FZCXVal && Object.keys(FZCXVal).length != 0) {
 					FZCXVal.data.forEach(r => {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
 						console.log("当前匹配到的商品对象:", SPObj);
@@ -1875,6 +1876,7 @@ function GetSale(global, vue, target_name, uni) {
 		let newbill = this.getBill();
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
+		console.log("[CreateNewBill]sale001：", this.sale001);
 		console.log("创建新单的大客户信息：", this.DKF.val);
 		commonSaleParm = {
 			GSID: this.GSID,
@@ -1895,7 +1897,11 @@ function GetSale(global, vue, target_name, uni) {
 			TIME: _date.getDateByParam("h"),
 			DKFID: this.DKF.val.DKFID
 		};
+		console.log("旧的sale001：", this.sale001);
+		// let oldSale1 = new saleClass.sale001();
+
 		if (Object.keys(this.sale001).length == 0) { //BILL,KCDID  ,DPID,SALETIME,GCID
+			// if (Object.keys(this.sale001).length != Object.keys(oldSale1).length) { //
 			this.sale001 = new sale.sale001(commonSaleParm)
 			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		}
@@ -2132,6 +2138,10 @@ function GetSale(global, vue, target_name, uni) {
 	//计算sale002
 	this.SaleNetAndDisc = async function() {
 		let znet = 0
+		if (Object.keys(that.sale002).length == 0) {
+			//如果没有加购商品 则sale1可能未初始化 导致一些默认值KHID 无法初始化到sale001上 导致传输到支付页面KHID 为空
+			return;
+		}
 		if (that.currentOperation.ynCx) {
 			await cx.Createcx(that.sale002);
 			let TCXDISC = 0;
@@ -2191,8 +2201,8 @@ function GetSale(global, vue, target_name, uni) {
 		//手工折扣额的处理
 		let oldTNET = Number(this.sale001.TNET);
 		console.log("[SKdiscCompute]原金额：", oldTNET);
-		let newTnet = Math.round(oldTNET * 10) / 10;
-		console.log("[SKdiscCompute]新金额：", oldTNET);
+		let newTnet = this.float(Math.round(oldTNET * 10) / 10, 2);
+		console.log("[SKdiscCompute]新金额：", newTnet);
 		let SKY_DISCOUNT = oldTNET - newTnet;
 		console.log("[SKdiscCompute]手工折扣额：", SKY_DISCOUNT);
 		this.sale001.TNET = newTnet;
@@ -2284,6 +2294,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function() {
+		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		this.HY.cval = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};
