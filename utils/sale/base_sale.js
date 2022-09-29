@@ -318,6 +318,7 @@ var XsTypeObj = {
 					if (bh_support_id.find(id => id === s2.PLID)) {
 						console.log("[SaleFinishing]裱花维护商品:", s2);
 						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
+						ywbhqh.BILL = result.sale1_obj.BILL;
 						ywbhqh.BILL = this.getBill();
 						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
 						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
@@ -1771,9 +1772,8 @@ function GetSale(global, vue, target_name, uni) {
 			PayList: that.payed,
 			actType: that.actType
 		}
-		console.log("sale001:", that.sale001);
+		console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
-		console.log("[PayParamAssemble]动作类型:", that.actType);
 		uni.navigateTo({
 			url: "../Payment/Payment",
 			events: {

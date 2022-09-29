@@ -87,7 +87,7 @@
 				form: {
 					search: {
 						code: "",
-						bill: "LH202209220005" //LH2022080
+						bill: "" //LH2022080
 						// bill: ""
 					},
 					code: "", //自提码

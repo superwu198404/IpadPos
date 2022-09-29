@@ -1287,7 +1287,7 @@
 							QTY: parseInt(r.QTY)
 						}
 					});
-					this.totalAmount = prev_page_param.sale1_obj.TNET; //实际付款金额
+					this.totalAmount = prev_page_param.sale1_obj.DNET || prev_page_param.sale1_obj.TNET; //实际付款金额(如果存在定金那么就使用定金金额)
 					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
 					// this.PriceCount(); //给 sale2 加上 SKY_DISCOUNT 参数 已废弃
 					// this.GetSBData(); //筛选水吧产品 水吧商品由销售页面传入不需要再处理
