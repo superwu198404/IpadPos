@@ -74,7 +74,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="operat" style="display: flex;height: 60px;align-items: center;">
+			<view class="operat" style="style="display: flex;padding: 8px;gap: 8px;"">
 				<button class="btn btn-qx" @click="Close">取 消</button>
 				<button class="btn" @click="Save">保 存</button>
 			</view>
