@@ -111,12 +111,12 @@ var XsTypeObj = {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
-				item.SNAME = "";
+				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = "";
-				item.balance = 0;
+				item.SNAME = util.getStorage('PayWayList').find(c=>c.fkid == item.FKID).name;
+				item.balance = item.balance;
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -216,12 +216,12 @@ var XsTypeObj = {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
-				item.SNAME = "";
+				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = "";
-				item.balance = 0;
+				item.SNAME = util.getStorage('PayWayList').find(c=>c.fkid == item.FKID).name;
+				item.balance = item.balance;
 			})
 			console.log("销售退单开始调用打印", {
 				arr2,
