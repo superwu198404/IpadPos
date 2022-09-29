@@ -401,7 +401,6 @@
 	.details .goods {
 		height: 65%;
 	}
-
 	.detinfo {
 		height: 85%;
 	}
