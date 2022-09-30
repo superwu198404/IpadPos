@@ -11,7 +11,8 @@
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
-				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"></Head>
+				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
+					:_ynDKF="mainSale.currentOperation.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -155,7 +156,10 @@
 						</label>
 					</view>
 					<view class="price">
+						<view>
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
+						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia" style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						</view>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
@@ -166,10 +170,9 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label><text>X{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
-								<text v-for="(sx08, sxindex) in mainSale.sale008"
-									v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.PRICE?(""):""}}]</text>
-							</label>
+						  <label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
+						  </label>
 							<label><text>￥{{sp.PRICE}}</text>
 								<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
@@ -293,7 +296,8 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
-									<text>单价￥{{Price(sp.SPID)}}/</text>
+									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
+									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -307,18 +311,17 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text
-									v-if="!mainSale.currentOperation.showEdit">总价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text>
-								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
+								<!-- <text v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
+								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
-									<text @click="mainSale.Calculate(sp,-1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
+									<text @click="mainSale.Calculate(spinx,sp,-1)">
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
-									<label>{{sp.QTY}}</label>
-									<text @click="mainSale.Calculate(sp,1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
+									<label style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
+									<text @click="mainSale.Calculate(spinx,sp,1)">
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
 								</view>
@@ -496,8 +499,8 @@
 		},
 		methods: {
 			onShow: function(e) {
-				let str = e.target.value;
-				console.log(this.sptiem.SNAME)
+				// let str = e.target.value;
+				// console.log(this.sptiem.SNAME)
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
@@ -515,24 +518,28 @@
 				this.$refs.printerPage.testPrinter();
 			},
 			//商品总数量
-						TotalNum: function() {
-							let total = 0;
-							// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
-							this.mainSale.sale002.map(r => {
-								total += r.QTY;
-							})
-							// }
-							return total;
-						}
+			TotalNum: function() {
+				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
+				this.mainSale.sale002.map(r => {
+					total += r.QTY;
+				})
+				// }
+				return total;
+			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
+			// console.log("初始化的khid:", this.KHID);
+			// console.log("初始化的DQID:", this.DQID);
+			// console.log("初始化的KHZID:", this.KHZID);
 			let log = console.log;
 			console.log = () => {};
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
+			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
@@ -586,6 +593,8 @@
 	.popup {
 		position: relative;
 		padding-bottom: 140rpx;
+		max-height: 85%;
+		overflow: auto;
 	}
 
 	.popup .confirm {
@@ -595,6 +604,7 @@
 		width: 90%;
 		left: 5%;
 		text-align: center;
+		background-color: #fff;
 	}
 
 	.pop-rs .goods {
@@ -624,7 +634,7 @@
 	}
 
 	.prolist .bianji {
-		width: 220rpx;
+		width: 180rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -634,7 +644,8 @@
 		transform: translateY(-50%);
 	}
 
-	.bianji label {
+	.prolist .bianji label {
+		display: flex;
 		height: 50rpx;
 		line-height: 50rpx;
 		width: 160rpx;
@@ -647,7 +658,9 @@
 	}
 
 	.bianji text {
-		display: inline-block;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		font-size: 50rpx;
 		margin: 10rpx;
 		width: 50rpx;
@@ -656,7 +669,11 @@
 	}
 
 	.bianji image {
-		width: 50rpx;
-		height: 50rpx;
+		width: 40rpx;
+		height: 40rpx;
+	}
+	.price .zongjia{
+		font-size: 28rpx;
+		margin-left: 26rpx;
 	}
 </style>

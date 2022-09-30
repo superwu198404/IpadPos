@@ -152,7 +152,7 @@ var loadSaleSP  =
 	    console.log("##############################开始获取主商品##############################")
 	 //z主商品sql 1
 	  let  msplistSql=
-	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,S1.SPJGZ, \
+	  "SELECT substr(S1.pinyin,1,1) FSTR, S1.SPID,S1.SNAME,S1.UNIT,S1.PINYIN,SM.ZLID plid,s1.plid XPLID,PLDA.SNAME plname,S1.SPJGZ, \
 	                 0 ynshowlist , '' specslist, \
 					 0 ynAddPro,'' addlist  \
 	                 FROM SPDA S1,SPKHDA SM,PLDA \
@@ -171,12 +171,13 @@ var loadSaleSP  =
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,s1.plid XPLID,'01' SPJGZ,PLDA.SNAME plname," +
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,'10901' XPLID,'01' SPJGZ,PLDA.SNAME plname," +
 	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
 					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
-				    " and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'" +
-				    " and spda_dgxl.dgxlid =dgxlda.dgxlid) ";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+					" and spda_dgxl.dgxlid =dgxlda.dgxlid) "
+				    " and spkhda.YN_XS='Y' and   spkhda.khid ='"+ pm_storeid+ "'" +
+				    "";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 			 await  $sqlLite.executeQry(drinksAddSql,"正在获取蛋糕数据",(res)=>
 			 {  
 						
@@ -204,7 +205,7 @@ var loadSaleSP  =
 	"WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID "+
 	"AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  "+ 
 	"AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='"+pm_storeid+"' AND  "+
-	"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='"+pm_dqid+"' AND SM.SPID = KXPSX.MATNR )";
+	"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='"+pm_dqid+"' AND SM.SPID = KXPSX.MATNR   )";
 	  			await  $sqlLite.executeQry(msDrinksql,"开始获取水吧商品",(res)=>
 	  			{  					
 	  			  	console.log(JSON.stringify(res).substring(0,2000));
@@ -212,8 +213,9 @@ var loadSaleSP  =
 	  			},null);						 
 			 console.log("##############################开始获取水吧属性##############################")		 
      //水吧属性	 
-	      let drinkProSql  =" SELECT  MATNR, CSTCODE,ATTCODE, ATTNAME, OPTCODE, OPTMAT, OPTNAME, RECMARK  "+" FROM  KXPSX   WHERE   ifnull(DELMK,'N')='N' AND    BZIRK='"+pm_dqid+"'"+
-" ORDER BY KXPSX.MATNR,CSTCODE,ATTCODE " ;
+	      let drinkProSql  =" SELECT  MATNR, CSTCODE,ATTCODE, ATTNAME, OPTCODE, OPTMAT, OPTNAME, RECMARK  "+" FROM  KXPSX   WHERE   ifnull(DELMK,'N')='N' " +
+		 "  and  not  EXISTS (SELECT 1 FROM KXPSX k2 where   BZIRK='"+pm_dqid+"' and  k2.OPTMAT = KXPSX. OPTMAT and  k2.MATNR = KXPSX. MATNR  and k2.CSTCODE = KXPSX.CSTCODE AND K2.CSTCODE='2' AND K2.OPTMAT ='000000002120900109') "+
+         " AND    BZIRK='"+pm_dqid+"'"+ " ORDER BY KXPSX.MATNR,CSTCODE,ATTCODE " ;
 				await  $sqlLite.executeQry(drinkProSql,"正在获取水吧数据",(res)=>
 				{  
 										

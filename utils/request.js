@@ -279,7 +279,7 @@ var showloding = function(yn_show, pm_txt) {
 }
 
 var hideloding = function(yn_show, pm_txt) {
-		uni.hideLoading();
+	uni.hideLoading();
 }
 
 var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {
@@ -295,8 +295,8 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			console.log("[AsyncFuncArr]http请求:", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
-			console.log("[AsyncFuncArr]http返回值:", res);
-			hideloding(); 
+			// console.log("[AsyncFuncArr]http返回值:", res);
+			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;

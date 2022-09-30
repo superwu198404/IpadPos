@@ -312,15 +312,18 @@ var CalProduct = function(curData, Product) {
 		arr.forEach(r2 => {
 			if (r2.ZKTYPE == 'ZD02') { //标准折扣
 				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
+				r.DISCRATE = parseFloat(r.BZDISC);
 			} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
 				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) +  parseFloat(r.LSDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
+				r.DISCRATE = parseFloat(r.LSDISC);
 			} else { //特批折扣
 				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) +  parseFloat(r.TPDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
+				r.DISCRATE = parseFloat(r.TPDISC);
 			}
-			console.log("[CalProduct]Sale-Item:",r2);
+			console.log("[CalProduct]Sale-Item:", r2);
 		})
 	});
 	console.log("添加折扣后的商品数据：", Product);
@@ -329,30 +332,6 @@ var CalProduct = function(curData, Product) {
 
 //匹配商品的有效规则 包含标准临时和特批
 var MatchZKDatas = function(ZKObj, products) {
-	// products = [{
-	// 		SPJGZ: "01",
-	// 		NET: 2000,
-	// 		SPID: "123456",
-	// 		DISCRATE: 10
-	// 	},
-	// 	{
-	// 		SPJGZ: "01",
-	// 		NET: 1250,
-	// 		SPID: "123457",
-	// 		DISCRATE: 6
-	// 	},
-	// 	{
-	// 		SPJGZ: "02",
-	// 		NET: 5000,
-	// 		SPID: "12345678",
-	// 		DISCRATE: 100
-	// 	}, {
-	// 		SPJGZ: "03",
-	// 		NET: 3000,
-	// 		SPID: "123456789",
-	// 		DISCRATE: 80
-	// 	}
-	// ];
 	console.log("计算商品折扣传入的折扣数据：", ZKObj);
 	console.log("计算商品折扣传入的商品信息：", products);
 	let CurData;
@@ -448,6 +427,7 @@ var CalFZCX = function(fzcxArr, sale1) {
 		let MJ_DISC1 = r.MJ_DISC1 || 0; //折扣率
 		let spid = r.CLASSID || ""; //商品ID
 		if (syjsnet >= Onexxnum) {
+
 			//进行折扣计算
 			if (syjsnet / Onexxnum >= qty) {
 				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
@@ -464,12 +444,15 @@ var CalFZCX = function(fzcxArr, sale1) {
 				obj.gsid = gsid;
 				sparr.push(addfzcxdtinfo(obj));
 				syjsnet = syjsnet - Onexxnum * qty;
-				yjnet += cxprice * qty;
+				let all1 = Number(parseFloat(cxprice * qty).toFixed(2))
+				yjnet = Number(parseFloat(yjnet + all1).toFixed(2));
+				console.log("进入了计算1：", cxprice + "，" + qty);
 			} else {
 				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
 				let cxnet = cxprice * Math.floor(syjsnet / Onexxnum);
 				//超出数量的价格计算
-				let synet = Number(parseFloat((qty - Math.floor(syjsnet / Onexxnum)) * price).toFixed(2));
+				let synet = Number(parseFloat((qty - Math.floor(syjsnet / Onexxnum)) * price)
+					.toFixed(2));
 				// addfzcxdtinfo(cxbill, spid, qty, price, cxprice, synet + cxnet, i);
 				let obj = {};
 				obj.cxbill = cxbill;
@@ -483,7 +466,9 @@ var CalFZCX = function(fzcxArr, sale1) {
 				obj.gsid = gsid;
 				sparr.push(addfzcxdtinfo(obj));
 				syjsnet = syjsnet - Math.floor(syjsnet / Onexxnum) * Onexxnum;
-				yjnet += synet + cxnet;
+				let all = Number(parseFloat(synet + cxnet).toFixed(2))
+				yjnet = Number(parseFloat(yjnet + all).toFixed(2));
+				console.log("进入了计算2：", yjnet);
 			}
 		} else {
 			//进行单价计算
@@ -500,7 +485,9 @@ var CalFZCX = function(fzcxArr, sale1) {
 			obj.storeid = khid;
 			obj.gsid = gsid;
 			sparr.push(addfzcxdtinfo(obj));
-			yjnet += Number(parseFloat(price * qty).toFixed(2));
+			let all2 = Number(parseFloat(price * qty).toFixed(2));
+			yjnet = Number(parseFloat(yjnet + all2).toFixed(2));
+			console.log("进入了计算3：", price + "，" + qty);
 		}
 	})
 	// jsnet = yjnet;
@@ -599,7 +586,8 @@ var ManualDiscount = function(sale1, sale2_arr) {
 	let curDis = 0;
 	sale2_arr.forEach(function(item, index, arr) {
 		if (!sale1.ROUND) return; //round 为 0 就不进行分摊
-		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
+		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(
+			2));
 		console.log("[ManualDiscount]ManualDiscount:", high);
 		let SKYDISCOUNT = high;
 		curDis += high;
