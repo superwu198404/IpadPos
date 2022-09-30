@@ -11,7 +11,8 @@
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
-				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"></Head>
+				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
+					:_ynDKF="mainSale.currentOperation.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -155,8 +156,10 @@
 						</label>
 					</view>
 					<view class="price">
+						<view>
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
-						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia" style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						</view>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
@@ -167,7 +170,7 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-						  <label class="shux"><text>×{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+						  <label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
 							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
 						  </label>
 							<label><text>￥{{sp.PRICE}}</text>
@@ -313,12 +316,12 @@
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
-									<label>{{sp.QTY}}</label>
+									<label style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
 									<text @click="mainSale.Calculate(spinx,sp,1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
 								</view>
@@ -629,7 +632,7 @@
 	}
 
 	.prolist .bianji {
-		width: 220rpx;
+		width: 180rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -639,7 +642,8 @@
 		transform: translateY(-50%);
 	}
 
-	.bianji label {
+	.prolist .bianji label {
+		display: flex;
 		height: 50rpx;
 		line-height: 50rpx;
 		width: 160rpx;
@@ -652,7 +656,9 @@
 	}
 
 	.bianji text {
-		display: inline-block;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		font-size: 50rpx;
 		margin: 10rpx;
 		width: 50rpx;
@@ -661,10 +667,11 @@
 	}
 
 	.bianji image {
-		width: 50rpx;
-		height: 50rpx;
+		width: 40rpx;
+		height: 40rpx;
 	}
-	.zongjia{
+	.price .zongjia{
 		font-size: 28rpx;
+		margin-left: 26rpx;
 	}
 </style>

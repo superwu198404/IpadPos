@@ -611,8 +611,10 @@ page {
 	position: relative;
 }
 .sizes .sizelist .del{
-	width:40rpx;
-	height: 40rpx;
+	width:50rpx;
+	height: 50rpx;
+	line-height: 50rpx;
+	font-size: 30rpx;
 	margin:0;
 	padding:0;
 	position: absolute;
@@ -629,6 +631,7 @@ page {
 	margin: 1% 4% 1% 0;
 	border-radius: 6rpx;
 	text-align: center;
+	padding:0 10rpx;
 }
 
 /* .sizes .sizelist label:nth-child(1) {

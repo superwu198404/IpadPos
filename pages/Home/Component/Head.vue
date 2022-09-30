@@ -196,7 +196,8 @@
 		props: {
 			data: [],
 			custom: Boolean,
-			_showSale: Boolean
+			_showSale: Boolean,
+			_ynDKF: Boolean
 		},
 		data() {
 			return {
@@ -234,12 +235,16 @@
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
-				showYWMsg: false
+				showYWMsg: false,
+				ynDKF: true
 			};
 		},
 		watch: {
 			_showSale: function(n, o) {
 				this.showSale = this._showSale;
+			},
+			_ynDKF: function(n, o) {
+				this.ynDKF = this._ynDKF;
 			}
 		},
 		/**
@@ -503,6 +508,10 @@
 			ShowDKF: function() {
 				// this.showBig = true;
 				console.log("[ShowDKF]选择大客户!");
+				if (!this.ynDKF) {
+					util.simpleMsg("禁止选择大客户", true);
+					return;
+				}
 				uni.$emit('open-big-customer');
 			},
 			//选择大客户
