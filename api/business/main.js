@@ -424,6 +424,7 @@ var CalFZCX = function(fzcxArr, sale1) {
 		let MJ_DISC1 = r.MJ_DISC1 || 0; //折扣率
 		let spid = r.CLASSID || ""; //商品ID
 		if (syjsnet >= Onexxnum) {
+
 			//进行折扣计算
 			if (syjsnet / Onexxnum >= qty) {
 				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
