@@ -72,8 +72,8 @@
 			uni.getSystemInfo({
 				success: function(res) {
 					// console.log("设备信息：", res);
-					that.x = res.screenWidth - 280;
-					that.y = res.screenHeight - 260;
+					that.x = res.screenWidth - 240; //280
+					that.y = res.screenHeight - 360; //260
 					// console.log("偏移宽度：", that.x);
 				}
 			})
