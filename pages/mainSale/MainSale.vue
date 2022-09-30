@@ -163,7 +163,8 @@
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
 							<label>{{mainSale.clikSpItem.ynAddPro?1:mainSale.clikSpItem.inputQty}}</label>
-							<button @click="mainSale.chengedQty" data-qty="1"  :disabled="mainSale.clikSpItem.ynAddPro">+</button>
+							<button @click="mainSale.chengedQty" data-qty="1"
+								:disabled="mainSale.clikSpItem.ynAddPro">+</button>
 						</view>
 					</view>
 					<view class="tochoose">
@@ -294,7 +295,8 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
-									<text>单价￥{{Price(sp.SPID)}}/</text>
+									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
+									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -308,17 +310,16 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text
-									v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
-								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
+								<!-- <text v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
+								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
-									<text @click="mainSale.Calculate(sp,-1)">
+									<text @click="mainSale.Calculate(spinx,sp,-1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
 									<label style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
-									<text @click="mainSale.Calculate(sp,1)">
+									<text @click="mainSale.Calculate(spinx,sp,1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
@@ -525,9 +526,9 @@
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
-			console.log("初始化的khid:", this.KHID);
-			console.log("初始化的DQID:", this.DQID);
-			console.log("初始化的KHZID:", this.KHZID);
+			// console.log("初始化的khid:", this.KHID);
+			// console.log("初始化的DQID:", this.DQID);
+			// console.log("初始化的KHZID:", this.KHZID);
 			let log = console.log;
 			console.log = () => {};
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);

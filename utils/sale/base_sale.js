@@ -1128,12 +1128,34 @@ function GetSale(global, vue, target_name, uni) {
 		this.update();
 	})
 	//*func*sale002商品详情页的加号和 减号
-	this.Calculate = function(item, type) {
-		item.QTY = Number(item.QTY) + type;
-		if (item.QTY < 0) {
-			item.QTY = 0;
+	this.Calculate = function(index, item, type) {
+		let obj = this.sale008.find(r => {
+			return r.NO == item.NO
+		});
+		if (obj && Object.keys(obj).length > 0) {
+			//说明是水吧商品
+			if (item.QTY >= 1 && type > 0) {
+				item.QTY = 1;
+				util.simpleMsg("水吧商品限定数量为1", "none");
+			} else if (item.QTY <= 0 && type < 0) {
+				item.QTY = 0;
+			} else {
+				item.QTY = Number(item.QTY) + type;
+			}
+		} else {
+			item.QTY = Number(item.QTY) + type;
+			if (item.QTY < 0) {
+				item.QTY = 0;
+			}
+
 		}
-		console.log("数量给变化", item);
+		// let _qty = 0;
+		// _qty = Number(item.QTY) + type;
+		// if (item.QTY < 0) {
+		// 	_qty = 0;
+		// }
+		console.log("商品数量变化:", item.QTY);
+		// this.updateSp(index, item.SPID, _qty);
 	}
 	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
@@ -1141,10 +1163,15 @@ function GetSale(global, vue, target_name, uni) {
 		this.update();
 
 		//筛选一下商品
-		let sale2 = this.sale002.filter(r => {
-			return r.QTY > 0;
-		})
-		this.sale002 = sale2;
+		// let sale2 = this.sale002.filter(r => {
+		// 	return r.QTY > 0;
+		// })
+		// this.sale002 = sale2;
+		for (var i = this.sale002.length - 1; i >= 0; i--) {
+			let item = this.sale002[i];
+			// console.log("当前商品行：", item);
+			this.updateSp(i, item.SPID, item.QTY);
+		}
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
 	})
@@ -1268,10 +1295,15 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
 			this.cval = newval;
-			if (this.cval) {
+			if (this.cval) 
+			{
 				//使用that
 				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
+			}
+			else
+			{
+				that.setSaleTypeDefval("DKF"); 
 			}
 			that.update();
 		}
@@ -1291,14 +1323,18 @@ function GetSale(global, vue, target_name, uni) {
 			*/
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval) 
+		{
 			this.base.ComponentsManage["DKF"] = false;
-			if (!newval || Object.keys(newval).length == 0) {
+			if (!newval || Object.keys(newval).length == 0)
+			{
 				this.cval.DKFID = this.Defval;
 				return;
 			}
 			//使用that
-			that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
+			//that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
+			that.setSaleTypeDefval("HY"); 
+			this.base.HY.cval={};
 			this.cval = newval;
 		}
 	}
@@ -1311,9 +1347,20 @@ function GetSale(global, vue, target_name, uni) {
 		get val() {
 			return this.cval;
 		},
-		set val(newval) {
+		set val(newval) 
+		{
 			//赋值的时候进行计算
-			this.cval = newval;
+			this.cval = newval;//判断有效值
+			if(newval)
+			{
+			   that.currentOperation.ynCx = false; //
+			   that.currentOperation.FZCX = false; //
+			}
+			else
+			{
+			    that.setSaleTypeDefval("ynCx"); 
+			    that.setSaleTypeDefval("FZCX"); 
+			}
 		}
 	};
 	this.Disc.base = this;
@@ -1360,8 +1407,8 @@ function GetSale(global, vue, target_name, uni) {
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候试用
 	this.setSaleTypeDefval = function(pm_key) {
-		if (this.currentOperation.hasOwnProperty(pm_key)) {
-			this.ComponentsManage[pm_key] = this.currentOperation[pm_key];
+		if (this.current_type.operation.hasOwnProperty(pm_key)) {
+			this.ComponentsManage[pm_key] = this.current_type.operation[pm_key];
 		} else {
 			this.ComponentsManage[pm_key] = false;
 		}
@@ -2036,8 +2083,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 		}
-		if (!find) 
-		{
+		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
 			let newprm = that.createNewBill.call(that);
@@ -2059,10 +2105,9 @@ function GetSale(global, vue, target_name, uni) {
 			price = that.float(price, 2);
 
 			//添加水吧商品  水吧商品的
-			if (that.clikSpItem.ynAddPro)
-			{
+			if (that.clikSpItem.ynAddPro) {
 				//水吧商品默认只加一个
-                pm_qty=1; 
+				pm_qty = 1;
 				that.clikSpItem.addlist.forEach(
 					item => {
 						item.Darr.forEach(
@@ -2083,7 +2128,7 @@ function GetSale(global, vue, target_name, uni) {
 									//就是这里售价要累加
 									price += that.float(drinkitem.QTY, 2) * that.float(new008.PRICE);
 								}
-								
+
 							}
 						)
 					}
@@ -2098,63 +2143,54 @@ function GetSale(global, vue, target_name, uni) {
 			new002.BARCODE = that.clikSpItem.SPID;
 			new002.PLID = that.clikSpItem.XPLID;
 			that.sale002.push(new002);
-			
+
 			that.log("[GetSp]添加了商品", new002);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
 		}
-		if( that.clikSpItem.ynAddPro)
-		{
+		if (that.clikSpItem.ynAddPro) {
 			//水吧商品不关闭 直接刷新
 			that.resetDrinkPro();
 			that.update();
-		}
-		else
-		{
-	    	that.SetManage("inputsp");
+		} else {
+			that.SetManage("inputsp");
 		}
 	}
 	//重置水吧商品的属性
-	this.resetDrinkPro =function()
-	{
-		if(  !that.clikSpItem.ynAddPro  )
-		{
-			 return ;
+	this.resetDrinkPro = function() {
+		if (!that.clikSpItem.ynAddPro) {
+			return;
 		}
-		that.clikSpItem.NEWPRICE =0  //每次添加后重置，新的水吧总价
-		that.clikSpItem.addlist.forEach
-		(
+		that.clikSpItem.NEWPRICE = 0 //每次添加后重置，新的水吧总价
+		that.clikSpItem.addlist.forEach(
 			item => {
 				item.Darr.forEach(
 					drinkitem => {
-						
-					    drinkitem.QTY = 0; //添加完产品后qty清零
-					    drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+
+						drinkitem.QTY = 0; //添加完产品后qty清零
+						drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
 					}
 				)
 			}
 		)
 
-		
+
 	}
-	
+
 	///计算最新的水吧累计金额
-	this.sumDrinkNewNet =function()
-	{
-		var price =0;
-		if(  !that.clikSpItem.ynAddPro  )
-		{
-			 return ;
+	this.sumDrinkNewNet = function() {
+		var price = 0;
+		if (!that.clikSpItem.ynAddPro) {
+			return;
 		}
 		that.clikSpItem.addlist.forEach(
 			item => {
 				item.Darr.forEach(
 					drinkitem => {
-						 console.log("显示一下售价"+drinkitem.SELECTED +"###" +drinkitem.CSTCODE);
-					   if (drinkitem.SELECTED == "X" && drinkitem.CSTCODE == '2') 
-						{
-							 var  itempprice = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
-							 console.log("显示一下售价"+itempprice)
+						console.log("显示一下售价" + drinkitem.SELECTED + "###" + drinkitem.CSTCODE);
+						if (drinkitem.SELECTED == "X" && drinkitem.CSTCODE == '2') {
+							var itempprice = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
+							console.log("显示一下售价" + itempprice)
 							//就是这里售价要累加
 							price += that.float(drinkitem.QTY) * that.float(itempprice);
 						}
@@ -2163,20 +2199,17 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		)
 		that.clikSpItem.NEWPRICE = price;
-		
+
 	}
-    ///清除水吧产品的所有选择
-    this.clearDrinkSx=function(pm_inx)
-	{
-		var maddr   =  that.clikSpItem.addlist[pm_inx].Darr;
-		maddr.forEach
-		  (
-			  drinkitem=>
-			  {
-					 drinkitem.QTY =0;//添加完产品后qty清零
-					 drinkitem.SELECTED = drinkitem.RECMARK;//回复为默认选项
-			  }
-		  )
+	///清除水吧产品的所有选择
+	this.clearDrinkSx = function(pm_inx) {
+		var maddr = that.clikSpItem.addlist[pm_inx].Darr;
+		maddr.forEach(
+			drinkitem => {
+				drinkitem.QTY = 0; //添加完产品后qty清零
+				drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+			}
+		)
 		that.sumDrinkNewNet();
 		that.update()
 	}
@@ -2196,13 +2229,14 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
 		if (pm_qty <= 0) {
-			this.sale002.splice(pm_row, 1);
+			
 			//删除水吧相关的产品 
 			for (var i = this.sale008.length - 1; i >= 0; i--) {
 				if (this.sale008[i].NO == this.sale002[pm_row].NO) {
 					this.sale008.splice(i, 1);
 				}
 			}
+			this.sale002.splice(pm_row, 1);
 		}
 		return true;
 	}
@@ -2227,7 +2261,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
-			await cx.Createcx(that.sale002);
+			await cx.Createcx(that.sale002,this.clickSaleType?.clickType);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
@@ -2249,8 +2283,8 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET, 2);
-		that.sale001.TNET = this.float(retx.NET, 2);
+		that.sale001.ZNET = this.float(retx.NET - retx.DISCRATE, 2);
+		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE , 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行

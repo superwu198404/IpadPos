@@ -29,39 +29,19 @@
 			onLoad: function() {
 				that = this;
 
-				let sale02_arr = [		
+				let sale02_arr = [
 					{
-						"SPID": "000000001090100415",
-						"SNAME": "爱恋草莓6号-仟吉",
-						"QTY": 1,
-						"OPRICE": 139,
+						"SPID": "000000001090100001",
+						"SNAME": "樱桃诱惑12号-仟吉",
+						"QTY": 2,
+						"OPRICE": 189,
 						"DISCRATE": 0,
-						"NET": 139,
-						"PRICE": 139,
+						"NET": 378,
+						"PRICE": 189,
 						"NO": 1
-					},
-					{
-						"SPID": "000000001070600008",
-						"SNAME": "(10盎司)芒果酸奶",
-						"QTY": 3,
-						"OPRICE": 15,
-						"DISCRATE": 0,
-						"NET":15,
-						"PRICE": 15,
-						"NO": 2
-					},
-					{
-					    "SPID": "000000001040200044",
-					    "SNAME": "奥利奥狂想罐",
-					    "QTY": 2,
-					    "OPRICE": 22.8,
-					    "DISCRATE": 0,
-					    "NET": 45.6,
-					    "PRICE": 22.8,
-					    "NO": 3
 					}
 					];
-				cxCount.Createcx(sale02_arr);
+				cxCount.Createcx(sale02_arr, "SaleYd");
 			},
 			CreateArr1: e => {
 				let arr = [],
