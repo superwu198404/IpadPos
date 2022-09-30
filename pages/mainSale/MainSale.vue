@@ -514,8 +514,9 @@
 			wmBluePrinter: function(order, datails, type, print) {
 				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
 			},
-			testPrinter: function() {
-				this.$refs.printerPage.testPrinter();
+			//预定打印小票
+			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
+				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
 			},
 			//商品总数量
 			TotalNum: function() {

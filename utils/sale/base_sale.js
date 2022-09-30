@@ -356,7 +356,22 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: function() {
-			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷
+			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷	
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+				item.balance = item.balance;
+			})
+			console.log("销售下单开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -495,6 +510,21 @@ var XsTypeObj = {
 			delete this.old_bill;
 		},
 		async $saleFinied(sales) {
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+				item.balance = item.balance;
+			})
+			console.log("销售下单开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -572,6 +602,23 @@ var XsTypeObj = {
 			})
 			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+		},
+		async $saleFinied(sales) {
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+				item.balance = item.balance;
+			})
+			console.log("销售下单开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
 		},
 	},
 	//赊销
