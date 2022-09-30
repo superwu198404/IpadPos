@@ -202,7 +202,7 @@
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput"
-				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001">
+				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001" :decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
 		<!-- 辅助促销 -->
@@ -329,7 +329,7 @@
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
 						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
-						<view class="li"><text>应收金额</text><text>￥{{mainSale.sale001.TNET}}</text></view>
+						<view class="li"><text>应收金额</text><text>￥{{ ReceivableAmount }}</text></view>
 					</view>
 					<!-- <view class="h5" v-if="mainSale.currentOperation.ynFzCx">
 						<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>
@@ -447,6 +447,9 @@
 				return util.callBind(this, function(spid) {
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
+			},
+			ReceivableAmount:function(){//mainSale.sale001.TNET
+				return (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0)
 			},
 			MemberInfo: function() {
 				console.log("[MemberInfo]会员信息:", this.mainSale.HY.val);

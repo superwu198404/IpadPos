@@ -131,7 +131,7 @@
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
-    "appid" : "__UNI__DBF626B",
+    "appid" : "__UNI__A6034C6",
     "name" : "com.zczy.ipadpos",
     "versionName" : "1.0.0.0",
     "description" : "ipad上运行的收银软件",

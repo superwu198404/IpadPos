@@ -129,6 +129,10 @@
 			sale: {
 				type: Object,
 				default: null
+			},
+			decoration:{
+				type:Boolean,
+				default: false
 			}
 		},
 		data() {
@@ -243,6 +247,7 @@
 			inputTHKH: e => {
 				console.log("[InputTHKH]门店数据:",that.THKHDATAS);
 				let str = e.detail.value;
+				let decoration = this.decoration;//判断是否包含裱花商品
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
@@ -288,9 +293,10 @@
 
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;
-				} else {
-					that.Order.DNET = 0;
-				}
+				} 
+				// else {
+				// 	that.Order.DNET = 0;
+				// }
 				if (that.Order.THTYPE == '0') { //自提
 					that.startTime = that.STIME;
 					that.endTime = that.ETIME;
@@ -338,6 +344,7 @@
 			},
 			//获取配送类型
 			getTHTYPE: async function() {
+				let decoration = this.decoration;//获取sale2是否存在裱花类别的信息
 				await common.GetDapzcs("THTYPE", res => {
 					console.log("[ReserveDrawer]提货类型数据：", res);
 					if (res.code && res.msg.length > 0) {
@@ -346,7 +353,7 @@
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
-						})
+						}).filter(i => decoration || (i.NAME !== '宅配到家'))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
 					}
 				})
