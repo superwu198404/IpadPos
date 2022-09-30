@@ -295,6 +295,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			console.log("[AsyncFuncArr]http请求:", res);
 			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
+			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
 			// console.log("[AsyncFuncArr]http返回值:", res);
 			hideloding();
 			if (res && !res.code) {
