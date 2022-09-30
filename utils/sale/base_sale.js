@@ -1390,7 +1390,7 @@ function GetSale(global, vue, target_name, uni) {
 				this.cval.DKFID = this.Defval;
 				that.setSaleTypeDefval("HY");
 				this.base.HY.cval = {};
-
+				//缓存默认一下
 				let store = util.getStorage("store");
 				store.DKFID = this.Defval;
 				store.DKFNAME = '默认大客户';
