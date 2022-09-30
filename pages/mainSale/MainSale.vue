@@ -11,7 +11,8 @@
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
-				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"></Head>
+				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
+					:_ynDKF="mainSale.currentOperation.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -156,7 +157,8 @@
 					</view>
 					<view class="price">
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
-						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						<text v-if="mainSale.clikSpItem.ynAddPro"
+							class="jiage zongjia">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
@@ -167,9 +169,10 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-						  <label class="shux"><text>×{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
-							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
-						  </label>
+							<label class="shux"><text>×{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+								<text v-for="(sx08, sxindex) in mainSale.sale008"
+									v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
+							</label>
 							<label><text>￥{{sp.PRICE}}</text>
 								<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
@@ -663,7 +666,8 @@
 		width: 50rpx;
 		height: 50rpx;
 	}
-	.zongjia{
+
+	.zongjia {
 		font-size: 28rpx;
 	}
 </style>

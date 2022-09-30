@@ -312,17 +312,18 @@ var CalProduct = function(curData, Product) {
 		arr.forEach(r2 => {
 			if (r2.ZKTYPE == 'ZD02') { //标准折扣
 				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
+				r.DISCRATE = parseFloat(r.BZDISC);
 			} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
 				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
+				r.DISCRATE = parseFloat(r.LSDISC);
 			} else { //特批折扣
 				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
+				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
+				r.DISCRATE = parseFloat(r.TPDISC);
 			}
-			r.NET = Number(parseFloat(r.$NET - r.DISCRATE).toFixed(2));
-			console.log(
-				"[CalProduct]Sale-Item:", r2);
+			console.log("[CalProduct]Sale-Item:", r2);
 		})
 	});
 	console.log("添加折扣后的商品数据：", Product);

@@ -1295,15 +1295,12 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			this.base.ComponentsManage["HY"] = false;
 			this.cval = newval;
-			if (this.cval) 
-			{
+			if (this.cval && Object.keys(this.cval).length > 0) {
 				//使用that
 				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
-			}
-			else
-			{
-				that.setSaleTypeDefval("DKF"); 
+			} else {
+				that.setSaleTypeDefval("DKF");
 			}
 			that.update();
 		}
@@ -1323,19 +1320,17 @@ function GetSale(global, vue, target_name, uni) {
 			*/
 			return this.cval;
 		},
-		set val(newval) 
-		{
+		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
-			if (!newval || Object.keys(newval).length == 0)
-			{
+			if (!newval || Object.keys(newval).length == 0) { //为空或者默认值
 				this.cval.DKFID = this.Defval;
+				that.setSaleTypeDefval("HY");
+				this.base.HY.cval = {};
 				return;
+			} else {
+				this.cval = newval;
+				that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
 			}
-			//使用that
-			//that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
-			that.setSaleTypeDefval("HY"); 
-			this.base.HY.cval={};
-			this.cval = newval;
 		}
 	}
 	this.DKF.base = this;
@@ -1347,19 +1342,15 @@ function GetSale(global, vue, target_name, uni) {
 		get val() {
 			return this.cval;
 		},
-		set val(newval) 
-		{
+		set val(newval) {
 			//赋值的时候进行计算
-			this.cval = newval;//判断有效值
-			if(newval)
-			{
-			   that.currentOperation.ynCx = false; //
-			   that.currentOperation.FZCX = false; //
-			}
-			else
-			{
-			    that.setSaleTypeDefval("ynCx"); 
-			    that.setSaleTypeDefval("FZCX"); 
+			this.cval = newval; //判断有效值
+			if (newval && Object.keys(newval).length > 0) {
+				that.currentOperation.ynCx = false; //
+				// that.currentOperation.FZCX = false; //
+			} else {
+				that.setSaleTypeDefval("ynCx");
+				// that.setSaleTypeDefval("FZCX");
 			}
 		}
 	};
@@ -1408,9 +1399,10 @@ function GetSale(global, vue, target_name, uni) {
 	///当出现一些互斥的操作的时候  恢复默认值的时候试用
 	this.setSaleTypeDefval = function(pm_key) {
 		if (this.current_type.operation.hasOwnProperty(pm_key)) {
-			this.ComponentsManage[pm_key] = this.current_type.operation[pm_key];
+			this.allOperation[pm_key] = this.current_type.operation[pm_key];
 		} else {
-			this.ComponentsManage[pm_key] = false;
+			// this.ComponentsManage[pm_key] = false;
+			this.allOperation[pm_key] = false;
 		}
 	}
 
@@ -2231,7 +2223,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
 		if (pm_qty <= 0) {
-			
+
 			//删除水吧相关的产品 
 			for (var i = this.sale008.length - 1; i >= 0; i--) {
 				if (this.sale008[i].NO == this.sale002[pm_row].NO) {
@@ -2269,7 +2261,7 @@ function GetSale(global, vue, target_name, uni) {
 				TCXDISC += r.CXDISC
 			});
 			this.sale001.TCXDISC = TCXDISC;
-			this.sale001.TDISC += TCXDISC;
+			this.sale001.TDISC = TCXDISC;
 			console.log("普通促销计算后的销售单:", this.sale001);
 		}
 		if (that.currentOperation.Disc) {
@@ -2286,7 +2278,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
 		that.sale001.ZNET = this.float(retx.NET - retx.DISCRATE, 2);
-		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE , 2);
+		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
