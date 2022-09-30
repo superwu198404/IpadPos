@@ -171,7 +171,7 @@ var loadSaleSP  =
 		
 	   console.log("##############################开始获取蛋糕主商品##############################")	   
      //蛋糕合并 2
-	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,dgxlda.plid XPLID,'01' SPJGZ,PLDA.SNAME plname," +
+	let drinksAddSql= " select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,'10901' XPLID,'01' SPJGZ,PLDA.SNAME plname," +
 	                  "  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 				    " from  dgxlda,plda where dgxlda.plid=plda.plid " +
 					" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
