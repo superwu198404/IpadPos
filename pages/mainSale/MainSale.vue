@@ -155,19 +155,23 @@
 						</label>
 					</view>
 					<view class="price">
-						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text><text v-if="mainSale.clikSpItem.ynAddPro" class="jiage">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text><text
+							v-if="mainSale.clikSpItem.ynAddPro"
+							class="jiage">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
 							<label>{{mainSale.clikSpItem.ynAddPro?1:mainSale.clikSpItem.inputQty}}</label>
-							<button @click="mainSale.chengedQty" data-qty="1"  :disabled="mainSale.clikSpItem.ynAddPro">+</button>
+							<button @click="mainSale.chengedQty" data-qty="1"
+								:disabled="mainSale.clikSpItem.ynAddPro">+</button>
 						</view>
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-						  <label><text>X{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
-							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
-						  </label>
+							<label><text>X{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+								<text v-for="(sx08, sxindex) in mainSale.sale008"
+									v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
+							</label>
 							<label><text>￥{{sp.PRICE}}</text>
 								<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
@@ -291,7 +295,8 @@
 									<text>折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
-									<text>单价￥{{Price(sp.SPID)}}/</text>
+									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
+									<text>单价￥{{sp.PRICE)}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -305,17 +310,18 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<text
-									v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
+								<!-- <text
+									v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
+								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
 								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
-									<text @click="mainSale.Calculate(sp,-1)">
+									<text @click="mainSale.Calculate(spinx,sp,-1)">
 										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
 									<label>{{sp.QTY}}</label>
-									<text @click="mainSale.Calculate(sp,1)">
+									<text @click="mainSale.Calculate(spinx,sp,1)">
 										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
