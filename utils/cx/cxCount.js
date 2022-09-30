@@ -275,13 +275,17 @@ const Cxdict = async () => {
 }
 
 //计算促销的方法
-const Createcx = async (sale02_arr) => {
-	console.log("Createcx计算促销传入的商品sale02_arr", sale02_arr)
+const Createcx = async (sale02_arr, xstype) => {
+	console.log("Createcx计算促销传入的商品sale02_arr", {xstype,sale02_arr})
 	//计算时无生效的促销，再次请求初始化一次
 	if (cxdict == null || cxdict.size <= 0) {
 		await Cxdict();
 	}
-
+    if(xstype == "sale"){
+		is_Xstype = "Sale";
+	}else{
+		is_Xstype = "SaleYd";
+	}
 	//清除计算过的集合
 	ClearResult();
 
