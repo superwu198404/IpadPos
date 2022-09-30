@@ -1755,7 +1755,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("提货门店:" + data.thkhid.toString());
+			jpPrinter.setText("提货门店:" + data.khName.toString()); //data.thkhid
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
