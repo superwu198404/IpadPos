@@ -306,7 +306,7 @@
 									</label>
 								</view>
 								<text
-									v-if="!mainSale.currentOperation.showEdit">总价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text>
+									v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
 								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">

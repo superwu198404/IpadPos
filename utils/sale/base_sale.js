@@ -1576,7 +1576,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
 		}
-		that.clikSpItem.NEWPRICE ="0"; //水吧显示新的总价
+		that.resetDrinkPro();
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
@@ -2083,8 +2083,7 @@ function GetSale(global, vue, target_name, uni) {
 									//就是这里售价要累加
 									price += that.float(drinkitem.QTY, 2) * that.float(new008.PRICE);
 								}
-								drinkitem.QTY = 0; //添加完产品后qty清零
-								drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+								
 							}
 						)
 					}
@@ -2099,7 +2098,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.BARCODE = that.clikSpItem.SPID;
 			new002.PLID = that.clikSpItem.plid;
 			that.sale002.push(new002);
-			that.clikSpItem.NEWPRICE ="0"  //每次添加后重置，新的水吧总价
+			
 			that.log("[GetSp]添加了商品", new002);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
@@ -2107,6 +2106,7 @@ function GetSale(global, vue, target_name, uni) {
 		if( that.clikSpItem.ynAddPro)
 		{
 			//水吧商品不关闭 直接刷新
+			that.resetDrinkPro();
 			that.update();
 		}
 		else
@@ -2114,11 +2114,35 @@ function GetSale(global, vue, target_name, uni) {
 	    	that.SetManage("inputsp");
 		}
 	}
+	//重置水吧商品的属性
+	this.resetDrinkPro =function()
+	{
+		if(  !that.clikSpItem.ynAddPro  )
+		{
+			 return ;
+		}
+		that.clikSpItem.NEWPRICE =0  //每次添加后重置，新的水吧总价
+		that.clikSpItem.addlist.forEach
+		(
+			item => {
+				item.Darr.forEach(
+					drinkitem => {
+						
+					    drinkitem.QTY = 0; //添加完产品后qty清零
+					    drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+					}
+				)
+			}
+		)
+
+		
+	}
+	
 	///计算最新的水吧累计金额
 	this.sumDrinkNewNet =function()
 	{
 		var price =0;
-		if(  that.clikSpItem.ynAddPro  )
+		if(  !that.clikSpItem.ynAddPro  )
 		{
 			 return ;
 		}
@@ -2126,9 +2150,11 @@ function GetSale(global, vue, target_name, uni) {
 			item => {
 				item.Darr.forEach(
 					drinkitem => {
+						 console.log("显示一下售价"+drinkitem.SELECTED +"###" +drinkitem.CSTCODE);
 					   if (drinkitem.SELECTED == "X" && drinkitem.CSTCODE == '2') 
 						{
 							 var  itempprice = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
+							 console.log("显示一下售价"+itempprice)
 							//就是这里售价要累加
 							price += that.float(drinkitem.QTY) * that.float(itempprice);
 						}
