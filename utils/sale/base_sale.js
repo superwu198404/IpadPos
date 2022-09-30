@@ -115,7 +115,7 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c=>c.fkid == item.FKID).name;
+				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 				item.balance = item.balance;
 			})
 			console.log("销售下单开始调用打印", {
@@ -220,7 +220,7 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c=>c.fkid == item.FKID).name;
+				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 				item.balance = item.balance;
 			})
 			console.log("销售退单开始调用打印", {
@@ -319,7 +319,7 @@ var XsTypeObj = {
 			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
-			this.ydsale001.BMID = this.ydsale001.BMID || "80000000";//默认
+			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
 			let sys_param = util.getStorage("sysParam");
 			console.log("[SaleFinishing]系统参数信息:", sys_param);
 			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
@@ -469,8 +469,8 @@ var XsTypeObj = {
 			// this.sale001.DNET = Number(this.sale001.ZNET) - 1; //测试支付金额为 1 元
 			console.log("[SaleReserve]定金:", this.sale001);
 			this.sale001.$total_amount = 0;
-			this.sale002.forEach(i => this.sale001.$total_amount+= (Number(i.NET) || 0));
-			console.log("[SaleReserve]预定提取整单金额为:",this.sale001.$total_amount);
+			this.sale002.forEach(i => this.sale001.$total_amount += (Number(i.NET) || 0));
+			console.log("[SaleReserve]预定提取整单金额为:", this.sale001.$total_amount);
 			if (this.sale001.DNET) {
 				console.log("[SaleReserve]生成预定支付信息...");
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -662,8 +662,18 @@ var XsTypeObj = {
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
 		operation: {
-			"sale": true,
+			"HY": false, //是否可以录入会员
+			"DKF": false, //是否可以打开录入大客户
+			"Disc": false, //是否可以打开录入折扣
+			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
+			"FZCX": false, //是否可以打开辅助促销组件
+			"ynCx": false, //是否进行可以进行促销
+			"ynSKDisc": false, //是否可以计算手工折扣
+			"ynEdit": false, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+
+			"sale": true,
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
@@ -1553,7 +1563,7 @@ function GetSale(global, vue, target_name, uni) {
 		let spindex = e.currentTarget.dataset.spindex;
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
-         that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
+		that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
 		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 0;
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
@@ -1583,7 +1593,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//选择水吧属性的操作
 	this.selectSxitem_Chenged = function(e) {
-		
+
 		that.log("进入事件：" + JSON.stringify(e.currentTarget.dataset));
 		let dinx = e.currentTarget.dataset.dinx;
 		let sxinx = e.currentTarget.dataset.sxinx;
@@ -2089,18 +2099,15 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		that.SetManage("inputsp");
 	}
-    ///清除水吧产品的所有选择
-    this.clearDrinkSx=function(pm_inx)
-	{
-		var maddr   =  that.clikSpItem.addlist[pm_inx].Darr;
-		maddr.forEach
-		  (
-			  drinkitem=>
-			  {
-					 drinkitem.QTY =0;//添加完产品后qty清零
-					 drinkitem.SELECTED = drinkitem.RECMARK;//回复为默认选项
-			  }
-		  )
+	///清除水吧产品的所有选择
+	this.clearDrinkSx = function(pm_inx) {
+		var maddr = that.clikSpItem.addlist[pm_inx].Darr;
+		maddr.forEach(
+			drinkitem => {
+				drinkitem.QTY = 0; //添加完产品后qty清零
+				drinkitem.SELECTED = drinkitem.RECMARK; //回复为默认选项
+			}
+		)
 		that.update()
 	}
 
@@ -2149,7 +2156,7 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		if (that.currentOperation.ynCx) {
-			console.log("[SaleNetAndDisc]促销前:",that.sale002);
+			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			await cx.Createcx(that.sale002);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
@@ -2161,7 +2168,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
-			console.log("[SaleNetAndDisc]促销后:",that.sale002);
+			console.log("[SaleNetAndDisc]促销后:", that.sale002);
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
