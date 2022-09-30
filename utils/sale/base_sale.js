@@ -2096,7 +2096,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.NET = that.float(pm_qty * price, 2);
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
-			new002.PLID = that.clikSpItem.plid;
+			new002.PLID = that.clikSpItem.XPLID;
 			that.sale002.push(new002);
 			
 			that.log("[GetSp]添加了商品", new002);
