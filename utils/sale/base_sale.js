@@ -2240,7 +2240,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
-			await cx.Createcx(that.sale002);
+			await cx.Createcx(that.sale002,this.clickSaleType?.clickType);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
