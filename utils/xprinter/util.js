@@ -450,6 +450,158 @@ const xsPrinterData = (sale1_obj, ggyContent, type) => {
 }
 
 /**
+ * 打印数据转换
+ * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
+ */
+const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) => {
+	var xsType = "YD";
+	switch (sale1_obj.XSTYPE) {
+		case "0": //外卖单接单
+			xsType = "WM";
+			break;
+		case "1": //销售
+			xsType = "XS";
+			break;
+		case "2": //退单
+			xsType = "TD";
+			break;
+		case "3": //预订
+			xsType = "YD";
+			break;
+		case "4": //预订取消
+			xsType = "YDQX";
+			break;
+		case "5": //预订提取
+			xsType = "YDTQ";
+			break;
+		case "6": //赊销
+			xsType = "SX";
+			break;
+		case "7": //赊销退单
+			xsType = "SXTD";
+			break;
+		case "8": //线上订单提取
+			xsType = "XSDD";
+			break;
+		case "9": //线上订单取消
+			xsType = "XSDDQX";
+			break;
+	}
+	var billType = sale1_obj.BILL_TYPE; //Z101
+	var bill = sale1_obj.BILL;
+	var xsBill = sale1_obj.XS_BILL;
+	var xsDate = sale1_obj.SALETIME;
+	var khName = getApp().globalData.store.NAME;
+	var khAddress = getApp().globalData.store.KHAddress;
+	var khPhone = getApp().globalData.store.PHONE;
+	var posId = snvl(sale1_obj.POSID,"");
+	var posUser = snvl(sale1_obj.RYID,"");
+	var lineNum = sale2_arr.length;
+	var totalQty = 0;
+	var payableAmount = sale1_obj.TNET;
+	var discountedAmount = sale1_obj.BILLDISC;
+	var originalAmount = sale1_obj.ZNET;
+	var cuid = snvl(sale1_obj.CUID,"");
+	var hdnet = 0;
+	var ggy = ggyContent;
+	//商品数据
+	var goodsList = [];
+	for (var i = 0; i < sale2_arr.length; i++) {
+		var sale2_printer = {
+			bill: sale2_arr[i].BILL, //主单号
+			saleDate: sale2_arr[i].SALEDATE,
+			saleTime: sale2_arr[i].SALETIME,
+			khid: sale2_arr[i].KHID,
+			posId: snvl(sale2_arr[i].POSID,""),
+			no: i,
+			plid: snvl(sale2_arr[i].PLID,""),
+			barCode: sale2_arr[i].BARCODE,
+			unit: sale2_arr[i].UNIT, //单位
+
+			spid: sale2_arr[i].SPID, //商品编码
+			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
+			qty: sale2_arr[i].QTY, //数量
+			price: sale2_arr[i].PRICE, //单价
+			amount: nnvl(sale2_arr[i].NET, 0), //金额
+			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
+		};
+		goodsList = goodsList.concat(sale2_printer);
+		totalQty += sale2_arr[i].QTY;
+	}
+
+	console.log("goodsList 转换后数据:", goodsList);
+
+	//支付数据
+	var sale3List = [];
+	for (var j = 0; j < sale3_arr.length; j++) {
+		var sale3_printer = {
+			bill: sale3_arr[j].BILL,
+			saleDate: sale3_arr[j].SALEDATE,
+			saleTime: sale3_arr[j].SALETIME,
+			khid: snvl(sale3_arr[j].KHID,""),
+			posId: snvl(sale3_arr[j].POSID,""),
+			no: sale3_arr[j].NO, //付款序号
+			fkid: sale3_arr[j].FKID, //付款类型id
+			amt: parseFloat(sale3_arr[j].AMT), //付款金额
+			id: sale3_arr[j].ID, //卡号或者券号
+			ryid: snvl(sale3_arr[j].RYID,""), //人员
+			disc: sale3_arr[j].DISC, //折扣金额
+			zklx: sale3_arr[j].ZKLX, //折扣类型
+			idType: sale3_arr[j].IDTYPE, //卡类型
+			fkName: snvl(sale3_arr[j].SNAME,""),
+			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+		};
+		sale3List = sale3List.concat(sale3_printer);
+	}
+
+	console.log("sale3List 转换后数据:", sale3List);
+	
+	var qknet = nnvl(originalAmount,0) - nnvl(payableAmount,0) - nnvl(discountedAmount,0);
+	var dnet = nnvl(ydsale001.DNET,0);
+	var custmname = snvl(ydsale001.CUSTMNAME,"");
+	var custmphone = snvl(ydsale001.CUSTMPHONE,"");
+	var thdate = snvl(ydsale001.THDATE,"");
+	var custmcomm = snvl(ydsale001.CUSTMCOMM,"");;
+	var thkhid = snvl(ydsale001.THKHID,"");;
+	var custmaddress = snvl(ydsale001.CUSTMADDRESS,"");
+
+	var printerInfo = {
+		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
+		billType,
+		bill, //单号
+		xsBill, //原单号
+		xsDate, //打印时间
+		khName, //门店名称
+		khAddress, //门店地址
+		khPhone, //门店电话
+		posId, //款台
+		posUser, //收银员
+		goodsList, //商品集合
+		lineNum, //条目
+		payableAmount, //应付金额
+		discountedAmount, //已优惠金额
+		originalAmount, //原金额
+		totalQty, //总数量
+		cuid, //会员编号
+		hdnet, //商家承担
+		sale3List, //支付信息
+		ggy, //广告语
+		
+		qknet,//欠款
+		dnet,//定金金额
+		custmname,//客户名称
+		custmphone,//客户电话
+		thdate,//要求提货日期
+		custmcomm,//客户要求
+		thkhid,//要求提货门店	
+		custmaddress,//送货地址
+	}
+	console.log("打印接收数据转换后 printerInfo:", printerInfo);
+
+	return printerInfo;
+}
+
+/**
  * 只显示后几位 *********** 0222
  * @param {value} 传入数据
  */
@@ -907,5 +1059,6 @@ module.exports = {
 	wmPrinterData: wmPrinterData,
 	xsPrinterData: xsPrinterData,
 	snvl: snvl,
-	nnvl: nnvl
+	nnvl: nnvl,
+	ydPrinterData: ydPrinterData
 };

@@ -362,6 +362,10 @@
 		},
 		watch: {
 			dPayAmount: function(n, o) {
+				console.log("[Watch-dPayAmount]待支付金额修改:", {
+					new: n,
+					old: o
+				});
 				if (this.isRefund) return; //如果为退款，直接退出
 				if (Object.is(NaN, Number(n))) { //判断输入的是否是数字
 					this.dPayAmount = o;
@@ -442,6 +446,13 @@
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
 					this.createOrders();
+				}
+			},
+			PayList: function(n, o) {
+				if (this.toBePaidPrice() === 0) {//判断如果待支付金额为 0 则返回上一个界面
+					this.CanBack = true;
+					console.log("[PayList-Watch]Payments：", this.PayList)
+					this.backPrevPage();
 				}
 			},
 			logs: function(n, o) {
@@ -1291,7 +1302,7 @@
 					console.log("[ParamInit]手动设置待支付金额:", this.sale1_obj.$total_amount);
 					if (this.sale1_obj.$total_amount !== undefined)
 						this.totalAmount = this.sale1_obj.$total_amount;
-					else{
+					else {
 						this.totalAmount = prev_page_param.sale1_obj.TNET
 					}
 					this.Discount = Number(prev_page_param.sale1_obj?.BILLDISC || "0").toFixed(2); //折扣信息
@@ -1310,9 +1321,11 @@
 					// this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
+				console.log("[ParamInit]待支付金额初始化前:", this.dPayAmount);
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
+				console.log("[ParamInit]待支付金额初始化后:", this.dPayAmount);
 				let store = uni.getStorageSync('store');
-				console.log("门店编码和名称（缓存）", store);
+				console.log("[ParamInit]门店编码和名称（缓存）", store);
 			},
 			//总金额计算 舍弃分的处理 ***已废弃***
 			PriceCount: function() {
