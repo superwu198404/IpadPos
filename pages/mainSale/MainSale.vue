@@ -296,7 +296,7 @@
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
-									<text>单价￥{{sp.PRICE)}}/</text>
+									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{sp.QTY}}</text>
 								</view>
 							</view>
@@ -310,10 +310,8 @@
 										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{sp.UNIT}}
 									</label>
 								</view>
-								<!-- <text
-									v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
+								<!-- <text v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
 								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
-								<!-- <text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text> -->
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
@@ -528,9 +526,9 @@
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
-			console.log("初始化的khid:", this.KHID);
-			console.log("初始化的DQID:", this.DQID);
-			console.log("初始化的KHZID:", this.KHZID);
+			// console.log("初始化的khid:", this.KHID);
+			// console.log("初始化的DQID:", this.DQID);
+			// console.log("初始化的KHZID:", this.KHZID);
 			let log = console.log;
 			console.log = () => {};
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);

@@ -1129,13 +1129,33 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*sale002商品详情页的加号和 减号
 	this.Calculate = function(index, item, type) {
-		let _qty = 0;
-		_qty = Number(item.QTY) + type;
-		if (item.QTY < 0) {
-			_qty = 0;
+		let obj = this.sale008.find(r => {
+			return r.NO == item.NO
+		});
+		if (obj && Object.keys(obj).length > 0) {
+			//说明是水吧商品
+			if (item.QTY >= 1 && type > 0) {
+				item.QTY = 1;
+				util.simpleMsg("水吧商品限定数量为1", "none");
+			} else if (item.QTY <= 0 && type < 0) {
+				item.QTY = 0;
+			} else {
+				item.QTY = Number(item.QTY) + type;
+			}
+		} else {
+			item.QTY = Number(item.QTY) + type;
+			if (item.QTY < 0) {
+				item.QTY = 0;
+			}
+
 		}
-		console.log("数量给变化", item);
-		this.updateSp(index, item.SPID, _qty);
+		// let _qty = 0;
+		// _qty = Number(item.QTY) + type;
+		// if (item.QTY < 0) {
+		// 	_qty = 0;
+		// }
+		console.log("商品数量变化:", item.QTY);
+		// this.updateSp(index, item.SPID, _qty);
 	}
 	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
@@ -1143,10 +1163,15 @@ function GetSale(global, vue, target_name, uni) {
 		this.update();
 
 		//筛选一下商品
-		let sale2 = this.sale002.filter(r => {
-			return r.QTY > 0;
-		})
-		this.sale002 = sale2;
+		// let sale2 = this.sale002.filter(r => {
+		// 	return r.QTY > 0;
+		// })
+		// this.sale002 = sale2;
+		for (var i = this.sale002.length - 1; i >= 0; i--) {
+			let item = this.sale002[i];
+			// console.log("当前商品行：", item);
+			this.updateSp(i, item.SPID, item.QTY);
+		}
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
 	})
@@ -2184,13 +2209,13 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
 		if (pm_qty <= 0) {
-			this.sale002.splice(pm_row, 1);
 			//删除水吧相关的产品 
 			for (var i = this.sale008.length - 1; i >= 0; i--) {
 				if (this.sale008[i].NO == this.sale002[pm_row].NO) {
 					this.sale008.splice(i, 1);
 				}
 			}
+			this.sale002.splice(pm_row, 1);
 		}
 		return true;
 	}
