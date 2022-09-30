@@ -320,7 +320,9 @@ var CalProduct = function(curData, Product) {
 				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
 				r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
 			}
-			console.log("[CalProduct]Sale-Item:", r2);
+			r.NET = Number(parseFloat(r.$NET - r.DISCRATE).toFixed(2));
+			console.log(
+				"[CalProduct]Sale-Item:", r2);
 		})
 	});
 	console.log("添加折扣后的商品数据：", Product);
@@ -448,7 +450,8 @@ var CalFZCX = function(fzcxArr, sale1) {
 				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
 				let cxnet = cxprice * Math.floor(syjsnet / Onexxnum);
 				//超出数量的价格计算
-				let synet = Number(parseFloat((qty - Math.floor(syjsnet / Onexxnum)) * price).toFixed(2));
+				let synet = Number(parseFloat((qty - Math.floor(syjsnet / Onexxnum)) * price)
+					.toFixed(2));
 				// addfzcxdtinfo(cxbill, spid, qty, price, cxprice, synet + cxnet, i);
 				let obj = {};
 				obj.cxbill = cxbill;
@@ -582,7 +585,8 @@ var ManualDiscount = function(sale1, sale2_arr) {
 	let curDis = 0;
 	sale2_arr.forEach(function(item, index, arr) {
 		if (!sale1.ROUND) return; //round 为 0 就不进行分摊
-		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(2));
+		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(
+			2));
 		console.log("[ManualDiscount]ManualDiscount:", high);
 		let SKYDISCOUNT = high;
 		curDis += high;

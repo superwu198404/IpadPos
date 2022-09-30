@@ -2119,6 +2119,8 @@ function GetSale(global, vue, target_name, uni) {
 			new002.PRICE = price;
 			new002.QTY = pm_qty;
 			new002.NET = that.float(pm_qty * price, 2);
+			// new002.$NET = that.float(pm_qty * price, 2);
+			// util.hidePropety(new002, '$NET');
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
 			new002.PLID = that.clikSpItem.XPLID;
@@ -2240,7 +2242,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
-			await cx.Createcx(that.sale002,this.clickSaleType?.clickType);
+			await cx.Createcx(that.sale002, this.clickSaleType?.clickType);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
