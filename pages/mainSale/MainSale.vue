@@ -155,8 +155,10 @@
 						</label>
 					</view>
 					<view class="price">
+						<view>
 						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
-						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia" style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+						</view>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
 								:disabled="mainSale.clikSpItem.ynAddPro">-</button>
@@ -665,7 +667,8 @@
 		width: 40rpx;
 		height: 40rpx;
 	}
-	.zongjia{
+	.price .zongjia{
 		font-size: 28rpx;
+		margin-left: 26rpx;
 	}
 </style>
