@@ -2209,6 +2209,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
 		if (pm_qty <= 0) {
+			
 			//删除水吧相关的产品 
 			for (var i = this.sale008.length - 1; i >= 0; i--) {
 				if (this.sale008[i].NO == this.sale002[pm_row].NO) {
