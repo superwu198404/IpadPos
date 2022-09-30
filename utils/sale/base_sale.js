@@ -246,7 +246,7 @@ var XsTypeObj = {
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
-			"ynFzCx": true, //是否可以辅助促销 预定不开启
+			"ynFzCx": false, //是否可以辅助促销 预定不开启
 			"ynCx": true, //是否进行可以进行促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynSKDisc": true, //是否可以计算手工折扣
@@ -371,7 +371,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -524,7 +524,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -618,7 +618,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3,this.ydsale001, "");
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
 		},
 	},
 	//赊销
@@ -1336,11 +1336,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类
 	this.selectPlid = "";
-	
-	this.Page.$watch('mainSale.sale002', util.callBind(this,function(n, o) {
+
+	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
-	
+
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
@@ -1390,6 +1390,11 @@ function GetSale(global, vue, target_name, uni) {
 				this.cval.DKFID = this.Defval;
 				that.setSaleTypeDefval("HY");
 				this.base.HY.cval = {};
+
+				let store = util.getStorage("store");
+				store.DKFID = this.Defval;
+				store.DKFNAME = '默认大客户';
+				util.setStorage(store);
 				return;
 			} else {
 				this.cval = newval;
@@ -2154,7 +2159,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 		}
-		console.log("[GetSp]是否存在添加商品:",find);
+		console.log("[GetSp]是否存在添加商品:", find);
 		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
