@@ -440,7 +440,9 @@ var CalFZCX = function(fzcxArr, sale1) {
 				obj.gsid = gsid;
 				sparr.push(addfzcxdtinfo(obj));
 				syjsnet = syjsnet - Onexxnum * qty;
-				yjnet += cxprice * qty;
+				let all1 = Number(parseFloat(cxprice * qty).toFixed(2))
+				yjnet = Number(parseFloat(yjnet + all1).toFixed(2));
+				console.log("进入了计算1：", cxprice + "，" + qty);
 			} else {
 				let cxprice = Number(parseFloat(price * (MJ_DISC1 / 100)).toFixed(2));
 				let cxnet = cxprice * Math.floor(syjsnet / Onexxnum);
@@ -459,7 +461,9 @@ var CalFZCX = function(fzcxArr, sale1) {
 				obj.gsid = gsid;
 				sparr.push(addfzcxdtinfo(obj));
 				syjsnet = syjsnet - Math.floor(syjsnet / Onexxnum) * Onexxnum;
-				yjnet += synet + cxnet;
+				let all = Number(parseFloat(synet + cxnet).toFixed(2))
+				yjnet = Number(parseFloat(yjnet + all).toFixed(2));
+				console.log("进入了计算2：", yjnet);
 			}
 		} else {
 			//进行单价计算
@@ -476,7 +480,9 @@ var CalFZCX = function(fzcxArr, sale1) {
 			obj.storeid = khid;
 			obj.gsid = gsid;
 			sparr.push(addfzcxdtinfo(obj));
-			yjnet += Number(parseFloat(price * qty).toFixed(2));
+			let all2 = Number(parseFloat(price * qty).toFixed(2));
+			yjnet = Number(parseFloat(yjnet + all2).toFixed(2));
+			console.log("进入了计算3：", price + "，" + qty);
 		}
 	})
 	// jsnet = yjnet;

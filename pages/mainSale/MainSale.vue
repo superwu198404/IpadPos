@@ -493,8 +493,8 @@
 		},
 		methods: {
 			onShow: function(e) {
-				let str = e.target.value;
-				console.log(this.sptiem.SNAME)
+				// let str = e.target.value;
+				// console.log(this.sptiem.SNAME)
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
@@ -512,24 +512,28 @@
 				this.$refs.printerPage.testPrinter();
 			},
 			//商品总数量
-						TotalNum: function() {
-							let total = 0;
-							// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
-							this.mainSale.sale002.map(r => {
-								total += r.QTY;
-							})
-							// }
-							return total;
-						}
+			TotalNum: function() {
+				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
+				this.mainSale.sale002.map(r => {
+					total += r.QTY;
+				})
+				// }
+				return total;
+			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
+			console.log("初始化的khid:", this.KHID);
+			console.log("初始化的DQID:", this.DQID);
+			console.log("初始化的KHZID:", this.KHZID);
 			let log = console.log;
 			console.log = () => {};
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
+			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);

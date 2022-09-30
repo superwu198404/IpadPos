@@ -42,7 +42,7 @@
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 					</label>
 					<label>
-						<button class="rijie" v-if="showSale" @click="ReturnSale()">返回销售</button>
+						<button class="rijie" v-if="showSale" @click="ReturnSale()">清空</button>
 					</label>
 				</view>
 				<!-- <view class="account" v-if="hyinfo">
