@@ -312,12 +312,12 @@
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 									<text @click="mainSale.Calculate(sp,-1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jian.png"
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
-									<label>{{sp.QTY}}</label>
+									<label style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
 									<text @click="mainSale.Calculate(sp,1)">
-										<image style="width: 50rpx; height: 50rpx;" src="@/images/dx-jia.png"
+										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
 								</view>
@@ -627,7 +627,7 @@
 	}
 
 	.prolist .bianji {
-		width: 220rpx;
+		width: 180rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -637,7 +637,8 @@
 		transform: translateY(-50%);
 	}
 
-	.bianji label {
+	.prolist .bianji label {
+		display: flex;
 		height: 50rpx;
 		line-height: 50rpx;
 		width: 160rpx;
@@ -650,7 +651,9 @@
 	}
 
 	.bianji text {
-		display: inline-block;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		font-size: 50rpx;
 		margin: 10rpx;
 		width: 50rpx;
@@ -659,8 +662,8 @@
 	}
 
 	.bianji image {
-		width: 50rpx;
-		height: 50rpx;
+		width: 40rpx;
+		height: 40rpx;
 	}
 	.zongjia{
 		font-size: 28rpx;
