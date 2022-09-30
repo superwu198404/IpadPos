@@ -302,30 +302,39 @@ var SortData = (type, data, pro) => {
 }
 //计算商品信息折扣信息
 var CalProduct = function(curData, Product) {
-	Product.forEach(r => {
-		let discArr = [],
-			discObj = {},
-			DiscNet = 0;
-		let arr = curData.filter(r1 => {
-			return r1.ZKSTR == r.SPJGZ
+	if (curData.length == 0) {
+		Product.forEach(r => {
+			r.BZDISC = 0;
+			r.LSDISC = 0;
+			r.TPDISC = 0;
+			r.DISCRATE = 0;
 		})
-		arr.forEach(r2 => {
-			if (r2.ZKTYPE == 'ZD02') { //标准折扣
-				r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
-				r.DISCRATE = parseFloat(r.BZDISC);
-			} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
-				r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
-				r.DISCRATE = parseFloat(r.LSDISC);
-			} else { //特批折扣
-				r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
-				// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
-				r.DISCRATE = parseFloat(r.TPDISC);
-			}
-			console.log("[CalProduct]Sale-Item:", r2);
-		})
-	});
+	} else {
+		Product.forEach(r => {
+			let discArr = [],
+				discObj = {},
+				DiscNet = 0;
+			let arr = curData.filter(r1 => {
+				return r1.ZKSTR == r.SPJGZ
+			})
+			arr.forEach(r2 => {
+				if (r2.ZKTYPE == 'ZD02') { //标准折扣
+					r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
+					r.DISCRATE = parseFloat(r.BZDISC);
+				} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
+					r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
+					r.DISCRATE = parseFloat(r.LSDISC);
+				} else { //特批折扣
+					r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
+					r.DISCRATE = parseFloat(r.TPDISC);
+				}
+				console.log("[CalProduct]Sale-Item:", r2);
+			})
+		});
+	}
 	console.log("添加折扣后的商品数据：", Product);
 	return Product;
 }
