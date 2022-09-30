@@ -166,7 +166,7 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-						  <label class="shux"><text>×{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+						  <label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
 							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
 						  </label>
 							<label><text>￥{{sp.PRICE}}</text>
