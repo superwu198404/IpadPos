@@ -325,13 +325,12 @@
 				console.log("打印格式记录结束");
 			},
 			//预定打印小票
-			ydBluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, ydsale001, type, print) {
+			ydBluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
 				//票据
 				var that = this;
 				//输出日志
 				console.log("预定打印接收数据 sale1_obj", sale1_obj);
 				console.log("预定打印接收数据 sale2_arr", sale2_arr);
-				console.log("预定打印控制参数 type", type);
 				console.log("预定打印接收数据 sale3_arr", sale3_arr);
 				console.log("预定打印接收数据 ydsale001", ydsale001);
 				//查询终端参数
