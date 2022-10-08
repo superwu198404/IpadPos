@@ -564,6 +564,7 @@
 							.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
+						AUTH: item.auth, //交易号
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
@@ -1168,7 +1169,8 @@
 								id_type: coupon?.type,
 								is_free: coupon?.yn_zq,
 								card_no: coupon?.no,
-								no: payload.no
+								no: payload.no,
+								auth: payload.transaction_id //交易号 用于多卡退款时的分组依据
 							}, result));
 							this.used_no.push(payload.no);
 							payload.no++;
