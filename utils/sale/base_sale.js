@@ -1448,13 +1448,14 @@ function GetSale(global, vue, target_name, uni) {
 
 	//检查sale002 是否包含裱花类型商品
 	this.CheckSale002ExistsDecoration = function() {
+		console.log("[CheckSale002ExistsDecoration]此时的sale2:",this.sale002);
 		let sys_param = util.getStorage("sysParam");
 		console.log("[CheckSale002ExistsDecoration]系统参数信息:", sys_param);
 		if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
 			let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
 			let exists_decoration = false;
 			this.sale002?.forEach(s2 => {
-				if (bh_support_id.find(id => id === s2.PLID)) exists_decoration = true;
+				if (bh_support_id.find(id => id === s2.PLID?.substr(0,3))) exists_decoration = true;
 			})
 			console.log("[CheckSale002ExistsDecoration]当前商品中是否包含裱花商品:", exists_decoration);
 			this.decoration = exists_decoration;

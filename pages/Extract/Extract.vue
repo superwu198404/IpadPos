@@ -191,7 +191,7 @@
 				})
 				_extract.getReserveOrderInfos({ //查到商品信息后传值
 					khid: this.KHID,
-					posid: this.POSID,
+					posid: item.POSID,
 					bill: item.BILL,
 					saledate: item.SALEDATE
 				}, util.callBind(this, function(res) {
