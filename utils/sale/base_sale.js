@@ -167,9 +167,9 @@ var XsTypeObj = {
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
 			console.log("[sale_return_good]SALES:", {
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
 			this.ShowStatement();
 		},
@@ -315,28 +315,6 @@ var XsTypeObj = {
 			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
 			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
-			let sys_param = util.getStorage("sysParam");
-			console.log("[SaleFinishing]系统参数信息:", sys_param);
-			if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
-				let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
-				console.log("[SaleFinishing]存在裱花参数!", bh_support_id);
-				this.sale002.forEach(util.callBind(this, function(s2) {
-					if (bh_support_id.find(id => id === s2.PLID)) {
-						console.log("[SaleFinishing]裱花维护商品:", s2);
-						let ywbhqh = Object.cover(new sale.ywbhqh(), s2);
-						ywbhqh.BILL_YD = result.sale1_obj.BILL;
-						ywbhqh.BILL = this.getBill();
-						ywbhqh.GSID_BH = this.GSID; //测试数据 *勿删
-						ywbhqh.KHID_BH = this.Storeid; //测试数据 *勿删
-						ywbhqh.DATE_DH = this.getDate(); //测试数据 *勿删
-						ywbhqh.DHSJD = '0'; //测试数据 *勿删
-						ywbhqh.ID_RY_LR = '01100040'; //测试数据 *勿删
-						ywbhqh.DATE_LR = this.getDate(); //测试数据 *勿删
-						// this.ywbhqh.push(ywbhqh);
-					}
-				}))
-				console.log("[SaleFinishing]YWBHQH列表:", this.ywbhqh);
-			}
 			if (result.sale1_obj.DNET !== 0) { //定金为 0
 				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
 				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
@@ -422,7 +400,7 @@ var XsTypeObj = {
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
+			}, common.actTypeEnum.Refund);
 			this.ShowStatement();
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
@@ -496,10 +474,14 @@ var XsTypeObj = {
 		},
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预定生成中...", this.sale003);
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this
-				.raw_order || []); //删除 $beforeFk 中生成的 zg03 的信息
+			let reserve_amount = 0; //预定金额
+			this.sale003.filter(i => i.FKID !== 'ZG03')?.forEach(s3 => reserve_amount += s3.AMT);
+			console.log("[SaleFinishing]预定金额为:", reserve_amount);
+			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
+			this.sale001.TNET = reserve_amount;//把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
+			// this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order || []); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
@@ -582,9 +564,11 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定取消旧单更新:", this.old_bill);
 			console.log("[SaleFinishing]预定取消获取的CurrentType:", this.current_type);
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='3', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			this.sale001.XSTYPE = this.current_type.xstype;
+			this.sale001.TNET = this.sale001.DNET;
+			this.sale001.ZNET = this.sale001.DNET;
 			this.sale001.TLINE = this.sale002.length || 0;
 			this.sale002.forEach(i => {
 				i.QTY = Math.abs(Number(i.QTY) || 0);
@@ -1165,6 +1149,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[Redirect]模式信息:", menu_info);
 		this.$initSale(menu_info, info.params);
 		this.SetManage('sale');
+		console.log("[Redirect]菜单切换完毕,更新data信息...");
+		this.update();
 	})
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
@@ -1442,14 +1428,14 @@ function GetSale(global, vue, target_name, uni) {
 
 	//检查sale002 是否包含裱花类型商品
 	this.CheckSale002ExistsDecoration = function() {
-		console.log("[CheckSale002ExistsDecoration]此时的sale2:",this.sale002);
+		console.log("[CheckSale002ExistsDecoration]此时的sale2:", this.sale002);
 		let sys_param = util.getStorage("sysParam");
 		console.log("[CheckSale002ExistsDecoration]系统参数信息:", sys_param);
 		if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
 			let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
 			let exists_decoration = false;
 			this.sale002?.forEach(s2 => {
-				if (bh_support_id.find(id => id === s2.PLID?.substr(0,3))) exists_decoration = true;
+				if (bh_support_id.find(id => id === s2.PLID?.substr(0, 3))) exists_decoration = true;
 			})
 			console.log("[CheckSale002ExistsDecoration]当前商品中是否包含裱花商品:", exists_decoration);
 			this.decoration = exists_decoration;
@@ -1867,7 +1853,11 @@ function GetSale(global, vue, target_name, uni) {
 			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
-			this.$saleFinied(result.data);
+			try{
+				this.$saleFinied(result.data);
+			} catch(e){
+				console.log("[SaleFinied]执行异常:",e);
+			}
 		} else {
 			util.simpleMsg(result.msg, true);
 		}
@@ -2357,7 +2347,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET - retx.DISCRATE, 2);
+		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
@@ -2515,7 +2505,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_sqlite = [];
 		this.SetDefaultType();
 		that.update()
-		console.log("清空后的：", this.sale001);
+		console.log("[ResetSaleBill]清空后的：", this.sale001);
 	})
 
 	//打印的方法

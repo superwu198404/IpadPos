@@ -961,6 +961,12 @@
 						let refundInfo = groups[refundInfo.group][0];//获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
 						current_refund_exists_only_code = true;
 					}
+					if(['ZG03'].indexOf(refundInfo.fkid) !== -1){//如果是预定金直接跳过
+						refundInfo.fail = false;
+						if(current_refund_exists_only_code){//是否带唯一码
+							groups[refundInfo.group].forEach(g => g.fail = false);
+						}
+					}
 					if (payWayType) {
 						if (!isRetry) {//开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 							refundInfo.fail = false;

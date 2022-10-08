@@ -348,7 +348,7 @@ const Createcx = async (sale02_arr, xstype) => {
 		//单个商品折扣后的单价
 		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].PRICE, 0));
 
-		sale02_arr[i].NET = Math.round((ProPrice * ProNum - cxdiscvalue) * 100) / 100;
+		// sale02_arr[i].NET = Math.round((ProPrice * ProNum - cxdiscvalue) * 100) / 100;
 		sale02_arr[i].QTY = ProNum;
 		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum) * 100) / 100;
 		sale02_arr[i].SPJF = jfnum;
