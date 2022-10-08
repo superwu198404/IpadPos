@@ -155,27 +155,22 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
-			// console.log("[sale_return_good]SALE001:", params.sale1);
-			// console.log("[sale_return_good]SALE002:", params.sale2);
-			// console.log("[sale_return_good]SALE003:", params.sale3);
-			// this.sale001 = params.sale1 ?? {};
-			// this.sale002 = params.sale2 ?? {};
-			// this.sale003 = params.sale3 ?? {};
-			// console.log("[sale_return_good]退款初始化：");
+			console.log("[sale_return_good]params:", params);
 			this.currentOperation["ynFzCx"] = false; //退款不允许辅助促销
 			this.ComponentsManage.FZCX = false;
-
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_return_good]SALE001:", this.sale001);
-			console.log("[sale_return_good]SALE002:", this.sale002);
-			console.log("[sale_return_good]SALE003:", this.sale003);
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			console.log("[sale_return_good]SALES:", {
+				sale1:this.sale001,
+				sale2:this.sale002,
+				sale3:this.sale003
+			});
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -1127,7 +1122,6 @@ function GetSale(global, vue, target_name, uni) {
 			})
 		}
 	})
-
 	//*func*会员登录关闭回调
 	this.CloseMember = util.callBind(this, function(member_info) {
 		this.setComponentsManage(null, "HY");
@@ -1448,13 +1442,14 @@ function GetSale(global, vue, target_name, uni) {
 
 	//检查sale002 是否包含裱花类型商品
 	this.CheckSale002ExistsDecoration = function() {
+		console.log("[CheckSale002ExistsDecoration]此时的sale2:",this.sale002);
 		let sys_param = util.getStorage("sysParam");
 		console.log("[CheckSale002ExistsDecoration]系统参数信息:", sys_param);
 		if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
 			let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
 			let exists_decoration = false;
 			this.sale002?.forEach(s2 => {
-				if (bh_support_id.find(id => id === s2.PLID)) exists_decoration = true;
+				if (bh_support_id.find(id => id === s2.PLID?.substr(0,3))) exists_decoration = true;
 			})
 			console.log("[CheckSale002ExistsDecoration]当前商品中是否包含裱花商品:", exists_decoration);
 			this.decoration = exists_decoration;

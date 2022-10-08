@@ -449,7 +449,7 @@
 				}
 			},
 			PayList: function(n, o) {
-				if (this.toBePaidPrice() === 0) {//判断如果待支付金额为 0 则返回上一个界面
+				if (this.toBePaidPrice() === 0) { //判断如果待支付金额为 0 则返回上一个界面
 					this.CanBack = true;
 					console.log("[PayList-Watch]Payments：", this.PayList)
 					this.backPrevPage();
@@ -479,11 +479,22 @@
 					if (this.prev_no === null) {
 						this.prev_no = that.PayList.length;
 						return that.PayList.length;
-					} else
-					if (this.used_no.indexOf(this.prev_no) !== -1)
-						return ++this.prev_no;
-					else
-						return this.prev_no;
+					} 
+					else{
+						if (this.used_no.indexOf(this.prev_no) !== -1){//如果序号已被使用
+							let index = 20;//最大循环数20次
+							while(index>0){//循环判断当前单号递增是否还存在，如果存在继续递增
+								if(this.used_no.indexOf(this.prev_no) !== -1)
+									++this.prev_no;
+								else //如果单号找不到了那么就跳出
+									break;
+								index--;
+							}
+							return this.prev_no;
+						}
+						else
+							return this.prev_no;
+					}
 				}).bind(this))();
 				return;
 				//单号防止重处理（暂不启用）
@@ -1146,6 +1157,8 @@
 								card_no: coupon?.no,
 								no: payload.no
 							}, result));
+							this.used_no.push(payload.no);
+							payload.no++;
 						}).bind(this));
 					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
