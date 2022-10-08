@@ -1785,7 +1785,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
-		if (!this.currentOperation[pm_type]) { //排除清空按钮的影响
+		if (!this.currentOperation[pm_type]) {
 			this.myAlert("请完成当前模式再进行切换！");
 			return;
 		}
