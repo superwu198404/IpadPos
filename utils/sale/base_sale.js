@@ -116,10 +116,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				try{
+				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
-				}catch(e){
+				} catch (e) {
 					item.SNAME = "";
 				}
 			})
@@ -149,7 +149,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
-			"sale": true, //可以跳转到销售模式
+			// "sale": true, //可以跳转到销售模式 此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
@@ -227,10 +227,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				try{
+				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
-				}catch(e){
+				} catch (e) {
 					item.SNAME = "";
 				}
 			})
@@ -353,10 +353,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				try{
+				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
-				}catch(e){
+				} catch (e) {
 					item.SNAME = "";
 				}
 			})
@@ -393,7 +393,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xz-ydtq.png"),
 		icon_close: require("@/images/wxz-ydtq.png"),
 		operation: {
-			"sale": true,
+			// "sale": true, //此模式禁止跳转到销售
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
@@ -498,7 +498,7 @@ var XsTypeObj = {
 			this.sale003.filter(i => i.FKID !== 'ZG03')?.forEach(s3 => reserve_amount += s3.AMT);
 			console.log("[SaleFinishing]预定金额为:", reserve_amount);
 			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
-			this.sale001.TNET = reserve_amount;//把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
+			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
 			// this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order || []); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
@@ -514,10 +514,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				try{
+				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
-				}catch(e){
+				} catch (e) {
 					item.SNAME = "";
 				}
 			})
@@ -541,7 +541,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/ydqx.png"),
 		icon_close: require("@/images/ydqx-wxz.png"),
 		operation: {
-			"sale": true,
+			// "sale": true,//此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
@@ -614,10 +614,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				try{
+				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
-				}catch(e){
+				} catch (e) {
 					item.SNAME = "";
 				}
 			})
@@ -1785,7 +1785,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
-		if (!this.currentOperation[pm_type]) {
+		if (!this.currentOperation[pm_type]) { //排除清空按钮的影响
 			this.myAlert("请完成当前模式再进行切换！");
 			return;
 		}
@@ -1892,10 +1892,10 @@ function GetSale(global, vue, target_name, uni) {
 			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
-			try{
+			try {
 				this.$saleFinied(result.data);
-			} catch(e){
-				console.log("[SaleFinied]执行异常:",e);
+			} catch (e) {
+				console.log("[SaleFinied]执行异常:", e);
 			}
 		} else {
 			util.simpleMsg(result.msg, true);
@@ -2391,7 +2391,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET, 2);
+		that.sale001.ZNET = this.float(retx.NET, 2); //原价
 		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);

@@ -75,10 +75,10 @@
 							<image src="@/images/xgmima.png" mode="widthFix"></image>
 							<text>修改密码</text>
 						</view>
-						<view class="exit" @click="Back()">
+						<!-- <view class="exit" @click="Back()">
 							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
 							<text>返回上级</text>
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>
