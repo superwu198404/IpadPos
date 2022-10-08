@@ -19,6 +19,7 @@ import {
 } from '@/bll/Common/bll.js'
 import common from '@/api/common.js';
 import saleClass from '@/utils/sale/saleClass.js';
+import hy_query from '@/api/hy/hy_query.js';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -115,8 +116,12 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-				item.balance = item.balance;
+				try{
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				}catch(e){
+					item.SNAME = "";
+				}
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -215,8 +220,12 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-				item.balance = item.balance;
+				try{
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				}catch(e){
+					item.SNAME = "";
+				}
 			})
 			console.log("销售退单开始调用打印", {
 				arr2,
@@ -337,8 +346,12 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-				item.balance = item.balance;
+				try{
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				}catch(e){
+					item.SNAME = "";
+				}
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -494,8 +507,12 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-				item.balance = item.balance;
+				try{
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				}catch(e){
+					item.SNAME = "";
+				}
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -590,8 +607,12 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
-				item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-				item.balance = item.balance;
+				try{
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				}catch(e){
+					item.SNAME = "";
+				}
 			})
 			console.log("销售下单开始调用打印", {
 				arr2,
@@ -1209,6 +1230,16 @@ function GetSale(global, vue, target_name, uni) {
 			let item = this.sale002[i];
 			// console.log("当前商品行：", item);
 			this.updateSp(i, item.SPID, item.QTY);
+		}
+		if (this.sale002.length == 0) {
+			//防止编辑时直接清空了商品数量 则之前计算的归0 处理
+			that.sale001.ZNET = 0;
+			that.sale001.TNET = 0;
+			that.sale001.BILLDISC = 0;
+			that.sale001.TLINE = 0; //这个是存商品行
+			this.sale001.TCXDISC = 0;
+			this.sale001.TDISC = 0;
+			return;
 		}
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
@@ -2325,7 +2356,8 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
-			await cx.Createcx(that.sale002, this.clickSaleType?.clickType);
+			//调用促销计算
+			await cx.Createcx(that.sale002, this.clickSaleType?.clickType, hy_query.hyinfoModel);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC

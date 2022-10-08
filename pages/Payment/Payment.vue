@@ -1176,7 +1176,7 @@
 								is_free: coupon?.yn_zq,
 								card_no: coupon?.no,
 								no: payload.no,
-								auth: payload.transaction_id //交易号 用于多卡退款时的分组依据
+								auth: result.transaction_id //交易号 用于多卡退款时的分组依据
 							}, result));
 							this.used_no.push(payload.no);
 							payload.no++;

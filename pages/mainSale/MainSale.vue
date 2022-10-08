@@ -334,7 +334,7 @@
 					</view>
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
+						<view class="li"><text>件数</text><text>{{TotalNum}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{ ReceivableAmount }}</text></view>
 					</view>
@@ -512,6 +512,16 @@
 			},
 			MenuName: function() {
 				return this.mainSale?.current_type?.clickType ?? ""
+			},
+			//商品总数量
+			TotalNum: function() {
+				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
+				this.mainSale.sale002.map(r => {
+					total += r.QTY;
+				})
+				// }
+				return total;
 			}
 		},
 		methods: {
@@ -535,16 +545,6 @@
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
 				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
 			},
-			//商品总数量
-			TotalNum: function() {
-				let total = 0;
-				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
-				this.mainSale.sale002.map(r => {
-					total += r.QTY;
-				})
-				// }
-				return total;
-			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
