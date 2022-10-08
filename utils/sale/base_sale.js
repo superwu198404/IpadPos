@@ -171,6 +171,13 @@ var XsTypeObj = {
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
+			//给全局会员对象赋值
+			if (this.sale001.CUID) {
+				let obj = {
+					hyId: this.sale001.CUID
+				};
+				this.HY.val = obj;
+			}
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -1824,6 +1831,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (this.sale001.CUID) {
 				this.HY.cval = {};
 				this.HY.cval.hyId = this.sale001.CUID;
+				console.log("反写会员信息成功：", this.HY.cval.hyId);
 			}
 			console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
 			//如果允许辅助促销
@@ -2164,6 +2172,10 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 		}
+		if (pm_qty <= 0) {
+			util.simpleMsg("商品数量错误", true);
+			return;
+		}
 		console.log("[GetSp]是否存在添加商品:", find);
 		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
@@ -2367,7 +2379,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET - retx.DISCRATE, 2);
+		that.sale001.ZNET = this.float(retx.NET, 2);
 		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
@@ -2441,7 +2453,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.XSTYPE = this.xsType //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
-		this.sale001.CUID = this.HY.cval.hyId; //写会员编码
+		this.sale001.CUID = this.HY.cval.hyId; //如果sale1无hyid则写会员对象的hyid
 		console.log("[BeforeFk]sale001：", this.sale001);
 		//写大客户
 		//code...

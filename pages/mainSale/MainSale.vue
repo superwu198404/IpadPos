@@ -296,12 +296,12 @@
 							<view class="h3">
 								<label>
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
-									<text>折扣￥{{sp.DISCRATE}}</text>
+									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
-									<text>单价￥{{sp.PRICE}}/</text>
-									<text><em>×</em>{{sp.QTY}}</text>
+									<text>单价￥{{mainSale.actType=='Payment'?sp.PRICE:-sp.PRICE}}/</text>
+									<text><em>×</em>{{mainSale.actType=='Payment'?sp.QTY:-sp.QTY}}</text>
 								</view>
 							</view>
 							<view class="cods">
@@ -315,7 +315,8 @@
 									</label>
 								</view>
 								<!-- <text v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
-								<text v-if="!mainSale.currentOperation.showEdit">总价￥{{sp.NET}}</text>
+								<text
+									v-if="!mainSale.currentOperation.showEdit">总价￥{{mainSale.actType=='Payment'?sp.NET:-sp.NET}}</text>
 								<!-- 数量编辑 -->
 								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
@@ -333,10 +334,17 @@
 						</view>
 					</view>
 					<view class="ul">
-						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{TotalNum}}</text></view>
-						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
-						<view class="li"><text>应收金额</text><text>￥{{ ReceivableAmount }}</text></view>
+						<view class="li">
+							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.ZNET}}</text>
+						</view>
+						<view class="li"><text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
+						</view>
+						<view class="li">
+							<text>总折扣</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
+						</view>
+						<view class="li">
+							<text>应收金额</text><text>￥{{ mainSale.actType=='Payment'?ReceivableAmount:-ReceivableAmount }}</text>
+						</view>
 					</view>
 					<!-- <view class="h5" v-if="mainSale.currentOperation.ynFzCx">
 						<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>

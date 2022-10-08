@@ -953,26 +953,40 @@
 				})
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
+					console.log("refundInfo.fail", refundInfo);
+
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
-					let current_refund_exists_only_code = false;//当前退款是否包含唯一码
+					let current_refund_exists_only_code = false; //当前退款是否包含唯一码
 					console.log("[Refund]退款fkid:", refundInfo.fkid)
 					console.log("[Refund]退款payWayType:", payWayType)
+					console.log("refundInfo.group:", refundInfo.group);
+					console.log("groups:", groups);
+					let total = 0;
 					if (refundInfo.group) { //判断当前支付是否包含唯一码
-						let refundInfo = groups[refundInfo.group][0];//获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
+						refundInfo = groups[refundInfo.group][0]; //获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
+						groups[refundInfo.group].map(r => {
+							total += Number(r.amount); //聚合多卡支付的总金额
+						})
+						// refundInfo.amount = total.toFixed(2);
+						total = total.toFixed(2);
+						console.log("refundInfo:", refundInfo);
 						current_refund_exists_only_code = true;
 					}
+					if (!refundInfo.fail && refundInfo.refunding) {
+						return;
+					}
 					if (payWayType) {
-						if (!isRetry) {//开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+						if (!isRetry) { //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 							refundInfo.fail = false;
-						} 
+						}
 						refundInfo.refunding = true; //标记为正在退款的状态
 						let res = _pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
 								out_refund_no: refund_no + `_${index}`, //退款单号
-								refund_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
-									0), //退款金额
-								total_money: (Math.abs(Number(refundInfo.amount) * 100)).toFixed(
-									0), //退款总金额（兼容微信）
+								refund_money: (Math.abs(Number(total || refundInfo.amount) * 100))
+									.toFixed(0), //退款金额
+								total_money: (Math.abs(Number(total || refundInfo.amount) * 100))
+									.toFixed(0), //退款总金额（兼容微信）
 								point: refundInfo.origin.BMID //兼容积分抵现返还积分
 							}, (function(err) { //如果发生异常（catch）
 								// util.simpleMsg(err.msg, true, err);
@@ -989,10 +1003,12 @@
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 									refundInfo.fail = true;
 									refundInfo.msg = ress[1].msg; //错误提示信息记录
-								} else{
+								} else {
 									refundInfo.fail = false;
-									if(current_refund_exists_only_code){//是否带唯一码
+									if (current_refund_exists_only_code) { //是否带唯一码
 										groups[refundInfo.group].forEach(g => g.fail = false);
+										console.log("groups[refundInfo.group]", groups[refundInfo
+											.group]);
 									}
 								}
 							}).bind(that));
