@@ -304,8 +304,8 @@
 					that.startTime = dateformat.getDateByParam('h') + ":" + dateformat.getDateByParam('m');
 					that.endTime = "19:00";
 				}
-				console.log("开始时间：", that.startTime);
-				console.log("开始时间1：", that.endTime);
+				console.log("[RefreshData]开始时间：", that.startTime);
+				console.log("[RefreshData]结束时间：", that.endTime);
 			},
 			//弹出预定信息录入框
 			showReserve: function() {

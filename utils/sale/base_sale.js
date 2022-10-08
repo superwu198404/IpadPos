@@ -155,27 +155,22 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
-			// console.log("[sale_return_good]SALE001:", params.sale1);
-			// console.log("[sale_return_good]SALE002:", params.sale2);
-			// console.log("[sale_return_good]SALE003:", params.sale3);
-			// this.sale001 = params.sale1 ?? {};
-			// this.sale002 = params.sale2 ?? {};
-			// this.sale003 = params.sale3 ?? {};
-			// console.log("[sale_return_good]退款初始化：");
+			console.log("[sale_return_good]params:", params);
 			this.currentOperation["ynFzCx"] = false; //退款不允许辅助促销
 			this.ComponentsManage.FZCX = false;
-
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-			console.log("[sale_return_good]SALE001:", this.sale001);
-			console.log("[sale_return_good]SALE002:", this.sale002);
-			console.log("[sale_return_good]SALE003:", this.sale003);
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			console.log("[sale_return_good]SALES:", {
+				sale1:this.sale001,
+				sale2:this.sale002,
+				sale3:this.sale003
+			});
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -1127,7 +1122,6 @@ function GetSale(global, vue, target_name, uni) {
 			})
 		}
 	})
-
 	//*func*会员登录关闭回调
 	this.CloseMember = util.callBind(this, function(member_info) {
 		this.setComponentsManage(null, "HY");
