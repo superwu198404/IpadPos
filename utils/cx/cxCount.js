@@ -275,10 +275,11 @@ const Cxdict = async () => {
 }
 
 //计算促销的方法
-const Createcx = async (sale02_arr, xstype) => {
+const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	console.log("Createcx计算促销传入的商品sale02_arr", {
 		xstype,
-		sale02_arr
+		sale02_arr,
+		hyinfoModel
 	})
 	//计算时无生效的促销，再次请求初始化一次
 	if (cxdict == null || cxdict.size <= 0) {
@@ -1333,7 +1334,7 @@ const setHyjfUpleve = function(num) {
 	if (jfinfo.upleve == 0) {
 		jfinfo.upleve = num;
 	}
-	//每次去最小的积分上限
+	//每次取最小的积分上限
 	if (num < jfinfo.upleve) {
 		jfinfo.upleve = num;
 	}

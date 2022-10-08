@@ -972,6 +972,12 @@
 						console.log("refundInfo:", refundInfo);
 						current_refund_exists_only_code = true;
 					}
+					if(['ZG03'].indexOf(refundInfo.fkid) !== -1){//如果是预定金直接跳过
+						refundInfo.fail = false;
+						if(current_refund_exists_only_code){//是否带唯一码
+							groups[refundInfo.group].forEach(g => g.fail = false);
+						}
+					}
 					if (!refundInfo.fail && refundInfo.refunding) {
 						return;
 					}

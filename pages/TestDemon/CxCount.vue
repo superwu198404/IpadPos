@@ -16,6 +16,7 @@
 </template>
 <script>
 	import cxCount from '@/utils/cx/cxCount.js';
+	import hy_query from '@/api/hy/hy_query.js';
 	var app = getApp();
 	var that;
 
@@ -41,7 +42,7 @@
 						"NO": 1
 					}
 					];
-				cxCount.Createcx(sale02_arr, "SaleYd");
+				cxCount.Createcx(sale02_arr, "SaleYd",hy_query.hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],

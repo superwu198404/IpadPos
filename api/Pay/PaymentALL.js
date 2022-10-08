@@ -461,6 +461,7 @@ import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
+		// util.getStorage("hyinfo")
 		member.PointsDeduction("积分抵现中...", {
 			brand: getApp().globalData?.brand,
 			data: {

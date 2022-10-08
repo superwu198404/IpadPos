@@ -464,7 +464,20 @@
 				})
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET
-				return (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0)
+				// return (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0)
+				console.log("[ReceivableAmount]待支付金额计算...");
+				var amount = 0;
+				if(this.mainSale.current_type.clickType === 'sale_reserve_extract'){
+					let complet_ammount = 0; //已经完成的定金
+					this.mainSale?.sale003.forEach(s3 => complet_ammount +=s3.AMT);
+					amount = (this.mainSale?.sale001?.TNET || 0) - complet_ammount
+				}
+				else if(this.mainSale.current_type.clickType === 'sale_reserve_cancel'){
+					amount = this.mainSale?.sale001?.DNET;
+				}
+				else
+					amount = (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0);
+				return amount?.toFixed(2);
 			},
 			MemberInfo: function() {
 				console.log("[MemberInfo]会员信息:", this.mainSale.HY.val);
