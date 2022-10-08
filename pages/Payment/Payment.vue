@@ -293,7 +293,7 @@
 				},
 				PaymentInfos: { //从上个页面传来的支付信息
 					PayList: [],
-					PayedAmount: 0, //已经完成支付的金额，主要针对从上个页面传入的订单数据的总和（解耦金额计算逻辑）
+					PayedAmount: 0 //已经完成支付的金额，主要针对从上个页面传入的订单数据的总和
 				},
 				CashOffset: {
 					Score: 1, //抵现的积分数
@@ -432,7 +432,7 @@
 					this.domForceRefresh();
 					this.allowInput = true;
 				} else if (n === "HyJfExchange") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
-					this.dPayAmount = this.CashOffset.Money;
+					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
 				} else {
 					this.dPayAmount = this.toBePaidPrice();
@@ -479,20 +479,18 @@
 					if (this.prev_no === null) {
 						this.prev_no = that.PayList.length;
 						return that.PayList.length;
-					} 
-					else{
-						if (this.used_no.indexOf(this.prev_no) !== -1){//如果序号已被使用
-							let index = 20;//最大循环数20次
-							while(index>0){//循环判断当前单号递增是否还存在，如果存在继续递增
-								if(this.used_no.indexOf(this.prev_no) !== -1)
+					} else {
+						if (this.used_no.indexOf(this.prev_no) !== -1) { //如果序号已被使用
+							let index = 20; //最大循环数20次
+							while (index > 0) { //循环判断当前单号递增是否还存在，如果存在继续递增
+								if (this.used_no.indexOf(this.prev_no) !== -1)
 									++this.prev_no;
 								else //如果单号找不到了那么就跳出
 									break;
 								index--;
 							}
 							return this.prev_no;
-						}
-						else
+						} else
 							return this.prev_no;
 					}
 				}).bind(this))();
@@ -913,6 +911,7 @@
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
 							amount: Number(i.AMT).toFixed(2),
 							no: i.NO,
+							group: i.AUTH,
 							fail: true, //def初始和退款失败的皆为true
 							refund_num: 0, //退款（尝试）次数
 							refunding: false, //是否在正在退款中
@@ -946,15 +945,25 @@
 					this.backPrevPage();
 					return;
 				}
-				console.log("RefundList-Before:", this.RefundList);
+				let groups = util.group(this.RefundList, 'group'); //根据 group 分组，auth为空的会被分到 null 中
+				let only_code = Object.keys(groups)?.filter(k => k !== 'null'); //排除掉不包含唯一码的数据
+				only_code.forEach(k => {
+					groups[k].sort((a, b) => Number(a.no) - Number(b.no));
+				})
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
+					let current_refund_exists_only_code = false;//当前退款是否包含唯一码
 					console.log("[Refund]退款fkid:", refundInfo.fkid)
 					console.log("[Refund]退款payWayType:", payWayType)
+					if (refundInfo.group) { //判断当前支付是否包含唯一码
+						let refundInfo = groups[refundInfo.group][0];//获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
+						current_refund_exists_only_code = true;
+					}
 					if (payWayType) {
-						if (!isRetry) refundInfo.fail =
-							false; //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+						if (!isRetry) {//开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+							refundInfo.fail = false;
+						} 
 						refundInfo.refunding = true; //标记为正在退款的状态
 						let res = _pay.RefundAll(payWayType, {
 								out_trade_no: refundInfo.bill, //单号
@@ -979,8 +988,12 @@
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 									refundInfo.fail = true;
 									refundInfo.msg = ress[1].msg; //错误提示信息记录
-								} else
+								} else{
 									refundInfo.fail = false;
+									if(current_refund_exists_only_code){//是否带唯一码
+										groups[refundInfo.group].forEach(g => g.fail = false);
+									}
+								}
 							}).bind(that));
 						promises.push(res)
 					} else {
