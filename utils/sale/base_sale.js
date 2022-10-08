@@ -167,9 +167,9 @@ var XsTypeObj = {
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
 			console.log("[sale_return_good]SALES:", {
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
 			this.ShowStatement();
 		},
@@ -1224,6 +1224,16 @@ function GetSale(global, vue, target_name, uni) {
 			// console.log("当前商品行：", item);
 			this.updateSp(i, item.SPID, item.QTY);
 		}
+		if (this.sale002.length == 0) {
+			//防止编辑时直接清空了商品数量 则之前计算的归0 处理
+			that.sale001.ZNET = 0;
+			that.sale001.TNET = 0;
+			that.sale001.BILLDISC = 0;
+			that.sale001.TLINE = 0; //这个是存商品行
+			this.sale001.TCXDISC = 0;
+			this.sale001.TDISC = 0;
+			return;
+		}
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
 	})
@@ -1442,14 +1452,14 @@ function GetSale(global, vue, target_name, uni) {
 
 	//检查sale002 是否包含裱花类型商品
 	this.CheckSale002ExistsDecoration = function() {
-		console.log("[CheckSale002ExistsDecoration]此时的sale2:",this.sale002);
+		console.log("[CheckSale002ExistsDecoration]此时的sale2:", this.sale002);
 		let sys_param = util.getStorage("sysParam");
 		console.log("[CheckSale002ExistsDecoration]系统参数信息:", sys_param);
 		if (sys_param && (Object.keys(sys_param).length > 0)) { //判断裱花参数是否存在
 			let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
 			let exists_decoration = false;
 			this.sale002?.forEach(s2 => {
-				if (bh_support_id.find(id => id === s2.PLID?.substr(0,3))) exists_decoration = true;
+				if (bh_support_id.find(id => id === s2.PLID?.substr(0, 3))) exists_decoration = true;
 			})
 			console.log("[CheckSale002ExistsDecoration]当前商品中是否包含裱花商品:", exists_decoration);
 			this.decoration = exists_decoration;

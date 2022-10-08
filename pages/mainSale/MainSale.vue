@@ -157,8 +157,9 @@
 					</view>
 					<view class="price">
 						<view>
-						<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
-						<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia" style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+							<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
+							<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia"
+								style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
 						</view>
 						<view>
 							<button @click="mainSale.chengedQty" data-qty="-1"
@@ -170,9 +171,10 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-						  <label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
-							  <text v-for="(sx08, sxindex) in mainSale.sale008" v-if="sp.NO==sx08.NO" >[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
-						  </label>
+							<label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+								<text v-for="(sx08, sxindex) in mainSale.sale008"
+									v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
+							</label>
 							<label><text>￥{{sp.PRICE}}</text>
 								<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
@@ -205,7 +207,8 @@
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput"
-				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001" :decoration="mainSale.decoration">
+				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
+				:decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
 		<!-- 辅助促销 -->
@@ -319,7 +322,8 @@
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
-									<label style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
+									<label
+										style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
 									<text @click="mainSale.Calculate(spinx,sp,1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
 											mode="widthFix"></image>
@@ -330,7 +334,7 @@
 					</view>
 					<view class="ul">
 						<view class="li"><text>总金额</text><text>{{mainSale.sale001.ZNET}}</text></view>
-						<view class="li"><text>件数</text><text>{{mainSale.sale001.TLINE}}</text></view>
+						<view class="li"><text>件数</text><text>{{TotalNum}}</text></view>
 						<view class="li"><text>总折扣</text><text>-￥{{mainSale.sale001.BILLDISC}}</text></view>
 						<view class="li"><text>应收金额</text><text>￥{{ ReceivableAmount }}</text></view>
 					</view>
@@ -451,7 +455,7 @@
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
 			},
-			ReceivableAmount:function(){//mainSale.sale001.TNET
+			ReceivableAmount: function() { //mainSale.sale001.TNET
 				return (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0)
 			},
 			MemberInfo: function() {
@@ -495,6 +499,16 @@
 			},
 			MenuName: function() {
 				return this.mainSale?.current_type?.clickType ?? ""
+			},
+			//商品总数量
+			TotalNum: function() {
+				let total = 0;
+				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
+				this.mainSale.sale002.map(r => {
+					total += r.QTY;
+				})
+				// }
+				return total;
 			}
 		},
 		methods: {
@@ -518,16 +532,6 @@
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
 				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
 			},
-			//商品总数量
-			TotalNum: function() {
-				let total = 0;
-				// if (this.mainSale.currentOperation.showEdit) { //完成后再计算
-				this.mainSale.sale002.map(r => {
-					total += r.QTY;
-				})
-				// }
-				return total;
-			}
 		},
 		created() {
 			console.log("[MainSale]开始构造函数!");
@@ -673,7 +677,8 @@
 		width: 40rpx;
 		height: 40rpx;
 	}
-	.price .zongjia{
+
+	.price .zongjia {
 		font-size: 28rpx;
 		margin-left: 26rpx;
 	}
