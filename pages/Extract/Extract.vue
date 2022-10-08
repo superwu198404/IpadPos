@@ -190,7 +190,7 @@
 					}
 				})
 				_extract.getReserveOrderInfos({ //查到商品信息后传值
-					khid: this.KHID,
+					khid: item.KHID,
 					posid: item.POSID,
 					bill: item.BILL,
 					saledate: item.SALEDATE
