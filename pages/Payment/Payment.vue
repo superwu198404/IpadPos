@@ -479,20 +479,18 @@
 					if (this.prev_no === null) {
 						this.prev_no = that.PayList.length;
 						return that.PayList.length;
-					} 
-					else{
-						if (this.used_no.indexOf(this.prev_no) !== -1){//如果序号已被使用
-							let index = 20;//最大循环数20次
-							while(index>0){//循环判断当前单号递增是否还存在，如果存在继续递增
-								if(this.used_no.indexOf(this.prev_no) !== -1)
+					} else {
+						if (this.used_no.indexOf(this.prev_no) !== -1) { //如果序号已被使用
+							let index = 20; //最大循环数20次
+							while (index > 0) { //循环判断当前单号递增是否还存在，如果存在继续递增
+								if (this.used_no.indexOf(this.prev_no) !== -1)
 									++this.prev_no;
 								else //如果单号找不到了那么就跳出
 									break;
 								index--;
 							}
 							return this.prev_no;
-						}
-						else
+						} else
 							return this.prev_no;
 					}
 				}).bind(this))();
@@ -566,6 +564,7 @@
 							.disc, //折扣金额(卡消费后要记录)
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
+						AUTH: item.auth, //交易号
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
@@ -1155,7 +1154,8 @@
 								id_type: coupon?.type,
 								is_free: coupon?.yn_zq,
 								card_no: coupon?.no,
-								no: payload.no
+								no: payload.no,
+								auth: payload.transaction_id //交易号 用于多卡退款时的分组依据
 							}, result));
 							this.used_no.push(payload.no);
 							payload.no++;
