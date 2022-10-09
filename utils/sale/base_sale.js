@@ -841,9 +841,9 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Payment;
 			this.old_bill = params.sale1.BILL;
-			this.createNewBill();
 			console.log("[sale_online_order_extract]线上订单sale信息:", params);
-			Object.cover(this.sale001, Object.cover(params.sale1, this.sale001));
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale001.DNET = this.sale001.TNET;//线上订单的 DNET 为下单时候的付款金额
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
@@ -854,6 +854,7 @@ var XsTypeObj = {
 				let new_s3 = Object.cover(new sale.sale003(), s3)
 				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
 				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
+				new_s3.FKID = 'ZG03';
 				return new_s3
 			});
 			this.reserve_param = params.reserve_params;
@@ -862,7 +863,9 @@ var XsTypeObj = {
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
+			}, common.actTypeEnum.Refund);
+			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
+			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
 			this.ShowStatement();
 			for (let s3 of this.sale003) {
 				this.payed.push(Sale3ModelAdditional(Sale3Model({

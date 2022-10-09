@@ -206,7 +206,7 @@
 		</view>
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput"
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="true"
 				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
@@ -464,10 +464,9 @@
 				})
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET
-				// return (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0)
-				console.log("[ReceivableAmount]待支付金额计算...");
+				console.log("[ReceivableAmount]待支付金额计算...",this.mainSale.current_type);
 				var amount = 0;
-				if(this.mainSale.current_type.clickType === 'sale_reserve_extract'){
+				if(this.mainSale.current_type.clickType === 'sale_reserve'){
 					let complet_ammount = 0; //已经完成的定金
 					this.mainSale?.sale003.forEach(s3 => complet_ammount +=s3.AMT);
 					amount = (this.mainSale?.sale001?.TNET || 0) - complet_ammount

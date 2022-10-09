@@ -193,7 +193,8 @@
 					khid: item.KHID,
 					posid: item.POSID,
 					bill: item.BILL,
-					saledate: item.SALEDATE
+					saledate: item.SALEDATE,
+					cancel: !this.mode //true 为提取，false 为取消
 				}, util.callBind(this, function(res) {
 					if (res.code) {
 						let sales = JSON.parse(res.data),
