@@ -488,11 +488,11 @@ var XsTypeObj = {
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false //定金显示为成功
 				}));
-				console.log("[SaleReserve]生成预定支付信息成功!",{
-					sale1:this.sale001,
-					sale2:this.sale002,
-					sale3:this.sale003,
-					payed:this.payed
+				console.log("[SaleReserve]生成预定支付信息成功!", {
+					sale1: this.sale001,
+					sale2: this.sale002,
+					sale3: this.sale003,
+					payed: this.payed
 				});
 			}
 			this.PayParamAssemble();
@@ -652,7 +652,7 @@ var XsTypeObj = {
 			"ynEdit": true, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
 
-			"sale": true,
+			// "sale": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -743,7 +743,7 @@ var XsTypeObj = {
 			"ynEdit": false, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
 
-			"sale": true,
+			// "sale": true,
 			"sale_credit_return_good": true
 		},
 		$initSale: function(params) {
@@ -849,8 +849,8 @@ var XsTypeObj = {
 			console.log("[sale_online_order_extract]线上订单sale信息:", params);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
-			this.sale001.ZNET = this.sale001.TNET;//线上订单的 ZNET 为下单时候的付款金额
-			this.sale001.BILLDISC = 0.0;//线上订单的 DNET 为下单时候的付款金额
+			this.sale001.ZNET = this.sale001.TNET; //线上订单的 ZNET 为下单时候的付款金额
+			this.sale001.BILLDISC = 0.0; //线上订单的 DNET 为下单时候的付款金额
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
@@ -1073,6 +1073,10 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
+		if (!this.currentOperation.Disc) {
+			util.simpleMsg("当前模式禁止选择折扣", "none");
+			return;
+		}
 		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
 		console.log("传入折扣的大客户数据：", this.DKF.val.DKFID);
 		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKFID); //传入大客户值
@@ -1086,14 +1090,14 @@ function GetSale(global, vue, target_name, uni) {
 		if (data == "NO") { //清除折扣
 			this.Disc.val = {};
 			//如果未选择 折扣类型 则说明可以进行促销操作 反之
-			this.currentOperation["Disc"] = false;
+			// this.currentOperation["Disc"] = false;
 			// this.currentOperation["ynFzCx"] = true;
-			this.currentOperation["ynCx"] = true;
+			// this.currentOperation["ynCx"] = true;
 		} else {
 			this.Disc.val.ZKType = data;
-			this.currentOperation["Disc"] = true;
+			// this.currentOperation["Disc"] = true;
 			// this.currentOperation["ynFzCx"] = false;
-			this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
+			// this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
 		}
 		//切换折扣或者促销后 清空一下原来计算的折扣值
 		this.sale001.BZDISC = 0; //zk
@@ -1509,9 +1513,11 @@ function GetSale(global, vue, target_name, uni) {
 		//筛选字母的列表
 	}
 
-	///当出现一些互斥的操作的时候  恢复默认值的时候试用
+	///当出现一些互斥的操作的时候  恢复默认值的时候使用
 	this.setSaleTypeDefval = function(pm_key) {
 		if (this.current_type.operation.hasOwnProperty(pm_key)) {
+			let pm = this.current_type.operation[pm_key];
+			console.log("当前权限：", pm);
 			this.allOperation[pm_key] = this.current_type.operation[pm_key];
 		} else {
 			// this.ComponentsManage[pm_key] = false;
@@ -1907,9 +1913,10 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
-			// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
-			// this.communication_for_oracle.push(cxfsSqlArr);
-			console.log("追加了促销发售的sql:", this.communication_for_oracle);
+			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
+			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
+			console.log("追加了辅助促销发售的sql:", this.communication_for_oracle);
+
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
 				SALE002: this.sale002,

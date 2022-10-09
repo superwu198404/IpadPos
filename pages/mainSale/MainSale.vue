@@ -339,7 +339,8 @@
 					</view>
 					<view class="ul">
 						<view class="li">
-							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.ZNET}}</text>
+							<!-- 支付展示整单金额 退款展示实付金额 -->
+							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.TNET}}</text>
 						</view>
 						<view class="li"><text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>

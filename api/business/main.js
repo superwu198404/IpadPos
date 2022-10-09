@@ -626,6 +626,7 @@ var ManualDiscount = function(sale1, sale2_arr) {
 		item.NET = Number((item.NET - SKYDISCOUNT).toFixed(2));
 		item.PRICE = Number((item.NET / item.QTY).toFixed(2));
 		item.DISCRATE = Number((item.DISCRATE + SKYDISCOUNT).toFixed(2));
+		item.CXDISC = Number((item.CXDISC + SKYDISCOUNT).toFixed(2));
 		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
 		item.DISC = Number(Number(Number(item.DISC) + SKYDISCOUNT).toFixed(2));
 	});
