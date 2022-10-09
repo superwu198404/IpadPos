@@ -46,7 +46,7 @@ export const Refund = async function(source,bill_type) {
  * @param {*} obj 
  * @param {*} props 
  */
-const BatchInverse = function(obj, props) {
+export const BatchInverse = function(obj, props) {
 	props.forEach((prop) => {
 		obj[prop] = util.inverseNumber(obj[prop])?.toFixed(2);
 	})
