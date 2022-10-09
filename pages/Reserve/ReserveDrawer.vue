@@ -26,7 +26,7 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange" :start="LimitTime">
+					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
 					</picker>
 					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -291,13 +291,13 @@
 				if (this.over48) {
 					let current_datetime = new Date(new Date().setHours(56));
 					date = current_datetime.toLocaleDateString().replaceAll('/', '-');
-					time = current_datetime.toTimeString().split(" ")[0];
+					// time = current_datetime.toTimeString().split(" ")[0];
 					console.log("[RefreshData]时间:",{
 						date,
 						time
 					});
 					this.LimitDate = date;
-					this.LimitTime = time;
+					// this.LimitTime = time;
 				} else {
 					if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
 						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一

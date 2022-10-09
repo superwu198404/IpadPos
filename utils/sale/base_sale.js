@@ -491,11 +491,11 @@ var XsTypeObj = {
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false //定金显示为成功
 				}));
-				console.log("[SaleReserve]生成预定支付信息成功!",{
-					sale1:this.sale001,
-					sale2:this.sale002,
-					sale3:this.sale003,
-					payed:this.payed
+				console.log("[SaleReserve]生成预定支付信息成功!", {
+					sale1: this.sale001,
+					sale2: this.sale002,
+					sale3: this.sale003,
+					payed: this.payed
 				});
 			}
 			this.PayParamAssemble();
@@ -507,7 +507,8 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定金额为:", reserve_amount);
 			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order || []); //删除 $beforeFk 中生成的 zg03 的信息
+			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order ||
+		[]); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
@@ -851,9 +852,6 @@ var XsTypeObj = {
 			this.old_bill = params.sale1.BILL;
 			console.log("[sale_online_order_extract]线上订单sale信息:", params);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
-			this.sale001.ZNET = this.sale001.TNET;//线上订单的 ZNET 为下单时候的付款金额
-			this.sale001.BILLDISC = 0.0;//线上订单的 DNET 为下单时候的付款金额
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
@@ -912,6 +910,16 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function(result) { //生成yd
+			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
+			this.sale001.ZNET = this.sale001.TNET; //线上订单的 ZNET 为下单时候的付款金额
+			this.sale001.BILLDISC = 0; 
+			this.sale001.TCXDISC = 0; 
+			this.sale001.TDISC = 0;
+			this.sale002.forEach(i => {
+				i.DISCRATE = 0;
+				i.DISC = 0;
+				i.CXDISC = 0;
+			});
 			console.log("[SaleFinishing]线上提取生成中...", this.sale003);
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
@@ -2416,7 +2424,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			//调用促销计算
 			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
-			this.CheckOver48Hours(response?.cxfs);//检查是否包含 hylv=3-48 的数据
+			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
@@ -2454,14 +2462,14 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("计算过促销和折扣后的商品002：", that.sale002);
 		//this.update();
 	}
-	
-	this.CheckOver48Hours = function(list){
-		if(list){
+
+	this.CheckOver48Hours = function(list) {
+		if (list) {
 			let over48 = list?.find(i => i.HYLV === '3-48');
-			if(over48) this.over48 = true;
+			if (over48) this.over48 = true;
 			else this.over48 = false;
-			console.log("[CheckOver48Hours]HYLV为3-48的信息判断结果:",this.over48);
-		}else
+			console.log("[CheckOver48Hours]HYLV为3-48的信息判断结果:", this.over48);
+		} else
 			console.warn("[CheckOver48Hours]list值无效!");
 	}
 
