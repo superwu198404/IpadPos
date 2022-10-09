@@ -32,14 +32,14 @@
 
 				let sale02_arr = [
 					{
-						"SPID": "000000001090100001",
-						"SNAME": "樱桃诱惑12号-仟吉",
-						"QTY": 2,
-						"OPRICE": 189,
-						"DISCRATE": 0,
-						"NET": 378,
-						"PRICE": 189,
-						"NO": 1
+					    "SPID": "000000001040200044",
+					    "SNAME": "奥利奥狂想罐",
+					    "QTY": 2,
+					    "OPRICE": 22.8,
+					    "DISCRATE": 0,
+					    "NET": 45.6,
+					    "PRICE": 22.8,
+					    "NO": 3
 					}
 					];
 				cxCount.Createcx(sale02_arr, "SaleYd",hy_query.hyinfoModel);

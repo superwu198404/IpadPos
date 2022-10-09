@@ -87,7 +87,7 @@
 								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.GetTSZKData">
-								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
+								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
 							<!-- <view class="a-z" @click="SignIn()">
 								<span class="mini-text">签到</span>
@@ -98,6 +98,10 @@
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
+								<view class="statnum">
+									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+									<text>3</text>
+								</view>
 							</view>
 						</view>
 						<view class="toproof">
