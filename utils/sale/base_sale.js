@@ -1817,6 +1817,9 @@ function GetSale(global, vue, target_name, uni) {
 	 */
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
+		// this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
+		// console.log("分摊后的商品信息：", this.sale002);
+		// return;
 		if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 			util.simpleMsg(result.msg, !result.code);
 			//清除一下辅助促销 以及辅助促销产生的折扣数据 
