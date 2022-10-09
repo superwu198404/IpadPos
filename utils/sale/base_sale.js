@@ -488,7 +488,12 @@ var XsTypeObj = {
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false //定金显示为成功
 				}));
-				console.log("[SaleReserve]生成预定支付信息成功!");
+				console.log("[SaleReserve]生成预定支付信息成功!",{
+					sale1:this.sale001,
+					sale2:this.sale002,
+					sale3:this.sale003,
+					payed:this.payed
+				});
 			}
 			this.PayParamAssemble();
 		},
@@ -844,6 +849,8 @@ var XsTypeObj = {
 			console.log("[sale_online_order_extract]线上订单sale信息:", params);
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale001.DNET = this.sale001.TNET;//线上订单的 DNET 为下单时候的付款金额
+			this.sale001.ZNET = this.sale001.TNET;//线上订单的 ZNET 为下单时候的付款金额
+			this.sale001.BILLDISC = 0.0;//线上订单的 DNET 为下单时候的付款金额
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
@@ -2375,7 +2382,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			//调用促销计算
-			await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
+			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
