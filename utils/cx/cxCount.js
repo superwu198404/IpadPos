@@ -49,6 +49,8 @@ let oprice = "OPRICE";
 let disc = "DISC";
 //积分
 let jfnum = "jfnum";
+//销售方式
+let hylv = "HYLV";
 //保存已经发生的促销
 let fsdcx = new Array();
 
@@ -132,6 +134,7 @@ const Cxdict = async () => {
 			C1.cxtype = YNJSLB;
 			C1.upleave = cxjfup;
 			C1.OneSp = false;
+			C1.HYLV = cx_util.snvl(dscxm[i].HYLV, 0);
 
 			try {
 				let typeArr = CxSaleStr.split('-');
@@ -290,6 +293,11 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	} else {
 		is_Xstype = "SaleYd";
 	}
+	
+	//会员信息判断
+	if(hyinfoModel != null){
+		hymen = hyinfoModel;
+	}
 	//清除计算过的集合
 	ClearResult();
 
@@ -319,6 +327,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		let spnet = Math.round((parseFloat(sale02_arr[i].OPRICE) * parseFloat(sale02_arr[i].QTY)) * 100) / 100;
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
+		let hylv = cx_util.nnvl(cxbilldts[i].HYLV, -1);
 		if (cxdiscvalue >= 0) {
 			if (spnet - cxdiscvalue < 0) {
 				cxdiscvalue = spnet;
@@ -355,6 +364,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		sale02_arr[i].SPJF = jfnum;
 		sale02_arr[i].CXZT = cxztStr;
 		sale02_arr[i].CXBILL = cxbillStr;
+		sale02_arr[i].HYLV = hylv;
 	}
 	if (cxfsdt != null && cxfsdt.length > 0) {
 		//修改其中的SPID编码，通过行数
@@ -390,6 +400,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.DISC = 0;
 				dr.CXZT = "";
 				dr.jfnum = 0;
+				dr.HYLV = -1;
 				dr.zdcxbill = zdcxsubno;
 				cxbilldts.push(dr);
 			} else {
@@ -405,6 +416,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.DISC = 0;
 				dr.CXZT = "";
 				dr.jfnum = 0;
+				dr.HYLV = -1;
 				if (spdt.length > 0) {
 					for (let i = 0; i < spdt.length; i++) {
 						let bill = cx_util.snvl(spdt[i].BILL, "");
@@ -460,7 +472,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 		let cxbilldData = cxbilldts[col];
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
-		for (let k = 8; k < cxbilldDataKeys.length; k++) {
+		for (let k = 9; k < cxbilldDataKeys.length; k++) {
 			//console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
 			//console.log("cxbilldDataKeys cxbill", cxbill)
@@ -744,6 +756,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				cxbilldts[i][fscs] = fsqty;
 				//促销主题
 				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
 			}
 			let fsnet = new Map();
 			fsnet.set(subx.subno, Fsnet);
@@ -840,6 +853,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				cxbilldts[i][fscs] = fsqty;
 				//促销主题
 				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
 			}
 
 			let fsnet = new Map();
@@ -977,6 +991,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			cxbilldts[i][fscs] = fsqty;
 			//促销主题
 			cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+			cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
 		}
 		//console.log("FreeZhCx cxbilldts 111",cxbilldts)
 		SubCxQty(spid, bill, saledate, pmList, cx, Fsnet, 0, Lcm);
