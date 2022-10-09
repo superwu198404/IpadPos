@@ -16,7 +16,7 @@
 				<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 						:disabled="!YN_YDTH" />
 					<view class="thmd">
-					<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
+						<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 					</view>
 				</label>
 				<label><text>*配送方式：</text>
@@ -26,7 +26,7 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange">
+					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange" :start="LimitTime">
 						<view>{{Order.TH_TIME}}</view>
 					</picker>
 					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -41,7 +41,7 @@
 				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
 				<label><text>*提货日期：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="date" fields="day" @change="dateChange">
+					<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
 						<view>{{Order.TH_DATE}}</view>
 					</picker>
 				</label>
@@ -130,8 +130,12 @@
 				type: Object,
 				default: null
 			},
-			decoration:{
-				type:Boolean,
+			decoration: {
+				type: Boolean,
+				default: false
+			},
+			over48: {
+				type: Boolean,
 				default: false
 			}
 		},
@@ -145,6 +149,8 @@
 				statements: false,
 				index: 0,
 				THTYPES: [],
+				LimitDate: '2000-01-01',
+				LimitTime: '00:00',
 				Products: [{
 					PLID: "109",
 					SPID: "10101022",
@@ -215,7 +221,7 @@
 				await that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
 				that.Order.CARDID = that.GGDatas[0];
-				console.log("[DataInit]是否支持异店提货:",common.GetPOSCS_Local("YN_YDTH"));
+				console.log("[DataInit]是否支持异店提货:", common.GetPOSCS_Local("YN_YDTH"));
 				that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
 				if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
 					_reserve.GetTHKHDA(that.GSID, that.KHID, res => {
@@ -245,9 +251,9 @@
 			},
 			//提货门店输入事件
 			inputTHKH: e => {
-				console.log("[InputTHKH]门店数据:",that.THKHDATAS);
+				console.log("[InputTHKH]门店数据:", that.THKHDATAS);
 				let str = e.detail.value;
-				let decoration = this.decoration;//判断是否包含裱花商品
+				let decoration = this.decoration; //判断是否包含裱花商品
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
@@ -282,18 +288,31 @@
 				let date = dateformat.getYMD(), //现卖的默认当前日期
 					time = dateformat.gettime(1); //默认加一分钟
 
-				if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
-					if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
-						date = dateformat.getYMD(1);
+				if (this.over48) {
+					let current_datetime = new Date(new Date().setHours(56));
+					date = current_datetime.toLocaleDateString().replaceAll('/', '-');
+					time = current_datetime.toTimeString().split(" ")[0];
+					console.log("[RefreshData]时间:",{
+						date,
+						time
+					});
+					this.LimitDate = date;
+					this.LimitTime = time;
+				} else {
+					if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
+						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
+							date = dateformat.getYMD(1);
+						}
 					}
 				}
+
 				that.Order.THDATE = date + ' ' + time;
 				that.Order.TH_DATE = date;
 				that.Order.TH_TIME = time;
 
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;
-				} 
+				}
 				// else {
 				// 	that.Order.DNET = 0;
 				// }
@@ -344,7 +363,7 @@
 			},
 			//获取配送类型
 			getTHTYPE: async function() {
-				let decoration = this.decoration;//获取sale2是否存在裱花类别的信息
+				let decoration = this.decoration; //获取sale2是否存在裱花类别的信息
 				await common.GetDapzcs("THTYPE", res => {
 					console.log("[ReserveDrawer]提货类型数据：", res);
 					if (res.code && res.msg.length > 0) {
@@ -612,7 +631,7 @@
 				that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
 				that.YDDATA = JSON.stringify(that.Order);
 				that.Order.DNET = Number(that.Order.DNET);
-				console.log("[Confirm]已设置定金金额:",that.Order);
+				console.log("[Confirm]已设置定金金额:", that.Order);
 				that.Order.YD_STATUS = "1";
 				that.Order.BMID = that.BMID;
 				if (that.confirm) {
@@ -667,19 +686,20 @@
 </script>
 
 <style>
-	.thmd{
+	.thmd {
 		position: absolute;
 		left: 150rpx;
-		top:100%;
+		top: 100%;
 		background-color: #fff;
 		border-radius: 6rpx;
-		width:66%;
+		width: 66%;
 		text-align: left;
 		z-index: 999999999;
-		box-shadow: 0px 10rpx 20rpx 1px rgba(66,177,75,0.06);
-		padding:1%;
+		box-shadow: 0px 10rpx 20rpx 1px rgba(66, 177, 75, 0.06);
+		padding: 1%;
 	}
-	.restlist .thmd text{
+
+	.restlist .thmd text {
 		width: 100%;
 		display: block;
 		text-align: left;
