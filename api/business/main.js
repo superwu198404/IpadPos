@@ -636,10 +636,11 @@ var ManualDiscount = function(sale1, sale2_arr) {
 }
 
 //生成促销跟踪表执行sql
-var CXMDFS = function(sale1, sale2, cxarr) {
+var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
 	let arr = [];
-	if (cxarr && cxarr.length > 0) {
-		cxarr.map(r => {
+	//允许促销的情况下
+	if (yncx && fzcxArr && fzcxArr.length > 0) {
+		fzcxArr.map(r => {
 			let obj = {
 				SALEDATE: sale1.SALEDATE,
 				KHID: sale1.KHID,
@@ -648,6 +649,29 @@ var CXMDFS = function(sale1, sale2, cxarr) {
 				CLASSID: r.CLASSID,
 				XSBILL: sale1.BILL,
 				SPID: r.SPID,
+				XSQTY: r.XSQTY,
+				OPRICE: r.OPRICE,
+				ONET: r.ONET,
+				CXPRICE: r.CXPRICE,
+				CXNET: r.CXNET,
+				CXLV: "",
+				// LCM: "",
+				NO: r.NO
+			};
+			arr.push(obj);
+		})
+	}
+	//允许辅助促销的情况下
+	if (ynfzcx && cxfsArr && cxfsArr.length > 0) {
+		cxfsArr.map(r => {
+			let obj = {
+				SALEDATE: sale1.SALEDATE,
+				KHID: sale1.KHID,
+				GSID: sale1.GSID,
+				CXBILL: r.CXBILL,
+				CLASSID: r.CLASSID,
+				XSBILL: sale1.BILL,
+				SPID: r.SPID.substr(8),
 				XSQTY: r.XSQTY,
 				OPRICE: r.OPRICE,
 				ONET: r.ONET,

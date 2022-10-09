@@ -912,8 +912,8 @@ var XsTypeObj = {
 		$saleFinishing: function(result) { //生成yd
 			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
 			this.sale001.ZNET = this.sale001.TNET; //线上订单的 ZNET 为下单时候的付款金额
-			this.sale001.BILLDISC = 0; 
-			this.sale001.TCXDISC = 0; 
+			this.sale001.BILLDISC = 0;
+			this.sale001.TCXDISC = 0;
 			this.sale001.TDISC = 0;
 			this.sale002.forEach(i => {
 				i.DISCRATE = 0;
@@ -1348,6 +1348,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.decoration = false;
 	//判断当前 sale2 中是否包含促销方式为 hylv=3-48 的类型
 	this.over48 = false;
+	//促销跟踪
+	this.cxfsArr = [];
 	// 通讯表\sqlite 额外sql
 	this.communication_for_oracle = [];
 	this.communication_for_sqlite = [];
@@ -1460,7 +1462,7 @@ function GetSale(global, vue, target_name, uni) {
 			//赋值的时候进行计算
 			this.cval = newval; //判断有效值
 			if (newval && Object.keys(newval).length > 0) {
-				that.currentOperation.ynCx = false; //
+				that.currentOperation.ynCx = false;
 				// that.currentOperation.FZCX = false; //
 			} else {
 				that.setSaleTypeDefval("ynCx");
@@ -1926,9 +1928,10 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
-			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
+			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
+				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
-			console.log("追加了辅助促销发售的sql:", this.communication_for_oracle);
+			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
 
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
@@ -2432,6 +2435,7 @@ function GetSale(global, vue, target_name, uni) {
 			//调用促销计算
 			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
+			this.cxfsArr = response?.cxfs; //促销跟踪
 			let TCXDISC = 0;
 			this.sale002.map(r => {
 				TCXDISC += r.CXDISC
