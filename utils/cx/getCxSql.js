@@ -64,7 +64,7 @@ const cxSPsql = async (storeid,date1) => {
 	let cxformd003_sql = "SELECT KHID,BILL,BILL||CLASSID CLASSID,SPID  FROM  cxformd003 WHERE  bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB!='F'\
 					   AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') )";
     await db.get().executeQry(cxformd003_sql, "执行中", function(res) {
-		//console.log("cxformd003_sql执行结果：", res.msg);
+		console.log("cxformd003_sql执行结果：", res.msg);
 		cxformd003_arr = res.msg;
 	}, function(err) {
 		console.log("cxformd003_sql执行失败：", err);
@@ -82,7 +82,7 @@ const cxZqSql = async (gsid,storeid,date1) => {
 					  WHERE Kquser in (select sname  from Dapzcs_Nr  where  id   like  'DSF%'  and  id_nr  like  'KQUSER_%' and note ='" + gsid + "')  and  bill IN  (   SELECT  BILL  FROM  cxformd001 WHERE\
                       BILL_STATUS ='1' and YN_JSLB!='F'  AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') )";
     await db.get().executeQry(cxformd005_sql, "执行中", function(res) {
-		console.log("cxformd005_sql执行结果：", res.msg);
+		//console.log("cxformd005_sql执行结果：", res.msg);
 		cxformd005_arr = res.msg;
 	}, function(err) {
 		console.log("cxformd005_sql执行失败：", err);
@@ -98,7 +98,7 @@ const cxspdaSql = async (spid) => {
 	let spda_arr = [];
 	let spda_sql = "select YN_ZS from spda where spid='" + spid + "'";
     await db.get().executeQry(spda_sql, "执行中", function(res) {
-		console.log("spda_sql执行结果：", res.msg);
+		//console.log("spda_sql执行结果：", res.msg);
 		spda_arr = res.msg;
 	}, function(err) {
 		console.log("spda_sql执行失败：", err);
