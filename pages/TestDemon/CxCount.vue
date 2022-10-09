@@ -32,17 +32,27 @@
 
 				let sale02_arr = [
 					{
-					    "SPID": "000000001040200044",
-					    "SNAME": "奥利奥狂想罐",
-					    "QTY": 2,
-					    "OPRICE": 22.8,
+					    "SPID": "000000001020100001",
+					    "SNAME": "乳酪蛋糕",
+					    "QTY": 3,
+					    "OPRICE": 200,
 					    "DISCRATE": 0,
-					    "NET": 45.6,
-					    "PRICE": 22.8,
-					    "NO": 3
-					}
+					    "NET": 600,
+					    "PRICE": 200,
+					    "NO": 1
+					},
+					{
+					    "SPID": "000000001020200005",
+					    "SNAME": "云朵醇味戚风蛋糕",
+					    "QTY": 3,
+					    "OPRICE": 200,
+					    "DISCRATE": 0,
+					    "NET": 400,
+					    "PRICE": 200,
+					    "NO": 2
+					},
 					];
-				cxCount.Createcx(sale02_arr, "SaleYd",hy_query.hyinfoModel);
+				cxCount.Createcx(sale02_arr, "sale",hy_query.hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],
