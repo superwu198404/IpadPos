@@ -420,7 +420,7 @@ page {
 	align-items: center;
 	border: 1px solid #006B44;
 	border-radius: 40rpx;
-	padding: 40rpx 0 20rpx;
+	padding: 40rpx 0 0;
 	margin-top: 100rpx;
 }
 
@@ -900,7 +900,25 @@ page {
 	bottom: 30%;
 	right: 101%;
 }
-
+.states .statnum{
+	position: relative;
+	width:100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding:10rpx 0;
+}
+.states .statnum image{
+	position: absolute;
+	width:100%;
+	bottom:0;
+	left: 0;
+}
+.states .statnum text{
+	position: relative;
+	z-index: 9;
+	color: #fff;	
+}
 .shoppbag {
 	width: 94%;
 	overflow: auto;
