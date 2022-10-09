@@ -100,7 +100,7 @@
 								<label>«</label>
 								<view class="statnum">
 									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
-									<text>3</text>
+									<text>{{mainSale.sale002.length}}</text>
 								</view>
 							</view>
 						</view>
@@ -468,17 +468,15 @@
 				})
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET
-				console.log("[ReceivableAmount]待支付金额计算...",this.mainSale.current_type);
+				console.log("[ReceivableAmount]待支付金额计算...", this.mainSale.current_type);
 				var amount = 0;
-				if(this.mainSale.current_type.clickType === 'sale_reserve'){
+				if (this.mainSale.current_type.clickType === 'sale_reserve') {
 					let complet_ammount = 0; //已经完成的定金
-					this.mainSale?.sale003.forEach(s3 => complet_ammount +=s3.AMT);
+					this.mainSale?.sale003.forEach(s3 => complet_ammount += s3.AMT);
 					amount = (this.mainSale?.sale001?.TNET || 0) - complet_ammount
-				}
-				else if(this.mainSale.current_type.clickType === 'sale_reserve_cancel'){
+				} else if (this.mainSale.current_type.clickType === 'sale_reserve_cancel') {
 					amount = this.mainSale?.sale001?.DNET;
-				}
-				else
+				} else
 					amount = (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0);
 				return amount?.toFixed(2);
 			},

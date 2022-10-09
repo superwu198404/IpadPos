@@ -1900,8 +1900,8 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
-			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
-			this.communication_for_oracle.push(cxfsSqlArr);
+			// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
+			// this.communication_for_oracle.push(cxfsSqlArr);
 			console.log("追加了促销发售的sql:", this.communication_for_oracle);
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
@@ -2181,7 +2181,11 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[Sale002Sum]循环中查看002:", item);
 			let keys = Object.keys(pm_input);
 			for (var i = 0; i < keys.length; i++) {
-				pm_input[keys[i]] += that.float(item[keys[i]], 2);
+				if (keys[i] == "ONET") {
+					pm_input[keys[i]] += that.float(item["OPRICE"] * item["QTY"], 2);
+				} else {
+					pm_input[keys[i]] += that.float(item[keys[i]], 2);
+				}
 			}
 		})
 		return pm_input;
@@ -2379,6 +2383,10 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
+		if (that.sale002.length == 0 || Object.keys(that.sale002).length == 0) {
+			util.simpleMsg("请先加购商品", true);
+			return;
+		}
 		console.log("[ShowStatement]商品信息:", that.sale002);
 		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);
@@ -2410,16 +2418,18 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
-			OPRICE: 0,
+			ONET: 0,
 			NET: 0,
 			QTY: 0,
 			DISCRATE: 0
 		});
+		console.log("原价计算：", retx.OPRICE);
+		console.log("原价计算：", retx.QTY);
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.OPRICE * retx.QTY, 2); //原价
-		that.sale001.TNET = this.float(retx.OPRICE * retx.QTY - retx.DISCRATE, 2);
+		that.sale001.ZNET = this.float(retx.ONET, 2); //原价
+		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
