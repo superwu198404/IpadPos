@@ -322,21 +322,18 @@ var CalProduct = function(curData, Product) {
 				if (r2.ZKTYPE == 'ZD02') { //标准折扣
 					r.BZDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
 						2));
-					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
 					// r.DISCRATE += parseFloat(r.BZDISC);
 					disc += r.BZDISC;
 					console.log("当前标准折扣值：", r.BZDISC);
 				} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
 					r.LSDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
 						2));
-					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
 					// r.DISCRATE += parseFloat(r.LSDISC);
 					disc += r.LSDISC;
 					console.log("当前临时折扣值：", r.LSDISC);
 				} else { //特批折扣
 					r.TPDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
 						2));
-					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
 					// r.DISCRATE = parseFloat(r.TPDISC);
 					disc += r.TPDISC;
 					console.log("当前特批折扣值：", r.TPDISC);
@@ -607,7 +604,15 @@ var ManualDiscount = function(sale1, sale2_arr) {
 		sale2: sale2_arr
 	});
 	let curDis = 0;
-	sale2_arr.forEach(function(item, index, arr) {
+	let Arr = [];
+	let arr = sale2_arr.filter(r => {
+		return r.NET > 0
+	});
+	let arr1 = sale2_arr.filter(r => {
+		return r.NET == 0
+	});
+	//售价不为0的才参与分摊 排除辅助促销赠送的商品
+	arr.forEach(function(item, index, arr) {
 		if (!sale1.ROUND) return; //round 为 0 就不进行分摊
 		let high = Number(parseFloat(item.NET / (sale1.TNET + sale1.ROUND) * sale1.ROUND).toFixed(
 			2));
@@ -618,13 +623,15 @@ var ManualDiscount = function(sale1, sale2_arr) {
 			let dif = Number(parseFloat((sale1.ROUND - curDis).toFixed(2))); //实际的差值
 			SKYDISCOUNT += dif;
 		}
-		item.NET = Number(item.NET) - SKYDISCOUNT;
-		item.PRICE = Number(item.NET / item.QTY).toFixed(2);
-		item.DISCRATE = Number(item.DISCRATE) + SKYDISCOUNT;
+		item.NET = Number((item.NET - SKYDISCOUNT).toFixed(2));
+		item.PRICE = Number((item.NET / item.QTY).toFixed(2));
+		item.DISCRATE = Number((item.DISCRATE + SKYDISCOUNT).toFixed(2));
 		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
-		item.DISC = Number(item.DISC) + SKYDISCOUNT;
+		item.DISC = Number(Number(Number(item.DISC) + SKYDISCOUNT).toFixed(2));
 	});
-	return sale2_arr;
+	Arr = arr.concat(arr1);
+	console.log("排除售价为0的商品分摊集合：", Arr);
+	return Arr;
 }
 
 //生成促销跟踪表执行sql
