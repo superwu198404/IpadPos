@@ -2613,6 +2613,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.Disc.cval = {};
 		this.FZCX.oval = {};
 		this.FZCX.cval = {};
+		this.cxfsArr = [];
 		this.bill = null;
 		this.sale001 = {};
 		this.sale002 = [];
