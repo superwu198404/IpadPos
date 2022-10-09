@@ -317,22 +317,36 @@ var CalProduct = function(curData, Product) {
 			let arr = curData.filter(r1 => {
 				return r1.ZKSTR == r.SPJGZ
 			})
+			let disc = 0;
 			arr.forEach(r2 => {
 				if (r2.ZKTYPE == 'ZD02') { //标准折扣
-					r.BZDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					r.BZDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+						2));
 					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.BZDISC);
-					r.DISCRATE = parseFloat(r.BZDISC);
+					// r.DISCRATE += parseFloat(r.BZDISC);
+					disc += r.BZDISC;
+					console.log("当前标准折扣值：", r.BZDISC);
 				} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
-					r.LSDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					r.LSDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+						2));
 					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.LSDISC);
-					r.DISCRATE = parseFloat(r.LSDISC);
+					// r.DISCRATE += parseFloat(r.LSDISC);
+					disc += r.LSDISC;
+					console.log("当前临时折扣值：", r.LSDISC);
 				} else { //特批折扣
-					r.TPDISC = (r.NET * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(2);
+					r.TPDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+						2));
 					// r.DISCRATE = (r.$DISCRATE || 0) + parseFloat(r.TPDISC);
-					r.DISCRATE = parseFloat(r.TPDISC);
+					// r.DISCRATE = parseFloat(r.TPDISC);
+					disc += r.TPDISC;
+					console.log("当前特批折扣值：", r.TPDISC);
 				}
 				console.log("[CalProduct]Sale-Item:", r2);
 			})
+			console.log("当前总折扣值：", disc);
+			r.DISCRATE = Number(disc.toFixed(2));
+			r.NET = Number((r.OPRICE * r.QTY - r.DISCRATE).toFixed(2));
+			r.PRICE = Number((r.NET / r.QTY).toFixed(2));
 		});
 	}
 	console.log("添加折扣后的商品数据：", Product);
@@ -612,6 +626,40 @@ var ManualDiscount = function(sale1, sale2_arr) {
 	});
 	return sale2_arr;
 }
+
+//生成促销跟踪表执行sql
+var CXMDFS = function(sale1, sale2, cxarr) {
+	let arr = [];
+	if (cxarr && cxarr.length > 0) {
+		cxarr.map(r => {
+			let obj = {
+				SALEDATE: sale1.SALEDATE,
+				KHID: sale1.KHID,
+				GSID: sale1.GSID,
+				CXBILL: r.CXBILL,
+				CLASSID: r.CLASSID,
+				XSBILL: sale1.BILL,
+				SPID: r.SPID,
+				XSQTY: r.XSQTY,
+				OPRICE: r.OPRICE,
+				ONET: r.ONET,
+				CXPRICE: r.CXPRICE,
+				CXNET: r.CXNET,
+				CXLV: "",
+				// LCM: "",
+				NO: r.NO
+			};
+			arr.push(obj);
+		})
+	}
+	console.log("新组装的促销跟踪数据：", arr);
+	if (arr.length <= 0) {
+		return [];
+	}
+	let sqlObj = common.CreateSQL(arr, "CXMDFSMX");
+	return sqlObj.oracle_arr; //sql 集合
+}
+
 export default {
 	GetFZCX,
 	GetMDCXHD,
@@ -623,5 +671,6 @@ export default {
 	CalFZCX,
 	FindSP,
 	CreateSale2,
-	ManualDiscount
+	ManualDiscount,
+	CXMDFS
 }
