@@ -1877,6 +1877,9 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
+			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
+			this.communication_for_oracle.push(cxfsSqlArr);
+			console.log("追加了促销发售的sql:", this.communication_for_oracle);
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
 				SALE002: this.sale002,
@@ -2184,7 +2187,7 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		}
 		if (pm_qty <= 0) {
-			util.simpleMsg("商品数量错误", true);
+			util.simpleMsg("请选择商品数量", true);
 			return;
 		}
 		console.log("[GetSp]是否存在添加商品:", find);
@@ -2384,6 +2387,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
+			OPRICE: 0,
 			NET: 0,
 			QTY: 0,
 			DISCRATE: 0
@@ -2391,8 +2395,8 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET, 2); //原价
-		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
+		that.sale001.ZNET = this.float(retx.OPRICE * retx.QTY, 2); //原价
+		that.sale001.TNET = this.float(retx.OPRICE * retx.QTY - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
