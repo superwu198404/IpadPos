@@ -841,9 +841,9 @@ var XsTypeObj = {
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Payment;
 			this.old_bill = params.sale1.BILL;
-			this.createNewBill();
 			console.log("[sale_online_order_extract]线上订单sale信息:", params);
-			Object.cover(this.sale001, Object.cover(params.sale1, this.sale001));
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale001.DNET = this.sale001.TNET;//线上订单的 DNET 为下单时候的付款金额
 			this.sale002 = params.sale2.map(s2 => {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
@@ -854,6 +854,7 @@ var XsTypeObj = {
 				let new_s3 = Object.cover(new sale.sale003(), s3)
 				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
 				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
+				new_s3.FKID = 'ZG03';
 				return new_s3
 			});
 			this.reserve_param = params.reserve_params;
@@ -862,7 +863,9 @@ var XsTypeObj = {
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
-			}, common.actTypeEnum.Payment);
+			}, common.actTypeEnum.Refund);
+			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
+			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
 			this.ShowStatement();
 			for (let s3 of this.sale003) {
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -1877,6 +1880,9 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
+			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.sale002, this.FZCX.cval.data);
+			this.communication_for_oracle.push(cxfsSqlArr);
+			console.log("追加了促销发售的sql:", this.communication_for_oracle);
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
 				SALE002: this.sale002,
@@ -2184,7 +2190,7 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		}
 		if (pm_qty <= 0) {
-			util.simpleMsg("商品数量错误", true);
+			util.simpleMsg("请选择商品数量", true);
 			return;
 		}
 		console.log("[GetSp]是否存在添加商品:", find);
@@ -2384,6 +2390,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("特殊折扣计算后的销售单:", this.sale001);
 		}
 		var retx = that.sale002Sum({
+			OPRICE: 0,
 			NET: 0,
 			QTY: 0,
 			DISCRATE: 0
@@ -2391,8 +2398,8 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		that.sale001.ZNET = this.float(retx.NET, 2); //原价
-		that.sale001.TNET = this.float(retx.NET - retx.DISCRATE, 2);
+		that.sale001.ZNET = this.float(retx.OPRICE * retx.QTY, 2); //原价
+		that.sale001.TNET = this.float(retx.OPRICE * retx.QTY - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行

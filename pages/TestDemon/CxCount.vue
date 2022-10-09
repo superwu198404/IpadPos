@@ -32,17 +32,27 @@
 
 				let sale02_arr = [
 					{
-						"SPID": "000000001090100001",
-						"SNAME": "樱桃诱惑12号-仟吉",
-						"QTY": 2,
-						"OPRICE": 189,
-						"DISCRATE": 0,
-						"NET": 378,
-						"PRICE": 189,
-						"NO": 1
-					}
+					    "SPID": "000000001020100001",
+					    "SNAME": "乳酪蛋糕",
+					    "QTY": 3,
+					    "OPRICE": 200,
+					    "DISCRATE": 0,
+					    "NET": 600,
+					    "PRICE": 200,
+					    "NO": 1
+					},
+					{
+					    "SPID": "000000001020200005",
+					    "SNAME": "云朵醇味戚风蛋糕",
+					    "QTY": 3,
+					    "OPRICE": 200,
+					    "DISCRATE": 0,
+					    "NET": 400,
+					    "PRICE": 200,
+					    "NO": 2
+					},
 					];
-				cxCount.Createcx(sale02_arr, "SaleYd",hy_query.hyinfoModel);
+				cxCount.Createcx(sale02_arr, "sale",hy_query.hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],
