@@ -1,3 +1,12 @@
+function formatDate (date){
+	let dateNew = new Date(date);
+	const year = dateNew.getFullYear();
+	const month = dateNew.getMonth() + 1;
+	const day = dateNew.getDate();
+	//yyyy-MM-dd HH:mm:ss
+	return year + '-' + month + '-' + day;
+}
+
 function getTime(type) {
 	let date = new Date(),
 		currentDate,
@@ -264,5 +273,6 @@ module.exports = {
 	cxZkTj: cxZkTj,
 	toStr: toStr,
 	TryParse: TryParse,
-	defStr: defStr
+	defStr: defStr,
+	formatDate: formatDate
 };

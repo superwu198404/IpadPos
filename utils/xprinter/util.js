@@ -17,6 +17,16 @@ const formatNumber = n => {
 	return n[1] ? n : '0' + n;
 };
 
+function formatDate (date){
+	debugger
+	let dateNew = new Date(date);
+	const year = dateNew.getFullYear();
+	const month = dateNew.getMonth() + 1;
+	const day = dateNew.getDate();
+	//yyyy-MM-dd HH:mm:ss
+	return year + '-' + month + '-' + day;
+}
+
 function getTime(type) {
 	let date = new Date(),
 		currentDate,
@@ -1060,5 +1070,6 @@ module.exports = {
 	xsPrinterData: xsPrinterData,
 	snvl: snvl,
 	nnvl: nnvl,
-	ydPrinterData: ydPrinterData
+	ydPrinterData: ydPrinterData,
+	formatDate: formatDate
 };
