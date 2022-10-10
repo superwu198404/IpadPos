@@ -254,9 +254,25 @@ const TryParse = function(BALANCE){
 	try{
 		hyjfnum=parseFloat(BALANCE);
 	}catch(e){
-		hyjfnum = 0;
+		hyjfnum = -1;
 	}		
 	return hyjfnum;
+}
+
+const DefaultNull = function(data,dataNull){
+	let strNull = "";
+	try{
+		if(data == null){
+			return strNull;
+		}else if(dataNull == null || dataNull == undefined){
+			return strNull;
+		}else{
+			return dataNull;
+		}
+	}catch(e){
+		strNull = "";
+	}
+	return strNull;
 }
 
 module.exports = {
@@ -274,5 +290,6 @@ module.exports = {
 	toStr: toStr,
 	TryParse: TryParse,
 	defStr: defStr,
-	formatDate: formatDate
+	formatDate: formatDate,
+	DefaultNull: DefaultNull
 };
