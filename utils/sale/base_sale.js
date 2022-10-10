@@ -2071,7 +2071,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetNewParmSale]SALE002合并后:", inputParm.sale002);
 		inputParm.sale003.forEach(item003 => {
 			Object.cover(item003, retparm);
-		})
+		}) 
 		console.log("[SetNewParmSale]SALE003合并后:", inputParm.sale003);
 		if (pm_actType == common.actTypeEnum.Refund) {
 			console.log("[SetNewParmSale]原单信息:", savaSale001);
