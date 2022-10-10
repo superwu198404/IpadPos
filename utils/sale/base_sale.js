@@ -1457,54 +1457,27 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	this.DKF.base = this;
 	//折扣、当前选择的折扣方式
-	var Disc1 = {
-		base: {},
-		cval: {},
-		Defval: 100,
-		get val() {
-			return this.cval;
-		},
-		set val(newval) {
-			//赋值的时候进行计算
-			this.cval = newval; //判断有效值
-
-			console.log("进入赋值：");
-			// if (newval && Object.keys(newval).length > 0) {
-			if (newval && newval.ZKType) { //有赋值折扣类型才算折扣生效
-				that.currentOperation.ynCx = false;
-				console.log("折扣赋值：", newval);
-				// that.currentOperation.FZCX = false; //
-			} else {
-				that.setSaleTypeDefval("ynCx");
-				console.log("折扣赋值空：", newval);
-				// that.setSaleTypeDefval("FZCX");
-			}
-		}
-	};
-	//折扣、当前选择的折扣方式
 	this.Disc = {
 		base: {},
 		cval: {},
 		Defval: 100,
 		get val() {
-			console.log("进入取值：");
 			return this.cval;
 		},
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval; //判断有效值
-
-			console.log("进入赋值：");
 			// if (newval && Object.keys(newval).length > 0) {
 			if (newval && newval.ZKType) { //有赋值折扣类型才算折扣生效
 				that.currentOperation.ynCx = false;
-				console.log("折扣赋值：", newval);
-				// that.currentOperation.FZCX = false; //
+				// that.currentOperation.FZCX = false;
 			} else {
+				console.log("折扣赋空值前的促销权限：", that.currentOperation.ynCx);
+
 				that.setSaleTypeDefval("ynCx");
-				console.log("折扣赋值空：", newval);
 				// that.setSaleTypeDefval("FZCX");
 			}
+			console.log("折扣赋值后的促销权限：", that.currentOperation.ynCx);
 		}
 	};
 	this.Disc.base = this;
