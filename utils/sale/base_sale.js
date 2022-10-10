@@ -1744,6 +1744,7 @@ function GetSale(global, vue, target_name, uni) {
 
 			that.log("查看蛋糕包含的品类" + JSON.stringify(that.clikSpItem.specslist));
 			that.clikSpItem.selectSPID = that.clikSpItem.specslist[0].SPID;
+			that.clikSpItem.SPECS = that.clikSpItem.specslist[0].SPECS;
 
 
 		} else {
@@ -1759,8 +1760,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.selectSPID_Chenged = function(e) {
 		that.log("进入事件：" + JSON.stringify(e.currentTarget.dataset));
 		let spid = e.currentTarget.dataset.spid;
+		let specs = e.currentTarget.dataset.specs;
 		that.log("选择的商品编码：" + JSON.stringify(spid));
 		that.clikSpItem.selectSPID = spid;
+		that.clikSpItem.SPECS = specs;
 		that.clikSpItem.PRICE = that.spPrice[spid].PRICE;
 		that.log("" + JSON.stringify(that.clikSpItem));
 		that.update();
@@ -2260,7 +2263,8 @@ function GetSale(global, vue, target_name, uni) {
 			new002.SPID = pm_spid;
 			new002.NO = timeNo;
 			new002.STR1 = that.clikSpItem.SNAME;
-			new002.UNIT = that.clikSpItem.UNIT;
+			//SPECS 为selectSPID_Chenged动态添加的属性，只有蛋糕商品存在此属性，其他商品不存在！
+			new002.UNIT =that.clikSpItem.SPECS|| that.clikSpItem.UNIT;
 			new002.STR2 = that.storeName;
 			new002.YN_XPDG = pm_yndgxp;
 			new002.SPJGZ = that.clikSpItem.SPJGZ;
