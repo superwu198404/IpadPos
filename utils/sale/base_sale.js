@@ -1090,6 +1090,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		//初始化获取特殊折扣(默认是标准和临时，如果选了大客户则包含特批)
 		console.log("传入折扣的大客户数据：", this.DKF.val.DKFID);
+		console.log("传入折扣的大客户数据1：", this.Disc.val);
 		this.Disc.val.ZKData = await _main.GetZKDatasAll(this.DKF.val.DKFID); //传入大客户值
 		this.setComponentsManage(null, "Disc");
 		console.log("首页初始化的折扣数据：", this.Disc.val.ZKData);
@@ -1108,7 +1109,7 @@ function GetSale(global, vue, target_name, uni) {
 			let obj = this.Disc.cval;
 			obj.ZKType = data;
 			console.log("回调折扣赋值：", obj);
-			Disc1.val = obj;
+			this.Disc.val = obj;
 			console.log("回调折扣赋值1：", this.Disc.cval);
 			// this.currentOperation["Disc"] = true;
 			// this.currentOperation["ynFzCx"] = false;
@@ -1485,6 +1486,7 @@ function GetSale(global, vue, target_name, uni) {
 		cval: {},
 		Defval: 100,
 		get val() {
+			console.log("进入赋值：");
 			return this.cval;
 		},
 		set val(newval) {
@@ -1505,6 +1507,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	};
 	this.Disc.base = this;
+	util.hidePropety(this.Disc, "val");
 	//辅助促销
 	this.FZCX = {
 		base: {},
