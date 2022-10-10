@@ -1028,7 +1028,7 @@
 				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
 					console.log("[Refund]RefundList-After:", this.RefundList);
-					this.RefundList.sort();
+					// this.RefundList.sort();
 				})
 			},
 			//创建订单对象列表
