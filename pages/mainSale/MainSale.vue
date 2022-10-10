@@ -99,7 +99,7 @@
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum">
-									<image src="@/images/jsd-dxiao.png" mode="widthFix"></image>
+									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
 									<text>{{TotalNum}}</text>
 								</view>
 							</view>

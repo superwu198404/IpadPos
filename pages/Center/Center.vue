@@ -96,13 +96,15 @@
 				timer: null,
 				angle: 0,
 				angles: 0,
-				angless: 0
+				angless: 0,
+				syyjk: {} //收银员是否结款
 			};
 		},
 		methods: {
 			onLoad: function() {
 				that = this;
 				that.GetSignOutInWeeks();
+				that.GetSkyJk();
 			},
 			onShow: function() {
 				this.timer = setInterval(() => {
@@ -145,7 +147,7 @@
 				}
 				uni.showModal({
 					title: "提示",
-					content: "是否要验证日结后进入销售？",
+					content: "是否要验证结款，日结后进入销售？",
 					cancelText: "否",
 					confirmText: "是",
 					success: res => {
@@ -160,6 +162,11 @@
 							console.log("本次单据传输定时ID:", int);
 						}
 						if (res.confirm) {
+							if (that.syyjk && Object.keys(that.syyjk).length > 0 && !that.syyjk
+								.code) { //有未结款数据
+								util.simpleMsg(that.syyjk.msg, "none");
+								return;
+							}
 							if (that.signOutDates.length > 0) { //有日结数据
 								that.SignOut(); //发起日结
 								return;
@@ -255,7 +262,13 @@
 					// that.signOutDates = ["2022/9/8", "2022/9/7"];
 				})
 			},
-
+			//收款员结款的结果
+			GetSkyJk: function(t, func) {
+				_login.GetSkyJk(res => {
+					console.log("查询到的结款数据：", res);
+					that.syyjk = res;
+				})
+			},
 			//关闭签到
 			// CloseSign: function(res) {
 			// 	console.log("父组件被通知事件");

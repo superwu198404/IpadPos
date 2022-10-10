@@ -243,6 +243,19 @@ var GetSignOutInWeek = async function(func) {
 	let reqdata = Req.resObj(true, "查询中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+//获取收银员是否结款
+var GetSkyJk = async function(func) {
+	let store = util.getStorage("store");
+
+	let data = {
+		khid: store.KHID,
+		ryid: store.RYID
+	}
+	let apistr = "MobilePos_API.Models.MainCLASS.GetSkyJk";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 
 export default {
 	GetPassWord,
@@ -252,5 +265,6 @@ export default {
 	UpdatePWD_Local,
 	SignOrSignOut,
 	SignOrSignOutSql,
-	GetSignOutInWeek
+	GetSignOutInWeek,
+	GetSkyJk
 }
