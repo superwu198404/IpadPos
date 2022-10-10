@@ -100,7 +100,7 @@
 								<label>«</label>
 								<view class="statnum">
 									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
-									<text>{{mainSale.sale002.length}}</text>
+									<text>{{TotalNum}}</text>
 								</view>
 							</view>
 						</view>

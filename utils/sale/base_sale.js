@@ -37,8 +37,8 @@ var XsTypeObj = {
 		operation: { //只设置为true的就好 其他的默认设置为false
 			"HY": true, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
-			"ynCx": true, //是否进行可以进行促销  (默认可以促销)
-			"Disc": false, //是否可以打开录入折扣 (默认可以促销就不能特殊折扣)
+			"ynCx": true, //是否进行可以进行促销  (默认可以促销,选择折扣后默认清除促销)
+			"Disc": true, //是否可以打开录入折扣 (默认可以特殊折扣)
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCancel": false, //是否可以退出当前销售模式
 			"FZCX": true, //是否可以打开辅助促销组件
@@ -1105,7 +1105,10 @@ function GetSale(global, vue, target_name, uni) {
 			// this.currentOperation["ynFzCx"] = true;
 			// this.currentOperation["ynCx"] = true;
 		} else {
-			this.Disc.val.ZKType = data;
+			let obj = {
+				ZKType: data
+			}
+			this.Disc.val = obj;
 			// this.currentOperation["Disc"] = true;
 			// this.currentOperation["ynFzCx"] = false;
 			// this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
@@ -2413,6 +2416,7 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
+		console.log("促销权限：", that.currentOperation.ynCx);
 		if (that.sale002.length == 0 || Object.keys(that.sale002).length == 0) {
 			util.simpleMsg("请先加购商品", true);
 			return;
