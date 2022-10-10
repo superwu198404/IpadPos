@@ -253,7 +253,7 @@
 			inputTHKH: e => {
 				console.log("[InputTHKH]门店数据:", that.THKHDATAS);
 				let str = e.detail.value;
-				let decoration = this.decoration; //判断是否包含裱花商品
+				let decoration = that.decoration; //判断是否包含裱花商品
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
