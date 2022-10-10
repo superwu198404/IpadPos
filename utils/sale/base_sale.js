@@ -1109,7 +1109,7 @@ function GetSale(global, vue, target_name, uni) {
 			let obj = this.Disc.cval;
 			obj.ZKType = data;
 			console.log("回调折扣赋值：", obj);
-			this.Disc.val = obj;
+			this.Disc.val = {...obj};
 			console.log("回调折扣赋值1：", this.Disc.cval);
 			// this.currentOperation["Disc"] = true;
 			// this.currentOperation["ynFzCx"] = false;
@@ -1486,7 +1486,7 @@ function GetSale(global, vue, target_name, uni) {
 		cval: {},
 		Defval: 100,
 		get val() {
-			console.log("进入赋值：");
+			console.log("进入取值：");
 			return this.cval;
 		},
 		set val(newval) {
@@ -1507,10 +1507,6 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	};
 	this.Disc.base = this;
-	this.Page.$watch("mainSale.Disc.val", util.callBind(this, function(n, o) {
-		console.log("日志监听");
-	}))
-	// util.hidePropety(this.Disc, "val");
 	//辅助促销
 	this.FZCX = {
 		base: {},
