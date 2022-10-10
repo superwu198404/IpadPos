@@ -132,7 +132,7 @@ const timeTodec = function(dtime, minValue) {
 	} else {
 		let sd = Math.floor((dtime / 1000 / 60 / 60) % 24);
 		let ff = Math.floor((dtime / 1000 / 60) % 60);
-		ff = Math.Round(ff, 2);
+		ff = Math.round(ff*100)/100;
 		new_obj = sd + ff;
 	}
 	return new_obj;

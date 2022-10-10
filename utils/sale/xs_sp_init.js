@@ -187,9 +187,9 @@ var loadSaleSP  =
 			 },null);	
 	    console.log("##############################开始获取蛋糕规格##############################")	
 	  //蛋糕规格 
-	 let  cakeSpescSql=" SELECT  spda_dgxl.DGXLID, spda_dgxl.SPID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
-	               from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid  \
-				     and spkhda.YN_XS='Y' and   spkhda.khid ='"+pm_storeid+"'";
+	 let  cakeSpescSql=" SELECT  spda_dgxl.DGXLID, spda_dgxl.SPID,spda.SPJGZ DGJGZ,spda.plid DGPLID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
+	               from spda_dgxl,spkhda,spda where  spda.spid=spda_dgxl.spid  and spda_dgxl.spid= spkhda.spid  \
+				     and spkhda.YN_XS='Y' and spda.SPJGZ IS NOT NULL and   spkhda.khid ='"+pm_storeid+"'";
 					 
 			await  $sqlLite.executeQry(cakeSpescSql,"正在获取蛋糕数据",(res)=>
 			{  				
