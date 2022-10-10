@@ -335,8 +335,8 @@ export const PointUpload = async function(def = point_upload_def_params) {
 	console.log("[PointUpload]积分上传参数组装开始...", params);
 	let member_request = Object.assign(Object.assign({
 		channel: params.channel,
-		bill: params.order_no, //主订单号
-		zf_bill: params.order_child_no, //子订单号
+		bill: params.order_no, //退款单号
+		zf_bill: params.sale_order_no, //支付单号
 		date: dateformat.getYMDS(),
 		productList: params.product.map((item, i) => {
 			total_amount += item.NET;

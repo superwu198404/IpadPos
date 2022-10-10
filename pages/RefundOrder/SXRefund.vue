@@ -66,7 +66,7 @@
 										<label>客户名称：{{item.DKFNAME}}</label>
 									</view>
 									<view class="handles"><text></text>
-										<button class="btn" @click="GetSXOrderDetails(item)">确定</button>
+										<button class="btn" @click="GetSXOrderDetails(item)">退单</button>
 									</view>
 								</view>
 							</view>
@@ -401,9 +401,11 @@
 	.details .goods {
 		height: 65%;
 	}
+
 	.detinfo {
 		height: 85%;
 	}
+
 	.products {
 		height: 84%;
 	}
@@ -411,14 +413,17 @@
 	.products .details {
 		justify-content: start;
 	}
-	.products .procycle{
+
+	.products .procycle {
 		height: 100%;
 		overflow: auto;
 	}
+
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
 		font-weight: 600;
 	}
+
 	.products .h3 text {
 		font-weight: 600;
 	}
