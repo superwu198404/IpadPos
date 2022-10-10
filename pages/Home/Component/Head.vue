@@ -15,7 +15,7 @@
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
-					<text v-if="XT_MsgData.length==0">暂无消息！</text>
+					<text v-if="XT_MsgData.length==0">暂无系统消息！</text>
 					<text v-else v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
 						@click="ReadMsg(item)">{{item.title}}</text>
 				</view>

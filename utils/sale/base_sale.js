@@ -2267,7 +2267,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.NO = timeNo;
 			new002.STR1 = that.clikSpItem.SNAME;
 			//SPECS 为selectSPID_Chenged动态添加的属性，只有蛋糕商品存在此属性，其他商品不存在！
-			new002.UNIT =that.clikSpItem.SPECS|| that.clikSpItem.UNIT;
+			new002.UNIT = that.clikSpItem.SPECS || that.clikSpItem.UNIT;
 			new002.STR2 = that.storeName;
 			new002.YN_XPDG = pm_yndgxp;
 			new002.SPJGZ = that.clikSpItem.SPJGZ;
@@ -2442,20 +2442,23 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			//调用促销计算
 			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
+			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.cxfsArr = response?.cxfs; //促销跟踪
+			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
-			this.sale002.map(r => {
+			that.sale002.map(r => {
 				TCXDISC += r.CXDISC
 			});
 			this.sale001.TCXDISC = TCXDISC;
 			this.sale001.TDISC = TCXDISC;
-			console.log("普通促销计算后的销售单:", this.sale001);
+			console.log("普通促销计算后的销售单1:", this.sale001);
+			console.log("普通促销计算后的销售单2:", that.sale002);
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
-			console.log("[SaleNetAndDisc]促销后:", that.sale002);
-			console.log("特殊折扣计算后的销售单:", this.sale001);
+			console.log("特殊折扣计算后的销售单2:", that.sale002);
+			console.log("特殊折扣计算后的销售单1:", this.sale001);
 		}
 		var retx = that.sale002Sum({
 			ONET: 0,
@@ -2463,8 +2466,6 @@ function GetSale(global, vue, target_name, uni) {
 			QTY: 0,
 			DISCRATE: 0
 		});
-		console.log("原价计算：", retx.OPRICE);
-		console.log("原价计算：", retx.QTY);
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")

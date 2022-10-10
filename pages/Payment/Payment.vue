@@ -970,9 +970,9 @@
 						current_refund_exists_only_code = true;
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
-					if(['ZG03','ZF01'].indexOf(i => i===refundInfo.fkid) !== -1){//如果是预定金直接跳过
+					if (['ZG03', 'ZF01'].indexOf(i => i === refundInfo.fkid) !== -1) { //如果是预定金直接跳过
 						refundInfo.fail = false;
-						if(current_refund_exists_only_code){//是否带唯一码
+						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
 						console.log("[Refund]跳过接口调用...");
@@ -1033,7 +1033,8 @@
 				if (this.RefundList.length !== 0 && this.RefundList.filter(i => i.fail).length === 0 || this.PayList
 					.length !== 0 && this.PayList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
-						util.simpleMsg("支付已完成！");
+						let tip = that.actType == common.actTypeEnum.Refund ? "退款" : "支付";
+						util.simpleMsg(tip + "已完成！");
 						setTimeout(function() {
 							that.backPrevPage();
 						}, 1500);
