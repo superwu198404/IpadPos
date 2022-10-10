@@ -970,12 +970,13 @@
 						current_refund_exists_only_code = true;
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
-					if(['ZG03','ZF01'].indexOf(i => i===refundInfo.fkid) !== -1){//如果是预定金直接跳过
+					if(['ZG03','ZF01'].indexOf(refundInfo.fkid) !== -1){//如果是预定金直接跳过
 						refundInfo.fail = false;
 						if(current_refund_exists_only_code){//是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
 						console.log("[Refund]跳过接口调用...");
+						return;
 					}
 					if (!refundInfo.fail && refundInfo.refunding) {
 						console.log("[Refund]跳出当前循环...");
@@ -1020,12 +1021,13 @@
 							}).bind(that));
 						promises.push(res)
 					} else {
-						util.simpleMsg("支付方式不存在!");
+						util.simpleMsg("支付方式不存在!",true);
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
-					console.log("RefundList-After:", this.RefundList);
+					console.log("[Refund]RefundList-After:", this.RefundList);
+					this.RefundList.sort();
 				})
 			},
 			//创建订单对象列表
