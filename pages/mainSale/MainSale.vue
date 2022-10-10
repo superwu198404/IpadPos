@@ -99,7 +99,7 @@
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum">
-									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+									<image src="@/images/jsd-dxiao.png" mode="widthFix"></image>
 									<text>{{TotalNum}}</text>
 								</view>
 							</view>
@@ -186,8 +186,8 @@
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist" :data-specs="specs.SPECS" :data-spid="specs.SPID"
-								:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist" :data-specs="specs.SPECS"
+								:data-spid="specs.SPID" :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
