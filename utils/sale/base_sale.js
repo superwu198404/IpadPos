@@ -159,6 +159,7 @@ var XsTypeObj = {
 			"upload_point": true, //允许积分上传
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0 //是否存在锁定行数
 		},
 		$initSale: function(params) {
@@ -275,7 +276,7 @@ var XsTypeObj = {
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"tools": true,
-			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
+			// "sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
 		},
@@ -408,6 +409,7 @@ var XsTypeObj = {
 
 			"tools": true,
 			"upload_point": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true, //是否可以输入商品
 		},
@@ -554,6 +556,7 @@ var XsTypeObj = {
 			"ynCancel": true, //是否可以退出当前销售模式
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$initSale: function(params) {
@@ -748,7 +751,8 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 
 			// "sale": true,
-			"sale_credit_return_good": true
+			"sale_credit_return_good": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Refund;
@@ -1846,9 +1850,8 @@ function GetSale(global, vue, target_name, uni) {
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType
-					.operation
-					.sale002Rows)) {
-				this.myAlert("已经输入了商品不能进行此操作")
+					.operation.sale002Rows)) {
+				this.myAlert("已录入商品，无法切换此模式！")
 				return;
 			}
 			if (this.clickSaleType.$click.call(this)) {
