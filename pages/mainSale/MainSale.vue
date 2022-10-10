@@ -186,8 +186,8 @@
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist" :data-specs="specs.SPECS"
-								:data-spid="specs.SPID" :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"  :data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS" :data-spid="specs.SPID"
+								:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>

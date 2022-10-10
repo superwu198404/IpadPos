@@ -2280,12 +2280,12 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左 
-		jpPrinter.setText("备注:" + util.toStr(data.custmcomm));
+		jpPrinter.setText("备注:" + data.custmcomm);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("送货地址:" +util.toStr(data.custmaddress));
+		jpPrinter.setText("送货地址:" + data.custmaddress);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
