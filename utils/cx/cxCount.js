@@ -88,7 +88,7 @@ const Cxdict = async () => {
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
 	//console.log("dszqda集合：", dszqda);
-
+	
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -474,6 +474,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 		jfinfo.dhnet = 0;
 		jfinfo.hdbill = [];
 		jfinfo.hdtype = [];
+		jfinfo.upleve =0;
 	}
 	//清除促销跟踪信息
 	cxfsdt = [];
@@ -1336,7 +1337,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						fsdcx.push(cx.CxBill);
 					}
 				}
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur,jfinfo);
 			} catch (e) {
 
 			}
@@ -1353,20 +1354,20 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 //每次计算之前先设置会员积分上限
 const setHyjfUpleve = function(num) {
 	//会员信息
-	if (null == hymen) {
+	if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
 		return;
 	}
 	let tj = 0;
 	if (null == jfinfo) {
-		let hyjfnum = cx_util.TryParse(hymen.BALANCE); //当前积分
-		if (hyjfnum <= 0) {
+		let hyjfnum = cx_util.TryParse(hymen.JFBalance); //当前积分
+		if (hyjfnum < 0) {
 			return;
 		}
 		//积分加价购 
 		jfinfo = {
 			"jfnum": 0,
 			"dhnet": 0,
-			"hyid": hymen.PARTNER,
+			"hyid": hymen.hyId,
 			"fznet": tj,
 			"hyojf": hyjfnum,
 			"upleve": 0
@@ -1386,12 +1387,12 @@ const setHyjfUpleve = function(num) {
 const calculateJf = function(dsnum, jfnum, cx) {
 	try {
 		//会员为null
-		if (null == hymen) {
+	    if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
 			return;
 		}
-		let tj = cx_util.TryParse(hymen.BALANCE);
+		let tj = cx_util.TryParse(hymen.JFBalance);
 		//会员积分错误
-		if (tj >= 0) {
+		if (tj < 0) {
 			return;
 		}
 		let syjf = 0; //当前已经累计的积分
@@ -1431,12 +1432,12 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 		return;
 	}
 	//会员为null
-	if (null == hymen) {
+	if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
 		return;
 	}
-	let tj = cx_util.TryParse(hymen.BALANCE);
+	let tj = cx_util.TryParse(hymen.JFBalance);
 	//会员积分错误
-	if (tj <= 0) {
+	if (tj < 0) {
 		return;
 	}
 	let yyjf = 0;
@@ -1555,7 +1556,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			//一次计算促销但是 所有的数量都要计算进 
 			//生成促销的结果
 			try {
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm,"");
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm,"",jfinfo);
 			} catch (e) {
 
 			}
@@ -1571,7 +1572,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 }
 
 //添加促销追踪
-const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM,jfnum) {
+const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM,jfnum,jfinfo) {
 	let i = row;
 	let dr = {};
 	dr["SALEDATE"] = saledate;
@@ -1590,6 +1591,8 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;
     dr["SPJF"] = jfnum;
+    dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet,0);
+	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum,0);
 	dr["NO"] = i;
 	cxfsdt.push(dr);
 }

@@ -29,7 +29,70 @@
 		methods: {
 			onLoad: function() {
 				that = this;
-
+                let hyinfoModel= {
+    "hyId": "1000311652", 
+    "CardNo": "KG1000311652", 
+    "AllinPayAccount": "100000001349164", 
+    "AliPayId": "", 
+    "AllinPayCardNo": "1082770000400550", 
+    "ActivityId": "", 
+    "youzanId": "FhRDCTGa996921810022846464", 
+    "Balance": 97700, 
+    "JFBalance": "177", 
+    "JFFactor": null, 
+    "Name": "", 
+    "NickName": "", 
+    "CertNum": "", 
+    "Phone": "13817909479", 
+    "Birthday": "", 
+    "Avatar": "", 
+    "Sex": "男", 
+    "CountryCode": "", 
+    "ProvinceCode": "", 
+    "CityCode": "", 
+    "DistrictCode": "", 
+    "OrgCode": "KG", 
+    "Area_code": null, 
+    "Area": "", 
+    "OpenId": "", 
+    "AppId": "wx1464791bb4d14db8", 
+    "UnionId": "ojIi0w9ttkx4ZzSDC5NgnA6RiXLQ", 
+    "ynhyk": null, 
+    "Vamt": 0, 
+    "Couponnum": null, 
+    "CardType": null, 
+    "RegisterDay": "20220629", 
+    "CreateTime": "1656464797000", 
+    "Status": "1", 
+    "ktypename": null, 
+    "giftcard": null, 
+    "hy_Level": {
+        "hyId": "1000311652", 
+        "CardNo": null, 
+        "CardType": null, 
+        "ShowIndex": 1, 
+        "dValue": 0, 
+        "Level": "V1", 
+        "LevelName": "默认等级", 
+        "CardLevel": null, 
+        "nextLevelName": "", 
+        "JFBalance": null, 
+        "Balance": null, 
+        "ExpDate": null, 
+        "CardStatus": "1", 
+        "TotalRefundAmount": 0, 
+        "TotalConsumeAmount": 0
+    }, 
+    "hy_Assets": {
+        "hyId": "1000311652", 
+        "GiftAmt": 126600, 
+        "GiftDisAmt": 25320, 
+        "OverdueValue": 0, 
+        "FreezeValue": 0, 
+        "eVipDisAmt": 8890
+    }, 
+    "coupons": [ ]
+};
 				let sale02_arr = [
 					{
 					    "SPID": "000000001010100006",
@@ -52,7 +115,7 @@
 					    "NO": 2
 					},
 					];
-				cxCount.Createcx(sale02_arr, "sale",hy_query.hyinfoModel);
+				cxCount.Createcx(sale02_arr, "sale",hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],
