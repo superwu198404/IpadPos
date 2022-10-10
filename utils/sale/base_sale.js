@@ -1105,10 +1105,11 @@ function GetSale(global, vue, target_name, uni) {
 			// this.currentOperation["ynFzCx"] = true;
 			// this.currentOperation["ynCx"] = true;
 		} else {
-			let obj = {
-				ZKType: data
-			}
-			this.Disc.val = obj;
+			let obj = this.Disc.cval;
+			obj.ZKType = data;
+			console.log("回调折扣赋值：", obj);
+			Disc1.val = obj;
+			console.log("回调折扣赋值1：", this.Disc.cval);
 			// this.currentOperation["Disc"] = true;
 			// this.currentOperation["ynFzCx"] = false;
 			// this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
@@ -1454,6 +1455,31 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	this.DKF.base = this;
 	//折扣、当前选择的折扣方式
+	var Disc1 = {
+		base: {},
+		cval: {},
+		Defval: 100,
+		get val() {
+			return this.cval;
+		},
+		set val(newval) {
+			//赋值的时候进行计算
+			this.cval = newval; //判断有效值
+
+			console.log("进入赋值：");
+			// if (newval && Object.keys(newval).length > 0) {
+			if (newval && newval.ZKType) { //有赋值折扣类型才算折扣生效
+				that.currentOperation.ynCx = false;
+				console.log("折扣赋值：", newval);
+				// that.currentOperation.FZCX = false; //
+			} else {
+				that.setSaleTypeDefval("ynCx");
+				console.log("折扣赋值空：", newval);
+				// that.setSaleTypeDefval("FZCX");
+			}
+		}
+	};
+	//折扣、当前选择的折扣方式
 	this.Disc = {
 		base: {},
 		cval: {},
@@ -1464,11 +1490,16 @@ function GetSale(global, vue, target_name, uni) {
 		set val(newval) {
 			//赋值的时候进行计算
 			this.cval = newval; //判断有效值
-			if (newval && Object.keys(newval).length > 0) {
+
+			console.log("进入赋值：");
+			// if (newval && Object.keys(newval).length > 0) {
+			if (newval && newval.ZKType) { //有赋值折扣类型才算折扣生效
 				that.currentOperation.ynCx = false;
+				console.log("折扣赋值：", newval);
 				// that.currentOperation.FZCX = false; //
 			} else {
 				that.setSaleTypeDefval("ynCx");
+				console.log("折扣赋值空：", newval);
 				// that.setSaleTypeDefval("FZCX");
 			}
 		}
@@ -2071,7 +2102,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetNewParmSale]SALE002合并后:", inputParm.sale002);
 		inputParm.sale003.forEach(item003 => {
 			Object.cover(item003, retparm);
-		}) 
+		})
 		console.log("[SetNewParmSale]SALE003合并后:", inputParm.sale003);
 		if (pm_actType == common.actTypeEnum.Refund) {
 			console.log("[SetNewParmSale]原单信息:", savaSale001);
@@ -2617,6 +2648,7 @@ function GetSale(global, vue, target_name, uni) {
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function() {
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
+		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};

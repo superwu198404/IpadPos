@@ -270,24 +270,29 @@ var zfbPay = {
 //仟吉电子卡支付类
 var hykPay = {
 	GetConfig: async function() { //获取 mis 支付参数，款台号
-		if (!util.getStorage('ecard-config')) {
-			let result = await RequestSend(
-				`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
-			);
-			if (result.code && result.result.code) {
-				let config_arr = JSON.parse(result.result.data);
-				if (config_arr && config_arr.length && config_arr.length > 0)
-					util.setStorage('ecard-config', config_arr[0]);
-				else
-					util.simpleMsg("[ECARD-CONFIG]支付参数数据库未查询到!", true)
-			} else
-				util.simpleMsg("[ECARD-CONFIG]支付参数获取失败!", true)
+		// if (!util.getStorage('ecard-config')) {
+		let result = await RequestSend(
+			`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
+		);
+		if (result.code && result.result.code) {
+			let config_arr = JSON.parse(result.result.data);
+			if (config_arr && config_arr.length && config_arr.length > 0)
+				// util.setStorage('ecard-config', config_arr[0]);
+				return config_arr[0];
+			else
+				util.simpleMsg("支付参数错误!", true)
 		} else
-			console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
-		return util.getStorage('ecard-config');
+			util.simpleMsg("支付参数错误!", true)
+		// } else
+		// 	console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
+		// return util.getStorage('ecard-config');
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数错误!", true)
+				return;
+			}
 			body.merchant_no = config.SHID; //从数据库获取配置
 			_PaymentAll(pt, body, func, catchFunc);
 		})
@@ -332,10 +337,11 @@ var kengeePay = {
 	},
 	PaymentAll: function(pt, body, func, catchFunc) {
 		this.GetConfig().then((config) => {
-			Req.asyncFuncOne(CreateData("TL", "查询中...", "ReadCard", {//这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
-				store_id: config.KEY,
-				terminalCode: config.NOTE
-			}), (res) => { //返回卡号和磁道信息
+			Req.asyncFuncOne(CreateData("TL", "查询中...",
+				"ReadCard", { //这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
+					store_id: config.KEY,
+					terminalCode: config.NOTE
+				}), (res) => { //返回卡号和磁道信息
 				console.log("[ReadCard]读取卡信息:", res);
 				let card_info = res.data;
 				body.card_no = card_info.card_no.substring(3); //去掉实体卡前缀三位
@@ -482,9 +488,11 @@ var pointPay = {
 				refund_no: body.out_refund_no,
 				money: body.refund_money
 			}
-		}, (res) => {//成功回调
+		}, (res) => { //成功回调
 			finallyFunc(res);
-			resultsFunc([,{code:true}]);//手动控制结果成功（因为积分回退没有所谓的查询，也就不存在两个返回结果：查询结果 and 退款结果）
+			resultsFunc([, {
+				code: true
+			}]); //手动控制结果成功（因为积分回退没有所谓的查询，也就不存在两个返回结果：查询结果 and 退款结果）
 		}, catchFunc);
 	}
 }

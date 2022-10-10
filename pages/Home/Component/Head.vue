@@ -262,6 +262,11 @@
 				console.log("[Head]设置会员名称!", info);
 				this.hyinfo = info;
 			}))
+			uni.$off('set-dkf');
+			uni.$on('set-dkf', util.callBind(this, function(info) {
+				console.log("[Head]设置大客户名称!", info);
+				this.DKFNAME = info;
+			}))
 			_msg.ShowMsg(that.KHID, "", res => {
 				that.MsgData = res;
 				that.XT_MsgData = res.filter((r, i) => {
