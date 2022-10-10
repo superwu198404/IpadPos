@@ -63,7 +63,7 @@
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
 						<button @click="EditOrder(item)" class="btn btn-hk">编辑</button>
-						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '预定提取' : '预定取消'}} </button>
+						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '提取' : '取消'}} </button>
 					</view>
 				</view>
 			</view>
@@ -172,12 +172,21 @@
 					//    ②且整单金额(ZNET)不等于 0，
 					//    ③且定金(DNET)不为 0，
 					//    则提示信息异常(其中②、③含义：这部分意思是要支付的完整金额不是 0 元，且预先付过定金，那么查不到sale3就是异常情况了)
-					console.log("[ExtractOrder]销售信息:",{ sale1,sale2,sale3 });
-					if (sale3.length === 0 && !this.view.mode && Number(sale1.ZNET) !== 0 && Number(sale1.DNET) !== 0) {
+					console.log("[ExtractOrder]销售信息:", {
+						sale1,
+						sale2,
+						sale3
+					});
+					if (sale3.length === 0 && !this.view.mode && Number(sale1.ZNET) !== 0 && Number(sale1
+							.DNET) !== 0) {
 						console.log("[ExtractOrder]sale3信息异常...")
 						util.simpleMsg("未查到交易记录[SALE3]!");
-					} else{
-						console.log("[ExtractOrder]预定信息:", { sale1, sale2, sale3 });
+					} else {
+						console.log("[ExtractOrder]预定信息:", {
+							sale1,
+							sale2,
+							sale3
+						});
 						this.$to_sale_pages(this.view.mode ? 'sale_reserve_extract' : 'sale_reserve_cancel', {
 							sale1,
 							sale2: (function() {

@@ -100,7 +100,21 @@ const _QueryRefund = function(pt, d, func, catchFunc) {
 	BasePayment(pt, "查询中...", "QueryRefund", d, func, catchFunc)
 };
 
-
+//获取支付配置参数
+const _GetConfig = async function(type, khid) { //获取 mis 支付参数，款台号
+	let config;
+	let result = await RequestSend(
+		// `select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
+		`select * from payconfig where paytype='${type}' and KHID='${khid}'`
+	);
+	if (result.code && result.result.code) {
+		let config_arr = JSON.parse(result.result.data);
+		if (config_arr && config_arr.length && config_arr.length > 0) {
+			config = config_arr[0];
+		}
+	}
+	return config;
+}
 
 /**
  * 包含支付和查询以及撤销的支付体
@@ -269,25 +283,12 @@ var zfbPay = {
 }
 //仟吉电子卡支付类
 var hykPay = {
-	GetConfig: async function() { //获取 mis 支付参数，款台号
-		if (!util.getStorage('ecard-config')) {
-			let result = await RequestSend(
-				`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
-			);
-			if (result.code && result.result.code) {
-				let config_arr = JSON.parse(result.result.data);
-				if (config_arr && config_arr.length && config_arr.length > 0)
-					util.setStorage('ecard-config', config_arr[0]);
-				else
-					util.simpleMsg("[ECARD-CONFIG]支付参数数据库未查询到!", true)
-			} else
-				util.simpleMsg("[ECARD-CONFIG]支付参数获取失败!", true)
-		} else
-			console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
-		return util.getStorage('ecard-config');
-	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		this.GetConfig().then((config) => {
+		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true)
+				return;
+			}
 			body.merchant_no = config.SHID; //从数据库获取配置
 			_PaymentAll(pt, body, func, catchFunc);
 		})
@@ -313,29 +314,17 @@ var hykPay = {
 }
 //仟吉实体卡
 var kengeePay = {
-	GetConfig: async function() { //获取 mis 支付参数，款台号
-		if (!util.getStorage('ecard-config')) {
-			let result = await RequestSend(
-				`select * from payconfig where paytype='TLCARD' and KHID='${getApp().globalData.store.KHID}'`
-			);
-			if (result.code && result.result.code) {
-				let config_arr = JSON.parse(result.result.data);
-				if (config_arr && config_arr.length && config_arr.length > 0)
-					util.setStorage('ecard-config', config_arr[0]);
-				else
-					util.simpleMsg("[ECARD-CONFIG]支付参数数据库未查询到!", true)
-			} else
-				util.simpleMsg("[ECARD-CONFIG]支付参数获取失败!", true)
-		} else
-			console.log("[ECARD-CONFIG][catch]Config:", util.getStorage('ecard-config'));
-		return util.getStorage('ecard-config');
-	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		this.GetConfig().then((config) => {
-			Req.asyncFuncOne(CreateData("TL", "查询中...", "ReadCard", {//这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
-				store_id: config.KEY,
-				terminalCode: config.NOTE
-			}), (res) => { //返回卡号和磁道信息
+		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true)
+				return;
+			}
+			Req.asyncFuncOne(CreateData("TL", "查询中...",
+				"ReadCard", { //这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
+					store_id: config.KEY,
+					terminalCode: config.NOTE
+				}), (res) => { //返回卡号和磁道信息
 				console.log("[ReadCard]读取卡信息:", res);
 				let card_info = res.data;
 				body.card_no = card_info.card_no.substring(3); //去掉实体卡前缀三位
@@ -368,24 +357,12 @@ var kengeePay = {
 }
 //mis银联支付
 var misPay = {
-	GetConfig: async function() { //获取 mis 支付参数，款台号
-		if (!util.getStorage('mis-config')) {
-			let result = await RequestSend(
-				`select * from payconfig where paytype='TL' and khid='${getApp().globalData.store.KHID}'`);
-			if (result.code && result.result.code) {
-				let config_arr = JSON.parse(result.result.data);
-				if (config_arr && config_arr.length && config_arr.length > 0)
-					util.setStorage('mis-config', config_arr[0]);
-				else
-					util.simpleMsg("[MIS-CONFIG]支付参数数据库未查询到!", true)
-			} else
-				util.simpleMsg("[MIS-CONFIG]支付参数获取失败!", true)
-		} else
-			console.log("[MIS-CONFIG][catch]Config:", util.getStorage('mis-config'));
-		return util.getStorage('mis-config');
-	},
 	PaymentAll: function(pt, body, func, catchFunc) {
-		this.GetConfig().then((config) => {
+		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true)
+				return;
+			}
 			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
 			body.merchant_no = null; //使用全局配置（后端）
 			body.terminalCode = config.NOTE;
@@ -394,7 +371,11 @@ var misPay = {
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		this.GetConfig().then((config) => {
+		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true)
+				return;
+			}
 			body.terminalCode = config.NOTE;
 			body.store_id = config.KEY;
 			_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
@@ -465,8 +446,8 @@ var pointPay = {
 		member.PointsDeduction("积分抵现中...", {
 			brand: getApp().globalData?.brand,
 			data: {
-				// hyid: util.getStorage("hyinfo")?.hyId,
-				hyid: "1000311647",
+				hyid: util.getStorage("hyinfo")?.hyId,
+				// hyid: "1000311647",
 				amount: body.point,
 				trade_no: body.out_trade_no,
 				money: body.point_money * 100
@@ -482,9 +463,11 @@ var pointPay = {
 				refund_no: body.out_refund_no,
 				money: body.refund_money
 			}
-		}, (res) => {//成功回调
+		}, (res) => { //成功回调
 			finallyFunc(res);
-			resultsFunc([,{code:true}]);//手动控制结果成功（因为积分回退没有所谓的查询，也就不存在两个返回结果：查询结果 and 退款结果）
+			resultsFunc([, {
+				code: true
+			}]); //手动控制结果成功（因为积分回退没有所谓的查询，也就不存在两个返回结果：查询结果 and 退款结果）
 		}, catchFunc);
 	}
 }

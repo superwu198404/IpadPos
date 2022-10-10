@@ -626,6 +626,7 @@ var ManualDiscount = function(sale1, sale2_arr) {
 		item.NET = Number((item.NET - SKYDISCOUNT).toFixed(2));
 		item.PRICE = Number((item.NET / item.QTY).toFixed(2));
 		item.DISCRATE = Number((item.DISCRATE + SKYDISCOUNT).toFixed(2));
+		item.CXDISC = Number((item.CXDISC + SKYDISCOUNT).toFixed(2));
 		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
 		item.DISC = Number(Number(Number(item.DISC) + SKYDISCOUNT).toFixed(2));
 	});
@@ -635,10 +636,11 @@ var ManualDiscount = function(sale1, sale2_arr) {
 }
 
 //生成促销跟踪表执行sql
-var CXMDFS = function(sale1, sale2, cxarr) {
+var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
 	let arr = [];
-	if (cxarr && cxarr.length > 0) {
-		cxarr.map(r => {
+	//允许辅助促销的情况下
+	if (ynfzcx && fzcxArr && fzcxArr.length > 0) {
+		fzcxArr.map(r => {
 			let obj = {
 				SALEDATE: sale1.SALEDATE,
 				KHID: sale1.KHID,
@@ -653,6 +655,29 @@ var CXMDFS = function(sale1, sale2, cxarr) {
 				CXPRICE: r.CXPRICE,
 				CXNET: r.CXNET,
 				CXLV: "",
+				// LCM: "",
+				NO: r.NO
+			};
+			arr.push(obj);
+		})
+	}
+	//允许促销的情况下
+	if (yncx && cxfsArr && cxfsArr.length > 0) {
+		cxfsArr.map(r => {
+			let obj = {
+				SALEDATE: sale1.SALEDATE,
+				KHID: sale1.KHID,
+				GSID: sale1.GSID,
+				CXBILL: r.CXBILL,
+				CLASSID: r.CLASSID,
+				XSBILL: sale1.BILL,
+				SPID: r.SPID.substr(8),
+				XSQTY: r.XSQTY,
+				OPRICE: r.OPRICE,
+				ONET: r.ONET,
+				CXPRICE: r.CXPRICE,
+				CXNET: r.CXNET,
+				CXLV: r.CXLV,
 				// LCM: "",
 				NO: r.NO
 			};

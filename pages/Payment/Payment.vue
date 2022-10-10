@@ -953,14 +953,11 @@
 				})
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
-					console.log("refundInfo.fail", refundInfo);
-
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
 					let current_refund_exists_only_code = false; //当前退款是否包含唯一码
 					console.log("[Refund]退款fkid:", refundInfo.fkid)
 					console.log("[Refund]退款payWayType:", payWayType)
-					console.log("refundInfo.group:", refundInfo.group);
-					console.log("groups:", groups);
+					console.log("[Refund]groups:", groups);
 					let total = 0;
 					if (refundInfo.group) { //判断当前支付是否包含唯一码
 						refundInfo = groups[refundInfo.group][0]; //获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
@@ -972,13 +969,18 @@
 						console.log("refundInfo:", refundInfo);
 						current_refund_exists_only_code = true;
 					}
-					if(['ZG03'].indexOf(refundInfo.fkid) !== -1){//如果是预定金直接跳过
+					console.log("[Refund]退款单据信息:", refundInfo);
+					if(['ZG03','ZF01'].indexOf(refundInfo.fkid) !== -1){//如果是预定金、现金（如果为0）直接跳过
 						refundInfo.fail = false;
-						if(current_refund_exists_only_code){//是否带唯一码
+						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
+						console.log("[Refund]跳过接口调用...");
+						if(!(refundInfo.fkid === 'ZF01' && Number(refundInfo.amount) !== 0))//如果为现金且金额不为 0
+							return;
 					}
 					if (!refundInfo.fail && refundInfo.refunding) {
+						console.log("[Refund]跳出当前循环...");
 						return;
 					}
 					if (payWayType) {
@@ -1020,12 +1022,13 @@
 							}).bind(that));
 						promises.push(res)
 					} else {
-						util.simpleMsg("支付方式不存在!");
+						util.simpleMsg("支付方式不存在!",true);
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
-					console.log("RefundList-After:", this.RefundList);
+					console.log("[Refund]RefundList-After:", this.RefundList);
+					this.RefundList.sort();
 				})
 			},
 			//创建订单对象列表
@@ -1033,7 +1036,8 @@
 				if (this.RefundList.length !== 0 && this.RefundList.filter(i => i.fail).length === 0 || this.PayList
 					.length !== 0 && this.PayList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
-						util.simpleMsg("支付已完成！");
+						let tip = that.actType == common.actTypeEnum.Refund ? "退款" : "支付";
+						util.simpleMsg(tip + "已完成！");
 						setTimeout(function() {
 							that.backPrevPage();
 						}, 1500);

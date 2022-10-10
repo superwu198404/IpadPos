@@ -15,9 +15,9 @@
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
-					<text v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
+					<text v-if="XT_MsgData.length==0">暂无系统消息！</text>
+					<text v-else v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
 						@click="ReadMsg(item)">{{item.title}}</text>
-					<!-- <text>测试消息...</text> -->
 				</view>
 			</view>
 			<view class="stores" style="position: absolute;right: 1%;">
@@ -261,6 +261,11 @@
 			uni.$on('set-member', util.callBind(this, function(info) {
 				console.log("[Head]设置会员名称!", info);
 				this.hyinfo = info;
+			}))
+			uni.$off('set-dkf');
+			uni.$on('set-dkf', util.callBind(this, function(info) {
+				console.log("[Head]设置大客户名称!", info);
+				this.DKFNAME = info;
 			}))
 			_msg.ShowMsg(that.KHID, "", res => {
 				that.MsgData = res;

@@ -99,8 +99,8 @@
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum">
-									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
-									<text>{{mainSale.sale002.length}}</text>
+									<image src="@/images/jsd-dxiao.png" mode="widthFix"></image>
+									<text>{{TotalNum}}</text>
 								</view>
 							</view>
 						</view>
@@ -175,7 +175,7 @@
 					</view>
 					<view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-							<label class="shux"><text>{{sp.QTY}}</text>-<text>{{sp.UNIT}}</text>
+							<label class="shux"><text>{{sp.UNIT}}</text>*<text>{{sp.QTY}}</text>
 								<text v-for="(sx08, sxindex) in mainSale.sale008"
 									v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
 							</label>
@@ -186,7 +186,7 @@
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist" :data-spid="specs.SPID"
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"  :data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS" :data-spid="specs.SPID"
 								:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
@@ -210,7 +210,7 @@
 		</view>
 		<!-- 预定信息录入 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
-			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="true"
+			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
 				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
@@ -339,7 +339,8 @@
 					</view>
 					<view class="ul">
 						<view class="li">
-							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.ZNET}}</text>
+							<!-- 支付展示整单金额 退款展示实付金额 -->
+							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.TNET}}</text>
 						</view>
 						<view class="li"><text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>

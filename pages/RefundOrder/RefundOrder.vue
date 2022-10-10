@@ -63,7 +63,7 @@
 									<label>订单类型 {{item.XSTYPE}}</label>
 								</view>
 								<view class="handles"><text></text>
-									<button class="btn" @click="GetOrderDetails(item)">详情</button>
+									<button class="btn" @click="GetOrderDetails(item)">退单</button>
 								</view>
 							</view>
 						</view>
@@ -318,10 +318,10 @@
 					sale1.XSTYPE = '2';
 					sale1.BILL_TYPE = 'Z151';
 					console.log("[Refund-Confirm]sale1数据:", data.sale1);
-					this.$to_sale_pages('sale_return_good',{
-						sale1:sale1,
-						sale2:data.sale2,
-						sale3:data.sale3
+					this.$to_sale_pages('sale_return_good', {
+						sale1: sale1,
+						sale2: data.sale2,
+						sale3: data.sale3
 					});
 				}
 			},
@@ -335,13 +335,13 @@
 					sale1.BILL_TYPE = 'Z151';
 					console.log("[Refund-Confirm]sale1数据:", data.sale1);
 					this.$emit("Switch", {
-						name: "MainSale",//销售页面组件名（必须与 router 中信息对应，且与 title 皆为必填项）
-						title: "销售",//销售页面组件名（必须与 router 中信息对应，且与 name 皆为必填项）
-						load_sale: true,//是否初始化 sale 销售主页模式
-						load_params:{//初始化方法参数
-							sale1:sale1,
-							sale2:data.sale2,
-							sale3:data.sale3
+						name: "MainSale", //销售页面组件名（必须与 router 中信息对应，且与 title 皆为必填项）
+						title: "销售", //销售页面组件名（必须与 router 中信息对应，且与 name 皆为必填项）
+						load_sale: true, //是否初始化 sale 销售主页模式
+						load_params: { //初始化方法参数
+							sale1: sale1,
+							sale2: data.sale2,
+							sale3: data.sale3
 						}
 					})
 				}

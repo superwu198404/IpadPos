@@ -1,3 +1,12 @@
+function formatDate (date){
+	let dateNew = new Date(date);
+	const year = dateNew.getFullYear();
+	const month = dateNew.getMonth() + 1;
+	const day = dateNew.getDate();
+	//yyyy-MM-dd HH:mm:ss
+	return year + '-' + month + '-' + day;
+}
+
 function getTime(type) {
 	let date = new Date(),
 		currentDate,
@@ -123,7 +132,7 @@ const timeTodec = function(dtime, minValue) {
 	} else {
 		let sd = Math.floor((dtime / 1000 / 60 / 60) % 24);
 		let ff = Math.floor((dtime / 1000 / 60) % 60);
-		ff = Math.Round(ff, 2);
+		ff = Math.round(ff*100)/100;
 		new_obj = sd + ff;
 	}
 	return new_obj;
@@ -264,5 +273,6 @@ module.exports = {
 	cxZkTj: cxZkTj,
 	toStr: toStr,
 	TryParse: TryParse,
-	defStr: defStr
+	defStr: defStr,
+	formatDate: formatDate
 };
