@@ -1507,7 +1507,10 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	};
 	this.Disc.base = this;
-	util.hidePropety(this.Disc, "val");
+	this.Page.$watch("mainSale.Disc.val", util.callBind(this, function(n, o) {
+		console.log("日志监听");
+	}))
+	// util.hidePropety(this.Disc, "val");
 	//辅助促销
 	this.FZCX = {
 		base: {},
