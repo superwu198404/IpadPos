@@ -1755,6 +1755,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.currentOperation.inputsp) {
 			that.myAlert("当前模式下不可录入商品")
 			return;
+			
 		}
 		let plindex = e.currentTarget.dataset.plindex;
 		that.log("开始点击plindex" + plindex);

@@ -23,9 +23,8 @@
 				</label>
 			</view>
 			<view class="logbtn">
-				<button @click="Login()">登 录</button>
+				<button @click="Login()">登 录</button>  
 				<button @click="reset()" style="margin-top: 20rpx;">重新初始化</button>
-				<!-- <button @click="Admin()" style="margin-top: 20rpx;">管理登录</button> -->
 			</view>
 		</view>
 	</view>
@@ -62,7 +61,7 @@
 		},
 		methods: {
 			onLoad: function() {
-				console.log("[Login-onLoad]加载触发!");
+				//console.log("[Login-onLoad]加载触发!");
 				that = this;
 				let Init_Data = util.getStorage("Init_Data");
 				if (Init_Data && Init_Data != '{}') { //赋值初始化的门店和款台
@@ -70,7 +69,7 @@
 					that.posid = Init_Data.POSID;
 				}
 				//初始化支付方式和全局配置参数
-				console.log("[Login-onLoad]初始化基本数据!");
+				//console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);
 			},
 			GetKHIDS: function() {

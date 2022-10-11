@@ -103,7 +103,12 @@
 			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
-			await _init.YN_Init(function(res) {
+			console.log("进行通讯！")
+		  	await _init.dataInit("download_zbtx");
+			 await _init.YN_Init(function(res) 
+			 {
+				 //执行通讯
+				 
 				uni.reLaunch({
 					url: "/pages/Login/Login",
 					// url: "/pages/start/start",

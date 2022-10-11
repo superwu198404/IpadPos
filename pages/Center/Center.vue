@@ -54,7 +54,8 @@
 				</view>
 				<view class="chongdu">
 					<view class="dates">
-						<label><text>重读基础数据</text><text>REREAD DATA</text></label>
+						<button @click="_init.dataInit('download_zbtx')" style="margin-top: 20rpx;">重读基础数据</button>
+					    <button @click="_init.dataInit('reloadsqlite')" style="margin-top: 20rpx;">通讯</button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
@@ -82,7 +83,7 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _login from '@/api/business/login.js';
-
+	import _init from '@/api/business/init.js';
 	var that;
 	export default {
 		data() {
@@ -193,7 +194,8 @@
 							console.log("手动签到结果：", res);
 							if (res.code) {
 								let data = JSON.parse(res.data);
-								if (data.sql) {
+								if (data.sql) 
+								{
 									_login.SignOrSignOutSql(data.sql, store => {
 										console.log("签到结果回调：", store);
 										if (store.OPENFLAG == 1) {
