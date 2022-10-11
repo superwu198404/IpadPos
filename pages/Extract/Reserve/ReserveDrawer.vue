@@ -17,11 +17,16 @@
 							v-on:blur="QueryAddress()" /></label>
 					<label><text>提货时间：</text><input type="text" v-model="details.info.THDATE" /></label>
 					<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
-					<label><text>提货门店：</text>
+					<label><text>配送中心：</text>
+						<picker @change="CenterChange" :range="distribution" range-key="SNAME">
+							<view>{{ details.info.STR2}}-{{ details.info._STR2 }}</view>
+						</picker>
+					</label>
+					<!-- <label><text>提货门店：</text>
 						<StorePicker @change="StoreChange" :init="details.info.THKHID"
 							style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;"
 							class="uni-input-input"></StorePicker>
-					</label>
+					</label> -->
 					<!-- <label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label> -->
 					<!-- <label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label> -->
 					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
@@ -126,6 +131,7 @@
 						ADDRID: "" //地址ID
 					}
 				},
+				distribution: [],
 				details: {
 					info: {
 						BILL: "",
@@ -136,7 +142,9 @@
 						DNET: "",
 						ZNET: "",
 						BILLDISC: "",
-						CUSTMADDRESS: ""
+						CUSTMADDRESS: "",
+						STR2: "",
+						_STR2: ""
 					}, //主单数据（商品集合中共有的部分，如买家的信息）
 					address: [], //用户配送地址集合
 					current: 0
@@ -151,6 +159,18 @@
 				this.view.add_address = true; //新增地址
 				this.view.address_edit = false;
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
+			},
+			GetDistributionCenter: function(e) { //获取配送中心
+				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
+					if (r.msg.length > 0) {
+						this.distribution = r.msg;
+					}
+				}))
+			},
+			CenterChange: function(e) {
+				this.details.info.STR2 = this.distribution[e.detail.value].KHID;
+				this.details.info._STR2 = this.distribution[e.detail.value].SNAME;
+				util.hidePropety(this.details.info, '_STR2');
 			},
 			Save: function() {
 				let address = this.details.info.CUSTMADDRESS,
@@ -170,27 +190,28 @@
 				}
 				console.log("[Save]选择的address:", address);
 				console.log("[Save]选择的address_id:", address_id);
-				_extract.reserveOrdersUpdate({
-					khid: this.details.info.KHID,
-					gsid: this.GSID,
-					bill: this.details.info.BILL,
-					regenerate: this.ExistsGenarate(),
-					order: {
-						remark: this.details.info.CUSTMCOMM,
-						addr_id: address_id,
-						bhid: this.details.info.STR2,
-						date: this.details.info.THDATE,
-						phone: this.details.info.CUSTMPHONE,
-						addr: address,
-						custname: this.details.info.CUSTMNAME,
-						thkhid: this.details.info.thkhid
-					}
-				}, util.callBind(this, function(res) {
-					util.simpleMsg(res.msg, res.code, res);
-					if (res.code) {
-						this.Close();
-					}
-				}));
+				if (this.ValidFromData())
+					_extract.reserveOrdersUpdate({
+						khid: this.details.info.KHID,
+						gsid: this.GSID,
+						bill: this.details.info.BILL,
+						regenerate: this.ExistsGenarate(),
+						order: {
+							remark: this.details.info.CUSTMCOMM,
+							addr_id: address_id,
+							bhid: this.details.info.STR2,
+							date: this.details.info.THDATE,
+							phone: this.details.info.CUSTMPHONE,
+							addr: address,
+							custname: this.details.info.CUSTMNAME,
+							thkhid: this.details.info.thkhid
+						}
+					}, util.callBind(this, function(res) {
+						util.simpleMsg(res.msg, res.code, res);
+						if (res.code) {
+							this.Close();
+						}
+					}));
 			},
 			DeleteAddress: function(id, phone) {
 				_extract.Del_Addr({
@@ -257,6 +278,50 @@
 			QueryAddress: function() {
 				console.log("查询客户地址信息...");
 				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+			},
+			ValidFromData: function() {
+				let order = this.details.info;
+				if (!order.THKHID) {
+					util.simpleMsg("提货门店为空", true);
+					return false;
+				}
+				if (order.THTYPE != '1' && new Date(order.THDATE.replace(/-/g, "/")) < new Date()) {
+					util.simpleMsg("提货时间早于当前", true);
+					return false;
+				}
+				if (order.THTYPE == '1') {
+					let hour = new Date(order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
+					if (hour < 7 || hour > 19) {
+						util.simpleMsg("提货时间不在7到19点", true);
+						return false;
+					}
+					if (new Date(order.THDATE.replace(/-/g, "/")) < new Date().setHours(new Date().getHours() +
+							1)) {
+						util.simpleMsg("提货时间小于一小时内", true);
+						return false;
+					}
+				}
+				if (order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
+					if (new Date(order.THDATE.replace(/-/g, "/")) < new Date()) {
+						util.simpleMsg("提货时间小于当前时间", true);
+						return false;
+					}
+					if (new Date(order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
+						util.simpleMsg("提货时间晚于19点", true);
+						return false;
+					}
+				}
+				if (!order.CUSTMPHONE) {
+					util.simpleMsg("联系电话为空", true);
+					return false;
+				}
+				if (order.THTYPE == '1' || order.THTYPE == '2') {
+					if (!order.CUSTMADDRESS) {
+						util.simpleMsg("配送地址为空", true);
+						return false;
+					}
+				}
+				return true;
 			},
 			ExistsGenarate: function() { //判断是否需要重新生成配送单（详细逻辑可看接口 ReserveOrdersUpdate 内的注释）
 				let before = util.timeZoneCompensation(new Date(util.formatIOSDateTime(this.details.info.$THDATE)));
