@@ -256,7 +256,6 @@ var GetSkyJk = async function(func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
-
 export default {
 	GetPassWord,
 	GetKHIDByRYID,

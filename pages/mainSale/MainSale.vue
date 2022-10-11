@@ -186,8 +186,9 @@
 					</view>
 					<view class="sizes" v-if="mainSale.clikSpItem.ynshowlist">
 						<view class="sizelist">
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"  :data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS" :data-spid="specs.SPID"
-								:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
+							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+								:data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS"
+								:data-spid="specs.SPID" :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
 								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 						</view>
 					</view>
@@ -477,8 +478,10 @@
 					amount = (this.mainSale?.sale001?.TNET || 0) - complet_ammount
 				} else if (this.mainSale.current_type.clickType === 'sale_reserve_cancel') {
 					amount = this.mainSale?.sale001?.DNET;
-				} else
+				} else if (this.mainSale.current_type.clickType === 'sale_reserve_extract')
 					amount = (this.mainSale?.sale001?.TNET || 0) - (this.mainSale?.sale001?.DNET || 0);
+				else
+					amount = (this.mainSale?.sale001?.TNET || 0);
 				return amount?.toFixed(2);
 			},
 			MemberInfo: function() {

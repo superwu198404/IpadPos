@@ -104,7 +104,7 @@
 			onLoad: function() {
 				that = this;
 				that.GetSignOutInWeeks();
-				that.GetSkyJk();
+				// that.GetSkyJk();
 			},
 			onShow: function() {
 				this.timer = setInterval(() => {
@@ -162,18 +162,20 @@
 							console.log("本次单据传输定时ID:", int);
 						}
 						if (res.confirm) {
-							if (that.syyjk && Object.keys(that.syyjk).length > 0 && !that.syyjk
-								.code) { //有未结款数据
-								util.simpleMsg(that.syyjk.msg, "none");
-								return;
-							}
-							if (that.signOutDates.length > 0) { //有日结数据
-								that.SignOut(); //发起日结
-								return;
-							}
-							uni.redirectTo({
-								url: "/pages/mainSale/MainSale"
-							});
+							_login.GetSkyJk(res => {
+								console.log("查询到的结款数据：", res);
+								if (!res.code) { //有未结款数据
+									util.simpleMsg(res.msg, "none");
+									return;
+								}
+								if (that.signOutDates.length > 0) { //有日结数据
+									that.SignOut(); //发起日结
+									return;
+								}
+								uni.redirectTo({
+									url: "/pages/mainSale/MainSale"
+								});
+							})
 						} else {
 							uni.redirectTo({
 								url: "/pages/mainSale/MainSale"
