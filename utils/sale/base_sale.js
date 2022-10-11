@@ -1136,16 +1136,19 @@ function GetSale(global, vue, target_name, uni) {
 			// this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
 		}
 		//切换折扣或者促销后 清空一下原来计算的折扣值
-		this.sale001.BZDISC = 0; //zk
-		this.sale001.BZDISC = 0; //zk
-		this.sale001.BZDISC = 0; //zk
-
-		this.sale001.TCXDISC = 0; //cx
+		this.sale001.TBZDISC = 0; //zk 总标准折扣
+		this.sale001.TLSDISC = 0; //zk 总临时折扣
+		this.sale001.TTPDISC = 0; //zk 总特批折扣
+		this.sale001.TCXDISC = 0; //cx 总促销折扣
 		this.sale001.TDISC = 0; //cx
+
 		this.sale002.map(r => {
 			r.DISCRATE = 0; //zk，cx
 			r.CXDISC = 0; //cx
 			r.YN_CXDISC = "N"; //cx
+			r.BZDISC = 0; //zk
+			r.LSDISC = 0; //zk
+			r.TPDISC = 0; //zk
 		})
 		console.log("特殊折扣的操作权限：", this.currentOperation.Disc);
 		console.log("促销的操作权限：", this.currentOperation.ynCx);
@@ -1770,6 +1773,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.currentOperation.inputsp) {
 			that.myAlert("当前模式下不可录入商品")
 			return;
+			
 		}
 		let plindex = e.currentTarget.dataset.plindex;
 		that.log("开始点击plindex" + plindex);
@@ -2500,6 +2504,18 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.currentOperation.Disc) {
 			that.discCompute();
+			let TBZDISC = 0,
+				TLSDISC = 0,
+				TTPDISC = 0;
+			that.sale002.map(r => {
+				TBZDISC += r.BZDISC;
+				TLSDISC += r.LSDISC;
+				TTPDISC += r.TPDISC;
+			});
+			//001 表追加特殊折扣值
+			this.sale001.TBZDISC = TBZDISC;
+			this.sale001.TLSDISC = TLSDISC;
+			this.sale001.TTPDISC = TTPDISC;
 			console.log("特殊折扣计算后的销售单2:", that.sale002);
 			console.log("特殊折扣计算后的销售单1:", this.sale001);
 		}

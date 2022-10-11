@@ -54,7 +54,8 @@
 				</view>
 				<view class="chongdu">
 					<view class="dates">
-						<label><text>重读基础数据</text><text>REREAD DATA</text></label>
+						<button @click="DataInit('download_zbtx')" style="margin-top: 20rpx;">重读基础数据</button>
+						<button @click="DataInit('reloadsqlite')" style="margin-top: 20rpx;">通讯</button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
@@ -82,7 +83,7 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _login from '@/api/business/login.js';
-
+	import _init from '@/api/business/init.js';
 	var that;
 	export default {
 		data() {
@@ -319,6 +320,10 @@
 						}
 					}
 				})
+			},
+			//初始化
+			DataInit: function(e) {
+				_init.dataInit(e);
 			}
 		},
 	}
@@ -525,8 +530,34 @@
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		padding: 60rpx 5%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
-
+.chongdu .dates button{
+	margin:0;
+	background-color: #fff;
+	color: #006B44;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	font-weight: 700;
+	line-height: 70rpx;
+	padding:0;
+}
+.chongdu .dates button:nth-child(1){
+	border-right:1px solid #C1F6D8;
+	width:52%;
+}
+.chongdu .dates button:nth-child(2){
+	width:45%;
+	padding-left: 2%;
+}
+.chongdu .dates button text{
+	font-weight: 400;
+	line-height: 50rpx;
+}
 	.chongdu .tuichu {
 		width: 25%;
 		background-color: #006B44;

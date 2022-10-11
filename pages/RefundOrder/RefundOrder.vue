@@ -56,11 +56,12 @@
 								@click="ChooseOrder(item,index)">
 								<view class="h3">
 									<text>单号：{{item.BILL}}</text>
-									<text class="price">￥{{item.TNET}}</text>
+									<text class="price">￥{{item.XSTYPE=='销售'?item.TNET:item.ZNET}}</text>
+									<!-- 预定提取的单展示整单金额 -->
 								</view>
 								<view class="cods">
 									<label>{{item.SALEDATE}} {{item.SALETIME}}</label>
-									<label>订单类型 {{item.XSTYPE}}</label>
+									<label>订单类型： {{item.XSTYPE}}</label>
 								</view>
 								<view class="handles"><text></text>
 									<button class="btn" @click="GetOrderDetails(item)">退单</button>

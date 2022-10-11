@@ -1371,7 +1371,9 @@
 					this.RYID = this.SALES.sale1.RYID; //重新赋值RYID
 					// util.simpleModal("门店检测1", this.SALES.sale1.KHID);
 					// this.PaymentInfos.PayedAmount = 0; //进行初始化后不再计算此值
-					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
+
+					//暂不确定默认0 getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
+					this.ZFBZK = 0;
 				}
 				console.log("[ParamInit]待支付金额初始化前:", this.dPayAmount);
 				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值(其中会总计出待支付金额 debt)

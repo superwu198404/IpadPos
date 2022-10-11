@@ -130,8 +130,6 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			util.simpleMsg("门店信息查询失败，请重新初始化", "none");
 			return;
 		}
-
-
 		console.log("门店信息查询成功：", res);
 		console.log("人员信息展示：", ryinfo);
 		store = {
@@ -180,7 +178,8 @@ var YN_Sign = function(khid, posid, func) {
 
 var SignOrSignOut = async function(ynqd, qtdate, func) {
 	let salenum = 0,
-		salenet = 0;
+		salenet = 0,
+		openflag = 0;
 	let sql = "SELECT COUNT(*) SALENUM,SUM(TNET) SALENET FROM  SALE001  WHERE SALEDATE =DATETIME('" + dateformat
 		.getYMD(-1) + "')";
 	await db.get().executeQry(sql, "查询中...", res => {
@@ -189,18 +188,26 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 			salenum = res.msg[0].SALENUM || 0;
 			salenet = res.msg[0].SALENET || 0;
 		}
-	}, err => {
-
 	})
 	let store = util.getStorage("store");
-	// console.log("门店缓存信息：", store);
+	let sql1 = "SELECT RUN_STATUS FROM KHYYMX  K1  WHERE  K1.KHID = '" + store.KHID +
+		"'  and  DATE_YY>=DATETIME('" + dateformat.getYMD() + "')  and  DATE_YY<=DATETIME('" + dateformat
+		.getYMD(1) + "')";
+	await db.get().executeQry(sql1, "查询中...", res => {
+		if (res.code && res.msg.length > 0) {
+			console.log("签到查询结果:", res);
+			openflag = res.msg[0].RUN_STATUS || 0;
+		}
+	})
+	// console.log("门店签到查询sql：", sql1);
+	// console.log("门店签到信息：", openflag);
 	let data = {
 		gsid: store.GSID,
 		khid: store.KHID,
 		posid: store.POSID,
 		ryid: store.RYID,
 		ynqd,
-		openflag: store.OPENFLAG || 0,
+		openflag: openflag,
 		salenum,
 		salenet,
 		qtdate
