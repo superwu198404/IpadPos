@@ -2509,6 +2509,9 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
+		console.log("[SaleNetAndDisc]参数:",{
+			retx
+		});
 		that.sale001.ZNET = this.float(retx.ONET, 2); //原价
 		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣

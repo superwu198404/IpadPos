@@ -160,16 +160,17 @@
 				this.view.address_edit = false;
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
 			},
-			GetDistributionCenter: function(e) { //获取配送中心
+			GetDistributionCenter: function() { //获取配送中心
 				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
+					console.log("[GetDistributionCenter]配送中心...",r);
 					if (r.msg.length > 0) {
 						this.distribution = r.msg;
 					}
 				}))
 			},
 			CenterChange: function(e) {
-				this.details.info.STR2 = this.distribution[e.detail.value].KHID;
-				this.details.info._STR2 = this.distribution[e.detail.value].SNAME;
+				this.details.info.STR2 = this.distribution[e.detail.value]?.KHID;
+				this.details.info._STR2 = this.distribution[e.detail.value]?.SNAME;
 				util.hidePropety(this.details.info, '_STR2');
 			},
 			Save: function() {
@@ -338,6 +339,7 @@
 			console.log("[Extract-Reserve]预订单修改信息:", this.details.info);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
 			this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+			this.GetDistributionCenter();
 		}
 	}
 </script>
