@@ -66,7 +66,8 @@
     "app-plus" : {
         "modules" : {
             "SQLite" : {},
-            "Bluetooth" : {}
+            "Bluetooth" : {},
+            "Maps" : {}
         },
         "distribute" : {
             "android" : {
@@ -84,7 +85,13 @@
             },
             "sdkConfigs" : {
                 "geolocation" : {},
-                "ad" : {}
+                "ad" : {},
+                "maps" : {
+                    "amap" : {
+                        "appkey_ios" : "7abfed2964bcad2143b01f6aaf0b86da",
+                        "appkey_android" : "86f75f9051e9eb25c6f7907df2b4230c"
+                    }
+                }
             },
             "icons" : {
                 "ios" : {

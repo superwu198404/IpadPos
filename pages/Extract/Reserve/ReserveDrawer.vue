@@ -22,8 +22,8 @@
 							style="height: 30px;background-color: #F5F5F5;line-height: 30px;border-radius: 2px;border: 0.5px solid #eee;width: 65%;"
 							class="uni-input-input"></StorePicker>
 					</label>
-					<label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label>
-					<label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label>
+					<!-- <label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label> -->
+					<!-- <label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label> -->
 					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
 				</view>
 				<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
@@ -74,7 +74,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="operat" style="style="display: flex;padding: 8px;gap: 8px;"">
+			<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
 				<button class="btn btn-qx" @click="Close">取 消</button>
 				<button class="btn" @click="Save">保 存</button>
 			</view>
