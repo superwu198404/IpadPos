@@ -667,6 +667,14 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			this.actType = common.actTypeEnum.Payment
+			//销售切换到赊销时清除促销折扣等数据
+			this.sale002.map(r => {
+				r.NET = this.float(r.NET + r.DISCRATE, 2);
+				r.PRICE = this.float(r.NET / r.QTY, 2);
+				r.DISCRATE = 0;
+				r.CXDISC = 0;
+				r.YN_CXDISC = "N";
+			})
 			console.log("[sale-$initSale]params:", params);
 		},
 		///对打印的控制

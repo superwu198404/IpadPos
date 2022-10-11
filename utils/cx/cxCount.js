@@ -298,6 +298,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	//会员信息判断
 	if(hyinfoModel != null){
 		hymen = hyinfoModel;
+		isHy = cx_util.DefaultNull(hyinfoModel,hyinfoModel.hyId)!="" ? true : false;
 	}
 	//清除计算过的集合
 	ClearResult();
@@ -584,7 +585,7 @@ const ynjsCxforHy = function(bill) {
 			case "all":
 				return true;
 			case "Hy": //测试改为true
-				return true;
+				return false;
 			case "Nhy":
 				return true;
 			default:
