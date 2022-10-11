@@ -117,10 +117,18 @@
 				plus.navigator.closeSplashscreen();
 			})
 			// #endif
+
+			// let deviceinfo = uni.getDeviceInfo();
+			// console.log("设备信息：", deviceinfo);
+			// util.setStorage("deviceinfo", deviceinfo);
+
+			let sysinfo = uni.getSystemInfoSync();
+			console.log("系统信息：", sysinfo);
+			util.setStorage("sysinfo", sysinfo);
+
 		},
 		onShow: function() {
 			console.log('App Show');
-			this.globalData.sysinfo = uni.getSystemInfoSync();
 		},
 		onHide: function() {
 			console.log('App Hide');

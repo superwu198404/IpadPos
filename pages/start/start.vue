@@ -94,7 +94,7 @@
 		width: 86%;
 		height: 80rpx;
 		line-height: 80rpx;
-		padding:0 20rpx;
+		padding: 0 20rpx;
 	}
 
 	.infos image {
@@ -219,6 +219,7 @@
 
 			},
 			init: async function() {
+
 				if (!that.khid || !that.posid) {
 					util.simpleMsg("请输入门店id和款台号", "none");
 					return;
@@ -231,9 +232,11 @@
 					(res) => {
 						console.log("001回调成功");
 						that.tx001 = Req.getResData(res);
+						let sysinfo = util.getStorage("sysinfo");
 						let reqPosData = {
 							"khid": that.khid,
-							"posid": that.posid
+							"posid": that.posid,
+							"deviceId": sysinfo?.deviceId || "IPADPOS" //传入设备号 注意设备号会随着storage清除而发生改变
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
 						return Req.resObj(true, "初始化中...", reqPosData, apistr);
