@@ -470,6 +470,13 @@ var XsTypeObj = {
 			return false;
 		},
 		$beforeFk() {
+			console.log("[SaleReserve]预定提取下一步...", this.sale001);
+			let tnet = Number(this.sale001.TNET),
+				dnet = Number(this.sale001.DNET)
+			if (!isNaN(tnet) && !isNaN(dnet) && (tnet < dnet)) { //定金是无法退还的，所以提取的时候商品如果总值没达到定金金额是得提示让其继续加购商品才行
+				util.simpleMsg("当前金额小于定金金额,请继续加购商品!", 'none')
+				return false;
+			}
 			console.log("[SaleReserve]预定支付金额:", this.sale001.DNET);
 			let keys = Object.keys(new sale.sale001());
 			let reserve_key = Object.keys(this.sale001);
@@ -1233,6 +1240,12 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
+		this.sale002.map(s2 => {
+			if (!s2.$raw) {
+				s2.$raw = Object.assign({},s2);
+				util.hidePropety(s2, '$raw');
+			}
+		})
 		this.currentOperation["showEdit"] = true;
 		this.update();
 	})
@@ -1256,7 +1269,6 @@ function GetSale(global, vue, target_name, uni) {
 			if (item.QTY < 0) {
 				item.QTY = 0;
 			}
-
 		}
 		// let _qty = 0;
 		// _qty = Number(item.QTY) + type;
@@ -1268,6 +1280,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
+		let attempt_lock_row = false;//判断是否尝试修改锁定行
 		this.currentOperation["showEdit"] = false;
 		this.update();
 
@@ -1279,8 +1292,13 @@ function GetSale(global, vue, target_name, uni) {
 		for (var i = this.sale002.length - 1; i >= 0; i--) {
 			let item = this.sale002[i];
 			// console.log("当前商品行：", item);
-			this.updateSp(i, item.SPID, item.QTY);
+			if (i < this.currentOperation.lockRows && item.QTY !== 0) {
+				item.QTY = item.$raw.QTY ?? item.QTY;
+				attempt_lock_row = true;
+			} else
+				this.updateSp(i, item.SPID, item.QTY);
 		}
+		if(attempt_lock_row) util.simpleMsg("该商品已被锁定!",true)
 		if (this.sale002.length == 0) {
 			//防止编辑时直接清空了商品数量 则之前计算的归0 处理
 			that.sale001.ZNET = 0;
@@ -2416,10 +2434,10 @@ function GetSale(global, vue, target_name, uni) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_row < this.currentOperation.lockRows) {
+		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0) {
 			util.simpleMsg("该商品已被锁定!", true)
-			console.log("[UpdateSp]商品处于被锁定行，无法删除!");
-			return;
+			console.log("[UpdateSp]商品处于被锁定行，无法修改数量!");
+			return true;
 		}
 		if (pm_qty > 0) {
 			this.sale002[pm_row].QTY = pm_qty;
@@ -2494,7 +2512,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		console.log("[SaleNetAndDisc]参数:",{
+		console.log("[SaleNetAndDisc]参数:", {
 			retx
 		});
 		that.sale001.ZNET = this.float(retx.ONET, 2); //原价
