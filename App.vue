@@ -104,7 +104,7 @@
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
 			console.log("进行通讯！")
-			await _init.dataInit("download_zbtx");
+			// await _init.dataInit("download_zbtx");
 			await _init.YN_Init(function(res) {
 				//执行通讯
 				uni.reLaunch({

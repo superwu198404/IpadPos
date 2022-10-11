@@ -532,7 +532,7 @@ var addfzcxdtinfo = function(cxobj) {
 	obj.XSQTY = cxobj.qty;
 	obj.OPRICE = cxobj.price;
 	obj.ONET = cxobj.price * cxobj.qty;
-	obj.CXPRICE = cxobj.MJ_DISC1;
+	obj.CXPRICE = cxobj.cxprice;
 	obj.CXNET = cxobj.zprice;
 	obj.CXLV = "1";
 	obj.LCM = "";
@@ -637,6 +637,7 @@ var ManualDiscount = function(sale1, sale2_arr) {
 
 //生成促销跟踪表执行sql
 var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
+	console.log("促销跟踪数据的数量：", cxfsArr.length);
 	let arr = [];
 	//允许辅助促销的情况下
 	if (ynfzcx && fzcxArr && fzcxArr.length > 0) {
@@ -671,7 +672,7 @@ var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
 				CXBILL: r.CXBILL,
 				CLASSID: r.CLASSID,
 				XSBILL: sale1.BILL,
-				SPID: r.SPID.substr(8),
+				SPID: r.SPID, //.substr(r.CXBILL.length),
 				XSQTY: r.XSQTY,
 				OPRICE: r.OPRICE,
 				ONET: r.ONET,
@@ -689,7 +690,7 @@ var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
 		return [];
 	}
 	let sqlObj = common.CreateSQL(arr, "CXMDFSMX");
-	return sqlObj.oracle_arr; //sql 集合
+	return sqlObj.oracleArr; //sql 集合
 }
 
 export default {

@@ -1755,7 +1755,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.currentOperation.inputsp) {
 			that.myAlert("当前模式下不可录入商品")
 			return;
-			
+
 		}
 		let plindex = e.currentTarget.dataset.plindex;
 		that.log("开始点击plindex" + plindex);
@@ -1881,25 +1881,11 @@ function GetSale(global, vue, target_name, uni) {
 	 */
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
-		// let FZCXVal = this.FZCX.cval;
-		// console.log("[PayedResult]辅助促销的结果：", FZCXVal);
-		// if (FZCXVal && Object.keys(FZCXVal).length != 0) {
-		// 	FZCXVal.data.forEach(r => {
-		// 		let SPObj = _main.FindSP(this.Allsplist, r.SPID);
-		// 		console.log("当前匹配到的商品对象:", SPObj);
-		// 		console.log("当前辅助促销商品对象:", r);
-		// 		if (Object.keys(SPObj).length > 0) {
-		// 			let NO = this.sale002.length;
-		// 			let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
-		// 			s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
-		// 			console.log("追加的辅助促销商品:", s2);
-		// 			this.sale002.push(s2); //追加s2
-		// 		}
-		// 	})
-		// 	console.log("[PayedResult]追加辅助促销后的商品：", this.sale002);
-		// }
-		// this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
-		// console.log("分摊后的商品信息：", this.sale002);
+
+		// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
+		// 	.ynCx, this.currentOperation.FZCX);
+		// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
+		// console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
 		// return;
 		if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 			util.simpleMsg(result.msg, !result.code);
