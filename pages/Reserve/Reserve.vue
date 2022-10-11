@@ -113,7 +113,7 @@
 							<div class="map"></div>
 						</view>
 					</view>
-					<view class="operat">
+					<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
 						<button class="btn btn-qx" @click="Close()">取 消</button>
 						<button class="btn" @click="Confirm">确 定</button>
 					</view>

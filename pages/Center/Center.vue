@@ -530,8 +530,34 @@
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		padding: 60rpx 5%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
-
+.chongdu .dates button{
+	margin:0;
+	background-color: #fff;
+	color: #006B44;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	font-weight: 700;
+	line-height: 70rpx;
+	padding:0;
+}
+.chongdu .dates button:nth-child(1){
+	border-right:1px solid #C1F6D8;
+	width:52%;
+}
+.chongdu .dates button:nth-child(2){
+	width:45%;
+	padding-left: 2%;
+}
+.chongdu .dates button text{
+	font-weight: 400;
+	line-height: 50rpx;
+}
 	.chongdu .tuichu {
 		width: 25%;
 		background-color: #006B44;
