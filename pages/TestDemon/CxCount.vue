@@ -95,17 +95,27 @@
 };
 				let sale02_arr = [
 					{
-					    "SPID": "000000001060100011",
-					    "SNAME": "香蕉味冰淇淋",
+					    "SPID": "000000001030200001",
+					    "SNAME": "可可饼",
 					    "QTY": 2,
-					    "OPRICE": 30,
+					    "OPRICE": 1000,
 					    "DISCRATE": 0,
-					    "NET": 60,
-					    "PRICE": 30,
+					    "NET": 2000,
+					    "PRICE": 1000,
 					    "NO": 1
+					},
+					{
+					    "SPID": "000000001030200002",
+					    "SNAME": "咸芝士奶香片",
+					    "QTY": 1,
+					    "OPRICE": 3000,
+					    "DISCRATE": 0,
+					    "NET": 3000,
+					    "PRICE": 3000,
+					    "NO": 2
 					}
 					];
-				cxCount.Createcx(sale02_arr, "sale",null);
+				cxCount.Createcx(sale02_arr, "sale",hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],

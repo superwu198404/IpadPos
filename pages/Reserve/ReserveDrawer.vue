@@ -51,7 +51,7 @@
 						<view>{{Order.STR2}}-{{Order._STR2}}</view>
 					</picker>
 				</label>
-				<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
+				<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
 				<label><text>*蛋糕规格：</text>
 					<picker @change="GGChange" :range="GGDatas">
 						<view>{{Order.CARDID}}</view>
@@ -418,6 +418,10 @@
 						that.ADDRS = JSON.parse(res.data).filter((r) => {
 							return r.ADDRID != null;
 						});
+						that.yn_add = false;
+					}
+					else{
+						that.ShowAddADDR();//默认展开地址新增表单
 					}
 				})
 			},

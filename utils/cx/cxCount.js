@@ -1576,13 +1576,15 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM,jfnum,jfinfo) {
 	let i = row;
 	let dr = {};
+	
+	let spid_dr = cxbilldts[i]["SPID"];
 	dr["SALEDATE"] = saledate;
 	dr["KHID"] = getApp().globalData.store.KHID;
 	dr["GSID"] = getApp().globalData.store.GSID;
 	dr["CXBILL"] = cx.CxBill;
 	dr["CLASSID"] = subid.substring(cx.CxBill.length);
 	dr["XSBILL"] = bill;
-	dr["SPID"] = spid;
+	dr["SPID"] = spid_dr;
 	dr["XSQTY"] = fsqty;
 	dr["OPRICE"] = price;
 	dr["ONET"] = price * fsqty;
@@ -1592,8 +1594,8 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;
     dr["SPJF"] = jfnum;
-    dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet,0);
-	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum,0);
+    dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet,0); //积分抵扣金额
+	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum,0); //抵扣积分
 	dr["NO"] = i;
 	cxfsdt.push(dr);
 }
