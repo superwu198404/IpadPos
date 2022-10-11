@@ -832,13 +832,14 @@
 			},
 			//退款数据处理
 			RefundDataHandle: function() { //把上个页面传入的退款数据进行处理后进行展示
-				console.log("[RefundDataHandle]SALE1 初始化开始：", this.sale1_obj);
-				this.SALE1Init(this.sale1_obj); //sale1 初始化
-				console.log("[RefundDataHandle]SALE2 初始化开始：", this.sale2_arr);
-				this.SALE2Init(this.sale2_arr);
-				console.log("[RefundDataHandle]SALE3 初始化开始：", this.sale3_arr);
-				this.SALE3Init(this.sale3_arr);
-				this.logs = false;
+				if (common.actTypeEnum.Refund === this.actType) { //如果是支付
+					console.log("[RefundDataHandle]初始化 Sales 列表...", this.SALES)
+					this.SALE1Init();
+					this.SALE2Init();
+					this.SALE3Init();
+					this.refundAmountCount(); //退款金额计算
+					console.log("[RefundDataHandle]初始化完毕!");
+				}
 			},
 			//支付数据处理
 			PayDataHandle: function() {
@@ -874,7 +875,6 @@
 				if (this.isRefund)
 					this.sale1_obj = this.SALES.sale1 ? Object.assign({}, this.SALES.sale1) : {};
 				console.log("SALE1 初始化完毕！", this.sale1_obj)
-				this.sale1_obj = {}; //重置此项	
 			},
 			//SALE002 初始化、处理
 			SALE2Init: function() {
@@ -896,7 +896,6 @@
 						}, i)
 					}).bind(this));
 					console.log("[SALE2Init]商品信息循环后：", this.Products);
-					this.refundAmountCount(); //退款金额计算
 				}
 				console.log("[SALE2Init]SALE2 初始化完毕！", this.Products)
 			},
@@ -970,14 +969,17 @@
 						current_refund_exists_only_code = true;
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
-					if(['ZG03','ZF01'].indexOf(refundInfo.fkid) !== -1){//如果是预定金、现金（如果为0）直接跳过
-						refundInfo.fail = false;
+					if (['ZG03', 'ZF01'].indexOf(refundInfo.fkid) !== -1) { //如果是预定金、现金（如果为0）直接跳过
+
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
 						console.log("[Refund]跳过接口调用...");
-						if(!(refundInfo.fkid === 'ZF01' && Number(refundInfo.amount) !== 0))//如果为现金且金额不为 0
+						if (!(refundInfo.fkid === 'ZF01' && Number(refundInfo.amount) !==
+								0)) { //如果为现金且金额不为 0
+							refundInfo.fail = false;
 							return;
+						}
 					}
 					if (!refundInfo.fail && refundInfo.refunding) {
 						console.log("[Refund]跳出当前循环...");
@@ -1022,7 +1024,7 @@
 							}).bind(that));
 						promises.push(res)
 					} else {
-						util.simpleMsg("支付方式不存在!",true);
+						util.simpleMsg("支付方式不存在!", true);
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
@@ -1312,10 +1314,6 @@
 				that = this;
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
 				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
-
-				// this.hyinfo = util.getStorage('hyinfo');
-				// console.log("支付初始化——会员信息:", this.hyinfo);
-
 				var prev_page_param = this.$store.state.location;
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
@@ -1338,7 +1336,7 @@
 					} else { //退款
 						this.isRefund = true;
 						this.out_refund_no = prev_page_param.sale1_obj.BILL; //退款单号初始化
-						this.RefundDataHandle(); //处理上个页面传入的退单数据
+						this.RefundDataHandle(); //处理上个页面传入的退单数据(其中会总计出退款金额 debtAmount)
 					}
 					this.Products = prev_page_param.sale2_arr.map(r => {
 						return {
@@ -1376,10 +1374,22 @@
 					this.ZFBZK = getApp().globalData.PZCS["YN_ZFBKBQ"] == "Y" ? this.totalAmount : 0; //初始化一下支付宝折扣金额
 				}
 				console.log("[ParamInit]待支付金额初始化前:", this.dPayAmount);
-				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值
+				this.dPayAmount = this.toBePaidPrice(); //初始化首次给待支付一个默认值(其中会总计出待支付金额 debt)
+				this.CheckActionComplet(); //此函数一定要在待支付金额和退款金额后进行调用
 				console.log("[ParamInit]待支付金额初始化后:", this.dPayAmount);
-				let store = uni.getStorageSync('store');
-				console.log("[ParamInit]门店编码和名称（缓存）", store);
+			},
+			CheckActionComplet() { //判断支付或退款动作是否完成（初始化阶段判断）
+				if (this.isRefund) { //判断退款金额是否为 0（不判断支付是因为支付已经做了相关处理）
+					let num = Number(this.refundView.debtAmount);
+					if (!isNaN(num) && num === 0) {
+						this.CanBack = true;
+						this.RefundFinish = true;
+						this.RefundList.map(i => i.fail = false);
+						console.log("[CheckActionComplet]自动转为成功记录...", this.RefundList);
+						this.SaleDataCombine();
+						this.backPrevPage();
+					}
+				}
 			},
 			//总金额计算 舍弃分的处理 ***已废弃***
 			PriceCount: function() {
@@ -1662,11 +1672,6 @@
 			}
 		},
 		async created() {
-			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS);
-			// console.log("打印一下支付宝参数：",getApp().globalData.PZCS["YN_ZFBKBQ"]);
-			if (window && !window.vue) { //把vue放到全局上，方便调试
-				window.vue = this;
-			}
 			this.paramInit();
 			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
 				.GetZFRULE(); //初始化支付规则（如果没有的话）
