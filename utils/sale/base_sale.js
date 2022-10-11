@@ -1132,9 +1132,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TBZDISC = 0; //zk 总标准折扣
 		this.sale001.TLSDISC = 0; //zk 总临时折扣
 		this.sale001.TTPDISC = 0; //zk 总特批折扣
-
-		this.sale001.TCXDISC = 0; //cx
+		this.sale001.TCXDISC = 0; //cx 总促销折扣
 		this.sale001.TDISC = 0; //cx
+
 		this.sale002.map(r => {
 			r.DISCRATE = 0; //zk，cx
 			r.CXDISC = 0; //cx
@@ -2510,7 +2510,7 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("***************计算结果展示******************")
 		// that.log(retx)
 		// that.log("***************计算结果展示******************")
-		console.log("[SaleNetAndDisc]参数:",{
+		console.log("[SaleNetAndDisc]参数:", {
 			retx
 		});
 		that.sale001.ZNET = this.float(retx.ONET, 2); //原价
