@@ -130,21 +130,21 @@ var InitData = async function(khid, func) {
 	// await common.InitZFRULE();
 	//获取支付规则数据 在前执行
 	await common.GetZFRULE();
-	
+
 	//获取支付方式 在后执行
 	await GetPayWay(khid);
-	
+
 	//初始化配置参数
 	await common.GetPZCS();
-	
+
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
-	
+
 	//初始化系统参数
 	_sysParam.init(khid);
 	//签到状态
 	GetMDQD(khid);
-	
+
 	//主动删除过期的销售数据
 	common.DelSale(); //主动删除销售单
 	if (func)
@@ -152,21 +152,16 @@ var InitData = async function(khid, func) {
 }
 
 var tx001 = null;
-var  dataInit =  async function(pm_initType) 
-{
-	
-	
-	var pm_khid,pm_posid;
+var dataInit = async function(pm_initType) {
+	console.log("进入重读")
+	var pm_khid, pm_posid;
 	let store = util.getStorage("Init_Data");
-	if (store && JSON.stringify(store) != "{}") 
-	{
+	if (store && JSON.stringify(store) != "{}") {
 		pm_khid = store.KHID;
 		pm_posid = store.POSID;
-	}
-	else
-	{
+	} else {
 		console.log("**********************未读到本地存储的门店和款台号信息************************")
-		return ;
+		return;
 	}
 	if (!pm_khid || !pm_posid) {
 		util.simpleMsg("请输入门店id和款台号", "none");
@@ -177,23 +172,21 @@ var  dataInit =  async function(pm_initType)
 	let reqdata = Req.resObj(true, "开始初始化...", null, apistr);
 	console.log(JSON.stringify(reqdata));
 	Req.asyncFunc(reqdata,
-		(res) =>
-		{
+		(res) => {
 			console.log("进行通讯的001回调成功");
 			tx001 = Req.getResData(res);
-			let reqPosData = 
-			{
+			let reqPosData = {
 				"khid": pm_khid,
 				"posid": pm_posid,
-				"initType":pm_initType
+				"initType": pm_initType
 			};
-			let apistr = "MobilePos_API.Utils.PosInit."+pm_initType;
+			let apistr = "MobilePos_API.Utils.PosInit." + pm_initType;
 			return Req.resObj(true, "初始化中...", reqPosData, apistr);
 		},
 		(res) => {
 			let sql = [];
 			// console.log("004回调：", res);
-			
+
 			uni.showLoading({
 				title: "数据重建中...",
 				mask: true
@@ -201,41 +194,36 @@ var  dataInit =  async function(pm_initType)
 			let tx004 = Req.getResData(res);
 			console.log("进行通讯的004回调成功" + JSON.stringify(tx004[0]).length);
 			//根据001循环创建表，并生成初始化语句
-				tx001.forEach(function(item) 
-				{
-					let arr004 = tx004[0].filter((item4) => {
-						return item4.TABNAME == item.TABNAME
-					});
-					//console.log( JSON.stringify( arr004));
-					let new004 = arr004.map(function(item004) 
-					{
-						 var ret_Sql="";
-						 if( item004.DELSTR)
-						 {
-							 ret_Sql+= item.SQLDEL+" "+ item004.DELSTR+";";
-						 }
-						 if(item004.INSSTR )
-						 {
-							 ret_Sql+= item.SQLINS +" "+ item004.INSSTR;
-						 }
-						return ret_Sql;
-					});
-					if( pm_initType =="reloadsqlite" )
-					{
-						if (new004.length > 0) //存在数据说明这里有初始化的内容
-						{
-							sql.push("drop table  " + item.TABNAME);
-						}
-						sql.push(item.DDLSTR);
+			tx001.forEach(function(item) {
+				let arr004 = tx004[0].filter((item4) => {
+					return item4.TABNAME == item.TABNAME
+				});
+				//console.log( JSON.stringify( arr004));
+				let new004 = arr004.map(function(item004) {
+					var ret_Sql = "";
+					if (item004.DELSTR) {
+						ret_Sql += item.SQLDEL + " " + item004.DELSTR + ";";
 					}
-					//console.log("加载了............"+ JSON.stringify( new004.length));
-					sql = sql.concat(new004);
+					if (item004.INSSTR) {
+						ret_Sql += item.SQLINS + " " + item004.INSSTR;
+					}
+					return ret_Sql;
+				});
+				if (pm_initType == "reloadsqlite") {
+					if (new004.length > 0) //存在数据说明这里有初始化的内容
+					{
+						sql.push("drop table  " + item.TABNAME);
+					}
+					sql.push(item.DDLSTR);
+				}
+				//console.log("加载了............"+ JSON.stringify( new004.length));
+				sql = sql.concat(new004);
 			});
 			//sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
 			return Req.resObj(true, "即将完成...", sql);
 		},
 		async (res) => {
-				console.log("数据库通讯结果：" + JSON.stringify( res.data));
+				console.log("数据库通讯结果：" + JSON.stringify(res.data));
 				// console.log("重建数据的sql:", res.data);
 				let x = await db.get().executeSqlArray(res.data, "开始创建数据库",
 					(resks) => {
@@ -248,7 +236,7 @@ var  dataInit =  async function(pm_initType)
 						return Req.retData(false, "start创建失败" + JSON.stringify(resF.msg))
 					}
 				);
-				console.log("执行结果"+JSON.stringify(x));
+				console.log("执行结果" + JSON.stringify(x));
 				return x;
 			},
 			null,
@@ -259,7 +247,7 @@ var  dataInit =  async function(pm_initType)
 				if (res.msg != "OK") {
 					util.simpleModal("提示", res.msg)
 				} else {
-					util.simpleMsg("通讯完成");  
+					util.simpleMsg("通讯完成");
 				}
 			}
 	)
