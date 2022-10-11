@@ -7,10 +7,9 @@ import dateformat from '@/utils/dateformat.js';
 import _sysParam from '@/utils/sysParm/sysParm.js';
 
 //校验是否有初始化过
-var YN_Init = async function(sucFunc, errFunc) {
-	await db.get().close(); //为了解决热更新 数据库写入会失败的问题 首次关闭数据库
+var YN_Init = function(sucFunc, errFunc) {
 	let sql = "select count(1) count from SPKHDA"
-	await db.get().executeQry(sql, "校验中...", res => {
+	db.get().executeQry(sql, "校验中...", res => {
 		console.log("SPKHDA查询结果：", res);
 		if (res.code && res.msg.length > 0 && res.msg[0].count > 0) {
 			if (sucFunc)
@@ -25,6 +24,8 @@ var YN_Init = async function(sucFunc, errFunc) {
 			errFunc(err);
 	})
 }
+
+
 
 //获取支付方式
 var GetPayWay = async function(e) {
@@ -129,28 +130,145 @@ var InitData = async function(khid, func) {
 	// await common.InitZFRULE();
 	//获取支付规则数据 在前执行
 	await common.GetZFRULE();
-
+	
 	//获取支付方式 在后执行
 	await GetPayWay(khid);
-
+	
 	//初始化配置参数
 	await common.GetPZCS();
-
+	
 	//获取POS参数组数据
 	await common.GetPOSCS(khid);
-
+	
 	//初始化系统参数
 	_sysParam.init(khid);
 	//签到状态
 	GetMDQD(khid);
-
+	
 	//主动删除过期的销售数据
 	common.DelSale(); //主动删除销售单
 	if (func)
 		func();
 }
 
+var tx001 = null;
+var  dataInit =  async function(pm_initType) 
+{
+	
+	
+	var pm_khid,pm_posid;
+	let store = util.getStorage("Init_Data");
+	if (store && JSON.stringify(store) != "{}") 
+	{
+		pm_khid = store.KHID;
+		pm_posid = store.POSID;
+	}
+	else
+	{
+		console.log("**********************未读到本地存储的门店和款台号信息************************")
+		return ;
+	}
+	if (!pm_khid || !pm_posid) {
+		util.simpleMsg("请输入门店id和款台号", "none");
+		return;
+	}
+	console.log("准备开始初始化" + pm_khid);
+	let apistr = "MobilePos_API.Utils.PosInit.getTx001";
+	let reqdata = Req.resObj(true, "开始初始化...", null, apistr);
+	console.log(JSON.stringify(reqdata));
+	Req.asyncFunc(reqdata,
+		(res) =>
+		{
+			console.log("进行通讯的001回调成功");
+			tx001 = Req.getResData(res);
+			let reqPosData = 
+			{
+				"khid": pm_khid,
+				"posid": pm_posid,
+				"initType":pm_initType
+			};
+			let apistr = "MobilePos_API.Utils.PosInit."+pm_initType;
+			return Req.resObj(true, "初始化中...", reqPosData, apistr);
+		},
+		(res) => {
+			let sql = [];
+			// console.log("004回调：", res);
+			
+			uni.showLoading({
+				title: "数据重建中...",
+				mask: true
+			});
+			let tx004 = Req.getResData(res);
+			console.log("进行通讯的004回调成功" + JSON.stringify(tx004[0]).length);
+			//根据001循环创建表，并生成初始化语句
+				tx001.forEach(function(item) 
+				{
+					let arr004 = tx004[0].filter((item4) => {
+						return item4.TABNAME == item.TABNAME
+					});
+					//console.log( JSON.stringify( arr004));
+					let new004 = arr004.map(function(item004) 
+					{
+						 var ret_Sql="";
+						 if( item004.DELSTR)
+						 {
+							 ret_Sql+= item.SQLDEL+" "+ item004.DELSTR+";";
+						 }
+						 if(item004.INSSTR )
+						 {
+							 ret_Sql+= item.SQLINS +" "+ item004.INSSTR;
+						 }
+						return ret_Sql;
+					});
+					if( pm_initType =="reloadsqlite" )
+					{
+						if (new004.length > 0) //存在数据说明这里有初始化的内容
+						{
+							sql.push("drop table  " + item.TABNAME);
+						}
+						sql.push(item.DDLSTR);
+					}
+					//console.log("加载了............"+ JSON.stringify( new004.length));
+					sql = sql.concat(new004);
+			});
+			//sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
+			return Req.resObj(true, "即将完成...", sql);
+		},
+		async (res) => {
+				console.log("数据库通讯结果：" + JSON.stringify( res.data));
+				// console.log("重建数据的sql:", res.data);
+				let x = await db.get().executeSqlArray(res.data, "开始创建数据库",
+					(resks) => {
+						console.log("执行语句成功" + resks.data.length);
+						let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
+						return reqdata;
+					},
+					(resF) => {
+						cconsole.log("执行失败了：", resF);
+						return Req.retData(false, "start创建失败" + JSON.stringify(resF.msg))
+					}
+				);
+				console.log("执行结果"+JSON.stringify(x));
+				return x;
+			},
+			null,
+			(res) => {
+				console.log("最终结果：", res);
+				console.log(JSON.stringify("重读创建完成"));
+
+				if (res.msg != "OK") {
+					util.simpleModal("提示", res.msg)
+				} else {
+					util.simpleMsg("通讯完成");  
+				}
+			}
+	)
+}
+
+
+
 export default {
 	InitData,
-	YN_Init
+	YN_Init,
+	dataInit
 }

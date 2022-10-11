@@ -213,9 +213,9 @@ var mySqllite = function() {
 
 	var open = function(msg) {
 		msg = msg || "正在进行操作";
-		console.log("[DBO]检查数据库是否打开...");
+		//console.log("[DBO]检查数据库是否打开...");
 		if (isopen()) {
-			console.log("[DBO]数据库已经打开!");
+			//console.log("[DBO]数据库已经打开!");
 			return new Promise(
 				(resolve, reject) => {
 					return resolve({
@@ -224,14 +224,14 @@ var mySqllite = function() {
 					})
 				})
 		} else {
-			console.log("[DBO]数据库未打开!");
+			//console.log("[DBO]数据库未打开!");
 			return new Promise((resolve, reject) => {
 				// 修改表数据
 				plus.sqlite.openDatabase({
 					name: that.name,
 					path: that.path,
 					success(e) {
-						console.log("[DBO][Success]数据库打开成功:", e);
+						//console.log("[DBO][Success]数据库打开成功:", e);
 						return resolve({
 							code: true,
 							msg: e
@@ -289,7 +289,7 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					// console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
+					 console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
 					return resolve({
 						code: false,
 						msg: e
@@ -341,7 +341,7 @@ var mySqllite = function() {
 				name: that.name,
 				operation: pm_str,
 				success(e) {
-					console.log(pm_str + JSON.stringify(e));
+					//console.log(pm_str + JSON.stringify(e));
 					return resolve({
 						code: true,
 						msg: e
@@ -383,14 +383,13 @@ var mySqllite = function() {
 		retcode = await open(pm_msg);
 		console.log("open:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
-
 		retcode = await tran(tranEnum.begin);
 		console.log("tran:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
 			if (!retcode.code) {
-				//console.log(i+"exec:"+JSON.stringify( retcode));
+				console.log(i+"exec:"+JSON.stringify( retcode));
 				if (retcode.msg.code === -1404) {
 					continue;
 				}
@@ -413,9 +412,9 @@ var mySqllite = function() {
 	this.executeQry = async function(sql, pm_msg, success, fail) {
 		var retcode;
 		retcode = await open(pm_msg);
-		console.log("[ExecuteQry]打开数据库:", retcode);
+		//console.log("[ExecuteQry]打开数据库:", retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("[ExecuteQry]执行SQL:", [sql]);
+		//console.log("[ExecuteQry]执行SQL:", [sql]);
 		retcode = await qry(sql);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);
@@ -433,10 +432,10 @@ var mySqllite = function() {
 		await open(pm_msg);
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("开始执行sql:", sql);
+		//console.log("开始执行sql:", sql);
 		retcode = await exec(sql);
 		console.log("[ExecuteDml]返回值:", retcode);
-		console.log("[ExecuteDml]sql:", sql);
+		//console.log("[ExecuteDml]sql:", sql);
 		//await close();
 		if (retcode.code) {
 			// retcode = await tran(tranEnum.commit);
