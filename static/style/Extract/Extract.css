@@ -195,6 +195,7 @@
 	left: 0;
 	width:96%;
 	background-color: #fff;
+	z-index: 9999999;
 }
 .memberes .operat button{
 	margin:0 20rpx;
