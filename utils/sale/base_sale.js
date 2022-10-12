@@ -2488,6 +2488,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("普通促销计算后的销售单1:", this.sale001);
 			console.log("普通促销计算后的销售单2:", that.sale002);
 		}
+
 		if (that.currentOperation.Disc) {
 			that.discCompute();
 			let TBZDISC = 0,
@@ -2502,6 +2503,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.TBZDISC = TBZDISC;
 			this.sale001.TLSDISC = TLSDISC;
 			this.sale001.TTPDISC = TTPDISC;
+			this.sale001.TDISC = TBZDISC + TLSDISC + TTPDISC;
 			console.log("特殊折扣计算后的销售单2:", that.sale002);
 			console.log("特殊折扣计算后的销售单1:", this.sale001);
 		}
