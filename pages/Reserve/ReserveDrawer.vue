@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="meminfo" style="display: inline-flex;flex-direction: column;">
+	<view class="meminfo" style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
