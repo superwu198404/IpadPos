@@ -341,7 +341,7 @@
 					<view class="ul">
 						<view class="li">
 							<!-- 支付展示整单金额 退款展示实付金额 -->
-							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?mainSale.sale001.ZNET:-mainSale.sale001.TNET}}</text>
+							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?TotalNet:-mainSale.sale001.TNET}}</text>
 						</view>
 						<view class="li"><text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>
@@ -476,8 +476,7 @@
 					let complet_ammount = 0; //已经完成的定金
 					this.mainSale?.sale003.forEach(s3 => complet_ammount += s3.AMT);
 					amount = (this.mainSale?.sale001?.TNET || 0) - complet_ammount
-				} 
-				else if (this.mainSale.current_type.clickType === 'sale_reserve_cancel')
+				} else if (this.mainSale.current_type.clickType === 'sale_reserve_cancel')
 					amount = this.mainSale?.sale001?.DNET || 0;
 				else if (this.mainSale.current_type.clickType === 'sale_reserve_extract')
 					amount = (this.mainSale?.sale001?.ZNET || 0) - (this.mainSale?.sale001?.DNET || 0);
@@ -536,7 +535,13 @@
 				})
 				// }
 				return total;
-			}
+			},
+			//商品总金额 包含折扣
+			TotalNet: function() {
+				console.log("00000000000001数据：", this.mainSale.sale001);
+				let total = (this.mainSale.sale001.TNET + this.mainSale.sale001.BILLDISC).toFixed(2);
+				return total;
+			},
 		},
 		methods: {
 			onShow: function(e) {

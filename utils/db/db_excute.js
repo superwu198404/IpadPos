@@ -289,7 +289,7 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					 console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
+					// console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
 					return resolve({
 						code: false,
 						msg: e
@@ -389,7 +389,7 @@ var mySqllite = function() {
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
 			if (!retcode.code) {
-				console.log(i+"exec:"+JSON.stringify( retcode));
+				console.log(i + "exec:" + JSON.stringify(retcode));
 				if (retcode.msg.code === -1404) {
 					continue;
 				}
