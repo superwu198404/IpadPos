@@ -186,6 +186,7 @@
 }
 .map{
 	height: 560rpx;
+	width:100%;
 }
 .memberes .operat{
 	display: flex;
@@ -195,6 +196,7 @@
 	left: 0;
 	width:96%;
 	background-color: #fff;
+	z-index: 9999999;
 }
 .memberes .operat button{
 	margin:0 20rpx;

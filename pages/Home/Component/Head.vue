@@ -351,7 +351,7 @@
 				uni.$emit("Switch", "sale_message");
 				return;
 				//旧版本
-				let store = util.getStorage("store");
+				//let store = util.getStorage("store");
 				// _msg.DelMsg(that.KHID, e, res => {
 				// 	console.log("消息数据：", res);
 				// 	that.MsgData.splice(i, 1);
