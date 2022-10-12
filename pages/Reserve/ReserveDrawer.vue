@@ -371,6 +371,7 @@
 			//获取配送类型
 			getTHTYPE: async function() {
 				let decoration = this.decoration; //获取sale2是否存在裱花类别的信息
+				let over48 = this.over48; //获取sale2是否存在裱花类别的信息
 				await common.GetDapzcs("THTYPE", res => {
 					console.log("[ReserveDrawer]提货类型数据：", res);
 					if (res.code && res.msg.length > 0) {
@@ -379,7 +380,7 @@
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
-						}).filter(i => !that.decoration ? (i.NAME === '宅配到家') : (i.NAME !== '宅配到家'))
+						}).filter(i => over48 ?  (i.NAME === '宅配到家') : (decoration || (i.NAME !== '宅配到家')))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
 					}
 				})
