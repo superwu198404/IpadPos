@@ -186,6 +186,7 @@
 }
 .map{
 	height: 560rpx;
+	width:100%;
 }
 .memberes .operat{
 	display: flex;
