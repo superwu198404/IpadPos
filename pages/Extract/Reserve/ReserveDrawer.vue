@@ -73,8 +73,8 @@
 				</view>
 				<view v-show="!view.add_address" class="map-content">
 					<view style="width: 90%; height: 290px;">
-						<map style="width: 100%; height: 100%;" :latitude="map.latitude" :longitude="map.longitude"
-							:scale="map.scale">
+						<map style="width: 100%; height: 100%;" :latitude="details.info.LATITUDE" :longitude="details.info.LONGITUDE"
+							:scale="map.scale" :markers="map.markers" :enable-poi="false">
 						</map>
 					</view>
 				</view>
@@ -110,6 +110,7 @@
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
+					markers:[]
 				},
 				form: {
 					selected: { //当前选中的配送地址
@@ -143,6 +144,8 @@
 						ZNET: "",
 						BILLDISC: "",
 						CUSTMADDRESS: "",
+						LATITUDE: "", //纬度
+						LONGITUDE: "", //经度
 						STR2: "",
 						_STR2: ""
 					}, //主单数据（商品集合中共有的部分，如买家的信息）
@@ -333,11 +336,27 @@
 				else
 					return false;
 			},
+			CheckAlsoSetLongitudeAndLatitude:function(order){//检查经纬度，如果不存在设置默认
+				if(!order.LONGITUDE) order.LONGITUDE = this.map.longitude;
+				if(!order.LATITUDE) order.LATITUDE = this.map.latitude;
+				this.map.markers.push({
+					id:'client',
+					latitude:order.LATITUDE,
+					longitude:order.LONGITUDE,
+					title:'配送地址',
+					callout:{
+						content:'收货地址',
+						color:'red',
+						display:'ALWAYS'
+					}
+				})
+			}
 		},
 		mounted() {
 			Object.assign(this.details.info, this.order);
 			console.log("[Extract-Reserve]预订单修改信息:", this.details.info);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
+			this.CheckAlsoSetLongitudeAndLatitude(this.details.info);
 			this.GetCustomerAddress(this.details.info.CUSTMPHONE);
 			this.GetDistributionCenter();
 		}

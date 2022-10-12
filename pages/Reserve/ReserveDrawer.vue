@@ -35,7 +35,7 @@
 						</view>
 					</hTimePicker> -->
 				</label>
-				<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
+				<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number" v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
 				</label>
 				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
 				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
@@ -100,7 +100,9 @@
 				</view>
 			</view>
 			<view class="atlas">
-				<div class="map"></div>
+				<div class="map">
+					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"></map>
+				</div>
 			</view>
 		</view>
 		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
@@ -183,6 +185,11 @@
 					_STR2: "", //配送中心名称
 					CARDID: "", //蛋糕类型  
 					YD_STATUS: "1"
+				},
+				map:{
+					longitude: 114.3093413671875, //经度
+					latitude: 30.570206594347283, //纬度
+					scale: 12, //缩放级别
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -372,7 +379,7 @@
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
-						}).filter(i => decoration || (i.NAME !== '宅配到家'))
+						}).filter(i => decoration ? (i.NAME === '宅配到家') : (i.NAME !== '宅配到家'))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
 					}
 				})

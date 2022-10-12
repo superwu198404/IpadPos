@@ -480,7 +480,7 @@
 				else if (this.mainSale.current_type.clickType === 'sale_reserve_cancel')
 					amount = this.mainSale?.sale001?.DNET || 0;
 				else if (this.mainSale.current_type.clickType === 'sale_reserve_extract')
-					amount = (this.mainSale?.sale001?.ZNET || 0);
+					amount = (this.mainSale?.sale001?.ZNET || 0) - (this.mainSale?.sale001?.DNET || 0);
 				else
 					amount = (this.mainSale?.sale001?.TNET || 0);
 				return amount?.toFixed(2);
