@@ -524,6 +524,7 @@
 					ROUND: this.isRefund ? -sale1.ROUND : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
 					TDISC: this.isRefund ? -sale1.TDISC : (sale1?.TDISC || 0),
+					TCXDISC: this.isRefund ? -sale1.TCXDISC : (sale1?.TCXDISC || 0),
 					// TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
 					TLINE: sale1.TLINE
 				});
@@ -535,6 +536,7 @@
 						DISCRATE: this.isRefund ? -item.DISCRATE : item
 							.DISCRATE, //当前商品的折扣额 后续可能有促销折扣
 						DISC: this.isRefund ? -item.DISC : item.DISC, //手工折扣额
+						CXDISC: this.isRefund ? -item.CXDISC : item.CXDISC, //手工折扣额
 						QTY: this.isRefund ? -item.QTY : item.QTY
 					});
 					return util.hidePropety(obj, "NAME");
@@ -557,11 +559,12 @@
 						KCDID: sale1.KCDID, //库存点
 						// BMID: this.BMID, //部门id
 						BMID: item.point, //部门id
-						DISC: this.isRefund ? -(item.origin?.DISC || 0) : item.disc, //折扣金额
-						FAMT: this.isRefund ? -(item.origin?.FAMT || 0) : item
-							.disc, //折扣金额(卡券消费后要记录)
-						RATE: this.isRefund ? -(item.origin?.RATE || 0) : item
-							.disc, //折扣金额(卡消费后要记录)
+						DISC: this.isRefund ? (item.origin?.DISC || 0) : item
+							.disc, //折扣金额 *逆向退款 不需要记录为负数*
+						FAMT: this.isRefund ? (item.origin?.FAMT || 0) : item
+							.disc, //折扣金额(卡券消费后要记录) *逆向退款 不需要记录为负数*
+						RATE: this.isRefund ? (item.origin?.RATE || 0) : item
+							.disc, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth, //交易号

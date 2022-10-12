@@ -617,11 +617,11 @@ var XsTypeObj = {
 				i.QTY = Math.abs(Number(i.QTY) || 0);
 				i.NET = Math.abs(Number(i.NET) || 0);
 			})
-			this.sale003.forEach(i => {
-				i.FAMT = Math.abs(Number(i.FAMT) || 0);
-				i.RATE = Math.abs(Number(i.RATE) || 0);
-				i.DISC = Math.abs(Number(i.DISC) || 0);
-			});
+			// this.sale003.forEach(i => {
+			// 	i.FAMT = Math.abs(Number(i.FAMT) || 0);
+			// 	i.RATE = Math.abs(Number(i.RATE) || 0);
+			// 	i.DISC = Math.abs(Number(i.DISC) || 0);
+			// }); //由支付页面payment内部 统一处理 
 			delete this.old_bill;
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 		},
@@ -1245,7 +1245,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		this.sale002.map(s2 => {
 			if (!s2.$raw) {
-				s2.$raw = Object.assign({},s2);
+				s2.$raw = Object.assign({}, s2);
 				util.hidePropety(s2, '$raw');
 			}
 		})
@@ -1283,7 +1283,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
-		let attempt_lock_row = false;//判断是否尝试修改锁定行
+		let attempt_lock_row = false; //判断是否尝试修改锁定行
 		this.currentOperation["showEdit"] = false;
 		this.update();
 
@@ -1301,7 +1301,7 @@ function GetSale(global, vue, target_name, uni) {
 			} else
 				this.updateSp(i, item.SPID, item.QTY);
 		}
-		if(attempt_lock_row) util.simpleMsg("该商品已被锁定!",true)
+		if (attempt_lock_row) util.simpleMsg("该商品已被锁定!", true)
 		if (this.sale002.length == 0) {
 			//防止编辑时直接清空了商品数量 则之前计算的归0 处理
 			that.sale001.ZNET = 0;
@@ -2517,8 +2517,9 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SaleNetAndDisc]参数:", {
 			retx
 		});
-		that.sale001.ZNET = this.float(retx.ONET, 2); //原价
+		// that.sale001.ZNET = this.float(retx.ONET, 2); //原价
 		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
@@ -2569,7 +2570,7 @@ function GetSale(global, vue, target_name, uni) {
 		let SKY_DISCOUNT = this.float(oldTNET - newTnet, 2);
 		console.log("[SKdiscCompute]手工折扣额：", SKY_DISCOUNT);
 		this.sale001.TNET = newTnet;
-		this.sale001.ZNET = this.float(oldTNET - SKY_DISCOUNT, 2);
+		this.sale001.ZNET = newTnet; //this.float(oldTNET - SKY_DISCOUNT, 2);
 		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
 		this.sale001.TCXDISC = this.float(Number(this.sale001.TCXDISC) + SKY_DISCOUNT, 2);
 		this.sale001.ROUND = SKY_DISCOUNT;
@@ -2610,11 +2611,12 @@ function GetSale(global, vue, target_name, uni) {
 		//可以使用的支付方式 
 		//code...
 		//如果 operation 中包含就弹出
-		if (this.currentOperation.ynFzCx) {
+		if (this.currentOperation.ynFzCx && this.FZCX.oval.length > 0) { //要有辅助促销数据
 			console.log("[BeforeFk]此模式包含辅助销促操作...");
 			this.setComponentsManage(null, 'FZCX');
 			uni.$once('close-FZCX', util.callBind(this, function(e) {
 				console.log("[BeforeFk]辅助促销关闭!");
+				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
 				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(this.FZCX
 						.cval.data || {}).length > 0) {
@@ -2625,6 +2627,7 @@ function GetSale(global, vue, target_name, uni) {
 					this.FZCX.cval.data.forEach(r => {
 						allDisc += (r.ONET - r.CXNET);
 					})
+					console.log("[BeforeFk] 追加辅助促销折扣额：", allDisc);
 					this.sale001.BILLDISC += allDisc;
 					this.sale001.TCXDISC += allDisc;
 					this.sale001.TDISC += allDisc;
@@ -2669,7 +2672,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.HY.cval = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};
-		this.FZCX.oval = {};
+		this.FZCX.oval = [];
 		this.FZCX.cval = {};
 		this.cxfsArr = [];
 		this.bill = null;
