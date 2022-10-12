@@ -251,22 +251,24 @@
 				this.form.address.LATITUDE = data.adrwd; //纬度
 			},
 			ChangeCustomerAddress: function() {
-				_extract.ConfirmADDR(Object.assign(this.from.address, {
+				_extract.ConfirmADDR(Object.assign(this.form.address, {
 					ACT: this.view.address_edit ? "Edit" : "Add"
 				}), util.callBind(this, function(res) {
+					console.log("[ChangeCustomerAddress]ConfirmADDR回调:",res);
 					util.simpleMsg(res.msg, res.code, res);
 					this.Newaddr = false;
-					this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
-						res) {
+					this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(res) {
 						if (!this.view.address_edit) {
-							let address = this.from.address.ADDRESS
+							let address = this.form.address.ADDRESS
 							console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
 							console.log("[GetCustomerAddress-Inner]Address列表:", this.details
 								.address);
-							let index = this.details.address.findIndex(a => a.ADDRESS ===
+							let address_info = this.details.address.find(a => a.ADDRESS ===
 								address);
-							console.log("[GetCustomerAddress-Inner]Address索引:", index);
-							if (index != -1) this.views.current = index;
+							console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
+							if (address_info != -1) this.details.current = address_info?.ADDRESS;
+							this.view.more = true;
+							this.view.add_address = false;
 						}
 					}));
 				}))
@@ -279,7 +281,8 @@
 					phone: number
 				}, util.callBind(this, function(res) {
 					if (res.code) {
-						console.log("用户电话地址：", res);
+						console.log("[GetCustomerAddress]用户电话地址：", res);
+						console.log("[GetCustomerAddress]用户电话地址列表：", this.details.address);
 						this.details.address = JSON.parse(res.data);
 					} else {
 						util.simpleMsg(res.msg, true, res);
@@ -294,6 +297,7 @@
 			},
 			ValidFromData: function() {
 				let order = this.details.info;
+				let code = order.THTYPE.split('-')[0];
 				if (!order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return false;
@@ -302,6 +306,7 @@
 					util.simpleMsg("提货时间早于当前", true);
 					return false;
 				}
+				
 				if (order.THTYPE == '1') {
 					let hour = new Date(order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
