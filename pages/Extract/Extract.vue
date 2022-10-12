@@ -63,7 +63,7 @@
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
 						<button @click="EditOrder(item)" class="btn btn-hk">编辑</button>
-						<button @click="ExtractOrder(item)" class="btn">{{ view.mode ? '提取' : '取消'}} </button>
+						<button @click="ExtractOrder(item)" class="btn" :disabled="view.loading === item.BILL">{{ view.mode ? '提取' : '取消'}} </button>
 					</view>
 				</view>
 			</view>
@@ -77,6 +77,9 @@
 	import util from '@/utils/util.js';
 	import ReserveDrawer from '@/pages/Extract/Reserve/ReserveDrawer.vue'
 	import common from '@/api/common.js'
+	import {
+		RequestSend
+	} from '@/api/business/da.js'
 	import _extract from '@/api/business/extract.js'
 	import {
 		ErrorData
@@ -108,7 +111,8 @@
 				view: {
 					Details: false,
 					Criterias: false,
-					mode: true
+					mode: true,
+					loading: ''
 				},
 				extract_order: {}, //预定订单的信息
 				extracts: []
@@ -187,15 +191,31 @@
 							sale2,
 							sale3
 						});
-						this.$to_sale_pages(this.view.mode ? 'sale_reserve_extract' : 'sale_reserve_cancel', {
-							sale1,
-							sale2: (function() {
-								sale2?.forEach(i => i.STR1 = i.SNAME);
-								console.log("[ExtractOrder]预定 sale2 处理:", sale2);
-								return sale2;
-							})(),
-							sale3
-						});
+						this.view.loading = sale1.BILL;
+						RequestSend(`select YD_STATUS from ydsale001 where bill='${sale1.BILL}'`, util
+							.callBind(this, function(res) {
+								this.view.loading = "";
+								if (res.code) {
+									let data = JSON.parse(res.data)?.first();
+									if (data && data.YD_STATUS === '1') {
+										this.$to_sale_pages(this.view.mode ? 'sale_reserve_extract' :
+											'sale_reserve_cancel', {
+												sale1,
+												sale2: (function() {
+													sale2?.forEach(i => i.STR1 = i.SNAME);
+													console.log(
+														"[ExtractOrder]预定 sale2 处理:",
+														sale2);
+													return sale2;
+												})(),
+												sale3
+											});
+									} else
+										util.simpleMsg("单据状态已变更，请刷新后重试!", true)
+								} else
+									util.simpleMsg("状态查询失败!", true)
+							}));
+
 					}
 				})
 				_extract.getReserveOrderInfos({ //查到商品信息后传值

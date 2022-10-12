@@ -1584,10 +1584,10 @@ function GetSale(global, vue, target_name, uni) {
 		if (this.current_type.operation.hasOwnProperty(pm_key)) {
 			let pm = this.current_type.operation[pm_key];
 			console.log("当前权限：", pm);
-			this.allOperation[pm_key] = this.current_type.operation[pm_key];
+			this.currentOperation[pm_key] = this.current_type.operation[pm_key];
 		} else {
 			// this.ComponentsManage[pm_key] = false;
-			this.allOperation[pm_key] = false;
+			this.currentOperation[pm_key] = false;
 		}
 	}
 

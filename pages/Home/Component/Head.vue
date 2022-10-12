@@ -347,6 +347,10 @@
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
+				//home下有监听该回调事件
+				uni.$emit("Switch", "sale_message");
+				return;
+				//旧版本
 				let store = util.getStorage("store");
 				// _msg.DelMsg(that.KHID, e, res => {
 				// 	console.log("消息数据：", res);

@@ -6,10 +6,10 @@
 	          unit:"个",price:"11",specslist:[],ynshowlist:0,
 			       ynAddPro:0,addlist:[]},
              {spid:'002',spname:'蛋糕',pinyin:"xxx",
-			     unit:"个",price:"11",specslist:[]},ynshowlist:1,
+			     unit:"个",specslist:[]},ynshowlist:1,bqlist:[]
 				   ynAddPro:0,addlist:[]}
 			 {spid:'003',spname:'水吧',pinyin:"xxx",
-			     unit:"个",price:"11",specslist:[]},ynshowlist:0,
+			     unit:"个",specslist:[]},ynshowlist:0,
 				  ynAddPro:1,addlist:[]} 
 				 ]
 }
