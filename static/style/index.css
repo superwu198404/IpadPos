@@ -651,6 +651,7 @@ page {
 }
 .memberes {
 	height: 100%;
+	overflow: auto;
 	position: fixed;
 	top: 0;
 	right: 35%;

@@ -296,7 +296,7 @@ var SortData = (type, data, pro) => {
 	}
 	console.log("筛选后的折扣数据：", zkData);
 	if (zkData.length == 0) {
-		util.simpleMsg("暂无符合条件的特殊折扣", true);
+		util.simpleMsg("暂无符合条件的折扣活动", "none");
 	}
 	return zkData;
 }
@@ -321,19 +321,19 @@ var CalProduct = function(curData, Product) {
 			arr.forEach(r2 => {
 				if (r2.ZKTYPE == 'ZD02') { //标准折扣
 					r.BZDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						2));
+						1)); //测试要求保留一位
 					// r.DISCRATE += parseFloat(r.BZDISC);
 					disc += r.BZDISC;
 					console.log("当前标准折扣值：", r.BZDISC);
 				} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
 					r.LSDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						2));
+						1)); //测试要求保留一位
 					// r.DISCRATE += parseFloat(r.LSDISC);
 					disc += r.LSDISC;
 					console.log("当前临时折扣值：", r.LSDISC);
 				} else { //特批折扣
 					r.TPDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						2));
+						1)); //测试要求保留一位
 					// r.DISCRATE = parseFloat(r.TPDISC);
 					disc += r.TPDISC;
 					console.log("当前特批折扣值：", r.TPDISC);

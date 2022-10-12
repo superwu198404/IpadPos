@@ -682,6 +682,9 @@ var XsTypeObj = {
 				r.CXDISC = 0;
 				r.YN_CXDISC = "N";
 			})
+			//清除一下会员信息
+			this.HY.val = {};
+			uni.$emit('set-member', this.HY.val);
 			console.log("[sale-$initSale]params:", params);
 		},
 		///对打印的控制
@@ -769,9 +772,12 @@ var XsTypeObj = {
 			"sale_credit_return_good": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		},
-		$initSale: function(params) {
-			this.actType = common.actTypeEnum.Refund;
+		$initSale: function(params) { //清除一下会员信息
 			console.log("[InitSale]赊销退货单据信息:", params);
+			//清除一下已录入的会员信息
+			this.HY.val = {};
+			uni.$emit('set-member', this.HY.val);
+			this.actType = common.actTypeEnum.Refund;
 			this.credit_sales = params;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
@@ -1143,6 +1149,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TDISC = 0; //cx
 
 		this.sale002.map(r => {
+			r.NET = this.float(r.NET + r.DISCRATE, 2); //回退一下折扣？
+			r.PRICE = this.float(r.NET / r.QTY, 2); //回退一下折扣？
 			r.DISCRATE = 0; //zk，cx
 			r.CXDISC = 0; //cx
 			r.YN_CXDISC = "N"; //cx
@@ -1576,10 +1584,10 @@ function GetSale(global, vue, target_name, uni) {
 		if (this.current_type.operation.hasOwnProperty(pm_key)) {
 			let pm = this.current_type.operation[pm_key];
 			console.log("当前权限：", pm);
-			this.allOperation[pm_key] = this.current_type.operation[pm_key];
+			this.currentOperation[pm_key] = this.current_type.operation[pm_key];
 		} else {
 			// this.ComponentsManage[pm_key] = false;
-			this.allOperation[pm_key] = false;
+			this.currentOperation[pm_key] = false;
 		}
 	}
 
@@ -1691,7 +1699,8 @@ function GetSale(global, vue, target_name, uni) {
 		};
 		for (var item in this.allOperation) {
 			//that.log("开始设置权限"+item);
-			if (pm_OperEnum && pm_OperEnum[item]) {
+			if (pm_OperEnum && pm_OperEnum[item]) 
+			{
 				//普通销售具有所有的权限
 				this.currentOperation[item] = pm_OperEnum[item]
 			} else {

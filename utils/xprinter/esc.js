@@ -1277,12 +1277,12 @@ var jpPrinter = {
 		}
 		
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
-		// if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N"){
-		// 	jpPrinter.setCharacterSize(0); //设置正常大小
-		// 	jpPrinter.setSelectJustification(0); //设置居左
-		// 	jpPrinter.setText(xpType + "取餐码: " + printer_poscs.YN_CALLNUM);
-		// 	jpPrinter.setPrint(); //打印并换行
-		// }
+		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N"){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(xpType + "取餐码: " + data.bill.substr(-4));
+			jpPrinter.setPrint(); //打印并换行
+		}
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
