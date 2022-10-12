@@ -1458,6 +1458,7 @@ function GetSale(global, vue, target_name, uni) {
 				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
 			} else {
+				console.log("大客户权限：", this.currentOperation.DKF);
 				that.setSaleTypeDefval("DKF");
 			}
 			that.update();
