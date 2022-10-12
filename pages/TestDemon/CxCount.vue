@@ -95,27 +95,17 @@
 };
 				let sale02_arr = [
 					{
-					    "SPID": "000000001030200001",
-					    "SNAME": "可可饼",
-					    "QTY": 2,
-					    "OPRICE": 1000,
+					    "SPID": "000000001110200001",
+					    "SNAME": "邮寄服务收费",
+					    "QTY": 4,
+					    "OPRICE": 100,
 					    "DISCRATE": 0,
-					    "NET": 2000,
-					    "PRICE": 1000,
+					    "NET": 400,
+					    "PRICE": 100,
 					    "NO": 1
-					},
-					{
-					    "SPID": "000000001030200002",
-					    "SNAME": "咸芝士奶香片",
-					    "QTY": 1,
-					    "OPRICE": 3000,
-					    "DISCRATE": 0,
-					    "NET": 3000,
-					    "PRICE": 3000,
-					    "NO": 2
 					}
 					];
-				cxCount.Createcx(sale02_arr, "sale",hyinfoModel);
+				cxCount.Createcx(sale02_arr, "saleYD",hyinfoModel);
 			},
 			CreateArr1: e => {
 				let arr = [],

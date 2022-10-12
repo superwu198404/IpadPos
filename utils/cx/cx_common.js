@@ -130,9 +130,9 @@ const timeTodec = function(dtime, minValue) {
 	if (dtime == minValue) {
 		new_obj = 0;
 	} else {
-		let sd = Math.floor((dtime / 1000 / 60 / 60) % 24);
-		let ff = Math.floor((dtime / 1000 / 60) % 60);
-		ff = Math.round(ff*100)/100;
+		let sd = Math.floor(new Date(dtime).getHours());
+		let ff = Math.floor(new Date(dtime).getMinutes()) / 60;
+		ff = Math.round(ff * 100) / 100;
 		new_obj = sd + ff;
 	}
 	return new_obj;
