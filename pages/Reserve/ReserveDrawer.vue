@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view class="meminfo" style="display: inline-flex;flex-direction: column;">
+	<view class="meminfo" style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
@@ -379,7 +379,7 @@
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
-						}).filter(i => decoration ? (i.NAME === '宅配到家') : (i.NAME !== '宅配到家'))
+						}).filter(i => !that.decoration ? (i.NAME === '宅配到家') : (i.NAME !== '宅配到家'))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
 					}
 				})

@@ -88,7 +88,7 @@ const Cxdict = async () => {
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
 	//console.log("dszqda集合：", dszqda);
-	
+		
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -492,7 +492,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
-			//促销时间校验ss
+			//促销时间校验
 			if(!ynpastCx(cxbill)) {
 				continue;
 			}
