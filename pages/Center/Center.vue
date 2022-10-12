@@ -54,8 +54,8 @@
 				</view>
 				<view class="chongdu">
 					<view class="dates">
-						<button @click="DataInit('download_zbtx')" style="margin-top: 20rpx;">重读基础数据</button>
-						<button @click="DataInit('reloadsqlite')" style="margin-top: 20rpx;">通讯</button>
+						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
+					    <button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
@@ -132,6 +132,12 @@
 					}, 5000);
 				}, 5500);
 
+			},
+			reset:function(){
+				_init.dataInit('reloadsqlite')
+			},
+			zbtx:function(){
+				_init.dataInit('download_zbtx')
 			},
 			//uniapp中onHide()能监听到页面离开
 			onHide() { //离开页面前清除计时器
