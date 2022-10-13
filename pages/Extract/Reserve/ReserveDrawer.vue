@@ -99,6 +99,7 @@
 <script>
 	import _extract from '@/api/business/extract.js';
 	import util from '@/utils/util.js';
+	import cx from '@/utils/cx/cxCount.js';
 	export default {
 		name: "ReserveDrawer",
 		props: {
@@ -372,9 +373,9 @@
 			this.details.current = this.details.info.CUSTMADDRESS
 			console.log("[Extract-Reserve]预定提取地址ID:",this.details.current);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
-			this.CheckAlsoSetLongitudeAndLatitude(this.details.info);
-			this.GetCustomerAddress(this.details.info.CUSTMPHONE);
-			this.GetDistributionCenter();
+			this.CheckAlsoSetLongitudeAndLatitude(this.details.info);//检查和设置经纬度
+			this.GetCustomerAddress(this.details.info.CUSTMPHONE);//获取客户的地址信息
+			this.GetDistributionCenter();//获取配送中心
 		}
 	}
 </script>
