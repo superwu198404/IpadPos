@@ -42,14 +42,14 @@
 				</view>
 			</view>
 			<view class="hh" style="padding-top:56rpx;">
-				<view>
+				<view style="width:45%">
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 					<label class="sweep">
 						是否使用扫码枪：
 						<view class="classifys">
-							<text @click="PAD_SCANFunc()" :class="PAD_SCAN ? 'curr' : ''">是</text>
-							<text @click="PAD_SCANFunc()" :class="PAD_SCAN ? '' : 'curr'">否</text>
+							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? 'curr' : ''">是</text>
+							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? '' : 'curr'">否</text>
 						</view>
 					</label>
 				</view>
@@ -365,7 +365,7 @@
 				sale8_arr: [], //水吧产品集合
 				actType: "", //当前操作行为 用以定义是支付还是退款
 				hyinfo: {}, //当前会员信息
-				PAD_SCAN: false, //默认pad扫码 
+				PAD_SCAN: true, //默认pad扫码 
 			}
 		},
 		watch: {
@@ -479,13 +479,18 @@
 		methods: {
 			onLoad: function(option) {
 				console.log("进入onLoad方法");
-				this.PAD_SCAN = util.getStorage("PAD_SCAN") || false; //读取缓存配置 没有则为N
+				this.PAD_SCAN = util.getStorage("PAD_SCAN") || true; //读取缓存配置 没有则为N
 
 				this.event = this.getOpenerEventChannel();
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
 				this.PAD_SCAN = !this.PAD_SCAN;
+				if (!this.PAD_SCAN) {
+					util.simpleMsg("已切换为扫码枪扫码", "none");
+				} else {
+					util.simpleMsg("已切换为摄像头扫码", "none");
+				}
 				util.setStorage("PAD_SCAN", this.PAD_SCAN); //切换后缓存起来 下次默认使用
 			},
 			//单号防重处理
@@ -831,7 +836,7 @@
 					if ((pay_info.dbm === "Y" || this.is_poly) && !this.authCode) { //需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
 						console.log("此操作类型需要扫码！", pay_info)
 						console.log("是否属于聚合支付：", this.is_poly)
-						if (this.PAD_SCAN) { //是否扫码枪扫码
+						if (!this.PAD_SCAN) { //是否扫码枪扫码
 							uni.showModal({
 								content: "请使用扫码枪扫码",
 								editable: true,
@@ -1722,9 +1727,10 @@
 </script>
 
 <style>
-	.right{
+	.right {
 		height: 98%;
 	}
+
 	.refund-more-box {
 		display: flex;
 	}
