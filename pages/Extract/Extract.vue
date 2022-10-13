@@ -63,7 +63,8 @@
 					</view>
 					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
 						<button @click="EditOrder(item)" class="btn btn-hk">编辑</button>
-						<button @click="ExtractOrder(item)" class="btn" :disabled="view.loading === item.BILL">{{ view.mode ? '提取' : '取消'}} </button>
+						<button @click="ExtractOrder(item)" class="btn"
+							:disabled="view.loading === item.BILL">{{ view.mode ? '提取' : '取消'}} </button>
 					</view>
 				</view>
 			</view>
@@ -166,8 +167,22 @@
 			},
 			EditOrder: function(item) {
 				console.log("[EditOrder]订单编辑:", item);
-				this.extract_order = item;
-				this.view.Details = true;
+				RequestSend(`SELECT BILL_STATUS FROM YWBHQH WHERE bill='${item.BILL}'`, util.callBind(this, function(res) {
+					console.log("[EditOrder]裱花审核状态查询...",res);
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						if(data.length === 0 || !data?.first().BILL_STATUS || data?.first().BILL_STATUS != 1){
+							this.extract_order = item;
+							this.view.Details = true;
+						}
+						else
+							util.simpleMsg("此预定单对应的裱花请货单已经审核，不能再进行修改!", 'none')
+					}
+					else{
+						util.simpleMsg("裱花查询失败!", true)
+					}
+				}))
+				
 			},
 			ExtractOrder: function(item) {
 				let callback = util.callBind(this, function(sale1, sale2, sale3) {

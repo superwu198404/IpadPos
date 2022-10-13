@@ -1,6 +1,6 @@
 <template>
 	<view class="address-picker">
-		<input :style="inputStyle" class="address-picker-input" placeholder="请输入地址..." v-model="query" @blur="GetAddress" />
+		<input type="text" class="address" placeholder="请输入地址..." v-model="query" @blur="GetAddress" />
 		<view :style="viewStyle" :class="'address-picker-content ' + (state?'open':'close')">
 			<view v-for="i in list" @click="SelectedAddress(i)">{{ i.address }}</view>
 		</view>
@@ -116,6 +116,17 @@
 		border-radius: 5px;
 		box-sizing: border-box;
 		
+	}
+	
+	.address{
+		height: 60rpx;
+		background-color: #F5F5F5;
+		line-height: 60rpx;
+		border-radius: 4rpx;
+		border:1px solid #eee;
+		width:100%;
+		text-align: left;
+		padding:0 10rpx;
 	}
 
 	.open {

@@ -267,9 +267,9 @@ var XsTypeObj = {
 			"ynSKDisc": true, //是否可以计算手工折扣
 			"ynEdit": true, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
-			"sale": true, //从这里开始都是销售模式
+			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
-			"sale_credit": true,
+			// "sale_credit": true,
 			"sale_return_good": false,
 			"sale_reserve_cancel": false,
 			"sale_takeaway": true,
@@ -1896,11 +1896,11 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} pm_type 销售类型
 	 * @param {*} switch_callback 页面切换时的回调
 	 */
-	this.SetType = function(pm_type) {
+	this.SetType = function(pm_type,uncheck = false) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
-		if (!this.currentOperation[pm_type]) {
+		if (!this.currentOperation[pm_type] && (!uncheck)) {
 			this.myAlert("请完成当前模式再进行切换！");
 			return;
 		}
@@ -2737,7 +2737,7 @@ function GetSale(global, vue, target_name, uni) {
 	//
 	this.SetDefaultType = function(type = "sale") {
 		console.log("[SetDefaultType]设置默认类型:", type);
-		this.SetType(type);
+		this.SetType(type,true);
 		console.log("[SetDefaultType]初始化销售单...");
 		this.$initSale(XsTypeObj[type]);
 		console.log("[SetDefaultType]设置默认展示组件...");

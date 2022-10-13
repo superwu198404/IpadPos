@@ -13,7 +13,8 @@
 			<view class="middle" style="flex: 1 0px;">
 				<view class="restlist">
 					<label><text>收货人：</text><input type="text" v-model="details.info.CUSTMNAME" /></label>
-					<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE" v-on:blur="QueryAddress()" /></label>
+					<label><text>联系电话：</text><input type="text" v-model="details.info.CUSTMPHONE"
+							v-on:blur="QueryAddress()" /></label>
 					<label>
 						<text>提货日期：</text>
 						<picker mode="date" fields="day" @change="ExtractDateChange">
@@ -29,7 +30,8 @@
 					<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->
 					<label><text>配送中心：</text>
 						<picker @change="CenterChange" :range="distribution" range-key="SNAME">
-							<view style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{ details.info.STR2}}-{{ CenterName }}</view>
+							<view style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+								{{ details.info.STR2}}-{{ CenterName }}</view>
 						</picker>
 					</label>
 					<label><text>地址：</text><input v-model="details.info.CUSTMADDRESS" :disabled="true"></input></label>
@@ -47,8 +49,8 @@
 					<view class="restlist">
 						<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
 						<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
-						<label class="long"><text>收货地址：</text>
-							<AddressPicker @change="AddressChange"></AddressPicker>
+						<label class="long" style="display: flex;padding-right: 70rpx;"><text>收货地址：</text>
+							<AddressPicker @change="AddressChange" style="flex:1"></AddressPicker>
 						</label>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea></textarea></label> -->
@@ -62,8 +64,7 @@
 					<view class="h6"><text>地址</text> <button @click="AddAddress()">+ 新增地址</button></view>
 					<view class="location">
 						<view>
-							<view class="site" v-for="(i,index) in details.address"
-								v-show="ShowFirstAddress(i.ADDRID)"
+							<view class="site" v-for="(i,index) in details.address" v-show="ShowFirstAddress(i.ADDRID)"
 								@click="RadioChange(i)">
 								<view class="sitelist">
 									<view>
@@ -71,7 +72,8 @@
 										<label>{{ i.ADDRESS }}</label>
 									</view>
 								</view>
-								<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">修改</button><button class="btn-sc" @click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
+								<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">修改</button><button
+										class="btn-sc" @click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
 							</view>
 						</view>
 					</view>
@@ -80,10 +82,11 @@
 							src="../../../images/zhankaiqb-dt.png"></image>
 					</view>
 				</view>
-				<view v-show="!view.add_address" class="map-content">
+				<view v-show="!view.add_address && !view.more" class="map-content">
 					<view style="width: 90%; height: 290px;">
-						<map style="width: 100%; height: 100%;" :latitude="details.info.LATITUDE" :longitude="details.info.LONGITUDE"
-							:scale="map.scale" :markers="map.markers" :enable-poi="false">
+						<map style="width: 100%; height: 100%;" :latitude="details.info.LATITUDE"
+							:longitude="details.info.LONGITUDE" :scale="map.scale" :markers="map.markers"
+							:enable-poi="false">
 						</map>
 					</view>
 				</view>
@@ -108,19 +111,19 @@
 				default: () => ({})
 			}
 		},
-		computed:{
-			CenterName:function(){
+		computed: {
+			CenterName: function() {
 				return this.distribution.find(i => i.KHID === this.details.info.STR2)?.SNAME;
 			},
-			ExtractDate:function(){
+			ExtractDate: function() {
 				return this.details.info.THDATE.split(' ')?.first();
 			},
-			ExtractTime:function(){
+			ExtractTime: function() {
 				return this.details.info.THDATE.split(' ')?.last();
 			},
-			ShowFirstAddress:function(){
-				return util.callBind(this,function(address_id){
-					return this.view.more? true : (address_id === this.details.current);
+			ShowFirstAddress: function() {
+				return util.callBind(this, function(address_id) {
+					return this.view.more ? true : (address_id === this.details.current);
 				})
 			}
 		},
@@ -136,7 +139,7 @@
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
-					markers:[]
+					markers: []
 				},
 				form: {
 					selected: { //当前选中的配送地址
@@ -183,20 +186,21 @@
 			Close: function() {
 				this.$emit("Close");
 			},
-			ExtractDateChange:function(date) {
+			ExtractDateChange: function(date) {
 				this.details.info.THDATE = date.detail.value + " " + this.ExtractTime;
 			},
-			ExtractTimeChange:function(time) {
+			ExtractTimeChange: function(time) {
 				this.details.info.THDATE = this.ExtractDate + " " + time.detail.value;
 			},
 			AddAddress: function(e) {
 				this.view.add_address = true; //新增地址
 				this.view.address_edit = false;
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
+				this.form.address.NAME = this.details.info.CUSTMNAME;
 			},
 			GetDistributionCenter: function() { //获取配送中心
 				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
-					console.log("[GetDistributionCenter]配送中心...",r);
+					console.log("[GetDistributionCenter]配送中心...", r);
 					if (r.msg.length > 0) {
 						this.distribution = r.msg;
 					}
@@ -251,28 +255,39 @@
 				this.form.address.LONGITUDE = data.adrjd; //经度
 				this.form.address.LATITUDE = data.adrwd; //纬度
 			},
+			AddressVaild: function() {
+				if (!this.form.address.NAME) {
+					util.simpleMsg("收货人不能为空!", 'none');
+					return false;
+				}
+				return true;
+			},
+
 			ChangeCustomerAddress: function() {
-				_extract.ConfirmADDR(Object.assign(this.form.address, {
-					ACT: this.view.address_edit ? "Edit" : "Add"
-				}), util.callBind(this, function(res) {
-					console.log("[ChangeCustomerAddress]ConfirmADDR回调:",res);
-					util.simpleMsg(res.msg, res.code, res);
-					this.Newaddr = false;
-					this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(res) {
-						if (!this.view.address_edit) {
-							let address = this.form.address.ADDRESS
-							console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
-							console.log("[GetCustomerAddress-Inner]Address列表:", this.details
-								.address);
-							let address_info = this.details.address.find(a => a.ADDRESS ===
-								address);
-							console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
-							if (address_info != -1) this.details.current = address_info?.ADDRESS;
-							this.view.more = true;
-							this.view.add_address = false;
-						}
-					}));
-				}))
+				if (this.AddressVaild())
+					_extract.ConfirmADDR(Object.assign(this.form.address, {
+						ACT: this.view.address_edit ? "Edit" : "Add"
+					}), util.callBind(this, function(res) {
+						console.log("[ChangeCustomerAddress]ConfirmADDR回调:", res);
+						util.simpleMsg(res.msg, res.code, res);
+						this.Newaddr = false;
+						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
+						res) {
+							if (!this.view.address_edit) {
+								let address = this.form.address.ADDRESS
+								console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
+								console.log("[GetCustomerAddress-Inner]Address列表:", this.details
+									.address);
+								let address_info = this.details.address.find(a => a.ADDRESS ===
+									address);
+								console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
+								if (address_info != -1) this.details.current = address_info
+									?.ADDRESS;
+								this.view.more = true;
+								this.view.add_address = false;
+							}
+						}));
+					}))
 			},
 			StoreChange: function(data) {
 				console.log("[StoreChange]被选中的门店:", data);
@@ -307,7 +322,7 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return false;
 				}
-				
+
 				if (order.THTYPE == '1') {
 					let hour = new Date(order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
@@ -351,33 +366,33 @@
 				else
 					return false;
 			},
-			CheckAlsoSetLongitudeAndLatitude:function(order){//检查经纬度，如果不存在设置默认
-				if(order.LONGITUDE && order.LATITUDE){
+			CheckAlsoSetLongitudeAndLatitude: function(order) { //检查经纬度，如果不存在设置默认
+				if (order.LONGITUDE && order.LATITUDE) {
 					this.map.markers.push({
-						id:'client',
-						latitude:order.LATITUDE,
-						longitude:order.LONGITUDE,
-						title:'配送地址',
-						callout:{
-							content:'收货地址',
-							color:'red',
-							display:'ALWAYS'
+						id: 'client',
+						latitude: order.LATITUDE,
+						longitude: order.LONGITUDE,
+						title: '配送地址',
+						callout: {
+							content: '收货地址',
+							color: 'red',
+							display: 'ALWAYS'
 						}
 					})
 				}
-				if(!order.LONGITUDE) order.LONGITUDE = this.map.longitude;
-				if(!order.LATITUDE) order.LATITUDE = this.map.latitude;
+				if (!order.LONGITUDE) order.LONGITUDE = this.map.longitude;
+				if (!order.LATITUDE) order.LATITUDE = this.map.latitude;
 			}
 		},
 		mounted() {
 			Object.assign(this.details.info, this.order);
 			console.log("[Extract-Reserve]预订单修改信息:", this.details.info);
 			this.details.current = this.details.info.CUSTMADDRESS
-			console.log("[Extract-Reserve]预定提取地址ID:",this.details.current);
+			console.log("[Extract-Reserve]预定提取地址ID:", this.details.current);
 			this.details.info.$THDATE = this.details.info.THDATE; //储存旧的提货时间
-			this.CheckAlsoSetLongitudeAndLatitude(this.details.info);//检查和设置经纬度
-			this.GetCustomerAddress(this.details.info.CUSTMPHONE);//获取客户的地址信息
-			this.GetDistributionCenter();//获取配送中心
+			this.CheckAlsoSetLongitudeAndLatitude(this.details.info); //检查和设置经纬度
+			this.GetCustomerAddress(this.details.info.CUSTMPHONE); //获取客户的地址信息
+			this.GetDistributionCenter(); //获取配送中心
 		}
 	}
 </script>
