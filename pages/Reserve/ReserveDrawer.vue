@@ -35,7 +35,8 @@
 						</view>
 					</hTimePicker> -->
 				</label>
-				<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number" v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
+				<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
+						v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
 				</label>
 				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
 				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
@@ -186,7 +187,7 @@
 					CARDID: "", //蛋糕类型  
 					YD_STATUS: "1"
 				},
-				map:{
+				map: {
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
@@ -299,7 +300,7 @@
 					let current_datetime = new Date(new Date().setHours(56));
 					date = current_datetime.toLocaleDateString().replaceAll('/', '-');
 					// time = current_datetime.toTimeString().split(" ")[0];
-					console.log("[RefreshData]时间:",{
+					console.log("[RefreshData]时间:", {
 						date,
 						time
 					});
@@ -380,7 +381,7 @@
 								ID: item.ID_NR,
 								NAME: item.SNAME
 							};
-						}).filter(i => over48 ?  (i.NAME === '宅配到家') : (decoration || (i.NAME !== '宅配到家')))
+						}).filter(i => over48 ? (i.NAME === '宅配到家') : (decoration || (i.NAME !== '宅配到家')))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
 					}
 				})
@@ -427,9 +428,8 @@
 							return r.ADDRID != null;
 						});
 						that.yn_add = false;
-					}
-					else{
-						that.ShowAddADDR();//默认展开地址新增表单
+					} else {
+						that.ShowAddADDR(); //默认展开地址新增表单
 					}
 				})
 			},

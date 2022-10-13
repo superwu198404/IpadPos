@@ -357,7 +357,8 @@
 				sbsp_arr: [], //水吧产品初始集合
 				sale8_arr: [], //水吧产品集合
 				actType: "", //当前操作行为 用以定义是支付还是退款
-				hyinfo: {} //当前会员信息
+				hyinfo: {}, //当前会员信息
+				PAD_SCAN: false, //默认pad扫码 
 			}
 		},
 		watch: {
@@ -470,7 +471,14 @@
 		},
 		methods: {
 			onLoad: function(option) {
+				console.log("进入onLoad方法");
+				this.PAD_SCAN = util.getStorage("PAD_SCAN") || false; //读取缓存配置 没有则为N
 				this.event = this.getOpenerEventChannel();
+			},
+			//扫码方式切换
+			PAD_SCANFunc: function(e) {
+				this.PAD_SCAN = !this.PAD_SCAN;
+				util.setStorage("PAD_SCAN", this.PAD_SCAN); //切换后缓存起来 下次默认使用
 			},
 			//单号防重处理
 			UniqueBill: function() {
@@ -1677,6 +1685,7 @@
 			}
 		},
 		async created() {
+			console.log("进入created方法");
 			this.paramInit();
 			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
 				.GetZFRULE(); //初始化支付规则（如果没有的话）
