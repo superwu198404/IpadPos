@@ -473,6 +473,7 @@
 			onLoad: function(option) {
 				console.log("进入onLoad方法");
 				this.PAD_SCAN = util.getStorage("PAD_SCAN") || false; //读取缓存配置 没有则为N
+
 				this.event = this.getOpenerEventChannel();
 			},
 			//扫码方式切换

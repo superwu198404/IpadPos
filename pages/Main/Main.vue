@@ -708,7 +708,7 @@
 				this.$forceUpdate();
 			},
 			Letters: function(e) {
-				this.Alphabetical = true
+				this.Alphabetical = !this.Alphabetical
 
 			},
 			//会员登录

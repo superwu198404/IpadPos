@@ -439,7 +439,7 @@
 		flex-direction: column;
 		color: #006B44;
 		font-size: 44rpx;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.dates label text:nth-child(2) {
@@ -535,7 +535,7 @@
 		width: 70%;
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		padding: 60rpx 5%;
+		padding: 68rpx 5%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

@@ -39,8 +39,8 @@
 							</label>
 							<label><text>*提货时间：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
-								<picker mode="time" @change="timeChange">
-									<view>{{Order.TH_TIME}}</view>
+								<picker mode="time" @change="timeChange" style="width:65%">
+									<view style="width:100%">{{Order.TH_TIME}}</view>
 								</picker>
 							</label>
 							<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
