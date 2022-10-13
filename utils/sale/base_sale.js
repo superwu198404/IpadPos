@@ -364,7 +364,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定下单开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -539,7 +539,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定提取开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -640,7 +640,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预订单取消开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -881,12 +881,15 @@ var XsTypeObj = {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
 				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
+				new_s2.STR1 = s2.GOODNAME ?? "";
 				return new_s2;
 			});
 			this.sale003 = params.sale3.map(s3 => {
 				let new_s3 = Object.cover(new sale.sale003(), s3)
 				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
 				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
+				new_s3.FKNAME = s3.SNAME ?? "",
+				util.hidePropety(new_s3,'FKNAME');
 				new_s3.FKID = 'ZG03';
 				return new_s3
 			});
@@ -953,27 +956,27 @@ var XsTypeObj = {
 			delete this.old_bill;
 		},
 		async $saleFinied(sales) {
-			console.log("[SaleFinied]线上提取提货...");
-			
+			console.log("[SaleFinied]线上提取提货...");		
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
-				item.SNAME = item.STR1;
+				item.SNAME = item.STR2;
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-					item.balance = item.balance;
+					item.SNAME = item.FKNAME;
+					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("线上订单提取开始调用打印", {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTD");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTQ");
 			
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
@@ -2123,8 +2126,9 @@ function GetSale(global, vue, target_name, uni) {
 		var savaSale001 = {};
 		Object.assign(savaSale001, inputParm.sale001)
 		Object.assign(inputParm.sale001, retparm);
-		console.log("[SetNewParmSale]SALE001合并后:", inputParm.sale001);
+		
 		inputParm.sale001.GSID = this.GSID;
+		console.log("[SetNewParmSale]SALE001合并后:", inputParm.sale001);
 		inputParm.sale002.forEach(item002 => {
 			Object.cover(item002, retparm);
 		})

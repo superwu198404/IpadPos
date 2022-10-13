@@ -66,11 +66,25 @@
 		"modules": {
 			"SQLite": {},
 			"Bluetooth": {},
-			"Maps": {}
+			"Maps": {},
+			"OAuth": {}
 		},
 		"distribute": {
 			"android": {
-				"abiFilters": ["armeabi-v7a", "arm64-v8a", "x86"]
+				"abiFilters": ["armeabi-v7a", "arm64-v8a", "x86"],
+				"permissions": [
+					"<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.INTERNET\"/>",
+					"<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+					"<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+					"<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+					"<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+				]
 			},
 			"ios": {
 				"privacyDescription": {
@@ -90,7 +104,8 @@
 						"appkey_ios": "7abfed2964bcad2143b01f6aaf0b86da",
 						"appkey_android": "86f75f9051e9eb25c6f7907df2b4230c"
 					}
-				}
+				},
+				"oauth": {}
 			},
 			"icons": {
 				"ios": {
@@ -153,3 +168,4 @@
 // 		"query": "" //启动参数，在页面的onLoad函数里面得到
 // 	}]
 // }
+

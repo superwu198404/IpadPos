@@ -192,10 +192,11 @@ var dataInit = async function(pm_initType) {
 				mask: true
 			});
 			let tx004 = Req.getResData(res);
-			console.log("进行通讯的004回调成功" + JSON.stringify(tx004[0] ).substring(0,200));
+			let red
+			console.log("进行通讯的004回调成功" + JSON.stringify(tx004 ).substring(0,200));
 			//根据001循环创建表，并生成初始化语句
 			tx001.forEach(function(item) {
-				let arr004 = tx004[0].filter((item4) => {
+				let arr004 = tx004.filter((item4) => {
 					return item4.TABNAME == item.TABNAME
 				});
 				//console.log( JSON.stringify( arr004));
