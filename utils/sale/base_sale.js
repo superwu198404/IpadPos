@@ -364,7 +364,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定下单开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -539,7 +539,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定提取开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -640,7 +640,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预订单取消开始调用打印", {
 				arr2,
 				arr3
 			})
