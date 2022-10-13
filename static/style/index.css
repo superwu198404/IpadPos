@@ -312,10 +312,10 @@ page {
 
 .operation .ranks {
 	position: absolute;
-	top: 2%;
+	top: 1%;
 	left: -65%;
 	width: 72%;
-	height: 96%;
+	height: 98%;
 	/* transform: translate(-50%, -50%); */
 	background-color: #E0EAE9;
 	color: #006B44;
@@ -339,7 +339,7 @@ page {
 	        }
 	    100%{
 	        transform: scale(1);
-			top: 2%;
+			top: 1%;
 			left: -65%;
 			/* transform: translate(-50%, -50%); */
 	        }
