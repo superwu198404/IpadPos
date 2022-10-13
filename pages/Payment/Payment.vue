@@ -1722,10 +1722,9 @@
 </script>
 
 <style>
-	.right {
-		height: 86%;
+	.right{
+		height: 98%;
 	}
-
 	.refund-more-box {
 		display: flex;
 	}
