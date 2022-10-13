@@ -1715,6 +1715,9 @@
 </script>
 
 <style>
+	.right{
+		height: 98%;
+	}
 	.refund-more-box {
 		display: flex;
 	}
