@@ -50,8 +50,8 @@
 									@blur="GetAddr()" /></label>
 							<label><text>*提货日期：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
-								<picker mode="date" fields="day" @change="dateChange">
-									<view>{{Order.TH_DATE}}</view>
+								<picker style="width:65%;" mode="date" fields="day" @change="dateChange">
+									<view style="width:100%;">{{Order.TH_DATE}}</view>
 								</picker>
 							</label>
 							<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->

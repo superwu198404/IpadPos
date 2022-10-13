@@ -101,15 +101,21 @@
 				</view>
 			</view>
 			<view class="atlas">
+<<<<<<< HEAD
 				<cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view>
+=======
+				<view class="map">
+					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"></map>
+				</view>
+>>>>>>> e12ae7564bb69710bee77f9bc4ae4124e56f6d7f
 			</view>
 		</view>
-		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
+		<cover-view class="operat" style="display: flex;padding: 8px;gap: 8px;">
 			<button class="btn btn-qx" @click="Close()">取 消</button>
 			<button class="btn" @click="Confirm">确 定</button>
-		</view>
+		</cover-view>
 	</view>
 </template>
 
@@ -717,7 +723,7 @@
 		top: 100%;
 		background-color: #fff;
 		border-radius: 6rpx;
-		width: 67%;
+		width: 66%;
 		text-align: left;
 		z-index: 999999999;
 		box-shadow: 0px 10rpx 20rpx 1px rgba(66, 177, 75, 0.06);
@@ -735,5 +741,11 @@
 		line-height: 50rpx;
 		white-space: nowrap;
 		font-weight: 400 !important;
+	}
+	.operat{
+		z-index: 9999999999999;
+	}
+	.operat button{
+		margin:0 1%;
 	}
 </style>

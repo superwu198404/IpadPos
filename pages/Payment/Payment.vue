@@ -45,6 +45,13 @@
 				<view>
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
+					<label class="sweep">
+						是否使用扫码枪：
+						<view class="classifys">
+							<text @click="PAD_SCANFunc()" :class="PAD_SCAN ? 'curr' : ''">是</text>
+							<text @click="PAD_SCANFunc()" :class="PAD_SCAN ? '' : 'curr'">否</text>
+						</view>
+					</label>
 				</view>
 				<view class="checkout">
 					<label>
@@ -824,16 +831,35 @@
 					if ((pay_info.dbm === "Y" || this.is_poly) && !this.authCode) { //需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
 						console.log("此操作类型需要扫码！", pay_info)
 						console.log("是否属于聚合支付：", this.is_poly)
-						uni.scanCode({
-							success: (function(res) {
-								this.authCode = res.result; //获取扫码的 authCode
-								console.log("[Pay]scanCode:", res);
-								that.PayHandle();
-							}).bind(this),
-							fail(err) {
-								console.log("[Pay]Error:", err);
-							}
-						});
+						if (this.PAD_SCAN) { //是否扫码枪扫码
+							uni.showModal({
+								content: "请使用扫码枪扫码",
+								editable: true,
+								confirmText: "确认",
+								cancelText: "取消",
+								success: (function(res) {
+									console.log("回调结果：", res);
+									if (res.confirm) {
+										if (res.content) {
+											this.authCode = res.content; //获取扫码的 authCode
+											console.log("[Pay]authCode:", this.authCode);
+											that.PayHandle();
+										}
+									}
+								}).bind(this)
+							})
+						} else {
+							uni.scanCode({
+								success: (function(res) {
+									this.authCode = res.result; //获取扫码的 authCode
+									console.log("[Pay]scanCode:", res);
+									that.PayHandle();
+								}).bind(this),
+								fail(err) {
+									console.log("[Pay]Error:", err);
+								}
+							});
+						}
 					} else { //不需要扫码操作
 						console.log("此操作类型不需要扫码！", pay_info)
 						that.PayHandle(); //直接发起支付
@@ -1697,6 +1723,9 @@
 </script>
 
 <style>
+	.right{
+		height: 98%;
+	}
 	.refund-more-box {
 		display: flex;
 	}
@@ -1731,7 +1760,51 @@
 		animation: 1.5s rotate infinite linear;
 	}
 
-	.coupons {
-		width: 70%;
+	.sweep {
+		display: flex;
+		align-items: center;
+		width: 48%;
+		margin-right: 2%;
+	}
+
+	.classifys {
+		display: flex;
+		align-items: center;
+		background-color: #E0EAE9;
+		color: #006B44;
+		font-weight: 400;
+		border-radius: 40rpx;
+		font-size: 14px;
+		padding: 1px;
+		border: 1px solid #006B44;
+	}
+
+	.classifys text {
+		display: inline-block;
+		padding: 4rpx 20rpx;
+		border-radius: 30px;
+	}
+
+	.classifys text.curr {
+		background-color: #006B44;
+		color: #fff;
+
+	}
+
+	.customer .btn-qr {
+		width: 50%;
+		margin: 0 auto;
+		position: absolute;
+		bottom: 30rpx;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.customer .confirm {
+		position: absolute;
+		bottom: 0;
+		left: 10%;
+		width: 80%;
+		padding: 2% 0 3%;
 	}
 </style>
