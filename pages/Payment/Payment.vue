@@ -985,6 +985,7 @@
 					util.simpleMsg("已完成退款!");
 					this.CanBack = true;
 					this.RefundFinish = true;
+					this.SaleDataCombine();
 					this.backPrevPage();
 					return;
 				}

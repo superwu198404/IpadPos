@@ -101,9 +101,15 @@
 				</view>
 			</view>
 			<view class="atlas">
+<<<<<<< HEAD
+				<cover-view class="map">
+					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
+				</cover-view>
+=======
 				<view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"></map>
 				</view>
+>>>>>>> e12ae7564bb69710bee77f9bc4ae4124e56f6d7f
 			</view>
 		</view>
 		<cover-view class="operat" style="display: flex;padding: 8px;gap: 8px;">
@@ -191,6 +197,7 @@
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
+					markers:[]
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -519,6 +526,18 @@
 				that.Order.ADDRID = e.ADDRID;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
+				that.map.markers.pop();
+				that.map.markers = [{
+					id: 'client',
+					latitude: e.LONGITUDE,
+					longitude: e.LATITUDE,
+					title: '配送地址',
+					callout: {
+						content: '收货地址',
+						color: 'red',
+						display: 'ALWAYS'
+					}
+				}]
 				//宅配到家需要匹配最近的配送中心
 				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == '1') {
 					//匹配下裱花间
@@ -640,7 +659,7 @@
 					}
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
-				that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
+				// that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
 				that.YDDATA = JSON.stringify(that.Order);
 				that.Order.DNET = Number(that.Order.DNET);
 				console.log("[Confirm]已设置定金金额:", that.Order);
