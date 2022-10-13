@@ -592,28 +592,28 @@
 					return;
 				}
 				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
-					util.simpleMsg("提货时间早于当前", true);
+					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
 				if (that.Order.THTYPE == '1') {
 					let hour = new Date(that.Order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
-						util.simpleMsg("提货时间不在7到19点", true);
+						util.simpleMsg("提货时间不在7到19点", 'none');
 						return;
 					}
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date().setHours(new Date().getHours() +
 							1)) {
-						util.simpleMsg("提货时间小于一小时内", true);
+						util.simpleMsg("提货时间小于一小时内", 'none');
 						return;
 					}
 				}
 				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
-						util.simpleMsg("提货时间小于当前时间", true);
+						util.simpleMsg("提货时间小于当前时间", 'none');
 						return;
 					}
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
-						util.simpleMsg("提货时间晚于19点", true);
+						util.simpleMsg("提货时间晚于19点", 'none');
 						return;
 					}
 				}
@@ -626,7 +626,7 @@
 					return;
 				}
 				if (that.Order.ZNET < that.Order.DNET) {
-					util.simpleMsg("定金大于应收金额", true);
+					util.simpleMsg("定金大于应收金额", 'none');
 					return;
 				}
 				if (!that.Order.CUSTMPHONE) {

@@ -881,7 +881,7 @@ var XsTypeObj = {
 				let new_s2 = Object.cover(new sale.sale002(), s2);
 				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
 				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
-				new_s2.STR2 = s2.GOODNAME ?? "";
+				new_s2.STR1 = s2.GOODNAME ?? "";
 				return new_s2;
 			});
 			this.sale003 = params.sale3.map(s3 => {
@@ -2126,8 +2126,9 @@ function GetSale(global, vue, target_name, uni) {
 		var savaSale001 = {};
 		Object.assign(savaSale001, inputParm.sale001)
 		Object.assign(inputParm.sale001, retparm);
-		console.log("[SetNewParmSale]SALE001合并后:", inputParm.sale001);
+		
 		inputParm.sale001.GSID = this.GSID;
+		console.log("[SetNewParmSale]SALE001合并后:", inputParm.sale001);
 		inputParm.sale002.forEach(item002 => {
 			Object.cover(item002, retparm);
 		})
