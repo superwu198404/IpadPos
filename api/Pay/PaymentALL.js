@@ -439,20 +439,38 @@ var szqPay = {
 }
 
 import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
+import checker from '@/utils/graceChecker.js';
+
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		// util.getStorage("hyinfo")
-		member.PointsDeduction("积分抵现中...", {
+		if (!util.getStorage("hyinfo")?.hyId) {
+			util.simpleMsg("请先登录会员...", true);
+			return;
+		}
+		let flag = checker.checkMobile(util.getStorage("hyinfo")?.hyId)
+		member.QueryHyInfo("查询中...", {
 			brand: getApp().globalData?.brand,
+			kquser: getApp().globalData?.kquser,
 			data: {
-				hyid: util.getStorage("hyinfo")?.hyId,
-				// hyid: "1000311647",
-				amount: body.point,
-				trade_no: body.out_trade_no,
-				money: body.point_money * 100
+				code: util.getStorage("hyinfo")?.hyId,
+				type: flag ? 'Mobile' : 'ACCOUNT'
 			}
-		}, func, func);
+		}, function(res) {
+			console.log("[PaymentAll]会员信息查询结果...",res);
+		}, function(err) {
+			util.simpleMsg("会员积分查询失败，请重试...", 'none');
+		})
+		// member.PointsDeduction("积分抵现中...", {
+		// 	brand: getApp().globalData?.brand,
+		// 	data: {
+		// 		hyid: util.getStorage("hyinfo")?.hyId,
+		// 		// hyid: "1000311647",
+		// 		amount: body.point,
+		// 		trade_no: body.out_trade_no,
+		// 		money: body.point_money * 100
+		// 	}
+		// }, func, func);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		member.PointsReturn("积分返还中...", {

@@ -304,29 +304,29 @@
 					return false;
 				}
 				if (order.THTYPE != '1' && new Date(order.THDATE.replace(/-/g, "/")) < new Date()) {
-					util.simpleMsg("提货时间早于当前", true);
+					util.simpleMsg("提货时间早于当前", 'none');
 					return false;
 				}
 				
 				if (order.THTYPE == '1') {
 					let hour = new Date(order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
-						util.simpleMsg("提货时间不在7到19点", true);
+						util.simpleMsg("提货时间不在7到19点", 'none');
 						return false;
 					}
 					if (new Date(order.THDATE.replace(/-/g, "/")) < new Date().setHours(new Date().getHours() +
 							1)) {
-						util.simpleMsg("提货时间小于一小时内", true);
+						util.simpleMsg("提货时间小于一小时内", 'none');
 						return false;
 					}
 				}
 				if (order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
 					if (new Date(order.THDATE.replace(/-/g, "/")) < new Date()) {
-						util.simpleMsg("提货时间小于当前时间", true);
+						util.simpleMsg("提货时间小于当前时间", 'none');
 						return false;
 					}
 					if (new Date(order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
-						util.simpleMsg("提货时间晚于19点", true);
+						util.simpleMsg("提货时间晚于19点", 'none');
 						return false;
 					}
 				}
@@ -352,19 +352,21 @@
 					return false;
 			},
 			CheckAlsoSetLongitudeAndLatitude:function(order){//检查经纬度，如果不存在设置默认
+				if(order.LONGITUDE && order.LATITUDE){
+					this.map.markers.push({
+						id:'client',
+						latitude:order.LATITUDE,
+						longitude:order.LONGITUDE,
+						title:'配送地址',
+						callout:{
+							content:'收货地址',
+							color:'red',
+							display:'ALWAYS'
+						}
+					})
+				}
 				if(!order.LONGITUDE) order.LONGITUDE = this.map.longitude;
 				if(!order.LATITUDE) order.LATITUDE = this.map.latitude;
-				this.map.markers.push({
-					id:'client',
-					latitude:order.LATITUDE,
-					longitude:order.LONGITUDE,
-					title:'配送地址',
-					callout:{
-						content:'收货地址',
-						color:'red',
-						display:'ALWAYS'
-					}
-				})
 			}
 		},
 		mounted() {

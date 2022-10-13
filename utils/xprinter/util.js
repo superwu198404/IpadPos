@@ -227,7 +227,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			xsType = "SXTD";
 			break;
 		case "8": //线上订单提取
-			xsType = "XSDDTD";
+			xsType = "XSDDTQ";
 			break;
 		case "9": //线上订单取消
 			xsType = "XSDDQX";
@@ -510,7 +510,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = sale1_obj.BILLDISC;
-	var originalAmount = sale1_obj.ZNET;
+	var originalAmount = nnvl(sale1_obj.ZNET,0) + nnvl(sale1_obj.BILLDISC,0);
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -532,6 +532,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
+			oprice: sale2_arr[i].OPRICE, //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
@@ -566,7 +567,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 
 	console.log("sale3List 转换后数据:", sale3List);
 	
-	var qknet = nnvl(originalAmount,0) - nnvl(payableAmount,0) - nnvl(discountedAmount,0);
+	var qknet = Math.round((nnvl(originalAmount,0) - nnvl(payableAmount,0) - nnvl(discountedAmount,0))*100)/100;
 	var dnet = nnvl(ydsale001.DNET,0);
 	var custmname = snvl(ydsale001.CUSTMNAME,"");
 	var custmphone = snvl(ydsale001.CUSTMPHONE,"");
