@@ -122,7 +122,7 @@ var getGSKHINFO = (gsid, khid) => {
 		let addgsstr = "";
 		let strgsz = obj.KJGSFW; //QxDict[KJGSFW];
 		let arraygs = strgsz.split(',');
-		for (let i = 0; i < arraygs.Length; i++) {
+		for (let i = 0; i < arraygs.length; i++) {
 			addgsstr += "'" + arraygs[i] + "',";
 		}
 		addgsstr = addgsstr.substr(0, addgsstr.length - 1);
@@ -158,6 +158,7 @@ var GetPSCenter = function(gsid, khid, func) {
 	let sql =
 		"SELECT KHID,SNAME FROM KHDA WHERE  PINYIN NOT NULL AND BHTYPE IN( '1','2','3') AND ZZTLX IN('BH') and client_status  not  in ('2','3')  AND GSID" +
 		gskhinfo + " ORDER BY KHID";
+	console.log("sql:", sql);
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("配送中心查询成功：", res);
 		if (func)
