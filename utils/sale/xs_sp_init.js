@@ -158,7 +158,7 @@ var loadSaleSP  =
 	                 FROM SPDA S1,SPKHDA SM,PLDA \
 					WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID  \
 			    AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  \
-			    AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='"+pm_storeid+"' \
+			    AND ifnull(S1.yn_xpdg,'N') ='N'  AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='"+pm_storeid+"' \
 			    AND not exists(select 1 from spda_dgxl where  spda_dgxl.spid = SM.SPID) \
 				AND NOT EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='"+pm_dqid+"' AND SM.SPID = KXPSX.MATNR )";
 		
@@ -203,7 +203,7 @@ var loadSaleSP  =
 	" 0 ynshowlist , '' specslist, 1 ynAddPro,'' addlist "  +
     "FROM SPDA S1,SPKHDA SM,PLDA " +
 	"WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID "+
-	"AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  "+ 
+	"AND  ifnull(S1.yn_xpdg,'N') ='N' AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  "+ 
 	"AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='"+pm_storeid+"' AND  "+
 	"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='"+pm_dqid+"' AND SM.SPID = KXPSX.MATNR   )";
 	  			await  $sqlLite.executeQry(msDrinksql,"开始获取水吧商品",(res)=>

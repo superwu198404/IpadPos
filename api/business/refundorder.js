@@ -14,7 +14,7 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
                    when '1'then '销售' \
                    WHEN '5' then '预定提取' \
                     end \
-                   ) XSTYPE,ry.sname RYID,S1.TNET,S1.TLINE,S1.CUID,S1.HYJF*(-1) HYJF \
+                   ) XSTYPE,ry.sname RYID,S1.ZNET,S1.TNET,S1.TLINE,S1.CUID,S1.HYJF*(-1) HYJF \
                  FROM SALE001 S1 left join MDRYKH RY on  S1.RYID = RY.RYID  \
                  WHERE S1.XSTYPE IN('1','5') \
                  AND not exists  (select 1 from sale001 s2 where  s1.bill =s2.xs_bill \
@@ -26,7 +26,7 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
 	if (date) {
 		sql += " and date(S1.SALEDATE) =date('" + date + "')";
 	}
-	sql+=" order by s1.saledate desc"
+	sql += " order by s1.saledate desc"
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("退货信息查询结果：", res);
 		if (func) func(res);
@@ -58,17 +58,17 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 		"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
 		"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
 		xs_bill + "'";
-	console.log("[GetOrderDetails]查询详情单条件参数列表:",{
-		KHID:Program.KHID,
-		GSID:Program.GSID,
-		BMID:Program.BMID,
-		RYID:Program.RYID,
-		POSID:Program.POSID,
-		REFUND_BILL:refund_bill,
-		XS_BILL:xs_bill,
-		DQID:Program.DQID,
-		KCDID:Program.KCDID,
-		GCID:Program.GCID
+	console.log("[GetOrderDetails]查询详情单条件参数列表:", {
+		KHID: Program.KHID,
+		GSID: Program.GSID,
+		BMID: Program.BMID,
+		RYID: Program.RYID,
+		POSID: Program.POSID,
+		REFUND_BILL: refund_bill,
+		XS_BILL: xs_bill,
+		DQID: Program.DQID,
+		KCDID: Program.KCDID,
+		GCID: Program.GCID
 	});
 	// sql = "select * FROM SALE002 S2, SPDA S1,SPTMDA T1,SPKHDA SM  WHERE  S1.SPID =T1.SPID " +
 	// 	"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
@@ -103,7 +103,7 @@ var GetSXOrderDetails = function(data, func) {
  * @param {*} data 
  * @param {*} func 
  */
-var CreditOrderRefund = function (data, func) {
+var CreditOrderRefund = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.CreditOrderRefund";
 	let reqdata = Req.resObj(true, "操作中...", data, apistr);
 	Req.asyncFuncOne(reqdata, func);

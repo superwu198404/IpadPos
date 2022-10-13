@@ -2496,8 +2496,8 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("普通促销计算后的销售单1:", this.sale001);
 			console.log("普通促销计算后的销售单2:", that.sale002);
 		}
-
-		if (that.currentOperation.Disc) {
+		// 因为默认促销和折扣都开启，所以只有禁止促销后才能进行折扣（选择折扣后促销则为false）
+		if (!that.currentOperation.ynCx && that.currentOperation.Disc) {
 			that.discCompute();
 			let TBZDISC = 0,
 				TLSDISC = 0,
@@ -2637,6 +2637,7 @@ function GetSale(global, vue, target_name, uni) {
 					this.FZCX.cval.data.forEach(r => {
 						allDisc += (r.ONET - r.CXNET);
 					})
+					allDisc = Number(allDisc.toFixed(2));
 					console.log("[BeforeFk] 追加辅助促销折扣额：", allDisc);
 					this.sale001.BILLDISC += allDisc;
 					this.sale001.TCXDISC += allDisc;
