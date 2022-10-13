@@ -26,7 +26,13 @@ page {
 	width: 12px;
 	margin-right: 50rpx;
 }
-
+.hh .sweep{
+	font-size: 30rpx;
+	font-weight: 400;
+	display: flex;
+	margin-left: 30rpx;
+	color: #006B44;
+}
 .navmall {
 	height: 97%;
 	width: 10%;
