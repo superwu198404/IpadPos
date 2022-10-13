@@ -365,7 +365,7 @@
 				sale8_arr: [], //水吧产品集合
 				actType: "", //当前操作行为 用以定义是支付还是退款
 				hyinfo: {}, //当前会员信息
-				PAD_SCAN: true, //默认pad扫码 
+				PAD_SCAN: util.getStorage("PAD_SCAN") || true, //默认pad扫码 
 			}
 		},
 		watch: {
@@ -479,14 +479,16 @@
 		methods: {
 			onLoad: function(option) {
 				console.log("进入onLoad方法");
-				this.PAD_SCAN = util.getStorage("PAD_SCAN") || true; //读取缓存配置 没有则为N
-
+				// this.PAD_SCAN = util.getStorage("PAD_SCAN") || true; //读取缓存配置 没有则为true
+				util.simpleMsg("扫码枪状态", this.PAD_SCAN);
 				this.event = this.getOpenerEventChannel();
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
 				this.PAD_SCAN = !this.PAD_SCAN;
+				util.simpleMsg("扫码枪状态", this.PAD_SCAN);
 				if (!this.PAD_SCAN) {
+					uni.setLocale("en");
 					util.simpleMsg("已切换为扫码枪扫码", "none");
 				} else {
 					util.simpleMsg("已切换为摄像头扫码", "none");
