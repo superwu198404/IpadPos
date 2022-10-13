@@ -956,27 +956,27 @@ var XsTypeObj = {
 			delete this.old_bill;
 		},
 		async $saleFinied(sales) {
-			console.log("[SaleFinied]线上提取提货...");
-			
+			console.log("[SaleFinied]线上提取提货...");		
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
-				item.SNAME = item.STR1;
+				item.SNAME = item.STR2;
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
-					item.balance = item.balance;
+					item.SNAME = item.FKNAME;
+					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("线上订单提取开始调用打印", {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTD");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTQ");
 			
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
