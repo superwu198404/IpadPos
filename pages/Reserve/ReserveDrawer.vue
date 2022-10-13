@@ -463,10 +463,10 @@
 					util.simpleMsg("电话为空", true);
 					return;
 				}
-				if (!that.ADDR.NAME) {
-					util.simpleMsg("联系人为空", true);
-					return;
-				}
+				// if (!that.ADDR.NAME) { 
+				// 	util.simpleMsg("联系人为空", true);
+				// 	return;
+				// }
 				if (!that.ADDR.ADDRESS) {
 					util.simpleMsg("地址信息为空", true);
 					return;
