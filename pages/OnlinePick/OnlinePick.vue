@@ -6,6 +6,7 @@
 
 <template>
 	<view class="commodity" style="position: relative;">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="hh">
 			<view class="hotcakes">
 				<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
@@ -55,6 +56,15 @@
 					</view>
 				</view>
 			</view>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			</view>
 		</view>
 	</view>
 	</view>
@@ -71,10 +81,13 @@
 		getReserveOnlineRawOrderInfo
 	} from '@/api/business/onlineorders.js'
 	import Extract from '@/pages/OnlinePick/Extract/Extract.vue'
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
 	export default {
 		name: "OnlinePick",
 		components: {
-			Extract
+			Extract,
+			PrinterPage
 		},
 		computed: {
 			ShowInfo: function() {

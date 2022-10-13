@@ -270,13 +270,13 @@
 				console.log("外卖打印格式记录结束");
 			},
 			//销售打印小票
-			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print) {
+			bluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, print,type) {
 				//票据
 				var that = this;
 				//输出日志
 				console.log("销售打印接收数据 sale1_obj", sale1_obj);
 				console.log("销售打印接收数据 sale2_arr", sale2_arr);
-				console.log("销售打印控制参数 print", print);
+				//console.log("销售打印控制参数 print", print);
 				console.log("销售打印接收数据 sale3_arr", sale3_arr);
 
 				//查询终端参数
@@ -292,7 +292,7 @@
 				}
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
-				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent);
+				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent,type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();

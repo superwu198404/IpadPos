@@ -436,6 +436,10 @@
 						if (res.data.yn_print) {
 							//调用打印
 							console.log("此处调用打印：");
+							//打印
+							if (that.js_res.yn_print) {
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+							}
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);

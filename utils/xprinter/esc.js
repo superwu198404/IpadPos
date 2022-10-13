@@ -1195,7 +1195,7 @@ var jpPrinter = {
 	}
 	
 	//打印格式：外卖单接单、销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单提取、线上订单取消；
-	var printerType = ["WM","XS", "TD", "YD","YDQX", "YDTQ", "SX", "SXTD", "XSDD","XSDDQX"];
+	var printerType = ["WM","XS", "TD", "YD","YDQX", "YDTQ", "SX", "SXTD", "XSDD","XSDDTQ","XSDDQX"];
 	
 	jpPrinter.formString = function(data,printer_poscs,print){
 		var type = data.xsType;
@@ -1249,7 +1249,7 @@ var jpPrinter = {
 			break;	
 			
 		  case printerType[5]:
-			xpType ="提取";
+			xpType ="提货";
 			isYD = true;
 		    break;	
 			
@@ -1268,7 +1268,12 @@ var jpPrinter = {
 			xpType ="线上";
 		    break;
 			
-		   case printerType[9]:
+		  case printerType[9]:
+			xpType ="提货";
+			xsBill= data.xsBill;
+			break;
+			
+		   case printerType[10]:
 			 xpType ="线上";
 			 xsBill= data.xsBill;
 			 lineNum = Math.abs(lineNum);
@@ -1277,10 +1282,10 @@ var jpPrinter = {
 		}
 		
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
-		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N"){
+		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N" && xpType == "XS"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(xpType + "取餐码: " + data.bill.substr(-4));
+			jpPrinter.setText("取餐码: " + data.bill.substr(-4));
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
@@ -1337,7 +1342,7 @@ var jpPrinter = {
 			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 15));
+			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
 			// console.log("data spid",item.spid);
@@ -1463,16 +1468,6 @@ var jpPrinter = {
 			}
 		});
 		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("-----------------------------------------------");
-		jpPrinter.setPrint(); //打印并换行
-		
-		jpPrinter.setCharacterSize(0); //设置正常大小
-		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商户承担折扣额:" + zqNet.toString());
-		jpPrinter.setPrint(); //打印并换行
-		
 		if(isYD){
 			//预定信息
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1485,7 +1480,17 @@ var jpPrinter = {
 			jpPrinter.setText("定金:" + payTotal.toFixed(2).toString());
 			jpPrinter.setPrint(); //打印并换行
 		}
-	
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("商户承担折扣额:" + zqNet.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
@@ -1934,7 +1939,7 @@ var jpPrinter = {
 			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 15));
+			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1957,7 +1962,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("订单总价:" + data.originalAmount.toString());
+		jpPrinter.setText("订单总价:" + util.nnvl(data.originalAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1967,7 +1972,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("收货地址:" + data.shAddress.toString());
+		jpPrinter.setText("收货地址:" + util.snvl(data.shAddress.toString(),""));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小

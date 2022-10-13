@@ -183,10 +183,16 @@
 }
 .atlas{
 	padding:0 3%;
+	width:94%;
+	display: flex;
 }
 .map{
-	height: 560rpx;
+	height: 400rpx;
 	width:100%;
+}
+.map map{
+	width:100% !important;
+	height: 400rpx;
 }
 .memberes .operat{
 	display: flex;

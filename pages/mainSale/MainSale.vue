@@ -549,8 +549,8 @@
 				// console.log(this.sptiem.SNAME)
 			},
 			//销售打印小票
-			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
-				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
+			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print,type) {
+				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print,type);
 			},
 			//线上订单打印小票
 			xsBluePrinter: function(order, type, print) {

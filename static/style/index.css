@@ -50,8 +50,8 @@ page {
 	overflow-y: auto;
 }
 .prolist {
-	width: 92%;
-	margin: 0 auto;
+	width: 94%;
+	margin: 0;
 	height: 98%;
 	position: relative;
 }
@@ -296,6 +296,7 @@ page {
 
 .price view image {
 	width: 40rpx;
+	height: 40rpx;
 }
 
 .operation {
@@ -311,10 +312,10 @@ page {
 
 .operation .ranks {
 	position: absolute;
-	top: 2%;
-	left: -43%;
-	width: 60%;
-	height: 96%;
+	top: 1%;
+	left: -65%;
+	width: 72%;
+	height: 98%;
 	/* transform: translate(-50%, -50%); */
 	background-color: #E0EAE9;
 	color: #006B44;
@@ -338,8 +339,8 @@ page {
 	        }
 	    100%{
 	        transform: scale(1);
-			top: 2%;
-			left: -43%;
+			top: 1%;
+			left: -65%;
 			/* transform: translate(-50%, -50%); */
 	        }
 	        }
@@ -511,6 +512,7 @@ page {
 
 .commods .h3 image {
 	width: 56rpx;
+	height: 56rpx;
 }
 
 .commods .cods {
@@ -521,6 +523,7 @@ page {
 
 .commods .cods image {
 	width: 40rpx;
+	height: 40rpx;
 	margin-right: 10rpx;
 }
 
@@ -1058,7 +1061,7 @@ page {
 	padding: 1% 4% 2.5%;
 	border-top: 1px solid #EEEEEE;
 	border-bottom: 1px solid #EEEEEE;
-	margin: 3% 0;
+	margin: 3% 0 0;
 }
 
 .h2 {

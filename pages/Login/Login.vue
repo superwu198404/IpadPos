@@ -23,7 +23,7 @@
 				</label>
 			</view>
 			<view class="logbtn">
-				<button @click="Login()">登 录</button>  
+				<button @click="Login()">登 录</button>
 				<button @click="reset()" style="margin-top: 20rpx;">重新初始化</button>
 			</view>
 		</view>
@@ -130,8 +130,7 @@
 					});
 				})
 			},
-			reset:function()
-			{
+			reset: function() {
 				uni.redirectTo({
 					url: "/pages/start/start"
 				})

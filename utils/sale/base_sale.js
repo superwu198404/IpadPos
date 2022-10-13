@@ -130,7 +130,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XS");
 			//一些特殊的设置 如积分上传
 			console.log("检测积分上传参数：", {
 				upload_point: this.currentOperation.upload_point,
@@ -242,7 +242,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","TD");
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
@@ -364,7 +364,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定下单开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -539,7 +539,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预定提取开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -640,7 +640,7 @@ var XsTypeObj = {
 					item.SNAME = "";
 				}
 			})
-			console.log("销售下单开始调用打印", {
+			console.log("预订单取消开始调用打印", {
 				arr2,
 				arr3
 			})
@@ -957,6 +957,27 @@ var XsTypeObj = {
 		},
 		async $saleFinied(sales) {
 			console.log("[SaleFinied]线上提取提货...");
+			
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				} catch (e) {
+					item.SNAME = "";
+				}
+			})
+			console.log("线上订单提取开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTD");
+			
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
 			}), util.callBind(this, function(err) {
@@ -1246,7 +1267,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
-		this.Page.Alphabetical = true
+		this.Page.Alphabetical = !this.Page.Alphabetical
 	})
 	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
@@ -1578,7 +1599,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", false);
+		this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 
