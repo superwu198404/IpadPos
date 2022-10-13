@@ -358,7 +358,7 @@
 				sale8_arr: [], //水吧产品集合
 				actType: "", //当前操作行为 用以定义是支付还是退款
 				hyinfo: {}, //当前会员信息
-				PAD_SCAN: true, //默认pad扫码 
+				PAD_SCAN: false, //默认pad扫码 
 			}
 		},
 		watch: {
@@ -824,7 +824,7 @@
 					if ((pay_info.dbm === "Y" || this.is_poly) && !this.authCode) { //需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
 						console.log("此操作类型需要扫码！", pay_info)
 						console.log("是否属于聚合支付：", this.is_poly)
-						if (this.PAD_SCAN) { //是否扫码枪扫码
+						if (!this.PAD_SCAN) { //是否扫码枪扫码
 							uni.showModal({
 								content: "请使用扫码枪扫码",
 								editable: true,
@@ -834,25 +834,25 @@
 									console.log("回调结果：", res);
 									if (res.confirm) {
 										if (res.content) {
-											this.authCode = res.result; //获取扫码的 authCode
-											console.log("[Pay]scanCode:", res);
+											this.authCode = res.content; //获取扫码的 authCode
+											console.log("[Pay]authCode:", this.authCode);
 											that.PayHandle();
 										}
 									}
 								}).bind(this)
 							})
-							return;
+						} else {
+							uni.scanCode({
+								success: (function(res) {
+									this.authCode = res.result; //获取扫码的 authCode
+									console.log("[Pay]scanCode:", res);
+									that.PayHandle();
+								}).bind(this),
+								fail(err) {
+									console.log("[Pay]Error:", err);
+								}
+							});
 						}
-						uni.scanCode({
-							success: (function(res) {
-								this.authCode = res.result; //获取扫码的 authCode
-								console.log("[Pay]scanCode:", res);
-								that.PayHandle();
-							}).bind(this),
-							fail(err) {
-								console.log("[Pay]Error:", err);
-							}
-						});
 					} else { //不需要扫码操作
 						console.log("此操作类型不需要扫码！", pay_info)
 						that.PayHandle(); //直接发起支付
