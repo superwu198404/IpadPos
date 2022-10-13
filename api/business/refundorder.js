@@ -58,23 +58,34 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 		"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
 		"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
 		xs_bill + "'";
-	console.log("[GetOrderDetails]查询详情单条件参数列表:", {
-		KHID: Program.KHID,
-		GSID: Program.GSID,
-		BMID: Program.BMID,
-		RYID: Program.RYID,
-		POSID: Program.POSID,
-		REFUND_BILL: refund_bill,
-		XS_BILL: xs_bill,
-		DQID: Program.DQID,
-		KCDID: Program.KCDID,
-		GCID: Program.GCID
-	});
-	// sql = "select * FROM SALE002 S2, SPDA S1,SPTMDA T1,SPKHDA SM  WHERE  S1.SPID =T1.SPID " +
-	// 	"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
-	// 	"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
-	// 	xs_bill + "'";
-	// sql = "select * from sale002 where bill='" + xs_bill + "'";
+	// console.log("[GetOrderDetails]查询详情单条件参数列表:", {
+	// 	KHID: Program.KHID,
+	// 	GSID: Program.GSID,
+	// 	BMID: Program.BMID,
+	// 	RYID: Program.RYID,
+	// 	POSID: Program.POSID,
+	// 	REFUND_BILL: refund_bill,
+	// 	XS_BILL: xs_bill,
+	// 	DQID: Program.DQID,
+	// 	KCDID: Program.KCDID,
+	// 	GCID: Program.GCID
+	// });
+
+	//去除表sptmda的关联 初始化去除了这个表
+	sql = " SELECT '" + Program.KHID + "' KHID ,'" + Program.GSID + "' GSID,'" + Program.BMID + "' BMID,'" +
+		Program.POSID + "' POSID," +
+		" date('" + _date.getYMDS() + "') SALEDATE,DATETIME('" + _date.getYMDS() + "') SALETIME,'" + refund_bill +
+		"' BILL,'" + Program.RYID + "' RYID, cast(s2.NO as int) NO," +
+		" s1.spid,s1.sname,S1.UNIT,s1.plid,'' SERIAL,(-1)*S2.QTY QTY,S2.PRICE,S2.OPRICE,(-1)*S2.NET NET," +
+		"HYBL,0.0 DISCRATE,0.0 BILLDISC,'N'YN_CXDISC,-1*abs(S2.CXDISC) CXDISC,'' CXID,'N' YN_HYDISC,0.0 HYDISC, 0.0 HYJF,'N' YN_SKYDISC,0.0 DISC,'' DISC_TYPE,'" +
+		_date.getDateByParam("Y") + "' YAER,'" +
+		_date.getDateByParam("M") + "' MONTH,'" + _date.getDateByParam("w") + "' WEEK," + _date.getDateByParam(
+			"h") + " TIME,'' STR1, STR2,  S1.YN_ZS,'" + Program.DQID + "' DPID,'" + Program.KCDID + "' KCDID,'" +
+		Program.GCID +
+		"' GCID, -1*abs(s2.BZDISC) BZDISC, -1*abs(s2.TPDISC) TPDISC , -1*abs(s2.LSDISC) LSDISC, s2.SPJGZ FROM SALE002 S2, SPDA S1,SPKHDA SM  WHERE S1.SPID =SM.SPID AND SM.KHID ='" +
+		Program.KHID +
+		"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
+		xs_bill + "'";
 	console.log("[GetOrderDetails]查询详情单sql:", sql)
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("[GetOrderDetails]退货信息查询结果：", res);
