@@ -704,18 +704,23 @@
 		top: 100%;
 		background-color: #fff;
 		border-radius: 6rpx;
-		width: 66%;
+		width: 67%;
 		text-align: left;
 		z-index: 999999999;
 		box-shadow: 0px 10rpx 20rpx 1px rgba(66, 177, 75, 0.06);
 		padding: 1%;
+		max-height: 800rpx;
+		overflow:auto;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.restlist .thmd text {
-		width: 100%;
+		width: 100% !important;
 		display: block;
 		text-align: left;
 		line-height: 50rpx;
 		white-space: nowrap;
+		font-weight: 400 !important;
 	}
 </style>

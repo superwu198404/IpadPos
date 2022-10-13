@@ -1243,7 +1243,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
-		this.Page.Alphabetical = true
+		this.Page.Alphabetical = !this.Page.Alphabetical
 	})
 	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
@@ -1575,7 +1575,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", false);
+		this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 

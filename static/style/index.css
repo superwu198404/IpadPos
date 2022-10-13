@@ -50,8 +50,8 @@ page {
 	overflow-y: auto;
 }
 .prolist {
-	width: 92%;
-	margin: 0 auto;
+	width: 94%;
+	margin: 0;
 	height: 98%;
 	position: relative;
 }
@@ -313,8 +313,8 @@ page {
 .operation .ranks {
 	position: absolute;
 	top: 2%;
-	left: -43%;
-	width: 60%;
+	left: -65%;
+	width: 72%;
 	height: 96%;
 	/* transform: translate(-50%, -50%); */
 	background-color: #E0EAE9;
@@ -340,7 +340,7 @@ page {
 	    100%{
 	        transform: scale(1);
 			top: 2%;
-			left: -43%;
+			left: -65%;
 			/* transform: translate(-50%, -50%); */
 	        }
 	        }
