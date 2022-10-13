@@ -130,7 +130,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XS");
 			//一些特殊的设置 如积分上传
 			console.log("检测积分上传参数：", {
 				upload_point: this.currentOperation.upload_point,
@@ -242,7 +242,7 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "");
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","TD");
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
@@ -954,6 +954,27 @@ var XsTypeObj = {
 		},
 		async $saleFinied(sales) {
 			console.log("[SaleFinied]线上提取提货...");
+			
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.balance = item.balance;
+				} catch (e) {
+					item.SNAME = "";
+				}
+			})
+			console.log("线上订单提取开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "","XSDDTD");
+			
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
 			}), util.callBind(this, function(err) {

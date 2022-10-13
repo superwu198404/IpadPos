@@ -199,7 +199,7 @@ function convertToMonoImage(width, height, data, shake) {
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
+const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var xsType = "XS";
 	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
@@ -227,7 +227,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent) => {
 			xsType = "SXTD";
 			break;
 		case "8": //线上订单提取
-			xsType = "XSDD";
+			xsType = "XSDDTD";
 			break;
 		case "9": //线上订单取消
 			xsType = "XSDDQX";
@@ -348,10 +348,10 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 	var status = sale1_obj.STATUS;
 	var remark = sale1_obj.STR1 == null ? "" : sale1_obj.STR1;
 	var payableAmount = sale1_obj.STR2;
-	var originalAmount = sale1_obj.STR8;
-	var shAddress = sale1_obj.STR4;
-	var shPhone = sale1_obj.STR6;
-	var shContact = sale1_obj.STR5;
+	var originalAmount = nnvl(sale1_obj.STR8,0);
+	var shAddress = snvl(sale1_obj.STR4,"");
+	var shPhone = snvl(sale1_obj.STR6,"");
+	var shContact = snvl(sale1_obj.STR5,"");
 	var ggy = ggyContent;
 	var xsptid = sale1_obj.XSPTID;
 
