@@ -100,9 +100,9 @@
 				</view>
 			</view>
 			<view class="atlas">
-				<div class="map">
+				<cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"></map>
-				</div>
+				</cover-view>
 			</view>
 		</view>
 		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">

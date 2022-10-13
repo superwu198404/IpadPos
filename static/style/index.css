@@ -296,6 +296,7 @@ page {
 
 .price view image {
 	width: 40rpx;
+	height: 40rpx;
 }
 
 .operation {
@@ -511,6 +512,7 @@ page {
 
 .commods .h3 image {
 	width: 56rpx;
+	height: 56rpx;
 }
 
 .commods .cods {
@@ -521,6 +523,7 @@ page {
 
 .commods .cods image {
 	width: 40rpx;
+	height: 40rpx;
 	margin-right: 10rpx;
 }
 
@@ -1058,7 +1061,7 @@ page {
 	padding: 1% 4% 2.5%;
 	border-top: 1px solid #EEEEEE;
 	border-bottom: 1px solid #EEEEEE;
-	margin: 3% 0;
+	margin: 3% 0 0;
 }
 
 .h2 {
