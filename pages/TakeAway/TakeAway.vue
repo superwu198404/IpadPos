@@ -349,7 +349,7 @@
 							// 	//调用打印
 							// 	//console.log("此处调用打印：");
 							//let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
+							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note，"");
 							// }
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
@@ -441,7 +441,7 @@
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "",
-									that.bs_Reason, that.bs_Note);
+									that.bs_Reason, that.bs_Note,"");
 							}
 						}
 					} else {
@@ -556,7 +556,7 @@
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "", that
-								.bs_Reason, that.bs_Note);
+								.bs_Reason, that.bs_Note,that.new_bill);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -658,7 +658,7 @@
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "", that
-								.bs_Reason, that.bs_Note);
+								.bs_Reason, that.bs_Note,"");
 						}
 					}
 					that.Close();

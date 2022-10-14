@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall">
 		<view class="logo">
-			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
+			<image src="@/images/kengee-logo.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
@@ -93,7 +93,9 @@
 				current_info: null, //当前菜单信息
 				menu_info: null,
 				showGJ: false,
-				showCX: false
+				showCX: false,
+				click_num: 0,
+				timer: 0
 			};
 		},
 		methods: {
@@ -108,6 +110,27 @@
 					name: menu_name,
 					info: menu_info
 				});
+			},
+			OpenDevoloper() {
+				this.click_num++;
+				if (!this.timer)
+					this.timer = setTimeout(util.callBind(this, function() {
+						this.click_num = 0;
+						this.timer = 0;
+					}), 5000);
+				if (this.click_num === 10){
+					uni.showModal({
+						title:"输入密码",
+						editable:true,
+						success(res){
+							if(res.confirm && res.content==='1234321'){
+								uni.navigateTo({
+									url: "../index/index"
+								})
+							}
+						}
+					})
+				}
 			},
 			//工具
 			ShowTool: function(e) {

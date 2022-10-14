@@ -1560,6 +1560,7 @@ var jpPrinter = {
 			
 		  case printerType[5]:
 			xpType ="提货";
+			xsBill= data.xsBill
 			isYD = true;
 		    break;	
 			
@@ -1578,7 +1579,12 @@ var jpPrinter = {
 			xpType ="线上";
 		    break;
 			
-		   case printerType[9]:
+			case printerType[9]:
+			xpType ="提货";
+			xsBill= data.xsBill;
+			break
+			
+		   case printerType[10]:
 			 xpType ="线上";
 			 xsBill= data.xsBill;
 			 lineNum = Math.abs(lineNum);
@@ -2260,7 +2266,7 @@ var jpPrinter = {
 	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("单号: " + data.bill);
+		jpPrinter.setText("单号: " + data.newBill);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2290,12 +2296,12 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("报损原因:" + snvl(data.bsReason,""));
+		jpPrinter.setText("报损原因:" + util.snvl(data.bsReason,""));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("备注:" + snvl(data.bsNote,""));
+		jpPrinter.setText("备注:" + util.snvl(data.bsNote,""));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2305,7 +2311,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("打印时间:" + snvl(data.nowTime,""));
+		jpPrinter.setText("打印时间:" + util.snvl(data.nowTime,""));
 		jpPrinter.setPrint(); //打印并换行
 	}
 	

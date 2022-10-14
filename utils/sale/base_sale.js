@@ -23,6 +23,9 @@ import {
 import common from '@/api/common.js';
 import saleClass from '@/utils/sale/saleClass.js';
 import hy_query from '@/api/hy/hy_query.js';
+import {
+	RequestSend
+} from '@/api/business/da.js'
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -519,7 +522,7 @@ var XsTypeObj = {
 			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order ||
 		[]); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
@@ -607,7 +610,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定取消旧单更新:", this.old_bill);
 			console.log("[SaleFinishing]预定取消获取的CurrentType:", this.current_type);
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			this.sale001.XSTYPE = this.current_type.xstype;
 			this.sale001.TNET = -this.sale001.DNET;
@@ -983,9 +986,11 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			//查询支付方式
+			//console.log("获取支付方式 test111",this.FKDA_INFO);
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = item.FKNAME;
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
@@ -1107,6 +1112,23 @@ function GetSale(global, vue, target_name, uni) {
 	this.billindex = 0;
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
+	this.FKDA_INFO = [];
+	(util.callBind(this,async function(){
+		try{
+			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
+				if (res.code) {
+					this.FKDA_INFO = JSON.parse(res.data);
+					//console.log("获取支付方式 test111",this.FKDA_INFO);
+				}
+				else{
+					util.simpleMsg("获取付款方式失败!", true)
+				}
+			}))
+		}
+		catch(e){
+			util.simpleMsg("获取付款方式失败!", true);
+		}
+	}))()
 	/*
 	 * 工具方法 
 	 */
@@ -1440,6 +1462,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.decoration = false;
 	//判断当前 sale2 中是否包含促销方式为 hylv=3-48 的类型
 	this.over48 = false;
+	//可支付的积分
+	this.score_info = {
+		score:0,
+		money:0
+	}
 	//促销跟踪
 	this.cxfsArr = [];
 	// 通讯表\sqlite 额外sql
@@ -1621,7 +1648,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", "");
+		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 
@@ -2538,6 +2565,7 @@ function GetSale(global, vue, target_name, uni) {
 			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
+			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
 			this.cxfsArr = response?.cxfs; //促销跟踪
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
@@ -2603,6 +2631,21 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[CheckOver48Hours]HYLV为3-48的信息判断结果:", this.over48);
 		} else
 			console.warn("[CheckOver48Hours]list值无效!");
+	}
+	
+	this.ScoreCount = function(list){
+		if (list) {
+			let score_total = 0;
+			let money_total = 0;
+			list.forEach(i => {
+				score_total += i.JFNUM;
+				money_total += i.DHNET;
+			})
+			this.score_info.money = money_total;
+			this.score_info.score = score_total;
+			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
+		} else
+			console.warn("[ScoreCount]list值无效!");
 	}
 
 	//获取辅助促销的数据 因为需要依赖加购的商品产生的sale001 总价
