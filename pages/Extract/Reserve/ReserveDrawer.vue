@@ -276,13 +276,10 @@
 							if (!this.view.address_edit) {
 								let address = this.form.address.ADDRESS
 								console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
-								console.log("[GetCustomerAddress-Inner]Address列表:", this.details
-									.address);
-								let address_info = this.details.address.find(a => a.ADDRESS ===
-									address);
+								console.log("[GetCustomerAddress-Inner]Address列表:", this.details.address);
+								let address_info = this.details.address.find(a => a.ADDRESS === address);
 								console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
-								if (address_info != -1) this.details.current = address_info
-									?.ADDRESS;
+								if (address_info != -1) this.details.current = address_info?.ADDRESS;
 								this.view.more = true;
 								this.view.add_address = false;
 							}
