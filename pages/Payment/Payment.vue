@@ -494,7 +494,7 @@
 				if (this.PAD_SCAN) {
 					util.simpleMsg("已切换为摄像头扫码", "none");
 				} else {
-					uni.setLocale("en");
+					// uni.setLocale("en");
 					util.simpleMsg("已切换为扫码枪扫码", "none");
 				}
 				util.setStorage("PAD_SCAN", this.PAD_SCAN); //切换后缓存起来 下次默认使用

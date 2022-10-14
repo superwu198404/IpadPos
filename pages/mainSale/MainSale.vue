@@ -221,43 +221,55 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-			<view class="memberes">
-				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
-					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
-					<view class="member">
-						<label>
-							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<label
-								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
-						</label>
-						<button @click="mainSale.HY.open = false">×</button>
-					</view>
-					<view class="nom">
-						<label>
-							<text>￥{{ MemberBalance }}</text>
-							<text>余额</text>
-						</label>
-						<label>
-							<text>{{ MemberPoint }}</text>
-							<text>积分</text>
-						</label>
-						<label>
-							<text>{{ MemberCoupons.length}}</text>
-							<text>优惠券</text>
-						</label>
-						<label>
-							<text>{{ MemberGiftCard }}</text>
-							<text>礼品卡</text>
-						</label>
-					</view>
-					<view class="coulist">
-						<view class="h2">优惠券</view>
-						<view class="uls">
-							<view class="lis" v-for="(item,index) in MemberCoupons">
-								<view class="voucher">
-									<view><text>￥</text>{{item.money}}</view>
-									<text>满{{item.limitmoney}}可用</text>
+		<view>
+			<!-- //左侧的遮罩 -->
+			<view class="boxs" @click="mainSale.setComponentsManage" data-mtype='statement'
+				v-if="mainSale.ComponentsManage.statement">
+			</view>
+		<view class="memberes" style="z-index: 9999;width:auto;" v-if="mainSale.ComponentsManage.statement">
+			<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
+				<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
+				<view class="member">
+					<label>
+						<image class="touxiang" src="../../images/touxiang.png"></image>
+						<label
+							class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
+					</label>
+					<button @click="mainSale.HY.open = false">×</button>
+				</view>
+				<view class="nom">
+					<label>
+						<text>￥{{ MemberBalance }}</text>
+						<text>余额</text>
+					</label>
+					<label>
+						<text>{{ MemberPoint }}</text>
+						<text>积分</text>
+					</label>
+					<label>
+						<text>{{ MemberCoupons.length}}</text>
+						<text>优惠券</text>
+					</label>
+					<label>
+						<text>{{ MemberGiftCard }}</text>
+						<text>礼品卡</text>
+					</label>
+				</view>
+				<view class="coulist">
+					<view class="h2">优惠券</view>
+					<view class="uls">
+						<view class="lis" v-for="(item,index) in MemberCoupons">
+							<view class="voucher">
+								<view><text>￥</text>{{item.money}}</view>
+								<text>满{{item.limitmoney}}可用</text>
+							</view>
+							<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+							<view class="coupon-dets">
+								<view class="limit">
+									<view class="h3" v-for="(item1,index1) in item.limitDesc">
+										<text>{{item1}}</text>
+									</view>
+									<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 								</view>
 								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 								<view class="coupon-dets">
@@ -272,7 +284,7 @@
 										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
 										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-															mode="widthFix"></image></button> -->
+														mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
@@ -353,11 +365,11 @@
 						</view>
 					</view>
 					<!-- <view class="h5" v-if="mainSale.currentOperation.ynFzCx">
-						<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>
-					</view>
-					<view class="h5" v-if="mainSale.FZCX.cval.msg">
-						<text>提示：{{mainSale.FZCX.cval.msg}}</text>
-					</view> -->
+					<text>赠品</text><text @click="mainSale.FZCX.open=true">点击查看 ></text>
+				</view>
+				<view class="h5" v-if="mainSale.FZCX.cval.msg">
+					<text>提示：{{mainSale.FZCX.cval.msg}}</text>
+				</view> -->
 					<view class="shoppbag" v-if="false">
 						<view class="hengs">
 							<view class="baglist curr" v-for="(item,index) in AuxiliaryPromotion">
@@ -384,6 +396,15 @@
 						<label>»</label>
 					</view>
 				</view>
+			</view>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
@@ -442,7 +463,14 @@
 				DQID: app.globalData.store.DQID, //"K01000"
 				KHZID: app.globalData.store.KHZID, //"02"
 				CXDatas: [],
-				page_info: {}
+				page_info: {},
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		components: {

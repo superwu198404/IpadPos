@@ -106,7 +106,7 @@
 									<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
 									<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
 									<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
-									<button class="btn btn-qx" @click="ReBack()">退出</button>
+									<!-- <button class="btn btn-qx" @click="ReBack()">退出</button> -->
 								</view>
 							</view>
 						</view>
@@ -440,7 +440,8 @@
 							//打印
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "",
+									that.bs_Reason, that.bs_Note);
 							}
 						}
 					} else {
@@ -554,7 +555,8 @@
 						//调用打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "", that
+								.bs_Reason, that.bs_Note);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -655,7 +657,8 @@
 						//后打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, "", that
+								.bs_Reason, that.bs_Note);
 						}
 					}
 					that.Close();
