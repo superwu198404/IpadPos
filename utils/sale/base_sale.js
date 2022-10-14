@@ -960,7 +960,7 @@ var XsTypeObj = {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
-				item.SNAME = item.STR2;
+				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
 			arr3.forEach(function(item, index) {
