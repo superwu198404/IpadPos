@@ -2143,7 +2143,7 @@ var jpPrinter = {
 			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 15));
+			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2273,7 +2273,7 @@ var jpPrinter = {
 			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 15));
+			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
