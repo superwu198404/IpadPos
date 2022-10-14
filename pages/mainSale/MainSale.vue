@@ -227,7 +227,7 @@
 			<view class="boxs" @click="mainSale.setComponentsManage" data-mtype='statement'
 				v-if="mainSale.ComponentsManage.statement">
 			</view>
-			<view class="memberes" style="z-index: 9999;width:auto;" v-if="mainSale.ComponentsManage.statement">
+			<view class="memberes" style="z-index: 9999;width: auto;" v-if="mainSale.ComponentsManage.statement">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -409,9 +409,9 @@
 						:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 				</view>
 			</view>
-			<!-- 特殊折扣 -->
-			<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
 		</view>
+		<!-- 特殊折扣 -->
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
 	</view>
 </template>
 
