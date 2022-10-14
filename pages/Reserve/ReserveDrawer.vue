@@ -82,7 +82,7 @@
 			</view>
 			<view class='rests'>
 				<view class="h6"><text>地址</text> <button @click="ShowAddADDR()">+ 新增地址</button></view>
-				<view class="location">
+				<view class="location" v-if="ShowAllAddressList">
 					<view class="site" v-for="(item,index) in ADDRS" @click="ConfirmOrderAddr(item)">
 						<view class="sitelist">
 							<!-- <radio></radio> -->
@@ -97,14 +97,14 @@
 						</view>
 					</view>
 				</view>
-				<view class="more">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
+				<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
 				</view>
 			</view>
 			<view class="atlas">
 				<!-- <cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view> -->
-				<view class="map">
+				<view class="map" v-if="!ShowAllAddressList && !yn_add">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
 						:markers="map.markers"></map>
 				</view>
@@ -158,6 +158,7 @@
 				THTYPES: [],
 				LimitDate: '2000-01-01',
 				LimitTime: '00:00',
+				ShowAllAddressList: false,
 				Products: [{
 					PLID: "109",
 					SPID: "10101022",
@@ -525,6 +526,7 @@
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
 				that.map.markers.pop();
+				console.log("[ConfirmOrderAddr]markers标点信息:",that.map.markers);
 				that.map.markers = [{
 					id: 'client',
 					latitude: e.LONGITUDE,
@@ -535,7 +537,8 @@
 						color: 'red',
 						display: 'ALWAYS'
 					}
-				}]
+				}];
+				console.log("[ConfirmOrderAddr]markers新标点信息:",that.map.markers);
 				//宅配到家需要匹配最近的配送中心
 				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == '1') {
 					//匹配下裱花间

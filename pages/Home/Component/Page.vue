@@ -45,6 +45,11 @@
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
 					</view>
+					<view class="currs" @click="CloseDB">
+						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
+						<text>断开连接</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -54,8 +59,7 @@
 <script>
 	import base_sale from '@/utils/sale/base_sale.js'
 	import util from '@/utils/util.js';
-
-
+	import db from '@/utils/db/db_excute.js';
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
 	export default {
 		components: {
@@ -112,6 +116,9 @@
 				if (e == 'CX') {
 					this.showCX = !this.showCX;
 				}
+			},
+			CloseDB:async function() {
+				await db.get().close();
 			}
 		},
 		created() {

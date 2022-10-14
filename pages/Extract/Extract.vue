@@ -182,7 +182,6 @@
 						util.simpleMsg("裱花查询失败!", true)
 					}
 				}))
-				
 			},
 			ExtractOrder: function(item) {
 				let callback = util.callBind(this, function(sale1, sale2, sale3) {
