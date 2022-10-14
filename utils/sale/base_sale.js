@@ -1621,7 +1621,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", "");
+		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 
