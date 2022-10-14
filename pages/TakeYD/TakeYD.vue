@@ -112,7 +112,7 @@
 									<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
 									<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
 									<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
-									<button class="btn btn-qx" @click="ReBack()">退出</button>
+									<!-- <button class="btn btn-qx" @click="ReBack()">退出</button> -->
 								</view>
 							</view>
 						</view>
