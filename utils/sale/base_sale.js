@@ -23,6 +23,9 @@ import {
 import common from '@/api/common.js';
 import saleClass from '@/utils/sale/saleClass.js';
 import hy_query from '@/api/hy/hy_query.js';
+import {
+	RequestSend
+} from '@/api/business/da.js'
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -983,9 +986,11 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			//查询支付方式
+			//console.log("获取支付方式 test111",this.FKDA_INFO);
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = item.FKNAME;
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
@@ -1107,6 +1112,23 @@ function GetSale(global, vue, target_name, uni) {
 	this.billindex = 0;
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
+	this.FKDA_INFO = [];
+	(util.callBind(this,async function(){
+		try{
+			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
+				if (res.code) {
+					this.FKDA_INFO = JSON.parse(res.data);
+					//console.log("获取支付方式 test111",this.FKDA_INFO);
+				}
+				else{
+					util.simpleMsg("获取付款方式失败!", true)
+				}
+			}))
+		}
+		catch(e){
+			util.simpleMsg("获取付款方式失败!", true);
+		}
+	}))()
 	/*
 	 * 工具方法 
 	 */
@@ -1621,7 +1643,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", "");
+		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 

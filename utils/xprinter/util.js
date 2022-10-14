@@ -245,8 +245,8 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var lineNum = sale2_arr.length;
 	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = sale1_obj.BILLDISC;
-	var originalAmount = sale1_obj.ZNET;
+	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
+	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -268,6 +268,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
+			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
@@ -333,7 +334,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note) => {
+const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,new_bill) => {
 	var xsType = "WM";
 	var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
@@ -346,7 +347,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note)
 	var khPhone = getApp().globalData.store.PHONE;
 	var gsid = snvl(sale1_obj.GSID,"");
 	var status = nnvl(sale1_obj.STATUS,0);
-	var remark = sale1_obj.STR1 == null ? "" : sale1_obj.STR1;
+	var remark = snvl(sale1_obj.STR1,"");
 	var payableAmount = sale1_obj.STR2;
 	var originalAmount = nnvl(sale1_obj.STR8,0);
 	var shAddress = snvl(sale1_obj.STR4,"");
@@ -364,9 +365,11 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note)
 	
 	var bsReason = "";
 	var bsNote = "";
-	if(type=="WMTHBS"){
+	var newBill="";
+	if(type == "WMTHBS"){
 		bsReason = bs_Reason;
 		bsNote = bs_Note;
+		newBill = new_bill;
 	}
 	var wmType = type;
 
@@ -421,6 +424,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note)
 		bsNote,
 		nowTime, //当前时间
 		posId,
+		newBill, //新产生的退货单号
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 
@@ -522,8 +526,8 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	var lineNum = sale2_arr.length;
 	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = sale1_obj.BILLDISC;
-	var originalAmount = nnvl(sale1_obj.ZNET,0) + nnvl(sale1_obj.BILLDISC,0);
+	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
+	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -581,7 +585,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	console.log("sale3List 转换后数据:", sale3List);
 	
 	var qknet = Math.round((nnvl(originalAmount,0) - nnvl(payableAmount,0) - nnvl(discountedAmount,0))*100)/100;
-	var dnet = nnvl(ydsale001.DNET,0);
+	var dnet = nnvl(sale1_obj.DNET,0);
 	var custmname = snvl(ydsale001.CUSTMNAME,"");
 	var custmphone = snvl(ydsale001.CUSTMPHONE,"");
 	var thdate = snvl(ydsale001.THDATE,"");
