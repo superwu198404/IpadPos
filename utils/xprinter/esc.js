@@ -2266,7 +2266,7 @@ var jpPrinter = {
 	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("单号: " + data.bill);
+		jpPrinter.setText("单号: " + data.newBill);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2296,12 +2296,12 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("报损原因:" + snvl(data.bsReason,""));
+		jpPrinter.setText("报损原因:" + util.snvl(data.bsReason,""));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("备注:" + snvl(data.bsNote,""));
+		jpPrinter.setText("备注:" + util.snvl(data.bsNote,""));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2311,7 +2311,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("打印时间:" + snvl(data.nowTime,""));
+		jpPrinter.setText("打印时间:" + util.snvl(data.nowTime,""));
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
