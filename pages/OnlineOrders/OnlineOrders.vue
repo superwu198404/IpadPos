@@ -532,8 +532,10 @@
 					}), (err) => {
 						util.simpleMsg(err.msg, "none", err);
 					});
-				else
+				else{
+					Object.assign(this.details.order,this.details.order.$raw)
 					util.simpleMsg("时间设置有误!", true)
+				}
 			},
 			//取消（编辑->取消）
 			CancelSave: function() {
