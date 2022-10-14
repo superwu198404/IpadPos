@@ -519,7 +519,7 @@ var XsTypeObj = {
 			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order ||
 		[]); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
@@ -607,7 +607,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定取消旧单更新:", this.old_bill);
 			console.log("[SaleFinishing]预定取消获取的CurrentType:", this.current_type);
 			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
 			this.sale001.XSTYPE = this.current_type.xstype;
 			this.sale001.TNET = -this.sale001.DNET;
