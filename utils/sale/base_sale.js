@@ -1462,6 +1462,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.decoration = false;
 	//判断当前 sale2 中是否包含促销方式为 hylv=3-48 的类型
 	this.over48 = false;
+	//可支付的积分
+	this.score_info = {
+		score:0,
+		money:0
+	}
 	//促销跟踪
 	this.cxfsArr = [];
 	// 通讯表\sqlite 额外sql
@@ -2560,6 +2565,7 @@ function GetSale(global, vue, target_name, uni) {
 			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
+			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
 			this.cxfsArr = response?.cxfs; //促销跟踪
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
@@ -2625,6 +2631,21 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[CheckOver48Hours]HYLV为3-48的信息判断结果:", this.over48);
 		} else
 			console.warn("[CheckOver48Hours]list值无效!");
+	}
+	
+	this.ScoreCount = function(list){
+		if (list) {
+			let score_total = 0;
+			let money_total = 0;
+			list.forEach(i => {
+				score_total += i.JFNUM;
+				money_total += i.DHNET;
+			})
+			this.score_info.money = money_total;
+			this.score_info.score = score_total;
+			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
+		} else
+			console.warn("[ScoreCount]list值无效!");
 	}
 
 	//获取辅助促销的数据 因为需要依赖加购的商品产生的sale001 总价
