@@ -787,6 +787,9 @@ var XsTypeObj = {
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			this.sale003.map(sale3 => {
+				sale3.fail = false;
+			});
 			console.log("[sale_credit_return_good]SALE001:", this.sale001);
 			console.log("[sale_credit_return_good]SALE002:", this.sale002);
 			console.log("[sale_credit_return_good]SALE003:", this.sale003);
@@ -817,7 +820,7 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function() {
-			console.log("[SaleFinishing]赊销退货结算单信息生成...");
+			console.log("[SaleFinishing]赊销退货结算单信息重写中...");
 			this.sale001.DNET = 0;
 			this.sale001.BILLDISC = Math.abs(Number(this.sale001.BILLDISC) || 0);
 			this.sale001.TDISC = -Math.abs(Number(this.sale001.TDISC) || 0);
@@ -829,24 +832,27 @@ var XsTypeObj = {
 				i.LSDISC = -Math.abs(Number(i.LSDISC) || 0);
 				i.TPDISC = -Math.abs(Number(i.TPDISC) || 0);
 			})
+			console.log("[SaleFinishing]赊销退货结算单信息重写完成...", this.sale001);
+			console.log("[SaleFinishing]赊销退货结算单信息重写完成1...", this.sale002);
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
-			_refund.CreditOrderRefund({
-				khid: this.Storeid,
-				posid: this.POSID,
-				ryid: this.ryid,
-				dkhname: this.credit_sales.sale1.DKFNAME,
-				bill: this.credit_sales.sale1.BILL,
-				saledata: this.credit_sales.sale1.SALEDATE //new Date().toLocaleDateString()
-			}, res => {
-				console.log("[SaleFinied]赊销退单结果:", res);
-				if (res.code) {
-					util.simpleMsg("赊销退单成功!");
-				} else {
-					util.simpleMsg("退单失败:" + res.msg, true);
-				}
-			})
+			//废弃 采用本地生成模式
+			// _refund.CreditOrderRefund({
+			// 	khid: this.Storeid,
+			// 	posid: this.POSID,
+			// 	ryid: this.ryid,
+			// 	dkhname: this.credit_sales.sale1.DKFNAME,
+			// 	bill: this.credit_sales.sale1.BILL,
+			// 	saledata: this.credit_sales.sale1.SALEDATE //new Date().toLocaleDateString()
+			// }, res => {
+			// 	console.log("[SaleFinied]赊销退单结果:", res);
+			// 	if (res.code) {
+			// 		util.simpleMsg("赊销退单成功!");
+			// 	} else {
+			// 		util.simpleMsg("退单失败:" + res.msg, true);
+			// 	}
+			// })
 		},
 	},
 	//线上订单
@@ -909,7 +915,7 @@ var XsTypeObj = {
 				new_s3.FKID = 'ZG03';
 				return new_s3
 			});
-			console.log("[InitSale]FKNAME:",this.sale003.map(i=> i.FKNAME));
+			console.log("[InitSale]FKNAME:", this.sale003.map(i => i.FKNAME));
 			this.reserve_param = params.reserve_params;
 			console.log("[InitSale]线上订单提货参数:", this.reserve_param);
 			this.setNewParmSale({
@@ -1637,7 +1643,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		this.Page.$set(this.Page, "Alphabetical", "");
+		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
 
@@ -2099,7 +2105,7 @@ function GetSale(global, vue, target_name, uni) {
 			PayList: that.payed,
 			actType: that.actType
 		}
-		console.log("[PayParamAssemble]封装数据:", inputParm);
+		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
 		uni.navigateTo({
 			url: "../Payment/Payment",
