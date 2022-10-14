@@ -888,11 +888,12 @@ var XsTypeObj = {
 				let new_s3 = Object.cover(new sale.sale003(), s3)
 				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
 				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
-				new_s3.FKNAME = s3.SNAME ?? "",
-					util.hidePropety(new_s3, 'FKNAME');
+				new_s3.FKNAME = s3.SNAME ?? "";
+				util.hidePropety(new_s3, 'FKNAME');
 				new_s3.FKID = 'ZG03';
 				return new_s3
 			});
+			console.log("[InitSale]FKNAME:",this.sale003.map(i=> i.FKNAME));
 			this.reserve_param = params.reserve_params;
 			console.log("[InitSale]线上订单提货参数:", this.reserve_param);
 			this.setNewParmSale({
