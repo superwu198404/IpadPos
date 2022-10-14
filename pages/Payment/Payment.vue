@@ -1019,7 +1019,8 @@
 						current_refund_exists_only_code = true;
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
-					if (['ZG03', 'ZF01'].indexOf(refundInfo.fkid) !== -1) { //如果是预定金、现金（如果为0）直接跳过
+					//如果是预定金、现金（如果为0）门店赊销，直接跳过
+					if (['ZG03', 'ZF01', 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
