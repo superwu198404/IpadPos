@@ -209,7 +209,8 @@
 				p_name: "",
 				p_date: dateformat.getYMD(),
 				Order: {},
-				Details: {},
+				Details: [],
+				Sale3: [],
 				curIndex: 0,
 			}
 		},
@@ -260,7 +261,8 @@
 					console.log("赊销详情单查询结果:", res);
 					if (res.code) {
 						let data = JSON.parse(res.data);
-						that.Details = data;
+						that.Details = data.sale2;
+						that.Sale3 = data.sale3;
 						that.statements = true;
 						that.ConfirmToPay();
 					} else {
@@ -318,7 +320,8 @@
 							console.log("[ConfirmToPay]order:", that.Order);
 							this.$to_sale_pages('sale_credit_return_good', {
 								sale1: that.Order,
-								sale2: that.Details
+								sale2: that.Details,
+								sale3: that.Sale3,
 							})
 						}
 					})
