@@ -210,7 +210,7 @@
 				console.log("线上订单打印格式记录结束");
 			},
 			//外卖打印小票
-			wmBluePrinter: async function(order, datails, type, print) {
+			wmBluePrinter: async function(order, datails, type, print,bs_Reason,bs_Note) {
 				//票据
 				var that = this;
 				let sale1_objO = JSON.stringify(order);
@@ -218,7 +218,7 @@
 				//输出日志
 				console.log("外卖打印接收数据 sale1_obj", order);
 				console.log("外卖打印接收数据 sale2_arr", datails);
-				console.log("外卖打印控制参数 print", print);
+				console.log("外卖打印控制参数 type", {type,bs_Reason,bs_Note});
 
 				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
@@ -236,7 +236,7 @@
 				//打印数据转换
 				let sale1_obj = JSON.parse(sale1_objO);
 				let sale2_arr = JSON.parse(sale2_arrO);
-				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent, type);
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();

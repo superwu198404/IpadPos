@@ -333,7 +333,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
+const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note) => {
 	var xsType = "WM";
 	var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
@@ -345,7 +345,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
 	var gsid = snvl(sale1_obj.GSID,"");
-	var status = sale1_obj.STATUS;
+	var status = nnvl(sale1_obj.STATUS,0);
 	var remark = sale1_obj.STR1 == null ? "" : sale1_obj.STR1;
 	var payableAmount = sale1_obj.STR2;
 	var originalAmount = nnvl(sale1_obj.STR8,0);
@@ -354,10 +354,19 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 	var shContact = snvl(sale1_obj.STR5,"");
 	var ggy = ggyContent;
 	var xsptid = sale1_obj.XSPTID;
-
+	var nowTime = getTime(3);
+	var posId = snvl(sale1_obj.POSID,"");
+		
 	var note2 = "";
 	if (type == "WMYD") {
 		note2 = sale1_obj.NOTE2; //外卖预订单，平台名称。如美团外卖
+	}
+	
+	var bsReason = "";
+	var bsNote = "";
+	if(type=="WMTHBS"){
+		bsReason = bs_Reason;
+		bsNote = bs_Note;
 	}
 	var wmType = type;
 
@@ -408,6 +417,10 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type) => {
 		xsptid,
 		note2,
 		wmType,
+		bsReason,
+		bsNote,
+		nowTime, //当前时间
+		posId,
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 

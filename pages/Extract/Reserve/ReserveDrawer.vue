@@ -18,13 +18,13 @@
 					<label>
 						<text>提货日期：</text>
 						<picker mode="date" fields="day" @change="ExtractDateChange">
-							<text>{{ ExtractDate }}</text>
+							<view>{{ ExtractDate }}</view>
 						</picker>
 					</label>
 					<label>
 						<text>提货时间：</text>
 						<picker mode="time" @change="ExtractTimeChange">
-							<text>{{ ExtractTime }}</text>
+							<view>{{ ExtractTime }}</view>
 						</picker>
 					</label>
 					<!-- <label><text>提货门店：</text><input type="text" v-model="details.info.THKHID" /></label> -->

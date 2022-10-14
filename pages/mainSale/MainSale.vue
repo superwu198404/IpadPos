@@ -566,6 +566,19 @@
 			},
 		},
 		created() {
+			// uni.setLocale("en");
+			// uni.showModal({
+			// 	content: "请使用扫码枪扫码",
+			// 	editable: true,
+			// 	confirmText: "确认",
+			// 	cancelText: "取消",
+			// 	success: function(res) {
+			// 		console.log("回调结果：", res);
+			// 		if (res.confirm) {
+			// 			if (res.content) {}
+			// 		}
+			// 	}
+			// })
 			console.log("[MainSale]开始构造函数!");
 			// console.log("初始化的khid:", this.KHID);
 			// console.log("初始化的DQID:", this.DQID);

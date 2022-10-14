@@ -348,7 +348,8 @@
 							// if (data.yn_print) {
 							// 	//调用打印
 							// 	//console.log("此处调用打印：");
-							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+							//let wm_type = that.yn_bs ? "WMTHBS" : "WM";
+							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
 							// }
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
@@ -438,7 +439,8 @@
 							console.log("此处调用打印：");
 							//打印
 							if (that.js_res.yn_print) {
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
 							}
 						}
 					} else {
@@ -551,7 +553,8 @@
 						util.simpleMsg("接收成功");
 						//调用打印
 						if (that.js_res.yn_print) {
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -651,7 +654,8 @@
 						util.simpleMsg("接收成功");
 						//后打印
 						if (that.js_res.yn_print) {
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WM");
+							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note);
 						}
 					}
 					that.Close();
