@@ -332,8 +332,11 @@
 				}))
 			},
 			QueryAddress: function() {
-				console.log("查询客户地址信息...");
-				this.GetCustomerAddress(this.details.info.CUSTMPHONE);
+				console.log("[QueryAddress]查询客户地址信息...");
+				this.GetCustomerAddress(this.details.info.CUSTMPHONE,util.callBind(this,function(){
+					console.log("[QueryAddress]自动展开地址列表...");
+					this.view.more = true;//自动展开地址栏
+				}));
 			},
 			ValidFromData: function() {
 				let order = this.details.info;

@@ -1080,6 +1080,7 @@
 				this.refundAmountCount(); //重新计算
 				Promise.all(promises).then((res) => {
 					console.log("[Refund]RefundList-After:", this.RefundList);
+					this.CheckActionComplet();
 					// this.RefundList.sort();
 				})
 			},
