@@ -778,6 +778,8 @@ var XsTypeObj = {
 			this.HY.val = {};
 			uni.$emit('set-member', this.HY.val);
 			this.actType = common.actTypeEnum.Refund;
+			this.xsType = '2' //赊销退单重写
+			this.bill_type = 'Z154'; ////赊销退单重写
 			this.credit_sales = params;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
@@ -813,6 +815,17 @@ var XsTypeObj = {
 		},
 		$saleFinishing: function() {
 			console.log("[SaleFinishing]赊销退货结算单信息生成...");
+			this.sale001.DNET = 0;
+			this.sale001.BILLDISC = Math.abs(Number(this.sale001.BILLDISC) || 0);
+			this.sale001.TDISC = -Math.abs(Number(this.sale001.TDISC) || 0);
+			this.sale001.TTPDISC = -Math.abs(Number(this.sale001.TTPDISC) || 0);
+			this.sale001.TBZDISC = -Math.abs(Number(this.sale001.TBZDISC) || 0);
+			this.sale001.TLSDISC = -Math.abs(Number(this.sale001.TLSDISC) || 0);
+			this.sale002.forEach(i => {
+				i.BZDISC = -Math.abs(Number(i.BZDISC) || 0);
+				i.LSDISC = -Math.abs(Number(i.LSDISC) || 0);
+				i.TPDISC = -Math.abs(Number(i.TPDISC) || 0);
+			})
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
@@ -1115,7 +1128,8 @@ function GetSale(global, vue, target_name, uni) {
 		var newbill = "";
 		if (this.bill == null) {
 			let d = new Date();
-			let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() % 100);
+			let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() %
+				100);
 			let month = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1);
 			let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
 			let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
@@ -1578,7 +1592,8 @@ function GetSale(global, vue, target_name, uni) {
 			let bh_support_id = (sys_param['BHLBBM'] ?? "").split(',');
 			let exists_decoration = false;
 			this.sale002?.forEach(s2 => {
-				if (bh_support_id.find(id => id === s2.PLID?.substr(0, 3))) exists_decoration = true;
+				if (bh_support_id.find(id => id === s2.PLID?.substr(0, 3))) exists_decoration =
+					true;
 			})
 			console.log("[CheckSale002ExistsDecoration]当前商品中是否包含裱花商品:", exists_decoration);
 			this.decoration = exists_decoration;
@@ -1950,9 +1965,12 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		this.sale001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
-		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
-		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
-		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(), sale8));
+		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(),
+			sale2));
+		this.sale003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new sale.sale003(),
+			sale3));
+		this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(),
+			sale8));
 		console.log("[PayedResult]支付结果状态判断...", result.code);
 		if (result.code) {
 			util.simpleMsg(result.msg);
@@ -1999,7 +2017,8 @@ function GetSale(global, vue, target_name, uni) {
 				ywbhqh: this.ywbhqh,
 				sxsale001: this.sxsale001
 			});
-			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
+			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
+				.currentOperation
 				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
 			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
@@ -2366,7 +2385,8 @@ function GetSale(global, vue, target_name, uni) {
 									new008.PRICE = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
 									that.sale008.push(new008);
 									//就是这里售价要累加
-									price += that.float(drinkitem.QTY, 2) * that.float(new008.PRICE);
+									price += that.float(drinkitem.QTY, 2) * that.float(new008
+										.PRICE);
 								}
 
 							}
@@ -2655,7 +2675,8 @@ function GetSale(global, vue, target_name, uni) {
 				console.log("[BeforeFk]辅助促销关闭!");
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
-				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(this.FZCX
+				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(this
+						.FZCX
 						.cval.data || {}).length > 0) {
 					console.warn("[BeforeFk]辅助促销计算部分!");
 					this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
