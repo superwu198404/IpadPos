@@ -65,7 +65,9 @@
 	font-size: 24rpx;
 	margin-left: 5%;
 }
-
+.products .procycle .li .h3 .state text{
+	border:none !important;
+}
 .products .procycle .li .h3 .quxiao text {
 	color: #FF8367;
 }
