@@ -105,7 +105,7 @@
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view> -->
 				<view class="map" v-if="!ShowAllAddressList && !yn_add">
-					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
+					<map :key="map.key" :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
 						:markers="map.markers"></map>
 				</view>
 			</view>
@@ -196,7 +196,8 @@
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
-					markers: []
+					markers: [],
+					key:Number(new Date())
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -538,6 +539,7 @@
 						display: 'ALWAYS'
 					}
 				}];
+				this.map.key = Number(new Date());
 				console.log("[ConfirmOrderAddr]markers新标点信息:",that.map.markers);
 				//宅配到家需要匹配最近的配送中心
 				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == '1') {

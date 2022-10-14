@@ -167,16 +167,18 @@
 			},
 			EditOrder: function(item) {
 				console.log("[EditOrder]订单编辑:", item);
-				RequestSend(`SELECT BILL_STATUS FROM YWBHQH WHERE bill='${item.BILL}'`, util.callBind(this, function(res) {
+				RequestSend(`select  1  from  ywbhqh where khid='${item.KHID}' and  Bill_Status ='1' and Bill_Yd ='${item.BILL}'`, util.callBind(this, function(res) {
 					console.log("[EditOrder]裱花审核状态查询...",res);
 					if (res.code) {
 						let data = JSON.parse(res.data);
-						if(data.length === 0 || !data?.first().BILL_STATUS || data?.first().BILL_STATUS != 1){
+						console.log("[EditOrder]订单裱花状态信息:",data);
+						if(data.length === 0){
 							this.extract_order = item;
 							this.view.Details = true;
 						}
-						else
-							util.simpleMsg("此预定单对应的裱花请货单已经审核，不能再进行修改!", 'none')
+						else{
+							util.simpleMsg("此预定单对应的裱花请货单已经审核，不能再进行修改!", 'none');
+						}
 					}
 					else{
 						util.simpleMsg("裱花查询失败!", true)
@@ -262,10 +264,12 @@
 				}))
 			},
 			CloseDrawer: function() {
+				console.log("[CloseDrawer]关闭修改窗口...");
 				this.view.Details = false;
 				this.GetList(); //刷新列表
 			},
 			GetList: function() {
+				console.log("[GetList]获取预定信息...");
 				getReserveOrders({
 					khid: this.KHID,
 					type: this.condition.value, //-1 已过期，0 今日，1 待提货

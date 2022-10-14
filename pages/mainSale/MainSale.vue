@@ -412,6 +412,7 @@
 			<!-- 特殊折扣 -->
 			<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
 		</view>
+	</view>
 </template>
 
 <script>

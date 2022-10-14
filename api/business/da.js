@@ -5,7 +5,7 @@ Database Access(SQLite 本地数据库)
 import Req from '@/utils/request.js';
 
 export const RequestSend = async function(sql, succesFunc, errorFunc) {
-	let reqdata = Req.resObj(true, "数据传输中", sql, `MobilePos_API.Models.DataQuery.SALEQuery`),
+	let reqdata = Req.resObj(true, "数据处理中", sql, `MobilePos_API.Models.DataQuery.SALEQuery`),
 		code = true,
 		result = null;
 	reqdata.data.data = sql;
@@ -18,7 +18,7 @@ export const RequestSend = async function(sql, succesFunc, errorFunc) {
 		function(error) {
 			code = false;
 			result = error;
-			if (errorFunc) succesFunc(error);
+			if (errorFunc) errorFunc(error);
 		});
 	return {
 		code: code,
