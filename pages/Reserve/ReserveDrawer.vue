@@ -101,15 +101,9 @@
 				</view>
 			</view>
 			<view class="atlas">
-<<<<<<< HEAD
-				<cover-view class="map">
-					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
-				</cover-view>
-=======
 				<view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"></map>
 				</view>
->>>>>>> e12ae7564bb69710bee77f9bc4ae4124e56f6d7f
 			</view>
 		</view>
 		<cover-view class="operat" style="display: flex;padding: 8px;gap: 8px;">

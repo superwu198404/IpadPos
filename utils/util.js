@@ -18,8 +18,8 @@ const utils = {
 	 */
 	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
-			title: isError == "none" ? "提示：\n" + title : title,
-			icon: isError == 'none' ? "none" : (isError ? 'error' : "success") //可传入none值
+			title:(isError == 'none' || title.length > 6) ? `${isError ? '⚠' : '✔'}提示:\n` + title : title,
+			icon: (isError == 'none' || title.length > 6) ? "none" : (isError ? 'error' : "success") //可传入none值
 		})
 		if (errData) console.log(title, errData)
 	},
