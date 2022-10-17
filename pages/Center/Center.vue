@@ -55,7 +55,7 @@
 				<view class="chongdu">
 					<view class="dates">
 						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
-					    <button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
+						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
@@ -133,10 +133,10 @@
 				}, 5500);
 
 			},
-			reset:function(){
+			reset: function() {
 				_init.dataInit('reloadsqlite')
 			},
-			zbtx:function(){
+			zbtx: function() {
 				_init.dataInit('download_zbtx')
 			},
 			//uniapp中onHide()能监听到页面离开
@@ -152,44 +152,44 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				uni.showModal({
-					title: "提示",
-					content: "是否要验证结款，日结后进入销售？",
-					cancelText: "否",
-					confirmText: "是",
-					success: res => {
-						let int = getApp().globalData.Int;
-						console.log("传输定时ID:", int);
-						if (!int) {
-							//3min执行一次销售单传输
-							int = setInterval(() => {
-								common.TransLiteData();
-							}, 1000 * 60 * 3);
-							getApp().globalData.Int = int;
-							console.log("本次单据传输定时ID:", int);
-						}
-						if (res.confirm) {
-							_login.GetSkyJk(res => {
-								console.log("查询到的结款数据：", res);
-								if (!res.code) { //有未结款数据
-									util.simpleMsg(res.msg, "none");
-									return;
-								}
-								if (that.signOutDates.length > 0) { //有日结数据
-									that.SignOut(); //发起日结
-									return;
-								}
-								uni.redirectTo({
-									url: "/pages/mainSale/MainSale"
-								});
-							})
-						} else {
-							uni.redirectTo({
-								url: "/pages/mainSale/MainSale"
-							});
-						}
+				// uni.showModal({
+				// 	title: "提示",
+				// 	content: "是否要验证结款，日结后进入销售？",
+				// 	cancelText: "否",
+				// 	confirmText: "是",
+				// 	success: res => {
+				let int = getApp().globalData.Int;
+				console.log("传输定时ID:", int);
+				if (!int) {
+					//3min执行一次销售单传输
+					int = setInterval(() => {
+						common.TransLiteData();
+					}, 1000 * 60 * 3);
+					getApp().globalData.Int = int;
+					console.log("本次单据传输定时ID:", int);
+				}
+				// if (res.confirm) {
+				_login.GetSkyJk(res => {
+					console.log("查询到的结款数据：", res);
+					if (!res.code) { //有未结款数据
+						util.simpleMsg(res.msg, "none");
+						return;
 					}
+					if (that.signOutDates.length > 0) { //有日结数据
+						that.SignOut(); //发起日结
+						return;
+					}
+					uni.redirectTo({
+						url: "/pages/mainSale/MainSale"
+					});
 				})
+				// } else {
+				// 	uni.redirectTo({
+				// 		url: "/pages/mainSale/MainSale"
+				// 	});
+				// }
+				// 	}
+				// })
 			},
 			//手动直接发起签到
 			Sign: function() {
@@ -540,30 +540,35 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-.chongdu .dates button{
-	margin:0;
-	background-color: #fff;
-	color: #006B44;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: flex-start;
-	font-weight: 700;
-	line-height: 70rpx;
-	padding:0;
-}
-.chongdu .dates button:nth-child(1){
-	border-right:1px solid #C1F6D8;
-	width:52%;
-}
-.chongdu .dates button:nth-child(2){
-	width:45%;
-	padding-left: 2%;
-}
-.chongdu .dates button text{
-	font-weight: 400;
-	line-height: 50rpx;
-}
+
+	.chongdu .dates button {
+		margin: 0;
+		background-color: #fff;
+		color: #006B44;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+		font-weight: 700;
+		line-height: 70rpx;
+		padding: 0;
+	}
+
+	.chongdu .dates button:nth-child(1) {
+		border-right: 1px solid #C1F6D8;
+		width: 52%;
+	}
+
+	.chongdu .dates button:nth-child(2) {
+		width: 45%;
+		padding-left: 2%;
+	}
+
+	.chongdu .dates button text {
+		font-weight: 400;
+		line-height: 50rpx;
+	}
+
 	.chongdu .tuichu {
 		width: 25%;
 		background-color: #006B44;

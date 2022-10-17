@@ -50,8 +50,8 @@
 	export default {
 		data() {
 			return {
-				userid: "999",
-				password: "123",
+				userid: "",
+				password: "",
 				khid: "",
 				posid: "",
 				KHArr: [],
