@@ -243,13 +243,14 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var posId = snvl(sale1_obj.POSID,"");
 	var posUser = snvl(sale1_obj.RYID,"");
 	var lineNum = sale2_arr.length;
-	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
 	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
+	var totalQty = 0;
+	var totalPrice = 0;
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -274,8 +275,10 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
+		totalPrice += nnvl(sale2_arr[i].OPRICE,0);
 	}
-
+	
+	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);
 
 	//支付数据
@@ -382,6 +385,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 			spname: sale2_arr[i].STR5, //商品名称
 			qty: sale2_arr[i].QTY, //商品数量
 			price: sale2_arr[i].PRICE, //商品价格
+			oprice: sale2_arr[i].OPRICE, //原价
 			net: nnvl(sale2_arr[i].NET,0), //商品金额
 			unit: sale2_arr[i].STR7, //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
@@ -524,13 +528,15 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	var posId = snvl(sale1_obj.POSID,"");
 	var posUser = snvl(sale1_obj.RYID,"");
 	var lineNum = sale2_arr.length;
-	var totalQty = 0;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
 	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
+	var totalQty = 0;
+	var totalPrice = 0;
+	
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -554,9 +560,10 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
 		goodsList = goodsList.concat(sale2_printer);
-		totalQty += sale2_arr[i].QTY;
+		totalQty += nnvl(sale2_arr[i].QTY,0);
+		totalPrice += nnvl(sale2_arr[i].OPRICE,0);
 	}
-
+	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);
 
 	//支付数据

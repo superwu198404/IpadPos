@@ -1318,7 +1318,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单: "+ xsBill + "\n");
+			jpPrinter.setText("原单号: "+ xsBill + "\n");
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1345,11 +1345,10 @@ var jpPrinter = {
 			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
-			// console.log("data spid",item.spid);
-			// console.log("data qty",item.qty);
-			// console.log("data amount",item.amount);
-			// console.log("data discount",item.discount);
-			
+			//是退单，折扣显示0
+			if(isReturn){
+				item.discount = 0;
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
@@ -1366,6 +1365,11 @@ var jpPrinter = {
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 			
+		
+		//是退单，已优惠金额显示0
+		if(isReturn){
+			data.discountedAmount = 0;
+		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
@@ -1621,7 +1625,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单: "+ xsBill + "\n");
+			jpPrinter.setText("原单号: "+ xsBill + "\n");
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1648,6 +1652,10 @@ var jpPrinter = {
 			jpPrinter.setText(util.getComputedByteLen(spname, 25));
 			jpPrinter.setPrint(); //打印并换行
 			
+			//是退单，折扣显示0
+			// if(isReturn){
+			// 	item.discount = 0;
+			// }
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
@@ -1663,7 +1671,11 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
-			
+		
+		//是退单，已优惠金额显示0
+		// if(isReturn){
+		// 	data.discountedAmount = 0;
+		// }
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
@@ -1890,7 +1902,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单: "+ xsBill);
+			jpPrinter.setText("原单号: "+ xsBill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterScale(0); //设置正常大小
@@ -2077,7 +2089,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单: "+ xsBill);
+			jpPrinter.setText("原单号: "+ xsBill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterScale(0); //设置正常大小
@@ -2478,7 +2490,7 @@ var jpPrinter = {
 		strCmd += strLeft + strSize1 + (xpType + "时间: " + data.xsDate) + strSetPrint;
 		strCmd += strLeft + strSize1 + (util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser) + strSetPrint;
 		strCmd += strLeft + strSize1 + "单号: " + data.bill + strSetPrint;
-		strCmd += strLeft + strSize1 + "原单" + data.xsBill + strSetPrint;
+		strCmd += strLeft + strSize1 + "原单号" + data.xsBill + strSetPrint;
 		
 		strCmd += strLeft + strSize1 + "商品名称       数量  单价  金额  折扣  " + strSetPrint;
 		strCmd += strLeft + strSize1 + "-----------------------------------------------" + strSetPrint;

@@ -534,12 +534,14 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			let fkda_data = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.SNAME = fkda_data.find(a=> a.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("预定提取开始调用打印", {
@@ -987,10 +989,11 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			//查询支付方式
-			//console.log("获取支付方式 test111",this.FKDA_INFO);
+		    //console.log("获取支付方式 test111",this.FKDA_INFO.find(a=>a.FKID=="ZG03").SNAME);
+			let fkda_data = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.SNAME = fkda_data.find(a=> a.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
