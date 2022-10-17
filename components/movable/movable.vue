@@ -215,14 +215,12 @@
 		position: fixed;
 		bottom: 20%;
 		right: 0;
-		background-color: #fff;
 		width: 110rpx;
 		height: 110rpx;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border:1px solid #006B44;
 		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
 	}
 	.ordermes em{

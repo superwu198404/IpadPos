@@ -71,7 +71,7 @@
 		border-radius: 20rpx;
 		padding: 0 3% 140rpx;
 		z-index: 99;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
+		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
 	}
 
 	.customer .bg {
