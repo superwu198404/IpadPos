@@ -297,15 +297,18 @@
 								v-if="ShowHY">{{mainSale.HY.val.hyId}}</button>
 							<button class="btn" v-else>未登录...</button>
 						</label>
-						<text class="qingk" @click="mainSale.resetSaleBill">清除促销</text>
+						<text class="qingk"
+							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
+							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>
 						<label>
 							<button v-if="mainSale.currentOperation.ynEdit&&!mainSale.currentOperation.showEdit"
-							@click="mainSale.showEditFunc">编辑</button>
+								@click="mainSale.showEditFunc">编辑</button>
 							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
-							@click="mainSale.completeEdit">完成</button>
-							<button style="color:#FE694B;border-left:1px solid #eee"  @click="mainSale.resetSaleBill">清空</button>
+								@click="mainSale.completeEdit">完成</button>
+							<button style="color:#FE694B;border-left:1px solid #eee"
+								@click="mainSale.resetSaleBill">清空</button>
 						</label>
 					</view>
 					<view class="goods">

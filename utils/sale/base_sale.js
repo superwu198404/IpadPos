@@ -1444,11 +1444,11 @@ function GetSale(global, vue, target_name, uni) {
 				if (!this.currentOperation.ynResetCX) {
 					// this.currentOperation.ynCx = false;
 					this.ResetCXZK();
-					this.currentOperation.ynResetCX = true;
 				} else {
 					// this.currentOperation.ynCx = true;
 					this.SaleNetAndDisc();
 				}
+				this.currentOperation.ynResetCX = !this.currentOperation.ynResetCX;
 			}
 		})
 	});
@@ -2661,7 +2661,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.ScoreCount = function(list) {
-		console.log("[ScoreCount]积分原列表:",list);
+		console.log("[ScoreCount]积分原列表:", list);
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;
