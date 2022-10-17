@@ -61,10 +61,10 @@
 						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 					<label @click="PAD_SCANFunc()">
-						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="YN_SAOMA_CON=='Y'"></image>
+						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="!PAD_SCAN"></image>
 						<image src="@/images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
-						<text v-if="YN_SAOMA_CON=='Y'">扫码枪</text>
-						<text v-else>启用扫码枪</text>
+						<text v-if="!PAD_SCAN">使用扫码枪</text>
+						<text v-else>使用拍照扫码</text>
 					</label>
 				</view>
 			</view>
