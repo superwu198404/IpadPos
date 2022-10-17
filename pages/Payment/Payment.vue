@@ -405,10 +405,13 @@
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						this.domForceRefresh();
 					} else {
-						let count = (this.dPayAmount?.toString() || ".").split('.')[1].length;
-						if (count > 2) {
-							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
-							this.domForceRefresh();
+						let decimal = (this.dPayAmount?.toString() ?? ".")?.split('.');
+						if (decimal.length === 2) {
+							let count = decimal[1].length;
+							if (count > 2) {
+								this.dPayAmount = Number(this.dPayAmounth.toFixed(2));
+								this.domForceRefresh();
+							}
 						}
 					}
 				} else { //完成支付，推送数据
@@ -1374,6 +1377,12 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
+					this.CashOffset.Money = prev_page_param?.score_info.money;
+					this.CashOffset.Score = prev_page_param?.score_info.score;
+					console.log("[ParamInit]积分信息:", {
+						pay: this.CashOffset,
+						param: prev_page_param?.score_info
+					});
 					this.hyinfo = prev_page_param?.hyinfo; //会员信息采用传入
 					console.log("[ParamInit]支付初始化——会员信息:", this.hyinfo);
 
