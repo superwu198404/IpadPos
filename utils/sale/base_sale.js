@@ -2651,8 +2651,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("001数据：", that.sale001);
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
-		_main.GetFZCX(this.Storeid, res => {
-			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
+		_main.GetFZCX(this.Storeid, async res => {
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}
