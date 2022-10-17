@@ -7,7 +7,7 @@
 	<view class="boxs">
 		<view class="meminfo" style="display: flex;flex-direction: column;position: absolute;right: 0px;">
 			<view class="member">
-				<label>填写预定信息</label>
+				<label>编辑预定信息</label>
 				<button @click="Close">×</button>
 			</view>
 			<view class="middle" style="flex: 1 0px;">
@@ -64,7 +64,8 @@
 					<view class="h6"><text>地址</text> <button @click="AddAddress()">+ 新增地址</button></view>
 					<view class="location">
 						<view>
-							<view class="site" v-for="(i,index) in details.address" v-show="ShowFirstAddress(i.ADDRID)"
+							<!-- <view class="site" v-for="(i,index) in details.address" v-show="ShowFirstAddress(i.ADDRID)" -->
+							<view class="site" v-for="(i,index) in details.address" v-show="ShowFirstAddress(i.ADDRESS)"
 								@click="RadioChange(i)">
 								<view class="sitelist">
 									<view>
@@ -84,7 +85,7 @@
 				</view>
 				<view v-show="!view.add_address && !view.more" class="map-content">
 					<view style="width: 90%; height: 290px;">
-						<map style="width: 100%; height: 100%;" :latitude="details.info.LATITUDE"
+						<map style="width: 100%; height: 100%;" :key="map.key" :latitude="details.info.LATITUDE"
 							:longitude="details.info.LONGITUDE" :scale="map.scale" :markers="map.markers"
 							:enable-poi="false">
 						</map>
@@ -139,7 +140,8 @@
 					longitude: 114.3093413671875, //经度
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
-					markers: []
+					markers: [],
+					key: Number(new Date())
 				},
 				form: {
 					selected: { //当前选中的配送地址
@@ -184,6 +186,7 @@
 		},
 		methods: {
 			Close: function() {
+				console.log("[Close]关闭编辑...");
 				this.$emit("Close");
 			},
 			ExtractDateChange: function(date) {
@@ -229,11 +232,14 @@
 							thkhid: this.details.info.thkhid
 						}
 					}, util.callBind(this, function(res) {
+						console.log("[Save]保存成功:",res);
 						util.simpleMsg(res.msg, res.code, res);
 						if (res.code) {
 							this.Close();
 						}
 					}));
+				else
+					console.log("[Save]信息验证失败...");
 			},
 			DeleteAddress: function(id, phone) {
 				_extract.Del_Addr({
@@ -245,9 +251,28 @@
 				}));
 			},
 			RadioChange: function(address_info) {
-				this.details.current = address_info.ADDRID;
+				// this.details.current = address_info.ADDRID;
+				this.details.current = address_info.ADDRESS;
 				this.details.info.CUSTMADDRESS = address_info.ADDRESS;
-				console.log("[RadioChange]选择地址ID:", this.details.current);
+				console.log("[RadioChange]选择地址:", address_info);
+				if (address_info.LONGITUDE && address_info.LATITUDE) {
+					this.map.markers.pop();
+					this.details.info.LATITUDE = address_info.LATITUDE;
+					this.details.info.LONGITUDE = address_info.LONGITUDE;
+					this.map.markers.push({
+						id: 'client',
+						latitude: address_info.LATITUDE,
+						longitude: address_info.LONGITUDE,
+						title: '配送地址',
+						callout: {
+							content: '收货地址',
+							color: 'red',
+							display: 'ALWAYS'
+						}
+					})
+					this.key = Number(new Date());
+				}
+				console.log("[RadioChange]标点更新...",address_info);
 			},
 			AddressChange: function(data) {
 				console.log("[AddressChange]地址为:", data);
@@ -262,7 +287,6 @@
 				}
 				return true;
 			},
-
 			ChangeCustomerAddress: function() {
 				if (this.AddressVaild())
 					_extract.ConfirmADDR(Object.assign(this.form.address, {
@@ -271,16 +295,19 @@
 						console.log("[ChangeCustomerAddress]ConfirmADDR回调:", res);
 						util.simpleMsg(res.msg, res.code, res);
 						this.Newaddr = false;
-						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
-						res) {
+						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(res) {
 							if (!this.view.address_edit) {
 								let address = this.form.address.ADDRESS
 								console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
 								console.log("[GetCustomerAddress-Inner]Address列表:", this.details.address);
 								let address_info = this.details.address.find(a => a.ADDRESS === address);
 								console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
-								if (address_info != -1) this.details.current = address_info?.ADDRESS;
-								this.view.more = true;
+								if (address_info) {
+									this.RadioChange(address_info);
+									this.details.info.CUSTMNAME = this.form.address.NAME;
+									this.details.info.CUSTMPHONE = this.form.address.PHONE;
+								}
+								this.view.more = false;
 								this.view.add_address = false;
 							}
 						}));

@@ -1560,6 +1560,7 @@ var jpPrinter = {
 			
 		  case printerType[5]:
 			xpType ="提货";
+			xsBill= data.xsBill
 			isYD = true;
 		    break;	
 			
@@ -1578,7 +1579,12 @@ var jpPrinter = {
 			xpType ="线上";
 		    break;
 			
-		   case printerType[9]:
+			case printerType[9]:
+			xpType ="提货";
+			xsBill= data.xsBill;
+			break
+			
+		   case printerType[10]:
 			 xpType ="线上";
 			 xsBill= data.xsBill;
 			 lineNum = Math.abs(lineNum);

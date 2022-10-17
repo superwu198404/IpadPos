@@ -7,6 +7,7 @@
 
 <template>
 	<view class="content">
+		<saomaqiang></saomaqiang>
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
@@ -202,6 +203,7 @@
 								<button :data-dinx="dinx" @click="mainSale.clearDrinkSx(dinx)" class="del">×</button>
 							</view>
 						</view>
+
 					</view>
 				</view>
 				<view class="confirm">
@@ -221,11 +223,8 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view>
-			<view class="boxs" v-if="mainSale.ComponentsManage.statement">
-
-			</view>
-			<view class="memberes" style="z-index: 9999;width:auto;" v-if="mainSale.ComponentsManage.statement">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+			<view class="memberes">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -270,12 +269,21 @@
 										</view>
 										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 									</view>
-									<view class="directions">
-										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+									<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+									<view class="coupon-dets">
+										<view class="limit">
+											<view class="h3" v-for="(item1,index1) in item.limitDesc">
+												<text>{{item1}}</text>
+											</view>
+											<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 										</view>
-										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+										<view class="directions">
+											<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+											<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+											</view>
+											<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
 														mode="widthFix"></image></button> -->
+										</view>
 									</view>
 								</view>
 							</view>
@@ -346,7 +354,8 @@
 							<!-- 支付展示整单金额 退款展示实付金额 -->
 							<text>总金额</text><text>￥{{mainSale.actType=='Payment'?TotalNet:-mainSale.sale001.TNET}}</text>
 						</view>
-						<view class="li"><text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
+						<view class="li">
+							<text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>
 						<view class="li">
 							<text>总折扣</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
@@ -387,19 +396,19 @@
 						<label>»</label>
 					</view>
 				</view>
-				<!-- 画布 -->
-				<view class="canvasdiv" :style="'visibility:hidden;'">
-					<canvas canvas-id="couponQrcode" class="canvas"
-						:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-					<canvas canvas-id="canvasLogo" class="canvas"
-						:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-					<canvas canvas-id="canvasXPEWM" class="canvas"
-						:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-				</view>
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 

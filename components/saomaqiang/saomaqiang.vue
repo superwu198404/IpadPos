@@ -24,7 +24,7 @@
 <style>
 	.customer {
 		background-color: #fff;
-		width: 46%;
+		width: 40%;
 		min-height: 400rpx;
 		position: relative;
 		position: fixed;
@@ -33,6 +33,8 @@
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
 		padding: 0 3% 140rpx;
+		z-index: 99;
+		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1);
 	}
 
 	.customer .bg {
@@ -69,7 +71,6 @@
 		line-height: 80rpx;
 		font-size: 32rpx;
 		font-weight: 600;
-		position: relative;
 		z-index: 9;
 	}
 
@@ -130,17 +131,23 @@
 	.clues {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: start;
 		align-items: center;
 		line-height: 140rpx;
 		fony-size: 34rpx;
 		position: relative;
 		z-index: 2;
 		font-weight: 700;
+		padding:80rpx 0 0;
 	}
 
-	.clues image {
-		margin: 2% 0 0 4%;
+	.clues input {
+		height: 70rpx;
+		line-height: 70rpx;
+		border:1px solid #aaa;
+		width:99%;
+		border-radius: 6rpx;
+		padding:0 0.5%;
 	}
 
 	.rjcg {
