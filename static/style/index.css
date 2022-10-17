@@ -829,7 +829,9 @@ page {
 .h5 text:nth-child(2) {
 	color: #b0b0b0;
 }
-
+.h5 label{
+	display: flex;
+}
 .goods {
 	height: 33%;
 	overflow: auto;
