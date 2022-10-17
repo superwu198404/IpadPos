@@ -1223,6 +1223,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TTPDISC = 0; //zk 总特批折扣
 		this.sale001.TCXDISC = 0; //cx 总促销折扣
 		this.sale001.TDISC = 0; //cx
+		this.sale001.BILLDISC = 0; //cx zk
 
 		this.sale002.map(r => {
 			r.NET = this.float(r.NET + r.DISCRATE, 2); //回退一下折扣？
@@ -1439,7 +1440,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ResetCX = util.callBind(this, function(e) {
 		console.log("传入的状态值：", e);
 		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
-		util.simpleModal("提示", "是否确认要" + tip + "促销计算？", res => {
+		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {
 				if (!this.currentOperation.ynResetCX) {
 					// this.currentOperation.ynCx = false;
