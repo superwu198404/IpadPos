@@ -22,7 +22,7 @@
 						<image src="../../images/dx-mendian.png" mode="widthFix"></image><text>{{NAME}}</text>
 					</label>
 					<label>
-						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 				</view>
 			</view>
@@ -152,7 +152,7 @@
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
 								:class="currentPayType === item.type ? 'selected':' '" :id="item.type"
 								@click="clickPayType(item,$event)">
-								<view class="">
+								<view class="tits">
 									<p>{{item.name}}</p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">

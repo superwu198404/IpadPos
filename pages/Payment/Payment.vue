@@ -45,20 +45,26 @@
 				<view style="width:45%">
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
-					<label class="sweep">
+					<!-- <label class="sweep">
 						是否使用扫码枪：
 						<view class="classifys">
 							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? 'curr' : ''">是</text>
 							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? '' : 'curr'">否</text>
 						</view>
-					</label>
+					</label> -->
 				</view>
 				<view class="checkout">
 					<label>
 						<image src="../../images/dx-mendian.png" mode="widthFix"></image><text>{{NAME}}</text>
 					</label>
 					<label>
-						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
+					</label>
+					<label @click="PAD_SCANFunc()">
+						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="YN_SAOMA_CON=='Y'"></image>
+						<image src="@/images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
+						<text v-if="YN_SAOMA_CON=='Y'">扫码枪</text>
+						<text v-else>启用扫码枪</text>
 					</label>
 				</view>
 			</view>

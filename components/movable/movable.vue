@@ -231,7 +231,8 @@
 		border:1px solid #006B44;
 		border-radius: 50%;
 		animation: scales 1s ease infinite;
-		-webkit-animation: scales 1s ease infinite;
+		-webkit-animation: scales 1s ease infinite;		
+		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
 	}
 	@keyframes scales {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
 		0%{
@@ -245,16 +246,16 @@
 	        }
 	.ordermes .neiquan{
 		background-color: #006B44;
-		width: 104rpx;
-		height: 104rpx;
+		width: 100rpx;
+		height: 100rpx;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 	.ordermes image {
-		width: 60rpx;
-		height: 60rpx;
+		width: 50rpx;
+		height: 50rpx;
 	}
 
 	.ordermes label text {

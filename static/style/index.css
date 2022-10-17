@@ -491,12 +491,14 @@ page {
 	right: 4%;
 	width: 80rpx;
 	height: 80rpx;
+	background-color: #eee;
+	border-radius: 50%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background: none;
 	color: #333;
-	font-size: 50rpx;
+	font-size: 44rpx;
 }
 
 .commods {
@@ -760,7 +762,7 @@ page {
 }
 
 .member .btn {
-	font-size: 28rpx;
+	font-size: 24rpx;
 	height: 50rpx;
 	line-height: 50rpx;
 	padding: 0;
@@ -768,10 +770,18 @@ page {
 }
 
 .member text:nth-child(2) {
-	color: #FE694B;
-	font-size: 26rpx;
+	height: 44rpx;
+	line-height: 44rpx;
+	font-size: 24rpx;
+	padding:0 20rpx;
+	border-radius: 6rpx;
 }
-
+.member .qingk{
+	background-color:#FE694B ;
+	color: #fff;
+	height: 44rpx;
+	line-height: 44rpx;
+}
 .member button {
 	margin: 0;
 	background: none;
@@ -838,6 +848,7 @@ page {
 	white-space: nowrap;
 	overflow: hidden;
 }
+
 .prolist .h3 .danjia text:nth-child(1){
 	color: #999;
 	font-size: 22rpx;

@@ -300,6 +300,7 @@
         "movable" : "/components/movable/movable",
         "qiandao" : "/components/qiandao/qiandao",
         "rijie" : "/components/rijie/rijie",
-		"saomaqiang":"/components/saomaqiang/saomaqiang"
+		"saomaqiang":"/components/saomaqiang/saomaqiang",
+		"cdxp":"/components/cdxp/cdxp"
     }
 }

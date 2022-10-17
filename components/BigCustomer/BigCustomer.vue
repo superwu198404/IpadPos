@@ -169,13 +169,15 @@
 
 	.search {
 		display: flex;
-		padding: 1% 1% 0 0;
+		padding: 0 1% 0 0;
 		justify-content: space-between;
+		position: relative;
+		margin-top:1%;
 	}
 
 	.search .client {
 		background-color: #F2F6F6;
-		width: 85%;
+		width: 100%;
 		display: flex;
 		border: 1rpx solid #98C3B3;
 		border-radius: 6rpx 0 0 6rpx;
@@ -217,13 +219,16 @@
 	}
 
 	.search .btn {
-		width: 180rpx;
-		height: 62rpx;
-		line-height: 62rpx;
+		width: 160rpx;
+		height: 64rpx;
+		line-height: 64rpx;
 		padding: 0;
 		font-size: 28rpx;
 		background: #006B44;
 		border-radius: 0 6rpx 6rpx 0;
+		position: absolute;
+		top:-1px;
+		right:0;
 	}
 
 	.credit {
@@ -235,7 +240,7 @@
 	}
 
 	.credit .li {
-		width: 44%;
+		width: 44.8%;
 		display: flex;
 		background-color: #fff;
 		border-radius: 10rpx;
@@ -245,7 +250,9 @@
 		border: 1rpx solid #ddd;
 		position: relative;
 	}
-
+	.credit .li:nth-child(2n){
+		margin-right: 0;
+	}
 	.credit .li em {
 		position: absolute;
 		top: 10%;

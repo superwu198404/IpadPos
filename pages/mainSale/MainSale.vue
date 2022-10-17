@@ -104,9 +104,9 @@
 								</view>
 							</view>
 						</view>
-						<view class="toproof">
+						<!-- <view class="toproof">
 							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
-						</view>
+						</view> -->
 						<view class="ranks" v-if="Alphabetical">
 							<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
 								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
@@ -297,13 +297,16 @@
 								v-if="ShowHY">{{mainSale.HY.val.hyId}}</button>
 							<button class="btn" v-else>未登录...</button>
 						</label>
-						<text @click="mainSale.resetSaleBill">清空</text>
+						<text class="qingk" @click="mainSale.resetSaleBill">清除促销</text>
 					</view>
-					<view class="h5"><text>账单</text><button
-							v-if="mainSale.currentOperation.ynEdit&&!mainSale.currentOperation.showEdit"
+					<view class="h5"><text>账单</text>
+						<label>
+							<button v-if="mainSale.currentOperation.ynEdit&&!mainSale.currentOperation.showEdit"
 							@click="mainSale.showEditFunc">编辑</button>
-						<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
+							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
 							@click="mainSale.completeEdit">完成</button>
+							<button style="color:#FE694B;border-left:1px solid #eee"  @click="mainSale.resetSaleBill">清空</button>
+						</label>
 					</view>
 					<view class="goods">
 						<!-- 商品循环 -->
@@ -393,6 +396,10 @@
 					<view class="states" @click="mainSale.setComponentsManage" data-mtype='statement'>
 						<text>结算单</text>
 						<label>»</label>
+						<view class="statnum">
+							<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+							<text>{{TotalNum}}</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -708,6 +715,7 @@
 		font-size: 28rpx;
 		margin: 0;
 		padding: 0 20rpx;
+		border-radius: 0;
 	}
 
 	.prolist .bianji {
