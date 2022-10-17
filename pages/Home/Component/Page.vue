@@ -30,11 +30,11 @@
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
 					</view>
-					<view @click="ShowTool('TX')">
+					<!-- <view @click="ShowTool('TX')">
 						<image class="xz" src="@/images/tongxun.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
-					</view>
+					</view> -->
 					<!-- <view @click="ShowTool('CD')">
 						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
@@ -45,10 +45,15 @@
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
 					</view>
-					<view class="currs" @click="CloseDB">
+					<!-- <view class="currs" @click="CloseDB">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
+					</view> -->
+					<view @click="ShowTool('CD')">
+						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
+						<text>重打小票</text>
 					</view>
 				</view>
 			</view>

@@ -117,7 +117,7 @@
 		<!-- 报损数据 -->
 		<view class="boxs" v-if="yn_bs">
 			<view class="memberes">
-				<view class="pop-r">
+				<view class="pop-r" style="right:0 !important;">
 					<view class="member">
 						<label>
 							门店报损

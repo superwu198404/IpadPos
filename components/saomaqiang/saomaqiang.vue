@@ -4,27 +4,64 @@
 </style>
 <template>
 	<!-- <view class="boxs"> -->
-		<!-- v-if="qd_show" -->
-		<view class="customer">
-			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">输入扫码枪标号 <button @click="Close()" class="guan">×</button></view>
-			<view class="clues">
-				<input type="text" placeholder="请输入"/>
-			</view>
-			<view class="affirm">
-				<button class="btn btn-hk" @click="Close()">取消</button>
-				<button class="btn" @click="Sign()">确定</button>
-			</view>
+	<!-- v-if="qd_show" -->
+	<view class="customer">
+		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+		<view class="h3">请使用扫码枪扫码 <button @click="ConfirmScan()" class="guan">×</button></view>
+		<view class="clues">
+			<input password="true" placeholder="请扫码" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />
 		</view>
+		<view class="affirm">
+			<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
+			<button class="btn" @click="ConfirmScan()">确定</button>
+		</view>
+	</view>
 	<!-- </view> -->
 </template>
 <script>
+	var app = getApp();
+	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
+	import _login from '@/api/business/login.js';
+	import _main from '@/api/business/main.js';
+
+	var that;
+	export default {
+		name: "saomaqiang",
+		props: {
+			dkhid: String,
+		},
+		data() {
+			return {
+				AuthCode: ""
+			};
+		},
+		created: function() {
+			that = this;
+		},
+		methods: {
+			ConfirmScan: function() {
+				console.log("扫码内容：", this.AuthCode);
+				let code = this.AuthCode;
+				this.AuthCode = "";
+				if (code) {
+					console.log("扫码内容1：", code);
+					uni.$emit("getAuthCode", code);
+				} else {
+					uni.$emit("getAuthCode");
+				}
+			},
+		}
+	}
 </script>
 
 <style>
 	.customer {
 		background-color: #fff;
-		width: 46%;
+		width: 40%;
 		min-height: 400rpx;
 		position: relative;
 		position: fixed;
@@ -33,6 +70,8 @@
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
 		padding: 0 3% 140rpx;
+		z-index: 99;
+		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
 	}
 
 	.customer .bg {
@@ -69,7 +108,6 @@
 		line-height: 80rpx;
 		font-size: 32rpx;
 		font-weight: 600;
-		position: relative;
 		z-index: 9;
 	}
 
@@ -130,17 +168,23 @@
 	.clues {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: start;
 		align-items: center;
 		line-height: 140rpx;
 		fony-size: 34rpx;
 		position: relative;
 		z-index: 2;
 		font-weight: 700;
+		padding:80rpx 0 0;
 	}
 
-	.clues image {
-		margin: 2% 0 0 4%;
+	.clues input {
+		height: 70rpx;
+		line-height: 70rpx;
+		border:1px solid #aaa;
+		width:99%;
+		border-radius: 6rpx;
+		padding:0 0.5%;
 	}
 
 	.rjcg {

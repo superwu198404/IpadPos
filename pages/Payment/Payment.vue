@@ -242,8 +242,10 @@
 			<canvas canvas-id="canvasXPEWM" class="canvas"
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
+		<!-- //扫码枪组件  @getAuthCode="GetAuthCode" -->
+		<saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang>
 	</view>
-	</view>
+	<!-- </view> -->
 </template>
 <script>
 	var app = getApp();
@@ -366,6 +368,7 @@
 				actType: "", //当前操作行为 用以定义是支付还是退款
 				hyinfo: {}, //当前会员信息
 				PAD_SCAN: true, //默认pad扫码 
+				showSMQ: false, //是否显示扫码枪
 			}
 		},
 		watch: {
@@ -481,6 +484,8 @@
 		},
 		methods: {
 			onLoad: function(option) {
+				uni.$off('getAuthCode');
+				uni.$on("getAuthCode", this.GetAuthCode);
 				console.log("进入onLoad方法");
 				let a = util.getStorage("PAD_SCAN");
 				if (a === "") {
@@ -826,6 +831,18 @@
 				let sql3 = common.CreateSQL(current, 'SALE003');
 				this.SaleExcuted(sql3);
 			},
+			//扫码枪回调
+			GetAuthCode: function(e) {
+				console.log("收到扫码枪回调：", e);
+				this.showSMQ = false; //关闭组件
+				if (e) {
+					this.authCode = e; //获取扫码的 authCode
+					console.log("[Pay]authCode:", this.authCode);
+					that.PayHandle();
+				} else {
+					this.authCode = "";
+				}
+			},
 			//支付按钮点击事件
 			Pay: function() {
 				let that = this; //适配真机
@@ -846,6 +863,8 @@
 						console.log("此操作类型需要扫码！", pay_info)
 						console.log("是否属于聚合支付：", this.is_poly)
 						if (!this.PAD_SCAN) { //是否扫码枪扫码
+							this.showSMQ = true; //启动扫码框组件
+							return;
 							uni.showModal({
 								content: "请使用扫码枪扫码",
 								editable: true,

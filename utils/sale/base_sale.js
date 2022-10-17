@@ -1113,19 +1113,17 @@ function GetSale(global, vue, target_name, uni) {
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = [];
-	(util.callBind(this,async function(){
-		try{
+	(util.callBind(this, async function() {
+		try {
 			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
 				if (res.code) {
 					this.FKDA_INFO = JSON.parse(res.data);
 					//console.log("获取支付方式 test111",this.FKDA_INFO);
-				}
-				else{
+				} else {
 					util.simpleMsg("获取付款方式失败!", true)
 				}
 			}))
-		}
-		catch(e){
+		} catch (e) {
 			util.simpleMsg("获取付款方式失败!", true);
 		}
 	}))()
@@ -1464,8 +1462,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.over48 = false;
 	//可支付的积分
 	this.score_info = {
-		score:0,
-		money:0
+		score: 0,
+		money: 0
 	}
 	//促销跟踪
 	this.cxfsArr = [];
@@ -2633,8 +2631,8 @@ function GetSale(global, vue, target_name, uni) {
 		} else
 			console.warn("[CheckOver48Hours]list值无效!");
 	}
-	
-	this.ScoreCount = function(list){
+
+	this.ScoreCount = function(list) {
 		console.log("[ScoreCount]积分原列表:",list);
 		if (list) {
 			let score_total = 0;
@@ -2655,8 +2653,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("001数据：", that.sale001);
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
-		_main.GetFZCX(this.Storeid, res => {
-			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.spPrice);
+		_main.GetFZCX(this.Storeid, async res => {
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}

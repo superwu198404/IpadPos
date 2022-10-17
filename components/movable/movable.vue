@@ -3,8 +3,9 @@
 		<movable-area style="z-index: 999;" v-if="msgDatas.length>0">
 			<movable-view :x="x" :y="y" direction="all" position="position">
 				<view class="ordermes">
-					<label @click="Orderments()">
-						<image src="../../images/xianshangdd.gif" mode="widthFix"></image><text>{{totalCount}}</text>
+					<em></em>
+					<label class="neiquan" @click="Orderments()">
+						<image src="../../images/xianshangdd-bai.png" mode="widthFix"></image><text>{{totalCount}}</text>
 					</label>
 					<view class="orderlist" v-if="orderlist">
 						<view v-for="(item,index) in msgDatas" :key="index" @click="ReadMsg(item,index)">
@@ -214,20 +215,46 @@
 		position: fixed;
 		bottom: 20%;
 		right: 0;
-		background-color: #fff;
-		width: 100rpx;
-		height: 100rpx;
+		width: 110rpx;
+		height: 110rpx;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
-		border-radius: 16rpx;
 	}
-
+	.ordermes em{
+		position: absolute;
+		top:50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		border:1px solid #006B44;
+		border-radius: 50%;
+		animation: scales 1s ease infinite;
+		-webkit-animation: scales 1s ease infinite;
+	}
+	@keyframes scales {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+		0%{
+			width:70rpx;
+			height: 70rpx;
+	        }
+	    100%{
+	       width:120rpx;
+	       height: 120rpx;
+	        }
+	        }
+	.ordermes .neiquan{
+		background-color: #006B44;
+		width: 104rpx;
+		height: 104rpx;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	.ordermes image {
-		width: 90rpx;
-		height: 90rpx;
+		width: 60rpx;
+		height: 60rpx;
 	}
 
 	.ordermes label text {
