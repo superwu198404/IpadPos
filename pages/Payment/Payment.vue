@@ -45,20 +45,26 @@
 				<view style="width:45%">
 					<image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image>
 					<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
-					<label class="sweep">
+					<!-- <label class="sweep">
 						是否使用扫码枪：
 						<view class="classifys">
 							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? 'curr' : ''">是</text>
 							<text @click="PAD_SCANFunc()" :class="!PAD_SCAN ? '' : 'curr'">否</text>
 						</view>
-					</label>
+					</label> -->
 				</view>
 				<view class="checkout">
 					<label>
 						<image src="../../images/dx-mendian.png" mode="widthFix"></image><text>{{NAME}}</text>
 					</label>
 					<label>
-						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
+					</label>
+					<label @click="PAD_SCANFunc()">
+						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="YN_SAOMA_CON=='Y'"></image>
+						<image src="@/images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
+						<text v-if="YN_SAOMA_CON=='Y'">扫码枪</text>
+						<text v-else>启用扫码枪</text>
 					</label>
 				</view>
 			</view>
@@ -408,10 +414,13 @@
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						this.domForceRefresh();
 					} else {
-						let count = (this.dPayAmount?.toString() || ".").split('.')[1].length;
-						if (count > 2) {
-							this.dPayAmount = Number(this.dPayAmount).toFixed(2);
-							this.domForceRefresh();
+						let decimal = (this.dPayAmount?.toString() ?? ".")?.split('.');
+						if (decimal.length === 2) {
+							let count = decimal[1].length;
+							if (count > 2) {
+								this.dPayAmount = Number(this.dPayAmounth.toFixed(2));
+								this.domForceRefresh();
+							}
 						}
 					}
 				} else { //完成支付，推送数据
@@ -1393,6 +1402,12 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
+					this.CashOffset.Money = prev_page_param?.score_info.money;
+					this.CashOffset.Score = prev_page_param?.score_info.score;
+					console.log("[ParamInit]积分信息:", {
+						pay: this.CashOffset,
+						param: prev_page_param?.score_info
+					});
 					this.hyinfo = prev_page_param?.hyinfo; //会员信息采用传入
 					console.log("[ParamInit]支付初始化——会员信息:", this.hyinfo);
 

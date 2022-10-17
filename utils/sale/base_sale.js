@@ -2133,6 +2133,7 @@ function GetSale(global, vue, target_name, uni) {
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
+			score_info: that.score_info,
 			PayList: that.payed,
 			actType: that.actType
 		}
@@ -2660,6 +2661,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.ScoreCount = function(list) {
+		console.log("[ScoreCount]积分原列表:",list);
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;

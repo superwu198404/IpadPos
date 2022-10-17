@@ -37,9 +37,9 @@
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 					<label @click="ShowPrint()">
-						<!-- ：{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼ -->
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
+						{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼
 					</label>
 					<label>
 						<button class="rijie" v-if="showSale" @click="ReturnSale()">清空</button>
@@ -1302,5 +1302,8 @@
 
 	.checkout .rijie {
 		background-color: #FE694B;
+		height:44rpx;
+		line-height:44rpx;
+		
 	}
 </style>
