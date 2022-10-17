@@ -534,14 +534,12 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
-			let fkda_data = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = fkda_data.find(a=> a.FKID == item.FKID).SNAME;
+					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
-					item.balance = 0;
 				}
 			})
 			console.log("预定提取开始调用打印", {
@@ -989,11 +987,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			//查询支付方式
-		    //console.log("获取支付方式 test111",this.FKDA_INFO.find(a=>a.FKID=="ZG03").SNAME);
-			let fkda_data = this.FKDA_INFO;
+			//console.log("获取支付方式 test111",this.FKDA_INFO);
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = fkda_data.find(a=> a.FKID == item.FKID).SNAME;
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
@@ -1116,19 +1113,17 @@ function GetSale(global, vue, target_name, uni) {
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = [];
-	(util.callBind(this,async function(){
-		try{
+	(util.callBind(this, async function() {
+		try {
 			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
 				if (res.code) {
 					this.FKDA_INFO = JSON.parse(res.data);
 					//console.log("获取支付方式 test111",this.FKDA_INFO);
-				}
-				else{
+				} else {
 					util.simpleMsg("获取付款方式失败!", true)
 				}
 			}))
-		}
-		catch(e){
+		} catch (e) {
 			util.simpleMsg("获取付款方式失败!", true);
 		}
 	}))()
@@ -1467,8 +1462,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.over48 = false;
 	//可支付的积分
 	this.score_info = {
-		score:0,
-		money:0
+		score: 0,
+		money: 0
 	}
 	//促销跟踪
 	this.cxfsArr = [];
@@ -2635,8 +2630,8 @@ function GetSale(global, vue, target_name, uni) {
 		} else
 			console.warn("[CheckOver48Hours]list值无效!");
 	}
-	
-	this.ScoreCount = function(list){
+
+	this.ScoreCount = function(list) {
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;
@@ -2657,7 +2652,7 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
 		_main.GetFZCX(this.Storeid, res => {
-			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.spPrice);
+			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}
