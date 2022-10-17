@@ -713,9 +713,11 @@ page {
 }
 
 .nots p {
-	color: #CCCCCC;
+	color: #ccc;
 }
-
+.nots .selected{
+	color: #666;
+}
 .btn {
 	background-color: #42B14B;
 	color: #fff;
