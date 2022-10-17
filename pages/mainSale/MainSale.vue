@@ -321,7 +321,7 @@
 								</label>
 								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
-									<text>单价￥{{mainSale.actType=='Payment'?sp.PRICE:-sp.PRICE}}/</text>
+									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{mainSale.actType=='Payment'?sp.QTY:-sp.QTY}}</text>
 								</view>
 							</view>

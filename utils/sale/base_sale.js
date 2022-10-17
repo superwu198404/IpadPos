@@ -43,7 +43,7 @@ var XsTypeObj = {
 			"ynCx": true, //是否进行可以进行促销  (默认可以促销,选择折扣后默认清除促销)
 			"Disc": true, //是否可以打开录入折扣 (默认可以特殊折扣)
 			"ynFzCx": true, //是否可以辅助促销
-			"ynCancel": false, //是否可以退出当前销售模式
+			"ynCancel": true, //是否可以退出当前销售模式 wy测试要求销售放出清空按钮
 			"FZCX": true, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
@@ -73,6 +73,7 @@ var XsTypeObj = {
 			return true;
 		},
 		$initSale: function(params) {
+			// console.log("ynCancel取消状态：", this.currentOperation.ynCancel);
 			this.actType = common.actTypeEnum.Payment
 			console.log("[sale-$initSale]params:", params);
 			if (this.actType != common.actTypeEnum.Payment) {
@@ -1427,7 +1428,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
-		util.simpleModal("提示", "是否确认要退出当前销售模式，并返回到销售？", res => {
+		util.simpleModal("提示", "是否要退出清空当前销售单？", res => {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
@@ -1438,7 +1439,6 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func* 取消促销和重置促销
 	this.ResetCX = util.callBind(this, function(e) {
-		console.log("传入的状态值：", e);
 		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
 		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {

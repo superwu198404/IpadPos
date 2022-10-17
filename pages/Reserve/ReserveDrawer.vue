@@ -97,7 +97,8 @@
 						</view>
 					</view>
 				</view>
-				<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image src="../../images/zhankaiqb-dt.png"></image>
+				<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image
+						src="../../images/zhankaiqb-dt.png"></image>
 				</view>
 			</view>
 			<view class="atlas">
@@ -189,7 +190,7 @@
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "", //蛋糕类型  
+					CARDID: "普通蛋糕", //蛋糕类型  
 					YD_STATUS: "1"
 				},
 				map: {
@@ -197,7 +198,7 @@
 					latitude: 30.570206594347283, //纬度
 					scale: 12, //缩放级别
 					markers: [],
-					key:Number(new Date())
+					key: Number(new Date())
 				},
 				hyinfo: util.getStorage("hyinfo"),
 				yn_add: false,
@@ -235,7 +236,7 @@
 				that = this;
 				await that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
-				that.Order.CARDID = that.GGDatas[0];
+				// that.Order.CARDID = that.GGDatas[0];
 				console.log("[DataInit]是否支持异店提货:", common.GetPOSCS_Local("YN_YDTH"));
 				that.YN_YDTH = common.GetPOSCS_Local("YN_YDTH") == 'Y' ? true : false; //查看是否支持异店提货
 				if (that.YN_YDTH) { //如果支持异店提货，则查询下当前区域门店数据
@@ -528,7 +529,7 @@
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
 				that.map.markers.pop();
-				console.log("[ConfirmOrderAddr]markers标点信息:",that.map.markers);
+				console.log("[ConfirmOrderAddr]markers标点信息:", that.map.markers);
 				that.map.markers = [{
 					id: 'client',
 					latitude: e.LONGITUDE,
@@ -541,7 +542,7 @@
 					}
 				}];
 				this.map.key = Number(new Date());
-				console.log("[ConfirmOrderAddr]markers新标点信息:",that.map.markers);
+				console.log("[ConfirmOrderAddr]markers新标点信息:", that.map.markers);
 				//宅配到家需要匹配最近的配送中心
 				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == '1') {
 					//匹配下裱花间
@@ -700,7 +701,7 @@
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "" //蛋糕类型
+					CARDID: "普通蛋糕" //蛋糕类型
 
 				};
 				that.ADDRS = [];
