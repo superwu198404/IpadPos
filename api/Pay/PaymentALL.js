@@ -457,20 +457,27 @@ var pointPay = {
 				type: flag ? 'Mobile' : 'ACCOUNT'
 			}
 		}, function(res) {
-			console.log("[PaymentAll]会员信息查询结果...",res);
+			console.log("[PaymentAll]积分抵现部分会员信息查询结果...",res);
+			let member_info = JSON.parse(res.data);
+			let score = member_info.JFBalance
+			if(score > body){//如果账户积分支持抵现
+				member.PointsDeduction("积分抵现中...", {
+					brand: getApp().globalData?.brand,
+					data: {
+						hyid: util.getStorage("hyinfo")?.hyId,
+						// hyid: "1000311647",
+						amount: body.point,
+						trade_no: body.out_trade_no,
+						money: body.point_money * 100
+					}
+				}, func, func);
+			}
+			else{
+				console.log("[PaymentAll]积分不足，无法抵现...",member_info);
+			}
 		}, function(err) {
 			util.simpleMsg("会员积分查询失败，请重试...", 'none');
 		})
-		// member.PointsDeduction("积分抵现中...", {
-		// 	brand: getApp().globalData?.brand,
-		// 	data: {
-		// 		hyid: util.getStorage("hyinfo")?.hyId,
-		// 		// hyid: "1000311647",
-		// 		amount: body.point,
-		// 		trade_no: body.out_trade_no,
-		// 		money: body.point_money * 100
-		// 	}
-		// }, func, func);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		member.PointsReturn("积分返还中...", {

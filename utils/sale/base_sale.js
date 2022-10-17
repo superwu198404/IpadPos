@@ -2105,6 +2105,7 @@ function GetSale(global, vue, target_name, uni) {
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
+			score_info: that.score_info,
 			PayList: that.payed,
 			actType: that.actType
 		}
@@ -2632,6 +2633,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.ScoreCount = function(list) {
+		console.log("[ScoreCount]积分原列表:",list);
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;
@@ -2651,8 +2653,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("001数据：", that.sale001);
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
-		_main.GetFZCX(this.Storeid, res => {
-			that.FZCX.oval = _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
+		_main.GetFZCX(this.Storeid, async res => {
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}
