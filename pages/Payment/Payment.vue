@@ -64,7 +64,7 @@
 						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="!PAD_SCAN"></image>
 						<image src="@/images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
 						<text v-if="!PAD_SCAN">使用扫码枪</text>
-						<text v-else>使用拍照扫码</text>
+						<text v-else style="color: #FE694B;">使用拍照扫码</text>
 					</label>
 				</view>
 			</view>
