@@ -49,6 +49,8 @@ var XsTypeObj = {
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
 			"ynEdit": true, //当前业务能否编辑商品
+			"ynResetCX": false, //是否清除了促销
+
 			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -270,6 +272,8 @@ var XsTypeObj = {
 			"ynSKDisc": true, //是否可以计算手工折扣
 			"ynEdit": true, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
+			"ynResetCX": false, //是否清除了促销
+
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			// "sale_credit": true,
@@ -1206,6 +1210,13 @@ function GetSale(global, vue, target_name, uni) {
 			// this.currentOperation["ynFzCx"] = false;
 			// this.currentOperation["ynCx"] = false; //特殊折扣和普通促销互斥
 		}
+		//清除一下之前产生的促销和折扣
+		this.ResetCXZK();
+		console.log("特殊折扣的操作权限：", this.currentOperation.Disc);
+		console.log("促销的操作权限：", this.currentOperation.ynCx);
+	})
+	//*func*清除促销和折扣
+	this.ResetCXZK = util.callBind(this, function(res) {
 		//切换折扣或者促销后 清空一下原来计算的折扣值
 		this.sale001.TBZDISC = 0; //zk 总标准折扣
 		this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -1223,8 +1234,6 @@ function GetSale(global, vue, target_name, uni) {
 			r.LSDISC = 0; //zk
 			r.TPDISC = 0; //zk
 		})
-		console.log("特殊折扣的操作权限：", this.currentOperation.Disc);
-		console.log("促销的操作权限：", this.currentOperation.ynCx);
 	})
 	//*func*辅助促销关闭回调
 	this.CloseFZCX = util.callBind(this, function(res) {
@@ -1415,12 +1424,30 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
 	})
-	//退出当前销售模式 返回到默认的销售模式
+	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
 		util.simpleModal("提示", "是否确认要退出当前销售模式，并返回到销售？", res => {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
+				}
+			}
+		})
+	});
+
+	//*func* 取消促销和重置促销
+	this.ResetCX = util.callBind(this, function(e) {
+		console.log("传入的状态值：", e);
+		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
+		util.simpleModal("提示", "是否确认要" + tip + "促销计算？", res => {
+			if (res) {
+				if (!this.currentOperation.ynResetCX) {
+					// this.currentOperation.ynCx = false;
+					this.ResetCXZK();
+					this.currentOperation.ynResetCX = true;
+				} else {
+					// this.currentOperation.ynCx = true;
+					this.SaleNetAndDisc();
 				}
 			}
 		})
@@ -1708,6 +1735,7 @@ function GetSale(global, vue, target_name, uni) {
 		"upload_point": false, //支付完毕后是否进行积分上传
 		"showEdit": false, //展开编辑商品
 		"ynEdit": false, //当前业务能否编辑商品
+		"ynResetCX": false, //是否清除了促销
 
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,

@@ -197,6 +197,8 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 		if (res.code && res.msg.length > 0) {
 			console.log("签到查询结果:", res);
 			openflag = res.msg[0].RUN_STATUS || 0;
+			store.OPENFLAG = openflag;
+			util.setStorage("store", store);
 		}
 	})
 	// console.log("门店签到查询sql：", sql1);
