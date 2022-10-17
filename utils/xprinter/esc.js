@@ -1282,7 +1282,7 @@ var jpPrinter = {
 		}
 		
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
-		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N" && xpType == "XS"){
+		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N" && type == "XS"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("取餐码: " + data.bill.substr(-4));
@@ -1386,7 +1386,7 @@ var jpPrinter = {
 		//支付方式分组的处理
 		let sale3_arrOrigin = JSON.stringify(data.sale3List);
 		let sale3_arr = [];
-		let zqNet = 0;
+		let zqNet = data.discountedAmount;
 		//付款方式
 		data.sale3List.forEach((item1, index1) => {
 			payTotal += parseFloat(item1.amt);		
@@ -1692,7 +1692,7 @@ var jpPrinter = {
 		//支付方式分组的处理
 		let sale3_arrOrigin = JSON.stringify(data.sale3List);
 		let sale3_arr = [];
-		let zqNet = 0;
+		let zqNet = data.discountedAmount;
 		//付款方式
 		data.sale3List.forEach((item1, index1) => {
 			payTotal += parseFloat(item1.amt);		
