@@ -24,6 +24,12 @@
 						<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 					</picker>
 				</label>
+				<label><text>*提货日期：</text>
+					<!-- <input type="date" v-model="Order.THDATE" /> -->
+					<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
+						<view>{{Order.TH_DATE}}</view>
+					</picker>
+				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
 					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange">
@@ -38,26 +44,21 @@
 				<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
 						v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
 				</label>
-				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
-				<label><text>*提货日期：</text>
-					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
-						<view>{{Order.TH_DATE}}</view>
+				<label><text>*蛋糕规格：</text>
+					<picker @change="GGChange" :range="GGDatas">
+						<view>{{Order.CARDID}}</view>
 					</picker>
 				</label>
+				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
+				<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
 				<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 				<label><text>*配送中心：</text>
 					<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
 						<view>{{Order.STR2}}-{{Order._STR2}}</view>
 					</picker>
 				</label>
-				<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
-				<label><text>*蛋糕规格：</text>
-					<picker @change="GGChange" :range="GGDatas">
-						<view>{{Order.CARDID}}</view>
-					</picker>
-				</label>
+
 				<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 			</view>
 			<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
