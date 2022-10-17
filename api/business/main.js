@@ -403,33 +403,52 @@ var getPrice = async function(spid, dqid, khzid) {
 	return price;
 }
 
-var GetFZCXNew = function(arr, sale1, spPrice) {
-	// let spArr = "";
-	// if (arr.length > 0) {
-	// 	arr.forEach(r => {
-	// 		r.Details.forEach(async r1 => {
-	// 			spArr += "'" + r.CLASSID + "',";
-	// 		})
-	// 	})
-	// 	spArr = spArr.substr(0, spArr.length - 1);
-	// 	let priceArr = await getPrice(spArr, dqid, khzid);
-	// console.log("商品集合：", spArr);
-	// console.log("商品价格集合：", priceArr);
-	// return;
-	// console.log("新促销传入的数据：", arr);
-	// console.log("新促销传入的数据1：", sale1);
-	// console.log("新促销传入的数据2：", spPrice);
-	arr.forEach(r => {
-		r.Details.forEach(r1 => {
-			r1.CZQTY = Math.floor((sale1.TNET || 0) / r1.XX_NET1);
-			let price = spPrice[r1.CLASSID].PRICE;
-			r1.PRICE = price;
-			r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);
+var GetFZCXNew = async function(arr, sale1, sale2, spPrice) {
+	let billStr = "";
+	if (arr.length > 0) {
+		arr.forEach(r => {
+			billStr += "'" + r.BILL + "',";
 		})
-	})
+		billStr = billStr.substr(0, billStr.length - 1);
+		let hasBill = []; //用来存储加购商品是否存在于促销活动限制商品中的促销活动单号
+		let sql = "select * from CXFORMD003 where bill in(" + billStr + ") and KHID='" + sale1.KHID + "'";
+		await db.get().executeQry(sql, "", res => {
+			let xzSPArr = res.msg; //所有生效的辅助促销活动限制商品集合
+			if (xzSPArr.length > 0) {
+				sale2.forEach(r1 => {
+					let arr1 = xzSPArr.filter(r2 => {
+						return r2.SPID == r1.SPID;
+					});
+					if (arr1.length > 0) {
+						arr1.map(r3 => {
+							if (hasBill.indexOf(r3.BILL) < 0) {
+								hasBill.push(r3.BILL);
+							}
+						})
+					}
+					console.log("筛选出来的含有限制商品的辅助促销活动单号：", hasBill);
+				})
+			}
+		}, err => {});
+		console.log("筛选后准备去重：", hasBill);
+		if (hasBill.length > 0) {
+			arr = arr.filter(r4 => {
+				return hasBill.indexOf(r4.BILL) < 0;
+			})
+			console.log("筛选去重后的促销活动：", arr);
+		}
+		arr.forEach(r => {
+			r.Details.forEach(r1 => {
+				r1.CZQTY = Math.floor((sale1.TNET || 0) / r1.XX_NET1);
+				let price = spPrice[r1.CLASSID].PRICE;
+				r1.PRICE = price;
+				r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);
+			})
+		})
+	}
 	return arr;
 }
-//计算促销价格
+//计算辅助促销价格
 var CalFZCX = function(fzcxArr, sale1) {
 	let yjnet = 0,
 		tsnum = 0,
