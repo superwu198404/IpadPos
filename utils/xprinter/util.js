@@ -334,7 +334,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note) => {
+const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,new_bill) => {
 	var xsType = "WM";
 	var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
@@ -365,9 +365,11 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note)
 	
 	var bsReason = "";
 	var bsNote = "";
+	var newBill="";
 	if(type == "WMTHBS"){
 		bsReason = bs_Reason;
 		bsNote = bs_Note;
+		newBill = new_bill;
 	}
 	var wmType = type;
 
@@ -422,6 +424,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note)
 		bsNote,
 		nowTime, //当前时间
 		posId,
+		newBill, //新产生的退货单号
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 

@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall">
 		<view class="logo">
-			<image src="@/images/kengee-logo.png" mode="widthFix"></image>
+			<image src="@/images/kengee-logo.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
@@ -30,11 +30,11 @@
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
 					</view>
-					<view @click="ShowTool('TX')">
+					<!-- <view @click="ShowTool('TX')">
 						<image class="xz" src="@/images/tongxun.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
-					</view>
+					</view> -->
 					<!-- <view @click="ShowTool('CD')">
 						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
@@ -45,10 +45,15 @@
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
 					</view>
-					<view class="currs" @click="CloseDB">
+					<!-- <view class="currs" @click="CloseDB">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
+					</view> -->
+					<view @click="ShowTool('CD')">
+						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
+						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
+						<text>重打小票</text>
 					</view>
 				</view>
 			</view>
@@ -88,7 +93,9 @@
 				current_info: null, //当前菜单信息
 				menu_info: null,
 				showGJ: false,
-				showCX: false
+				showCX: false,
+				click_num: 0,
+				timer: 0
 			};
 		},
 		methods: {
@@ -104,6 +111,27 @@
 					info: menu_info
 				});
 			},
+			OpenDevoloper() {
+				this.click_num++;
+				if (!this.timer)
+					this.timer = setTimeout(util.callBind(this, function() {
+						this.click_num = 0;
+						this.timer = 0;
+					}), 5000);
+				if (this.click_num === 10){
+					uni.showModal({
+						title:"输入密码",
+						editable:true,
+						success(res){
+							if(res.confirm && res.content==='1234321'){
+								uni.navigateTo({
+									url: "../index/index"
+								})
+							}
+						}
+					})
+				}
+			},
 			//工具
 			ShowTool: function(e) {
 				util.simpleMsg("暂未开放", true);
@@ -117,7 +145,7 @@
 					this.showCX = !this.showCX;
 				}
 			},
-			CloseDB:async function() {
+			CloseDB: async function() {
 				await db.get().close();
 			}
 		},

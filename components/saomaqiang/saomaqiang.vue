@@ -4,21 +4,58 @@
 </style>
 <template>
 	<!-- <view class="boxs"> -->
-		<!-- v-if="qd_show" -->
-		<view class="customer">
-			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">输入扫码枪标号 <button @click="Close()" class="guan">×</button></view>
-			<view class="clues">
-				<input type="text" placeholder="请输入"/>
-			</view>
-			<view class="affirm">
-				<button class="btn btn-hk" @click="Close()">取消</button>
-				<button class="btn" @click="Sign()">确定</button>
-			</view>
+	<!-- v-if="qd_show" -->
+	<view class="customer">
+		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+		<view class="h3">请使用扫码枪扫码 <button @click="ConfirmScan()" class="guan">×</button></view>
+		<view class="clues">
+			<input password="true" placeholder="请扫码" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />
 		</view>
+		<view class="affirm">
+			<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
+			<button class="btn" @click="ConfirmScan()">确定</button>
+		</view>
+	</view>
 	<!-- </view> -->
 </template>
 <script>
+	var app = getApp();
+	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
+	import _login from '@/api/business/login.js';
+	import _main from '@/api/business/main.js';
+
+	var that;
+	export default {
+		name: "saomaqiang",
+		props: {
+			dkhid: String,
+		},
+		data() {
+			return {
+				AuthCode: ""
+			};
+		},
+		created: function() {
+			that = this;
+		},
+		methods: {
+			ConfirmScan: function() {
+				console.log("扫码内容：", this.AuthCode);
+				let code = this.AuthCode;
+				this.AuthCode = "";
+				if (code) {
+					console.log("扫码内容1：", code);
+					uni.$emit("getAuthCode", code);
+				} else {
+					uni.$emit("getAuthCode");
+				}
+			},
+		}
+	}
 </script>
 
 <style>

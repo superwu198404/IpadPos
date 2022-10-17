@@ -435,6 +435,7 @@
 							return r.ADDRID != null;
 						});
 						that.yn_add = false;
+						this.ShowAllAddressList = true;
 					} else {
 						that.ShowAddADDR(); //默认展开地址新增表单
 					}
