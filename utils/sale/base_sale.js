@@ -2133,14 +2133,14 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
-			uni.$emit('stop-message');
-			// that.PayParamAssemble();
+			that.PayParamAssemble();
 		} else {
 			console.log("[Pay]未进入支付!");
 		}
 	}
 
 	this.PayParamAssemble = function(sales) {
+		uni.$emit('stop-message');
 		that.log("[PayParamAssemble]支付参数组装...")
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象

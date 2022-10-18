@@ -305,7 +305,6 @@
 				console.log("[MonitorEvent]事件监听开始...");
 				uni.$off('stop-message');
 				uni.$on('stop-message', util.callBind(this, function() { //停止消息轮询
-					console.warn("[MonitorEvent]STOP!!!!");
 					let timer = getApp().globalData.msgInt;
 					console.log("[MonitorEvent]消息轮询停止!", timer);
 					clearInterval(timer);
