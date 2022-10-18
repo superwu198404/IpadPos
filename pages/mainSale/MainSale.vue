@@ -286,9 +286,12 @@
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="mainSale.HY.open=true"
-								v-if="ShowHY">{{mainSale.HY.val.hyId}}</button>
-							<button class="btn" v-else>未登录...</button>
+							<view>
+								<button class="btn" @click="mainSale.HY.open=true"
+									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
+								<button class="btn" v-else>未登录...</button>
+								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
+							</view>
 						</label>
 						<text class="qingk"
 							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
@@ -312,7 +315,8 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<view class="danjia" v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">
+								<view class="danjia"
+									v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
 									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{mainSale.actType=='Payment'?sp.QTY:-sp.QTY}}</text>
@@ -332,7 +336,8 @@
 								<text
 									v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">总价￥{{mainSale.actType=='Payment'?sp.NET:-sp.NET}}</text>
 								<!-- 数量编辑 -->
-								<view class="bianji" v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
+								<view class="bianji"
+									v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
@@ -401,7 +406,8 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"
+			:product="mainSale.sale002"></SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -499,11 +505,11 @@
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
 			},
-			CheckGoodIsLock:function(){
-				return util.callBind(this,function(index){
-					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:",{
+			CheckGoodIsLock: function() {
+				return util.callBind(this, function(index) {
+					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", {
 						index,
-						lock:this.mainSale.currentOperation
+						lock: this.mainSale.currentOperation
 					});
 					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
@@ -766,5 +772,14 @@
 	.price .zongjia {
 		font-size: 28rpx;
 		margin-left: 26rpx;
+	}
+	
+	.score-box{
+		background-color:var(--green);
+		border-radius: 5px;
+		font-size: 0.6rem;
+		padding: 2px 5px;
+		color: white;
+		white-space: nowrap;
 	}
 </style>

@@ -347,8 +347,19 @@ const TXSql = [`drop table POS_TXFILE`,
 			    CONNSTR    VARCHAR(100),  
 			    CONSTRAINT POS_TXFILE_KEY PRIMARY KEY (SEQ_NO))`
 ];
+
+//创建重打表的过程
+const PRINTSql = [`drop table POS_XSBILLPRINT`,
+	`CREATE TABLE POS_XSBILLPRINT( 
+             XSBILL    VARCHAR2(20)  NOT NULL,  
+             XSDATE    DATE   NOT NULL, 
+             BILLSTR   VARCHAR2(6), 
+             CONSTRAINT POS_XSBILLPRINT PRIMARY KEY (XSBILL,XSDATE))`
+];
+
 export default {
 	createSql,
 	ZFRuleSql,
-	TXSql
+	TXSql,
+	PRINTSql
 }
