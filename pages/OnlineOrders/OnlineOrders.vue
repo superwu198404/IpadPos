@@ -562,7 +562,7 @@
 						this.GetOnlineOrders(util.callBind(this,function(){
 							let type = Object.keys(this.onlineOrdersGroup)[0];
 							if(this.onlineOrdersGroup[type]){
-								Object.assign(this.details.details,this.onlineOrdersGroup[type][0]);
+								Object.assign(this.details.order,this.onlineOrdersGroup[type][0]);
 							}
 						})); //刷新页面
 						util.simpleMsg("接受成功!")

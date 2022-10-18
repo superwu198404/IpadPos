@@ -269,54 +269,8 @@
 				console.log("[Head]设置大客户名称!", info);
 				this.DKFNAME = info;
 			}))
-			_msg.ShowMsg(that.KHID, "", res => {
-				that.MsgData = res;
-				that.XT_MsgData = res.filter((r, i) => {
-					return r.type == 'SYSTEM';
-				});
-				that.YW_MsgData = res.filter((r, i) => {
-					//外卖，外卖预定单，线上
-					return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
-				});
-				if (that.YW_MsgData.length > 0) {
-					that.showYWMsg = false;
-					// console.log("触发没有：");
-					that.$nextTick(() => {
-						// console.log("触发没有1：");
-						that.showYWMsg = true;
-					})
-				} else {
-					that.showYWMsg = false;
-				}
-				if (that.XT_MsgData.length > 0) {
-					let newArr = that.XT_MsgData[0].Details.map(r => {
-						return {
-							key: r.key,
-							val: JSON.parse(r.val),
-							newVal: JSON.parse(r.val)[0]
-						}
-					})
-					console.log("分组后的消息：", newArr);
-					that.urgenMsg = newArr.find(r => {
-						return r.newVal.IMTYPE == '1'
-					})
-					if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
-						that.viewTime = that.urgenMsg.VIEWTIME || 5;
-						let id = setInterval(r => {
-							that.viewTime -= 1;
-							if (that.viewTime == 0) {
-								that.viewTime == 0;
-								clearInterval(id);
-							}
-						}, 1000);
-					}
-				}
-				// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
-				// console.log(
-				// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
-				// console.log(
-				// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
-			});
+			this.GetStoreMessage();
+			this.MonitorEvent(); //事件监听
 			//搜索蓝牙
 			that.startSearch();
 			that.onBLEConnectionStateChange();
@@ -346,6 +300,78 @@
 						this[data.name]();
 					}
 				}))
+			},
+			MonitorEvent: function() {
+				console.log("[MonitorEvent]事件监听开始...");
+				uni.$off('stop-message');
+				uni.$on('stop-message', util.callBind(this, function() { //停止消息轮询
+					console.warn("[MonitorEvent]STOP!!!!");
+					let timer = getApp().globalData.msgInt;
+					console.log("[MonitorEvent]消息轮询停止!", timer);
+					clearInterval(timer);
+					getApp().globalData.msgInt = 0;
+				}));
+				console.log("[MonitorEvent]消息轮询停止事件监听开始...");
+				uni.$off('continue-message');
+				uni.$on('continue-message', util.callBind(this, function() { //继续消息轮询
+					if (!getApp().globalData.msgInt) {
+						console.log("[MonitorEvent]消息轮询继续!");
+						this.GetStoreMessage();
+					} else {
+						console.log("[MonitorEvent]消息轮询正在运行!", timer);
+					}
+				}));
+				console.log("[MonitorEvent]消息轮询继续事件监听开始...");
+			},
+			GetStoreMessage: function() { //获取门店消息
+				_msg.ShowMsg(that.KHID, "", res => {
+					that.MsgData = res;
+					that.XT_MsgData = res.filter((r, i) => {
+						return r.type == 'SYSTEM';
+					});
+					that.YW_MsgData = res.filter((r, i) => {
+						//外卖，外卖预定单，线上
+						return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
+					});
+					if (that.YW_MsgData.length > 0) {
+						that.showYWMsg = false;
+						// console.log("触发没有：");
+						that.$nextTick(() => {
+							// console.log("触发没有1：");
+							that.showYWMsg = true;
+						})
+					} else {
+						that.showYWMsg = false;
+					}
+					if (that.XT_MsgData.length > 0) {
+						let newArr = that.XT_MsgData[0].Details.map(r => {
+							return {
+								key: r.key,
+								val: JSON.parse(r.val),
+								newVal: JSON.parse(r.val)[0]
+							}
+						})
+						console.log("分组后的消息：", newArr);
+						that.urgenMsg = newArr.find(r => {
+							return r.newVal.IMTYPE == '1'
+						})
+						if (that.urgenMsg && JSON.stringify(that.urgenMsg) != "{}") {
+							that.viewTime = that.urgenMsg.VIEWTIME || 5;
+							let id = setInterval(r => {
+								that.viewTime -= 1;
+								if (that.viewTime == 0) {
+									that.viewTime == 0;
+									clearInterval(id);
+								}
+							}, 1000);
+						}
+					}
+					// console.log("[Head-Created]系统消息数据 XT_MsgData:", that.XT_MsgData);
+					// console.log(
+					// 	"[Head-Created]业务消息数据 YW_MsgData:", that.YW_MsgData);
+					// console.log(
+					// 	"[Head-Created]紧急消息数据 urgenMsg:", that.urgenMsg);
+				});
 			},
 			//消息已读
 			ReadMsg: function(e, i) {

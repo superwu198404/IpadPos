@@ -2020,7 +2020,7 @@ function GetSale(global, vue, target_name, uni) {
 	 */
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
-
+		uni.$emit('continue-message');
 		// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
 		// 	.ynCx, this.currentOperation.FZCX);
 		// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
@@ -2133,7 +2133,8 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
-			that.PayParamAssemble();
+			uni.$emit('stop-message');
+			// that.PayParamAssemble();
 		} else {
 			console.log("[Pay]未进入支付!");
 		}
