@@ -832,6 +832,10 @@ page {
 .h5 label{
 	display: flex;
 }
+.h5 label button{
+	height: 60rpx;
+	line-height: 60rpx;
+}
 .goods {
 	height: 33%;
 	overflow: auto;

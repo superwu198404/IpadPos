@@ -82,11 +82,11 @@
 						<label class="from-label">
 							<text>到货日期：</text>
 							<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
-							<picker v-if="mode('edit')" class="date-picker picker" mode="date" :value="getOrderDate"
+							<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day" :value="getOrderDate"
 								:start="new Date()" @change="SelectDate">
 								<view class="uni-input">{{ details.order.DATE_DH.split(' ')[0] }}</view>
 							</picker>
-							<picker v-if="mode('edit')" class="time-picker picker" mode="time" :value="getOrderTime"
+							<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time" :value="getOrderTime"
 								:start="getCurrentTime" @change="SelectTime">
 								<view class="uni-input">{{ details.order.DATE_DH.split(' ')[1] }}</view>
 							</picker>

@@ -712,11 +712,11 @@ page {
 	margin: 0 1.5% 40rpx;
 }
 
-.nots p {
+.nots .tits p {
 	color: #ccc;
 }
-.nots .selected{
-	color: #666;
+.selected .tits p {
+	color: #333;
 }
 .btn {
 	background-color: #42B14B;
