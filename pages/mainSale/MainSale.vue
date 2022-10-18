@@ -321,9 +321,9 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<view class="danjia" v-if="!mainSale.currentOperation.showEdit">
+								<view class="danjia" v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
-									<text>单价￥{{mainSale.actType=='Payment'?sp.PRICE:-sp.PRICE}}/</text>
+									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{mainSale.actType=='Payment'?sp.QTY:-sp.QTY}}</text>
 								</view>
 							</view>
@@ -339,9 +339,9 @@
 								</view>
 								<!-- <text v-if="!mainSale.currentOperation.showEdit">原价￥{{(Price(sp.SPID)*sp.QTY).toFixed(2)}}</text> -->
 								<text
-									v-if="!mainSale.currentOperation.showEdit">总价￥{{mainSale.actType=='Payment'?sp.NET:-sp.NET}}</text>
+									v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">总价￥{{mainSale.actType=='Payment'?sp.NET:-sp.NET}}</text>
 								<!-- 数量编辑 -->
-								<view class="bianji" v-if="mainSale.currentOperation.showEdit">
+								<view class="bianji" v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
@@ -506,6 +506,15 @@
 			Price: function() {
 				return util.callBind(this, function(spid) {
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
+				})
+			},
+			CheckGoodIsLock:function(){
+				return util.callBind(this,function(index){
+					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:",{
+						index,
+						lock:this.mainSale.currentOperation
+					});
+					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET

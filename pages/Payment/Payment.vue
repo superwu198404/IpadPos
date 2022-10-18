@@ -1300,7 +1300,7 @@
 						no: payload.no,
 						bill: payload.out_trade_no //保存失败的订单号
 					})
-					console.log("[OrderGenarator]支付失败信息:",trade);
+					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
 					console.log("[OrderGenarator]失败记录：", trade);
 					this.PayList.push(trade);
@@ -1484,10 +1484,17 @@
 				this.CheckActionComplet(); //此函数一定要在待支付金额和退款金额后进行调用
 				console.log("[ParamInit]待支付金额初始化后:", this.dPayAmount);
 			},
+			ImmediateRefundCheck() { //直接退款的条件检测
+				if (this.SALES.sale3.length === 1 && this.SALES.sale3[0].FKID === 'ZG01')//为赊销退单
+					return true;
+				// else if(){} //如果有其他业务分支...
+				else
+					return false;
+			},
 			CheckActionComplet() { //判断支付或退款动作是否完成（初始化阶段判断）
 				if (this.isRefund) { //判断退款金额是否为 0（不判断支付是因为支付已经做了相关处理）
 					let num = Number(this.refundView.debtAmount);
-					if (!isNaN(num) && num === 0) {
+					if (!isNaN(num) && num === 0 || this.ImmediateRefundCheck()) {
 						this.CanBack = true;
 						this.RefundFinish = true;
 						this.RefundList.map(i => i.fail = false);
