@@ -1425,19 +1425,19 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("close-FZCX");
 		uni.$off("ReturnSale");
 		uni.$off("Switch");
+		uni.$off("tools");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
-
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
-
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
+		uni.$on("tools",this.ToolsManage);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1507,6 +1507,12 @@ function GetSale(global, vue, target_name, uni) {
 		score: 0,
 		money: 0
 	}
+	//工具栏界面
+	this.tool_pages = {
+		promotions:false,//当前促销活动
+		communication:false,//通讯
+		tickers:false//重打小票
+	}
 	//促销跟踪
 	this.cxfsArr = [];
 	// 通讯表\sqlite 额外sql
@@ -1546,6 +1552,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
+	
+	this.Page.$watch('mainSale.tool_pages', util.callBind(this, function(n, o) {
+		console.warn('		发生变化');
+	}),{ deep:true })
 
 	this.update = function() {
 		if (that.Page) {
@@ -1854,6 +1864,15 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
 	}
+	
+	this.ToolsManage = util.callBind(this,function(info){
+		console.log("[ToolsManage]信息:",info);
+		if(this.tool_pages[info] !== undefined){
+			console.log("[ToolsManage]修改前:",this.tool_pages[info]);
+			this.tool_pages[info] = !this.tool_pages[info];
+			console.log("[ToolsManage]修改后:",this.tool_pages[info]);
+		}
+	})
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
 	this.setComponentsManage = function(e, pm_mtype) {
