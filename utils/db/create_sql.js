@@ -354,7 +354,7 @@ const PRINTSql = [`drop table POS_XSBILLPRINT`,
              XSBILL    VARCHAR2(20)  NOT NULL,  
              XSDATE    DATE   NOT NULL, 
              BILLSTR   VARCHAR2(6), 
-             CONSTRAINT POS_XSBILLPRINT_KEY PRIMARY KEY (XSBILL,XSDATE))`
+             CONSTRAINT POS_XSBILLPRINT PRIMARY KEY (XSBILL,XSDATE))`
 ];
 
 export default {
