@@ -1227,6 +1227,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
+		console.log("进入清除促销折扣方法");
 		//切换折扣或者促销后 清空一下原来计算的折扣值
 		this.sale001.TBZDISC = 0; //zk 总标准折扣
 		this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -1456,12 +1457,12 @@ function GetSale(global, vue, target_name, uni) {
 		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {
 				if (!this.currentOperation.ynResetCX) {
-					// this.currentOperation.ynCx = false;
+					this.currentOperation.ynCx = false;
 					this.ResetCXZK();
 				} else {
-					// this.currentOperation.ynCx = true;
-					this.SaleNetAndDisc();
+					this.currentOperation.ynCx = true;
 				}
+				this.SaleNetAndDisc();
 				this.currentOperation.ynResetCX = !this.currentOperation.ynResetCX;
 			}
 		})
@@ -1596,14 +1597,19 @@ function GetSale(global, vue, target_name, uni) {
 			if (!newval || Object.keys(newval).length == 0) { //为空或者默认值
 				this.cval.DKFID = this.Defval;
 				that.setSaleTypeDefval("HY");
+				that.setSaleTypeDefval("ynCx");
 				this.base.HY.cval = {};
 				store.DKFID = this.Defval;
 				store.DKFNAME = '默认大客户';
 			} else {
 				this.cval = newval;
 				that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
+				that.currentOperation["ynCx"] = false; //选择大客户后 促销也同步失效
 				store.DKFID = newval.DKFID;
 				store.DKFNAME = newval.NAME;
+				if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
+					that.ResetCXZK(); //正向操作时 选择大客户后清除促销折扣
+				}
 			}
 			util.setStorage("store", store);
 		}
