@@ -3,11 +3,11 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs" v-if="qd_show">
+	<view class="boxs">
 	<!--  -->
 	<view class="customer">
 		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-		<view class="h3">重打小票 <button @click="ConfirmScan()" class="guan">×</button></view>
+		<view class="h3">重打小票 <button @click="CloseCD" class="guan">×</button></view>
 		<view class="clues">
 			<view class="infors">
 				<text>销售日期：</text>
@@ -16,14 +16,24 @@
 				</picker>
 			</view>
 			<view class="infors">
-				<text>小票编号：</text>
-				<input password="true" placeholder="请输入小票号" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />
+				<text>小票单号：</text>
+				<input password="true" placeholder="请输入小票号" @confirm="ConfirmCD" v-model="xsBill" focus="true" />
 			</view>
 		</view>
 		<view class="affirm">
-			<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
-			<button class="btn" @click="ConfirmScan()">确定</button>
+			<button class="btn btn-hk" @click="CloseCD">取消</button>
+			<button class="btn" @click="ConfirmCD">确定</button>
 		</view>
+	</view>
+	<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
+	<!-- 画布 -->
+	<view class="canvasdiv" :style="'visibility:hidden;'">
+		<canvas canvas-id="couponQrcode" class="canvas"
+			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+		<canvas canvas-id="canvasLogo" class="canvas"
+			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+		<canvas canvas-id="canvasXPEWM" class="canvas"
+			:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 	</view>
 	</view>
 </template>
@@ -36,19 +46,55 @@
 	import util from '@/utils/util.js';
 	import _login from '@/api/business/login.js';
 	import _main from '@/api/business/main.js';
-
+	import PrinterPage from '@/pages/xprinter/receipt';
+	import cx_util from '@/utils/cx/cx_common.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
+	
 	var that;
 	export default {
 		name: "saomaqiang",
 		props: {
 			TH_DATE: "",
 		},
+		components: {
+			PrinterPage
+		},
 		data() {
 			return {
-				AuthCode: ""
+				xsBill: "",
+				qd_show: true,
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 200, //二维码宽
+				qrCodeHeight: 200, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
+				POS_XSBILLPRINT: [], //重打查询数据集合
 			};
 		},
-		
+		created : function(){
+			this.qd_show = true;
+			
+			this.POS_XSBILLPRINT = [];
+			(util.callBind(this, async function() {
+				try {
+					await RequestSend(`select * from POS_XSBILLPRINT order by XSDATE desc limit 1`, util.callBind(this, function(res) {
+						if (res.code) {
+							this.POS_XSBILLPRINT = JSON.parse(res.data);
+							console.log("获取重打数据 111",this.FKDA_INFO);
+						} else {
+							//util.simpleMsg("获取重打数据失败!", true)
+						}
+					}))
+				} catch (e) {
+					//util.simpleMsg("获取重打数据失败!", e);
+					console.log("获取重打数据失败",e);
+				}
+			}))()
+		},
 		methods: {
 			dateChange: e => {
 				that.Order.TH_DATE = e.detail.value;
@@ -57,6 +103,21 @@
 			timeChange: e => {
 				that.Order.TH_TIME = e.detail.value;
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
+			},
+			//重打小票
+			ConfirmCD: function(data) {
+				let that = this;
+				let bill = cx_util.snvl(that.xsBill,"");
+				if(bill == ""){
+					util.simpleMsg("小票单号不能为空!", true);
+					return;
+				}
+				that.$refs.printerPage.againPrinter(that.refund_no);
+			},
+			//重打小票关闭
+			CloseCD: function(data) {
+				// this.qd_show = false;
+				this.$emit("ClosePopup");
 			},
 		}
 	}
