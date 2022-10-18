@@ -23,7 +23,7 @@
 					</label>
 					<label>
 						<text>提货时间：</text>
-						<picker mode="time" @change="ExtractTimeChange">
+						<picker mode="time" fields="time" @change="ExtractTimeChange">
 							<view>{{ ExtractTime }}</view>
 						</picker>
 					</label>
