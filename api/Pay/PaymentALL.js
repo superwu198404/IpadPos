@@ -336,6 +336,7 @@ var kengeePay = {
 			}, (err) => {
 				util.simpleMsg("读卡异常!" + err.msg, true)
 				console.log("[ReadCard]读卡异常!", err);
+				if(catchFunc) catchFunc(err);
 			});
 		})
 	},
@@ -460,7 +461,7 @@ var pointPay = {
 			console.log("[PaymentAll]积分抵现部分会员信息查询结果...",res);
 			let member_info = JSON.parse(res.data);
 			let score = member_info.JFBalance
-			if(score > body){//如果账户积分支持抵现
+			if(score > body.point){//如果账户积分支持抵现
 				member.PointsDeduction("积分抵现中...", {
 					brand: getApp().globalData?.brand,
 					data: {

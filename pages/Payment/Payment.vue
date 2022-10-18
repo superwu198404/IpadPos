@@ -111,7 +111,7 @@
 								<view class="paylists">
 									<view class="Methods"
 										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding)"
-										v-if="pay.pay_num == 0">
+										v-if="pay.pay_num <= 3">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
@@ -996,8 +996,6 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
-				console.log("[PayWayInfo]支付类型:", type);
-				console.log("[PayWayInfo]支付方式列表:", this.PayWayList);
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			//退款操作
@@ -1209,6 +1207,10 @@
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);
 						this.authCode = ""; //避免同一个付款码多次使用
+						console.log("[Payment-付款]包装信息:", {
+							assemble: payAfter,
+							type: info.type
+						});
 						this.orderGenarator(payAfter, info.type, null,
 							true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this))
@@ -1285,12 +1287,17 @@
 						}, result));
 					}
 				} else { //如果为失败的支付请求
-					this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+					console.log("[OrderGenarator]支付失败请求...");
+					let trade = this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: (payload.money / 100).toFixed(2),
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no //保存失败的订单号
-					}));
+					})
+					console.log("[OrderGenarator]支付失败信息:",trade);
+					this.retryEnd(trade, fail);
+					console.log("[OrderGenarator]失败记录：", trade);
+					this.PayList.push(trade);
 				}
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -1383,11 +1390,22 @@
 					actionType: this.useOrderTypeChoice() //values： INCREASE(增加) or DECREASE(减少)
 				}, obj);
 			},
+			ExistsAllowScore: function() { //判断是否允许使用积分抵现操作
+				console.log("[ExistsAllowScore]", util.getStorage("hyinfo"));
+				if (!util.getStorage("hyinfo")?.hyId) {
+					let pay_info = this.PayWayList.find(i => i.type === 'HyJfExchange');
+					if (pay_info) pay_info.yn_use = 'N';
+				} else {
+					let pay_info = this.PayWayList.find(i => i.type === 'HyJfExchange');
+					if (pay_info) pay_info.yn_use = 'Y';
+				}
+			},
 			//初始化
 			paramInit: function() {
 				that = this;
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
 				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
+				this.ExistsAllowScore();
 				var prev_page_param = this.$store.state.location;
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
@@ -1396,8 +1414,8 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
-					this.CashOffset.Money = prev_page_param?.score_info.money;
-					this.CashOffset.Score = prev_page_param?.score_info.score;
+					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
+					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
 						pay: this.CashOffset,
 						param: prev_page_param?.score_info
@@ -1541,9 +1559,9 @@
 			//返回上个页面
 			backPrevPage: function() {
 				if (this.CanBack) {
-					console.log("[BackPrevPage]待支付金额:", this.dPayAmount);
+					console.log("[BackPrevPage]待支付金额:", this.toBePaidPrice());
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.dPayAmount) === 0 || this
+					if (Number(this.toBePaidPrice()) === 0 || this
 						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.event.emit("FinishOrder", {
 							code: true,

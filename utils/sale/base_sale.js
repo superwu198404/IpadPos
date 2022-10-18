@@ -1368,7 +1368,7 @@ function GetSale(global, vue, target_name, uni) {
 		for (var i = this.sale002.length - 1; i >= 0; i--) {
 			let item = this.sale002[i];
 			// console.log("当前商品行：", item);
-			if (i < this.currentOperation.lockRows && item.QTY !== 0) {
+			if (i < this.currentOperation.lockRows && item.QTY !== 0 && item.QTY != item.$raw.QTY) {//1、必须在锁定行。2、数量必须改变了才提示。
 				item.QTY = item.$raw.QTY ?? item.QTY;
 				attempt_lock_row = true;
 			} else
@@ -2511,7 +2511,7 @@ function GetSale(global, vue, target_name, uni) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0) {
+		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0 && pm_qty != this.sale002[pm_row].QTY) {
 			util.simpleMsg("该商品已被锁定!", true)
 			console.log("[UpdateSp]商品处于被锁定行，无法修改数量!");
 			return true;
