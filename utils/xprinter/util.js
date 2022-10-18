@@ -857,8 +857,10 @@ const getBillPrinterData = async (xsBill) => {
 	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("重打数据查询成功", res);
-		billStr = res.msg[0].BILLSTR;
-		console.log("重打数据查询成功", res.msg[0].XSBILL);
+		if(res.msg != null && res.msg != ""){
+			billStr = res.msg[0].BILLSTR;
+			console.log("重打数据查询成功", res.msg[0].XSBILL);
+		}
 	}, function(err) {
 		console.log("获取打印数据出错:", err);
 		uni.showToast({
@@ -867,6 +869,25 @@ const getBillPrinterData = async (xsBill) => {
 		})
 	});
 	return billStr;
+}
+
+/**
+ * 查询打印记录，时间最近的一条记录
+ * @param {xsBill}  
+ */
+const getBillPrinterMax = async () => {
+	let xsBill = "";
+	let sql = "select * from POS_XSBILLPRINT order by XSDATE desc limit 1";
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("重打数据查询成功 getBillPrinterMax", res);
+		if(res.msg != null && res.msg != ""){
+			xsBill = res.msg[0].XSBILL;
+			console.log("重打数据查询成功 getBillPrinterMax", res.msg[0].XSBILL);
+		}
+	}, function(err) {
+		console.log("获取打印数据出错 getBillPrinterMax:", err);
+	});
+	return xsBill;
 }
 
 const groupByOrder = function(array, f) {
@@ -1083,6 +1104,7 @@ module.exports = {
 	getPOSCS: getPOSCS,
 	commonPOSCS: commonPOSCS,
 	getBillPrinterData: getBillPrinterData,
+	getBillPrinterMax: getBillPrinterMax,
 	onlyFourPhone: onlyFourPhone,
 	groupBy: groupBy,
 	getSum: getSum,
