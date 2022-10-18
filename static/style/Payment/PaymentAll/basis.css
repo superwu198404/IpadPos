@@ -351,8 +351,7 @@ page {
 }
 
 .checkout .buyer {
-	background-color: #E0EAE9;
-	border: 1px solid #006B44;
+	background-color: #eee;
 	border-radius: 60rpx;
 	padding: 0 20rpx;
 	max-width: 500rpx;
@@ -362,16 +361,16 @@ page {
 }
 
 .checkout .buyer image {
-	width: 22rpx;
-	height: 22rpx;
+	width: 38rpx;
+	height: 38rpx;
 }
 .checkout .buyer text{
 	display: block;
-	max-width: 460rpx;
+	max-width: 440rpx;
 }
 .checkout .buyer image:nth-child(1) {
-	width: 30rpx;
-	height: 30rpx;
+	width: 38rpx;
+	height: 38rpx;
 }
 
 .checkout label {
@@ -395,8 +394,8 @@ page {
 }
 
 .checkout label image {
-	width: 42rpx;
-	height: 42rpx;
+	width: 38rpx;
+	height: 38rpx;
 	margin-right: 6rpx;
 }
 
@@ -623,6 +622,7 @@ page {
 	font-weight: 700;
 	position: relative;
 	z-index: 9;
+	color:#333;
 }
 
 .bom-zhifu .pattern:nth-child(1) label {
@@ -713,9 +713,11 @@ page {
 }
 
 .nots p {
-	color: #CCCCCC;
+	color: #ccc;
 }
-
+.nots .selected{
+	color: #666;
+}
 .btn {
 	background-color: #42B14B;
 	color: #fff;

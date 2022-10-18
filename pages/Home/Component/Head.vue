@@ -37,9 +37,9 @@
 						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 					<label @click="ShowPrint()">
-						<!-- ：{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼ -->
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
+						{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼
 					</label>
 					<label>
 						<button class="rijie" v-if="showSale" @click="ReturnSale()">清空</button>
@@ -242,6 +242,7 @@
 		watch: {
 			_showSale: function(n, o) {
 				this.showSale = this._showSale;
+				console.log("Head->showSale:", this.showSale);
 			},
 			_ynDKF: function(n, o) {
 				this.ynDKF = this._ynDKF;
@@ -256,6 +257,7 @@
 			that.startSearch();
 		},
 		created: function(e) {
+			this.showSale = this._showSale;
 			that = this;
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
@@ -418,12 +420,12 @@
 			},
 			//退出app
 			LoginOut: async function() {
-				let arr = await common.GetTXFILE();
-				console.log("未处理单据：", arr);
-				if (arr.length > 0) {
-					util.simpleMsg("当前有未处理的单据，暂无法退出", "none");
-					return;
-				}
+				// let arr = await common.GetTXFILE();
+				// console.log("未处理单据：", arr);
+				// if (arr.length > 0) {
+				// 	util.simpleMsg("当前有未处理的单据，暂无法退出", "none");
+				// 	return;
+				// }
 				util.simpleModal("提示", "是否确认退出销售？", e => {
 					if (e) { //点击了确定
 						// let store = util.getStorage("store");
@@ -1302,5 +1304,8 @@
 
 	.checkout .rijie {
 		background-color: #FE694B;
+		height: 44rpx;
+		line-height: 44rpx;
+
 	}
 </style>

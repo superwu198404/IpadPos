@@ -71,6 +71,14 @@
 				//初始化支付方式和全局配置参数
 				//console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);
+				//测试数据：
+				// let sql =
+				// 	"select * FROM cxformd001 where bill='FZCX2210170002' and KHID = 'K200QTD005' AND Yn_Jslb = 'F'";
+				// db.get().executeQry(sql1, "", res => {
+				// 	console.log("查询结果：", res);
+				// }, err => {
+				// 	console.log("查询错误：", err);
+				// })
 			},
 			GetKHIDS: function() {
 				if (that.khid) {

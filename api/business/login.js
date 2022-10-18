@@ -19,7 +19,7 @@ var GetPassWord = function(khid, userid, password, func) {
 			console.log("密文解密：", ps);
 			newPs = newPs.substr(2, newPs.length - 4);
 			if (newPs != password) {
-				util.simpleMsg("密码错误！", true);
+				util.simpleMsg("密码输入错误", true);
 				return;
 			}
 			if (func) func({
@@ -32,7 +32,7 @@ var GetPassWord = function(khid, userid, password, func) {
 				}
 			});
 		} else {
-			util.simpleMsg("账号错误", true);
+			util.simpleMsg("账号不允许登录当前门店！", "none");
 		}
 	}, err => {
 		util.simpleMsg("校验异常", true);
@@ -197,6 +197,8 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 		if (res.code && res.msg.length > 0) {
 			console.log("签到查询结果:", res);
 			openflag = res.msg[0].RUN_STATUS || 0;
+			store.OPENFLAG = openflag;
+			util.setStorage("store", store);
 		}
 	})
 	// console.log("门店签到查询sql：", sql1);

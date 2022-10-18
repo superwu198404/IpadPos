@@ -665,11 +665,11 @@
 	}
 
 	.meminfo .goods {
-		height: 48%;
+		height: 46%;
 	}
 
 	.from-label {
-		margin-bottom: 6rpx;
+		margin-bottom: 2rpx;
 	}
 </style>
 <style>
