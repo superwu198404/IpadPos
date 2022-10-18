@@ -23,8 +23,8 @@
 							</view>
 							<view class="discount">
 								<view class="zhekou">
-									<label
-										v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">· {{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span>
+									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">·
+										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span>
 									</label>
 								</view>
 								<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
@@ -35,10 +35,10 @@
 										</checkbox-group>
 									</label>
 									<view class="zhekou" style="margin-top:0;border:none;">
-									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-										<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
-										<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
-									</label>
+										<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
+											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
+											<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
+										</label>
 									</view>
 								</view>
 							</view>
@@ -52,8 +52,8 @@
 							</view>
 							<view class="discount">
 								<view class="zhekou">
-									<label
-										v-for="(item,index) in DKFZKDatas">· {{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
+									<label v-for="(item,index) in DKFZKDatas">·
+										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
 									<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 								</view>
 							</view>
@@ -123,6 +123,12 @@
 				ProductOld: [],
 				YN_LSZK: false
 			};
+		},
+		watch: {
+			product: function(n, o) {
+				this.Product = this.product;
+				console.log("特殊折扣传入的商品信息:", this.Product);
+			},
 		},
 		created: function() {
 			that = this;
@@ -368,20 +374,22 @@
 </script>
 
 <style>
-	.special{
+	.special {
 		position: relative;
 		padding-bottom: 150rpx;
 	}
-	.special .confirm{
+
+	.special .confirm {
 		position: absolute;
 		left: 0;
-		bottom:0;
+		bottom: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		background-color: #fff;
-		width:100%;
+		width: 100%;
 	}
+
 	.special .confirm .btn {
 		width: 30%;
 		margin: 0 2%;

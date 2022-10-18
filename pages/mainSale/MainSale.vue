@@ -319,7 +319,8 @@
 									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
-								<view class="danjia" v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">
+								<view class="danjia"
+									v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">
 									<!-- <text>单价￥{{Price(sp.SPID)}}/</text> -->
 									<text>单价￥{{sp.PRICE}}/</text>
 									<text><em>×</em>{{mainSale.actType=='Payment'?sp.QTY:-sp.QTY}}</text>
@@ -339,7 +340,8 @@
 								<text
 									v-if="!mainSale.currentOperation.showEdit || CheckGoodIsLock(spinx)">总价￥{{mainSale.actType=='Payment'?sp.NET:-sp.NET}}</text>
 								<!-- 数量编辑 -->
-								<view class="bianji" v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
+								<view class="bianji"
+									v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
 										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
 											mode="widthFix"></image>
@@ -408,7 +410,8 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"></SpecialDisc>
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"
+			:product="mainSale.sale002"></SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -506,11 +509,11 @@
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
 				})
 			},
-			CheckGoodIsLock:function(){
-				return util.callBind(this,function(index){
-					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:",{
+			CheckGoodIsLock: function() {
+				return util.callBind(this, function(index) {
+					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", {
 						index,
-						lock:this.mainSale.currentOperation
+						lock: this.mainSale.currentOperation
 					});
 					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
