@@ -120,7 +120,7 @@ page {
 	font-size: 30rpx;
 	font-weight: 700;
 	position: relative;
-	color: #006B44;
+	color: #333;
 }
 
 .products .h2 label {
@@ -133,8 +133,14 @@ page {
 	position: absolute;
 	bottom: 20rpx;
 	left: 0;
+	display: none;
 }
-
+.products .h2.curr{
+	color: #006B44;
+}
+.products .h2.curr label{
+	display: block;
+}
 .products {
 	padding: 0 2% 0;
 	/* height: 92%; */
@@ -350,6 +356,57 @@ page {
 	display: flex;
 	justify-content:center;
 	align-items: center;
+	position: relative;
+}
+.operation .ranks label em {
+	animation: scaleDs 0.5s ease-in-out;
+	-webkit-animation: scaleDs 0.5s ease;
+}
+
+@keyframes scaleDs {
+
+	/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	100% {
+		transform: scale(0.05);
+		opacity: 0;
+	}
+}
+
+.operation .curr {
+	color: #fff;
+}
+
+.operation .curr em {
+	display: block;
+	position: absolute;
+	top: 5rpx;
+	left: 5rpx;
+	background-color: #006B44;
+	padding: 2% 0;
+	width: 50rpx;
+	height: 50rpx;
+	border-radius: 30rpx;
+	z-index: 0;
+	animation: scaleDraw 0.3s ease-in-out;
+	-webkit-animation: scaleDraw 0.3s ease;
+}
+
+@keyframes scaleDraw {
+
+	/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+	0% {
+		transform: scale(0.05);
+		/*开始为原始大小*/
+	}
+
+	100% {
+		transform: scale(1);
+	}
 }
 .ranks .curr text {
 	display: flex;
@@ -358,7 +415,7 @@ page {
 	width: 50rpx;
 	height: 50rpx;
 	border-radius: 50%;
-	background-color: #006B44;
+	/* background-color: #006B44; */
 	color: #fff;
 }
 
@@ -410,7 +467,27 @@ page {
 	width:100%;
 	max-height: 80rpx;
 }
+.sorting .selects span{
+	position: absolute;
+	top:0;
+	left: 0;
+	width: 76rpx;
+	height: 76rpx;
+	animation: Draws 0.3s ease-in-out;
+	-webkit-animation: Draws 0.3s ease;
+}
 
+@keyframes Draws {
+
+	/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+	0% {
+		top:100%;
+	}
+
+	100% {
+		top:1;
+	}
+}
 .states {
 	width: 60rpx;
 	display: flex;

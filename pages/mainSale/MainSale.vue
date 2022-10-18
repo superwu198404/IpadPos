@@ -36,10 +36,10 @@
 							</view>
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
-								<scroll-view scroll-y="true" class="catecyc" :scroll-into-view="mainSale.scrollinto">
+								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true" :scroll-into-view="mainSale.scrollinto">
 									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 
-										<view :id="mainSale.selectFlag+plitem.plid" class="h2">{{plitem.plname}}
+										<view :id="mainSale.selectFlag+plitem.plid" :class="mainSale.id==plitem.plid?'curr':''" class="h2">{{plitem.plname}}
 											<label></label>
 										</view>
 
@@ -80,7 +80,8 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()">{{mainSale.selectFlag}}
+							<view class="a-z" @click="mainSale.Letters()" :class="mainSale.selectLet==1?'selects':''">
+								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.MemberLogin(1)">
@@ -111,6 +112,7 @@
 							<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
 								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
 								<text>{{flagitem}}</text>
+								<em></em>
 							</label>
 
 						</view>
