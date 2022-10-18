@@ -58,6 +58,8 @@
 				</view>
 			</view>
 		</view>
+		<!-- 重打小票 -->
+		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>
 </template>
 
@@ -95,7 +97,8 @@
 				showGJ: false,
 				showCX: false,
 				click_num: 0,
-				timer: 0
+				timer: 0,
+				showcdxp: false,
 			};
 		},
 		methods: {
@@ -134,8 +137,15 @@
 			},
 			//工具
 			ShowTool: function(e) {
-				util.simpleMsg("暂未开放", true);
-				return;
+				if (e == 'CD') {
+					this.showcdxp = true;
+					console.log("重打小票",this.showcdxp)
+				}else{
+					//功能放开，则去掉该提示
+					util.simpleMsg("暂未开放", true);
+					return;
+				}
+				
 				if (!e) {
 					this.showGJ = !this.showGJ;
 					this.showCX = false;
@@ -144,9 +154,14 @@
 				if (e == 'CX') {
 					this.showCX = !this.showCX;
 				}
+
 			},
 			CloseDB: async function() {
 				await db.get().close();
+			},
+			//重打小票关闭
+			ClosePopup: function(data) {
+				this.showcdxp = false;
 			}
 		},
 		created() {
