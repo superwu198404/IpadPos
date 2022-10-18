@@ -267,6 +267,7 @@
 							sql = sql.concat(new004);
 						});
 						sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
+						sql = sql.concat(_create_sql.PRINTSql); //追加重打记录表POS_XSBILLPRINT
 						return Req.resObj(true, "即将完成...", sql);
 					},
 					async (res) => {
