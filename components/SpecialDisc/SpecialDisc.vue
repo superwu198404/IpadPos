@@ -18,16 +18,16 @@
 						<view :class="curZKType!='TP'?'lis curr':'lis'" @click="ChooseZK('BZ')">
 							<view class="h8">
 								<view>标准折扣<em></em></view>
-								<!-- <label>总折扣额:￥{{totalDisc}}<text></text></label> -->
+								<label>总折扣额:￥{{totalDisc}}<text></text></label>
 								<span>已选</span>
 							</view>
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">·
-										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；</span>
+										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
+											折扣额：<text>￥{{item.ZKNET}};</text></span>
 									</label>
 								</view>
-								<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
 								<view @click.stop="Def">
 									<label>
 										<checkbox-group @change="ChooseLS">
@@ -36,8 +36,7 @@
 									</label>
 									<view class="zhekou" style="margin-top:0;border:none;">
 										<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</text>
-											<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
+											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：￥{{item.ZKNET}};</text>
 										</label>
 									</view>
 								</view>
@@ -47,14 +46,13 @@
 							@click="ChooseZK('TP')">
 							<view class="h8">
 								<view>特批折扣<em></em></view>
-								<!-- <label>总折扣额:￥{{totalDiscDKF}}<text></text></label> -->
+								<label>总折扣额:￥{{totalDiscDKF}}<text></text></label>
 								<span>已选</span>
 							</view>
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in DKFZKDatas">·
-										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；</label>
-									<!-- ，折扣额<text>￥{{item.ZKNET}};</text> -->
+										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
 								</view>
 							</view>
 						</view>
@@ -135,6 +133,8 @@
 			console.log("传入的折扣数据：", that.zkdatas);
 			that.ZKDatas = that.zkdatas.ZKDatas;
 			that.DKFZKDatas = that.zkdatas.DKFZKDatas;
+			that.CalProZK();
+			that.CalProZK1();
 			// that.GetZKDatas();
 			// if (that.dkhid && that.dkhid != '80000000') {
 			// 	// that.dkhid = '0020004289';
@@ -183,8 +183,119 @@
 
 				console.log("折扣类型切换：", that.curZKType);
 			},
-
-			//计算商品信息折扣信息
+			//计算满足折扣规则的商品以及对应折扣额 标准，临时
+			CalProZK: function() {
+				console.log("商品信息：", this.product);
+				let TNET = 0;
+				let jgzArr = []; //商品价格组集合
+				this.product.map(r => {
+					if (!jgzArr.find(r1 => {
+							return r1.SPJGZ == r.SPJGZ
+						})) {
+						let a = this.product.filter(r2 => {
+							return r2.SPJGZ == r.SPJGZ;
+						});
+						let aa = 0;
+						a.map(r4 => {
+							aa += r4.NET;
+						});
+						let obj = {
+							SPJGZ: r.SPJGZ,
+							TNET: aa
+						};
+						jgzArr.push(obj);
+					}
+				})
+				console.log("商品价格组信息：", jgzArr);
+				let arr = that.ZKDatas.filter(r => {
+					return r.ZKTYPE == 'ZD02'
+				}) //标准折扣规则
+				let arr1 = that.ZKDatas.filter(r => {
+					return r.ZKTYPE == 'ZD03'
+				}) //临时折扣规则
+				let pushArr = [];
+				jgzArr.map(r1 => {
+					let newArr = arr.filter(r => {
+						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
+					})
+					console.log("111111:", newArr);
+					let sortArr = newArr.sort((a, b) => {
+						return a.MZNET - b.MZNET;
+					});
+					console.log("222222:", sortArr);
+					let newArr1 = arr1.filter(r => {
+						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
+					})
+					console.log("333333:", newArr1);
+					let sortArr1 = newArr1.sort((a, b) => {
+						return a.MZNET - b.MZNET;
+					});
+					console.log("444444:", sortArr1);
+					if (sortArr.length > 0) { //追加标准折扣规则
+						let obj = sortArr[0];
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						pushArr.push(obj);
+					}
+					if (sortArr1.length > 0) { //追加标准折扣规则
+						let obj = sortArr1[0];
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						pushArr.push(obj);
+					}
+				})
+				console.log("合并后的折扣规则：", pushArr);
+				if (pushArr.length > 0) {
+					pushArr.map(r => {
+						that.totalDisc += r.ZKNET
+					})
+				}
+				that.ZKDatas = pushArr;
+			},
+			//计算满足折扣规则的商品以及对应折扣额 大客户
+			CalProZK1: function() {
+				console.log("商品信息：", this.product);
+				let TNET = 0;
+				let jgzArr = []; //商品价格组集合
+				this.product.map(r => {
+					if (!jgzArr.find(r1 => {
+							return r1.SPJGZ == r.SPJGZ
+						})) {
+						let a = this.product.filter(r2 => {
+							return r2.SPJGZ == r.SPJGZ;
+						});
+						let aa = 0;
+						a.map(r4 => {
+							aa += r4.NET;
+						});
+						let obj = {
+							SPJGZ: r.SPJGZ,
+							TNET: aa
+						};
+						jgzArr.push(obj);
+					}
+				})
+				console.log("商品价格组信息：", jgzArr);
+				let arr = that.DKFZKDatas;
+				let pushArr = [];
+				jgzArr.map(r1 => {
+					let sortArr = arr.filter(r => {
+						return r.ZKSTR == r1.SPJGZ;
+					})
+					console.log("222222:", sortArr);
+					if (sortArr.length > 0) { //追加标准折扣规则
+						let obj = sortArr[0];
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						pushArr.push(obj);
+					}
+				})
+				console.log("合并后的折扣规则1：", pushArr);
+				if (pushArr.length > 0) {
+					pushArr.map(r => {
+						that.totalDiscDKF += r.ZKNET
+					})
+				}
+				that.DKFZKDatas = pushArr;
+			},
+			//计算商品信息折扣信息 
 			CalProduct: function() {
 				let curData = [];
 				if (that.curZKType == 'TP') {
