@@ -37,9 +37,9 @@
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true" :scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList" >
 
-										<view :id="mainSale.selectFlag+plitem.plid" :class="mainSale.id==plitem.plid?'curr':''" class="h2">{{plitem.plname}}
+										<view :id="mainSale.selectFlag+plitem.plid" :class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">{{plitem.plname}}
 											<label></label>
 										</view>
 

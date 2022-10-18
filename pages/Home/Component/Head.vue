@@ -39,10 +39,12 @@
 					<label @click="ShowPrint()">
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
-						{{YN_PRINT_CON=='Y'?'已连接':'未连接'}}▼
+						<text v-if="YN_PRINT_CON=='Y'">已连接</text>
+						<text v-else style="color: #FE694B;">未连接</text>						
 					</label>
-					<label>
-						<button class="rijie" v-if="showSale" @click="ReturnSale()">清空</button>
+					<label  class="rijie">
+						<image src="@/images/dx-qingkong.png" mode="widthFix"></image>
+						<button v-if="showSale" @click="ReturnSale()">清空</button>
 					</label>
 				</view>
 				<!-- <view class="account" v-if="hyinfo">
@@ -1328,9 +1330,23 @@
 	}
 
 	.checkout .rijie {
-		background-color: #FE694B;
+		display: flex;
+		align-items: center;
+		background:none;
+		height:68rpx;
+		line-height: 68rpx;
+		margin-left: 20rpx;
+	}
+	.checkout .rijie image{
+		margin-right: 0;
+	}
+	.checkout .rijie button{
+		color: #FE694B;
 		height: 44rpx;
 		line-height: 44rpx;
-
+		font-size: 26rpx;
+		padding:0 10rpx 0 2rpx;
+		background:none;
+		margin-left:0;
 	}
 </style>
