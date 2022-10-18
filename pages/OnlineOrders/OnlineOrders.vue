@@ -544,7 +544,7 @@
 			},
 			//确认接受
 			ConfirmAccept: async function(isAccept) {
-				console.log("处理订单：", this.details.order)
+				console.log("[ConfirmAccept]处理订单：", this.details.order)
 				this.details.order.STATUS = isAccept;
 				let info_valid = true,
 					time_valid = true;
@@ -559,10 +559,14 @@
 						end_time: this.EndTime,
 						orders: [this.details.order]
 					}, util.callBind(this, function(res) {
-						this.GetOnlineOrders(); //刷新页面
+						this.GetOnlineOrders(util.callBind(this,function(){
+							let type = Object.keys(this.onlineOrdersGroup)[0];
+							if(this.onlineOrdersGroup[type]){
+								Object.assign(this.details.details,this.onlineOrdersGroup[type][0]);
+							}
+						})); //刷新页面
 						util.simpleMsg("接受成功!")
-						console.log("处理结果：", res)
-
+						console.log("[ConfirmAccept]处理结果：", res)
 						//调用打印
 						this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
 

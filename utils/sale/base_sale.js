@@ -43,7 +43,7 @@ var XsTypeObj = {
 			"ynCx": true, //是否进行可以进行促销  (默认可以促销,选择折扣后默认清除促销)
 			"Disc": true, //是否可以打开录入折扣 (默认可以特殊折扣)
 			"ynFzCx": true, //是否可以辅助促销
-			"ynCancel": false, //是否可以退出当前销售模式
+			"ynCancel": true, //是否可以退出当前销售模式 wy测试要求销售放出清空按钮
 			"FZCX": true, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
@@ -73,6 +73,7 @@ var XsTypeObj = {
 			return true;
 		},
 		$initSale: function(params) {
+			// console.log("ynCancel取消状态：", this.currentOperation.ynCancel);
 			this.actType = common.actTypeEnum.Payment
 			console.log("[sale-$initSale]params:", params);
 			if (this.actType != common.actTypeEnum.Payment) {
@@ -1378,7 +1379,7 @@ function GetSale(global, vue, target_name, uni) {
 		for (var i = this.sale002.length - 1; i >= 0; i--) {
 			let item = this.sale002[i];
 			// console.log("当前商品行：", item);
-			if (i < this.currentOperation.lockRows && item.QTY !== 0) {
+			if (i < this.currentOperation.lockRows && item.QTY !== 0 && item.QTY != item.$raw.QTY) {//1、必须在锁定行。2、数量必须改变了才提示。
 				item.QTY = item.$raw.QTY ?? item.QTY;
 				attempt_lock_row = true;
 			} else
@@ -1427,7 +1428,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
-		util.simpleModal("提示", "是否确认要退出当前销售模式，并返回到销售？", res => {
+		util.simpleModal("提示", "是否要退出清空当前销售单？", res => {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
@@ -1438,7 +1439,6 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func* 取消促销和重置促销
 	this.ResetCX = util.callBind(this, function(e) {
-		console.log("传入的状态值：", e);
 		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
 		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {
@@ -2540,7 +2540,7 @@ function GetSale(global, vue, target_name, uni) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
-		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0) {
+		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0 && pm_qty != this.sale002[pm_row].QTY) {
 			util.simpleMsg("该商品已被锁定!", true)
 			console.log("[UpdateSp]商品处于被锁定行，无法修改数量!");
 			return true;
