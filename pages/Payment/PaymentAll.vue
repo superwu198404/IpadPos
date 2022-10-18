@@ -168,11 +168,35 @@
 			</view>
 		</view>
 		<!-- 会员券列表 -->
-		<view class="boxs" v-if="coupons">
+		 <!-- v-if="coupons" -->
+		<view class="boxs">
 			<view class="coupons">
 				<view class="h4"><text>选择优惠券</text> <button class="colse" @click="coupons = !coupons">×</button></view>
 				<view style="max-height: 620px;overflow: auto;">
 					<view class="uls">
+						<view class="lis">
+							<view class="voucher">
+								<view><text>￥</text>23</view>
+								<text>满23可用</text>
+							</view>
+							<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+							<view class="coupon-dets">
+								<view class="limit">
+									<view class="h3" >
+										<text>sfsd</text>
+									</view>
+									<text class="datas">2345232323 至 2334345434</text>
+								</view>
+								<view class="directions">
+									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+									<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+									</view>
+									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+											mode="widthFix"></image></button>
+								</view>
+							</view>
+						</view>
+							
 						<view class="lis" v-for="(item,index) in coupon_list">
 							<view class="voucher">
 								<view><text>￥</text>{{item.money}}</view>

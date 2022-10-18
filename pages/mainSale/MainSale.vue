@@ -264,15 +264,7 @@
 									<view><text>￥</text>{{item.money}}</view>
 									<text>满{{item.limitmoney}}可用</text>
 								</view>
-								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
-								<view class="coupon-dets">
-									<view class="limit">
-										<view class="h3" v-for="(item1,index1) in item.limitDesc">
-											<text>{{item1}}</text>
-										</view>
-										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
-									</view>
-									<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>								
 									<view class="coupon-dets">
 										<view class="limit">
 											<view class="h3" v-for="(item1,index1) in item.limitDesc">
@@ -288,7 +280,6 @@
 														mode="widthFix"></image></button> -->
 										</view>
 									</view>
-								</view>
 							</view>
 						</view>
 					</view>
