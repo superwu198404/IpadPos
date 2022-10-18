@@ -2134,7 +2134,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
 			uni.$emit('stop-message');
-			that.PayParamAssemble();
+			// that.PayParamAssemble();
 		} else {
 			console.log("[Pay]未进入支付!");
 		}
