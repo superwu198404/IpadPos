@@ -1244,7 +1244,9 @@ function GetSale(global, vue, target_name, uni) {
 			r.BZDISC = 0; //zk
 			r.LSDISC = 0; //zk
 			r.TPDISC = 0; //zk
-		})
+		});
+		this.score_info.money = 0;
+		this.score_info.score = 0;
 	})
 	//*func*辅助促销关闭回调
 	this.CloseFZCX = util.callBind(this, function(res) {
@@ -1728,7 +1730,7 @@ function GetSale(global, vue, target_name, uni) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
-		this.selectLet==1
+		this.selectLet == 1
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {

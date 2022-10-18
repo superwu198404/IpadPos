@@ -295,9 +295,12 @@
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<button class="btn" @click="mainSale.HY.open=true"
-								v-if="ShowHY">{{mainSale.HY.val.hyId}}</button>
-							<button class="btn" v-else>未登录...</button>
+							<view>
+								<button class="btn" @click="mainSale.HY.open=true"
+									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
+								<button class="btn" v-else>未登录...</button>
+								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
+							</view>
 						</label>
 						<text class="qingk"
 							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
@@ -775,5 +778,14 @@
 	.price .zongjia {
 		font-size: 28rpx;
 		margin-left: 26rpx;
+	}
+	
+	.score-box{
+		background-color:var(--green);
+		border-radius: 5px;
+		font-size: 0.6rem;
+		padding: 2px 5px;
+		color: white;
+		white-space: nowrap;
 	}
 </style>

@@ -156,11 +156,15 @@
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ refund.name }}
 										</view>
-										<div class="refund-more-box" @click="singleRetry(refund.bill)">
+										<div class="refund-more-box">
 											<text class="refund-text">￥{{(-refund.amount).toFixed(2)}}</text>
-											<div class="refund-reset">
+											<div class="refund-reset" @click="NoOrginRefund(refund)">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
+											</div>
+											<div class="refund-reset" @click="singleRetry(refund.bill)">
+												退回
+												<div class="refund-icon refund-loading"></div>
 											</div>
 										</div>
 									</view>
@@ -1397,8 +1401,8 @@
 				}, obj);
 			},
 			ExistsAllowScore: function() { //判断是否允许使用积分抵现操作
-				console.log("[ExistsAllowScore]", util.getStorage("hyinfo"));
-				if (!util.getStorage("hyinfo")?.hyId) {
+				console.log("[ExistsAllowScore]", this.SALES.sale1.CUID);
+				if (!this.SALES.sale1.CUID) {
 					let pay_info = this.PayWayList.find(i => i.type === 'HyJfExchange');
 					if (pay_info) pay_info.yn_use = 'N';
 				} else {
@@ -1411,7 +1415,6 @@
 				that = this;
 				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
 				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
-				this.ExistsAllowScore();
 				var prev_page_param = this.$store.state.location;
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
@@ -1420,6 +1423,7 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
+					this.ExistsAllowScore();
 					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
 					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
@@ -1652,6 +1656,23 @@
 					this.Refund();
 				else
 					this.Pay();
+			},
+			NoOrginRefund:function(refund_info){//不可原路——退款
+				if(refund_info?.refund_num == 0){//未进行重试
+					util.simpleModal('退款','确定使用不可原路退回方式退款吗?',util.callBind(this,function(res){
+						if(res.confirm){
+							this.RecordInfoAsNoOrgin(refund_info);
+						}
+					}))
+				}
+				else{//已经重试过
+					this.RecordInfoAsNoOrgin(refund_info);
+				}
+			},
+			RecordInfoAsNoOrgin:function(info){//记录为不可回退类型
+				info.fkid = 'ZG11';
+				info.name = '不可原路退回';
+				info.fail = false;
 			},
 			//单笔订单退款重试
 			singleRetry: function(trade_no) {
