@@ -785,6 +785,14 @@ var XsTypeObj = {
 			//清除一下已录入的会员信息
 			this.HY.val = {};
 			uni.$emit('set-member', this.HY.val);
+			//给全局大客户对象赋值
+			if (params.sale1.DKFID) {
+				let obj = {
+					DKFID: params.sale1.DKFID,
+					NAME: params.sale1.DKFNAME,
+				};
+				this.DKF.val = obj;
+			}
 			this.actType = common.actTypeEnum.Refund;
 			this.xsType = '2' //赊销退单重写
 			this.bill_type = 'Z154'; ////赊销退单重写
@@ -798,6 +806,7 @@ var XsTypeObj = {
 			console.log("[sale_credit_return_good]SALE001:", this.sale001);
 			console.log("[sale_credit_return_good]SALE002:", this.sale002);
 			console.log("[sale_credit_return_good]SALE003:", this.sale003);
+
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -1379,7 +1388,8 @@ function GetSale(global, vue, target_name, uni) {
 		for (var i = this.sale002.length - 1; i >= 0; i--) {
 			let item = this.sale002[i];
 			// console.log("当前商品行：", item);
-			if (i < this.currentOperation.lockRows && item.QTY !== 0 && item.QTY != item.$raw.QTY) {//1、必须在锁定行。2、数量必须改变了才提示。
+			if (i < this.currentOperation.lockRows && item.QTY !== 0 && item.QTY != item.$raw
+				.QTY) { //1、必须在锁定行。2、数量必须改变了才提示。
 				item.QTY = item.$raw.QTY ?? item.QTY;
 				attempt_lock_row = true;
 			} else
@@ -1428,7 +1438,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
-		util.simpleModal("提示", "是否要退出清空当前销售单？", res => {
+		let tip = this.clickSaleType.clickType == 'sale' ? "是否要清空当前销售单?" : "是否要清空销售单，并退出当前销售模式？"
+		util.simpleModal("提示", tip, res => {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
@@ -1578,20 +1589,21 @@ function GetSale(global, vue, target_name, uni) {
 		},
 		set val(newval) {
 			this.base.ComponentsManage["DKF"] = false;
+			//缓存默认一下
+			let store = util.getStorage("store");
 			if (!newval || Object.keys(newval).length == 0) { //为空或者默认值
 				this.cval.DKFID = this.Defval;
 				that.setSaleTypeDefval("HY");
 				this.base.HY.cval = {};
-				//缓存默认一下
-				let store = util.getStorage("store");
 				store.DKFID = this.Defval;
 				store.DKFNAME = '默认大客户';
-				util.setStorage(store);
-				return;
 			} else {
 				this.cval = newval;
 				that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
+				store.DKFID = newval.DKFID;
+				store.DKFNAME = newval.NAME;
 			}
+			util.setStorage("store", store);
 		}
 	}
 	this.DKF.base = this;
