@@ -307,7 +307,7 @@
 								@click="mainSale.showEditFunc">编辑</button>
 							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
 								@click="mainSale.completeEdit">完成</button>
-							<button style="color:#FE694B;border-left:1px solid #eee"
+							<button style="color:#FE694B;"
 								@click="mainSale.resetSaleBill">清空</button>
 						</label>
 					</view>

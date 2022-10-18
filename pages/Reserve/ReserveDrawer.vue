@@ -26,7 +26,7 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" position="bottom" get-container="#picker" @change="timeChange">
+					<picker mode="time" fields="time" position="bottom" get-container="#picker" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
 					</picker>
 					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
