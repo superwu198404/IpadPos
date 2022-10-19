@@ -1552,10 +1552,6 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
-	
-	this.Page.$watch('mainSale.tool_pages', util.callBind(this, function(n, o) {
-		console.warn('		发生变化');
-	}),{ deep:true })
 
 	this.update = function() {
 		if (that.Page) {
@@ -2615,6 +2611,7 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
+		console.log("[ShowStatement]SALE001:", Object.getOwnPropertyNames(that.sale001));
 		console.log("[ShowStatement]商品信息:", that.sale002);
 		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);
