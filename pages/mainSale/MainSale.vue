@@ -140,11 +140,12 @@
 				</RefundOrder>
 				<SXRefund style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<Promotion style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.tools"></Promotion>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
-
+		<view class="boxs" v-if="mainSale.tool_pages.promotions" style="display: flex;justify-content: center;align-items: center;">
+			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
+		</view>
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
 		<!-- 蛋糕属性选择 -->
@@ -222,6 +223,7 @@
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
+		
 		<!-- 辅助促销 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
