@@ -82,7 +82,7 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()">
+							<view class="a-z" @click="mainSale.Letters()" :class="{azs:isRed}">
 								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
@@ -110,7 +110,7 @@
 						<!-- <view class="toproof">
 							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
 						</view> -->
-						<view class="ranks" v-if="Alphabetical">
+						<view class="ranks" v-if="Alphabetical">						
 							<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
 								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
 								<text>{{flagitem}}</text>

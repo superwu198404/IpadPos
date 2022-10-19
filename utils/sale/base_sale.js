@@ -67,7 +67,7 @@ var XsTypeObj = {
 			"sale_message": true,
 			"tools": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
-			"lockRows": 0 //是否存在锁定行数
+			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
 			return true;
@@ -1816,7 +1816,7 @@ function GetSale(global, vue, target_name, uni) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
-		this.selectLet == 1
+		return that.isRed=true
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
