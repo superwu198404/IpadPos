@@ -487,9 +487,6 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				obj: {
-					a: "13123"
-				}
 			}
 		},
 		components: {
