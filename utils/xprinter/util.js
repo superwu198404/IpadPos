@@ -877,7 +877,7 @@ const getBillPrinterData = async (xsBill) => {
  */
 const getBillPrinterMax = async () => {
 	let xsBill = "";
-	let sql = "select * from POS_XSBILLPRINT order by XSDATE desc limit 1";
+	let sql = "select * from (select * from POS_XSBILLPRINT order by XSDATE DESC) limit 1";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("重打数据查询成功 getBillPrinterMax", res);
 		if(res.msg != null && res.msg != ""){
