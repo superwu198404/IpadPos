@@ -194,7 +194,7 @@
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
 								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
-								<view class="tits"  v-bind:class="{seltss:isRed}">
+								<view class="tits" v-bind:class="{seltss:item.yn_use}">
 									<p>{{item.name}}</p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
@@ -500,7 +500,7 @@
 					this.PAD_SCAN = a;
 				}
 				this.event = this.getOpenerEventChannel();
-				 
+
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
@@ -1567,7 +1567,7 @@
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
-					
+
 				}
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
@@ -1673,7 +1673,7 @@
 				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
 				return new Promise(util.callBind(this, function(resolve, reject) {
 					util.simpleModal('付款', '确定使用不可原路退回方式付款吗?', util.callBind(this, function(res) {
-						console.log("[NoOrginRefund]选择结果:",res);
+						console.log("[NoOrginRefund]选择结果:", res);
 						if (res) {
 							console.log("[NoOrginRefund]开始切换未不可原路退回方式...");
 							this.RecordInfoAsNoOrgin(pay_info);
@@ -1691,7 +1691,7 @@
 			},
 			//单笔订单退款重试
 			singleRetry: async function(info) {
-				console.log("[SingleRetry]退款重试次数:",info.refund_num);
+				console.log("[SingleRetry]退款重试次数:", info.refund_num);
 				let trade_no = info.bill;
 				if (info.refund_num != 0) {
 					if (await this.NoOrginRefund(info)) {
@@ -1750,19 +1750,20 @@
 				return this.PayList.indexOf(i => i.type == type) !== -1; //满足则是存在，否则不存在
 			},
 			//单笔订单重试
-			singlePayRetry:async function(info) {
+			singlePayRetry: async function(info) {
 				if (info.pay_num > 1) {
 					if (await this.NoOrginPay(info)) {
 						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
 						this.used_no.push(info.no); //如果成功
-						console.log("[SinglePayRetry]已储存单序号...",info.no);
+						console.log("[SinglePayRetry]已储存单序号...", info.no);
 						this.yPayAmount += Number(info.amount);
-						console.log("[SinglePayRetry]已计算待支付金额...",info.amount);
+						console.log("[SinglePayRetry]已计算待支付金额...", info.amount);
 						this.PayList.sort(); //刷新视图
 						return;
 					}
 				}
-				let fkid = info.fkid, trade_no = info.bill;
+				let fkid = info.fkid,
+					trade_no = info.bill;
 				let type = this.PayWayList.find(i => i.fkid == fkid)?.type,
 					data = this.PayDataAssemble();
 				info.loading = true;

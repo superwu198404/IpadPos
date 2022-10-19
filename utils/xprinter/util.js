@@ -275,7 +275,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0);
+		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
 	}
 	
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
@@ -337,7 +337,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
  * 赊销打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
+const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) => {
 	var xsType = "SX";
 	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
@@ -389,6 +389,9 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var ggy = ggyContent;
 	var totalQty = 0;
 	var totalPrice = 0;
+	var dnet = nnvl(sale1_obj.DNET,0); //定金
+    var dkhName = "";
+	
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -412,8 +415,8 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
 		goodsList = goodsList.concat(sale2_printer);
-		totalQty += sale2_arr[i].QTY;
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0);
+		totalQty += nnvl(sale2_arr[i].QTY,1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
 	}
 	
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
@@ -444,6 +447,12 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 
 	console.log("sale3List 转换后数据:", sale3List);
 
+	let printerNum = 1;
+	if(print != null){
+		printerNum = nnvl(print.PRINTNUM,1);
+		dkhName = snvl(print.DKFNAME,"");
+	}
+
 	var printerInfo = {
 		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
 		billType,
@@ -465,6 +474,8 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 		hdnet, //商家承担
 		sale3List, //支付信息
 		ggy, //广告语
+		dnet,
+		dkhName, //大客户名称
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
 
@@ -698,8 +709,8 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
 		};
 		goodsList = goodsList.concat(sale2_printer);
-		totalQty += nnvl(sale2_arr[i].QTY,0);
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0);
+		totalQty += nnvl(sale2_arr[i].QTY,1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
 	}
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);

@@ -36,8 +36,10 @@
 							</view>
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
-								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true" :scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList" :data-plid="plitem.plid">
+								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
+									:scroll-into-view="mainSale.scrollinto">
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
+										:data-plid="plitem.plid">
 
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">
@@ -56,18 +58,21 @@
 												</view>
 												<view class="cods">
 													<label>
-														<image src="../../images/dx-bm.png" mode="widthFix"></image>
+														<image src="../../images/dx-bm.png" mode="widthFix">
+														</image>
 														{{sptiem.SPID.substr(8)}}
 													</label>
 													<label>
-														<image src="../../images/dx-dw.png" mode="widthFix"></image>
+														<image src="../../images/dx-dw.png" mode="widthFix">
+														</image>
 														{{sptiem.UNIT}}
 													</label>
 												</view>
 												<view class="price">
 													<text>￥{{ Price(sptiem.SPID) }}</text>
 													<view>
-														<image src="../../images/dx-gd.png" mode="widthFix"></image>
+														<image src="../../images/dx-gd.png" mode="widthFix">
+														</image>
 													</view>
 												</view>
 											</view>
@@ -75,6 +80,7 @@
 									</view>
 								</scroll-view>
 							</view>
+							</scroll-view>
 						</view>
 					</view>
 					<view class="operation">
@@ -134,7 +140,8 @@
 				</OnlineOrders>
 				<OnlinePick style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
-				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message">
+				</Message>
 				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
 				</RefundOrder>
 				<SXRefund style="position: absolute;z-index: 5;"
@@ -226,7 +233,8 @@
 
 		<!-- 辅助促销 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
+			</FZCX>
 		</view>
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement" @click="mainSale.setComponentsManage">
@@ -306,7 +314,8 @@
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
 								<button class="btn" v-else>未登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
-									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
+									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
+								</view>
 							</view>
 						</label>
 						<text class="qingk"
@@ -627,8 +636,8 @@
 				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
 			},
 			//赊销打印小票
-			sxBluePrinter: function(sale1_obj, sale2_arr, sale3_arr,sxsale001, print, type) {
-				this.$refs.printerPage.sxBluePrinter(sale1_obj, sale2_arr, sale3_arr,sxsale001, print, type);
+			sxBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type) {
+				this.$refs.printerPage.sxBluePrinter(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type);
 			},
 		},
 		created() {
