@@ -36,9 +36,6 @@
 							</view>
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
-								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
-									:scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 										<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
 											:scroll-into-view="mainSale.scrollinto">
 											<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
