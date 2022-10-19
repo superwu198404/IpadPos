@@ -197,7 +197,7 @@
 						});
 						let aa = 0;
 						a.map(r4 => {
-							aa += r4.NET;
+							aa += Number((r4.OPRICE * r4.QTY).toFixed(2)); //修改为由原价计算 防止促销生效后 net改变了
 						});
 						let obj = {
 							SPJGZ: r.SPJGZ,
@@ -244,9 +244,11 @@
 				})
 				console.log("合并后的折扣规则：", pushArr);
 				if (pushArr.length > 0) {
+					let anet = 0;
 					pushArr.map(r => {
-						that.totalDisc += r.ZKNET
+						anet += r.ZKNET;
 					})
+					that.totalDisc = Number(anet.toFixed(2));
 				}
 				that.ZKDatas = pushArr;
 			},
@@ -264,7 +266,7 @@
 						});
 						let aa = 0;
 						a.map(r4 => {
-							aa += r4.NET;
+							aa += Number((r4.OPRICE * r4.QTY).toFixed(2)); //修改为由原价计算 防止促销生效后 net改变了;
 						});
 						let obj = {
 							SPJGZ: r.SPJGZ,
@@ -289,9 +291,11 @@
 				})
 				console.log("合并后的折扣规则1：", pushArr);
 				if (pushArr.length > 0) {
+					let anet = 0;
 					pushArr.map(r => {
-						that.totalDiscDKF += r.ZKNET
+						anet += r.ZKNET;
 					})
+					that.totalDiscDKF = Number(anet.toFixed(2));
 				}
 				that.DKFZKDatas = pushArr;
 			},
