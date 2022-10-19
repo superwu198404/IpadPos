@@ -88,7 +88,7 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()" >
+							<view class="a-z" @click="mainSale.Letters()">
 								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
@@ -116,7 +116,7 @@
 						<!-- <view class="toproof">
 							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
 						</view> -->
-						<view class="ranks" v-if="Alphabetical">						
+						<view class="ranks" v-if="Alphabetical">
 							<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
 								:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
 								<text>{{flagitem}}</text>
@@ -264,17 +264,18 @@
 							<text>优惠券</text>
 						</label>
 						<label>
-							<text>{{ MemberGiftCard }}</text>
+							<text>***</text>
+							<!-- <text>{{ MemberGiftCard }}</text> -->
 							<text>礼品卡</text>
 						</label>
 					</view>
 					<view class="coulist">
 						<view class="h2">会员信息</view>
 						<view class="infoes">
-							<view><text>会员手机号：</text>1234</view>
-							<view><text>会员生日：</text>1223-09-09</view>
-							<view><text>注册日期：</text> </view>
-							<view><text>企微好友：</text> </view>
+							<view><text>会员手机号：</text>{{mainSale.HY.val.Phone}}</view>
+							<view><text>会员生日：</text>{{mainSale.HY.val.Birthday}}</view>
+							<view><text>注册日期：</text>{{RegisterDate}}</view>
+							<view><text>企微好友：</text>{{mainSale.HY.val.WxCpFriend?"是":"否"}}</view>
 						</view>
 					</view>
 					<view class="coulist">
@@ -586,7 +587,15 @@
 				return (this.mainSale.HY.val?.Balance ?? 0) / 100;
 			},
 			MemberPoint: function() {
-				return (this.mainSale.HY.val?.JFBalance ?? 0) / 100;
+				return (this.mainSale.HY.val?.JFBalance ?? 0);
+			},
+			RegisterDate: function() {
+				let a = "";
+				let day = this.mainSale.HY.val?.RegisterDay;
+				if (day && day.indexOf(':') < 0) {
+					a = day.substr(0, 4) + "-" + day.substr(4, 2) + "-" + day.substr(6, 2);
+				}
+				return a;
 			},
 			MemberGiftCard: function() {
 				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;

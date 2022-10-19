@@ -16,7 +16,7 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu gongju" tabindex="-1" @blur="this.showGJ = false">
+		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
 				<view @click="showGJ=!showGJ">
@@ -121,12 +121,12 @@
 						this.click_num = 0;
 						this.timer = 0;
 					}), 5000);
-				if (this.click_num === 10){
+				if (this.click_num === 10) {
 					uni.showModal({
-						title:"输入密码",
-						editable:true,
-						success(res){
-							if(res.confirm && res.content==='1234321'){
+						title: "输入密码",
+						editable: true,
+						success(res) {
+							if (res.confirm && res.content === '1234321') {
 								uni.navigateTo({
 									url: "../index/index"
 								})
@@ -139,17 +139,15 @@
 			ShowTool: function(e) {
 				if (e == 'CD') {
 					this.showcdxp = true;
-					console.log("重打小票",this.showcdxp)
-				}
-				else if (e == 'promotions') {
-					uni.$emit('tools',e);
-				}
-				else{
+					console.log("重打小票", this.showcdxp)
+				} else if (e == 'promotions') {
+					uni.$emit('tools', e);
+				} else {
 					//功能放开，则去掉该提示
 					util.simpleMsg("暂未开放", true);
 					return;
 				}
-				
+
 				if (!e) {
 					this.showGJ = !this.showGJ;
 					this.showCX = false;
