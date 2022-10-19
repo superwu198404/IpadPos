@@ -1511,6 +1511,277 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 	}
 	
+	jpPrinter.SXFormString = function(data,printer_poscs,print){
+		var type = data.xsType;
+		var xpType = "赊销";
+		var xsBill= "";
+		var lineNum = data.lineNum;
+	    var isReturn = false;
+		var isYD = false;
+		jpPrinter.setSelectJustification(1); //居中
+		jpPrinter.setCharacterSize(17); //设置倍高倍宽
+		jpPrinter.setText("KenGee 仟吉" + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		let HYY = "欢迎光临";
+		// 终端参数配置了欢迎语，则取配置
+		if(printer_poscs.HYY  != ""){
+			HYY = printer_poscs.HYY;
+		}	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(1); //设置居左	
+		jpPrinter.setText(HYY);
+		jpPrinter.setPrint(); //打印并换行
+	
+		switch (type) {
+			case printerType[0]:
+			  xpType ="外卖";
+			  break;
+			  
+		   case printerType[1]:
+		    xpType ="销售";
+		    break;	
+			
+		   case printerType[2]:
+		    xpType ="退单";
+			xsBill= data.xsBill;
+			lineNum = Math.abs(lineNum);
+			isReturn = true;
+		    break;
+			
+		   case printerType[3]:
+			xpType ="预定";
+			isYD = true;
+		    break;	
+			
+		   case printerType[4]:
+			 xpType ="预定";
+			 xsBill= data.xsBill;
+			 lineNum = Math.abs(lineNum);
+			 isReturn = true;
+			 isYD = true;
+			break;	
+			
+		  case printerType[5]:
+			xpType ="提货";
+			isYD = true;
+		    break;	
+			
+		  case printerType[6]:
+			xpType ="赊销";
+		    break;
+			
+		  case printerType[7]:
+			xpType ="赊销";
+			xsBill= data.xsBill;
+			lineNum = Math.abs(lineNum);
+			isReturn = true;
+		    break;
+			
+		  case printerType[8]:
+			xpType ="线上";
+		    break;
+			
+		  case printerType[9]:
+			xpType ="提货";
+			xsBill= data.xsBill;
+			break;
+			
+		   case printerType[10]:
+			 xpType ="线上";
+			 xsBill= data.xsBill;
+			 lineNum = Math.abs(lineNum);
+			 isReturn = true;
+			 break;
+		}
+			
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType + "小票: " + data.khName);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("门店电话: " + data.khPhone);
+		jpPrinter.setPrint(); //打印并换行
+	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType + "时间: " + data.xsDate);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收银员: " + data.posUser);
+		jpPrinter.setPrint(); //打印并换行
+		
+		//如果是退单，有原单号，则将原单号打印
+		if(xsBill != "" && xsBill != undefined){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("单号: "+ data.bill);
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("原单号: "+ xsBill + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}else{
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("单号: "+ data.bill + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("商品名称       数量  金额  折扣  ");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		//商品信息
+		data.goodsList.forEach((item, i) => {
+			let spname = (i + 1).toString() + item.spname.toString();
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setPrint(); //打印并换行
+			
+			//是退单，折扣显示0
+			if(isReturn){
+				item.discount = 0;
+			}
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
+			jpPrinter.setPrint(); //打印并换行		
+		});
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------总计-----------------------");
+		jpPrinter.setPrint(); //打印并换行
+			
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setPrint(); //打印并换行
+			
+		
+		//是退单，已优惠金额显示0
+		if(isReturn){
+			data.discountedAmount = 0;
+		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------付款方式-------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		var payTotal = 0.00;
+		var change = 0.00;
+		
+		//支付方式分组的处理
+		let sale3_arrOrigin = JSON.stringify(data.sale3List);
+		let sale3_arr = [];
+		let zqNet = data.discountedAmount;
+		//付款方式
+		data.sale3List.forEach((item1, index1) => {
+			payTotal += parseFloat(item1.amt);		
+			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
+			if (!parent) {
+			    let list = data.sale3List.filter(el => {
+				  return el.fkid === item1.fkid
+			    })
+				//console.log("sFkid 111",list);
+				let totalAmt = list.reduce((prev, cur) => {
+					return prev + cur.amt;
+				}, 0)
+				//如果是赠券
+				if(item1.fkid == "ZZ01"|| item1.fkid=="ZCV1"){
+					zqNet += totalAmt;
+				}
+				item1.amt = totalAmt;
+				sale3_arr.push(item1)
+			} 
+		});
+	
+	
+		sale3_arr.forEach((item2, index2) => {
+			let amount = item2.amt;
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item2.fkName + ":" + amount.toString());
+			jpPrinter.setPrint(); //打印并换行
+		});		
+	
+		//是退单，金额显示负数
+		if(isReturn){
+			payTotal = -Math.abs(payTotal).toFixed(2);
+			zqNet = 0;
+		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("支付:" + payTotal.toFixed(2).toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("找零:" + change.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		if(data.cuid != "" && data.cuid != null){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("大客户:" + data.cuid);
+			jpPrinter.setPrint(); //打印并换行
+		}
+	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("欠款:" + util.nnvl(payTotal,0).toFixed(2) + " 定金:" + util.nnvl(payTotal,0).toFixed(2));
+		jpPrinter.setPrint(); //打印并换行
+		
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("商户承担折扣额:" + zqNet.toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(data.ggy);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+	}
+	
 	jpPrinter.YDFormString = function(data,printer_poscs,print){
 		var type = data.xsType;
 		var xpType = "预定";

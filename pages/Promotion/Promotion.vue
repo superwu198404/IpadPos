@@ -19,6 +19,9 @@
 					<view class="sousuo">
 						<image src="../../images/shuaxin.png" mode="widthFix" @click="GetMDCXHD(true)"></image>刷新
 					</view>
+					<view class="sousuo">
+						<image src="../../images/shuaxin.png" mode="widthFix" @click="Close"></image>关闭
+					</view>
 				</view>
 			</view>
 		</view>
@@ -74,6 +77,9 @@
 		methods: {
 			onLoad: function() {
 				that = this;
+			},
+			Close:function(){
+				uni.$emit('tools','promotions');
 			},
 			GetMDCXHD: function(e) {
 				_main.GetMDCXHD(res => {

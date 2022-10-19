@@ -16,7 +16,7 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu gongju">
+		<view class="menu gongju" tabindex="-1" @blur="this.showGJ = false">
 			<view class="bills">
 				<label></label>
 				<view @click="showGJ=!showGJ">
@@ -24,8 +24,8 @@
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
 				</view>
-				<view class="chargeback" v-if="showGJ" tabindex="-1" @blur="ToolBlur">
-					<view class="currs" @click="ShowTool('CX')">
+				<view class="chargeback" v-if="showGJ">
+					<view class="currs" @click="ShowTool('promotions')">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
@@ -102,9 +102,6 @@
 			};
 		},
 		methods: {
-			ToolBlur(){
-				
-			},
 			MenuSelect(menu_name, menu_info) {
 				this.previous_info = this.current_info;
 				// this.current_info = {
@@ -143,7 +140,11 @@
 				if (e == 'CD') {
 					this.showcdxp = true;
 					console.log("重打小票",this.showcdxp)
-				}else{
+				}
+				else if (e == 'promotions') {
+					uni.$emit('tools',e);
+				}
+				else{
 					//功能放开，则去掉该提示
 					util.simpleMsg("暂未开放", true);
 					return;
@@ -190,5 +191,6 @@
 <style>
 	.menu {
 		padding: 0px;
+		outline: 0px;
 	}
 </style>

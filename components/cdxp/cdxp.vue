@@ -17,7 +17,7 @@
 			</view>
 			<view class="infors">
 				<text>小票单号：</text>
-				<input password="true" placeholder="请输入小票号" @confirm="ConfirmCD" v-model="xsBill" focus="true" />
+				<input type="text" placeholder="请输入小票号" @confirm="ConfirmCD" v-model="xsBill" focus="true" />
 			</view>
 		</view>
 		<view class="affirm">
@@ -48,6 +48,7 @@
 	import _main from '@/api/business/main.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import cx_util from '@/utils/cx/cx_common.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
@@ -75,25 +76,11 @@
 				POS_XSBILLPRINT: [], //重打查询数据集合
 			};
 		},
-		created : function(){
+		created : async function(){
 			this.qd_show = true;
-			
-			this.POS_XSBILLPRINT = [];
-			(util.callBind(this, async function() {
-				try {
-					await RequestSend(`select * from POS_XSBILLPRINT order by XSDATE desc limit 1`, util.callBind(this, function(res) {
-						if (res.code) {
-							this.POS_XSBILLPRINT = JSON.parse(res.data);
-							console.log("获取重打数据 111",this.FKDA_INFO);
-						} else {
-							//util.simpleMsg("获取重打数据失败!", true)
-						}
-					}))
-				} catch (e) {
-					//util.simpleMsg("获取重打数据失败!", e);
-					console.log("获取重打数据失败",e);
-				}
-			}))()
+			let xsBillRes = await xprinter_util.getBillPrinterMax();
+			console.log("获取重打数据 111",xsBillRes);
+			this.xsBill = xsBillRes;
 		},
 		methods: {
 			dateChange: e => {
@@ -112,7 +99,8 @@
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
-				that.$refs.printerPage.againPrinter(that.refund_no);
+				this.$emit("ClosePopup");
+				that.$refs.printerPage.againPrinter(bill);
 			},
 			//重打小票关闭
 			CloseCD: function(data) {

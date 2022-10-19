@@ -697,7 +697,13 @@ var XsTypeObj = {
 		},
 		///对打印的控制
 		$print: function(sale001, sale002, sale003) {
-
+			return {
+				tName: "赊销小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 		//在此模式下添加商品是否所有限制
 		$addSp: function(pm_input) {
@@ -739,6 +745,31 @@ var XsTypeObj = {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
 			});
+		},
+		$saleFinied: function(sales) {
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			//查询支付方式
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			let printerPram = {"printNum": 2};
+			console.log("赊销开始调用打印", {
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SX");	
 		},
 		$click() {
 			console.log("[sale_credit]赊销点击...");
@@ -814,6 +845,16 @@ var XsTypeObj = {
 			}, common.actTypeEnum.Refund);
 			this.ShowStatement();
 		},
+		///对打印的控制
+		$print: function(sale001, sale002, sale003) {
+			return {
+				tName: "赊销退货小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 		$click() {
 			this.SetManage("sale_credit_return_good");
 			return false;
@@ -851,6 +892,30 @@ var XsTypeObj = {
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			//查询支付方式
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			let printerPram = {"printNum": 1};
+			console.log("赊销退单开始调用打印", {
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SXTD");	
+			
 			//废弃 采用本地生成模式
 			// _refund.CreditOrderRefund({
 			// 	khid: this.Storeid,
@@ -1425,19 +1490,19 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("close-FZCX");
 		uni.$off("ReturnSale");
 		uni.$off("Switch");
+		uni.$off("tools");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
-
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
-
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
+		uni.$on("tools",this.ToolsManage);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1506,6 +1571,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.score_info = {
 		score: 0,
 		money: 0
+	}
+	//工具栏界面
+	this.tool_pages = {
+		promotions:false,//当前促销活动
+		communication:false,//通讯
+		tickers:false//重打小票
 	}
 	//促销跟踪
 	this.cxfsArr = [];
@@ -1854,6 +1925,15 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
 	}
+	
+	this.ToolsManage = util.callBind(this,function(info){
+		console.log("[ToolsManage]信息:",info);
+		if(this.tool_pages[info] !== undefined){
+			console.log("[ToolsManage]修改前:",this.tool_pages[info]);
+			this.tool_pages[info] = !this.tool_pages[info];
+			console.log("[ToolsManage]修改后:",this.tool_pages[info]);
+		}
+	})
 
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
 	this.setComponentsManage = function(e, pm_mtype) {
@@ -2596,6 +2676,7 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
+		console.log("[ShowStatement]SALE001:", Object.getOwnPropertyNames(that.sale001));
 		console.log("[ShowStatement]商品信息:", that.sale002);
 		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);

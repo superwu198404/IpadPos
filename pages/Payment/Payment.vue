@@ -124,7 +124,7 @@
 										</view>
 										<div class="refund-more-box">
 											<text class="refund-text">{{pay.amount}}￥</text>
-											<div class="refund-reset" @click="singlePayRetry(pay.fkid,pay.bill)">
+											<div class="refund-reset" @click="singlePayRetry(pay)">
 												{{ pay.auth_code?"支付":"重试" }}
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div>
@@ -158,13 +158,9 @@
 										</view>
 										<div class="refund-more-box">
 											<text class="refund-text">￥{{(-refund.amount).toFixed(2)}}</text>
-											<div class="refund-reset" @click="NoOrginRefund(refund)">
+											<div class="refund-reset" @click="singleRetry(refund)">
 												重试
 												<div v-if="refund.loading" class="refund-icon refund-loading"></div>
-											</div>
-											<div class="refund-reset" @click="singleRetry(refund.bill)">
-												退回
-												<div class="refund-icon refund-loading"></div>
 											</div>
 										</div>
 									</view>
@@ -1011,11 +1007,12 @@
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
-				console.log("开始退款流程...")
-				console.log("退款单号为：", this.out_refund_no)
+				console.log("[Refund]开始退款流程...")
+				console.log("[Refund]退款单号为：", this.out_refund_no)
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
+				this.CanBack = false; //锁定退出
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
@@ -1051,7 +1048,7 @@
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
 					//如果是预定金、现金（如果为0）门店赊销，直接跳过
-					if (['ZG03', 'ZF01', 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
+					if (['ZG03', /*'ZF01',*/ 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
@@ -1176,6 +1173,7 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
+				this.CanBack = false; //锁定退出
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1490,7 +1488,7 @@
 				console.log("[ParamInit]待支付金额初始化后:", this.dPayAmount);
 			},
 			ImmediateRefundCheck() { //直接退款的条件检测
-				if (this.SALES.sale3.length === 1 && this.SALES.sale3[0].FKID === 'ZG01')//为赊销退单
+				if (this.SALES.sale3.length === 1 && this.SALES.sale3[0].FKID === 'ZG01') //为赊销退单
 					return true;
 				// else if(){} //如果有其他业务分支...
 				else
@@ -1659,26 +1657,49 @@
 				else
 					this.Pay();
 			},
-			NoOrginRefund:function(refund_info){//不可原路——退款
-				if(refund_info?.refund_num == 0){//未进行重试
-					util.simpleModal('退款','确定使用不可原路退回方式退款吗?',util.callBind(this,function(res){
-						if(res.confirm){
+			NoOrginRefund: function(refund_info) { //不可原路——退款
+				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
+				return new Promise(util.callBind(this, function(resolve, reject) {
+					util.simpleModal('退款', '确定使用不可原路退回方式退款吗?', util.callBind(this, function(res) {
+						if (res.confirm) {
 							this.RecordInfoAsNoOrgin(refund_info);
-						}
+							resolve(true);
+						} else
+							resolve(false);
 					}))
-				}
-				else{//已经重试过
-					this.RecordInfoAsNoOrgin(refund_info);
-				}
+				}));
 			},
-			RecordInfoAsNoOrgin:function(info){//记录为不可回退类型
+			NoOrginPay: async function(pay_info) { //不可原路——退款
+				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
+				return new Promise(util.callBind(this, function(resolve, reject) {
+					util.simpleModal('付款', '确定使用不可原路退回方式付款吗?', util.callBind(this, function(res) {
+						console.log("[NoOrginRefund]选择结果:",res);
+						if (res) {
+							console.log("[NoOrginRefund]开始切换未不可原路退回方式...");
+							this.RecordInfoAsNoOrgin(pay_info);
+							console.log("[NoOrginRefund]切换完毕...");
+							resolve(true);
+						} else
+							resolve(false);
+					}))
+				}));
+			},
+			RecordInfoAsNoOrgin: function(info) { //记录为不可回退类型
 				info.fkid = 'ZG11';
 				info.name = '不可原路退回';
 				info.fail = false;
 			},
 			//单笔订单退款重试
-			singleRetry: function(trade_no) {
-				console.log("重试单号：", trade_no)
+			singleRetry: async function(info) {
+				console.log("[SingleRetry]退款重试次数:",info.refund_num);
+				let trade_no = info.bill;
+				if (info.refund_num != 0) {
+					if (await this.NoOrginRefund(info)) {
+						this.refundAmountCount(); //重新计算
+						return;
+					}
+				}
+				console.log("[SingleRetry]重试单号：", trade_no)
 				let singleRefund = this.RefundList.find(i => i.bill === trade_no);
 				if (singleRefund) {
 					singleRefund.loading = true; //开启加载样式
@@ -1729,30 +1750,41 @@
 				return this.PayList.indexOf(i => i.type == type) !== -1; //满足则是存在，否则不存在
 			},
 			//单笔订单重试
-			singlePayRetry: function(fkid, trade_no) {
-				let trade = this.PayList.find(i => i.bill === trade_no),
-					type = this.PayWayList.find(i => i.fkid == fkid)?.type,
+			singlePayRetry:async function(info) {
+				if (info.pay_num > 1) {
+					if (await this.NoOrginPay(info)) {
+						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
+						this.used_no.push(info.no); //如果成功
+						console.log("[SinglePayRetry]已储存单序号...",info.no);
+						this.yPayAmount += Number(info.amount);
+						console.log("[SinglePayRetry]已计算待支付金额...",info.amount);
+						this.PayList.sort(); //刷新视图
+						return;
+					}
+				}
+				let fkid = info.fkid, trade_no = info.bill;
+				let type = this.PayWayList.find(i => i.fkid == fkid)?.type,
 					data = this.PayDataAssemble();
-				trade.loading = true;
+				info.loading = true;
 				if (!this.existSamePayType(type))
 					retrySinglePay({
 						type: type,
-						trade,
+						trade: info,
 						trade_no,
 						data
 					}, (function(res) {
 						let data = res.data;
 						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
-						trade.discount = data.discount ?? 0;
-						trade.disc = data.zklx ?? "";
-						trade.user_id = (data?.open_id || data?.hyid) ?? "";
+						info.discount = data.discount ?? 0;
+						info.disc = data.zklx ?? "";
+						info.user_id = (data?.open_id || data?.hyid) ?? "";
 						this.used_no.push(this.prev_no); //如果成功
-						this.retryEnd(trade, false)
+						this.retryEnd(info, false)
 						this.yPayAmount += (data.money / 100);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
 						util.simpleModal('[singlePayRetry]重试支付成功!', res);
 					}).bind(this), (function(err) {
-						this.retryEnd(trade);
+						this.retryEnd(info);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
 						util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
 					}).bind(this));
