@@ -36,10 +36,13 @@
 							</view>
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
-								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true" :scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList" >
+								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
+									:scroll-into-view="mainSale.scrollinto">
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
 
-										<view :id="mainSale.selectFlag+plitem.plid" :class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">{{plitem.plname}}
+										<view :id="mainSale.selectFlag+plitem.plid"
+											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">
+											{{plitem.plname}}
 											<label></label>
 										</view>
 
@@ -238,7 +241,8 @@
 					</view>
 					<view class="nom">
 						<label>
-							<text>￥{{ MemberBalance }}</text>
+							<text>***</text>
+							<!-- <text>￥{{ MemberBalance }}</text> -->
 							<text>余额</text>
 						</label>
 						<label>
@@ -262,22 +266,22 @@
 									<view><text>￥</text>{{item.money}}</view>
 									<text>满{{item.limitmoney}}可用</text>
 								</view>
-								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>								
-									<view class="coupon-dets">
-										<view class="limit">
-											<view class="h3" v-for="(item1,index1) in item.limitDesc">
-												<text>{{item1}}</text>
-											</view>
-											<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
+								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
+								<view class="coupon-dets">
+									<view class="limit">
+										<view class="h3" v-for="(item1,index1) in item.limitDesc">
+											<text>{{item1}}</text>
 										</view>
-										<view class="directions">
-											<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-											<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
-											</view>
-											<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-														mode="widthFix"></image></button> -->
-										</view>
+										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 									</view>
+									<view class="directions">
+										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+										</view>
+										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
+														mode="widthFix"></image></button> -->
+									</view>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -290,7 +294,8 @@
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
 								<button class="btn" v-else>未登录...</button>
-								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
+								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
+									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
 							</view>
 						</label>
 						<text class="qingk"
@@ -773,9 +778,9 @@
 		font-size: 28rpx;
 		margin-left: 26rpx;
 	}
-	
-	.score-box{
-		background-color:var(--green);
+
+	.score-box {
+		background-color: var(--green);
 		border-radius: 5px;
 		font-size: 0.6rem;
 		padding: 2px 5px;
