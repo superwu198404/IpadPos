@@ -82,7 +82,7 @@
 						<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
 							value="" :key="domRefresh" v-model="dPayAmount" />
 						<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
-							value="" :key="domRefresh" v-model="CashOffset.Score" />
+							value="" :key="domRefresh" v-model="CashOffset.Money" />
 					</text>
 				</p>
 			</view>
@@ -859,8 +859,8 @@
 					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
 				}
-				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
-					util.simpleMsg("金额不能为空!", false);
+				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
+					util.simpleMsg("金额不能为空!", true);
 					this.dPayAmount = this.toBePaidPrice();
 					return;
 				}
@@ -1047,7 +1047,7 @@
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
 					//如果是预定金、现金（如果为0）门店赊销，直接跳过
-					if (['ZG03', /*'ZF01',*/ 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
+					if (['ZG03', 'ZF01', 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
@@ -1172,7 +1172,6 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
-				this.CanBack = false; //锁定退出
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1196,6 +1195,10 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
+						if(this.currentPayType == 'HyJfExchange') {//判断当前是不是积分支付，如果是则扣除所有积分
+							this.CashOffset.Score = 0;
+							this.CashOffset.Money = 0;
+						}
 						console.log("[Payment-付款]支付结果：", result);
 						util.simpleMsg("支付成功!");
 						this.UpdateHyInfo(result.data); //更新会员信息

@@ -56,6 +56,7 @@ export const PayDataAssemble = function() {
 		channel: this.channel,
 		point:this.CashOffset.Score,//抵现积分数
 		point_money:this.CashOffset.Money,//积分积分对应金额
+		member_id: this.SALES.sale1.CUID,
 		memo: this.currentPayInfo?.fkid,
 		discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		product_info: this.Products.map(i => { //商品清单

@@ -445,16 +445,16 @@ import checker from '@/utils/graceChecker.js';
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		if (!util.getStorage("hyinfo")?.hyId) {
+		if (!body.member_id) {
 			util.simpleMsg("请先登录会员...", true);
 			return;
 		}
-		let flag = checker.checkMobile(util.getStorage("hyinfo")?.hyId)
+		let flag = checker.checkMobile(body.member_id)
 		member.QueryHyInfo("查询中...", {
 			brand: getApp().globalData?.brand,
 			kquser: getApp().globalData?.kquser,
 			data: {
-				code: util.getStorage("hyinfo")?.hyId,
+				code: body.member_id,
 				type: flag ? 'Mobile' : 'ACCOUNT'
 			}
 		}, function(res) {
@@ -465,7 +465,7 @@ var pointPay = {
 				member.PointsDeduction("积分抵现中...", {
 					brand: getApp().globalData?.brand,
 					data: {
-						hyid: util.getStorage("hyinfo")?.hyId,
+						hyid: body.member_id,
 						// hyid: "1000311647",
 						amount: body.point,
 						trade_no: body.out_trade_no,

@@ -620,6 +620,9 @@
 			//用户信息确定
 			Confirm: () => {
 				console.log("预定信息：", that.Order);
+				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				let hour = th_date.getHours();
+				let minute = th_date.getMinutes();
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
@@ -630,6 +633,10 @@
 				}
 				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 					util.simpleMsg("提货时间早于当前", 'none');
+					return;
+				}
+				if (!(Number(that.startTime) <= hour && Number(that.endTime) >= hour)) {
+					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}
 				if (that.Order.THTYPE == '1') {
