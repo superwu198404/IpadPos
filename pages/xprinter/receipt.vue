@@ -382,6 +382,65 @@
 				}
 				console.log("打印格式记录结束");
 			},
+			//赊销打印小票
+			sxBluePrinter: async function(sale1_obj, sale2_arr, sale3_arr,sxsale001, print,type) {
+				//票据
+				var that = this;
+				//输出日志
+				console.log("赊销打印接收数据 sale1_obj", sale1_obj);
+				console.log("赊销打印接收数据 sale2_arr", sale2_arr);
+				console.log("赊销打印控制参数 print", xprinter_util.nnvl(print.PRINTNUM,1));
+				console.log("赊销打印接收数据 sale3_arr", sale3_arr);
+			
+			    if(print != null){
+					that.printerNum = print.PRINTNUM;
+				}
+			    
+				//查询终端参数
+				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
+				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
+				console.log("查询终端参数", printer_poscs);
+			
+				// 通过终端参数，Y 打印小票
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("终端参数未设置打印小票", "none");
+					console.log("终端参数未设置打印小票");
+					return;
+				}
+				var ggyContent = await that.ggyAction();
+				//打印数据转换
+				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr, ggyContent,type);
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.init();
+				//打印格式
+				command.SXFormString(printerInfo, printer_poscs, print);
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
+			
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				// 电子发票二维码不为空、小票结尾二维码不为空
+				if (is_dzfpewmdz && type == "XS") {
+					//生成属于单号的二维码
+					Promise.all([
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
+							that.qrCodeWidth, that.qrCodeHeight),
+						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
+					]).then(res => {
+						console.log("开始发送打印命令");
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('bluePrinter reject failed reason', reason)
+						that.prepareSend(command.getData()); //发送数据
+					})
+				} else {
+					that.prepareSend(command.getData()); //发送数据
+				}
+				console.log("打印格式记录结束");
+			},
 			//重新打印
 			againPrinter: async function(xsBill) {
 				var that = this;

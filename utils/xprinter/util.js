@@ -389,6 +389,9 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var ggy = ggyContent;
 	var totalQty = 0;
 	var totalPrice = 0;
+	var dnet = nnvl(sale1_obj.DNET,0); //定金
+    var dkhName = snvl(sale1_obj.DKFNAME, "");
+	
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -465,6 +468,8 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 		hdnet, //商家承担
 		sale3List, //支付信息
 		ggy, //广告语
+		dnet,
+		dkhName, //大客户名称
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
 

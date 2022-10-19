@@ -754,18 +754,18 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			//查询支付方式
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
 					item.balance = 0;
 				}
 			})
-			let printerPram = {
-				"printNum": 2
-			};
+			let dkfname = this.DKF.val.DKFNAME;
+			let printerPram = {"PRINTNUM": 2, "DKFNAME": dkfname};
 			console.log("赊销开始调用打印", {
 				arr2,
 				arr3,
@@ -901,18 +901,19 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			//查询支付方式
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
 					item.balance = 0;
 				}
 			})
-			let printerPram = {
-				"printNum": 1
-			};
+			
+			let dkfname = this.DKF.val.DKFNAME;
+			let printerPram = {"PRINTNUM": 1, "DKFNAME": dkfname};
 			console.log("赊销退单开始调用打印", {
 				arr2,
 				arr3,
@@ -1070,10 +1071,10 @@ var XsTypeObj = {
 			})
 			let arr3 = this.sale003;
 			//查询支付方式
-			//console.log("获取支付方式 test111",this.FKDA_INFO);
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = 0;
 				} catch (e) {
 					item.SNAME = "";
