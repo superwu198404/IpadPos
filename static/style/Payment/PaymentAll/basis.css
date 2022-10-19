@@ -782,12 +782,12 @@ page {
 	display: none;
 }
 
-/* ::-webkit-scrollbar {
-	display: none;
-	width: 0;
+::-webkit-scrollbar {
+	display: block;
+	width: 1rpx;
 	height: 0;
-	color: transparent;
-} */
+	color: #f9f9f9;
+}
 
 .boxs,.box{
 	position: fixed;

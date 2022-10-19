@@ -1827,7 +1827,6 @@ function GetSale(global, vue, target_name, uni) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
-		return that.isRed=true
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
