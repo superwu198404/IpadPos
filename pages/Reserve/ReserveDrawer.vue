@@ -400,7 +400,19 @@
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			timeChange: e => {
-				that.Order.TH_TIME = e.detail.value;
+				console.log("时间切换：", e);
+				let time = e.detail.value;
+				if (!time) {
+					time = "00:00";
+				}
+				if (time.indexOf(':') == 0) {
+					time = "00" + time;
+				}
+				if (time.indexOf(':') < 0) {
+					time = time + ":00";
+				}
+				console.log("时间格式化后：", time);
+				that.Order.TH_TIME = time;
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			//提货类型改变

@@ -31,7 +31,8 @@
 					<label><text>配送中心：</text>
 						<picker @change="CenterChange" :range="distribution" range-key="SNAME">
 							<view style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-								{{ details.info.STR2}}-{{ CenterName }}</view>
+								{{ details.info.STR2}}-{{ CenterName }}
+							</view>
 						</picker>
 					</label>
 					<label><text>地址：</text><input v-model="details.info.CUSTMADDRESS" :disabled="true"></input></label>
@@ -192,8 +193,18 @@
 			ExtractDateChange: function(date) {
 				this.details.info.THDATE = date.detail.value + " " + this.ExtractTime;
 			},
-			ExtractTimeChange: function(time) {
-				this.details.info.THDATE = this.ExtractDate + " " + time.detail.value;
+			ExtractTimeChange: function(e) {
+				let time = e.detail.value;
+				if (!time) {
+					time = "00:00";
+				}
+				if (time.indexOf(':') == 0) {
+					time = "00" + time;
+				}
+				if (time.indexOf(':') < 0) {
+					time = time + ":00";
+				}
+				this.details.info.THDATE = this.ExtractDate + " " + time;
 			},
 			AddAddress: function(e) {
 				this.view.add_address = true; //新增地址
@@ -232,7 +243,7 @@
 							thkhid: this.details.info.thkhid
 						}
 					}, util.callBind(this, function(res) {
-						console.log("[Save]保存成功:",res);
+						console.log("[Save]保存成功:", res);
 						util.simpleMsg(res.msg, res.code, res);
 						if (res.code) {
 							this.Close();
@@ -272,7 +283,7 @@
 					})
 					this.key = Number(new Date());
 				}
-				console.log("[RadioChange]标点更新...",address_info);
+				console.log("[RadioChange]标点更新...", address_info);
 			},
 			AddressChange: function(data) {
 				console.log("[AddressChange]地址为:", data);
@@ -295,12 +306,15 @@
 						console.log("[ChangeCustomerAddress]ConfirmADDR回调:", res);
 						util.simpleMsg(res.msg, res.code, res);
 						this.Newaddr = false;
-						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(res) {
+						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
+							res) {
 							if (!this.view.address_edit) {
 								let address = this.form.address.ADDRESS
 								console.log("[GetCustomerAddress-Inner]插入前的Address:", address);
-								console.log("[GetCustomerAddress-Inner]Address列表:", this.details.address);
-								let address_info = this.details.address.find(a => a.ADDRESS === address);
+								console.log("[GetCustomerAddress-Inner]Address列表:", this.details
+									.address);
+								let address_info = this.details.address.find(a => a.ADDRESS ===
+									address);
 								console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
 								if (address_info) {
 									this.RadioChange(address_info);
@@ -333,9 +347,9 @@
 			},
 			QueryAddress: function() {
 				console.log("[QueryAddress]查询客户地址信息...");
-				this.GetCustomerAddress(this.details.info.CUSTMPHONE,util.callBind(this,function(){
+				this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function() {
 					console.log("[QueryAddress]自动展开地址列表...");
-					this.view.more = true;//自动展开地址栏
+					this.view.more = true; //自动展开地址栏
 				}));
 			},
 			ValidFromData: function() {
