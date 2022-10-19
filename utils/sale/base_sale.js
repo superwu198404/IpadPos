@@ -1303,8 +1303,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
-		console.log("进入清除促销折扣方法");
-		if (!this.sale001) { //创建对象后 才允许清楚 big bug
+		console.log("进入清除促销折扣方法", this.sale001);
+		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
 			this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -1693,7 +1693,7 @@ function GetSale(global, vue, target_name, uni) {
 				if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
 					that.ResetCXZK(); //正向操作时 选择大客户后清除促销折扣
 					//切换大客户后 要清除一下 上一个大客户的 折扣规则以及当前折扣类型
-					if (that.Disc.val.ZKData.DKFZKDatas) {
+					if (that.Disc.val.ZKData?.DKFZKDatas) {
 						console.log("清除前的特殊折扣数据：", that.Disc.cval);
 						Reflect.deleteProperty(that.Disc.val.ZKData, "DKFZKDatas");
 						Reflect.deleteProperty(that.Disc.val, "ZKType");
