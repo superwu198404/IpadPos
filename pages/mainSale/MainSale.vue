@@ -38,7 +38,8 @@
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
 									:scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList">
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
+										:data-plid="plitem.plid">
 
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">
@@ -57,18 +58,21 @@
 												</view>
 												<view class="cods">
 													<label>
-														<image src="../../images/dx-bm.png" mode="widthFix"></image>
+														<image src="../../images/dx-bm.png" mode="widthFix">
+														</image>
 														{{sptiem.SPID.substr(8)}}
 													</label>
 													<label>
-														<image src="../../images/dx-dw.png" mode="widthFix"></image>
+														<image src="../../images/dx-dw.png" mode="widthFix">
+														</image>
 														{{sptiem.UNIT}}
 													</label>
 												</view>
 												<view class="price">
 													<text>￥{{ Price(sptiem.SPID) }}</text>
 													<view>
-														<image src="../../images/dx-gd.png" mode="widthFix"></image>
+														<image src="../../images/dx-gd.png" mode="widthFix">
+														</image>
 													</view>
 												</view>
 											</view>
@@ -76,6 +80,7 @@
 									</view>
 								</scroll-view>
 							</view>
+							</scroll-view>
 						</view>
 					</view>
 					<view class="operation">
@@ -83,7 +88,7 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()" :class="mainSale.selectLet==1?'selects':''">
+							<view class="a-z" @click="mainSale.Letters()">
 								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
@@ -135,7 +140,8 @@
 				</OnlineOrders>
 				<OnlinePick style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
-				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message">
+				</Message>
 				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
 				</RefundOrder>
 				<SXRefund style="position: absolute;z-index: 5;"
@@ -143,7 +149,8 @@
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
-		<view class="boxs" v-if="mainSale.tool_pages.promotions" style="display: flex;justify-content: center;align-items: center;">
+		<view class="boxs" v-if="mainSale.tool_pages.promotions"
+			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
 		</view>
 		<!-- 会员登录 -->
@@ -223,13 +230,14 @@
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
-		
+
 		<!-- 辅助促销 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
-			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
+			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
+			</FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement" @click="mainSale.setComponentsManage">
 			<view class="memberes">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -239,7 +247,7 @@
 							<label
 								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
 						</label>
-						<button @click="mainSale.HY.open = false">×</button>
+						<button class="close" @click="mainSale.HY.open = false">×</button>
 					</view>
 					<view class="nom">
 						<label>
@@ -259,6 +267,15 @@
 							<text>{{ MemberGiftCard }}</text>
 							<text>礼品卡</text>
 						</label>
+					</view>
+					<view class="coulist">
+						<view class="h2">会员信息</view>
+						<view class="infoes">
+							<view><text>会员手机号：</text>1234</view>
+							<view><text>会员生日：</text>1223-09-09</view>
+							<view><text>注册日期：</text> </view>
+							<view><text>企微好友：</text> </view>
+						</view>
 					</view>
 					<view class="coulist">
 						<view class="h2">优惠券</view>
@@ -297,7 +314,8 @@
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
 								<button class="btn" v-else>未登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
-									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}</view>
+									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
+								</view>
 							</view>
 						</label>
 						<text class="qingk"
@@ -514,10 +532,11 @@
 			},
 			CheckGoodIsLock: function() {
 				return util.callBind(this, function(index) {
-					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", {
-						index,
-						lock: this.mainSale.currentOperation
-					});
+					// console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", 
+					// 	{
+					// 	index,
+					// 	lock: this.mainSale.currentOperation
+					// });
 					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
 			},
@@ -615,6 +634,10 @@
 			//预定打印小票
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
 				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
+			},
+			//赊销打印小票
+			sxBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type) {
+				this.$refs.printerPage.sxBluePrinter(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type);
 			},
 		},
 		created() {
