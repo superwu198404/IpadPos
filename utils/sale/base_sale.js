@@ -1228,14 +1228,15 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
 		console.log("进入清除促销折扣方法");
-		//切换折扣或者促销后 清空一下原来计算的折扣值
-		this.sale001.TBZDISC = 0; //zk 总标准折扣
-		this.sale001.TLSDISC = 0; //zk 总临时折扣
-		this.sale001.TTPDISC = 0; //zk 总特批折扣
-		this.sale001.TCXDISC = 0; //cx 总促销折扣
-		this.sale001.TDISC = 0; //cx
-		this.sale001.BILLDISC = 0; //cx zk
-
+		if (!this.sale001) { //创建对象后 才允许清楚 big bug
+			//切换折扣或者促销后 清空一下原来计算的折扣值
+			this.sale001.TBZDISC = 0; //zk 总标准折扣
+			this.sale001.TLSDISC = 0; //zk 总临时折扣
+			this.sale001.TTPDISC = 0; //zk 总特批折扣
+			this.sale001.TCXDISC = 0; //cx 总促销折扣
+			this.sale001.TDISC = 0; //cx
+			this.sale001.BILLDISC = 0; //cx zk
+		}
 		this.sale002.map(r => {
 			r.NET = this.float(r.NET + r.DISCRATE, 2); //回退一下折扣？
 			r.PRICE = this.float(r.NET / r.QTY, 2); //回退一下折扣？
@@ -1437,7 +1438,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-FZCX", this.CloseFZCX);
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
-		uni.$on("tools",this.ToolsManage);
+		uni.$on("tools", this.ToolsManage);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1509,9 +1510,9 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//工具栏界面
 	this.tool_pages = {
-		promotions:false,//当前促销活动
-		communication:false,//通讯
-		tickers:false//重打小票
+		promotions: false, //当前促销活动
+		communication: false, //通讯
+		tickers: false //重打小票
 	}
 	//促销跟踪
 	this.cxfsArr = [];
@@ -1552,10 +1553,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
-	
+
 	this.Page.$watch('mainSale.tool_pages', util.callBind(this, function(n, o) {
 		console.warn('		发生变化');
-	}),{ deep:true })
+	}), {
+		deep: true
+	})
 
 	this.update = function() {
 		if (that.Page) {
@@ -1864,13 +1867,13 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
 	}
-	
-	this.ToolsManage = util.callBind(this,function(info){
-		console.log("[ToolsManage]信息:",info);
-		if(this.tool_pages[info] !== undefined){
-			console.log("[ToolsManage]修改前:",this.tool_pages[info]);
+
+	this.ToolsManage = util.callBind(this, function(info) {
+		console.log("[ToolsManage]信息:", info);
+		if (this.tool_pages[info] !== undefined) {
+			console.log("[ToolsManage]修改前:", this.tool_pages[info]);
 			this.tool_pages[info] = !this.tool_pages[info];
-			console.log("[ToolsManage]修改后:",this.tool_pages[info]);
+			console.log("[ToolsManage]修改后:", this.tool_pages[info]);
 		}
 	})
 
@@ -2678,6 +2681,7 @@ function GetSale(global, vue, target_name, uni) {
 			retx
 		});
 		// that.sale001.ZNET = this.float(retx.ONET, 2); //原价
+		// that.Page.$set(that.sale001, "TNET", this.float(retx.ONET - retx.DISCRATE, 2))
 		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
@@ -2689,7 +2693,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		console.log("计算过促销和折扣后的主单001：", that.sale001);
 		console.log("计算过促销和折扣后的商品002：", that.sale002);
-		//this.update();
+		that.update();
 	}
 
 	this.CheckOver48Hours = function(list) {

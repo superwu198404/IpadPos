@@ -143,7 +143,8 @@
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
-		<view class="boxs" v-if="mainSale.tool_pages.promotions" style="display: flex;justify-content: center;align-items: center;">
+		<view class="boxs" v-if="mainSale.tool_pages.promotions"
+			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
 		</view>
 		<!-- 会员登录 -->
@@ -223,7 +224,7 @@
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
-		
+
 		<!-- 辅助促销 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
@@ -486,6 +487,9 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+				obj: {
+					a: "13123"
+				}
 			}
 		},
 		components: {
@@ -514,10 +518,11 @@
 			},
 			CheckGoodIsLock: function() {
 				return util.callBind(this, function(index) {
-					console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", {
-						index,
-						lock: this.mainSale.currentOperation
-					});
+					// console.log("[CheckGoodIsLock]检查商品是否是被锁定的:", 
+					// 	{
+					// 	index,
+					// 	lock: this.mainSale.currentOperation
+					// });
 					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
 			},
