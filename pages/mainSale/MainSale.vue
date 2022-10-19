@@ -37,7 +37,7 @@
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true" :scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList" >
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList" :data-plid="plitem.plid">
 
 										<view :id="mainSale.selectFlag+plitem.plid" :class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">{{plitem.plname}}
 											<label></label>
@@ -80,7 +80,7 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()" :class="mainSale.selectLet==1?'selects':''">
+							<view class="a-z" @click="mainSale.Letters()">
 								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
@@ -224,7 +224,7 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001"></FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement" @click="mainSale.setComponentsManage">
 			<view class="memberes">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -234,7 +234,7 @@
 							<label
 								class="meminfo"><text>{{mainSale.HY.val.NickName}}</text><text>{{mainSale.HY.val.hyId}}</text></label>
 						</label>
-						<button @click="mainSale.HY.open = false">×</button>
+						<button class="close" @click="mainSale.HY.open = false">×</button>
 					</view>
 					<view class="nom">
 						<label>
@@ -253,6 +253,15 @@
 							<text>{{ MemberGiftCard }}</text>
 							<text>礼品卡</text>
 						</label>
+					</view>
+					<view class="coulist">
+						<view class="h2">会员信息</view>
+						<view class="infoes">
+							<view><text>会员手机号：</text>1234</view>
+							<view><text>会员生日：</text>1223-09-09</view>
+							<view><text>注册日期：</text> </view>
+							<view><text>企微好友：</text> </view>
+						</view>
 					</view>
 					<view class="coulist">
 						<view class="h2">优惠券</view>

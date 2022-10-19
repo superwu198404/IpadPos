@@ -28,7 +28,7 @@
 					<view class="middle">
 						<view class="restlist">
 							<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
-									:disabled="!YN_YDTH" />
+									:disabled="!YN_YDTH"  />
 								<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 							</label>
 							<label><text>*配送方式：</text>

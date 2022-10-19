@@ -196,9 +196,9 @@
 								</label>
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
-								:class="currentPayType === item.type ? 'selected':' '" :id="item.type"
+								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
-								<view class="tits">
+								<view class="tits"  v-bind:class="{seltss:isRed}">
 									<p>{{item.name}}</p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
@@ -504,6 +504,7 @@
 					this.PAD_SCAN = a;
 				}
 				this.event = this.getOpenerEventChannel();
+				 
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
@@ -1568,6 +1569,7 @@
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序
+					
 				}
 				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 					this.currentPayType = e.currentTarget.id; //小程序

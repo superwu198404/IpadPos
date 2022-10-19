@@ -76,10 +76,10 @@
 }
 .meminfo .restlist input,.meminfo .restlist StorePicker,.meminfo .restlist picker{
 	height: 60rpx;
-	background-color: #F5F5F5;
+	background-color: #f9f9f9;
 	line-height: 60rpx;
 	border-radius: 4rpx;
-	border:1px solid #eee;
+	border:1rpx solid #eee;
 	width:65%;
 	text-align: left;
 	padding:0 10rpx;
@@ -97,13 +97,14 @@
 	width:100%;
 }
 .meminfo .restlist textarea{
-	background-color: #F5F5F5;
+	background-color: #f9f9f9;
 	border-radius: 4rpx;
 	height: 80rpx;
 	line-height: 40rpx;
-	width:84%;
+	width:83%;
 	border:1px solid #eee;
 	text-align: left;
+	padding:0 0.5%;
 }
 .meminfo .restlist .long {
 	width:100%;

@@ -774,17 +774,20 @@ page {
 .pays-bj .curr.selected text {
 	color: #338869;
 }
-
+.pays-bj .seltss p,
+.pays-bj .seltss text{
+	color:#333;
+}
 .pays-bj .p-bg {
 	display: none;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
 	display: none;
 	width: 0;
 	height: 0;
 	color: transparent;
-}
+} */
 
 .boxs,.box{
 	position: fixed;
