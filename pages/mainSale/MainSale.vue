@@ -88,7 +88,7 @@
 							<view class="seasonal">
 								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
 							</view>
-							<view class="a-z" @click="mainSale.Letters()" :class="{azs:mainSale.flagitem}">
+							<view class="a-z" @click="mainSale.Letters()" >
 								<span>{{mainSale.selectFlag}}</span>
 								<image class="text" src="../../images/dx-fldw.png" mode="widthFix"></image>
 							</view>
