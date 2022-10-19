@@ -765,7 +765,10 @@ var XsTypeObj = {
 				}
 			})
 			let dkfname = this.DKF.val.DKFNAME;
-			let printerPram = {"PRINTNUM": 2, "DKFNAME": dkfname};
+			let printerPram = {
+				"PRINTNUM": 2,
+				"DKFNAME": dkfname
+			};
 			console.log("赊销开始调用打印", {
 				arr2,
 				arr3,
@@ -911,9 +914,12 @@ var XsTypeObj = {
 					item.balance = 0;
 				}
 			})
-			
+
 			let dkfname = this.DKF.val.DKFNAME;
-			let printerPram = {"PRINTNUM": 1, "DKFNAME": dkfname};
+			let printerPram = {
+				"PRINTNUM": 1,
+				"DKFNAME": dkfname
+			};
 			console.log("赊销退单开始调用打印", {
 				arr2,
 				arr3,
@@ -1952,6 +1958,7 @@ function GetSale(global, vue, target_name, uni) {
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
 	this.setComponentsManage = function(e, pm_mtype) {
 		console.log("进入组件切换事件：", pm_mtype);
+		console.log("进入组件切换事件1：", e);
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		console.log("[SetComponentsManage]设置组件切换:", {
 			type: mtype,

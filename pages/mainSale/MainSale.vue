@@ -237,7 +237,7 @@
 			</FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement" @click="mainSale.setComponentsManage">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
