@@ -697,7 +697,13 @@ var XsTypeObj = {
 		},
 		///对打印的控制
 		$print: function(sale001, sale002, sale003) {
-
+			return {
+				tName: "赊销小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
 		},
 		//在此模式下添加商品是否所有限制
 		$addSp: function(pm_input) {
@@ -739,6 +745,31 @@ var XsTypeObj = {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
 			});
+		},
+		$saleFinied: function(sales) {
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			//查询支付方式
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			let printerPram = {"printNum": 2};
+			console.log("赊销开始调用打印", {
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SX");	
 		},
 		$click() {
 			console.log("[sale_credit]赊销点击...");
@@ -814,6 +845,16 @@ var XsTypeObj = {
 			}, common.actTypeEnum.Refund);
 			this.ShowStatement();
 		},
+		///对打印的控制
+		$print: function(sale001, sale002, sale003) {
+			return {
+				tName: "赊销退货小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
 		$click() {
 			this.SetManage("sale_credit_return_good");
 			return false;
@@ -851,6 +892,30 @@ var XsTypeObj = {
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			//查询支付方式
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = this.FKDA_INFO.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			let printerPram = {"printNum": 1};
+			console.log("赊销退单开始调用打印", {
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SXTD");	
+			
 			//废弃 采用本地生成模式
 			// _refund.CreditOrderRefund({
 			// 	khid: this.Storeid,

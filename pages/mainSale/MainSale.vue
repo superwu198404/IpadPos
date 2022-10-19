@@ -616,6 +616,10 @@
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {
 				this.$refs.printerPage.ydBluePrinter(sale1_obj, sale2_arr, sale3_arr, ydsale001, print);
 			},
+			//赊销打印小票
+			sxBluePrinter: function(sale1_obj, sale2_arr, sale3_arr,sxsale001, print, type) {
+				this.$refs.printerPage.sxBluePrinter(sale1_obj, sale2_arr, sale3_arr,sxsale001, print, type);
+			},
 		},
 		created() {
 			// uni.setLocale("en");
