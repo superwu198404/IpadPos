@@ -771,7 +771,7 @@ var XsTypeObj = {
 				arr3,
 				printerPram
 			})
-			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SX");	
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3, this.sxsale001, printerPram, "SX");
 		},
 		$click() {
 			console.log("[sale_credit]赊销点击...");
@@ -919,8 +919,8 @@ var XsTypeObj = {
 				arr3,
 				printerPram
 			})
-			this.Page.sxBluePrinter(this.sale001, arr2, arr3,this.sxsale001, printerPram, "SXTD");	
-			
+			this.Page.sxBluePrinter(this.sale001, arr2, arr3, this.sxsale001, printerPram, "SXTD");
+
 			//废弃 采用本地生成模式
 			// _refund.CreditOrderRefund({
 			// 	khid: this.Storeid,
@@ -1953,11 +1953,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.setComponentsManage = function(e, pm_mtype) {
 		console.log("进入组件切换事件：", pm_mtype);
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
-		// console.log("[SetComponentsManage]设置组件切换:", {
-		// 	type: mtype,
-		// 		mode: that.current_type,
-		// 		current: that.currentOperation
-		// });
+		console.log("[SetComponentsManage]设置组件切换:", {
+			type: mtype,
+			mode: that.current_type,
+			current: that.currentOperation
+		});
 		if (that.currentOperation.hasOwnProperty(mtype)) {
 			// console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
