@@ -391,9 +391,9 @@
 				console.log("赊销打印接收数据 sale2_arr", sale2_arr);
 				console.log("赊销打印控制参数 print", xprinter_util.nnvl(print.PRINTNUM,1));
 				console.log("赊销打印接收数据 sale3_arr", sale3_arr);
-			
+			    
 			    if(print != null){
-					that.printerNum = print.PRINTNUM;
+					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
 				}
 			    
 				//查询终端参数
@@ -409,7 +409,7 @@
 				}
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
-				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr, ggyContent,type);
+				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr,print, ggyContent,type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
