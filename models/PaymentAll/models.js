@@ -10,12 +10,12 @@ import {
 } from '@/bll/Common/bll.js';
 
 //订单对象创建
-export const orderCreated = function(obj, payload) {
+export const orderCreated = function(obj, payload,current_pay_info) {
 	let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
-		fkid: this.currentPayInfo?.fkid ?? "",
-		type: this.currentPayInfo?.type ?? "",
+		fkid: current_pay_info?.fkid ?? "",
+		type: current_pay_info?.type ?? "",
 		bill: payload?.out_trade_no,
-		name: this.currentPayInfo?.name ?? "",
+		name: current_pay_info?.name ?? "",
 		amount: 0,
 		no: this.PayList.length,
 		disc: (payload?.discount / 100).toFixed(2) || 0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN

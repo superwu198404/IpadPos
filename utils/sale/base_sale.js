@@ -317,6 +317,7 @@ var XsTypeObj = {
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[SaleReserve]生成预定支付信息...");
+			this.payed = [];
 			this.payed.push(Sale3ModelAdditional(Sale3Model({
 				fkid: 'ZF01',
 				type: 'XJ',
@@ -722,6 +723,7 @@ var XsTypeObj = {
 			});
 			if (this.sale001.TNET) {
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
+				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: 'ZG01',
 					type: 'MDSX',
@@ -1010,6 +1012,7 @@ var XsTypeObj = {
 			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
 			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
 			this.ShowStatement();
+			this.payed = [];
 			for (let s3 of this.sale003) {
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: s3.FKID,
@@ -2124,6 +2127,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
 		uni.$emit('continue-message');
+		uni.$emit('continue-timed-communication');
 		// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
 		// 	.ynCx, this.currentOperation.FZCX);
 		// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
@@ -2244,6 +2248,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	this.PayParamAssemble = function(sales) {
 		uni.$emit('stop-message');
+		uni.$emit('stop-timed-communication');
 		that.log("[PayParamAssemble]支付参数组装...")
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象

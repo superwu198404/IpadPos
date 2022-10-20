@@ -274,7 +274,7 @@
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
-						return item.ADDR.indexOf(str) >= 0;
+						return item.ADDR?.indexOf(str) >= 0;
 					})
 				}
 			},
@@ -356,7 +356,7 @@
 				}
 				if (that.Products.length > 0) {
 					that.Products.map((r) => {
-						if (bmArr.indexOf(r.PLID) >= 0) {
+						if (bmArr?.indexOf(r.PLID) >= 0) {
 							that.YN_BHSP = true;
 						}
 					});
@@ -405,10 +405,10 @@
 				if (!time) {
 					time = "00:00";
 				}
-				if (time.indexOf(':') == 0) {
+				if (time?.indexOf(':') == 0) {
 					time = "00" + time;
 				}
-				if (time.indexOf(':') < 0) {
+				if (time?.indexOf(':') < 0) {
 					time = time + ":00";
 				}
 				console.log("时间格式化后：", time);
