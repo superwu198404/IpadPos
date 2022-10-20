@@ -153,19 +153,20 @@ const sale3_def = {
 };
 export const Sale3Model = function(init = sale3_def) {
 	return Object.assign({
-		fkid: "ZF04",
-		type: "HYK",
-		bill: "111111111111111111111111111",
-		name: "微信支付",
-		amount: 0.01,
-		no: 0,
-		is_free: "", //*卡券独有 是否是赠券
+		fkid: "", //支付id
+		type: "", //支付类型
+		bill: "", //单号
+		name: "", //支付类型名称
+		amount: 0, //支付金额
+		no: 0, //子单号
 		disc: 0, //*卡券独有 卡折扣金额折扣率
 		zklx: "", //*卡券独有 折扣类型
 		id_type: "", //*卡券独有 卡类型
 		user_id: "", //*支付宝微信独有 用户id 
+		is_free: "", //*卡券独有 是否是赠券
+		card_no: "" ,//*卡券独有卡券号码
+		point: 0, //积分数（积分抵现）
 		auth_code: "", //*支付宝微信，其他的不知道
-		card_no: "" //*卡券独有卡券号码
 	}, init)
 }
 
@@ -176,8 +177,10 @@ export const Sale3Model = function(init = sale3_def) {
 const additional_def = {
 	fail: true, //def初始和退款、支付失败的皆为true
 	pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+	refund_num: 0, //退款（尝试）次数，这里起码有一次才会显示为失败，0则不会
 	paying: false, //是否在正在支付重试中
 	refunding: false, //是否在正在退款重试中
+	show:true,//是否显示在列表中
 	loading: false, //是否显示加载
 	msg: "" //操作提示信息（可以显示失败的或者成功的）
 };
@@ -187,8 +190,10 @@ export const Sale3ModelAdditional = function(sale3_model, init = additional_def)
 		//业务配置字段 ↓
 		fail: true, //def初始和退款、支付失败的皆为true
 		pay_num: 0, //付款（尝试）次数，这里起码有一次才会显示为失败，0则不会
+		refund_num: 0, //退款（尝试）次数，这里起码有一次才会显示为失败，0则不会
 		paying: false, //是否在正在支付重试中
 		refunding: false, //是否在正在退款重试中
+		show:true,//是否显示在列表中
 		loading: false,
 		msg: "" //操作提示信息（可以显示失败的或者成功的）
 	}, init))

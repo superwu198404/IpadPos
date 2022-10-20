@@ -326,7 +326,7 @@ var XsTypeObj = {
 				amount: 0
 			}), { //业务配置字段（支付状态设定为成功）
 				fail: false, //定金显示为成功
-				paying: true
+				show: false
 			}));
 			console.log("[SaleReserve]生成预定支付信息成功!");
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
