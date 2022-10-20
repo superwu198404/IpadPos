@@ -202,7 +202,7 @@
 			},
 			Empty: function() {
 				that.p_bill = "";
-				that.p_date = that.p_date = dateformat.getYMD();
+				that.p_date = dateformat.getYMD();
 			},
 			Search: function() {
 				that.GetPTOrder(1);
