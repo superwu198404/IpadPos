@@ -29,7 +29,8 @@
 		<view class="products">
 			<view class="commods">
 				<view class="uls">
-					<view class="lis" v-for="(item,index) in UnLoadDatas">
+					<NoData v-if="UnLoadDatas.length==0"></NoData>
+					<view class="lis" v-else v-for="(item,index) in UnLoadDatas">
 						<view class="protheme">
 							<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
 							<view class="themes">

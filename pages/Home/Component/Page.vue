@@ -19,7 +19,7 @@
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
-				<view  @click.stop="operations(index)">
+				<view @click.stop="operations()">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
@@ -103,14 +103,14 @@
 		},
 		methods: {
 			// 隐藏
-			hideIsShow: function(){
+			hideIsShow: function() {
 				this.showGJ = false;
 			},
-			operations:function(index){
-				let that = this;			
+			operations: function(index) {
+				let that = this;
 				that.showGJ = !that.showGJ
 			},
-					
+
 			MenuSelect(menu_name, menu_info) {
 				this.previous_info = this.current_info;
 				// this.current_info = {
