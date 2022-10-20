@@ -16,11 +16,11 @@
 			</view>
 			<view>
 				<view class="prints">
-					<view class="sousuo">
-						<image src="../../images/shuaxin.png" mode="widthFix" @click="GetMDCXHD(true)"></image>刷新
+					<view class="sousuo" @click="GetMDCXHD(true)">
+						<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 					</view>
-					<view class="sousuo">
-						<image src="../../images/shuaxin.png" mode="widthFix" @click="Close"></image>关闭
+					<view class="sousuo" @click="Close">
+						<image src="../../images/shuaxin.png" mode="widthFix"></image>关闭
 					</view>
 				</view>
 			</view>
@@ -78,8 +78,8 @@
 			onLoad: function() {
 				that = this;
 			},
-			Close:function(){
-				uni.$emit('tools','promotions');
+			Close: function() {
+				uni.$emit('tools', 'promotions');
 			},
 			GetMDCXHD: function(e) {
 				_main.GetMDCXHD(res => {
