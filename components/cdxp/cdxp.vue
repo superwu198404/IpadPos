@@ -1,11 +1,97 @@
 <style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
+	@import url(@/static/style/Extract/extract.css);
 </style>
 <template>
 	<view class="boxs">
-	<!--  -->
-	<view class="customer">
+	<view class="content customer">
+		<view class="right">
+				<view class="commodity">
+					<view class="hh">
+						<view class="hotcakes">
+							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 重打小票
+							<!-- <view class="classifys">
+												<text class="curr">全部</text><text>今日</text><text>近三天</text>
+											</view> -->
+						</view>
+						<view>
+							<view class="prints">
+								<view class="sousuo">
+									<label @click="ShowSearch()">
+										<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
+									</label>
+									<view class="criterias" v-if="Criterias" style="z-index: 99999;">
+										<view class="critlist"><text>订单号：</text>
+											<input type="text" v-model="p_bill" />
+										</view>
+										<view class="critlist"><text>销售日期：</text>
+											<picker mode="date" fields="day" @change="changeDate">
+												<view class="uni-input">{{p_date}}</view>
+											</picker>
+										</view>
+										<view class="confs">
+											<button class="btn btn-qx" @click="Empty()">清空</button>
+											<button class="btn" @click="Search()">查询</button>
+										</view>
+									</view>
+								</view>
+								
+							</view>
+						</view>
+						<button class="close">×</button>
+					</view>
+	
+					<!-- <NoData v-if="Orders.length==0"></NoData> -->
+					<!-- 小类循环 -->
+					 <!-- v-else -->
+					<view class="products">
+						<!-- <view class="h2">销售退单 <label></label></view>
+			-->
+						<view class="procycle">
+							<view class="li" >
+								<view class="h3">
+									<text>单号：132323</text>
+									<text class="price">￥12</text>
+									<!-- 预定提取的单展示整单金额 -->
+								</view>
+								<view class="cods">
+									<label>销售日期：2022-09-09</label>
+									<label>出售时间：10：00</label>
+								</view>
+								<view class="cods">									
+									<label>订单类型： 销售</label>
+									<label>条目：9</label>
+								</view>
+								<view class="handles"><text></text>
+									<button class="btn" @click="ConfirmCD">重新打印</button>
+								</view>
+							</view>
+							<!-- 订单循环 -->
+							<!-- <view class="li" v-for="(item,index) in Orders" :class="curIndex === index? 'curr':' '"
+								@click="ChooseOrder(item,index)">
+								<view class="h3">
+									<text>单号：{{item.BILL}}</text>
+									<text class="price">￥{{item.XSTYPE=='销售'?item.TNET:item.ZNET}}</text>
+									
+								</view>
+								<view class="cods">
+									<label>{{item.SALEDATE}} {{item.SALETIME}}</label>
+									<label>订单类型： {{item.XSTYPE}}</label>
+								</view>
+								<view class="handles"><text></text>
+									<button class="btn" @click="GetOrderDetails(item)">退单</button>
+								</view>
+							</view> -->
+						</view>
+					
+					</view>
+				</view>
+		</view>
+		
+	</view>
+	
+	<!-- <view class="customer">
 		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 		<view class="h3">重打小票 <button @click="CloseCD" class="guan">×</button></view>
 		<view class="clues">
@@ -24,7 +110,7 @@
 			<button class="btn btn-hk" @click="CloseCD">取消</button>
 			<button class="btn" @click="ConfirmCD">确定</button>
 		</view>
-	</view>
+	</view> -->
 	<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
 	<!-- 画布 -->
 	<view class="canvasdiv" :style="'visibility:hidden;'">
@@ -113,8 +199,8 @@
 
 <style>
 	.customer {
-		background-color: #fff;
-		width: 40%;
+		background-color: #f9f9f9;
+		width: 90%;
 		min-height: 400rpx;
 		position: relative;
 		position: fixed;
@@ -122,134 +208,44 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
-		padding: 0 3% 140rpx;
+		padding: 0 1% 140rpx;
 		z-index: 99;
 		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
+		max-height: 90%;
 	}
 
-	.customer .bg {
-		position: absolute !important;
-		top: 0;
-		left: 0;
-		width: 100%;
-		z-index: 0;
-	}
-
-	.customer .h3 {
-		height: 100rpx;
-		line-height: 100rpx;
-		font-size: 34rpx;
-		border-bottom: 1px dashed #eee;
-		position: relative;
-		z-index: 2;
-		font-weight: 700;
-	}
-
-	.customer .h3 .guan {
-		float: right;
-		background: none;
-		font-size: 32rpx;
-		height: 100rpx;
-		line-height: 100rpx;
-		text-align: right;
-		padding: 0;
-		width: 60rpx;
-	}
-
-	.customer .h6 {
-		color: #FE694B;
-		line-height: 80rpx;
-		font-size: 32rpx;
-		font-weight: 600;
-		z-index: 9;
-	}
-
-	.cluelist {
+	.procycle .li .h3{
 		display: flex;
-		flex-wrap: wrap;
+		justify-content: space-between;
+		color: #333;
+		padding-bottom: 12rpx;
 	}
-
-	.cluelist .list {
-		width: 22.5%;
-		margin: 0 1% 2%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 2% 0;
-		font-weight: 600;
-		border: 2rpx solid #98C3B3;
-		border-radius: 14rpx;
-		font-size: 28rpx;
-		line-height: 50rpx;
+	.handles{
+		margin-top:6rpx;
 	}
-
-	.cluelist .list.curr {
-		border-color: #006B44;
-		color: #006B44;
+	.handles button{
+		width:200rpx;
 	}
-
-	.cluelist .list.curr text {
-		color: #006B44;
+	.prolist .products .procycle .li .h3{
+		margin-bottom: 14rpx;
 	}
-
-	.cluelist .list text {
-		font-size: 26rpx;
-		color: #B0b0b0;
-		line-height: 50rpx;
-		font-weight: 400;
+	.li .cods{
+		padding:6rpx 0;
 	}
-
-	.affirm {
-		position: absolute;
-		bottom: 0;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 90%;
-		height: 140rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding-bottom: 2%;
+	.hh{
+		padding-right: 100rpx;
 	}
-
-	.affirm button {
-		width: 46%;
-		margin: 0 2%;
-	}
-
-	.clues {
-		display: flex;
-		flex-direction: column;
-		justify-content: start;
-		align-items: center;
-		fony-size: 34rpx;
-		position: relative;
-		z-index: 2;
-		padding:40rpx 0 0;
-	}
-	.clues .infors{
-		width:100%;
-		display: flex;
-		align-items: center;
-		margin-bottom: 40rpx;
-	}
-	.clues input,.clues picker{
+	.hh .close{
+		background:none;
+		padding:0;
+		color: #333;
+		top: 12rpx;
+		right: 1%;
 		height: 70rpx;
-		line-height: 70rpx;
-		border:1px solid #aaa;
-		width:65%;
-		border-radius: 6rpx;
-		padding:0 0.5%;
+		border-radius: 50%;
+		font-size: 44rpx;
 	}
-
-	.rjcg {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin-top: 100rpx;
-		color: #006B44;
-		font-weight: 700;
-		font-size: 40rpx;
+	.hotcakes{
+		color: #333;
 	}
 </style>

@@ -73,7 +73,7 @@ page {
 	bottom:0;
 	background-color: #fff;
 	border-top: 1rpx #eee solid;
-	z-index: 2;
+	z-index: 9;
 }
 .menu .bills {
 	width: 100%;
@@ -785,7 +785,6 @@ page {
 ::-webkit-scrollbar {
 	display: block;
 	width: 1rpx;
-	height: 0;
 	color: #f9f9f9;
 }
 

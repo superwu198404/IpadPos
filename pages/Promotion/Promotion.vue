@@ -16,19 +16,21 @@
 			</view>
 			<view>
 				<view class="prints">
-					<view class="sousuo">
-						<image src="../../images/shuaxin.png" mode="widthFix" @click="GetMDCXHD(true)"></image>刷新
+					<view class="sousuo" @click="GetMDCXHD(true)">
+						<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 					</view>
-					<view class="sousuo">
-						<image src="../../images/shuaxin.png" mode="widthFix" @click="Close"></image>关闭
-					</view>
+					<!-- <view class="sousuo" @click="Close">
+						X 关闭
+					</view> -->
 				</view>
 			</view>
+			<button class="close" @click="Close">×</button>
 		</view>
 		<view class="products">
 			<view class="commods">
 				<view class="uls">
-					<view class="lis" v-for="(item,index) in MDCXDatas">
+					<NoData v-if="MDCXDatas.length==0"></NoData>
+					<view class="lis" v-else v-for="(item,index) in MDCXDatas">
 						<view class="protheme">
 							<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
 							<view class="themes">
@@ -78,8 +80,8 @@
 			onLoad: function() {
 				that = this;
 			},
-			Close:function(){
-				uni.$emit('tools','promotions');
+			Close: function() {
+				uni.$emit('tools', 'promotions');
 			},
 			GetMDCXHD: function(e) {
 				_main.GetMDCXHD(res => {
@@ -96,5 +98,21 @@
 </script>
 
 <style>
-
+.products{
+	height:92%;
+	overflow: auto;
+}
+.hh{
+		padding-right: 100rpx;
+	}
+	.hh .close{
+		background:none;
+		padding:0;
+		color: #333;
+		top: 12rpx;
+		right: 1%;
+		height: 70rpx;
+		border-radius: 50%;
+		font-size: 44rpx;
+	}
 </style>

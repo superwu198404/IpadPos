@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="navmall">
+	<view class="navmall" @click="hideIsShow">
 		<view class="logo">
 			<image src="@/images/kengee-logo.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
@@ -19,7 +19,7 @@
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
-				<view @click="showGJ=!showGJ">
+				<view @click.stop="operations()">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
@@ -40,7 +40,7 @@
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view> -->
-					<view @click="ShowTool('communication')">
+					<view  class="currs" @click="ShowTool('communication')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
@@ -50,7 +50,7 @@
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
 					</view> -->
-					<view @click="ShowTool('CD')">
+					<view  class="currs" @click="ShowTool('CD')">
 						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
 						<text>重打小票</text>
@@ -102,6 +102,15 @@
 			};
 		},
 		methods: {
+			// 隐藏
+			hideIsShow: function() {
+				this.showGJ = false;
+			},
+			operations: function(index) {
+				let that = this;
+				that.showGJ = !that.showGJ
+			},
+
 			MenuSelect(menu_name, menu_info) {
 				this.previous_info = this.current_info;
 				// this.current_info = {

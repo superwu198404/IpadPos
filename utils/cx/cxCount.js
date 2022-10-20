@@ -75,19 +75,15 @@ const Cxdict = async () => {
 
 	//获取主单的Sql
 	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-	//console.log("dscxm集合：", dscxm);
 
 	//促销规则Sql
 	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-	//console.log("dscxclass集合：", dscxclass);
 
 	//促销内容对应的产品Sql
 	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
-	//console.log("dscxsp集合：", dscxsp);
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	//console.log("dszqda集合：", dszqda);
 		
 	//循环主单数据处理
 	if (dscxm.length < 1) {
@@ -507,7 +503,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			}
 
 			let retyyslclass = retCxClassForDtRow(cxbill, yysl);
-			console.log("retyyslclass 1", retyyslclass);
+			//console.log("retyyslclass 1", retyyslclass);
 			if (retyyslclass != null) {
 				testallcx(cxbill, retyyslclass);
 			}
@@ -546,10 +542,19 @@ const CreateArr = cols => {
 const ynpastCx = function(bill) {
 	let mcc = cxdict.get(bill);
 	let dateTime = cx_util.getTime(3);
-	//let decnow = cx_util.timeTodec(dateTime);
-	let edate1 = cx_util.formatDate(mcc.EDATE);
-	let dateTime1 = cx_util.formatDate(dateTime);
-	if (Date.parse(dateTime1) > Date.parse(edate1)) {
+	//console.log("ynpastCx dateTime",dateTime);	
+	let dateTime1 = cx_util.formatDateNew(dateTime);
+	let edate1 = cx_util.formatDateNew(mcc.EDATE);
+	
+	//console.log("ynpastCx edate1",edate1);
+	//console.log("ynpastCx dateTime1",dateTime1);			
+	let dateNowNum = Date.parse(dateTime1);
+	let edateNum = Date.parse(edate1);
+	// console.log("ynpastCx", {
+	// 	dateNowNum,
+	// 	edateNum
+	// });
+	if (dateNowNum > edateNum) {
 		return false;
 	}else{
 		return true;
@@ -564,6 +569,28 @@ const ynjsCx = function(bill) {
 	} else {
 		let dateTime = cx_util.getTime(3);
 		let decnow = cx_util.timeTodec(dateTime);
+		
+		let tstart1 = mcc.Tstart1;
+		let tstart2 = mcc.Tstart2;
+		let tstart3 = mcc.Tstart3;
+		
+		// console.log("ynjsCx Tstart", {
+		// 	    decnow,
+		// 		tstart1,
+		// 		tstart2,
+		// 		tstart3,
+		// });
+		
+		let tstop1 = mcc.Tstop1;
+		let tstop2 = mcc.Tstop2;
+		let tstop3 = mcc.Tstop3;
+		
+		// console.log("ynjsCx Tstop", {
+		// 	    decnow,
+		// 		tstop1,
+		// 		tstop2,
+		// 		tstop3,
+		// });
 		if (mcc.Tstart1 <= decnow && decnow <= mcc.Tstop1) {
 			return true;
 		}
@@ -704,8 +731,8 @@ const testallcx = function(bill, pmList) {
 
 //参与促销计算
 const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype) {
-	console.log("CxClasCompute", spid + "||" + salebill + "|" + saledate)
-	//console.log("CxClasCompute cx1", cxdict.get(bill))
+	//console.log("CxClasCompute", spid + "||" + salebill + "|" + saledate)
+	console.log("CxClasCompute cx1", cxdict.get(bill))
 	let cx1 = cxdict.get(bill);
 	if (cx1.YN_JSLB) {
 		if (cx1.OneJs) {
