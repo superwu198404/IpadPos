@@ -134,7 +134,10 @@
 			that.ZKDatas = that.zkdatas.ZKDatas;
 			that.DKFZKDatas = that.zkdatas.DKFZKDatas;
 			that.CalProZK();
-			that.CalProZK1();
+			// that.CalProZK1();
+			if (that.ZKDatas.length == 0 && that.DKFZKDatas.length == 0) {
+				util.simpleMsg("当前无可满足的折扣规则", "none");
+			}
 			// that.GetZKDatas();
 			// if (that.dkhid && that.dkhid != '80000000') {
 			// 	// that.dkhid = '0020004289';
@@ -213,7 +216,9 @@
 				let arr1 = that.ZKDatas.filter(r => {
 					return r.ZKTYPE == 'ZD03'
 				}) //临时折扣规则
-				let pushArr = [];
+				let arr2 = that.DKFZKDatas; //特批折扣
+				let pushArr = [],
+					pushArr1 = [];
 				jgzArr.map(r1 => {
 					let newArr = arr.filter(r => {
 						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
@@ -241,6 +246,15 @@
 						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
 						pushArr.push(obj);
 					}
+					let sortArr2 = arr2.filter(r => {
+						return r.ZKSTR == r1.SPJGZ;
+					})
+					console.log("55555:", sortArr2);
+					if (sortArr2.length > 0) { //追加标准折扣规则
+						let obj = sortArr2[0];
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						pushArr1.push(obj);
+					}
 				})
 				console.log("合并后的折扣规则：", pushArr);
 				if (pushArr.length > 0) {
@@ -250,7 +264,16 @@
 					})
 					that.totalDisc = Number(anet.toFixed(2));
 				}
+				console.log("合并后的折扣规则1：", pushArr);
+				if (pushArr1.length > 0) {
+					let anet = 0;
+					pushArr1.map(r => {
+						anet += r.ZKNET;
+					})
+					that.totalDiscDKF = Number(anet.toFixed(2));
+				}
 				that.ZKDatas = pushArr;
+				that.DKFZKDatas = pushArr1;
 			},
 			//计算满足折扣规则的商品以及对应折扣额 大客户
 			CalProZK1: function() {
