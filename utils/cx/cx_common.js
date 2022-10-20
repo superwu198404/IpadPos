@@ -1,10 +1,19 @@
 function formatDate (date){
-	let dateNew = new Date(date);
+	let dateNew = new Date(date.replaceAll('-','/'));
 	const year = dateNew.getFullYear();
 	const month = dateNew.getMonth() + 1;
 	const day = dateNew.getDate();
 	//yyyy-MM-dd HH:mm:ss
 	return year + '-' + month + '-' + day;
+}
+
+function formatDateNew (date){
+	let dateNew = new Date(date.replaceAll('-','/'));
+	const year = dateNew.getFullYear();
+	const month = dateNew.getMonth() + 1;
+	const day = dateNew.getDate();
+	//yyyy-MM-dd HH:mm:ss
+	return year + '/' + month + '/' + day;
 }
 
 function getTime(type) {
@@ -84,13 +93,13 @@ const dnvl = function(pb_obj, pm_default) {
 	let new_obj = "";
 
 	var dates = [];
-	dates.push(new Date(pm_default))
+	dates.push(new Date(snvl(pm_default,"").replaceAll('-','/')))
 	var minDate = new Date(Math.min.apply(null, dates));
 
 	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
 		new_obj = minDate;
 	} else {
-		new_obj = new Date(pb_obj);
+		new_obj = new Date(snvl(pb_obj,"").replaceAll('-','/'));
 	}
 	return new_obj;
 }
@@ -130,8 +139,9 @@ const timeTodec = function(dtime, minValue) {
 	if (dtime == minValue) {
 		new_obj = 0;
 	} else {
-		let sd = Math.floor(new Date(dtime).getHours());
-		let ff = Math.floor(new Date(dtime).getMinutes()) / 60;
+		let dttime1 = new Date(snvl(dtime,"").replaceAll('-','/'));
+		let sd = Math.floor(dttime1.getHours());
+		let ff = Math.floor(dttime1.getMinutes()) / 60;
 		ff = Math.round(ff * 100) / 100;
 		new_obj = sd + ff;
 	}
@@ -291,5 +301,6 @@ module.exports = {
 	TryParse: TryParse,
 	defStr: defStr,
 	formatDate: formatDate,
-	DefaultNull: DefaultNull
+	DefaultNull: DefaultNull,
+	formatDateNew: formatDateNew,
 };

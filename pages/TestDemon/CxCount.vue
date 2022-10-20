@@ -1,3 +1,4 @@
+<!-- 测试促销界面 -->
 <template>
 	<view class="body">
 		<view>
@@ -98,14 +99,73 @@
 					    "SPID": "000000001090100259",
 					    "SNAME": "泡泡兔6号-仟吉",
 					    "QTY": 2,
-					    "OPRICE": 160,
+					    "OPRICE": 139,
 					    "DISCRATE": 0,
-					    "NET": 320,
-					    "PRICE": 160,
-					    "NO": 1
+					    "NET": 278,
+					    "PRICE": 139,
+					    "NO": 146542555
 					}
 					];
-				cxCount.Createcx(sale02_arr, "saleYD",hyinfoModel);
+			   
+			 //   let sale02_arr = [{
+				// 	"SALEDATE": "2022-10-19",
+				// 	"XPDGCOM": null,
+				// 	"XPDGSTR": null,
+				// 	"SBERR": null,
+				// 	"YN_SB": null,
+				// 	"MYSTR": null,
+				// 	"SPJGZ": "02",
+				// 	"YN_XPDG": "N",
+				// 	"BMID": null,
+				// 	"RYID": "999",
+				// 	"KCDID": "D005",
+				// 	"DPID": "K01000",
+				// 	"GCID": "K201",
+				// 	"STR2": "武汉领秀城店门厅",
+				// 	"STR1": "泡泡兔",
+				// 	"TIME": "10",
+				// 	"WEEK": 41,
+				// 	"MONTH": "10",
+				// 	"YAER": "2022",
+				// 	"HYJFCD": 0,
+				// 	"JFDISC": 0,
+				// 	"HYJF": 0,
+				// 	"LSDISC": 0,
+				// 	"TPDISC": 0,
+				// 	"BZDISC": 0,
+				// 	"HYDISC": 0,
+				// 	"YN_HYDISC": null,
+				// 	"CXID": null,
+				// 	"CXDISC": 0,
+				// 	"YN_CXDISC": "N",
+				// 	"BILLDISC": 0,
+				// 	"DISC_TYPE": null,
+				// 	"DISC": 0,
+				// 	"YN_SKYDISC": null,
+				// 	"HYBL": 0,
+				// 	"DISCRATE": 0,
+				// 	"BRANDID": null,
+				// 	"HTID": null,
+				// 	"GYSID": null,
+				// 	"NET": 278,
+				// 	"OPRICE": 139,
+				// 	"PRICE": 139,
+				// 	"MINSQTY": 0,
+				// 	"QTY": 2,
+				// 	"UNIT": "6号",
+				// 	"SERIAL": null,
+				// 	"BARCODE": "000000001090100259",
+				// 	"PLID": "10901",
+				// 	"NO": "146542555",
+				// 	"SPID": "000000001090100259",
+				// 	"BILL": "K200QTD00512210191029020",
+				// 	"POSID": "1",
+				// 	"KHID": "K200QTD005",
+				// 	"SALETIME": "2022-10-19 10:29:2",
+				// 	"CXBILL": ""
+				// }];
+				
+				cxCount.Createcx(sale02_arr, "sale",null);
 			},
 			CreateArr1: e => {
 				let arr = [],
