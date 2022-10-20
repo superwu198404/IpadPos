@@ -1693,7 +1693,8 @@ function GetSale(global, vue, target_name, uni) {
 				that.currentOperation["ynCx"] = false; //选择大客户后 促销也同步失效
 				store.DKFID = newval.DKFID;
 				store.DKFNAME = newval.NAME;
-				if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
+				// if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
+				if (that.currentOperation.DKF) {
 					that.ResetCXZK(); //正向操作时 选择大客户后清除促销折扣
 					//切换大客户后 要清除一下 上一个大客户的 折扣规则以及当前折扣类型
 					if (that.Disc.val.ZKData?.DKFZKDatas) {
