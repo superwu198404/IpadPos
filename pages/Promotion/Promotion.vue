@@ -19,12 +19,12 @@
 					<view class="sousuo" @click="GetMDCXHD(true)">
 						<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 					</view>
-					<view class="sousuo" @click="Close">
-						<!-- <image src="../../images/shuaxin.png" mode="widthFix"></image> -->
+					<!-- <view class="sousuo" @click="Close">
 						X 关闭
-					</view>
+					</view> -->
 				</view>
 			</view>
+			<button class="close" @click="Close">×</button>
 		</view>
 		<view class="products">
 			<view class="commods">
@@ -98,5 +98,21 @@
 </script>
 
 <style>
-
+.products{
+	height:92%;
+	overflow: auto;
+}
+.hh{
+		padding-right: 100rpx;
+	}
+	.hh .close{
+		background:none;
+		padding:0;
+		color: #333;
+		top: 12rpx;
+		right: 1%;
+		height: 70rpx;
+		border-radius: 50%;
+		font-size: 44rpx;
+	}
 </style>

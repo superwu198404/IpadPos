@@ -84,58 +84,7 @@
 								</view>
 							</view> -->
 						</view>
-						<view class="details" v-if="false">
-							<!-- statements -->
-							<view class="meminfo">
-								<view class="member">
-									<label>
-										<image class="touxiang" src="../../images/touxiang.png"></image>
-										<label class="meminfo"><text>会员ID</text><text>{{Order.CUID}}</text></label>
-									</label>
-									<text>清空</text>
-								</view>
-								<view class="h5"><text>单号：{{Order.BILL}}</text></view>
-								<view class="goods">
-									<!-- 商品循环 -->
-									<view class="prolist" v-for="(item,index) in Details">
-										<view class="h3">
-											<label>
-												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
-												{{item.SNAME}}
-											</label>
-											<text>X{{item.QTY}}</text>
-										</view>
-										<view class="cods">
-											<view>
-												<label>
-													<image src="../../images/dx-bm.png" mode="widthFix"></image>
-													{{item.SPID}}
-												</label>
-												<label>
-													<image src="../../images/dx-dw.png" mode="widthFix"></image>
-													{{item.UNIT}}
-												</label>
-											</view>
-											<text>￥{{item.NET}}</text>
-										</view>
-									</view>
-								</view>
-								<view class="ul">
-									<view class="li"><text>总金额</text><text>￥{{Order.TNET}}</text></view>
-									<view class="li"><text>件数</text><text>{{Order.TLINE}}</text></view>
-									<!-- <view class="li"><text>折扣</text><text>-￥5</text></view> -->
-									<view class="li"><text>应收金额</text><text>￥{{Order.TNET}}</text></view>
-								</view>
-								<view class="confirm">
-									<button class="btn btn-qx" @click="statements=false">返 回</button>
-									<button class="btn" @click="Confirm">确 认</button>
-								</view>
-								<!-- <view class="states" @click="Statements()">
-												<text>结算单</text>
-												<label>»</label>
-											</view> -->
-							</view>
-						</view>
+					
 					</view>
 				</view>
 		</view>
@@ -284,7 +233,7 @@
 		padding:6rpx 0;
 	}
 	.hh{
-		padding-right: 120rpx;
+		padding-right: 100rpx;
 	}
 	.hh .close{
 		background:none;
