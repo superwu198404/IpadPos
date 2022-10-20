@@ -64,7 +64,7 @@
 									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
-									<button class="btn" @click="ConfirmCD">重新打印</button>
+									<button class="btn" @click="ConfirmCD(item.BILL,item.XSTYPE)">重新打印</button>
 								</view>
 							</view>
 							<!-- 订单循环 -->
@@ -170,7 +170,7 @@
 			that = this;
 			this.qd_show = true;
 			let xsBillRes = await xprinter_util.getBillPrinterMax();
-			console.log("获取重打数据 111", xsBillRes);
+			//console.log("获取重打数据 111", xsBillRes);
 			this.xsBill = xsBillRes;
 			this.GetPTOrder();
 		},
@@ -208,13 +208,22 @@
 				that.GetPTOrder(1);
 			},
 			//重打小票
-			ConfirmCD: function(data) {
+			ConfirmCD: async function(xsBill,xsType) {
 				let that = this;
-				let bill = cx_util.snvl(that.xsBill, "");
+				let bill = cx_util.snvl(xsBill, "");
 				if (bill == "") {
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
+				
+				//通过单号，查询重打格式数据
+				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
+				//console.log("pos_xsbillprint ==================================",pos_xsbillprint);	
+				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
+					util.simpleMsg("未查询到重打数据", "none");
+					return;
+				}
+				
 				this.$emit("ClosePopup");
 				that.$refs.printerPage.againPrinter(bill);
 			},
