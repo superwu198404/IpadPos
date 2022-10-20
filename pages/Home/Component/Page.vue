@@ -16,8 +16,7 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu gongju" tabindex="-1" @blur="this.showGJ = false" >
-		<!-- <view class="menu gongju" tabindex="-1" @blur="showGJ = false"> -->
+		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
 				<view  @click.stop="operations(index)">
