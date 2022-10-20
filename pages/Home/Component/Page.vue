@@ -40,7 +40,7 @@
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view> -->
-					<view @click="ShowTool('SC')">
+					<view @click="ShowTool('communication')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
@@ -140,7 +140,7 @@
 				if (e == 'CD') {
 					this.showcdxp = true;
 					console.log("重打小票", this.showcdxp)
-				} else if (e == 'promotions') {
+				} else if (e == 'promotions' || e == 'communication') {
 					uni.$emit('tools', e);
 				} else {
 					//功能放开，则去掉该提示

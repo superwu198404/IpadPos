@@ -153,6 +153,11 @@
 			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
 		</view>
+		
+		<view class="boxs" v-if="mainSale.tool_pages.communication"
+			style="display: flex;justify-content: center;align-items: center;">
+			<UnUpload style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></UnUpload>
+		</view>
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
 		<!-- 蛋糕属性选择 -->
@@ -462,6 +467,7 @@
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
+	import UnUpload from '@/pages/UnUpload/UnUpload.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
 	//页面组件导入 👆
@@ -521,6 +527,7 @@
 			Message,
 			CreditSettlement,
 			Promotion,
+			UnUpload,
 			MemberLogin,
 			ReserveDrawer,
 			PrinterPage
