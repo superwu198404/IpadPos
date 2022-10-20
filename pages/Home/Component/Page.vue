@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="navmall">
+	<view class="navmall" @click="hideIsShow">
 		<view class="logo">
 			<image src="@/images/kengee-logo.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
@@ -16,10 +16,10 @@
 				<text>{{value.nameSale}}</text>
 			</view>
 		</view>
-		<view class="menu gongju" tabindex="-1" @blur="this.showGJ = false">
+		<view class="menu gongju" tabindex="-1" @blur="this.showGJ = false" >
 			<view class="bills">
 				<label></label>
-				<view @click="showGJ=!showGJ">
+				<view  @click.stop="operations(index)">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
@@ -102,6 +102,15 @@
 			};
 		},
 		methods: {
+			// 隐藏
+			hideIsShow: function(){
+				this.showGJ = false;
+			},
+			operations:function(index){
+				let that = this;			
+				that.showGJ = !that.showGJ
+			},
+					
 			MenuSelect(menu_name, menu_info) {
 				this.previous_info = this.current_info;
 				// this.current_info = {
