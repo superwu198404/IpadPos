@@ -15,6 +15,7 @@ import {
 var CreateData = function(pt, t, m, d) {
 	let data;
 	// let PayInfo = getApp().globalData.PayInfo;
+	let store = util.getStorage("store");
 	let PayInfo = util.getStorage("PayInfo");
 	console.log("[CreateData]PayInfo:", PayInfo);
 	if (pt && PayInfo && PayInfo.length > 0) {
@@ -36,7 +37,7 @@ var CreateData = function(pt, t, m, d) {
 					method: m, //Payment
 					param: {
 						appid: PayObj.APPID, //getApp().globalData.appid,
-						gsid: PayObj.GSID, //getApp().globalData.store.GSID
+						gsid: store.GSID,
 						source: PayObj.SOURCE
 					},
 					sign: aes.aesEncrypt(JSON.stringify(d))
@@ -336,7 +337,7 @@ var kengeePay = {
 			}, (err) => {
 				util.simpleMsg("读卡异常!" + err.msg, true)
 				console.log("[ReadCard]读卡异常!", err);
-				if(catchFunc) catchFunc(err);
+				if (catchFunc) catchFunc(err);
 			});
 		})
 	},
@@ -445,36 +446,35 @@ import checker from '@/utils/graceChecker.js';
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		if (!util.getStorage("hyinfo")?.hyId) {
+		if (!body.member_id) {
 			util.simpleMsg("请先登录会员...", true);
 			return;
 		}
-		let flag = checker.checkMobile(util.getStorage("hyinfo")?.hyId)
+		let flag = checker.checkMobile(body.member_id)
 		member.QueryHyInfo("查询中...", {
 			brand: getApp().globalData?.brand,
 			kquser: getApp().globalData?.kquser,
 			data: {
-				code: util.getStorage("hyinfo")?.hyId,
+				code: body.member_id,
 				type: flag ? 'Mobile' : 'ACCOUNT'
 			}
 		}, function(res) {
-			console.log("[PaymentAll]积分抵现部分会员信息查询结果...",res);
+			console.log("[PaymentAll]积分抵现部分会员信息查询结果...", res);
 			let member_info = JSON.parse(res.data);
 			let score = member_info.JFBalance
-			if(score > body.point){//如果账户积分支持抵现
+			if (score > body.point) { //如果账户积分支持抵现
 				member.PointsDeduction("积分抵现中...", {
 					brand: getApp().globalData?.brand,
 					data: {
-						hyid: util.getStorage("hyinfo")?.hyId,
+						hyid: body.member_id,
 						// hyid: "1000311647",
 						amount: body.point,
 						trade_no: body.out_trade_no,
 						money: body.point_money * 100
 					}
 				}, func, func);
-			}
-			else{
-				console.log("[PaymentAll]积分不足，无法抵现...",member_info);
+			} else {
+				console.log("[PaymentAll]积分不足，无法抵现...", member_info);
 			}
 		}, function(err) {
 			util.simpleMsg("会员积分查询失败，请重试...", 'none');

@@ -10,12 +10,12 @@ import {
 } from '@/bll/Common/bll.js';
 
 //订单对象创建
-export const orderCreated = function(obj, payload) {
+export const orderCreated = function(obj, payload,current_pay_info) {
 	let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
-		fkid: this.currentPayInfo?.fkid ?? "",
-		type: this.currentPayInfo?.type ?? "",
+		fkid: current_pay_info?.fkid ?? "",
+		type: current_pay_info?.type ?? "",
 		bill: payload?.out_trade_no,
-		name: this.currentPayInfo?.name ?? "",
+		name: current_pay_info?.name ?? "",
 		amount: 0,
 		no: this.PayList.length,
 		disc: (payload?.discount / 100).toFixed(2) || 0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
@@ -56,6 +56,7 @@ export const PayDataAssemble = function() {
 		channel: this.channel,
 		point:this.CashOffset.Score,//抵现积分数
 		point_money:this.CashOffset.Money,//积分积分对应金额
+		member_id: this.SALES.sale1.CUID,
 		memo: this.currentPayInfo?.fkid,
 		discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		product_info: this.Products.map(i => { //商品清单

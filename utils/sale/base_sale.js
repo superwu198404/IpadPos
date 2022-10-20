@@ -317,6 +317,7 @@ var XsTypeObj = {
 			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
 			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
 			console.log("[SaleReserve]生成预定支付信息...");
+			this.payed = [];
 			this.payed.push(Sale3ModelAdditional(Sale3Model({
 				fkid: 'ZF01',
 				type: 'XJ',
@@ -722,6 +723,7 @@ var XsTypeObj = {
 			});
 			if (this.sale001.TNET) {
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
+				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: 'ZG01',
 					type: 'MDSX',
@@ -915,9 +917,9 @@ var XsTypeObj = {
 				}
 			})
 
-			let dkfname = this.DKF.val.DKFNAME;
+			let dkfname = this.DKF.val.NAME;
 			let printerPram = {
-				"PRINTNUM": 1,
+				"PRINTNUM": 2,
 				"DKFNAME": dkfname
 			};
 			console.log("赊销退单开始调用打印", {
@@ -1016,6 +1018,7 @@ var XsTypeObj = {
 			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
 			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
 			this.ShowStatement();
+			this.payed = [];
 			for (let s3 of this.sale003) {
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: s3.FKID,
@@ -1303,8 +1306,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
-		console.log("进入清除促销折扣方法");
-		if (!this.sale001) { //创建对象后 才允许清楚 big bug
+		console.log("进入清除促销折扣方法", this.sale001);
+		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
 			this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -1693,7 +1696,7 @@ function GetSale(global, vue, target_name, uni) {
 				if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
 					that.ResetCXZK(); //正向操作时 选择大客户后清除促销折扣
 					//切换大客户后 要清除一下 上一个大客户的 折扣规则以及当前折扣类型
-					if (that.Disc.val.ZKData.DKFZKDatas) {
+					if (that.Disc.val.ZKData?.DKFZKDatas) {
 						console.log("清除前的特殊折扣数据：", that.Disc.cval);
 						Reflect.deleteProperty(that.Disc.val.ZKData, "DKFZKDatas");
 						Reflect.deleteProperty(that.Disc.val, "ZKType");
@@ -2130,6 +2133,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.PayedResult = async function(result) {
 		console.log("[PayedResult]支付结果:", result);
 		uni.$emit('continue-message');
+		uni.$emit('continue-timed-communication');
 		// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
 		// 	.ynCx, this.currentOperation.FZCX);
 		// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
@@ -2250,6 +2254,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	this.PayParamAssemble = function(sales) {
 		uni.$emit('stop-message');
+		uni.$emit('stop-timed-communication');
 		that.log("[PayParamAssemble]支付参数组装...")
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象

@@ -108,6 +108,7 @@
 				// that.GetSkyJk();
 			},
 			onShow: function() {
+				this.MonitorEvent();
 				this.timer = setInterval(() => {
 					this.timer = setTimeout(() => {
 						if (this.angle == 0) {
@@ -145,6 +146,35 @@
 				clearInterval(this.timer);
 				this.timer = null;
 			},
+			TimedCommunication: function() {
+				//3min执行一次销售单传输
+				let int = setInterval(() => {
+					common.TransLiteData();
+				}, 1000 * 60 * 3);
+				getApp().globalData.Int = int;
+				console.log("本次单据传输定时ID:", int);
+			},
+			MonitorEvent: function() {
+				console.log("[MonitorEvent-Center]事件监听开始...");
+				uni.$off('stop-timed-communication');
+				uni.$on('stop-timed-communication', util.callBind(this, function() { //停止消息轮询
+					let timer = getApp().globalData.Int;
+					console.log("[MonitorEvent-Center]通讯轮询停止!", timer);
+					clearInterval(timer);
+					getApp().globalData.Int = 0;
+				}));
+				console.log("[MonitorEvent-Center]通讯轮询停止事件监听开始...");
+				uni.$off('continue-timed-communication');
+				uni.$on('continue-timed-communication', util.callBind(this, function() { //继续消息轮询
+					if (!getApp().globalData.msgInt) {
+						console.log("[MonitorEvent-Center]通讯轮询继续!");
+						this.TimedCommunication();
+					} else {
+						console.log("[MonitorEvent-Center]通讯轮询正在运行!", timer);
+					}
+				}));
+				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
+			},
 			//跳转到销售页面
 			ToSale: function(e) {
 				let store = util.getStorage("store");
@@ -158,15 +188,11 @@
 				// 	cancelText: "否",
 				// 	confirmText: "是",
 				// 	success: res => {
+
 				let int = getApp().globalData.Int;
 				console.log("传输定时ID:", int);
 				if (!int) {
-					//3min执行一次销售单传输
-					int = setInterval(() => {
-						common.TransLiteData();
-					}, 1000 * 60 * 3);
-					getApp().globalData.Int = int;
-					console.log("本次单据传输定时ID:", int);
+					this.TimedCommunication();
 				}
 				// if (res.confirm) {
 				_login.GetSkyJk(res => {

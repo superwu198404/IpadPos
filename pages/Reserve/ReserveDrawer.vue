@@ -274,7 +274,7 @@
 				console.log("输入信息：", str);
 				if (that.THKHDATA.length > 0) {
 					that.THKHDATAS = that.THKHDATA.filter((item, index) => {
-						return item.ADDR.indexOf(str) >= 0;
+						return item.ADDR?.indexOf(str) >= 0;
 					})
 				}
 			},
@@ -356,7 +356,7 @@
 				}
 				if (that.Products.length > 0) {
 					that.Products.map((r) => {
-						if (bmArr.indexOf(r.PLID) >= 0) {
+						if (bmArr?.indexOf(r.PLID) >= 0) {
 							that.YN_BHSP = true;
 						}
 					});
@@ -405,10 +405,10 @@
 				if (!time) {
 					time = "00:00";
 				}
-				if (time.indexOf(':') == 0) {
+				if (time?.indexOf(':') == 0) {
 					time = "00" + time;
 				}
-				if (time.indexOf(':') < 0) {
+				if (time?.indexOf(':') < 0) {
 					time = time + ":00";
 				}
 				console.log("时间格式化后：", time);
@@ -620,6 +620,9 @@
 			//用户信息确定
 			Confirm: () => {
 				console.log("预定信息：", that.Order);
+				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				let hour = th_date.getHours();
+				let minute = th_date.getMinutes();
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
@@ -630,6 +633,10 @@
 				}
 				if (that.Order.THTYPE != '1' && new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 					util.simpleMsg("提货时间早于当前", 'none');
+					return;
+				}
+				if (!(Number(that.startTime) <= hour && Number(that.endTime) >= hour)) {
+					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}
 				if (that.Order.THTYPE == '1') {

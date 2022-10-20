@@ -82,7 +82,7 @@
 						<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
 							value="" :key="domRefresh" v-model="dPayAmount" />
 						<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
-							value="" :key="domRefresh" v-model="CashOffset.Score" />
+							value="" :key="domRefresh" v-model="CashOffset.Money" />
 					</text>
 				</p>
 			</view>
@@ -860,8 +860,8 @@
 					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
 				}
-				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0) {
-					util.simpleMsg("金额不能为空!", false);
+				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
+					util.simpleMsg("金额不能为空!", true);
 					this.dPayAmount = this.toBePaidPrice();
 					return;
 				}
@@ -1048,7 +1048,7 @@
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
 					//如果是预定金、现金（如果为0）门店赊销，直接跳过
-					if (['ZG03', /*'ZF01',*/ 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
+					if (['ZG03', 'ZF01', 'ZG01'].indexOf(refundInfo.fkid) !== -1) {
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
@@ -1173,12 +1173,11 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
-				this.CanBack = false; //锁定退出
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
 				console.log("[PayHandle]Info:", info);
-				console.log("[PayHandle]判断支付信息...");
+				console.log("[PayHandle]判断支付信息...",Object.keys(info).length);
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
 				console.log("[PayHandle]支付单号:", this.out_trade_no);
@@ -1197,12 +1196,16 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
+						if(this.currentPayType == 'HyJfExchange') {//判断当前是不是积分支付，如果是则扣除所有积分
+							this.CashOffset.Score = 0;
+							this.CashOffset.Money = 0;
+						}
 						console.log("[Payment-付款]支付结果：", result);
 						util.simpleMsg("支付成功!");
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.authCode = ""; //避免同一个付款码多次使用
-						this.orderGenarator(payAfter, info.type, result.data, false); //支付记录处理(成功)
+						this.orderGenarator(payAfter, info.type, result.data, false,info); //支付记录处理(成功)
 						if (this.debt > 0) {
 							this.CanBack = false;
 						}
@@ -1220,12 +1223,11 @@
 							assemble: payAfter,
 							type: info.type
 						});
-						this.orderGenarator(payAfter, info.type, null,
-							true); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+						this.orderGenarator(payAfter, info.type, null,true, info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this))
 			},
 			//支付后创建支付记录
-			orderGenarator: function(payload, type, result, fail) {
+			orderGenarator: function(payload, type, result, fail, type_info) {
 				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
 				console.log("生成订单类型[payload]：", payload);
 				console.log("生成订单类型[result]：", result);
@@ -1290,19 +1292,19 @@
 						}).bind(this));
 					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: (payload.money / 100).toFixed(2),
+							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money?.toFixed(2),
 							fail,
 							no: payload.no
-						}, result));
+						}, result, type_info));
 					}
 				} else { //如果为失败的支付请求
 					console.log("[OrderGenarator]支付失败请求...");
 					let trade = this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: (payload.money / 100).toFixed(2),
+						amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money?.toFixed(2),
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no //保存失败的订单号
-					})
+					},null,type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
 					console.log("[OrderGenarator]失败记录：", trade);
