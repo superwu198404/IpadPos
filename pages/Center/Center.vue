@@ -182,19 +182,23 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				// uni.showModal({
-				// 	title: "提示",
-				// 	content: "是否要验证结款，日结后进入销售？",
-				// 	cancelText: "否",
-				// 	confirmText: "是",
-				// 	success: res => {
-
 				let int = getApp().globalData.Int;
 				console.log("传输定时ID:", int);
 				if (!int) {
 					this.TimedCommunication();
 				}
-				// if (res.confirm) {
+				let sysParam = util.getStorage("sysParam");
+				console.log("是否结款判断参数：", sysParam.YN_JKXS);
+				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
+					if (that.signOutDates.length > 0) { //有日结数据
+						that.SignOut(); //发起日结
+						return;
+					}
+					uni.redirectTo({
+						url: "/pages/mainSale/MainSale"
+					});
+					return;
+				}
 				_login.GetSkyJk(res => {
 					console.log("查询到的结款数据：", res);
 					if (!res.code) { //有未结款数据
@@ -209,13 +213,6 @@
 						url: "/pages/mainSale/MainSale"
 					});
 				})
-				// } else {
-				// 	uni.redirectTo({
-				// 		url: "/pages/mainSale/MainSale"
-				// 	});
-				// }
-				// 	}
-				// })
 			},
 			//手动直接发起签到
 			Sign: function() {
