@@ -96,5 +96,8 @@
 </script>
 
 <style>
-
+.products{
+	height:92%;
+	overflow: auto;
+}
 </style>
