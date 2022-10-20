@@ -40,7 +40,7 @@
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view> -->
-					<view @click="ShowTool('communication')">
+					<view  class="currs" @click="ShowTool('communication')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
@@ -50,7 +50,7 @@
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
 					</view> -->
-					<view @click="ShowTool('CD')">
+					<view  class="currs" @click="ShowTool('CD')">
 						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
 						<text>重打小票</text>
