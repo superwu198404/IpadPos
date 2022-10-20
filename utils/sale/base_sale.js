@@ -326,7 +326,7 @@ var XsTypeObj = {
 				amount: 0
 			}), { //业务配置字段（支付状态设定为成功）
 				fail: false, //定金显示为成功
-				paying: true
+				show: false
 			}));
 			console.log("[SaleReserve]生成预定支付信息成功!");
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
@@ -377,7 +377,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 2, "XSTYPE": "YD"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -552,7 +553,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDTQ"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -653,7 +655,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDQX"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 	},
 	//赊销

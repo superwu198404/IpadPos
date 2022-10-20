@@ -84,11 +84,11 @@
 							<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
 							<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day" :value="getOrderDate"
 								:start="new Date()" @change="SelectDate">
-								<view class="uni-input">{{ details.order.DATE_DH.split(' ')[0] }}</view>
+								<view class="uni-input">{{ viewDate }}</view>
 							</picker>
 							<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time" :value="getOrderTime"
 								:start="getCurrentTime" @change="SelectTime">
-								<view class="uni-input">{{ details.order.DATE_DH.split(' ')[1] }}</view>
+								<view class="uni-input">{{ viewTime }}</view>
 							</picker>
 							<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
 						</label>
@@ -277,6 +277,12 @@
 			getOrderTime: function() {
 				return this.details.order.DATE_DH?.split(' ')[1] || JSON.stringify(new Date()).split("T")[1];
 			},
+			viewDate:function(){
+				return this.details.order.DATE_DH.split(' ')[0]
+			},
+			viewTime:function(){
+				return this.details.order.DATE_DH.split(' ')[1]
+			},
 			getOrderTimeRange: function() {
 				return this.details.order.DHSJD
 			},
@@ -375,6 +381,7 @@
 					if (func) func();
 				}), (res) => {
 					util.simpleMsg("订单获取失败!", true, res);
+					this.onlineOrdersGroup = {};
 				});
 			},
 			//时间限制说明
@@ -504,11 +511,15 @@
 			},
 			//选择日期
 			SelectDate: function(val) {
+				console.log("[SelectDate]设置日期:",val);
 				this.details.order.$date = val.detail.value;
 			},
 			//选择时间
 			SelectTime: function(val) {
-				this.details.order.$time = val.detail.value;
+				console.log("[SelectTime]设置时间:",val);
+				let pad = false;
+				if(val.length <= 2) pad = true;
+				this.details.order.$time = (val.detail.value || "00") + ":00";
 			},
 			//编辑
 			Edit: function() {

@@ -221,6 +221,10 @@
 				console.log("外卖打印接收数据 sale2_arr", datails);
 				console.log("外卖打印控制参数 type", {type,bs_Reason,bs_Note,new_bill});
 
+				if(print != null && type == "WMTHBS"){
+					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
+				}
+
 				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
@@ -335,6 +339,11 @@
 				console.log("预定打印接收数据 sale2_arr", sale2_arr);
 				console.log("预定打印接收数据 sale3_arr", sale3_arr);
 				console.log("预定打印接收数据 ydsale001", ydsale001);
+				
+				if(print != null && xprinter_util.snvl(print.XSTYPE,"") == "YD"){
+					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
+				}
+				
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
@@ -409,7 +418,7 @@
 				}
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
-				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr,print, ggyContent,type);
+				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();

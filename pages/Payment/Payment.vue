@@ -94,7 +94,7 @@
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.paying)">
+										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.paying && i.show)">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
@@ -116,8 +116,7 @@
 							<view class="sets-list refund" v-if="!isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding)"
-										v-if="pay.pay_num <= 3">
+										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding && i.show)">
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
 											{{ pay.name }}
@@ -136,7 +135,8 @@
 							<h3 v-if="isRefund">已退款 <button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
-									<view class="Methods" v-for="(refund, index) in refundedList">
+									<view class="Methods"
+										v-for="(refund, index) in RefundList.filter(i => !i.fail && i.refund_num != 0 && !i.refunding && i.show)">
 										<!-- 这段的含义是 退款成功 且 次数不等于 0 的（起码为1，因为发起请求时默认为成功）且是状态确定的（正在支付操作算不确定的，所以不显示，当成功或失败才算确定的状态） -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
@@ -150,7 +150,7 @@
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
-										v-for="(refund, index) in RefundList.filter(i => i.fail && i.refund_num!=0 && !i.refunding)">
+										v-for="(refund, index) in RefundList.filter(i => i.fail && i.refund_num !=0 && !i.refunding && i.show)">
 										<!-- v-for="(refund, index) in RefundList"> -->
 										<view class="payicon">
 											<image src="../../images/dianziquan.png" mode="widthFix"></image>
@@ -276,7 +276,10 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import {
-		orderCreated,
+		Sale3Model,
+		Sale3ModelAdditional
+	} from '@/bll/PaymentBusiness/bll.js';
+	import {
 		PayDataAssemble,
 		global,
 		print
@@ -483,9 +486,6 @@
 			debt: function() {
 				this.allAmount = this.toBePaidPrice();
 				return this.allAmount;
-			},
-			refundedList: function() {
-				return this.RefundList.filter(i => !i.fail && i.refund_num != 0 && !i.refunding);
 			}
 		},
 		methods: {
@@ -761,8 +761,8 @@
 			},
 			//sale 003 数据源：
 			Sale3Source: function() {
-				return this.isRefund ? this.RefundList.filter(i => !i.fail) : this.PayList.filter(
-					i => !i.fail); //如果是退款，那么就是退款信息，否则是支付信息
+				return this.isRefund ? this.RefundList.filter(i => !i.fail) : this.PayList.filter(i => !i
+				.fail); //如果是退款，那么就是退款信息，否则是支付信息
 			},
 			//创建订单数据
 			CreateDBData: async function(func) {
@@ -860,7 +860,8 @@
 					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
 					return;
 				}
-				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
+				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this
+						.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
 					util.simpleMsg("金额不能为空!", true);
 					this.dPayAmount = this.toBePaidPrice();
 					return;
@@ -983,20 +984,15 @@
 				if (this.isRefund) {
 					console.log("[SALE3Init]PayWayList:", this.PayWayList);
 					this.RefundList = this.SALES.sale3?.map((function(i) { //将sale3的数据转为页面适用的格式
-						return {
+						return Sale3ModelAdditional(Sale3Model({
 							fkid: i.FKID,
 							bill: `${that.SALES.sale1.XS_BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
 							amount: Number(i.AMT).toFixed(2),
 							no: i.NO,
 							group: i.AUTH,
-							fail: true, //def初始和退款失败的皆为true
-							refund_num: 0, //退款（尝试）次数
-							refunding: false, //是否在正在退款中
-							loading: false,
-							msg: "", //操作提示信息（可以显示失败的或者成功的）
 							origin: i
-						}
+						}))
 					}).bind(this));
 				}
 				console.log("SALE3 初始化完毕！", this.RefundList)
@@ -1079,6 +1075,8 @@
 								point: refundInfo.origin.BMID //兼容积分抵现返还积分
 							}, (function(err) { //如果发生异常（catch）
 								// util.simpleMsg(err.msg, true, err);
+								refundInfo.fail = true;
+								console.log("[Refund-退款]退款失败:", err);
 								util.simpleModal("退款失败", err.msg);
 							}).bind(that),
 							(function(res) { //执行完毕（finally），退款次数 +1
@@ -1110,7 +1108,6 @@
 				Promise.all(promises).then((res) => {
 					console.log("[Refund]RefundList-After:", this.RefundList);
 					this.CheckActionComplet();
-					// this.RefundList.sort();
 				})
 			},
 			//创建订单对象列表
@@ -1177,7 +1174,7 @@
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
 				console.log("[PayHandle]Info:", info);
-				console.log("[PayHandle]判断支付信息...",Object.keys(info).length);
+				console.log("[PayHandle]判断支付信息...", Object.keys(info).length);
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
 				console.log("[PayHandle]支付单号:", this.out_trade_no);
@@ -1196,7 +1193,7 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
-						if(this.currentPayType == 'HyJfExchange') {//判断当前是不是积分支付，如果是则扣除所有积分
+						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
 						}
@@ -1205,7 +1202,7 @@
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.authCode = ""; //避免同一个付款码多次使用
-						this.orderGenarator(payAfter, info.type, result.data, false,info); //支付记录处理(成功)
+						this.orderGenarator(payAfter, info.type, result.data, false, info); //支付记录处理(成功)
 						if (this.debt > 0) {
 							this.CanBack = false;
 						}
@@ -1223,7 +1220,8 @@
 							assemble: payAfter,
 							type: info.type
 						});
-						this.orderGenarator(payAfter, info.type, null,true, info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+						this.orderGenarator(payAfter, info.type, null, true,
+							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this))
 			},
 			//支付后创建支付记录
@@ -1251,8 +1249,11 @@
 							return num / 100
 						}
 					} else {
-						console.log("[OrderGenarator]非券支付金额：", payload.money / 100)
-						return (payload.money / 100)
+						let pay_amount = 0;
+						if(type == 'HyJfExchange') pay_amount = payload.point_money;
+						else pay_amount = payload.money / 100;
+						console.log("[OrderGenarator]非券支付金额：", pay_amount)
+						return pay_amount;
 					}
 				}).bind(this))(); //把支付成功部分金额加上
 				//支付失败的时候 result 并不是标准的响应内容
@@ -1292,7 +1293,8 @@
 						}).bind(this));
 					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money?.toFixed(2),
+							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
+								.point_money?.toFixed(2),
 							fail,
 							no: payload.no
 						}, result, type_info));
@@ -1300,11 +1302,12 @@
 				} else { //如果为失败的支付请求
 					console.log("[OrderGenarator]支付失败请求...");
 					let trade = this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money?.toFixed(2),
+						amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money
+							?.toFixed(2),
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no //保存失败的订单号
-					},null,type_info)
+					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
 					console.log("[OrderGenarator]失败记录：", trade);
@@ -1313,7 +1316,22 @@
 				this.PayList = Object.assign([], this.PayList);
 			},
 			//订单对象创建
-			orderCreated, //避免后续绑定this指向
+			orderCreated: function(obj, payload, current_pay_info) {
+				let order = Object.assign(Sale3ModelAdditional(Sale3Model({
+					fkid: current_pay_info?.fkid ?? "",
+					type: current_pay_info?.type ?? "",
+					bill: payload?.out_trade_no,
+					name: current_pay_info?.name ?? "",
+					no: this.PayList.length,
+					disc: (Number(payload?.discount) / 100).toFixed(2) ||
+						0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
+					zklx: payload?.disc_type ?? "",
+					user_id: payload?.open_id || payload?.hyid,
+					point: payload?.point ?? 0, //抵现积分数
+				})), obj);
+				console.log("封装响应体[orderCreated]:", order)
+				return order;
+			}, //避免后续绑定this指向
 			_scoreConsume: function() {
 				PointUpload({
 					order_no: this.useOrderNoChoice(),
@@ -1724,15 +1742,14 @@
 							}).bind(this),
 							(function(ress) { //执行完毕（results），根据结果判断
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
-									if (this.limit >= singleRefund.refund_num)
-										singleRefund.fail = true; //退款失败
-									else {
-										let info = this.PayWayInfo('NO');
-										singleRefund.fail = false; //退款失败
-										singleRefund.fkid = info.fkid;
-										singleRefund.name = info.name;
-									}
+									let info = this.PayWayInfo('NO');
+									singleRefund.fail = true; //退款失败
+									singleRefund.fkid = info.fkid;
+									singleRefund.name = info.name;
 									singleRefund.msg = ress[1].msg; //错误提示信息记录
+									if (ress[1].msg && !ress[1].msg.includes('网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
+										singleRefund.show = false;
+									}
 									util.simpleModal('退款失败', ress[1].msg);
 								} else {
 									singleRefund.fail = false;
@@ -1788,6 +1805,9 @@
 						util.simpleModal('[singlePayRetry]重试支付成功!', res);
 					}).bind(this), (function(err) {
 						this.retryEnd(info);
+						if (err.msg && !err.msg.includes('网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
+							info.show = false;
+						}
 						this.PayList = Object.assign([], this.PayList); //刷新视图
 						util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
 					}).bind(this));

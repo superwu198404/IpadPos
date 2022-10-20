@@ -1351,7 +1351,7 @@ var jpPrinter = {
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.originalNet.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		
@@ -1662,7 +1662,7 @@ var jpPrinter = {
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.originalNet.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		
@@ -1934,7 +1934,7 @@ var jpPrinter = {
 			// }
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.amount.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
+			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util.getComputedByteLen(item.originalNet.toString(), 6) + util.getComputedByteLen(item.discount.toString(), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		

@@ -9,34 +9,6 @@ import {
 	GetPayWayList
 } from '@/bll/Common/bll.js';
 
-//订单对象创建
-export const orderCreated = function(obj, payload,current_pay_info) {
-	let order = Object.assign({ //每支付成功一笔，则往此数组内存入一笔记录
-		fkid: current_pay_info?.fkid ?? "",
-		type: current_pay_info?.type ?? "",
-		bill: payload?.out_trade_no,
-		name: current_pay_info?.name ?? "",
-		amount: 0,
-		no: this.PayList.length,
-		disc: (payload?.discount / 100).toFixed(2) || 0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
-		zklx: payload?.disc_type ?? "",
-		id_type: "",
-		user_id: payload?.open_id || payload?.hyid,
-		is_free: "",
-		card_no: "",
-		point:payload?.point ?? 0,//抵现积分数
-		auth_code: "", //用于处理从上个页面传入，但未进行支付的订单
-		//业务配置字段 ↓
-		fail: true, //def初始和退款失败的皆为true
-		pay_num: 0, //退款（尝试）次数
-		paying: false, //是否在正在退款中
-		loading: false,
-		msg: "" //操作提示信息（可以显示失败的或者成功的）
-	}, obj);
-	console.log("封装响应体[orderCreated]:", order)
-	return order;
-}
-
 /**
  * 支付数据封装体（只支持在 PaymentALL 中使用）
  */
