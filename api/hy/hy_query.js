@@ -39,6 +39,7 @@ var hyinfoModel = {
 	CreateTime: null,
 	Status: null,
 	ktypename: null,
+	WxCpFriend: null,
 	giftcard: [],
 	hy_Level: {
 		hyId: null,

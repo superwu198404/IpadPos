@@ -194,7 +194,7 @@
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
 								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
-								<view class="tits" v-bind:class="{seltss:item.yn_use}">
+								<view class="tits" :class="{seltss:item.yn_use}">
 									<p>{{item.name}}</p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">

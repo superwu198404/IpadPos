@@ -1594,10 +1594,10 @@ var jpPrinter = {
 			 isReturn = true;
 			 break;
 		}
-			
+		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText(xpType + "小票: " + data.khName);
+		jpPrinter.setText(isReturn ? "赊销退货" : xpType + "小票: " + data.khName);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1624,7 +1624,12 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单号: "+ xsBill + "\n");
+			jpPrinter.setText("原单号: "+ xsBill);
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("大客户名称: "+ data.dkhName + "\n");
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1671,10 +1676,10 @@ var jpPrinter = {
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 			
-		
 		//是退单，已优惠金额显示0
 		if(isReturn){
 			data.discountedAmount = 0;
+			data.payableAmount = Math.abs(data.payableAmount);
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左

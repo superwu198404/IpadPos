@@ -67,7 +67,7 @@ var XsTypeObj = {
 			"sale_message": true,
 			"tools": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
-			"lockRows": 0 //是否存在锁定行数
+			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
 			return true;
@@ -766,8 +766,11 @@ var XsTypeObj = {
 					item.balance = 0;
 				}
 			})
-			let dkfname = this.DKF.val.DKFNAME;
-			let printerPram = {"PRINTNUM": 2, "DKFNAME": dkfname};
+			let dkfname = this.DKF.val.NAME;
+			let printerPram = {
+				"PRINTNUM": 2,
+				"DKFNAME": dkfname
+			};
 			console.log("赊销开始调用打印", {
 				arr2,
 				arr3,
@@ -913,9 +916,12 @@ var XsTypeObj = {
 					item.balance = 0;
 				}
 			})
-			
-			let dkfname = this.DKF.val.DKFNAME;
-			let printerPram = {"PRINTNUM": 1, "DKFNAME": dkfname};
+
+			let dkfname = this.DKF.val.NAME;
+			let printerPram = {
+				"PRINTNUM": 2,
+				"DKFNAME": dkfname
+			};
 			console.log("赊销退单开始调用打印", {
 				arr2,
 				arr3,
@@ -1300,8 +1306,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
-		console.log("进入清除促销折扣方法");
-		if (!this.sale001) { //创建对象后 才允许清楚 big bug
+		console.log("进入清除促销折扣方法", this.sale001);
+		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
 			this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -1690,7 +1696,7 @@ function GetSale(global, vue, target_name, uni) {
 				if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
 					that.ResetCXZK(); //正向操作时 选择大客户后清除促销折扣
 					//切换大客户后 要清除一下 上一个大客户的 折扣规则以及当前折扣类型
-					if (that.Disc.val.ZKData.DKFZKDatas) {
+					if (that.Disc.val.ZKData?.DKFZKDatas) {
 						console.log("清除前的特殊折扣数据：", that.Disc.cval);
 						Reflect.deleteProperty(that.Disc.val.ZKData, "DKFZKDatas");
 						Reflect.deleteProperty(that.Disc.val, "ZKType");
@@ -1824,7 +1830,6 @@ function GetSale(global, vue, target_name, uni) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
-		this.selectLet == 1
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
@@ -1955,6 +1960,7 @@ function GetSale(global, vue, target_name, uni) {
 	//设置所有插件的切换非销售模式的切换  会员  折扣 大客户等事件
 	this.setComponentsManage = function(e, pm_mtype) {
 		console.log("进入组件切换事件：", pm_mtype);
+		console.log("进入组件切换事件1：", e);
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
 		console.log("[SetComponentsManage]设置组件切换:", {
 			type: mtype,

@@ -237,7 +237,7 @@
 			</FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement" @click="mainSale.setComponentsManage">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
@@ -264,17 +264,18 @@
 							<text>优惠券</text>
 						</label>
 						<label>
-							<text>{{ MemberGiftCard }}</text>
+							<text>***</text>
+							<!-- <text>{{ MemberGiftCard }}</text> -->
 							<text>礼品卡</text>
 						</label>
 					</view>
 					<view class="coulist">
 						<view class="h2">会员信息</view>
 						<view class="infoes">
-							<view><text>会员手机号：</text>1234</view>
-							<view><text>会员生日：</text>1223-09-09</view>
-							<view><text>注册日期：</text> </view>
-							<view><text>企微好友：</text> </view>
+							<view><text>会员手机号：</text>{{mainSale.HY.val.Phone}}</view>
+							<view><text>会员生日：</text>{{mainSale.HY.val.Birthday}}</view>
+							<view><text>注册日期：</text>{{RegisterDate}}</view>
+							<view><text>企微好友：</text>{{mainSale.HY.val.WxCpFriend?"是":"否"}}</view>
 						</view>
 					</view>
 					<view class="coulist">
@@ -586,7 +587,15 @@
 				return (this.mainSale.HY.val?.Balance ?? 0) / 100;
 			},
 			MemberPoint: function() {
-				return (this.mainSale.HY.val?.JFBalance ?? 0) / 100;
+				return (this.mainSale.HY.val?.JFBalance ?? 0);
+			},
+			RegisterDate: function() {
+				let a = "";
+				let day = this.mainSale.HY.val?.RegisterDay;
+				if (day && day.indexOf(':') < 0) {
+					a = day.substr(0, 4) + "-" + day.substr(4, 2) + "-" + day.substr(6, 2);
+				}
+				return a;
 			},
 			MemberGiftCard: function() {
 				return (this.mainSale.HY.val?.hy_Assets?.GiftAmt ?? 0) / 100;
