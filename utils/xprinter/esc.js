@@ -1686,6 +1686,13 @@ var jpPrinter = {
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
+		if(isReturn){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("");
+			jpPrinter.setPrint(); //打印并换行
+		}
+		
 		if(!isReturn){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
@@ -1783,6 +1790,11 @@ var jpPrinter = {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("-----------------------------------------------");
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("");
 			jpPrinter.setPrint(); //打印并换行
 		}	
 	}
