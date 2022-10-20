@@ -148,7 +148,7 @@ var loadSaleSP = {
 			" PRICETYPE,SPID,SDATE FROM PRICDA WHERE DATE(SDATE) <= DATE('" + x + "')  " +
 			" AND DATE(EDATE) >= DATE('" + x + "') and (dqid is null or dqid = '" + pm_dqid + "') " +
 			" and (khzid is null or khzid = '" + pm_khzid +
-			"') and  QYSTAT  ='1' ORDER BY SPID, PRICETYPE,SDATE DESC";
+			"') and  QYSTAT  ='1' ORDER BY SPID,SDATE, PRICETYPE DESC";
 		await $sqlLite.executeQry(pricesql, "正在获取主数据", (res) => {
 			let price = res.msg;
 			price.forEach(pitem => {
