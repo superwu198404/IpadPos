@@ -665,7 +665,7 @@ var XsTypeObj = {
 		icon_close: require("@/images/xstd-wxz.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
-			"DKF": false, //是否可以打开录入大客户
+			"DKF": true, //是否可以打开录入大客户
 			"Disc": true, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -780,7 +780,9 @@ var XsTypeObj = {
 		},
 		$click() {
 			console.log("[sale_credit]赊销点击...");
+			console.log("大客户权限：", this.currentOperation);
 			this.ComponentsManage.DKF = true; //打开大客户弹窗
+			console.log("大客户权限1：", this.currentOperation.DKF);
 			return false;
 		},
 		OpenBigCustomer: function(data) {
@@ -1656,6 +1658,7 @@ function GetSale(global, vue, target_name, uni) {
 				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
 				this.base.GetHyCoupons();
 			} else {
+				console.log("会员清空后的权限操作：");
 				that.setSaleTypeDefval("DKF");
 			}
 			that.update();

@@ -734,6 +734,22 @@ var GetUnLoad = function(func) {
 		}
 	}, err => {})
 }
+//获取销售单
+var GetPTOrder = function(e, b, d, func) {
+	let str = "";
+	str += b ? " and BILL like '%" + b + "%'" : "";
+	str += e ? " and KHID='" + e + "'" : "";
+	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE)>=date('now')";
+	let sql = "SELECT * from SALE001 where 1=1" + str;
+	console.log("查询条件：", sql);
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("查出的销售单数据：", res);
+		if (func)
+			func(res);
+	}, err => {
+		console.log("查询错误：", err);
+	})
+}
 
 export default {
 	GetFZCX,
@@ -748,5 +764,6 @@ export default {
 	CreateSale2,
 	ManualDiscount,
 	CXMDFS,
-	GetUnLoad
+	GetUnLoad,
+	GetPTOrder
 }
