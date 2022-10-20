@@ -245,7 +245,8 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	var originalAmount = 0;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -272,6 +273,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
+			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
@@ -383,7 +385,8 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	var originalAmount = 0;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -413,6 +416,7 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
+			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += nnvl(sale2_arr[i].QTY,1);
@@ -679,7 +683,8 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-	var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
+	var originalAmount = 0;
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var ggy = ggyContent;
@@ -707,6 +712,8 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			oprice: sale2_arr[i].OPRICE, //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
+			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
+			
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += nnvl(sale2_arr[i].QTY,1);

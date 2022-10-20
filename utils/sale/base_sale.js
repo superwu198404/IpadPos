@@ -377,7 +377,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 2, "XSTYPE": "YD"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -552,7 +553,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDTQ"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
 				console.log("[PayedResult]准备上传会员积分...");
@@ -653,7 +655,8 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, "");
+			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDQX"};
+			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 	},
 	//赊销
