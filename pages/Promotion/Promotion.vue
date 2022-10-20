@@ -20,7 +20,8 @@
 						<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 					</view>
 					<view class="sousuo" @click="Close">
-						<image src="../../images/shuaxin.png" mode="widthFix"></image>关闭
+						<!-- <image src="../../images/shuaxin.png" mode="widthFix"></image> -->
+						X 关闭
 					</view>
 				</view>
 			</view>
