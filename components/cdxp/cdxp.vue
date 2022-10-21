@@ -60,7 +60,7 @@
 									<label>出售时间：{{item.SALETIME}}</label>
 								</view>
 								<view class="cods">
-									<label>订单类型：{{item.XSTYPE}}</label>
+									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE)}}</label>
 									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
@@ -225,13 +225,54 @@
 				}
 				
 				this.$emit("ClosePopup");
-				that.$refs.printerPage.againPrinter(bill);
+				that.$refs.printerPage.againPrinter(bill,xsType);
 			},
 			//重打小票关闭
 			CloseCD: function(data) {
 				// this.qd_show = false;
 				this.$emit("ClosePopup");
 			},
+			xsTypeName: function(xstype,bill_type){
+				switch (xstype){
+					case "0":
+					    return "外卖订单";
+						break;
+                    case "1":
+                        return "销售";
+                    	break;
+					case "2":
+					    if(bill_type = "Z154"){
+							return "赊销退货";
+						}else{
+							return "销售退货";
+						}
+						break;
+                    case "3":
+                        return "预定";
+                    	break;
+                    case "4":
+                        return "预定取消";
+                    	break;
+                    case "5":
+                        return "预定提取";
+                    	break;
+                    case "6":
+                        return "赊销";
+                    	break;
+                    case "7":
+                        return "赊销退货";
+                    	break;
+					case "8":
+					    return "线上订单提取";
+						break;																																						
+					case "9":
+					    return "线上订单取消";
+						break;
+					default:
+					    return "";
+						break;
+				}
+			}
 		}
 	}
 </script>
