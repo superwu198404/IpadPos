@@ -51,6 +51,8 @@ let disc = "DISC";
 let jfnum = "jfnum";
 //销售方式
 let hylv = "HYLV";
+//促销不可用的支付方式
+let notfkid = "NOTFKID";
 //保存已经发生的促销
 let fsdcx = new Array();
 
@@ -407,6 +409,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.CXZT = "";
 				dr.jfnum = 0;
 				dr.HYLV = -1;
+				dr.NOTFKID = "";
 				dr.zdcxbill = zdcxsubno;
 				cxbilldts.push(dr);
 			} else {
@@ -423,6 +426,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.CXZT = "";
 				dr.jfnum = 0;
 				dr.HYLV = -1;
+				dr.NOTFKID = "";
 				if (spdt.length > 0) {
 					for (let i = 0; i < spdt.length; i++) {
 						let bill = cx_util.snvl(spdt[i].BILL, "");
@@ -479,7 +483,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 		let cxbilldData = cxbilldts[col];
 		let cxbilldDataKeys = Object.keys(cxbilldData);
 		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
-		for (let k = 9; k < cxbilldDataKeys.length; k++) {
+		for (let k = 10; k < cxbilldDataKeys.length; k++) {
 			//console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
 			//console.log("cxbilldDataKeys cxbill", cxbill)
@@ -813,6 +817,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				//促销主题
 				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
 				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+				cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 			}
 			let fsnet = new Map();
 			fsnet.set(subx.subno, Fsnet);
@@ -910,6 +915,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				//促销主题
 				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
 				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+				cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 			}
 
 			let fsnet = new Map();
@@ -1048,6 +1054,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			//促销主题
 			cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
 			cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+			cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 		}
 		//console.log("FreeZhCx cxbilldts 111",cxbilldts)
 		SubCxQty(spid, bill, saledate, pmList, cx, Fsnet, 0, Lcm);
@@ -1605,6 +1612,8 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	let dr = {};
 	
 	let spid_dr = cxbilldts[i]["SPID"];
+	let notfkid_dr = cxbilldts[i][notfkid];
+	
 	dr["SALEDATE"] = saledate;
 	dr["KHID"] = getApp().globalData.store.KHID;
 	dr["GSID"] = getApp().globalData.store.GSID;
@@ -1623,6 +1632,7 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
     dr["SPJF"] = jfnum;
     dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet,0); //积分抵扣金额
 	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum,0); //抵扣积分
+    dr[notfkid] = cx_util.snvl(notfkid_dr,""); //不可用支付方式
 	dr["NO"] = i;
 	cxfsdt.push(dr);
 }
