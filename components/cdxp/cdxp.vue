@@ -22,6 +22,12 @@
 										<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 									</label>
 									<view class="criterias" v-if="Criterias" style="z-index: 99999;">
+										<view class="critlist"><text>销售类别：</text>
+											<view class="xslb">
+												<text>销售类别1</text>
+												<text>销售类别2</text>
+											</view>
+										</view>
 										<view class="critlist"><text>订单号：</text>
 											<input type="text" v-model="p_bill" />
 										</view>
@@ -334,5 +340,27 @@
 
 	.hotcakes {
 		color: #333;
+	}
+	.critlist{
+		position: relative;
+	}
+	.critlist .xslb{
+		position: absolute;
+		top:64rpx;
+		left: 0;
+		width:96%;
+		padding:2% 2% 0;
+		background-color: #fff;
+		z-index: 9;
+		box-shadow: 0px 4rpx 20rpx 2rpx rgba(66,177,75,0.2);
+		display: flex;
+		flex-direction: column;
+		border-radius: 4rpx;
+	}
+	.critlist .xslb text{
+		width:100%;
+		height: 66rpx;
+		display: block;
+		max-height: 600rpx;
 	}
 </style>
