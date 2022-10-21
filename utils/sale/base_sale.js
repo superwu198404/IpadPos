@@ -50,6 +50,7 @@ var XsTypeObj = {
 			"ynSKDisc": true, //是否可以计算特殊折扣
 			"ynEdit": true, //当前业务能否编辑商品
 			"ynResetCX": false, //是否清除了促销
+			"showCXZK": false, //展示促销和折扣来源
 
 			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
@@ -377,7 +378,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 2, "XSTYPE": "YD"};
+			let printerPram = {
+				"PRINTNUM": 2,
+				"XSTYPE": "YD"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 		CloseReserveDrawer: function() {
@@ -553,7 +557,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDTQ"};
+			let printerPram = {
+				"PRINTNUM": 1,
+				"XSTYPE": "YDTQ"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
@@ -655,7 +662,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDQX"};
+			let printerPram = {
+				"PRINTNUM": 1,
+				"XSTYPE": "YDQX"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 	},
@@ -1552,6 +1562,14 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		})
 	});
+	//*func* 展示促销和折扣来源
+	this.showCXZKFunc = util.callBind(this, function(e) {
+		if (this.sale001.BILLDISC <= 0) {
+			util.simpleMsg("暂无折扣", true);
+			// return;
+		}
+		this.currentOperation.showCXZK = !this.currentOperation.showCXZK;
+	});
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -1858,6 +1876,7 @@ function GetSale(global, vue, target_name, uni) {
 		"showEdit": false, //展开编辑商品
 		"ynEdit": false, //当前业务能否编辑商品
 		"ynResetCX": false, //是否清除了促销
+		"showCXZK": false, //是否展示促销，折扣来源
 
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
@@ -1969,11 +1988,11 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("进入组件切换事件：", pm_mtype);
 		console.log("进入组件切换事件1：", e);
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
-		console.log("[SetComponentsManage]设置组件切换:", {
-			type: mtype,
-			mode: that.current_type,
-			current: that.currentOperation
-		});
+		// console.log("[SetComponentsManage]设置组件切换:", {
+		// 	type: mtype,
+		// 	mode: that.current_type,
+		// 	current: that.currentOperation
+		// });
 		if (that.currentOperation.hasOwnProperty(mtype)) {
 			// console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
