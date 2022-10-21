@@ -1566,9 +1566,22 @@ function GetSale(global, vue, target_name, uni) {
 	this.showCXZKFunc = util.callBind(this, function(e) {
 		if (this.sale001.BILLDISC <= 0) {
 			util.simpleMsg("暂无折扣", true);
-			// return;
+			return;
+		}
+		if (this.currentOperation.ynCx) { //如果促销生效了
+			let str = "";
+			this.cxfsArr.map(r => {
+				str += r.CXBILL;
+			})
+			str = str.substr(0, str.length - 1);
+			console.log("促销活动单号：", str);
+		}
+		if (this.currentOperation.Disc) { //如果折扣生效了
+
 		}
 		this.currentOperation.showCXZK = !this.currentOperation.showCXZK;
+		console.log("促销折扣显示状态：", this.currentOperation.showCXZK);
+		this.update();
 	});
 	//日志
 	this.log = function(str) {
@@ -2637,7 +2650,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.clikSpItem.ynAddPro) {
 			return;
 		}
-		that.clikSpItem.inputQty=1;
+		that.clikSpItem.inputQty = 1;
 		that.clikSpItem.NEWPRICE = 0 //每次添加后重置，新的水吧总价
 		that.clikSpItem.addlist.forEach(
 			item => {
