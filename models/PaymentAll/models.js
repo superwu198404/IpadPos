@@ -1,3 +1,5 @@
+// import sysParm from "../../utils/sysParm/sysParm"
+// import util from "../../utils/util"
 /**
  * 此 js 用于创建 PaymentAll 下一些可能会和其他页面有共用的对象
  * @param {*} obj 
@@ -15,6 +17,11 @@ import {
 export const PayDataAssemble = function() {
 	this.UniqueBill(); //包装 data 前先执行防重复单号操作
 	console.log("此时的二级单号:", this.prev_no);
+	let sysParam = util.getStorage("sysParam");
+	let zfb_disc = 0;
+	if (sysParam.YN_ZFBKBQ && sysParam.YN_ZFBKBQ == "Y") {
+		zfb_disc = (Number(this.dPayAmount) * 100).toFixed(0)
+	}
 	return {
 		subject: this.subject,
 		no: this.prev_no, //储存当前序号
@@ -26,11 +33,12 @@ export const PayDataAssemble = function() {
 		store_name: this.NAME,
 		merchant_no: this.MerId,
 		channel: this.channel,
-		point:this.CashOffset.Score,//抵现积分数
-		point_money:this.CashOffset.Money,//积分积分对应金额
+		point: this.CashOffset.Score, //抵现积分数
+		point_money: this.CashOffset.Money, //积分积分对应金额
 		member_id: this.SALES.sale1.CUID,
 		memo: this.currentPayInfo?.fkid,
-		discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
+		// discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
+		discountable_amount: zfb_disc,
 		product_info: this.Products.map(i => { //商品清单
 			return {
 				spid: i.SPID,
@@ -54,7 +62,7 @@ export const global = {
 	},
 	data: function() {
 		return {
-			GSID:uni.getStorageSync('store')?.GSID, //公司id
+			GSID: uni.getStorageSync('store')?.GSID, //公司id
 			DPID: uni.getStorageSync('store')?.DPID, //店铺id
 			KCDID: uni.getStorageSync('store')?.KCDID, //存库点id
 			GCID: uni.getStorageSync('store')?.GCID, //工厂id
