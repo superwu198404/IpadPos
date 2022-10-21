@@ -84,7 +84,7 @@
 				uni.$emit('tools', 'promotions');
 			},
 			GetMDCXHD: function(e) {
-				_main.GetMDCXHD(res => {
+				_main.GetMDCXHD(e, res => {
 					console.log("获取成功:", res);
 					that.MDCXDatas = res;
 					that.showMDCXData = true;

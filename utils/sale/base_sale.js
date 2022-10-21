@@ -1569,12 +1569,14 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		if (this.currentOperation.ynCx) { //如果促销生效了
-			let str = "";
-			this.cxfsArr.map(r => {
-				str += r.CXBILL;
+			let arr = this.cxfsArr.map(r => {
+				return r.CXBILL
+			});
+			console.log("促销单集合：", arr);
+			_main.GetMDCXHD(arr, res => {
+				console.log("获取到促销单信息：", res);
+				this.CXHDArr = res;
 			})
-			str = str.substr(0, str.length - 1);
-			console.log("促销活动单号：", str);
 		}
 		if (this.currentOperation.Disc) { //如果折扣生效了
 
@@ -1631,6 +1633,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//促销跟踪
 	this.cxfsArr = [];
+	//生效的促销活动集合
+	this.CXHDArr = [];
 	// 通讯表\sqlite 额外sql
 	this.communication_for_oracle = [];
 	this.communication_for_sqlite = [];

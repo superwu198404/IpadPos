@@ -317,7 +317,23 @@
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
 				<view class="meminfo" v-if="mainSale.currentOperation.showCXZK">
-					展示促销折扣
+					<!-- 促销集合 -->
+					<view v-if="mainSale.currentOperation.ynCx">
+						<view class="lis" v-for="(item,index) in mainSale.CXHDArr">
+							<view class="protheme">
+								<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
+								<view class="themes">
+									<view class="h8">活动主题：{{item.CXZT}}</view>
+									<label><text>顾客范围：</text>{{item.CXRY}}</label>
+								</view>
+							</view>
+							<label class="eventdate">活动日期：<text>{{item.SDATE}} 至 {{item.EDATE}}</text></label>
+						</view>
+					</view>
+					<!-- 折扣集合 -->
+					<view v-if="mainSale.currentOperation.Disc">
+
+					</view>
 				</view>
 				<!-- 结算单详情 -->
 				<view class="pop-r pop-rs">

@@ -89,21 +89,22 @@ var GetMDCXHD = function(billArr, func) {
 		pstr = "";
 	if (Array.isArray(billArr) && billArr.length > 0) {
 		billArr.map(r => {
-			str += "'" + r.BILL + "',";
+			str += "'" + r + "',";
 		})
 		str = str.substr(0, str.length - 1);
 		pstr = " and BILL in(" + str + ")";
 	} else {
-		if (str) {
-			pstr = " and BILL like '%" + str + "%'";
+		if (billArr) {
+			pstr = " and BILL like '%" + billArr + "%'";
 		}
 	}
 	console.log("促销活动查询条件：", pstr);
 	let sql =
 		"select  CXZT,DATE(SDATE) \
-             SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE>=date('now') \
-                                        union all \
-                                        select CXZT,DATE(SDATE) \
+             SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE>=date('now') " +
+		pstr +
+		" union all \
+              select CXZT,DATE(SDATE) \
              SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE>=date('now') " +
 		pstr + " ORDER  by CXRY , SDATE desc";
 	//下列sql为 测试使用
