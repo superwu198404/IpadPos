@@ -72,10 +72,19 @@
 				//console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);
 				//测试数据：
-				// let sql =
-				// 	"select * FROM cxformd001 where bill='FZCX2210170002' and KHID = 'K200QTD005' AND Yn_Jslb = 'F'";
-				// db.get().executeQry(sql1, "", res => {
-				// 	console.log("查询结果：", res);
+				//let sql =
+				//"select * FROM cxformd001 where bill='FZCX2210170002' and KHID = 'K200QTD005' AND Yn_Jslb = 'F'";
+				//sql = [
+				//"delete from SYSYWTEMP002 WHERE YWTYPE = 'QTBS'  AND  bill = 'K200QTD0051221021180118'",
+				//"delete from SYSYWTEMP001 WHERE YWTYPE = 'QTBS'  AND  bill = 'K200QTD0051221021180118'",
+				//sql =
+				//"insert into SYSYWTEMP002 (CLTIME,STATUS,NUM6,NUM5,NUM4,NUM3,NUM2,NUM1,STR7,STR6,STR5,STR4,STR3,STR2,STR1,NOTE2,NOTE1,QTY3,QTY2,QTY1,PRICE,BQTY,PACK,SPID,YWTYPE,BILL,NOTEERR) values(null,null,\"0\",\"0\",\"0\",\"0\",\"0\",\"30\",null,null,\"竹节排包(原味)\",null,null,\"损坏\",\"外卖报损\",null,null,\"0\",\"0\",\"0\",\"30\",\"1\",\"0\",\"000000001010100004\",\"QTBS\",\"K200QTD0051221021180118\",null)insert into SYSYWTEMP002 (CLTIME,STATUS,NUM6,NUM5,NUM4,NUM3,NUM2,NUM1,STR7,STR6,STR5,STR4,STR3,STR2,STR1,NOTE2,NOTE1,QTY3,QTY2,QTY1,PRICE,BQTY,PACK,SPID,YWTYPE,BILL,NOTEERR) values(null,null,\"0\",\"0\",\"0\",\"0\",\"0\",\"5\",null,null,\"告白5号\",null,null,\"损坏\",\"外卖报损\",null,null,\"0\",\"0\",\"0\",\"5\",\"1\",\"0\",\"000000001090100003\",\"QTBS\",\"K200QTD0051221021180118\",null)";
+				//"insert into SYSYWTEMP001 (KHID,POSID,GSID,BMID,YWTYPE,BILL,RYID,RYNAME,WDATE,WTIME,STR1,STR2,STR3,STR4,STR5,STR6,STR7,NOTE1,NOTE2,STATUS,TO_BMID,TO_KHID) values('K200QTD005','1','K200','','QTBS','K200QTD0051221021180118','999','门店测试1','2022-10-21','2022-10-21 18:01:19','','','','','','','','','','0','','')",
+				//"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051221021180118'",
+				//"UPDATE  SYSYWTEMP002 SET STATUS= '0' WHERE YWTYPE = 'QTBS' AND  BILL = 'K200QTD0051221021180118'"
+				//]
+				// db.get().executeDml(sql, "", res => {
+				// 	console.log("执行结果：", res);
 				// }, err => {
 				// 	console.log("查询错误：", err);
 				// })

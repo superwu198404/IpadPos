@@ -22,12 +22,12 @@
 										<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 									</label>
 									<view class="criterias" v-if="Criterias" style="z-index: 99999;">
-										<view class="critlist"><text>销售类别：</text>
+		<!-- 								<view class="critlist"><text>销售类别：</text>
 											<view class="xslb">
-												<text>销售类别1</text>
-												<text>销售类别2</text>
+												<text>销售</text>
+												<text>销售退货</text>
 											</view>
-										</view>
+										</view> -->
 										<view class="critlist"><text>订单号：</text>
 											<input type="text" v-model="p_bill" />
 										</view>
