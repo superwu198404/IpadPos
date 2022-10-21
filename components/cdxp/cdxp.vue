@@ -362,5 +362,6 @@
 		height: 66rpx;
 		display: block;
 		max-height: 600rpx;
+		color: #333;
 	}
 </style>
