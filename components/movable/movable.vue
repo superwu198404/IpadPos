@@ -1,7 +1,8 @@
 <template>
 	<view>
-		<movable-area style="z-index: 999;" v-if="msgDatas.length>0">
-			<movable-view :x="x" :y="y" direction="all" position="position">
+		 <!-- v-if="msgDatas.length>0" -->
+		<movable-area style="z-index: 999;">
+			<movable-view :x="x" :y="y" direction="all" position="position" @change="onChange">
 				<view class="ordermes">
 					<em></em>
 					<label class="neiquan" @click="Orderments()">
@@ -63,23 +64,33 @@
 				}
 			},
 		},
-		created: function() {
+		
+		created: function(position) {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			// console.log("传入的业务消息集合：", that.msgDatas);
 			that._msgDatas.map(r => {
 				that.totalCount += r.count;
 			})
+			let move=util.getStorage("move")
 			uni.getSystemInfo({
 				success: function(res) {
 					// console.log("设备信息：", res);
-					that.x = res.screenWidth - 240; //280
-					that.y = res.screenHeight - 360; //260
+					that.x =move.x|| (res.screenWidth - 240); //280
+					that.y =move.y|| (res.screenHeight - 360); //260
 					// console.log("偏移宽度：", that.x);
 				}
 			})
 		},
 		methods: {
+			onChange: function(e) {
+			            this.move.x = e.detail.x
+						
+			            this.move.y = e.detail.y;
+						util.setStorage("move",this.move);
+						console.log(this.move.x,this.move.y)
+			        },
+			
 			mounted() {
 				this.$refs.setPlan.open()
 				var _this = this
