@@ -154,15 +154,15 @@ var ConfirmBS = function(data, is_ywtype, bill, Program, func) {
 		"delete from SYSYWTEMP001 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'"
 	];
 	sqlArr = sqlArr.concat(excesql.sqlliteArr);
-	let arr = [
+	sqlArr = sqlArr.concat([
 		"insert into SYSYWTEMP001 (KHID,POSID,GSID,BMID,YWTYPE,BILL,RYID,RYNAME,WDATE,WTIME,STR1,STR2,STR3,STR4,STR5,STR6,STR7,NOTE1,NOTE2,STATUS,TO_BMID,TO_KHID) values('" +
 		Program.storeid + "','" + Program.posid + "','" + Program.gsid + "','','" + is_ywtype + "','" +
 		bill + "','" + Program.czyid + "','" + Program.czyname + "','" + _date.getYMD() + "','" + _date
 		.getYMDS() + "','','','','','','','','','','0','','')",
-		"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = '" + is_ywtype + "' AND  BILL = '" + bill + "'",
+		"UPDATE  SYSYWTEMP001 SET STATUS= '0' WHERE YWTYPE = '" + is_ywtype + "' AND  BILL = '" + bill +
+		"'",
 		"UPDATE  SYSYWTEMP002 SET STATUS= '0' WHERE YWTYPE = '" + is_ywtype + "' AND  BILL = '" + bill + "'"
-	];
-	sqlArr = sqlArr.concat(arr);
+	]);
 	// let sqlArr = [
 	// 	"delete from SYSYWTEMP002 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'",
 	// 	"delete from SYSYWTEMP001 WHERE YWTYPE = '" + is_ywtype + "'  AND  bill = '" + bill + "'",
