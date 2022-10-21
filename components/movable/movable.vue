@@ -77,7 +77,7 @@
 				success: function(res) {
 					// console.log("设备信息：", res);
 					that.x =move.x|| (res.screenWidth - 240); //280
-					that.y =move.y|| (res.screenHeight - 360); //260
+					that.y =move.y|| (res.screenHeight - 160); //260
 					// console.log("偏移宽度：", that.x);
 				}
 			})
@@ -87,8 +87,7 @@
 			            this.move.x = e.detail.x
 						
 			            this.move.y = e.detail.y;
-						util.setStorage("move",this.move);
-						console.log(this.move.x,this.move.y)
+						util.setStorage("move",this.move);					
 			        },
 			
 			mounted() {

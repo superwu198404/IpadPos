@@ -7,7 +7,6 @@
 
 <template>
 	<view class="content">
-		<movable></movable>
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
