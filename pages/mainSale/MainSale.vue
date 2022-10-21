@@ -153,7 +153,7 @@
 			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
 		</view>
-		
+
 		<view class="boxs" v-if="mainSale.tool_pages.communication"
 			style="display: flex;justify-content: center;align-items: center;">
 			<UnUpload style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></UnUpload>
@@ -162,6 +162,7 @@
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×</button>
@@ -171,7 +172,8 @@
 					</view>
 					<view class="cods">
 						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>
+							{{mainSale.clikSpItem.SPID.substr(8)}}
 						</label>
 						<label>
 							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}
@@ -244,6 +246,8 @@
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
+				<view class="shareButton" @click="mainSale.setComponentsManage" data-mtype='statement'></view>
+				<!-- 会员信息 -->
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -311,6 +315,30 @@
 						</view>
 					</view>
 				</view>
+				<!-- 折扣信息 促销和折扣下且有值才显示-->
+				<view class="meminfo" v-if="mainSale.currentOperation.showCXZK">
+					<!-- 促销集合 -->
+					<view v-if="mainSale.currentOperation.ynCx">
+						<view class="lis" v-for="(item,index) in mainSale.CXHDArr">
+							<view class="protheme">
+								<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
+								<view class="themes">
+									<view class="h8">活动主题：{{item.CXZT}}</view>
+									<label><text>顾客范围：</text>{{item.CXRY}}</label>
+								</view>
+							</view>
+							<label class="eventdate">活动日期：<text>{{item.SDATE}} 至 {{item.EDATE}}</text></label>
+						</view>
+					</view>
+					<!-- 折扣集合 -->
+					<view v-if="mainSale.currentOperation.Disc">
+						<label v-for="(item,index) in mainSale.ZKHDArr">·
+							折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}},内容：{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
+								折扣额：<text>￥{{item.ZKNET}};</text></span>
+						</label>
+					</view>
+				</view>
+				<!-- 结算单详情 -->
 				<view class="pop-r pop-rs">
 					<view class="member">
 						<label>
@@ -391,7 +419,7 @@
 						<view class="li">
 							<text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>
-						<view class="li">
+						<view class="li" @click="mainSale.showCXZKFunc">
 							<text>总折扣</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
 						</view>
 						<view class="li">
@@ -438,7 +466,8 @@
 		</view>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"
-			:product="mainSale.sale002"></SpecialDisc>
+			:product="mainSale.sale002">
+		</SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -631,9 +660,9 @@
 			},
 		},
 		methods: {
-			onShow: function(e) {
-				// let str = e.target.value;
-				// console.log(this.sptiem.SNAME)
+			// 隐藏
+			Componentes: function() {
+				this.statement = false;
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print, type) {
@@ -827,5 +856,14 @@
 		padding: 2px 5px;
 		color: white;
 		white-space: nowrap;
+	}
+
+	.shareButton {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		right: 0;
+		background: none;
 	}
 </style>

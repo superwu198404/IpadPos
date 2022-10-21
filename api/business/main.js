@@ -84,14 +84,29 @@ var GetFZCX = function(khid, func) {
  * 获取门店促销活动信息
  * @param {} khid 
  */
-var GetMDCXHD = function(func) {
-	let cxArr = [];
+var GetMDCXHD = function(billArr, func) {
+	let str = "",
+		pstr = "";
+	if (Array.isArray(billArr) && billArr.length > 0) {
+		billArr.map(r => {
+			str += "'" + r + "',";
+		})
+		str = str.substr(0, str.length - 1);
+		pstr = " and BILL in(" + str + ")";
+	} else {
+		if (billArr) {
+			pstr = " and BILL like '%" + billArr + "%'";
+		}
+	}
+	console.log("促销活动查询条件：", pstr);
 	let sql =
 		"select  CXZT,DATE(SDATE) \
-             SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE>=date('now') \
-                                        union all \
-                                        select CXZT,DATE(SDATE) \
-             SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE>=date('now')  ORDER  by CXRY , SDATE desc";
+             SDATE, DATE(EDATE) EDATE, CASE WHEN CXRY = 2 THEN '会员' END AS CXRY from cxformd001 where CXRY='2' and YN_JSLB!='F' and EDATE>=date('now') " +
+		pstr +
+		" union all \
+              select CXZT,DATE(SDATE) \
+             SDATE ,DATE(EDATE) EDATE, CASE WHEN CXRY = 1 THEN '所有顾客' ELSE '非会员' END AS CXRY  from cxformd001 where CXRY<>'2' and YN_JSLB!='F' and EDATE>=date('now') " +
+		pstr + " ORDER  by CXRY , SDATE desc";
 	//下列sql为 测试使用
 	// sql =
 	// 	"select  CXZT,DATE(SDATE) \
@@ -371,7 +386,11 @@ var MatchZKDatas = function(ZKObj, products) {
 		console.log("当前商品匹配到的有效折扣规则：", CurData);
 		products = CalProduct(CurData, products);
 	}
-	return products;
+	let obj = {
+		sale2: products,
+		zkrule: CurData
+	}
+	return obj;
 }
 var getPrice = async function(spid, dqid, khzid) {
 	let price = 0;
@@ -734,6 +753,22 @@ var GetUnLoad = function(func) {
 		}
 	}, err => {})
 }
+//获取销售单
+var GetPTOrder = function(e, b, d, func) {
+	let str = "";
+	str += b ? " and BILL like '%" + b + "%'" : "";
+	str += e ? " and KHID='" + e + "'" : "";
+	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE)>=date('now')";
+	let sql = "SELECT * from SALE001 where 1=1" + str;
+	console.log("查询条件：", sql);
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("查出的销售单数据：", res);
+		if (func)
+			func(res);
+	}, err => {
+		console.log("查询错误：", err);
+	})
+}
 
 export default {
 	GetFZCX,
@@ -748,5 +783,6 @@ export default {
 	CreateSale2,
 	ManualDiscount,
 	CXMDFS,
-	GetUnLoad
+	GetUnLoad,
+	GetPTOrder
 }

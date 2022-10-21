@@ -132,8 +132,8 @@
 				initok: false,
 				errstr: "",
 				tx001: null,
-				khid: "K200QTD005", //'K0101QT2',//108通讯 测试使用
-				posid: "1", //"8",//108通讯 测试使用
+				khid: "", //'K0101QT2',//108通讯 测试使用
+				posid: "", //"8",//108通讯 测试使用
 				yninit: false,
 				showmsg: "门店基础数据初始化"
 			}

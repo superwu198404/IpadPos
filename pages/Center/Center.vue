@@ -147,10 +147,12 @@
 				this.timer = null;
 			},
 			TimedCommunication: function() {
-				//3min执行一次销售单传输
+				//3min执行一次销售单传输 从终端参数获取
+				let sysParam = util.getStorage("sysParam");
+				let min = sysParam.TXSJJG || 3;
 				let int = setInterval(() => {
 					common.TransLiteData();
-				}, 1000 * 60 * 3);
+				}, 1000 * 60 * min);
 				getApp().globalData.Int = int;
 				console.log("本次单据传输定时ID:", int);
 			},

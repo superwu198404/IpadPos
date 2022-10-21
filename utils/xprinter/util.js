@@ -712,8 +712,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			oprice: sale2_arr[i].OPRICE, //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
-			
+			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,	
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += nnvl(sale2_arr[i].QTY,1);

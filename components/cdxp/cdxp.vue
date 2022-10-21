@@ -5,8 +5,8 @@
 </style>
 <template>
 	<view class="boxs">
-	<view class="content customer">
-		<view class="right">
+		<view class="content customer">
+			<view class="right">
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
@@ -36,35 +36,35 @@
 										</view>
 									</view>
 								</view>
-								
+
 							</view>
 						</view>
-						<button class="close">×</button>
+						<button class="close" @click="CloseCD">×</button>
 					</view>
-	
+
 					<!-- <NoData v-if="Orders.length==0"></NoData> -->
 					<!-- 小类循环 -->
-					 <!-- v-else -->
+					<!-- v-else -->
 					<view class="products">
 						<!-- <view class="h2">销售退单 <label></label></view>
 			-->
 						<view class="procycle">
-							<view class="li" >
+							<view class="li" v-for="item in Datas">
 								<view class="h3">
-									<text>单号：132323</text>
-									<text class="price">￥12</text>
+									<text>单号：{{item.BILL}}</text>
+									<text class="price">￥{{item.TNET}}</text>
 									<!-- 预定提取的单展示整单金额 -->
 								</view>
 								<view class="cods">
-									<label>销售日期：2022-09-09</label>
-									<label>出售时间：10：00</label>
+									<label>销售日期：{{item.SALEDATE}}</label>
+									<label>出售时间：{{item.SALETIME}}</label>
 								</view>
-								<view class="cods">									
-									<label>订单类型： 销售</label>
-									<label>条目：9</label>
+								<view class="cods">
+									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE)}}</label>
+									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
-									<button class="btn" @click="ConfirmCD">重新打印</button>
+									<button class="btn" @click="ConfirmCD(item.BILL,item.XSTYPE)">重新打印</button>
 								</view>
 							</view>
 							<!-- 订单循环 -->
@@ -84,14 +84,14 @@
 								</view>
 							</view> -->
 						</view>
-					
+
 					</view>
 				</view>
+			</view>
+
 		</view>
-		
-	</view>
-	
-	<!-- <view class="customer">
+
+		<!-- <view class="customer">
 		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 		<view class="h3">重打小票 <button @click="CloseCD" class="guan">×</button></view>
 		<view class="clues">
@@ -111,16 +111,16 @@
 			<button class="btn" @click="ConfirmCD">确定</button>
 		</view>
 	</view> -->
-	<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
-	<!-- 画布 -->
-	<view class="canvasdiv" :style="'visibility:hidden;'">
-		<canvas canvas-id="couponQrcode" class="canvas"
-			:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-		<canvas canvas-id="canvasLogo" class="canvas"
-			:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-		<canvas canvas-id="canvasXPEWM" class="canvas"
-			:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-	</view>
+		<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 <script>
@@ -138,7 +138,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	var that;
 	export default {
 		name: "saomaqiang",
@@ -160,39 +160,119 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				POS_XSBILLPRINT: [], //重打查询数据集合
+				Datas: [],
+				Criterias: false,
+				p_date: dateformat.getYMD(),
+				p_bill: "",
 			};
 		},
-		created : async function(){
+		created: async function() {
+			that = this;
 			this.qd_show = true;
 			let xsBillRes = await xprinter_util.getBillPrinterMax();
-			console.log("获取重打数据 111",xsBillRes);
+			//console.log("获取重打数据 111", xsBillRes);
 			this.xsBill = xsBillRes;
+			this.GetPTOrder();
 		},
 		methods: {
-			dateChange: e => {
-				that.Order.TH_DATE = e.detail.value;
-				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
+			changeDate: e => {
+				that.p_date = e.detail.value;
 			},
-			timeChange: e => {
-				that.Order.TH_TIME = e.detail.value;
-				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
+			GetPTOrder: function(e) {
+				let store = util.getStorage("store");
+				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, res => {
+					console.log("获取成功:", res);
+					if (res.code && res.msg.length > 0) {
+						that.Datas = res.msg;
+						if (e) {
+							util.simpleMsg("查询成功");
+						}
+					} else {
+						that.Datas = [];
+						util.simpleMsg("暂无数据", true);
+					}
+				})
+			},
+			ShowSearch: function() {
+				that.Criterias = !that.Criterias;
+				if (!that.Criterias) {
+					that.p_bill = "";
+					that.p_date = dateformat.getYMD();
+				}
+			},
+			Empty: function() {
+				that.p_bill = "";
+				that.p_date = dateformat.getYMD();
+			},
+			Search: function() {
+				that.GetPTOrder(1);
 			},
 			//重打小票
-			ConfirmCD: function(data) {
+			ConfirmCD: async function(xsBill,xsType) {
 				let that = this;
-				let bill = cx_util.snvl(that.xsBill,"");
-				if(bill == ""){
+				let bill = cx_util.snvl(xsBill, "");
+				if (bill == "") {
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
+				
+				//通过单号，查询重打格式数据
+				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
+				//console.log("pos_xsbillprint ==================================",pos_xsbillprint);	
+				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
+					util.simpleMsg("未查询到重打数据", "none");
+					return;
+				}
+				
 				this.$emit("ClosePopup");
-				that.$refs.printerPage.againPrinter(bill);
+				that.$refs.printerPage.againPrinter(bill,xsType);
 			},
 			//重打小票关闭
 			CloseCD: function(data) {
 				// this.qd_show = false;
 				this.$emit("ClosePopup");
 			},
+			xsTypeName: function(xstype,bill_type){
+				switch (xstype){
+					case "0":
+					    return "外卖订单";
+						break;
+                    case "1":
+                        return "销售";
+                    	break;
+					case "2":
+					    if(bill_type = "Z154"){
+							return "赊销退货";
+						}else{
+							return "销售退货";
+						}
+						break;
+                    case "3":
+                        return "预定";
+                    	break;
+                    case "4":
+                        return "预定取消";
+                    	break;
+                    case "5":
+                        return "预定提取";
+                    	break;
+                    case "6":
+                        return "赊销";
+                    	break;
+                    case "7":
+                        return "赊销退货";
+                    	break;
+					case "8":
+					    return "线上订单提取";
+						break;																																						
+					case "9":
+					    return "线上订单取消";
+						break;
+					default:
+					    return "";
+						break;
+				}
+			}
 		}
 	}
 </script>
@@ -210,34 +290,40 @@
 		border-radius: 20rpx;
 		padding: 0 1% 140rpx;
 		z-index: 99;
-		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
+		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
 		max-height: 90%;
 	}
 
-	.procycle .li .h3{
+	.procycle .li .h3 {
 		display: flex;
 		justify-content: space-between;
 		color: #333;
 		padding-bottom: 12rpx;
 	}
-	.handles{
-		margin-top:6rpx;
+
+	.handles {
+		margin-top: 6rpx;
 	}
-	.handles button{
-		width:200rpx;
+
+	.handles button {
+		width: 200rpx;
 	}
-	.prolist .products .procycle .li .h3{
+
+	.prolist .products .procycle .li .h3 {
 		margin-bottom: 14rpx;
 	}
-	.li .cods{
-		padding:6rpx 0;
+
+	.li .cods {
+		padding: 6rpx 0;
 	}
-	.hh{
+
+	.hh {
 		padding-right: 100rpx;
 	}
-	.hh .close{
-		background:none;
-		padding:0;
+
+	.hh .close {
+		background: none;
+		padding: 0;
 		color: #333;
 		top: 12rpx;
 		right: 1%;
@@ -245,7 +331,8 @@
 		border-radius: 50%;
 		font-size: 44rpx;
 	}
-	.hotcakes{
+
+	.hotcakes {
 		color: #333;
 	}
 </style>

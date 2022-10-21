@@ -179,7 +179,7 @@ var TransLite = function(e, func) {
 								console.log("[TransLite]缓存数据删除失败:", err1);
 							});
 						}
-					},function(err){
+					}, function(err) {
 						console.log("[TransLite-Error]数据传输结果:", err1);
 					});
 				}
@@ -628,17 +628,16 @@ var ywTypeEnum = {
 
 //删除过期的销售单
 var DelSale = function(e) { //khid
-	let day = 10; //默认十天
+	let day = 10; //默认10天
+	let day1 = 6; //默认6天
 	let obj = util.getStorage("sysParam");
 	day = obj.SJBLTS || 10; //数据保留天数
-	// let sql1 = "select bill from sale001 where date(saledate)<date('now', '-" + day + " day')";
-	// let arr1 = [
-	// 	"delete from sale001 where date(saledate)<date('now', '-" + day + " day')",
-	// 	"delete from sale002 where bill in (" + sql1 + ")",
-	// 	"delete from sale003 where bill in (" + sql1 + ")"
-	// ];
+	day1 = obj.WSCSJBLTS || 6; //通讯数据保留天数
+
 	let curDay = dateformat.getYMD(-day);
 	console.log("业务数据保留天数：", curDay);
+	let curDay1 = dateformat.getYMD(-day1);
+	console.log("通讯数据保留天数：", curDay1);
 	let arr1 = [
 		"delete from sale001 where yn_sc='Y' and saledate < date('" + curDay + "')",
 		"delete from sale002 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
@@ -646,7 +645,8 @@ var DelSale = function(e) { //khid
 		"delete from sale003 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
 		curDay + "')",
 		"delete from sale008 where  bill not in( select bill from sale001 where yn_sc='Y') and saledate < date('" +
-		curDay + "')"
+		curDay + "')",
+		"DELETE FROM POS_TXFILE WHERE BDATE < date('" + curDay1 + "')"
 	];
 	db.get().executeDml(arr1, "", res => {
 		console.log("本地销售单删除成功：" + day, res);

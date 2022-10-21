@@ -79,27 +79,24 @@
 				qrCodeWidth: 200, //开票二维码宽
 				qrCodeHeight: 200, // 开票二维码高
 				bill_printer: "", //单号
+				blueStatus: false, //打印机状态
 			};
 		},
 		components: {},
-		/**
-		 * 生命周期函数--监听页面加载
-		 */
+		//生命周期函数--监听页面加载
 		onLoad: function(options) {
 			var that = this;
 			setTimeout(() => {
 				that.couponQrCode()
 			}, 50);
 		},
-		/**
-		 * 生命周期函数--监听页面初次渲染完成
-		 */
+		//生命周期函数--监听页面初次渲染完成
 		onReady: function() {
 			var list = [];
 			var numList = [];
 			var j = 0;
 			//打印字节数组
-			for (var i = 2000; i <= 20000; i += 1000) {
+			for (var i = 5000; i <= 20000; i += 1000) {
 				list[j] = i;
 				j++;
 			}
@@ -113,14 +110,14 @@
 				printNum: numList,
 				printerNum: numList[0]
 			});
+		},
+		created: function(e) {
+			let that = this;
+			//console.log("打印created ========================================================================================== ",app.globalData.YN_PRINT_CON)
 			//初始化画布
 			this.initPhoto();
 		},
 		methods: {
-			testPrinter: async function(){
-				console.log("==========================================================================================testPrinter");
-				util.simpleMsg("testPrinter");
-			},
 			// 二维码生成工具
 			couponQrCode: function() {
 				let that = this;
@@ -199,12 +196,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("xsBluePrinter 开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('xsBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
@@ -264,12 +264,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("wmBluePrinter 开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('wmBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
@@ -320,12 +323,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('bluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
@@ -381,12 +387,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('ydBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
@@ -440,18 +449,21 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('bluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: async function(xsBill) {
+			againPrinter: async function(xsBill,xsType) {
 				var that = this;
 				//xsBill = that.bill_printer;
 				console.log("重打单号:", xsBill)
@@ -492,7 +504,7 @@
 				console.log("is_dzfpewmdz", is_dzfpewmdz)
 				console.log("is_xpewm", is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
-				if (is_dzfpewmdz || is_xpewm) {
+				if ((is_dzfpewmdz || is_xpewm) && xprinter_util.nnvl(xsType,0) == 1) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, xsBill, printer_poscs.DZFPEWMDZ, that
@@ -737,89 +749,82 @@
 				var that = this;
 				var buf;
 				var dateView;
-				/*
-				  n = 1：传送打印机状态
-				  n = 2：传送脱机状态
-				  n = 3：传送错误状态
-				  n = 4：传送纸传感器状态
-				*/
-				buf = new ArrayBuffer(3);
-				dateView = new DataView(buf);
-				dateView.setUint8(0, 16);
-				dateView.setUint8(1, 4);
-				dateView.setUint8(2, 2);
-				uni.writeBLECharacteristicValue({
-					deviceId: app.globalData.BLEInformation.deviceId,
-					serviceId: app.globalData.BLEInformation.writeServiceId,
-					characteristicId: app.globalData.BLEInformation.writeCharaterId,
-					value: buf,
-					success: function(res) {
-						console.log("发送成功");
-						that.setData({
-							isQuery: true
-						});
-					},
-					fail: function(e) {
-						util.simpleMsg("发送失败",true);
-						return;
-					},
-					complete: function() {}
-				});
-				uni.notifyBLECharacteristicValueChange({
-					deviceId: app.globalData.BLEInformation.deviceId,
-					serviceId: app.globalData.BLEInformation.notifyServiceId,
-					characteristicId: app.globalData.BLEInformation.notifyCharaterId,
-					state: true,
-					success: function(res) {
-						uni.onBLECharacteristicValueChange(function(r) {
-							console.log(
-								`characteristic ${r.characteristicId} has changed, now is ${r}`
-							);
-							var result = xprinter_util.ab2hex(r.value);
-							console.log("返回" + result);
-							var tip = "";
-
-							if (result == 12) {
-								//正常
-								tip = "正常";
-							} else if (result == 32) {
-								//缺纸
-								tip = "缺纸";
-							} else if (result == 36) {
-								//开盖、缺纸
-								tip = "开盖、缺纸";
-							} else if (result == 16) {
-								tip = "开盖";
-							} else if (result == 40) {
-								//其他错误
-								tip = "其他错误";
-							} else {
-								//未处理错误
-								tip = "未知错误";
-							}
-
-							uni.showModal({
-								title: "打印机状态",
-								content: tip,
-								showCancel: false
+				blueStatus = false;
+				try{
+					/*
+					  n = 1：传送打印机状态
+					  n = 2：传送脱机状态
+					  n = 3：传送错误状态
+					  n = 4：传送纸传感器状态
+					*/
+					buf = new ArrayBuffer(3);
+					dateView = new DataView(buf);
+					dateView.setUint8(0, 16);
+					dateView.setUint8(1, 4);
+					dateView.setUint8(2, 2);
+					uni.writeBLECharacteristicValue({
+						deviceId: app.globalData.BLEInformation.deviceId,
+						serviceId: app.globalData.BLEInformation.writeServiceId,
+						characteristicId: app.globalData.BLEInformation.writeCharaterId,
+						value: buf,
+						success: function(res) {
+							console.log("发送成功");
+							that.setData({
+								isQuery: true
 							});
-						});
-					},
-					fail: function(e) {
-						uni.showModal({
-							title: "打印机状态",
-							content: "获取失败",
-							showCancel: false
-						});
-						console.log(e);
-					},
-					complete: function(e) {
-						that.setData({
-							isQuery: false
-						});
-						console.log("执行完成");
-					}
-				});
+						},
+						fail: function(e) {
+							//util.simpleMsg("发送失败",true);
+							return;
+						},
+						complete: function() {}
+					});
+					uni.notifyBLECharacteristicValueChange({
+						deviceId: app.globalData.BLEInformation.deviceId,
+						serviceId: app.globalData.BLEInformation.notifyServiceId,
+						characteristicId: app.globalData.BLEInformation.notifyCharaterId,
+						state: true,
+						success: function(res) {
+							uni.onBLECharacteristicValueChange(function(r) {
+								console.log(
+									`characteristic ${r.characteristicId} has changed, now is ${r}`
+								);
+								var result = xprinter_util.ab2hex(r.value);
+								console.log("返回" + result);
+								var tip = "";
+					
+								if (result == 12) {
+									//正常
+									tip = "正常";
+									blueStatus = true;
+								} else if (result == 32) {
+									//缺纸
+									tip = "缺纸";
+								} else if (result == 36) {
+									//开盖、缺纸
+									tip = "开盖、缺纸";
+								} else if (result == 16) {
+									tip = "开盖";
+								} else if (result == 40) {
+									//其他错误
+									tip = "其他错误";
+								} else {
+									//未处理错误
+									tip = "未知错误";
+								}
+							});
+						},
+						fail: function(e) {
+							console.log("打印机状态 获取失败",e);
+						},
+						complete: function(e) {
+							console.log("打印机状态 执行完成");
+						}
+					});	
+				}catch(e){
+
+				}
+				return 	blueStatus;
 			},
 			Send: function(buff) {
 				//分包发送
@@ -862,7 +867,7 @@
 						} //console.log(res)
 					},
 					fail: function(e) {
-						util.simpleMsg("已打印第" + currentPrint + "张成功", "none");
+						util.simpleMsg("已打印第" + currentPrint + "张失败", "none");
 					},
 					complete: function() {
 						currentTime++;
