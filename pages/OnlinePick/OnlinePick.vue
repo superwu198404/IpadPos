@@ -169,7 +169,7 @@
 					this.$forceUpdate();
 					this.view.Order = true;
 				}), util.callBind(this, (err) => {
-					util.simpleMsg(err.msg, true, err);
+					util.simpleMsg("查询失败,未能查询到订单!", true, err);
 					this.view.Order = false;
 				}));
 			},
@@ -207,7 +207,12 @@
 						})
 						if (allow_cancel) {
 							util.simpleMsg("此单商品已全部取消，无法进行提取!", true)
-						} else {
+						} 
+						else {
+							if((!this.extracts.THTYPE || this.extracts.THTYPE == '0') && !this.form.code){
+								util.simpleMsg("自提订单需要自提码才能提取!", true);
+								return;
+							}
 							this.$to_sale_pages('sale_online_order_extract', {
 								sale1: sales.jk_sys_sale001.first(),
 								sale2: (function() {
@@ -219,7 +224,7 @@
 								reserve_params: {
 									khid: this.KHID,
 									bill: this.extracts.BILL,
-									code: this.form.code,
+									code: this.form.search.code,
 									isBill: this.extracts.THTYPE !== "0",
 									details: this.extracts
 								}

@@ -762,7 +762,7 @@
 			//sale 003 数据源：
 			Sale3Source: function() {
 				return this.isRefund ? this.RefundList.filter(i => !i.fail) : this.PayList.filter(i => !i
-				.fail); //如果是退款，那么就是退款信息，否则是支付信息
+					.fail); //如果是退款，那么就是退款信息，否则是支付信息
 			},
 			//创建订单数据
 			CreateDBData: async function(func) {
@@ -1250,7 +1250,7 @@
 						}
 					} else {
 						let pay_amount = 0;
-						if(type == 'HyJfExchange') pay_amount = payload.point_money;
+						if (type == 'HyJfExchange') pay_amount = payload.point_money;
 						else pay_amount = payload.money / 100;
 						console.log("[OrderGenarator]非券支付金额：", pay_amount)
 						return pay_amount;
@@ -1600,6 +1600,12 @@
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
 					if (Number(this.toBePaidPrice()) === 0 || this
 						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+						console.log("[BackPrevPage]单据数据:", {
+							sale1: this.sale1_obj,
+							sale2: this.sale2_arr,
+							sale3: this.sale3_arr,
+							sale8: this.sale8_arr
+						});
 						this.event.emit("FinishOrder", {
 							code: true,
 							msg: this.isRefund ? "退款成功!" : "支付完成!",
@@ -1747,7 +1753,8 @@
 									singleRefund.fkid = info.fkid;
 									singleRefund.name = info.name;
 									singleRefund.msg = ress[1].msg; //错误提示信息记录
-									if (ress[1].msg && !ress[1].msg.includes('网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
+									if (ress[1].msg && !ress[1].msg.includes(
+											'网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
 										singleRefund.show = false;
 									}
 									util.simpleModal('退款失败', ress[1].msg);
@@ -1770,7 +1777,7 @@
 			},
 			//单笔订单重试
 			singlePayRetry: async function(info) {
-				if (info.pay_num > 1) {
+				if (info.pay_num > 1 && info.exactly) {//重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
 					if (await this.NoOrginPay(info)) {
 						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
 						this.used_no.push(info.no); //如果成功
@@ -1794,6 +1801,12 @@
 						data
 					}, (function(res) {
 						let data = res.data;
+						if (data.status === 'PAYING') { //如果查询成功，状态为支付中
+							console.log("[SinglePayRetry]重试查询结果为支付中...", data)
+							this.RefundErrorCallback(info, false, res); //调用失败回调
+							info.exactly = false; //结果为不确定的
+							return;
+						}
 						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
 						info.discount = data.discount ?? 0;
 						info.disc = data.zklx ?? "";
@@ -1802,20 +1815,26 @@
 						this.retryEnd(info, false)
 						this.yPayAmount += (data.money / 100);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
-						util.simpleModal('[singlePayRetry]重试支付成功!', res);
-					}).bind(this), (function(err) {
-						this.retryEnd(info);
-						if (err.msg && !err.msg.includes('网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
-							info.show = false;
-						}
-						this.PayList = Object.assign([], this.PayList); //刷新视图
-						util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
-					}).bind(this));
+						util.simpleModal('[SinglePayRetry]重试支付成功!', res);
+					}).bind(this), (this.RefundErrorCallback).bind(this, info, true));
 				else
 					util.simpleMsg("已存在相同的付款方式！", false);
 			},
+			RefundErrorCallback: function(info, judge_net_err, err) { //单据记录
+				console.log("[RefundErrorCallback]退款异常回调...", {
+					info,
+					err
+				});
+				this.retryEnd(info);
+				if (err.msg && !err.msg.includes('网络错误') && judge_net_err) { //本地查询超时，判定为可重试为 不可回退方式过机
+					info.show = false;
+				}
+				this.PayList = Object.assign([], this.PayList); //刷新视图
+				util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
+			},
 			retryEnd: function(trade, isFail = true) {
 				trade.loading = false;
+				trade.exactly = true;//将结果转为确定，这种可以参与不可原路退回的判断
 				trade.pay_num += 1; //支付次数加一
 				trade.fail = isFail;
 			},
