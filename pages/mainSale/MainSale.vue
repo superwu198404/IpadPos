@@ -162,6 +162,7 @@
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
 		<!-- 蛋糕属性选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
+			
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×</button>
@@ -242,8 +243,9 @@
 			</FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		<view class="boxs" v-if="mainSale.ComponentsManage.statement" >			
 			<view class="memberes">
+				<view class="shareButton" @click="Componentes()"></view>
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -631,9 +633,9 @@
 			},
 		},
 		methods: {
-			onShow: function(e) {
-				// let str = e.target.value;
-				// console.log(this.sptiem.SNAME)
+			// 隐藏
+			Componentes: function() {
+				this.statement = false;
 			},
 			//销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print, type) {
@@ -827,5 +829,13 @@
 		padding: 2px 5px;
 		color: white;
 		white-space: nowrap;
+	}
+	.shareButton{
+	    position: absolute;
+	    width: 100%;
+	    height: 100%;
+	    top: 0;
+	    right: 0;
+	    background: none;
 	}
 </style>
