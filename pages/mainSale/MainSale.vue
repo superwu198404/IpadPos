@@ -172,7 +172,7 @@
 					</view>
 					<view class="cods">
 						<label>
-							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID}}
+							<image src="../../images/dx-bm.png" mode="widthFix"></image>{{mainSale.clikSpItem.SPID.substr(8)}}
 						</label>
 						<label>
 							<image src="../../images/dx-dw.png" mode="widthFix"></image>{{mainSale.clikSpItem.UNIT}}

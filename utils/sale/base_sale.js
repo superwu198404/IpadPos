@@ -2637,6 +2637,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.clikSpItem.ynAddPro) {
 			return;
 		}
+		that.clikSpItem.inputQty=1;
 		that.clikSpItem.NEWPRICE = 0 //每次添加后重置，新的水吧总价
 		that.clikSpItem.addlist.forEach(
 			item => {
