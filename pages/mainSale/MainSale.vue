@@ -153,7 +153,7 @@
 			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
 		</view>
-		
+
 		<view class="boxs" v-if="mainSale.tool_pages.communication"
 			style="display: flex;justify-content: center;align-items: center;">
 			<UnUpload style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></UnUpload>
@@ -244,6 +244,7 @@
 		<!-- 结算单 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
+				<!-- 会员信息 -->
 				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -311,6 +312,11 @@
 						</view>
 					</view>
 				</view>
+				<!-- 折扣信息 -->
+				<view class="meminfo">
+
+				</view>
+				<!-- 结算单详情 -->
 				<view class="pop-r pop-rs">
 					<view class="member">
 						<label>
@@ -438,7 +444,8 @@
 		</view>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"
-			:product="mainSale.sale002"></SpecialDisc>
+			:product="mainSale.sale002">
+		</SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
