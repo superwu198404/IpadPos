@@ -452,7 +452,7 @@
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: async function(xsBill) {
+			againPrinter: async function(xsBill,xsType) {
 				var that = this;
 				//xsBill = that.bill_printer;
 				console.log("重打单号:", xsBill)
@@ -493,7 +493,7 @@
 				console.log("is_dzfpewmdz", is_dzfpewmdz)
 				console.log("is_xpewm", is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
-				if (is_dzfpewmdz || is_xpewm) {
+				if ((is_dzfpewmdz || is_xpewm) && xprinter_util.nnvl(xsType,0) == 1) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, xsBill, printer_poscs.DZFPEWMDZ, that
