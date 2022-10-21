@@ -182,6 +182,7 @@ const additional_def = {
 	refunding: false, //是否在正在退款重试中
 	show:true,//是否显示在列表中
 	loading: false, //是否显示加载
+	exactly: true,//支付结果是否已经确定（不确定的结果，如支付中）
 	msg: "" //操作提示信息（可以显示失败的或者成功的）
 };
 
@@ -195,6 +196,7 @@ export const Sale3ModelAdditional = function(sale3_model, init = additional_def)
 		refunding: false, //是否在正在退款重试中
 		show:true,//是否显示在列表中
 		loading: false,
+		exactly: true,//支付结果是否已经确定（不确定的结果，如支付中）
 		msg: "" //操作提示信息（可以显示失败的或者成功的）
 	}, init))
 }
