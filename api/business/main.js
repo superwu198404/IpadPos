@@ -386,7 +386,11 @@ var MatchZKDatas = function(ZKObj, products) {
 		console.log("当前商品匹配到的有效折扣规则：", CurData);
 		products = CalProduct(CurData, products);
 	}
-	return products;
+	let obj = {
+		sale2: products,
+		zkrule: CurData
+	}
+	return obj;
 }
 var getPrice = async function(spid, dqid, khzid) {
 	let price = 0;

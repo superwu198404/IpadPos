@@ -332,7 +332,10 @@
 					</view>
 					<!-- 折扣集合 -->
 					<view v-if="mainSale.currentOperation.Disc">
-
+						<label v-for="(item,index) in mainSale.ZKHDArr">·
+							折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}},内容：{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
+								折扣额：<text>￥{{item.ZKNET}};</text></span>
+						</label>
 					</view>
 				</view>
 				<!-- 结算单详情 -->

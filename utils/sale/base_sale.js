@@ -1635,6 +1635,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.cxfsArr = [];
 	//生效的促销活动集合
 	this.CXHDArr = [];
+	//生效的特殊折扣规则集合
+	this.ZKHDArr = [];
 	// 通讯表\sqlite 额外sql
 	this.communication_for_oracle = [];
 	this.communication_for_sqlite = [];
@@ -2865,7 +2867,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.discCompute = function() {
 		// 计算商品的折扣值
 		// console.log("002旧数据：", that.sale002);
-		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		let res = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		that.sale002 = res.sale2;
+		that.ZKHDArr = res.zkrule;
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 	//使用手工折扣进行计算 新版四舍五入的逻辑
