@@ -168,11 +168,11 @@
 				console.log("[MonitorEvent-Center]通讯轮询停止事件监听开始...");
 				uni.$off('continue-timed-communication');
 				uni.$on('continue-timed-communication', util.callBind(this, function() { //继续消息轮询
-					if (!getApp().globalData.msgInt) {
+					if (!getApp().globalData.Int) {
 						console.log("[MonitorEvent-Center]通讯轮询继续!");
 						this.TimedCommunication();
 					} else {
-						console.log("[MonitorEvent-Center]通讯轮询正在运行!", timer);
+						console.log("[MonitorEvent-Center]通讯轮询正在运行!", getApp().globalData.Int);
 					}
 				}));
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");

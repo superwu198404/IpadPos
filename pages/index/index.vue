@@ -69,7 +69,7 @@
 		<button @click="MenuPage(4)">外卖预定</button> -->
 		<!-- <button @click="MenuPage(5)">登录</button> -->
 		<button @click="MenuPage(6)">首页</button>
-		<!-- <button @click="MenuPage(7)">销售退单</button> -->
+		<button @click="MenuPage(7)">初始化</button>
 		<!-- <button @click="MenuPage(8)">预定</button>
 		<button @click="MenuPage(9)">赊销退单</button> -->
 		<button @click="MenuPage(10)">数据查看</button>
@@ -434,7 +434,13 @@
 					uni.navigateTo({
 						url: "/pages/mainSale/MainSale"
 					});
-				} else if (e == 8) {
+				} 
+				else if (e == 7) {
+					uni.navigateTo({
+						url: "../start/start"
+					});
+				}
+				else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",
 						complete: r => {
