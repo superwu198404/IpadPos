@@ -83,24 +83,20 @@
 			};
 		},
 		components: {},
-		/**
-		 * 生命周期函数--监听页面加载
-		 */
+		//生命周期函数--监听页面加载
 		onLoad: function(options) {
 			var that = this;
 			setTimeout(() => {
 				that.couponQrCode()
 			}, 50);
 		},
-		/**
-		 * 生命周期函数--监听页面初次渲染完成
-		 */
+		//生命周期函数--监听页面初次渲染完成
 		onReady: function() {
 			var list = [];
 			var numList = [];
 			var j = 0;
 			//打印字节数组
-			for (var i = 2000; i <= 20000; i += 1000) {
+			for (var i = 5000; i <= 20000; i += 1000) {
 				list[j] = i;
 				j++;
 			}
@@ -114,12 +110,12 @@
 				printNum: numList,
 				printerNum: numList[0]
 			});
-			//初始化画布
-			this.initPhoto();
 		},
 		created: function(e) {
 			let that = this;
 			//console.log("打印created ========================================================================================== ",app.globalData.YN_PRINT_CON)
+			//初始化画布
+			this.initPhoto();
 		},
 		methods: {
 			// 二维码生成工具
@@ -200,12 +196,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("xsBluePrinter 开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('xsBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
@@ -265,12 +264,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("wmBluePrinter 开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('wmBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				//that.prepareSend(command.getData()); //发送数据
@@ -321,12 +323,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('bluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
@@ -382,12 +387,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('ydBluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");
@@ -441,12 +449,15 @@
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('bluePrinter reject failed reason', reason)
+						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
+					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
 				}
 				console.log("打印格式记录结束");

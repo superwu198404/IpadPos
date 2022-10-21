@@ -440,7 +440,7 @@
 							//打印
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-								let printerPram = {"PRINTNUM": 2};
+								let printerPram = {"PRINTNUM": 1};
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram,
 									that.bs_Reason, that.bs_Note,"");
 							}
@@ -556,7 +556,7 @@
 						//调用打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							let printerPram = {"PRINTNUM": 2};
+							let printerPram = {"PRINTNUM": 1};
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram, that
 								.bs_Reason, that.bs_Note,that.new_bill);
 						}
@@ -659,7 +659,7 @@
 						//后打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							let printerPram = {"PRINTNUM": 2};
+							let printerPram = {"PRINTNUM": 1};
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram, that
 								.bs_Reason, that.bs_Note,"");
 						}

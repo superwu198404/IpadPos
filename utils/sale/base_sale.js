@@ -50,6 +50,7 @@ var XsTypeObj = {
 			"ynSKDisc": true, //是否可以计算特殊折扣
 			"ynEdit": true, //当前业务能否编辑商品
 			"ynResetCX": false, //是否清除了促销
+			"showCXZK": false, //展示促销和折扣来源
 
 			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
@@ -377,7 +378,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 2, "XSTYPE": "YD"};
+			let printerPram = {
+				"PRINTNUM": 2,
+				"XSTYPE": "YD"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 		CloseReserveDrawer: function() {
@@ -553,7 +557,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDTQ"};
+			let printerPram = {
+				"PRINTNUM": 1,
+				"XSTYPE": "YDTQ"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 			//一些特殊的设置 如积分上传
 			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
@@ -655,7 +662,10 @@ var XsTypeObj = {
 				arr2,
 				arr3
 			})
-			let printerPram = {"PRINTNUM": 1, "XSTYPE": "YDQX"};
+			let printerPram = {
+				"PRINTNUM": 1,
+				"XSTYPE": "YDQX"
+			};
 			this.Page.ydBluePrinter(this.sale001, arr2, arr3, this.ydsale001, printerPram);
 		},
 	},
@@ -771,7 +781,7 @@ var XsTypeObj = {
 			})
 			let dkfname = this.DKF.val.NAME;
 			let printerPram = {
-				"PRINTNUM": 2,
+				"PRINTNUM": 1,
 				"DKFNAME": dkfname
 			};
 			console.log("赊销开始调用打印", {
@@ -924,7 +934,7 @@ var XsTypeObj = {
 
 			let dkfname = this.DKF.val.NAME;
 			let printerPram = {
-				"PRINTNUM": 2,
+				"PRINTNUM": 1,
 				"DKFNAME": dkfname
 			};
 			console.log("赊销退单开始调用打印", {
@@ -1552,6 +1562,29 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		})
 	});
+	//*func* 展示促销和折扣来源
+	this.showCXZKFunc = util.callBind(this, function(e) {
+		if (this.sale001.BILLDISC <= 0) {
+			util.simpleMsg("暂无折扣", true);
+			return;
+		}
+		if (this.currentOperation.ynCx) { //如果促销生效了
+			let arr = this.cxfsArr.map(r => {
+				return r.CXBILL
+			});
+			console.log("促销单集合：", arr);
+			_main.GetMDCXHD(arr, res => {
+				console.log("获取到促销单信息：", res);
+				this.CXHDArr = res;
+			})
+		}
+		if (this.currentOperation.Disc) { //如果折扣生效了
+
+		}
+		this.currentOperation.showCXZK = !this.currentOperation.showCXZK;
+		console.log("促销折扣显示状态：", this.currentOperation.showCXZK);
+		this.update();
+	});
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -1600,6 +1633,10 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//促销跟踪
 	this.cxfsArr = [];
+	//生效的促销活动集合
+	this.CXHDArr = [];
+	//生效的特殊折扣规则集合
+	this.ZKHDArr = [];
 	// 通讯表\sqlite 额外sql
 	this.communication_for_oracle = [];
 	this.communication_for_sqlite = [];
@@ -1858,6 +1895,7 @@ function GetSale(global, vue, target_name, uni) {
 		"showEdit": false, //展开编辑商品
 		"ynEdit": false, //当前业务能否编辑商品
 		"ynResetCX": false, //是否清除了促销
+		"showCXZK": false, //是否展示促销，折扣来源
 
 		"sale": false, //从这里开始都是销售模式
 		"sale_reserve": false,
@@ -1969,11 +2007,11 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("进入组件切换事件：", pm_mtype);
 		console.log("进入组件切换事件1：", e);
 		let mtype = pm_mtype || e.currentTarget.dataset.mtype;
-		console.log("[SetComponentsManage]设置组件切换:", {
-			type: mtype,
-			mode: that.current_type,
-			current: that.currentOperation
-		});
+		// console.log("[SetComponentsManage]设置组件切换:", {
+		// 	type: mtype,
+		// 	mode: that.current_type,
+		// 	current: that.currentOperation
+		// });
 		if (that.currentOperation.hasOwnProperty(mtype)) {
 			// console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
@@ -2618,7 +2656,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.clikSpItem.ynAddPro) {
 			return;
 		}
-		that.clikSpItem.inputQty=1;
+		that.clikSpItem.inputQty = 1;
 		that.clikSpItem.NEWPRICE = 0 //每次添加后重置，新的水吧总价
 		that.clikSpItem.addlist.forEach(
 			item => {
@@ -2829,7 +2867,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.discCompute = function() {
 		// 计算商品的折扣值
 		// console.log("002旧数据：", that.sale002);
-		that.sale002 = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		let res = _main.MatchZKDatas(this.Disc.val, that.sale002);
+		that.sale002 = res.sale2;
+		that.ZKHDArr = res.zkrule;
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 	//使用手工折扣进行计算 新版四舍五入的逻辑
