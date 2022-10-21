@@ -781,7 +781,7 @@ var XsTypeObj = {
 			})
 			let dkfname = this.DKF.val.NAME;
 			let printerPram = {
-				"PRINTNUM": 2,
+				"PRINTNUM": 1,
 				"DKFNAME": dkfname
 			};
 			console.log("赊销开始调用打印", {
@@ -934,7 +934,7 @@ var XsTypeObj = {
 
 			let dkfname = this.DKF.val.NAME;
 			let printerPram = {
-				"PRINTNUM": 2,
+				"PRINTNUM": 1,
 				"DKFNAME": dkfname
 			};
 			console.log("赊销退单开始调用打印", {
