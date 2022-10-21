@@ -2605,12 +2605,12 @@ function GetSale(global, vue, target_name, uni) {
 					item => {
 						item.Darr.forEach(
 							drinkitem => {
-								//gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
 								if (drinkitem.SELECTED == "X") {
 									let new008 = new sale.sale008();
+									console.log("录入的水吧商品",drinkitem)
 									new008 = Object.cover(new008, newprm);
 									new008.NO = timeNo;
-									new008.SPID = drinkitem.MATNR;
+									new008.SPID = drinkitem.SPID;
 									new008.OPTCODE = drinkitem.OPTCODE;
 									new008.OPTMAT = drinkitem.OPTMAT
 									new008.ATTCODE = drinkitem.ATTCODE;
