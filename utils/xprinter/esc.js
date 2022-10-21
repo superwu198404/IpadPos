@@ -71,6 +71,16 @@ var jpPrinter = {
       data.push(n);
     };
 	
+	/**
+	 * 
+	 * 切纸
+	 */
+	jpPrinter.setPrintAndPapercut = function (n) {
+	  data.push(29);
+	  data.push(86);
+	  data.push(n);
+	};
+	
 	// 走纸 n = 行数
 	jpPrinter.feedLine = function (n) {
 	  const line = n || 1
@@ -1686,13 +1696,6 @@ var jpPrinter = {
 		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
 		
-		if(isReturn){
-			jpPrinter.setCharacterSize(0); //设置正常大小
-			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("");
-			jpPrinter.setPrint(); //打印并换行
-		}
-		
 		if(!isReturn){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
@@ -1790,13 +1793,21 @@ var jpPrinter = {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("-----------------------------------------------");
-			jpPrinter.setPrint(); //打印并换行
-			
-			jpPrinter.setCharacterSize(0); //设置正常大小
-			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("");
-			jpPrinter.setPrint(); //打印并换行
+			jpPrinter.setPrint(); //打印并换行	
 		}	
+	}
+	
+	//打印结束，打印换行
+	jpPrinter.endPrinter = function(){
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("." + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("");
+		jpPrinter.setPrintAndPapercut(49);
 	}
 	
 	jpPrinter.YDFormString = function(data,printer_poscs,print){
