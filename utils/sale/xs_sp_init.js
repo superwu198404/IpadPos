@@ -31,7 +31,8 @@ var loadSaleSP = {
 				let py = item.PINYIN;
 				//console.log("数组的结构"+JSON.stringify(item))
 				let flag = "";
-				for (let x = 0; x < py.length; x++) {
+				for (let x = 0; x < py.length; x++) 
+				{
 					if (py.charCodeAt(x) >= 97 && py.charCodeAt(x) <= 122) {
 						flag = py.substr(x, 1);
 						break;
@@ -76,7 +77,8 @@ var loadSaleSP = {
 			let plid = item.plid;
 			let plname = item.plname;
 			let cpk = fslag + "" + plid;
-			if (cpk != pkey) {
+			if (cpk != pkey) 
+			{
 				plarr = [];
 				fsArr.push({
 					"FSTR": fslag,
@@ -195,12 +197,12 @@ var loadSaleSP = {
 		console.log("##############################开始获取蛋糕主商品##############################")
 		//蛋糕合并 2
 		let drinksAddSql =
-			" select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid,'109' XPLID,'01' SPJGZ,PLDA.SNAME plname," +
+			" select  substr(dgxlda.pinyin,1,1) FSTR,dgxlda.dgxlid SPID,dgxlda.SNAME,'个' UNIT,dgxlda.PINYIN,dgxlda.plid plid,'109' XPLID,'01' SPJGZ,PLDA.SNAME plname," +
 			"  1 ynshowlist , '' specslist,0 ynAddPro,'' addlist " +
 			" from  dgxlda,plda where dgxlda.plid=plda.plid " +
 			" and  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
-			" and spda_dgxl.dgxlid =dgxlda.dgxlid) "
-		" and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "'" +
+			" and spda_dgxl.dgxlid =dgxlda.dgxlid " +
+		" and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "')" +
 			"";
 		await $sqlLite.executeQry(drinksAddSql, "正在获取蛋糕数据", (res) => {
 
