@@ -98,16 +98,18 @@
 </script>
 
 <style>
-.products{
-	height:92%;
-	overflow: auto;
-}
-.hh{
+	.products {
+		height: 92%;
+		overflow: auto;
+	}
+
+	.hh {
 		padding-right: 100rpx;
 	}
-	.hh .close{
-		background:none;
-		padding:0;
+
+	.hh .close {
+		background: none;
+		padding: 0;
 		color: #333;
 		top: 12rpx;
 		right: 1%;
