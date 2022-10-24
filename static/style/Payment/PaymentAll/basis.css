@@ -73,7 +73,7 @@ page {
 	bottom:0;
 	background-color: #fff;
 	border-top: 1rpx #eee solid;
-	z-index: 4;
+	z-index: 6;
 }
 .menu .bills {
 	width: 100%;
