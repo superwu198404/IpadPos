@@ -422,7 +422,7 @@
 		overflow: auto;
 	}
 	.products .procycle .li{
-		height:116rpx;
+		height:176rpx;
 	}
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
