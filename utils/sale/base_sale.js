@@ -1625,6 +1625,8 @@ function GetSale(global, vue, target_name, uni) {
 		score: 0,
 		money: 0
 	}
+	//禁止类型
+	this.ban_type = [];
 	//工具栏界面
 	this.tool_pages = {
 		promotions: false, //当前促销活动
@@ -2602,10 +2604,10 @@ function GetSale(global, vue, target_name, uni) {
 				pm_qty = 1;
 				that.clikSpItem.addlist.forEach(
 					item => {
-						item.Darr.forEach(
-							drinkitem => {
+						item.Darr.forEach(drinkitem => {
 								//gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
 								if (drinkitem.SELECTED == "X") {
+									console.log("[GetSP]水吧商品:",drinkitem);
 									let new008 = new sale.sale008();
 									new008 = Object.cover(new008, newprm);
 									new008.NO = timeNo;
@@ -2768,6 +2770,7 @@ function GetSale(global, vue, target_name, uni) {
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
+			this.BanPayType(response?.cxfs); //收集禁止的支付id
 			this.cxfsArr = response?.cxfs; //促销跟踪
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
@@ -2850,6 +2853,19 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
 		} else
 			console.warn("[ScoreCount]list值无效!");
+	}
+	
+	this.BanPayType = function(list){
+		console.log("[BanPayType]被禁止类型:", list);
+		if (list) {
+			var ban_pay = [];
+			list.forEach(i => {
+				ban_pay.push(i.NOTFKID)
+			})
+			console.log("[BanPayType]禁止类型:", ban_pay);
+			this.ban_type = ban_pay;
+		} else
+			console.warn("[BanPayType]list值无效!");
 	}
 
 	//获取辅助促销的数据 因为需要依赖加购的商品产生的sale001 总价
