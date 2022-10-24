@@ -1,11 +1,13 @@
 <template>
 	<view>
-		<movable-area style="z-index: 999;" v-if="msgDatas.length>0">
-			<movable-view :x="x" :y="y" direction="all" position="position">
+		<!-- v-if="msgDatas.length>0" -->
+		<movable-area style="z-index: 999;">
+			<movable-view :x="x" :y="y" direction="all" position="position" @change="onChange">
 				<view class="ordermes">
 					<em></em>
 					<label class="neiquan" @click="Orderments()">
-						<image src="../../images/xianshangdd-bai.png" mode="widthFix"></image><text>{{totalCount}}</text>
+						<image src="../../images/xianshangdd-bai.png" mode="widthFix"></image>
+						<text>{{totalCount}}</text>
 					</label>
 					<view class="orderlist" v-if="orderlist">
 						<view v-for="(item,index) in msgDatas" :key="index" @click="ReadMsg(item,index)">
@@ -63,23 +65,31 @@
 				}
 			},
 		},
-		created: function() {
+
+		created: function(position) {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			// console.log("传入的业务消息集合：", that.msgDatas);
 			that._msgDatas.map(r => {
 				that.totalCount += r.count;
 			})
+			let move = util.getStorage("move")
 			uni.getSystemInfo({
 				success: function(res) {
 					// console.log("设备信息：", res);
-					that.x = res.screenWidth - 240; //280
-					that.y = res.screenHeight - 360; //260
+					that.x = move.x || (res.screenWidth - 240); //280
+					that.y = move.y || (res.screenHeight - 260); //260
 					// console.log("偏移宽度：", that.x);
 				}
 			})
 		},
 		methods: {
+			onChange: function(e) {
+				this.move.x = e.detail.x;
+				this.move.y = e.detail.y;
+				util.setStorage("move", this.move);
+			},
+
 			mounted() {
 				this.$refs.setPlan.open()
 				var _this = this
@@ -223,28 +233,34 @@
 		justify-content: center;
 		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
 	}
-	.ordermes em{
+
+	.ordermes em {
 		position: absolute;
-		top:50%;
+		top: 50%;
 		left: 50%;
-		transform: translate(-50%,-50%);
-		border:1px solid #006B44;
+		transform: translate(-50%, -50%);
+		border: 1px solid #006B44;
 		border-radius: 50%;
 		animation: scales 1s ease infinite;
-		-webkit-animation: scales 1s ease infinite;		
+		-webkit-animation: scales 1s ease infinite;
 		box-shadow: 0px 3px 20px 1px rgba(0, 107, 68, 0.1000);
 	}
-	@keyframes scales {  /*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
-		0%{
-			width:70rpx;
+
+	@keyframes scales {
+
+		/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
+		0% {
+			width: 70rpx;
 			height: 70rpx;
-	        }
-	    100%{
-	       width:120rpx;
-	       height: 120rpx;
-	        }
-	        }
-	.ordermes .neiquan{
+		}
+
+		100% {
+			width: 120rpx;
+			height: 120rpx;
+		}
+	}
+
+	.ordermes .neiquan {
 		background-color: #006B44;
 		width: 100rpx;
 		height: 100rpx;
@@ -253,6 +269,7 @@
 		align-items: center;
 		justify-content: center;
 	}
+
 	.ordermes image {
 		width: 50rpx;
 		height: 50rpx;

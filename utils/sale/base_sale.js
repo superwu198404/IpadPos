@@ -275,6 +275,7 @@ var XsTypeObj = {
 			"ynEdit": true, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
 			"ynResetCX": false, //是否清除了促销
+			"showCXZK": false, //展示促销和折扣来源
 
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -2605,13 +2606,13 @@ function GetSale(global, vue, target_name, uni) {
 				that.clikSpItem.addlist.forEach(
 					item => {
 						item.Darr.forEach(drinkitem => {
-								//gtoupDarr.push( {ATTCODE:retd.ATTCODE,ATTNAME:retd.ATTNAME,CSTCODE:retd.CSTCODE,OPTCODE:retd.OPTCODE,OPTNAME:retd.OPTNAME,OPTMAT:retd.OPTMAT,PRICE:0,SELECTED:retd.RECMARK,SPID:retd.MATNR,QTY:0,RECMARK:retd.RECMARK} )
 								if (drinkitem.SELECTED == "X") {
 									console.log("[GetSP]水吧商品:",drinkitem);
 									let new008 = new sale.sale008();
+									console.log("录入的水吧商品",drinkitem)
 									new008 = Object.cover(new008, newprm);
 									new008.NO = timeNo;
-									new008.SPID = drinkitem.MATNR;
+									new008.SPID = drinkitem.SPID;
 									new008.OPTCODE = drinkitem.OPTCODE;
 									new008.OPTMAT = drinkitem.OPTMAT
 									new008.ATTCODE = drinkitem.ATTCODE;

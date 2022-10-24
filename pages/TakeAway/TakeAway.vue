@@ -440,9 +440,12 @@
 							//打印
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-								let printerPram = {"PRINTNUM": 1};
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram,
-									that.bs_Reason, that.bs_Note,"");
+								let printerPram = {
+									"PRINTNUM": 1
+								};
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
+									printerPram,
+									that.bs_Reason, that.bs_Note, "");
 							}
 						}
 					} else {
@@ -549,6 +552,7 @@
 					storeDqid: that.DQID
 				};
 				console.log("报损数据处理开始：", obj);
+				console.log("报损数据处理开始1：", that.BSDATA);
 				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, res => {
 					console.log("报损本地操作结果：", res);
 					if (res.code) {
@@ -556,9 +560,12 @@
 						//调用打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							let printerPram = {"PRINTNUM": 1};
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram, that
-								.bs_Reason, that.bs_Note,that.new_bill);
+							let printerPram = {
+								"PRINTNUM": 1
+							};
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
+								printerPram, that
+								.bs_Reason, that.bs_Note, that.new_bill);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -659,9 +666,12 @@
 						//后打印
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							let printerPram = {"PRINTNUM": 1};
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type, printerPram, that
-								.bs_Reason, that.bs_Note,"");
+							let printerPram = {
+								"PRINTNUM": 1
+							};
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
+								printerPram, that
+								.bs_Reason, that.bs_Note, "");
 						}
 					}
 					that.Close();

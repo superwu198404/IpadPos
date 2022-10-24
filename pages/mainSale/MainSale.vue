@@ -317,31 +317,48 @@
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
 				<view class="meminfo" v-if="mainSale.currentOperation.showCXZK">
+					<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix"></image>
+					<view class="member">
+						<label style="font-weight: 700;"><text>已使用的促销/折扣列表</text></label>
+						<button class="close" @click="mainSale.showCXZKFunc">×</button>
+					</view>
 					<!-- 促销集合 -->
-					<view v-if="mainSale.currentOperation.ynCx">
-						<view class="lis" v-for="(item,index) in mainSale.CXHDArr">
+					<view class="listuls" v-if="mainSale.currentOperation.ynCx" style="padding:20rpx 2%">
+						<view class="lis" v-for="(item,index) in mainSale.CXHDArr"
+							style="width:90%;flex-direction: column;border:1px solid #eee">
 							<view class="protheme">
 								<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
 								<view class="themes">
 									<view class="h8">活动主题：{{item.CXZT}}</view>
 									<label><text>顾客范围：</text>{{item.CXRY}}</label>
+									<label class="eventdate">活动日期：{{item.SDATE}} 至 {{item.EDATE}}</label>
 								</view>
 							</view>
-							<label class="eventdate">活动日期：<text>{{item.SDATE}} 至 {{item.EDATE}}</text></label>
 						</view>
 					</view>
 					<!-- 折扣集合 -->
-					<view v-if="mainSale.currentOperation.Disc">
-						<label v-for="(item,index) in mainSale.ZKHDArr">
+					<view class="zhekou" v-if="mainSale.currentOperation.Disc">
+						<view class="lis" v-for="(item,index) in mainSale.ZKHDArr" style="width:90%;padding-top:4rpx;">
 							<view v-if="item.ZKTYPE">
-								折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}},内容：{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
-									折扣额：<text>￥{{item.ZKNET}};</text></span>
+								<view class="h8">
+									<view>折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}}</view>
+									<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
+								</view>
+								<vlew class="manjian">
+									满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折；</vlew>
+								<view class="neirong">内容：{{item.ZKNAME}}</view>
+
 							</view>
 							<view v-else>
-								折扣类型：{{"特批折扣"}},内容：{{item.ZKNAME}}，打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
-									折扣额：<text>￥{{item.ZKNET}};</text></span>
+								<view class="h8">
+									<view>折扣类型：{{"特批折扣"}}</view>
+									<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
+								</view>
+								<vlew class="manjian">打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折</vlew>
+								<view class="neirong">内容：{{item.ZKNAME}}</view>
 							</view>
-						</label>
+						</view>
+
 					</view>
 				</view>
 				<!-- 结算单详情 -->
@@ -426,7 +443,9 @@
 							<text>件数</text><text>{{mainSale.actType=='Payment'?TotalNum:-TotalNum}}</text>
 						</view>
 						<view class="li" @click="mainSale.showCXZKFunc">
-							<text>总折扣</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
+							<text>总折扣<image style="width:40rpx;height:40rpx;vertical-align: middle;"
+									src="@/images/dx-zhekou.png"></image>
+							</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
 						</view>
 						<view class="li">
 							<text>应收金额</text><text>￥{{ mainSale.actType=='Payment'?ReceivableAmount:-ReceivableAmount }}</text>

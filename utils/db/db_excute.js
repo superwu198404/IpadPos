@@ -432,10 +432,10 @@ var mySqllite = function() {
 		await open(pm_msg);
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		//console.log("开始执行sql:", sql);
+		console.log("开始执行sql:", sql);
 		retcode = await exec(sql);
 		console.log("[ExecuteDml]返回值:", retcode);
-		//console.log("[ExecuteDml]sql:", sql);
+		// console.log("[ExecuteDml]sql:", sql);
 		//await close();
 		if (retcode.code) {
 			// retcode = await tran(tranEnum.commit);

@@ -748,7 +748,7 @@
 		top: 100%;
 		background-color: #fff;
 		border-radius: 6rpx;
-		width: 66%;
+		width: 160%;
 		text-align: left;
 		z-index: 999999999;
 		box-shadow: 0px 10rpx 20rpx 1px rgba(66, 177, 75, 0.06);
