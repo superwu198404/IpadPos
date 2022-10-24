@@ -2309,9 +2309,10 @@ function GetSale(global, vue, target_name, uni) {
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
-			score_info: that.score_info,
-			PayList: that.payed,
-			actType: that.actType
+			score_info: that.score_info,//积分抵现信息
+			ban_pay: that.ban_type,//被禁用的支付类型
+			PayList: that.payed,//已支付信息
+			actType: that.actType//动作类型(退款、支付)
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
@@ -2859,12 +2860,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.BanPayType = function(list){
 		console.log("[BanPayType]被禁止类型:", list);
 		if (list) {
-			var ban_pay = [];
+			var ban_pay = new Set();
 			list.forEach(i => {
-				ban_pay.push(i.NOTFKID)
-			})
-			console.log("[BanPayType]禁止类型:", ban_pay);
-			this.ban_type = ban_pay;
+				ban_pay.add(i.NOTFKID)
+			});
+			this.ban_type = Array.from(ban_pay);
+			console.log("[BanPayType]禁止类型:", this.ban_type);
 		} else
 			console.warn("[BanPayType]list值无效!");
 	}

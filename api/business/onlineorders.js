@@ -100,5 +100,5 @@ export const ordersAccept = function(data, func, err) {
 export const ordersStatusCheck = function(data, func, err) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.OnlineOrderStatusCheck";
 	let reqdata = Req.resObj(true, "订单查询中", data, apistr);
-	Req.asyncFuncOne(reqdata, func, err);
+	return Req.asyncFuncOne(reqdata, func, err);
 }
