@@ -22,12 +22,13 @@
 										<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 									</label>
 									<view class="criterias" v-if="Criterias" style="z-index: 99999;">
-		<!-- 								<view class="critlist"><text>销售类别：</text>
-											<view class="xslb">
-												<text>销售</text>
-												<text>销售退货</text>
-											</view>
-										</view> -->
+										<view class="critlist"><text>销售类别：</text>
+											<!-- <view class="xslb"> -->
+												<picker range-key="NAME" mode="selector" :range="xstypes" @change="Change" @cancel="Cancel">
+													<view style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ current_data.NAME }}</view>
+												</picker>
+											<!-- </view> -->
+										</view>
 										<view class="critlist"><text>订单号：</text>
 											<input type="text" v-model="p_bill" />
 										</view>
@@ -170,6 +171,11 @@
 				Criterias: false,
 				p_date: dateformat.getYMD(),
 				p_bill: "",
+				p_xsType: "", //销售类别
+				xstypes:[],
+				current_data:{"TYPE": 1 , "NAME":"销售"},
+				current_index:0,
+				init: 1
 			};
 		},
 		created: async function() {
@@ -181,12 +187,23 @@
 			this.GetPTOrder();
 		},
 		methods: {
+			Change:function(e){
+				let index = e.detail.value;
+				if(index < this.xstypes.length){
+					this.current_data = this.xstypes[index];
+					this.p_xsType = this.xstypes[index];
+				}		
+			},
+			Cancel:function(){
+				
+			},
 			changeDate: e => {
 				that.p_date = e.detail.value;
 			},
 			GetPTOrder: function(e) {
+				console.log("current_data 111",this.current_data)
 				let store = util.getStorage("store");
-				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, res => {
+				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date,cx_util.snvl(that.current_data.TYPE,""), res => {
 					console.log("获取成功:", res);
 					if (res.code && res.msg.length > 0) {
 						that.Datas = res.msg;
@@ -278,6 +295,12 @@
 					    return "";
 						break;
 				}
+			}
+		},
+		mounted() {
+		    this.xstypes = [{"TYPE": 0 , "NAME":"外卖订单"},{"TYPE": 1 , "NAME":"销售"},{"TYPE": 2, "NAME":"销售退货"},{"TYPE": 3, "NAME":"预定"},{"TYPE": 4, "NAME":"预定取消"},{"TYPE": 5, "NAME":"预定提取"},{"TYPE": 6, "NAME":"赊销"},{"TYPE": 7, "NAME":"赊销退货"},{"TYPE": 8, "NAME":"线上订单提取"},{"TYPE": 9, "NAME":"线上订单取消"}];
+			if(this.init){
+				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};
 			}
 		}
 	}
