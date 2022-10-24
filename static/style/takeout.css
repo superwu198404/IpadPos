@@ -110,7 +110,7 @@
 	margin:0 0 2%;
 }
 
-.products .cods view {
+.cods view {
 	width: 80%;
 }
 
@@ -118,7 +118,8 @@
 	width: 48%;
 	line-height: 50rpx;
 	color: #b0b0b0;
-	margin-right: 2%;
+	margin-right: 2%; 
+	white-space: nowrap;
 }
 
 .cods label:nth-last-child(1),

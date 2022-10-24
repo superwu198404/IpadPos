@@ -165,7 +165,7 @@
 
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'>×</button>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp' style="z-index: 99999;">×</button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
@@ -800,6 +800,7 @@
 		left: 5%;
 		text-align: center;
 		background-color: #fff;
+		z-index: 99;
 	}
 
 	.pop-rs .goods {

@@ -616,8 +616,10 @@ page {
 .commods {
 	padding: 0 0%;
 	position: relative;
-	z-index: 99;
+	z-index: 98;
 	min-height: 500rpx;
+	max-height: 1200rpx;
+	overflow: auto;
 }
 
 .commods .h3 {
