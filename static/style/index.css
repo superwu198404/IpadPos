@@ -231,6 +231,15 @@ page {
 	height: 90rpx;
 	margin-right: 4%;
 }
+.uls .lis .protheme .themes,.listuls .lis .protheme .themes{
+	max-width:93%;
+}
+.uls .lis .protheme .themes .h8,.listuls .lis .protheme .themes .h8{
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .uls .lis .protheme .themes label,.listuls .lis .protheme .themes label{
 	font-size: 28rpx;
 	color: #b0b0b0;
@@ -245,7 +254,7 @@ page {
 	line-height: 40rpx;
 	margin-right: 20rpx;
 	border-radius: 6rpx;
-	font-size: 26rpx;
+	font-size: 26rpx;	
 }
 .listuls .lis .protheme .eventdate{
 	display: block;
