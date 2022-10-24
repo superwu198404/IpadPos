@@ -115,6 +115,7 @@
 }
 
 .cods label {
+	display: inline-block;
 	width: 48%;
 	line-height: 50rpx;
 	color: #b0b0b0;

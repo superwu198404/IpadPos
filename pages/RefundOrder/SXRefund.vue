@@ -421,9 +421,7 @@
 		max-height: 100%;
 		overflow: auto;
 	}
-	.products .procycle .li{
-		min-width: 48%;
-	}
+	
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
 		font-weight: 600;
