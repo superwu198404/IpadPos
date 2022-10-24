@@ -800,6 +800,7 @@
 		left: 5%;
 		text-align: center;
 		background-color: #fff;
+		z-index: 99;
 	}
 
 	.pop-rs .goods {
