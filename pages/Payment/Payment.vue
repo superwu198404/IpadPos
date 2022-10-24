@@ -194,7 +194,7 @@
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
 								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
-								<view class="tits" :class="{seltss:item.yn_use}">
+								<view class="tits" :class="{seltss:item.yn_use == 'Y'}">
 									<p>{{item.name}}</p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
@@ -1174,12 +1174,15 @@
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
 				console.log("[PayHandle]Info:", info);
-				console.log("[PayHandle]判断支付信息...", Object.keys(info).length);
 				if (Object.keys(info).length === 0)
 					info = this.PayWayInfo(this.PayTypeJudgment());
 				console.log("[PayHandle]支付单号:", this.out_trade_no);
 				console.log("[PayHandle]支付参数:", payAfter);
 				console.log("[PayHandle]支付类型:", info);
+				if(info.yn_use == 'N'){
+					util.simpleMsg("不可使用此支付方式!", true);
+					return;
+				}
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
 				console.log("[PayHandle]当前支付集合：", this.PayList);
@@ -1429,12 +1432,25 @@
 					if (pay_info) pay_info.yn_use = 'Y';
 				}
 			},
+			PayWayListInit: function(ban_pay_type = []){//支付方式初始化
+				let pay_way_list = util.getStorage('PayWayList'); //获取支付方式 
+				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
+				this.PayWayList = pay_way_list.map(i => {
+					if(ban_pay_type?.find(t => t == i.fkid)){
+						i.yn_use = 'N';//如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
+					}
+					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
+					// 	i.yn_use = 'N';
+					// }
+					return i;
+				});;
+				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList)
+			},
 			//初始化
 			paramInit: function() {
 				that = this;
-				this.PayWayList = util.getStorage('PayWayList'); //获取支付方式 
-				console.log("[ParamInit]支付初始化——可用的支付方式:", this.PayWayList)
 				var prev_page_param = this.$store.state.location;
+				this.PayWayListInit(prev_page_param.ban_pay);
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
 					//传入的sale系列表数据初始化 👇

@@ -82,12 +82,12 @@
 						<label class="from-label">
 							<text>到货日期：</text>
 							<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
-							<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day" :value="getOrderDate"
-								:start="new Date()" @change="SelectDate">
+							<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day"
+								:value="getOrderDate" :start="new Date()" @change="SelectDate">
 								<view class="uni-input">{{ viewDate }}</view>
 							</picker>
-							<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time" :value="getOrderTime"
-								:start="getCurrentTime" @change="SelectTime">
+							<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time"
+								:value="getOrderTime" :start="getCurrentTime" @change="SelectTime">
 								<view class="uni-input">{{ viewTime }}</view>
 							</picker>
 							<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
@@ -277,10 +277,10 @@
 			getOrderTime: function() {
 				return this.details.order.DATE_DH?.split(' ')[1] || JSON.stringify(new Date()).split("T")[1];
 			},
-			viewDate:function(){
+			viewDate: function() {
 				return this.details.order.DATE_DH.split(' ')[0]
 			},
-			viewTime:function(){
+			viewTime: function() {
 				return this.details.order.DATE_DH.split(' ')[1]
 			},
 			getOrderTimeRange: function() {
@@ -459,26 +459,7 @@
 				if (source?.BILL) {
 					this.view.check.loading = true;
 					this.view.check.bill = source?.YDBILL;
-					this.EditLoad(true, source?.YDBILL);
-					ordersStatusCheck({
-						bill: source?.YDBILL
-					}, util.callBind(this, function(res) {
-						this.EditLoad(false, source?.YDBILL);
-						if (res.code) {
-							let data = JSON.parse(res.data);
-							if (data.length > 0) {
-								data = data[0];
-								if (data.orderStatus === 'DELIVERED')
-									this.view.search.confirm = false;
-								else
-									this.view.search.confirm = true;
-							}
-						} else {
-							this.view.search.confirm = true;
-							util.simpleMsg(res.msg, true, res);
-						}
-						console.log("[RenderFrom]Res:", res);
-					}));
+					this.OrderStatusCheck(source?.YDBILL)
 					Object.assign(this.details.order, source);
 					this.details.order.$date = this.details.order?.DATE_DH?.split(" ")[0] || "";
 					this.details.order.$time = this.details.order?.DATE_DH?.split(" ")[1] || "";
@@ -486,6 +467,28 @@
 					console.log("[RenderFrom]当前组数据:", good_infos);
 					if (good_infos) this.details.goods = good_infos;
 				}
+			},
+			OrderStatusCheck: function(bill) {
+				this.EditLoad(true, bill);
+				return ordersStatusCheck({
+					bill: bill
+				}, util.callBind(this, function(res) {
+					this.EditLoad(false, bill);
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						if (data.length > 0) {
+							data = data[0];
+							if (data.orderStatus === 'DELIVERED')
+								this.view.search.confirm = false;
+							else
+								this.view.search.confirm = true;
+						}
+					} else {
+						this.view.search.confirm = true;
+						util.simpleMsg(res.msg, true, res);
+					}
+					console.log("[OrderStatusCheck]Res:", res);
+				}));
 			},
 			//展示详情
 			ShowDetail: function(order) {
@@ -511,14 +514,14 @@
 			},
 			//选择日期
 			SelectDate: function(val) {
-				console.log("[SelectDate]设置日期:",val);
+				console.log("[SelectDate]设置日期:", val);
 				this.details.order.$date = val.detail.value;
 			},
 			//选择时间
 			SelectTime: function(val) {
-				console.log("[SelectTime]设置时间:",val);
+				console.log("[SelectTime]设置时间:", val);
 				let pad = false;
-				if(val.length <= 2) pad = true;
+				if (val.length <= 2) pad = true;
 				this.details.order.$time = (val.detail.value || "00") + ":00";
 			},
 			//编辑
@@ -543,8 +546,8 @@
 					}), (err) => {
 						util.simpleMsg(err.msg, "none", err);
 					});
-				else{
-					Object.assign(this.details.order,this.details.order.$raw)
+				else {
+					Object.assign(this.details.order, this.details.order.$raw)
 					util.simpleMsg("时间设置有误!", true)
 				}
 			},
@@ -563,27 +566,34 @@
 					info_valid = await Validity(this.details.order);
 					time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
 				}
-				if (info_valid.state && time_valid || !isAccept)
-					ordersAccept({
-						storeid: this.KHID, //店铺id
-						gcid: this.GCID, //工厂id
-						end_time: this.EndTime,
-						orders: [this.details.order]
-					}, util.callBind(this, function(res) {
-						this.GetOnlineOrders(util.callBind(this,function(){
-							let type = Object.keys(this.onlineOrdersGroup)[0];
-							if(this.onlineOrdersGroup[type]){
-								Object.assign(this.details.order,this.onlineOrdersGroup[type][0]);
-							}
-						})); //刷新页面
-						util.simpleMsg("接受成功!")
-						console.log("[ConfirmAccept]处理结果：", res)
-						//调用打印
-						this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
-
-					}), (err) => {
-						util.simpleMsg(err.msg, "none", err);
-					});
+				if (info_valid.state && time_valid || !isAccept){
+					await this.OrderStatusCheck(this.details.order.YDBILL);
+					if (this.view.search.confirm){
+						ordersAccept({
+							storeid: this.KHID, //店铺id
+							gcid: this.GCID, //工厂id
+							end_time: this.EndTime,
+							orders: [this.details.order]
+						}, util.callBind(this, function(res) {
+							this.GetOnlineOrders(util.callBind(this, function() {
+								let type = Object.keys(this.onlineOrdersGroup)[0];
+								if (this.onlineOrdersGroup[type]) {
+									Object.assign(this.details.order, this.onlineOrdersGroup[type][0]);
+								}
+							})); //刷新页面
+							util.simpleMsg("接受成功!")
+							console.log("[ConfirmAccept]处理结果：", res)
+							//调用打印
+							this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
+							
+						}), (err) => {
+							util.simpleMsg(err.msg, "none", err);
+						});
+					}
+					else{
+						util.simpleMsg('订单状态无效!', true);
+					}
+				}
 				else {
 					if (!info_valid.state)
 						util.simpleMsg(info_valid.msg, true, info_valid)
