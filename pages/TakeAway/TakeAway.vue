@@ -144,7 +144,7 @@
 										<image src="../../images/dx-bm.png" mode="widthFix"></image>{{item.SPID}}
 									</label>
 									<label>
-										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.PACK}}个
+										<image src="../../images/dx-dw.png" mode="widthFix"></image>{{item.UNIT}}
 									</label>
 								</view>
 								<text>￥{{item.NUM1}}</text>
@@ -551,9 +551,13 @@
 					storeKhzid: that.KHZID,
 					storeDqid: that.DQID
 				};
+				let newArr = JSON.parse(JSON.stringify(that.BSDATA))
+				for (const key in newArr) {
+					delete newArr[key].UNIT;
+				}
 				console.log("报损数据处理开始：", obj);
-				console.log("报损数据处理开始1：", that.BSDATA);
-				_take.ConfirmBS(that.BSDATA, common.ywTypeEnum.QTBS, that.new_bill, obj, res => {
+				console.log("报损数据处理开始1：", newArr);
+				_take.ConfirmBS(newArr, common.ywTypeEnum.QTBS, that.new_bill, obj, res => {
 					console.log("报损本地操作结果：", res);
 					if (res.code) {
 						util.simpleMsg("接收成功");
