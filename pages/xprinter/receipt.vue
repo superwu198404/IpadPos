@@ -60,7 +60,7 @@
 				looptime: 0,
 				currentTime: 1,
 				lastData: 0,
-				oneTimeData: 5000,
+				oneTimeData: 10000,
 				buffSize: [],
 				buffIndex: 0,
 				//发送字节数下标
@@ -96,7 +96,7 @@
 			var numList = [];
 			var j = 0;
 			//打印字节数组
-			for (var i = 5000; i <= 20000; i += 1000) {
+			for (var i = 10000; i <= 200000; i += 10000) {
 				list[j] = i;
 				j++;
 			}
@@ -113,7 +113,6 @@
 		},
 		created: function(e) {
 			let that = this;
-			//console.log("打印created ========================================================================================== ",app.globalData.YN_PRINT_CON)
 			//初始化画布
 			this.initPhoto();
 		},
@@ -774,7 +773,7 @@
 							});
 						},
 						fail: function(e) {
-							//util.simpleMsg("发送失败",true);
+							console.log("发送失败",e);
 							return;
 						},
 						complete: function() {}
@@ -867,7 +866,12 @@
 						} //console.log(res)
 					},
 					fail: function(e) {
-						util.simpleMsg("已打印第" + currentPrint + "张失败", "none");
+						var yn_print_con = app.globalData.YN_PRINT_CON;
+						if(yn_print_con != "Y"){
+							util.simpleMsg("打印失败，请检查打印机连接状态", "none");
+						}else{
+							util.simpleMsg("打印第" + currentPrint + "张失败", "none");
+						}
 					},
 					complete: function() {
 						currentTime++;

@@ -62,10 +62,10 @@
 						退出
 					</view>
 				</view>
-				
+
 			</view>
 		</view>
-		<view class="banbenhao">版本号：{{version}}</view>
+		<view class="banbenhao">系统版本号：{{version}}</view>
 		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>
 		<button @click="ToSale()">去销售（不判断日结）</button>
 		<button @click="Sign()">签到</button>
@@ -374,16 +374,18 @@
 	page {
 		height: 100%;
 	}
-	.banbenhao{
+
+	.banbenhao {
 		position: fixed;
-		bottom:0;
+		bottom: 0;
 		height: 100rpx;
 		line-height: 100rpx;
 		font-size: 28rpx;
 		color: #999;
-		padding:0 3%;
+		padding: 0 3%;
 		font-weight: 600;
 	}
+
 	.centre {
 		width: 100%;
 		height: 100%;
@@ -422,7 +424,7 @@
 
 	.leftlist .logos image {
 		position: absolute;
-		bottom:0;
+		bottom: 0;
 		left: 0;
 		width: 100%;
 	}
