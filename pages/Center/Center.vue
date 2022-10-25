@@ -14,7 +14,7 @@
 					<view @click="Sign()"><label>签到</label><text>SIGN IN</text></view>
 					<view @click="SignOut()"><label>签退</label><text>CHECK OUT</text></view>
 				</view>
-				<view class="dates" style="padding:100rpx 0;">
+				<view class="dates">
 					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
 					<view>
 						<label><text>{{curWeek}}</text><text>{{curDate}}</text></label>
@@ -397,8 +397,7 @@
 
 	.leftlist .logos {
 		width: 100%;
-		/* border-radius: 30rpx;
-		box-shadow: 10px 20px 99px 1px rgba(0,107,68,0.1); */
+		height: 472rpx;
 	}
 
 	.leftlist .logos image {
@@ -408,6 +407,7 @@
 	.leftlist .sginout {
 		display: flex;
 		margin: 8% 0;
+		height: 260rpx;
 	}
 
 	.leftlist .sginout view {
@@ -418,7 +418,9 @@
 		display: flex;
 		flex-direction: column;
 		color: #006B44;
-		padding: 50rpx 0;
+		height: 100%;
+		justify-content: center;
+		align-items: flex-start;
 	}
 
 	.leftlist .sginout view label {
@@ -443,7 +445,11 @@
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
-		padding: 110rpx 0;
+		padding:  0;
+		height: 360rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.dates .datebg {
@@ -457,6 +463,7 @@
 		display: flex;
 		justify-content: space-between;
 		padding: 0 15%;
+		width: 70%;
 	}
 
 	.dates label {
@@ -486,6 +493,7 @@
 		background-color: #fff;
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+		height: 876rpx;
 	}
 
 	.rightlist .market .prods {
@@ -537,12 +545,18 @@
 	}
 
 	.market .dates {
-		padding: 80rpx 0;
+		padding:  0;
 		box-shadow: none;
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		align-items: center;
+		height: 33%;
 	}
 
 	.rightlist .dates view {
 		padding: 0 6%;
+		width:88%;
 	}
 
 	.rightlist .dates view image {
@@ -560,10 +574,11 @@
 		width: 70%;
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		padding: 68rpx 5%;
+		padding:0 5%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		height: 256rpx;
 	}
 
 	.chongdu .dates button {
@@ -603,7 +618,8 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		padding: 2.8% 0;
+		padding: 0;
+		height: 256rpx;
 	}
 
 	.chongdu .tuichu image {
