@@ -27,7 +27,7 @@
 				<!-- <button @click="reset()" style="margin-top: 20rpx;">重新初始化</button> -->
 			</view>
 		</view>
-		<view class="box">
+		<view class="box" v-if="false">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="thods">版本V.0.0.1</view>
@@ -238,75 +238,87 @@
 		color: #333;
 		height: 100%;
 	}
-	.box{
-	position: fixed;
-	top: 0;
-	left: 0;
-	background-color: rgba(0, 0, 0, 0.5);
-	width: 100%;
-	height: 100%;
-	z-index: 99999;
-}
-	.renewal{
-		width:660rpx;
+
+	.box {
 		position: fixed;
-		top:50%;
+		top: 0;
+		left: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		width: 100%;
+		height: 100%;
+		z-index: 99999;
+	}
+
+	.renewal {
+		width: 660rpx;
+		position: fixed;
+		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		background-color: #fff;
 		border-radius: 10rpx;
 	}
-	.renewal image{
-		width:100%;
-		margin-top:-140rpx;
+
+	.renewal image {
+		width: 100%;
+		margin-top: -140rpx;
 	}
-	.renewal .thods{
+
+	.renewal .thods {
 		position: absolute;
-		top:160rpx;
+		top: 160rpx;
 		left: 0;
-		width:100%;
+		width: 100%;
 		text-align: center;
 		color: #fff;
 		font-weight: 700;
 	}
-	.renewal .upinfo{
-		padding:3% 10%;
+
+	.renewal .upinfo {
+		padding: 3% 10%;
 		min-height: 340rpx;
 	}
-	.renewal .upinfo .h9{
+
+	.renewal .upinfo .h9 {
 		font-size: 32rpx;
 		font-weight: 700;
 		line-height: 80rpx;
 	}
-	.renewal .upinfo label{
+
+	.renewal .upinfo label {
 		display: flex;
 		flex-direction: column;
-		width:100%;
+		width: 100%;
 		color: #999;
 	}
-	.renewal .upinfo label text{
-		margin:6rpx 0;
+
+	.renewal .upinfo label text {
+		margin: 6rpx 0;
 	}
-	.confirm{
-		padding:8% 10% 6%;
+
+	.confirm {
+		padding: 8% 10% 6%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
-	.confirm .btn{
-		width:43%;
-		margin:0 ;
+
+	.confirm .btn {
+		width: 43%;
+		margin: 0;
 		height: 70rpx;
 		line-height: 70rpx;
-		padding:0;
+		padding: 0;
 		background-color: #42B14B;
 		color: #fff;
 		font-size: 30rpx;
 	}
-	.confirm .btn-h{
+
+	.confirm .btn-h {
 		background-color: #ddd;
 		color: #222;
 	}
+
 	.content {
 		width: 100%;
 		height: 95%;
