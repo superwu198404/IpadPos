@@ -991,6 +991,7 @@ page {
 	font-style: normal;
 	text-decoration: none;
 }
+
 .prolist .cods view {
 	width: 45%;
 	display: flex;
@@ -1002,6 +1003,13 @@ page {
 }
 .goods .prolist .cods{
 	margin: 1% 0 3%;
+	width:75%;
+}
+.goods .prolist .cods view{
+	width:100%;
+}
+.goods .prolist .cods view label{
+	white-space: nowrap;
 }
 .prolist .cods text {
 	color: #333;
