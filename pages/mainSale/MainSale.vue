@@ -845,7 +845,7 @@
 		display: flex;
 		height: 50rpx;
 		line-height: 50rpx;
-		width: 160rpx;
+		width: 160rpx !important;
 		border: 1px solid #D3D3D3;
 		background-color: #f5f5f5;
 		text-align: center;
