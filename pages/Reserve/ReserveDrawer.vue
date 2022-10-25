@@ -234,6 +234,10 @@
 		},
 		methods: {
 			DataInit: async function() {
+				console.log("[DataInit]时间限制配置:",{
+					start_time:this.STIME,
+					end_time:this.ETIME,
+				})
 				that = this;
 				await that.getTHTYPE();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
@@ -623,6 +627,12 @@
 				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
+				let hour_minute = hour.toString().padStart(2,0)+minute.toString().padStart(2,0);
+				console.log("[Confirm]时间参数:",{
+					current:hour_minute,
+					stime:that.STIME,
+					etime:that.ETIME
+				});
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
@@ -635,7 +645,11 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-				if (!(Number(that.startTime) <= hour && Number(that.endTime) >= hour)) {
+				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute) && Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {
+					console.log("[Confirm]时间限制:",{
+						start_time:that.STIME,
+						end_time:that.ETIME
+					});
 					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}

@@ -13,9 +13,9 @@
 			</view>
 			<view>
 				<view class="prints">
-					<view class="sousuo">
+					<!-- <view class="sousuo">
 						<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
-					</view>
+					</view> -->
 					<view class="sousuo">
 						<label @click="Search">
 							<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
@@ -148,6 +148,11 @@
 			},
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias;
+			},
+			ClearSearch:function(){
+				this.form.search.code = "";
+				this.form.search.bill = "";
+				this.form.code = "";
 			},
 			QueryOrder: function() {
 				console.log("[QueryOrder]查询线上订单...", this.KHID);
