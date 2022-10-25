@@ -912,6 +912,9 @@ var XsTypeObj = {
 			})
 			console.log("[SaleFinishing]赊销退货结算单信息重写完成...", this.sale001);
 			console.log("[SaleFinishing]赊销退货结算单信息重写完成1...", this.sale002);
+			this.communication_for_oracle.push(
+				`update sxsale001 set SX_STATUS='3' where bill='${this.sale001.XS_BILL}';`
+			);
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
@@ -2309,10 +2312,10 @@ function GetSale(global, vue, target_name, uni) {
 			sale2_arr: that.sale002, //002 商品 数据对象集合
 			sale3_arr: that.sale003, //003 支付数据集合
 			sale8_arr: that.sale008, //008水吧商品
-			score_info: that.score_info,//积分抵现信息
-			ban_pay: that.ban_type,//被禁用的支付类型
-			PayList: that.payed,//已支付信息
-			actType: that.actType//动作类型(退款、支付)
+			score_info: that.score_info, //积分抵现信息
+			ban_pay: that.ban_type, //被禁用的支付类型
+			PayList: that.payed, //已支付信息
+			actType: that.actType //动作类型(退款、支付)
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
@@ -2607,27 +2610,26 @@ function GetSale(global, vue, target_name, uni) {
 				that.clikSpItem.addlist.forEach(
 					item => {
 						item.Darr.forEach(drinkitem => {
-								if (drinkitem.SELECTED == "X") {
-									console.log("[GetSP]水吧商品:",drinkitem);
-									let new008 = new sale.sale008();
-									console.log("录入的水吧商品",drinkitem)
-									new008 = Object.cover(new008, newprm);
-									new008.NO = timeNo;
-									new008.SPID = drinkitem.SPID;
-									new008.OPTCODE = drinkitem.OPTCODE;
-									new008.OPTMAT = drinkitem.OPTMAT
-									new008.ATTCODE = drinkitem.ATTCODE;
-									new008.ATTNAME = drinkitem.OPTNAME;
-									new008.QTY = drinkitem.CSTCODE == '1' ? 0 : drinkitem.QTY;
-									new008.PRICE = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
-									that.sale008.push(new008);
-									//就是这里售价要累加
-									price += that.float(drinkitem.QTY, 2) * that.float(new008
-										.PRICE);
-								}
-
+							if (drinkitem.SELECTED == "X") {
+								console.log("[GetSP]水吧商品:", drinkitem);
+								let new008 = new sale.sale008();
+								console.log("录入的水吧商品", drinkitem)
+								new008 = Object.cover(new008, newprm);
+								new008.NO = timeNo;
+								new008.SPID = drinkitem.SPID;
+								new008.OPTCODE = drinkitem.OPTCODE;
+								new008.OPTMAT = drinkitem.OPTMAT
+								new008.ATTCODE = drinkitem.ATTCODE;
+								new008.ATTNAME = drinkitem.OPTNAME;
+								new008.QTY = drinkitem.CSTCODE == '1' ? 0 : drinkitem.QTY;
+								new008.PRICE = that.spPrice[drinkitem.OPTMAT]?.PRICE ?? 0;
+								that.sale008.push(new008);
+								//就是这里售价要累加
+								price += that.float(drinkitem.QTY, 2) * that.float(new008
+									.PRICE);
 							}
-						)
+
+						})
 					}
 				)
 				//添加水吧商品
@@ -2856,8 +2858,8 @@ function GetSale(global, vue, target_name, uni) {
 		} else
 			console.warn("[ScoreCount]list值无效!");
 	}
-	
-	this.BanPayType = function(list){
+
+	this.BanPayType = function(list) {
 		console.log("[BanPayType]被禁止类型:", list);
 		if (list) {
 			var ban_pay = new Set();
