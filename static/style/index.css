@@ -1003,7 +1003,7 @@ page {
 }
 .goods .prolist .cods{
 	margin: 1% 0 3%;
-	width:75%;
+	width:60%;
 }
 .goods .prolist .cods view{
 	width:100%;
@@ -1014,14 +1014,12 @@ page {
 .prolist .cods text {
 	color: #333;
 }
-
 .ul {
 	border-top: 1px solid #eee;
 	width: 92%;
 	margin: 1% auto;
 	padding: 2% 0;
 }
-
 .ul .li {
 	display: flex;
 	justify-content: space-between;
