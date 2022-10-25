@@ -62,6 +62,7 @@
 						退出
 					</view>
 				</view>
+				版本号:{{version}}
 			</view>
 		</view>
 		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>
@@ -98,7 +99,8 @@
 				angle: 0,
 				angles: 0,
 				angless: 0,
-				syyjk: {} //收银员是否结款
+				syyjk: {}, //收银员是否结款
+				version: "1.0.0" //版本号
 			};
 		},
 		methods: {
@@ -106,6 +108,10 @@
 				that = this;
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();
+				let sysinfo = util.getStorage("sysinfo");
+				if (sysinfo) {
+					that.version = sysinfo.appWgtVersion;
+				}
 			},
 			onShow: function() {
 				this.MonitorEvent();
