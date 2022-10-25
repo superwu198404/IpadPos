@@ -1264,7 +1264,7 @@
 					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 						result.vouchers.forEach((function(coupon, index) {
 							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
-							console.log("卡券：", coupon)
+							console.log("[OrderGenarator]卡券：", coupon)
 							this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 								amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
 									(coupon
@@ -1294,6 +1294,7 @@
 							this.used_no.push(payload.no);
 							payload.no++;
 						}).bind(this));
+						console.log("[OrderGenarator]卡、券支付列表:",this.PayList);
 					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
