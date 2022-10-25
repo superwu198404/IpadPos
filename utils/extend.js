@@ -59,3 +59,15 @@ Object.defineProperty(Array.prototype, 'last', {
 			return null;
 	}
 })
+
+const replaceAll = String.prototype.replaceAll;
+Object.defineProperty(String.prototype, 'replaceAll', {
+	value: function(searchValue,replaceValue) {
+		if(replaceAll){
+			return replaceAll.apply(this,Array.from(arguments));
+		}
+		else{//表示当前环境不支持 replaceAll
+			return String.prototype.replace.apply(this,[new RegExp(searchValue,'g'), replaceValue]);
+		}
+	}
+})

@@ -13,8 +13,9 @@
 		</view>
 		<view class="middle" style="flex: 1 0px;">
 			<view class="restlist">
-				<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
-						:disabled="!YN_YDTH" />
+				<label>
+					<text>*提货门店：</text>
+					<input type="text" v-model="Order.THNAME" @input="inputTHKH" :disabled="!YN_YDTH" />
 					<view class="thmd">
 						<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 					</view>
@@ -633,9 +634,20 @@
 					stime:that.STIME,
 					etime:that.ETIME
 				});
+				console.log("[Confirm]门店信息:",{
+					current_store:that.KHID,
+					use_store:that.Order.THKHID,
+				});
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
+				}
+				if (that.Order.THKHID != that.KHID) {//判断提货门店id是否是当前门店，如果不是则是异店提货，异店提货时候定金必须是全额
+					if(Number(that.Order.ZNET) != Number(that.Order.DNET)){//判断定金是否等于整单金额
+						that.Order.DNET = that.Order.ZNET;
+						util.simpleMsg("异店提货必须全额支付", true);
+						return;
+					}
 				}
 				if (!that.Order.THTYPE) {
 					util.simpleMsg("配送方式为空", true);
