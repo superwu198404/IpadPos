@@ -129,9 +129,6 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 		function(res) {
 			// util.sleep(3000);
 			if (show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
-			if (pt == "SZQ" && res.data.discount) { //将券核销返回的抵扣金额传入到查询接口中做比对
-				body.discount = res.data.discount;
-			}
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
@@ -405,7 +402,109 @@ var misPay = {
 //仟吉电子券
 var szqPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		_PaymentAll(pt, body, func, catchFunc);
+		// _PaymentAll(pt, body, func, catchFunc);
+		let request = CreateData(pt, "支付中...", "Payment", body);
+		let show_log = true;
+		console.log("[PaymentAll]获取请求体：", body);
+		console.log("[PaymentAll]获取请求体(whole)：", request);
+		Req.asyncFuncArr1(request, [
+			function(res) {
+				// util.sleep(3000);
+				if (show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
+				if (res.data.discount) { //将券核销返回的抵扣金额传入到查询接口中做比对
+					body.discount = res.data.discount;
+				}
+				return CreateData(pt, "查询中...", "QueryPayment", body);
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res);
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					//30s超时撤销
+					return CreateData(pt, "撤销中...", "CancelPayment", body);
+				}
+			}
+		], function(err) {
+			console.log("[PaymentAll]支付接口返回的错误信息：", err);
+			if (catchFunc) catchFunc(err);
+			util.simpleMsg(res.msg, true);
+		});
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		// _RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);

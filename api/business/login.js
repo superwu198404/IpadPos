@@ -15,6 +15,10 @@ var GetPassWord = function(khid, userid, password, func) {
 		console.log("用户密码查询结果：", res);
 		if (res.code && res.msg.length > 0) {
 			let ps = res.msg[0].PASSWORD_MD;
+			if (!ps) {
+				util.simpleMsg("账号密码异常", true);
+				return;
+			}
 			let newPs = get_mystr(ps);
 			console.log("密文解密：", ps);
 			newPs = newPs.substr(2, newPs.length - 4);
