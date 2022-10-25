@@ -62,7 +62,7 @@
 						退出
 					</view>
 				</view>
-				版本号:{{version}}
+				版本号：{{version}}
 			</view>
 		</view>
 		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>

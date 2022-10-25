@@ -2556,7 +2556,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.getSp = function(e) {
 		let curDate = util.getStorage("CurDate");
 		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
-			util.simpleMsg("登录日期不是今天,请重新登录", "none");
+			util.simpleMsg("登录日期不是今天，请重新登录", "none");
 			return;
 		}
 		console.log("[GetSp]获取商品详情:");
@@ -2755,7 +2755,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ShowStatement = async function(e) {
 		let curDate = util.getStorage("CurDate");
 		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
-			util.simpleMsg("登录日期不是今天,请重新登录", "none");
+			util.simpleMsg("登录日期不是今天，请重新登录", "none");
 			return;
 		}
 		console.log("促销权限：", that.currentOperation.ynCx);
