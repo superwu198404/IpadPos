@@ -129,6 +129,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 		function(res) {
 			// util.sleep(3000);
 			if (show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
+			// body.money="";
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
