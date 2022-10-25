@@ -181,14 +181,14 @@
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
-									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y')">
+									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y')">
 										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 										</image>
 									</view>
 								</label>
 								<label class="poly-text">
 									<!-- <text>支持</text> -->
-									<text>支持{{PayWayList.filter(i=>i.poly=='Y').map(i => i.name).join(",")}}</text>
+									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 							</view>
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
@@ -1179,7 +1179,7 @@
 				console.log("[PayHandle]支付单号:", this.out_trade_no);
 				console.log("[PayHandle]支付参数:", payAfter);
 				console.log("[PayHandle]支付类型:", info);
-				if(info.yn_use == 'N'){
+				if (info.yn_use == 'N') {
 					util.simpleMsg("不可使用此支付方式!", true);
 					return;
 				}
@@ -1433,19 +1433,19 @@
 					if (pay_info) pay_info.yn_use = 'Y';
 				}
 			},
-			PayWayListInit: function(ban_pay_type = []){//支付方式初始化
-				let pay_way_list = util.getStorage('PayWayList'); //获取支付方式 
+			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
+				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage('PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
 				this.PayWayList = pay_way_list.map(i => {
-					if(ban_pay_type?.find(t => t == i.fkid)){
-						i.yn_use = 'N';//如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
+					if (ban_pay_type?.find(t => t == i.fkid)) {
+						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
 					}
 					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
 					// 	i.yn_use = 'N';
 					// }
 					return i;
 				});;
-				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList)
+				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList);
 			},
 			//初始化
 			paramInit: function() {
@@ -1794,7 +1794,7 @@
 			},
 			//单笔订单重试
 			singlePayRetry: async function(info) {
-				if (info.pay_num > 1 && info.exactly) {//重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
+				if (info.pay_num > 1 && info.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
 					if (await this.NoOrginPay(info)) {
 						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
 						this.used_no.push(info.no); //如果成功
@@ -1851,7 +1851,7 @@
 			},
 			retryEnd: function(trade, isFail = true) {
 				trade.loading = false;
-				trade.exactly = true;//将结果转为确定，这种可以参与不可原路退回的判断
+				trade.exactly = true; //将结果转为确定，这种可以参与不可原路退回的判断
 				trade.pay_num += 1; //支付次数加一
 				trade.fail = isFail;
 			},

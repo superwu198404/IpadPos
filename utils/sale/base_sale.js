@@ -2780,6 +2780,7 @@ function GetSale(global, vue, target_name, uni) {
 			//如果没有加购商品 则sale1可能未初始化 导致一些默认值KHID 无法初始化到sale001上 导致传输到支付页面KHID 为空
 			return;
 		}
+		this.ban_type = []; //清空禁止支付方式操作
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			//调用促销计算
@@ -2817,6 +2818,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.TDISC = TBZDISC + TLSDISC + TTPDISC;
 			console.log("特殊折扣计算后的销售单2:", that.sale002);
 			console.log("特殊折扣计算后的销售单1:", this.sale001);
+			this.BanPayType(); //收集禁止的支付id
 		}
 		var retx = that.sale002Sum({
 			ONET: 0,
@@ -2880,9 +2882,18 @@ function GetSale(global, vue, target_name, uni) {
 				ban_pay.add(i.NOTFKID)
 			});
 			this.ban_type = Array.from(ban_pay);
-			console.log("[BanPayType]禁止类型:", this.ban_type);
-		} else
-			console.warn("[BanPayType]list值无效!");
+		} else {
+			console.warn("[BanPayType]折扣禁止支付方式处理!");
+			let PayWayList = util.getStorage("PayWayList");
+			console.log("[BanPayType]禁止类型1:", PayWayList);
+			let arr = PayWayList.filter(r => {
+				return r.type != "WXZF" && r.type != "TL"
+			});
+			this.ban_type = arr.map(r => {
+				return r.fkid
+			});
+		}
+		console.log("[BanPayType]禁止类型:", this.ban_type);
 	}
 
 	//获取辅助促销的数据 因为需要依赖加购的商品产生的sale001 总价
@@ -3022,6 +3033,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.FZCX.oval = [];
 		this.FZCX.cval = {};
 		this.cxfsArr = [];
+		this.CXHDArr = [];
+		this.ZKHDArr = [];
 		this.bill = null;
 		this.sale001 = {};
 		this.sale002 = [];
