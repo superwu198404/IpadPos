@@ -86,7 +86,7 @@ const Cxdict = async () => {
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-		
+	
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -482,13 +482,13 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 	for (let col = 0; col < cxbilldts.length; col++) {
 		let cxbilldData = cxbilldts[col];
 		let cxbilldDataKeys = Object.keys(cxbilldData);
-		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
+		console.log("cxbilldDataKeys",cxbilldDataKeys)	
 		for (let k = 10; k < cxbilldDataKeys.length; k++) {
-			//console.log("cxbilldDataKeys", cxbilldDataKeys[k])
+			console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
-			//console.log("cxbilldDataKeys cxbill", cxbill)
+			console.log("cxbilldDataKeys cxbill", cxbill)
 			let cxbill_val = cxbilldData[cxbill];
-			//console.log("cxbilldData[cxbill]", cxbill_val)
+			console.log("cxbilldData[cxbill]", cxbill_val)
 			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
@@ -546,12 +546,12 @@ const CreateArr = cols => {
 const ynpastCx = function(bill) {
 	let mcc = cxdict.get(bill);
 	let dateTime = cx_util.getTime(3);
-	//console.log("ynpastCx dateTime",dateTime);	
+	console.log("ynpastCx dateTime",dateTime);	
 	let dateTime1 = cx_util.formatDateNew(dateTime);
 	let edate1 = cx_util.formatDateNew(mcc.EDATE);
 	
-	//console.log("ynpastCx edate1",edate1);
-	//console.log("ynpastCx dateTime1",dateTime1);			
+	console.log("ynpastCx edate1",edate1);
+	console.log("ynpastCx dateTime1",dateTime1);			
 	let dateNowNum = Date.parse(dateTime1);
 	let edateNum = Date.parse(edate1);
 	// console.log("ynpastCx", {
@@ -578,12 +578,12 @@ const ynjsCx = function(bill) {
 		let tstart2 = mcc.Tstart2;
 		let tstart3 = mcc.Tstart3;
 		
-		// console.log("ynjsCx Tstart", {
-		// 	    decnow,
-		// 		tstart1,
-		// 		tstart2,
-		// 		tstart3,
-		// });
+		console.log("ynjsCx Tstart", {
+			    decnow,
+				tstart1,
+				tstart2,
+				tstart3,
+		});
 		
 		let tstop1 = mcc.Tstop1;
 		let tstop2 = mcc.Tstop2;
@@ -610,7 +610,7 @@ const ynjsCx = function(bill) {
 //判断会员促销方式
 const ynjsCxforHy = function(bill) {
 	let mcc = cxdict.get(bill);
-	// console.log("ynjsCxforHy mcc.CXRY",mcc.CXRY);
+	console.log("ynjsCxforHy mcc.CXRY",mcc.CXRY);
 	if (!isHy) {
 		switch (mcc.CXRY) {
 			case "all":
@@ -639,7 +639,7 @@ const ynjsCxforHy = function(bill) {
 //销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict.get(bill);
-	//console.log("xsTypeCheck",mcc);
+	console.log("xsTypeCheck",mcc.Cxztype);
 	if (mcc.Cxztype == "None") {
 		return true;
 	} else if (mcc.Cxztype == is_Xstype) {
@@ -1662,7 +1662,6 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 			}
 		}
 
-
 		if (subx.ZkTj == "Net") {
 			syqty = getOneSpNetForQty(cx, subid, syqty, oldprcle);
 		}
@@ -1672,7 +1671,6 @@ const getSubidZqty = function(pm_list, cx, sltype) {
 		} else {
 			zqty.set(subid, syqty);
 		}
-
 	}
 	//console.log("getSubidZqty zqty",zqty.size);
 	return zqty;
@@ -1685,10 +1683,25 @@ const ClearResult = function() {
 	cxbilldts = [];
 }
 
+//清除所有全局数据
+const ClearAllResult = function(){
+	//初始化，全局变量先清除
+	cxfsdt = [];
+	cxSelectTip = [];
+	cxbilldts = [];
+	
+	cxdict = new Map();
+	dscxm = [];
+	dscxclass = [];
+	dscxsp = [];
+	dszqda = [];
+}
+
 
 export default {
 	Cxdict, //从数据库中取出所有的促销信息，初始化
 	CreateArr,
 	Createcx, //计算促销的方法
-	ClearResult //清除集合数据
+	ClearResult, //清除集合数据
+	ClearAllResult, //清除所有全局数据
 }
