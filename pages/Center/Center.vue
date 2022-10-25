@@ -516,7 +516,7 @@
 		background-color: #fff;
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		height: 900px;
+		height: 900rpx;
 	}
 
 	.rightlist .market .prods {
