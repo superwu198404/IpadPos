@@ -94,7 +94,8 @@
 					"NSLocationAlwaysAndWhenInUseUsageDescription": "对店铺的位置进行定位",
 					"NSCameraUsageDescription": "识别二维码"
 				},
-				"dSYMs": false
+				"dSYMs": false,
+				"idfa": false
 			},
 			"sdkConfigs": {
 				"geolocation": {},
@@ -154,7 +155,7 @@
 	},
 	"appid": "__UNI__D975D37",
 	"name": "com.zczy.ipadpos",
-	"versionName": "1.0.0.0",
+	"versionName": "1.0.4",
 	"description": "ipad上运行的收银软件",
 	"versionCode": 3,
 	"locale": "zh-Hans"
