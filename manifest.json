@@ -154,7 +154,7 @@
 		"screenOrientation": ["portrait-primary", "landscape-primary"]
 	},
 	"appid": "__UNI__D975D37",
-	"name": "com.zczy.ipadpos",
+	"name": "KengeePos",
 	"versionName": "1.0.4",
 	"description": "ipad上运行的收银软件",
 	"versionCode": 3,
