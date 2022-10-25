@@ -170,6 +170,9 @@
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
@@ -380,7 +383,7 @@
 					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
 					if (func) func();
 				}), (res) => {
-					util.simpleMsg("订单获取失败!", true, res);
+					util.simpleMsg("暂无数据!", true, res);
 					this.onlineOrdersGroup = {};
 				});
 			},
@@ -474,19 +477,8 @@
 					bill: bill
 				}, util.callBind(this, function(res) {
 					this.EditLoad(false, bill);
-					if (res.code) {
-						let data = JSON.parse(res.data);
-						if (data.length > 0) {
-							data = data[0];
-							if (data.orderStatus === 'DELIVERED')
-								this.view.search.confirm = false;
-							else
-								this.view.search.confirm = true;
-						}
-					} else {
-						this.view.search.confirm = true;
-						util.simpleMsg(res.msg, true, res);
-					}
+					this.view.search.confirm = res.code;
+					if(!res.code) util.simpleMsg(res.msg, res.code, res);
 					console.log("[OrderStatusCheck]Res:", res);
 				}));
 			},
@@ -567,8 +559,10 @@
 					time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
 				}
 				if (info_valid.state && time_valid || !isAccept){
-					await this.OrderStatusCheck(this.details.order.YDBILL);
-					if (this.view.search.confirm){
+					let query_res = await RequestSend(`select * from ywbhqh where bill_status='0' and BILL_YD='${this.details.order.YDBILL}'`);
+					// let query_res = await RequestSend(`select * from ywbhqh where bill_status='0' and BILL_YD='LH202210240004'`);
+					console.log("[ConfirmAccept]订单查询信息:",query_res);
+					if (this.view.search.confirm && JSON.parse(query_res.result?.data)?.length != 0){//因为接单后状态会发生变更
 						ordersAccept({
 							storeid: this.KHID, //店铺id
 							gcid: this.GCID, //工厂id
