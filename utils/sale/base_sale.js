@@ -367,9 +367,10 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
@@ -546,9 +547,10 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
@@ -651,9 +653,10 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";

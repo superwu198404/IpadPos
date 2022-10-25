@@ -1810,6 +1810,7 @@ var jpPrinter = {
 		jpPrinter.setPrintAndPapercut(49);
 	}
 	
+	//预定打印格式
 	jpPrinter.YDFormString = function(data,printer_poscs,print){
 		var type = data.xsType;
 		var xpType = "预定";
