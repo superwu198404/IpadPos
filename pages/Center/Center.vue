@@ -62,8 +62,10 @@
 						退出
 					</view>
 				</view>
+				
 			</view>
 		</view>
+		<view class="banbenhao">版本号：{{version}}</view>
 		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>
 		<button @click="ToSale()">去销售（不判断日结）</button>
 		<button @click="Sign()">签到</button>
@@ -98,7 +100,8 @@
 				angle: 0,
 				angles: 0,
 				angless: 0,
-				syyjk: {} //收银员是否结款
+				syyjk: {}, //收银员是否结款
+				version: "1.0.0" //版本号
 			};
 		},
 		methods: {
@@ -106,6 +109,10 @@
 				that = this;
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();
+				let sysinfo = util.getStorage("sysinfo");
+				if (sysinfo) {
+					that.version = sysinfo.appWgtVersion;
+				}
 			},
 			onShow: function() {
 				this.MonitorEvent();
@@ -367,7 +374,16 @@
 	page {
 		height: 100%;
 	}
-
+	.banbenhao{
+		position: fixed;
+		bottom:0;
+		height: 100rpx;
+		line-height: 100rpx;
+		font-size: 28rpx;
+		color: #999;
+		padding:0 3%;
+		font-weight: 600;
+	}
 	.centre {
 		width: 100%;
 		height: 100%;
@@ -386,7 +402,7 @@
 		position: relative;
 		z-index: 99;
 		width: 80%;
-		height: 86%;
+		height: 78%;
 		padding: 6% 10%;
 		display: flex;
 	}
@@ -398,16 +414,22 @@
 
 	.leftlist .logos {
 		width: 100%;
-		height: 472rpx;
+		height: 500rpx;
+		position: relative;
+		overflow: hidden;
+		border-radius: 30rpx;
 	}
 
 	.leftlist .logos image {
+		position: absolute;
+		bottom:0;
+		left: 0;
 		width: 100%;
 	}
 
 	.leftlist .sginout {
 		display: flex;
-		margin: 8% 0;
+		margin: 60rpx 0;
 		height: 260rpx;
 	}
 
@@ -447,7 +469,7 @@
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
 		padding: 0;
-		height: 360rpx;
+		height: 340rpx;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -494,7 +516,7 @@
 		background-color: #fff;
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		height: 876rpx;
+		height: 900px;
 	}
 
 	.rightlist .market .prods {
@@ -568,7 +590,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-top: 7%;
+		margin-top: 60rpx;
 	}
 
 	.chongdu .dates {
