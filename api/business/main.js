@@ -260,7 +260,7 @@ var SortData = (type, data, pro) => {
 				})
 				let Net = 0;
 				arr1.forEach(r2 => {
-					Net += r2.NET;
+					Net += Number((r2.OPRICE * r2.QTY).toFixed(2)); //r2.NET
 				})
 				spArr.push({
 					SPJGZ: r.SPJGZ,
