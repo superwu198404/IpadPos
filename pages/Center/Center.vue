@@ -189,6 +189,7 @@
 				if (!int) {
 					this.TimedCommunication();
 				}
+				util.setStorage("CurDate", dateformat.getYMD(-1)); //缓存当天日期 用于在销售页判断是否为当天业务操作
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
 				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
@@ -445,7 +446,7 @@
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
-		padding:  0;
+		padding: 0;
 		height: 360rpx;
 		display: flex;
 		justify-content: space-between;
@@ -545,7 +546,7 @@
 	}
 
 	.market .dates {
-		padding:  0;
+		padding: 0;
 		box-shadow: none;
 		display: flex;
 		width: 100%;
@@ -556,7 +557,7 @@
 
 	.rightlist .dates view {
 		padding: 0 6%;
-		width:88%;
+		width: 88%;
 	}
 
 	.rightlist .dates view image {
@@ -574,7 +575,7 @@
 		width: 70%;
 		margin-right: 5%;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		padding:0 5%;
+		padding: 0 5%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

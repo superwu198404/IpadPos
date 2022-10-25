@@ -2554,6 +2554,11 @@ function GetSale(global, vue, target_name, uni) {
 
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
+		let curDate = util.getStorage("CurDate");
+		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
+			util.simpleMsg("登录日期不是今天,请重新登录", "none");
+			return;
+		}
 		console.log("[GetSp]获取商品详情:");
 		let pm_spid = that.clikSpItem.selectSPID;
 		let pm_yndgxp = e.currentTarget.dataset.yndgxp; //是否是改胚蛋糕
@@ -2748,6 +2753,11 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
+		let curDate = util.getStorage("CurDate");
+		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
+			util.simpleMsg("登录日期不是今天,请重新登录", "none");
+			return;
+		}
 		console.log("促销权限：", that.currentOperation.ynCx);
 		if (that.sale002.length == 0 || Object.keys(that.sale002).length == 0) {
 			util.simpleMsg("请先加购商品", true);

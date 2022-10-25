@@ -22,6 +22,7 @@ export const PayDataAssemble = function() {
 	if (sysParam.YN_ZFBKBQ && sysParam.YN_ZFBKBQ == "Y") {
 		zfb_disc = (Number(this.dPayAmount) * 100).toFixed(0)
 	}
+
 	return {
 		subject: this.subject,
 		no: this.prev_no, //储存当前序号
