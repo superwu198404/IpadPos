@@ -461,13 +461,15 @@ page {
 	height: 80rpx;
 	border-radius: 50%;
 	background-color: #E0EAE9;
-
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .seasonal image {
-	width: 60rpx;
-	height: 60rpx;
-	margin: 10rpx;
+	width: 44rpx;
+	height: 44rpx;
+	/* margin: 10rpx; */
 }
 
 .sorting .a-z {

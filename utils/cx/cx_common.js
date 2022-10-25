@@ -1,5 +1,5 @@
 function formatDate (date){
-	let dateNew = new Date(date.replaceAll('-','/'));
+	let dateNew = new Date(date.replace(/-/g,'/'));
 	const year = dateNew.getFullYear();
 	const month = dateNew.getMonth() + 1;
 	const day = dateNew.getDate();
@@ -8,12 +8,17 @@ function formatDate (date){
 }
 
 function formatDateNew (date){
-	let dateNew = new Date(date.replaceAll('-','/'));
-	const year = dateNew.getFullYear();
-	const month = dateNew.getMonth() + 1;
-	const day = dateNew.getDate();
-	//yyyy-MM-dd HH:mm:ss
-	return year + '/' + month + '/' + day;
+	try{
+		let dateNew = new Date(date.replace(/-/g,'/'));
+		const year = dateNew.getFullYear();
+		const month = dateNew.getMonth() + 1;
+		const day = dateNew.getDate();
+		//yyyy-MM-dd HH:mm:ss
+		return year + '/' + month + '/' + day;
+	}catch(e){
+		console.log("formatDateNew err",e)
+	}
+	return "";
 }
 
 function getTime(type) {
@@ -93,13 +98,13 @@ const dnvl = function(pb_obj, pm_default) {
 	let new_obj = "";
 
 	var dates = [];
-	dates.push(new Date(snvl(pm_default,"").replaceAll('-','/')))
+	dates.push(new Date(snvl(pm_default,"").replace(/-/g,'/')))
 	var minDate = new Date(Math.min.apply(null, dates));
 
 	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
 		new_obj = minDate;
 	} else {
-		new_obj = new Date(snvl(pb_obj,"").replaceAll('-','/'));
+		new_obj = new Date(snvl(pb_obj,"").replace(/-/g,'/'));
 	}
 	return new_obj;
 }
@@ -139,7 +144,7 @@ const timeTodec = function(dtime, minValue) {
 	if (dtime == minValue) {
 		new_obj = 0;
 	} else {
-		let dttime1 = new Date(snvl(dtime,"").replaceAll('-','/'));
+		let dttime1 = new Date(snvl(dtime,"").replace(/-/g,'/'));
 		let sd = Math.floor(dttime1.getHours());
 		let ff = Math.floor(dttime1.getMinutes()) / 60;
 		ff = Math.round(ff * 100) / 100;
