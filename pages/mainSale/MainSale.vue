@@ -831,7 +831,7 @@
 	}
 
 	.prolist .bianji {
-		width: 180rpx;
+		width: 180rpx !important;
 		display: flex;
 		justify-content: center;
 		align-items: center;
