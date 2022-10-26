@@ -51,7 +51,7 @@ var _GetFZCX = function(khid, func) {
  */
 var GetFZCX = function(khid, func) {
 	let cxArr = [];
-	let sql = "SELECT cx1.CXZT, cx2.bill, cx2.classid, sp.sname, '0' CZQTY, '0' BQTY, cx2.XX_NET1, cx2.MJ_DISC1, '' PRICE, '满' || cx2.XX_NET1 || '可售' || cx2.MJ_DISC1 || '%' describe \
+	let sql = "SELECT cx1.CXZT, cx2.bill, cx2.classid, sp.sname, '0' CZQTY, '0' BQTY, cx2.XX_NET1,cx2.XX_QTY4, cx2.MJ_DISC1, '' PRICE, '满' || cx2.XX_NET1 || '可售' || cx2.MJ_DISC1 || '%' describe \
 				FROM  cxformd001 cx1 LEFT JOIN cxformd002 cx2  ON cx1.bill = cx2.bill AND cx1.khid = cx2.khid LEFT JOIN spda sp ON cx2.classid = sp.spid LEFT JOIN spkhda sk ON sp.spid = sk.spid AND cx1.KHID = sk.KHID \
 				WHERE cx1.KHID = '" + khid +
 		"'  AND cx1.Yn_Jslb = 'F' AND sp.PINYIN IS NOT NULL  AND sk.YN_XS = 'Y' AND sp.PRODUCT_TYPE IN ( 'Z001', 'Z004', 'Z005' ) and date(cx1.sdate)<=date('now') and date(cx1.edate)>=date('now') Order by cx1.CXZT";
@@ -260,7 +260,7 @@ var SortData = (type, data, pro) => {
 				})
 				let Net = 0;
 				arr1.forEach(r2 => {
-					Net += r2.NET;
+					Net += Number((r2.OPRICE * r2.QTY).toFixed(2)); //r2.NET
 				})
 				spArr.push({
 					SPJGZ: r.SPJGZ,
@@ -457,7 +457,11 @@ var GetFZCXNew = async function(arr, sale1, sale2, spPrice) {
 		}
 		arr.forEach(r => {
 			r.Details.forEach(r1 => {
-				r1.CZQTY = Math.floor((sale1.TNET || 0) / r1.XX_NET1);
+				let qty = Math.floor((sale1.TNET || 0) / r1.XX_NET1);
+				if (r1.XX_QTY4 && r1.XX_QTY4 < qty) { // 处理赠品上限
+					qty = r1.XX_QTY4;
+				}
+				r1.CZQTY = qty; // Math.floor((sale1.TNET || 0) / r1.XX_NET1);
 				let price = spPrice[r1.CLASSID].PRICE;
 				r1.PRICE = price;
 				r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);

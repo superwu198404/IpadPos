@@ -225,7 +225,7 @@
 					})
 					console.log("111111:", newArr);
 					let sortArr = newArr.sort((a, b) => {
-						return a.MZNET - b.MZNET;
+						return b.MZNET - a.MZNET;
 					});
 					console.log("222222:", sortArr);
 					let newArr1 = arr1.filter(r => {
@@ -233,7 +233,7 @@
 					})
 					console.log("333333:", newArr1);
 					let sortArr1 = newArr1.sort((a, b) => {
-						return a.MZNET - b.MZNET;
+						return b.MZNET - a.MZNET;
 					});
 					console.log("444444:", sortArr1);
 					if (sortArr.length > 0) { //追加标准折扣规则

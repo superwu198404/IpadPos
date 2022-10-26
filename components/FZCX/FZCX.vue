@@ -87,6 +87,10 @@
 		},
 		methods: {
 			Calculate: function(item, type) {
+				if (item.XX_QTY4 && item.BQTY >= item.XX_QTY4) {
+					util.simpleMsg("已达到该赠品上限：" + item.XX_QTY4, "none");
+					return;
+				}
 				item.BQTY = Number(item.BQTY) + type;
 				if (item.BQTY < 0) {
 					item.BQTY = 0;
