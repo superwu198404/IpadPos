@@ -24,7 +24,7 @@
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">·
-										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
+										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(2)}}折；
 											折扣额：<text>￥{{item.ZKNET}};</text></span>
 									</label>
 								</view>
@@ -36,7 +36,7 @@
 									</label>
 									<view class="zhekou" style="margin-top:0;border:none;">
 										<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：￥{{item.ZKNET}};</text>
+											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：￥{{item.ZKNET}};</text>
 										</label>
 									</view>
 								</view>
@@ -52,7 +52,7 @@
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in DKFZKDatas">·
-										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
+										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
 								</view>
 							</view>
 						</view>
