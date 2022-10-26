@@ -212,6 +212,29 @@
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
 				this.form.address.NAME = this.details.info.CUSTMNAME;
 			},
+			MatchDecorativeCenter: function() {//匹配裱花中心
+				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
+				console.log("[MatchDecorativeCenter]获取到的GSKHINFO:", GSKHINFO);
+				_reserve.MatchBHKH({
+					LONGITUDE: this.details.info.LONGITUDE,
+					LATITUDE: this.details.info.LATITUDE,
+					GSKHINFO: GSKHINFO
+				}, res => {
+					console.log("[MatchDecorativeCenter]匹配结果:", res);
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						if (data.over) {
+							util.simpleMsg(data.msg, "none");
+							this.details.info.STR2 = "";
+							that.index = 0;
+						} else {
+							util.simpleMsg("已匹配最近的配送中心", "none");
+							this.details.info.STR2 = data.khid;
+							that.$forceUpdate(); //刷新input的值 狗bug
+						}
+					}
+				})
+			},
 			GetDistributionCenter: function() { //获取配送中心
 				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
 					console.log("[GetDistributionCenter]配送中心...", r);

@@ -2882,11 +2882,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.BanPayType = function(list) {
 		console.log("[BanPayType]被禁止类型:", list);
 		if (list) {
-			var ban_pay = new Set();
+			var ban_pay = [];
 			list.forEach(i => {
-				ban_pay.add(i.NOTFKID)
+				ban_pay = ban_pay.concat(i.NOTFKID?.split(','));
 			});
-			this.ban_type = Array.from(ban_pay);
+			this.ban_type = Array.from(new Set(ban_pay));
+			console.log("[BanPayType]存在禁止类型...", this.ban_type);
 		} else {
 			console.warn("[BanPayType]折扣禁止支付方式处理!");
 			let PayWayList = util.getStorage("PayWayList");
