@@ -2735,7 +2735,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (pm_qty > 0) {
 			this.sale002[pm_row].QTY = pm_qty;
-			let price = this.float(this.sale002[pm_row].PRICE);
+			let price = this.float(this.sale002[pm_row].PRICE, 2);
 			this.sale002[pm_row].NET = this.float(pm_qty * price, 2);
 			that.log("更新商品" + JSON.stringify(this.sale002[pm_row]))
 		}
