@@ -58,7 +58,7 @@ let fsdcx = new Array();
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
-	console.log("有进入初始化方法Cxdict")
+	console.log("进入初始化方法Cxdict")
 	let storeDqid = getApp().globalData.store.DQID;
 	let dateTime = cx_util.getTime(0);
 	let storeid = getApp().globalData.store.KHID;
@@ -410,7 +410,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.jfnum = 0;
 				dr.HYLV = -1;
 				dr.NOTFKID = "";
-				dr.zdcxbill = zdcxsubno;
+				dr[zdcxbill] = zdcxsubno;
 				cxbilldts.push(dr);
 			} else {
 				//查询促销单对应的商品
