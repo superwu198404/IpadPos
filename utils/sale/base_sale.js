@@ -1734,6 +1734,7 @@ function GetSale(global, vue, target_name, uni) {
 			//缓存默认一下
 			let store = util.getStorage("store");
 			if (!newval || Object.keys(newval).length == 0) { //为空或者默认值
+				console.log("默认值:", newval);
 				this.cval.DKFID = this.Defval;
 				that.setSaleTypeDefval("HY");
 				that.setSaleTypeDefval("ynCx");
