@@ -1328,7 +1328,8 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*清除促销和折扣
 	this.ResetCXZK = util.callBind(this, function(res) {
-		console.log("进入清除促销折扣方法", this.sale001);
+		console.log("进入清除促销折扣方法sale1", this.sale001);
+		console.log("进入清除促销折扣方法sale2", this.sale002);
 		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
@@ -2914,6 +2915,11 @@ function GetSale(global, vue, target_name, uni) {
 		let res = _main.MatchZKDatas(this.Disc.val, that.sale002);
 		that.sale002 = res.sale2;
 		that.ZKHDArr = res.zkrule;
+		// if (res.zkrule && res.zkrule.length > 0) {
+		// 	that.ZKHDArr = res.zkrule;
+		// } else {
+		// 	that.ResetCXZK(); //回退一下上一步计算的折扣值
+		// }
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 	//使用手工折扣进行计算 新版四舍五入的逻辑
