@@ -21,10 +21,10 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 		console.log("getCxmSql dapzcs_nr_sql执行失败：", err);
 	});
 	
-	let cxformd001_sql = "SELECT KHID,BILL,YN_ZD,YN_JSLB,CXRY,HYLV,CXZT,CX_WEEK,SDATE,EDATE,YN_TIME,\
-						 STIME1,ETIME1,STIME2,ETIME2,STIME3,ETIME3,NOTFKID,BILL_STATUS,JFSX\
-						 FROM   cxformd001 WHERE BILL_STATUS ='1' AND khid ='" + storeid + "' and YN_JSLB!='F'\
-						 AND SDATE<= DATETIME('" + dateTime + "') AND EDATE>= DATETIME('" + dateTime + "')  AND  cxformd001.cxzt like  '%" + cxkey + "%' order by YN_ZD desc ";
+	let cxformd001_sql = "SELECT C1.KHID,C1.BILL,C1.YN_ZD,C1.YN_JSLB,C1.CXRY,C1.HYLV,C1.CXZT,C1.CX_WEEK,C1.SDATE,C1.EDATE,C1.YN_TIME,\
+						 C1.STIME1,C1.ETIME1,C1.STIME2,C1.ETIME2,C1.STIME3,C1.ETIME3,C1.NOTFKID,C1.BILL_STATUS,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END)AS ZKLQTY,C1.JFSX\
+						 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" + storeid + "' and C1.YN_JSLB!='F'\
+						 AND C1.SDATE<= DATETIME('" + dateTime + "') AND C1.EDATE>= DATETIME('" + dateTime + "')  AND  C1.cxzt like  '%" + cxkey + "%' order by C1.YN_ZD desc,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 	await db.get().executeQry(cxformd001_sql, "执行中", function(res1) {
 		console.log("cxformd001_sql执行结果：", res1.msg);
 		cxformd001_arr = res1.msg;
