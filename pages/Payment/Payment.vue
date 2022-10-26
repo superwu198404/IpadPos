@@ -394,6 +394,7 @@
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
+				let amount_include_negative_number = this.toBePaidPriceAllNumber(); //计算待支付金额(包含负数)
 				if (Number(n) === 0 && n.length > 1 && n[0] === '-') {
 					this.dPayAmount = 0;
 					this.domForceRefresh();
@@ -403,7 +404,7 @@
 					util.simpleMsg('待支付金额必须大于0!', false);
 					this.domForceRefresh();
 				}
-				console.log(`newValue:${n},amount:${amount}`);
+				console.log(`[Watch-dPayAmount]newValue:${n},amount:${amount}`);
 				if (amount > 0) { //未完成支付，仍然存在欠款
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					// else this.CanBack = false;
@@ -427,11 +428,14 @@
 						}
 					}
 				} else { //完成支付，推送数据
-					var that = this;
-					this.YN_TotalPay = true;
-					this.CanBack = true;
-					console.log("Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this.sale3_arr);
-					this.createOrders(true);
+					console.log("[Watch-dPayAmount]完整支付金额:",amount_include_negative_number);
+					if (amount_include_negative_number >= 0) {//避免券类的支付出现提前完成导致放弃金额未被记录的问题（未被记录则会变成负数）
+						var that = this;
+						this.YN_TotalPay = true;
+						this.CanBack = true;
+						console.log("[Watch-dPayAmount]Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						this.createOrders(true);
+					}
 				}
 			},
 			yPayAmount: function(n, o) {
@@ -1229,12 +1233,10 @@
 			},
 			//支付后创建支付记录
 			orderGenarator: function(payload, type, result, fail, type_info) {
-				console.log("生成订单类型[orderGenarator]：", this.currentPayType);
-				console.log("生成订单类型[payload]：", payload);
-				console.log("生成订单类型[result]：", result);
+				console.log("[OrderGenarator]生成订单类型：", { type:this.currentPayType,payload,result});
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
-				this.yPayAmount += fail ? 0 : ((function() {
+				let paid_amount = fail ? 0 : ((function() {
 					if (result.vouchers.length > 0) {
 						console.log("[OrderGenarator]券支付金额：")
 						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),
@@ -1242,9 +1244,7 @@
 						if (coupon.length > 0) {
 							console.log("[OrderGenarator]券 payload.money：", payload.money)
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) :
-								result
-								.vouchers[0].denomination) / 100;
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result.vouchers[0].denomination) / 100;
 						} else {
 							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
@@ -1263,38 +1263,37 @@
 				if (result) {
 					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 						result.vouchers.forEach((function(coupon, index) {
-							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
-							console.log("[OrderGenarator]卡券：", coupon)
-							this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-								amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
-									(coupon
-										.note === 'EXCESS' ? -coupon
-										.pay_amount : coupon
-										.denomination)) / 100).toFixed(2),
-								fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
-									coupon
-									?.fkid,
-								name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
-									excessInfo.name,
-								balance: (coupon?.balance / 100).toFixed(2), //如果是电子卡，余额
-								balance_old: ((coupon.balance + coupon.pay_amount) / 100)
-									.toFixed(
-										2), //如果是电子卡，余额
-								zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
-									.note ===
-									'EXCESS' ? excessInfo.fkid : coupon.disc_type),
-								disc: (coupon?.discount / 100).toFixed(2),
-								fail,
-								id_type: coupon?.type,
-								is_free: coupon?.yn_zq,
-								card_no: coupon?.no,
-								no: payload.no,
-								auth: result.transaction_id //交易号 用于多卡退款时的分组依据
-							}, result));
-							this.used_no.push(payload.no);
-							payload.no++;
+							try{
+								let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
+								console.log("[OrderGenarator]卡券：", coupon)
+								this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+									amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
+										(coupon.note === 'EXCESS' ? -coupon.pay_amount :
+											coupon.denomination)) / 100).toFixed(2),
+									fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
+										coupon?.fkid,
+									name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
+										excessInfo?.name,
+									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
+									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
+										?.toFixed(2), //如果是电子卡，余额
+									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+										'EXCESS' ? coupon.fkid : coupon.disc_type),
+									disc: (coupon?.discount / 100)?.toFixed(2),
+									fail,
+									id_type: coupon?.type,
+									is_free: coupon?.yn_zq,
+									card_no: coupon?.no,
+									no: payload.no,
+									auth: result.transaction_id //交易号 用于多卡退款时的分组依据
+								}, result, type_info));
+								this.used_no.push(payload.no);
+								payload.no++;
+							} catch(e){
+								console.warn("[OrderGenarator]券信息生成异常:",e);
+							}
 						}).bind(this));
-						console.log("[OrderGenarator]卡、券支付列表:",this.PayList);
+						console.log("[OrderGenarator]卡、券支付列表:", this.PayList);
 					} else { //如果是聚合支付(这里应该是非卡券类别)
 						this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
@@ -1318,23 +1317,29 @@
 					console.log("[OrderGenarator]失败记录：", trade);
 					this.PayList.push(trade);
 				}
+				this.yPayAmount += paid_amount;
 				this.PayList = Object.assign([], this.PayList);
 			},
 			//订单对象创建
 			orderCreated: function(obj, payload, current_pay_info) {
+				console.log("[OrderCreated]封装响应体开始...", {
+					obj,
+					payload,
+					current_pay_info
+				})
 				let order = Object.assign(Sale3ModelAdditional(Sale3Model({
 					fkid: current_pay_info?.fkid ?? "",
 					type: current_pay_info?.type ?? "",
 					bill: payload?.out_trade_no,
 					name: current_pay_info?.name ?? "",
 					no: this.PayList.length,
-					disc: (Number(payload?.discount) / 100).toFixed(2) ||
+					disc: (Number(payload?.discount) / 100)?.toFixed(2) ||
 						0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
 					zklx: payload?.disc_type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
 					point: payload?.point ?? 0, //抵现积分数
 				})), obj);
-				console.log("封装响应体[orderCreated]:", order)
+				console.log("[OrderCreated]封装响应体:", order)
 				return order;
 			}, //避免后续绑定this指向
 			_scoreConsume: function() {
@@ -1595,6 +1600,10 @@
 				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
 				let price = amount >= 0 ? amount : 0;
 				return price;
+			},
+			toBePaidPriceAllNumber: function() { //和上面那个区别就是包含负数，避免券那种首先返回券面额再返回放弃金额导致订单提前结束生成
+				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
+				return amount;
 			},
 			//文本框dom刷新
 			domForceRefresh: function() {
