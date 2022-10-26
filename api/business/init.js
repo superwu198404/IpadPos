@@ -92,7 +92,7 @@ var GetPayWay = async function(e) {
 			}]
 			for (var i = 0; i < arr.length; i++) {
 				let obj = PayWayList.find((item) => {
-					return item.type == arr[i].type;
+					return item.type == arr[i].type && item.fkid == arr[i].fkid;
 				});
 				if (!obj) {
 					PayWayList.push(arr[i]);
