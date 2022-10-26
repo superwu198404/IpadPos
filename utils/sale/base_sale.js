@@ -2424,32 +2424,54 @@ function GetSale(global, vue, target_name, uni) {
 		return inputParm;
 	}
 	//创建新单 测试版
-	this.createNewBill = function() {
+	this.createNewBill = function(e) {
 		var commonSaleParm = {};
 		let newbill = this.getBill();
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
 		console.log("[CreateNewBill]sale001：", this.sale001);
 		console.log("创建新单的大客户信息：", this.DKF.val);
-		commonSaleParm = {
-			GSID: this.GSID,
-			KHID: this.Storeid,
-			SALEDATE: this.saledate,
-			POSID: this.POSID,
-			RYID: this.ryid,
-			BILL: newbill,
-			KCDID: this.KCDID,
-			DPID: this.DPID,
-			GCID: this.GCID,
-			SALETIME: stime,
-			YN_OK: 'X', //默认为 X
-			YN_SC: 'N', //默认为 N
-			YAER: _date.getDateByParam("Y"),
-			MONTH: _date.getDateByParam("M"),
-			WEEK: _date.getDateByParam("w"),
-			TIME: _date.getDateByParam("h"),
-			DKFID: this.DKF.val.DKFID
-		};
+		if (e && Object.keys(this.sale001).length > 0) { //适用于添加商品时的处理
+			commonSaleParm = {
+				KHID: this.sale001.KHID,
+				POSID: this.sale001.POSID,
+				RYID: this.sale001.RYID,
+				BILL: this.sale001.BILL,
+				KCDID: this.sale001.KCDID,
+				GCID: this.sale001.GCID,
+				DPID: this.sale001.DPID,
+				SALEDATE: this.sale001.SALEDATE,
+				SALETIME: this.sale001.SALETIME,
+				CLTIME: this.sale001.CLTIME,
+				YN_OK: this.sale001.YN_OK,
+				YN_SC: this.sale001.YN_SC,
+				YAER: this.sale001.YAER,
+				MONTH: this.sale001.MONTH,
+				WEEK: this.sale001.WEEK,
+				TIME: this.sale001.TIME,
+				DKFID: this.sale001.DKFID
+			}
+		} else {
+			commonSaleParm = {
+				GSID: this.GSID,
+				KHID: this.Storeid,
+				SALEDATE: this.saledate,
+				POSID: this.POSID,
+				RYID: this.ryid,
+				BILL: newbill,
+				KCDID: this.KCDID,
+				DPID: this.DPID,
+				GCID: this.GCID,
+				SALETIME: stime,
+				YN_OK: 'X', //默认为 X
+				YN_SC: 'N', //默认为 N
+				YAER: _date.getDateByParam("Y"),
+				MONTH: _date.getDateByParam("M"),
+				WEEK: _date.getDateByParam("w"),
+				TIME: _date.getDateByParam("h"),
+				DKFID: this.DKF.val.DKFID
+			};
+		}
 		console.log("旧的sale001：", this.sale001);
 		// let oldSale1 = new saleClass.sale001();
 
@@ -2459,33 +2481,6 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		}
 		return commonSaleParm;
-		// else {
-		// 	console.log("[CreateNewBill]创建新单参数!");
-		// 	commonSaleParm = {
-		// 		KHID: this.sale001.KHID,
-		// 		POSID: this.sale001.POSID,
-		// 		RYID: this.sale001.RYID,
-		// 		BILL: this.getBill(),
-		// 		KCDID: this.sale001.KCDID,
-		// 		GCID: this.sale001.GCID,
-		// 		DPID: this.sale001.DPID,
-		// 		// SALEDATE: this.sale001.SALEDATE, //应该采用新的值
-		// 		// SALETIME: this.sale001.SALETIME, //应该采用新的值
-		// 		SALEDATE: this.getDate(), //应该采用新的值
-		// 		SALETIME: this.getTime(), //应该采用新的值
-		// 		// CLTIME: this.sale001.SALETIME, //应该采用新的值
-		// 		// YN_OK: this.sale001.YN_OK, //默认为 X
-		// 		// YN_SC: this.sale001.YN_SC, //默认为 N
-		// 		YN_OK: "X", //默认为 X
-		// 		YN_SC: "N", //默认为 N
-		// 		YAER: this.sale001.YAER,
-		// 		MONTH: this.sale001.MONTH,
-		// 		WEEK: this.sale001.WEEK,
-		// 		TIME: this.sale001.TIME,
-		// 		DKFID: this.sale001.DKFID
-		// 	}
-		// }
-		//return commonSaleParm;
 	}
 	this._createNewBill = function() {
 		var commonSaleParm = {};
@@ -2560,7 +2555,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.getSp = function(e) {
 		let curDate = util.getStorage("CurDate");
 		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
-			util.simpleMsg("登录日期不是今天，请重新登录", "none");
+			util.simpleMsg("签到状态过期，请重新签到", "none");
+			util.sleep(1500);
+			uni.redirectTo({
+				url: "/pages/Center/Center"
+			});
 			return;
 		}
 		console.log("[GetSp]获取商品详情:");
@@ -2591,7 +2590,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
-			let newprm = that.createNewBill.call(that);
+			let newprm = that.createNewBill.call(that, 1);
 			// let new002 = new sale.sale002(newprm);
 			let new002 = new sale.sale002();
 			new002 = Object.cover(new002, newprm);
@@ -2655,6 +2654,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.sale002.push(new002);
 
 			that.log("[GetSp]添加了商品", new002);
+			that.log("[GetSp]添加了水吧商品", that.sale008);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
 		}
@@ -2759,7 +2759,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.ShowStatement = async function(e) {
 		let curDate = util.getStorage("CurDate");
 		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
-			util.simpleMsg("登录日期不是今天，请重新登录", "none");
+			util.simpleMsg("签到状态过期，请重新签到", "none");
+			util.sleep(1500);
+			uni.redirectTo({
+				url: "/pages/Center/Center"
+			});
 			return;
 		}
 		console.log("促销权限：", that.currentOperation.ynCx);
@@ -2915,11 +2919,6 @@ function GetSale(global, vue, target_name, uni) {
 		let res = _main.MatchZKDatas(this.Disc.val, that.sale002);
 		that.sale002 = res.sale2;
 		that.ZKHDArr = res.zkrule;
-		// if (res.zkrule && res.zkrule.length > 0) {
-		// 	that.ZKHDArr = res.zkrule;
-		// } else {
-		// 	that.ResetCXZK(); //回退一下上一步计算的折扣值
-		// }
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
 	//使用手工折扣进行计算 新版四舍五入的逻辑
