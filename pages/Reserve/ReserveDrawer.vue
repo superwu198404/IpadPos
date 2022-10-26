@@ -504,14 +504,17 @@
 				}
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
+					let exists_address_refresh = false;
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
+					if(that.Order.CUSTMPHONE != that.ADDR.PHONE) exists_address_refresh = true;
+					that.Order.CUSTMPHONE = that.ADDR.PHONE;
 					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
-					// if (res.code) {
-					// 	that.GetAddr(); //刷新一下地址列表
-					// }
+					if (exists_address_refresh) {
+						that.GetAddr(); //刷新一下地址列表
+					}
 				})
 			},
 			searchMapAddr: async function() {
@@ -684,6 +687,7 @@
 					}
 				}
 				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
+					that.Order.STR2 = that.KHID;//现卖配送的，提交 当前门店编码
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 						util.simpleMsg("提货时间小于当前时间", 'none');
 						return;

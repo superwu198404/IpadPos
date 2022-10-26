@@ -51,7 +51,7 @@
 						<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
 						<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
 						<label class="long" style="display: flex;padding-right: 70rpx;"><text>收货地址：</text>
-							<AddressPicker @change="AddressChange" style="flex:1"></AddressPicker>
+							<AddressPicker @change="AddressChange" :address="form.address.ADDRESS" style="flex:1" ></AddressPicker>
 						</label>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea></textarea></label> -->
@@ -297,6 +297,11 @@
 					return false;
 				}
 				return true;
+			},
+			EditAddress:function(address){
+				this.view.address_edit = true;
+				this.view.add_address = true;
+				Object.assign(this.form.address,address);
 			},
 			ChangeCustomerAddress: function() {
 				if (this.AddressVaild())

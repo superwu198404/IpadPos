@@ -35,6 +35,11 @@
 							</view>
 							<view class="critlist"><text>手机号：</text><input type="text" v-model="condition.phone" />
 							</view>
+							<view class="critlist"><text>提货方式：</text>
+								<picker @change="ExtractType" :range="extract_types" range-key="NAME" value="index" style="width: 80%;height: 90%;">
+									<view>{{ condition.type ? (extract_types.length > condition.type ? extract_types[condition.type].NAME : "") : "" }}</view>
+								</picker>
+							</view>
 							<view class="confs"><button class="btn btn-qx" @click="ClearSearch()">清空</button><button
 									class="btn" @click="GetList()">查询</button>
 							</view>
@@ -107,6 +112,7 @@
 					value: -1,
 					bill: "",
 					phone: "",
+					type:0,
 					customer: ""
 				},
 				view: {
@@ -116,6 +122,7 @@
 					loading: ''
 				},
 				extract_order: {}, //预定订单的信息
+				extract_types:[],
 				extracts: []
 			}
 		},
@@ -149,9 +156,27 @@
 			}
 		},
 		methods: {
+			GetExtractType:async function(){
+				await common.GetDapzcs("THTYPE", util.callBind(this,function(res){
+					console.log("[GetExtractType]提货类型数据：", res);
+					if (res.code && res.msg.length > 0) {
+						this.extract_types = res.msg.map((item, index) => {
+							return {
+								ID: item.ID_NR,
+								NAME: item.SNAME
+							};
+						})
+						console.log("[GetExtractType]提货类型数据THTYPES：", that._THTYPES);
+					}
+				}))
+			},
+			ExtractType:function(event){
+				this.condition.type = event.detail.value?.toString();
+			},
 			ClearSearch: function() {
 				this.condition.bill = "";
 				this.condition.phone = "";
+				this.condition.type = "";
 			},
 			Selected: function(type, value) {
 				this.condition.name = type;
@@ -160,7 +185,6 @@
 			},
 			Statements: function(e) {
 				this.view.Details = !this.view.Details;
-
 			},
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias
@@ -273,6 +297,7 @@
 				getReserveOrders({
 					khid: this.KHID,
 					type: this.condition.value, //-1 已过期，0 今日，1 待提货
+					extract_type: this.condition.type,
 					bill: this.condition.bill,
 					phone: this.condition.phone,
 					customer: this.condition.customer
@@ -300,6 +325,7 @@
 			this.view.mode = this.mode; //跳转传值
 			console.log("[Extract-Mounted]元数据:", this.meta);
 			this.GetList();
+			this.GetExtractType();
 		}
 	}
 </script>
