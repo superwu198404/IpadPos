@@ -6,7 +6,8 @@
 </style>
 
 <template>
-	<view class="meminfo" style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;">
+	<view class="boxs">
+	<view class="meminfo" style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;z-index: 999;">
 		<view class="member">
 			<label>填写预定信息</label>
 			<button @click="Close()">×</button>
@@ -117,6 +118,7 @@
 			<button class="btn btn-qx" @click="Close()">取 消</button>
 			<button class="btn" @click="Confirm">确 定</button>
 		</view>
+	</view>
 	</view>
 </template>
 

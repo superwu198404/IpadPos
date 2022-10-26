@@ -17,7 +17,7 @@
 			预定主单数据：{{YDDATA}}
 		</view>
 		<!-- 编辑 -->
-		<view class="boxs" v-if="statements">
+		<view class="boxs" style="z-index: 9999;" v-if="statements">
 			<view class="memberes">
 				<!-- v-if="Memberinfo" -->
 				<view class="meminfo">
