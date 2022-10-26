@@ -319,6 +319,8 @@ var SortData = (type, data, pro) => {
 var CalProduct = function(curData, Product) {
 	if (curData.length == 0) {
 		Product.forEach(r => {
+			r.NET = Number((r.OPRICE * r.QTY).toFixed(2));
+			r.PRICE = Number((r.NET / r.QTY).toFixed(2));
 			r.BZDISC = 0;
 			r.LSDISC = 0;
 			r.TPDISC = 0;
