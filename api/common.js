@@ -232,7 +232,7 @@ var GetPayWay = function(e, func) {
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	db.get().executeQry(sql, "数据查询中", async function(res) {
 			let arr = res;
-			// console.log("本地fkda:", res);
+			console.log("[GetPayWay]本地fkda:", res);
 			await GetPolyPayWay(e, (res1) => {
 				for (var i = 0; i < res.msg.length; i++) {
 					let obj = res1.msg.find((item) => {

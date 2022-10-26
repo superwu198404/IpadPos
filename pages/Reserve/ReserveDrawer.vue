@@ -424,6 +424,10 @@
 			THChange: e => {
 				that.index = e.detail.value;
 				that.Order.THTYPE = that.THTYPES[that.index].ID;
+				if(that.THTYPE == '0' || that.THTYPE == '2'){
+					that.Order.STR2 = "";
+					that.Order._STR2 = "";
+				}
 				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
 					that.GetAddr();
 				}
@@ -539,7 +543,7 @@
 			},
 			//选中配送地址
 			ConfirmOrderAddr: function(e) {
-				console.log("触发没", e);
+				console.log("[ConfirmOrderAddr]触发没", e);
 				that.AddrArr = []; //清空一下
 				that.Order.CUSTMNAME = e.CNAME; //默认赋值
 				that.Order.CUSTMADDRESS = e.ADDRESS;
@@ -584,6 +588,8 @@
 						let data = JSON.parse(res.data);
 						if (data.over) {
 							util.simpleMsg(data.msg, "none");
+							that.Order.STR2 = "";
+							that.Order._STR2 = "";
 							that.index = 0;
 						} else {
 							util.simpleMsg("已匹配最近的配送中心", "none");
@@ -657,7 +663,7 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute) && Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {
+				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute) && Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {//自提
 					console.log("[Confirm]时间限制:",{
 						start_time:that.STIME,
 						end_time:that.ETIME
@@ -665,7 +671,7 @@
 					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '1') {
+				if (that.Order.THTYPE == '1') {//宅配到家
 					let hour = new Date(that.Order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
 						util.simpleMsg("提货时间不在7到19点", 'none');

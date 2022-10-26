@@ -1106,6 +1106,7 @@
 						promises.push(res)
 					} else {
 						util.simpleMsg("支付方式不存在!", true);
+						if(this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
@@ -1442,6 +1443,7 @@
 			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
 				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage('PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
+				console.log("[PayWayListInit]支付方式:", { all:util.getStorage('PayWayList'),catch:uni.getStorageSync('PayWayList')});
 				this.PayWayList = pay_way_list.map(i => {
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
