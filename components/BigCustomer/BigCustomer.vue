@@ -5,7 +5,7 @@
 <template>
 	<view class="boxs">
 		<view class="customer">
-			<view class="h3">选择大客户 <button @click="Close()" class="guan">×</button></view>
+			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
 				<!-- <label>
 					是否赊销：

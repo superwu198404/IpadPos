@@ -103,6 +103,7 @@
 }
 .prolist .cods label text{
 	color: #b0b0b0;
+	vertical-align: middle;
 }
 /* .cods label:nth-child(1) text{
 	color: #333;
