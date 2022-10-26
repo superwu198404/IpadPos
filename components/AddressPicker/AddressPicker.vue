@@ -25,6 +25,10 @@
 					}
 				}
 			},
+			address: {
+				type:String,
+				default:""
+			},
 			rows:{
 				type:Number,
 				default:8
@@ -32,7 +36,7 @@
 		},
 		data() {
 			return {
-				query: "",
+				query: this.address,
 				map_info: {},
 				list: [],
 				state: false,
