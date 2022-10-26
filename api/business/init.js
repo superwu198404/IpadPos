@@ -30,11 +30,11 @@ var YN_Init = function(sucFunc, errFunc) {
 //获取支付方式
 var GetPayWay = async function(e) {
 	let PayWayList = [];
-	await common.GetPayWay(e, function(res) {
-		// console.log("本地查到的付款信息：", res);
+	await common.GetPayWay(e, function(res) { 
+		console.log("[GetPayWay]本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
-			console.log("支付规则信息：", PayInfo);
+			console.log("[GetPayWay]支付规则信息：", PayInfo);
 			for (var i = 0; i < res.msg.length; i++) {
 				if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
 					return;
@@ -92,7 +92,7 @@ var GetPayWay = async function(e) {
 			}]
 			for (var i = 0; i < arr.length; i++) {
 				let obj = PayWayList.find((item) => {
-					return item.type == arr[i].type;
+					return item.type == arr[i].type && item.fkid == arr[i].fkid;
 				});
 				if (!obj) {
 					PayWayList.push(arr[i]);

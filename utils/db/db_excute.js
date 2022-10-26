@@ -289,7 +289,7 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					// console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
+					 console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
 					return resolve({
 						code: false,
 						msg: e

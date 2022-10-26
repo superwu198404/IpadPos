@@ -18,8 +18,10 @@ const utils = {
 	 */
 	simpleMsg: function(title, isError = false, errData) {
 		uni.showToast({
-			title:(isError == 'none' || title.length > 6) ? `${isError ? '⚠' : '✔'}提示:\n` + title : title,
-			icon: (isError == 'none' || title.length > 6) ? "none" : (isError ? 'error' : "success") //可传入none值
+			title: (isError == 'none' || title.length > 6) ? `${isError ? '⚠' : '✔'}提示:\n` + title :
+				title,
+			icon: (isError == 'none' || title.length > 6) ? "none" : (isError ? 'error' :
+				"success") //可传入none值
 		})
 		if (errData) console.log(title, errData)
 	},
@@ -98,8 +100,7 @@ const utils = {
 		let keys = Object.keys(obj);
 		props.forEach(p => {
 			if (keys.indexOf(p) !== -1)
-				configs[p] = 
-				{
+				configs[p] = {
 					configurable: true,
 					enumerable: false,
 					writable: true
@@ -216,7 +217,7 @@ const utils = {
 		return newObj.substring(0, newObj.length - 1);
 	},
 
-	//模拟休眠方法
+	//模拟休眠方法 ms
 	sleep: function(ms) {
 		var start = Date.now(),
 			end = start + ms;
