@@ -1003,10 +1003,13 @@ page {
 }
 .goods .prolist .cods{
 	margin: 1% 0 3%;
-	width:66%;
+	width:100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 .goods .prolist .cods view{
-	width:100%;
+	width:66%;
 }
 .goods .prolist .cods view label{
 	white-space: nowrap;
