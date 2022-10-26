@@ -283,11 +283,11 @@ var SortData = (type, data, pro) => {
 				}
 			} else {
 				let arr2 = data.filter(r4 => {
-					return (r4.ZKSTR == r3.SPJGZ && r4.MZNET < r3.NET && r4
+					return (r4.ZKSTR == r3.SPJGZ && r4.MZNET <= r3.NET && r4
 						.ZKTYPE == 'ZD02');
 				});
 				let arr3 = data.filter(r4 => {
-					return (r4.ZKSTR == r3.SPJGZ && r4.MZNET < r3.NET && r4
+					return (r4.ZKSTR == r3.SPJGZ && r4.MZNET <= r3.NET && r4
 						.ZKTYPE == 'ZD03');
 				});
 				// let sortArr = arr2.sort((a, b) => {
