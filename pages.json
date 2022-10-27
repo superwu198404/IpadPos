@@ -260,6 +260,10 @@
         {
             "path" : "components/saomaqiang/saomaqiang",
             "style" : {}
+        },
+        {
+            "path" : "pages/UnUpload/UnUpload",
+            "style" : {}
         }
     ],
     "globalStyle" : {
