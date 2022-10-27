@@ -1,132 +1,138 @@
 <template>
 	<view>
-		<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
 		<view>
-			<div class="product">
-				<div>商品ID：</div>
-				<div><input v-model="input.fromData.SPID" /></div>
-			</div>
-			<div class="product">
-				<div>品类ID：</div>
-				<div><input v-model="input.fromData.PLID" /></div>
-			</div>
-			<div class="product">
-				<div>商品名称：</div>
-				<div><input v-model="input.fromData.NAME" /></div>
-			</div>
-			<div class="product">
-				<div>商品条码：</div>
-				<div><input v-model="input.fromData.BARCODE" /></div>
-			</div>
-			<div class="product">
-				<div>商品数量：</div>
-				<div><input v-model="input.fromData.QTY" /></div>
-			</div>
-			<div class="product">
-				<div>商品单位：</div>
-				<div><input v-model="input.fromData.UNIT" /></div>
-			</div>
-			<div class="product">
-				<div>商品价格(元)：</div>
-				<div><input v-model="input.fromData.PRICE" /></div>
-			</div>
-			<div class="product">
-				<div>商品金额：</div>
-				<div>{{ input.fromData.NET }}</div>
-			</div>
-			<div class="product">
-				<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;"
-					@click="insertProduct()">添加</div>
-			</div>
+			<button @click="MenuPage(10)">数据查看</button>
+			<button @click="closeDB()">断开数据库链接</button>
 		</view>
-		<p>--加购的商品商品信息--</p>
-		<view style="max-height: 180px;border: 1px solid gray;overflow-y:auto;">
-			<view v-for="(item,index) in Products" style="margin: 14px 2px;">
-				<text>{{item.NAME}}</text>-
-				<text>￥{{item.NET}}</text>-
-				<text>{{item.PRICE}}元/kg</text>-
-				<text>x{{item.QTY}}</text>
-				<text><span
-						style="background-color: red;color: white;padding: 2px 4px;border-radius: 5px;margin-left: 10px;"
-						@click="removeProduct(item.ID)">删除</span></text>
+		<view v-if="false">
+			<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
+			<view>
+				<div class="product">
+					<div>商品ID：</div>
+					<div><input v-model="input.fromData.SPID" /></div>
+				</div>
+				<div class="product">
+					<div>品类ID：</div>
+					<div><input v-model="input.fromData.PLID" /></div>
+				</div>
+				<div class="product">
+					<div>商品名称：</div>
+					<div><input v-model="input.fromData.NAME" /></div>
+				</div>
+				<div class="product">
+					<div>商品条码：</div>
+					<div><input v-model="input.fromData.BARCODE" /></div>
+				</div>
+				<div class="product">
+					<div>商品数量：</div>
+					<div><input v-model="input.fromData.QTY" /></div>
+				</div>
+				<div class="product">
+					<div>商品单位：</div>
+					<div><input v-model="input.fromData.UNIT" /></div>
+				</div>
+				<div class="product">
+					<div>商品价格(元)：</div>
+					<div><input v-model="input.fromData.PRICE" /></div>
+				</div>
+				<div class="product">
+					<div>商品金额：</div>
+					<div>{{ input.fromData.NET }}</div>
+				</div>
+				<div class="product">
+					<div style="border-radius: 5px;background-color: lightgray;border:1px solid gray;padding: 2px 3px;margin-left: 5px;"
+						@click="insertProduct()">添加</div>
+				</div>
 			</view>
-		</view>
-		<view>
-			<text style="height: 50px;line-height: 50px;">请输入单号（用于测试退款）：<span
-					style="border-radius: 5px;padding: 2px 3px;margin-left: 5px;background-color: royalblue;color: white;"
-					@click="searchOrder()">查询</span></text>
-			<text>
-				<input style="border:1px solid gray" type="text" v-model="refund_no" :adjust-position="false" />
-				<div class="bills">
-					<div v-for="bill in input.similar" @click="billAssignment(bill)">{{ bill }}</div>
-				</div>
-			</text>
-		</view>
-		<button @click="MenuPage(0)">开始结算</button>
-		<button @click="MenuPage(1)">开始退款</button>
-		<!-- <button @click="MenuPage(2)">会员登录</button> -->
-		<!-- <button @click="MenuPage(3)">外卖处理</button>
+			<p>--加购的商品商品信息--</p>
+			<view style="max-height: 180px;border: 1px solid gray;overflow-y:auto;">
+				<view v-for="(item,index) in Products" style="margin: 14px 2px;">
+					<text>{{item.NAME}}</text>-
+					<text>￥{{item.NET}}</text>-
+					<text>{{item.PRICE}}元/kg</text>-
+					<text>x{{item.QTY}}</text>
+					<text><span
+							style="background-color: red;color: white;padding: 2px 4px;border-radius: 5px;margin-left: 10px;"
+							@click="removeProduct(item.ID)">删除</span></text>
+				</view>
+			</view>
+			<view>
+				<text style="height: 50px;line-height: 50px;">请输入单号（用于测试退款）：<span
+						style="border-radius: 5px;padding: 2px 3px;margin-left: 5px;background-color: royalblue;color: white;"
+						@click="searchOrder()">查询</span></text>
+				<text>
+					<input style="border:1px solid gray" type="text" v-model="refund_no" :adjust-position="false" />
+					<div class="bills">
+						<div v-for="bill in input.similar" @click="billAssignment(bill)">{{ bill }}</div>
+					</div>
+				</text>
+			</view>
+			<button @click="MenuPage(0)">开始结算</button>
+			<button @click="MenuPage(1)">开始退款</button>
+			<!-- <button @click="MenuPage(2)">会员登录</button> -->
+			<!-- <button @click="MenuPage(3)">外卖处理</button>
 		<button @click="MenuPage(4)">外卖预定</button> -->
-		<!-- <button @click="MenuPage(5)">登录</button> -->
-		<button @click="MenuPage(6)">首页</button>
-		<button @click="MenuPage(7)">初始化</button>
-		<!-- <button @click="MenuPage(8)">预定</button>
+			<!-- <button @click="MenuPage(5)">登录</button> -->
+			<button @click="MenuPage(6)">首页</button>
+			<button @click="MenuPage(7)">初始化</button>
+			<!-- <button @click="MenuPage(8)">预定</button>
 		<button @click="MenuPage(9)">赊销退单</button> -->
-		<button @click="MenuPage(10)">数据查看</button>
-		<button @click="MenuPage(11)">蓝牙与打印</button>
-		<!-- <button @click="MenuMain()">功能主页</button> -->
-		<!-- <button @click="againPrinter()">重新打印</button> -->
-		<!-- <button @click="inputAuthCode()">录入付款码</button> -->
-		<button @click="closeDB()">断开数据库链接</button>
-		<!-- <button @click="MenuPage(3)">返回调试</button>-->
-		<button @click="Test(2)">测试一下</button>
-		<button @click="toMainSale">主销售界面</button>
+			<button @click="MenuPage(10)">数据查看</button>
+			<button @click="MenuPage(11)">蓝牙与打印</button>
+			<!-- <button @click="MenuMain()">功能主页</button> -->
+			<!-- <button @click="againPrinter()">重新打印</button> -->
+			<!-- <button @click="inputAuthCode()">录入付款码</button> -->
+			<button @click="closeDB()">断开数据库链接</button>
+			<!-- <button @click="MenuPage(3)">返回调试</button>-->
+			<button @click="Test(2)">测试一下</button>
+			<button @click="toMainSale">主销售界面</button>
 
 
-		<div v-if="view.orders.showDetail"
-			style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
-			<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
-				<div style="height: 25px;">
-					<div @click="view.orders.showDetail = false"
-						style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
-						×</div>
-				</div>
-				<div style="display: flex;">
-					<div>
-						<span>
-							SALE001:
-						</span>
-						<pre>
-						{{ view.orders.sale1_string }}
-						</pre>
+			<div v-if="view.orders.showDetail"
+				style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
+				<div style="height: 100%;width: 100%;overflow-y: auto;position: relative;">
+					<div style="height: 25px;">
+						<div @click="view.orders.showDetail = false"
+							style="position: fixed;right: 0px;display: inline-block;padding: 6px;background-color: red;box-sizing: border-box;color: white;height: 25px;width: 25px;text-align: center;line-height: 12.5px;">
+							×</div>
 					</div>
-					<div>
-						<span>
-							SALE002:
-						</span>
-						<pre>
-						{{ view.orders.sale2_string }}
-						</pre>
-					</div>
-					<div>
-						<span>
-							SALE003:
-						</span>
-						<pre>
-						{{ view.orders.sale3_string }}
-						</pre>
+					<div style="display: flex;">
+						<div>
+							<span>
+								SALE001:
+							</span>
+							<pre>
+							{{ view.orders.sale1_string }}
+							</pre>
+						</div>
+						<div>
+							<span>
+								SALE002:
+							</span>
+							<pre>
+							{{ view.orders.sale2_string }}
+							</pre>
+						</div>
+						<div>
+							<span>
+								SALE003:
+							</span>
+							<pre>
+							{{ view.orders.sale3_string }}
+							</pre>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- 画布 -->
-		<view class="canvasdiv" :style="'visibility:hidden;'">
-			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+			</view>
 		</view>
 	</view>
 </template>
@@ -434,13 +440,11 @@
 					uni.navigateTo({
 						url: "/pages/mainSale/MainSale"
 					});
-				} 
-				else if (e == 7) {
+				} else if (e == 7) {
 					uni.navigateTo({
 						url: "../start/start"
 					});
-				}
-				else if (e == 8) {
+				} else if (e == 8) {
 					uni.navigateTo({
 						url: "../Reserve/Reserve",
 						complete: r => {
@@ -912,7 +916,8 @@
 				console.log("after:", this.sale2_arr)
 			},
 			Test: function(e) {
-				let sql = "insert into POS_TXFILE (TX_SQL,STOREID,POSID,TAB_NAME,STR1,BDATE,YW_NAME,CONNSTR) values(\"insert into SALE001 (CLTIME,CUSTID,XSPTID,YN_DCDG,YN_HH,DKFID,BMID,KCDID,DPID,GCID,GSID,STR2,STR1,ERRINO,ERRID,TIME,WEEK,MONTH,YAER,YN_SC,REASON,TDISC,TLSDISC,TTPDISC,TBZDISC,THYDISC,HYJF,CARDID,CUID,TCXDISC,CXTNET,CHANGENET,ROUND,BILLDISC,ZNET,DNET,TNET,TLINE,XS_GSID,XS_KHID,XS_DATE,XS_POSID,XS_BILL,XSTYPE,BILL_TYPE,RYID,BILL,POSID,KHID,SALETIME,SALEDATE,THTYPE,ZTMSTR,KQXSTYPE,YN_JLTH,YN_OK,CUSTMTIME,CUSTMCOMM,CUSTMADDRESS,CUSTMPHONE,CUSTMNAME) values(TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'),null,null,null,null,'80000000','80000000',null,null,null,'K200','K210BHD001',null,null,null,'0','0','0','0',null,null,'0','0','0','0','0',null,null,null,'0','0','0','0','0','189','189','189','1',null,null,null,null,null,null,'Z101',null,'K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),'1-宅配到家',null,null,null,null,null,null,'湖北省 武汉市 江岸区 武汉市  ','18572113862','测试');insert into SALE002 (SALEDATE,XPDGCOM,XPDGSTR,SBERR,YN_SB,MYSTR,SPJGZ,YN_XPDG,BMID,RYID,KCDID,DPID,GCID,STR2,STR1,TIME,WEEK,MONTH,YAER,HYJFCD,JFDISC,HYJF,LSDISC,TPDISC,BZDISC,HYDISC,YN_HYDISC,CXID,CXDISC,YN_CXDISC,BILLDISC,DISC_TYPE,DISC,YN_SKYDISC,HYBL,DISCRATE,BRANDID,HTID,GYSID,NET,OPRICE,PRICE,MINSQTY,QTY,UNIT,SERIAL,BARCODE,PLID,NO,SPID,BILL,POSID,KHID,SALETIME) values(TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),null,null,null,null,null,null,null,null,null,null,null,null,null,'樱桃诱惑12号-仟吉','0','0','0','0','0','0','0','0','0','0','0',null,null,'0',null,null,null,'0',null,'0','0',null,null,null,'189','189','189','0','1',null,null,'2001109010028','10901','0','000000001090100001','K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'));insert into SALE003 (SALEDATE,DISC,ZKLX,YN_ZQ,YN_ST,YN_JL,YN_LP,YN_YLTH,BMID,RYID,KCDID,DPID,GCID,CZK_AK,STR2,STR1,AUTH,TIME,WEEK,MONTH,YAER,SAVE_JE,SAVE_JEO,IDTYPE,ID,DSFKD,RATE,FAMT,AMT,FKID,NO,BILL,POSID,KHID,SALETIME) values(TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),null,null,'N','N','N','N',null,null,null,null,null,null,null,'Y','N',null,'0','0','0','0',null,null,'1',null,null,null,null,'189','ZG03','0','K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'));UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('2022-09-21', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = 'K200', SJTHGCID = 'K201', SJTHDPID = '11072', SJTHKCDID = 'D005', SJTHKHID = 'K200QTD005', SJTHPOSID = '1', SJTHBILL = 'K200QTD00522208120848161' WHERE bill ='K200QTD00522208120848161';\"\",\"K200QTD005\",\"2\",\"XS\",\"K200QTD00522208120848161\",DATETIME(\"2022-09-21 19:43:21\"),\"销售单据\",\"CONNSTRING\")";
+				let sql =
+					"insert into POS_TXFILE (TX_SQL,STOREID,POSID,TAB_NAME,STR1,BDATE,YW_NAME,CONNSTR) values(\"insert into SALE001 (CLTIME,CUSTID,XSPTID,YN_DCDG,YN_HH,DKFID,BMID,KCDID,DPID,GCID,GSID,STR2,STR1,ERRINO,ERRID,TIME,WEEK,MONTH,YAER,YN_SC,REASON,TDISC,TLSDISC,TTPDISC,TBZDISC,THYDISC,HYJF,CARDID,CUID,TCXDISC,CXTNET,CHANGENET,ROUND,BILLDISC,ZNET,DNET,TNET,TLINE,XS_GSID,XS_KHID,XS_DATE,XS_POSID,XS_BILL,XSTYPE,BILL_TYPE,RYID,BILL,POSID,KHID,SALETIME,SALEDATE,THTYPE,ZTMSTR,KQXSTYPE,YN_JLTH,YN_OK,CUSTMTIME,CUSTMCOMM,CUSTMADDRESS,CUSTMPHONE,CUSTMNAME) values(TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'),null,null,null,null,'80000000','80000000',null,null,null,'K200','K210BHD001',null,null,null,'0','0','0','0',null,null,'0','0','0','0','0',null,null,null,'0','0','0','0','0','189','189','189','1',null,null,null,null,null,null,'Z101',null,'K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'),TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),'1-宅配到家',null,null,null,null,null,null,'湖北省 武汉市 江岸区 武汉市  ','18572113862','测试');insert into SALE002 (SALEDATE,XPDGCOM,XPDGSTR,SBERR,YN_SB,MYSTR,SPJGZ,YN_XPDG,BMID,RYID,KCDID,DPID,GCID,STR2,STR1,TIME,WEEK,MONTH,YAER,HYJFCD,JFDISC,HYJF,LSDISC,TPDISC,BZDISC,HYDISC,YN_HYDISC,CXID,CXDISC,YN_CXDISC,BILLDISC,DISC_TYPE,DISC,YN_SKYDISC,HYBL,DISCRATE,BRANDID,HTID,GYSID,NET,OPRICE,PRICE,MINSQTY,QTY,UNIT,SERIAL,BARCODE,PLID,NO,SPID,BILL,POSID,KHID,SALETIME) values(TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),null,null,null,null,null,null,null,null,null,null,null,null,null,'樱桃诱惑12号-仟吉','0','0','0','0','0','0','0','0','0','0','0',null,null,'0',null,null,null,'0',null,'0','0',null,null,null,'189','189','189','0','1',null,null,'2001109010028','10901','0','000000001090100001','K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'));insert into SALE003 (SALEDATE,DISC,ZKLX,YN_ZQ,YN_ST,YN_JL,YN_LP,YN_YLTH,BMID,RYID,KCDID,DPID,GCID,CZK_AK,STR2,STR1,AUTH,TIME,WEEK,MONTH,YAER,SAVE_JE,SAVE_JEO,IDTYPE,ID,DSFKD,RATE,FAMT,AMT,FKID,NO,BILL,POSID,KHID,SALETIME) values(TO_DATE('2022-08-12','yyyy-MM-dd HH24:mi:ss'),null,null,'N','N','N','N',null,null,null,null,null,null,null,'Y','N',null,'0','0','0','0',null,null,'1',null,null,null,null,'189','ZG03','0','K200QTD00522208120848161','2','K200QTD005',TO_DATE('2022-08-12 08:48:16','yyyy-MM-dd HH24:mi:ss'));UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('2022-09-21', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = 'K200', SJTHGCID = 'K201', SJTHDPID = '11072', SJTHKCDID = 'D005', SJTHKHID = 'K200QTD005', SJTHPOSID = '1', SJTHBILL = 'K200QTD00522208120848161' WHERE bill ='K200QTD00522208120848161';\"\",\"K200QTD005\",\"2\",\"XS\",\"K200QTD00522208120848161\",DATETIME(\"2022-09-21 19:43:21\"),\"销售单据\",\"CONNSTRING\")";
 				db.get().executeDml(sql, "数据操作中", function(res2) {
 					console.log("成功:", res2);
 				}, function(err1) {
