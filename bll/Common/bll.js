@@ -3,6 +3,7 @@ import util from '@/utils/util.js';
 import db from '@/utils/db/db_excute.js';
 import dateformat from '@/utils/dateformat.js';
 import member_api from '@/api/hy/MemberInterfaces.js';
+import reserve from '@/api/business/extract.js';
 import {
 	Refund,
 	PaymentToRefundSALE001,
@@ -382,4 +383,27 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		result.data = err;
 	})
 	return result;
+}
+
+
+/**
+ * 根据经纬度坐标匹配裱花配送中心
+ */
+export const MatchDeliveryCenter = function(longitude,latitude) { //匹配裱花中心
+	let store = getApp().globalData.store;
+	let GSKHINFO = reserve.getGSKHINFO(store.GSID, store.KHID);
+	console.log("[MatchDeliveryCenter]获取到的GSKHINFO:", GSKHINFO);
+	return new Promise((resolve,reject) => {
+		reserve.MatchBHKH({
+			LONGITUDE: longitude,
+			LATITUDE: latitude,
+			GSKHINFO: GSKHINFO
+		}, res => {
+			console.log("[MatchDeliveryCenter]匹配结果:", res);
+			if (res.code) {
+				let data = JSON.parse(res.data);
+				resolve(data);
+			}
+		})
+	})
 }

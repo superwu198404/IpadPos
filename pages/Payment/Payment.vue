@@ -1627,8 +1627,8 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.toBePaidPrice());
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.toBePaidPrice()) === 0 || this
-						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.toBePaidPrice()) === 0 || this.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+						this.CanBack = false;
 						console.log("[BackPrevPage]单据数据:", {
 							sale1: this.sale1_obj,
 							sale2: this.sale2_arr,

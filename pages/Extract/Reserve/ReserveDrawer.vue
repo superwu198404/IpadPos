@@ -51,7 +51,8 @@
 						<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
 						<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
 						<label class="long" style="display: flex;padding-right: 70rpx;"><text>收货地址：</text>
-							<AddressPicker @change="AddressChange" :address="form.address.ADDRESS" style="flex:1" ></AddressPicker>
+							<AddressPicker @change="AddressChange" @catch="FirstAddressCatch"
+								:address="form.address.ADDRESS" style="flex:1"></AddressPicker>
 						</label>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea></textarea></label> -->
@@ -103,8 +104,12 @@
 
 <script>
 	import _extract from '@/api/business/extract.js';
+	import {
+		MatchDeliveryCenter
+	} from '@/bll/Common/bll.js'
 	import util from '@/utils/util.js';
 	import cx from '@/utils/cx/cxCount.js';
+import { resolve } from 'path';
 	export default {
 		name: "ReserveDrawer",
 		props: {
@@ -162,7 +167,8 @@
 						LONGITUDE: "", //经度
 						ADDRESS: "", //地址
 						ADDRID: "" //地址ID
-					}
+					},
+					catch: null
 				},
 				distribution: [],
 				details: {
@@ -211,29 +217,6 @@
 				this.view.address_edit = false;
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
 				this.form.address.NAME = this.details.info.CUSTMNAME;
-			},
-			MatchDecorativeCenter: function() {//匹配裱花中心
-				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
-				console.log("[MatchDecorativeCenter]获取到的GSKHINFO:", GSKHINFO);
-				_reserve.MatchBHKH({
-					LONGITUDE: this.details.info.LONGITUDE,
-					LATITUDE: this.details.info.LATITUDE,
-					GSKHINFO: GSKHINFO
-				}, res => {
-					console.log("[MatchDecorativeCenter]匹配结果:", res);
-					if (res.code) {
-						let data = JSON.parse(res.data);
-						if (data.over) {
-							util.simpleMsg(data.msg, "none");
-							this.details.info.STR2 = "";
-							that.index = 0;
-						} else {
-							util.simpleMsg("已匹配最近的配送中心", "none");
-							this.details.info.STR2 = data.khid;
-							that.$forceUpdate(); //刷新input的值 狗bug
-						}
-					}
-				})
 			},
 			GetDistributionCenter: function() { //获取配送中心
 				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
@@ -308,26 +291,57 @@
 				}
 				console.log("[RadioChange]标点更新...", address_info);
 			},
+			FirstAddressCatch: function(address_info) { //缓存首个地址信息
+				console.log("[FirstAddressCatch]已获取首个地址缓存信息:", address_info);
+				this.form.catch = address_info;
+			},
 			AddressChange: function(data) {
 				console.log("[AddressChange]地址为:", data);
 				this.form.address.ADDRESS = data.address;
 				this.form.address.LONGITUDE = data.adrjd; //经度
 				this.form.address.LATITUDE = data.adrwd; //纬度
 			},
-			AddressVaild: function() {
+			AddressVaild:async function() {
 				if (!this.form.address.NAME) {
 					util.simpleMsg("收货人不能为空!", 'none');
 					return false;
 				}
+				if(!this.form.address.LONGITUDE && !this.form.address.LATITUDE){//如果经纬度为空
+					console.log("[AddressVaild]检测到经纬度为空,自动采用缓存地址信息:",this.form.catch);
+					if(!this.form.catch || !this.form.catch.adrjd && !this.form.catch.adrwd){//可能是未获取到经纬度信息
+						this.form.catch = await new Promise(util.callBind(this, function(resolve,reject){
+							let overtimer = null;
+							uni.$once('catch',util.callBind(this,function(catch_info){//监听缓存数据获取
+								console.log("[AddressVaild]已获取到查询缓存信息:",catch_info);
+								if(overtimer != null) clearTimeout(overtimer);//避免失败通知
+								resolve(catch_info);
+							}));
+							overtimer = setTimeout(util.callBind(this,function(){
+								console.log("[AddressVaild]获取缓存信息超时...");
+								resolve(null);
+							}),5000);
+						}));
+					}
+					console.log("[AddressVaild]获取到的缓存信息:",this.form.catch);
+					if(!this.form.catch) {
+						util.simpleMsg("未能获取地址信息!",true)
+						console.log("[AddressVaild]未能获取到地址详细信息!");
+						return false;
+					};
+					this.form.address.ADDRESS = this.form.catch.address ?? this.form.catch.address;
+					this.form.address.LONGITUDE = this.form.catch.adrjd;
+					this.form.address.LATITUDE = this.form.catch.adrwd;
+					console.log("[AddressVaild]现有地址信息:",this.form.address);
+				}
 				return true;
 			},
-			EditAddress:function(address){
+			EditAddress: function(address) {
 				this.view.address_edit = true;
 				this.view.add_address = true;
-				Object.assign(this.form.address,address);
+				Object.assign(this.form.address, address);
 			},
-			ChangeCustomerAddress: function() {
-				if (this.AddressVaild())
+			ChangeCustomerAddress:async function() {
+				if (await this.AddressVaild())
 					_extract.ConfirmADDR(Object.assign(this.form.address, {
 						ACT: this.view.address_edit ? "Edit" : "Add"
 					}), util.callBind(this, function(res) {

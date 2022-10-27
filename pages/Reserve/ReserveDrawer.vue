@@ -34,7 +34,7 @@
 				</label>
 				<label><text>*提货时间：</text>
 					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" fields="time" position="bottom" get-container="#picker" @change="timeChange">
+					<picker mode="time" fields="time" position="bottom" get-container="#picker" :value="Order.TH_TIME" @change="timeChange">
 						<view>{{Order.TH_TIME}}</view>
 					</picker>
 					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -164,6 +164,7 @@
 				LimitDate: '2000-01-01',
 				LimitTime: '00:00',
 				ShowAllAddressList: false,
+				CatchAddress: null,
 				Products: [{
 					PLID: "109",
 					SPID: "10101022",
@@ -258,9 +259,11 @@
 				// if (obj1 && obj1.POSCSNR) {
 				// 	that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
 				// }
+				console.log("[ReserveDrawer]获取系统参数配置...");
 				let obj = util.getStorage("sysParam");
 				if (obj && obj.YDZXJG) {
 					that.YDJGSJ = obj.YDZXJG * 60; //小时化分
+					console.log("[ReserveDrawer]最短销售间隔:",that.YDJGSJ);
 				}
 				this.showReserve();
 				this.Order.ZNET = this.sale?.ZNET || 0; //从外部接收整单金额
@@ -496,10 +499,12 @@
 					util.simpleMsg("电话为空", true);
 					return;
 				}
-				// if (!that.ADDR.NAME) { 
-				// 	util.simpleMsg("联系人为空", true);
-				// 	return;
-				// }
+				if (!that.ADDR.LONGITUDE && !that.ADDR.LATITUDE) { 
+					console.log("[ConfirmADDR]缓存地址:", this.CatchAddress);
+					that.ADDR.ADDRESS = that.ADDR.ADDRESS ?? this.CatchAddress.address;
+					that.ADDR.LONGITUDE = this.CatchAddress.adrjd;
+					that.ADDR.LATITUDE = this.CatchAddress.adrwd;
+				}
 				if (!that.ADDR.ADDRESS) {
 					util.simpleMsg("地址信息为空", true);
 					return;
@@ -531,13 +536,16 @@
 					Areaid: obj.areaid,
 					key: obj.key
 				}, res => {
-					console.log("高德地址查询:", res);
+					console.log("[SearchMapAddr]高德地址查询:", res);
 					if (res.code) {
 						that.AddrArr = JSON.parse(res.data);
+						if(that.AddrArr && that.AddrArr.length && that.AddrArr.length > 0){
+							this.CatchAddress = that.AddrArr[0];
+							console.log("[SearchMapAddr]储存缓存地址:",this.CatchAddress);
+						}
 					}
 				})
 			},
-
 			//选中地址
 			chooseAddr: function(e) {
 				if (e) {
@@ -636,14 +644,17 @@
 			//用户信息确定
 			Confirm: () => {
 				console.log("预定信息：", that.Order);
-				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
 				let hour_minute = hour.toString().padStart(2,0)+minute.toString().padStart(2,0);
+				let mix_time_interval = new Date().SetHours(8).SetMinutes(Number(that.YDJGSJ));//获取提货最短时间间隔
 				console.log("[Confirm]时间参数:",{
 					current:hour_minute,
 					stime:that.STIME,
-					etime:that.ETIME
+					etime:that.ETIME,
+					mix_interval: mix_time_interval,
+					extract_date: th_date
 				});
 				console.log("[Confirm]门店信息:",{
 					current_store:that.KHID,
@@ -651,6 +662,10 @@
 				});
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
+					return;
+				}
+				if(th_date < mix_time_interval){
+					util.simpleMsg(`提货时间小于最小提货时间间隔(最小间隔:${that.YDJGSJ} 分钟)`, true);
 					return;
 				}
 				if (that.Order.THKHID != that.KHID) {//判断提货门店id是否是当前门店，如果不是则是异店提货，异店提货时候定金必须是全额
@@ -668,7 +683,7 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute) && Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {//自提
+				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute)) && !(Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {//自提
 					console.log("[Confirm]时间限制:",{
 						start_time:that.STIME,
 						end_time:that.ETIME
