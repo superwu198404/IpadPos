@@ -193,8 +193,8 @@ var dataInit = async function(pm_initType) {
 			});
 			let tx004 = Req.getResData(res);
 			let red
-			console.log("进行通讯的004回调成功" + JSON.stringify(tx004 ).substring(0,200));
-			//根据001循环创建表，并生成初始化语句
+     			//console.log("进行通讯的004回调成功" + JSON.stringify(tx004 ).substring(0,200));
+			  //根据001循环创建表，并生成初始化语句
 			tx001.forEach(function(item) {
 				let arr004 = tx004.filter((item4) => {
 					return item4.TABNAME == item.TABNAME
@@ -210,12 +210,16 @@ var dataInit = async function(pm_initType) {
 					}
 					return ret_Sql;
 				});
-				if (pm_initType == "reloadsqlite") {
+				if (pm_initType == "reloadsqlite") 
+				{
 					if (new004.length > 0) //存在数据说明这里有初始化的内容
 					{
-						sql.push("drop table  " + item.TABNAME);
+						let sqldrop = "drop table  " + item.TABNAME;
+						console.log("删除一天数据"+ sqldrop+"建表的语句"+item.DDLSTR);
+						sql.push(sqldrop);
+						sql.push(item.DDLSTR);
 					}
-					sql.push(item.DDLSTR);
+					
 				}
 				//console.log("加载了............"+ JSON.stringify( new004.length));
 				sql = sql.concat(new004);
@@ -224,8 +228,8 @@ var dataInit = async function(pm_initType) {
 			return Req.resObj(true, "即将完成...", sql);
 		},
 		async (res) => {
-				console.log("数据库通讯结果：" + JSON.stringify(res.data));
-				// console.log("重建数据的sql:", res.data);
+				    //console.log("数据库通讯结果：" + JSON.stringify(res.data));
+			 	// console.log("重建数据的sql:", res.data);
 				let x = await db.get().executeSqlArray(res.data, "开始创建数据库",
 					(resks) => {
 						console.log("执行语句成功" + resks.data.length);
