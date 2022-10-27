@@ -1349,6 +1349,8 @@ function GetSale(global, vue, target_name, uni) {
 			r.LSDISC = 0; //zk
 			r.TPDISC = 0; //zk
 		});
+		this.CXHDArr = []; //
+		this.ZKHDArr = []; //清除一下已生效的活动数据
 		this.score_info.money = 0;
 		this.score_info.score = 0;
 	})
@@ -2883,16 +2885,22 @@ function GetSale(global, vue, target_name, uni) {
 
 	this.BanPayType = function(list) {
 		console.log("[BanPayType]被禁止类型:", list);
+
+		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
+			if (!this.sale001.CUID) {
+				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
+				if (pay_info)
+					ban_pay.push(pay_info.fkid);
+			}
 			list.forEach(i => {
 				ban_pay = ban_pay.concat(i.NOTFKID?.split(','));
 			});
 			this.ban_type = Array.from(new Set(ban_pay));
 			console.log("[BanPayType]存在禁止类型...", this.ban_type);
-		} else {
+		} else { //特殊折扣只允许 这两种支付方式
 			console.warn("[BanPayType]折扣禁止支付方式处理!");
-			let PayWayList = util.getStorage("PayWayList");
 			console.log("[BanPayType]禁止类型1:", PayWayList);
 			let arr = PayWayList.filter(r => {
 				return r.type != "WXZF" && r.type != "TL"
