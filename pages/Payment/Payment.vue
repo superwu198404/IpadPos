@@ -1481,7 +1481,7 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
-					this.ExistsAllowScore();
+					// this.ExistsAllowScore();//上一页面处理
 					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
 					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
@@ -1649,7 +1649,8 @@
 				if (this.CanBack) {
 					console.log("[BackPrevPage]待支付金额:", this.toBePaidPrice());
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
-					if (Number(this.toBePaidPrice()) === 0 || this.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+					if (Number(this.toBePaidPrice()) === 0 || this
+						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.CanBack = false;
 						console.log("[BackPrevPage]单据数据:", {
 							sale1: this.sale1_obj,
