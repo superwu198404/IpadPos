@@ -23,43 +23,11 @@
 								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
-						<!-- <NoData v-if="WMOrders.length==0"></NoData> -->
-						 <!-- v-else -->
-						<view class="products">
+						<NoData v-if="WMOrders.length==0"></NoData>
+						<view class="products" v-else>
 							<view class="procycle">
-								<view class="li" :class="curIndex === index? 'curr':' '"
-									 @click="ShowDetail(item,index)">
-									<view class="h3">
-										<view class="platform">
-											<label>
-												<!-- <image v-if="item.XSPTID=='ELM'" src="@/images/wmd-eleme.png"
-													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='MEITUAN'" src="@/images/wmd-meituan.png"
-													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='YOUZAN'" src="@/images/wmd-youzan.png"
-													mode="widthFix"></image> -->
-												svdv
-											</label>
-											<!-- <label class="state jiedan"
-												v-if="item.STATUS==12"><text>●</text>{{item.STR3}}</label>
-											<label class="state quxiao" v-else><text>●</text>{{item.STR3}}</label> -->
-										</view>
-										<view>￥43</view>
-									</view>
-									<view class="cods">
-										<label><text>流水号：</text><text>wefer234</text></label>
-										<label><text>提货时间：</text><text>2345333</text></label>
-										<!-- <label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
-										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
-										<label><text>备注：</text><text>{{item.STR1}}</text></label> -->
-									</view>
-									<view class="address">
-										订单类型：2345
-									</view>
-								</view>
-															
 								<!-- 外卖单循环 -->
-								<!-- <view class="li" :class="curIndex === index? 'curr':' '"
+								<view class="li" :class="curIndex === index? 'curr':' '"
 									v-for="(item,index) in WMOrders" :order="item" @click="ShowDetail(item,index)">
 									<view class="h3">
 										<view class="platform">
@@ -81,16 +49,16 @@
 									<view class="cods">
 										<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
 										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
-										
+										<!-- <label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
+										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
+										<label><text>备注：</text><text>{{item.STR1}}</text></label> -->
 									</view>
 									<view class="address">
 										订单类型：{{item.GSID}}
 									</view>
 								</view>
-							 -->
 							</view>
-							 <!-- v-if="WMOrders.length>0" -->
-							<view class="details">
+							<view class="details" v-if="WMOrders.length>0">
 								<view class="detinfo">
 									<view class="member">
 										<label>

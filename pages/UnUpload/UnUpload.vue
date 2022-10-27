@@ -38,8 +38,10 @@
 								<label><text>单据类型</text>{{item.YW_NAME}}</label>
 							</view>
 						</view>
-						<label class="eventdate">单据日期：<text>{{item.BDATE}}</text><button
-								@click="Upload(item)">上传</button></label>
+						<view class="eventdate">
+							<label>单据日期：<text>{{item.BDATE}}</text></label>
+							<button class="btn" @click="Upload(item)">上传</button>
+						</view>
 					</view>
 				</view>
 
@@ -93,30 +95,22 @@
 						util.simpleMsg("刷新成功");
 					}
 				})
-			},
-			//单据上传
-			Upload: function(e) {
-				if (e) {
-					common.TransLite(e.STR1); //直接传输数据
-				}
 			}
 		}
 	}
 </script>
 
 <style>
-	.products {
-		height: 92%;
-		overflow: auto;
-	}
-
-	.hh {
+.products{
+	height:92%;
+	overflow: auto;
+}
+.hh{
 		padding-right: 100rpx;
 	}
-
-	.hh .close {
-		background: none;
-		padding: 0;
+	.hh .close{
+		background:none;
+		padding:0;
 		color: #333;
 		top: 12rpx;
 		right: 1%;

@@ -1741,6 +1741,7 @@ function GetSale(global, vue, target_name, uni) {
 				this.base.HY.cval = {};
 				store.DKFID = this.Defval;
 				store.DKFNAME = '默认大客户';
+				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 			} else {
 				this.cval = newval;
 				that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员

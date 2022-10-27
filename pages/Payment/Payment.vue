@@ -195,14 +195,15 @@
 								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
 								<view class="tits" :class="{seltss:item.yn_use == 'Y'}">
-									<p>{{item.name}}</p>
+									<p v-if="item.yn_use == 'Y'">{{item.name}}</p>
+									<p v-else>{{item.name}}<span style="font-size: 12px;">(禁用)</span></p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 							</view>
 						</view>
 
 					</view>
-					</p>
+					<!-- </p> -->
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
 				</view>
 			</view>
@@ -428,12 +429,13 @@
 						}
 					}
 				} else { //完成支付，推送数据
-					console.log("[Watch-dPayAmount]完整支付金额:",amount_include_negative_number);
-					if (amount_include_negative_number >= 0) {//避免券类的支付出现提前完成导致放弃金额未被记录的问题（未被记录则会变成负数）
+					console.log("[Watch-dPayAmount]完整支付金额:", amount_include_negative_number);
+					if (amount_include_negative_number >= 0) { //避免券类的支付出现提前完成导致放弃金额未被记录的问题（未被记录则会变成负数）
 						var that = this;
 						this.YN_TotalPay = true;
 						this.CanBack = true;
-						console.log("[Watch-dPayAmount]Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						console.log("[Watch-dPayAmount]Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this
+							.sale3_arr);
 						this.createOrders(true);
 					}
 				}
@@ -1106,7 +1108,7 @@
 						promises.push(res)
 					} else {
 						util.simpleMsg("支付方式不存在!", true);
-						if(this.RefundList.length === 0) this.CanBack = true; //锁定退出
+						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
@@ -1156,6 +1158,7 @@
 			//支付类型判断
 			PayTypeJudgment: function() {
 				let curPayType = "";
+				console.log("二维码：", this.authCode);
 				let startCode = this.authCode.substring(0, 2);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
@@ -1234,7 +1237,11 @@
 			},
 			//支付后创建支付记录
 			orderGenarator: function(payload, type, result, fail, type_info) {
-				console.log("[OrderGenarator]生成订单类型：", { type:this.currentPayType,payload,result});
+				console.log("[OrderGenarator]生成订单类型：", {
+					type: this.currentPayType,
+					payload,
+					result
+				});
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
 				let paid_amount = fail ? 0 : ((function() {
@@ -1245,7 +1252,8 @@
 						if (coupon.length > 0) {
 							console.log("[OrderGenarator]券 payload.money：", payload.money)
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result.vouchers[0].denomination) / 100;
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+								.vouchers[0].denomination) / 100;
 						} else {
 							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
@@ -1264,12 +1272,14 @@
 				if (result) {
 					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 						result.vouchers.forEach((function(coupon, index) {
-							try{
-								let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
+							try {
+								let excessInfo = this.PayWayList.find(item => item.fkid == coupon
+									.fkid); //放弃金额
 								console.log("[OrderGenarator]卡券：", coupon)
 								this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 									amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
-										(coupon.note === 'EXCESS' ? -coupon.pay_amount :
+										(coupon.note === 'EXCESS' ? -coupon
+											.pay_amount :
 											coupon.denomination)) / 100).toFixed(2),
 									fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
 										coupon?.fkid,
@@ -1278,7 +1288,8 @@
 									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
 									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
-									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
+										.note ===
 										'EXCESS' ? coupon.fkid : coupon.disc_type),
 									disc: (coupon?.discount / 100)?.toFixed(2),
 									fail,
@@ -1290,8 +1301,8 @@
 								}, result, type_info));
 								this.used_no.push(payload.no);
 								payload.no++;
-							} catch(e){
-								console.warn("[OrderGenarator]券信息生成异常:",e);
+							} catch (e) {
+								console.warn("[OrderGenarator]券信息生成异常:", e);
 							}
 						}).bind(this));
 						console.log("[OrderGenarator]卡、券支付列表:", this.PayList);
@@ -1443,7 +1454,10 @@
 			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
 				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage('PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
-				console.log("[PayWayListInit]支付方式:", { all:util.getStorage('PayWayList'),catch:uni.getStorageSync('PayWayList')});
+				console.log("[PayWayListInit]支付方式:", {
+					all: util.getStorage('PayWayList'),
+					catch: uni.getStorageSync('PayWayList')
+				});
 				this.PayWayList = pay_way_list.map(i => {
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
@@ -1613,13 +1627,21 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(r, e) {
+				console.log("选择的支付类型：", r);
+				console.log("选择的支付类型1：", e);
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
-					this.currentPayType = e.currentTarget.id; //小程序
-
-				}
-				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
-					this.currentPayType = e.currentTarget.id; //小程序
+				// if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
+				// 	this.currentPayType = e.currentTarget.id; //小程序
+				// }
+				if (this.is_poly) {
+					this.currentPayType = e.currentTarget.id; //聚合支付
+				} else {
+					if (r.yn_use == 'Y') {
+						this.currentPayType = e.currentTarget.id; //可使用的支付方式
+					} else {
+						this.is_poly = true; //聚合支付复位
+						util.simpleMsg("该支付方式已禁用", "none");
+					}
 				}
 			},
 			//返回上个页面

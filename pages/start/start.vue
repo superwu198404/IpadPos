@@ -19,7 +19,7 @@
 			</view>
 			<view class="operate">
 				<button class="btn" @click="init">初始化</button>
-				<button @click="toDbqry">数据查看</button>
+				<!-- <button @click="toDbqry">数据查看</button> -->
 			</view>
 		</view>
 

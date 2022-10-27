@@ -24,7 +24,7 @@
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">·
-										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}折；
+										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(2)}}折；
 											折扣额：<text>￥{{item.ZKNET}};</text></span>
 									</label>
 								</view>
@@ -36,7 +36,7 @@
 									</label>
 									<view class="zhekou" style="margin-top:0;border:none;">
 										<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：￥{{item.ZKNET}};</text>
+											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：￥{{item.ZKNET}};</text>
 										</label>
 									</view>
 								</view>
@@ -52,7 +52,7 @@
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in DKFZKDatas">·
-										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(1)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
+										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
 								</view>
 							</view>
 						</view>
@@ -238,12 +238,12 @@
 					console.log("444444:", sortArr1);
 					if (sortArr.length > 0) { //追加标准折扣规则
 						let obj = sortArr[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						pushArr.push(obj);
 					}
 					if (sortArr1.length > 0) { //追加标准折扣规则
 						let obj = sortArr1[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						pushArr.push(obj);
 					}
 					let sortArr2 = arr2.filter(r => {
@@ -252,7 +252,7 @@
 					console.log("55555:", sortArr2);
 					if (sortArr2.length > 0) { //追加标准折扣规则
 						let obj = sortArr2[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
+						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						pushArr1.push(obj);
 					}
 				})
@@ -262,7 +262,7 @@
 					pushArr.map(r => {
 						anet += r.ZKNET;
 					})
-					that.totalDisc = Number(anet.toFixed(2));
+					that.totalDisc = Number(anet.toFixed(1));
 				}
 				console.log("合并后的折扣规则1：", pushArr);
 				if (pushArr1.length > 0) {
@@ -270,57 +270,10 @@
 					pushArr1.map(r => {
 						anet += r.ZKNET;
 					})
-					that.totalDiscDKF = Number(anet.toFixed(2));
+					that.totalDiscDKF = Number(anet.toFixed(1));
 				}
 				that.ZKDatas = pushArr;
 				that.DKFZKDatas = pushArr1;
-			},
-			//计算满足折扣规则的商品以及对应折扣额 大客户
-			CalProZK1: function() {
-				console.log("商品信息：", this.product);
-				let TNET = 0;
-				let jgzArr = []; //商品价格组集合
-				this.product.map(r => {
-					if (!jgzArr.find(r1 => {
-							return r1.SPJGZ == r.SPJGZ
-						})) {
-						let a = this.product.filter(r2 => {
-							return r2.SPJGZ == r.SPJGZ;
-						});
-						let aa = 0;
-						a.map(r4 => {
-							aa += Number((r4.OPRICE * r4.QTY).toFixed(2)); //修改为由原价计算 防止促销生效后 net改变了;
-						});
-						let obj = {
-							SPJGZ: r.SPJGZ,
-							TNET: aa
-						};
-						jgzArr.push(obj);
-					}
-				})
-				console.log("商品价格组信息：", jgzArr);
-				let arr = that.DKFZKDatas;
-				let pushArr = [];
-				jgzArr.map(r1 => {
-					let sortArr = arr.filter(r => {
-						return r.ZKSTR == r1.SPJGZ;
-					})
-					console.log("222222:", sortArr);
-					if (sortArr.length > 0) { //追加标准折扣规则
-						let obj = sortArr[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(2));
-						pushArr.push(obj);
-					}
-				})
-				console.log("合并后的折扣规则1：", pushArr);
-				if (pushArr.length > 0) {
-					let anet = 0;
-					pushArr.map(r => {
-						anet += r.ZKNET;
-					})
-					that.totalDiscDKF = Number(anet.toFixed(2));
-				}
-				that.DKFZKDatas = pushArr;
 			},
 			//计算商品信息折扣信息 
 			CalProduct: function() {
