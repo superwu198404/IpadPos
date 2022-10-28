@@ -581,10 +581,10 @@
 
 			//获取外卖袋数据
 			GetWMDData: function(b, d) {
+				that.yn_wmd = true;
 				_take.GetWMDData(b, d, res => {
 					console.log("外卖袋数据：", res);
 					if (res.code && res.msg.length > 0) {
-						that.yn_wmd = true;
 						that.WMDDATA = res.msg;
 						that.WMDDATA.forEach((item, index, arr) => {
 							if (arr.length == 1) {
@@ -594,6 +594,7 @@
 							}
 						})
 					} else { //没有外卖袋的时候 直接进行积分上传和打印
+						that.yn_wmd = false;
 						that.UpAndPrint();
 					}
 				})
