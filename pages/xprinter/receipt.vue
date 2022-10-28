@@ -156,7 +156,8 @@
 				//输出日志
 				console.log("线上订单打印接收数据 sale1_obj", order);
 				console.log("线上订单打印控制参数 print", print);
-
+				
+				that.printerNum = 1;
 				let dateNow = xprinter_util.getTime(3);
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
@@ -228,6 +229,8 @@
 
 				if(print != null && type == "WMTHBS"){
 					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
+				}else{
+					that.printerNum = 1;
 				}
 
 				let dateNow = xprinter_util.getTime(3);
@@ -299,6 +302,7 @@
 				//console.log("销售打印控制参数 print", print);
 				console.log("销售打印接收数据 sale3_arr", sale3_arr);
 
+				that.printerNum = 1;
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
@@ -365,6 +369,8 @@
 				
 				if(print != null && xprinter_util.snvl(print.XSTYPE,"") == "YD"){
 					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
+				}else{
+					that.printerNum = 1;
 				}
 				
 				//查询终端参数
@@ -435,6 +441,8 @@
 			    
 			    if(print != null){
 					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
+				}else{
+					that.printerNum = 1;
 				}
 			    
 				//查询终端参数
