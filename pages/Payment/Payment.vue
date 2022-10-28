@@ -1071,40 +1071,50 @@
 							refundInfo.fail = false;
 						}
 						refundInfo.refunding = true; //标记为正在退款的状态
-						let res = _pay.RefundAll(payWayType, {
-								out_trade_no: refundInfo.bill, //单号
-								out_refund_no: refund_no + `_${index}`, //退款单号
-								refund_money: (Math.abs(Number(total || refundInfo.amount) * 100))
-									.toFixed(0), //退款金额
-								total_money: (Math.abs(Number(total || refundInfo.amount) * 100))
-									.toFixed(0), //退款总金额（兼容微信）
-								point: refundInfo.origin.BMID //兼容积分抵现返还积分
-							}, (function(err) { //如果发生异常（catch）
-								// util.simpleMsg(err.msg, true, err);
-								refundInfo.fail = true;
-								console.log("[Refund-退款]退款失败:", err);
-								util.simpleModal("退款失败", err.msg);
-							}).bind(that),
-							(function(res) { //执行完毕（finally），退款次数 +1
-								console.log("[Refund-退款]Finally:", res);
-								refundInfo.refund_num += 1; //发起请求默认加1
-								refundInfo.refunding = false; //标记为已经结束退款操作
-								this.RefundList = Object.assign([], this.RefundList) //刷新视图
-							}).bind(that),
-							(function(ress) { //执行完毕（results），根据结果判断
-								console.log("[Refund-退款]Results:", ress);
-								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+						let res = new Promise(util.callBind(this, function(resolve, reject) {
+							_pay.RefundAll(payWayType, {
+									out_trade_no: refundInfo.bill, //单号
+									out_refund_no: refund_no + `_${index}`, //退款单号
+									refund_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100))
+										.toFixed(0), //退款金额
+									total_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100))
+										.toFixed(0), //退款总金额（兼容微信）
+									point: refundInfo.origin.BMID //兼容积分抵现返还积分
+								}, (function(err) { //如果发生异常（catch）
+									// util.simpleMsg(err.msg, true, err);
 									refundInfo.fail = true;
-									refundInfo.msg = ress[1].msg; //错误提示信息记录
-								} else {
-									refundInfo.fail = false;
-									if (current_refund_exists_only_code) { //是否带唯一码
-										groups[refundInfo.group].forEach(g => g.fail = false);
-										console.log("groups[refundInfo.group]", groups[refundInfo
-											.group]);
+									console.log("[Refund-退款]退款失败:", err);
+									util.simpleModal("退款失败", err.msg);
+									resolve();//结束状态
+								}).bind(that),
+								(function(res) { //执行完毕（finally），退款次数 +1
+									console.log("[Refund-退款]Finally:", res);
+									refundInfo.refund_num += 1; //发起请求默认加1
+									refundInfo.refunding = false; //标记为已经结束退款操作
+									this.RefundList = Object.assign([], this.RefundList) //刷新视图
+									resolve();//结束状态
+								}).bind(that),
+								(function(ress) { //执行完毕（results），根据结果判断
+									console.log("[Refund-退款]Results:", ress);
+									if (!ress[1]
+										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+										refundInfo.fail = true;
+										refundInfo.msg = ress[1].msg; //错误提示信息记录
+									} else {
+										refundInfo.fail = false;
+										if (current_refund_exists_only_code) { //是否带唯一码
+											groups[refundInfo.group].forEach(g => g
+												.fail = false);
+											console.log("groups[refundInfo.group]",
+												groups[refundInfo
+													.group]);
+										}
 									}
-								}
-							}).bind(that));
+									resolve();//结束状态
+								}).bind(that));
+						}));
 						promises.push(res)
 					} else {
 						util.simpleMsg("支付方式不存在!", true);
@@ -1112,10 +1122,10 @@
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
-				Promise.all(promises).then((res) => {
+				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
 					this.CheckActionComplet();
-				})
+				}))
 			},
 			//创建订单对象列表
 			createOrders: function(is_success) {
