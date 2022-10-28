@@ -671,7 +671,7 @@ var ManualDiscount = function(sale1, sale2_arr) {
 		item.DISCRATE = Number((item.DISCRATE + SKYDISCOUNT).toFixed(2));
 		item.CXDISC = Number((item.CXDISC + SKYDISCOUNT).toFixed(2));
 		item.YN_SKYDISC = SKYDISCOUNT > 0 ? "Y" : "N"; //是否有手工折扣
-		item.DISC = Number(Number(Number(item.DISC) + SKYDISCOUNT).toFixed(2));
+		// item.DISC = Number((item.DISC + SKYDISCOUNT).toFixed(2));  //22.10.28 应wy要求不累加手工折扣的值，reason不详！
 	});
 	Arr = arr.concat(arr1);
 	console.log("排除售价为0的商品分摊集合：", Arr);
