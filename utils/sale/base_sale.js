@@ -103,9 +103,21 @@ var XsTypeObj = {
 			this.createNewBill(); //创建新的sale001
 			this.sale001.XSTYPE = 1;
 
+			if (this.sale001.TNET == 0) {
+				this.payed = [];
+				this.payed.push(Sale3ModelAdditional(Sale3Model({
+					fkid: 'ZF01',
+					type: 'XJ',
+					bill: this.sale001.BILL,
+					name: "现金",
+					amount: 0
+				}), { //业务配置字段（支付状态设定为成功）
+					fail: false, //定金显示为成功
+					show: false
+				}));
+			}
 			console.log("[Sale]新单据生成完毕!", this.sale001);
 			this.PayParamAssemble();
-			//可以使用的支付方式 
 			return true;
 		},
 		//支付完成之前销售单之前
