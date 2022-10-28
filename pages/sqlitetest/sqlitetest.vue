@@ -114,10 +114,10 @@
 			onLoad() {
 				console.log("load")
 				this.sql = "select * from sale001";
-				console.log(this.sql)
+				this.qry(this.sql);
+				console.log("默认sql:", this.sql);
 			},
 			adddata() {
-
 				let addnum = 100;
 				if (this.mydata.length >= this.alldata.length) {
 					return;

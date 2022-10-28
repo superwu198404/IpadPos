@@ -194,7 +194,7 @@
 					</view>
 					<view class="confirm">
 						<button class="btn" @click="ConfirmWMD()">确 认</button>
-						<button class="btn btn-xk" @click="Close()">跳 过</button>
+						<button class="btn btn-xk" @click="Close(1)">跳 过</button>
 					</view>
 				</view>
 			</view>
@@ -581,10 +581,10 @@
 
 			//获取外卖袋数据
 			GetWMDData: function(b, d) {
-				that.yn_wmd = true;
 				_take.GetWMDData(b, d, res => {
 					console.log("外卖袋数据：", res);
-					if (res.code) {
+					if (res.code && res.msg.length > 0) {
+						that.yn_wmd = true;
 						that.WMDDATA = res.msg;
 						that.WMDDATA.forEach((item, index, arr) => {
 							if (arr.length == 1) {
@@ -593,6 +593,8 @@
 								item.BQTY = 0;
 							}
 						})
+					} else { //没有外卖袋的时候 直接进行积分上传和打印
+						that.UpAndPrint();
 					}
 				})
 			},
@@ -659,27 +661,31 @@
 				_take.ConfirmLY(obj, bill, common.ywTypeEnum.QTLY, res => {
 					console.log("领用本地操作结果：", res);
 					if (res.code) {
-						//先上传积分
-						if (that.js_res.pay_data && that.js_res.pay_data.length > 0) {
-							if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
-								console.log("有赞接单后调用积分上传接口:")
-								that.JFConsume(that.js_res.pay_data, that.Order.YZID);
-							}
-						}
-						util.simpleMsg("接收成功");
-						//后打印
-						if (that.js_res.yn_print) {
-							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							let printerPram = {
-								"PRINTNUM": 2
-							};
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
-								printerPram, that
-								.bs_Reason, that.bs_Note, "");
-						}
+						that.UpAndPrint();
 					}
 					that.Close();
 				});
+			},
+			//上传积分和打印
+			UpAndPrint: function() {
+				//先上传积分
+				if (that.js_res.pay_data && that.js_res.pay_data.length > 0) {
+					if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
+						console.log("有赞接单后调用积分上传接口:")
+						that.JFConsume(that.js_res.pay_data, that.Order.YZID);
+					}
+				}
+				util.simpleMsg("接收成功");
+				//后打印
+				if (that.js_res.yn_print) {
+					let wm_type = that.yn_bs ? "WMTHBS" : "WM";
+					let printerPram = {
+						"PRINTNUM": 2
+					};
+					that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
+						printerPram, that
+						.bs_Reason, that.bs_Note, "");
+				}
 			},
 			//列表刷新
 			Refresh: function() {
@@ -690,7 +696,10 @@
 				}, 1000);
 			},
 			//退出
-			Close: function() {
+			Close: function(e) {
+				if (e) { //外卖袋 跳过后 直接调用积分上传和打印
+					that.UpAndPrint();
+				}
 				that.yn_bs = false;
 				that.yn_wmd = false;
 				//刷新列表
