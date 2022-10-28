@@ -1205,9 +1205,9 @@
 				let pt = this.PayTypeJudgment();
 				console.log("[PayHandle]当前支付集合：", this.PayList);
 				console.log("[PayHandle]当前支付类型：", pt);
-				//如果被限制了 则进行判断是否有过支付
+				//如果被限制了 则进行判断是否有过支付 且排除
 				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
-						.type == pt)) {
+						.type == pt && r.show)) { //显示时才参与判断
 					util.simpleMsg("请更换支付方式!", true);
 					this.authCode = '';
 					return;

@@ -764,7 +764,7 @@ var GetPTOrder = function(e, b, d, t, func) {
 	let str = "";
 	str += b ? " and BILL like '%" + b + "%'" : "";
 	str += e ? " and KHID='" + e + "'" : "";
-	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE)>=date('now')";
+	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
 	str += t ? " and XSTYPE ='" + t + "'" : "";
 	let sql = "SELECT * from SALE001 where 1=1" + str;
 	console.log("查询条件：", sql);

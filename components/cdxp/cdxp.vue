@@ -264,11 +264,7 @@
                         return "销售";
                     	break;
 					case "2":
-					    if(bill_type = "Z154"){
-							return "赊销退货";
-						}else{
-							return "销售退货";
-						}
+						return "销售退货";
 						break;
                     case "3":
                         return "预定";
@@ -298,7 +294,7 @@
 			}
 		},
 		mounted() {
-		    this.xstypes = [{"TYPE": 0 , "NAME":"外卖订单"},{"TYPE": 1 , "NAME":"销售"},{"TYPE": 2, "NAME":"销售退货"},{"TYPE": 3, "NAME":"预定"},{"TYPE": 4, "NAME":"预定取消"},{"TYPE": 5, "NAME":"预定提取"},{"TYPE": 6, "NAME":"赊销"},{"TYPE": 7, "NAME":"赊销退货"},{"TYPE": 8, "NAME":"线上订单提取"},{"TYPE": 9, "NAME":"线上订单取消"}];
+		    this.xstypes = [{"TYPE": 0 , "NAME":""},{"TYPE": 1 , "NAME":"销售"},{"TYPE": 2, "NAME":"销售退货"},{"TYPE": 3, "NAME":"预定"},{"TYPE": 4, "NAME":"预定取消"},{"TYPE": 5, "NAME":"预定提取"},{"TYPE": 6, "NAME":"赊销"},{"TYPE": 7, "NAME":"赊销退货"},{"TYPE": 8, "NAME":"线上订单提取"},{"TYPE": 9, "NAME":"线上订单取消"}];
 			if(this.init){
 				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};
 			}
