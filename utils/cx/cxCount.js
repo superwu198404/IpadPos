@@ -53,8 +53,12 @@ let jfnum = "jfnum";
 let hylv = "HYLV";
 //促销不可用的支付方式
 let notfkid = "NOTFKID";
+//售价
+let NET = "NET";
 //保存已经发生的促销
 let fsdcx = new Array();
+//保存商品价格
+let sdprice = [];
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
@@ -74,6 +78,7 @@ const Cxdict = async () => {
 	dscxclass = [];
 	dscxsp = [];
 	dszqda = [];
+	sdprice = [];
 
 	//获取主单的Sql
 	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
@@ -86,7 +91,7 @@ const Cxdict = async () => {
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	
+
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -292,16 +297,16 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	} else {
 		is_Xstype = "SaleYd";
 	}
-	
+
 	//会员信息判断
-	if(hyinfoModel != null){
+	if (hyinfoModel != null) {
 		hymen = hyinfoModel;
-		isHy = cx_util.DefaultNull(hyinfoModel,hyinfoModel.hyId)!="" ? true : false;
+		isHy = cx_util.DefaultNull(hyinfoModel, hyinfoModel.hyId) != "" ? true : false;
 	}
 	//清除计算过的集合
 	ClearResult();
 
-    let respData = new Object();
+	let respData = new Object();
 	let sale02_order = [];
 	let spid = "";
 	let dateTime_now = cx_util.getTime(3);
@@ -309,9 +314,9 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		sale02_order = sale02_arr.sort((p1, p2) => {
 			return p1.NO - p2.NO; //升序
 		});
-		 respData.products= sale02_order;
-		 respData.cxfs = [];
-		 return respData;
+		respData.products = sale02_order;
+		respData.cxfs = [];
+		return respData;
 	}
 
 	//循环传入的购物车商品
@@ -319,9 +324,10 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		let spid = sale02_arr[i].SPID.toString();
 		let price = Math.round(parseFloat(sale02_arr[i].OPRICE.toString()) * 100) / 100;
 		let num = Math.round(parseFloat(sale02_arr[i].QTY.toString()) * 100) / 100;
+		let net = Math.round(parseFloat(sale02_arr[i].NET.toString()) * 100) / 100;
 
 		//添加商品到促销计算数组
-		AddRowCxbilldts(spid, price, num, i);
+		AddRowCxbilldts(spid, price, num, net, i);
 		//去计算促销
 		SaleCxCreate(spid, "10000000", dateTime_now.toString(), "", 0);
 	}
@@ -382,14 +388,14 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	sale02_order = sale02_arr.sort((p1, p2) => {
 		return p1.NO - p2.NO; //升序
 	});
-	respData.products= sale02_order;
+	respData.products = sale02_order;
 	respData.cxfs = cxfsdt;
 	console.log("sale02_arr new", respData);
 	return respData;
 }
 
 //向计算缓冲区添加一行
-const AddRowCxbilldts = async (itemid, price, qty, row) => {
+const AddRowCxbilldts = async (itemid, price, qty, net, row) => {
 	if (qty == 0) {
 		//删除
 		CxdtReMoveRow(row);
@@ -410,6 +416,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.jfnum = 0;
 				dr.HYLV = -1;
 				dr.NOTFKID = "";
+				dr.NET = net;
 				dr[zdcxbill] = zdcxsubno;
 				cxbilldts.push(dr);
 			} else {
@@ -427,6 +434,7 @@ const AddRowCxbilldts = async (itemid, price, qty, row) => {
 				dr.jfnum = 0;
 				dr.HYLV = -1;
 				dr.NOTFKID = "";
+				dr.NET = net;
 				if (spdt.length > 0) {
 					for (let i = 0; i < spdt.length; i++) {
 						let bill = cx_util.snvl(spdt[i].BILL, "");
@@ -475,25 +483,25 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 		jfinfo.dhnet = 0;
 		jfinfo.hdbill = [];
 		jfinfo.hdtype = [];
-		jfinfo.upleve =0;
+		jfinfo.upleve = 0;
 	}
 	//清除促销跟踪信息
 	cxfsdt = [];
 	for (let col = 0; col < cxbilldts.length; col++) {
 		let cxbilldData = cxbilldts[col];
 		let cxbilldDataKeys = Object.keys(cxbilldData);
-		console.log("cxbilldDataKeys",cxbilldDataKeys)	
-		for (let k = 10; k < cxbilldDataKeys.length; k++) {
-			console.log("cxbilldDataKeys", cxbilldDataKeys[k])
+		//console.log("cxbilldDataKeys",cxbilldDataKeys)	
+		for (let k = 11; k < cxbilldDataKeys.length; k++) {
+			//console.log("cxbilldDataKeys", cxbilldDataKeys[k])
 			let cxbill = cxbilldDataKeys[k];
-			console.log("cxbilldDataKeys cxbill", cxbill)
+			//console.log("cxbilldDataKeys cxbill", cxbill)
 			let cxbill_val = cxbilldData[cxbill];
-			console.log("cxbilldData[cxbill]", cxbill_val)
+			//console.log("cxbilldData[cxbill]", cxbill_val)
 			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
 			//促销时间校验
-			if(!ynpastCx(cxbill)) {
+			if (!ynpastCx(cxbill)) {
 				continue;
 			}
 			if (!ynjsCx(cxbill)) {
@@ -546,12 +554,12 @@ const CreateArr = cols => {
 const ynpastCx = function(bill) {
 	let mcc = cxdict.get(bill);
 	let dateTime = cx_util.getTime(3);
-	console.log("ynpastCx dateTime",dateTime);	
+	//console.log("ynpastCx dateTime",dateTime);	
 	let dateTime1 = cx_util.formatDateNew(dateTime);
 	let edate1 = cx_util.formatDateNew(mcc.EDATE);
-	
-	console.log("ynpastCx edate1",edate1);
-	console.log("ynpastCx dateTime1",dateTime1);			
+
+	//console.log("ynpastCx edate1",edate1);
+	//console.log("ynpastCx dateTime1",dateTime1);			
 	let dateNowNum = Date.parse(dateTime1);
 	let edateNum = Date.parse(edate1);
 	// console.log("ynpastCx", {
@@ -560,7 +568,7 @@ const ynpastCx = function(bill) {
 	// });
 	if (dateNowNum > edateNum) {
 		return false;
-	}else{
+	} else {
 		return true;
 	}
 }
@@ -573,22 +581,22 @@ const ynjsCx = function(bill) {
 	} else {
 		let dateTime = cx_util.getTime(3);
 		let decnow = cx_util.timeTodec(dateTime);
-		
+
 		let tstart1 = mcc.Tstart1;
 		let tstart2 = mcc.Tstart2;
 		let tstart3 = mcc.Tstart3;
-		
-		console.log("ynjsCx Tstart", {
-			    decnow,
-				tstart1,
-				tstart2,
-				tstart3,
-		});
-		
+
+		// console.log("ynjsCx Tstart", {
+		// 	    decnow,
+		// 		tstart1,
+		// 		tstart2,
+		// 		tstart3,
+		// });
+
 		let tstop1 = mcc.Tstop1;
 		let tstop2 = mcc.Tstop2;
 		let tstop3 = mcc.Tstop3;
-		
+
 		// console.log("ynjsCx Tstop", {
 		// 	    decnow,
 		// 		tstop1,
@@ -610,7 +618,7 @@ const ynjsCx = function(bill) {
 //判断会员促销方式
 const ynjsCxforHy = function(bill) {
 	let mcc = cxdict.get(bill);
-	console.log("ynjsCxforHy mcc.CXRY",mcc.CXRY);
+	console.log("ynjsCxforHy mcc.CXRY", mcc.CXRY);
 	if (!isHy) {
 		switch (mcc.CXRY) {
 			case "all":
@@ -639,7 +647,7 @@ const ynjsCxforHy = function(bill) {
 //销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict.get(bill);
-	console.log("xsTypeCheck",mcc.Cxztype);
+	console.log("xsTypeCheck", mcc.Cxztype);
 	if (mcc.Cxztype == "None") {
 		return true;
 	} else if (mcc.Cxztype == is_Xstype) {
@@ -737,6 +745,30 @@ const testallcx = function(bill, pmList) {
 const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype) {
 	//console.log("CxClasCompute", spid + "||" + salebill + "|" + saledate)
 	console.log("CxClasCompute cx1", cxdict.get(bill))
+
+	try {
+		var sdpriceMap = new Map();
+		for (let col = 0; col < cxbilldts.length; col++) {
+			let net = cx_util.nnvl(cxbilldts[col][NET], 0);
+			sdpriceMap.set(Math.round((net + 0.00001 * (col + 1)) * 100000) / 100000, col);
+		}
+
+		let net_arr = Array.from(sdpriceMap)
+		sdprice = []
+		net_arr.forEach((item) => {
+			sdprice.push({
+				key: item[0],
+				val: item[1]
+			})
+		});
+
+		sdprice.sort((a, b) => {
+			return b['key'] - a['key']
+		});
+	} catch (e) {
+
+	}
+
 	let cx1 = cxdict.get(bill);
 	if (cx1.YN_JSLB) {
 		if (cx1.OneJs) {
@@ -781,43 +813,49 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			}
 			//发生的总金额 或者总数量
 			let Fsnet = 0;
-			for (let i = 0; i < pmList.length; i++) {
-				if (pmList[i] == null) {
-					continue;
-				}
-				let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
-				if (currqty == 0) {
-					///没有剩余要跳出
-					continue;
-				}
-				let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
-				///取出条件数量
-				let fsqty = 0;
-				fsqty = currqty;
-				if (subx.ZkTj == "Qty") {
-					if (currqty - Tjqty > 0) {
-						Fsnet += Fsnet + Tjqty * oldprice;
-						// Fsnet += Fsnet + currqty * oldprice;
-						Tjqty = 0;
-					} else {
-						Fsnet += currqty * oldprice;
-						Tjqty = Tjqty - currqty;
+			for (let p = 0; p < sdprice.length; p++) {
+				let c = sdprice[p]["val"];
+				for (let i = 0; i < pmList.length; i++) {
+					if (i != c) {
+						continue;
 					}
-				} else {
-					if (currqty * oldprice - Tjqty > 0) {
-						Fsnet += Math.ceil(Tjqty / oldprice) * oldprice;
-						//Fsnet += Math.ceil(currqty / oldprice) * oldprice;
-						Tjqty = 0;
-					} else {
-						Fsnet += currqty * oldprice;
-						Tjqty = Tjqty - currqty * oldprice;
+					if (pmList[i] == null) {
+						continue;
 					}
+					let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
+					if (currqty == 0) {
+						///没有剩余要跳出
+						continue;
+					}
+					let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
+					///取出条件数量
+					let fsqty = 0;
+					fsqty = currqty;
+					if (subx.ZkTj == "Qty") {
+						if (currqty - Tjqty > 0) {
+							Fsnet += Fsnet + Tjqty * oldprice;
+							// Fsnet += Fsnet + currqty * oldprice;
+							Tjqty = 0;
+						} else {
+							Fsnet += currqty * oldprice;
+							Tjqty = Tjqty - currqty;
+						}
+					} else {
+						if (currqty * oldprice - Tjqty > 0) {
+							Fsnet += Math.ceil(Tjqty / oldprice) * oldprice;
+							//Fsnet += Math.ceil(currqty / oldprice) * oldprice;
+							Tjqty = 0;
+						} else {
+							Fsnet += currqty * oldprice;
+							Tjqty = Tjqty - currqty * oldprice;
+						}
+					}
+					cxbilldts[i][fscs] = fsqty;
+					//促销主题
+					cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+					cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+					cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 				}
-				cxbilldts[i][fscs] = fsqty;
-				//促销主题
-				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
-				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
-				cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 			}
 			let fsnet = new Map();
 			fsnet.set(subx.subno, Fsnet);
@@ -861,63 +899,69 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 			//发生的总金额 或者总数量
 			let Fsnet = 0;
 
-			for (let i = 0; i < pmList.length; i++) {
-				if (pmList[i] == null) {
-					continue;
-				}
-				let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
-				if (currqty == 0) {
-					//没有剩余要跳出
-					continue;
-				}
-				let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
-				//取出售价
-				let Spprice = 0;
-				//取出条件数量
-				let fsqty = 0;
+			for (let p = 0; p < sdprice.length; p++) {
+				let c = sdprice[p]["val"];
 
-				//let ynzs = true;
-				// let zsds = getCxSql_db.cxspdaSql(spid);
-				// if (zsds != null && zsds.length > 0) {
-				// 	let iszs = cx_util.snvl(zsds[0]["YN_ZS"], "");
-				// 	if (iszs == "N") {
-				// 		ynzs = false;
-				// 	}
-				// }
-
-				let ynzs = false; //测试使用，正式注释，使用上面注释的代码
-
-				if (subx.ZkTj == "Qty") {
-					if (currqty >= Tjqty) //&& ynzs==true
-					{
-						fsqty = Tjqty;
-					} else {
-						fsqty = currqty;
+				for (let i = 0; i < pmList.length; i++) {
+					if (i != c) {
+						continue;
 					}
-					Tjqty = Tjqty - fsqty;
-				} else {
-					Spprice = oldprice;
-
-					if (ynzs == false && currqty * Spprice >= Tjqty) {
-						fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
-						Tjqty = 0;
-					} else if (currqty * Spprice >= Tjqty) //&& ynzs == true
-					{
-						fsqty = parseInt(Math.ceil(Tjqty / Spprice));
-						Tjqty = 0;
-					} else {
-						fsqty = currqty;
-						Tjqty = Tjqty - fsqty * Spprice;
+					if (pmList[i] == null) {
+						continue;
 					}
+					let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
+					if (currqty == 0) {
+						//没有剩余要跳出
+						continue;
+					}
+					let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
+					//取出售价
+					let Spprice = 0;
+					//取出条件数量
+					let fsqty = 0;
+
+					//let ynzs = true;
+					// let zsds = getCxSql_db.cxspdaSql(spid);
+					// if (zsds != null && zsds.length > 0) {
+					// 	let iszs = cx_util.snvl(zsds[0]["YN_ZS"], "");
+					// 	if (iszs == "N") {
+					// 		ynzs = false;
+					// 	}
+					// }
+
+					let ynzs = false; //测试使用，正式注释，使用上面注释的代码
+
+					if (subx.ZkTj == "Qty") {
+						if (currqty >= Tjqty) //&& ynzs==true
+						{
+							fsqty = Tjqty;
+						} else {
+							fsqty = currqty;
+						}
+						Tjqty = Tjqty - fsqty;
+					} else {
+						Spprice = oldprice;
+
+						if (ynzs == false && currqty * Spprice >= Tjqty) {
+							fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
+							Tjqty = 0;
+						} else if (currqty * Spprice >= Tjqty) //&& ynzs == true
+						{
+							fsqty = parseInt(Math.ceil(Tjqty / Spprice));
+							Tjqty = 0;
+						} else {
+							fsqty = currqty;
+							Tjqty = Tjqty - fsqty * Spprice;
+						}
+					}
+					Fsnet = Fsnet + fsqty * oldprice;
+					cxbilldts[i][fscs] = fsqty;
+					//促销主题
+					cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+					cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+					cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 				}
-				Fsnet = Fsnet + fsqty * oldprice;
-				cxbilldts[i][fscs] = fsqty;
-				//促销主题
-				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
-				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
-				cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 			}
-
 			let fsnet = new Map();
 			fsnet.get(subx.subno, Fsnet);
 
@@ -976,85 +1020,92 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 		}
 		//发生促销的时候按类别的总售价金额
 		let Fsnet = new Map();
-		for (let i = 0; i < pmList.length; i++) {
-			if (pmList[i] == null) {
-				//无效的行数 要跳出
-				continue;
-			}
-			let subid = pmList[i];
-			let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
-			if (currqty == 0) {
-				//没有剩余要跳出
-				continue;
-			}
-			let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
-			//取出售价
-			let Spprice = 0;
-			//取出条件数量
-			let Tjqty = 0;
-			let subx = cx.SubList[subid];
-			//某一行产品进行计算时进行这些计算
-			if (subx.ZkTj == "Qty") {
-				Spprice = 1;
-				if (hashqty.has(subid)) {
-					Tjqty = hashqty.get(subid);
-				} else {
-					Tjqty = subx.QtyCondition[0] * Lcm;
-					hashqty.set(subid, Tjqty);
-					Fsnet.set(subid, 0);
-				}
-			} else {
-				Spprice = oldprice;
-				if (hashqty.has(subid)) {
-					Tjqty = hashqty.get(subid);
-				} else {
-					Tjqty = subx.NetCondition[0] * Lcm;
-					hashqty.set(subid, Tjqty);
-					Fsnet.set(subid, 0);
-				}
-			}
-			if (Tjqty == 0) {
-				//条件数量用尽要退出
-				continue;
-			}
-			//发生数量
-			let fsqty = 0;
-			//这里判断商品是不是整数
-			// let ynzs = true;
-			// let zsds = getCxSql_db.cxspdaSql(spid);
-			// if (zsds != null && zsds.length > 0) {
-			// 	let iszs = cx_util.snvl(zsds[0]['YN_ZS'], "");
-			// 	if (iszs == "N") {
-			// 		ynzs = false;
-			// 	}
-			// }
-			let ynzs = false; //测试使用，正式使用，上面注释代码
-			if (cx.OneSp) {
-				fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
-				if (fsqty < 0) {
-					fsqty = 0;
-				}
-			} else {
-				if (currqty * Spprice >= Tjqty && ynzs == false) {
-					fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
-				} else if (currqty * Spprice >= Tjqty) {
-					fsqty = Math.ceil(Tjqty / Spprice);
-				} else {
-					fsqty = currqty;
-				}
-			}
 
-			Tjqty = Tjqty - fsqty * Spprice;
-			if (Tjqty <= 0) {
-				Tjqty = 0;
+		for (let p = 0; p < sdprice.length; p++) {
+			let c = sdprice[p]["val"];
+			for (let i = 0; i < pmList.length; i++) {
+				if (i != c) {
+					continue;
+				}
+				if (pmList[i] == null) {
+					//无效的行数 要跳出
+					continue;
+				}
+				let subid = pmList[i];
+				let currqty = cx_util.nnvl(cxbilldts[i][qtytype], 0);
+				if (currqty == 0) {
+					//没有剩余要跳出
+					continue;
+				}
+				let oldprice = cx_util.nnvl(cxbilldts[i][oprice], 0);
+				//取出售价
+				let Spprice = 0;
+				//取出条件数量
+				let Tjqty = 0;
+				let subx = cx.SubList[subid];
+				//某一行产品进行计算时进行这些计算
+				if (subx.ZkTj == "Qty") {
+					Spprice = 1;
+					if (hashqty.has(subid)) {
+						Tjqty = hashqty.get(subid);
+					} else {
+						Tjqty = subx.QtyCondition[0] * Lcm;
+						hashqty.set(subid, Tjqty);
+						Fsnet.set(subid, 0);
+					}
+				} else {
+					Spprice = oldprice;
+					if (hashqty.has(subid)) {
+						Tjqty = hashqty.get(subid);
+					} else {
+						Tjqty = subx.NetCondition[0] * Lcm;
+						hashqty.set(subid, Tjqty);
+						Fsnet.set(subid, 0);
+					}
+				}
+				if (Tjqty == 0) {
+					//条件数量用尽要退出
+					continue;
+				}
+				//发生数量
+				let fsqty = 0;
+				//这里判断商品是不是整数
+				// let ynzs = true;
+				// let zsds = getCxSql_db.cxspdaSql(spid);
+				// if (zsds != null && zsds.length > 0) {
+				// 	let iszs = cx_util.snvl(zsds[0]['YN_ZS'], "");
+				// 	if (iszs == "N") {
+				// 		ynzs = false;
+				// 	}
+				// }
+				let ynzs = false; //测试使用，正式使用，上面注释代码
+				if (cx.OneSp) {
+					fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
+					if (fsqty < 0) {
+						fsqty = 0;
+					}
+				} else {
+					if (currqty * Spprice >= Tjqty && ynzs == false) {
+						fsqty = Math.round((Tjqty / Spprice) * 100) / 100;
+					} else if (currqty * Spprice >= Tjqty) {
+						fsqty = Math.ceil(Tjqty / Spprice);
+					} else {
+						fsqty = currqty;
+					}
+				}
+
+				Tjqty = Tjqty - fsqty * Spprice;
+				if (Tjqty <= 0) {
+					Tjqty = 0;
+				}
+				hashqty.set(subid, Tjqty);
+				Fsnet.set(subid, Fsnet.get(subid) + fsqty * oldprice);
+				cxbilldts[i][fscs] = fsqty;
+				//促销主题
+				cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
+				cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
+				cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 			}
-			hashqty.set(subid, Tjqty);
-			Fsnet.set(subid, Fsnet.get(subid) + fsqty * oldprice);
-			cxbilldts[i][fscs] = fsqty;
-			//促销主题
-			cxbilldts[i][cxzt] = cx != null ? cx.CxZt.replace("|", "") + "|" + cx.CxBill : "";
-			cxbilldts[i][hylv] = cx != null ? cx.HYLV : -1;
-			cxbilldts[i][notfkid] = cx != null ? cx.nofkSTR : "";
 		}
 		//console.log("FreeZhCx cxbilldts 111",cxbilldts)
 		SubCxQty(spid, bill, saledate, pmList, cx, Fsnet, 0, Lcm);
@@ -1372,7 +1423,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						fsdcx.push(cx.CxBill);
 					}
 				}
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur,jfinfo);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur,
+					jfinfo);
 			} catch (e) {
 
 			}
@@ -1389,7 +1441,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 //每次计算之前先设置会员积分上限
 const setHyjfUpleve = function(num) {
 	//会员信息
-	if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
+	if (cx_util.DefaultNull(hymen, hymen.hyId) == "") {
 		return;
 	}
 	let tj = 0;
@@ -1422,7 +1474,7 @@ const setHyjfUpleve = function(num) {
 const calculateJf = function(dsnum, jfnum, cx) {
 	try {
 		//会员为null
-	    if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
+		if (cx_util.DefaultNull(hymen, hymen.hyId) == "") {
 			return;
 		}
 		let tj = cx_util.TryParse(hymen.JFBalance);
@@ -1467,7 +1519,7 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 		return;
 	}
 	//会员为null
-	if (cx_util.DefaultNull(hymen,hymen.hyId) == "") {
+	if (cx_util.DefaultNull(hymen, hymen.hyId) == "") {
 		return;
 	}
 	let tj = cx_util.TryParse(hymen.JFBalance);
@@ -1591,7 +1643,7 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			//一次计算促销但是 所有的数量都要计算进 
 			//生成促销的结果
 			try {
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm,"",jfinfo);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, "", jfinfo);
 			} catch (e) {
 
 			}
@@ -1607,13 +1659,14 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 }
 
 //添加促销追踪
-const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM,jfnum,jfinfo) {
+const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newprice, price, level, PM_LCM, jfnum,
+	jfinfo) {
 	let i = row;
 	let dr = {};
-	
+
 	let spid_dr = cxbilldts[i]["SPID"];
 	let notfkid_dr = cxbilldts[i][notfkid];
-	
+
 	dr["SALEDATE"] = saledate;
 	dr["KHID"] = getApp().globalData.store.KHID;
 	dr["GSID"] = getApp().globalData.store.GSID;
@@ -1629,10 +1682,10 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["CXLV"] = level + 1;
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;
-    dr["SPJF"] = jfnum;
-    dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet,0); //积分抵扣金额
-	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum,0); //抵扣积分
-    dr[notfkid] = cx_util.snvl(notfkid_dr,""); //不可用支付方式
+	dr["SPJF"] = jfnum;
+	dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet, 0); //积分抵扣金额
+	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum, 0); //抵扣积分
+	dr[notfkid] = cx_util.snvl(notfkid_dr, ""); //不可用支付方式
 	dr["NO"] = i;
 	cxfsdt.push(dr);
 }
@@ -1681,20 +1734,22 @@ const ClearResult = function() {
 	cxfsdt = [];
 	cxSelectTip = [];
 	cxbilldts = [];
+	sdprice = [];
 }
 
 //清除所有全局数据
-const ClearAllResult = function(){
+const ClearAllResult = function() {
 	//初始化，全局变量先清除
 	cxfsdt = [];
 	cxSelectTip = [];
 	cxbilldts = [];
-	
+
 	cxdict = new Map();
 	dscxm = [];
 	dscxclass = [];
 	dscxsp = [];
 	dszqda = [];
+	sdprice = [];
 }
 
 

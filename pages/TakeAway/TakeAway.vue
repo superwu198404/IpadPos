@@ -441,7 +441,7 @@
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 								let printerPram = {
-									"PRINTNUM": 1
+									"PRINTNUM": 2
 								};
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 									printerPram,
@@ -565,7 +565,7 @@
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 							let printerPram = {
-								"PRINTNUM": 1
+								"PRINTNUM": 2
 							};
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 								printerPram, that
@@ -671,7 +671,7 @@
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 							let printerPram = {
-								"PRINTNUM": 1
+								"PRINTNUM": 2
 							};
 							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 								printerPram, that
