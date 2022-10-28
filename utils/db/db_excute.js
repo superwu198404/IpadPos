@@ -388,13 +388,14 @@ var mySqllite = function() {
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
-			if (!retcode.code) {
+			if (!retcode.code)
+			{
 				// console.log(i + "exec:" + JSON.stringify(retcode)); 
-				if (retcode.msg.code === -1404) {
-					continue;
-				}
-				await tran(tranEnum.rollback);
-				return callBackCloseLoading(retcode, fail, pm_msg);
+				//if (retcode.msg.code === -1404) {
+				//	continue;
+			    //	}
+				//await tran(tranEnum.rollback);
+				//return callBackCloseLoading(retcode, fail, pm_msg);
 			}
 		}
 		retcode = await tran(tranEnum.commit);
