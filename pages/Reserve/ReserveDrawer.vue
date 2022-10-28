@@ -252,6 +252,9 @@
 					that.Order._STR2 = "";
 					console.log("[WATCH-THTYPE]清空自提的地址信息...");
 				}
+			},
+			'Order.CUSTMADDRESS':function(n,o){
+				if(n && this.Order.THTYPE != '0') this.MatchBHKH();
 			}
 		},
 		methods: {
@@ -541,6 +544,8 @@
 					that.Order.CUSTMPHONE = that.ADDR.PHONE;
 					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
+					that.Order.LONGITUDE = that.ADDR.LONGITUDE;
+					that.Order.LATITUDE = that.ADDR.LATITUDE;
 					if (exists_address_refresh) {
 						that.GetAddr(); //刷新一下地址列表
 					}
