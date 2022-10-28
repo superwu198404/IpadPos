@@ -194,7 +194,7 @@
 					</view>
 					<view class="confirm">
 						<button class="btn" @click="ConfirmWMD()">确 认</button>
-						<button class="btn btn-xk" @click="Close(1)">跳 过</button>
+						<button class="btn btn-xk" @click="Skip()">跳 过</button>
 					</view>
 				</view>
 			</view>
@@ -594,8 +594,7 @@
 							}
 						})
 					} else { //没有外卖袋的时候 直接进行积分上传和打印
-						that.yn_wmd = false;
-						that.UpAndPrint();
+						that.Skip();
 					}
 				})
 			},
@@ -696,11 +695,14 @@
 					});
 				}, 1000);
 			},
+			//外卖袋跳过
+			Skip: function(e) {
+				//外卖袋 跳过后 直接调用积分上传和打印
+				that.UpAndPrint();
+				that.Close();
+			},
 			//退出
-			Close: function(e) {
-				if (e) { //外卖袋 跳过后 直接调用积分上传和打印
-					that.UpAndPrint();
-				}
+			Close: function() {
 				that.yn_bs = false;
 				that.yn_wmd = false;
 				//刷新列表
