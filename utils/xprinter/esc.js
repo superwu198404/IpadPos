@@ -1291,8 +1291,17 @@ var jpPrinter = {
 			 break;
 		}
 		
+		//商品内有水吧的商品，才打印取餐码
+		let isSB = false;
+		try{
+			let sbCode = data.goodsList.find(c=> parseInt(c.spid).toString().substr(0,3) == util.snvl(printer_poscs.SBLBBM,""));
+			isSB = (sbCode == null || sbCode == undefined)? false : true;
+			//console.log("===========================================isSB============",isSB);
+		}catch(e){
+			
+		}	
 		//水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
-		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N" && type == "XS"){
+		if(printer_poscs.YN_CALLNUM  != "" && printer_poscs.YN_CALLNUM != "N" && type == "XS" && isSB){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("取餐码: " + data.bill.substr(-4));
