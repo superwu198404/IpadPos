@@ -60,7 +60,7 @@
 					<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text>*配送中心：</text>
-						<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
+						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
 							<view>{{Order.STR2}}-{{Order._STR2}}</view>
 						</picker>
 					</label>
