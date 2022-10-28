@@ -36,7 +36,7 @@
 							<view class="critlist"><text>手机号：</text><input type="text" v-model="condition.phone" />
 							</view>
 							<view class="critlist"><text>提货方式：</text>
-								<picker @change="ExtractType" :range="extract_types" range-key="NAME" value="index" style="width: 80%;height: 90%;">
+								<picker @change="ExtractType" :range="extract_types" range-key="NAME" value="index">
 									<view>{{ condition.type ? (extract_types.length > condition.type ? extract_types[condition.type].NAME : "") : "" }}</view>
 								</picker>
 							</view>
