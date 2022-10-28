@@ -253,8 +253,13 @@
 					console.log("[WATCH-THTYPE]清空自提的地址信息...");
 				}
 			},
-			'Order.CUSTMADDRESS':function(n,o){
-				if(n && this.Order.THTYPE != '0') this.MatchBHKH();
+			'Order.CUSTMADDRESS': function(n, o) {
+				if (n && this.Order.THTYPE == '1') 
+					this.MatchBHKH();
+				else{
+					this.Order.LONGITUDE = "";
+					this.Order.LATITUDE = "";
+				}
 			}
 		},
 		methods: {
@@ -458,6 +463,12 @@
 					that.Order.STR2 = "";
 					that.Order._STR2 = "";
 				}
+				if (that.Order.THTYPE == '1') { //宅配到家
+					if (that.Order.LONGITUDE && that.Order.LATITUDE)
+						that.MatchBHKH();
+					else
+						that.Order.CUSTMADDRESS = "";
+				}
 				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
 					that.GetAddr();
 				}
@@ -632,8 +643,10 @@
 							that.Order._STR2 = "";
 							that.index = 0;
 							that.Order.THTYPE = 0;
+							that.Order.LONGITUDE = 0;
+							that.Order.LATITUDE = 0;
 							that.Order.CUSTMADDRESS = ""; //清空地址信息
-							console.log("[MatchBHKH]清空结果:",that.Order);
+							console.log("[MatchBHKH]清空结果:", that.Order);
 						} else {
 							util.simpleMsg("已匹配最近的配送中心", "none");
 							that.Order.STR2 = data.khid;
