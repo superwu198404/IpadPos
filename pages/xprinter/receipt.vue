@@ -392,7 +392,7 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				
-				let isPrinterFP = sale1_obj.XSTYPE = 5 ? true : false;
+				let isPrinterFP = xprinter_util.snvl(print.XSTYPE,"") == "YDTQ" ? true : false;
 				// 电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					//生成属于单号的二维码
