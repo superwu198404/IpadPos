@@ -117,4 +117,7 @@
 		border-radius: 50%;
 		font-size: 44rpx;
 	}
+	.uls .lis .protheme .themes .h8{
+		max-width:80%;
+	}
 </style>
