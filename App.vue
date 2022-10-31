@@ -7,7 +7,10 @@
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
-
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
+	
 	export default {
 		globalData: {
 			appid: 'keengee',
@@ -97,7 +100,8 @@
 			},
 			YN_PRINT_CON: "N", //打印机连接状态
 			msgInt: 0, //消息定时id
-			Int: null //单据定时传输的定时器
+			Int: null, //单据定时传输的定时器
+			AppStore_DownLoad: "https://apps.apple.com/cn/app/", //App Store下载地址
 		},
 		onLaunch: async function() {
 			console.log('[APP-LAUNCH]APP启动!')
@@ -128,6 +132,49 @@
 			let sysinfo = uni.getSystemInfoSync();
 			console.log("系统信息：", sysinfo);
 			util.setStorage("sysinfo", sysinfo);
+
+			//存缓存 应用版本号
+			try {
+			    uni.setStorageSync('appversion', sysinfo.appWgtVersion);
+			} catch (e) {}
+			
+			//取缓存 应用的版本号
+			const v = uni.getStorageSync('appversion');
+			let v_db = "";
+			let down_id = "";
+			//数据库版本号
+			this.db_appversion = {};
+			try {
+				await RequestSend(`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`, util.callBind(this, function(res) {
+					if (res.code) {
+						let db_vs = JSON.parse(res.data);
+						if(db_vs != null && db_vs != undefined){
+							this.db_appversion = db_vs[0];
+							v_db = this.db_appversion.STR1;
+							down_id = this.db_appversion.STR2;
+						}
+						uni.setStorageSync('db_appversion', this.db_appversion);
+					} else {
+						console.log("获取db_appversion失败!");
+					}
+				}))
+			} catch (e) {
+				console.log("获取db_appversion失败:",e);
+			}
+
+			//对比版本号
+			if (util.contrast(v_db, v) == 1) {
+				//提醒用户更新
+				uni.showModal({
+				  title: 'KengeePos更新',
+				  content: "请务必完成版本更新\n以免影响正常功能使用!\n最新版本号: "+ v_db +"",
+				  success: (ee) => {
+				    if (ee.confirm) {
+				       plus.runtime.openURL(getApp().globalData.AppStore_DownLoad + "id" + down_id);
+				    }
+				  }
+				})
+			}
 
 		},
 		onShow: function() {

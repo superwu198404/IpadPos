@@ -27,15 +27,14 @@
 				<!-- <button @click="reset()" style="margin-top: 20rpx;">重新初始化</button> -->
 			</view>
 		</view>
-		<view class="box" v-if="false">
+		 <!-- v-if="false" -->
+		<view class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
-				<view class="thods">版本V.0.0.1</view>
 				<view class="upinfo">
-					<view class="h9">检测到新版本</view>
+					<view class="h9">更新版本至V.0.0.1</view>
 					<label>
-						<text>更新内容：</text>
-						<text>1.不就是说的话</text>
+						<text>本次更新大小为12M</text>
 					</label>
 				</view>
 				<view class="confirm">
@@ -275,12 +274,12 @@
 	}
 
 	.renewal .upinfo {
-		padding: 3% 10%;
-		min-height: 340rpx;
+		padding: 7% 10% 0;
+		min-height: 240rpx;
 	}
 
 	.renewal .upinfo .h9 {
-		font-size: 32rpx;
+		font-size: 36rpx;
 		font-weight: 700;
 		line-height: 80rpx;
 	}
@@ -289,7 +288,7 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		color: #999;
+		color: #666;
 	}
 
 	.renewal .upinfo label text {
@@ -297,7 +296,7 @@
 	}
 
 	.confirm {
-		padding: 8% 10% 6%;
+		padding: 8% 10%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
