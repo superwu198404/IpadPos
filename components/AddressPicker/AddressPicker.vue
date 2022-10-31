@@ -37,6 +37,7 @@
 		data() {
 			return {
 				query: this.address,
+				first_address: {},//首个地址信息
 				map_info: {},
 				list: [],
 				state: false,
@@ -69,11 +70,16 @@
 					if (res.code) {
 						this.list = JSON.parse(res.data);
 						console.log("[GetAddress]高德地址查询:", this.list);
+						if(this.list && this.list.length > 0){
+							this.first_address = this.list[0];
+							this.$emit("catch", this.first_address);
+							uni.$emit("catch", this.first_address);
+						}
 					}
 					else{
-						// util.simpleMsg("!")
 						this.$emit("Message",{ type:'tips',msg:'查询失败!' })
 					}
+					console.log("[GetAddress]缓存的首个地址信息:",this.first_address);
 				}))
 			},
 			SelectedAddress: function(address_info) {
@@ -134,11 +140,11 @@
 	}
 
 	.open {
-		transition: .5s all;
+		transition: .5s all !important;
 	}
 
 	.close {
-		transition: .5s all;
+		transition: .5s all !important;
 		max-height: 0em !important;
 	}
 </style>

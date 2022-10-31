@@ -289,7 +289,7 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					 console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
+					// console.log("executeSql:errrrrrr" + pm_sql + JSON.stringify(e));
 					return resolve({
 						code: false,
 						msg: e
@@ -388,13 +388,14 @@ var mySqllite = function() {
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
-			if (!retcode.code) {
+			if (!retcode.code)
+			{
 				// console.log(i + "exec:" + JSON.stringify(retcode)); 
-				if (retcode.msg.code === -1404) {
-					continue;
-				}
-				await tran(tranEnum.rollback);
-				return callBackCloseLoading(retcode, fail, pm_msg);
+				//if (retcode.msg.code === -1404) {
+				//	continue;
+			    //	}
+				//await tran(tranEnum.rollback);
+				//return callBackCloseLoading(retcode, fail, pm_msg);
 			}
 		}
 		retcode = await tran(tranEnum.commit);
@@ -432,7 +433,7 @@ var mySqllite = function() {
 		await open(pm_msg);
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		console.log("开始执行sql:", sql);
+		//console.log("开始执行sql:", sql);
 		retcode = await exec(sql);
 		console.log("[ExecuteDml]返回值:", retcode);
 		// console.log("[ExecuteDml]sql:", sql);

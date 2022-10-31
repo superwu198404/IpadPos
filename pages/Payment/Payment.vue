@@ -195,14 +195,15 @@
 								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
 								@click="clickPayType(item,$event)">
 								<view class="tits" :class="{seltss:item.yn_use == 'Y'}">
-									<p>{{item.name}}</p>
+									<p v-if="item.yn_use == 'Y'">{{item.name}}</p>
+									<p v-else>{{item.name}}<span style="font-size: 12px;">(禁用)</span></p>
 								</view>
 								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
 							</view>
 						</view>
 
 					</view>
-					</p>
+					<!-- </p> -->
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
 				</view>
 			</view>
@@ -428,12 +429,13 @@
 						}
 					}
 				} else { //完成支付，推送数据
-					console.log("[Watch-dPayAmount]完整支付金额:",amount_include_negative_number);
-					if (amount_include_negative_number >= 0) {//避免券类的支付出现提前完成导致放弃金额未被记录的问题（未被记录则会变成负数）
+					console.log("[Watch-dPayAmount]完整支付金额:", amount_include_negative_number);
+					if (amount_include_negative_number >= 0) { //避免券类的支付出现提前完成导致放弃金额未被记录的问题（未被记录则会变成负数）
 						var that = this;
 						this.YN_TotalPay = true;
 						this.CanBack = true;
-						console.log("[Watch-dPayAmount]Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this.sale3_arr);
+						console.log("[Watch-dPayAmount]Generator-SALE1、2、3:", this.sale1_obj, this.sale2_arr, this
+							.sale3_arr);
 						this.createOrders(true);
 					}
 				}
@@ -1069,51 +1071,61 @@
 							refundInfo.fail = false;
 						}
 						refundInfo.refunding = true; //标记为正在退款的状态
-						let res = _pay.RefundAll(payWayType, {
-								out_trade_no: refundInfo.bill, //单号
-								out_refund_no: refund_no + `_${index}`, //退款单号
-								refund_money: (Math.abs(Number(total || refundInfo.amount) * 100))
-									.toFixed(0), //退款金额
-								total_money: (Math.abs(Number(total || refundInfo.amount) * 100))
-									.toFixed(0), //退款总金额（兼容微信）
-								point: refundInfo.origin.BMID //兼容积分抵现返还积分
-							}, (function(err) { //如果发生异常（catch）
-								// util.simpleMsg(err.msg, true, err);
-								refundInfo.fail = true;
-								console.log("[Refund-退款]退款失败:", err);
-								util.simpleModal("退款失败", err.msg);
-							}).bind(that),
-							(function(res) { //执行完毕（finally），退款次数 +1
-								console.log("[Refund-退款]Finally:", res);
-								refundInfo.refund_num += 1; //发起请求默认加1
-								refundInfo.refunding = false; //标记为已经结束退款操作
-								this.RefundList = Object.assign([], this.RefundList) //刷新视图
-							}).bind(that),
-							(function(ress) { //执行完毕（results），根据结果判断
-								console.log("[Refund-退款]Results:", ress);
-								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+						let res = new Promise(util.callBind(this, function(resolve, reject) {
+							_pay.RefundAll(payWayType, {
+									out_trade_no: refundInfo.bill, //单号
+									out_refund_no: refund_no + `_${index}`, //退款单号
+									refund_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100))
+										.toFixed(0), //退款金额
+									total_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100))
+										.toFixed(0), //退款总金额（兼容微信）
+									point: refundInfo.origin.BMID //兼容积分抵现返还积分
+								}, (function(err) { //如果发生异常（catch）
+									// util.simpleMsg(err.msg, true, err);
 									refundInfo.fail = true;
-									refundInfo.msg = ress[1].msg; //错误提示信息记录
-								} else {
-									refundInfo.fail = false;
-									if (current_refund_exists_only_code) { //是否带唯一码
-										groups[refundInfo.group].forEach(g => g.fail = false);
-										console.log("groups[refundInfo.group]", groups[refundInfo
-											.group]);
+									console.log("[Refund-退款]退款失败:", err);
+									util.simpleModal("退款失败", err.msg);
+									resolve();//结束状态
+								}).bind(that),
+								(function(res) { //执行完毕（finally），退款次数 +1
+									console.log("[Refund-退款]Finally:", res);
+									refundInfo.refund_num += 1; //发起请求默认加1
+									refundInfo.refunding = false; //标记为已经结束退款操作
+									this.RefundList = Object.assign([], this.RefundList) //刷新视图
+									resolve();//结束状态
+								}).bind(that),
+								(function(ress) { //执行完毕（results），根据结果判断
+									console.log("[Refund-退款]Results:", ress);
+									if (!ress[1]
+										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+										refundInfo.fail = true;
+										refundInfo.msg = ress[1].msg; //错误提示信息记录
+									} else {
+										refundInfo.fail = false;
+										if (current_refund_exists_only_code) { //是否带唯一码
+											groups[refundInfo.group].forEach(g => g
+												.fail = false);
+											console.log("groups[refundInfo.group]",
+												groups[refundInfo
+													.group]);
+										}
 									}
-								}
-							}).bind(that));
+									resolve();//结束状态
+								}).bind(that));
+						}));
 						promises.push(res)
 					} else {
 						util.simpleMsg("支付方式不存在!", true);
-						if(this.RefundList.length === 0) this.CanBack = true; //锁定退出
+						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
 				this.refundAmountCount(); //重新计算
-				Promise.all(promises).then((res) => {
+				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
 					this.CheckActionComplet();
-				})
+				}))
 			},
 			//创建订单对象列表
 			createOrders: function(is_success) {
@@ -1156,6 +1168,7 @@
 			//支付类型判断
 			PayTypeJudgment: function() {
 				let curPayType = "";
+				console.log("二维码：", this.authCode);
 				let startCode = this.authCode.substring(0, 2);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
@@ -1192,9 +1205,9 @@
 				let pt = this.PayTypeJudgment();
 				console.log("[PayHandle]当前支付集合：", this.PayList);
 				console.log("[PayHandle]当前支付类型：", pt);
-				//如果被限制了 则进行判断是否有过支付
+				//如果被限制了 则进行判断是否有过支付 且排除
 				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
-						.type == pt)) {
+						.type == pt && r.show)) { //显示时才参与判断
 					util.simpleMsg("请更换支付方式!", true);
 					this.authCode = '';
 					return;
@@ -1234,7 +1247,11 @@
 			},
 			//支付后创建支付记录
 			orderGenarator: function(payload, type, result, fail, type_info) {
-				console.log("[OrderGenarator]生成订单类型：", { type:this.currentPayType,payload,result});
+				console.log("[OrderGenarator]生成订单类型：", {
+					type: this.currentPayType,
+					payload,
+					result
+				});
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
 				let paid_amount = fail ? 0 : ((function() {
@@ -1245,7 +1262,8 @@
 						if (coupon.length > 0) {
 							console.log("[OrderGenarator]券 payload.money：", payload.money)
 							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result.vouchers[0].denomination) / 100;
+							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+								.vouchers[0].denomination) / 100;
 						} else {
 							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
@@ -1264,12 +1282,14 @@
 				if (result) {
 					if (result.vouchers.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
 						result.vouchers.forEach((function(coupon, index) {
-							try{
-								let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
+							try {
+								let excessInfo = this.PayWayList.find(item => item.fkid == coupon
+									.fkid); //放弃金额
 								console.log("[OrderGenarator]卡券：", coupon)
 								this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 									amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
-										(coupon.note === 'EXCESS' ? -coupon.pay_amount :
+										(coupon.note === 'EXCESS' ? -coupon
+											.pay_amount :
 											coupon.denomination)) / 100).toFixed(2),
 									fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
 										coupon?.fkid,
@@ -1278,7 +1298,8 @@
 									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
 									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
-									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon.note ===
+									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
+										.note ===
 										'EXCESS' ? coupon.fkid : coupon.disc_type),
 									disc: (coupon?.discount / 100)?.toFixed(2),
 									fail,
@@ -1290,8 +1311,8 @@
 								}, result, type_info));
 								this.used_no.push(payload.no);
 								payload.no++;
-							} catch(e){
-								console.warn("[OrderGenarator]券信息生成异常:",e);
+							} catch (e) {
+								console.warn("[OrderGenarator]券信息生成异常:", e);
 							}
 						}).bind(this));
 						console.log("[OrderGenarator]卡、券支付列表:", this.PayList);
@@ -1300,7 +1321,7 @@
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
 								.point_money?.toFixed(2),
 							fail,
-							card_no: result.hyid,
+							card_no: result.transaction_id,
 							no: payload.no
 						}, result, type_info));
 					}
@@ -1443,7 +1464,10 @@
 			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
 				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage('PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
-				console.log("[PayWayListInit]支付方式:", { all:util.getStorage('PayWayList'),catch:uni.getStorageSync('PayWayList')});
+				console.log("[PayWayListInit]支付方式:", {
+					all: util.getStorage('PayWayList'),
+					catch: uni.getStorageSync('PayWayList')
+				});
 				this.PayWayList = pay_way_list.map(i => {
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
@@ -1467,7 +1491,7 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
-					this.ExistsAllowScore();
+					// this.ExistsAllowScore();//上一页面处理
 					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
 					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
@@ -1613,13 +1637,21 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(r, e) {
+				console.log("选择的支付类型：", r);
+				console.log("选择的支付类型1：", e);
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
-				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
-					this.currentPayType = e.currentTarget.id; //小程序
-
-				}
-				if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
-					this.currentPayType = e.currentTarget.id; //小程序
+				// if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
+				// 	this.currentPayType = e.currentTarget.id; //小程序
+				// }
+				if (this.is_poly) {
+					this.currentPayType = e.currentTarget.id; //聚合支付
+				} else {
+					if (r.yn_use == 'Y') {
+						this.currentPayType = e.currentTarget.id; //可使用的支付方式
+					} else {
+						this.is_poly = true; //聚合支付复位
+						util.simpleMsg("该支付方式已禁用", "none");
+					}
 				}
 			},
 			//返回上个页面
@@ -1629,6 +1661,7 @@
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
 					if (Number(this.toBePaidPrice()) === 0 || this
 						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
+						this.CanBack = false;
 						console.log("[BackPrevPage]单据数据:", {
 							sale1: this.sale1_obj,
 							sale2: this.sale2_arr,

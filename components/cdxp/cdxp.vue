@@ -24,9 +24,13 @@
 									<view class="criterias" v-if="Criterias" style="z-index: 99999;">
 										<view class="critlist"><text>销售类别：</text>
 											<!-- <view class="xslb"> -->
-												<picker range-key="NAME" mode="selector" :range="xstypes" @change="Change" @cancel="Cancel">
-													<view style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ current_data.NAME }}</view>
-												</picker>
+											<picker range-key="NAME" mode="selector" :range="xstypes" @change="Change"
+												@cancel="Cancel">
+												<view
+													style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+													{{ current_data.NAME }}
+												</view>
+											</picker>
 											<!-- </view> -->
 										</view>
 										<view class="critlist"><text>订单号：</text>
@@ -48,13 +52,9 @@
 						</view>
 						<button class="close" @click="CloseCD">×</button>
 					</view>
-
-					<!-- <NoData v-if="Orders.length==0"></NoData> -->
+					<NoData v-if="Datas.length==0"></NoData>
 					<!-- 小类循环 -->
-					<!-- v-else -->
-					<view class="products">
-						<!-- <view class="h2">销售退单 <label></label></view>
-			-->
+					<view class="products" v-else>
 						<view class="procycle">
 							<view class="li" v-for="item in Datas">
 								<view class="h3">
@@ -172,9 +172,12 @@
 				p_date: dateformat.getYMD(),
 				p_bill: "",
 				p_xsType: "", //销售类别
-				xstypes:[],
-				current_data:{"TYPE": 1 , "NAME":"销售"},
-				current_index:0,
+				xstypes: [],
+				current_data: {
+					"TYPE": 1,
+					"NAME": "销售"
+				},
+				current_index: 0,
 				init: 1
 			};
 		},
@@ -187,34 +190,35 @@
 			this.GetPTOrder();
 		},
 		methods: {
-			Change:function(e){
+			Change: function(e) {
 				let index = e.detail.value;
-				if(index < this.xstypes.length){
+				if (index < this.xstypes.length) {
 					this.current_data = this.xstypes[index];
 					this.p_xsType = this.xstypes[index];
-				}		
+				}
 			},
-			Cancel:function(){
-				
+			Cancel: function() {
+
 			},
 			changeDate: e => {
 				that.p_date = e.detail.value;
 			},
 			GetPTOrder: function(e) {
-				console.log("current_data 111",this.current_data)
+				console.log("current_data 111", this.current_data)
 				let store = util.getStorage("store");
-				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date,cx_util.snvl(that.current_data.TYPE,""), res => {
-					console.log("获取成功:", res);
-					if (res.code && res.msg.length > 0) {
-						that.Datas = res.msg;
-						if (e) {
-							util.simpleMsg("查询成功");
+				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, cx_util.snvl(that.current_data.TYPE, ""),
+					res => {
+						console.log("获取成功:", res);
+						if (res.code && res.msg.length > 0) {
+							that.Datas = res.msg;
+							if (e) {
+								util.simpleMsg("查询成功");
+							}
+						} else {
+							that.Datas = [];
+							util.simpleMsg("暂无数据", true);
 						}
-					} else {
-						that.Datas = [];
-						util.simpleMsg("暂无数据", true);
-					}
-				})
+					})
 			},
 			ShowSearch: function() {
 				that.Criterias = !that.Criterias;
@@ -231,14 +235,14 @@
 				that.GetPTOrder(1);
 			},
 			//重打小票
-			ConfirmCD: async function(xsBill,xsType) {
+			ConfirmCD: async function(xsBill, xsType) {
 				let that = this;
 				let bill = cx_util.snvl(xsBill, "");
 				if (bill == "") {
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
-				
+
 				//通过单号，查询重打格式数据
 				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 				//console.log("pos_xsbillprint ==================================",pos_xsbillprint);	
@@ -246,60 +250,86 @@
 					util.simpleMsg("未查询到重打数据", "none");
 					return;
 				}
-				
+
 				this.$emit("ClosePopup");
-				that.$refs.printerPage.againPrinter(bill,xsType);
+				that.$refs.printerPage.againPrinter(bill, xsType);
 			},
 			//重打小票关闭
 			CloseCD: function(data) {
 				// this.qd_show = false;
 				this.$emit("ClosePopup");
 			},
-			xsTypeName: function(xstype,bill_type){
-				switch (xstype){
+			xsTypeName: function(xstype, bill_type) {
+				switch (xstype) {
 					case "0":
-					    return "外卖订单";
+						return "外卖订单";
 						break;
-                    case "1":
-                        return "销售";
-                    	break;
+					case "1":
+						return "销售";
+						break;
 					case "2":
-					    if(bill_type = "Z154"){
-							return "赊销退货";
-						}else{
-							return "销售退货";
-						}
+						return "销售退货";
 						break;
-                    case "3":
-                        return "预定";
-                    	break;
-                    case "4":
-                        return "预定取消";
-                    	break;
-                    case "5":
-                        return "预定提取";
-                    	break;
-                    case "6":
-                        return "赊销";
-                    	break;
-                    case "7":
-                        return "赊销退货";
-                    	break;
+					case "3":
+						return "预定";
+						break;
+					case "4":
+						return "预定取消";
+						break;
+					case "5":
+						return "预定提取";
+						break;
+					case "6":
+						return "赊销";
+						break;
+					case "7":
+						return "赊销退货";
+						break;
 					case "8":
-					    return "线上订单提取";
-						break;																																						
+						return "线上订单提取";
+						break;
 					case "9":
-					    return "线上订单取消";
+						return "线上订单取消";
 						break;
 					default:
-					    return "";
+						return "";
 						break;
 				}
 			}
 		},
 		mounted() {
-		    this.xstypes = [{"TYPE": 0 , "NAME":"外卖订单"},{"TYPE": 1 , "NAME":"销售"},{"TYPE": 2, "NAME":"销售退货"},{"TYPE": 3, "NAME":"预定"},{"TYPE": 4, "NAME":"预定取消"},{"TYPE": 5, "NAME":"预定提取"},{"TYPE": 6, "NAME":"赊销"},{"TYPE": 7, "NAME":"赊销退货"},{"TYPE": 8, "NAME":"线上订单提取"},{"TYPE": 9, "NAME":"线上订单取消"}];
-			if(this.init){
+			this.xstypes = [{
+				"TYPE": 0,
+				"NAME": ""
+			}, {
+				"TYPE": 1,
+				"NAME": "销售"
+			}, {
+				"TYPE": 2,
+				"NAME": "销售退货"
+			}, {
+				"TYPE": 3,
+				"NAME": "预定"
+			}, {
+				"TYPE": 4,
+				"NAME": "预定取消"
+			}, {
+				"TYPE": 5,
+				"NAME": "预定提取"
+			}, {
+				"TYPE": 6,
+				"NAME": "赊销"
+			}, {
+				"TYPE": 7,
+				"NAME": "赊销退货"
+			}, {
+				"TYPE": 8,
+				"NAME": "线上订单提取"
+			}, {
+				"TYPE": 9,
+				"NAME": "线上订单取消"
+			}];
+			if (this.init) {
 				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};
 			}
 		}
@@ -364,24 +394,27 @@
 	.hotcakes {
 		color: #333;
 	}
-	.critlist{
+
+	.critlist {
 		position: relative;
 	}
-	.critlist .xslb{
+
+	.critlist .xslb {
 		position: absolute;
-		top:64rpx;
+		top: 64rpx;
 		left: 0;
-		width:96%;
-		padding:2% 2% 0;
+		width: 96%;
+		padding: 2% 2% 0;
 		background-color: #fff;
 		z-index: 9;
-		box-shadow: 0px 4rpx 20rpx 2rpx rgba(66,177,75,0.2);
+		box-shadow: 0px 4rpx 20rpx 2rpx rgba(66, 177, 75, 0.2);
 		display: flex;
 		flex-direction: column;
 		border-radius: 4rpx;
 	}
-	.critlist .xslb text{
-		width:100%;
+
+	.critlist .xslb text {
+		width: 100%;
 		height: 66rpx;
 		display: block;
 		max-height: 600rpx;

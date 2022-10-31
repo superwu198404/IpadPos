@@ -62,12 +62,38 @@ Object.defineProperty(Array.prototype, 'last', {
 
 const replaceAll = String.prototype.replaceAll;
 Object.defineProperty(String.prototype, 'replaceAll', {
-	value: function(searchValue,replaceValue) {
-		if(replaceAll){
-			return replaceAll.apply(this,Array.from(arguments));
+	value: function(searchValue, replaceValue) {
+		if (replaceAll) {
+			return replaceAll.apply(this, Array.from(arguments));
+		} else { //表示当前环境不支持 replaceAll
+			return String.prototype.replace.apply(this, [new RegExp(searchValue, 'g'), replaceValue]);
 		}
-		else{//表示当前环境不支持 replaceAll
-			return String.prototype.replace.apply(this,[new RegExp(searchValue,'g'), replaceValue]);
-		}
+	}
+})
+
+Object.defineProperty(Date.prototype, 'SetSeconds', {
+	value: function(number = 0) {
+		if (number) {
+			return new Date(this.setSeconds(this.getSeconds() + number));
+		} else
+			return this;
+	}
+})
+
+Object.defineProperty(Date.prototype, 'SetMinutes', {
+	value: function(number = 0) {
+		if (number) {
+			return new Date(this.setMinutes(this.getMinutes() + number));
+		} else
+			return this;
+	}
+})
+
+Object.defineProperty(Date.prototype, 'SetHours', {
+	value: function(number = 0) {
+		if (number) {
+			return new Date(this.setHours(this.getHours() + number));
+		} else
+			return this;
 	}
 })

@@ -279,7 +279,10 @@ var showloding = function(yn_show, pm_txt) {
 }
 
 var hideloding = function(yn_show, pm_txt) {
-	uni.hideLoading();
+	if (yn_show) {
+		console.log("关闭加载框");
+		uni.hideLoading();
+	}
 }
 
 var asyncFuncOne = async function(pm_data, callbackfun, catchfun) {

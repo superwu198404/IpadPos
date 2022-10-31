@@ -28,21 +28,28 @@ var loadSaleSP = {
 		console.log("开始获取拼音首字母");
 		newarrList = pm_arr.map(
 			item => {
-				let py = item.PINYIN;
-				//console.log("数组的结构"+JSON.stringify(item))
-				let flag = "";
-				for (let x = 0; x < py.length; x++) 
+				try
 				{
-					if (py.charCodeAt(x) >= 97 && py.charCodeAt(x) <= 122) {
-						flag = py.substr(x, 1);
-						break;
-					}
+						let py = item.PINYIN||'';
+						//console.log("数组的结构"+JSON.stringify(item))
+						let flag = "";
+						for (let x = 0; x < py.length; x++) 
+						{
+							if (py.charCodeAt(x) >= 97 && py.charCodeAt(x) <= 122) {
+								flag = py.substr(x, 1);
+								break;
+							}
+						}
+						if (flag.length == 0) {
+							flag = "Z";
+						}
+						item["FSTR"] = flag.toUpperCase();
+						return item;
+			 	}
+				catch(err)
+				{
+					console.log("开始获取拼音首字母发生了错误",err,item);
 				}
-				if (flag.length == 0) {
-					flag = "Z";
-				}
-				item["FSTR"] = flag.toUpperCase();
-				return item;
 			});
 		return newarrList;
 	},
@@ -156,7 +163,8 @@ var loadSaleSP = {
 			price.forEach(pitem => {
 
 
-				if (spPrice[pitem.SPID]) {
+				if (spPrice[pitem.SPID]) 
+				{
 					//continue;
 				} else {
 					spPrice[pitem.SPID] = {
@@ -233,8 +241,15 @@ var loadSaleSP = {
 			"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='" + pm_dqid +
 			"' AND SM.SPID = KXPSX.MATNR   )";
 		await $sqlLite.executeQry(msDrinksql, "开始获取水吧商品", (res) => {
-			// console.log(JSON.stringify(res).substring(0,2000));
-			mainArr = mainArr.concat(res.msg);
+			console.log(JSON.stringify(res).substring(0,300));
+			if( res.msg && res.msg.length >0 )
+			{
+		     	mainArr = mainArr.concat(res.msg);
+			}
+			else
+			{
+				console.log("没有水吧商品");
+			}
 		}, null);
 		console.log("##############################开始获取水吧属性##############################")
 		//水吧属性	 
@@ -245,7 +260,7 @@ var loadSaleSP = {
 			" AND    BZIRK='" + pm_dqid + "'" + " ORDER BY KXPSX.MATNR,CSTCODE,ATTCODE ";
 		await $sqlLite.executeQry(drinkProSql, "正在获取水吧数据", (res) => {
 
-			//console.log(JSON.stringify(res).substring(0,2000));
+			console.log(JSON.stringify(res).substring(0,300));
 			dinkP = res.msg;
 
 		}, null);

@@ -7,118 +7,122 @@
 
 <template>
 	<view class="boxs">
-	<view class="meminfo" style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;z-index: 999;">
-		<view class="member">
-			<label>填写预定信息</label>
-			<button @click="Close()">×</button>
-		</view>
-		<view class="middle" style="flex: 1 0px;">
-			<view class="restlist">
-				<label>
-					<text>*提货门店：</text>
-					<input type="text" v-model="Order.THNAME" @input="inputTHKH" :disabled="!YN_YDTH" />
-					<view class="thmd">
-						<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
-					</view>
-				</label>
-				<label><text>*配送方式：</text>
-					<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index" :disabled="YN_THTYPE">
-						<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
-					</picker>
-				</label>
-				<label><text>*提货日期：</text>
-					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
-						<view>{{Order.TH_DATE}}</view>
-					</picker>
-				</label>
-				<label><text>*提货时间：</text>
-					<!-- <input type="date" v-model="Order.THDATE" /> -->
-					<picker mode="time" fields="time" position="bottom" get-container="#picker" @change="timeChange">
-						<view>{{Order.TH_TIME}}</view>
-					</picker>
-					<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
+		<view class="meminfo"
+			style="display: inline-flex;flex-direction: column;max-heighy:100%;overflow:auto;z-index: 999;">
+			<view class="member">
+				<label>填写预定信息</label>
+				<button @click="Close()">×</button>
+			</view>
+			<view class="middle" style="flex: 1 0px;">
+				<view class="restlist">
+					<label>
+						<text>*提货门店：</text>
+						<input type="text" v-model="Order.THNAME" @input="inputTHKH" :disabled="!YN_YDTH" />
+						<view class="thmd">
+							<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
+						</view>
+					</label>
+					<label><text>*配送方式：</text>
+						<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
+							:disabled="YN_THTYPE">
+							<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
+						</picker>
+					</label>
+					<label><text>*提货日期：</text>
+						<!-- <input type="date" v-model="Order.THDATE" /> -->
+						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
+							<view>{{Order.TH_DATE}}</view>
+						</picker>
+					</label>
+					<label><text>*提货时间：</text>
+						<!-- <input type="date" v-model="Order.THDATE" /> -->
+						<picker mode="time" fields="time" position="bottom" get-container="#picker"
+							:value="Order.TH_TIME" @change="timeChange">
+							<view>{{Order.TH_TIME}}</view>
+						</picker>
+						<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
 						<view slot="pCon" class="changeTime">
 							点击选择时间
 						</view>
 					</hTimePicker> -->
-				</label>
-				<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
-						v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
-				</label>
-				<label><text>*蛋糕规格：</text>
-					<picker @change="GGChange" :range="GGDatas">
-						<view>{{Order.CARDID}}</view>
-					</picker>
-				</label>
-				<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-				<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE" @blur="GetAddr()" /></label>
-				<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
-				<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
-				<label><text>*配送中心：</text>
-					<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
-						<view>{{Order.STR2}}-{{Order._STR2}}</view>
-					</picker>
-				</label>
+					</label>
+					<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
+							v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
+					</label>
+					<label><text>*蛋糕规格：</text>
+						<picker @change="GGChange" :range="GGDatas">
+							<view>{{Order.CARDID}}</view>
+						</picker>
+					</label>
+					<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+					<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
+							@blur="GetAddr()" /></label>
+					<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
+					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
+					<label><text>*配送中心：</text>
+						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
+							<view>{{Order.STR2}}-{{Order._STR2}}</view>
+						</picker>
+					</label>
 
-				<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
-			</view>
-			<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
-				<view class="h6"><text>新增地址</text></view>
-				<view class="restlist">
-					<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
-					<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
-					<!-- :disabled="ADDR.ACT=='Update'" -->
-					<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
-							@blur="searchMapAddr()" /></label>
-					<view v-if="AddrArr.length>0">
-						<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
-							style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
-					</view>
-					<view class="note">
-						<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
-						<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
-							<!-- <button class="btn-sc">删除</button> -->
-						</view>
-					</view>
+					<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 				</view>
-			</view>
-			<view class='rests'>
-				<view class="h6"><text>地址</text> <button @click="ShowAddADDR()">+ 新增地址</button></view>
-				<view class="location" v-if="ShowAllAddressList">
-					<view class="site" v-for="(item,index) in ADDRS" @click="ConfirmOrderAddr(item)">
-						<view class="sitelist">
-							<!-- <radio></radio> -->
-							<view>
-								<text>{{item.CNAME}}，{{item.PHONE}}</text>
-								<label>{{item.ADDRESS}}</label>
+				<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
+					<view class="h6"><text>新增地址</text></view>
+					<view class="restlist">
+						<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
+						<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
+						<!-- :disabled="ADDR.ACT=='Update'" -->
+						<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
+								@blur="searchMapAddr()" /></label>
+						<view v-if="AddrArr.length>0">
+							<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
+								style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
+						</view>
+						<view class="note">
+							<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
+							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
+								<!-- <button class="btn-sc">删除</button> -->
 							</view>
 						</view>
-						<view class="caozuo">
-							<button class="btn-xg" @click="Up_Addr(item)">修改</button>
-							<button class="btn-sc" @click="Del_Addr(item)">删除</button>
-						</view>
 					</view>
 				</view>
-				<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image
-						src="../../images/zhankaiqb-dt.png"></image>
+				<view class='rests'>
+					<view class="h6"><text>地址</text> <button @click="ShowAddADDR()">+ 新增地址</button></view>
+					<view class="location" v-if="ShowAllAddressList && Order.THTYPE!='0'">
+						<view class="site" v-for="(item,index) in ADDRS" @click="ConfirmOrderAddr(item)">
+							<view class="sitelist">
+								<!-- <radio></radio> -->
+								<view>
+									<text>{{item.CNAME}}，{{item.PHONE}}</text>
+									<label>{{item.ADDRESS}}</label>
+								</view>
+							</view>
+							<view class="caozuo">
+								<button class="btn-xg" @click="Up_Addr(item)">修改</button>
+								<button class="btn-sc" @click="Del_Addr(item)">删除</button>
+							</view>
+						</view>
+					</view>
+					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image
+							src="../../images/zhankaiqb-dt.png"></image>
+					</view>
 				</view>
-			</view>
-			<view class="atlas">
-				<!-- <cover-view class="map">
+				<view class="atlas">
+					<!-- <cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view> -->
-				<view class="map" v-if="!ShowAllAddressList && !yn_add">
-					<map :key="map.key" :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
-						:markers="map.markers"></map>
+					<view class="map" v-if="!ShowAllAddressList && !yn_add">
+						<map :key="map.key" :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
+							:markers="map.markers"></map>
+					</view>
 				</view>
 			</view>
+			<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
+				<button class="btn btn-qx" @click="Close()">取 消</button>
+				<button class="btn" @click="Confirm">确 定</button>
+			</view>
 		</view>
-		<view class="operat" style="display: flex;padding: 8px;gap: 8px;">
-			<button class="btn btn-qx" @click="Close()">取 消</button>
-			<button class="btn" @click="Confirm">确 定</button>
-		</view>
-	</view>
 	</view>
 </template>
 
@@ -164,6 +168,7 @@
 				LimitDate: '2000-01-01',
 				LimitTime: '00:00',
 				ShowAllAddressList: false,
+				CatchAddress: null,
 				Products: [{
 					PLID: "109",
 					SPID: "10101022",
@@ -235,11 +240,33 @@
 			console.log("[ReserveDrawer]预定录入!");
 			this.DataInit();
 		},
+		watch: {
+			'Order.THTYPE': function(n, o) {
+				console.log("[WATCH-THTYPE]提货方式发生改变!", {
+					n,
+					o
+				});
+				if (n == '0') {
+					that.Order.CUSTMADDRESS = ""; //清空地址信息
+					that.Order.STR2 = "";
+					that.Order._STR2 = "";
+					console.log("[WATCH-THTYPE]清空自提的地址信息...");
+				}
+			},
+			'Order.CUSTMADDRESS': function(n, o) {
+				if (n && this.Order.THTYPE == '1') 
+					this.MatchBHKH();
+				else{
+					this.Order.LONGITUDE = "";
+					this.Order.LATITUDE = "";
+				}
+			}
+		},
 		methods: {
 			DataInit: async function() {
-				console.log("[DataInit]时间限制配置:",{
-					start_time:this.STIME,
-					end_time:this.ETIME,
+				console.log("[DataInit]时间限制配置:", {
+					start_time: this.STIME,
+					end_time: this.ETIME,
 				})
 				that = this;
 				await that.getTHTYPE();
@@ -258,9 +285,11 @@
 				// if (obj1 && obj1.POSCSNR) {
 				// 	that.YDJGSJ = obj1.POSCSNR * 60; //小时化分
 				// }
+				console.log("[ReserveDrawer]获取系统参数配置...");
 				let obj = util.getStorage("sysParam");
 				if (obj && obj.YDZXJG) {
 					that.YDJGSJ = obj.YDZXJG * 60; //小时化分
+					console.log("[ReserveDrawer]最短销售间隔:", that.YDJGSJ);
 				}
 				this.showReserve();
 				this.Order.ZNET = this.sale?.ZNET || 0; //从外部接收整单金额
@@ -426,9 +455,19 @@
 			THChange: e => {
 				that.index = e.detail.value;
 				that.Order.THTYPE = that.THTYPES[that.index].ID;
-				if(that.THTYPE == '0' || that.THTYPE == '2'){
+				if (that.Order.THTYPE == '0' || that.Order.THTYPE == '2') {
+					if (that.Order.THTYPE == '0') {
+						that.Order.CUSTMADDRESS = ""; //清空地址信息
+						console.log("[THChange]清空自提的地址信息...");
+					}
 					that.Order.STR2 = "";
 					that.Order._STR2 = "";
+				}
+				if (that.Order.THTYPE == '1') { //宅配到家
+					if (that.Order.LONGITUDE && that.Order.LATITUDE)
+						that.MatchBHKH();
+					else
+						that.Order.CUSTMADDRESS = "";
 				}
 				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
 					that.GetAddr();
@@ -496,10 +535,12 @@
 					util.simpleMsg("电话为空", true);
 					return;
 				}
-				// if (!that.ADDR.NAME) { 
-				// 	util.simpleMsg("联系人为空", true);
-				// 	return;
-				// }
+				if (!that.ADDR.LONGITUDE && !that.ADDR.LATITUDE) {
+					console.log("[ConfirmADDR]缓存地址:", this.CatchAddress);
+					that.ADDR.ADDRESS = that.ADDR.ADDRESS ?? this.CatchAddress.address;
+					that.ADDR.LONGITUDE = this.CatchAddress.adrjd;
+					that.ADDR.LATITUDE = this.CatchAddress.adrwd;
+				}
 				if (!that.ADDR.ADDRESS) {
 					util.simpleMsg("地址信息为空", true);
 					return;
@@ -510,10 +551,12 @@
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
-					if(that.Order.CUSTMPHONE != that.ADDR.PHONE) exists_address_refresh = true;
+					if (that.Order.CUSTMPHONE != that.ADDR.PHONE) exists_address_refresh = true;
 					that.Order.CUSTMPHONE = that.ADDR.PHONE;
 					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
+					that.Order.LONGITUDE = that.ADDR.LONGITUDE;
+					that.Order.LATITUDE = that.ADDR.LATITUDE;
 					if (exists_address_refresh) {
 						that.GetAddr(); //刷新一下地址列表
 					}
@@ -531,13 +574,16 @@
 					Areaid: obj.areaid,
 					key: obj.key
 				}, res => {
-					console.log("高德地址查询:", res);
+					console.log("[SearchMapAddr]高德地址查询:", res);
 					if (res.code) {
 						that.AddrArr = JSON.parse(res.data);
+						if (that.AddrArr && that.AddrArr.length && that.AddrArr.length > 0) {
+							this.CatchAddress = that.AddrArr[0];
+							console.log("[SearchMapAddr]储存缓存地址:", this.CatchAddress);
+						}
 					}
 				})
 			},
-
 			//选中地址
 			chooseAddr: function(e) {
 				if (e) {
@@ -582,13 +628,13 @@
 			MatchBHKH: function() {
 				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// GSKHINFO = "in ('K210') ";
-				console.log("获取到的GSKHINFO", GSKHINFO);
+				console.log("[MatchBHKH]获取到的GSKHINFO", GSKHINFO);
 				_reserve.MatchBHKH({
 					LONGITUDE: that.Order.LONGITUDE,
 					LATITUDE: that.Order.LATITUDE,
 					GSKHINFO: GSKHINFO
 				}, res => {
-					console.log("匹配结果:", res);
+					console.log("[MatchBHKH]匹配结果:", res);
 					if (res.code) {
 						let data = JSON.parse(res.data);
 						if (data.over) {
@@ -596,6 +642,11 @@
 							that.Order.STR2 = "";
 							that.Order._STR2 = "";
 							that.index = 0;
+							that.Order.THTYPE = 0;
+							that.Order.LONGITUDE = 0;
+							that.Order.LATITUDE = 0;
+							that.Order.CUSTMADDRESS = ""; //清空地址信息
+							console.log("[MatchBHKH]清空结果:", that.Order);
 						} else {
 							util.simpleMsg("已匹配最近的配送中心", "none");
 							that.Order.STR2 = data.khid;
@@ -636,25 +687,32 @@
 			//用户信息确定
 			Confirm: () => {
 				console.log("预定信息：", that.Order);
-				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
-				let hour_minute = hour.toString().padStart(2,0)+minute.toString().padStart(2,0);
-				console.log("[Confirm]时间参数:",{
-					current:hour_minute,
-					stime:that.STIME,
-					etime:that.ETIME
+				let hour_minute = hour.toString().padStart(2, 0) + minute.toString().padStart(2, 0);
+				let mix_time_interval = new Date().SetHours(8).SetMinutes(Number(that.YDJGSJ)); //获取提货最短时间间隔
+				console.log("[Confirm]时间参数:", {
+					current: hour_minute,
+					stime: that.STIME,
+					etime: that.ETIME,
+					mix_interval: mix_time_interval,
+					extract_date: th_date
 				});
-				console.log("[Confirm]门店信息:",{
-					current_store:that.KHID,
-					use_store:that.Order.THKHID,
+				console.log("[Confirm]门店信息:", {
+					current_store: that.KHID,
+					use_store: that.Order.THKHID,
 				});
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
 					return;
 				}
-				if (that.Order.THKHID != that.KHID) {//判断提货门店id是否是当前门店，如果不是则是异店提货，异店提货时候定金必须是全额
-					if(Number(that.Order.ZNET) != Number(that.Order.DNET)){//判断定金是否等于整单金额
+				if (th_date < mix_time_interval) {
+					util.simpleMsg(`提货时间小于最小提货时间间隔(最小间隔:${that.YDJGSJ} 分钟)`, true);
+					return;
+				}
+				if (that.Order.THKHID != that.KHID) { //判断提货门店id是否是当前门店，如果不是则是异店提货，异店提货时候定金必须是全额
+					if (Number(that.Order.ZNET) != Number(that.Order.DNET)) { //判断定金是否等于整单金额
 						that.Order.DNET = that.Order.ZNET;
 						util.simpleMsg("异店提货必须全额支付", true);
 						return;
@@ -668,15 +726,17 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0,5).replace(':','')) <= Number(hour_minute) && Number(that.ETIME.substr(0,5).replace(':','')) >= Number(hour_minute))) {//自提
-					console.log("[Confirm]时间限制:",{
-						start_time:that.STIME,
-						end_time:that.ETIME
+				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0, 5).replace(':', '')) <= Number(
+						hour_minute)) && !(Number(that.ETIME.substr(0, 5).replace(':', '')) >= Number(
+						hour_minute))) { //自提
+					console.log("[Confirm]时间限制:", {
+						start_time: that.STIME,
+						end_time: that.ETIME
 					});
 					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '1') {//宅配到家
+				if (that.Order.THTYPE == '1') { //宅配到家
 					let hour = new Date(that.Order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
 					if (hour < 7 || hour > 19) {
 						util.simpleMsg("提货时间不在7到19点", 'none');
@@ -689,7 +749,7 @@
 					}
 				}
 				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
-					that.Order.STR2 = that.KHID;//现卖配送的，提交 当前门店编码
+					that.Order.STR2 = that.KHID; //现卖配送的，提交 当前门店编码
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date()) {
 						util.simpleMsg("提货时间小于当前时间", 'none');
 						return;
