@@ -336,6 +336,8 @@
 				subject: "商品销售", //订单类型（文本说明）
 				xuanzhong: true,
 				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
+				AlreadyBack: false,
+				ExistOperation: false,//是否是交易中
 				RefundFinish: false,
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
@@ -1188,6 +1190,11 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
+				if(!this.ExistOperation){
+					console.log("[PayHandle]正在支付中...");
+					return;
+				}
+				this.ExistOperation = true;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1214,6 +1221,7 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
+						this.ExistOperation = false;
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1233,6 +1241,7 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
+						this.ExistOperation = false;
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);
@@ -1656,12 +1665,13 @@
 			},
 			//返回上个页面
 			backPrevPage: function() {
-				if (this.CanBack) {
+				if (this.CanBack && !this.AlreadyBack) {
 					console.log("[BackPrevPage]待支付金额:", this.toBePaidPrice());
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);
 					if (Number(this.toBePaidPrice()) === 0 || this
 						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.CanBack = false;
+						this.AlreadyBack = true;//完成退出
 						console.log("[BackPrevPage]单据数据:", {
 							sale1: this.sale1_obj,
 							sale2: this.sale2_arr,
@@ -1686,7 +1696,7 @@
 					}
 					uni.navigateBack()
 				} else
-					util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
+					if(!this.CanBack && !this.AlreadyBack)util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
