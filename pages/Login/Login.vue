@@ -28,18 +28,18 @@
 			</view>
 		</view>
 		 <!-- v-if="false" -->
-		<view v-if="false" class="box">
+		<view v-if="isUpdate" class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
-					<view class="h9">更新版本至V.0.0.1</view>
+					<view class="h9">{{v_version}}</view>
 					<label>
-						<text>本次更新大小为12M</text>
+						<text>请务必完成版本更新\n以免影响正常功能使用!</text>
 					</label>
 				</view>
 				<view class="confirm">
-					<button class="btn btn-h">跳过这版</button>
-					<button class="btn">现在升级</button>
+					<button class="btn btn-h" @click="CloseUpdate">跳过这版</button>
+					<button class="btn" @click="ConfirmUpgrade">现在升级</button>
 				</view>
 			</view>
 		</view>
@@ -62,6 +62,9 @@
 	import {
 		global
 	} from '@/models/PaymentAll/models.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
 	var that;
 	export default {
 		data() {
@@ -72,7 +75,12 @@
 				posid: "",
 				KHArr: [],
 				index: 0,
-				store: util.getStorage("store")
+				store: util.getStorage("store"),
+				//app升级
+				isUpdate: false, //是否下载
+				down_id: "",//下载应用id
+				v_db: "", //数据库版本号
+				v_version: "",//版本号提示
 			}
 		},
 		methods: {
@@ -103,7 +111,46 @@
 				// 	console.log("执行结果：", res);
 				// }, err => {
 				// 	console.log("查询错误：", err);
-				// })
+				// })	
+			},
+			onReady: async function() {
+				plus.runtime.getProperty(plus.runtime.appid, function (wgtinfo) {
+					// 获取 app的应用version
+					let appversion = wgtinfo.version;
+					//存缓存 应用版本号
+					try {
+						uni.setStorageSync('appversion', appversion);
+					} catch (e) {}
+				});
+				//取缓存 应用的版本号
+				const v = uni.getStorageSync('appversion');
+				console.log("appversion：================================", v);
+				//数据库版本号
+				this.db_appversion = {};
+				try {
+					await RequestSend(`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`, util.callBind(this, function(res) {
+						if (res.code) {
+							let db_vs = JSON.parse(res.data);
+							if(db_vs != null && db_vs != undefined){
+								this.db_appversion = db_vs[0];
+								this.v_db = this.db_appversion.STR1;
+								this.down_id = this.db_appversion.STR2;
+								this.v_version = "更新版本至V."+ this.v_db;
+							}
+							uni.setStorageSync('db_appversion', this.db_appversion);
+						} else {
+							console.log("获取db_appversion失败!");
+						}
+					}))
+				} catch (e) {
+					console.log("获取db_appversion失败:",e);
+				}
+				console.log("db_appversion：================================", this.db_appversion);
+				//对比版本号
+				if (util.contrast(this.v_db, v) == 1) {
+					//提醒用户更新
+					this.isUpdate = true;			
+				}
 			},
 			GetKHIDS: function() {
 				if (that.khid) {
@@ -224,7 +271,15 @@
 						}
 					}
 				})
-			}
+			},
+			//版本号弹窗 关闭
+			CloseUpdate: function(data) {
+				this.isUpdate = false;
+			},
+			//现在升级
+			ConfirmUpgrade: function(data) {
+				plus.runtime.openURL(getApp().globalData.AppStore_DownLoad + "id" + this.down_id);
+			},
 		}
 	}
 </script>
