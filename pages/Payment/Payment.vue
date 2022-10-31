@@ -1190,7 +1190,7 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
-				if(!this.ExistOperation){
+				if(this.ExistOperation){
 					console.log("[PayHandle]正在支付中...");
 					return;
 				}
