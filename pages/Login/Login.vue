@@ -28,7 +28,7 @@
 			</view>
 		</view>
 		 <!-- v-if="false" -->
-		<view class="box">
+		<view v-if="false" class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
