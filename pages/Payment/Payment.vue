@@ -1341,7 +1341,8 @@
 							?.toFixed(2),
 						fail,
 						no: payload.no,
-						bill: payload.out_trade_no //保存失败的订单号
+						bill: payload.out_trade_no ,//保存失败的订单号
+						auth_code: ['ZF09','ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
@@ -1646,8 +1647,8 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(r, e) {
-				console.log("选择的支付类型：", r);
-				console.log("选择的支付类型1：", e);
+				console.log("[ClickPayType]选择的支付类型：", {r,e});
+				// if(!e.currentTarget.id) return;
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				// if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 				// 	this.currentPayType = e.currentTarget.id; //小程序
@@ -1849,6 +1850,7 @@
 			},
 			//单笔订单重试
 			singlePayRetry: async function(info) {
+				console.log('[SinglePayRetry]重试支付:', info);
 				if (info.pay_num > 1 && info.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
 					if (await this.NoOrginPay(info)) {
 						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
@@ -1869,6 +1871,8 @@
 					retrySinglePay({
 						type: type,
 						trade: info,
+						auth_code: info.auth_code,
+						store_id: this.KHID,
 						trade_no,
 						data
 					}, (function(res) {
