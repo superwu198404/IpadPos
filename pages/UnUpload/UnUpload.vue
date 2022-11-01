@@ -89,28 +89,43 @@
 			GetUnLoad: function(e) {
 				_main.GetUnLoad(res => {
 					console.log("获取成功:", res);
-					that.UnLoadDatas = res;
-					that.showUnLoadData = true;
-					if (e) {
-						util.simpleMsg("刷新成功");
+					if (res.code && res.msg.length > 0) {
+						that.UnLoadDatas = res.msg;
+						that.showUnLoadData = true;
+						if (e) {
+							util.simpleMsg("刷新成功");
+						}
+					} else {
+						that.UnLoadDatas = [];
+						util.simpleMsg("暂无数据", true);
 					}
 				})
+			},
+			//单据上传
+			Upload: function(e) {
+				if (e) {
+					common.TransLite(e.STR1, res => {
+						that.GetUnLoad();
+					}); //直接传输数据
+				}
 			}
 		}
 	}
 </script>
 
 <style>
-.products{
-	height:92%;
-	overflow: auto;
-}
-.hh{
+	.products {
+		height: 92%;
+		overflow: auto;
+	}
+
+	.hh {
 		padding-right: 100rpx;
 	}
-	.hh .close{
-		background:none;
-		padding:0;
+
+	.hh .close {
+		background: none;
+		padding: 0;
 		color: #333;
 		top: 12rpx;
 		right: 1%;
