@@ -2569,9 +2569,11 @@ function GetSale(global, vue, target_name, uni) {
 
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
-		let curDate = util.getStorage("CurDate");
-		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
+		let store = util.getStorage("store");
+		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
 			util.simpleMsg("签到状态过期，请重新签到", "none");
+			store.OPENFLAG = 0;
+			util.setStorage("store", store);
 			util.sleep(1500);
 			uni.redirectTo({
 				url: "/pages/Center/Center"
@@ -2773,9 +2775,11 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
-		let curDate = util.getStorage("CurDate");
-		if (curDate && new Date(curDate).getDate() !== new Date().getDate()) {
+		let store = util.getStorage("store");
+		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
 			util.simpleMsg("签到状态过期，请重新签到", "none");
+			store.OPENFLAG = 0;
+			util.setStorage("store", store);
 			util.sleep(1500);
 			uni.redirectTo({
 				url: "/pages/Center/Center"

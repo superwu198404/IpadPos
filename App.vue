@@ -10,7 +10,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	export default {
 		globalData: {
 			appid: 'keengee',
@@ -42,7 +42,7 @@
 				STIME: "",
 				ETIME: "",
 				OPENFLAG: 0, //签到状态
-
+				LOGINDATE: "", //登录时间
 			},
 			hyinfo: {
 				// hyId: "1000311640"
@@ -108,7 +108,7 @@
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
 			console.log("进行通讯！")
-		    await _init.dataInit("download_zbtx");
+			await _init.dataInit("download_zbtx");
 			await _init.YN_Init(function(res) {
 				//执行通讯
 				uni.reLaunch({
@@ -135,9 +135,9 @@
 
 			//存缓存 应用版本号
 			try {
-			    uni.setStorageSync('appversion', sysinfo.appWgtVersion);
+				uni.setStorageSync('appversion', sysinfo.appWgtVersion);
 			} catch (e) {}
-			
+
 			//取缓存 应用的版本号
 			const v = uni.getStorageSync('appversion');
 			let v_db = "";
@@ -145,21 +145,23 @@
 			//数据库版本号
 			this.db_appversion = {};
 			try {
-				await RequestSend(`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`, util.callBind(this, function(res) {
-					if (res.code) {
-						let db_vs = JSON.parse(res.data);
-						if(db_vs != null && db_vs != undefined){
-							this.db_appversion = db_vs[0];
-							v_db = this.db_appversion.STR1;
-							down_id = this.db_appversion.STR2;
+				await RequestSend(
+					`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`,
+					util.callBind(this, function(res) {
+						if (res.code) {
+							let db_vs = JSON.parse(res.data);
+							if (db_vs != null && db_vs != undefined) {
+								this.db_appversion = db_vs[0];
+								v_db = this.db_appversion.STR1;
+								down_id = this.db_appversion.STR2;
+							}
+							uni.setStorageSync('db_appversion', this.db_appversion);
+						} else {
+							console.log("获取db_appversion失败!");
 						}
-						uni.setStorageSync('db_appversion', this.db_appversion);
-					} else {
-						console.log("获取db_appversion失败!");
-					}
-				}))
+					}))
 			} catch (e) {
-				console.log("获取db_appversion失败:",e);
+				console.log("获取db_appversion失败:", e);
 			}
 		},
 		onShow: function() {

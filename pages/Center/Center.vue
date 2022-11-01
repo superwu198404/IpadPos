@@ -187,6 +187,7 @@
 			//跳转到销售页面
 			ToSale: function(e) {
 				let store = util.getStorage("store");
+				// console.log("门店信息", store.OPENFLAG);
 				if (store.OPENFLAG != 1) {
 					util.simpleMsg("请先进行签到", true);
 					return;
@@ -196,7 +197,8 @@
 				if (!int) {
 					this.TimedCommunication();
 				}
-				util.setStorage("CurDate", dateformat.getYMD()); //缓存当天日期 用于在销售页判断是否为当天业务操作
+				store.LOGINDATE = dateformat.getYMD(-1);
+				util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
 				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
