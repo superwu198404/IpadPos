@@ -3,15 +3,17 @@
 </style>
 
 <template>
-	<view class="content">
+	<view class="boxs">
 		<!-- <menu_page :menuIndex="0"></menu_page> -->
 		<view class="right">
 			<!-- <menu_head></menu_head> -->
 			<!-- <Head></Head> -->
 			<view class="mem-bg">
-				<button class="skip" @click="ReBack()">返回</button>
+				<button class="skip" @click="ReBack()">×</button>
 				<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
 				<view class="import">
+					<view class="h1">会员登录</view>
+					<text class="zim">Member login</text>
 					<label>
 						<image src="../../images/zhanghu.png" mode="widthFix"></image>
 						<input type="number" v-model="numbers" :adjust-position="false" focus="true"
@@ -111,31 +113,52 @@
 
 <style>
 	.mem-bg {
-		width: 96%;
-		height: 96%;
+		width: 75%;
+		height: 90%;
 		padding: 2%;
 		position: relative;
+		margin:5% auto;
 	}
 
 	.mem-bg .img-bg {
 		width: 100%;
+		/* opacity: 0; */
 	}
 
 	.mem-bg .import {
 		position: absolute;
-		top: 36%;
-		left: 12%;
+		top: 26%;
+		left: 50%;
+		transform: translateX(-50%);
 		display: flex;
-		width: 42%;
-		justify-content: start;
+		flex-direction: column;
+		color: #fff;
+		width: 60%;
+		justify-content: center;
+		background: rgba(0, 107, 68, 0.3);
+		text-align: center;
 	}
-
+	.mem-bg .import .h1{
+		font-size: 80rpx;
+		font-weight: 700;
+		line-height: 100rpx;
+		text-align: center;
+		margin-top:-50rpx;
+	}
+	.mem-bg .import .zim{
+		display: block;
+		font-size: 50rpx;
+		line-height: 160rpx;
+	}
 	.mem-bg .import label {
 		display: flex;
 		background-color: #fff;
-		width: 80%;
+		width: 76%;
 		align-items: center;
 		padding: 0 2%;
+		margin:40rpx auto;
+		height: 84rpx;
+		line-height: 84rpx;
 	}
 
 	.import label image {
@@ -149,12 +172,14 @@
 	}
 
 	.import button {
-		margin: 0;
+		margin: 30rpx auto;
 		border-radius: 0;
 		background-color: #006B44;
 		color: #fff;
-		width: 22%;
+		width: 80%;
+		padding: 0 2%;
 		font-weight: 700;
+		border-radius: 6rpx;
 	}
 
 	.skip {
@@ -165,6 +190,8 @@
 		background-color: #F5F5F5;
 		height: 80rpx;
 		line-height: 80rpx;
-		width: 140rpx;
+		width: 80rpx;
+		font-size: 40rpx;
+		padding:0;
 	}
 </style>

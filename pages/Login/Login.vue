@@ -353,12 +353,12 @@
 	.confirm {
 		padding: 8% 10%;
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 	}
 
 	.confirm .btn {
-		width: 43%;
+		width: 60%;
 		margin: 0;
 		height: 70rpx;
 		line-height: 70rpx;
