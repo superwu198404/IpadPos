@@ -61,8 +61,8 @@ const cxClassSql = async (storeid,date1) => {
  */
 const cxSPsql = async (storeid,date1) => {
 	let cxformd003_arr = [];
-	let cxformd003_sql = "SELECT KHID,BILL,BILL||CLASSID CLASSID,SPID  FROM  cxformd003 WHERE  bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB!='F'\
-					   AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') )";
+	let cxformd003_sql = "SELECT C3.KHID,C3.BILL,C3.BILL||C3.CLASSID CLASSID,C3.SPID  FROM  cxformd003 C3 LEFT JOIN cxformd006 C6 ON C3.BILL = C6.BILL AND C3.KHID = C6.KHID WHERE  C3.bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB!='F'\
+					   AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) order by (CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc";
     await db.get().executeQry(cxformd003_sql, "执行中", function(res) {
 		console.log("cxformd003_sql执行结果：", res.msg);
 		cxformd003_arr = res.msg;
