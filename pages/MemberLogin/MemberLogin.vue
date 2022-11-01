@@ -5,7 +5,7 @@
 <template>
 	<view class="boxs">
 		<!-- <menu_page :menuIndex="0"></menu_page> -->
-		<view class="right">
+		<!-- <view class="right"> -->
 			<!-- <menu_head></menu_head> -->
 			<!-- <Head></Head> -->
 			<view class="mem-bg">
@@ -22,7 +22,7 @@
 					<button @click="HYLogin()">登 录</button>
 				</view>
 			</view>
-		</view>
+		<!-- </view> -->
 	</view>
 </template>
 
