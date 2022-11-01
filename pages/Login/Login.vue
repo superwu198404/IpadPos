@@ -38,7 +38,7 @@
 					</label>
 				</view>
 				<view class="confirm">
-					<button class="btn btn-h" @click="CloseUpdate">跳过这版</button>
+		<!-- 			<button class="btn btn-h" @click="CloseUpdate">跳过这版</button> -->
 					<button class="btn" @click="ConfirmUpgrade">现在升级</button>
 				</view>
 			</view>
