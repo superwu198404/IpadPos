@@ -128,11 +128,11 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 	Req.asyncFuncArr1(request, [
 		function(res) {
 			// util.sleep(3000);
-			if (show_log) console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]发起支付结果（Payment）:", res);
 			return CreateData(pt, "查询中...", "QueryPayment", body);
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第一次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res);
@@ -146,7 +146,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第二次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -160,7 +160,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第三次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -174,7 +174,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第四次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -188,7 +188,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第五次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -202,7 +202,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 			}
 		},
 		function(res) {
-			if (show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:", res);
+			if (show_log) console.log("[PaymentAll]第六次查询结果（QueryPayment）:", res);
 			if (res.code && res.data.status == "SUCCESS") {
 				if (func)
 					func(res)
@@ -211,6 +211,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 					msg: "支付成功了"
 				};
 			} else { //res.code&&res.data.status=="PAYING"
+				if (show_log) console.log("[PaymentAll]超时发起撤销");
 				//30s超时撤销
 				return CreateData(pt, "撤销中...", "CancelPayment", body);
 			}
