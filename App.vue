@@ -161,21 +161,6 @@
 			} catch (e) {
 				console.log("获取db_appversion失败:",e);
 			}
-
-			//对比版本号
-			if (util.contrast(v_db, v) == 1) {
-				//提醒用户更新
-				uni.showModal({
-				  title: 'KengeePos更新',
-				  content: "请务必完成版本更新\n以免影响正常功能使用!\n最新版本号: "+ v_db +"",
-				  success: (ee) => {
-				    if (ee.confirm) {
-				       plus.runtime.openURL(getApp().globalData.AppStore_DownLoad + "id" + down_id);
-				    }
-				  }
-				})
-			}
-
 		},
 		onShow: function() {
 			console.log('App Show');

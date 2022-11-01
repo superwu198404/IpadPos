@@ -308,7 +308,7 @@
 									uni.redirectTo({
 										url: "/pages/Login/Login"
 									});
-								}, 500)
+								}, 1000)
 							}
 						}
 				)

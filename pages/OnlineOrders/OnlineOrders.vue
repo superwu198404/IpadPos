@@ -76,7 +76,7 @@
 						<label class="from-label">
 							<text>裱花间：</text>
 							<text v-if="mode('read')">{{details.order.KHSNAME || '-'}}</text>
-							<StorePicker class="input" :init="details.order.KHID_BH" v-if="mode('edit')"
+							<StorePicker mode="selector" class="input" style="z-index: 99999999;" :init="details.order.KHID_BH" v-if="mode('edit')"
 								@change="StoreChange"></StorePicker>
 						</label>
 						<label class="from-label">
