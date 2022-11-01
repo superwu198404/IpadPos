@@ -27,41 +27,41 @@
 					</view>
 					<view class="middle">
 						<view class="restlist">
-							<label><text>*提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
+							<label><text><i class="sgin">*</i>提货门店：</text><input type="text" v-model="Order.THNAME" @input="inputTHKH"
 									:disabled="!YN_YDTH"  />
 								<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 							</label>
-							<label><text>*配送方式：</text>
+							<label><text><i class="sgin">*</i>配送方式：</text>
 								<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
 									:disabled="YN_THTYPE">
 									<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 								</picker>
 							</label>
-							<label><text>*提货时间：</text>
+							<label><text><i class="sgin">*</i>提货时间：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
 								<picker mode="time" fields="time" position="bottom" get-container="#picker" @change="timeChange" style="width:65%">
 									<view style="width:100%">{{Order.TH_TIME}}</view>
 								</picker>
 							</label>
-							<label><text>*定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
+							<label><text><i class="sgin">*</i>定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 							</label>
 							<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-							<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
+							<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 									@blur="GetAddr()" /></label>
-							<label><text>*提货日期：</text>
+							<label><text><i class="sgin">*</i>提货日期：</text>
 								<!-- <input type="date" v-model="Order.THDATE" /> -->
 								<picker style="width:65%;" mode="date" fields="day" @change="dateChange">
 									<view style="width:100%;">{{Order.TH_DATE}}</view>
 								</picker>
 							</label>
 							<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
-							<label><text>*配送中心：</text>
+							<label><text><i class="sgin">*</i>配送中心：</text>
 								<picker @change="PSChange" :range="PSDatas" range-key="SNAME">
 									<view>{{Order.STR2}}-{{Order._STR2}}</view>
 								</picker>
 							</label>
 							<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
-							<label><text>*蛋糕规格：</text>
+							<label><text><i class="sgin">*</i>蛋糕规格：</text>
 								<picker @change="GGChange" :range="GGDatas">
 									<view>{{Order.CARDID}}</view>
 								</picker>

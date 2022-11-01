@@ -16,25 +16,25 @@
 			<view class="middle" style="flex: 1 0px;">
 				<view class="restlist">
 					<label>
-						<text>*提货门店：</text>
+						<text><i class="sgin">*</i>提货门店：</text>
 						<input type="text" v-model="Order.THNAME" @input="inputTHKH" :disabled="!YN_YDTH" />
 						<view class="thmd">
 							<text v-for="(item,index) in THKHDATAS" @click="ChooseTH(item)">{{item.ADDR}}</text>
 						</view>
 					</label>
-					<label><text>*配送方式：</text>
+					<label><text><i class="sgin">*</i>配送方式：</text>
 						<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
 							:disabled="YN_THTYPE">
 							<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
 						</picker>
 					</label>
-					<label><text>*提货日期：</text>
+					<label><text><i class="sgin">*</i>提货日期：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
 							<view>{{Order.TH_DATE}}</view>
 						</picker>
 					</label>
-					<label><text>*提货时间：</text>
+					<label><text><i class="sgin">*</i>提货时间：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="time" fields="time" position="bottom" get-container="#picker"
 							:value="Order.TH_TIME" @change="timeChange">
@@ -46,20 +46,20 @@
 						</view>
 					</hTimePicker> -->
 					</label>
-					<label><text>*定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
+					<label><text><i class="sgin">*</i>定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
 							v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
 					</label>
-					<label><text>*蛋糕规格：</text>
+					<label><text><i class="sgin">*</i>蛋糕规格：</text>
 						<picker @change="GGChange" :range="GGDatas">
 							<view>{{Order.CARDID}}</view>
 						</picker>
 					</label>
 					<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
-					<label><text>*联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
+					<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 							@blur="GetAddr()" /></label>
 					<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
-					<label><text>*配送中心：</text>
+					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
 							<view>{{Order.STR2}}-{{Order._STR2}}</view>
 						</picker>
