@@ -239,8 +239,7 @@ var wxPay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
-	},
-
+	}, 
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
