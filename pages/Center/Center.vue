@@ -197,7 +197,7 @@
 				if (!int) {
 					this.TimedCommunication();
 				}
-				store.LOGINDATE = dateformat.getYMD(-1);
+				store.LOGINDATE = dateformat.getYMD();
 				util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
