@@ -27,13 +27,8 @@
 				<!-- <button @click="reset()" style="margin-top: 20rpx;">重新初始化</button> -->
 			</view>
 		</view>
-<<<<<<< HEAD
-
-		<view class="box" v-if="false">
-=======
 		 <!-- v-if="false" -->
 		<view v-if="isUpdate" class="box">
->>>>>>> 76f746c6c19125216e1a624cdd75ba369257900c
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
