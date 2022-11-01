@@ -2086,7 +2086,9 @@ function GetSale(global, vue, target_name, uni) {
 		let spitem = plitem.plarr[spindex];
 		that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
 		that.clikSpItem = spitem;
-		that.clikSpItem.inputQty = 0;
+		that.clikSpItem.inputQty = 1;
+		
+		
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			//SPECS,DGJGZ,DGPLID 为selectSPID_Chenged动态添加的属性，只有蛋糕商品存在此属性，其他商品不存在！
@@ -2095,8 +2097,18 @@ function GetSale(global, vue, target_name, uni) {
 			that.clikSpItem.SPECS = that.clikSpItem.specslist[0].SPECS;
 			that.clikSpItem.DGJGZ = that.clikSpItem.specslist[0].DGJGZ;
 			that.clikSpItem.DGPLID = that.clikSpItem.specslist[0].DGPLID;
-		} else {
+		} 
+		else 
+		{
 			that.clikSpItem.selectSPID = that.clikSpItem.SPID;
+			///若没有录入了商品 默认的数量为1  蛋糕和水吧都默认为1
+			let arrSale002Filter  = that.sale002.filter(item=>{  return  item.SPID  == that.clikSpItem.SPID  })
+			if(  arrSale002Filter.length> 0  )
+			{
+				console.log("arrSale002Filter录入的详情",arrSale002Filter);
+				//已经录入了商品 
+				that.clikSpItem.inputQty = arrSale002Filter[0].QTY;
+			}
 		}
 		that.resetDrinkPro();
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
