@@ -172,7 +172,7 @@ var TransLite = function(e, func) {
 						util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
 						if (res1.code) {
 							let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
-							db.get().executeDml(delStr, "数据删除中", function(res2) {
+							db.get().executeDml1(delStr, "数据删除中", function(res2) {
 								console.log("[TransLite]缓存数据删除成功:", res2);
 								if (func) func(res2);
 							}, function(err1) {
