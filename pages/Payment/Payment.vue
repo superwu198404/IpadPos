@@ -1325,7 +1325,7 @@
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
 								.point_money?.toFixed(2),
 							fail,
-							card_no: result.open_id,
+							card_no: result.open_id ?? result.transaction_id,
 							no: payload.no
 						}, result, type_info));
 					}
@@ -1336,6 +1336,8 @@
 							?.toFixed(2),
 						fail,
 						no: payload.no,
+						bill: payload.out_trade_no ,//保存失败的订单号
+						auth_code: ['ZF09','ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 						bill: payload.out_trade_no, //保存失败的订单号
 						auth_code: ['ZF09', 'ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 					}, null, type_info)

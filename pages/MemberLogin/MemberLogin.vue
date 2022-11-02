@@ -14,6 +14,7 @@
 			<view class="import">
 				<view class="h1">会员登录</view>
 				<text class="zim">Member login</text>
+				<view class="denglu">
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
 					<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
@@ -21,7 +22,7 @@
 					<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
 				</label>
 				<button @click="HYLogin()">登 录</button>
-
+				</view>
 				<button @click="Codequery()">扫码查询</button>
 			</view>
 		</view>
@@ -228,7 +229,7 @@
 
 <style>
 	.mem-bg {
-		width: 70%;
+		width: 60%;
 		height: 90%;
 		padding: 2%;
 		position: relative;
@@ -244,16 +245,17 @@
 
 	.mem-bg .import {
 		position: absolute;
-		top: 26%;
+		top: 20%;
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
 		flex-direction: column;
 		color: #fff;
-		width: 60%;
+		width: 66%;
 		justify-content: center;
 		background: rgba(0, 107, 68, 0.3);
 		text-align: center;
+		padding-bottom: 30rpx;
 	}
 
 	.mem-bg .import .h1 {
@@ -269,7 +271,13 @@
 		font-size: 50rpx;
 		line-height: 160rpx;
 	}
-
+	.mem-bg .import .denglu{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width:80%;
+		margin:0 auto;
+	}
 	.mem-bg .import label {
 		display: flex;
 		background-color: #fff;
@@ -279,6 +287,7 @@
 		margin: 40rpx auto;
 		height: 84rpx;
 		line-height: 84rpx;
+		border-radius:6rpx 0 0 6rpx;
 	}
 
 	.import label image {
@@ -290,6 +299,7 @@
 		margin-left: 10rpx;
 		width: 76%;
 		color: #333;
+		border-radius:6rpx 0 0 6rpx;
 	}
 
 	.import button {
@@ -302,7 +312,12 @@
 		font-weight: 700;
 		border-radius: 6rpx;
 	}
-
+	.mem-bg .import .denglu button{
+		width:24%;
+		height: 86rpx;
+		line-height: 86rpx;
+		border-radius:0 6rpx 6rpx 0;
+	}
 	.skip {
 		position: absolute;
 		top: 5%;
