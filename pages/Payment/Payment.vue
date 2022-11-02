@@ -1336,8 +1336,6 @@
 							?.toFixed(2),
 						fail,
 						no: payload.no,
-						bill: payload.out_trade_no ,//保存失败的订单号
-						auth_code: ['ZF09','ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 						bill: payload.out_trade_no, //保存失败的订单号
 						auth_code: ['ZF09', 'ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 					}, null, type_info)
