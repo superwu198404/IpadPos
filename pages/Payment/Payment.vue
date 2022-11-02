@@ -1190,11 +1190,6 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
-				if(this.ExistOperation){
-					console.log("[PayHandle]正在支付中...");
-					return;
-				}
-				this.ExistOperation = true;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1206,6 +1201,7 @@
 				console.log("[PayHandle]支付类型:", info);
 				if (info.yn_use == 'N') {
 					util.simpleMsg("不可使用此支付方式!", true);
+					this.authCode = "";
 					return;
 				}
 				let XZZF = util.getStorage("XZZF");
@@ -1221,7 +1217,6 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
-						this.ExistOperation = false;
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1241,7 +1236,6 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
-						this.ExistOperation = false;
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);
