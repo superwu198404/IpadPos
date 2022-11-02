@@ -206,6 +206,7 @@
 						that.OrderDeails = JSON.parse(res.data).detail;
 						// console.log("主单集合信息：", JSON.stringify(that.WMOrders));
 						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
+						uni.$emit("exists-takeaway-reserve");
 						if (func) func(res);
 					} else {
 						that.WMOrders = [];
