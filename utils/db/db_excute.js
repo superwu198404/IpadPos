@@ -341,7 +341,7 @@ var mySqllite = function() {
 				name: that.name,
 				operation: pm_str,
 				success(e) {
-					//console.log(pm_str + JSON.stringify(e));
+					console.log(pm_str + JSON.stringify(e));
 					return resolve({
 						code: true,
 						msg: e
@@ -388,12 +388,11 @@ var mySqllite = function() {
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
 		for (var i = 0; i < sqlArray.length; i++) {
 			retcode = await exec(sqlArray[i]);
-			if (!retcode.code)
-			{
+			if (!retcode.code) {
 				// console.log(i + "exec:" + JSON.stringify(retcode)); 
 				//if (retcode.msg.code === -1404) {
 				//	continue;
-			    //	}
+				//	}
 				//await tran(tranEnum.rollback);
 				//return callBackCloseLoading(retcode, fail, pm_msg);
 			}
@@ -433,6 +432,32 @@ var mySqllite = function() {
 		await open(pm_msg);
 		retcode = await tran(tranEnum.begin);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
+		//console.log("开始执行sql:", sql);
+		retcode = await exec(sql);
+		console.log("[ExecuteDml]返回值:", retcode);
+		// console.log("[ExecuteDml]sql:", sql);
+		//await close();
+		if (retcode.code) {
+			// retcode = await tran(tranEnum.commit);
+			await tran(tranEnum.commit); //不采用事务提交的结果通知外部
+			//await close();
+			return callBackCloseLoading(retcode, success, pm_msg);
+		} else {
+			// retcode = await tran(tranEnum.rollback);
+			await tran(tranEnum.rollback); //不采用事务回滚的结果通知外部
+			//await close();
+			return callBackCloseLoading(retcode, fail, pm_msg);
+		}
+	}
+	this.executeDml1 = async function(sql, pm_msg, success, fail) {
+		var retcode = {
+			code: true,
+			msg: "默认打开"
+		};
+		//console.log("数据库状态" + isopen())
+		await open(pm_msg);
+		await tran(tranEnum.begin);
+		// if (!retcode.code) return callBackCloseLoading(retcode, fail);
 		//console.log("开始执行sql:", sql);
 		retcode = await exec(sql);
 		console.log("[ExecuteDml]返回值:", retcode);

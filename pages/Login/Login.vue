@@ -8,7 +8,7 @@
 			<view class="import">
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
-					<input type="text" v-model="userid" placeholder="请输入登录账号" @blur="GetKHIDS()" />
+					<input type="text" v-model="userid" placeholder="请输入登录账号" @blur="GetKHIDS()" @input="ResetPWD" />
 				</label>
 				<label>
 					<image src="../../images/dl-mima.png" mode="widthFix"></image>
@@ -16,19 +16,23 @@
 				</label>
 				<label>
 					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<input type="text" v-model="khid" disabled="true" />
+					<input type="text" v-model="khname" placeholder="请输入门店" disabled="true" />
 					<!-- <picker :range="KHArr" :value="index" @change="ChooseKH">
 						<view style="width: 100%;">{{KHArr[index]}}</view>
 					</picker> -->
 				</label>
+				<!-- <label>
+					<image src="../../images/dl-kuantai.png" mode="widthFix"></image>
+					<input type="text" v-model="posid" placeholder="请输入款台号" disabled="true" />
+				</label> -->
 			</view>
 			<view class="logbtn">
 				<button @click="Login()">登 录</button>
 				<!-- <button @click="reset()" style="margin-top: 20rpx;">重新初始化</button> -->
 			</view>
 		</view>
-		 <!-- v-if="false" -->
-		<view v-if="isUpdate && false" class="box">
+		<!-- v-if="false" -->
+		<view v-if="isUpdate" class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
@@ -38,7 +42,7 @@
 					</label>
 				</view>
 				<view class="confirm">
-		<!-- 			<button class="btn btn-h" @click="CloseUpdate">跳过这版</button> -->
+					<!-- 			<button class="btn btn-h" @click="CloseUpdate">跳过这版</button> -->
 					<button class="btn" @click="ConfirmUpgrade">现在升级</button>
 				</view>
 			</view>
@@ -71,6 +75,7 @@
 			return {
 				userid: "",
 				password: "",
+				name: "",
 				khid: "",
 				posid: "",
 				KHArr: [],
@@ -78,9 +83,14 @@
 				store: util.getStorage("store"),
 				//app升级
 				isUpdate: false, //是否下载
-				down_id: "",//下载应用id
+				down_id: "", //下载应用id
 				v_db: "", //数据库版本号
-				v_version: "",//版本号提示
+				v_version: "", //版本号提示
+			}
+		},
+		computed: {
+			khname: function() {
+				return this.khid + "-" + this.name;
 			}
 		},
 		methods: {
@@ -95,6 +105,9 @@
 				//初始化支付方式和全局配置参数
 				console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);
+				_init.GetMDName(that.khid, res => {
+					that.name = res;
+				});
 				//测试数据：
 				//let sql =
 				//"select * FROM cxformd001 where bill='FZCX2210170002' and KHID = 'K200QTD005' AND Yn_Jslb = 'F'";
@@ -114,7 +127,7 @@
 				// })	
 			},
 			onReady: async function() {
-				plus.runtime.getProperty(plus.runtime.appid, function (wgtinfo) {
+				plus.runtime.getProperty(plus.runtime.appid, function(wgtinfo) {
 					// 获取 app的应用version
 					let appversion = wgtinfo.version;
 					//存缓存 应用版本号
@@ -128,28 +141,30 @@
 				//数据库版本号
 				this.db_appversion = {};
 				try {
-					await RequestSend(`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`, util.callBind(this, function(res) {
-						if (res.code) {
-							let db_vs = JSON.parse(res.data);
-							if(db_vs != null && db_vs != undefined){
-								this.db_appversion = db_vs[0];
-								this.v_db = this.db_appversion.STR1;
-								this.down_id = this.db_appversion.STR2;
-								this.v_version = "更新版本至V."+ this.v_db;
+					await RequestSend(
+						`SELECT X.XTCSID,X.SNAME,X.SEQNO,X.STR1,X.STR2,X.DATE_LR,X.DATE_XG  FROM XTCS X WHERE X.XTCSID ='version' AND ROWNUM<=1 ORDER BY SEQNO DESC,DATE_XG DESC`,
+						util.callBind(this, function(res) {
+							if (res.code) {
+								let db_vs = JSON.parse(res.data);
+								if (db_vs != null && db_vs != undefined) {
+									this.db_appversion = db_vs[0];
+									this.v_db = this.db_appversion.STR1;
+									this.down_id = this.db_appversion.STR2;
+									this.v_version = "更新版本至V." + this.v_db;
+								}
+								uni.setStorageSync('db_appversion', this.db_appversion);
+							} else {
+								console.log("获取db_appversion失败!");
 							}
-							uni.setStorageSync('db_appversion', this.db_appversion);
-						} else {
-							console.log("获取db_appversion失败!");
-						}
-					}))
+						}))
 				} catch (e) {
-					console.log("获取db_appversion失败:",e);
+					console.log("获取db_appversion失败:", e);
 				}
 				console.log("db_appversion：================================", this.db_appversion);
 				//对比版本号
 				if (util.contrast(this.v_db, v) == 1) {
 					//提醒用户更新
-					this.isUpdate = true;			
+					this.isUpdate = true;
 				}
 			},
 			GetKHIDS: function() {
@@ -214,6 +229,13 @@
 				uni.redirectTo({
 					url: "/pages/start/start"
 				})
+			},
+			//清空密码
+			ResetPWD: function(e) {
+				console.log("输入事件:", e);
+				if (e.target.value) {
+					this.password = "";
+				}
 			},
 			Admin: function() {
 				uni.showModal({

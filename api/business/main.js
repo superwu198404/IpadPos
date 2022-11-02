@@ -735,7 +735,7 @@ var CXMDFS = function(sale1, cxfsArr, fzcxArr, yncx, ynfzcx) {
 	let sqlObj = common.CreateSQL(arr, "CXMDFSMX");
 	return sqlObj.oracleArr; //sql 集合
 }
-var GetUnLoad = function(func) {
+var GetUnLoad1 = function(func) {
 	let sql = "SELECT p.BILL,s1.* from POS_TXFILE p left join sale001 s1 on p.BILL=s1.BILL ";
 	db.get().executeQry(sql, "", res => {
 		console.log("查出未上传的数据：", res);
@@ -751,12 +751,8 @@ var GetUnLoad = function(func) {
 	let sql = "SELECT * from POS_TXFILE";
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("查出未上传的数据：", res);
-		if (res.code && res.msg.length > 0) {
-			if (func)
-				func(res.msg);
-		} else {
-			util.simpleMsg("暂无数据", true);
-		}
+		if (func)
+			func(res);
 	}, err => {})
 }
 //获取销售单

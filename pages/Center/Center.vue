@@ -142,10 +142,10 @@
 
 			},
 			reset: function() {
-				_init.dataInit('reloadsqlite')
+				_init.dataInit('reloadsqlite',true)
 			},
 			zbtx: function() {
-				_init.dataInit('download_zbtx')
+				_init.dataInit('download_zbtx',true)
 			},
 			//uniapp中onHide()能监听到页面离开
 			onHide() { //离开页面前清除计时器
