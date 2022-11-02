@@ -1169,7 +1169,11 @@
 		display: flex;
 		align-items: center;
 	}
-
+	.critlist view text{
+		display: inline-block;
+		width:180rpx;
+		text-align: right;
+	}
 	.critlist view label {
 		height: 60rpx;
 		line-height: 60rpx;
