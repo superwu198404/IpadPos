@@ -560,6 +560,8 @@
 			},
 			//合并重构sale123数据对象 缩减版
 			SaleDataCombine: function() {
+				if(this.complete) return;//表示已经创建过销售单，不再进行重复创建
+				else this.complete = true;//如果未创建，那么标记为已创建
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
@@ -1123,9 +1125,10 @@
 						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
-				this.refundAmountCount(); //重新计算
+				
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
+					this.refundAmountCount(); //重新计算
 					this.CheckActionComplet();
 				}))
 			},
