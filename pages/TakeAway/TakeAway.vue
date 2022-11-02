@@ -289,6 +289,7 @@
 					if (res.code) {
 						that.WMOrders = JSON.parse(res.data).main;
 						that.OrderDeails = JSON.parse(res.data).detail;
+						uni.$emit("exists-takeaway");
 						// console.log("主单集合信息：", JSON.stringify(that.WMOrders));
 						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
 						if (func) func(res);

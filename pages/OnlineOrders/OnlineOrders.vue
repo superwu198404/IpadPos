@@ -381,6 +381,7 @@
 					this.onlineOrdersGroup = util.group(this.onlineOrders, 'YDBILL');
 					console.log("[GetOnlineOrders]线上订单数据:", this.onlineOrders);
 					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
+					uni.$emit("exists-online-order");
 					if (func) func();
 				}), (res) => {
 					util.simpleMsg("暂无数据!", true, res);

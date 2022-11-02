@@ -36,7 +36,7 @@
 							<view class="critlist"><text>手机号：</text><input type="text" v-model="condition.phone" />
 							</view>
 							<view class="critlist"><text>提货方式：</text>
-								<picker @change="ExtractType" :range="extract_types" range-key="NAME" value="index">
+								<picker class="extract-type" @change="ExtractType" :range="extract_types" range-key="NAME" value="index">
 									<view>{{ condition.type ? (extract_types.length > condition.type ? extract_types[condition.type].NAME : "") : "" }}</view>
 								</picker>
 							</view>
@@ -481,5 +481,12 @@
 	.title-box>.price:nth-child(3) {
 		justify-content: right;
 		flex-shrink: 0;
+	}
+	
+	.extract-type{
+		display: inline-block;
+		align-items: center;
+		width: 62%;
+		height: 100%;
 	}
 </style>
