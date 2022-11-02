@@ -167,7 +167,7 @@ var InitData = async function(khid, func) {
 }
 
 var tx001 = null;
-var dataInit = async function(pm_initType) {
+var dataInit = async function(pm_initType,ynshow=false) {
 	console.log("进入重读")
 	var pm_khid, pm_posid;
 	let store = util.getStorage("Init_Data");
@@ -184,7 +184,7 @@ var dataInit = async function(pm_initType) {
 	}
 	console.log("准备开始初始化" + pm_khid);
 	let apistr = "MobilePos_API.Utils.PosInit.getTx001";
-	let reqdata = Req.resObj(true, "开始初始化...", null, apistr);
+	let reqdata = Req.resObj(true, "开始通讯...", null, apistr);
 	console.log(JSON.stringify(reqdata));
 	Req.asyncFunc(reqdata,
 		(res) => {
@@ -196,14 +196,14 @@ var dataInit = async function(pm_initType) {
 				"initType": pm_initType
 			};
 			let apistr = "MobilePos_API.Utils.PosInit." + pm_initType;
-			return Req.resObj(true, "初始化中...", reqPosData, apistr);
+			return Req.resObj(true, "通讯读取中...", reqPosData, apistr);
 		},
 		(res) => {
 			let sql = [];
 			// console.log("004回调：", res);
 
 			uni.showLoading({
-				title: "数据重建中...",
+				title: "数据通讯中...",
 				mask: true
 			});
 			let tx004 = Req.getResData(res);
@@ -259,14 +259,18 @@ var dataInit = async function(pm_initType) {
 				return x;
 			},
 			null,
-			(res) => {
+			(res) => 
+			{
 				console.log("最终结果：", res);
 				console.log(JSON.stringify("重读创建完成"));
-
-				if (res.msg != "OK") {
-					util.simpleModal("提示", res.msg)
-				} else {
-					util.simpleMsg("通讯完成");
+                if(ynshow)
+				{
+					if (res.msg != "OK") 
+					{
+						util.simpleModal("提示", res.msg)
+					} else {
+						util.simpleMsg("通讯完成");
+					}
 				}
 			}
 	)
