@@ -165,7 +165,8 @@
 
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp' style="z-index: 99999;">×</button>
+				<button class="close" @click="mainSale.setComponentsManage" data-mtype='inputsp'
+					style="z-index: 99999;">×</button>
 				<view class="commods">
 					<view class="h3">
 						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
@@ -369,7 +370,7 @@
 							<view>
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
-								<button class="btn" v-else>未登录...</button>
+								<button class="btn" v-else @click="mainSale.MemberLogin(1)">未登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
 									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
 								</view>
