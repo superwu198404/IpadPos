@@ -994,7 +994,9 @@ var XsTypeObj = {
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
+			this.SetType("sale_online_order");
 			this.SetManage("sale_online_order");
+			this.$initSale(XsTypeObj["sale_online_order"]);
 			return false;
 		},
 		///对打印的控制
