@@ -117,7 +117,16 @@
 		border-radius: 50%;
 		font-size: 44rpx;
 	}
+	.commods .uls{
+		display: flex;
+	}
+	.commods .uls .lis{
+		width:43%;
+	}
+	.uls .lis .protheme .themes{
+		width:70%;
+	}
 	.uls .lis .protheme .themes .h8{
-		max-width:80%;
+		max-width:100%;
 	}
 </style>

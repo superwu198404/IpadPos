@@ -244,7 +244,7 @@
 
 	.mem-bg .import {
 		position: absolute;
-		top: 26%;
+		top: 20%;
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
@@ -254,6 +254,7 @@
 		justify-content: center;
 		background: rgba(0, 107, 68, 0.3);
 		text-align: center;
+		padding-bottom: 30rpx;
 	}
 
 	.mem-bg .import .h1 {
