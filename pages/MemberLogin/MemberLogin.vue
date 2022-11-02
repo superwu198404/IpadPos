@@ -16,7 +16,7 @@
 				<text class="zim">Member login</text>
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
-					<input type="number" v-model="numbers" :adjust-position="false" focus="true" :hold-keyboard="true"
+					<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
 						@confirm="HYLogin" />
 					<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
 				</label>
@@ -69,7 +69,7 @@
 						khid: store.KHID,
 						code: that.numbers
 					}
-					_member.QueryHyInfoByCode(obj,
+					_member.QueryHyInfoByCode("查询中...", obj,
 						function(res) {
 							if (res.code) {
 								let hyinfo = JSON.parse(res.data);
