@@ -21,10 +21,10 @@
 						<view style="width: 100%;">{{KHArr[index]}}</view>
 					</picker> -->
 				</label>
-				<label>
+				<!-- <label>
 					<image src="../../images/dl-kuantai.png" mode="widthFix"></image>
 					<input type="text" v-model="posid" placeholder="请输入款台号" disabled="true" />
-				</label>
+				</label> -->
 			</view>
 			<view class="logbtn">
 				<button @click="Login()">登 录</button>
