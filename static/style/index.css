@@ -862,7 +862,7 @@ page {
 	justify-content: space-between;
 	padding: 3% 4%;
 	position: relative;
-	z-index: 9;
+	z-index: 6;
 }
 
 .member .touxiang {
