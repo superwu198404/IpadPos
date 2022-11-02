@@ -1324,7 +1324,7 @@
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
 								.point_money?.toFixed(2),
 							fail,
-							card_no: result.transaction_id,
+							card_no: result.open_id ?? result.transaction_id,
 							no: payload.no
 						}, result, type_info));
 					}
