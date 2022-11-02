@@ -243,6 +243,7 @@
 		height: 100%;
 		margin-left: 10rpx;
 		width: 76%;
+		color: #333;
 	}
 
 	.import button {
