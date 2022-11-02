@@ -62,7 +62,7 @@ let sdprice = [];
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
-	console.log("进入初始化方法Cxdict")
+	console.log("进入促销初始化方法Cxdict=================")
 	let storeDqid = getApp().globalData.store.DQID;
 	let dateTime = cx_util.getTime(0);
 	let storeid = getApp().globalData.store.KHID;
@@ -194,9 +194,7 @@ const Cxdict = async () => {
 						C1.dictZslq[struZslq.lqtype] = struZslq;
 					}
 				}
-			} catch (e) {
-
-			}
+			} catch (e) {}
 
 			let cxclass = cx_util.retDtforConditions(dscxclass, "BILL", bill);
 			//console.log(bill, cxclass);
@@ -247,9 +245,7 @@ const Cxdict = async () => {
 					try {
 						sub1.minMaxQty = cx_util.nnvl(cxclass[j]["MJ_NET1"], 0);
 						sub1.minDisc = cx_util.nnvl(cxclass[j]["MJ_NET2"], 0) / 100;
-					} catch (e) {
-
-					}
+					} catch (e) {}
 				}
 				//console.log("sub1.subno||sub1", sub1)
 				C1.SubList[sub1.subno] = sub1;
@@ -277,7 +273,6 @@ const Cxdict = async () => {
 			//异常提示信息
 			console.log("Cxdict 创建促销数据发生错误", e);
 		}
-
 	}
 }
 
@@ -373,6 +368,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		sale02_arr[i].QTY = ProNum;
 		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum) * 100) / 100;
 		sale02_arr[i].CXBILL = cxbillStr;
+		//不是sale02表字段，不返回
 		//sale02_arr[i].SPJF = jfnum;
 		//sale02_arr[i].CXZT = cxztStr;
 		//sale02_arr[i].HYLV = hylv;
@@ -390,7 +386,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	});
 	respData.products = sale02_order;
 	respData.cxfs = cxfsdt;
-	console.log("sale02_arr new", respData);
+	console.log("Createcx促销返回结果respData:", respData);
 	return respData;
 }
 
@@ -618,7 +614,7 @@ const ynjsCx = function(bill) {
 //判断会员促销方式
 const ynjsCxforHy = function(bill) {
 	let mcc = cxdict.get(bill);
-	console.log("ynjsCxforHy mcc.CXRY", mcc.CXRY);
+	//console.log("ynjsCxforHy mcc.CXRY", mcc.CXRY);
 	if (!isHy) {
 		switch (mcc.CXRY) {
 			case "all":
@@ -647,7 +643,7 @@ const ynjsCxforHy = function(bill) {
 //销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict.get(bill);
-	console.log("xsTypeCheck", mcc.Cxztype);
+	//console.log("xsTypeCheck", mcc.Cxztype);
 	if (mcc.Cxztype == "None") {
 		return true;
 	} else if (mcc.Cxztype == is_Xstype) {
@@ -1078,7 +1074,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				// 		ynzs = false;
 				// 	}
 				// }
-				let ynzs = false; //测试使用，正式使用，上面注释代码
+				let ynzs = false;
 				if (cx.OneSp) {
 					fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
 					if (fsqty < 0) {
@@ -1299,8 +1295,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round(((
-						(1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
 				case "Subnet":
@@ -1336,8 +1331,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 					} else {
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
-							100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) / 100;
 					}
 					break;
 				case "zjprice":
@@ -1363,8 +1357,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 						//计算积分
 						else {
-							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (
-								price - zjprice) * fsqty) * 100) / 100;
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price - zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
 					}
@@ -1378,12 +1371,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math
-							.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
-							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) *
-									100) / 100) /
-								fsqty;
+							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) / fsqty;
 						} else {
 							newprice = price;
 						}
@@ -1418,13 +1408,11 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 				cxbilldts[i][jfnum] = jfnum_cur;
 				if (!fsdcx.hasOwnProperty(cxsub.subno)) {
 					///积分的促销类型不在这里添加
-					if (cx.cxtype != ("G") && cx.cxtype != "D" && !fsdcx.hasOwnProperty(cx.CxBill) && jfxs >
-						0) {
+					if (cx.cxtype != ("G") && cx.cxtype != "D" && !fsdcx.hasOwnProperty(cx.CxBill) && jfxs > 0) {
 						fsdcx.push(cx.CxBill);
 					}
 				}
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur,
-					jfinfo);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur, jfinfo);
 			} catch (e) {
 
 			}
@@ -1617,24 +1605,20 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			if (fsqty > 0) {
 				switch (cxsub.SubZktype) {
 					case "Subdisc":
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub
-							.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 						newprice = price * cxsub.discnum[level] / 100;
 						break;
 					case "Subnet":
-						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) /
-							100;
+						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) / 100;
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) *
-							100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) / 100;
 						break;
 					case "zjprice":
 						let zjprice = cxsub.zjprice[level];
 						if (zjprice > price) {
 							//cxbilldts[i][disc] = 0;
 						} else {
-							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price -
-								zjprice) * fsqty) * 100) / 100;
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price - zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
 						break;

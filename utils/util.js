@@ -12,15 +12,19 @@ const utils = {
 	 * @param {Object} v2
 	 */
 	contrast(v1, v2) {
-	  let arr_1 = v1.split('.')
-	  let arr_2 = v2.split('.')
-	  for (var i = 0; i < arr_1.length; i++) {
-	    if (parseInt(arr_1[i]) > parseInt(arr_2[i])) {
-	      return 1
-	    } else if (parseInt(arr_1[i]) < parseInt(arr_2[i])) {
-	      return -1
-	    }
-	  }
+		try{
+			let arr_1 = v1.split('.')
+			let arr_2 = v2.split('.')
+			for (var i = 0; i < arr_1.length; i++) {
+			  if (parseInt(arr_1[i]) > parseInt(arr_2[i])) {
+			    return 1
+			  } else if (parseInt(arr_1[i]) < parseInt(arr_2[i])) {
+			    return -1
+			  }
+			}
+		}catch(e){
+			return 0
+		}
 	  return 0
 	},
 	//去空格
