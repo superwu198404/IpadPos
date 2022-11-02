@@ -192,7 +192,8 @@
 
 	.mem-bg .img-bg {
 		width: 100%;
-		border-radius: 12rpx;
+		border-radius: 30rpx;
+		border:16rpx solid #fff;
 		/* opacity: 0; */
 	}
 
