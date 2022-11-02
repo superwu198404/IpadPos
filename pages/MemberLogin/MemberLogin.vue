@@ -183,7 +183,7 @@
 
 <style>
 	.mem-bg {
-		width: 75%;
+		width: 70%;
 		height: 90%;
 		padding: 2%;
 		position: relative;

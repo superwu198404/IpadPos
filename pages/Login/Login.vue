@@ -16,14 +16,14 @@
 				</label>
 				<label>
 					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<input type="text" v-model="khname" disabled="true" />
+					<input type="text" v-model="khname" placeholder="请输入门店" disabled="true" />
 					<!-- <picker :range="KHArr" :value="index" @change="ChooseKH">
 						<view style="width: 100%;">{{KHArr[index]}}</view>
 					</picker> -->
 				</label>
 				<label>
-					<image src="../../images/dl-mendian.png" mode="widthFix"></image>
-					<input type="text" v-model="posid" disabled="true" />
+					<image src="../../images/dl-kuantai.png" mode="widthFix"></image>
+					<input type="text" v-model="posid" placeholder="请输入款台号" disabled="true" />
 				</label>
 			</view>
 			<view class="logbtn">
