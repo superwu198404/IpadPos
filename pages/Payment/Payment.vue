@@ -567,14 +567,19 @@
 					sale2 = this.SALES.sale2,
 					sale3 = this.SALES.sale3,
 					sale8 = this.SALES.sale8;
+				console.log("当前类型：", this.isRefund);
+				console.log("当前sale1：", sale1);
+				console.log("当前sale2：", sale2);
+				console.log("当前sale3：", sale3);
 				this.sale1_obj = Object.assign(sale1, { //上个页面传入的 sale1 和 当前追加
-					TNET: this.isRefund ? -sale1.TNET : sale1.TNET, //实付金额（重点）
-					ZNET: this.isRefund ? -sale1.ZNET : sale1.ZNET, //总金额（重点）
-					BILLDISC: this.isRefund ? -sale1?.BILLDISC : (sale1?.BILLDISC || 0), //整单折扣需要加上手工折扣,
-					ROUND: this.isRefund ? -sale1.ROUND : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
+					TNET: this.isRefund ? -Math.abs(sale1.TNET) : sale1.TNET, //实付金额（重点）
+					ZNET: this.isRefund ? -Math.abs(sale1.ZNET) : sale1.ZNET, //总金额（重点）
+					BILLDISC: this.isRefund ? -Math.abs(sale1?.BILLDISC) : (sale1?.BILLDISC ||
+					0), //整单折扣需要加上手工折扣,
+					ROUND: this.isRefund ? -Math.abs(sale1.ROUND) : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
-					TDISC: this.isRefund ? -sale1.TDISC : (sale1?.TDISC || 0),
-					TCXDISC: this.isRefund ? -sale1.TCXDISC : (sale1?.TCXDISC || 0),
+					TDISC: this.isRefund ? -Math.abs(sale1.TDISC) : (sale1?.TDISC || 0),
+					TCXDISC: this.isRefund ? -Math.abs(sale1.TCXDISC) : (sale1?.TCXDISC || 0),
 					// TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE
 					TLINE: sale1.TLINE
 				});
@@ -582,12 +587,12 @@
 				this.sale2_arr = sale2.map((function(item, index) {
 					let obj = Object.assign(item, {
 						BILL: sale1.BILL, //取最新的单号
-						NET: this.isRefund ? -item.NET : item.NET,
-						DISCRATE: this.isRefund ? -item.DISCRATE : item
+						NET: this.isRefund ? -Math.abs(item.NET) : item.NET,
+						DISCRATE: this.isRefund ? -Math.abs(item.DISCRATE) : item
 							.DISCRATE, //当前商品的折扣额 后续可能有促销折扣
-						DISC: this.isRefund ? -item.DISC : item.DISC, //手工折扣额
-						CXDISC: this.isRefund ? -item.CXDISC : item.CXDISC, //手工折扣额
-						QTY: this.isRefund ? -item.QTY : item.QTY
+						DISC: this.isRefund ? -Math.abs(item.DISC) : item.DISC, //手工折扣额
+						CXDISC: this.isRefund ? -Math.abs(item.CXDISC) : item.CXDISC, //手工折扣额
+						QTY: this.isRefund ? -Math.abs(item.QTY) : item.QTY
 					});
 					return util.hidePropety(obj, "NAME");
 				}).bind(this));
