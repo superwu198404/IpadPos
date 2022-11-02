@@ -1007,7 +1007,7 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
-		SelectMenu: function(){
+		SelectMenu: function() {
 			console.log("[SelectMenu]线上订单选中...");
 			this.SetType("sale_online_order");
 			this.$initSale(XsTypeObj["sale_online_order"]);
@@ -1179,7 +1179,7 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
-		SelectMenu: function(){
+		SelectMenu: function() {
 			console.log("[SelectMenu]外卖订单选中...");
 			this.SetType("sale_takeaway");
 			this.$initSale(XsTypeObj["sale_takeaway"]);
@@ -1216,7 +1216,7 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
-		SelectMenu: function(){
+		SelectMenu: function() {
 			console.log("[SelectMenu]外卖预定单选中...");
 			this.SetType("sale_takeaway_reserve");
 			this.$initSale(XsTypeObj["sale_takeaway_reserve"]);
@@ -1511,6 +1511,9 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//*func*完成编辑
 	this.completeEdit = util.callBind(this, function(e) {
+		this.currentOperation.showCXZK = false;
+		this.CXHDArr = [];
+		this.ZKHDArr = [];
 		let attempt_lock_row = false; //判断是否尝试修改锁定行
 		this.currentOperation["showEdit"] = false;
 		this.update();
@@ -1573,9 +1576,9 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
 		uni.$on("tools", this.ToolsManage);
-		uni.$on("exists-online-order",(XsTypeObj.sale_online_order.SelectMenu).bind(this));
-		uni.$on("exists-takeaway",(XsTypeObj.sale_takeaway.SelectMenu).bind(this));
-		uni.$on("exists-takeaway-reserve",(XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
+		uni.$on("exists-online-order", (XsTypeObj.sale_online_order.SelectMenu).bind(this));
+		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
+		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -2829,7 +2832,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement");
 		//如果会员存在 则直接打开会员详情
-		if (that.HY.val.hyId) {
+		if (that.HY.val.hyId && that.HY.val.Balance) {
 			that.HY.open = true;
 		}
 	}
