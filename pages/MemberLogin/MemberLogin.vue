@@ -16,11 +16,13 @@
 				<text class="zim">Member login</text>
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
-					<input type="number" v-model="numbers" :adjust-position="false" focus="true" :hold-keyboard="true"
+					<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
 						@confirm="HYLogin" />
 					<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
 				</label>
 				<button @click="HYLogin()">登 录</button>
+
+				<button @click="Codequery()">扫码查询</button>
 			</view>
 		</view>
 		<!-- </view> -->
@@ -57,6 +59,41 @@
 				that = this;
 				eventChannel = this.getOpenerEventChannel();
 			},
+			Codequery: function() {
+				let that = this;
+				uni.scanCode({
+					success: function(res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+						// that.code = res.result;
+						let store = util.getStorage("store");
+						let obj = {
+							khid: store.KHID,
+							code: res.result
+						}
+						_member.QueryHyInfoByCode("查询中...", {
+								brand: that.brand,
+								kquser: that.kquser,
+								data: obj
+							},
+							function(res) {
+								if (res.code) {
+									let hyinfo = JSON.parse(res.data);
+									util.setStorage("hyinfo", hyinfo);
+									util.simpleMsg("登录成功");
+									setTimeout(r => {
+										uni.$emit("member-close", hyinfo);
+									}, 1500)
+								} else {
+									util.simpleMsg(res.msg, "none");
+								}
+							}, err => {
+								console.log("会员信息查询失败:", err);
+								util.simpleMsg(err.msg, "none");
+							});
+					}
+				});
+			},
 			//登录事件
 			HYLogin: function() {
 				if (!that.numbers) {
@@ -69,13 +106,19 @@
 						khid: store.KHID,
 						code: that.numbers
 					}
-					_member.QueryHyInfoByCode(obj,
+					_member.QueryHyInfoByCode("查询中...", {
+							brand: that.brand,
+							kquser: that.kquser,
+							data: obj
+						},
 						function(res) {
 							if (res.code) {
 								let hyinfo = JSON.parse(res.data);
 								util.setStorage("hyinfo", hyinfo);
 								util.simpleMsg("登录成功");
-								uni.$emit("member-close", hyinfo);
+								setTimeout(r => {
+									uni.$emit("member-close", hyinfo);
+								}, 1500)
 							} else {
 								util.simpleMsg(res.msg, "none");
 							}
@@ -99,7 +142,9 @@
 							let hyinfo = JSON.parse(res.data);
 							util.setStorage("hyinfo", hyinfo);
 							util.simpleMsg("登录成功");
-							uni.$emit("member-close", hyinfo);
+							setTimeout(r => {
+								uni.$emit("member-close", hyinfo);
+							}, 1500)
 						} else {
 							util.simpleMsg(res.msg, "none");
 						}

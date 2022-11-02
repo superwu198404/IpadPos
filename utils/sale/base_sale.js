@@ -1007,6 +1007,11 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
+		SelectMenu: function(){
+			console.log("[SelectMenu]线上订单选中...");
+			this.SetType("sale_online_order");
+			this.$initSale(XsTypeObj["sale_online_order"]);
+		}
 	},
 	//线上订单提取
 	sale_online_order_extract: {
@@ -1174,6 +1179,11 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
+		SelectMenu: function(){
+			console.log("[SelectMenu]外卖订单选中...");
+			this.SetType("sale_takeaway");
+			this.$initSale(XsTypeObj["sale_takeaway"]);
+		}
 	},
 	//外卖单预定
 	sale_takeaway_reserve: {
@@ -1206,6 +1216,11 @@ var XsTypeObj = {
 				payOrRet: "", //支付还是退款
 			}
 		},
+		SelectMenu: function(){
+			console.log("[SelectMenu]外卖预定单选中...");
+			this.SetType("sale_takeaway_reserve");
+			this.$initSale(XsTypeObj["sale_takeaway_reserve"]);
+		}
 	},
 	//消息
 	sale_message: {
@@ -1543,6 +1558,9 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("ReturnSale");
 		uni.$off("Switch");
 		uni.$off("tools");
+		uni.$off("exists-online-order");
+		uni.$off("exists-takeaway");
+		uni.$off("exists-takeaway-reserve");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1555,6 +1573,9 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
 		uni.$on("tools", this.ToolsManage);
+		uni.$on("exists-online-order",(XsTypeObj.sale_online_order.SelectMenu).bind(this));
+		uni.$on("exists-takeaway",(XsTypeObj.sale_takeaway.SelectMenu).bind(this));
+		uni.$on("exists-takeaway-reserve",(XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
