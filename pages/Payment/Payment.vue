@@ -337,7 +337,7 @@
 				xuanzhong: true,
 				CanBack: true, //是否允许退出(为false，此处是为了方便测试)
 				AlreadyBack: false,
-				ExistOperation: false,//是否是交易中
+				ExistOperation: false, //是否是交易中
 				RefundFinish: false,
 				type: 'center',
 				allAmount: 0, //订单总金额(包含折扣)
@@ -1089,14 +1089,15 @@
 									refundInfo.fail = true;
 									console.log("[Refund-退款]退款失败:", err);
 									util.simpleModal("退款失败", err.msg);
-									resolve();//结束状态
+									resolve(); //结束状态
 								}).bind(that),
 								(function(res) { //执行完毕（finally），退款次数 +1
 									console.log("[Refund-退款]Finally:", res);
 									refundInfo.refund_num += 1; //发起请求默认加1
 									refundInfo.refunding = false; //标记为已经结束退款操作
-									this.RefundList = Object.assign([], this.RefundList) //刷新视图
-									resolve();//结束状态
+									this.RefundList = Object.assign([], this
+										.RefundList) //刷新视图
+									resolve(); //结束状态
 								}).bind(that),
 								(function(ress) { //执行完毕（results），根据结果判断
 									console.log("[Refund-退款]Results:", ress);
@@ -1114,7 +1115,7 @@
 													.group]);
 										}
 									}
-									resolve();//结束状态
+									resolve(); //结束状态
 								}).bind(that));
 						}));
 						promises.push(res)
@@ -1324,7 +1325,7 @@
 							amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
 								.point_money?.toFixed(2),
 							fail,
-							card_no: result.transaction_id,
+							card_no: result.open_id,
 							no: payload.no
 						}, result, type_info));
 					}
@@ -1335,8 +1336,8 @@
 							?.toFixed(2),
 						fail,
 						no: payload.no,
-						bill: payload.out_trade_no ,//保存失败的订单号
-						auth_code: ['ZF09','ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
+						bill: payload.out_trade_no, //保存失败的订单号
+						auth_code: ['ZF09', 'ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
 					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
@@ -1641,7 +1642,10 @@
 			},
 			//点击切换支付方式
 			clickPayType: function(r, e) {
-				console.log("[ClickPayType]选择的支付类型：", {r,e});
+				console.log("[ClickPayType]选择的支付类型：", {
+					r,
+					e
+				});
 				// if(!e.currentTarget.id) return;
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				// if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
@@ -1666,7 +1670,7 @@
 					if (Number(this.toBePaidPrice()) === 0 || this
 						.RefundFinish) { //完成支付金额（待支付为 0 时）或者 RefundFinish（订单被标记为退款完成时） 为 true
 						this.CanBack = false;
-						this.AlreadyBack = true;//完成退出
+						this.AlreadyBack = true; //完成退出
 						console.log("[BackPrevPage]单据数据:", {
 							sale1: this.sale1_obj,
 							sale2: this.sale2_arr,
@@ -1691,7 +1695,7 @@
 					}
 					uni.navigateBack()
 				} else
-					if(!this.CanBack && !this.AlreadyBack)util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
+				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
