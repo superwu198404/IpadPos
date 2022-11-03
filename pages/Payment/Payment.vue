@@ -1213,6 +1213,11 @@
 					this.authCode = "";
 					return;
 				}
+				if(!info || Object.keys(info).length == 0){
+					util.simpleMsg("未找到此类支付方式信息!", true);
+					this.authCode = "";
+					return;
+				}
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
 				console.log("[PayHandle]当前支付集合：", this.PayList);
