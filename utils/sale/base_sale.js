@@ -467,7 +467,7 @@ var XsTypeObj = {
 			});
 			this.raw_order = []
 			if (combine.length > 0) {
-				let sale3 = combine[0]; //取出第一位
+				let sale3 = Object.assign({},combine[0]); //取出第一位
 				let total = 0;
 				combine.forEach(i => total += Number(i.AMT));
 				sale3.AMT = total; //合并金额部分
