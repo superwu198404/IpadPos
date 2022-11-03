@@ -47,6 +47,7 @@ page {
 }
 .commodity{
 	height: 100%;
+	z-index: 3;
 }
 .catecyc{
 	height: 91%;
