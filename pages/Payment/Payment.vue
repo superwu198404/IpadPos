@@ -562,8 +562,8 @@
 			},
 			//合并重构sale123数据对象 缩减版
 			SaleDataCombine: function() {
-				if(this.complete) return;//表示已经创建过销售单，不再进行重复创建
-				else this.complete = true;//如果未创建，那么标记为已创建
+				if (this.complete) return; //表示已经创建过销售单，不再进行重复创建
+				else this.complete = true; //如果未创建，那么标记为已创建
 				let saledate = dateformat.getYMD();
 				let saletime = dateformat.getYMDS();
 				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
@@ -579,7 +579,7 @@
 					TNET: this.isRefund ? -Math.abs(sale1.TNET) : sale1.TNET, //实付金额（重点）
 					ZNET: this.isRefund ? -Math.abs(sale1.ZNET) : sale1.ZNET, //总金额（重点）
 					BILLDISC: this.isRefund ? -Math.abs(sale1?.BILLDISC) : (sale1?.BILLDISC ||
-					0), //整单折扣需要加上手工折扣,
+						0), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -Math.abs(sale1.ROUND) : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
 					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
 					TDISC: this.isRefund ? -Math.abs(sale1.TDISC) : (sale1?.TDISC || 0),
@@ -1133,7 +1133,7 @@
 						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
-				
+
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
 					this.refundAmountCount(); //重新计算
@@ -1215,7 +1215,7 @@
 					this.authCode = "";
 					return;
 				}
-				if(!info || Object.keys(info).length == 0){
+				if (!info || Object.keys(info).length == 0) {
 					util.simpleMsg("未找到此类支付方式信息!", true);
 					this.authCode = "";
 					return;
@@ -1905,7 +1905,7 @@
 						this.retryEnd(info, false)
 						this.yPayAmount += (data.money / 100);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
-						util.simpleModal('[SinglePayRetry]重试支付成功!', res);
+						util.simpleModal('重试结果', res);
 					}).bind(this), (this.RefundErrorCallback).bind(this, info, true));
 				else
 					util.simpleMsg("已存在相同的付款方式！", false);
@@ -1920,7 +1920,7 @@
 					info.show = false;
 				}
 				this.PayList = Object.assign([], this.PayList); //刷新视图
-				util.simpleModal('[singlePayRetry]重试支付失败!', err.msg);
+				util.simpleModal('重试结果', err.msg);
 			},
 			retryEnd: function(trade, isFail = true) {
 				trade.loading = false;
