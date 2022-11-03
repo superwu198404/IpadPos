@@ -26,12 +26,14 @@
 						<picker @change="THChange" :range="THTYPES" range-key="NAME" value="index"
 							:disabled="YN_THTYPE">
 							<view>{{THTYPES.length>0?THTYPES[index].NAME:""}}</view>
+							<text class="xial">▼</text>
 						</picker>
 					</label>
 					<label><text><i class="sgin">*</i>提货日期：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
 							<view>{{Order.TH_DATE}}</view>
+							<text class="xial">▼</text>
 						</picker>
 					</label>
 					<label><text><i class="sgin">*</i>提货时间：</text>
@@ -39,6 +41,7 @@
 						<picker mode="time" fields="time" position="bottom" get-container="#picker"
 							:value="Order.TH_TIME" @change="timeChange">
 							<view>{{Order.TH_TIME}}</view>
+							<text class="xial">▼</text>
 						</picker>
 						<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
 						<view slot="pCon" class="changeTime">
@@ -52,6 +55,7 @@
 					<label><text><i class="sgin">*</i>蛋糕规格：</text>
 						<picker @change="GGChange" :range="GGDatas">
 							<view>{{Order.CARDID}}</view>
+							<text class="xial">▼</text>
 						</picker>
 					</label>
 					<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
@@ -62,6 +66,7 @@
 					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
 							<view>{{Order.STR2}}-{{Order._STR2}}</view>
+							<text class="xial">▼</text>
 						</picker>
 					</label>
 
