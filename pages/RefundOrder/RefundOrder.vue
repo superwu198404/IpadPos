@@ -60,8 +60,8 @@
 									<!-- 预定提取的单展示整单金额 -->
 								</view>
 								<view class="cods">
-									<label>{{item.SALEDATE}} {{item.SALETIME}}</label>
-									<label>订单类型： {{item.XSTYPE}}</label>
+									<label>销售日期：{{item.SALEDATE}} {{item.SALETIME}}</label>
+									<label>订单类型：{{item.XSTYPE}}</label>
 								</view>
 								<view class="handles"><text></text>
 									<button class="btn" @click="GetOrderDetails(item)">退单</button>
