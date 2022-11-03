@@ -573,6 +573,7 @@
 			ShowPrint: function() {
 				// util.simpleMsg(that.YN_PRINT_CON == 'Y' ? "打印机已连接" : "打印机未连接", that.YN_PRINT_CON != 'Y');
 				that.showBle = true;
+				that.startSearch();
 			},
 			onBLEConnectionStateChange: function() {
 				let that = this;
