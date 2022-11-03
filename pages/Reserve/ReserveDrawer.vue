@@ -58,10 +58,10 @@
 							<text class="xial">▼</text>
 						</picker>
 					</label>
-					<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+					<label class="hui"><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
 					<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 							@blur="GetAddr()" /></label>
-					<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
+					<label class="hui"><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
@@ -70,7 +70,7 @@
 						</picker>
 					</label>
 
-					<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
+					<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 				</view>
 				<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>

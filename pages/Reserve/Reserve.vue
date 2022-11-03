@@ -47,7 +47,7 @@
 							</label>
 							<label><text><i class="sgin">*</i>定金：</text><input type="number" v-model="Order.DNET" @input="CheckMoney" />
 							</label>
-							<label><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+							<label class="hui"><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
 							<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 									@blur="GetAddr()" /></label>
 							<label><text><i class="sgin">*</i>提货日期：</text>
@@ -64,14 +64,14 @@
 									<text class="xial">▼</text>
 								</picker>
 							</label>
-							<label><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
+							<label class="hui"><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" /></label>
 							<label><text><i class="sgin">*</i>蛋糕规格：</text>
 								<picker @change="GGChange" :range="GGDatas">
 									<view>{{Order.CARDID}}</view>
 									<text class="xial">▼</text>
 								</picker>
 							</label>
-							<label><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
+							<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
 						</view>
 						<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
 							<view class="h6"><text>新增地址</text></view>
