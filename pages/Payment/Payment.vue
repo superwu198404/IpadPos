@@ -331,6 +331,7 @@
 				YN_TotalPay: false,
 				allowInput: false,
 				refundRefresh: new Date().toString(), //刷新退款成功和失败列表
+				currentSelectedInfo: null,//当前界面选中状态支付方式
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
@@ -448,12 +449,13 @@
 			authCode: function(n, o) {
 				console.log("[watch-authCode]判断authCode：", n);
 				console.log("[watch-authCode]PayWayList：", this.PayWayList);
-				if (n)
-					this.currentPayInfo = this.PayWayList.find(i => i.type === this
-						.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+				if (n){
+					this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					if(this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo;//储存包含聚合的支付信息
+				}
 				else
 					this.currentPayInfo = null
-				console.log("当前支付类型信息：", this.currentPayInfo);
+				console.log("[Watch-AuthCode]当前支付类型信息：", this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				console.log("[Watch-CurrentPayType]当前类型:", n);
@@ -1669,6 +1671,7 @@
 				} else {
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
+						this.currentSelectedInfo = r;//缓存当前点击选中的支付信息
 					} else {
 						this.is_poly = true; //聚合支付复位
 						util.simpleMsg("该支付方式已禁用", "none");
