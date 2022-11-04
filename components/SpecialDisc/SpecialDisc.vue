@@ -257,6 +257,19 @@
 					}
 				})
 				console.log("合并后的折扣规则：", pushArr);
+				let bzarr = pushArr.filter(r => {
+					return r.ZKTYPE == 'ZD02'
+				}) //筛选出标准规则的可用规则 
+				console.log("bzarr:", bzarr);
+				let lsarr = pushArr.filter(r => {
+					return r.ZKTYPE == 'ZD03' && bzarr.find(r1 => {
+						return r1.ZKSTR == r.ZKSTR
+					})
+				});
+				pushArr = [];
+				pushArr = pushArr.concat(bzarr);
+				pushArr = pushArr.concat(lsarr);
+				console.log("lsarr:", lsarr);
 				if (pushArr.length > 0) {
 					let anet = 0;
 					pushArr.map(r => {

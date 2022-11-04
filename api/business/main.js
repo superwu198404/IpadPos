@@ -278,7 +278,7 @@ var SortData = (type, data, pro) => {
 				if (arr4.length > 0) {
 					arr4[0].ZKNET = ((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3
 							.NET))
-						.toFixed(2);
+						.toFixed(1);
 					zkData.push(arr4[0]);
 				}
 			} else {
@@ -295,14 +295,12 @@ var SortData = (type, data, pro) => {
 				// });
 				if (arr2.length > 0) {
 					arr2[0].ZKNET = ((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3
-						.NET)).toFixed(
-						2);
+						.NET)).toFixed(1);
 					zkData.push(arr2[0]);
 				}
 				if (arr2.length > 0 && arr3.length > 0) { //临时生效必须要标准折扣满足最低生效金额
 					arr3[0].ZKNET = ((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3
-						.NET)).toFixed(
-						2);
+						.NET)).toFixed(1);
 					zkData.push(arr3[0]);
 				}
 			}
