@@ -264,6 +264,10 @@
         {
             "path" : "pages/UnUpload/UnUpload",
             "style" : {}
+        },
+        {
+            "path" : "components/rijie/rijie",
+            "style" : {}
         }
     ],
     "globalStyle" : {
