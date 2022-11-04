@@ -679,6 +679,17 @@ var GetPayOrRefund = function(sale1) {
 	}
 }
 
+//会员码转大写
+var ResetAuthCode = function(e) {
+	let code = e;
+	if (e) {
+		if (e.startsWith("kg") || e.startsWith("Kg") || e.startsWith("kG")) {
+			code = e.toUpperCase();
+		}
+	}
+	return code;
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -702,5 +713,6 @@ export default {
 	DelSale,
 	GetPOSCS_Local,
 	GetTXFILE,
-	GetPayOrRefund
+	GetPayOrRefund,
+	ResetAuthCode
 }

@@ -298,6 +298,7 @@ export const PointUploadNew = async function(sale1, sale2, sale3) {
 	let mode = (type1 == common.actTypeEnum.Payment) ? "INCREASE" : "DECREASE";
 	obj.order_no = sale1.BILL;
 	obj.sale_order_no = sale1.XS_BILL;
+	// obj.xs_type = sale1.XSTYPE == '2' ? '2' : '1';
 	obj.member_id = sale1.CUID;
 	obj.mode = mode;
 	obj.product = sale2;
@@ -316,6 +317,7 @@ export const PointUploadNew = async function(sale1, sale2, sale3) {
 const point_upload_def_params = {
 	order_no: "", //单号
 	sale_order_no: "", //销售单号，退款才会传入（[主单号]+[下划线]+[序号]，例如:100000001_0）
+	// xs_type: "", //销售类型
 	channel: "POS", //平台、渠道（基本固定）
 	member_id: "", //会员id（一般付款取当前的hyid，退单取支付单的hyid）
 	product: [], //标准的 sale2 字段对象数组
@@ -338,6 +340,7 @@ export const PointUpload = async function(def = point_upload_def_params) {
 		channel: params.channel,
 		bill: params.order_no, //退款单号
 		zf_bill: params.sale_order_no, //支付单号
+		// xs_type: params.xs_type, //销售类型 1或者2
 		date: dateformat.getYMDS(),
 		productList: params.product.map((item, i) => {
 			total_amount += item.NET;
@@ -389,11 +392,11 @@ export const PointUpload = async function(def = point_upload_def_params) {
 /**
  * 根据经纬度坐标匹配裱花配送中心
  */
-export const MatchDeliveryCenter = function(longitude,latitude) { //匹配裱花中心
+export const MatchDeliveryCenter = function(longitude, latitude) { //匹配裱花中心
 	let store = getApp().globalData.store;
 	let GSKHINFO = reserve.getGSKHINFO(store.GSID, store.KHID);
 	console.log("[MatchDeliveryCenter]获取到的GSKHINFO:", GSKHINFO);
-	return new Promise((resolve,reject) => {
+	return new Promise((resolve, reject) => {
 		reserve.MatchBHKH({
 			LONGITUDE: longitude,
 			LATITUDE: latitude,
