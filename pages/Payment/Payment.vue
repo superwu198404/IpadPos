@@ -92,7 +92,7 @@
 						<view class="paymentlist">
 							<h3 v-if="!isRefund">已结算<button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list" v-if="!isRefund">
-								<view class="paylists">
+								<view class="paylists yjs">
 									<view class="Methods"
 										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.paying && i.show)">
 										<view class="payicon">
@@ -114,7 +114,7 @@
 							</view>
 							<h3 v-if="!isRefund">结算失败</h3>
 							<view class="sets-list refund" v-if="!isRefund">
-								<view class="paylists">
+								<view class="paylists yjs">
 									<view class="Methods"
 										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding && i.show)">
 										<view class="payicon">
@@ -474,7 +474,7 @@
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
-				if (n && n.filter(i => i.fail).length == 0) {
+				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) {
 					this.CanBack = true;
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
@@ -1138,8 +1138,6 @@
 
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
-					this.refundAmountCount(); //重新计算
-					this.CheckActionComplet();
 				}))
 			},
 			//创建订单对象列表

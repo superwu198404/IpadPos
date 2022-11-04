@@ -991,6 +991,7 @@ var XsTypeObj = {
 		operation: {
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
@@ -1290,6 +1291,18 @@ function GetSale(global, vue, target_name, uni) {
 			d
 			.getMinutes() + ":" + d.getSeconds();
 		return x;
+	}
+	//清除sale2的折扣信息
+	this.ClearDiscount = function(sale2){
+		console.log("[ClearDiscount]折扣清除前:",sale2);
+		sale2?.forEach(s2 => {
+			s2.DSICRATE = 0;
+			s2.TCXDISC = 0;
+			s2.BZDISC = 0;
+			s2.LSDISC = 0;
+			s2.TPDISC = 0;
+		})
+		console.log("[ClearDiscount]折扣清除后:",sale2);
 	}
 	//创建订单号
 	this.getBill = function() {
