@@ -92,7 +92,7 @@
 						<view class="paymentlist">
 							<h3 v-if="!isRefund">已结算<button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
 							<view class="sets-list" v-if="!isRefund">
-								<view class="paylists">
+								<view class="paylists yjs">
 									<view class="Methods"
 										v-for="(pay, index) in PayList.filter(i => !i.fail && !i.paying && i.show)">
 										<view class="payicon">
@@ -114,7 +114,7 @@
 							</view>
 							<h3 v-if="!isRefund">结算失败</h3>
 							<view class="sets-list refund" v-if="!isRefund">
-								<view class="paylists">
+								<view class="paylists yjs">
 									<view class="Methods"
 										v-for="(pay, index) in PayList.filter(i => i.fail && !i.payding && i.show)">
 										<view class="payicon">
