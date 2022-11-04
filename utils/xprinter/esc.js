@@ -72,23 +72,14 @@ var jpPrinter = {
     };
 	
 	/**
-	 * 
-	 * 切纸
+	 * n 切纸模式 0,48全切 ; 1,49半切
+	 * 选择切纸模式并切纸
 	 */
 	jpPrinter.setPrintAndPapercut = function (n) {
 	  data.push(29);
 	  data.push(86);
 	  data.push(n);
 	};
-	
-	// 走纸 n = 行数
-	jpPrinter.feedLine = function (n) {
-	  const line = n || 1
-	  writer.write(0x1B)
-	  writer.write(0x64)
-	  writer.write(line) // 行数
-	  writer.flush()
-	}
 	
     /**
      * ESC d 打印并走纸n 行
@@ -120,6 +111,19 @@ var jpPrinter = {
       data.push(parseInt(where % 256));
       data.push(parseInt(where / 256));
     };
+	
+	/**
+	 * ESC $ 设置绝对打印位置
+	 * 将当前位置设置到距离行首（nL + nH × 256）×（横向或纵向移动单位）处。
+	 * 传入参数为点数
+	 * 1mm=8dot
+	 */
+	jpPrinter.setAbsolutePrintPositionNew = function (where) {
+	  data.push(27);
+	  data.push(36);
+	  data.push(parseInt(where));
+	  data.push(parseInt(where));
+	};
 	
     /**
      * ESC \ 设置相对横向打印位置
