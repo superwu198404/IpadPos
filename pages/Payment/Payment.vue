@@ -474,7 +474,7 @@
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
-				if (n && n.filter(i => i.fail).length == 0) {
+				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) {
 					this.CanBack = true;
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
@@ -1136,8 +1136,6 @@
 
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
-					this.refundAmountCount(); //重新计算
-					this.CheckActionComplet();
 				}))
 			},
 			//创建订单对象列表

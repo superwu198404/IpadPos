@@ -39,7 +39,7 @@
 					<label><text><i class="sgin">*</i>提货时间：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="time" fields="time" position="bottom" get-container="#picker"
-							:value="Order.TH_TIME" @change="timeChange">
+							:value="extract_time" @change="timeChange">
 							<view>{{Order.TH_TIME}}</view>
 							<text class="xial">▼</text>
 						</picker>
@@ -65,7 +65,7 @@
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
-							<view>{{Order.STR2}}-{{Order._STR2}}</view>
+							<view>{{(Order.STR2 && Order._STR2) ? (Order.STR2 + '-' + Order._STR2) : ""}}</view>
 							<text class="xial">▼</text>
 						</picker>
 					</label>
@@ -158,6 +158,20 @@
 			over48: {
 				type: Boolean,
 				default: false
+			}
+		},
+		computed:{
+			extract_time:function(){
+				console.log("[ExtractTime]提货时间:",this.Order.TH_TIME);
+				if(this.Order.TH_TIME.length >= 5){
+					return this.Order.TH_TIME.substr(0,5);
+				}
+				else if(this.Order.TH_TIME.length == 2){
+					return this.Order.TH_TIME+":00";
+				}
+				else{
+					return "00:00"
+				}
 			}
 		},
 		data() {
@@ -360,10 +374,15 @@
 					if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
 						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
 							date = dateformat.getYMD(1);
+							this.LimitDate = date;//限制时间为t+1后
 						}
 					}
 				}
-
+				console.log("[RefreshData]提货时间:",{
+					th_date:this.Order.THDATE,
+					date,
+					time
+				});
 				that.Order.THDATE = date + ' ' + time;
 				that.Order.TH_DATE = date;
 				that.Order.TH_TIME = time;
@@ -441,7 +460,7 @@
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			timeChange: e => {
-				console.log("时间切换：", e);
+				console.log("[TimeChange]时间切换：", e.detail);
 				let time = e.detail.value;
 				if (!time) {
 					time = "00:00";
@@ -452,7 +471,7 @@
 				if (time?.indexOf(':') < 0) {
 					time = time + ":00";
 				}
-				console.log("时间格式化后：", time);
+				console.log("[TimeChange]时间格式化后：", time);
 				that.Order.TH_TIME = time;
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
