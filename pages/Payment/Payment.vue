@@ -1709,7 +1709,10 @@
 							msg: "支付取消!"
 						});
 					}
-					uni.navigateBack()
+					// setTimeout(() => {
+					// 	uni.navigateBack();
+					// },5000)
+					uni.navigateBack();
 				} else
 				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
