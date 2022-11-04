@@ -772,16 +772,6 @@ var GetPTOrder = function(e, b, d, t, func) {
 		console.log("查询错误：", err);
 	})
 }
-//会员码转大写
-var ResetAuthCode = function(e) {
-	let code = e;
-	if (e) {
-		if (e.startsWith("kg") || e.startsWith("Kg") || e.startsWith("kG")) {
-			code = e.toUpperCase();
-		}
-	}
-	return code;
-}
 
 export default {
 	GetFZCX,
@@ -797,6 +787,5 @@ export default {
 	ManualDiscount,
 	CXMDFS,
 	GetUnLoad,
-	GetPTOrder,
-	ResetAuthCode
+	GetPTOrder
 }
