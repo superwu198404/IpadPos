@@ -9,6 +9,7 @@
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
 					<input type="text" v-model="userid" placeholder="请输入登录账号" @blur="GetKHIDS()" @input="ResetPWD" />
+					<button class="del" @click="delid()" v-if="delshow">×</button>
 				</label>
 				<label>
 					<image src="../../images/dl-mima.png" mode="widthFix"></image>
@@ -86,6 +87,7 @@
 				down_id: "", //下载应用id
 				v_db: "", //数据库版本号
 				v_version: "", //版本号提示
+				delshow:false
 			}
 		},
 		computed: {
@@ -233,9 +235,14 @@
 			//清空密码
 			ResetPWD: function(e) {
 				console.log("输入事件:", e);
+				this.delshow=true;
 				if (e.target.value) {
 					this.password = "";
 				}
+			},
+			delid: function(e) {
+					this.userid = "";
+					this.delshow=false;
 			},
 			Admin: function() {
 				uni.showModal({
@@ -457,12 +464,27 @@
 		align-items: center;
 		padding: 0 2%;
 		margin-bottom: 8%;
+		position: relative;
 	}
 
 	.import label image {
 		width: 40rpx;
 	}
-
+	.import label .del{
+		position: absolute;
+		top:50%;
+		right:2%;
+		transform: translateY(-50%);
+		width:40rpx;
+		height: 40rpx;
+		line-height: 38rpx;
+		text-align: center;
+		padding:0;
+		margin:0;
+		border-radius: 50%;
+		background:rgba(0,0,0,0.2);
+		color: #666;
+	}
 	.import label input {
 		height: 100%;
 		margin-left: 10rpx;

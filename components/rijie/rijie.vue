@@ -4,19 +4,10 @@
 </style>
 <template>
 	<view class="boxs">
-		<!-- <view class="customer" v-if="rj_sf">
-			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
-			<view class="clues">
-				<image src="@/images/rijie.png" mode="widthFix"></image>
-				<text>您确定当前要进行日结操作吗？</text>
-			</view>
-			<view class="affirm"><button class="btn btn-hk">取消</button><button class="btn">确定</button></view>
-		</view> -->
 		<!-- 选择日结 -->
 		<view class="customer">
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">日结 <button @click="Close()" class="guan">×</button></view>
+			<view class="h3">日结 <button @click="Close()" class="guan close">×</button></view>
 			<view class="h6">当前你有以下日期没有做日结操作</view>
 			<view class="cluelist">
 				<view :class="index==curIndex?'list curr':'list'" v-for="(item,index) in signOutDate"
@@ -179,13 +170,10 @@
 
 	.customer .h3 .guan {
 		float: right;
-		background: none;
 		font-size: 32rpx;
-		height: 100rpx;
-		line-height: 100rpx;
 		text-align: right;
 		padding: 0;
-		width: 60rpx;
+		right:0;
 	}
 
 	.customer .h6 {

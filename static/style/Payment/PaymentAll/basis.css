@@ -534,7 +534,9 @@ page {
 	gap: 25px;
 	padding: 10px 2.8%;
 }
-
+.yjs{
+	max-height: 50%;
+}
 .Methods {
 	width: 100%;
 	display: flex;
