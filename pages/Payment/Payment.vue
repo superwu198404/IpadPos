@@ -331,7 +331,7 @@
 				YN_TotalPay: false,
 				allowInput: false,
 				refundRefresh: new Date().toString(), //刷新退款成功和失败列表
-				currentSelectedInfo: null,//当前界面选中状态支付方式
+				currentSelectedInfo: null, //当前界面选中状态支付方式
 				currentPayInfo: null, //当前一单的支付平台信息（提供 fkid 和 name）
 				currentPayType: "POLY", //支付类型，目前主要区分 聚合（聚合包含 支付宝、微信、会员卡-电子卡）和 券，默认聚合
 				subject: "商品销售", //订单类型（文本说明）
@@ -449,11 +449,11 @@
 			authCode: function(n, o) {
 				console.log("[watch-authCode]判断authCode：", n);
 				console.log("[watch-authCode]PayWayList：", this.PayWayList);
-				if (n){
-					this.currentPayInfo = this.PayWayList.find(i => i.type === this.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
-					if(this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo;//储存包含聚合的支付信息
-				}
-				else
+				if (n) {
+					this.currentPayInfo = this.PayWayList.find(i => i.type === this
+						.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					if (this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo; //储存包含聚合的支付信息
+				} else
 					this.currentPayInfo = null
 				console.log("[Watch-AuthCode]当前支付类型信息：", this.currentPayInfo);
 			},
@@ -860,7 +860,8 @@
 				console.log("收到扫码枪回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
-					this.authCode = e; //获取扫码的 authCode
+					let code = common.ResetAuthCode(e);
+					this.authCode = code; //获取扫码的 authCode
 					console.log("[Pay]authCode:", this.authCode);
 					that.PayHandle();
 				} else {
@@ -909,7 +910,8 @@
 						} else {
 							uni.scanCode({
 								success: (function(res) {
-									this.authCode = res.result; //获取扫码的 authCode
+									let code = common.ResetAuthCode(res.result);
+									this.authCode = code; //获取扫码的 authCode
 									console.log("[Pay]scanCode:", res);
 									that.PayHandle();
 								}).bind(this),
@@ -1669,7 +1671,7 @@
 				} else {
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
-						this.currentSelectedInfo = r;//缓存当前点击选中的支付信息
+						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
 					} else {
 						this.is_poly = true; //聚合支付复位
 						util.simpleMsg("该支付方式已禁用", "none");
