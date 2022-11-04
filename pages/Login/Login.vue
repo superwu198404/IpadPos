@@ -483,7 +483,7 @@
 		margin:0;
 		border-radius: 50%;
 		background:rgba(0,0,0,0.2);
-		color: #222;
+		color: #666;
 	}
 	.import label input {
 		height: 100%;
