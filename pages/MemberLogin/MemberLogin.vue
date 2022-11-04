@@ -15,13 +15,13 @@
 				<view class="h1">会员登录</view>
 				<text class="zim">Member login</text>
 				<view class="denglu">
-				<label>
-					<image src="../../images/zhanghu.png" mode="widthFix"></image>
-					<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
-						@confirm="HYLogin" />
-					<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
-				</label>
-				<button @click="HYLogin()">登 录</button>
+					<label>
+						<image src="../../images/zhanghu.png" mode="widthFix"></image>
+						<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
+							@confirm="HYLogin" />
+						<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
+					</label>
+					<button @click="HYLogin()">登 录</button>
 				</view>
 				<button @click="Codequery()">扫码查询</button>
 			</view>
@@ -67,10 +67,12 @@
 						console.log('条码类型：' + res.scanType);
 						console.log('条码内容：' + res.result);
 						// that.code = res.result;
+
+						let code = common.ResetAuthCode(res.result);
 						let store = util.getStorage("store");
 						let obj = {
 							khid: store.KHID,
-							code: res.result
+							code: code
 						}
 						_member.QueryHyInfoByCode("查询中...", {
 								brand: that.brand,
@@ -103,9 +105,10 @@
 				}
 				let store = util.getStorage("store");
 				if (that.numbers.length > 11) { //扫码操作
+					let code = common.ResetAuthCode(that.numbers);
 					let obj = {
 						khid: store.KHID,
-						code: that.numbers
+						code: code
 					}
 					_member.QueryHyInfoByCode("查询中...", {
 							brand: that.brand,
@@ -239,7 +242,7 @@
 	.mem-bg .img-bg {
 		width: 100%;
 		border-radius: 30rpx;
-		border:16rpx solid #fff;
+		border: 16rpx solid #fff;
 		/* opacity: 0; */
 	}
 
@@ -271,13 +274,15 @@
 		font-size: 50rpx;
 		line-height: 160rpx;
 	}
-	.mem-bg .import .denglu{
+
+	.mem-bg .import .denglu {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width:80%;
-		margin:0 auto;
+		width: 80%;
+		margin: 0 auto;
 	}
+
 	.mem-bg .import label {
 		display: flex;
 		background-color: #fff;
@@ -287,7 +292,7 @@
 		margin: 40rpx auto;
 		height: 84rpx;
 		line-height: 84rpx;
-		border-radius:6rpx 0 0 6rpx;
+		border-radius: 6rpx 0 0 6rpx;
 	}
 
 	.import label image {
@@ -299,7 +304,7 @@
 		margin-left: 10rpx;
 		width: 76%;
 		color: #333;
-		border-radius:6rpx 0 0 6rpx;
+		border-radius: 6rpx 0 0 6rpx;
 	}
 
 	.import button {
@@ -312,12 +317,14 @@
 		font-weight: 700;
 		border-radius: 6rpx;
 	}
-	.mem-bg .import .denglu button{
-		width:24%;
+
+	.mem-bg .import .denglu button {
+		width: 24%;
 		height: 86rpx;
 		line-height: 86rpx;
-		border-radius:0 6rpx 6rpx 0;
+		border-radius: 0 6rpx 6rpx 0;
 	}
+
 	.skip {
 		position: absolute;
 		top: 5%;

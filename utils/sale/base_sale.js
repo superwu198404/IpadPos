@@ -199,6 +199,9 @@ var XsTypeObj = {
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
+			console.log("002清除折扣前:", this.sale002)
+			this.ClearDiscount(this.sale002);
+			console.log("002清除折扣后:", this.sale002)
 			//给全局会员对象赋值
 			if (this.sale001.CUID) {
 				let obj = {
@@ -454,6 +457,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
@@ -467,7 +471,7 @@ var XsTypeObj = {
 			});
 			this.raw_order = []
 			if (combine.length > 0) {
-				let sale3 = Object.assign({},combine[0]); //取出第一位
+				let sale3 = Object.assign({}, combine[0]); //取出第一位
 				let total = 0;
 				combine.forEach(i => total += Number(i.AMT));
 				sale3.AMT = total; //合并金额部分
@@ -615,6 +619,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[BeforeFk]预定取消信息初始化:", {
 				sale1: this.sale001,
@@ -881,6 +886,9 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			console.log("002清除折扣前:", this.sale002)
+			this.ClearDiscount(this.sale002);
+			console.log("002清除折扣后:", this.sale002)
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -989,8 +997,10 @@ var XsTypeObj = {
 		icon_open: require("@/images/xsdingdan.png"),
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
+			"sale":true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
@@ -1290,6 +1300,18 @@ function GetSale(global, vue, target_name, uni) {
 			d
 			.getMinutes() + ":" + d.getSeconds();
 		return x;
+	}
+	//清除sale2的折扣信息
+	this.ClearDiscount = function(sale2) {
+		console.log("[ClearDiscount]折扣清除前:", sale2);
+		sale2?.forEach(s2 => {
+			s2.DISCRATE = 0;
+			s2.TCXDISC = 0;
+			s2.BZDISC = 0;
+			s2.LSDISC = 0;
+			s2.TPDISC = 0;
+		})
+		console.log("[ClearDiscount]折扣清除后:", sale2);
 	}
 	//创建订单号
 	this.getBill = function() {
