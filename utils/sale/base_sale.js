@@ -454,6 +454,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
@@ -615,6 +616,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[BeforeFk]预定取消信息初始化:", {
 				sale1: this.sale001,
@@ -989,6 +991,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xsdingdan.png"),
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
+			"sale":true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
