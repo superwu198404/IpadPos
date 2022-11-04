@@ -445,7 +445,7 @@
 						</view>
 						<view class="li" @click="mainSale.showCXZKFunc">
 							<text>总折扣<image style="width:40rpx;height:40rpx;vertical-align: middle;"
-									src="@/images/dx-zhekou.png"></image>
+									src="@/images/ts-zhekou.png"></image>
 							</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
 						</view>
 						<view class="li">
