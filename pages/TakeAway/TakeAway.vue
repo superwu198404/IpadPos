@@ -346,12 +346,16 @@
 							let data = JSON.parse(res.data);
 							console.log("返回信息:", data);
 							that.js_res = data;
-							// if (data.yn_print) {
-							// 	//调用打印
-							// 	//console.log("此处调用打印：");
-							//let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-							// 	that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,"",that.bs_Reason,that.bs_Note，"");
-							// }
+							//是退单状态接收确认，打印退单小票
+							if (data.yn_print && that.Order.STATUS == "33") {
+								let wm_type = "WM";
+								let printerPram = {
+									"PRINTNUM": 1
+								};
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
+									printerPram,
+									that.bs_Reason, that.bs_Note, "");
+							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
 								//调用处理报损
