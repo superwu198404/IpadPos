@@ -156,6 +156,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			JGID: res.msg[0].JGID,
 			STIME: dateformat.CheckStoreTime(res.msg[0].STIME),
 			ETIME: dateformat.CheckStoreTime(res.msg[0].ETIME),
+			DKFID: "80000000",
+			DKFNAME: "默认大客户",
 		}
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);

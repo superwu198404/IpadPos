@@ -40,9 +40,9 @@
 						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
 						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 						<text v-if="YN_PRINT_CON=='Y'">已连接</text>
-						<text v-else style="color: #FE694B;">未连接</text>						
+						<text v-else style="color: #FE694B;">未连接</text>
 					</label>
-					<label  class="rijie">
+					<label class="rijie">
 						<image src="@/images/dx-qingkong.png" mode="widthFix"></image>
 						<button v-if="showSale" @click="ReturnSale()">清空</button>
 					</label>
@@ -422,16 +422,16 @@
 			Login: function() {
 				util.simpleModal("提示", "是否确认注销？", e => {
 					if (e) { //点击了确定
-						let store = util.getStorage("store");
-						if (store) {
-							if (store.RYTYPE == "SYSTEM") { //管理员退出要清空一下
-								store = {};
-							} else {
-								store.RYID = "";
-								store.RYNAME = "";
-							}
-							util.setStorage("store", store);
-						}
+						// let store = util.getStorage("store");
+						// if (store) {
+						// if (store.RYTYPE == "SYSTEM") { //管理员退出要清空一下
+						// store = {};
+						// } else {
+						// 	store.RYID = "";
+						// 	store.RYNAME = "";
+						// }
+						util.setStorage("store", {});
+						// }
 						console.log("门店信息:", util.getStorage("store"));
 						util.removeStorage("hyinfo"); //清除会员信息
 						clearInterval(getApp().globalData.Int); //取消定时传输
@@ -468,6 +468,12 @@
 						// } else if (uni.getSystemInfoSync().platform == 'android') {
 						// 	plus.runtime.quit();
 						// }
+						let store = util.getStorage("store");
+						if (store) {
+							store.DKFID = "80000000";
+							store.DKFNAME = "默认大客户";
+							util.setStorage("store", store);
+						}
 						clearInterval(getApp().globalData.Int); //取消定时传输
 						getApp().globalData.Int = null;
 						uni.redirectTo({
@@ -1170,11 +1176,13 @@
 		display: flex;
 		align-items: center;
 	}
-	.critlist view text{
+
+	.critlist view text {
 		display: inline-block;
-		width:180rpx;
+		width: 180rpx;
 		text-align: right;
 	}
+
 	.critlist view label {
 		height: 60rpx;
 		line-height: 60rpx;
@@ -1287,7 +1295,7 @@
 		padding: 4% 2% 4%;
 		position: relative;
 		z-index: 9;
-		max-height:800rpx;
+		max-height: 800rpx;
 		overflow: auto;
 	}
 
@@ -1339,21 +1347,23 @@
 	.checkout .rijie {
 		display: flex;
 		align-items: center;
-		background:none;
-		height:68rpx;
+		background: none;
+		height: 68rpx;
 		line-height: 68rpx;
 		margin-left: 20rpx;
 	}
-	.checkout .rijie image{
+
+	.checkout .rijie image {
 		margin-right: 0;
 	}
-	.checkout .rijie button{
+
+	.checkout .rijie button {
 		color: #FE694B;
 		height: 44rpx;
 		line-height: 44rpx;
 		font-size: 26rpx;
-		padding:0 10rpx 0 2rpx;
-		background:none;
-		margin-left:0;
+		padding: 0 10rpx 0 2rpx;
+		background: none;
+		margin-left: 0;
 	}
 </style>
