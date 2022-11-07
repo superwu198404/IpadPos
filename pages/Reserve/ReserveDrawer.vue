@@ -383,8 +383,8 @@
 							});
 						}
 						else{
-							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));
-							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(8));
+							this.LimitDate = dateformat.toDateString(new Date().SetHours(-8));
+							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(-8));
 							console.log("[RefreshData]限制时间（现卖）:",{
 								min:this.LimitDate,
 								max:this.LimitMaxDate
