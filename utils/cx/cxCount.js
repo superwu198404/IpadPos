@@ -278,7 +278,7 @@ const Cxdict = async () => {
 
 //计算促销的方法
 const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
-	console.log("Createcx计算促销传入的商品sale02_arr", {
+	console.log("Createcx计算促销传入的商品sale02_arr=================", {
 		xstype,
 		sale02_arr,
 		hyinfoModel
@@ -386,7 +386,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	});
 	respData.products = sale02_order;
 	respData.cxfs = cxfsdt;
-	console.log("Createcx促销返回结果respData:", respData);
+	console.log("Createcx促销返回结果respData=================", respData);
 	return respData;
 }
 

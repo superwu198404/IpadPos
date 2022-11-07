@@ -87,7 +87,7 @@
 				down_id: "", //下载应用id
 				v_db: "", //数据库版本号
 				v_version: "", //版本号提示
-				delshow:false
+				delshow: false
 			}
 		},
 		computed: {
@@ -235,14 +235,15 @@
 			//清空密码
 			ResetPWD: function(e) {
 				console.log("输入事件:", e);
-				this.delshow=true;
+				this.delshow = true;
 				if (e.target.value) {
 					this.password = "";
 				}
 			},
 			delid: function(e) {
-					this.userid = "";
-					this.delshow=false;
+				this.userid = "";
+				this.password = "";
+				this.delshow = false;
 			},
 			Admin: function() {
 				uni.showModal({
@@ -470,21 +471,23 @@
 	.import label image {
 		width: 40rpx;
 	}
-	.import label .del{
+
+	.import label .del {
 		position: absolute;
-		top:50%;
-		right:2%;
+		top: 50%;
+		right: 2%;
 		transform: translateY(-50%);
-		width:40rpx;
+		width: 40rpx;
 		height: 40rpx;
 		line-height: 38rpx;
 		text-align: center;
-		padding:0;
-		margin:0;
+		padding: 0;
+		margin: 0;
 		border-radius: 50%;
-		background:rgba(0,0,0,0.2);
+		background: rgba(0, 0, 0, 0.2);
 		color: #666;
 	}
+
 	.import label input {
 		height: 100%;
 		margin-left: 10rpx;
