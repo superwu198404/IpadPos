@@ -199,9 +199,6 @@ var XsTypeObj = {
 				sale2: this.sale002,
 				sale3: this.sale003
 			});
-			console.log("002清除折扣前:", this.sale002)
-			this.ClearDiscount(this.sale002);
-			console.log("002清除折扣后:", this.sale002)
 			//给全局会员对象赋值
 			if (this.sale001.CUID) {
 				let obj = {
@@ -242,7 +239,7 @@ var XsTypeObj = {
 		},
 		//支付完成中
 		$saleFinishing: function(result) {
-
+			this.ClearDiscount(this.sale001, this.sale002);
 		},
 		//支付完成以后
 		$saleFinied: async function() {
@@ -457,7 +454,6 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
-			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
@@ -555,6 +551,7 @@ var XsTypeObj = {
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
+			this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
 		},
 		async $saleFinied(sales) {
 			//调用打印
@@ -619,7 +616,6 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
-			this.ClearDiscount(this.sale002);//清除折扣信息
 			this.ShowStatement();
 			console.log("[BeforeFk]预定取消信息初始化:", {
 				sale1: this.sale001,
@@ -661,6 +657,7 @@ var XsTypeObj = {
 			// 	i.DISC = Math.abs(Number(i.DISC) || 0);
 			// }); //由支付页面payment内部 统一处理 
 			delete this.old_bill;
+			this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 		},
 		async $saleFinied(sales) {
@@ -886,9 +883,6 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
-			console.log("002清除折扣前:", this.sale002)
-			this.ClearDiscount(this.sale002);
-			console.log("002清除折扣后:", this.sale002)
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -938,6 +932,7 @@ var XsTypeObj = {
 			this.communication_for_oracle.push(
 				`update sxsale001 set SX_STATUS='3' where bill='${this.sale001.XS_BILL}';`
 			);
+			this.ClearDiscount(this.sale001, this.sale002);
 		},
 		$saleFinied: function(sales) {
 			console.log("[SaleFinied]赊销退单...", this.credit_sales);
@@ -997,7 +992,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xsdingdan.png"),
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
-			"sale":true,
+			"sale": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
@@ -1302,11 +1297,17 @@ function GetSale(global, vue, target_name, uni) {
 		return x;
 	}
 	//清除sale2的折扣信息
-	this.ClearDiscount = function(sale2) {
-		console.log("[ClearDiscount]折扣清除前:", sale2);
+	this.ClearDiscount = function(sale1, sale2) {
+		sale1.BILLDISC = 0;
+		sale1.TDISC = 0;
+		sale1.TCXDISC = 0;
+		sale1.TBZDISC = 0;
+		sale1.TLSDISC = 0;
+		sale1.TTPDISC = 0;
+		console.log("[ClearDiscount]sale1折扣清除后:", sale1);
 		sale2?.forEach(s2 => {
 			s2.DISCRATE = 0;
-			s2.TCXDISC = 0;
+			s2.CXDISC = 0;
 			s2.BZDISC = 0;
 			s2.LSDISC = 0;
 			s2.TPDISC = 0;
@@ -2854,7 +2855,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement");
 		//如果会员存在 则直接打开会员详情
-		if (that.HY.val.hyId && that.HY.val.Balance) {
+		if (that.HY.val.hyId && that.HY.val.Phone) {
 			that.HY.open = true;
 		}
 	}
