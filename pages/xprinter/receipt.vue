@@ -114,7 +114,7 @@
 		created: function(e) {
 			let that = this;
 			//初始化画布
-			this.initPhoto();
+			that.initPhoto();
 		},
 		methods: {
 			// 二维码生成工具
@@ -137,7 +137,7 @@
 						method: "GET",
 						data: "",
 						success: (res) => {
-							console.log("ggyAction success: ", res.data)
+							//console.log("ggyAction success: ", res.data)
 							app.globalData.BLEInformation.ggy = res.data;
 							return resolve(res.data);
 						},
@@ -162,12 +162,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
@@ -237,12 +237,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
@@ -306,12 +306,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 
-				// 通过终端参数，Y 打印小票
+				//通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
@@ -337,7 +337,7 @@
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-						console.log("开始发送打印命令");
+						console.log("bluePrinter开始发送打印命令");
 						command.setPrint();
 						command.setPrint();
 						command.endPrinter(); //打印切纸
@@ -376,12 +376,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 			
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
@@ -409,7 +409,7 @@
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-						console.log("开始发送打印命令");
+						console.log("ydBluePrinter开始发送打印命令");
 						command.setPrint();
 						command.setPrint();
 						command.endPrinter(); //打印切纸
@@ -448,12 +448,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 			
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 				var ggyContent = await that.ggyAction();
@@ -502,8 +502,7 @@
 			//重新打印
 			againPrinter: async function(xsBill,xsType) {
 				var that = this;
-				//xsBill = that.bill_printer;
-				console.log("重打单号:", xsBill)
+				//console.log("重打单号:", xsBill)
 				if (xsBill == "" || xsBill == null) {
 					uni.showToast({
 						icon: 'error',
@@ -515,7 +514,6 @@
 				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 				//console.log("pos_xsbillprint",pos_xsbillprint);	
 				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
-
 					util.simpleMsg("未查询到重打数据", "none");
 					return;
 				}
@@ -523,12 +521,12 @@
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				console.log("查询终端参数", printer_poscs);
+				//console.log("查询终端参数", printer_poscs);
 
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("未查询到重打数据", "none");
-					console.log("终端参数未设置打印小票");
+					//console.log("终端参数未设置打印小票");
 					return;
 				}
 
@@ -538,8 +536,8 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				console.log("is_dzfpewmdz", is_dzfpewmdz)
-				console.log("is_xpewm", is_xpewm)
+				//console.log("is_dzfpewmdz", is_dzfpewmdz)
+				//console.log("is_xpewm", is_xpewm)
 				// 电子发票二维码不为空，则打印二维码
 				if ((is_dzfpewmdz || is_xpewm) && xprinter_util.nnvl(xsType,0) == 1) {
 					//生成属于单号的二维码
@@ -550,7 +548,7 @@
 						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
-						console.log("开始发送打印命令");
+						console.log("againPrinter开始发送打印命令");
 						command.setPrint();
 						command.setPrint();
 						command.endPrinter(); //打印切纸	
@@ -567,6 +565,7 @@
 					that.prepareSend(command.getData()); //发送数据
 				}
 			},
+			//生成公众号
 			gzhQrCodeGenerate: function(is_xpewm, url) {
 				return new Promise((resolve, reject) => {
 					if (!is_xpewm) {
