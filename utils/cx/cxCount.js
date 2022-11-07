@@ -1419,7 +1419,6 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 
 			cxbilldts[i][sysl] = cx_util.nnvl(cxbilldts[i][sysl], 0) - fsqty;
 			cxbilldts[i][fscs] = 0;
-
 		}
 	} catch (e) {
 

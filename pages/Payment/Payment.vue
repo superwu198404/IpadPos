@@ -474,7 +474,7 @@
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
-				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) {
+				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) {//失败的、支付中的、退款中的 都为0
 					this.CanBack = true;
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)

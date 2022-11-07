@@ -388,6 +388,12 @@ function getWeekDate() {
 	var week = weeks[day];
 	return week;
 }
+
+//日期转字符串
+function toDateString(date) {
+	return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,"0")}-${date.getDate().toString().padStart(2,"0")}`;
+}
+
 export default {
 	stringToDate,
 	formatDate,
@@ -409,5 +415,6 @@ export default {
 	gettime,
 	getDateByParam,
 	CheckStoreTime,
-	getWeekDate
+	getWeekDate,
+	toDateString
 }

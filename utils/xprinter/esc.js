@@ -49,7 +49,7 @@ var jpPrinter = {
 				str += String.fromCharCode(_arr[i]);
 			}
 		}
-		console.log('byteToString', str)
+		//console.log('byteToString', str)
 		return str;
 	};
 	
@@ -592,7 +592,7 @@ var jpPrinter = {
       const BLOCK_SIZE = 128;
       var pitch = parseInt((w + 7) / 8);
       var block = parseInt((h + BLOCK_SIZE - 1) / BLOCK_SIZE);
-      console.log(w + "--" + h);
+      //console.log(w + "--" + h);
 
       for (var i = 0; i < block; i++) {
         var bith = BLOCK_SIZE;
@@ -603,8 +603,7 @@ var jpPrinter = {
 
         convertPartialToBitmap(w, i * BLOCK_SIZE, bith, pitch, res);
       }
-
-      console.log(data);
+      //console.log(data);
     }
 	
     /*
@@ -618,14 +617,11 @@ var jpPrinter = {
       var bith = h;
       var pitch = parseInt(bitw / 8);
       var bits = new Uint8Array(bith * pitch);
-      console.log(w + "--" + h);
+      //console.log(w + "--" + h);
       //console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
       data.push(29); // 0x1D
-
       data.push(118); // 0x76
-
       data.push(48); // 0x30
-
       data.push(0); // 0x00
 
       data.push(parseInt(pitch % 256));
@@ -657,17 +653,14 @@ var jpPrinter = {
 	  var bith = h;
 	  var pitch = parseInt(bitw / 8);
 	  var bits = new Uint8Array(bith * pitch);
-	  console.log(w + "--" + h);
+	  //console.log(w + "--" + h);
 	  //console.log("bitw=" + bitw + ", bith=" + bith + ", pitch=" + pitch);
 	  
 	  var Print = [];
 	  
-	  Print.push(29); // 0x1D
-	
+	  Print.push(29); // 0x1D	
 	  Print.push(118); // 0x76
-	
 	  Print.push(48); // 0x30
-	
 	  Print.push(0); // 0x00
 	
 	  Print.push(parseInt(pitch % 256));
@@ -702,7 +695,6 @@ var jpPrinter = {
       //console.log('画布的参数',res);
       convertToSingleBitmap(res); // 转成单张位图
       //convertToMultiBitmap(res) // 转成多张位图
-
       //console.log(data);
     };
 	
@@ -710,7 +702,7 @@ var jpPrinter = {
 	  //参数，画布的参数
 	  //console.log('画布的参数',res);
 	  convertToSingleBitmapNew(res); // 转成单张位图
-	  console.log(data);
+	  //console.log(data);
 	};
 	
 	jpPrinter.setBitmap2 = function (res) { //参数，画布的参数
@@ -720,7 +712,7 @@ var jpPrinter = {
 	      var time = 1;
 	      var temp = res.data.length - width * 32;
 	      var point_list = []
-	      console.log(width + "--" + height)
+	      //console.log(width + "--" + height)
 	      data.push(29)
 	      data.push(118)
 	      data.push(48)
@@ -729,8 +721,8 @@ var jpPrinter = {
 	      data.push(0)
 	      data.push(parseInt(res.height % 256))
 	      data.push(parseInt(res.height / 256))
-	      console.log(res.data.length)
-	      console.log("temp=" + temp)
+	      //console.log(res.data.length)
+	      //console.log("temp=" + temp)
 	      for (var i = 0; i < height; ++i) {
 	        for (var j = 0; j < width; ++j) {
 	          for (var k = 0; k < 32; k += 4) {
@@ -1162,7 +1154,7 @@ var jpPrinter = {
      * 设置GB18030编码格式文字
      */
     jpPrinter.setText = function (content) {
-	  console.log("打印格式",content);
+	  //console.log("打印格式",content);
       var code = new encode.TextEncoder('gb18030', {
         NONSTANDARD_allowLegacyEncoding: true
       }).encode(content);
@@ -2860,13 +2852,13 @@ var jpPrinter = {
 			width: qrCodeWidth,
 			height: qrCodeHeight,
 			success: function(res) {
-				console.log("获取画布数据成功");
+				//console.log("获取画布数据成功");
 				jpPrinter.setSelectJustification(1); //居中
 				jpPrinter.setBitmap(res);
 				jpPrinter.setPrint();	
 			},
 			complete: function(res) {
-				console.log("打印二维码 finish");
+				//console.log("打印二维码 finish");
 			},
 			fail: function(res) {
 				console.log("获取画布数据失败:", res);
@@ -2944,7 +2936,7 @@ var jpPrinter = {
         value: buf,
         success: function (res) {},
         complete: function (res) {
-          console.log(res);
+          //console.log(res);
           buf = null;
           dateView = null;
         }
