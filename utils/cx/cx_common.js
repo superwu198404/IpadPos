@@ -263,7 +263,6 @@ const toStr = function(data) {
 	}
 }
 
-//
 const TryParse = function(BALANCE){
 	let hyjfnum = 0;
 	try{

@@ -1474,6 +1474,10 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}));
 		}
+		if (menu.info.clickType !== 'sale') {
+			console.log("切换菜单进入重置大客户操作");
+			this.DKF.val = {}; //切换菜单后 重置大客户
+		}
 		this.SetType(menu.info.clickType);
 	})
 	//*func*菜单切换
