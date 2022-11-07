@@ -43,7 +43,7 @@
 
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">
-											{{plitem.plname}}
+											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
 
