@@ -31,7 +31,7 @@
 					</label>
 					<label><text><i class="sgin">*</i>提货日期：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
-						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate">
+						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate" :end="LimitMaxDate">
 							<view>{{Order.TH_DATE}}</view>
 							<text class="xial">▼</text>
 						</picker>
@@ -185,6 +185,7 @@
 				index: 0,
 				THTYPES: [],
 				LimitDate: '2000-01-01',
+				LimitMaxDate: '2100-01-01',
 				LimitTime: '00:00',
 				ShowAllAddressList: false,
 				CatchAddress: null,
@@ -375,6 +376,19 @@
 						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
 							date = dateformat.getYMD(1);
 							this.LimitDate = date;//限制时间为t+1后
+							this.LimitMaxDate = "2100-01-01";
+							console.log("[RefreshData]限制时间（自提、宅配）:",{
+								min:this.LimitDate,
+								max:this.LimitMaxDate
+							});
+						}
+						else{
+							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));
+							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(8));
+							console.log("[RefreshData]限制时间（现卖）:",{
+								min:this.LimitDate,
+								max:this.LimitMaxDate
+							});
 						}
 					}
 				}
@@ -742,7 +756,7 @@
 						return;
 					}
 				}
-				if (!that.Order.THTYPE) {
+				if (that.Order.THTYPE == undefined || that.Order.THTYPE == null) {
 					util.simpleMsg("配送方式为空", true);
 					return;
 				}
