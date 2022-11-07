@@ -349,6 +349,7 @@
 				//查询在线订单列表
 				this.GetOnlineOrders(util.callBind(this, function() {
 					this.RenderFrom(this.onlineOrders[0]); //首次渲染
+					uni.$emit("exists-online-order");
 				}));
 
 				// 查询到货时间段列表
@@ -381,7 +382,6 @@
 					this.onlineOrdersGroup = util.group(this.onlineOrders, 'YDBILL');
 					console.log("[GetOnlineOrders]线上订单数据:", this.onlineOrders);
 					console.log("[GetOnlineOrders]线上订单数据-根据与订单号分组:", this.onlineOrdersGroup);
-					uni.$emit("exists-online-order");
 					if (func) func();
 				}), (res) => {
 					util.simpleMsg("暂无数据!", true, res);

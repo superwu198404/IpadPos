@@ -1168,6 +1168,7 @@ var XsTypeObj = {
 			"sale_reserve_cancel": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {
@@ -1205,6 +1206,7 @@ var XsTypeObj = {
 			"sale_reserve_cancel": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
+			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
 		},
 		$click() {

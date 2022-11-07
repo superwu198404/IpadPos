@@ -65,7 +65,8 @@
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
-							<view>{{(Order.STR2 && Order._STR2) ? (Order.STR2 + '-' + Order._STR2) : ""}}</view>
+							<!-- <view>{{(Order.STR2 && Order._STR2) ? (Order.STR2 + '-' + Order._STR2) : ""}}</view> -->
+							<view>{{(Order.STR2 && Order._STR2) ? (Order._STR2) : ""}}</view>
 							<text class="xial">▼</text>
 						</picker>
 					</label>
