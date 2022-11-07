@@ -7,6 +7,10 @@
 
 <template>
 	<!-- <menu_content :index="2"> -->
+	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
+		<!-- <menu_page :menuIndex="4"></menu_page> -->
+		<view class="right">
 	<view class="commodity" style="height: 100%;">
 		<view class="hh">
 			<view class="hotcakes">
@@ -77,6 +81,8 @@
 		<ReserveDrawer v-if="view.Details" :order="extract_order" @Close="CloseDrawer"></ReserveDrawer>
 	</view>
 	<!-- </menu_content> -->
+	</view>
+	</view>
 </template>
 
 <script>
@@ -426,6 +432,7 @@
 	.commodity {
 		display: flex;
 		flex-direction: column;
+		position: relative;
 	}
 
 	.price {
