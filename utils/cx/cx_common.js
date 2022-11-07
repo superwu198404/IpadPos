@@ -267,7 +267,7 @@ const toStr = function(data) {
 const TryParse = function(BALANCE){
 	let hyjfnum = 0;
 	try{
-		hyjfnum=parseFloat(BALANCE);
+		hyjfnum = parseFloat(BALANCE);
 	}catch(e){
 		hyjfnum = -1;
 	}		
