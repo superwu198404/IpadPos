@@ -774,7 +774,7 @@
 				//如果提货时间是当天，判断时间是否大于当前时间且小于 19:00
 				if(new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date().toLocaleDateString()){
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(-5);
 					let current_datetime = new Date().SetHours(8);
 					console.log("[Confirm]提货时间控制:",{
 						th_datetime,
@@ -791,7 +791,27 @@
 					}
 				}
 				else{//否则判断时间是否在 8:00 ~ 19:00 之间
-					
+					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(19);
+					let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(8);
+					console.log("[Confirm]提货时间控制:",{
+						th_raw:that.Order.THDATE,
+						t1: th_datetime.toLocaleDateString(),
+						t2: new Date(th_datetime.toLocaleDateString()),
+						t3: new Date(th_datetime.toLocaleDateString()).toLocaleDateString(),
+						t4: new Date(th_datetime.toLocaleDateString()).SetHours(8).toLocaleDateString(),
+						th_datetime:th_datetime.toLocaleDateString(),
+						max_th_datetime:max_th_datetime.toLocaleDateString(),
+						min_th_datetime:min_th_datetime.toLocaleDateString()
+					});
+					if(th_datetime < min_th_datetime){
+						util.simpleMsg("当天提货时间必须大于 8:00!", true);
+						return;
+					}
+					if(th_datetime > max_th_datetime){
+						util.simpleMsg("当天提货时间必须小于 19:00!", true);
+						return;
+					}
 				}
 				if (that.Order.THTYPE == undefined || that.Order.THTYPE == null) {
 					util.simpleMsg("配送方式为空", true);

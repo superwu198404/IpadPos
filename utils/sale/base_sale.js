@@ -139,8 +139,8 @@ var XsTypeObj = {
 			
 			let arr3 = [];
 			try{
-				console.log("销售下单开始调用打印this.sale003 payresult", payresult);
-				arr3 = payresult.data.sale3_arr;
+				console.log("销售下单开始调用打印this.sale003 payresult", this.GetPayedResult());
+				arr3 = this.GetPayedResult().data.sale3_arr;
 			}catch(e){
 				console.log("销售下单开始调用打印this.sale003异常",e);
 				arr3 = this.sale003;
