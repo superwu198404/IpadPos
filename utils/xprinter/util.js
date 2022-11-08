@@ -1245,6 +1245,16 @@ const nnvl = function(pb_obj, pm_default) {
 	return new_obj;
 }
 
+const tnvl = function(pb_obj, pm_default) {
+	let new_obj = "";
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
+		new_obj = pm_default;
+	} else {
+		new_obj = pb_obj.toFixed(2);
+	}
+	return new_obj;
+}
+
 module.exports = {
 	formatTime: formatTime,
 	getTime: getTime,
@@ -1277,4 +1287,5 @@ module.exports = {
 	ydPrinterData: ydPrinterData,
 	formatDate: formatDate,
 	sxPrinterData: sxPrinterData,
+	tnvl: tnvl
 };
