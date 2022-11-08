@@ -1258,6 +1258,7 @@ function GetSale(global, vue, target_name, uni) {
 	let brand = global.brand;
 	var that = this;
 	var uni = uni;
+	var payresult = null;
 	this.billindex = 0;
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
@@ -1473,10 +1474,6 @@ function GetSale(global, vue, target_name, uni) {
 					this.resetSaleBill();
 				}
 			}));
-		}
-		if (menu.info.clickType !== 'sale') {
-			console.log("切换菜单进入重置大客户操作");
-			this.DKF.val = {}; //切换菜单后 重置大客户
 		}
 		this.SetType(menu.info.clickType);
 	})
@@ -2284,6 +2281,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.ROUND = 0;
 			return;
 		}
+		payresult = result;
 		this.sale001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
 		this.sale002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new sale.sale002(),
 			sale2));

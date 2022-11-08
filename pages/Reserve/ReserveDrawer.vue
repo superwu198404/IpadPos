@@ -376,7 +376,7 @@
 					if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
 						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
 							date = dateformat.getYMD(1);
-							this.LimitDate = date;//限制时间为t+1后
+							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));//限制时间为t+1后
 							this.LimitMaxDate = "2100-01-01";
 							console.log("[RefreshData]限制时间（自提、宅配）:",{
 								min:this.LimitDate,
@@ -384,8 +384,8 @@
 							});
 						}
 						else{
-							this.LimitDate = dateformat.toDateString(new Date().SetHours(-8));
-							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(-8));
+							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));
+							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(8));
 							console.log("[RefreshData]限制时间（现卖）:",{
 								min:this.LimitDate,
 								max:this.LimitMaxDate
