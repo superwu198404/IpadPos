@@ -774,7 +774,7 @@
 				//如果提货时间是当天，判断时间是否大于当前时间且小于 19:00
 				if(new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date().toLocaleDateString()){
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()+" 19:00").SetHours(8-24);
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);
 					let current_datetime = new Date().SetHours(8);
 					console.log("[Confirm]提货时间控制:",{
 						th_datetime,
