@@ -524,6 +524,7 @@ page {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	max-height: 70%;
 }
 
 .paylists {
