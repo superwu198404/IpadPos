@@ -2427,12 +2427,12 @@ var jpPrinter = {
 		if(isReturn){
 			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("单号: "+ data.bill);
+			jpPrinter.setText("单号: "+ xsBill);
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("原单号: "+ xsBill);
+			jpPrinter.setText("原单号: " + data.bill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
 			jpPrinter.setCharacterScale(0); //设置正常大小
