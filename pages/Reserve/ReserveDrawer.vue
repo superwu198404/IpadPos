@@ -32,7 +32,7 @@
 					<label><text><i class="sgin">*</i>提货日期：</text>
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="date" fields="day" @change="dateChange" :start="LimitDate" :end="LimitMaxDate">
-							<view>{{Order.TH_DATE}}</view>
+							<view>{{ extract_date }}</view>
 							<text class="xial">▼</text>
 						</picker>
 					</label>
@@ -172,6 +172,9 @@
 				} else {
 					return "00:00"
 				}
+			},
+			extract_date:function(){
+				return this.Order.TH_DATE.replaceAll('-','/');
 			}
 		},
 		data() {
@@ -340,7 +343,8 @@
 				that.Order.THKHID = e.KHID;
 				that.Order.THNAME = e.SNAME;
 				if (that.Order.THKHID != that.KHID) {
-					that.THTYPE = 0;
+					that.Order.THTYPE = 0;
+					that.index = 0;
 					that.YN_THTYPE = true; //默认自提且不允许更改
 				} else {
 					that.YN_THTYPE = false;
@@ -397,7 +401,24 @@
 					time
 				});
 				that.Order.THDATE = date + ' ' + time;
-				that.Order.TH_DATE = date;
+				that.Order.TH_DATE = (() => {
+					if (that.Order.THTYPE == '2') { //现卖
+						console.log("[RefreshData]提货日期处理-现卖:", date);
+						return date;
+					} else { //非现卖
+						console.log("[RefreshData]提货日期处理-非现卖:", {
+							date_before:date,
+							current_date:new Date().toLocaleDateString().replaceAll('-', '/')
+						});
+						if (date.replaceAll('-', '/') ==  dateformat.toDateString(new Date()).replaceAll('-', '/')) {
+							console.log("[RefreshData]增加1天时间...");
+							return new Date(date.replaceAll('-', '/')).SetHours(24).toLocaleDateString();
+						} else{
+							console.log("[RefreshData]不变...");
+							return date
+						};
+					}
+				})();
 				that.Order.TH_TIME = (() => {
 					console.log("[RefreshData]时间间隔处理:", {
 						datetime: that.Order.THDATE,
@@ -411,7 +432,7 @@
 					});
 					console.log("[RefreshData]时间间隔处理后:", {
 						datetime: dateformat.toDateString(add_interval_date),
-						time:add_time
+						time: add_time
 					});
 					return add_time;
 				})();
@@ -772,39 +793,39 @@
 					}
 				}
 				//如果提货时间是当天，判断时间是否大于当前时间且小于 19:00
-				if(new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date().toLocaleDateString()){
+				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
+					.toLocaleDateString()) {
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
 					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
 					let current_datetime = new Date();
-					console.log("[Confirm]提货时间控制:",{
-						th_datetime:th_datetime.toLocaleString(),
-						max_th_datetime:max_th_datetime.toLocaleString(),
-						current_datetime:current_datetime.toLocaleString()
+					console.log("[Confirm]提货时间控制:", {
+						th_datetime: th_datetime.toLocaleString(),
+						max_th_datetime: max_th_datetime.toLocaleString(),
+						current_datetime: current_datetime.toLocaleString()
 					});
-					if(!(th_datetime > current_datetime)){
+					if (!(th_datetime > current_datetime)) {
 						util.simpleMsg("当天提货时间必须大于当前时间!", true);
 						return;
 					}
-					if(th_datetime > max_th_datetime){
+					if (th_datetime > max_th_datetime) {
 						util.simpleMsg("当天提货时间必须小于 19:00!", true);
 						return;
 					}
-				}
-				else{//否则判断时间是否在 8:00 ~ 19:00 之间
+				} else { //否则判断时间是否在 8:00 ~ 19:00 之间
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
 					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
 					let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);
-					console.log("[Confirm]提货时间控制:",{
-						th_raw:that.Order.THDATE,
-						th_raw_datetime:th_datetime.toLocaleString(),
-						max_th_datetime:max_th_datetime.toLocaleString(),
-						min_th_datetime:min_th_datetime.toLocaleString()
+					console.log("[Confirm]提货时间控制:", {
+						th_raw: that.Order.THDATE,
+						th_raw_datetime: th_datetime.toLocaleString(),
+						max_th_datetime: max_th_datetime.toLocaleString(),
+						min_th_datetime: min_th_datetime.toLocaleString()
 					});
-					if(th_datetime < min_th_datetime){
+					if (th_datetime < min_th_datetime) {
 						util.simpleMsg("提货时间必须在 8:00 之后!", true);
 						return;
 					}
-					if(th_datetime > max_th_datetime){
+					if (th_datetime > max_th_datetime) {
 						util.simpleMsg("提货时间必须在 19:00 之前!", true);
 						return;
 					}
