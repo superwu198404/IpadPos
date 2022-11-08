@@ -95,15 +95,14 @@
 							}, err => {
 								console.log("会员信息查询失败:", err);
 								util.simpleMsg(err.msg, "none");
+								this.delshow = true;
 							});
 					}
 				});
 			},
 			//清空密码
-			ResetPWD: function(e) {
-				
-				this.delshow = true;
-				
+			ResetPWD: function(e) {			
+				this.delshow = true;				
 			},
 			delid: function(e) {
 				this.numbers = "";
