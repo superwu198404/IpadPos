@@ -1277,6 +1277,7 @@ var jpPrinter = {
 		  case printerType[9]:
 			xpType ="提货";
 			xsBill= data.xsBill;
+			isYD = true;
 			break;
 			
 		   case printerType[10]:
@@ -1379,7 +1380,6 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
 		jpPrinter.setPrint(); //打印并换行
-			
 		
 		//是退单，已优惠金额显示0
 		if(isReturn){
@@ -2104,6 +2104,41 @@ var jpPrinter = {
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
+		if(type == "YD" || type == "YDQX"){
+			let	sale3_List = JSON.parse(sale3_arrOrigin);	
+			sale3_List.forEach((item3, index3) => {
+				if(isReturn){
+					item3.amt = item3.amt;
+				}
+				//卡券号存在，才打印
+				if(item3.id != "" && item3.id != undefined){
+					jpPrinter.setCharacterSize(0); //设置正常大小
+					jpPrinter.setSelectJustification(0); //设置居左
+					jpPrinter.setText("-----------------------------------------------");
+					jpPrinter.setPrint(); //打印并换行
+					
+					jpPrinter.setCharacterSize(0); //设置正常大小
+					jpPrinter.setSelectJustification(0); //设置居左
+					jpPrinter.setText("卡/券号:" + util.onlyFourBank(item3.id));
+					jpPrinter.setPrint(); //打印并换行
+					
+					let yeStr = "";
+					if(item3.save_je.toString() !="" && item3.save_je.toString() != null){
+						yeStr = " 余额:" + item3.save_je.toString();
+					}
+					jpPrinter.setCharacterSize(0); //设置正常大小
+					jpPrinter.setSelectJustification(0); //设置居左
+					jpPrinter.setText("消费额:" + item3.amt.toString() + yeStr);
+					jpPrinter.setPrint(); //打印并换行
+					
+					jpPrinter.setCharacterSize(0); //设置正常大小
+					jpPrinter.setSelectJustification(0); //设置居左
+					jpPrinter.setText("卡类型:" + item3.fkName.toString()+ " 识别码:");
+					jpPrinter.setPrint(); //打印并换行
+				}
+			});	
+		}
+	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
