@@ -1264,6 +1264,9 @@ function GetSale(global, vue, target_name, uni) {
 	var that = this;
 	var uni = uni;
 	var payresult = null;
+	
+	this.GetPayedResult = () => payresult;
+	
 	this.billindex = 0;
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
