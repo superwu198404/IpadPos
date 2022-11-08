@@ -771,6 +771,28 @@
 						return;
 					}
 				}
+				//如果提货时间是当天，判断时间是否大于当前时间且小于 19:00
+				if(new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date().toLocaleDateString()){
+					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()+" 19:00").SetHours(8-24);
+					let current_datetime = new Date().SetHours(8);
+					console.log("[Confirm]提货时间控制:",{
+						th_datetime,
+						max_th_datetime,
+						current_datetime
+					});
+					if(!(th_datetime > current_datetime)){
+						util.simpleMsg("当天提货时间必须大于当前时间!", true);
+						return;
+					}
+					if(th_datetime > max_th_datetime){
+						util.simpleMsg("当天提货时间必须小于 19:00!", true);
+						return;
+					}
+				}
+				else{//否则判断时间是否在 8:00 ~ 19:00 之间
+					
+				}
 				if (that.Order.THTYPE == undefined || that.Order.THTYPE == null) {
 					util.simpleMsg("配送方式为空", true);
 					return;
