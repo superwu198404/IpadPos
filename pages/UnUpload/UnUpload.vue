@@ -105,7 +105,9 @@
 			Upload: function(e) {
 				if (e) {
 					common.TransLite(e.STR1, res => {
-						that.GetUnLoad();
+						setTimeout(r => {
+							that.GetUnLoad();
+						}, 1500);
 					}); //直接传输数据
 				}
 			}
