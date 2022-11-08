@@ -118,7 +118,7 @@
 					value: -1,
 					bill: "",
 					phone: "",
-					type:0,
+					type:"",
 					customer: ""
 				},
 				view: {
