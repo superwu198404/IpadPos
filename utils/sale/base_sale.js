@@ -137,12 +137,14 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			//console.log("销售下单开始调用打印this.sale003",this.sale003);
 			arr3.forEach(function(item, index) {
 				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("销售下单开始调用打印", {
@@ -249,12 +251,15 @@ var XsTypeObj = {
 				item.SNAME = item.STR1;
 			})
 			let arr3 = this.sale003;
+			let fkdaRes = this.FKDA_INFO;
 			arr3.forEach(function(item, index) {
 				try {
-					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					//item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("销售退单开始调用打印", {

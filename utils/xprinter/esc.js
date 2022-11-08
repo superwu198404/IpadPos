@@ -1154,7 +1154,7 @@ var jpPrinter = {
      * 设置GB18030编码格式文字
      */
     jpPrinter.setText = function (content) {
-	  //console.log("打印格式",content);
+	  console.log("打印格式",content);
       var code = new encode.TextEncoder('gb18030', {
         NONSTANDARD_allowLegacyEncoding: true
       }).encode(content);
@@ -1610,9 +1610,16 @@ var jpPrinter = {
 			 break;
 		}
 		
+		if(isReturn){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(data.khName);
+			jpPrinter.setPrint(); //打印并换行
+		}
+			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText(isReturn ? "赊销退货" : xpType + "小票: " + data.khName);
+		jpPrinter.setText(isReturn ? "赊销退货小票" : xpType + "小票: " + data.khName);
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
