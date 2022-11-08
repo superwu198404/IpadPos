@@ -2385,34 +2385,30 @@ var jpPrinter = {
 			jpPrinter.setPrint(); //打印并换行
 		}
 
-		switch (data.status) {
-			case "12":
-			  xpType ="外卖销售单";
-			  break;
-
-		   case "15":
-		    xpType ="退货单";
-			xsBill= data.xsBill;
-			isReturn = true;
-		    break;
-			
-			case "20":
-			 xpType ="退货单";
-			 xsBill= data.xsBill;
-			 isReturn = true;
-			 break;
-			 
-			 case "30":
-			  xpType ="退货单";
-			  xsBill= data.xsBill;
-			  isReturn = true;
-			  break;
-			  
-			  case "33":
-			   xpType ="退货单";
-			   xsBill= data.xsBill;
-			   isReturn = true;
+		switch (util.snvl(data.status,"12")) {
+		   case "12":
+			   xpType ="外卖销售单";
 			   break;
+		   case "15":
+				xpType ="退货单";
+				xsBill = data.xsBill;
+				isReturn = true;
+				break;		
+			case "20":
+				 xpType ="退货单";
+				 xsBill= data.xsBill;
+				 isReturn = true;
+				 break;		 
+			 case "30":
+				xpType ="退货单";
+				xsBill= data.xsBill;
+				isReturn = true;
+				break;		  
+			  case "33":
+			    xpType ="退货单";
+			    xsBill= data.newBill;
+			    isReturn = true;
+			    break;
 		}
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小

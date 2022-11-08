@@ -354,7 +354,7 @@
 								};
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 									printerPram,
-									that.bs_Reason, that.bs_Note, "");
+									that.bs_Reason, that.bs_Note, data.new_bill);
 							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
