@@ -686,6 +686,10 @@ var ResetAuthCode = function(e) {
 		if (e.startsWith("kg") || e.startsWith("Kg") || e.startsWith("kG")) {
 			code = e.toUpperCase();
 		}
+		if (!code.startsWith("KG1") && code.length == 22) { //防止扫码不全导致缺少的位数
+			code = code.replace("KG", "KG1");
+			console.log("校验后的码：", code);
+		}
 	}
 	return code;
 }

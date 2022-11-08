@@ -52,7 +52,8 @@
 				brand: app.globalData.brand,
 				kquser: app.globalData.kquser,
 				realBarcode: "",
-				isScanningGun: false
+				isScanningGun: false,
+				delshow: false
 			}
 		},
 		methods: {
@@ -99,6 +100,7 @@
 			},
 			//登录事件
 			HYLogin: function() {
+				this.delshow = true;
 				if (!that.numbers) {
 					util.simpleMsg("请输入手机号，会员号", "none");
 					return;
@@ -106,6 +108,7 @@
 				let store = util.getStorage("store");
 				if (that.numbers.length > 11) { //扫码操作
 					let code = common.ResetAuthCode(that.numbers);
+					this.numbers = code;
 					let obj = {
 						khid: store.KHID,
 						code: code
@@ -181,6 +184,7 @@
 					"K", "L", "Z", "X", "C", "V", "B", "N", "M",
 					"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
 				]
+				console.log("key：", key);
 				// 这种情况下 基本上是 中文输入法 才有出现
 				if (key == "Process") {
 					for (const a of array) {
