@@ -415,7 +415,7 @@
 					});
 					return add_time;
 				})();
-
+				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;
 				}
@@ -740,17 +740,17 @@
 			//用户信息确定
 			Confirm: () => {
 				console.log("预定信息：", that.Order);
-				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
+				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
 				let hour_minute = hour.toString().padStart(2, 0) + minute.toString().padStart(2, 0);
-				let mix_time_interval = new Date().SetHours(8).SetMinutes(Number(that.YDJGSJ)); //获取提货最短时间间隔
+				let mix_time_interval = new Date().SetMinutes(Number(that.YDJGSJ)); //获取提货最短时间间隔
 				console.log("[Confirm]时间参数:", {
 					current: hour_minute,
 					stime: that.STIME,
 					etime: that.ETIME,
-					mix_interval: mix_time_interval,
-					extract_date: th_date
+					mix_interval: mix_time_interval.toLocaleString(),
+					extract_date: th_date.toLocaleString()
 				});
 				console.log("[Confirm]门店信息:", {
 					current_store: that.KHID,
@@ -801,11 +801,11 @@
 						min_th_datetime:min_th_datetime.toLocaleString()
 					});
 					if(th_datetime < min_th_datetime){
-						util.simpleMsg("当天提货时间必须大于 8:00!", true);
+						util.simpleMsg("提货时间必须在 8:00 之后!", true);
 						return;
 					}
 					if(th_datetime > max_th_datetime){
-						util.simpleMsg("当天提货时间必须小于 19:00!", true);
+						util.simpleMsg("提货时间必须在 19:00 之前!", true);
 						return;
 					}
 				}
