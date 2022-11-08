@@ -139,7 +139,6 @@ var XsTypeObj = {
 			
 			let arr3 = [];
 			try{
-				console.log("销售下单开始调用打印this.sale003 payresult", this.GetPayedResult());
 				arr3 = this.GetPayedResult().data.sale3_arr;
 			}catch(e){
 				console.log("销售下单开始调用打印this.sale003异常",e);
@@ -391,16 +390,26 @@ var XsTypeObj = {
 			arr2.forEach(function(item, index) {
 				item.SNAME = item.STR1;
 			})
-			let arr3 = this.sale003;
-			let fkdaRes = this.FKDA_INFO;
+			
+			let fkdaRes = this.FKDA_INFO;		
+			let arr3 = [];
+			try{
+				arr3 = this.GetPayedResult().data.sale3_arr;
+			}catch(e){
+				console.log("预定下单开始调用打印this.sale003异常",e);
+				arr3 = this.sale003;
+			}
+			
 			arr3.forEach(function(item, index) {
 				try {
 					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
+			
 			console.log("预定下单开始调用打印", {
 				arr2,
 				arr3
@@ -679,14 +688,22 @@ var XsTypeObj = {
 			arr2.forEach(function(item, index) {
 				item.SNAME = item.STR1;
 			})
-			let arr3 = this.sale003;
+			let arr3 = [];
 			let fkdaRes = this.FKDA_INFO;
+			try{
+				arr3 = this.GetPayedResult().data.sale3_arr;
+			}catch(e){
+				console.log("预订单取消开始调用打印this.sale003异常",e);
+				arr3 = this.sale003;
+			}
+			
 			arr3.forEach(function(item, index) {
 				try {
 					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
 					item.balance = item.balance;
 				} catch (e) {
 					item.SNAME = "";
+					item.balance = 0;
 				}
 			})
 			console.log("预订单取消开始调用打印", {

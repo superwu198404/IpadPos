@@ -18,8 +18,8 @@
 					<label>
 						<image src="../../images/zhanghu.png" mode="widthFix"></image>
 						<input type="text" v-model="numbers" :adjust-position="true" focus="true" :hold-keyboard="true"
-							@confirm="HYLogin" />
-						<!-- <input v-model="realBarcode" type="text" @keydown="handleKeyUp" /> -->
+							@confirm="HYLogin" @input="ResetPWD" />
+						<button class="del" @click="delid()" v-if="delshow">×</button>
 					</label>
 					<button @click="HYLogin()">登 录</button>
 				</view>
@@ -53,6 +53,7 @@
 				kquser: app.globalData.kquser,
 				realBarcode: "",
 				isScanningGun: false,
+				delshow: false,
 				delshow: false
 			}
 		},
@@ -94,9 +95,18 @@
 							}, err => {
 								console.log("会员信息查询失败:", err);
 								util.simpleMsg(err.msg, "none");
+								this.delshow = true;
 							});
 					}
 				});
+			},
+			//清空密码
+			ResetPWD: function(e) {			
+				this.delshow = true;				
+			},
+			delid: function(e) {
+				this.numbers = "";
+				this.delshow = false;
 			},
 			//登录事件
 			HYLogin: function() {
@@ -297,8 +307,23 @@
 		height: 84rpx;
 		line-height: 84rpx;
 		border-radius: 6rpx 0 0 6rpx;
+		position: relative;
 	}
-
+	.mem-bg .import .denglu label .del {
+		position: absolute;
+		top: 50%;
+		right: 2%;
+		transform: translateY(-50%);
+		width: 40rpx;
+		height: 40rpx;
+		line-height: 36rpx;
+		text-align: center;
+		padding: 0;
+		margin: 0;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, 0.2);
+		color: #666;
+	}
 	.import label image {
 		width: 40rpx;
 	}
@@ -309,6 +334,7 @@
 		width: 76%;
 		color: #333;
 		border-radius: 6rpx 0 0 6rpx;
+		text-align: left;
 	}
 
 	.import button {
