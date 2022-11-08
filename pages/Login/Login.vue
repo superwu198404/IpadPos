@@ -33,7 +33,7 @@
 			</view>
 		</view>
 		<!-- v-if="false" -->
-		<view v-if="isUpdate" class="box">
+		<view v-if="isUpdate && false" class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
