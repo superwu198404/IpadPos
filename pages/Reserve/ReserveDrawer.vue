@@ -773,13 +773,13 @@
 				}
 				//如果提货时间是当天，判断时间是否大于当前时间且小于 19:00
 				if(new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date().toLocaleDateString()){
-					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(-5);
-					let current_datetime = new Date().SetHours(8);
+					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
+					let current_datetime = new Date();
 					console.log("[Confirm]提货时间控制:",{
-						th_datetime,
-						max_th_datetime,
-						current_datetime
+						th_datetime:th_datetime.toLocaleString(),
+						max_th_datetime:max_th_datetime.toLocaleString(),
+						current_datetime:current_datetime.toLocaleString()
 					});
 					if(!(th_datetime > current_datetime)){
 						util.simpleMsg("当天提货时间必须大于当前时间!", true);
@@ -791,18 +791,14 @@
 					}
 				}
 				else{//否则判断时间是否在 8:00 ~ 19:00 之间
-					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/")).SetHours(8);
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(19);
-					let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8).SetHours(8);
+					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
+					let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);
 					console.log("[Confirm]提货时间控制:",{
 						th_raw:that.Order.THDATE,
-						t1: th_datetime.toLocaleDateString(),
-						t2: new Date(th_datetime.toLocaleDateString()),
-						t3: new Date(th_datetime.toLocaleDateString()).toLocaleDateString(),
-						t4: new Date(th_datetime.toLocaleDateString()).SetHours(8).toLocaleDateString(),
-						th_datetime:th_datetime.toLocaleDateString(),
-						max_th_datetime:max_th_datetime.toLocaleDateString(),
-						min_th_datetime:min_th_datetime.toLocaleDateString()
+						th_raw_datetime:th_datetime.toLocaleString(),
+						max_th_datetime:max_th_datetime.toLocaleString(),
+						min_th_datetime:min_th_datetime.toLocaleString()
 					});
 					if(th_datetime < min_th_datetime){
 						util.simpleMsg("当天提货时间必须大于 8:00!", true);
