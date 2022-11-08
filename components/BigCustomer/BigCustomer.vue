@@ -314,20 +314,18 @@
 
 	}
 
-	.customer .btn-qr {
-		width: 50%;
+	.confirm .btn-qx {
+		width: 70%;
 		margin: 0 auto;
-		position: absolute;
-		bottom: 30rpx;
-		left: 50%;
-		transform: translateX(-50%);
 	}
 
 	.customer .confirm {
 		position: absolute;
 		bottom: 0;
-		left: 10%;
-		width: 80%;
-		padding: 2% 0 3%;
+		left: 0;
+		width: 100%;
+		padding: 2% 0;
+		background-color: #fff;
+		border-top:1px solid #eee;
 	}
 </style>

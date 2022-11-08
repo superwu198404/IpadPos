@@ -526,6 +526,8 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 		bsReason = bs_Reason;
 		bsNote = bs_Note;
 		newBill = new_bill;
+	}else if(type == "WM"){
+		newBill = new_bill;
 	}
 	var wmType = type;
 
