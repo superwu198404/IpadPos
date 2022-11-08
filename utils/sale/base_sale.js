@@ -476,6 +476,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Refund);
+			this.ClearDiscount(this.sale001, this.sale002); //初始化清除折扣信息 提取会增加商品和辅助促销 会产生新的折扣值
 			this.ShowStatement();
 			console.log("[InitSale]预定提取，已设置锁定行...", this.sale002.length);
 			this.currentOperation.lockRows = this.sale002.length;
@@ -573,7 +574,7 @@ var XsTypeObj = {
 			);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
-			this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
+			// this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
 		},
 		async $saleFinied(sales) {
 			//调用打印

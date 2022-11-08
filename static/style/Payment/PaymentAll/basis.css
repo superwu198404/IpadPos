@@ -516,7 +516,7 @@ page {
 }
 
 .sets-list {
-	min-height: 60%;
+	min-height: 45%;
 	background-color: #F9F9F9;
 	border-radius: 10rpx;
 	position: relative;
@@ -524,7 +524,7 @@ page {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	max-height: 70%;
+	max-height: 50%;
 }
 
 .paylists {
@@ -537,6 +537,7 @@ page {
 }
 .yjs{
 	max-height: 80%;
+	overflow: auto;
 }
 .Methods {
 	width: 100%;

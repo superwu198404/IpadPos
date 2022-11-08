@@ -33,7 +33,7 @@
 			</view>
 		</view>
 		<!-- v-if="false" -->
-		<view v-if="isUpdate && false" class="box">
+		<view v-if="isUpdate" class="box">
 			<view class="renewal">
 				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
@@ -162,12 +162,13 @@
 				} catch (e) {
 					console.log("获取db_appversion失败:", e);
 				}
-				console.log("db_appversion：================================", this.db_appversion);
+
 				//对比版本号
 				if (util.contrast(this.v_db, v) == 1) {
 					//提醒用户更新
 					this.isUpdate = true;
 				}
+				console.log("db_appversion：================================",this.v_db);
 			},
 			GetKHIDS: function() {
 				if (that.khid) {
