@@ -315,12 +315,8 @@
 	}
 
 	.customer .btn-qr {
-		width: 50%;
+		width: 80%;
 		margin: 0 auto;
-		position: absolute;
-		bottom: 30rpx;
-		left: 50%;
-		transform: translateX(-50%);
 	}
 
 	.customer .confirm {
