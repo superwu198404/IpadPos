@@ -1378,7 +1378,7 @@ var jpPrinter = {
 			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + util.tnvl(data.originalAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		//是退单，已优惠金额显示0
@@ -1387,7 +1387,7 @@ var jpPrinter = {
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 应付金额:" + util.tnvl(data.payableAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1695,7 +1695,7 @@ var jpPrinter = {
 			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + util.tnvl(data.originalAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 			
 		//是退单，已优惠金额显示0
@@ -1705,7 +1705,7 @@ var jpPrinter = {
 		}
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 应付金额:" + util.tnvl(data.payableAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		if(!isReturn){
@@ -1981,7 +1981,7 @@ var jpPrinter = {
 			
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + data.originalAmount.toString());
+		jpPrinter.setText("条目:" + lineNum.toString() + " 数量:" + data.totalQty.toString() + " 原金额:" + util.tnvl(data.originalAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		//是退单，已优惠金额显示0
@@ -1990,7 +1990,7 @@ var jpPrinter = {
 		// }
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("已优惠金额:" + data.discountedAmount.toString() + " 应付金额:" + data.payableAmount.toString());
+		jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 应付金额:" + util.tnvl(data.payableAmount,0));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小

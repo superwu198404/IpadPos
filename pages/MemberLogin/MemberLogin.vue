@@ -54,7 +54,6 @@
 				realBarcode: "",
 				isScanningGun: false,
 				delshow: false,
-				delshow: false
 			}
 		},
 		methods: {
@@ -101,8 +100,8 @@
 				});
 			},
 			//清空密码
-			ResetPWD: function(e) {			
-				this.delshow = true;				
+			ResetPWD: function(e) {
+				this.delshow = true;
 			},
 			delid: function(e) {
 				this.numbers = "";
@@ -309,6 +308,7 @@
 		border-radius: 6rpx 0 0 6rpx;
 		position: relative;
 	}
+
 	.mem-bg .import .denglu label .del {
 		position: absolute;
 		top: 50%;
@@ -324,6 +324,7 @@
 		background: rgba(0, 0, 0, 0.2);
 		color: #666;
 	}
+
 	.import label image {
 		width: 40rpx;
 	}
