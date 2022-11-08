@@ -136,8 +136,16 @@ var XsTypeObj = {
 			arr2.forEach(function(item, index) {
 				item.SNAME = item.STR1;
 			})
-			let arr3 = this.sale003;
-			//console.log("销售下单开始调用打印this.sale003",this.sale003);
+			
+			let arr3 = [];
+			try{
+				console.log("销售下单开始调用打印this.sale003 payresult", payresult);
+				arr3 = payresult.data.sale3_arr;
+			}catch(e){
+				console.log("销售下单开始调用打印this.sale003异常",e);
+				arr3 = this.sale003;
+			}
+			
 			arr3.forEach(function(item, index) {
 				try {
 					item.SNAME = util.getStorage('PayWayList').find(c => c.fkid == item.FKID).name;
