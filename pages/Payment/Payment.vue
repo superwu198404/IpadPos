@@ -1662,6 +1662,7 @@
 					e
 				});
 				// if(!e.currentTarget.id) return;
+				let poly = this.is_poly;
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
 				// if (this.is_poly || r.yn_use == 'Y') { //配置了可使用的支付方式才可被选中
 				// 	this.currentPayType = e.currentTarget.id; //小程序
@@ -1673,7 +1674,7 @@
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
 						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
 					} else {
-						this.is_poly = true; //聚合支付复位
+						this.is_poly = poly; //聚合支付复位
 						util.simpleMsg("该支付方式已禁用", "none");
 					}
 				}
