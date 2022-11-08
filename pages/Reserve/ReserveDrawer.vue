@@ -49,8 +49,8 @@
 						</view>
 					</hTimePicker> -->
 					</label>
-					<label><text><i class="sgin">*</i>定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else type="number"
-							v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
+					<label><text><i class="sgin">*</i>定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else
+							type="number" v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
 					</label>
 					<label><text><i class="sgin">*</i>蛋糕规格：</text>
 						<picker @change="GGChange" :range="GGDatas">
@@ -61,7 +61,8 @@
 					<label class="hui"><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
 					<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 							@blur="GetAddr()" /></label>
-					<label class="hui"><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS" disabled="true" /></label>
+					<label class="hui"><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS"
+							disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
 						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0'">
@@ -161,16 +162,14 @@
 				default: false
 			}
 		},
-		computed:{
-			extract_time:function(){
-				console.log("[ExtractTime]提货时间:",this.Order.TH_TIME);
-				if(this.Order.TH_TIME.length >= 5){
-					return this.Order.TH_TIME.substr(0,5);
-				}
-				else if(this.Order.TH_TIME.length == 2){
-					return this.Order.TH_TIME+":00";
-				}
-				else{
+		computed: {
+			extract_time: function() {
+				console.log("[ExtractTime]提货时间:", this.Order.TH_TIME);
+				if (this.Order.TH_TIME.length >= 5) {
+					return this.Order.TH_TIME.substr(0, 5);
+				} else if (this.Order.TH_TIME.length == 2) {
+					return this.Order.TH_TIME + ":00";
+				} else {
 					return "00:00"
 				}
 			}
@@ -275,9 +274,9 @@
 				}
 			},
 			'Order.CUSTMADDRESS': function(n, o) {
-				if (n && this.Order.THTYPE == '1') 
+				if (n && this.Order.THTYPE == '1')
 					this.MatchBHKH();
-				else{
+				else {
 					this.Order.LONGITUDE = "";
 					this.Order.LATITUDE = "";
 				}
@@ -376,31 +375,46 @@
 					if (that.Order.THKHID == that.KHID) { //提货门店是当前门店
 						if (that.Order.THTYPE == 0 || that.Order.THTYPE == 1) { //自提或者宅配 日期加一
 							date = dateformat.getYMD(1);
-							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));//限制时间为t+1后
+							this.LimitDate = dateformat.toDateString(new Date().SetHours(8)); //限制时间为t+1后
 							this.LimitMaxDate = "2100-01-01";
-							console.log("[RefreshData]限制时间（自提、宅配）:",{
-								min:this.LimitDate,
-								max:this.LimitMaxDate
+							console.log("[RefreshData]限制时间（自提、宅配）:", {
+								min: this.LimitDate,
+								max: this.LimitMaxDate
 							});
-						}
-						else{
+						} else {
 							this.LimitDate = dateformat.toDateString(new Date().SetHours(8));
 							this.LimitMaxDate = dateformat.toDateString(new Date().SetHours(8));
-							console.log("[RefreshData]限制时间（现卖）:",{
-								min:this.LimitDate,
-								max:this.LimitMaxDate
+							console.log("[RefreshData]限制时间（现卖）:", {
+								min: this.LimitDate,
+								max: this.LimitMaxDate
 							});
 						}
 					}
 				}
-				console.log("[RefreshData]提货时间:",{
-					th_date:this.Order.THDATE,
+				console.log("[RefreshData]提货时间:", {
+					th_date: this.Order.THDATE,
 					date,
 					time
 				});
 				that.Order.THDATE = date + ' ' + time;
 				that.Order.TH_DATE = date;
-				that.Order.TH_TIME = time;
+				that.Order.TH_TIME = (() => {
+					console.log("[RefreshData]时间间隔处理:", {
+						datetime: that.Order.THDATE,
+						interval: that.YDJGSJ
+					});
+					let add_interval_date = new Date(that.Order.THDATE.replaceAll('-', '/')).SetMinutes(that
+						.YDJGSJ);
+					let add_time = add_interval_date.toLocaleTimeString('zh-CN', {
+						hour: '2-digit',
+						minute: '2-digit'
+					});
+					console.log("[RefreshData]时间间隔处理后:", {
+						datetime: dateformat.toDateString(add_interval_date),
+						time:add_time
+					});
+					return add_time;
+				})();
 
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;
