@@ -64,7 +64,7 @@
         "backgroundColor" : "#F8F8F8"
     },
     "app-plus" : {
-        "popGesture" : "none",
+	    "popGesture" : "none",
         "modules" : {
             "SQLite" : {},
             "Bluetooth" : {},
@@ -155,11 +155,11 @@
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
-    "appid" : "__UNI__A6034C6",
+    "appid" : "__UNI__DBF626B",
     "name" : "KengeePos",
-    "versionName" : "1.1.0",
+    "versionName" : "1.1.3",
     "description" : "ipad上运行的收银软件",
-    "versionCode" : 10,
+    "versionCode" : 13,
     "locale" : "zh-Hans"
 }
 // ,

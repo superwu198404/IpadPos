@@ -273,6 +273,10 @@
         {
             "path" : "components/BigCustomer/BigCustomer",
             "style" : {}
+        },
+        {
+            "path" : "pages/Home/Component/Head",
+            "style" : {}
         }
     ],
     "globalStyle" : {

@@ -753,13 +753,18 @@ var GetUnLoad = function(func) {
 			func(res);
 	}, err => {})
 }
+
 //获取销售单
 var GetPTOrder = function(e, b, d, t, func) {
 	let str = "";
 	str += b ? " and BILL like '%" + b + "%'" : "";
 	str += e ? " and KHID='" + e + "'" : "";
-	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
-	str += t ? " and XSTYPE ='" + t + "'" : "";
+	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";	
+	if(t == 0){
+	   str += " and XSTYPE ='" + t + "'";	
+	} else if(t != -1){
+	  str += t ? " and XSTYPE ='" + t + "'" : "";
+	}
 	let sql = "SELECT * from SALE001 where 1=1" + str;
 	console.log("查询条件：", sql);
 	db.get().executeQry(sql, "查询中...", res => {
