@@ -1036,10 +1036,10 @@ const getBillPrinterMax = async () => {
 	let xsBill = "";
 	let sql = "select * from (select * from POS_XSBILLPRINT order by XSDATE DESC) limit 1";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
-		console.log("重打数据查询成功 getBillPrinterMax", res);
+		//console.log("重打数据查询成功 getBillPrinterMax", res);
 		if(res.msg != null && res.msg != ""){
 			xsBill = res.msg[0].XSBILL;
-			console.log("重打数据查询成功 getBillPrinterMax", res.msg[0].XSBILL);
+			//console.log("重打数据查询成功 getBillPrinterMax", res.msg[0].XSBILL);
 		}
 	}, function(err) {
 		console.log("获取打印数据出错 getBillPrinterMax:", err);
