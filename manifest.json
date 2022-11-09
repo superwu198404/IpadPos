@@ -64,6 +64,7 @@
         "backgroundColor" : "#F8F8F8"
     },
     "app-plus" : {
+	    "popGesture" : "none",
         "modules" : {
             "SQLite" : {},
             "Bluetooth" : {},
