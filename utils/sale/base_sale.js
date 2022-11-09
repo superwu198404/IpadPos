@@ -854,6 +854,11 @@ var XsTypeObj = {
 		},
 		CloseBigCustomer: function(data) {
 			console.log("[CloseBigCustomer]大客户关闭!", data);
+			if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
+				.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
+				this.ComponentsManage["DKF"] = false;
+				return;
+			}
 			this.DKF.val = data;
 			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
@@ -1508,9 +1513,6 @@ function GetSale(global, vue, target_name, uni) {
 					this.resetSaleBill();
 				}
 			}));
-		}
-		if (menu.info.clickType !== 'sale') {
-			this.DKF.val = {}; //恢复默认大客户
 		}
 		this.SetType(menu.info.clickType);
 	})
@@ -2286,10 +2288,12 @@ function GetSale(global, vue, target_name, uni) {
 				this.myAlert("已录入商品，无法切换此模式！")
 				return;
 			}
+			if (this.DKF && this.DKF.cval.DKFID != "80000000") {
+				this.DKF.val = {};
+			}
 			if (this.clickSaleType.$click.call(this)) {
 				this.$initSale(this.clickSaleType);
 			}
-
 		} else {
 			this.myAlert("没有此种操作模式" + pm_type);
 		}
