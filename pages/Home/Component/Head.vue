@@ -1295,7 +1295,7 @@
 		padding: 4% 2% 4%;
 		position: relative;
 		z-index: 9;
-		max-height: 800rpx;
+		max-height: 700rpx;
 		overflow: auto;
 	}
 

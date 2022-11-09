@@ -450,7 +450,7 @@
 								};
 								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 									printerPram,
-									that.bs_Reason, that.bs_Note, "");
+									that.bs_Reason, that.bs_Note, that.new_bill);
 							}
 						}
 					} else {
@@ -689,7 +689,7 @@
 					};
 					that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
 						printerPram, that
-						.bs_Reason, that.bs_Note, "");
+						.bs_Reason, that.bs_Note, that.new_bill);
 				}
 			},
 			//列表刷新

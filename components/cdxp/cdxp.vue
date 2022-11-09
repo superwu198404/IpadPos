@@ -204,9 +204,9 @@
 				that.p_date = e.detail.value;
 			},
 			GetPTOrder: function(e) {
-				console.log("current_data 111", this.current_data)
+				//console.log("current_data 111", that.current_data.TYPE)
 				let store = util.getStorage("store");
-				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, cx_util.snvl(that.current_data.TYPE, ""),
+				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, that.current_data.TYPE,
 					res => {
 						console.log("获取成功:", res);
 						if (res.code && res.msg.length > 0) {
@@ -298,9 +298,10 @@
 			}
 		},
 		mounted() {
-			this.xstypes = [{
-				"TYPE": 0,
-				"NAME": ""
+			this.xstypes = [
+			{
+				"TYPE": -1,
+				"NAME": "--全部--"
 			}, {
 				"TYPE": 1,
 				"NAME": "销售"
