@@ -179,6 +179,9 @@
 <script>
 	var app = getApp();
 	import Req from '@/utils/request.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
 	import dateformat from '@/utils/dateformat.js';
@@ -314,15 +317,30 @@
 				uni.showModal({
 					title: '提示',
 					content: '是否确认退货',
-					success: util.callBind(this, function(res) {
+					success: util.callBind(this, async function(res) {
 						if (res.confirm) {
-							console.log('用户点击确定');
-							console.log("[ConfirmToPay]order:", that.Order);
-							this.$to_sale_pages('sale_credit_return_good', {
-								sale1: that.Order,
-								sale2: that.Details,
-								sale3: that.Sale3,
-							})
+							var result = await RequestSend(`select sx_status from sxsale001 where bill='${that.Order.BILL}'`);
+							console.log("[ConfirmToPay]订单状态查询结果:",result);
+							if (result.code) {
+								let status = JSON.parse(result.result.data)?.first()?.SX_STATUS;
+								if (status) {
+									if (status == '1') {
+										console.log('用户点击确定');
+										console.log("[ConfirmToPay]order:", that.Order);
+										this.$to_sale_pages('sale_credit_return_good', {
+											sale1: that.Order,
+											sale2: that.Details,
+											sale3: that.Sale3,
+										})
+									} else {
+										util.simpleMsg(status != '3' ? "赊销退货订单状态信息异常!" :
+											"赊销退货订单已完成退货!")
+									}
+								} else
+									util.simpleMsg("赊销退货未查询到此订单信息!")
+							} else {
+								util.simpleMsg("赊销退货订单状态查询失败!")
+							}
 						}
 					})
 				})
@@ -421,7 +439,7 @@
 		max-height: 100%;
 		overflow: auto;
 	}
-	
+
 	.products .procycle .li .h3 {
 		font-size: 28rpx;
 		font-weight: 600;

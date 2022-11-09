@@ -481,6 +481,10 @@
 					this.view.search.confirm = res.code;
 					if(!res.code) util.simpleMsg(res.msg, res.code, res);
 					console.log("[OrderStatusCheck]Res:", res);
+				}),util.callBind(this,function(err){
+					console.log("[OrderStatusCheck]订单状态查询失败...");
+					this.EditLoad(false, bill);
+					util.simpleMsg("订单状态查询失败,请重新点击左侧订单发起查询!")
 				}));
 			},
 			//展示详情

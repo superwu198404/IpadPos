@@ -510,7 +510,7 @@
 					this.PAD_SCAN = a;
 				}
 				this.event = this.getOpenerEventChannel();
-
+				this.$mp?.page?.$getAppWebview()?.setStyle({ popGesture: 'none' });
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
