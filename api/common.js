@@ -694,7 +694,13 @@ var ResetAuthCode = function(e) {
 	return code;
 }
 
-//四舍六入  返回number类型
+//四舍六入五成双  返回number类型
+// 规则:
+// 四舍六入五考虑，
+// 五后非零就进一，
+// 五后皆零看奇偶，
+// 五前为偶应舍去，
+// 五前为奇要进一。
 var newFixed = function(num, decimalPlaces) {
 	var d = decimalPlaces || 0;
 	var m = Math.pow(10, d);
