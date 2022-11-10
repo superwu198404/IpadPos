@@ -1670,6 +1670,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 				this.SaleNetAndDisc();
 				this.currentOperation.ynResetCX = !this.currentOperation.ynResetCX;
+				this.currentOperation.showCXZK = false; //清除和恢复时都关闭一下
 			}
 		})
 	});

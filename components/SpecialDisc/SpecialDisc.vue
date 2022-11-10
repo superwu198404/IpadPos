@@ -238,12 +238,14 @@
 					console.log("444444:", sortArr1);
 					if (sortArr.length > 0) { //追加标准折扣规则
 						let obj = sortArr[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
 						pushArr.push(obj);
 					}
 					if (sortArr1.length > 0) { //追加标准折扣规则
 						let obj = sortArr1[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
 						pushArr.push(obj);
 					}
 					let sortArr2 = arr2.filter(r => {
@@ -252,7 +254,8 @@
 					console.log("55555:", sortArr2);
 					if (sortArr2.length > 0) { //追加标准折扣规则
 						let obj = sortArr2[0];
-						obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
+						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
 						pushArr1.push(obj);
 					}
 				})
@@ -275,7 +278,8 @@
 					pushArr.map(r => {
 						anet += r.ZKNET;
 					})
-					that.totalDisc = Number(anet.toFixed(1));
+					// that.totalDisc = Number(anet.toFixed(1));
+					that.totalDisc = common.newFixed(anet);
 				}
 				console.log("合并后的折扣规则1：", pushArr);
 				if (pushArr1.length > 0) {
@@ -283,11 +287,13 @@
 					pushArr1.map(r => {
 						anet += r.ZKNET;
 					})
-					that.totalDiscDKF = Number(anet.toFixed(1));
+					// that.totalDiscDKF = Number(anet.toFixed(1));
+					that.totalDiscDKF = common.newFixed(anet);
 				}
 				that.ZKDatas = pushArr;
 				that.DKFZKDatas = pushArr1;
 			},
+			//后续的已废弃
 			//计算商品信息折扣信息 
 			CalProduct: function() {
 				let curData = [];
