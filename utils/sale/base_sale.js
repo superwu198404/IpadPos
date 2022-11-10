@@ -2304,6 +2304,7 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.PayedResult = async function(result) {
+		util.setStorage('open-loading',true);
 		console.log("[PayedResult]支付结果:", result);
 		uni.$emit('continue-message');
 		uni.$emit('continue-timed-communication');
@@ -2430,6 +2431,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit('stop-message');
 		uni.$emit('stop-timed-communication');
 		that.log("[PayParamAssemble]支付参数组装...")
+		util.setStorage('open-loading',false);
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合

@@ -127,9 +127,14 @@ var GetMDName = function(khid, func) {
 	let name = "";
 	let sql = "SELECT * FROM KHDA WHERE KHID = '" + khid + "'";
 	db.get().executeQry(sql, "查询中...", res => {
-		console.log("门店信息查询成功：", res);
+		console.log("[GetMDName]门店信息查询成功：", res);
 		if (res.code && res.msg.length > 0) {
 			name = res.msg[0].SNAME;
+			util.setStorage('StoreCoodinate',{
+				longitude: res.msg[0].ADRJD,
+				latitude: res.msg[0].ADRWD
+			})
+			console.log("[GetMDName]门店经纬度获取:",util.getStorage('StoreCoodinate'));
 		}
 		if (func) func(name);
 	}, err => {
