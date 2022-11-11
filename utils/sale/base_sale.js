@@ -3208,7 +3208,13 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		// that.sale001.ZNET = this.float(retx.ONET, 2); //原价
 		// that.Page.$set(that.sale001, "TNET", this.float(retx.ONET - retx.DISCRATE, 2))
-		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+
+		//为了兼容预定提取 初始化会清除折扣额的问题，早期购物车重复开关闭会产生重复扣减的问题 待后续测试后去除
+		if (this.clickSaleType.clickType != "sale_reserve_extract") {
+			that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+		} else {
+			that.sale001.TNET = this.float(retx.NET, 2);
+		}
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
@@ -3283,7 +3289,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
 		_main.GetFZCX(this.Storeid, async res => {
-			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that
+				.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}
@@ -3355,7 +3362,8 @@ function GetSale(global, vue, target_name, uni) {
 				console.log("[BeforeFk]辅助促销关闭!");
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
-				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(this
+				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(
+						this
 						.FZCX
 						.cval.data || {}).length > 0) {
 					console.warn("[BeforeFk]辅助促销计算部分!");
