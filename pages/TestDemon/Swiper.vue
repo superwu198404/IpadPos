@@ -1,6 +1,29 @@
+<style scopeed>
+	@import url(@/static/style/payment/paymentall/basis.css);
+	@import url(@/static/style/index.css);
+</style>
+
 <template>
-	<view>
-		<customSwiper :swiper-list="swiperList" />
+	<view class="content">
+		<view>
+			<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
+				<view class="account">
+						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<text>会员登录</text>
+					
+					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
+						<text></text>
+					</view>
+				</view>
+				<button class="qiehuan"><image src="@/images/tuichu.png"></image> 切换</button>
+			</view>
+			
+		</view>
+		<view>
+			<view>
+			<customSwiper :swiper-list="swiperList" />
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -1830,5 +1853,21 @@
 </script>
 
 <style lang="scss">
-
+	.qiehuan{
+		background-color: #E0EAE9;
+		color: #006B44;
+		height: 60rpx;
+		line-height: 60rpx;
+		width:170rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin:0;
+		font-size: 30rpx;
+	}
+	.qiehuan image{
+		width:32rpx;
+		height: 32rpx;
+		margin-right: 10px;
+	}
 </style>

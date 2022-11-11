@@ -364,7 +364,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 		//单个商品折扣后的单价
 		let ProOPrice = parseFloat(cx_util.nnvl(sale02_arr[i].PRICE, 0));
 
-		sale02_arr[i].NET = Math.round((ProPrice * ProNum - cxdiscvalue) * 100) / 100; //外面扣除
+		sale02_arr[i].NET = Math.round((ProPrice * ProNum - cxdiscvalue) * 100) / 100;
 		sale02_arr[i].QTY = ProNum;
 		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum) * 100) / 100;
 		sale02_arr[i].CXBILL = cxbillStr;
@@ -1295,7 +1295,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let newprice = 0;
 			switch (cxsub.SubZktype) {
 				case "Subdisc":
-					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round((((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+					cxbilldts[i][disc] = Math.round(cx_util.nnvl(cxbilldts[i][disc], 0) * 100) / 100 + Math.round(((
+						(1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
 					newprice = price * cxsub.discnum[level] / 100;
 					break;
 				case "Subnet":
@@ -1331,7 +1332,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 					} else {
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) /
+						100;
 					}
 					break;
 				case "zjprice":
@@ -1357,7 +1359,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						}
 						//计算积分
 						else {
-							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price - zjprice) * fsqty) * 100) / 100;
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price -
+								zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
 					}
@@ -1371,9 +1374,11 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + MinRow.get(i) * Math
+							.round((price * (1 - cxsub.minDisc)) * 100) / 100) * 100) / 100;
 						if (fsqty != 0) {
-							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) * 100) / 100) / fsqty;
+							newprice = (fsqty * price - MinRow.get(i) * Math.round((price * (1 - cxsub.minDisc)) *
+								100) / 100) / fsqty;
 						} else {
 							newprice = price;
 						}
@@ -1412,7 +1417,8 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 						fsdcx.push(cx.CxBill);
 					}
 				}
-				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur, jfinfo);
+				AddCxTable(spid, bill, saledate, cx, subid, i, fsqty, newprice, price, level, lcm, jfnum_cur,
+					jfinfo);
 			} catch (e) {
 
 			}
@@ -1604,20 +1610,24 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			if (fsqty > 0) {
 				switch (cxsub.SubZktype) {
 					case "Subdisc":
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub.discnum[level] / 100) * price * fsqty)) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + ((1 - cxsub.discnum[
+							level] / 100) * price * fsqty)) * 100) / 100;
 						newprice = price * cxsub.discnum[level] / 100;
 						break;
 					case "Subnet":
-						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) / 100;
+						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) /
+						100;
 						newprice = (price * fsqty - subdisc) / fsqty;
-						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) / 100;
+						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) /
+						100;
 						break;
 					case "zjprice":
 						let zjprice = cxsub.zjprice[level];
 						if (zjprice > price) {
 							//cxbilldts[i][disc] = 0;
 						} else {
-							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price - zjprice) * fsqty) * 100) / 100;
+							cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + (price -
+								zjprice) * fsqty) * 100) / 100;
 							newprice = zjprice;
 						}
 						break;

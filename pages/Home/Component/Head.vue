@@ -1351,6 +1351,7 @@
 		height: 68rpx;
 		line-height: 68rpx;
 		margin-left: 20rpx;
+		vertical-align: middle;
 	}
 
 	.checkout .rijie image {

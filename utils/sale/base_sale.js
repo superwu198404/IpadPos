@@ -6,6 +6,8 @@ import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
+import _cake from '@/api/business/CakeYD.js';
+
 import {
 	onlineOrderReserve //更新表接口
 } from '@/api/business/onlineorders.js';
@@ -216,6 +218,10 @@ var XsTypeObj = {
 				};
 				this.HY.val = obj;
 			}
+			//给全局大客户对象赋值
+			if (this.sale001.DKFID) {
+				this.DKF.val.DKFID = this.sale001.DKFID;
+			}
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -317,8 +323,10 @@ var XsTypeObj = {
 			this.show_cake_reservation = true;
 			return true;
 		},
-		$initSale: function() {
+		$initSale: async function() {
 			this.actType = common.actTypeEnum.Payment;
+			this.CakeBQList = await _cake.GetDGBQ();
+			console.log("标签数据：", this.CakeBQList);
 		},
 		$print: function() { //对打印的控制
 			return {
@@ -417,9 +425,9 @@ var XsTypeObj = {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
 					this.show_cake_reservation = false;
 					this.SetDefaultType();
-				}
-				else{
-					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
 				}
 			}), true)
 		},
@@ -447,9 +455,9 @@ var XsTypeObj = {
 					console.log("[CloseReserveDrawer]预定录入关闭...");
 					this.setComponentsManage(null, "statement");
 					this.PayParamAssemble();
-				}
-				else{
-					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
 				}
 			}), true)
 
@@ -956,7 +964,7 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				sxsale001: this.sxsale001
 			});
-			if (this.sale001.TNET) {
+			if (this.sale002.length > 0 && this.sale001.TNET >= 0) { // 部分商品金额为0
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -1786,6 +1794,28 @@ function GetSale(global, vue, target_name, uni) {
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
 	})
+	//*func*选中标签
+	this.ChooseBQ = util.callBind(this, function(e) {
+		if (e) {
+			this.CakeTagList = e.DATA;
+		}
+	})
+	//*func*选中标签
+	this.ChooseTag = util.callBind(this, function(e) {
+		if (e) {
+			e._CHECK = !e._CHECK;
+			if (e._CHECK) {
+				this.CheckTagList.push(e);
+			} else {
+				for (var i = 0; i < this.CheckTagList.length; i++) {
+					if (this.CheckTagList[i]._ID === e._ID) {
+						this.CheckTagList.splice(i, 1);
+					}
+				}
+			}
+		}
+		console.log("选中事件：", this.CheckTagList);
+	})
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -1962,7 +1992,34 @@ function GetSale(global, vue, target_name, uni) {
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类
 	this.selectPlid = "";
-
+	//蛋糕预定标签集合
+	this.CakeBQList = [];
+	//蛋糕预定标签子级集合
+	this.CakeTagList = [];
+	//已选标签集合
+	this.CheckTagList = [];
+	//蛋糕预定商品集合
+	this.CakeList = [{
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}];
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
@@ -2623,8 +2680,8 @@ function GetSale(global, vue, target_name, uni) {
 			score_info: that.score_info, //积分抵现信息
 			ban_pay: that.ban_type, //被禁用的支付类型
 			PayList: that.payed, //已支付信息
-			actType: that.actType ,//动作类型(退款、支付)
-			hyinfo: that.HY.cval//会员信息
+			actType: that.actType, //动作类型(退款、支付)
+			hyinfo: that.HY.cval //会员信息
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
@@ -3152,7 +3209,13 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		// that.sale001.ZNET = this.float(retx.ONET, 2); //原价
 		// that.Page.$set(that.sale001, "TNET", this.float(retx.ONET - retx.DISCRATE, 2))
-		that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+
+		//为了兼容预定提取 初始化会清除折扣额的问题，早期购物车重复开关闭会产生重复扣减的问题 待后续测试后去除
+		if (this.clickSaleType.clickType != "sale_reserve_extract") {
+			that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+		} else {
+			that.sale001.TNET = this.float(retx.NET, 2);
+		}
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
@@ -3227,7 +3290,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
 		_main.GetFZCX(this.Storeid, async res => {
-			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that
+				.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}
@@ -3299,7 +3363,8 @@ function GetSale(global, vue, target_name, uni) {
 				console.log("[BeforeFk]辅助促销关闭!");
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
-				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(this
+				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(
+						this
 						.FZCX
 						.cval.data || {}).length > 0) {
 					console.warn("[BeforeFk]辅助促销计算部分!");

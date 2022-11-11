@@ -799,7 +799,7 @@ page {
 	background-color: rgba(0, 0, 0, 0.5);
 	width: 100%;
 	height: 100%;
-	z-index: 99999;
+	z-index: 99999 !important;
 }
 
 .coupons {
@@ -1020,4 +1020,141 @@ uni-button:after {
 	color: #999;
 	font-size: 26rpx;
 	font-weight: 400;
+}
+
+.dgyd{
+	position: fixed;
+	width:100%;
+	height: 100%;
+	top:0;
+	left:0;
+	background-color: #F5F4F8;
+	z-index: 9;
+}
+.head {
+		height: 120rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		box-sizing: border-box;
+		padding: 44rpx 2% 12rpx;
+		background-color: #fff;
+	}
+	.head-left{
+		width:100%;
+	}
+	.head-portrait {
+		display: flex;
+		width: 50%;
+	}
+
+	.head-portrait>view {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.head-portrait image{
+		width:70rpx;
+		height: 70rpx;
+		margin-right: 10rpx;
+	}
+	.exit {
+		background: #E0EAE9;
+		color: #006B44;
+		padding: 10rpx 20rpx;
+		border-radius: 5px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.exit image{
+		width:40rpx;
+		height: 40rpx;
+		margin-right: 8rpx;
+	}
+	.body-titles {
+		height: 60px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		box-sizing: border-box;
+		padding: 20rpx 20px 0;
+		width:96%;
+		margin:0 auto;
+		font-size: 34rpx;
+		color: #006B44;
+		position: relative;
+		font-weight: 700;
+	}
+	.hot-sales{
+		position: relative;
+		width:160rpx;
+	}
+	.body-titles .hot-sales label{
+		position: absolute;
+		bottom:8rpx;
+		left: 0rpx;
+		width: 158rpx;
+		height: 18rpx;
+		background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0) 100%);
+		border-radius: 9px 9px 9px 9px;
+		opacity: 0.3;
+	}
+.body-titles .filter{
+	font-size: 30rpx;
+}
+.body-titles .filter image{
+	width:30rpx;
+	height: 30rpx;
+	margin-right: 6rpx;
+}
+.body-titles .yixuan,.shaixuan .yixuan{
+	width:70%;
+	font-weight: 400;
+	font-size: 30rpx;
+	display: flex;
+	align-items: center;
+	margin-left: 3%;
+	white-space: nowrap;
+	overflow: hidden;
+	padding:16rpx;
+}
+.body-titles .yixuan text,.shaixuan .yixuan text{
+	font-weight: 400;
+}
+.body-titles .yixuan label,.shaixuan .yixuan label{
+	position: relative;
+	background-color: #E0EAE9;
+	color: #006B44;
+	display: flex;
+	padding:8rpx 60rpx 8rpx 20rpx;
+	margin-right: 20rpx;
+}
+.body-titles .yixuan label button,.shaixuan .yixuan label button{
+	width:54rpx !important;
+	height: 54rpx;
+	background:none;
+	position: absolute;
+	top:0;
+	right:0;
+	padding:0;
+	width:0;
+	line-height: 54rpx;
+	color: #7EB4A0;
+	text-align: center;
+}
+.body-titles .shaixuan{
+	position: absolute;;
+	top:130%;
+	left:0;
+	background-color: #fff;
+	border-radius: 14rpx;
+	box-shadow: 0px 10px 20px 1px rgba(66,177,75,0.16);
+	width:100%;
+	z-index: 9999999;
+	padding:1% 2%;
+}
+.shaixuan .yixuan{
+	width:100%;
+	margin:0 auto;
 }
