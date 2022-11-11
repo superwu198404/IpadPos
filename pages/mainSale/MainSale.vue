@@ -507,28 +507,32 @@
 		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
 			@open="mainSale.ShowStatement">
 			<view class="head">
-					<view class="head-portrait">
-						<image src="@/images/touxiang.png" mode="widthFix"></image>
-						<view class="member-account">会员账户</view>
+				<view class="head-portrait">
+					<image src="@/images/touxiang.png" mode="widthFix"></image>
+					<view class="member-account">会员账户</view>
+				</view>
+				<view class="head-exit">
+					<view class="exit" @click="Exit">
+						<image src="@/images/tuichu.png"></image> 退出
 					</view>
-					<view class="head-exit">
-						<view class="exit" @click="Exit"><image src="@/images/tuichu.png"></image> 退出</view>
-					</view>
+				</view>
 			</view>
 			<view class="body-titles">
 				<view style="width: 90%;display: flex; align-items: center;">
 					<view class="hot-sales">
 						产品列表
-						<label></label>						
+						<label></label>
 					</view>
 					<view class="yixuan">
 						<text>已选：</text>
 						<view>
-						<label>生日精选 <button>×</button></label>
+							<label>生日精选 <button>×</button></label>
 						</view>
 					</view>
 				</view>
-				<view class="filter"><image src="@/images/qushaixuan.png"></image> 去筛选</view>
+				<view class="filter">
+					<image src="@/images/qushaixuan.png"></image> 去筛选
+				</view>
 				<view class="shaixuan">
 					<view class="yixuan">
 						<text>全部已选:</text>
@@ -536,7 +540,7 @@
 					</view>
 					<view><label v-for="item in mainSale.CakeBQList"
 							@click="mainSale.ChooseBQ(item)">{{item.BQNAME}},</label></view>
-					<view >选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
+					<view>选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
 							{{item1._NAME}},
 						</label>
 					</view>
@@ -937,5 +941,4 @@
 		right: 0;
 		background: none;
 	}
-	
 </style>
