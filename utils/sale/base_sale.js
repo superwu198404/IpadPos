@@ -1243,6 +1243,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/xsddtiqu.png"),
 		icon_close: require("@/images/xsddtiqu-wxz.png"),
 		operation: {
+			"ynCancel": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
