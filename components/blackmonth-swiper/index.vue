@@ -43,7 +43,8 @@
 			})
 			this.swiperList.forEach((item, index) => {
 				this.itemStyle.push(this.getStyle(index))
-			}) this.swiperList.forEach((item, index) => {
+			});
+			this.swiperList.forEach((item, index) => {
 				this.itemStyle.push(this.getStyle(index))
 			})
 		},

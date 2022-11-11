@@ -33,11 +33,11 @@
 					<slot></slot>
 				</view>
 				<view class="body-content-right">
-					<view class="statement">
+					<view class="statement" @click="$emit('open')">
 						<text>结算单</text>
 						<label>«</label>
 						<view class="good-number">
-							<image src="@/images/jsd-dxiao.gif" mode="widthFix" style="width: 30px;height: 100px;"></image>
+							<!-- <image src="../../images/jsd-dxiao.gif" mode="widthFix" style="width: 30px;height: 100px;"></image> -->
 							<text>0</text>
 						</view>
 					</view>
@@ -144,9 +144,9 @@
 
 	.body-content-right {
 		width: 60px;
-		border: 1px solid red;
 		display: flex;
 		align-items: center;
+		justify-content: center;
 	}
 
 	.statement {
@@ -170,6 +170,9 @@
 	
 	.good-number{
 		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.hot-sales {

@@ -314,6 +314,7 @@ var XsTypeObj = {
 		},
 		$click() {
 			console.log("[sale_cake_reserve]蛋糕预定信息录入操作!");
+			this.show_cake_reservation = false;
 			return true;
 		},
 		$initSale: function() {
@@ -404,6 +405,11 @@ var XsTypeObj = {
 				"XSTYPE": "YD"
 			};
 			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
+		},
+		CloseCakeReservation: function(){
+			console.log("[CloseCakeReservation]蛋糕预定关闭...");
+			this.show_cake_reservation = false;
+			this.SetManage('sale_reserve');
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -1881,6 +1887,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//禁止类型
 	this.ban_type = [];
+	//蛋糕预定
+	this.show_cake_reservation = false;
 	//工具栏界面
 	this.tool_pages = {
 		promotions: false, //当前促销活动
