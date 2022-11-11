@@ -41,11 +41,6 @@
 			this.swiperList.forEach((item, index) => {
 				this.itemStyle.push(this.getStyle(index))
 			})
-			this.swiperList.forEach((item, index) => {
-				this.itemStyle.push(this.getStyle(index))
-			}) this.swiperList.forEach((item, index) => {
-				this.itemStyle.push(this.getStyle(index))
-			})
 		},
 		methods: {
 			getStyle(e) {
