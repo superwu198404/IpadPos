@@ -1777,6 +1777,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("exists-online-order");
 		uni.$off("exists-takeaway");
 		uni.$off("exists-takeaway-reserve");
+		uni.$off("exit-cake-reservation");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1792,6 +1793,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-online-order", (XsTypeObj.sale_online_order.SelectMenu).bind(this));
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
+		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {

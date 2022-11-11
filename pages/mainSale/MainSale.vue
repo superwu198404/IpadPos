@@ -504,7 +504,7 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation" @exit="(mysale.XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(mainSale)" @open="mainSale.ShowStatement">
+		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation" @open="mainSale.ShowStatement">
 			<view style="background-color: red;width: 100%;height: 100%;font-size: 48px;">
 				在这里写轮播组件code...
 			</view>
@@ -573,6 +573,7 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+				sale_type_infos:null
 			}
 		},
 		components: {
@@ -734,11 +735,7 @@
 			// 	}
 			// })
 			console.log("[MainSale]开始构造函数!");
-			// console.log("初始化的khid:", this.KHID);
-			// console.log("初始化的DQID:", this.DQID);
-			// console.log("初始化的KHZID:", this.KHZID);
-			let log = console.log;
-			console.log = () => {};
+			this.sale_type_infos = mysale.XsTypeObj;
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
@@ -748,7 +745,6 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
-			console.log = log;
 		}
 	}
 </script>

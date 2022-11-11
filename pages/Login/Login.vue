@@ -48,10 +48,18 @@
 				</view>
 			</view>
 		</view>
+		<!-- <CakeReservation>
+			<view style="background-color: red;width: 100%;height: 100%;font-size: 48px;">
+				在这里写轮播组件code...
+			</view>
+		</CakeReservation> -->
 	</view>
 </template>
 
 <script>
+	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
+	
+	
 	var app = getApp();
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
@@ -94,6 +102,9 @@
 			khname: function() {
 				return this.khid + "-" + this.name;
 			}
+		},
+		components:{
+			CakeReservation
 		},
 		methods: {
 			onLoad: function() {
