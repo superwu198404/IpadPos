@@ -383,14 +383,16 @@
 							this.LimitMaxDate = "2100-01-01";
 							console.log("[RefreshData]限制时间（自提、宅配）:", {
 								min: this.LimitDate,
-								max: this.LimitMaxDate
+								max: this.LimitMaxDate,
+								min_long: dateformat.toDateTimeString(new Date())
 							});
 						} else {
 							this.LimitDate = dateformat.toDateString(new Date());
 							this.LimitMaxDate = dateformat.toDateString(new Date());
 							console.log("[RefreshData]限制时间（现卖）:", {
 								min: this.LimitDate,
-								max: this.LimitMaxDate
+								max: this.LimitMaxDate,
+								min_long: dateformat.toDateTimeString(new Date())
 							});
 						}
 					}

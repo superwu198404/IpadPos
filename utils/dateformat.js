@@ -394,6 +394,11 @@ function toDateString(date) {
 	return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,"0")}-${date.getDate().toString().padStart(2,"0")}`;
 }
 
+//日期转字符串
+function toDateTimeString(date) {
+	return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,"0")}-${date.getDate().toString().padStart(2,"0")} ${date.getHours().toString().padStart(2,"0")}:${date.getMinutes().toString().padStart(2,"0")}`;
+}
+
 export default {
 	stringToDate,
 	formatDate,
@@ -416,5 +421,6 @@ export default {
 	getDateByParam,
 	CheckStoreTime,
 	getWeekDate,
-	toDateString
+	toDateString,
+	toDateTimeString
 }
