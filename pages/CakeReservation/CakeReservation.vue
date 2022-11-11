@@ -122,7 +122,7 @@
 		height: 100vh;
 		width: 100vw;
 		position: absolute;
-		z-index: 10000000000000;
+		z-index: 88888;
 		background-color: white;
 		display: flex;
 		flex-direction: column;
