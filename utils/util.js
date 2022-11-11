@@ -12,20 +12,20 @@ const utils = {
 	 * @param {Object} v2
 	 */
 	contrast(v1, v2) {
-		try{
+		try {
 			let arr_1 = v1.split('.')
 			let arr_2 = v2.split('.')
 			for (var i = 0; i < arr_1.length; i++) {
-			  if (parseInt(arr_1[i]) > parseInt(arr_2[i])) {
-			    return 1
-			  } else if (parseInt(arr_1[i]) < parseInt(arr_2[i])) {
-			    return -1
-			  }
+				if (parseInt(arr_1[i]) > parseInt(arr_2[i])) {
+					return 1
+				} else if (parseInt(arr_1[i]) < parseInt(arr_2[i])) {
+					return -1
+				}
 			}
-		}catch(e){
+		} catch (e) {
 			return 0
 		}
-	  return 0
+		return 0
 	},
 	//去空格
 	trim: function(value) {
@@ -52,19 +52,20 @@ const utils = {
 	 * @param content: 内容
 	 * @returns void
 	 */
-	simpleModal: function(title, content, conFunc) {
+	simpleModal: function(title, content, conFunc, is_input) {
 		uni.showModal({
 			title,
 			content,
+			editable: is_input,
 			success: function(res) {
 				if (res.confirm) {
 					console.log('用户点击确定');
 					if (conFunc)
-						conFunc(true);
+						conFunc(true, res);
 				} else if (res.cancel) {
 					console.log('用户点击取消');
 					if (conFunc)
-						conFunc(false);
+						conFunc(false, res);
 				}
 			}
 		});

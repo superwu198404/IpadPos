@@ -1729,6 +1729,11 @@
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
+				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
+				if (!hyinfo?.hyId) {
+					util.simpleMsg("请登录会员后再使用!")
+					return;
+				}
 				this.GetHyCoupons(util.callBind(this,function() {
 					if (that.coupon_list.length <= 0) {
 						util.simpleMsg("暂无可用券", true);
@@ -1750,7 +1755,7 @@
 			//获取会员卡券	
 			GetHyCoupons: function(func) {
 				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
-				// console.log("会员信息：", JSON.stringify(hyinfo));
+				console.log("[GetHyCoupons]会员信息：", hyinfo);
 				if (hyinfo?.hyId) {
 					_member.CouponList("获取中...", {
 						brand: that.brand,
@@ -1764,7 +1769,7 @@
 						}
 						if (func) func();
 					}, (err) => {
-						console.log("异常数据：", res)
+						console.log("[GetHyCoupons]异常数据：", res)
 						if (func) func();
 					})
 				}

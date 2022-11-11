@@ -16,7 +16,7 @@ var GetDGBQ = async function() {
 		if (dbbqArr.length > 0) {
 			dbbqArr.map(r => {
 				let obj = data.find(r1 => {
-					r.ZF == r1.BQID
+					return r1.BQID == r.ZF;
 				})
 				if (!obj) {
 					data.push({
@@ -27,7 +27,8 @@ var GetDGBQ = async function() {
 						}).map(r4 => {
 							return {
 								_NAME: r4.SNAME,
-								_ID: r4.ID_NR
+								_ID: r4.ID_NR,
+								_CHECK: false
 							}
 						})
 					})
