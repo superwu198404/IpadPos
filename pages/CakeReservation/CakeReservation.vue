@@ -30,7 +30,55 @@
 			</view>
 			<view class="body-content">
 				<view class="body-content-left">
-					<slot></slot>
+					<view class="content-head" v-if="false">
+						<view class="filter-box">
+							<view class="filter-tips">
+								<view class="filter-title">
+									全部已选:
+								</view>
+								<view class="tips-list">
+									<view class="tips-item">生日精选<view>x</view>
+									</view>
+									<view class="tips-item">仪式庆祝<view>x</view>
+									</view>
+									<view class="tips-item">2-3人食(四寸)<view>x</view>
+									</view>
+									<view class="tips-item">￥200.00-￥1000.00<view>x</view>
+									</view>
+									<view class="tips-item">蛋糕胚<view>x</view>
+									</view>
+								</view>
+							</view>
+							<view class="filter-types">
+								<view class="filter-left">
+									<view class="filter-type check">场景</view>
+									<view class="filter-type">人群</view>
+									<view class="filter-type">尺寸</view>
+									<view class="filter-type">蛋糕材料</view>
+									<view class="filter-type">蛋糕类型</view>
+								</view>
+								<view class="filter-right">
+									<view class="more-type">+ 更多</view>
+								</view>
+							</view>
+							<view class="filter-options">
+								<view class="filter-title">
+									选&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选:
+								</view>
+								<view class="option-list">
+									<view class="option-item">生日精选</view>
+									<view class="option-item">仪式庆祝</view>
+									<view class="option-item">2-3人食(四寸)</view>
+									<view class="option-item">￥200.00-￥1000.00</view>
+									<view class="option-item">蛋糕胚</view>
+								</view>
+							</view>
+							<view class="filter-price-range"></view>
+						</view>
+					</view>
+					<view class="content-body">
+						<slot></slot>
+					</view>
 				</view>
 				<view class="body-content-right">
 					<view class="statement" @click="$emit('open')">
@@ -56,7 +104,7 @@
 		},
 		methods: {
 			Exit() {
-				this.$emit('exit');
+				uni.$emit('exit-cake-reservation');
 			}
 		},
 		created() {
@@ -65,7 +113,11 @@
 	}
 </script>
 
-<style>
+<style scoped>
+	:root {
+		--statement-width: 60px;
+	}
+
 	.full-screen {
 		height: 100vh;
 		width: 100vw;
@@ -140,10 +192,15 @@
 
 	.body-content-left {
 		flex: 1;
+		padding-left: 20px;
+		box-sizing: border-box;
+		position: relative;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.body-content-right {
-		width: 60px;
+		width: var(--statement-width);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -167,8 +224,8 @@
 		text-align: center;
 		font-weight: 600;
 	}
-	
-	.good-number{
+
+	.good-number {
 		width: 100%;
 		display: flex;
 		justify-content: center;
@@ -186,6 +243,10 @@
 		width: 22px;
 	}
 
+	.body-title-right {
+		margin-right: var(--statement-width);
+	}
+
 	.btn-group {
 		display: flex;
 		gap: 40px;
@@ -199,5 +260,83 @@
 	.filter {
 		font-weight: 600;
 		color: var(--drak-green);
+	}
+
+	.content-head {
+		position: absolute;
+		height: 36%;
+		width: calc(100% - 20px);
+		background-color: #ffffff;
+		border-radius: 5px;
+		top: 0px;
+		left: 20px
+	}
+
+	.filter-box {
+		height: 100%;
+		box-shadow: 0px 10px 16px .2px gray;
+	}
+
+	.filter-box>view {
+		height: 25%;
+		box-sizing: border-box;
+		padding: 10px 20px;
+		box-sizing: border-box;
+	}
+
+	.content-body {
+		flex: 1;
+	}
+
+	.filter-tips,
+	.filter-options {
+		display: flex;
+		align-items: center;
+	}
+
+	.filter-tips {
+		border-bottom: 1px solid #f8f8f8;
+	}
+
+	.tips-list,
+	.option-list {
+		display: flex;
+	}
+
+	.tips-item {
+		background: var(--light-green);
+		color: var(--drak-green);
+	}
+
+	.tips-item,
+	.option-item {
+		display: flex;
+		margin-left: 15px;
+		gap: 5px;
+		padding: 0px 5px;
+	}
+
+	.filter-types {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.filter-type,
+	.more-type {
+		border-radius: 20px;
+		border: 1px solid lightgray;
+		padding: 5px 12px;
+	}
+
+	.more-type {
+		border: 1px solid var(--drak-green);
+		color: var(--drak-green);
+	}
+
+	.filter-left {
+		display: flex;
+		gap: 15px
 	}
 </style>
