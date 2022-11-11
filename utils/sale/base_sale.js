@@ -54,6 +54,7 @@ var XsTypeObj = {
 
 			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
+			"sale_cake_reserve":true,
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
 			"sale_online_order": true,
@@ -281,6 +282,147 @@ var XsTypeObj = {
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
+	},
+	//蛋糕预定
+	sale_cake_reserve:{
+		xstype: "3",
+		clickType: "sale_cake_reserve",
+		nameSale: "蛋糕预定",
+		icon_open: require("@/images/yuding.png"),
+		icon_close: require("@/images/yuding-hui.png"),
+		operation: {
+			"HY": true, //是否可以录入会员
+			"Disc": true, //是否可以打开录入折扣
+			"ynFzCx": false, //是否可以辅助促销 预定不开启
+			"ynCx": true, //是否进行可以进行促销
+			"ynCancel": true, //是否可以退出当前销售模式
+			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+			"ynResetCX": false, //是否清除了促销
+			"showCXZK": false, //展示促销和折扣来源
+			"sale_cake_reserve": true,
+			"sale_reserve": false,
+			"sale_return_good": false,
+			"sale_reserve_cancel": false,
+			"sale_takeaway": true,
+			"sale_takeaway_reserve": true,
+			"sale_message": true,
+			"tools": true,
+			"lockRows": 0, //是否存在锁定行数
+			"inputsp": true //是否可以输入商品
+		},
+		$click() {
+			console.log("[sale_cake_reserve]蛋糕预定信息录入操作!");
+			return true;
+		},
+		$initSale: function() {
+			this.actType = common.actTypeEnum.Payment;
+		},
+		$print: function() {//对打印的控制
+			return {
+				tName: "蛋糕预定小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
+		$beforeFk: function() { //支付打开预定信息录入
+			//品诺
+			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
+			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
+			console.log("[BeforeFk]预订单录入:", this.sale001);
+			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
+			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
+			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
+			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
+			console.log("[SaleReserve]生成预定支付信息...");
+			this.payed = [];
+			this.payed.push(Sale3ModelAdditional(Sale3Model({
+				fkid: 'ZF01',
+				type: 'XJ',
+				bill: this.sale001.BILL,
+				name: "现金",
+				amount: 0
+			}), { //业务配置字段（支付状态设定为成功）
+				fail: false, //定金显示为成功
+				show: false
+			}));
+			console.log("[SaleReserve]生成预定支付信息成功!");
+			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003,
+				ydsale001: this.ydsale001
+			});
+			return false;
+		},
+		//支付完成中
+		$saleFinishing: function(result) { //生成yd
+			console.log("[SaleFinishing]预订单生成中...", result);
+			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
+			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
+			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
+			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
+			if (result.sale1_obj.DNET !== 0) { //定金为 0
+				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
+				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
+				console.log("[SaleFinishing]过滤后的记录:", this.sale003);
+			}
+			console.log("[SaleFinishing]预订单生成完毕!", {
+				ydsale1: this.ydsale001,
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			});
+		},
+		//支付完成以后
+		$saleFinied: function() {
+			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷	
+			//调用打印
+			this.sale002.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let fkdaRes = this.FKDA_INFO;
+			let sale3 = this.GetPayedResult()?.data?.sale3_arr ?? this.sale003;
+			sale3.forEach(function(item, index) {
+				try {
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = item.balance;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			console.log("蛋糕预定下单开始调用打印", {
+				sale002: this.sale002,
+				sale3
+			})
+			let printerPram = {
+				"PRINTNUM": 2,
+				"XSTYPE": "YD"
+			};
+			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
+		},
+		CloseReserveDrawer: function() {
+			console.log("[CloseReserveDrawer]结算单打开...");
+			this.setComponentsManage(null, "statement");
+		},
+		ReserveInfoInput: function(sale1) {
+			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", sale1);
+			Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
+			Object.cover(this.ydsale001, sale1); //用于 ydsale001
+			console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+				ydsale1: this.ydsale001,
+				sale1: this.sale001
+			});
+			this.sale001.$total_amount = this.sale001.DNET;
+			this.$total_amount = this.sale001.DNET;
+			console.log("[CloseReserveDrawer]预定录入关闭...");
+			this.setComponentsManage(null, "statement");
+			this.PayParamAssemble();
+		}
 	},
 	//预订单下单
 	sale_reserve: {
@@ -2014,6 +2156,7 @@ function GetSale(global, vue, target_name, uni) {
 		"showCXZK": false, //是否展示促销，折扣来源
 
 		"sale": false, //从这里开始都是销售模式
+		"sale_cake_reserve":false,
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
 		"sale_online_order": false,
@@ -2044,6 +2187,7 @@ function GetSale(global, vue, target_name, uni) {
 		// "showEdit": false, //商品数量编辑是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
+		"sale_cake_reserve":false,
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
 		"sale_online_order": false,
@@ -2092,6 +2236,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
+		console.log("[SetManage]组件类型:",pm_mtype);
 		if (!pm_mtype) return;
 		// console.log("[SetManage]LastManage:", lastManage);
 		// console.log("[SetManage]CurrentManage:", pm_mtype);
@@ -2100,8 +2245,9 @@ function GetSale(global, vue, target_name, uni) {
 			// console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;
 		}
-		// that.log("[SetManage]点击的类型:", pm_mtype);
+		console.log("[SetManage]组件类型信息-修改前:",that.ComponentsManage[pm_mtype]);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		console.log("[SetManage]组件类型信息-修改前:",that.ComponentsManage[pm_mtype]);
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		// that.log("[SetManage]组件控制对象:", that.ComponentsManage);

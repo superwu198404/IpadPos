@@ -297,13 +297,11 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
 			console.log("[AsyncFuncArr]http请求:", res);
-			if (util.getStorage('open-loading'))
-				showloding(res.http.load, res.http.title);
+			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res);
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
 			// console.log("[AsyncFuncArr]http返回值:", res);
-			if (util.getStorage('open-loading'))
-				hideloding();
+			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);
 				break;
@@ -339,8 +337,7 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			console.log("[AsyncFuncChain]http请求:", res);
-			if (util.getStorage('open-loading'))
-				showloding(res.http.load, res.http.title);
+			showloding(res.http.load, res.http.title);
 			res = await httpFunc(res); //发起请求
 			console.log("[AsyncFuncChain]http请求结果:", res);
 			results.push(res); //存入执行结果
@@ -348,8 +345,7 @@ var asyncFuncChain = async function(pm_data, callbackfunArr, catchfun, finallyfu
 				def(catchfun, res);
 			}
 		}
-		if (util.getStorage('open-loading'))
-			showloding(res.load, res.msg);
+		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res);
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
@@ -365,8 +361,7 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	let res = pm_data;
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
-			if (util.getStorage('open-loading'))
-				showloding(res.http.load, res.http.title);
+			showloding(res.http.load, res.http.title);
 			console.log("[AsyncFuncArr1]http请求:", res);
 			res = await httpFunc(res); //发起请求
 			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
@@ -374,8 +369,7 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 				break;
 			}
 		}
-		if (util.getStorage('open-loading'))
-			showloding(res.load, res.msg);
+		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
