@@ -768,7 +768,7 @@ var GetPTOrder = function(e, b, d, t, func) {
 	let str = "";
 	str += b ? " and BILL like '%" + b + "%'" : "";
 	str += e ? " and KHID='" + e + "'" : "";
-	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
+	str += d ? " and date(SALEDATE) = date('" + d + "')" : " and date(SALEDATE) = date('now')";
 	if (t == 0) {
 		str += " and XSTYPE ='" + t + "'";
 	} else if (t != -1) {
