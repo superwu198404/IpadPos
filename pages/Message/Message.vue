@@ -82,7 +82,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="boxs" v-if="showDetail">
+		<view class="boxs" v-if="showDetail" style="z-index: 99999;">
 			<view class="meminfo">
 				<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 				<view>

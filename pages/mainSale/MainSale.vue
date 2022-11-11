@@ -504,21 +504,49 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
 			@open="mainSale.ShowStatement">
-			<view style="width: 100%;height: 100%">
-				<view>
-					<view>全部已选:<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}},</label></view>
+			<view class="head">
+					<view class="head-portrait">
+						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<view class="member-account">会员账户</view>
+					</view>
+					<view class="head-exit">
+						<view class="exit" @click="Exit"><image src="@/images/tuichu.png"></image> 退出</view>
+					</view>
+			</view>
+			<view class="body-titles">
+				<view style="width: 90%;display: flex; align-items: center;">
+					<view class="hot-sales">
+						产品列表
+						<label></label>						
+					</view>
+					<view class="yixuan">
+						<text>已选：</text>
+						<view>
+						<label>生日精选 <button>×</button></label>
+						</view>
+					</view>
+				</view>
+				<view class="filter"><image src="@/images/qushaixuan.png"></image> 去筛选</view>
+				<view class="shaixuan">
+					<view class="yixuan">
+						<text>全部已选:</text>
+						<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button>×</button></label>
+					</view>
 					<view><label v-for="item in mainSale.CakeBQList"
 							@click="mainSale.ChooseBQ(item)">{{item.BQNAME}},</label></view>
-					<view>选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
+					<view >选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
 							{{item1._NAME}},
 						</label>
 					</view>
 				</view>
+			</view>
+			<view style="width: 100%;height: 100%">
+
 				<Swiper :swiper-list="mainSale.CakeList" />
 			</view>
-		</CakeReservation>
+		</view>
 	</view>
 </template>
 
@@ -909,4 +937,5 @@
 		right: 0;
 		background: none;
 	}
+	
 </style>

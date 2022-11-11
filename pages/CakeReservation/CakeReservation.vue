@@ -1,32 +1,33 @@
 <template>
 	<view class="full-screen">
 		<view class="head">
-			<view class="head-left">
 				<view class="head-portrait">
-					<view class="member-portrait"></view>
+					<image src="@/images/touxiang.png" mode="widthFix"></image>
 					<view class="member-account">会员账户</view>
 				</view>
-			</view>
-			<view class="head-right">
 				<view class="head-exit">
-					<view class="exit" @click="Exit">退出</view>
+					<view class="exit" @click="Exit"><image src="@/images/tuichu.png"></image> 退出</view>
 				</view>
-			</view>
 		</view>
 		<view class="body">
 			<view class="body-title">
 				<view class="body-title-left">
 					<view class="hot-sales">
-						<!-- <image src="../../images/dx-tqi.png" class="hot-sales-icon" mode="widthFix"></image> 本店热销 -->
-						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
+						产品列表
+						<label></label>						
 					</view>
+					<view>
+						<text>已选</text>
+						<label>生日精选 <button>×</button></label>
+					</view>
+					<view><image src="@/images/TL.png"></image></view>
 				</view>
-				<view class="body-title-right">
+				<!-- <view class="body-title-right">
 					<view class="btn-group">
 						<view class="clear">清空</view>
 						<view class="filter">去筛选</view>
 					</view>
-				</view>
+				</view> -->
 			</view>
 			<view class="body-content">
 				<view class="body-content-left">
@@ -133,19 +134,19 @@
 	}
 
 	.head {
-		height: 60px;
+		height: 120rpx;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		box-sizing: border-box;
-		padding: 0px 20px;
+		padding: 44rpx 2% 12rpx;
 	}
-
+	.head-left{
+		width:100%;
+	}
 	.head-portrait {
 		display: flex;
-		width: 120px;
-		display: flex;
-		justify-content: space-between;
+		width: 50%;
 	}
 
 	.head-portrait>view {
@@ -153,7 +154,11 @@
 		align-items: center;
 		justify-content: center;
 	}
-
+	.head-portrait image{
+		width:70rpx;
+		height: 70rpx;
+		margin-right: 10rpx;
+	}
 	.member-portrait {
 		border-radius: 50%;
 		width: 35px;
@@ -162,13 +167,19 @@
 	}
 
 	.exit {
-		background: var(--light-green);
-		color: var(--drak-green);
-		padding: 5px 14px;
+		background: #E0EAE9;
+		color: #006B44;
+		padding: 10rpx 20rpx;
 		border-radius: 5px;
-		font-weight: 600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
-
+	.exit image{
+		width:40rpx;
+		height: 40rpx;
+		margin-right: 8rpx;
+	}
 	.body {
 		flex: 1;
 		background-color: var(--light-gray);
@@ -183,8 +194,26 @@
 		justify-content: space-between;
 		box-sizing: border-box;
 		padding: 0px 20px;
+		width:96%;
+		margin:0 auto;
+		font-size: 34rpx;
+		color: #006B44;
+		position: relative;
+		font-weight: 700;
 	}
-
+	.hot-sales{
+		position: relative;
+	}
+	.body-title .hot-sales label{
+		position: absolute;
+		bottom:0;
+		left: 20rpx;
+		width: 158rpx;
+		height: 18rpx;
+		background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0) 100%);
+		border-radius: 9px 9px 9px 9px;
+		opacity: 0.3;
+	}
 	.body-content {
 		flex: 1;
 		display: flex;
@@ -243,46 +272,6 @@
 		width: 22px;
 	}
 
-	.body-title-right {
-		margin-right: var(--statement-width);
-	}
-
-	.btn-group {
-		display: flex;
-		gap: 40px;
-	}
-
-	.clear {
-		font-weight: 600;
-		color: red;
-	}
-
-	.filter {
-		font-weight: 600;
-		color: var(--drak-green);
-	}
-
-	.content-head {
-		position: absolute;
-		height: 36%;
-		width: calc(100% - 20px);
-		background-color: #ffffff;
-		border-radius: 5px;
-		top: 0px;
-		left: 20px
-	}
-
-	.filter-box {
-		height: 100%;
-		box-shadow: 0px 10px 16px .2px gray;
-	}
-
-	.filter-box>view {
-		height: 25%;
-		box-sizing: border-box;
-		padding: 10px 20px;
-		box-sizing: border-box;
-	}
 
 	.content-body {
 		flex: 1;
