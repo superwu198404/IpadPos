@@ -2,6 +2,7 @@
 	<view>
 		<view>
 			<button @click="MenuPage(10)">数据查看</button>
+			<button @click="MenuPage(12)">查看轮播</button>
 			<button @click="closeDB()">断开数据库链接</button>
 		</view>
 		<view v-if="false">
@@ -465,6 +466,10 @@
 				} else if (e == 11) {
 					uni.navigateTo({
 						url: "/pages/xprinter/home"
+					});
+				} else if (e == 12) {
+					uni.navigateTo({
+						url: "/pages/TestDemon/Swiper"
 					});
 				}
 			},
