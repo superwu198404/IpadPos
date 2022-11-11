@@ -2622,7 +2622,8 @@ function GetSale(global, vue, target_name, uni) {
 			score_info: that.score_info, //积分抵现信息
 			ban_pay: that.ban_type, //被禁用的支付类型
 			PayList: that.payed, //已支付信息
-			actType: that.actType //动作类型(退款、支付)
+			actType: that.actType ,//动作类型(退款、支付)
+			hyinfo: that.HY.cval//会员信息
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
@@ -3351,6 +3352,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
+		this.HY.val = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};
 		this.FZCX.oval = [];
