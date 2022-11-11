@@ -218,6 +218,10 @@ var XsTypeObj = {
 				};
 				this.HY.val = obj;
 			}
+			//给全局大客户对象赋值
+			if (this.sale001.DKFID) {
+				this.DKF.val.DKFID = this.sale001.DKFID;
+			}
 			this.ShowStatement();
 		},
 		///对打印的控制
