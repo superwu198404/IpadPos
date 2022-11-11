@@ -17,7 +17,7 @@
 			<view class="body-title">
 				<view class="body-title-left">
 					<view class="hot-sales">
-						<image src="../../images/dx-tqi.png" class="hot-sales-icon" mode="widthFix"></image> 本店热销
+						<!-- <image src="../../images/dx-tqi.png" class="hot-sales-icon" mode="widthFix"></image> 本店热销 -->
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 				</view>

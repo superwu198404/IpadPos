@@ -6,6 +6,8 @@ import _refund from '@/api/business/refundorder.js';
 import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
+import _cake from '@/api/business/CakeYD.js';
+
 import {
 	onlineOrderReserve //更新表接口
 } from '@/api/business/onlineorders.js';
@@ -54,7 +56,7 @@ var XsTypeObj = {
 
 			"showEdit": false, //展开编辑商品
 			"sale": true, //从这里开始都是销售模式
-			"sale_cake_reserve":true,
+			"sale_cake_reserve": true,
 			"sale_reserve": true,
 			"sale_reserve_extract": true,
 			"sale_online_order": true,
@@ -284,7 +286,7 @@ var XsTypeObj = {
 		},
 	},
 	//蛋糕预定
-	sale_cake_reserve:{
+	sale_cake_reserve: {
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -317,10 +319,12 @@ var XsTypeObj = {
 			this.show_cake_reservation = false;
 			return true;
 		},
-		$initSale: function() {
+		$initSale: async function() {
 			this.actType = common.actTypeEnum.Payment;
+			this.CakeBQList = await _cake.GetDGBQ();
+			console.log("标签数据：", this.CakeBQList);
 		},
-		$print: function() {//对打印的控制
+		$print: function() { //对打印的控制
 			return {
 				tName: "蛋糕预定小票", // 名称
 				ynPrintFp: true, //是否打印发票二维码
@@ -406,7 +410,7 @@ var XsTypeObj = {
 			};
 			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
 		},
-		CloseCakeReservation: function(){
+		CloseCakeReservation: function() {
 			console.log("[CloseCakeReservation]蛋糕预定关闭...");
 			this.show_cake_reservation = false;
 			this.SetManage('sale_reserve');
@@ -1760,6 +1764,28 @@ function GetSale(global, vue, target_name, uni) {
 		//重新计算一下 促销啊 折扣啊 
 		this.SaleNetAndDisc();
 	})
+	//*func*选中标签
+	this.ChooseBQ = util.callBind(this, function(e) {
+		if (e) {
+			this.CakeTagList = e.DATA;
+		}
+	})
+	//*func*选中标签
+	this.ChooseTag = util.callBind(this, function(e) {
+		if (e) {
+			e._CHECK = !e._CHECK;
+			if (e._CHECK) {
+				this.CheckTagList.push(e);
+			} else {
+				for (var i = 0; i < this.CheckTagList.length; i++) {
+					if (this.CheckTagList[i]._ID === e._ID) {
+						this.CheckTagList.splice(i, 1);
+					}
+				}
+			}
+		}
+		console.log("选中事件：", this.CheckTagList);
+	})
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -1936,7 +1962,34 @@ function GetSale(global, vue, target_name, uni) {
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类
 	this.selectPlid = "";
-
+	//蛋糕预定标签集合
+	this.CakeBQList = [];
+	//蛋糕预定标签子级集合
+	this.CakeTagList = [];
+	//已选标签集合
+	this.CheckTagList = [];
+	//蛋糕预定商品集合
+	this.CakeList = [{
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}, {
+		type: 'image',
+		url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
+		names: '七星瓢虫儿童蛋糕',
+		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+	}];
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
@@ -2166,7 +2219,7 @@ function GetSale(global, vue, target_name, uni) {
 		"showCXZK": false, //是否展示促销，折扣来源
 
 		"sale": false, //从这里开始都是销售模式
-		"sale_cake_reserve":false,
+		"sale_cake_reserve": false,
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
 		"sale_online_order": false,
@@ -2197,7 +2250,7 @@ function GetSale(global, vue, target_name, uni) {
 		// "showEdit": false, //商品数量编辑是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
-		"sale_cake_reserve":false,
+		"sale_cake_reserve": false,
 		"sale_reserve": false,
 		"sale_reserve_extract": false,
 		"sale_online_order": false,
@@ -2246,7 +2299,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
 	this.SetManage = function(pm_mtype) {
-		console.log("[SetManage]组件类型:",pm_mtype);
+		console.log("[SetManage]组件类型:", pm_mtype);
 		if (!pm_mtype) return;
 		// console.log("[SetManage]LastManage:", lastManage);
 		// console.log("[SetManage]CurrentManage:", pm_mtype);
@@ -2255,9 +2308,9 @@ function GetSale(global, vue, target_name, uni) {
 			// console.log("[SetManage]关闭上一个组件!");
 			that.ComponentsManage[lastManage] = false;
 		}
-		console.log("[SetManage]组件类型信息-修改前:",that.ComponentsManage[pm_mtype]);
+		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
-		console.log("[SetManage]组件类型信息-修改前:",that.ComponentsManage[pm_mtype]);
+		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		// that.log("[SetManage]组件控制对象:", that.ComponentsManage);
@@ -2461,7 +2514,7 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.PayedResult = async function(result) {
-		util.setStorage('open-loading',true);
+		util.setStorage('open-loading', true);
 		console.log("[PayedResult]支付结果:", result);
 		uni.$emit('continue-message');
 		uni.$emit('continue-timed-communication');
@@ -2588,7 +2641,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit('stop-message');
 		uni.$emit('stop-timed-communication');
 		that.log("[PayParamAssemble]支付参数组装...")
-		util.setStorage('open-loading',false);
+		util.setStorage('open-loading', false);
 		let inputParm = {
 			sale1_obj: that.sale001, //001 主单 数据对象
 			sale2_arr: that.sale002, //002 商品 数据对象集合

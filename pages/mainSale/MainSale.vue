@@ -504,9 +504,19 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation" @open="mainSale.ShowStatement">
-			<view style="background-color: red;width: 100%;height: 100%;font-size: 48px;">
-				在这里写轮播组件code...
+		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+			@open="mainSale.ShowStatement">
+			<view style="width: 100%;height: 100%">
+				<view>
+					<view>全部已选:<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}},</label></view>
+					<view><label v-for="item in mainSale.CakeBQList"
+							@click="mainSale.ChooseBQ(item)">{{item.BQNAME}},</label></view>
+					<view>选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
+							{{item1._NAME}},
+						</label>
+					</view>
+				</view>
+				<Swiper :swiper-list="mainSale.CakeList" />
 			</view>
 		</CakeReservation>
 	</view>
@@ -516,6 +526,7 @@
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue'
 	import Page from '@/pages/Home/Component/Page.vue'
+	import Swiper from '@/components/blackmonth-swiper/index'
 	//页面组件导入 👇
 	import Reserve from '@/pages/Reserve/Reserve.vue'
 	import Extract from '@/pages/Extract/Extract.vue'
@@ -573,7 +584,7 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				sale_type_infos:null
+				sale_type_infos: null
 			}
 		},
 		components: {
@@ -594,7 +605,8 @@
 			MemberLogin,
 			ReserveDrawer,
 			CakeReservation,
-			PrinterPage
+			PrinterPage,
+			Swiper
 		},
 		computed: {
 			Price: function() {
