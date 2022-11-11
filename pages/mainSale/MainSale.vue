@@ -504,7 +504,11 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve" @exit="mainSale.SetManage('sale_reserve')"></CakeReservation>
+		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation" @exit="(mysale.XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(mainSale)" @open="mainSale.ShowStatement">
+			<view style="background-color: red;width: 100%;height: 100%;font-size: 48px;">
+				在这里写轮播组件code...
+			</view>
+		</CakeReservation>
 	</view>
 </template>
 
