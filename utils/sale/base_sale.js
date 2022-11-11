@@ -421,9 +421,9 @@ var XsTypeObj = {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
 					this.show_cake_reservation = false;
 					this.SetDefaultType();
-				}
-				else{
-					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
 				}
 			}), true)
 		},
@@ -451,9 +451,9 @@ var XsTypeObj = {
 					console.log("[CloseReserveDrawer]预定录入关闭...");
 					this.setComponentsManage(null, "statement");
 					this.PayParamAssemble();
-				}
-				else{
-					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
 				}
 			}), true)
 
@@ -960,7 +960,7 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				sxsale001: this.sxsale001
 			});
-			if (this.sale001.TNET) {
+			if (this.sale002.length > 0 && this.sale001.TNET >= 0) { // 部分商品金额为0
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -2675,8 +2675,8 @@ function GetSale(global, vue, target_name, uni) {
 			score_info: that.score_info, //积分抵现信息
 			ban_pay: that.ban_type, //被禁用的支付类型
 			PayList: that.payed, //已支付信息
-			actType: that.actType ,//动作类型(退款、支付)
-			hyinfo: that.HY.cval//会员信息
+			actType: that.actType, //动作类型(退款、支付)
+			hyinfo: that.HY.cval //会员信息
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
