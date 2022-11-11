@@ -503,6 +503,12 @@
 			<canvas canvas-id="canvasXPEWM" class="canvas"
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
+		<!-- 蛋糕预定 -->
+		<CakeReservation v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation" @exit="(mysale.XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(mainSale)" @open="mainSale.ShowStatement">
+			<view style="background-color: red;width: 100%;height: 100%;font-size: 48px;">
+				在这里写轮播组件code...
+			</view>
+		</CakeReservation>
 	</view>
 </template>
 
@@ -525,6 +531,7 @@
 	import UnUpload from '@/pages/UnUpload/UnUpload.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
+	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -585,6 +592,7 @@
 			UnUpload,
 			MemberLogin,
 			ReserveDrawer,
+			CakeReservation,
 			PrinterPage
 		},
 		computed: {

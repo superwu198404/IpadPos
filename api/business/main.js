@@ -276,9 +276,10 @@ var SortData = (type, data, pro) => {
 					return r4.ZKSTR == r3.SPJGZ;
 				});
 				if (arr4.length > 0) {
-					arr4[0].ZKNET = ((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3
-							.NET))
-						.toFixed(1);
+					// arr4[0].ZKNET = ((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3
+					// 		.NET)).toFixed(1);
+					arr4[0].ZKNET = common.newFixed((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3.NET),
+						1);
 					zkData.push(arr4[0]);
 				}
 			} else {
@@ -294,13 +295,17 @@ var SortData = (type, data, pro) => {
 				// 	return b - a
 				// });
 				if (arr2.length > 0) {
-					arr2[0].ZKNET = ((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3
-						.NET)).toFixed(1);
+					// arr2[0].ZKNET = ((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3
+					// 	.NET)).toFixed(1);
+					arr2[0].ZKNET = common.newFixed((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3.NET),
+						1);
 					zkData.push(arr2[0]);
 				}
 				if (arr2.length > 0 && arr3.length > 0) { //临时生效必须要标准折扣满足最低生效金额
-					arr3[0].ZKNET = ((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3
-						.NET)).toFixed(1);
+					// arr3[0].ZKNET = ((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3
+					// 	.NET)).toFixed(1);
+					arr3[0].ZKNET = common.newFixed((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3.NET),
+						1);
 					zkData.push(arr3[0]);
 				}
 			}
@@ -334,22 +339,26 @@ var CalProduct = function(curData, Product) {
 			})
 			let disc = 0;
 			arr.forEach(r2 => {
+				let zknet = Number(r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS)));
 				if (r2.ZKTYPE == 'ZD02') { //标准折扣
-					r.BZDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						1)); //测试要求保留一位
-					// r.DISCRATE += parseFloat(r.BZDISC);
+					// r.BZDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+					// 	1)); //测试要求保留一位
+					r.BZDISC = common.newFixed(zknet, 1);
+					console.log("新规则返回的数据类型：", typeof(r.BZDISC));
 					disc += r.BZDISC;
+					console.log("商品信息：", r.OPRICE + "+" + r.QTY + "+" + (1 - parseFloat(r2
+						.ZKQTY_JS)));
 					console.log("当前标准折扣值：", r.BZDISC);
 				} else if (r2.ZKTYPE == 'ZD03') { //临时折扣
-					r.LSDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						1)); //测试要求保留一位
-					// r.DISCRATE += parseFloat(r.LSDISC);
+					// r.LSDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+					// 	1)); //测试要求保留一位
+					r.LSDISC = common.newFixed(zknet, 1);
 					disc += r.LSDISC;
 					console.log("当前临时折扣值：", r.LSDISC);
 				} else { //特批折扣
-					r.TPDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
-						1)); //测试要求保留一位
-					// r.DISCRATE = parseFloat(r.TPDISC);
+					// r.TPDISC = Number((r.OPRICE * r.QTY * (1 - parseFloat(r2.ZKQTY_JS))).toFixed(
+					// 	1)); //测试要求保留一位
+					r.TPDISC = common.newFixed(zknet, 1);
 					disc += r.TPDISC;
 					console.log("当前特批折扣值：", r.TPDISC);
 				}
@@ -753,13 +762,18 @@ var GetUnLoad = function(func) {
 			func(res);
 	}, err => {})
 }
+
 //获取销售单
 var GetPTOrder = function(e, b, d, t, func) {
 	let str = "";
 	str += b ? " and BILL like '%" + b + "%'" : "";
 	str += e ? " and KHID='" + e + "'" : "";
 	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
-	str += t ? " and XSTYPE ='" + t + "'" : "";
+	if (t == 0) {
+		str += " and XSTYPE ='" + t + "'";
+	} else if (t != -1) {
+		str += t ? " and XSTYPE ='" + t + "'" : "";
+	}
 	let sql = "SELECT * from SALE001 where 1=1" + str;
 	console.log("查询条件：", sql);
 	db.get().executeQry(sql, "查询中...", res => {

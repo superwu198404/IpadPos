@@ -137,14 +137,11 @@
 					</view>
 				</view>
 				<view class="operat">
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading" class="btn btn-edit"
-						@click="Edit()">编辑</button>
+					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result" class="btn btn-edit" @click="Edit()">编辑</button>
 					<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 					<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading" class="btn"
-						@click="ConfirmAccept(true)">接受确认</button>
-					<button v-if="mode('read') && !view.search.confirm && !view.check.loading" class="btn btn-qx"
-						@click="ConfirmAccept(false)">取消</button>
+					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result" class="btn" @click="ConfirmAccept(true)">接受确认</button>
+					<button v-if="mode('read') && !view.search.confirm && !view.check.loading && view.check.result" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
 					<view class="check-tips loading" v-if="view.check.loading">订单状态检查中</view>
 				</view>
 			</view>
@@ -214,6 +211,7 @@
 					},
 					check: {
 						loading: false,
+						result: true,
 						bill: ""
 					}
 				},
@@ -474,13 +472,20 @@
 			},
 			OrderStatusCheck: function(bill) {
 				this.EditLoad(true, bill);
+				this.view.check.result = false;
 				return ordersStatusCheck({
 					bill: bill
 				}, util.callBind(this, function(res) {
 					this.EditLoad(false, bill);
 					this.view.search.confirm = res.code;
+					this.view.check.result = true;//放开所有按钮
 					if(!res.code) util.simpleMsg(res.msg, res.code, res);
 					console.log("[OrderStatusCheck]Res:", res);
+				}),util.callBind(this,function(err){
+					console.log("[OrderStatusCheck]订单状态查询失败...");
+					this.EditLoad(false, bill);
+					this.view.check.result = false;//锁定所有按钮
+					util.simpleMsg("订单状态查询失败,请重新点击左侧订单发起查询!")
 				}));
 			},
 			//展示详情

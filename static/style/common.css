@@ -1,5 +1,8 @@
 :root {
 	--green: #42b14b;
+	--light-green: #e0eae9;
+	--drak-green: #385b3b;
+	--light-gray:#f5f4f8;
 }
 
 @keyframes rotate {

@@ -26,7 +26,7 @@ var CreateData = function(pt, t, m, d) {
 			data = {
 				code: true,
 				http: {
-					load: true,
+					load: false,
 					url: PayObj.URL, //"/PaymentAll/Handle", //默认值
 					title: t,
 					brand: PayObj.BRAND

@@ -154,7 +154,7 @@
 				// 		that.posid = store.POSID;
 				// 	}
 				// }
-
+				util.setStorage('open-loading',true);
 				//用于重读时的赋值
 				let store = util.getStorage("Init_Data");
 				if (store && JSON.stringify(store) != "{}") {

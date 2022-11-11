@@ -104,6 +104,7 @@
 					that.khid = Init_Data.KHID;
 					that.posid = Init_Data.POSID;
 				}
+				util.setStorage('open-loading',true);
 				//初始化支付方式和全局配置参数
 				console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);

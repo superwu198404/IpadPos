@@ -117,7 +117,7 @@
 			that.initPhoto();
 		},
 		methods: {
-			// 二维码生成工具
+			//二维码生成工具
 			couponQrCode: function() {
 				let that = this;
 				new qrCode('couponQrcode', {
@@ -142,7 +142,7 @@
 							return resolve(res.data);
 						},
 						fail: (res) => {
-							console.log("ggyAction false: ", res);
+							console.log("ggyAction获取失败: ", res);
 							return resolve("");
 						}
 					})
@@ -185,14 +185,12 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				let isPrinterFP = false;
-				// 电子发票二维码不为空、小票结尾二维码不为空
+				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
 							that.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("xsBluePrinter 开始发送打印命令");
@@ -267,8 +265,6 @@
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
 							that.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("wmBluePrinter 开始发送打印命令");
@@ -333,9 +329,25 @@
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
 							that.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
+					]).then(res => {
+						console.log("bluePrinter开始发送打印命令");
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('bluePrinter reject failed reason', reason)
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸
+						that.prepareSend(command.getData()); //发送数据
+					})
+				}else if(is_xpewm && type == "XS"){
+					//生成公告号二维码
+					Promise.all([
+						that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 					]).then(res => {
 						console.log("bluePrinter开始发送打印命令");
 						command.setPrint();
@@ -405,9 +417,25 @@
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
 							that.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
+					]).then(res => {
+						console.log("ydBluePrinter开始发送打印命令");
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('ydBluePrinter reject failed reason', reason)
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸
+						that.prepareSend(command.getData()); //发送数据
+					})
+				}else if(is_xpewm && isPrinterFP) {
+					//生成公众号
+					Promise.all([
+						that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
+						xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 					]).then(res => {
 						console.log("ydBluePrinter开始发送打印命令");
 						command.setPrint();
@@ -475,8 +503,6 @@
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
 							that.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,that.imageSrc),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");

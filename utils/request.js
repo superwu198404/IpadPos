@@ -1,4 +1,5 @@
 import configInfo from '@/utils/configInfo.js'; //配置参数
+import util from './util';
 
 const baseUrl = configInfo.baseUrl;
 const centerUrl = configInfo.centerUrl;
@@ -361,7 +362,7 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	for (var i = 0; i <= callbacklist.length; i++) {
 		if (res && res.http) {
 			showloding(res.http.load, res.http.title);
-			console.log("[asyncFuncArr1]http请求:", res);
+			console.log("[AsyncFuncArr1]http请求:", res);
 			res = await httpFunc(res); //发起请求
 			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
 				def(catchfun, res);

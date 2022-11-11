@@ -251,6 +251,8 @@
 		</view>
 		<!-- //扫码枪组件  @getAuthCode="GetAuthCode" -->
 		<saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang>
+		<!-- 支付加载框 -->
+		<Loading :title="isRefund?'退款中...':'支付中...'" :show="in_payment"></Loading>
 	</view>
 	<!-- </view> -->
 </template>
@@ -318,6 +320,7 @@
 					Score: 1, //抵现的积分数
 					Money: 0.01 //抵现的积分数对应的实际金额
 				},
+				in_payment: false,
 				coupons: false, //卡券弹窗
 				prev_no: 0,
 				limit: 3,
@@ -474,7 +477,7 @@
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
-				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) {//失败的、支付中的、退款中的 都为0
+				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) { //失败的、支付中的、退款中的 都为0
 					this.CanBack = true;
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
@@ -510,7 +513,9 @@
 					this.PAD_SCAN = a;
 				}
 				this.event = this.getOpenerEventChannel();
-
+				this.$mp?.page?.$getAppWebview()?.setStyle({
+					popGesture: 'none'
+				});
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
@@ -1022,6 +1027,7 @@
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
+				this.in_payment = true;
 				console.log("[Refund]开始退款流程...")
 				console.log("[Refund]退款单号为：", this.out_refund_no)
 				let refund_no = this.out_refund_no,
@@ -1138,6 +1144,7 @@
 
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
+					this.in_payment = false;
 				}))
 			},
 			//创建订单对象列表
@@ -1201,6 +1208,7 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
+				this.in_payment = true;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1233,6 +1241,7 @@
 				}
 				console.log("[PayHandle]支付开始...");
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
+						this.in_payment = false;
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1252,6 +1261,7 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
+						this.in_payment = false;
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);
@@ -1503,7 +1513,7 @@
 			paramInit: function() {
 				that = this;
 				var prev_page_param = this.$store.state.location;
-				this.PayWayListInit(prev_page_param.ban_pay);
+				this.PayWayListInit(prev_page_param?.ban_pay);
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
 					//传入的sale系列表数据初始化 👇
@@ -1719,19 +1729,26 @@
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
-				if (that.coupon_list.length <= 0) {
-					util.simpleMsg("暂无可用券", true);
-				} else {
-					this.currentPayType = "SZQ"
-					let arr = that.coupon_list.filter(function(item, index, arr) {
-						return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
-					})
-					that.coupon_list = arr;
-					that.coupons = !that.coupons;
-				}
+				this.GetHyCoupons(util.callBind(this,function() {
+					if (that.coupon_list.length <= 0) {
+						util.simpleMsg("暂无可用券", true);
+					} else {
+						this.currentPayType = "SZQ"
+						let arr = that.coupon_list.filter(function(item, index, arr) {
+							return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
+						})
+						that.coupon_list = arr;
+						if(!arr.length){
+							util.simpleMsg("暂无可用券", true);
+							return;
+						}
+						that.coupons = !that.coupons;
+						console.log("[ShowCoupon]券列表信息:",that.coupon_list);
+					}
+				}));
 			},
 			//获取会员卡券	
-			GetHyCoupons: function() {
+			GetHyCoupons: function(func) {
 				let hyinfo = this.hyinfo || util.getStorage("hyinfo");
 				// console.log("会员信息：", JSON.stringify(hyinfo));
 				if (hyinfo?.hyId) {
@@ -1745,8 +1762,10 @@
 						if (res.code) {
 							that.coupon_list = res.data;
 						}
+						if (func) func();
 					}, (err) => {
 						console.log("异常数据：", res)
+						if (func) func();
 					})
 				}
 			},
@@ -1808,6 +1827,7 @@
 			},
 			//单笔订单退款重试
 			singleRetry: async function(info) {
+				this.in_payment = true;
 				console.log("[SingleRetry]退款重试次数:", info.refund_num);
 				let trade_no = info.bill;
 				if (info.refund_num != 0) {
@@ -1834,10 +1854,12 @@
 								// catch code...
 							}).bind(this),
 							(function(res) { //执行完毕（finally），退款次数 +1
+								this.in_payment = false;
 								singleRefund.refund_num += 1; //发起请求默认加1
 								this.RefundList = Object.assign([], this.RefundList) //刷新视图
 							}).bind(this),
 							(function(ress) { //执行完毕（results），根据结果判断
+								this.in_payment = false;
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 									let info = this.PayWayInfo('NO');
 									singleRefund.fail = true; //退款失败
@@ -1868,6 +1890,7 @@
 			},
 			//单笔订单重试
 			singlePayRetry: async function(info) {
+				this.in_payment = true;
 				console.log('[SinglePayRetry]重试支付:', info);
 				if (info.pay_num > 1 && info.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
 					if (await this.NoOrginPay(info)) {
@@ -1894,6 +1917,7 @@
 						trade_no,
 						data
 					}, (function(res) {
+						this.in_payment = false;
 						let data = res.data;
 						if (data.status === 'PAYING') { //如果查询成功，状态为支付中
 							console.log("[SinglePayRetry]重试查询结果为支付中...", data)
@@ -1915,6 +1939,7 @@
 					util.simpleMsg("已存在相同的付款方式！", false);
 			},
 			RefundErrorCallback: function(info, judge_net_err, err) { //单据记录
+				this.in_payment = false;
 				console.log("[RefundErrorCallback]退款异常回调...", {
 					info,
 					err
