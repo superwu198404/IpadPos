@@ -316,7 +316,7 @@ var XsTypeObj = {
 		},
 		$click() {
 			console.log("[sale_cake_reserve]蛋糕预定信息录入操作!");
-			this.show_cake_reservation = false;
+			this.show_cake_reservation = true;
 			return true;
 		},
 		$initSale: async function() {
@@ -411,9 +411,21 @@ var XsTypeObj = {
 			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
 		},
 		CloseCakeReservation: function() {
-			console.log("[CloseCakeReservation]蛋糕预定关闭...");
-			this.show_cake_reservation = false;
-			this.SetManage('sale_reserve');
+			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+				console.log("[ReserveInfoInput]密码确认:", {
+					is_confirm,
+					data,
+					userinfo: getApp().globalData?.userinfo
+				});
+				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
+					console.log("[CloseCakeReservation]蛋糕预定关闭...");
+					this.show_cake_reservation = false;
+					this.SetDefaultType();
+				}
+				else{
+					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				}
+			}), true)
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -429,9 +441,22 @@ var XsTypeObj = {
 			});
 			this.sale001.$total_amount = this.sale001.DNET;
 			this.$total_amount = this.sale001.DNET;
-			console.log("[CloseReserveDrawer]预定录入关闭...");
-			this.setComponentsManage(null, "statement");
-			this.PayParamAssemble();
+			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+				console.log("[ReserveInfoInput]密码确认:", {
+					is_confirm,
+					data,
+					userinfo: getApp().globalData?.userinfo
+				});
+				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
+					console.log("[CloseReserveDrawer]预定录入关闭...");
+					this.setComponentsManage(null, "statement");
+					this.PayParamAssemble();
+				}
+				else{
+					if(data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误", true)
+				}
+			}), true)
+
 		}
 	},
 	//预订单下单
@@ -2650,7 +2675,8 @@ function GetSale(global, vue, target_name, uni) {
 			score_info: that.score_info, //积分抵现信息
 			ban_pay: that.ban_type, //被禁用的支付类型
 			PayList: that.payed, //已支付信息
-			actType: that.actType //动作类型(退款、支付)
+			actType: that.actType ,//动作类型(退款、支付)
+			hyinfo: that.HY.cval//会员信息
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
 		that.Page.$store.commit('set-location', inputParm);
@@ -3379,6 +3405,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
+		this.HY.val = {};
 		this.DKF.cval = {};
 		this.Disc.cval = {};
 		this.FZCX.oval = [];

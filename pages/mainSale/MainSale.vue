@@ -232,9 +232,9 @@
 			</view>
 		</view>
 		<!-- 预定信息录入 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;">
+		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
-				:confirm="(mainSale.mode_info.sale_reserve.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
+				:confirm="(mainSale.current_type.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration">
 			</ReserveDrawer>
 		</view>
@@ -245,7 +245,7 @@
 			</FZCX>
 		</view>
 		<!-- 结算单 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.statement">
+		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 				<view class="shareButton" @click="mainSale.setComponentsManage" data-mtype='statement'></view>
 				<!-- 会员信息 -->
