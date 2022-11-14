@@ -39,6 +39,19 @@ var GetDGBQ = async function() {
 	return data;
 }
 
+//获取蛋糕数据 测试用
+var GetCakeList = async function() {
+	let data = [];
+	//http://58.19.103.220:8805/CakeImage/00004/-2.jpg
+	let sql =
+		"select *,'http://58.19.103.220:8805/CakeImage/wx8.jpg?v=" + dateformat.getYMDS() +
+		"' as URL2 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 10";
+	await db.get().executeQry(sql, "查询中...", res => {
+		data = res.msg;
+	}, err => {})
+	return data;
+}
 export default {
-	GetDGBQ
+	GetDGBQ,
+	GetCakeList
 }
