@@ -201,6 +201,12 @@ var XsTypeObj = {
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			//给全局大客户对象赋值
+			console.log("退单给大客户信息赋值：", this.sale001.DKFID);
+			if (this.sale001.DKFID) {
+				this.DKF.val.DKFID = this.sale001.DKFID;
+			}
+			console.log("退单给大客户信息赋值：", this.DKF.val);
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -217,10 +223,6 @@ var XsTypeObj = {
 					hyId: this.sale001.CUID
 				};
 				this.HY.val = obj;
-			}
-			//给全局大客户对象赋值
-			if (this.sale001.DKFID) {
-				this.DKF.val.DKFID = this.sale001.DKFID;
 			}
 			this.ShowStatement();
 		},
@@ -3193,7 +3195,9 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.TDISC = TBZDISC + TLSDISC + TTPDISC;
 			console.log("特殊折扣计算后的销售单2:", that.sale002);
 			console.log("特殊折扣计算后的销售单1:", this.sale001);
-			this.BanPayType(); //收集禁止的支付id
+			if (that.Disc.cval.ZKType && that.Disc.cval.ZKType != "NO") { //选了折扣类型才进行禁止支付的操作
+				this.BanPayType(); //收集禁止的支付id
+			}
 		}
 		var retx = that.sale002Sum({
 			ONET: 0,
@@ -3274,6 +3278,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else { //特殊折扣只允许 这两种支付方式
 			console.warn("[BanPayType]折扣禁止支付方式处理!");
 			console.log("[BanPayType]禁止类型1:", PayWayList);
+
 			let arr = PayWayList.filter(r => {
 				return r.type != "WXZF" && r.type != "TL"
 			});
