@@ -512,7 +512,7 @@
 					<view class="member-account">会员账户</view>
 				</view>
 				<view class="head-exit">
-					<view class="exit" @click="Exit">
+					<view class="exit" @click="mainSale.dgydExit">
 						<image src="@/images/tuichu.png"></image> 退出
 					</view>
 				</view>
@@ -542,17 +542,17 @@
 						<view class="queding"><button>重置</button><button>确定</button></view>
 					</view>
 					<view class="kinds">
-						<view class="kindlist" :class="num== 1?'tab_toggle_show':'tab_toggle_hide'">
+						<view class="kindlist" :class="true?'tab_toggle_show':'tab_toggle_hide'">
 							<label v-for="item in mainSale.CakeBQList" @click="mainSale.ChooseBQ(item)"
-								:class="curnums === index? 'curr':' '">{{item.BQNAME}},</label>
+								:class="item.CHECK? 'curr':' '">{{item.BQNAME}}</label>
 						</view>
-						<button @click="Morekind">+ 更多</button>
+						<!-- <button @click="Morekind">+ 更多</button> -->
 					</view>
 					<view class="tallys">
 						<text>选择：</text>
 						<view class="talist">
 							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)"
-								:class="TagList === index? 'curr':' '">
+								:class="item1._CHECK? 'curr':' '">
 								{{item1._NAME}}
 							</label>
 						</view>
