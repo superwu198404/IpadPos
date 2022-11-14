@@ -533,7 +533,7 @@
 				<view class="filter" @click="mainSale.ToChoose">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
-				<view class="shaixuan" v-if="true">
+				<view class="shaixuan" v-if="false">
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">
@@ -560,8 +560,7 @@
 				</view>
 			</view>
 			<view style="width: 100%;height: 100%">
-
-				<Swiper :swiper-list="mainSale.CakeList" />
+				<Swiper :_swiperList="mainSale.CakeList" />
 			</view>
 		</view>
 	</view>

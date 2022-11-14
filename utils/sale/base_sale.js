@@ -293,7 +293,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -329,7 +329,9 @@ var XsTypeObj = {
 		$initSale: async function() {
 			this.actType = common.actTypeEnum.Payment;
 			this.CakeBQList = await _cake.GetDGBQ();
+			// this.CakeList = await _cake.GetCakeList(); //数据比组件渲染要晚
 			console.log("标签数据：", this.CakeBQList);
+			// console.log("蛋糕数据：", this.CakeList);
 		},
 		$print: function() { //对打印的控制
 			return {
@@ -2016,27 +2018,29 @@ function GetSale(global, vue, target_name, uni) {
 	//已选标签集合
 	this.CheckTagList = [];
 	//蛋糕预定商品集合
-	this.CakeList = [{
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}];
+	this.CakeList = [
+		// 	{
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// },
+	];
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))

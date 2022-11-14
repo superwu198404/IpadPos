@@ -5,10 +5,10 @@
 				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
-					<image class="pic" :src="item.url" mode="widthFix"></image>
+					<image class="pic" :src="item.URL2" mode="widthFix"></image>
 					<view class="products">
-						<view class="names">{{item.names}}</view>
-						<text>{{item.miaoshu}}</text>
+						<view class="names">{{item.DGXLID}}</view>
+						<text>{{item.DESCRIBE}}</text>
 					</view>
 				</view>
 			</view>
@@ -17,9 +17,10 @@
 </template>
 
 <script>
+	import _cake from '@/api/business/CakeYD.js';
 	export default {
 		props: {
-			swiperList: {
+			_swiperList: {
 				type: Array,
 				default: []
 			}
@@ -31,12 +32,17 @@
 					y: 0
 				},
 				screenWidth: 0,
-				itemStyle: []
+				itemStyle: [],
+				swiperList: [],
+				url: "http://58.19.103.220:8805/CakeImage/00004/-2.jpg"
 			};
 		},
-		created() {
+		async created() {
 			var macInfo = uni.getSystemInfoSync();
 			this.screenWidth = macInfo.screenWidth;
+
+			this.swiperList = await _cake.GetCakeList();
+			console.log("集合数据：", this.swiperList);
 			// 计算swiper样式
 			this.swiperList.forEach((item, index) => {
 				this.itemStyle.push(this.getStyle(index))
@@ -82,7 +88,7 @@
 
 <style lang="scss">
 	.swiperPanel {
-		margin-top:20rpx;
+		margin-top: 20rpx;
 		height: 1400rpx;
 		width: 100%;
 		overflow: hidden;
