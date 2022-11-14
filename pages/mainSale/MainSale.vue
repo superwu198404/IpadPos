@@ -526,8 +526,7 @@
 					<view class="yixuan">
 						<text>已选：</text>
 						<view class="yxlb">
-							<label v-for="tag in mainSale.mode_info.sale_cake_reserve.condition">{{ tag._NAME }}<button
-									@click="DeleteCheckedTag(tag)">×</button></label>
+							<label v-for="tag in CheckedList">{{ tag._NAME }}<button @click="DeleteCheckedTag(tag)">×</button></label>
 						</view>
 					</view>
 				</view>
@@ -659,6 +658,14 @@
 			Swiper
 		},
 		computed: {
+			CheckedList:function(){
+				let tags = [];
+				console.log("[CheckedList]选择项目:",this.mainSale.mode_info.sale_cake_reserve.condition);
+				this.mainSale.mode_info.sale_cake_reserve.condition.map(i => tags = tags.concat(i.DATA));
+				console.log("[CheckedList]计算结果:",tags);
+				return tags;
+			},
+			
 			Price: function() {
 				return util.callBind(this, function(spid) {
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";

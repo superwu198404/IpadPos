@@ -28,6 +28,7 @@ import hy_query from '@/api/hy/hy_query.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
+// import { log } from 'console';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -459,17 +460,28 @@ var XsTypeObj = {
 		//确认条件
 		ConfirmCondition: function(condition) {
 			console.log("[ConfirmCondition]确认选择条件...");
+			condition.splice(0,condition.length);
 			console.log("[ConfirmCondition]参数信息:", {
 				check_list: this.CheckTagList,
 				condition,
 				cake_tags: this.CakeTagList
 			});
-			this.CheckTagList?.forEach(i => condition?.push(i));
+			this.CakeBQList?.forEach(i => {
+				let cake = i.DATA.filter(o => o._CHECK);
+				console.log("[ConfirmCondition]当前类别:",i);
+				if(cake.length){
+					let check = Object.assign({},i);
+					check.DATA = cake;
+					condition?.push(check);
+				}
+			});
+			console.log("[ConfirmCondition]确认条件:",condition);
 		},
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
-			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition
-				.indexOf(item), 1);
+			this.mode_info.sale_cake_reserve.condition.forEach(i => {
+				i.DATA.splice(i.DATA.indexOf(item),1);
+			})
 		},
 		DeleteCheckingTag: function(item) {
 			console.log("[DeleteCheckingTag]当前删除的标签:", item);
