@@ -533,7 +533,7 @@
 				<view class="filter" @click="mainSale.ToChoose">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
-				<view class="shaixuan" v-if="Tallylist">
+				<view class="shaixuan" v-if="true">
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">
