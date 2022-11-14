@@ -5,7 +5,7 @@
 				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
-					<image class="pic" :src="item.URL2" mode="widthFix"></image>
+					<image class="pic" :src="item.URL3" mode="widthFix"></image>
 					<view class="products">
 						<view class="names">{{item.DGXLID}}</view>
 						<text>{{item.DESCRIBE}}</text>
