@@ -300,6 +300,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
 		condition: [],
+		filter: false,
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -1966,7 +1967,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func* 展开和关闭标签筛选
 	this.ToChoose = util.callBind(this, function(e) {
-
+		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 	});
 	//*End* 自定义方法
 	//日志
@@ -2088,6 +2089,7 @@ function GetSale(global, vue, target_name, uni) {
 		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
 		// },
 	];
+	
 	//观察sale2信息
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
