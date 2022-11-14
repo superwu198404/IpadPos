@@ -799,7 +799,7 @@ var XsTypeObj = {
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
 			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this, function() {
 				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)
-				?.pop() ?? -1) + 1;
+					?.pop() ?? -1) + 1;
 				console.log("[SaleFinishing]新起始序号:", start_no);
 				this.raw_order?.forEach(i => {
 					i.NO = start_no;
@@ -1894,6 +1894,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("exists-takeaway");
 		uni.$off("exists-takeaway-reserve");
 		uni.$off("exit-cake-reservation");
+		uni.$off("ShowCakeDetail");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1910,6 +1911,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
+		uni.$on("ShowCakeDetail", this.ShowCakeDetail);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -2091,7 +2093,7 @@ function GetSale(global, vue, target_name, uni) {
 		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
 		// },
 	];
-	
+
 	//观察sale2信息
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
@@ -2516,6 +2518,10 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
+	}
+	//dgyd展示预定蛋糕详情
+	this.ShowCakeDetail = function(e) {
+		// that.SetManage("inputsp");
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {

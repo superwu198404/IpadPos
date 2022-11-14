@@ -2,7 +2,8 @@
 	<view>
 		<view class="swiperPanel" @touchstart="startMove" @touchend="endMove">
 			<view class="swiperItem" v-for="(item, index) in swiperList" :key="index"
-				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}">
+				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}"
+				@click="ChooseCake(item)">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
 					<image class="pic" :src="item.URL3" mode="widthFix"></image>
@@ -49,6 +50,10 @@
 			})
 		},
 		methods: {
+			ChooseCake: function(e) {
+				console.log("选中的蛋糕:", e);
+				uni.$emit("ShowCakeDetail", e);
+			},
 			getStyle(e) {
 				if (e > this.swiperList.length / 2) {
 					var right = this.swiperList.length - e
@@ -71,7 +76,15 @@
 			},
 			endMove(e) {
 				var newList = JSON.parse(JSON.stringify(this.itemStyle))
-				if ((e.changedTouches[0].pageX - this.slideNote.x) < 0) {
+
+				console.log("滑动数据：", );
+				let touchCode = e.changedTouches[0].pageX - this.slideNote.x;
+				if (touchCode == 0) {
+					//说明是点击事件
+					console.log("点击事件");
+					return;
+				}
+				if (touchCode < 0) {
 					// 向左滑动
 					var last = [newList.pop()]
 					newList = last.concat(newList)
@@ -80,6 +93,7 @@
 					newList.push(newList[0])
 					newList.splice(0, 1)
 				}
+				console.log("滑动集合：", newList);
 				this.itemStyle = newList
 			}
 		}
