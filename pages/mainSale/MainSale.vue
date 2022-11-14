@@ -12,7 +12,7 @@
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
-					:_ynDKF="mainSale.currentOperation.DKF"></Head>
+					:_ynDKF="mainSale.currentOperation.DKF"  :type="mainSale.current_type.clickType"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -533,7 +533,7 @@
 				<view class="filter" @click="mainSale.ToChoose">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
-				<view class="shaixuan" v-if="false">
+				<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">

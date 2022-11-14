@@ -174,7 +174,7 @@
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-if="showYWMsg" :_msgDatas="YW_MsgData"></movable>
+			<movable v-if="showYWMsg && (type != 'sale_cake_reserve')" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
@@ -199,7 +199,11 @@
 			data: [],
 			custom: Boolean,
 			_showSale: Boolean,
-			_ynDKF: Boolean
+			_ynDKF: Boolean,
+			type: {
+				type: String,
+				default: ""
+			}
 		},
 		data() {
 			return {
