@@ -353,7 +353,10 @@
 		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
 		max-height: 90%;
 	}
-
+	.products{
+		max-height: 1200rpx;
+		overflow:auto;
+	}
 	.procycle .li .h3 {
 		display: flex;
 		justify-content: space-between;
