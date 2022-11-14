@@ -293,7 +293,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -1915,6 +1915,10 @@ function GetSale(global, vue, target_name, uni) {
 		XsTypeObj.sale_cake_reserve.CloseCakeReservation();
 	});
 
+	//*func* 展开和关闭标签筛选
+	this.ToChoose = util.callBind(this, function(e) {
+
+	});
 	//*End* 自定义方法
 	//日志
 	this.log = function(str) {

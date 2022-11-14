@@ -530,7 +530,7 @@
 						</view>
 					</view>
 				</view>
-				<view class="filter" @click="Qushaixuan">
+				<view class="filter" @click="mainSale.ToChoose">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
 				<view class="shaixuan" v-if="Tallylist">
