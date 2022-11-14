@@ -430,9 +430,8 @@ var XsTypeObj = {
 				});
 				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
-					this.show_cake_reservation = false;
-					// this.SetDefaultType();
-					this.resetSaleBill();
+					this.show_cake_reservation = false; 
+					this.SetDefaultType();
 				} else {
 					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
 						true)
@@ -797,8 +796,15 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定金额为:", reserve_amount);
 			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order ||
-		[]); //删除 $beforeFk 中生成的 zg03 的信息
+			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this,function(){
+				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)?.pop() ?? -1) + 1;
+				console.log("[SaleFinishing]新起始序号:",start_no);
+				this.raw_order?.forEach(i => {
+					i.NO = start_no;
+					start_no++;
+				})
+				return this.raw_order || [];
+			}))()); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
@@ -1957,9 +1963,7 @@ function GetSale(global, vue, target_name, uni) {
 	});
 
 	//*func* 取消促销和重置促销
-	this.dgydExit = util.callBind(this, function(e) {
-		XsTypeObj.sale_cake_reserve.CloseCakeReservation();
-	});
+	this.dgydExit = util.callBind(this, XsTypeObj.sale_cake_reserve.CloseCakeReservation);
 
 	//*func* 展开和关闭标签筛选
 	this.ToChoose = util.callBind(this, function(e) {
