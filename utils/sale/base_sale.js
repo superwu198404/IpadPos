@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -460,7 +460,7 @@ var XsTypeObj = {
 		//确认条件
 		ConfirmCondition: function(condition) {
 			console.log("[ConfirmCondition]确认选择条件...");
-			condition.splice(0,condition.length);
+			condition.splice(0, condition.length);
 			console.log("[ConfirmCondition]参数信息:", {
 				check_list: this.CheckTagList,
 				condition,
@@ -468,19 +468,20 @@ var XsTypeObj = {
 			});
 			this.CakeBQList?.forEach(i => {
 				let cake = i.DATA.filter(o => o._CHECK);
-				console.log("[ConfirmCondition]当前类别:",i);
-				if(cake.length){
-					let check = Object.assign({},i);
+				console.log("[ConfirmCondition]当前类别:", i);
+				if (cake.length) {
+					let check = Object.assign({}, i);
 					check.DATA = cake;
 					condition?.push(check);
 				}
 			});
-			console.log("[ConfirmCondition]确认条件:",condition);
+			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
+			console.log("[ConfirmCondition]确认条件:", condition);
 		},
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
 			this.mode_info.sale_cake_reserve.condition.forEach(i => {
-				i.DATA.splice(i.DATA.indexOf(item),1);
+				i.DATA.splice(i.DATA.indexOf(item), 1);
 			})
 		},
 		DeleteCheckingTag: function(item) {
@@ -1630,6 +1631,9 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return newbill;
 	}
+
+	//*start* 自定义方法开始
+
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
 		if (!this.currentOperation.Disc) {
@@ -1985,7 +1989,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ToChoose = util.callBind(this, function(e) {
 		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 	});
-	//*End* 自定义方法
+	//*End* 自定义方法结束
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -2534,6 +2538,8 @@ function GetSale(global, vue, target_name, uni) {
 	//dgyd展示预定蛋糕详情
 	this.ShowCakeDetail = function(e) {
 		// that.SetManage("inputsp");
+		console.log("蛋糕信息：", e);
+		util.simpleMsg("当前蛋糕：" + e.DGXLID);
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {
