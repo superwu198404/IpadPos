@@ -201,6 +201,12 @@ var XsTypeObj = {
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
+			//给全局大客户对象赋值
+			console.log("退单给大客户信息赋值：", this.sale001.DKFID);
+			if (this.sale001.DKFID) {
+				this.DKF.val.DKFID = this.sale001.DKFID;
+			}
+			console.log("退单给大客户信息赋值：", this.DKF.val);
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
@@ -217,10 +223,6 @@ var XsTypeObj = {
 					hyId: this.sale001.CUID
 				};
 				this.HY.val = obj;
-			}
-			//给全局大客户对象赋值
-			if (this.sale001.DKFID) {
-				this.DKF.val.DKFID = this.sale001.DKFID;
 			}
 			this.ShowStatement();
 		},
