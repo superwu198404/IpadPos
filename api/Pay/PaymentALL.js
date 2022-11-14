@@ -288,6 +288,7 @@ var hykPay = {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true)
+				if(catchFunc) catchFunc();
 				return;
 			}
 			body.merchant_no = config.SHID; //从数据库获取配置
@@ -318,7 +319,8 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				util.simpleMsg("支付参数为空!", true)
+				util.simpleMsg("支付参数为空!", true);
+				if(catchFunc) catchFunc();
 				return;
 			}
 			Req.asyncFuncOne(CreateData("TL", "查询中...",
@@ -362,7 +364,8 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				util.simpleMsg("支付参数为空!", true)
+				util.simpleMsg("支付参数为空!", true);
+				if(catchFunc) catchFunc();
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
@@ -376,6 +379,7 @@ var misPay = {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true)
+				if(catchFunc) catchFunc();
 				return;
 			}
 			body.terminalCode = config.NOTE;
