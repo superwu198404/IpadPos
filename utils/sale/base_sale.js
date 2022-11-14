@@ -466,17 +466,18 @@ var XsTypeObj = {
 			});
 			this.CheckTagList?.forEach(i => condition?.push(i));
 		},
-		DeleteCheckedTag:function(item){
-			console.log("[DeleteCheckedTag]当前删除的标签:",item);
-			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition.indexOf(item),1);
+		DeleteCheckedTag: function(item) {
+			console.log("[DeleteCheckedTag]当前删除的标签:", item);
+			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition
+				.indexOf(item), 1);
 		},
-		DeleteCheckingTag:function(item){
-			console.log("[DeleteCheckingTag]当前删除的标签:",item);
-			this.CheckTagList.splice(this.CheckTagList.indexOf(item),1);
+		DeleteCheckingTag: function(item) {
+			console.log("[DeleteCheckingTag]当前删除的标签:", item);
+			this.CheckTagList.splice(this.CheckTagList.indexOf(item), 1);
 			this.CakeBQList.forEach(i => {
-				console.log("[DeleteCheckingTag]当前类别:",i);
+				console.log("[DeleteCheckingTag]当前类别:", i);
 				let info = i.DATA.find(o => o == item);
-				if(info) info._CHECK = false;
+				if (info) info._CHECK = false;
 			})
 		},
 		CloseReserveDrawer: function() {
