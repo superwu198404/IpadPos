@@ -299,6 +299,7 @@ var XsTypeObj = {
 		nameSale: "蛋糕预定",
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
+		condition: [],
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -417,6 +418,7 @@ var XsTypeObj = {
 			};
 			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
 		},
+		//退出确认
 		CloseCakeReservation: function() {
 			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
 				console.log("[ReserveInfoInput]密码确认:", {
@@ -433,6 +435,46 @@ var XsTypeObj = {
 						true)
 				}
 			}), true)
+		},
+		//重置条件
+		ResetCondition: function(condition) {
+			console.log("[ResetCondition]重置选择条件...");
+			console.log("[ResetCondition]参数信息:", {
+				check_list: this.CheckTagList,
+				condition,
+				cake_tags: this.CakeTagList,
+				kinds: this.CakeBQList
+			});
+			condition?.splice(0, condition?.length);
+			this.CakeTagList?.map(i => i._CHECK = false);
+			this.CheckTagList?.splice(0, this.CheckTagList?.length);
+			this.CakeBQList?.map(i => {
+				i.CHECK = false;
+				i.DATA?.map(o => o._CHECK = false);
+			});
+		},
+		//确认条件
+		ConfirmCondition: function(condition) {
+			console.log("[ConfirmCondition]确认选择条件...");
+			console.log("[ConfirmCondition]参数信息:", {
+				check_list: this.CheckTagList,
+				condition,
+				cake_tags: this.CakeTagList
+			});
+			this.CheckTagList?.forEach(i => condition?.push(i));
+		},
+		DeleteCheckedTag:function(item){
+			console.log("[DeleteCheckedTag]当前删除的标签:",item);
+			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition.indexOf(item),1);
+		},
+		DeleteCheckingTag:function(item){
+			console.log("[DeleteCheckingTag]当前删除的标签:",item);
+			this.CheckTagList.splice(this.CheckTagList.indexOf(item),1);
+			this.CakeBQList.forEach(i => {
+				console.log("[DeleteCheckingTag]当前类别:",i);
+				let info = i.DATA.find(o => o == item);
+				if(info) info._CHECK = false;
+			})
 		},
 		CloseReserveDrawer: function() {
 			console.log("[CloseReserveDrawer]结算单打开...");
@@ -2037,6 +2079,7 @@ function GetSale(global, vue, target_name, uni) {
 		names: '七星瓢虫儿童蛋糕',
 		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
 	}];
+	//观察sale2信息
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
