@@ -137,7 +137,6 @@
 						method: "GET",
 						data: "",
 						success: (res) => {
-							//console.log("ggyAction success: ", res.data)
 							app.globalData.BLEInformation.ggy = res.data;
 							return resolve(res.data);
 						},
@@ -258,7 +257,7 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				// 电子发票二维码不为空、小票结尾二维码不为空
+				//电子发票二维码不为空、小票结尾二维码不为空
 				let isPrinterFP = false;
 				if (is_dzfpewmdz && isPrinterFP) {
 					//生成属于单号的二维码
@@ -323,7 +322,7 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				// 电子发票二维码不为空、小票结尾二维码不为空
+				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					//生成属于单号的二维码
 					Promise.all([
@@ -390,7 +389,7 @@
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
 				//console.log("查询终端参数", printer_poscs);
 			
-				// 通过终端参数，Y 打印小票
+				//通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
 					//console.log("终端参数未设置打印小票");
@@ -411,7 +410,7 @@
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				
 				let isPrinterFP = xprinter_util.snvl(print.XSTYPE,"") == "YDTQ" ? true : false;
-				// 电子发票二维码不为空、小票结尾二维码不为空
+				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					//生成属于单号的二维码
 					Promise.all([
@@ -478,7 +477,7 @@
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
 				//console.log("查询终端参数", printer_poscs);
 			
-				// 通过终端参数，Y 打印小票
+				//通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("终端参数未设置打印小票", "none");
 					//console.log("终端参数未设置打印小票");
@@ -497,7 +496,7 @@
 			
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				// 电子发票二维码不为空、小票结尾二维码不为空
+				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					//生成属于单号的二维码
 					Promise.all([
@@ -562,17 +561,31 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				//console.log("is_dzfpewmdz", is_dzfpewmdz)
-				//console.log("is_xpewm", is_xpewm)
-				// 电子发票二维码不为空，则打印二维码
-				if ((is_dzfpewmdz || is_xpewm) && xprinter_util.nnvl(xsType,0) == 1) {
+				//电子发票二维码不为空，则打印二维码
+				if (is_dzfpewmdz && xprinter_util.nnvl(xsType,0) == 1) {
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, xsBill, printer_poscs.DZFPEWMDZ, that
 							.qrCodeWidth, that.qrCodeHeight),
-						//that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),
-						//xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
+					]).then(res => {
+						console.log("againPrinter开始发送打印命令");
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸	
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('againPrinter reject failed reason', reason)
+						command.setPrint();
+						command.setPrint();
+					    command.endPrinter(); //打印切纸		
+						that.prepareSend(command.getData()); //发送数据
+					})
+				}else if(is_xpewm && xprinter_util.nnvl(xsType,0) == 1){
+					//生成属于单号的公众号
+					Promise.all([
+						that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),
+						xprinter_util.gzhQrCodeAction(is_xpewm,command,that.canvasGZHWidth,that.canvasGZHHeight),
 					]).then(res => {
 						console.log("againPrinter开始发送打印命令");
 						command.setPrint();

@@ -1154,7 +1154,7 @@ var jpPrinter = {
      * 设置GB18030编码格式文字
      */
     jpPrinter.setText = function (content) {
-	  console.log("打印格式",content);
+	  // console.log("打印格式",content);
       var code = new encode.TextEncoder('gb18030', {
         NONSTANDARD_allowLegacyEncoding: true
       }).encode(content);
