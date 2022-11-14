@@ -431,7 +431,8 @@ var XsTypeObj = {
 				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
 					this.show_cake_reservation = false;
-					this.SetDefaultType();
+					// this.SetDefaultType();
+					this.resetSaleBill();
 				} else {
 					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
 						true)
@@ -465,17 +466,18 @@ var XsTypeObj = {
 			});
 			this.CheckTagList?.forEach(i => condition?.push(i));
 		},
-		DeleteCheckedTag:function(item){
-			console.log("[DeleteCheckedTag]当前删除的标签:",item);
-			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition.indexOf(item),1);
+		DeleteCheckedTag: function(item) {
+			console.log("[DeleteCheckedTag]当前删除的标签:", item);
+			this.mode_info.sale_cake_reserve.condition.splice(this.mode_info.sale_cake_reserve.condition
+				.indexOf(item), 1);
 		},
-		DeleteCheckingTag:function(item){
-			console.log("[DeleteCheckingTag]当前删除的标签:",item);
-			this.CheckTagList.splice(this.CheckTagList.indexOf(item),1);
+		DeleteCheckingTag: function(item) {
+			console.log("[DeleteCheckingTag]当前删除的标签:", item);
+			this.CheckTagList.splice(this.CheckTagList.indexOf(item), 1);
 			this.CakeBQList.forEach(i => {
-				console.log("[DeleteCheckingTag]当前类别:",i);
+				console.log("[DeleteCheckingTag]当前类别:", i);
 				let info = i.DATA.find(o => o == item);
-				if(info) info._CHECK = false;
+				if (info) info._CHECK = false;
 			})
 		},
 		CloseReserveDrawer: function() {
