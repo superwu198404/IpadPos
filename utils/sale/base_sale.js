@@ -432,7 +432,7 @@ var XsTypeObj = {
 				});
 				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
-					this.show_cake_reservation = false; 
+					this.show_cake_reservation = false;
 					this.SetDefaultType();
 				} else {
 					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
@@ -809,9 +809,10 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定金额为:", reserve_amount);
 			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this,function(){
-				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)?.pop() ?? -1) + 1;
-				console.log("[SaleFinishing]新起始序号:",start_no);
+			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this, function() {
+				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)
+				?.pop() ?? -1) + 1;
+				console.log("[SaleFinishing]新起始序号:", start_no);
 				this.raw_order?.forEach(i => {
 					i.NO = start_no;
 					start_no++;
