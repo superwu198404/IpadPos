@@ -526,7 +526,7 @@
 					<view class="yixuan">
 						<text>已选：</text>
 						<view class="yxlb">
-							<label>生日精选 <button>×</button></label>
+							<label v-for="tag in mainSale.mode_info.sale_cake_reserve.condition">{{ tag._NAME }}<button @click="DeleteCheckedTag(tag)">×</button></label>
 						</view>
 					</view>
 				</view>
@@ -537,9 +537,12 @@
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">
-							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button>×</button></label>
+							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button @click="DeleteCheckingTag(item2)">×</button></label>
 						</view>
-						<view class="queding"><button>重置</button><button>确定</button></view>
+						<view class="queding">
+							<button @click="Reset">重置</button>
+							<button @click="Confirm">确定</button>
+						</view>
 					</view>
 					<view class="kinds">
 						<view class="kindlist" :class="true?'tab_toggle_show':'tab_toggle_hide'">
@@ -759,6 +762,18 @@
 				console.log("00000000000001数据：", this.mainSale.sale001);
 				let total = (this.mainSale.sale001.TNET + this.mainSale.sale001.BILLDISC).toFixed(2);
 				return total;
+			},
+			Reset:function(){
+				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale,this.mainSale.mode_info.sale_cake_reserve.condition);
+			},
+			Confirm:function(){
+				return (this.sale_type_infos.sale_cake_reserve.ConfirmCondition).bind(this.mainSale,this.mainSale.mode_info.sale_cake_reserve.condition);
+			},
+			DeleteCheckedTag:function(){
+				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckedTag).bind(this.mainSale);
+			},
+			DeleteCheckingTag:function(){
+				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckingTag).bind(this.mainSale);
 			},
 		},
 		methods: {
