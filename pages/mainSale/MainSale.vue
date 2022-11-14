@@ -504,9 +504,8 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<!-- v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
-			@open="mainSale.ShowStatement" -->
-		<view class="dgyd">
+		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+			@open="mainSale.ShowStatement">
 			<view class="head">
 				<view class="head-portrait">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -544,16 +543,17 @@
 					</view>
 					<view class="kinds">
 						<view class="kindlist" :class="num== 1?'tab_toggle_show':'tab_toggle_hide'">
-							<label v-for="item in mainSale.CakeBQList"
-							@click="mainSale.ChooseBQ(item)" :class="curnums === index? 'curr':' '">{{item.BQNAME}},</label>
+							<label v-for="item in mainSale.CakeBQList" @click="mainSale.ChooseBQ(item)"
+								:class="curnums === index? 'curr':' '">{{item.BQNAME}},</label>
 						</view>
 						<button @click="Morekind">+ 更多</button>
 					</view>
 					<view class="tallys">
 						<text>选择：</text>
 						<view class="talist">
-							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)" :class="TagList === index? 'curr':' '">
-							{{item1._NAME}}
+							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)"
+								:class="TagList === index? 'curr':' '">
+								{{item1._NAME}}
 							</label>
 						</view>
 					</view>
@@ -630,7 +630,7 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				sale_type_infos: null,
-				Tallylist:false
+				Tallylist: false
 			}
 		},
 		components: {
@@ -671,13 +671,13 @@
 				})
 			},
 			Qushaixuan: function() {
-				this.Tallylist=!this.Tallylist
+				this.Tallylist = !this.Tallylist
 			},
 			Morekind: function() {
-				if(this.qudao_num =1){
-					this.qudao_num =2
-				}else{
-					this.qudao_num =1
+				if (this.qudao_num = 1) {
+					this.qudao_num = 2
+				} else {
+					this.qudao_num = 1
 				}
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET
