@@ -504,8 +504,9 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
-			@open="mainSale.ShowStatement">
+		<!-- v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+			@open="mainSale.ShowStatement" -->
+		<view class="dgyd">
 			<view class="head">
 				<view class="head-portrait">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -525,24 +526,36 @@
 					</view>
 					<view class="yixuan">
 						<text>已选：</text>
-						<view>
+						<view class="yxlb">
 							<label>生日精选 <button>×</button></label>
 						</view>
 					</view>
 				</view>
-				<view class="filter">
+				<view class="filter" @click="Qushaixuan">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
-				<view class="shaixuan">
+				<view class="shaixuan" v-if="Tallylist">
 					<view class="yixuan">
-						<text>全部已选:</text>
-						<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button>×</button></label>
+						<text>全部已选：</text>
+						<view class="yxlb">
+							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button>×</button></label>
+						</view>
+						<view class="queding"><button>重置</button><button>确定</button></view>
 					</view>
-					<view><label v-for="item in mainSale.CakeBQList"
-							@click="mainSale.ChooseBQ(item)">{{item.BQNAME}},</label></view>
-					<view>选择：<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)">
-							{{item1._NAME}},
-						</label>
+					<view class="kinds">
+						<view class="kindlist" :class="num== 1?'tab_toggle_show':'tab_toggle_hide'">
+							<label v-for="item in mainSale.CakeBQList"
+							@click="mainSale.ChooseBQ(item)" :class="curnums === index? 'curr':' '">{{item.BQNAME}},</label>
+						</view>
+						<button @click="Morekind">+ 更多</button>
+					</view>
+					<view class="tallys">
+						<text>选择：</text>
+						<view class="talist">
+							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)" :class="TagList === index? 'curr':' '">
+							{{item1._NAME}}
+							</label>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -616,7 +629,8 @@
 				qrCodeHeight: 200, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				sale_type_infos: null
+				sale_type_infos: null,
+				Tallylist:false
 			}
 		},
 		components: {
@@ -655,6 +669,16 @@
 					// });
 					return (index + 1) <= this.mainSale.currentOperation.lockRows;
 				})
+			},
+			Qushaixuan: function() {
+				this.Tallylist=!this.Tallylist
+			},
+			Morekind: function() {
+				if(this.qudao_num =1){
+					this.qudao_num =2
+				}else{
+					this.qudao_num =1
+				}
 			},
 			ReceivableAmount: function() { //mainSale.sale001.TNET
 				console.log("[ReceivableAmount]待支付金额计算...", this.mainSale.current_type);

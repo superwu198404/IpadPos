@@ -82,7 +82,7 @@
 
 <style lang="scss">
 	.swiperPanel {
-		margin: 20rpx 0;
+		margin:0;
 		height: 1400rpx;
 		width: 100%;
 		overflow: hidden;
@@ -90,7 +90,7 @@
 	}
 
 	.swiperItem {
-		height: 100%;
+		height: 99%;
 		width: 100%;
 		position: absolute;
 		top: 0;
@@ -100,7 +100,7 @@
 
 	.children {
 		height: 90%;
-		width: 80%;
+		width: 90%;
 		margin: 3% auto;
 		position: relative;
 		overflow: hidden;
