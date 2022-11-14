@@ -3193,7 +3193,9 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.TDISC = TBZDISC + TLSDISC + TTPDISC;
 			console.log("特殊折扣计算后的销售单2:", that.sale002);
 			console.log("特殊折扣计算后的销售单1:", this.sale001);
-			this.BanPayType(); //收集禁止的支付id
+			if (that.Disc.cval.ZKType && that.Disc.cval.ZKType != "NO") { //选了折扣类型才进行禁止支付的操作
+				this.BanPayType(); //收集禁止的支付id
+			}
 		}
 		var retx = that.sale002Sum({
 			ONET: 0,
@@ -3274,6 +3276,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else { //特殊折扣只允许 这两种支付方式
 			console.warn("[BanPayType]折扣禁止支付方式处理!");
 			console.log("[BanPayType]禁止类型1:", PayWayList);
+
 			let arr = PayWayList.filter(r => {
 				return r.type != "WXZF" && r.type != "TL"
 			});
