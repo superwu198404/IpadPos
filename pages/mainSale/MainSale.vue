@@ -571,7 +571,7 @@
 		</view>
 		
 		<!-- 详情 -->
-		<view class="detailys">
+		<view v-if="false" class="detailys">
 			<view class="body-titles">
 				<view style="width: 90%;display: flex; align-items: center;">
 					ㄑ
