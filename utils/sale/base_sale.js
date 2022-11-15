@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -489,6 +489,7 @@ var XsTypeObj = {
 			});
 			console.log("[ConfirmCondition]确认条件:", condition);
 			console.log("[ConfirmCondition]输出信息:", this.mode_info.sale_cake_reserve.condition_output());
+			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 		},
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
@@ -1643,6 +1644,9 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return newbill;
 	}
+
+	//*start* 自定义方法开始
+
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
 		if (!this.currentOperation.Disc) {
@@ -1919,6 +1923,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("exists-takeaway");
 		uni.$off("exists-takeaway-reserve");
 		uni.$off("exit-cake-reservation");
+		uni.$off("ShowCakeDetail");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1935,6 +1940,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
+		uni.$on("ShowCakeDetail", this.ShowCakeDetail);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1996,7 +2002,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ToChoose = util.callBind(this, function(e) {
 		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 	});
-	//*End* 自定义方法
+	//*End* 自定义方法结束
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -2541,6 +2547,12 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
+	}
+	//dgyd展示预定蛋糕详情
+	this.ShowCakeDetail = function(e) {
+		// that.SetManage("inputsp");
+		console.log("蛋糕信息：", e);
+		util.simpleMsg("当前蛋糕：" + e.DGXLID);
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {

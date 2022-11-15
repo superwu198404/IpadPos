@@ -12,7 +12,7 @@
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
-					:_ynDKF="mainSale.currentOperation.DKF"  :type="mainSale.current_type.clickType"></Head>
+					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -537,7 +537,8 @@
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">
-							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button @click="DeleteCheckingTag(item2)">×</button></label>
+							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button
+									@click="DeleteCheckingTag(item2)">×</button></label>
 						</view>
 						<view class="queding">
 							<button @click="Reset">重置</button>
@@ -771,16 +772,18 @@
 				let total = (this.mainSale.sale001.TNET + this.mainSale.sale001.BILLDISC).toFixed(2);
 				return total;
 			},
-			Reset:function(){
-				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale,this.mainSale.mode_info.sale_cake_reserve.condition);
+			Reset: function() {
+				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale, this.mainSale
+					.mode_info.sale_cake_reserve.condition);
 			},
-			Confirm:function(){
-				return (this.sale_type_infos.sale_cake_reserve.ConfirmCondition).bind(this.mainSale,this.mainSale.mode_info.sale_cake_reserve.condition);
+			Confirm: function() {
+				return (this.sale_type_infos.sale_cake_reserve.ConfirmCondition).bind(this.mainSale, this.mainSale
+					.mode_info.sale_cake_reserve.condition);
 			},
-			DeleteCheckedTag:function(){
+			DeleteCheckedTag: function() {
 				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckedTag).bind(this.mainSale);
 			},
-			DeleteCheckingTag:function(){
+			DeleteCheckingTag: function() {
 				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckingTag).bind(this.mainSale);
 			},
 		},
