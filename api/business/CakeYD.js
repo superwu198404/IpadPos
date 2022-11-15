@@ -45,7 +45,7 @@ var GetCakeList = async function() {
 	//http://58.19.103.220:8805/CakeImage/00004/-2.jpg
 	let sql =
 		"select *,'http://58.19.103.220:8805/CakeImage/wx8.jpg?v=" + dateformat.getYMD() +
-		"' as URL2,'http://58.19.103.220:8805/CakeImage/'||url||'?v=" + dateformat.getYMDS() +
+		"' as URL2,'http://58.19.103.220:8805/CakeImage/'||url||'?v=" + dateformat.getYMD() +
 		"' as URL3 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 50";
 	await db.get().executeQry(sql, "查询中...", res => {
 		data = res.msg;
