@@ -45,7 +45,7 @@
 			<view class="exhibiting">
 				<view class="h3"><image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕</view>
 				<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
-棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
+				棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
 				<view class="commods">
 				<!-- 价格数量 -->
 					<!-- <view class="price">
@@ -91,6 +91,14 @@
 					</view>
 				</view>
 				<view class="join"><button class="btn">加入购物车</button></view>
+			</view>
+		</view>
+		<view class="states" @click="mainSale.ShowStatement">
+			<text>结算单</text>
+			<label>«</label>
+			<view class="statnum">
+				<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+				<text>{{TotalNum}}</text>
 			</view>
 		</view>
 	</view>
@@ -145,6 +153,7 @@
 		margin-top:40rpx;
 		padding:0 2%;
 		height: 85%;
+		width:94%;
 	}
 	.particular .shuffs{
 		width:55%;
@@ -246,5 +255,14 @@
 		justify-content: center;
 		padding:20rpx 0;
 		background-color: #F5F4F8;
+	}
+	.states{
+		position: fixed;
+		bottom:20%;
+		right:1%;
+		overflow: hidden;
+	}
+	.statnum{
+		margin-top:40rpx;
 	}
 </style>
