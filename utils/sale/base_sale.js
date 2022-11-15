@@ -301,6 +301,18 @@ var XsTypeObj = {
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
 		condition: [],
+		condition_output: function() {
+			let result = [];
+			this.condition.forEach(i => {
+				i.DATA.forEach(o => {
+					result.push({
+						[i.BQID]: o._ID
+					})
+				})
+			})
+			console.log("[condition_output]输出格式调整:", result);
+			return result;
+		},
 		filter: false,
 		operation: {
 			"HY": true, //是否可以录入会员
@@ -460,7 +472,7 @@ var XsTypeObj = {
 		//确认条件
 		ConfirmCondition: function(condition) {
 			console.log("[ConfirmCondition]确认选择条件...");
-			condition.splice(0,condition.length);
+			condition.splice(0, condition.length);
 			console.log("[ConfirmCondition]参数信息:", {
 				check_list: this.CheckTagList,
 				condition,
@@ -468,19 +480,20 @@ var XsTypeObj = {
 			});
 			this.CakeBQList?.forEach(i => {
 				let cake = i.DATA.filter(o => o._CHECK);
-				console.log("[ConfirmCondition]当前类别:",i);
-				if(cake.length){
-					let check = Object.assign({},i);
+				console.log("[ConfirmCondition]当前类别:", i);
+				if (cake.length) {
+					let check = Object.assign({}, i);
 					check.DATA = cake;
 					condition?.push(check);
 				}
 			});
-			console.log("[ConfirmCondition]确认条件:",condition);
+			console.log("[ConfirmCondition]确认条件:", condition);
+			console.log("[ConfirmCondition]输出信息:", this.mode_info.sale_cake_reserve.condition_output());
 		},
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
 			this.mode_info.sale_cake_reserve.condition.forEach(i => {
-				i.DATA.splice(i.DATA.indexOf(item),1);
+				i.DATA.splice(i.DATA.indexOf(item), 1);
 			})
 		},
 		DeleteCheckingTag: function(item) {
@@ -811,7 +824,7 @@ var XsTypeObj = {
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
 			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this, function() {
 				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)
-				?.pop() ?? -1) + 1;
+					?.pop() ?? -1) + 1;
 				console.log("[SaleFinishing]新起始序号:", start_no);
 				this.raw_order?.forEach(i => {
 					i.NO = start_no;
@@ -2103,7 +2116,7 @@ function GetSale(global, vue, target_name, uni) {
 		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
 		// },
 	];
-	
+
 	//观察sale2信息
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
