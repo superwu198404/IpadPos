@@ -258,8 +258,8 @@
 	}
 	.states{
 		position: fixed;
-		bottom:20%;
-		right:1%;
+		bottom:30%;
+		right:0.5%;
 		overflow: hidden;
 	}
 	.statnum{
