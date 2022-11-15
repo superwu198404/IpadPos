@@ -111,17 +111,17 @@
 
 	.swiperItem {
 		height: 99%;
-		width: 100%;
+		width: 98%;
 		position: absolute;
 		top: 0;
-		left: 0;
+		left: 1%;
 		transition: all .5s;
 	}
 
 	.children {
 		height: 90%;
 		width: 90%;
-		margin: 3% auto;
+		margin: 1.5% auto 3%;
 		position: relative;
 		overflow: hidden;
 		border-radius: 20rpx;

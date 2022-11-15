@@ -289,6 +289,14 @@
         {
             "path" : "pages/CakeReservation/CakeReservation",
             "style" : {}
+        },
+        {
+            "path" : "pages/xiangqing/xiangqing",
+            "style" : {
+                "titleNView" : false,
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
         }
     ],
     "globalStyle" : {
