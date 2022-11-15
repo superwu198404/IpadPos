@@ -1027,13 +1027,12 @@
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
-				this.in_payment = true;
 				console.log("[Refund]开始退款流程...")
 				console.log("[Refund]退款单号为：", this.out_refund_no)
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
-				this.CanBack = false; //锁定退出
+				this.RefundList.find(i => i.refund_num != 0) ? this.CanBack = false : this.CanBack = true;
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
@@ -1049,6 +1048,26 @@
 				only_code.forEach(k => {
 					groups[k].sort((a, b) => Number(a.no) - Number(b.no));
 				})
+				//检测是否存在不包含的付款类型
+				let all_support_fkid = this.PayWayList;
+				let check_result = this.RefundList.map(r => r.fkid).map(i => {
+					let find_info = all_support_fkid.find(o => o.fkid == i)
+					if (find_info && find_info.yn_use == 'Y')
+						return {
+							pay_info: find_info ?? i,
+							is_support: true
+						};
+					else
+						return {
+							pay_info: find_info ?? i,
+							is_support: false
+						};
+				});
+				if (check_result.find(i => !i.is_support)) {
+					util.simpleMsg("当前单据存在不被当前支持的类型,无法退款!", true);
+					console.log("[Refund]检查出不受支持的支付类型...", check_result);
+					return;
+				}
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
 					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
@@ -1091,6 +1110,10 @@
 						}
 						refundInfo.refunding = true; //标记为正在退款的状态
 						let res = new Promise(util.callBind(this, function(resolve, reject) {
+							this.in_payment = true;
+							console.log("[Refund]加载框打开...", {
+								pay_type: payWayType
+							});
 							_pay.RefundAll(payWayType, {
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no + `_${index}`, //退款单号
@@ -1141,7 +1164,7 @@
 						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
 					}
 				}).bind(this));
-
+				console.log("[Refund]等待退款队列请求执行完毕...");
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
 					this.in_payment = false;
@@ -1239,9 +1262,9 @@
 					return;
 				}
 				console.log("[PayHandle]支付开始...");
-				this.in_payment = true;//必须放这里
+				this.in_payment = true; //必须放这里
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
-						this.in_payment = false;//必须放这里
+						this.in_payment = false; //必须放这里
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1734,7 +1757,7 @@
 					util.simpleMsg("请登录会员后再使用!")
 					return;
 				}
-				this.GetHyCoupons(util.callBind(this,function() {
+				this.GetHyCoupons(util.callBind(this, function() {
 					if (that.coupon_list.length <= 0) {
 						util.simpleMsg("暂无可用券", true);
 					} else {
@@ -1743,12 +1766,12 @@
 							return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
 						})
 						that.coupon_list = arr;
-						if(!arr.length){
+						if (!arr.length) {
 							util.simpleMsg("暂无可用券", true);
 							return;
 						}
 						that.coupons = !that.coupons;
-						console.log("[ShowCoupon]券列表信息:",that.coupon_list);
+						console.log("[ShowCoupon]券列表信息:", that.coupon_list);
 					}
 				}));
 			},
@@ -1832,7 +1855,6 @@
 			},
 			//单笔订单退款重试
 			singleRetry: async function(info) {
-				this.in_payment = true;
 				console.log("[SingleRetry]退款重试次数:", info.refund_num);
 				let trade_no = info.bill;
 				if (info.refund_num != 0) {
@@ -1848,6 +1870,7 @@
 					let refund_no = this.out_refund_no; //获取订单号
 					let payWayType = this.PayWayList.find(i => i.fkid == singleRefund.fkid)?.type;
 					if (payWayType) {
+						this.in_payment = true;
 						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
@@ -1895,7 +1918,6 @@
 			},
 			//单笔订单重试
 			singlePayRetry: async function(info) {
-				this.in_payment = true;
 				console.log('[SinglePayRetry]重试支付:', info);
 				if (info.pay_num > 1 && info.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
 					if (await this.NoOrginPay(info)) {
@@ -1913,7 +1935,8 @@
 				let type = this.PayWayList.find(i => i.fkid == fkid)?.type,
 					data = this.PayDataAssemble();
 				info.loading = true;
-				if (!this.existSamePayType(type))
+				if (!this.existSamePayType(type)) {
+					this.in_payment = true;
 					retrySinglePay({
 						type: type,
 						trade: info,
@@ -1940,7 +1963,8 @@
 						this.PayList = Object.assign([], this.PayList); //刷新视图
 						util.simpleModal('重试结果', res);
 					}).bind(this), (this.RefundErrorCallback).bind(this, info, true));
-				else
+
+				} else
 					util.simpleMsg("已存在相同的付款方式！", false);
 			},
 			RefundErrorCallback: function(info, judge_net_err, err) { //单据记录

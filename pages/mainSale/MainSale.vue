@@ -12,7 +12,7 @@
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
-					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
+					:_ynDKF="mainSale.currentOperation.DKF"></Head>
 				<view class="listof" style="position: absolute;z-index: 0;">
 					<view class="prolist">
 						<!-- 大类循环 -->
@@ -169,7 +169,7 @@
 					style="z-index: 99999;">×</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+						<image src="@/images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
 						<label>
@@ -507,13 +507,13 @@
 		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
 			@open="mainSale.ShowStatement">
 			<view class="head">
-				<view class="head-portrait">
+				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
-					<view class="member-account">会员账户</view>
+					<view class="member-account">{{ mainSale.HY.val.hyId ? (mainSale.HY.val.hyId) : "点击登录..."}}</view>
 				</view>
 				<view class="head-exit">
-					<view class="exit" @click="mainSale.dgydExit">
-						<image src="@/images/tuichu.png"></image> 退出
+					<view class="exit" @click="Exit">
+						<image src="@/images/tuichu.png"></image> 切换
 					</view>
 				</view>
 			</view>
@@ -526,37 +526,33 @@
 					<view class="yixuan">
 						<text>已选：</text>
 						<view class="yxlb">
-							<label v-for="tag in CheckedList">{{ tag._NAME }}<button @click="DeleteCheckedTag(tag)">×</button></label>
+							<label>生日精选 <button>×</button></label>
 						</view>
 					</view>
 				</view>
-				<view class="filter" @click="mainSale.ToChoose">
+				<view class="filter" @click="Qushaixuan">
 					<image src="@/images/qushaixuan.png"></image> 去筛选
 				</view>
-				<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
+				<view class="shaixuan" v-if="Tallylist">
 					<view class="yixuan">
 						<text>全部已选：</text>
 						<view class="yxlb">
-							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button
-									@click="DeleteCheckingTag(item2)">×</button></label>
+							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button>×</button></label>
 						</view>
-						<view class="queding">
-							<button @click="Reset">重置</button>
-							<button @click="Confirm">确定</button>
-						</view>
+						<view class="queding"><button>重置</button><button>确定</button></view>
 					</view>
 					<view class="kinds">
-						<view class="kindlist" :class="true?'tab_toggle_show':'tab_toggle_hide'">
+						<view class="kindlist" :class="num== 1?'tab_toggle_show':'tab_toggle_hide'">
 							<label v-for="item in mainSale.CakeBQList" @click="mainSale.ChooseBQ(item)"
-								:class="item.CHECK? 'curr':' '">{{item.BQNAME}}</label>
+								:class="curnums === index? 'curr':' '">{{item.BQNAME}},</label>
 						</view>
-						<!-- <button @click="Morekind">+ 更多</button> -->
+						<button @click="Morekind">+ 更多</button>
 					</view>
 					<view class="tallys">
 						<text>选择：</text>
 						<view class="talist">
 							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)"
-								:class="item1._CHECK? 'curr':' '">
+								:class="TagList === index? 'curr':' '">
 								{{item1._NAME}}
 							</label>
 						</view>
@@ -564,7 +560,8 @@
 				</view>
 			</view>
 			<view style="width: 100%;height: 100%">
-				<Swiper :_swiperList="mainSale.CakeList" />
+
+				<Swiper :swiper-list="mainSale.CakeList" />
 			</view>
 		</view>
 	</view>
@@ -658,14 +655,6 @@
 			Swiper
 		},
 		computed: {
-			CheckedList:function(){
-				let tags = [];
-				console.log("[CheckedList]选择项目:",this.mainSale.mode_info.sale_cake_reserve.condition);
-				this.mainSale.mode_info.sale_cake_reserve.condition.map(i => tags = tags.concat(i.DATA));
-				console.log("[CheckedList]计算结果:",tags);
-				return tags;
-			},
-			
 			Price: function() {
 				return util.callBind(this, function(spid) {
 					return this.mainSale.spPrice[spid]?.PRICE ?? "-";
@@ -771,20 +760,6 @@
 				console.log("00000000000001数据：", this.mainSale.sale001);
 				let total = (this.mainSale.sale001.TNET + this.mainSale.sale001.BILLDISC).toFixed(2);
 				return total;
-			},
-			Reset: function() {
-				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale, this.mainSale
-					.mode_info.sale_cake_reserve.condition);
-			},
-			Confirm: function() {
-				return (this.sale_type_infos.sale_cake_reserve.ConfirmCondition).bind(this.mainSale, this.mainSale
-					.mode_info.sale_cake_reserve.condition);
-			},
-			DeleteCheckedTag: function() {
-				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckedTag).bind(this.mainSale);
-			},
-			DeleteCheckingTag: function() {
-				return (this.sale_type_infos.sale_cake_reserve.DeleteCheckingTag).bind(this.mainSale);
 			},
 		},
 		methods: {
