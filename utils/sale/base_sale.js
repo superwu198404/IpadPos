@@ -306,7 +306,7 @@ var XsTypeObj = {
 			this.condition.forEach(i => {
 				i.DATA.forEach(o => {
 					result.push({
-						[i.BQID]: o._ID
+						ID: o._ID
 					})
 				})
 			})
