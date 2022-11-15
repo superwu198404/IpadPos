@@ -28,6 +28,7 @@ import hy_query from '@/api/hy/hy_query.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
+// import { log } from 'console';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
  */
@@ -292,179 +293,251 @@ var XsTypeObj = {
 		},
 	},
 	//蛋糕预定
-	// sale_cake_reserve: {
-	// 	xstype: "3",
-	// 	clickType: "sale_cake_reserve",
-	// 	nameSale: "蛋糕预定",
-	// 	icon_open: require("@/images/yuding.png"),
-	// 	icon_close: require("@/images/yuding-hui.png"),
-	// 	operation: {
-	// 		"HY": true, //是否可以录入会员
-	// 		"Disc": true, //是否可以打开录入折扣
-	// 		"ynFzCx": false, //是否可以辅助促销 预定不开启
-	// 		"ynCx": true, //是否进行可以进行促销
-	// 		"ynCancel": true, //是否可以退出当前销售模式
-	// 		"ynSKDisc": true, //是否可以计算手工折扣
-	// 		"ynEdit": true, //当前业务能否编辑商品
-	// 		"showEdit": false, //展开编辑商品
-	// 		"ynResetCX": false, //是否清除了促销
-	// 		"showCXZK": false, //展示促销和折扣来源
-	// 		"sale_cake_reserve": true,
-	// 		"sale_reserve": false,
-	// 		"sale_return_good": false,
-	// 		"sale_reserve_cancel": false,
-	// 		"sale_takeaway": true,
-	// 		"sale_takeaway_reserve": true,
-	// 		"sale_message": true,
-	// 		"tools": true,
-	// 		"lockRows": 0, //是否存在锁定行数
-	// 		"inputsp": true //是否可以输入商品
-	// 	},
-	// 	$click() {
-	// 		console.log("[sale_cake_reserve]蛋糕预定信息录入操作!");
-	// 		this.show_cake_reservation = true;
-	// 		return true;
-	// 	},
-	// 	$initSale: async function() {
-	// 		this.actType = common.actTypeEnum.Payment;
-	// 		this.CakeBQList = await _cake.GetDGBQ();
-	// 		console.log("标签数据：", this.CakeBQList);
-	// 	},
-	// 	$print: function() { //对打印的控制
-	// 		return {
-	// 			tName: "蛋糕预定小票", // 名称
-	// 			ynPrintFp: true, //是否打印发票二维码
-	// 			ynPintCustem: false, // 是否打印客户信息
-	// 			ynPintDisc: true, //是否打印折扣  
-	// 			payOrRet: "", //支付还是退款
-	// 		}
-	// 	},
-	// 	$beforeFk: function() { //支付打开预定信息录入
-	// 		//品诺
-	// 		//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
-	// 		//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
-	// 		console.log("[BeforeFk]预订单录入:", this.sale001);
-	// 		this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
-	// 		this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
-	// 		console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
-	// 		this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
-	// 		console.log("[SaleReserve]生成预定支付信息...");
-	// 		this.payed = [];
-	// 		this.payed.push(Sale3ModelAdditional(Sale3Model({
-	// 			fkid: 'ZF01',
-	// 			type: 'XJ',
-	// 			bill: this.sale001.BILL,
-	// 			name: "现金",
-	// 			amount: 0
-	// 		}), { //业务配置字段（支付状态设定为成功）
-	// 			fail: false, //定金显示为成功
-	// 			show: false
-	// 		}));
-	// 		console.log("[SaleReserve]生成预定支付信息成功!");
-	// 		console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
-	// 			sale001: this.sale001,
-	// 			sale002: this.sale002,
-	// 			sale003: this.sale003,
-	// 			ydsale001: this.ydsale001
-	// 		});
-	// 		return false;
-	// 	},
-	// 	//支付完成中
-	// 	$saleFinishing: function(result) { //生成yd
-	// 		console.log("[SaleFinishing]预订单生成中...", result);
-	// 		this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
-	// 		this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
-	// 		this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
-	// 		this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
-	// 		if (result.sale1_obj.DNET !== 0) { //定金为 0
-	// 			console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
-	// 			this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
-	// 			console.log("[SaleFinishing]过滤后的记录:", this.sale003);
-	// 		}
-	// 		console.log("[SaleFinishing]预订单生成完毕!", {
-	// 			ydsale1: this.ydsale001,
-	// 			sale001: this.sale001,
-	// 			sale002: this.sale002,
-	// 			sale003: this.sale003
-	// 		});
-	// 	},
-	// 	//支付完成以后
-	// 	$saleFinied: function() {
-	// 		///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷	
-	// 		//调用打印
-	// 		this.sale002.forEach(function(item, index) {
-	// 			item.SNAME = item.STR1;
-	// 		})
-	// 		let fkdaRes = this.FKDA_INFO;
-	// 		let sale3 = this.GetPayedResult()?.data?.sale3_arr ?? this.sale003;
-	// 		sale3.forEach(function(item, index) {
-	// 			try {
-	// 				item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-	// 				item.balance = item.balance;
-	// 			} catch (e) {
-	// 				item.SNAME = "";
-	// 				item.balance = 0;
-	// 			}
-	// 		})
-	// 		console.log("蛋糕预定下单开始调用打印", {
-	// 			sale002: this.sale002,
-	// 			sale3
-	// 		})
-	// 		let printerPram = {
-	// 			"PRINTNUM": 2,
-	// 			"XSTYPE": "YD"
-	// 		};
-	// 		this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
-	// 	},
-	// 	CloseCakeReservation: function() {
-	// 		util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
-	// 			console.log("[ReserveInfoInput]密码确认:", {
-	// 				is_confirm,
-	// 				data,
-	// 				userinfo: getApp().globalData?.userinfo
-	// 			});
-	// 			if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-	// 				console.log("[CloseCakeReservation]蛋糕预定关闭...");
-	// 				this.show_cake_reservation = false;
-	// 				this.SetDefaultType();
-	// 			} else {
-	// 				if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-	// 					true)
-	// 			}
-	// 		}), true)
-	// 	},
-	// 	CloseReserveDrawer: function() {
-	// 		console.log("[CloseReserveDrawer]结算单打开...");
-	// 		this.setComponentsManage(null, "statement");
-	// 	},
-	// 	ReserveInfoInput: function(sale1) {
-	// 		console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", sale1);
-	// 		Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
-	// 		Object.cover(this.ydsale001, sale1); //用于 ydsale001
-	// 		console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
-	// 			ydsale1: this.ydsale001,
-	// 			sale1: this.sale001
-	// 		});
-	// 		this.sale001.$total_amount = this.sale001.DNET;
-	// 		this.$total_amount = this.sale001.DNET;
-	// 		util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
-	// 			console.log("[ReserveInfoInput]密码确认:", {
-	// 				is_confirm,
-	// 				data,
-	// 				userinfo: getApp().globalData?.userinfo
-	// 			});
-	// 			if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-	// 				console.log("[CloseReserveDrawer]预定录入关闭...");
-	// 				this.setComponentsManage(null, "statement");
-	// 				this.PayParamAssemble();
-	// 			} else {
-	// 				if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-	// 					true)
-	// 			}
-	// 		}), true)
+	sale_cake_reserve: {
+		close: true,
+		xstype: "3",
+		clickType: "sale_cake_reserve",
+		nameSale: "蛋糕预定",
+		icon_open: require("@/images/yuding.png"),
+		icon_close: require("@/images/yuding-hui.png"),
+		condition: [],
+		condition_output: function() {
+			let result = [];
+			this.condition.forEach(i => {
+				i.DATA.forEach(o => {
+					result.push({
+						[i.BQID]: o._ID
+					})
+				})
+			})
+			console.log("[condition_output]输出格式调整:", result);
+			return result;
+		},
+		filter: false,
+		operation: {
+			"HY": true, //是否可以录入会员
+			"Disc": true, //是否可以打开录入折扣
+			"ynFzCx": false, //是否可以辅助促销 预定不开启
+			"ynCx": true, //是否进行可以进行促销
+			"ynCancel": true, //是否可以退出当前销售模式
+			"ynSKDisc": true, //是否可以计算手工折扣
+			"ynEdit": true, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+			"ynResetCX": false, //是否清除了促销
+			"showCXZK": false, //展示促销和折扣来源
+			"sale_cake_reserve": true,
+			"sale_reserve": false,
+			"sale_return_good": false,
+			"sale_reserve_cancel": false,
+			"sale_takeaway": true,
+			"sale_takeaway_reserve": true,
+			"sale_message": true,
+			"tools": true,
+			"lockRows": 0, //是否存在锁定行数
+			"inputsp": true //是否可以输入商品
+		},
+		$click() {
+			console.log("[sale_cake_reserve]蛋糕预定信息录入操作!");
+			this.show_cake_reservation = true;
+			return true;
+		},
+		$initSale: async function() {
+			this.actType = common.actTypeEnum.Payment;
+			this.CakeBQList = await _cake.GetDGBQ();
+			// this.CakeList = await _cake.GetCakeList(); //数据比组件渲染要晚
+			console.log("标签数据：", this.CakeBQList);
+			// console.log("蛋糕数据：", this.CakeList);
+		},
+		$print: function() { //对打印的控制
+			return {
+				tName: "蛋糕预定小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
+		$beforeFk: function() { //支付打开预定信息录入
+			//品诺
+			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
+			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
+			console.log("[BeforeFk]预订单录入:", this.sale001);
+			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
+			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
+			console.log("[BeforeFk]预定录入信息初始化:", this.sale001);
+			this.ydsale001 = Object.cover(new sale.ydsale001(), this.sale001);
+			console.log("[SaleReserve]生成预定支付信息...");
+			this.payed = [];
+			this.payed.push(Sale3ModelAdditional(Sale3Model({
+				fkid: 'ZF01',
+				type: 'XJ',
+				bill: this.sale001.BILL,
+				name: "现金",
+				amount: 0
+			}), { //业务配置字段（支付状态设定为成功）
+				fail: false, //定金显示为成功
+				show: false
+			}));
+			console.log("[SaleReserve]生成预定支付信息成功!");
+			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003,
+				ydsale001: this.ydsale001
+			});
+			return false;
+		},
+		//支付完成中
+		$saleFinishing: function(result) { //生成yd
+			console.log("[SaleFinishing]预订单生成中...", result);
+			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
+			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
+			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
+			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
+			if (result.sale1_obj.DNET !== 0) { //定金为 0
+				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
+				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
+				console.log("[SaleFinishing]过滤后的记录:", this.sale003);
+			}
+			console.log("[SaleFinishing]预订单生成完毕!", {
+				ydsale1: this.ydsale001,
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			});
+		},
+		//支付完成以后
+		$saleFinied: function() {
+			///******新增预定提取和预定取消时验证预定单的状态是否变更过，是否要进行判断有待商榷	
+			//调用打印
+			this.sale002.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let fkdaRes = this.FKDA_INFO;
+			let sale3 = this.GetPayedResult()?.data?.sale3_arr ?? this.sale003;
+			sale3.forEach(function(item, index) {
+				try {
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = item.balance;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			console.log("蛋糕预定下单开始调用打印", {
+				sale002: this.sale002,
+				sale3
+			})
+			let printerPram = {
+				"PRINTNUM": 2,
+				"XSTYPE": "YD"
+			};
+			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
+		},
+		//退出确认
+		CloseCakeReservation: function() {
+			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+				console.log("[ReserveInfoInput]密码确认:", {
+					is_confirm,
+					data,
+					userinfo: getApp().globalData?.userinfo
+				});
+				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
+					console.log("[CloseCakeReservation]蛋糕预定关闭...");
+					this.show_cake_reservation = false;
+					this.SetDefaultType();
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
+				}
+			}), true)
+		},
+		//重置条件
+		ResetCondition: function(condition) {
+			console.log("[ResetCondition]重置选择条件...");
+			console.log("[ResetCondition]参数信息:", {
+				check_list: this.CheckTagList,
+				condition,
+				cake_tags: this.CakeTagList,
+				kinds: this.CakeBQList
+			});
+			condition?.splice(0, condition?.length);
+			this.CakeTagList?.map(i => i._CHECK = false);
+			this.CheckTagList?.splice(0, this.CheckTagList?.length);
+			this.CakeBQList?.map(i => {
+				i.CHECK = false;
+				i.DATA?.map(o => o._CHECK = false);
+			});
+		},
+		//确认条件
+		ConfirmCondition: function(condition) {
+			console.log("[ConfirmCondition]确认选择条件...");
+			condition.splice(0, condition.length);
+			console.log("[ConfirmCondition]参数信息:", {
+				check_list: this.CheckTagList,
+				condition,
+				cake_tags: this.CakeTagList
+			});
+			this.CakeBQList?.forEach(i => {
+				let cake = i.DATA.filter(o => o._CHECK);
+				console.log("[ConfirmCondition]当前类别:", i);
+				if (cake.length) {
+					let check = Object.assign({}, i);
+					check.DATA = cake;
+					condition?.push(check);
+				}
+			});
+			console.log("[ConfirmCondition]确认条件:", condition);
+			console.log("[ConfirmCondition]输出信息:", this.mode_info.sale_cake_reserve.condition_output());
+			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
+		},
+		DeleteCheckedTag: function(item) {
+			console.log("[DeleteCheckedTag]当前删除的标签:", item);
+			this.mode_info.sale_cake_reserve.condition.forEach(i => {
+				i.DATA.splice(i.DATA.indexOf(item), 1);
+			})
+		},
+		DeleteCheckingTag: function(item) {
+			console.log("[DeleteCheckingTag]当前删除的标签:", item);
+			this.CheckTagList.splice(this.CheckTagList.indexOf(item), 1);
+			this.CakeBQList.forEach(i => {
+				console.log("[DeleteCheckingTag]当前类别:", i);
+				let info = i.DATA.find(o => o == item);
+				if (info) info._CHECK = false;
+			})
+		},
+		CloseReserveDrawer: function() {
+			console.log("[CloseReserveDrawer]结算单打开...");
+			this.setComponentsManage(null, "statement");
+		},
+		ReserveInfoInput: function(sale1) {
+			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", sale1);
+			Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
+			Object.cover(this.ydsale001, sale1); //用于 ydsale001
+			console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
+				ydsale1: this.ydsale001,
+				sale1: this.sale001
+			});
+			this.sale001.$total_amount = this.sale001.DNET;
+			this.$total_amount = this.sale001.DNET;
+			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+				console.log("[ReserveInfoInput]密码确认:", {
+					is_confirm,
+					data,
+					userinfo: getApp().globalData?.userinfo
+				});
+				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
+					console.log("[CloseReserveDrawer]预定录入关闭...");
+					this.setComponentsManage(null, "statement");
+					this.PayParamAssemble();
+				} else {
+					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
+						true)
+				}
+			}), true)
 
-	// 	}
-	// },
+		}
+	},
 	//预订单下单
 	sale_reserve: {
 		xstype: "3",
@@ -750,8 +823,16 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]预定金额为:", reserve_amount);
 			console.log("[SaleFinishing]此单实付金额为:", this.sale001.TNET - reserve_amount);
 			this.sale001.TNET = reserve_amount; //把此单的实际支付金额给到 TNET （预定提取后的TNET为整单金额减去定金）
-			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat(this.raw_order ||
-		[]); //删除 $beforeFk 中生成的 zg03 的信息
+			this.sale003 = this.sale003.filter(i => i.FKID !== 'ZG03').concat((util.callBind(this, function() {
+				let start_no = (this.sale003.filter(i => i.FKID !== 'ZG03').map(i => i.NO)
+					?.pop() ?? -1) + 1;
+				console.log("[SaleFinishing]新起始序号:", start_no);
+				this.raw_order?.forEach(i => {
+					i.NO = start_no;
+					start_no++;
+				})
+				return this.raw_order || [];
+			}))()); //删除 $beforeFk 中生成的 zg03 的信息
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='2',ID_RY_TH ='${this.ryid}' , SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
@@ -1563,6 +1644,9 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		return newbill;
 	}
+
+	//*start* 自定义方法开始
+
 	//*func*特殊折扣初始化数据
 	this.GetTSZKData = util.callBind(this, async function() {
 		if (!this.currentOperation.Disc) {
@@ -1799,8 +1883,11 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*选中标签
 	this.ChooseBQ = util.callBind(this, function(e) {
 		if (e) {
+			e.CHECK = !e.CHECK;
 			this.CakeTagList = e.DATA;
 		}
+		this.update();
+		console.log("当前标签数据：", e);
 	})
 	//*func*选中标签
 	this.ChooseTag = util.callBind(this, function(e) {
@@ -1835,7 +1922,8 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("exists-online-order");
 		uni.$off("exists-takeaway");
 		uni.$off("exists-takeaway-reserve");
-		// uni.$off("exit-cake-reservation");
+		uni.$off("exit-cake-reservation");
+		uni.$off("ShowCakeDetail");
 		console.log("[Bind]BIND!");
 		uni.$on("change", this.Change);
 		uni.$on("redirect", this.Redirect);
@@ -1851,7 +1939,8 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-online-order", (XsTypeObj.sale_online_order.SelectMenu).bind(this));
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
-		// uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
+		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
+		uni.$on("ShowCakeDetail", this.ShowCakeDetail);
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -1905,6 +1994,15 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("促销折扣显示状态：", this.currentOperation.showCXZK);
 		this.update();
 	});
+
+	//*func* 取消促销和重置促销
+	this.dgydExit = util.callBind(this, XsTypeObj.sale_cake_reserve.CloseCakeReservation);
+
+	//*func* 展开和关闭标签筛选
+	this.ToChoose = util.callBind(this, function(e) {
+		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
+	});
+	//*End* 自定义方法结束
 	//日志
 	this.log = function(str) {
 		if (typeof(str) == 'string') {
@@ -2001,27 +2099,31 @@ function GetSale(global, vue, target_name, uni) {
 	//已选标签集合
 	this.CheckTagList = [];
 	//蛋糕预定商品集合
-	this.CakeList = [{
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}, {
-		type: 'image',
-		url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
-		names: '七星瓢虫儿童蛋糕',
-		miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
-	}];
+	this.CakeList = [
+		// 	{
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/6.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/5.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/8.jpg',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// }, {
+		// 	type: 'image',
+		// 	url: 'http://58.19.103.220:8805/CakeImage/11-2.png',
+		// 	names: '七星瓢虫儿童蛋糕',
+		// 	miaoshu: '这是一段描述,七星瓢虫儿童蛋糕'
+		// },
+	];
+
+	//观察sale2信息
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
@@ -2445,6 +2547,12 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
+	}
+	//dgyd展示预定蛋糕详情
+	this.ShowCakeDetail = function(e) {
+		// that.SetManage("inputsp");
+		console.log("蛋糕信息：", e);
+		util.simpleMsg("当前蛋糕：" + e.DGXLID);
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {

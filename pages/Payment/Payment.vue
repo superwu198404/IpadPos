@@ -1208,7 +1208,6 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: function() {
-				this.in_payment = true;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1240,8 +1239,9 @@
 					return;
 				}
 				console.log("[PayHandle]支付开始...");
+				this.in_payment = true;//必须放这里
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
-						this.in_payment = false;
+						this.in_payment = false;//必须放这里
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;

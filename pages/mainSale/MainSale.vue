@@ -504,9 +504,8 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<!-- v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
-			@open="mainSale.ShowStatement" -->
-		<view class="dgyd" >
+		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+			@open="mainSale.ShowStatement">
 			<view class="head">
 				<view class="head-portrait">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>

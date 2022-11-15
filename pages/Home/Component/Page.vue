@@ -9,7 +9,7 @@
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : ''">
+				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
 				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
@@ -40,7 +40,7 @@
 						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view> -->
-					<view  class="currs" @click="ShowTool('communication')">
+					<view class="currs" @click="ShowTool('communication')">
 						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
@@ -50,7 +50,7 @@
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
 					</view> -->
-					<view  class="currs" @click="ShowTool('CD')">
+					<view class="currs" @click="ShowTool('CD')">
 						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
 						<text>重打小票</text>
