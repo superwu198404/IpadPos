@@ -169,7 +169,7 @@
 					style="z-index: 99999;">×</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+						<image src="@/images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
 						<label>
@@ -504,8 +504,9 @@
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
 		<!-- 蛋糕预定 -->
-		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
-			@open="mainSale.ShowStatement">
+		<!-- v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+			@open="mainSale.ShowStatement" -->
+		<view class="dgyd" >
 			<view class="head">
 				<view class="head-portrait">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -513,7 +514,7 @@
 				</view>
 				<view class="head-exit">
 					<view class="exit" @click="Exit">
-						<image src="@/images/tuichu.png"></image> 退出
+						<image src="@/images/tuichu.png"></image> 切换
 					</view>
 				</view>
 			</view>
