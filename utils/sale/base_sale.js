@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -1884,14 +1884,13 @@ function GetSale(global, vue, target_name, uni) {
 	this.ChooseBQ = util.callBind(this, function(e) {
 		if (e) {
 			this.CakeBQList.forEach(i => {
-				if(i != e){
-					if(!i.DATA.find(o => o._CHECK))
+				if (i != e) {
+					if (!i.DATA.find(o => o._CHECK))
 						i.CHECK = false;
-				}
-				else{
-					if(i.DATA.find(o => o._CHECK))
+				} else {
+					if (i.DATA.find(o => o._CHECK))
 						i.CHECK = true;
-					else{
+					else {
 						i.CHECK = !i.CHECK;
 					}
 				}
