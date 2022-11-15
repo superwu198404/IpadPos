@@ -173,8 +173,8 @@
 					return "00:00"
 				}
 			},
-			extract_date:function(){
-				return this.Order.TH_DATE.replaceAll('-','/');
+			extract_date: function() {
+				return this.Order.TH_DATE.replaceAll('-', '/');
 			}
 		},
 		data() {
@@ -227,7 +227,7 @@
 				},
 				map: {
 					longitude: util.getStorage('StoreCoodinate').longitude ?? 114.3093413671875, //经度
-					latitude: util.getStorage('StoreCoodinate').latitude ??30.570206594347283, //纬度
+					latitude: util.getStorage('StoreCoodinate').latitude ?? 30.570206594347283, //纬度
 					scale: 12, //缩放级别
 					markers: [],
 					key: Number(new Date())
@@ -409,13 +409,14 @@
 						return date;
 					} else { //非现卖
 						console.log("[RefreshData]提货日期处理-非现卖:", {
-							date_before:date,
-							current_date:new Date().toLocaleDateString().replaceAll('-', '/')
+							date_before: date,
+							current_date: new Date().toLocaleDateString().replaceAll('-', '/')
 						});
-						if (date.replaceAll('-', '/') ==  dateformat.toDateString(new Date()).replaceAll('-', '/')) {
+						if (date.replaceAll('-', '/') == dateformat.toDateString(new Date()).replaceAll('-',
+								'/')) {
 							console.log("[RefreshData]增加1天时间...");
 							return new Date(date.replaceAll('-', '/')).SetHours(24).toLocaleDateString();
-						} else{
+						} else {
 							console.log("[RefreshData]不变...");
 							return date
 						};
@@ -708,7 +709,8 @@
 				_reserve.MatchBHKH({
 					LONGITUDE: that.Order.LONGITUDE,
 					LATITUDE: that.Order.LATITUDE,
-					GSKHINFO: GSKHINFO
+					GSKHINFO: GSKHINFO,
+					KHID: this.KHID
 				}, res => {
 					console.log("[MatchBHKH]匹配结果:", res);
 					if (res.code) {
