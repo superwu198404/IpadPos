@@ -507,9 +507,9 @@
 		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
 			@open="mainSale.ShowStatement">
 			<view class="head">
-				<view class="head-portrait">
+				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
-					<view class="member-account">会员账户</view>
+					<view class="member-account">{{ mainSale.HY.val.hyId ? (mainSale.HY.val.hyId) : "点击登录..."}}</view>
 				</view>
 				<view class="head-exit">
 					<view class="exit" @click="mainSale.dgydExit">
