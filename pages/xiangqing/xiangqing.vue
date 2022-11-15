@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view>
+	<view  class="content" style="display: block;">
 		<view class="head">
 			<view class="head-portrait">
 				<image src="@/images/touxiang.png" mode="widthFix"></image>
@@ -17,7 +17,7 @@
 		</view>
 		<view class="body-titles">
 			<view style="width: 90%;display: flex; align-items: center;">
-				<
+				ㄑ
 				<view class="hot-sales">
 					产品详情
 					<label></label>
@@ -34,33 +34,20 @@
 						</swiper-item>
 					</swiper>
 				</view>
+				<view class="tupian">
+					<label><image src="@/images/xstu2-1.png"></image></label>
+					<label><image src="@/images/xstu2-1.png"></image></label>
+					<label><image src="@/images/xstu2-1.png"></image></label>
+					<label><image src="@/images/xstu2-1.png"></image></label>
+					<label><image src="@/images/xstu2-1.png"></image></label>
+				</view>
 			</view>
 			<view class="exhibiting">
 				<view class="h3"><image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕</view>
 				<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
-棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
+				棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
 				<view class="commods">
-					<view class="price">
-							<view>
-								<text class="jiage">￥123</text>
-							</view>
-							<view>
-								<button @click="mainSale.chengedQty" >-</button>
-								<label>1</label>
-								<button @click="mainSale.chengedQty">+</button>
-							</view>
-						</view>
-						<view class="tochoose">
-							<view >
-								<label class="shux"><text>1</text>*<text>名称</text>
-									<text>嗡嗡嗡分</text>
-								</label>
-								<label><text>￥123</text>
-									<button
-										@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
-							</view>
-						</view>
-					
+				<!-- 价格数量 -->
 					<!-- <view class="price">
 						<view>
 							<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
@@ -74,8 +61,9 @@
 							<button @click="mainSale.chengedQty" data-qty="1"
 								:disabled="mainSale.clikSpItem.ynAddPro">+</button>
 						</view>
-					</view>
-					<view class="tochoose">
+					</view> -->
+					<!-- 加入购物车的产品属性 -->
+					<!-- <view class="tochoose">
 						<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 							<label class="shux"><text>{{sp.UNIT}}</text>*<text>{{sp.QTY}}</text>
 								<text v-for="(sx08, sxindex) in mainSale.sale008"
@@ -85,13 +73,32 @@
 								<button :data-spid="sp.SPID" :data-row="spinx"
 									@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
 						</view>
-					</view>
-				 -->
+					</view> -->
+				
 				</view>
 				<view class="yxlb">
-					 <!-- v-for="item2 in mainSale.CheckTagList"    {{item2._NAME}}-->
-					<label># 生日精选</label>
+					 <!-- 以选标签   -->
+					<!-- <label v-for="item2 in mainSale.CheckTagList"># {{item2._NAME}}</label> -->
 				</view>
+				<view class="sizes">
+					<view class="chic"><i class="sgin">*</i>尺寸</view>
+					<view class="sizelist">
+						<!-- 尺寸列表 -->
+						<!-- <label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+							:data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS"
+							:data-spid="specs.SPID" :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''" 
+							@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label> -->
+					</view>
+				</view>
+				<view class="join"><button class="btn">加入购物车</button></view>
+			</view>
+		</view>
+		<view class="states" @click="mainSale.ShowStatement">
+			<text>结算单</text>
+			<label>«</label>
+			<view class="statnum">
+				<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+				<text>{{TotalNum}}</text>
 			</view>
 		</view>
 	</view>
@@ -137,12 +144,16 @@
 <style>
 	.hot-sales{
 		height:56rpx;
-		margin-left: 50rpx;
+		margin-left: 30rpx;
+		display: flex;
+		align-items: center;
 	}
 	.particular{
 		display: flex;
 		margin-top:40rpx;
 		padding:0 2%;
+		height: 85%;
+		width:94%;
 	}
 	.particular .shuffs{
 		width:55%;
@@ -159,9 +170,26 @@
 		width:100%;
 		height: 100%;
 	}
+	.tupian{
+		display: flex;
+		margin-top:4%;
+		padding:0 5%;
+	}
+	.tupian label{
+		display: flex;
+		width:20%;
+		justify-content: center;
+		align-items: center;
+	}
+	.tupian label image{
+		width:130rpx;
+		height: 130rpx;
+	}
 	.particular .exhibiting{
 		width:44%;
 		margin-left: 1%;
+		height: 100%;
+		position: relative;
 	}
 	.exhibiting .h3{
 		font-weight: 700;
@@ -193,8 +221,9 @@
 	.yxlb{
 		display: flex;
 		align-items: center;
-		width:80%;
-		margin-top:4%;	
+		width:100%;
+		flex-wrap: wrap;
+		margin:3.5% 0 2%;	
 	}
 	.yxlb label{
 		position: relative;
@@ -206,5 +235,34 @@
 		margin-right: 30rpx;
 		border-radius: 40rpx;
 		font-size: 26rpx;
+		margin-bottom: 20rpx;
+	}
+	.sizes .chic{
+		height: 80rpx;
+		line-height: 80rpx;
+	}
+	.sizes .sizelist label{
+		padding:0 1%;
+		min-width: 27%;
+		font-size: 28rpx;
+	}
+	.join{
+		position: absolute;
+		bottom:0;
+		left: 0;
+		width:100%;
+		display: flex;
+		justify-content: center;
+		padding:20rpx 0;
+		background-color: #F5F4F8;
+	}
+	.states{
+		position: fixed;
+		bottom:30%;
+		right:0.5%;
+		overflow: hidden;
+	}
+	.statnum{
+		margin-top:40rpx;
 	}
 </style>
