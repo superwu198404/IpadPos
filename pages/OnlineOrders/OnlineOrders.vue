@@ -573,6 +573,7 @@
 							storeid: this.KHID, //店铺id
 							gcid: this.GCID, //工厂id
 							end_time: this.EndTime,
+							czyid: this.RYID,
 							orders: [this.details.order]
 						}, util.callBind(this, function(res) {
 							this.GetOnlineOrders(util.callBind(this, function() {
