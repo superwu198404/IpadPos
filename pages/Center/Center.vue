@@ -86,6 +86,7 @@
 	import util from '@/utils/util.js';
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
+	import _cake from '@/api/business/CakeYD.js';
 	var that;
 	export default {
 		data() {
@@ -113,6 +114,9 @@
 				if (sysinfo) {
 					that.version = sysinfo.appWgtVersion;
 				}
+				console.log("预先");
+				_cake.PreLoadCakeImg(); //预先加载蛋糕图片
+				console.log("预先1");
 			},
 			onShow: function() {
 				this.MonitorEvent();
@@ -142,10 +146,10 @@
 
 			},
 			reset: function() {
-				_init.dataInit('reloadsqlite',true)
+				_init.dataInit('reloadsqlite', true)
 			},
 			zbtx: function() {
-				_init.dataInit('download_zbtx',true)
+				_init.dataInit('download_zbtx', true)
 			},
 			//uniapp中onHide()能监听到页面离开
 			onHide() { //离开页面前清除计时器

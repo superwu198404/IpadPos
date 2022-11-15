@@ -52,7 +52,42 @@ var GetCakeList = async function() {
 	}, err => {})
 	return data;
 }
+//预加载图片 异步操作
+var loadImage = async function(url) {
+	return new Promise((resolve, reject) => {
+		try {
+			var img = new Image();
+			img.src = url;
+			img.onload = function() {
+				// var imgHeight = img.height;
+				// var imgWidth = img.width;
+				console.log("图片预加载完成...")
+				resolve(img);
+			};
+			img.onerror = function() {
+				reject(img);
+			};
+		} catch (e) {
+			//TODO handle the exception
+			console.log("图片预加载出错", e);
+		}
+	})
+}
+var PreLoadCakeImg = function() {
+	let sql =
+		"select *,'http://58.19.103.220:8805/CakeImage/wx8.jpg?v=" + dateformat.getYMD() +
+		"' as URL2,'http://58.19.103.220:8805/CakeImage/'||url||'?v=" + dateformat.getYMD() +
+		"' as URL3 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 200";
+	db.get().executeQry(sql, "查询中...", res => {
+		console.log("预先2", res);
+		for (var i = 0; i < res.msg.length; i++) {
+			console.log("预先3", res.msg[i].URL3);
+			loadImage(res.msg[i].URL3);
+		}
+	}, err => {})
+}
 export default {
 	GetDGBQ,
-	GetCakeList
+	GetCakeList,
+	PreLoadCakeImg
 }
