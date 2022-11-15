@@ -1883,11 +1883,23 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*选中标签
 	this.ChooseBQ = util.callBind(this, function(e) {
 		if (e) {
-			e.CHECK = !e.CHECK;
+			this.CakeBQList.forEach(i => {
+				if(i != e){
+					if(!i.DATA.find(o => o._CHECK))
+						i.CHECK = false;
+				}
+				else{
+					if(i.DATA.find(o => o._CHECK))
+						i.CHECK = true;
+					else{
+						i.CHECK = !i.CHECK;
+					}
+				}
+			});
 			this.CakeTagList = e.DATA;
 		}
 		this.update();
-		console.log("当前标签数据：", e);
+		console.log("[ChooseBQ]当前标签数据：", e);
 	})
 	//*func*选中标签
 	this.ChooseTag = util.callBind(this, function(e) {
