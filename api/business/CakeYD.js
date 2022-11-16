@@ -56,34 +56,51 @@ var GetCakeList = async function() {
 var loadImage = async function(url) {
 	return new Promise((resolve, reject) => {
 		try {
+			//#ifdef APP-PLUS
+			uni.getImageInfo({
+				// urls: [url],
+				src: url,
+				success: function(image) {
+					console.log("图片预加载完成...")
+					resolve(true);
+				},
+				fail: function(err) {
+					resolve(false);
+				}
+			});
+			//#endif
+
+			// #ifdef H5
 			var img = new Image();
+			console.log("img", img);
 			img.src = url;
 			img.onload = function() {
 				// var imgHeight = img.height;
 				// var imgWidth = img.width;
-				console.log("图片预加载完成...")
+				console.log("图片预加载完成1...")
 				resolve(img);
 			};
 			img.onerror = function() {
 				reject(img);
 			};
+			//#endif
 		} catch (e) {
 			//TODO handle the exception
 			console.log("图片预加载出错", e);
 		}
 	})
 }
-var PreLoadCakeImg = function() {
+var PreLoadCakeImg = function(func) {
 	let sql =
 		"select *,'http://58.19.103.220:8805/CakeImage/wx8.jpg?v=" + dateformat.getYMD() +
 		"' as URL2,'http://58.19.103.220:8805/CakeImage/'||url||'?v=" + dateformat.getYMD() +
-		"' as URL3 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 200";
+		"' as URL3 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 150";
 	db.get().executeQry(sql, "查询中...", res => {
-		console.log("预先2", res);
-		for (var i = 0; i < res.msg.length; i++) {
-			console.log("预先3", res.msg[i].URL3);
-			loadImage(res.msg[i].URL3);
-		}
+		if (func) func(res);
+		// for (var i = 0; i < res.msg.length; i++) {
+		// 	console.log("预先3", res.msg[i].URL3);
+		// 	loadImage(res.msg[i].URL3);
+		// }
 	}, err => {})
 }
 export default {

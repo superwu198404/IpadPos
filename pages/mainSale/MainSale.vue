@@ -503,8 +503,8 @@
 			<canvas canvas-id="canvasXPEWM" class="canvas"
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
-		<!-- 蛋糕预定  --> 
-	<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
+		<!-- 蛋糕预定  -->
+		<view class="dgyd" v-if="mainSale.ComponentsManage.sale_cake_reserve || mainSale.show_cake_reservation"
 			@open="mainSale.ShowStatement">
 			<view class="head">
 				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
@@ -517,149 +517,166 @@
 					</view>
 				</view>
 			</view>
-		<view>
-			<view class="body-titles">
-				<view style="width: 90%;display: flex; align-items: center;">
-					<view class="hot-sales">
-						产品列表
-						<label></label>
+			<!-- //列表 -->
+			<view v-if="!mainSale.mode_info.sale_cake_reserve.yn_showDetail">
+				<view class="body-titles">
+					<view style="width: 90%;display: flex; align-items: center;">
+						<view class="hot-sales">
+							产品列表
+							<label></label>
+						</view>
+						<view class="yixuan">
+							<text>已选：</text>
+							<view class="yxlb">
+								<label v-for="tag in CheckedList">{{ tag._NAME }}<button
+										@click="DeleteCheckedTag(tag)">×</button></label>
+							</view>
+						</view>
 					</view>
-					<view class="yixuan">
-						<text>已选：</text>
-						<view class="yxlb">
-							<label v-for="tag in CheckedList">{{ tag._NAME }}<button
-									@click="DeleteCheckedTag(tag)">×</button></label>
+					<view class="filter" @click="mainSale.ToChoose">
+						<image src="@/images/qushaixuan.png"></image> 去筛选
+					</view>
+					<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
+						<view class="yixuan">
+							<text>全部已选：</text>
+							<view class="yxlb">
+								<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button
+										@click="DeleteCheckingTag(item2)">×</button></label>
+							</view>
+							<view class="queding">
+								<button @click="Reset">重置</button>
+								<button @click="Confirm">确定</button>
+							</view>
+						</view>
+						<view class="kinds">
+							<view class="kindlist" :class="true?'tab_toggle_show':'tab_toggle_hide'">
+								<label v-for="item in mainSale.CakeBQList" @click="mainSale.ChooseBQ(item)"
+									:class="item.CHECK? 'curr':' '">{{item.BQNAME}}</label>
+							</view>
+							<!-- <button @click="Morekind">+ 更多</button> -->
+						</view>
+						<view class="tallys">
+							<text>选择：</text>
+							<view class="talist">
+								<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)"
+									:class="item1._CHECK? 'curr':' '">
+									{{item1._NAME}}
+								</label>
+							</view>
 						</view>
 					</view>
 				</view>
-				<view class="filter" @click="mainSale.ToChoose">
-					<image src="@/images/qushaixuan.png"></image> 去筛选
+				<view style="width: 100%;height: 100%">
+					<Swiper :_swiperList="mainSale.CakeList" />
 				</view>
-				<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
-					<view class="yixuan">
-						<text>全部已选：</text>
-						<view class="yxlb">
-							<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button
-									@click="DeleteCheckingTag(item2)">×</button></label>
-						</view>
-						<view class="queding">
-							<button @click="Reset">重置</button>
-							<button @click="Confirm">确定</button>
+			</view>
+
+			<!-- 详情 -->
+			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
+				<view class="body-titles">
+					<view style="width: 90%;display: flex; align-items: center;"
+						@click="mainSale.mode_info.sale_cake_reserve.ShowCakeDetail()">
+						ㄑ
+						<view class="hot-sales">
+							产品详情
+							<label></label>
 						</view>
 					</view>
-					<view class="kinds">
-						<view class="kindlist" :class="true?'tab_toggle_show':'tab_toggle_hide'">
-							<label v-for="item in mainSale.CakeBQList" @click="mainSale.ChooseBQ(item)"
-								:class="item.CHECK? 'curr':' '">{{item.BQNAME}}</label>
+				</view>
+				<view class="particular">
+					<view class="shuffs">
+						<view class="banner">
+							<swiper autoplay="true" :interval="5000" :duration="500" circular="true"
+								indicator-active-color="#fff" easing-function="true" indicator-dots='true'
+								@change="swiperChange">
+								<swiper-item v-for="(item, index) in bannerList" :key="index">
+									<image :src="item.url"></image>
+								</swiper-item>
+							</swiper>
 						</view>
-						<!-- <button @click="Morekind">+ 更多</button> -->
-					</view>
-					<view class="tallys">
-						<text>选择：</text>
-						<view class="talist">
-							<label v-for="item1 in mainSale.CakeTagList" @click="mainSale.ChooseTag(item1)"
-								:class="item1._CHECK? 'curr':' '">
-								{{item1._NAME}}
+						<view class="tupian">
+							<label>
+								<image src="@/images/xstu2-1.png"></image>
+							</label>
+							<label>
+								<image src="@/images/xstu2-1.png"></image>
+							</label>
+							<label>
+								<image src="@/images/xstu2-1.png"></image>
+							</label>
+							<label>
+								<image src="@/images/xstu2-1.png"></image>
+							</label>
+							<label>
+								<image src="@/images/xstu2-1.png"></image>
 							</label>
 						</view>
 					</view>
-				</view>
-			</view>
-			<view style="width: 100%;height: 100%">
-				<Swiper :_swiperList="mainSale.CakeList" />
-			</view>
-		</view>
-		
-		<!-- 详情 -->
-		<view v-if="false" class="detailys">
-			<view class="body-titles">
-				<view style="width: 90%;display: flex; align-items: center;">
-					ㄑ
-					<view class="hot-sales">
-						产品详情
-						<label></label>
-					</view>
-				</view>
-			</view>
-			<view class="particular">
-				<view class="shuffs">
-					<view class="banner">
-						<swiper autoplay="true" :interval="5000" :duration="500" circular="true" indicator-active-color="#fff"
-							easing-function="true" indicator-dots='true' @change="swiperChange">
-							<swiper-item v-for="(item, index) in bannerList" :key="index">
-								<image :src="item.url"></image>
-							</swiper-item>
-						</swiper>
-					</view>
-					<view class="tupian">
-						<label><image src="@/images/xstu2-1.png"></image></label>
-						<label><image src="@/images/xstu2-1.png"></image></label>
-						<label><image src="@/images/xstu2-1.png"></image></label>
-						<label><image src="@/images/xstu2-1.png"></image></label>
-						<label><image src="@/images/xstu2-1.png"></image></label>
-					</view>
-				</view>
-				<view class="exhibiting">
-					<view class="h3"><image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕</view>
-					<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
-					棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
-					<view class="commods">
-					<!-- 价格数量 -->
-						<view class="price">
-							<view>
-								<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
-								<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia"
-									style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+					<view class="exhibiting">
+						<view class="h3">
+							<image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕
+						</view>
+						<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
+							棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
+						<view class="commods">
+							<!-- 价格数量 -->
+							<view class="price">
+								<view>
+									<text class="jiage">￥{{mainSale.clikSpItem.PRICE}}</text>
+									<text v-if="mainSale.clikSpItem.ynAddPro" class="jiage zongjia"
+										style="font-size: 28rpx;">+加料总价{{mainSale.clikSpItem.NEWPRICE}}={{mainSale.clikSpItem.PRICE+mainSale.clikSpItem.NEWPRICE}}</text>
+								</view>
+								<view>
+									<button @click="mainSale.chengedQty" data-qty="-1"
+										:disabled="mainSale.clikSpItem.ynAddPro">-</button>
+									<label>{{mainSale.clikSpItem.ynAddPro?1:mainSale.clikSpItem.inputQty}}</label>
+									<button @click="mainSale.chengedQty" data-qty="1"
+										:disabled="mainSale.clikSpItem.ynAddPro">+</button>
+								</view>
 							</view>
-							<view>
-								<button @click="mainSale.chengedQty" data-qty="-1"
-									:disabled="mainSale.clikSpItem.ynAddPro">-</button>
-								<label>{{mainSale.clikSpItem.ynAddPro?1:mainSale.clikSpItem.inputQty}}</label>
-								<button @click="mainSale.chengedQty" data-qty="1"
-									:disabled="mainSale.clikSpItem.ynAddPro">+</button>
+							<!-- 加入购物车的产品属性 -->
+							<view class="tochoose">
+								<view v-for=" (sp, spinx) in mainSale.sale002"
+									v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
+									<label class="shux"><text>{{sp.UNIT}}</text>*<text>{{sp.QTY}}</text>
+										<text v-for="(sx08, sxindex) in mainSale.sale008"
+											v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
+									</label>
+									<label><text>￥{{sp.PRICE}}</text>
+										<button :data-spid="sp.SPID" :data-row="spinx"
+											@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
+								</view>
+							</view>
+
+						</view>
+						<view class="yxlb">
+							<!-- 以选标签   -->
+							<label v-for="item2 in mainSale.CheckTagList"># {{item2._NAME}}</label>
+						</view>
+						<view class="sizes">
+							<view class="chic"><i class="sgin">*</i>尺寸</view>
+							<view class="sizelist">
+								<!-- 尺寸列表 -->
+								<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
+									:data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS"
+									:data-spid="specs.SPID"
+									:class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''"
+									@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 							</view>
 						</view>
-						<!-- 加入购物车的产品属性 -->
-						<view class="tochoose">
-							<view v-for=" (sp, spinx) in mainSale.sale002" v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
-								<label class="shux"><text>{{sp.UNIT}}</text>*<text>{{sp.QTY}}</text>
-									<text v-for="(sx08, sxindex) in mainSale.sale008"
-										v-if="sp.NO==sx08.NO">[{{sx08.ATTNAME}}{{sx08.QTY?("x"+sx08.QTY):""}}]</text>
-								</label>
-								<label><text>￥{{sp.PRICE}}</text>
-									<button :data-spid="sp.SPID" :data-row="spinx"
-										@click="mainSale.updateSp(spinx,sp.SPID,0)" class="del">×</button></label>
-							</view>
-						</view>
-					
+						<view class="join"><button class="btn">加入购物车</button></view>
 					</view>
-					<view class="yxlb">
-						 <!-- 以选标签   -->
-						<label v-for="item2 in mainSale.CheckTagList"># {{item2._NAME}}</label>
-					</view>
-					<view class="sizes">
-						<view class="chic"><i class="sgin">*</i>尺寸</view>
-						<view class="sizelist">
-							<!-- 尺寸列表 -->
-							<label v-for=" (specs, specsinx) in mainSale.clikSpItem.specslist"
-								:data-dgplid="specs.DGPLID" :data-dgjgz="specs.DGJGZ" :data-specs="specs.SPECS"
-								:data-spid="specs.SPID" :class="specs.SPID==mainSale.clikSpItem.selectSPID?'curr':''" 
-								@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
-						</view>
-					</view>
-					<view class="join"><button class="btn">加入购物车</button></view>
 				</view>
-			</view>
-			<view class="states" @click="mainSale.ShowStatement">
-				<text>结算单</text>
-				<label>«</label>
-				<view class="statnum">
-					<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
-					<text>{{TotalNum}}</text>
+				<view class="states" @click="mainSale.ShowStatement">
+					<text>结算单</text>
+					<label>«</label>
+					<view class="statnum">
+						<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+						<text>{{TotalNum}}</text>
+					</view>
 				</view>
 			</view>
 		</view>
-	</view>
 	</view>
 </template>
 

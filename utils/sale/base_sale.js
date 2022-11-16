@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -314,6 +314,7 @@ var XsTypeObj = {
 			return result;
 		},
 		filter: false,
+		yn_showDetail: false,
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -537,6 +538,21 @@ var XsTypeObj = {
 				}
 			}), true)
 
+		},
+
+		//dgyd展示预定蛋糕详情
+		ShowCakeDetail: function(e) {
+			// that.SetManage("inputsp");
+			// util.simpleMsg("当前蛋糕：" + e.DGXLID);
+			console.log("蛋糕信息：", e);
+			if (e) { //展开详情
+				console.log("展开详情");
+				this.mode_info.sale_cake_reserve.yn_showDetail = true;
+			} else { //关闭详情
+				console.log("关闭详情");
+				this.condition = []; //清空已选标签
+				this.yn_showDetail = false;
+			}
 		}
 	},
 	//预订单下单
@@ -1294,6 +1310,7 @@ var XsTypeObj = {
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
 			"sale": true,
+			"sale_takeaway": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
@@ -1468,6 +1485,7 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
+			"sale_online_order": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
@@ -1506,7 +1524,9 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
-			"sale_takeaway_reserve": true,
+			"sale_online_order": true,
+			"sale_takeaway": true,
+			// "sale_takeaway_reserve": true,//和外卖单保持一致 点击自己不允许跳转到其他页面
 			"sale_message": true,
 			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -1885,14 +1905,13 @@ function GetSale(global, vue, target_name, uni) {
 	this.ChooseBQ = util.callBind(this, function(e) {
 		if (e) {
 			this.CakeBQList.forEach(i => {
-				if(i != e){
-					if(!i.DATA.find(o => o._CHECK))
+				if (i != e) {
+					if (!i.DATA.find(o => o._CHECK))
 						i.CHECK = false;
-				}
-				else{
-					if(i.DATA.find(o => o._CHECK))
+				} else {
+					if (i.DATA.find(o => o._CHECK))
 						i.CHECK = true;
-					else{
+					else {
 						i.CHECK = !i.CHECK;
 					}
 				}
@@ -1953,7 +1972,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
-		uni.$on("ShowCakeDetail", this.ShowCakeDetail);
+		uni.$on("ShowCakeDetail", (XsTypeObj.sale_cake_reserve.ShowCakeDetail).bind(this));
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -2530,11 +2549,15 @@ function GetSale(global, vue, target_name, uni) {
 		let spindex = e.currentTarget.dataset.spindex;
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
+        that.initClikSpItem(spitem);
+		that.SetManage("inputsp")
+	}
+	//初始化选中的item，预定选蛋糕和 正常的商品点选都会使用
+	this.initClikSpItem =function(pm_itemcClick)
+	{
+		that.clikSpItem = pm_itemcClick;
 		that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
-		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 1;
-
-
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			//SPECS,DGJGZ,DGPLID 为selectSPID_Chenged动态添加的属性，只有蛋糕商品存在此属性，其他商品不存在！
@@ -2559,8 +2582,75 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.SetManage("inputsp")
+		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
 	}
+	
+	//已经筛选好的蛋糕数组，作为缓存
+	this.cakeList =[]
+	//根据传入的标签数组进行筛选，返回that.clikSpItem
+	//使用结构中的bqlist  进行筛选
+	//传入的参数格式[{id:"xxxxx"}] 
+	this.cakeFilter =function(pm_inputArr)
+	{
+		that.cakeListInit();
+		if(that.cakeList.length==0 )
+		{
+			that.myAlert("没有筛选出蛋糕结果！");
+			return;
+		}
+		var b= pm_inputArr;
+		if(b == null || b.length ==0  )
+		{
+			return  that.cakeList;
+		}
+		else
+		{
+			var fret =[]
+			  that.cakeList.forEach(a=> 
+			     {
+                    let x=  a.bqlist.filter( item=>{  let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length  });
+				
+					if(x.length >0)
+					{
+						fret.push(a);
+					}
+				 }
+			);	
+			console.log("查看一下筛选的结果",fret);
+			return fret;
+		}
+	}
+	//只做一次 将所有蛋糕筛选出来备用
+	this.cakeListInit=function()
+	{
+		let  fplid ='109';
+		if(that.cakeList.length >0)
+		{
+			return ;
+		}
+		   var  carr = that.Allsplist.filter(item=>{return  (item.plid.indexOf(fplid)==0);})
+		   console.log("查看蛋糕的总长度"+carr.length,carr[0]);
+		    carr.forEach
+			(
+			     carritem =>
+					{   
+						carritem.plarr.forEach
+						(
+							spitem=>
+							{
+								 if(spitem.ynshowlist == "1")
+								 {
+									 that.cakeList.push(spitem);
+								 }
+							}
+						)	
+					}  
+			)
+			
+			console.log("查看一下蛋糕的数据呢",that.cakeList)
+	}
+	
+	
 	//dgyd展示预定蛋糕详情
 	this.ShowCakeDetail = function(e) {
 		// that.SetManage("inputsp");

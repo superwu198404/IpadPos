@@ -74,6 +74,10 @@
 		<!-- <qiandao @CloseSign="CloseSignIn" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
 		<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
+		<!-- //用于预先加载图片使用 -->
+		<view v-show="false">
+			<image :src="item.URL3" v-for="(item,index) in images" mode="widthFix"></image>
+		</view>
 	</view>
 </template>
 
@@ -102,7 +106,8 @@
 				angles: 0,
 				angless: 0,
 				syyjk: {}, //收银员是否结款
-				version: "1.0.0" //版本号
+				version: "1.0.0", //版本号
+				images: []
 			};
 		},
 		methods: {
@@ -114,9 +119,13 @@
 				if (sysinfo) {
 					that.version = sysinfo.appWgtVersion;
 				}
-				console.log("预先");
-				_cake.PreLoadCakeImg(); //预先加载蛋糕图片
-				console.log("预先1");
+
+				//预先加载蛋糕图片
+				// _cake.PreLoadCakeImg(res => {
+				// 	console.log("图片数据：", res);
+				// 	that.images = res.msg;
+				// });
+
 			},
 			onShow: function() {
 				this.MonitorEvent();
