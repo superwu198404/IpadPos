@@ -54,7 +54,7 @@
 				orderlist: false,
 				msgDatas: [],
 				KHID: getApp().globalData.store.KHID,
-				totalCount: 0
+				// totalCount: 0
 			}
 		},
 		props: {
@@ -65,14 +65,22 @@
 				}
 			},
 		},
-
+		computed: {
+			totalCount: function() {
+				let count = 0;
+				that.msgDatas.map(r => {
+					count += r.count;
+				})
+				return count;
+			}
+		},
 		created: function(position) {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
 			// console.log("传入的业务消息集合：", that.msgDatas);
-			that._msgDatas.map(r => {
-				that.totalCount += r.count;
-			})
+			// that._msgDatas.map(r => {
+			// 	that.totalCount += r.count;
+			// })
 			let move = util.getStorage("move")
 			uni.getSystemInfo({
 				success: function(res) {

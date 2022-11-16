@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -314,6 +314,7 @@ var XsTypeObj = {
 			return result;
 		},
 		filter: false,
+		yn_showDetail: false,
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -536,6 +537,21 @@ var XsTypeObj = {
 				}
 			}), true)
 
+		},
+
+		//dgyd展示预定蛋糕详情
+		ShowCakeDetail: function(e) {
+			// that.SetManage("inputsp");
+			// util.simpleMsg("当前蛋糕：" + e.DGXLID);
+			console.log("蛋糕信息：", e);
+			if (e) { //展开详情
+				console.log("展开详情");
+				this.mode_info.sale_cake_reserve.yn_showDetail = true;
+			} else { //关闭详情
+				console.log("关闭详情");
+				this.condition = []; //清空已选标签
+				this.yn_showDetail = false;
+			}
 		}
 	},
 	//预订单下单
@@ -1293,6 +1309,7 @@ var XsTypeObj = {
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
 			"sale": true,
+			"sale_takeaway": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
@@ -1467,6 +1484,7 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
+			"sale_online_order": true,
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
@@ -1505,7 +1523,9 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
-			"sale_takeaway_reserve": true,
+			"sale_online_order": true,
+			"sale_takeaway": true,
+			// "sale_takeaway_reserve": true,//和外卖单保持一致 点击自己不允许跳转到其他页面
 			"sale_message": true,
 			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -1951,7 +1971,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("exists-takeaway", (XsTypeObj.sale_takeaway.SelectMenu).bind(this));
 		uni.$on("exists-takeaway-reserve", (XsTypeObj.sale_takeaway_reserve.SelectMenu).bind(this));
 		uni.$on("exit-cake-reservation", (XsTypeObj.sale_cake_reserve.CloseCakeReservation).bind(this));
-		uni.$on("ShowCakeDetail", this.ShowCakeDetail);
+		uni.$on("ShowCakeDetail", (XsTypeObj.sale_cake_reserve.ShowCakeDetail).bind(this));
 	})
 	//*func*退出当前销售模式 返回到默认的销售模式
 	this.CancelSale = util.callBind(this, function(e) {
@@ -2558,12 +2578,6 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		that.SetManage("inputsp")
-	}
-	//dgyd展示预定蛋糕详情
-	this.ShowCakeDetail = function(e) {
-		// that.SetManage("inputsp");
-		console.log("蛋糕信息：", e);
-		util.simpleMsg("当前蛋糕：" + e.DGXLID);
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {
