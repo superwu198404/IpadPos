@@ -494,6 +494,7 @@ var XsTypeObj = {
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
 			this.mode_info.sale_cake_reserve.condition.forEach(i => {
+				console.log("[DeleteCheckedTag]当前是否存在:",i.DATA.indexOf(item));
 				i.DATA.splice(i.DATA.indexOf(item), 1);
 			})
 		},

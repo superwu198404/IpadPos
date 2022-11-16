@@ -369,7 +369,7 @@ var misPay = {
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是机器号，Note是门店id
-			body.merchant_no = null; //使用全局配置（后端）
+			body.merchant_no = config.SHID; //使用全局配置（后端）
 			body.terminalCode = config.NOTE;
 			body.store_id = config.KEY;
 			_PaymentAll(pt, body, func, catchFunc);
