@@ -2581,6 +2581,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
+		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
 	}
 	
 	//已经筛选好的蛋糕数组，作为缓存
@@ -2597,7 +2598,7 @@ function GetSale(global, vue, target_name, uni) {
 			return;
 		}
 		var b= pm_inputArr;
-		if(b == null || pm_inputArr.length ==0  )
+		if(b == null || b.length ==0  )
 		{
 			return  that.cakeList;
 		}
@@ -2607,12 +2608,14 @@ function GetSale(global, vue, target_name, uni) {
 			  that.cakeList.forEach(a=> 
 			     {
                     let x=  a.bqlist.filter( item=>{  let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length  });
-				    if(x.length >0)
+				
+					if(x.length >0)
 					{
 						fret.push(a);
 					}
 				 }
 			);	
+			console.log("查看一下筛选的结果",fret);
 			return fret;
 		}
 	}
@@ -2620,11 +2623,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.cakeListInit=function()
 	{
 		let  fplid ='109';
-		if(this.cakeList.length >0)
+		if(that.cakeList.length >0)
 		{
 			return ;
 		}
-		   var  carr = this.Allsplist.filter(item=>{return item.plid.indexOf(fplid);})
+		   var  carr = that.Allsplist.filter(item=>{return  (item.plid.indexOf(fplid)==0);})
+		   console.log("查看蛋糕的总长度"+carr.length,carr[0]);
 		    carr.forEach
 			(
 			     carritem =>
@@ -2635,12 +2639,14 @@ function GetSale(global, vue, target_name, uni) {
 							{
 								 if(spitem.ynshowlist == "1")
 								 {
-									 this.cakeList.push(spitem);
+									 that.cakeList.push(spitem);
 								 }
 							}
 						)	
 					}  
 			)
+			
+			console.log("查看一下蛋糕的数据呢",that.cakeList)
 	}
 	
 	

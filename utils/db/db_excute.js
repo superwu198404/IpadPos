@@ -321,10 +321,10 @@ var mySqllite = function() {
 					});
 				},
 				fail(e) {
-					// console.log("[Qry]查询异常:", {
-					// 	result: e,
-					// 	sql: pm_sql
-					// });
+					 console.log("[Qry]查询异常:", {
+						result: e,
+					 	sql: pm_sql
+					 });
 					return resolve({
 						code: false,
 						msg: e
