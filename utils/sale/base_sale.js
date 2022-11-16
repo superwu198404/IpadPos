@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -343,11 +343,14 @@ var XsTypeObj = {
 			return true;
 		},
 		$initSale: async function() {
+			console.log("[sale_cake_reserve]蛋糕预定初始化");
 			this.actType = common.actTypeEnum.Payment;
 			this.CakeBQList = await _cake.GetDGBQ();
-			// this.CakeList = await _cake.GetCakeList(); //数据比组件渲染要晚
+			// this.CakeList = await _cake.GetCakeList(); 
+			//数据比组件渲染要晚
+			this.CakeList = this.cakeFilter();
 			console.log("标签数据：", this.CakeBQList);
-			// console.log("蛋糕数据：", this.CakeList);
+			console.log("蛋糕数据：", this.CakeList);
 		},
 		$print: function() { //对打印的控制
 			return {
@@ -2550,12 +2553,11 @@ function GetSale(global, vue, target_name, uni) {
 		let spindex = e.currentTarget.dataset.spindex;
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
-        that.initClikSpItem(spitem);
+		that.initClikSpItem(spitem);
 		that.SetManage("inputsp")
 	}
 	//初始化选中的item，预定选蛋糕和 正常的商品点选都会使用
-	this.initClikSpItem =function(pm_itemcClick)
-	{
+	this.initClikSpItem = function(pm_itemcClick) {
 		that.clikSpItem = pm_itemcClick;
 		that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
 		that.clikSpItem.inputQty = 1;
@@ -2585,73 +2587,65 @@ function GetSale(global, vue, target_name, uni) {
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
 		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
 	}
-	
+
 	//已经筛选好的蛋糕数组，作为缓存
-	this.cakeList =[]
+	this.cakeList = []
 	//根据传入的标签数组进行筛选，返回that.clikSpItem
 	//使用结构中的bqlist  进行筛选
 	//传入的参数格式[{id:"xxxxx"}] 
-	this.cakeFilter =function(pm_inputArr)
-	{
+	this.cakeFilter = function(pm_inputArr) {
 		that.cakeListInit();
-		if(that.cakeList.length==0 )
-		{
+		if (that.cakeList.length == 0) {
 			that.myAlert("没有筛选出蛋糕结果！");
 			return;
 		}
-		var b= pm_inputArr;
-		if(b == null || b.length ==0  )
-		{
-			return  that.cakeList;
-		}
-		else
-		{
-			var fret =[]
-			  that.cakeList.forEach(a=> 
-			     {
-                    let x=  a.bqlist.filter( item=>{  let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length  });
-				
-					if(x.length >0)
-					{
-						fret.push(a);
-					}
-				 }
-			);	
-			console.log("查看一下筛选的结果",fret);
+		var b = pm_inputArr;
+		if (b == null || b.length == 0) {
+			return that.cakeList;
+		} else {
+			var fret = []
+			that.cakeList.forEach(a => {
+				let x = a.bqlist.filter(item => {
+					let ret = b.filter(itemb => {
+						return itemb.ID == item.ID
+					});
+					return ret.length
+				});
+
+				if (x.length > 0) {
+					fret.push(a);
+				}
+			});
+			console.log("查看一下筛选的结果", fret);
 			return fret;
 		}
 	}
 	//只做一次 将所有蛋糕筛选出来备用
-	this.cakeListInit=function()
-	{
-		let  fplid ='109';
-		if(that.cakeList.length >0)
-		{
-			return ;
+	this.cakeListInit = function() {
+		let fplid = '109';
+		if (that.cakeList.length > 0) {
+			return;
 		}
-		   var  carr = that.Allsplist.filter(item=>{return  (item.plid.indexOf(fplid)==0);})
-		   console.log("查看蛋糕的总长度"+carr.length,carr[0]);
-		    carr.forEach
-			(
-			     carritem =>
-					{   
-						carritem.plarr.forEach
-						(
-							spitem=>
-							{
-								 if(spitem.ynshowlist == "1")
-								 {
-									 that.cakeList.push(spitem);
-								 }
-							}
-						)	
-					}  
-			)
-			
-			console.log("查看一下蛋糕的数据呢",that.cakeList)
+		var carr = that.Allsplist.filter(item => {
+			return (item.plid.indexOf(fplid) == 0);
+		})
+		console.log("查看蛋糕的总长度" + carr.length, carr[0]);
+		carr.forEach(
+			carritem => {
+				carritem.plarr.forEach(
+					spitem => {
+						if (spitem.ynshowlist == "1") {
+							that.cakeList.push(spitem);
+						}
+					}
+				)
+			}
+		)
+
+		console.log("查看一下蛋糕的数据呢", that.cakeList)
 	}
-	
-	
+
+
 	//dgyd展示预定蛋糕详情
 	this.ShowCakeDetail = function(e) {
 		// that.SetManage("inputsp");

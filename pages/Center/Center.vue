@@ -76,7 +76,7 @@
 		<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
 		<!-- //用于预先加载图片使用 -->
 		<view v-show="false">
-			<image :src="item.URL3" v-for="(item,index) in images" mode="widthFix"></image>
+			<image :src="item.IMGURL" v-for="(item,index) in IMAGES" mode="widthFix"></image>
 		</view>
 	</view>
 </template>
@@ -107,7 +107,7 @@
 				angless: 0,
 				syyjk: {}, //收银员是否结款
 				version: "1.0.0", //版本号
-				images: []
+				IMAGES: []
 			};
 		},
 		methods: {
@@ -123,9 +123,8 @@
 				//预先加载蛋糕图片
 				// _cake.PreLoadCakeImg(res => {
 				// 	console.log("图片数据：", res);
-				// 	that.images = res.msg;
+				// 	that.IMAGES = res.msg;
 				// });
-
 			},
 			onShow: function() {
 				this.MonitorEvent();

@@ -95,6 +95,11 @@ var PreLoadCakeImg = function(func) {
 		"select *,'http://58.19.103.220:8805/CakeImage/wx8.jpg?v=" + dateformat.getYMD() +
 		"' as URL2,'http://58.19.103.220:8805/CakeImage/'||url||'?v=" + dateformat.getYMD() +
 		"' as URL3 from DGXLIMAGE where DQID='K01000' and YN_MAIN='Y' limit 150";
+	let store = util.getStorage("store");
+	let sysParam = util.getStorage("sysParam");
+	sql = "select '" + sysParam.DGIMGURL +
+		"' || url ||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL from DGXLIMAGE where DQID='" +
+		store.DQID + "' and YN_MAIN='Y'";
 	db.get().executeQry(sql, "查询中...", res => {
 		if (func) func(res);
 		// for (var i = 0; i < res.msg.length; i++) {
