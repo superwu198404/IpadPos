@@ -2550,11 +2550,15 @@ function GetSale(global, vue, target_name, uni) {
 		let spindex = e.currentTarget.dataset.spindex;
 		let plitem = that.selectFlagList[plindex];
 		let spitem = plitem.plarr[spindex];
+        that.initClikSpItem(spitem);
+		that.SetManage("inputsp")
+	}
+	//初始化选中的item，预定选蛋糕和 正常的商品点选都会使用
+	this.initClikSpItem =function(pm_itemcClick)
+	{
+		that.clikSpItem = pm_itemcClick;
 		that.log("查看点击的商品" + JSON.stringify(that.clikSpItem));
-		that.clikSpItem = spitem;
 		that.clikSpItem.inputQty = 1;
-
-
 		if (that.clikSpItem.ynshowlist) //如果是蛋糕默认选择一个商品id
 		{
 			//SPECS,DGJGZ,DGPLID 为selectSPID_Chenged动态添加的属性，只有蛋糕商品存在此属性，其他商品不存在！
@@ -2579,7 +2583,80 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.SetManage("inputsp")
+		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
+	}
+	
+	//已经筛选好的蛋糕数组，作为缓存
+	this.cakeList =[]
+	//根据传入的标签数组进行筛选，返回that.clikSpItem
+	//使用结构中的bqlist  进行筛选
+	//传入的参数格式[{id:"xxxxx"}] 
+	this.cakeFilter =function(pm_inputArr)
+	{
+		that.cakeListInit();
+		if(that.cakeList.length==0 )
+		{
+			that.myAlert("没有筛选出蛋糕结果！");
+			return;
+		}
+		var b= pm_inputArr;
+		if(b == null || b.length ==0  )
+		{
+			return  that.cakeList;
+		}
+		else
+		{
+			var fret =[]
+			  that.cakeList.forEach(a=> 
+			     {
+                    let x=  a.bqlist.filter( item=>{  let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length  });
+				
+					if(x.length >0)
+					{
+						fret.push(a);
+					}
+				 }
+			);	
+			console.log("查看一下筛选的结果",fret);
+			return fret;
+		}
+	}
+	//只做一次 将所有蛋糕筛选出来备用
+	this.cakeListInit=function()
+	{
+		let  fplid ='109';
+		if(that.cakeList.length >0)
+		{
+			return ;
+		}
+		   var  carr = that.Allsplist.filter(item=>{return  (item.plid.indexOf(fplid)==0);})
+		   console.log("查看蛋糕的总长度"+carr.length,carr[0]);
+		    carr.forEach
+			(
+			     carritem =>
+					{   
+						carritem.plarr.forEach
+						(
+							spitem=>
+							{
+								 if(spitem.ynshowlist == "1")
+								 {
+									 that.cakeList.push(spitem);
+								 }
+							}
+						)	
+					}  
+			)
+			
+			console.log("查看一下蛋糕的数据呢",that.cakeList)
+	}
+	
+	
+	//dgyd展示预定蛋糕详情
+	this.ShowCakeDetail = function(e) {
+		// that.SetManage("inputsp");
+		console.log("蛋糕信息：", e);
+		util.simpleMsg("当前蛋糕：" + e.DGXLID);
 	}
 	//选择蛋糕时候的操作
 	this.selectSPID_Chenged = function(e) {

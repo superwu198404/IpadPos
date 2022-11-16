@@ -1,7 +1,7 @@
 /*
 初始化销售商品的录入信息
 初始化后的结果为   
-{FSTR:A,[plid:'xx',plname:'xxx',
+{[FSTR:A,plid:'xx',plname:'xxx',
      splist:[{spid:'001',spname:'吐司1',pinyin:"xxx",
 	          unit:"个",price:"11",specslist:[],ynshowlist:0,
 			       ynAddPro:0,addlist:[]},
@@ -59,7 +59,7 @@ var loadSaleSP = {
 	  蛋糕合并    2
 	  水吧sql	 3
 	*/
-	arrListGroupBy: function(pm_arr, cake_arr, drinkP_arr) {
+	arrListGroupBy: function(pm_arr, cake_arr, drinkP_arr,cakeBq_arr,cakeimg_arr) {
 		//{"FSTR":"z","PINYIN":"zjpbtzw（x）8-qj","SNAME":"竹节排包提子味（型）8-仟吉","SPID":"000000001010100002","addlist":"","plid":"308","plname":"三明治用半成品","specslist":"","ynAddPro":0,"ynshowlist":0}
 		//console.log(pm_arr.length+"#"+cake_arr.length+"#"+drinkP_arr.length+"#")
 		let pkey = "";
@@ -96,14 +96,50 @@ var loadSaleSP = {
 				pkey = cpk;
 				//console.log(item.plname+"字母"+fslag)
 			}
-			if (item.ynshowlist == "1") {
+			if (item.ynshowlist == "1") 
+			{
 				item.specslist = cake_arr.filter(cakeitem => {
 					return cakeitem.DGXLID == item.SPID
 				})
-				if (item.specslist.length > 0) {
+				
+				try
+				{
+					if(cakeBq_arr)
+					{
+						item.bqlist= cakeBq_arr.filter(Bqitem => 
+						{
+							return Bqitem.DGXLID == item.SPID
+						})
+					   //console.log("标签"+JSON.stringify(item.bqlist).substring(0,100) );
+					}
+					 if(cakeimg_arr)
+					 {
+						//console.log("图片开始获取" );
+						item.imglist = cakeimg_arr.filter(imgitem => 
+						{
+							return imgitem.DGXLID == item.SPID
+						})
+						//console.log("图片"+JSON.stringify(item.imglist).substring(0,100) );
+					 }
+					
+					
+						if(item.imglist.length>0)
+						{
+							item.img = item.imglist[0].IMGURL;
+							//console.log("图片"+JSON.stringify(item.img) );
+						}
+					
+				}
+				catch(error)
+				{
+					
+					　　console.log("出现了"+error);
+				}
+				if (item.specslist.length > 0)
+				{
 					item.SPID = item.specslist[0].SPID;
 				}
-				//console.log( JSON.stringify(item.specslist)  );
+				
 			}
 			if (item.ynAddPro == "1") {
 				var retDarr = drinkP_arr.filter(drinkitem => {
@@ -146,6 +182,15 @@ var loadSaleSP = {
 		// console.log(JSON.stringify(fsArr.slice(0, 3)));
 		return fsArr;
 	},
+    getDgxlImg:function(pm_storeid)
+	{
+	   	
+		let sql ="select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage ";
+	/* 	let sql= "select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage  where exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
+		   	" and spda_dgxl.dgxlid =dgxlimage.dgxlid " +
+		   " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') order by yn_main desc "; */
+		   return sql;
+	},
 	loadSp: async function(pm_storeid, callbackfun, pm_dqid, pm_khzid) {
 
 		let d = new Date();
@@ -178,9 +223,12 @@ var loadSaleSP = {
 		}, null);
 
 		// var  cakeid=pm_cakeid.split(",").map((item)=> {return  "'"+item+"'"});
-		var mainArr = [];
-		var cakeSpesc = [];
-		var dinkP = []
+		var mainArr = [];//主数据的列表
+		var cakeSpesc = [];//蛋糕规格的档案
+		var dinkP = [];  //水吧的列表
+		var cakeBq=[]; //存放的是蛋糕的标签
+		var cakeimg=[]; //存放的是蛋糕的图片
+		
 
 		console.log("##############################开始获取主商品##############################")
 		//z主商品sql 1
@@ -229,7 +277,25 @@ var loadSaleSP = {
 			cakeSpesc = res.msg;
 		}, null);
 		//水吧sql	3		 
-
+           
+		console.log("##############################开始获取标签的列表##############################")
+	     /* 	let dgbqlsql_sql ="select  DGXLID,DGBQ ID from  dgxlda_bq  where  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
+			" and spda_dgxl.dgxlid =dgxlda_bq.dgxlid " +
+		    " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') ";   */
+		  let dgbqlsql_sql ="select  DGXLID,DGBQ ID from  dgxlda_bq ";
+		  await $sqlLite.executeQry(dgbqlsql_sql, "正在获取标签的列表", (res) => {
+		  	// console.log(JSON.stringify(res).substring(0,2000));
+		  	cakeBq = res.msg;
+			console.log("查看一下标签的长度"+JSON.stringify(cakeBq).substring(0,300));
+		  }, null);
+		  console.log("##############################开始获取图片列表##############################")
+		  let imagesql =this.getDgxlImg(pm_storeid);
+		await $sqlLite.executeQry(imagesql, "正在获取图片列表", (res) => {
+			// console.log(JSON.stringify(res).substring(0,2000));
+			cakeimg = res.msg;
+					console.log("查看一下图片列表"+JSON.stringify(cakeimg).substring(0,300));
+		}, null);
+		   
 		console.log("##############################开始获取水吧商品##############################")
 		let msDrinksql =
 			"SELECT  substr(S1.PINYIN,1,1) FSTR, S1.SPID,S1.UNIT,S1.SNAME,S1.PINYIN,SM.ZLID plid,PLDA.SNAME plname,s1.plid XPLID,S1.SPJGZ,  " +
@@ -251,6 +317,9 @@ var loadSaleSP = {
 				console.log("没有水吧商品");
 			}
 		}, null);
+		
+		
+		
 		console.log("##############################开始获取水吧属性##############################")
 		//水吧属性	 
 		let drinkProSql = " SELECT  MATNR, CSTCODE,ATTCODE, ATTNAME, OPTCODE, OPTMAT, OPTNAME, RECMARK  " +
@@ -265,7 +334,7 @@ var loadSaleSP = {
 
 		}, null);
 		console.log("##############################开始进行数组整合##############################")
-		let arrAllsp = this.arrListGroupBy(mainArr, cakeSpesc, dinkP);
+		let arrAllsp = this.arrListGroupBy(mainArr, cakeSpesc, dinkP,cakeBq,cakeimg);
 		console.log("##############################调用完成进入回调函数##########################")
 
 		if (callbackfun) {
