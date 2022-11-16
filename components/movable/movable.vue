@@ -110,7 +110,9 @@
 				console.log("主动调用成功：", that.totalCount);
 			},
 			Orderments: function(e) {
-				this.orderlist = !this.orderlist;
+				if (this.totalCount > 0) {
+					this.orderlist = !this.orderlist;
+				}
 				// console.log("点击消息：", this.orderlist);
 			},
 			//消息已读

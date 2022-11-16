@@ -6,9 +6,10 @@
 				@click="ChooseCake(item)">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
-					<image class="pic" :src="item.URL3" mode="widthFix"></image>
+					<image class="pic" :src="url+item.P_URL" mode="widthFix"></image>
 					<view class="products">
 						<view class="names">{{item.DGXLID}}</view>
+
 						<text>{{item.DESCRIBE}}</text>
 					</view>
 				</view>
@@ -35,10 +36,14 @@
 				screenWidth: 0,
 				itemStyle: [],
 				swiperList: [],
-				url: "http://58.19.103.220:8805/CakeImage/00004/-2.jpg"
+				P_URL: "http://58.19.103.220:8805/CakeImage/"
 			};
 		},
 		async created() {
+			let sysParam = util.getStorage("sysParam");
+			if (sysParam && sysParam.DGIMGURL) {
+				this.P_URL = sysParam.DGIMGURL
+			}
 			var macInfo = uni.getSystemInfoSync();
 			this.screenWidth = macInfo.screenWidth;
 

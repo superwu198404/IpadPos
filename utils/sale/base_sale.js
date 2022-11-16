@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -1309,8 +1309,9 @@ var XsTypeObj = {
 		icon_close: require("@/images/xsdingdan-wxz.png"),
 		operation: {
 			"sale": true,
-			"sale_takeaway": true,
-			"sale_takeaway_reserve": true,
+			// "sale_online_order": true,
+			// "sale_takeaway": true,
+			// "sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -1484,8 +1485,8 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
-			"sale_online_order": true,
-			"sale_takeaway_reserve": true,
+			// "sale_online_order": true,
+			// "sale_takeaway_reserve": true,
 			"sale_message": true,
 			"ynCancel": true,
 			"lockRows": 0, //是否存在锁定行数
@@ -1523,8 +1524,8 @@ var XsTypeObj = {
 			"sale_credit": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
-			"sale_online_order": true,
-			"sale_takeaway": true,
+			// "sale_online_order": true,
+			// "sale_takeaway": true,
 			// "sale_takeaway_reserve": true,//和外卖单保持一致 点击自己不允许跳转到其他页面
 			"sale_message": true,
 			"ynCancel": true,
@@ -2340,6 +2341,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表  ，初始化促销单 
 	this.SetAllGoods = function(pm_list, pm_price) {
+		// console.log("所有的商品集合：", pm_list);
 		cx.Cxdict();
 		this.spPrice = pm_price;
 		this.Page.$set(this.Page[this.pageName], "spPrice", this.spPrice);
