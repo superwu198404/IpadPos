@@ -24,7 +24,7 @@
 		props: {
 			_swiperList: {
 				type: Array,
-				default: []
+				default: () => ([]) //工厂模式设置默认值
 			}
 		},
 		watch: {

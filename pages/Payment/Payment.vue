@@ -1997,6 +1997,9 @@
 							util.setStorage("hyinfo", {
 								hyId: e.hyid
 							});
+							this.hyinfo = {
+								hyId: e.hyid
+							};
 						}
 						// if ((!hyinfo || !hyinfo.hyId) && getApp().globalData.hyinfo) { //如果没有会员信息就重新录入一下
 						// 	getApp().globalData.hyinfo.hyId = e.hyid;

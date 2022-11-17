@@ -235,7 +235,7 @@
 		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
 				:confirm="(mainSale.current_type.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
-				:decoration="mainSale.decoration">
+				:decoration="mainSale.decoration" :_saleType="mainSale.clickSaleType.clickType">
 			</ReserveDrawer>
 		</view>
 
@@ -588,14 +588,16 @@
 						<view class="banner">
 							<swiper autoplay="true" :interval="5000" :duration="500" circular="true"
 								indicator-active-color="#fff" easing-function="true" indicator-dots='true'
-								@change="swiperChange">
+								:current="mainSale.mode_info.sale_cake_reserve.imgCurrent">
+								<!-- @change="swiperChange" -->
 								<swiper-item v-for="(item, index) in mainSale.clikSpItem.imglist" :key="index">
 									<image :src="P_URL+item.IMGURL"></image>
 								</swiper-item>
 							</swiper>
 						</view>
 						<view class="tupian">
-							<label v-for="(item, index) in mainSale.clikSpItem.imglist">
+							<label v-for="(item, index) in mainSale.clikSpItem.imglist"
+								@click="mainSale.mode_info.sale_cake_reserve.ChooseDetail(index)">
 								<image :src="P_URL+item.IMGURL"></image>
 							</label>
 						</view>

@@ -160,6 +160,10 @@
 			over48: {
 				type: Boolean,
 				default: false
+			},
+			_saleType: {
+				type: String,
+				default: ""
 			}
 		},
 		computed: {

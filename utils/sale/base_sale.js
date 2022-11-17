@@ -259,7 +259,6 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) {
 			this.ClearDiscount(this.sale001, this.sale002);
-			this.CombineCouponAndNoOrginPay(this.sale003);
 		},
 		//支付完成以后
 		$saleFinied: async function() {
@@ -302,6 +301,7 @@ var XsTypeObj = {
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
 		condition: [],
+		imgCurrent: 0,
 		condition_output: function() {
 			let result = [];
 			this.condition.forEach(i => {
@@ -441,7 +441,7 @@ var XsTypeObj = {
 		},
 		//退出确认
 		CloseCakeReservation: function() {
-			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+			util.simpleModal('提示', '请输入校验密码', util.callBind(this, function(is_confirm, data) {
 				console.log("[ReserveInfoInput]密码确认:", {
 					is_confirm,
 					data,
@@ -496,20 +496,17 @@ var XsTypeObj = {
 			console.log("[ConfirmCondition]确认条件:", condition);
 			console.log("[ConfirmCondition]输出信息:", );
 			let bqlist = this.mode_info.sale_cake_reserve.condition_output();
-			// if (bqlist && bqlist.length > 0) {
 			this.CakeList = this.cakeFilter(bqlist); //根据标签筛选蛋糕数据
 			if (this.CakeList.length == 0) {
 				util.simpleMsg("无符合条件数据", true);
 			} else {
 				util.simpleMsg("筛选数据成功");
 			}
-			// }
 			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 		},
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
 			this.mode_info.sale_cake_reserve.condition.forEach(i => {
-				console.log("[DeleteCheckedTag]当前是否存在:",i.DATA.indexOf(item));
 				i.DATA.splice(i.DATA.indexOf(item), 1);
 			})
 		},
@@ -536,7 +533,7 @@ var XsTypeObj = {
 			});
 			this.sale001.$total_amount = this.sale001.DNET;
 			this.$total_amount = this.sale001.DNET;
-			util.simpleModal('收银员密码确认', '请输入密码,以进行下一步操作...', util.callBind(this, function(is_confirm, data) {
+			util.simpleModal('提示', '请输入密码校验', util.callBind(this, function(is_confirm, data) {
 				console.log("[ReserveInfoInput]密码确认:", {
 					is_confirm,
 					data,
@@ -569,6 +566,12 @@ var XsTypeObj = {
 				this.condition = []; //清空已选标签
 				this.yn_showDetail = false;
 			}
+		},
+		//选择详情图片顶部切换
+		ChooseDetail: function(e) {
+			console.log("切换索引：", e);
+			// console.log("切换索引1：", this);
+			this.imgCurrent = e;
 		}
 	},
 	//预订单下单
@@ -978,7 +981,6 @@ var XsTypeObj = {
 			// }); //由支付页面payment内部 统一处理 
 			delete this.old_bill;
 			this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
-			this.CombineCouponAndNoOrginPay(this.sale003);
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 		},
 		async $saleFinied(sales) {
@@ -1608,10 +1610,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.FKDA_INFO = [];
 	(util.callBind(this, async function() {
 		try {
-			await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(this, function(res) {
+			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
 				if (res.code) {
 					this.FKDA_INFO = JSON.parse(res.data);
-					console.warn("[GetSale]获取支付方式:",this.FKDA_INFO);
+					//console.log("获取支付方式 test111",this.FKDA_INFO);
 				} else {
 					util.simpleMsg("获取付款方式失败!", true)
 				}
@@ -1659,36 +1661,6 @@ function GetSale(global, vue, target_name, uni) {
 			s2.TPDISC = 0;
 		})
 		console.log("[ClearDiscount]折扣清除后:", sale2);
-	}
-	//合并券类型和不可原路退回操作
-	this.CombineCouponAndNoOrginPay = function(sale003){
-		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ',].includes(i.JKSNAME)).map(i => i.FKID).concat(['ZG02']);
-		console.log("[CombineCouponAndNoOrginPay]合并项FKID:",combine_fkid);
-		let combine_sale3 = sale003.filter(i => combine_fkid.includes(i.FKID));
-		let uncombine_sale3 = sale003.filter(i => !combine_fkid.includes(i.FKID));
-		console.log("[CombineCouponAndNoOrginPay]合并分类:",{
-			combine_sale3,
-			uncombine_sale3,
-			sale003
-		});
-		if(!combine_sale3.length) return;//如果没有和并项
-		let single_sale3 = (() => {
-			let sale3 = combine_sale3[0],total_amount = 0;//取原单第一位的原因是序号问题和部分数据填充的问题
-			combine_sale3.forEach(i => {
-				total_amount+=Number(i.AMT) ?? 0;
-			})
-			sale3.AMT = total_amount;
-			sale3.FKID = 'ZG02';
-			sale3.FAMT = 0;
-			sale3.RATE = 0;
-			sale3.DISC = 0;
-			sale3.ZKLX = 0;
-			sale3.AUTH = "";
-			sale3.ID = "";
-			sale3.IDTYPE = "";
-			return sale3;
-		})();
-		sale003 = uncombine_sale3.concat([single_sale3]);
 	}
 	//创建订单号
 	this.getBill = function() {
@@ -2853,11 +2825,7 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 			console.log("[PayedResult]调用执行 SaleFinishing 中...");
-			try{
-				this.$saleFinishing(result.data);
-			}catch(e){
-				console.log("[PayedResult]执行 SaleFinishing 发生异常:",e);
-			}
+			this.$saleFinishing(result.data);
 			//支付前允许手工折扣 则支付完成后要分摊商品金额
 			if (this.currentOperation.ynSKDisc) {
 				//手工折扣额分摊
@@ -3521,7 +3489,7 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			if (!this.sale001.CUID && !this.HY.cval.hyId) {
+			if (!this.sale001.CUID) {
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);
