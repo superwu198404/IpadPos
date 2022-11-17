@@ -240,7 +240,7 @@ var wxPay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
-	}, 
+	},
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
@@ -288,7 +288,7 @@ var hykPay = {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true)
-				if(catchFunc) catchFunc();
+				if (catchFunc) catchFunc();
 				return;
 			}
 			body.merchant_no = config.SHID; //从数据库获取配置
@@ -320,7 +320,7 @@ var kengeePay = {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true);
-				if(catchFunc) catchFunc();
+				if (catchFunc) catchFunc();
 				return;
 			}
 			Req.asyncFuncOne(CreateData("TL", "查询中...",
@@ -365,7 +365,7 @@ var misPay = {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true);
-				if(catchFunc) catchFunc();
+				if (catchFunc) catchFunc();
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
@@ -379,7 +379,7 @@ var misPay = {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true)
-				if(catchFunc) catchFunc();
+				if (catchFunc) catchFunc();
 				return;
 			}
 			body.terminalCode = config.NOTE;
@@ -701,11 +701,21 @@ var payType = {
 
 //聚合支付主入口
 var PaymentAll = function(pt, body, func, catchFunc) {
-	payType[pt].PaymentAll(pt, body, func, catchFunc)
+	try {
+		payType[pt].PaymentAll(pt, body, func, catchFunc)
+	} catch (e) {
+		console.log("[PaymentAll]发生调用异常:",e);
+		if(catchFunc) catchFunc();
+	}
 }
 //聚合退款主入口
 var RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-	payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
+	try {
+		payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
+	} catch (e) {
+		console.log("[RefundAll]发生调用异常:",e);
+		if(catchFunc) catchFunc();
+	}
 }
 
 //单个支付入口

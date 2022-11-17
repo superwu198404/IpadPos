@@ -143,8 +143,8 @@ import { resolve } from 'path';
 					more: false
 				},
 				map: {
-					longitude: 114.3093413671875, //经度
-					latitude: 30.570206594347283, //纬度
+					longitude: util.getStorage('StoreCoodinate').longitude ?? 114.3093413671875, //经度
+					latitude: util.getStorage('StoreCoodinate').latitude ?? 30.570206594347283, //纬度
 					scale: 12, //缩放级别
 					markers: [],
 					key: Number(new Date())

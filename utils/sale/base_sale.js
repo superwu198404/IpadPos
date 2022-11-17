@@ -507,6 +507,7 @@ var XsTypeObj = {
 		DeleteCheckedTag: function(item) {
 			console.log("[DeleteCheckedTag]当前删除的标签:", item);
 			this.mode_info.sale_cake_reserve.condition.forEach(i => {
+				console.log("[DeleteCheckedTag]当前是否存在:", i.DATA.indexOf(item));
 				i.DATA.splice(i.DATA.indexOf(item), 1);
 			})
 		},
@@ -1613,7 +1614,7 @@ function GetSale(global, vue, target_name, uni) {
 			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
 				if (res.code) {
 					this.FKDA_INFO = JSON.parse(res.data);
-					//console.log("获取支付方式 test111",this.FKDA_INFO);
+					console.warn("[GetSale]获取支付方式:", this.FKDA_INFO);
 				} else {
 					util.simpleMsg("获取付款方式失败!", true)
 				}
@@ -1661,6 +1662,42 @@ function GetSale(global, vue, target_name, uni) {
 			s2.TPDISC = 0;
 		})
 		console.log("[ClearDiscount]折扣清除后:", sale2);
+	}
+	//合并券类型和不可原路退回操作
+	this.CombineCouponAndNoOrginPay = function(sale003) {
+		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ', ].includes(i.JKSNAME)).map(i => i.FKID).concat([
+			'ZG02']);
+		console.log("[CombineCouponAndNoOrginPay]合并项FKID:", combine_fkid);
+		let combine_sale3 = sale003.filter(i => combine_fkid.includes(i.FKID));
+		let uncombine_sale3 = sale003.filter(i => !combine_fkid.includes(i.FKID));
+		console.log("[CombineCouponAndNoOrginPay]合并分类:", {
+			combine_sale3,
+			uncombine_sale3,
+			sale003
+		});
+		if (!combine_sale3.length) return; //如果没有和并项
+		let single_sale3 = (() => {
+			let sale3 = combine_sale3[0],
+				total_amount = 0; //取原单第一位的原因是序号问题和部分数据填充的问题
+			combine_sale3.forEach(i => {
+				total_amount += Number(i.AMT) ?? 0;
+			})
+			sale3.AMT = total_amount;
+			sale3.FKID = 'ZG02';
+			sale3.FAMT = 0;
+			sale3.RATE = 0;
+			sale3.DISC = 0;
+			sale3.ZKLX = 0;
+			sale3.AUTH = "";
+			sale3.ID = "";
+			sale3.IDTYPE = "";
+			return sale3;
+		})();
+		this.sale003 = uncombine_sale3.concat([single_sale3]);
+		console.log("[CombineCouponAndNoOrginPay]合并处理后:", {
+			sale003,
+			this_sale003: this.sale003
+		});
 	}
 	//创建订单号
 	this.getBill = function() {
@@ -2825,7 +2862,11 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 			console.log("[PayedResult]调用执行 SaleFinishing 中...");
-			this.$saleFinishing(result.data);
+			try {
+				this.$saleFinishing(result.data);
+			} catch (e) {
+				console.log("[PayedResult]执行 SaleFinishing 发生异常:", e);
+			}
 			//支付前允许手工折扣 则支付完成后要分摊商品金额
 			if (this.currentOperation.ynSKDisc) {
 				//手工折扣额分摊
