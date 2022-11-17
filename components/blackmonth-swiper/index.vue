@@ -6,7 +6,7 @@
 				@click="ChooseCake(item)">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
-					<image class="pic" :src="item.URL3" mode="widthFix"></image>
+					<image class="pic" :src="P_URL+item.IMGURL" mode="widthFix"></image>
 					<view class="products">
 						<view class="names">{{item.DGXLID}}</view>
 						<text>{{item.DESCRIBE}}</text>
@@ -19,11 +19,22 @@
 
 <script>
 	import _cake from '@/api/business/CakeYD.js';
+	import util from '@/utils/util.js';
 	export default {
 		props: {
 			_swiperList: {
 				type: Array,
 				default: []
+			}
+		},
+		watch: {
+			_swiperList: function(n, o) {
+				console.log("监测值", n);
+				if (n && n.length > 0) {
+					this.swiperList = n.filter((r, i) => {
+						return i <= 100;
+					});
+				}
 			}
 		},
 		data() {
@@ -35,15 +46,20 @@
 				screenWidth: 0,
 				itemStyle: [],
 				swiperList: [],
-				url: "http://58.19.103.220:8805/CakeImage/00004/-2.jpg"
+				// P_URL: "http://58.19.103.220:8805/CakeImage/"
+				P_URL: ""
 			};
 		},
 		async created() {
+			let sysParam = util.getStorage("sysParam");
+			if (sysParam && sysParam.DGIMGURL) {
+				this.P_URL = sysParam.DGIMGURL
+			}
 			var macInfo = uni.getSystemInfoSync();
 			this.screenWidth = macInfo.screenWidth;
 
-			this.swiperList = await _cake.GetCakeList();
-			console.log("集合数据：", this.swiperList);
+			// this.swiperList = await _cake.GetCakeList();
+			// console.log("集合数据：", this.swiperList);
 			// 计算swiper样式
 			this.swiperList.forEach((item, index) => {
 				this.itemStyle.push(this.getStyle(index))
