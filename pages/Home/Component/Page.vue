@@ -117,7 +117,7 @@
 				// 	name: menu_name,
 				// 	info: menu_info
 				// };
-				console.log("[MenuSelect]切换页面...");
+				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
 				uni.$emit("change", {
 					name: menu_name,
 					info: menu_info

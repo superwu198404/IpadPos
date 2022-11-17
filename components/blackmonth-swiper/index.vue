@@ -6,10 +6,10 @@
 				@click="ChooseCake(item)">
 				<view class="children">
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
-					<image class="pic" :src="P_URL+item.IMGURL" mode="widthFix"></image>
+					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
 					<view class="products">
-						<view class="names">{{item.DGXLID}}</view>
-						<text>{{item.DESCRIBE}}</text>
+						<view class="names">{{item.SNAME}}</view>
+						<text>{{item.note}}</text>
 					</view>
 				</view>
 			</view>
@@ -29,12 +29,19 @@
 		},
 		watch: {
 			_swiperList: function(n, o) {
-				console.log("监测值", n);
+				console.log("蛋糕数据发生变动：", n.length);
 				if (n && n.length > 0) {
 					this.swiperList = n.filter((r, i) => {
 						return i <= 100;
 					});
+					this.itemStyle = [];
+					this.swiperList.forEach((item, index) => {
+						this.itemStyle.push(this.getStyle(index))
+					})
+				} else {
+					this.swiperList = [];
 				}
+				console.log("蛋糕显示数据", this.swiperList);
 			}
 		},
 		data() {
@@ -61,9 +68,9 @@
 			// this.swiperList = await _cake.GetCakeList();
 			// console.log("集合数据：", this.swiperList);
 			// 计算swiper样式
-			this.swiperList.forEach((item, index) => {
-				this.itemStyle.push(this.getStyle(index))
-			})
+			// this.swiperList.forEach((item, index) => {
+			// 	this.itemStyle.push(this.getStyle(index))
+			// })
 		},
 		methods: {
 			ChooseCake: function(e) {

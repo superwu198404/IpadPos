@@ -295,7 +295,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -450,6 +450,7 @@ var XsTypeObj = {
 				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
 					this.show_cake_reservation = false;
+					this.CakeList = []; //清空传入的蛋糕数据
 					this.SetDefaultType();
 				} else {
 					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
@@ -493,7 +494,16 @@ var XsTypeObj = {
 				}
 			});
 			console.log("[ConfirmCondition]确认条件:", condition);
-			console.log("[ConfirmCondition]输出信息:", this.mode_info.sale_cake_reserve.condition_output());
+			console.log("[ConfirmCondition]输出信息:", );
+			let bqlist = this.mode_info.sale_cake_reserve.condition_output();
+			// if (bqlist && bqlist.length > 0) {
+			this.CakeList = this.cakeFilter(bqlist); //根据标签筛选蛋糕数据
+			if (this.CakeList.length == 0) {
+				util.simpleMsg("无符合条件数据", true);
+			} else {
+				util.simpleMsg("筛选数据成功");
+			}
+			// }
 			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 		},
 		DeleteCheckedTag: function(item) {
@@ -552,6 +562,8 @@ var XsTypeObj = {
 			if (e) { //展开详情
 				console.log("展开详情");
 				this.mode_info.sale_cake_reserve.yn_showDetail = true;
+				this.initClikSpItem(e);
+				console.log("详情渲染对象：", this.clikSpItem);
 			} else { //关闭详情
 				console.log("关闭详情");
 				this.condition = []; //清空已选标签
@@ -2632,23 +2644,23 @@ function GetSale(global, vue, target_name, uni) {
 			that.myAlert("没有筛选出蛋糕结果！");
 			return;
 		}
-		var b= pm_inputArr;
-		if(b == null || b.length == 0  )
-		{
-			return  that.cakeList;
-		}
-		else
-		{
-			var fret =[]
-			  that.cakeList.forEach(a=> 
-			     {
-                    let x=  a.bqlist.filter( item=>{ let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length >0 ;});	
-					   if(x.length  == b.length )
-					   {
-						fret.push(a);
-					   }
-		         })
-			console.log("查看一下筛选的结果",fret);
+		var b = pm_inputArr;
+		if (b == null || b.length == 0) {
+			return that.cakeList;
+		} else {
+			var fret = []
+			that.cakeList.forEach(a => {
+				let x = a.bqlist.filter(item => {
+					let ret = b.filter(itemb => {
+						return itemb.ID == item.ID
+					});
+					return ret.length > 0;
+				});
+				if (x.length == b.length) {
+					fret.push(a);
+				}
+			})
+			console.log("查看一下筛选的结果", fret);
 			return fret;
 		}
 	}
@@ -3271,7 +3283,9 @@ function GetSale(global, vue, target_name, uni) {
 			that.resetDrinkPro();
 			that.update();
 		} else {
-			that.SetManage("inputsp");
+			if (!that.clikSpItem.img) { //排除蛋糕预定确认后 还弹框的问题
+				that.SetManage("inputsp");
+			}
 		}
 	}
 	//重置水吧商品的属性
