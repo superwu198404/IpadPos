@@ -160,7 +160,7 @@
 		</view>
 		<!-- 会员登录 -->
 		<MemberLogin v-if="mainSale.ComponentsManage.HY" class="member-login-box"></MemberLogin>
-		<!-- 蛋糕属性选择 -->
+		<!-- 商品详情选择 -->
 		<view class="boxs" v-if="mainSale.ComponentsManage.inputsp">
 
 			<view class="popup">
@@ -518,7 +518,7 @@
 				</view>
 			</view>
 			<!-- //列表 -->
-			<view v-if="!mainSale.mode_info.sale_cake_reserve.yn_showDetail">
+			<view v-show="!mainSale.mode_info.sale_cake_reserve.yn_showDetail">
 				<view class="body-titles">
 					<view style="width: 90%;display: flex; align-items: center;">
 						<view class="hot-sales">
@@ -573,7 +573,7 @@
 
 			<!-- 详情 -->
 			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
-				<view class="body-titles">
+				<view class="body-titles"  style="height:70rpx;line-height: 70rpx;">
 					<view style="width: 90%;display: flex; align-items: center;"
 						@click="mainSale.mode_info.sale_cake_reserve.ShowCakeDetail()">
 						ㄑ
@@ -589,35 +589,22 @@
 							<swiper autoplay="true" :interval="5000" :duration="500" circular="true"
 								indicator-active-color="#fff" easing-function="true" indicator-dots='true'
 								@change="swiperChange">
-								<swiper-item v-for="(item, index) in bannerList" :key="index">
-									<image :src="item.url"></image>
+								<swiper-item v-for="(item, index) in mainSale.clikSpItem.imglist" :key="index">
+									<image :src="P_URL+item.IMGURL"></image>
 								</swiper-item>
 							</swiper>
 						</view>
 						<view class="tupian">
-							<label>
-								<image src="@/images/xstu2-1.png"></image>
-							</label>
-							<label>
-								<image src="@/images/xstu2-1.png"></image>
-							</label>
-							<label>
-								<image src="@/images/xstu2-1.png"></image>
-							</label>
-							<label>
-								<image src="@/images/xstu2-1.png"></image>
-							</label>
-							<label>
-								<image src="@/images/xstu2-1.png"></image>
+							<label v-for="(item, index) in mainSale.clikSpItem.imglist">
+								<image :src="P_URL+item.IMGURL"></image>
 							</label>
 						</view>
 					</view>
 					<view class="exhibiting">
 						<view class="h3">
-							<image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕
+							<image src="@/images/dx-mrxk.png" mode="widthFix"> {{mainSale.clikSpItem.SNAME}}
 						</view>
-						<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
-							棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
+						<view class="miaos">{{mainSale.clikSpItem.note}}</view>
 						<view class="commods">
 							<!-- 价格数量 -->
 							<view class="price">
@@ -635,7 +622,7 @@
 								</view>
 							</view>
 							<!-- 加入购物车的产品属性 -->
-							<view class="tochoose">
+							<view class="tochoose" v-if="false">
 								<view v-for=" (sp, spinx) in mainSale.sale002"
 									v-if="sp.BARCODE == mainSale.clikSpItem.SPID">
 									<label class="shux"><text>{{sp.UNIT}}</text>*<text>{{sp.QTY}}</text>
@@ -651,7 +638,7 @@
 						</view>
 						<view class="yxlb">
 							<!-- 以选标签   -->
-							<label v-for="item2 in mainSale.CheckTagList"># {{item2._NAME}}</label>
+							<label v-for="item2 in mainSale.clikSpItem.bqlist"># {{item2.NAME}}</label>
 						</view>
 						<view class="sizes">
 							<view class="chic"><i class="sgin">*</i>尺寸</view>
@@ -664,7 +651,8 @@
 									@click="mainSale.selectSPID_Chenged">{{specs.SPECS}}</label>
 							</view>
 						</view>
-						<view class="join"><button class="btn">加入购物车</button></view>
+						<view class="join"><button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+						</view>
 					</view>
 				</view>
 				<view class="states" @click="mainSale.ShowStatement">
@@ -743,7 +731,8 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				sale_type_infos: null,
-				Tallylist: false
+				Tallylist: false,
+				P_URL: ""
 			}
 		},
 		components: {
@@ -947,6 +936,10 @@
 				console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
 			}), this.DQID, this.KHZID);
+			let sys = util.getStorage("sysParam");
+			if (sys && sys.DGIMGURL) {
+				this.P_URL = sys.DGIMGURL;
+			}
 		}
 	}
 </script>
