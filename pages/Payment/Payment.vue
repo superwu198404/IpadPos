@@ -1052,7 +1052,7 @@
 				let all_support_fkid = this.PayWayList;
 				let check_result = this.RefundList.map(r => r.fkid).map(i => {
 					let find_info = all_support_fkid.find(o => o.fkid == i)
-					if (find_info && find_info.yn_use == 'Y')
+					if (find_info && (find_info.poly == 'O' || find_info.yn_use == 'Y'))
 						return {
 							pay_info: find_info ?? i,
 							is_support: true
