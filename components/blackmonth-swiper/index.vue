@@ -29,7 +29,7 @@
 		},
 		watch: {
 			_swiperList: function(n, o) {
-				// console.log("监测值", n);
+				console.log("蛋糕数据发生变动");
 				if (n && n.length > 0) {
 					this.swiperList = n.filter((r, i) => {
 						return i <= 100;

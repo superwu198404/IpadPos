@@ -449,6 +449,7 @@ var XsTypeObj = {
 				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
 					console.log("[CloseCakeReservation]蛋糕预定关闭...");
 					this.show_cake_reservation = false;
+					this.CakeList = []; //清空传入的蛋糕数据
 					this.SetDefaultType();
 				} else {
 					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
@@ -550,6 +551,8 @@ var XsTypeObj = {
 			if (e) { //展开详情
 				console.log("展开详情");
 				this.mode_info.sale_cake_reserve.yn_showDetail = true;
+				this.initClikSpItem(e);
+				console.log("详情渲染对象：", this.clikSpItem);
 			} else { //关闭详情
 				console.log("关闭详情");
 				this.condition = []; //清空已选标签
@@ -3234,7 +3237,9 @@ function GetSale(global, vue, target_name, uni) {
 			that.resetDrinkPro();
 			that.update();
 		} else {
-			that.SetManage("inputsp");
+			if (!that.clikSpItem.img) { //排除蛋糕预定确认后 还弹框的问题
+				that.SetManage("inputsp");
+			}
 		}
 	}
 	//重置水吧商品的属性
