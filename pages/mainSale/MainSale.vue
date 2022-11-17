@@ -573,7 +573,7 @@
 
 			<!-- 详情 -->
 			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
-				<view class="body-titles"  style="height:70rpx;line-height: 70rpx;">
+				<view class="body-titles" style="height:70rpx;line-height: 70rpx;">
 					<view style="width: 90%;display: flex; align-items: center;"
 						@click="mainSale.mode_info.sale_cake_reserve.ShowCakeDetail()">
 						ㄑ
@@ -845,7 +845,7 @@
 					return [];
 			},
 			ShowHY: function() {
-				return this.mainSale.HY.val?.hyId;
+				return this.mainSale.HY.val?.hyId && this.mainSale.currentOperation.HY;
 			},
 			MemberBalance: function() {
 				return (this.mainSale.HY.val?.Balance ?? 0) / 100;
