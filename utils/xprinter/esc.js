@@ -1428,7 +1428,7 @@ var jpPrinter = {
 			let amount = item2.amt;
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item2.fkName + ":" + amount.toString());
+			jpPrinter.setText(item2.fkName + ":" + util.tnvl(amount,0));
 			jpPrinter.setPrint(); //打印并换行
 		});		
 
@@ -1747,10 +1747,10 @@ var jpPrinter = {
 				let amount = item2.amt;
 				jpPrinter.setCharacterSize(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
-				jpPrinter.setText(item2.fkName + ":" + amount.toString());
+				jpPrinter.setText(item2.fkName + ":" + util.tnvl(amount,0));
 				jpPrinter.setPrint(); //打印并换行
 			});		
-				
+			
 			//是退单，金额显示负数
 			if(isReturn){
 				payTotal = -Math.abs(payTotal).toFixed(2);
@@ -2031,7 +2031,7 @@ var jpPrinter = {
 			let amount = item2.amt;
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item2.fkName + ":" + amount.toString());
+			jpPrinter.setText(item2.fkName + ":" + util.tnvl(amount,0));
 			jpPrinter.setPrint(); //打印并换行
 		});		
 	
