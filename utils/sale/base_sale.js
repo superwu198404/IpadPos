@@ -2618,7 +2618,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
+		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
 	}
 
 	//已经筛选好的蛋糕数组，作为缓存
