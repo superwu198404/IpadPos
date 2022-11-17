@@ -16,6 +16,11 @@
 					<!-- <input /> -->
 					<input placeholder="请输入款台号" v-model="posid" type="number" />
 				</label>
+				<label>
+					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
+					<!-- <input /> -->
+					<input placeholder="请输入初始化密码" v-model="poskey"  password="true" />
+				</label>
 			</view>
 			<view class="operate">
 				<button class="btn" @click="init">初始化</button>
@@ -134,6 +139,7 @@
 				tx001: null,
 				khid: "", //'K0101QT2',//108通讯 测试使用
 				posid: "", //"8",//108通讯 测试使用
+				poskey:"",//pos初始化的密码
 				yninit: false,
 				showmsg: "门店基础数据初始化"
 			}
@@ -235,7 +241,8 @@
 						// let sysinfo = util.getStorage("sysinfo");
 						let reqPosData = {
 							"khid": that.khid,
-							"posid": that.posid
+							"posid": that.posid,
+							"poskey":that.poskey,
 							//"deviceId": sysinfo?.deviceId || "IPADPOS" //传入设备号 注意设备号会随着storage清除而发生改变
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
