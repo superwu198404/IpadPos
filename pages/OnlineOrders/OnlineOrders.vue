@@ -29,6 +29,9 @@
 											<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 										</label>
 									</view> -->
+						<view class="sousuo" @click="GetOnlineOrders()" style="color: white;">
+							<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+						</view>
 					</view>
 				</view>
 			</view>
@@ -76,8 +79,8 @@
 						<label class="from-label">
 							<text>裱花间：</text>
 							<text v-if="mode('read')">{{details.order.KHSNAME || '-'}}</text>
-							<StorePicker mode="selector" class="input" style="z-index: 99999999;" :init="details.order.KHID_BH" v-if="mode('edit')"
-								@change="StoreChange"></StorePicker>
+							<StorePicker mode="selector" class="input" style="z-index: 99999999;"
+								:init="details.order.KHID_BH" v-if="mode('edit')" @change="StoreChange"></StorePicker>
 						</label>
 						<label class="from-label">
 							<text>到货日期：</text>
@@ -137,11 +140,14 @@
 					</view>
 				</view>
 				<view class="operat">
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result" class="btn btn-edit" @click="Edit()">编辑</button>
+					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
+						class="btn btn-edit" @click="Edit()">编辑</button>
 					<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
 					<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result" class="btn" @click="ConfirmAccept(true)">接受确认</button>
-					<button v-if="mode('read') && !view.search.confirm && !view.check.loading && view.check.result" class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
+					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
+						class="btn" @click="ConfirmAccept(true)">接受确认</button>
+					<button v-if="mode('read') && !view.search.confirm && !view.check.loading && view.check.result"
+						class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
 					<view class="check-tips loading" v-if="view.check.loading">订单状态检查中</view>
 				</view>
 			</view>
@@ -478,13 +484,13 @@
 				}, util.callBind(this, function(res) {
 					this.EditLoad(false, bill);
 					this.view.search.confirm = res.code;
-					this.view.check.result = true;//放开所有按钮
-					if(!res.code) util.simpleMsg(res.msg, res.code, res);
+					this.view.check.result = true; //放开所有按钮
+					if (!res.code) util.simpleMsg(res.msg, res.code, res);
 					console.log("[OrderStatusCheck]Res:", res);
-				}),util.callBind(this,function(err){
+				}), util.callBind(this, function(err) {
 					console.log("[OrderStatusCheck]订单状态查询失败...");
 					this.EditLoad(false, bill);
-					this.view.check.result = false;//锁定所有按钮
+					this.view.check.result = false; //锁定所有按钮
 					util.simpleMsg("订单状态查询失败,请重新点击左侧订单发起查询!")
 				}));
 			},
@@ -564,11 +570,12 @@
 					info_valid = await Validity(this.details.order);
 					time_valid = this.CheckArrivalDate(this.details.order.DATE_DH);
 				}
-				if (info_valid.state && time_valid || !isAccept){
-					let query_res = await RequestSend(`select * from ywbhqh where bill_status='0' and BILL_YD='${this.details.order.YDBILL}'`);
+				if (info_valid.state && time_valid || !isAccept) {
+					let query_res = await RequestSend(
+						`select * from ywbhqh where bill_status='0' and BILL_YD='${this.details.order.YDBILL}'`);
 					// let query_res = await RequestSend(`select * from ywbhqh where bill_status='0' and BILL_YD='LH202210240004'`);
-					console.log("[ConfirmAccept]订单查询信息:",query_res);
-					if (this.view.search.confirm && JSON.parse(query_res.result?.data)?.length != 0){//因为接单后状态会发生变更
+					console.log("[ConfirmAccept]订单查询信息:", query_res);
+					if (this.view.search.confirm && JSON.parse(query_res.result?.data)?.length != 0) { //因为接单后状态会发生变更
 						ordersAccept({
 							storeid: this.KHID, //店铺id
 							gcid: this.GCID, //工厂id
@@ -579,23 +586,22 @@
 							this.GetOnlineOrders(util.callBind(this, function() {
 								let type = Object.keys(this.onlineOrdersGroup)[0];
 								if (this.onlineOrdersGroup[type]) {
-									Object.assign(this.details.order, this.onlineOrdersGroup[type][0]);
+									Object.assign(this.details.order, this.onlineOrdersGroup[
+										type][0]);
 								}
 							})); //刷新页面
 							util.simpleMsg("接受成功!")
 							console.log("[ConfirmAccept]处理结果：", res)
 							//调用打印
 							this.$refs.printerPage.xsBluePrinter(this.details.order, "XSDD");
-							
+
 						}), (err) => {
 							util.simpleMsg(err.msg, "none", err);
 						});
-					}
-					else{
+					} else {
 						util.simpleMsg('订单状态无效!', true);
 					}
-				}
-				else {
+				} else {
 					if (!info_valid.state)
 						util.simpleMsg(info_valid.msg, true, info_valid)
 					else if (!time_valid)
