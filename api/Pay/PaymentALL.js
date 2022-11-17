@@ -291,7 +291,7 @@ var hykPay = {
 				if (catchFunc) catchFunc();
 				return;
 			}
-			body.merchant_no = config.SHID; //从数据库获取配置
+			body.merchant_no = config.LONGKEY; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
 			_PaymentAll(pt, body, func, catchFunc);
 		})
 	},
