@@ -9,7 +9,7 @@
 					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
 					<view class="products">
 						<view class="names">{{item.SNAME}}</view>
-						<text>{{item.SNAME}}</text>
+						<text>{{item.note}}</text>
 					</view>
 				</view>
 			</view>

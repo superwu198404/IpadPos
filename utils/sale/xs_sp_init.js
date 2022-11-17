@@ -126,7 +126,9 @@ var loadSaleSP = {
 						if(item.imglist.length>0)
 						{
 							item.img = item.imglist[0].IMGURL;
+							item.note = item.imglist[0].DESCRIBE||'暂时没有添加描述';
 							//console.log("图片"+JSON.stringify(item.img) );
+							
 						}
 					
 				}
@@ -185,7 +187,7 @@ var loadSaleSP = {
     getDgxlImg:function(pm_storeid)
 	{
 	   	
-		let sql ="select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage ";
+		let sql ="select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL,DESCRIBE  from   dgxlimage ";
 	/* 	let sql= "select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage  where exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
 		   	" and spda_dgxl.dgxlid =dgxlimage.dgxlid " +
 		   " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') order by yn_main desc "; */
@@ -282,7 +284,7 @@ var loadSaleSP = {
 	     /* 	let dgbqlsql_sql ="select  DGXLID,DGBQ ID from  dgxlda_bq  where  exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
 			" and spda_dgxl.dgxlid =dgxlda_bq.dgxlid " +
 		    " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') ";   */
-		  let dgbqlsql_sql ="select  DGXLID,DGBQ ID from  dgxlda_bq ";
+		  let dgbqlsql_sql ="  select  DGXLID,dgxlda_bq.DGBQ ID,dapzcs_nr.Sname NAME from  dgxlda_bq,dapzcs_nr where dapzcs_nr.id='DGBQ'  AND  dgxlda_bq.Dgbq = dapzcs_nr.Id_Nr ";
 		  await $sqlLite.executeQry(dgbqlsql_sql, "正在获取标签的列表", (res) => {
 		  	// console.log(JSON.stringify(res).substring(0,2000));
 		  	cakeBq = res.msg;
