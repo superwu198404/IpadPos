@@ -29,14 +29,17 @@
 		},
 		watch: {
 			_swiperList: function(n, o) {
-				console.log("蛋糕数据发生变动");
+				console.log("蛋糕数据发生变动：", n.length);
 				if (n && n.length > 0) {
 					this.swiperList = n.filter((r, i) => {
 						return i <= 100;
 					});
+					this.itemStyle = [];
 					this.swiperList.forEach((item, index) => {
 						this.itemStyle.push(this.getStyle(index))
 					})
+				} else {
+					this.swiperList = [];
 				}
 				console.log("蛋糕显示数据", this.swiperList);
 			}

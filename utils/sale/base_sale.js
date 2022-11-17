@@ -493,7 +493,16 @@ var XsTypeObj = {
 				}
 			});
 			console.log("[ConfirmCondition]确认条件:", condition);
-			console.log("[ConfirmCondition]输出信息:", this.mode_info.sale_cake_reserve.condition_output());
+			console.log("[ConfirmCondition]输出信息:", );
+			let bqlist = this.mode_info.sale_cake_reserve.condition_output();
+			// if (bqlist && bqlist.length > 0) {
+			this.CakeList = this.cakeFilter(bqlist); //根据标签筛选蛋糕数据
+			if (this.CakeList.length == 0) {
+				util.simpleMsg("无符合条件数据", true);
+			} else {
+				util.simpleMsg("筛选数据成功");
+			}
+			// }
 			this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
 		},
 		DeleteCheckedTag: function(item) {
