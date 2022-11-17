@@ -85,9 +85,19 @@ var GetPayWay = async function(e) {
 				type: "NOPAY",
 				poly: "O"
 			}, {
-				name: "弃用金额",
+				name: "预定金",
+				fkid: "ZG03",
+				type: "YDCOIN",
+				poly: "O"
+			}, {
+				name: "现金",
+				fkid: "ZF01",
+				type: "CASH",
+				poly: "O"
+			}, {
+				name: "券自动放弃金额",
 				fkid: "ZCV1",
-				type: "NOPAY",
+				type: "CASH",
 				poly: "O"
 			}]
 			for (var i = 0; i < arr.length; i++) {
