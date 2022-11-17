@@ -139,8 +139,14 @@
 							xstype = "sale_takeaway_reserve";
 						}
 						that.orderlist = false; //关闭消息框
-						//home下有监听该回调事件
-						uni.$emit("Switch", xstype)
+						//home下有监听该回调事件 废弃
+						// uni.$emit("Switch", xstype)
+						uni.$emit("change", {
+							name: xstype,
+							info: {
+								clickType: xstype
+							}
+						});
 					}
 				});
 			},

@@ -380,8 +380,14 @@
 			},
 			//消息已读
 			ReadMsg: function(e, i) {
-				//home下有监听该回调事件
-				uni.$emit("Switch", "sale_message");
+				//home下有监听该回调事件 废弃
+				// uni.$emit("Switch", "sale_message");
+				uni.$emit("change", {
+					name: "sale_message",
+					info: {
+						clickType: "sale_message"
+					}
+				});
 				return;
 				//旧版本
 				//let store = util.getStorage("store");

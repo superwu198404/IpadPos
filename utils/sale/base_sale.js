@@ -294,7 +294,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -2585,7 +2585,13 @@ function GetSale(global, vue, target_name, uni) {
 		that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 		that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 		that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
+		that.cakeFilter([{
+			'ID': '002002'
+		}, {
+			'ID': '003002'
+		}, {
+			'ID': '003009'
+		}])
 	}
 
 	//已经筛选好的蛋糕数组，作为缓存
@@ -2599,23 +2605,23 @@ function GetSale(global, vue, target_name, uni) {
 			that.myAlert("没有筛选出蛋糕结果！");
 			return;
 		}
-		var b= pm_inputArr;
-		if(b == null || b.length == 0  )
-		{
-			return  that.cakeList;
-		}
-		else
-		{
-			var fret =[]
-			  that.cakeList.forEach(a=> 
-			     {
-                    let x=  a.bqlist.filter( item=>{ let ret= b.filter( itemb=>{ return  itemb.ID == item.ID   });  return ret.length >0 ;});	
-					   if(x.length  == b.length )
-					   {
-						fret.push(a);
-					   }
-		         })
-			console.log("查看一下筛选的结果",fret);
+		var b = pm_inputArr;
+		if (b == null || b.length == 0) {
+			return that.cakeList;
+		} else {
+			var fret = []
+			that.cakeList.forEach(a => {
+				let x = a.bqlist.filter(item => {
+					let ret = b.filter(itemb => {
+						return itemb.ID == item.ID
+					});
+					return ret.length > 0;
+				});
+				if (x.length == b.length) {
+					fret.push(a);
+				}
+			})
+			console.log("查看一下筛选的结果", fret);
 			return fret;
 		}
 	}
