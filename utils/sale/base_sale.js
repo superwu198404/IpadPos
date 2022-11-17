@@ -3287,7 +3287,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("[GetSp]添加了水吧商品", that.sale008);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
-			util.simpleMsg("商品已添加到购物车");
+			util.simpleMsg("商品添加成功");
 		}
 		if (that.clikSpItem.ynAddPro) {
 			//水吧商品不关闭 直接刷新
