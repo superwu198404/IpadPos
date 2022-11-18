@@ -370,8 +370,8 @@
 					time = dateformat.gettime(1); //默认加一分钟
 
 				if (this.over48) {
-					let current_datetime = new Date(new Date().setHours(56));
-					date = current_datetime.toLocaleDateString().replaceAll('/', '-');
+					let current_datetime = new Date().SetHours(48);
+					date = dateformat.toDateString(current_datetime).replaceAll('/', '-');
 					// time = current_datetime.toTimeString().split(" ")[0];
 					console.log("[RefreshData]时间:", {
 						date,
@@ -797,6 +797,13 @@
 					if (Number(that.Order.ZNET) != Number(that.Order.DNET)) { //判断定金是否等于整单金额
 						that.Order.DNET = that.Order.ZNET;
 						util.simpleMsg("异店提货必须全额支付", true);
+						return;
+					}
+				}
+				if(that.over48){
+					if(new Date().SetHours(48) > new Date(that.Order.THDATE.replace(/-/g, "/"))){
+						util.simpleMsg("当前促销限制提货时间必须是在48小时以后!", true);
+						that.RefreshData();
 						return;
 					}
 				}
