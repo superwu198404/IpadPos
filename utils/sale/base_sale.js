@@ -3522,11 +3522,12 @@ function GetSale(global, vue, target_name, uni) {
 		// that.Page.$set(that.sale001, "TNET", this.float(retx.ONET - retx.DISCRATE, 2))
 
 		//为了兼容预定提取 初始化会清除折扣额的问题，早期购物车重复开关闭会产生重复扣减的问题 待后续测试后去除
-		if (this.clickSaleType.clickType != "sale_reserve_extract") {
-			that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
-		} else {
-			that.sale001.TNET = this.float(retx.NET, 2);
-		}
+		//1.销售退单 discrate 默认为0 就会导致002的商品原价-0=NET 
+		// if (this.clickSaleType.clickType != "sale_reserve_extract") {
+		// 	that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+		// } else {
+		that.sale001.TNET = this.float(retx.NET, 2); //全部采用累加net 测试
+		// }
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);
