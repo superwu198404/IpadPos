@@ -1839,6 +1839,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.ZKHDArr = []; //清除一下已生效的活动数据
 		this.score_info.money = 0;
 		this.score_info.score = 0;
+		this.over48 = false;
 	})
 	//*func*辅助促销关闭回调
 	this.CloseFZCX = util.callBind(this, function(res) {
