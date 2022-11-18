@@ -1181,15 +1181,16 @@ const qrCodeAction = function(is_dzfpewmdz, command, qrCodeWidth, qrCodeHeight) 
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight 
  */
-const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight) {
+const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight,objQrCode) {
 	return new Promise((resolve, reject) => {
-		console.log("1.二维码生成内容:", is_dzfpewmdz, qrCodeContent + bill)
+		let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + objQrCode.saledate + "&bill=" + objQrCode.bill + "&khid=" + objQrCode.khid + "&gsid=" +objQrCode.gsid + "&sltype=" +objQrCode.sltype;
+		console.log("1.二维码生成内容:", qrText)
 		if (!is_dzfpewmdz) {
 			resolve('1')
 			return;
 		}
 		new qrCode('couponQrcode', {
-			text: qrCodeContent,
+			text: qrText,
 			width: qrCodeWidth,
 			height: qrCodeHeight,
 			colorDark: "#333333",
