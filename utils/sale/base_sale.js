@@ -1816,7 +1816,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ResetCXZK = util.callBind(this, function(res) {
 		console.log("进入清除促销折扣方法sale1", this.sale001);
 		console.log("进入清除促销折扣方法sale2", this.sale002);
-		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
+		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清除 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
 			this.sale001.TLSDISC = 0; //zk 总临时折扣
