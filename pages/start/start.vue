@@ -8,12 +8,10 @@
 			<view class="infos">
 				<label>
 					<image src="../../images/dx-mendian.png" mode="widthFix"></image>
-					<!-- <input /> -->
 					<input placeholder="请输入门店的编码" v-model="khid" />
 				</label>
 				<label>
 					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
-					<!-- <input /> -->
 					<input placeholder="请输入款台号" v-model="posid" type="number" />
 				</label>
 				<!-- <label>

@@ -1735,7 +1735,7 @@ function GetSale(global, vue, target_name, uni) {
 			sale3.FAMT = 0;
 			sale3.RATE = 0;
 			sale3.DISC = 0;
-			sale3.ZKLX = 0;
+			sale3.ZKLX = null;
 			sale3.AUTH = "";
 			sale3.ID = "";
 			sale3.IDTYPE = "";
