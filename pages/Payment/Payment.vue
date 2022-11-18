@@ -1127,9 +1127,9 @@
 								}, (function(err) { //如果发生异常（catch）
 									// util.simpleMsg(err.msg, true, err);
 									refundInfo.fail = true;
+									resolve(); //结束状态
 									console.log("[Refund-退款]退款失败:", err);
 									util.simpleModal("退款失败", err.msg);
-									resolve(); //结束状态
 								}).bind(that),
 								(function(res) { //执行完毕（finally），退款次数 +1
 									console.log("[Refund-退款]Finally:", res);
