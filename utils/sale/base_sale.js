@@ -1614,9 +1614,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.FKDA_INFO = [];
 	(util.callBind(this, async function() {
 		try {
-			await RequestSend(`SELECT FKID,SNAME FROM FKDA`, util.callBind(this, function(res) {
+			await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(this, function(res) {
 				if (res.code) {
 					this.FKDA_INFO = JSON.parse(res.data);
+					util.setStorage('FKDA_INFO', this.FKDA_INFO)
 					console.warn("[GetSale]获取支付方式:", this.FKDA_INFO);
 				} else {
 					util.simpleMsg("获取付款方式失败!", true)
@@ -1668,9 +1669,14 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//合并券类型和不可原路退回操作
 	this.CombineCouponAndNoOrginPay = function(sale003) {
-		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ', ].includes(i.JKSNAME)).map(i => i.FKID).concat([
-			'ZG02'
-		]);
+		console.log("[CombineCouponAndNoOrginPay]支付类型信息:", {
+			memory: this.FKDA_INFO,
+			catch: util.getStorage("FKDA_INFO")
+		});
+		let combine_fkid = util.getStorage("FKDA_INFO").filter(i => ['SZQ'].includes(i.JKSNAME)).map(i => i.FKID)
+			.concat([
+				'ZG02'
+			]);
 		console.log("[CombineCouponAndNoOrginPay]合并项FKID:", combine_fkid);
 		let combine_sale3 = sale003.filter(i => combine_fkid.includes(i.FKID));
 		let uncombine_sale3 = sale003.filter(i => !combine_fkid.includes(i.FKID));
@@ -1705,6 +1711,7 @@ function GetSale(global, vue, target_name, uni) {
 	} //合并券类型和不可原路退回操作
 	//合并券类型和不可原路退回操作
 	this.CombineCouponAndNoOrginPay = function(sale003) {
+		console.log("[CombineCouponAndNoOrginPay]付款类型信息:", this.FKDA_INFO);
 		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ'].includes(i.JKSNAME)).map(i => i.FKID).concat([
 			'ZG02'
 		]);
