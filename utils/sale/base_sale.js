@@ -2103,8 +2103,8 @@ function GetSale(global, vue, target_name, uni) {
 	});
 	//*func* 展示促销和折扣来源
 	this.showCXZKFunc = util.callBind(this, function(e) {
-		if (this.sale001.BILLDISC <= 0) {
-			util.simpleMsg("暂无折扣", true);
+		if (this.sale001.BILLDISC <= 0 || this.sale001.BILLDISC == this.sale001.ROUND) { //防止产生促销折扣后支付返回判断错误
+			util.simpleMsg("暂无生效的促销或折扣", "none");
 			return;
 		}
 		if (this.currentOperation.ynCx) { //如果促销生效了
