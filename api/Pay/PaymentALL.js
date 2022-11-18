@@ -291,7 +291,7 @@ var hykPay = {
 				if (catchFunc) catchFunc();
 				return;
 			}
-			body.merchant_no = config.LONGKEY; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
+			body.merchant_no = config.SHID; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
 			_PaymentAll(pt, body, func, catchFunc);
 		})
 	},
@@ -332,7 +332,7 @@ var kengeePay = {
 				let card_info = res.data;
 				body.card_no = card_info.card_no.substring(3); //去掉实体卡前缀三位
 				body.auth_code = card_info.track_info;
-				body.merchant_no = config.SHID;
+				body.merchant_no = config.LONGKEY;
 				body.storeName = getApp().globalData.store.NAME;
 				console.log("[ReadCard]组装支付参数:", body);
 				_PaymentAll(pt, body, func, catchFunc);
@@ -704,8 +704,8 @@ var PaymentAll = function(pt, body, func, catchFunc) {
 	try {
 		payType[pt].PaymentAll(pt, body, func, catchFunc)
 	} catch (e) {
-		console.log("[PaymentAll]发生调用异常:",e);
-		if(catchFunc) catchFunc();
+		console.log("[PaymentAll]发生调用异常:", e);
+		if (catchFunc) catchFunc();
 	}
 }
 //聚合退款主入口
@@ -713,8 +713,8 @@ var RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 	try {
 		payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
 	} catch (e) {
-		console.log("[RefundAll]发生调用异常:",e);
-		if(catchFunc) catchFunc();
+		console.log("[RefundAll]发生调用异常:", e);
+		if (catchFunc) catchFunc();
 	}
 }
 

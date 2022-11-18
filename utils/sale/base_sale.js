@@ -295,7 +295,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: false,
+		close: true,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -1704,7 +1704,7 @@ function GetSale(global, vue, target_name, uni) {
 	} //合并券类型和不可原路退回操作
 	//合并券类型和不可原路退回操作
 	this.CombineCouponAndNoOrginPay = function(sale003) {
-		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ', ].includes(i.JKSNAME)).map(i => i.FKID).concat([
+		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ'].includes(i.JKSNAME)).map(i => i.FKID).concat([
 			'ZG02'
 		]);
 		console.log("[CombineCouponAndNoOrginPay]合并项FKID:", combine_fkid);
@@ -3326,6 +3326,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.log("[GetSp]添加了水吧商品", that.sale008);
 			that.log("[GetSp]添加商品对象", that.clikSpItem);
 			//that.log("[GetSp]商品价格", that.spPrice);
+			util.simpleMsg("商品添加成功");
 		}
 		if (that.clikSpItem.ynAddPro) {
 			//水吧商品不关闭 直接刷新
