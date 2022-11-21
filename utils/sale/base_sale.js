@@ -3106,8 +3106,9 @@ function GetSale(global, vue, target_name, uni) {
 		let stime = this.getTime();
 		console.log("[CreateNewBill]创建新单!");
 		console.log("[CreateNewBill]sale001：", this.sale001);
-		console.log("创建新单的大客户信息：", this.DKF.val);
+		console.log("[CreateNewBill]创建新单的大客户信息：", this.DKF.val);
 		if (e && Object.keys(this.sale001).length > 0) { //适用于添加商品时的处理
+			console.log("[CreateNewBill]sale1已经初始化过...");
 			commonSaleParm = {
 				KHID: this.sale001.KHID,
 				POSID: this.sale001.POSID,
@@ -3128,6 +3129,7 @@ function GetSale(global, vue, target_name, uni) {
 				DKFID: this.sale001.DKFID
 			}
 		} else {
+			console.log("[CreateNewBill]sale1未初始化过...");
 			commonSaleParm = {
 				GSID: this.GSID,
 				KHID: this.Storeid,
@@ -3156,6 +3158,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001 = new sale.sale001(commonSaleParm)
 			console.log("[CreateNewBill]新单创建完毕!", this.sale001);
 		}
+		console.log("[CreateNewBill]单据参数：", commonSaleParm);
 		return commonSaleParm;
 	}
 	this._createNewBill = function() {
