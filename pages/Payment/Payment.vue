@@ -1351,8 +1351,8 @@
 									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
 									zklx: coupon.yn_card === 'Y' ? payObj.zklx : (coupon
-										.note ===
-										'EXCESS' ? coupon.fkid : coupon.disc_type),
+										.note != 'EXCESS' ? coupon.fkid : coupon.disc_type
+									), //22.11.21 测试要求券放弃金额 记录原折扣类型
 									disc: (coupon?.discount / 100)?.toFixed(2),
 									fail,
 									id_type: coupon?.type,
