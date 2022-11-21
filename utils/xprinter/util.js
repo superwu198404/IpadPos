@@ -298,7 +298,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			id: sale3_arr[j].ID, //卡号或者券号
 			ryid: snvl(sale3_arr[j].RYID,""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: sale3_arr[j].ZKLX, //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
 			fkName: snvl(sale3_arr[j].SNAME,""),
 			save_je: nnvl(sale3_arr[j].balance,0), // 余额
@@ -441,7 +441,7 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 			id: sale3_arr[j].ID, //卡号或者券号
 			ryid: snvl(sale3_arr[j].RYID,""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: sale3_arr[j].ZKLX, //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
 			fkName: snvl(sale3_arr[j].SNAME,""),
 			save_je: nnvl(sale3_arr[j].balance,0), // 余额
@@ -738,7 +738,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			id: sale3_arr[j].ID, //卡号或者券号
 			ryid: snvl(sale3_arr[j].RYID,""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: sale3_arr[j].ZKLX, //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
 			fkName: snvl(sale3_arr[j].SNAME,""),
 			save_je: nnvl(sale3_arr[j].balance,0), // 余额
