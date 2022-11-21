@@ -1735,7 +1735,7 @@ function GetSale(global, vue, target_name, uni) {
 			sale3.FAMT = 0;
 			sale3.RATE = 0;
 			sale3.DISC = 0;
-			sale3.ZKLX = 0;
+			sale3.ZKLX = null;
 			sale3.AUTH = "";
 			sale3.ID = "";
 			sale3.IDTYPE = "";
@@ -1816,7 +1816,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ResetCXZK = util.callBind(this, function(res) {
 		console.log("进入清除促销折扣方法sale1", this.sale001);
 		console.log("进入清除促销折扣方法sale2", this.sale002);
-		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清楚 big bug
+		if (this.sale001 && Object.keys(this.sale001).length > 0) { //创建对象后 才允许清除 big bug
 			//切换折扣或者促销后 清空一下原来计算的折扣值
 			this.sale001.TBZDISC = 0; //zk 总标准折扣
 			this.sale001.TLSDISC = 0; //zk 总临时折扣
@@ -3530,11 +3530,12 @@ function GetSale(global, vue, target_name, uni) {
 		// that.Page.$set(that.sale001, "TNET", this.float(retx.ONET - retx.DISCRATE, 2))
 
 		//为了兼容预定提取 初始化会清除折扣额的问题，早期购物车重复开关闭会产生重复扣减的问题 待后续测试后去除
-		if (this.clickSaleType.clickType != "sale_reserve_extract") {
-			that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
-		} else {
-			that.sale001.TNET = this.float(retx.NET, 2);
-		}
+		//1.销售退单 discrate 默认为0 就会导致002的商品原价-0=NET 
+		// if (this.clickSaleType.clickType != "sale_reserve_extract") {
+		// 	that.sale001.TNET = this.float(retx.ONET - retx.DISCRATE, 2);
+		// } else {
+		that.sale001.TNET = this.float(retx.NET, 2); //全部采用累加net 测试
+		// }
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
 		// that.sale001.TLINE = this.float(retx.QTY, 2);

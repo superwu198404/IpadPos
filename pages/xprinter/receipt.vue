@@ -186,10 +186,21 @@
 				let isPrinterFP = false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
+					
+					let objQrCode = 
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
-							that.qrCodeWidth, that.qrCodeHeight),
+							that.qrCodeWidth, that.qrCodeHeight, objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("xsBluePrinter 开始发送打印命令");
@@ -260,10 +271,20 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				let isPrinterFP = false;
 				if (is_dzfpewmdz && isPrinterFP) {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
-							that.qrCodeWidth, that.qrCodeHeight),
+							that.qrCodeWidth, that.qrCodeHeight,objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("wmBluePrinter 开始发送打印命令");
@@ -324,10 +345,21 @@
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
+					
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
-							that.qrCodeWidth, that.qrCodeHeight),
+							that.qrCodeWidth, that.qrCodeHeight, objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("bluePrinter开始发送打印命令");
@@ -412,10 +444,21 @@
 				let isPrinterFP = xprinter_util.snvl(print.XSTYPE,"") == "YDTQ" ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
+					
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
-							that.qrCodeWidth, that.qrCodeHeight),
+							that.qrCodeWidth, that.qrCodeHeight,objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("ydBluePrinter开始发送打印命令");
@@ -498,10 +541,20 @@
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
-							that.qrCodeWidth, that.qrCodeHeight),
+							that.qrCodeWidth, that.qrCodeHeight,objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("开始发送打印命令");
@@ -563,10 +616,20 @@
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				//电子发票二维码不为空，则打印二维码
 				if (is_dzfpewmdz && xprinter_util.nnvl(xsType,0) == 1) {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
 					//生成属于单号的二维码
 					Promise.all([
 						xprinter_util.qrCodeGenerate(is_dzfpewmdz, xsBill, printer_poscs.DZFPEWMDZ, that
-							.qrCodeWidth, that.qrCodeHeight),
+							.qrCodeWidth, that.qrCodeHeight,objQrCode),
 						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
 					]).then(res => {
 						console.log("againPrinter开始发送打印命令");
