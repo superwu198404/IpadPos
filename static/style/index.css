@@ -1084,6 +1084,7 @@ page {
 	position: absolute;
 	bottom: 30%;
 	right: 101%;
+	z-index: 999;
 }
 .states .statnum{
 	position: relative;
@@ -1720,6 +1721,7 @@ checkbox.mycheck .wx-checkbox-input,
 		bottom:30%;
 		right:0.5%;
 		overflow: hidden;
+		
 	}
 	.statnum{
 		margin-top:40rpx;

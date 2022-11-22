@@ -520,19 +520,22 @@
 			<!-- //列表 -->
 			<view v-show="!mainSale.mode_info.sale_cake_reserve.yn_showDetail">
 				<view class="body-titles">
-					<view style="width: 90%;display: flex; align-items: center;">
-						<view class="hot-sales">
+					<view style="width: 90%;display: flex;">
+						<view class="hot-sales" style="height: 70rpx; line-height: 70rpx;">
 							产品列表
 							<label></label>
 						</view>
-						<view class="yixuan" v-if="CheckedList.length>0">
+						 <!-- v-if="CheckedList.length>0" -->
+						<view class="yixuan">
 
-							<text>已选：</text>
-							<view class="yxlb">
+							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;">已选：</text>
+							<view class="yxlb">							
 								<label v-for="tag in CheckedList">{{ tag._NAME }}
 									<!-- <button @click="DeleteCheckedTag(tag)">×</button> -->
 								</label>
+								
 							</view>
+							<!-- <label class="xsqb">显示全部…</label> -->
 						</view>
 					</view>
 					<view class="filter" @click="mainSale.ToChoose">

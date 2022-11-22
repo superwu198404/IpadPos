@@ -4,18 +4,18 @@
 </style>
 <template>
 	<view class="boxs">
-		<!-- v-if="qd_show" -->
-		<view class="customer">
-			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">请使用扫码枪扫码 <button @click="ConfirmScan()" class="guan">×</button></view>
-			<view class="clues">
-				<input password="true" placeholder="请扫码" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />
-			</view>
-			<view class="affirm">
-				<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
-				<button class="btn" @click="ConfirmScan()">确定</button>
-			</view>
+	<!-- v-if="qd_show" -->
+	<view class="customer">
+		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+		<view class="h3">请使用扫码枪扫码 <button @click="ConfirmScan()" class="guan">×</button></view>
+		<view class="clues">
+			<input password="true" placeholder="请扫码" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />
 		</view>
+		<view class="affirm">
+			<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
+			<button class="btn" @click="ConfirmScan()">确定</button>
+		</view>
+	</view>
 	</view>
 </template>
 <script>
@@ -59,6 +59,9 @@
 </script>
 
 <style>
+	.boxs{
+		opacity: 0.1;
+	}
 	.customer {
 		background-color: #fff;
 		width: 40%;
@@ -71,7 +74,7 @@
 		border-radius: 20rpx;
 		padding: 0 3% 140rpx;
 		z-index: 99;
-		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
+		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
 	}
 
 	.customer .bg {
@@ -175,16 +178,16 @@
 		position: relative;
 		z-index: 2;
 		font-weight: 700;
-		padding: 80rpx 0 0;
+		padding:80rpx 0 0;
 	}
 
 	.clues input {
 		height: 70rpx;
 		line-height: 70rpx;
-		border: 1px solid #aaa;
-		width: 99%;
+		border:1px solid #aaa;
+		width:99%;
 		border-radius: 6rpx;
-		padding: 0 0.5%;
+		padding:0 0.5%;
 	}
 
 	.rjcg {
