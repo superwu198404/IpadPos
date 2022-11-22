@@ -97,7 +97,7 @@ var GetPayWay = async function(e) {
 			}, {
 				name: "券自动放弃金额",
 				fkid: "ZCV1",
-				type: "",
+				type: "SZQ",
 				poly: "O"
 			}]
 			for (var i = 0; i < arr.length; i++) {
