@@ -5,7 +5,9 @@ import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 import dateformat from '@/utils/dateformat.js';
 import _sysParam from '@/utils/sysParm/sysParm.js';
-
+import {
+	RequestSend
+} from '@/api/business/da.js'
 //校验是否有初始化过
 var YN_Init = function(sucFunc, errFunc) {
 	let sql = "select count(1) count from SPKHDA"
@@ -87,12 +89,12 @@ var GetPayWay = async function(e) {
 			}, {
 				name: "预定金",
 				fkid: "ZG03",
-				type: "YDCOIN",
+				type: "",
 				poly: "O"
 			}, {
 				name: "现金",
 				fkid: "ZF01",
-				type: "CASH",
+				type: "",
 				poly: "O"
 			}, {
 				name: "券自动放弃金额",
@@ -140,16 +142,23 @@ var GetMDName = function(khid, func) {
 		console.log("[GetMDName]门店信息查询成功：", res);
 		if (res.code && res.msg.length > 0) {
 			name = res.msg[0].SNAME;
-			util.setStorage('StoreCoodinate',{
-				longitude: res.msg[0].ADRJD,
-				latitude: res.msg[0].ADRWD
-			})
-			console.log("[GetMDName]门店经纬度获取:",util.getStorage('StoreCoodinate'));
 		}
 		if (func) func(name);
 	}, err => {
 		console.log("门店信息查询失败：", err);
 		if (func) func(name);
+	})
+}
+
+var GetStoreCoordinate = function(khid) {
+	RequestSend(`select * from KHDADZ where khid='${khid}'`, function(res) {
+		let info = JSON.parse(res.data)?.first();
+		console.warn("[GetStoreCoordinate]门店信息:",info);
+		util.setStorage('StoreCoodinate', {
+			longitude: info.ADRJD,
+			latitude: info.ADRWD
+		})
+		console.log("[GetStoreCoordinate]门店经纬度信息(KHDADZ):",util.getStorage('StoreCoodinate'));
 	})
 }
 
@@ -182,7 +191,7 @@ var InitData = async function(khid, func) {
 }
 
 var tx001 = null;
-var dataInit = async function(pm_initType,ynshow=false) {
+var dataInit = async function(pm_initType, ynshow = false) {
 	console.log("进入重读")
 	var pm_khid, pm_posid;
 	let store = util.getStorage("Init_Data");
@@ -274,14 +283,11 @@ var dataInit = async function(pm_initType,ynshow=false) {
 				return x;
 			},
 			null,
-			(res) => 
-			{
+			(res) => {
 				console.log("最终结果：", res);
 				console.log(JSON.stringify("重读创建完成"));
-                if(ynshow)
-				{
-					if (res.msg != "OK") 
-					{
+				if (ynshow) {
+					if (res.msg != "OK") {
 						util.simpleModal("提示", res.msg)
 					} else {
 						util.simpleMsg("通讯完成");
@@ -297,5 +303,6 @@ export default {
 	InitData,
 	YN_Init,
 	dataInit,
-	GetMDName
+	GetMDName,
+	GetStoreCoordinate
 }

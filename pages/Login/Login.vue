@@ -122,6 +122,7 @@
 				_init.GetMDName(that.khid, res => {
 					that.name = res;
 				});
+				_init.GetStoreCoordinate(that.khid);
 				//测试数据：
 				//let sql =
 				//"select * FROM cxformd001 where bill='FZCX2210170002' and KHID = 'K200QTD005' AND Yn_Jslb = 'F'";
