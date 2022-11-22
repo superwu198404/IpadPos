@@ -3760,7 +3760,13 @@ function GetSale(global, vue, target_name, uni) {
 		this.notFayType = [];
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
+		// if (this.currentOperation.yn_toSale) { //是否要跳转到sale
+		// 	console.log("重置后跳转到：sale")
 		this.SetDefaultType();
+		// } else {
+		// 	console.log("重置后跳转到：", this.clickSaleType.clickType)
+		// 	this.SetDefaultType(this.clickSaleType.clickType);
+		// }
 		that.update()
 		console.log("[ResetSaleBill]清空后的：", this.sale001);
 	})
