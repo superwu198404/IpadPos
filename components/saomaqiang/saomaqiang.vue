@@ -3,7 +3,7 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<!-- <view class="boxs"> -->
+	<view class="boxs">
 	<!-- v-if="qd_show" -->
 	<view class="customer">
 		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
@@ -16,7 +16,7 @@
 			<button class="btn" @click="ConfirmScan()">确定</button>
 		</view>
 	</view>
-	<!-- </view> -->
+	</view>
 </template>
 <script>
 	var app = getApp();
@@ -59,6 +59,9 @@
 </script>
 
 <style>
+	.boxs{
+		opacity: 0.1;
+	}
 	.customer {
 		background-color: #fff;
 		width: 40%;
