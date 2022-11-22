@@ -1881,6 +1881,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[CloseMember]会员页关闭!", member_info);
 		this.HY.val = member_info;
 		console.log("[CloseMember]会员信息:", this.HY.val);
+		this.sale001.CUID = this.HY.val.hyId;
+		console.log("[CloseMember]已设置会员ID信息至CUID字段...",this.sale001);
 		uni.$emit('set-member', this.HY.val);
 	})
 	//*func*会员登录
@@ -3457,7 +3459,7 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
-		console.log("[ShowStatement]SALE001:", Object.getOwnPropertyNames(that.sale001));
+		console.log("[ShowStatement]SALE001:", that.sale001);
 		console.log("[ShowStatement]商品信息:", that.sale002);
 		await that.SaleNetAndDisc();
 		console.log("[ShowStatement]打开结算单:", that.sale002);
