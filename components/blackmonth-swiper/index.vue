@@ -125,7 +125,7 @@
 
 <style lang="scss">
 	.swiperPanel {
-		margin-top: 20rpx;
+		margin-top: 10rpx;
 		height: 1400rpx;
 		width: 100%;
 		overflow: hidden;

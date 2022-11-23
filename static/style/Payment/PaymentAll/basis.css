@@ -1077,7 +1077,7 @@ uni-button:after {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 40rpx 20px 10rpx;
+		padding: 20rpx 20px 10rpx;
 		width:96%;
 		margin:0 auto;
 		font-size: 34rpx;
@@ -1161,6 +1161,9 @@ uni-button:after {
 	padding:4rpx 20rpx 6rpx;
 	margin:10rpx 30rpx 10rpx 0;
 }
+.shaixuan .yixuan label{
+	padding:4rpx 46rpx 6rpx 14rpx;
+}
 .shaixuan .yixuan{
 	align-items: flex-start;
 }
@@ -1185,12 +1188,12 @@ uni-button:after {
 }
 .body-titles .shaixuan{
 	position: absolute;;
-	top:150%;
-	left:0;
+	top:110%;
+	left:1%;
 	background-color: #fff;
 	border-radius: 14rpx;
 	box-shadow: 0px 10px 20px 1px rgba(66,177,75,0.16);
-	width:96%;
+	width:94%;
 	z-index: 9999999;
 	padding:0 2%;
 }
@@ -1226,8 +1229,9 @@ uni-button:after {
 }
 .kinds .kindlist{
 	display: flex;
+	align-items: center;
 	width:90%;
-	height: 96rpx;
+	height: 94rpx;
 	overflow: hidden;
 }
 .kinds label{
@@ -1263,7 +1267,7 @@ uni-button:after {
 .tallys{
 	font-weight: 400;
 	font-size: 30rpx;
-	padding:20rpx 0 10rpx;
+	padding:0 0 30rpx;
 	display: flex;
 	align-items: flex-start;
 }
