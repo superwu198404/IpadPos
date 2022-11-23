@@ -329,12 +329,14 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 
 	for (let i = 0; i < cxbilldts.length; i++) {
 		//获取每个商品中的值
-		let cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0) * 100)) / 100;
+		let cxdiscvalue = 0;
+		cxdiscvalue = Math.round((cx_util.nnvl(cxbilldts[i].DISC, 0) * 100)) / 100;
 		let spnet = Math.round((parseFloat(sale02_arr[i].OPRICE) * parseFloat(sale02_arr[i].QTY)) * 100) / 100;
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
 		//let hylv = cx_util.nnvl(cxbilldts[i].HYLV, -1);
-		if (cxdiscvalue >= 0) {
+		cxdiscvalue = cx_util.nnvl(cxdiscvalue,0);
+		if (cxdiscvalue >= 0) { 
 			if (spnet - cxdiscvalue < 0) {
 				cxdiscvalue = spnet;
 			}
