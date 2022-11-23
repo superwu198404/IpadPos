@@ -107,7 +107,7 @@
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
-								<view class="statnum">
+								<view class="statnum" style="margin-top:10rpx;">
 									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
 									<text>{{TotalNum}}</text>
 								</view>
