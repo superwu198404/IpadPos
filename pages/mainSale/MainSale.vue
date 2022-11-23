@@ -395,7 +395,8 @@
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 
+									<label>{{sp.STR1}}</label>
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia"
@@ -575,7 +576,6 @@
 					<Swiper :_swiperList="mainSale.CakeList" />
 				</view>
 			</view>
-
 			<!-- 详情 -->
 			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
 				<view class="body-titles" style="height:70rpx;line-height: 70rpx;">
