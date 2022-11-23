@@ -12,7 +12,7 @@ export const LocalDataQuery = function(bill) {
 		},
 		{
 			name: "sale2",
-			sql: `select s2.*,ifnull(s.SNAME,'名称无') NAME from SALE002 s2 left join spda s on s2.spid=s.spid where bill='${bill}'`
+			sql: `select s2.*,ifnull(s.SNAME,'名称无') NAME,ifnull(s.SNAME,'名称无') STR1 from SALE002 s2 left join spda s on s2.spid=s.spid where bill='${bill}'`
 		},
 		{
 			name: "sale3",

@@ -138,9 +138,10 @@ var XsTypeObj = {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
+				console.log("查看商品打印商品名称：", item.STR1);
 				item.SNAME = item.STR1;
 			})
-
+			console.log("查看商品打印数据：", arr2);
 			let arr3 = [];
 			try {
 				arr3 = this.GetPayedResult().data.sale3_arr;
@@ -2946,7 +2947,8 @@ function GetSale(global, vue, target_name, uni) {
 				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
 			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
-
+			// this.sale002.forEach(s2 => util.hidePropety(s2, 'STR1'));
+			// this.sale002.forEach(s2 => util.hidePropety(s2, 'STR2'));
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
 				SALE002: this.sale002,
@@ -3294,7 +3296,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.UNIT = that.clikSpItem.SPECS || that.clikSpItem.UNIT;
 			new002.SPJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
 			new002.PLID = that.clikSpItem.DGPLID || that.clikSpItem.XPLID;
-			// new002.STR2 = that.storeName; //测试wy 要求str2 不记录门店信息
+			new002.STR2 = that.storeName;
 			new002.YN_XPDG = pm_yndgxp;
 
 			let price = that.spPrice[pm_spid].PRICE;
@@ -3337,8 +3339,6 @@ function GetSale(global, vue, target_name, uni) {
 			new002.PRICE = price;
 			new002.QTY = pm_qty;
 			new002.NET = that.float(pm_qty * price, 2);
-			// new002.$NET = that.float(pm_qty * price, 2);
-			// util.hidePropety(new002, '$NET');
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
 

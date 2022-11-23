@@ -218,7 +218,14 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		let OracleSql = "",
 			SqliteSql = []
 		for (let key in dataObj) {
-			let sqlObj = common.CreateSQL(dataObj[key], key);
+			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
+			if (key == "SALE002") {
+				dataArr.forEach(r => {
+					delete r.STR1;
+					delete r.STR2;
+				})
+			}
+			let sqlObj = common.CreateSQL(dataArr, key);
 			if (Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
