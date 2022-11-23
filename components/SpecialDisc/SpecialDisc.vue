@@ -279,7 +279,7 @@
 						anet += r.ZKNET;
 					})
 					// that.totalDisc = Number(anet.toFixed(1));
-					that.totalDisc = common.newFixed(anet);
+					that.totalDisc = common.newFixed(anet, 1);
 				}
 				console.log("合并后的折扣规则1：", pushArr);
 				if (pushArr1.length > 0) {
@@ -288,7 +288,7 @@
 						anet += r.ZKNET;
 					})
 					// that.totalDiscDKF = Number(anet.toFixed(1));
-					that.totalDiscDKF = common.newFixed(anet);
+					that.totalDiscDKF = common.newFixed(anet, 1);
 				}
 				that.ZKDatas = pushArr;
 				that.DKFZKDatas = pushArr1;

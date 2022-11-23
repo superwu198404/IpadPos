@@ -54,8 +54,8 @@ var XsTypeObj = {
 			"ynEdit": true, //当前业务能否编辑商品
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
-
 			"showEdit": false, //展开编辑商品
+
 			"sale": true, //从这里开始都是销售模式
 			"sale_cake_reserve": true,
 			"sale_reserve": true,
@@ -189,6 +189,7 @@ var XsTypeObj = {
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
+
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -303,6 +304,7 @@ var XsTypeObj = {
 		icon_close: require("@/images/yuding-hui.png"),
 		condition: [],
 		imgCurrent: 0,
+		afterPay: "sale_cake_reserve", //支付后要跳转的模式
 		condition_output: function() {
 			let result = [];
 			this.condition.forEach(i => {
@@ -328,6 +330,7 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
+
 			"sale_cake_reserve": true,
 			"sale_reserve": false,
 			"sale_return_good": false,
@@ -434,6 +437,10 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale3
 			})
+
+			this.mode_info.sale_cake_reserve.yn_showDetail = false; //支付完成后关闭蛋糕详情
+			console.log("蛋糕详情关闭：", this.mode_info.sale_cake_reserve.yn_showDetail);
+
 			let printerPram = {
 				"PRINTNUM": 2,
 				"XSTYPE": "YD"
@@ -1882,7 +1889,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.HY.val = member_info;
 		console.log("[CloseMember]会员信息:", this.HY.val);
 		this.sale001.CUID = this.HY.val.hyId;
-		console.log("[CloseMember]已设置会员ID信息至CUID字段...",this.sale001);
+		console.log("[CloseMember]已设置会员ID信息至CUID字段...", this.sale001);
 		uni.$emit('set-member', this.HY.val);
 	})
 	//*func*会员登录
@@ -3765,6 +3772,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.notFayType = [];
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
+
+		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
+		// this.SetDefaultType(this.clickSaleType.afterPay);
 		this.SetDefaultType();
 		that.update()
 		console.log("[ResetSaleBill]清空后的：", this.sale001);
