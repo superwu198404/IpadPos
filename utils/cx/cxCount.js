@@ -91,7 +91,7 @@ const Cxdict = async () => {
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-
+	
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -868,6 +868,7 @@ const JustOnelbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 //价随量变促销
 const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 	try {
+		//console.log("Jslbcx价随量变促销pmList",pmList);
 		let Lcm = 1;
 		let currentlv = 0;
 		if (Object.keys(cx.SubList).length != 1) {
@@ -961,9 +962,10 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				}
 			}
 			let fsnet = new Map();
-			fsnet.get(subx.subno, Fsnet);
+			fsnet.set(subx.subno, Fsnet);
 
 			if (Tjqty == 0) {
+				//console.log("Jslbcx价随量变促销fsnet",fsnet);
 				SubCxQty(spid, bill, saledate, pmList, cx, fsnet, currentlv, Lcm);
 			}
 			currentlv--;
@@ -1266,6 +1268,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 //组合促销计算折扣和金额的方法
 const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm) {
 	try {
+		//console.log("SubCxQty组合促销计算折扣和金额的方法fsznet",fsznet);
 		//取出表中促销单不为空的最后一行
 		let lastIndex = 0;
 		for (let n = pm_list.length - 1; n >= 0; n--) {
@@ -1290,7 +1293,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 			let price = cx_util.nnvl(cxbilldts[i][oprice], 0);
 			//表示此行单品 在当前促销单下 发生的数量
 			let fsqty = cx_util.nnvl(cxbilldts[i][fscs], 0);
+
 			let subznet = fsznet.get(subid);
+			//console.log("SubCxQty组合促销计算折扣和金额的方法subznet",subznet);
 			let cxsub = cx.SubList[subid];
 			let jfxs = cxsub.jfxs[level]; ///产品的积分系数
 			//促销后金额/数量的  售价
