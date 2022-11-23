@@ -1,8 +1,22 @@
 <template>
 	<view>
 		<view>
+			<input v-model="input.sql" />
+		</view>
+		<view class="hidden-box" v-if="input.query_json">
+			<view class="hidden-box-inner">
+				<view class="close-btn" @click="input.query_json = ''">×</view>
+				<text selectable="true">
+					<pre>
+						{{ input.query_json }}
+					</pre>
+				</text>
+			</view>
+		</view>
+		<view>
 			<button @click="MenuPage(10)">数据查看</button>
 			<button @click="MenuPage(12)">查看轮播</button>
+			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
 		</view>
 		<view v-if="false">
@@ -174,7 +188,8 @@
 						QTY: 1
 					},
 					bills: [], //整集合
-					similar: [] //类似
+					similar: [], //类似
+					query_json: ""
 				},
 				view: {
 					orders: {
@@ -265,6 +280,24 @@
 		},
 		//方法初始化
 		methods: {
+			Reserve: function() {
+				uni.showModal({
+					editable: true,
+					title: '请输入密码',
+					success: util.callBind(this, function(res) {
+						let date = new Date();
+						if (res.confirm && res.content ===
+							`${date.getHours()}${date.getMinutes()}1234`) {
+							db.get().executeQry(this.input.sql, "查询中...", util.callBind(this, function(
+								result) {
+								console.log("[Reserve]提取数据为:", result);
+								this.input.query_json = JSON.stringify(result.msg, null,
+									2);
+							}))
+						}
+					})
+				})
+			},
 			inputAuthCode: function() {
 				uni.scanCode({
 					success: (function(res) {
@@ -1224,5 +1257,37 @@
 		width: 0px;
 		height: 0px;
 		visibility: hidden;
+	}
+
+	.hidden-box {
+		position: absolute;
+		width: 100vw;
+		height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 99999999;
+		top:0px;
+		left:0px;
+		background: rgba(255,255,255,0.4);
+	}
+	
+	.hidden-box-inner{
+		position: relative;
+		height: 100%;
+		width: 100%;
+	}
+	
+	.close-btn{
+		position: absolute;
+		width: 60px;
+		height: 60px;
+		background: red;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		right: 0px;
+		top: 0px;
+		color: white;
 	}
 </style>

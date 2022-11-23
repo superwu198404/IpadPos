@@ -95,30 +95,20 @@
 				"coupons": [ ]
 				};
 				
-				let sale02_arr = [
+				let sale02_arr1 = [
 					{
-					    "SPID": "000000001090100158",
-					    "SNAME": "蓓蕾初绽6号-仟吉",
-					    "QTY": 3,
-					    "OPRICE": 150,
-					    "DISCRATE": 0,
-					    "NET": 450,
-					    "PRICE": 150,
-					    "NO": 1
-					},
-					{
-					    "SPID": "000000001090100333",
-					    "SNAME": "比翼天使6号-仟吉",
+					    "SPID": "000000001040200231",
+					    "SNAME": "半熟芝士（原味）-仟吉",
 					    "QTY": 2,
-					    "OPRICE": 200,
+					    "OPRICE": 38,
 					    "DISCRATE": 0,
-					    "NET": 400,
-					    "PRICE": 200,
-					    "NO": 2
+					    "NET": 72,
+					    "PRICE": 38,
+					    "NO": 111
 					}
 					];
 			   
-				cxCount.Createcx(sale02_arr, "sale",hyinfoModel);
+				cxCount.Createcx(sale02_arr1, "sale",null);
 			},
 			CreateArr1: e => {
 				let arr = [],
