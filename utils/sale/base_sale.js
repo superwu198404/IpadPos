@@ -2945,7 +2945,6 @@ function GetSale(global, vue, target_name, uni) {
 				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
 			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
-
 			let create_result = await CreateSaleOrder({
 				SALE001: this.sale001,
 				SALE002: this.sale002,

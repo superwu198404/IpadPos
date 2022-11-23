@@ -65,7 +65,8 @@
 							disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
-						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0' || Order.THTYPE=='2'">
+						<picker @change="PSChange" :range="PSDatas" range-key="SNAME"
+							:disabled="Order.THTYPE=='0' || Order.THTYPE=='2'">
 							<!-- <view>{{(Order.STR2 && Order._STR2) ? (Order.STR2 + '-' + Order._STR2) : ""}}</view> -->
 							<view>{{(Order.STR2 && Order._STR2) ? (Order._STR2) : ""}}</view>
 							<text class="xial">▼</text>
@@ -529,7 +530,7 @@
 					time = time + ":00";
 				}
 				console.log("[TimeChange]时间格式化后：", time);
-				that.Order.TH_TIME = time;
+				that.Order.TH_TIME = time.replace(/[^u4e00-u9fa5]/g,'');
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			//提货类型改变
@@ -682,6 +683,7 @@
 				that.Order.ADDRID = e.ADDRID;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
+				that.ShowAllAddressList = false;
 				that.map.markers.pop();
 				console.log("[ConfirmOrderAddr]markers标点信息:", that.map.markers);
 				that.map.markers = [{
@@ -800,8 +802,8 @@
 						return;
 					}
 				}
-				if(that.over48){
-					if(new Date().SetHours(48) > new Date(that.Order.THDATE.replace(/-/g, "/"))){
+				if (that.over48) {
+					if (new Date().SetHours(48) > new Date(that.Order.THDATE.replace(/-/g, "/"))) {
 						util.simpleMsg("当前促销限制提货时间必须是在48小时以后!", true);
 						that.RefreshData();
 						return;
