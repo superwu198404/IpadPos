@@ -3294,7 +3294,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.UNIT = that.clikSpItem.SPECS || that.clikSpItem.UNIT;
 			new002.SPJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
 			new002.PLID = that.clikSpItem.DGPLID || that.clikSpItem.XPLID;
-			new002.STR2 = that.storeName;
+			// new002.STR2 = that.storeName; //测试wy 要求str2 不记录门店信息
 			new002.YN_XPDG = pm_yndgxp;
 
 			let price = that.spPrice[pm_spid].PRICE;
