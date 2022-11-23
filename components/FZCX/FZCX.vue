@@ -20,7 +20,7 @@
 				<view class="shoppbag">
 					<view :class="item1.BQTY>0?'baglist curr':'baglist'" v-for="(item1,index1) in item.Details">
 						<view class="bag">
-							<view class="h8">{{item1.SNAME}} <text>售价：￥{{item1.PRICE}}</text></view>
+							<view class="h8"><text>{{item1.SNAME}}</text> <text>售价：￥{{item1.PRICE}}</text></view>
 							<label><text>说明</text><em>{{item1.DESCRIBE}}</em></label>
 						</view>
 						<view class="quantit">
@@ -191,7 +191,11 @@
 		align-items: center;
 		display: flex;
 	}
-
+	.bag .h8 text:nth-child(1){
+		font-weight: 700;
+		max-width: 70%;
+		overflow: auto;
+	}
 	.bag .h8 text {
 		font-weight: 400;
 	}
