@@ -76,7 +76,7 @@ function getTime(type) {
 
 const snvl = function(pb_obj, pm_default) {
 	let new_obj = "";
-	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || isNaN(pb_obj)) {
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined) {
 		new_obj = pm_default;
 	} else {
 		new_obj = pb_obj.toString();
