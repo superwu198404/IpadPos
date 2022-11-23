@@ -525,15 +525,14 @@
 							产品列表
 							<label></label>
 						</view>
-						 <!-- v-if="CheckedList.length>0" -->
-						<view class="yixuan">
+						<view class="yixuan" v-if="CheckedList.length>0">
 
 							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;">已选：</text>
-							<view class="yxlb">							
+							<view class="yxlb">
 								<label v-for="tag in CheckedList">{{ tag._NAME }}
 									<!-- <button @click="DeleteCheckedTag(tag)">×</button> -->
 								</label>
-								
+
 							</view>
 							<!-- <label class="xsqb">显示全部…</label> -->
 						</view>
