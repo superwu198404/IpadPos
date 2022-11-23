@@ -1003,11 +1003,15 @@ page {
 .prolist .h3 label {
 	display: flex;
 	align-items: center;
-	max-width:88%;
+	max-width:86%;
 	white-space: nowrap;
 	overflow: hidden;
 }
-
+.prolist .h3 label label{
+	max-width: 75%;
+	white-space: nowrap;
+	overflow: auto;
+}
 .prolist .h3 .danjia text:nth-child(1){
 	color: #999;
 	font-size: 22rpx;
@@ -1082,9 +1086,8 @@ page {
 }
 .pop-r .states {
 	position: absolute;
-	bottom: 30%;
+	bottom: 26%;
 	right: 101%;
-	z-index: 999;
 }
 .states .statnum{
 	position: relative;
@@ -1099,7 +1102,7 @@ page {
 .states .statnum image{
 	position: absolute;
 	width:100%;
-	max-height:120rpx;
+	max-height:100rpx;
 	bottom:0;
 	left: 0;
 }
@@ -1718,7 +1721,7 @@ checkbox.mycheck .wx-checkbox-input,
 	}
 	.states{
 		position: fixed;
-		bottom:30%;
+		bottom:25%;
 		right:0.5%;
 		overflow: hidden;
 		

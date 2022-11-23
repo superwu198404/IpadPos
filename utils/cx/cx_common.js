@@ -126,7 +126,7 @@ const defStr = function(pb_obj, pm_default){
 
 const nnvl = function(pb_obj, pm_default) {
 	let new_obj = 0;
-	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || pb_obj == NaN) {
+	if (pb_obj == null || pb_obj == "" || pb_obj == undefined || isNaN(pb_obj)) {
 		new_obj = pm_default;
 	} else {
 		try {

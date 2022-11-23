@@ -503,10 +503,11 @@ var XsTypeObj = {
 				}
 			});
 			console.log("[ConfirmCondition]确认条件:", condition);
-			console.log("[ConfirmCondition]输出信息:", );
 			let bqlist = this.mode_info.sale_cake_reserve.condition_output();
+			console.log("[ConfirmCondition]标签条件输出信息:", bqlist);
 			this.CakeList = this.cakeFilter(bqlist); //根据标签筛选蛋糕数据
-			if (this.CakeList.length == 0) {
+			console.log("[ConfirmCondition]标签条件筛选结果:", this.CakeList);
+			if (this.CakeList && this.CakeList.length == 0) {
 				util.simpleMsg("无符合条件数据", true);
 			} else {
 				util.simpleMsg("筛选数据成功");
@@ -3292,7 +3293,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.UNIT = that.clikSpItem.SPECS || that.clikSpItem.UNIT;
 			new002.SPJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
 			new002.PLID = that.clikSpItem.DGPLID || that.clikSpItem.XPLID;
-			new002.STR2 = that.storeName;
+			// new002.STR2 = that.storeName; //测试wy 要求str2 不记录门店信息
 			new002.YN_XPDG = pm_yndgxp;
 
 			let price = that.spPrice[pm_spid].PRICE;

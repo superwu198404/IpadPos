@@ -395,7 +395,8 @@
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{sp.STR1}}
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 
+									<label>{{sp.STR1}}</label>
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
 								<view class="danjia"
@@ -525,15 +526,14 @@
 							产品列表
 							<label></label>
 						</view>
-						 <!-- v-if="CheckedList.length>0" -->
-						<view class="yixuan">
+						<view class="yixuan" v-if="CheckedList.length>0">
 
 							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;">已选：</text>
-							<view class="yxlb">							
+							<view class="yxlb">
 								<label v-for="tag in CheckedList">{{ tag._NAME }}
 									<!-- <button @click="DeleteCheckedTag(tag)">×</button> -->
 								</label>
-								
+
 							</view>
 							<!-- <label class="xsqb">显示全部…</label> -->
 						</view>
@@ -575,7 +575,6 @@
 					<Swiper :_swiperList="mainSale.CakeList" />
 				</view>
 			</view>
-
 			<!-- 详情 -->
 			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
 				<view class="body-titles" style="height:70rpx;line-height: 70rpx;">
