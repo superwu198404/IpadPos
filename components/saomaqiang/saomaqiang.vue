@@ -59,9 +59,6 @@
 </script>
 
 <style>
-	.boxs{
-		opacity: 0.1;
-	}
 	.customer {
 		background-color: #fff;
 		width: 40%;
