@@ -71,7 +71,7 @@
 									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
-									<button class="btn" @click="ConfirmCD(item.BILL,item.XSTYPE)">重新打印</button>
+									<button class="btn" @click="ConfirmCD(item)">重新打印</button>
 								</view>
 							</view>
 							<!-- 订单循环 -->
@@ -235,7 +235,11 @@
 				that.GetPTOrder(1);
 			},
 			//重打小票
-			ConfirmCD: async function(xsBill, xsType) {
+			ConfirmCD: async function(data) {
+				console.log("ConfirmCD =======",data);
+				let xsBill = cx_util.snvl(data.BILL,"");
+				let xsType = cx_util.snvl(data.XSTYPE,"");
+				
 				let that = this;
 				let bill = cx_util.snvl(xsBill, "");
 				if (bill == "") {
@@ -252,7 +256,7 @@
 				}
 
 				this.$emit("ClosePopup");
-				that.$refs.printerPage.againPrinter(bill, xsType);
+				that.$refs.printerPage.againPrinter(bill, xsType,data);
 			},
 			//重打小票关闭
 			CloseCD: function(data) {

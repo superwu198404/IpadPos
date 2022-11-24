@@ -578,7 +578,7 @@
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: async function(xsBill,xsType) {
+			againPrinter: async function(xsBill,xsType,data) {
 				var that = this;
 				//console.log("重打单号:", xsBill)
 				if (xsBill == "" || xsBill == null) {
@@ -614,16 +614,17 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
+				let is_ewm = true;
 				//电子发票二维码不为空，则打印二维码
-				if (is_dzfpewmdz && xprinter_util.nnvl(xsType,0) == 1) {
+				if (is_dzfpewmdz && xprinter_util.nnvl(xsType,0) == 1 && is_ewm) {
 					let objQrCode =
 					{
 						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
 						v: xprinter_util.snvl(1,""),
-						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
-						bill: xprinter_util.snvl(sale1_obj.BILL,""),
-						khid: xprinter_util.snvl(sale1_obj.KHID,""),
-						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						saledate: xprinter_util.snvl(data.SALEDATE,""),
+						bill: xprinter_util.snvl(xsBill,""),
+						khid: xprinter_util.snvl(data.KHID,""),
+						gsid: xprinter_util.snvl(data.GSID,""),
 						sltype: xprinter_util.snvl(0.16,""),
 					};
 					//生成属于单号的二维码
@@ -644,7 +645,7 @@
 					    command.endPrinter(); //打印切纸		
 						that.prepareSend(command.getData()); //发送数据
 					})
-				}else if(is_xpewm && xprinter_util.nnvl(xsType,0) == 1){
+				}else if(is_xpewm && xprinter_util.nnvl(xsType,0) == 1 && is_ewm){
 					//生成属于单号的公众号
 					Promise.all([
 						that.gzhQrCodeGenerate(is_xpewm,app.globalData.BLEInformation.printerFile + printer_poscs.XPEWM),

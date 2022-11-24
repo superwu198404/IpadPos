@@ -26,7 +26,7 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 						 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" + storeid + "' and C1.YN_JSLB!='F'\
 						 AND C1.SDATE<= DATETIME('" + dateTime + "') AND C1.EDATE>= DATETIME('" + dateTime + "')  AND  C1.cxzt like  '%" + cxkey + "%' order by C1.YN_ZD desc,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 	await db.get().executeQry(cxformd001_sql, "执行中", function(res1) {
-		console.log("cxformd001_sql执行结果：", res1.msg);
+		//console.log("cxformd001_sql执行结果：", res1.msg);
 		cxformd001_arr = res1.msg;
 	}, function(err) {
 		console.log("cxformd001_sql执行失败：", err);
@@ -47,7 +47,7 @@ const cxClassSql = async (storeid,date1) => {
                              FROM   cxformd002 WHERE bill IN  ( SELECT  BILL  FROM  cxformd001 WHERE     BILL_STATUS ='1' and YN_JSLB!='F'  AND khid ='" + storeid + "'\
 							AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') )  ORDER  by CLASSID*1";
     await db.get().executeQry(cxformd002_sql, "执行中", function(res) {
-		console.log("cxformd002_sql执行结果：", res.msg);
+		//console.log("cxformd002_sql执行结果：", res.msg);
 		cxformd002_arr = res.msg;
 	}, function(err) {
 		console.log("cxformd002_sql执行失败：", err);
@@ -64,7 +64,7 @@ const cxSPsql = async (storeid,date1) => {
 	let cxformd003_sql = "SELECT C3.KHID,C3.BILL,C3.BILL||C3.CLASSID CLASSID,C3.SPID  FROM  cxformd003 C3 LEFT JOIN cxformd006 C6 ON C3.BILL = C6.BILL AND C3.KHID = C6.KHID WHERE  C3.bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB!='F'\
 					   AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) order by (CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc";
     await db.get().executeQry(cxformd003_sql, "执行中", function(res) {
-		console.log("cxformd003_sql执行结果：", res.msg);
+		//console.log("cxformd003_sql执行结果：", res.msg);
 		cxformd003_arr = res.msg;
 	}, function(err) {
 		console.log("cxformd003_sql执行失败：", err);
