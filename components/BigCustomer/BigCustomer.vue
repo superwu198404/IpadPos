@@ -83,6 +83,7 @@
 				// 	util.simpleMsg("请选择大客户", true);
 				// 	return;
 				// }
+				console.log("[BigCustomer-Close]大客户信息:",this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 			},
 			CreditMode: function(is_credit) {
@@ -113,6 +114,7 @@
 				this.curIndex = i;
 				this.big_client_info = e;
 				this.big_client_info.DKFID = e.DKHID;
+				console.log("[BigCustomer-ConfimrBig]大客户信息:",this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 			},

@@ -83,15 +83,13 @@
 						<!-- :disabled="ADDR.ACT=='Update'" -->
 						<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
 								@blur="searchMapAddr()" /></label>
-						<view v-if="AddrArr.length>0">
+						<view v-if="AddrArr.length>0 && AddShowAllAddressList">
 							<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
 								style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
 						</view>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
-							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
-								<!-- <button class="btn-sc">删除</button> -->
-							</view>
+							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button><button class="btn-sc" @click="yn_add = false">取消</button></view>
 						</view>
 					</view>
 				</view>
@@ -196,6 +194,7 @@
 				LimitMaxDate: '2100-01-01',
 				LimitTime: '00:00',
 				ShowAllAddressList: false,
+				AddShowAllAddressList: false,
 				CatchAddress: null,
 				Products: [{
 					PLID: "109",
@@ -530,7 +529,7 @@
 					time = time + ":00";
 				}
 				console.log("[TimeChange]时间格式化后：", time);
-				that.Order.TH_TIME = time.replace(/[^u4e00-u9fa5]/g,'');
+				that.Order.TH_TIME = time.replace(/[^u4e00-u9fa5]/g, '');
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			//提货类型改变
@@ -659,6 +658,7 @@
 					console.log("[SearchMapAddr]高德地址查询:", res);
 					if (res.code) {
 						that.AddrArr = JSON.parse(res.data);
+						that.AddShowAllAddressList = true;
 						if (that.AddrArr && that.AddrArr.length && that.AddrArr.length > 0) {
 							this.CatchAddress = that.AddrArr[0];
 							console.log("[SearchMapAddr]储存缓存地址:", this.CatchAddress);
@@ -672,6 +672,7 @@
 					that.ADDR.ADDRESS = e.address;
 					that.ADDR.LONGITUDE = e.adrjd;
 					that.ADDR.LATITUDE = e.adrwd;
+					that.AddShowAllAddressList = false;
 				}
 			},
 			//选中配送地址

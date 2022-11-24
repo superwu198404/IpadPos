@@ -144,8 +144,8 @@
 				</Message>
 				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
 				</RefundOrder>
-				<SXRefund style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<SXRefund style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>

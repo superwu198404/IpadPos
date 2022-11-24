@@ -63,6 +63,7 @@ var XsTypeObj = {
 			"sale_online_order": true,
 			"sale_online_order_extract": true,
 			"sale_credit": true,
+			"sale_credit_settlement":true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
 			"sale_credit": true,
@@ -1177,6 +1178,68 @@ var XsTypeObj = {
 			uni.$emit('select-credit', data);
 		}
 	},
+	//赊销结算
+	sale_credit_settlement:{
+		close: true,
+		xstype: "7",
+		clickType: "sale_credit_settlement",
+		nameSale: "赊销结算",
+		icon_open: require("@/images/sxtd.png"),
+		icon_close: require("@/images/sxtd-wxz.png"),
+		operation: {
+			"HY": false, //是否可以录入会员
+			"DKF": false, //是否可以打开录入大客户
+			"Disc": false, //是否可以打开录入折扣
+			"ynFzCx": false, //是否可以辅助促销
+			"ynCancel": true, //是否可以退出当前销售模式
+			"FZCX": false, //是否可以打开辅助促销组件
+			"ynCx": false, //是否进行可以进行促销
+			"ynSKDisc": false, //是否可以计算手工折扣
+			"ynEdit": false, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+		
+			"sale_credit_settlement": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
+		},
+		$click() {
+			console.log("[sale_credit_settlement]赊销结算点击...");
+			console.log("[sale_credit_settlement]大客户权限(设置前)：", this.currentOperation);
+			this.ComponentsManage.DKF = true; //打开大客户弹窗
+			console.log("[sale_credit_settlement]大客户权限(设置后)：", this.currentOperation.DKF);
+			uni.$once('select-credit', util.callBind(this, function(data) {
+				if (Object.keys(data ?? {}).length > 0) {
+					console.log("[Change]切换到赊销结算!");
+					this.SetManage("sale_credit_settlement"); //切换到赊销
+				} else { //如果没有大客户数据 则切换到普通销售模式
+					console.log("[Change]切换到普通模式!");
+					this.resetSaleBill();
+				}
+			}));
+			return false;
+		},
+		$initSale:function(params) {
+			console.log("[InitSale]赊销结算单据信息:", params);
+			this.actType = common.actTypeEnum.Payment;
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			this.sale003 = [];
+			this.communication_for_oracle = params.sql;
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			this.ShowStatement();
+		},
+		$beforeFk: function() {
+			return true;
+		},
+		$saleFinishing: function() {
+			console.log("[SaleFinishing]赊销结算单据信息生成中...");
+			
+			this.ClearDiscount(this.sale001, this.sale002);
+		}
+	},
 	//赊销退货
 	sale_credit_return_good: {
 		xstype: "7",
@@ -1612,6 +1675,7 @@ function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
 	let brand = global.brand;
 	var that = this;
+	this.uni = uni;
 	var uni = uni;
 	var payresult = null;
 
@@ -2512,6 +2576,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
+		"sale_credit_settlement":false,
 		"sale_credit_return_good": false,
 		"sale_takeaway": false,
 		"sale_takeaway_reserve": false,
@@ -2540,6 +2605,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_online_order": false,
 		"sale_online_order_extract": false,
 		"sale_credit": false,
+		"sale_credit_settlement":false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
