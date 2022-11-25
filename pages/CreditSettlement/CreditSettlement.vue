@@ -41,7 +41,7 @@
 										<label>客户名称：{{item.DKFNAME}}</label>
 									</view>
 									<view class="handles"><text></text>
-										<button class="btn" @click="Settlement(item.BILL)">结算</button>
+										<!-- <button class="btn" @click="Settlement(item.BILL)">结算</button> -->
 									</view>
 								</view>
 							</view>
@@ -112,7 +112,7 @@
 				this.big_client_info = this.big_clients[val.detail.value];
 				this.GetBigClientSettlement();
 			},
-			Settlement: function() {
+			Settlement:async function() {
 				let bills = [],
 					main_order = this.select_orders[0],
 					update_status_sql = [],
@@ -128,7 +128,7 @@
 					s3.JSNET = i.ZNET;
 					ywsxjsmx.push(s3);
 				})
-				let ywsxjs = sale.ywsxjs({
+				let ywsxjs = new sale.ywsxjs({
 					DKFID: this.big_client_info.DKHID,
 					DKFNAME: this.big_client_info.DKFNAME,
 					KHID: this.KHID,

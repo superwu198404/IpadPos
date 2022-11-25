@@ -1232,14 +1232,42 @@ var XsTypeObj = {
 				sale003: this.sale003
 			}, common.actTypeEnum.Payment);
 			this.ShowStatement();
+			this.additional['YWSXJS'] = params.ywsxjs;
+			this.additional['YWSXJSMX'] = params.ywsxjsmx;
+			console.log("[InitSale]赊销结算附加表生成:", this.additional);
 		},
 		$beforeFk: function() {
+			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
+			allow_type.push('ZF04');//测试用
+			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
+			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
+				allow_type,
+				ban_type:this.ban_type
+			});
 			return true;
 		},
 		$saleFinishing: function() {
-			console.log("[SaleFinishing]赊销结算单据信息生成中...");
-
-			this.ClearDiscount(this.sale001, this.sale002);
+			let credit_bill = this.getBill();
+			console.log("[SaleFinishing]赊销结算单据信息生成中...",{
+				sale1:this.sale001,
+				sale2:this.sale002,
+				sale3:this.sale003
+			});
+			let ywsxfk_list = [];
+			this.sale003.forEach(s3 => {
+				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
+				ywsxfk.BILL = credit_bill;
+				ywsxfk.JK_DATE = new Date().toLocaleString();
+				ywsxfk_list.push(ywsxfk);
+			})
+			this.sale001 = [];
+			this.sale002 = [];
+			this.sale003 = [];
+			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
+			this.additional['YWSXFK'] = ywsxfk_list;
+			this.additional['YWSXJS'].BILL = credit_bill;
+			this.additional['YWSXJSMX'].map(i => i.BILL=credit_bill);
+			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
 		}
 	},
 	//赊销退货
@@ -2249,6 +2277,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ywbhqh = []; //裱花请货单
 	this.ydsale001 = {}; //预定主单
 	this.sxsale001 = {}; //赊销主单
+	this.additional = {}; //附加生成信息
 	//判断当前 sale2 中是否包含裱花商品
 	this.decoration = false;
 	//判断当前 sale2 中是否包含促销方式为 hylv=3-48 的类型
@@ -2997,11 +3026,13 @@ function GetSale(global, vue, target_name, uni) {
 			} catch (e) {
 				console.log("[PayedResult]执行 SaleFinishing 发生异常:", e);
 			}
+			console.log("[PayedResult]调用执行 SaleFinishing 完毕!");
 			//支付前允许手工折扣 则支付完成后要分摊商品金额
 			if (this.currentOperation.ynSKDisc) {
+				console.log("[PayedResult]判断支付前是否允许手工折扣...");
 				//手工折扣额分摊
 				this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
-				console.log("分摊后的商品信息：", this.sale002);
+				console.log("[PayedResult]分摊后的商品信息：", this.sale002);
 			}
 			console.log("[PayedResult]准备创建销售单记录...", {
 				sale001: this.sale001,
@@ -3010,25 +3041,33 @@ function GetSale(global, vue, target_name, uni) {
 				sale008: this.sale008,
 				ydsale001: this.ydsale001,
 				ywbhqh: this.ywbhqh,
-				sxsale001: this.sxsale001
+				sxsale001: this.sxsale001,
+				...this.additional
 			});
+			console.log("[PayedResult]执行 CXMDFS 中...");
 			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
 				.currentOperation
 				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
-			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
-			let create_result = await CreateSaleOrder({
-				SALE001: this.sale001,
-				SALE002: this.sale002,
-				SALE003: this.sale003,
-				SALE008: this.sale008,
-				YWBHQH: this.ywbhqh,
-				YDSALE001: this.ydsale001,
-				SXSALE001: this.sxsale001
-			}, {
-				sqlite: this.communication_for_sqlite,
-				oracle: this.communication_for_oracle
-			});
+			console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
+			let create_result;
+			try{
+				create_result = await CreateSaleOrder({
+					SALE001: this.sale001,
+					SALE002: this.sale002,
+					SALE003: this.sale003,
+					SALE008: this.sale008,
+					YWBHQH: this.ywbhqh,
+					YDSALE001: this.ydsale001,
+					SXSALE001: this.sxsale001,
+					...this.additional
+				}, {
+					sqlite: this.communication_for_sqlite,
+					oracle: this.communication_for_oracle
+				});
+			}catch(e){
+				console.log("[PayedResult]订单sql生成发生异常:",e);
+			}
 			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
@@ -3838,7 +3877,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.sxsale001 = {};
 		this.clikSpItem = {};
 		this.payed = [];
+		this.ban_type = [];
 		this.notFayType = [];
+		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
 
