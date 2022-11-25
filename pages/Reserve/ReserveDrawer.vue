@@ -110,15 +110,15 @@
 							</view>
 						</view>
 					</view>
-					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image
-							src="../../images/zhankaiqb-dt.png"></image>
+					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">{{ ShowAllAddressList?'隐藏全部地址':'显示全部地址' }}
+						<image src="../../images/zhankaiqb-dt.png" :class="ShowAllAddressList?'flip-vertical':''"></image>
 					</view>
 				</view>
 				<view class="atlas">
 					<!-- <cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view> -->
-					<view class="map" v-if="!ShowAllAddressList && !yn_add">
+					<view class="map" v-if="!ShowAllAddressList && !yn_add || ADDRS.length == 0">
 						<map :key="map.key" :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
 							:markers="map.markers"></map>
 					</view>
@@ -582,6 +582,7 @@
 						that.yn_add = false;
 						this.ShowAllAddressList = true;
 					} else {
+						that.ADDRS = [];
 						that.ShowAddADDR(); //默认展开地址新增表单
 					}
 				})
@@ -970,6 +971,9 @@
 </script>
 
 <style>
+	.flip-vertical{
+		transform: rotate(180deg);
+	}
 	.thmd {
 		position: absolute;
 		left: 150rpx;
