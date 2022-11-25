@@ -390,7 +390,7 @@
 							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
 								@click="mainSale.completeEdit">完成</button>
 							<button style="color:#FE694B;border-left:1px solid #eee"
-								@click="mainSale.resetSaleBill">清空</button>
+								@click="mainSale.resetSaleBill()">清空</button>
 						</label>
 					</view>
 					<view class="goods">
@@ -542,6 +542,7 @@
 						</view>
 					</view>
 					<view class="filter" @click="mainSale.ToChoose">
+						<span>共{{mainSale.CakeList.length}}款</span>
 						<image src="@/images/qushaixuan.png"></image> 去筛选
 					</view>
 					<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">

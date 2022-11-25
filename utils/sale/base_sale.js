@@ -457,15 +457,17 @@ var XsTypeObj = {
 					data,
 					userinfo: getApp().globalData?.userinfo
 				});
-				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-					console.log("[CloseCakeReservation]蛋糕预定关闭...");
-					this.show_cake_reservation = false;
-					this.CakeList = []; //清空传入的蛋糕数据
-					this.resetSaleBill(); //清空一下
-					this.SetDefaultType();
-				} else {
-					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-						true)
+				if (is_confirm) {
+					if (data.content == getApp().globalData?.userinfo?.pwd) {
+						console.log("[CloseCakeReservation]蛋糕预定关闭...");
+						this.show_cake_reservation = false;
+						this.CakeList = []; //清空传入的蛋糕数据
+						this.resetSaleBill(); //清空一下
+						// this.SetDefaultType();
+					} else {
+						if (data.content != getApp().globalData?.userinfo?.pwd)
+							util.simpleMsg("密码错误", true)
+					}
 				}
 			}), true)
 		},
@@ -552,13 +554,16 @@ var XsTypeObj = {
 					data,
 					userinfo: getApp().globalData?.userinfo
 				});
-				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-					console.log("[CloseReserveDrawer]预定录入关闭...");
-					this.setComponentsManage(null, "statement");
-					this.PayParamAssemble();
-				} else {
-					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-						true)
+				if (is_confirm) {
+					if (data.content == getApp().globalData?.userinfo?.pwd) {
+						console.log("[CloseReserveDrawer]预定录入关闭...");
+						this.setComponentsManage(null, "statement");
+						this.PayParamAssemble();
+					} else {
+						if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg(
+							"密码错误",
+							true)
+					}
 				}
 			}), true)
 
@@ -1238,20 +1243,21 @@ var XsTypeObj = {
 		},
 		$beforeFk: function() {
 			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
-			allow_type.push('ZF04');//测试用
-			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
+			allow_type.push('ZF04'); //测试用
+			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
+				.fkid);
 			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
 				allow_type,
-				ban_type:this.ban_type
+				ban_type: this.ban_type
 			});
 			return true;
 		},
 		$saleFinishing: function() {
 			let credit_bill = this.getBill();
-			console.log("[SaleFinishing]赊销结算单据信息生成中...",{
-				sale1:this.sale001,
-				sale2:this.sale002,
-				sale3:this.sale003
+			console.log("[SaleFinishing]赊销结算单据信息生成中...", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
 			});
 			let ywsxfk_list = [];
 			this.sale003.forEach(s3 => {
@@ -1266,7 +1272,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
 			this.additional['YWSXFK'] = ywsxfk_list;
 			this.additional['YWSXJS'].BILL = credit_bill;
-			this.additional['YWSXJSMX'].map(i => i.BILL=credit_bill);
+			this.additional['YWSXJSMX'].map(i => i.BILL = credit_bill);
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
 		}
 	},
@@ -3051,7 +3057,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
 			console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
 			let create_result;
-			try{
+			try {
 				create_result = await CreateSaleOrder({
 					SALE001: this.sale001,
 					SALE002: this.sale002,
@@ -3065,8 +3071,8 @@ function GetSale(global, vue, target_name, uni) {
 					sqlite: this.communication_for_sqlite,
 					oracle: this.communication_for_oracle
 				});
-			}catch(e){
-				console.log("[PayedResult]订单sql生成发生异常:",e);
+			} catch (e) {
+				console.log("[PayedResult]订单sql生成发生异常:", e);
 			}
 			common.TransLiteData(this.sale001.BILL); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
@@ -3079,7 +3085,9 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			util.simpleMsg(result.msg, true);
 		}
-		this.resetSaleBill();
+		console.log("支付后要跳转的模式：", this.clickSaleType)
+		console.log("支付后要跳转的模式：", this.clickSaleType.afterPay)
+		this.resetSaleBill(this.clickSaleType.afterPay); //支付后要跳转的销售模式
 	}
 
 	//去支付
@@ -3855,7 +3863,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//重置销售单据
-	this.resetSaleBill = util.callBind(this, function() {
+	this.resetSaleBill = util.callBind(this, function(e) {
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
@@ -3887,12 +3895,12 @@ function GetSale(global, vue, target_name, uni) {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
 			// console.log("this.clickSaleType", this.clickSaleType);
 		}
-		console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
-		console.log("this.clickSaleType", this.clickSaleType);
+		// console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
+		// console.log("this.clickSaleType", this.clickSaleType);
 		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
-		this.SetDefaultType(this.clickSaleType.afterPay);
-		console.log("this.clickSaleType.yn_showDetail1", this.clickSaleType.yn_showDetail);
-		// this.SetDefaultType();
+		// this.SetDefaultType(this.clickSaleType.afterPay);
+		// console.log("this.clickSaleType.yn_showDetail1", this.clickSaleType.yn_showDetail);
+		this.SetDefaultType(e);
 		that.update()
 		console.log("[ResetSaleBill]清空后的：", this.sale001);
 	})
