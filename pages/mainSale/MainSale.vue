@@ -144,8 +144,11 @@
 				</Message>
 				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
 				</RefundOrder>
-				<SXRefund style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val"></CreditSettlement>
+				<SXRefund style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
+				</CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -395,7 +398,7 @@
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
 									<label>{{sp.STR1}}</label>
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>

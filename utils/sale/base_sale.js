@@ -577,7 +577,9 @@ var XsTypeObj = {
 			} else { //关闭详情
 				console.log("关闭详情");
 				this.condition = []; //清空已选标签
-				this.yn_showDetail = false;
+				// this.yn_showDetail = false;
+				XsTypeObj.sale_cake_reserve.yn_showDetail = false;
+
 			}
 		},
 		//选择详情图片顶部切换
@@ -2906,6 +2908,8 @@ function GetSale(global, vue, target_name, uni) {
 
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
+			console.warn("type:", this.clickSaleType);
+			console.warn("type:", XsTypeObj[pm_type]);
 			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
@@ -3838,9 +3842,16 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
 
+		if (this.clickSaleType.clickType == "sale_cake_reserve") {
+			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
+			// console.log("this.clickSaleType", this.clickSaleType);
+		}
+		console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
+		console.log("this.clickSaleType", this.clickSaleType);
 		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
-		// this.SetDefaultType(this.clickSaleType.afterPay);
-		this.SetDefaultType();
+		this.SetDefaultType(this.clickSaleType.afterPay);
+		console.log("this.clickSaleType.yn_showDetail1", this.clickSaleType.yn_showDetail);
+		// this.SetDefaultType();
 		that.update()
 		console.log("[ResetSaleBill]清空后的：", this.sale001);
 	})
