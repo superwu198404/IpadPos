@@ -63,7 +63,7 @@ var XsTypeObj = {
 			"sale_online_order": true,
 			"sale_online_order_extract": true,
 			"sale_credit": true,
-			"sale_credit_settlement":true,
+			"sale_credit_settlement": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
 			"sale_credit": true,
@@ -298,7 +298,7 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
@@ -1179,7 +1179,7 @@ var XsTypeObj = {
 		}
 	},
 	//赊销结算
-	sale_credit_settlement:{
+	sale_credit_settlement: {
 		close: true,
 		xstype: "7",
 		clickType: "sale_credit_settlement",
@@ -1197,7 +1197,7 @@ var XsTypeObj = {
 			"ynSKDisc": false, //是否可以计算手工折扣
 			"ynEdit": false, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
-		
+
 			"sale_credit_settlement": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		},
@@ -1217,7 +1217,7 @@ var XsTypeObj = {
 			}));
 			return false;
 		},
-		$initSale:function(params) {
+		$initSale: function(params) {
 			console.log("[InitSale]赊销结算单据信息:", params);
 			this.actType = common.actTypeEnum.Payment;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -1236,7 +1236,7 @@ var XsTypeObj = {
 		},
 		$saleFinishing: function() {
 			console.log("[SaleFinishing]赊销结算单据信息生成中...");
-			
+
 			this.ClearDiscount(this.sale001, this.sale002);
 		}
 	},
@@ -2576,7 +2576,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
-		"sale_credit_settlement":false,
+		"sale_credit_settlement": false,
 		"sale_credit_return_good": false,
 		"sale_takeaway": false,
 		"sale_takeaway_reserve": false,
@@ -2605,7 +2605,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_online_order": false,
 		"sale_online_order_extract": false,
 		"sale_credit": false,
-		"sale_credit_settlement":false,
+		"sale_credit_settlement": false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
