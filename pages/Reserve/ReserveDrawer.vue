@@ -925,7 +925,7 @@
 				}
 				that.statements = false;
 				that.yn_add = false;
-				that.Empty();
+				// that.Empty();
 				console.log("待提交的顾客信息:", that.YDDATA);
 			},
 			//清空
