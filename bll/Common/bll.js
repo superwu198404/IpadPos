@@ -237,12 +237,16 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		OracleSql += oracle_addition_sqls.join(';');
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
+		console.log("[CreateSaleOrder]生成绑定BILL信息：", {
+			销售BILL:dataObj["SALE001"].BILL || "-",
+			赊销结算BILL:dataObj["YWSXJS"].BILL || "-"
+		})
 		let tx_obj = {
 			TX_SQL: OracleSql,
 			STOREID: dataObj["SALE001"].KHID,
 			POSID: dataObj["SALE001"].POSID,
 			TAB_NAME: 'XS',
-			STR1: dataObj["SALE001"].BILL,
+			STR1: dataObj["SALE001"].BILL || dataObj["YWSXJS"].BILL,
 			BDATE: saletime, //增加时分秒的操作
 			YW_NAME: "销售单据",
 			CONNSTR: 'CONNSTRING'
