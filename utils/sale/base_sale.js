@@ -302,8 +302,8 @@ var XsTypeObj = {
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
-		icon_open: require("@/images/yuding.png"),
-		icon_close: require("@/images/yuding-hui.png"),
+		icon_open: require("@/images/dgaoyud.png"),
+		icon_close: require("@/images/dgaoyud-wxz.png"),
 		condition: [],
 		imgCurrent: 0,
 		afterPay: "sale_cake_reserve", //支付后要跳转的模式
