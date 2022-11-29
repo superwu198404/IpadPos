@@ -1187,12 +1187,13 @@ var XsTypeObj = {
 	},
 	//赊销结算
 	sale_credit_settlement: {
-		close: true,
+		close: false,
 		xstype: "7",
 		clickType: "sale_credit_settlement",
 		nameSale: "赊销结算",
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
+		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
 			"DKF": false, //是否可以打开录入大客户
@@ -1225,6 +1226,9 @@ var XsTypeObj = {
 			return false;
 		},
 		$initSale: function(params) {
+			console.log("[InitSale]当前业务:",this.current_type);
+			this.mode_info.sale_credit_settlement.new_bill = this.getBill();
+			console.log("[InitSale]赊销结算生成单号:",this.mode_info.sale_credit_settlement.new_bill);
 			console.log("[InitSale]赊销结算单据信息:", params);
 			this.actType = common.actTypeEnum.Payment;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -1253,7 +1257,8 @@ var XsTypeObj = {
 			return true;
 		},
 		$saleFinishing: function() {
-			let credit_bill = this.getBill();
+			let credit_bill = this.mode_info.sale_credit_settlement.new_bill;
+			console.log("[SaleFinishing]赊销结算绑定单号:",credit_bill);
 			console.log("[SaleFinishing]赊销结算单据信息生成中...", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -1266,7 +1271,7 @@ var XsTypeObj = {
 				ywsxfk.JK_DATE = new Date().toLocaleString();
 				ywsxfk_list.push(ywsxfk);
 			})
-			this.sale001 = [];
+			this.sale001 = {};
 			this.sale002 = [];
 			this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
@@ -3085,7 +3090,18 @@ function GetSale(global, vue, target_name, uni) {
 			} catch (e) {
 				console.log("[PayedResult]订单sql生成发生异常:", e);
 			}
-			common.TransLiteData(this.sale001.BILL); //上传至服务端
+			let bill = "";
+			console.warn("[PayedResult]结算模式信息获取:", this.current_type);
+			if(this.current_type.clickType == 'sale_credit_settlement'){
+				bill = this.mode_info.sale_credit_settlement.new_bill;
+				console.log("[PayedResult]赊销结算模式...");
+			}
+			else{
+				bill = this.sale001.BILL;
+				console.log("[PayedResult]其他结算模式...");
+			}
+			console.log('[PayedResult]通信表记录单号:',bill);
+			common.TransLiteData(bill); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
 			try {
