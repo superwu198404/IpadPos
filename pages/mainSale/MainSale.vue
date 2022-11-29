@@ -390,7 +390,7 @@
 							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
 								@click="mainSale.completeEdit">完成</button>
 							<button style="color:#FE694B;border-left:1px solid #eee"
-								@click="mainSale.resetSaleBill()">清空</button>
+								@click="mainSale.resetSaleBill(mainSale.clickSaleType.afterPay)">清空</button>
 						</label>
 					</view>
 					<view class="goods">

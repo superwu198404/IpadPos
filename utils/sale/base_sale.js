@@ -2250,6 +2250,16 @@ function GetSale(global, vue, target_name, uni) {
 	//*func* 展开和关闭标签筛选
 	this.ToChoose = util.callBind(this, function(e) {
 		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
+
+		console.log("标签数据：", this.CakeBQList);
+		if (this.CakeBQList.length > 0) {
+			let arr = this.CakeBQList.filter(r => {
+				return r.CHECK
+			});
+			if (arr.length == 0) {
+				this.ChooseBQ(this.CakeBQList[0]) //默认展开第一个标签的数据
+			}
+		}
 	});
 	//*End* 自定义方法结束
 	//日志
@@ -2945,7 +2955,8 @@ function GetSale(global, vue, target_name, uni) {
 			// this.clickSaleType = XsTypeObj[pm_type];
 			console.warn("type:", this.clickSaleType);
 			console.warn("type:", XsTypeObj[pm_type]);
-			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
+			// Object.assign(this.clickSaleType, XsTypeObj[pm_type]);//容易合并到其他模式没有的属性
+			this.clickSaleType = XsTypeObj[pm_type];
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
@@ -3864,6 +3875,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function(e) {
+		console.log("传入的参数：", e);
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
@@ -3891,11 +3903,11 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
 
+		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
-			// console.log("this.clickSaleType", this.clickSaleType);
 		}
-		// console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
+		console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
 		// console.log("this.clickSaleType", this.clickSaleType);
 		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
 		// this.SetDefaultType(this.clickSaleType.afterPay);
