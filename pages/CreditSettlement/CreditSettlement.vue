@@ -19,11 +19,14 @@
 										<label @click="Settlement">
 											<image src="../../images/sousuo.png" mode="widthFix"></image>结算
 										</label>
+										<label @click="SelectAll">
+											<image src="../../images/sousuo.png" mode="widthFix"></image>{{ this.big_client_settlement.length === this.select_orders.length ? '取消全选' : '全选'}}
+										</label>
 									</view>
 								</view>
 							</view>
 						</view>
-						<view class="h2">赊销退单 <label></label></view>
+						<view class="h2">赊销结算 <label></label></view>
 						<NoData v-if="big_client_settlement.length==0"></NoData>
 						<!-- 小类循环 -->
 						<view class="products" v-else>
@@ -112,7 +115,13 @@
 				this.big_client_info = this.big_clients[val.detail.value];
 				this.GetBigClientSettlement();
 			},
-			Settlement:async function() {
+			SelectAll: function() {
+				if (this.big_client_settlement.length === this.select_orders.length)
+					this.select_orders = [];
+				else
+					this.select_orders = [...this.big_client_settlement];
+			},
+			Settlement: async function() {
 				let bills = [],
 					main_order = this.select_orders[0],
 					update_status_sql = [],
@@ -162,11 +171,11 @@
 		created() {
 			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
 			console.log("[CreditSettlement-Created]门店信息:", {
-				ryid:this.RYID,
-				dpid:this.DPID,
-				posid:this.POSID,
-				ryname:this.RYNAME,
-				khid:this.KHID
+				ryid: this.RYID,
+				dpid: this.DPID,
+				posid: this.POSID,
+				ryname: this.RYNAME,
+				khid: this.KHID
 			});
 			this.big_client_info = this.bigCustomerInfo;
 			console.log("[CreditSettlement-Created]获取大客户单据信息...");
