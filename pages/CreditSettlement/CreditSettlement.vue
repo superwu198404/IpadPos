@@ -130,15 +130,15 @@
 				})
 				let ywsxjs = new sale.ywsxjs({
 					DKFID: this.big_client_info.DKHID,
-					DKFNAME: this.big_client_info.DKFNAME,
+					DKFNAME: this.big_client_info.NAME,
 					KHID: this.KHID,
 					BILL_STATUS: 0,
 					TPNET: main_order.ZNET,
 					TJSNET: main_order.ZNET,
 					ID_RY_LR: this.RYID,
-					DATE_LR: new Date().toDateString(),
+					DATE_LR: new Date().toLocaleString(),
 					RYNAME_LR: this.RYNAME,
-					DATE_QT: new Date().toDateString(),
+					DATE_QT: new Date().toLocaleString(),
 					POSID: this.POSID,
 					DPID: this.DPID
 				});
@@ -160,7 +160,14 @@
 			}
 		},
 		created() {
-			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo.DKFID);
+			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
+			console.log("[CreditSettlement-Created]门店信息:", {
+				ryid:this.RYID,
+				dpid:this.DPID,
+				posid:this.POSID,
+				ryname:this.RYNAME,
+				khid:this.KHID
+			});
 			this.big_client_info = this.bigCustomerInfo;
 			console.log("[CreditSettlement-Created]获取大客户单据信息...");
 			this.GetBigClientSettlement();
