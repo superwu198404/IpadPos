@@ -162,8 +162,8 @@
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				POS_XSBILLPRINT: [], //重打查询数据集合

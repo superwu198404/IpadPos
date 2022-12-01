@@ -26,8 +26,8 @@ export const print_init = {
 			canvasGZHHeight: 200, //小票结尾二维码高
 			jpgWidth: 340,
 			jpgHeight: 113,
-			qrCodeWidth: 200, //开票二维码宽
-			qrCodeHeight: 200, // 开票二维码高
+			qrCodeWidth: 256, //开票二维码宽
+			qrCodeHeight: 256, // 开票二维码高
 			bill_printer: "", //单号
 		}
 	}

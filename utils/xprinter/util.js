@@ -1193,9 +1193,9 @@ const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, 
 			text: qrText,
 			width: qrCodeWidth,
 			height: qrCodeHeight,
-			colorDark: "#333333",
+			colorDark: "#000000",
 			colorLight: "#FFFFFF",
-			correctLevel: qrCode.CorrectLevel.H
+			correctLevel: qrCode.CorrectLevel.L
 		})
 		resolve('1')
 	});
