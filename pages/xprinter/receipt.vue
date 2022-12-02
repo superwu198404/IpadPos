@@ -267,7 +267,7 @@
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
-				let isPrinterFP = ((type == "WM" || type == "WMYD") && (xprinter_util.snvl(sale1_obj.STATUS,"") == "12")) ? true : false;
+				let isPrinterFP = ((type == "WM") && (xprinter_util.snvl(sale1_obj.STATUS,"") == "12")) ? true : false;
 				if (is_dzfpewmdz && isPrinterFP) {
 					let objQrCode =
 					{
