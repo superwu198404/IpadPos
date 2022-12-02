@@ -225,15 +225,21 @@
 				console.log("线上订单打印格式记录结束");
 			},
 			//外卖打印小票
-			wmBluePrinter: async function(order, datails, type, print,bs_Reason,bs_Note,new_bill) {
+			wmBluePrinter: async function(order, datails, print) {
 				//票据
 				var that = this;
 				let sale1_objO = JSON.stringify(order);
 				let sale2_arrO = JSON.stringify(datails);
+				
+				let type = xprinter_util.snvl(print.XSTYPE,"");
+				let bs_Reason = xprinter_util.snvl(print.BS_REASON,"");
+				let bs_Note = xprinter_util.snvl(print.BS_NOTE,"");
+				let new_bill = xprinter_util.snvl(print.NEW_BILL,"");
+				
 				//输出日志
 				console.log("外卖打印接收数据 sale1_obj", order);
 				console.log("外卖打印接收数据 sale2_arr", datails);
-				console.log("外卖打印控制参数 type", {type,bs_Reason,bs_Note,new_bill});
+				console.log("外卖打印控制参数 type", {type, bs_Reason, bs_Note, new_bill});
 
 				if(print != null && type == "WMTHBS"){
 					that.printerNum = xprinter_util.nnvl(print.PRINTNUM,1);
@@ -255,7 +261,7 @@
 				//打印数据转换
 				let sale1_obj = JSON.parse(sale1_objO);
 				let sale2_arr = JSON.parse(sale2_arrO);
-				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,new_bill);
+				var printerInfo = xprinter_util.wmPrinterData(sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Note, new_bill);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();

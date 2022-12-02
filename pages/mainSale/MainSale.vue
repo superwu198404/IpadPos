@@ -909,8 +909,8 @@
 				this.$refs.printerPage.xsBluePrinter(order, type, print);
 			},
 			//外卖打印小票
-			wmBluePrinter: function(order, datails, type, print) {
-				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
+			wmBluePrinter: function(order, datails, print) {
+				this.$refs.printerPage.wmBluePrinter(order, datails, print);
 			},
 			//预定打印小票
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {

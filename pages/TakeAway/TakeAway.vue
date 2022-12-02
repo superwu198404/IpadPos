@@ -349,11 +349,13 @@
 							if (data.yn_print && that.Order.STATUS == "33") {
 								let wm_type = "WM";
 								let printerPram = {
-									"PRINTNUM": 1
+									"PRINTNUM": 1,
+									"XSTYPE": wm_type,
+									"BS_REASON": that.bs_Reason,
+									"BS_NOTE": that.bs_Note,
+									"NEW_BILL": data.new_bill,
 								};
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
-									printerPram,
-									that.bs_Reason, that.bs_Note, data.new_bill);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
 							}
 							if (data.yn_bs) { //有报损操作
 								that.new_bill = data.new_bill;
@@ -445,11 +447,13 @@
 							if (that.js_res.yn_print) {
 								let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 								let printerPram = {
-									"PRINTNUM": 2
+									"PRINTNUM": 2,
+									"XSTYPE": wm_type,
+									"BS_REASON": that.bs_Reason,
+									"BS_NOTE": that.bs_Note,
+									"NEW_BILL": that.new_bill,
 								};
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
-									printerPram,
-									that.bs_Reason, that.bs_Note, that.new_bill);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
 							}
 						}
 					} else {
@@ -569,11 +573,13 @@
 						if (that.js_res.yn_print) {
 							let wm_type = that.yn_bs ? "WMTHBS" : "WM";
 							let printerPram = {
-								"PRINTNUM": 2
+								"PRINTNUM": 2,
+								"XSTYPE": wm_type,
+								"BS_REASON": that.bs_Reason,
+								"BS_NOTE": that.bs_Note,
+								"NEW_BILL": that.new_bill,
 							};
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
-								printerPram, that
-								.bs_Reason, that.bs_Note, that.new_bill);
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,printerPram);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -683,12 +689,15 @@
 				//后打印
 				if (that.js_res.yn_print) {
 					let wm_type = that.yn_bs ? "WMTHBS" : "WM";
-					let printerPram = {
-						"PRINTNUM": 2
+					let printerPram = 
+					{
+						"PRINTNUM": 2,
+						"XSTYPE": wm_type,
+						"BS_REASON": that.bs_Reason,
+						"BS_NOTE": that.bs_Note,
+						"NEW_BILL": that.new_bill,
 					};
-					that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, wm_type,
-						printerPram, that
-						.bs_Reason, that.bs_Note, that.new_bill);
+					that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
 				}
 			},
 			//列表刷新
