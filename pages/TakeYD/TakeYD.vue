@@ -294,7 +294,10 @@
 							if (data.yn_print) {
 								//调用打印
 								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WMYD");
+								let printerPram = {
+									"PRINTNUM": 1
+								};
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WMYD", printerPram, "", "", that.new_bill);
 							}
 						} else {
 							util.simpleModal("操作失败", res.msg);
