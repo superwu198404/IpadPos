@@ -436,7 +436,10 @@ var ywsxjs = function(init) {
 	this.POSID = "";
 	this.BILL_QT = "";
 	this.DPID = "";
-	if(init) Object.cover(ywsxjs,init);
+	if(init) {
+		let ywsxjs = this;
+		Object.cover(ywsxjs,init);
+	}
 }
 
 var ywsxjsmx = function() {

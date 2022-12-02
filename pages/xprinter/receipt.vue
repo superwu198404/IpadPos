@@ -72,12 +72,12 @@
 				isQuery: false,
 				imageSrc: "/static/xprinter/erweima.png",
 				jpgSrc: "/static/xprinter/logo.jpg",
-				canvasGZHWidth: 200, //小票结尾二维码宽
-				canvasGZHHeight: 200, //小票结尾二维码高
+				canvasGZHWidth: 256, //小票结尾二维码宽
+				canvasGZHHeight: 256, //小票结尾二维码高
 				jpgWidth: 340,
 				jpgHeight: 113,
-				qrCodeWidth: 200, //开票二维码宽
-				qrCodeHeight: 200, // 开票二维码高
+				qrCodeWidth: 256, //开票二维码宽
+				qrCodeHeight: 256, // 开票二维码高
 				bill_printer: "", //单号
 				blueStatus: false, //打印机状态
 			};
@@ -124,9 +124,9 @@
 					text: app.globalData.BLEInformation.qrCodeContent,
 					width: that.qrCodeWidth,
 					height: that.qrCodeHeight,
-					colorDark: "#333333",
+					colorDark: "#000000",
 					colorLight: "#FFFFFF",
-					correctLevel: qrCode.CorrectLevel.H
+					correctLevel: qrCode.CorrectLevel.L
 				})
 			},
 			//广告语

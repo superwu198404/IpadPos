@@ -134,8 +134,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			util.simpleMsg("门店信息查询失败，请重新初始化", "none");
 			return;
 		}
-		console.log("门店信息查询成功：", res);
-		console.log("人员信息展示：", ryinfo);
+		console.warn("[InitStore]门店信息查询成功：", res);
+		console.warn("[InitStore]人员信息展示：", ryinfo);
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
@@ -163,8 +163,11 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
 		console.log("[InitStore]全局混入客户端信息！");
+		global.data = function(){
+			return store1;
+		};
 		Vue.mixin(global);
-		console.log("登录后的初始化信息：", store1);
+		console.log("[InitStore]登录后的初始化信息：", store1);
 		if (func) func({
 			code: true,
 			msg: "初始化成功"

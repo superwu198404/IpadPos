@@ -238,8 +238,8 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 		console.log("[CreateSaleOrder]生成绑定BILL信息：", {
-			销售BILL:dataObj["SALE001"].BILL || "-",
-			赊销结算BILL:dataObj["YWSXJS"].BILL || "-"
+			销售BILL:dataObj["SALE001"]?.BILL || "-",
+			赊销结算BILL:dataObj["YWSXJS"]?.BILL || "-"
 		})
 		let tx_obj = {
 			TX_SQL: OracleSql,

@@ -23,7 +23,11 @@
 								</view>
 							</view>
 						</view>
-						<view class="h2">赊销退单 <label></label></view>
+						<view class="h2" style="display: flex;align-items: center;">赊销结算
+							<view @click="SelectAll" class="select-all-orders">
+								{{ this.big_client_settlement.length === this.select_orders.length ? '取消全选' : '全选'}}
+							</view>
+						</view>
 						<NoData v-if="big_client_settlement.length==0"></NoData>
 						<!-- 小类循环 -->
 						<view class="products" v-else>
@@ -33,7 +37,7 @@
 									@click="SelectOrder(item)">
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
-										<text class="price">￥{{item.DNET}}</text>
+										<text class="price">￥{{item.TNET}}</text>
 									</view>
 									<view class="cods">
 										<label>下单时间：{{item.SALEDATE}}</label>
@@ -56,6 +60,7 @@
 <script>
 	import sale from '@/utils/sale/saleClass.js';
 	import util from '@/utils/util.js';
+	import dateformat from '@/utils/dateformat.js';
 	import {
 		getBigClientSettlement
 	} from '@/api/business/bigclient.js';
@@ -112,11 +117,22 @@
 				this.big_client_info = this.big_clients[val.detail.value];
 				this.GetBigClientSettlement();
 			},
-			Settlement:async function() {
+			SelectAll: function() {
+				if (this.big_client_settlement.length === this.select_orders.length)
+					this.select_orders = [];
+				else
+					this.select_orders = [...this.big_client_settlement];
+			},
+			Settlement: async function() {
+				if (!this.select_orders.length) {
+					util.simpleMsg("请选择需要结算的单据后进行结算!");
+					return;
+				}
 				let bills = [],
-					main_order = this.select_orders[0],
+					main_order = Object.assign({}, this.select_orders[0]),
 					update_status_sql = [],
 					ywsxjsmx = [];
+				main_order.ZNET = 0;
 				this.select_orders.forEach(i => {
 					bills.push(i.BILL);
 					main_order.ZNET += i.ZNET;
@@ -130,27 +146,32 @@
 				})
 				let ywsxjs = new sale.ywsxjs({
 					DKFID: this.big_client_info.DKHID,
-					DKFNAME: this.big_client_info.DKFNAME,
+					DKFNAME: this.big_client_info.NAME,
 					KHID: this.KHID,
 					BILL_STATUS: 0,
 					TPNET: main_order.ZNET,
 					TJSNET: main_order.ZNET,
 					ID_RY_LR: this.RYID,
-					DATE_LR: new Date().toDateString(),
+					DATE_LR: dateformat.toDateTimeString(new Date()),
 					RYNAME_LR: this.RYNAME,
-					DATE_QT: new Date().toDateString(),
+					DATE_QT: dateformat.toDateTimeString(new Date()),
 					POSID: this.POSID,
 					DPID: this.DPID
 				});
 				let condition = bills.join("','");
 				console.log("[Settlement]查询总商品信息:", condition);
-				RequestSend(`select * from syssale002 where bill in('${condition}') and khid='${this.KHID}'`).then(util
+				RequestSend(
+					`select sale2.*,spda.SNAME GOOD_NAME from (select * from syssale002 where bill in('${condition}') and khid='${this.KHID}') sale2 left join spda on sale2.spid=spda.spid`
+				).then(util
 					.callBind(this, function(res) {
 						let data = JSON.parse(res.result.data);
 						console.log("[Settlement]商品信息:", data);
 						this.$to_sale_pages('sale_credit_settlement', {
 							sale1: main_order,
-							sale2: data,
+							sale2: data.map(i => {
+								i.STR1 = i.GOOD_NAME;
+								return i;
+							}),
 							sale3: [],
 							sql: update_status_sql,
 							ywsxjs,
@@ -160,7 +181,14 @@
 			}
 		},
 		created() {
-			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo.DKFID);
+			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
+			console.log("[CreditSettlement-Created]门店信息:", {
+				ryid: this.RYID,
+				dpid: this.DPID,
+				posid: this.POSID,
+				ryname: this.RYNAME,
+				khid: this.KHID
+			});
 			this.big_client_info = this.bigCustomerInfo;
 			console.log("[CreditSettlement-Created]获取大客户单据信息...");
 			this.GetBigClientSettlement();
@@ -229,5 +257,17 @@
 
 	.products .h3 text {
 		font-weight: 600;
+	}
+
+	.select-all-orders {
+		display: inline-flex;
+		justify-content: center;
+		border-radius: 30rpx;
+		padding: 0 18rpx;
+		height: 48rpx;
+		background-color: #006B44;
+		color: #fff;
+		align-items: center;
+		margin-left: 10px;
 	}
 </style>

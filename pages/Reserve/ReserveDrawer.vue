@@ -441,7 +441,7 @@
 						datetime: dateformat.toDateString(add_interval_date),
 						time: add_time
 					});
-					return add_time;
+					return add_time.replace(/[^u4e00-u9fa5]/g, '');
 				})();
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
