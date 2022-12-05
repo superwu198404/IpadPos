@@ -148,7 +148,7 @@
 					DKFID: this.big_client_info.DKHID,
 					DKFNAME: this.big_client_info.NAME,
 					KHID: this.KHID,
-					BILL_STATUS: 0,
+					BILL_STATUS: 1,
 					TPNET: main_order.ZNET,
 					TJSNET: main_order.ZNET,
 					ID_RY_LR: this.RYID,

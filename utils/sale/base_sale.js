@@ -3425,6 +3425,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
+			console.log("[GetSp]进行单据创建,调用createNewBill有参...");
 			let newprm = that.createNewBill.call(that, 1);
 			// let new002 = new sale.sale002(newprm);
 			let new002 = new sale.sale002();
