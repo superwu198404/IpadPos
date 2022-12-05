@@ -1226,9 +1226,9 @@ var XsTypeObj = {
 			return false;
 		},
 		$initSale: function(params) {
-			console.log("[InitSale]当前业务:",this.current_type);
+			console.log("[InitSale]当前业务:", this.current_type);
 			this.mode_info.sale_credit_settlement.new_bill = this.getBill();
-			console.log("[InitSale]赊销结算生成单号:",this.mode_info.sale_credit_settlement.new_bill);
+			console.log("[InitSale]赊销结算生成单号:", this.mode_info.sale_credit_settlement.new_bill);
 			console.log("[InitSale]赊销结算单据信息:", params);
 			this.actType = common.actTypeEnum.Payment;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -1258,7 +1258,7 @@ var XsTypeObj = {
 		},
 		$saleFinishing: function() {
 			let credit_bill = this.mode_info.sale_credit_settlement.new_bill;
-			console.log("[SaleFinishing]赊销结算绑定单号:",credit_bill);
+			console.log("[SaleFinishing]赊销结算绑定单号:", credit_bill);
 			console.log("[SaleFinishing]赊销结算单据信息生成中...", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -1995,8 +1995,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[CloseMember]会员页关闭!", member_info);
 		this.HY.val = member_info;
 		console.log("[CloseMember]会员信息:", this.HY.val);
-		this.sale001.CUID = this.HY.val.hyId;
-		console.log("[CloseMember]已设置会员ID信息至CUID字段...", this.sale001);
+		// this.sale001.CUID = this.HY.val.hyId; //不要放开 先录入会员会导致sale 其他值为undefefined
+		// console.log("[CloseMember]已设置会员ID信息至CUID字段...", this.sale001);
 		uni.$emit('set-member', this.HY.val);
 	})
 	//*func*会员登录
@@ -3092,15 +3092,14 @@ function GetSale(global, vue, target_name, uni) {
 			}
 			let bill = "";
 			console.warn("[PayedResult]结算模式信息获取:", this.current_type);
-			if(this.current_type.clickType == 'sale_credit_settlement'){
+			if (this.current_type.clickType == 'sale_credit_settlement') {
 				bill = this.mode_info.sale_credit_settlement.new_bill;
 				console.log("[PayedResult]赊销结算模式...");
-			}
-			else{
+			} else {
 				bill = this.sale001.BILL;
 				console.log("[PayedResult]其他结算模式...");
 			}
-			console.log('[PayedResult]通信表记录单号:',bill);
+			console.log('[PayedResult]通信表记录单号:', bill);
 			common.TransLiteData(bill); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
@@ -3737,7 +3736,9 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			if (!this.sale001.CUID) {
+			// this.sale001.CUID = this.HY.val.hyId; 
+			//!this.sale001.CUID || 
+			if (!this.HY.val.hyId) {
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);
