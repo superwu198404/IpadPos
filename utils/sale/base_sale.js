@@ -1269,7 +1269,11 @@ var XsTypeObj = {
 				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
 				ywsxfk.BILL = credit_bill;
 				ywsxfk.JK_DATE = new Date().toLocaleString();
-				ywsxfk_list.push(ywsxfk);
+				let exists_same_fkid = ywsxfk_list.find(i => i.FKID = ywsxfk.FKID);
+				if (exists_same_fkid) { //业务赊销付款判断当前是否存在重复的fkid，有重复的则合并
+					exists_same_fkid.AMT = Number(exists_same_fkid.AMT) + Number(ywsxfk.AMT);
+				} else
+					ywsxfk_list.push(ywsxfk);
 			})
 			this.sale001 = {};
 			this.sale002 = [];
@@ -1298,7 +1302,7 @@ var XsTypeObj = {
 					item.balance = 0;
 				}
 			})
-			
+
 			let printerPram = {
 				"PRINTNUM": 2,
 			};
