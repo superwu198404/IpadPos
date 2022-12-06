@@ -8,7 +8,8 @@
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
 					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
 					<view class="products">
-						<view class="names">{{item.SNAME}} <text class="price">￥145</text></view>
+						<view class="names">{{item.SNAME}} <!-- <text class="price">￥145</text> -->
+						</view>
 						<text>{{item.note}}</text>
 					</view>
 				</view>
