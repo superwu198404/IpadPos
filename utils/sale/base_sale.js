@@ -1383,7 +1383,7 @@ var XsTypeObj = {
 		},
 		$beforeFk: function() {
 			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
-			allow_type.push('ZF04'); //测试用
+			// allow_type.push('ZF04'); //测试用
 			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
 				.fkid);
 			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
@@ -1405,18 +1405,51 @@ var XsTypeObj = {
 				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
 				ywsxfk.BILL = credit_bill;
 				ywsxfk.JK_DATE = new Date().toLocaleString();
-				ywsxfk_list.push(ywsxfk);
+				let exists_same_fkid = ywsxfk_list.find(i => i.FKID = ywsxfk.FKID);
+				if (exists_same_fkid) { //业务赊销付款判断当前是否存在重复的fkid，有重复的则合并
+					exists_same_fkid.AMT = Number(exists_same_fkid.AMT) + Number(ywsxfk.AMT);
+				} else
+					ywsxfk_list.push(ywsxfk);
 			})
 			this.sale001 = {};
 			this.sale002 = [];
 			this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
+			//YWSXFK(类sale3)、YWSXJS(类sale1，主单号为BILL，大客户ID-DKFID，大客户名称-DKFNAME)、YWSXJSMX(类sale2-记录结算的单据，原单号记录字段为BILL_SX)
 			this.additional['YWSXFK'] = ywsxfk_list;
 			this.additional['YWSXJS'].BILL = credit_bill;
 			this.additional['YWSXJS'].BILL_QT = credit_bill;
 			this.additional['YWSXJSMX'].map(i => i.BILL = credit_bill);
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
-		}
+		},
+		$saleFinied: function(sales) {
+			//调用打印
+			let arr1 = this.additional['YWSXJS'];
+			let arr2 = this.additional['YWSXJSMX'];
+			let arr3 = this.additional['YWSXFK'];
+			//查询支付方式
+			let fkdaRes = this.FKDA_INFO;
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+
+			let printerPram = {
+				"PRINTNUM": 2,
+			};
+			console.log("赊销结算开始调用打印", {
+				arr1,
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxjsBluePrinter(arr1, arr2, arr3, printerPram);
+		},
 	},
 	//外卖单
 	sale_takeaway: {

@@ -487,6 +487,93 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 }
 
 /**
+ * 赊销结算打印数据转换
+ * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
+ */
+const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => {
+	var xsType = "SXJS";
+	
+	var bill = sale1_obj.BILL;
+	// var xsDate = sale1_obj.DATE_QT;
+	var xsDate = getTime(3);
+	var khName = getApp().globalData.store.NAME;
+	var khAddress = getApp().globalData.store.KHAddress;
+	var khPhone = getApp().globalData.store.PHONE;
+	var posId = snvl(sale1_obj.POSID,"");
+	var posUser = snvl(sale1_obj.RYNAME_LR,"");
+	var dkfid = snvl(sale1_obj.DKFID,"");
+	var dkfname = snvl(sale1_obj.DKFNAME,"");
+	var lineNum = sale2_arr.length;
+	var payableAmount = nnvl(sale1_obj.TJSNET,0);
+    
+	var ggy = ggyContent;
+	var totalPrice = 0;
+	
+	//arr2数据
+	var arr2List = [];
+	for (var i = 0; i < sale2_arr.length; i++) {
+		var sale2_printer = {
+			bill: snvl(sale2_arr[i].BILL,""), //单号
+			bill_sx: snvl(sale2_arr[i].BILL_SX,""),//BILL_SX
+			dnet: nnvl(sale2_arr[i].DNET,0), //待结算额
+			jsnet: nnvl(sale2_arr[i].JSNET,0), //本次结算额
+			no: i,
+		};
+		arr2List = arr2List.concat(sale2_printer);
+		totalPrice += nnvl(sale2_arr[i].JSNET,0);
+	}
+	
+	var originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
+	console.log("arr2List 转换后数据:", arr2List);
+
+	//支付数据
+	var sale3List = [];
+	for (var j = 0; j < sale3_arr.length; j++) {
+		var sale3_printer = {
+			bill: sale3_arr[j].BILL,
+			saleTime: sale3_arr[j].JK_DATE,
+			no: sale3_arr[j].NO, //付款序号
+			fkid: sale3_arr[j].FKID, //付款类型id
+			fkName: snvl(sale3_arr[j].SNAME,""),
+			amt: parseFloat(sale3_arr[j].AMT), //付款金额
+			disc: nnvl(sale3_arr[j].DISC,0), //折扣金额
+			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
+			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+		};
+		sale3List = sale3List.concat(sale3_printer);
+	}
+
+	console.log("sale3List 转换后数据:", sale3List);
+
+	let printerNum = 1;
+	if(print != null){
+		printerNum = nnvl(print.PRINTNUM,1);
+	}
+
+	var printerInfo = {
+		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
+		bill,
+		xsDate,
+		khName,
+		khAddress,
+		khPhone,
+		posId,
+		posUser,
+		dkfid,
+		dkfname,
+		lineNum,
+		payableAmount,
+		ggy,
+		arr2List,
+		sale3List,
+		printerNum,
+	}
+	console.log("打印接收数据转换后 printerInfo:", printerInfo);
+
+	return printerInfo;
+}
+
+/**
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
@@ -1288,5 +1375,6 @@ module.exports = {
 	ydPrinterData: ydPrinterData,
 	formatDate: formatDate,
 	sxPrinterData: sxPrinterData,
-	tnvl: tnvl
+	tnvl: tnvl,
+	sxjsPrinterData: sxjsPrinterData,
 };

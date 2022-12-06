@@ -682,7 +682,7 @@
 				that.AddrArr = []; //清空一下
 				that.Order.CUSTMNAME = e.CNAME; //默认赋值
 				that.Order.CUSTMADDRESS = e.ADDRESS;
-				that.Order.ADDRID = e.ADDRID;
+				that.Order.NOTE2 = e.ADDRID;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
 				that.ShowAllAddressList = false;

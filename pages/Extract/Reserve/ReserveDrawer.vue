@@ -109,7 +109,9 @@
 	} from '@/bll/Common/bll.js'
 	import util from '@/utils/util.js';
 	import cx from '@/utils/cx/cxCount.js';
-import { resolve } from 'path';
+	import {
+		resolve
+	} from 'path';
 	export default {
 		name: "ReserveDrawer",
 		props: {
@@ -268,9 +270,9 @@ import { resolve } from 'path';
 				}));
 			},
 			RadioChange: function(address_info) {
-				// this.details.current = address_info.ADDRID;
 				this.details.current = address_info.ADDRESS;
 				this.details.info.CUSTMADDRESS = address_info.ADDRESS;
+				this.details.info.NOTE2 = address_info.ADDRID;
 				console.log("[RadioChange]选择地址:", address_info);
 				if (address_info.LONGITUDE && address_info.LATITUDE) {
 					this.map.markers.pop();
@@ -301,37 +303,37 @@ import { resolve } from 'path';
 				this.form.address.LONGITUDE = data.adrjd; //经度
 				this.form.address.LATITUDE = data.adrwd; //纬度
 			},
-			AddressVaild:async function() {
+			AddressVaild: async function() {
 				if (!this.form.address.NAME) {
 					util.simpleMsg("收货人不能为空!", 'none');
 					return false;
 				}
-				if(!this.form.address.LONGITUDE && !this.form.address.LATITUDE){//如果经纬度为空
-					console.log("[AddressVaild]检测到经纬度为空,自动采用缓存地址信息:",this.form.catch);
-					if(!this.form.catch || !this.form.catch.adrjd && !this.form.catch.adrwd){//可能是未获取到经纬度信息
-						this.form.catch = await new Promise(util.callBind(this, function(resolve,reject){
+				if (!this.form.address.LONGITUDE && !this.form.address.LATITUDE) { //如果经纬度为空
+					console.log("[AddressVaild]检测到经纬度为空,自动采用缓存地址信息:", this.form.catch);
+					if (!this.form.catch || !this.form.catch.adrjd && !this.form.catch.adrwd) { //可能是未获取到经纬度信息
+						this.form.catch = await new Promise(util.callBind(this, function(resolve, reject) {
 							let overtimer = null;
-							uni.$once('catch',util.callBind(this,function(catch_info){//监听缓存数据获取
-								console.log("[AddressVaild]已获取到查询缓存信息:",catch_info);
-								if(overtimer != null) clearTimeout(overtimer);//避免失败通知
+							uni.$once('catch', util.callBind(this, function(catch_info) { //监听缓存数据获取
+								console.log("[AddressVaild]已获取到查询缓存信息:", catch_info);
+								if (overtimer != null) clearTimeout(overtimer); //避免失败通知
 								resolve(catch_info);
 							}));
-							overtimer = setTimeout(util.callBind(this,function(){
+							overtimer = setTimeout(util.callBind(this, function() {
 								console.log("[AddressVaild]获取缓存信息超时...");
 								resolve(null);
-							}),5000);
+							}), 5000);
 						}));
 					}
-					console.log("[AddressVaild]获取到的缓存信息:",this.form.catch);
-					if(!this.form.catch) {
-						util.simpleMsg("未能获取地址信息!",true)
+					console.log("[AddressVaild]获取到的缓存信息:", this.form.catch);
+					if (!this.form.catch) {
+						util.simpleMsg("未能获取地址信息!", true)
 						console.log("[AddressVaild]未能获取到地址详细信息!");
 						return false;
 					};
 					this.form.address.ADDRESS = this.form.catch.address ?? this.form.catch.address;
 					this.form.address.LONGITUDE = this.form.catch.adrjd;
 					this.form.address.LATITUDE = this.form.catch.adrwd;
-					console.log("[AddressVaild]现有地址信息:",this.form.address);
+					console.log("[AddressVaild]现有地址信息:", this.form.address);
 				}
 				return true;
 			},
@@ -340,7 +342,7 @@ import { resolve } from 'path';
 				this.view.add_address = true;
 				Object.assign(this.form.address, address);
 			},
-			ChangeCustomerAddress:async function() {
+			ChangeCustomerAddress: async function() {
 				if (await this.AddressVaild())
 					_extract.ConfirmADDR(Object.assign(this.form.address, {
 						ACT: this.view.address_edit ? "Edit" : "Add"
