@@ -59,6 +59,7 @@
 									<view class="h3">
 										<text>单号：{{item.BILL}}</text>
 										<text class="price">￥{{item.DNET}}</text>
+										<!-- <text class="price">￥{{ '0' }}</text> -->
 									</view>
 									<view class="cods">
 										<label>下单时间：{{item.SALEDATE}}</label>
@@ -319,8 +320,10 @@
 					content: '是否确认退货',
 					success: util.callBind(this, async function(res) {
 						if (res.confirm) {
-							var result = await RequestSend(`select sx_status from sxsale001 where bill='${that.Order.BILL}'`);
-							console.log("[ConfirmToPay]订单状态查询结果:",result);
+							var result = await RequestSend(
+								`select sx_status from sxsale001 where bill='${that.Order.BILL}'`
+							);
+							console.log("[ConfirmToPay]订单状态查询结果:", result);
 							if (result.code) {
 								let status = JSON.parse(result.result.data)?.first()?.SX_STATUS;
 								if (status) {

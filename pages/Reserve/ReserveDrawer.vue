@@ -65,7 +65,8 @@
 							disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
 					<label><text><i class="sgin">*</i>配送中心：</text>
-						<picker @change="PSChange" :range="PSDatas" range-key="SNAME" :disabled="Order.THTYPE=='0' || Order.THTYPE=='2'">
+						<picker @change="PSChange" :range="PSDatas" range-key="SNAME"
+							:disabled="Order.THTYPE=='0' || Order.THTYPE=='2'">
 							<!-- <view>{{(Order.STR2 && Order._STR2) ? (Order.STR2 + '-' + Order._STR2) : ""}}</view> -->
 							<view>{{(Order.STR2 && Order._STR2) ? (Order._STR2) : ""}}</view>
 							<text class="xial">▼</text>
@@ -82,15 +83,13 @@
 						<!-- :disabled="ADDR.ACT=='Update'" -->
 						<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
 								@blur="searchMapAddr()" /></label>
-						<view v-if="AddrArr.length>0">
+						<view v-if="AddrArr.length>0 && AddShowAllAddressList">
 							<label v-for="(item1,index1) in AddrArr" @click="chooseAddr(item1)"
 								style="width: 100%;padding-left: 80px;">{{item1.address}};</label>
 						</view>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
-							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button>
-								<!-- <button class="btn-sc">删除</button> -->
-							</view>
+							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button><button class="btn-sc" @click="yn_add = false">取消</button></view>
 						</view>
 					</view>
 				</view>
@@ -111,15 +110,15 @@
 							</view>
 						</view>
 					</view>
-					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">显示全部地址<image
-							src="../../images/zhankaiqb-dt.png"></image>
+					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">{{ ShowAllAddressList?'隐藏全部地址':'显示全部地址' }}
+						<image src="../../images/zhankaiqb-dt.png" :class="ShowAllAddressList?'flip-vertical':''"></image>
 					</view>
 				</view>
 				<view class="atlas">
 					<!-- <cover-view class="map">
 					<map :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale" :markers="map.markers"></map>
 				</cover-view> -->
-					<view class="map" v-if="!ShowAllAddressList && !yn_add">
+					<view class="map" v-if="!ShowAllAddressList && !yn_add || ADDRS.length == 0">
 						<map :key="map.key" :latitude="map.latitude" :longitude="map.longitude" :scale="map.scale"
 							:markers="map.markers"></map>
 					</view>
@@ -195,6 +194,7 @@
 				LimitMaxDate: '2100-01-01',
 				LimitTime: '00:00',
 				ShowAllAddressList: false,
+				AddShowAllAddressList: false,
 				CatchAddress: null,
 				Products: [{
 					PLID: "109",
@@ -441,7 +441,7 @@
 						datetime: dateformat.toDateString(add_interval_date),
 						time: add_time
 					});
-					return add_time;
+					return add_time.replace(/[^u4e00-u9fa5]/g, '');
 				})();
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
@@ -529,7 +529,7 @@
 					time = time + ":00";
 				}
 				console.log("[TimeChange]时间格式化后：", time);
-				that.Order.TH_TIME = time;
+				that.Order.TH_TIME = time.replace(/[^u4e00-u9fa5]/g, '');
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
 			},
 			//提货类型改变
@@ -582,6 +582,7 @@
 						that.yn_add = false;
 						this.ShowAllAddressList = true;
 					} else {
+						that.ADDRS = [];
 						that.ShowAddADDR(); //默认展开地址新增表单
 					}
 				})
@@ -658,6 +659,7 @@
 					console.log("[SearchMapAddr]高德地址查询:", res);
 					if (res.code) {
 						that.AddrArr = JSON.parse(res.data);
+						that.AddShowAllAddressList = true;
 						if (that.AddrArr && that.AddrArr.length && that.AddrArr.length > 0) {
 							this.CatchAddress = that.AddrArr[0];
 							console.log("[SearchMapAddr]储存缓存地址:", this.CatchAddress);
@@ -671,6 +673,7 @@
 					that.ADDR.ADDRESS = e.address;
 					that.ADDR.LONGITUDE = e.adrjd;
 					that.ADDR.LATITUDE = e.adrwd;
+					that.AddShowAllAddressList = false;
 				}
 			},
 			//选中配送地址
@@ -682,6 +685,7 @@
 				that.Order.ADDRID = e.ADDRID;
 				that.Order.LONGITUDE = e.LONGITUDE;
 				that.Order.LATITUDE = e.LATITUDE;
+				that.ShowAllAddressList = false;
 				that.map.markers.pop();
 				console.log("[ConfirmOrderAddr]markers标点信息:", that.map.markers);
 				that.map.markers = [{
@@ -800,8 +804,8 @@
 						return;
 					}
 				}
-				if(that.over48){
-					if(new Date().SetHours(48) > new Date(that.Order.THDATE.replace(/-/g, "/"))){
+				if (that.over48) {
+					if (new Date().SetHours(48) > new Date(that.Order.THDATE.replace(/-/g, "/"))) {
 						util.simpleMsg("当前促销限制提货时间必须是在48小时以后!", true);
 						that.RefreshData();
 						return;
@@ -921,7 +925,7 @@
 				}
 				that.statements = false;
 				that.yn_add = false;
-				that.Empty();
+				// that.Empty();
 				console.log("待提交的顾客信息:", that.YDDATA);
 			},
 			//清空
@@ -967,6 +971,9 @@
 </script>
 
 <style>
+	.flip-vertical{
+		transform: rotate(180deg);
+	}
 	.thmd {
 		position: absolute;
 		left: 150rpx;

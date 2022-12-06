@@ -121,10 +121,10 @@
 				}
 
 				//预先加载蛋糕图片
-				// _cake.PreLoadCakeImg(res => {
-				// 	console.log("图片数据：", res);
-				// 	that.IMAGES = res.msg;
-				// });
+				_cake.PreLoadCakeImg(res => {
+					console.log("图片数据：", res);
+					that.IMAGES = res.msg;
+				});
 			},
 			onShow: function() {
 				this.MonitorEvent();

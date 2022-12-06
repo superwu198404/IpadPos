@@ -218,7 +218,14 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		let OracleSql = "",
 			SqliteSql = []
 		for (let key in dataObj) {
-			let sqlObj = common.CreateSQL(dataObj[key], key);
+			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
+			if (key == "SALE002") {
+				dataArr.forEach(r => {
+					delete r.STR1;
+					delete r.STR2;
+				})
+			}
+			let sqlObj = common.CreateSQL(dataArr, key);
 			if (Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
 			if (key == "SALE001" || key == "SALE002" || key == "SALE003" || key == "SALE008" || key ==
@@ -230,12 +237,16 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		OracleSql += oracle_addition_sqls.join(';');
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
+		console.log("[CreateSaleOrder]生成绑定BILL信息：", {
+			销售BILL:dataObj["SALE001"]?.BILL || "-",
+			赊销结算BILL:dataObj["YWSXJS"]?.BILL || "-"
+		})
 		let tx_obj = {
 			TX_SQL: OracleSql,
 			STOREID: dataObj["SALE001"].KHID,
 			POSID: dataObj["SALE001"].POSID,
 			TAB_NAME: 'XS',
-			STR1: dataObj["SALE001"].BILL,
+			STR1: dataObj["SALE001"].BILL || dataObj["YWSXJS"].BILL,
 			BDATE: saletime, //增加时分秒的操作
 			YW_NAME: "销售单据",
 			CONNSTR: 'CONNSTRING'

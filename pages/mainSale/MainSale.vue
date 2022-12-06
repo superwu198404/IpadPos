@@ -146,6 +146,9 @@
 				</RefundOrder>
 				<SXRefund style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
+				</CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -387,7 +390,7 @@
 							<button v-if="mainSale.currentOperation.ynEdit&&mainSale.currentOperation.showEdit"
 								@click="mainSale.completeEdit">完成</button>
 							<button style="color:#FE694B;border-left:1px solid #eee"
-								@click="mainSale.resetSaleBill">清空</button>
+								@click="mainSale.resetSaleBill(mainSale.clickSaleType.afterPay)">清空</button>
 						</label>
 					</view>
 					<view class="goods">
@@ -395,7 +398,7 @@
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
 							<view class="h3">
 								<label>
-									<image src="../../images/dx-mrxk.png" mode="widthFix"></image> 
+									<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
 									<label>{{sp.STR1}}</label>
 									<text v-if="mainSale.actType=='Payment'">折扣￥{{sp.DISCRATE}}</text>
 								</label>
@@ -539,6 +542,7 @@
 						</view>
 					</view>
 					<view class="filter" @click="mainSale.ToChoose">
+						<span>共{{mainSale.CakeList.length}}款</span>
 						<image src="@/images/qushaixuan.png"></image> 去筛选
 					</view>
 					<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
@@ -732,8 +736,8 @@
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				sale_type_infos: null,
@@ -905,8 +909,8 @@
 				this.$refs.printerPage.xsBluePrinter(order, type, print);
 			},
 			//外卖打印小票
-			wmBluePrinter: function(order, datails, type, print) {
-				this.$refs.printerPage.wmBluePrinter(order, datails, type, print);
+			wmBluePrinter: function(order, datails, print) {
+				this.$refs.printerPage.wmBluePrinter(order, datails, print);
 			},
 			//预定打印小票
 			ydBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, ydsale001, print) {

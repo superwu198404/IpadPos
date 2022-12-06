@@ -63,6 +63,7 @@ var XsTypeObj = {
 			"sale_online_order": true,
 			"sale_online_order_extract": true,
 			"sale_credit": true,
+			"sale_credit_settlement": true,
 			"sale_return_good": true,
 			"sale_reserve_cancel": true,
 			"sale_credit": true,
@@ -138,9 +139,10 @@ var XsTypeObj = {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
+				console.log("查看商品打印商品名称：", item.STR1);
 				item.SNAME = item.STR1;
 			})
-
+			console.log("查看商品打印数据：", arr2);
 			let arr3 = [];
 			try {
 				arr3 = this.GetPayedResult().data.sale3_arr;
@@ -296,12 +298,12 @@ var XsTypeObj = {
 	},
 	//蛋糕预定
 	sale_cake_reserve: {
-		close: true,
+		close: false,
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕预定",
-		icon_open: require("@/images/yuding.png"),
-		icon_close: require("@/images/yuding-hui.png"),
+		icon_open: require("@/images/dgaoyud.png"),
+		icon_close: require("@/images/dgaoyud-wxz.png"),
 		condition: [],
 		imgCurrent: 0,
 		afterPay: "sale_cake_reserve", //支付后要跳转的模式
@@ -455,15 +457,17 @@ var XsTypeObj = {
 					data,
 					userinfo: getApp().globalData?.userinfo
 				});
-				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-					console.log("[CloseCakeReservation]蛋糕预定关闭...");
-					this.show_cake_reservation = false;
-					this.CakeList = []; //清空传入的蛋糕数据
-					this.resetSaleBill(); //清空一下
-					this.SetDefaultType();
-				} else {
-					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-						true)
+				if (is_confirm) {
+					if (data.content == getApp().globalData?.userinfo?.pwd) {
+						console.log("[CloseCakeReservation]蛋糕预定关闭...");
+						this.show_cake_reservation = false;
+						this.CakeList = []; //清空传入的蛋糕数据
+						this.resetSaleBill(); //清空一下
+						// this.SetDefaultType();
+					} else {
+						if (data.content != getApp().globalData?.userinfo?.pwd)
+							util.simpleMsg("密码错误", true)
+					}
 				}
 			}), true)
 		},
@@ -550,13 +554,16 @@ var XsTypeObj = {
 					data,
 					userinfo: getApp().globalData?.userinfo
 				});
-				if (is_confirm && data.content == getApp().globalData?.userinfo?.pwd) {
-					console.log("[CloseReserveDrawer]预定录入关闭...");
-					this.setComponentsManage(null, "statement");
-					this.PayParamAssemble();
-				} else {
-					if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg("密码错误",
-						true)
+				if (is_confirm) {
+					if (data.content == getApp().globalData?.userinfo?.pwd) {
+						console.log("[CloseReserveDrawer]预定录入关闭...");
+						this.setComponentsManage(null, "statement");
+						this.PayParamAssemble();
+					} else {
+						if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg(
+							"密码错误",
+							true)
+					}
 				}
 			}), true)
 
@@ -575,7 +582,9 @@ var XsTypeObj = {
 			} else { //关闭详情
 				console.log("关闭详情");
 				this.condition = []; //清空已选标签
-				this.yn_showDetail = false;
+				// this.yn_showDetail = false;
+				XsTypeObj.sale_cake_reserve.yn_showDetail = false;
+
 			}
 		},
 		//选择详情图片顶部切换
@@ -1176,6 +1185,103 @@ var XsTypeObj = {
 			uni.$emit('select-credit', data);
 		}
 	},
+	//赊销结算
+	sale_credit_settlement: {
+		close: false,
+		xstype: "7",
+		clickType: "sale_credit_settlement",
+		nameSale: "赊销结算",
+		icon_open: require("@/images/sxtd.png"),
+		icon_close: require("@/images/sxtd-wxz.png"),
+		new_bill: "",
+		operation: {
+			"HY": false, //是否可以录入会员
+			"DKF": false, //是否可以打开录入大客户
+			"Disc": false, //是否可以打开录入折扣
+			"ynFzCx": false, //是否可以辅助促销
+			"ynCancel": true, //是否可以退出当前销售模式
+			"FZCX": false, //是否可以打开辅助促销组件
+			"ynCx": false, //是否进行可以进行促销
+			"ynSKDisc": false, //是否可以计算手工折扣
+			"ynEdit": false, //当前业务能否编辑商品
+			"showEdit": false, //展开编辑商品
+
+			"sale_credit_settlement": true,
+			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
+		},
+		$click() {
+			console.log("[sale_credit_settlement]赊销结算点击...");
+			console.log("[sale_credit_settlement]大客户权限(设置前)：", this.currentOperation);
+			this.ComponentsManage.DKF = true; //打开大客户弹窗
+			console.log("[sale_credit_settlement]大客户权限(设置后)：", this.currentOperation.DKF);
+			uni.$once('select-credit', util.callBind(this, function(data) {
+				if (Object.keys(data ?? {}).length > 0) {
+					console.log("[Change]切换到赊销结算!");
+					this.SetManage("sale_credit_settlement"); //切换到赊销
+				} else { //如果没有大客户数据 则切换到普通销售模式
+					console.log("[Change]切换到普通模式!");
+					this.resetSaleBill();
+				}
+			}));
+			return false;
+		},
+		$initSale: function(params) {
+			console.log("[InitSale]当前业务:", this.current_type);
+			this.mode_info.sale_credit_settlement.new_bill = this.getBill();
+			console.log("[InitSale]赊销结算生成单号:", this.mode_info.sale_credit_settlement.new_bill);
+			console.log("[InitSale]赊销结算单据信息:", params);
+			this.actType = common.actTypeEnum.Payment;
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
+			this.sale003 = [];
+			this.communication_for_oracle = params.sql;
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			this.ShowStatement();
+			this.additional['YWSXJS'] = params.ywsxjs;
+			this.additional['YWSXJSMX'] = params.ywsxjsmx;
+			console.log("[InitSale]赊销结算附加表生成:", this.additional);
+		},
+		$beforeFk: function() {
+			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
+			allow_type.push('ZF04'); //测试用
+			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
+				.fkid);
+			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
+				allow_type,
+				ban_type: this.ban_type
+			});
+			return true;
+		},
+		$saleFinishing: function() {
+			let credit_bill = this.mode_info.sale_credit_settlement.new_bill;
+			console.log("[SaleFinishing]赊销结算绑定单号:", credit_bill);
+			console.log("[SaleFinishing]赊销结算单据信息生成中...", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
+			});
+			let ywsxfk_list = [];
+			this.sale003.forEach(s3 => {
+				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
+				ywsxfk.BILL = credit_bill;
+				ywsxfk.JK_DATE = new Date().toLocaleString();
+				ywsxfk_list.push(ywsxfk);
+			})
+			this.sale001 = {};
+			this.sale002 = [];
+			this.sale003 = [];
+			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
+			this.additional['YWSXFK'] = ywsxfk_list;
+			this.additional['YWSXJS'].BILL = credit_bill;
+			this.additional['YWSXJS'].BILL_QT = credit_bill;
+			this.additional['YWSXJSMX'].map(i => i.BILL = credit_bill);
+			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
+		}
+	},
 	//赊销退货
 	sale_credit_return_good: {
 		xstype: "7",
@@ -1611,6 +1717,7 @@ function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
 	let brand = global.brand;
 	var that = this;
+	this.uni = uni;
 	var uni = uni;
 	var payresult = null;
 
@@ -1889,8 +1996,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[CloseMember]会员页关闭!", member_info);
 		this.HY.val = member_info;
 		console.log("[CloseMember]会员信息:", this.HY.val);
-		this.sale001.CUID = this.HY.val.hyId;
-		console.log("[CloseMember]已设置会员ID信息至CUID字段...", this.sale001);
+		// this.sale001.CUID = this.HY.val.hyId; //不要放开 先录入会员会导致sale 其他值为undefefined
+		// console.log("[CloseMember]已设置会员ID信息至CUID字段...", this.sale001);
 		uni.$emit('set-member', this.HY.val);
 	})
 	//*func*会员登录
@@ -2149,6 +2256,16 @@ function GetSale(global, vue, target_name, uni) {
 	//*func* 展开和关闭标签筛选
 	this.ToChoose = util.callBind(this, function(e) {
 		this.mode_info.sale_cake_reserve.filter = !this.mode_info.sale_cake_reserve.filter;
+
+		console.log("标签数据：", this.CakeBQList);
+		if (this.CakeBQList.length > 0) {
+			let arr = this.CakeBQList.filter(r => {
+				return r.CHECK
+			});
+			if (arr.length == 0) {
+				this.ChooseBQ(this.CakeBQList[0]) //默认展开第一个标签的数据
+			}
+		}
 	});
 	//*End* 自定义方法结束
 	//日志
@@ -2182,6 +2299,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.ywbhqh = []; //裱花请货单
 	this.ydsale001 = {}; //预定主单
 	this.sxsale001 = {}; //赊销主单
+	this.additional = {}; //附加生成信息
 	//判断当前 sale2 中是否包含裱花商品
 	this.decoration = false;
 	//判断当前 sale2 中是否包含促销方式为 hylv=3-48 的类型
@@ -2511,6 +2629,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
+		"sale_credit_settlement": false,
 		"sale_credit_return_good": false,
 		"sale_takeaway": false,
 		"sale_takeaway_reserve": false,
@@ -2539,6 +2658,7 @@ function GetSale(global, vue, target_name, uni) {
 		"sale_online_order": false,
 		"sale_online_order_extract": false,
 		"sale_credit": false,
+		"sale_credit_settlement": false,
 		"sale_return_good": false,
 		"sale_reserve_cancel": false,
 		"sale_credit": false,
@@ -2839,7 +2959,10 @@ function GetSale(global, vue, target_name, uni) {
 
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
-			Object.assign(this.clickSaleType, XsTypeObj[pm_type])
+			console.warn("type:", this.clickSaleType);
+			console.warn("type:", XsTypeObj[pm_type]);
+			// Object.assign(this.clickSaleType, XsTypeObj[pm_type]);//容易合并到其他模式没有的属性
+			this.clickSaleType = XsTypeObj[pm_type];
 			console.log("[SetType]设置当前点击销售的类型为:", this.clickSaleType);
 			this.Page.$set(that.Page[that.pageName], "clickSaleType", that.clickSaleType);
 			console.log("[SetType]销售类型:", pm_type);
@@ -2926,11 +3049,13 @@ function GetSale(global, vue, target_name, uni) {
 			} catch (e) {
 				console.log("[PayedResult]执行 SaleFinishing 发生异常:", e);
 			}
+			console.log("[PayedResult]调用执行 SaleFinishing 完毕!");
 			//支付前允许手工折扣 则支付完成后要分摊商品金额
 			if (this.currentOperation.ynSKDisc) {
+				console.log("[PayedResult]判断支付前是否允许手工折扣...");
 				//手工折扣额分摊
 				this.sale002 = _main.ManualDiscount(this.sale001, this.sale002);
-				console.log("分摊后的商品信息：", this.sale002);
+				console.log("[PayedResult]分摊后的商品信息：", this.sale002);
 			}
 			console.log("[PayedResult]准备创建销售单记录...", {
 				sale001: this.sale001,
@@ -2939,27 +3064,44 @@ function GetSale(global, vue, target_name, uni) {
 				sale008: this.sale008,
 				ydsale001: this.ydsale001,
 				ywbhqh: this.ywbhqh,
-				sxsale001: this.sxsale001
+				sxsale001: this.sxsale001,
+				...this.additional
 			});
+			console.log("[PayedResult]执行 CXMDFS 中...");
 			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
 				.currentOperation
 				.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
-			console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
-
-			let create_result = await CreateSaleOrder({
-				SALE001: this.sale001,
-				SALE002: this.sale002,
-				SALE003: this.sale003,
-				SALE008: this.sale008,
-				YWBHQH: this.ywbhqh,
-				YDSALE001: this.ydsale001,
-				SXSALE001: this.sxsale001
-			}, {
-				sqlite: this.communication_for_sqlite,
-				oracle: this.communication_for_oracle
-			});
-			common.TransLiteData(this.sale001.BILL); //上传至服务端
+			console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
+			let create_result;
+			try {
+				create_result = await CreateSaleOrder({
+					SALE001: this.sale001,
+					SALE002: this.sale002,
+					SALE003: this.sale003,
+					SALE008: this.sale008,
+					YWBHQH: this.ywbhqh,
+					YDSALE001: this.ydsale001,
+					SXSALE001: this.sxsale001,
+					...this.additional
+				}, {
+					sqlite: this.communication_for_sqlite,
+					oracle: this.communication_for_oracle
+				});
+			} catch (e) {
+				console.log("[PayedResult]订单sql生成发生异常:", e);
+			}
+			let bill = "";
+			console.warn("[PayedResult]结算模式信息获取:", this.current_type);
+			if (this.current_type.clickType == 'sale_credit_settlement') {
+				bill = this.mode_info.sale_credit_settlement.new_bill;
+				console.log("[PayedResult]赊销结算模式...");
+			} else {
+				bill = this.sale001.BILL;
+				console.log("[PayedResult]其他结算模式...");
+			}
+			console.log('[PayedResult]通信表记录单号:', bill);
+			common.TransLiteData(bill); //上传至服务端
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
 			try {
@@ -2970,7 +3112,9 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			util.simpleMsg(result.msg, true);
 		}
-		this.resetSaleBill();
+		console.log("支付后要跳转的模式：", this.clickSaleType)
+		console.log("支付后要跳转的模式：", this.clickSaleType.afterPay)
+		this.resetSaleBill(this.clickSaleType.afterPay); //支付后要跳转的销售模式
 	}
 
 	//去支付
@@ -3281,6 +3425,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!find) {
 			//从这里开始就是添加商品的逻辑，包含了水吧008的商品 可以独立一个方法
 			//STR1 商品名称 STR2 门店名称  YN_XPDG  ,YNZS, SPJGZ
+			console.log("[GetSp]进行单据创建,调用createNewBill有参...");
 			let newprm = that.createNewBill.call(that, 1);
 			// let new002 = new sale.sale002(newprm);
 			let new002 = new sale.sale002();
@@ -3294,7 +3439,7 @@ function GetSale(global, vue, target_name, uni) {
 			new002.UNIT = that.clikSpItem.SPECS || that.clikSpItem.UNIT;
 			new002.SPJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
 			new002.PLID = that.clikSpItem.DGPLID || that.clikSpItem.XPLID;
-			// new002.STR2 = that.storeName; //测试wy 要求str2 不记录门店信息
+			new002.STR2 = that.storeName;
 			new002.YN_XPDG = pm_yndgxp;
 
 			let price = that.spPrice[pm_spid].PRICE;
@@ -3337,8 +3482,6 @@ function GetSale(global, vue, target_name, uni) {
 			new002.PRICE = price;
 			new002.QTY = pm_qty;
 			new002.NET = that.float(pm_qty * price, 2);
-			// new002.$NET = that.float(pm_qty * price, 2);
-			// util.hidePropety(new002, '$NET');
 			new002.DISCRATE = 0;
 			new002.BARCODE = that.clikSpItem.SPID;
 
@@ -3594,7 +3737,9 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			if (!this.sale001.CUID) {
+			// this.sale001.CUID = this.HY.val.hyId; 
+			//!this.sale001.CUID || 
+			if (!this.HY.val.hyId) {
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);
@@ -3748,7 +3893,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//重置销售单据
-	this.resetSaleBill = util.callBind(this, function() {
+	this.resetSaleBill = util.callBind(this, function(e) {
+		console.log("传入的参数：", e);
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};
@@ -3770,13 +3916,22 @@ function GetSale(global, vue, target_name, uni) {
 		this.sxsale001 = {};
 		this.clikSpItem = {};
 		this.payed = [];
+		this.ban_type = [];
 		this.notFayType = [];
+		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
 
+		console.log("this.clickSaleType", this.clickSaleType);
+		if (this.clickSaleType.clickType == "sale_cake_reserve") {
+			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
+		}
+		console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
+		// console.log("this.clickSaleType", this.clickSaleType);
 		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
 		// this.SetDefaultType(this.clickSaleType.afterPay);
-		this.SetDefaultType();
+		// console.log("this.clickSaleType.yn_showDetail1", this.clickSaleType.yn_showDetail);
+		this.SetDefaultType(e);
 		that.update()
 		console.log("[ResetSaleBill]清空后的：", this.sale001);
 	})

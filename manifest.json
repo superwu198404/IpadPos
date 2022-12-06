@@ -1,165 +1,166 @@
 {
-	"pages": [{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/BTDemo",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		},
-		{
-			"path": "pages/index/PopupDemon",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/ScanCodeDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/index/RquestDemo",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/popup/ShowPopup",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false,
-				"disableScroll": true,
-				"backgroundColorTop": "transparent",
-				"background": "transparent",
-				"titleNView": false,
-				"scrollIndicator": false,
-				"popGesture": "none",
-				"animationType": "fade-in",
-				"animationDuration": 300
-			}
-		},
-		{
-			"path": "pages/test/test",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"app-plus": {
-		"popGesture": "none",
-		"modules": {
-			"SQLite": {},
-			"Bluetooth": {},
-			"Maps": {},
-			"OAuth": {}
-		},
-		"distribute": {
-			"android": {
-				"abiFilters": ["armeabi-v7a", "arm64-v8a", "x86"],
-				"permissions": [
-					"<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
-					"<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
-					"<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
-					"<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
-					"<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
-					"<uses-permission android:name=\"android.permission.INTERNET\"/>",
-					"<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
-					"<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
-					"<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
-					"<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
-					"<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
-				]
-			},
-			"ios": {
-				"privacyDescription": {
-					"NSBluetoothPeripheralUsageDescription": "使用蓝牙驱动打印机",
-					"NSBluetoothAlwaysUsageDescription": "使用蓝牙驱动打印机",
-					"NSLocalNetworkUsageDescription": "使用wifi链接后台接口",
-					"NSLocationAlwaysAndWhenInUseUsageDescription": "对店铺的位置进行定位",
-					"NSCameraUsageDescription": "识别二维码"
-				},
-				"dSYMs": false,
-				"idfa": false
-			},
-			"sdkConfigs": {
-				"geolocation": {},
-				"ad": {},
-				"maps": {
-					"amap": {
-						"appkey_ios": "7abfed2964bcad2143b01f6aaf0b86da",
-						"appkey_android": "86f75f9051e9eb25c6f7907df2b4230c"
-					}
-				},
-				"oauth": {}
-			},
-			"icons": {
-				"ios": {
-					"appstore": "unpackage/res/icons/1024x1024.png",
-					"ipad": {
-						"app": "unpackage/res/icons/76x76.png",
-						"app@2x": "unpackage/res/icons/152x152.png",
-						"proapp@2x": "unpackage/res/icons/167x167.png",
-						"spotlight": "unpackage/res/icons/40x40.png",
-						"spotlight@2x": "unpackage/res/icons/80x80.png",
-						"settings": "unpackage/res/icons/29x29.png",
-						"settings@2x": "unpackage/res/icons/58x58.png",
-						"notification": "unpackage/res/icons/20x20.png",
-						"notification@2x": "unpackage/res/icons/40x40.png"
-					},
-					"iphone": {
-						"app@2x": "unpackage/res/icons/120x120.png",
-						"app@3x": "unpackage/res/icons/180x180.png",
-						"notification@2x": "unpackage/res/icons/40x40.png",
-						"notification@3x": "unpackage/res/icons/60x60.png",
-						"settings@2x": "unpackage/res/icons/58x58.png",
-						"settings@3x": "unpackage/res/icons/87x87.png",
-						"spotlight@2x": "unpackage/res/icons/80x80.png",
-						"spotlight@3x": "unpackage/res/icons/120x120.png"
-					}
-				},
-				"android": {
-					"hdpi": "unpackage/res/icons/72x72.png",
-					"xhdpi": "unpackage/res/icons/96x96.png",
-					"xxhdpi": "unpackage/res/icons/144x144.png",
-					"xxxhdpi": "unpackage/res/icons/192x192.png"
-				}
-			}
-		},
-		"orientation": [
-			"portrait-primary",
-			"landscape-primary",
-			"portrait-secondary",
-			"landscape-secondary"
-		],
-		"splashscreen": {
-			"waiting": true,
-			"alwaysShowBeforeRender": true
-		},
-		"screenOrientation": ["portrait-primary", "landscape-primary"]
-	},
-	"appid": "__UNI__D975D37",
-	"name": "KengeePos",
-	"versionName": "1.1.14",
-	"description": "ipad上运行的收银软件",
-	"versionCode": 24,
-	"locale": "zh-Hans"
+    "pages" : [
+        {
+            "path" : "pages/index/index",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/BTDemo",
+            "style" : {
+                "navigationBarTitleText" : "uni-app"
+            }
+        },
+        {
+            "path" : "pages/index/PopupDemon",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/ScanCodeDemo",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/index/RquestDemo",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/popup/ShowPopup",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false,
+                "disableScroll" : true,
+                "backgroundColorTop" : "transparent",
+                "background" : "transparent",
+                "titleNView" : false,
+                "scrollIndicator" : false,
+                "popGesture" : "none",
+                "animationType" : "fade-in",
+                "animationDuration" : 300
+            }
+        },
+        {
+            "path" : "pages/test/test",
+            "style" : {
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        }
+    ],
+    "globalStyle" : {
+        "navigationBarTextStyle" : "black",
+        "navigationBarTitleText" : "uni-app",
+        "navigationBarBackgroundColor" : "#F8F8F8",
+        "backgroundColor" : "#F8F8F8"
+    },
+    "app-plus" : {
+        "popGesture" : "none",
+        "modules" : {
+            "SQLite" : {},
+            "Bluetooth" : {},
+            "Maps" : {},
+            "OAuth" : {}
+        },
+        "distribute" : {
+            "android" : {
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+                ]
+            },
+            "ios" : {
+                "privacyDescription" : {
+                    "NSBluetoothPeripheralUsageDescription" : "使用蓝牙驱动打印机",
+                    "NSBluetoothAlwaysUsageDescription" : "使用蓝牙驱动打印机",
+                    "NSLocalNetworkUsageDescription" : "使用wifi链接后台接口",
+                    "NSLocationAlwaysAndWhenInUseUsageDescription" : "对店铺的位置进行定位",
+                    "NSCameraUsageDescription" : "识别二维码"
+                },
+                "dSYMs" : false,
+                "idfa" : false
+            },
+            "sdkConfigs" : {
+                "geolocation" : {},
+                "ad" : {},
+                "maps" : {
+                    "amap" : {
+                        "appkey_ios" : "7abfed2964bcad2143b01f6aaf0b86da",
+                        "appkey_android" : "86f75f9051e9eb25c6f7907df2b4230c"
+                    }
+                },
+                "oauth" : {}
+            },
+            "icons" : {
+                "ios" : {
+                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png"
+                    },
+                    "iphone" : {
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    }
+                },
+                "android" : {
+                    "hdpi" : "unpackage/res/icons/72x72.png",
+                    "xhdpi" : "unpackage/res/icons/96x96.png",
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                }
+            }
+        },
+        "orientation" : [
+            "portrait-primary",
+            "landscape-primary",
+            "portrait-secondary",
+            "landscape-secondary"
+        ],
+        "splashscreen" : {
+            "waiting" : true,
+            "alwaysShowBeforeRender" : true
+        },
+        "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
+    },
+    "appid" : "__UNI__A6034C6",
+    "name" : "KengeePos",
+    "versionName" : "1.1.23",
+    "description" : "ipad上运行的收银软件",
+    "versionCode" : 33,
+    "locale" : "zh-Hans"
 }
 // ,
 // "condition": { //模式配置，仅开发期间生效
@@ -170,3 +171,4 @@
 // 		"query": "" //启动参数，在页面的onLoad函数里面得到
 // 	}]
 // }
+

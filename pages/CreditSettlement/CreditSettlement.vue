@@ -1,107 +1,104 @@
 <style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
-	@import url(@/static/style/takeout.css);
-	/* @import url(@/static/style/OnlineOrders/index.css); */
+	@import url(@/static/style/Extract/extract.css);
 </style>
 <template>
-	<!-- <menu_content index="8"> -->
-	<view>
-		<view class="page-content">
-			<view class="hh">
-				<view class="hotcakes">
-					<image src="@/images/ydtq.png" mode="widthFix"></image> 赊销结算
-				</view>
-				<view class="search-bar">
-					<view class="sousuo" @click="view.show = true">
-						选择大客户
-					</view>
-				</view>
-			</view>
-			<view class="bottom">
-				<view class="settlement">
-					<view class="item-box">
-						<view :class="'item '+ Selected(i.BILL)" v-for="i in big_client_settlement" @click="ShowDetails(i)">
-							<em></em>
-							<view class="item-title">
-								<text>{{ i.BILL }}</text>
-								<text>{{ i.SALETIME }}</text>
+	<view class="content">
+		<view class="right">
+			<view class="listof">
+				<view class="prolist">
+					<view class="commodity">
+						<view class="hh">
+							<view class="hotcakes">
+								<image src="../../images/tuidan.png" mode="widthFix"></image> 结算业务
 							</view>
-							<view class="item-content">
-								<view>编号:{{ i.DKFID }}</view>
-								<view>名称:{{ i.DKFNAME }}</view>
-								<!-- <view>订单号:{{ i.BILL }}</view> -->
-								<view>商品名称:{{ i.SNAME }}</view>
-							</view>
-		
-						</view>
-					</view>
-				</view>
-				<view class="details" style="padding: 10px;box-sizing: border-box;">
-					<view class="row">
-						<view class="details-title" style="display: flex;align-items: center;gap: 8px;">
-							<view class="cover">
-								<image class="touxiang" src="@/images/touxiang.png"></image>
-							</view>
-							<view class="desigs">
-								<view>{{ current_settlement.DKFNAME || "-" }}</view>
-								<view>{{ current_settlement.DKFID || "-"  }}</view>
+							<view>
+								<view class="prints">
+									<view class="sousuo">
+										<label @click="Settlement">
+											<image src="../../images/sousuo.png" mode="widthFix"></image>结算
+										</label>
+									</view>
+								</view>
 							</view>
 						</view>
-					</view>
-					<view class="row">
-						<text>商品名称:</text>{{ current_settlement.SNAME || "-" }}
-					</view>
-					<view class="row">
-						<text>销售类型:</text>{{ current_settlement.BILL_TYPE || "-" }}
-					</view>
-					<view class="row">
-						<text>店铺编号:</text>{{ current_settlement.DPID || "-" }}
-					</view>
-					<view class="row">
-						<text>销售时间:</text>{{ current_settlement.SALETIME || "-" }}
+						<view class="h2" style="display: flex;align-items: center;">赊销结算
+							<view @click="SelectAll" class="select-all-orders">
+								{{ this.big_client_settlement.length === this.select_orders.length ? '取消全选' : '全选'}}
+							</view>
+						</view>
+						<NoData v-if="big_client_settlement.length==0"></NoData>
+						<!-- 小类循环 -->
+						<view class="products" v-else>
+							<view class="procycle">
+								<!-- 订单循环 -->
+								<view v-for="(item,index) in big_client_settlement" :class="Selected(item) + ' li'"
+									@click="SelectOrder(item)">
+									<view class="h3">
+										<text>单号：{{item.BILL}}</text>
+										<text class="price">￥{{item.TNET}}</text>
+									</view>
+									<view class="cods">
+										<label>下单时间：{{item.SALEDATE}}</label>
+										<label>客户编码：{{item.DKFID}}</label>
+										<label>客户名称：{{item.DKFNAME}}</label>
+									</view>
+									<view class="handles"><text></text>
+										<!-- <button class="btn" @click="Settlement(item.BILL)">结算</button> -->
+									</view>
+								</view>
+							</view>
+						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-		<BigCustomer v-show="view.show" @ClosePopup="ClosePopup"></BigCustomer>
-	</view>	
-	<!-- </menu_content> -->
+	</view>
 </template>
 
 <script>
-	// import BigCustomer from '@/pages/CreditSettlement/Popup/BigCustomer.vue'
+	import sale from '@/utils/sale/saleClass.js';
 	import util from '@/utils/util.js';
+	import dateformat from '@/utils/dateformat.js';
 	import {
 		getBigClientSettlement
 	} from '@/api/business/bigclient.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js'
 
 	export default {
 		name: "CreditSettlement",
-		// components:{
-		// 	BigCustomer
-		// },
+		props: {
+			bigCustomerInfo: Object
+		},
 		data() {
 			return {
-				view:{
-					show:true
-				},
 				big_client_info: {},
+				select_orders: [],
 				big_client_settlement: [],
-				current_settlement:{}
+				current_settlement: {}
 			}
 		},
-	    computed:{
-			Selected:function(){
-				return function(bill){
-					if(this.current_settlement.BILL === bill) 
-						return 'selected';
-					else 
+		computed: {
+			Selected: function() {
+				return function(info) {
+					if (this.select_orders.includes(info))
+						return 'curr';
+					else
 						return '';
 				}
 			}
 		},
 		methods: {
+			SelectOrder: function(info) {
+				if (this.select_orders.includes(info)) {
+					let index = this.select_orders.indexOf(info);
+					if (index != -1) this.select_orders.splice(index, 1);
+				} else
+					this.select_orders.push(info);
+			},
 			GetBigClientSettlement: function() {
 				getBigClientSettlement({
 					dkhid: this.big_client_info.DKHID,
@@ -109,9 +106,9 @@
 				}, util.callBind(this, function(res) {
 					util.simpleMsg("大客户单据查询成功!");
 					this.big_client_settlement = JSON.parse(res.data);
-					if(this.big_client_settlement?.length && this.big_client_settlement?.length > 0)
+					if (this.big_client_settlement?.length && this.big_client_settlement?.length > 0)
 						this.current_settlement = this.big_client_settlement[0];
-					console.log("大客户单据：", res)
+					console.log("[CreditSettlement]大客户单据：", res)
 				}), (err) => {
 					util.simpleMsg("大客户单据查询失败!", true, err);
 				})
@@ -120,139 +117,157 @@
 				this.big_client_info = this.big_clients[val.detail.value];
 				this.GetBigClientSettlement();
 			},
-			ShowDetails:function(i){
-				this.current_settlement = i;
+			SelectAll: function() {
+				if (this.big_client_settlement.length === this.select_orders.length)
+					this.select_orders = [];
+				else
+					this.select_orders = [...this.big_client_settlement];
 			},
-			ClosePopup:function(data){
-				this.view.show = false;
-				this.big_client_info = data;
-				this.GetBigClientSettlement();
+			Settlement: async function() {
+				if (!this.select_orders.length) {
+					util.simpleMsg("请选择需要结算的单据后进行结算!");
+					return;
+				}
+				let bills = [],
+					main_order = Object.assign({}, this.select_orders[0]),
+					update_status_sql = [],
+					ywsxjsmx = [];
+				main_order.ZNET = 0;
+				this.select_orders.forEach(i => {
+					bills.push(i.BILL);
+					main_order.ZNET += i.ZNET;
+					update_status_sql.push(`update sxsale001 set SX_STATUS='2' where bill='${i.BILL}';`);
+					let s3 = new sale.ywsxjsmx();
+					s3.BILL_SX = i.BILL;
+					//(需求)结算明细 YWSXJSMX：选中的 赊销单，DNET=JSNET=赊销单的ZNET ;
+					s3.DNET = i.ZNET;
+					s3.JSNET = i.ZNET;
+					ywsxjsmx.push(s3);
+				})
+				let ywsxjs = new sale.ywsxjs({
+					DKFID: this.big_client_info.DKHID,
+					DKFNAME: this.big_client_info.NAME,
+					KHID: this.KHID,
+					BILL_STATUS: 1,
+					TPNET: main_order.ZNET,
+					TJSNET: main_order.ZNET,
+					ID_RY_LR: this.RYID,
+					DATE_LR: dateformat.toDateTimeString(new Date()),
+					RYNAME_LR: this.RYNAME,
+					DATE_QT: dateformat.toDateTimeString(new Date()),
+					POSID: this.POSID,
+					DPID: this.DPID
+				});
+				let condition = bills.join("','");
+				console.log("[Settlement]查询总商品信息:", condition);
+				RequestSend(
+					`select sale2.*,spda.SNAME GOOD_NAME from (select * from syssale002 where bill in('${condition}') and khid='${this.KHID}') sale2 left join spda on sale2.spid=spda.spid`
+				).then(util
+					.callBind(this, function(res) {
+						let data = JSON.parse(res.result.data);
+						console.log("[Settlement]商品信息:", data);
+						this.$to_sale_pages('sale_credit_settlement', {
+							sale1: main_order,
+							sale2: data.map(i => {
+								i.STR1 = i.GOOD_NAME;
+								return i;
+							}),
+							sale3: [],
+							sql: update_status_sql,
+							ywsxjs,
+							ywsxjsmx,
+						})
+					}))
 			}
+		},
+		created() {
+			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
+			console.log("[CreditSettlement-Created]门店信息:", {
+				ryid: this.RYID,
+				dpid: this.DPID,
+				posid: this.POSID,
+				ryname: this.RYNAME,
+				khid: this.KHID
+			});
+			this.big_client_info = this.bigCustomerInfo;
+			console.log("[CreditSettlement-Created]获取大客户单据信息...");
+			this.GetBigClientSettlement();
 		}
 	}
 </script>
 
+
 <style>
-	
-	.page-content {
-		box-sizing: border-box;
-		display: flex;
-		flex-direction: column;
-		height: 92%;
-	}
-
-	.search-bar {
-		display: flex;
-		align-items: center;
-		padding-right: 10px;
-	}
-
-	.bottom {
-		display: flex;
-		padding: 0px 2% 10px;
-		box-sizing: border-box;
-		height: calc(100vh - 112px);
-	}
-
-	.bottom>* {
-		
+	.right {
 		height: 100%;
-		box-sizing: border-box;
-		overflow-y: auto;
 	}
 
-	.settlement {
-		width:50%;
-	}
-
-	.details {
-		background-color: white;
-		display: flex;
-		flex-direction: column;
-		width:48%;
-		margin-left: 2%;
-	}
-	
-	.row text,.row:not(:first-child){
-		color: gray;
-		margin-right: 6px;
+	.handles button {
+		width: 160rpx;
+		height: 60rpx;
 		line-height: 60rpx;
 		font-size: 28rpx;
 	}
 
-	.item-box {
-		display: flex;
-		gap: 10px;
-		flex-wrap: wrap;
-		justify-content: center;
+	.price {
+		margin-top: 0;
 	}
 
-	.item {
-		width: 94%;
-		display: inline-block;
-		height: 20%;
-		background-color: white;
-		border-radius: 14rpx;
-		padding: 20rpx 3%;
-		display: flex;
-		gap: 6px;
-		flex-direction: column;
-		border:1rpx solid #eee;
-		margin-bottom: 2%;
+	.h2 {
+		padding: 0 3% 1%;
 		position: relative;
-	}
-	.item em{
-		display: flex;
-		height: 40rpx;
-		width:6rpx;
-		background-color: #70c477;
-		position: absolute;
-		top:30rpx;
-		right:0;
-		display: none;
-		opacity: 0.5;
-	}
-	.selected em{
-		display: block;
-	}
-	.selected{
-		border:1rpx solid #70c477;
-	}
-	
-	.item-title{
-		display: flex;
-		justify-content: space-between;
-		font-weight: 600;
-		font-size: 1em;
-		line-height: 60rpx;
-	}
-	.item-title text:nth-child(2){
-		font-weight: 400;
-		font-size: 26rpx;
-	}
-	.item-content::before{
-		content: "";
-		border-top: 1px solid lightgray;
-	}
-	.item-content{
-		color: gray;
-		font-size: 0.8em;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-	
-	.item-content view {
-		line-height: 50rpx;
-	}
-	
-	.cover,.cover > image{
-		height: 70rpx;
-		width: 70rpx;
-	}
-	.desigs view:nth-child(2){
-		color: #b0b0b0;
-		font-size: 24rpx;
 		line-height: 40rpx;
+	}
+
+	.h2 label {
+		position: absolute;
+		width: 140rpx;
+		bottom: 20rpx;
+		left: 3%;
+		height: 8rpx;
+		background: linear-gradient(90deg, #006B44 0%, rgba(0, 107, 68, 0) 100%);
+		border-radius: 8rpx;
+	}
+
+	.details .goods {
+		height: 65%;
+	}
+
+	.detinfo {
+		height: 85%;
+	}
+
+	.products {
+		height: 84%;
+	}
+
+	.products .details {
+		justify-content: start;
+	}
+
+	.products .procycle {
+		max-height: 100%;
+		overflow: auto;
+	}
+
+	.products .procycle .li .h3 {
+		font-size: 28rpx;
+		font-weight: 600;
+	}
+
+	.products .h3 text {
+		font-weight: 600;
+	}
+
+	.select-all-orders {
+		display: inline-flex;
+		justify-content: center;
+		border-radius: 30rpx;
+		padding: 0 18rpx;
+		height: 48rpx;
+		background-color: #006B44;
+		color: #fff;
+		align-items: center;
+		margin-left: 10px;
 	}
 </style>

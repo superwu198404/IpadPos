@@ -8,14 +8,14 @@
 				<view class="close-btn" @click="input.query_json = ''">×</view>
 				<text selectable="true">
 					<pre>
-						{{ input.query_json }}
+					{{ input.query_json }}
 					</pre>
 				</text>
 			</view>
 		</view>
 		<view>
 			<button @click="MenuPage(10)">数据查看</button>
-			<button @click="MenuPage(12)">查看轮播</button>
+			<!-- <button @click="MenuPage(12)">查看轮播</button> -->
 			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
 		</view>
@@ -252,8 +252,8 @@
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				actType: common.actTypeEnum.Payment, //当前行为 代表是支付还是退款 默认支付行为
@@ -1267,18 +1267,18 @@
 		justify-content: center;
 		align-items: center;
 		z-index: 99999999;
-		top:0px;
-		left:0px;
-		background: rgba(255,255,255,0.4);
+		top: 0px;
+		left: 0px;
+		background: rgba(255, 255, 255, 0.4);
 	}
-	
-	.hidden-box-inner{
+
+	.hidden-box-inner {
 		position: relative;
 		height: 100%;
 		width: 100%;
 	}
-	
-	.close-btn{
+
+	.close-btn {
 		position: absolute;
 		width: 60px;
 		height: 60px;

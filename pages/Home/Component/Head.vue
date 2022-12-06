@@ -254,13 +254,15 @@
 				this.ynDKF = this._ynDKF;
 			}
 		},
-		/**
-		 * 生命周期函数--监听页面显示
-		 */
 		onShow: function() {
 			let that = this;
 			//搜索蓝牙
 			that.startSearch();
+		},
+		onLoad: function(options) {
+			let that = this;
+			//监听蓝牙连接状态
+			that.onBLEConnectionStateChange();
 		},
 		created: function(e) {
 			this.showSale = this._showSale;
@@ -596,26 +598,21 @@
 				uni.onBLEConnectionStateChange(res => {
 					console.log(`设备状态 ${res.deviceId},connected: ${res.connected}`);
 					if (res.connected == false) {
-						closeBluetoothAdapter();
-						closeBLEConnection(res.deviceId, 0);
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
-						//选择适合需求的定时器
-						intervalId = setInterval(() => {
-							console.log("intervalId" + new Date());
-							try {
-								if (app.globalData.BLEInformation.deviceId != "" && app.globalData
-									.BLEInformation.deviceName != "") {
-									that.startSearch();
-								}
-							} catch (e) {
-								that.clearIntervalFun();
-							}
-							console.log("YN_PRINT_CON", app.globalData.YN_PRINT_CON);
-						}, 5000);
+						try{
+							//closeBluetoothAdapter();
+							that.closeBLEConnection(res.deviceId, 0);
+						}catch(e){}
+						
+						if (app.globalData.BLEInformation.deviceId != "" && app.globalData
+							.BLEInformation.deviceName != "") {
+							that.startSearch();
+						}
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
 						that.YN_PRINT_CON = "Y";
+						//that.clearIntervalFun();
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -767,14 +764,15 @@
 										isScanning: false
 									});
 
-									that.isLink = []
+									//console.log("that.list======", that.list);
+									that.isLink = [];
 									var i = 0;
 									that.list.forEach(e => {
 										that.isLink.push(0)
 										i++;
-									})
-									console.log("isLink", that.isLink)
-									// uni.hideLoading();
+									});
+									//console.log("isLink", that.isLink);
+
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
 										success: function(res) {
@@ -960,7 +958,18 @@
 							that.YN_PRINT_CON = "Y";
 							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
 								"||" + app.globalData.YN_PRINT_CON)
-							//that.openControl();
+
+							that.isLink = [];
+							var i = 0;
+							that.list.forEach(e => {
+								if(e.deviceId==app.globalData.BLEInformation.deviceId){
+									that.isLink.push(1)
+								}else{
+									that.isLink.push(0)
+								}
+								i++;
+							});
+
 						}
 					},
 					fail: function(e) {
@@ -996,7 +1005,7 @@
 				plus.bluetooth.closeBLEConnection({
 					deviceId: deviceId,
 					success: res => {
-						console.log('断开蓝牙连接')
+						console.log('断开蓝牙连接closeBLEConnection======',deviceId)
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
 						that.isLink.splice(index, 0, 0)

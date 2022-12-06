@@ -180,8 +180,8 @@
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
-				qrCodeWidth: 200, //二维码宽
-				qrCodeHeight: 200, // 二维码高
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				yn_qr: true,
@@ -293,8 +293,15 @@
 							let data = JSON.parse(res.data);
 							if (data.yn_print) {
 								//调用打印
-								//console.log("此处调用打印：");
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, "WMYD");
+								let printerPram = 
+								{
+									"PRINTNUM": 1,
+									"XSTYPE": "WMYD",
+									"BS_REASON": "",
+									"BS_NOTE": "",
+									"NEW_BILL": data.new_bill,
+								};
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
 							}
 						} else {
 							util.simpleModal("操作失败", res.msg);

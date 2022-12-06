@@ -419,6 +419,51 @@ var sxsale001 = function(pm_obj) {
 		}
 	}
 }
+
+var ywsxjs = function(init) {
+	this.BILL = "";
+	this.DKFID = "";
+	this.DKFNAME = "";
+	this.KHID = "";
+	this.BILL_STATUS = "";
+	this.TPNET = 0;
+	this.TJSNET = 0;
+	this.NOTE = "";
+	this.ID_RY_LR = "";
+	this.DATE_LR = "";
+	this.RYNAME_LR = "";
+	this.DATE_QT = "";
+	this.POSID = "";
+	this.BILL_QT = "";
+	this.DPID = "";
+	if(init) {
+		let ywsxjs = this;
+		Object.cover(ywsxjs,init);
+	}
+}
+
+var ywsxjsmx = function() {
+	this.BILL = "";
+	this.BILL_SX = "";
+	this.YWID = "";
+	this.DNET = 0;
+	this.JSNET = 0;
+	this.NOTE = "";
+}
+
+var ywsxfk = function() {
+	this.BILL = "";
+	this.FKID = "";
+	this.AMT = 0;
+	this.NOTE = "";
+	this.NO = 0;
+	this.JK_STATUS = 0;
+	this.JK_DATE = "";
+	this.JK_ERRID = "";
+	this.ZKLX = "";
+	this.DISC = 0;
+}
+
 var saleBillType = [
 	"NONE",
 
@@ -435,7 +480,7 @@ var saleBillType = [
 	"Z104", //门零现场商品赊销订单
 
 	"Z104", //门零现场商品赊销订单
-	
+
 	"Z101", //线上订单提取
 
 	"Z112", //门零现场卡券赊销订单
@@ -462,6 +507,9 @@ export default {
 	ydsale003,
 	ywbhqh,
 	sxsale001,
+	ywsxjs,
+	ywsxjsmx,
+	ywsxfk,
 	sale008,
 	saleBillType
 }
