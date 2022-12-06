@@ -498,7 +498,7 @@ const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => 
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(getApp().globalData.store.POSID,"");
+	var posId = snvl(sale1_obj.POSID,"");
 	var posUser = snvl(sale1_obj.RYNAME_LR,"");
 	var dkfid = snvl(sale1_obj.DKFID,"");
 	var dkfname = snvl(sale1_obj.DKFNAME,"");

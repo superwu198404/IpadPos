@@ -1812,8 +1812,7 @@ var jpPrinter = {
 	jpPrinter.SXJSFormString = function(data,printer_poscs,print){
 		var type = data.xsType;
 		var xpType = "赊销结算";
-		var lineNum = 0;
-		
+	
 		// jpPrinter.setSelectJustification(1); //居中
 		// jpPrinter.setCharacterSize(17); //设置倍高倍宽
 		// jpPrinter.setText("KenGee 仟吉" + "\n");
@@ -1878,7 +1877,7 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("共结算赊销单:" + util.nnvl(lineNum,0) + "张");
+		jpPrinter.setText("共结算赊销单:" + util.nnvl(data.lineNum,0) + "张");
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
