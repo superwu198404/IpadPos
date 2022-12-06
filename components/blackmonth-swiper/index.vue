@@ -8,7 +8,7 @@
 					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
 					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
 					<view class="products">
-						<view class="names">{{item.SNAME}}</view>
+						<view class="names">{{item.SNAME}} <text class="price">￥145</text></view>
 						<text>{{item.note}}</text>
 					</view>
 				</view>
@@ -171,6 +171,8 @@
 	.children .products .names {
 		font-size: 40rpx;
 		font-weight: 700;
+		display: flex;
+		justify-content: space-between;
 	}
 
 	.children .products text {
