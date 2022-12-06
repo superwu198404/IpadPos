@@ -1277,6 +1277,7 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
 			this.additional['YWSXFK'] = ywsxfk_list;
 			this.additional['YWSXJS'].BILL = credit_bill;
+			this.additional['YWSXJS'].BILL_QT = credit_bill;
 			this.additional['YWSXJSMX'].map(i => i.BILL = credit_bill);
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
 		}
