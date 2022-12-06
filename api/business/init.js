@@ -33,7 +33,7 @@ var YN_Init = function(sucFunc, errFunc) {
 var GetPayWay = async function(e) {
 	let PayWayList = [];
 	await common.GetPayWay(e, function(res) {
-		console.log("[GetPayWay]本地查到的付款信息：", res);
+		console.warn("[GetPayWay]本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
 			console.log("[GetPayWay]支付规则信息：", PayInfo);
@@ -62,6 +62,13 @@ var GetPayWay = async function(e) {
 			}
 			//如果fkda没有则追加测试数据
 			let arr = [{
+				name: "仟吉电子券",
+				fkid: "ZF09",
+				type: "SZQ",
+				yn_use: "Y",
+				dbm: "Y",
+				poly: "N"
+			}, {
 				name: "云闪付",
 				fkid: "ZF33",
 				type: "YSF",
@@ -99,7 +106,7 @@ var GetPayWay = async function(e) {
 			}, {
 				name: "券自动放弃金额",
 				fkid: "ZCV1",
-				type: "SZQ",
+				type: "EXCESS",
 				poly: "O"
 			}]
 			for (var i = 0; i < arr.length; i++) {
@@ -153,12 +160,12 @@ var GetMDName = function(khid, func) {
 var GetStoreCoordinate = function(khid) {
 	RequestSend(`select * from KHDADZ where khid='${khid}'`, function(res) {
 		let info = JSON.parse(res.data)?.first();
-		console.warn("[GetStoreCoordinate]门店信息:",info);
+		console.warn("[GetStoreCoordinate]门店信息:", info);
 		util.setStorage('StoreCoodinate', {
 			longitude: info.ADRJD,
 			latitude: info.ADRWD
 		})
-		console.log("[GetStoreCoordinate]门店经纬度信息(KHDADZ):",util.getStorage('StoreCoodinate'));
+		console.log("[GetStoreCoordinate]门店经纬度信息(KHDADZ):", util.getStorage('StoreCoodinate'));
 	})
 }
 

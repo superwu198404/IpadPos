@@ -1247,7 +1247,7 @@ var XsTypeObj = {
 		},
 		$beforeFk: function() {
 			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
-			allow_type.push('ZF04'); //测试用
+			// allow_type.push('ZF04'); //测试用
 			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
 				.fkid);
 			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
@@ -1275,6 +1275,7 @@ var XsTypeObj = {
 			this.sale002 = [];
 			this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
+			//YWSXFK(类sale3)、YWSXJS(类sale1，主单号为BILL，大客户ID-DKFID，大客户名称-DKFNAME)、YWSXJSMX(类sale2-记录结算的单据，原单号记录字段为BILL_SX)
 			this.additional['YWSXFK'] = ywsxfk_list;
 			this.additional['YWSXJS'].BILL = credit_bill;
 			this.additional['YWSXJS'].BILL_QT = credit_bill;

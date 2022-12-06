@@ -152,9 +152,7 @@
 					TPNET: main_order.ZNET,
 					TJSNET: main_order.ZNET,
 					ID_RY_LR: this.RYID,
-					DATE_LR: dateformat.toDateTimeString(new Date()),
 					RYNAME_LR: this.RYNAME,
-					DATE_QT: dateformat.toDateTimeString(new Date()),
 					POSID: this.POSID,
 					DPID: this.DPID
 				});
