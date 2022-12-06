@@ -920,6 +920,10 @@
 			sxBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type) {
 				this.$refs.printerPage.sxBluePrinter(sale1_obj, sale2_arr, sale3_arr, sxsale001, print, type);
 			},
+			//赊销结算打印小票
+			sxjsBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
+				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
+			},
 		},
 		created() {
 			// uni.setLocale("en");

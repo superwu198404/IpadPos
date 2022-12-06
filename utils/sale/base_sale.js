@@ -1281,7 +1281,35 @@ var XsTypeObj = {
 			this.additional['YWSXJS'].BILL_QT = credit_bill;
 			this.additional['YWSXJSMX'].map(i => i.BILL = credit_bill);
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL后):", this.additional);
-		}
+		},
+		$saleFinied: function(sales) {
+			//调用打印
+			let arr1 = this.additional['YWSXJS'];
+			let arr2 = this.additional['YWSXJSMX'];
+			let arr3 = this.additional['YWSXFK'];
+			//查询支付方式
+			let fkdaRes = this.FKDA_INFO;
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			
+			let printerPram = {
+				"PRINTNUM": 2,
+			};
+			console.log("赊销结算开始调用打印", {
+				arr1,
+				arr2,
+				arr3,
+				printerPram
+			})
+			this.Page.sxjsBluePrinter(arr1, arr2, arr3, printerPram);
+		},
 	},
 	//赊销退货
 	sale_credit_return_good: {
