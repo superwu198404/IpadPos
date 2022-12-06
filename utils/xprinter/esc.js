@@ -1809,6 +1809,120 @@ var jpPrinter = {
 		}	
 	}
 	
+	jpPrinter.SXJSFormString = function(data,printer_poscs,print){
+		var type = data.xsType;
+		var xpType = "赊销结算";
+		var lineNum = 0;
+		
+		// jpPrinter.setSelectJustification(1); //居中
+		// jpPrinter.setCharacterSize(17); //设置倍高倍宽
+		// jpPrinter.setText("KenGee 仟吉" + "\n");
+		// jpPrinter.setPrint(); //打印并换行
+		
+		let HYY = "欢迎光临";
+		// 终端参数配置了欢迎语，则取配置
+		if(printer_poscs.HYY  != ""){
+			HYY = printer_poscs.HYY;
+		}	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(1); //设置居左	
+		jpPrinter.setText(HYY);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(data.khName);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType + "小票");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("单号: "+ data.bill);
+		jpPrinter.setPrint(); //打印并换行
+	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("时间: " + data.xsDate);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收款员: " + data.posUser);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("大客户名称: "+ data.dkfname + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		data.arr2List.forEach((item, i) => {
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item.bill_sx);
+			jpPrinter.setPrint(); //打印并换行	
+		});
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("共结算赊销单:" + util.nnvl(lineNum,0) + "张");
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------付款方式-------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		let payTotal = 0;
+		let change = 0;
+		data.sale3List.forEach((item2, index2) => {
+			let amount = item2.amt;
+			payTotal += parseFloat(item2.amt);
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item2.fkName + ":" + util.tnvl(amount,0));
+			jpPrinter.setPrint(); //打印并换行
+		});
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("总金额:" + util.nnvl(data.payableAmount.toFixed(2),0));
+		jpPrinter.setPrint(); //打印并换行
+	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("支付:" + payTotal.toFixed(2));
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("找零:" + util.nnvl(change.toFixed(2),0) + "\n");
+		jpPrinter.setPrint(); //打印并换行
+	
+		// jpPrinter.setCharacterSize(0); //设置正常大小
+		// jpPrinter.setSelectJustification(0); //设置居左
+		// jpPrinter.setText(data.ggy);
+		// jpPrinter.setPrint(); //打印并换行
+		
+		// jpPrinter.setCharacterSize(0); //设置正常大小
+		// jpPrinter.setSelectJustification(0); //设置居左
+		// jpPrinter.setText("-----------------------------------------------");
+		// jpPrinter.setPrint(); //打印并换行	
+	}
+	
 	//打印结束，打印换行
 	jpPrinter.endPrinter = function(){
 		jpPrinter.setCharacterSize(0); //设置正常大小
