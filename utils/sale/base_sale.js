@@ -1490,6 +1490,46 @@ var XsTypeObj = {
 			this.$initSale(XsTypeObj["sale_takeaway"]);
 		}
 	},
+	//外卖单预定
+	sale_takeaway_reserve: {
+		xstype: "8",
+		clickType: "sale_takeaway_reserve",
+		nameSale: "外卖预定单",
+		icon_open: require("@/images/wmyudd.png"),
+		icon_close: require("@/images/wmyudd-hui.png"),
+		operation: {
+			"sale": true, //从这里开始都是销售模式
+			"sale_reserve": true,
+			"sale_credit": true,
+			"sale_return_good": true,
+			"sale_reserve_cancel": true,
+			// "sale_online_order": true,
+			// "sale_takeaway": true,
+			// "sale_takeaway_reserve": true,//和外卖单保持一致 点击自己不允许跳转到其他页面
+			"sale_message": true,
+			"ynCancel": true,
+			"lockRows": 0, //是否存在锁定行数
+		},
+		$click() {
+			this.SetManage("sale_takeaway_reserve");
+			return false;
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "外卖预订单", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
+		SelectMenu: function() {
+			console.log("[SelectMenu]外卖预定单选中...");
+			this.SetType("sale_takeaway_reserve");
+			this.$initSale(XsTypeObj["sale_takeaway_reserve"]);
+		}
+	},
 	//线上订单
 	sale_online_order: {
 		xstype: "8",
@@ -1682,51 +1722,8 @@ var XsTypeObj = {
 			// })
 		},
 	},
-
-	//外卖单预定
-	sale_takeaway_reserve: {
-		close: true,
-		xstype: "8",
-		clickType: "sale_takeaway_reserve",
-		nameSale: "外卖预定单",
-		icon_open: require("@/images/wmyudd.png"),
-		icon_close: require("@/images/wmyudd-hui.png"),
-		operation: {
-			"sale": true, //从这里开始都是销售模式
-			"sale_reserve": true,
-			"sale_credit": true,
-			"sale_return_good": true,
-			"sale_reserve_cancel": true,
-			// "sale_online_order": true,
-			// "sale_takeaway": true,
-			// "sale_takeaway_reserve": true,//和外卖单保持一致 点击自己不允许跳转到其他页面
-			"sale_message": true,
-			"ynCancel": true,
-			"lockRows": 0, //是否存在锁定行数
-		},
-		$click() {
-			this.SetManage("sale_takeaway_reserve");
-			return false;
-		},
-		///对打印的控制
-		$print: function() {
-			return {
-				tName: "外卖预订单", // 名称
-				ynPrintFp: true, //是否打印发票二维码
-				ynPintCustem: false, // 是否打印客户信息
-				ynPintDisc: true, //是否打印折扣  
-				payOrRet: "", //支付还是退款
-			}
-		},
-		SelectMenu: function() {
-			console.log("[SelectMenu]外卖预定单选中...");
-			this.SetType("sale_takeaway_reserve");
-			this.$initSale(XsTypeObj["sale_takeaway_reserve"]);
-		}
-	},
 	//消息
 	sale_message: {
-		close: true,
 		xstype: "6",
 		clickType: "sale_message",
 		nameSale: "消息",
