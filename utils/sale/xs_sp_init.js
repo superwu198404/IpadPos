@@ -173,7 +173,7 @@ var loadSaleSP = {
 
 		let sql =
 			"select dgxlimage.DGXLID , url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL,DESCRIBE  from dgxlimage where DQID='" +
-			pm_dqid + "' ";
+			pm_dqid + "'   order by DGXLID,yn_main desc";
 		/* 	let sql= "select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage  where exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
 			   	" and spda_dgxl.dgxlid =dgxlimage.dgxlid " +
 			   " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') order by yn_main desc "; */

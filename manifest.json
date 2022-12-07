@@ -157,9 +157,9 @@
     },
     "appid" : "__UNI__A6034C6",
     "name" : "KengeePos",
-    "versionName" : "1.1.29",
+    "versionName" : "1.1.31",
     "description" : "ipad上运行的收银软件",
-    "versionCode" : 39,
+    "versionCode" : 41,
     "locale" : "zh-Hans"
 }
 // ,
