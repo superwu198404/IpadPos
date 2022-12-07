@@ -131,21 +131,30 @@
 			},
 			//广告语
 			ggyAction: async function() {
-				return new Promise(function(resolve, reject) {
-					uni.request({
-						url: app.globalData.BLEInformation.printerFile + "poem.txt",
-						method: "GET",
-						data: "",
-						success: (res) => {
-							app.globalData.BLEInformation.ggy = res.data;
-							return resolve(res.data);
-						},
-						fail: (res) => {
-							console.log("ggyAction获取失败: ", res);
-							return resolve("");
-						}
-					})
-				})
+				try{
+					return new Promise(function(resolve, reject) {
+						uni.request({
+							url: app.globalData.BLEInformation.printerFile + "poem.txt",
+							method: "GET",
+							data: "",
+							success: (res) => {
+								if(res.statusCode == 200){
+									app.globalData.BLEInformation.ggy = res.data;
+									return resolve(res.data);
+								}else{
+									app.globalData.BLEInformation.ggy = "";
+									return resolve("");
+								}
+							},
+							fail: (res) => {
+								console.log("ggyAction获取失败: ", res);
+								return resolve("");
+							}
+						})
+					});
+				}catch(e){
+					return "";
+				}
 			},
 			//线上订单打印小票
 			xsBluePrinter: async function(order, type, print) {

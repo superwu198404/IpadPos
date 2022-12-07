@@ -94,8 +94,9 @@
 				notifyServiceId: "",
 				readCharaterId: "",
 				readServiceId: "",
-				printerFile: "http://139.9.122.101:8029/files/", //打印文件存放url
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址
+				//printerFile: "http://58.19.103.220:8805/files/xprinter/", //测试环境 - 打印广告语文件存放url
+				printerFile: "http://pad.kengee.com.cn:8018/files/xprinter/", //正式环境 - 打印广告语文件存放url
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址,走终端参数获取
 				ggy: "", //广告语
 			},
 			YN_PRINT_CON: "N", //打印机连接状态

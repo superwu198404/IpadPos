@@ -2532,7 +2532,7 @@ var jpPrinter = {
 		if(data.daysn != "" && data.daysn != null && data.daysn != undefined){
 			jpPrinter.setCharacterScale(1); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("有赞流水号: " + data.daysn + "\n");
+			jpPrinter.setText(data.note2 + "流水号: " + data.daysn + "\n");
 			jpPrinter.setPrint(); //打印并换行
 		}
 		

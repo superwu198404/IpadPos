@@ -584,7 +584,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 	var wtime = sale1_obj.WTIME;
 	var xsBill = sale1_obj.XS_BILL;
 	var custmtime = snvl(sale1_obj.CUSTMTIME,"");
-	var daysn = sale1_obj.DAYSN;
+	var daysn = snvl(sale1_obj.DAYSN,"");
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
@@ -600,11 +600,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 	var xsptid = sale1_obj.XSPTID;
 	var nowTime = getTime(3);
 	var posId = snvl(sale1_obj.POSID,"");
-		
-	var note2 = "";
-	if (type == "WMYD") {
-		note2 = sale1_obj.NOTE2; //外卖预订单，平台名称。如美团外卖
-	}
+	var note2 = snvl(sale1_obj.NOTE2,""); //平台名称。如美团外卖
 	
 	var bsReason = "";
 	var bsNote = "";
