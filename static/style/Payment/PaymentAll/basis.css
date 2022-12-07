@@ -1077,7 +1077,7 @@ uni-button:after {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 20rpx 20px 10rpx;
+		padding: 10rpx 20px 4rpx;
 		width:96%;
 		margin:0 auto;
 		font-size: 34rpx;
@@ -1101,6 +1101,7 @@ uni-button:after {
 	}
 .body-titles .filter{
 	font-size: 30rpx;
+	white-space: nowrap;
 }
 .body-titles .filter image{
 	width:30rpx;

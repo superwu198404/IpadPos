@@ -5,7 +5,7 @@
 				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}"
 				@click="ChooseCake(item)">
 				<view class="children">
-					<!-- <image class="pic" src="@/image/455.png" mode="widthFix"></image> -->
+					<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
 					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
 					<view class="products">
 						<view class="names">{{item.SNAME}} <!-- <text class="price">￥145</text> -->
@@ -149,13 +149,21 @@
 		position: relative;
 		overflow: hidden;
 		border-radius: 20rpx;
-		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.05);
+		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.1);
 		background-color: #FFFFFF;
 	}
-
+	.children .logo{
+		position: absolute;
+		top:16rpx;
+		left: 20rpx;
+		width:120rpx;
+		height: 120rpx;
+		z-index: 9;
+	}
 	.pic {
 		position: absolute;
-		top: -15%;
+		top: 50%;
+		transform: translateY(-50%);
 		left: 0;
 		width: 100%;
 	}

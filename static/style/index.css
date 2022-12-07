@@ -1632,6 +1632,13 @@ checkbox.mycheck .wx-checkbox-input,
 		height: 100%;
 		border-radius: 20rpx;
 	}
+	.shuffs .banner swiper .logo{
+		position: absolute;
+		top:16rpx;
+		left: 20rpx;
+		width:120rpx;
+		height: 120rpx;
+	}
 	.tupian{
 		display: flex;
 		margin-top:1.5%;
