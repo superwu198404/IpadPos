@@ -333,7 +333,7 @@ var kengeePay = {
 				let card_info = res.data;
 				body.card_no = card_info.card_no.substring(3); //去掉实体卡前缀三位
 				body.auth_code = card_info.track_info;
-				body.merchant_no = config.LONGKEY;
+				body.merchant_no = config.SHID;
 				body.storeName = getApp().globalData.store.NAME;
 				console.log("[ReadCard]组装支付参数:", body);
 				_PaymentAll(pt, body, func, catchFunc);

@@ -925,7 +925,7 @@
 				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			},
 		},
-		created() {
+		created() { 
 			// uni.setLocale("en");
 			// uni.showModal({
 			// 	content: "请使用扫码枪扫码",
