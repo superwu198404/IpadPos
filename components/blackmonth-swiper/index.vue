@@ -125,9 +125,9 @@
 
 <style lang="scss">
 	.swiperPanel {
-		margin-top: 10rpx;
 		height: 1400rpx;
 		width: 100%;
+		margin:0 auto;
 		overflow: hidden;
 		position: relative;
 	}
@@ -142,19 +142,19 @@
 	}
 
 	.children {
-		height: 90%;
-		width: 90%;
-		margin: 1.5% auto 3%;
+		height: 92%;
+		width: 88%;
+		margin: 0.5% auto 3%;
 		position: relative;
 		overflow: hidden;
 		border-radius: 20rpx;
-		box-shadow: 20px 0px 40px 1px rgba(51, 51, 51, 0.2);
+		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.05);
 		background-color: #FFFFFF;
 	}
 
 	.pic {
 		position: absolute;
-		top: -10%;
+		top: -15%;
 		left: 0;
 		width: 100%;
 	}

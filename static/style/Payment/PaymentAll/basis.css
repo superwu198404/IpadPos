@@ -1106,6 +1106,7 @@ uni-button:after {
 	width:30rpx;
 	height: 30rpx;
 	margin-right: 6rpx;
+	margin-left: 12rpx;
 }
 .body-titles .yixuan,.shaixuan .yixuan{
 	width:95%;
