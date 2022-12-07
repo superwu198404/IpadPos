@@ -524,7 +524,7 @@
 			<!-- //列表 -->
 			<view v-show="!mainSale.mode_info.sale_cake_reserve.yn_showDetail">
 				<view class="body-titles">
-					<view style="width: 90%;display: flex;">
+					<view style="width: 89%;display: flex;">
 						<view class="hot-sales" style="height: 70rpx; line-height: 70rpx;">
 							产品列表
 							<label></label>
@@ -532,7 +532,7 @@
 						<view class="yixuan" v-if="CheckedList.length>0">
 
 							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;">已选：</text>
-							<view class="yxlb">
+							<view class="yxlb" style="max-height: 70rpx;">
 								<label v-for="tag in CheckedList">{{ tag._NAME }}
 									<!-- <button @click="DeleteCheckedTag(tag)">×</button> -->
 								</label>
@@ -599,6 +599,7 @@
 								:current="mainSale.mode_info.sale_cake_reserve.imgCurrent">
 								<!-- @change="swiperChange" -->
 								<swiper-item v-for="(item, index) in mainSale.clikSpItem.imglist" :key="index">
+									<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
 									<image :src="P_URL+item.IMGURL"></image>
 								</swiper-item>
 							</swiper>
