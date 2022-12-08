@@ -32,9 +32,11 @@
 			_swiperList: function(n, o) {
 				console.log("蛋糕数据发生变动：", n.length);
 				if (n && n.length > 0) {
-					this.swiperList = n.filter((r, i) => {
+					let arr = n.filter((r, i) => {
 						return i <= 100;
 					});
+					this.swiperList = JSON.parse(JSON.stringify(arr));
+					console.log("接收传入的蛋糕数据：", this.swiperList);
 					this.itemStyle = [];
 					this.swiperList.forEach((item, index) => {
 						item.img = (this.P_URL + item.img);
@@ -76,7 +78,7 @@
 		},
 		methods: {
 			imgerr(e, i) {
-				// console.log("图片加载出错事件：", e);
+				console.log("图片加载出错事件：", e);
 				this.swiperList[i].img = "/images/zanwutp.png";
 			},
 			ChooseCake: function(e) {
