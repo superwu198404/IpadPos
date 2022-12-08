@@ -99,7 +99,8 @@ var PreLoadCakeImg = function(func) {
 	let sysParam = util.getStorage("sysParam");
 	sql = "select '" + sysParam.DGIMGURL +
 		"' || url ||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL from DGXLIMAGE where DQID='" +
-		store.DQID + "' and YN_MAIN='Y'";
+		store.DQID + "' and YN_MAIN='Y' order by DGXLID,yn_main desc";
+	console.log("sql:", sql);
 	db.get().executeQry(sql, "查询中...", res => {
 		if (func) func(res);
 		// for (var i = 0; i < res.msg.length; i++) {

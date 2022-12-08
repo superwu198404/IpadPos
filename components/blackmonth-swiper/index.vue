@@ -42,7 +42,7 @@
 				} else {
 					this.swiperList = [];
 				}
-				console.log("蛋糕显示数据", this.swiperList);
+				console.log("蛋糕显示数据", this.swiperList.length);
 			}
 		},
 		data() {
@@ -128,7 +128,7 @@
 	.swiperPanel {
 		height: 1400rpx;
 		width: 100%;
-		margin:0 auto;
+		margin: 0 auto;
 		overflow: hidden;
 		position: relative;
 	}
@@ -152,14 +152,16 @@
 		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.1);
 		background-color: #FFFFFF;
 	}
-	.children .logo{
+
+	.children .logo {
 		position: absolute;
-		top:16rpx;
+		top: 16rpx;
 		left: 20rpx;
-		width:120rpx;
+		width: 120rpx;
 		height: 120rpx;
 		z-index: 9;
 	}
+
 	.pic {
 		position: absolute;
 		top: 50%;
