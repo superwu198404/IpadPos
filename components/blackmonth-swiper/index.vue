@@ -6,7 +6,7 @@
 				@click="ChooseCake(item)">
 				<view class="children">
 					<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
-					<image class="pic" :src="P_URL+item.img" mode="widthFix"></image>
+					<image class="pic" :src="item.img" mode="widthFix" @error="imgerr($event,index)"></image>
 					<view class="products">
 						<view class="names">{{item.SNAME}} <!-- <text class="price">￥145</text> -->
 						</view>
@@ -59,10 +59,10 @@
 			};
 		},
 		async created() {
-			let sysParam = util.getStorage("sysParam");
-			if (sysParam && sysParam.DGIMGURL) {
-				this.P_URL = sysParam.DGIMGURL
-			}
+			// let sysParam = util.getStorage("sysParam");
+			// if (sysParam && sysParam.DGIMGURL) {
+			// 	this.P_URL = sysParam.DGIMGURL
+			// }
 			var macInfo = uni.getSystemInfoSync();
 			this.screenWidth = macInfo.screenWidth;
 
@@ -74,6 +74,14 @@
 			// })
 		},
 		methods: {
+			imgerr(e, i) {
+				console.log("图片加载出错事件：", e);
+				this.swiperList[i].img = "/images/zanwutp.png";
+				// this.swiperList[i].img = "/images/fh.png";
+				this.$forceUpdate();
+				console.log("图片加载出错事件1：", this.swiperList[i]);
+				// e. .src = require("@/images/zanwutp.jpg")
+			},
 			ChooseCake: function(e) {
 				console.log("选中的蛋糕:", e);
 				uni.$emit("ShowCakeDetail", e);
