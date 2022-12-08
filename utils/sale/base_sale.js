@@ -892,7 +892,7 @@ var XsTypeObj = {
 				"PRINTNUM": 2,
 				"XSTYPE": "YD"
 			};
-			this.Page.ydBluePrinter(this.sale001, this.sale002, arr3, this.ydsale001, printerPram);
+			this.Page.ydBluePrinter(this.sale001, this.sale002, sale3, this.ydsale001, printerPram);
 		},
 		//退出确认
 		CloseCakeReservation: function() {
