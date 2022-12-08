@@ -37,6 +37,7 @@
 					});
 					this.itemStyle = [];
 					this.swiperList.forEach((item, index) => {
+						item.img = (this.P_URL + item.img);
 						this.itemStyle.push(this.getStyle(index))
 					})
 				} else {
@@ -59,10 +60,10 @@
 			};
 		},
 		async created() {
-			// let sysParam = util.getStorage("sysParam");
-			// if (sysParam && sysParam.DGIMGURL) {
-			// 	this.P_URL = sysParam.DGIMGURL
-			// }
+			let sysParam = util.getStorage("sysParam");
+			if (sysParam && sysParam.DGIMGURL) {
+				this.P_URL = sysParam.DGIMGURL;
+			}
 			var macInfo = uni.getSystemInfoSync();
 			this.screenWidth = macInfo.screenWidth;
 
@@ -75,12 +76,8 @@
 		},
 		methods: {
 			imgerr(e, i) {
-				console.log("图片加载出错事件：", e);
+				// console.log("图片加载出错事件：", e);
 				this.swiperList[i].img = "/images/zanwutp.png";
-				// this.swiperList[i].img = "/images/fh.png";
-				this.$forceUpdate();
-				console.log("图片加载出错事件1：", this.swiperList[i]);
-				// e. .src = require("@/images/zanwutp.jpg")
 			},
 			ChooseCake: function(e) {
 				console.log("选中的蛋糕:", e);
