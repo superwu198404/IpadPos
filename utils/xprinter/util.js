@@ -18,13 +18,27 @@ const formatNumber = n => {
 };
 
 function formatDate (date){
-	debugger
+	// debugger
 	let dateNew = new Date(date);
 	const year = dateNew.getFullYear();
 	const month = dateNew.getMonth() + 1;
 	const day = dateNew.getDate();
 	//yyyy-MM-dd HH:mm:ss
 	return year + '-' + month + '-' + day;
+}
+
+function formatDateNew (date){
+	try{
+		let dateNew = new Date(date.replace(/-/g,'/'));
+		const year = dateNew.getFullYear();
+		const month = dateNew.getMonth() + 1;
+		const day = dateNew.getDate();
+		//yyyy-MM-dd HH:mm:ss
+		return year + '/' + month + '/' + day;
+	}catch(e){
+		console.log("formatDateNew err",e)
+	}
+	return "";
 }
 
 function getTime(type) {
@@ -1262,11 +1276,12 @@ const qrCodeAction = function(is_dzfpewmdz, command, qrCodeWidth, qrCodeHeight) 
  * @param {*} bill 
  * @param {*} qrCodeContent 
  * @param {*} qrCodeWidth 
- * @param {*} qrCodeHeight 
+ * @param {*} qrCodeHeight
  */
 const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight,objQrCode) {
 	return new Promise((resolve, reject) => {
-		let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + objQrCode.saledate + "&bill=" + objQrCode.bill + "&khid=" + objQrCode.khid + "&gsid=" +objQrCode.gsid + "&sltype=" +objQrCode.sltype;
+		let saleDate = formatDateNew(objQrCode.saledate);
+		let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + saleDate + "&bill=" + objQrCode.bill + "&khid=" + objQrCode.khid + "&gsid=" +objQrCode.gsid + "&sltype=" +objQrCode.sltype;
 		console.log("1.二维码生成内容:", qrText)
 		if (!is_dzfpewmdz) {
 			resolve('1')
@@ -1373,4 +1388,5 @@ module.exports = {
 	sxPrinterData: sxPrinterData,
 	tnvl: tnvl,
 	sxjsPrinterData: sxjsPrinterData,
+	formatDateNew: formatDateNew
 };
