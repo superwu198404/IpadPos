@@ -14,10 +14,10 @@
 					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
 					<input placeholder="请输入款台号" v-model="posid" type="number" />
 				</label>
-				<!-- <label>
+				 <label>
 					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
 					<input placeholder="请输入初始化密码" v-model="poskey"  password="true" />
-				</label> -->
+				 </label>
 			</view>
 			<view class="operate">
 				<button class="btn" @click="init">初始化</button>
@@ -239,7 +239,7 @@
 						let reqPosData = {
 							"khid": that.khid,
 							"posid": that.posid,
-							"poskey": that.poskey,
+							"passkey": that.poskey,
 							//"deviceId": sysinfo?.deviceId || "IPADPOS" //传入设备号 注意设备号会随着storage清除而发生改变
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";

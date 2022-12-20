@@ -228,6 +228,7 @@ var loadSaleSP = {
 			    AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  \
 			    AND ifnull(S1.yn_xpdg,'N') ='N'  AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='" + pm_storeid + "' \
 			    AND not exists(select 1 from spda_dgxl where  spda_dgxl.spid = SM.SPID) \
+				AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = SM.SPID AND SPDOWNQT.KHID ='" + pm_storeid + "' ) \
 				AND NOT EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='" + pm_dqid +
 			"' AND SM.SPID = KXPSX.MATNR )";
 
@@ -257,7 +258,8 @@ var loadSaleSP = {
 		//蛋糕规格 
 		let cakeSpescSql = " SELECT  spda_dgxl.DGXLID, spda_dgxl.SPID,spda.SPJGZ DGJGZ,spda.plid DGPLID, IFNULL(spda_dgxl.cccz,'无尺寸') SPECS  \
 	               from spda_dgxl,spkhda,spda where  spda.spid=spda_dgxl.spid  and spda_dgxl.spid= spkhda.spid  \
-				     and spkhda.YN_XS='Y' and spda.SPJGZ IS NOT NULL and   spkhda.khid ='" + pm_storeid + "'";
+				   AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = spkhda.SPID AND SPDOWNQT.KHID ='" + pm_storeid + "' ) \
+				   and spkhda.YN_XS='Y' and spda.SPJGZ IS NOT NULL and   spkhda.khid ='" + pm_storeid + "'";
 
 		await $sqlLite.executeQry(cakeSpescSql, "正在获取蛋糕数据", (res) => {
 			// console.log(JSON.stringify(res).substring(0,2000));
@@ -293,7 +295,7 @@ var loadSaleSP = {
 			"AND  ifnull(S1.yn_xpdg,'N') ='N' AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  " +
 			"AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='" + pm_storeid + "' AND  " +
 			"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='" + pm_dqid +
-			"' AND SM.SPID = KXPSX.MATNR   )";
+			"' AND SM.SPID = KXPSX.MATNR   )  AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = SM.SPID AND SPDOWNQT.KHID ='" + pm_storeid + "' )";
 		await $sqlLite.executeQry(msDrinksql, "开始获取水吧商品", (res) => {
 			console.log(JSON.stringify(res).substring(0, 300));
 			if (res.msg && res.msg.length > 0) {
