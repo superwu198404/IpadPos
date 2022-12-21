@@ -1271,7 +1271,7 @@ page {
 }
 
 .coulist {
-	padding: 0 4%;
+	padding: 0 3%;
 }
 
 .coulist .uls{
@@ -1291,11 +1291,11 @@ page {
 }
 
 .coulist .voucher {
-	width: 26%;
+	width: 29%;
 }
 
 .coulist .voucher view {
-	font-size: 56rpx;
+	font-size: 48rpx;
 }
 
 .coulist .voucher text {
@@ -1304,13 +1304,20 @@ page {
 
 .coulist .limit .h3 {
 	line-height: 70rpx;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .coulist .limit .h3 text {
 	color: #333;
-	font-size: 32rpx;
+	font-size: 28rpx;
 }
-
+.coulist .limit .datas{
+	font-size: 24rpx;
+	white-space: nowrap;
+	overflow: hidden;
+}
+	
 .coulist .uls .lis .banyuan {
 	width: 20rpx;
 }
