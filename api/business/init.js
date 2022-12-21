@@ -224,7 +224,8 @@ var dataInit = async function(pm_initType, ynshow = false) {
 			let reqPosData = {
 				"khid": pm_khid,
 				"posid": pm_posid,
-				"initType": pm_initType
+				"initType": pm_initType,
+				"passkey":"111"
 			};
 			let apistr = "MobilePos_API.Utils.PosInit." + pm_initType;
 			return Req.resObj(true, "通讯读取中...", reqPosData, apistr);
