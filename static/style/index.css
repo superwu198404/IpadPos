@@ -1641,10 +1641,10 @@ checkbox.mycheck .wx-checkbox-input,
 	}
 	.shuffs .banner swiper .logo{
 		position: absolute;
-		top:16rpx;
-		left: 20rpx;
-		width:120rpx;
-		height: 120rpx;
+		top:26rpx;
+		left: 24rpx;
+		width:280rpx;
+		height: 40rpx;
 	}
 	.tupian{
 		display: flex;
