@@ -21,6 +21,13 @@ export const PayDataAssemble = function() {
 	let zfb_disc = 0;
 	if (sysParam.YN_ZFBKBQ && sysParam.YN_ZFBKBQ == "Y") {
 		zfb_disc = (Number(this.dPayAmount) * 100).toFixed(0)
+	} else { //下列为测试新加需求
+		let cxnet = Number(this.SALES.sale1.TCXSISC); //总促销额
+		if (cxnet == 0) {
+			zfb_disc = (Number(this.dPayAmount) * 100).toFixed(0)
+		} else {
+			zfb_disc = 0;
+		}
 	}
 
 	return {
@@ -37,7 +44,8 @@ export const PayDataAssemble = function() {
 		point: this.CashOffset.Score, //抵现积分数
 		point_money: this.CashOffset.Money, //积分积分对应金额
 		member_id: this.SALES.sale1.CUID,
-		memo: this.currentPayInfo?.fkid ?? this.currentSelectedInfo?.fkid,//因为前者会受到authcode影响被清空，导致用券支付时，如果扫了错误的码会导致找不到支付信息，从而使其获取不到fkid，导致失败后端券查询报无auth_code的问题
+		memo: this.currentPayInfo?.fkid ?? this.currentSelectedInfo
+			?.fkid, //因为前者会受到authcode影响被清空，导致用券支付时，如果扫了错误的码会导致找不到支付信息，从而使其获取不到fkid，导致失败后端券查询报无auth_code的问题
 		// discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		discountable_amount: zfb_disc,
 		product_info: this.Products.map(i => { //商品清单
