@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall" @click="hideIsShow">
 		<view class="logo">
-			<image src="@/images/kengee-logo.png" mode="widthFix" @click="OpenDevoloper"></image>
+			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"

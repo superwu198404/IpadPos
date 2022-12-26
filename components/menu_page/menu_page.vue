@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall">
 		<view class="logo">
-			<image src="../../images/kengee-logo.png" mode="widthFix"></image>
+			<image src="../../images/KGlogo-2.png" mode="widthFix"></image>
 		</view>
 		<view class="menu">
 			<view v-for="(item,index) in urls" :class="menuIndex==item.index?'curr':''" @click="ToPage(item)">
