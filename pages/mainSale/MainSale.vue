@@ -309,7 +309,7 @@
 									</view>
 									<view class="directions">
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+										<view class="shuoming">使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
 										</view>
 										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
 														mode="widthFix"></image></button> -->
