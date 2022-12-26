@@ -297,7 +297,6 @@
 							<view class="lis" v-for="(item,index) in MemberCoupons">
 								<view class="voucher">
 									<view><text>￥</text>{{item.money}}</view>
-									<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
 								</view>
 								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 								<view class="coupon-dets">
@@ -309,8 +308,10 @@
 									</view>
 									<view class="directions">
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view class="shuoming">使用说明
-										<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
+										<view>
+											使用说明：
+											<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
+											<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
 										</view>
 									</view>
 								</view>
