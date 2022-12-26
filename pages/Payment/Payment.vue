@@ -1088,7 +1088,7 @@
 					}
 					console.log("[Refund]退款单据信息:", refundInfo);
 					//如果是预定金、现金（如果为0）门店赊销，直接跳过
-					if (['ZG03', 'ZF01', 'ZG01','ZCV1'].indexOf(refundInfo.fkid) !== -1) {
+					if (['ZG03', 'ZF01', 'ZG01', 'ZCV1'].indexOf(refundInfo.fkid) !== -1) {
 						if (current_refund_exists_only_code) { //是否带唯一码
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
@@ -1211,14 +1211,17 @@
 			//支付类型判断
 			PayTypeJudgment: function() {
 				let curPayType = "";
-				console.log("二维码：", this.authCode);
+				console.log("[PayTypeJudgment]二维码:", this.authCode);
 				let startCode = this.authCode.substring(0, 2);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
+					console.log("[PayTypeJudgment]支付规则:", CodeRule);
 					if (this.currentPayType === "SZQ") //券
 						startCode = "coupon";
 					//取出当前是何种类型的支付方式
 					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
+					if (this.currentPayType === "UPAY") //银联二维码
+							curPayType = "UPAY";
 				}
 				if (!curPayType) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
@@ -1350,7 +1353,8 @@
 									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
 									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
-									zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
+									zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon
+										.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
 									disc: (coupon?.discount / 100)?.toFixed(2),
 									fail,
 									id_type: coupon?.type,
@@ -1522,6 +1526,9 @@
 				this.PayWayList = pay_way_list.map(i => {
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
+					}
+					if(i.fkid === 'ZF15'){//测试:用于测试禁止使用部分聚合支付的效果
+						i.poly = 'N';
 					}
 					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
 					// 	i.yn_use = 'N';
