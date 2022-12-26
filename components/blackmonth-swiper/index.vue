@@ -158,6 +158,7 @@
 		border-radius: 20rpx;
 		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.1);
 		background-color: #FFFFFF;
+		border-radius: 10px;
 	}
 
 	.children .logo {
@@ -175,6 +176,7 @@
 		transform: translateY(-50%);
 		left: 0;
 		width: 100%;
+		border-radius: 20rpx;
 	}
 
 	.children .products {
