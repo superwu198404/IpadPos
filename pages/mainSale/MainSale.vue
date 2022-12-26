@@ -297,22 +297,21 @@
 							<view class="lis" v-for="(item,index) in MemberCoupons">
 								<view class="voucher">
 									<view><text>￥</text>{{item.money}}</view>
-									<text>满{{item.limitmoney}}可用</text>
+									<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
 								</view>
 								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 								<view class="coupon-dets">
 									<view class="limit">
-										<view class="h3" v-for="(item1,index1) in item.limitDesc">
-											<text>{{item1}}</text>
+										<view class="h3">
+											<text>{{item.sname}}</text>
 										</view>
 										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 									</view>
 									<view class="directions">
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view class="shuoming">使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+										<view class="shuoming">使用说明
+										<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
 										</view>
-										<!-- <button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-														mode="widthFix"></image></button> -->
 									</view>
 								</view>
 							</view>
@@ -926,7 +925,7 @@
 				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			},
 		},
-		created() { 
+		created() {
 			// uni.setLocale("en");
 			// uni.showModal({
 			// 	content: "请使用扫码枪扫码",
