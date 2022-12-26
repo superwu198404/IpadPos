@@ -12,6 +12,10 @@
 .hh{
 	padding:24rpx 0 24rpx 2%;
 }
+.products{
+	height: 90%;
+	overflow: auto;
+}
 .products .procycle .li{
 	width:45.5%;
 	border:1rpx solid #f0f0f0;
