@@ -346,7 +346,7 @@
 							console.log("返回信息:", data);
 							that.js_res = data;
 							//是退单状态接收确认，打印退单小票
-							if (data.yn_print && that.Order.STATUS == "33") {
+							if (data.yn_print && ( that.Order.STATUS == "33" || that.Order.STATUS == "15")) {
 								let wm_type = "WM";
 								let printerPram = {
 									"PRINTNUM": 1,
