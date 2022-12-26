@@ -2011,6 +2011,7 @@ function GetSale(global, vue, target_name, uni) {
 					phone: this.HY.val.Phone
 				}
 			}, util.callBind(this, function(res) {
+				console.log("会员券列表查询结果：", res);
 				if (res.code) {
 					if (res.data && Array.isArray(res.data)) {
 						this.HY.val.coupons = res.data;

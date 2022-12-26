@@ -533,7 +533,7 @@ var InitZFRULE = async function(e, func) {
 }
 //获取支付规则
 var GetZFRULE = async function(e, func) {
-	let sql = "select * from ZF_RULE where YN_USE ='Y'";
+	let sql = "select * from ZF_RULE where YN_USE ='Y' and source='Mobile_Pos'";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("获取支付规则数据成功：", res);
 		if (res.code) {
