@@ -383,8 +383,58 @@ var misPay = {
 				if (catchFunc) catchFunc();
 				return;
 			}
+			body.merchant_no = config.SHID; //使用全局配置（后端
 			body.terminalCode = config.NOTE;
 			body.store_id = config.KEY;
+			_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+		})
+	},
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+//mis银联二维码支付
+var misScanCodePay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true);
+				if (catchFunc) catchFunc();
+				return;
+			}
+			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
+			body.merchant_no = config.SHID; //使用全局配置（后端）
+			body.terminalCode = config.NOTE;
+			body.store_id = config.KEY;
+			_PaymentAll(pt, body, func, catchFunc);
+		})
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+			if (!config) {
+				util.simpleMsg("支付参数为空!", true)
+				if (catchFunc) catchFunc();
+				return;
+			}
+			body.merchant_no = config.SHID; //使用全局配置（后端
+			body.terminalCode = config.NOTE;
+			body.store_id = config.KEY;
+			console.log("[RefundAll]银联二维码退款参数:",{
+				config,
+				body
+			});
 			_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 		})
 	},
@@ -698,6 +748,9 @@ var payType = {
 	HyJfExchange: pointPay, //积分抵现
 	SZQ: szqPay,
 	TL: misPay,
+	
+	//新增接口
+	UPAY:misScanCodePay,
 }
 
 //聚合支付主入口

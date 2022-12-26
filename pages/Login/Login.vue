@@ -226,6 +226,8 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
+							console.log("[Login]获取门店信息:",util.getStorage("store"));
+							console.log("[Login]获取支付规则:",util.getStorage("PayInfo"));
 							// if (that.store.OPENFLAG == "1") {
 							// 	uni.redirectTo({
 							// 		url: "../mainSale/MainSale"
