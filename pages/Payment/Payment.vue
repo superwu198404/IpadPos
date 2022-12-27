@@ -217,19 +217,20 @@
 						<view class="lis" v-for="(item,index) in coupon_list">
 							<view class="voucher">
 								<view><text>￥</text>{{item.money}}</view>
-								<text>满{{item.limitmoney}}可用</text>
+								<!-- <text>满{{item.limitmoney}}可用</text> -->
 							</view>
 							<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 							<view class="coupon-dets">
 								<view class="limit">
-									<view class="h3" v-for="(item1,index1) in item.limitDesc">
-										<text>{{item1}}</text>
+									<view class="h3">
+										<text>{{item.sname}}</text>
 									</view>
 									<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 								</view>
 								<view class="directions">
 									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-									<view>使用说明<image src="../../images/xiala.png" mode="widthFix"></image>
+									<view>使用说明<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
+										<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
 									</view>
 									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
 											mode="widthFix"></image></button>
@@ -1221,7 +1222,7 @@
 					//取出当前是何种类型的支付方式
 					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 					if (this.currentPayType === "UPAY") //银联二维码
-							curPayType = "UPAY";
+						curPayType = "UPAY";
 				}
 				if (!curPayType) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
@@ -1527,7 +1528,7 @@
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
 					}
-					if(i.fkid === 'ZF15'){//测试:用于测试禁止使用部分聚合支付的效果
+					if (i.fkid === 'ZF15') { //测试:用于测试禁止使用部分聚合支付的效果
 						i.poly = 'N';
 					}
 					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
