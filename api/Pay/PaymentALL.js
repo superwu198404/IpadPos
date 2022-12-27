@@ -422,15 +422,15 @@ var misScanCodePay = {
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
 				return;
 			}
-			body.merchant_no = config.SHID; //使用全局配置（后端
+			body.merchant_no = config.LONGKEY; //使用全局配置（后端
 			body.terminalCode = config.NOTE;
-			body.store_id = config.KEY;
+			body.store_id = config.RYID;
 			console.log("[RefundAll]银联二维码退款参数:",{
 				config,
 				body
