@@ -2504,17 +2504,17 @@ var jpPrinter = {
 			   break;
 		   case "15":
 				xpType ="取消单";
-				xsBill = data.xsBill;
+				xsBill = data.newBill;
 				isReturn = true;
 				break;		
 			case "20":
 				 xpType ="退货单";
-				 xsBill= data.xsBill;
+				 xsBill= data.newBill;
 				 isReturn = true;
 				 break;		 
 			 case "30":
 				xpType ="退货单";
-				xsBill= data.xsBill;
+				xsBill= data.newBill;
 				isReturn = true;
 				break;		  
 			  case "33":
