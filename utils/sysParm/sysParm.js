@@ -79,7 +79,7 @@ import util from '@/utils/util.js';
 74	刷脸仟吉会员卡	SLQJHYK	PAYCARD
 */
 var sysParam = {
-	getSysParam: function(pm_khid) {
+	getSysParam: async function(pm_khid) {
 		let $sqlLite = sqlLite.get();
 		let cssql = "SELECT  D1.SNAME,P1.POSCS,P1.POSCSNR\
 							   FROM     POSCSZMX P1 ,DAPZCS_NR D1\
@@ -88,15 +88,15 @@ var sysParam = {
 							AND       P1.POSCSZID =(select poscszid from khda  where  khid ='" + pm_khid + "' )\
 						  ORDER BY  P1.SZ";
 
-		$sqlLite.executeQry(cssql, "正在获取系统参数", (res) => {
-			console.log("查询系统参数sql：", [cssql]);
-			console.log("查询系统参数结果：", res);
+		await $sqlLite.executeQry(cssql, "正在获取系统参数", (res) => {
+			// console.log("查询系统参数sql：", [cssql]);
+			// console.log("查询系统参数结果：", res);
 			// let app = getApp();
 			var paramKeyValue = {};
 			res.msg.forEach(item => {
 				paramKeyValue[item.POSCS] = item.POSCSNR
 			})
-			console.log("系统参数：", paramKeyValue);
+			console.log("POS系统参数：", paramKeyValue);
 			// app.globalData.sysParam = paramKeyValue;
 			util.setStorage("sysParam", paramKeyValue); //可以持久化存储
 		}, null);

@@ -20,7 +20,8 @@ export const PayDataAssemble = function() {
 	let sysParam = util.getStorage("sysParam");
 	let zfb_disc = 0;
 	console.log("支付宝折扣：", sysParam.YN_ZFBKBQ);
-	console.log("支付宝折扣1：", this.SALES.sale1.TCXDISC || 0);
+	console.log("支付宝折扣1：", this.SALES.sale1.TCXDISC);
+	console.log("支付宝折扣2：", this.dPayAmount);
 	if (sysParam.YN_ZFBKBQ && sysParam.YN_ZFBKBQ == "Y") {
 		zfb_disc = (Number(this.dPayAmount) * 100).toFixed(0)
 	} else { //下列为测试新加需求
@@ -31,7 +32,7 @@ export const PayDataAssemble = function() {
 			zfb_disc = 0;
 		}
 	}
-
+	console.log("支付宝折扣3：", zfb_disc);
 	return {
 		subject: this.subject,
 		no: this.prev_no, //储存当前序号

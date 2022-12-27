@@ -91,6 +91,7 @@
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
 	import _cake from '@/api/business/CakeYD.js';
+	import _sysParam from '@/utils/sysParm/sysParm.js';
 	var that;
 	export default {
 		data() {
@@ -197,9 +198,10 @@
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
 			},
 			//跳转到销售页面
-			ToSale: function(e) {
+			ToSale: async function(e) {
 				let store = util.getStorage("store");
-				// console.log("门店信息", store.OPENFLAG);
+				//初始化系统参数 (防止重读后失效的)
+				await _sysParam.init(store.KHID);
 				if (store.OPENFLAG != 1) {
 					util.simpleMsg("请先进行签到", true);
 					return;

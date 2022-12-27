@@ -14,10 +14,10 @@
 					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
 					<input placeholder="请输入款台号" v-model="posid" type="number" />
 				</label>
-				 <label>
+				<label>
 					<image src="../../images/dx-kuantai.png" mode="widthFix"></image>
-					<input placeholder="请输入初始化密码" v-model="poskey"  password="true" />
-				 </label>
+					<input placeholder="请输入初始化密码" v-model="poskey" password="true" />
+				</label>
 			</view>
 			<view class="operate">
 				<button class="btn" @click="init">初始化</button>
@@ -222,9 +222,16 @@
 
 			},
 			init: async function() {
-
-				if (!that.khid || !that.posid) {
-					util.simpleMsg("请输入门店id和款台号", "none");
+				if (!that.khid) {
+					util.simpleMsg("请输入门店编码", "none");
+					return;
+				}
+				if (!that.posid) {
+					util.simpleMsg("请输入款台号", "none");
+					return;
+				}
+				if (!that.poskey) {
+					util.simpleMsg("请输入密码", "none");
 					return;
 				}
 				console.log("准备开始初始化" + that.khid);

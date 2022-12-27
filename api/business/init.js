@@ -225,7 +225,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				"khid": pm_khid,
 				"posid": pm_posid,
 				"initType": pm_initType,
-				"passkey":"111"
+				"passkey": "111"
 			};
 			let apistr = "MobilePos_API.Utils.PosInit." + pm_initType;
 			return Req.resObj(true, "通讯读取中...", reqPosData, apistr);
@@ -261,7 +261,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 					if (new004.length > 0) //存在数据说明这里有初始化的内容
 					{
 						let sqldrop = "drop table  " + item.TABNAME;
-						console.log("删除一天数据" + sqldrop + "建表的语句" + item.DDLSTR);
+						// console.log("删除一天数据" + sqldrop + "建表的语句" + item.DDLSTR);
 						sql.push(sqldrop);
 						sql.push(item.DDLSTR);
 					}
@@ -276,9 +276,10 @@ var dataInit = async function(pm_initType, ynshow = false) {
 		async (res) => {
 				//console.log("数据库通讯结果：" + JSON.stringify(res.data));
 				// console.log("重建数据的sql:", res.data);
-				let x = await db.get().executeSqlArray(res.data, "开始创建数据库",
+				console.log("1231231312131");
+				let x = await db.get().executeSqlArray(res.data, "开始创建数据库1",
 					(resks) => {
-						console.log("执行语句成功" + resks.data.length);
+						console.log("执行语句成功", resks.data.length);
 						let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
 						return reqdata;
 					},
@@ -287,7 +288,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 						return Req.retData(false, "start创建失败" + JSON.stringify(resF.msg))
 					}
 				);
-				console.log("执行结果" + JSON.stringify(x));
+				console.log("执行结果", JSON.stringify(x));
 				return x;
 			},
 			null,
