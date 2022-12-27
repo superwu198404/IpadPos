@@ -2503,7 +2503,7 @@ var jpPrinter = {
 			   xpType ="外卖销售单";
 			   break;
 		   case "15":
-				xpType ="退货单";
+				xpType ="取消单";
 				xsBill = data.xsBill;
 				isReturn = true;
 				break;		
