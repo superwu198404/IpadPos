@@ -178,7 +178,6 @@
 		width: 100%;
 		border-radius: 20rpx;
 	}
-
 	.children .products {
 		position: absolute;
 		bottom: 0;

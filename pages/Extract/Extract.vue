@@ -414,7 +414,7 @@
 	}
 
 	.products {
-		flex: 1 0px;
+		height: 84%;
 		overflow-y: auto;
 		padding: 0px 2% 2% 2% !important;
 	}
