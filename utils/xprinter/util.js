@@ -641,6 +641,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 			net: nnvl(sale2_arr[i].NET,0), //商品金额
 			unit: sale2_arr[i].STR7, //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
+			bqty: nnvl(sale2_arr[i].BQTY,0),
 		};
 		goodsList = goodsList.concat(sale2_printer);
 	}

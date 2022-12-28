@@ -2536,8 +2536,11 @@ var jpPrinter = {
 			jpPrinter.setPrint(); //打印并换行
 		}
 		
+		var goodsList = [];
 		//如果是退单，有原单号，则将原单号打印
 		if(isReturn){
+			goodsList = data.goodsList.filter(c => c.bqty > 0);
+			//console.log("goodsList", goodsList);
 			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ xsBill);
@@ -2548,6 +2551,7 @@ var jpPrinter = {
 			jpPrinter.setText("原单号: " + data.bill);
 			jpPrinter.setPrint(); //打印并换行
 		}else{
+			goodsList = data.goodsList;
 			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("单号: "+ data.bill);
@@ -2613,7 +2617,7 @@ var jpPrinter = {
 		
 		//console.log("外卖打印接收数据 data.goodsList", data.goodsList);
 		//商品信息
-		data.goodsList.forEach((item, i) => {
+		goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
