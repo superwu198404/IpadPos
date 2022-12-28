@@ -660,7 +660,9 @@
 						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
-				} else {
+				} 
+				else
+				{
 					command.setPrint();
 					command.setPrint();
 					command.endPrinter(); //打印切纸		
