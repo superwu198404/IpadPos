@@ -157,12 +157,11 @@ function retData(pm_code, pm_msg, pm_http) {
 
 //请求方法
 let httpFunc = function(pm_data) {
-
-	let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
+	// let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
 	let p_url = baseUrl;
-	if (config) {
-		p_url = config.urls[pm_data.url_type]; //通过键值来取
-	}
+	// if (config) {
+	// 	p_url = config.urls[pm_data.url_type]; //通过键值来取
+	// }
 	// if (pm_data.url_type && pm_data.url_type == 'center') {
 	// 	p_url = centerUrl;
 	// }
@@ -170,9 +169,13 @@ let httpFunc = function(pm_data) {
 	// 	pm_data.data.brand = "MobilePos_API.Models";
 	// }
 	return new Promise(function(resolve, reject) {
+		console.log("请求地址：", p_url + pm_data.http.url);
+		// console.log("请求参数类型：", pm_data.method);
+		// console.log("请求参数参数：", pm_data.data);
 		uni.request({
 			url: p_url + pm_data.http.url,
 			method: pm_data.method || "POST",
+			// sslVerify: false,
 			header: {
 				'Content-Type': pm_data.method == 'GET' ?
 					'application/x-www-form-urlencoded' : "application/json"
@@ -187,7 +190,6 @@ let httpFunc = function(pm_data) {
 				}
 			},
 			fail: (res) => {
-
 				console.log(res);
 				// return resolve(new retData(false, res.errMsg));
 				return resolve(new retData(false, "网络错误!"));

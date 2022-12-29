@@ -150,7 +150,7 @@ var TransLiteData = function(e) {
 }
 
 //传输本地缓存的数据
-var TransLite = function(e, func) {
+var TransLite = function(e, func, load = false) {
 	let sql = "select * from POS_TXFILE where BDATE<=datetime('now','-5 minute')"; //五分钟前 
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
@@ -163,10 +163,11 @@ var TransLite = function(e, func) {
 					let delVal = res.msg[i].STR1;
 					// console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
+					// sql1 = "select * from dual"
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
 						sql: sql1
-					}, apistr, false);
+					}, apistr, load);
 					Req.asyncFuncOne(reqdata, function(res1) {
 						console.log("[TransLite-Success]数据传输结果：", res1);
 						util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
@@ -180,6 +181,7 @@ var TransLite = function(e, func) {
 							});
 						}
 					}, function(err) {
+						util.simpleMsg(err.msg, true);
 						console.log("[TransLite-Error]数据传输结果:", err1);
 					});
 				}

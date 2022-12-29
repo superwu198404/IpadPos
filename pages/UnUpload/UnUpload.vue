@@ -103,12 +103,13 @@
 			},
 			//单据上传
 			Upload: function(e) {
+				console.log("上传事件：", e);
 				if (e) {
 					common.TransLite(e.STR1, res => {
 						setTimeout(r => {
 							that.GetUnLoad();
 						}, 1500);
-					}); //直接传输数据
+					}, true); //直接传输数据
 				}
 			}
 		}

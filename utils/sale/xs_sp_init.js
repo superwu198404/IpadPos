@@ -295,7 +295,8 @@ var loadSaleSP = {
 			"AND  ifnull(S1.yn_xpdg,'N') ='N' AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  " +
 			"AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='" + pm_storeid + "' AND  " +
 			"EXISTS (SELECT 1 FROM KXPSX WHERE ifnull(KXPSX.DELMK,'N')='N' AND KXPSX.BZIRK='" + pm_dqid +
-			"' AND SM.SPID = KXPSX.MATNR   )  AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = SM.SPID AND SPDOWNQT.KHID ='" + pm_storeid + "' )";
+			"' AND SM.SPID = KXPSX.MATNR   )  AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = SM.SPID AND SPDOWNQT.KHID ='" +
+			pm_storeid + "' )";
 		await $sqlLite.executeQry(msDrinksql, "开始获取水吧商品", (res) => {
 			console.log(JSON.stringify(res).substring(0, 300));
 			if (res.msg && res.msg.length > 0) {

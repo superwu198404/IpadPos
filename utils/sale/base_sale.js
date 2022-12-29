@@ -3146,6 +3146,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			util.simpleMsg(result.msg, true);
 		}
+
 		console.log("支付后要跳转的模式：", this.clickSaleType)
 		console.log("支付后要跳转的模式：", this.clickSaleType.afterPay)
 		this.resetSaleBill(this.clickSaleType.afterPay); //支付后要跳转的销售模式
