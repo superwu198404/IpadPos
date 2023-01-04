@@ -2051,6 +2051,7 @@
 <style>
 	.right {
 		height: 98%;
+		width:100%;
 	}
 
 	.refund-more-box {
