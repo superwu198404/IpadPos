@@ -1539,7 +1539,7 @@
 						i.icon = require('../../images/' + i.type + '.png');
 					}
 					catch(e){
-						i.icon = require('../../images/dianziquan.png');
+						i.icon = require('../../images/default_pay.png');
 					}
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
