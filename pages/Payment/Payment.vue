@@ -182,7 +182,7 @@
 								<p>聚合支付</p>
 								<label>
 									<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y')">
-										<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
+										<image :src="item.icon" mode="widthFix">
 										</image>
 									</view>
 								</label>
@@ -198,7 +198,7 @@
 									<p v-if="item.yn_use == 'Y'">{{item.name}}</p>
 									<p v-else>{{item.name}}<span style="font-size: 12px;">(禁用)</span></p>
 								</view>
-								<image :src="require('../../images/' + item.type + '.png')" mode="widthFix">
+								<image :src="item.icon" mode="widthFix">
 							</view>
 						</view>
 
@@ -1528,6 +1528,12 @@
 					catch: uni.getStorageSync('PayWayList')
 				});
 				this.PayWayList = pay_way_list.map(i => {
+					try{
+						i.icon = require('../../images/' + i.type + '.png');
+					}
+					catch(e){
+						i.icon = require('../../images/dianziquan.png');
+					}
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
 					}
@@ -2054,6 +2060,7 @@
 <style>
 	.right {
 		height: 98%;
+		width:100%;
 	}
 
 	.refund-more-box {

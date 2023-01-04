@@ -1462,6 +1462,7 @@
 <style>
 	.right{
 		height:86%;
+		width:100%;
 	}
 	.refund-more-box {
 		display: flex;
