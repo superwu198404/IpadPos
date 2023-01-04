@@ -408,16 +408,16 @@ var misPay = {
 //mis银联二维码支付
 var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
-			body.merchant_no = config.SHID; //使用全局配置（后端）
+			body.merchant_no = config.LONGKEY; //使用全局配置（后端）
 			body.terminalCode = config.NOTE;
-			body.store_id = config.KEY;
+			body.store_id = config.RYID;
 			_PaymentAll(pt, body, func, catchFunc);
 		})
 	},
