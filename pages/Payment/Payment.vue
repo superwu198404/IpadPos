@@ -518,6 +518,9 @@
 					popGesture: 'none'
 				});
 			},
+			ShowDefaultAfterImageLoadError:function(e, index, i){
+				
+			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
 				this.PAD_SCAN = !this.PAD_SCAN;
