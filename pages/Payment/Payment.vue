@@ -80,7 +80,7 @@
 					<text class="pay-center">
 						<span v-if="isRefund">{{ refundView.debtAmount }}</span>
 						<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
-							value="" :key="domRefresh" v-model="dPayAmount" />
+							value="" :key="domRefresh" v-model="dPayAmount" min="0.01" />
 						<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
 							value="" :key="domRefresh" v-model="CashOffset.Money" />
 					</text>
@@ -396,9 +396,15 @@
 				});
 				if (this.isRefund) return; //如果为退款，直接退出
 				if (Object.is(NaN, Number(n))) { //判断输入的是否是数字
-					this.dPayAmount = o;
-					util.simpleMsg('输入的数字有误,已自动修正!', false);
-					this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
+					if (o != null) {
+						console.log("[Watch-dPayAmount]数据信息:",{
+							new: n,
+							old: o
+						});
+						this.dPayAmount = o;
+						util.simpleMsg('输入的数字有误,已自动修正!', false);
+						this.domForceRefresh(); //解决待付款赋值触发监听后，在其中修改值后文本内容依然没变的问题
+					}
 					return;
 				}
 				let amount = this.toBePaidPrice(); //计算待支付金额
@@ -414,11 +420,17 @@
 				}
 				console.log(`[Watch-dPayAmount]newValue:${n},amount:${amount}`);
 				if (amount > 0) { //未完成支付，仍然存在欠款
+					console.log(`[Watch-dPayAmount]未完成支付!`,this.PayList);
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
+						console.log(`[Watch-dPayAmount]超过待支付金额!`,n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
+							console.log(`[Watch-dPayAmount]金额异常!`,{
+								new:Number(n),
+								count:this.toBePaidPrice()
+							});
 							util.simpleMsg('金额输入错误!', false, {
 								new_val: n || "-",
 								count_val: this.toBePaidPrice()
@@ -426,11 +438,16 @@
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						this.domForceRefresh();
 					} else {
+						console.log(`[Watch-dPayAmount]未超过待支付金额!`,n);
 						let decimal = (this.dPayAmount?.toString() ?? ".")?.split('.');
+						console.log(`[Watch-dPayAmount]判断小数位数!`,decimal);
 						if (decimal.length === 2) {
 							let count = decimal[1].length;
-							if (count > 2) {
-								this.dPayAmount = Number(this.dPayAmounth.toFixed(2));
+							console.log("[Watch-dPayAmount]金额:",{
+								val:Number(this.dPayAmount)
+							});
+							if ((count > 2) || (this.dPayAmount && decimal[0].length > 1 && this.dPayAmount[0] == '0')) {
+								this.dPayAmount = Number(this.dPayAmount)?.toFixed(2);
 								this.domForceRefresh();
 							}
 						}
@@ -518,8 +535,8 @@
 					popGesture: 'none'
 				});
 			},
-			ShowDefaultAfterImageLoadError:function(e, index, i){
-				
+			ShowDefaultAfterImageLoadError: function(e, index, i) {
+
 			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
@@ -1535,10 +1552,9 @@
 					catch: uni.getStorageSync('PayWayList')
 				});
 				this.PayWayList = pay_way_list.map(i => {
-					try{
+					try {
 						i.icon = require('../../images/' + i.type + '.png');
-					}
-					catch(e){
+					} catch (e) {
 						i.icon = require('../../images/default_pay.png');
 					}
 					if (ban_pay_type?.find(t => t == i.fkid)) {
