@@ -62,53 +62,56 @@ var GetPayWay = async function(e) {
 			}
 			//如果fkda没有则追加测试数据
 			let arr = [{
-				name: "仟吉电子券",
-				fkid: "ZF09",
-				type: "SZQ",
-				yn_use: "Y",
-				dbm: "Y",
-				poly: "N"
-			}, {
-				name: "云闪付",
-				fkid: "ZF33",
-				type: "YSF",
-				poly: "N"
-			}, {
-				name: "可伴支付",
-				fkid: "ZF22",
-				type: "COUPON",
-				poly: "N"
-			}, {
-				name: "品诺支付",
-				fkid: "ZF32",
-				type: "PINNUO",
-				poly: "N",
-			}, {
-				name: "不可原路退回",
-				fkid: "ZG11",
-				type: "NO",
-				poly: "O"
-			}, {
-				name: "仟吉赠券",
-				fkid: "ZZ01",
-				type: "NOPAY",
-				poly: "O"
-			}, {
-				name: "预定金",
-				fkid: "ZG03",
-				type: "",
-				poly: "O"
-			}, {
-				name: "现金",
-				fkid: "ZF01",
-				type: "",
-				poly: "O"
-			}, {
-				name: "券自动放弃金额",
-				fkid: "ZCV1",
-				type: "EXCESS",
-				poly: "O"
-			}]
+					name: "仟吉电子券",
+					fkid: "ZF09",
+					type: "SZQ",
+					yn_use: "Y",
+					dbm: "Y",
+					poly: "N"
+				},
+				// {
+				// 	name: "云闪付",
+				// 	fkid: "ZF33",
+				// 	type: "YSF",
+				// 	poly: "N"
+				// },
+				{
+					name: "可伴支付",
+					fkid: "ZF22",
+					type: "COUPON",
+					poly: "N"
+				}, {
+					name: "品诺支付",
+					fkid: "ZF32",
+					type: "PINNUO",
+					poly: "N",
+				}, {
+					name: "不可原路退回",
+					fkid: "ZG11",
+					type: "NO",
+					poly: "O"
+				}, {
+					name: "仟吉赠券",
+					fkid: "ZZ01",
+					type: "NOPAY",
+					poly: "O"
+				}, {
+					name: "预定金",
+					fkid: "ZG03",
+					type: "",
+					poly: "O"
+				}, {
+					name: "现金",
+					fkid: "ZF01",
+					type: "",
+					poly: "O"
+				}, {
+					name: "券自动放弃金额",
+					fkid: "ZCV1",
+					type: "EXCESS",
+					poly: "O"
+				}
+			]
 			for (var i = 0; i < arr.length; i++) {
 				let obj = PayWayList.find((item) => {
 					return item.type == arr[i].type && item.fkid == arr[i].fkid;

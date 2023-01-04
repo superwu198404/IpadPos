@@ -1259,7 +1259,8 @@
 				console.log("[PayHandle]当前支付集合：", this.PayList);
 				console.log("[PayHandle]当前支付类型：", pt);
 				//如果被限制了 则进行判断是否有过支付 且排除
-				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
+				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find(
+						(r) => r
 						.type == pt && r.show)) { //显示时才参与判断
 					util.simpleMsg("请更换支付方式!", true);
 					this.authCode = '';
@@ -1278,7 +1279,8 @@
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.authCode = ""; //避免同一个付款码多次使用
-						this.orderGenarator(payAfter, info.type, result.data, false, info); //支付记录处理(成功)
+						this.orderGenarator(payAfter, info.type, result.data, false,
+							info); //支付记录处理(成功)
 						if (this.debt > 0) {
 							this.CanBack = false;
 						}
@@ -1343,16 +1345,20 @@
 									.fkid); //放弃金额
 								console.log("[OrderGenarator]卡券：", coupon)
 								this.PayList.push(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-									amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount :
+									amount: ((coupon.yn_card === 'Y' ? coupon
+										.pay_amount :
 										(coupon.note === 'EXCESS' ? -coupon
 											.pay_amount :
-											coupon.denomination)) / 100).toFixed(2),
-									fkid: coupon.yn_card === 'Y' ? this.currentPayInfo?.fkid :
-										coupon?.fkid,
-									name: coupon.yn_card === 'Y' ? this.currentPayInfo?.name :
-										excessInfo?.name,
-									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
-									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
+											coupon.denomination)) / 100).toFixed(
+										2),
+									fkid: coupon.yn_card === 'Y' ? this.currentPayInfo
+										?.fkid : coupon?.fkid,
+									name: coupon.yn_card === 'Y' ? this.currentPayInfo
+										?.name : excessInfo?.name,
+									balance: (coupon?.balance / 100)?.toFixed(
+										2), //如果是电子卡，余额
+									balance_old: ((coupon?.balance + coupon
+											?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
 									zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon
 										.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
@@ -1383,7 +1389,8 @@
 				} else { //如果为失败的支付请求
 					console.log("[OrderGenarator]支付失败请求...");
 					let trade = this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload.point_money
+						amount: type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) : payload
+							.point_money
 							?.toFixed(2),
 						fail,
 						no: payload.no,
@@ -1528,9 +1535,9 @@
 					if (ban_pay_type?.find(t => t == i.fkid)) {
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
 					}
-					if (i.fkid === 'ZF15') { //测试:用于测试禁止使用部分聚合支付的效果
-						i.poly = 'N';
-					}
+					// if (i.fkid === 'ZF15') { //测试:用于测试禁止使用部分聚合支付的效果
+					// 	i.poly = 'N';
+					// } //银联二维码 属于聚合支付
 					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
 					// 	i.yn_use = 'N';
 					// }
@@ -1567,7 +1574,8 @@
 						this.out_trade_no_old = prev_page_param.sale1_obj.BILL; //单号初始化（原单号）
 						this.out_trade_no = this.out_trade_no_old; //子单号（首次进入赋值）
 						this.PaymentInfos.PayList = prev_page_param?.PayList; //已支付的支付数据（某些业务下存在已支付的数据）
-						this.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
+						this
+							.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
 					} else { //退款
 						this.isRefund = true;
 						this.out_refund_no = prev_page_param.sale1_obj.BILL; //退款单号初始化
@@ -1682,12 +1690,14 @@
 				// let amount = (Number(this.totalAmount - this.Discount - this.yPayAmount - this.PaymentInfos
 				// 	.PayedAmount)).toFixed(2);
 				//进入支付页面后TNET已经是折扣后的金额
-				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
+				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount))
+					.toFixed(2);
 				let price = amount >= 0 ? amount : 0;
 				return price;
 			},
 			toBePaidPriceAllNumber: function() { //和上面那个区别就是包含负数，避免券那种首先返回券面额再返回放弃金额导致订单提前结束生成
-				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
+				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount))
+					.toFixed(2);
 				return amount;
 			},
 			//文本框dom刷新
@@ -1754,7 +1764,8 @@
 					// },5000)
 					uni.navigateBack();
 				} else
-				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
+				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`,
+					true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
@@ -1842,7 +1853,8 @@
 			NoOrginPay: async function(pay_info) { //不可原路——退款
 				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
 				return new Promise(util.callBind(this, function(resolve, reject) {
-					util.simpleModal('付款', '确定使用不可原路退回方式付款吗?', util.callBind(this, function(res) {
+					util.simpleModal('付款', '确定使用不可原路退回方式付款吗?', util.callBind(this, function(
+						res) {
 						console.log("[NoOrginRefund]选择结果:", res);
 						if (res) {
 							console.log("[NoOrginRefund]开始切换未不可原路退回方式...");
@@ -1880,8 +1892,9 @@
 						_pay.RefundAll(payWayType, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
-									0), //退款金额
+								refund_money: (Math.abs(Number(singleRefund.amount) * 100))
+									.toFixed(
+										0), //退款金额
 								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
 									0) //退款总金额（兼容微信）
 							}, (function(err) { //如果发生异常（catch）
@@ -1980,7 +1993,8 @@
 					err
 				});
 				this.retryEnd(info);
-				if (err.msg && !err.msg.includes('网络错误') && judge_net_err) { //本地查询超时，判定为可重试为 不可回退方式过机
+				if (err.msg && !err.msg.includes('网络错误') &&
+					judge_net_err) { //本地查询超时，判定为可重试为 不可回退方式过机
 					info.show = false;
 				}
 				this.PayList = Object.assign([], this.PayList); //刷新视图
@@ -2051,7 +2065,7 @@
 <style>
 	.right {
 		height: 98%;
-		width:100%;
+		width: 100%;
 	}
 
 	.refund-more-box {
