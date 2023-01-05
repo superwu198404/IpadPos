@@ -906,6 +906,7 @@ page {
 	justify-content: start;
 	text-align: left;
 	align-items: flex-start;
+	background:none;
 }
 .member label .meminfo text:nth-child(1) {
 	font-size: 34rpx;
