@@ -278,7 +278,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			no: i,
 			plid: snvl(sale2_arr[i].PLID,""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: sale2_arr[i].UNIT, //单位
+			unit: snvl(sale2_arr[i].UNIT,""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
 			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
@@ -421,7 +421,7 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 			no: i,
 			plid: snvl(sale2_arr[i].PLID,""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: sale2_arr[i].UNIT, //单位
+			unit: snvl(sale2_arr[i].UNIT,""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
 			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
@@ -639,7 +639,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 			price: sale2_arr[i].PRICE, //商品价格
 			oprice: sale2_arr[i].OPRICE, //原价
 			net: nnvl(sale2_arr[i].NET,0), //商品金额
-			unit: sale2_arr[i].STR7, //商品单位
+			unit: snvl(sale2_arr[i].STR7,""), //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
 			bqty: nnvl(sale2_arr[i].BQTY,0),
 		};
@@ -803,7 +803,7 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			no: i,
 			plid: snvl(sale2_arr[i].PLID,""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: sale2_arr[i].UNIT, //单位
+			unit: snvl(sale2_arr[i].UNIT,""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
 			spname: snvl(sale2_arr[i].SNAME,""), //商品名称

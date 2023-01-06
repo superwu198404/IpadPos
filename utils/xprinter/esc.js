@@ -1356,9 +1356,13 @@ var jpPrinter = {
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			//是退单，折扣显示0
@@ -1673,9 +1677,13 @@ var jpPrinter = {
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			//是退单，折扣显示0
@@ -2072,9 +2080,13 @@ var jpPrinter = {
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			//是退单，折扣显示0
@@ -2417,9 +2429,13 @@ var jpPrinter = {
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2619,9 +2635,13 @@ var jpPrinter = {
 		//商品信息
 		goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2749,9 +2769,13 @@ var jpPrinter = {
 		//商品信息
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
+			let isSpid = jpPrinter.spidSubStr(item.spid);
+			if(isSpid){
+				spname = spname + util.snvl(item.unit,"");
+			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(util.getComputedByteLen(spname, 25));
+			jpPrinter.setText(util.getComputedByteLen(spname, 50));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2843,13 +2867,13 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText("商品名称          价格    数量    ");
+		jpPrinter.setText("商品名称            价格    数量    ");
 		jpPrinter.setPrint(); //打印并换行
 		
 		//商品信息
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
-		jpPrinter.setText(util.getComputedByteLen(data.sname, 18) + util.getComputedByteLen(data.price.toString(), 8) + util.getComputedByteLen("1", 8));
+		jpPrinter.setText(util.getComputedByteLen(data.sname, 20) + util.getComputedByteLen(data.price.toString(), 8) + util.getComputedByteLen("1", 8));
 		jpPrinter.setPrint(); //打印并换行
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
@@ -3023,6 +3047,16 @@ var jpPrinter = {
 				});
 			}
 		});
+	}
+	
+	//截取商品编码前三位
+	jpPrinter.spidSubStr = function(spid){
+		let isBH = false;
+		let subSpid = Number(spid).toString().substring(0,3);
+		if(subSpid == "109"){
+			isBH = true;
+		}
+		return isBH;
 	}
 	
 	/** 预定业务蛋糕标签打印格式
