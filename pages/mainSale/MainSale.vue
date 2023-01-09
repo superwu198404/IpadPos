@@ -578,6 +578,14 @@
 				<view style="width: 100%;height: 100%">
 					<Swiper :_swiperList="mainSale.CakeList" />
 				</view>
+				<view class="states" style="z-index: 999;" @click="mainSale.ShowStatement">
+					<text>结算单</text>
+					<label>«</label>
+					<view class="statnum">
+						<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+						<text>{{TotalNum}}</text>
+					</view>
+				</view>
 			</view>
 			<!-- 详情 -->
 			<view class="detailys" v-if="mainSale.mode_info.sale_cake_reserve.yn_showDetail">
