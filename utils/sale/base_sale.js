@@ -928,9 +928,13 @@ var XsTypeObj = {
 			condition?.splice(0, condition?.length);
 			this.CakeTagList?.map(i => i._CHECK = false);
 			this.CheckTagList?.splice(0, this.CheckTagList?.length);
-			this.CakeBQList?.map(i => {
-				i.CHECK = false;
-				i.DATA?.map(o => o._CHECK = false);
+			this.CakeBQList?.map((i, ii) => {
+				if (ii == 0) {
+					i.CHECK = true;
+				} else {
+					i.CHECK = false;
+					i.DATA?.map(o => o._CHECK = false);
+				}
 			});
 		},
 		//确认条件
