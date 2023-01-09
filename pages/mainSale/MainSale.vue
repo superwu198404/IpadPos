@@ -578,7 +578,7 @@
 				<view style="width: 100%;height: 100%">
 					<Swiper :_swiperList="mainSale.CakeList" />
 				</view>
-				<view class="states" style="z-index: 999;" @click="mainSale.ShowStatement">
+				<view class="states" style="z-index: 999999999;right:0" @click="mainSale.ShowStatement">
 					<text>结算单</text>
 					<label>«</label>
 					<view class="statnum">
