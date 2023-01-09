@@ -1357,7 +1357,7 @@ var jpPrinter = {
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -1678,7 +1678,7 @@ var jpPrinter = {
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2081,7 +2081,7 @@ var jpPrinter = {
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2430,7 +2430,7 @@ var jpPrinter = {
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2636,7 +2636,7 @@ var jpPrinter = {
 		goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -2770,7 +2770,7 @@ var jpPrinter = {
 		data.goodsList.forEach((item, i) => {
 			let spname = (i + 1).toString() + item.spname.toString();
 			let isSpid = jpPrinter.spidSubStr(item.spid);
-			if(isSpid){
+			if(isSpid && !isReturn){
 				spname = spname + util.snvl(item.unit,"");
 			}
 			jpPrinter.setCharacterSize(0); //设置正常大小
