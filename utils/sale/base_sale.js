@@ -795,6 +795,9 @@ var XsTypeObj = {
 			return true;
 		},
 		$initSale: async function() {
+			console.log("出实话this:", this.mode_info);
+
+			this.mode_info.sale_cake_reserve.yn_showDetail = false; //初始化时关闭之前那打开的详情页
 			console.log("[sale_cake_reserve]蛋糕预定初始化");
 			this.actType = common.actTypeEnum.Payment;
 			this.CakeBQList = await _cake.GetDGBQ();
@@ -931,10 +934,11 @@ var XsTypeObj = {
 			this.CakeBQList?.map((i, ii) => {
 				if (ii == 0) {
 					i.CHECK = true;
+					this.CakeTagList = i.DATA;
 				} else {
 					i.CHECK = false;
-					i.DATA?.map(o => o._CHECK = false);
 				}
+				i.DATA?.map(o => o._CHECK = false);
 			});
 		},
 		//确认条件
