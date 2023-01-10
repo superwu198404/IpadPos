@@ -804,6 +804,8 @@ var XsTypeObj = {
 			// this.CakeList = await _cake.GetCakeList(); 
 			//数据比组件渲染要晚
 			this.CakeList = this.cakeFilter();
+			this.mode_info.sale_cake_reserve.condition = []; //清除一下已选标签数据
+			this.CheckTagList = [];
 			console.log("标签数据：", this.CakeBQList);
 			console.log("蛋糕数据：", this.CakeList);
 		},
@@ -1034,7 +1036,7 @@ var XsTypeObj = {
 				console.log("详情渲染对象：", this.clikSpItem);
 			} else { //关闭详情
 				console.log("关闭详情");
-				this.condition = []; //清空已选标签
+				// this.condition = []; //清空已选标签 xyj 要求不清除 待后续观察清除原因
 				// this.yn_showDetail = false;
 				XsTypeObj.sale_cake_reserve.yn_showDetail = false;
 
