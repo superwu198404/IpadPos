@@ -795,12 +795,17 @@ var XsTypeObj = {
 			return true;
 		},
 		$initSale: async function() {
+			console.log("出实话this:", this.mode_info);
+
+			this.mode_info.sale_cake_reserve.yn_showDetail = false; //初始化时关闭之前那打开的详情页
 			console.log("[sale_cake_reserve]蛋糕预定初始化");
 			this.actType = common.actTypeEnum.Payment;
 			this.CakeBQList = await _cake.GetDGBQ();
 			// this.CakeList = await _cake.GetCakeList(); 
 			//数据比组件渲染要晚
 			this.CakeList = this.cakeFilter();
+			this.mode_info.sale_cake_reserve.condition = []; //清除一下已选标签数据
+			this.CheckTagList = [];
 			console.log("标签数据：", this.CakeBQList);
 			console.log("蛋糕数据：", this.CakeList);
 		},
@@ -928,8 +933,13 @@ var XsTypeObj = {
 			condition?.splice(0, condition?.length);
 			this.CakeTagList?.map(i => i._CHECK = false);
 			this.CheckTagList?.splice(0, this.CheckTagList?.length);
-			this.CakeBQList?.map(i => {
-				i.CHECK = false;
+			this.CakeBQList?.map((i, ii) => {
+				if (ii == 0) {
+					i.CHECK = true;
+					this.CakeTagList = i.DATA;
+				} else {
+					i.CHECK = false;
+				}
 				i.DATA?.map(o => o._CHECK = false);
 			});
 		},
@@ -1026,7 +1036,7 @@ var XsTypeObj = {
 				console.log("详情渲染对象：", this.clikSpItem);
 			} else { //关闭详情
 				console.log("关闭详情");
-				this.condition = []; //清空已选标签
+				// this.condition = []; //清空已选标签 xyj 要求不清除 待后续观察清除原因
 				// this.yn_showDetail = false;
 				XsTypeObj.sale_cake_reserve.yn_showDetail = false;
 
