@@ -1042,6 +1042,7 @@
 		margin-left: 12rpx;
 		margin-top:4rpx;
 		border-radius: 4rpx;
+		white-space: nowrap;
 	}
 
 	.h5 button {
