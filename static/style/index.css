@@ -1011,7 +1011,7 @@ page {
 	overflow: hidden;
 }
 .prolist .h3 label label{
-	width: 100%;
+	max-width: 100%;
 	white-space: nowrap;
 	overflow: auto;
 }
