@@ -1040,7 +1040,7 @@
 		padding: 0 4rpx;
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
-		margin-top:4rpx;
+		margin-top: 4rpx;
 		border-radius: 4rpx;
 	}
 
