@@ -995,7 +995,9 @@ page {
 	overflow: auto;
 	padding: 0 4%;
 }
-
+.goods .prolist .h3{
+	align-items: flex-start;
+}
 .prolist .h3 {
 	display: flex;
 	justify-content: space-between;
@@ -1003,8 +1005,8 @@ page {
 
 .prolist .h3 label {
 	display: flex;
-	align-items: center;
-	max-width:86%;
+	align-items: flex-start;
+	max-width:85%;
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -1044,6 +1046,9 @@ page {
 	width:66%;
 }
 .goods .prolist .cods view label{
+	white-space: nowrap;
+}
+.goods .prolist .danjia{
 	white-space: nowrap;
 }
 .prolist .cods text {

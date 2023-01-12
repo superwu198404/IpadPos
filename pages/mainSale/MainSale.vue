@@ -394,7 +394,6 @@
 						</label>
 					</view>
 					<view class="goods">
-						<!-- 商品循环 -->
 						<view class="prolist" v-for="(sp, spinx) in mainSale.sale002">
 							<view class="h3">
 								<label>
@@ -1041,6 +1040,7 @@
 		padding: 0 4rpx;
 		border: 1rpx solid #FE694B;
 		margin-left: 12rpx;
+		margin-top:4rpx;
 		border-radius: 4rpx;
 	}
 
