@@ -343,7 +343,7 @@
 
 <style>
 	.customer {
-		background-color: #f9f9f9;
+		background-color: #fff;
 		width: 90%;
 		min-height: 400rpx;
 		position: relative;
@@ -352,10 +352,10 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		border-radius: 20rpx;
-		padding: 0 1% 140rpx;
+		padding: 0 1% 0rpx;
 		z-index: 99;
 		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
-		max-height: 90%;
+		max-height: 86%;
 	}
 	.products{
 		max-height: 1200rpx;
