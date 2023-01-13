@@ -3829,8 +3829,8 @@ function GetSale(global, vue, target_name, uni) {
 		that.ZKHDArr = res.zkrule;
 		console.log("002增加折扣后的新数据：", that.sale002);
 	}
-	//使用手工折扣进行计算 新版四舍五入的逻辑
-	this.SKdiscCompute = function() {
+	//使用手工折扣进行计算 旧版四舍五入的逻辑
+	this._SKdiscCompute = function() {
 		//手工折扣额的处理
 		let oldTNET = Number(this.sale001.TNET);
 		console.log("[SKdiscCompute]原金额：", oldTNET);
@@ -3846,9 +3846,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
 	}
-	//使用手工折扣进行计算 旧版舍弃分的逻辑
-	this._SKdiscCompute = function() {
-		// 计算商品的手工折扣值 也就是舍去分的处理
+	//使用手工折扣进行计算 新版舍弃全部分的逻辑
+	this.SKdiscCompute = function() {
 		//手工折扣额的处理
 		console.log("原金额：", this.sale001.TNET);
 		let SKY_DISCOUNT = this.float(((this.sale001.TNET * 10) % 1) / 10, 2);
@@ -3857,7 +3856,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.sale001.ZNET = this.float(Number(this.sale001.ZNET) - SKY_DISCOUNT, 2);
 		this.sale001.BILLDISC = this.float(Number(this.sale001.BILLDISC) + SKY_DISCOUNT, 2);
 		this.sale001.TCXDISC = this.float(Number(this.sale001.TCXDISC) + SKY_DISCOUNT, 2);
-		this.sale001.ROUND = this.float(Number(this.sale001.ROUND) + SKY_DISCOUNT, 2);
+		this.sale001.ROUND = SKY_DISCOUNT;
 		this.sale001.TDISC = this.float(Number(this.sale001.TDISC) + SKY_DISCOUNT, 2);
 		console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.sale001);
 	}
