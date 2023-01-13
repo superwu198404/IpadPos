@@ -357,6 +357,9 @@
 		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
 		max-height: 86%;
 	}
+	.commodity{
+		background:#fff;
+	}
 	.products{
 		max-height: 1200rpx;
 		overflow:auto;
