@@ -21,32 +21,80 @@ addlist：为属性列表例如 ：全糖、半糖，去冰，加椰果等等
 import sqlLite from '@/utils/db/db_excute.js';
 var $sqlLite = sqlLite.get();
 var loadSaleSP = {
+	//名称格式化
+	nameFormat: function(r) {
+		// if (r.PINYIN != '(13.9x)xknrs')
+		// 	return;
+		// console.log("进入格式化商品名称：", r.PINYIN);
+		let index = -1;
+		//（）
+		if (r.PINYIN.indexOf('（') == 0) {
+			index = r.PINYIN.indexOf('）');
+		}
+		//()
+		if (r.PINYIN.indexOf('(') == 0) {
+			index = r.PINYIN.indexOf(')');
+		}
+		//【】
+		if (r.PINYIN.indexOf('【') == 0) {
+			index = r.PINYIN.indexOf('】');
+		}
+		//[]
+		if (r.PINYIN.indexOf('[') == 0) {
+			index = r.PINYIN.indexOf(']');
+		}
+		//数字开头 10元
+		if (/^\d/.test(r.SNAME) && r.SNAME.indexOf('元') > 0) {
+			index = r.PINYIN.indexOf('元');
+		}
+		//4号
+		if (/^\d/.test(r.SNAME) && r.SNAME.indexOf('号') > 0) {
+			index = r.SNAME.indexOf('号');
+		}
+		//4磅
+		if (/^\d/.test(r.SNAME) && r.SNAME.indexOf('磅') > 0) {
+			index = r.SNAME.indexOf('磅');
+		}
+		// console.log("查看索引：", index);
+		if (index >= 0) {
+			let prefix = r.SNAME.substring(0, index + 1);
+			let suffix = r.SNAME.substring(index + 1);
+			let prefix1 = r.PINYIN.substring(0, index + 1);
+			let suffix1 = r.PINYIN.substring(index + 1);
+			r.SNAME = suffix + prefix;
+			r.PINYIN = suffix1 + prefix1;
+		}
+		// console.log("格式化后的商品名称：", r.SNAME);
+	},
 	getFstrAndSort: function(pm_arr) //将当前数组的拼音的第一位截取出来
 	{
 		//{"FSTR":"z","PINYIN":"zjpbtzw（x）8-qj","SNAME":"竹节排包提子味（型）8-仟吉","SPID":"000000001010100002","addlist":"","plid":"308","plname":"三明治用半成品","specslist":"","ynAddPro":0,"ynshowlist":0}
 		let newarrList;
 		console.log("开始获取拼音首字母");
-		newarrList = pm_arr.map(
-			item => {
-				try {
-					let py = item.PINYIN || '';
-					//console.log("数组的结构"+JSON.stringify(item))
-					let flag = "";
-					for (let x = 0; x < py.length; x++) {
-						if (py.charCodeAt(x) >= 97 && py.charCodeAt(x) <= 122) {
-							flag = py.substr(x, 1);
-							break;
-						}
+		newarrList = pm_arr.map(item => {
+			try {
+				//名称格式化 测试再放开
+				// this.nameFormat(item);
+				// console.log("外部名称 ", item);
+				let py = item.PINYIN || '';
+				//console.log("数组的结构"+JSON.stringify(item))
+				let flag = "";
+				for (let x = 0; x < py.length; x++) {
+					if (py.charCodeAt(x) >= 97 && py.charCodeAt(x) <= 122) {
+						flag = py.substr(x, 1);
+						break;
 					}
-					if (flag.length == 0) {
-						flag = "Z";
-					}
-					item["FSTR"] = flag.toUpperCase();
-					return item;
-				} catch (err) {
-					console.log("开始获取拼音首字母发生了错误", err, item);
 				}
-			});
+				if (flag.length == 0) {
+					flag = "Z";
+				}
+				item["FSTR"] = flag.toUpperCase();
+				// console.log("外部名称首字母", flag);
+				return item;
+			} catch (err) {
+				console.log("开始获取拼音首字母发生了错误", err, item);
+			}
+		});
 		return newarrList;
 	},
 	/*
@@ -322,9 +370,14 @@ var loadSaleSP = {
 
 		}, null);
 		console.log("##############################开始进行数组整合##############################")
+		// console.log("商品数据：", mainArr);
+		// console.log("商品数据1：", cakeSpesc);
+		// console.log("商品数据2：", dinkP);
+		// console.log("商品数据3：", cakeBq);
+		// console.log("商品数据4：", cakeimg);
 		let arrAllsp = this.arrListGroupBy(mainArr, cakeSpesc, dinkP, cakeBq, cakeimg);
 		console.log("##############################调用完成进入回调函数##########################")
-
+		// console.log("商品数据5：", arrAllsp);
 		if (callbackfun) {
 			// console.log("售价"+JSON.stringify(spPrice).substr(0,300));
 			//  console.log("商品"+JSON.stringify(arrAllsp).substr(0,300));
