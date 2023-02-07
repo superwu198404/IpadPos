@@ -1,10 +1,10 @@
 <template>
 	<view>
-		<view class="swiperPanel" @touchstart="startMove" @touchend="endMove">
-			<view class="swiperItem" v-for="(item, index) in swiperList" :key="index"
-				:style="{transform: itemStyle[index].transform, zIndex: itemStyle[index].zIndex, opacity: itemStyle[index].opacity}"
+		 <!-- @touchstart="startMove" @touchend="endMove" -->
+		<swiper class="swiperPanel" previous-margin='28px' next-margin='28px' @change="change">
+			<swiper-item class="swiperItem" v-for="(item, index) in swiperList" :key="index"				
 				@click="ChooseCake(item)">
-				<view class="children">
+				<view class="children" :class="index == currentIndex?'animationData':''">
 					<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
 					<image class="pic" :src="item.img" mode="widthFix" @error="imgerr($event,index)"></image>
 					<view class="products">
@@ -13,8 +13,8 @@
 						<text>{{item.note}}</text>
 					</view>
 				</view>
-			</view>
-		</view>
+			</swiper-item >
+		</swiper>
 	</view>
 </template>
 
@@ -58,7 +58,10 @@
 				itemStyle: [],
 				swiperList: [],
 				// P_URL: "http://58.19.103.220:8805/CakeImage/"
-				P_URL: ""
+				P_URL: "",
+				currentIndex:0,
+				animationData: {},
+				animationData2: {},
 			};
 		},
 		async created() {
@@ -86,81 +89,115 @@
 				uni.$emit("ShowCakeDetail", e);
 			},
 			getStyle(e) {
-				if (e > this.swiperList.length / 2) {
-					var right = this.swiperList.length - e
-					return {
-						transform: 'scale(' + (1 - right / 10) + ') translate(-' + (right * 9) + '%,0px)',
-						zIndex: 9999 - right,
-						opacity: 0.8 / right
-					}
-				} else {
-					return {
-						transform: 'scale(' + (1 - e / 10) + ') translate(' + (e * 9) + '%,0px)',
-						zIndex: 9999 - e,
-						opacity: 0.8 / e
-					}
-				}
+				// if (e > this.swiperList.length / 2) {
+				// 	var right = this.swiperList.length - e
+				// 	return {
+				// 		// transform: 'scale(' + (1 - right / 10) + ') translate(-' + (right * 9) + '%,0px)',
+				// 		zIndex: 9999 - right,
+				// 		opacity: 1 
+				// 	}
+				// } else {
+				// 	return {
+				// 		// transform: 'scale(' + (1 - e / 10) + ') translate(' + (e * 9) + '%,0px)',
+				// 		zIndex: 9999 - e,
+				// 		opacity: 1
+				// 	}
+				// }
 			},
-			startMove(e) {
-				this.slideNote.x = e.changedTouches[0] ? e.changedTouches[0].pageX : 0;
-				this.slideNote.y = e.changedTouches[0] ? e.changedTouches[0].pageY : 0;
+			change(e){
+				this.currentIndex = e.detail.current
 			},
-			endMove(e) {
-				var newList = JSON.parse(JSON.stringify(this.itemStyle))
+		// 	startMove(e) {
+		// 		this.slideNote.x = e.changedTouches[0] ? e.changedTouches[0].pageX : 0;
+		// 		this.slideNote.y = e.changedTouches[0] ? e.changedTouches[0].pageY : 0;
+		// 	},
+		// 	endMove(e) {
+		// 		var newList = JSON.parse(JSON.stringify(this.itemStyle))
 
-				console.log("滑动数据：", );
-				let touchCode = e.changedTouches[0].pageX - this.slideNote.x;
-				if (touchCode == 0) {
-					//说明是点击事件
-					console.log("点击事件");
-					return;
-				}
-				if (touchCode < 0) {
-					// 向左滑动
-					var last = [newList.pop()]
-					newList = last.concat(newList)
-				} else {
-					// 向右滑动
-					newList.push(newList[0])
-					newList.splice(0, 1)
-				}
-				console.log("滑动集合：", newList);
-				this.itemStyle = newList
-			}
+		// 		console.log("滑动数据：", );
+		// 		let touchCode = e.changedTouches[0].pageX - this.slideNote.x;
+		// 		if (touchCode == 0) {
+		// 			//说明是点击事件
+		// 			console.log("点击事件");
+		// 			return;
+		// 		}
+		// 		if (touchCode < 0) {
+		// 			// 向左滑动
+		// 			var last = [newList.pop()]
+		// 			newList = last.concat(newList)
+		// 		} else {
+		// 			// 向右滑动
+		// 			newList.push(newList[0])
+		// 			newList.splice(0, 1)
+		// 		}
+		// 		console.log("滑动集合：", newList);
+		// 		this.itemStyle = newList
+		// 	}
+		
+		},
+		computed:{
+			stretch() {
+					   var animation = uni.createAnimation({
+					     duration: 400,
+					     timingFunction: 'ease',
+					   })
+					   animation.scale(1).step()
+					   this.animationData =  animation.export()
+					 },
+					 // 展开
+					 shrink(h) {
+					    var animation2 = uni.createAnimation({
+					      duration: 400,
+					      timingFunction: 'ease',
+					    })
+					    animation2.scale(0.9).step()
+					    this.animationData2 =  animation2.export()
+				},		
 		}
+	
 	}
 </script>
 
 <style lang="scss">
 	.swiperPanel {
-		height: 1400rpx;
+		height: 1450rpx;
 		width: 100%;
 		margin: 0 auto;
-		overflow: hidden;
+		// overflow: hidden;
 		position: relative;
 	}
-
+.swiper-wrapper{
+	overflow: inherit;
+}
 	.swiperItem {
 		height: 99%;
-		width: 98%;
-		position: absolute;
-		top: 0;
-		left: 1%;
-		transition: all .5s;
+		width: 99%;
+		// position: absolute;
+		// top: 0;
+		// left: 1%;
+		// transition: all .1s;
+		// -webkit-transition: all .1s;
+		// -webkit-backface-visibility: hidden;
+		// -webkit-overflow-scrolling: touch;
 	}
 
 	.children {
 		height: 92%;
-		width: 88%;
+		width: 99%;
 		margin: 0.5% auto 3%;
 		position: relative;
 		overflow: hidden;
 		border-radius: 20rpx;
-		box-shadow: 20rpx 0px 30rpx 1px rgba(51, 51, 51, 0.1);
+		box-shadow: 10rpx 0px 20rpx 1px rgba(51, 51, 51, 0.1);
 		background-color: #FFFFFF;
 		border-radius: 10px;
+		opacity: 0.7;
+		transform: scale(0.98);
 	}
-
+.animationData{
+	opacity: 1;
+	transform: scale(1);
+}
 	.children .logo {
 		position: absolute;
 		top: 16rpx;
