@@ -1843,6 +1843,9 @@ function GetSale(global, vue, target_name, uni) {
 			uncombine_sale3,
 			sale003
 		});
+		// 取消ZG02的合并功能 👇
+		// return;
+		// 下面代码目前作废 👇
 		if (!combine_sale3.length) return; //如果没有和并项
 		let single_sale3 = (() => {
 			let sale3 = combine_sale3[0],
@@ -1856,44 +1859,6 @@ function GetSale(global, vue, target_name, uni) {
 			sale3.RATE = 0;
 			sale3.DISC = 0;
 			sale3.ZKLX = 0;
-			sale3.AUTH = "";
-			sale3.ID = "";
-			sale3.IDTYPE = "";
-			return sale3;
-		})();
-		this.sale003 = uncombine_sale3.concat([single_sale3]);
-		console.log("[CombineCouponAndNoOrginPay]合并处理后:", {
-			sale003,
-			this_sale003: this.sale003
-		});
-	} //合并券类型和不可原路退回操作
-	//合并券类型和不可原路退回操作
-	this.CombineCouponAndNoOrginPay = function(sale003) {
-		console.log("[CombineCouponAndNoOrginPay]付款类型信息:", this.FKDA_INFO);
-		let combine_fkid = this.FKDA_INFO.filter(i => ['SZQ'].includes(i.JKSNAME)).map(i => i.FKID).concat([
-			'ZG02'
-		]);
-		console.log("[CombineCouponAndNoOrginPay]合并项FKID:", combine_fkid);
-		let combine_sale3 = sale003.filter(i => combine_fkid.includes(i.FKID));
-		let uncombine_sale3 = sale003.filter(i => !combine_fkid.includes(i.FKID));
-		console.log("[CombineCouponAndNoOrginPay]合并分类:", {
-			combine_sale3,
-			uncombine_sale3,
-			sale003
-		});
-		if (!combine_sale3.length) return; //如果没有和并项
-		let single_sale3 = (() => {
-			let sale3 = combine_sale3[0],
-				total_amount = 0; //取原单第一位的原因是序号问题和部分数据填充的问题
-			combine_sale3.forEach(i => {
-				total_amount += Number(i.AMT) ?? 0;
-			})
-			sale3.AMT = total_amount;
-			sale3.FKID = 'ZG02';
-			sale3.FAMT = 0;
-			sale3.RATE = 0;
-			sale3.DISC = 0;
-			sale3.ZKLX = null;
 			sale3.AUTH = "";
 			sale3.ID = "";
 			sale3.IDTYPE = "";
