@@ -892,6 +892,8 @@ uni-button:after {
 	width: 80%;
 	background-color: #F0F9F1;
 	border-radius: 0 14rpx 14rpx 0;
+	display: flex;
+	white-space: nowrap;
 }
 
 .coupon-dets image {
@@ -916,7 +918,7 @@ uni-button:after {
 	width: 100%;
 }
 .directions view{
-	width:65%;
+	width:62%;
 	max-height: 50rpx;
 	overflow: hidden;
 }
