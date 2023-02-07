@@ -179,6 +179,17 @@ export const updateReserveOrder = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
+/**
+ * 查询 KHID 是否存在于 KHDADZ 表（判断是否是外地提货的操作）
+ * @param {*} data 
+ * @param {*} func 
+ */
+export const IsForeignStore = function(data, func) {
+	let apistr = "MobilePos_API.Models.YDSALE001CLASS.IsForeignStore";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
 export default {
 	GetAddr,
 	AddressQuery,
@@ -195,5 +206,6 @@ export default {
 	reserveOrdersStatusUpdate,
 	getReserveOrdersDetails,
 	getReserveOrderInfos,
-	updateReserveOrder
+	updateReserveOrder,
+	IsForeignStore
 }

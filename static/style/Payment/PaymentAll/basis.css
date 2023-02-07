@@ -915,7 +915,11 @@ uni-button:after {
 	right: 0;
 	width: 100%;
 }
-
+.directions view{
+	width:65%;
+	max-height: 50rpx;
+	overflow: hidden;
+}
 .directions view image {
 	width: 20rpx;
 	margin-left: 10rpx;
@@ -933,6 +937,7 @@ uni-button:after {
 	justify-content: center;
 	align-items: center;
 	color: #006B44;
+	white-space: nowrap;
 }
 
 .directions button image {
