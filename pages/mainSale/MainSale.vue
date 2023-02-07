@@ -308,7 +308,7 @@
 									</view>
 									<view class="directions">
 										<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-										<view>
+										<view style="width:95%">
 											使用说明：
 											<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
 											<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
