@@ -229,9 +229,9 @@
 								</view>
 								<view class="directions">
 									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
-									<view>使用说明<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text>
+									<view>使用说明:<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text></view>
 										<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
-									</view>
+									
 									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
 											mode="widthFix"></image></button>
 								</view>
