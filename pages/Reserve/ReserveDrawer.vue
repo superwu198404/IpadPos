@@ -89,7 +89,8 @@
 						</view>
 						<view class="note">
 							<!-- <label><text>备注：</text><textarea v-model="ADDR.NOTE"></textarea></label> -->
-							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button><button class="btn-sc" @click="yn_add = false">取消</button></view>
+							<view class="caozuo"><button class="btn-xg" @click="ConfirmADDR()">确认</button><button
+									class="btn-sc" @click="yn_add = false">取消</button></view>
 						</view>
 					</view>
 				</view>
@@ -110,8 +111,10 @@
 							</view>
 						</view>
 					</view>
-					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">{{ ShowAllAddressList?'隐藏全部地址':'显示全部地址' }}
-						<image src="../../images/zhankaiqb-dt.png" :class="ShowAllAddressList?'flip-vertical':''"></image>
+					<view class="more" @click="ShowAllAddressList = !ShowAllAddressList">
+						{{ ShowAllAddressList?'隐藏全部地址':'显示全部地址' }}
+						<image src="../../images/zhankaiqb-dt.png" :class="ShowAllAddressList?'flip-vertical':''">
+						</image>
 					</view>
 				</view>
 				<view class="atlas">
@@ -325,6 +328,7 @@
 				this.Order.DNET = this.sale.ZNET;
 				this.Order.TNET = this.sale.ZNET;
 				console.log("[DataInit]预订单初始化完毕!", this.Order);
+				this.IsForeignStore();//判断是否是外地门店提货
 			},
 			onLoad: function() {
 				this.DataInit();
@@ -355,6 +359,20 @@
 				}
 				that.THKHDATAS = []; //选择后清空一下数据源
 				that.RefreshData(); //刷新一下数据
+			},
+			IsForeignStore: function() {
+				console.log("[IsForeignStore]判断门店是否是外地提货...",this.KHID);
+				_reserve.IsForeignStore({
+					KHID: this.KHID
+				},util.callBind(this,function(res){
+					let data = JSON.parse(res.data);
+					console.log("[IsForeignStore]查询结果:",data);
+					if(!(data && data.length)){
+						this.Order.THTYPE = 0;
+						this.index = 0;
+						this.YN_THTYPE = true; //默认自提且不允许更改
+					}
+				}))
 			},
 			Show: function() {
 				let pages = getCurrentPages(); //当前页面栈
@@ -971,9 +989,10 @@
 </script>
 
 <style>
-	.flip-vertical{
+	.flip-vertical {
 		transform: rotate(180deg);
 	}
+
 	.thmd {
 		position: absolute;
 		left: 150rpx;
