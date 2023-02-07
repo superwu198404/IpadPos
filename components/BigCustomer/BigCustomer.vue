@@ -145,7 +145,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		padding: 0 3% 140rpx;
+		padding: 0 3% 40rpx;
 	}
 
 	.customer .h3 {
