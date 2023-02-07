@@ -892,8 +892,8 @@ uni-button:after {
 	width: 80%;
 	background-color: #F0F9F1;
 	border-radius: 0 14rpx 14rpx 0;
-	display: flex;
-	white-space: nowrap;
+	/* display: flex;
+	white-space: nowrap; */
 }
 
 .coupon-dets image {
@@ -903,12 +903,13 @@ uni-button:after {
 .directions {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	/* align-items: center; */
 	border-top: 1rpx solid #D6EED8;
 	padding: 2% 2%;
 	color: #474747;
 	font-size: 24rpx;
 	position: relative;
+	/* white-space: nowrap; */
 }
 
 .directions .bg {
@@ -918,9 +919,10 @@ uni-button:after {
 	width: 100%;
 }
 .directions view{
-	width:62%;
-	max-height: 50rpx;
+	width:63%;
+	max-height: 60rpx;
 	overflow: hidden;
+	line-height: 30rpx;
 }
 .directions view image {
 	width: 20rpx;
@@ -928,6 +930,7 @@ uni-button:after {
 }
 
 .directions button {
+	width:36%;
 	margin: 0;
 	height: 58rpx;
 	line-height: 58rpx;
