@@ -1844,7 +1844,7 @@ function GetSale(global, vue, target_name, uni) {
 			sale003
 		});
 		// 取消ZG02的合并功能 👇
-		return;
+		// return;
 		// 下面代码目前作废 👇
 		if (!combine_sale3.length) return; //如果没有和并项
 		let single_sale3 = (() => {
