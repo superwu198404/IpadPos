@@ -23,6 +23,55 @@ var $sqlLite = sqlLite.get();
 var loadSaleSP = {
 	//名称格式化
 	nameFormat: function(r) {
+		let index = -1,
+			old = r.PINYIN;
+		try {
+			//匹配括号中内容()（）[] 【】
+			if (/^(\W+)/.test(r.PINYIN)) {
+				let str = r.PINYIN.match(/\(.+\)/g);
+				if (!str) {
+					str = r.PINYIN.match(/\（.+\）/g);
+				}
+				if (!str) {
+					str = r.PINYIN.match(/\[.+\]/g);
+				}
+				if (!str) {
+					str = r.PINYIN.match(/\【.+\】/g);
+				}
+				if (str) {
+					r.PINYIN = r.PINYIN.split(str[0])[1];
+				}
+			} else { //数字开头
+				//10元
+				if (/^\d+元/.test(r.SNAME)) {
+					index = r.SNAME.indexOf('元');
+				}
+				//4号
+				if (/^\d+号/.test(r.SNAME)) {
+					index = r.SNAME.indexOf('号');
+				}
+				//4磅
+				if (/^\d+磅/.test(r.SNAME)) {
+					index = r.SNAME.indexOf('磅');
+				}
+				//4盎
+				if (/^\d+盎/.test(r.SNAME)) {
+					index = r.SNAME.indexOf('盎');
+				}
+				if (index >= 0) {
+					let prefix1 = r.PINYIN.substring(0, index + 1);
+					let suffix1 = r.PINYIN.substring(index + 1);
+					r.PINYIN = suffix1; // + prefix1;
+				}
+			}
+		} catch (e) {
+			//TODO handle the exception
+			r.PINYIN = old;
+			console.log("拼音格式化异常：", e.message);
+		}
+	},
+	//旧版本格式方法
+	nameFormat1: function(r) {
 		// if (r.PINYIN != '(13.9x)xknrs')
 		// 	return;
 		// console.log("进入格式化商品名称：", r.PINYIN);
@@ -74,7 +123,7 @@ var loadSaleSP = {
 		newarrList = pm_arr.map(item => {
 			try {
 				//名称格式化 测试再放开
-				// this.nameFormat(item);
+				this.nameFormat(item);
 				// console.log("外部名称 ", item);
 				let py = item.PINYIN || '';
 				//console.log("数组的结构"+JSON.stringify(item))
@@ -218,7 +267,6 @@ var loadSaleSP = {
 		return fsArr;
 	},
 	getDgxlImg: function(pm_dqid) {
-
 		let sql =
 			"select dgxlimage.DGXLID , url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL,DESCRIBE  from dgxlimage where DQID='" +
 			pm_dqid + "' order by DGXLID,yn_main desc";
