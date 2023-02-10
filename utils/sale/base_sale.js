@@ -652,7 +652,6 @@ var XsTypeObj = {
 			this.allOperation.actType = false;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale001.BMID = ""; //因为数据源取得是 ydsale1，导致会携带默认的 BMID，而 sale1 是不需要默认的大客户的
-			this.sale001.XSTYPE = "4";
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = (params.sale3 ?? []).map(sale3 => Object.cover(new sale.sale003(), sale3));
 			console.log("[InitSale]预定取消，已设置锁定行...", this.sale002.length);

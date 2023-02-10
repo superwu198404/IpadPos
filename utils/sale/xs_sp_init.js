@@ -40,6 +40,7 @@ var loadSaleSP = {
 				}
 				if (str) {
 					r.PINYIN = r.PINYIN.split(str[0])[1];
+					console.warn("拼音格式变化：", old + "->" + r.PINYIN);
 				}
 			} else { //数字开头
 				//10元
@@ -56,12 +57,14 @@ var loadSaleSP = {
 				}
 				//4盎
 				if (/^\d+盎/.test(r.SNAME)) {
-					index = r.SNAME.indexOf('盎');
+					index = r.SNAME.indexOf('盎司');
+					index += 1;
 				}
 				if (index >= 0) {
 					let prefix1 = r.PINYIN.substring(0, index + 1);
 					let suffix1 = r.PINYIN.substring(index + 1);
 					r.PINYIN = suffix1; // + prefix1;
+					console.warn("拼音格式变化：", old + "->" + r.PINYIN);
 				}
 			}
 		} catch (e) {
@@ -70,7 +73,7 @@ var loadSaleSP = {
 			console.log("拼音格式化异常：", e.message);
 		}
 	},
-	//旧版本格式方法
+	//旧版本格式方法 暂废弃
 	nameFormat1: function(r) {
 		// if (r.PINYIN != '(13.9x)xknrs')
 		// 	return;
