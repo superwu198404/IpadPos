@@ -1,6 +1,9 @@
 import Req from '@/utils/request.js';
 import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
+import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
+import checker from '@/utils/graceChecker.js';
+import common from '@/api/common.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -117,9 +120,7 @@ const _GetConfig = async function(type, khid) { //获取 mis 支付参数，款�
 	return config;
 }
 
-/**
- * 包含支付和查询以及撤销的支付体
- */
+//包含支付和查询以及撤销的支付体
 const _PaymentAll = function(pt, body, func, catchFunc) {
 	let request = CreateData(pt, "支付中...", "Payment", body);
 	let show_log = true;
@@ -257,6 +258,7 @@ var wxPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //支付宝支付类
 var zfbPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -282,6 +284,7 @@ var zfbPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //仟吉电子卡支付类
 var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -314,6 +317,7 @@ var hykPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //仟吉实体卡
 var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -360,6 +364,7 @@ var kengeePay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //mis银联支付
 var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -405,6 +410,7 @@ var misPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //mis银联二维码支付
 var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -454,6 +460,7 @@ var misScanCodePay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //仟吉电子券
 var szqPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -639,9 +646,6 @@ var kbPay = {
 	}
 }
 
-import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
-import checker from '@/utils/graceChecker.js';
-
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -696,6 +700,7 @@ var pointPay = {
 		}, catchFunc);
 	}
 }
+
 //无后端接口的处理方式
 var noPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -771,6 +776,193 @@ var noPay = {
 	}
 }
 
+//品诺支付
+var pinoPay = {
+	/* 品诺支付流程（支付）：
+	 * 先查订单，平台不存在时，再调用核销。
+	 * 补充：由于核销不会提示余额不足，所以要自行调用卡信息查询接口确认。
+	 */
+	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc) {
+		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
+			var result = {
+				code: false,
+				msg: null,
+				data: null
+			}
+			console.log("[PaymentAll]品诺支付参数获取:", config)
+			if (!config) {
+				result.code = false;
+				result.msg = "支付参数为空!";
+			} else {
+				result.code = true;
+				result.msg = "参数获取成功!";
+				result.data = config;
+			}
+			return result;
+		})
+		if (!config_result.code) {
+			catchFunc(config_result);
+		} else {
+			var config = config_result.data;
+			var base_require_request_params = () => ({
+				transaction_id: config.KEY, //渠道私钥
+				trade_no: config.LONGKEY, //密码aes加密用的密钥
+				deviceno: config.SHID, //门店标识id
+				store_id: config.APPID //门店id
+			});
+			if (!body.auth_code)
+				catchFunc({
+					msg: "未传入卡号!"
+				});
+			var card_no = body.auth_code.substr(2, 11);
+			var password = body.auth_code.substr(13) ?? 0;
+			console.log("[PaymentAll]品诺支付:", {
+				card_no,
+				password
+			});
+			Req.AsyncRequesrChain(CreateData(pt, "查询中...", "QueryPayment", Object.assign(
+				base_require_request_params(), {
+					out_refund_no: body.out_trade_no, //查询订单号
+				})), [
+				function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
+					console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
+					var request_data = CreateData(pt, "查询中...", "QueryCardDetails", Object.assign(
+						base_require_request_params(), {
+							ryid: getApp().globalData.store.KHID,
+							card_no: body.auth_code
+						}));
+					return request_data;
+				},
+				function(res) {
+					console.log("[PaymentAll]第二次结果（QueryCardDetails）:", res);
+					console.log("[PaymentAll]支付金额:", {
+						card_balance: res.data.balance,
+						order_balance: body.money
+					});
+					var request_data = CreateData(pt, "支付中...", "Payment", Object.assign(
+						base_require_request_params(), {
+							ryid: getApp().globalData.store.KHID,
+							card_no: card_no,
+							auth_code: password,
+							money: body.money,
+							out_trade_no: body.out_trade_no
+						}));
+					console.log("[PaymentAll]支付请求参数:", request_data);
+					if (res.code && (res.data.balance - (body.money / 100)) > 0) {
+						return request_data;
+					} else {
+						request_data.code = false; //主动抛出异常
+						util.simpleMsg("卡余额不足，请充值后重试!", true);
+						finallyFunc?.call();
+						return;
+					}
+				},
+				function(res) {
+					var request_data = CreateData(pt, "查询中...", "QueryPayment", Object.assign(
+						base_require_request_params(), {
+							out_refund_no: body.out_trade_no, //查询订单号
+						}));
+					console.log("[PaymentAll]第三次结果（Payment）:", res);
+					if (res.code) { //支付成功
+						return request_data;
+					} else { //支付失败
+						request_data.code = false; //主动抛出异常
+						util.simpleMsg("支付失败!", true);
+						console.log("支付失败:", res);
+						finallyFunc?.call();
+						return;
+					}
+				},
+				function(res) {
+					console.log("[PaymentAll]第四次结果（QueryPayment）:", res);
+					if (res.code) { //支付成功
+						func?.call(null, res);
+						return {
+							code: false,
+							msg: "支付成功了",
+							data: res
+						};
+					} else { //支付失败
+						request_data.code = false; //主动抛出异常
+						util.simpleMsg("支付失败!", true);
+						console.log("支付失败:", res);
+						finallyFunc?.call();
+						return;
+					}
+				}
+			], function(err) {
+				console.log("[PaymentAll]支付接口返回的错误信息：", err);
+				if (err.msg == "未查询到订单信息") {
+					err.code = true;
+					return;
+				}
+				if (catchFunc) catchFunc(err);
+				util.simpleMsg(res.msg, true);
+			}, function(active_err) {
+				console.log("主动抛出异常:", active_err);
+			});
+		}
+	},
+	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
+			var result = {
+				code: false,
+				msg: null,
+				data: null
+			}
+			console.log("[RefundAll]品诺支付参数获取:", config)
+			if (!config) {
+				result.code = false;
+				result.msg = "支付参数为空!";
+			} else {
+				result.code = true;
+				result.msg = "参数获取成功!";
+				result.data = config;
+			}
+			return result;
+		})
+		if (!config_result.code) {
+			catchFunc(config_result);
+		} else {
+			var config = config_result.data;
+			var base_require_request_params = () => ({
+				transaction_id: config.KEY, //渠道私钥
+				trade_no: config.LONGKEY, //密码aes加密用的密钥
+				deviceno: config.SHID, //门店标识id
+				store_id: config.APPID //门店id
+			});
+			console.log("[RefundAll]退款数据:", body);
+			Req.asyncFuncChain(CreateData(pt, "查询中...", "QueryPayment", Object.assign(
+				base_require_request_params(), {
+					out_refund_no: body.out_trade_no, //本地订单号
+				})), [
+				function(res) {
+					console.log("[RefundAll]第一次结果（QueryPayment）:", res);
+					console.log("[RefundAll]准备被退款的渠道单号:", body.point);
+					return CreateData(pt, "退款中...", "Refund", Object.assign(base_require_request_params(), {
+						out_refund_no: body.point, //品诺渠道单号
+					}));
+				}
+			], catchFunc, finallyFunc, resultsFunc);
+		}
+	},
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+
 //根据支付类型反射支付方式
 var payType = {
 	// 108使用
@@ -784,22 +976,23 @@ var payType = {
 	//108使用
 
 	//仟吉使用
-	WXZF: wxPay,
-	ZFB20: zfbPay,
-	PAYCARD: hykPay,
-	PAYBRUSHCARD: kengeePay,
+	WXZF: wxPay, //微信支付
+	ZFB20: zfbPay, //支付宝支付
+	PAYCARD: hykPay, //仟吉电子卡
+	PAYBRUSHCARD: kengeePay, //仟吉实体卡
 	HyJfExchange: pointPay, //积分抵现
-	SZQ: szqPay,
-	TL: misPay,
-	UPAY: misScanCodePay,
+	SZQ: szqPay, //电子券支付
+	TL: misPay, //银联（银行卡）支付
+	UPAY: misScanCodePay, //银联二维码
+	PINNUO: pinoPay //品诺支付（核销、支付、支付查询）
 	COUPON: kbPay,
 	NOPAY: noPay, //不走接口的支付方式
 }
 
 //聚合支付主入口
-var PaymentAll = function(pt, body, func, catchFunc) {
+var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 	try {
-		payType[pt].PaymentAll(pt, body, func, catchFunc)
+		payType[pt].PaymentAll(pt, body, func, catchFunc, finallyFunc)
 	} catch (e) {
 		console.log("[PaymentAll]发生调用异常:", e);
 		if (catchFunc) catchFunc();
