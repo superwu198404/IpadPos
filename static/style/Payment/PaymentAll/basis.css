@@ -919,7 +919,7 @@ uni-button:after {
 	width: 100%;
 }
 .directions view{
-	width:63%;
+	width:66%;
 	max-height: 60rpx;
 	overflow: hidden;
 	line-height: 30rpx;
@@ -930,7 +930,7 @@ uni-button:after {
 }
 
 .directions button {
-	width:36%;
+	width:33%;
 	margin: 0;
 	height: 58rpx;
 	line-height: 58rpx;
@@ -1309,3 +1309,88 @@ uni-button:after {
   height: auto;
 }
 
+ .coupons .bjs{
+	 position: absolute;
+	 top:0;
+	 left: 0;
+	 width:100%;
+	 opacity: 0.5;
+ }
+.listofpay{
+	position: relative;
+	z-index: 9;
+	width:94%;
+	margin:3% auto;
+	height: 81%;
+}
+.listofpay .modelist{
+	display: flex;
+	flex-wrap: wrap;
+}
+.listofpay .modelist .modeli{
+	width:24.5%;
+	margin:1% 0;
+	display: flex;
+	align-items: center;
+	font-size: 44px;
+	padding:40rpx 0;
+	border-radius: 10rpx;
+}
+.listofpay .modelist .modeli.curr{
+	background: linear-gradient(180deg, #DBFFDD 0%, #FFFFFF 100%);
+	box-shadow: 0px 0px 20px 1px rgba(66,177,75,0.25);
+	border:1px solid rgba(66, 177, 75, 0.30);
+}
+.modeli view{
+	display: flex;
+	align-items: center;
+	border-right:1px solid rgba(66, 177, 75, 0.30);
+	padding:0 5% 0 15%;
+	width:96%;
+	font-weight: 500;
+}
+.modeli view label{
+	display: block;
+	max-width: 260rpx;
+}
+.modeli:nth-child(4n) view{
+	border-right:none;
+}
+.modeli image{
+	width:70rpx;
+	height: 70rpx;
+	margin-right: 16rpx;
+}
+.modeclassy{
+	width:100rpx;
+	position: absolute;
+	top:5%;
+	left: 100%;
+}
+.modeclassy view{
+	background-color: #71C478;
+	color: #fff;
+	border-radius:0 8rpx 8rpx 0;
+	writing-mode:vertical-lr;
+	width: 100rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin:30rpx 0;
+	padding:26rpx 0;
+	font-size: 40rpx;
+}
+.modeclassy view.curr{
+	background-color: #fff;
+	color: #006B44;
+	font-size: 42rpx;
+	font-weight: 700;
+	width:120rpx;
+}
+.coupons .operats{
+	display: flex;
+	padding:2% 3% 0;
+}
+.coupons .operats button{
+	margin:0 2%;
+}

@@ -241,6 +241,45 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 其他支付方式 -->
+		<view class="boxs" v-if="Paymode">
+			<view class="coupons" style="width:80%;height: 80%;">
+				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+				<view class="modeclassy">
+					<view class="curr">银行合作</view>
+					<view>异业合作</view>
+					<view>其他方式</view>
+				</view>
+				<view class="listofpay">
+					<view class="modelist">
+						<view class="modeli">
+							<view>
+							<image src="../../images/TL.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+						<view class="modeli curr">
+							<view>
+							<image src="../../images/moren-zfu.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+						<view class="modeli">
+							<view>
+							<image src="../../images/TL.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="operats">
+					<button class="btn btn-qx">返回</button>
+					<button class="btn">确认</button>
+				</view>
+			</view>
+		</view>
+		
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -2182,5 +2221,9 @@
 		left: 10%;
 		width: 80%;
 		padding: 2% 0 3%;
+	}
+	.bom-zhifu .pattern:nth-last-child(1),.bom-zhifu .pattern:nth-last-child(2)
+	,.bom-zhifu .pattern:nth-last-child(3),.bom-zhifu .pattern:nth-last-child(4){
+		width:22%;
 	}
 </style>
