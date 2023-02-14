@@ -75,17 +75,18 @@ var GetPayWay = async function(e) {
 				// 	type: "YSF",
 				// 	poly: "N"
 				// },
+				// {
+				// 	name: "可伴支付",
+				// 	fkid: "ZF22",
+				// 	type: "COUPON",
+				// 	poly: "N"
+				// }, {
+				// 	name: "品诺支付",
+				// 	fkid: "ZF32",
+				// 	type: "PINNUO",
+				// 	poly: "N",
+				// },
 				{
-					name: "可伴支付",
-					fkid: "ZF22",
-					type: "COUPON",
-					poly: "N"
-				}, {
-					name: "品诺支付",
-					fkid: "ZF32",
-					type: "PINNUO",
-					poly: "N",
-				}, {
 					name: "不可原路退回",
 					fkid: "ZG11",
 					type: "NO",
@@ -100,12 +101,14 @@ var GetPayWay = async function(e) {
 					fkid: "ZG03",
 					type: "",
 					poly: "O"
-				}, {
-					name: "现金",
-					fkid: "ZF01",
-					type: "",
-					poly: "O"
-				}, {
+				},
+				// {
+				// 	name: "现金",
+				// 	fkid: "ZF01",
+				// 	type: "",
+				// 	poly: "O"
+				// }, 
+				{
 					name: "券自动放弃金额",
 					fkid: "ZCV1",
 					type: "EXCESS",

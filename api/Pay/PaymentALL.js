@@ -612,6 +612,32 @@ var szqPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+//可伴电子券
+var kbPay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		_PaymentAll(pt, body, func, catchFunc);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+	},
+
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		//注意券后端无该接口
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
 
 import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
 import checker from '@/utils/graceChecker.js';
@@ -755,6 +781,7 @@ var payType = {
 	MIS: misPay,
 	NOPAY: noPay,
 	REALCARD: kengeePay,
+	//108使用
 
 	//仟吉使用
 	WXZF: wxPay,
@@ -764,9 +791,9 @@ var payType = {
 	HyJfExchange: pointPay, //积分抵现
 	SZQ: szqPay,
 	TL: misPay,
-
-	//新增接口
 	UPAY: misScanCodePay,
+	COUPON: kbPay,
+	NOPAY: noPay, //不走接口的支付方式
 }
 
 //聚合支付主入口
