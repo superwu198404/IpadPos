@@ -176,7 +176,7 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="bom-zhifu">
-							<view class="pattern nots curr" :class="currentPayType === 'POLY'? 'selected':' '" id='POLY'
+							<view class="pattern curr" :class="currentPayType === 'POLY'? 'selected':' '" id='POLY'
 								@click="clickPayType('',$event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
@@ -2226,8 +2226,18 @@
 		width: 80%;
 		padding: 2% 0 3%;
 	}
+	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
+	,.bom-zhifu .pattern:nth-child(3){
+		width:47% !important;
+	}
 	.bom-zhifu .pattern:nth-last-child(1),.bom-zhifu .pattern:nth-last-child(2)
 	,.bom-zhifu .pattern:nth-last-child(3),.bom-zhifu .pattern:nth-last-child(4){
 		width:22%;
+	}
+	
+	.bom-zhifu .pattern:nth-last-child(1) .tits,.bom-zhifu .pattern:nth-last-child(2) .tits
+	,.bom-zhifu .pattern:nth-last-child(3) .tits,.bom-zhifu .pattern:nth-last-child(4) .tits{
+		font-size: 30rpx;
+		line-hright:60rpx;
 	}
 </style>

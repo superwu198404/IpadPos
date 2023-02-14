@@ -649,7 +649,7 @@ page {
 
 .bom-zhifu .pattern:nth-child(1) text {
 	display: block;
-	font-size: 14px;
+	font-size: 28rpx;
 	color: #666;
 	margin-top: 10%;
 	position: relative;
