@@ -86,7 +86,7 @@
 					<view class="operation">
 						<view class="sorting">
 							<view class="seasonal">
-								<image src="../../images/dx-dwj.png" mode="widthFix"></image>
+								<image src="../../images/rexiao-fenlei.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.Letters()">
 								<span>{{mainSale.selectFlag}}</span>
@@ -247,7 +247,7 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
 			</FZCX>
 		</view>
-		<!-- 结算单 -->
+		<!-- 结算单  -->
 		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
 				<view class="shareButton" @click="mainSale.setComponentsManage" data-mtype='statement'></view>
@@ -379,6 +379,8 @@
 								</view>
 							</view>
 						</label>
+						<text class="fangqi" v-if="jifencx">放弃积分促销</text>
+						<text class="youxian">优先积分促销</text>
 						<text class="qingk"
 							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
@@ -1046,7 +1048,7 @@
 	}
 
 	.h5 button {
-		color: #42B14B;
+		color: #006B44;
 		background: none;
 		font-size: 28rpx;
 		margin: 0;

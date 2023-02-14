@@ -484,7 +484,7 @@ page {
 .seasonal {
 	width: 80rpx;
 	height: 80rpx;
-	border-radius: 50%;
+	border-radius: 10rpx;
 	background-color: #E0EAE9;
 	display: flex;
 	justify-content: center;
@@ -924,7 +924,7 @@ page {
 	padding: 0;
 	width: 200rpx;
 }
-.member text:nth-child(2) {
+.member text {
 	height: 44rpx;
 	line-height: 44rpx;
 	font-size: 24rpx;
@@ -936,6 +936,21 @@ page {
 	color: #fff;
 	height: 44rpx;
 	line-height: 44rpx;
+	
+}
+.member .fangqi{
+	height: 42rpx;
+	line-height: 42rpx;
+	border:1px solid #FE694B ;
+	color: #FE694B;
+	background-color: #FFF4EE;
+}
+.member .youxian{
+	height: 42rpx;
+	line-height: 42rpx;
+	border:1px solid #006B44 ;
+	color: #006B44;
+	background-color: #E0EAE9;
 }
 .member button {
 	margin:20rpx 0 0 0;
@@ -972,6 +987,7 @@ page {
 .h5 {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	line-height: 100rpx;
 	border-top: 1rpx solid #EEEEEE;
 	margin: 0 4%;
@@ -984,6 +1000,7 @@ page {
 }
 .h5 label{
 	display: flex;
+	align-items: center;
 }
 .h5 label button{
 	height: 60rpx;
