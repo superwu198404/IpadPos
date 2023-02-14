@@ -534,12 +534,39 @@ var InitZFRULE = async function(e, func) {
 		console.log("支付规则数据和聚合数据初始化失败:", err);
 	});
 }
-
-//获取支付规则
-var GetZFRULE = async function(e, func) {
+//获取支付规则 旧版
+var GetZFRULE1 = async function(e, func) {
 	let sql = "select * from ZF_RULE where YN_USE ='Y' and source='Mobile_Pos'";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("获取支付规则数据成功：", res);
+		if (res.code) {
+			let obj = {};
+			util.setStorage("PayInfo", res.msg);
+			// getApp().globalData.PayInfo = res.msg; //首先赋值一下支付规则集合
+			for (var i = 0; i < res.msg.length; i++) {
+				if (res.msg[i].CODE) { //防止有些支付防止没有配置code
+					let codeArr = res.msg[i].CODE.split(',');
+					for (var j = 0; j < codeArr.length; j++) {
+						if (codeArr[j]) {
+							obj[codeArr[j]] = res.msg[i].TYPE;
+						}
+					}
+				}
+			}
+			util.setStorage("CodeRule", obj);
+			// getApp().globalData.CodeRule = obj;
+		}
+		if (func) func(res);
+	}, function(err) {
+		console.log("获取支付规则数据出错:", err);
+	});
+}
+//获取支付规则 新版
+var GetZFRULE = async function(e, func) {
+	let sql =
+		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos'";
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("新版本获取支付规则数据成功：", res);
 		if (res.code) {
 			let obj = {};
 			util.setStorage("PayInfo", res.msg);

@@ -241,6 +241,45 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 其他支付方式 -->
+		<view class="boxs" v-if="Paymode">
+			<view class="coupons" style="width:80%;height: 80%;">
+				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+				<view class="modeclassy">
+					<view class="curr">银行合作</view>
+					<view>异业合作</view>
+					<view>其他方式</view>
+				</view>
+				<view class="listofpay">
+					<view class="modelist">
+						<view class="modeli">
+							<view>
+							<image src="../../images/TL.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+						<view class="modeli curr">
+							<view>
+							<image src="../../images/moren-zfu.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+						<view class="modeli">
+							<view>
+							<image src="../../images/TL.png" mode="widthFix"></image>
+							<label>汉口银行</label>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="operats">
+					<button class="btn btn-qx">返回</button>
+					<button class="btn">确认</button>
+				</view>
+			</view>
+		</view>
+		
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -397,7 +436,7 @@
 				if (this.isRefund) return; //如果为退款，直接退出
 				if (Object.is(NaN, Number(n))) { //判断输入的是否是数字
 					if (o != null) {
-						console.log("[Watch-dPayAmount]数据信息:",{
+						console.log("[Watch-dPayAmount]数据信息:", {
 							new: n,
 							old: o
 						});
@@ -420,33 +459,34 @@
 				}
 				console.log(`[Watch-dPayAmount]newValue:${n},amount:${amount}`);
 				if (amount > 0) { //未完成支付，仍然存在欠款
-					console.log(`[Watch-dPayAmount]未完成支付!`,this.PayList);
+					console.log(`[Watch-dPayAmount]未完成支付!`, this.PayList);
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					if (Number(n) > this.toBePaidPrice()) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
-						console.log(`[Watch-dPayAmount]超过待支付金额!`,n);
+						console.log(`[Watch-dPayAmount]超过待支付金额!`, n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
-							console.log(`[Watch-dPayAmount]金额异常!`,{
-								new:Number(n),
-								count:this.toBePaidPrice()
+							console.log(`[Watch-dPayAmount]金额异常!`, {
+								new: Number(n),
+								count: this.toBePaidPrice()
 							});
-							util.simpleMsg('金额输入错误!', false, {
-								new_val: n || "-",
-								count_val: this.toBePaidPrice()
-							});
+						util.simpleMsg('金额输入错误!', false, {
+							new_val: n || "-",
+							count_val: this.toBePaidPrice()
+						});
 						this.dPayAmount = amount; //超过待支付金额后自动给与目前待支付金额的值
 						this.domForceRefresh();
 					} else {
-						console.log(`[Watch-dPayAmount]未超过待支付金额!`,n);
+						console.log(`[Watch-dPayAmount]未超过待支付金额!`, n);
 						let decimal = (this.dPayAmount?.toString() ?? ".")?.split('.');
-						console.log(`[Watch-dPayAmount]判断小数位数!`,decimal);
+						console.log(`[Watch-dPayAmount]判断小数位数!`, decimal);
 						if (decimal.length === 2) {
 							let count = decimal[1].length;
-							console.log("[Watch-dPayAmount]金额:",{
-								val:Number(this.dPayAmount)
+							console.log("[Watch-dPayAmount]金额:", {
+								val: Number(this.dPayAmount)
 							});
-							if ((count > 2) || (this.dPayAmount && decimal[0].length > 1 && this.dPayAmount[0] == '0')) {
+							if ((count > 2) || (this.dPayAmount && decimal[0].length > 1 && this.dPayAmount[0] ==
+									'0')) {
 								this.dPayAmount = Number(this.dPayAmount)?.toFixed(2);
 								this.domForceRefresh();
 							}
@@ -1144,7 +1184,11 @@
 									total_money: (Math.abs(Number(total || refundInfo
 											.amount) * 100))
 										.toFixed(0), //退款总金额（兼容微信）
-									point: refundInfo.origin.BMID //兼容积分抵现返还积分
+									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
+									card_no: refundInfo.origin
+										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									ywtype: this
+										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 								}, (function(err) { //如果发生异常（catch）
 									// util.simpleMsg(err.msg, true, err);
 									refundInfo.fail = true;
@@ -1925,7 +1969,11 @@
 									.toFixed(
 										0), //退款金额
 								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
-									0) //退款总金额（兼容微信）
+									0), //退款总金额（兼容微信）
+								card_no: singleRefund.origin
+									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+								ywtype: this
+									.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 							}).bind(this),
@@ -2177,5 +2225,9 @@
 		left: 10%;
 		width: 80%;
 		padding: 2% 0 3%;
+	}
+	.bom-zhifu .pattern:nth-last-child(1),.bom-zhifu .pattern:nth-last-child(2)
+	,.bom-zhifu .pattern:nth-last-child(3),.bom-zhifu .pattern:nth-last-child(4){
+		width:22%;
 	}
 </style>
