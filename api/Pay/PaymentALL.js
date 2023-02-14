@@ -431,7 +431,7 @@ var misScanCodePay = {
 			body.merchant_no = config.LONGKEY; //使用全局配置（后端
 			body.terminalCode = config.NOTE;
 			body.store_id = config.RYID;
-			console.log("[RefundAll]银联二维码退款参数:",{
+			console.log("[RefundAll]银联二维码退款参数:", {
 				config,
 				body
 			});
@@ -563,6 +563,22 @@ var szqPay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		// _RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+
+		//调用下 券退回 接口 但是不能影响主线业务
+		try {
+			//销售退货或预定取消才可进行券退回
+			console.log("券返回时的业务类型：", body.ywtype);
+			if (body.ywtype && (body.ywtype == 'Z151' || body.ywtype == 'Z171')) {
+				_Refund(pt, body, res => {
+					console.log("券返回结果：", res);
+				}, err => {
+					console.log("券返回失败：", err);
+				});
+			}
+		} catch (e) {
+			//TODO handle the exception
+			console.log("券返回异常：", e.message);
+		}
 		//退款自处理
 		if (finallyFunc)
 			finallyFunc({
@@ -748,9 +764,9 @@ var payType = {
 	HyJfExchange: pointPay, //积分抵现
 	SZQ: szqPay,
 	TL: misPay,
-	
+
 	//新增接口
-	UPAY:misScanCodePay,
+	UPAY: misScanCodePay,
 }
 
 //聚合支付主入口

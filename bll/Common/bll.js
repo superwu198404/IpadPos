@@ -219,6 +219,9 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 			SqliteSql = []
 		for (let key in dataObj) {
 			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
+			if (key == "SALE001") {
+				dataArr.XSPTID = "PAD";
+			}
 			if (key == "SALE002") {
 				dataArr.forEach(r => {
 					delete r.STR1;
@@ -238,8 +241,8 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 		console.log("[CreateSaleOrder]生成绑定BILL信息：", {
-			销售BILL:dataObj["SALE001"]?.BILL || "-",
-			赊销结算BILL:dataObj["YWSXJS"]?.BILL || "-"
+			销售BILL: dataObj["SALE001"]?.BILL || "-",
+			赊销结算BILL: dataObj["YWSXJS"]?.BILL || "-"
 		})
 		let tx_obj = {
 			TX_SQL: OracleSql,

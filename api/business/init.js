@@ -93,7 +93,7 @@ var GetPayWay = async function(e) {
 				}, {
 					name: "仟吉赠券",
 					fkid: "ZZ01",
-					type: "NOPAY",
+					type: "SZQ", //NOPAY 用于券支付退款时 通过fkid找到SZQ后 走券退回接口
 					poly: "O"
 				}, {
 					name: "预定金",
