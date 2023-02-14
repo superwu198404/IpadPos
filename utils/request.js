@@ -381,6 +381,38 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
 	if (finallyfun) def(finallyfun, res);
 }
+
+var AsyncRequesrChain = async function(pm_data, callbackfunArr, catchfun, otherfun, finallyfun) {
+	var callbacklist = [];
+	callbacklist = callbackfunArr;
+	let res = pm_data;
+	for (var i = 0; i <= callbacklist.length; i++) {
+		if (res && res.http) {
+			showloding(res.http.load, res.http.title);
+			console.log("[AsyncRequesrChain]http请求:", res);
+			res = await httpFunc(res); //发起请求
+			if (res && !res.code) { //如果请求失败，则调用配置的catch函数
+				def(catchfun, res);
+				if (res && !res.code)
+					break;
+			}
+		}
+		showloding(res.load, res.msg);
+		console.log("[AsyncRequesrChain]开始调用回调函数：", {
+			callback_list:callbacklist,
+			current_callback:callbacklist[i],
+			current_index:i
+		});
+		res = await forPromise(callbacklist[i], res);
+		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
+			def(otherfun, res);
+			break;
+		}
+	}
+	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
+	if (finallyfun) def(finallyfun, res);
+}
+
 var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 	let urlx = pm_url || '';
 	let urlArr = urlx.split('.')
@@ -427,6 +459,7 @@ export default {
 	asyncFuncOne,
 	asyncFuncArr,
 	asyncFuncArr1,
+	AsyncRequesrChain,
 	asyncFuncChain,
 	getResData
 }

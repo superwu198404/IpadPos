@@ -81,11 +81,6 @@ var GetPayWay = async function(e) {
 					type: "COUPON",
 					poly: "N"
 				}, {
-					name: "品诺支付",
-					fkid: "ZF32",
-					type: "PINNUO",
-					poly: "N",
-				}, {
 					name: "不可原路退回",
 					fkid: "ZG11",
 					type: "NO",
