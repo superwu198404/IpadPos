@@ -646,9 +646,6 @@ var kbPay = {
 	}
 }
 
-import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
-import checker from '@/utils/graceChecker.js';
-
 //仟吉积分抵现
 var pointPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
