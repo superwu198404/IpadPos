@@ -563,7 +563,7 @@ var GetZFRULE1 = async function(e, func) {
 //获取支付规则 新版
 var GetZFRULE = async function(e, func) {
 	let sql =
-		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos'";
+		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE,SEQNO from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos' order by seqno";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("新版本获取支付规则数据成功：", res);
 		if (res.code) {
