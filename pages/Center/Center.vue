@@ -9,6 +9,7 @@
 			<view class="leftlist">
 				<view class="logos">
 					<image src="@/images/hello-card.png" mode="widthFix"></image>
+					<view class="xingqi"><text>{{curWeek}}</text>{{curDate}}</view>
 				</view>
 				<view class="sginout">
 					<view @click="Sign()"><label>签到</label><text>SIGN IN</text></view>
@@ -16,9 +17,15 @@
 				</view>
 				<view class="dates">
 					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
-					<view>
-						<label><text>{{curWeek}}</text><text>{{curDate}}</text></label>
-						<image src="@/images/day-icon.png" mode="widthFix"></image>
+					<view class="sginout">
+						<view @click="Waimai()">
+							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
+							<label>外卖单</label><text>TAKE OUT</text>
+						</view>
+						<view @click="Chaxun()">
+							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
+							<label>门店查询</label><text>QUERY</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -437,7 +444,18 @@
 		overflow: hidden;
 		border-radius: 30rpx;
 	}
-
+	.leftlist .logos .xingqi{
+		position: absolute;
+		bottom:58rpx;
+		left: 5%;
+		z-index: 9;
+		font-size: 38rpx;
+		color: #fff;
+	}
+	.leftlist .logos .xingqi text{
+		font-weight: 700;
+		margin-right: 30rpx;
+	}
 	.leftlist .logos image {
 		position: absolute;
 		bottom: 0;
@@ -525,7 +543,28 @@
 		width: 140rpx;
 		height: 140rpx;
 	}
-
+	.dates .sginout{
+		width: 90%;
+		position: relative;
+		z-index: 9;
+		padding:0 5%;
+	}
+	.dates .sginout view{
+		padding:0;
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		box-shadow: none;
+	}
+	.dates .sginout view:nth-child(1){
+		border-right: 0.5px solid #C1F6D8;
+	}
+	.dates .sginout view .tubiao{
+		width:60rpx;
+		height: 60rpx;
+		margin-left: 20%;
+		margin-bottom: 26rpx;
+	}
 	.rightlist {
 		width: 53%;
 	}
@@ -680,39 +719,20 @@
 		perspective: 400px;
 
 	}
-
-
-
 	.div {
-
 		width: 100;
-
 		height: 450px;
-
 		margin: 0 auto;
-
 		position: relative;
-
 	}
 
 	.div image {
-
 		width: 100%;
-
 		height: 100%;
-
 		position: absolute;
-
 		top: 0;
-
-		/* left: 0; */
-
 		transition: all 1s;
-
 	}
-
-
-
 	.div image:first-child {
 
 		z-index: 1;
@@ -722,12 +742,5 @@
 		backface-visibility: hidden;
 
 	}
-
-
-
-	/* .div:hover image{
 	
-	            transform: rotateY(180deg);
-	
-	        } */
 </style>
