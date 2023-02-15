@@ -2238,7 +2238,7 @@
 	
 	.bom-zhifu .pattern:nth-last-child(1) .tits,.bom-zhifu .pattern:nth-last-child(2) .tits
 	,.bom-zhifu .pattern:nth-last-child(3) .tits,.bom-zhifu .pattern:nth-last-child(4) .tits{
-		font-size: 30rpx;
-		line-hright:60rpx;
+		font-size: 30rpx !important;
+		line-hright:70rpx !important;
 	}
 </style>
