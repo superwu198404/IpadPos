@@ -3,7 +3,7 @@ import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
 import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
 import checker from '@/utils/graceChecker.js';
-import common from '@/api/common.js';
+import common from '@/api/common.js'; 
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -848,11 +848,11 @@ var pinoPay = {
 							out_trade_no: body.out_trade_no
 						}));
 					console.log("[PaymentAll]支付请求参数:", request_data);
-					if (res.code && (res.data.balance - (body.money / 100)) > 0) {
+					if (res.code && (res.data.balance - (body.money / 100)) >= 0) {
 						return request_data;
 					} else {
 						request_data.code = false; //主动抛出异常
-						util.simpleMsg("卡余额不足，请充值后重试!", true);
+						util.simpleMsg(`卡余额不足，当前余额：${res.data.balance}，请充值后重试!`, true);
 						finallyFunc?.call();
 						return;
 					}
@@ -942,6 +942,7 @@ var pinoPay = {
 					return CreateData(pt, "退款中...", "Refund", Object.assign(
 					base_require_request_params(), {
 						out_refund_no: body.point, //品诺渠道单号
+						posid: body.out_refund_no, //品诺渠道单号
 					}));
 				}
 			], catchFunc, finallyFunc, resultsFunc);
@@ -981,7 +982,7 @@ var payType = {
 	ZFB20: zfbPay, //支付宝支付
 	PAYCARD: hykPay, //仟吉电子卡
 	PAYBRUSHCARD: kengeePay, //仟吉实体卡
-	HyJfExchange: pointPay, //积分抵现
+	HyJfExchange: pointPay, //积分抵现 
 	SZQ: szqPay, //电子券支付
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
