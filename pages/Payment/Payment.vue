@@ -967,7 +967,20 @@
 									if (res.confirm) {
 										if (res.content) {
 											this.authCode = res.content; //获取扫码的 authCode
+											let current_pay_info = this.PayWayInfo(this
+												.PayTypeJudgment());
+											console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
 											console.log("[Pay]authCode:", this.authCode);
+											console.log("[Pay]支付信息：", {
+												current_pay_info,
+												pay_type: this.currentPayType
+											});
+											if (Object.keys(current_pay_info).length && current_pay_info
+												.poly != 'Y' && this.currentPayType == 'POLY') {
+												util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
+												this.authCode = "";
+												return;
+											}
 											that.PayHandle();
 										}
 									}
@@ -978,7 +991,19 @@
 								success: (function(res) {
 									let code = common.ResetAuthCode(res.result);
 									this.authCode = code; //获取扫码的 authCode
+									let current_pay_info = this.PayWayInfo(this.PayTypeJudgment());
+									console.log("[Pay]扫码判断支付方式信息:", pay_info);
 									console.log("[Pay]scanCode:", res);
+									console.log("[Pay]支付信息：", {
+										current_pay_info,
+										pay_type: this.currentPayType
+									});
+									if (Object.keys(current_pay_info).length && current_pay_info
+										.poly != 'Y' && this.currentPayType == 'POLY') {
+										util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
+										this.authCode = "";
+										return;
+									}
 									that.PayHandle();
 								}).bind(this),
 								fail(err) {
@@ -1336,7 +1361,7 @@
 				console.log("[PayHandle]支付开始...");
 				this.in_payment = true; //必须放这里
 				_pay.PaymentAll(info.type, payAfter, (function(result) {
-						this.in_payment = false; //必须放这里
+						this.operationAfterSinglePayment();
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1345,7 +1370,6 @@
 						util.simpleMsg("支付成功!");
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
-						this.authCode = ""; //避免同一个付款码多次使用
 						this.orderGenarator(payAfter, info.type, result.data, false,
 							info); //支付记录处理(成功)
 						if (this.debt > 0) {
@@ -1357,11 +1381,10 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
-						this.in_payment = false;
+						this.operationAfterSinglePayment();
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);
-						this.authCode = ""; //避免同一个付款码多次使用
 						console.log("[Payment-付款]包装信息:", {
 							assemble: payAfter,
 							type: info.type
@@ -1370,9 +1393,13 @@
 							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this),
 					(function(end) { //finally
-						this.in_payment = false;
+						this.operationAfterSinglePayment();
 					}).bind(this)
 				)
+			},
+			operationAfterSinglePayment: function() {
+				this.in_payment = false;
+				this.authCode = ""; //避免同一个付款码多次使用
 			},
 			//支付后创建支付记录
 			orderGenarator: function(payload, type, result, fail, type_info) {
@@ -2239,11 +2266,9 @@
 		width: 80%;
 		padding: 2% 0 3%;
 	}
-
-	.bom-zhifu .pattern:nth-child(1),
-	.bom-zhifu .pattern:nth-child(2),
-	.bom-zhifu .pattern:nth-child(3) {
-		width: 47% !important;
+	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
+	,.bom-zhifu .pattern:nth-child(3),.bom-zhifu .pattern:nth-child(4){
+		width:47% !important;
 	}
 
 	.bom-zhifu .pattern:nth-last-child(1),
@@ -2257,7 +2282,7 @@
 	.bom-zhifu .pattern:nth-last-child(2) .tits,
 	.bom-zhifu .pattern:nth-last-child(3) .tits,
 	.bom-zhifu .pattern:nth-last-child(4) .tits {
-		font-size: 30rpx;
-		line-hright: 60rpx;
+		font-size: 30rpx !important;
+		line-hright:70rpx !important;
 	}
 </style>
