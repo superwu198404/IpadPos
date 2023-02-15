@@ -467,6 +467,7 @@ var GetPZCS = async function(e, func) {
 		console.log("获取档案参数出错:", err);
 	});
 }
+
 //初始化支付规则（测试使用）
 var InitZFRULE = async function(e, func) {
 	//创建表结构和测试数据 后期可挪到数据库中初始化
@@ -563,7 +564,7 @@ var GetZFRULE1 = async function(e, func) {
 //获取支付规则 新版
 var GetZFRULE = async function(e, func) {
 	let sql =
-		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos'";
+		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE,SEQNO from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos' order by seqno";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("新版本获取支付规则数据成功：", res);
 		if (res.code) {
@@ -645,11 +646,13 @@ var GetPOSCS_Local = function(e) {
 	}
 	return "";
 }
+
 //支付行为
 var actTypeEnum = {
 	Payment: "Payment", //支付
 	Refund: "Refund", //退款
 }
+
 //y业务类型
 var ywTypeEnum = {
 	QTBS: "QTBS",
@@ -697,6 +700,7 @@ var GetTXFILE = async function(e) {
 	})
 	return arr;
 }
+
 //确定是支付业务还是退款业务
 var GetPayOrRefund = function(sale1) {
 	if (sale1) {
@@ -742,6 +746,23 @@ var newFixed = function(num, decimalPlaces) {
 		((i % 2 == 0) ? i : i + 1) : Math.round(n);
 	return d ? r / m : r;
 }
+
+const default_request_options = {
+	namespace: "MobilePos_API.Models", //反射命名空间（默认models）
+	class: "", //反射类名（非空）
+	method: "", //反射接口（非空）
+	data: null, //反射调用传入参数（给 method 用的）
+	success: () => console.log(`[SimpleAPIRequest]接口调用成功...`),
+	error: () => console.log(`[SimpleAPIRequest]接口调用失败...`)
+}
+//简易反射接口请求模板(默认Models下的类)
+var SimpleAPIRequest = function(options = default_request_options) {
+	var default_params = Object.assign({}, default_request_options);
+	options = Object.assign(default_params, options);
+	let reqdata = Req.resObj(true, "操作中...", options.data, `${options.namespace}.${options.class}.${options.method}`);
+	return Req.asyncFuncOne(reqdata, options.success, options.error);
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -767,5 +788,6 @@ export default {
 	GetTXFILE,
 	GetPayOrRefund,
 	ResetAuthCode,
-	newFixed
+	newFixed,
+	SimpleAPIRequest
 }

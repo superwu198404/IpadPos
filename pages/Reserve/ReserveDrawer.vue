@@ -366,7 +366,7 @@
 					KHID: this.KHID
 				},util.callBind(this,function(res){
 					let data = JSON.parse(res.data);
-					console.log("[IsForeignStore]查询结果:",data);
+					console.log("[IsForeignStore]查询结果:",{raw:res,data});
 					if(!(data && data.length)){
 						this.Order.THTYPE = 0;
 						this.index = 0;

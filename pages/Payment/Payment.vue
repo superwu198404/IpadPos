@@ -1365,7 +1365,11 @@
 						});
 						this.orderGenarator(payAfter, info.type, null, true,
 							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
-					}).bind(this))
+					}).bind(this),
+					(function(end) {//finally
+						this.in_payment = false;
+					}).bind(this)
+				)
 			},
 			//支付后创建支付记录
 			orderGenarator: function(payload, type, result, fail, type_info) {
