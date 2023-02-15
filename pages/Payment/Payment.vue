@@ -2227,8 +2227,7 @@
 		padding: 2% 0 3%;
 	}
 	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
-	,.bom-zhifu .pattern:nth-child(3),.bom-zhifu .pattern:nth-child(4)
-	,.bom-zhifu .pattern:nth-child(5),.bom-zhifu .pattern:nth-child(6){
+	,.bom-zhifu .pattern:nth-child(3),.bom-zhifu .pattern:nth-child(4){
 		width:47% !important;
 	}
 	.bom-zhifu .pattern:nth-last-child(1),.bom-zhifu .pattern:nth-last-child(2)
