@@ -230,8 +230,8 @@
 								<view class="directions">
 									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
 									<view>使用说明:<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text></view>
-										<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
-									
+									<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
+
 									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
 											mode="widthFix"></image></button>
 								</view>
@@ -241,7 +241,7 @@
 				</view>
 			</view>
 		</view>
-		
+
 		<!-- 其他支付方式 -->
 		<view class="boxs" v-if="Paymode">
 			<view class="coupons" style="width:80%;height: 80%;">
@@ -255,20 +255,20 @@
 					<view class="modelist">
 						<view class="modeli">
 							<view>
-							<image src="../../images/TL.png" mode="widthFix"></image>
-							<label>汉口银行</label>
+								<image src="../../images/TL.png" mode="widthFix"></image>
+								<label>汉口银行</label>
 							</view>
 						</view>
 						<view class="modeli curr">
 							<view>
-							<image src="../../images/moren-zfu.png" mode="widthFix"></image>
-							<label>汉口银行</label>
+								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
+								<label>汉口银行</label>
 							</view>
 						</view>
 						<view class="modeli">
 							<view>
-							<image src="../../images/TL.png" mode="widthFix"></image>
-							<label>汉口银行</label>
+								<image src="../../images/TL.png" mode="widthFix"></image>
+								<label>汉口银行</label>
 							</view>
 						</view>
 					</view>
@@ -279,7 +279,7 @@
 				</view>
 			</view>
 		</view>
-		
+
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -1185,6 +1185,9 @@
 											.amount) * 100))
 										.toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
+									auth_code: refundInfo.origin
+										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
 									ywtype: this
@@ -1366,7 +1369,7 @@
 						this.orderGenarator(payAfter, info.type, null, true,
 							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 					}).bind(this),
-					(function(end) {//finally
+					(function(end) { //finally
 						this.in_payment = false;
 					}).bind(this)
 				)
@@ -1387,9 +1390,15 @@
 							card = result.vouchers.filter(i => i.yn_card === 'Y');
 						if (coupon.length > 0) {
 							console.log("[OrderGenarator]券 payload.money：", payload.money)
-							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
-								.vouchers[0].denomination) / 100;
+							let fq = coupon.find(i => i.note === "EXCESS"); //针对仟吉券
+							if (fq) {
+								return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+									.vouchers[0].denomination) / 100;
+							} else { //其他券支付 如可伴券
+								let num = 0;
+								coupon.map(i => num += i.pay_amount);
+								return num / 100
+							}
 						} else {
 							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
@@ -1463,7 +1472,8 @@
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no, //保存失败的订单号
-						auth_code: ['ZF09', 'ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
+						auth_code: ['ZF09', 'ZZ01', 'ZF22'].includes(payload.memo) ? payload.auth_code :
+							"" //保存失败的券号
 					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
@@ -1970,6 +1980,9 @@
 										0), //退款金额
 								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
 									0), //退款总金额（兼容微信）
+								auth_code: singleRefund.origin
+									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+								store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 								card_no: singleRefund.origin
 									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
 								ywtype: this
@@ -2226,18 +2239,25 @@
 		width: 80%;
 		padding: 2% 0 3%;
 	}
-	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
-	,.bom-zhifu .pattern:nth-child(3){
-		width:47% !important;
+
+	.bom-zhifu .pattern:nth-child(1),
+	.bom-zhifu .pattern:nth-child(2),
+	.bom-zhifu .pattern:nth-child(3) {
+		width: 47% !important;
 	}
-	.bom-zhifu .pattern:nth-last-child(1),.bom-zhifu .pattern:nth-last-child(2)
-	,.bom-zhifu .pattern:nth-last-child(3),.bom-zhifu .pattern:nth-last-child(4){
-		width:22%;
+
+	.bom-zhifu .pattern:nth-last-child(1),
+	.bom-zhifu .pattern:nth-last-child(2),
+	.bom-zhifu .pattern:nth-last-child(3),
+	.bom-zhifu .pattern:nth-last-child(4) {
+		width: 22%;
 	}
-	
-	.bom-zhifu .pattern:nth-last-child(1) .tits,.bom-zhifu .pattern:nth-last-child(2) .tits
-	,.bom-zhifu .pattern:nth-last-child(3) .tits,.bom-zhifu .pattern:nth-last-child(4) .tits{
+
+	.bom-zhifu .pattern:nth-last-child(1) .tits,
+	.bom-zhifu .pattern:nth-last-child(2) .tits,
+	.bom-zhifu .pattern:nth-last-child(3) .tits,
+	.bom-zhifu .pattern:nth-last-child(4) .tits {
 		font-size: 30rpx;
-		line-hright:60rpx;
+		line-hright: 60rpx;
 	}
 </style>

@@ -940,9 +940,9 @@ var pinoPay = {
 					console.log("[RefundAll]第一次结果（QueryPayment）:", res);
 					console.log("[RefundAll]准备被退款的渠道单号:", body.point);
 					return CreateData(pt, "退款中...", "Refund", Object.assign(
-					base_require_request_params(), {
-						out_refund_no: body.point, //品诺渠道单号
-					}));
+						base_require_request_params(), {
+							out_refund_no: body.point, //品诺渠道单号
+						}));
 				}
 			], catchFunc, finallyFunc, resultsFunc);
 		}
@@ -986,7 +986,7 @@ var payType = {
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）
-	COUPON: kbPay,
+	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
 }
 
