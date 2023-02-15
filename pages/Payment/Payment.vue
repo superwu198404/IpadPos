@@ -2253,11 +2253,9 @@
 		width: 80%;
 		padding: 2% 0 3%;
 	}
-
-	.bom-zhifu .pattern:nth-child(1),
-	.bom-zhifu .pattern:nth-child(2),
-	.bom-zhifu .pattern:nth-child(3) {
-		width: 47% !important;
+	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
+	,.bom-zhifu .pattern:nth-child(3),.bom-zhifu .pattern:nth-child(4){
+		width:47% !important;
 	}
 
 	.bom-zhifu .pattern:nth-last-child(1),
@@ -2271,7 +2269,7 @@
 	.bom-zhifu .pattern:nth-last-child(2) .tits,
 	.bom-zhifu .pattern:nth-last-child(3) .tits,
 	.bom-zhifu .pattern:nth-last-child(4) .tits {
-		font-size: 30rpx;
-		line-hright: 60rpx;
+		font-size: 30rpx !important;
+		line-hright:70rpx !important;
 	}
 </style>
