@@ -2175,7 +2175,6 @@
 	.refund-more-box {
 		display: flex;
 	}
-
 	.refund-reset {
 		background-color: var(--green);
 		color: white;
