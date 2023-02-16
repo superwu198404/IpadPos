@@ -713,10 +713,16 @@ page {
 	float: left;
 	margin-bottom: 40rpx;
 	margin: 0 1.5% 40rpx;
+	display: flex;
+	justify-content: space-between;
 }
-
+.nots .tits {
+	display: block;
+	width:70%;
+}
 .nots .tits p {
 	color: #ccc;
+	width: 100%;
 }
 .selected .tits p {
 	color: #333;
