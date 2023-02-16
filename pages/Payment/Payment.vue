@@ -1210,6 +1210,9 @@
 											.amount) * 100))
 										.toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
+									auth_code: refundInfo.origin
+										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
 									ywtype: this
@@ -1414,9 +1417,15 @@
 							card = result.vouchers.filter(i => i.yn_card === 'Y');
 						if (coupon.length > 0) {
 							console.log("[OrderGenarator]券 payload.money：", payload.money)
-							let fq = coupon.find(i => i.note === "EXCESS");
-							return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
-								.vouchers[0].denomination) / 100;
+							let fq = coupon.find(i => i.note === "EXCESS"); //针对仟吉券
+							if (fq) {
+								return (coupon.length > 1 ? (fq.denomination - fq.pay_amount) : result
+									.vouchers[0].denomination) / 100;
+							} else { //其他券支付 如可伴券
+								let num = 0;
+								coupon.map(i => num += i.pay_amount);
+								return num / 100
+							}
 						} else {
 							console.log("[OrderGenarator]卡 payload.money：", card)
 							let num = 0;
@@ -1490,7 +1499,8 @@
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no, //保存失败的订单号
-						auth_code: ['ZF09', 'ZZ01'].includes(payload.memo) ? payload.auth_code : "" //保存失败的券号
+						auth_code: ['ZF09', 'ZZ01', 'ZF22'].includes(payload.memo) ? payload.auth_code :
+							"" //保存失败的券号
 					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);
@@ -1997,6 +2007,9 @@
 										0), //退款金额
 								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
 									0), //退款总金额（兼容微信）
+								auth_code: singleRefund.origin
+									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+								store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 								card_no: singleRefund.origin
 									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
 								ywtype: this

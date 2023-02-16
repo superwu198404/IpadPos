@@ -814,8 +814,9 @@ var pinoPay = {
 				catchFunc({
 					msg: "未传入卡号!"
 				});
+			var is_pe_code = body.auth_code.substr(0, 2) == "PE";//判断是否是 PE 码（PE、PN）
 			var card_no = body.auth_code.substr(2, 11);
-			var password = body.auth_code.substr(13) ?? 0;
+			var password = body.auth_code.substr(13) || 0;
 			console.log("[PaymentAll]品诺支付:", {
 				card_no,
 				password
@@ -837,13 +838,16 @@ var pinoPay = {
 					console.log("[PaymentAll]第二次结果（QueryCardDetails）:", res);
 					console.log("[PaymentAll]支付金额:", {
 						card_balance: res.data.balance,
-						order_balance: body.money
+						order_balance: body.money,
+						card_id: res.data.card_id,
+						query_password: res.data.card_password,
+						password,
 					});
 					var request_data = CreateData(pt, "支付中...", "Payment", Object.assign(
 						base_require_request_params(), {
 							ryid: getApp().globalData.store.KHID,
-							card_no: card_no,
-							auth_code: password,
+							card_no: is_pe_code ? res.data.card_id : card_no,//如果是PE码则传入查询卡信息返回的card_id,否则按照PN规则传入
+							auth_code: is_pe_code ? res.data.card_password : password,
 							money: body.money,
 							out_trade_no: body.out_trade_no
 						}));
@@ -987,7 +991,7 @@ var payType = {
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）
-	COUPON: kbPay,
+	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
 }
 
