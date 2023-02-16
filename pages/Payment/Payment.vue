@@ -243,8 +243,8 @@
 			</view>
 		</view>
 
-		<!-- 其他支付方式 -->
-		<view class="boxs" v-if="Paymode">
+		<!-- 其他支付方式 v-if="Paymode"-->
+		<view class="boxs" >
 			<view class="coupons" style="width:80%;height: 80%;">
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
@@ -2284,7 +2284,7 @@
 	.bom-zhifu .pattern:nth-last-child(3) .tits p,
 	.bom-zhifu .pattern:nth-last-child(4) .tits p {
 		font-size: 30rpx !important;
-		line-height:60rpx !important;
+		line-height:56rpx !important;
 		width:90%;
 	}
 	/* .bom-zhifu .pattern:nth-last-child(1) .tits p,

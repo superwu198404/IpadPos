@@ -1354,6 +1354,7 @@ uni-button:after {
 	padding:0 5% 0 15%;
 	width:96%;
 	font-weight: 500;
+	font-size: 36rpx;
 }
 .modeli view label{
 	display: block;
