@@ -1432,6 +1432,7 @@
 							card.map(i => num += i.pay_amount);
 							return num / 100
 						}
+						
 					} else {
 						let pay_amount = 0;
 						if (type == 'HyJfExchange') pay_amount = payload.point_money;
@@ -2146,7 +2147,6 @@
 				} catch (err) {
 					console.log("HYID:", err);
 				}
-
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
