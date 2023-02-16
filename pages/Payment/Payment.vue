@@ -202,7 +202,7 @@
 							</view>
 							<view class="pattern nots curr" @click="clickPayType('Others',$event)">
 								<view class="tits">
-									<p>其他</p>
+									<p>更多</p>
 								</view>
 								<image src="../../images/moren-zfu.png" mode="widthFix">
 							</view>
@@ -252,35 +252,25 @@
 			<view class="coupons" style="width:80%;height: 80%;">
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
-					<view class="curr">银行合作</view>
-					<view>异业合作</view>
-					<view>其他方式</view>
+					<view :class="PayMode=='93'?'curr':' '" @click="PayMode='93'">银行合作</view>
+					<view :class="PayMode=='95'?'curr':' '" @click="PayMode='95'">异业合作</view>
+					<view :class="PayMode=='98'?'curr':' '" @click="PayMode='98'">其他方式</view>
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
-						<view class="modeli">
-							<view>
-								<image src="../../images/TL.png" mode="widthFix"></image>
-								<label>汉口银行</label>
-							</view>
-						</view>
-						<view class="modeli curr">
+						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
+							:class="currentPayType == item.type ? 'modeli curr':'modeli'" :id="item.type"
+							@click="clickPayType(item,$event)">
 							<view>
 								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
-								<label>汉口银行</label>
-							</view>
-						</view>
-						<view class="modeli">
-							<view>
-								<image src="../../images/TL.png" mode="widthFix"></image>
-								<label>汉口银行</label>
+								<label>{{item.name}}</label>
 							</view>
 						</view>
 					</view>
 				</view>
 				<view class="operats">
 					<button class="btn btn-qx" @click="Others_ReturnPay">返回</button>
-					<button class="btn" @click="Others_ConfirmPay">确认</button>
+					<button class="btn" @click="ActionSwtich()">确认支付</button>
 				</view>
 			</view>
 		</view>
@@ -431,6 +421,7 @@
 				PAD_SCAN: true, //默认pad扫码 
 				showSMQ: false, //是否显示扫码枪
 				ShowOthersPay: false, //是否显示其他支付方式
+				PayMode: '93', //支付类型
 			}
 		},
 		watch: {
@@ -2309,8 +2300,8 @@
 	.bom-zhifu .pattern:nth-last-child(3) .tits p,
 	.bom-zhifu .pattern:nth-last-child(4) .tits p {
 		font-size: 30rpx !important;
-		line-height:56rpx !important;
-		width:90%;
+		line-height: 56rpx !important;
+		width: 90%;
 	}
 
 	/* .bom-zhifu .pattern:nth-last-child(1) .tits p,
