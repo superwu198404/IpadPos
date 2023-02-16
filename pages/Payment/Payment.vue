@@ -200,9 +200,13 @@
 								</view>
 								<image :src="item.icon" mode="widthFix">
 							</view>
-							
+							<view class="pattern nots curr" @click="clickPayType('Others',$event)">
+								<view class="tits">
+									<p>其他</p>
+								</view>
+								<image src="../../images/moren-zfu.png" mode="widthFix">
+							</view>
 						</view>
-
 					</view>
 					<!-- </p> -->
 					<button class="btn gopays" @click="ActionSwtich()">{{ isRefund ? "退 款":"支 付"}}</button>
@@ -243,8 +247,8 @@
 			</view>
 		</view>
 
-		<!-- 其他支付方式 v-if="Paymode"-->
-		<view class="boxs" >
+		<!-- 其他支付方式 -->
+		<view class="boxs" v-if="ShowOthersPay">
 			<view class="coupons" style="width:80%;height: 80%;">
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
@@ -275,8 +279,8 @@
 					</view>
 				</view>
 				<view class="operats">
-					<button class="btn btn-qx">返回</button>
-					<button class="btn">确认</button>
+					<button class="btn btn-qx" @click="Others_ReturnPay">返回</button>
+					<button class="btn" @click="Others_ConfirmPay">确认</button>
 				</view>
 			</view>
 		</view>
@@ -426,6 +430,7 @@
 				hyinfo: {}, //当前会员信息
 				PAD_SCAN: true, //默认pad扫码 
 				showSMQ: false, //是否显示扫码枪
+				ShowOthersPay: false, //是否显示其他支付方式
 			}
 		},
 		watch: {
@@ -976,7 +981,8 @@
 												current_pay_info,
 												pay_type: this.currentPayType
 											});
-											if (Object.keys(current_pay_info).length && current_pay_info
+											if (Object.keys(current_pay_info).length &&
+												current_pay_info
 												.poly != 'Y' && this.currentPayType == 'POLY') {
 												util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
 												this.authCode = "";
@@ -1433,7 +1439,6 @@
 							card.map(i => num += i.pay_amount);
 							return num / 100
 						}
-						
 					} else {
 						let pay_amount = 0;
 						if (type == 'HyJfExchange') pay_amount = payload.point_money;
@@ -1822,6 +1827,11 @@
 					r,
 					e
 				});
+				if (r == 'Others') { //点击其他支付
+					this.ShowOthersPay = true;
+					console.log("展示其他方式");
+					return;
+				}
 				// if(!e.currentTarget.id) return;
 				let poly = this.is_poly;
 				this.is_poly = e.currentTarget.id === 'POLY'; //如果是 POLY 则是聚合，否则不是
@@ -2148,6 +2158,7 @@
 				} catch (err) {
 					console.log("HYID:", err);
 				}
+
 			},
 			//获取水吧商品
 			GetSBData: function(e) {
@@ -2168,7 +2179,16 @@
 			onUnload: function(e) {
 				console.log("页面卸载事件：");
 				util.removeStorage("hyinfo"); //支付完成后清除下会员信息
-			}
+			},
+			//其他支付 相关方法
+			//返回操作
+			Others_ReturnPay: function(e) {
+				this.ShowOthersPay = false;
+			},
+			//确认操作
+			Others_ConfirmPay: function(e) {
+				this.ShowOthersPay = false;
+			},
 		},
 		async created() {
 			console.log("进入created方法");
@@ -2189,6 +2209,7 @@
 	.refund-more-box {
 		display: flex;
 	}
+
 	.refund-reset {
 		background-color: var(--green);
 		color: white;
@@ -2266,9 +2287,13 @@
 		width: 80%;
 		padding: 2% 0 3%;
 	}
-	.bom-zhifu .pattern:nth-child(1),.bom-zhifu .pattern:nth-child(2)
-	,.bom-zhifu .pattern:nth-child(3),.bom-zhifu .pattern:nth-child(4),.pattern:nth-child(5){
-		width:47% !important;
+
+	.bom-zhifu .pattern:nth-child(1),
+	.bom-zhifu .pattern:nth-child(2),
+	.bom-zhifu .pattern:nth-child(3),
+	.bom-zhifu .pattern:nth-child(4),
+	.pattern:nth-child(5) {
+		width: 47% !important;
 	}
 
 	.bom-zhifu .pattern:nth-last-child(1),
@@ -2276,7 +2301,7 @@
 	.bom-zhifu .pattern:nth-last-child(3),
 	.bom-zhifu .pattern:nth-last-child(4) {
 		width: 22%;
-		padding:0 1% 0 2%;
+		padding: 0 1% 0 2%;
 	}
 
 	.bom-zhifu .pattern:nth-last-child(1) .tits p,
@@ -2287,6 +2312,7 @@
 		line-height:56rpx !important;
 		width:90%;
 	}
+
 	/* .bom-zhifu .pattern:nth-last-child(1) .tits p,
 	.bom-zhifu .pattern:nth-last-child(2) .tits p,
 	.bom-zhifu .pattern:nth-last-child(3) .tits p,
