@@ -98,7 +98,7 @@ var GetPayWay = async function(e) {
 					name: "不可原路退回",
 					fkid: "ZG11",
 					type: "NO",
-					poly: "O",
+					poly: "O", //不显示的支付方式
 					seq: 100
 				}, {
 					name: "仟吉赠券",
@@ -129,10 +129,28 @@ var GetPayWay = async function(e) {
 					PayWayList.push(arr[i]);
 				}
 			}
+			let arr1 = res.msg.filter(r => {
+				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") & r.FKJBID ==
+					'2');
+			}).map((r, i) => {
+				return {
+					name: r.SNAME,
+					fkid: r.FKID,
+					type: r.JKSNAME || 'NOPAY',
+					dbm: r.YN_DBM,
+					zklx: r.ZKLX,
+					fkid_f: r.FKID_F,
+					yn_use: 'N',
+					poly: "S", //更多中的支付方式
+					seq: PayWayList.length + i + 1
+				}
+			})
+			PayWayList = PayWayList.concat(arr1);
+			console.log("筛选后的二级支付方式：", arr1);
+			PayWayList = PayWayList.sort((r, r1) => {
+				return r.seq - r1.seq;
+			})
 		}
-		PayWayList = PayWayList.sort((r, r1) => {
-			return r.seq - r1.seq;
-		})
 		console.log("获取到的支付方式：", PayWayList);
 		util.setStorage("PayWayList", PayWayList);
 	})

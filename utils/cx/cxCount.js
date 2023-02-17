@@ -59,6 +59,8 @@ let NET = "NET";
 let fsdcx = new Array();
 //保存商品价格
 let sdprice = [];
+//0:优先积分促销  1:放弃积分促销
+let is_Points = 0;
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
@@ -277,7 +279,7 @@ const Cxdict = async () => {
 }
 
 //计算促销的方法
-const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
+const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 	console.log("Createcx计算促销传入的商品sale02_arr=================", {
 		xstype,
 		sale02_arr,
@@ -297,10 +299,15 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel) => {
 	if (hyinfoModel != null) {
 		hymen = hyinfoModel;
 		isHy = cx_util.DefaultNull(hyinfoModel, hyinfoModel.hyId) != "" ? true : false;
+	}else{
+		hymen = {};
+		isHy = false;
 	}
+	
 	//清除计算过的集合
 	ClearResult();
-
+	
+	is_Points = ispoints;
 	let respData = new Object();
 	let sale02_order = [];
 	let spid = "";
@@ -502,13 +509,20 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (!ynpastCx(cxbill)) {
 				continue;
 			}
+			//时段促销校验
 			if (!ynjsCx(cxbill)) {
 				continue;
 			}
+			//会员促销方式校验
 			if (!ynjsCxforHy(cxbill)) {
 				continue;
 			}
+			//销售方式校验
 			if (!xsTypeCheck(cxbill, is_Xstype)) {
+				continue;
+			}
+			//0:优先积分促销  1:放弃积分促销 校验
+			if (!isPointsCheck(cxbill, is_Points)) {
 				continue;
 			}
 
@@ -652,6 +666,19 @@ const xsTypeCheck = function(bill, is_Xstype) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+//0:优先积分促销、1:放弃积分促销
+const isPointsCheck = function(bill,isPoints) {
+	let mcc = cxdict.get(bill);
+	console.log("isPointsCheck", mcc.cxtype);
+	if ((mcc.cxtype == "D" || mcc.cxtype == "G") && isPoints == 0 ) {
+		return true;
+	} else if((mcc.cxtype == "D" || mcc.cxtype == "G") && isPoints == 1 ){
+		return false;
+	}else {
+		return true;
 	}
 }
 
@@ -1735,6 +1762,7 @@ const ClearResult = function() {
 	cxSelectTip = [];
 	cxbilldts = [];
 	sdprice = [];
+	is_Points = 0;
 }
 
 //清除所有全局数据

@@ -3646,7 +3646,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
 			//调用促销计算
-			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval);
+			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval, 0);
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额

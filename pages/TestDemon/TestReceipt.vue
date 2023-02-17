@@ -38,14 +38,14 @@
 </template>
 
 <script>
-	// import esc from '@/utils/xprinter/esc.js';
-	// import xprinter_util from '@/utils/xprinter/util.js';
-	//import qrCode from '@/utils/xprinter/weapp-qrcode.js';
+	import esc from '@/utils/xprinter/esc.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
+	import qrCode from '@/utils/xprinter/weapp-qrcode.js';
 
-	// import common from '@/api/common.js';
-	// import Req from '@/utils/request.js';
-	// import util from '@/utils/util.js';
-	// import bleConnect from '@/utils/xprinter/bleConnect.js';
+	import common from '@/api/common.js';
+	import Req from '@/utils/request.js';
+	import util from '@/utils/util.js';
+	//import bleConnect from '@/utils/xprinter/bleConnect.js';
 
 	export default {
 		data() {
@@ -77,50 +77,50 @@
 		},
 		//生命周期函数--监听页面加载
 		onLoad: function(options) {
-			// var that = this;
-			// setTimeout(() => {
-			// 	that.couponQrCode()
-			// }, 50);
+			var that = this;
+			setTimeout(() => {
+				that.couponQrCode()
+			}, 50);
 		},
 		//生命周期函数--监听页面初次渲染完成
 		onReady: function() {
-			// var list = [];
-			// var numList = [];
-			// var j = 0;
-			// //打印字节数组
-			// for (var i = 10000; i <= 200000; i += 10000) {
-			// 	list[j] = i;
-			// 	j++;
-			// }
-			// //打印份数数组
-			// for (var i = 1; i <= 10; i++) {
-			// 	numList[i - 1] = i;
-			// }
-			// this.setData({
-			// 	buffSize: list,
-			// 	oneTimeData: list[3],
-			// 	printNum: numList,
-			// 	printerNum: numList[0]
-			// });
+			var list = [];
+			var numList = [];
+			var j = 0;
+			//打印字节数组
+			for (var i = 10000; i <= 200000; i += 10000) {
+				list[j] = i;
+				j++;
+			}
+			//打印份数数组
+			for (var i = 1; i <= 10; i++) {
+				numList[i - 1] = i;
+			}
+			this.setData({
+				buffSize: list,
+				oneTimeData: list[3],
+				printNum: numList,
+				printerNum: numList[0]
+			});
 		},
 		created: function(e) {
-			// let that = this;
-			// //初始化画布
-			// that.initPhoto();
+			let that = this;
+			//初始化画布
+			that.initPhoto();
 		},
 		methods: {
 			//二维码生成工具
-			// couponQrCode: function() {
-			// 	let that = this;
-			// 	new qrCode('couponQrcode', {
-			// 		text: "",
-			// 		width: that.qrCodeWidth,
-			// 		height: that.qrCodeHeight,
-			// 		colorDark: "#333333",
-			// 		colorLight: "#FFFFFF",
-			// 		correctLevel: qrCode.CorrectLevel.H
-			// 	})
-			// },	
+			couponQrCode: function() {
+				let that = this;
+				new qrCode('couponQrcode', {
+					text: "",
+					width: that.qrCodeWidth,
+					height: that.qrCodeHeight,
+					colorDark: "#333333",
+					colorLight: "#FFFFFF",
+					correctLevel: qrCode.CorrectLevel.L
+				})
+			},	
 			//初始化画布数据
 			initPhoto: function() {
 				//初始化画布数据

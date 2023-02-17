@@ -200,9 +200,10 @@
 								</view>
 								<image :src="item.icon" mode="widthFix">
 							</view>
-							<view class="pattern nots curr" @click="clickPayType('Others',$event)">
-								<view class="tits">
-									<p>其他</p>
+							<view class="pattern nots curr" @click="clickPayType('Others',$event)"
+								:class="currentPayType === 'Others' ? 'selected':''">
+								<view class="tits seltss">
+									<p>更多</p>
 								</view>
 								<image src="../../images/moren-zfu.png" mode="widthFix">
 							</view>
@@ -252,35 +253,25 @@
 			<view class="coupons" style="width:80%;height: 80%;">
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
-					<view class="curr">银行合作</view>
-					<view>异业合作</view>
-					<view>其他方式</view>
+					<view :class="PayMode=='93'?'curr':' '" @click="PayMode='93'">银行合作</view>
+					<view :class="PayMode=='95'?'curr':' '" @click="PayMode='95'">异业合作</view>
+					<view :class="PayMode=='98'?'curr':' '" @click="PayMode='98'">其他方式</view>
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
-						<view class="modeli">
-							<view>
-								<image src="../../images/TL.png" mode="widthFix"></image>
-								<label>汉口银行</label>
-							</view>
-						</view>
-						<view class="modeli curr">
+						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
+							:class="currentPayType == item.type ? 'modeli curr':'modeli'" :id="item.type"
+							@click="clickPayType(item,$event)">
 							<view>
 								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
-								<label>汉口银行</label>
-							</view>
-						</view>
-						<view class="modeli">
-							<view>
-								<image src="../../images/TL.png" mode="widthFix"></image>
-								<label>汉口银行</label>
+								<label>{{item.name}}</label>
 							</view>
 						</view>
 					</view>
 				</view>
 				<view class="operats">
 					<button class="btn btn-qx" @click="Others_ReturnPay">返回</button>
-					<button class="btn" @click="Others_ConfirmPay">确认</button>
+					<button class="btn" @click="ActionSwtich()">确认支付</button>
 				</view>
 			</view>
 		</view>
@@ -433,6 +424,7 @@
 				PAD_SCAN: true, //默认pad扫码 
 				showSMQ: false, //是否显示扫码枪
 				ShowOthersPay: false, //是否显示其他支付方式
+				PayMode: '93', //支付类型
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
 			}
 		},
@@ -965,12 +957,12 @@
 			Pay: function() {
 				let that = this; //适配真机
 				console.log("[Pay]当前支付类型:", this.currentPayType);
-				let pay_info = this.PayWayInfo(this.currentPayType);
-				console.log("[Pay]当前支付类型信息:", pay_info);
-				if (!this.currentPayType) {
-					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
+				if (!this.currentPayType || this.currentPayType == 'Others') { //增加其他选项 不允许支付的控制
+					util.simpleMsg("请选择支付方式后再进行支付!", false);
 					return;
 				}
+				let pay_info = this.PayWayInfo(this.currentPayType);
+				console.log("[Pay]当前支付类型信息:", pay_info);
 				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this
 						.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
 					util.simpleMsg("金额不能为空!", true);
@@ -1894,6 +1886,7 @@
 				});
 				if (r == 'Others') { //点击其他支付
 					this.ShowOthersPay = true;
+					this.currentPayType = r;
 					console.log("展示其他方式");
 					return;
 				}
@@ -1911,7 +1904,7 @@
 						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
 					} else {
 						this.is_poly = poly; //聚合支付复位
-						util.simpleMsg("该支付方式已禁用", "none");
+						util.simpleMsg("该支付方式暂无法使用！", "none");
 					}
 				}
 			},
