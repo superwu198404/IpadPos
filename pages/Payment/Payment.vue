@@ -200,8 +200,9 @@
 								</view>
 								<image :src="item.icon" mode="widthFix">
 							</view>
-							<view class="pattern nots curr" @click="clickPayType('Others',$event)">
-								<view class="tits">
+							<view class="pattern nots curr" @click="clickPayType('Others',$event)"
+								:class="currentPayType === 'Others' ? 'selected':''">
+								<view class="tits seltss">
 									<p>更多</p>
 								</view>
 								<image src="../../images/moren-zfu.png" mode="widthFix">
@@ -935,12 +936,12 @@
 			Pay: function() {
 				let that = this; //适配真机
 				console.log("[Pay]当前支付类型:", this.currentPayType);
-				let pay_info = this.PayWayInfo(this.currentPayType);
-				console.log("[Pay]当前支付类型信息:", pay_info);
-				if (!this.currentPayType) {
-					util.simpleMsg("未选择支付方式，请选择后再进行支付!", false);
+				if (!this.currentPayType || this.currentPayType == 'Others') { //增加其他选项 不允许支付的控制
+					util.simpleMsg("请选择支付方式后再进行支付!", false);
 					return;
 				}
+				let pay_info = this.PayWayInfo(this.currentPayType);
+				console.log("[Pay]当前支付类型信息:", pay_info);
 				if ((!this.dPayAmount || Number(this.dPayAmount) === 0) && this.toBePaidPrice() != 0 || (this
 						.currentPayType == 'HyJfExchange' && this.CashOffset.Score == 0)) {
 					util.simpleMsg("金额不能为空!", true);
@@ -1820,6 +1821,7 @@
 				});
 				if (r == 'Others') { //点击其他支付
 					this.ShowOthersPay = true;
+					this.currentPayType = r;
 					console.log("展示其他方式");
 					return;
 				}
@@ -1837,7 +1839,7 @@
 						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
 					} else {
 						this.is_poly = poly; //聚合支付复位
-						util.simpleMsg("该支付方式已禁用", "none");
+						util.simpleMsg("该支付方式暂无法使用！", "none");
 					}
 				}
 			},
