@@ -135,8 +135,8 @@ var GetPayWay = async function(e) {
 				}
 			}
 			let arr1 = res.msg.filter(r => {
-				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") & r.FKJBID ==
-					'2');
+				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
+					.FKJBID == '2');
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
@@ -145,7 +145,7 @@ var GetPayWay = async function(e) {
 					dbm: r.YN_DBM,
 					zklx: r.ZKLX,
 					fkid_f: r.FKID_F,
-					yn_use: 'N',
+					yn_use: 'Y',
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
 					addtype: r.NET_ADDTYPE,

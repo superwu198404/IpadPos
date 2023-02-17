@@ -260,8 +260,8 @@
 				<view class="listofpay">
 					<view class="modelist">
 						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
-							:class="currentPayType == item.type ? 'modeli curr':'modeli'" :id="item.type"
-							@click="clickPayType(item,$event)">
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'modeli curr':'modeli'"
+							:id="item.type" @click="clickPayType(item,$event)">
 							<view>
 								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
 								<label>{{item.name}}</label>
@@ -290,7 +290,8 @@
 		<!-- 支付加载框 -->
 		<Loading :title="isRefund?'退款中...':'支付中...'" :show="in_payment"></Loading>
 		<!-- 现金支付提示弹窗 -->
-		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text"></CashChangeModal>
+		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text">
+		</CashChangeModal>
 	</view>
 	<!-- </view> -->
 </template>
@@ -346,7 +347,7 @@
 					sale3: [], //支付
 					sale8: [] //水吧商品
 				},
-				CashModal:{
+				CashModal: {
 					Visible: false,
 					Text: ""
 				},
@@ -1346,7 +1347,7 @@
 			//支付 data 对象组装
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
-			PayHandle:async function() {
+			PayHandle: async function() {
 				if (await this.InPaymentBeforeStoped())
 					return;
 				console.log("[PayHandle]进入支付处理...");
@@ -1421,15 +1422,15 @@
 			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
 			//注：支持异步方法
-			InPaymentBeforeStoped:async function() {
+			InPaymentBeforeStoped: async function() {
 				console.log("[InPaymentBeforeStoped]支付前终止判断...");
 				//自定义判断，往数组里加
 				return (await Promise.all([this.CashChange()])).every(result => (!result) == true);
 			},
 			//现金找零(判断 [当前支付金额] - [欠款])
-			CashChange:async function() {
-				console.log("[CashChange]现金找零操作判断处理...",{
-					pay_money:this.dPayAmount,
+			CashChange: async function() {
+				console.log("[CashChange]现金找零操作判断处理...", {
+					pay_money: this.dPayAmount,
 					debt: this.allAmount
 				});
 				//找零金额
@@ -1443,22 +1444,21 @@
 					console.log("[CashChange]找零低于100元但大于0元...");
 					this.CashModal.Text = `支付 ${ this.dPayAmount }，需找零 ${ change_number } 元，确认支付？`;
 					this.CashModal.Visible = true;
-					var async_callback = new Promise(util.callBind(this,function(reslove,reject){
-						uni.$once("cash-modal-confirm",util.callBind(this,function(){
+					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
+						uni.$once("cash-modal-confirm", util.callBind(this, function() {
 							console.log("[CashChange]弹窗点击了确定...");
 							reslove(true);
 						}));
-						uni.$once("cash-modal-cancel",util.callBind(this,function(){
+						uni.$once("cash-modal-cancel", util.callBind(this, function() {
 							console.log("[CashChange]弹窗点击了取消...");
 							reslove(false);
 						}));
 					}));
-					if((await async_callback) == true)
+					if ((await async_callback) == true)
 						return true;
 					else
 						return false;
-				}
-				else
+				} else
 					return true;
 			},
 			operationAfterSinglePayment: function() {
