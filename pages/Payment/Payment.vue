@@ -289,6 +289,8 @@
 		<saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang>
 		<!-- 支付加载框 -->
 		<Loading :title="isRefund?'退款中...':'支付中...'" :show="in_payment"></Loading>
+		<!-- 现金支付提示弹窗 -->
+		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text"></CashChangeModal>
 	</view>
 	<!-- </view> -->
 </template>
@@ -330,10 +332,6 @@
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var that, is_log = true;
 	var log = console.log;
-	// console.log = (...params) => {
-	// 	if(is_log)
-	// 		log(...params)
-	// };
 	export default {
 		mixins: [global, print],
 		components: {
@@ -347,6 +345,10 @@
 					sale2: [], //商品
 					sale3: [], //支付
 					sale8: [] //水吧商品
+				},
+				CashModal:{
+					Visible: false,
+					Text: ""
 				},
 				PaymentInfos: { //从上个页面传来的支付信息
 					PayList: [],
@@ -423,6 +425,7 @@
 				showSMQ: false, //是否显示扫码枪
 				ShowOthersPay: false, //是否显示其他支付方式
 				PayMode: '93', //支付类型
+				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
 			}
 		},
 		watch: {
@@ -461,7 +464,9 @@
 					if (this.PayList.length === 0) this.CanBack = true; //未使金额发生变化则仍然可以退出
 					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
-					if (Number(n) > this.toBePaidPrice()) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
+					console.log("[Watch-dPayAmount]判断是否允许超额支付:", this.allow_debt_excess);
+					if (Number(n) > this.toBePaidPrice() && !this
+						.allow_debt_excess) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						console.log(`[Watch-dPayAmount]超过待支付金额!`, n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
 							console.log(`[Watch-dPayAmount]金额异常!`, {
@@ -530,6 +535,8 @@
 					this.dPayAmount = this.toBePaidPrice();
 					this.allowInput = false;
 				}
+				this.allow_debt_excess = (n === "NOPAY"); //判断是否允许采用 金额>欠款 得操作
+				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
@@ -927,6 +934,20 @@
 					let code = common.ResetAuthCode(e);
 					this.authCode = code; //获取扫码的 authCode
 					console.log("[Pay]authCode:", this.authCode);
+					let current_pay_info = this.PayWayInfo(this
+						.PayTypeJudgment());
+					console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
+					console.log("[Pay]authCode:", this.authCode);
+					console.log("[Pay]支付信息：", {
+						current_pay_info,
+						pay_type: this.currentPayType
+					});
+					if (Object.keys(current_pay_info).length && current_pay_info
+						.poly != 'Y' && this.currentPayType == 'POLY') {
+						util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
+						this.authCode = "";
+						return;
+					}
 					that.PayHandle();
 				} else {
 					this.authCode = "";
@@ -1325,7 +1346,9 @@
 			//支付 data 对象组装
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
-			PayHandle: function() {
+			PayHandle:async function() {
+				if (await this.InPaymentBeforeStoped())
+					return;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1396,6 +1419,48 @@
 					}).bind(this)
 				)
 			},
+			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
+			//注：支持异步方法
+			InPaymentBeforeStoped:async function() {
+				console.log("[InPaymentBeforeStoped]支付前终止判断...");
+				//自定义判断，往数组里加
+				return (await Promise.all([this.CashChange()])).every(result => (!result) == true);
+			},
+			//现金找零(判断 [当前支付金额] - [欠款])
+			CashChange:async function() {
+				console.log("[CashChange]现金找零操作判断处理...",{
+					pay_money:this.dPayAmount,
+					debt: this.allAmount
+				});
+				//找零金额
+				let change_number = this.dPayAmount - this.allAmount;
+				if (change_number > 100) {
+					console.log("[CashChange]找零超过100元...");
+					this.CashModal.Text = "找零金额超过100￥，重新输入支付金额!";
+					this.CashModal.Visible = true;
+					return false;
+				} else if (change_number > 0) {
+					console.log("[CashChange]找零低于100元但大于0元...");
+					this.CashModal.Text = `支付 ${ this.dPayAmount }，需找零 ${ change_number } 元，确认支付？`;
+					this.CashModal.Visible = true;
+					var async_callback = new Promise(util.callBind(this,function(reslove,reject){
+						uni.$once("cash-modal-confirm",util.callBind(this,function(){
+							console.log("[CashChange]弹窗点击了确定...");
+							reslove(true);
+						}));
+						uni.$once("cash-modal-cancel",util.callBind(this,function(){
+							console.log("[CashChange]弹窗点击了取消...");
+							reslove(false);
+						}));
+					}));
+					if((await async_callback) == true)
+						return true;
+					else
+						return false;
+				}
+				else
+					return true;
+			},
 			operationAfterSinglePayment: function() {
 				this.in_payment = false;
 				this.authCode = ""; //避免同一个付款码多次使用
@@ -1410,7 +1475,7 @@
 				let payObj = this.PayWayList.find(item => item.type == type); //支付对象主要用于会员卡支付
 				//计算已支付金额（如果这笔支付成功，则总和进已支付金额中，否则为 0）
 				let paid_amount = fail ? 0 : ((function() {
-					if (result.vouchers.length > 0) {
+					if (result?.vouchers && result.vouchers.length > 0) {
 						console.log("[OrderGenarator]券支付金额：")
 						let coupon = result.vouchers.filter(i => i.yn_card === 'N'),
 							card = result.vouchers.filter(i => i.yn_card === 'Y');
@@ -1498,8 +1563,8 @@
 						fail,
 						no: payload.no,
 						bill: payload.out_trade_no, //保存失败的订单号
-						auth_code: ['ZF09', 'ZZ01', 'ZF22'].includes(payload.memo) ? payload.auth_code :
-							"" //保存失败的券号
+						auth_code: ['ZF09', 'ZZ01', 'ZF22', 'ZF32'].includes(payload.memo) ? payload
+							.auth_code : "" //保存失败的券号
 					}, null, type_info)
 					console.log("[OrderGenarator]支付失败信息:", trade);
 					this.retryEnd(trade, fail);

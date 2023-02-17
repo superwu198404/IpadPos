@@ -3,7 +3,7 @@ import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
 import member from '@/api/hy/MemberInterfaces.js'; //会员积分抵现自实现的支付和退款（由于不是常规支付，所以常规的支付流程不适用）
 import checker from '@/utils/graceChecker.js';
-import common from '@/api/common.js'; 
+import common from '@/api/common.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -619,6 +619,7 @@ var szqPay = {
 		_QueryRefund(pt, body, func, catchFunc);
 	}
 }
+
 //可伴电子券
 var kbPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
@@ -810,11 +811,13 @@ var pinoPay = {
 				deviceno: config.SHID, //门店标识id
 				store_id: config.APPID //门店id
 			});
-			if (!body.auth_code)
+			if (!body.auth_code){
 				catchFunc({
 					msg: "未传入卡号!"
 				});
-			var is_pe_code = body.auth_code.substr(0, 2) == "PE";//判断是否是 PE 码（PE、PN）
+				return;
+			}
+			var is_pe_code = body.auth_code.substr(0, 2) == "PE"; //判断是否是 PE 码（PE、PN）
 			var card_no = body.auth_code.substr(2, 11);
 			var password = body.auth_code.substr(13) || 0;
 			console.log("[PaymentAll]品诺支付:", {
@@ -846,7 +849,8 @@ var pinoPay = {
 					var request_data = CreateData(pt, "支付中...", "Payment", Object.assign(
 						base_require_request_params(), {
 							ryid: getApp().globalData.store.KHID,
-							card_no: is_pe_code ? res.data.card_id : card_no,//如果是PE码则传入查询卡信息返回的card_id,否则按照PN规则传入
+							card_no: is_pe_code ? res.data.card_id :
+							card_no, //如果是PE码则传入查询卡信息返回的card_id,否则按照PN规则传入
 							auth_code: is_pe_code ? res.data.card_password : password,
 							money: body.money,
 							out_trade_no: body.out_trade_no
@@ -944,10 +948,10 @@ var pinoPay = {
 					console.log("[RefundAll]第一次结果（QueryPayment）:", res);
 					console.log("[RefundAll]准备被退款的渠道单号:", body.point);
 					return CreateData(pt, "退款中...", "Refund", Object.assign(
-					base_require_request_params(), {
-						out_refund_no: body.point, //品诺渠道单号
-						posid: body.out_refund_no, //品诺渠道单号
-					}));
+						base_require_request_params(), {
+							out_refund_no: body.point, //品诺渠道单号
+							posid: body.out_refund_no, //品诺渠道单号
+						}));
 				}
 			], catchFunc, finallyFunc, resultsFunc);
 		}
@@ -955,8 +959,49 @@ var pinoPay = {
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
-	QueryPayment: function(pt, body, func, catchFunc) {
-		_QueryPayment(pt, body, func, catchFunc);
+	QueryPayment: async function(pt, body, func, catchFunc) {
+		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
+			var result = {
+				code: false,
+				msg: null,
+				data: null
+			}
+			console.log("[PaymentAll]品诺支付参数获取:", config)
+			if (!config) {
+				result.code = false;
+				result.msg = "支付参数为空!";
+			} else {
+				result.code = true;
+				result.msg = "参数获取成功!";
+				result.data = config;
+			}
+			return result;
+		});
+		if (!config_result.code) {
+			catchFunc(config_result);
+		} else {
+			var config = config_result.data;
+			var base_require_request_params = () => ({
+				transaction_id: config.KEY, //渠道私钥
+				trade_no: config.LONGKEY, //密码aes加密用的密钥
+				deviceno: config.SHID, //门店标识id
+				store_id: config.APPID //门店id
+			});
+			if (!body.auth_code)
+				catchFunc({
+					msg: "未传入卡号!"
+				});
+			var is_pe_code = body.auth_code.substr(0, 2) == "PE"; //判断是否是 PE 码（PE、PN）
+			var card_no = body.auth_code.substr(2, 11);
+			var password = body.auth_code.substr(13) || 0;
+			console.log("[PaymentAll]品诺支付:", {
+				card_no,
+				password
+			});
+			_QueryPayment(pt, Object.assign(base_require_request_params(), {
+				out_refund_no: body.out_trade_no, //查询订单号
+			}), func, catchFunc);
+		}
 	},
 	CancelPayment: function(pt, body, func, catchFunc) {
 		_CancelPayment(pt, body, func, catchFunc);
@@ -1001,6 +1046,7 @@ var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 		payType[pt].PaymentAll(pt, body, func, catchFunc, finallyFunc)
 	} catch (e) {
 		console.log("[PaymentAll]发生调用异常:", e);
+		console.log("[PaymentAll]发生调用异常参数:", [...arguments]);
 		if (catchFunc) catchFunc();
 	}
 }
