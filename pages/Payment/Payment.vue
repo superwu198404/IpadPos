@@ -1587,8 +1587,9 @@
 					bill: payload?.out_trade_no,
 					name: current_pay_info?.name ?? "",
 					no: this.PayList.length,
-					disc: (Number(payload?.discount) / 100)?.toFixed(2) ||
-						0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
+					// disc:(Number(payload?.discount) / 100)?.toFixed(2) ||
+					// 	0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
+					disc: payload?.discount ? (Number(payload?.discount) / 100)?.toFixed(2) : 0,
 					zklx: payload?.disc_type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
 					point: payload?.point ?? 0, //抵现积分数
