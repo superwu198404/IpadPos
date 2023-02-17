@@ -271,7 +271,7 @@
 				</view>
 				<view class="operats">
 					<button class="btn btn-qx" @click="Others_ReturnPay">返回</button>
-					<button class="btn" @click="ActionSwtich()">确认支付</button>
+					<button class="btn" @click="ActionSwtich()">{{ isRefund ? "确认退款":"确认支付"}}</button>
 				</view>
 			</view>
 		</view>
