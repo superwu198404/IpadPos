@@ -1405,6 +1405,10 @@
 					}).bind(this),
 					(function(error) {
 						this.operationAfterSinglePayment();
+						if (error === "NOAPI") {
+							util.simpleMsg("暂不支持此支付方式!");
+							return;
+						}
 						this.used_no.push(this.prev_no); //避免出现用某一种支付方式失败后，再次支付因为订单号重复导致无法支付的问题
 						console.log("[Payment-付款]支付失败！")
 						util.simpleModal("支付失败", error.msg);

@@ -1845,7 +1845,7 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		// 取消ZG02的合并功能（但保留根据券类型 FKID 切换至对应类型退款的 FKID） 👇
 		combine_sale3?.forEach(i => {
-			if(i.FKID == 'ZF09')
+			if (i.FKID == 'ZF09')
 				i.FKID = 'ZG02'
 		});
 		return;
@@ -2279,6 +2279,11 @@ function GetSale(global, vue, target_name, uni) {
 				this.ChooseBQ(this.CakeBQList[0]) //默认展开第一个标签的数据
 			}
 		}
+	});
+	//*func* 积分促销控制
+	this.CalScore = util.callBind(this, function(e) {
+		console.log("是否要积分促销", e);
+		this.SaleNetAndDisc(e);
 	});
 	//*End* 自定义方法结束
 	//日志
@@ -3636,7 +3641,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = async function() {
+	this.SaleNetAndDisc = async function(e = 0) {
 		let znet = 0
 		if (Object.keys(that.sale002).length == 0) {
 			//如果没有加购商品 则sale1可能未初始化 导致一些默认值KHID 无法初始化到sale001上 导致传输到支付页面KHID 为空
@@ -3645,8 +3650,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.ban_type = []; //清空禁止支付方式操作
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
+			console.log("促销计算条件：", e);
 			//调用促销计算
-			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval, 0);
+			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval, e);
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
