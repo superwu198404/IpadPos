@@ -1763,7 +1763,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.uni = uni;
 	var uni = uni;
 	var payresult = null;
-
+     //热销商品的存储介质！
+	 var hotSale  =null; 
+	 
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
@@ -2051,6 +2053,16 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[Redirect]菜单切换完毕,更新data信息...");
 		this.update();
 	})
+	//获取热销商品的列表
+	this.getHotSale  =function()
+	{
+	   if(hotSale == null)
+	   {
+		    //ajax 获取热销商品
+	   }
+	   //回调函数里调用这段代码
+	   that.selectFlagList   =  null;
+	}
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = !this.Page.Alphabetical;
@@ -2303,8 +2315,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.Storeid = store.KHID;
 	this.storeName = store.NAME;
 	this.POSID = store.POSID;
-	this.ryid = store
-		.RYID;
+	this.ryid = store.RYID;
 	this.KCDID = store.KCDID;
 	this.DPID = store.DQID; //测试要求按照ｐｏｓ记录
 	this.GCID = store.GCID;
@@ -3989,7 +4000,8 @@ function GetSale(global, vue, target_name, uni) {
 }
 
 
-export default {
+export default 
+{
 	XsTypeObj,
 	GetSale
 }

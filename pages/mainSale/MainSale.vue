@@ -83,9 +83,10 @@
 							</scroll-view>
 						</view>
 					</view>
+					<!--从这里开始为最右侧的选项去 包括热销、字母区，会员，特殊折扣等 -->
 					<view class="operation">
 						<view class="sorting">
-							<view class="seasonal">
+							<view class="seasonal" @click="mainSale.getHotSale()">
 								<image src="../../images/rexiao-fenlei.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.Letters()">
