@@ -711,6 +711,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -721,6 +722,7 @@ var noPay = {
 			finallyFunc({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -732,6 +734,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -742,6 +745,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -752,6 +756,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -762,6 +767,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	},
@@ -772,6 +778,7 @@ var noPay = {
 			func({
 				code: true,
 				msg: "自处理成功",
+				data: body,
 				body
 			});
 	}

@@ -56,6 +56,7 @@ var GetPayWay = async function(e) {
 				obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
 				obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
 				obj.seq = obj1.SEQNO; //排序方式
+				obj.raw = res.msg[i];
 				if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 					obj.type = "EXCESS";
 				}

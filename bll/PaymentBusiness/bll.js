@@ -158,6 +158,7 @@ export const Sale3Model = function(init = sale3_def) {
 		bill: "", //单号
 		name: "", //支付类型名称
 		amount: 0, //支付金额
+		excess: 0,//超额支付金额（超出金额）
 		no: 0, //子单号
 		disc: 0, //*卡券独有 卡折扣金额折扣率
 		zklx: "", //*卡券独有 折扣类型
