@@ -56,6 +56,7 @@ var GetPayWay = async function(e) {
 				obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
 				obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
 				obj.seq = obj1.SEQNO; //排序方式
+				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
 				obj.raw = res.msg[i];
 				if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 					obj.type = "EXCESS";
@@ -100,26 +101,30 @@ var GetPayWay = async function(e) {
 					fkid: "ZG11",
 					type: "NO",
 					poly: "O", //不显示的支付方式
-					seq: 100
+					seq: 100,
+					addtype: "NEWADD",
 				}, {
 					name: "仟吉赠券",
 					fkid: "ZZ01",
 					type: "SZQ", //NOPAY 用于券支付退款时 通过fkid找到SZQ后 走券退回接口
 					poly: "O",
-					seq: 101
+					seq: 101,
+					addtype: "NEWADD",
 				}, {
 					name: "预定金",
 					fkid: "ZG03",
 					type: "",
 					poly: "O",
-					seq: 102
+					seq: 102,
+					addtype: "NEWADD",
 				},
 				{
 					name: "券自动放弃金额",
 					fkid: "ZCV1",
 					type: "EXCESS",
 					poly: "O",
-					seq: 103
+					seq: 103,
+					addtype: "NEWADD",
 				}
 			]
 			for (var i = 0; i < arr.length; i++) {
@@ -131,8 +136,8 @@ var GetPayWay = async function(e) {
 				}
 			}
 			let arr1 = res.msg.filter(r => {
-				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") & r.FKJBID ==
-					'2');
+				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
+					.FKJBID == '2');
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
@@ -141,9 +146,10 @@ var GetPayWay = async function(e) {
 					dbm: r.YN_DBM,
 					zklx: r.ZKLX,
 					fkid_f: r.FKID_F,
-					yn_use: 'N',
+					yn_use: 'Y',
 					poly: "S", //更多中的支付方式
-					seq: PayWayList.length + i + 1
+					seq: PayWayList.length + i + 1,
+					addtype: r.NET_ADDTYPE,
 				}
 			})
 			PayWayList = PayWayList.concat(arr1);

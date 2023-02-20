@@ -260,8 +260,8 @@
 				<view class="listofpay">
 					<view class="modelist">
 						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
-							:class="currentPayType == item.type ? 'modeli curr':'modeli'" :id="item.type"
-							@click="clickPayType(item,$event)">
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'modeli curr':'modeli'"
+							:id="item.type" @click="clickPayType(item,$event)">
 							<view>
 								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
 								<label>{{item.name}}</label>
@@ -271,7 +271,7 @@
 				</view>
 				<view class="operats">
 					<button class="btn btn-qx" @click="Others_ReturnPay">返回</button>
-					<button class="btn" @click="ActionSwtich()">确认支付</button>
+					<button class="btn" @click="ActionSwtich()">{{ isRefund ? "确认退款":"确认支付"}}</button>
 				</view>
 			</view>
 		</view>
@@ -1233,6 +1233,7 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: async function() {
+					return;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1521,8 +1522,9 @@
 					bill: payload?.out_trade_no,
 					name: current_pay_info?.name ?? "",
 					no: this.PayList.length,
-					disc: (Number(payload?.discount) / 100)?.toFixed(2) ||
-						0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
+					// disc:(Number(payload?.discount) / 100)?.toFixed(2) ||
+					// 	0, //由于失败会导致 discount 取值变成 undefined ，再进行计算会导致数值变成 NaN
+					disc: payload?.discount ? (Number(payload?.discount) / 100)?.toFixed(2) : 0,
 					zklx: payload?.disc_type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
 					point: payload?.point ?? 0, //抵现积分数
