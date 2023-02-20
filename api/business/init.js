@@ -146,7 +146,8 @@ var GetPayWay = async function(e) {
 					dbm: r.YN_DBM,
 					zklx: r.ZKLX,
 					fkid_f: r.FKID_F,
-					yn_use: 'Y',
+					yn_use: PayInfo.find(r => r.TYPE == r.JKSNAME && r.NOTE == r
+						.SNAME) ? 'Y' : "N",
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
 					addtype: r.NET_ADDTYPE,

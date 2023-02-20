@@ -7,6 +7,7 @@ import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _cake from '@/api/business/CakeYD.js';
+import _Req from '@/utils/request.js';
 
 import {
 	onlineOrderReserve //更新表接口
@@ -1763,7 +1764,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.uni = uni;
 	var uni = uni;
 	var payresult = null;
-
+     //热销商品的存储介质！
+	 var hotSale  =null; 
+	 
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
@@ -1845,7 +1848,7 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		// 取消ZG02的合并功能（但保留根据券类型 FKID 切换至对应类型退款的 FKID） 👇
 		combine_sale3?.forEach(i => {
-			if(i.FKID == 'ZF09')
+			if (i.FKID == 'ZF09')
 				i.FKID = 'ZG07'
 		});
 		return;
@@ -2051,6 +2054,62 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[Redirect]菜单切换完毕,更新data信息...");
 		this.update();
 	})
+	//获取热销商品的列表
+	this.getHotSale  =function()
+	{
+	   if(hotSale == null)
+	   {
+		   let reqPosData = {
+		   	"khid": that.Storeid
+		   };
+		   let apistr = "MobilePos_API.Models.padGetHotSale.getHotSaleGoods";
+		   let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr);
+		   _Req.asyncFuncOne(reqdata,
+		    res=>
+				{
+			    // console.log("请求的返回结果是啥"+ JSON.stringify(res).substr(0,300));
+				   var  rethotsale   =   _Req.getResData(res);
+				 
+			       that.createHotSaleSpList(rethotsale);
+				}
+		   )
+		    //ajax 获取热销商品
+	   }
+	   else
+	   {
+	      //回调函数里调用这段代码
+	     that.createHotSaleSpList(hotSale);
+	   }
+	}
+	
+    this.createHotSaleSpList  =function(pm_rethotsale)
+	{
+		if(hotSale ==null)
+		{
+			hotSale  = pm_rethotsale;
+			hotSale.forEach
+			(plitem=>
+				{
+				   //生成热销数据结构
+		       	   plitem.plarr=[];
+				   plitem.splist.forEach(spitem=>{   
+					       if(that.spidKeyVal[spitem.SPID]) 
+						   {  plitem.plarr.push(  that.spidKeyVal[spitem.SPID] ) } ;          });
+			       that.log("看一下品类初始化的怎么样"+ JSON.stringify(plitem.plarr).substr(0,300));
+				   
+				
+				} )
+		}
+		console.log("请求的返回结果是啥"+ JSON.stringify(hotSale).substr(0,300));
+
+		that.selectFlagList   =  hotSale;
+		if(  that.selectFlagList.length >0)
+		{
+          that.selectPlid  = that.selectFlagList[0].plid;
+		}
+		that.update();
+	}
+	
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = !this.Page.Alphabetical;
@@ -2280,6 +2339,11 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		}
 	});
+	//*func* 积分促销控制
+	this.CalScore = util.callBind(this, function(e) {
+		console.log("是否要积分促销", e);
+		this.SaleNetAndDisc(e);
+	});
 	//*End* 自定义方法结束
 	//日志
 	this.log = function(str) {
@@ -2298,8 +2362,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.Storeid = store.KHID;
 	this.storeName = store.NAME;
 	this.POSID = store.POSID;
-	this.ryid = store
-		.RYID;
+	this.ryid = store.RYID;
 	this.KCDID = store.KCDID;
 	this.DPID = store.DQID; //测试要求按照ｐｏｓ记录
 	this.GCID = store.GCID;
@@ -2367,6 +2430,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.clikSpItem = {};
 	//商品档案002 以商品id为键值的结构
 	this.spSelectArr = {};
+	//用商品编码作为Key和Val的数据结构
+	this.spidKeyVal  ={};
 	//更新（根据代码应该是强制刷新页面）
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类
@@ -3636,7 +3701,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//计算sale002
-	this.SaleNetAndDisc = async function() {
+	this.SaleNetAndDisc = async function(e = 0) {
 		let znet = 0
 		if (Object.keys(that.sale002).length == 0) {
 			//如果没有加购商品 则sale1可能未初始化 导致一些默认值KHID 无法初始化到sale001上 导致传输到支付页面KHID 为空
@@ -3645,8 +3710,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.ban_type = []; //清空禁止支付方式操作
 		if (that.currentOperation.ynCx) {
 			console.log("[SaleNetAndDisc]促销前:", that.sale002);
+			console.log("促销计算条件：", e);
 			//调用促销计算
-			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval, 0);
+			let response = await cx.Createcx(that.sale002, this.clickSaleType?.clickType, this.HY.cval, e);
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
@@ -3983,7 +4049,8 @@ function GetSale(global, vue, target_name, uni) {
 }
 
 
-export default {
+export default 
+{
 	XsTypeObj,
 	GetSale
 }
