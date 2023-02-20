@@ -18,7 +18,7 @@
 				<view class="dates">
 					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
 					<view class="sginout">
-						<view @click="Waimai()">
+						<view @click="ToTakeout()">
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
@@ -203,6 +203,14 @@
 					}
 				}));
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
+			},
+			ToTakeout: function() {
+				uni.navigateTo({
+					url: "/pages/mainSale/MainSale",
+					success: util.callBind(this, function(res) {
+						uni.$emit("page-to-takeout");
+					})
+				})
 			},
 			//跳转到销售页面
 			ToSale: async function(e) {
@@ -444,18 +452,21 @@
 		overflow: hidden;
 		border-radius: 30rpx;
 	}
-	.leftlist .logos .xingqi{
+
+	.leftlist .logos .xingqi {
 		position: absolute;
-		bottom:58rpx;
+		bottom: 58rpx;
 		left: 5%;
 		z-index: 9;
 		font-size: 38rpx;
 		color: #fff;
 	}
-	.leftlist .logos .xingqi text{
+
+	.leftlist .logos .xingqi text {
 		font-weight: 700;
 		margin-right: 30rpx;
 	}
+
 	.leftlist .logos image {
 		position: absolute;
 		bottom: 0;
@@ -543,28 +554,33 @@
 		width: 140rpx;
 		height: 140rpx;
 	}
-	.dates .sginout{
+
+	.dates .sginout {
 		width: 90%;
 		position: relative;
 		z-index: 9;
-		padding:0 5%;
+		padding: 0 5%;
 	}
-	.dates .sginout view{
-		padding:0;
+
+	.dates .sginout view {
+		padding: 0;
 		display: flex;
 		justify-content: center;
 		align-items: flex-start;
 		box-shadow: none;
 	}
-	.dates .sginout view:nth-child(1){
+
+	.dates .sginout view:nth-child(1) {
 		border-right: 0.5px solid #C1F6D8;
 	}
-	.dates .sginout view .tubiao{
-		width:60rpx;
+
+	.dates .sginout view .tubiao {
+		width: 60rpx;
 		height: 60rpx;
 		margin-left: 20%;
 		margin-bottom: 26rpx;
 	}
+
 	.rightlist {
 		width: 53%;
 	}
@@ -719,6 +735,7 @@
 		perspective: 400px;
 
 	}
+
 	.div {
 		width: 100;
 		height: 450px;
@@ -733,6 +750,7 @@
 		top: 0;
 		transition: all 1s;
 	}
+
 	.div image:first-child {
 
 		z-index: 1;
@@ -742,5 +760,4 @@
 		backface-visibility: hidden;
 
 	}
-	
 </style>

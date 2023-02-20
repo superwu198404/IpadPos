@@ -955,6 +955,11 @@
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
+			uni.$once("page-to-takeout", util.callBind(this, function() {
+				console.warn("[Created]切换至外卖单...");
+				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
+				this.mainSale.$initSale(XsTypeObj['sale_takeaway']); //切换到外卖
+			}));
 			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
 				console.log("[MainSale]商品实际的长度:", products.length);
