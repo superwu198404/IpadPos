@@ -57,6 +57,7 @@ var GetPayWay = async function(e) {
 				obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
 				obj.seq = obj1.SEQNO; //排序方式
 				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
+				obj.raw = res.msg[i];
 				if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 					obj.type = "EXCESS";
 				}
