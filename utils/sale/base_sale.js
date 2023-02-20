@@ -7,6 +7,7 @@ import _extract from '@/api/business/extract.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _cake from '@/api/business/CakeYD.js';
+import _Req from '@/utils/request.js';
 
 import {
 	onlineOrderReserve //更新表接口
@@ -2058,11 +2059,57 @@ function GetSale(global, vue, target_name, uni) {
 	{
 	   if(hotSale == null)
 	   {
+		   let reqPosData = {
+		   	"khid": that.Storeid
+		   };
+		   let apistr = "MobilePos_API.Models.padGetHotSale.getHotSaleGoods";
+		   let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr);
+		   _Req.asyncFuncOne(reqdata,
+		    res=>
+				{
+			    // console.log("请求的返回结果是啥"+ JSON.stringify(res).substr(0,300));
+				   var  rethotsale   =   _Req.getResData(res);
+				 
+			       that.createHotSaleSpList(rethotsale);
+				}
+		   )
 		    //ajax 获取热销商品
 	   }
-	   //回调函数里调用这段代码
-	   that.selectFlagList   =  null;
+	   else
+	   {
+	      //回调函数里调用这段代码
+	     that.createHotSaleSpList(hotSale);
+	   }
 	}
+	
+    this.createHotSaleSpList  =function(pm_rethotsale)
+	{
+		if(hotSale ==null)
+		{
+			hotSale  = pm_rethotsale;
+			hotSale.forEach
+			(plitem=>
+				{
+				   //生成热销数据结构
+		       	   plitem.plarr=[];
+				   plitem.splist.forEach(spitem=>{   
+					       if(that.spidKeyVal[spitem.SPID]) 
+						   {  plitem.plarr.push(  that.spidKeyVal[spitem.SPID] ) } ;          });
+			       that.log("看一下品类初始化的怎么样"+ JSON.stringify(plitem.plarr).substr(0,300));
+				   
+				
+				} )
+		}
+		console.log("请求的返回结果是啥"+ JSON.stringify(hotSale).substr(0,300));
+
+		that.selectFlagList   =  hotSale;
+		if(  that.selectFlagList.length >0)
+		{
+          that.selectPlid  = that.selectFlagList[0].plid;
+		}
+		that.update();
+	}
+	
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = !this.Page.Alphabetical;
@@ -2383,6 +2430,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.clikSpItem = {};
 	//商品档案002 以商品id为键值的结构
 	this.spSelectArr = {};
+	//用商品编码作为Key和Val的数据结构
+	this.spidKeyVal  ={};
 	//更新（根据代码应该是强制刷新页面）
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类

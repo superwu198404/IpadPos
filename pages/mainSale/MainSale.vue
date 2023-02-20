@@ -955,12 +955,13 @@
 			this.sale_type_infos = mysale.XsTypeObj;
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
-			console.log("[MainSale]开始设置基础的销售类型");
+			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			console.log("初始化的khid:", this.KHID);
-			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
-				console.log("[MainSale]商品实际的长度:", products.length);
+			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices,pm_spidKeyVal) {
+				//console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
+				this.mainSale.spidKeyVal  = pm_spidKeyVal;
 			}), this.DQID, this.KHZID);
 			let sys = util.getStorage("sysParam");
 			if (sys && sys.DGIMGURL) {
