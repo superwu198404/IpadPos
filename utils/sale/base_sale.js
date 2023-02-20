@@ -1846,7 +1846,7 @@ function GetSale(global, vue, target_name, uni) {
 		// 取消ZG02的合并功能（但保留根据券类型 FKID 切换至对应类型退款的 FKID） 👇
 		combine_sale3?.forEach(i => {
 			if(i.FKID == 'ZF09')
-				i.FKID = 'ZG02'
+				i.FKID = 'ZG07'
 		});
 		return;
 		// 下面代码目前作废 👇
