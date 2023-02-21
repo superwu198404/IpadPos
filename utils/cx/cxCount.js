@@ -1710,8 +1710,8 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;
 	dr["SPJF"] = jfnum;
-	dr["DHNET"] = cx_util.nnvl(jfinfo.dhnet, 0); //积分抵扣金额
-	dr["JFNUM"] = cx_util.nnvl(jfinfo.jfnum, 0); //抵扣积分
+	dr["DHNET"] = (jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.dhnet, 0) : 0; //积分抵扣金额
+	dr["JFNUM"] =(jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.jfnum, 0) : 0; //抵扣积分
 	dr[notfkid] = cx_util.snvl(notfkid_dr, ""); //不可用支付方式
 	dr["NO"] = i;
 	cxfsdt.push(dr);
