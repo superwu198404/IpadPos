@@ -40,7 +40,7 @@ var loadSaleSP = {
 				}
 				if (str) {
 					r.PINYIN = r.PINYIN.split(str[0])[1];
-					console.warn("拼音格式变化：", old + "->" + r.PINYIN);
+					// console.warn("拼音格式变化：", old + "->" + r.PINYIN);
 				}
 			} else { //数字开头
 				//10元
@@ -155,7 +155,7 @@ var loadSaleSP = {
 	  蛋糕合并    2
 	  水吧sql	 3
 	*/
-	arrListGroupBy: function(pm_arr, cake_arr, drinkP_arr, cakeBq_arr, cakeimg_arr,pm_spidKeyList) {
+	arrListGroupBy: function(pm_arr, cake_arr, drinkP_arr, cakeBq_arr, cakeimg_arr, pm_spidKeyList) {
 		//{"FSTR":"z","PINYIN":"zjpbtzw（x）8-qj","SNAME":"竹节排包提子味（型）8-仟吉","SPID":"000000001010100002","addlist":"","plid":"308","plname":"三明治用半成品","specslist":"","ynAddPro":0,"ynshowlist":0}
 		//console.log(pm_arr.length+"#"+cake_arr.length+"#"+drinkP_arr.length+"#")
 		let pkey = "";
@@ -262,11 +262,11 @@ var loadSaleSP = {
 					})
 				})
 				item.addlist = retDrr_arr;
-				
+
 				//console.log( JSON.stringify(item.addlist)  );
 			}
 			plarr.push(item);
-			pm_spidKeyList[item.SPID]= item;
+			pm_spidKeyList[item.SPID] = item;
 		})
 		// console.log(JSON.stringify(fsArr.slice(0, 3)));
 		return fsArr;
@@ -316,7 +316,7 @@ var loadSaleSP = {
 		var dinkP = []; //水吧的列表
 		var cakeBq = []; //存放的是蛋糕的标签
 		var cakeimg = []; //存放的是蛋糕的图片
-        var spidKeyList ={} ;//用keyVal的方式存储商品信息 方便后续进行检索
+		var spidKeyList = {}; //用keyVal的方式存储商品信息 方便后续进行检索
 		console.log("##############################开始获取主商品##############################")
 		//z主商品sql 1
 		let msplistSql =
@@ -427,13 +427,13 @@ var loadSaleSP = {
 		// console.log("商品数据2：", dinkP);
 		// console.log("商品数据3：", cakeBq);
 		// console.log("商品数据4：", cakeimg);
-		let arrAllsp = this.arrListGroupBy(mainArr, cakeSpesc, dinkP, cakeBq, cakeimg,spidKeyList);
+		let arrAllsp = this.arrListGroupBy(mainArr, cakeSpesc, dinkP, cakeBq, cakeimg, spidKeyList);
 		console.log("##############################调用完成进入回调函数##########################")
 		// console.log("商品数据5：", arrAllsp);
 		if (callbackfun) {
 			// console.log("售价"+JSON.stringify(spPrice).substr(0,300));
-		    console.log("商品spidKeyList"+JSON.stringify(spidKeyList).substr(0,300));
-			callbackfun(arrAllsp, spPrice,spidKeyList);
+			console.log("商品spidKeyList" + JSON.stringify(spidKeyList).substr(0, 300));
+			callbackfun(arrAllsp, spPrice, spidKeyList);
 
 		}
 		return new Promise((resolve, reject) => {

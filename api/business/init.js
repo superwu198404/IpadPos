@@ -50,7 +50,8 @@ var GetPayWay = async function(e) {
 				let obj = {};
 				obj.name = res.msg[i].SNAME;
 				obj.fkid = res.msg[i].FKID;
-				obj.type = res.msg[i].JKSNAME || "NOPAY";
+				obj.type = res.msg[i].JKSNAME || res.msg[i].FKID; //唯一性识别 用于通过type找到当前对象
+				obj.api = res.msg[i].JKSNAME || "NOPAY"; //api 只用于接口调用方式
 				obj.poly = res.msg[i].POLY;
 				obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 				obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
@@ -58,6 +59,7 @@ var GetPayWay = async function(e) {
 				obj.seq = obj1.SEQNO; //排序方式
 				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
 				obj.raw = res.msg[i];
+				obj.yn_cezf = res.msg[i].YN_CEZF; //是否允许超额支付
 				if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
 					obj.type = "EXCESS";
 				}
@@ -135,6 +137,7 @@ var GetPayWay = async function(e) {
 					PayWayList.push(arr[i]);
 				}
 			}
+
 			let arr1 = res.msg.filter(r => {
 				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
 					.FKJBID == '2');
@@ -142,15 +145,17 @@ var GetPayWay = async function(e) {
 				return {
 					name: r.SNAME,
 					fkid: r.FKID,
-					type: r.JKSNAME || 'NOPAY',
+					type: r.JKSNAME || r.FKID, //唯一性识别 用于通过type找到当前对象
+					api: r.JKSNAME || "NOPAY", //api 只用于接口调用方式
 					dbm: r.YN_DBM,
 					zklx: r.ZKLX,
 					fkid_f: r.FKID_F,
-					yn_use: PayInfo.find(r => r.TYPE == r.JKSNAME && r.NOTE == r
-						.SNAME) ? 'Y' : "N",
+					yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r => r.TYPE == r.JKSNAME && r
+						.NOTE == r.SNAME) ? 'Y' : "N"),
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
 					addtype: r.NET_ADDTYPE,
+					yn_cezf: r.YN_CEZF, //是否允许超额支付
 				}
 			})
 			PayWayList = PayWayList.concat(arr1);
