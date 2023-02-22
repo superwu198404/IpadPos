@@ -1034,11 +1034,11 @@
 				});
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
-			CashRefundCombine: function(){
+			CashRefundCombine: function() {
 				let cash_list = this.RefundList.filter(i => i.fkid == 'ZF01');
 				let other_list = this.RefundList.filter(i => i.fkid != 'ZF01');
-				if(cash_list.length == 2){//现金存在找零的情况
-					let sum = cash_list.reduce((prev,next) => Number(prev.amount) + Number(next.amount));
+				if (cash_list.length == 2) { //现金存在找零的情况
+					let sum = cash_list.reduce((prev, next) => Number(prev.amount) + Number(next.amount));
 					cash_list[0].amount = sum;
 					other_list.push(cash_list[0]);
 					this.RefundList = other_list;
@@ -1046,16 +1046,16 @@
 			},
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
-				if(!this.cash_change_tips) return;
+				if (!this.cash_change_tips) return;
 				this.cash_change_tips = false;
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
 					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash} 元。`);
 				}
-				setTimeout(util.callBind(this,function(){
+				setTimeout(util.callBind(this, function() {
 					this.cash_change_tips = true;
-				}),2000)
+				}), 2000)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -1617,7 +1617,7 @@
 							paid_record,
 							cash_paid_record
 						});
-						this.yPayAmount -= cash_paid_record.amount;//减去上次现金支付的金额
+						this.yPayAmount -= cash_paid_record.amount; //减去上次现金支付的金额
 						paid_record.amount = Number(paid_record.amount)?.toFixed(2); //把前一条现金支付金额与后一条合并
 					}
 					push_paids.push(paid_record); //把当前这条记录追加入集合
@@ -1925,6 +1925,7 @@
 				// }
 				if (this.is_poly) {
 					this.currentPayType = e.currentTarget.id; //聚合支付
+					this.currentSelectedInfo = null; //清除非聚合方式的 选中项信息 后续通过支付码主动赋值
 				} else {
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
