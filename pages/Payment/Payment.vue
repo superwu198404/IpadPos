@@ -1929,6 +1929,7 @@
 				// }
 				if (this.is_poly) {
 					this.currentPayType = e.currentTarget.id; //聚合支付
+					this.currentSelectedInfo = null; //清除非聚合方式的 选中项信息 后续通过支付码主动赋值
 				} else {
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
