@@ -140,7 +140,7 @@ var GetPayWay = async function(e) {
 
 			let arr1 = res.msg.filter(r => {
 				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
-					.FKJBID == '2');
+					.FKJBID == '2' && r.YN_SQ == 'Y');
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
