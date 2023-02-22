@@ -1034,11 +1034,11 @@
 				});
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
-			CashRefundCombine: function(){
+			CashRefundCombine: function() {
 				let cash_list = this.RefundList.filter(i => i.fkid == 'ZF01');
 				let other_list = this.RefundList.filter(i => i.fkid != 'ZF01');
-				if(cash_list.length == 2){//现金存在找零的情况
-					let sum = cash_list.reduce((prev,next) => Number(prev.amount) + Number(next.amount));
+				if (cash_list.length == 2) { //现金存在找零的情况
+					let sum = cash_list.reduce((prev, next) => Number(prev.amount) + Number(next.amount));
 					cash_list[0].amount = sum;
 					other_list.push(cash_list[0]);
 					this.RefundList = other_list;
@@ -1046,16 +1046,16 @@
 			},
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
-				if(!this.cash_change_tips) return;
+				if (!this.cash_change_tips) return;
 				this.cash_change_tips = false;
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
 					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash} 元。`);
 				}
-				setTimeout(util.callBind(this,function(){
+				setTimeout(util.callBind(this, function() {
 					this.cash_change_tips = true;
-				}),2000)
+				}), 2000)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -1295,8 +1295,7 @@
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.orderGenarator(payAfter, info.type, result.data, false, info, {
-							excess: this.dPayAmount - this.debt <= 0 ? 0 : this.dPayAmount - this
-								.debt, //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
+							excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
 						}); //支付记录处理(成功)
 						console.log("[PayHandle]判断待支付金额是否为0...");
 						if (this.debt > 0) {
@@ -1323,6 +1322,10 @@
 					}).bind(this)
 				)
 			},
+			CountCashChange: function() {
+				let prev_cash_amount = this.PayList.find(i => i.fkid == 'ZF01')?.amount || 0; //查找上一个现金支付金额判断是否存在
+				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
+			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
 			//注：支持异步+同步方法(貌似 uniapp 或者是 ios 的 js 解释器内不支持在 Promise.all 中使用同步的代码，所以只能用 Promise.resolve 包裹同步代码的返回结果)
 			InPaymentBeforeStoped: async function() {
@@ -1345,8 +1348,9 @@
 					pay_money: this.dPayAmount,
 					debt: this.allAmount
 				});
+				if(this.currentPayInfo.fkid != 'ZF01') return true;//不是现金不走这个条件
 				//找零金额
-				let change_number = this.dPayAmount - this.allAmount;
+				let change_number = this.CountCashChange();
 				if (change_number > 100) {
 					console.log("[CashChange]找零超过100元...");
 					this.CashModal.Text = "找零金额超过100￥，重新输入支付金额!";
@@ -1354,7 +1358,7 @@
 					return false;
 				} else if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
-					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，需找零 ${ change_number } 元，确认支付？`;
+					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，需找零 ${ change_number?.toFixed(2) } 元，确认支付？`;
 					this.CashModal.Visible = true;
 					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
 						uni.$once("cash-modal-confirm", util.callBind(this, function() {
@@ -1617,12 +1621,12 @@
 							paid_record,
 							cash_paid_record
 						});
-						this.yPayAmount -= cash_paid_record.amount;//减去上次现金支付的金额
+						this.yPayAmount -= cash_paid_record.amount; //减去上次现金支付的金额
 						paid_record.amount = Number(paid_record.amount)?.toFixed(2); //把前一条现金支付金额与后一条合并
 					}
 					push_paids.push(paid_record); //把当前这条记录追加入集合
 					console.log("[CheckCashPayment]现金是否超额支付...", paid_record.excess);
-					if (paid_record.excess) { //判断是否存在找零金额
+					if (paid_record.excess && paid_record.excess > 0) { //判断是否存在找零金额
 						let change_record = Object.assign({}, paid_record); //生成找零记录
 						let new_no = ++this.prev_no;
 						this.used_no.push(new_no);
