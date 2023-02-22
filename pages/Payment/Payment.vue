@@ -427,6 +427,7 @@
 				ShowOthersPay: false, //是否显示其他支付方式
 				PayMode: '93', //支付类型
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
+				cash_change_tips: true,
 			}
 		},
 		watch: {
@@ -546,6 +547,7 @@
 					this.CanBack = true;
 					this.RefundFinish = true;
 					console.log("[RefundList-Watch]现金提示...");
+					this.CashRefundCombine(); //现金退款金额合并（实际支付金额-找零）
 					this.CashRefundTips(); //现金退款提示
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
 					this.createOrders();
@@ -1028,13 +1030,28 @@
 				});
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
+			CashRefundCombine: function(){
+				let cash_list = this.RefundList.filter(i => i.fkid == 'ZF01');
+				let other_list = this.RefundList.filter(i => i.fkid != 'ZF01');
+				if(cash_list.length == 2){//现金存在找零的情况
+					let sum = cash_list.reduce((prev,next) => Number(prev.amount) + Number(next.amount));
+					cash_list[0].amount = sum;
+					other_list.push(cash_list[0]);
+					this.RefundList = other_list;
+				}
+			},
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
+				if(!this.cash_change_tips) return;
+				this.cash_change_tips = false;
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
 				if(cash_paids.length){//是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev,next) => prev + next);
 					util.simpleModal('退款提示',`当前订单包含现金退款 ${sum_cash} 元。`);
 				}
+				setTimeout(util.callBind(this,function(){
+					this.cash_change_tips = true;
+				}),2000)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -1242,7 +1259,7 @@
 					if (this.currentPayType === "UPAY") //银联二维码
 						curPayType = "UPAY";
 				}
-				if (!curPayType) {
+				if (!curPayType && this.authCode) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
 					this.authCode = '';
 				}
@@ -1312,7 +1329,7 @@
 					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
-					return results.every(result => (!result) == true);
+					return !results.every(result => result == true);
 				} catch (e) {
 					console.log("[InPaymentBeforeStoped]处理异常:", e);
 					return true;
@@ -1333,7 +1350,7 @@
 					return false;
 				} else if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
-					this.CashModal.Text = `支付 ${ this.dPayAmount }，需找零 ${ change_number } 元，确认支付？`;
+					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，需找零 ${ change_number } 元，确认支付？`;
 					this.CashModal.Visible = true;
 					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
 						uni.$once("cash-modal-confirm", util.callBind(this, function() {
@@ -1351,7 +1368,22 @@
 						return false;
 				} else {
 					console.log("[CashChange]支付金额小于欠款...");
-					return true;
+					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，确认支付？`;
+					this.CashModal.Visible = true;
+					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
+						uni.$once("cash-modal-confirm", util.callBind(this, function() {
+							console.log("[CashChange]弹窗点击了确定...");
+							reslove(true);
+						}));
+						uni.$once("cash-modal-cancel", util.callBind(this, function() {
+							console.log("[CashChange]弹窗点击了取消...");
+							reslove(false);
+						}));
+					}));
+					if ((await async_callback) == true)
+						return true;
+					else
+						return false;
 				}
 			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
@@ -1577,8 +1609,8 @@
 							paid_record,
 							cash_paid_record
 						});
-						paid_record.amount = (Number(paid_record.amount) + Number(cash_paid_record.amount))?.toFixed(
-						2); //把前一条现金支付金额与后一条合并
+						this.yPayAmount -= cash_paid_record.amount;//减去上次现金支付的金额
+						paid_record.amount = Number(paid_record.amount)?.toFixed(2); //把前一条现金支付金额与后一条合并
 					}
 					push_paids.push(paid_record); //把当前这条记录追加入集合
 					console.log("[CheckCashPayment]现金是否超额支付...", paid_record.excess);
