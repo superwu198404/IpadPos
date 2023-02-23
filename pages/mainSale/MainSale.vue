@@ -83,9 +83,10 @@
 							</scroll-view>
 						</view>
 					</view>
+					<!--从这里开始为最右侧的选项去 包括热销、字母区，会员，特殊折扣等 -->
 					<view class="operation">
 						<view class="sorting">
-							<view class="seasonal">
+							<view class="seasonal" @click="mainSale.getHotSale()">
 								<image src="../../images/rexiao-fenlei.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.Letters()">
@@ -379,8 +380,9 @@
 								</view>
 							</view>
 						</label>
-						<text class="fangqi" v-if="jifencx">放弃积分促销</text>
-						<text class="youxian">优先积分促销</text>
+						<text class="fangqi" v-if="mainSale.score_info.ispoints"
+							@click="mainSale.CalScore(1)">放弃积分促销</text>
+						<text class="youxian" v-else @click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
 							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
@@ -953,12 +955,18 @@
 			this.sale_type_infos = mysale.XsTypeObj;
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
-			console.log("[MainSale]开始设置基础的销售类型");
+			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
+			uni.$once("page-to-takeout", util.callBind(this, function() {
+				console.warn("[Created]切换至外卖单...");
+				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
+				this.mainSale.$initSale(XsTypeObj['sale_takeaway']); //切换到外卖
+			}));
 			console.log("初始化的khid:", this.KHID);
-			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices) {
-				console.log("[MainSale]商品实际的长度:", products.length);
+			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices,pm_spidKeyVal) {
+				//console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
+				this.mainSale.spidKeyVal  = pm_spidKeyVal;
 			}), this.DQID, this.KHZID);
 			let sys = util.getStorage("sysParam");
 			if (sys && sys.DGIMGURL) {

@@ -191,9 +191,10 @@
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 							</view>
+							<!-- :class="currentPayType === item.type ? 'selected':''" -->
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
-								:class="currentPayType === item.type ? 'selected':''" :id="item.type"
-								@click="clickPayType(item,$event)">
+								:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'selected':''"
+								:id="item.type" @click="clickPayType(item,$event)">
 								<view class="tits" :class="{seltss:item.yn_use == 'Y'}">
 									<p v-if="item.yn_use == 'Y'">{{item.name}}</p>
 									<p v-else>{{item.name}}<span style="font-size: 12px;">(禁用)</span></p>
@@ -427,6 +428,7 @@
 				ShowOthersPay: false, //是否显示其他支付方式
 				PayMode: '93', //支付类型
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
+				cash_change_tips: true,
 			}
 		},
 		watch: {
@@ -509,6 +511,10 @@
 				}
 			},
 			yPayAmount: function(n, o) {
+				console.log("[Watch-yPayAmount]已支付金额发生修改:", {
+					n,
+					o
+				});
 				this.dPayAmount = this.toBePaidPrice(); //一旦已支付金额发生变化，自动触发计算剩余待支付金额
 			},
 			authCode: function(n, o) {
@@ -536,7 +542,7 @@
 					this.dPayAmount = this.toBePaidPrice();
 					this.allowInput = false;
 				}
-				this.allow_debt_excess = (n === "NOPAY"); //判断是否允许采用 金额>欠款 得操作
+				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
 				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 			},
 			RefundList: function(n, o) {
@@ -544,6 +550,9 @@
 				if (n && n.filter(i => i.fail || i.paying || i.refunding).length == 0) { //失败的、支付中的、退款中的 都为0
 					this.CanBack = true;
 					this.RefundFinish = true;
+					console.log("[RefundList-Watch]现金提示...");
+					this.CashRefundCombine(); //现金退款金额合并（实际支付金额-找零）
+					this.CashRefundTips(); //现金退款提示
 					console.log("[RefundList-Watch]Refunds：", this.RefundList)
 					this.createOrders();
 				}
@@ -691,11 +700,11 @@
 						// BMID: this.BMID, //部门id
 						BMID: item.point, //部门id
 						DISC: this.isRefund ? (item.origin?.DISC || 0) : item
-							.disc, //折扣金额 *逆向退款 不需要记录为负数*
+							.disc || 0, //折扣金额 *逆向退款 不需要记录为负数*
 						FAMT: this.isRefund ? (item.origin?.FAMT || 0) : item
-							.disc, //折扣金额(卡券消费后要记录) *逆向退款 不需要记录为负数*
+							.disc || 0, //折扣金额(卡券消费后要记录) *逆向退款 不需要记录为负数*
 						RATE: this.isRefund ? (item.origin?.RATE || 0) : item
-							.disc, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
+							.disc || 0, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth, //交易号
@@ -898,7 +907,11 @@
 									let code = common.ResetAuthCode(res.result);
 									this.authCode = code; //获取扫码的 authCode
 									let current_pay_info = this.PayWayInfo(this.PayTypeJudgment());
-									console.log("[Pay]扫码判断支付方式信息:", pay_info);
+									if (current_pay_info && Object.keys(current_pay_info).length) {
+										this.currentPayInfo = current_pay_info;
+										this.currentPayType = current_pay_info?.type;
+									}
+									console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
 									console.log("[Pay]scanCode:", res);
 									console.log("[Pay]支付信息：", {
 										current_pay_info,
@@ -1015,7 +1028,34 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
+				console.log("[PayWayInfo]根据TYPE获取对应支付的具体信息:", {
+					type,
+					info: this.PayWayList.find(i => i.type === type) || {}
+				});
 				return this.PayWayList.find(i => i.type === type) || {};
+			},
+			CashRefundCombine: function() {
+				let cash_list = this.RefundList.filter(i => i.fkid == 'ZF01');
+				let other_list = this.RefundList.filter(i => i.fkid != 'ZF01');
+				if (cash_list.length == 2) { //现金存在找零的情况
+					let sum = cash_list.reduce((prev, next) => Number(prev.amount) + Number(next.amount));
+					cash_list[0].amount = sum;
+					other_list.push(cash_list[0]);
+					this.RefundList = other_list;
+				}
+			},
+			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
+			CashRefundTips: function() {
+				if (!this.cash_change_tips) return;
+				this.cash_change_tips = false;
+				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
+				if (cash_paids.length) { //是否包含现金退款
+					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
+					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash} 元。`);
+				}
+				setTimeout(util.callBind(this, function() {
+					this.cash_change_tips = true;
+				}), 2000)
 			},
 			//退款操作
 			Refund: function(isRetry = false) {
@@ -1031,6 +1071,7 @@
 					util.simpleMsg("已完成退款!");
 					this.CanBack = true;
 					this.RefundFinish = true;
+					this.CashRefundTips(); //现金退款提示
 					this.SaleDataCombine();
 					this.backPrevPage();
 					return;
@@ -1062,10 +1103,10 @@
 				}
 				//遍历 RefundList 发起退单请求
 				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
-					let payWayType = this.PayWayList.find(i => i.fkid == refundInfo.fkid)?.type;
+					let payObj = this.PayWayList.find(i => i.fkid == refundInfo.fkid);
 					let current_refund_exists_only_code = false; //当前退款是否包含唯一码
 					console.log("[Refund]退款fkid:", refundInfo.fkid)
-					console.log("[Refund]退款payWayType:", payWayType)
+					console.log("[Refund]退款payWayType:", payObj.type)
 					console.log("[Refund]groups:", groups);
 					let total = 0;
 					if (refundInfo.group) { //判断当前支付是否包含唯一码
@@ -1096,7 +1137,7 @@
 						console.log("[Refund]跳出当前循环...");
 						return;
 					}
-					if (payWayType) {
+					if (payObj) {
 						if (!isRetry) { //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
 							refundInfo.fail = false;
 						}
@@ -1104,9 +1145,9 @@
 						let res = new Promise(util.callBind(this, function(resolve, reject) {
 							this.in_payment = true;
 							console.log("[Refund]加载框打开...", {
-								pay_type: payWayType
+								pay_type: payObj.type
 							});
-							_pay.RefundAll(payWayType, {
+							_pay.RefundAll(payObj.api, {
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no + `_${index}`, //退款单号
 									refund_money: (Math.abs(Number(total || refundInfo
@@ -1222,7 +1263,7 @@
 					if (this.currentPayType === "UPAY") //银联二维码
 						curPayType = "UPAY";
 				}
-				if (!curPayType) {
+				if (!curPayType && this.authCode) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
 					this.authCode = '';
 				}
@@ -1233,7 +1274,6 @@
 			PayDataAssemble: PayDataAssemble,
 			//支付处理入口
 			PayHandle: async function() {
-					return;
 				console.log("[PayHandle]进入支付处理...");
 				let payAfter = this.PayDataAssemble(),
 					info = this.PayWayInfo(this.currentPayType);
@@ -1245,7 +1285,7 @@
 					return;
 				console.log("[PayHandle]支付开始...");
 				this.in_payment = true; //必须放这里
-				_pay.PaymentAll(info.type, payAfter, (function(result) {
+				_pay.PaymentAll(info.api, payAfter, (function(result) {
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 							this.CashOffset.Score = 0;
 							this.CashOffset.Money = 0;
@@ -1255,8 +1295,7 @@
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.orderGenarator(payAfter, info.type, result.data, false, info, {
-							excess: this.dPayAmount - this.debt <= 0 ? 0 : this.dPayAmount - this
-								.debt, //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
+							excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
 						}); //支付记录处理(成功)
 						console.log("[PayHandle]判断待支付金额是否为0...");
 						if (this.debt > 0) {
@@ -1275,13 +1314,17 @@
 							type: info.type
 						});
 						this.orderGenarator(payAfter, info.type, null, true,
-						info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
 						this.operationAfterSinglePayment();
 					}).bind(this),
 					(function(end) { //finally
 						this.operationAfterSinglePayment();
 					}).bind(this)
 				)
+			},
+			CountCashChange: function() {
+				let prev_cash_amount = this.PayList.find(i => i.fkid == 'ZF01')?.amount || 0; //查找上一个现金支付金额判断是否存在
+				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
 			//注：支持异步+同步方法(貌似 uniapp 或者是 ios 的 js 解释器内不支持在 Promise.all 中使用同步的代码，所以只能用 Promise.resolve 包裹同步代码的返回结果)
@@ -1293,7 +1336,7 @@
 					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
-					return results.every(result => (!result) == true);
+					return !results.every(result => result == true);
 				} catch (e) {
 					console.log("[InPaymentBeforeStoped]处理异常:", e);
 					return true;
@@ -1305,8 +1348,9 @@
 					pay_money: this.dPayAmount,
 					debt: this.allAmount
 				});
+				if(this.currentPayInfo.fkid != 'ZF01') return true;//不是现金不走这个条件
 				//找零金额
-				let change_number = this.dPayAmount - this.allAmount;
+				let change_number = this.CountCashChange();
 				if (change_number > 100) {
 					console.log("[CashChange]找零超过100元...");
 					this.CashModal.Text = "找零金额超过100￥，重新输入支付金额!";
@@ -1314,7 +1358,7 @@
 					return false;
 				} else if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
-					this.CashModal.Text = `支付 ${ this.dPayAmount }，需找零 ${ change_number } 元，确认支付？`;
+					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，需找零 ${ change_number?.toFixed(2) } 元，确认支付？`;
 					this.CashModal.Visible = true;
 					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
 						uni.$once("cash-modal-confirm", util.callBind(this, function() {
@@ -1332,7 +1376,22 @@
 						return false;
 				} else {
 					console.log("[CashChange]支付金额小于欠款...");
-					return true;
+					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，确认支付？`;
+					this.CashModal.Visible = true;
+					var async_callback = new Promise(util.callBind(this, function(reslove, reject) {
+						uni.$once("cash-modal-confirm", util.callBind(this, function() {
+							console.log("[CashChange]弹窗点击了确定...");
+							reslove(true);
+						}));
+						uni.$once("cash-modal-cancel", util.callBind(this, function() {
+							console.log("[CashChange]弹窗点击了取消...");
+							reslove(false);
+						}));
+					}));
+					if ((await async_callback) == true)
+						return true;
+					else
+						return false;
 				}
 			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
@@ -1401,8 +1460,13 @@
 			},
 			//已支付金额计算
 			PaidAmountCalculation: function(payload, result, type_info) {
+				console.warn("[PaidAmountCalculation]已支付金额计算...");
 				if (result?.vouchers && result.vouchers.length > 0) {
-					console.log("[OrderGenarator]券支付金额：")
+					console.log("[OrderGenarator]券支付金额：", {
+						payload,
+						result,
+						type_info
+					})
 					let coupon = result.vouchers.filter(i => i.yn_card === 'N'),
 						card = result.vouchers.filter(i => i.yn_card === 'Y');
 					if (coupon.length > 0) {
@@ -1413,7 +1477,7 @@
 								.vouchers[0].denomination) / 100;
 						} else { //其他券支付 如可伴券
 							let num = 0;
-							coupon.map(i => num += i.pay_amount);
+							coupon.map(i => num += i.denomination);
 							return num / 100
 						}
 					} else {
@@ -1443,6 +1507,7 @@
 							let excessInfo = this.PayWayList.find(item => item.fkid == coupon
 								.fkid); //放弃金额
 							console.log("[OrderGenarator]卡券：", coupon)
+							console.log("[OrderGenarator]当前支付方式信息：", this.currentPayInfo)
 							this.PushToPaidList(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 								amount: ((coupon.yn_card === 'Y' ? coupon
 									.pay_amount :
@@ -1552,25 +1617,27 @@
 					console.log("[CheckCashPayment]前一条现金支付记录:", cash_paid_record);
 					let push_paids = []; //放入待追加集合中
 					if (cash_paid_record) { //存在一条现金支付记录
-						console.log("[CheckCashPayment]合并现金支付金额...",{
+						console.log("[CheckCashPayment]合并现金支付金额...", {
 							paid_record,
 							cash_paid_record
 						});
-						paid_record.amount = (Number(paid_record.amount) + Number(cash_paid_record.amount))?.toFixed(2); //把前一条现金支付金额与后一条合并
+						this.yPayAmount -= cash_paid_record.amount; //减去上次现金支付的金额
+						paid_record.amount = Number(paid_record.amount)?.toFixed(2); //把前一条现金支付金额与后一条合并
 					}
 					push_paids.push(paid_record); //把当前这条记录追加入集合
-					console.log("[CheckCashPayment]现金是否超额支付...",paid_record.excess);
-					if (paid_record.excess) { //判断是否存在找零金额
+					console.log("[CheckCashPayment]现金是否超额支付...", paid_record.excess);
+					if (paid_record.excess && paid_record.excess > 0) { //判断是否存在找零金额
 						let change_record = Object.assign({}, paid_record); //生成找零记录
 						let new_no = ++this.prev_no;
 						this.used_no.push(new_no);
 						change_record.no = new_no;
 						change_record.amount = -paid_record.excess;
-						this.yPayAmount -= paid_record.excess;//让 yPayAmount 金额回正，因为不排除找零，此时金额假如为 189，现金支付 190，则 189-190<0 不满足券类生成订单条件（券和现金类似，为券完整金额-放弃金额[如果有的话]）。
- 						push_paids.push(change_record); //把当前这条找零记录追加入集合
+						this.yPayAmount -= paid_record
+							.excess; //让 yPayAmount 金额回正，因为不排除找零，此时金额假如为 189，现金支付 190，则 189-190<0 不满足券类生成订单条件（券和现金类似，为券完整金额-放弃金额[如果有的话]）。
+						push_paids.push(change_record); //把当前这条找零记录追加入集合
 					}
 					this.PayList = this.PayList.concat(push_paids);
-					console.log("[CheckCashPayment]现金追加后的记录:",this.PayList);
+					console.log("[CheckCashPayment]现金追加后的记录:", this.PayList);
 					return true;
 				} else
 					return false;
@@ -1862,12 +1929,16 @@
 				// }
 				if (this.is_poly) {
 					this.currentPayType = e.currentTarget.id; //聚合支付
+					this.currentSelectedInfo = null; //清除非聚合方式的 选中项信息 后续通过支付码主动赋值
 				} else {
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
 						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
 					} else {
-						this.is_poly = poly; //聚合支付复位
+						if (!this.ShowOthersPay) { //不在其他支付选项的时候
+							this.is_poly = poly; //聚合支付复位
+						}
+						console.log("is_poly:", this.is_poly);
 						util.simpleMsg("该支付方式暂无法使用！", "none");
 					}
 				}
@@ -2030,10 +2101,10 @@
 				if (singleRefund) {
 					singleRefund.loading = true; //开启加载样式
 					let refund_no = this.out_refund_no; //获取订单号
-					let payWayType = this.PayWayList.find(i => i.fkid == singleRefund.fkid)?.type;
-					if (payWayType) {
+					let payObj = this.PayWayList.find(i => i.fkid == singleRefund.fkid);
+					if (payObj) {
 						this.in_payment = true;
-						_pay.RefundAll(payWayType, {
+						_pay.RefundAll(payObj.api, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
 								refund_money: (Math.abs(Number(singleRefund.amount) * 100))

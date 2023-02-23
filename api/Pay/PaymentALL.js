@@ -818,7 +818,7 @@ var pinoPay = {
 				deviceno: config.SHID, //门店标识id
 				store_id: config.APPID //门店id
 			});
-			if (!body.auth_code){
+			if (!body.auth_code) {
 				catchFunc({
 					msg: "未传入卡号!"
 				});

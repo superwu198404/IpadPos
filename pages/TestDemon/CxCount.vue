@@ -105,18 +105,18 @@
 			
 			let sale02_arr1 = [
 				{
-				    "SPID": "000000001040200231",
-				    "SNAME": "半熟芝士（原味）-仟吉",
+				    "SPID": "000000001040200003",
+				    "SNAME": "笨笨猪",
 				    "QTY": 2,
-				    "OPRICE": 38,
+				    "OPRICE": 10,
 				    "DISCRATE": 0,
-				    "NET": 72,
-				    "PRICE": 38,
+				    "NET": 30,
+				    "PRICE": 10,
 				    "NO": 111
 				}
 				];
 		   
-			cxCount.Createcx(sale02_arr1, "sale",null);
+			cxCount.Createcx(sale02_arr1, "sale",hyinfoModel);
 			
 			var that = this;
 			setTimeout(() => {
