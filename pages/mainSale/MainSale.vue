@@ -150,6 +150,8 @@
 				<CreditSettlement style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
 				</CreditSettlement>
+				<CouponSale style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_coupon"></CouponSale>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -711,6 +713,7 @@
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
 	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
+	import CouponSale from '@/pages/CouponSale/CouponSale.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -775,6 +778,7 @@
 			MemberLogin,
 			ReserveDrawer,
 			CakeReservation,
+			CouponSale,
 			PrinterPage,
 			Swiper
 		},

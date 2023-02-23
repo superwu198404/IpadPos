@@ -756,11 +756,18 @@ const default_request_options = {
 	error: () => console.log(`[SimpleAPIRequest]接口调用失败...`)
 }
 //简易反射接口请求模板(默认Models下的类)
-var SimpleAPIRequest = function(options = default_request_options) {
+var SimpleAPIRequest = async function(options = default_request_options) {
 	var default_params = Object.assign({}, default_request_options);
 	options = Object.assign(default_params, options);
 	let reqdata = Req.resObj(true, "操作中...", options.data, `${options.namespace}.${options.class}.${options.method}`);
-	return Req.asyncFuncOne(reqdata, options.success, options.error);
+	let result = null;
+	let callback = (res) => result = res;
+	await Req.asyncFuncOne(reqdata, options.success, options.error);
+	if(result.code)
+		options.success.call(result);
+	else
+		options.error.call(result);
+	return result;
 }
 
 export default {
