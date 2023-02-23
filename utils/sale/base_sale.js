@@ -1969,6 +1969,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.ZKHDArr = []; //清除一下已生效的活动数据
 		this.score_info.money = 0;
 		this.score_info.score = 0;
+		this.score_info.ispoints = 0;
 		this.over48 = false;
 	})
 	//*func*辅助促销关闭回调
@@ -3800,12 +3801,15 @@ function GetSale(global, vue, target_name, uni) {
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;
+			let ispoints = 0;
 			list.forEach(i => {
 				score_total += i.JFNUM;
 				money_total += i.DHNET;
+				ispoints += i.POINTS;
 			})
 			this.score_info.money = money_total;
 			this.score_info.score = score_total;
+			this.score_info.ispoints = ispoints;
 			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
 		} else
 			console.warn("[ScoreCount]list值无效!");

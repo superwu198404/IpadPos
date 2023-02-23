@@ -380,7 +380,7 @@
 								</view>
 							</view>
 						</label>
-						<text class="fangqi" v-if="mainSale.score_info.score"
+						<text class="fangqi" v-if="mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
 						<text class="youxian" v-else @click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
