@@ -301,7 +301,15 @@
         {
             "path" : "components/blackmonth-swiper/index",
             "style" : {}
-        }
+        },
+		{
+			"path":"pages/Storeinquiry/Storeinquiry",
+			"style" : {
+			    "titleNView" : false,
+			    "navigationBarTitleText" : "",
+			    "enablePullDownRefresh" : false
+			}
+		}
     ],
     "globalStyle" : {
         "navigationBarTextStyle" : "black",

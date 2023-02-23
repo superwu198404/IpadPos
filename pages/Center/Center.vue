@@ -492,6 +492,7 @@
 	.leftlist .sginout view label {
 		display: block;
 		padding-left: 20%;
+		white-space: nowrap;
 	}
 
 	.leftlist .sginout view:nth-child(1) {
@@ -742,5 +743,7 @@
 		backface-visibility: hidden;
 
 	}
-	
+	page{
+		overflow: hidden;
+	}
 </style>
