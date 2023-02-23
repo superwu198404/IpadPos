@@ -723,6 +723,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	import _card_coupon from '@/utils/sale/card_coupon.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var app = getApp();
@@ -938,6 +939,8 @@
 			},
 		},
 		created() {
+			var kqsale = new _card_coupon.InitKQSale(this, uni, app.globalData.store);
+			kqsale.SetFunction("VIPCard_Active", "InitData");
 			// uni.setLocale("en");
 			// uni.showModal({
 			// 	content: "请使用扫码枪扫码",
@@ -963,10 +966,10 @@
 				this.mainSale.$initSale(XsTypeObj['sale_takeaway']); //切换到外卖
 			}));
 			console.log("初始化的khid:", this.KHID);
-			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices,pm_spidKeyVal) {
+			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
 				//console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
-				this.mainSale.spidKeyVal  = pm_spidKeyVal;
+				this.mainSale.spidKeyVal = pm_spidKeyVal;
 			}), this.DQID, this.KHZID);
 			let sys = util.getStorage("sysParam");
 			if (sys && sys.DGIMGURL) {

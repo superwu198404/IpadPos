@@ -12,19 +12,20 @@ var KQTypeObj = {
 		bill_type: "Z111",
 		kqtype: "SKCZ", //售卡充值
 		typename: "VIP售卡充值", //售卡充值
-
 		//初始化
-		InitData: function() {},
+		InitData: function() {
+			console.log("VIP售卡初始化");
+		},
 		//校验状态
-		CheckStatus: function(),
+		CheckStatus: function() {},
 		//校验库存
-		CheckStock: function(),
+		CheckStock: function() {},
 		//激活申请校验
-		ActiveApply: function(),
+		ActiveApply: function() {},
 		//激活确认校验
-		ActiveConfirm: function(),
+		ActiveConfirm: function() {},
 		//激活后充值
-		Recharge: function(),
+		Recharge: function() {},
 		//业务完成
 		Completed: function() {},
 	},
@@ -38,15 +39,15 @@ var KQTypeObj = {
 		//初始化
 		InitData: function() {},
 		//校验状态
-		CheckStatus: function(),
+		CheckStatus: function() {},
 		//校验库存
-		CheckStock: function(),
+		CheckStock: function() {},
 		//激活申请校验
-		ActiveApply: function(),
+		ActiveApply: function() {},
 		//激活确认校验
-		ActiveConfirm: function(),
+		ActiveConfirm: function() {},
 		//激活后充值
-		Recharge: function(),
+		Recharge: function() {},
 		//业务完成
 		Completed: function() {},
 	},
@@ -60,15 +61,15 @@ var KQTypeObj = {
 		//初始化
 		InitData: function() {},
 		//校验状态
-		CheckStatus: function(),
+		CheckStatus: function() {},
 		//校验库存
-		CheckStock: function(),
+		CheckStock: function() {},
 		//激活申请校验
-		ActiveApply: function(),
+		ActiveApply: function() {},
 		//激活确认校验
-		ActiveConfirm: function(),
+		ActiveConfirm: function() {},
 		//激活后充值
-		Recharge: function(),
+		Recharge: function() {},
 		//业务完成
 		Completed: function() {},
 	},
@@ -86,8 +87,12 @@ var InitKQSale = function(vue, uni, store) {
 	this.Vue = vue; //vue实例
 	this.Uni = uni; //uni实例
 	this.Store = store; //门店实例
+	//执行操作方法
+	this.SetFunction = function(ywtype, method) {
+		KQTypeObj[ywtype][method]();
+	}
 }
 export default {
 	KQTypeObj,
-	InitSale
+	InitKQSale
 }
