@@ -1559,6 +1559,10 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (null != jfinfo) {
 		yyjf = jfinfo.jfnum;
 	}
+	
+	//累计单号
+	jfinfo.hdbill.push(cx.CxBill);
+	
 	//当前累计积分超过会员积分的时候，就返回
 	if (tj < (jfnum + yyjf)) {
 		return;
@@ -1580,8 +1584,7 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 		if (jfxs > 0) {
 			jfinfo.xsIndex.push(jfinfo.hdbill.length);
 		}
-		//累计单号
-		jfinfo.hdbill.push(cx.CxBill);
+
 		//累计类型
 		jfinfo.hdtype.push(cx.cxtype);
 	}
@@ -1710,6 +1713,7 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;
 	dr["SPJF"] = jfnum;
+	dr["POINTS"] = (jfinfo.hdbill == cx.CxBill) ? 1 : 0; //1:积分促销  0:不是积分促销
 	dr["DHNET"] = (jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.dhnet, 0) : 0; //积分抵扣金额
 	dr["JFNUM"] =(jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.jfnum, 0) : 0; //抵扣积分
 	dr[notfkid] = cx_util.snvl(notfkid_dr, ""); //不可用支付方式
