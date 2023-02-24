@@ -35,7 +35,11 @@
 				}, res => {
 					console.log(res);
 					if (KQSale.CheckStatus(res)) {
-						KQSale.CheckStock({})
+						KQSale.CheckStock({
+							begin_num: that.begin_num,
+							end_num: that.begin_num,
+							material_id: res.data.materielId
+						})
 					}
 				})
 			}

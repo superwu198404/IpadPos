@@ -39,7 +39,11 @@ var KQTypeObj = {
 			return true;
 		},
 		//校验库存
-		CheckStock: function(data) {},
+		CheckStock: function(data, func) {
+			_member.CheckStock("查询中。。。", {
+				data
+			}, func, func);
+		},
 		//激活申请校验
 		ActiveApply: function(data) {},
 		//激活确认校验
@@ -116,20 +120,20 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.QueryInfo = function(data, func) {
 		KQTypeObj[this.YWType].QueryInfo(data, func);
 	};
-	this.CheckStock = function(ywtype, data) {
-		KQTypeObj[ywtype].CheckStock(data);
+	this.CheckStock = function(data, func) {
+		KQTypeObj[ywtype].CheckStock(data, func);
 	};
-	this.ActiveApply = function(ywtype, data) {
-		KQTypeObj[ywtype].ActiveApply(data);
+	this.ActiveApply = function(data, func) {
+		KQTypeObj[ywtype].ActiveApply(data, func);
 	};
-	this.ActiveConfirm = function(ywtype, data) {
-		KQTypeObj[ywtype].ActiveConfirm(data);
+	this.ActiveConfirm = function(data, func) {
+		KQTypeObj[ywtype].ActiveConfirm(data, func);
 	};
-	this.Recharge = function(ywtype, data) {
-		KQTypeObj[ywtype].Recharge(data);
+	this.Recharge = function(data, func) {
+		KQTypeObj[ywtype].Recharge(data, func);
 	};
-	this.Completed = function(ywtype, ) {
-		KQTypeObj[ywtype].Completed(data);
+	this.Completed = function(data, func) {
+		KQTypeObj[ywtype].Completed(data, func);
 	};
 }
 export default {
