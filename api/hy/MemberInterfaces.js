@@ -267,6 +267,59 @@ const batchCardActiveConfirm = function(loading_title, request, success, error) 
 			error(res)
 	});
 }
+
+const coupon_sale = {
+	async base_request(process, data, success, error){
+		let request_params = requestAssemble("处理中...", {
+			brand: getApp().globalData.brand,
+			data: {
+				custom: data
+			},
+			paytype: "MemberInterface",
+			method: process
+		});
+		let result = null;
+		let callback = (res) => result = res;
+		await Req.asyncFuncOne(reqdata, callback);
+		if(result.code)
+			success.call(result);
+		else
+			error.call(result);
+		return result;
+	},
+	async special_request(process, data, success, error){
+		let request_params = requestAssemble("处理中...", {
+			brand: getApp().globalData.brand,
+			data: data,
+			paytype: "MemberInterface",
+			method: process
+		});
+		let result = null;
+		let callback = (res) => result = res;
+		await Req.asyncFuncOne(reqdata, callback);
+		if(result.code)
+			success.call(result);
+		else
+			error.call(result);
+		return result;
+	},
+	async CouponInfoSearch(params){//券信息查询
+		return await this.base_request("CouponSearch",params);
+	},
+	async CouponValid(params){//券号校验
+		return await this.base_request("CouponAllowSaleSegmentValid",params);
+	},
+	async CouponDistribute(params){//券号下发
+		return await this.base_request("CouponSegmentDistribute",params);
+	},
+	async CouponActivation(params){//券激活
+		return await this.base_request("CouponActivation",params);
+	},
+	async CouponStoreSearch(params){//券库存查询
+		return await this.special_request("StockQuery",params);
+	}
+}
+
 export default {
 	UploadPoint,
 	CouponList,
@@ -282,4 +335,5 @@ export default {
 	checkCardsActiveNums,
 	batchCardActiveApply,
 	batchCardActiveConfirm,
+	coupon_sale
 }
