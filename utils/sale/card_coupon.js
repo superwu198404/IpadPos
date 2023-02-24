@@ -13,21 +13,21 @@ var KQTypeObj = {
 		kqtype: "SKCZ", //售卡充值
 		typename: "VIP售卡充值", //售卡充值
 		//初始化
-		InitData: function() {
-			console.log("VIP售卡初始化");
+		InitData: function(data) {
+			console.log("VIP售卡初始化：");
 		},
 		//校验状态
-		CheckStatus: function() {},
+		CheckStatus: function(data) {},
 		//校验库存
-		CheckStock: function() {},
+		CheckStock: function(data) {},
 		//激活申请校验
-		ActiveApply: function() {},
+		ActiveApply: function(data) {},
 		//激活确认校验
-		ActiveConfirm: function() {},
+		ActiveConfirm: function(data) {},
 		//激活后充值
-		Recharge: function() {},
+		Recharge: function(data) {},
 		//业务完成
-		Completed: function() {},
+		Completed: function(data) {},
 	},
 	//VIP 卡充值
 	"VIPCard_Recharge": {
@@ -87,10 +87,29 @@ var InitKQSale = function(vue, uni, store) {
 	this.Vue = vue; //vue实例
 	this.Uni = uni; //uni实例
 	this.Store = store; //门店实例
+
 	//执行操作方法
-	this.SetFunction = function(ywtype, method) {
-		KQTypeObj[ywtype][method]();
-	}
+	this.InitData = function(ywtype, data) {
+		KQTypeObj[ywtype].InitData(data);
+	};
+	this.CheckStatus = function(ywtype, data) {
+		KQTypeObj[ywtype].CheckStatus(data);
+	};
+	this.CheckStock = function(ywtype, data) {
+		KQTypeObj[ywtype].CheckStock(data);
+	};
+	this.ActiveApply = function(ywtype, data) {
+		KQTypeObj[ywtype].ActiveApply(data);
+	};
+	this.ActiveConfirm = function(ywtype, data) {
+		KQTypeObj[ywtype].ActiveConfirm(data);
+	};
+	this.Recharge = function(ywtype, data) {
+		KQTypeObj[ywtype].Recharge(data);
+	};
+	this.Completed = function(ywtype, ) {
+		KQTypeObj[ywtype].Completed(data);
+	};
 }
 export default {
 	KQTypeObj,

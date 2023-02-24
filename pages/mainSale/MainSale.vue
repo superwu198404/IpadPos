@@ -940,7 +940,7 @@
 		},
 		created() {
 			var kqsale = new _card_coupon.InitKQSale(this, uni, app.globalData.store);
-			kqsale.SetFunction("VIPCard_Active", "InitData");
+			kqsale.InitData("VIPCard_Active", "InitData", "hjskhsdhhd");
 			// uni.setLocale("en");
 			// uni.showModal({
 			// 	content: "请使用扫码枪扫码",
