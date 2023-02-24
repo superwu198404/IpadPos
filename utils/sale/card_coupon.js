@@ -3,6 +3,7 @@ import _util from '@/utils/util.js';
 import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
+import db from '@/utils/db/db_excute.js';
 
 
 var KQTypeObj = {
@@ -25,22 +26,22 @@ var KQTypeObj = {
 		//校验状态
 		CheckStatus: function(res) {
 			if (!res.code) {
-				_util.simpleMsg(res.msg);
+				_util.simpleMsg(res.msg, true);
 				return false;
 			}
-			if (res.data.cardType == 'Z1001') {
-				_util.simpleMsg("不是VIP卡");
+			if (res.data.cardType != 'Z001') {
+				_util.simpleMsg("卡类型不是VIP卡", "none");
 				return false;
 			}
-			if (res.data.status == 'Z007') {
-				_util.simpleMsg("卡状态无效");
+			if (res.data.status != 'Z007') {
+				_util.simpleMsg("卡状态无效", "none");
 				return false;
 			}
 			return true;
 		},
 		//校验库存
 		CheckStock: function(data, func) {
-			_member.CheckStock("查询中。。。", {
+			_member.StockQuery("查询中。。。", {
 				data
 			}, func, func);
 		},
@@ -52,6 +53,24 @@ var KQTypeObj = {
 		Recharge: function(data) {},
 		//业务完成
 		Completed: function(data) {},
+		//商品信息匹配
+		MatchSP: async function(spid) {
+			let spinfo;
+			let sql = "select * from SPDA where SPID='" + spid + "'";
+			await db.get().executeQry(sql, "查询中", res => {
+				console.log("查询结果：", res);
+				if (res.code && res.msg.length > 0) {
+					spinfo = res.msg[0];
+				}
+			})
+			if (spinfo)
+				return {
+					SNAME: spinfo?.SNAME,
+					PRICE: spinfo?.PRICE,
+					UNIT: spinfo?.UNIT,
+					PLID: spinfo?.PLID
+				};
+		}
 	},
 	//VIP 卡充值
 	"VIPCard_Recharge": {
@@ -120,6 +139,9 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.QueryInfo = function(data, func) {
 		KQTypeObj[this.YWType].QueryInfo(data, func);
 	};
+	this.CheckStatus = function(data, func) {
+		return KQTypeObj[this.YWType].CheckStatus(data, func);
+	};
 	this.CheckStock = function(data, func) {
 		KQTypeObj[this.YWType].CheckStock(data, func);
 	};
@@ -135,6 +157,10 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.Completed = function(data, func) {
 		KQTypeObj[this.YWType].Completed(data, func);
 	};
+	//商品信息匹配
+	this.MatchSP = async function(spid) {
+		return await KQTypeObj[this.YWType].MatchSP(spid);
+	}
 }
 export default {
 	KQTypeObj,
