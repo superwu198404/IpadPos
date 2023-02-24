@@ -121,19 +121,19 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		KQTypeObj[this.YWType].QueryInfo(data, func);
 	};
 	this.CheckStock = function(data, func) {
-		KQTypeObj[ywtype].CheckStock(data, func);
+		KQTypeObj[this.YWType].CheckStock(data, func);
 	};
 	this.ActiveApply = function(data, func) {
-		KQTypeObj[ywtype].ActiveApply(data, func);
+		KQTypeObj[this.YWType].ActiveApply(data, func);
 	};
 	this.ActiveConfirm = function(data, func) {
-		KQTypeObj[ywtype].ActiveConfirm(data, func);
+		KQTypeObj[this.YWType].ActiveConfirm(data, func);
 	};
 	this.Recharge = function(data, func) {
-		KQTypeObj[ywtype].Recharge(data, func);
+		KQTypeObj[this.YWType].Recharge(data, func);
 	};
 	this.Completed = function(data, func) {
-		KQTypeObj[ywtype].Completed(data, func);
+		KQTypeObj[this.YWType].Completed(data, func);
 	};
 }
 export default {
