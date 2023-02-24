@@ -6,8 +6,6 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 	try {
 		let app = getApp();
 		let global_data = app.globalData;
-		console.log("[RequestAssemble]global_data参数:", global_data ?? {});
-		console.log("[RequestAssemble]options参数:", options ?? {});
 		let request = {
 			code: true,
 			http: {
@@ -27,6 +25,36 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 
 				},
 				member: JSON.stringify(options?.data)
+			}
+		};
+		console.log("[RequestAssemble]调用参数:", request);
+		return request;
+	} catch (e) {
+		console.log("[RequestAssemble]发生异常:", e);
+	}
+}
+var requestAssembleTwo = function(loading_title = "请求中...", options) {
+	try {
+		let app = getApp();
+		let global_data = app.globalData;
+		let request = {
+			code: true,
+			http: {
+				load: true,
+				url: "/Member/handle",
+				title: loading_title
+			},
+			method: "POST",
+			data: {
+				paytype: options?.paytype, //"WxPay_ScanCode",
+				method: options?.method, //Payment
+				param: {
+					appid: global_data?.appid, //getApp().globalData.appid,
+					gsid: global_data?.store?.GSID, //getApp().globalData.store.GSID
+					brand: global_data?.brand,
+					kquser: global_data?.kquser
+				},
+				cardinfo: options?.data
 			}
 		};
 		console.log("[RequestAssemble]调用参数:", request);
@@ -141,8 +169,7 @@ const PointsReturn = async function(loading_title, request, success, error) {
 
 //单卡查询（与会员中心，查卡 所属物料号，面额等信息）
 const CARD_QUERY = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "CARD_QUERY"
@@ -157,8 +184,7 @@ const CARD_QUERY = function(loading_title, request, success, error) {
 }
 //卡券库存查询（与仟吉Hybris中台，卡券公用接口）
 const StockQuery = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "StockQuery"
@@ -173,7 +199,7 @@ const StockQuery = function(loading_title, request, success, error) {
 }
 //VIP卡单卡申请校验（与会员中心， 校验卡是否符合激活条件）
 const singleCardActiveApply = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
+	let data = requestAssembleTwo(loading_title, {
 		brand: request.brand,
 		data: request.data,
 		paytype: "MemberInterface",
@@ -189,8 +215,7 @@ const singleCardActiveApply = function(loading_title, request, success, error) {
 }
 //VIP卡单卡激活（与会员中心， 激活）
 const singleCardActiveConfirm = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "singleCardActiveConfirm"
@@ -205,8 +230,7 @@ const singleCardActiveConfirm = function(loading_title, request, success, error)
 }
 //VIP充值（与会员中心，VIP卡充值）
 const posPayRecharge = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "posPayRecharge"
@@ -221,8 +245,7 @@ const posPayRecharge = function(loading_title, request, success, error) {
 }
 //卡号段可激活数量校验（与会员，获取会员中心确认的 可激活礼品卡号）
 const checkCardsActiveNums = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "checkCardsActiveNums"
@@ -237,8 +260,7 @@ const checkCardsActiveNums = function(loading_title, request, success, error) {
 }
 //礼品卡批量申请校验（与会员，校验）
 const batchCardActiveApply = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "batchCardActiveApply"
@@ -253,8 +275,7 @@ const batchCardActiveApply = function(loading_title, request, success, error) {
 }
 //礼品卡批量激活  （与会员，激活）
 const batchCardActiveConfirm = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
-		brand: request.brand,
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "batchCardActiveConfirm"
@@ -269,7 +290,7 @@ const batchCardActiveConfirm = function(loading_title, request, success, error) 
 }
 
 const coupon_sale = {
-	async base_request(process, data, success, error){
+	async base_request(process, data, success, error) {
 		let request_params = requestAssemble("处理中...", {
 			brand: getApp().globalData.brand,
 			data: {
@@ -281,13 +302,13 @@ const coupon_sale = {
 		let result = null;
 		let callback = (res) => result = res;
 		await Req.asyncFuncOne(reqdata, callback);
-		if(result.code)
+		if (result.code)
 			success.call(result);
 		else
 			error.call(result);
 		return result;
 	},
-	async special_request(process, data, success, error){
+	async special_request(process, data, success, error) {
 		let request_params = requestAssemble("处理中...", {
 			brand: getApp().globalData.brand,
 			data: data,
@@ -297,26 +318,26 @@ const coupon_sale = {
 		let result = null;
 		let callback = (res) => result = res;
 		await Req.asyncFuncOne(reqdata, callback);
-		if(result.code)
+		if (result.code)
 			success.call(result);
 		else
 			error.call(result);
 		return result;
 	},
-	async CouponInfoSearch(params){//券信息查询
-		return await this.base_request("CouponSearch",params);
+	async CouponInfoSearch(params) { //券信息查询
+		return await this.base_request("CouponSearch", params);
 	},
-	async CouponValid(params){//券号校验
-		return await this.base_request("CouponAllowSaleSegmentValid",params);
+	async CouponValid(params) { //券号校验
+		return await this.base_request("CouponAllowSaleSegmentValid", params);
 	},
-	async CouponDistribute(params){//券号下发
-		return await this.base_request("CouponSegmentDistribute",params);
+	async CouponDistribute(params) { //券号下发
+		return await this.base_request("CouponSegmentDistribute", params);
 	},
-	async CouponActivation(params){//券激活
-		return await this.base_request("CouponActivation",params);
+	async CouponActivation(params) { //券激活
+		return await this.base_request("CouponActivation", params);
 	},
-	async CouponStoreSearch(params){//券库存查询
-		return await this.special_request("StockQuery",params);
+	async CouponStoreSearch(params) { //券库存查询
+		return await this.special_request("StockQuery", params);
 	}
 }
 

@@ -150,8 +150,10 @@
 				<CreditSettlement style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
 				</CreditSettlement>
-				<CouponSale style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_coupon"></CouponSale>
+				<CouponSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_coupon">
+				</CouponSale>
+				<CardSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_card">
+				</CardSale>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -714,6 +716,7 @@
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
 	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
 	import CouponSale from '@/pages/CouponSale/CouponSale.vue';
+	import CardSale from '@/pages/CardSale/CardSale.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -780,6 +783,7 @@
 			ReserveDrawer,
 			CakeReservation,
 			CouponSale,
+			CardSale,
 			PrinterPage,
 			Swiper
 		},
@@ -943,8 +947,6 @@
 			},
 		},
 		created() {
-			var kqsale = new _card_coupon.InitKQSale(this, uni, app.globalData.store);
-			kqsale.InitData("VIPCard_Active", "InitData", "hjskhsdhhd");
 			// uni.setLocale("en");
 			// uni.showModal({
 			// 	content: "请使用扫码枪扫码",

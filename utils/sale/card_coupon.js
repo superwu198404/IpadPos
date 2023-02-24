@@ -13,11 +13,31 @@ var KQTypeObj = {
 		kqtype: "SKCZ", //售卡充值
 		typename: "VIP售卡充值", //售卡充值
 		//初始化
-		InitData: function(data) {
-			console.log("VIP售卡初始化：");
+		InitData: function(data, func) {
+			console.log("VIP售卡初始化：", data);
+		},
+		//查询信息
+		QueryInfo: function(data, func) {
+			_member.CARD_QUERY("查询中。。。", {
+				data
+			}, func, func);
 		},
 		//校验状态
-		CheckStatus: function(data) {},
+		CheckStatus: function(res) {
+			if (!res.code) {
+				_util.simpleMsg(res.msg);
+				return false;
+			}
+			if (res.data.cardType == 'Z1001') {
+				_util.simpleMsg("不是VIP卡");
+				return false;
+			}
+			if (res.data.status == 'Z007') {
+				_util.simpleMsg("卡状态无效");
+				return false;
+			}
+			return true;
+		},
 		//校验库存
 		CheckStock: function(data) {},
 		//激活申请校验
@@ -83,17 +103,18 @@ var KQTypeObj = {
 }
 
 //初始化卡券销售业务
-var InitKQSale = function(vue, uni, store) {
+var InitKQSale = function(vue, uni, store, ywtype) {
 	this.Vue = vue; //vue实例
 	this.Uni = uni; //uni实例
 	this.Store = store; //门店实例
+	this.YWType = ywtype; //业务类型
 
 	//执行操作方法
-	this.InitData = function(ywtype, data) {
-		KQTypeObj[ywtype].InitData(data);
+	this.InitData = function(data) {
+		KQTypeObj[this.YWType].InitData(this.Store, data);
 	};
-	this.CheckStatus = function(ywtype, data) {
-		KQTypeObj[ywtype].CheckStatus(data);
+	this.QueryInfo = function(data, func) {
+		KQTypeObj[this.YWType].QueryInfo(data, func);
 	};
 	this.CheckStock = function(ywtype, data) {
 		KQTypeObj[ywtype].CheckStock(data);
