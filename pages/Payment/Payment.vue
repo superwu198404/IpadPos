@@ -539,6 +539,9 @@
 					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
 				} else {
+					if(n === "Others" || o === "Others"){
+						return;
+					}
 					this.dPayAmount = this.toBePaidPrice();
 					this.allowInput = false;
 				}
@@ -1051,7 +1054,7 @@
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
-					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash} 元。`);
+					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash?.toFixed(2)} 元。`);
 				}
 				setTimeout(util.callBind(this, function() {
 					this.cash_change_tips = true;

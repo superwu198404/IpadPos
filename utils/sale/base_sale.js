@@ -1456,28 +1456,30 @@ var XsTypeObj = {
 			this.Page.sxBluePrinter(this.sale001, arr2, arr3, this.sxsale001, printerPram, "SX");
 		},
 		$click() {
-			console.log("[sale_credit]赊销点击...");
-			console.log("大客户权限：", this.currentOperation);
+			console.log("[sale_credit]售券点击...");
+			console.log("[Click]大客户权限：", this.currentOperation);
 			this.ComponentsManage.DKF = true; //打开大客户弹窗
-			console.log("大客户权限1：", this.currentOperation.DKF);
+			console.log("[Click]大客户权限配置：", this.currentOperation.DKF);
+			//发送名称
+			this.uni.$once("big-customer-open",util.callBind(this,function(){
+				console.warn("[Click]售券操作名称设置...");
+				this.uni.$emit("set-custom-event", "coupon-sale");
+			}))
+			uni.$once("coupon-sale", util.callBind(this, function(data) {
+				console.log("[CloseBigCustomer]售券回调:",data);
+				if (data == 'close') {
+					if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
+						.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
+						this.ComponentsManage["DKF"] = false;
+						return;
+					}
+					this.SetManage("sale_coupon");
+					this.DKF.val = data;
+					console.log("[CloseBigCustomer]当前大客户信息：", this.DKF.val);
+					uni.$emit('select-credit', data);
+				}
+			}));
 			return false;
-		},
-		OpenBigCustomer: function(data) {
-			console.log("[CloseBigCustomer]大客户打开!", data);
-			// this.mainSale.ComponentsManage.DKF = true;
-			this.setComponentsManage(null, "DKF");
-		},
-		CloseBigCustomer: function(data) {
-			console.log("[CloseBigCustomer]大客户关闭!", data);
-			if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
-				.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
-				this.ComponentsManage["DKF"] = false;
-				return;
-			}
-			this.SetManage("sale_coupon");
-			this.DKF.val = data;
-			console.log("当前大客户信息：", this.DKF.val);
-			uni.$emit('select-credit', data);
 		}
 	},
 	//赊销结算
@@ -1912,9 +1914,9 @@ function GetSale(global, vue, target_name, uni) {
 	this.uni = uni;
 	var uni = uni;
 	var payresult = null;
-     //热销商品的存储介质！
-	 var hotSale  =null; 
-	 
+	//热销商品的存储介质！
+	var hotSale = null;
+
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
@@ -2204,61 +2206,53 @@ function GetSale(global, vue, target_name, uni) {
 		this.update();
 	})
 	//获取热销商品的列表
-	this.getHotSale  =function()
-	{
-	   if(hotSale == null)
-	   {
-		   let reqPosData = {
-		   	"khid": that.Storeid
-		   };
-		   let apistr = "MobilePos_API.Models.padGetHotSale.getHotSaleGoods";
-		   let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr);
-		   _Req.asyncFuncOne(reqdata,
-		    res=>
-				{
-			    // console.log("请求的返回结果是啥"+ JSON.stringify(res).substr(0,300));
-				   var  rethotsale   =   _Req.getResData(res);
-				 
-			       that.createHotSaleSpList(rethotsale);
-				}
-		   )
-		    //ajax 获取热销商品
-	   }
-	   else
-	   {
-	      //回调函数里调用这段代码
-	     that.createHotSaleSpList(hotSale);
-	   }
-	}
-	
-    this.createHotSaleSpList  =function(pm_rethotsale)
-	{
-		if(hotSale ==null)
-		{
-			hotSale  = pm_rethotsale;
-			hotSale.forEach
-			(plitem=>
-				{
-				   //生成热销数据结构
-		       	   plitem.plarr=[];
-				   plitem.splist.forEach(spitem=>{   
-					       if(that.spidKeyVal[spitem.SPID]) 
-						   {  plitem.plarr.push(  that.spidKeyVal[spitem.SPID] ) } ;          });
-			       that.log("看一下品类初始化的怎么样"+ JSON.stringify(plitem.plarr).substr(0,300));
-				   
-				
-				} )
-		}
-		console.log("请求的返回结果是啥"+ JSON.stringify(hotSale).substr(0,300));
+	this.getHotSale = function() {
+		if (hotSale == null) {
+			let reqPosData = {
+				"khid": that.Storeid
+		 };
+			let apistr = "MobilePos_API.Models.padGetHotSale.getHotSaleGoods";
+			let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr);
+			_Req.asyncFuncOne(reqdata,
+				res => {
+					// console.log("请求的返回结果是啥"+ JSON.stringify(res).substr(0,300));
+					var rethotsale = _Req.getResData(res);
 
-		that.selectFlagList   =  hotSale;
-		if(  that.selectFlagList.length >0)
-		{
-          that.selectPlid  = that.selectFlagList[0].plid;
+					that.createHotSaleSpList(rethotsale);
+				}
+			)
+			//ajax 获取热销商品
+		} else {
+			//回调函数里调用这段代码
+			that.createHotSaleSpList(hotSale);
+		}
+	}
+
+	this.createHotSaleSpList = function(pm_rethotsale) {
+		if (hotSale == null) {
+			hotSale = pm_rethotsale;
+			hotSale.forEach(plitem => {
+				//生成热销数据结构
+				plitem.plarr = [];
+				plitem.splist.forEach(spitem => {
+					if (that.spidKeyVal[spitem.SPID]) {
+						plitem.plarr.push(that.spidKeyVal[spitem.SPID])
+					};
+				});
+				that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
+
+
+			})
+		}
+		console.log("请求的返回结果是啥" + JSON.stringify(hotSale).substr(0, 300));
+
+		that.selectFlagList = hotSale;
+		if (that.selectFlagList.length > 0) {
+			that.selectPlid = that.selectFlagList[0].plid;
 		}
 		that.update();
 	}
-	
+
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = !this.Page.Alphabetical;
@@ -2405,7 +2399,6 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
-		uni.$on("close-big-customer", (XsTypeObj.sale_coupon.CloseBigCustomer).bind(this));
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
 		uni.$on("close-tszk", this.CloseTSZK);
@@ -2581,7 +2574,7 @@ function GetSale(global, vue, target_name, uni) {
 	//商品档案002 以商品id为键值的结构
 	this.spSelectArr = {};
 	//用商品编码作为Key和Val的数据结构
-	this.spidKeyVal  ={};
+	this.spidKeyVal = {};
 	//更新（根据代码应该是强制刷新页面）
 	this.actType = common.actTypeEnum.Payment;
 	//筛选的品类
@@ -4205,8 +4198,7 @@ function GetSale(global, vue, target_name, uni) {
 }
 
 
-export default 
-{
+export default {
 	XsTypeObj,
 	GetSale
 }

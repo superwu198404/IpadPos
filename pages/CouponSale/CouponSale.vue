@@ -9,7 +9,7 @@
 </template>
 
 <script>
-	import coupon_sale from '@/api/business/coupon_sale.js'
+	import member from '@/api/hy/MemberInterfaces.js'
 	export default {
 		name:"CouponSale",
 		data(){
@@ -30,12 +30,18 @@
 		},
 		methods:{
 			async coupon_info_search(){
-				let result = await coupon_sale.CouponInfoSearch({
+				let result = await member.coupon_sale.CouponInfoSearch({
 					coupon_start: this.start_coupon_no
 				})
 			},
+			async coupon_store_search(){
+				let result = await member.coupon_sale.CouponStoreSearch({
+					coupon_start: this.start_coupon_no,
+					coupon_end: this.end_coupon_no
+				})
+			},
 			async coupon_segment_valid(){
-				let result = await coupon_sale.CouponValid({
+				let result = await member.coupon_sale.CouponValid({
 					coupon_start: this.start_coupon_no,
 					coupon_end: this.end_coupon_no
 				})
