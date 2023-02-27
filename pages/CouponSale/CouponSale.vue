@@ -42,14 +42,15 @@
 						begin_num: this.form.start_coupon_no,
 						end_num: this.form.end_coupon_no,
 						material_id: id,
-						khid: "K200QTD006" || this.KHID
+						khid: "K200QTD005" || this.KHID
 					}
 				})
 			},
 			async coupon_segment_valid() {
 				return await member.coupon_sale.CouponValid({
 					coupon_start: this.form.start_coupon_no,
-					coupon_end: this.form.end_coupon_no
+					coupon_end: this.form.end_coupon_no,
+					khid: "K200QTD005" || this.KHID
 				})
 			},
 			coupon_sale() {
@@ -63,9 +64,16 @@
 
 					}
 				})).then(util.callBind(this, function(res) {
-					console.log("[CouponSale]券可发售号段校验:", res);
+					console.log("[CouponSale]券库存校验:", res);
 					if(res.code){
 						return this.coupon_segment_valid();
+					} else {
+
+					}
+				})).then(util.callBind(this, function(res) {
+					console.log("[CouponSale]券可发售号段校验:", res);
+					if(res.code){
+						
 					} else {
 
 					}
