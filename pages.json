@@ -317,6 +317,10 @@
 			    "navigationBarTitleText" : "",
 			    "enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path": "pages/CardSale/CardSale",
+			"style": {}
 		}
     ],
     "globalStyle" : {
@@ -360,4 +364,5 @@
         "saomaqiang" : "/components/saomaqiang/saomaqiang",
         "cdxp" : "/components/cdxp/cdxp"
     }
+
 }

@@ -150,6 +150,10 @@
 				<CreditSettlement style="position: absolute;z-index: 5;"
 					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
 				</CreditSettlement>
+				<CouponSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_coupon">
+				</CouponSale>
+				<CardSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_card">
+				</CardSale>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -711,6 +715,8 @@
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
 	import ReserveDrawer from '@/pages/Reserve/ReserveDrawer.vue';
 	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
+	import CouponSale from '@/pages/CouponSale/CouponSale.vue';
+	import CardSale from '@/pages/CardSale/CardSale.vue';
 	//页面组件导入 👆
 	import mysale from '@/utils/sale/base_sale.js';
 	import xs_sp_init from '@/utils/sale/xs_sp_init.js';
@@ -723,6 +729,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _msg from '@/api/business/message.js';
 	import _main from '@/api/business/main.js';
+	import _card_coupon from '@/utils/sale/card_coupon.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	var app = getApp();
@@ -775,6 +782,8 @@
 			MemberLogin,
 			ReserveDrawer,
 			CakeReservation,
+			CouponSale,
+			CardSale,
 			PrinterPage,
 			Swiper
 		},
@@ -963,10 +972,10 @@
 				this.mainSale.$initSale(XsTypeObj['sale_takeaway']); //切换到外卖
 			}));
 			console.log("初始化的khid:", this.KHID);
-			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices,pm_spidKeyVal) {
+			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
 				//console.log("[MainSale]商品实际的长度:", products.length);
 				this.mainSale.SetAllGoods(products, prices);
-				this.mainSale.spidKeyVal  = pm_spidKeyVal;
+				this.mainSale.spidKeyVal = pm_spidKeyVal;
 			}), this.DQID, this.KHZID);
 			let sys = util.getStorage("sysParam");
 			if (sys && sys.DGIMGURL) {
