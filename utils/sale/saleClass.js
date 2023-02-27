@@ -230,6 +230,23 @@ var sale003 = function() {
 	this.SALETIME = null;
 }
 
+var sale006 = function() {
+	let client_info = getApp().globalData.store;
+	this.SALEDATE = "";
+	this.SALETIME = "";
+	this.GCID = client_info.GCID;
+	this.KHID = client_info.KHID;
+	this.POSID = client_info.POSID;
+	this.BILL = "";
+	this.SPID = "";
+	this.NO = 0;
+	this.KQIDS = "";
+	this.KQIDE = "";
+	this.KQIDSTR = "";
+	this.QTY = 0;
+	this.MYSTR = "";
+}
+
 var sale008 = function() {
 	this.SALEDATE = null;
 	this.NOTE = null;
@@ -436,9 +453,9 @@ var ywsxjs = function(init) {
 	this.POSID = "";
 	this.BILL_QT = "";
 	this.DPID = "";
-	if(init) {
+	if (init) {
 		let ywsxjs = this;
-		Object.cover(ywsxjs,init);
+		Object.cover(ywsxjs, init);
 	}
 }
 
@@ -502,6 +519,7 @@ export default {
 	sale001,
 	sale002,
 	sale003,
+	sale006,
 	ydsale001,
 	ydsale002,
 	ydsale003,

@@ -1510,15 +1510,21 @@ var XsTypeObj = {
 			"inputsp": true //是否可以输入商品
 		},
 		$initSale: function(params) {
-			this.actType = common.actTypeEnum.Payment
-			//销售切换到赊销时清除促销折扣等数据
-			this.sale002.map(r => {
-				r.NET = this.float(r.NET + r.DISCRATE, 2);
-				r.PRICE = this.float(r.NET / r.QTY, 2);
-				r.DISCRATE = 0;
-				r.CXDISC = 0;
-				r.YN_CXDISC = "N";
-			})
+			console.log("[InitSale]券销售参数:",params);
+			this.actType = common.actTypeEnum.Payment;
+			this.sale001 = new sale.sale001();
+			this.sale002 = params.sale2;
+			this.sale003 = [];
+			this.sale006 = params.sale6;
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Payment);
+			let amount = this.sale002.reduce((prev,next) => Number(prev?.NET) * Number(prev?.QTY) + Number(next?.NET) * Number(next?.QTY),{ NET:0,QTY:0});
+			this.sale001.ZNET = amount;
+			this.sale001.TNET = amount;
+			console.log("[InitSale]券总金额:",amount);
 			//清除一下会员信息
 			this.HY.val = {};
 			uni.$emit('set-member', this.HY.val);
@@ -1537,19 +1543,19 @@ var XsTypeObj = {
 		//在此模式下添加商品是否所有限制
 		$addSp: function(pm_input) {
 			//无条件返回表示，不需要限制
-			return true;
+			return false;
 		},
 		///在付款之前的操作
 		$beforeFk: function() {
-			//生成赊销单
-			this.sxsale001 = Object.cover(new sale.sxsale001(), this.sale001);
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
 				sale001: this.sale001,
 				sale002: this.sale002,
-				sale003: this.sale003,
-				sxsale001: this.sxsale001
+				sale003: this.sale003
 			});
-			if (this.sale002.length > 0 && this.sale001.TNET >= 0) { // 部分商品金额为0
+			console.log("[BeforePayment]付款判断是否启用赊销:",this.DKF.exists_credit);
+			if (this.sale002.length > 0 && this.sale001.TNET >= 0 && this.DKF.val.exists_credit) { // 部分商品金额为0
+				//生成赊销单
+				this.sxsale001 = Object.cover(new sale.sxsale001(), this.sale001);
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -2663,6 +2669,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.sale001 = {}; //sale001 主单
 	this.sale002 = []; //sale002 子单1：记录商品信息
 	this.sale003 = []; //sale003 子单2：记录支付信息
+	this.sale006 = [];
 	this.sale008 = []; //sale008
 	this.ywbhqh = []; //裱花请货单
 	this.ydsale001 = {}; //预定主单
@@ -2763,7 +2770,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
-
+	
+	this.Page.$watch('mainSale.DKF', util.callBind(this, function(n, o) {
+		console.warn("[Watch-Big-Customer]打客户信息发生变更...");
+	}))
+	
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()
@@ -3436,6 +3447,7 @@ function GetSale(global, vue, target_name, uni) {
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003,
+				sale006: this.sale006,
 				sale008: this.sale008,
 				ydsale001: this.ydsale001,
 				ywbhqh: this.ywbhqh,
@@ -3454,6 +3466,7 @@ function GetSale(global, vue, target_name, uni) {
 					SALE001: this.sale001,
 					SALE002: this.sale002,
 					SALE003: this.sale003,
+					SALE006: this.sale006,
 					SALE008: this.sale008,
 					YWBHQH: this.ywbhqh,
 					YDSALE001: this.ydsale001,
