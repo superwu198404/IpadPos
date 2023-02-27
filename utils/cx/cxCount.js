@@ -524,6 +524,10 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			//0:优先积分促销  1:放弃积分促销 校验
 			if (!isPointsCheck(cxbill, is_Points)) {
 				continue;
+			}	
+			//判断会员积分促销，积分是否够扣除
+			if(!ynCxjfCheck(cxbill)){
+				continue;
 			}
 
 			let retyyslclass = retCxClassForDtRow(cxbill, yysl);
@@ -678,6 +682,35 @@ const isPointsCheck = function(bill,isPoints) {
 	} else if((mcc.cxtype == "D" || mcc.cxtype == "G") && isPoints == 1 ){
 		return false;
 	}else {
+		return true;
+	}
+}
+
+//判断会员积分促销，积分是否够扣除
+const ynCxjfCheck = function(bill) {
+	try{
+		let mcc = cxdict.get(bill);
+		if (isHy) {
+			switch (mcc.CXRY) {
+				case "all":
+					return true;
+				case "Hy":
+					let tj = cx_util.TryParse(hymen.JFBalance);
+				    //会员积分不够扣除
+					if(tj < cx_util.nnvl(mcc.syjf,0)){
+						return false;
+					}else{
+						return true;	
+					}
+				case "Nhy":
+					return true;
+				default:
+					return true;
+			}
+		} else {
+			return true;
+		}
+	}catch(err){
 		return true;
 	}
 }
