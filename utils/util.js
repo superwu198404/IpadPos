@@ -346,6 +346,10 @@ const utils = {
 				return a[prop] - b[prop] // 升序
 			}
 		}
+	},
+	//转换为小数，并保留2位 返回number
+	newFloat: function(pm_num, pm_declen = 2) {
+		return Number(parseFloat(pm_num).toFixed(pm_declen));
 	}
 }
 
@@ -378,4 +382,5 @@ export default {
 	inverseNumber: utils.inverseNumber,
 	compare: utils.compare,
 	contrast: utils.contrast,
+	newFloat: utils.newFloat
 }

@@ -1,15 +1,3 @@
-<!-- <template>
-	<view style="border: 1px solid red;height: 100%;width: 100%;">
-		<p>卡销售：</p>
-		起始卡号：<input type="text" v-model="begin_num" />
-		结束卡号：<input type="text" v-model="end_num" />
-		<button @click="Confirm">确认</button>
-		<view>
-			<p v-for="(item) in SALE002Arr">{{item.STR1}}-{{item.SPID}}-{{item.PLID}}-{{item.UNIT}}</p>
-			<p v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)">充{{item.CZNET}}元，送{{item.ZSNET}}元.</p>
-		</view>
-	</view>
-</template> -->
 <style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
@@ -20,9 +8,6 @@
 	<view class="content">
 		<!-- <menu_page :menuIndex="7"></menu_page> -->
 		<view class="right">
-			<!-- 顶部导航栏 -->
-			<Head></Head>
-			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
 					<text class="xuhao">01</text>
@@ -62,11 +47,30 @@
 					<view class="module">
 						<view class="hh">充值金额 <em></em></view>
 						<view class="jinelist">
-							<view class="li-je " v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)"
-								:class="CurCZGZ.CZNET==item.CZNET?'curr':''">
-								<label>¥{{item.CZNET}}</label>
-								<!-- <text>20元为代金券</text> -->
-								<em>送￥{{item.ZSNET}}</em>
+							<view class="li-je curr">
+								<label>¥200</label>
+								<text>20元为代金券</text>
+								<em>送￥20</em>
+							</view>
+							<view class="li-je">
+								<label>¥200</label>
+								<text>20元为代金券</text>
+								<em>送￥20</em>
+							</view>
+							<view class="li-je">
+								<label>¥200</label>
+								<text>20元为代金券</text>
+								<em>送￥20</em>
+							</view>
+							<view class="li-je">
+								<label>¥200</label>
+								<text>20元为代金券</text>
+								<em>送￥20</em>
+							</view>
+							<view class="li-je">
+								<label>¥200</label>
+								<text>20元为代金券</text>
+								<em>送￥20</em>
 							</view>
 						</view>
 					</view>
@@ -78,13 +82,13 @@
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist" v-for="(item) in SALE002">
+						<view class="cardlist">
 							<view class="ulli">
 								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
-									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+									<label>￥550<text>/10张</text></label>
 									<view class="zje">
-										<view><text>总金额</text>￥{{item.NET}}</view>
+										<view><text>总金额</text>￥56780</view>
 										<button>
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button>
@@ -113,18 +117,37 @@
 						<button class="btn">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry v-if="showCardNum"></CardNumEntry>
+					<view class="boxs" v-if="ShowOthersPay">
+						<view class="popup">
+							<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
+							<view class="h1">录入礼品卡卡号 <button class="close">×</button></view>
+							<view class="number">
+								<label>
+									<text>开始卡号：</text>
+									<input type="text" placeholder="请输入开始卡号" />
+								</label>
+								<label>
+									<text>截止卡号：</text>
+									<input type="text" placeholder="请输入截止卡号" />
+								</label>
+							</view>
+							<view class="confirm">
+								<button class="btn btn-qx" data-yndgxp='N'>取消</button>
+								<button class="btn" data-yndgxp='N' @click="mainSale.getSp">确认</button>
+							</view>
+						</view>
+
+					</view>
 				</view>
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNum=true">
-							</image>
+							<image src="../../images/img2/shuakalr.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z">
+						<view class="a-z" @click="mainSale.MemberLogin(1)">
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z">
+						<view class="a-z" @click="mainSale.GetTSZKData">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 					</view>
@@ -132,9 +155,8 @@
 							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
 						</view> -->
 					<view class="ranks" v-if="Alphabetical">
-						<!-- @click="mainSale.FlagClick" -->
-						<label :class="mainSale.selectFlag==flagitem?'curr':''" :data-flag="flagitem"
-							v-for="(flagitem, flagindex) in  mainSale.flagList">
+						<label :class="mainSale.selectFlag==flagitem?'curr':''" @click="mainSale.FlagClick"
+							:data-flag="flagitem" v-for="(flagitem, flagindex) in  mainSale.flagList">
 							<text>{{flagitem}}</text>
 							<em></em>
 						</label>
@@ -145,10 +167,8 @@
 		</view>
 	</view>
 </template>
-<script>
-	//基础组件
-	import Head from '@/pages/Home/Component/Head.vue'
 
+<script>
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
 	import _util from "@/utils/util.js";
@@ -158,21 +178,16 @@
 	var that, KQSale;
 	export default {
 		name: "CardSale",
-		components: {
-			Head
-		},
 		data() {
 			return {
-				begin_num: "",
+				begin_num: "1087110000744323",
 				end_num: "",
 				store: getApp().globalData.store,
+				SALE002Arr: [],
 				showCZGZ: false,
 				CZGZMX: [],
 				CurCZGZ: {},
-				SALE001: {},
-				SALE002: [],
-				showCardNum: false,
-				swipetip: false
+				SALE002: []
 			}
 		},
 		created: function() {
@@ -181,25 +196,8 @@
 			KQSale.InitData("卡销售初始化", res => {
 				that.ShowCZGZ();
 			});
-			//事件监听
-			uni.$off("GetCardNums");
-			uni.$on("GetCardNums", that.GetCardNums);
 		},
 		methods: {
-			//卡号返回
-			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
-				if (e) {
-					that.showCardNum = false;
-					that.begin_num = e.begin_num;
-					that.end_num = e.end_num;
-					if (e.type == 'Y') {
-						that.Confirm();
-					} else {
-
-					}
-				}
-			},
 			Confirm: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
@@ -226,11 +224,11 @@
 							}
 							let spObj = await KQSale.MatchSP(res.data.materielId);
 							if (spObj) {
-								let arr = that.SALE002.filter(r => {
+								let arr = that.SALE002Arr.filter(r => {
 									return r.SPID == spObj.SPID;
 								});
 								if (arr.length == 0)
-									that.SALE002.push(spObj);
+									that.SALE002Arr.push(spObj);
 								else {
 									_util.simpleMsg("已添加该商品", "none");
 								}
@@ -256,21 +254,15 @@
 			ChooseCZGZ: function(e) {
 				if (e)
 					that.CurCZGZ = e;
-				console.log("选择得规则：", that.CurCZGZ);
-				let s2 = JSON.parse(JSON.stringify(that.SALE002));
-
-				s2.map(r => {
-					r.PRICE = _util.newFloat(Number(e.CZNET) + Number(e.ZSNET), 2);
-					console.log("测试数据：", r.PRICE);
-					console.log("测试数据1：", r.QTY);
-					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
+				that.SALE002.map(r => {
+					r.PRICE = e.CZNET;
+					r.PRICE = e.CZNET;
+					r.PRICE = e.CZNET;
 				})
-				that.SALE002 = s2;
 			},
 		}
 	}
 </script>
 
 <style>
-
 </style>

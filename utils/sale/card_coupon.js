@@ -19,10 +19,20 @@ var KQTypeObj = {
 		//初始化
 		InitData: function(data, func) {
 			console.log("VIP售卡初始化：", data);
+			_card_sale.GetKCZGZMX("", res => {
+				console.log("卡充值规则获取结果：", res);
+				if (res.code) {
+					let arr = JSON.parse(res.data);
+					_util.setStorage("KCZGZMX", arr);
+				} else {
+					_util.removeStorage("KCZGZMX");
+				}
+				if (func) func();
+			});
 		},
 		//查询信息
 		QueryInfo: function(data, func) {
-			_member.CARD_QUERY("查询中。。。", {
+			_member.CARD_QUERY("查询中...", {
 				data
 			}, func, func);
 		},
@@ -62,16 +72,24 @@ var KQTypeObj = {
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
 			var data = JSON.parse(result.data || "");
+			console.log("匹配的商品信息：", data)
 			if (result.code && data?.length) {
 				spinfo = data[0];
 			}
-			if (spinfo)
-				return {
-					SNAME: spinfo?.SNAME,
-					PRICE: spinfo?.PRICE,
-					UNIT: spinfo?.UNIT,
-					PLID: spinfo?.PLID
-				};
+			if (spinfo) {
+				let sale2 = new _sale.sale002();
+				sale2.QTY = 1;
+				sale2.SPID = spid;
+				sale2.STR1 = spinfo?.SNAME;
+				sale2.PRICE = spinfo?.PRICE;
+				sale2.OPRICE = spinfo?.PRICE;
+				sale2.UNIT = spinfo?.UNIT;
+				sale2.PLID = spinfo?.PLID;
+				sale2.SPJGZ = spinfo?.SPJGZ;
+				sale2.BRANDID = "SK";
+				return sale2;
+			}
+			return null;
 		}
 	},
 	//VIP 卡充值
@@ -157,8 +175,8 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.YWType = ywtype; //业务类型
 
 	//执行操作方法
-	this.InitData = function(data) {
-		KQTypeObj[this.YWType].InitData(this.Store, data);
+	this.InitData = function(data, func) {
+		KQTypeObj[this.YWType].InitData(data, func);
 	};
 	this.QueryInfo = function(data, func) {
 		KQTypeObj[this.YWType].QueryInfo(data, func);

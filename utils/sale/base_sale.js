@@ -1624,7 +1624,8 @@ var XsTypeObj = {
 			}))
 			this.uni.$once("big-customer-close", util.callBind(this, function(data) {
 				console.log("[CloseBigCustomer]售券回调:", data);
-				if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
+				if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID !=
+					'80000000' && Object
 					.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
 					this.ComponentsManage["DKF"] = false;
 					return;
@@ -2374,6 +2375,12 @@ function GetSale(global, vue, target_name, uni) {
 					var rethotsale = _Req.getResData(res);
 
 					that.createHotSaleSpList(rethotsale);
+				},
+			res=>
+				{
+					hotSale =null;
+					that.myAlert("获取热销商品失败"+res.msg);
+				
 				}
 			)
 			//ajax 获取热销商品

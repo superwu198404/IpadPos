@@ -68,7 +68,6 @@
 				big_client_info: {},
 				current: -1,
 				curIndex: -1,
-				custom_event_name: ""
 			}
 		},
 		computed: {
