@@ -9,6 +9,50 @@ import _card_sale from "@/api/business/card_sale.js";
 import {
 	RequestSend
 } from '@/api/business/da.js'
+//创建订单号
+var getBill = function(store, index = 0) {
+	var newbill = "";
+	let d = new Date();
+	let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() %
+		100);
+	let month = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1);
+	let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
+	let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+	let min = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+	let sec = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
+	newbill = store.KHID + store.POSID + year + month + day + hour + min + sec;
+	//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
+	newbill = newbill + "" + index;
+	console.log("创建的单号：", newbill);
+	return newbill;
+}
+//初始化sale001
+var InitSale001 = function(store, pm_input) {
+	var commonSaleParm = {
+		GSID: store.GSID,
+		KHID: store.KHID,
+		SALEDATE: _date.getYMD(),
+		POSID: store.POSID,
+		RYID: store.ryid,
+		BILL: getBill(),
+		KCDID: store.KCDID,
+		DPID: store.DPID,
+		GCID: store.GCID,
+		SALETIME: _date.getYMDS(),
+		YN_OK: 'X', //默认为 X
+		YN_SC: 'N', //默认为 N
+		YAER: _date.getDateByParam("Y"),
+		MONTH: _date.getDateByParam("M"),
+		WEEK: _date.getDateByParam("w"),
+		TIME: _date.getDateByParam("h")
+	};
+	if (pm_input && Object.keys(pm_input).length > 0) {
+		commonSaleParm = Object.assign(commonSaleParm, pm_input);
+	}
+	let sale001 = new _sale.sale001(commonSaleParm);
+	console.log("[InitSale001]SALE001创建完毕!", sale001);
+	return sale001;
+}
 
 var KQTypeObj = {
 	//VIP卡 激活，充值
@@ -202,5 +246,6 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 }
 export default {
 	KQTypeObj,
-	InitKQSale
+	InitKQSale,
+	InitSale001
 }
