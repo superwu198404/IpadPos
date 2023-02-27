@@ -79,6 +79,7 @@ var KQTypeObj = {
 			}
 			if (spinfo) {
 				let sale2 = new _sale.sale002();
+				sale2.QTY = 1;
 				sale2.SPID = spid;
 				sale2.STR1 = spinfo?.SNAME;
 				sale2.PRICE = spinfo?.PRICE;

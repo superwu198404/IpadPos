@@ -20,6 +20,9 @@
 	<view class="content">
 		<!-- <menu_page :menuIndex="7"></menu_page> -->
 		<view class="right">
+			<!-- 顶部导航栏 -->
+			<Head></Head>
+			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
 					<text class="xuhao">01</text>
@@ -75,13 +78,13 @@
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist">
+						<view class="cardlist" v-for="(item) in SALE002">
 							<view class="ulli">
 								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
-									<label>￥550<text>/10张</text></label>
+									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
 									<view class="zje">
-										<view><text>总金额</text>￥56780</view>
+										<view><text>总金额</text>￥{{item.NET}}</view>
 										<button>
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button>
@@ -110,27 +113,7 @@
 						<button class="btn">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry @GetCardNums="GetCardNums()" v-show="showCardNum"></CardNumEntry>
-					<!-- <view class="boxs" v-if="ShowOthersPay">
-						<view class="popup">
-							<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-							<view class="h1">录入礼品卡卡号 <button class="close">×</button></view>
-							<view class="number">
-								<label>
-									<text>开始卡号：</text>
-									<input type="text" placeholder="请输入开始卡号" />
-								</label>
-								<label>
-									<text>截止卡号：</text>
-									<input type="text" placeholder="请输入截止卡号" />
-								</label>
-							</view>
-							<view class="confirm">
-								<button class="btn btn-qx" data-yndgxp='N'>取消</button>
-								<button class="btn" data-yndgxp='N'>确认</button>
-							</view>
-						</view>
-					</view> -->
+					<CardNumEntry v-if="showCardNum"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -163,6 +146,9 @@
 	</view>
 </template>
 <script>
+	//基础组件
+	import Head from '@/pages/Home/Component/Head.vue'
+
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
 	import _util from "@/utils/util.js";
@@ -172,17 +158,21 @@
 	var that, KQSale;
 	export default {
 		name: "CardSale",
+		components: {
+			Head
+		},
 		data() {
 			return {
 				begin_num: "",
 				end_num: "",
 				store: getApp().globalData.store,
-				SALE002Arr: [],
 				showCZGZ: false,
 				CZGZMX: [],
 				CurCZGZ: {},
+				SALE001: {},
 				SALE002: [],
-				showCardNum: false
+				showCardNum: false,
+				swipetip: false
 			}
 		},
 		created: function() {
@@ -191,8 +181,25 @@
 			KQSale.InitData("卡销售初始化", res => {
 				that.ShowCZGZ();
 			});
+			//事件监听
+			uni.$off("GetCardNums");
+			uni.$on("GetCardNums", that.GetCardNums);
 		},
 		methods: {
+			//卡号返回
+			GetCardNums: function(e) {
+				console.log("卡号返回事件：", e);
+				if (e) {
+					that.showCardNum = false;
+					that.begin_num = e.begin_num;
+					that.end_num = e.end_num;
+					if (e.type == 'Y') {
+						that.Confirm();
+					} else {
+
+					}
+				}
+			},
 			Confirm: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
@@ -219,11 +226,11 @@
 							}
 							let spObj = await KQSale.MatchSP(res.data.materielId);
 							if (spObj) {
-								let arr = that.SALE002Arr.filter(r => {
+								let arr = that.SALE002.filter(r => {
 									return r.SPID == spObj.SPID;
 								});
 								if (arr.length == 0)
-									that.SALE002Arr.push(spObj);
+									that.SALE002.push(spObj);
 								else {
 									_util.simpleMsg("已添加该商品", "none");
 								}
@@ -250,14 +257,15 @@
 				if (e)
 					that.CurCZGZ = e;
 				console.log("选择得规则：", that.CurCZGZ);
-				that.SALE002.map(r => {
-					r.PRICE = _util.myFixed(e.CZNET + r.ZSNET, 2);
-					r.NET = _util.myFixed(r.PRICE * r.QTY, 2);
+				let s2 = JSON.parse(JSON.stringify(that.SALE002));
+
+				s2.map(r => {
+					r.PRICE = _util.newFloat(Number(e.CZNET) + Number(e.ZSNET), 2);
+					console.log("测试数据：", r.PRICE);
+					console.log("测试数据1：", r.QTY);
+					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
-			},
-			//卡号返回
-			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
+				that.SALE002 = s2;
 			},
 		}
 	}

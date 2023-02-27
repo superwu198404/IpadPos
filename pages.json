@@ -304,7 +304,7 @@
 		{
 			"path": "pages/Storeinquiry/Storeinquiry",
 			"style": {
-			 "titleNView": false,
+				"titleNView": false,
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
@@ -319,10 +319,18 @@
 		},
 		{
 			"path": "pages/CardSale/CardSale",
-			"style": {}
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 		}, {
 			"path": "pages/CouponSale/CouponSale",
-			"style": {}
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 		}
 	],
 	"globalStyle": {

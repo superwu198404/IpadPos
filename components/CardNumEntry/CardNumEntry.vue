@@ -52,6 +52,7 @@
 		},
 		methods: {
 			Cancel: function() {
+				console.log("事件触发");
 				uni.$emit("GetCardNums", {
 					type: "N",
 					begin_num: that.beginNum,
@@ -59,6 +60,7 @@
 				})
 			},
 			Confirm: function() {
+				console.log("事件触发");
 				if (!that.beginNum) {
 					_util.simpleMsg("请输入起始卡号");
 					return;
