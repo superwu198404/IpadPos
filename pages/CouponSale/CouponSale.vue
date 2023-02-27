@@ -20,7 +20,7 @@
 			return {
 				form: {
 					start_coupon_no: "400000005787429980",
-					end_coupon_no: "400000005787518186",
+					end_coupon_no: "400000005787431313",
 					is_batch: false,
 				},
 				sale: null,
@@ -86,7 +86,10 @@
 							sale006.KQIDE = this.form.end_coupon_no;
 							this.$to_sale_pages('sale_coupon', {
 								sale2: [product_info],
-								sale6: [sale006]
+								sale6: [sale006],
+								start_no:this.form.start_coupon_no,
+								end_no:this.form.end_coupon_no,
+								coupon_count:res.data.coupon_count
 							})
 						}catch(e){
 							console.log("[CouponSale]券商品信息查询失败:",e);
