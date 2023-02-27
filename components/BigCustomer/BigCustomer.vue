@@ -68,7 +68,6 @@
 				big_client_info: {},
 				current: -1,
 				curIndex: -1,
-				custom_event_name: ""
 			}
 		},
 		computed: {
@@ -86,7 +85,6 @@
 				// }
 				console.log("[BigCustomer-Close]大客户信息:",this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
-				uni.$emit(this.custom_event_name,'close');
 			},
 			CreditMode: function(is_credit) {
 				this.exists_credit = is_credit;
@@ -119,7 +117,6 @@
 				console.log("[BigCustomer-ConfimrBig]大客户信息:",this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
-				uni.$emit(this.custom_event_name,'close');
 			},
 			SelectedBigCustomer: function(evt) {
 				for (let i = 0; i < this.big_customers.length; i++) {
@@ -129,25 +126,10 @@
 						break;
 					}
 				}
-			},
-			CustomListener: function(){
-				console.log("[CustomListener]准备接收名称...");
-				uni.$off("set-custom-event");
-				uni.$once("set-custom-event",util.callBind(this,function(data){
-					console.log("[CustomListener]获取名称:",data);
-					this.custom_event_name = data;
-				}))
 			}
 		},
 		mounted() {
 			this.GetBigClients();
-		},
-		created() {
-			this.CustomListener();
-			uni.$emit("big-customer-open");
-		},
-		destroyed(){
-			uni.$emit("big-customer-close");
 		}
 	}
 </script>

@@ -97,14 +97,3 @@ Object.defineProperty(Date.prototype, 'SetHours', {
 			return this;
 	}
 })
-
-Object.defineProperty(Object.prototype, 'BindMine', {
-	value: function(obj = null) {
-		let that = obj || this;
-		for(var prop in this){
-			if(this[prop] instanceof Function){
-				this[prop] = this[prop].bind(that);
-			}
-		}
-	}
-})

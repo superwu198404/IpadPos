@@ -47,7 +47,7 @@
 			"ActivityId": "", 
 			"youzanId": "FhRDCTGa996921810022846464", 
 			"Balance": 97700, 
-			"JFBalance": "500000", 
+			"JFBalance": "177", 
 			"JFFactor": null, 
 			"Name": "", 
 			"NickName": "", 

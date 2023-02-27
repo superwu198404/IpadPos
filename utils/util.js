@@ -377,5 +377,5 @@ export default {
 	generateSQLStringArray: utils.generateSQLStringArray,
 	inverseNumber: utils.inverseNumber,
 	compare: utils.compare,
-	contrast: utils.contrast,
+	contrast: utils.contrast
 }
