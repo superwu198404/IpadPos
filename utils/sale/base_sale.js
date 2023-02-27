@@ -1465,19 +1465,17 @@ var XsTypeObj = {
 				console.warn("[Click]售券操作名称设置...");
 				this.uni.$emit("set-custom-event", "coupon-sale");
 			}))
-			uni.$once("coupon-sale", util.callBind(this, function(data) {
+			this.uni.$once("big-customer-close", util.callBind(this, function(data) {
 				console.log("[CloseBigCustomer]售券回调:",data);
-				if (data == 'close') {
-					if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
-						.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
-						this.ComponentsManage["DKF"] = false;
-						return;
-					}
-					this.SetManage("sale_coupon");
-					this.DKF.val = data;
-					console.log("[CloseBigCustomer]当前大客户信息：", this.DKF.val);
-					uni.$emit('select-credit', data);
+				if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
+					.keys(data).length == 0) { //赊销打开大客户后 没选择大客户则不做更改
+					this.ComponentsManage["DKF"] = false;
+					return;
 				}
+				this.SetManage("sale_coupon");
+				this.DKF.val = data;
+				console.log("[CloseBigCustomer]当前大客户信息：", this.DKF.val);
+				this.uni.$emit('select-credit', data);
 			}));
 			return false;
 		}
