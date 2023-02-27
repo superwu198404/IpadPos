@@ -4,7 +4,7 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
-
+import _card_sale from "@/api/business/card_sale.js";
 
 var KQTypeObj = {
 	//VIP卡 激活，充值
@@ -16,6 +16,16 @@ var KQTypeObj = {
 		//初始化
 		InitData: function(data, func) {
 			console.log("VIP售卡初始化：", data);
+			_card_sale.GetKCZGZMX("", res => {
+				console.log("卡充值规则获取结果：", res);
+				if (res.code) {
+					let arr = JSON.parse(res.data);
+					_util.setStorage("KCZGZMX", arr);
+				} else {
+					_util.removeStorage("KCZGZMX");
+				}
+				if (func) func();
+			});
 		},
 		//查询信息
 		QueryInfo: function(data, func) {
@@ -133,8 +143,8 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.YWType = ywtype; //业务类型
 
 	//执行操作方法
-	this.InitData = function(data) {
-		KQTypeObj[this.YWType].InitData(this.Store, data);
+	this.InitData = function(data, func) {
+		KQTypeObj[this.YWType].InitData(data, func);
 	};
 	this.QueryInfo = function(data, func) {
 		KQTypeObj[this.YWType].QueryInfo(data, func);
