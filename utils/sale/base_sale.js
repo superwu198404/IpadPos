@@ -2370,6 +2370,12 @@ function GetSale(global, vue, target_name, uni) {
 					var rethotsale = _Req.getResData(res);
 
 					that.createHotSaleSpList(rethotsale);
+				},
+			res=>
+				{
+					hotSale =null;
+					that.myAlert("获取热销商品失败"+res.msg);
+				
 				}
 			)
 			//ajax 获取热销商品
