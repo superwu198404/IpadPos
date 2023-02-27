@@ -270,7 +270,7 @@ var loadSaleSP = {
 			plarr.push(item);
 			pm_spidKeyList[item.SPID] = item;
 		    //蛋糕类初始化第一个选择的商品id
-			if (item.specslist.length > 0) 
+			if (item.specslist.length > 0&&item.ynshowlist == "1") 
 			{
 				item.SPID = item.specslist[0].SPID;
 			}
