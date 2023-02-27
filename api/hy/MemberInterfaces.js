@@ -24,7 +24,8 @@ var requestAssemble = function(loading_title = "请求中...", options) {
 					kquser: global_data?.kquser
 
 				},
-				member: JSON.stringify(options?.data)
+				member: JSON.stringify(options?.data),
+				cardinfo: options?.cardinfo
 			}
 		};
 		console.log("[RequestAssemble]调用参数:", request);
@@ -291,24 +292,12 @@ const batchCardActiveConfirm = function(loading_title, request, success, error) 
 
 const coupon_sale = {
 	async base_request(process, data, success, error) {
-		let request_params = requestAssemble("处理中...", {
-			brand: getApp().globalData.brand,
-			data: {
-				custom: data
-			},
-			paytype: "MemberInterface",
-			method: process
+		console.log("[BaseRequest]参数信息:", {
+			process,
+			data,
+			success,
+			error
 		});
-		let result = null;
-		let callback = (res) => result = res;
-		await Req.asyncFuncOne(reqdata, callback);
-		if (result.code)
-			success.call(result);
-		else
-			error.call(result);
-		return result;
-	},
-	async special_request(process, data, success, error) {
 		let request_params = requestAssemble("处理中...", {
 			brand: getApp().globalData.brand,
 			data: data,
@@ -317,11 +306,27 @@ const coupon_sale = {
 		});
 		let result = null;
 		let callback = (res) => result = res;
-		await Req.asyncFuncOne(reqdata, callback);
+		await Req.asyncFuncOne(request_params, callback, callback);
 		if (result.code)
-			success.call(result);
+			success?.call(result);
 		else
-			error.call(result);
+			error?.call(result);
+		return result;
+	},
+	async special_request(process, data, success, error) {
+		let request_params = requestAssembleTwo("处理中...", {
+			brand: getApp().globalData.brand,
+			data: data,
+			paytype: "MemberInterface",
+			method: process
+		});
+		let result = null;
+		let callback = (res) => result = res;
+		await Req.asyncFuncOne(request_params, callback, callback);
+		if (result.code)
+			success?.call(result);
+		else
+			error?.call(result);
 		return result;
 	},
 	async CouponInfoSearch(params) { //券信息查询

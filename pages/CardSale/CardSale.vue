@@ -16,6 +16,7 @@
 	import util from "@/utils/util.js";
 	import _util from "@/utils/util.js";
 	import _card_sale from "@/api/business/card_sale.js";
+	import _saleClass from "@/utils/sale/saleClass.js";
 
 	var that, KQSale;
 	export default {
@@ -29,6 +30,7 @@
 				showCZGZ: false,
 				CZGZMX: [],
 				CurCZGZ: {},
+				SALE002: []
 			}
 		},
 		created: function() {
@@ -87,6 +89,11 @@
 			ChooseCZGZ: function(e) {
 				if (e)
 					that.CurCZGZ = e;
+				that.SALE002.map(r => {
+					r.PRICE = e.CZNET;
+					r.PRICE = e.CZNET;
+					r.PRICE = e.CZNET;
+				})
 			},
 		}
 	}
