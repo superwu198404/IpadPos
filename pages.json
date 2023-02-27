@@ -309,6 +309,14 @@
 			    "navigationBarTitleText" : "",
 			    "enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path":"pages/Sellingcard/Sellingcard",
+			"style" : {
+			    "titleNView" : false,
+			    "navigationBarTitleText" : "",
+			    "enablePullDownRefresh" : false
+			}
 		}
     ],
     "globalStyle" : {
