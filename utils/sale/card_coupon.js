@@ -5,6 +5,7 @@ import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
 import _card_sale from "@/api/business/card_sale.js";
+
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -32,7 +33,7 @@ var KQTypeObj = {
 		},
 		//查询信息
 		QueryInfo: function(data, func) {
-			_member.CARD_QUERY("查询中。。。", {
+			_member.CARD_QUERY("查询中...", {
 				data
 			}, func, func);
 		},
@@ -72,16 +73,23 @@ var KQTypeObj = {
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
 			var data = JSON.parse(result.data || "");
+			console.log("匹配的商品信息：", data)
 			if (result.code && data?.length) {
 				spinfo = data[0];
 			}
-			if (spinfo)
-				return {
-					SNAME: spinfo?.SNAME,
-					PRICE: spinfo?.PRICE,
-					UNIT: spinfo?.UNIT,
-					PLID: spinfo?.PLID
-				};
+			if (spinfo) {
+				let sale2 = new _sale.sale002();
+				sale2.SPID = spid;
+				sale2.STR1 = spinfo?.SNAME;
+				sale2.PRICE = spinfo?.PRICE;
+				sale2.OPRICE = spinfo?.PRICE;
+				sale2.UNIT = spinfo?.UNIT;
+				sale2.PLID = spinfo?.PLID;
+				sale2.SPJGZ = spinfo?.SPJGZ;
+				sale2.BRANDID = "SK";
+				return sale2;
+			}
+			return null;
 		}
 	},
 	//VIP 卡充值

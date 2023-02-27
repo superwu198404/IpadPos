@@ -5,7 +5,7 @@
 		结束卡号：<input type="text" v-model="end_num" />
 		<button @click="Confirm">确认</button>
 		<view>
-			<p v-for="(item) in ValidCards">{{item.SNAME}}-{{item.SPID}}-{{item.PLID}}-{{item.UNIT}}</p>
+			<p v-for="(item) in SALE002Arr">{{item.STR1}}-{{item.SPID}}-{{item.PLID}}-{{item.UNIT}}</p>
 			<p v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)">充{{item.CZNET}}元，送{{item.ZSNET}}元.</p>
 		</view>
 	</view>
@@ -26,7 +26,7 @@
 				begin_num: "1087110000744323",
 				end_num: "",
 				store: getApp().globalData.store,
-				ValidCards: [],
+				SALE002Arr: [],
 				showCZGZ: false,
 				CZGZMX: [],
 				CurCZGZ: {},
@@ -55,7 +55,7 @@
 							end_num: that.begin_num,
 							material_id: res.data.materielId,
 							khid: that.store.KHID
-						}, res1 => {
+						}, async res1 => {
 							console.log("库存校验结果：", res1);
 							if (!res1.code) {
 								_util.simpleMsg(res1.msg, true);
@@ -65,9 +65,17 @@
 								_util.simpleMsg("卡库存不在当前门店", "none");
 								return;
 							}
-							let spObj = KQSale.MatchSP(res.data.materielId);
-							if (spObj)
-								that.ValidCards.push(spObj);
+							let spObj = await KQSale.MatchSP(res.data.materielId);
+							if (spObj) {
+								let arr = that.SALE002Arr.filter(r => {
+									return r.SPID == spObj.SPID;
+								});
+								if (arr.length == 0)
+									that.SALE002Arr.push(spObj);
+								else {
+									_util.simpleMsg("已添加该商品", "none");
+								}
+							}
 						})
 					}
 				})
