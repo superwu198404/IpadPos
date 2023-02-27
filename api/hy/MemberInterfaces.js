@@ -292,23 +292,31 @@ const batchCardActiveConfirm = function(loading_title, request, success, error) 
 
 const coupon_sale = {
 	async base_request(process, data, success, error) {
-		console.log("[BaseRequest]参数信息:",{
-			process, data, success, error
+		console.log("[BaseRequest]参数信息:", {
+			process,
+			data,
+			success,
+			error
 		});
-		let result = null;
-		let callback = (res) => result = res;
-		await Req.asyncFuncOne(reqdata, callback);
-		if (result.code)
-			success.call(result);
-		else
-			error.call(result);
-		return result;
-	},
-	async special_request(process, data, success, error) {
 		let request_params = requestAssemble("处理中...", {
 			brand: getApp().globalData.brand,
 			data: data,
-			cardinfo: data?.cardinfo || undefined,
+			paytype: "MemberInterface",
+			method: process
+		});
+		let result = null;
+		let callback = (res) => result = res;
+		await Req.asyncFuncOne(request_params, callback, callback);
+		if (result.code)
+			success?.call(result);
+		else
+			error?.call(result);
+		return result;
+	},
+	async special_request(process, data, success, error) {
+		let request_params = requestAssembleTwo("处理中...", {
+			brand: getApp().globalData.brand,
+			data: data,
 			paytype: "MemberInterface",
 			method: process
 		});
@@ -333,8 +341,8 @@ const coupon_sale = {
 	async CouponActivation(params) { //券激活
 		return await this.base_request("CouponActivation", params);
 	},
-	async CouponStoreSearch(params){//券库存查询
-		return await this.base_request("StockQuery",params);
+	async CouponStoreSearch(params) { //券库存查询
+		return await this.special_request("StockQuery", params);
 	}
 }
 

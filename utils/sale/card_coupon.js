@@ -4,7 +4,9 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
-
+import {
+	RequestSend
+} from '@/api/business/da.js'
 
 var KQTypeObj = {
 	//VIP卡 激活，充值
@@ -56,13 +58,12 @@ var KQTypeObj = {
 		//商品信息匹配
 		MatchSP: async function(spid) {
 			let spinfo;
-			let sql = "select * from SPDA where SPID='" + spid + "'";
-			await db.get().executeQry(sql, "查询中", res => {
-				console.log("查询结果：", res);
-				if (res.code && res.msg.length > 0) {
-					spinfo = res.msg[0];
-				}
-			})
+			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
+			console.log("[MatchSP]查询结果：", result);
+			var data = JSON.parse(result.data || "");
+			if (result.code && data?.length) {
+				spinfo = data[0];
+			}
 			if (spinfo)
 				return {
 					SNAME: spinfo?.SNAME,
@@ -122,6 +123,23 @@ var KQTypeObj = {
 		bill_type: "Z111",
 		kqtype: "SQ", //售券
 		typename: "礼品券售券", //售券
+		//商品信息匹配
+		MatchSP: async function(spid) {
+			let spinfo;
+			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
+			console.log("[MatchSP]查询结果：", result);
+			var data = JSON.parse(result.data || "");
+			if (result.code && data?.length) {
+				spinfo = data[0];
+			}
+			if (spinfo)
+				return {
+					SNAME: spinfo?.SNAME,
+					PRICE: spinfo?.PRICE,
+					UNIT: spinfo?.UNIT,
+					PLID: spinfo?.PLID
+				};
+		}
 	},
 }
 

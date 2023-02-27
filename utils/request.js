@@ -300,7 +300,14 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		if (res && res.http) {
 			console.log("[AsyncFuncArr]http请求:", res);
 			showloding(res.http.load, res.http.title);
-			res = await httpFunc(res);
+			console.log("[AsyncFuncArr]已打开加载框...");
+			console.log("[AsyncFuncArr]开始请求数据...");
+			try{
+				res = await httpFunc(res);
+			}catch(e){
+				console.log("[AsyncFuncArr]请求异常:",e);
+			}
+			console.log("[AsyncFuncArr]请求完成:",res);
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
 			// console.log("[AsyncFuncArr]http返回值:", res);
 			hideloding();
