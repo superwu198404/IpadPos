@@ -4,8 +4,7 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
-import _card_sale from "@/api/business/card_sale.js";
-
+import sales from '@/utils/sale/saleClass.js'
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -188,7 +187,7 @@ var KQTypeObj = {
 		kqtype: "SQ", //售券
 		typename: "礼品券售券", //售券
 		//商品信息匹配
-		MatchSP: async function(spid) {
+		MatchSP: async function(spid,count,price) {
 			let spinfo;
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
@@ -196,14 +195,19 @@ var KQTypeObj = {
 			if (result.code && data?.length) {
 				spinfo = data[0];
 			}
-			if (spinfo)
-				return {
-					SNAME: spinfo?.SNAME,
-					PRICE: spinfo?.PRICE,
-					UNIT: spinfo?.UNIT,
-					PLID: spinfo?.PLID
-				};
-		}
+			let sale002 = new sales.sale002();
+			sale002.STR1 = spinfo?.SNAME;
+			sale002.PRICE = price;
+			sale002.SPID = spid;
+			sale002.OPRICE = price;
+			sale002.NET = price * count;
+			sale002.QTY = count;
+			sale002.NO = 0;
+			sale002.UNIT = spinfo?.UNIT;
+			sale002.PLID = spinfo?.PLID;
+			sale002.SPJGZ = spinfo?.SPJGZ;
+			return sale002;
+		},
 	},
 }
 
@@ -241,7 +245,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	};
 	//商品信息匹配
 	this.MatchSP = async function(spid) {
-		return await KQTypeObj[this.YWType].MatchSP(spid);
+		return await KQTypeObj[this.YWType].MatchSP.call(this,...arguments);
 	}
 }
 export default {

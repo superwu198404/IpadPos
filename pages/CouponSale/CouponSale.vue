@@ -13,6 +13,7 @@
 	import member from '@/api/hy/MemberInterfaces.js'
 	import Sale from '@/utils/sale/card_coupon.js'
 	import util from '../../utils/util';
+	import sales from '@/utils/sale/saleClass.js';
 	export default {
 		name: "CouponSale",
 		data() {
@@ -76,10 +77,16 @@
 					console.log("[CouponSale]券可发售号段校验:", res);
 					if (res.code) {
 						try{
-							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count);
+							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count,res.data.coupon_value);
 							console.log("[CouponSale]券商品信息查询(sale002):",product_info);
+							let sale006 = new sales.sale006();
+							sale006.QTY = res.data.coupon_count;
+							sale006.SPID = good_id;
+							sale006.KQIDS = this.form.start_coupon_no;
+							sale006.KQIDE = this.form.end_coupon_no;
 							this.$to_sale_pages('sale_coupon', {
-								sale2: [product_info]
+								sale2: [product_info],
+								sale6: [sale006]
 							})
 						}catch(e){
 							console.log("[CouponSale]券商品信息查询失败:",e);
