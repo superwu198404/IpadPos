@@ -166,6 +166,9 @@
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
+				BIll_TYPE: "Z111",
+				XSTYPE: "1",
+				KQXSTYPE: "SK"
 			}
 		},
 		created: function() {
@@ -178,7 +181,12 @@
 				that.ShowCZGZ();
 			});
 			// console.log("数据测试：",getApp().globalData.store);
-			that.SALE001 = _card_coupon.InitSale001(getApp().globalData.store);
+			that.SALE001 = _card_coupon.InitSale001(getApp().globalData.store, {
+				BIll_TYPE: that.BIll_TYPE,
+				XSTYPE: that.XSTYPE,
+				KQXSTYPE: that.KQXSTYPE,
+				CUID: that.KQXSTYPE,
+			});
 		},
 		computed: {
 			//商品总数量
@@ -244,15 +252,58 @@
 								let arr = that.SALE002.filter(r => {
 									return r.SPID == spObj.SPID;
 								});
-								if (arr.length == 0)
+								if (arr.length == 0) {
+									spObj = that.CoverSale(spObj, that.SALE001);
+									console.log("属性合并后的对象：", spObj);
 									that.SALE002.push(spObj);
-								else {
+								} else {
 									_util.simpleMsg("已添加该商品", "none");
 								}
 							}
 						})
 					}
 				})
+			},
+			//sale对象属性合并
+			CoverSale: function(sale, sale1) {
+				try {
+					if (!sale1 || !sale) {
+						return sale;
+					}
+					let arr = [
+						KHID,
+						POSID,
+						RYID,
+						BILL,
+						KCDID,
+						GCID,
+						DPID,
+						SALEDATE,
+						SALETIME,
+						CLTIME,
+						YN_OK,
+						YN_SC,
+						YAER,
+						MONTH,
+						WEEK,
+						TIME,
+						DKFID
+					];
+					console.log("开始循环：", arr);
+					arr.map(r => {
+						console.log("当前属性：", r);
+						console.log("当前属性1：", sale1[r]);
+						console.log("当前属性2：", sale.hasOwnProperty(r));
+						if (sale1[r] && sale.hasOwnProperty(r)) { //sale1有这个属性值 且sale 有这个属性
+							sale[r] = sale1[r];
+						}
+					});
+					return sale;
+				} catch (e) {
+					//TODO handle the exception
+					console.log("转换异常：", e.message);
+					return null;
+				}
 			},
 			//展示充值规则
 			ShowCZGZ: function() {
@@ -275,9 +326,8 @@
 				let s2 = JSON.parse(JSON.stringify(that.SALE002));
 
 				s2.map(r => {
-					r.PRICE = _util.newFloat(Number(e.CZNET) + Number(e.ZSNET), 2);
-					console.log("测试数据：", r.PRICE);
-					console.log("测试数据1：", r.QTY);
+					r.PRICE = _util.newFloat(e.CZNET, 2);
+					r.CXDISC = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
 				that.SALE002 = s2;
@@ -286,14 +336,25 @@
 			//根据002 计算001 金额等字段
 			CalTNET: function() {
 				let tnet = 0,
-					disc = 0;
+					tcxdisc = 0,
+					tbzdisc = 0,
+					ttpdisc = 0
+				tlsdisc = 0;
 				that.SALE002.map(r => {
 					tnet += r.NET;
-					disc += r.DISCRATE;
+					tcxdisc += r.CXDISC;
+					tbzdisc += r.BZDISC;
+					ttpdisc += r.TPDISC;
+					tlsdisc += r.LSDISC;
 				})
 				that.SALE001.TNET = _util.newFloat(tnet);
 				that.SALE001.ZNET = that.SALE001.TNET; //调整为原价
-				that.SALE001.BILLDISC = _util.newFloat(disc);
+				that.SALE001.TCXDISC = _util.newFloat(tcxdisc);
+				that.SALE001.TBZDISC = _util.newFloat(tbzdisc);
+				that.SALE001.TTPDISC = _util.newFloat(ttpdisc);
+				that.SALE001.TLSDISC = _util.newFloat(tlsdisc);
+				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbadisc + ttpdisc + tlsdisc);
+				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
 			}
 		}

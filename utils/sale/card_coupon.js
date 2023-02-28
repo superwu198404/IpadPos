@@ -4,7 +4,9 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
-import sales from '@/utils/sale/saleClass.js'
+import sales from '@/utils/sale/saleClass.js';
+import _card_sale from "@/api/business/card_sale.js";
+
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -43,7 +45,8 @@ var InitSale001 = function(store, pm_input) {
 		YAER: _date.getDateByParam("Y"),
 		MONTH: _date.getDateByParam("M"),
 		WEEK: _date.getDateByParam("w"),
-		TIME: _date.getDateByParam("h")
+		TIME: _date.getDateByParam("h"),
+		XSPTID: "PAD"
 	};
 	if (pm_input && Object.keys(pm_input).length > 0) {
 		commonSaleParm = Object.assign(commonSaleParm, pm_input);
@@ -187,7 +190,7 @@ var KQTypeObj = {
 		kqtype: "SQ", //售券
 		typename: "礼品券售券", //售券
 		//商品信息匹配
-		MatchSP: async function(spid,count,price) {
+		MatchSP: async function(spid, count, price) {
 			let spinfo;
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
@@ -245,7 +248,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	};
 	//商品信息匹配
 	this.MatchSP = async function(spid) {
-		return await KQTypeObj[this.YWType].MatchSP.call(this,...arguments);
+		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
 }
 export default {
