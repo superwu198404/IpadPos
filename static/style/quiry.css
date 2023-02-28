@@ -1,5 +1,5 @@
 .leftcx{
-	width:15%;
+	width:17%;
 	background-color: #006B44;
 	display: flex;
 	flex-direction: column;
@@ -67,7 +67,7 @@
 	background-color: #fff;
 	border-radius: 20rpx;
 	margin:0 auto;
-	height: 94%;
+	height: 87%;
 	position: relative;
 	overflow: auto;
 }
@@ -99,8 +99,8 @@
 	z-index: 9;
 }
 .commodity .ol .li{
-	width:18%;
-	padding:0.5% 2% 0;
+	width:18.4%;
+	padding:0.5% 1.8% 0;
 	box-shadow: 0px 10rpx 20rpx 1px rgba(66,177,75,0.1);
 	border-radius: 12rpx;
 	border: 2rpx solid #DCF0DE;
@@ -168,7 +168,7 @@
 }
 .commodity .ol .li:nth-child(4),,.commodity .ol .li:nth-child(12){
 	/* background: linear-gradient(180deg, #F8F2E0 0%, #FFFFFF 100%); */
-	width:17%;
+	width:17.4%;
 }
 .commodity .ol .li:nth-child(7){
 	width:16%;
@@ -209,3 +209,257 @@
 	width:30rpx;
 	height: 30rpx;
 }
+
+.takelist{
+	display: flex;
+	height: 87%;
+	padding:0 2%;
+}
+.takelist .condits{
+	width:30%;
+	background-color: #fff;
+	height: 100%;
+	padding:0 1.5%;
+	border-radius: 12rpx;
+	border: 1px solid #EEEEEE;
+	position: relative;
+}
+.condits .h1{
+	font-size: 32rpx;
+	line-height: 80rpx;
+	font-weight: 700;
+	margin-bottom: 20rpx;
+}
+.srq{
+	display: flex;
+}
+.srq label{
+	width:50%;
+	display: flex;
+	flex-direction: column;
+}
+.srq label:nth-child(2){
+	border-left: 1px solid #eee;
+	padding-left: 2%;
+}
+.srq label text{
+	color: #B0B0B0;
+	font-size: 24rpx;
+}
+.srq label picker view{
+	font-weight: 700;
+	margin-top:24rpx;
+}
+.srq label picker view image{
+	width:20rpx;
+	height: 20rpx;
+}
+.channel{
+	margin-top:4%;
+}
+.tjmc{
+	font-size: 24rpx;
+	color: #b0b0b0;
+	line-height: 60rpx;
+}
+.chanxz{
+	display: flex;
+	padding:0 0 3%;
+}
+.chanxz label{
+	width:30%;
+	border-radius: 8rpx;
+	border: 2rpx solid #DCF0DE;
+	height: 70rpx;
+	line-height: 70rpx;
+	text-align: center;
+	font-size: 26rpx;
+	position: relative;
+	overflow: hidden;
+}
+.chanxz label:nth-child(2),.chanxz label:nth-child(5){
+	margin:0 4%;
+}
+.chanxz label em{
+	display: none;
+}
+.chanxz label.curr{
+	background: linear-gradient(180deg, #E0F8E2 0%, #FFFFFF 100%);
+	border: 2rpx solid #42B14B;
+	color: #42B14B;
+	font-weight: 700;
+	font-size: 28rpx;
+}
+.chanxz label.curr em{
+	display: block;
+	position: absolute;
+	bottom:-2%;
+	right:-3%;
+	font-size: 14rpx;
+	padding:6rpx 10rpx;
+	border-radius: 8rpx 0 8rpx 0;
+	background:#42B14B;
+	color: #fff;
+	height: 20rpx;
+	line-height: 20rpx;
+	transform: scale(0.8);
+}
+.pulldown{
+	margin-top:4%;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.pulldown label{
+	background: #F5F5F5;
+	border-radius: 8rpx;
+	border: 1px solid #EEEEEE;
+	height: 60rpx;
+	line-height: 60rpx;
+	display: inline-block;
+	position: relative;
+	width: 100%;
+}
+.pulldown label input{
+	font-size: 26rpx;
+	height: 60rpx;
+	line-height: 60rpx;
+	padding:0 4rpx;
+}
+.pulldown label button{
+	background-color:#DDDDDD;
+	font-size:16rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	width:30rpx;
+	height: 30rpx;
+	padding:0;
+	margin:0;
+	position: absolute;
+	top:14rpx;
+	right:3%;
+}
+.confirm{
+	display: flex;
+	position: absolute;
+	bottom:0;
+	padding:20rpx 0;
+	left: 0;
+	width:100%;
+}
+.confirm button{
+	margin:0 5%;
+}
+.form{
+	width:65%;
+	margin-left: 2%;
+	background-color: #fff;
+	border-radius: 12rpx;
+	border: 2rpx solid #C5E7C8;
+	overflow: auto;
+	padding:1% 0 0;
+	position: relative;
+}
+.form table{
+	width:96%;
+	border:0;
+	margin:0 auto;
+	border-style:none;
+	position: relative;
+	padding-bottom: 80rpx;
+}
+.form table thead tr th{
+	font-weight: 400;
+	font-size: 26rpx;
+	color: #b0b0b0;
+	height: 60rpx;
+	line-height: 60rpx;
+}
+.form table td,.form table th{
+	text-align: center;
+	height:70rpx;
+	line-height: 70rpx;
+	border-style:none;
+}
+.form table td:nth-last-child(1),.form table th:nth-last-child(1){
+	text-align: right;
+}
+.form table tbody tr{
+	border-radius: 6rpx;
+	background: linear-gradient(90deg, #F7F7F7 0%, rgba(247,247,247,0.5) 100%);
+}
+.form table tbody tr td{
+	border-top:16rpx solid #fff;
+}
+.form table tbody tr:nth-child(2n){
+	background: linear-gradient(90deg, #D0F3ED 0%, rgba(255,255,255,0.5) 100%);
+}
+.form table tfoot{
+	position: absolute;
+	bottom:0;
+	left: 0;
+	background: linear-gradient(90deg, #DDFCDF 0%, #FFFFFF 100%);
+}
+.form table td:nth-last-child(1),.form table th:nth-last-child(1){
+	color: #19C7A5;
+	font-weight: 700;
+}
+.form table td:nth-last-child(2),.form table th:nth-last-child(2){
+	color: #42B14B;
+}
+.form table td:nth-last-child(4),.form table th:nth-last-child(4){
+	color: #FE694B;
+}
+.totals{
+	position: absolute;
+	bottom:0;
+	height: 80rpx;
+	background: linear-gradient(90deg, #DDFCDF 0%, #FFFFFF 100%);
+	border-radius: 10rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+.totals view{
+	display: flex;
+	align-items: center;
+	font-size: 28rpx;
+}
+.totals view em{
+	display: inline-block;
+	margin:0 16rpx 0 40rpx;
+	width: 8rpx;
+	height: 48rpx;
+	background: #42B14B;
+	border-radius: 12rpx;
+}
+.totals view label{
+	margin-right: 40rpx;
+	display: flex;
+	align-items: center;
+}
+.totals view label:nth-last-child(1){
+	color: #19C7A5;
+}
+.totals view label:nth-last-child(2){
+	color: #42B14B;
+}
+.totals view label:nth-last-child(4){
+	color: #FE694B;
+}
+.totals view label text{
+	font-weight: 700;
+	font-size: 34rpx;
+}
+.totals button{
+	width:340rpx;
+	border-radius: 10rpx 0 10rpx 10rpx;
+	height: 80rpx;
+	line-height: 80rpx;
+	padding:0;
+	font-size: 32rpx;
+}
+

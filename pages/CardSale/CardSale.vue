@@ -19,6 +19,7 @@
 <template>
 	<view class="content">
 		<!-- <menu_page :menuIndex="7"></menu_page> -->
+		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head></Head>
@@ -48,18 +49,22 @@
 			<view class="listof" style="width: 100%;">
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
+						<view class="table">
 						<view class="tab curr">
+							<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+							<label>
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 							<text>VIP售卡充值</text>
+							</label>
 						</view>
 						<view class="tab">
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 						</view>
-
+						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 
-					<view class="module">
+					<view class="module" v-if="SALE002.length>0">
 						<view class="hh">充值金额 <em></em></view>
 						<view class="jinelist">
 							<view class="li-je " v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)"
@@ -113,7 +118,7 @@
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry v-if="showCardNum"></CardNumEntry>
+					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -139,7 +144,8 @@
 </template>
 <script>
 	//基础组件
-	import Head from '@/pages/Home/Component/Head.vue'
+	import Head from '@/pages/Home/Component/Head.vue';
+	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
@@ -158,7 +164,8 @@
 	export default {
 		name: "CardSale",
 		components: {
-			Head
+			Head,
+			Pagekq
 		},
 		data() {
 			return {
@@ -279,6 +286,8 @@
 											end_num: that.end_num
 										}, spObj, that.SALE001);
 										that.SALE006.push(sale6);
+										console.log("sale2", that.SALE002);
+										console.log("sale6", that.SALE006);
 									}
 								} else {
 									_util.simpleMsg("已添加该商品", "none");
@@ -361,13 +370,21 @@
 				that.CurCZGZ = e;
 				console.log("选择得规则：", that.CurCZGZ);
 				let s2 = JSON.parse(JSON.stringify(that.SALE002));
-
+				let s6 = JSON.parse(JSON.stringify(that.SALE006));
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
 					r.CXDISC = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
+				s6.map(r => {
+					let obj = s2.find(r1 => {
+						return r1.SPID == r.SPID
+					});
+					if (obj)
+						r.MYSTR = obj.PRICE;
+				})
 				that.SALE002 = s2;
+				that.SALE006 = s6;
 				that.CalTNET();
 			},
 			//待售列表清除
@@ -427,16 +444,17 @@
 			//去支付
 			ToPay: function() {
 				if (!that.CurCZGZ || Object.keys(that.CurCZGZ).length == 0) {
-					_util.simpleMsg("请选择充值规则")
+					_util.simpleMsg("请选择充值规则", true)
 					return;
 				}
 				if (that.SALE002.length == 0) {
-					_util.simpleMsg("请录入有效卡号");
+					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
+				console.log("sale2", that.SALE002);
 				KQSale.ActiveApply({
 					salebill: that.SALE001.BILL,
-					materielId: that.SALE002[0].SPID,
+					material_id: that.SALE002[0].SPID,
 					channel: "ZC007",
 					khid: that.SALE001.KHID,
 					card_num: that.begin_num,
@@ -452,6 +470,8 @@
 							//进入支付 等待支付返回结果
 							that.PayParamAssemble();
 						}
+					} else {
+						_util.simpleMsg("校验失败：", res.msg, true);
 					}
 				});
 			},
@@ -475,6 +495,7 @@
 				}
 				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 				that.$store.commit('set-location', inputParm);
+				console.log("支付前的sale6：", that.SALE006);
 				uni.navigateTo({
 					url: "../Payment/Payment",
 					events: {
@@ -484,6 +505,7 @@
 			},
 			//支付完成处理
 			PayedResult: async function(result) {
+				console.log("支付后的sale6：", that.SALE006);
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -494,21 +516,27 @@
 					that.SALE001.ROUND = 0;
 					return;
 				}
-				that.SALE001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
+				that.SALE001 = Object.cover(new _saleClass.sale001(), result.data.sale1_obj);
 				that.SALE002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass.sale002(),
 					sale2));
 				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass.sale003(),
 					sale3));
 				// this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(),
 				// 	sale8));
-				// console.log("[PayedResult]支付结果状态判断...", result.code);
+				console.log("支付后返回结果：", that.SALE001);
 				if (result.code) {
-					_util.simpleMsg(result.msg);
+					console.log("准备激活：", that.SALE002);
+					// _util.simpleMsg("发起激活");
 					//手工折扣额分摊
 					if (that.SALE001.ROUND > 0) {
 						that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
 						console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
 					}
+					console.log("准备激活1：", that.SALE001);
+					console.log("准备激活2：", that.SALE002);
+					console.log("准备激活3：", that.SALE006);
+					console.log("准备激活4：", that.store);
+					console.log("准备激活4：", that.CurCZGZ);
 					//发起激活
 					KQSale.ActiveConfirm({
 						salebill: that.SALE001.BILL,
@@ -524,8 +552,12 @@
 						dqid: that.store.DQID,
 						dq_name: that.store.DQNAME,
 						flag: 2,
-						card_num: that.sale006.KQIDS
+						card_num: that.SALE006[0].KQIDS
 					}, res2 => {
+						if (!res2.code) {
+							_util.simpleMsg("激活失败：" + res2.msg);
+							return;
+						}
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
@@ -536,10 +568,6 @@
 							SALE003: that.SALE003,
 							SALE006: that.SALE006
 						})
-						if (!res2.code) {
-							_util.simpleMsg("激活失败：" + res2.msg);
-							return;
-						}
 						//发起充值
 						KQSale.Recharge({
 							salebill: that.SALE001.BILL,
@@ -549,17 +577,36 @@
 							kh_name: that.store.NAME,
 							ryid: that.store.RYID,
 							ry_name: that.store.RYNAME,
-							card_num: that.sale006.KQIDS
+							card_num: that.SALE006[0].KQIDS
 						}, res3 => {
 							//充值
 							console.log("VIP单卡充值结果：", res3);
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
-						})
+						});
+						//重置销售单
+						that.ResetSaleBill();
 					})
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
-			}
+			},
+			//重置本次销售单
+			ResetSaleBill: function() {
+				that.SALE001 = _card_coupon.InitSale001(that.store, {
+					XSTYPE: that.XSTYPE,
+					BIll_TYPE: that.Bill_TYPE,
+					KQXSTYPE: that.KQXSTYPE,
+					CUID: that.KQXSTYPE,
+					DKFID: that.store.DKFID
+				});
+				that.SALE002 = [];
+				that.SALE003 = [];
+				that.SALE006 = [];
+				that.SXSALE001 = [];
+				that.CurCZGZ = {};
+				that.Amount = 0;
+				console.log("单据重置成功")
+			},
 		}
 	}
 </script>
