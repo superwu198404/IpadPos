@@ -182,7 +182,7 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-
+				console.log("请求成功");
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
