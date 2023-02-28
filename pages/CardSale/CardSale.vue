@@ -19,6 +19,7 @@
 <template>
 	<view class="content">
 		<!-- <menu_page :menuIndex="7"></menu_page> -->
+		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head></Head>
@@ -48,14 +49,18 @@
 			<view class="listof" style="width: 100%;">
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
+						<view class="table">
 						<view class="tab curr">
+							<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+							<label>
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 							<text>VIP售卡充值</text>
+							</label>
 						</view>
 						<view class="tab">
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 						</view>
-
+						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 
@@ -139,7 +144,8 @@
 </template>
 <script>
 	//基础组件
-	import Head from '@/pages/Home/Component/Head.vue'
+	import Head from '@/pages/Home/Component/Head.vue';
+	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
@@ -158,7 +164,8 @@
 	export default {
 		name: "CardSale",
 		components: {
-			Head
+			Head,
+			Pagekq
 		},
 		data() {
 			return {
