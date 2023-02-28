@@ -64,13 +64,13 @@
 						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
 						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
+					<view class="tuichu">
+						<view @click="ToSQ()">售券</view>
+						<view @click="ToSK()">售卡</view>
+					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
 						退出
-					</view>
-					<view class="tuichu" @click="ToSK()">
-						<image src="@/images/logout.png" mode="widthFix"></image>
-						售卡券
 					</view>
 				</view>
 
