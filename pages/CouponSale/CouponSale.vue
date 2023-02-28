@@ -7,7 +7,7 @@
 	<view class="content">
 		<view class="right right-correct">
 			<!-- 顶部导航栏 -->
-			<Head></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -47,14 +47,14 @@
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist" v-for="sales in source.sale2_union_sale6">
-							<view class="ulli">
+						<view class="cardlist">
+							<view class="ulli" v-for="sales in source.sale2_union_sale6">
 								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
 									<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
 									<view class="zje">
 										<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
-										<button>
+										<button @click="remove_union(sales)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button>
 									</view>
@@ -79,7 +79,7 @@
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn">确认支付</button>
+						<button class="btn" @click="ToPayment">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
@@ -109,6 +109,10 @@
 	import Sale from '@/utils/sale/card_coupon.js';
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
+	import {
+		Sale3Model,
+		Sale3ModelAdditional
+	} from '@/bll/PaymentBusiness/bll.js'
 	var $ = null;
 	export default {
 		name: "CouponSale",
@@ -125,11 +129,15 @@
 					select_coupon_segment: null,
 					no_input: false,
 					swipe_tip: false,
+					big_customer: true,
+					enable_customer: true,
 				},
 				source: {
+					enable_credit: false,
 					sale001: null,
 					sale002: [],
 					sale006: [],
+					paid: [],
 					sale2_union_sale6: []
 				},
 				sale: null,
@@ -138,9 +146,9 @@
 		},
 		computed: {
 			unpaid_total_quantity() {
-				return this.source.sale002.reduce((prev_sale2,next_sale2) => prev_sale2.QTY + next_sale2.QTY , 0);
+				return this.source.sale002.map(sale2 => sale2.QTY).reduce((prev_qty, next_qty) => prev_qty + next_qty, 0);
 			},
-			unpaid_total_amount(){
+			unpaid_total_amount() {
 				return this.source.sale001?.TNET || 0;
 			}
 		},
@@ -152,8 +160,10 @@
 				if (n === true) {
 					uni.$once("GetCardNums", $(function(data) {
 						console.log("[Watch-Number-Info]获取到号码信息:", data);
-						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE === data.end_num);
-						if(added){//判断是否出现重合的券号
+						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6
+							.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE ===
+							data.end_num);
+						if (added) { //判断是否出现重合的券号
 							util.simpleMsg('当前起始或结束券号已被添加，请重新录入!')
 							return;
 						}
@@ -166,14 +176,24 @@
 				}
 			},
 			'source.sale002'(n, o) {
-				let sale001 = this.source.sale001, total_amount = this.source.sale002.reduce((prev_sale2,next_sale2) => prev_sale2.NET + next_sale2.NET, 0);
+				let sale001 = this.source.sale001,
+					total_amount = this.source.sale002.map(sale2 => sale2.NET).reduce((prev_net, next_net) => prev_net +
+						next_net, 0);
 				sale001.TNET = total_amount;
 				sale001.ZNET = total_amount;
 			}
 		},
 		methods: {
-			remove_unpaid_sales(){
-				
+			remove_union(sales) {
+				let remove_sale2_index = this.source.sale002.indexOf(sales.sale002),
+					remove_sale6_index = this.source.sale006.indexOf(sales.sale006),
+					remove_union_index = this.source.sale2_union_sale6.indexOf(sales);
+				if (remove_sale2_index != -1)
+					this.source.sale002.splice(remove_sale2_index, 1);
+				if (remove_sale6_index != -1)
+					this.source.sale006.splice(remove_sale6_index, 1);
+				if (remove_union_index != -1)
+					this.source.sale2_union_sale6.splice(remove_union_index, 1);
 			},
 			async coupon_info_search() {
 				return await member.coupon_sale.CouponInfoSearch({
@@ -220,14 +240,14 @@
 						try {
 							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count, res
 								.data.coupon_value);
-							if(this.source.sale001 === null){//判断是否存在 sale001，不存在则创建
+							if (this.source.sale001 === null) { //判断是否存在 sale001，不存在则创建
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
 								});
 							}
 							let sale002 = this.factory.get_sale002(this.source.sale001, product_info);
-							let sale006 = this.factory.get_sale006(this.source.sale001,{
+							let sale006 = this.factory.get_sale006(this.source.sale001, {
 								QTY: res.data.coupon_count,
 								SPID: good_id,
 								KQIDS: this.form.start_coupon_no,
@@ -236,7 +256,8 @@
 							this.source.sale002.push(sale002);
 							this.source.sale006.push(sale006);
 							this.source.sale2_union_sale6.push({
-								sale002, sale006
+								sale002,
+								sale006
 							});
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 						} catch (e) {
@@ -245,15 +266,50 @@
 					} else {
 						util.simpleMsg("券可销售号段校验有误!" + (res?.msg || ""), true);
 					}
-				})).then($(function(){
+				})).then($(function() {
 					this.form = this.$options.data().form;
 					console.log("[CouponSale]重置表单信息完成...");
 				}));
+			},
+			ToPayment() {
+				this.CreateCreditSale();
+				this.sale.RedirectToPayment({
+					sale001: this.source.sale001,
+					sale002: this.source.sale002,
+					paid: this.source.paid,
+					action: 'Payment',
+					complet: $(function(result) {
+						console.log("[ToPayment]支付完成:", result);
+						if (result.code) {
+
+						}
+					})
+				});
+			},
+			CreateCreditSale() {
+				if (this.source.enable_credit)
+					this.source.paid.push(Sale3ModelAdditional(Sale3Model({
+						fkid: 'ZG01',
+						type: 'MDSX',
+						bill: util.getBill(),
+						name: "门店赊销",
+						amount: this.source.sale001.TNET
+					}), { //业务配置字段（支付状态设定为成功）
+						fail: false //定金显示为成功
+					}));
 			}
 		},
 		created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			$ = util.callContainer(this);
+			uni.$on("big-customer-close", $(function(data) {
+				console.log("[Created]大客户回调:", data);
+				if (data.exists_credit)
+					this.source.enable_credit = true; //启用赊销
+			}));
+		},
+		destroyed() {
+			uni.off("big-customer-close");
 		}
 	}
 </script>

@@ -258,12 +258,11 @@
 			_ynDKF: function(n, o) {
 				this.ynDKF = this._ynDKF;
 			},
-			custom_display: function(n, o){
+			custom_display: function(n, o) {
 				console.log("[Customer]显示状态:", n);
-				if(n === true){
+				if (n === true) {
 					uni.$emit("customer-open");
-				}
-				else if(n === false){
+				} else if (n === false) {
 					uni.$emit("customer-close");
 				}
 			}
@@ -582,19 +581,27 @@
 					util.simpleMsg("禁止选择大客户", true);
 					return;
 				}
+				this.$emit('update:custom',true);
 				uni.$emit('open-big-customer');
 			},
 			//选择大客户
 			ClosePopup: function(data) {
 				console.log("[ClosePopup]大客户信息:", data);
 				// this.showBig = false;
-				if (data && JSON.stringify(data) != "{}") {
+				if (data && Object.keys(data).length) {
+					this.$emit('update:custom', false);
+					console.log("[ClosePopup]获取门店信息...");
 					let store = util.getStorage("store");
+					console.log("[ClosePopup]设置门店大客户信息...");
 					store.DKFID = data.DKHID;
 					store.DKFNAME = data.NAME;
-					util.setStorage("store", store);
+					try {
+						util.setStorage("store", store);
+					} catch (e) {
+						console.log("[ClosePopup]设置信息异常:", e);
+					}
+					console.log("[ClosePopup]设置门店大客户信息完成...");
 					this.DKFNAME = data.NAME;
-					console.log("[ClosePopup]新的门店信息:", store);
 				}
 				this.$forceUpdate();
 			},
@@ -614,11 +621,11 @@
 					if (res.connected == false) {
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
-						try{
+						try {
 							//closeBluetoothAdapter();
 							that.closeBLEConnection(res.deviceId, 0);
-						}catch(e){}
-						
+						} catch (e) {}
+
 						if (app.globalData.BLEInformation.deviceId != "" && app.globalData
 							.BLEInformation.deviceName != "") {
 							that.startSearch();
@@ -976,9 +983,9 @@
 							that.isLink = [];
 							var i = 0;
 							that.list.forEach(e => {
-								if(e.deviceId==app.globalData.BLEInformation.deviceId){
+								if (e.deviceId == app.globalData.BLEInformation.deviceId) {
 									that.isLink.push(1)
-								}else{
+								} else {
 									that.isLink.push(0)
 								}
 								i++;
@@ -1019,7 +1026,7 @@
 				plus.bluetooth.closeBLEConnection({
 					deviceId: deviceId,
 					success: res => {
-						console.log('断开蓝牙连接closeBLEConnection======',deviceId)
+						console.log('断开蓝牙连接closeBLEConnection======', deviceId)
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
 						that.isLink.splice(index, 0, 0)
