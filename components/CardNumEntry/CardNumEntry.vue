@@ -12,11 +12,15 @@
 				<view class="number">
 					<label>
 						<text>开始卡号：</text>
-						<input type="text" placeholder="请输入开始卡号" v-model="beginNum" />
+						<input type="text" placeholder="请输入开始卡号" v-model="beginNum"
+							@focus="ScanCodeHandle('beginNum')" />
 					</label>
 					<label>
 						<text>截止卡号：</text>
-						<input type="text" placeholder="请输入截止卡号" v-model="endNum" />
+						<input type="text" placeholder="请输入截止卡号" v-model="endNum" @focus="ScanCodeHandle('endNum')" />
+					</label>
+					<label><text>启用扫码操作：</text>
+						<radio :checked="scan_code" @click="scan_code = !scan_code"></radio>
 					</label>
 				</view>
 				<view class="confirm">
@@ -31,30 +35,30 @@
 
 <script>
 	import _util from "@/utils/util.js";
-	var that;
+	var that, $;
 	export default {
 		name: "CardNumEntry",
 		props: {
-			begin_num: String,
-			end_num: String,
 			yetype: String,
 			show: Boolean
 		},
 		created() {
 			that = this;
+			$ = _util.callContainer(this);
 			that.ywType = that.yetype;
 		},
 		data() {
 			return {
 				ywType: "",
 				beginNum: "400000005787446369",
-				endNum: "",
+				endNum: "400000005787446369",
+				scan_code: false,
 			};
 		},
 		methods: {
 			Cancel: function() {
 				console.log("事件触发");
-				this.$emit("update:show",false);
+				this.$emit("update:show", false);
 				uni.$emit("GetCardNums", {
 					type: "N",
 					begin_num: that.beginNum,
@@ -71,12 +75,26 @@
 					_util.simpleMsg("请输入截止卡号");
 					return;
 				}
-				this.$emit("update:show",false);
+				this.$emit("update:show", false);
 				uni.$emit("GetCardNums", {
 					type: "Y",
 					begin_num: that.beginNum,
 					end_num: that.endNum
 				})
+			},
+			ScanCodeHandle: function(prop) {
+				console.log("[ScanCodeHandle]对应属性名称:",prop);
+				if (this.scan_code)
+					uni.scanCode({
+						success: $(function(result) {
+							console.log("[ScanCodeHandle]扫码结果:", result);
+							if(prop in this){
+								this[prop] = result.result;
+							}
+							else
+								console.log("[ScanCodeHandle]属性不存在...");
+						})
+					})
 			}
 		}
 	}

@@ -109,6 +109,8 @@
 	position: relative;	
 	border-radius: 20rpx 20rpx 0 0;
 	margin-right: 10rpx;
+	display: flex;
+	align-items: center;
 }
 .choice .tab image{
 	width:34rpx;

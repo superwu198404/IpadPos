@@ -285,6 +285,45 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.MatchSP = async function(spid) {
 		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
+	
+	const def = {
+		sale001: null,
+		sale002: [],
+		sale003: [],
+		sale008: [],
+		score_info: null,
+		paid: [],
+		action: '',
+		member: null,
+		complet: (res) => console.log("[RedirectToPayment]支付完成:",res)
+	}
+	
+	this.RedirectToPayment = function(options = def){
+		let params = Object.assign(Object.assign({},def),options);
+		uni.$emit('stop-message');
+		uni.$emit('stop-timed-communication');
+		console.log("[RedirectToPayment]支付参数组装...");
+		_util.setStorage('open-loading', false);
+		let inputParm = {
+			sale1_obj: params.sale001, //001 主单 数据对象
+			sale2_arr: params.sale002, //002 商品 数据对象集合
+			sale3_arr: params.sale003, //003 支付数据集合
+			sale8_arr: params.sale008, //008水吧商品
+			score_info: params.score_info, //积分抵现信息
+			ban_pay: params.ban_type, //被禁用的支付类型
+			PayList: params.paid, //已支付信息
+			actType: params.action, //动作类型(退款、支付)
+			hyinfo: params.member //会员信息
+		}
+		console.log("[RedirectToPayment]封装数据:", inputParm);
+		this.Vue.$store.commit('set-location', inputParm);
+		uni.navigateTo({
+			url: "../Payment/Payment",
+			events: {
+				FinishOrder: params.complet
+			}
+		})
+	}
 }
 export default {
 	KQTypeObj,
