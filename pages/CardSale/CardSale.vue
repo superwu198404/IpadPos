@@ -48,15 +48,14 @@
 			<view class="listof" style="width: 100%;">
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
-						<view class="table">
 						<view class="tab curr">
-							<image class="bgs" src="@/images/img2/tab-zuo.png"></image>
-							<label><image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image><text>VIP售卡充值</text></label>
+							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+							<text>VIP售卡充值</text>
 						</view>
 						<view class="tab">
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 						</view>
-						</view>
+
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 
@@ -128,10 +127,6 @@
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
-						<view class="a-z kaquan">
-							<image src="@/images/img2/quanquan.png" mode="widthFix"></image>
-							<!-- 售 券 -->
-						</view>
 					</view>
 				</view>
 			</view>
@@ -151,6 +146,13 @@
 	import _util from "@/utils/util.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _saleClass from "@/utils/sale/saleClass.js";
+	import _main from '@/api/business/main.js';
+	import {
+		CreateSaleOrder,
+		PointUploadNew
+	} from '@/bll/Common/bll.js';
+
+	import _common from '@/api/common.js';
 
 	var that, KQSale;
 	export default {
@@ -167,6 +169,7 @@
 				CurCZGZ: {},
 				SALE001: {},
 				SALE002: [],
+				SALE003: [],
 				SALE006: [],
 				showCardNum: true,
 				swipetip: false,
@@ -174,7 +177,8 @@
 				ZKData: [],
 				Bill_TYPE: "Z111",
 				XSTYPE: "1",
-				KQXSTYPE: "SK"
+				KQXSTYPE: "SK",
+				Amount: 0, //VIP卡余额
 			}
 		},
 		created: function() {
@@ -256,6 +260,7 @@
 								_util.simpleMsg("卡库存不在当前门店", "none");
 								return;
 							}
+							that.Amount = res.data.amount; //卡余额
 							let spObj = await KQSale.MatchSP(res.data.materielId);
 							if (spObj) {
 								let arr = that.SALE002.filter(r => {
@@ -349,8 +354,11 @@
 			},
 			//充值规则选择事件
 			ChooseCZGZ: function(e) {
-				if (e)
-					that.CurCZGZ = e;
+				if (_util.newFloat(e.CZNET + e.ZSNET + that.Amount) > 5000) {
+					_util.simpleMsg("充值后卡余额大于 5000￥，更换充值金额；");
+					return;
+				}
+				that.CurCZGZ = e;
 				console.log("选择得规则：", that.CurCZGZ);
 				let s2 = JSON.parse(JSON.stringify(that.SALE002));
 
@@ -402,6 +410,20 @@
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
 			},
+			//使用手工折扣进行计算 新版舍弃全部分的逻辑
+			SKdiscCompute: function() {
+				//手工折扣额的处理
+				console.log("原金额：", this.SALE001.TNET);
+				let SKY_DISCOUNT = _util.newFloat(((this.SALE001.TNET * 10) % 1) / 10, 2);
+				console.log("手工折扣额：", SKY_DISCOUNT);
+				this.SALE001.TNET = _util.newFloat(Number(this.SALE001.TNET) - SKY_DISCOUNT, 2);
+				this.SALE001.ZNET = _util.newFloat(Number(this.SALE001.ZNET) - SKY_DISCOUNT, 2);
+				this.SALE001.BILLDISC = _util.newFloat(Number(this.SALE001.BILLDISC) + SKY_DISCOUNT, 2);
+				this.SALE001.TCXDISC = _util.newFloat(Number(this.SALE001.TCXDISC) + SKY_DISCOUNT, 2);
+				this.SALE001.ROUND = SKY_DISCOUNT;
+				this.SALE001.TDISC = _util.newFloat(Number(this.SALE001.TDISC) + SKY_DISCOUNT, 2);
+				console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.SALE001);
+			},
 			//去支付
 			ToPay: function() {
 				if (!that.CurCZGZ || Object.keys(that.CurCZGZ).length == 0) {
@@ -421,43 +443,178 @@
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
+						that.SKdiscCompute() //手工折扣
 						if (that.BIll_TYPE == 'Z112') { //卡券赊销
 							//直接生成赊销销售单
 							//调用激活
 							//调用充值
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-
+							that.PayParamAssemble();
 						}
 					}
 				});
 			},
+
 			//跳转支付
-			PayParamAssemble = function(sales) {
+			PayParamAssemble: function(sales) {
 				uni.$emit('stop-message');
 				uni.$emit('stop-timed-communication');
 				that.log("[PayParamAssemble]支付参数组装...")
 				util.setStorage('open-loading', false);
 				let inputParm = {
-					sale1_obj: that.sale001, //001 主单 数据对象
-					sale2_arr: that.sale002, //002 商品 数据对象集合
-					sale3_arr: that.sale003, //003 支付数据集合
-					sale8_arr: that.sale008, //008水吧商品
-					score_info: that.score_info, //积分抵现信息
-					ban_pay: that.ban_type, //被禁用的支付类型
-					PayList: that.payed, //已支付信息
-					actType: that.actType, //动作类型(退款、支付)
-					hyinfo: that.HY.cval //会员信息
+					sale1_obj: that.SALE001, //001 主单 数据对象
+					sale2_arr: that.SALE002, //002 商品 数据对象集合
+					// sale3_arr: that.SALE003, //003 支付数据集合
+					// sale8_arr: that.SALE008, //008水吧商品
+					// score_info: that.score_info, //积分抵现信息
+					// ban_pay: that.ban_type, //被禁用的支付类型
+					// PayList: that.payed, //已支付信息
+					actType: "Payment", //动作类型(退款、支付)
+					// hyinfo: that.HY.cval //会员信息
 				}
-				// console.log("[PayParamAssemble]封装数据:", inputParm);
-				that.Page.$store.commit('set-location', inputParm);
+				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
+				that.$store.commit('set-location', inputParm);
 				uni.navigateTo({
 					url: "../Payment/Payment",
 					events: {
-						FinishOrder: util.callBind(that, that.PayedResult)
+						FinishOrder: that.PayedResult
 					}
 				})
 			},
+			//支付完成处理
+			PayedResult: async function(result) {
+				_util.setStorage('open-loading', true);
+				console.log("[PayedResult]支付结果:", result);
+				uni.$emit('continue-message');
+				uni.$emit('continue-timed-communication');
+				// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
+				// 	.ynCx, this.currentOperation.FZCX);
+				// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
+				// console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
+				// return;
+				if (!result.code) { //取消支付或者支付失败了 不走后续的处理
+					_util.simpleMsg(result.msg, !result.code);
+					//清除一下辅助促销 以及辅助促销产生的折扣数据 
+					// this.FZCX.cval = {};
+					// this.sale001.TCXDISC = 0; //fzcx
+					// this.sale001.TDISC = 0; //fzcx 
+					//清除手工折扣
+					this.SALE001.ROUND = 0;
+					return;
+				}
+				that.SALE001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
+				that.SALE002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass.sale002(),
+					sale2));
+				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass.sale003(),
+					sale3));
+				// this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(),
+				// 	sale8));
+				// console.log("[PayedResult]支付结果状态判断...", result.code);
+				if (result.code) {
+					_util.simpleMsg(result.msg);
+					//反写一下会员id
+					// if (this.SALE001.CUID) {
+					// 	this.HY.cval = {};
+					// 	this.HY.cval.hyId = this.sale001.CUID;
+					// 	console.log("反写会员信息成功：", this.HY.cval.hyId);
+					// }
+					// console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
+					//如果允许辅助促销
+					// if (this.currentOperation.ynFzCx) {
+					// 	let FZCXVal = this.FZCX.cval;
+					// 	console.log("[PayedResult]辅助促销的结果：", FZCXVal);
+					// 	if (FZCXVal && Object.keys(FZCXVal).length != 0) {
+					// 		FZCXVal.data.forEach(r => {
+					// 			let SPObj = _main.FindSP(this.Allsplist, r.SPID);
+					// 			console.log("当前匹配到的商品对象:", SPObj);
+					// 			console.log("当前辅助促销商品对象:", r);
+					// 			if (Object.keys(SPObj).length > 0) {
+					// 				let NO = this.sale002.length;
+					// 				let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
+					// 				s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
+					// 				this.sale002.push(s2); //追加s2
+					// 			}
+					// 		})
+					// 		console.log("[PayedResult]追加辅助促销后的商品：", this.sale002);
+					// 	}
+					// }
+					// console.log("[PayedResult]调用执行 SaleFinishing 中...");
+					// try {
+					// 	this.$saleFinishing(result.data);
+					// } catch (e) {
+					// 	console.log("[PayedResult]执行 SaleFinishing 发生异常:", e);
+					// }
+					// console.log("[PayedResult]调用执行 SaleFinishing 完毕!");
+					//支付前允许手工折扣 则支付完成后要分摊商品金额
+					// if (this.currentOperation.ynSKDisc) {
+					// 	console.log("[PayedResult]判断支付前是否允许手工折扣...");
+					//手工折扣额分摊
+					that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
+					console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
+					// console.log("[PayedResult]准备创建销售单记录...", {
+					// 	sale001: this.sale001,
+					// 	sale002: this.sale002,
+					// 	sale003: this.sale003,
+					// 	sale006: this.sale006,
+					// 	sale008: this.sale008,
+					// 	ydsale001: this.ydsale001,
+					// 	ywbhqh: this.ywbhqh,
+					// 	sxsale001: this.sxsale001,
+					// 	...this.additional
+					// });
+					// console.log("[PayedResult]执行 CXMDFS 中...");
+					// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
+					// 	.currentOperation
+					// 	.ynCx, this.currentOperation.FZCX);
+					// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
+					// console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
+					let create_result;
+					try {
+						create_result = await CreateSaleOrder({
+								SALE001: that.SALE001,
+								SALE002: that.SALE002,
+								SALE003: that.SALE003,
+								SALE006: that.SALE006,
+								// SALE008: that.sale008,
+								// YWBHQH: that.ywbhqh,
+								// YDSALE001: this.ydsale001,
+								// SXSALE001: this.sxsale001,
+								// ...this.additional
+							}
+							// , {
+							// 	sqlite: this.communication_for_sqlite,
+							// 	oracle: this.communication_for_oracle
+							// },
+						);
+					} catch (e) {
+						console.log("[PayedResult]订单sql生成发生异常:", e);
+					}
+					// let bill = "";
+					// console.warn("[PayedResult]结算模式信息获取:", this.current_type);
+					// if (this.current_type.clickType == 'sale_credit_settlement') {
+					// 	bill = this.mode_info.sale_credit_settlement.new_bill;
+					// 	console.log("[PayedResult]赊销结算模式...");
+					// } else {
+					let bill = that.SALE001.BILL;
+					// 	console.log("[PayedResult]其他结算模式...");
+					// }
+					console.log('[PayedResult]通信表记录单号:', bill);
+					_common.TransLiteData(bill); //上传至服务端
+					console.log("[PayedResult]创建销售单结果:", create_result);
+					_util.simpleMsg(create_result.msg, !create_result.code);
+					// try {
+					// 	this.$saleFinied(result.data);
+					// } catch (e) {
+					// 	console.log("[SaleFinied]执行异常:", e);
+					// }
+				} else {
+					_util.simpleMsg(result.msg, true);
+				}
+				// console.log("支付后要跳转的模式：", this.clickSaleType)
+				// console.log("支付后要跳转的模式：", this.clickSaleType.afterPay)
+				// this.resetSaleBill(this.clickSaleType.afterPay); //支付后要跳转的销售模式
+			}
 		}
 	}
 </script>
