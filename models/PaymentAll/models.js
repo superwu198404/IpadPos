@@ -88,8 +88,12 @@ export const global = {
 			MerId: uni.getStorageSync('store')?.MERID, //商户号id
 			brand: getApp().globalData.brand,
 			kquser: getApp().globalData.kquser,
-			hyinfo: getApp().globalData.hyinfo //会员卡信息,
+			hyinfo: getApp().globalData.hyinfo, //会员卡信息,
+
 		}
+	},
+	methods: {
+		get_bill: util.getBill,
 	}
 }
 

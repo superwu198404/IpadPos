@@ -134,6 +134,11 @@ const utils = {
 	callBind: function(thisObject, func) {
 		return func.bind(thisObject);
 	},
+	callContainer: function(this_quote) {
+		return (function(callback){
+			return callback.bind(this);
+		}).bind(this_quote);
+	},
 	//日期格式化
 	formatDate: function(formatStr, fdate) {
 		if (fdate) {
@@ -350,6 +355,27 @@ const utils = {
 	//转换为小数，并保留2位 返回number
 	newFloat: function(pm_num, pm_declen = 2) {
 		return Number(parseFloat(pm_num).toFixed(pm_declen));
+	},
+	getBill:function(){
+		var newbill = "",
+			store = uni.getStorageSync('store'),
+			serial_number = Number(uni.getStorageSync('serial-number') || "0");
+		let d = new Date();
+		let year = (d.getFullYear() % 100) < 10 ? "0" + (d.getFullYear() % 100) : (d.getFullYear() %
+			100);
+		let month = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1);
+		let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
+		let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+		let min = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+		let sec = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
+		// newbill = this.Storeid + this.POSID + "" + d.getFullYear() % 100 + (d.getMonth() + 1) + d.getDate() + d
+		// 	.getHours() + d.getMinutes() + d.getSeconds();
+		newbill = store.KHID + store.POSID + year + month + day + hour + min + sec;
+		//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
+		newbill = newbill + "" + serial_number;
+		serial_number++;
+		uni.setStorageSync('serial-number', serial_number);
+		return newbill;
 	}
 }
 
@@ -377,10 +403,12 @@ export default {
 	hidePropety: utils.hidePropety,
 	stripscript: utils.stripscript,
 	callBind: utils.callBind,
+	callContainer: utils.callContainer,
 	group: utils.group,
 	generateSQLStringArray: utils.generateSQLStringArray,
 	inverseNumber: utils.inverseNumber,
 	compare: utils.compare,
 	contrast: utils.contrast,
-	newFloat: utils.newFloat
+	newFloat: utils.newFloat,
+	getBill: utils.getBill,
 }

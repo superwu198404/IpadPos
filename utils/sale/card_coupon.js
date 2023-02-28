@@ -195,18 +195,18 @@ var KQTypeObj = {
 			if (result.code && data?.length) {
 				spinfo = data[0];
 			}
-			let sale002 = new sales.sale002();
-			sale002.STR1 = spinfo?.SNAME;
-			sale002.PRICE = price;
-			sale002.SPID = spid;
-			sale002.OPRICE = price;
-			sale002.NET = price * count;
-			sale002.QTY = count;
-			sale002.NO = 0;
-			sale002.UNIT = spinfo?.UNIT;
-			sale002.PLID = spinfo?.PLID;
-			sale002.SPJGZ = spinfo?.SPJGZ;
-			return sale002;
+			return {
+				STR1 : spinfo?.SNAME,
+				PRICE : price,
+				SPID : spid,
+				OPRICE : price,
+				NET : price * count,
+				QTY : count,
+				NO : 0,
+				UNIT : spinfo?.UNIT,
+				PLID : spinfo?.PLID,
+				SPJGZ : spinfo?.SPJGZ
+			};
 		},
 	},
 }

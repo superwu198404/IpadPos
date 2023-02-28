@@ -2116,6 +2116,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
+	this.Page.$watch('mainSale.billindex', util.callBind(this, function(n, o) {
+		console.warn("[Watch-Serial-Number]流水号发生变更...");
+		util.setStorage('serial-number',n);
+	}))
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = [];

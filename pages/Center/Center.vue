@@ -64,7 +64,7 @@
 						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
 						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
-					<view class="tuichu">
+					<view class="sale-card-coupon">
 						<view @click="ToSQ()">售券</view>
 						<view @click="ToSK()">售卡</view>
 					</view>
@@ -399,6 +399,11 @@
 			ToSK: function() {
 				uni.redirectTo({
 					url: "/pages/CardSale/CardSale"
+				});
+			},
+			ToSQ: function() {
+				uni.redirectTo({
+					url: "/pages/CouponSale/CouponSale"
 				});
 			},
 			//初始化
@@ -774,5 +779,28 @@
 
 	page {
 		overflow: hidden;
+	}
+	
+	.sale-card-coupon{
+		display: flex;
+		flex-direction: column;
+		gap: 20rpx;
+		overflow: hidden;
+		border-radius: 20rpx;
+		height: 256rpx;
+		margin-right: 50rpx;
+		width: 25%;
+	}
+	
+	.sale-card-coupon > *{
+		flex:1;
+		background-color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #006B44;
+		font-size: 34rpx;
+		border-radius: 20rpx;
+		font-weight: 700;
 	}
 </style>

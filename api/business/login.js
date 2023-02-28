@@ -8,6 +8,7 @@ import Vue from 'vue'
 import {
 	global
 } from '@/models/PaymentAll/models.js';
+import init_object_factory from '@/utils/init.js';
 
 var GetPassWord = function(khid, userid, password, func) {
 	let sql = "select password_MD,gwid,SNAME from MDRYKH where ryid='" + userid + "' and khid='" + khid + "'";
@@ -162,6 +163,10 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
+		init_object_factory.init();
+		Object.assign(store1,{
+			factory: init_object_factory
+		});
 		console.log("[InitStore]全局混入客户端信息！");
 		global.data = function(){
 			return store1;
