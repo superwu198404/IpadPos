@@ -251,6 +251,25 @@ var KQTypeObj = {
 				SPJGZ: spinfo?.SPJGZ
 			};
 		},
+		Completed: async function(data) {
+			try {
+				console.log("[Completed]即将创建销售单:", data);
+				let create_result = await CreateSaleOrder({
+					SALE001: data.SALE001,
+					SALE002: data.SALE002,
+					SALE003: data.SALE003,
+					SALE006: data.SALE006,
+					SXSALE001: data.SXSALE001,
+				});
+				console.log("[Completed]创建销售单结果:", create_result);
+				if (create_result.code)
+					console.log("业务单号:", data.SALE001.BILL);
+				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
+				_util.simpleMsg(create_result.msg, !create_result.code);
+			} catch (e) {
+				console.log("[Completed]订单sql生成发生异常:", e);
+			}
+		}
 	},
 }
 
