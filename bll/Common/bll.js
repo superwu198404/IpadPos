@@ -226,6 +226,8 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 				dataArr.forEach(r => {
 					delete r.STR1;
 					delete r.STR2;
+					delete r.begin_num;
+					delete r.end_num;
 				})
 			}
 			let sqlObj = common.CreateSQL(dataArr, key);

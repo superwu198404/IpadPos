@@ -47,8 +47,8 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "400000005787446369",
-				endNum: "",
+				beginNum: "1087110000744381",
+				endNum: "1087110000744381",
 			};
 		},
 		methods: {

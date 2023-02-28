@@ -121,12 +121,14 @@ var KQTypeObj = {
 		},
 		//激活确认校验
 		ActiveConfirm: function(data, func) {
+			console.log("激活参数：", data);
 			_member.singleCardActiveConfirm("激活中...", {
 				data
 			}, func, func);
 		},
 		//激活后充值
 		Recharge: function(data, func) {
+			console.log("充值参数：", data);
 			_member.posPayRecharge("充值中...", {
 				data
 			}, func, func);
@@ -134,18 +136,20 @@ var KQTypeObj = {
 		//业务完成
 		Completed: async function(data) {
 			try {
+				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
 					SALE001: data.SALE001,
 					SALE002: data.SALE002,
 					SALE003: data.SALE003,
 					SALE006: data.SALE006,
 				});
-				console.log("[PayedResult]创建销售单结果:", create_result);
+				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
-					_common.TransLiteData(bill); //上传至服务端
+					console.log("业务单号:", data.SALE001.BILL);
+				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
-				console.log("[PayedResult]订单sql生成发生异常:", e);
+				console.log("[Completed]订单sql生成发生异常:", e);
 			}
 		},
 		//商品信息匹配
@@ -234,16 +238,16 @@ var KQTypeObj = {
 				spinfo = data[0];
 			}
 			return {
-				STR1 : spinfo?.SNAME,
-				PRICE : price,
-				SPID : spid,
-				OPRICE : price,
-				NET : price * count,
-				QTY : count,
-				NO : 0,
-				UNIT : spinfo?.UNIT,
-				PLID : spinfo?.PLID,
-				SPJGZ : spinfo?.SPJGZ
+				STR1: spinfo?.SNAME,
+				PRICE: price,
+				SPID: spid,
+				OPRICE: price,
+				NET: price * count,
+				QTY: count,
+				NO: 0,
+				UNIT: spinfo?.UNIT,
+				PLID: spinfo?.PLID,
+				SPJGZ: spinfo?.SPJGZ
 			};
 		},
 	},
