@@ -510,6 +510,12 @@
 					}
 				}
 			},
+			allow_debt_excess: function(n, o){
+				let reset_amount = this.toBePaidPrice();
+				if(n === false && this.dPayAmount > Number(reset_amount)){
+					this.dPayAmount = reset_amount;
+				}
+			},
 			yPayAmount: function(n, o) {
 				console.log("[Watch-yPayAmount]已支付金额发生修改:", {
 					n,
@@ -531,6 +537,8 @@
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				console.log("[Watch-CurrentPayType]当前类型:", n);
 				this.currentPayInfo = this.PayWayInfo(n); //根据 type 获取支付信息
+				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
+				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 				if (n === "SZQ") { //如果用券，则不再允许编辑待付款金额
 					this.dPayAmount = this.toBePaidPrice();
 					this.domForceRefresh();
@@ -539,11 +547,12 @@
 					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
 				} else {
+					if(n === 'Others' || this.currentPayInfo.poly === "S"){
+						return;
+					}
 					this.dPayAmount = this.toBePaidPrice();
 					this.allowInput = false;
 				}
-				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
-				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 			},
 			RefundList: function(n, o) {
 				this.refundAmountCount(); //重新计算金额
@@ -1051,7 +1060,7 @@
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
-					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash} 元。`);
+					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash?.toFixed(2)} 元。`);
 				}
 				setTimeout(util.callBind(this, function() {
 					this.cash_change_tips = true;
