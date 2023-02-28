@@ -79,7 +79,7 @@
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn" @click="ToPayment">确认支付</button>
+						<button class="btn" @click="to_Payment">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
@@ -137,7 +137,7 @@
 					sale001: null,
 					sale002: [],
 					sale006: [],
-					paid: [],
+					sxsale001: null,
 					sale2_union_sale6: []
 				},
 				sale: null,
@@ -271,41 +271,48 @@
 					console.log("[CouponSale]重置表单信息完成...");
 				}));
 			},
-			ToPayment() {
-				this.CreateCreditSale();
-				this.sale.RedirectToPayment({
-					sale001: this.source.sale001,
-					sale002: this.source.sale002,
-					paid: this.source.paid,
-					action: 'Payment',
-					complet: $(function(result) {
-						console.log("[ToPayment]支付完成:", result);
-						if (result.code) {
-
-						}
-					})
+			save_orders(){
+				this.sale.Completed({
+					SALE001: this.source.sale001,
+					SALE002: this.source.sale002,
+					SALE003: result.sale3_arr.map($(function(sale3){
+						return this.factory.get_sale003(this.source.sale001,sale3)
+					})),
+					SXSALE001: this.source.sxsale001
 				});
 			},
-			CreateCreditSale() {
-				if (this.source.enable_credit)
-					this.source.paid.push(Sale3ModelAdditional(Sale3Model({
-						fkid: 'ZG01',
-						type: 'MDSX',
-						bill: util.getBill(),
-						name: "门店赊销",
-						amount: this.source.sale001.TNET
-					}), { //业务配置字段（支付状态设定为成功）
-						fail: false //定金显示为成功
-					}));
-			}
+			to_Payment() {
+				if (this.source.enable_credit) {
+					//这里还差一句生成 sale 003的记录
+					this.save_orders();
+				} else
+					this.sale.RedirectToPayment({
+						sale001: this.source.sale001,
+						sale002: this.source.sale002,
+						paid: this.source.paid,
+						action: 'Payment',
+						complet: $(function(result) {
+							console.log("[ToPayment]支付完成:", result);
+							if (result.code) {
+								this.save_orders();
+							}
+						})
+					});
+			},
 		},
 		created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			$ = util.callContainer(this);
 			uni.$on("big-customer-close", $(function(data) {
 				console.log("[Created]大客户回调:", data);
-				if (data.exists_credit)
+				if (data.exists_credit) {
 					this.source.enable_credit = true; //启用赊销
+					this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
+						SX_STATUS: 1,
+						DKFNAME: data.NAME,
+						DKFID: data.DKHID,
+					});
+				}
 			}));
 		},
 		destroyed() {
