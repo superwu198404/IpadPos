@@ -107,8 +107,8 @@
 					<view class="totals">
 						<view>
 							<em></em>
-							<label>总数量：<text>2134</text></label>
-							<label>总金额：<text>￥82134</text></label>
+							<label>总数量：<text>{{TotalNum}}</text></label>
+							<label>总金额：<text>￥{{TotalNet}}</text></label>
 						</view>
 						<button class="btn">确认支付</button>
 					</view>
@@ -122,27 +122,19 @@
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 					</view>
-					<!-- <view class="toproof">
-							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
-						</view> -->
-					<view class="ranks" v-if="Alphabetical">
-						<!-- @click="mainSale.FlagClick" -->
-						<label :class="mainSale.selectFlag==flagitem?'curr':''" :data-flag="flagitem"
-							v-for="(flagitem, flagindex) in  mainSale.flagList">
-							<text>{{flagitem}}</text>
-							<em></em>
-						</label>
-
-					</view>
 				</view>
 			</view>
 		</view>
+		<!-- 特殊折扣 -->
+		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
+		</SpecialDisc>
+
 	</view>
 </template>
 <script>
@@ -166,24 +158,47 @@
 				begin_num: "",
 				end_num: "",
 				store: getApp().globalData.store,
-				showCZGZ: false,
 				CZGZMX: [],
 				CurCZGZ: {},
 				SALE001: {},
 				SALE002: [],
-				showCardNum: false,
-				swipetip: false
+				showCardNum: true,
+				swipetip: false,
+				showDisc: false,
+				ZKData: [],
 			}
 		},
 		created: function() {
 			that = this;
-			KQSale = new _card_coupon.InitKQSale(that, uni, that.store, "VIPCard_Active");
-			KQSale.InitData("卡销售初始化", res => {
-				that.ShowCZGZ();
-			});
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
+			KQSale = new _card_coupon.InitKQSale(that, uni, getApp().globalData.store, "VIPCard_Active");
+			KQSale.InitData("卡销售初始化", res => {
+				that.ShowCZGZ();
+			});
+			// console.log("数据测试：",getApp().globalData.store);
+			that.SALE001 = _card_coupon.InitSale001(getApp().globalData.store);
+		},
+		computed: {
+			//商品总数量
+			TotalNum: function() {
+				let total = 0;
+				that.SALE002.map(r => {
+					total += r.QTY;
+				})
+				return total;
+			},
+			//商品总金额 包含折扣
+			TotalNet: function() {
+				let total = 0;
+				console.log("sale001", that.SALE001);
+				if (!that.SALE001 || Object.keys(that.SALE001).length == 0) {
+					return total;
+				}
+				total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				return total;
+			},
 		},
 		methods: {
 			//卡号返回
@@ -266,7 +281,21 @@
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
 				that.SALE002 = s2;
+				that.CalTNET();
 			},
+			//根据002 计算001 金额等字段
+			CalTNET: function() {
+				let tnet = 0,
+					disc = 0;
+				that.SALE002.map(r => {
+					tnet += r.NET;
+					disc += r.DISCRATE;
+				})
+				that.SALE001.TNET = _util.newFloat(tnet);
+				that.SALE001.ZNET = that.SALE001.TNET; //调整为原价
+				that.SALE001.BILLDISC = _util.newFloat(disc);
+				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
+			}
 		}
 	}
 </script>

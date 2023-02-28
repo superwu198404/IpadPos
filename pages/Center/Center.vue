@@ -771,7 +771,8 @@
 		backface-visibility: hidden;
 
 	}
-	page{
+
+	page {
 		overflow: hidden;
 	}
 </style>
