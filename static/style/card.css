@@ -109,6 +109,8 @@
 	position: relative;	
 	border-radius: 20rpx 20rpx 0 0;
 	margin-right: 10rpx;
+	display: flex;
+	align-items: center;
 }
 .choice .tab image{
 	width:34rpx;
@@ -211,7 +213,7 @@
 	flex-direction: column;
 	color: #999;
 	line-height: 100rpx;
-	padding:12% 0;
+	padding:10% 0;
 }
 .swipetip image{
 	width:240rpx;
