@@ -488,17 +488,8 @@
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
 				uni.$emit('continue-timed-communication');
-				// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this.currentOperation
-				// 	.ynCx, this.currentOperation.FZCX);
-				// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
-				// console.log("追加了促销跟踪的sql:", this.communication_for_oracle);
-				// return;
 				if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 					_util.simpleMsg(result.msg, !result.code);
-					//清除一下辅助促销 以及辅助促销产生的折扣数据 
-					// this.FZCX.cval = {};
-					// this.sale001.TCXDISC = 0; //fzcx
-					// this.sale001.TDISC = 0; //fzcx 
 					//清除手工折扣
 					that.SALE001.ROUND = 0;
 					return;
@@ -513,138 +504,61 @@
 				// console.log("[PayedResult]支付结果状态判断...", result.code);
 				if (result.code) {
 					_util.simpleMsg(result.msg);
-					//反写一下会员id
-					// if (this.SALE001.CUID) {
-					// 	this.HY.cval = {};
-					// 	this.HY.cval.hyId = this.sale001.CUID;
-					// 	console.log("反写会员信息成功：", this.HY.cval.hyId);
-					// }
-					// console.log("[PayedResult]是否允许辅助促销:", this.currentOperation.ynFzCx);
-					//如果允许辅助促销
-					// if (this.currentOperation.ynFzCx) {
-					// 	let FZCXVal = this.FZCX.cval;
-					// 	console.log("[PayedResult]辅助促销的结果：", FZCXVal);
-					// 	if (FZCXVal && Object.keys(FZCXVal).length != 0) {
-					// 		FZCXVal.data.forEach(r => {
-					// 			let SPObj = _main.FindSP(this.Allsplist, r.SPID);
-					// 			console.log("当前匹配到的商品对象:", SPObj);
-					// 			console.log("当前辅助促销商品对象:", r);
-					// 			if (Object.keys(SPObj).length > 0) {
-					// 				let NO = this.sale002.length;
-					// 				let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
-					// 				s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
-					// 				this.sale002.push(s2); //追加s2
-					// 			}
-					// 		})
-					// 		console.log("[PayedResult]追加辅助促销后的商品：", this.sale002);
-					// 	}
-					// }
-					// console.log("[PayedResult]调用执行 SaleFinishing 中...");
-					// try {
-					// 	this.$saleFinishing(result.data);
-					// } catch (e) {
-					// 	console.log("[PayedResult]执行 SaleFinishing 发生异常:", e);
-					// }
-					// console.log("[PayedResult]调用执行 SaleFinishing 完毕!");
-					//支付前允许手工折扣 则支付完成后要分摊商品金额
-					// if (this.currentOperation.ynSKDisc) {
-					// 	console.log("[PayedResult]判断支付前是否允许手工折扣...");
 					//手工折扣额分摊
-					that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
-					console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
-					// console.log("[PayedResult]准备创建销售单记录...", {
-					// 	sale001: this.sale001,
-					// 	sale002: this.sale002,
-					// 	sale003: this.sale003,
-					// 	sale006: this.sale006,
-					// 	sale008: this.sale008,
-					// 	ydsale001: this.ydsale001,
-					// 	ywbhqh: this.ywbhqh,
-					// 	sxsale001: this.sxsale001,
-					// 	...this.additional
-					// });
-					// console.log("[PayedResult]执行 CXMDFS 中...");
-					// let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
-					// 	.currentOperation
-					// 	.ynCx, this.currentOperation.FZCX);
-					// this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
-					// console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
-					let create_result;
-					try {
-						create_result = await CreateSaleOrder({
-								SALE001: that.SALE001,
-								SALE002: that.SALE002,
-								SALE003: that.SALE003,
-								SALE006: that.SALE006,
-								// SALE008: that.sale008,
-								// YWBHQH: that.ywbhqh,
-								// YDSALE001: this.ydsale001,
-								// SXSALE001: this.sxsale001,
-								// ...this.additional
-							}
-							// , {
-							// 	sqlite: this.communication_for_sqlite,
-							// 	oracle: this.communication_for_oracle
-							// },
-						);
-					} catch (e) {
-						console.log("[PayedResult]订单sql生成发生异常:", e);
+					if (that.SALE001.ROUND > 0) {
+						that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
+						console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
 					}
-					// let bill = "";
-					// console.warn("[PayedResult]结算模式信息获取:", this.current_type);
-					// if (this.current_type.clickType == 'sale_credit_settlement') {
-					// 	bill = this.mode_info.sale_credit_settlement.new_bill;
-					// 	console.log("[PayedResult]赊销结算模式...");
-					// } else {
-					let bill = that.SALE001.BILL;
-					// 	console.log("[PayedResult]其他结算模式...");
-					// }
-					console.log('[PayedResult]通信表记录单号:', bill);
-					_common.TransLiteData(bill); //上传至服务端
-					console.log("[PayedResult]创建销售单结果:", create_result);
-					_util.simpleMsg(create_result.msg, !create_result.code);
-					try {
-						KQSale.ActiveConfirm({
+					//发起激活
+					KQSale.ActiveConfirm({
+						salebill: that.SALE001.BILL,
+						material_id: that.SALE002[0].SPID,
+						amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
+						dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
+						channel: "ZC007",
+						app_key: "POS",
+						khid: that.store.KHID,
+						kh_name: that.store.NAME,
+						ryid: that.store.RYID,
+						ry_name: that.store.RYNAME,
+						dqid: that.store.DQID,
+						dq_name: that.store.DQNAME,
+						flag: 2,
+						card_num: that.sale006.KQIDS
+					}, res2 => {
+						//激活
+						console.log("VIP单卡激活结果：", res2);
+						that.SALE001.STR1 = res2.code ? "success" : "fail";
+						//激活完成-创建卡券销售单
+						KQSale.Completed({
+							SALE001: that.SALE001,
+							SALE002: that.SALE002,
+							SALE003: that.SALE003,
+							SALE006: that.SALE006
+						})
+						if (!res2.code) {
+							_util.simpleMsg("激活失败：" + res2.msg);
+							return;
+						}
+						//发起充值
+						KQSale.Recharge({
 							salebill: that.SALE001.BILL,
-							material_id: that.SALE002[0].SPID,
 							amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
 							dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
-							channel: "ZC007",
-							app_key: "POS",
-							khid: that.store.KHID,
+							khid: that.SALE001.KHID,
 							kh_name: that.store.NAME,
 							ryid: that.store.RYID,
 							ry_name: that.store.RYNAME,
-							dqid: that.store.DQID,
-							dq_name: that.store.DQNAME,
-							flag: 2,
 							card_num: that.sale006.KQIDS
-						}, res2 => {
-							//激活
-							console.log("VIP单卡激活结果：", res2);
-							KQSale.Recharge({
-								salebill: that.SALE001.BILL,
-								amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
-								dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
-								khid: that.SALE001.KHID,
-								kh_name: that.store.NAME,
-								ryid: that.store.RYID,
-								ry_name: that.store.RYNAME,
-								card_num: that.sale006.KQIDS
-							}, res3 => {
-								//充值
-								console.log("VIP单卡充值结果：", res3);
-							})
+						}, res3 => {
+							//充值
+							console.log("VIP单卡充值结果：", res3);
+							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						})
-					} catch (e) {
-						console.log("[SaleFinied]执行异常:", e);
-					}
+					})
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
-				// console.log("支付后要跳转的模式：", this.clickSaleType)
-				// console.log("支付后要跳转的模式：", this.clickSaleType.afterPay)
-				// this.resetSaleBill(this.clickSaleType.afterPay); //支付后要跳转的销售模式
 			}
 		}
 	}

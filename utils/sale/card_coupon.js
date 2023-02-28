@@ -6,7 +6,12 @@ import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
 import sales from '@/utils/sale/saleClass.js';
 import _card_sale from "@/api/business/card_sale.js";
+import {
+	CreateSaleOrder,
+	PointUploadNew
+} from '@/bll/Common/bll.js';
 
+import _common from '@/api/common.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -109,25 +114,40 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//激活申请校验
-		ActiveApply: function(data,func) {
+		ActiveApply: function(data, func) {
 			_member.singleCardActiveApply("校验中...", {
 				data
 			}, func, func);
 		},
 		//激活确认校验
-		ActiveConfirm: function(data,func) {
+		ActiveConfirm: function(data, func) {
 			_member.singleCardActiveConfirm("激活中...", {
 				data
 			}, func, func);
 		},
 		//激活后充值
-		Recharge: function(data,func) {
+		Recharge: function(data, func) {
 			_member.posPayRecharge("充值中...", {
 				data
 			}, func, func);
 		},
 		//业务完成
-		Completed: function(data) {},
+		Completed: async function(data) {
+			try {
+				let create_result = await CreateSaleOrder({
+					SALE001: data.SALE001,
+					SALE002: data.SALE002,
+					SALE003: data.SALE003,
+					SALE006: data.SALE006,
+				});
+				console.log("[PayedResult]创建销售单结果:", create_result);
+				if (create_result.code)
+					_common.TransLiteData(bill); //上传至服务端
+				_util.simpleMsg(create_result.msg, !create_result.code);
+			} catch (e) {
+				console.log("[PayedResult]订单sql生成发生异常:", e);
+			}
+		},
 		//商品信息匹配
 		MatchSP: async function(spid) {
 			let spinfo;
