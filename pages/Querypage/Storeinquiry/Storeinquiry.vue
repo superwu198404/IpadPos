@@ -23,7 +23,7 @@
 					<view>
 						<image class="wx" src="/images/img2/danjucx.png" mode="widthFix"></image>
 						<image class="xz" src="@/images/img2/danjucx-cu.png" mode="widthFix"></image>
-						单据查询
+						外卖单查询
 					</view>
 				</view>
 				<view class="glcx">
@@ -50,15 +50,17 @@
 							<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 							<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 						</view>
-						<!-- <view class="classifys">
-							<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
-								:class="mainSale.selectPlid==xplitem.plid?'curr':''"
-								@click="mainSale.selectPlidChenged"
-								:data-plid="xplitem.plid">{{xplitem.plname}}</text>
+						<!-- v-for="(xplitem, xplindex) in mainSale.selectFlagList"
+							:class="mainSale.selectPlid==xplitem.plid?'curr':''"
+							@click="mainSale.selectPlidChenged"
+							:data-plid="xplitem.plid"  {{xplitem.plname}}-->
+						<view class="classifys">
+							<text  class="curr">日销售</text>
+							<text >品类</text>
 							<label>
-								<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
+								<!-- <image src="@./images/jt-zhangkai.png" mode="widthFix"></image> -->
 							</label>
-						</view> -->
+						</view>
 					</view>
 					<view class="commodity">
 						<view class="mokuai">日销售<text>/8</text></view>
@@ -76,6 +78,19 @@
 								<view class="summary">裱花请货商品汇总</view>
 								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
 							</view>
+							<view class="li">
+								<text class="zhuangs">裱</text>
+								<label><image src="@/images/TL.png" mode="widthFix"></image> 表单</label>
+								<view class="summary">裱花请货商品汇总</view>
+								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
+							</view>
+							<view class="li">
+								<text class="zhuangs">裱</text>
+								<label><image src="@/images/TL.png" mode="widthFix"></image> 表单</label>
+								<view class="summary">裱花请货商品汇总</view>
+								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
+							</view>
+							
 						</view>
 					</view>
 				</view>
@@ -85,6 +100,28 @@
 </template>
 
 <script>
+	import Head from '@/pages/Home/Component/Head.vue'
+	import query from '@/pages/Home/query.vue'
+	
+		export default {
+			components: {
+				query,
+				Head
+			},
+			
+			data() {
+				return {
+		
+				}
+			},
+			onLoad() {
+	
+			},
+			methods: {
+			
+			}	
+		}
+	
 </script>
 
 <style>

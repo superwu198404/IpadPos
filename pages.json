@@ -303,7 +303,15 @@
 			"style": {}
 		},
 		{
-			"path": "pages/Storeinquiry/Storeinquiry",
+			"path": "pages/Querypage/Storeinquiry/Storeinquiry",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Querypage/TakeawayCX/TakeawayCX",
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",
@@ -371,6 +379,7 @@
 		"qiandao": "/components/qiandao/qiandao",
 		"rijie": "/components/rijie/rijie",
 		"saomaqiang": "/components/saomaqiang/saomaqiang",
-		"cdxp": "/components/cdxp/cdxp"
+		"cdxp": "/components/cdxp/cdxp",
+		"query":"/Home/query/query"
 	}
 }
