@@ -68,6 +68,10 @@
 						<image src="@/images/logout.png" mode="widthFix"></image>
 						退出
 					</view>
+					<view class="tuichu" @click="ToSK()">
+						<image src="@/images/logout.png" mode="widthFix"></image>
+						售卡券
+					</view>
 				</view>
 
 			</view>
@@ -390,6 +394,12 @@
 						}
 					}
 				})
+			},
+			//进入售卡
+			ToSK: function() {
+				uni.redirectTo({
+					url: "/pages/CardSale/CardSale"
+				});
 			},
 			//初始化
 			DataInit: function(e) {
@@ -761,7 +771,8 @@
 		backface-visibility: hidden;
 
 	}
-	page{
+
+	page {
 		overflow: hidden;
 	}
 </style>

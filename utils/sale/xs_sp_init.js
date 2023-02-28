@@ -345,9 +345,11 @@ var loadSaleSP = {
 
 					console.log("出现了" + error);
 				}
-				if (item.specslist.length > 0) {
+				/*
+				if (item.specslist.length > 0) 
+				{
 					item.SPID = item.specslist[0].SPID;
-				}
+				}*/
 
 			}
 			if (item.ynAddPro == "1") {
@@ -389,6 +391,11 @@ var loadSaleSP = {
 			}
 			plarr.push(item);
 			pm_spidKeyList[item.SPID] = item;
+		    //蛋糕类初始化第一个选择的商品id
+			if (item.specslist.length > 0&&item.ynshowlist == "1") 
+			{
+				item.SPID = item.specslist[0].SPID;
+			}
 		})
 		// console.log(JSON.stringify(fsArr.slice(0, 3)));
 		return fsArr;

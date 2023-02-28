@@ -7,13 +7,13 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
-				<!-- <label>
+				<label>
 					是否赊销：
 					<view class="classifys">
 						<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
 						<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text>
 					</view>
-				</label> -->
+				</label>
 				<view class="client">
 					<label>
 						<image src="../../images/dakehu.png" mode="widthFix"></image><input v-model="search.client_name"
@@ -68,7 +68,6 @@
 				big_client_info: {},
 				current: -1,
 				curIndex: -1,
-				custom_event_name: ""
 			}
 		},
 		computed: {
@@ -84,9 +83,10 @@
 				// 	util.simpleMsg("请选择大客户", true);
 				// 	return;
 				// }
-				console.log("[BigCustomer-Close]大客户信息:",this.big_client_info);
+				console.log("[BigCustomer-Close]大客户信息:", this.big_client_info);
+				this.big_client_info.exists_credit = this.exists_credit;
 				uni.$emit('close-big-customer', this.big_client_info);
-				uni.$emit(this.custom_event_name,'close');
+				uni.$emit(this.custom_event_name, 'close');
 			},
 			CreditMode: function(is_credit) {
 				this.exists_credit = is_credit;
@@ -116,25 +116,27 @@
 				this.curIndex = i;
 				this.big_client_info = e;
 				this.big_client_info.DKFID = e.DKHID;
-				console.log("[BigCustomer-ConfimrBig]大客户信息:",this.big_client_info);
+				console.log("[BigCustomer-ConfimrBig]大客户信息:", this.big_client_info);
+				this.big_client_info.exists_credit = this.exists_credit;
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
-				uni.$emit(this.custom_event_name,'close');
+				uni.$emit(this.custom_event_name, 'close');
 			},
 			SelectedBigCustomer: function(evt) {
 				for (let i = 0; i < this.big_customers.length; i++) {
 					if (this.big_customers[i].DKHID === evt.detail.value) {
 						this.current = i;
 						this.big_client_info = this.big_customers[i];
+						this.big_client_info.exists_credit = this.exists_credit;
 						break;
 					}
 				}
 			},
-			CustomListener: function(){
+			CustomListener: function() {
 				console.log("[CustomListener]准备接收名称...");
 				uni.$off("set-custom-event");
-				uni.$once("set-custom-event",util.callBind(this,function(data){
-					console.log("[CustomListener]获取名称:",data);
+				uni.$once("set-custom-event", util.callBind(this, function(data) {
+					console.log("[CustomListener]获取名称:", data);
 					this.custom_event_name = data;
 				}))
 			}
@@ -146,8 +148,9 @@
 			this.CustomListener();
 			uni.$emit("big-customer-open");
 		},
-		destroyed(){
-			uni.$emit("big-customer-close");
+		destroyed() {
+			this.big_client_info.exists_credit = this.exists_credit;
+			uni.$emit("big-customer-close", this.big_client_info);
 		}
 	}
 </script>
@@ -192,7 +195,7 @@
 		padding: 0 1% 0 0;
 		justify-content: space-between;
 		position: relative;
-		margin-top:1%;
+		margin-top: 1%;
 	}
 
 	.search .client {
@@ -247,8 +250,8 @@
 		background: #006B44;
 		border-radius: 0 6rpx 6rpx 0;
 		position: absolute;
-		top:-1px;
-		right:0;
+		top: -1px;
+		right: 0;
 	}
 
 	.credit {
@@ -270,9 +273,11 @@
 		border: 1rpx solid #ddd;
 		position: relative;
 	}
-	.credit .li:nth-child(2n){
+
+	.credit .li:nth-child(2n) {
 		margin-right: 0;
 	}
+
 	.credit .li em {
 		position: absolute;
 		top: 10%;
@@ -346,6 +351,6 @@
 		width: 100%;
 		padding: 2% 0;
 		background-color: #fff;
-		border-top:1px solid #eee;
+		border-top: 1px solid #eee;
 	}
 </style>
