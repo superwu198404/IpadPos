@@ -1,15 +1,3 @@
-<!-- <template>
-	<view style="border: 1px solid red;height: 100%;width: 100%;">
-		<p>卡销售：</p>
-		起始卡号：<input type="text" v-model="begin_num" />
-		结束卡号：<input type="text" v-model="end_num" />
-		<button @click="Confirm">确认</button>
-		<view>
-			<p v-for="(item) in SALE002Arr">{{item.STR1}}-{{item.SPID}}-{{item.PLID}}-{{item.UNIT}}</p>
-			<p v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)">充{{item.CZNET}}元，送{{item.ZSNET}}元.</p>
-		</view>
-	</view>
-</template> -->
 <style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
@@ -18,11 +6,10 @@
 
 <template>
 	<view class="content">
-		<!-- <menu_page :menuIndex="7"></menu_page> -->
 		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -50,16 +37,16 @@
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
 						<view class="table">
-						<view class="tab curr">
-							<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
-							<label>
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text>VIP售卡充值</text>
-							</label>
-						</view>
-						<view class="tab">
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
-						</view>
+							<view class="tab curr">
+								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<label>
+									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<text>VIP售卡充值</text>
+								</label>
+							</view>
+							<view class="tab">
+								<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
+							</view>
 						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
@@ -178,21 +165,23 @@
 				SALE002: [],
 				SALE003: [],
 				SALE006: [],
-				showCardNum: true,
+				SXSALE001: [],
+				showCardNum: false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				Bill_TYPE: "Z111",
+				Bill_TYPE: "Z111", //Z112
 				XSTYPE: "1",
 				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
+				view: {
+					big_customer: false,
+					enable_customer: true,
+				},
 			}
 		},
 		created: function() {
 			that = this;
-			//事件监听
-			uni.$off("GetCardNums");
-			uni.$on("GetCardNums", that.GetCardNums);
 
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
@@ -206,7 +195,23 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
+
+			//事件监听
+			uni.$off("GetCardNums");
+			uni.$on("GetCardNums", that.GetCardNums);
+
+			uni.off("big-customer-close");
+			uni.$on("big-customer-close", function(data) {
+				console.log("[Created]大客户回调:", data);
+				if (data.exists_credit) {
+					that.Bill_TYPE = "Z112"; //启用赊销
+				} else {
+					that.Bill_TYPE = "Z111"; //不启用赊销	
+				}
+				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+			});
 		},
+		destroyed() {},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -400,6 +405,10 @@
 							return r.SPID != e.SPID
 						});
 						that.SALE006 = arr1;
+						if (arr.length == 0) {
+							that.SALE001.TNET = 0;
+							that.SALE001.BILLDISC = 0;
+						}
 					}
 				})
 			},
@@ -466,6 +475,17 @@
 							//直接生成赊销销售单
 							//调用激活
 							//调用充值
+							//赊销参数组装
+							that.CreateSXSale001();
+							let result = {
+								code: true,
+								data: {
+									sale1_obj: that.SALE001,
+									sale2_arr: that.SALE002,
+									sale3_arr: that.SALE003,
+								}
+							};
+							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
 							that.PayParamAssemble();
@@ -532,11 +552,6 @@
 						that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
 						console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
 					}
-					console.log("准备激活1：", that.SALE001);
-					console.log("准备激活2：", that.SALE002);
-					console.log("准备激活3：", that.SALE006);
-					console.log("准备激活4：", that.store);
-					console.log("准备激活4：", that.CurCZGZ);
 					//发起激活
 					KQSale.ActiveConfirm({
 						salebill: that.SALE001.BILL,
@@ -566,7 +581,8 @@
 							SALE001: that.SALE001,
 							SALE002: that.SALE002,
 							SALE003: that.SALE003,
-							SALE006: that.SALE006
+							SALE006: that.SALE006,
+							SXSALE001: that.SXSALE001,
 						})
 						//发起充值
 						KQSale.Recharge({
@@ -606,6 +622,20 @@
 				that.CurCZGZ = {};
 				that.Amount = 0;
 				console.log("单据重置成功")
+			},
+			//创建sxsale1
+			CreateSXSale001: function() {
+				console.log("进入赊销组装：");
+				//生成赊销单
+				that.SXSALE001 = Object.cover(new _saleClass.sxsale001(), that.SALE001);
+				that.SXSALE001.SX_STATUS = 1;
+				that.SXSALE001.DKFNAME = that.store.DKFNAME; //赊销追加一下 大客户名称
+				let sale3 = Object.cover(new _saleClass.sale003(), that.SALE001);
+				sale3.FKID = "ZG01";
+				sale3.AMT = that.SALE001.TNET;
+				that.SALE003.push(sale3);
+				console.log("赊销单组装数据sx1：", that.SXSALE001);
+				console.log("赊销单组装数据s3：", that.SALE003);
 			},
 		}
 	}

@@ -295,7 +295,7 @@ const utils = {
 				val = uni.getStorageSync(key);
 			}
 		}
-		return val;
+		return JSON.parse(JSON.stringify(val)) ;
 	},
 	/**
 	 * 清除全局存储值

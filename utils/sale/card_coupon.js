@@ -142,6 +142,7 @@ var KQTypeObj = {
 					SALE002: data.SALE002,
 					SALE003: data.SALE003,
 					SALE006: data.SALE006,
+					SXSALE001: data.SXSALE001,
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
@@ -289,7 +290,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.MatchSP = async function(spid) {
 		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
-	
+
 	const def = {
 		sale001: null,
 		sale002: [],
@@ -299,11 +300,11 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		paid: [],
 		action: '',
 		member: null,
-		complet: (res) => console.log("[RedirectToPayment]支付完成:",res)
+		complet: (res) => console.log("[RedirectToPayment]支付完成:", res)
 	}
-	
-	this.RedirectToPayment = function(options = def){
-		let params = Object.assign(Object.assign({},def),options);
+
+	this.RedirectToPayment = function(options = def) {
+		let params = Object.assign(Object.assign({}, def), options);
 		uni.$emit('stop-message');
 		uni.$emit('stop-timed-communication');
 		console.log("[RedirectToPayment]支付参数组装...");
