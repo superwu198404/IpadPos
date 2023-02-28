@@ -115,9 +115,17 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//激活确认校验
-		ActiveConfirm: function(data) {},
+		ActiveConfirm: function(data,func) {
+			_member.singleCardActiveConfirm("激活中...", {
+				data
+			}, func, func);
+		},
 		//激活后充值
-		Recharge: function(data) {},
+		Recharge: function(data,func) {
+			_member.posPayRecharge("充值中...", {
+				data
+			}, func, func);
+		},
 		//业务完成
 		Completed: function(data) {},
 		//商品信息匹配

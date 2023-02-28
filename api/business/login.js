@@ -127,7 +127,7 @@ export const UpdatePWD = function(data, func) {
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
-		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		if (!res.code || res.msg.length == 0) {
@@ -144,6 +144,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			DPID: res.msg[0].DPID,
 			GCID: res.msg[0].GCID,
 			DQID: res.msg[0].DQID,
+			DQNAME: res.msg[0].DQNAME,
 			NAME: res.msg[0].SNAME,
 			KHAddress: res.msg[0].ADDRESS,
 			POSCSZID: res.msg[0].POSCSZID,

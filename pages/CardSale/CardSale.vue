@@ -460,7 +460,7 @@
 			PayParamAssemble: function(sales) {
 				uni.$emit('stop-message');
 				uni.$emit('stop-timed-communication');
-				that.log("[PayParamAssemble]支付参数组装...")
+				console.log("[PayParamAssemble]支付参数组装...")
 				util.setStorage('open-loading', false);
 				let inputParm = {
 					sale1_obj: that.SALE001, //001 主单 数据对象
@@ -500,7 +500,7 @@
 					// this.sale001.TCXDISC = 0; //fzcx
 					// this.sale001.TDISC = 0; //fzcx 
 					//清除手工折扣
-					this.SALE001.ROUND = 0;
+					that.SALE001.ROUND = 0;
 					return;
 				}
 				that.SALE001 = Object.cover(new sale.sale001(), result.data.sale1_obj);
@@ -603,11 +603,42 @@
 					_common.TransLiteData(bill); //上传至服务端
 					console.log("[PayedResult]创建销售单结果:", create_result);
 					_util.simpleMsg(create_result.msg, !create_result.code);
-					// try {
-					// 	this.$saleFinied(result.data);
-					// } catch (e) {
-					// 	console.log("[SaleFinied]执行异常:", e);
-					// }
+					try {
+						KQSale.ActiveConfirm({
+							salebill: that.SALE001.BILL,
+							material_id: that.SALE002[0].SPID,
+							amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
+							dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
+							channel: "ZC007",
+							app_key: "POS",
+							khid: that.store.KHID,
+							kh_name: that.store.NAME,
+							ryid: that.store.RYID,
+							ry_name: that.store.RYNAME,
+							dqid: that.store.DQID,
+							dq_name: that.store.DQNAME,
+							flag: 2,
+							card_num: that.sale006.KQIDS
+						}, res2 => {
+							//激活
+							console.log("VIP单卡激活结果：", res2);
+							KQSale.Recharge({
+								salebill: that.SALE001.BILL,
+								amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
+								dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
+								khid: that.SALE001.KHID,
+								kh_name: that.store.NAME,
+								ryid: that.store.RYID,
+								ry_name: that.store.RYNAME,
+								card_num: that.sale006.KQIDS
+							}, res3 => {
+								//充值
+								console.log("VIP单卡充值结果：", res3);
+							})
+						})
+					} catch (e) {
+						console.log("[SaleFinied]执行异常:", e);
+					}
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
