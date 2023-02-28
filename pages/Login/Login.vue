@@ -82,8 +82,8 @@
 	export default {
 		data() {
 			return {
-				userid: "",
-				password: "",
+				userid: "999",
+				password: "123",
 				name: "",
 				khid: "",
 				posid: "",

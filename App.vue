@@ -27,6 +27,7 @@
 				BMID: "", //对应program.xsbm pos 这个参数为空字符串
 				GCID: "",
 				DQID: '', //地区ID（销售地区）
+				DQNAME: '', //地区名称（销售地区）
 				NAME: "",
 				// MERID: "999990053990001",
 				// deviceno: "13001001",

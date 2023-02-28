@@ -1510,21 +1510,35 @@ var XsTypeObj = {
 			"inputsp": true //是否可以输入商品
 		},
 		$initSale: function(params) {
-			console.log("[InitSale]券销售参数:",params);
+			console.log("[InitSale]券销售参数:", params);
 			this.actType = common.actTypeEnum.Payment;
 			this.sale001 = new sale.sale001();
 			this.sale002 = params.sale2;
 			this.sale003 = [];
 			this.sale006 = params.sale6;
+
+			this.coupon_id_start = params.start_no;
+			this.coupon_id_end = params.end_no;
+			this.coupon_segment_count = params.coupon_count;
+			console.log("[InitSale]券销售参数信息:", {
+				coupon_id_start: this.coupon_id_start,
+				coupon_id_end: this.coupon_id_end,
+				coupon_segment_count: this.coupon_segment_count
+			});
+
 			this.setNewParmSale({
 				sale001: this.sale001,
 				sale002: this.sale002,
 				sale003: this.sale003
 			}, common.actTypeEnum.Payment);
-			let amount = this.sale002.reduce((prev,next) => Number(prev?.NET) * Number(prev?.QTY) + Number(next?.NET) * Number(next?.QTY),{ NET:0,QTY:0});
+			let amount = this.sale002.reduce((prev, next) => Number(prev?.NET) * Number(prev?.QTY) + Number(next
+				?.NET) * Number(next?.QTY), {
+				NET: 0,
+				QTY: 0
+			});
 			this.sale001.ZNET = amount;
 			this.sale001.TNET = amount;
-			console.log("[InitSale]券总金额:",amount);
+			console.log("[InitSale]券总金额:", amount);
 			//清除一下会员信息
 			this.HY.val = {};
 			uni.$emit('set-member', this.HY.val);
@@ -1552,7 +1566,7 @@ var XsTypeObj = {
 				sale002: this.sale002,
 				sale003: this.sale003
 			});
-			console.log("[BeforePayment]付款判断是否启用赊销:",this.DKF.exists_credit);
+			console.log("[BeforePayment]付款判断是否启用赊销:", this.DKF.exists_credit);
 			if (this.sale002.length > 0 && this.sale001.TNET >= 0 && this.DKF.val.exists_credit) { // 部分商品金额为0
 				//生成赊销单
 				this.sxsale001 = Object.cover(new sale.sxsale001(), this.sale001);
@@ -1611,6 +1625,32 @@ var XsTypeObj = {
 				printerPram
 			})
 			this.Page.sxBluePrinter(this.sale001, arr2, arr3, this.sxsale001, printerPram, "SX");
+			let request = {
+				bill: this.sale001.BILL,
+				disc: 0,
+				khid: this.Storeid,
+				appid: 'kengee',
+				coupon_infos: [{
+					start_no: this.coupon_id_start,
+					end_no: this.coupon_id_end,
+					count: this.coupon_segment_count,
+					total_denomination: this.sale001.TNET
+				}]
+			};
+			console.log("[SaleFinied]券下发操作参数:", request);
+			_member.coupon_sale.CouponDistribute(request).then(util.callBind(this, function(res) {
+				console.log("[SaleFinied]券下发操作成功:", res);
+				request = {
+					bill: this.sale001.BILL,
+					khid: this.Storeid,
+					appid: 'kengee',
+				};
+				console.log("[SaleFinied]券下发操作参数:", request);
+				_member.coupon_sale.CouponActivation(request).then(util.callBind(this, function(
+				res) {
+					console.log("[SaleFinied]券激活操作成功:", res);
+				}))
+			}))
 		},
 		$click() {
 			console.log("[sale_credit]售券点击...");
@@ -2076,6 +2116,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
+	this.Page.$watch('mainSale.billindex', util.callBind(this, function(n, o) {
+		console.warn("[Watch-Serial-Number]流水号发生变更...");
+		util.setStorage('serial-number',n);
+	}))
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = [];
@@ -2376,11 +2420,10 @@ function GetSale(global, vue, target_name, uni) {
 
 					that.createHotSaleSpList(rethotsale);
 				},
-			res=>
-				{
-					hotSale =null;
-					that.myAlert("获取热销商品失败"+res.msg);
-				
+				res => {
+					hotSale = null;
+					that.myAlert("获取热销商品失败" + res.msg);
+
 				}
 			)
 			//ajax 获取热销商品
@@ -2777,11 +2820,11 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.sale002', util.callBind(this, function(n, o) {
 		this.CheckSale002ExistsDecoration();
 	}))
-	
+
 	this.Page.$watch('mainSale.DKF', util.callBind(this, function(n, o) {
 		console.warn("[Watch-Big-Customer]打客户信息发生变更...");
 	}))
-	
+
 	this.update = function() {
 		if (that.Page) {
 			that.Page.$forceUpdate()

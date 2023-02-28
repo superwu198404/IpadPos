@@ -4,7 +4,7 @@
 	@import url(@/static/style/card.css);
 </style>
 <template>
-	<view>
+	<view v-show="show">
 		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
@@ -37,7 +37,8 @@
 		props: {
 			begin_num: String,
 			end_num: String,
-			yetype: String
+			yetype: String,
+			show: Boolean
 		},
 		created() {
 			that = this;
@@ -46,13 +47,14 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087110000744323",
-				endNum: "1087110000744323",
+				beginNum: "400000005787446369",
+				endNum: "",
 			};
 		},
 		methods: {
 			Cancel: function() {
 				console.log("事件触发");
+				this.$emit("update:show",false);
 				uni.$emit("GetCardNums", {
 					type: "N",
 					begin_num: that.beginNum,
@@ -69,6 +71,7 @@
 					_util.simpleMsg("请输入截止卡号");
 					return;
 				}
+				this.$emit("update:show",false);
 				uni.$emit("GetCardNums", {
 					type: "Y",
 					begin_num: that.beginNum,

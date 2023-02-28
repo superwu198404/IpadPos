@@ -8,6 +8,7 @@ import Vue from 'vue'
 import {
 	global
 } from '@/models/PaymentAll/models.js';
+import init_object_factory from '@/utils/init.js';
 
 var GetPassWord = function(khid, userid, password, func) {
 	let sql = "select password_MD,gwid,SNAME from MDRYKH where ryid='" + userid + "' and khid='" + khid + "'";
@@ -127,7 +128,7 @@ export const UpdatePWD = function(data, func) {
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
-		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		if (!res.code || res.msg.length == 0) {
@@ -144,6 +145,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			DPID: res.msg[0].DPID,
 			GCID: res.msg[0].GCID,
 			DQID: res.msg[0].DQID,
+			DQNAME: res.msg[0].DQNAME,
 			NAME: res.msg[0].SNAME,
 			KHAddress: res.msg[0].ADDRESS,
 			POSCSZID: res.msg[0].POSCSZID,
@@ -162,6 +164,10 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
+		init_object_factory.init();
+		Object.assign(store1,{
+			factory: init_object_factory
+		});
 		console.log("[InitStore]全局混入客户端信息！");
 		global.data = function(){
 			return store1;
