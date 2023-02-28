@@ -245,6 +245,11 @@
 				ynDKF: true
 			};
 		},
+		computed: {
+			custom_display() {
+				return this.custom;
+			}
+		},
 		watch: {
 			_showSale: function(n, o) {
 				this.showSale = this._showSale;
@@ -252,6 +257,15 @@
 			},
 			_ynDKF: function(n, o) {
 				this.ynDKF = this._ynDKF;
+			},
+			custom_display: function(n, o){
+				console.log("[Customer]显示状态:", n);
+				if(n === true){
+					uni.$emit("customer-open");
+				}
+				else if(n === false){
+					uni.$emit("customer-close");
+				}
 			}
 		},
 		onShow: function() {
