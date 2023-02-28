@@ -664,35 +664,6 @@ const ynjsCxforHy = function(bill) {
 	}
 }
 
-//判断会员积分促销，积分是否够扣除
-const ynCxjfCheck = function(bill) {
-	try{
-		let mcc = cxdict.get(bill);
-		if (isHy) {
-			switch (mcc.CXRY) {
-				case "all":
-					return true;
-				case "Hy":
-					let tj = cx_util.TryParse(hymen.JFBalance);
-				    //会员积分不够扣除
-					if(tj < cx_util.nnvl(mcc.syjf,0)){
-						return false;
-					}else{
-						return true;	
-					}
-				case "Nhy":
-					return true;
-				default:
-					return true;
-			}
-		} else {
-			return true;
-		}
-	}catch(err){
-		return true;
-	}
-}
-
 //销售方式的转变
 const xsTypeCheck = function(bill, is_Xstype) {
 	let mcc = cxdict.get(bill);
