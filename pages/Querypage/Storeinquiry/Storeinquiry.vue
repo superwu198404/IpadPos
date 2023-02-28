@@ -76,19 +76,19 @@
 								<text class="zhuangs">裱</text>
 								<label><image src="@/images/TL.png" mode="widthFix"></image> 表单</label>
 								<view class="summary">裱花请货商品汇总</view>
-								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
+								<view class="examine"><text>点击查看</text><image src="@/images/img2/dianji-jinru.png"></image></view>
 							</view>
 							<view class="li">
 								<text class="zhuangs">裱</text>
 								<label><image src="@/images/TL.png" mode="widthFix"></image> 表单</label>
 								<view class="summary">裱花请货商品汇总</view>
-								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
+								<view class="examine"><text>点击查看</text><image src="@/images/img2/dianji-jinru.png"></image></view>
 							</view>
 							<view class="li">
 								<text class="zhuangs">裱</text>
 								<label><image src="@/images/TL.png" mode="widthFix"></image> 表单</label>
 								<view class="summary">裱花请货商品汇总</view>
-								<view class="examine"><text>点击查看</text><image src="@/images/TL.png"></image></view>
+								<view class="examine"><text>点击查看</text><image src="@/images/img2/dianji-jinru.png"></image></view>
 							</view>
 							
 						</view>
