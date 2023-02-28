@@ -158,10 +158,10 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding:1.5% 0 2%;
+	padding:2% 0 2%;
 }
 .jinelist .li-je label{
-	font-size: 36rpx;
+	font-size: 46rpx;
 	font-weight: 700;
 	line-height: 60rpx;
 }
