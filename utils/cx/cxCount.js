@@ -529,10 +529,6 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if(!ynCxjfCheck(cxbill)){
 				continue;
 			}
-			//判断会员积分促销，积分是否够扣除
-			if(!ynCxjfCheck(cxbill)){
-				continue;
-			}
 
 			let retyyslclass = retCxClassForDtRow(cxbill, yysl);
 			//console.log("retyyslclass 1", retyyslclass);
