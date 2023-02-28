@@ -73,7 +73,7 @@
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
-						<view class="swipetip" v-if="swipetip">
+						<view class="swipetip" v-if="SALE002.length==0">
 							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 							<text>请先刷卡录入</text>
 						</view>
@@ -85,20 +85,20 @@
 									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
 									<view class="zje">
 										<view><text>总金额</text>￥{{item.NET}}</view>
-										<button>
+										<button @click="RemoveSP(item)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button>
 									</view>
 								</view>
 								<view class="card-num">
-									<label>始：<text>ID4332143223456767565</text></label>
-									<label>终：<text>ID4332143223456767575</text></label>
+									<label>始：<text>{{item.begin_num}}</text></label>
+									<label>终：<text>{{item.end_num}}</text></label>
 								</view>
 								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>567</label>
-									<label><em>●</em><text>默认折扣：</text>5</label>
-									<label><em>●</em><text>标准折扣：</text>54</label>
-									<label><em>●</em><text>特批折扣：</text>5</label>
+									<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
+									<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
+									<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+									<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 								</view>
 							</view>
 
@@ -110,7 +110,7 @@
 							<label>总数量：<text>{{TotalNum}}</text></label>
 							<label>总金额：<text>￥{{TotalNet}}</text></label>
 						</view>
-						<button class="btn">确认支付</button>
+						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry v-if="showCardNum"></CardNumEntry>
@@ -162,11 +162,12 @@
 				CurCZGZ: {},
 				SALE001: {},
 				SALE002: [],
+				SALE006: [],
 				showCardNum: true,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				BIll_TYPE: "Z111",
+				Bill_TYPE: "Z111",
 				XSTYPE: "1",
 				KQXSTYPE: "SK"
 			}
@@ -176,16 +177,18 @@
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
-			KQSale = new _card_coupon.InitKQSale(that, uni, getApp().globalData.store, "VIPCard_Active");
+
+			let store = getApp().globalData.store;
+			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
 			KQSale.InitData("卡销售初始化", res => {
 				that.ShowCZGZ();
 			});
-			// console.log("数据测试：",getApp().globalData.store);
-			that.SALE001 = _card_coupon.InitSale001(getApp().globalData.store, {
-				BIll_TYPE: that.BIll_TYPE,
+			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
+				BIll_TYPE: that.Bill_TYPE,
 				KQXSTYPE: that.KQXSTYPE,
 				CUID: that.KQXSTYPE,
+				DKFID: store.DKFID
 			});
 		},
 		computed: {
@@ -209,7 +212,7 @@
 			},
 		},
 		methods: {
-			//卡号返回
+			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件：", e);
 				if (e) {
@@ -217,13 +220,14 @@
 					that.begin_num = e.begin_num;
 					that.end_num = e.end_num;
 					if (e.type == 'Y') {
-						that.Confirm();
+						that.MatchSP();
 					} else {
 
 					}
 				}
 			},
-			Confirm: function() {
+			//商品状态和库存校验并并生成sale2,6
+			MatchSP: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
 				}
@@ -253,9 +257,19 @@
 									return r.SPID == spObj.SPID;
 								});
 								if (arr.length == 0) {
+									console.log("开始进入合并：", spObj);
 									spObj = that.CoverSale(spObj, that.SALE001);
 									console.log("属性合并后的对象：", spObj);
-									that.SALE002.push(spObj);
+									if (spObj) {
+										spObj.begin_num = that.begin_num;
+										spObj.end_num = that.end_num;
+										that.SALE002.push(spObj);
+										let sale6 = that.CreateSale006({
+											begin_num: that.begin_num,
+											end_num: that.end_num
+										}, spObj, that.SALE001);
+										that.SALE006.push(sale6);
+									}
 								} else {
 									_util.simpleMsg("已添加该商品", "none");
 								}
@@ -264,36 +278,46 @@
 					}
 				})
 			},
+			//创建s6
+			CreateSale006: function(cards, sale2, sale1) {
+				let sale6 = new _saleClass.sale006();
+				sale6 = that.CoverSale(sale6, sale1);
+				sale6.KQIDS = cards.begin_num;
+				sale6.KQIDE = cards.end_num;
+				sale6.KQIDSTR = cards.begin_num + "-" + cards.end_num;
+				sale6.SPID = sale2.SPID;
+				sale6.MYSTR = sale2.PRICE;
+				sale6.QTY = sale2.QTY;
+				sale6.NO = sale2.NO;
+				console.log("生成的的sale6:", sale6);
+				return sale6;
+			},
 			//sale对象属性合并
 			CoverSale: function(sale, sale1) {
 				try {
-					if (!sale1 || !sale) {
+					if (Object.keys(sale1).length == 0) {
 						return sale;
 					}
 					let arr = [
-						KHID,
-						POSID,
-						RYID,
-						BILL,
-						KCDID,
-						GCID,
-						DPID,
-						SALEDATE,
-						SALETIME,
-						CLTIME,
-						YN_OK,
-						YN_SC,
-						YAER,
-						MONTH,
-						WEEK,
-						TIME,
-						DKFID
+						"KHID",
+						"POSID",
+						"RYID",
+						"BILL",
+						"KCDID",
+						"GCID",
+						"DPID",
+						"SALEDATE",
+						"SALETIME",
+						"CLTIME",
+						"YN_OK",
+						"YN_SC",
+						"YAER",
+						"MONTH",
+						"WEEK",
+						"TIME",
+						"DKFID"
 					];
-					console.log("开始循环：", arr);
 					arr.map(r => {
-						console.log("当前属性：", r);
-						console.log("当前属性1：", sale1[r]);
-						console.log("当前属性2：", sale.hasOwnProperty(r));
 						if (sale1[r] && sale.hasOwnProperty(r)) { //sale1有这个属性值 且sale 有这个属性
 							sale[r] = sale1[r];
 						}
@@ -333,13 +357,29 @@
 				that.SALE002 = s2;
 				that.CalTNET();
 			},
+			//待售列表清除
+			RemoveSP: function(e) {
+				_util.simpleModal("提示", "是否确认删除此项？", res => {
+					if (res) {
+						let spid = e.SPID;
+						let arr = that.SALE002.filter(r => {
+							return r.SPID != e.SPID
+						});
+						that.SALE002 = arr;
+						let arr1 = that.SALE006.filter(r => {
+							return r.SPID != e.SPID
+						});
+						that.SALE006 = arr1;
+					}
+				})
+			},
 			//根据002 计算001 金额等字段
 			CalTNET: function() {
 				let tnet = 0,
 					tcxdisc = 0,
 					tbzdisc = 0,
-					ttpdisc = 0
-				tlsdisc = 0;
+					ttpdisc = 0,
+					tlsdisc = 0;
 				that.SALE002.map(r => {
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
@@ -353,10 +393,66 @@
 				that.SALE001.TBZDISC = _util.newFloat(tbzdisc);
 				that.SALE001.TTPDISC = _util.newFloat(ttpdisc);
 				that.SALE001.TLSDISC = _util.newFloat(tlsdisc);
-				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbadisc + ttpdisc + tlsdisc);
+				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
-			}
+			},
+			//去支付
+			ToPay: function() {
+				if (!that.CurCZGZ || Object.keys(that.CurCZGZ).length == 0) {
+					_util.simpleMsg("请选择充值规则")
+					return;
+				}
+				if (that.SALE002.length == 0) {
+					_util.simpleMsg("请录入有效卡号");
+					return;
+				}
+				KQSale.ActiveApply({
+					salebill: that.SALE001.BILL,
+					materielId: that.SALE002[0].SPID,
+					channel: "ZC007",
+					khid: that.SALE001.KHID,
+					card_num: that.begin_num,
+				}, res => {
+					console.log("单卡激活校验结果：", res);
+					if (res.code) {
+						if (that.BIll_TYPE == 'Z112') { //卡券赊销
+							//直接生成赊销销售单
+							//调用激活
+							//调用充值
+						} else { //普通销售
+							//进入支付 等待支付返回结果
+
+						}
+					}
+				});
+			},
+			//跳转支付
+			PayParamAssemble = function(sales) {
+				uni.$emit('stop-message');
+				uni.$emit('stop-timed-communication');
+				that.log("[PayParamAssemble]支付参数组装...")
+				util.setStorage('open-loading', false);
+				let inputParm = {
+					sale1_obj: that.sale001, //001 主单 数据对象
+					sale2_arr: that.sale002, //002 商品 数据对象集合
+					sale3_arr: that.sale003, //003 支付数据集合
+					sale8_arr: that.sale008, //008水吧商品
+					score_info: that.score_info, //积分抵现信息
+					ban_pay: that.ban_type, //被禁用的支付类型
+					PayList: that.payed, //已支付信息
+					actType: that.actType, //动作类型(退款、支付)
+					hyinfo: that.HY.cval //会员信息
+				}
+				// console.log("[PayParamAssemble]封装数据:", inputParm);
+				that.Page.$store.commit('set-location', inputParm);
+				uni.navigateTo({
+					url: "../Payment/Payment",
+					events: {
+						FinishOrder: util.callBind(that, that.PayedResult)
+					}
+				})
+			},
 		}
 	}
 </script>
