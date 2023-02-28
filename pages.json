@@ -302,26 +302,30 @@
             "path" : "components/blackmonth-swiper/index",
             "style" : {}
         },
-		{
-			"path":"pages/Storeinquiry/Storeinquiry",
-			"style" : {
-			    "titleNView" : false,
-			    "navigationBarTitleText" : "",
-			    "enablePullDownRefresh" : false
-			}
-		},
-		{
-			"path":"pages/Sellingcard/Sellingcard",
-			"style" : {
-			    "titleNView" : false,
-			    "navigationBarTitleText" : "",
-			    "enablePullDownRefresh" : false
-			}
-		},
-		{
-			"path": "pages/CardSale/CardSale",
-			"style": {}
-		}
+        {
+            "path" : "pages/Storeinquiry/Storeinquiry",
+            "style" : {
+                "titleNView" : false,
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/Sellingcard/Sellingcard",
+            "style" : {
+                "titleNView" : false,
+                "navigationBarTitleText" : "",
+                "enablePullDownRefresh" : false
+            }
+        },
+        {
+            "path" : "pages/CardSale/CardSale",
+            "style" : {}
+        },
+        {
+            "path" : "pages/CouponSale/CouponSale",
+            "style" : {}
+        }
     ],
     "globalStyle" : {
         "navigationBarTextStyle" : "black",
@@ -364,5 +368,4 @@
         "saomaqiang" : "/components/saomaqiang/saomaqiang",
         "cdxp" : "/components/cdxp/cdxp"
     }
-
 }
