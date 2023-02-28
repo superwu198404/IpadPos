@@ -8,7 +8,7 @@
 		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<view class="h1">录入卡号(单卡业务：起始号，截至号一致) <button class="close">×</button></view>
+				<view class="h1">录入卡号(单卡业务：起始号，截至号一致) <button class="close" @click="Cancel">×</button></view>
 				<view class="number">
 					<label>
 						<text>开始卡号：</text>

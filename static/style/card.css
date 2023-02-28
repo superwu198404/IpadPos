@@ -1,6 +1,9 @@
 .operation{
 	padding-top:0;
 }
+.listof{
+	height: 80%;
+}
 .sorting .a-z:nth-child(1){
 	margin-top:0;
 }
@@ -70,8 +73,7 @@
 	margin:0 0 0 2%;
 	border-radius: 20rpx;
 	background-color: #fff;
-	overflow: hidden;
-	height: 82%;
+	height: 92%;
 	position: relative;
 	padding-bottom: 80rpx;
 } 
@@ -81,6 +83,7 @@
 	background-color: #D5F5D8;
 	color: #006B44;
 	position: relative;
+	border-radius: 20rpx 20rpx 0 0;
 }
 .choice .ckr{
 	position: absolute;
@@ -94,19 +97,22 @@
 	font-size: 26rpx;
 	color: #333333;
 }
+.choice .table{
+	border-radius: 20rpx 20rpx 0 0;
+	background-color: #C5E7C8;
+	display: flex;
+}
 .choice .tab{
 	height: 70rpx;
 	line-height: 70rpx;
-	padding:0 42rpx 0 36rpx;
-	position: relative;
-	display: flex;
-	align-items: center;
-	align-items: center;
+	padding:0 52rpx 0 46rpx;
+	position: relative;	
 	border-radius: 20rpx 20rpx 0 0;
+	margin-right: 10rpx;
 }
 .choice .tab image{
-	width:30rpx;
-	height: 30rpx;	
+	width:34rpx;
+	height: 34rpx;	
 	display: none;
 	margin-right: 4rpx;
 }
@@ -117,9 +123,17 @@
 	left: 0;
 	height: 80rpx;
 }
+.choice .tab label{
+	position: relative;
+	z-index: 9;
+	display: flex;
+	align-items: center;
+	align-items: center;
+}
 .choice .tab.curr{
 	background-color: #42B14B;
 	color: #fff;
+	font-weight: 700;
 }
 .choice .tab.curr image{
 	display: block;
@@ -395,4 +409,21 @@
 	line-height: 80rpx;
 	padding:0;
 	font-size: 32rpx;
+}
+.sorting .kaquan {
+	background-color: #006B44;
+	color: #fff;
+	font-size: 28rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100rpx;
+	height: 100rpx;
+	position: absolute;
+	top:82%;
+	border-radius: 50%;
+}
+.sorting .kaquan image{
+	width:52rpx;
+	margin-bottom:6rpx;
 }

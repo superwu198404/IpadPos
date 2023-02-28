@@ -57,9 +57,8 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="width:74%;border-left: 1rpx solid #C1F6D8; display: flex;justify-content: space-between;" >
-							<label  @click="ToSK()"><text>售卡</text><text>CARD</text></label>
-							<label><text>售券</text><text>TICKET</text></label>
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSK()">
+							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
 				</view>

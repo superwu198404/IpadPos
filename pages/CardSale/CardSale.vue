@@ -48,14 +48,15 @@
 			<view class="listof" style="width: 100%;">
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
+						<view class="table">
 						<view class="tab curr">
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text>VIP售卡充值</text>
+							<image class="bgs" src="@/images/img2/tab-zuo.png"></image>
+							<label><image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image><text>VIP售卡充值</text></label>
 						</view>
 						<view class="tab">
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 						</view>
-
+						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 
@@ -126,6 +127,10 @@
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z kaquan">
+							<image src="@/images/img2/quanquan.png" mode="widthFix"></image>
+							<!-- 售 券 -->
 						</view>
 					</view>
 				</view>
