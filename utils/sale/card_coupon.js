@@ -4,7 +4,14 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _Req from '@/utils/request.js';
 import db from '@/utils/db/db_excute.js';
-import sales from '@/utils/sale/saleClass.js'
+import sales from '@/utils/sale/saleClass.js';
+import _card_sale from "@/api/business/card_sale.js";
+import {
+	CreateSaleOrder,
+	PointUploadNew
+} from '@/bll/Common/bll.js';
+
+import _common from '@/api/common.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
@@ -27,13 +34,15 @@ var getBill = function(store, index = 0) {
 }
 //初始化sale001
 var InitSale001 = function(store, pm_input) {
+	console.log("传入的数据：", store);
+	console.log("传入的数据1：", pm_input);
 	var commonSaleParm = {
 		GSID: store.GSID,
 		KHID: store.KHID,
 		SALEDATE: _date.getYMD(),
 		POSID: store.POSID,
-		RYID: store.ryid,
-		BILL: getBill(),
+		RYID: store.RYID,
+		BILL: getBill(store),
 		KCDID: store.KCDID,
 		DPID: store.DPID,
 		GCID: store.GCID,
@@ -43,12 +52,14 @@ var InitSale001 = function(store, pm_input) {
 		YAER: _date.getDateByParam("Y"),
 		MONTH: _date.getDateByParam("M"),
 		WEEK: _date.getDateByParam("w"),
-		TIME: _date.getDateByParam("h")
+		TIME: _date.getDateByParam("h"),
+		XSPTID: "PAD"
 	};
+	let obj = commonSaleParm;
 	if (pm_input && Object.keys(pm_input).length > 0) {
-		commonSaleParm = Object.assign(commonSaleParm, pm_input);
+		obj = Object.assign({}, commonSaleParm, pm_input);
 	}
-	let sale001 = new _sale.sale001(commonSaleParm);
+	let sale001 = new _sale.sale001(obj);
 	console.log("[InitSale001]SALE001创建完毕!", sale001);
 	return sale001;
 }
@@ -98,18 +109,45 @@ var KQTypeObj = {
 		},
 		//校验库存
 		CheckStock: function(data, func) {
-			_member.StockQuery("查询中。。。", {
+			_member.StockQuery("查询中...", {
 				data
 			}, func, func);
 		},
 		//激活申请校验
-		ActiveApply: function(data) {},
+		ActiveApply: function(data, func) {
+			_member.singleCardActiveApply("校验中...", {
+				data
+			}, func, func);
+		},
 		//激活确认校验
-		ActiveConfirm: function(data) {},
+		ActiveConfirm: function(data, func) {
+			_member.singleCardActiveConfirm("激活中...", {
+				data
+			}, func, func);
+		},
 		//激活后充值
-		Recharge: function(data) {},
+		Recharge: function(data, func) {
+			_member.posPayRecharge("充值中...", {
+				data
+			}, func, func);
+		},
 		//业务完成
-		Completed: function(data) {},
+		Completed: async function(data) {
+			try {
+				let create_result = await CreateSaleOrder({
+					SALE001: data.SALE001,
+					SALE002: data.SALE002,
+					SALE003: data.SALE003,
+					SALE006: data.SALE006,
+				});
+				console.log("[PayedResult]创建销售单结果:", create_result);
+				if (create_result.code)
+					_common.TransLiteData(bill); //上传至服务端
+				_util.simpleMsg(create_result.msg, !create_result.code);
+			} catch (e) {
+				console.log("[PayedResult]订单sql生成发生异常:", e);
+			}
+		},
 		//商品信息匹配
 		MatchSP: async function(spid) {
 			let spinfo;
@@ -125,8 +163,8 @@ var KQTypeObj = {
 				sale2.QTY = 1;
 				sale2.SPID = spid;
 				sale2.STR1 = spinfo?.SNAME;
-				sale2.PRICE = spinfo?.PRICE;
-				sale2.OPRICE = spinfo?.PRICE;
+				sale2.PRICE = 0;
+				sale2.OPRICE = 0;
 				sale2.UNIT = spinfo?.UNIT;
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
@@ -187,7 +225,7 @@ var KQTypeObj = {
 		kqtype: "SQ", //售券
 		typename: "礼品券售券", //售券
 		//商品信息匹配
-		MatchSP: async function(spid,count,price) {
+		MatchSP: async function(spid, count, price) {
 			let spinfo;
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
@@ -245,7 +283,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	};
 	//商品信息匹配
 	this.MatchSP = async function(spid) {
-		return await KQTypeObj[this.YWType].MatchSP.call(this,...arguments);
+		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
 }
 export default {

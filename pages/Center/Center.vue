@@ -52,10 +52,13 @@
 								mode="heightFix"></image>
 						</view>
 					</view>
-					<view class="dates" @click="ToSale(1)">
-						<view>
+					<view class="dates" >
+						<view @click="ToSale(1)">
 							<label><text>销售</text><text>SALES</text></label>
-							<image src="@/images/jinruxs-jt.png" mode="widthFix"></image>
+							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
+						</view>
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSK()">
+							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
 				</view>
