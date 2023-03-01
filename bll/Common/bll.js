@@ -204,6 +204,7 @@ const additional_def_params = {
 //统一生成销售单数据
 export const CreateSaleOrder = async function(dataObj, additional = additional_def_params, func) {
 	//执行结果
+	console.log("[CreateSaleOrder]开始创建执行结果...");
 	let result = {
 		code: false,
 		data: null,
@@ -211,13 +212,20 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 	};
 	let oracle_addition_sqls = additional?.oracle || [];
 	let sqlite_addition_sqls = additional?.sqlite || [];
+	console.log("[CreateSaleOrder]从外部传入的sql语句:", {
+		oracle_addition_sqls,
+		sqlite_addition_sqls
+	});
 	try {
+		console.log("[CreateSaleOrder]获取销售时间...");
 		let saledate = dateformat.getYMD();
 		let saletime = dateformat.getYMDS();
-
 		let OracleSql = "",
 			SqliteSql = []
+		console.log("[CreateSaleOrder]开始循环(dataObj)的内容...");
 		for (let key in dataObj) {
+			console.log("[CreateSaleOrder]循环:深拷贝...");
+			if(!dataObj[key]) continue;
 			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
 			if (key == "SALE001") {
 				dataArr.XSPTID = "PAD";
@@ -230,6 +238,7 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 					delete r.end_num;
 				})
 			}
+			console.log("[CreateSaleOrder]循环:创建sql语句...");
 			let sqlObj = common.CreateSQL(dataArr, key);
 			if (Object.keys(sqlObj).length === 0) continue;
 			OracleSql += sqlObj.oracleSql;
@@ -238,6 +247,7 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 				SqliteSql = SqliteSql.concat(sqlObj.sqlliteArr ?? []);
 			}
 		}
+		console.log("[CreateSaleOrder]将外部传入sql和生成的sql进行合并...");
 		SqliteSql.concat(sqlite_addition_sqls);
 		OracleSql += oracle_addition_sqls.join(';');
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);

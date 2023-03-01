@@ -79,7 +79,7 @@
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn" @click="to_Payment">确认支付</button>
+						<button class="btn" @click="to_payment">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
@@ -136,9 +136,11 @@
 					enable_credit: false,
 					sale001: null,
 					sale002: [],
+					sale003: [],
 					sale006: [],
 					sxsale001: null,
-					sale2_union_sale6: []
+					sale2_union_sale6: [],
+					coupon_active_success: false
 				},
 				sale: null,
 				container: null,
@@ -205,20 +207,55 @@
 					begin_num: this.form.start_coupon_no,
 					end_num: this.form.end_coupon_no,
 					material_id: id,
-					khid: "K200QTD006" || this.KHID
+					khid: this.KHID
 				})
 			},
 			async coupon_segment_valid() {
 				return await member.coupon_sale.CouponValid({
 					coupon_start: this.form.start_coupon_no,
 					coupon_end: this.form.end_coupon_no,
-					khid: "K200QTD006" || this.KHID
+					khid: this.KHID
 				})
 			},
-			coupon_sale() {
+			async coupon_segment_distribute() {
+				return await member.coupon_sale.CouponDistribute({
+					bill: this.source.sale001.BILL,
+					disc: 0,
+					khid: this.KHID,
+					appid: getApp().globalData.appid,
+					coupon_infos: this.source.sale2_union_sale6.map($(function(salas){
+						return {
+							start_no: salas.sale006.KQIDS,
+							end_no: salas.sale006.KQIDE,
+							count: salas.sale006.QTY,
+							total_denomination: salas.sale002.NET
+						}
+					}))
+				})
+			},
+			async coupon_segment_activate() {
+				return Promise.all(($(function(){
+					return this.source.sale006.map($(function(sale6){
+						return member.coupon_sale.CouponActivation({
+							coupon_start: sale6.KQIDS,
+							coupon_end: sale6.KQIDE,
+							khid: this.KHID
+						})
+					}));
+				}))()).then($(function(results){
+					let active_fail = results?.filter(res => res.code === 'false'), result = { code: true, msg: "激活成功!" };
+					if(active_fail && active_fail.length){//存在激活失败的记录
+						this.source.sale001.STR1 = "激活失败";
+						result.code = false;
+						result.msg = "激活失败!";
+					}
+					return result
+				}))
+			},
+			async coupon_sale() {
 				console.log("[CouponSale]开始售券流程...");
 				var good_id = null;
-				this.coupon_info_search().then($(function(res) {
+				await this.coupon_info_search().then($(function(res) {
 					console.log("[CouponSale]券信息查询:", res);
 					if (res.code) {
 						good_id = res.data.coupon_good_no;
@@ -238,7 +275,8 @@
 					console.log("[CouponSale]券可发售号段校验:", res);
 					if (res.code) {
 						try {
-							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count, res
+							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count,
+								res
 								.data.coupon_value);
 							if (this.source.sale001 === null) { //判断是否存在 sale001，不存在则创建
 								this.source.sale001 = this.factory.get_sale001({
@@ -271,20 +309,63 @@
 					console.log("[CouponSale]重置表单信息完成...");
 				}));
 			},
-			save_orders(){
-				this.sale.Completed({
-					SALE001: this.source.sale001,
-					SALE002: this.source.sale002,
-					SALE003: result.sale3_arr.map($(function(sale3){
-						return this.factory.get_sale003(this.source.sale001,sale3)
-					})),
-					SXSALE001: this.source.sxsale001
-				});
+			async coupon_activate() {
+				console.log("[CouponActivate]准备开始券号激活流程...");
+				await this.coupon_segment_distribute().then($(function(res){
+					console.log("[CouponActivate]券号激活申请结果:",res);
+					if (res.code) {
+						return this.coupon_segment_activate();
+					} else {
+						util.simpleMsg("券激活申请失败!" + (res?.msg || ""), true);
+					}
+				})).then($(function(res){
+					console.log("[CouponActivate]券号激活结果:",res);
+					if (res.code) {
+						util.simpleMsg("券激活成功!" , true);
+					} else {
+						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
+					}
+				}))
+				console.log("[CouponActivate]券号激活流程执行完毕...");
+				this.save_orders();//最后生成订单（激活成功与否不影响订单生成，但是需要记录激活结果，所以得写在激活后）
 			},
-			to_Payment() {
+			async save_orders() {//因为目前是作为最后流程执行，所以生成完单据后，重置下订单信息
+				console.log("[SaveOrders]准备开始生成订单，并上传订单信息到服务器...");
+				try{
+					let created_sales_result = await this.sale.Completed({
+						SALE001: this.source.sale001,
+						SALE002: this.source.sale002,
+						SALE003: this.source.sale003,
+						SXSALE001: this.source.sxsale001
+					});
+					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
+					this.source = this.$options.data().source;
+					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
+				}catch(e){
+					console.log("[SaveOrders]执行异常:",e);
+				}
+			},
+			credit_sales_create() {
+				console.log("[CreditSalesCreate]准备开始创建赊销单据记录...");
+				this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
+					SX_STATUS: 1,
+					DKFNAME: data.NAME,
+					DKFID: data.DKHID,
+				});
+				console.log("[CreditSalesCreate]创建赊销单据记录完成...");
+				console.log("[CreditSalesCreate]准备开始创建赊销单据支付记录...");
+				this.source.sale003.push(this.factory.get_sale003(this.source.sale001, {
+					FKID: "ZG01",
+					AMT: this.source.sale001.TNET
+				}));
+				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
+				console.log("[CreditSalesCreate]创建结果:", this.source);
+			},
+			to_payment() {
+				console.log("[ToPayment]准备开始进入支付操作，判断是否进行赊销操作...", this.source.enable_credit);
 				if (this.source.enable_credit) {
-					//这里还差一句生成 sale 003的记录
-					this.save_orders();
+					this.credit_sales_create();
+					this.coupon_activate();//开始券申请激活流程
 				} else
 					this.sale.RedirectToPayment({
 						sale001: this.source.sale001,
@@ -292,9 +373,18 @@
 						paid: this.source.paid,
 						action: 'Payment',
 						complet: $(function(result) {
-							console.log("[ToPayment]支付完成:", result);
+							console.log("[ToPayment]支付完成，支付结果:", result);
 							if (result.code) {
-								this.save_orders();
+								let salas = result.data;
+								this.source.sale001 = Object.cover(this.factory.get_sale001(), salas
+								.sale1_obj);
+								this.source.sale002 = salas.sale2_arr.map($(function(sale2) {
+									return this.factory.get_sale002(this.source.sale001, sale2)
+								}));
+								this.source.sale003 = salas.sale3_arr.map($(function(sale3) {
+									return this.factory.get_sale003(this.source.sale001, sale3)
+								}));
+								this.coupon_activate();//开始券申请激活流程
 							}
 						})
 					});
@@ -307,13 +397,10 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					this.source.enable_credit = true; //启用赊销
-					this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
-						SX_STATUS: 1,
-						DKFNAME: data.NAME,
-						DKFID: data.DKHID,
-					});
 				}
 			}));
+			//test code...
+			this.KHID = "K200QTD006";
 		},
 		destroyed() {
 			uni.off("big-customer-close");
