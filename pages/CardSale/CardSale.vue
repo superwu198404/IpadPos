@@ -6,6 +6,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
@@ -131,7 +132,15 @@
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
 		</SpecialDisc>
-
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 <script>
@@ -151,13 +160,16 @@
 	} from '@/bll/Common/bll.js';
 
 	import _common from '@/api/common.js';
-
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	
 	var that, KQSale;
 	export default {
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq
+			Pagekq,
+			PrinterPage,
 		},
 		data() {
 			return {
@@ -184,6 +196,13 @@
 					enable_customer: true,
 				},
 				YWTYPE: "VIPCard_Active", //业务类型
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		created: function() {
@@ -599,6 +618,13 @@
 							console.log("VIP单卡充值结果：", res3);
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
+						
+						let printerPram = {
+							"PRINTNUM": 1,
+							"XSTYPE": "SK",
+						};
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,that.SALE003,that.SALE006, printerPram);
+						
 						//重置销售单
 						that.ResetSaleBill();
 					})
