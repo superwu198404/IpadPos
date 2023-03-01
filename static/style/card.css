@@ -119,7 +119,7 @@
 	margin-right: 4rpx;
 }
 .choice .tab .bgs{
-	position: absolute;
+	position: absolute !important;
 	bottom:0;
 	width:110%;
 	left: 0;
@@ -232,6 +232,7 @@
 	border-radius: 20rpx;
 	border: 2px solid #DCF0DE;
 	position: relative;
+	overflow: hidden;
 }
 .cardlist .ulli .bgs{
 	position: absolute;
@@ -256,10 +257,9 @@
 	display: flex;
 	background-color: #42B14B;
 	color: #fff;
-	height: 72rpx;
+	height: 70rpx;
 	line-height: 34rpx;
 	border-radius:0 20rpx 0 20rpx;
-	padding:0 0 0 14rpx;
 }
 .cardlist .ulli .h6 label{
 	padding-left: 3%;
@@ -273,14 +273,16 @@
 }
 .cardlist .ulli .zje view{
 	display: flex;
-	flex-direction: column;
-	padding: 0 18rpx;
+	align-items: center;
+	padding: 0 20rpx;
 	font-size: 26rpx;
+	font-weight: 700;
 }
 .cardlist .ulli .zje view text{
 	font-size: 14rpx;
 	color: #eee;
 	opacity: 0.8;
+	font-weight: 400;
 }
 .cardlist .ulli .zje button{
 	background: #006B44;
@@ -428,4 +430,55 @@
 .sorting .kaquan image{
 	width:52rpx;
 	margin-bottom:6rpx;
+}
+.remove {
+	    width: 80rpx;
+	    height: 100%;
+	    background-color: red;
+	    color: white;
+	    position: absolute;
+	    top: 0;
+	    right: -80rpx;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+		font-size: 30rpx;
+		border-radius: 12rpx;
+	}
+
+.touch-list{
+    position: absolute; 
+    top:0; 
+    border-radius: 10px;
+    overflow: hidden;
+	background-color: #fff;
+}
+.list-touch{
+    position: relative;
+    width: 100%;   
+    z-index: 5;    
+    transition: left 0.2s ease-in-out;   
+    white-space:nowrap;   
+    overflow:hidden;   
+    text-overflow:ellipsis; 
+	left:0
+}
+.list-delete{
+    right: 0; 
+    float: left;
+    width: 100rpx;
+    height: 100%;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+    background-color: #FE694B;
+    border-radius:0;
+    color: #fff;
+    font-size: 18px;
+    font-weight: lighter;
+    text-align: center;
+}
+.list-delete image{
+	width:50rpx;
+	height: 50rpx;
 }
