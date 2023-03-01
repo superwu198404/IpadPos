@@ -212,7 +212,7 @@
 
 .takelist{
 	display: flex;
-	height: 87%;
+	height: 94%;
 	padding:0 2%;
 }
 .takelist .condits{
@@ -392,6 +392,7 @@
 }
 .form table tbody tr td{
 	border-top:16rpx solid #fff;
+	font-size:26rpx;
 }
 .form table tbody tr:nth-child(2n){
 	background: linear-gradient(90deg, #D0F3ED 0%, rgba(255,255,255,0.5) 100%);
@@ -411,6 +412,10 @@
 }
 .form table td:nth-last-child(4),.form table th:nth-last-child(4){
 	color: #FE694B;
+}
+.biaoge{
+	max-height: 90%;
+	overflow: auto;
 }
 .totals{
 	position: absolute;
@@ -461,5 +466,27 @@
 	line-height: 80rpx;
 	padding:0;
 	font-size: 32rpx;
+}
+.zibiao{
+	position: fixed;
+	top:0;
+	right:0;
+	background-color: #fff;
+	width:70%;
+	height: 100%;
+}
+.zibiao .h1{
+	height:120rpx;
+	line-height:120rpx;
+	padding:0 2%;
+	font-weight: 700;
+}
+.zibiao .h1 button{
+	background:none;
+}
+.zibiao .form{
+	width:96%;
+	margin:0 auto;
+	height: 90%;
 }
 

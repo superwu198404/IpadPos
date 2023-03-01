@@ -166,7 +166,7 @@
 				SALE003: [],
 				SALE006: [],
 				SXSALE001: [],
-				showCardNum: false,
+				showCardNum: true,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
