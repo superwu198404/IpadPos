@@ -217,7 +217,7 @@
 				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-FKDA_INFO: [],
+				FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				startX:'',
 			}
