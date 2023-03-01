@@ -550,7 +550,6 @@
 	padding:0 62rpx 0 56rpx;
 	position: relative;	
 	border-radius: 12rpx 12rpx 0 0;
-	margin-right: 10rpx;
 	display: flex;
 	align-items: center;
 	text-align: center;
@@ -562,7 +561,7 @@
 	margin-right: 4rpx;
 }
 .choice .tab .bgs{
-	position: absolute;
+	position: absolute !important;
 	bottom:0;
 	width:110%;
 	left: 0;
