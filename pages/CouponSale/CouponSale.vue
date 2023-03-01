@@ -140,7 +140,8 @@
 					sale006: [],
 					sxsale001: null,
 					sale2_union_sale6: [],
-					coupon_active_success: false
+					coupon_active_success: false,
+					big_customer_info: null
 				},
 				sale: null,
 				container: null,
@@ -339,18 +340,22 @@
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
+					this.receipt_printing(this.source);
 					this.source = this.$options.data().source;
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
 			},
+			receipt_printing(source){//打印代码写在下面
+				
+			},
 			credit_sales_create() {
 				console.log("[CreditSalesCreate]准备开始创建赊销单据记录...");
-				this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
+				this.source.sxsale001 = this.factory.get_sxsale001(this.source.sale001, {
 					SX_STATUS: 1,
-					DKFNAME: data.NAME,
-					DKFID: data.DKHID,
+					DKFNAME: this.source.big_customer_info.NAME,
+					DKFID: this.source.big_customer_info.DKHID,
 				});
 				console.log("[CreditSalesCreate]创建赊销单据记录完成...");
 				console.log("[CreditSalesCreate]准备开始创建赊销单据支付记录...");
@@ -397,6 +402,7 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					this.source.enable_credit = true; //启用赊销
+					this.source.big_customer_info = data;
 				}
 			}));
 			//test code...
