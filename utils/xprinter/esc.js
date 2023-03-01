@@ -3195,7 +3195,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 原金额:" + util.tnvl(data.payableAmount,0));
+			jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 原金额:" + util.tnvl(data.originalAmount,0));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小

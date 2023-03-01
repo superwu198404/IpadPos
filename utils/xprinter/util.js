@@ -226,7 +226,7 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
 	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-	var originalAmount = 0;
+	var originalAmount = sale1_obj.TNET + nnvl(sale1_obj.BILLDISC,0);
 	var cuid = snvl(sale1_obj.CUID,"");
 	var hdnet = 0;
 	var totalQty = 0;
@@ -260,8 +260,6 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 		totalQty += sale2_arr[i].QTY;
 		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
 	}
-	
-	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("sale02List 转换后数据:", sale2List);
 
 	//支付数据

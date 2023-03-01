@@ -162,6 +162,9 @@
 	import _common from '@/api/common.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
 	
 	var that, KQSale;
 	export default {
@@ -203,7 +206,26 @@
 				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+				FKDA_INFO: [], //付款信息
 			}
+		},
+		onReady: function() {
+			//查询付款方式
+			(_util.callBind(that, async function() {
+				try {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+						if (res.code) {
+							that.FKDA_INFO = JSON.parse(res.data);
+							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+						} else {
+							console.log("获取付款方式失败!======",err);
+						}
+					}))
+				} catch (err) {
+					console.log("获取付款方式失败!======",err);
+				}
+			}))()
 		},
 		created: function() {
 			that = this;
@@ -220,7 +242,7 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-
+			
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
@@ -616,11 +638,24 @@
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
 						
+						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
 							"XSTYPE": "SK",
 						};
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,that.SALE003,that.SALE006, printerPram);
+						
+						let arr3 = that.SALE003;
+						let fkdaRes = that.FKDA_INFO;
+						arr3.forEach(function(item, index) {
+							try {
+								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+								item.balance = item.balance;
+							} catch (e) {
+								item.SNAME = "";
+								item.balance = 0;
+							}
+						});
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,arr3,that.SALE006, printerPram);
 						
 						//重置销售单
 						that.ResetSaleBill();
