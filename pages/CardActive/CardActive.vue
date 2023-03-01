@@ -254,10 +254,38 @@
 							material_id: res.data.materielId,
 							khid: that.store.KHID,
 							cardnum: _util.CheckNum(that.begin_num, that.end_num)
-						}, res3 => {
+						}, async res3 => {
 							if (res3.code) {
-								let arr = res3.data;
-								arr.map(r3 => {
+								let totalNum = 0;
+								res3.data.map(r4 => {
+									totalNum = _util.newFloat(totalNum + r4.cardNum, 0);
+								})
+								let spObj = await KQSale.MatchSP(res.data
+									.materielId, res.data.amount, totalNum);
+								if (spObj) {
+									let arr = that.SALE002.filter(r => {
+										return r.SPID == spObj.SPID;
+									});
+									if (arr.length == 0) {
+										spObj = that.CoverSale(spObj, that.SALE001);
+										console.log("sale2属性合并后的对象：", spObj);
+										if (spObj) {
+											spObj.begin_num = num1;
+											spObj.end_num = num2;
+											that.SALE002.push(spObj);
+											that.CalTNET();
+											console.log("sale2", that.SALE002);
+										}
+									} else {
+										_util.simpleMsg("已添加该商品", "none");
+										return;
+									}
+								} else {
+									_util.simpleMsg("暂未匹配到商品信息", "none");
+									return;
+								}
+								let arr = res3.data; //可用号段集合
+								arr.map((r3, i3) => { //循环发起库存校验
 									let num1 = r3.cardNoBegin;
 									let num2 = r3.cardNoEnd;
 									KQSale.CheckStock({
@@ -265,7 +293,7 @@
 										end_num: num2,
 										material_id: res.data.materielId,
 										khid: that.store.KHID
-									}, async res1 => {
+									}, res1 => {
 										console.log("库存校验结果：", res1);
 										if (!res1.code) {
 											_util.simpleMsg(res1.msg, true);
