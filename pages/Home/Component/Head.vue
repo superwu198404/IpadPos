@@ -480,19 +480,6 @@
 				// }
 				util.simpleModal("提示", "是否确认退出销售？", e => {
 					if (e) { //点击了确定
-						// let store = util.getStorage("store");
-						// if (store) {
-						// 	store.RYID = "";
-						// 	store.RYNAME = "";
-						// 	util.setStorage("store", store);
-						// }
-						// util.removeStorage("hyinfo"); //清除会员信息
-						// if (uni.getSystemInfoSync().platform == 'ios') {
-						// 	plus.ios.import("UIApplication").sharedApplication()
-						// 		.performSelector("exit")
-						// } else if (uni.getSystemInfoSync().platform == 'android') {
-						// 	plus.runtime.quit();
-						// }
 						let store = util.getStorage("store");
 						if (store) {
 							store.DKFID = "80000000";
@@ -581,28 +568,21 @@
 					util.simpleMsg("禁止选择大客户", true);
 					return;
 				}
-				this.$emit('update:custom',true);
+				this.$emit('update:custom', true);
 				uni.$emit('open-big-customer');
 			},
 			//选择大客户
 			ClosePopup: function(data) {
 				console.log("[ClosePopup]大客户信息:", data);
-				// this.showBig = false;
-				if (data && Object.keys(data).length) {
-					this.$emit('update:custom', false);
-					console.log("[ClosePopup]获取门店信息...");
+				if (data && Object.keys(data).length && data.DKHID) {
 					let store = util.getStorage("store");
-					console.log("[ClosePopup]设置门店大客户信息...");
 					store.DKFID = data.DKHID;
 					store.DKFNAME = data.NAME;
-					try {
-						util.setStorage("store", store);
-					} catch (e) {
-						console.log("[ClosePopup]设置信息异常:", e);
-					}
+					util.setStorage("store", store);
 					console.log("[ClosePopup]设置门店大客户信息完成...");
 					this.DKFNAME = data.NAME;
 				}
+				this.$emit('update:custom', false);
 				this.$forceUpdate();
 			},
 			//通知外部返回销售
