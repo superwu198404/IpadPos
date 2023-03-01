@@ -165,7 +165,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	var that, KQSale;
 	export default {
 		name: "CardSale",
@@ -199,6 +199,7 @@
 					enable_customer: true,
 				},
 				YWTYPE: "VIPCard_Active", //业务类型 默认为VIP 售卡充值
+				CurZKDisc: {}, //特殊折扣类型
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
@@ -213,17 +214,18 @@
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(
+						res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);
 							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
 							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
 						} else {
-							console.log("获取付款方式失败!======",err);
+							console.log("获取付款方式失败!======", err);
 						}
 					}))
 				} catch (err) {
-					console.log("获取付款方式失败!======",err);
+					console.log("获取付款方式失败!======", err);
 				}
 			}))()
 		},
@@ -242,7 +244,7 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-			
+
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
@@ -256,7 +258,13 @@
 					that.Bill_TYPE = "Z111"; //不启用赊销	
 				}
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				if (data.DKFID) {
+					that.SALE001.DKFID = data.DKFID;
+					that.ZKData = _main.GetZKDatasAll(data.DKFID);
+				}
 			});
+			uni.$off("close-tszk");
+			uni.$on("close-tszk", that.CloseTSZK);
 		},
 		watch: {},
 		computed: {
@@ -515,6 +523,7 @@
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
+						that.discCompute() //特殊折扣
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -637,13 +646,13 @@
 							console.log("VIP单卡充值结果：", res3);
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
-						
+
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
 							"XSTYPE": "SK",
 						};
-						
+
 						let arr3 = that.SALE003;
 						let fkdaRes = that.FKDA_INFO;
 						arr3.forEach(function(item, index) {
@@ -655,8 +664,9 @@
 								item.balance = 0;
 							}
 						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,arr3,that.SALE006, printerPram);
-						
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+							printerPram);
+
 						//重置销售单
 						that.ResetSaleBill();
 					})
@@ -712,7 +722,26 @@
 						}
 					})
 				}
+			}, //特殊折扣关闭回调
+			CloseTSZK: function(data) {
+				that.showDisc = false;
+				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				if (data == "NO") { //清除折扣
+					that.CurZKDisc = {};
+				} else {
+					that.CurZKDisc.ZKType = data;
+				}
+				//清除一下之前产生的促销和折扣
+				// this.ResetCXZK();
 			},
+			//使用特殊折扣进行计算
+			discCompute: function() {
+				// 计算商品的折扣值
+				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				that.SALE002 = res.sale2;
+				// that.ZKHDArr = res.zkrule;
+				console.log("002增加折扣后的新数据：", that.SALE002);
+			}
 		}
 	}
 </script>

@@ -109,9 +109,7 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
-		</SpecialDisc>
-
+		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002"></SpecialDisc>
 	</view>
 </template>
 <script>
@@ -164,6 +162,7 @@
 					enable_customer: true,
 				},
 				YWTYPE: "GiftCard_Active", //礼品卡激活
+				CurZKDisc: {}, //特殊折扣类型
 			}
 		},
 		created: function() {
@@ -181,7 +180,8 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-
+			//初始化折扣数据
+			that.ZKData = _main.GetZKDatasAll(store.DKFID);
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
@@ -195,7 +195,13 @@
 					that.Bill_TYPE = "Z111"; //不启用赊销	
 				}
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				if (data.DKFID) {
+					that.SALE001.DKFID = data.DKFID;
+					that.ZKData = _main.GetZKDatasAll(data.DKFID);
+				}
 			});
+			uni.$off("close-tszk");
+			uni.$on("close-tszk", that.CloseTSZK);
 		},
 		watch: {},
 		computed: {
@@ -297,7 +303,7 @@
 											begin_num: num1,
 											end_num: num2,
 											qty: r3.cardNum,
-											index: r3
+											index: i3
 										}, spObj, that.SALE001);
 										if (sale6)
 											that.SALE006.push(sale6);
@@ -469,6 +475,7 @@
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
+						that.discCompute() //特殊折扣
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -510,7 +517,6 @@
 				}
 				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 				that.$store.commit('set-location', inputParm);
-				console.log("支付前的sale6：", that.SALE006);
 				uni.navigateTo({
 					url: "../Payment/Payment",
 					events: {
@@ -598,24 +604,26 @@
 				console.log("赊销单组装数据sx1：", that.SXSALE001);
 				console.log("赊销单组装数据s3：", that.SALE003);
 			},
-			//切换业务类型
-			ChangeYWTYPE: function(e) {
-				if (that.YWTYPE != e) {
-					if (that.SALE002.length > 0) {
-						_util.simpleMsg("已录入商品暂无法切换");
-						return;
-					}
-					_util.simpleModal("提示", "是否确认切换业务类型？", res => {
-						if (res) {
-							that.YWTYPE = e;
-							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
-							that.KQXSTYPE = "SKCZ";
-							that.ResetSaleBill();
-							console.log("业务类型已切换：", that.SALE001)
-						}
-					})
+			//特殊折扣关闭回调
+			CloseTSZK: function(data) {
+				that.showDisc = false;
+				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				if (data == "NO") { //清除折扣
+					that.CurZKDisc = {};
+				} else {
+					that.CurZKDisc.ZKType = data;
 				}
+				//清除一下之前产生的促销和折扣
+				// this.ResetCXZK();
 			},
+			//使用特殊折扣进行计算
+			discCompute: function() {
+				// 计算商品的折扣值
+				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				that.SALE002 = res.sale2;
+				// that.ZKHDArr = res.zkrule;
+				console.log("002增加折扣后的新数据：", that.SALE002);
+			}
 		}
 	}
 </script>
