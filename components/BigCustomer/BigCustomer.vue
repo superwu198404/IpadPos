@@ -87,6 +87,7 @@
 				console.log("[BigCustomer-Close]大客户信息:", this.big_client_info);
 				this.big_client_info.exists_credit = this.exists_credit;
 				uni.$emit('close-big-customer', this.big_client_info);
+				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
 			},
 			CreditMode: function(is_credit) {
