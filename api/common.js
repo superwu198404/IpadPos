@@ -140,7 +140,7 @@ var CreateSQL = function(e, t) {
 var TransLiteData = function(e) {
 	console.log("[TransLiteData]数据传输中...");
 	TransLite(e, r => {
-		let delArr = ["update SALE001 set yn_sc='Y' where bill='" + delVal + "'"];
+		let delArr = "update SALE001 set yn_sc='Y' where bill='" + e + "'";
 		db.get().executeDml(delArr, "数据删除中", function(res2) {
 			console.log("销售数据传输状态更改成功：", res2);
 		}, function(err1) {
@@ -163,7 +163,6 @@ var TransLite = function(e, func, load = false) {
 					let delVal = res.msg[i].STR1;
 					// console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
-					// sql1 = "select * from dual"
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
 						sql: sql1

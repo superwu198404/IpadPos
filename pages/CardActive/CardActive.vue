@@ -37,35 +37,15 @@
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
 						<view class="table">
-							<view class="tab " @click="ChangeYWTYPE('VIPCard_Active')"
-								:class="YWTYPE=='VIPCard_Active'?'curr':''">
+							<view class="tab curr">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>VIP售卡充值</text>
-								</label>
-							</view>
-							<view class="tab" @click="ChangeYWTYPE('VIPCard_Recharge')"
-								:class="YWTYPE=='VIPCard_Recharge'?'curr':''">
-								<label>
-									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>VIP卡充值</text>
+									<text>礼品卡激活</text>
 								</label>
 							</view>
 						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
-					</view>
-
-					<view class="module" v-if="SALE002.length>0">
-						<view class="hh">充值金额 <em></em></view>
-						<view class="jinelist">
-							<view class="li-je " v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)"
-								:class="CurCZGZ.CZNET==item.CZNET?'curr':''">
-								<label>¥{{item.CZNET}}</label>
-								<!-- <text>20元为代金券</text> -->
-								<em>送￥{{item.ZSNET}}</em>
-							</view>
-						</view>
 					</view>
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
@@ -177,23 +157,23 @@
 				ZKData: [],
 				Bill_TYPE: "Z111", //Z112
 				XSTYPE: "1",
-				KQXSTYPE: "SKCZ",
+				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
 				view: {
 					big_customer: false,
 					enable_customer: true,
 				},
-				YWTYPE: "VIPCard_Active", //业务类型 默认为VIP 售卡充值
+				YWTYPE: "GiftCard_Active", //礼品卡激活
 			}
 		},
 		created: function() {
 			that = this;
 
 			let store = getApp().globalData.store;
-			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
-			KQSale.InitData("卡销售初始化", res => {
-				that.ShowCZGZ();
-			});
+			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
+			// KQSale.InitData("礼品卡激活初始化", res => {
+			// 	that.ShowCZGZ();
+			// });
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
 				BIll_TYPE: that.Bill_TYPE,
@@ -248,8 +228,6 @@
 					that.end_num = e.end_num;
 					if (e.type == 'Y') {
 						that.MatchSP();
-					} else {
-
 					}
 				}
 			},
@@ -263,44 +241,67 @@
 				}, res => {
 					console.log(res);
 					if (KQSale.CheckStatus(res)) {
-						KQSale.CheckStock({
+						KQSale.CheckActiveNum({
+							channel: "ZC007",
 							begin_num: that.begin_num,
-							end_num: that.begin_num,
+							end_num: that.end_num,
 							material_id: res.data.materielId,
-							khid: that.store.KHID
-						}, async res1 => {
-							console.log("库存校验结果：", res1);
-							if (!res1.code) {
-								_util.simpleMsg(res1.msg, true);
-								return;
-							}
-							that.Amount = res.data.amount; //卡余额
-							let spObj = await KQSale.MatchSP(res.data.materielId);
-							if (spObj) {
-								let arr = that.SALE002.filter(r => {
-									return r.SPID == spObj.SPID;
-								});
-								if (arr.length == 0) {
-									console.log("开始进入合并：", spObj);
-									spObj = that.CoverSale(spObj, that.SALE001);
-									console.log("属性合并后的对象：", spObj);
-									if (spObj) {
-										spObj.begin_num = that.begin_num;
-										spObj.end_num = that.end_num;
-										that.SALE002.push(spObj);
-										let sale6 = that.CreateSale006({
-											begin_num: that.begin_num,
-											end_num: that.end_num
-										}, spObj, that.SALE001);
-										that.SALE006.push(sale6);
-										console.log("sale2", that.SALE002);
-										console.log("sale6", that.SALE006);
-									}
-								} else {
-									_util.simpleMsg("已添加该商品", "none");
-								}
+							khid: that.store.KHID,
+							cardnum: _util.CheckNum(that.begin_num, that.end_num)
+						}, res3 => {
+							if (res3.code) {
+								let arr = res3.data;
+								arr.map(r3 => {
+									let num1 = r3.cardNoBegin;
+									let num2 = r3.cardNoEnd;
+									KQSale.CheckStock({
+										begin_num: num1,
+										end_num: num2,
+										material_id: res.data.materielId,
+										khid: that.store.KHID
+									}, async res1 => {
+										console.log("库存校验结果：", res1);
+										if (!res1.code) {
+											_util.simpleMsg(res1.msg, true);
+											return;
+										}
+										let spObj = await KQSale.MatchSP(res.data
+											.materielId);
+										if (spObj) {
+											let arr = that.SALE002.filter(r => {
+												return r.SPID == spObj
+												.SPID;
+											});
+											if (arr.length == 0) {
+												console.log("开始进入合并：", spObj);
+												spObj = that.CoverSale(spObj, that
+													.SALE001);
+												console.log("属性合并后的对象：", spObj);
+												if (spObj) {
+													spObj.begin_num = num1;
+													spObj.end_num = num2;
+													that.SALE002.push(spObj);
+													let sale6 = that
+												.CreateSale006({
+														begin_num: num1,
+														end_num: num2
+													}, spObj, that.SALE001);
+													that.SALE006.push(sale6);
+													console.log("sale2", that
+														.SALE002);
+													console.log("sale6", that
+														.SALE006);
+												}
+											} else {
+												_util.simpleMsg("已添加该商品", "none");
+											}
+										} else {
+											_util.simpleMsg("暂未匹配到商品信息", "none");
+										}
+									})
+								})
 							} else {
-								_util.simpleMsg("暂未匹配到商品信息", "none");
+								_util.simpleMsg("激活校验错误：" + res3.msg, "none");
 							}
 						})
 					}
@@ -648,7 +649,7 @@
 						if (res) {
 							that.YWTYPE = e;
 							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
-							that.KQXSTYPE = e == "VIPCard_Active" ? "SKCZ" : "CZ";
+							that.KQXSTYPE = "SKCZ";
 							that.ResetSaleBill();
 							console.log("业务类型已切换：", that.SALE001)
 						}
