@@ -334,6 +334,14 @@
                 "enablePullDownRefresh" : false
             }
         },
+		{
+		    "path" : "pages/CardActive/CardActive",
+		    "style" : {
+		        "titleNView" : false,
+		        "navigationBarTitleText" : "",
+		        "enablePullDownRefresh" : false
+		    }
+		},
         {
             "path" : "pages/CouponSale/CouponSale",
             "style" : {

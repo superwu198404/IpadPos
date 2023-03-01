@@ -79,38 +79,34 @@
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
 							<view class="ulli" v-for="(item,index) in SALE002">
-							<view class="touch-list list-touch" @touchstart="touchS"
-									@touchmove="touchM" @touchend="touchE" :data-index="index" 
-									:style="item.txtStyle" @click="goDetail(item.user_id)">	
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-								<view class="h6">
-									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
-									<view class="zje">
-										<view><text>总金额</text>￥{{item.NET}}</view>
-										<!-- <button @click="RemoveSP(item)">
+								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
+									@touchend="touchE" :data-index="index" :style="item.txtStyle"
+									@click="goDetail(item)">
+									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+									<view class="h6">
+										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<view class="zje">
+											<view><text>总金额</text>￥{{item.NET}}</view>
+											<!-- <button @click="RemoveSP(item)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button> -->
+										</view>
+									</view>
+									<view class="card-num">
+										<label>始：<text>{{item.begin_num}}</text></label>
+										<label>终：<text>{{item.end_num}}</text></label>
+									</view>
+									<view class="statistic">
+										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
+										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 									</view>
 								</view>
-								<view class="card-num">
-									<label>始：<text>{{item.begin_num}}</text></label>
-									<label>终：<text>{{item.end_num}}</text></label>
+								<view class="touch-list list-delete" @click="RemoveSP(item)">
+									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
-								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-									<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
-									<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
-									<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
-								</view>
-								
 							</view>
-							<view class="touch-list list-delete" :data-userid="item.user_id" @click="RemoveSP(item)" >
-							   <image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
-							</view>
-						</view>
-
-					
-							
 						</view>
 					</view>
 					<view class="totals">
@@ -218,9 +214,9 @@
 				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-FKDA_INFO: [],
+				FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
-				startX:'',
+				startX: '',
 			}
 		},
 		onReady: function() {
@@ -242,7 +238,7 @@ FKDA_INFO: [],
 				}
 			}))()
 		},
-		created: function() {
+		created: async function() {
 			that = this;
 
 			let store = getApp().globalData.store;
@@ -258,12 +254,14 @@ FKDA_INFO: [],
 				DKFID: store.DKFID
 			});
 
+			//初始化折扣数据
+			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
 
-			uni.off("big-customer-close");
-			uni.$on("big-customer-close", function(data) {
+			uni.$off("big-customer-close");
+			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.Bill_TYPE = "Z112"; //启用赊销
@@ -273,7 +271,7 @@ FKDA_INFO: [],
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-					that.ZKData = _main.GetZKDatasAll(data.DKFID);
+					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
 			});
 			uni.$off("close-tszk");
@@ -301,68 +299,68 @@ FKDA_INFO: [],
 			},
 		},
 		methods: {
-			touchS: function (e) {
-                console.log('touchS')
-                if (e.touches.length == 1) {
-                    //设置触摸起始点水平方向位置
-                    this.startX=e.touches[0].clientX
-                    // console.log(this.startX)
-                }
-            },
-            touchM: function (e) {
-                 console.log('touchM')
-                if (e.touches.length == 1) {
-                    //手指移动时水平方向位置
-                    var moveX = e.touches[0].clientX;
-                    //手指起始点位置与移动期间的差值
-                    var disX = this.startX - moveX;
-                    var delBtnWidth = this.delBtnWidth;
-                    var txtStyle = "";
-                    if (disX == 0 || disX < 0) {//如果移动距离小于等于0，说明向右滑动，文本层位置不变
-                        txtStyle = "left:0px";
-                    } else if(disX > 0){//移动距离大于0，文本层left值等于手指移动距离
-                        txtStyle = "left:-" + disX + "px";
-                        if (disX >= delBtnWidth) {
-                            //控制手指移动距离最大值为删除按钮的宽度
-                            txtStyle = "left:-" + delBtnWidth + "px";
-                        }
-                    }
-                    //获取手指触摸的是哪一项
-                    var index = e.currentTarget.dataset.index;
-                    var list = this.SALE002;
-                    list[index].txtStyle = txtStyle;
-                    // console.log(list[index].txtStyle)
-                    //更新列表的状态
-                    this.SALE002=list;
-                }
-            },
-            touchE: function (e) {
-                // console.log('touchE')
-                if (e.changedTouches.length == 1) {
-                    //手指移动结束后水平位置
-                    var endX = e.changedTouches[0].clientX;
-                    //触摸开始与结束，手指移动的距离
-                    var disX = this.startX - endX;
-                    var delBtnWidth = this.delBtnWidth;
-                    //如果距离小于删除按钮的1/2，不显示删除按钮
-                    var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
-                    //获取手指触摸的是哪一项
-                    var index = e.currentTarget.dataset.index;
-                    var list = this.SALE002;
-                    list[index].txtStyle = txtStyle;
-                    // console.log(list[index].txtStyle)
-                    //更新列表的状态{
-                    this.SALE002=list
-                }
-            },
-            //点击删除按钮事件
-            delItem: function (e) {
-                //获取列表中要删除项的下标
-                var userid = e.currentTarget.dataset.userid;
-                this.deleteMember(userid);
-            },
-			
-			
+			touchS: function(e) {
+				console.log('touchS')
+				if (e.touches.length == 1) {
+					//设置触摸起始点水平方向位置
+					this.startX = e.touches[0].clientX
+					// console.log(this.startX)
+				}
+			},
+			touchM: function(e) {
+				console.log('touchM')
+				if (e.touches.length == 1) {
+					//手指移动时水平方向位置
+					var moveX = e.touches[0].clientX;
+					//手指起始点位置与移动期间的差值
+					var disX = this.startX - moveX;
+					var delBtnWidth = this.delBtnWidth;
+					var txtStyle = "";
+					if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
+						txtStyle = "left:0px";
+					} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
+						txtStyle = "left:-" + disX + "px";
+						if (disX >= delBtnWidth) {
+							//控制手指移动距离最大值为删除按钮的宽度
+							txtStyle = "left:-" + delBtnWidth + "px";
+						}
+					}
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态
+					this.SALE002 = list;
+				}
+			},
+			touchE: function(e) {
+				// console.log('touchE')
+				if (e.changedTouches.length == 1) {
+					//手指移动结束后水平位置
+					var endX = e.changedTouches[0].clientX;
+					//触摸开始与结束，手指移动的距离
+					var disX = this.startX - endX;
+					var delBtnWidth = this.delBtnWidth;
+					//如果距离小于删除按钮的1/2，不显示删除按钮
+					var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态{
+					this.SALE002 = list
+				}
+			},
+			//点击删除按钮事件
+			delItem: function(e) {
+				//获取列表中要删除项的下标
+				var userid = e.currentTarget.dataset.userid;
+				this.deleteMember(userid);
+			},
+
+
 			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件：", e);
@@ -805,6 +803,7 @@ FKDA_INFO: [],
 					that.CurZKDisc = {};
 				} else {
 					that.CurZKDisc.ZKType = data;
+					that.CurZKDisc.ZKData = that.ZKData;
 				}
 				//清除一下之前产生的促销和折扣
 				// this.ResetCXZK();
