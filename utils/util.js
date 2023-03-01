@@ -135,7 +135,7 @@ const utils = {
 		return func.bind(thisObject);
 	},
 	callContainer: function(this_quote) {
-		return (function(callback) {
+		return (function(callback){
 			return callback.bind(this);
 		}).bind(this_quote);
 	},
@@ -356,7 +356,7 @@ const utils = {
 	newFloat: function(pm_num, pm_declen = 2) {
 		return Number(parseFloat(pm_num).toFixed(pm_declen));
 	},
-	getBill: function() {
+	getBill:function(){
 		var newbill = "",
 			store = uni.getStorageSync('store'),
 			serial_number = Number(uni.getStorageSync('serial-number') || "0");
@@ -376,20 +376,7 @@ const utils = {
 		serial_number++;
 		uni.setStorageSync('serial-number', serial_number);
 		return newbill;
-	},
-	//校验数量
-	CheckNum: (r, r1) => {
-		let num = 0;
-		if (r && r1) {
-			num = 1;
-			if (r == r1)
-				return 1;
-			let num1 = r.substr(r.length - 6, 5);
-			let num2 = r1.subStr(r1.length - 6, 5);
-			num = newFloat(Number(num1) - Number(num2), 0);
-		}
-		return num;
-	},
+	}
 }
 
 export default {
@@ -424,5 +411,4 @@ export default {
 	contrast: utils.contrast,
 	newFloat: utils.newFloat,
 	getBill: utils.getBill,
-	CheckNum: utils.CheckNum,
 }

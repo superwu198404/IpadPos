@@ -17,7 +17,8 @@
 					</view>
 				</view>
 				<view class="takelist"> 
-					<view class="condits">
+					<view class="condits" v-if="condits">						
+						<view class="srqlist">
 						<view class="h1">查询条件</view>
 						<!-- 双日期选择 -->
 						<view class="srq">
@@ -67,13 +68,17 @@
 							<text class="tjmc">门店：</text>
 							<label><input placeholder="请选择门店"></input><button>∨</button></label>
 						</view>
-						
+						</view>
 						<view class="confirm">
 							<button class="btn btn-qx">重置</button>
 							<button class="btn">确定</button>
 						</view>
 					</view>
 					<view class="form">
+						<view class="Putaway">
+							<label @click="shouqi" v-if="shouqi"><image src="@/images/img2/zhankaiiii.png" mode="widthFix"></image></label>
+							<label @click="zhankai" v-if="sousuo"><image src="@/images/img2/sousuoooo.png" mode="widthFix"></image></label>
+						</view>
 						<view class="biaoge">
 						<table border="0" cellpadding="0" cellspacing="0">
 							<thead>
@@ -120,7 +125,7 @@
 						</view>
 						<view class="totals">
 							<view>
-								<em></em>
+								<!-- <em></em> -->
 								<label>退货量：<text>34</text></label>
 								<label>退货金额：<text>￥834</text></label>
 								<label>总销量：<text>2134</text></label>
@@ -137,6 +142,22 @@
 			<view class="zibiao">
 				<view class="h1">外卖单查询<button class="close">×</button></view>
 				<view class="form">
+					<view class="choice">
+						<view class="table">
+							<view class="tab curr">
+								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<label>
+									<text>子表一</text>
+								</label>
+							</view>
+							<view class="tab">
+								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<label>
+									<text>子表二</text>
+								</label>
+							</view>
+						</view>
+					</view>
 					<view class="biaoge">
 					<table border="0" cellpadding="0" cellspacing="0">
 						<thead>
@@ -183,7 +204,7 @@
 					</view>
 				<view class="totals">
 					<view>
-						<em></em>
+						<!-- <em></em> -->
 						<label>退货量：<text>34</text></label>
 						<label>退货金额：<text>￥834</text></label>
 						<label>总销量：<text>2134</text></label>
@@ -209,16 +230,23 @@
 			
 			data() {
 				return {
-		
+					condits:true
 				}
 			},
 			onLoad() {
 	
 			},
-			methods: {
-			ExtractDateChange: function(date) {
-				this.details.info.THDATE = date.detail.value + " " + this.ExtractTime;
-			},
+			methods: {				
+				shouqi:function(e) {
+					this.condits = false;
+					this.shouqi=false;
+					this.sousuo=true
+			    },
+				zhankai:function(e) {
+					this.condits = true;
+					this.shouqi=true;
+					this.sousuo=false
+				}
 			}	
 		}
 	

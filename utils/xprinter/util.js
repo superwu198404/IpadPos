@@ -260,6 +260,7 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 		totalQty += sale2_arr[i].QTY;
 		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
 	}
+	
 	console.log("sale02List 转换后数据:", sale2List);
 
 	//支付数据
