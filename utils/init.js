@@ -57,7 +57,7 @@ const init = {
 		}
 	},
 	init(){
-		this.client = util.getStorage("store");
+		this.client = Object.assign({},util.getStorage("store"));
 	},
 	client: null,
 }
