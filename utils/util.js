@@ -378,7 +378,7 @@ const utils = {
 		return newbill;
 	},
 	//校验数量
-	CheckNum: function(r, r1) => {
+	CheckNum: function(r, r1) {
 		let num = 0;
 		if (r && r1) {
 			num = 1;

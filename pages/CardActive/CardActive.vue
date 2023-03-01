@@ -248,10 +248,38 @@
 							material_id: res.data.materielId,
 							khid: that.store.KHID,
 							cardnum: _util.CheckNum(that.begin_num, that.end_num)
-						}, res3 => {
+						}, async res3 => {
 							if (res3.code) {
-								let arr = res3.data;
-								arr.map(r3 => {
+								let totalNum = 0;
+								res3.data.map(r4 => {
+									totalNum = _util.newFloat(totalNum + r4.cardNum, 0);
+								})
+								let spObj = await KQSale.MatchSP(res.data
+									.materielId, res.data.amount, totalNum);
+								if (spObj) {
+									let arr = that.SALE002.filter(r => {
+										return r.SPID == spObj.SPID;
+									});
+									if (arr.length == 0) {
+										spObj = that.CoverSale(spObj, that.SALE001);
+										console.log("sale2属性合并后的对象：", spObj);
+										if (spObj) {
+											spObj.begin_num = num1;
+											spObj.end_num = num2;
+											that.SALE002.push(spObj);
+											that.CalTNET();
+											console.log("sale2", that.SALE002);
+										}
+									} else {
+										_util.simpleMsg("已添加该商品", "none");
+										return;
+									}
+								} else {
+									_util.simpleMsg("暂未匹配到商品信息", "none");
+									return;
+								}
+								let arr = res3.data; //可用号段集合
+								arr.map((r3, i3) => { //循环发起库存校验
 									let num1 = r3.cardNoBegin;
 									let num2 = r3.cardNoEnd;
 									KQSale.CheckStock({
@@ -259,45 +287,21 @@
 										end_num: num2,
 										material_id: res.data.materielId,
 										khid: that.store.KHID
-									}, async res1 => {
+									}, res1 => {
 										console.log("库存校验结果：", res1);
 										if (!res1.code) {
 											_util.simpleMsg(res1.msg, true);
 											return;
 										}
-										let spObj = await KQSale.MatchSP(res.data
-											.materielId);
-										if (spObj) {
-											let arr = that.SALE002.filter(r => {
-												return r.SPID == spObj
-												.SPID;
-											});
-											if (arr.length == 0) {
-												console.log("开始进入合并：", spObj);
-												spObj = that.CoverSale(spObj, that
-													.SALE001);
-												console.log("属性合并后的对象：", spObj);
-												if (spObj) {
-													spObj.begin_num = num1;
-													spObj.end_num = num2;
-													that.SALE002.push(spObj);
-													let sale6 = that
-												.CreateSale006({
-														begin_num: num1,
-														end_num: num2
-													}, spObj, that.SALE001);
-													that.SALE006.push(sale6);
-													console.log("sale2", that
-														.SALE002);
-													console.log("sale6", that
-														.SALE006);
-												}
-											} else {
-												_util.simpleMsg("已添加该商品", "none");
-											}
-										} else {
-											_util.simpleMsg("暂未匹配到商品信息", "none");
-										}
+										let sale6 = that.CreateSale006({
+											begin_num: num1,
+											end_num: num2,
+											qty: r3.cardNum,
+											index: r3
+										}, spObj, that.SALE001);
+										if (sale6)
+											that.SALE006.push(sale6);
+										console.log("sale6", that.SALE006);
 									})
 								})
 							} else {
@@ -316,8 +320,8 @@
 				sale6.KQIDSTR = cards.begin_num + "-" + cards.end_num;
 				sale6.SPID = sale2.SPID;
 				sale6.MYSTR = sale2.PRICE;
-				sale6.QTY = sale2.QTY;
-				sale6.NO = sale2.NO;
+				sale6.QTY = cards.QTY || sale2.QTY;
+				sale6.NO = cards.index || sale2.NO;
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -358,45 +362,7 @@
 					return null;
 				}
 			},
-			//展示充值规则
-			ShowCZGZ: function() {
-				let czgz = _util.getStorage("KCZGZMX");
-				if (czgz) {
-					that.showCZGZ = true;
-					that.CZGZMX = czgz.map(r => {
-						return {
-							CZNET: r.CZNET,
-							ZSNET: r.ZSNET
-						}
-					})
-				}
-			},
-			//充值规则选择事件
-			ChooseCZGZ: function(e) {
-				if (_util.newFloat(e.CZNET + e.ZSNET + that.Amount) > 5000) {
-					_util.simpleMsg("充值后卡余额大于 5000￥，更换充值金额；");
-					return;
-				}
-				that.CurCZGZ = e;
-				console.log("选择得规则：", that.CurCZGZ);
-				let s2 = JSON.parse(JSON.stringify(that.SALE002));
-				let s6 = JSON.parse(JSON.stringify(that.SALE006));
-				s2.map(r => {
-					r.PRICE = _util.newFloat(e.CZNET, 2);
-					r.CXDISC = _util.newFloat(e.ZSNET, 2);
-					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
-				})
-				s6.map(r => {
-					let obj = s2.find(r1 => {
-						return r1.SPID == r.SPID
-					});
-					if (obj)
-						r.MYSTR = obj.PRICE;
-				})
-				that.SALE002 = s2;
-				that.SALE006 = s6;
-				that.CalTNET();
-			},
+
 			//待售列表清除
 			RemoveSP: function(e) {
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
@@ -455,24 +421,52 @@
 				this.SALE001.TDISC = _util.newFloat(Number(this.SALE001.TDISC) + SKY_DISCOUNT, 2);
 				console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.SALE001);
 			},
+			//组装激活申请参数
+			PackgeActivData: function() {
+				let dataObj = {
+						channel: "ZC007"
+					},
+					orderList = [],
+					cardList = [];
+				orderList = that.SALE002.map(r => {
+					return {
+						merOrderId: r.BILL,
+						lineNo: r.NO,
+						materielId: r.SPID,
+						totalNum: r.QTY,
+						amount: r.NET,
+						discountAmount: r.BILLDISC || 0,
+						storeNo: r.KHID,
+						guestFlag: 2,
+						saleChannelId: that.store.DQID,
+						saleChannelName: that.store.DQNAME,
+						saleUserCode: that.store.RYID,
+						saleUserName: that.store.RYNAME,
+						saleStoreCode: that.SALE001.KHID,
+						saleStoreName: that.store.NAME
+					}
+				})
+				cardList = that.SALE006.map(r => {
+					return {
+						merOrderId: r.BILL,
+						lineNo: r.NO,
+						cardNoBegin: r.KQIDS,
+						cardNoEnd: r.KQIDE,
+						cardNum: r.QTY
+					}
+				})
+				dataObj.orderList = orderList;
+				dataObj.cardList = cardList;
+				return dataObj;
+			},
 			//去支付
 			ToPay: function() {
-				if (!that.CurCZGZ || Object.keys(that.CurCZGZ).length == 0) {
-					_util.simpleMsg("请选择充值规则", true)
-					return;
-				}
 				if (that.SALE002.length == 0) {
 					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
 				console.log("sale2", that.SALE002);
-				KQSale.ActiveApply({
-					salebill: that.SALE001.BILL,
-					material_id: that.SALE002[0].SPID,
-					channel: "ZC007",
-					khid: that.SALE001.KHID,
-					card_num: that.begin_num,
-				}, res => {
+				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.SKdiscCompute() //手工折扣
@@ -526,7 +520,6 @@
 			},
 			//支付完成处理
 			PayedResult: async function(result) {
-				console.log("支付后的sale6：", that.SALE006);
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -542,12 +535,9 @@
 					sale2));
 				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass.sale003(),
 					sale3));
-				// this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(),
-				// 	sale8));
 				console.log("支付后返回结果：", that.SALE001);
 				if (result.code) {
 					console.log("准备激活：", that.SALE002);
-					// _util.simpleMsg("发起激活");
 					//手工折扣额分摊
 					if (that.SALE001.ROUND > 0) {
 						that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
@@ -556,24 +546,9 @@
 					//发起激活
 					KQSale.ActiveConfirm({
 						salebill: that.SALE001.BILL,
-						material_id: that.SALE002[0].SPID,
-						amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
-						dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
-						channel: "ZC007",
-						app_key: "POS",
-						khid: that.store.KHID,
-						kh_name: that.store.NAME,
-						ryid: that.store.RYID,
-						ry_name: that.store.RYNAME,
-						dqid: that.store.DQID,
-						dq_name: that.store.DQNAME,
-						flag: 2,
-						card_num: that.SALE006[0].KQIDS
+						channel: "ZC007"
 					}, res2 => {
-						if (!res2.code) {
-							_util.simpleMsg("激活失败：" + res2.msg);
-							return;
-						}
+						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
@@ -585,21 +560,6 @@
 							SALE006: that.SALE006,
 							SXSALE001: that.SXSALE001,
 						})
-						//发起充值
-						KQSale.Recharge({
-							salebill: that.SALE001.BILL,
-							amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
-							dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
-							khid: that.SALE001.KHID,
-							kh_name: that.store.NAME,
-							ryid: that.store.RYID,
-							ry_name: that.store.RYNAME,
-							card_num: that.SALE006[0].KQIDS
-						}, res3 => {
-							//充值
-							console.log("VIP单卡充值结果：", res3);
-							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
-						});
 						//重置销售单
 						that.ResetSaleBill();
 					})

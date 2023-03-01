@@ -588,10 +588,7 @@
 						flag: 2,
 						card_num: that.SALE006[0].KQIDS
 					}, res2 => {
-						if (!res2.code) {
-							_util.simpleMsg("激活失败：" + res2.msg);
-							return;
-						}
+						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
