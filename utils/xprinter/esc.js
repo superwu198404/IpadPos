@@ -3093,7 +3093,197 @@ var jpPrinter = {
 		});
 	}
 	
-    return jpPrinter;
+	/* 售卡售券，打印格式
+	*/
+	jpPrinter.SkSqFormString = function(data,printer_poscs,print){
+		var type = data.xsType;
+		var xpType = "卡激活充值";
+		var xsBill= "";
+		var lineNum = data.lineNum;
+	    var isReturn = false;
+		var isYD = false;
+		jpPrinter.setSelectJustification(1); //居中
+		jpPrinter.setCharacterSize(17); //设置倍高倍宽
+		jpPrinter.setText("KenGee 仟吉" + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		let HYY = "欢迎光临";
+		//终端参数配置了欢迎语，则取配置
+		if(printer_poscs.HYY  != ""){
+			HYY = printer_poscs.HYY;
+		}	
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(1); //居中	
+		jpPrinter.setText(HYY);
+		jpPrinter.setPrint(); //打印并换行
+	
+		switch (type) {
+		   case "SK":
+		    xpType ="卡激活充值";
+		    break;	
+			
+		   case "SQ":
+		    xpType ="券销售";
+		    break;
+			
+		   default:
+			xpType ="卡激活充值";
+		}
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(data.khName);
+		jpPrinter.setPrint(); //打印并换行
+			
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(xpType);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("小票号: "+ data.bill);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("时间: " + data.xsDate);
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收款员: " + data.posUser + "\n");
+		jpPrinter.setPrint(); //打印并换行
+		
+		// jpPrinter.setCharacterSize(0); //设置正常大小
+		// jpPrinter.setSelectJustification(0); //设置居左
+		// jpPrinter.setText("门店电话: " + data.khPhone);
+		// jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		//售卡售券信息
+		data.sale6List.forEach((item, i) => {
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item.kqids.toString() + "-");
+			jpPrinter.setPrint(); //打印并换行	
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item.kqide.toString() + " 成功!");
+			jpPrinter.setPrint(); //打印并换行
+		});
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("-----------------------------------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		if(type == "SK"){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("成功:" + util.tnvl(data.sale6_sumQty,0) + "张" + " 金额:" + util.tnvl(data.sale6_sumNet,0));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("失败:" + util.tnvl(data.failSumQty,0) + "张" + " 金额:" + util.tnvl(data.failSumNet,0));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 原金额:" + util.tnvl(data.payableAmount,0));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("共销售卡券:" + util.tnvl(data.sale6_sumQty,0) + "张");
+			jpPrinter.setPrint(); //打印并换行
+		}else if(type == "SQ"){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("共销售卡券:" + util.tnvl(data.sale6_sumQty,0) + "张");
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("卡券总金额:" + util.tnvl(data.sale6_sumNet,0));
+			jpPrinter.setPrint(); //打印并换行
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("卡券总折扣额:" + util.tnvl(data.discountedAmount,0));
+			jpPrinter.setPrint(); //打印并换行
+		}
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("--------------------付款方式-------------------");
+		jpPrinter.setPrint(); //打印并换行
+		
+		var payTotal = 0.00;
+		var change = 0.00;
+		
+		//支付方式分组的处理
+		let sale3_arrOrigin = JSON.stringify(data.sale3List);
+		let sale3_arr = [];
+		let zqNet = data.discountedAmount;
+		//付款方式
+		data.sale3List.forEach((item1, index1) => {
+			payTotal += parseFloat(item1.amt);		
+			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
+			if (!parent) {
+			    let list = data.sale3List.filter(el => {
+				  return el.fkid === item1.fkid
+			    })
+				//console.log("sFkid 111",list);
+				let totalAmt = list.reduce((prev, cur) => {
+					return prev + cur.amt;
+				}, 0)
+				//如果是赠券
+				if(item1.fkid == "ZZ01"|| item1.fkid=="ZCV1"){
+					zqNet += totalAmt;
+				}
+				item1.amt = totalAmt;
+				sale3_arr.push(item1)
+			} 
+		});
+	
+		sale3_arr.forEach((item2, index2) => {
+			let amount = item2.amt;
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item2.fkName + ":" + util.tnvl(amount,0));
+			jpPrinter.setPrint(); //打印并换行
+		});
+		
+		if(type == "SK"){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("总金额:" + payTotal.toFixed(2).toString());
+			jpPrinter.setPrint(); //打印并换行
+		}else if(type == "SQ"){
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("应付金额:" + payTotal.toFixed(2).toString());
+			jpPrinter.setPrint(); //打印并换行
+		}
+
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左
+		jpPrinter.setText("支付:" + payTotal.toFixed(2).toString());
+		jpPrinter.setPrint(); //打印并换行
+		
+		jpPrinter.setCharacterSize(0); //设置正常大小
+		jpPrinter.setSelectJustification(0); //设置居左，
+		jpPrinter.setText("找零:" + change.toString() + "\n");
+		jpPrinter.setPrint(); //打印并换行
+	}	
+    
+	return jpPrinter;
   },
   Query: function () {
     var queryStatus = {};
