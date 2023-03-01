@@ -14,10 +14,13 @@ const init = {
 			KCDID : this.client.KCDID,
 			GCID : this.client.GCID,
 			DPID : this.client.DPID,
+			YN_OK: 'X', //默认为 X
+			YN_SC: 'N', //默认为 N
 			YAER : dateformate.getDateByParam("Y"),
 			MONTH: dateformate.getDateByParam("M"),
 			WEEK: dateformate.getDateByParam("w"),
-			TIME: dateformate.getDateByParam("h")
+			TIME: dateformate.getDateByParam("h"),
+			XSPTID: "PAD"
 		}
 	},
 	get_sale001(attach = {}){
@@ -33,11 +36,11 @@ const init = {
 		}
 	},
 	get_sale003(sale1, attach = {}){
-		let sale6 = new sales.sale006();
+		let sale3 = new sales.sale003();
 		if(sale1)
-			return Object.cover(Object.cover(sale6, sale1),attach);
+			return Object.cover(Object.cover(sale3, sale1),attach);
 		else{
-			return Object.cover(Object.cover(sale6, this.sale_common_init_params()),attach)
+			return Object.cover(Object.cover(sale3, this.sale_common_init_params()),attach)
 		}
 	},
 	get_sale006(sale1, attach = {}){//用sale1去初始化sale6部分信息，以保证信息一致
