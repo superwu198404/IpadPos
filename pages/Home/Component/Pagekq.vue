@@ -22,20 +22,13 @@
 </template>
 
 <script>
-	
-	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
 	export default {
-		components: {
-			Promotion
+		name: "Pagekq",
+		//属性
+		//组件生命周期
+		created:function(e){
+		
 		},
-		name: "Page",
-		props: {
-			current: String
-		},
-		computed: {
-			
-		},
-	
 		data() {
 			return {
 				menukq: [
@@ -70,9 +63,75 @@
 					//点击事件要控制的参数 页面的层级都为0 所以 v-if 所在的容器隐藏了，通过这个属性来控制
 				};
 		},
+		
 		methods: {
-			
+	
+		}
+	}
+</script>
+<script>
+	import base_sale from '@/utils/sale/base_sale.js'
+	import util from '@/utils/util.js';
+	import db from '@/utils/db/db_excute.js';
+	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
+	export default {
+		components: {
+			Promotion
 		},
+		name: "Page",
+		props: {
+			current: String
+		},
+		computed: {
+			Selected: function() {
+				return util.callBind(this, function(name) {
+					return name === this.current_info?.name;
+				});
+			},
+		},
+		watch: {
+			current: function(n, o) {
+				this.current_info.name = n;
+				this.current_info.info = this.menu_info[n];
+			}
+		},
+		data() {
+			return {
+				
+				menukq: [
+					{
+						icon_open: require('@/images/img2/kakaka.png'),
+						icon_close: require('@/images/img2/kakaka-hui.png'),
+						nameSale:'VIP卡充值'
+					},
+					{
+						icon_open: require('@/images/img2/lpkjih-bai.png'),
+						icon_close: require('@/images/img2/lpkjih.png'),
+						nameSale:'礼品卡激活'
+					},
+					{
+						icon_open: require('@/images/img2/quanquan.png'),
+						icon_close: require('@/images/img2/quanquan-hui.png'),
+						nameSale:'券销售'
+					},
+					{
+						icon_open: require('@/images/img2/kachaxun-bai.png'),
+						icon_close: require('@/images/img2/kachaxun.png'),
+						nameSale:'卡查询'
+					},
+					
+					{
+						icon_open: require('@/images/img2/quancx-bai.png'),
+						icon_close: require('@/images/img2/quancx.png'),
+						nameSale:'券查询'
+					}
+				],
+				
+			};
+		},
+		methods: {
+		
+	},
 	}
 </script>
 
@@ -80,5 +139,8 @@
 	.menu {
 		padding: 0px;
 		outline: 0px;
+	}
+	.menu .bills{
+		padding:14% 0;
 	}
 </style>

@@ -45,10 +45,10 @@
 								</label>
 							</view>
 							<view class="tab">
-								<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP卡充值
+								<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 							</view>
 						</view>
-						<!-- <view class="ckr">“持卡人姓名”：877888999</view> -->
+						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 
 					<view class="module" v-if="SALE002.length>0">
@@ -166,11 +166,11 @@
 				SALE003: [],
 				SALE006: [],
 				SXSALE001: [],
-				showCardNum: true,
+				showCardNum: false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				BILL_TYPE: "Z111", //Z112
+				Bill_TYPE: "Z111", //Z112
 				XSTYPE: "1",
 				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
@@ -190,7 +190,7 @@
 			});
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
-				BILL_TYPE: that.BILL_TYPE,
+				BIll_TYPE: that.Bill_TYPE,
 				KQXSTYPE: that.KQXSTYPE,
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
@@ -200,18 +200,15 @@
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
 
-			uni.$off("big-customer-close");
+			uni.off("big-customer-close");
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
-				if (data.exists_credit) { //启用赊销
-					that.BILL_TYPE = "Z112";
-				} else { //不启用赊销
-					that.BILL_TYPE = "Z111";
+				if (data.exists_credit) {
+					that.Bill_TYPE = "Z112"; //启用赊销
+				} else {
+					that.Bill_TYPE = "Z111"; //不启用赊销	
 				}
-				if (data.DKFID) {
-					that.SALE001.DKFID = data.DKFID;
-				}
-				that.SALE001.BILL_TYPE = that.BILL_TYPE;
+				that.SALE001.BILL_TYPE = that.Bill_TYPE;
 			});
 		},
 		destroyed() {},
@@ -474,12 +471,10 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.SKdiscCompute() //手工折扣
-						console.log("单据类型：",that.BILL_TYPE);
-						if (that.BILL_TYPE == 'Z112') { //卡券赊销
+						if (that.BIll_TYPE == 'Z112') { //卡券赊销
 							//直接生成赊销销售单
 							//调用激活
 							//调用充值
-							
 							//赊销参数组装
 							that.CreateSXSale001();
 							let result = {
@@ -615,7 +610,7 @@
 			ResetSaleBill: function() {
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
-					BILL_TYPE: that.BILL_TYPE,
+					BIll_TYPE: that.Bill_TYPE,
 					KQXSTYPE: that.KQXSTYPE,
 					CUID: that.KQXSTYPE,
 					DKFID: that.store.DKFID
