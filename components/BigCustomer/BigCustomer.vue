@@ -101,7 +101,7 @@
 					client_type: '1',
 					khid: this.search.client_no,
 					name: this.search.client_name,
-					storeid: store.KHID
+					storeid: "K200QTD005" //store.KHID
 				}, util.callBind(this, function(res) {
 					this.big_customers = JSON.parse(res.data);
 					console.log("查询出的大客户信息：", res);

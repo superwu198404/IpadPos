@@ -3,17 +3,17 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="navmall" @click="hideIsShow">
+	<view class="navmall">
 		<view class="logo">
-			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
+			<image src="@/images/KGlogo-2.png" mode="widthFix"></image>
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
-			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
+			<view class="bills" v-for="(item,key) in menukq" @click="MenuSelect(key,item)"
+				:class="Selected(key) ? 'curr' : ''">
 				<label></label>
-				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
-				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
-				<text>{{value.nameSale}}</text>
+				<image class="xz" :src="item.icon_open" mode="widthFix"></image>
+				<image class="wx" :src="item.icon_close" mode="widthFix"></image>
+				<text>{{item.nameSale}}</text>
 			</view>
 		</view>
 		<!-- 重打小票 -->
@@ -21,6 +21,54 @@
 	</view>
 </template>
 
+<script>
+	export default {
+		name: "Pagekq",
+		//属性
+		//组件生命周期
+		created:function(e){
+		
+		},
+		data() {
+			return {
+				menukq: [
+					{
+						icon_open: '@/image/img2/kakaka-hui.png',
+						icon_close: '@/image/img2/kakaka.png',
+						nameSale:'VIP卡充值'
+					},
+					{
+						icon_open: '@/image/img2/lpkjih-bai.png',
+						icon_close: '@/image/img2/lpkjih.png',
+						nameSale:'礼品卡激活'
+					},
+					{
+						icon_open: '@/image/img2/quanquan-hui.png',
+						icon_close: '@/image/img2/quanquan.png',
+						nameSale:'券销售'
+					},
+					{
+						icon_open: '@/image/img2/kachaxun.png',
+						icon_close: '@/image/img2/kachaxun-bai.png',
+						nameSale:'卡查询'
+					},
+					,
+					{
+						icon_open: '@/image/img2/quancx.png',
+						icon_close: '@/image/img2/quancx-bai.png',
+						nameSale:'券查询'
+					}
+				],
+				Selected:0,
+					//点击事件要控制的参数 页面的层级都为0 所以 v-if 所在的容器隐藏了，通过这个属性来控制
+				};
+		},
+		
+		methods: {
+	
+		}
+	}
+</script>
 <script>
 	import base_sale from '@/utils/sale/base_sale.js'
 	import util from '@/utils/util.js';
@@ -49,107 +97,41 @@
 		},
 		data() {
 			return {
-				previous_info: null, //上一个菜单信息
-				current_info: null, //当前菜单信息
-				menu_info: null,
-				showGJ: false,
-				showCX: false,
-				click_num: 0,
-				timer: 0,
-				showcdxp: false,
+				
+				menukq: [
+					{
+						icon_open: require('@/images/img2/kakaka.png'),
+						icon_close: require('@/images/img2/kakaka-hui.png'),
+						nameSale:'VIP卡充值'
+					},
+					{
+						icon_open: require('@/images/img2/lpkjih-bai.png'),
+						icon_close: require('@/images/img2/lpkjih.png'),
+						nameSale:'礼品卡激活'
+					},
+					{
+						icon_open: require('@/images/img2/quanquan.png'),
+						icon_close: require('@/images/img2/quanquan-hui.png'),
+						nameSale:'券销售'
+					},
+					{
+						icon_open: require('@/images/img2/kachaxun-bai.png'),
+						icon_close: require('@/images/img2/kachaxun.png'),
+						nameSale:'卡查询'
+					},
+					
+					{
+						icon_open: require('@/images/img2/quancx-bai.png'),
+						icon_close: require('@/images/img2/quancx.png'),
+						nameSale:'券查询'
+					}
+				],
+				
 			};
 		},
 		methods: {
-			// 隐藏
-			hideIsShow: function() {
-				this.showGJ = false;
-			},
-			operations: function(index) {
-				let that = this;
-				that.showGJ = !that.showGJ
-			},
-
-			MenuSelect(menu_name, menu_info) {
-				this.previous_info = this.current_info;
-				// this.current_info = {
-				// 	name: menu_name,
-				// 	info: menu_info
-				// };
-				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
-				uni.$emit("change", {
-					name: menu_name,
-					info: menu_info
-				});
-			},
-			OpenDevoloper() {
-				this.click_num++;
-				if (!this.timer)
-					this.timer = setTimeout(util.callBind(this, function() {
-						this.click_num = 0;
-						this.timer = 0;
-					}), 5000);
-				if (this.click_num === 10) {
-					uni.showModal({
-						title: "输入密码",
-						editable: true,
-						success(res) {
-							if (res.confirm && res.content === '1234321') {
-								uni.navigateTo({
-									url: "../index/index"
-								})
-							}
-						}
-					})
-				}
-			},
-			//工具
-			ShowTool: function(e) {
-				if (e == 'CD') {
-					this.showcdxp = true;
-					console.log("重打小票", this.showcdxp)
-				} else if (e == 'promotions' || e == 'communication') {
-					uni.$emit('tools', e);
-				} else {
-					//功能放开，则去掉该提示
-					util.simpleMsg("暂未开放", true);
-					return;
-				}
-
-				if (!e) {
-					this.showGJ = !this.showGJ;
-					this.showCX = false;
-					return;
-				}
-				if (e == 'CX') {
-					this.showCX = !this.showCX;
-				}
-
-			},
-			CloseDB: async function() {
-				await db.get().close();
-			},
-			//重打小票关闭
-			ClosePopup: function(data) {
-				this.showcdxp = false;
-			}
-		},
-		created() {
-			console.log("[Page-Mounted]菜单初始化开始...");
-			this.menu_info = base_sale.XsTypeObj;
-			this.current_info = {
-				name: 'sale',
-				info: this.menu_info.sale
-			}
-			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
-			uni.$off('set-menu');
-			uni.$on('set-menu', util.callBind(this, function(data) {
-				console.log("[Page]手动切换菜单!", data);
-				this.current_info.name = data;
-				this.current_info.info = this.menu_info[data];
-				console.log("[Page]当前菜单:", this.current_info);
-				this.$forceUpdate();
-			}))
-		}
+		
+	},
 	}
 </script>
 
@@ -157,5 +139,8 @@
 	.menu {
 		padding: 0px;
 		outline: 0px;
+	}
+	.menu .bills{
+		padding:14% 0;
 	}
 </style>

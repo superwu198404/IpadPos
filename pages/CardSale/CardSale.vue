@@ -6,6 +6,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
@@ -37,15 +38,20 @@
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
 						<view class="table">
-							<view class="tab curr">
+							<view class="tab " @click="ChangeYWTYPE('VIPCard_Active')"
+								:class="YWTYPE=='VIPCard_Active'?'curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 									<text>VIP售卡充值</text>
 								</label>
 							</view>
-							<view class="tab">
-								<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
+							<view class="tab" @click="ChangeYWTYPE('VIPCard_Recharge')"
+								:class="YWTYPE=='VIPCard_Recharge'?'curr':''">
+								<label>
+									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<text>VIP卡充值</text>
+								</label>
 							</view>
 						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
@@ -126,7 +132,15 @@
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
 		</SpecialDisc>
-
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 <script>
@@ -146,13 +160,16 @@
 	} from '@/bll/Common/bll.js';
 
 	import _common from '@/api/common.js';
-
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	
 	var that, KQSale;
 	export default {
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq
+			Pagekq,
+			PrinterPage,
 		},
 		data() {
 			return {
@@ -178,6 +195,14 @@
 					big_customer: false,
 					enable_customer: true,
 				},
+				YWTYPE: "VIPCard_Active", //业务类型
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
 			}
 		},
 		created: function() {
@@ -211,7 +236,7 @@
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
 			});
 		},
-		destroyed() {},
+		watch: {},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -268,10 +293,6 @@
 								_util.simpleMsg(res1.msg, true);
 								return;
 							}
-							if (res1.data[0].CARDNUM == "0") {
-								_util.simpleMsg("卡库存不在当前门店", "none");
-								return;
-							}
 							that.Amount = res.data.amount; //卡余额
 							let spObj = await KQSale.MatchSP(res.data.materielId);
 							if (spObj) {
@@ -297,6 +318,8 @@
 								} else {
 									_util.simpleMsg("已添加该商品", "none");
 								}
+							} else {
+								_util.simpleMsg("暂未匹配到商品信息", "none");
 							}
 						})
 					}
@@ -471,10 +494,12 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.SKdiscCompute() //手工折扣
-						if (that.BIll_TYPE == 'Z112') { //卡券赊销
+						console.log("单据类型：", that.BILL_TYPE);
+						if (that.BILL_TYPE == 'Z112') { //卡券赊销
 							//直接生成赊销销售单
 							//调用激活
 							//调用充值
+
 							//赊销参数组装
 							that.CreateSXSale001();
 							let result = {
@@ -505,13 +530,7 @@
 				let inputParm = {
 					sale1_obj: that.SALE001, //001 主单 数据对象
 					sale2_arr: that.SALE002, //002 商品 数据对象集合
-					// sale3_arr: that.SALE003, //003 支付数据集合
-					// sale8_arr: that.SALE008, //008水吧商品
-					// score_info: that.score_info, //积分抵现信息
-					// ban_pay: that.ban_type, //被禁用的支付类型
-					// PayList: that.payed, //已支付信息
 					actType: "Payment", //动作类型(退款、支付)
-					// hyinfo: that.HY.cval //会员信息
 				}
 				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 				that.$store.commit('set-location', inputParm);
@@ -599,6 +618,13 @@
 							console.log("VIP单卡充值结果：", res3);
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
+						
+						let printerPram = {
+							"PRINTNUM": 1,
+							"XSTYPE": "SK",
+						};
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,that.SALE003,that.SALE006, printerPram);
+						
 						//重置销售单
 						that.ResetSaleBill();
 					})
@@ -636,6 +662,24 @@
 				that.SALE003.push(sale3);
 				console.log("赊销单组装数据sx1：", that.SXSALE001);
 				console.log("赊销单组装数据s3：", that.SALE003);
+			},
+			//切换业务类型
+			ChangeYWTYPE: function(e) {
+				if (that.YWTYPE != e) {
+					if (that.SALE002.length > 0) {
+						_util.simpleMsg("已录入商品暂无法切换");
+						return;
+					}
+					_util.simpleModal("提示", "是否确认切换业务类型？", res => {
+						if (res) {
+							that.YWTYPE = e;
+							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
+							that.KQXSTYPE = "SKCZ";
+							that.ResetSaleBill();
+							console.log("业务类型已切换：", that.SALE001)
+						}
+					})
+				}
 			},
 		}
 	}

@@ -670,6 +670,83 @@
 				}
 				console.log("打印格式记录结束");
 			},
+			//售卡售券打印小票
+			sksqBluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, sale6_arr, print) {
+				var that = this;
+				let xsType = "";
+				//输出日志
+				console.log("售卡售券打印接收数据 sale1_obj", sale1_obj);
+				console.log("售卡售券打印接收数据 sale2_arr", sale2_arr);
+				console.log("售卡售券打印接收数据 sale3_arr", sale3_arr);
+				console.log("售卡售券打印接收数据 sale6_arr", sale6_arr);
+				console.log("售卡售券打印控制参数 print", print);
+			    
+				if(print != null){
+					that.printerNum = print.PRINTNUM;
+					xsType = print.XSTYPE;
+				}else{
+					that.printerNum = 1;
+				}
+				
+				//查询终端参数
+				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
+				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);	
+				//通过终端参数，Y 打印小票
+				if (printer_poscs.YN_YXDY != "Y") {
+					util.simpleMsg("终端参数未设置打印小票", "none");
+					return;
+				}
+				//打印数据转换
+				var printerInfo = xprinter_util.skPrinterData(sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType);
+				//初始化打印机
+				var command = esc.jpPrinter.createNew();
+				command.init();
+				//打印格式
+				command.SkSqFormString(printerInfo, printer_poscs, print);
+				//写入打印记录表
+				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
+			
+				//打印二维码
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				//电子发票二维码不为空、小票结尾二维码不为空
+				if (is_dzfpewmdz) {
+					let objQrCode =
+					{
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ,""),
+						v: xprinter_util.snvl(1,""),
+						saledate: xprinter_util.snvl(sale1_obj.SALEDATE,""),
+						bill: xprinter_util.snvl(sale1_obj.BILL,""),
+						khid: xprinter_util.snvl(sale1_obj.KHID,""),
+						gsid: xprinter_util.snvl(sale1_obj.GSID,""),
+						sltype: xprinter_util.snvl(0.16,""),
+					};
+					
+					//生成属于单号的二维码
+					Promise.all([
+						xprinter_util.qrCodeGenerate(is_dzfpewmdz, sale1_obj.BILL, printer_poscs.DZFPEWMDZ,
+							that.qrCodeWidth, that.qrCodeHeight, objQrCode),
+						xprinter_util.qrCodeAction(is_dzfpewmdz, command, that.qrCodeWidth, that.qrCodeHeight),
+					]).then(res => {
+						console.log("sksqBluePrinter开始发送打印命令");
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸 
+						that.prepareSend(command.getData()); //发送数据
+					}).catch(reason => {
+						console.log('sksqBluePrinter reject failed reason', reason)
+						command.setPrint();
+						command.setPrint();
+						command.endPrinter(); //打印切纸
+						that.prepareSend(command.getData()); //发送数据
+					})
+				} else {
+					command.setPrint();
+					command.setPrint();
+					command.endPrinter(); //打印切纸
+					that.prepareSend(command.getData()); //发送数据
+				}
+				console.log("打印格式记录结束");
+			},
 			//重新打印
 			againPrinter: async function(xsBill,xsType,data) {
 				var that = this;

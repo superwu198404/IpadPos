@@ -111,7 +111,16 @@ var KQTypeObj = {
 		CheckStock: function(data, func) {
 			_member.StockQuery("查询中...", {
 				data
-			}, func, func);
+			}, res1 => {
+				if (res1.code && res1.data[0].CARDNUM == "0") {
+					func({
+						code: false,
+						msg: "卡库存不在当前门店"
+					})
+					return;
+				}
+				func(res1);
+			}, func);
 		},
 		//激活申请校验
 		ActiveApply: function(data, func) {
@@ -188,18 +197,105 @@ var KQTypeObj = {
 
 		//初始化
 		InitData: function() {},
+		//查询信息
+		QueryInfo: function(data, func) {
+			_member.CARD_QUERY("查询中...", {
+				data
+			}, func, func);
+		},
 		//校验状态
-		CheckStatus: function() {},
+		CheckStatus: function(res) {
+			if (!res.code) {
+				_util.simpleMsg(res.msg, true);
+				return false;
+			}
+			if (res.data.cardType != 'Z001') {
+				_util.simpleMsg("卡类型不是VIP卡", "none");
+				return false;
+			}
+			if (res.data.status != 'Z001') { //要已激活的
+				_util.simpleMsg("卡状态无效", "none");
+				return false;
+			}
+			return true;
+		},
 		//校验库存
-		CheckStock: function() {},
-		//激活申请校验
-		ActiveApply: function() {},
-		//激活确认校验
-		ActiveConfirm: function() {},
+		CheckStock: function(data, func) {
+			//vip卡充值不校验库存 所以默认通过
+			func({
+				code: true,
+				msg: "默认校验通过"
+			})
+		},
+		//激活申请（校验）
+		ActiveApply: function(data, func) {
+			//vip卡充值不需要激活 所以默认通过
+			func({
+				code: true,
+				msg: "默认激活通过"
+			})
+		},
+		//激活确认（校验）
+		ActiveConfirm: function(data, func) {
+			//vip卡充值不需要激活 所以默认通过
+			func({
+				code: true,
+				msg: "默认激活通过"
+			})
+		},
 		//激活后充值
-		Recharge: function() {},
+		Recharge: function(data, func) {
+			console.log("充值参数：", data);
+			_member.posPayRecharge("充值中...", {
+				data
+			}, func, func);
+		},
 		//业务完成
-		Completed: function() {},
+		Completed: async function(data) {
+			try {
+				console.log("[Completed]即将创建销售单:", data);
+				let create_result = await CreateSaleOrder({
+					SALE001: data.SALE001,
+					SALE002: data.SALE002,
+					SALE003: data.SALE003,
+					SALE006: data.SALE006,
+					SXSALE001: data.SXSALE001,
+				});
+				console.log("[Completed]创建销售单结果:", create_result);
+				if (create_result.code)
+					console.log("业务单号:", data.SALE001.BILL);
+				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
+				_util.simpleMsg(create_result.msg, !create_result.code);
+			} catch (e) {
+				console.log("[Completed]订单sql生成发生异常:", e);
+			}
+		},
+		//商品信息匹配
+		MatchSP: async function(spid) {
+			let spinfo;
+			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
+			console.log("[MatchSP]查询结果：", result);
+			var data = JSON.parse(result.data || "");
+			console.log("匹配的商品信息：", data)
+			if (result.code && data?.length) {
+				spinfo = data[0];
+			}
+			if (spinfo) {
+				let sale2 = new _sale.sale002();
+				sale2.QTY = 1;
+				sale2.SPID = spid;
+				sale2.STR1 = spinfo?.SNAME;
+				sale2.PRICE = 0;
+				sale2.OPRICE = 0;
+				sale2.UNIT = spinfo?.UNIT;
+				sale2.PLID = spinfo?.PLID;
+				sale2.SPJGZ = spinfo?.SPJGZ;
+				sale2.BRANDID = "SK";
+				return sale2;
+			}
+			return null;
+		}
+
 	},
 	//礼品卡 激活
 	"GiftCard_Active": {
