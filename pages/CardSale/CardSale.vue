@@ -209,37 +209,7 @@
 				FKDA_INFO: [], //付款信息
 			}
 		},
-		created: function() {
-			that = this;
-
-			let store = getApp().globalData.store;
-			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
-			KQSale.InitData("卡销售初始化", res => {
-				that.ShowCZGZ();
-			});
-			that.SALE001 = _card_coupon.InitSale001(store, {
-				XSTYPE: that.XSTYPE,
-				BIll_TYPE: that.Bill_TYPE,
-				KQXSTYPE: that.KQXSTYPE,
-				CUID: that.KQXSTYPE,
-				DKFID: store.DKFID
-			});
-
-			//事件监听
-			uni.$off("GetCardNums");
-			uni.$on("GetCardNums", that.GetCardNums);
-
-			uni.off("big-customer-close");
-			uni.$on("big-customer-close", function(data) {
-				console.log("[Created]大客户回调:", data);
-				if (data.exists_credit) {
-					that.Bill_TYPE = "Z112"; //启用赊销
-				} else {
-					that.Bill_TYPE = "Z111"; //不启用赊销	
-				}
-				that.SALE001.BILL_TYPE = that.Bill_TYPE;
-			});
-			
+		onReady: function() {
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
@@ -256,6 +226,37 @@
 					console.log("获取付款方式失败!======",err);
 				}
 			}))()
+		},
+		created: function() {
+			that = this;
+
+			let store = getApp().globalData.store;
+			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
+			KQSale.InitData("卡销售初始化", res => {
+				that.ShowCZGZ();
+			});
+			that.SALE001 = _card_coupon.InitSale001(store, {
+				XSTYPE: that.XSTYPE,
+				BIll_TYPE: that.Bill_TYPE,
+				KQXSTYPE: that.KQXSTYPE,
+				CUID: that.KQXSTYPE,
+				DKFID: store.DKFID
+			});
+			
+			//事件监听
+			uni.$off("GetCardNums");
+			uni.$on("GetCardNums", that.GetCardNums);
+
+			uni.off("big-customer-close");
+			uni.$on("big-customer-close", function(data) {
+				console.log("[Created]大客户回调:", data);
+				if (data.exists_credit) {
+					that.Bill_TYPE = "Z112"; //启用赊销
+				} else {
+					that.Bill_TYPE = "Z111"; //不启用赊销	
+				}
+				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+			});
 		},
 		watch: {},
 		computed: {
