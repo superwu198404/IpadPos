@@ -173,6 +173,9 @@
 	import _common from '@/api/common.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
 	
 	var that, KQSale;
 	export default {
@@ -200,13 +203,13 @@
 				ZKData: [],
 				Bill_TYPE: "Z111", //Z112
 				XSTYPE: "1",
-				KQXSTYPE: "SK",
+				KQXSTYPE: "SKCZ",
 				Amount: 0, //VIP卡余额
 				view: {
 					big_customer: false,
 					enable_customer: true,
 				},
-				YWTYPE: "VIPCard_Active", //业务类型
+				YWTYPE: "VIPCard_Active", //业务类型 默认为VIP 售卡充值
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
@@ -214,9 +217,28 @@
 				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
+FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				startX:'',
 			}
+		},
+		onReady: function() {
+			//查询付款方式
+			(_util.callBind(that, async function() {
+				try {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+						if (res.code) {
+							that.FKDA_INFO = JSON.parse(res.data);
+							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+						} else {
+							console.log("获取付款方式失败!======",err);
+						}
+					}))
+				} catch (err) {
+					console.log("获取付款方式失败!======",err);
+				}
+			}))()
 		},
 		created: function() {
 			that = this;
@@ -233,7 +255,7 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-
+			
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
@@ -663,10 +685,7 @@
 						flag: 2,
 						card_num: that.SALE006[0].KQIDS
 					}, res2 => {
-						if (!res2.code) {
-							_util.simpleMsg("激活失败：" + res2.msg);
-							return;
-						}
+						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
@@ -694,11 +713,24 @@
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
 						
+						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
 							"XSTYPE": "SK",
 						};
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,that.SALE003,that.SALE006, printerPram);
+						
+						let arr3 = that.SALE003;
+						let fkdaRes = that.FKDA_INFO;
+						arr3.forEach(function(item, index) {
+							try {
+								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+								item.balance = item.balance;
+							} catch (e) {
+								item.SNAME = "";
+								item.balance = 0;
+							}
+						});
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,arr3,that.SALE006, printerPram);
 						
 						//重置销售单
 						that.ResetSaleBill();
@@ -749,7 +781,7 @@
 						if (res) {
 							that.YWTYPE = e;
 							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
-							that.KQXSTYPE = "SKCZ";
+							that.KQXSTYPE = e == "VIPCard_Active" ? "SKCZ" : "CZ";
 							that.ResetSaleBill();
 							console.log("业务类型已切换：", that.SALE001)
 						}
