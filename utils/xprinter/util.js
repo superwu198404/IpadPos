@@ -292,25 +292,25 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 	//销售卡券明细
 	var sale6List = [];
 	for (var j = 0; j < sale3_arr.length; j++) {
-		var sale3_printer = {
+		var sale6_printer = {
 			bill: sale6_arr[j].BILL,
 			saleDate: sale6_arr[j].SALEDATE, //销售日期
 			saleTime: sale6_arr[j].SALETIME, //销售时间
 			khid: snvl(sale6_arr[j].KHID,""), //门店
 			posId: snvl(sale6_arr[j].POSID,""), //收款台
-			spid: snvl(sale3_arr[j].SPID,""),
+			spid: snvl(sale6_arr[j].SPID,""),
 			no: sale6_arr[j].NO, //序号
 			
-			kqids: snvl(sale3_arr[j].KQIDS,""), //起始卡券号
-			kqide: snvl(sale3_arr[j].KQIDE,""), //截止卡券号
+			kqids: snvl(sale6_arr[j].KQIDS,""), //起始卡券号
+			kqide: snvl(sale6_arr[j].KQIDE,""), //截止卡券号
 									
-			kqidstr: snvl(sale3_arr[j].KQIDSTR,""), //卡券范围
-			qty: nnvl(sale3_arr[j].QTY,0), //数量
-			mystr: nnvl(sale3_arr[j].MYSTR,0),
+			kqidstr: snvl(sale6_arr[j].KQIDSTR,""), //卡券范围
+			qty: nnvl(sale6_arr[j].QTY,0), //数量
+			mystr: nnvl(sale6_arr[j].MYSTR,0),
 		};
-		sale6_sumQty += nnvl(sale3_arr[j].QTY,0),
-		sale6_sumNet += nnvl(sale3_arr[j].MYSTR,0),
-		sale6List = sale6List.concat(sale3_printer);
+		sale6_sumQty += nnvl(sale6_arr[j].QTY,0),
+		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0),
+		sale6List = sale6List.concat(sale6_printer);
 	}
 	
 	console.log("sale06List 转换后数据:", sale6List);
