@@ -7,28 +7,28 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right right-correct">
-			<!-- ¶¥²¿µ¼º½À¸ -->
+			<!-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
-			<!-- ÄÚÈÝÀ¸ -->
+			<!-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -->
 			<view class="steps">
 				<view class="listep curr">
 					<text class="xuhao">01</text>
-					<view class="setname"><label>Â¼Èë´ýÊÛ¿¨È¯</label><text>Ë¢¿¨£¬É¨È¯£¬»òÊÖ¶¯Â¼Èë</text></view>
+					<view class="setname"><label>Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Û¿ï¿½È¯</label><text>Ë¢ï¿½ï¿½ï¿½ï¿½É¨È¯ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½Â¼ï¿½ï¿½</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep">
 					<text class="xuhao">02</text>
-					<view class="setname"><label>È·ÈÏÕÛ¿ÛºÍ½ð¶î</label><text>ÊÇ·ñÑ¡´ó¿Í»§ÉÞÏúµÈ</text></view>
+					<view class="setname"><label>È·ï¿½ï¿½ï¿½Û¿ÛºÍ½ï¿½ï¿½ï¿½</label><text>ï¿½Ç·ï¿½Ñ¡ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep">
 					<text class="xuhao">03</text>
-					<view class="setname"><label>Ö§¸¶</label><text>ÏÈÖ§¸¶£¬ºó¼¤»î/³äÖµ</text></view>
+					<view class="setname"><label>Ö§ï¿½ï¿½</label><text>ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ó¼¤»ï¿½/ï¿½ï¿½Öµ</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep">
 					<text class="xuhao">04</text>
-					<view class="setname"><label>µÈ´ý¼¤»î/³äÖµ</label><text>ÒÑÖ§¸¶¶©µ¥</text></view>
+					<view class="setname"><label>ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½Öµ</label><text>ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</text></view>
 					<!-- <em>>>>>>></em> -->
 				</view>
 			</view>
@@ -37,38 +37,38 @@
 					<view class="choice">
 						<view class="tab curr">
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text>»î¶¯È¯¼¤»î</text>
+							<text>ï¿½î¶¯È¯ï¿½ï¿½ï¿½ï¿½</text>
 						</view>
 					</view>
 					<view class="module" style="height: 66%;">
-						<view class="hh">´ýÊÛÏêÇé <em></em></view>
-						<!-- Ã»Ë¢¿¨Ê±ÏÔÊ¾ -->
+						<view class="hh">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ <em></em></view>
+						<!-- Ã»Ë¢ï¿½ï¿½Ê±ï¿½ï¿½Ê¾ -->
 						<view class="swipetip" v-if="view.swipe_tip">
 							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-							<text>ÇëÏÈË¢¿¨Â¼Èë</text>
+							<text>ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½Â¼ï¿½ï¿½</text>
 						</view>
-						<!-- Ë¢¿¨ºóÏÔÊ¾¿¨ÁÐ±í -->
+						<!-- Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ð±ï¿½ -->
 						<view class="cardlist">
 							<view class="ulli" v-for="sales in source.sale2_union_sale6">
 								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
-									<label>£¤{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}ÕÅ</text></label>
+									<label>ï¿½ï¿½{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}ï¿½ï¿½</text></label>
 									<view class="zje">
-										<view><text>×Ü½ð¶î</text>£¤{{ sales.sale002.NET }}</view>
+										<view><text>ï¿½Ü½ï¿½ï¿½ï¿½</text>ï¿½ï¿½{{ sales.sale002.NET }}</view>
 										<button @click="remove_union(sales)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button>
 									</view>
 								</view>
 								<view class="card-num">
-									<label>Ê¼£º<text>{{ sales.sale006.KQIDS }}</text></label>
-									<label>ÖÕ£º<text>{{ sales.sale006.KQIDE }}</text></label>
+									<label>Ê¼ï¿½ï¿½<text>{{ sales.sale006.KQIDS }}</text></label>
+									<label>ï¿½Õ£ï¿½<text>{{ sales.sale006.KQIDE }}</text></label>
 								</view>
 								<view class="statistic">
-									<label><em>¡ñ</em><text>×ÜÕÛ¿Û£º</text>567</label>
-									<label><em>¡ñ</em><text>Ä¬ÈÏÕÛ¿Û£º</text>5</label>
-									<label><em>¡ñ</em><text>±ê×¼ÕÛ¿Û£º</text>54</label>
-									<label><em>¡ñ</em><text>ÌØÅúÕÛ¿Û£º</text>5</label>
+									<label><em>ï¿½ï¿½</em><text>ï¿½ï¿½ï¿½Û¿Û£ï¿½</text>567</label>
+									<label><em>ï¿½ï¿½</em><text>Ä¬ï¿½ï¿½ï¿½Û¿Û£ï¿½</text>5</label>
+									<label><em>ï¿½ï¿½</em><text>ï¿½ï¿½×¼ï¿½Û¿Û£ï¿½</text>54</label>
+									<label><em>ï¿½ï¿½</em><text>ï¿½ï¿½ï¿½ï¿½ï¿½Û¿Û£ï¿½</text>5</label>
 								</view>
 							</view>
 
@@ -77,12 +77,12 @@
 					<view class="totals">
 						<view>
 							<em></em>
-							<label>×ÜÊýÁ¿£º<text>{{ unpaid_total_quantity }}</text></label>
-							<label>×Ü½ð¶î£º<text>£¤{{ unpaid_total_amount }}</text></label>
+							<label>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½<text>{{ unpaid_total_quantity }}</text></label>
+							<label>ï¿½Ü½ï¿½ï¿½î£º<text>ï¿½ï¿½{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn" @click="to_payment">È·ÈÏÖ§¸¶</button>
+						<button class="btn" @click="to_payment">È·ï¿½ï¿½Ö§ï¿½ï¿½</button>
 					</view>
-					<!-- ÆðÊ¼¿¨ºÅ -->
+					<!-- ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
 				</view>
 				<view class="operation operation-correct">
@@ -100,7 +100,7 @@
 					</view>
 				</view>
 				<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002"></SpecialDisc>
-				<!-- »­²¼ -->
+				<!-- ï¿½ï¿½ï¿½ï¿½ -->
 				<view class="canvasdiv" :style="'visibility:hidden;'">
 					<canvas canvas-id="couponQrcode" class="canvas"
 						:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
@@ -122,7 +122,6 @@
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
 	import main from '@/api/business/main.js';
-	//´òÓ¡Ïà¹Ø
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
 		RequestSend
@@ -131,11 +130,6 @@
 		Sale3Model,
 		Sale3ModelAdditional
 	} from '@/bll/PaymentBusiness/bll.js';
-	//´òÓ¡Ïà¹Ø
-	import PrinterPage from '@/pages/xprinter/receipt';
-	import {
-		RequestSend
-	} from '@/api/business/da.js';
 		
 	var $ = null;
 	export default {
@@ -172,32 +166,32 @@
 				},
 				sale: null,
 				container: null,
-				//´òÓ¡Ïà¹Ø
+				//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
 				jpgWidth: 1,
 				jpgHeight: 1,
-				qrCodeWidth: 256, //¶þÎ¬Âë¿í
-				qrCodeHeight: 256, // ¶þÎ¬Âë¸ß
+				qrCodeWidth: 256, //ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½
+				qrCodeHeight: 256, // ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				FKDA_INFO: [], //¸¶¿îÐÅÏ¢
+				FKDA_INFO: [], //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 			}
 		},
 		onReady: function() {
 			let that = this;
-			//²éÑ¯¸¶¿î·½Ê½
+			//ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½î·½Ê½
 			(util.callBind(that, async function() {
 				try {
 					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(that, function(res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);
 							util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]»ñÈ¡Ö§¸¶·½Ê½==========:", that.FKDA_INFO);
+							console.log("[GetSale]ï¿½ï¿½È¡Ö§ï¿½ï¿½ï¿½ï¿½Ê½==========:", that.FKDA_INFO);
 						} else {
-							console.log("»ñÈ¡¸¶¿î·½Ê½Ê§°Ü!======",err);
+							console.log("ï¿½ï¿½È¡ï¿½ï¿½ï¿½î·½Ê½Ê§ï¿½ï¿½!======",err);
 						}
 					}))
 				} catch (err) {
-					console.log("»ñÈ¡¸¶¿î·½Ê½Ê§°Ü!======",err);
+					console.log("ï¿½ï¿½È¡ï¿½ï¿½ï¿½î·½Ê½Ê§ï¿½ï¿½!======",err);
 				}
 			}))()
 		},
@@ -211,17 +205,17 @@
 		},
 		watch: {
 			'form.start_coupon_no'(n, o) {
-				console.log("[Watch-Coupon]È¯ºÅ·¢Éú±ä¸ü...");
+				console.log("[Watch-Coupon]È¯ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
 			},
 			'view.no_input'(n, o) {
 				if (n === true) {
 					uni.$once("GetCardNums", $(function(data) {
-						console.log("[Watch-Number-Info]»ñÈ¡µ½ºÅÂëÐÅÏ¢:", data);
+						console.log("[Watch-Number-Info]ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢:", data);
 						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6
 							.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE ===
 							data.end_num);
-						if (added) { //ÅÐ¶ÏÊÇ·ñ³öÏÖÖØºÏµÄÈ¯ºÅ
-							util.simpleMsg('µ±Ç°ÆðÊ¼»ò½áÊøÈ¯ºÅÒÑ±»Ìí¼Ó£¬ÇëÖØÐÂÂ¼Èë!')
+						if (added) { //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØºÏµï¿½È¯ï¿½ï¿½
+							util.simpleMsg('ï¿½ï¿½Ç°ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¯ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½!')
 							return;
 						}
 						this.form.start_coupon_no = data.begin_num;
@@ -260,9 +254,9 @@
 					if (res.code) {
 						this.FKDA_INFO = JSON.parse(res.data);
 						util.setStorage('FKDA_INFO', this.FKDA_INFO)
-						console.log("[GetPaymentInfos]»ñÈ¡Ö§¸¶·½Ê½:", this.FKDA_INFO);
+						console.log("[GetPaymentInfos]ï¿½ï¿½È¡Ö§ï¿½ï¿½ï¿½ï¿½Ê½:", this.FKDA_INFO);
 					} else {
-						console.log("[GetPaymentInfos]»ñÈ¡¸¶¿î·½Ê½Ê§°Ü!", res);
+						console.log("[GetPaymentInfos]ï¿½ï¿½È¡ï¿½ï¿½ï¿½î·½Ê½Ê§ï¿½ï¿½!", res);
 					}
 				}))
 			},
@@ -309,32 +303,32 @@
 				});
 			},
 			async coupon_sale() {
-				console.log("[CouponSale]¿ªÊ¼ÊÛÈ¯Á÷³Ì...");
+				console.log("[CouponSale]ï¿½ï¿½Ê¼ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½...");
 				var good_id = null;
 				await this.coupon_info_search().then($(function(res) {
-					console.log("[CouponSale]È¯ÐÅÏ¢²éÑ¯:", res);
+					console.log("[CouponSale]È¯ï¿½ï¿½Ï¢ï¿½ï¿½Ñ¯:", res);
 					if (res.code) {
 						good_id = res.data.coupon_good_no;
 						return this.coupon_store_search(good_id);
 					} else {
-						util.simpleMsg("È¯ÐÅÏ¢²éÑ¯ÓÐÎó!" + (res?.msg || ""), true)
+						util.simpleMsg("È¯ï¿½ï¿½Ï¢ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½!" + (res?.msg || ""), true)
 					}
 				})).then($(function(res) {
-					console.log("[CouponSale]È¯¿â´æÐ£Ñé:", res);
+					console.log("[CouponSale]È¯ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½:", res);
 					let data = res.data;
 					if (res.code && data?.length && data[0].CARDNUM != 0) {
 						return this.coupon_segment_valid();
 					} else {
-						util.simpleMsg("È¯¿â´æÐ£ÑéÓÐÎó£¬Çë¼ì²éÊÇ·ñÔÚµ±Ç°ÃÅµêÈ¯¿â´æ!" + (res?.msg || ""), true)
+						util.simpleMsg("È¯ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Úµï¿½Ç°ï¿½Åµï¿½È¯ï¿½ï¿½ï¿½ï¿½!" + (res?.msg || ""), true)
 					}
 				})).then($(async function(res) {
-					console.log("[CouponSale]È¯¿É·¢ÊÛºÅ¶ÎÐ£Ñé:", res);
+					console.log("[CouponSale]È¯ï¿½É·ï¿½ï¿½ÛºÅ¶ï¿½Ð£ï¿½ï¿½:", res);
 					if (res.code) {
 						try {
 							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count,
 								res
 								.data.coupon_value);
-							if (this.source.sale001 === null) { //ÅÐ¶ÏÊÇ·ñ´æÔÚ sale001£¬²»´æÔÚÔò´´½¨
+							if (this.source.sale001 === null) { //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ sale001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò´´½ï¿½
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
@@ -353,41 +347,41 @@
 								sale002,
 								sale006
 							});
-							console.log("[CouponSale]ÒÑ¼ÓÈëµ½´ýÖ§¸¶ÁÐ±í:", this.source);
+							console.log("[CouponSale]ï¿½Ñ¼ï¿½ï¿½ëµ½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½Ð±ï¿½:", this.source);
 						} catch (e) {
-							console.log("[CouponSale]È¯ÉÌÆ·ÐÅÏ¢²éÑ¯Ê§°Ü:", e);
+							console.log("[CouponSale]È¯ï¿½ï¿½Æ·ï¿½ï¿½Ï¢ï¿½ï¿½Ñ¯Ê§ï¿½ï¿½:", e);
 						}
 					} else {
-						util.simpleMsg("È¯¿ÉÏúÊÛºÅ¶ÎÐ£ÑéÓÐÎó!" + (res?.msg || ""), true);
+						util.simpleMsg("È¯ï¿½ï¿½ï¿½ï¿½ï¿½ÛºÅ¶ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!" + (res?.msg || ""), true);
 					}
 				})).then($(function() {
 					this.form = this.$options.data().form;
-					console.log("[CouponSale]ÖØÖÃ±íµ¥ÐÅÏ¢Íê³É...");
+					console.log("[CouponSale]ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½...");
 				}));
 			},
 			async coupon_activate() {
-				console.log("[CouponActivate]×¼±¸¿ªÊ¼È¯ºÅ¼¤»îÁ÷³Ì...");
+				console.log("[CouponActivate]×¼ï¿½ï¿½ï¿½ï¿½Ê¼È¯ï¿½Å¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
 				await this.coupon_segment_distribute().then($(function(res){
-					console.log("[CouponActivate]È¯ºÅ¼¤»îÉêÇë½á¹û:",res);
+					console.log("[CouponActivate]È¯ï¿½Å¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:",res);
 					if (res.code) {
 						return this.coupon_segment_activate();
 					} else {
-						util.simpleMsg("È¯¼¤»îÉêÇëÊ§°Ü!" + (res?.msg || ""), true);
+						util.simpleMsg("È¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½!" + (res?.msg || ""), true);
 					}
 				})).then($(function(res){
-					console.log("[CouponActivate]È¯ºÅ¼¤»î½á¹û:",res);
+					console.log("[CouponActivate]È¯ï¿½Å¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:",res);
 					if (res.code) {
-						util.simpleMsg("È¯¼¤»î³É¹¦!" , true);
+						util.simpleMsg("È¯ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½!" , true);
 					} else {
-						this.source.sale001.STR1 = "¼¤»îÊ§°Ü";
-						util.simpleMsg("È¯¼¤»îÊ§°Ü!" + (res?.msg || ""), true);
+						this.source.sale001.STR1 = "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½";
+						util.simpleMsg("È¯ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½!" + (res?.msg || ""), true);
 					}
 				}))
-				console.log("[CouponActivate]È¯ºÅ¼¤»îÁ÷³ÌÖ´ÐÐÍê±Ï...");
-				this.save_orders();//×îºóÉú³É¶©µ¥£¨¼¤»î³É¹¦Óë·ñ²»Ó°Ïì¶©µ¥Éú³É£¬µ«ÊÇÐèÒª¼ÇÂ¼¼¤»î½á¹û£¬ËùÒÔµÃÐ´ÔÚ¼¤»îºó£©
+				console.log("[CouponActivate]È¯ï¿½Å¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
+				this.save_orders();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ì¶©ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½Ð´ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			},
-			async save_orders() {//ÒòÎªÄ¿Ç°ÊÇ×÷Îª×îºóÁ÷³ÌÖ´ÐÐ£¬ËùÒÔÉú³ÉÍêµ¥¾Ýºó£¬ÖØÖÃÏÂ¶©µ¥ÐÅÏ¢
-				console.log("[SaveOrders]×¼±¸¿ªÊ¼Éú³É¶©µ¥£¬²¢ÉÏ´«¶©µ¥ÐÅÏ¢µ½·þÎñÆ÷...");
+			async save_orders() {//ï¿½ï¿½ÎªÄ¿Ç°ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êµ¥ï¿½Ýºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+				console.log("[SaveOrders]×¼ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
 				try{
 					let created_sales_result = await this.sale.Completed({
 						SALE001: this.source.sale001,
@@ -395,17 +389,17 @@
 						SALE003: this.source.sale003,
 						SXSALE001: this.source.sxsale001
 					});
-					console.log("[SaveOrders]ÉÏ´«Íê±Ï£¬ÉÏ´«½á¹û£º", created_sales_result);
+					console.log("[SaveOrders]ï¿½Ï´ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", created_sales_result);
 					this.receipt_printing(this.source);
 					this.source = this.$options.data().source;
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
 				}catch(e){
-					console.log("[SaveOrders]Ö´ÐÐÒì³£:",e);
+					console.log("[SaveOrders]Ö´ï¿½ï¿½ï¿½ì³£:",e);
 				}
 			},
-			receipt_printing(source){//´òÓ¡´úÂëÐ´ÔÚÏÂÃæ
+			receipt_printing(source){//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			    let that = this;
-				//µ÷ÓÃ´òÓ¡
+				//ï¿½ï¿½ï¿½Ã´ï¿½Ó¡
 				let printerPram = {
 					"PRINTNUM": 1,
 					"XSTYPE": "SQ",
@@ -425,26 +419,26 @@
 				that.$refs.printerPage.sksqBluePrinter(that.source.sale001, that.source.sale002,arr3,that.source.sale006, printerPram);
 			},
 			credit_sales_create() {
-				console.log("[CreditSalesCreate]×¼±¸¿ªÊ¼´´½¨ÉÞÏúµ¥¾Ý¼ÇÂ¼...");
+				console.log("[CreditSalesCreate]×¼ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼ï¿½Â¼...");
 				this.source.sxsale001 = this.factory.get_sxsale001(this.source.sale001, {
 					SX_STATUS: 1,
 					DKFNAME: this.source.big_customer_info.NAME,
 					DKFID: this.source.big_customer_info.DKHID,
 				});
-				console.log("[CreditSalesCreate]´´½¨ÉÞÏúµ¥¾Ý¼ÇÂ¼Íê³É...");
-				console.log("[CreditSalesCreate]×¼±¸¿ªÊ¼´´½¨ÉÞÏúµ¥¾ÝÖ§¸¶¼ÇÂ¼...");
+				console.log("[CreditSalesCreate]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½...");
+				console.log("[CreditSalesCreate]×¼ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Â¼...");
 				this.source.sale003.push(this.factory.get_sale003(this.source.sale001, {
 					FKID: "ZG01",
 					AMT: this.source.sale001.TNET
 				}));
-				console.log("[CreditSalesCreate]´´½¨ÉÞÏúµ¥¾ÝÖ§¸¶¼ÇÂ¼Íê³É...");
-				console.log("[CreditSalesCreate]´´½¨½á¹û:", this.source);
+				console.log("[CreditSalesCreate]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½...");
+				console.log("[CreditSalesCreate]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:", this.source);
 			},
 			to_payment() {
-				console.log("[ToPayment]×¼±¸¿ªÊ¼½øÈëÖ§¸¶²Ù×÷£¬ÅÐ¶ÏÊÇ·ñ½øÐÐÉÞÏú²Ù×÷...", this.source.enable_credit);
+				console.log("[ToPayment]×¼ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...", this.source.enable_credit);
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
-					this.coupon_activate();//¿ªÊ¼È¯ÉêÇë¼¤»îÁ÷³Ì
+					this.coupon_activate();//ï¿½ï¿½Ê¼È¯ï¿½ï¿½ï¿½ë¼¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				} else
 					this.sale.RedirectToPayment({
 						sale001: this.source.sale001,
@@ -452,7 +446,7 @@
 						paid: this.source.paid,
 						action: 'Payment',
 						complet: $(function(result) {
-							console.log("[ToPayment]Ö§¸¶Íê³É£¬Ö§¸¶½á¹û:", result);
+							console.log("[ToPayment]Ö§ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:", result);
 							if (result.code) {
 								let salas = result.data;
 								this.source.sale001 = Object.cover(this.factory.get_sale001(), salas
@@ -463,23 +457,23 @@
 								this.source.sale003 = salas.sale3_arr.map($(function(sale3) {
 									return this.factory.get_sale003(this.source.sale001, sale3)
 								}));
-								this.coupon_activate();//¿ªÊ¼È¯ÉêÇë¼¤»îÁ÷³Ì
+								this.coupon_activate();//ï¿½ï¿½Ê¼È¯ï¿½ï¿½ï¿½ë¼¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 							}
 						})
 					});
 			},
 			event_monitor(){
 				this.event_register('close-tszk',$(function(data){
-					console.log("[EventMonitor]ÓÃ»§Ñ¡ÔñµÄÕÛ¿ÛÐÅÏ¢:",data);
-					this.view.enable_special_discount = false;//¹Ø±ÕÌØÊâÕÛ¿Ûµ¯´°
+					console.log("[EventMonitor]ï¿½Ã»ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½Ï¢:",data);
+					this.view.enable_special_discount = false;//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û¿Ûµï¿½ï¿½ï¿½
 				}));
 				this.event_register("big-customer-close", $(function(data) {
-					console.log("[Created]´ó¿Í»§»Øµ÷:", data);
+					console.log("[Created]ï¿½ï¿½ï¿½Í»ï¿½ï¿½Øµï¿½:", data);
 					if (data.exists_credit) {
-						this.source.enable_credit = true; //ÆôÓÃÉÞÏú
+						this.source.enable_credit = true; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						this.source.big_customer_info = data;
 						this.source.discount_infos = this.get_discount_data(data.DKHID);
-						console.log("[Created]»ñÈ¡µ±Ç°´ó¿Í»§ÕÛ¿ÛÐÅÏ¢:", this.source.discount_infos);
+						console.log("[Created]ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Í»ï¿½ï¿½Û¿ï¿½ï¿½ï¿½Ï¢:", this.source.discount_infos);
 					}
 				}));
 			},
@@ -491,8 +485,8 @@
 		created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			$ = util.callContainer(this);
-			this.event_monitor();//ÅúÁ¿ÊÂ¼þ´¦Àí
-			this.get_payment_infos();//»ñÈ¡Ö§¸¶ÐÅÏ¢
+			this.event_monitor();//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
+			this.get_payment_infos();//ï¿½ï¿½È¡Ö§ï¿½ï¿½ï¿½ï¿½Ï¢
 			//test code...
 			this.KHID = "K200QTD006";
 		},

@@ -12,10 +12,11 @@
 				<view class="number">
 					<view class="labnum">
 						<text>开始卡号：</text>
-						<label><image src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
-							<input type="text" placeholder="请输入开始卡号" v-model="beginNum"
-							:focus="curFocus=='beginNum'"
-							@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
+						<label>
+							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
+								@click="ScanCodeHandle('beginNum')"></image>
+							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
+								@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
 						</label>
 						<view class="classifys">
 							<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
@@ -24,9 +25,11 @@
 					</view>
 					<view class="labnum" v-if="isbatchOperation">
 						<text>截止卡号：</text>
-						<label><image src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
+						<label>
+							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
+							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='beginNum'"
-							@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
+								@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -34,7 +37,7 @@
 					</label>
 				</view>
 				<view class="confirm">
-					<button class="btn btn-qx" @click="ScanCodeHandle">刷卡/扫码</button>
+					<!-- <button class="btn btn-qx" @click="ScanCodeHandle">刷卡/扫码</button> -->
 					<button class="btn btn-qx" @click="Cancel">取消</button>
 					<button class="btn" @click="Confirm">确认</button>
 				</view>
@@ -65,7 +68,7 @@
 				store: getApp().globalData.store,
 				// focus: true
 				exists_credit: false,
-				isbatchOperation:false
+				isbatchOperation: false
 			};
 		},
 		created() {
@@ -80,11 +83,11 @@
 		methods: {
 			CreditMode: function(is_credit) {
 				this.exists_credit = is_credit;
-				if(is_credit){
-				        this.isbatchOperation=true
-				    }else{
-				      this.isbatchOperation=false
-				    }
+				if (is_credit) {
+					this.isbatchOperation = true
+				} else {
+					this.isbatchOperation = false
+				}
 			},
 			Cancel: function() {
 				console.log("事件触发");
@@ -126,7 +129,8 @@
 				}, 500);
 			},
 			ScanCodeHandle: function(prop) {
-				prop = that.curFocus;
+				// prop = that.curFocus;
+				that.curFocus = prop;
 				console.log("[ScanCodeHandle]对应属性名称:", prop);
 				if (this.scan_code) { //扫码
 					uni.scanCode({
