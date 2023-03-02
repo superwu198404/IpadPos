@@ -1,400 +1,378 @@
 {
-    "pages" : [
-        {
-            "path" : "pages/start/start",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "初始化",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/index/index",
-            "style" : {
-                "navigationBarTitleText" : "首页",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Home/Home",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "首页",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/TestDemon/TestDemon",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/TestDemon/CxCount",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Payment/Payment",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "订单支付",
-                "enablePullDownRefresh" : false,
-                "disableSwipeBack" : true
-            }
-        },
-        {
-            "path" : "pages/Payment/PaymentAll",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "订单支付",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/modal/modal",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Barcode/Barcode",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/QRCode/QRCode",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/mainSale/MainSale",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false,
-                "mp-alipay" : {
-                    "allowsBounceVertical" : "NO"
-                }
-            }
-        },
-        {
-            "path" : "pages/hyinfo/index",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Refund/Refund",
-            "style" : {
-                "navigationBarTitleText" : "订单退款",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/sqlitetest/sqlitetest",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/xprinter/home",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/xprinter/bleConnect",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/xprinter/receipt",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/TakeAway/TakeAway",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/TakeYD/TakeYD",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Login/Login",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/MemberLogin/MemberLogin",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Main/Main",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/RefundOrder/RefundOrder",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Admin/Admin",
-            "style" : {
-                "navigationBarTitleText" : "管理页",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Reserve/Reserve",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Extract/Extract",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/RefundOrder/SXRefund",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/OnlineOrders/OnlineOrders",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Message/Message",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/OnlinePick/OnlinePick",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/CreditSettlement/CreditSettlement",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Promotion/Promotion",
-            "style" : {
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Center/Center",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Reserve/ReserveDrawer",
-            "style" : {}
-        },
-        {
-            "path" : "components/saomaqiang/saomaqiang",
-            "style" : {}
-        },
-        {
-            "path" : "pages/UnUpload/UnUpload",
-            "style" : {}
-        },
-        {
-            "path" : "components/rijie/rijie",
-            "style" : {}
-        },
-        {
-            "path" : "components/BigCustomer/BigCustomer",
-            "style" : {}
-        },
-        {
-            "path" : "pages/Home/Component/Head",
-            "style" : {}
-        },
-        {
-            "path" : "pages/TestDemon/Swiper",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/CakeReservation/CakeReservation",
-            "style" : {}
-        },
-        {
-            "path" : "pages/xiangqing/xiangqing",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "components/blackmonth-swiper/index",
-            "style" : {}
-        },
-        {
-            "path" : "pages/Querypage/Storeinquiry/Storeinquiry",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Querypage/TakeawayCX/TakeawayCX",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Sellingcard/Sellingcard",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/CardSale/CardSale",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-		{
-		    "path" : "pages/CardActive/CardActive",
-		    "style" : {
-		        "titleNView" : false,
-		        "navigationBarTitleText" : "",
-		        "enablePullDownRefresh" : false
-		    }
+
+	"pages": [{
+			"path": "pages/start/start",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "初始化",
+				"enablePullDownRefresh": false
+			}
 		},
-        {
-            "path" : "pages/CouponSale/CouponSale",
-            "style" : {
-                "titleNView" : false,
-                "navigationBarTitleText" : "",
-                "enablePullDownRefresh" : false
-            }
-        },
-        {
-            "path" : "pages/Home/Component/Pagekq",
-            "style" : {}
-        }
-    ],
-    "globalStyle" : {
-        "navigationBarTextStyle" : "black",
-        "navigationBarTitleText" : "uni-app",
-        "navigationBarBackgroundColor" : "#F8F8F8",
-        "backgroundColor" : "#F8F8F8",
-        "pageOrientation" : "landscape"
-    },
-    "easycom" : {
-        "autoscan" : true,
-        "custom" : {
-            "tui-(.*)" : "@/components/thorui/tui-$1/tui-$1.vue"
-        }
-    },
-    // "(.*)": "@/pages/$1/$1.vue" 
-    "app-plus" : {
-        "softinputMode" : "adjustResize",
-        "splashscreen" : {
-            "alwaysShowBeforeRender" : false,
-            "waiting" : true,
-            "autoclose" : false,
-            "delay" : 0
-        }
-    },
-    "condition" : {
-        //模式配置，仅开发期间生效
-        "current" : 0, //当前激活的模式(list 的索引项)
-        "list" : [
-            {
-                "name" : "", //模式名称
-                "path" : "pages/start/start", //启动页面，必选  
-                "query" : "" //启动参数，在页面的onLoad函数里面得到
-            }
-        ]
-    },
-    "usingComponents" : {
-        "movable" : "/components/movable/movable",
-        "qiandao" : "/components/qiandao/qiandao",
-        "rijie" : "/components/rijie/rijie",
-        "saomaqiang" : "/components/saomaqiang/saomaqiang",
-        "cdxp" : "/components/cdxp/cdxp",
-        "query" : "/Home/query/query"
-    }
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Home/Home",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/TestDemon/TestDemon",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/TestDemon/CxCount",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Payment/Payment",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "订单支付",
+				"enablePullDownRefresh": false,
+				"disableSwipeBack": true
+			}
+		},
+		{
+			"path": "pages/Payment/PaymentAll",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "订单支付",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/modal/modal",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Barcode/Barcode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/QRCode/QRCode",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mainSale/MainSale",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"mp-alipay": {
+					"allowsBounceVertical": "NO"
+				}
+			}
+		},
+		{
+			"path": "pages/hyinfo/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Refund/Refund",
+			"style": {
+				"navigationBarTitleText": "订单退款",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/sqlitetest/sqlitetest",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/xprinter/home",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/xprinter/bleConnect",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/xprinter/receipt",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/TakeAway/TakeAway",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/TakeYD/TakeYD",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Login/Login",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/MemberLogin/MemberLogin",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Main/Main",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/RefundOrder/RefundOrder",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Admin/Admin",
+			"style": {
+				"navigationBarTitleText": "管理页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Reserve/Reserve",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Extract/Extract",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/RefundOrder/SXRefund",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/OnlineOrders/OnlineOrders",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Message/Message",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/OnlinePick/OnlinePick",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/CreditSettlement/CreditSettlement",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Promotion/Promotion",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Center/Center",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Reserve/ReserveDrawer",
+			"style": {}
+		},
+		
+		{
+			"path": "pages/UnUpload/UnUpload",
+			"style": {}
+		},
+		{
+			"path": "pages/TestDemon/Swiper",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/CakeReservation/CakeReservation",
+			"style": {}
+		},
+		{
+			"path": "pages/xiangqing/xiangqing",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "components/blackmonth-swiper/index",
+			"style": {}
+		},
+		{
+			"path": "pages/Querypage/Storeinquiry/Storeinquiry",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Querypage/TakeawayCX/TakeawayCX",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Sellingcard/Sellingcard",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/CardSale/CardSale",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/CouponSale/CouponSale",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Cardquery/Cardquery",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"pageOrientation": "landscape"
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue"
+		}
+	},
+	// "(.*)": "@/pages/$1/$1.vue" 
+	"app-plus": {
+		"softinputMode": "adjustResize",
+		"splashscreen": {
+			"alwaysShowBeforeRender": false,
+			"waiting": true,
+			"autoclose": false,
+			"delay": 0
+		}
+	},
+	"condition": {
+		//模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "pages/start/start", //启动页面，必选  
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	},
+	"usingComponents": {
+		"movable": "/components/movable/movable",
+		"qiandao": "/components/qiandao/qiandao",
+		"rijie": "/components/rijie/rijie",
+		"saomaqiang": "/components/saomaqiang/saomaqiang",
+		"cdxp": "/components/cdxp/cdxp",
+		"query":"/Home/query/query"
+	}
 }

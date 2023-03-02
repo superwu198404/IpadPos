@@ -22,54 +22,6 @@
 </template>
 
 <script>
-	export default {
-		name: "Pagekq",
-		//属性
-		//组件生命周期
-		created:function(e){
-		
-		},
-		data() {
-			return {
-				menukq: [
-					{
-						icon_open: '@/image/img2/kakaka-hui.png',
-						icon_close: '@/image/img2/kakaka.png',
-						nameSale:'VIP卡充值'
-					},
-					{
-						icon_open: '@/image/img2/lpkjih-bai.png',
-						icon_close: '@/image/img2/lpkjih.png',
-						nameSale:'礼品卡激活'
-					},
-					{
-						icon_open: '@/image/img2/quanquan-hui.png',
-						icon_close: '@/image/img2/quanquan.png',
-						nameSale:'券销售'
-					},
-					{
-						icon_open: '@/image/img2/kachaxun.png',
-						icon_close: '@/image/img2/kachaxun-bai.png',
-						nameSale:'卡查询'
-					},
-					,
-					{
-						icon_open: '@/image/img2/quancx.png',
-						icon_close: '@/image/img2/quancx-bai.png',
-						nameSale:'券查询'
-					}
-				],
-				Selected:0,
-					//点击事件要控制的参数 页面的层级都为0 所以 v-if 所在的容器隐藏了，通过这个属性来控制
-				};
-		},
-		
-		methods: {
-	
-		}
-	}
-</script>
-<script>
 	import base_sale from '@/utils/sale/base_sale.js'
 	import util from '@/utils/util.js';
 	import db from '@/utils/db/db_excute.js';
@@ -78,7 +30,7 @@
 		components: {
 			Promotion
 		},
-		name: "Page",
+		name: "Pagekq",
 		props: {
 			current: String
 		},
@@ -97,7 +49,6 @@
 		},
 		data() {
 			return {
-				
 				menukq: [
 					{
 						icon_open: require('@/images/img2/kakaka.png'),

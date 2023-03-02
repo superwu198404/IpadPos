@@ -17,6 +17,7 @@
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
+								<button v-if="emptys">×</button>
 						</label>
 						<view class="classifys">
 							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
@@ -30,6 +31,7 @@
 							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
+								<button v-if="emptys">×</button>
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -117,6 +119,7 @@
 			ScanCodeHandle: function(prop) {
 				// prop = that.curFocus;
 				that.curFocus = prop;
+				
 				console.log("[ScanCodeHandle]对应属性名称:", prop);
 				if (this.scan_code) { //扫码
 					uni.scanCode({
@@ -129,6 +132,7 @@
 										this.endNum = result.result;
 									} else {
 										that.curFocus = "endNum";
+										
 									}
 								}
 							} else

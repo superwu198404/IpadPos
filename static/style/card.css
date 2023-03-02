@@ -248,6 +248,8 @@
 	display: flex;
 	justify-content: space-between;
 	background: linear-gradient(90deg, #E8FFEA 0%, #FFFFFF 100%);
+	position: relative;
+	z-index: 8;
 }
 .cardlist .ulli .h6 image{
 	width:30rpx;
@@ -297,7 +299,7 @@
 .ulli .card-num{
 	padding:2% 0;
 	position: relative;
-	z-index: 1;
+	z-index: 8;
 	border-bottom: 2rpx solid #E8F5E9;
 }
 .ulli .card-num label{
@@ -315,6 +317,8 @@
 	padding:1.5% 4%;
 	display: flex;
 	flex-wrap: wrap;
+	position: relative;
+	z-index: 8;
 }
 .statistic label{
 	display: block;
@@ -396,6 +400,18 @@
 	border:1px solid #98C3B3;
 	background-color: #F2F6F6;
 }
+.number .labnum label button{
+	width: 32rpx;
+	height: 32rpx;
+	background: #98C3B3;
+	border-radius: 50%;
+	font-size: 18rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding:0;
+	color: #fff;
+}
 .popup .confirm button:nth-child(1){
 	margin-right: 5%;
 }
@@ -414,6 +430,7 @@
 	display: flex;
 	align-items: center;
 	font-size: 28rpx;
+	width: 90%;
 }
 .zxpro .totals view em{
 	display: inline-block;
@@ -507,4 +524,81 @@
 .list-delete image{
 	width:50rpx;
 	height: 50rpx;
+}
+.partics{
+	display: flex;
+	height: 79%;
+	position: relative;
+	z-index: 9;
+}
+.partics .cardqs{
+	width: 44%;
+	margin-right:2%;
+}
+.partics .carddet{
+	width: 54%;
+	background: #F6FDF7;
+	border-radius: 12rpx;
+	border: 2rpx solid #C5E7C8;
+	height: 100%;
+	position: relative;
+}
+.partics .carddet .totals{
+	top:0;
+}
+.cardinfo{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	z-index: 8;
+}
+.leftinfo .kname{
+	font-weight: 700;
+	padding-top:40rpx;
+}
+.leftinfo .kname em{
+	display: inline-block;
+    margin: 0 22rpx 0 0px;
+    width: 8rpx;
+    height: 24rpx;
+    background: #42B14B;
+    border-radius: 6px;
+}
+.denominat{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding-right: 2%;
+	font-size: 26rpx;
+}
+.denominat label{
+	color: #42B14B;
+	line-height: 80rpx;
+	font-size: 30rpx;
+	font-weight: 700;
+}
+.denominat label text{	
+	font-size: 60rpx;
+}
+.kainfolist{
+	padding:120rpx 5% 0;
+	font-size: 28rpx;
+}
+.kainfolist label{
+	height: 80rpx;
+	line-height: 80rpx;
+	display: flex;
+}
+.kainfolist label:nth-child(3){
+	color: #FE694B;
+}
+.kainfolist label:nth-child(3) text:nth-child(1){
+	color: #FE694B;
+}
+.kainfolist label text:nth-child(1){
+	display: inline-block;
+	width:260rpx;
+	color: #b0b0b0;
 }
