@@ -225,7 +225,7 @@ var KQTypeObj = {
 			//vip卡充值不校验库存 所以默认通过
 			func({
 				code: true,
-				msg: "默认校验通过"
+				msg: "vip卡充值:默认校验通过"
 			})
 		},
 		//激活申请（校验）
@@ -233,7 +233,7 @@ var KQTypeObj = {
 			//vip卡充值不需要激活 所以默认通过
 			func({
 				code: true,
-				msg: "默认激活通过"
+				msg: "vip卡充值:默认激活通过"
 			})
 		},
 		//激活确认（校验）
@@ -241,7 +241,7 @@ var KQTypeObj = {
 			//vip卡充值不需要激活 所以默认通过
 			func({
 				code: true,
-				msg: "默认激活通过"
+				msg: "vip卡充值:默认激活通过"
 			})
 		},
 		//激活后充值

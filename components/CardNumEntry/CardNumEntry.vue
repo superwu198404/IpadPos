@@ -37,7 +37,6 @@
 					</label>
 				</view>
 				<view class="confirm">
-					<!-- <button class="btn btn-qx" @click="ScanCodeHandle">刷卡/扫码</button> -->
 					<button class="btn btn-qx" @click="Cancel">取消</button>
 					<button class="btn" @click="Confirm">确认</button>
 				</view>
@@ -60,8 +59,8 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "", //1087111000002638
-				endNum: "", //1087111000002658
+				beginNum: "1087110000744331", //1087111000002638
+				endNum: "1087110000744331", //1087111000002658
 				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
@@ -75,14 +74,6 @@
 			that.store = _util.getStorage("store");
 		},
 		methods: {
-			// CreditMode: function(is_credit) {
-			// 	this.exists_credit = is_credit;
-			// 	if (is_credit) {
-			// 		this.single = true
-			// 	} else {
-			// 		this.single = false
-			// 	}
-			// },
 			Cancel: function() {
 				console.log("事件触发");
 				this.$emit("update:show", false);
