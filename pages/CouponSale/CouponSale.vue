@@ -92,14 +92,14 @@
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
+							<image src="../../images/VIP-dlu.png" mode="widthFix" @click="view.enable_special_discount=true"></image>
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 					</view>
 				</view>
-				
+				<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002"></SpecialDisc>
 				<!-- 画布 -->
 				<view class="canvasdiv" :style="'visibility:hidden;'">
 					<canvas canvas-id="couponQrcode" class="canvas"
@@ -116,19 +116,21 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue';
+	
 	import member from '@/api/hy/MemberInterfaces.js';
 	import Sale from '@/utils/sale/card_coupon.js';
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
-	import {
-		Sale3Model,
-		Sale3ModelAdditional
-	} from '@/bll/PaymentBusiness/bll.js';
+	import main from '@/api/business/main.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
+	import {
+		Sale3Model,
+		Sale3ModelAdditional
+	} from '@/bll/PaymentBusiness/bll.js';
 		
 	var $ = null;
 	export default {
@@ -149,6 +151,7 @@
 					swipe_tip: false,
 					big_customer: true,
 					enable_customer: true,
+					enable_special_discount: false
 				},
 				source: {
 					enable_credit: false,
@@ -158,7 +161,9 @@
 					sale006: [],
 					sxsale001: null,
 					sale2_union_sale6: [],
-					coupon_active_success: false
+					coupon_active_success: false,
+					big_customer_info: null,
+					discount_infos: null
 				},
 				sale: null,
 				container: null,
@@ -171,24 +176,6 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //付款信息
 			}
-		},
-		onReady: function() {
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
-						if (res.code) {
-							that.FKDA_INFO = JSON.parse(res.data);
-							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-						} else {
-							console.log("获取付款方式失败!======",err);
-						}
-					}))
-				} catch (err) {
-					console.log("获取付款方式失败!======",err);
-				}
-			}))()
 		},
 		computed: {
 			unpaid_total_quantity() {
@@ -240,6 +227,20 @@
 					this.source.sale006.splice(remove_sale6_index, 1);
 				if (remove_union_index != -1)
 					this.source.sale2_union_sale6.splice(remove_union_index, 1);
+			},
+			async get_discount_data(id){
+				return await _main.GetZKDatasAll(id);
+			},
+			async get_payment_infos(){
+				return await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, $(function(res) {
+					if (res.code) {
+						this.FKDA_INFO = JSON.parse(res.data);
+						util.setStorage('FKDA_INFO', this.FKDA_INFO)
+						console.log("[GetPaymentInfos]获取支付方式:", this.FKDA_INFO);
+					} else {
+						console.log("[GetPaymentInfos]获取付款方式失败!", res);
+					}
+				}))
 			},
 			async coupon_info_search() {
 				return await member.coupon_sale.CouponInfoSearch({
@@ -371,6 +372,7 @@
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
+					this.receipt_printing(this.source);
 					this.source = this.$options.data().source;
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
 				}catch(e){
@@ -400,10 +402,10 @@
 			},
 			credit_sales_create() {
 				console.log("[CreditSalesCreate]准备开始创建赊销单据记录...");
-				this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
+				this.source.sxsale001 = this.factory.get_sxsale001(this.source.sale001, {
 					SX_STATUS: 1,
-					DKFNAME: data.NAME,
-					DKFID: data.DKHID,
+					DKFNAME: this.source.big_customer_info.NAME,
+					DKFID: this.source.big_customer_info.DKHID,
 				});
 				console.log("[CreditSalesCreate]创建赊销单据记录完成...");
 				console.log("[CreditSalesCreate]准备开始创建赊销单据支付记录...");
@@ -442,16 +444,31 @@
 						})
 					});
 			},
+			event_monitor(){
+				this.event_register('close-tszk',$(function(data){
+					console.log("[EventMonitor]用户选择的折扣信息:",data);
+					this.view.enable_special_discount = false;//关闭特殊折扣弹窗
+				}));
+				this.event_register("big-customer-close", $(function(data) {
+					console.log("[Created]大客户回调:", data);
+					if (data.exists_credit) {
+						this.source.enable_credit = true; //启用赊销
+						this.source.big_customer_info = data;
+						this.source.discount_infos = this.get_discount_data(data.DKHID);
+						console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
+					}
+				}));
+			},
+			event_register(event_name, event_callback){
+				uni.off(event_name);
+				uni.$on(event_name, event_callback);
+			}
 		},
 		created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			$ = util.callContainer(this);
-			uni.$on("big-customer-close", $(function(data) {
-				console.log("[Created]大客户回调:", data);
-				if (data.exists_credit) {
-					this.source.enable_credit = true; //启用赊销
-				}
-			}));
+			this.event_monitor();//批量事件处理
+			this.get_payment_infos();//获取支付信息
 			//test code...
 			this.KHID = "K200QTD006";
 		},
