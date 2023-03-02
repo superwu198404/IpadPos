@@ -92,9 +92,14 @@ em{
 	border-radius: 30rpx;
 	font-size: 28rpx;
 	padding: 2rpx;
+	height: 48rpx;
+	line-height:48rpx;
 	border: 2rpx solid #006B44;
 	animation: classy 0.5s ease;
-		-webkit-animation: classy 0.5s ease;
+	-webkit-animation: classy 0.5s ease;
+	display:flex;
+	justify-content: space-between;
+	align-items: center;
 	}
 	@keyframes classy { 
 			0%{
@@ -111,6 +116,8 @@ em{
 	display: inline-block;
 	padding: 4rpx 20rpx;
 	border-radius: 30rpx;
+	height: 44rpx;
+	line-height:44rpx;
 }
 
 .classifys text.curr {
