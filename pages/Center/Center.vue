@@ -52,12 +52,12 @@
 								mode="heightFix"></image>
 						</view>
 					</view>
-					<view class="dates" >
+					<view class="dates">
 						<view @click="ToSale(1)">
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSK()">
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSK(0)">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -69,7 +69,7 @@
 					</view>
 					<view class="sale-card-coupon">
 						<view @click="ToSQ()">售券</view>
-						<view @click="ToSK()">售卡</view>
+						<view @click="ToSK(1)">售卡</view>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
@@ -399,10 +399,21 @@
 				})
 			},
 			//进入售卡
-			ToSK: function() {
-				uni.redirectTo({
-					url: "/pages/CardSale/CardSale"
-				});
+			ToSK: function(e) {
+				console.log("页面参数值：", e);
+				if (e) {
+					uni.redirectTo({
+						url: "/pages/CardActive/CardActive",
+						complete(r) {
+
+							console.log("页面参数值：", r);
+						}
+					});
+				} else {
+					uni.redirectTo({
+						url: "/pages/CardSale/CardSale"
+					});
+				}
 			},
 			ToSQ: function() {
 				uni.redirectTo({
@@ -783,8 +794,8 @@
 	page {
 		overflow: hidden;
 	}
-	
-	.sale-card-coupon{
+
+	.sale-card-coupon {
 		display: flex;
 		flex-direction: column;
 		gap: 20rpx;
@@ -794,9 +805,9 @@
 		margin-right: 50rpx;
 		width: 25%;
 	}
-	
-	.sale-card-coupon > *{
-		flex:1;
+
+	.sale-card-coupon>* {
+		flex: 1;
 		background-color: white;
 		display: flex;
 		align-items: center;

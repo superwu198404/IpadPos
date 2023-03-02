@@ -3163,7 +3163,12 @@ var jpPrinter = {
 		data.sale6List.forEach((item, i) => {
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item.kqids.toString() + " 成功");
+			jpPrinter.setText(item.kqids.toString() + "-");
+			jpPrinter.setPrint(); //打印并换行	
+			
+			jpPrinter.setCharacterSize(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText(item.kqide.toString() + " 成功");
 			jpPrinter.setPrint(); //打印并换行	
 		});
 		
@@ -3175,27 +3180,27 @@ var jpPrinter = {
 		if(type == "SK"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("成功:" + util.tnvl(data.sale6_sumQty,0) + "张" + " 金额:" + util.tnvl(data.sale6_sumNet,0));
+			jpPrinter.setText("成功:" + util.nnvl(data.sale6_sumQty,0) + "张" + " 金额:" + util.tnvl(data.sale6_sumNet,0));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("失败:" + util.tnvl(data.failSumQty,0) + "张" + " 金额:" + util.tnvl(data.failSumNet,0));
+			jpPrinter.setText("失败:" + util.nnvl(data.failSumQty,0) + "张" + " 金额:" + util.tnvl(data.failSumNet,0));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 原金额:" + util.tnvl(data.payableAmount,0));
+			jpPrinter.setText("已优惠金额:" + util.tnvl(data.discountedAmount,0) + " 原金额:" + util.tnvl(data.originalAmount,0));
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("共销售卡券:" + util.tnvl(data.sale6_sumQty,0) + "张");
+			jpPrinter.setText("共销售卡券:" + util.nnvl(data.sale6_sumQty,0) + "张");
 			jpPrinter.setPrint(); //打印并换行
 		}else if(type == "SQ"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("共销售卡券:" + util.tnvl(data.sale6_sumQty,0) + "张");
+			jpPrinter.setText("共销售卡券:" + util.nnvl(data.sale6_sumQty,0) + "张");
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
