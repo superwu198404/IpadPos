@@ -723,7 +723,7 @@
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE": "SK",
+							"XSTYPE": "SKCZ",
 						};
 
 						let arr3 = that.SALE003;

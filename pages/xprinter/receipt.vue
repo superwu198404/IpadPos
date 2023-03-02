@@ -697,7 +697,7 @@
 					return;
 				}
 				//打印数据转换
-				var printerInfo = xprinter_util.skPrinterData(sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType);
+				var printerInfo = xprinter_util.sksqPrinterData(sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
