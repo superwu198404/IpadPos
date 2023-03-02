@@ -131,11 +131,6 @@
 		Sale3Model,
 		Sale3ModelAdditional
 	} from '@/bll/PaymentBusiness/bll.js';
-	//打印相关
-	import PrinterPage from '@/pages/xprinter/receipt';
-	import {
-		RequestSend
-	} from '@/api/business/da.js';
 		
 	var $ = null;
 	export default {
@@ -184,20 +179,20 @@
 		},
 		onReady: function() {
 			let that = this;
-			//查询付款方式
+			//锟斤拷询锟斤拷锟筋方式
 			(util.callBind(that, async function() {
 				try {
 					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(that, function(res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);
 							util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+							console.log("[GetSale]锟斤拷取支锟斤拷锟斤拷式==========:", that.FKDA_INFO);
 						} else {
-							console.log("获取付款方式失败!======",err);
+							console.log("锟斤拷取锟斤拷锟筋方式失锟斤拷!======",err);
 						}
 					}))
 				} catch (err) {
-					console.log("获取付款方式失败!======",err);
+					console.log("锟斤拷取锟斤拷锟筋方式失锟斤拷!======",err);
 				}
 			}))()
 		},
