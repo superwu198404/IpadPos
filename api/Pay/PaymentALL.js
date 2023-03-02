@@ -15,7 +15,7 @@ import {
  * @param {支付方法:支付，退款...} m 
  * @param {业务参数:1} d 
  */
-var CreateData = function(pt, t, m, d) {
+var CreateData = function(pt, t, m, d, load = false) {
 	let data;
 	// let PayInfo = getApp().globalData.PayInfo;
 	let store = util.getStorage("store");
@@ -29,7 +29,7 @@ var CreateData = function(pt, t, m, d) {
 			data = {
 				code: true,
 				http: {
-					load: false,
+					load,
 					url: PayObj.URL, //"/PaymentAll/Handle", //默认值
 					title: t,
 					brand: PayObj.BRAND
@@ -322,7 +322,7 @@ var hykPay = {
 var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
-			if (!config||!config.LONGKEY) {
+			if (!config || !config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -369,7 +369,7 @@ var kengeePay = {
 var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
-			if (!config||!config.NOTE) {
+			if (!config || !config.NOTE) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -383,7 +383,7 @@ var misPay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
-			if (!config||!config.NOTE) {
+			if (!config || !config.NOTE) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
 				return;
@@ -415,7 +415,7 @@ var misPay = {
 var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
-			if (!config||!config.LONGKEY) {
+			if (!config || !config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -429,7 +429,7 @@ var misScanCodePay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
-			if (!config||!config.LONGKEY) {
+			if (!config || !config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
 				return;

@@ -8,7 +8,7 @@
 		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
-				<view class="h1">录入卡号(单卡业务：起始号，截至号一致) <button class="close" @click="Cancel">×</button></view>
+				<view class="h1">录入卡券号<button class="close" @click="Cancel">×</button></view>
 				<view class="number">
 					<view class="labnum">
 						<text>开始卡号：</text>
@@ -16,20 +16,20 @@
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
-								@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
+								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
 						</label>
 						<view class="classifys">
-							<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
-							<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text>
+							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
+							<text @click="single=false" :class="single ? '' : 'curr'">多</text>
 						</view>
 					</view>
-					<view class="labnum" v-if="isbatchOperation">
+					<view class="labnum" v-if="!single">
 						<text>截止卡号：</text>
 						<label>
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
 							</image>
-							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='beginNum'"
-								@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
+							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
+								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -66,29 +66,23 @@
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
 				store: getApp().globalData.store,
-				// focus: true
 				exists_credit: false,
-				isbatchOperation: false
 			};
 		},
 		created() {
 			that = this;
 			$ = _util.callContainer(this);
-			// that.ywType = that.ywtype;
 			that.store = _util.getStorage("store");
-			// setTimeout(() => {
-			//         that.focus = true;
-			// }, 1000)
 		},
 		methods: {
-			CreditMode: function(is_credit) {
-				this.exists_credit = is_credit;
-				if (is_credit) {
-					this.isbatchOperation = true
-				} else {
-					this.isbatchOperation = false
-				}
-			},
+			// CreditMode: function(is_credit) {
+			// 	this.exists_credit = is_credit;
+			// 	if (is_credit) {
+			// 		this.single = true
+			// 	} else {
+			// 		this.single = false
+			// 	}
+			// },
 			Cancel: function() {
 				console.log("事件触发");
 				this.$emit("update:show", false);
@@ -102,11 +96,11 @@
 			Confirm: function() {
 				console.log("事件触发");
 				if (!that.beginNum) {
-					_util.simpleMsg("请输入起始卡号");
+					_util.simpleMsg("请输入起始卡号", true);
 					return;
 				}
-				if (!that.endNum) {
-					_util.simpleMsg("请输入截止卡号");
+				if (!that.single&&!that.endNum) {
+					_util.simpleMsg("请输入截止卡号", true);
 					return;
 				}
 				this.$emit("update:show", false);
@@ -126,6 +120,7 @@
 					that.curFocus = false;
 					that.beginNum = "";
 					that.endNum = "";
+					that.exists_credit = false;
 				}, 500);
 			},
 			ScanCodeHandle: function(prop) {

@@ -357,12 +357,12 @@ var GetTLCard = function(store, func) {
 			return;
 		}
 		console.log("参数信息：", config);
-		Req.asyncFuncOne(paymentAll.CreateData("TL", "查询中...",
+		Req.asyncFuncOne(paymentAll.CreateData("TL", "请刷卡...",
 			"ReadCard", { //这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
 				store_id: config.KEY,
 				terminalCode: config.NOTE,
 				merchant_no: config.LONGKEY
-			}), (res) => { //返回卡号和磁道信息
+			}, true), (res) => { //返回卡号和磁道信息
 			console.log("[ReadCard]读取卡信息:", res);
 			let card_info = res.data;
 			let cardNum = card_info.card_no.substring(3); //去掉实体卡前缀三位
