@@ -5,6 +5,7 @@
 </style>
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right right-correct">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
@@ -98,6 +99,16 @@
 						</view>
 					</view>
 				</view>
+				
+				<!-- 画布 -->
+				<view class="canvasdiv" :style="'visibility:hidden;'">
+					<canvas canvas-id="couponQrcode" class="canvas"
+						:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+					<canvas canvas-id="canvasLogo" class="canvas"
+						:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+					<canvas canvas-id="canvasXPEWM" class="canvas"
+						:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -112,12 +123,19 @@
 	import {
 		Sale3Model,
 		Sale3ModelAdditional
-	} from '@/bll/PaymentBusiness/bll.js'
+	} from '@/bll/PaymentBusiness/bll.js';
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
+		
 	var $ = null;
 	export default {
 		name: "CouponSale",
 		components: {
-			Head
+			Head,
+			PrinterPage,
 		},
 		data() {
 			return {
@@ -140,12 +158,37 @@
 					sale006: [],
 					sxsale001: null,
 					sale2_union_sale6: [],
-					coupon_active_success: false,
-					big_customer_info: null
+					coupon_active_success: false
 				},
 				sale: null,
 				container: null,
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
+				FKDA_INFO: [], //付款信息
 			}
+		},
+		onReady: function() {
+			//查询付款方式
+			(_util.callBind(that, async function() {
+				try {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+						if (res.code) {
+							that.FKDA_INFO = JSON.parse(res.data);
+							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+						} else {
+							console.log("获取付款方式失败!======",err);
+						}
+					}))
+				} catch (err) {
+					console.log("获取付款方式失败!======",err);
+				}
+			}))()
 		},
 		computed: {
 			unpaid_total_quantity() {
@@ -328,7 +371,6 @@
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
-					this.receipt_printing(this.source);
 					this.source = this.$options.data().source;
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
 				}catch(e){
@@ -336,14 +378,32 @@
 				}
 			},
 			receipt_printing(source){//打印代码写在下面
+			    let that = this;
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": "SQ",
+				};
 				
+				let arr3 = that.source.sale003;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				that.$refs.printerPage.sksqBluePrinter(that.source.sale001, that.source.sale002,arr3,that.source.sale006, printerPram);
 			},
 			credit_sales_create() {
 				console.log("[CreditSalesCreate]准备开始创建赊销单据记录...");
-				this.source.sxsale001 = this.factory.get_sxsale001(this.source.sale001, {
+				this.source.sxsale001 = this.get_sxsale001(this.source.sales01, {
 					SX_STATUS: 1,
-					DKFNAME: this.source.big_customer_info.NAME,
-					DKFID: this.source.big_customer_info.DKHID,
+					DKFNAME: data.NAME,
+					DKFID: data.DKHID,
 				});
 				console.log("[CreditSalesCreate]创建赊销单据记录完成...");
 				console.log("[CreditSalesCreate]准备开始创建赊销单据支付记录...");
@@ -390,7 +450,6 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					this.source.enable_credit = true; //启用赊销
-					this.source.big_customer_info = data;
 				}
 			}));
 			//test code...

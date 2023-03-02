@@ -53,7 +53,7 @@ const init = {
 	},
 	get_sxsale001(sale1, attach = {}){
 		let sxsale1 = new sales.sxsale001();
-		if(sale1)
+		if(sxsale1)
 			return Object.cover(Object.cover(sxsale1, sale1),attach);
 		else{
 			return Object.cover(Object.cover(sxsale1, this.sale_common_init_params()),attach)

@@ -183,6 +183,7 @@ var KQTypeObj = {
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
 				sale2.BRANDID = "SK";
+				sale2.txtStyle = "left:0";
 				return sale2;
 			}
 			return null;
@@ -291,6 +292,7 @@ var KQTypeObj = {
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
 				sale2.BRANDID = "SK";
+				sale2.txtStyle = "left:0";
 				return sale2;
 			}
 			return null;
@@ -313,7 +315,7 @@ var KQTypeObj = {
 			_member.CARD_QUERY("查询中...", {
 				data
 			}, func, func);
-		},//校验状态
+		}, //校验状态
 		CheckStatus: function(res) {
 			if (!res.code) {
 				_util.simpleMsg(res.msg, true);
@@ -329,7 +331,7 @@ var KQTypeObj = {
 			}
 			return true;
 		},
-		
+
 		//校验可用号段
 		CheckActiveNum: function(data, func) {
 			_member.checkCardsActiveNums("校验中...", {
@@ -364,7 +366,7 @@ var KQTypeObj = {
 				data
 			}, func, func);
 		},
-		
+
 		//业务完成
 		Completed: async function(data) {
 			try {
@@ -386,7 +388,7 @@ var KQTypeObj = {
 			}
 		},
 		//商品信息匹配
-		MatchSP: async function(spid) {
+		MatchSP: async function(spid, price, qty) {
 			let spinfo;
 			var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
 			console.log("[MatchSP]查询结果：", result);
@@ -397,15 +399,17 @@ var KQTypeObj = {
 			}
 			if (spinfo) {
 				let sale2 = new _sale.sale002();
-				sale2.QTY = 1;
 				sale2.SPID = spid;
 				sale2.STR1 = spinfo?.SNAME;
-				sale2.PRICE = 0;
-				sale2.OPRICE = 0;
+				sale2.PRICE = price || 0;
+				sale2.OPRICE = price || 0;
+				sale2.QTY = qty || 1;
+				sale2.NET = _util.newFloat(sale2.PRICE * sale2.QTY, 2);
 				sale2.UNIT = spinfo?.UNIT;
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
 				sale2.BRANDID = "SK";
+				sale2.txtStyle = "left:0";
 				return sale2;
 			}
 			return null;
@@ -440,7 +444,7 @@ var KQTypeObj = {
 				SPJGZ: spinfo?.SPJGZ
 			};
 		},
-		Completed: async function(data,callback) {
+		Completed: async function(data, callback) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -454,7 +458,7 @@ var KQTypeObj = {
 				if (create_result.code)
 					console.log("业务单号:", data.SALE001.BILL);
 				let tranfer_result = await _common.TransLiteDataAsync(data.SALE001.BILL); //上传至服务端
-				if(callback) callback(tranfer_result);
+				if (callback) callback(tranfer_result);
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
 				console.log("[Completed]订单sql生成发生异常:", e);
@@ -509,7 +513,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 			if (create_result.code)
 				console.log("[Completed]业务单号:", data.SALE001.BILL);
 			let tranfer_result = await _common.TransLiteDataAsync(data.SALE001.BILL); //上传至服务端
-			if(callback) callback(tranfer_result);
+			if (callback) callback(tranfer_result);
 			_util.simpleMsg(create_result.msg, !create_result.code);
 			return tranfer_result;
 		} catch (e) {
@@ -517,7 +521,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		}
 	};
 	//商品信息匹配
-	this.MatchSP = async function(spid) {
+	this.MatchSP = async function() {
 		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
 

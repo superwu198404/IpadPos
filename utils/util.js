@@ -378,15 +378,15 @@ const utils = {
 		return newbill;
 	},
 	//校验数量
-	CheckNum: (r, r1) => {
+	CheckNum: function(r, r1) {
 		let num = 0;
 		if (r && r1) {
 			num = 1;
 			if (r == r1)
 				return 1;
 			let num1 = r.substr(r.length - 6, 5);
-			let num2 = r1.subStr(r1.length - 6, 5);
-			num = newFloat(Number(num1) - Number(num2), 0);
+			let num2 = r1.substr(r1.length - 6, 5);
+			num = this.newFloat(Number(num1) - Number(num2), 0);
 		}
 		return num;
 	},
@@ -424,5 +424,5 @@ export default {
 	contrast: utils.contrast,
 	newFloat: utils.newFloat,
 	getBill: utils.getBill,
-	CheckNum: utils.CheckNum,
+	CheckNum: utils.CheckNum
 }

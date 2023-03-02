@@ -246,7 +246,7 @@ const posPayRecharge = function(loading_title, request, success, error) {
 }
 //卡号段可激活数量校验（与会员，获取会员中心确认的 可激活礼品卡号）
 const checkCardsActiveNums = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "checkCardsActiveNums"
@@ -261,7 +261,7 @@ const checkCardsActiveNums = function(loading_title, request, success, error) {
 }
 //礼品卡批量申请校验（与会员，校验）
 const batchCardActiveApply = function(loading_title, request, success, error) {
-	let data = requestAssembleTwo(loading_title, {
+	let data = requestAssemble(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "batchCardActiveApply"
