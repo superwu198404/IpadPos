@@ -5,6 +5,7 @@
 </style>
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right right-correct">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
@@ -98,6 +99,16 @@
 						</view>
 					</view>
 				</view>
+				
+				<!-- 画布 -->
+				<view class="canvasdiv" :style="'visibility:hidden;'">
+					<canvas canvas-id="couponQrcode" class="canvas"
+						:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+					<canvas canvas-id="canvasLogo" class="canvas"
+						:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+					<canvas canvas-id="canvasXPEWM" class="canvas"
+						:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -112,12 +123,19 @@
 	import {
 		Sale3Model,
 		Sale3ModelAdditional
-	} from '@/bll/PaymentBusiness/bll.js'
+	} from '@/bll/PaymentBusiness/bll.js';
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
+		
 	var $ = null;
 	export default {
 		name: "CouponSale",
 		components: {
-			Head
+			Head,
+			PrinterPage,
 		},
 		data() {
 			return {
@@ -144,7 +162,34 @@
 				},
 				sale: null,
 				container: null,
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
+				FKDA_INFO: [], //付款信息
 			}
+		},
+		onReady: function() {
+			let that = this;
+			//查询付款方式
+			(util.callBind(that, async function() {
+				try {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(that, function(res) {
+						if (res.code) {
+							that.FKDA_INFO = JSON.parse(res.data);
+							util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+						} else {
+							console.log("获取付款方式失败!======",err);
+						}
+					}))
+				} catch (err) {
+					console.log("获取付款方式失败!======",err);
+				}
+			}))()
 		},
 		computed: {
 			unpaid_total_quantity() {
@@ -344,6 +389,27 @@
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
+			},
+			receipt_printing(source){//打印代码写在下面
+			    let that = this;
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": "SQ",
+				};
+				
+				let arr3 = that.source.sale003;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				that.$refs.printerPage.sksqBluePrinter(that.source.sale001, that.source.sale002,arr3,that.source.sale006, printerPram);
 			},
 			credit_sales_create() {
 				console.log("[CreditSalesCreate]准备开始创建赊销单据记录...");
