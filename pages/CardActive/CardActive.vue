@@ -55,30 +55,36 @@
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist" v-for="(item) in SALE002">
-							<view class="ulli">
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-								<view class="h6">
-									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
-									<view class="zje">
-										<view><text>总金额</text>￥{{item.NET}}</view>
-										<button @click="RemoveSP(item)">
+						<view class="cardlist">
+							<view class="ulli" v-for="(item,index) in SALE002">
+								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
+									@touchend="touchE" :data-index="index" :style="item.txtStyle"
+									@click="goDetail(item)">
+									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+									<view class="h6">
+										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<view class="zje">
+											<view><text>总金额</text>￥{{item.NET}}</view>
+											<!-- <button @click="RemoveSP(item)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
-										</button>
+										</button> -->
+										</view>
+									</view>
+									<view class="card-num">
+										<label>始：<text>{{item.begin_num}}</text></label>
+										<label>终：<text>{{item.end_num}}</text></label>
+									</view>
+									<view class="statistic">
+										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
+										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 									</view>
 								</view>
-								<view class="card-num">
-									<label>始：<text>{{item.begin_num}}</text></label>
-									<label>终：<text>{{item.end_num}}</text></label>
-								</view>
-								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-									<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
-									<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
-									<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
+								<view class="touch-list list-delete" @click="RemoveSP(item)">
+									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
-
 						</view>
 					</view>
 					<view class="totals">
@@ -109,9 +115,7 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
-		</SpecialDisc>
-
+		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002"></SpecialDisc>
 	</view>
 </template>
 <script>
@@ -164,9 +168,10 @@
 					enable_customer: true,
 				},
 				YWTYPE: "GiftCard_Active", //礼品卡激活
+				CurZKDisc: {}, //特殊折扣类型
 			}
 		},
-		created: function() {
+		created: async function() {
 			that = this;
 
 			let store = getApp().globalData.store;
@@ -181,12 +186,13 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-
+			//初始化折扣数据
+			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
 
-			uni.off("big-customer-close");
+			uni.$off("big-customer-close");
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
@@ -195,7 +201,13 @@
 					that.Bill_TYPE = "Z111"; //不启用赊销	
 				}
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				if (data.DKFID) {
+					that.SALE001.DKFID = data.DKFID;
+					that.ZKData = _main.GetZKDatasAll(data.DKFID);
+				}
 			});
+			uni.$off("close-tszk");
+			uni.$on("close-tszk", that.CloseTSZK);
 		},
 		watch: {},
 		computed: {
@@ -219,6 +231,61 @@
 			},
 		},
 		methods: {
+			touchS: function(e) {
+				console.log('touchS')
+				if (e.touches.length == 1) {
+					//设置触摸起始点水平方向位置
+					this.startX = e.touches[0].clientX
+					// console.log(this.startX)
+				}
+			},
+			touchM: function(e) {
+				console.log('touchM')
+				if (e.touches.length == 1) {
+					//手指移动时水平方向位置
+					var moveX = e.touches[0].clientX;
+					//手指起始点位置与移动期间的差值
+					var disX = this.startX - moveX;
+					var delBtnWidth = this.delBtnWidth;
+					var txtStyle = "";
+					if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
+						txtStyle = "left:0px";
+					} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
+						txtStyle = "left:-" + disX + "px";
+						if (disX >= delBtnWidth) {
+							//控制手指移动距离最大值为删除按钮的宽度
+							txtStyle = "left:-" + delBtnWidth + "px";
+						}
+					}
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态
+					this.SALE002 = list;
+				}
+			},
+			touchE: function(e) {
+				// console.log('touchE')
+				if (e.changedTouches.length == 1) {
+					//手指移动结束后水平位置
+					var endX = e.changedTouches[0].clientX;
+					//触摸开始与结束，手指移动的距离
+					var disX = this.startX - endX;
+					var delBtnWidth = this.delBtnWidth;
+					//如果距离小于删除按钮的1/2，不显示删除按钮
+					var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态{
+					this.SALE002 = list
+				}
+			},
+
 			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件：", e);
@@ -264,11 +331,11 @@
 										spObj = that.CoverSale(spObj, that.SALE001);
 										console.log("sale2属性合并后的对象：", spObj);
 										if (spObj) {
-											spObj.begin_num = num1;
-											spObj.end_num = num2;
+											spObj.begin_num = that.begin_num;
+											spObj.end_num = that.end_num;
 											that.SALE002.push(spObj);
-											that.CalTNET();
 											console.log("sale2", that.SALE002);
+											that.CalTNET();
 										}
 									} else {
 										_util.simpleMsg("已添加该商品", "none");
@@ -278,6 +345,7 @@
 									_util.simpleMsg("暂未匹配到商品信息", "none");
 									return;
 								}
+								console.log("开始校验库存：", res3.data);
 								let arr = res3.data; //可用号段集合
 								arr.map((r3, i3) => { //循环发起库存校验
 									let num1 = r3.cardNoBegin;
@@ -297,7 +365,7 @@
 											begin_num: num1,
 											end_num: num2,
 											qty: r3.cardNum,
-											index: r3
+											index: i3
 										}, spObj, that.SALE001);
 										if (sale6)
 											that.SALE006.push(sale6);
@@ -469,6 +537,7 @@
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
+						that.discCompute() //特殊折扣
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -510,7 +579,6 @@
 				}
 				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 				that.$store.commit('set-location', inputParm);
-				console.log("支付前的sale6：", that.SALE006);
 				uni.navigateTo({
 					url: "../Payment/Payment",
 					events: {
@@ -598,24 +666,27 @@
 				console.log("赊销单组装数据sx1：", that.SXSALE001);
 				console.log("赊销单组装数据s3：", that.SALE003);
 			},
-			//切换业务类型
-			ChangeYWTYPE: function(e) {
-				if (that.YWTYPE != e) {
-					if (that.SALE002.length > 0) {
-						_util.simpleMsg("已录入商品暂无法切换");
-						return;
-					}
-					_util.simpleModal("提示", "是否确认切换业务类型？", res => {
-						if (res) {
-							that.YWTYPE = e;
-							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
-							that.KQXSTYPE = "SKCZ";
-							that.ResetSaleBill();
-							console.log("业务类型已切换：", that.SALE001)
-						}
-					})
+			//特殊折扣关闭回调
+			CloseTSZK: function(data) {
+				that.showDisc = false;
+				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				if (data == "NO") { //清除折扣
+					that.CurZKDisc = {};
+				} else {
+					that.CurZKDisc.ZKType = data;
+					that.CurZKDisc.ZKData = that.ZKData;
 				}
+				//清除一下之前产生的促销和折扣
+				// this.ResetCXZK();
 			},
+			//使用特殊折扣进行计算
+			discCompute: function() {
+				// 计算商品的折扣值
+				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				that.SALE002 = res.sale2;
+				// that.ZKHDArr = res.zkrule;
+				console.log("002增加折扣后的新数据：", that.SALE002);
+			}
 		}
 	}
 </script>

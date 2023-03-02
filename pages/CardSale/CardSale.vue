@@ -79,38 +79,34 @@
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
 							<view class="ulli" v-for="(item,index) in SALE002">
-							<view class="touch-list list-touch" @touchstart="touchS"
-									@touchmove="touchM" @touchend="touchE" :data-index="index" 
-									:style="item.txtStyle" @click="goDetail(item.user_id)">	
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-								<view class="h6">
-									<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
-									<view class="zje">
-										<view><text>总金额</text>￥{{item.NET}}</view>
-										<!-- <button @click="RemoveSP(item)">
+								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
+									@touchend="touchE" :data-index="index" :style="item.txtStyle"
+									@click="goDetail(item)">
+									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+									<view class="h6">
+										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<view class="zje">
+											<view><text>总金额</text>￥{{item.NET}}</view>
+											<!-- <button @click="RemoveSP(item)">
 											<image src="@/images/img2/ka-shanchu.png"></image>
 										</button> -->
+										</view>
+									</view>
+									<view class="card-num">
+										<label>始：<text>{{item.begin_num}}</text></label>
+										<label>终：<text>{{item.end_num}}</text></label>
+									</view>
+									<view class="statistic">
+										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
+										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 									</view>
 								</view>
-								<view class="card-num">
-									<label>始：<text>{{item.begin_num}}</text></label>
-									<label>终：<text>{{item.end_num}}</text></label>
+								<view class="touch-list list-delete" @click="RemoveSP(item)">
+									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
-								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-									<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
-									<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
-									<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
-								</view>
-								
 							</view>
-							<view class="touch-list list-delete" :data-userid="item.user_id" @click="RemoveSP(item)" >
-							   <image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
-							</view>
-						</view>
-
-					
-							
 						</view>
 					</view>
 					<view class="totals">
@@ -176,7 +172,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	var that, KQSale;
 	export default {
 		name: "CardSale",
@@ -210,6 +206,7 @@
 					enable_customer: true,
 				},
 				YWTYPE: "VIPCard_Active", //业务类型 默认为VIP 售卡充值
+				CurZKDisc: {}, //特殊折扣类型
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
@@ -219,28 +216,29 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
-				startX:'',
+				startX: '',
 			}
 		},
 		onReady: function() {
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(
+						res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);
 							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
 							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
 						} else {
-							console.log("获取付款方式失败!======",err);
+							console.log("获取付款方式失败!======", err);
 						}
 					}))
 				} catch (err) {
-					console.log("获取付款方式失败!======",err);
+					console.log("获取付款方式失败!======", err);
 				}
 			}))()
 		},
-		created: function() {
+		created: async function() {
 			that = this;
 
 			let store = getApp().globalData.store;
@@ -255,13 +253,15 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-			
+
+			//初始化折扣数据
+			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
 
-			uni.off("big-customer-close");
-			uni.$on("big-customer-close", function(data) {
+			uni.$off("big-customer-close");
+			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.Bill_TYPE = "Z112"; //启用赊销
@@ -269,7 +269,13 @@
 					that.Bill_TYPE = "Z111"; //不启用赊销	
 				}
 				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				if (data.DKFID) {
+					that.SALE001.DKFID = data.DKFID;
+					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
+				}
 			});
+			uni.$off("close-tszk");
+			uni.$on("close-tszk", that.CloseTSZK);
 		},
 		watch: {},
 		computed: {
@@ -293,68 +299,68 @@
 			},
 		},
 		methods: {
-			touchS: function (e) {
-                console.log('touchS')
-                if (e.touches.length == 1) {
-                    //设置触摸起始点水平方向位置
-                    this.startX=e.touches[0].clientX
-                    // console.log(this.startX)
-                }
-            },
-            touchM: function (e) {
-                 console.log('touchM')
-                if (e.touches.length == 1) {
-                    //手指移动时水平方向位置
-                    var moveX = e.touches[0].clientX;
-                    //手指起始点位置与移动期间的差值
-                    var disX = this.startX - moveX;
-                    var delBtnWidth = this.delBtnWidth;
-                    var txtStyle = "";
-                    if (disX == 0 || disX < 0) {//如果移动距离小于等于0，说明向右滑动，文本层位置不变
-                        txtStyle = "left:0px";
-                    } else if(disX > 0){//移动距离大于0，文本层left值等于手指移动距离
-                        txtStyle = "left:-" + disX + "px";
-                        if (disX >= delBtnWidth) {
-                            //控制手指移动距离最大值为删除按钮的宽度
-                            txtStyle = "left:-" + delBtnWidth + "px";
-                        }
-                    }
-                    //获取手指触摸的是哪一项
-                    var index = e.currentTarget.dataset.index;
-                    var list = this.SALE002;
-                    list[index].txtStyle = txtStyle;
-                    // console.log(list[index].txtStyle)
-                    //更新列表的状态
-                    this.SALE002=list;
-                }
-            },
-            touchE: function (e) {
-                // console.log('touchE')
-                if (e.changedTouches.length == 1) {
-                    //手指移动结束后水平位置
-                    var endX = e.changedTouches[0].clientX;
-                    //触摸开始与结束，手指移动的距离
-                    var disX = this.startX - endX;
-                    var delBtnWidth = this.delBtnWidth;
-                    //如果距离小于删除按钮的1/2，不显示删除按钮
-                    var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
-                    //获取手指触摸的是哪一项
-                    var index = e.currentTarget.dataset.index;
-                    var list = this.SALE002;
-                    list[index].txtStyle = txtStyle;
-                    // console.log(list[index].txtStyle)
-                    //更新列表的状态{
-                    this.SALE002=list
-                }
-            },
-            //点击删除按钮事件
-            delItem: function (e) {
-                //获取列表中要删除项的下标
-                var userid = e.currentTarget.dataset.userid;
-                this.deleteMember(userid);
-            },
-			
-			
+			touchS: function(e) {
+				console.log('touchS')
+				if (e.touches.length == 1) {
+					//设置触摸起始点水平方向位置
+					this.startX = e.touches[0].clientX
+					// console.log(this.startX)
+				}
+			},
+			touchM: function(e) {
+				console.log('touchM')
+				if (e.touches.length == 1) {
+					//手指移动时水平方向位置
+					var moveX = e.touches[0].clientX;
+					//手指起始点位置与移动期间的差值
+					var disX = this.startX - moveX;
+					var delBtnWidth = this.delBtnWidth;
+					var txtStyle = "";
+					if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
+						txtStyle = "left:0px";
+					} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
+						txtStyle = "left:-" + disX + "px";
+						if (disX >= delBtnWidth) {
+							//控制手指移动距离最大值为删除按钮的宽度
+							txtStyle = "left:-" + delBtnWidth + "px";
+						}
+					}
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态
+					this.SALE002 = list;
+				}
+			},
+			touchE: function(e) {
+				// console.log('touchE')
+				if (e.changedTouches.length == 1) {
+					//手指移动结束后水平位置
+					var endX = e.changedTouches[0].clientX;
+					//触摸开始与结束，手指移动的距离
+					var disX = this.startX - endX;
+					var delBtnWidth = this.delBtnWidth;
+					//如果距离小于删除按钮的1/2，不显示删除按钮
+					var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
+					//获取手指触摸的是哪一项
+					var index = e.currentTarget.dataset.index;
+					var list = this.SALE002;
+					list[index].txtStyle = txtStyle;
+					// console.log(list[index].txtStyle)
+					//更新列表的状态{
+					this.SALE002 = list
+				}
+			},
+			//点击删除按钮事件
+			delItem: function(e) {
+				//获取列表中要删除项的下标
+				var userid = e.currentTarget.dataset.userid;
+				this.deleteMember(userid);
+			},
+
+
 			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件：", e);
@@ -590,6 +596,7 @@
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
+						that.discCompute() //特殊折扣
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -712,13 +719,13 @@
 							console.log("VIP单卡充值结果：", res3);
 							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
 						});
-						
+
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
 							"XSTYPE": "SK",
 						};
-						
+
 						let arr3 = that.SALE003;
 						let fkdaRes = that.FKDA_INFO;
 						arr3.forEach(function(item, index) {
@@ -730,8 +737,9 @@
 								item.balance = 0;
 							}
 						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002,arr3,that.SALE006, printerPram);
-						
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+							printerPram);
+
 						//重置销售单
 						that.ResetSaleBill();
 					})
@@ -787,7 +795,27 @@
 						}
 					})
 				}
+			}, //特殊折扣关闭回调
+			CloseTSZK: function(data) {
+				that.showDisc = false;
+				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				if (data == "NO") { //清除折扣
+					that.CurZKDisc = {};
+				} else {
+					that.CurZKDisc.ZKType = data;
+					that.CurZKDisc.ZKData = that.ZKData;
+				}
+				//清除一下之前产生的促销和折扣
+				// this.ResetCXZK();
 			},
+			//使用特殊折扣进行计算
+			discCompute: function() {
+				// 计算商品的折扣值
+				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				that.SALE002 = res.sale2;
+				// that.ZKHDArr = res.zkrule;
+				console.log("002增加折扣后的新数据：", that.SALE002);
+			}
 		}
 	}
 </script>
