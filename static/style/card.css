@@ -349,24 +349,50 @@
 }
 .number{
 	padding:5% 0;
+	position: relative;
+	z-index:99
 }
-.number label{
+.number .classifys{
+	margin-left:14rpx;
+}
+.number .labnum{
 	display: flex;
 	margin:4% 0;
-	width: 80%;
+	width: 92%;
 	height: 70rpx;
 	line-height: 70rpx;
 }
-.number label input{
+.number .labnum:nth-child(1){
+	width:92.5%;
+}
+.number .labnum label{
+	font-weight: 700;
+	white-space: nowrap;
+	display:flex;
+	align-items: center;
 	background: #F5F5F5;
-	border-radius: 10rpx;
-	border: 1px solid #EEEEEE;
 	height: 70rpx;
 	line-height: 70rpx;
+	border-radius: 10rpx;
+	width:68%;
+	border: 1px solid #eee;
+}
+.number .labnum label image{
+	width:40rpx;
+	height: 40rpx;
+	margin-left:14rpx;
+	margin-right:14rpx;
+}
+.number .labnum input{
+	background: #F5F5F5;
+	border-radius: 0rpx;
+	border-left: 1px solid #aaa;
+	height: 40rpx;
+	line-height: 40rpx;
 	width:78%;
 	padding:0 10rpx;
 }
-.number label input:focus{
+.number .labnum input:focus{
 	border:1px solid #98C3B3;
 	background-color: #F2F6F6;
 }
