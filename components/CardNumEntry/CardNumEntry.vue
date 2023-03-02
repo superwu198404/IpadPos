@@ -17,7 +17,7 @@
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
-								<button v-if="emptys">×</button>
+								<button v-if="beginNum=''">×</button>
 						</label>
 						<view class="classifys">
 							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
@@ -31,7 +31,7 @@
 							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
-								<button v-if="emptys">×</button>
+								<button v-if="endNum=''">×</button>
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -61,8 +61,8 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087110000744331", //1087111000002638
-				endNum: "1087110000744331", //1087111000002658
+				beginNum: "", //1087111000002638
+				endNum: "", //1087111000002658
 				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
