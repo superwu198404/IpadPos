@@ -261,7 +261,7 @@ const checkCardsActiveNums = function(loading_title, request, success, error) {
 }
 //礼品卡批量申请校验（与会员，校验）
 const batchCardActiveApply = function(loading_title, request, success, error) {
-	let data = requestAssemble(loading_title, {
+	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "batchCardActiveApply"

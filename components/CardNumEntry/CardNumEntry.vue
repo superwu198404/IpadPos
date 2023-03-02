@@ -50,8 +50,8 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087111000002638",
-				endNum: "1087111000002658",
+				beginNum: "1087110000744399",
+				endNum: "1087110000744399",
 				scan_code: false,
 			};
 		},

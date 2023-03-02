@@ -234,9 +234,8 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 				dataArr.forEach(r => {
 					delete r.STR1;
 					delete r.STR2;
-					delete r.begin_num;//售卖卡券
-					delete r.end_num;//售卖卡券
-					delete r.txtStyle;//售卖卡券
+					delete r.begin_num;
+					delete r.end_num;
 				})
 			}
 			console.log("[CreateSaleOrder]循环:创建sql语句...");
