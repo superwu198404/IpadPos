@@ -3119,19 +3119,19 @@ var jpPrinter = {
 	
 		switch (type) {
 		   case "SKCZ":
-		    xpType ="卡激活充值";
+		    xpType ="卡充值";
 		    break;
-				
+			
 		   case "SKJH":
 		    xpType ="卡激活充值";
 		    break;
-			
+		   
 		   case "SQ":
 		    xpType ="券销售";
 		    break;
 			
 		   default:
-			xpType ="卡激活充值";
+			xpType ="卡充值";
 		}	
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左

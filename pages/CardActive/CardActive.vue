@@ -196,6 +196,7 @@
 			}
 		},
 		onReady: function() {
+			that = this;
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
