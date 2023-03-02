@@ -173,13 +173,14 @@
 			}
 		},
 		onReady: function() {
+			let that = this;
 			//查询付款方式
-			(_util.callBind(that, async function() {
+			(util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(res) {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(that, function(res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);
-							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							util.setStorage('FKDA_INFO', that.FKDA_INFO)
 							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
 						} else {
 							console.log("获取付款方式失败!======",err);
