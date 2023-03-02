@@ -3154,11 +3154,6 @@ var jpPrinter = {
 		jpPrinter.setText(util.getComputedByteLen("款台: " + data.posId, 17) + "收款员: " + data.posUser + "\n");
 		jpPrinter.setPrint(); //打印并换行
 		
-		// jpPrinter.setCharacterSize(0); //设置正常大小
-		// jpPrinter.setSelectJustification(0); //设置居左
-		// jpPrinter.setText("门店电话: " + data.khPhone);
-		// jpPrinter.setPrint(); //打印并换行
-		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
@@ -3225,8 +3220,7 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 		
 		var payTotal = 0.00;
-		var change = 0.00;
-		
+				
 		//支付方式分组的处理
 		let sale3_arrOrigin = JSON.stringify(data.sale3List);
 		let sale3_arr = [];
@@ -3263,12 +3257,12 @@ var jpPrinter = {
 		if(type == "SK"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("总金额:" + payTotal.toFixed(2).toString());
+			jpPrinter.setText("总金额:" + data.payableAmount.toFixed(2).toString());
 			jpPrinter.setPrint(); //打印并换行
 		}else if(type == "SQ"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("应付金额:" + payTotal.toFixed(2).toString());
+			jpPrinter.setText("应付金额:" + data.payableAmount.toFixed(2).toString());
 			jpPrinter.setPrint(); //打印并换行
 		}
 
@@ -3279,9 +3273,9 @@ var jpPrinter = {
 		
 		jpPrinter.setCharacterSize(0); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左，
-		jpPrinter.setText("找零:" + change.toString() + "\n");
+		jpPrinter.setText("找零:" + (payTotal - data.payableAmount).toFixed(2) + "\n"); //支付金额 - 应付金额
 		jpPrinter.setPrint(); //打印并换行
-	}	
+	}
     
 	return jpPrinter;
   },
