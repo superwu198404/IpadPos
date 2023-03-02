@@ -235,23 +235,10 @@
 				})
 			},
 			async coupon_segment_activate() {
-				return Promise.all(($(function(){
-					return this.source.sale006.map($(function(sale6){
-						return member.coupon_sale.CouponActivation({
-							coupon_start: sale6.KQIDS,
-							coupon_end: sale6.KQIDE,
-							khid: this.KHID
-						})
-					}));
-				}))()).then($(function(results){
-					let active_fail = results?.filter(res => res.code === 'false'), result = { code: true, msg: "激活成功!" };
-					if(active_fail && active_fail.length){//存在激活失败的记录
-						this.source.sale001.STR1 = "激活失败";
-						result.code = false;
-						result.msg = "激活失败!";
-					}
-					return result
-				}))
+				return member.coupon_sale.CouponActivation({
+					bill: this.source.sale001.BILL,
+					khid: this.KHID
+				});
 			},
 			async coupon_sale() {
 				console.log("[CouponSale]开始售券流程...");
@@ -324,6 +311,7 @@
 					if (res.code) {
 						util.simpleMsg("券激活成功!" , true);
 					} else {
+						this.source.sale001.STR1 = "激活失败";
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
 					}
 				}))
