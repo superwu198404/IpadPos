@@ -1,6 +1,7 @@
 import Req from '@/utils/request.js';
 import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
+import paymentAll from "@/api/Pay/PaymentALL.js"
 
 var requestAssemble = function(loading_title = "请求中...", options) {
 	try {
@@ -345,6 +346,38 @@ const coupon_sale = {
 		return await this.special_request("StockQuery", params);
 	}
 }
+//获取通联刷卡的卡号
+var GetTLCard = function(store, func) {
+	paymentAll._GetConfig("TLCARD", store.KHID).then((config) => {
+		if (!config || !config.LONGKEY) {
+			if (func) func({
+				code: false,
+				msg: "商户参数为空!"
+			});
+			return;
+		}
+		console.log("参数信息：", config);
+		Req.asyncFuncOne(paymentAll.CreateData("TL", "查询中...",
+			"ReadCard", { //这里固定写成通联的原因是因为，刷卡接口写在MIS的Payment里在，且因为使用刷卡机要包装一系列参数，而MIS内有方法处理，其他类里没有
+				store_id: config.KEY,
+				terminalCode: config.NOTE,
+				merchant_no: config.LONGKEY
+			}), (res) => { //返回卡号和磁道信息
+			console.log("[ReadCard]读取卡信息:", res);
+			let card_info = res.data;
+			let cardNum = card_info.card_no.substring(3); //去掉实体卡前缀三位
+			func({
+				code: true,
+				msg: "卡号获取成功",
+				data: cardNum
+			});
+			// body.auth_code = card_info.track_info;
+			// body.merchant_no = config.SHID;
+			// body.storeName = getApp().globalData.store.NAME;
+			// console.log("[ReadCard]组装支付参数:", body);
+		}, func);
+	})
+}
 
 export default {
 	UploadPoint,
@@ -361,5 +394,6 @@ export default {
 	checkCardsActiveNums,
 	batchCardActiveApply,
 	batchCardActiveConfirm,
-	coupon_sale
+	coupon_sale,
+	GetTLCard
 }

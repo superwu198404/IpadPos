@@ -322,7 +322,7 @@ var hykPay = {
 var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
-			if (!config) {
+			if (!config||!config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -369,7 +369,7 @@ var kengeePay = {
 var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
-			if (!config) {
+			if (!config||!config.NOTE) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -383,7 +383,7 @@ var misPay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
-			if (!config) {
+			if (!config||!config.NOTE) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
 				return;
@@ -415,7 +415,7 @@ var misPay = {
 var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
-			if (!config) {
+			if (!config||!config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true);
 				if (catchFunc) catchFunc();
 				return;
@@ -429,7 +429,7 @@ var misScanCodePay = {
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
-			if (!config) {
+			if (!config||!config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
 				return;
@@ -1095,5 +1095,8 @@ export default {
 	Refund,
 	QueryRefund,
 	PaymentAll,
-	RefundAll
+	RefundAll,
+	_GetConfig,
+	_PaymentAll,
+	CreateData,
 }

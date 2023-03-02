@@ -4,7 +4,7 @@
 	@import url(@/static/style/card.css);
 </style>
 <template>
-	<view v-show="show">
+	<view v-if="show">
 		<view class="boxs">
 			<view class="popup">
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
@@ -12,18 +12,20 @@
 				<view class="number">
 					<label>
 						<text>开始卡号：</text>
-						<input type="text" placeholder="请输入开始卡号" v-model="beginNum"
-							@focus="ScanCodeHandle('beginNum')" />
+						<input type="number" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
+							@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
 					</label>
 					<label>
 						<text>截止卡号：</text>
-						<input type="text" placeholder="请输入截止卡号" v-model="endNum" @focus="ScanCodeHandle('endNum')" />
+						<input type="number" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
+							@confirm="ScanCodeHandle" @focus="curFocus='endNum'" />
 					</label>
 					<label><text>启用扫码操作：</text>
 						<radio :checked="scan_code" @click="scan_code = !scan_code"></radio>
 					</label>
 				</view>
 				<view class="confirm">
+					<button class="btn btn-qx" @click="ScanCodeHandle">刷卡/扫码</button>
 					<button class="btn btn-qx" @click="Cancel">取消</button>
 					<button class="btn" @click="Confirm">确认</button>
 				</view>
@@ -35,25 +37,34 @@
 
 <script>
 	import _util from "@/utils/util.js";
+	import _member from "@/api/hy/MemberInterfaces.js";
 	var that, $;
 	export default {
 		name: "CardNumEntry",
 		props: {
-			yetype: String,
+			ywtype: String,
 			show: Boolean
-		},
-		created() {
-			that = this;
-			$ = _util.callContainer(this);
-			that.ywType = that.yetype;
 		},
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087111000002638",
-				endNum: "1087111000002658",
-				scan_code: false,
+				beginNum: "", //1087111000002638
+				endNum: "", //1087111000002658
+				scan_code: false, //是否刷卡
+				single: false, //是否单卡
+				curFocus: "beginNum", //默认定位到起始卡号
+				store: getApp().globalData.store,
+				// focus: true
 			};
+		},
+		created() {
+			that = this;
+			$ = _util.callContainer(this);
+			// that.ywType = that.ywtype;
+			that.store = _util.getStorage("store");
+			// setTimeout(() => {
+			//         that.focus = true;
+			// }, 1000)
 		},
 		methods: {
 			Cancel: function() {
@@ -64,6 +75,7 @@
 					begin_num: that.beginNum,
 					end_num: that.endNum
 				})
+				that.ResetBill();
 			},
 			Confirm: function() {
 				console.log("事件触发");
@@ -81,33 +93,69 @@
 					begin_num: that.beginNum,
 					end_num: that.endNum
 				})
+				that.ResetBill();
+			},
+			//变量重置
+			ResetBill: function() {
+				//重置操作
+				setTimeout(() => {
+					that.curFocus = "beginNum";
+					that.scan_code = false;
+					that.curFocus = false;
+					that.beginNum = "";
+					that.endNum = "";
+				}, 500);
 			},
 			ScanCodeHandle: function(prop) {
-				console.log("[ScanCodeHandle]对应属性名称:",prop);
-				if (this.scan_code)
+				prop = that.curFocus;
+				console.log("[ScanCodeHandle]对应属性名称:", prop);
+				if (this.scan_code) { //扫码
 					uni.scanCode({
 						success: $(function(result) {
 							console.log("[ScanCodeHandle]扫码结果:", result);
-							if(prop in this){
+							if (prop in this) {
 								this[prop] = result.result;
-							}
-							else
+								if (prop == "beginNum") {
+									if (that.single) {
+										this.endNum = result.result;
+									} else {
+										that.curFocus = "endNum";
+									}
+								}
+							} else
 								console.log("[ScanCodeHandle]属性不存在...");
 						})
 					})
+				} else { //刷卡
+					_member.GetTLCard(that.store, res => {
+						if (!res.code) {
+							_util.simpleMsg(res.msg, !res.code);
+							return;
+						}
+						that[prop] = res.data;
+						if (prop == "beginNum") {
+							if (that.single) {
+								this.endNum = res.data;
+							} else {
+								that.curFocus = "endNum";
+							}
+						}
+					})
+				}
 			}
 		}
 	}
 </script>
 
 <style>
-	.popup{
+	.popup {
 		position: relative;
 	}
-	.popup .tchw{
+
+	.popup .tchw {
 		position: absolute;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
+		top: 0;
+		left: 0;
+		width: 100%;
 	}
 </style>
