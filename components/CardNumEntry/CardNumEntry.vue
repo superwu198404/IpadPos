@@ -10,15 +10,23 @@
 				<image class="tchw" src="../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="h1">录入卡号(单卡业务：起始号，截至号一致) <button class="close" @click="Cancel">×</button></view>
 				<view class="number">
-					<label>
+					<view class="labnum">
 						<text>开始卡号：</text>
-						<input type="text" placeholder="请输入开始卡号" v-model="beginNum"
+						<label><image src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
+							<input type="text" placeholder="请输入开始卡号" v-model="beginNum"
 							@focus="ScanCodeHandle('beginNum')" />
-					</label>
-					<label>
+						</label>
+						<view class="classifys">
+							<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
+							<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text>
+						</view>
+					</view>
+					<view class="labnum" v-if="isbatchOperation">
 						<text>截止卡号：</text>
-						<input type="text" placeholder="请输入截止卡号" v-model="endNum" @focus="ScanCodeHandle('endNum')" />
-					</label>
+						<label><image src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
+							<input type="text" placeholder="请输入截止卡号" v-model="endNum" @focus="ScanCodeHandle('endNum')" />
+						</label>
+					</view>
 					<label><text>启用扫码操作：</text>
 						<radio :checked="scan_code" @click="scan_code = !scan_code"></radio>
 					</label>
@@ -50,12 +58,22 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087110000744399",
-				endNum: "1087110000744399",
+				beginNum: "1087111000002638",
+				endNum: "1087111000002658",
 				scan_code: false,
+				exists_credit: false,
+				isbatchOperation:false
 			};
 		},
 		methods: {
+			CreditMode: function(is_credit) {
+				this.exists_credit = is_credit;
+				if(is_credit){
+				        this.isbatchOperation=true
+				    }else{
+				      this.isbatchOperation=false
+				    }
+			},
 			Cancel: function() {
 				console.log("事件触发");
 				this.$emit("update:show", false);
