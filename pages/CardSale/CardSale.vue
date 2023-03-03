@@ -118,7 +118,7 @@
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
+					<CardNumEntry :show.sync="showCardNum" :ywtype="YWTYPE"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -729,7 +729,7 @@
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE": "SKCZ",
+							"XSTYPE": "SK",
 						};
 
 						let arr3 = that.SALE003;

@@ -17,9 +17,9 @@
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
-								<button v-if="beginNum=''">×</button>
+							<button v-if="beginNum=''">×</button>
 						</label>
-						<view class="classifys">
+						<view class="classifys" v-if="ywtype!='VIPCard_Active'&&ywtype!='VIPCard_Recharge'">
 							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
 							<text @click="single=false" :class="single ? '' : 'curr'">多</text>
 						</view>
@@ -31,7 +31,7 @@
 							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
-								<button v-if="endNum=''">×</button>
+							<button v-if="endNum=''">×</button>
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -55,12 +55,15 @@
 	export default {
 		name: "CardNumEntry",
 		props: {
-			ywtype: String,
+			ywtype: {
+				type: String,
+				default: ""
+			},
 			show: Boolean
 		},
 		data() {
 			return {
-				ywType: "",
+				// ywType: "",
 				beginNum: "", //1087111000002638
 				endNum: "", //1087111000002658
 				scan_code: false, //是否刷卡
@@ -69,6 +72,19 @@
 				store: getApp().globalData.store,
 				exists_credit: false,
 			};
+		},
+		watch: {
+			ywtype: {
+				immediate: true,
+				handler: function(n, o) {
+					console.log("业务类型发生变动:", n);
+					if (n == 'VIPCard_Active' || n == 'VIPCard_Recharge') {
+						this.single = true;
+					} else {
+						this.single = false;
+					}
+				}
+			}
 		},
 		created() {
 			that = this;
@@ -92,7 +108,7 @@
 					_util.simpleMsg("请输入起始卡号", true);
 					return;
 				}
-				if (!that.single&&!that.endNum) {
+				if (!that.single && !that.endNum) {
 					_util.simpleMsg("请输入截止卡号", true);
 					return;
 				}
@@ -119,7 +135,7 @@
 			ScanCodeHandle: function(prop) {
 				// prop = that.curFocus;
 				that.curFocus = prop;
-				
+
 				console.log("[ScanCodeHandle]对应属性名称:", prop);
 				if (this.scan_code) { //扫码
 					uni.scanCode({
@@ -132,7 +148,7 @@
 										this.endNum = result.result;
 									} else {
 										that.curFocus = "endNum";
-										
+
 									}
 								}
 							} else
