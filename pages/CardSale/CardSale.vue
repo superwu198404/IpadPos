@@ -507,6 +507,8 @@
 					r.PRICE = _util.newFloat(e.CZNET, 2);
 					r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
 					r.BZDISC = _util.newFloat(e.ZSNET, 2);
+					r.BILLDISC = _util.newFloat(e.ZSNET, 2);
+					r.DISCRATE = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
 				s6.map(r => {
@@ -540,6 +542,7 @@
 							that.SALE001.TNET = 0;
 							that.SALE001.BILLDISC = 0;
 						}
+						that.CalTNET();//扣减后重新计算
 					}
 				})
 			},
@@ -602,6 +605,7 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.discCompute() //特殊折扣
+						that.CalTNET();//因为会产生特殊折扣 所以重新计算 
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -729,7 +733,7 @@
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE": "SK",
+							"XSTYPE":that.KQXSTYPE,
 						};
 
 						let arr3 = that.SALE003;
