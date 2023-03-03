@@ -80,7 +80,7 @@
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn" @click="to_payment">确认支付</button>
+						<button class="btn" @click="to_payment">确认支付</button><button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
@@ -434,6 +434,202 @@
 				}));
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
+			},
+			to_printer(){
+				let that = this;
+								
+				let sale01 = {
+					"CLTIME": null,
+					"CUSTID": null,
+					"XSPTID": "PAD",
+					"YN_DCDG": null,
+					"YN_HH": null,
+					"DKFID": "80000000",
+					"BMID": null,
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"GSID": "K200",
+					"STR2": null,
+					"STR1": "success",
+					"ERRINO": null,
+					"ERRID": null,
+					"TIME": "16",
+					"WEEK": 9,
+					"MONTH": "03",
+					"YAER": "2023",
+					"YN_SC": "N",
+					"REASON": null,
+					"TDISC": 30,
+					"TLSDISC": 0,
+					"TTPDISC": 0,
+					"TBZDISC": 0,
+					"THYDISC": 0,
+					"HYJF": 0,
+					"CARDID": null,
+					"CUID": "1000311652",
+					"TCXDISC": 30,
+					"CXTNET": 0,
+					"CHANGENET": 0,
+					"ROUND": 0,
+					"BILLDISC": 30,
+					"ZNET": 300,
+					"DNET": 0,
+					"TNET": 300,
+					"TLINE": 1,
+					"XS_GSID": null,
+					"XS_KHID": null,
+					"XS_DATE": null,
+					"XS_POSID": null,
+					"XS_BILL": null,
+					"XSTYPE": "1",
+					"BILL_TYPE": null,
+					"RYID": "999",
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-02 10:30:32",
+					"SALEDATE": "2023-03-02",
+					"THTYPE": null,
+					"ZTMSTR": null,
+					"KQXSTYPE": "SKCZ",
+					"YN_JLTH": null,
+					"YN_OK": "X",
+					"CUSTMTIME": null,
+					"CUSTMCOMM": null,
+					"CUSTMADDRESS": null,
+					"CUSTMPHONE": null,
+					"CUSTMNAME": null
+				};
+				
+				let sale02 = [{
+					"SALEDATE": "2023-03-01",
+					"XPDGCOM": null,
+					"XPDGSTR": null,
+					"SBERR": null,
+					"YN_SB": null,
+					"MYSTR": null,
+					"SPJGZ": "03",
+					"YN_XPDG": null,
+					"BMID": null,
+					"RYID": "999",
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"STR2": null,
+					"STR1": "仟吉SAP-VIP卡",
+					"TIME": "16",
+					"WEEK": 9,
+					"MONTH": "03",
+					"YAER": "2023",
+					"HYJFCD": 0,
+					"JFDISC": 0,
+					"HYJF": 0,
+					"LSDISC": 0,
+					"TPDISC": 0,
+					"BZDISC": 0,
+					"HYDISC": 0,
+					"YN_HYDISC": null,
+					"CXID": null,
+					"CXDISC": 30,
+					"YN_CXDISC": null,
+					"BILLDISC": 0,
+					"DISC_TYPE": null,
+					"DISC": 0,
+					"YN_SKYDISC": null,
+					"HYBL": 0,
+					"DISCRATE": 0,
+					"BRANDID": "SK",
+					"HTID": null,
+					"GYSID": null,
+					"NET": 300,
+					"OPRICE": 0,
+					"PRICE": 300,
+					"MINSQTY": 0,
+					"QTY": 1,
+					"UNIT": "张",
+					"SERIAL": null,
+					"BARCODE": null,
+					"PLID": "80101",
+					"NO": 0,
+					"SPID": "000000008010100002",
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-01 16:38:32"
+				}];
+				
+				let sale03 = [{
+					"SALEDATE": "2023-03-01",
+					"DISC": "60.00",
+					"ZKLX": "ZV03",
+					"YN_ZQ": null,
+					"YN_ST": null,
+					"YN_JL": null,
+					"YN_LP": null,
+					"YN_YLTH": null,
+					"BMID": 0,
+					"RYID": "999",
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"CZK_AK": 0,
+					"STR2": null,
+					"STR1": null,
+					"AUTH": "1001270578",
+					"TIME": 0,
+					"WEEK": 0,
+					"MONTH": 0,
+					"YAER": 0,
+					"SAVE_JE": 0,
+					"SAVE_JEO": 0,
+					"IDTYPE": "Z003",
+					"ID": "1082770000400588",
+					"DSFKD": 0,
+					"RATE": "60.00",
+					"FAMT": "60.00",
+					"AMT": "300.00",
+					"FKID": "ZF04",
+					"NO": 0,
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-01 16:38:32",
+					"SNAME": "仟吉电子卡"
+				}];
+				let sale06 = [{
+					"BILL": "K200QTD00612303011638320",
+					"SALEDATE": "2023-03-01",
+					"SALETIME": "2023-03-01 16:38:32",
+					"KHID": "K200QTD006",
+					"POSID": "1",
+					"SPID": "000000008010100002",
+					"NO": 0,
+					"KQIDS": "1087110000744422",
+					"KQIDE": "1087110000744422",
+					"KQIDSTR": "1087110000744422-1087110000744422",
+					"QTY": 1,
+					"MYSTR": 300
+				}];
+
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": "SQ",
+				};
+				
+				let arr3 = sale03;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				that.$refs.printerPage.sksqBluePrinter(sale01, sale02, arr3, sale06, printerPram);
 			},
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否进行赊销操作...", this.source.enable_credit);
