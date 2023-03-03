@@ -70,7 +70,6 @@
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
 				store: getApp().globalData.store,
-				exists_credit: false,
 			};
 		},
 		watch: {
@@ -134,7 +133,6 @@
 					that.curFocus = false;
 					that.beginNum = "";
 					that.endNum = "";
-					that.exists_credit = false;
 				}, 500);
 			},
 			ScanCodeHandle: function(prop) {
