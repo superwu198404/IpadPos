@@ -671,7 +671,7 @@
 					BILLDISC: this.isRefund ? -Math.abs(sale1?.BILLDISC) : (sale1?.BILLDISC ||
 						0), //整单折扣需要加上手工折扣,
 					ROUND: this.isRefund ? -Math.abs(sale1.ROUND) : (sale1?.ROUND || 0), //取整差值（手工折扣总额）
-					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId,
+					CUID: this.isRefund ? sale1.CUID : hyinfo?.hyId || sale1.CUID,
 					TDISC: this.isRefund ? -Math.abs(sale1.TDISC) : (sale1?.TDISC || 0),
 					TCXDISC: this.isRefund ? -Math.abs(sale1.TCXDISC) : (sale1?.TCXDISC || 0),
 					// TLINE: this.isRefund ? -sale1.TLINE : sale1.TLINE

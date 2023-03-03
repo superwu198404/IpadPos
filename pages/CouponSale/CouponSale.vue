@@ -210,12 +210,17 @@
 				}
 			},
 			'source.sale002'(n, o) {
+				if(n.length === 0){
+					this.factory.reset_generators();
+				}
 				if(n.length !== o.length){//如果长度发生变化则进行计算（不受内部对象变化影响）
 					console.log("[WatchSale2]长度发生变化，开始计算特殊折扣和手工折扣...");
 					this.discount_computed();//特殊折扣计算
 					this.craft_discount_computed();//手工折扣额
 					console.log("[WatchSale2]特殊折扣和手工折扣计算完毕...");
 				}
+				this.source.sale001.TLINE = n.length;
+				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
 				console.log("[WatchSale2]准备开始汇总金额:",this.source.sale002.map(i => i.NET));
 				let sale001 = this.source.sale001,
 					total_amount = this.source.sale002.map(sale2 => sale2.NET).reduce((prev_net, next_net) => prev_net +
@@ -334,6 +339,9 @@
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
+									BILL_TYPE: 'Z111',
+									XSTYPE: '1',
+									CUID: 'SQ'
 								});
 							}
 							let sale002 = this.factory.get_sale002(this.source.sale001, product_info);
@@ -394,6 +402,7 @@
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
+					this.factory.reset_generators();
 					this.receipt_printing(this.source);
 					this.source = this.$options.data().source;
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
