@@ -17,7 +17,7 @@
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
-							<button v-if="beginNum">×</button>
+							<button v-if="beginNum" @click="beginNum=''">×</button>
 						</label>
 						<view class="classifys" v-if="ywtype!='VIPCard_Active'&&ywtype!='VIPCard_Recharge'">
 							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
@@ -31,7 +31,7 @@
 							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
-							<button v-if="endNum">×</button>
+							<button v-if="endNum" @click="endNum=''">×</button>
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
