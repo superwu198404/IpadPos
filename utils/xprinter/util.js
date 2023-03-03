@@ -210,10 +210,10 @@ function convertToMonoImage(width, height, data, shake) {
 }
 
 /**
- * 售卡打印数据转换
+ * 售卡/售券打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {	
+const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {	
 	var billType = sale1_obj.BILL_TYPE; //Z101
 	var bill = sale1_obj.BILL;
 	var xsBill = sale1_obj.XS_BILL;
@@ -290,7 +290,7 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 	
 	//销售卡券明细
 	var sale6List = [];
-	for (var j = 0; j < sale3_arr.length; j++) {
+	for (var j = 0; j < sale6_arr.length; j++) {
 		var sale6_printer = {
 			bill: sale6_arr[j].BILL,
 			saleDate: sale6_arr[j].SALEDATE, //销售日期
@@ -341,108 +341,6 @@ const skPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 		failSumNet,
 	}
 	console.log("打印接收数据转换后 skPrinterData:", printerInfo);
-	return printerInfo;
-}
-
-/**
- * 售券打印数据转换
- * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
- */
-const sqPrinterData = (sale1_obj, sale2_arr, sale3_arr, type) => {
-	var xsType = "SQ";
-	
-	var billType = sale1_obj.BILL_TYPE; //Z101
-	var bill = sale1_obj.BILL;
-	var xsBill = sale1_obj.XS_BILL;
-	var xsDate = sale1_obj.SALETIME;
-	var khName = getApp().globalData.store.NAME;
-	var khAddress = getApp().globalData.store.KHAddress;
-	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYID,"");
-	var lineNum = sale2_arr.length;
-	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-
-	var originalAmount = 0;
-	var cuid = snvl(sale1_obj.CUID,"");
-	var hdnet = 0;
-	var totalQty = 0;
-	var totalPrice = 0;
-	//商品数据
-	var carList = [];
-	for (var i = 0; i < sale2_arr.length; i++) {
-		var sale2_printer = {
-			bill: sale2_arr[i].BILL, //主单号
-			saleDate: sale2_arr[i].SALEDATE,
-			saleTime: sale2_arr[i].SALETIME,
-			khid: sale2_arr[i].KHID,
-			posId: snvl(sale2_arr[i].POSID,""),
-			no: i,
-			
-			barCode: sale2_arr[i].BARCODE,
-			qty: sale2_arr[i].QTY, //数量
-			price: sale2_arr[i].PRICE, //单价
-			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
-			amount: nnvl(sale2_arr[i].NET, 0), //金额
-			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
-		};
-		carList = carList.concat(sale2_printer);
-		totalQty += sale2_arr[i].QTY;
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
-	}
-	
-	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
-	console.log("carList 转换后数据:", carList);
-
-	//支付数据
-	var sale3List = [];
-	for (var j = 0; j < sale3_arr.length; j++) {
-		var sale3_printer = {
-			bill: sale3_arr[j].BILL,
-			saleDate: sale3_arr[j].SALEDATE,
-			saleTime: sale3_arr[j].SALETIME,
-			khid: snvl(sale3_arr[j].KHID,""),
-			posId: snvl(sale3_arr[j].POSID,""),
-			no: sale3_arr[j].NO, //付款序号
-			fkid: sale3_arr[j].FKID, //付款类型id
-			amt: parseFloat(sale3_arr[j].AMT), //付款金额
-			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: snvl(sale3_arr[j].RYID,""), //人员
-			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
-			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: snvl(sale3_arr[j].SNAME,""),
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
-		};
-		sale3List = sale3List.concat(sale3_printer);
-	}
-
-	console.log("sale3List 转换后数据:", sale3List);
-
-	var printerInfo = {
-		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
-		billType,
-		bill, //单号
-		xsBill, //原单号
-		xsDate, //打印时间
-		khName, //门店名称
-		khAddress, //门店地址
-		khPhone, //门店电话
-		posId, //款台
-		posUser, //收银员
-		carList, //售卡售券集合
-		lineNum, //条目
-		payableAmount, //应付金额
-		discountedAmount, //已优惠金额
-		originalAmount, //原金额
-		totalQty, //总数量
-		cuid, //会员编号
-		hdnet, //商家承担
-		sale3List, //支付信息
-	}
-	console.log("打印接收数据转换后 sqPrinterData:", printerInfo);
 	return printerInfo;
 }
 
@@ -1627,6 +1525,5 @@ module.exports = {
 	tnvl: tnvl,
 	sxjsPrinterData: sxjsPrinterData,
 	formatDateNew: formatDateNew,
-	skPrinterData: skPrinterData,
-	sqPrinterData: sqPrinterData,
+	sksqPrinterData: sksqPrinterData,
 };

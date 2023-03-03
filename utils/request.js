@@ -182,7 +182,7 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				console.log("请求成功");
+				// console.log("请求成功");
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
@@ -300,8 +300,8 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		if (res && res.http) {
 			console.log("[AsyncFuncArr]http请求:", res);
 			showloding(res.http.load, res.http.title);
-			console.log("[AsyncFuncArr]已打开加载框...");
-			console.log("[AsyncFuncArr]开始请求数据...");
+			// console.log("[AsyncFuncArr]已打开加载框...");
+			// console.log("[AsyncFuncArr]开始请求数据...");
 			try{
 				res = await httpFunc(res);
 			}catch(e){

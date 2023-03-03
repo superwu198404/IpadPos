@@ -6,6 +6,7 @@
 
 <template>
 	<view class="content">
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<Pagekq></Pagekq>
 		<view class="right">
 			<!-- 顶部导航栏 -->
@@ -116,6 +117,15 @@
 		</view>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002"></SpecialDisc>
+		<!-- 画布 -->
+		<view class="canvasdiv" :style="'visibility:hidden;'">
+			<canvas canvas-id="couponQrcode" class="canvas"
+				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasLogo" class="canvas"
+				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+			<canvas canvas-id="canvasXPEWM" class="canvas"
+				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+		</view>
 	</view>
 </template>
 <script>
@@ -135,13 +145,19 @@
 	} from '@/bll/Common/bll.js';
 
 	import _common from '@/api/common.js';
-
+	//打印相关
+	import PrinterPage from '@/pages/xprinter/receipt';
+	import {
+		RequestSend
+	} from '@/api/business/da.js';
+	
 	var that, KQSale;
 	export default {
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq
+			Pagekq,
+			PrinterPage,
 		},
 		data() {
 			return {
@@ -159,7 +175,7 @@
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				Bill_TYPE: "Z111", //Z112
+				BILL_TYPE: "Z111", //Z112
 				XSTYPE: "1",
 				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
@@ -169,7 +185,35 @@
 				},
 				YWTYPE: "GiftCard_Active", //礼品卡激活
 				CurZKDisc: {}, //特殊折扣类型
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
+				FKDA_INFO: [],//支付方式
 			}
+		},
+		onReady: function() {
+			that = this;
+			//查询付款方式
+			(_util.callBind(that, async function() {
+				try {
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(
+						res) {
+						if (res.code) {
+							that.FKDA_INFO = JSON.parse(res.data);
+							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+						} else {
+							console.log("获取付款方式失败!======", err);
+						}
+					}))
+				} catch (err) {
+					console.log("获取付款方式失败!======", err);
+				}
+			}))()
 		},
 		created: async function() {
 			that = this;
@@ -181,7 +225,7 @@
 			// });
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
-				BIll_TYPE: that.Bill_TYPE,
+				BILL_TYPE: that.BILL_TYPE,
 				KQXSTYPE: that.KQXSTYPE,
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
@@ -196,11 +240,11 @@
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
-					that.Bill_TYPE = "Z112"; //启用赊销
+					that.BILL_TYPE = "Z112"; //启用赊销
 				} else {
-					that.Bill_TYPE = "Z111"; //不启用赊销	
+					that.BILL_TYPE = "Z111"; //不启用赊销	
 				}
-				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = _main.GetZKDatasAll(data.DKFID);
@@ -628,6 +672,27 @@
 							SALE006: that.SALE006,
 							SXSALE001: that.SXSALE001,
 						})
+						
+						//调用打印
+						let printerPram = {
+							"PRINTNUM": 1,
+							"XSTYPE": "SKJH",
+						};
+						
+						let arr3 = that.SALE003;
+						let fkdaRes = that.FKDA_INFO;
+						arr3.forEach(function(item, index) {
+							try {
+								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+								item.balance = item.balance;
+							} catch (e) {
+								item.SNAME = "";
+								item.balance = 0;
+							}
+						});
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+							printerPram);
+								
 						//重置销售单
 						that.ResetSaleBill();
 					})
@@ -639,7 +704,7 @@
 			ResetSaleBill: function() {
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
-					BIll_TYPE: that.Bill_TYPE,
+					BILL_TYPE: that.BILL_TYPE,
 					KQXSTYPE: that.KQXSTYPE,
 					CUID: that.KQXSTYPE,
 					DKFID: that.store.DKFID
