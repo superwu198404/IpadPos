@@ -10,7 +10,7 @@
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
-							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 重打小票
+							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 录入持卡人信息
 							<!-- <view class="classifys">
 												<text class="curr">全部</text><text>今日</text><text>近三天</text>
 											</view> -->
