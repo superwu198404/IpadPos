@@ -136,6 +136,8 @@
 				</view>
 			</view>
 		</view>
+		<!-- 持卡人信息 -->
+		<chikaren :show.sync="showCardRen"></chikaren>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
 		</SpecialDisc>
@@ -153,7 +155,8 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
+	import Pagekq from '@/pages/Home/Component/Pagekq.vue';
+	import chikaren from '@/components/chikaren/chikaren.vue';
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
@@ -194,6 +197,7 @@
 				SALE006: [],
 				SXSALE001: [],
 				showCardNum: false,
+				showCardRen:false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
