@@ -58,8 +58,8 @@
 		data() {
 			return {
 				ywType: "",
-				beginNum: "1087111000002638",
-				endNum: "1087111000002658",
+				beginNum: "",
+				endNum: "",
 				scan_code: false,
 				exists_credit: false,
 				isbatchOperation:false

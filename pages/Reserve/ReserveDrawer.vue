@@ -647,7 +647,13 @@
 				}
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
-					let exists_address_refresh = false;
+					let exists_address_refresh = false,data = null;
+					if(res.data){
+						let data = JSON.parse(res.data);
+						if(data.AddressID){
+							that.Order.NOTE2 = Number(data.AddressID);
+						}
+					}
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
