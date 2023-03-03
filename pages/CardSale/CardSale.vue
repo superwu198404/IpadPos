@@ -505,7 +505,7 @@
 				let s6 = JSON.parse(JSON.stringify(that.SALE006));
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
-					r.OPRICE = _util.newFloat(e.CZNET+e.ZSNET, 2);
+					r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
 					r.BZDISC = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
@@ -519,9 +519,9 @@
 				that.SALE002 = s2;
 				that.SALE006 = s6;
 				that.CalTNET();
-				console.log("s1:",that.SALE001);
-				console.log("s2:",that.SALE002);
-				console.log("s6:",that.SALE006);
+				console.log("s1:", that.SALE001);
+				console.log("s2:", that.SALE002);
+				console.log("s6:", that.SALE006);
 			},
 			//待售列表清除
 			RemoveSP: function(e) {
@@ -701,6 +701,7 @@
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
+						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
 						//激活完成-创建卡券销售单
 						KQSale.Completed({
 							SALE001: that.SALE001,
@@ -767,7 +768,7 @@
 				that.SXSALE001 = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
-				console.log("单据重置成功")
+				console.log("单据重置成功:", that.SALE001);
 			},
 			//创建sxsale1
 			CreateSXSale001: function() {
