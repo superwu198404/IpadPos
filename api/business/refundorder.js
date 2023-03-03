@@ -19,7 +19,7 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
                  WHERE S1.XSTYPE IN('1','5') \
                  AND not exists  (select 1 from sale001 s2 where  s1.bill =s2.xs_bill \
                  AND s1.saledate = s2.xs_date and s1.khid =s2.xs_khid and s1.posid =s2.xs_posid) \
-                 AND S1.KHID='" + khid + "'  AND S1.GSID  ='" + gsid + "'  AND S1.POSID ='" + posid + "'";
+                 AND S1.KHID='" + khid + "'  AND S1.GSID  ='" + gsid + "'  AND S1.POSID ='" + posid + "' and s1.BILL_TYPE not in ('Z111','Z112')";
 	if (bill) {
 		sql += " and S1.BILL='" + bill + "' ";
 	}

@@ -80,8 +80,7 @@
 						<view class="cardlist">
 							<view class="ulli" v-for="(item,index) in SALE002">
 								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
-									@touchend="touchE" :data-index="index" :style="item.txtStyle"
-									@click="goDetail(item)">
+									@touchend="touchE" :data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
 										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
@@ -118,7 +117,7 @@
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
+					<CardNumEntry :show.sync="showCardNum" :ywtype="YWTYPE"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -201,7 +200,7 @@
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				Bill_TYPE: "Z111", //Z112
+				BILL_TYPE: "Z111", //Z112
 				XSTYPE: "1",
 				KQXSTYPE: "SKCZ",
 				Amount: 0, //VIP卡余额
@@ -252,7 +251,7 @@
 			});
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
-				BIll_TYPE: that.Bill_TYPE,
+				BILL_TYPE: that.BILL_TYPE,
 				KQXSTYPE: that.KQXSTYPE,
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
@@ -268,11 +267,11 @@
 			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
-					that.Bill_TYPE = "Z112"; //启用赊销
+					that.BILL_TYPE = "Z112"; //启用赊销
 				} else {
-					that.Bill_TYPE = "Z111"; //不启用赊销	
+					that.BILL_TYPE = "Z111"; //不启用赊销	
 				}
-				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
@@ -400,7 +399,7 @@
 								_util.simpleMsg(res1.msg, true);
 								return;
 							}
-							that.Amount = res.data.amount; //卡余额
+							that.Amount = _util.newFloat(res.data.balance, 2); //卡余额
 							let spObj = await KQSale.MatchSP(res.data.materielId);
 							if (spObj) {
 								let arr = that.SALE002.filter(r => {
@@ -498,7 +497,9 @@
 			},
 			//充值规则选择事件
 			ChooseCZGZ: function(e) {
-				if (_util.newFloat(e.CZNET + e.ZSNET + that.Amount) > 5000) {
+				let amount = e.CZNET + e.ZSNET + that.Amount;
+				console.log("充值金额:", amount);
+				if (_util.newFloat(amount) > 5000) {
 					_util.simpleMsg("充值后卡余额大于 5000￥，更换充值金额；");
 					return;
 				}
@@ -508,7 +509,8 @@
 				let s6 = JSON.parse(JSON.stringify(that.SALE006));
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
-					r.CXDISC = _util.newFloat(e.ZSNET, 2);
+					r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
+					r.BZDISC = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
 				s6.map(r => {
@@ -521,6 +523,9 @@
 				that.SALE002 = s2;
 				that.SALE006 = s6;
 				that.CalTNET();
+				console.log("s1:", that.SALE001);
+				console.log("s2:", that.SALE002);
+				console.log("s6:", that.SALE006);
 			},
 			//待售列表清除
 			RemoveSP: function(e) {
@@ -700,6 +705,7 @@
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
+						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
 						//激活完成-创建卡券销售单
 						KQSale.Completed({
 							SALE001: that.SALE001,
@@ -727,7 +733,7 @@
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE": "SKCZ",
+							"XSTYPE": "SK",
 						};
 
 						let arr3 = that.SALE003;
@@ -755,7 +761,7 @@
 			ResetSaleBill: function() {
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
-					BIll_TYPE: that.Bill_TYPE,
+					BILL_TYPE: that.BILL_TYPE,
 					KQXSTYPE: that.KQXSTYPE,
 					CUID: that.KQXSTYPE,
 					DKFID: that.store.DKFID
@@ -766,7 +772,7 @@
 				that.SXSALE001 = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
-				console.log("单据重置成功")
+				console.log("单据重置成功:", that.SALE001);
 			},
 			//创建sxsale1
 			CreateSXSale001: function() {

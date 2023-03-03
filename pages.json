@@ -258,7 +258,7 @@
 			"path": "pages/Reserve/ReserveDrawer",
 			"style": {}
 		},
-		
+
 		{
 			"path": "pages/UnUpload/UnUpload",
 			"style": {}
@@ -319,6 +319,13 @@
 				"enablePullDownRefresh": false
 			}
 		}, {
+			"path": "pages/CardActive/CardActive",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
 			"path": "pages/CouponSale/CouponSale",
 			"style": {
 				"titleNView": false,
@@ -373,6 +380,6 @@
 		"rijie": "/components/rijie/rijie",
 		"saomaqiang": "/components/saomaqiang/saomaqiang",
 		"cdxp": "/components/cdxp/cdxp",
-		"query":"/Home/query/query"
+		"query": "/Home/query/query"
 	}
 }

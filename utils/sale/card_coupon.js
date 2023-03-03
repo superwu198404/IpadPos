@@ -182,7 +182,7 @@ var KQTypeObj = {
 				sale2.UNIT = spinfo?.UNIT;
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
-				sale2.BRANDID = "SK";
+				sale2.BRANDID = "SKCZ";
 				sale2.txtStyle = "left:0";
 				return sale2;
 			}
@@ -225,7 +225,7 @@ var KQTypeObj = {
 			//vip卡充值不校验库存 所以默认通过
 			func({
 				code: true,
-				msg: "默认校验通过"
+				msg: "vip卡充值:默认校验通过"
 			})
 		},
 		//激活申请（校验）
@@ -233,7 +233,7 @@ var KQTypeObj = {
 			//vip卡充值不需要激活 所以默认通过
 			func({
 				code: true,
-				msg: "默认激活通过"
+				msg: "vip卡充值:默认激活通过"
 			})
 		},
 		//激活确认（校验）
@@ -241,7 +241,7 @@ var KQTypeObj = {
 			//vip卡充值不需要激活 所以默认通过
 			func({
 				code: true,
-				msg: "默认激活通过"
+				msg: "vip卡充值:默认激活通过"
 			})
 		},
 		//激活后充值
@@ -291,7 +291,7 @@ var KQTypeObj = {
 				sale2.UNIT = spinfo?.UNIT;
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
-				sale2.BRANDID = "SK";
+				sale2.BRANDID = "CZ";
 				sale2.txtStyle = "left:0";
 				return sale2;
 			}

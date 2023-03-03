@@ -17,9 +17,9 @@
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
-								<button v-if="emptys">×</button>
+							<button v-if="beginNum" @click="beginNum=''">×</button>
 						</label>
-						<view class="classifys">
+						<view class="classifys" v-if="ywtype!='VIPCard_Active'&&ywtype!='VIPCard_Recharge'">
 							<text @click="single=true" :class="single ? 'curr' : ''">单</text>
 							<text @click="single=false" :class="single ? '' : 'curr'">多</text>
 						</view>
@@ -31,7 +31,7 @@
 							</image>
 							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
-								<button v-if="emptys">×</button>
+							<button v-if="endNum" @click="endNum=''">×</button>
 						</label>
 					</view>
 					<label><text>启用扫码操作：</text>
@@ -39,7 +39,6 @@
 					</label>
 				</view>
 				<view class="confirm">
-					<!-- <button class="btn btn-qx" @click="ScanCodeHandle">刷卡/扫码</button> -->
 					<button class="btn btn-qx" @click="Cancel">取消</button>
 					<button class="btn" @click="Confirm">确认</button>
 				</view>
@@ -56,20 +55,35 @@
 	export default {
 		name: "CardNumEntry",
 		props: {
-			ywtype: String,
+			ywtype: {
+				type: String,
+				default: ""
+			},
 			show: Boolean
 		},
 		data() {
 			return {
-				ywType: "",
+				// ywType: "",
 				beginNum: "", //1087111000002638
 				endNum: "", //1087111000002658
 				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
 				store: getApp().globalData.store,
-				exists_credit: false,
 			};
+		},
+		watch: {
+			ywtype: {
+				immediate: true,
+				handler: function(n, o) {
+					console.log("业务类型发生变动:", n);
+					if (n == 'VIPCard_Active' || n == 'VIPCard_Recharge') {
+						this.single = true;
+					} else {
+						this.single = false;
+					}
+				}
+			}
 		},
 		created() {
 			that = this;
@@ -77,14 +91,6 @@
 			that.store = _util.getStorage("store");
 		},
 		methods: {
-			// CreditMode: function(is_credit) {
-			// 	this.exists_credit = is_credit;
-			// 	if (is_credit) {
-			// 		this.single = true
-			// 	} else {
-			// 		this.single = false
-			// 	}
-			// },
 			Cancel: function() {
 				console.log("事件触发");
 				this.$emit("update:show", false);
@@ -96,15 +102,20 @@
 				that.ResetBill();
 			},
 			Confirm: function() {
-				console.log("事件触发");
 				if (!that.beginNum) {
 					_util.simpleMsg("请输入起始卡号", true);
 					return;
 				}
-				if (!that.single&&!that.endNum) {
-					_util.simpleMsg("请输入截止卡号", true);
-					return;
+				if (!that.single) {
+					if (!that.endNum) {
+						_util.simpleMsg("请输入截止卡号", true);
+						return;
+					}
+				} else {
+					that.endNum = that.beginNum;
 				}
+				console.log("即将回调的卡号:", that.beginNum);
+				console.log("即将回调的卡号1:", that.endNum);
 				this.$emit("update:show", false);
 				uni.$emit("GetCardNums", {
 					type: "Y",
@@ -122,13 +133,12 @@
 					that.curFocus = false;
 					that.beginNum = "";
 					that.endNum = "";
-					that.exists_credit = false;
 				}, 500);
 			},
 			ScanCodeHandle: function(prop) {
 				// prop = that.curFocus;
 				that.curFocus = prop;
-				
+
 				console.log("[ScanCodeHandle]对应属性名称:", prop);
 				if (this.scan_code) { //扫码
 					uni.scanCode({
@@ -141,7 +151,7 @@
 										this.endNum = result.result;
 									} else {
 										that.curFocus = "endNum";
-										
+
 									}
 								}
 							} else

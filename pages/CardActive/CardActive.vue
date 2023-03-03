@@ -175,7 +175,7 @@
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
-				Bill_TYPE: "Z111", //Z112
+				BILL_TYPE: "Z111", //Z112
 				XSTYPE: "1",
 				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
@@ -196,6 +196,7 @@
 			}
 		},
 		onReady: function() {
+			that = this;
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
@@ -224,7 +225,7 @@
 			// });
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
-				BIll_TYPE: that.Bill_TYPE,
+				BILL_TYPE: that.BILL_TYPE,
 				KQXSTYPE: that.KQXSTYPE,
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
@@ -239,11 +240,11 @@
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
-					that.Bill_TYPE = "Z112"; //启用赊销
+					that.BILL_TYPE = "Z112"; //启用赊销
 				} else {
-					that.Bill_TYPE = "Z111"; //不启用赊销	
+					that.BILL_TYPE = "Z111"; //不启用赊销	
 				}
-				that.SALE001.BILL_TYPE = that.Bill_TYPE;
+				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = _main.GetZKDatasAll(data.DKFID);
@@ -703,7 +704,7 @@
 			ResetSaleBill: function() {
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
-					BIll_TYPE: that.Bill_TYPE,
+					BILL_TYPE: that.BILL_TYPE,
 					KQXSTYPE: that.KQXSTYPE,
 					CUID: that.KQXSTYPE,
 					DKFID: that.store.DKFID

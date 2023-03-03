@@ -65,10 +65,10 @@
 									<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
 								</view>
 								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>567</label>
-									<label><em>●</em><text>默认折扣：</text>5</label>
-									<label><em>●</em><text>标准折扣：</text>54</label>
-									<label><em>●</em><text>特批折扣：</text>5</label>
+									<label><em>●</em><text>总折扣：</text>{{sales.sale002.DISCRATE}}</label>
+									<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
+									<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
+									<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
 								</view>
 							</view>
 
@@ -80,7 +80,7 @@
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
 						</view>
-						<button class="btn" @click="to_payment">确认支付</button>
+						<button class="btn" @click="to_payment">确认支付</button><button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button>
 					</view>
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
@@ -92,7 +92,7 @@
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../images/VIP-dlu.png" mode="widthFix" @click="view.enable_special_discount=true"></image>
+							<image src="../../images/VIP-dlu.png" mode="widthFix" @click="select_special_discount"></image>
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
@@ -163,7 +163,8 @@
 					sale2_union_sale6: [],
 					coupon_active_success: false,
 					big_customer_info: null,
-					discount_infos: null
+					discount_infos: null,
+					discount_type: null
 				},
 				sale: null,
 				container: null,
@@ -176,25 +177,6 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //付款信息
 			}
-		},
-		onReady: function() {
-			let that = this;
-			//��ѯ���ʽ
-			(util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(that, function(res) {
-						if (res.code) {
-							that.FKDA_INFO = JSON.parse(res.data);
-							util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]��ȡ֧����ʽ==========:", that.FKDA_INFO);
-						} else {
-							console.log("��ȡ���ʽʧ��!======",err);
-						}
-					}))
-				} catch (err) {
-					console.log("��ȡ���ʽʧ��!======",err);
-				}
-			}))()
 		},
 		computed: {
 			unpaid_total_quantity() {
@@ -228,11 +210,30 @@
 				}
 			},
 			'source.sale002'(n, o) {
+				if(n.length !== o.length){//如果长度发生变化则进行计算（不受内部对象变化影响）
+					console.log("[WatchSale2]长度发生变化，开始计算特殊折扣和手工折扣...");
+					this.discount_computed();//特殊折扣计算
+					this.craft_discount_computed();//手工折扣额
+					console.log("[WatchSale2]特殊折扣和手工折扣计算完毕...");
+				}
+				console.log("[WatchSale2]准备开始汇总金额:",this.source.sale002.map(i => i.NET));
 				let sale001 = this.source.sale001,
 					total_amount = this.source.sale002.map(sale2 => sale2.NET).reduce((prev_net, next_net) => prev_net +
 						next_net, 0);
 				sale001.TNET = total_amount;
 				sale001.ZNET = total_amount;
+				console.log("[WatchSale2]汇总完毕:",{
+					TNET: sale001.TNET,
+					ZNET: sale001.ZNET
+				});
+			},
+			'source.discount_type'(n, o){
+				if(n && n !== 'NO'){
+					console.log("[WatchDiscount]折扣发生改变（不为NO）:",n);
+					this.discount_computed();//特殊折扣计算
+					this.craft_discount_computed();//手工折扣额
+					this.source.sale002.sort();
+				}
 			}
 		},
 		methods: {
@@ -248,7 +249,7 @@
 					this.source.sale2_union_sale6.splice(remove_union_index, 1);
 			},
 			async get_discount_data(id){
-				return await _main.GetZKDatasAll(id);
+				return await main.GetZKDatasAll(id);
 			},
 			async get_payment_infos(){
 				return await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, $(function(res) {
@@ -340,7 +341,8 @@
 								QTY: res.data.coupon_count,
 								SPID: good_id,
 								KQIDS: this.form.start_coupon_no,
-								KQIDE: this.form.end_coupon_no
+								KQIDE: this.form.end_coupon_no,
+								KQIDSTR: this.form.start_coupon_no + "-" +this.form.end_coupon_no,
 							});
 							this.source.sale002.push(sale002);
 							this.source.sale006.push(sale006);
@@ -388,6 +390,7 @@
 						SALE001: this.source.sale001,
 						SALE002: this.source.sale002,
 						SALE003: this.source.sale003,
+						SALE006: this.source.sale006,
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
@@ -397,6 +400,40 @@
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
+			},
+			select_special_discount(){
+				console.log("[SelectSpecialDiscount]特殊折扣选择:", this.source);
+				if(!this.source.big_customer_info){
+					util.simpleMsg("请选择大客户后再进行此操作!",true)
+					this.view.big_customer = true;
+					return;
+				}
+				if(!this.source.sale002?.length){
+					util.simpleMsg("请添加活动券后再进行此操作!",true)
+					return;
+				}
+				this.view.enable_special_discount=true;
+			},
+			discount_computed() {//使用特殊折扣进行计算
+				let discount_computed_params = {};
+				if(this.source.discount_type != 'NO'){
+					discount_computed_params.ZKType= this.source.discount_type;
+					discount_computed_params.ZKData= this.source.discount_infos;
+				}
+				main.MatchZKDatas(discount_computed_params, this.source.sale002);
+				console.log("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
+			},
+			craft_discount_computed() {//手工折扣额的处理
+				console.log("[CraftDiscountComputed]原金额:", this.source.sale001.TNET);
+				let SKY_DISCOUNT = util.newFloat(((this.source.sale001.TNET * 10) % 1) / 10, 2);
+				console.log("[CraftDiscountComputed]手工折扣额：", SKY_DISCOUNT);
+				this.source.sale001.TNET = util.newFloat(Number(this.source.sale001.TNET) - SKY_DISCOUNT, 2);
+				this.source.sale001.ZNET = util.newFloat(Number(this.source.sale001.ZNET) - SKY_DISCOUNT, 2);
+				this.source.sale001.BILLDISC = util.newFloat(Number(this.source.sale001.BILLDISC) + SKY_DISCOUNT, 2);
+				this.source.sale001.TCXDISC = util.newFloat(Number(this.source.sale001.TCXDISC) + SKY_DISCOUNT, 2);
+				this.source.sale001.ROUND = SKY_DISCOUNT;
+				this.source.sale001.TDISC = util.newFloat(Number(this.source.sale001.TDISC) + SKY_DISCOUNT, 2);
+				console.log("[CraftDiscountComputed]SALE001计算手工折扣后的新数据：", this.source);
 			},
 			receipt_printing(source){//打印代码写在下面
 			    let that = this;
@@ -435,6 +472,202 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
+			to_printer(){
+				let that = this;
+								
+				let sale01 = {
+					"CLTIME": null,
+					"CUSTID": null,
+					"XSPTID": "PAD",
+					"YN_DCDG": null,
+					"YN_HH": null,
+					"DKFID": "80000000",
+					"BMID": null,
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"GSID": "K200",
+					"STR2": null,
+					"STR1": "success",
+					"ERRINO": null,
+					"ERRID": null,
+					"TIME": "16",
+					"WEEK": 9,
+					"MONTH": "03",
+					"YAER": "2023",
+					"YN_SC": "N",
+					"REASON": null,
+					"TDISC": 30,
+					"TLSDISC": 0,
+					"TTPDISC": 0,
+					"TBZDISC": 0,
+					"THYDISC": 0,
+					"HYJF": 0,
+					"CARDID": null,
+					"CUID": "1000311652",
+					"TCXDISC": 30,
+					"CXTNET": 0,
+					"CHANGENET": 0,
+					"ROUND": 0,
+					"BILLDISC": 30,
+					"ZNET": 300,
+					"DNET": 0,
+					"TNET": 300,
+					"TLINE": 1,
+					"XS_GSID": null,
+					"XS_KHID": null,
+					"XS_DATE": null,
+					"XS_POSID": null,
+					"XS_BILL": null,
+					"XSTYPE": "1",
+					"BILL_TYPE": null,
+					"RYID": "999",
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-02 10:30:32",
+					"SALEDATE": "2023-03-02",
+					"THTYPE": null,
+					"ZTMSTR": null,
+					"KQXSTYPE": "SKCZ",
+					"YN_JLTH": null,
+					"YN_OK": "X",
+					"CUSTMTIME": null,
+					"CUSTMCOMM": null,
+					"CUSTMADDRESS": null,
+					"CUSTMPHONE": null,
+					"CUSTMNAME": null
+				};
+				
+				let sale02 = [{
+					"SALEDATE": "2023-03-01",
+					"XPDGCOM": null,
+					"XPDGSTR": null,
+					"SBERR": null,
+					"YN_SB": null,
+					"MYSTR": null,
+					"SPJGZ": "03",
+					"YN_XPDG": null,
+					"BMID": null,
+					"RYID": "999",
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"STR2": null,
+					"STR1": "仟吉SAP-VIP卡",
+					"TIME": "16",
+					"WEEK": 9,
+					"MONTH": "03",
+					"YAER": "2023",
+					"HYJFCD": 0,
+					"JFDISC": 0,
+					"HYJF": 0,
+					"LSDISC": 0,
+					"TPDISC": 0,
+					"BZDISC": 0,
+					"HYDISC": 0,
+					"YN_HYDISC": null,
+					"CXID": null,
+					"CXDISC": 30,
+					"YN_CXDISC": null,
+					"BILLDISC": 0,
+					"DISC_TYPE": null,
+					"DISC": 0,
+					"YN_SKYDISC": null,
+					"HYBL": 0,
+					"DISCRATE": 0,
+					"BRANDID": "SK",
+					"HTID": null,
+					"GYSID": null,
+					"NET": 300,
+					"OPRICE": 0,
+					"PRICE": 300,
+					"MINSQTY": 0,
+					"QTY": 1,
+					"UNIT": "张",
+					"SERIAL": null,
+					"BARCODE": null,
+					"PLID": "80101",
+					"NO": 0,
+					"SPID": "000000008010100002",
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-01 16:38:32"
+				}];
+				
+				let sale03 = [{
+					"SALEDATE": "2023-03-01",
+					"DISC": "60.00",
+					"ZKLX": "ZV03",
+					"YN_ZQ": null,
+					"YN_ST": null,
+					"YN_JL": null,
+					"YN_LP": null,
+					"YN_YLTH": null,
+					"BMID": 0,
+					"RYID": "999",
+					"KCDID": "D006",
+					"DPID": "11075",
+					"GCID": "K201",
+					"CZK_AK": 0,
+					"STR2": null,
+					"STR1": null,
+					"AUTH": "1001270578",
+					"TIME": 0,
+					"WEEK": 0,
+					"MONTH": 0,
+					"YAER": 0,
+					"SAVE_JE": 0,
+					"SAVE_JEO": 0,
+					"IDTYPE": "Z003",
+					"ID": "1082770000400588",
+					"DSFKD": 0,
+					"RATE": "60.00",
+					"FAMT": "60.00",
+					"AMT": "300.00",
+					"FKID": "ZF04",
+					"NO": 0,
+					"BILL": "K200QTD00612303011638320",
+					"POSID": "1",
+					"KHID": "K200QTD006",
+					"SALETIME": "2023-03-01 16:38:32",
+					"SNAME": "仟吉电子卡"
+				}];
+				let sale06 = [{
+					"BILL": "K200QTD00612303011638320",
+					"SALEDATE": "2023-03-01",
+					"SALETIME": "2023-03-01 16:38:32",
+					"KHID": "K200QTD006",
+					"POSID": "1",
+					"SPID": "000000008010100002",
+					"NO": 0,
+					"KQIDS": "1087110000744422",
+					"KQIDE": "1087110000744422",
+					"KQIDSTR": "1087110000744422-1087110000744422",
+					"QTY": 1,
+					"MYSTR": 300
+				}];
+
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": "SQ",
+				};
+				
+				let arr3 = sale03;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				that.$refs.printerPage.sksqBluePrinter(sale01, sale02, arr3, sale06, printerPram);
+			},
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否进行赊销操作...", this.source.enable_credit);
 				if (this.source.enable_credit) {
@@ -467,16 +700,18 @@
 				console.log("[EventMonitor]事件处理...");
 				this.event_register('close-tszk',$(function(data){
 					console.log("[EventMonitor]用户选择的折扣信息:",data);
+					this.source.discount_type = data;//记录折扣类型
+					console.log("[EventMonitor]用户选择的折扣处理后的SALE2信息:",this.source.sale002);
 					this.view.enable_special_discount = false;//关闭特殊折扣弹窗
 				}));
-				this.event_register("big-customer-close", $(function(data) {
+				this.event_register("big-customer-close", $(async function(data) {
 					console.log("[Created]大客户回调:", data);
 					if (data.exists_credit) {
 						this.source.enable_credit = true; //启用赊销
-						this.source.big_customer_info = data;
-						this.source.discount_infos = this.get_discount_data(data.DKHID);
-						console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
 					}
+					this.source.big_customer_info = data;
+					this.source.discount_infos = await this.get_discount_data(data.DKHID);
+					console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
 				}));
 			},
 			event_register(event_name, event_callback){
