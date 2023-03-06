@@ -290,7 +290,36 @@ const batchCardActiveConfirm = function(loading_title, request, success, error) 
 			error(res)
 	});
 }
-
+//VIP卡信息登记
+const updateCustomerInfo = function(loading_title, request, success, error) {
+	let data = requestAssembleTwo(loading_title, {
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "updateCustomerInfo"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+//VIP卡信息登记查询
+const queryVipCardInfo = function(loading_title, request, success, error) {
+	let data = requestAssembleTwo(loading_title, {
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "queryVipCardInfo"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
 const coupon_sale = {
 	async base_request(process, data, success, error) {
 		console.log("[BaseRequest]参数信息:", {
@@ -395,5 +424,7 @@ export default {
 	batchCardActiveApply,
 	batchCardActiveConfirm,
 	coupon_sale,
-	GetTLCard
+	GetTLCard,
+	updateCustomerInfo,
+	queryVipCardInfo
 }

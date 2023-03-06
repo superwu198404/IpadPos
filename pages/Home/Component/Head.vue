@@ -42,9 +42,9 @@
 						<text v-if="YN_PRINT_CON=='Y'">已连接</text>
 						<text v-else style="color: #FE694B;">未连接</text>
 					</label>
-					<label class="rijie">
+					<label class="rijie" v-if="showSale">
 						<image src="@/images/dx-qingkong.png" mode="widthFix"></image>
-						<button v-if="showSale" @click="ReturnSale()">清空</button>
+						<button @click="ReturnSale()">清空</button>
 					</label>
 				</view>
 				<!-- <view class="account" v-if="hyinfo">
