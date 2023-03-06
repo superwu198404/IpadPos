@@ -90,6 +90,12 @@
 							icon_close: require('@/images/img2/quancx.png'),
 							name:'卡绑定',
 							key: ''
+						},
+						{
+							icon_open: require('@/images/img2/quancx-bai.png'),
+							icon_close: require('@/images/img2/quancx.png'),
+							name:'激活失败',
+							key: ''
 						}
 					]
 				}
