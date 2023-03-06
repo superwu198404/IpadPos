@@ -42,7 +42,7 @@
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>礼品卡激活</text>
+									<text>兑换券/换卡</text>
 								</label>
 							</view>
 						</view>
@@ -106,6 +106,9 @@
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z">
+							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
 						</view>
 					</view>
 				</view>
