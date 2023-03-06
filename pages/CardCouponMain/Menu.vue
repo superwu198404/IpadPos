@@ -62,21 +62,33 @@
 							key: 'CardActive'
 						},
 						{
+							icon_open: require('@/images/img2/lpkjih-bai.png'),
+							icon_close: require('@/images/img2/lpkjih.png'),
+							name:'兑换券换卡',
+							key: ''
+						},
+						{
 							icon_open: require('@/images/img2/quanquan.png'),
 							icon_close: require('@/images/img2/quanquan-hui.png'),
-							name: '券销售',
+							name: '券激活',
 							key: 'CouponSale'
 						},
 						{
 							icon_open: require('@/images/img2/kachaxun-bai.png'),
 							icon_close: require('@/images/img2/kachaxun.png'),
-							name: '卡查询',
+							name: '卡券查询',
 							key: 'Cardquery'
 						},
 						{
 							icon_open: require('@/images/img2/quancx-bai.png'),
 							icon_close: require('@/images/img2/quancx.png'),
-							name: '券查询',
+							name:'卡延期',
+							key: ''
+						},					
+						{
+							icon_open: require('@/images/img2/quancx-bai.png'),
+							icon_close: require('@/images/img2/quancx.png'),
+							name:'卡绑定',
 							key: ''
 						}
 					]
@@ -87,10 +99,14 @@
 			select_menu(info) {
 				this.source.current_menu_info = info;
 				console.log("[SelectMenu]当前选择的菜单信息:", info);
+			},
+			setting_default_menu(){//设置默认菜单
+				this.source.current_menu_info = this.source.menu_infos[0];
 			}
 		},
 		created() {
 			console.log("[Created]Menu菜单加载...");
+			this.setting_default_menu();
 		}
 	}
 </script>
