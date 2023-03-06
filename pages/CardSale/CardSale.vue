@@ -7,7 +7,7 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<Pagekq></Pagekq>
+		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
@@ -96,9 +96,9 @@
 										<label>终：<text>{{item.end_num}}</text></label>
 									</view>
 									<view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||item.ZSNET}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||item.ZSNET}}</label>
+										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC}}</label>
 										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 									</view>
 								</view>
@@ -139,8 +139,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- 持卡人信息 -->
-		<chikaren :show.sync="showCardRen"></chikaren>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
 		</SpecialDisc>
@@ -158,8 +156,7 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue';
-	import chikaren from '@/components/chikaren/chikaren.vue';
+	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
@@ -200,7 +197,6 @@
 				SALE006: [],
 				SXSALE001: [],
 				showCardNum: false,
-				showCardRen:false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
@@ -298,10 +294,13 @@
 			TotalNet: function() {
 				let total = 0;
 				console.log("sale001", that.SALE001);
-				if (!that.SALE001 || Object.keys(that.SALE001).length == 0) {
+				if (!that.SALE002 || that.SALE002.length == 0) {
 					return total;
 				}
-				total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				that.SALE002.map(r => {
+					total += r.NET;
+				})
+				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
 				return total;
 			},
 		},
@@ -513,10 +512,11 @@
 				let s6 = JSON.parse(JSON.stringify(that.SALE006));
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
-					r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
-					r.BZDISC = _util.newFloat(e.ZSNET, 2);
-					r.BILLDISC = _util.newFloat(e.ZSNET, 2);
-					r.DISCRATE = _util.newFloat(e.ZSNET, 2);
+					r.OPRICE = _util.newFloat(e.CZNET+e.ZSNET, 2);
+					r.ZSNET = _util.newFloat(e.ZSNET, 2);
+					// r.BZDISC = _util.newFloat(e.ZSNET, 2);//后续追加
+					// r.BILLDISC = _util.newFloat(e.ZSNET, 2);
+					// r.DISCRATE = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
 				})
 				s6.map(r => {
@@ -528,10 +528,10 @@
 				})
 				that.SALE002 = s2;
 				that.SALE006 = s6;
-				that.CalTNET();
-				console.log("s1:", that.SALE001);
-				console.log("s2:", that.SALE002);
-				console.log("s6:", that.SALE006);
+				// that.CalTNET();
+				console.log("s1:",that.SALE001);
+				console.log("s2:",that.SALE002);
+				console.log("s6:",that.SALE006);
 			},
 			//待售列表清除
 			RemoveSP: function(e) {
@@ -550,7 +550,7 @@
 							that.SALE001.TNET = 0;
 							that.SALE001.BILLDISC = 0;
 						}
-						that.CalTNET();//扣减后重新计算
+						// that.CalTNET(); //扣减后重新计算
 					}
 				})
 			},
@@ -562,6 +562,11 @@
 					ttpdisc = 0,
 					tlsdisc = 0;
 				that.SALE002.map(r => {
+					if (r.ZSNET) {
+						r.BZDISC += r.ZSNET;
+						r.BILLDISC += r.ZSNET;
+						r.DISCRATE += r.ZSNET;
+					}
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
 					tbzdisc += r.BZDISC;
@@ -588,8 +593,8 @@
 				this.SALE001.ZNET = _util.newFloat(Number(this.SALE001.ZNET) - SKY_DISCOUNT, 2);
 				this.SALE001.BILLDISC = _util.newFloat(Number(this.SALE001.BILLDISC) + SKY_DISCOUNT, 2);
 				this.SALE001.TCXDISC = _util.newFloat(Number(this.SALE001.TCXDISC) + SKY_DISCOUNT, 2);
-				this.SALE001.ROUND = SKY_DISCOUNT;
 				this.SALE001.TDISC = _util.newFloat(Number(this.SALE001.TDISC) + SKY_DISCOUNT, 2);
+				this.SALE001.ROUND = SKY_DISCOUNT;
 				console.log("[skdiscCompute]001计算手工折扣后的新数据：", that.SALE001);
 			},
 			//去支付
@@ -613,7 +618,7 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.discCompute() //特殊折扣
-						that.CalTNET();//因为会产生特殊折扣 所以重新计算 
+						that.CalTNET(); //因为会产生特殊折扣 所以重新计算 
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -634,7 +639,8 @@
 							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-							that.PayParamAssemble();
+							// that.PayParamAssemble();
+							_card_sale.PayParamAssemble(that, that.PayedResult);
 						}
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);
@@ -648,10 +654,18 @@
 				uni.$emit('stop-timed-communication');
 				console.log("[PayParamAssemble]支付参数组装...")
 				util.setStorage('open-loading', false);
+				let allow_type = _util.getStorage("POSCS").find(i => i.POSCS == 'SKSQFKID')?.POSCSNR.split(',');
+				let ban_type = _util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
+					.fkid);
+				console.warn("[BeforeFk]卡券销售结算获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type
+				});
 				let inputParm = {
 					sale1_obj: that.SALE001, //001 主单 数据对象
 					sale2_arr: that.SALE002, //002 商品 数据对象集合
 					actType: "Payment", //动作类型(退款、支付)
+					ban_pay: ban_type, //被禁用的支付类型
 				}
 				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 				that.$store.commit('set-location', inputParm);
@@ -713,7 +727,6 @@
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
-						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
 						//激活完成-创建卡券销售单
 						KQSale.Completed({
 							SALE001: that.SALE001,
@@ -741,7 +754,7 @@
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE":that.KQXSTYPE,
+							"XSTYPE": that.KQXSTYPE,
 						};
 
 						let arr3 = that.SALE003;
@@ -780,7 +793,7 @@
 				that.SXSALE001 = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
-				console.log("单据重置成功:", that.SALE001);
+				console.log("单据重置成功")
 			},
 			//创建sxsale1
 			CreateSXSale001: function() {

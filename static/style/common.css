@@ -27,6 +27,16 @@
 	margin-left: 14px;
 }
 
-/* page {
-	overflow: hidden;
-} */
+.full {
+	width: 100%;
+	height: 100%;
+}
+
+.all-border-box, .all-border-box * {
+	box-sizing: border-box;
+}
+
+.component-content > view {
+	height: 100%;
+	width: 100%;
+}

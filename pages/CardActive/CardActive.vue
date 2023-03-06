@@ -7,7 +7,7 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<Pagekq></Pagekq>
+		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
@@ -602,7 +602,8 @@
 							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-							that.PayParamAssemble();
+							// that.PayParamAssemble();
+							_card_sale.PayParamAssemble(that, that.PayedResult);
 						}
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);
