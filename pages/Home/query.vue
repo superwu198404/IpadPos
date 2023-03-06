@@ -50,6 +50,11 @@
 				value: "值"
 			},
 		},
+		data() {
+			return {
+				
+			}
+		},
 		//组件生命周期
 		created:function(e){
 		

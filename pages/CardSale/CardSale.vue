@@ -131,6 +131,10 @@
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
+						<view class="a-z">
+							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
+						</view>
+						
 					</view>
 				</view>
 			</view>
