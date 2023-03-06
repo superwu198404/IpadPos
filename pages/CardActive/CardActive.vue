@@ -602,7 +602,8 @@
 							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-							that.PayParamAssemble();
+							// that.PayParamAssemble();
+							_card_sale.PayParamAssemble(that, that.PayedResult);
 						}
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);
