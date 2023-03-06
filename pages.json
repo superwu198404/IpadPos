@@ -258,7 +258,6 @@
 			"path": "pages/Reserve/ReserveDrawer",
 			"style": {}
 		},
-
 		{
 			"path": "pages/UnUpload/UnUpload",
 			"style": {}
@@ -318,14 +317,16 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		}, {
+		},
+		{
 			"path": "pages/CardActive/CardActive",
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/CouponSale/CouponSale",
 			"style": {
 				"titleNView": false,
@@ -335,6 +336,14 @@
 		},
 		{
 			"path": "pages/Cardquery/Cardquery",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/CardCouponMain/Menu",
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",

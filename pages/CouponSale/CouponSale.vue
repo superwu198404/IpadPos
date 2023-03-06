@@ -4,111 +4,108 @@
 	@import url(@/static/style/card.css);
 </style>
 <template>
-	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
-		<view class="right right-correct">
-			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
-			<!-- 内容栏 -->
-			<view class="steps">
-				<view class="listep curr">
-					<text class="xuhao">01</text>
-					<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
-					<em>>>>>>></em>
-				</view>
-				<view class="listep">
-					<text class="xuhao">02</text>
-					<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
-					<em>>>>>>></em>
-				</view>
-				<view class="listep">
-					<text class="xuhao">03</text>
-					<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
-					<em>>>>>>></em>
-				</view>
-				<view class="listep">
-					<text class="xuhao">04</text>
-					<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
-					<!-- <em>>>>>>></em> -->
-				</view>
+	<view>
+		<!-- 顶部导航栏 -->
+		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+		<!-- 内容栏 -->
+		<view class="steps">
+			<view class="listep curr">
+				<text class="xuhao">01</text>
+				<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
+				<em>>>>>>></em>
 			</view>
-			<view class="listof listof-correct">
-				<view class="prolist prolist-correct zxpro " style="width: 92%;">
-					<view class="choice">
-						<view class="tab curr">
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text>活动券激活</text>
-						</view>
+			<view class="listep">
+				<text class="xuhao">02</text>
+				<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
+				<em>>>>>>></em>
+			</view>
+			<view class="listep">
+				<text class="xuhao">03</text>
+				<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
+				<em>>>>>>></em>
+			</view>
+			<view class="listep">
+				<text class="xuhao">04</text>
+				<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
+				<!-- <em>>>>>>></em> -->
+			</view>
+		</view>
+		<view class="listof listof-correct">
+			<view class="prolist prolist-correct zxpro " style="width: 92%;">
+				<view class="choice">
+					<view class="tab curr">
+						<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+						<text>活动券激活</text>
 					</view>
-					<view class="module" style="height: 66%;">
-						<view class="hh">待售详情 <em></em></view>
-						<!-- 没刷卡时显示 -->
-						<view class="swipetip" v-if="view.swipe_tip">
-							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-							<text>请先刷卡录入</text>
-						</view>
-						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist">
-							<view class="ulli" v-for="sales in source.sale2_union_sale6">
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-								<view class="h6">
-									<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
-									<view class="zje">
-										<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
-										<button @click="remove_union(sales)">
-											<image src="@/images/img2/ka-shanchu.png"></image>
-										</button>
-									</view>
-								</view>
-								<view class="card-num">
-									<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
-									<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
-								</view>
-								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{sales.sale002.DISCRATE}}</label>
-									<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
-									<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
-									<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
+				</view>
+				<view class="module" style="height: 66%;">
+					<view class="hh">待售详情 <em></em></view>
+					<!-- 没刷卡时显示 -->
+					<view class="swipetip" v-if="view.swipe_tip">
+						<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+						<text>请先刷卡录入</text>
+					</view>
+					<!-- 刷卡后显示卡列表 -->
+					<view class="cardlist">
+						<view class="ulli" v-for="sales in source.sale2_union_sale6">
+							<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+							<view class="h6">
+								<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
+								<view class="zje">
+									<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
+									<button @click="remove_union(sales)">
+										<image src="@/images/img2/ka-shanchu.png"></image>
+									</button>
 								</view>
 							</view>
-
+							<view class="card-num">
+								<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
+								<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
+							</view>
+							<view class="statistic">
+								<label><em>●</em><text>总折扣：</text>{{sales.sale002.DISCRATE}}</label>
+								<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
+								<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
+								<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
+							</view>
 						</view>
-					</view>
-					<view class="totals">
-						<view>
-							<em></em>
-							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
-							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
-						</view>
-						<button class="btn" @click="to_payment">确认支付</button><button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button>
-					</view>
-					<!-- 起始卡号 -->
-					<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
-				</view>
-				<view class="operation operation-correct">
-					<view class="sorting">
-						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="view.no_input=true">
-							</image>
-						</view>
-						<view class="a-z">
-							<image src="../../images/VIP-dlu.png" mode="widthFix" @click="select_special_discount"></image>
-						</view>
-						<view class="a-z">
-							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
-						</view>
+	
 					</view>
 				</view>
-				<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002"></SpecialDisc>
-				<!-- 画布 -->
-				<view class="canvasdiv" :style="'visibility:hidden;'">
-					<canvas canvas-id="couponQrcode" class="canvas"
-						:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-					<canvas canvas-id="canvasLogo" class="canvas"
-						:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-					<canvas canvas-id="canvasXPEWM" class="canvas"
-						:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+				<view class="totals">
+					<view>
+						<em></em>
+						<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
+						<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
+					</view>
+					<button class="btn" @click="to_payment">确认支付</button><button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button>
 				</view>
+				<!-- 起始卡号 -->
+				<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
+			</view>
+			<view class="operation operation-correct">
+				<view class="sorting">
+					<view class="a-z">
+						<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="view.no_input=true">
+						</image>
+					</view>
+					<view class="a-z">
+						<image src="../../images/VIP-dlu.png" mode="widthFix" @click="select_special_discount"></image>
+					</view>
+					<view class="a-z">
+						<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+					</view>
+				</view>
+			</view>
+			<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002"></SpecialDisc>
+			<!-- 画布 -->
+			<view class="canvasdiv" :style="'visibility:hidden;'">
+				<canvas canvas-id="couponQrcode" class="canvas"
+					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasLogo" class="canvas"
+					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+				<canvas canvas-id="canvasXPEWM" class="canvas"
+					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 			</view>
 		</view>
 	</view>
@@ -116,6 +113,7 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue';
+	import Menu from '@/pages/CardCouponMain/Menu.vue';
 	
 	import member from '@/api/hy/MemberInterfaces.js';
 	import Sale from '@/utils/sale/card_coupon.js';
@@ -137,7 +135,8 @@
 		name: "CouponSale",
 		components: {
 			Head,
-			PrinterPage,
+			Menu,
+			PrinterPage
 		},
 		data() {
 			return {
