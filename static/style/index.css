@@ -1785,3 +1785,12 @@ checkbox.mycheck .wx-checkbox-input,
 	.statnum{
 		margin-top:40rpx;
 	}
+input::placeholder{
+   font-weight:400;
+}
+input::-webkit-input-placeholder{
+   font-weight:400;
+}
+input:-ms-input-placeholder{
+    font-weight:400;
+}

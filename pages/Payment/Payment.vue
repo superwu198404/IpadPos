@@ -252,6 +252,30 @@
 		<!-- 其他支付方式 -->
 		<view class="boxs" v-if="ShowOthersPay">
 			<view class="coupons" style="width:80%;height: 80%;">
+				<view class="hh" style="padding-top:56rpx;">
+					<view style="width:45%">
+						<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
+						<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台	
+					</view>
+				</view>
+				<view class="amounts">
+					<!-- <p>订单号：{{out_trade_no_old}}</p> -->
+					<p><text>总金额</text><text>{{isRefund ? refundView.totalAmount : totalAmount}}</text></p>
+					<p><text>折扣</text><text>{{Discount}}</text></p>
+					<p><text>已收</text><text>{{isRefund ? refundView.actualAmount : Number(yPayAmount).toFixed(2)}}</text>
+					</p>
+					<p><text>欠款</text><text>{{isRefund ? refundView.debtAmount : debt}}</text></p>
+					<p>
+						<text>还需支付</text>
+						<text class="pay-center">
+							<span v-if="isRefund">{{ refundView.debtAmount }}</span>
+							<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
+								value="" :key="domRefresh" v-model="dPayAmount" min="0.01" />
+							<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
+								value="" :key="domRefresh" v-model="CashOffset.Money" />
+						</text>
+					</p>
+				</view>
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
 					<view :class="PayMode=='93'?'curr':' '" @click="PayMode='93'">银行合作</view>

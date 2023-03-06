@@ -842,7 +842,17 @@ page {
 	background-color: #fff;
 	border-color: #fff;
 }
-
+.coupons .hh{
+	padding-top:10rpx;
+}
+.coupons .amounts{
+	margin:1% auto 2%;
+	background-color: #fff;
+	border-radius: 20rpx;
+	position: relative;
+	z-index: 99;
+	border: 1px solid #D6EED8;
+}
 uni-button:after {
 	border: none;
 }
