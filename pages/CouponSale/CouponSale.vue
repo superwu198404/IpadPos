@@ -47,8 +47,31 @@
 					</view>
 					<!-- 刷卡后显示卡列表 -->
 					<view class="cardlist">
-						<view class="ulli" v-for="sales in source.sale2_union_sale6">
-							<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+						<view class="ulli" v-for="(sales,index) in source.sale2_union_sale6">
+							<view class="touch-list list-touch" @click="touch_list" :data-style="sales.attach.text_style"
+								:data-index="index" :style="sales.attach.text_style">
+								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+								<view class="h6">
+									<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
+									<view class="zje">
+										<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
+									</view>
+								</view>
+								<view class="card-num">
+									<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
+									<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
+								</view>
+								<view class="statistic">
+									<label><em>●</em><text>总折扣：</text>{{ sales.sale002.DISCRATE }}</label>
+									<label><em>●</em><text>默认折扣：</text>{{ sales.sale002.CXDISC }}</label>
+									<label><em>●</em><text>标准折扣：</text>{{ sales.sale002.BZDISC }}</label>
+									<label><em>●</em><text>特批折扣：</text>{{ sales.sale002.TPDISC }}</label>
+								</view>
+							</view>
+							<view class="touch-list list-delete" @click="remove_union(sales)">
+								<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+							</view>
+							<!-- <image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 							<view class="h6">
 								<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
 								<view class="zje">
@@ -67,7 +90,7 @@
 								<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
 								<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
 								<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
-							</view>
+							</view> -->
 						</view>
 	
 					</view>
@@ -372,7 +395,10 @@
 							this.source.sale006.push(sale006);
 							this.source.sale2_union_sale6.push({
 								sale002,
-								sale006
+								sale006,
+								attach:{
+									text_style: "left:0"
+								}
 							});
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 						} catch (e) {
@@ -426,6 +452,18 @@
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
+			},
+			touch_list: function(e) {
+				var text_tyle = e.currentTarget.dataset.style;
+				var index = e.currentTarget.dataset.index;
+				var list = this.source.sale2_union_sale6;
+				console.log('[TouchList]点击了列表，当前样式:',text_tyle);
+				if (text_tyle == "left:0") {
+					list[index].attach.text_style = "left:-50px";
+				} else {
+					list[index].attach.text_style = "left:0";
+				}
+			
 			},
 			select_special_discount(){
 				console.log("[SelectSpecialDiscount]特殊折扣选择:", this.source);
