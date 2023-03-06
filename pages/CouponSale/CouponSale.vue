@@ -238,6 +238,20 @@
 					this.craft_discount_computed();//手工折扣额
 					this.source.sale002.sort();
 				}
+			},
+			'source.sale001'(n, o){
+				if(n && n.DKHID){//如果设置的值合法
+					if(this.source.big_customer_info && source.big_customer_info.DKHID){//判断sale001是否生成，如果已经生成那么设置其大客户id信息
+						this.source.sale001.DKFID = source.big_customer_info.DKHID;
+					}
+				}
+			},
+			'source.big_customer_info'(n, o){//如果设置了大客户信息
+				if(n && n.DKHID){//如果设置的值合法
+					if(this.source.sale001){//判断sale001是否生成，如果已经生成那么设置其大客户id信息
+						this.source.sale001.DKFID = n.DKHID;
+					}
+				}
 			}
 		},
 		methods: {
@@ -338,6 +352,9 @@
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
+									DKHID: '80000000',//default
+									KQXSTYPE: 'SQ',
+									THTYPE: '0',
 									BILL_TYPE: 'Z111',
 									XSTYPE: '1',
 									CUID: 'SQ'
@@ -384,6 +401,7 @@
 						util.simpleMsg("券激活成功!" , true);
 					} else {
 						this.source.sale001.STR1 = "激活失败";
+						this.source.sale001.YN_OK = "F";
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
 					}
 				}))
