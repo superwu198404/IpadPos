@@ -57,32 +57,28 @@
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
-							<view class="ulli" v-for="(item,index) in SALE002">
+							<view class="ulli" v-for="(item,index) in SALE006">
 								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
-									@touchend="touchE" :data-index="index" :style="item.txtStyle"
-									@click="goDetail(item)">
+									@touchend="touchE" :data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
-										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<label>￥{{item.SALE2.PRICE}}<text>/{{item.SALE2.QTY}}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{item.NET}}</view>
-											<!-- <button @click="RemoveSP(item)">
-											<image src="@/images/img2/ka-shanchu.png"></image>
-										</button> -->
+											<view><text>总金额</text>￥{{item.SALE2.NET}}</view>
 										</view>
 									</view>
 									<view class="card-num">
-										<label>始：<text>{{item.begin_num}}</text></label>
-										<label>终：<text>{{item.end_num}}</text></label>
+										<label>始：<text>{{item.KQIDS}}</text></label>
+										<label>终：<text>{{item.KQIDE}}</text></label>
 									</view>
 									<view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
-										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
+										<label><em>●</em><text>总折扣：</text>{{item.SALE2.DISCRATE}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.SALE2.BZDISC}}</label>
+										<label><em>●</em><text>临时折扣：</text>{{item.SALE2.LSDISC}}</label>
+										<label><em>●</em><text>特批折扣：</text>{{item.SALE2.TPDISC}}</label>
 									</view>
 								</view>
-								<view class="touch-list list-delete" @click="RemoveSP(item)">
+								<view class="touch-list list-delete" @click="RemoveItem(item)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
@@ -150,7 +146,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	var that, KQSale;
 	export default {
 		name: "CardSale",
@@ -192,7 +188,7 @@
 				qrCodeHeight: 256, // 二维码高
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
-				FKDA_INFO: [],//支付方式
+				FKDA_INFO: [], //支付方式
 			}
 		},
 		onReady: function() {
@@ -267,10 +263,13 @@
 			TotalNet: function() {
 				let total = 0;
 				console.log("sale001", that.SALE001);
-				if (!that.SALE001 || Object.keys(that.SALE001).length == 0) {
+				if (!that.SALE002 || that.SALE002.length == 0) {
 					return total;
 				}
-				total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				that.SALE002.map(r => {
+					total += r.NET;
+				})
+				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
 				return total;
 			},
 		},
@@ -303,11 +302,11 @@
 					}
 					//获取手指触摸的是哪一项
 					var index = e.currentTarget.dataset.index;
-					var list = this.SALE002;
+					var list = this.SALE006;
 					list[index].txtStyle = txtStyle;
 					// console.log(list[index].txtStyle)
 					//更新列表的状态
-					this.SALE002 = list;
+					this.SALE006 = list;
 				}
 			},
 			touchE: function(e) {
@@ -322,11 +321,11 @@
 					var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
 					//获取手指触摸的是哪一项
 					var index = e.currentTarget.dataset.index;
-					var list = this.SALE002;
+					var list = this.SALE006;
 					list[index].txtStyle = txtStyle;
 					// console.log(list[index].txtStyle)
 					//更新列表的状态{
-					this.SALE002 = list
+					this.SALE006 = list
 				}
 			},
 
@@ -350,7 +349,7 @@
 				KQSale.QueryInfo({
 					card_num: that.begin_num
 				}, res => {
-					console.log(res);
+					console.log("库存校验结果：", res);
 					if (KQSale.CheckStatus(res)) {
 						KQSale.CheckActiveNum({
 							channel: "ZC007",
@@ -375,11 +374,11 @@
 										spObj = that.CoverSale(spObj, that.SALE001);
 										console.log("sale2属性合并后的对象：", spObj);
 										if (spObj) {
-											spObj.begin_num = that.begin_num;
-											spObj.end_num = that.end_num;
+											// spObj.begin_num = that.begin_num;//列表以sale6 为主
+											// spObj.end_num = that.end_num;
 											that.SALE002.push(spObj);
 											console.log("sale2", that.SALE002);
-											that.CalTNET();
+											// that.CalTNET();
 										}
 									} else {
 										_util.simpleMsg("已添加该商品", "none");
@@ -434,6 +433,8 @@
 				sale6.MYSTR = sale2.PRICE;
 				sale6.QTY = cards.QTY || sale2.QTY;
 				sale6.NO = cards.index || sale2.NO;
+				sale6.txtStyle = "left:0"; //用于滑动删除事件
+				sale6.SALE2 = sale2; //新加用于列表联查显示
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -476,24 +477,28 @@
 			},
 
 			//待售列表清除
-			RemoveSP: function(e) {
+			RemoveItem: function(e) {
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
-						let spid = e.SPID;
-						let arr = that.SALE002.filter(r => {
-							return r.SPID != e.SPID
-						});
-						that.SALE002 = arr;
 						let arr1 = that.SALE006.filter(r => {
-							return r.SPID != e.SPID
+							return r.KQIDSTR != r.KQIDSTR;
 						});
 						that.SALE006 = arr1;
-						if (arr.length == 0) {
-							that.SALE001.TNET = 0;
-							that.SALE001.BILLDISC = 0;
-						}
 					}
 				})
+			},
+			//删除商品
+			deleteSP: function(spid) {
+				if (spid) {
+					let arr = that.SALE002.filter(r => {
+						return r.SPID != spid
+					});
+					that.SALE002 = arr;
+					let arr1 = that.SALE006.filter(r => {
+						return r.SPID != spid
+					});
+					that.SALE006 = arr1;
+				}
 			},
 			//根据002 计算001 金额等字段
 			CalTNET: function() {
@@ -582,6 +587,7 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.discCompute() //特殊折扣
+						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -673,13 +679,13 @@
 							SALE006: that.SALE006,
 							SXSALE001: that.SXSALE001,
 						})
-						
+
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
 							"XSTYPE": "SKJH",
 						};
-						
+
 						let arr3 = that.SALE003;
 						let fkdaRes = that.FKDA_INFO;
 						arr3.forEach(function(item, index) {
@@ -693,7 +699,7 @@
 						});
 						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
 							printerPram);
-								
+
 						//重置销售单
 						that.ResetSaleBill();
 					})

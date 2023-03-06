@@ -169,7 +169,7 @@ let httpFunc = function(pm_data) {
 	// 	pm_data.data.brand = "MobilePos_API.Models";
 	// }
 	return new Promise(function(resolve, reject) {
-		console.log("请求地址：", p_url + pm_data.http.url);
+		// console.log("请求地址：", p_url + pm_data.http.url);
 		// console.log("请求参数类型：", pm_data.method);
 		// console.log("请求参数参数：", pm_data.data);
 		uni.request({
@@ -298,7 +298,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
 		if (res && res.http) {
-			console.log("[AsyncFuncArr]http请求:", res);
+			console.log("[AsyncFuncArr]http请求参数:", res);
 			showloding(res.http.load, res.http.title);
 			// console.log("[AsyncFuncArr]已打开加载框...");
 			// console.log("[AsyncFuncArr]开始请求数据...");
@@ -307,9 +307,9 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			}catch(e){
 				console.log("[AsyncFuncArr]请求异常:",e);
 			}
-			console.log("[AsyncFuncArr]请求完成...");
+			// console.log("[AsyncFuncArr]请求完成...");
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
-			// console.log("[AsyncFuncArr]http返回值:", res);
+			console.warn("[AsyncFuncArr]http请求返回值:",JSON.stringify(res).substring(0,1000));
 			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);

@@ -240,6 +240,12 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 					delete r.ZSNET;//售卖卡券
 				})
 			}
+			if (key == "SALE006") {
+				dataArr.forEach(r => {
+					delete r.txtStyle;//售卖卡券
+					delete r.SALE2;//售卖卡券
+				})
+			}
 			// console.log("[CreateSaleOrder]循环:创建sql语句...");
 			let sqlObj = common.CreateSQL(dataArr, key);
 			if (Object.keys(sqlObj).length === 0) continue;
