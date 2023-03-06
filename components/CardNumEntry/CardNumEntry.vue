@@ -15,7 +15,7 @@
 						<view class="label">
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"></image>
-							<input type="text" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
+							<input type="number" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
 							<button v-if="beginNum" @click="beginNum=''">×</button>
 						</view>
@@ -29,7 +29,7 @@
 						<view class="label">
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
 							</image>
-							<input type="text" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
+							<input type="number" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
 							<button v-if="endNum" @click="endNum=''">×</button>
 						</view class="label">

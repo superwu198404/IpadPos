@@ -79,12 +79,13 @@
 						<!-- 刷卡后显示卡列表 @touchstart="touchS" @touchmove="touchM" @touchend="touchE"-->
 						<view class="cardlist">
 							<view class="ulli" v-for="(item,index) in SALE002">
-								<view class="touch-list list-touch"  @click="Touchlist" :data-index="index" :style="item.txtStyle">
+								<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
+									:data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
 										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{item.NET}}</view>											
+											<view><text>总金额</text>￥{{item.NET}}</view>
 										</view>
 									</view>
 									<view class="card-num">
@@ -102,7 +103,7 @@
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
-							
+
 						</view>
 					</view>
 					<view class="totals">
@@ -128,8 +129,8 @@
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
-						
-						
+
+
 					</view>
 				</view>
 			</view>
@@ -195,7 +196,7 @@
 				SALE006: [],
 				SXSALE001: [],
 				showCardNum: false,
-				showCardRen:false,
+				showCardRen: false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
@@ -355,24 +356,23 @@
 			// 		this.SALE002 = list
 			// 	}
 			// },
-			
-			Touchlist:function(e) {
-				var txtStyle = "";
+
+			Touchlist: function(e) {
+				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
-				var list = this.SALE002;	
-				// console.log(txtStyle);
-				if (txtStyle = "left:0") {
-					txtStyle = "left:-50px";						
-					list[index].txtStyle = txtStyle;					
-					 this.SALE002 = list				
-				}
-				else{
+				var list = this.SALE002;
+				console.log(txtStyle);
+				if (txtStyle == "left:0") {
+					txtStyle = "left:-50px";
+					list[index].txtStyle = txtStyle;
+					this.SALE002 = list
+				} else {
 					txtStyle = "left:0";
 					list[index].txtStyle = txtStyle;
-					console.log(list[index].txtStyle);
+					// console.log(list[index].txtStyle);
 					this.SALE002 = list
 				}
-				
+
 			},
 
 			//组件卡号返回
@@ -557,7 +557,7 @@
 							that.SALE001.TNET = 0;
 							that.SALE001.BILLDISC = 0;
 						}
-						that.CalTNET();//扣减后重新计算
+						that.CalTNET(); //扣减后重新计算
 					}
 				})
 			},
@@ -620,7 +620,7 @@
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
 						that.discCompute() //特殊折扣
-						that.CalTNET();//因为会产生特殊折扣 所以重新计算 
+						that.CalTNET(); //因为会产生特殊折扣 所以重新计算 
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
@@ -721,34 +721,48 @@
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
-						//激活完成-创建卡券销售单
-						KQSale.Completed({
-							SALE001: that.SALE001,
-							SALE002: that.SALE002,
-							SALE003: that.SALE003,
-							SALE006: that.SALE006,
-							SXSALE001: that.SXSALE001,
-						})
-						//发起充值
-						KQSale.Recharge({
-							salebill: that.SALE001.BILL,
-							amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
-							dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
-							khid: that.SALE001.KHID,
-							kh_name: that.store.NAME,
-							ryid: that.store.RYID,
-							ry_name: that.store.RYNAME,
-							card_num: that.SALE006[0].KQIDS
-						}, res3 => {
-							//充值
-							console.log("VIP单卡充值结果：", res3);
-							_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
-						});
-
+						if (res2.code) { //激活成功
+							//发起充值
+							KQSale.Recharge({
+								salebill: that.SALE001.BILL,
+								amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
+								dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
+								khid: that.SALE001.KHID,
+								kh_name: that.store.NAME,
+								ryid: that.store.RYID,
+								ry_name: that.store.RYNAME,
+								card_num: that.SALE006[0].KQIDS
+							}, res3 => {
+								//充值
+								console.log("VIP单卡充值结果：", res3);
+								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
+								if (!res3.code) {
+									that.SALE001.YN_OK = "F";
+								}
+								//激活成功-充值成功（与否）均生成销售单
+								KQSale.Completed({
+									SALE001: that.SALE001,
+									SALE002: that.SALE002,
+									SALE003: that.SALE003,
+									SALE006: that.SALE006,
+									SXSALE001: that.SXSALE001,
+								})
+							});
+						} else { //激活失败 直接提交单据
+							that.SALE001.YN_OK = "F";
+							//创建卡券销售单
+							KQSale.Completed({
+								SALE001: that.SALE001,
+								SALE002: that.SALE002,
+								SALE003: that.SALE003,
+								SALE006: that.SALE006,
+								SXSALE001: that.SXSALE001,
+							})
+						}
 						//调用打印
 						let printerPram = {
 							"PRINTNUM": 1,
-							"XSTYPE":that.KQXSTYPE,
+							"XSTYPE": that.KQXSTYPE,
 						};
 
 						let arr3 = that.SALE003;

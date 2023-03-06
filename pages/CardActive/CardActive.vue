@@ -51,20 +51,20 @@
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
-						<view class="swipetip" v-if="SALE002.length==0">
+						<view class="swipetip" v-if="SALE006.length==0">
 							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
 							<view class="ulli" v-for="(item,index) in SALE006">
-								<view class="touch-list list-touch" @touchstart="touchS" @touchmove="touchM"
-									@touchend="touchE" :data-index="index" :style="item.txtStyle">
+								<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
+									:data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
-										<label>￥{{item.SALE2.PRICE}}<text>/{{item.SALE2.QTY}}张</text></label>
+										<label>￥{{item.SALE2.PRICE}}<text>/{{item.QTY}}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{item.SALE2.NET}}</view>
+											<view><text>总金额</text>￥{{item.NET}}</view>
 										</view>
 									</view>
 									<view class="card-num">
@@ -277,61 +277,75 @@
 			},
 		},
 		methods: {
-			touchS: function(e) {
-				console.log('touchS')
-				if (e.touches.length == 1) {
-					//设置触摸起始点水平方向位置
-					this.startX = e.touches[0].clientX
-					// console.log(this.startX)
-				}
-			},
-			touchM: function(e) {
-				console.log('touchM')
-				if (e.touches.length == 1) {
-					//手指移动时水平方向位置
-					var moveX = e.touches[0].clientX;
-					//手指起始点位置与移动期间的差值
-					var disX = this.startX - moveX;
-					var delBtnWidth = this.delBtnWidth;
-					var txtStyle = "";
-					if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
-						txtStyle = "left:0px";
-					} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
-						txtStyle = "left:-" + disX + "px";
-						if (disX >= delBtnWidth) {
-							//控制手指移动距离最大值为删除按钮的宽度
-							txtStyle = "left:-" + delBtnWidth + "px";
-						}
-					}
-					//获取手指触摸的是哪一项
-					var index = e.currentTarget.dataset.index;
-					var list = this.SALE006;
+			// touchS: function(e) {
+			// 	console.log('touchS')
+			// 	if (e.touches.length == 1) {
+			// 		//设置触摸起始点水平方向位置
+			// 		this.startX = e.touches[0].clientX
+			// 		// console.log(this.startX)
+			// 	}
+			// },
+			// touchM: function(e) {
+			// 	console.log('touchM')
+			// 	if (e.touches.length == 1) {
+			// 		//手指移动时水平方向位置
+			// 		var moveX = e.touches[0].clientX;
+			// 		//手指起始点位置与移动期间的差值
+			// 		var disX = this.startX - moveX;
+			// 		var delBtnWidth = this.delBtnWidth;
+			// 		var txtStyle = "";
+			// 		if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
+			// 			txtStyle = "left:0px";
+			// 		} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
+			// 			txtStyle = "left:-" + disX + "px";
+			// 			if (disX >= delBtnWidth) {
+			// 				//控制手指移动距离最大值为删除按钮的宽度
+			// 				txtStyle = "left:-" + delBtnWidth + "px";
+			// 			}
+			// 		}
+			// 		//获取手指触摸的是哪一项
+			// 		var index = e.currentTarget.dataset.index;
+			// 		var list = this.SALE006;
+			// 		list[index].txtStyle = txtStyle;
+			// 		// console.log(list[index].txtStyle)
+			// 		//更新列表的状态
+			// 		this.SALE006 = list;
+			// 	}
+			// },
+			// touchE: function(e) {
+			// 	// console.log('touchE')
+			// 	if (e.changedTouches.length == 1) {
+			// 		//手指移动结束后水平位置
+			// 		var endX = e.changedTouches[0].clientX;
+			// 		//触摸开始与结束，手指移动的距离
+			// 		var disX = this.startX - endX;
+			// 		var delBtnWidth = this.delBtnWidth;
+			// 		//如果距离小于删除按钮的1/2，不显示删除按钮
+			// 		var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
+			// 		//获取手指触摸的是哪一项
+			// 		var index = e.currentTarget.dataset.index;
+			// 		var list = this.SALE006;
+			// 		list[index].txtStyle = txtStyle;
+			// 		// console.log(list[index].txtStyle)
+			// 		//更新列表的状态{
+			// 		this.SALE006 = list
+			// 	}
+			// },
+			Touchlist: function(e) {
+				var txtStyle = e.currentTarget.dataset.style;
+				var index = e.currentTarget.dataset.index;
+				var list = this.SALE006;
+				console.log(txtStyle);
+				if (txtStyle == "left:0") {
+					txtStyle = "left:-50px";
 					list[index].txtStyle = txtStyle;
-					// console.log(list[index].txtStyle)
-					//更新列表的状态
-					this.SALE006 = list;
-				}
-			},
-			touchE: function(e) {
-				// console.log('touchE')
-				if (e.changedTouches.length == 1) {
-					//手指移动结束后水平位置
-					var endX = e.changedTouches[0].clientX;
-					//触摸开始与结束，手指移动的距离
-					var disX = this.startX - endX;
-					var delBtnWidth = this.delBtnWidth;
-					//如果距离小于删除按钮的1/2，不显示删除按钮
-					var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
-					//获取手指触摸的是哪一项
-					var index = e.currentTarget.dataset.index;
-					var list = this.SALE006;
+					this.SALE006 = list
+				} else {
+					txtStyle = "left:0";
 					list[index].txtStyle = txtStyle;
-					// console.log(list[index].txtStyle)
-					//更新列表的状态{
 					this.SALE006 = list
 				}
 			},
-
 			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件：", e);
@@ -365,27 +379,32 @@
 							if (res3.code) {
 								let totalNum = 0;
 								res3.data.map(r4 => {
-									totalNum = _util.newFloat(totalNum + r4.cardNum, 0);
+									totalNum = _util.newFloat(totalNum + r4
+										.cardNum, 0);
 								})
 								let spObj = await KQSale.MatchSP(res.data
 									.materielId, res.data.amount, totalNum);
 								if (spObj) {
+									spObj = that.CoverSale(spObj, that.SALE001);
+									console.log("sale2属性合并后的对象：", spObj);
 									let arr = that.SALE002.filter(r => {
 										return r.SPID == spObj.SPID;
 									});
 									if (arr.length == 0) {
-										spObj = that.CoverSale(spObj, that.SALE001);
-										console.log("sale2属性合并后的对象：", spObj);
-										if (spObj) {
-											// spObj.begin_num = that.begin_num;//列表以sale6 为主
-											// spObj.end_num = that.end_num;
-											that.SALE002.push(spObj);
-											console.log("sale2", that.SALE002);
-											// that.CalTNET();
-										}
-									} else {
-										_util.simpleMsg("已添加该商品", "none");
-										return;
+										that.SALE002.push(spObj);
+										console.log("sale2", that.SALE002);
+									} else { //有则追加
+										that.SALE002.map(r => {
+											if (r.SPID == spObj.SPID) {
+												r.QTY = _util.newFloat(r.QTY +
+													totalNum,
+													2);
+												r.NET = _util.newFloat(r.QTY * r
+													.PRICE, 2);
+											}
+										});
+										// _util.simpleMsg("已添加该商品", "none");
+										// return;
 									}
 								} else {
 									_util.simpleMsg("暂未匹配到商品信息", "none");
@@ -404,7 +423,8 @@
 									}, res1 => {
 										console.log("库存校验结果：", res1);
 										if (!res1.code) {
-											_util.simpleMsg(res1.msg, true);
+											_util.simpleMsg(res1.msg,
+												true);
 											return;
 										}
 										let sale6 = that.CreateSale006({
@@ -436,8 +456,10 @@
 				sale6.MYSTR = sale2.PRICE;
 				sale6.QTY = cards.QTY || sale2.QTY;
 				sale6.NO = cards.index || sale2.NO;
+
 				sale6.txtStyle = "left:0"; //用于滑动删除事件
 				sale6.SALE2 = sale2; //新加用于列表联查显示
+				sale6.NET = _util.newFloat(sale6.MYSTR * sale6.QTY, 2); //新加用于列表联查显示
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -653,9 +675,11 @@
 					return;
 				}
 				that.SALE001 = Object.cover(new _saleClass.sale001(), result.data.sale1_obj);
-				that.SALE002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass.sale002(),
+				that.SALE002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass
+					.sale002(),
 					sale2));
-				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass.sale003(),
+				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass
+					.sale003(),
 					sale3));
 				console.log("支付后返回结果：", that.SALE001);
 				if (result.code) {
@@ -674,6 +698,10 @@
 						//激活
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
+						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
+						if (!res2.code) { //激活失败要记录一下
+							that.SALE001.YN_OK = "F";
+						}
 						//激活完成-创建卡券销售单
 						KQSale.Completed({
 							SALE001: that.SALE001,
@@ -700,7 +728,8 @@
 								item.balance = 0;
 							}
 						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3,
+							that.SALE006,
 							printerPram);
 
 						//重置销售单
