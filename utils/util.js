@@ -386,7 +386,7 @@ const utils = {
 				return 1;
 			let num1 = r.substr(r.length - 6, 5);
 			let num2 = r1.substr(r1.length - 6, 5);
-			num = this.newFloat(Number(num1) - Number(num2), 0);
+			num = this.newFloat(Number(num2) - Number(num1) + 1, 0);
 		}
 		return num;
 	},
