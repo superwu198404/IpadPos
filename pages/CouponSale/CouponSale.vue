@@ -677,7 +677,12 @@
 				that.$refs.printerPage.sksqBluePrinter(sale01, sale02, arr3, sale06, printerPram);
 			},
 			to_payment() {
-				console.log("[ToPayment]准备开始进入支付操作，判断是否进行赊销操作...", this.source.enable_credit);
+				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
+				if(!this.source.sale001 || !this.source.sale002.length){
+					util.simpleMsg('请添加活动券后再进行此操作!')
+					return;
+				}
+				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
 					this.coupon_activate();//开始券申请激活流程
