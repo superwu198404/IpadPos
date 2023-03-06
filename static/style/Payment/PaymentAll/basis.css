@@ -843,15 +843,21 @@ page {
 	border-color: #fff;
 }
 .coupons .hh{
+	width:90%;
 	padding-top:10rpx;
+	margin: 0 auto;
 }
 .coupons .amounts{
+	width:90%;
 	margin:1% auto 2%;
-	background-color: #fff;
-	border-radius: 20rpx;
+	background: none;
+	border-radius: 0;
 	position: relative;
 	z-index: 99;
-	border: 1px solid #D6EED8;
+	border-bottom: 4rpx solid #D6EED8;
+}
+.coupons .amounts p{
+	border-color: #D6EED8;
 }
 uni-button:after {
 	border: none;
@@ -1337,7 +1343,7 @@ uni-button:after {
 	z-index: 9;
 	width:94%;
 	margin:3% auto;
-	height: 81%;
+	height: 56%;
 }
 .listofpay .modelist{
 	display: flex;
