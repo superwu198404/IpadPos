@@ -238,7 +238,10 @@
 							// 	})
 							// }
 							uni.redirectTo({
-								url: "/pages/Center/Center"
+								url: "/pages/Center/Center",
+								complete(data) {
+									console.log("[Login]跳转完成:",data);
+								}
 							})
 						}, 1000);
 					});

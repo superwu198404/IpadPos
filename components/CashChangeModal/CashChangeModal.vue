@@ -6,7 +6,7 @@
 </style>
 
 <template>
-	<view v-show="visible" class="cash-modal-box">
+	<view class="cash-modal-box" v-show="visible">
 		<view class="cash-modal-contain">
 			<view class="cash-modal-head">
 				<span>找零提示</span>
@@ -16,8 +16,9 @@
 				{{ text }}
 			</view>
 			<view class="cash-modal-btn-groups">
+				
+				<button class="btn btn-qx" @click="Cancel">取消</button>
 				<button class="btn btn-qr btn-flex" @click="Confirm">确认</button>
-				<button class="btn btn-qk btn-flex" @click="Cancel">取消</button>
 			</view>
 		</view>
 	</view>
@@ -57,6 +58,7 @@
 		top: 0;
 		left: 0;
 		border: 1px solid red;
+		
 	}
 	
 	.cash-modal-head{
@@ -65,6 +67,9 @@
 		align-items: center;
 		padding: 2px 5px;
 		box-sizing: border-box;
+		line-height: 70rpx;
+		padding:0 2%;
+		font-size: 32rpx;
 	}
 	
 	.cash-modal-close-btn{
@@ -77,7 +82,6 @@
 		width: 30%;	
 		display: flex;
 		flex-direction: column;
-		border-radius: 5px;
 		background-blend-mode: multiply;
 		background-image: url(../../images/dx-tchw.png);
 		background-size: contain;
@@ -85,27 +89,31 @@
 		background-color: white;
 		padding: 5px;
 		box-sizing: border-box;
-		box-shadow: 0px 0px 6px -1px var(--green);
+		box-shadow: 0px 3px 40px 1px rgba(66,177,75,0.4);
+		border-radius: 10rpx;
 	}
 	
 	.cash-modal-btn-groups{
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 40px;
-		gap:10px;
+		padding:4% 0 2%;
 	}
 	
 	.cash-modal-content{
 		flex:1;
-		padding: 30px 10px;
-		box-sizing: border-box;
+		padding: 50px 10px;
+		font-size: 46rpx;
+		font-weight: 700;
+		text-align: center;
+		display: block;
 	}
 	
-	.btn-flex{
-		width: 20%;
-		height: 90%;
-		line-height: 40px;
-		font-size: 16px;
+	.cash-modal-btn-groups .btn{
+		width: 250rpx;
+		height: 66rpx;
+		line-height: 66rpx;
+		font-size: 32rpx;
+		margin: 0 30rpx;
 	}
 </style>
