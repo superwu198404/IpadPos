@@ -369,7 +369,7 @@
 .number .labnum:nth-child(1){
 	width:92.5%;
 }
-.number .labnum label{
+.number .labnum .label{
 	font-weight: 700;
 	white-space: nowrap;
 	display:flex;
@@ -381,7 +381,7 @@
 	width:68%;
 	border: 1px solid #eee;
 }
-.number .labnum label image{
+.number .labnum .label image{
 	width:40rpx;
 	height: 40rpx;
 	margin-left:14rpx;
@@ -400,7 +400,7 @@
 	border:1px solid #98C3B3;
 	background-color: #F2F6F6;
 }
-.number .labnum label button{
+.number .labnum .label button{
 	width: 32rpx;
 	height: 32rpx;
 	background: #98C3B3;

@@ -58,7 +58,7 @@
 					{
 						icon_open: require('@/images/img2/lpkjih-bai.png'),
 						icon_close: require('@/images/img2/lpkjih.png'),
-						nameSale:'礼品卡激活'
+						nameSale:'兑换券换卡'
 					},
 					{
 						icon_open: require('@/images/img2/quanquan.png'),
