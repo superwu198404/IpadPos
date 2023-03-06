@@ -8,7 +8,7 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<Pagekq></Pagekq>
+		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'>-->
 			<Head> </Head>
@@ -25,12 +25,12 @@
 						<view class="labnum">
 							<text>卡号：</text>
 							<view class="chaxun">
-							<label>
+							<view class="label">
 								<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
 								</image>
 								<input type="text" placeholder="请输入查询卡号" v-model="endNum" :focus="curFocus=='beginNum'"
 									@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
-							</label>
+							</view>
 							<button class="btn">查询</button>
 							</view>
 						</view>	

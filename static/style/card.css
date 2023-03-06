@@ -322,12 +322,12 @@
 }
 .statistic label{
 	display: block;
-	width:60%;
+	width:55%;
 	line-height: 44rpx;
 	font-size: 26rpx;
 }
 .statistic label:nth-child(2n){
-	width: 40%;
+	width: 45%;
 }
 .statistic label em{
 	font-size: 20rpx;
@@ -369,7 +369,7 @@
 .number .labnum:nth-child(1){
 	width:92.5%;
 }
-.number .labnum label{
+.number .labnum .label{
 	font-weight: 700;
 	white-space: nowrap;
 	display:flex;
@@ -381,7 +381,7 @@
 	width:68%;
 	border: 1px solid #eee;
 }
-.number .labnum label image{
+.number .labnum .label image{
 	width:40rpx;
 	height: 40rpx;
 	margin-left:14rpx;
@@ -400,7 +400,7 @@
 	border:1px solid #98C3B3;
 	background-color: #F2F6F6;
 }
-.number .labnum label button{
+.number .labnum .label button{
 	width: 32rpx;
 	height: 32rpx;
 	background: #98C3B3;
@@ -508,9 +508,10 @@
 }
 .list-delete{
     right: 0; 
-    float: left;
+	top:50%;
+    transform: translateY(-50%);
     width: 100rpx;
-    height: 100%;
+    height: 100rpx;
     display: flex;
 	justify-content: center;
 	align-items: center;
@@ -520,10 +521,11 @@
     font-size: 18px;
     font-weight: lighter;
     text-align: center;
+	border-radius: 50%;
 }
 .list-delete image{
-	width:50rpx;
-	height: 50rpx;
+	width:40rpx;
+	height: 40rpx;
 }
 .partics{
 	display: flex;

@@ -61,20 +61,29 @@
 						nameSale:'礼品卡激活'
 					},
 					{
+						icon_open: require('@/images/img2/lpkjih-bai.png'),
+						icon_close: require('@/images/img2/lpkjih.png'),
+						nameSale:'兑换券换卡'
+					},
+					{
 						icon_open: require('@/images/img2/quanquan.png'),
 						icon_close: require('@/images/img2/quanquan-hui.png'),
-						nameSale:'券销售'
+						nameSale:'券激活'
 					},
 					{
 						icon_open: require('@/images/img2/kachaxun-bai.png'),
 						icon_close: require('@/images/img2/kachaxun.png'),
-						nameSale:'卡查询'
-					},
-					
+						nameSale:'卡券查询'
+					},					
 					{
 						icon_open: require('@/images/img2/quancx-bai.png'),
 						icon_close: require('@/images/img2/quancx.png'),
-						nameSale:'券查询'
+						nameSale:'卡延期'
+					},					
+					{
+						icon_open: require('@/images/img2/quancx-bai.png'),
+						icon_close: require('@/images/img2/quancx.png'),
+						nameSale:'卡绑定'
 					}
 				],
 				

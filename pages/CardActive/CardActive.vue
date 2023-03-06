@@ -7,7 +7,7 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<Pagekq></Pagekq>
+		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
@@ -42,7 +42,7 @@
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>礼品卡激活</text>
+									<text>兑换券/换卡</text>
 								</label>
 							</view>
 						</view>
@@ -110,6 +110,9 @@
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+						</view>
+						<view class="a-z">
+							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
 						</view>
 					</view>
 				</view>
@@ -602,7 +605,8 @@
 							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-							that.PayParamAssemble();
+							// that.PayParamAssemble();
+							_card_sale.PayParamAssemble(that, that.PayedResult);
 						}
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);

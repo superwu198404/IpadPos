@@ -282,11 +282,11 @@
 }
 .srq label picker view{
 	font-weight: 700;
-	margin-top:24rpx;
+	padding:10rpx 0 28rpx;
 }
 .srq label picker view image{
-	width:20rpx;
-	height: 20rpx;
+	width:22rpx;
+	height: 22rpx;
 }
 .channel{
 	margin-top:4%;
