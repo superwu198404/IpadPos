@@ -171,7 +171,7 @@
 					select_coupon_segment: null,
 					no_input: false,
 					swipe_tip: false,
-					big_customer: true,
+					big_customer: false,
 					enable_customer: true,
 					enable_special_discount: false
 				},
