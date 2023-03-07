@@ -62,14 +62,14 @@
 							key: 'CardActive'
 						},
 						{
-							icon_open: require('@/images/img2/lpkjih-bai.png'),
-							icon_close: require('@/images/img2/lpkjih.png'),
+							icon_open: require('@/images/img2/quanquan.png'),
+							icon_close: require('@/images/img2/quanquan-hui.png'),
 							name:'兑换券换卡',
 							key: ''
 						},
 						{
-							icon_open: require('@/images/img2/quanquan.png'),
-							icon_close: require('@/images/img2/quanquan-hui.png'),
+							icon_open: require('@/images/img2/quanjh-bai.png'),
+							icon_close: require('@/images/img2/quanjh.png'),
 							name: '券激活',
 							key: 'CouponSale'
 						},
@@ -80,15 +80,21 @@
 							key: 'Cardquery'
 						},
 						{
-							icon_open: require('@/images/img2/quancx-bai.png'),
-							icon_close: require('@/images/img2/quancx.png'),
+							icon_open: require('@/images/img2/kayanqi-bai.png'),
+							icon_close: require('@/images/img2/kayanqi.png'),
 							name:'卡延期',
 							key: ''
 						},					
 						{
-							icon_open: require('@/images/img2/quancx-bai.png'),
-							icon_close: require('@/images/img2/quancx.png'),
+							icon_open: require('@/images/img2/kabangd-bai.png'),
+							icon_close: require('@/images/img2/kabangd.png'),
 							name:'卡绑定',
+							key: ''
+						},
+						{
+							icon_open: require('@/images/img2/jhshibai-bai.png'),
+							icon_close: require('@/images/img2/jhshibai.png'),
+							name:'激活失败',
 							key: ''
 						}
 					]

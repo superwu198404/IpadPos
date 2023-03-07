@@ -49,13 +49,16 @@
 							<view class="cardlist">
 								<view class="ulli">
 									<view class="touch-list list-touch">
-										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+										<image class="bgs" src="@/images/img2/kaqchaxun .png" mode="widthFix"></image>
 										<view class="h6">
-											<label><image src="@/images/img2/quanmcheng.png"></image>卡类型名称</label>											
+											<label><em></em>实体23.9型海藻糖绿豆糕提货券-19</label>											
+										</view>
+										<view class="denominat">
+											<label>￥<text>100</text></label>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname"><em></em>实体23.9型海藻糖绿豆糕提货券-19</view>
+												<view class="kname">卡类型名称</view>
 												<view class="card-num">											
 													<label>券号：{{ default_view(form.infos.card_id) }}</label>
 													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
@@ -191,9 +194,9 @@
 
 <style>
 	.commodity .number{
-		padding:1% 0;
-		width:49.5%;
-		
+		padding: 0;
+		width:100%;
+		display: flex;
 	}
 	.chaxun{
 		display: flex;
@@ -204,6 +207,7 @@
 		display: flex;
 		flex-direction: column;
 		height: auto;
+		width:46%;
 	}
 	.commodity .number button{
 		width: 25%;
@@ -226,24 +230,45 @@
 		margin:0 8rpx 0 30rpx;
 	}
 	.cardlist{
-		padding:0;
 		box-shadow: 0px 10px 30px 1px rgba(66,177,75,0.16);
+		position: relative;
+		padding:0;
 	}
+	
 	.cardlist .ulli{
 		width:100%;
-		margin:0;		
+		margin:0;			
 	}
 	.cardlist .ulli .h6{
-		background: #E8FFEA;
+		background: none;
+		padding:2% 2% 0;
+		height: 120rpx;
+		width:70%;
+		/* overflow: hidden; */
 	}
 	.cardlist .ulli .h6 label{
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
+		position: relative;
+		font-size: 46rpx;
+		color: #006B44;
+		height: 120rpx;
+		line-height: 60rpx;
 	}
-	.cardlist .ulli .h6 image{
-		width:38rpx;
-		height: 38rpx;
-		margin-right: 6rpx;
+	.cardlist .ulli .h6 em{
+		display: block;
+		width:68rpx;
+		height: 6rpx;
+		position: absolute;
+		bottom:0;
+		left:3%;
+		z-index: 6;
+		border-radius: 6rpx;
+		background-color: #006B44;
+	}
+	.cardlist .touch-list{
+		padding:6% 0 0;
 	}
 	.ulli .card-num{
 		border-bottom: none;
@@ -254,11 +279,16 @@
 		padding-left: 4%;
 		padding-top:14rpx;
 	}
+	.ulli .card-num label{
+		padding:0;
+	}
+	.cardinfo{
+		padding:4% 4% 1%;
+	}
 	.statistic{
 		padding:3% 3%;
 		justify-content: space-between;
-		color: #b0b0b0;
-		border-top: 1px solid #E8F5E9;
+		color: #fff;
 		margin-top:18rpx;
 	}
 	.statistic text:nth-child(2){
@@ -266,6 +296,28 @@
 		color: #FE694B;
 		font-size: 26rpx;
 		padding:4rpx 10rpx;
+	}
+	.chanxz{
+		width:85%;
+		padding:2% 15% 0 0;
+		position: relative;
+	}
+	.chanxz label{
+		width:18%;
+		font-size: 26rpx;
+		margin:0 1% !important;
+	}
+	.chanxz .quanbu{
+		width:90rpx;
+		position: absolute;
+		top:19rpx;
+		right:3%;
+		font-size: 18rpx;
+		color: #42B14B;
+	}
+	.chanxz .quanbu image{
+		width:22rpx;
+		height: 22rpx;
 	}
 	.label picker{
 		width: 100%;
