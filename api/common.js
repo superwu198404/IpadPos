@@ -855,6 +855,21 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 	return result;
 }
 
+var SimpleLocalQuery = async function(table_name,filter){
+	let filter_string = "", result = null;
+	for(let key in filter){
+		filter_string += ` and ${key}='${filter[key]}'`;
+	}
+	let sql = `select * from ${table_name} where 1=1 ${filter_string}`;
+	console.log("[SimpleLocalQuery]待执行的sql:",sql);
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		result = util.createdResult(true,'查询成功!', res.msg);
+	}, function(err) {
+		result = util.createdResult(false,'查询失败!');
+	});
+	return result;
+}
+
 export default {
 	InitData,
 	CreateBill,
@@ -883,5 +898,6 @@ export default {
 	newFixed,
 	SimpleAPIRequest,
 	TransLiteDataAsync,
-	TransLiteAsync
+	TransLiteAsync,
+	SimpleLocalQuery
 }

@@ -175,7 +175,7 @@
 			return {
 				first: true,
 				input: {
-					sql: "",
+					sql: "select * from SPDA where spid='000000008010100002'",
 					fromData: {
 						PLID: "101",
 						SPID: "",
