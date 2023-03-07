@@ -47,8 +47,31 @@
 					</view>
 					<!-- 刷卡后显示卡列表 -->
 					<view class="cardlist">
-						<view class="ulli" v-for="sales in source.sale2_union_sale6">
-							<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+						<view class="ulli" v-for="(sales,index) in source.sale2_union_sale6">
+							<view class="touch-list list-touch" @click="touch_list" :data-style="sales.attach.text_style"
+								:data-index="index" :style="sales.attach.text_style">
+								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+								<view class="h6">
+									<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
+									<view class="zje">
+										<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
+									</view>
+								</view>
+								<view class="card-num">
+									<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
+									<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
+								</view>
+								<view class="statistic">
+									<label><em>●</em><text>总折扣：</text>{{ sales.sale002.DISCRATE }}</label>
+									<label><em>●</em><text>默认折扣：</text>{{ sales.sale002.CXDISC }}</label>
+									<label><em>●</em><text>标准折扣：</text>{{ sales.sale002.BZDISC }}</label>
+									<label><em>●</em><text>特批折扣：</text>{{ sales.sale002.TPDISC }}</label>
+								</view>
+							</view>
+							<view class="touch-list list-delete" @click="remove_union(sales)">
+								<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+							</view>
+							<!-- <image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 							<view class="h6">
 								<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
 								<view class="zje">
@@ -67,7 +90,7 @@
 								<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
 								<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
 								<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
-							</view>
+							</view> -->
 						</view>
 	
 					</view>
@@ -238,6 +261,20 @@
 					this.craft_discount_computed();//手工折扣额
 					this.source.sale002.sort();
 				}
+			},
+			'source.sale001'(n, o){
+				if(n && n.DKHID){//如果设置的值合法
+					if(this.source.big_customer_info && source.big_customer_info.DKHID){//判断sale001是否生成，如果已经生成那么设置其大客户id信息
+						this.source.sale001.DKFID = source.big_customer_info.DKHID;
+					}
+				}
+			},
+			'source.big_customer_info'(n, o){//如果设置了大客户信息
+				if(n && n.DKHID){//如果设置的值合法
+					if(this.source.sale001){//判断sale001是否生成，如果已经生成那么设置其大客户id信息
+						this.source.sale001.DKFID = n.DKHID;
+					}
+				}
 			}
 		},
 		methods: {
@@ -338,6 +375,9 @@
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
+									DKHID: '80000000',//default
+									KQXSTYPE: 'SQ',
+									THTYPE: '0',
 									BILL_TYPE: 'Z111',
 									XSTYPE: '1',
 									CUID: 'SQ'
@@ -355,7 +395,10 @@
 							this.source.sale006.push(sale006);
 							this.source.sale2_union_sale6.push({
 								sale002,
-								sale006
+								sale006,
+								attach:{
+									text_style: "left:0"
+								}
 							});
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 						} catch (e) {
@@ -384,6 +427,7 @@
 						util.simpleMsg("券激活成功!" , true);
 					} else {
 						this.source.sale001.STR1 = "激活失败";
+						this.source.sale001.YN_OK = "F";
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
 					}
 				}))
@@ -408,6 +452,18 @@
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
+			},
+			touch_list: function(e) {
+				var text_tyle = e.currentTarget.dataset.style;
+				var index = e.currentTarget.dataset.index;
+				var list = this.source.sale2_union_sale6;
+				console.log('[TouchList]点击了列表，当前样式:',text_tyle);
+				if (text_tyle == "left:0") {
+					list[index].attach.text_style = "left:-50px";
+				} else {
+					list[index].attach.text_style = "left:0";
+				}
+			
 			},
 			select_special_discount(){
 				console.log("[SelectSpecialDiscount]特殊折扣选择:", this.source);
@@ -677,7 +733,12 @@
 				that.$refs.printerPage.sksqBluePrinter(sale01, sale02, arr3, sale06, printerPram);
 			},
 			to_payment() {
-				console.log("[ToPayment]准备开始进入支付操作，判断是否进行赊销操作...", this.source.enable_credit);
+				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
+				if(!this.source.sale001 || !this.source.sale002.length){
+					util.simpleMsg('请添加活动券后再进行此操作!')
+					return;
+				}
+				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
 					this.coupon_activate();//开始券申请激活流程

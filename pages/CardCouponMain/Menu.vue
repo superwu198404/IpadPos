@@ -105,10 +105,14 @@
 			select_menu(info) {
 				this.source.current_menu_info = info;
 				console.log("[SelectMenu]当前选择的菜单信息:", info);
+			},
+			setting_default_menu(){//设置默认菜单
+				this.source.current_menu_info = this.source.menu_infos[0];
 			}
 		},
 		created() {
 			console.log("[Created]Menu菜单加载...");
+			this.setting_default_menu();
 		}
 	}
 </script>

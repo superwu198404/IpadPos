@@ -59,7 +59,7 @@ var requestAssembleTwo = function(loading_title = "请求中...", options) {
 				cardinfo: options?.data
 			}
 		};
-		console.log("[RequestAssemble]调用参数:", request);
+		// console.log("[RequestAssemble]调用参数:", request);
 		return request;
 	} catch (e) {
 		console.log("[RequestAssemble]发生异常:", e);

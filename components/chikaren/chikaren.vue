@@ -45,7 +45,7 @@
 	export default {
 		name: "chikaren",
 		props: {
-			
+			show: Boolean
 		},
 		data() {
 			return {
