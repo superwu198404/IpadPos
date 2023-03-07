@@ -534,14 +534,14 @@
 					},
 					orderList = [],
 					cardList = [];
-				orderList = that.SALE002.map(r => {
+				orderList = that.SALE006.map(r => {
 					return {
 						merOrderId: r.BILL,
 						lineNo: r.NO,
 						materielId: r.SPID,
 						totalNum: r.QTY,
 						amount: r.NET,
-						discountAmount: r.BILLDISC || 0,
+						discountAmount: 0,
 						storeNo: r.KHID,
 						guestFlag: 2,
 						saleChannelId: that.store.DQID,
@@ -563,6 +563,7 @@
 				})
 				dataObj.orderList = orderList;
 				dataObj.cardList = cardList;
+				dataObj.merOrderId = that.SALE001.BILL;//业务单号
 				return dataObj;
 			},
 			//兑换券核销
@@ -772,7 +773,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				e = "400000005787446369";
+				// e = "400000005787446369";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
@@ -780,10 +781,10 @@
 					let couponInfo = await that.coupon_info_search(code);
 					console.log("券信息：", couponInfo);
 					if (couponInfo && couponInfo.code) {
-						that.CouponInfo = couponInfo.data;
-						that.CouponInfo.coupon_num = code;
-						console.log("兑换券信息：", that.CouponInfo);
-						return;
+						// that.CouponInfo = couponInfo.data;
+						// that.CouponInfo.coupon_num = code;
+						// console.log("兑换券信息：", that.CouponInfo);
+						// return;
 						if (couponInfo.ZZIFDHQ != "Y") {
 							that.CouponInfo = {};
 							_util.simpleMsg("券类型不是兑换券", true);

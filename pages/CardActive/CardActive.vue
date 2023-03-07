@@ -515,14 +515,14 @@
 					},
 					orderList = [],
 					cardList = [];
-				orderList = that.SALE002.map(r => {
+				orderList = that.SALE006.map(r => {
 					return {
 						merOrderId: r.BILL,
 						lineNo: r.NO,
 						materielId: r.SPID,
 						totalNum: r.QTY,
 						amount: r.NET,
-						discountAmount: r.BILLDISC || 0,
+						discountAmount: 0,
 						storeNo: r.KHID,
 						guestFlag: 2,
 						saleChannelId: that.store.DQID,
@@ -544,6 +544,7 @@
 				})
 				dataObj.orderList = orderList;
 				dataObj.cardList = cardList;
+				dataObj.merOrderId = that.SALE001.BILL;//业务单号
 				return dataObj;
 			},
 			//去支付
