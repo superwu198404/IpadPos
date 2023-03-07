@@ -23,15 +23,24 @@
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 					<view class="number">
 						<view class="labnum">
+							<text>卡/券类型：</text>
+							<view class="chaxun">
+								<view class="label">
+									<picker :range="source.types" range-key="text" mode='selector' @change="select_type">
+										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
+									</picker>
+								</view>
+							</view>
+						</view>
+						<view class="labnum">
 							<text>卡号：</text>
 							<view class="chaxun">
 							<view class="label">
-								<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
+								<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
 								</image>
-								<input type="text" placeholder="请输入查询卡号" v-model="endNum" :focus="curFocus=='beginNum'"
-									@confirm="ScanCodeHandle" @focus="curFocus='beginNum'" />
+								<input type="text" placeholder="请输入查询卡号" v-model="form.number"/>
 							</view>
-							<button class="btn">查询</button>
+							<button class="btn" @click="according_to_type_search">查询</button>
 							</view>
 						</view>	
 					</view>
@@ -48,18 +57,18 @@
 											<view class="leftinfo">
 												<view class="kname"><em></em>实体23.9型海藻糖绿豆糕提货券-19</view>
 												<view class="card-num">											
-													<label>券号：400000037265246750</label>
-													<view><em>●</em>全场商品代金券</view>
+													<label>券号：{{ default_view(form.infos.card_id) }}</label>
+													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
 												</view>
 											</view>
 											<view class="denominat">
-												<label>￥<text>100</text></label>
+												<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
 												<text>（满38元使用）</text>
 											</view>
 										</view>
 										<view class="statistic">
-											<text>有效期至2023-09-09</text>
-											<text>已使用</text>
+											<text>{{ default_view(form.infos.valid_date,'') }}</text>
+											<text>{{ default_view(form.infos.is_use,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -72,37 +81,37 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>{{TotalNum}}</text></label>
+									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
 								</view>
-								<button class="btn btn-qx">已使用</button>
+								<button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button>
 							</view>
 							<view class="kainfolist">
 								<label>
-									<text>是否客情券：</text><text>N</text>
+									<text>是否客情券：</text><text>{{ default_view(form.infos.is_customer_emotional_coupon) }}</text>
 								</label>
 								<label>
-									<text>是否客诉赠券：</text><text>N</text>
+									<text>是否客诉赠券：</text><text>{{ default_view(form.infos.is_customer_complaint_coupon) }}</text>
 								</label>
 								<label>
-									<text>申领人：</text><text>1100433</text>
+									<text>申领人：</text><text>{{ default_view(form.infos.apply) }}</text>
 								</label>
 								<label>
-									<text>售卖门店：</text><text>武汉渠道虚拟卡券线上小程序</text>
+									<text>售卖门店：</text><text>{{ default_view(form.infos.sale_store_name) }}</text>
 								</label>
 								<label>
-									<text>售出时间：</text><text>2023-02-12 14:23:23</text>
+									<text>售出时间：</text><text>{{ default_view(form.infos.sale_date) }}</text>
 								</label>
 								<label>
-									<text>使用时间：</text><text>2023-02-12 14:23:23</text>
+									<text>使用时间：</text><text>{{ default_view(form.infos.use_date) }}</text>
 								</label>
 								<label>
-									<text>使用门店：</text><text>2武汉领秀城门厅</text>
+									<text>使用门店：</text><text>{{ default_view(form.infos.use_store_name) }}</text>
 								</label>
 								<label>
-									<text>消费金额：</text><text>￥567</text>
+									<text>消费金额：</text><text>￥{{ default_view(form.infos.spend_amount, 0) }}</text>
 								</label>
 								<label>
-									<text>操作员：</text><text>2023-02-12 14:23:23</text>
+									<text>操作员：</text><text>{{ default_view(form.infos.operator) }}</text>
 								</label>
 							</view>
 						</view>
@@ -116,21 +125,66 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
 	
-	
+	//业务处理
+	import bussiness from '@/api/business/card_coupon_query.js';
+	import util from '@/utils/util.js';
+	var $;
 	export default {
 		name: "Cardquery",
 		components: {
-			Head,
-			Pagekq
+			Head
+		},
+		computed:{
+			default_view(){
+				return $(function(v, def_val = '暂无更多信息...'){
+					if(v)
+						return v;
+					else
+						return def_val;
+				});
+			}
 		},
 		data() {
 			return {
+				form:{
+					current_type_info: null,
+					number: '',
+					infos: bussiness.base.infos()
+				},
+				source:{
+					types: [],
+				}
 			}
 		},
-		
 		methods: {
+			select_type(e){
+				this.form.current_type_info = this.source.types[e.detail.value];
+				console.log("[SelectType]选择卡券类型:",this.form.current_type_info);
+			},
+			scan_code_handle(){
+				uni.scanCode({
+					success: $(function(result) {
+						this.form.number = result.result;
+					})
+				})
+			},
+			async according_to_type_search(){
+				if(this.form.current_type_info){
+					this.form.infos = await this.form.current_type_info.search(this.form.number);
+					console.log("[TypeSearch]查询结果:", this.form.infos);
+				}
+				else{
+					util.simpleMsg('请选择类型后再进行此操作!');
+				}
+			},
+			async get_types(){
+				return await bussiness.get_types();
+			}
+		},
+		async created() {
+			$ = util.callContainer(this);
+			this.source.types = await this.get_types();
 		}
 	}
 </script>
@@ -156,6 +210,9 @@
 		height: 70rpx;
 		line-height: 70rpx;
 		margin:2% 0 2% 20rpx;
+	}
+	.commodity .number{
+		display: flex;
 	}
 	.commodity .totals view label{
 		font-size: 32rpx;
@@ -209,5 +266,11 @@
 		color: #FE694B;
 		font-size: 26rpx;
 		padding:4rpx 10rpx;
+	}
+	.label picker{
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		background: #F5F5F5;
 	}
 </style>

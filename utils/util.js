@@ -390,6 +390,24 @@ const utils = {
 		}
 		return num;
 	},
+	createdResult: function(code, msg, data = null){
+		return {
+			code,
+			msg,
+			data
+		}
+	},
+	convertShortDate:function(yyyymmdd){
+		if(yyyymmdd && yyyymmdd.length){
+			if(yyyymmdd.length === 6){
+				return `${yyyymmdd.substr(0,4)}/${yyyymmdd.substr(4,2)}/${yyyymmdd.substr(6,2)}`;
+			}
+			return new Date().toLocaleDateString()
+		}
+		else {
+			return new Date().toLocaleDateString();
+		}
+	}
 }
 
 export default {
@@ -424,5 +442,7 @@ export default {
 	contrast: utils.contrast,
 	newFloat: utils.newFloat,
 	getBill: utils.getBill,
-	CheckNum: utils.CheckNum
+	CheckNum: utils.CheckNum,
+	createdResult: utils.createdResult,
+	convertShortDate: utils.convertShortDate,
 }

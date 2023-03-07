@@ -536,7 +536,7 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
-			to_printer(){
+			to_printer(source){
 				let that = this;
 								
 				let sale01 = {

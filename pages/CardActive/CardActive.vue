@@ -232,10 +232,10 @@
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 			//事件监听
-			uni.$off("GetCardNums");
+			
 			uni.$on("GetCardNums", that.GetCardNums);
 
-			uni.$off("big-customer-close");
+			
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
@@ -249,7 +249,7 @@
 					that.ZKData = _main.GetZKDatasAll(data.DKFID);
 				}
 			});
-			uni.$off("close-tszk");
+			
 			uni.$on("close-tszk", that.CloseTSZK);
 		},
 		watch: {},
@@ -275,6 +275,11 @@
 				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
 				return total;
 			},
+		},
+		destroyed() {
+			uni.$off("close-tszk");
+			uni.$off("big-customer-close");
+			uni.$off("GetCardNums");
 		},
 		methods: {
 			// touchS: function(e) {
