@@ -23,6 +23,17 @@
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 					<view class="number">
 						<view class="labnum">
+							<text>卡券类型：</text>
+							<view class="chanxz">
+								<label class="curr">礼品卡 <em>✓</em></label>
+								<label>礼品券 <em>✓</em></label>
+								<label>可伴卡 <em>✓</em></label>
+								<label>品诺券 <em>✓</em></label>
+								<label>团体券 <em>✓</em></label>
+								<label class="quanbu">全部 <em>✓</em></label>
+							</view>
+						</view>
+						<view class="labnum">
 							<text>卡号：</text>
 							<view class="chaxun">
 							<view class="label">
@@ -137,9 +148,9 @@
 
 <style>
 	.commodity .number{
-		padding:1% 0;
-		width:49.5%;
-		
+		padding: 0;
+		width:100%;
+		display: flex;
 	}
 	.chaxun{
 		display: flex;
@@ -150,6 +161,7 @@
 		display: flex;
 		flex-direction: column;
 		height: auto;
+		width:46%;
 	}
 	.commodity .number button{
 		width: 25%;
@@ -222,7 +234,7 @@
 		padding:0;
 	}
 	.cardinfo{
-		padding:4% 4% 3%;
+		padding:4% 4% 1%;
 	}
 	.statistic{
 		padding:3% 3%;
@@ -235,5 +247,27 @@
 		color: #FE694B;
 		font-size: 26rpx;
 		padding:4rpx 10rpx;
+	}
+	.chanxz{
+		width:85%;
+		padding:2% 15% 0 0;
+		position: relative;
+	}
+	.chanxz label{
+		width:18%;
+		font-size: 26rpx;
+		margin:0 1% !important;
+	}
+	.chanxz .quanbu{
+		width:90rpx;
+		position: absolute;
+		top:19rpx;
+		right:3%;
+		font-size: 18rpx;
+		color: #42B14B;
+	}
+	.chanxz .quanbu image{
+		width:22rpx;
+		height: 22rpx;
 	}
 </style>
