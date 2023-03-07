@@ -232,9 +232,7 @@
 
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
-			// KQSale.InitData("礼品卡激活初始化", res => {
-			// 	that.ShowCZGZ();
-			// });
+
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
 				BILL_TYPE: that.BILL_TYPE,
@@ -242,29 +240,10 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-			//初始化折扣数据
-			// that.ZKData = await _main.GetZKDatasAll(store.DKFID);
+
 			//事件监听
 			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
-
-			// uni.$off("big-customer-close");
-			// uni.$on("big-customer-close", function(data) {
-			// 	console.log("[Created]大客户回调:", data);
-			// 	if (data.exists_credit) {
-			// 		that.BILL_TYPE = "Z112"; //启用赊销
-			// 	} else {
-			// 		that.BILL_TYPE = "Z111"; //不启用赊销	
-			// 	}
-			// 	that.SALE001.BILL_TYPE = that.BILL_TYPE;
-			// 	if (data.DKFID) {
-			// 		that.SALE001.DKFID = data.DKFID;
-			// 		that.ZKData = _main.GetZKDatasAll(data.DKFID);
-			// 	}
-			// });
-			// //特殊折扣回调
-			// uni.$off("close-tszk");
-			// uni.$on("close-tszk", that.CloseTSZK);
 			//券号回调
 			uni.$off('getAuthCode');
 			uni.$on("getAuthCode", that.GetAuthCode);
@@ -563,7 +542,7 @@
 				})
 				dataObj.orderList = orderList;
 				dataObj.cardList = cardList;
-				dataObj.merOrderId = that.SALE001.BILL;//业务单号
+				dataObj.merOrderId = that.SALE001.BILL; //业务单号
 				return dataObj;
 			},
 			//兑换券核销
