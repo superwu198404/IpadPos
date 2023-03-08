@@ -94,8 +94,8 @@
 									</view>
 									<view class="statistic">
 										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
-										<label><em>●</em><text>默认折扣：</text>{{item.CXDISC}}</label>
 										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
+										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC}}</label>
 										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
 									</view>
 								</view>
@@ -111,6 +111,7 @@
 							<em></em>
 							<label>总数量：<text>{{TotalNum}}</text></label>
 							<label>总金额：<text>￥{{TotalNet}}</text></label>
+							<label>总折扣：<text>￥{{TotalDisc}}</text></label>
 						</view>
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
@@ -260,7 +261,7 @@
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 		},
-		 mounted() {
+		mounted() {
 			//事件监听
 			uni.$on("GetCardNums", that.GetCardNums);
 			uni.$on("big-customer-close", async function(data) {
@@ -279,9 +280,19 @@
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
 		},
-		watch: {},
+		watch: {
+			SALE002: function(n, o) {
+				console.log("SALE002发生变化(新)：", n);
+				console.log("SALE002发生变化(旧)：", o);
+				that.discCompute();
+			},
+			CurZKDisc: function(n, o) {
+				console.log("特殊折扣发生变化(新)：", n);
+				console.log("特殊折扣发生变化(旧)：", o);
+				that.discCompute();
+			}
+		},
 		destroyed() {
-			console.log("5555555555555");
 			uni.$off("GetCardNums");
 			uni.$off("big-customer-close");
 			uni.$off("close-tszk");
@@ -296,14 +307,27 @@
 				})
 				return total;
 			},
-			//商品总金额 包含折扣
+			//商品总金额 
 			TotalNet: function() {
 				let total = 0;
-				console.log("sale001", that.SALE001);
-				if (!that.SALE001 || Object.keys(that.SALE001).length == 0) {
+				if (!that.SALE002 || Object.keys(that.SALE002).length == 0) {
 					return total;
 				}
-				total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				that.SALE002.map(r => {
+					total += r.NET;
+				})
+				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				return total;
+			},
+			//总折扣额 赠送金额和特殊折扣
+			TotalDisc: function() {
+				let total = 0;
+				if (!that.SALE002 || Object.keys(that.SALE002).length == 0) {
+					return total;
+				}
+				that.SALE002.map(r => {
+					total += _util.newFloat(r.DISCRATE + r.ZSNET, 2);
+				})
 				return total;
 			},
 		},
@@ -471,11 +495,14 @@
 				let s6 = JSON.parse(JSON.stringify(that.SALE006));
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
-					r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
-					r.BZDISC = _util.newFloat(e.ZSNET, 2);
-					r.BILLDISC = _util.newFloat(e.ZSNET, 2);
-					r.DISCRATE = _util.newFloat(e.ZSNET, 2);
+					r.OPRICE = r.PRICE;
+					// r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
+					// r.BZDISC = _util.newFloat(e.ZSNET, 2);
+					// r.BILLDISC = _util.newFloat(e.ZSNET, 2);
+					// r.DISCRATE = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
+					// r.ONET = r.NET;
+					r.ZSNET = _util.newFloat(e.ZSNET, 2);
 				})
 				s6.map(r => {
 					let obj = s2.find(r1 => {
@@ -570,7 +597,8 @@
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
-						that.discCompute() //特殊折扣
+						// that.discCompute() //特殊折扣
+						that.Sale2AddDisc();//追加一下赠送金额
 						that.CalTNET(); //因为会产生特殊折扣 所以重新计算 
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
@@ -738,6 +766,15 @@
 					_util.simpleMsg(result.msg, true);
 				}
 			},
+			//sale2追加赠送金额
+			Sale2AddDisc: function() {
+				that.SALE002.map(e => {
+					e.OPRICE = _util.newFloat(e.OPRICE + e.ZSNET, 2);
+					e.BZDISC = _util.newFloat(e.BZDISC + e.ZSNET, 2);
+					e.BILLDISC = _util.newFloat(e.BILLDISC + e.ZSNET, 2);
+					e.DISCRATE = _util.newFloat(e.DISCRATE + e.ZSNET, 2);
+				})
+			},
 			//重置本次销售单
 			ResetSaleBill: function() {
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
@@ -790,14 +827,28 @@
 			CloseTSZK: function(data) {
 				that.showDisc = false;
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				let obj = {};
 				if (data == "NO") { //清除折扣
-					that.CurZKDisc = {};
+					obj = {};
+					//清除一下之前产生的促销和折扣
+					that.ResetCXZK();
 				} else {
-					that.CurZKDisc.ZKType = data;
-					that.CurZKDisc.ZKData = that.ZKData;
+					obj = {
+						ZKType: data,
+						ZKData: that.ZKData
+					};
 				}
-				//清除一下之前产生的促销和折扣
-				// this.ResetCXZK();
+				that.CurZKDisc = obj;
+			},
+			ResetCXZK: function() {
+				that.SALE002.map(r => {
+					r.NET = r.NET; //回退一下折扣？
+					r.PRICE = _util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
+					r.DISCRATE = 0; //zk
+					r.BZDISC = 0; //zk
+					r.LSDISC = 0; //zk
+					r.TPDISC = 0; //zk
+				});
 			},
 			//使用特殊折扣进行计算
 			discCompute: function() {

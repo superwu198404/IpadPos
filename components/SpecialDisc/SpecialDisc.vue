@@ -223,19 +223,19 @@
 					let newArr = arr.filter(r => {
 						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
 					})
-					console.log("111111:", newArr);
+					// console.log("111111:", newArr);
 					let sortArr = newArr.sort((a, b) => {
 						return b.MZNET - a.MZNET;
 					});
-					console.log("222222:", sortArr);
+					// console.log("222222:", sortArr);
 					let newArr1 = arr1.filter(r => {
 						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
 					})
-					console.log("333333:", newArr1);
+					// console.log("333333:", newArr1);
 					let sortArr1 = newArr1.sort((a, b) => {
 						return b.MZNET - a.MZNET;
 					});
-					console.log("444444:", sortArr1);
+					// console.log("444444:", sortArr1);
 					if (sortArr.length > 0) { //追加标准折扣规则
 						let obj = sortArr[0];
 						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
@@ -251,7 +251,7 @@
 					let sortArr2 = arr2.filter(r => {
 						return r.ZKSTR == r1.SPJGZ;
 					})
-					console.log("55555:", sortArr2);
+					// console.log("55555:", sortArr2);
 					if (sortArr2.length > 0) { //追加标准折扣规则
 						let obj = sortArr2[0];
 						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));

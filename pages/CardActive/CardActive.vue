@@ -252,7 +252,18 @@
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
 		},
-		watch: {},
+		watch: {
+			SALE002: function(n, o) {
+				console.log("SALE002发生变化(新)：", n);
+				console.log("SALE002发生变化(旧)：", o);
+				that.discCompute();
+			},
+			CurZKDisc: function(n, o) {
+				console.log("特殊折扣发生变化(新)：", n);
+				console.log("特殊折扣发生变化(旧)：", o);
+				that.discCompute();
+			}
+		},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -355,6 +366,7 @@
 													2);
 												r.NET = _util.newFloat(r.QTY * r
 													.PRICE, 2);
+												r.ONET = r.NET;
 											}
 										});
 									}
@@ -582,7 +594,7 @@
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
-						that.discCompute() //特殊折扣
+						// that.discCompute() //特殊折扣
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
@@ -745,19 +757,34 @@
 			CloseTSZK: function(data) {
 				that.showDisc = false;
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
+				let obj = {};
 				if (data == "NO") { //清除折扣
-					that.CurZKDisc = {};
+					obj = {};
+					//清除一下之前产生的促销和折扣
+					that.ResetCXZK();
 				} else {
-					that.CurZKDisc.ZKType = data;
-					that.CurZKDisc.ZKData = that.ZKData;
+					obj = {
+						ZKType: data,
+						ZKData: that.ZKData
+					};
 				}
-				//清除一下之前产生的促销和折扣
-				// this.ResetCXZK();
+				that.CurZKDisc = obj;
+			},
+			//清除折扣
+			ResetCXZK: function() {
+				that.SALE002.map(r => {
+					r.NET = r.ONET; //回退一下折扣？
+					r.PRICE = _util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
+					r.DISCRATE = 0; //zk
+					r.BZDISC = 0; //zk
+					r.LSDISC = 0; //zk
+					r.TPDISC = 0; //zk
+				});
 			},
 			//使用特殊折扣进行计算
 			discCompute: function() {
 				// 计算商品的折扣值
-				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				let res = _card_sale.MatchZKDatas(that.CurZKDisc, that.SALE002);
 				that.SALE002 = res.sale2;
 				// that.ZKHDArr = res.zkrule;
 				console.log("002增加折扣后的新数据：", that.SALE002);
