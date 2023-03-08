@@ -42,18 +42,18 @@
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>礼品卡激活</text>
+									<text>兑换券换卡</text>
 								</label>
 							</view>
 						</view>
-						<view class="ckr">“持卡人姓名”：877888999</view>
+						<view class="ckr">兑换券折扣额：{{CouponInfo.coupon_value||0}}</view>
 					</view>
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
 						<view class="swipetip" v-if="SALE006.length==0">
 							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-							<text>请先刷卡录入</text>
+							<text>请先录入兑换券，再录入待激活礼品卡</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
@@ -98,24 +98,24 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNum=true">
+							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardFunc">
 							</image>
 						</view>
-						<view class="a-z">
+						<!-- <view class="a-z">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
-						</view>
+						</view> -->
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
+							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showSMQ=true"></image>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002"></SpecialDisc>
+		<!-- <SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002"></SpecialDisc> -->
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
 			<canvas canvas-id="couponQrcode" class="canvas"
@@ -125,6 +125,9 @@
 			<canvas canvas-id="canvasXPEWM" class="canvas"
 				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 		</view>
+
+		<!-- //扫码枪组件 -->
+		<saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang>
 	</view>
 </template>
 <script>
@@ -138,12 +141,19 @@
 	import _card_sale from "@/api/business/card_sale.js";
 	import _saleClass from "@/utils/sale/saleClass.js";
 	import _main from '@/api/business/main.js';
+	import _member from '@/api/hy/MemberInterfaces.js';
+	import _common from '@/api/common.js';
+	import _pay from '@/api/Pay/PaymentALL.js';
+
 	import {
 		CreateSaleOrder,
 		PointUploadNew
 	} from '@/bll/Common/bll.js';
+	import {
+		Sale3Model,
+		Sale3ModelAdditional
+	} from '@/bll/PaymentBusiness/bll.js'
 
-	import _common from '@/api/common.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
@@ -179,8 +189,8 @@
 				KQXSTYPE: "SK",
 				Amount: 0, //VIP卡余额
 				view: {
-					big_customer: false,
-					enable_customer: true,
+					big_customer: false, //是否默认展示大客户
+					enable_customer: false, //是否能选择大客户
 				},
 				YWTYPE: "GiftCard_Active", //礼品卡激活
 				CurZKDisc: {}, //特殊折扣类型
@@ -192,6 +202,9 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
+				showSMQ: false, //s是否显示扫码
+				CouponInfo: {}, //券信息
+				payed: [] //已支付信息用于组装券兑换
 			}
 		},
 		onReady: function() {
@@ -219,9 +232,7 @@
 
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
-			// KQSale.InitData("礼品卡激活初始化", res => {
-			// 	that.ShowCZGZ();
-			// });
+
 			that.SALE001 = _card_coupon.InitSale001(store, {
 				XSTYPE: that.XSTYPE,
 				BILL_TYPE: that.BILL_TYPE,
@@ -229,28 +240,13 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-			//初始化折扣数据
-			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
-			//事件监听
-			
-			uni.$on("GetCardNums", that.GetCardNums);
 
-			
-			uni.$on("big-customer-close", function(data) {
-				console.log("[Created]大客户回调:", data);
-				if (data.exists_credit) {
-					that.BILL_TYPE = "Z112"; //启用赊销
-				} else {
-					that.BILL_TYPE = "Z111"; //不启用赊销	
-				}
-				that.SALE001.BILL_TYPE = that.BILL_TYPE;
-				if (data.DKFID) {
-					that.SALE001.DKFID = data.DKFID;
-					that.ZKData = _main.GetZKDatasAll(data.DKFID);
-				}
-			});
-			
-			uni.$on("close-tszk", that.CloseTSZK);
+			//事件监听
+			uni.$off("GetCardNums");
+			uni.$on("GetCardNums", that.GetCardNums);
+			//券号回调
+			uni.$off('getAuthCode');
+			uni.$on("getAuthCode", that.GetAuthCode);
 		},
 		watch: {},
 		computed: {
@@ -276,12 +272,8 @@
 				return total;
 			},
 		},
-		destroyed() {
-			uni.$off("close-tszk");
-			uni.$off("big-customer-close");
-			uni.$off("GetCardNums");
-		},
 		methods: {
+
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
@@ -317,7 +309,7 @@
 				KQSale.QueryInfo({
 					card_num: that.begin_num
 				}, res => {
-					console.log("卡信息查询结果：", res);
+					console.log("库存校验结果：", res);
 					if (KQSale.CheckStatus(res)) {
 						KQSale.CheckActiveNum({
 							channel: "ZC007",
@@ -327,7 +319,6 @@
 							khid: that.store.KHID,
 							cardnum: _util.CheckNum(that.begin_num, that.end_num)
 						}, async res3 => {
-							console.log("可激活数量校验结果：", res3);
 							if (res3.code) {
 								let totalNum = 0;
 								res3.data.map(r4 => {
@@ -355,6 +346,8 @@
 													.PRICE, 2);
 											}
 										});
+										// _util.simpleMsg("已添加该商品", "none");
+										// return;
 									}
 								} else {
 									_util.simpleMsg("暂未匹配到商品信息", "none");
@@ -549,8 +542,52 @@
 				})
 				dataObj.orderList = orderList;
 				dataObj.cardList = cardList;
-				dataObj.merOrderId = that.SALE001.BILL;//业务单号
+				dataObj.merOrderId = that.SALE001.BILL; //业务单号
 				return dataObj;
+			},
+			//兑换券核销
+			CreateSale003: function() {
+				that.payed.push(Sale3ModelAdditional(Sale3Model({
+					fkid: 'ZF11',
+					type: 'SZQ',
+					bill: that.SALE001.BILL,
+					name: "仟吉兑换券",
+					amount: that.CouponInfo.coupon_value
+				}), { //业务配置字段（支付状态设定为成功）
+					fail: false, //显示为成功
+					show: false
+				}));
+			},
+			//创建支付参数
+			CreatePayData() {
+				return {
+					// subject: "兑换券核销",
+					// no: "0", //储存当前序号
+					out_trade_no: that.SALE001.BILL,
+					total_money: _util.newFloat(that.SALE001.TNET * 100, 2), //总支付金额
+					money: (Number(that.CouponInfo.coupon_value) * 100).toFixed(0), //这一笔的支付金额
+					auth_code: that.CouponInfo.coupon_num,
+					store_id: that.SALE001.KHID,
+					// store_name: this.NAME,
+					// merchant_no: this.MerId,
+					channel: "POS",
+					// point: this.CashOffset.Score, //抵现积分数
+					// point_money: this.CashOffset.Money, //积分积分对应金额
+					// member_id: this.SALES.sale1.CUID,
+					// memo: this.currentPayInfo?.fkid ?? this.currentSelectedInfo
+					// 	?.fkid, //因为前者会受到authcode影响被清空，导致用券支付时，如果扫了错误的码会导致找不到支付信息，从而使其获取不到fkid，导致失败后端券查询报无auth_code的问题
+					// discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
+					// discountable_amount: zfb_disc,
+					product_info: that.SALE002.map(i => { //商品清单
+						return {
+							spid: i.SPID,
+							// name: i.NAME,
+							// price: (Number(i.PRICE) * 100).toFixed(0), //单价
+							amount: (Number(i.NET) * 100).toFixed(0), //总金额
+							num: i.QTY
+						}
+					})
+				}
 			},
 			//去支付
 			ToPay: function() {
@@ -560,33 +597,31 @@
 				}
 				console.log("sale2", that.SALE002);
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
-					console.log("单卡激活校验结果：", res);
+					console.log("激活校验申请结果：", res);
 					if (res.code) {
-						that.discCompute() //特殊折扣
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
-						console.log("单据类型：", that.BILL_TYPE);
-						if (that.BILL_TYPE == 'Z112') { //卡券赊销
-							//直接生成赊销销售单
-							//调用激活
-							//调用充值
-
-							//赊销参数组装
-							that.CreateSXSale001();
-							let result = {
-								code: true,
-								data: {
-									sale1_obj: that.SALE001,
-									sale2_arr: that.SALE002,
-									sale3_arr: that.SALE003,
-								}
-							};
-							that.PayedResult(result);
-						} else { //普通销售
-							//进入支付 等待支付返回结果
-							// that.PayParamAssemble();
-							_card_sale.PayParamAssemble(that, that.PayedResult);
-						}
+						//先进行券核销再进入支付 等待支付返回结果
+						_util.simpleModal("提示", "是否要核销该兑换券？", res => {
+							if (res) {
+								//券核销成功后
+								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
+									console.log("兑换券核销结果：", res1);
+									if (res1.code) {
+										_util.simpleMsg("券核销成功即将跳转支付...", "none");
+										that.CreateSale003(); //创建已支付的兑换券记录
+										console.log("兑换券支付记录：", that.payed);
+										//跳转支付
+										setTimeout(_card_sale.PayParamAssemble(that, that
+											.PayedResult), 1000);
+									} else {
+										_util.simpleMsg("券核销失败：" + res1.msg, "none");
+									}
+								}, err => {
+									_util.simpleMsg("券核销失败：" + err.msg, "none");
+								})
+							}
+						})
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);
 					}
@@ -707,41 +742,52 @@
 				that.Amount = 0;
 				console.log("单据重置成功")
 			},
-			//创建sxsale1
-			CreateSXSale001: function() {
-				console.log("进入赊销组装：");
-				//生成赊销单
-				that.SXSALE001 = Object.cover(new _saleClass.sxsale001(), that.SALE001);
-				that.SXSALE001.SX_STATUS = 1;
-				that.SXSALE001.DKFNAME = that.store.DKFNAME; //赊销追加一下 大客户名称
-				let sale3 = Object.cover(new _saleClass.sale003(), that.SALE001);
-				sale3.FKID = "ZG01";
-				sale3.AMT = that.SALE001.TNET;
-				that.SALE003.push(sale3);
-				console.log("赊销单组装数据sx1：", that.SXSALE001);
-				console.log("赊销单组装数据s3：", that.SALE003);
-			},
-			//特殊折扣关闭回调
-			CloseTSZK: function(data) {
-				that.showDisc = false;
-				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
-				if (data == "NO") { //清除折扣
-					that.CurZKDisc = {};
-				} else {
-					that.CurZKDisc.ZKType = data;
-					that.CurZKDisc.ZKData = that.ZKData;
+			//显示扫码组件
+			showCardFunc: function() {
+				if (!that.CouponInfo || Object.keys(that.CouponInfo).length == 0) {
+					_util.simpleMsg("请录入有效兑换券", "none");
+					return;
 				}
-				//清除一下之前产生的促销和折扣
-				// this.ResetCXZK();
+				that.showCardNum = true;
 			},
-			//使用特殊折扣进行计算
-			discCompute: function() {
-				// 计算商品的折扣值
-				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
-				that.SALE002 = res.sale2;
-				// that.ZKHDArr = res.zkrule;
-				console.log("002增加折扣后的新数据：", that.SALE002);
-			}
+			//扫码组件回调
+			GetAuthCode: async function(e) {
+				// e = "400000005787446369";
+				console.log("收到扫码组件回调：", e);
+				this.showSMQ = false; //关闭组件
+				if (e) {
+					let code = _common.ResetAuthCode(e);
+					let couponInfo = await that.coupon_info_search(code);
+					console.log("券信息：", couponInfo);
+					if (couponInfo && couponInfo.code) {
+						// that.CouponInfo = couponInfo.data;
+						// that.CouponInfo.coupon_num = code;
+						// console.log("兑换券信息：", that.CouponInfo);
+						// return;
+						if (couponInfo.ZZIFDHQ != "Y") {
+							that.CouponInfo = {};
+							_util.simpleMsg("券类型不是兑换券", true);
+							return;
+						}
+						if (couponInfo.ZZCPSTATE == "J01" || couponInfo.ZZCPSTATE == "J06") {
+							that.CouponInfo = couponInfo.data;
+							that.CouponInfo.coupon_num = code;
+						} else {
+							that.CouponInfo = {};
+							_util.simpleMsg("券状态不可用", true);
+							return;
+						}
+					} else {
+						_util.simpleMsg("券信息查询错误：" + couponInfo.msg, true);
+					}
+				}
+			},
+			//券信息查询
+			async coupon_info_search(e) {
+				return await _member.coupon_sale.CouponInfoSearch({
+					coupon_start: e
+				})
+			},
 		}
 	}
 </script>

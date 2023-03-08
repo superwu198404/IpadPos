@@ -171,7 +171,7 @@
 					select_coupon_segment: null,
 					no_input: false,
 					swipe_tip: false,
-					big_customer: true,
+					big_customer: false,
 					enable_customer: true,
 					enable_special_discount: false
 				},
@@ -536,7 +536,7 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
-			to_printer(){
+			to_printer(source){
 				let that = this;
 								
 				let sale01 = {

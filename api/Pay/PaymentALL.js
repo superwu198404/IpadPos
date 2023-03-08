@@ -628,7 +628,29 @@ var kbPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-
+	QueryCouponDetails: async function(card_number){
+		let details_result = null;
+		await Req.AsyncRequesrChain(CreateData(pt, "查询中...", "QueryInfo", {
+			param: {
+				gsid: getApp().globalData.store.GSID
+			},
+			data:{
+				auth_code: card_number
+			}
+		}), [
+			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
+				console.log("[QueryInfo]第一次结果（QueryInfo）:", res);
+				details_result = util.createdResult(true,'信息查询成功!',res);
+				return res;
+			}
+		], function(err) {
+			details_result = util.createdResult(false,'发生异常!',err);
+		}, function(active_err) {
+			console.log("主动抛出异常:", active_err);
+			details_result = util.createdResult(false,'主动-发生异常!',active_err);
+		});
+		return details_result;
+	},
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
@@ -963,6 +985,56 @@ var pinoPay = {
 			], catchFunc, finallyFunc, resultsFunc);
 		}
 	},
+	QueryCardDetails: async function(card_number){
+		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
+			console.log("[QueryCardDetails]品诺支付参数获取:", config)
+			if (!config) {
+				return util.createdResult(false,'支付参数为空!');
+			} else {
+				return util.createdResult(true,'参数获取成功!',config);
+			}
+		})
+		console.log("[QueryCardDetails]品诺支付参数获取结果:",config_result);
+		if (!config_result.code) {//如果没获取到参数
+			catchFunc(config_result);
+			return result;
+		}
+		var config = config_result.data;
+		var base_require_request_params = () => ({
+			transaction_id: config.KEY, //渠道私钥
+			trade_no: config.LONGKEY, //密码aes加密用的密钥
+			deviceno: config.SHID, //门店标识id
+			store_id: config.APPID //门店id
+		});
+		if (!card_number) {
+			return util.createdResult(false, "未传入卡号!");
+		}
+		var is_pe_code = card_number.substr(0, 2) == "PE"; //判断是否是 PE 码（PE、PN）
+		var card_no = card_number.substr(2, 11);
+		var password = card_number.substr(13) || 0;
+		console.log("[QueryCardDetails]品诺支付:", {
+			card_no,
+			password
+		});
+		let details_result = null;
+		await Req.AsyncRequesrChain(CreateData('PINNUO', "查询中...", "QueryCardDetails", Object.assign(
+			base_require_request_params(), {
+				ryid: getApp().globalData.store.KHID,
+				card_no: card_number
+			})), [
+			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
+				console.log("[QueryCardDetails]第一次结果（QueryCardDetails）:", res);
+				details_result = res;
+				return res;
+			}
+		], function(err) {
+			details_result = util.createdResult(false,'发生异常!',err);
+		}, function(active_err) {
+			console.log("主动抛出异常:", active_err);
+			details_result = util.createdResult(false,'主动-发生异常!',active_err);
+		});
+		return details_result;
+	},
 	Payment: function(pt, body, func, catchFunc) {
 		_Payment(pt, body, func, catchFunc);
 	},
@@ -1099,4 +1171,5 @@ export default {
 	_GetConfig,
 	_PaymentAll,
 	CreateData,
+	PaymentTypeInfos: payType,
 }

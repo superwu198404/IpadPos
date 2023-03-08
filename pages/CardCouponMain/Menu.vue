@@ -30,6 +30,7 @@
 	import CardSale from '@/pages/CardSale/CardSale.vue';
 	import Cardquery from '@/pages/Cardquery/Cardquery.vue';
 	import CardActive from '@/pages/CardActive/CardActive.vue';
+	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
 	//页面组件 👆
 	export default {
 		name: "Menu",
@@ -37,7 +38,8 @@
 			CouponSale,
 			CardSale,
 			Cardquery,
-			CardActive
+			CardActive,
+			CouponExchange
 		},
 		computed: {
 			component_name() {
@@ -65,7 +67,7 @@
 							icon_open: require('@/images/img2/quanquan.png'),
 							icon_close: require('@/images/img2/quanquan-hui.png'),
 							name:'兑换券换卡',
-							key: ''
+							key: 'CouponExchange'
 						},
 						{
 							icon_open: require('@/images/img2/quanjh-bai.png'),

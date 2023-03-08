@@ -333,7 +333,7 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		}, 
+		},
 		{
 			"path": "pages/CouponSale/CouponSale",
 			"style": {
@@ -358,6 +358,14 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
+		}, {
+			"path": "pages/CouponExchange/CouponExchange",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	],
 	"globalStyle": {

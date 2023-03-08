@@ -283,6 +283,7 @@
 		},
 		created: function(e) {
 			this.showSale = this._showSale;
+			this.ynDKF = this._ynDKF;
 			that = this;
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
