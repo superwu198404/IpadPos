@@ -303,6 +303,14 @@
 			}
 		},
 		{
+			"path": "pages/Querypage/Statement/Statement",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/Sellingcard/Sellingcard",
 			"style": {
 				"titleNView": false,
@@ -342,6 +350,7 @@
 				"enablePullDownRefresh": false
 			}
 		},
+		
 		{
 			"path": "pages/CardCouponMain/Menu",
 			"style": {

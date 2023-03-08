@@ -23,8 +23,12 @@
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()">
-						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
-						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+						<image src="@/images/dakehu.png" mode="widthFix"></image>
+						<text>大客户：{{DKFNAME}}</text>
+					</label>
+					<label class="buyer shexiao" @click="ShowDKF()">
+						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
+						<text>赊销中：{{DKFNAME}}</text>
 					</label>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
 						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
@@ -1386,5 +1390,9 @@
 		padding: 0 10rpx 0 2rpx;
 		background: none;
 		margin-left: 0;
+	}
+	.checkout .shexiao{
+		background:#006B44;
+		color: #fff;
 	}
 </style>

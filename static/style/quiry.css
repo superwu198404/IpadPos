@@ -76,6 +76,10 @@
 	font-size: 34rpx;
 	font-weight: 700;
 	line-height: 100rpx;
+	display: flex;
+	align-items: center;
+	position: relative;
+	z-index: 2;
 }
 .bg-top{
 	position: absolute;
@@ -90,6 +94,11 @@
 .commodity .mokuai text{
 	font-size: 28rp;
 	font-weight: 400;
+}
+.commodity .mokuai image{
+	width:34rpx;
+	height: 34rpx;
+	margin-right: 10rpx;
 }
 .commodity .ol{
 	display: flex;
@@ -583,5 +592,139 @@
 }
 .choice .tab.curr image{
 	display: block;
+}
+.operatys,.particul{
+	display: flex;
+	width: 100%;
+	position: relative;
+	z-index: 9;
+}
+.wk{
+	background: #FFFFFF;
+	border-radius: 12rpx;
+	border: 2rpx solid #DCF0DE;
+}
+.operatys .operat-sales{
+	width:66%;
+	margin-right:2%;
+}
+.operatys .operat-flow{
+	width:32%;	
+	padding:1% 0;
+}
+.memb{
+	display: flex;
+	justify-content: space-between;
+}
+.memb .huiyuan{
+	display: flex;
+	flex-direction: column;
+	width: 46%;
+	padding:0 0 0 4%;
+}
+.memb .huiyuan:nth-child(2){
+	border-left:2rpx solid #DCF0DE;
+	
+}
+.memb .huiyuan image{
+	width:36rpx;
+	height: 36rpx;
+	margin-right: 6rpx;
+}
+.memb .huiyuan label{
+	display: flex;
+	align-items: center;
+	font-size: 40rpx;
+	font-weight: 700;
+	line-height: 60rpx;
+}
+.memb .huiyuan text{
+	color: #b0b0b0;
+	font-size: 24rpx;
+	margin-left: 42rpx;
+}
+.memb-stat{
+	padding:4% 3% 0;
+}
+.memb-stat view{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	line-height: 70rpx;
+	font-size: 26rpx;
+}
+.memb-stat view em{
+	color: #42B14B;
+	font-size:24rpx;
+	margin-right: 6rpx;
+}
+.memb-stat view:nth-child(3+n) em{
+	color: #19C7A5;
+	
+}
+.particul .part-sale{
+	width:50%;
+}
+.particul .part-cons{
+	width:48%;
+	margin-left: 2%;
+}
+.wk .h6{
+	padding:0 3%;
+	color: #FE694B;
+	font-size: 32rpx;
+}
+.breakage .huiyuan:nth-child(2n){
+	border-left: none;
+}
+.breakage .huiyuan:nth-child(2n) text{
+	margin-left: 0;
+}
+.cons-jl{
+	padding-top:3%;
+}
+.particul .part-waimai{
+	width:40%;
+}
+.particul .pasrt-kq{
+	width:58%;
+	margin-left: 2%;
+}
+.cons-wm{
+	display: flex;
+	flex-wrap: wrap;
+	
+}
+.waimai-list{
+	background: linear-gradient(90deg, #D0F3ED 0%, #FFFFFF 100%);
+	border-radius: 12rpx;
+	position: relative;
+	width:45%;
+	padding: 2% 5% 2%;
+	font-size: 28rpx;
+}
+.waimai-list em{
+	display: block;
+	position: absolute;
+	width:6rpx;
+	height: 80%;
+	top:10%;
+	left: 4%;
+	border-radius: 6rpx;
+	background-color: #19C7A5;
+}
+.waimai-list .namewm{
+	line-height: 60rpx;
+}
+.waimai-list .namewm text{
+	display: inline-block;
+	background: #19C7A5;
+	border-radius: 20rpx;
+	padding:4rpx 10rpx;
+	height: 36rpx;
+	line-height: 36rpx;
+	font-size: 26rpx;
+	color: #fff;
+	margin-left: 10rpx;
 }
 
