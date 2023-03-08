@@ -303,6 +303,14 @@
 			}
 		},
 		{
+			"path": "pages/Querypage/Statement/Statement",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/Sellingcard/Sellingcard",
 			"style": {
 				"titleNView": false,
@@ -325,7 +333,7 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		}, 
+		},
 		{
 			"path": "pages/CouponSale/CouponSale",
 			"style": {
@@ -342,6 +350,7 @@
 				"enablePullDownRefresh": false
 			}
 		},
+		
 		{
 			"path": "pages/CardCouponMain/Menu",
 			"style": {
@@ -349,6 +358,14 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
+		}, {
+			"path": "pages/CouponExchange/CouponExchange",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	],
 	"globalStyle": {

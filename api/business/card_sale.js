@@ -33,6 +33,7 @@ var PayParamAssemble = function(that, func) {
 		sale2_arr: that.SALE002, //002 商品 数据对象集合
 		actType: "Payment", //动作类型(退款、支付)
 		ban_pay: ban_type, //被禁用的支付类型
+		PayList: that.payed || [], //已支付信息
 	}
 	console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
 	that.$store.commit('set-location', inputParm);

@@ -22,9 +22,13 @@
 			</view>
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
-					<label class="buyer" @click="ShowDKF()">
-						<image src="@/images/dakehu.png" mode="widthFix"></image><text>大客户：{{DKFNAME}}</text>
-						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+					<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
+						<image src="@/images/dakehu.png" mode="widthFix"></image>
+						<text>大客户：{{DKFNAME}}</text>
+					</label>
+					<label class="buyer shexiao" @click="ShowDKF()" v-else>
+						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
+						<text>赊销中：{{DKFNAME}}</text>
 					</label>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
 						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
@@ -242,7 +246,8 @@
 				viewTime: 5, //默认5s
 				intervalId: null,
 				showYWMsg: false,
-				ynDKF: true
+				ynDKF: true,
+				YN_SX: false //是否赊销
 			};
 		},
 		computed: {
@@ -279,6 +284,7 @@
 		},
 		created: function(e) {
 			this.showSale = this._showSale;
+			this.ynDKF = this._ynDKF;
 			that = this;
 			uni.$off('set-member');
 			uni.$on('set-member', util.callBind(this, function(info) {
@@ -581,6 +587,11 @@
 					util.setStorage("store", store);
 					console.log("[ClosePopup]设置门店大客户信息完成...");
 					this.DKFNAME = data.NAME;
+					if (data.exists_credit) { //是否赊销
+						this.YN_SX = data.exists_credit;
+					} else {
+						this.YN_SX = false;
+					}
 				}
 				this.$emit('update:custom', false);
 				this.$forceUpdate();
@@ -1386,5 +1397,10 @@
 		padding: 0 10rpx 0 2rpx;
 		background: none;
 		margin-left: 0;
+	}
+
+	.checkout .shexiao {
+		background: #006B44;
+		color: #fff;
 	}
 </style>

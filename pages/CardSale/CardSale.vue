@@ -10,7 +10,7 @@
 		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -259,11 +259,10 @@
 
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
+		},
+		 mounted() {
 			//事件监听
-			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
-
-			uni.$off("big-customer-close");
 			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
@@ -277,10 +276,17 @@
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
 			});
-			uni.$off("close-tszk");
 			uni.$on("close-tszk", that.CloseTSZK);
+			uni.$on("ReturnSale", that.ClearSale);
 		},
 		watch: {},
+		destroyed() {
+			console.log("5555555555555");
+			uni.$off("GetCardNums");
+			uni.$off("big-customer-close");
+			uni.$off("close-tszk");
+			uni.$off("ReturnSale");
+		},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -302,61 +308,6 @@
 			},
 		},
 		methods: {
-			// touchS: function(e) {
-			// 	console.log('touchS')
-			// 	if (e.touches.length == 1) {
-			// 		//设置触摸起始点水平方向位置
-			// 		this.startX = e.touches[0].clientX
-			// 		// console.log(this.startX)
-			// 	}
-			// },
-			// touchM: function(e) {
-			// 	console.log('touchM')
-			// 	if (e.touches.length == 1) {
-			// 		//手指移动时水平方向位置
-			// 		var moveX = e.touches[0].clientX;
-			// 		//手指起始点位置与移动期间的差值
-			// 		var disX = this.startX - moveX;
-			// 		var delBtnWidth = this.delBtnWidth;
-			// 		var txtStyle = "";
-			// 		if (disX == 0 || disX < 0) { //如果移动距离小于等于0，说明向右滑动，文本层位置不变
-			// 			txtStyle = "left:0px";
-			// 		} else if (disX > 0) { //移动距离大于0，文本层left值等于手指移动距离
-			// 			txtStyle = "left:-" + disX + "px";
-			// 			if (disX >= delBtnWidth) {
-			// 				//控制手指移动距离最大值为删除按钮的宽度
-			// 				txtStyle = "left:-" + delBtnWidth + "px";
-			// 			}
-			// 		}
-			// 		//获取手指触摸的是哪一项
-			// 		var index = e.currentTarget.dataset.index;
-			// 		var list = this.SALE002;
-			// 		list[index].txtStyle = txtStyle;
-			// 		// console.log(list[index].txtStyle)
-			// 		//更新列表的状态
-			// 		this.SALE002 = list;
-			// 	}
-			// },
-			// touchE: function(e) {
-			// 	// console.log('touchE')
-			// 	if (e.changedTouches.length == 1) {
-			// 		//手指移动结束后水平位置
-			// 		var endX = e.changedTouches[0].clientX;
-			// 		//触摸开始与结束，手指移动的距离
-			// 		var disX = this.startX - endX;
-			// 		var delBtnWidth = this.delBtnWidth;
-			// 		//如果距离小于删除按钮的1/2，不显示删除按钮
-			// 		var txtStyle = disX > delBtnWidth / 2 ? "left:-" + delBtnWidth + "px" : "left:0px";
-			// 		//获取手指触摸的是哪一项
-			// 		var index = e.currentTarget.dataset.index;
-			// 		var list = this.SALE002;
-			// 		list[index].txtStyle = txtStyle;
-			// 		// console.log(list[index].txtStyle)
-			// 		//更新列表的状态{
-			// 		this.SALE002 = list
-			// 	}
-			// },
-
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
@@ -377,7 +328,7 @@
 
 			//组件卡号返回
 			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
+				console.log("卡号返回事件1：", e);
 				if (e) {
 					that.showCardNum = false;
 					that.begin_num = e.begin_num;
@@ -641,7 +592,8 @@
 							that.PayedResult(result);
 						} else { //普通销售
 							//进入支付 等待支付返回结果
-							that.PayParamAssemble();
+							// that.PayParamAssemble();
+							_card_sale.PayParamAssemble(that, that.PayedResult);
 						}
 					} else {
 						_util.simpleMsg("校验失败：", res.msg, true);
@@ -854,6 +806,14 @@
 				that.SALE002 = res.sale2;
 				// that.ZKHDArr = res.zkrule;
 				console.log("002增加折扣后的新数据：", that.SALE002);
+			},
+			//清空数据
+			ClearSale: function() {
+				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
+					if (res) {
+						that.ResetSaleBill();
+					}
+				})
 			}
 		}
 	}

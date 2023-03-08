@@ -64,8 +64,8 @@
 		data() {
 			return {
 				// ywType: "",
-				beginNum: "", //1087111000002638
-				endNum: "", //1087111000002658
+				beginNum: "", //1087111000002745
+				endNum: "", //1087111000002745
 				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
@@ -114,8 +114,7 @@
 				} else {
 					that.endNum = that.beginNum;
 				}
-				console.log("即将回调的卡号:", that.beginNum);
-				console.log("即将回调的卡号1:", that.endNum);
+				console.log("即将回调的卡号:", that.beginNum + "-" + that.endNum);
 				this.$emit("update:show", false);
 				uni.$emit("GetCardNums", {
 					type: "Y",
