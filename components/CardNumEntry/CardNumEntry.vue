@@ -114,8 +114,7 @@
 				} else {
 					that.endNum = that.beginNum;
 				}
-				console.log("即将回调的卡号:", that.beginNum);
-				console.log("即将回调的卡号1:", that.endNum);
+				console.log("即将回调的卡号:", that.beginNum + "-" + that.endNum);
 				this.$emit("update:show", false);
 				uni.$emit("GetCardNums", {
 					type: "Y",

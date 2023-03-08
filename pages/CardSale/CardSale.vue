@@ -259,6 +259,8 @@
 
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
+		},
+		 mounted() {
 			//事件监听
 			uni.$on("GetCardNums", that.GetCardNums);
 			uni.$on("big-customer-close", async function(data) {
@@ -279,6 +281,7 @@
 		},
 		watch: {},
 		destroyed() {
+			console.log("5555555555555");
 			uni.$off("GetCardNums");
 			uni.$off("big-customer-close");
 			uni.$off("close-tszk");
@@ -325,7 +328,7 @@
 
 			//组件卡号返回
 			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
+				console.log("卡号返回事件1：", e);
 				if (e) {
 					that.showCardNum = false;
 					that.begin_num = e.begin_num;

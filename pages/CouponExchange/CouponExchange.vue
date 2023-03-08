@@ -227,9 +227,9 @@
 				}
 			}))()
 		},
-		created: async function() {
+		created: function() {
 			that = this;
-
+			
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 
@@ -240,12 +240,14 @@
 				CUID: that.KQXSTYPE,
 				DKFID: store.DKFID
 			});
-
+		},
+		mounted() {
 			//事件监听
 			uni.$on("GetCardNums", that.GetCardNums);
 			//券号回调
 			uni.$on("getAuthCode", that.GetAuthCode);
 			uni.$on("ReturnSale", that.ClearSale);
+			
 		},
 		watch: {},
 		destroyed() {
@@ -295,7 +297,7 @@
 			},
 			//组件卡号返回
 			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
+				console.log("卡号返回事件3：", e);
 				if (e) {
 					that.showCardNum = false;
 					that.begin_num = e.begin_num;
@@ -378,7 +380,8 @@
 											begin_num: num1,
 											end_num: num2,
 											qty: r3.cardNum,
-											index: i3
+											index: that.SALE006.length +
+												1 + i3
 										}, spObj, that.SALE001);
 										if (sale6)
 											that.SALE006.push(sale6);
@@ -453,9 +456,25 @@
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
 						let arr1 = that.SALE006.filter(r => {
-							return r.KQIDSTR != r.KQIDSTR;
+							return r.KQIDSTR != e.KQIDSTR;
 						});
 						that.SALE006 = arr1;
+						let delIndex = -1;
+						let SALE2 = JSON.parse(JSON.stringify(that.SALE002)); //拷贝一下
+						SALE2.map((r, i) => {
+							if (r.SPID == e.SPID) {
+								if (r.QTY == e.QTY) {
+									delIndex = i;
+									return;
+								}
+								r.QTY -= e.QTY;
+								r.NET -= e.NET;
+							}
+						})
+						if (delIndex >= 0) {
+							SALE2.splice(delIndex, 1);
+						}
+						that.SALE002 = SALE2;
 					}
 				})
 			},
@@ -756,7 +775,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				// e = "400000005787446369";
+				// e = "900000000002068164";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
@@ -764,18 +783,16 @@
 					let couponInfo = await that.coupon_info_search(code);
 					console.log("券信息：", couponInfo);
 					if (couponInfo && couponInfo.code) {
-						// that.CouponInfo = couponInfo.data;
-						// that.CouponInfo.coupon_num = code;
-						// console.log("兑换券信息：", that.CouponInfo);
-						// return;
-						if (couponInfo.ZZIFDHQ != "Y") {
+						if (couponInfo.data.total_info.ZZIFDHQ != "Y") {
 							that.CouponInfo = {};
 							_util.simpleMsg("券类型不是兑换券", true);
 							return;
 						}
-						if (couponInfo.ZZCPSTATE == "J01" || couponInfo.ZZCPSTATE == "J06") {
+						if (couponInfo.data.total_info.ZZCPSTATE == "J01" || couponInfo.data.total_info.ZZCPSTATE ==
+							"J06") {
 							that.CouponInfo = couponInfo.data;
 							that.CouponInfo.coupon_num = code;
+							_util.simpleMsg("校验成功，券面额为：" + that.CouponInfo.coupon_value + "元");
 						} else {
 							that.CouponInfo = {};
 							_util.simpleMsg("券状态不可用", true);

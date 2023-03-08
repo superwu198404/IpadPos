@@ -231,10 +231,11 @@
 			});
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
-
+		},
+		mounted() {
 			//事件监听
 			uni.$on("GetCardNums", that.GetCardNums);
-			uni.$on("big-customer-close", function(data) {
+			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.BILL_TYPE = "Z112"; //启用赊销
@@ -244,7 +245,8 @@
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-					that.ZKData = _main.GetZKDatasAll(data.DKFID);
+					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
+					console.log("大客户折扣数据：", that.ZKData);
 				}
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
@@ -254,6 +256,7 @@
 		computed: {
 			//商品总数量
 			TotalNum: function() {
+				console.log("TotalNum发生改变：", that.SALE002);
 				let total = 0;
 				that.SALE002.map(r => {
 					total += r.QTY;
@@ -263,7 +266,7 @@
 			//商品总金额 包含折扣
 			TotalNet: function() {
 				let total = 0;
-				console.log("sale001", that.SALE001);
+				console.log("TotalNet发生改变：", that.SALE002);
 				if (!that.SALE002 || that.SALE002.length == 0) {
 					return total;
 				}
@@ -298,7 +301,7 @@
 			},
 			//组件卡号返回
 			GetCardNums: function(e) {
-				console.log("卡号返回事件：", e);
+				console.log("卡号返回事件2：", e);
 				if (e) {
 					that.showCardNum = false;
 					that.begin_num = e.begin_num;
@@ -380,7 +383,8 @@
 											begin_num: num1,
 											end_num: num2,
 											qty: r3.cardNum,
-											index: i3
+											index: that.SALE006.length +
+												1 + i3
 										}, spObj, that.SALE001);
 										if (sale6)
 											that.SALE006.push(sale6);
@@ -455,9 +459,25 @@
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
 						let arr1 = that.SALE006.filter(r => {
-							return r.KQIDSTR != r.KQIDSTR;
+							return r.KQIDSTR != e.KQIDSTR;
 						});
 						that.SALE006 = arr1;
+						let delIndex = -1;
+						let SALE2 = JSON.parse(JSON.stringify(that.SALE002)); //拷贝一下
+						SALE2.map((r, i) => {
+							if (r.SPID == e.SPID) {
+								if (r.QTY == e.QTY) {
+									delIndex = i;
+									return;
+								}
+								r.QTY -= e.QTY;
+								r.NET -= e.NET;
+							}
+						})
+						if (delIndex >= 0) {
+							SALE2.splice(delIndex, 1);
+						}
+						that.SALE002 = SALE2;
 					}
 				})
 			},
@@ -468,6 +488,7 @@
 						return r.SPID != spid
 					});
 					that.SALE002 = arr;
+					// console.log("新的sale2:", that.SALE002);
 					let arr1 = that.SALE006.filter(r => {
 						return r.SPID != spid
 					});
