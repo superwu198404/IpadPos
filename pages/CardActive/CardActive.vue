@@ -10,7 +10,7 @@
 		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -231,11 +231,9 @@
 			});
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
-			//事件监听
-			
-			uni.$on("GetCardNums", that.GetCardNums);
 
-			
+			//事件监听
+			uni.$on("GetCardNums", that.GetCardNums);
 			uni.$on("big-customer-close", function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
@@ -249,8 +247,8 @@
 					that.ZKData = _main.GetZKDatasAll(data.DKFID);
 				}
 			});
-			
 			uni.$on("close-tszk", that.CloseTSZK);
+			uni.$on("ReturnSale", that.ClearSale);
 		},
 		watch: {},
 		computed: {
@@ -280,6 +278,7 @@
 			uni.$off("close-tszk");
 			uni.$off("big-customer-close");
 			uni.$off("GetCardNums");
+			uni.$off("ReturnSale");
 		},
 		methods: {
 			Touchlist: function(e) {
@@ -549,7 +548,7 @@
 				})
 				dataObj.orderList = orderList;
 				dataObj.cardList = cardList;
-				dataObj.merOrderId = that.SALE001.BILL;//业务单号
+				dataObj.merOrderId = that.SALE001.BILL; //业务单号
 				return dataObj;
 			},
 			//去支付
@@ -741,7 +740,15 @@
 				that.SALE002 = res.sale2;
 				// that.ZKHDArr = res.zkrule;
 				console.log("002增加折扣后的新数据：", that.SALE002);
-			}
+			},
+			//清空数据
+			ClearSale: function() {
+				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
+					if (res) {
+						that.ResetSaleBill();
+					}
+				})
+			},
 		}
 	}
 </script>

@@ -22,11 +22,11 @@
 			</view>
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
-					<label class="buyer" @click="ShowDKF()">
+					<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
 						<image src="@/images/dakehu.png" mode="widthFix"></image>
 						<text>大客户：{{DKFNAME}}</text>
 					</label>
-					<label class="buyer shexiao" @click="ShowDKF()">
+					<label class="buyer shexiao" @click="ShowDKF()" v-else>
 						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
 						<text>赊销中：{{DKFNAME}}</text>
 					</label>
@@ -246,7 +246,8 @@
 				viewTime: 5, //默认5s
 				intervalId: null,
 				showYWMsg: false,
-				ynDKF: true
+				ynDKF: true,
+				YN_SX: false //是否赊销
 			};
 		},
 		computed: {
@@ -586,6 +587,11 @@
 					util.setStorage("store", store);
 					console.log("[ClosePopup]设置门店大客户信息完成...");
 					this.DKFNAME = data.NAME;
+					if (data.exists_credit) { //是否赊销
+						this.YN_SX = data.exists_credit;
+					} else {
+						this.YN_SX = false;
+					}
 				}
 				this.$emit('update:custom', false);
 				this.$forceUpdate();
@@ -1392,8 +1398,9 @@
 		background: none;
 		margin-left: 0;
 	}
-	.checkout .shexiao{
-		background:#006B44;
+
+	.checkout .shexiao {
+		background: #006B44;
 		color: #fff;
 	}
 </style>

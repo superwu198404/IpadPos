@@ -10,7 +10,7 @@
 		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -260,10 +260,7 @@
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
 			//事件监听
-			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
-
-			uni.$off("big-customer-close");
 			uni.$on("big-customer-close", async function(data) {
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
@@ -277,10 +274,16 @@
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
 			});
-			uni.$off("close-tszk");
 			uni.$on("close-tszk", that.CloseTSZK);
+			uni.$on("ReturnSale", that.ClearSale);
 		},
 		watch: {},
+		destroyed() {
+			uni.$off("GetCardNums");
+			uni.$off("big-customer-close");
+			uni.$off("close-tszk");
+			uni.$off("ReturnSale");
+		},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -800,6 +803,14 @@
 				that.SALE002 = res.sale2;
 				// that.ZKHDArr = res.zkrule;
 				console.log("002增加折扣后的新数据：", that.SALE002);
+			},
+			//清空数据
+			ClearSale: function() {
+				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
+					if (res) {
+						that.ResetSaleBill();
+					}
+				})
 			}
 		}
 	}

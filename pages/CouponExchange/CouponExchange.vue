@@ -10,7 +10,7 @@
 		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep curr">
@@ -242,13 +242,17 @@
 			});
 
 			//事件监听
-			uni.$off("GetCardNums");
 			uni.$on("GetCardNums", that.GetCardNums);
 			//券号回调
-			uni.$off('getAuthCode');
 			uni.$on("getAuthCode", that.GetAuthCode);
+			uni.$on("ReturnSale", that.ClearSale);
 		},
 		watch: {},
+		destroyed() {
+			uni.$off("GetCardNums");
+			uni.$off('getAuthCode');
+			uni.$off("ReturnSale");
+		},
 		computed: {
 			//商品总数量
 			TotalNum: function() {
@@ -786,6 +790,14 @@
 			async coupon_info_search(e) {
 				return await _member.coupon_sale.CouponInfoSearch({
 					coupon_start: e
+				})
+			},
+			//清空数据
+			ClearSale: function() {
+				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
+					if (res) {
+						that.ResetSaleBill();
+					}
 				})
 			},
 		}
