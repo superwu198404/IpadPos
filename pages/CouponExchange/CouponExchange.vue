@@ -636,7 +636,7 @@
 										console.log("兑换券支付记录：", that.payed);
 										//跳转支付
 										setTimeout(_card_sale.PayParamAssemble(that, that
-											.PayedResult), 1000);
+											.PayedResult), 1500);
 									} else {
 										_util.simpleMsg("券核销失败：" + res1.msg, "none");
 									}
@@ -775,7 +775,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				// e = "900000000002068164";
+				// e = "900000000002075269";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
