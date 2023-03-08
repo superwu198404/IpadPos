@@ -309,7 +309,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			}
 			// console.log("[AsyncFuncArr]请求完成...");
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
-			// console.log("[AsyncFuncArr]http请求返回值:",JSON.stringify(res).substring(0,1000));
+			console.log("[AsyncFuncArr]http请求返回值:",JSON.stringify(res).substring(0,1000));
 			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);
