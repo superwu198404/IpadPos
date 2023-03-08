@@ -71,26 +71,6 @@
 							<view class="touch-list list-delete" @click="remove_union(sales)">
 								<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 							</view>
-							<!-- <image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-							<view class="h6">
-								<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
-								<view class="zje">
-									<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
-									<button @click="remove_union(sales)">
-										<image src="@/images/img2/ka-shanchu.png"></image>
-									</button>
-								</view>
-							</view>
-							<view class="card-num">
-								<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
-								<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
-							</view>
-							<view class="statistic">
-								<label><em>●</em><text>总折扣：</text>{{sales.sale002.DISCRATE}}</label>
-								<label><em>●</em><text>默认折扣：</text>{{sales.sale002.CXDISC}}</label>
-								<label><em>●</em><text>标准折扣：</text>{{sales.sale002.BZDISC}}</label>
-								<label><em>●</em><text>特批折扣：</text>{{sales.sale002.TPDISC}}</label>
-							</view> -->
 						</view>
 	
 					</view>
@@ -171,7 +151,7 @@
 					select_coupon_segment: null,
 					no_input: false,
 					swipe_tip: false,
-					big_customer: true,
+					big_customer: false,
 					enable_customer: true,
 					enable_special_discount: false
 				},
@@ -419,6 +399,9 @@
 					if (res.code) {
 						return this.coupon_segment_activate();
 					} else {
+						this.source.sale001.STR1 = "激活申请失败";
+						this.source.sale001.YN_OK = "F";
+						this.source.sale001.REASON = "FPF";
 						util.simpleMsg("券激活申请失败!" + (res?.msg || ""), true);
 					}
 				})).then($(function(res){
@@ -428,6 +411,7 @@
 					} else {
 						this.source.sale001.STR1 = "激活失败";
 						this.source.sale001.YN_OK = "F";
+						this.source.sale001.REASON = "QJHF";
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
 					}
 				}))

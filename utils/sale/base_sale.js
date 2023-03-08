@@ -1421,9 +1421,9 @@ var XsTypeObj = {
 				} else
 					ywsxfk_list.push(ywsxfk);
 			})
-			this.sale001 = {};
-			this.sale002 = [];
-			this.sale003 = [];
+			// this.sale001 = {};
+			// this.sale002 = [];
+			// this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
 			//YWSXFK(类sale3)、YWSXJS(类sale1，主单号为BILL，大客户ID-DKFID，大客户名称-DKFNAME)、YWSXJSMX(类sale2-记录结算的单据，原单号记录字段为BILL_SX)
 			this.additional['YWSXFK'] = ywsxfk_list;

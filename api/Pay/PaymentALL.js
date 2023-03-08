@@ -630,24 +630,20 @@ var kbPay = {
 	},
 	QueryCouponDetails: async function(card_number){
 		let details_result = null;
-		await Req.AsyncRequesrChain(CreateData(pt, "查询中...", "QueryInfo", {
-			param: {
-				gsid: getApp().globalData.store.GSID
-			},
-			data:{
-				auth_code: card_number
-			}
-		}), [
+		await Req.AsyncRequesrChain(CreateData('COUPON', "查询中...", "QueryInfo", {
+				auth_code: card_number,
+				product_info: []
+			}), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[QueryInfo]第一次结果（QueryInfo）:", res);
-				details_result = util.createdResult(true,'信息查询成功!',res);
+				details_result = res;
 				return res;
 			}
 		], function(err) {
-			details_result = util.createdResult(false,'发生异常!',err);
+			details_result = err;
 		}, function(active_err) {
 			console.log("主动抛出异常:", active_err);
-			details_result = util.createdResult(false,'主动-发生异常!',active_err);
+			details_result = active_err;
 		});
 		return details_result;
 	},
@@ -1028,10 +1024,10 @@ var pinoPay = {
 				return res;
 			}
 		], function(err) {
-			details_result = util.createdResult(false,'发生异常!',err);
+			details_result = err;
 		}, function(active_err) {
 			console.log("主动抛出异常:", active_err);
-			details_result = util.createdResult(false,'主动-发生异常!',active_err);
+			details_result = active_err;
 		});
 		return details_result;
 	},

@@ -44,17 +44,17 @@
 							</view>
 						</view>	
 					</view>
-					<view class="partics">
+					<view class="partics" v-if="form.infos && form.infos.card_id">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli">
 									<view class="touch-list list-touch">
-										<image class="bgs" src="@/images/img2/kaqchaxun .png" mode="widthFix"></image>
+										<image class="bgs" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>实体23.9型海藻糖绿豆糕提货券-19</label>											
+											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
 										</view>
 										<view class="denominat">
-											<label>￥<text>100</text></label>
+											<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
@@ -64,10 +64,10 @@
 													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
 												</view>
 											</view>
-											<view class="denominat">
+											<!-- <view class="denominat">
 												<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
 												<text>（满38元使用）</text>
-											</view>
+											</view> -->
 										</view>
 										<view class="statistic">
 											<text>{{ default_view(form.infos.valid_date,'') }}</text>
@@ -153,7 +153,7 @@
 				form:{
 					current_type_info: null,
 					number: '',
-					infos: bussiness.base.infos()
+					infos: bussiness.infos()
 				},
 				source:{
 					types: [],
@@ -174,8 +174,14 @@
 			},
 			async according_to_type_search(){
 				if(this.form.current_type_info){
-					this.form.infos = await this.form.current_type_info.search(this.form.number);
-					console.log("[TypeSearch]查询结果:", this.form.infos);
+					let result = await this.form.current_type_info.search(this.form.number);
+					console.log("[TypeSearch]查询结果:", result);
+					if(result.code){
+						this.form.infos = result.data;
+					}
+					else{
+						util.simpleMsg(result.msg);
+					}
 				}
 				else{
 					util.simpleMsg('请选择类型后再进行此操作!');

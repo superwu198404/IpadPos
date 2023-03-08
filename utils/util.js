@@ -136,7 +136,12 @@ const utils = {
 	},
 	callContainer: function(this_quote) {
 		return (function(callback) {
-			return callback.bind(this);
+			try{
+				return callback.bind(this);
+			}
+			catch(e){
+				console.warn('[CallContainer]调用容器内发生错误!错误信息:', e);
+			}
 		}).bind(this_quote);
 	},
 	//日期格式化
