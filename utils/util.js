@@ -135,9 +135,12 @@ const utils = {
 		return func.bind(thisObject);
 	},
 	callContainer: function(this_quote) {
-		return (function(callback) {
+		return (function(callback, is_bind = true) {
 			try{
-				return callback.bind(this);
+				if(is_bind)
+					return callback.bind(this);
+				else
+					return callback.call(this);
 			}
 			catch(e){
 				console.warn('[CallContainer]调用容器内发生错误!错误信息:', e);
