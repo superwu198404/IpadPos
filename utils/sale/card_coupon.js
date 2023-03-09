@@ -409,7 +409,7 @@ var KQTypeObj = {
 				sale2.PLID = spinfo?.PLID;
 				sale2.SPJGZ = spinfo?.SPJGZ;
 				sale2.BRANDID = "SK";
-				// sale2.txtStyle = "left:0";
+				sale2.txtStyle = "left:0";
 				return sale2;
 			}
 			return null;

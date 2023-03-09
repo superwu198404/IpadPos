@@ -498,12 +498,7 @@
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
 					r.OPRICE = r.PRICE;
-					// r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
-					// r.BZDISC = _util.newFloat(e.ZSNET, 2);
-					// r.BILLDISC = _util.newFloat(e.ZSNET, 2);
-					// r.DISCRATE = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
-					// r.ONET = r.NET;
 					r.ZSNET = _util.newFloat(e.ZSNET, 2);
 				})
 				s6.map(r => {
@@ -690,11 +685,13 @@
 									.code);
 								if (!res3.code) {
 									that.SALE001.YN_OK = "F";
+									that.SALE001.REASON = "CZF"; //充值失败
 								}
 								that.SaleCompleted();
 							});
 						} else { //激活失败 直接提交单据
 							that.SALE001.YN_OK = "F";
+							that.SALE001.REASON = "JHF"; //激活失败
 							that.SaleCompleted();
 						}
 						//重置销售单
@@ -811,8 +808,6 @@
 				let obj = {};
 				if (data == "NO") { //清除折扣
 					obj = {};
-					//清除一下之前产生的促销和折扣
-					_card_sale.ResetCXZK(that);
 				} else {
 					obj = {
 						ZKType: data,
@@ -820,6 +815,8 @@
 					};
 				}
 				that.CurZKDisc = obj;
+				//清除一下之前产生的促销和折扣
+				_card_sale.ResetCXZK(that);
 			},
 			//使用特殊折扣进行计算
 			discCompute: function() {

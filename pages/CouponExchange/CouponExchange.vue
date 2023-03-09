@@ -710,6 +710,7 @@
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
 						if (!res2.code) { //激活失败要记录一下
 							that.SALE001.YN_OK = "F";
+							that.SALE001.REASON = "JHF"; //激活失败
 						}
 						//销售单生成
 						that.SaleCompleted();
