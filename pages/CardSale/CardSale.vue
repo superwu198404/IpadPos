@@ -627,7 +627,6 @@
 			},
 			//支付完成处理
 			PayedResult: async function(result) {
-				console.log("支付后的sale6：", that.SALE006);
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -687,56 +686,60 @@
 							}, res3 => {
 								//充值
 								console.log("VIP单卡充值结果：", res3);
-								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
+								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3
+									.code);
 								if (!res3.code) {
 									that.SALE001.YN_OK = "F";
 								}
-								//激活成功-充值成功（与否）均生成销售单
-								KQSale.Completed({
-									SALE001: that.SALE001,
-									SALE002: that.SALE2,
-									SALE003: that.SALE003,
-									SALE006: that.SALE006,
-									SXSALE001: that.SXSALE001,
-								})
+								that.SaleCompleted();
 							});
 						} else { //激活失败 直接提交单据
 							that.SALE001.YN_OK = "F";
-							//创建卡券销售单
-							KQSale.Completed({
-								SALE001: that.SALE001,
-								SALE002: that.SALE2,
-								SALE003: that.SALE003,
-								SALE006: that.SALE006,
-								SXSALE001: that.SXSALE001,
-							})
+							that.SaleCompleted();
 						}
-						//调用打印
-						let printerPram = {
-							"PRINTNUM": 1,
-							"XSTYPE": that.KQXSTYPE,
-						};
-
-						let arr3 = that.SALE003;
-						let fkdaRes = that.FKDA_INFO;
-						arr3.forEach(function(item, index) {
-							try {
-								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-								item.balance = item.balance;
-							} catch (e) {
-								item.SNAME = "";
-								item.balance = 0;
-							}
-						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE2, arr3, that.SALE006,
-							printerPram);
-
 						//重置销售单
-						that.ResetSaleBill();
+						// that.ResetSaleBill();
 					})
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
+			},
+			//完成销售单
+			SaleCompleted: async function() {
+				console.log("生成销售单");
+				//激活成功-充值成功（与否）均生成销售单
+				await KQSale.Completed({
+					SALE001: that.SALE001,
+					SALE002: that.SALE2,
+					SALE003: that.SALE003,
+					SALE006: that.SALE006,
+					SXSALE001: that.SXSALE001,
+				})
+				await that.PrintBill();
+				//重置销售单
+				that.ResetSaleBill();
+			},
+			PrintBill: async function() {
+				console.log("调用打印");
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": that.KQXSTYPE,
+				};
+
+				let arr3 = that.SALE003;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				await that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE2, arr3, that.SALE006,
+					printerPram);
 			},
 			//sale2追加赠送金额
 			Sale2AddDisc: function() {

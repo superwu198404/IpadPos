@@ -229,7 +229,7 @@
 		},
 		created: function() {
 			that = this;
-			
+
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 
@@ -247,7 +247,7 @@
 			//券号回调
 			uni.$on("getAuthCode", that.GetAuthCode);
 			uni.$on("ReturnSale", that.ClearSale);
-			
+
 		},
 		watch: {},
 		destroyed() {
@@ -702,7 +702,7 @@
 					KQSale.ActiveConfirm({
 						salebill: that.SALE001.BILL,
 						channel: "ZC007"
-					}, res2 => {
+					}, async res2 => {
 						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
 						console.log("VIP单卡激活结果：", res2);
@@ -711,42 +711,51 @@
 						if (!res2.code) { //激活失败要记录一下
 							that.SALE001.YN_OK = "F";
 						}
-						//激活完成-创建卡券销售单
-						KQSale.Completed({
-							SALE001: that.SALE001,
-							SALE002: that.SALE002,
-							SALE003: that.SALE003,
-							SALE006: that.SALE006,
-							SXSALE001: that.SXSALE001,
-						})
-
-						//调用打印
-						let printerPram = {
-							"PRINTNUM": 1,
-							"XSTYPE": "SKJH",
-						};
-
-						let arr3 = that.SALE003;
-						let fkdaRes = that.FKDA_INFO;
-						arr3.forEach(function(item, index) {
-							try {
-								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-								item.balance = item.balance;
-							} catch (e) {
-								item.SNAME = "";
-								item.balance = 0;
-							}
-						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3,
-							that.SALE006,
-							printerPram);
-
-						//重置销售单
-						that.ResetSaleBill();
+						//销售单生成
+						that.SaleCompleted();
 					})
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
+			},
+			//完成销售单
+			SaleCompleted: async function() {
+				console.log("生成销售单");
+				//激活完成-创建卡券销售单
+				await KQSale.Completed({
+					SALE001: that.SALE001,
+					SALE002: that.SALE002,
+					SALE003: that.SALE003,
+					SALE006: that.SALE006,
+					SXSALE001: that.SXSALE001,
+				})
+				await that.PrintBill();
+				//重置销售单
+				that.ResetSaleBill();
+			},
+			PrintBill: async function() {
+				console.log("调用打印");
+				//调用打印
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": "SKJH",
+				};
+
+				let arr3 = that.SALE003;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				await that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+					printerPram);
+
 			},
 			//重置本次销售单
 			ResetSaleBill: function() {
