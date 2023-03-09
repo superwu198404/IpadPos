@@ -225,7 +225,7 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]开始循环(dataObj)的内容...");
 		for (let key in dataObj) {
 			// console.log("[CreateSaleOrder]循环:深拷贝...");
-			if(!dataObj[key]) continue;
+			if (!dataObj[key]) continue;
 			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
 			if (key == "SALE001") {
 				dataArr.XSPTID = "PAD";
@@ -234,17 +234,18 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 				dataArr.forEach(r => {
 					delete r.STR1;
 					delete r.STR2;
-					delete r.begin_num;//售卖卡券
-					delete r.end_num;//售卖卡券
-					delete r.txtStyle;//售卖卡券
-					delete r.ZSNET;//售卖卡券
+					delete r.begin_num; //售卖卡券
+					delete r.end_num; //售卖卡券
+					delete r.txtStyle; //售卖卡券
+					delete r.ZSNET; //售卖卡券
+					delete r.ONET //售卖卡券
 				})
 			}
 			if (key == "SALE006") {
 				dataArr.forEach(r => {
-					delete r.txtStyle;//售卖卡券
-					delete r.SALE2;//售卖卡券
-					delete r.NET;//售卖卡券
+					delete r.txtStyle; //售卖卡券
+					delete r.SALE2; //售卖卡券
+					delete r.NET; //售卖卡券
 				})
 			}
 			// console.log("[CreateSaleOrder]循环:创建sql语句...");

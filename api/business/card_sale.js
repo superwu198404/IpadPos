@@ -30,7 +30,7 @@ var PayParamAssemble = function(that, func) {
 	});
 	let inputParm = {
 		sale1_obj: that.SALE001, //001 主单 数据对象
-		sale2_arr: that.SALE002, //002 商品 数据对象集合
+		sale2_arr: (that.SALE2 && that.SALE2.length > 0) ? that.SALE2 : that.SALE002, //002 商品 数据对象集合 vip业务有赠送金额
 		actType: "Payment", //动作类型(退款、支付)
 		ban_pay: ban_type, //被禁用的支付类型
 		PayList: that.payed || [], //已支付信息
@@ -45,7 +45,29 @@ var PayParamAssemble = function(that, func) {
 		}
 	})
 }
+
+//回退特殊折扣
+var ResetCXZK = function(that) {
+	if (that.SALE001 && Object.keys(that.SALE001).length > 0) {
+		//切换折扣或者促销后 清空一下原来计算的折扣值
+		that.SALE001.TBZDISC = 0; //zk 总标准折扣
+		that.SALE001.TLSDISC = 0; //zk 总临时折扣
+		that.SALE001.TTPDISC = 0; //zk 总特批折扣
+		that.SALE001.TCXDISC = 0; //cx 总促销折扣
+		that.SALE001.TDISC = 0; //cx
+		that.SALE001.BILLDISC = 0; //cx zk
+	}
+	that.SALE002.map(r => {
+		r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		r.PRICE = util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
+		r.DISCRATE = 0; //zk
+		r.BZDISC = 0; //zk
+		r.LSDISC = 0; //zk
+		r.TPDISC = 0; //zk
+	});
+}
 export default {
 	GetKCZGZMX,
-	PayParamAssemble
+	PayParamAssemble,
+	ResetCXZK
 }
