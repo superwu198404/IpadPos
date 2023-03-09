@@ -89,6 +89,7 @@
 							<em></em>
 							<label>总数量：<text>{{TotalNum}}</text></label>
 							<label>总金额：<text>￥{{TotalNet}}</text></label>
+							<label>总折扣：<text>￥{{TotalDisc}}</text></label>
 						</view>
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
@@ -286,7 +287,18 @@
 				})
 				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
 				return total;
+			}, //总折扣额 赠送金额和特殊折扣
+			TotalDisc: function() {
+				let total = 0;
+				if (!that.SALE002 || Object.keys(that.SALE002).length == 0) {
+					return total;
+				}
+				that.SALE002.map(r => {
+					total += _util.newFloat(r.DISCRATE, 2);
+				})
+				return total;
 			},
+
 		},
 		destroyed() {
 			uni.$off("close-tszk");
@@ -362,8 +374,7 @@
 										that.SALE002.map(r => {
 											if (r.SPID == spObj.SPID) {
 												r.QTY = _util.newFloat(r.QTY +
-													totalNum,
-													2);
+													totalNum, 2);
 												r.NET = _util.newFloat(r.QTY * r
 													.PRICE, 2);
 												r.ONET = r.NET;
@@ -594,7 +605,7 @@
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
-						// that.discCompute() //特殊折扣
+						// that.discCompute() //特殊折扣 调整为sale2 变化后计算
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
 						console.log("单据类型：", that.BILL_TYPE);
@@ -625,26 +636,6 @@
 				});
 			},
 
-			//跳转支付
-			PayParamAssemble: function(sales) {
-				uni.$emit('stop-message');
-				uni.$emit('stop-timed-communication');
-				console.log("[PayParamAssemble]支付参数组装...")
-				util.setStorage('open-loading', false);
-				let inputParm = {
-					sale1_obj: that.SALE001, //001 主单 数据对象
-					sale2_arr: that.SALE002, //002 商品 数据对象集合
-					actType: "Payment", //动作类型(退款、支付)
-				}
-				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
-				that.$store.commit('set-location', inputParm);
-				uni.navigateTo({
-					url: "../Payment/Payment",
-					events: {
-						FinishOrder: that.PayedResult
-					}
-				})
-			},
 			//支付完成处理
 			PayedResult: async function(result) {
 				_util.setStorage('open-loading', true);
@@ -761,7 +752,7 @@
 				if (data == "NO") { //清除折扣
 					obj = {};
 					//清除一下之前产生的促销和折扣
-					that.ResetCXZK();
+					_card_sale.ResetCXZK(that);
 				} else {
 					obj = {
 						ZKType: data,
@@ -771,20 +762,20 @@
 				that.CurZKDisc = obj;
 			},
 			//清除折扣
-			ResetCXZK: function() {
-				that.SALE002.map(r => {
-					r.NET = r.ONET; //回退一下折扣？
-					r.PRICE = _util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
-					r.DISCRATE = 0; //zk
-					r.BZDISC = 0; //zk
-					r.LSDISC = 0; //zk
-					r.TPDISC = 0; //zk
-				});
-			},
+			// ResetCXZK: function() {
+			// 	that.SALE002.map(r => {
+			// 		r.NET = r.ONET; //回退一下折扣？
+			// 		r.PRICE = _util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
+			// 		r.DISCRATE = 0; //zk
+			// 		r.BZDISC = 0; //zk
+			// 		r.LSDISC = 0; //zk
+			// 		r.TPDISC = 0; //zk
+			// 	});
+			// },
 			//使用特殊折扣进行计算
 			discCompute: function() {
 				// 计算商品的折扣值
-				let res = _card_sale.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
 				that.SALE002 = res.sale2;
 				// that.ZKHDArr = res.zkrule;
 				console.log("002增加折扣后的新数据：", that.SALE002);
