@@ -975,7 +975,7 @@
 	text-align: center;
 }
 .Barchart .dyxs view,.Barchart .drxs view{
-	width:30rpx;
+	width:26rpx;
 	height: 100%;
 	position: relative;
 	border-radius: 4rpx;
@@ -1006,7 +1006,7 @@
 	border-radius: 6rpx;
 	position: absolute;
 	top:-38rpx;
-	left: -70%;
+	left: -80%;
 	transform: scale(0.85);
 	z-index: 9;
 }
