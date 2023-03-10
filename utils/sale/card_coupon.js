@@ -465,6 +465,62 @@ var KQTypeObj = {
 			}
 		}
 	},
+	//VIP卡 激活，充值 重试
+	"VIPCard_Retry": {
+		//初始化
+		InitData: function(data, func) {
+			console.log("VIP售卡重试初始化：", data);
+			if (func) func();
+		},
+		//商品信息匹配
+		MatchSP: async function(spid) {
+
+		},
+		//查询信息
+		QueryInfo: function(data, func) {
+
+		},
+		//校验状态
+		CheckStatus: function(res) {
+
+		},
+		//校验库存
+		CheckStock: function(data, func) {
+
+		},
+		//激活申请校验
+		ActiveApply: function(data, func) {
+			_member.singleCardActiveApply("校验中...", {
+				data
+			}, func, func);
+		},
+		//激活确认校验
+		ActiveConfirm: function(data, func) {
+			console.log("激活参数：", data);
+			_member.singleCardActiveConfirm("激活中...", {
+				data
+			}, func, func);
+		},
+		//激活后充值
+		Recharge: function(data, func) {
+			console.log("充值参数：", data);
+			_member.posPayRecharge("充值中...", {
+				data
+			}, func, func);
+		},
+		//业务完成
+		Completed: function(data) {
+			console.log("[Completed]即将更新销售单状态:", data);
+			let sql = "update sale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
+				.yn_ok + "' where bill='" + data.bill + "';"
+			sql += "update syssale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
+				.yn_ok + "' where bill='" + data.bill + "';"
+			_card_sale.ExecuteBatchSQL(sql, res => {
+				console.log("销售单更新结果：", res);
+			})
+		},
+	},
+
 }
 
 //初始化卡券销售业务
@@ -524,7 +580,6 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.MatchSP = async function() {
 		return await KQTypeObj[this.YWType].MatchSP.call(this, ...arguments);
 	}
-
 	const def = {
 		sale001: null,
 		sale002: [],

@@ -46,7 +46,7 @@
 									<text>礼品卡激活</text>
 								</label>
 							</view>
-							<view class="tab">
+							<view class="tab jh-sb">
 								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
@@ -57,145 +57,145 @@
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 					<!-- 卡激活 -->
-					<view style="width: 100%; height: 100%;" >
-					<view class="module" style="height: 66%;">
-						<view class="hh">待售详情 <em></em></view>
-						<!-- 没刷卡时显示 -->
-						<view class="swipetip" v-if="SALE006.length==0">
-							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-							<text>请先刷卡录入</text>
-						</view>
-						<!-- 刷卡后显示卡列表 -->
-						<view class="cardlist">
-							<view class="ulli" v-for="(item,index) in SALE002">
-								<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
-									:data-index="index" :style="item.txtStyle">
-									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-									<view class="h6">
-										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
-										<view class="zje">
-											<view><text>总金额</text>￥{{item.NET}}</view>
+					<view style="width: 100%; height: 100%;">
+						<view class="module" style="height: 66%;">
+							<view class="hh">待售详情 <em></em></view>
+							<!-- 没刷卡时显示 -->
+							<view class="swipetip" v-if="SALE006.length==0">
+								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+								<text>请先刷卡录入</text>
+							</view>
+							<!-- 刷卡后显示卡列表 -->
+							<view class="cardlist">
+								<view class="ulli" v-for="(item,index) in SALE002">
+									<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
+										:data-index="index" :style="item.txtStyle">
+										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+										<view class="h6">
+											<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+											<view class="zje">
+												<view><text>总金额</text>￥{{item.NET}}</view>
+											</view>
+										</view>
+										<view class="card-num">
+											<label>始：<text>{{item.begin_num}}</text></label>
+											<label>终：<text>{{item.end_num}}</text></label>
+										</view>
+										<view class="statistic">
+											<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
+											<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
+											<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
+											<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
 										</view>
 									</view>
-									<view class="card-num">
-										<label>始：<text>{{item.begin_num}}</text></label>
-										<label>终：<text>{{item.end_num}}</text></label>
+									<view class="touch-list list-delete" @click="RemoveItem(item)">
+										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
-									<view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
-										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
-										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
-									</view>
-								</view>
-								<view class="touch-list list-delete" @click="RemoveItem(item)">
-									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
 						</view>
-					</view>
-					<view class="totals">
-						<view>
-							<em></em>
-							<label>总数量：<text>{{TotalNum}}</text></label>
-							<label>总金额：<text>￥{{TotalNet}}</text></label>
-							<label>总折扣：<text>￥{{TotalDisc}}</text></label>
+						<view class="totals">
+							<view>
+								<em></em>
+								<label>总数量：<text>{{TotalNum}}</text></label>
+								<label>总金额：<text>￥{{TotalNet}}</text></label>
+								<label>总折扣：<text>￥{{TotalDisc}}</text></label>
+							</view>
+							<button class="btn" @click="ToPay()">确认支付</button>
 						</view>
-						<button class="btn" @click="ToPay()">确认支付</button>
-					</view>
 					</view>
 					<!-- 激活失败 -->
 					<view class="commodity" v-if="Activatfail">
 						<view class="hh">
 							<view class="hotcakes">失败列表</view>
 						</view>
-						<view class="products">						
-						<view class="procycle">
-							<!-- 外卖单循环 -->
-							<view class="li">
-								<view class="h3">
-									<view class="platform">
-										<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
-									</view>									
-								</view>
-								<view class="cods">
-									<label>单号：3453234565434543 <text>￥500</text></label>
-									<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
-	
-								</view>
-								<view class="address">
-									销售时间：2023-09-09
-								</view>
-							</view>
-							<view class="li curr">
-								<view class="h3">
-									<view class="platform">
-										<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
-									</view>									
-								</view>
-								<view class="cods">
-									<label>单号：3453234565434543 <text>￥500</text></label>
-									<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
-								
-								</view>
-								<view class="address">
-									销售时间：2023-09-09
-								</view>
-							</view>
-													
-						</view>
-						<view class="details">
-							<view class="detinfo">
-								<view class="member">
-									<label>
-										单据明细
-									</label>
-								</view>
-								<view class="goods">
-									 <!-- v-for="(item1,index1) in Details" -->
-									<view class="prolist">
-										<view class="h3">
-											<label>
-												<text>1</text>
-												卡券类型名称
-											</label>
-											<view class="shuls"><text>数量：2</text></view>
+						<view class="products">
+							<view class="procycle">
+								<!-- 外卖单循环 -->
+								<view class="li">
+									<view class="h3">
+										<view class="platform">
+											<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
 										</view>
-										<view class="otheinfo">
-											<view>类型编码：1010</view>
-											<view class="quanhao">
-												<label>开始券号：098767809876</label>
-												<label>结束券号：098767809876 <text>总价：￥56</text></label>
+									</view>
+									<view class="cods">
+										<label>单号：3453234565434543 <text>￥500</text></label>
+										<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
+
+									</view>
+									<view class="address">
+										销售时间：2023-09-09
+									</view>
+								</view>
+								<view class="li curr">
+									<view class="h3">
+										<view class="platform">
+											<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
+										</view>
+									</view>
+									<view class="cods">
+										<label>单号：3453234565434543 <text>￥500</text></label>
+										<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
+
+									</view>
+									<view class="address">
+										销售时间：2023-09-09
+									</view>
+								</view>
+
+							</view>
+							<view class="details">
+								<view class="detinfo">
+									<view class="member">
+										<label>
+											单据明细
+										</label>
+									</view>
+									<view class="goods">
+										<!-- v-for="(item1,index1) in Details" -->
+										<view class="prolist">
+											<view class="h3">
+												<label>
+													<text>1</text>
+													卡券类型名称
+												</label>
+												<view class="shuls"><text>数量：2</text></view>
+											</view>
+											<view class="otheinfo">
+												<view>类型编码：1010</view>
+												<view class="quanhao">
+													<label>开始券号：098767809876</label>
+													<label>结束券号：098767809876 <text>总价：￥56</text></label>
+												</view>
+											</view>
+										</view>
+										<view class="prolist">
+											<view class="h3">
+												<label>
+													<text>2</text>
+													卡券类型名称
+												</label>
+												<view class="shuls"><text>数量：2</text></view>
+											</view>
+											<view class="otheinfo">
+												<view>类型编码：1010</view>
+												<view class="quanhao">
+													<label>开始券号：098767809876</label>
+													<label>结束券号：098767809876 <text>总价：￥56</text></label>
+												</view>
 											</view>
 										</view>
 									</view>
-									<view class="prolist">
-										<view class="h3">
-											<label>
-												<text>2</text>
-												卡券类型名称
-											</label>
-											<view class="shuls"><text>数量：2</text></view>
-										</view>
-										<view class="otheinfo">
-											<view>类型编码：1010</view>
-											<view class="quanhao">
-												<label>开始券号：098767809876</label>
-												<label>结束券号：098767809876 <text>总价：￥56</text></label>
-											</view>
-										</view>
-									</view>
-								</view>
 								</view>
 								<view class="operat">
-									<button class="btn btn-qx" @click="ConfirmReceipt()" >关闭</button>
+									<button class="btn btn-qx" @click="ConfirmReceipt()">关闭</button>
 									<button class="btn btn-h" @click="ConfirmReback()">重试</button>
-									
+
 								</view>
 							</view>
+						</view>
 					</view>
-					</view>
-					
+
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
 				</view>
@@ -934,134 +934,5 @@
 </script>
 
 <style>
-	.choice .tab.curr{
-		background-color: #FE694B;
-	}
-	.products{
-		padding:0 1.5%;
-		height:93%;
-	}
-	.products .procycle .li{
-		width:100%;
-		padding:0;
-		border-color: #FFE3E3;
-		margin-bottom: 30rpx;
-	}
-	.products .procycle .li .h3{
-		background: linear-gradient(90deg, #FFE9E9 0%, #FFFFFF 100%);
-		color: #FE694B;
-		padding-right: 4%;
-		border-radius: 10rpx 10rpx 0 0;
-	}
-	.products .procycle .li .h3 .state{
-		display: flex;
-		align-items: center;
-		color: #FE694B;
-		font-size: 28rpx;
-	}
-	.products .procycle .li .jiedan em{
-		background: #FE694B;	
-	}
-	.cods{
-		padding: 0 4%;
-	}
-	.cods label{
-		display: flex;
-		justify-content: space-between;
-	}
-	.prolist .cods label text{
-		text-align: right;
-		color: #4F4F4F;
-		font-size:26rpx;
-	}
-	.cods label:nth-child(1){
-		font-size: 34rpx;
-		font-weight: 700;
-		color: #333;
-		line-height: 70rpx;
-		padding-top:10rpx;
-	}
-	.cods label:nth-child(1) text{
-		color: #333;
-		font-size: 34rpx;
-	}
-	.address{
-		width:92%;
-		margin:0 4%;
-		padding:2% 0;
-		color: #b0b0b0;
-	}
-	.li.curr{
-		border-color: #FE694B !important;
-		background: #fff !important;
-		box-shadow: 0px 0px 0px 0.5px #FE694B !important;
-	}
-	.li.curr .h3{
-		background: linear-gradient(90deg, #FE694B 0%, #FFFFFF 100%) !important;
-	}
-	.li.curr .h3 .state{
-		color: #fff !important;
-	}
-	.li.curr .h3 em{
-		background: #fff !important;
-	}
-	.products  .details{
-		height: 98%;
-		background: #F9F9F9;
-		border: 2rpx solid #FFE3E3;
-	}
-	.goods .prolist .h3,.goods .prolist .h3 label{
-		align-items: center;
-		font-size: 34rpx;
-	}
-	.details .prolist .h3 label text{
-		display: inline-block;
-		width:60rpx;
-		height: 60rpx;
-		line-height: 60rpx;
-		border-radius: 60rpx;
-		color: #006B44;
-		background: #f1f1f1;
-		text-align: center;
-		margin-right: 14rpx;
-		font-weight: 700;
-	}
-	.prolist .h3 .shuls text{
-		color: #42B14B;
-		font-weight: 400;
-	}
-	.otheinfo{
-		padding:1% 2% 0 8%;
-		display: flex;
-		flex-direction: column;
-	}
-	.otheinfo label{
-		font-size: 26rpx;
-		line-height: 40rpx;
-		color: #b0b0b0;
-		display: flex;
-		justify-content: space-between;
-	}
-	.otheinfo label text{
-		color: #FE694B;
-		font-weight: 700;
-		font-size: 32rpx;
-	}
-	.quanhao{
-		margin-top:20rpx;
-		display: flex;
-		flex-direction: column;
-	}
-	.goods .prolist	{
-		padding-bottom: 40rpx;
-		border-bottom: 2rpx solid #E4E4E4;
-		margin-bottom:40rpx;
-	}
-	.detinfo .member{
-		font-size: 34rpx;
-		font-weight: 700;
-	}
-	.detinfo{
-		overflow: auto;
-	}
+
 </style>
