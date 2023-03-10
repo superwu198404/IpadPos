@@ -55,10 +55,10 @@
 									<text>VIP卡充值</text>
 								</label>
 							</view>
-							<view class="tab" @click="ChangeYWTYPE('Retry')" :class="YWTYPE=='Retry'?'curr':''">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+							<view class="tab jh-sb" @click="ChangeYWTYPE('Retry')" :class="YWTYPE=='Retry'?'curr':''">
+								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
-									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
 									<text>激活/充值失败</text>
 								</label>
 							</view>
