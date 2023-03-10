@@ -55,7 +55,8 @@
 									<text>VIP卡充值</text>
 								</label>
 							</view>
-							<view class="tab" @click="ChangeYWTYPE('Retry')" :class="YWTYPE=='Retry'?'curr':''">
+							<view class="tab" @click="ChangeYWTYPE('VIPCard_Retry')"
+								:class="YWTYPE=='VIPCard_Retry'?'curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
@@ -66,7 +67,7 @@
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 					<!-- 卡激活/充值 -->
-					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='Retry'">
+					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='VIPCard_Retry'">
 						<view class="module" v-if="SALE002.length>0">
 							<view class="hh">充值金额 <em></em></view>
 							<view class="jinelist">
@@ -151,22 +152,6 @@
 										销售时间：{{item.SALE1.SALETIME}}
 									</view>
 								</view>
-								<!-- <view class="li curr">
-									<view class="h3">
-										<view class="platform">
-											<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
-										</view>
-									</view>
-									<view class="cods">
-										<label>单号：3453234565434543 <text>￥500</text></label>
-										<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
-
-									</view>
-									<view class="address">
-										销售时间：2023-09-09
-									</view>
-								</view> -->
-
 							</view>
 							<view class="details">
 								<view class="detinfo">
@@ -186,34 +171,18 @@
 												<view class="shuls"><text>数量：{{item1.QTY}}</text></view>
 											</view>
 											<view class="otheinfo">
-												<view>类型编码：{{curFailSale.SALE1.KQXSTYPE}}</view>
+												<view>失败类型：{{curFailSale.SALE1.REASON=='JHF'?'激活失败':'充值失败'}}</view>
 												<view class="quanhao">
 													<label>开始券号：{{item1.KQIDS}}</label>
 													<label>结束券号：{{item1.KQIDE}}<text>总价：￥{{item1.MYSTR}}</text></label>
 												</view>
 											</view>
 										</view>
-										<!-- <view class="prolist">
-											<view class="h3">
-												<label>
-													<text>2</text>
-													卡券类型名称
-												</label>
-												<view class="shuls"><text>数量：2</text></view>
-											</view>
-											<view class="otheinfo">
-												<view>类型编码：1010</view>
-												<view class="quanhao">
-													<label>开始券号：098767809876</label>
-													<label>结束券号：098767809876 <text>总价：￥56</text></label>
-												</view>
-											</view>
-										</view> -->
 									</view>
 								</view>
 								<view class="operat">
-									<button class="btn btn-qx">关闭</button>
-									<button class="btn btn-h">重试</button>
+									<button class="btn btn-qx" @click="CloseRetry">关闭</button>
+									<button class="btn btn-h" @click="ConfirmRetry">重试</button>
 
 								</view>
 							</view>
@@ -775,7 +744,7 @@
 						dqid: that.store.DQID,
 						dq_name: that.store.DQNAME,
 						flag: 2,
-						card_num: "", //that.SALE006[0].KQIDS
+						card_num: that.SALE006[0].KQIDS,
 					}, res2 => {
 						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
@@ -809,8 +778,6 @@
 							that.SALE001.REASON = "JHF"; //激活失败
 							that.SaleCompleted();
 						}
-						//重置销售单
-						// that.ResetSaleBill();
 					})
 				} else {
 					_util.simpleMsg(result.msg, true);
@@ -909,14 +876,17 @@
 					_util.simpleModal("提示", "是否确认切换业务类型？", res => {
 						if (res) {
 							that.YWTYPE = e;
-							if (e == 'Retry') {
-								that.GetFailOrder();
-								return;
-							}
 							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
-							that.KQXSTYPE = e == "VIPCard_Active" ? "SKCZ" : "CZ";
-							that.ResetSaleBill();
-							console.log("业务类型已切换：", that.SALE001)
+							KQSale.InitData("VIP业务切换后初始化", res => {
+								if (e == 'VIPCard_Retry')
+									that.GetFailOrder();
+								else {
+									that.ShowCZGZ();
+									console.log("业务类型已切换：", that.SALE001)
+									that.KQXSTYPE = e == "VIPCard_Active" ? "SKCZ" : "CZ";
+									that.ResetSaleBill();
+								}
+							});
 						}
 					})
 				}
@@ -962,12 +932,121 @@
 					if (res.code) {
 						let data = JSON.parse(res.data);
 						that.FailSaleList = _card_sale.FormatSale(data);
-						that.curFailSale = that.FailSaleList[0];
+						if (that.FailSaleList.length > 0)
+							that.curFailSale = that.FailSaleList[0];
 					} else {
 						_util.simpleMsg("暂无数据", true);
 					}
 				})
 			},
+			//确定重试
+			ConfirmRetry: function() {
+				_util.simpleModal("提示", "是否确认进行重试", res => {
+					if (res) {
+						let curSale = that.curFailSale;
+						let str1, reason, yn_ok;
+						if (curSale.SALE1.REASON == 'JHF') { //激活失败
+							//先激活再充值
+							console.log("当前类型：", KQSale);
+							//发起激活
+							KQSale.ActiveConfirm({
+								salebill: curSale.SALE1.BILL,
+								material_id: curSale.SALE2[0].SPID,
+								amount: curSale.SALE1.OPRICE,
+								dis_amount: curSale.SALE1.BILLDISC,
+								channel: "ZC007",
+								app_key: "POS",
+								khid: that.store.KHID,
+								kh_name: that.store.NAME,
+								ryid: that.store.RYID,
+								ry_name: that.store.RYNAME,
+								dqid: that.store.DQID,
+								dq_name: that.store.DQNAME,
+								flag: 2,
+								card_num: "" //curSale.SALE6[0].KQIDS,
+							}, res2 => {
+								_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
+								//激活
+								console.log("VIP单卡激活结果：", res2);
+								str1 = res2.code ? "success" : "fail";
+								if (res2.code) { //激活成功
+									//发起充值
+									KQSale.Recharge({
+										salebill: curSale.SALE1.BILL,
+										amount: curSale.SALE1.OPRICE,
+										dis_amount: curSale.SALE1.BILLDISC,
+										khid: curSale.SALE1.KHID,
+										kh_name: that.store.NAME,
+										ryid: that.store.RYID,
+										ry_name: that.store.RYNAME,
+										card_num: curSale.SALE6[0].KQIDS
+									}, res3 => {
+										//充值
+										console.log("VIP单卡充值结果：", res3);
+										_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3
+											.msg, !res3
+											.code);
+										if (!res3.code) {
+											yn_ok = "F";
+											reason = "CZF"; //充值失败
+										} else {
+											yn_ok = "X";
+											reason = ""; //充值失败
+										}
+										KQSale.Completed({
+											bill: curSale.SALE1.BILL,
+											str1,
+											reason,
+											yn_ok
+										});
+									});
+								} else { //激活失败 直接提交单据
+									yn_ok = "F";
+									reason = "JHF"; //激活失败
+									KQSale.Completed({
+										bill: curSale.SALE1.BILL,
+										str1,
+										reason,
+										yn_ok
+									});
+								}
+							})
+						} else { //充值失败
+							//直接充值
+
+							//发起充值
+							KQSale.Recharge({
+								salebill: curSale.SALE1.BILL,
+								amount: curSale.SALE1.OPRICE,
+								dis_amount: curSale.SALE1.BILLDISC,
+								khid: curSale.SALE1.KHID,
+								kh_name: that.store.NAME,
+								ryid: that.store.RYID,
+								ry_name: that.store.RYNAME,
+								card_num: curSale.SALE6[0].KQIDS
+							}, res3 => {
+								//充值
+								console.log("VIP单卡充值结果：", res3);
+								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3
+									.code);
+								if (!res3.code) {
+									yn_ok = "F";
+									reason = "CZF"; //充值失败
+								} else {
+									yn_ok = "X";
+									reason = ""; //充值成功
+								}
+								KQSale.Completed({
+									bill: curSale.SALE1.BILL,
+									str1,
+									reason,
+									yn_ok
+								});
+							});
+						}
+					}
+				})
+			}
 		}
 	}
 </script>

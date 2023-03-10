@@ -97,10 +97,18 @@ var FormatSale = function(saleObj) {
 	console.log("重组后的售卡单：", arr);
 	return arr;
 }
+var ExecuteBatchSQL = function(sql, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+	let reqdata = Req.resObj(true, "数据传输中", {
+		sql
+	}, apistr);
+	Req.asyncFuncOne(reqdata, func);
+}
 export default {
 	GetKCZGZMX,
 	PayParamAssemble,
 	ResetCXZK,
 	GetFailOrder,
-	FormatSale
+	FormatSale,
+	ExecuteBatchSQL
 }
