@@ -1794,3 +1794,11 @@ input::-webkit-input-placeholder{
 input:-ms-input-placeholder{
     font-weight:400;
 }
+.gang{
+	display: inline-block;
+	width:6rpx;
+	height: 30rpx;
+	border-radius: 6rpx;
+	background: #42B14B;
+	margin-right: 8rpx;
+}
