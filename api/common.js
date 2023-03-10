@@ -153,16 +153,15 @@ var TransLiteDataAsync = function(e) {
 	console.log("[TransLiteDataAsync]数据传输中...");
 	return new Promise(async (resolve, reject) => {
 		let transfer_result = await TransLiteAsync(e, r => {
-				let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
-				console.log("[TransLiteDataAsync]执行更新操作...");
-				db.get().executeDml(delArr, "数据删除中", function(res2) {
-					console.log("[TransLiteDataAsync]销售数据传输状态更改成功：", res2);
-				}, function(err1) {
-					console.log("[TransLiteDataAsync]销售数据传输状态更改失败", err1);
-				})
-			}
-		)
-		console.log("[TransLiteData]数据传输结果:",transfer_result);
+			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
+			console.log("[TransLiteDataAsync]执行更新操作...");
+			db.get().executeDml(delArr, "数据删除中", function(res2) {
+				console.log("[TransLiteDataAsync]销售数据传输状态更改成功：", res2);
+			}, function(err1) {
+				console.log("[TransLiteDataAsync]销售数据传输状态更改失败", err1);
+			})
+		})
+		console.log("[TransLiteData]数据传输结果:", transfer_result);
 		resolve(transfer_result);
 	})
 }
@@ -237,13 +236,14 @@ var TransLiteAsync = function(e, func, load = false) {
 							console.log("[TransLiteAsync-Success]数据传输结果：", res1);
 							util.simpleMsg(res1.code ? "数据传输成功" : "数据传输失败", !res1.code);
 							if (res1.code) {
-								let delStr = "delete from POS_TXFILE where str1 ='" + delVal + "'";
+								let delStr = "delete from POS_TXFILE where str1 ='" + delVal +
+									"'";
 								db.get().executeDml1(delStr, "数据删除中", function(res2) {
 									console.log("[TransLiteAsync]缓存数据删除成功:", res2);
-									try{
+									try {
 										if (func) func(res2);
-									}catch(e){
-										console.log("[TransLiteAsync]回调执行异常:",e);
+									} catch (e) {
+										console.log("[TransLiteAsync]回调执行异常:", e);
 									}
 									console.log("[TransLiteAsync]回调执行完成...");
 									resolve(result);
@@ -841,31 +841,36 @@ const default_request_options = {
 }
 //简易反射接口请求模板(默认Models下的类)
 var SimpleAPIRequest = async function(options = default_request_options) {
-	var default_params = Object.assign({}, default_request_options);
-	options = Object.assign(default_params, options);
-	let reqdata = Req.resObj(true, "操作中...", options.data,
-		`${options.namespace}.${options.class}.${options.method}`);
-	let result = null;
-	let callback = (res) => result = res;
-	await Req.asyncFuncOne(reqdata, options.success, options.error);
-	if (result.code)
-		options.success.call(result);
-	else
-		options.error.call(result);
-	return result;
+	try {
+		var default_params = Object.assign({}, default_request_options);
+		options = Object.assign(default_params, options);
+		let reqdata = Req.resObj(true, "操作中...", options.data,
+			`${options.namespace}.${options.class}.${options.method}`);
+		let result = null;
+		let callback = (res) => result = res;
+		await Req.asyncFuncOne(reqdata, callback, callback);
+		if (result.code)
+			options.success.call(result);
+		else
+			options.error.call(result);
+		return result;
+	} catch (e) {
+		console.warn("[SimpleAPIRequest]发生异常:", e);
+	}
 }
 
-var SimpleLocalQuery = async function(table_name,filter){
-	let filter_string = "", result = null;
-	for(let key in filter){
+var SimpleLocalQuery = async function(table_name, filter) {
+	let filter_string = "",
+		result = null;
+	for (let key in filter) {
 		filter_string += ` and ${key}='${filter[key]}'`;
 	}
 	let sql = `select * from ${table_name} where 1=1 ${filter_string}`;
-	console.log("[SimpleLocalQuery]待执行的sql:",sql);
+	console.log("[SimpleLocalQuery]待执行的sql:", sql);
 	await db.get().executeQry(sql, "数据查询中", function(res) {
-		result = util.createdResult(true,'查询成功!', res.msg);
+		result = util.createdResult(true, '查询成功!', res.msg);
 	}, function(err) {
-		result = util.createdResult(false,'查询失败!');
+		result = util.createdResult(false, '查询失败!');
 	});
 	return result;
 }

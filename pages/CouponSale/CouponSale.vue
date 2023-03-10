@@ -2,6 +2,7 @@
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
 	@import url(@/static/style/card.css);
+	@import url(@/static/style/takeout.css);
 </style>
 <template>
 	<view>
@@ -33,55 +34,63 @@
 		<view class="listof listof-correct">
 			<view class="prolist prolist-correct zxpro " style="width: 92%;">
 				<view class="choice">
-					<view class="tab curr">
-						<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-						<text>活动券激活</text>
+					<view :class="view.current_part_view == 'coupon_activate' ? 'tab curr' : 'tab'">
+						<text @click="view.current_part_view = 'coupon_activate'">活动券激活</text>
+						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+					</view>
+					<view :class="view.current_part_view == 'coupon_activate_fail' ? 'tab curr' : 'tab'">
+						<text @click="view.current_part_view = 'coupon_activate_fail'">活动券激活失败</text>
+						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 					</view>
 				</view>
-				<view class="module" style="height: 66%;">
-					<view class="hh">待售详情 <em></em></view>
-					<!-- 没刷卡时显示 -->
-					<view class="swipetip" v-if="view.swipe_tip">
-						<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-						<text>请先刷卡录入</text>
-					</view>
-					<!-- 刷卡后显示卡列表 -->
-					<view class="cardlist">
-						<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
-							<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)" :data-style="get_text_style(sale6_main.sale006)"
-								:data-index="index" :style="get_text_style(sale6_main.sale006)">
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-								<view class="h6">
-									<label>￥{{ sale6_main.sale002.PRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
-									<view class="zje">
-										<view><text>总金额</text>￥{{ sale6_main.sale002.NET }}</view>
+				<view v-if="view.current_part_view == 'coupon_activate'">
+					<view class="module" style="height: 66%;">
+						<view class="hh">待售详情 <em></em></view>
+						<!-- 没刷卡时显示 -->
+						<view class="swipetip" v-if="view.swipe_tip">
+							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+							<text>请先刷卡录入</text>
+						</view>
+						<!-- 刷卡后显示卡列表 -->
+						<view class="cardlist">
+							<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
+								<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)" :data-style="get_text_style(sale6_main.sale006)"
+									:data-index="index" :style="get_text_style(sale6_main.sale006)">
+									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+									<view class="h6">
+										<label>￥{{ sale6_main.sale002.PRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
+										<view class="zje">
+											<view><text>总金额</text>￥{{ sale6_main.sale002.NET }}</view>
+										</view>
+									</view>
+									<view class="card-num">
+										<label>始：<text>{{ sale6_main.sale006.KQIDS }}</text></label>
+										<label>终：<text>{{ sale6_main.sale006.KQIDE }}</text></label>
+									</view>
+									<view class="statistic">
+										<label><em>●</em><text>总折扣：</text>{{ sale6_main.sale002.DISCRATE }}</label>
+										<label><em>●</em><text>标准折扣：</text>{{ sale6_main.sale002.BZDISC }}</label>
+										<label><em>●</em><text>临时折扣：</text>{{ sale6_main.sale002.CXDISC }}</label>
+										<label><em>●</em><text>特批折扣：</text>{{ sale6_main.sale002.TPDISC }}</label>
 									</view>
 								</view>
-								<view class="card-num">
-									<label>始：<text>{{ sale6_main.sale006.KQIDS }}</text></label>
-									<label>终：<text>{{ sale6_main.sale006.KQIDE }}</text></label>
+								<view class="touch-list list-delete" @click="remove_union(get_union(sale6_main.sale006),sale6_main.sale006)">
+									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
-								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{ sale6_main.sale002.DISCRATE }}</label>
-									<label><em>●</em><text>标准折扣：</text>{{ sale6_main.sale002.BZDISC }}</label>
-									<label><em>●</em><text>临时折扣：</text>{{ sale6_main.sale002.CXDISC }}</label>
-									<label><em>●</em><text>特批折扣：</text>{{ sale6_main.sale002.TPDISC }}</label>
-								</view>
-							</view>
-							<view class="touch-list list-delete" @click="remove_union(get_union(sale6_main.sale006),sale6_main.sale006)">
-								<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 							</view>
 						</view>
 					</view>
-				</view>
-				<view class="totals">
-					<view>
-						<em></em>
-						<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
-						<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
+					<view class="totals">
+						<view>
+							<em></em>
+							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
+							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
+						</view>
+						<button class="btn" @click="to_payment">确认支付</button>
+						<!-- <button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button> -->
 					</view>
-					<button class="btn" @click="to_payment">确认支付</button><button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button>
 				</view>
+				<CouponActivateFail v-if="view.current_part_view == 'coupon_activate_fail'"></CouponActivateFail>
 				<!-- 起始卡号 -->
 				<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
 			</view>
@@ -122,6 +131,8 @@
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
 	import main from '@/api/business/main.js';
+	import common from '@/api/common.js';
+	
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
@@ -131,14 +142,16 @@
 		Sale3Model,
 		Sale3ModelAdditional
 	} from '@/bll/PaymentBusiness/bll.js';
-		
+	//组件部分
+	import CouponActivateFail from '@/pages/CouponSale/CouponActivateFail.vue';
 	var $ = null;
 	export default {
 		name: "CouponSale",
 		components: {
 			Head,
 			Menu,
-			PrinterPage
+			PrinterPage,
+			CouponActivateFail
 		},
 		data() {
 			return {
@@ -152,7 +165,8 @@
 					swipe_tip: false,
 					big_customer: false,
 					enable_customer: true,
-					enable_special_discount: false
+					enable_special_discount: false,
+					current_part_view: "coupon_activate"
 				},
 				source: {
 					enable_credit: false,
@@ -219,7 +233,8 @@
 						}
 						this.form.start_coupon_no = data.begin_num;
 						this.form.end_coupon_no = data.end_num || data.begin_num;
-						this.coupon_sale();
+						if(this.form.start_coupon_no)//真值才允许查询
+							this.coupon_sale();
 					}));
 				} else if (n === false) {
 					uni.$off("GetCardNums");
@@ -230,10 +245,7 @@
 					if(n.length === 0){
 						this.factory.reset_generators();
 					}
-					console.log("[WatchSale2]开始计算特殊折扣和手工折扣...");
-					this.discount_computed();//特殊折扣计算
-					this.craft_discount_computed();//手工折扣额
-					console.log("[WatchSale2]特殊折扣和手工折扣计算完毕...");
+					this.total_discount_computed();
 					if(this.source.sale001)
 						this.source.sale001.TLINE = n.length;
 					else
@@ -272,7 +284,7 @@
 						this.source.sale001.DKFID = n.DKHID;
 					}
 				}
-			}
+			},
 		},
 		methods: {
 			async get_discount_data(id){
@@ -436,6 +448,12 @@
 					console.log("[SaveOrders]执行异常:",e);
 				}
 			},
+			total_discount_computed(){
+				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
+				this.discount_computed();//特殊折扣计算
+				this.craft_discount_computed();//手工折扣额
+				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
+			},
 			reset_form(){//重置界面表单信息
 				this.factory.reset_generators();
 				this.source = this.$options.data().source;
@@ -561,202 +579,6 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
-			to_printer(source){
-				let that = this;
-								
-				let sale01 = {
-					"CLTIME": null,
-					"CUSTID": null,
-					"XSPTID": "PAD",
-					"YN_DCDG": null,
-					"YN_HH": null,
-					"DKFID": "80000000",
-					"BMID": null,
-					"KCDID": "D006",
-					"DPID": "11075",
-					"GCID": "K201",
-					"GSID": "K200",
-					"STR2": null,
-					"STR1": "success",
-					"ERRINO": null,
-					"ERRID": null,
-					"TIME": "16",
-					"WEEK": 9,
-					"MONTH": "03",
-					"YAER": "2023",
-					"YN_SC": "N",
-					"REASON": null,
-					"TDISC": 30,
-					"TLSDISC": 0,
-					"TTPDISC": 0,
-					"TBZDISC": 0,
-					"THYDISC": 0,
-					"HYJF": 0,
-					"CARDID": null,
-					"CUID": "1000311652",
-					"TCXDISC": 30,
-					"CXTNET": 0,
-					"CHANGENET": 0,
-					"ROUND": 0,
-					"BILLDISC": 30,
-					"ZNET": 300,
-					"DNET": 0,
-					"TNET": 300,
-					"TLINE": 1,
-					"XS_GSID": null,
-					"XS_KHID": null,
-					"XS_DATE": null,
-					"XS_POSID": null,
-					"XS_BILL": null,
-					"XSTYPE": "1",
-					"BILL_TYPE": null,
-					"RYID": "999",
-					"BILL": "K200QTD00612303011638320",
-					"POSID": "1",
-					"KHID": "K200QTD006",
-					"SALETIME": "2023-03-02 10:30:32",
-					"SALEDATE": "2023-03-02",
-					"THTYPE": null,
-					"ZTMSTR": null,
-					"KQXSTYPE": "SKCZ",
-					"YN_JLTH": null,
-					"YN_OK": "X",
-					"CUSTMTIME": null,
-					"CUSTMCOMM": null,
-					"CUSTMADDRESS": null,
-					"CUSTMPHONE": null,
-					"CUSTMNAME": null
-				};
-				
-				let sale02 = [{
-					"SALEDATE": "2023-03-01",
-					"XPDGCOM": null,
-					"XPDGSTR": null,
-					"SBERR": null,
-					"YN_SB": null,
-					"MYSTR": null,
-					"SPJGZ": "03",
-					"YN_XPDG": null,
-					"BMID": null,
-					"RYID": "999",
-					"KCDID": "D006",
-					"DPID": "11075",
-					"GCID": "K201",
-					"STR2": null,
-					"STR1": "仟吉SAP-VIP卡",
-					"TIME": "16",
-					"WEEK": 9,
-					"MONTH": "03",
-					"YAER": "2023",
-					"HYJFCD": 0,
-					"JFDISC": 0,
-					"HYJF": 0,
-					"LSDISC": 0,
-					"TPDISC": 0,
-					"BZDISC": 0,
-					"HYDISC": 0,
-					"YN_HYDISC": null,
-					"CXID": null,
-					"CXDISC": 30,
-					"YN_CXDISC": null,
-					"BILLDISC": 0,
-					"DISC_TYPE": null,
-					"DISC": 0,
-					"YN_SKYDISC": null,
-					"HYBL": 0,
-					"DISCRATE": 0,
-					"BRANDID": "SK",
-					"HTID": null,
-					"GYSID": null,
-					"NET": 300,
-					"OPRICE": 0,
-					"PRICE": 300,
-					"MINSQTY": 0,
-					"QTY": 1,
-					"UNIT": "张",
-					"SERIAL": null,
-					"BARCODE": null,
-					"PLID": "80101",
-					"NO": 0,
-					"SPID": "000000008010100002",
-					"BILL": "K200QTD00612303011638320",
-					"POSID": "1",
-					"KHID": "K200QTD006",
-					"SALETIME": "2023-03-01 16:38:32"
-				}];
-				
-				let sale03 = [{
-					"SALEDATE": "2023-03-01",
-					"DISC": "60.00",
-					"ZKLX": "ZV03",
-					"YN_ZQ": null,
-					"YN_ST": null,
-					"YN_JL": null,
-					"YN_LP": null,
-					"YN_YLTH": null,
-					"BMID": 0,
-					"RYID": "999",
-					"KCDID": "D006",
-					"DPID": "11075",
-					"GCID": "K201",
-					"CZK_AK": 0,
-					"STR2": null,
-					"STR1": null,
-					"AUTH": "1001270578",
-					"TIME": 0,
-					"WEEK": 0,
-					"MONTH": 0,
-					"YAER": 0,
-					"SAVE_JE": 0,
-					"SAVE_JEO": 0,
-					"IDTYPE": "Z003",
-					"ID": "1082770000400588",
-					"DSFKD": 0,
-					"RATE": "60.00",
-					"FAMT": "60.00",
-					"AMT": "300.00",
-					"FKID": "ZF04",
-					"NO": 0,
-					"BILL": "K200QTD00612303011638320",
-					"POSID": "1",
-					"KHID": "K200QTD006",
-					"SALETIME": "2023-03-01 16:38:32",
-					"SNAME": "仟吉电子卡"
-				}];
-				let sale06 = [{
-					"BILL": "K200QTD00612303011638320",
-					"SALEDATE": "2023-03-01",
-					"SALETIME": "2023-03-01 16:38:32",
-					"KHID": "K200QTD006",
-					"POSID": "1",
-					"SPID": "000000008010100002",
-					"NO": 0,
-					"KQIDS": "1087110000744422",
-					"KQIDE": "1087110000744422",
-					"KQIDSTR": "1087110000744422-1087110000744422",
-					"QTY": 1,
-					"MYSTR": 300
-				}];
-
-				//调用打印
-				let printerPram = {
-					"PRINTNUM": 1,
-					"XSTYPE": "SQ",
-				};
-				
-				let arr3 = sale03;
-				let fkdaRes = that.FKDA_INFO;
-				arr3.forEach(function(item, index) {
-					try {
-						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-						item.balance = item.balance;
-					} catch (e) {
-						item.SNAME = "";
-						item.balance = 0;
-					}
-				});
-				that.$refs.printerPage.sksqBluePrinter(sale01, sale02, arr3, sale06, printerPram);
-			},
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
 				if(!this.source.sale001 || !this.source.sale002.length){
@@ -843,8 +665,8 @@
 		flex: 1;
 		display: flex;
 		align-items: center;
-		padding-bottom: 60px;
-		padding-top: 10px;
+		padding-bottom: 22px;
+		padding-top: 20px;
 		box-sizing: border-box;
 	}
 
@@ -854,5 +676,9 @@
 
 	.operation-correct {
 		height: 100%;
+		margin-top: -40px;
 	}
 </style>
+
+
+

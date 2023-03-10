@@ -239,9 +239,27 @@ var InitData = async function(khid, func) {
 
 	//主动删除过期的销售数据
 	common.DelSale(); //主动删除销售单
-
+	
+	await get_payment_infos();
+	
 	if (func)
 		func();
+}
+
+var get_payment_infos = async function(){
+	try {
+		await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, util.callBind(this, function(res) {
+			if (res.code) {
+				this.FKDA_INFO = JSON.parse(res.data);
+				util.setStorage('FKDA_INFO', this.FKDA_INFO)
+				console.warn("[GetPaymentInfos]获取支付方式:", this.FKDA_INFO);
+			} else {
+				util.simpleMsg("获取付款方式失败!", true)
+			}
+		}))
+	} catch (e) {
+		util.simpleMsg("获取付款方式失败!", true);
+	}
 }
 
 var tx001 = null;

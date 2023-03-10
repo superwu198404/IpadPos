@@ -31,7 +31,8 @@ export default {
 		search(){
 			console.log(`[Search]${this.text || ''}查询信息...`);
 			return Promise.resolve([]);
-		}
+		},
+		scan_code: true
 	},
 	infos: created_new_card_coupon_infos,
 	extend_base(type){
@@ -73,6 +74,7 @@ export default {
 			this.extend_base({
 				text: "仟吉卡",
 				value: "kengee_card",
+				scan_code: false,
 				async search(data){
 					console.log("[Search]仟吉卡查询信息...",data);
 					let result = await member.coupon_sale.special_request('CARD_QUERY', { card_num: data }), infos = null;

@@ -106,13 +106,14 @@ var XsTypeObj = {
 		///在付款之前的操作
 		$beforeFk: function() {
 			console.log("[Sale]新单据生成中...");
+			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.createNewBill(); //创建新的sale001
 			this.sale001.XSTYPE = 1;
-
+			
 			if (this.sale001.TNET == 0) {
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
-					fkid: 'ZF01',
+					fkid: cash_info.FKID,
 					type: 'XJ',
 					bill: this.sale001.BILL,
 					name: "现金",
@@ -352,6 +353,7 @@ var XsTypeObj = {
 			//品诺
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
+			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
@@ -360,7 +362,7 @@ var XsTypeObj = {
 			console.log("[SaleReserve]生成预定支付信息...");
 			this.payed = [];
 			this.payed.push(Sale3ModelAdditional(Sale3Model({
-				fkid: 'ZF01',
+				fkid: cash_info.FKID,
 				type: 'XJ',
 				bill: this.sale001.BILL,
 				name: "现金",
@@ -381,13 +383,14 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
+			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
 			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
 			if (result.sale1_obj.DNET !== 0) { //定金为 0
 				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
-				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
+				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === cash_info.FKID && Number(s3.AMT) === 0));
 				console.log("[SaleFinishing]过滤后的记录:", this.sale003);
 			}
 			console.log("[SaleFinishing]预订单生成完毕!", {
@@ -823,6 +826,7 @@ var XsTypeObj = {
 			//品诺
 			//仟吉卡 当预定金包含折扣类型的时候 需要拆分重写
 			//仟吉券 当预定金包含折扣类型的时候 需要拆分重写
+			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			console.log("[BeforeFk]预订单录入:", this.sale001);
 			this.sale001.XSTYPE = this.xsType; //把当前的销售类型赋值给新单
 			this.setComponentsManage(null, 'openydCustmInput'); //打开预定录入信息
@@ -831,7 +835,7 @@ var XsTypeObj = {
 			console.log("[SaleReserve]生成预定支付信息...");
 			this.payed = [];
 			this.payed.push(Sale3ModelAdditional(Sale3Model({
-				fkid: 'ZF01',
+				fkid: cash_info.FKID,
 				type: 'XJ',
 				bill: this.sale001.BILL,
 				name: "现金",
@@ -852,13 +856,14 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) { //生成yd
 			console.log("[SaleFinishing]预订单生成中...", result);
+			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.sale001.ZNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.sale001.TNET = this.$total_amount; //支付后把定金给到 sale001 对应的字段上
 			this.ydsale001 = Object.cover(this.ydsale001, this.sale001);
 			this.ydsale001.BMID = this.ydsale001.BMID || "80000000"; //默认
 			if (result.sale1_obj.DNET !== 0) { //定金为 0
 				console.log("[SaleFinishing]过滤掉现金为 0 的记录:", this.sale003);
-				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === 'ZF01' && Number(s3.AMT) === 0));
+				this.sale003 = this.sale003.filter(s3 => !(s3.FKID === cash_info.FKID && Number(s3.AMT) === 0));
 				console.log("[SaleFinishing]过滤后的记录:", this.sale003);
 			}
 			console.log("[SaleFinishing]预订单生成完毕!", {

@@ -118,6 +118,9 @@
 	display: none;
 	margin-right: 4rpx;
 }
+.choice .tab text{
+	z-index: 2;
+}
 .choice .tab .bgs{
 	position: absolute !important;
 	bottom:0;

@@ -1068,8 +1068,9 @@
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
 			CashRefundCombine: function() {
-				let cash_list = this.RefundList.filter(i => i.fkid == 'ZF01');
-				let other_list = this.RefundList.filter(i => i.fkid != 'ZF01');
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				let cash_list = this.RefundList.filter(i => i.fkid == cash_info.FKID);
+				let other_list = this.RefundList.filter(i => i.fkid != cash_info.FKID);
 				if (cash_list.length == 2) { //现金存在找零的情况
 					let sum = cash_list.reduce((prev, next) => Number(prev.amount) + Number(next.amount));
 					cash_list[0].amount = sum;
@@ -1079,9 +1080,10 @@
 			},
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 				if (!this.cash_change_tips) return;
 				this.cash_change_tips = false;
-				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == 'ZF01');
+				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == cash_info.FKID);
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
 					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash?.toFixed(2)} 元。`);
@@ -1093,7 +1095,8 @@
 			//退款操作
 			Refund: function(isRetry = false) {
 				console.log("[Refund]开始退款流程...")
-				console.log("[Refund]退款单号为：", this.out_refund_no)
+				console.log("[Refund]退款单号为：", this.out_refund_no);
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDID == '1');
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
@@ -1159,7 +1162,7 @@
 							groups[refundInfo.group].forEach(g => g.fail = false);
 						}
 						console.log("[Refund]跳过接口调用...");
-						if (!(refundInfo.fkid === 'ZF01' && Number(refundInfo.amount) !==
+						if (!(refundInfo.fkid === cash_info.FKID && Number(refundInfo.amount) !==
 								0)) { //如果为现金且金额不为 0
 							refundInfo.fail = false;
 							promises.push(Promise.resolve())
@@ -1356,7 +1359,8 @@
 				)
 			},
 			CountCashChange: function() {
-				let prev_cash_amount = this.PayList.find(i => i.fkid == 'ZF01')?.amount || 0; //查找上一个现金支付金额判断是否存在
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				let prev_cash_amount = this.PayList.find(i => i.fkid == cash_info.FKID)?.amount || 0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
@@ -1381,7 +1385,8 @@
 					pay_money: this.dPayAmount,
 					debt: this.allAmount
 				});
-				if(this.currentPayInfo.fkid != 'ZF01') return true;//不是现金不走这个条件
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				if(this.currentPayInfo.fkid != cash_info.FKID) return true;//不是现金不走这个条件
 				//找零金额
 				let change_number = this.CountCashChange();
 				if (change_number > 100) {
@@ -1598,13 +1603,16 @@
 					fail,
 					no: payload.no,
 					bill: payload.out_trade_no, //保存失败的订单号
-					auth_code: ['ZF09', 'ZZ01', 'ZF22', 'ZF32'].includes(payload.memo) ? payload.auth_code :
-						"" //保存失败的券号
+					auth_code: this.IsSaveAuthCode(payload.memo) ? payload.auth_code : "" //保存失败的券号
 				}, null, type_info)
 				console.log("[OrderGenarator]支付失败信息:", trade);
 				this.retryEnd(trade, fail);
 				console.log("[OrderGenarator]失败记录：", trade);
 				this.PushToPaidList(trade);
+			},
+			IsSaveAuthCode:function(fkid){
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ','COUPON','PINNUO'].includes(i.type)).map(i => i.fkid);
+				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
 			orderCreated: function(obj, payload, current_pay_info) {
@@ -1642,8 +1650,9 @@
 			 */
 			CheckCashPayment: function(paid_record) {
 				console.log("[CheckCashPayment]现金支付检测...", paid_record.fkid);
-				if (paid_record.fkid == 'ZF01') {
-					let remove_cash_record_index = this.PayList.findIndex(i => i.fkid == 'ZF01' && !i.fail);
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				if (paid_record.fkid == cash_info.FKID) {
+					let remove_cash_record_index = this.PayList.findIndex(i => i.fkid == cash_info.FKID && !i.fail);
 					console.log("[CheckCashPayment]现金支付索引:", remove_cash_record_index);
 					let cash_paid_record = remove_cash_record_index != -1 ? this.PayList.splice(
 						remove_cash_record_index, 1)[0] : null; //查找并删除支付成功，且为现金的记录，然后返回该记录

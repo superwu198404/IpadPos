@@ -26,9 +26,10 @@
 							<text>卡/券类型：</text>
 							<view class="chaxun">
 								<view class="label">
-									<picker :range="source.types" range-key="text" mode='selector' @change="select_type">
+									<!-- <picker :range="source.types" range-key="text" mode='selector' @change="select_type">
 										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
-									</picker>
+									</picker> -->
+									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
 								</view>
 							</view>
 						</view>
@@ -36,8 +37,8 @@
 							<text>卡号：</text>
 							<view class="chaxun">
 							<view class="label">
-								<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
-								</image>
+								<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
+								<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
 								<input type="text" placeholder="请输入查询卡号" v-model="form.number"/>
 							</view>
 							<button class="btn" @click="according_to_type_search">查询</button>
@@ -47,9 +48,9 @@
 					<view class="partics" v-if="form.infos && form.infos.card_id">
 						<view class="cardqs">
 							<view class="cardlist">
-								<view class="ulli">
+								<view class="ulli" style="height: 483rpx;">
 									<view class="touch-list list-touch">
-										<image class="bgs" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
+										<image class="bgs" style="position: absolute;top: 0px;" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
 											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
 										</view>
@@ -71,7 +72,7 @@
 										</view>
 										<view class="statistic">
 											<text>{{ default_view(form.infos.valid_date,'') }}</text>
-											<text>{{ default_view(form.infos.is_use,'') }}</text>
+											<text v-if="form.infos.is_use">{{ default_view(form.infos.is_use,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -89,36 +90,40 @@
 								<button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button>
 							</view>
 							<view class="kainfolist">
-								<label>
+								<label v-if="form.infos.is_customer_emotional_coupon">
 									<text>是否客情券：</text><text>{{ default_view(form.infos.is_customer_emotional_coupon) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.is_customer_complaint_coupon">
 									<text>是否客诉赠券：</text><text>{{ default_view(form.infos.is_customer_complaint_coupon) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.apply">
 									<text>申领人：</text><text>{{ default_view(form.infos.apply) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.sale_store_name">
 									<text>售卖门店：</text><text>{{ default_view(form.infos.sale_store_name) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.sale_date">
 									<text>售出时间：</text><text>{{ default_view(form.infos.sale_date) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.use_date">
 									<text>使用时间：</text><text>{{ default_view(form.infos.use_date) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.use_store_name">
 									<text>使用门店：</text><text>{{ default_view(form.infos.use_store_name) }}</text>
 								</label>
 								<label>
 									<text>消费金额：</text><text>￥{{ default_view(form.infos.spend_amount, 0) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.operator">
 									<text>操作员：</text><text>{{ default_view(form.infos.operator) }}</text>
+								</label>
+								<label v-if="show_not_more_infos">
+									暂无更多信息...
 								</label>
 							</view>
 						</view>
 					</view>
+					<NoData v-if="!(form.infos && form.infos.card_id)"></NoData>
 				</view>
 			</view>
 		</view>
@@ -132,6 +137,7 @@
 	//业务处理
 	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
+	import member from "@/api/hy/MemberInterfaces.js";
 	var $;
 	export default {
 		name: "Cardquery",
@@ -146,6 +152,16 @@
 					else
 						return def_val;
 				});
+			},
+			scan_code_icon(){
+				return (this.form.current_type_info?.scan_code || this.form.current_type_info == null) ? true : false;
+			},
+			show_not_more_infos(){
+				let infos = this.form.infos;
+				if(!infos.apply || !infos.sale_store_name || !infos.form.infos.sale_date || !infos.use_date || !infos.use_store_name || !infos.form.infos.operator)
+					return true;
+				else
+					return false;
 			}
 		},
 		data() {
@@ -161,9 +177,10 @@
 			}
 		},
 		methods: {
-			select_type(e){
-				this.form.current_type_info = this.source.types[e.detail.value];
+			select_type(data){
+				this.form.current_type_info = data;
 				console.log("[SelectType]选择卡券类型:",this.form.current_type_info);
+				this.form.infos = this.$options.data().form.infos;
 			},
 			scan_code_handle(){
 				uni.scanCode({
@@ -171,6 +188,15 @@
 						this.form.number = result.result;
 					})
 				})
+			},
+			swiping_card(){
+				member.GetTLCard(getApp().globalData.store, $(function(res){
+					if (!res.code) {
+						util.simpleMsg(res.msg, !res.code);
+						return;
+					}
+					this.form.number = res.data;
+				}))
 			},
 			async according_to_type_search(){
 				if(this.form.current_type_info){
@@ -290,6 +316,7 @@
 	}
 	.cardinfo{
 		padding:4% 4% 1%;
+		transform: translateY(-60rpx);
 	}
 	.statistic{
 		padding:3% 3%;
@@ -330,5 +357,10 @@
 		height: 100%;
 		border-radius: 5px;
 		background: #F5F5F5;
+	}
+	
+	.picker{
+		width: 100%;
+		height: 100%;
 	}
 </style>
