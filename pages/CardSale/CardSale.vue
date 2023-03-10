@@ -660,7 +660,7 @@
 						dqid: that.store.DQID,
 						dq_name: that.store.DQNAME,
 						flag: 2,
-						card_num: that.SALE006[0].KQIDS
+						card_num: "", //that.SALE006[0].KQIDS
 					}, res2 => {
 						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活

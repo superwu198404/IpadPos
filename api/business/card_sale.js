@@ -66,8 +66,17 @@ var ResetCXZK = function(that) {
 		r.TPDISC = 0; //zk
 	});
 }
+/**
+ * 获取激活、充值失败的订单
+ */
+var GetFailOrder = function(data, func) {
+	let apistr = "MobilePos_API.Models.CardSaleCLASS.GetFailOrder";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
 	GetKCZGZMX,
 	PayParamAssemble,
-	ResetCXZK
+	ResetCXZK,
+	GetFailOrder
 }
