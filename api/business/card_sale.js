@@ -66,8 +66,41 @@ var ResetCXZK = function(that) {
 		r.TPDISC = 0; //zk
 	});
 }
+/**
+ * 获取激活、充值失败的订单
+ */
+var GetFailOrder = function(data, func) {
+	let apistr = "MobilePos_API.Models.CardSaleCLASS.GetFailOrder";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+
+//重组sale 数据
+var FormatSale = function(saleObj) {
+	let arr = [];
+	if (saleObj && saleObj.sale1) {
+		saleObj.sale1.map(r => {
+			let obj = {};
+			obj.SALE1 = r;
+			obj.SALE2 = saleObj.sale2.filter(r1 => {
+				return r1.BILL == r.BILL
+			});
+			obj.SALE3 = saleObj.sale3.filter(r1 => {
+				return r1.BILL == r.BILL
+			});
+			obj.SALE6 = saleObj.sale6.filter(r1 => {
+				return r1.BILL == r.BILL
+			});
+			arr.push(obj);
+		})
+	}
+	console.log("重组后的售卡单：", arr);
+	return arr;
+}
 export default {
 	GetKCZGZMX,
 	PayParamAssemble,
-	ResetCXZK
+	ResetCXZK,
+	GetFailOrder,
+	FormatSale
 }
