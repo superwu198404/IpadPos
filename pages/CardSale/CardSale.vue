@@ -85,7 +85,7 @@
 									<view class="h6">
 										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{item.NET}}</view>
+											<view><text>总金额: ￥</text>{{item.NET}}</view>
 										</view>
 									</view>
 									<view class="card-num">
