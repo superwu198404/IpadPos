@@ -431,7 +431,7 @@ var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {
 			url: "ReqMuster/Handle",
 			title: pm_msg,
 			method: "POST",
-			load: pm_load == null ? true : pm_load,
+			load: pm_load ? true : false,
 		};
 
 		reqData.data = pm_data ? JSON.stringify(pm_data) : null;

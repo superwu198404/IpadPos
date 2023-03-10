@@ -509,15 +509,13 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: function(data) {
+		Completed: function(data,func) {
 			console.log("[Completed]即将更新销售单状态:", data);
 			let sql = "update sale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
 				.yn_ok + "' where bill='" + data.bill + "';"
 			sql += "update syssale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
 				.yn_ok + "' where bill='" + data.bill + "';"
-			_card_sale.ExecuteBatchSQL(sql, res => {
-				console.log("销售单更新结果：", res);
-			})
+			_card_sale.ExecuteBatchSQL(sql,func);
 		},
 	},
 
@@ -555,26 +553,28 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.Recharge = function(data, func) {
 		KQTypeObj[this.YWType].Recharge(data, func);
 	};
-	this.Completed = async function(data, callback) {
-		try {
-			console.log("[Completed]即将创建销售单:", data);
-			let create_result = await CreateSaleOrder({
-				SALE001: data.SALE001,
-				SALE002: data.SALE002,
-				SALE003: data.SALE003,
-				SALE006: data.SALE006,
-				SXSALE001: data.SXSALE001,
-			});
-			console.log("[Completed]创建销售单结果:", create_result);
-			if (create_result.code)
-				console.log("[Completed]业务单号:", data.SALE001.BILL);
-			let tranfer_result = await _common.TransLiteDataAsync(data.SALE001.BILL); //上传至服务端
-			if (callback) callback(tranfer_result);
-			_util.simpleMsg(create_result.msg, !create_result.code);
-			return tranfer_result;
-		} catch (e) {
-			console.log("[Completed]订单sql生成发生异常:", e);
-		}
+	this.Completed = function(data, func) {
+		KQTypeObj[this.YWType].Completed(data, func);
+		//各自重写
+		// try {
+		// 	console.log("[Completed]即将创建销售单:", data);
+		// 	let create_result = await CreateSaleOrder({
+		// 		SALE001: data.SALE001,
+		// 		SALE002: data.SALE002,
+		// 		SALE003: data.SALE003,
+		// 		SALE006: data.SALE006,
+		// 		SXSALE001: data.SXSALE001,
+		// 	});
+		// 	console.log("[Completed]创建销售单结果:", create_result);
+		// 	if (create_result.code)
+		// 		console.log("[Completed]业务单号:", data.SALE001.BILL);
+		// 	let tranfer_result = await _common.TransLiteDataAsync(data.SALE001.BILL); //上传至服务端
+		// 	if (callback) callback(tranfer_result);
+		// 	_util.simpleMsg(create_result.msg, !create_result.code);
+		// 	return tranfer_result;
+		// } catch (e) {
+		// 	console.log("[Completed]订单sql生成发生异常:", e);
+		// }
 	};
 	//商品信息匹配
 	this.MatchSP = async function() {

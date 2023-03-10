@@ -55,7 +55,7 @@
 									<text>VIP卡充值</text>
 								</label>
 							</view>
-							<view class="tab" @click="ChangeYWTYPE('VIPCard_Retry')"
+							<view class="tab jh-sb" @click="ChangeYWTYPE('VIPCard_Retry')"
 								:class="YWTYPE=='VIPCard_Retry'?'curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
@@ -947,7 +947,7 @@
 						let str1, reason, yn_ok;
 						if (curSale.SALE1.REASON == 'JHF') { //激活失败
 							//先激活再充值
-							console.log("当前类型：", KQSale);
+							console.log("当前类型：", KQSale.YWType);
 							//发起激活
 							KQSale.ActiveConfirm({
 								salebill: curSale.SALE1.BILL,
@@ -963,7 +963,7 @@
 								dqid: that.store.DQID,
 								dq_name: that.store.DQNAME,
 								flag: 2,
-								card_num: "" //curSale.SALE6[0].KQIDS,
+								card_num: curSale.SALE6[0].KQIDS,
 							}, res2 => {
 								_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 								//激活
@@ -998,16 +998,21 @@
 											str1,
 											reason,
 											yn_ok
+										}, res => {
+											console.log("销售单更新结果：", res);
 										});
 									});
 								} else { //激活失败 直接提交单据
 									yn_ok = "F";
 									reason = "JHF"; //激活失败
+									console.log("当前类型：", KQSale.YWType);
 									KQSale.Completed({
 										bill: curSale.SALE1.BILL,
 										str1,
 										reason,
 										yn_ok
+									}, res => {
+										console.log("销售单更新结果：", res);
 									});
 								}
 							})
@@ -1041,6 +1046,8 @@
 									str1,
 									reason,
 									yn_ok
+								}, res => {
+									console.log("销售单更新结果：", res);
 								});
 							});
 						}
