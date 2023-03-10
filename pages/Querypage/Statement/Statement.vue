@@ -307,11 +307,14 @@
 		}	
 	</script>
 	<style>
+		.hh{
+			padding:16rpx 2%;
+		}
 		.listof{
 			height: 92%;
 		}
 		.commodity{
-			height:92%;
+			height:95%;
 		}
 		.huanxing{
 			width:23%;
