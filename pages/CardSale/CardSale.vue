@@ -193,6 +193,7 @@
 				CurCZGZ: {},
 				SALE001: {},
 				SALE002: [],
+				SALE2: [], //支付前拷贝使用
 				SALE003: [],
 				SALE006: [],
 				SXSALE001: [],
@@ -221,6 +222,7 @@
 				FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				startX: '',
+				canComputed: true, //定义监听
 			}
 		},
 		onReady: function() {
@@ -326,7 +328,7 @@
 					return total;
 				}
 				that.SALE002.map(r => {
-					total += _util.newFloat(r.DISCRATE + r.ZSNET, 2);
+					total += _util.newFloat(r.DISCRATE + (r.ZSNET || 0), 2);
 				})
 				return total;
 			},
@@ -496,12 +498,7 @@
 				s2.map(r => {
 					r.PRICE = _util.newFloat(e.CZNET, 2);
 					r.OPRICE = r.PRICE;
-					// r.OPRICE = _util.newFloat(e.CZNET + e.ZSNET, 2);
-					// r.BZDISC = _util.newFloat(e.ZSNET, 2);
-					// r.BILLDISC = _util.newFloat(e.ZSNET, 2);
-					// r.DISCRATE = _util.newFloat(e.ZSNET, 2);
 					r.NET = _util.newFloat(Number(r.PRICE) * Number(r.QTY), 2);
-					// r.ONET = r.NET;
 					r.ZSNET = _util.newFloat(e.ZSNET, 2);
 				})
 				s6.map(r => {
@@ -513,7 +510,6 @@
 				})
 				that.SALE002 = s2;
 				that.SALE006 = s6;
-				that.CalTNET();
 				console.log("s1:", that.SALE001);
 				console.log("s2:", that.SALE002);
 				console.log("s6:", that.SALE006);
@@ -531,11 +527,7 @@
 							return r.SPID != e.SPID
 						});
 						that.SALE006 = arr1;
-						if (arr.length == 0) {
-							that.SALE001.TNET = 0;
-							that.SALE001.BILLDISC = 0;
-						}
-						that.CalTNET(); //扣减后重新计算
+
 					}
 				})
 			},
@@ -546,7 +538,7 @@
 					tbzdisc = 0,
 					ttpdisc = 0,
 					tlsdisc = 0;
-				that.SALE002.map(r => {
+				that.SALE2.map(r => {
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
 					tbzdisc += r.BZDISC;
@@ -561,7 +553,7 @@
 				that.SALE001.TLSDISC = _util.newFloat(tlsdisc);
 				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
-				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
+				that.SALE001.TLINE = that.SALE2.length; //这个是存商品行
 			},
 			//使用手工折扣进行计算 新版舍弃全部分的逻辑
 			SKdiscCompute: function() {
@@ -587,7 +579,6 @@
 					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
-				console.log("sale2", that.SALE002);
 				KQSale.ActiveApply({
 					salebill: that.SALE001.BILL,
 					material_id: that.SALE002[0].SPID,
@@ -597,11 +588,12 @@
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
-						// that.discCompute() //特殊折扣
-						that.Sale2AddDisc();//追加一下赠送金额
-						that.CalTNET(); //因为会产生特殊折扣 所以重新计算 
-						that.SKdiscCompute() //手工折扣
-						console.log("单据类型：", that.BILL_TYPE);
+						// that.discCompute() //特殊折扣 监听计算
+						that.Sale2AddDisc(); //追加一下赠送金额 拷贝一下sale002 (SALE002)
+						that.CalTNET(); //因为会产生特殊折扣 所以重新计算 (SALE001)
+						that.SKdiscCompute() //手工折扣 (SALE001)
+						console.log("sale1", that.SALE001);
+						console.log("sale2", that.SALE2);
 						if (that.BILL_TYPE == 'Z112') { //卡券赊销
 							//直接生成赊销销售单
 							//调用激活
@@ -613,7 +605,7 @@
 								code: true,
 								data: {
 									sale1_obj: that.SALE001,
-									sale2_arr: that.SALE002,
+									sale2_arr: that.SALE2,
 									sale3_arr: that.SALE003,
 								}
 							};
@@ -628,31 +620,8 @@
 					}
 				});
 			},
-
-			//跳转支付
-			PayParamAssemble: function(sales) {
-				uni.$emit('stop-message');
-				uni.$emit('stop-timed-communication');
-				console.log("[PayParamAssemble]支付参数组装...")
-				util.setStorage('open-loading', false);
-				let inputParm = {
-					sale1_obj: that.SALE001, //001 主单 数据对象
-					sale2_arr: that.SALE002, //002 商品 数据对象集合
-					actType: "Payment", //动作类型(退款、支付)
-				}
-				console.log("[PayParamAssemble]支付前封装的数据:", inputParm);
-				that.$store.commit('set-location', inputParm);
-				console.log("支付前的sale6：", that.SALE006);
-				uni.navigateTo({
-					url: "../Payment/Payment",
-					events: {
-						FinishOrder: that.PayedResult
-					}
-				})
-			},
 			//支付完成处理
 			PayedResult: async function(result) {
-				console.log("支付后的sale6：", that.SALE006);
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -664,25 +633,22 @@
 					return;
 				}
 				that.SALE001 = Object.cover(new _saleClass.sale001(), result.data.sale1_obj);
-				that.SALE002 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass.sale002(),
+				that.SALE2 = (result.data.sale2_arr ?? []).map(sale2 => Object.cover(new _saleClass.sale002(),
 					sale2));
 				that.SALE003 = (result.data.sale3_arr ?? []).map(sale3 => Object.cover(new _saleClass.sale003(),
 					sale3));
-				// this.sale008 = (result.data.sale8_arr ?? []).map(sale8 => Object.cover(new sale.sale008(),
-				// 	sale8));
 				console.log("支付后返回结果：", that.SALE001);
 				if (result.code) {
-					console.log("准备激活：", that.SALE002);
-					// _util.simpleMsg("发起激活");
+					console.log("准备激活：", that.SALE2);
 					//手工折扣额分摊
 					if (that.SALE001.ROUND > 0) {
-						that.SALE002 = _main.ManualDiscount(that.SALE001, that.SALE002);
-						console.log("[PayedResult]分摊后的商品信息：", that.SALE002);
+						that.SALE2 = _main.ManualDiscount(that.SALE001, that.SALE2);
+						console.log("[PayedResult]分摊后的商品信息：", that.SALE2);
 					}
 					//发起激活
 					KQSale.ActiveConfirm({
 						salebill: that.SALE001.BILL,
-						material_id: that.SALE002[0].SPID,
+						material_id: that.SALE2[0].SPID,
 						amount: _util.newFloat(that.CurCZGZ.CZNET + that.CurCZGZ.ZSNET),
 						dis_amount: _util.newFloat(that.CurCZGZ.ZSNET),
 						channel: "ZC007",
@@ -715,65 +681,76 @@
 							}, res3 => {
 								//充值
 								console.log("VIP单卡充值结果：", res3);
-								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3.code);
+								_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3.msg, !res3
+									.code);
 								if (!res3.code) {
 									that.SALE001.YN_OK = "F";
+									that.SALE001.REASON = "CZF"; //充值失败
 								}
-								//激活成功-充值成功（与否）均生成销售单
-								KQSale.Completed({
-									SALE001: that.SALE001,
-									SALE002: that.SALE002,
-									SALE003: that.SALE003,
-									SALE006: that.SALE006,
-									SXSALE001: that.SXSALE001,
-								})
+								that.SaleCompleted();
 							});
 						} else { //激活失败 直接提交单据
 							that.SALE001.YN_OK = "F";
-							//创建卡券销售单
-							KQSale.Completed({
-								SALE001: that.SALE001,
-								SALE002: that.SALE002,
-								SALE003: that.SALE003,
-								SALE006: that.SALE006,
-								SXSALE001: that.SXSALE001,
-							})
+							that.SALE001.REASON = "JHF"; //激活失败
+							that.SaleCompleted();
 						}
-						//调用打印
-						let printerPram = {
-							"PRINTNUM": 1,
-							"XSTYPE": that.KQXSTYPE,
-						};
-
-						let arr3 = that.SALE003;
-						let fkdaRes = that.FKDA_INFO;
-						arr3.forEach(function(item, index) {
-							try {
-								item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-								item.balance = item.balance;
-							} catch (e) {
-								item.SNAME = "";
-								item.balance = 0;
-							}
-						});
-						that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
-							printerPram);
-
 						//重置销售单
-						that.ResetSaleBill();
+						// that.ResetSaleBill();
 					})
 				} else {
 					_util.simpleMsg(result.msg, true);
 				}
 			},
+			//完成销售单
+			SaleCompleted: async function() {
+				console.log("生成销售单");
+				//激活成功-充值成功（与否）均生成销售单
+				await KQSale.Completed({
+					SALE001: that.SALE001,
+					SALE002: that.SALE2,
+					SALE003: that.SALE003,
+					SALE006: that.SALE006,
+					SXSALE001: that.SXSALE001,
+				})
+				await that.PrintBill();
+				//重置销售单
+				that.ResetSaleBill();
+			},
+			PrintBill: async function() {
+				console.log("调用打印");
+				//调用打印
+				let printerPram = {
+					"PRINTNUM": 1,
+					"XSTYPE": that.KQXSTYPE,
+				};
+
+				let arr3 = that.SALE003;
+				let fkdaRes = that.FKDA_INFO;
+				arr3.forEach(function(item, index) {
+					try {
+						item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+						item.balance = item.balance;
+					} catch (e) {
+						item.SNAME = "";
+						item.balance = 0;
+					}
+				});
+				await that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE2, arr3, that.SALE006,
+					printerPram);
+			},
 			//sale2追加赠送金额
 			Sale2AddDisc: function() {
-				that.SALE002.map(e => {
-					e.OPRICE = _util.newFloat(e.OPRICE + e.ZSNET, 2);
-					e.BZDISC = _util.newFloat(e.BZDISC + e.ZSNET, 2);
-					e.BILLDISC = _util.newFloat(e.BILLDISC + e.ZSNET, 2);
-					e.DISCRATE = _util.newFloat(e.DISCRATE + e.ZSNET, 2);
+				let sale2 = JSON.parse(JSON.stringify(that.SALE002));
+				sale2.map(e => {
+					let zsnet = e.ZSNET || 0;
+					console.log("赠送金额：", zsnet);
+					e.OPRICE = _util.newFloat(e.OPRICE + zsnet, 2);
+					e.BZDISC = _util.newFloat(e.BZDISC + zsnet, 2);
+					e.BILLDISC = _util.newFloat(e.BILLDISC + zsnet, 2);
+					e.DISCRATE = _util.newFloat(e.DISCRATE + zsnet, 2);
 				})
+				// that.SALE002 = sale2;
+				that.SALE2 = sale2;
 			},
 			//重置本次销售单
 			ResetSaleBill: function() {
@@ -785,6 +762,7 @@
 					DKFID: that.store.DKFID
 				});
 				that.SALE002 = [];
+				that.SALE2 = [];
 				that.SALE003 = [];
 				that.SALE006 = [];
 				that.SXSALE001 = [];
@@ -830,8 +808,6 @@
 				let obj = {};
 				if (data == "NO") { //清除折扣
 					obj = {};
-					//清除一下之前产生的促销和折扣
-					that.ResetCXZK();
 				} else {
 					obj = {
 						ZKType: data,
@@ -839,16 +815,8 @@
 					};
 				}
 				that.CurZKDisc = obj;
-			},
-			ResetCXZK: function() {
-				that.SALE002.map(r => {
-					r.NET = r.NET; //回退一下折扣？
-					r.PRICE = _util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
-					r.DISCRATE = 0; //zk
-					r.BZDISC = 0; //zk
-					r.LSDISC = 0; //zk
-					r.TPDISC = 0; //zk
-				});
+				//清除一下之前产生的促销和折扣
+				_card_sale.ResetCXZK(that);
 			},
 			//使用特殊折扣进行计算
 			discCompute: function() {

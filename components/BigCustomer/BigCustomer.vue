@@ -153,6 +153,7 @@
 		destroyed() {
 			this.big_client_info.exists_credit = this.exists_credit;
 			uni.$emit("big-customer-close", this.big_client_info);
+			console.warn("[Destroyed]大客户关闭...");
 		}
 	}
 </script>

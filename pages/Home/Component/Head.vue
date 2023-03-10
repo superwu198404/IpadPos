@@ -598,6 +598,7 @@
 			},
 			//通知外部返回销售
 			ReturnSale: function() {
+				console.log("[ReturnSale]清空销售单...");
 				uni.$emit('ReturnSale');
 			},
 			ShowPrint: function() {

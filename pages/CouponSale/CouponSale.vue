@@ -6,7 +6,7 @@
 <template>
 	<view>
 		<!-- 顶部导航栏 -->
-		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'></Head>
+		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 		<!-- 内容栏 -->
 		<view class="steps">
 			<view class="listep curr">
@@ -47,32 +47,31 @@
 					</view>
 					<!-- 刷卡后显示卡列表 -->
 					<view class="cardlist">
-						<view class="ulli" v-for="(sales,index) in source.sale2_union_sale6">
-							<view class="touch-list list-touch" @click="touch_list" :data-style="sales.attach.text_style"
-								:data-index="index" :style="sales.attach.text_style">
+						<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
+							<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)" :data-style="get_text_style(sale6_main.sale006)"
+								:data-index="index" :style="get_text_style(sale6_main.sale006)">
 								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
-									<label>￥{{ sales.sale002.PRICE }}<text>/{{ sales.sale002.QTY }}张</text></label>
+									<label>￥{{ sale6_main.sale002.PRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
 									<view class="zje">
-										<view><text>总金额</text>￥{{ sales.sale002.NET }}</view>
+										<view><text>总金额</text>￥{{ sale6_main.sale002.NET }}</view>
 									</view>
 								</view>
 								<view class="card-num">
-									<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
-									<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
+									<label>始：<text>{{ sale6_main.sale006.KQIDS }}</text></label>
+									<label>终：<text>{{ sale6_main.sale006.KQIDE }}</text></label>
 								</view>
 								<view class="statistic">
-									<label><em>●</em><text>总折扣：</text>{{ sales.sale002.DISCRATE }}</label>
-									<label><em>●</em><text>默认折扣：</text>{{ sales.sale002.CXDISC }}</label>
-									<label><em>●</em><text>标准折扣：</text>{{ sales.sale002.BZDISC }}</label>
-									<label><em>●</em><text>特批折扣：</text>{{ sales.sale002.TPDISC }}</label>
+									<label><em>●</em><text>总折扣：</text>{{ sale6_main.sale002.DISCRATE }}</label>
+									<label><em>●</em><text>标准折扣：</text>{{ sale6_main.sale002.BZDISC }}</label>
+									<label><em>●</em><text>临时折扣：</text>{{ sale6_main.sale002.CXDISC }}</label>
+									<label><em>●</em><text>特批折扣：</text>{{ sale6_main.sale002.TPDISC }}</label>
 								</view>
 							</view>
-							<view class="touch-list list-delete" @click="remove_union(sales)">
+							<view class="touch-list list-delete" @click="remove_union(get_union(sale6_main.sale006),sale6_main.sale006)">
 								<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 							</view>
 						</view>
-	
 					</view>
 				</view>
 				<view class="totals">
@@ -93,7 +92,7 @@
 						</image>
 					</view>
 					<view class="a-z">
-						<image src="../../images/VIP-dlu.png" mode="widthFix" @click="select_special_discount"></image>
+						<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount"></image>
 					</view>
 					<view class="a-z">
 						<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
@@ -163,6 +162,7 @@
 					sale006: [],
 					sxsale001: null,
 					sale2_union_sale6: [],
+					sale6_map_style: new Map(),
 					coupon_active_success: false,
 					big_customer_info: null,
 					discount_infos: null,
@@ -186,6 +186,19 @@
 			},
 			unpaid_total_amount() {
 				return this.source.sale001?.TNET || 0;
+			},
+			get_union(){
+				return $(function(sale6){
+					return this.source.sale2_union_sale6.find(sales => sales.sale006.includes(sale6));
+				})
+			},
+			get_main_sale6(){//以 sale6 做 key 的数组序列
+				return this.source.sale2_union_sale6.map(sales => sales.sale006.map(sale6 => ({ sale006: sale6, sale002: sales.sale002 }))).flat();
+			},
+			get_text_style(){
+				return $(function(sale6){
+					return this.source.sale6_map_style.get(sale6)?.text_style;
+				})
 			}
 		},
 		watch: {
@@ -196,6 +209,7 @@
 				if (n === true) {
 					uni.$once("GetCardNums", $(function(data) {
 						console.log("[Watch-Number-Info]获取到号码信息:", data);
+						console.log("[Watch-Number-Info]sale6列表数据:", this.source.sale006);
 						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6
 							.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE ===
 							data.end_num);
@@ -211,28 +225,31 @@
 					uni.$off("GetCardNums");
 				}
 			},
-			'source.sale002'(n, o) {
-				if(n.length === 0){
-					this.factory.reset_generators();
-				}
-				if(n.length !== o.length){//如果长度发生变化则进行计算（不受内部对象变化影响）
-					console.log("[WatchSale2]长度发生变化，开始计算特殊折扣和手工折扣...");
+			'source.sale002':{
+				handler(n, o) {
+					if(n.length === 0){
+						this.factory.reset_generators();
+					}
+					console.log("[WatchSale2]开始计算特殊折扣和手工折扣...");
 					this.discount_computed();//特殊折扣计算
 					this.craft_discount_computed();//手工折扣额
 					console.log("[WatchSale2]特殊折扣和手工折扣计算完毕...");
-				}
-				this.source.sale001.TLINE = n.length;
-				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
-				console.log("[WatchSale2]准备开始汇总金额:",this.source.sale002.map(i => i.NET));
-				let sale001 = this.source.sale001,
-					total_amount = this.source.sale002.map(sale2 => sale2.NET).reduce((prev_net, next_net) => prev_net +
-						next_net, 0);
-				sale001.TNET = total_amount;
-				sale001.ZNET = total_amount;
-				console.log("[WatchSale2]汇总完毕:",{
-					TNET: sale001.TNET,
-					ZNET: sale001.ZNET
-				});
+					if(this.source.sale001)
+						this.source.sale001.TLINE = n.length;
+					else
+						return;
+					console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
+					console.log("[WatchSale2]准备开始汇总金额:",this.source.sale002.map(i => i.NET));
+					let sale001 = this.source.sale001,
+						total_amount = this.source.sale002.map(sale2 => sale2.PRICE * sale2.QTY).reduce((prev_net, next_net) => prev_net + next_net, 0);
+					sale001.TNET = total_amount;
+					sale001.ZNET = total_amount;
+					console.log("[WatchSale2]汇总完毕:",{
+						TNET: sale001.TNET,
+						ZNET: sale001.ZNET
+					});
+				},
+				deep:true
 			},
 			'source.discount_type'(n, o){
 				if(n && n !== 'NO'){
@@ -258,17 +275,6 @@
 			}
 		},
 		methods: {
-			remove_union(sales) {
-				let remove_sale2_index = this.source.sale002.indexOf(sales.sale002),
-					remove_sale6_index = this.source.sale006.indexOf(sales.sale006),
-					remove_union_index = this.source.sale2_union_sale6.indexOf(sales);
-				if (remove_sale2_index != -1)
-					this.source.sale002.splice(remove_sale2_index, 1);
-				if (remove_sale6_index != -1)
-					this.source.sale006.splice(remove_sale6_index, 1);
-				if (remove_union_index != -1)
-					this.source.sale2_union_sale6.splice(remove_union_index, 1);
-			},
 			async get_discount_data(id){
 				return await main.GetZKDatasAll(id);
 			},
@@ -309,14 +315,13 @@
 					disc: 0,
 					khid: this.KHID,
 					appid: getApp().globalData.appid,
-					coupon_infos: this.source.sale2_union_sale6.map($(function(salas){
-						return {
-							start_no: salas.sale006.KQIDS,
-							end_no: salas.sale006.KQIDE,
-							count: salas.sale006.QTY,
-							total_denomination: salas.sale002.NET
-						}
-					}))
+					coupon_infos: this.source.sale2_union_sale6.map(sales => sales.sale006.map(sale6 => ({
+							start_no: sale6.KQIDS,
+							end_no: sale6.KQIDE,
+							count: sale6.QTY,
+							total_denomination: sales.sale002.NET
+						})
+					)).flat()
 				})
 			},
 			async coupon_segment_activate() {
@@ -332,6 +337,7 @@
 					console.log("[CouponSale]券信息查询:", res);
 					if (res.code) {
 						good_id = res.data.coupon_good_no;
+						console.warn("[CouponSale]券号段物料号:", good_id);
 						return this.coupon_store_search(good_id);
 					} else {
 						util.simpleMsg("券信息查询有误!" + (res?.msg || ""), true)
@@ -348,14 +354,13 @@
 					console.log("[CouponSale]券可发售号段校验:", res);
 					if (res.code) {
 						try {
-							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count,
-								res
-								.data.coupon_value);
+							let product_info = await this.sale.MatchSP(good_id, res.data.coupon_count, res.data.coupon_value);
+							console.log("[CouponSale]券商品信息匹配:", product_info);
 							if (this.source.sale001 === null) { //判断是否存在 sale001，不存在则创建
 								this.source.sale001 = this.factory.get_sale001({
 									ZNET: product_info.NET,
 									TNET: product_info.NET,
-									DKHID: '80000000',//default
+									DKFID: '80000000',//default
 									KQXSTYPE: 'SQ',
 									THTYPE: '0',
 									BILL_TYPE: 'Z111',
@@ -371,15 +376,10 @@
 								KQIDE: this.form.end_coupon_no,
 								KQIDSTR: this.form.start_coupon_no + "-" +this.form.end_coupon_no,
 							});
-							this.source.sale002.push(sale002);
+							this.push_sale2_check(sale002);
 							this.source.sale006.push(sale006);
-							this.source.sale2_union_sale6.push({
-								sale002,
-								sale006,
-								attach:{
-									text_style: "left:0"
-								}
-							});
+							this.source.sale6_map_style.set(sale006,{ text_style: "left:0" });
+							this.push_sale2_union_sale6_check(sale002,sale006);
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 						} catch (e) {
 							console.log("[CouponSale]券商品信息查询失败:", e);
@@ -429,37 +429,77 @@
 						SXSALE001: this.source.sxsale001
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
-					this.factory.reset_generators();
-					this.receipt_printing(this.source);
-					this.source = this.$options.data().source;
+					$(this.receipt_printing.bind(this.source),false);
+					this.reset_form();
 					util.simpleMsg(created_sales_result.msg, !created_sales_result.code);
 				}catch(e){
 					console.log("[SaveOrders]执行异常:",e);
 				}
 			},
-			touch_list: function(e) {
-				var text_tyle = e.currentTarget.dataset.style;
-				var index = e.currentTarget.dataset.index;
-				var list = this.source.sale2_union_sale6;
-				console.log('[TouchList]点击了列表，当前样式:',text_tyle);
-				if (text_tyle == "left:0") {
-					list[index].attach.text_style = "left:-50px";
-				} else {
-					list[index].attach.text_style = "left:0";
+			reset_form(){//重置界面表单信息
+				this.factory.reset_generators();
+				this.source = this.$options.data().source;
+			},
+			push_sale2_check(sale2){//向sale2推入数据前，检查是否存在有相同spid的，如果有则进行合并
+				let match_sale2 = this.source.sale002.find(s2 => s2.SPID == sale2.SPID);
+				if(match_sale2){
+					console.log("[PushSale2Check]包含相同的商品，执行合并操作...");
+					match_sale2.QTY += sale2.QTY;
+					console.log("[PushSale2Check]合并完成，合并项:", match_sale2);
 				}
-			
+				else{
+					console.log("[PushSale2Check]未包含相同的商品，执行新增操作...");
+					this.source.sale002.push(sale2);
+				}
+				console.log("[PushSale2Check]检查完毕:",this.source);
+			},
+			push_sale2_union_sale6_check(sale2,sale6){//向sale2和sale6联合数组推入数据前，检查是否已经包含了当前sale2的数据，如果存在那么对现有的联合数据中的sale6做push操作，否则新增一个sale2和sale6的联合数据
+				let match_sale2 = this.source.sale2_union_sale6.map(sales => sales.sale002).find(s2 => s2.SPID == sale2.SPID);
+				if(match_sale2){
+					console.log("[PushSale2UnionSale6Check]包含相同的商品，执行合并操作...");
+					let match_union_sales = this.source.sale2_union_sale6.find(sales => sales.sale002 === match_sale2);
+					console.log("[PushSale2UnionSale6Check]匹配到的联合数据对象:", match_union_sales);
+					match_union_sales.sale006 = match_union_sales.sale006.concat([sale6]);
+					console.log("[PushSale2UnionSale6Check]合并完成，合并项:", match_union_sales);
+				}
+				else{
+					console.log("[PushSale2UnionSale6Check]未包含相同的商品，执行新增操作...");
+					this.source.sale2_union_sale6.push({
+						sale002: sale2,
+						sale006: [sale6]
+					});
+				}
+				console.log("[PushSale2UnionSale6Check]检查完毕:",this.source);
+			},
+			remove_union(sales,sale6) {
+				let remove_sale2_index = this.source.sale002.indexOf(sales.sale002),
+					remove_sale6_index = this.source.sale006.indexOf(sale6),
+					remove_union_index = this.source.sale2_union_sale6.indexOf(sales);
+				if (remove_sale6_index != -1){
+					sales.sale006.splice(remove_sale6_index, 1);//删除联合数据中的sale006部分数据
+					this.source.sale006.splice(remove_sale6_index, 1);//删除外部sale006中的数据
+					sales.sale002.QTY -= sale6.QTY;//在sale2中减去被移除掉的券数量
+				}
+				if (sales.sale006.length == 0)//如果sale006被删除完了，则删除sale002的对应物料
+					sales.sale002.splice(remove_sale2_index, 1);
+				/*
+				 * 注：union内的结构是一对多，由一个sale2对应多个sale6，所以此处是检查sale6是否已经被删除完了，如果被删除完了那么就移除对应的 sale2和sale6 的联合数据。
+				*/
+				if (sales.sale006.length == 0)//如果sale002被删除完了，则删除 sale2_union_sale6 的对应物料
+					this.source.sale2_union_sale6.splice(remove_union_index, 1);
+				console.log("[RemoveUnion]删除信息后:",this.source);
+			},
+			touch_list(e,sale6) {
+				var text_tyle = e.currentTarget.dataset.style;
+				if (text_tyle == "left:0") {
+					this.source.sale6_map_style.get(sale6).text_style = "left:-50px";
+				} else {
+					this.source.sale6_map_style.get(sale6).text_style = "left:0px";
+				}
+				this.source.sale2_union_sale6.sort();
 			},
 			select_special_discount(){
 				console.log("[SelectSpecialDiscount]特殊折扣选择:", this.source);
-				if(!this.source.big_customer_info){
-					util.simpleMsg("请选择大客户后再进行此操作!",true)
-					this.view.big_customer = true;
-					return;
-				}
-				if(!this.source.sale002?.length){
-					util.simpleMsg("请添加活动券后再进行此操作!",true)
-					return;
-				}
 				this.view.enable_special_discount=true;
 			},
 			discount_computed() {//使用特殊折扣进行计算
@@ -472,6 +512,7 @@
 				console.log("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
 			craft_discount_computed() {//手工折扣额的处理
+				if(!this.source.sale001) return;
 				console.log("[CraftDiscountComputed]原金额:", this.source.sale001.TNET);
 				let SKY_DISCOUNT = util.newFloat(((this.source.sale001.TNET * 10) % 1) / 10, 2);
 				console.log("[CraftDiscountComputed]手工折扣额：", SKY_DISCOUNT);
@@ -751,6 +792,12 @@
 			},
 			event_monitor(){
 				console.log("[EventMonitor]事件处理...");
+				this.event_register('ReturnSale',$(function(data){
+					console.log('[EventMonitor]表单信息清空...');
+					util.simpleModal("提示", "是否确认清空当前数据？", $(function(res){
+						if (res) this.reset_form();
+					}))
+				}));
 				this.event_register('close-tszk',$(function(data){
 					console.log("[EventMonitor]用户选择的折扣信息:",data);
 					this.source.discount_type = data;//记录折扣类型
@@ -772,13 +819,15 @@
 				uni.$on(event_name, event_callback);
 			}
 		},
+		mounted() {
+			this.event_monitor();//批量事件处理
+			this.get_payment_infos();//获取支付信息
+		},
 		created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			$ = util.callContainer(this);
-			this.event_monitor();//批量事件处理
-			this.get_payment_infos();//获取支付信息
 			//test code...
-			this.KHID = "K200QTD006";
+			// this.KHID = 'K200QTD006';
 		}
 	}
 </script>
