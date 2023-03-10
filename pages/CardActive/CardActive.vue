@@ -46,7 +46,7 @@
 									<text>礼品卡激活</text>
 								</label>
 							</view>
-							<view class="tab">
+							<view class="tab jh-sb">
 								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>

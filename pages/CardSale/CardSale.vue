@@ -59,7 +59,7 @@
 								:class="YWTYPE=='VIPCard_Retry'?'curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
-									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
 									<text>激活/充值失败</text>
 								</label>
 							</view>
