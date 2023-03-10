@@ -656,9 +656,10 @@
 		line-height: 70rpx;
 		padding-top:10rpx;
 	}
-	.cods label:nth-child(1) text{
+	.prolist .cods label:nth-child(1) text{
 		color: #333;
 		font-size: 34rpx;
+		text-align: right;
 	}
 	.address{
 		width:92%;
