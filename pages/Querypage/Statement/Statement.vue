@@ -150,7 +150,7 @@
 											<view class="bszb">
 												<view class="charts-box">
 												  <qiun-data-charts type="arcbar" 
-												  :opts="{title:{name:'80%',color:'#2fc25b',fontSize:24},subtitle:{name:'当月指标报损',color:'#666666',fontSize:14}}" 
+												  :opts="{title:{name:'80%',color:'#2fc25b',fontSize:24},subtitle:{name:'当月报损指标',color:'#666666',fontSize:14}}" 
 												  :chartData="chartsDataArcbar1"/>
 												</view>
 												<view class="breakage">													
@@ -277,7 +277,8 @@
 				        {
 				            name: '达成进度(去节令)',
 				            data: 0.429,
-				            color: '#42B14B'
+				            color: '#42B14B',
+							BackgroundColor:'#E7FDE8'
 				        },
 						{
 						    name: '达成进度(去节令)',
