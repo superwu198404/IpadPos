@@ -1,6 +1,7 @@
 <style scopeed>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
+	@import url(@/static/style/takeout.css);
 	@import url(@/static/style/card.css);
 </style>
 
@@ -45,9 +46,18 @@
 									<text>礼品卡激活</text>
 								</label>
 							</view>
+							<view class="tab">
+								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
+								<label>
+									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
+									<text>激活/充值失败</text>
+								</label>
+							</view>
 						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
+					<!-- 卡激活 -->
+					<view style="width: 100%; height: 100%;" >
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
@@ -93,6 +103,99 @@
 						</view>
 						<button class="btn" @click="ToPay()">确认支付</button>
 					</view>
+					</view>
+					<!-- 激活失败 -->
+					<view class="commodity" v-if="Activatfail">
+						<view class="hh">
+							<view class="hotcakes">失败列表</view>
+						</view>
+						<view class="products">						
+						<view class="procycle">
+							<!-- 外卖单循环 -->
+							<view class="li">
+								<view class="h3">
+									<view class="platform">
+										<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
+									</view>									
+								</view>
+								<view class="cods">
+									<label>单号：3453234565434543 <text>￥500</text></label>
+									<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
+	
+								</view>
+								<view class="address">
+									销售时间：2023-09-09
+								</view>
+							</view>
+							<view class="li curr">
+								<view class="h3">
+									<view class="platform">
+										<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
+									</view>									
+								</view>
+								<view class="cods">
+									<label>单号：3453234565434543 <text>￥500</text></label>
+									<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
+								
+								</view>
+								<view class="address">
+									销售时间：2023-09-09
+								</view>
+							</view>
+													
+						</view>
+						<view class="details">
+							<view class="detinfo">
+								<view class="member">
+									<label>
+										单据明细
+									</label>
+								</view>
+								<view class="goods">
+									 <!-- v-for="(item1,index1) in Details" -->
+									<view class="prolist">
+										<view class="h3">
+											<label>
+												<text>1</text>
+												卡券类型名称
+											</label>
+											<view class="shuls"><text>数量：2</text></view>
+										</view>
+										<view class="otheinfo">
+											<view>类型编码：1010</view>
+											<view class="quanhao">
+												<label>开始券号：098767809876</label>
+												<label>结束券号：098767809876 <text>总价：￥56</text></label>
+											</view>
+										</view>
+									</view>
+									<view class="prolist">
+										<view class="h3">
+											<label>
+												<text>2</text>
+												卡券类型名称
+											</label>
+											<view class="shuls"><text>数量：2</text></view>
+										</view>
+										<view class="otheinfo">
+											<view>类型编码：1010</view>
+											<view class="quanhao">
+												<label>开始券号：098767809876</label>
+												<label>结束券号：098767809876 <text>总价：￥56</text></label>
+											</view>
+										</view>
+									</view>
+								</view>
+								</view>
+								<view class="operat">
+									<button class="btn btn-qx" @click="ConfirmReceipt()" >关闭</button>
+									<button class="btn btn-h" @click="ConfirmReback()">重试</button>
+									
+								</view>
+							</view>
+					</view>
+					</view>
+					
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
 				</view>
@@ -831,5 +934,5 @@
 </script>
 
 <style>
-
+	
 </style>

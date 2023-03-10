@@ -607,10 +607,13 @@
 .operatys .operat-sales{
 	width:66%;
 	margin-right:2%;
+	display: flex;
+	justify-content: space-between;
+	padding:1% 0 0
 }
 .operatys .operat-flow{
 	width:32%;	
-	padding:1% 0;
+	padding:1% 0 0;
 }
 .memb{
 	display: flex;
@@ -650,7 +653,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	line-height: 70rpx;
+	line-height: 56rpx;
 	font-size: 26rpx;
 }
 .memb-stat view em{
@@ -672,7 +675,12 @@
 .wk .h6{
 	padding:0 3%;
 	color: #FE694B;
-	font-size: 32rpx;
+	font-size: 28rpx;
+	font-weight: 700;
+}
+.wk .h6 em{
+	font-size: 24rpx;
+	margin-right: 6rpx;
 }
 .breakage .huiyuan:nth-child(2n){
 	border-left: none;
@@ -681,7 +689,7 @@
 	margin-left: 0;
 }
 .cons-jl{
-	padding-top:3%;
+	padding:2.5% 0 1%;
 }
 .particul .part-waimai{
 	width:40%;
@@ -690,7 +698,7 @@
 	width:58%;
 	margin-left: 2%;
 }
-.cons-wm{
+.cons-wm,.cons-qjl{
 	display: flex;
 	flex-wrap: wrap;
 	
@@ -699,8 +707,8 @@
 	background: linear-gradient(90deg, #D0F3ED 0%, #FFFFFF 100%);
 	border-radius: 12rpx;
 	position: relative;
-	width:45%;
-	padding: 2% 5% 2%;
+	width:43%;
+	padding: 2% 2% 2% 5%;
 	font-size: 28rpx;
 }
 .waimai-list em{
@@ -715,6 +723,8 @@
 }
 .waimai-list .namewm{
 	line-height: 60rpx;
+	display: flex;
+	align-items: center;
 }
 .waimai-list .namewm text{
 	display: inline-block;
@@ -727,4 +737,421 @@
 	color: #fff;
 	margin-left: 10rpx;
 }
-
+.waimai-list .pric{
+	display: block;
+	font-size:40rpx;
+	font-weight:700;
+	margin-bottom: 20rpx;
+}
+.waimai-xs{
+	font-size: 26rpx;
+	color: #333;
+	font-weight: 700;
+}
+.waimai-xs text{
+	font-weight: 400;	
+	color: #b0b0b0;
+}
+.cons-qjl .waimai-list{
+	background: linear-gradient(90deg, #F8F2E0 0%, #FFFFFF 100%);
+	width:26%;
+	padding:1.5% 2% 1.5% 5%;
+}
+.cons-qjl .waimai-list em,.cons-qjl .waimai-list .namewm text{
+	background-color: #FBB955;
+}
+.plan-bf{
+	flex-direction: column;
+	width:20%;
+	margin-right: 1%;
+}
+.plan-bf .huiyuan{
+	width: 100%;
+	height: 50%;
+	justify-content: center;
+}
+.plan-bf .huiyuan:nth-child(2){
+	border-left: none;
+}
+.sale-qk{
+	display: flex;
+	flex-wrap: wrap;
+	width: 52%;
+}
+.sale-qk .waimai-list{
+	padding:1% 3% 1.5%;
+	width:40%;
+	margin:1%;
+	background: linear-gradient(180deg, #DDFFDF 0%, #FFFFFF 100%);
+	border: 2rpx solid #DCF0DE;
+}
+.sale-qk .waimai-list .pric{
+	font-size: 36rpx;
+}
+.sale-qk .waimai-list:nth-child(2){
+	background: linear-gradient(180deg, #E6FFFA 0%, #FFFFFF 100%);
+	border: 2rpx solid #D0F3ED;
+}
+.sale-qk .waimai-list:nth-child(3){
+	background: linear-gradient(180deg, #F8F2E0 0%, #FFFFFF 100%);
+	border: 2rpx solid #F7ECCF;
+}
+.sale-qk .waimai-list:nth-child(4){
+	background: linear-gradient(180deg, #FFF0EC 0%, #FFFFFF 100%);
+	border: 2rpx solid #FFE9E9;
+}
+.sale-qk .waimai-list image{
+	width:30rpx;
+	height: 30rpx;
+	margin-right: 6rpx;
+}
+.sale-qk .waimai-list .pric{
+	color: #42B14B;
+}
+.sale-qk .waimai-list:nth-child(2) .pric{
+	color:#19C7A5;
+}
+.sale-qk .waimai-list:nth-child(3) .pric{
+	color:#FBB955;
+}
+.sale-qk .waimai-list:nth-child(4) .pric{
+	color:#FF9191;
+}
+.sale-qk .sale-jd{
+	width: 100%;
+	height: 8rpx;
+	background: #F2F2F2;
+	border-radius: 6rpx;
+	position: relative;
+	margin-top:30rpx;
+}
+.sale-qk .sale-jd label{
+	display: inline-block;
+	height: 8rpx;
+	background-color: #42B14B;
+	width: 12.8%;
+	position: absolute;
+	top:0rpx;
+	left:0;
+	max-width: 100%;
+	border-radius: 6rpx;
+}
+.sale-qk .waimai-list:nth-child(2) .sale-jd label{
+	background:#19C7A5;
+}
+.sale-qk .waimai-list:nth-child(3) .sale-jd label{
+	background:#FBB955;
+}
+.sale-qk .waimai-list:nth-child(4) .sale-jd label{
+	background:#FF9191;
+}
+.sale-qk .sale-jd text{
+	position: absolute;
+	top:-42rpx;
+	right:0;
+	height: 34rpx;
+	line-height: 34rpx;
+	font-size: 14rpx;
+	background: #fff;
+	padding:0 8rpx;
+	box-shadow: 0px 3rpx 6rpx 1px rgba(0,0,0,0.1);
+	border-radius: 8rpx;
+}
+.jlly{
+	margin-top:-16rpx;
+}
+.jlly .sale-qk{
+	width:100%;
+}
+.jlly .sale-qk .waimai-list{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: linear-gradient(90deg, #DDFCDF 0%, #FFFFFF 100%);
+	border:none;
+	border-radius: 8rpx;
+}
+.jlly .sale-qk .waimai-list:nth-child(2){
+	background: linear-gradient(90deg, #D0F3ED 0%, #FFFFFF 100%);
+}
+.jlly .sale-qk .waimai-list .namewm{
+	align-items: center;
+}
+.jlly .sale-qk .waimai-list label{
+	margin-bottom: 0;
+}
+.jlly .sale-qk .waimai-list .namewm em{
+	height: 40rpx;
+	margin-right:8rpx;
+	position: initial;
+}
+.jlly .sale-qk .waimai-list .pric{
+	color: #333;
+	font-size: 34rpx;
+}
+.jlly .h6{
+	color: #006B44;
+	line-height: 60rpx;
+}
+.sorts{
+	height: 70rpx;
+	text-align: right;
+	line-height: 70rpx;
+}
+.sorts label{
+	padding:0 20rpx;
+	font-size: 28rpx;
+}
+.sorts label em{
+	color:#42B14B;
+	margin-right: 6rpx;
+}
+.sorts label:nth-child(2) em{
+	color: #19C7A5;
+}
+.sorts label:nth-child(3) em{
+	color: #FBB955;
+}
+.timeperiod{
+	height: 80%;
+	width:94%;
+	margin:2%;
+	display: flex;
+	justify-content: center;
+}
+.Barchart{
+	display: flex;
+	justify-content: center;
+	height: 90%;
+	
+	padding:0 2%;
+	margin:0 2%;
+	width:50%;
+	position:relative;
+}
+.Barchart .beijing{
+	position: absolute;
+	top:0;
+	left: 5%;
+	width:95%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.Barchart .beijing view{
+	width: 100%;
+	border-bottom: 1px dashed #DDDDDD;
+	position: relative;
+}
+.Barchart .beijing view text{
+	position: absolute;
+	top:-20rpx;
+	left: -52rpx;
+	height: 40rpx;
+	line-height: 40rpx;
+	width: 50rpx;
+	font-size: 18rpx;
+	color: #b0b0b0;
+	text-align: right;
+	padding-right: 10rpx;
+}
+.Barchart .dyxs,.Barchart .drxs{
+	position: relative;
+	display: flex;
+	width: 48%;
+	height: 100%;
+	justify-content: center;
+}
+.Barchart .dyxs .dyname,.Barchart .drxs .dyname{
+	position: absolute;
+	bottom:-52rpx;
+	line-height: 50rpx;
+	font-size: 26rpx;
+	color: #b0b0b0;
+	left: 0;
+	height: 50rpx;
+	width: 100%;
+	text-align: center;
+}
+.Barchart .dyxs view,.Barchart .drxs view{
+	width:26rpx;
+	height: 100%;
+	position: relative;
+	border-radius: 4rpx;
+	margin:0 8rpx;
+}
+.Barchart .dyxs view label,.Barchart .drxs view label{
+	position: absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+	background-color: #42B14B;
+	border-radius: 4rpx;
+}
+.Barchart .dyxs view:nth-child(3) label,.Barchart .drxs view:nth-child(3) label{
+	background-color: #19C7A5;
+}
+.Barchart .dyxs view:nth-child(4) label,.Barchart .drxs view:nth-child(4) label{
+	background-color: #FBB955;
+}
+.Barchart .dyxs view label text,.Barchart .drxs view label text{
+	font-size: 14rpx;
+	background-color: #E7FDE8;
+	color: #42B14B;
+	border:1px solid #42B14B;
+	height:30rpx;
+	line-height: 30rpx;
+	padding:0 10rpx;
+	border-radius: 6rpx;
+	position: absolute;
+	top:-38rpx;
+	left: -80%;
+	transform: scale(0.85);
+	z-index: 9;
+}
+.cons-pl{
+	height: 83%;
+}
+.bszb{
+	display: flex;
+	justify-content: space-between;
+}
+.bszb .charts-box{
+	width: 33%;
+	height: 280rpx;
+}
+.bszb .breakage{
+	width:62%;
+	padding-top:20rpx;
+}
+.choice .tab.curr{
+		background-color: #FE694B;
+	}
+	.products{
+		padding:0 1.5%;
+		height:93%;
+	}
+	.products .procycle .li{
+		width:100%;
+		padding:0;
+		border-color: #FFE3E3;
+		margin-bottom: 30rpx;
+	}
+	.products .procycle .li .h3{
+		background: linear-gradient(90deg, #FFE9E9 0%, #FFFFFF 100%);
+		color: #FE694B;
+		padding-right: 4%;
+		border-radius: 10rpx 10rpx 0 0;
+	}
+	.products .procycle .li .h3 .state{
+		display: flex;
+		align-items: center;
+		color: #FE694B;
+		font-size: 28rpx;
+	}
+	.products .procycle .li .jiedan em{
+		background: #FE694B;	
+	}
+	.cods{
+		padding: 0 4%;
+	}
+	.cods label{
+		display: flex;
+		justify-content: space-between;
+	}
+	.prolist .cods label text{
+		text-align: right;
+		color: #4F4F4F;
+		font-size:26rpx;
+	}
+	.cods label:nth-child(1){
+		font-size: 34rpx;
+		font-weight: 700;
+		color: #333;
+		line-height: 70rpx;
+		padding-top:10rpx;
+	}
+	.cods label:nth-child(1) text{
+		color: #333;
+		font-size: 34rpx;
+	}
+	.address{
+		width:92%;
+		margin:0 4%;
+		padding:2% 0;
+		color: #b0b0b0;
+	}
+	.li.curr{
+		border-color: #FE694B !important;
+		background: #fff !important;
+		box-shadow: 0px 0px 0px 0.5px #FE694B !important;
+	}
+	.li.curr .h3{
+		background: linear-gradient(90deg, #FE694B 0%, #FFFFFF 100%) !important;
+	}
+	.li.curr .h3 .state{
+		color: #fff !important;
+	}
+	.li.curr .h3 em{
+		background: #fff !important;
+	}
+	.products  .details{
+		height: 98%;
+		background: #F9F9F9;
+		border: 2rpx solid #FFE3E3;
+	}
+	.goods .prolist .h3,.goods .prolist .h3 label{
+		align-items: center;
+		font-size: 34rpx;
+	}
+	.details .prolist .h3 label text{
+		display: inline-block;
+		width:60rpx;
+		height: 60rpx;
+		line-height: 60rpx;
+		border-radius: 60rpx;
+		color: #006B44;
+		background: #f1f1f1;
+		text-align: center;
+		margin-right: 14rpx;
+		font-weight: 700;
+	}
+	.prolist .h3 .shuls text{
+		color: #42B14B;
+		font-weight: 400;
+	}
+	.otheinfo{
+		padding:1% 2% 0 8%;
+		display: flex;
+		flex-direction: column;
+	}
+	.otheinfo label{
+		font-size: 26rpx;
+		line-height: 40rpx;
+		color: #b0b0b0;
+		display: flex;
+		justify-content: space-between;
+	}
+	.otheinfo label text{
+		color: #FE694B;
+		font-weight: 700;
+		font-size: 32rpx;
+	}
+	.quanhao{
+		margin-top:20rpx;
+		display: flex;
+		flex-direction: column;
+	}
+	.goods .prolist	{
+		padding-bottom: 40rpx;
+		border-bottom: 2rpx solid #E4E4E4;
+		margin-bottom:40rpx;
+	}
+	.detinfo .member{
+		font-size: 34rpx;
+		font-weight: 700;
+	}
+	.detinfo{
+		overflow: auto;
+	}
