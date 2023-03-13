@@ -659,7 +659,7 @@
 					material_id: that.SALE002[0].SPID,
 					channel: "ZC007",
 					khid: that.SALE001.KHID,
-					card_num: that.begin_num,
+					card_num: that.SALE002[0].begin_num,
 				}, res => {
 					console.log("单卡激活校验结果：", res);
 					if (res.code) {
