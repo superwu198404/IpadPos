@@ -462,7 +462,8 @@
 							console.log("可激活数量校验结果：", res3);
 							if (res3.code) {
 								let SPObj = await KQSale.MatchSP(res.data.materielId, res.data
-									.amount, res.data.cardNum); //当前号段
+									.amount, 1); //当前号段
+								// console.log("当前号段商品0：", SPObj);
 								SPObj = that.CoverSale(SPObj, that.SALE001); //属性合并
 
 								console.log("当前号段商品：", SPObj);
@@ -501,6 +502,9 @@
 										spObj.end_num = num2;
 										spObj.STR2 = num1 + "-" + num2;
 										spObj.NO = no;
+										spObj.QTY = r3.cardNum; //重写一下QTY
+										spObj.NET = _util.newFloat(spObj
+											.PRICE * spObj.QTY, 2); //重写一下NET
 										that.SALE002.push(
 											spObj); //追加当前号段的商品信息
 										console.log("sale2", that.SALE002);

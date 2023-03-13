@@ -398,6 +398,7 @@ var KQTypeObj = {
 				spinfo = data[0];
 			}
 			if (spinfo) {
+				
 				let sale2 = new _sale.sale002();
 				sale2.SPID = spid;
 				sale2.STR1 = spinfo?.SNAME;
