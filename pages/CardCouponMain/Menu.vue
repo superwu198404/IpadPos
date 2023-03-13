@@ -85,7 +85,7 @@
 							icon_open: require('@/images/img2/kayanqi-bai.png'),
 							icon_close: require('@/images/img2/kayanqi.png'),
 							name:'卡延期',
-							key: ''
+							key: 'CardDelay'
 						},					
 						{
 							icon_open: require('@/images/img2/kabangd-bai.png'),

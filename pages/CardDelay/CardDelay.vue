@@ -15,12 +15,15 @@
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡券信息查询
+						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 				</view>
 				<view class="commodity">
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+					<view class="typeoper">
+						<label><button>卡延期</button><image src="@/images/img2/danju.png" mode="widthFix"></image></label>
+					</view>
 					<view class="number">
 						<view class="labnum">
 							<text>卡/券类型：</text>
@@ -45,7 +48,8 @@
 							</view>
 						</view>	
 					</view>
-					<view class="partics" v-if="form.infos && form.infos.card_id">
+					 <!-- v-if="form.infos && form.infos.card_id" -->
+					<view class="partics">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
@@ -65,10 +69,7 @@
 													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
 												</view>
 											</view>
-											<!-- <view class="denominat">
-												<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
-												<text>（满38元使用）</text>
-											</view> -->
+		
 										</view>
 										<view class="statistic">
 											<text>{{ default_view(form.infos.valid_date,'') }}</text>
@@ -123,7 +124,7 @@
 							</view>
 						</view>
 					</view>
-					<NoData v-if="!(form.infos && form.infos.card_id)"></NoData>
+					
 				</view>
 			</view>
 		</view>
@@ -224,6 +225,7 @@
 	}
 </script>
 
+
 <style>
 	.commodity .number{
 		padding: 0;
@@ -260,6 +262,10 @@
 	.totals view em{
 		height: 40rpx;
 		margin:0 8rpx 0 30rpx;
+	}
+	.totals button{
+		background-color: #FBB955;
+		width: 300rpx;
 	}
 	.cardlist{
 		box-shadow: 0px 10px 30px 1px rgba(66,177,75,0.16);
