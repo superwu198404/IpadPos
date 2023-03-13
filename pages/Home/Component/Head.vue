@@ -291,10 +291,12 @@
 				console.log("[Head]设置会员名称!", info);
 				this.hyinfo = info;
 			}))
+			//来自销售页面的事件通知
 			uni.$off('set-dkf');
 			uni.$on('set-dkf', util.callBind(this, function(info) {
 				console.log("[Head]设置大客户名称!", info);
 				this.DKFNAME = info;
+				this.YN_SX = false;
 			}))
 			this.GetStoreMessage();
 			this.MonitorEvent(); //事件监听

@@ -833,6 +833,12 @@
 				that.SXSALE001 = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
+				that.CurZKDisc = {};
+				let store = _util.getStorage("store");
+				store.DKFID = "80000000";
+				store.DKFNAME = '默认大客户';
+				_util.setStorage("store", store);
+				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 				console.log("单据重置成功")
 			},
 			//显示扫码组件
