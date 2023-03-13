@@ -39,25 +39,27 @@
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
 						<view class="table">
-							<view class="tab curr">
+							<view class="tab" @click="ChangeYWTYPE('GiftCard_Active')"
+								:class="YWTYPE=='GiftCard_Active'?' curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 									<text>礼品卡激活</text>
 								</label>
 							</view>
-							<view class="tab jh-sb">
+							<view class="tab jh-sb" @click="ChangeYWTYPE('GiftCard_Retry')"
+								:class="YWTYPE=='GiftCard_Retry'?' curr':''">
 								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
-									<text>激活/充值失败</text>
+									<text>激活失败</text>
 								</label>
 							</view>
 						</view>
 						<view class="ckr">“持卡人姓名”：877888999</view>
 					</view>
 					<!-- 卡激活 -->
-					<view style="width: 100%; height: 100%;">
+					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
 						<view class="module" style="height: 66%;">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
@@ -105,44 +107,31 @@
 						</view>
 					</view>
 					<!-- 激活失败 -->
-					<view class="commodity" v-if="Activatfail">
+					<view class="commodity" v-else>
 						<view class="hh">
 							<view class="hotcakes">失败列表</view>
 						</view>
-						<view class="products">
+						<view class="products" v-if="FailSaleList.length>0">
 							<view class="procycle">
-								<!-- 外卖单循环 -->
-								<view class="li">
+								<!-- 销售单循环 -->
+								<view class="li" v-for="item in FailSaleList"
+									:class="curFailSale.SALE1.BILL==item.SALE1.BILL?' curr':''"
+									@click="curFailSale=item">
 									<view class="h3">
 										<view class="platform">
-											<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
+											<label class="state jiedan">
+												<em class="gang"></em>销售日期：{{item.SALE1.SALEDATE}}</label>
 										</view>
 									</view>
 									<view class="cods">
-										<label>单号：3453234565434543 <text>￥500</text></label>
-										<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
+										<label>单号：{{item.SALE1.BILL}} <text>￥{{item.SALE1.TNET}}</text></label>
+										<label><text>收银员：{{item.SALE1.RYID}}</text><text>折扣价：￥{{item.SALE1.BILLDISC}}</text></label>
 
 									</view>
 									<view class="address">
-										销售时间：2023-09-09
+										销售时间：{{item.SALE1.SALETIME}}
 									</view>
 								</view>
-								<view class="li curr">
-									<view class="h3">
-										<view class="platform">
-											<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
-										</view>
-									</view>
-									<view class="cods">
-										<label>单号：3453234565434543 <text>￥500</text></label>
-										<label><text>收银员：你你你</text><text>折扣价：￥5</text></label>
-
-									</view>
-									<view class="address">
-										销售时间：2023-09-09
-									</view>
-								</view>
-
 							</view>
 							<view class="details">
 								<view class="detinfo">
@@ -152,50 +141,33 @@
 										</label>
 									</view>
 									<view class="goods">
-										<!-- v-for="(item1,index1) in Details" -->
-										<view class="prolist">
+										<!-- -->
+										<view class="prolist" v-for="(item1,index1) in curFailSale.SALE6">
 											<view class="h3">
 												<label>
-													<text>1</text>
-													卡券类型名称
+													<text>{{item1.NO}}</text>
+													{{curFailSale.SALE1.KQXSTYPE=='SK'?"礼品卡售卡":"无"}}
 												</label>
-												<view class="shuls"><text>数量：2</text></view>
+												<view class="shuls"><text>数量：{{item1.QTY}}</text></view>
 											</view>
 											<view class="otheinfo">
-												<view>类型编码：1010</view>
+												<view>失败类型：{{curFailSale.SALE1.REASON=='JHF'?'激活失败':'充值失败'}}</view>
 												<view class="quanhao">
-													<label>开始券号：098767809876</label>
-													<label>结束券号：098767809876 <text>总价：￥56</text></label>
-												</view>
-											</view>
-										</view>
-										<view class="prolist">
-											<view class="h3">
-												<label>
-													<text>2</text>
-													卡券类型名称
-												</label>
-												<view class="shuls"><text>数量：2</text></view>
-											</view>
-											<view class="otheinfo">
-												<view>类型编码：1010</view>
-												<view class="quanhao">
-													<label>开始券号：098767809876</label>
-													<label>结束券号：098767809876 <text>总价：￥56</text></label>
+													<label>开始券号：{{item1.KQIDS}}</label>
+													<label>结束券号：{{item1.KQIDE}}<text>总价：￥{{item1.MYSTR}}</text></label>
 												</view>
 											</view>
 										</view>
 									</view>
 								</view>
 								<view class="operat">
-									<button class="btn btn-qx" @click="ConfirmReceipt()">关闭</button>
-									<button class="btn btn-h" @click="ConfirmReback()">重试</button>
-
+									<button class="btn btn-qx" @click="CloseRetry">关闭</button>
+									<button class="btn btn-h" @click="ConfirmRetry">重试</button>
 								</view>
 							</view>
 						</view>
+						<NoData v-else></NoData>
 					</view>
-
 					<!-- 起始卡号 -->
 					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
 				</view>
@@ -296,6 +268,20 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
+				FailSaleList: [
+					// 	{
+					// 	SALE1: {},
+					// 	SALE2: [],
+					// 	SALE3: [],
+					// 	SALE6: []
+					// },
+				], //激活、充值失败的单据集合
+				curFailSale: {
+					// SALE1: {},
+					// SALE2: [],
+					// SALE3: [],
+					// SALE6: []
+				},
 			}
 		},
 		onReady: function() {
@@ -437,11 +423,29 @@
 					}
 				}
 			},
+			//判断是否已录入
+			IntervalOverlap: function(min, max) {
+				console.log("开始校验区间：", that.SALE002);
+				if (that.SALE002.length == 0) return true;
+				let arr = that.SALE002.map(r => {
+					return {
+						min: r.begin_num.substr(r.begin_num.length - 6, 5),
+						max: r.end_num.substr(r.end_num.length - 6, 5)
+					};
+				})
+				arr.push({
+					min: min.substr(min.length - 6, 5),
+					max: max.substr(max.length - 6, 5)
+				});
+				return _util.IntervalOverlap(arr);
+			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
 				}
+				if (!that.IntervalOverlap(that.begin_num, that.end_num))
+					return _util.simpleMsg("当前号段与已录入号段重复，请重新录入！");
 				KQSale.QueryInfo({
 					card_num: that.begin_num
 				}, res => {
@@ -457,49 +461,20 @@
 						}, async res3 => {
 							console.log("可激活数量校验结果：", res3);
 							if (res3.code) {
-								// let totalNum = 0;
-								// res3.data.map(r4 => {
-								// 	totalNum = _util.newFloat(totalNum + r4
-								// 		.cardNum, 0);
-								// })
-								// let spObj = await KQSale.MatchSP(res.data
-								// 	.materielId, res.data.amount, totalNum);
-								// if (spObj) {
-								// 	spObj = that.CoverSale(spObj, that.SALE001);
-								// 	console.log("sale2属性合并后的对象：", spObj);
-								// 	console.log("sale2属性合并后的对象1：", that.SALE002);
-								// 	let arr = that.SALE002.filter(r => {
-								// 		return r.SPID == spObj.SPID;
-								// 	});
-								// 	console.log("sale2是否已存在：", arr.length);
-								// 	if (arr.length == 0) {
-								// 		that.SALE002.push(spObj);
-								// 		console.log("sale2", that.SALE002);
-								// 	} else { //有则追加
-								// 		let s2 = JSON.parse(JSON.stringify(that.SALE002));
-								// 		s2.map(r => {
-								// 			if (r.SPID == spObj.SPID) {
-								// 				r.QTY = _util.newFloat(r.QTY + totalNum,
-								// 					2);
-								// 				r.NET = _util.newFloat(r.QTY * r.PRICE, 2);
-								// 			}
-								// 		});
-								// 		that.SALE002 = s2;
-								// 	}
-								// } else {
-								// 	_util.simpleMsg("暂未匹配到商品信息", "none");
-								// 	return;
-								// }
-								let spObj = await KQSale.MatchSP(res.data.materielId, res.data
+								let SPObj = await KQSale.MatchSP(res.data.materielId, res.data
 									.amount, res.data.cardNum); //当前号段
-								spObj = that.CoverSale(spObj, that.SALE001); //属性合并
-								console.log("当前号段商品：", spObj);
+								SPObj = that.CoverSale(SPObj, that.SALE001); //属性合并
+
+								console.log("当前号段商品：", SPObj);
 								console.log("号段开始校验库存：", res3.data);
 								let arr = res3.data; //可用号段集合
-								arr.map((r3, i3) => { //循环发起库存校验
+								arr.map(async (r3, i3) => { //循环发起库存校验
+									let spObj = JSON.parse(JSON.stringify(
+										SPObj)); //防止被引用
 									let num1 = r3.cardNoBegin;
 									let num2 = r3.cardNoEnd;
-									KQSale.CheckStock({
+									console.log("号段检测：", num1 + "-" + num2);
+									await KQSale.CheckStock({
 										begin_num: num1,
 										end_num: num2,
 										material_id: res.data.materielId,
@@ -510,7 +485,10 @@
 											_util.simpleMsg(res1.msg, true);
 											return;
 										}
-										let no = that.SALE006.length + 1 + i3;
+										console.log("号段检测1：", num1 + "-" +
+											num2);
+										let no = that.SALE006.length + i3 ==
+											0 ? 1 : that.SALE006.length + i3;
 										let sale6 = that.CreateSale006({
 											begin_num: num1,
 											end_num: num2,
@@ -523,7 +501,9 @@
 										spObj.end_num = num2;
 										spObj.STR2 = num1 + "-" + num2;
 										spObj.NO = no;
-										that.SALE002.push(spObj); //追加当前号段的商品信息
+										that.SALE002.push(
+											spObj); //追加当前号段的商品信息
+										console.log("sale2", that.SALE002);
 										console.log("sale6", that.SALE006);
 									})
 								})
@@ -753,12 +733,12 @@
 					}
 					//发起激活
 					KQSale.ActiveConfirm({
-						salebill: that.SALE001.BILL,
+						salebill: "", //that.SALE001.BILL,
 						channel: "ZC007"
-					}, async res2 => {
+					}, res2 => {
 						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
 						//激活
-						console.log("VIP单卡激活结果：", res2);
+						console.log("礼品卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
 						if (!res2.code) { //激活失败要记录一下
@@ -929,6 +909,95 @@
 					}
 				})
 			},
+			//切换业务类型
+			ChangeYWTYPE: function(e) {
+				if (that.YWTYPE != e) {
+					if (that.SALE002.length > 0) {
+						_util.simpleMsg("已录入商品暂无法切换");
+						return;
+					}
+					_util.simpleModal("提示", "是否确认切换业务类型？", res => {
+						if (res) {
+							that.YWTYPE = e;
+							console.log("切换后的业务：", e);
+							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
+							KQSale.InitData("礼品卡业务切换后初始化", res => {
+								if (e == 'GiftCard_Retry')
+									that.GetFailOrder();
+								else {
+									console.log("业务类型已切换：", that.SALE001)
+									that.KQXSTYPE = "SK";
+									that.ResetSaleBill();
+								}
+							});
+						}
+					})
+				}
+			},
+			//获取充值失败的订单
+			GetFailOrder: function() {
+				_card_sale.GetFailOrder({
+					khid: that.store.KHID,
+					kqtype: "'SK'"
+				}, res => {
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						that.FailSaleList = _card_sale.FormatSale(data);
+						if (that.FailSaleList.length > 0)
+							that.curFailSale = that.FailSaleList[0];
+					} else {
+						that.FailSaleList = [];
+						that.curFailSale = {};
+						_util.simpleMsg("暂无数据", true);
+					}
+				})
+			},
+			//关闭重试
+			CloseRetry: function() {
+				that.ChangeYWTYPE("GiftCard_Active");
+			},
+			//确定重试
+			ConfirmRetry: function() {
+				_util.simpleModal("提示", "是否确认进行重试", res => {
+					if (res) {
+						let curSale = that.curFailSale;
+						let str1, reason, yn_ok;
+						if (curSale.SALE1.REASON == 'JHF') { //激活失败
+							//直接激活
+
+							//发起激活
+							KQSale.ActiveConfirm({
+								salebill: curSale.SALE1.BILL,
+								channel: "ZC007"
+							}, res2 => {
+								_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
+								//激活
+								console.log("礼品卡激活结果：", res2);
+								str1 = res2.code ? "success" : "fail";
+								if (res2.code) { //激活成功
+									yn_ok = "X";
+									reason = ""; //激活成功
+								} else { //激活失败 直接提交单据
+									yn_ok = "F";
+									reason = "JHF"; //激活失败
+								}
+								KQSale.Completed({
+									bill: curSale.SALE1.BILL,
+									str1,
+									reason,
+									yn_ok
+								}, res => {
+									console.log("销售单更新结果：", res);
+									that.GetFailOrder();
+								});
+							})
+						} else {
+							_util.simpleMsg("礼品卡业务暂不支持该操作");
+						}
+					}
+				})
+			},
+
 		}
 	}
 </script>

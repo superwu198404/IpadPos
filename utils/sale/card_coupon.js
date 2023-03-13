@@ -339,8 +339,8 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//校验库存
-		CheckStock: function(data, func) {
-			_member.StockQuery("查询中...", {
+		CheckStock: async function(data, func) {
+			await _member.StockQuery("查询中...", {
 				data
 			}, res1 => {
 				if (res1.code && res1.data[0].CARDNUM == "0") {
@@ -509,16 +509,59 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: function(data,func) {
+		Completed: function(data, func) {
 			console.log("[Completed]即将更新销售单状态:", data);
 			let sql = "update sale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
 				.yn_ok + "' where bill='" + data.bill + "';"
 			sql += "update syssale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
 				.yn_ok + "' where bill='" + data.bill + "';"
-			_card_sale.ExecuteBatchSQL(sql,func);
+			_card_sale.ExecuteBatchSQL(sql, func);
 		},
 	},
+	//礼品卡激活 重试
+	"GiftCard_Retry": {
+		//初始化
+		InitData: function(data, func) {
+			console.log("VIP售卡重试初始化：", data);
+			if (func) func();
+		},
+		//商品信息匹配
+		MatchSP: async function(spid) {
 
+		},
+		//查询信息
+		QueryInfo: function(data, func) {
+
+		},
+		//校验状态
+		CheckStatus: function(res) {
+
+		},
+		//校验库存
+		CheckStock: function(data, func) {
+
+		},
+		//激活申请校验
+		ActiveApply: function(data, func) {
+
+		},
+		//批量激活确认校验
+		ActiveConfirm: function(data, func) {
+			console.log("激活参数：", data);
+			_member.batchCardActiveConfirm("激活中...", {
+				data
+			}, func, func);
+		},
+		//业务完成
+		Completed: function(data, func) {
+			console.log("[Completed]即将更新销售单状态:", data);
+			let sql = "update sale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
+				.yn_ok + "' where bill='" + data.bill + "';"
+			sql += "update syssale001 set str1='" + data.str1 + "',reason='" + data.reason + "',yn_ok='" + data
+				.yn_ok + "' where bill='" + data.bill + "';"
+			_card_sale.ExecuteBatchSQL(sql, func);
+		},
+	},
 }
 
 //初始化卡券销售业务
@@ -541,8 +584,8 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 	this.CheckActiveNum = function(data, func) {
 		return KQTypeObj[this.YWType].CheckActiveNum(data, func);
 	};
-	this.CheckStock = function(data, func) {
-		KQTypeObj[this.YWType].CheckStock(data, func);
+	this.CheckStock = async function(data, func) {
+		await KQTypeObj[this.YWType].CheckStock(data, func);
 	};
 	this.ActiveApply = function(data, func) {
 		KQTypeObj[this.YWType].ActiveApply(data, func);

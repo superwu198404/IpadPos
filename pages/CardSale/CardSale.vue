@@ -47,7 +47,7 @@
 									<text>VIP售卡充值</text>
 								</label>
 							</view>
-							<view class="tab" @click="ChangeYWTYPE('VIPCard_Recharge')"
+							<view class="tab " @click="ChangeYWTYPE('VIPCard_Recharge')"
 								:class="YWTYPE=='VIPCard_Recharge'?'curr':''">
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
@@ -131,7 +131,7 @@
 						<view class="hh">
 							<view class="hotcakes">失败列表</view>
 						</view>
-						<view class="products">
+						<view class="products" v-if="FailSaleList.length>0">
 							<view class="procycle">
 								<!-- 销售单循环 -->
 								<view class="li" v-for="item in FailSaleList"
@@ -187,6 +187,7 @@
 								</view>
 							</view>
 						</view>
+						<NoData v-else></NoData>
 					</view>
 
 					<!-- 起始卡号 -->
@@ -295,17 +296,19 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [],
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
-				FailSaleList: [{
-					SALE1: {},
-					SALE2: [],
-					SALE3: [],
-					SALE6: []
-				}], //激活、充值失败的单据集合
+				FailSaleList: [
+					// 	{
+					// 	SALE1: {},
+					// 	SALE2: [],
+					// 	SALE3: [],
+					// 	SALE6: []
+					// },
+				], //激活、充值失败的单据集合
 				curFailSale: {
-					SALE1: {},
-					SALE2: [],
-					SALE3: [],
-					SALE6: []
+					// SALE1: {},
+					// SALE2: [],
+					// SALE3: [],
+					// SALE6: []
 				},
 			}
 		},
@@ -890,7 +893,8 @@
 						}
 					})
 				}
-			}, //特殊折扣关闭回调
+			},
+			//特殊折扣关闭回调
 			CloseTSZK: function(data) {
 				that.showDisc = false;
 				console.log("特殊折扣返回的商品数据：", data); //返回折扣类型 再次根据商品匹配一下折扣
@@ -935,9 +939,15 @@
 						if (that.FailSaleList.length > 0)
 							that.curFailSale = that.FailSaleList[0];
 					} else {
+						that.FailSaleList = [];
+						that.curFailSale = {};
 						_util.simpleMsg("暂无数据", true);
 					}
 				})
+			},
+			//关闭重试
+			CloseRetry: function() {
+				that.ChangeYWTYPE("VIPCard_Active");
 			},
 			//确定重试
 			ConfirmRetry: function() {
@@ -952,7 +962,7 @@
 							KQSale.ActiveConfirm({
 								salebill: curSale.SALE1.BILL,
 								material_id: curSale.SALE2[0].SPID,
-								amount: curSale.SALE1.OPRICE,
+								amount: curSale.SALE2[0].OPRICE,
 								dis_amount: curSale.SALE1.BILLDISC,
 								channel: "ZC007",
 								app_key: "POS",
@@ -973,7 +983,7 @@
 									//发起充值
 									KQSale.Recharge({
 										salebill: curSale.SALE1.BILL,
-										amount: curSale.SALE1.OPRICE,
+										amount: curSale.SALE2[0].OPRICE,
 										dis_amount: curSale.SALE1.BILLDISC,
 										khid: curSale.SALE1.KHID,
 										kh_name: that.store.NAME,
@@ -984,8 +994,7 @@
 										//充值
 										console.log("VIP单卡充值结果：", res3);
 										_util.simpleMsg(res3.code ? "充值成功！" : "充值失败：" + res3
-											.msg, !res3
-											.code);
+											.msg, !res3.code);
 										if (!res3.code) {
 											yn_ok = "F";
 											reason = "CZF"; //充值失败
@@ -1000,6 +1009,7 @@
 											yn_ok
 										}, res => {
 											console.log("销售单更新结果：", res);
+											that.GetFailOrder();
 										});
 									});
 								} else { //激活失败 直接提交单据
@@ -1013,6 +1023,7 @@
 										yn_ok
 									}, res => {
 										console.log("销售单更新结果：", res);
+										that.GetFailOrder();
 									});
 								}
 							})
@@ -1022,7 +1033,7 @@
 							//发起充值
 							KQSale.Recharge({
 								salebill: curSale.SALE1.BILL,
-								amount: curSale.SALE1.OPRICE,
+								amount: curSale.SALE2[0].OPRICE,
 								dis_amount: curSale.SALE1.BILLDISC,
 								khid: curSale.SALE1.KHID,
 								kh_name: that.store.NAME,
@@ -1041,6 +1052,7 @@
 									yn_ok = "X";
 									reason = ""; //充值成功
 								}
+								str1 = 'success';
 								KQSale.Completed({
 									bill: curSale.SALE1.BILL,
 									str1,
@@ -1048,6 +1060,7 @@
 									yn_ok
 								}, res => {
 									console.log("销售单更新结果：", res);
+									that.GetFailOrder();
 								});
 							});
 						}
