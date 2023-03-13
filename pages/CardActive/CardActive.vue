@@ -733,7 +733,7 @@
 					}
 					//发起激活
 					KQSale.ActiveConfirm({
-						salebill: "", //that.SALE001.BILL,
+						salebill: that.SALE001.BILL,
 						channel: "ZC007"
 					}, res2 => {
 						_util.simpleMsg(res2.code ? "激活成功" : "激活失败：" + res2.msg, !res2.code);
