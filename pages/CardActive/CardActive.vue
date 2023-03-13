@@ -488,8 +488,8 @@
 										}
 										console.log("号段检测1：", num1 + "-" +
 											num2);
-										let no = that.SALE006.length + i3 ==
-											0 ? 1 : that.SALE006.length + i3;
+										let no = that.SALE006.length + 1;
+										console.log("序号检测：", no);
 										let sale6 = that.CreateSale006({
 											begin_num: num1,
 											end_num: num2,
