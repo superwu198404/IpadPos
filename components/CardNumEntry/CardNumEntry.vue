@@ -64,8 +64,8 @@
 		data() {
 			return {
 				// ywType: "",
-				beginNum: "1087111000003298", //1087111000003218
-				endNum: "1087111000003313", //1087111000003218
+				beginNum: "", //1087111000003218
+				endNum: "", //1087111000003218
 				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
