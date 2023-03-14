@@ -51,31 +51,31 @@
 					<view class="module" style="height: 66%;">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
-						<view class="swipetip" v-if="SALE006.length==0">
+						<view class="swipetip" v-if="SALE002.length==0">
 							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 							<text>请先录入兑换券，再录入待激活礼品卡</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
-							<view class="ulli" v-for="(item,index) in SALE006">
+							<view class="ulli" v-for="(item,index) in SALE002">
 								<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
 									:data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
-										<label>￥{{item.SALE2.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
 										<view class="zje">
 											<view><text>总金额</text>￥{{item.NET}}</view>
 										</view>
 									</view>
 									<view class="card-num">
-										<label>始：<text>{{item.KQIDS}}</text></label>
-										<label>终：<text>{{item.KQIDE}}</text></label>
+										<label>始：<text>{{item.begin_num}}</text></label>
+										<label>终：<text>{{item.end_num}}</text></label>
 									</view>
 									<view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.SALE2.DISCRATE}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.SALE2.BZDISC}}</label>
-										<label><em>●</em><text>临时折扣：</text>{{item.SALE2.LSDISC}}</label>
-										<label><em>●</em><text>特批折扣：</text>{{item.SALE2.TPDISC}}</label>
+										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
+										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
+										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
+										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
 									</view>
 								</view>
 								<view class="touch-list list-delete" @click="RemoveItem(item)">
@@ -258,6 +258,7 @@
 		computed: {
 			//商品总数量
 			TotalNum: function() {
+				console.log("TotalNum发生改变：", that.SALE002);
 				let total = 0;
 				that.SALE002.map(r => {
 					total += r.QTY;
@@ -267,14 +268,23 @@
 			//商品总金额 包含折扣
 			TotalNet: function() {
 				let total = 0;
-				console.log("sale001", that.SALE001);
+				console.log("TotalNet发生改变：", that.SALE002);
 				if (!that.SALE002 || that.SALE002.length == 0) {
 					return total;
 				}
 				that.SALE002.map(r => {
 					total += r.NET;
 				})
-				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				return total;
+			}, //总折扣额 赠送金额和特殊折扣
+			TotalDisc: function() {
+				let total = 0;
+				if (!that.SALE002 || Object.keys(that.SALE002).length == 0) {
+					return total;
+				}
+				that.SALE002.map(r => {
+					total += _util.newFloat(r.DISCRATE, 2);
+				})
 				return total;
 			},
 		},
@@ -307,15 +317,33 @@
 					}
 				}
 			},
+			//判断是否已录入
+			IntervalOverlap: function(min, max) {
+				console.log("开始校验区间：", that.SALE002);
+				if (that.SALE002.length == 0) return true;
+				let arr = that.SALE002.map(r => {
+					return {
+						min: r.begin_num.substr(r.begin_num.length - 6, 5),
+						max: r.end_num.substr(r.end_num.length - 6, 5)
+					};
+				})
+				arr.push({
+					min: min.substr(min.length - 6, 5),
+					max: max.substr(max.length - 6, 5)
+				});
+				return _util.IntervalOverlap(arr);
+			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
 				}
+				if (!that.IntervalOverlap(that.begin_num, that.end_num))
+					return _util.simpleMsg("当前号段与已录入号段重复，请重新录入！");
 				KQSale.QueryInfo({
 					card_num: that.begin_num
 				}, res => {
-					console.log("库存校验结果：", res);
+					console.log("卡信息查询结果：", res);
 					if (KQSale.CheckStatus(res)) {
 						KQSale.CheckActiveNum({
 							channel: "ZC007",
@@ -325,46 +353,23 @@
 							khid: that.store.KHID,
 							cardnum: _util.CheckNum(that.begin_num, that.end_num)
 						}, async res3 => {
+							console.log("可激活数量校验结果：", res3);
 							if (res3.code) {
-								let totalNum = 0;
-								res3.data.map(r4 => {
-									totalNum = _util.newFloat(totalNum + r4
-										.cardNum, 0);
-								})
-								let spObj = await KQSale.MatchSP(res.data
-									.materielId, res.data.amount, totalNum);
-								if (spObj) {
-									spObj = that.CoverSale(spObj, that.SALE001);
-									console.log("sale2属性合并后的对象：", spObj);
-									let arr = that.SALE002.filter(r => {
-										return r.SPID == spObj.SPID;
-									});
-									if (arr.length == 0) {
-										that.SALE002.push(spObj);
-										console.log("sale2", that.SALE002);
-									} else { //有则追加
-										that.SALE002.map(r => {
-											if (r.SPID == spObj.SPID) {
-												r.QTY = _util.newFloat(r.QTY +
-													totalNum,
-													2);
-												r.NET = _util.newFloat(r.QTY * r
-													.PRICE, 2);
-											}
-										});
-										// _util.simpleMsg("已添加该商品", "none");
-										// return;
-									}
-								} else {
-									_util.simpleMsg("暂未匹配到商品信息", "none");
-									return;
-								}
-								console.log("开始校验库存：", res3.data);
+								let SPObj = await KQSale.MatchSP(res.data.materielId, res.data
+									.amount, 1); //当前号段
+								// console.log("当前号段商品0：", SPObj);
+								SPObj = that.CoverSale(SPObj, that.SALE001); //属性合并
+
+								console.log("当前号段商品：", SPObj);
+								console.log("号段开始校验库存：", res3.data);
 								let arr = res3.data; //可用号段集合
-								arr.map((r3, i3) => { //循环发起库存校验
+								arr.map(async (r3, i3) => { //循环发起库存校验
+									let spObj = JSON.parse(JSON.stringify(
+										SPObj)); //防止被引用
 									let num1 = r3.cardNoBegin;
 									let num2 = r3.cardNoEnd;
-									KQSale.CheckStock({
+									console.log("号段检测：", num1 + "-" + num2);
+									await KQSale.CheckStock({
 										begin_num: num1,
 										end_num: num2,
 										material_id: res.data.materielId,
@@ -372,19 +377,31 @@
 									}, res1 => {
 										console.log("库存校验结果：", res1);
 										if (!res1.code) {
-											_util.simpleMsg(res1.msg,
-												true);
+											_util.simpleMsg(res1.msg, true);
 											return;
 										}
+										console.log("号段检测1：", num1 + "-" +
+											num2);
+										let no = that.SALE006.length + 1;
+										console.log("序号检测：", no);
 										let sale6 = that.CreateSale006({
 											begin_num: num1,
 											end_num: num2,
 											qty: r3.cardNum,
-											index: that.SALE006.length +
-												1 + i3
+											index: no
 										}, spObj, that.SALE001);
 										if (sale6)
 											that.SALE006.push(sale6);
+										spObj.begin_num = num1;
+										spObj.end_num = num2;
+										spObj.STR2 = num1 + "-" + num2;
+										spObj.NO = no;
+										spObj.QTY = r3.cardNum; //重写一下QTY
+										spObj.NET = _util.newFloat(spObj
+											.PRICE * spObj.QTY, 2); //重写一下NET
+										that.SALE002.push(
+											spObj); //追加当前号段的商品信息
+										console.log("sale2", that.SALE002);
 										console.log("sale6", that.SALE006);
 									})
 								})
@@ -404,12 +421,10 @@
 				sale6.KQIDSTR = cards.begin_num + "-" + cards.end_num;
 				sale6.SPID = sale2.SPID;
 				sale6.MYSTR = sale2.PRICE;
-				sale6.QTY = cards.qty || sale2.QTY;
-				sale6.NO = cards.index || sale2.NO;
+				sale6.QTY = cards.qty;
+				sale6.NO = cards.index;
 
 				sale6.txtStyle = "left:0"; //用于滑动删除事件
-				sale6.SALE2 = sale2; //新加用于列表联查显示
-				sale6.NET = _util.newFloat(sale6.MYSTR * sale6.QTY, 2); //新加用于列表联查显示
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -455,26 +470,14 @@
 			RemoveItem: function(e) {
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
+						let arr = that.SALE002.filter(r => {
+							return r.SPID != e.SPID;
+						});
+						that.SALE002 = arr;
 						let arr1 = that.SALE006.filter(r => {
-							return r.KQIDSTR != e.KQIDSTR;
+							return r.KQIDSTR != e.STR2;
 						});
 						that.SALE006 = arr1;
-						let delIndex = -1;
-						let SALE2 = JSON.parse(JSON.stringify(that.SALE002)); //拷贝一下
-						SALE2.map((r, i) => {
-							if (r.SPID == e.SPID) {
-								if (r.QTY == e.QTY) {
-									delIndex = i;
-									return;
-								}
-								r.QTY -= e.QTY;
-								r.NET -= e.NET;
-							}
-						})
-						if (delIndex >= 0) {
-							SALE2.splice(delIndex, 1);
-						}
-						that.SALE002 = SALE2;
 					}
 				})
 			},
@@ -536,7 +539,7 @@
 					},
 					orderList = [],
 					cardList = [];
-				orderList = that.SALE006.map(r => {
+				orderList = that.SALE002.map(r => {
 					return {
 						merOrderId: r.BILL,
 						lineNo: r.NO,
@@ -646,7 +649,7 @@
 							}
 						})
 					} else {
-						_util.simpleMsg("校验失败：", res.msg, true);
+						_util.simpleMsg("校验失败：" + res.msg, true);
 					}
 				});
 			},
@@ -723,18 +726,75 @@
 			SaleCompleted: async function() {
 				console.log("生成销售单");
 				//激活完成-创建卡券销售单
+				let res = that.ConcatSale2_6();
 				await KQSale.Completed({
 					SALE001: that.SALE001,
-					SALE002: that.SALE002,
+					SALE002: res.sale2,
 					SALE003: that.SALE003,
-					SALE006: that.SALE006,
+					SALE006: res.sale6,
 					SXSALE001: that.SXSALE001,
 				})
-				await that.PrintBill();
+				await that.PrintBill(res.sale2, res.sale6);
 				//重置销售单
 				that.ResetSaleBill();
 			},
-			PrintBill: async function() {
+			//数据合并
+			ConcatSale2_6: function() {
+				let SALE2 = JSON.parse(JSON.stringify(that.SALE002));
+				let SALE6 = JSON.parse(JSON.stringify(that.SALE006));
+				console.log("合并传入的对象：", {
+					SALE2,
+					SALE6
+				});
+				let arr = [];
+				SALE2.map(r => {
+					if (arr.length == 0) {
+						console.log("1：", r);
+						arr.push(r);
+					} else {
+						let obj = arr.find(r1 => {
+							return r1.SPID == r.SPID;
+						});
+						console.log("2：", obj);
+						const index = arr.findIndex(r1 => {
+							return r1.SPID == r.SPID;
+						});
+						console.log("3：", index);
+						if (!obj) {
+							console.log("5：", obj);
+							arr.push(obj);
+						} else {
+							console.log("6：", obj);
+							arr[index].QTY = _util.newFloat(obj.QTY + r.QTY, 2);
+							arr[index].NET = _util.newFloat(obj.NET + r.NET, 2);
+							arr[index].DISCRATE = _util.newFloat(obj.DISCRATE + r.DISCRATE, 2);
+							arr[index].BILLDISC = _util.newFloat(obj.BILLDISC + r.BILLDISC, 2);
+							// arr[index].BZDISC = _util.newFloat(obj.BZDISC + r.BZDISC, 2);//无特殊折扣
+							// arr[index].LSDISC = _util.newFloat(obj.LSDISC + r.LSDISC, 2);
+							// arr[index].TPDISC = _util.newFloat(obj.TPDISC + r.TPDISC, 2);
+							arr[index].CXDISC = _util.newFloat(obj.CXDISC + r.CXDISC, 2); //主要是手工折扣
+							arr[index].YN_SKYDISC = arr[index].CXDISC > 0 ? "Y" : "N";
+							console.log("7：", arr[index]);
+						}
+					}
+				});
+				console.log("10:", SALE2);
+				SALE6.map(r => {
+					let obj = that.SALE002.find(r1 => {
+						return r1.STR2 == r.KQIDSTR;
+					})
+					console.log("8：", obj);
+					console.log("9：", obj.NET);
+					r.MYSTR = obj.NET;
+				});
+				let aObj = {
+					sale2: arr,
+					sale6: SALE6
+				};
+				console.log("合并后的SALE002_6：", aObj);
+				return aObj;
+			},
+			PrintBill: async function(sale2, sale6) {
 				console.log("调用打印");
 				//调用打印
 				//调用打印
@@ -754,7 +814,7 @@
 						item.balance = 0;
 					}
 				});
-				await that.$refs.printerPage.sksqBluePrinter(that.SALE001, that.SALE002, arr3, that.SALE006,
+				await that.$refs.printerPage.sksqBluePrinter(that.SALE001, sale2, arr3, sale6,
 					printerPram);
 
 			},
@@ -773,6 +833,12 @@
 				that.SXSALE001 = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
+				that.CurZKDisc = {};
+				let store = _util.getStorage("store");
+				store.DKFID = "80000000";
+				store.DKFNAME = '默认大客户';
+				_util.setStorage("store", store);
+				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 				console.log("单据重置成功")
 			},
 			//显示扫码组件
@@ -785,7 +851,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				// e = "900000000002075269";
+				// e = "900000000002082278";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {

@@ -15,28 +15,25 @@
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡券信息查询
+						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 				</view>
 				<view class="commodity">
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+					<view class="typeoper">
+						<label><button>卡延期</button><image src="@/images/img2/danju.png" mode="widthFix"></image></label>
+					</view>
 					<view class="number">
 						<view class="labnum">
 							<text>卡/券类型：</text>
 							<view class="chaxun">
-								<view class="chanxz">
-									<label class="curr">礼品卡 <em>✓</em></label>
-									<label>礼品券 <em>✓</em></label>
-									<label>可伴卡 <em>✓</em></label>
-									<label class="quanbu" v-if="quanbu">全部</label>
-								</view>
-								<!-- <view class="label">
-									<picker :range="source.types" range-key="text" mode='selector' @change="select_type">
+								<view class="label">
+									<!-- <picker :range="source.types" range-key="text" mode='selector' @change="select_type">
 										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
-									</picker>
+									</picker> -->
 									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
-								</view> -->
+								</view>
 							</view>
 						</view>
 						<view class="labnum">
@@ -51,7 +48,8 @@
 							</view>
 						</view>	
 					</view>
-					<view class="partics" v-if="form.infos && form.infos.card_id">
+					 <!-- v-if="form.infos && form.infos.card_id" -->
+					<view class="partics">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
@@ -65,20 +63,17 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname" style="opacity: 0;">卡类型名称</view>
+												<view class="kname">卡类型名称</view>
 												<view class="card-num">											
 													<label>券号：{{ default_view(form.infos.card_id) }}</label>
 													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
 												</view>
 											</view>
-											<!-- <view class="denominat">
-												<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
-												<text>（满38元使用）</text>
-											</view> -->
+		
 										</view>
 										<view class="statistic">
-											<text v-if="form.infos.valid_date">{{ default_view(form.infos.valid_date,'') }}</text>
-											<text v-if="form.infos.status">{{ default_view(form.infos.status,'') }}</text>
+											<text>{{ default_view(form.infos.valid_date,'') }}</text>
+											<text v-if="form.infos.is_use">{{ default_view(form.infos.is_use,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -93,7 +88,7 @@
 									<em></em>
 									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
 								</view>
-								<button v-if="form.infos.status" class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
+								<button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button>
 							</view>
 							<view class="kainfolist">
 								<label v-if="form.infos.is_customer_emotional_coupon">
@@ -129,7 +124,7 @@
 							</view>
 						</view>
 					</view>
-					<NoData v-if="!(form.infos && form.infos.card_id)"></NoData>
+					
 				</view>
 			</view>
 		</view>
@@ -154,14 +149,7 @@
 			default_view(){
 				return $(function(v, def_val = '暂无更多信息...'){
 					if(v)
-						if(v == 'Y'){
-							return '是';
-						}
-						else if(v == 'N'){
-							return '否'
-						}
-						else
-							return v;
+						return v;
 					else
 						return def_val;
 				});
@@ -237,6 +225,7 @@
 	}
 </script>
 
+
 <style>
 	.commodity .number{
 		padding: 0;
@@ -248,7 +237,7 @@
 		align-items: center;
 	}
 	.commodity .number .labnum{
-		margin:1% 0 2%;
+		margin:2% 0;
 		display: flex;
 		flex-direction: column;
 		height: auto;
@@ -273,6 +262,10 @@
 	.totals view em{
 		height: 40rpx;
 		margin:0 8rpx 0 30rpx;
+	}
+	.totals button{
+		background-color: #FBB955;
+		width: 300rpx;
 	}
 	.cardlist{
 		box-shadow: 0px 10px 30px 1px rgba(66,177,75,0.16);
@@ -335,7 +328,7 @@
 		padding:3% 3%;
 		justify-content: space-between;
 		color: #fff;
-		transform: translateY(-58rpx);
+		margin-top:18rpx;
 	}
 	.statistic text:nth-child(2){
 		background-color: #FFE8E4;
@@ -343,17 +336,12 @@
 		font-size: 26rpx;
 		padding:4rpx 10rpx;
 	}
-	.labnum text{
-		line-height: 90rpx;
-		color: #b0b0b0;
-	}
 	.chanxz{
 		width:85%;
-		padding:0 15% 0 0;
+		padding:2% 15% 0 0;
 		position: relative;
 	}
 	.chanxz label{
-		height: 70rpx;
 		width:18%;
 		font-size: 26rpx;
 		margin:0 1% !important;
@@ -361,7 +349,7 @@
 	.chanxz .quanbu{
 		width:90rpx;
 		position: absolute;
-		top:0rpx;
+		top:19rpx;
 		right:3%;
 		font-size: 18rpx;
 		color: #42B14B;

@@ -136,13 +136,12 @@ const utils = {
 	},
 	callContainer: function(this_quote) {
 		return (function(callback, is_bind = true) {
-			try{
-				if(is_bind)
+			try {
+				if (is_bind)
 					return callback.bind(this);
 				else
 					return callback.call(this);
-			}
-			catch(e){
+			} catch (e) {
 				console.warn('[CallContainer]调用容器内发生错误!错误信息:', e);
 			}
 		}).bind(this_quote);
@@ -398,23 +397,39 @@ const utils = {
 		}
 		return num;
 	},
-	createdResult: function(code, msg, data = null){
+	createdResult: function(code, msg, data = null) {
 		return {
 			code,
 			msg,
 			data
 		}
 	},
-	convertShortDate:function(yyyymmdd){
-		if(yyyymmdd && yyyymmdd.length){
-			if(yyyymmdd.length === 6){
+	convertShortDate: function(yyyymmdd) {
+		if (yyyymmdd && yyyymmdd.length) {
+			if (yyyymmdd.length === 6) {
 				return `${yyyymmdd.substr(0,4)}/${yyyymmdd.substr(4,2)}/${yyyymmdd.substr(6,2)}`;
 			}
 			return new Date().toLocaleDateString()
-		}
-		else {
+		} else {
 			return new Date().toLocaleDateString();
 		}
+	},
+
+	//判断区间重叠[{min:"",max:""},{min:"",max:""},{min:"",max:""}];
+	IntervalOverlap: function(intervalObjs) {
+		console.log("开始校验区间1：", intervalObjs);
+		let over = true;
+		for (var i = 0; i < intervalObjs.length - 1; i++) { //重叠判断，-1代表最后一个不进行判断
+			let a = intervalObjs[i].max - intervalObjs[i + 1].min;
+			console.log("比较值：", a);
+			if (intervalObjs[i].max - intervalObjs[i + 1].min >= 0) {
+				console.log("区间" + JSON.stringify(intervalObjs[i]) + "与" + JSON.stringify(intervalObjs[i + 1]) +
+					"有重叠");
+				over = false;
+				break;
+			}
+		}
+		return over;
 	}
 }
 
@@ -453,4 +468,5 @@ export default {
 	CheckNum: utils.CheckNum,
 	createdResult: utils.createdResult,
 	convertShortDate: utils.convertShortDate,
+	IntervalOverlap: utils.IntervalOverlap
 }

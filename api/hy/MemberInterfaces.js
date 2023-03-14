@@ -57,7 +57,8 @@ var requestAssembleTwo = function(loading_title = "请求中...", options) {
 					kquser: global_data?.kquser
 				},
 				cardinfo: options?.data
-			}
+			},
+			load: true,
 		};
 		// console.log("[RequestAssemble]调用参数:", request);
 		return request;
@@ -185,13 +186,13 @@ const CARD_QUERY = function(loading_title, request, success, error) {
 	});
 }
 //卡券库存查询（与仟吉Hybris中台，卡券公用接口）
-const StockQuery = function(loading_title, request, success, error) {
+const StockQuery = async function(loading_title, request, success, error) {
 	let data = requestAssembleTwo(loading_title, {
 		data: request.data,
 		paytype: "MemberInterface",
 		method: "StockQuery"
 	});
-	Req.asyncFuncOne(data, function(res) {
+	await Req.asyncFuncOne(data, function(res) {
 		if (success)
 			success(res)
 	}, function(res) {
