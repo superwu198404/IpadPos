@@ -21,18 +21,16 @@
 				</view>
 				<view class="commodity">
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
-					<view class="typeoper">
+					<!-- <view class="typeoper">
 						<label><button>卡延期</button><image src="@/images/img2/danju.png" mode="widthFix"></image></label>
-					</view>
+					</view> -->
 					<view class="number">
 						<view class="labnum">
 							<text>卡/券类型：</text>
 							<view class="chaxun">
-								<view class="label">
-									<!-- <picker :range="source.types" range-key="text" mode='selector' @change="select_type">
-										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
-									</picker> -->
-									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
+								<view class="chanxz">
+									<label class="curr">卡延期 <em>✓</em></label>
+									<label>卡挂失 <em>✓</em></label>
 								</view>
 							</view>
 						</view>
@@ -88,7 +86,7 @@
 									<em></em>
 									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
 								</view>
-								<button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button>
+								<!-- <button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button> -->
 							</view>
 							<view class="kainfolist">
 								<label v-if="form.infos.is_customer_emotional_coupon">
@@ -141,7 +139,7 @@
 	import member from "@/api/hy/MemberInterfaces.js";
 	var $;
 	export default {
-		name: "Cardquery",
+		name: "CardDelay",
 		components: {
 			Head
 		},
@@ -342,9 +340,33 @@
 		position: relative;
 	}
 	.chanxz label{
-		width:18%;
-		font-size: 26rpx;
+		width:23%;
+		font-size: 28rpx;
 		margin:0 1% !important;
+		border-color: #FFCFC5;
+	}
+	.chanxz label:nth-child(1){
+		border-color: #FBB955;
+		color: #FBB955;
+	}
+	.chanxz label:nth-child(2){
+		border-color: #FE694B;
+		color: #FE694B;
+	}
+	.chanxz label:nth-child(1).curr{
+		border-color: #FBB955;
+		background: linear-gradient(180deg, #FFEEB9 0%, #FFFFFF 100%);
+		color:#FBB955
+	}
+	.chanxz label:nth-child(2).curr{
+		background: linear-gradient(180deg, #FFD2C9 0%, #FFFFFF 100%);
+		border: 2rpx solid #FE694B;
+	}
+	.chanxz label:nth-child(1).curr em{
+		background:#FBB955;
+	}
+	.chanxz label:nth-child(2).curr em{
+		background:#FE694B;
 	}
 	.chanxz .quanbu{
 		width:90rpx;
