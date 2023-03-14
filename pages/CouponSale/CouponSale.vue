@@ -35,12 +35,18 @@
 			<view class="prolist prolist-correct zxpro " style="width: 92%;">
 				<view class="choice">
 					<view :class="view.current_part_view == 'coupon_activate' ? 'tab curr' : 'tab'">
-						<text @click="view.current_part_view = 'coupon_activate'">活动券激活</text>
+						<label>
+							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+							<text @click="view.current_part_view = 'coupon_activate'">活动券激活</text>
+						</label>
 						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 					</view>
 					<view :class="view.current_part_view == 'coupon_activate_fail' ? 'tab curr' : 'tab'">
-						<text @click="view.current_part_view = 'coupon_activate_fail'">活动券激活失败</text>
-						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+						<label>
+							<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>						
+							<text @click="view.current_part_view = 'coupon_activate_fail'">活动券激活失败</text>
+						</label>
+						<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 					</view>
 				</view>
 				<view v-if="view.current_part_view == 'coupon_activate'">

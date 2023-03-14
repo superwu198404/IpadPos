@@ -57,7 +57,7 @@
 							</view>
 							<view class="tab jh-sb" @click="ChangeYWTYPE('VIPCard_Retry')"
 								:class="YWTYPE=='VIPCard_Retry'?'curr':''">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
 									<text>激活/充值失败</text>
