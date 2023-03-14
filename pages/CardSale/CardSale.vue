@@ -14,22 +14,22 @@
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
-				<view class="listep curr">
+				<view class="listep" :class="{'curr':add_class==0}">
 					<text class="xuhao">01</text>
 					<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==1}">
 					<text class="xuhao">02</text>
 					<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==2}">
 					<text class="xuhao">03</text>
 					<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==3}">
 					<text class="xuhao">04</text>
 					<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
 					<!-- <em>>>>>>></em> -->
@@ -298,6 +298,7 @@
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
+				add_class:0
 			}
 		},
 		onReady: function() {
@@ -701,6 +702,7 @@
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
 				uni.$emit('continue-timed-communication');
+				that.add_class==3
 				if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 					_util.simpleMsg(result.msg, !result.code);
 					//清除手工折扣
