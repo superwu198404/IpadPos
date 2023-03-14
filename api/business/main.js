@@ -244,6 +244,7 @@ var GetZKDatasAll = async function(dkhid) {
 		ZKDatas: ZKDatas,
 		DKFZKDatas: DKFZKDatas
 	}
+	console.log("[GetZKDatasAll]折扣数据:",obj);
 	return obj;
 }
 //数据筛选

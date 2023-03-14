@@ -2,6 +2,7 @@ import member from '@/api/hy/MemberInterfaces.js';
 import common from '@/api/common.js';
 import payment_all from '@/api/Pay/PaymentALL.js';
 import util from '../../utils/util';
+import bd from '@/utils/business_dictionary.js';
 const infos_template = {
 		type_name: '',//类型名称
 		balance: 0,//余额
@@ -22,27 +23,11 @@ const infos_template = {
 		use_store_name: '',//使用门店
 		spend_amount: '',//消费金额
 		operator: '',//操作员
-		is_activate: '',//是否被激活
 	};
 const created_new_card_coupon_infos = (attach = infos_template) => {
 	return Object.assign(Object.assign({}, infos_template),attach);
 }
 export default {
-	coupon_status:{//券状态
-		'F01': '未发放',
-		'F02': '已领用',
-		'J01': '可使用',
-		'J02': '未售出已过期',
-		'J03': '已使用',
-		'J04': '已作废',
-		'J05': '已退货',
-		'J06': '售出已过期',
-		'Z01': '转赠中',
-		'S01': '已锁定',
-		'J07': '过期退款',
-		'J08': '过期后核销',
-		'J09': '过期后转入'
-	},
 	base:{
 		search(){
 			console.log(`[Search]${this.text || ''}查询信息...`);
@@ -80,7 +65,7 @@ export default {
 							apply: result.data.total_info.ZZCPSL_STAFF,
 							use_date: result.data.total_info.ZZCPHXDATE,
 							use_store_id: result.data.total_info.ZZCPHX_STORE,
-							status: coupon_status_enum[result.data.total_info.ZZCPSTATE] || ""
+							status: bd.coupon_status[result.data.total_info.ZZCPSTATE] || ""
 						});
 						console.log("[Search]仟吉券查询信息:",infos);
 						return util.createdResult(true,result.msg,infos);
@@ -99,20 +84,15 @@ export default {
 					let result = await member.coupon_sale.special_request('CARD_QUERY', { card_num: data }), infos = null;
 					console.log("[Search]仟吉卡查询信息:",result);
 					if(result.code){
-						let local_result = await common.SimpleLocalQuery('SPDA',{
-							spid: result.data.materielId
-						}), goods_infos = null;
-						console.log("[Search]商品信息查询结果:", local_result);
 						infos = created_new_card_coupon_infos({
+							type_name: bd.card_type[result.data.cardType] || this.text,
 							spend_amount: result.data.amount,
 							balance: result.data.balance,
 							card_id: data,
-							type_name: this.text,
-							valid_date: util.convertShortDate(result.data.expireDate)
+							valid_date: util.convertShortDate(result.data.expireDate),
+							status: bd.card_status[result.data.status] || ""
 						});
-						if(local_result.data && local_result.length){
-							infos.type_name = local_result[0].SNAME;
-						}
+						console.log("[Search]处理后的卡信息:",infos);
 						return util.createdResult(true,result.msg,infos);
 					}
 					else{
@@ -127,13 +107,18 @@ export default {
 					console.log("[Search]可伴券查询信息...",data);
 					let result = await payment_all.PaymentTypeInfos.COUPON.QueryCouponDetails(data), infos = null;
 					console.log("[Search]可伴券查询结果:",result);
+					let local_result = await common.SimpleLocalQuery('SPDA',{
+						spid: result.data?.coupon_good_no
+					});
+					console.log("[Search]本地商品信息查询结果:",local_result);
 					if(result.code){
 						infos = created_new_card_coupon_infos({
 							card_id: data,
+							type_name: bd.keban_coupon_type[result.data.codeType] || this.text,
 							coupon_denomination: result.data.money,
 							balance: result.data.leftMoney,
 							valid_date: new Date(result.data.endTime || new Date()).toLocaleString(),
-							is_activate: result.data.status == '20'
+							status: result.data.status == '20' ? '已激活' : '未激活'
 						});
 						return util.createdResult(true,result.msg,infos);
 					}

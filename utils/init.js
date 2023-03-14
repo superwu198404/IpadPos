@@ -29,12 +29,13 @@ const init = {
 		return Object.cover(Object.cover(sale1,this.sale_common_init_params()), attach);
 	},
 	get_sale002(sale1, attach = {}){//用sale1去初始化sale2部分信息，以保证信息一致
+		let _ = {...attach}
 		let sale2 = new sales.sale002();
-		attach.NO = this.generators.get_next_index('sale002');//自动进行编号
+		_.NO = this.generators.get_next_index('sale002');//自动进行编号
 		if(sale1)
-			return Object.cover(Object.cover(sale2, sale1),attach);
+			return Object.cover(Object.cover(sale2, sale1),_);
 		else{
-			return Object.cover(Object.cover(sale2, this.sale_common_init_params()),attach)
+			return Object.cover(Object.cover(sale2, this.sale_common_init_params()),_)
 		}
 	},
 	get_sale003(sale1, attach = {}){
@@ -46,12 +47,13 @@ const init = {
 		}
 	},
 	get_sale006(sale1, attach = {}){//用sale1去初始化sale6部分信息，以保证信息一致
+		let _ = {...attach}
 		let sale6 = new sales.sale006();
-		attach.NO = this.generators.get_next_index('sale006');//自动进行编号
+		_.NO = this.generators.get_next_index('sale006');//自动进行编号
 		if(sale1)
-			return Object.cover(Object.cover(sale6, sale1),attach);
+			return Object.cover(Object.cover(sale6, sale1),_);
 		else{
-			return Object.cover(Object.cover(sale6, this.sale_common_init_params()),attach)
+			return Object.cover(Object.cover(sale6, this.sale_common_init_params()),_)
 		}
 	},
 	get_sxsale001(sale1, attach = {}){
