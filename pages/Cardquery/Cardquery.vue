@@ -25,12 +25,18 @@
 						<view class="labnum">
 							<text>卡/券类型：</text>
 							<view class="chaxun">
-								<view class="label">
-									<!-- <picker :range="source.types" range-key="text" mode='selector' @change="select_type">
-										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
-									</picker> -->
-									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
+								<view class="chanxz">
+									<label class="curr">礼品卡 <em>✓</em></label>
+									<label>礼品券 <em>✓</em></label>
+									<label>可伴卡 <em>✓</em></label>
+									<label class="quanbu" v-if="quanbu">全部</label>
 								</view>
+								<!-- <view class="label">
+									<picker :range="source.types" range-key="text" mode='selector' @change="select_type">
+										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
+									</picker>
+									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
+								</view> -->
 							</view>
 						</view>
 						<view class="labnum">
@@ -235,7 +241,7 @@
 		align-items: center;
 	}
 	.commodity .number .labnum{
-		margin:2% 0;
+		margin:1% 0 2%;
 		display: flex;
 		flex-direction: column;
 		height: auto;
@@ -330,12 +336,17 @@
 		font-size: 26rpx;
 		padding:4rpx 10rpx;
 	}
+	.labnum text{
+		line-height: 90rpx;
+		color: #b0b0b0;
+	}
 	.chanxz{
 		width:85%;
-		padding:2% 15% 0 0;
+		padding:0 15% 0 0;
 		position: relative;
 	}
 	.chanxz label{
+		height: 70rpx;
 		width:18%;
 		font-size: 26rpx;
 		margin:0 1% !important;
@@ -343,7 +354,7 @@
 	.chanxz .quanbu{
 		width:90rpx;
 		position: absolute;
-		top:19rpx;
+		top:0rpx;
 		right:3%;
 		font-size: 18rpx;
 		color: #42B14B;
