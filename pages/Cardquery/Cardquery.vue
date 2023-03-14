@@ -65,7 +65,7 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname">卡类型名称</view>
+												<view class="kname" style="opacity: 0;">卡类型名称</view>
 												<view class="card-num">											
 													<label>券号：{{ default_view(form.infos.card_id) }}</label>
 													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
@@ -77,8 +77,8 @@
 											</view> -->
 										</view>
 										<view class="statistic">
-											<text>{{ default_view(form.infos.valid_date,'') }}</text>
-											<text v-if="form.infos.is_use">{{ default_view(form.infos.is_use,'') }}</text>
+											<text v-if="form.infos.valid_date">{{ default_view(form.infos.valid_date,'') }}</text>
+											<text v-if="form.infos.status">{{ default_view(form.infos.status,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -93,7 +93,7 @@
 									<em></em>
 									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
 								</view>
-								<button class="btn btn-qx">{{ default_view(form.infos.is_use,'') }}</button>
+								<button v-if="form.infos.status" class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
 							</view>
 							<view class="kainfolist">
 								<label v-if="form.infos.is_customer_emotional_coupon">
@@ -154,7 +154,14 @@
 			default_view(){
 				return $(function(v, def_val = '暂无更多信息...'){
 					if(v)
-						return v;
+						if(v == 'Y'){
+							return '是';
+						}
+						else if(v == 'N'){
+							return '否'
+						}
+						else
+							return v;
 					else
 						return def_val;
 				});
@@ -328,7 +335,7 @@
 		padding:3% 3%;
 		justify-content: space-between;
 		color: #fff;
-		margin-top:18rpx;
+		transform: translateY(-58rpx);
 	}
 	.statistic text:nth-child(2){
 		background-color: #FFE8E4;
