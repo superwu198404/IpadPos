@@ -1777,22 +1777,8 @@ function GetSale(global, vue, target_name, uni) {
 	
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
-	this.FKDA_INFO = [];
-	(util.callBind(this, async function() {
-		try {
-			await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, util.callBind(this, function(res) {
-				if (res.code) {
-					this.FKDA_INFO = JSON.parse(res.data);
-					util.setStorage('FKDA_INFO', this.FKDA_INFO)
-					console.warn("[GetSale]获取支付方式:", this.FKDA_INFO);
-				} else {
-					util.simpleMsg("获取付款方式失败!", true)
-				}
-			}))
-		} catch (e) {
-			util.simpleMsg("获取付款方式失败!", true);
-		}
-	}))()
+	this.FKDA_INFO = util.getStorage('FKDA_INFO');
+	console.warn("[GetSale]获取的支付方式信息:", this.FKDA_INFO);
 	/*
 	 * 工具方法 
 	 */

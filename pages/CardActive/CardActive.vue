@@ -303,7 +303,7 @@
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, _util.callBind(that, function(
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that, function(
 						res) {
 						if (res.code) {
 							that.FKDA_INFO = JSON.parse(res.data);

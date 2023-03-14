@@ -60,7 +60,7 @@
 									<view class="h6">
 										<label>￥{{ sale6_main.sale002.PRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{ sale6_main.sale002.NET }}</view>
+											<view><text>总金额</text>￥{{ get_current_coupons_total_amount(sale6_main) }}</view>
 										</view>
 									</view>
 									<view class="card-num">
@@ -213,6 +213,11 @@
 				return $(function(sale6){
 					return this.source.sale6_map_style.get(sale6)?.text_style;
 				})
+			},
+			get_current_coupons_total_amount(){//获取当前券号段
+				return $(function(sale6_main){
+					return sale6_main.sale002.PRICE * sale6_main.sale006.QTY;
+				})
 			}
 		},
 		watch: {
@@ -224,6 +229,7 @@
 					uni.$once("GetCardNums", $(function(data) {
 						console.log("[Watch-Number-Info]获取到号码信息:", data);
 						console.log("[Watch-Number-Info]sale6列表数据:", this.source.sale006);
+						if(data.type === 'N') return;//取消不进行查询操作
 						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6
 							.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE ===
 							data.end_num);
@@ -291,7 +297,7 @@
 				return await main.GetZKDatasAll(id);
 			},
 			async get_payment_infos(){
-				return await RequestSend(`SELECT FKID,SNAME,JKSNAME FROM FKDA`, $(function(res) {
+				return await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, $(function(res) {
 					if (res.code) {
 						this.FKDA_INFO = JSON.parse(res.data);
 						util.setStorage('FKDA_INFO', this.FKDA_INFO)

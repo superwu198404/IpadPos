@@ -1069,6 +1069,10 @@
 			},
 			CashRefundCombine: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn("[CashRefundCombine]现金支付信息:",{
+					payment_infos:util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				let cash_list = this.RefundList.filter(i => i.fkid == cash_info.FKID);
 				let other_list = this.RefundList.filter(i => i.fkid != cash_info.FKID);
 				if (cash_list.length == 2) { //现金存在找零的情况
@@ -1081,6 +1085,10 @@
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn("[CashRefundTips]现金支付信息:",{
+					payment_infos:util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				if (!this.cash_change_tips) return;
 				this.cash_change_tips = false;
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == cash_info.FKID);
@@ -1096,7 +1104,11 @@
 			Refund: function(isRetry = false) {
 				console.log("[Refund]开始退款流程...")
 				console.log("[Refund]退款单号为：", this.out_refund_no);
-				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDID == '1');
+				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn("[Refund]现金支付信息：", {
+					payment_infos: util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
@@ -1360,6 +1372,10 @@
 			},
 			CountCashChange: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn('[CountCashChange]现金支付信息:',{
+					payment_infos: util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				let prev_cash_amount = this.PayList.find(i => i.fkid == cash_info.FKID)?.amount || 0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
@@ -1386,6 +1402,10 @@
 					debt: this.allAmount
 				});
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn("[CashChange]现金支付信息:", {
+					payment_infos: util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				if(this.currentPayInfo.fkid != cash_info.FKID) return true;//不是现金不走这个条件
 				//找零金额
 				let change_number = this.CountCashChange();
@@ -1651,6 +1671,10 @@
 			CheckCashPayment: function(paid_record) {
 				console.log("[CheckCashPayment]现金支付检测...", paid_record.fkid);
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
+				console.warn("[CheckCashPayment]现金支付信息:", {
+					payment_infos: util.getStorage("FKDA_INFO"),
+					cash_info
+				});
 				if (paid_record.fkid == cash_info.FKID) {
 					let remove_cash_record_index = this.PayList.findIndex(i => i.fkid == cash_info.FKID && !i.fail);
 					console.log("[CheckCashPayment]现金支付索引:", remove_cash_record_index);
