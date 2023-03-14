@@ -635,7 +635,7 @@
 								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
 									console.log("兑换券核销结果：", res1);
 									if (res1.code) {
-										_util.simpleMsg("券核销成功即将跳转支付...", "none");
+										// _util.simpleMsg("券核销成功即将跳转支付...", "none");
 										that.CreateSale003(); //创建已支付的兑换券记录
 										console.log("兑换券支付记录：", that.payed);
 										//跳转支付
@@ -853,7 +853,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				 // e = "900000000002102069";
+				 // e = "900000000002133011";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
