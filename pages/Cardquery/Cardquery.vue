@@ -46,7 +46,7 @@
 					<view class="partics" v-if="form.infos && form.infos.card_id">
 						<view class="cardqs">
 							<view class="cardlist">
-								<view class="ulli" style="height: 483rpx;">
+								<view class="ulli">
 									<view class="touch-list list-touch">
 										<image class="bgs" style="position: absolute;top: 0px;" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
@@ -57,7 +57,6 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname" style="opacity: 0;">券号：{{ default_view(form.infos.card_id) }}</view>
 												<view class="card-num">											
 													<label>券号：{{ default_view(form.infos.card_id) }}</label>
 													<view><em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}</view>
@@ -330,7 +329,7 @@
 		padding:3% 3%;
 		justify-content: space-between;
 		color: #fff;
-		transform: translateY(-58rpx);
+		transform: translateY(15rpx);
 	}
 	.statistic text:nth-child(2){
 		background-color: #FFE8E4;
