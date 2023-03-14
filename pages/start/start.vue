@@ -236,7 +236,7 @@
 				}
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
-				let reqdata = Req.resObj(true, "开始初始化...", null, apistr);
+				let reqdata = Req.resObj(true, "开始初始化...", null, apistr, true);
 				console.log(JSON.stringify(reqdata));
 				Req.asyncFunc(reqdata,
 					(res) => {
@@ -250,7 +250,7 @@
 							//"deviceId": sysinfo?.deviceId || "IPADPOS" //传入设备号 注意设备号会随着storage清除而发生改变
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
-						return Req.resObj(true, "初始化中...", reqPosData, apistr);
+						return Req.resObj(true, "初始化中...", reqPosData, apistr, true);
 					},
 					(res) => {
 						let sql = [];
