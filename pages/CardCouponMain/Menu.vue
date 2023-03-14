@@ -93,12 +93,12 @@
 							name:'卡绑定',
 							key: ''
 						},
-						{
-							icon_open: require('@/images/img2/jhshibai-bai.png'),
-							icon_close: require('@/images/img2/jhshibai.png'),
-							name:'激活失败',
-							key: ''
-						}
+						// {
+						// 	icon_open: require('@/images/img2/jhshibai-bai.png'),
+						// 	icon_close: require('@/images/img2/jhshibai.png'),
+						// 	name:'激活失败',
+						// 	key: ''
+						// }
 					]
 				}
 			}

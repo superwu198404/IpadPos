@@ -103,6 +103,7 @@
 	display: flex;
 }
 .choice .tab{
+	width: 250rpx;
 	height: 70rpx;
 	line-height: 70rpx;
 	padding:0 52rpx 0 46rpx;
@@ -111,6 +112,8 @@
 	margin-right: 10rpx;
 	display: flex;
 	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
 }
 .choice .tab image{
 	width:34rpx;
@@ -246,8 +249,8 @@
 	z-index: 0;
 }
 .cardlist .ulli .h6{
-	height: 80rpx;
-	line-height: 80rpx;
+	height: 70rpx;
+	line-height: 60rpx;
 	display: flex;
 	justify-content: space-between;
 	background: linear-gradient(90deg, #E8FFEA 0%, #FFFFFF 100%);
@@ -587,7 +590,7 @@
 	font-weight: 700;
 }
 .denominat label text{	
-	font-size: 70rpx;
+	font-size: 60rpx;
 }
 .kainfolist{
 	padding:120rpx 5% 0;

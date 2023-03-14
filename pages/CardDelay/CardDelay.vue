@@ -61,10 +61,10 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname">卡类型名称</view>
+												<view class="kname">券号：{{ default_view(form.infos.card_id) }}</view>
 												<view class="card-num">											
-													<label>券号：{{ default_view(form.infos.card_id) }}</label>
-													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
+													<label>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</label>
+													<!-- <view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view> -->
 												</view>
 											</view>
 		
@@ -270,7 +270,6 @@
 		position: relative;
 		padding:0;
 	}
-	
 	.cardlist .ulli{
 		width:100%;
 		margin:0;			
@@ -297,8 +296,8 @@
 		width:68rpx;
 		height: 6rpx;
 		position: absolute;
-		bottom:0;
-		left:3%;
+		bottom:20rpx;
+		left:8%;
 		z-index: 6;
 		border-radius: 6rpx;
 		background-color: #006B44;
@@ -319,7 +318,7 @@
 		padding:0;
 	}
 	.cardinfo{
-		padding:4% 4% 1%;
+		padding:8% 4% 1%;
 		transform: translateY(-60rpx);
 	}
 	.statistic{
