@@ -71,12 +71,12 @@
 										<label>始：<text>{{item.begin_num}}</text></label>
 										<label>终：<text>{{item.end_num}}</text></label>
 									</view>
-									<view class="statistic">
+									<!-- <view class="statistic">
 										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
 										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
 										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
 										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
-									</view>
+									</view> -->
 								</view>
 								<view class="touch-list list-delete" @click="RemoveItem(item)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
@@ -578,7 +578,8 @@
 					type: 'SZQ',
 					bill: that.SALE001.BILL,
 					name: "仟吉兑换券",
-					amount: that.CouponInfo.coupon_value
+					amount: that.CouponInfo.coupon_value,
+					card_no:that.CouponInfo.coupon_num//003-ID 记录券号
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
 					show: false
@@ -834,6 +835,7 @@
 				that.CurCZGZ = {};
 				that.Amount = 0;
 				that.CurZKDisc = {};
+				that.CouponInfo = {};
 				let store = _util.getStorage("store");
 				store.DKFID = "80000000";
 				store.DKFNAME = '默认大客户';
@@ -851,7 +853,7 @@
 			},
 			//扫码组件回调
 			GetAuthCode: async function(e) {
-				// e = "900000000002082278";
+				 // e = "900000000002102069";
 				console.log("收到扫码组件回调：", e);
 				this.showSMQ = false; //关闭组件
 				if (e) {
