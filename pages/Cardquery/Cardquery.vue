@@ -26,17 +26,9 @@
 							<text>卡/券类型：</text>
 							<view class="chaxun">
 								<view class="chanxz">
-									<label class="curr">礼品卡 <em>✓</em></label>
-									<label>礼品券 <em>✓</em></label>
-									<label>可伴卡 <em>✓</em></label>
-									<label class="quanbu" v-if="quanbu">全部</label>
+									<label v-for="type_info in source.types" :class="source.current_type_info == type_info ? 'curr' : ''" @click="select_type(type_info)">{{ type_info.text }} <em>✓</em></label>
+									<label class="quanbu" v-if="show_types_limit">全部</label>
 								</view>
-								<!-- <view class="label">
-									<picker :range="source.types" range-key="text" mode='selector' @change="select_type">
-										<view>{{ form.current_type_info ? form.current_type_info.text : '' }}</view>
-									</picker>
-									<CustomPicker class="picker" :range="source.types" title="text" @change="select_type"></CustomPicker>
-								</view> -->
 							</view>
 						</view>
 						<view class="labnum">
@@ -61,14 +53,14 @@
 											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
 										</view>
 										<view class="denominat">
-											<label>￥<text>{{ default_view(form.infos.balance) }}</text></label>
+											<label>￥<text>{{ default_view(form.infos.balance, 0) }}</text></label>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="kname" style="opacity: 0;">卡类型名称</view>
 												<view class="card-num">											
 													<label>券号：{{ default_view(form.infos.card_id) }}</label>
-													<view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view>
+													<view><em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}</view>
 												</view>
 											</view>
 											<!-- <view class="denominat">
@@ -167,7 +159,7 @@
 				});
 			},
 			scan_code_icon(){
-				return (this.form.current_type_info?.scan_code || this.form.current_type_info == null) ? true : false;
+				return (this.source.current_type_info?.scan_code || this.source.current_type_info == null) ? true : false;
 			},
 			show_not_more_infos(){
 				let infos = this.form.infos;
@@ -175,25 +167,28 @@
 					return true;
 				else
 					return false;
+			},
+			show_types_limit(){
+				return this.source.types.length > 5;
 			}
 		},
 		data() {
 			return {
 				form:{
-					current_type_info: null,
 					number: '',
 					infos: bussiness.infos()
 				},
 				source:{
+					current_type_info: null,
 					types: [],
 				}
 			}
 		},
 		methods: {
 			select_type(data){
-				this.form.current_type_info = data;
-				console.log("[SelectType]选择卡券类型:",this.form.current_type_info);
-				this.form.infos = this.$options.data().form.infos;
+				this.source.current_type_info = data;
+				console.log("[SelectType]选择卡券类型:",this.source.current_type_info);
+				this.form = this.$options.data().form;
 			},
 			scan_code_handle(){
 				uni.scanCode({
@@ -212,8 +207,8 @@
 				}))
 			},
 			async according_to_type_search(){
-				if(this.form.current_type_info){
-					let result = await this.form.current_type_info.search(this.form.number);
+				if(this.source.current_type_info){
+					let result = await this.source.current_type_info.search(this.form.number);
 					console.log("[TypeSearch]查询结果:", result);
 					if(result.code){
 						this.form.infos = result.data;
