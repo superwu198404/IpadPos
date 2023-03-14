@@ -76,7 +76,7 @@
 									<view class="statistic">
 										<label><em>●</em><text>总折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).DISCRATE }}</label>
 										<label><em>●</em><text>标准折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).BZDISC }}</label>
-										<label><em>●</em><text>临时折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).CXDISC }}</label>
+										<label><em>●</em><text>临时折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).LSDISC }}</label>
 										<label><em>●</em><text>特批折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).TPDISC }}</label>
 									</view>
 								</view>
@@ -91,6 +91,7 @@
 							<em></em>
 							<label>总数量：<text>{{ unpaid_total_quantity }}</text></label>
 							<label>总金额：<text>￥{{ unpaid_total_amount }}</text></label>
+							<label>总折扣：<text>￥{{ unpaid_total_discount }}</text></label>
 						</view>
 						<button class="btn" @click="to_payment">确认支付</button>
 						<!-- <button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button> -->
@@ -134,6 +135,7 @@
 	
 	import member from '@/api/hy/MemberInterfaces.js';
 	import Sale from '@/utils/sale/card_coupon.js';
+	import card_sale from '@/api/business/card_sale.js';
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
 	import main from '@/api/business/main.js';
@@ -208,6 +210,9 @@
 			unpaid_total_amount() {
 				return this.source.sale001?.TNET || 0;
 			},
+			unpaid_total_discount(){
+				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p,n) => p+n,0);
+			},
 			get_union(){
 				return $(function(sale6){
 					return this.source.sale2_union_sale6.find(sales => sales.sale006.includes(sale6));
@@ -274,12 +279,7 @@
 				deep:true
 			},
 			'source.discount_type'(n, o){
-				if(n && n !== 'NO'){
-					console.log("[WatchDiscount]折扣发生改变（不为NO）:",n);
-					this.discount_computed();//特殊折扣计算
-					this.craft_discount_computed();//手工折扣额
-					this.source.sale002.sort();
-				}
+				$(this.total_discount_computed, false);
 			},
 			'source.sale001'(n, o){
 				if(n && n.DKHID){//如果设置的值合法
@@ -458,6 +458,11 @@
 					console.log("[SaveOrders]执行异常:",e);
 				}
 			},
+			async reset_form(){//重置界面表单信息
+				this.factory.reset_generators();
+				this.source = this.$options.data().source;
+				this.source.discount_infos = await this.get_discount_data();//初始化折扣信息数据
+			},
 			get_single_coupon_segment_list(){//根据单个券号段，计算出每个号段对应折扣
 				let sale6_main_discount_computed_list = this.source.sale2_union_sale6.map(
 					$(function(sales){ 
@@ -471,10 +476,9 @@
 								sale002: single_sale2_map_sale6,
 							}
 						}));
-						this.discount_computed(sale6_main.map(sales => sales.sale002));
-						console.log("[GetSingleCouponSegmentList]分组后的sale002折扣计算信息:", sale6_main);
 						return sale6_main;
 					})).flat();
+				this.discount_computed(sale6_main_discount_computed_list.map(sales => sales.sale002));
 				console.warn("[GetSingleCouponSegmentList]针对单券号段折扣计算结果:",sale6_main_discount_computed_list);
 				this.source.sale6_segment_discount = sale6_main_discount_computed_list;
 			},
@@ -509,11 +513,6 @@
 				this.source.sale001.TNET = total_amount;
 				this.source.sale001.ZNET = total_amount;
 				console.log("[GoodsDiscountSummary]对sale002的总金额、折扣汇总完毕:", this.source.sale001);
-			},
-			async reset_form(){//重置界面表单信息
-				this.factory.reset_generators();
-				this.source = this.$options.data().source;
-				this.source.discount_infos = await this.get_discount_data();//初始化折扣信息数据
 			},
 			push_sale2_check(sale2){//向sale2推入数据前，检查是否存在有相同spid的，如果有则进行合并
 				let match_sale2 = this.source.sale002.find(s2 => s2.SPID == sale2.SPID);
@@ -580,10 +579,15 @@
 			discount_computed(sale2) {//使用特殊折扣进行计算
 				let discount_computed_params = {};
 				if(this.source.discount_type != 'NO'){
+					console.log("[DiscountComputed]准备折扣计算参数...");
 					discount_computed_params.ZKType= this.source.discount_type;
 					discount_computed_params.ZKData= this.source.discount_infos;
+					main.MatchZKDatas(discount_computed_params,sale2 || this.source.sale002);//可使用传入的sale2，如果不存在则使用当前上下文的sale2
 				}
-				main.MatchZKDatas(discount_computed_params,sale2 || this.source.sale002);//可使用传入的sale2，如果不存在则使用当前上下文的sale2
+				else{
+					console.log("[DiscountComputed]清除折扣信息...");
+					card_sale.FallbackSpecialDiscount(this.source.sale001,sale2 || this.source.sale002);//清除折扣信息
+				}
 				console.log("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
 			craft_discount_computed() {//手工折扣额的处理

@@ -66,6 +66,27 @@ var ResetCXZK = function(that) {
 		r.TPDISC = 0; //zk
 	});
 }
+
+//回退特殊折扣(通用)
+var FallbackSpecialDiscount = function(sale001,sale002 = []) {
+	if (sale001 && Object.keys(sale001).length > 0) {
+		//切换折扣或者促销后 清空一下原来计算的折扣值
+		sale001.TBZDISC = 0; //zk 总标准折扣
+		sale001.TLSDISC = 0; //zk 总临时折扣
+		sale001.TTPDISC = 0; //zk 总特批折扣
+		sale001.TCXDISC = 0; //cx 总促销折扣
+		sale001.TDISC = 0; //cx
+		sale001.BILLDISC = 0; //cx zk
+	}
+	sale002.map(r => {
+		r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		r.PRICE = util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
+		r.DISCRATE = 0; //zk
+		r.BZDISC = 0; //zk
+		r.LSDISC = 0; //zk
+		r.TPDISC = 0; //zk
+	});
+}
 /**
  * 获取激活、充值失败的订单
  */
@@ -108,6 +129,7 @@ export default {
 	GetKCZGZMX,
 	PayParamAssemble,
 	ResetCXZK,
+	FallbackSpecialDiscount,
 	GetFailOrder,
 	FormatSale,
 	ExecuteBatchSQL
