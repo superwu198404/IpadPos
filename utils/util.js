@@ -416,7 +416,7 @@ const utils = {
 	},
 
 	//判断区间重叠[{min:"",max:""},{min:"",max:""},{min:"",max:""}];
-	IntervalOverlap: function(intervalObjs) {
+	_IntervalOverlap: function(intervalObjs) {
 		console.log("开始校验区间1：", intervalObjs);
 		let over = true;
 		for (var i = 0; i < intervalObjs.length - 1; i++) { //重叠判断，-1代表最后一个不进行判断
@@ -429,6 +429,25 @@ const utils = {
 				break;
 			}
 		}
+		return over;
+	},
+	//判断区间重叠[{min:"1",max:"4"},{min:"5",max:"8"},{min:"6",max:"10"}];
+	IntervalOverlap: function(arr, obj) {
+		// console.log("开始校验区间：", arr);
+		// console.log("开始校验区间1：", obj);
+		let over = true;
+		for (var i = 0; i < arr.length; i++) {
+			// console.log("条件校验：", arr[i].min <= obj.min);
+			// console.log("条件校验：", arr[i].max >= obj.min);
+			// console.log("条件校验：", arr[i].min <= obj.max);
+			// console.log("条件校验：", arr[i].max >= obj.max);
+			if ((arr[i].min <= obj.min && arr[i].max >= obj.min) || (arr[i].min <= obj.max && arr[i].max >= obj
+					.max)) {
+				over = false;
+				break;
+			}
+		}
+		console.log("校验结果：", over);
 		return over;
 	}
 }

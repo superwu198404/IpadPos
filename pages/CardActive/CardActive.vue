@@ -282,7 +282,7 @@
 					// SALE3: [],
 					// SALE6: []
 				},
-				add_class:0
+				add_class: 0
 			}
 		},
 		onReady: function() {
@@ -290,16 +290,17 @@
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that, function(
-						res) {
-						if (res.code) {
-							that.FKDA_INFO = JSON.parse(res.data);
-							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-						} else {
-							console.log("获取付款方式失败!======", err);
-						}
-					}))
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
+						function(
+							res) {
+							if (res.code) {
+								that.FKDA_INFO = JSON.parse(res.data);
+								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+							} else {
+								console.log("获取付款方式失败!======", err);
+							}
+						}))
 				} catch (err) {
 					console.log("获取付款方式失败!======", err);
 				}
@@ -430,15 +431,19 @@
 				if (that.SALE002.length == 0) return true;
 				let arr = that.SALE002.map(r => {
 					return {
-						min: r.begin_num.substr(r.begin_num.length - 6, 5),
-						max: r.end_num.substr(r.end_num.length - 6, 5)
+						min: Number(r.begin_num.substr(r.begin_num.length - 6, 5)),
+						max: Number(r.end_num.substr(r.end_num.length - 6, 5))
 					};
 				})
-				arr.push({
-					min: min.substr(min.length - 6, 5),
-					max: max.substr(max.length - 6, 5)
-				});
-				return _util.IntervalOverlap(arr);
+				// arr.push({
+				// 	min: min.substr(min.length - 6, 5),
+				// 	max: max.substr(max.length - 6, 5)
+				// });
+				let obj = {
+					min: Number(min.substr(min.length - 6, 5)),
+					max: Number(max.substr(max.length - 6, 5))
+				}
+				return _util.IntervalOverlap(arr, obj);
 			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
