@@ -108,7 +108,7 @@
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showSMQ=true"></image>
+							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showCouponNum=true"></image>
 						</view>
 					</view>
 				</view>
@@ -127,7 +127,9 @@
 		</view>
 
 		<!-- //扫码枪组件 -->
-		<saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang>
+		<!-- <saomaqiang v-if="showSMQ" style="z-index: 999;"></saomaqiang> -->
+		<!-- 兑换券 -->
+		<CouponNumEntry :show.sync="showCouponNum"></CouponNumEntry>
 	</view>
 </template>
 <script>
@@ -181,6 +183,7 @@
 				SALE006: [],
 				SXSALE001: [],
 				showCardNum: false,
+				showCouponNum: false,
 				swipetip: false,
 				showDisc: false,
 				ZKData: [],
@@ -212,16 +215,17 @@
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that, function(
-						res) {
-						if (res.code) {
-							that.FKDA_INFO = JSON.parse(res.data);
-							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-						} else {
-							console.log("获取付款方式失败!======", err);
-						}
-					}))
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
+						function(
+							res) {
+							if (res.code) {
+								that.FKDA_INFO = JSON.parse(res.data);
+								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+							} else {
+								console.log("获取付款方式失败!======", err);
+							}
+						}))
 				} catch (err) {
 					console.log("获取付款方式失败!======", err);
 				}
@@ -245,14 +249,14 @@
 			//事件监听
 			uni.$on("GetCardNums", that.GetCardNums);
 			//券号回调
-			uni.$on("getAuthCode", that.GetAuthCode);
+			uni.$on("GetCouponNums", that.GetCouponNums);
 			uni.$on("ReturnSale", that.ClearSale);
 
 		},
 		watch: {},
 		destroyed() {
 			uni.$off("GetCardNums");
-			uni.$off('getAuthCode');
+			uni.$off('GetCouponNums');
 			uni.$off("ReturnSale");
 		},
 		computed: {
@@ -323,15 +327,19 @@
 				if (that.SALE002.length == 0) return true;
 				let arr = that.SALE002.map(r => {
 					return {
-						min: r.begin_num.substr(r.begin_num.length - 6, 5),
-						max: r.end_num.substr(r.end_num.length - 6, 5)
+						min: Number(r.begin_num.substr(r.begin_num.length - 6, 5)),
+						max: Number(r.end_num.substr(r.end_num.length - 6, 5))
 					};
 				})
-				arr.push({
-					min: min.substr(min.length - 6, 5),
-					max: max.substr(max.length - 6, 5)
-				});
-				return _util.IntervalOverlap(arr);
+				// arr.push({
+				// 	min: min.substr(min.length - 6, 5),
+				// 	max: max.substr(max.length - 6, 5)
+				// });
+				let obj = {
+					min: Number(min.substr(min.length - 6, 5)),
+					max: Number(max.substr(max.length - 6, 5))
+				}
+				return _util.IntervalOverlap(arr, obj);
 			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
@@ -579,7 +587,7 @@
 					bill: that.SALE001.BILL,
 					name: "仟吉兑换券",
 					amount: that.CouponInfo.coupon_value,
-					card_no:that.CouponInfo.coupon_num//003-ID 记录券号
+					card_no: that.CouponInfo.coupon_num //003-ID 记录券号
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
 					show: false
@@ -635,7 +643,7 @@
 								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
 									console.log("兑换券核销结果：", res1);
 									if (res1.code) {
-										_util.simpleMsg("券核销成功即将跳转支付...", "none");
+										// _util.simpleMsg("券核销成功即将跳转支付...", "none");
 										that.CreateSale003(); //创建已支付的兑换券记录
 										console.log("兑换券支付记录：", that.payed);
 										//跳转支付
@@ -852,12 +860,16 @@
 				that.showCardNum = true;
 			},
 			//扫码组件回调
-			GetAuthCode: async function(e) {
-				 // e = "900000000002102069";
-				console.log("收到扫码组件回调：", e);
-				this.showSMQ = false; //关闭组件
-				if (e) {
-					let code = _common.ResetAuthCode(e);
+			GetCouponNums: async function(e) {
+				// e = "900000000002133011";
+				console.log("收到券号组件回调：", e);
+				if (e.type != 'Y') {
+					return;
+				}
+				let coupon = e.begin_num;
+				that.showCouponNum = false;
+				if (coupon) {
+					let code = _common.ResetAuthCode(coupon);
 					let couponInfo = await that.coupon_info_search(code);
 					console.log("券信息：", couponInfo);
 					if (couponInfo && couponInfo.code) {

@@ -398,31 +398,19 @@
 					}
 				})
 			},
-			//进入售卡
-			ToSK: function(e) {
+			//门店查询
+			Chaxun: function(e) {
 				console.log("页面参数值：", e);
-				if (e) {
 					uni.redirectTo({
-						url: "/pages/CardActive/CardActive",
+						url: "/pages/Querypage/Storeinquiry/Storeinquiry",
 						complete(r) {
-
 							console.log("页面参数值：", r);
 						}
 					});
-				} else {
-					uni.redirectTo({
-						url: "/pages/CardSale/CardSale"
-					});
-				}
 			},
 			ToCardCouponBussiness:function(){
 				uni.redirectTo({
 					url: "/pages/CardCouponMain/Menu"
-				});
-			},
-			ToSQ: function() {
-				uni.redirectTo({
-					url: "/pages/CouponSale/CouponSale"
 				});
 			},
 			//初始化

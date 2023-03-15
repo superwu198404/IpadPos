@@ -255,7 +255,7 @@
 				<view class="hh" style="padding-top:56rpx;">
 					<view style="width:45%">
 						<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
-						<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台	
+						<image src="../../images/shouyintai.png" mode="widthFix"></image> 收银台
 					</view>
 				</view>
 				<view class="amounts">
@@ -269,8 +269,8 @@
 						<text>还需支付</text>
 						<text class="pay-center">
 							<span v-if="isRefund">{{ refundView.debtAmount }}</span>
-							<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number" :disabled="allowInput"
-								value="" :key="domRefresh" v-model="dPayAmount" min="0.01" />
+							<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number"
+								:disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" min="0.01" />
 							<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
 								value="" :key="domRefresh" v-model="CashOffset.Money" />
 						</text>
@@ -534,9 +534,9 @@
 					}
 				}
 			},
-			allow_debt_excess: function(n, o){
+			allow_debt_excess: function(n, o) {
 				let reset_amount = this.toBePaidPrice();
-				if(n === false && this.dPayAmount > Number(reset_amount)){
+				if (n === false && this.dPayAmount > Number(reset_amount)) {
 					this.dPayAmount = reset_amount;
 				}
 			},
@@ -571,7 +571,7 @@
 					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
 				} else {
-					if(n === 'Others' || this.currentPayInfo.poly === "S"){
+					if (n === 'Others' || this.currentPayInfo.poly === "S") {
 						return;
 					}
 					this.dPayAmount = this.toBePaidPrice();
@@ -595,6 +595,11 @@
 					this.CanBack = true;
 					console.log("[PayList-Watch]Payments：", this.PayList)
 					// this.backPrevPage();
+				} else {
+					if (n.length == 1 && n[0].fkid == "ZF11") { //如果是兑换券 则默认不让退出
+						this.CanBack = false;
+						console.log("兑换券不允许返回：",this.CanBack);
+					}
 				}
 			},
 			logs: function(n, o) {
@@ -1069,8 +1074,8 @@
 			},
 			CashRefundCombine: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
-				console.warn("[CashRefundCombine]现金支付信息:",{
-					payment_infos:util.getStorage("FKDA_INFO"),
+				console.warn("[CashRefundCombine]现金支付信息:", {
+					payment_infos: util.getStorage("FKDA_INFO"),
 					cash_info
 				});
 				let cash_list = this.RefundList.filter(i => i.fkid == cash_info.FKID);
@@ -1085,8 +1090,8 @@
 			//现金退款提示（如果退款包含现金的话，提示现金部分是多少）
 			CashRefundTips: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
-				console.warn("[CashRefundTips]现金支付信息:",{
-					payment_infos:util.getStorage("FKDA_INFO"),
+				console.warn("[CashRefundTips]现金支付信息:", {
+					payment_infos: util.getStorage("FKDA_INFO"),
 					cash_info
 				});
 				if (!this.cash_change_tips) return;
@@ -1343,7 +1348,8 @@
 						this.UpdateHyInfo(result.data); //更新会员信息
 						console.log("[PayHandle]auth_code清空！");
 						this.orderGenarator(payAfter, info.type, result.data, false, info, {
-							excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
+							excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this
+								.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
 						}); //支付记录处理(成功)
 						console.log("[PayHandle]判断待支付金额是否为0...");
 						if (this.debt > 0) {
@@ -1372,11 +1378,12 @@
 			},
 			CountCashChange: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
-				console.warn('[CountCashChange]现金支付信息:',{
+				console.warn('[CountCashChange]现金支付信息:', {
 					payment_infos: util.getStorage("FKDA_INFO"),
 					cash_info
 				});
-				let prev_cash_amount = this.PayList.find(i => i.fkid == cash_info.FKID)?.amount || 0; //查找上一个现金支付金额判断是否存在
+				let prev_cash_amount = this.PayList.find(i => i.fkid == cash_info.FKID)?.amount ||
+					0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
@@ -1406,7 +1413,7 @@
 					payment_infos: util.getStorage("FKDA_INFO"),
 					cash_info
 				});
-				if(this.currentPayInfo.fkid != cash_info.FKID) return true;//不是现金不走这个条件
+				if (this.currentPayInfo.fkid != cash_info.FKID) return true; //不是现金不走这个条件
 				//找零金额
 				let change_number = this.CountCashChange();
 				if (change_number > 100) {
@@ -1630,8 +1637,9 @@
 				console.log("[OrderGenarator]失败记录：", trade);
 				this.PushToPaidList(trade);
 			},
-			IsSaveAuthCode:function(fkid){
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ','COUPON','PINNUO'].includes(i.type)).map(i => i.fkid);
+			IsSaveAuthCode: function(fkid) {
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO'].includes(i
+					.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
