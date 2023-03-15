@@ -13,6 +13,7 @@
 				<view class="commods" style="padding-top:26rpx;">
 					<view class="h3">
 						特殊折扣选择
+						<!-- <button class="close" @click="Close()">×</button> -->
 					</view>
 					<view class="uls">
 						<view :class="curZKType!='TP'?'lis curr':'lis'" @click="ChooseZK('BZ')">
@@ -151,6 +152,9 @@
 			// that.ProductOld = that.Product;
 		},
 		methods: {
+			// Close:function() {
+				
+			// },
 			Def: function() {
 				console.log("冒泡事件：", that.curZKType);
 				if (that.curZKType == 'LS') {
@@ -488,7 +492,7 @@
 		position: relative;
 		padding-bottom: 150rpx;
 	}
-
+	
 	.special .confirm {
 		position: absolute;
 		left: 0;
@@ -498,13 +502,16 @@
 		align-items: center;
 		background-color: #fff;
 		width: 100%;
+		padding-bottom: 20rpx;
 	}
-
+	
 	.special .confirm .btn {
 		width: 30%;
 		margin: 0 2%;
 	}
-
+	.close{
+		right:0;
+	}
 	.commods .uls .lis.curr {
 		background: #fff;
 	}
