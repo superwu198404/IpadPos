@@ -13,24 +13,24 @@
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
-				<view class="listep curr">
+				<view class="listep" :class="{'curr':add_class==0}">
 					<text class="xuhao">01</text>
-					<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
+					<view class="setname"><label>录入兑换券</label><text>扫券，或手动录入</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==1}">
 					<text class="xuhao">02</text>
-					<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
+					<view class="setname"><label>录入待售卡券</label><text>刷卡，或手动录入</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==2}">
 					<text class="xuhao">03</text>
-					<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
+					<view class="setname"><label>支付</label><text>号段校验后支付</text></view>
 					<em>>>>>>></em>
 				</view>
-				<view class="listep">
+				<view class="listep" :class="{'curr':add_class==3}">
 					<text class="xuhao">04</text>
-					<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
+					<view class="setname"><label>等待激活</label><text>已支付订单</text></view>
 					<!-- <em>>>>>>></em> -->
 				</view>
 			</view>
@@ -207,7 +207,8 @@
 				FKDA_INFO: [], //支付方式
 				showSMQ: false, //s是否显示扫码
 				CouponInfo: {}, //券信息
-				payed: [] //已支付信息用于组装券兑换
+				payed: [], //已支付信息用于组装券兑换
+				add_class: 0
 			}
 		},
 		onReady: function() {
@@ -313,6 +314,7 @@
 			GetCardNums: function(e) {
 				console.log("卡号返回事件3：", e);
 				if (e) {
+					that.add_class = 1; //步骤设置
 					that.showCardNum = false;
 					that.begin_num = e.begin_num;
 					that.end_num = e.end_num;
@@ -321,32 +323,12 @@
 					}
 				}
 			},
-			//判断是否已录入
-			IntervalOverlap: function(min, max) {
-				console.log("开始校验区间：", that.SALE002);
-				if (that.SALE002.length == 0) return true;
-				let arr = that.SALE002.map(r => {
-					return {
-						min: Number(r.begin_num.substr(r.begin_num.length - 6, 5)),
-						max: Number(r.end_num.substr(r.end_num.length - 6, 5))
-					};
-				})
-				// arr.push({
-				// 	min: min.substr(min.length - 6, 5),
-				// 	max: max.substr(max.length - 6, 5)
-				// });
-				let obj = {
-					min: Number(min.substr(min.length - 6, 5)),
-					max: Number(max.substr(max.length - 6, 5))
-				}
-				return _util.IntervalOverlap(arr, obj);
-			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
 				}
-				if (!that.IntervalOverlap(that.begin_num, that.end_num))
+				if (!_util.IntervalOverlap(that.SALE002, that.begin_num, that.end_num))
 					return _util.simpleMsg("当前号段与已录入号段重复，请重新录入！");
 				KQSale.QueryInfo({
 					card_num: that.begin_num
@@ -630,6 +612,7 @@
 					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
+				that.add_class = 2; //步骤设置
 				console.log("sale2", that.SALE002);
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("激活校验申请结果：", res);
@@ -685,6 +668,7 @@
 			},
 			//支付完成处理
 			PayedResult: async function(result) {
+				that.add_class = 3; //步骤设置
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -829,6 +813,7 @@
 			},
 			//重置本次销售单
 			ResetSaleBill: function() {
+				that.add_class = 0; //步骤设置
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
 					BILL_TYPE: that.BILL_TYPE,

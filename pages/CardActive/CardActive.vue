@@ -16,22 +16,22 @@
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
 					<text class="xuhao">01</text>
-					<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
+					<view class="setname"><label>录入待售卡券</label><text>刷卡，或手动录入</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep" :class="{'curr':add_class==1}">
 					<text class="xuhao">02</text>
-					<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
+					<view class="setname"><label>确认折扣和金额</label><text>选择大客户，特殊折扣等</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep" :class="{'curr':add_class==2}">
 					<text class="xuhao">03</text>
-					<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
+					<view class="setname"><label>支付</label><text>校验成功后发起支付</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep" :class="{'curr':add_class==3}">
 					<text class="xuhao">04</text>
-					<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
+					<view class="setname"><label>等待激活</label><text>已支付订单</text></view>
 					<!-- <em>>>>>>></em> -->
 				</view>
 			</view>
@@ -340,6 +340,7 @@
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 					console.log("大客户折扣数据：", that.ZKData);
 				}
+				that.add_class = 1; //步骤设置
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -425,32 +426,13 @@
 					}
 				}
 			},
-			//判断是否已录入
-			IntervalOverlap: function(min, max) {
-				console.log("开始校验区间：", that.SALE002);
-				if (that.SALE002.length == 0) return true;
-				let arr = that.SALE002.map(r => {
-					return {
-						min: Number(r.begin_num.substr(r.begin_num.length - 6, 5)),
-						max: Number(r.end_num.substr(r.end_num.length - 6, 5))
-					};
-				})
-				// arr.push({
-				// 	min: min.substr(min.length - 6, 5),
-				// 	max: max.substr(max.length - 6, 5)
-				// });
-				let obj = {
-					min: Number(min.substr(min.length - 6, 5)),
-					max: Number(max.substr(max.length - 6, 5))
-				}
-				return _util.IntervalOverlap(arr, obj);
-			},
+
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
 				if (!this.begin_num) {
 					_util.simpleMsg("卡号不为空");
 				}
-				if (!that.IntervalOverlap(that.begin_num, that.end_num))
+				if (!_util.IntervalOverlap(that.SALE002, that.begin_num, that.end_num))
 					return _util.simpleMsg("当前号段与已录入号段重复，请重新录入！");
 				KQSale.QueryInfo({
 					card_num: that.begin_num
@@ -677,8 +659,7 @@
 					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
-				// let res = that.ConcatSale2_6();
-				// return;
+				that.add_class = 2; //步骤设置
 				console.log("sale2", that.SALE002);
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("单卡激活校验结果：", res);
@@ -716,6 +697,7 @@
 
 			//支付完成处理
 			PayedResult: async function(result) {
+				that.add_class = 3; //步骤设置
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
@@ -857,6 +839,7 @@
 			},
 			//重置本次销售单
 			ResetSaleBill: function() {
+				that.add_class = 0; //步骤设置
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
 					BILL_TYPE: that.BILL_TYPE,
@@ -904,6 +887,7 @@
 						ZKType: data,
 						ZKData: that.ZKData
 					};
+					that.add_class = 1; //步骤设置
 				}
 				that.CurZKDisc = obj;
 				//清除一下之前产生的促销和折扣

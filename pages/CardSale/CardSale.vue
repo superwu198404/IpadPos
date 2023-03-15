@@ -21,7 +21,7 @@
 				</view>
 				<view class="listep" :class="{'curr':add_class==1}">
 					<text class="xuhao">02</text>
-					<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
+					<view class="setname"><label>选择金额和折扣</label><text>选择充值金额，特殊折扣等</text></view>
 					<em>>>>>>></em>
 				</view>
 				<view class="listep" :class="{'curr':add_class==2}">
@@ -298,23 +298,24 @@
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
-				add_class:0
+				add_class: 0
 			}
 		},
 		onReady: function() {
 			//查询付款方式
 			(_util.callBind(that, async function() {
 				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that, function(
-						res) {
-						if (res.code) {
-							that.FKDA_INFO = JSON.parse(res.data);
-							_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-							console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-						} else {
-							console.log("获取付款方式失败!======", err);
-						}
-					}))
+					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
+						function(
+							res) {
+							if (res.code) {
+								that.FKDA_INFO = JSON.parse(res.data);
+								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
+								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
+							} else {
+								console.log("获取付款方式失败!======", err);
+							}
+						}))
 				} catch (err) {
 					console.log("获取付款方式失败!======", err);
 				}
@@ -354,6 +355,7 @@
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
+				that.add_class = 1; //步骤
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -561,6 +563,7 @@
 			},
 			//充值规则选择事件
 			ChooseCZGZ: function(e) {
+				that.add_class = 1; //步骤
 				let amount = e.CZNET + e.ZSNET + that.Amount;
 				console.log("充值金额:", amount);
 				if (_util.newFloat(amount) > 5000) {
@@ -655,6 +658,7 @@
 					_util.simpleMsg("请录入有效卡号", true);
 					return;
 				}
+				that.add_class = 2; //步骤
 				KQSale.ActiveApply({
 					salebill: that.SALE001.BILL,
 					material_id: that.SALE002[0].SPID,
@@ -698,11 +702,12 @@
 			},
 			//支付完成处理
 			PayedResult: async function(result) {
+				that.add_class = 3; //步骤
 				_util.setStorage('open-loading', true);
 				console.log("[PayedResult]支付结果:", result);
 				uni.$emit('continue-message');
 				uni.$emit('continue-timed-communication');
-				that.add_class==3
+				that.add_class == 3
 				if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 					_util.simpleMsg(result.msg, !result.code);
 					//清除手工折扣
@@ -829,6 +834,7 @@
 			},
 			//重置本次销售单
 			ResetSaleBill: function() {
+				that.add_class = 0; //步骤
 				that.SALE001 = _card_coupon.InitSale001(that.store, {
 					XSTYPE: that.XSTYPE,
 					BILL_TYPE: that.BILL_TYPE,
@@ -902,6 +908,7 @@
 						ZKType: data,
 						ZKData: that.ZKData
 					};
+					that.add_class = 2; //步骤
 				}
 				that.CurZKDisc = obj;
 				//清除一下之前产生的促销和折扣

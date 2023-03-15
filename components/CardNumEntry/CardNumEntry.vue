@@ -34,9 +34,9 @@
 							<button v-if="endNum" @click="endNum=''">×</button>
 						</view class="label">
 					</view>
-					<label><text>启用扫码操作：</text>
+					<!-- <label><text>启用扫码操作：</text>
 						<radio :checked="scan_code" @click="scan_code = !scan_code"></radio>
-					</label>
+					</label> -->
 				</view>
 				<view class="confirm">
 					<button class="btn btn-qx" @click="Cancel">取消</button>
