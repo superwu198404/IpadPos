@@ -197,7 +197,19 @@ var KQTypeObj = {
 		typename: "VIP充值", //售卡充值
 
 		//初始化
-		InitData: function() {},
+		InitData: function(data,func) {
+			console.log("VIP充值初始化：", data);
+			_card_sale.GetKCZGZMX("", res => {
+				console.log("卡充值规则获取结果：", res);
+				if (res.code) {
+					let arr = JSON.parse(res.data);
+					_util.setStorage("KCZGZMX", arr);
+				} else {
+					_util.removeStorage("KCZGZMX");
+				}
+				if (func) func();
+			});
+		},
 		//查询信息
 		QueryInfo: function(data, func) {
 			_member.CARD_QUERY("查询中...", {

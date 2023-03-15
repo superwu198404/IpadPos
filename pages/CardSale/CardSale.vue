@@ -882,10 +882,12 @@
 						if (res) {
 							that.YWTYPE = e;
 							KQSale = new _card_coupon.InitKQSale(that, uni, that.store, e);
+							console.log("模式切换后");
 							KQSale.InitData("VIP业务切换后初始化", res => {
 								if (e == 'VIPCard_Retry')
 									that.GetFailOrder();
 								else {
+									console.log("模式切换后1");
 									that.ShowCZGZ();
 									console.log("业务类型已切换：", that.SALE001)
 									that.KQXSTYPE = e == "VIPCard_Active" ? "SKCZ" : "CZ";
