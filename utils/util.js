@@ -406,7 +406,7 @@ const utils = {
 	},
 	convertShortDate: function(yyyymmdd) {
 		if (yyyymmdd && yyyymmdd.length) {
-			if (yyyymmdd.length === 6) {
+			if (yyyymmdd.length === 8) {
 				return `${yyyymmdd.substr(0,4)}/${yyyymmdd.substr(4,2)}/${yyyymmdd.substr(6,2)}`;
 			}
 			return new Date().toLocaleDateString()

@@ -68,7 +68,7 @@
 											</view> -->
 										</view>
 										<view class="statistic">
-											<text v-if="form.infos.valid_date">{{ default_view(form.infos.valid_date,'') }}</text>
+											<text v-if="form.infos.valid_date">有效期至：{{ default_view(form.infos.valid_date,'') }}</text>
 											<text v-if="form.infos.status">{{ default_view(form.infos.status,'') }}</text>
 										</view>
 									</view>
@@ -108,7 +108,7 @@
 								<label v-if="form.infos.use_store_name">
 									<text>使用门店：</text><text>{{ default_view(form.infos.use_store_name) }}</text>
 								</label>
-								<label>
+								<label v-if="form.infos.spend_amount">
 									<text>消费金额：</text><text>￥{{ default_view(form.infos.spend_amount, 0) }}</text>
 								</label>
 								<label v-if="form.infos.operator">

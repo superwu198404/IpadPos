@@ -66,7 +66,7 @@
 									<view class="h6">
 										<label>￥{{ sale6_main.sale002.PRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{ get_current_coupons_total_amount(sale6_main) }}</view>
+											<view><text>总金额</text>￥{{ sale6_main.sale002.NET }}</view>
 										</view>
 									</view>
 									<view class="card-num">
@@ -226,11 +226,6 @@
 					return this.source.sale6_map_style.get(sale6)?.text_style;
 				})
 			},
-			get_current_coupons_total_amount(){//获取当前券号段
-				return $(function(sale6_main){
-					return sale6_main.sale002.PRICE * sale6_main.sale006.QTY;
-				})
-			},
 			get_current_single_discount_info(){
 				return $(function(sale6){
 					return this.source.sale6_segment_discount.find(sales => sales.sale006 === sale6).sale002;
@@ -263,20 +258,15 @@
 					uni.$off("GetCardNums");
 				}
 			},
-			'source.sale002':{
-				handler(n, o) {
-					if(n.length === 0){
-						this.factory.reset_generators();
-					}
-					this.total_discount_computed();
-					if(this.source.sale001)
-						this.source.sale001.TLINE = n.length;
-					else
-						return;
-					console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
-					this.get_single_coupon_segment_list();//计算券号段的单体折扣
-				},
-				deep:true
+			'source.sale002'(n, o) {
+				if(n.length === 0){
+					this.factory.reset_generators();
+				}
+				if(this.source.sale001)
+					this.source.sale001.TLINE = n.length;
+				else
+					return;
+				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
 			},
 			'source.discount_type'(n, o){
 				$(this.total_discount_computed, false);
@@ -403,6 +393,7 @@
 							this.source.sale6_map_style.set(sale006,{ text_style: "left:0" });
 							this.push_sale2_union_sale6_check(sale002,sale006);
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
+							this.total_discount_computed();
 						} catch (e) {
 							console.log("[CouponSale]券商品信息查询失败:", e);
 						}
@@ -464,13 +455,13 @@
 				this.source.discount_infos = await this.get_discount_data();//初始化折扣信息数据
 			},
 			get_single_coupon_segment_list(){//根据单个券号段，计算出每个号段对应折扣
+				console.warn("[GetSingleCouponSegmentList]准备开始计算分摊后的折扣:",this.source);
 				let sale6_main_discount_computed_list = this.source.sale2_union_sale6.map(
 					$(function(sales){ 
 						let sale6_main = sales.sale006.map($(function(sale6){
 							let single_sale2_map_sale6 = this.factory.get_sale002(null,sales.sale002);
 							single_sale2_map_sale6.QTY = sale6.QTY;//把当前券号段的数量传入
 							single_sale2_map_sale6.NET = sale6.QTY * sales.sale002.PRICE;//根据当前数量和单价计算出当前对应的总金额
-							console.log("[GetSingleCouponSegmentList]当前券号段数量:", single_sale2_map_sale6);
 							return { 
 								sale006: sale6, 
 								sale002: single_sale2_map_sale6,
@@ -479,14 +470,18 @@
 						return sale6_main;
 					})).flat();
 				this.discount_computed(sale6_main_discount_computed_list.map(sales => sales.sale002));
-				console.warn("[GetSingleCouponSegmentList]针对单券号段折扣计算结果:",sale6_main_discount_computed_list);
+				console.warn("[GetSingleCouponSegmentList]针对单券号段折扣计算结果:",{
+					sale6_main_discount_computed_list,
+					source: this.source
+				});
 				this.source.sale6_segment_discount = sale6_main_discount_computed_list;
 			},
 			total_discount_computed(){
 				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
 				$(this.discount_computed,false);//特殊折扣计算
-				$(this.craft_discount_computed,false);//手工折扣额
 				$(this.goods_discount_summary,false);//最后将折扣额汇总到sale001上
+				$(this.get_single_coupon_segment_list,false);//计算券号段的单体折扣
+				$(this.craft_discount_computed,false);//手工折扣额
 				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
 			},
 			goods_discount_summary(){//对sale002折扣、总金额进行汇总，并存入sale001
@@ -578,17 +573,20 @@
 			},
 			discount_computed(sale2) {//使用特殊折扣进行计算
 				let discount_computed_params = {};
+				console.warn("[DiscountComputed]先清除折扣信息数据...");
+				card_sale.FallbackSpecialDiscount(this.source.sale001,sale2 || this.source.sale002);//清除折扣信息
+				console.warn("[DiscountComputed]折扣信息数据清除完毕...");
 				if(this.source.discount_type != 'NO'){
-					console.log("[DiscountComputed]准备折扣计算参数...");
+					console.warn("[DiscountComputed]准备折扣计算参数...",{
+						param_sale2:sale2,
+						context_sale2:this.source.sale002
+					});
 					discount_computed_params.ZKType= this.source.discount_type;
 					discount_computed_params.ZKData= this.source.discount_infos;
 					main.MatchZKDatas(discount_computed_params,sale2 || this.source.sale002);//可使用传入的sale2，如果不存在则使用当前上下文的sale2
+					console.warn("[DiscountComputed]折扣计算完毕...");
 				}
-				else{
-					console.log("[DiscountComputed]清除折扣信息...");
-					card_sale.FallbackSpecialDiscount(this.source.sale001,sale2 || this.source.sale002);//清除折扣信息
-				}
-				console.log("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
+				console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
 			craft_discount_computed() {//手工折扣额的处理
 				if(!this.source.sale001) return;
