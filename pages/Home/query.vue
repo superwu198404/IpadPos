@@ -6,38 +6,40 @@
 <template name="query">
 	<view class="leftcx navmall">
 		<view class="logo">
-			<image src="@/images/img2/kgeeeee.png" mode="widthFix"></image>				
+			<image src="@/images/img2/kgeeeee.png" mode="widthFix"></image>
 		</view>
 		<text class="biaoti">门店查询</text>
 		<view class="menu">
-			<view class="glcx">
+			<view class="glcx" @click="ToPage('/pages/Querypage/Statement/Statement')">
 				<view>
 					<image class="wx" src="@/images/img2/xiaoshou.png" mode="widthFix"></image>
 					<image class="xz" src="@/images/img2/xiaoshoucx-cu.png" mode="widthFix"></image>
 					销售报表
 				</view>
 			</view>
-			<view class="glcx curr">
-				<view>
-					<image class="wx" src="/images/img2/danjucx.png" mode="widthFix"></image>
-					<image class="xz" src="@/images/img2/danjucx-cu.png" mode="widthFix"></image>
-					外卖单查询
-				</view>
-			</view>
-			<view class="glcx">
+			<view class="glcx curr" @click="ToPage('/pages/Querypage/TakeawayCX/TakeawayCX')">
 				<view>
 					<image class="wx" src="@/images/img2/zhifu.png" mode="widthFix"></image>
 					<image class="xz" src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
+					外卖单查询
+				</view>
+			</view>
+			<view class="glcx" @click="ToPage('/pages/Querypage/Storeinquiry/Storeinquiry')">
+				<view>
+					<image class="wx" src="/images/img2/danjucx.png" mode="widthFix"></image>
+					<image class="xz" src="@/images/img2/danjucx-cu.png" mode="widthFix"></image>
 					支付查询
 				</view>
 			</view>
 		</view>
 		<view class="tuichu">
 			<image class="mendian" src="@/images/img2/dianmian.png"></image>
-			<button><image src="@/images/img2/tuitui.png"></image>退出</button>
+			<button @click="Return">
+				<image src="@/images/img2/tuitui.png"></image>退出
+			</button>
 		</view>
 	</view>
-	
+
 </template>
 
 <script>
@@ -46,24 +48,32 @@
 		//属性
 		props: {
 			属性名称: {
-				type: String,//属性类型
+				type: String, //属性类型
 				value: "值"
 			},
 		},
 		data() {
 			return {
-				
+
 			}
 		},
 		//组件生命周期
-		created:function(e){
-		
+		created: function(e) {
+
 		},
 		methods: {
-
+			ToPage: function(e) {
+				uni.redirectTo({
+					url: e
+				})
+			},
+			Return: function() {
+				uni.redirectTo({
+					url: "/pages/Center/Center"
+				})
+			}
 		}
 	}
-	
 </script>
 
 <style>
