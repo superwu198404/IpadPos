@@ -111,7 +111,9 @@ var GetAllMsg = function(e, t, func) {
 		khid: e,
 		type: t
 	}, apistr, false);//不显示加载提示
-	Req.asyncFuncOne(reqdata, func, func);
+	// console.log("查询门店消息");
+	// Req.asyncFuncOne(reqdata, func, func);
+	Req.HttpPersonal(reqdata,func)
 }
 
 //获取消息方法

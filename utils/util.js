@@ -414,33 +414,10 @@ const utils = {
 			return new Date().toLocaleDateString();
 		}
 	},
-
-	//判断区间重叠[{min:"",max:""},{min:"",max:""},{min:"",max:""}];
-	_IntervalOverlap: function(intervalObjs) {
-		console.log("开始校验区间1：", intervalObjs);
-		let over = true;
-		for (var i = 0; i < intervalObjs.length - 1; i++) { //重叠判断，-1代表最后一个不进行判断
-			let a = intervalObjs[i].max - intervalObjs[i + 1].min;
-			console.log("比较值：", a);
-			if (intervalObjs[i].max - intervalObjs[i + 1].min >= 0) {
-				console.log("区间" + JSON.stringify(intervalObjs[i]) + "与" + JSON.stringify(intervalObjs[i + 1]) +
-					"有重叠");
-				over = false;
-				break;
-			}
-		}
-		return over;
-	},
 	//判断区间重叠[{min:"1",max:"4"},{min:"5",max:"8"},{min:"6",max:"10"}];
-	IntervalOverlap: function(arr, obj) {
-		// console.log("开始校验区间：", arr);
-		// console.log("开始校验区间1：", obj);
+	IntervalOverlap1: function(arr, obj) {
 		let over = true;
 		for (var i = 0; i < arr.length; i++) {
-			// console.log("条件校验：", arr[i].min <= obj.min);
-			// console.log("条件校验：", arr[i].max >= obj.min);
-			// console.log("条件校验：", arr[i].min <= obj.max);
-			// console.log("条件校验：", arr[i].max >= obj.max);
 			if ((arr[i].min <= obj.min && arr[i].max >= obj.min) || (arr[i].min <= obj.max && arr[i].max >= obj
 					.max)) {
 				over = false;
@@ -449,7 +426,23 @@ const utils = {
 		}
 		console.log("校验结果：", over);
 		return over;
-	}
+	},
+	//判断是否已录入
+	IntervalOverlap: function(sale2, min, max) {
+		console.log("开始校验区间：", sale2);
+		if (sale2.length == 0) return true;
+		let arr = sale2.map(r => {
+			return {
+				min: Number(r.begin_num.substr(r.begin_num.length - 6, 5)),
+				max: Number(r.end_num.substr(r.end_num.length - 6, 5))
+			};
+		})
+		let obj = {
+			min: Number(min.substr(min.length - 6, 5)),
+			max: Number(max.substr(max.length - 6, 5))
+		}
+		return utils.IntervalOverlap1(arr, obj);
+	},
 }
 
 export default {

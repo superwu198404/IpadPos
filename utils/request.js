@@ -273,7 +273,9 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 };
 
 var showloding = function(yn_show, pm_txt) {
+	// console.log("打开加载框：", yn_show + "-" + pm_txt);
 	if (yn_show && pm_txt) {
+		// console.log("打开加载框1");
 		uni.showLoading({
 			title: pm_txt || "加载中...",
 			mask: true
@@ -282,8 +284,9 @@ var showloding = function(yn_show, pm_txt) {
 }
 
 var hideloding = function(yn_show, pm_txt) {
+	// console.log("关闭加载框:", yn_show);
 	if (yn_show) {
-		console.log("关闭加载框");
+		// console.log("关闭加载框1");
 		uni.hideLoading();
 	}
 }
@@ -302,14 +305,14 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 			showloding(res.http.load, res.http.title);
 			// console.log("[AsyncFuncArr]已打开加载框...");
 			// console.log("[AsyncFuncArr]开始请求数据...");
-			try{
+			try {
 				res = await httpFunc(res);
-			}catch(e){
-				console.log("[AsyncFuncArr]请求异常:",e);
+			} catch (e) {
+				console.log("[AsyncFuncArr]请求异常:", e);
 			}
 			// console.log("[AsyncFuncArr]请求完成...");
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
-			console.log("[AsyncFuncArr]http请求返回值:",JSON.stringify(res).substring(0,1000));
+			console.log("[AsyncFuncArr]http请求返回值:", JSON.stringify(res).substring(0, 1000));
 			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -406,9 +409,9 @@ var AsyncRequesrChain = async function(pm_data, callbackfunArr, catchfun, otherf
 		}
 		showloding(res.load, res.msg);
 		console.log("[AsyncRequesrChain]开始调用回调函数：", {
-			callback_list:callbacklist,
-			current_callback:callbacklist[i],
-			current_index:i
+			callback_list: callbacklist,
+			current_callback: callbacklist[i],
+			current_index: i
 		});
 		res = await forPromise(callbacklist[i], res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
@@ -456,6 +459,12 @@ var getResData = function(res) {
 	let resdata = JSON.parse(res.data);
 	return resdata.data ? JSON.parse(resdata.data) : resdata;
 }
+var HttpPersonal = async function(data, func) {
+	// console.log("HttpPersonal请求前：", data);
+	let res = await httpFunc(data);
+	console.log("HttpPersonal请求结果：", res);
+	if (func) func(res);
+}
 
 export default {
 	http,
@@ -468,5 +477,6 @@ export default {
 	asyncFuncArr1,
 	AsyncRequesrChain,
 	asyncFuncChain,
-	getResData
+	getResData,
+	HttpPersonal
 }
