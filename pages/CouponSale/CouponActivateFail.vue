@@ -13,7 +13,7 @@
 		<view class="products">
 			<view class="procycle" v-if="source.sales_union.length">
 				<!-- 外卖单循环 -->
-				<view :class="source.select_order_info == sales ? 'li curr' : 'li'" class="li" v-for="(sales,index) in source.sales_union">
+				<view :class="source.select_order_info == sales ? 'li curr' : 'li'" class="li" v-for="(sales,index) in source.sales_union" @click="source.select_order_info = sales">
 					<view class="h3">
 						<view class="platform">
 							<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
@@ -120,15 +120,18 @@
 					console.log("[CouponActivate]券号激活结果:",res);
 					if (res.code) {
 						util.simpleMsg("券激活成功!" , true);
-						console.log("[CouponActivate]即将更新销售单状态:", data);
+						console.log("[CouponActivate]即将更新销售单状态:", res);
 						let sql = "update sale001 set str1=null,reason=null,yn_ok='X' where bill='" + this.source.select_order_info.sale001.BILL + "';"
 						sql += "update syssale001 set str1=null,reason=null,yn_ok='X' where bill='" + this.source.select_order_info.sale001.BILL + "';"
 						let result = await common.SimpleAPIRequest({
 							class:"SALE001CLASS",
 							method:"ExecuteBatchSQL",
-							data: sql
+							data: {
+								sql
+							}
 						});
 						console.log("销售单更新结果：", result);
+						this.get_activate_fail_orders();
 						util.simpleMsg((result?.msg || ""), !result.code);
 					} else {
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);

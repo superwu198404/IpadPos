@@ -99,7 +99,7 @@
 				</view>
 				<CouponActivateFail v-if="view.current_part_view == 'coupon_activate_fail'"></CouponActivateFail>
 				<!-- 起始卡号 -->
-				<CardNumEntry :show.sync="view.no_input"></CardNumEntry>
+				<CardNumEntry :show.sync="view.no_input" :scan_code="true"></CardNumEntry>
 			</view>
 			<view class="operation operation-correct">
 				<view class="sorting">
@@ -136,6 +136,7 @@
 	import member from '@/api/hy/MemberInterfaces.js';
 	import Sale from '@/utils/sale/card_coupon.js';
 	import card_sale from '@/api/business/card_sale.js';
+	import coupon_sale from '@/api/business/coupon_sale.js';
 	import util from '@/utils/util.js';
 	import sales from '@/utils/sale/saleClass.js';
 	import main from '@/api/business/main.js';
@@ -155,6 +156,7 @@
 	var $ = null;
 	export default {
 		name: "CouponSale",
+		mixins:[coupon_sale],
 		components: {
 			Head,
 			Menu,
@@ -189,7 +191,7 @@
 					coupon_active_success: false,
 					big_customer_info: null,
 					discount_infos: null,
-					discount_type: null
+					discount_type: 'NO'
 				},
 				sale: null,
 				container: null,
@@ -242,9 +244,9 @@
 						console.log("[Watch-Number-Info]获取到号码信息:", data);
 						console.log("[Watch-Number-Info]sale6列表数据:", this.source.sale006);
 						if(data.type === 'N') return;//取消不进行查询操作
-						let added = this.source.sale006.find(sale6 => sale6.KQIDS === data.begin_num || sale6
-							.KQIDE === data.begin_num || sale6.KQIDS === data.end_num || sale6.KQIDE ===
-							data.end_num);
+						console.warn("[Watch-Number-Info]开始判断起始结束券号是否重复...");
+						let added = this.coupons_segment_repeat_judge(`${data.begin_num}-${data.end_num}`,this.source.sale006.map(sale6 => `${sale6.KQIDS}-${sale6.KQIDE}`));
+						console.warn("[Watch-Number-Info]判断起始结束券号是否重复结果：",added);
 						if (added) { //判断是否出现重合的券号
 							util.simpleMsg('当前起始或结束券号已被添加，请重新录入!')
 							return;
@@ -338,8 +340,9 @@
 			},
 			async coupon_segment_activate() {
 				return member.coupon_sale.CouponActivation({
-					bill: this.source.sale001.BILL,
-					khid: this.KHID
+					bill: "",
+					// bill: "" || this.source.sale001.BILL,
+					khid: this.KHID //测试错误参数激活后续进行重试操作
 				});
 			},
 			async coupon_sale() {
@@ -478,11 +481,17 @@
 			},
 			total_discount_computed(){
 				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
+				$(this.reset_discount,false);//重置折扣
 				$(this.discount_computed,false);//特殊折扣计算
 				$(this.goods_discount_summary,false);//最后将折扣额汇总到sale001上
 				$(this.get_single_coupon_segment_list,false);//计算券号段的单体折扣
 				$(this.craft_discount_computed,false);//手工折扣额
 				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
+			},
+			reset_discount(){
+				console.warn("[DiscountComputed]先清除折扣信息数据...");
+				card_sale.FallbackSpecialDiscount(this.source.sale001, this.source.sale002);//清除折扣信息
+				console.warn("[DiscountComputed]折扣信息数据清除完毕...");
 			},
 			goods_discount_summary(){//对sale002折扣、总金额进行汇总，并存入sale001
 				console.log("[GoodsDiscountSummary]开始对sale002中的总金额，折扣额进行汇总...");
@@ -514,6 +523,7 @@
 				if(match_sale2){
 					console.log("[PushSale2Check]包含相同的商品，执行合并操作...");
 					match_sale2.QTY += sale2.QTY;
+					match_sale2.NET = match_sale2.QTY * match_sale2.PRICE;
 					console.log("[PushSale2Check]合并完成，合并项:", match_sale2);
 				}
 				else{
@@ -557,10 +567,14 @@
 				if (sales.sale006.length == 0)//如果sale002被删除完了，则删除 sale2_union_sale6 的对应物料
 					this.source.sale2_union_sale6.splice(remove_union_index, 1);
 				console.log("[RemoveUnion]删除信息后:",this.source);
+				$(this.total_discount_computed, false);//重新汇总折扣
 			},
 			touch_list(e,sale6) {
-				var text_tyle = e.currentTarget.dataset.style;
-				if (text_tyle == "left:0") {
+				console.log("[TouchList]点击列表:",{
+					event:e,
+					sale6
+				});
+				if (this.source.sale6_map_style.get(sale6).text_style == "left:0px") {
 					this.source.sale6_map_style.get(sale6).text_style = "left:-50px";
 				} else {
 					this.source.sale6_map_style.get(sale6).text_style = "left:0px";
@@ -573,9 +587,6 @@
 			},
 			discount_computed(sale2) {//使用特殊折扣进行计算
 				let discount_computed_params = {};
-				console.warn("[DiscountComputed]先清除折扣信息数据...");
-				card_sale.FallbackSpecialDiscount(this.source.sale001,sale2 || this.source.sale002);//清除折扣信息
-				console.warn("[DiscountComputed]折扣信息数据清除完毕...");
 				if(this.source.discount_type != 'NO'){
 					console.warn("[DiscountComputed]准备折扣计算参数...",{
 						param_sale2:sale2,

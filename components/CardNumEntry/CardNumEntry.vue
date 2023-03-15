@@ -34,9 +34,6 @@
 							<button v-if="endNum" @click="endNum=''">×</button>
 						</view class="label">
 					</view>
-					<label><text>启用扫码操作：</text>
-						<radio :checked="scan_code" @click="scan_code = !scan_code"></radio>
-					</label>
 				</view>
 				<view class="confirm">
 					<button class="btn btn-qx" @click="Cancel">取消</button>
@@ -59,6 +56,10 @@
 				type: String,
 				default: ""
 			},
+			scan_code: {
+				type:Boolean,
+				default: false
+			},
 			show: Boolean
 		},
 		data() {
@@ -66,7 +67,6 @@
 				// ywType: "",
 				beginNum: "", //1087111000003218
 				endNum: "", //1087111000003218
-				scan_code: false, //是否刷卡
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
 				store: getApp().globalData.store,
