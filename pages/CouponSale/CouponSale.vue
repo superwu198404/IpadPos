@@ -9,28 +9,7 @@
 		<!-- 顶部导航栏 -->
 		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 		<!-- 内容栏 -->
-		<view class="steps">
-			<view class="listep curr">
-				<text class="xuhao">01</text>
-				<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
-				<em>>>>>>></em>
-			</view>
-			<view class="listep">
-				<text class="xuhao">02</text>
-				<view class="setname"><label>确认折扣和金额</label><text>是否选大客户赊销等</text></view>
-				<em>>>>>>></em>
-			</view>
-			<view class="listep">
-				<text class="xuhao">03</text>
-				<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
-				<em>>>>>>></em>
-			</view>
-			<view class="listep">
-				<text class="xuhao">04</text>
-				<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
-				<!-- <em>>>>>>></em> -->
-			</view>
-		</view>
+		<CouponSaleSteps ref="steps"></CouponSaleSteps>
 		<view class="listof listof-correct">
 			<view class="prolist prolist-correct zxpro " style="width: 92%;">
 				<view class="choice">
@@ -150,6 +129,7 @@
 	} from '@/bll/PaymentBusiness/bll.js';
 	//组件部分
 	import CouponActivateFail from '@/pages/CouponSale/CouponActivateFail.vue';
+	import CouponSaleSteps from '@/pages/CouponSale/CouponSaleSteps.vue';
 	var $ = null;
 	export default {
 		name: "CouponSale",
@@ -158,7 +138,8 @@
 			Head,
 			Menu,
 			PrinterPage,
-			CouponActivateFail
+			CouponActivateFail,
+			CouponSaleSteps
 		},
 		data() {
 			return {
@@ -260,6 +241,10 @@
 			'source.sale002'(n, o) {
 				if(n.length === 0){
 					this.factory.reset_generators();
+					this.$refs.steps.set_step(1);
+				}
+				else{
+					this.$refs.steps.set_step(2);
 				}
 				if(this.source.sale001)
 					this.source.sale001.TLINE = n.length;
@@ -281,6 +266,7 @@
 				if(n && n.DKHID){//如果设置的值合法
 					if(this.source.sale001){//判断sale001是否生成，如果已经生成那么设置其大客户id信息
 						this.source.sale001.DKFID = n.DKHID;
+						this.$refs.steps.set_step(3);
 					}
 				}
 			},
@@ -406,6 +392,7 @@
 				}));
 			},
 			async coupon_activate() {
+				this.$refs.steps.set_step(4);
 				console.log("[CouponActivate]准备开始券号激活流程...");
 				await this.coupon_segment_distribute().then($(function(res){
 					console.log("[CouponActivate]券号激活申请结果:",res);
@@ -434,6 +421,7 @@
 			async save_orders() {//因为目前是作为最后流程执行，所以生成完单据后，重置下订单信息
 				console.log("[SaveOrders]准备开始生成订单，并上传订单信息到服务器...");
 				try{
+					main.ManualDiscount(this.source.sale001, this.source.sale002);
 					let created_sales_result = await this.sale.Completed({
 						SALE001: this.source.sale001,
 						SALE002: this.source.sale002,
@@ -701,6 +689,10 @@
 					this.source.big_customer_info = data;
 					this.source.discount_infos = await this.get_discount_data(data.DKHID);
 					console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
+				}));
+				this.event_register('coupon-activate-fail-close',$(function(data){
+					console.log("[EventMonitor]退出券激活界面...");
+					this.view.current_part_view = "coupon_activate";
 				}));
 			},
 			event_register(event_name, event_callback){
