@@ -265,20 +265,8 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
-				FailSaleList: [
-					// 	{
-					// 	SALE1: {},
-					// 	SALE2: [],
-					// 	SALE3: [],
-					// 	SALE6: []
-					// },
-				], //激活、充值失败的单据集合
-				curFailSale: {
-					// SALE1: {},
-					// SALE2: [],
-					// SALE3: [],
-					// SALE6: []
-				},
+				FailSaleList: [], //激活、充值失败的单据集合
+				curFailSale: {},
 				add_class: 0
 			}
 		},
@@ -516,7 +504,7 @@
 				sale6.QTY = cards.qty;
 				sale6.NO = cards.index;
 
-				sale6.txtStyle = "left:0"; //用于滑动删除事件
+				// sale6.txtStyle = "left:0"; //用于滑动删除事件
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -563,7 +551,7 @@
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
 						let arr = that.SALE002.filter(r => {
-							return r.SPID != e.SPID;
+							return r.STR2 != e.STR2;
 						});
 						that.SALE002 = arr;
 						let arr1 = that.SALE006.filter(r => {

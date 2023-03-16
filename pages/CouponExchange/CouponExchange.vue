@@ -295,16 +295,16 @@
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
-				var list = this.SALE006;
+				var list = this.SALE002;
 				console.log(txtStyle);
 				if (txtStyle == "left:0") {
 					txtStyle = "left:-50px";
 					list[index].txtStyle = txtStyle;
-					this.SALE006 = list
+					this.SALE002 = list
 				} else {
 					txtStyle = "left:0";
 					list[index].txtStyle = txtStyle;
-					this.SALE006 = list
+					this.SALE002 = list
 				}
 			},
 			//组件卡号返回
@@ -411,7 +411,7 @@
 				sale6.QTY = cards.qty;
 				sale6.NO = cards.index;
 
-				sale6.txtStyle = "left:0"; //用于滑动删除事件
+				// sale6.txtStyle = "left:0"; //用于滑动删除事件
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -458,7 +458,7 @@
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
 						let arr = that.SALE002.filter(r => {
-							return r.SPID != e.SPID;
+							return r.STR2 != e.STR2;
 						});
 						that.SALE002 = arr;
 						let arr1 = that.SALE006.filter(r => {
@@ -467,19 +467,6 @@
 						that.SALE006 = arr1;
 					}
 				})
-			},
-			//删除商品
-			deleteSP: function(spid) {
-				if (spid) {
-					let arr = that.SALE002.filter(r => {
-						return r.SPID != spid
-					});
-					that.SALE002 = arr;
-					let arr1 = that.SALE006.filter(r => {
-						return r.SPID != spid
-					});
-					that.SALE006 = arr1;
-				}
 			},
 			//根据002 计算001 金额等字段
 			CalTNET: function() {
@@ -843,7 +830,7 @@
 			},
 			//扫码组件回调
 			GetCouponNums: async function(e) {
-				// e = "900000000002133011";
+				// e = "900000000002163614";
 				console.log("收到券号组件回调：", e);
 				if (e.type != 'Y') {
 					return;

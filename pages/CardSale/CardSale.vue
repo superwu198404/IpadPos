@@ -603,7 +603,9 @@
 							return r.SPID != e.SPID
 						});
 						that.SALE006 = arr1;
-
+						if (arr.length == 0) {
+							that.CurCZGZ = {};
+						}
 					}
 				})
 			},
