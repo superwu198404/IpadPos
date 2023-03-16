@@ -8,7 +8,6 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
@@ -230,7 +229,6 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue';
 	import chikaren from '@/components/chikaren/chikaren.vue';
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
@@ -256,7 +254,6 @@
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq,
 			PrinterPage,
 		},
 		data() {

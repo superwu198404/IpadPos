@@ -31,6 +31,8 @@
 	import Cardquery from '@/pages/Cardquery/Cardquery.vue';
 	import CardActive from '@/pages/CardActive/CardActive.vue';
 	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
+	import CardDelay from '@/pages/CardDelay/CardDelay.vue';
+	// import CardSale from '@/pages/CardSale/CardSale.vue';
 	//页面组件 👆
 	export default {
 		name: "Menu",
@@ -39,7 +41,8 @@
 			CardSale,
 			Cardquery,
 			CardActive,
-			CouponExchange
+			CouponExchange,
+			CardDelay
 		},
 		computed: {
 			component_name() {
