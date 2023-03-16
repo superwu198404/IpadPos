@@ -23,6 +23,8 @@ const infos_template = {
 		use_store_name: '',//使用门店
 		spend_amount: '',//消费金额
 		operator: '',//操作员
+		//下面的是额外的信息，和卡券基本信息无关，用于一些特殊的控制
+		show_balance: true,//是否显示余额 注：实体卡未激活不显示余额
 	};
 const created_new_card_coupon_infos = (attach = infos_template) => {
 	return Object.assign(Object.assign({}, infos_template),attach);
@@ -59,7 +61,7 @@ export default {
 							card_id: data,
 							type_name: result.data.total_info.ZZCPTYPE3_TXT || this.text,
 							balance: result.data.total_info.ZZCPVALUE,
-							valid_date: result.data.total_info.ZZCPVALIDT,
+							valid_date: result.data.total_info.ZZCPVALIDT.replaceAll('-','/'),
 							is_customer_emotional_coupon: result.data.total_info.ZZIFKQ,
 							is_customer_complaint_coupon: result.data.total_info.ZZKSZQ,
 							apply: result.data.total_info.ZZCPSL_STAFF,
@@ -86,11 +88,11 @@ export default {
 					if(result.code){
 						infos = created_new_card_coupon_infos({
 							type_name: bd.card_type[result.data.cardType] || this.text,
-							spend_amount: result.data.amount,
 							balance: result.data.balance,
 							card_id: data,
 							valid_date: util.convertShortDate(result.data.expireDate),
-							status: bd.card_status[result.data.status] || ""
+							status: bd.card_status[result.data.status] || "",
+							show_balance: result.data.status != 'Z007'//卡未激活
 						});
 						console.log("[Search]处理后的卡信息:",infos);
 						return util.createdResult(true,result.msg,infos);

@@ -16,7 +16,7 @@
 				<view :class="source.select_order_info == sales ? 'li curr' : 'li'" class="li" v-for="(sales,index) in source.sales_union" @click="source.select_order_info = sales">
 					<view class="h3">
 						<view class="platform">
-							<label class="state jiedan"><em class="gang"></em>销售日期：2023-03-08</label>
+							<label class="state jiedan"><em class="gang"></em>销售日期：{{ to_date(sales.sale001.SALEDATE) }}</label>
 						</view>
 					</view>
 					<view class="cods">
@@ -25,7 +25,7 @@
 
 					</view>
 					<view class="address">
-						销售时间：{{ sales.sale001.SALETIME }}
+						销售时间：{{ to_time(sales.sale001.SALETIME) }}
 					</view>
 				</view>
 			</view>
@@ -91,8 +91,18 @@
 		computed:{
 			single_coupon_total_count(){
 				return $(function(sale6){
-					return (this.source.select_order_info?.sale002?.find(sale2 => sale2.BILL == sale6.BILL)?.PRICE * sale6.QTY) || 0
+					return (this.source.select_order_info?.sale002?.find(sale2 => sale2.BILL == sale6.BILL && sale2.SPID == sale6.SPID)?.PRICE * sale6.QTY) || 0
 				})
+			},
+			to_date(){
+				return $(function(datetime){
+					return new Date(datetime).toLocaleDateString();
+				});
+			},
+			to_time(){
+				return $(function(datetime){
+					return new Date(datetime).toLocaleTimeString();
+				});
 			},
 			current_order_coupons(){
 				return this.source.select_order_info || {

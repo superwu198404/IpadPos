@@ -52,7 +52,7 @@
 										<view class="h6">
 											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
 										</view>
-										<view class="denominat">
+										<view class="denominat" v-if="form.infos.show_balance">
 											<label>￥<text>{{ default_view(form.infos.balance, 0) }}</text></label>
 										</view>
 										<view class="cardinfo">
@@ -68,8 +68,8 @@
 											</view> -->
 										</view>
 										<view class="statistic">
-											<text v-if="form.infos.valid_date">有效期至：{{ default_view(form.infos.valid_date,'') }}</text>
-											<text v-if="form.infos.status">{{ default_view(form.infos.status,'') }}</text>
+											<text :class="form.infos.valid_date ? '' : 'hidden'">有效期至：{{ default_view(form.infos.valid_date,'') }}</text>
+											<text :class="form.infos.status ? '' : 'hidden'">{{ default_view(form.infos.status,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -374,5 +374,9 @@
 	.picker{
 		width: 100%;
 		height: 100%;
+	}
+	
+	.hidden {
+		visibility: hidden;
 	}
 </style>

@@ -110,9 +110,6 @@
 					<view class="a-z">
 						<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount"></image>
 					</view>
-					<view class="a-z">
-						<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
-					</view>
 				</view>
 			</view>
 			<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002"></SpecialDisc>
