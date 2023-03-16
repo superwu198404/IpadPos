@@ -664,9 +664,10 @@
 					return;
 				}
 				if (that.YWTYPE == "VIPCard_Active") {
-					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0)
+					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
 						_util.simpleMsg("请先填写顾客信息", true);
-					return;
+						return;
+					}
 				}
 				that.add_class = 2; //步骤
 				KQSale.ActiveApply({
