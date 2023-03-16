@@ -13,8 +13,12 @@
 					<view class="labnum">
 						<text>开始卡号：</text>
 						<view class="label">
+							<image src="@/images/img2/swiping_card.png" mode="widthFix"
+								@click="ScanCodeHandle('beginNum')"
+								v-if="ywtype=='VIPCard_Active'||ywtype=='VIPCard_Recharge'||ywtype=='GiftCard_Active'">
+							</image>
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
-								@click="ScanCodeHandle('beginNum')"></image>
+								@click="ScanCodeHandle('beginNum')" v-else></image>
 							<input type="number" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
 							<button v-if="beginNum" @click="beginNum=''">×</button>
@@ -27,7 +31,12 @@
 					<view class="labnum" v-if="!single">
 						<text>截止卡号：</text>
 						<view class="label">
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
+							<image src="@/images/img2/swiping_card.png" mode="widthFix"
+								@click="ScanCodeHandle('endNum')"
+								v-if="ywtype=='VIPCard_Active'||ywtype=='VIPCard_Recharge'||ywtype=='GiftCard_Active'">
+							</image>
+							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')"
+								v-else>
 							</image>
 							<input type="number" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
@@ -57,7 +66,7 @@
 				default: ""
 			},
 			scan_code: {
-				type:Boolean,
+				type: Boolean,
 				default: false
 			},
 			show: Boolean

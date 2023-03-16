@@ -55,7 +55,7 @@
 								</label>
 							</view>
 						</view>
-						<view class="ckr">“持卡人姓名”：877888999</view>
+						<!-- <view class="ckr">“持卡人姓名”：877888999</view> -->
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
@@ -168,7 +168,7 @@
 						<NoData v-else></NoData>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
+					<CardNumEntry :show.sync="showCardNum" :ywtype="YWTYPE"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -179,12 +179,12 @@
 						<view class="a-z">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
-						<view class="a-z">
+						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
-						</view>
-						<view class="a-z">
+						</view> -->
+						<!-- <view class="a-z">
 							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>

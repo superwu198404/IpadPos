@@ -202,7 +202,7 @@
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+							<image src="@/images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
 						</view>
 
 
@@ -255,6 +255,7 @@
 		components: {
 			Head,
 			PrinterPage,
+			chikaren
 		},
 		data() {
 			return {

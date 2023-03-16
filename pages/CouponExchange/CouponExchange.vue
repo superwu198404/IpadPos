@@ -103,9 +103,9 @@
 						<!-- <view class="a-z">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view> -->
-						<view class="a-z">
+						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
-						</view>
+						</view> -->
 						<view class="a-z">
 							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showCouponNum=true"></image>
 						</view>
