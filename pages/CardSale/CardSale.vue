@@ -814,6 +814,7 @@
 				let printerPram = {
 					"PRINTNUM": 1,
 					"XSTYPE": that.KQXSTYPE,
+					"ISFP": "Y",
 				};
 
 				let arr3 = that.SALE003;

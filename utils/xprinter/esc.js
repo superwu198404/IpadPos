@@ -3118,18 +3118,21 @@ var jpPrinter = {
 		jpPrinter.setPrint(); //打印并换行
 	
 		switch (type) {
-		   case "SKCZ":
+		   case "SKCZ"://VIP售卡充值
+			xpType ="卡激活充值";
+			break;	
+		   case "CZ"://VIP卡充值
 		    xpType ="卡充值";
+		    break;	
+		   case "LPKJH"://礼品卡激活
+		    xpType ="卡销售";
 		    break;
-			
-		   case "SKJH":
-		    xpType ="卡激活充值";
-		    break;
-		   
+		   case "DHQHK": //兑换券换卡
+			xpType ="卡销售";
+			break;	   
 		   case "SQ":
 		    xpType ="券销售";
 		    break;
-			
 		   default:
 			xpType ="卡充值";
 		}	
