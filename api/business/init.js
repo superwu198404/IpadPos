@@ -239,14 +239,14 @@ var InitData = async function(khid, func) {
 
 	//主动删除过期的销售数据
 	common.DelSale(); //主动删除销售单
-	
+
 	await get_payment_infos();
-	
+
 	if (func)
 		func();
 }
 
-var get_payment_infos = async function(){
+var get_payment_infos = async function() {
 	try {
 		await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, util.callBind(this, function(res) {
 			if (res.code) {
@@ -280,7 +280,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 	}
 	console.log("准备开始初始化" + pm_khid);
 	let apistr = "MobilePos_API.Utils.PosInit.getTx001";
-	let reqdata = Req.resObj(true, "开始通讯...", null, apistr);
+	let reqdata = Req.resObj(true, "开始通讯...", null, apistr, true);
 	console.log(JSON.stringify(reqdata));
 	Req.asyncFunc(reqdata,
 		(res) => {
@@ -293,7 +293,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				"passkey": "111"
 			};
 			let apistr = "MobilePos_API.Utils.PosInit." + pm_initType;
-			return Req.resObj(true, "通讯读取中...", reqPosData, apistr);
+			return Req.resObj(true, "通讯读取中...", reqPosData, apistr, true);
 		},
 		(res) => {
 			let sql = [];
@@ -336,7 +336,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				sql = sql.concat(new004);
 			});
 			//sql = sql.concat(_create_sql.TXSql); //追加数据通讯表POS_TXFILE
-			return Req.resObj(true, "即将完成...", sql);
+			return Req.resObj(true, "即将完成...", sql, null, true);
 		},
 		async (res) => {
 				//console.log("数据库通讯结果：" + JSON.stringify(res.data));

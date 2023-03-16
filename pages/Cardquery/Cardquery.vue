@@ -8,7 +8,6 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'>-->
 			<Head> </Head>

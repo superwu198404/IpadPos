@@ -166,7 +166,7 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue'
-	import query from '@/pages/Home/query.vue'
+	import query from '@/components/query/query.vue';
 	import Condits from '@/components/Condits/Condits.vue'
 	
 		export default {

@@ -66,8 +66,8 @@
 </template>
 
 <script>
-	import Head from '@/pages/Home/Component/Head.vue'
-	import query from '@/pages/Home/query.vue'
+	import Head from '@/pages/Home/Component/Head.vue';
+	import query from '@/components/query/query.vue';
 	
 		export default {
 			components: {

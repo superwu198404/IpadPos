@@ -8,7 +8,6 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
@@ -56,7 +55,7 @@
 								</label>
 							</view>
 						</view>
-						<view class="ckr">“持卡人姓名”：877888999</view>
+						<!-- <view class="ckr">“持卡人姓名”：877888999</view> -->
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
@@ -169,7 +168,7 @@
 						<NoData v-else></NoData>
 					</view>
 					<!-- 起始卡号 -->
-					<CardNumEntry :show.sync="showCardNum"></CardNumEntry>
+					<CardNumEntry :show.sync="showCardNum" :ywtype="YWTYPE"></CardNumEntry>
 				</view>
 				<view class="operation">
 					<view class="sorting">
@@ -180,12 +179,12 @@
 						<view class="a-z">
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
-						<view class="a-z">
+						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
-						</view>
-						<view class="a-z">
+						</view> -->
+						<!-- <view class="a-z">
 							<image src="@/images/img2/dhquannn.png" mode="widthFix"></image>
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>
@@ -206,7 +205,6 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue'
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import util from "@/utils/util.js";
@@ -231,7 +229,6 @@
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq,
 			PrinterPage,
 		},
 		data() {
@@ -268,20 +265,8 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
-				FailSaleList: [
-					// 	{
-					// 	SALE1: {},
-					// 	SALE2: [],
-					// 	SALE3: [],
-					// 	SALE6: []
-					// },
-				], //激活、充值失败的单据集合
-				curFailSale: {
-					// SALE1: {},
-					// SALE2: [],
-					// SALE3: [],
-					// SALE6: []
-				},
+				FailSaleList: [], //激活、充值失败的单据集合
+				curFailSale: {},
 				add_class: 0
 			}
 		},
@@ -519,7 +504,7 @@
 				sale6.QTY = cards.qty;
 				sale6.NO = cards.index;
 
-				sale6.txtStyle = "left:0"; //用于滑动删除事件
+				// sale6.txtStyle = "left:0"; //用于滑动删除事件
 				console.log("生成的的sale6:", sale6);
 				return sale6;
 			},
@@ -566,7 +551,7 @@
 				_util.simpleModal("提示", "是否确认删除此项？", res => {
 					if (res) {
 						let arr = that.SALE002.filter(r => {
-							return r.SPID != e.SPID;
+							return r.STR2 != e.STR2;
 						});
 						that.SALE002 = arr;
 						let arr1 = that.SALE006.filter(r => {

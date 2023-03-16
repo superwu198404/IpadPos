@@ -53,11 +53,11 @@
 						</view>
 					</view>
 					<view class="dates">
-						<view @click="ToSale(1)">
+						<view @click="ToSale('/pages/mainSale/MainSale')">
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToCardCouponBussiness()">
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -67,10 +67,6 @@
 						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
 						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
-					<!-- <view class="sale-card-coupon">
-						<view @click="ToSQ()">售券</view>
-						<view @click="ToSK(1)">售卡</view>
-					</view> -->
 					<view class="tuichu" @click="ToOut()">
 						<image src="@/images/logout.png" mode="widthFix"></image>
 						退出
@@ -230,7 +226,7 @@
 				}
 				let int = getApp().globalData.Int;
 				console.log("传输定时ID:", int);
-				if (!int) {
+				if (!int) { //销售单定时传输
 					this.TimedCommunication();
 				}
 				store.LOGINDATE = dateformat.getYMD();
@@ -243,7 +239,7 @@
 						return;
 					}
 					uni.redirectTo({
-						url: "/pages/mainSale/MainSale"
+						url: e
 					});
 					return;
 				}
@@ -258,7 +254,7 @@
 						return;
 					}
 					uni.redirectTo({
-						url: "/pages/mainSale/MainSale"
+						url: e
 					});
 				})
 			},
@@ -307,7 +303,7 @@
 					if (res.code) {
 						if (t) { //主动触发
 							that.showSignOut = true;
-							that.signOutDate = JSON.parse(res.data); // ["2022/9/1","2022/8/31"]; 
+							that.signOutDate = JSON.parse(res.data);
 						} else { //自动触发
 							uni.showModal({
 								title: "提示",
@@ -317,8 +313,7 @@
 									if (e.confirm) {
 										console.log("点击了确定");
 										that.showSignOut = true;
-										that.signOutDate = JSON.parse(res
-											.data); // ["2022/9/1","2022/8/31"]; 
+										that.signOutDate = JSON.parse(res.data);
 									}
 								}
 							})
@@ -349,11 +344,6 @@
 					that.syyjk = res;
 				})
 			},
-			//关闭签到
-			// CloseSign: function(res) {
-			// 	console.log("父组件被通知事件");
-			// 	that.showSign = false;
-			// },
 			//被通知关闭日结组件
 			CloseSignOut: function(res) {
 				console.log("父组件被通知事件");
@@ -401,16 +391,11 @@
 			//门店查询
 			Chaxun: function(e) {
 				console.log("页面参数值：", e);
-					uni.redirectTo({
-						url: "/pages/Querypage/Storeinquiry/Storeinquiry",
-						complete(r) {
-							console.log("页面参数值：", r);
-						}
-					});
-			},
-			ToCardCouponBussiness:function(){
 				uni.redirectTo({
-					url: "/pages/CardCouponMain/Menu"
+					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
+					complete(r) {
+						console.log("页面参数值：", r);
+					}
 				});
 			},
 			//初始化

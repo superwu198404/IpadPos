@@ -140,12 +140,14 @@ var CreateSQL = function(e, t) {
 var TransLiteData = function(e) {
 	console.log("[TransLiteData]数据传输中...");
 	TransLite(e, r => {
-		let delArr = ["update SALE001 set yn_sc='Y' where bill='" + delVal + "'"];
-		db.get().executeDml(delArr, "数据删除中", function(res2) {
-			console.log("销售数据传输状态更改成功：", res2);
-		}, function(err1) {
-			console.log("销售数据传输状态更改失败", err1);
-		});
+		if (e) {
+			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
+			db.get().executeDml(delArr, "数据删除中", function(res2) {
+				console.log("销售数据传输状态更改成功：", res2);
+			}, function(err1) {
+				console.log("销售数据传输状态更改失败", err1);
+			});
+		}
 	})
 }
 

@@ -8,7 +8,6 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<!-- <Pagekq></Pagekq> -->
 		<view class="right">
 			<!-- 顶部导航栏 -->
 			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
@@ -203,7 +202,7 @@
 							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+							<image src="@/images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
 						</view>
 
 
@@ -230,7 +229,6 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Pagekq from '@/pages/Home/Component/Pagekq.vue';
 	import chikaren from '@/components/chikaren/chikaren.vue';
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
@@ -256,8 +254,8 @@
 		name: "CardSale",
 		components: {
 			Head,
-			Pagekq,
 			PrinterPage,
+			chikaren
 		},
 		data() {
 			return {
@@ -298,7 +296,8 @@
 				delBtnWidth: 50, //删除按钮宽度单位（rpx）
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
-				add_class: 0
+				add_class: 0,
+				CKRInfo: {}, //持卡人信息
 			}
 		},
 		onReady: function() {
@@ -359,6 +358,8 @@
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
+			uni.$on("ConfirmCKR", that.ConfirmCKR);
+
 		},
 		watch: {
 			SALE002: function(n, o) {
@@ -377,6 +378,8 @@
 			uni.$off("big-customer-close");
 			uni.$off("close-tszk");
 			uni.$off("ReturnSale");
+			uni.$off("ConfirmCKR");
+
 		},
 		computed: {
 			//商品总数量
@@ -606,7 +609,9 @@
 							return r.SPID != e.SPID
 						});
 						that.SALE006 = arr1;
-
+						if (arr.length == 0) {
+							that.CurCZGZ = {};
+						}
 					}
 				})
 			},
@@ -656,6 +661,11 @@
 				}
 				if (that.SALE002.length == 0) {
 					_util.simpleMsg("请录入有效卡号", true);
+					return;
+				}
+				if (that.YWTYPE == "VIPCard_Active") {
+					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0)
+						_util.simpleMsg("请先填写顾客信息", true);
 					return;
 				}
 				that.add_class = 2; //步骤
@@ -783,6 +793,7 @@
 			},
 			//完成销售单
 			SaleCompleted: async function() {
+				that.UploadCKR(); //更新持卡人信息
 				console.log("生成销售单");
 				//激活成功-充值成功（与否）均生成销售单
 				await KQSale.Completed({
@@ -850,6 +861,7 @@
 				that.CurCZGZ = {};
 				that.Amount = 0;
 				that.CurZKDisc = {};
+				that.CKRInfo = {};
 				let store = _util.getStorage("store");
 				store.DKFID = "80000000";
 				store.DKFNAME = '默认大客户';
@@ -1070,6 +1082,34 @@
 							});
 						}
 					}
+				})
+			},
+			//持卡人回调事件
+			ConfirmCKR: function(e) {
+				console.log("持卡人回调事件：", e);
+				that.showCardRen = false;
+				if (e && e.type == 'Y') {
+					that.CKRInfo = e;
+				} else {
+					that.CKRInfo = {};
+				}
+			},
+			//更新持卡人信息
+			UploadCKR: function() {
+				if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0)
+					return;
+				let obj = {
+					card_num: that.SALE006[0].KQIDS,
+					phone: that.CKRInfo.phone,
+					id_card_no: that.CKRInfo.idcard,
+					user_name: that.CKRInfo.name,
+					khid: that.store.KHID,
+					kh_name: that.store.NAME,
+					ryid: that.store.RYID,
+					ry_name: that.store.RYNAME
+				};
+				_card_sale.updateCustomerInfo(obj, res => {
+					console.log("持卡人信息上传结果：", res);
 				})
 			}
 		}
