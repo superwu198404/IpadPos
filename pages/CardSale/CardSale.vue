@@ -63,7 +63,7 @@
 								</label>
 							</view>
 						</view>
-						<view class="ckr">“持卡人姓名”：877888999</view>
+						<view class="ckr">“持卡人姓名”：{{CKRInfo.name}}</view>
 					</view>
 					<!-- 卡激活/充值 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='VIPCard_Retry'">
@@ -664,9 +664,10 @@
 					return;
 				}
 				if (that.YWTYPE == "VIPCard_Active") {
-					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0)
+					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
 						_util.simpleMsg("请先填写顾客信息", true);
-					return;
+						return;
+					}
 				}
 				that.add_class = 2; //步骤
 				KQSale.ActiveApply({

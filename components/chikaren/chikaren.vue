@@ -9,22 +9,22 @@
 			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="guan">×</button></view>
 			<view class="clues">
 				<text>姓名：</text>
-				<label>
+				<view class="label">
 					<input type="text" placeholder="请输入姓名" v-model="name" focus="true" />
 					<button v-if="name" @click="name=''">×</button>
-				</label>
+				</view>
 			</view>
 			<view class="clues">
 				<text>手机号：</text>
-				<label><input type="number" v-model="phone" placeholder="请输入手机号" />
+				<view class="label"><input type="number" v-model="phone" placeholder="请输入手机号" />
 					<button v-if="phone" @click="phone=''">×</button>
-				</label>
+				</view>
 			</view>
 			<view class="clues">
 				<text>身份证号：</text>
-				<label><input type="text" v-model="idcard" placeholder="请输入身份证号" />
+				<view class="label"><input type="text" v-model="idcard" placeholder="请输入身份证号" />
 					<button v-if="idcard" @click="idcard=''">×</button>
-				</label>
+				</view>
 			</view>
 			<view class="affirm">
 				<button class="btn btn-hk" @click="ConfirmCKR('N')">取消</button>
@@ -70,19 +70,28 @@
 						util.simpleMsg("请输入手机号", true);
 						return;
 					}
+					if (!(/^(13|14|15|18)\d{9}$/.test(this.phone))) {
+						util.simpleMsg("手机号码有误，请重填", true);
+						return;
+					}
 					if (!this.idcard) {
 						util.simpleMsg("请输入身份证号", true);
 						return;
 					}
+					var ids =/^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
+					if (!ids.test(this.idcard)) {
+					util.simpleMsg("身份证号有误，请重填", true);
+					return;
 				}
-				uni.$emit("ConfirmCKR", {
-					type: e,
-					phone: that.phone,
-					name: that.name,
-					idcard: that.idcard
-				})
 			}
+			uni.$emit("ConfirmCKR", {
+				type: e,
+				phone: that.phone,
+				name: that.name,
+				idcard: that.idcard
+			})
 		}
+	}
 	}
 </script>
 
@@ -208,7 +217,7 @@
 		width: 162rpx;
 	}
 
-	.clues label {
+	.clues .label {
 		background-color: #F9f9f9;
 		height: 70rpx;
 		line-height: 70rpx;
@@ -220,14 +229,14 @@
 		align-items: center;
 	}
 
-	.clues label input {
+	.clues .label input {
 		width: 90%;
 		height: 70rpx;
 		line-height: 70rpx;
 		padding: 0 10rpx;
 	}
 
-	.clues label button {
+	.clues .label button {
 		width: 32rpx;
 		height: 32rpx;
 		background: #98C3B3;
