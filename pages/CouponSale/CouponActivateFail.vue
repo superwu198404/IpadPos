@@ -56,7 +56,7 @@
 					</view>
 				</view>
 				<view class="operat">
-					<button class="btn btn-qx">关闭</button>
+					<button class="btn btn-qx" @click="back">关闭</button>
 					<button class="btn btn-h" @click="coupon_activate()">重试</button>
 				</view>
 			</view>
@@ -175,6 +175,9 @@
 					this.source.sales_union = [];
 				}
 			},
+			back(){
+				uni.$emit('coupon-activate-fail-close');
+			}
 		},
 		created() {
 			this.get_activate_fail_orders();
