@@ -74,8 +74,8 @@
 		data() {
 			return {
 				// ywType: "",
-				beginNum: "", //1087111000003218
-				endNum: "", //1087111000003218
+				beginNum: "1087110000744323", //1087111000003218
+				endNum: "1087110000744323", //1087111000003218
 				single: false, //是否单卡
 				curFocus: "beginNum", //默认定位到起始卡号
 				store: getApp().globalData.store,

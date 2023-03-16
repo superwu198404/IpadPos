@@ -556,7 +556,7 @@
 					card_no: that.CouponInfo.coupon_num //003-ID 记录券号
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
-					show: false
+					show: true//是否显示
 				}));
 			},
 			//创建支付参数

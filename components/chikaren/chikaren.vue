@@ -4,31 +4,33 @@
 </style>
 <template>
 	<view class="boxs" v-if="show">
-	<view class="customer">
-		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-		<view class="h3">录入持卡人信息 <button @click="ConfirmScan()" class="guan">×</button></view>
-		<view class="clues">
-			<text>姓名：</text>
-			<label>
-			<input type="text" placeholder="请输入姓名" v-model="teacherName" focus="true" />
-			<button v-if="emptys" @click="inputempty()">×</button>
-			</label>
+		<view class="customer">
+			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="guan">×</button></view>
+			<view class="clues">
+				<text>姓名：</text>
+				<label>
+					<input type="text" placeholder="请输入姓名" v-model="name" focus="true" />
+					<button v-if="name" @click="name=''">×</button>
+				</label>
+			</view>
+			<view class="clues">
+				<text>手机号：</text>
+				<label><input type="number" v-model="phone" placeholder="请输入手机号" />
+					<button v-if="phone" @click="phone=''">×</button>
+				</label>
+			</view>
+			<view class="clues">
+				<text>身份证号：</text>
+				<label><input type="text" v-model="idcard" placeholder="请输入身份证号" />
+					<button v-if="idcard" @click="idcard=''">×</button>
+				</label>
+			</view>
+			<view class="affirm">
+				<button class="btn btn-hk" @click="ConfirmCKR('N')">取消</button>
+				<button class="btn" @click="ConfirmCKR('Y')">确定</button>
+			</view>
 		</view>
-		<view class="clues">
-			<text>手机号：</text>
-			<label><input text="number" pattern="[0-9]*" v-model="phone" placeholder="请输入手机号"  />
-			<button v-if="emptys">×</button></label>
-		</view>
-		<view class="clues">
-			<text>身份证号：</text>
-			<label><input type="text" :value="searchshenfen" placeholder="请输入身份证号" />
-			<button v-if="emptys">×</button></label>
-		</view>
-		<view class="affirm">
-			<button class="btn btn-hk" @click="ConfirmScan()">取消</button>
-			<button class="btn" @click="ConfirmScan()">确定</button>
-		</view>
-	</view>
 	</view>
 </template>
 <script>
@@ -49,15 +51,37 @@
 		},
 		data() {
 			return {
-				emptys: false,
+				phone: "",
+				name: "",
+				idcard: ""
 			};
 		},
 		created: function() {
 			that = this;
 		},
 		methods: {
-			
-			
+			ConfirmCKR: function(e) {
+				if (e == 'Y') {
+					if (!this.name) {
+						util.simpleMsg("请输入姓名", true);
+						return;
+					}
+					if (!this.phone) {
+						util.simpleMsg("请输入手机号", true);
+						return;
+					}
+					if (!this.idcard) {
+						util.simpleMsg("请输入身份证号", true);
+						return;
+					}
+				}
+				uni.$emit("ConfirmCKR", {
+					type: e,
+					phone: that.phone,
+					name: that.name,
+					idcard: that.idcard
+				})
+			}
 		}
 	}
 </script>
@@ -75,7 +99,7 @@
 		border-radius: 20rpx;
 		padding: 0 3% 220rpx;
 		z-index: 99;
-		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0,107,68,0.25);
+		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
 	}
 
 	.customer .bg {
@@ -150,7 +174,7 @@
 		line-height: 50rpx;
 		font-weight: 400;
 	}
-	
+
 	.affirm {
 		position: absolute;
 		bottom: 0;
@@ -177,29 +201,33 @@
 		fony-size: 34rpx;
 		position: relative;
 		z-index: 2;
-		margin:50rpx 0 0;
+		margin: 50rpx 0 0;
 	}
-	.clues text{
-		width:162rpx;
+
+	.clues text {
+		width: 162rpx;
 	}
+
 	.clues label {
 		background-color: #F9f9f9;
 		height: 70rpx;
 		line-height: 70rpx;
-		border:1px solid #eee;
-		width:79%;
+		border: 1px solid #eee;
+		width: 79%;
 		border-radius: 6rpx;
-		padding:0 0.5%;
+		padding: 0 0.5%;
 		display: flex;
 		align-items: center;
 	}
-	.clues label input{
-		width:90%;
+
+	.clues label input {
+		width: 90%;
 		height: 70rpx;
 		line-height: 70rpx;
-		padding:0 10rpx;
+		padding: 0 10rpx;
 	}
-	.clues label button{
+
+	.clues label button {
 		width: 32rpx;
 		height: 32rpx;
 		background: #98C3B3;
@@ -208,9 +236,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		padding:0;
+		padding: 0;
 		color: #fff;
 	}
+
 	.rjcg {
 		display: flex;
 		justify-content: center;
