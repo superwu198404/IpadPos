@@ -413,7 +413,6 @@
 		"qiandao": "/components/qiandao/qiandao",
 		"rijie": "/components/rijie/rijie",
 		"saomaqiang": "/components/saomaqiang/saomaqiang",
-		"cdxp": "/components/cdxp/cdxp",
-		"query": "/Home/query/query"
+		"cdxp": "/components/cdxp/cdxp"
 	}
 }
