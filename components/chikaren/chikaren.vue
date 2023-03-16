@@ -70,19 +70,28 @@
 						util.simpleMsg("请输入手机号", true);
 						return;
 					}
+					if (!(/^(13|14|15|18)\d{9}$/.test(this.phone))) {
+						util.simpleMsg("手机号码有误，请重填", true);
+						return;
+					}
 					if (!this.idcard) {
 						util.simpleMsg("请输入身份证号", true);
 						return;
 					}
+					var ids =/^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
+					if (!ids.test(this.idcard)) {
+					util.simpleMsg("身份证号有误，请重填", true);
+					return;
 				}
-				uni.$emit("ConfirmCKR", {
-					type: e,
-					phone: that.phone,
-					name: that.name,
-					idcard: that.idcard
-				})
 			}
+			uni.$emit("ConfirmCKR", {
+				type: e,
+				phone: that.phone,
+				name: that.name,
+				idcard: that.idcard
+			})
 		}
+	}
 	}
 </script>
 
