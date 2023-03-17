@@ -208,30 +208,11 @@
 				add_class: 0
 			}
 		},
-		onReady: function() {
-			that = this;
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
-						function(
-							res) {
-							if (res.code) {
-								that.FKDA_INFO = JSON.parse(res.data);
-								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-							} else {
-								console.log("获取付款方式失败!======", err);
-							}
-						}))
-				} catch (err) {
-					console.log("获取付款方式失败!======", err);
-				}
-			}))()
-		},
+		
 		created: function() {
 			that = this;
-
+			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
+			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 
@@ -291,7 +272,6 @@
 			},
 		},
 		methods: {
-
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
