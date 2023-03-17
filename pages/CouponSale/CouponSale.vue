@@ -189,10 +189,10 @@
 				return this.source.sale002.map(sale2 => sale2.QTY).reduce((prev_qty, next_qty) => prev_qty + next_qty, 0);
 			},
 			unpaid_total_amount() {
-				return this.source.sale001?.TNET || 0;
+				return this.source.sale001?.TNET?.toFixed(2) || 0;
 			},
 			unpaid_total_discount(){
-				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p,n) => p+n,0);
+				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p,n) => p+n,0).toFixed(2);
 			},
 			get_union(){
 				return $(function(sale6){
@@ -226,7 +226,7 @@
 						console.warn("[Watch-Number-Info]开始判断起始结束券号是否重复...");
 						let added = this.coupons_segment_repeat_judge(`${data.begin_num}-${data.end_num}`,this.source.sale006.map(sale6 => `${sale6.KQIDS}-${sale6.KQIDE}`));
 						console.warn("[Watch-Number-Info]判断起始结束券号是否重复结果：",added);
-						if (added) { //判断是否出现重合的券号
+						if (added) {
 							util.simpleMsg('当前起始或结束券号已被添加，请重新录入!')
 							return;
 						}
@@ -251,7 +251,8 @@
 					this.source.sale001.TLINE = n.length;
 				else
 					return;
-				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source.sale001.TLINE);
+				this.re_computed_sales(this.source.sale001,n);
+				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source);
 			},
 			'source.discount_type'(n, o){
 				$(this.total_discount_computed, false);
@@ -325,7 +326,7 @@
 			async coupon_segment_activate() {
 				return member.coupon_sale.CouponActivation({
 					bill: "",
-					// bill: "" || this.source.sale001.BILL,
+					// bill: this.source.sale001.BILL,
 					khid: this.KHID //测试错误参数激活后续进行重试操作
 				});
 			},
@@ -417,12 +418,12 @@
 					}
 				}))
 				console.log("[CouponActivate]券号激活流程执行完毕...");
-				this.save_orders();//最后生成订单（激活成功与否不影响订单生成，但是需要记录激活结果，所以得写在激活后）
+				main.ManualDiscountAlter(this.source.sale001, this.source.sale002);
+				this.save_orders();
 			},
-			async save_orders() {//因为目前是作为最后流程执行，所以生成完单据后，重置下订单信息
+			async save_orders() {
 				console.log("[SaveOrders]准备开始生成订单，并上传订单信息到服务器...");
 				try{
-					main.ManualDiscount(this.source.sale001, this.source.sale002);
 					let created_sales_result = await this.sale.Completed({
 						SALE001: this.source.sale001,
 						SALE002: this.source.sale002,
@@ -438,12 +439,12 @@
 					console.log("[SaveOrders]执行异常:",e);
 				}
 			},
-			async reset_form(){//重置界面表单信息
+			async reset_form(){
 				this.factory.reset_generators();
 				this.source = this.$options.data().source;
 				this.source.discount_infos = await this.get_discount_data();//初始化折扣信息数据
 			},
-			get_single_coupon_segment_list(){//根据单个券号段，计算出每个号段对应折扣
+			get_single_coupon_segment_list(){
 				console.warn("[GetSingleCouponSegmentList]准备开始计算分摊后的折扣:",this.source);
 				let sale6_main_discount_computed_list = this.source.sale2_union_sale6.map(
 					$(function(sales){ 
@@ -472,6 +473,7 @@
 				$(this.goods_discount_summary,false);//最后将折扣额汇总到sale001上
 				$(this.get_single_coupon_segment_list,false);//计算券号段的单体折扣
 				$(this.craft_discount_computed,false);//手工折扣额
+				$(this.coupon_price_record.bind(null,this.source.sale002,this.source.sale006),false);
 				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
 			},
 			reset_discount(){
@@ -509,7 +511,7 @@
 				if(match_sale2){
 					console.log("[PushSale2Check]包含相同的商品，执行合并操作...");
 					match_sale2.QTY += sale2.QTY;
-					match_sale2.NET = match_sale2.QTY * match_sale2.PRICE;
+					this.re_computed_sales(this.source.sale001,this.source.sale002);
 					console.log("[PushSale2Check]合并完成，合并项:", match_sale2);
 				}
 				else{
@@ -540,13 +542,19 @@
 				let remove_sale2_index = this.source.sale002.indexOf(sales.sale002),
 					remove_sale6_index = this.source.sale006.indexOf(sale6),
 					remove_union_index = this.source.sale2_union_sale6.indexOf(sales);
+					console.log("[RemoveUnion]即将要删除的元素索引:",{
+						remove_sale2_index,
+						remove_sale6_index,
+						remove_union_index
+					});
 				if (remove_sale6_index != -1){
 					sales.sale006.splice(remove_sale6_index, 1);//删除联合数据中的sale006部分数据
 					this.source.sale006.splice(remove_sale6_index, 1);//删除外部sale006中的数据
 					sales.sale002.QTY -= sale6.QTY;//在sale2中减去被移除掉的券数量
+					this.re_computed_sales(this.source.sale001,this.source.sale002);
 				}
 				if (sales.sale006.length == 0)//如果sale006被删除完了，则删除sale002的对应物料
-					sales.sale002.splice(remove_sale2_index, 1);
+					this.source.sale002.splice(remove_sale2_index, 1);
 				/*
 				 * 注：union内的结构是一对多，由一个sale2对应多个sale6，所以此处是检查sale6是否已经被删除完了，如果被删除完了那么就移除对应的 sale2和sale6 的联合数据。
 				*/

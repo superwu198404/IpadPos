@@ -59,10 +59,10 @@
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
-						<view class="module">
+						<view class="module" style="height: 66%;">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
-							<view class="swipetip" v-if="SALE002.length==0">
+							<view class="swipetip" v-if="SALE006.length==0">
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先刷卡录入</text>
 							</view>
@@ -93,7 +93,6 @@
 										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
-								
 							</view>
 						</view>
 						<view class="totals">
@@ -271,30 +270,11 @@
 				add_class: 0
 			}
 		},
-		onReady: function() {
-			that = this;
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
-						function(
-							res) {
-							if (res.code) {
-								that.FKDA_INFO = JSON.parse(res.data);
-								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-							} else {
-								console.log("获取付款方式失败!======", err);
-							}
-						}))
-				} catch (err) {
-					console.log("获取付款方式失败!======", err);
-				}
-			}))()
-		},
 		created: async function() {
 			that = this;
-
+			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
+			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
+			
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 			// KQSale.InitData("礼品卡激活初始化", res => {
