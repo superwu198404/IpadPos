@@ -512,8 +512,13 @@
 			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
-				if (!this.begin_num) {
-					_util.simpleMsg("卡号不为空");
+				if (!that.begin_num) {
+					_util.simpleMsg("卡号不为空", true);
+					return;
+				}
+				if (that.SALE002.length > 0) {
+					_util.simpleMsg("当前只支持单卡操作", true);
+					return;
 				}
 				KQSale.QueryInfo({
 					card_num: that.begin_num
@@ -877,6 +882,7 @@
 				let printerPram = {
 					"PRINTNUM": 1,
 					"XSTYPE": that.KQXSTYPE,
+					"ISFP": "Y",
 				};
 
 				let arr3 = that.SALE003;

@@ -806,7 +806,8 @@
 				//调用打印
 				let printerPram = {
 					"PRINTNUM": 1,
-					"XSTYPE": "SKJH",
+					"XSTYPE": "LPKJH",
+					"ISFP": "Y",
 				};
 
 				let arr3 = that.SALE003;
