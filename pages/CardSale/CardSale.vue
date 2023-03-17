@@ -10,7 +10,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='kq_sale'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
