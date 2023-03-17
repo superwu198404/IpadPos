@@ -67,7 +67,7 @@
 					</view>
 					<!-- 卡激活/充值 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='VIPCard_Retry'">
-						<view class="module" v-if="SALE002.length>0">
+						<view class="module" style="height: 28%;" v-if="SALE002.length>0">
 							<view class="hh">充值金额 <em></em></view>
 							<view class="jinelist">
 								<view class="li-je " v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)"
