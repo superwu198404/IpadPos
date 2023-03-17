@@ -418,7 +418,7 @@
 					}
 				}))
 				console.log("[CouponActivate]券号激活流程执行完毕...");
-				main.ManualDiscountAlter(this.source.sale001, this.source.sale002);
+				// main.ManualDiscount(this.source.sale001, this.source.sale002);
 				this.save_orders();
 			},
 			async save_orders() {
@@ -604,6 +604,16 @@
 				this.source.sale001.TCXDISC = util.newFloat(Number(this.source.sale001.TCXDISC) + SKY_DISCOUNT, 2);
 				this.source.sale001.ROUND = SKY_DISCOUNT;
 				this.source.sale001.TDISC = util.newFloat(Number(this.source.sale001.TDISC) + SKY_DISCOUNT, 2);
+				this.source.sale002.forEach(sale2 => {
+					let SKY_DISCOUNT = util.newFloat((((sale2.PRICE * sale2.QTY) * 10) % 1) / 10, 2);
+					if(SKY_DISCOUNT){
+						sale2.CXDISC = SKY_DISCOUNT;
+						sale2.YN_CXDISC = "Y";
+					}
+					else
+						sale2.YN_CXDISC = "F";
+					sale2.DISCRATE =parseFloat((Number(sale2.JFDISC) + Number(sale2.LSDISC) + Number(sale2.TPDISC) + Number(sale2.BZDISC) + Number(sale2.HYDISC) + Number(sale2.CXDISC) + Number(sale2.DISC)).toFixed(2));
+				})
 				console.log("[CraftDiscountComputed]SALE001计算手工折扣后的新数据：", this.source);
 			},
 			receipt_printing(source){//打印代码写在下面
