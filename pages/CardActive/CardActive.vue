@@ -59,7 +59,7 @@
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
-						<view class="module" style="height: 66%;">
+						<view class="module">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
 							<view class="swipetip" v-if="SALE006.length==0">
