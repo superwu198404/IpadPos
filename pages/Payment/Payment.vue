@@ -288,7 +288,7 @@
 							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'modeli curr':'modeli'"
 							:id="item.type" @click="clickPayType(item,$event)">
 							<view>
-								<image src="../../images/moren-zfu.png" mode="widthFix"></image>
+								<image :src="item.icon" mode="widthFix"></image>
 								<label>{{item.name}}</label>
 							</view>
 						</view>
