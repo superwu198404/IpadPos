@@ -3184,7 +3184,7 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		if(type == "SKCZ" || type == "SKJH"){
+		if(type == "SKCZ" || type == "CZ" || type == "LPKJH" ||type == "DHQHK"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("成功:" + util.nnvl(data.sale6_sumQty,0) + "张" + " 金额:" + util.tnvl(data.sale6_sumNet,0));
@@ -3261,7 +3261,7 @@ var jpPrinter = {
 			jpPrinter.setPrint(); //打印并换行
 		});
 		
-		if(type == "SKCZ" || type == "SKJH"){
+		if(type == "SKCZ" || type == "CZ" || type == "LPKJH" ||type == "DHQHK"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("总金额:" + data.payableAmount.toFixed(2).toString());

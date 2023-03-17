@@ -674,6 +674,7 @@
 			sksqBluePrinter: async function(sale1_obj, sale2_arr, sale3_arr, sale6_arr, print) {
 				var that = this;
 				let xsType = "";
+				let isFP = "Y"; //是否打印发票，区别于终端参数
 				//输出日志
 				console.log("售卡售券打印接收数据 sale1_obj", sale1_obj);
 				console.log("售卡售券打印接收数据 sale2_arr", sale2_arr);
@@ -684,6 +685,7 @@
 				if(print != null){
 					that.printerNum = print.PRINTNUM;
 					xsType = print.XSTYPE;
+					isFP = print.ISFP;
 				}else{
 					that.printerNum = 1;
 				}
@@ -707,7 +709,7 @@
 				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, sale1_obj.SALETIME, command.getData());
 			
 				//打印二维码
-				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
+				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y" && isFP == "Y") ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz) {
 					let objQrCode =
