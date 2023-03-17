@@ -67,7 +67,7 @@
 					</view>
 					<!-- 卡激活/充值 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='VIPCard_Retry'">
-						<view class="module" v-if="SALE002.length>0">
+						<view class="module" style="height: 28%;" v-if="SALE002.length>0">
 							<view class="hh">充值金额 <em></em></view>
 							<view class="jinelist">
 								<view class="li-je " v-for="(item) in CZGZMX" @click="ChooseCZGZ(item)"
@@ -85,7 +85,7 @@
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先刷卡录入</text>
 							</view>
-							<!-- 刷卡后显示卡列表 @touchstart="touchS" @touchmove="touchM" @touchend="touchE"-->
+							<!-- 刷卡后显示卡列表-->
 							<view class="cardlist">
 								<view class="ulli" v-for="(item,index) in SALE002">
 									<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
@@ -112,7 +112,6 @@
 										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
-
 							</view>
 						</view>
 						<view class="totals">
@@ -449,8 +448,13 @@
 			},
 			//商品状态和库存校验并并生成sale2,6
 			MatchSP: function() {
-				if (!this.begin_num) {
-					_util.simpleMsg("卡号不为空");
+				if (!that.begin_num) {
+					_util.simpleMsg("卡号不为空", true);
+					return;
+				}
+				if (that.SALE002.length > 0) {
+					_util.simpleMsg("当前只支持单卡操作", true);
+					return;
 				}
 				KQSale.QueryInfo({
 					card_num: that.begin_num
@@ -814,6 +818,7 @@
 				let printerPram = {
 					"PRINTNUM": 1,
 					"XSTYPE": that.KQXSTYPE,
+					"ISFP": "Y",
 				};
 
 				let arr3 = that.SALE003;

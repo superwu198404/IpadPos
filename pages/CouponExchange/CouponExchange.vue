@@ -47,7 +47,7 @@
 						</view>
 						<view class="ckr">兑换券折扣额：{{CouponInfo.coupon_value||0}}</view>
 					</view>
-					<view class="module" style="height: 66%;">
+					<view class="module">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
 						<view class="swipetip" v-if="SALE002.length==0">
@@ -70,17 +70,12 @@
 										<label>始：<text>{{item.begin_num}}</text></label>
 										<label>终：<text>{{item.end_num}}</text></label>
 									</view>
-									<!-- <view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
-										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
-										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
-									</view> -->
 								</view>
 								<view class="touch-list list-delete" @click="RemoveItem(item)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
+
 						</view>
 					</view>
 					<view class="totals">
@@ -536,7 +531,7 @@
 					card_no: that.CouponInfo.coupon_num //003-ID 记录券号
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
-					show: true//是否显示
+					show: true //是否显示
 				}));
 			},
 			//创建支付参数
@@ -756,8 +751,9 @@
 				//调用打印
 				//调用打印
 				let printerPram = {
-					"PRINTNUM": 1,
-					"XSTYPE": "SKJH",
+					"PRINTNUM": 2,
+					"XSTYPE": "DHQHK",
+					"ISFP": "N",
 				};
 
 				let arr3 = that.SALE003;

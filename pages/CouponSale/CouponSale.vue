@@ -6,6 +6,7 @@
 </style>
 <template>
 	<view>
+		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- 顶部导航栏 -->
 		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
 		<!-- 内容栏 -->
@@ -29,7 +30,7 @@
 					</view>
 				</view>
 				<view v-if="view.current_part_view == 'coupon_activate'">
-					<view class="module" style="height: 66%;">
+					<view class="module">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
 						<view class="swipetip" v-if="view.swipe_tip">
@@ -611,6 +612,7 @@
 				let printerPram = {
 					"PRINTNUM": 1,
 					"XSTYPE": "SQ",
+					"ISFP": "Y",
 				};
 				
 				let arr3 = that.source.sale003;

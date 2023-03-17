@@ -59,10 +59,10 @@
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
-						<view class="module" style="height: 66%;">
+						<view class="module">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
-							<view class="swipetip" v-if="SALE006.length==0">
+							<view class="swipetip" v-if="SALE002.length==0">
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先刷卡录入</text>
 							</view>
@@ -93,6 +93,7 @@
 										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
+								
 							</view>
 						</view>
 						<view class="totals">
@@ -806,7 +807,8 @@
 				//调用打印
 				let printerPram = {
 					"PRINTNUM": 1,
-					"XSTYPE": "SKJH",
+					"XSTYPE": "LPKJH",
+					"ISFP": "Y",
 				};
 
 				let arr3 = that.SALE003;

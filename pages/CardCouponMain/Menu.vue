@@ -94,14 +94,8 @@
 							icon_open: require('@/images/img2/kabangd-bai.png'),
 							icon_close: require('@/images/img2/kabangd.png'),
 							name:'卡绑定',
-							key: ''
+							key: 'CardBind'
 						},
-						// {
-						// 	icon_open: require('@/images/img2/jhshibai-bai.png'),
-						// 	icon_close: require('@/images/img2/jhshibai.png'),
-						// 	name:'激活失败',
-						// 	key: ''
-						// }
 					]
 				}
 			}
