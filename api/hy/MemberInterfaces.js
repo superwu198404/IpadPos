@@ -306,6 +306,37 @@ const updateCustomerInfo = function(loading_title, request, success, error) {
 			error(res)
 	});
 }
+
+//卡延期
+const CARD_DELAY = function(loading_title, request, success, error) {
+	let data = requestAssembleTwo(loading_title, {
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "CARD_DELAY"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+//卡挂失
+const REPORT_LOSS = function(loading_title, request, success, error) {
+	let data = requestAssembleTwo(loading_title, {
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "REPORT_LOSS"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
 //VIP卡信息登记查询
 const queryVipCardInfo = function(loading_title, request, success, error) {
 	let data = requestAssembleTwo(loading_title, {
@@ -427,5 +458,7 @@ export default {
 	coupon_sale,
 	GetTLCard,
 	updateCustomerInfo,
-	queryVipCardInfo
+	queryVipCardInfo,
+	CARD_DELAY,
+	REPORT_LOSS
 }

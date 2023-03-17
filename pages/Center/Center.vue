@@ -239,7 +239,10 @@
 						return;
 					}
 					uni.redirectTo({
-						url: e
+						url: e,
+						complete:res=>{
+							console.log("跳转结果",res);
+						}
 					});
 					return;
 				}
@@ -254,7 +257,10 @@
 						return;
 					}
 					uni.redirectTo({
-						url: e
+						url: e,
+						complete:res=>{
+							console.log("跳转结果",res);
+						}
 					});
 				})
 			},
