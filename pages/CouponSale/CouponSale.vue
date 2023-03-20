@@ -252,6 +252,7 @@
 				else
 					return;
 				this.re_computed_sales(this.source.sale001,n);
+				this.craft_discount_computed();
 				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source);
 			},
 			'source.discount_type'(n, o){
@@ -512,6 +513,7 @@
 					console.log("[PushSale2Check]包含相同的商品，执行合并操作...");
 					match_sale2.QTY += sale2.QTY;
 					this.re_computed_sales(this.source.sale001,this.source.sale002);
+					this.craft_discount_computed();
 					console.log("[PushSale2Check]合并完成，合并项:", match_sale2);
 				}
 				else{
@@ -552,6 +554,7 @@
 					this.source.sale006.splice(remove_sale6_index, 1);//删除外部sale006中的数据
 					sales.sale002.QTY -= sale6.QTY;//在sale2中减去被移除掉的券数量
 					this.re_computed_sales(this.source.sale001,this.source.sale002);
+					this.craft_discount_computed();
 				}
 				if (sales.sale006.length == 0)//如果sale006被删除完了，则删除sale002的对应物料
 					this.source.sale002.splice(remove_sale2_index, 1);
@@ -608,6 +611,7 @@
 					let SKY_DISCOUNT = util.newFloat((((sale2.PRICE * sale2.QTY) * 10) % 1) / 10, 2);
 					if(SKY_DISCOUNT){
 						sale2.CXDISC = SKY_DISCOUNT;
+						sale2.NET = (sale2.PRICE * sale2.QTY) - SKY_DISCOUNT;
 						sale2.YN_CXDISC = "Y";
 					}
 					else

@@ -91,7 +91,7 @@
 		computed:{
 			single_coupon_total_count(){
 				return $(function(sale6){
-					return (this.source.select_order_info?.sale002?.find(sale2 => sale2.BILL == sale6.BILL && sale2.SPID == sale6.SPID)?.PRICE * sale6.QTY) || 0
+					return (this.source.select_order_info?.sale002?.find(sale2 => sale2.BILL == sale6.BILL && sale2.SPID == sale6.SPID)?.NET) || 0
 				})
 			},
 			to_date(){
