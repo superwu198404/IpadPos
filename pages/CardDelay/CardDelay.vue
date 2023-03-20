@@ -53,8 +53,7 @@
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
 									<view class="touch-list list-touch">
-										<image class="bgs" style="position: absolute;top: 0px;"
-											src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
+										<image class="bgs" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
 											<label><em></em>{{CardInfo.spName||"暂无"}}</label>
 										</view>
@@ -120,7 +119,7 @@
 									暂无更多信息...
 								</label>
 							</view>
-							<view>
+							<view class="operat">
 								<button class="btn btn-qx" @click="Cancel">取消</button>
 								<button class="btn btn-h" @click="Confirm">确认</button>
 								<button class="btn btn-qx" @click="showCardRen=true">持卡人</button>
@@ -450,7 +449,7 @@
 		height: 6rpx;
 		position: absolute;
 		bottom: 20rpx;
-		left: 8%;
+		left: 19%;
 		z-index: 6;
 		border-radius: 6rpx;
 		background-color: #006B44;
@@ -560,5 +559,15 @@
 	.picker {
 		width: 100%;
 		height: 100%;
+	}
+	.operat{
+		width: 100%;
+		display: flex;
+		position: absolute;
+		bottom:0;
+		padding:2% 0;
+	}
+	.operat button{
+		margin:0 4%;
 	}
 </style>
