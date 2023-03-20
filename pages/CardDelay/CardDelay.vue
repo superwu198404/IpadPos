@@ -122,7 +122,7 @@
 							<view class="operat">
 								<button class="btn btn-qx" @click="Cancel">取消</button>
 								<button class="btn btn-h" @click="Confirm">确认</button>
-								<button class="btn btn-qx" @click="showCardRen=true">持卡人</button>
+								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
 							</view>
 						</view>
 					</view>
