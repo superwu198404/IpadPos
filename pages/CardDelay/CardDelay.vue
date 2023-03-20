@@ -56,7 +56,7 @@
 										<image class="bgs" style="position: absolute;top: 0px;"
 											src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
+											<label><em></em>{{CardInfo.spName||"暂无"}}</label>
 										</view>
 										<view class="denominat"
 											v-if="CardInfo.cardType=='Z001'||CardInfo.cardType=='Z005'">
@@ -68,10 +68,11 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
-												<view class="card-num">
-													<label></label>
-													<!-- <view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view> -->
-												</view>
+
+												<!-- <view class="card-num">
+													<label>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
+													<view>卡号：{{CardInfo.cardId||"暂无"}}</view>
+												</view> -->
 											</view>
 
 										</view>
@@ -98,6 +99,9 @@
 									<text>物料名称：</text><text>{{CardInfo.spName||"暂无"}}</text>
 								</label>
 								<label>
+									<text>卡类型：</text><text>{{typeDefault(CardInfo.cardType,"暂无")}}</text>
+								</label>
+								<label>
 									<text>状态：</text><text>{{statusDefault(CardInfo.status,"暂无")}}</text>
 								</label>
 								<label v-if="CardInfo.cardType=='Z001'||CardInfo.cardType=='Z005'">
@@ -107,7 +111,7 @@
 									<text>面额：</text><text>￥{{CardInfo.amount||0}}</text>
 								</label>
 								<label>
-									<text>过期时间：</text><text>{{CardInfo.expireDate||"暂无"}}</text>
+									<text>过期时间：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
 								</label>
 								<!-- <label>
 									<text>使用时间：</text><text>45644</text>
@@ -151,7 +155,7 @@
 		},
 		data() {
 			return {
-				CardNumber: "1087150000152209",
+				CardNumber: "1087110000037257",
 				CardInfo: {},
 				CKRInfo: {},
 				showCardRen: false,
@@ -208,6 +212,18 @@
 							return d;
 					} else
 						return d;
+				}
+			},
+			formateDate() {
+				return function(v) {
+					if (v) {
+						if (v.indexOf("-") < 0) {
+							let a = v.substr(0, 4) + '-' + v.substr(3, 2) + '-' + v.substr(5, 2);
+							return a;
+						}
+						return v;
+					} else
+						return "暂无";
 				}
 			},
 		},
