@@ -247,14 +247,14 @@
 				that.OrderBill = _card_coupon.getBill(that.Store);
 			},
 			swiping_card() {
-				member.GetTLCard(getApp().globalData.store, $(function(res) {
+				member.GetTLCard(getApp().globalData.store, function(res) {
 					if (!res.code) {
 						util.simpleMsg(res.msg, !res.code);
 						return;
 					}
 					that.CardNumber = res.data;
 					that.GetCardInfo();
-				}))
+				})
 			},
 			//获取卡信息
 			GetCardInfo: function() {
@@ -560,14 +560,16 @@
 		width: 100%;
 		height: 100%;
 	}
-	.operat{
+
+	.operat {
 		width: 100%;
 		display: flex;
 		position: absolute;
-		bottom:0;
-		padding:2% 0;
+		bottom: 0;
+		padding: 2% 0;
 	}
-	.operat button{
-		margin:0 4%;
+
+	.operat button {
+		margin: 0 4%;
 	}
 </style>
