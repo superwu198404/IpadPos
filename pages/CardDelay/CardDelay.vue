@@ -11,7 +11,7 @@
 		<view class="right">
 
 			<!-- 顶部导航栏-->
-			<Head :_ynDKF="false" :custom="false" :_showSale="true" :type='kq_sale'></Head>
+			<Head :_ynDKF="false" :custom="false" :_showSale="true" :type='"kq_sale"'></Head>
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
@@ -29,8 +29,10 @@
 							<text>卡操作：</text>
 							<view class="chaxun">
 								<view class="chanxz">
-									<label class="curr">卡延期 <em>✓</em></label>
-									<label>卡挂失 <em>✓</em></label>
+									<label :class="CurType=='Delay'?'curr':''" @click="select_type('Delay')">卡延期
+										<em>✓</em></label>
+									<label :class="CurType=='Loss'?'curr':''" @click="select_type('Loss')">卡挂失
+										<em>✓</em></label>
 								</view>
 							</view>
 						</view>
@@ -54,14 +56,18 @@
 										<image class="bgs" style="position: absolute;top: 0px;"
 											src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>453433</label>
+											<label><em></em>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 										</view>
-										<view class="denominat">
-											<label>￥<text>4534343</text></label>
+										<view class="denominat"
+											v-if="CardInfo.cardType=='Z001'||CardInfo.cardType=='Z005'">
+											<label>￥<text>{{CardInfo.balance||0}}</text></label>
+										</view>
+										<view class="denominat" v-else>
+											<label>￥<text>{{CardInfo.amount||0}}</text></label>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname">券号：453434343</view>
+												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
 												<view class="card-num">
 													<label></label>
 													<!-- <view><em>●</em>{{ default_view(form.current_type_info ? form.current_type_info.text : '') }}</view> -->
@@ -70,8 +76,8 @@
 
 										</view>
 										<view class="statistic">
-											<text>45345343434</text>
-											<text>453434</text>
+											<text>卡状态：{{statusDefault(CardInfo.status,"暂无")}}</text>
+											<!-- <text></text> -->
 										</view>
 									</view>
 									<view class="touch-list list-delete">
@@ -84,25 +90,36 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>12313213313</text></label>
+									<label>卡号：<text>{{CardInfo.cardId||"暂无"}}</text></label>
 								</view>
 							</view>
 							<view class="kainfolist">
 								<label>
-									<text>售出时间：</text><text>12312313</text>
+									<text>物料名称：</text><text>{{CardInfo.spName||"暂无"}}</text>
 								</label>
 								<label>
-									<text>使用时间：</text><text>45644</text>
+									<text>状态：</text><text>{{statusDefault(CardInfo.status,"暂无")}}</text>
+								</label>
+								<label v-if="CardInfo.cardType=='Z001'||CardInfo.cardType=='Z005'">
+									<text>余额：</text><text>￥{{CardInfo.balance||0}}</text>
+								</label>
+								<label v-else>
+									<text>面额：</text><text>￥{{CardInfo.amount||0}}</text>
 								</label>
 								<label>
-									<text>余额：</text><text>￥120</text>
-								</label>
-								<label>
-									<text>操作员：</text><text>5343434343</text>
+									<text>过期时间：</text><text>{{CardInfo.expireDate||"暂无"}}</text>
 								</label>
 								<!-- <label>
-									暂无更多信息...
+									<text>使用时间：</text><text>45644</text>
 								</label> -->
+								<label>
+									暂无更多信息...
+								</label>
+							</view>
+							<view>
+								<button class="btn btn-qx" @click="Cancel">取消</button>
+								<button class="btn btn-h" @click="Confirm">确认</button>
+								<button class="btn btn-qx" @click="showCardRen=true">持卡人</button>
 							</view>
 						</view>
 					</view>
@@ -110,6 +127,8 @@
 				</view>
 			</view>
 		</view>
+		<!-- 持卡人信息 -->
+		<chikaren :show.sync="showCardRen"></chikaren>
 	</view>
 </template>
 
@@ -121,41 +140,97 @@
 	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
 	import member from "@/api/hy/MemberInterfaces.js";
+	import _card_sale from "@/api/business/card_sale.js";
+	import _card_coupon from "@/utils/sale/card_coupon.js";
+
 	var that;
 	export default {
 		name: "CardDelay",
 		components: {
 			Head
 		},
-		created() {
-			that = this;
-		},
-		computed: {
-			// default_view() {
-			// 	return function(v, def_val = '暂无更多信息...') {
-			// 		if (v)
-			// 			if (v == 'Y') {
-			// 				return '是';
-			// 			}
-			// 		else if (v == 'N') {
-			// 			return '否'
-			// 		} else
-			// 			return v;
-			// 		else
-			// 			return def_val;
-			// 	};
-			// },
-		},
 		data() {
 			return {
-				CardNumber: "1087111000003218",
+				CardNumber: "1087150000152209",
 				CardInfo: {},
+				CKRInfo: {},
+				showCardRen: false,
+				CurType: "Delay",
+				Store: getApp().globalData.store
 			}
 		},
-		methods: {
-			// select_type(data) {
+		created() {
+			that = this;
+			that.OrderBill = _card_coupon.getBill(that.Store);
+		},
+		mounted() {
+			uni.$on("ConfirmCKR", that.ConfirmCKR);
+			uni.$on("ReturnSale", that.ClearSale);
+		},
+		destroyed() {
+			uni.$off("ConfirmCKR");
+			uni.$off("ReturnSale");
+		},
+		computed: {
+			statusDefault() {
+				return function(v, def_val = '暂无') {
+					if (v) {
+						if (v == 'Z001') {
+							return '正常';
+						} else if (v == 'Z002') {
+							return '冻结'
+						} else if (v == 'Z003') {
+							return '注销'
+						} else if (v == 'Z004') {
+							return '挂失'
+						} else if (v == 'Z005') {
+							return '挂失'
+						} else if (v == 'Z006') {
+							return '挂失'
+						} else
+							return "未激活";
+					} else
+						return def_val;
+				}
+			},
+			typeDefault() {
+				return function(v, d = "暂无") {
+					if (v) {
+						if (v == 'Z001') {
+							return '实体VIP卡';
+						} else if (v == 'Z002') {
+							return '实体礼品卡'
+						} else if (v == 'Z003') {
+							return '电子礼品卡'
+						} else if (v == 'Z005') {
+							return '电子储值卡'
+						} else
+							return d;
+					} else
+						return d;
+				}
+			},
+		},
 
-			// },
+		methods: {
+			select_type(data) {
+				if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
+					util.simpleModal("提示", "是否确认切换业务？", res => {
+						if (res) {
+							that.ResetBill(data);
+						}
+					})
+				} else {
+					that.ResetBill(data);
+				}
+			},
+			ResetBill(e = 'Delay') {
+				that.CardNumber = "";
+				that.CurType = e;
+				that.CardInfo = {};
+				that.CKRInfo = {};
+				that.OrderBill = _card_coupon.getBill(that.Store);
+			},
 			swiping_card() {
 				member.GetTLCard(getApp().globalData.store, $(function(res) {
 					if (!res.code) {
@@ -176,17 +251,99 @@
 					data: {
 						card_num: that.CardNumber
 					}
-				}, res => {
+				}, async res => {
 					if (res.code) {
 						console.log("卡信息查询结果：", res.data);
-						that.CardInfo = res.data;
+						let cardInfo = res.data;
+						cardInfo.cardId = that.CardNumber;
+						let spinfo = await _card_sale.MatchSP(cardInfo.materielId); //商品信息匹配
+						if (spinfo) {
+							cardInfo.spName = spinfo.SNAME;
+						}
+						that.CardInfo = cardInfo;
 					} else {
 						util.simpleMsg(res.msg, true);
 					}
 				}, err => {
 					util.simpleMsg(err.msg, true);
 				});
-			}
+			},
+			//确认
+			Confirm: function() {
+				if (!that.CardInfo || Object.keys(that.CardInfo).length == 0) {
+					util.simpleMsg("请先查询卡信息", true);
+					return;
+				}
+				util.simpleModal("提示", "是否确认此操作？", res1 => {
+					if (res1) {
+						if (that.CurType == 'Delay') {
+							_card_sale.CARD_DELAY({
+								salebill: that.OrderBill,
+								card_num: that.CardInfo.cardId,
+								ryid: that.Store.RYID,
+								ry_name: that.Store.RYNAME,
+								khid: that.Store.RYID,
+								kh_name: that.Store.RYID,
+							}, res => {
+								if (res.code) {
+									util.simpleMsg("延期成功！");
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+								that.ResetBill(); //重置
+							})
+						} else {
+							if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
+								util.simpleMsg("请先填写顾客信息", true);
+								return;
+							}
+							if (that.CardInfo.cardType != 'Z001') {
+								util.simpleMsg("抱歉，卡类型错误", true);
+								return;
+							}
+							_card_sale.REPORT_LOSS({
+								salebill: that.OrderBill,
+								card_num: that.CardInfo.cardId,
+								ryid: that.Store.RYID,
+								ry_name: that.Store.RYNAME,
+								phone: that.CKRInfo.phone,
+								id_card_no: that.CKRInfo.idcard,
+								user_name: that.CKRInfo.name,
+							}, res => {
+								if (res.code) {
+									util.simpleMsg("挂失成功！");
+								} else {
+									util.simpleModal("提示", res.msg);
+								}
+								that.ResetBill(); //重置
+							})
+						}
+					}
+				})
+			},
+			//取消
+			Cancel: function() {
+				that.ResetBill(); //重置
+			},
+
+			//清空数据
+			ClearSale: function() {
+				util.simpleModal("提示", "是否确认清空当前数据？", res => {
+					if (res) {
+						that.ResetBill();
+					}
+				})
+			},
+			//持卡人回调事件
+			ConfirmCKR: function(e) {
+				console.log("持卡人回调事件：", e);
+				that.showCardRen = false;
+				if (e && e.type == 'Y') {
+					that.CKRInfo = e;
+				} else {
+					that.CKRInfo = {};
+				}
+			},
 		},
 	}
 </script>
