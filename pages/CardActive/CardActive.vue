@@ -10,7 +10,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -59,7 +59,7 @@
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
-						<view class="module">
+						<view class="module" style="height: 66%;">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
 							<view class="swipetip" v-if="SALE006.length==0">
@@ -270,30 +270,11 @@
 				add_class: 0
 			}
 		},
-		onReady: function() {
-			that = this;
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
-						function(
-							res) {
-							if (res.code) {
-								that.FKDA_INFO = JSON.parse(res.data);
-								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-							} else {
-								console.log("获取付款方式失败!======", err);
-							}
-						}))
-				} catch (err) {
-					console.log("获取付款方式失败!======", err);
-				}
-			}))()
-		},
 		created: async function() {
 			that = this;
-
+			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
+			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
+			
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 			// KQSale.InitData("礼品卡激活初始化", res => {

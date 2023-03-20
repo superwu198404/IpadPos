@@ -9,7 +9,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -70,17 +70,12 @@
 										<label>始：<text>{{item.begin_num}}</text></label>
 										<label>终：<text>{{item.end_num}}</text></label>
 									</view>
-									<!-- <view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
-										<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
-										<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
-										<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
-									</view> -->
 								</view>
 								<view class="touch-list list-delete" @click="RemoveItem(item)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
+
 						</view>
 					</view>
 					<view class="totals">
@@ -208,30 +203,11 @@
 				add_class: 0
 			}
 		},
-		onReady: function() {
-			that = this;
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
-						function(
-							res) {
-							if (res.code) {
-								that.FKDA_INFO = JSON.parse(res.data);
-								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-							} else {
-								console.log("获取付款方式失败!======", err);
-							}
-						}))
-				} catch (err) {
-					console.log("获取付款方式失败!======", err);
-				}
-			}))()
-		},
+		
 		created: function() {
 			that = this;
-
+			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
+			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 
@@ -291,7 +267,6 @@
 			},
 		},
 		methods: {
-
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
@@ -556,7 +531,7 @@
 					card_no: that.CouponInfo.coupon_num //003-ID 记录券号
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
-					show: true//是否显示
+					show: true //是否显示
 				}));
 			},
 			//创建支付参数

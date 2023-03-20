@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="Chaxun()">
+						<view @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry')">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -239,7 +239,10 @@
 						return;
 					}
 					uni.redirectTo({
-						url: e
+						url: e,
+						complete:res=>{
+							console.log("跳转结果",res);
+						}
 					});
 					return;
 				}
@@ -254,7 +257,10 @@
 						return;
 					}
 					uni.redirectTo({
-						url: e
+						url: e,
+						complete:res=>{
+							console.log("跳转结果",res);
+						}
 					});
 				})
 			},

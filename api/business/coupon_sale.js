@@ -33,6 +33,25 @@ export default {
 			}
 			else
 				return true;
+		},
+		re_computed_sales(sale1,sale2){
+			console.log("[ReComputedSales]重新计算sale1、2，计算前：",{
+				sale1,sale2
+			});
+			sale2.forEach(s2 => s2.NET = s2.PRICE * s2.QTY);
+			console.log("[ReComputedSales]重新计算sale2金额：", sale2);
+			let total_amount = sale2.map(s2 => s2.NET - s2.CXDISC).reduce((p,n) => p + n,0);
+			sale1.ZNET = total_amount;
+			sale1.TNET = total_amount;
+			console.log("[ReComputedSales]重新计算sale1金额：", sale1);
+			console.log("[ReComputedSales]重新计算完成...");
+		},
+		coupon_price_record(sale2,sale6){
+			console.log("[CouponPriceRecord]券金额记录:",{sale2,sale6});
+			sale2.forEach(s2 => {
+				sale6.filter(s6 => s6.SPID == s2.SPID).forEach(s6 => s6.MYSTR = s2.PRICE);
+			})
+			console.log("[CouponPriceRecord]券金额处理后的记录:",{sale2,sale6});
 		}
 	}
 }

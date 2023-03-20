@@ -250,14 +250,15 @@ var get_payment_infos = async function() {
 	try {
 		await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, util.callBind(this, function(res) {
 			if (res.code) {
-				this.FKDA_INFO = JSON.parse(res.data);
-				util.setStorage('FKDA_INFO', this.FKDA_INFO)
-				console.warn("[GetPaymentInfos]获取支付方式:", this.FKDA_INFO);
+				var infos = JSON.parse(res.data);
+				util.setStorage('FKDA_INFO', infos)
+				console.warn("[GetPaymentInfos]获取支付方式:", infos);
 			} else {
 				util.simpleMsg("获取付款方式失败!", true)
 			}
 		}))
 	} catch (e) {
+		console.error("[GetPaymentInfos]支付信息初始化失败：",e);
 		util.simpleMsg("获取付款方式失败!", true);
 	}
 }

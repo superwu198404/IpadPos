@@ -10,7 +10,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true"></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -85,9 +85,9 @@
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先刷卡录入</text>
 							</view>
-							<!-- 刷卡后显示卡列表 @touchstart="touchS" @touchmove="touchM" @touchend="touchE"-->
+							<!-- 刷卡后显示卡列表-->
 							<view class="cardlist">
-								<!-- <view class="ulli" v-for="(item,index) in SALE002">
+								<view class="ulli" v-for="(item,index) in SALE002">
 									<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
 										:data-index="index" :style="item.txtStyle">
 										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
@@ -112,33 +112,6 @@
 										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
- -->
-								<view class="ulli" v-for="(item,index) in SALE002">
-									<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
-										:data-index="index" :style="item.txtStyle">
-										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
-										<view class="h6">
-											<label>￥{{item.PRICE}}<text>/23张</text></label>
-											<view class="zje">
-												<view><text>总金额: ￥</text>2323</view>
-											</view>
-										</view>
-										<view class="card-num">
-											<label>始：<text>5324555435</text></label>
-											<label>终：<text>2345643453</text></label>
-										</view>
-										<view class="statistic">
-											<label><em>●</em><text>总折扣：</text>34234</label>
-											<label><em>●</em><text>标准折扣：</text>423423</label>
-											<label><em>●</em><text>临时折扣：</text>234234</label>
-											<label><em>●</em><text>特批折扣：</text>43234</label>
-										</view>
-									</view>
-									<view class="touch-list list-delete" @click="RemoveSP(item)">
-										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
-									</view>
-								</view>
-
 							</view>
 						</view>
 						<view class="totals">
@@ -291,44 +264,7 @@
 				CZGZMX: [],
 				CurCZGZ: {},
 				SALE001: {},
-				SALE002: [
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					},
-					{
-						PRICE:90
-					}
-				],
+				SALE002: [],
 				SALE2: [], //支付前拷贝使用
 				SALE003: [],
 				SALE006: [],
@@ -363,29 +299,11 @@
 				CKRInfo: {}, //持卡人信息
 			}
 		},
-		onReady: function() {
-			//查询付款方式
-			(_util.callBind(that, async function() {
-				try {
-					await RequestSend(`SELECT FKID,SNAME,JKSNAME,MEDIA FROM FKDA`, _util.callBind(that,
-						function(
-							res) {
-							if (res.code) {
-								that.FKDA_INFO = JSON.parse(res.data);
-								_util.setStorage('FKDA_INFO', that.FKDA_INFO)
-								console.log("[GetSale]获取支付方式==========:", that.FKDA_INFO);
-							} else {
-								console.log("获取付款方式失败!======", err);
-							}
-						}))
-				} catch (err) {
-					console.log("获取付款方式失败!======", err);
-				}
-			}))()
-		},
 		created: async function() {
 			that = this;
-
+			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
+			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
+			
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
 			KQSale.InitData("卡销售初始化", res => {
