@@ -32,6 +32,7 @@
 	import CardActive from '@/pages/CardActive/CardActive.vue';
 	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
 	import CardDelay from '@/pages/CardDelay/CardDelay.vue';
+	import CardBind from '@/pages/CardBind/CardBind.vue';
 	// import CardSale from '@/pages/CardSale/CardSale.vue';
 	//页面组件 👆
 	export default {
@@ -42,7 +43,8 @@
 			Cardquery,
 			CardActive,
 			CouponExchange,
-			CardDelay
+			CardDelay,
+			CardBind
 		},
 		computed: {
 			component_name() {

@@ -1,0 +1,324 @@
+<template>
+	<view class="bind-card-container">
+		<h3 class="bind-card-title">绑卡信息</h3>
+		<view class="bind-card-form">
+			<view class="form-item-block">
+				<view class="form-item-tips">第一步&nbsp;&nbsp;-&nbsp;&nbsp;<b>输入会员信息</b>:</view>
+				<view class="form-item-input">
+					<view class="input-border-radius">
+						<view class="form-item-input-left">
+							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;"></image>|
+							<input placeholder="输入手机号或账户" v-model="form.member_code"/>
+						</view>
+						<view class="comfirm-btn" @click="search_member">确定</view>
+					</view>
+				</view>
+			</view>
+			<view class="info-content menber-infos">
+				<view class="menber-info">
+					<view class="menber-info-head">
+						<view class="menber-headshots">
+							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80px;"></image>
+						</view>
+						<view class="member-details">
+							<view class="member-id">ID {{ source.member_infos.hyId }}</view>
+							<view class="member-details-infos">
+								<view>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '---' }}</view>|
+								<view>电话:{{ source.member_infos.Phone || '---' }}</view>
+							</view>
+						</view>
+					</view>
+					<view class="gray-text" style="font-size: 1.1em;">
+						注册时间:{{ date_convert(source.member_infos.RegisterDay) || '---' }}
+					</view>
+				</view>
+				<view class="store-infos gray-text">
+					<view class="info-data-row">
+						<view>门店编号:{{ KHID }}</view>
+						<view>注册门店:---</view>
+					</view>
+					<view class="info-data-row">
+						<view>员工编号:{{ RYID }}</view>
+						<view>员工姓名:{{ NAME }}</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="bind-card-form">
+			<view class="form-item-block">
+				<view class="form-item-tips">第二步&nbsp;&nbsp;-&nbsp;&nbsp;<b>输入待绑定卡号</b>:</view>
+				<view class="form-item-input">
+					<view class="input-border-radius">
+						<view class="form-item-input-left">
+							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"></image>|
+							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number"/>
+						</view>
+						<view class="comfirm-btn" @click="search_card">确定</view>
+					</view>
+				</view>
+			</view>
+			<view class="info-content card-infos">
+				<view class="card-info-head">
+					<view>{{ source.card_infos.cardName || "---" }}</view>
+					<view>￥{{ source.card_infos.amount || "---" }}</view>
+				</view>
+				<view class="card-details">
+					<view class="info-data-row">
+						<view>类型名称:{{ source.card_infos.cardType || "---" }}</view>
+					</view>
+					<view class="info-data-row">
+						<view>卡号:{{ source.card_infos.cardNum || "---"}}</view>
+					</view>
+				</view>
+				<view class="card-valid-date">
+					有效期至:{{ source.card_infos.expireDate || "---" }}
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import card_bind from '@/api/business/card_bind.js';
+	import util from '../../utils/util';
+	var $;
+	export default {
+		mixins:[card_bind],
+		data(){
+			return {
+				form:{
+					member_code: "",
+					card_number: "1087110000742187"
+				},
+				source:{
+					member_infos: {
+						hyId: "",
+						Name: "",
+						Phone: "",
+						RegisterDay: ""
+					},
+					card_infos:{
+						amount: 0,
+						cardType: '',
+						cardNum: '',
+						expireDate: ''
+					}
+				}
+			}
+		},
+		computed:{
+			date_convert(){
+				return $(function(date){
+					return util.convertShortDate(date);
+				})
+			}
+		},
+		methods:{
+			async search_member(){
+				console.log("[SearchMember]会员信息查询...");
+				let data = await this.search_member_infos(this.form.member_code);
+				console.log("[SearchMember]会员信息:",data);
+				if(data){
+					this.source.member_infos = data;
+					util.simpleMsg('会员信息查询成功!',false);
+				}
+				else{
+					util.simpleMsg('未查询到相关信息!',true);
+				}
+			},
+			async search_card(){
+				console.log("[SearchMember]卡信息查询...");
+				let data = await this.search_card_infos(this.form.card_number);
+				console.log("[SearchMember]卡信息:",data);
+				if(data){
+					this.source.card_infos = data;
+					util.simpleMsg('卡信息查询成功!',false);
+				}
+				else{
+					util.simpleMsg('未查询到相关信息!',true);
+				}
+			}
+		},
+		created() {
+			$ = util.callContainer(this);
+		}
+	}
+</script>
+
+<style>
+	.bind-card-container{
+		padding: 10px 15px;
+	}
+	.bind-card-title{
+		color:#066e49;
+		padding: 6px 0px;
+	}
+	.bind-card-form{
+	    display: inline-flex;
+	    flex-direction: column;
+	    width: 50%;
+		gap: 15px;
+	}
+	.bind-card-infos{
+		display: flex;
+		justify-content: space-between;
+	}
+	.info-content{
+		height: 483rpx;
+		width: 856rpx;
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	.info-between{
+		justify-content: space-between;
+	}
+	.menber-infos{
+		border: 2px solid #c4e6c8;
+		box-shadow:0px 0px 10px -1px #c4e6c8;
+		background-image: url('@/images/jsd-hybj.png');
+	    justify-content: space-between;
+		border-radius: 5px;
+	    display: flex;
+	    flex-direction: column;
+	}
+	.menber-info,.store-infos{
+		padding: 0px 15px;
+	}
+	.menber-info {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 25px;
+	    box-sizing: border-box;
+		padding-top: 15px;
+		padding-bottom: 15px;
+		flex: 1;
+	}
+	.menber-info-head{
+		display: flex;
+		gap: 10px;
+	}
+	.member-id {
+	    font-weight: 600;
+	    font-size: 1.4em;
+	    display: flex;
+	    align-items: center;
+	    gap: 5px;
+	}
+	.member-id::before {
+	    content: "V";
+	    display: inline-flex;
+	    font-size: 0.6em !important;
+	    background-color: #40b04d;
+	    border-radius: 50%;
+	    width: 1rem;
+	    height: 1rem;
+	    color: white;
+	    justify-content: center;
+	    align-items: center;
+	    padding: 2px;
+	    font-family: fangsong;
+	}
+	.member-details {
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+		gap: 6px;
+	}
+	.member-details-infos {
+	    display: flex;
+	    color: #40b04d;
+		gap:10rpx
+	}
+	.info-data-row {
+	    display: flex;
+	    gap: 15px;
+		padding: 5rpx 0rpx;
+	}
+	.info-data-row > * {
+	    width: 50%;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	    overflow: hidden;
+	}
+	.card-infos{
+		background-image: url('@/images/img2/kaqchaxun.png');
+		padding: 20px 20px;
+	    box-sizing: border-box;
+	    position: relative;
+	}
+	.store-infos{
+		background-color: #f0f8f0;
+		padding-top: 10rpx;
+		padding-bottom: 10rpx;
+	}
+	.comfirm-btn{
+		background-color: #40b04d;
+		color: white;
+		padding: 4px 8px;
+	}
+	.form-item-tips{
+		color: #006a44;
+	}
+	.form-item-input{
+		display: flex;
+	    border-radius: 5px;
+	}
+	.form-item-input-left{
+		display: flex;
+		background-color: #f1f5f5;
+		border-right: 0px;
+		align-items: center;
+		border-radius: 5px;
+		color: #bbd6cc;
+		padding: 2px 2px;
+		gap: 5px;
+	}
+	.form-item-block {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 15px;
+	}
+	.menber-headshots{
+		border-radius: 5px;
+		overflow: hidden;
+		display: inline-block;
+	}
+	.input-border-radius {
+	    display: inline-flex;
+	    border-radius: 5px;
+	    overflow: hidden;
+	}
+	.gray-text {
+		color: darkgray;
+	}
+	.card-info-head {
+	    display: flex;
+	    justify-content: space-between;
+	    font-size: 1.4em;
+	    font-weight: 600;
+	    color: #006a44;
+		height: 2em;
+	}
+	.card-info-head:first-child{
+		position: relative;
+	}
+	.card-info-head:first-child::before {
+	    content: "";
+	    display: block;
+	    border-top: 4px solid #006a44;
+	    width: 2em;
+	    bottom: 0px;
+	    position: absolute;
+	}
+	.card-valid-date {
+	    position: absolute;
+	    bottom: 14px;
+	    color: white;
+	}
+	.card-details {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 10px;
+	    padding: 20px 5px;
+	}
+</style>
