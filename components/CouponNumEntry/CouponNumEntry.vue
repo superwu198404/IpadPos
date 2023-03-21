@@ -64,7 +64,7 @@
 		data() {
 			return {
 				// ywType: "",
-				beginNum: "",//900000000002163614
+				beginNum: "",//900000000002243485
 				endNum: "", 
 				scan_code: false, //是否刷卡
 				single: true, //是否单卡

@@ -45,7 +45,7 @@
 								</label>
 							</view>
 						</view>
-						<view class="ckr">兑换券折扣额：{{CouponInfo.coupon_value||0}}</view>
+						<view class="ckr">兑换券面额：{{CouponInfo.coupon_value||0}}</view>
 					</view>
 					<view class="module">
 						<view class="hh">待售详情 <em></em></view>
@@ -61,7 +61,7 @@
 									:data-index="index" :style="item.txtStyle">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
-										<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+										<label>￥{{item.OPRICE}}<text>/{{item.QTY}}张</text></label>
 										<view class="zje">
 											<view><text>总金额</text>￥{{item.NET}}</view>
 										</view>
@@ -528,7 +528,8 @@
 					bill: that.SALE001.BILL,
 					name: "仟吉兑换券",
 					amount: that.CouponInfo.coupon_value,
-					card_no: that.CouponInfo.coupon_num //003-ID 记录券号
+					card_no: that.CouponInfo.coupon_num ,//003-ID 记录券号
+					disc: that.CouponInfo.total_info.ZZCPXSDISC//销售折扣额
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
 					show: true //是否显示

@@ -62,7 +62,9 @@
 											<label>￥<text>{{CardInfo.balance||0}}</text></label>
 										</view>
 										<view class="denominat" v-else>
-											<label>￥<text>{{CardInfo.amount||0}}</text></label>
+											<view v-if="CardInfo.amount>0">
+												<label>￥<text>{{CardInfo.amount}}</text></label></view>
+											<view v-else><label>￥<text>{{CardInfo.balance||0}}</text></label></view>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
@@ -107,7 +109,9 @@
 									<text>余额：</text><text>￥{{CardInfo.balance||0}}</text>
 								</label>
 								<label v-else>
-									<text>面额：</text><text>￥{{CardInfo.amount||0}}</text>
+									<view v-if="CardInfo.amount>0"><text>面额：</text><text>￥{{CardInfo.amount||0}}</text>
+									</view>
+									<view v-else><text>余额：</text><text>￥{{CardInfo.balance||0}}</text></view>
 								</label>
 								<label>
 									<text>过期时间：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
@@ -216,8 +220,8 @@
 			formateDate() {
 				return function(v) {
 					if (v) {
-						if (v.indexOf("-") < 0) {
-							let a = v.substr(0, 4) + '-' + v.substr(3, 2) + '-' + v.substr(5, 2);
+						if (v.indexOf("-") < 0) { //20230916
+							let a = v.substr(0, 4) + '-' + v.substr(4, 2) + '-' + v.substr(6, 2);
 							return a;
 						}
 						return v;
@@ -226,7 +230,6 @@
 				}
 			},
 		},
-
 		methods: {
 			select_type(data) {
 				if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
@@ -258,6 +261,7 @@
 			},
 			//获取卡信息
 			GetCardInfo: function() {
+				that.CardNumber = that.CardNumber.trim();
 				if (!that.CardNumber) {
 					util.simpleMsg("请录入卡号", true);
 					return;
