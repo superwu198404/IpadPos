@@ -28,6 +28,9 @@ var getBill = function(store, index = 0) {
 	let sec = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
 	newbill = store.KHID + store.POSID + year + month + day + hour + min + sec;
 	//单号格式：门店号+pos号+yymmddHHmmss+流水号 自打开程序以后的开单号，每天清零
+	if (index == 0) {
+		index = _util.newFloat((Math.random() * 10), 0);
+	}
 	newbill = newbill + "" + index;
 	console.log("创建的单号：", newbill);
 	return newbill;
@@ -197,7 +200,7 @@ var KQTypeObj = {
 		typename: "VIP充值", //售卡充值
 
 		//初始化
-		InitData: function(data,func) {
+		InitData: function(data, func) {
 			console.log("VIP充值初始化：", data);
 			_card_sale.GetKCZGZMX("", res => {
 				console.log("卡充值规则获取结果：", res);

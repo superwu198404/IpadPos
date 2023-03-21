@@ -216,8 +216,8 @@
 			formateDate() {
 				return function(v) {
 					if (v) {
-						if (v.indexOf("-") < 0) {
-							let a = v.substr(0, 4) + '-' + v.substr(3, 2) + '-' + v.substr(5, 2);
+						if (v.indexOf("-") < 0) {//20230916
+							let a = v.substr(0, 4) + '-' + v.substr(4, 2) + '-' + v.substr(6, 2);
 							return a;
 						}
 						return v;

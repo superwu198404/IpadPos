@@ -73,7 +73,7 @@
 										:data-index="index" :style="item.txtStyle">
 										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 										<view class="h6">
-											<label>￥{{item.PRICE}}<text>/{{item.QTY}}张</text></label>
+											<label>￥{{item.OPRICE}}<text>/{{item.QTY}}张</text></label>
 											<view class="zje">
 												<view><text>总金额</text>￥{{item.NET}}</view>
 											</view>
