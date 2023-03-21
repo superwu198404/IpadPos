@@ -10,25 +10,12 @@
 		</view>
 		<text class="biaoti">门店查询</text>
 		<view class="menu">
-			<view class="glcx" @click="ToPage('/pages/Querypage/Statement/Statement')">
+			<view v-for="(item,index) in tableName" :key="item.id" class="glcx" @click="saleStatement(item,index)"
+				:class="{curr:activeIndex===index}">
 				<view>
-					<image class="wx" src="@/images/img2/xiaoshou.png" mode="widthFix"></image>
-					<image class="xz" src="@/images/img2/xiaoshoucx-cu.png" mode="widthFix"></image>
-					销售报表
-				</view>
-			</view>
-			<view class="glcx curr" @click="ToPage('/pages/Querypage/TakeawayCX/TakeawayCX')">
-				<view>
-					<image class="wx" src="@/images/img2/zhifu.png" mode="widthFix"></image>
-					<image class="xz" src="@/images/img2/zhifucx-cu.png" mode="widthFix"></image>
-					外卖单查询
-				</view>
-			</view>
-			<view class="glcx" @click="ToPage('/pages/Querypage/Storeinquiry/Storeinquiry')">
-				<view>
-					<image class="wx" src="/images/img2/danjucx.png" mode="widthFix"></image>
-					<image class="xz" src="@/images/img2/danjucx-cu.png" mode="widthFix"></image>
-					支付查询
+					<image class="wx" :src="item.src1" mode="widthFix"></image>
+					<image class="xz" :src="item.src2" mode="widthFix"></image>
+					{{item.name}}
 				</view>
 			</view>
 		</view>
@@ -43,29 +30,53 @@
 </template>
 
 <script>
+	import utils from "@/utils/util.js"
 	export default {
 		name: "query",
 		//属性
-		props: {
-			属性名称: {
-				type: String, //属性类型
-				value: "值"
-			},
-		},
+		props: ['index'],
 		data() {
 			return {
-
+				tableName: [
+					{
+						name: "销售报表",
+						id: 3,
+						src1: "@/images/img2/xiaoshou.png ",
+						src2: "@/images/img2/xiaoshoucx-cu.png",
+						src:"/pages/Querypage/Statement/Statement"
+					},{
+					name: "外卖单查询",
+					id: 1,
+					src1: "/images/img2/danjucx.png",
+					src2: "@/images/img2/danjucx-cu.png",
+					src:'/pages/Querypage/Storeinquiry/Storeinquiry'
+				}, {
+					name: "支付查询",
+					id: 2,
+					src1: "@/images/img2/zhifu.png",
+					src2: "@/images/img2/zhifucx-cu.png",
+					src:"/pages/Querypage/Storeinquiry/Storeinquiry"
+				}],
+				activeIndex: 0
 			}
 		},
 		//组件生命周期
 		created: function(e) {
-
+			if(!this.index){
+				this.activeIndex = 0
+				return
+			}
+			this.activeIndex = this.index
 		},
 		methods: {
-			ToPage: function(e) {
+			saleStatement(item, index) {
 				uni.redirectTo({
-					url: e
+					url:item.src
 				})
+				this.activeIndex = index
+				console.log(this.activeIndex,index,`pppppppppp`)
+				utils.setStorage("index",this.activeIndex)
+				
 			},
 			Return: function() {
 				uni.redirectTo({
