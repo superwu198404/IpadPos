@@ -483,7 +483,7 @@
 	}
 
 	.cardinfo {
-		padding: 8% 4% 1%;
+		padding: 9% 4% 1%;
 		transform: translateY(-60rpx);
 	}
 
