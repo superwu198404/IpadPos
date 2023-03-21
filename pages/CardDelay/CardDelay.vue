@@ -70,7 +70,7 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
-
+												<label >卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 												<!-- <view class="card-num">
 													<label>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 													<view>卡号：{{CardInfo.cardId||"暂无"}}</view>
@@ -79,8 +79,8 @@
 
 										</view>
 										<view class="statistic">
-											<text>卡状态：{{statusDefault(CardInfo.status,"暂无")}}</text>
-											<!-- <text></text> -->
+											<!-- <text>卡状态：{{statusDefault(CardInfo.status,"暂无")}}</text> -->
+											<text>有效期：{{formateDate(CardInfo.expireDate)}}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete">
@@ -98,13 +98,13 @@
 							</view>
 							<view class="kainfolist">
 								<label>
-									<text>物料名称：</text><text>{{CardInfo.spName||"暂无"}}</text>
+									<text>卡名称：</text><text>{{CardInfo.spName||"暂无"}}</text>
 								</label>
 								<label>
 									<text>卡类型：</text><text>{{typeDefault(CardInfo.cardType,"暂无")}}</text>
 								</label>
 								<label>
-									<text>状态：</text><text>{{statusDefault(CardInfo.status,"暂无")}}</text>
+									<text>卡状态：</text><text>{{statusDefault(CardInfo.status,"暂无")}}</text>
 								</label>
 								<label v-if="CardInfo.cardType=='Z001'||CardInfo.cardType=='Z005'">
 									<text>余额：</text><text>￥{{CardInfo.balance||0}}</text>
@@ -115,7 +115,7 @@
 									<view v-else><text>余额：</text><text>￥{{CardInfo.balance||0}}</text></view>
 								</label>
 								<label>
-									<text>过期时间：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
+									<text>有效期：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
 								</label>
 								<!-- <label>
 									<text>使用时间：</text><text>45644</text>
@@ -150,7 +150,7 @@
 	import member from "@/api/hy/MemberInterfaces.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _card_coupon from "@/utils/sale/card_coupon.js";
-	import _query_sale from "@/api/business/query_sale.js";
+	// import _query_sale from "@/api/business/query_sale.js";
 
 	var that;
 	export default {
@@ -171,7 +171,7 @@
 		async created() {
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
-			let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
+			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
 			console.log("日结销售数据：", a);
 		},
 		mounted() {
