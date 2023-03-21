@@ -38,7 +38,7 @@
 					<view class="inputBox">
 						<input :value="item.value" style="font-size: 13px;width: 100%;" :data-index="index" :placeholder="'请输入'+item.condname"
 							@input="bindKeyInput"/>
-							<view class="closeClick del" @click.stop="delItem(index)">X</view>
+							<view class="closeClick del" @click.stop="delItem(index)">x</view>
 					</view>
 				<!-- 	<label><input :value="item.value" :data-index="index" :placeholder="'请输入'+item.condname"
 							@input="bindKeyInput"></input><button @click.stop="delItem(index)" style="z-index: 2;">×</button></label> -->
@@ -464,6 +464,7 @@
 	.del{
 		width: 20rpx;
 		height: 20rpx;
+		padding: 1rpx;
 	}
 	.inputBox{
 		display: flex;
