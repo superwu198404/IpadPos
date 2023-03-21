@@ -4,6 +4,9 @@ import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 import _member from '@/api/hy/MemberInterfaces.js';
+import {
+	RequestSend
+} from '@/api/business/da.js'
 import Vue from 'vue';
 
 /**
@@ -138,7 +141,31 @@ var ExecuteBatchSQL = function(sql, func) {
 
 //持卡人事件
 var updateCustomerInfo = function(data, func) {
-	 _member.updateCustomerInfo("上传中...", {
+	_member.updateCustomerInfo("上传中...", {
+		data
+	}, func, func);
+}
+//商品信息匹配
+var MatchSP = async function(spid) {
+	let spinfo;
+	var result = (await RequestSend(`select * from SPDA where SPID='${spid}'`))?.result;
+	console.log("[MatchSP]查询结果：", result);
+	var data = JSON.parse(result.data || "");
+	console.log("匹配的商品信息：", data)
+	if (result.code && data?.length) {
+		spinfo = data[0];
+	}
+	return spinfo;
+}
+//卡延期
+var CARD_DELAY = function(data, func) {
+	_member.CARD_DELAY("操作中...", {
+		data
+	}, func, func);
+}
+//卡挂失
+var REPORT_LOSS = function(data, func) {
+	_member.REPORT_LOSS("操作中...", {
 		data
 	}, func, func);
 }
@@ -150,5 +177,8 @@ export default {
 	GetFailOrder,
 	FormatSale,
 	ExecuteBatchSQL,
-	updateCustomerInfo
+	updateCustomerInfo,
+	MatchSP,
+	REPORT_LOSS,
+	CARD_DELAY
 }

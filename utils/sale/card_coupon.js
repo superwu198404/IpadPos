@@ -657,5 +657,6 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 export default {
 	KQTypeObj,
 	InitKQSale,
-	InitSale001
+	InitSale001,
+	getBill
 }
