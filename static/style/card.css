@@ -560,9 +560,15 @@
 	position: relative;
 	z-index: 8;
 }
+.cardinfo .leftinfo label{
+	color: #B0B0B0;
+	font-size: 26rpx;
+	line-height: 48rpx;
+	padding-top:20rpx;
+}
 .leftinfo .kname{
 	font-weight: 700;
-	padding-top:40rpx;
+	/* padding-top:40rpx; */
 }
 .leftinfo .kname em{
 	display: inline-block;

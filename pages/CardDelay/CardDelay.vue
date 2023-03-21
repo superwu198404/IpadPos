@@ -69,8 +69,8 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
 												<label >卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
+												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
 												<!-- <view class="card-num">
 													<label>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 													<view>卡号：{{CardInfo.cardId||"暂无"}}</view>
@@ -491,7 +491,7 @@
 		padding: 3% 3%;
 		justify-content: space-between;
 		color: #fff;
-		margin-top: 18rpx;
+		/* margin-top: 18rpx; */
 	}
 
 	.statistic text:nth-child(2) {
