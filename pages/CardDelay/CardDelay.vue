@@ -63,7 +63,8 @@
 										</view>
 										<view class="denominat" v-else>
 											<view v-if="CardInfo.amount>0">
-												<label>￥<text>{{CardInfo.amount}}</text></label></view>
+												<label>￥<text>{{CardInfo.amount}}</text></label>
+											</view>
 											<view v-else><label>￥<text>{{CardInfo.balance||0}}</text></label></view>
 										</view>
 										<view class="cardinfo">
@@ -149,6 +150,7 @@
 	import member from "@/api/hy/MemberInterfaces.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _card_coupon from "@/utils/sale/card_coupon.js";
+	import _query_sale from "@/api/business/query_sale.js";
 
 	var that;
 	export default {
@@ -166,9 +168,11 @@
 				Store: getApp().globalData.store
 			}
 		},
-		created() {
+		async created() {
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
+			let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
+			console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
