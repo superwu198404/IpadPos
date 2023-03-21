@@ -160,7 +160,7 @@
 		},
 		data() {
 			return {
-				CardNumber: "",
+				CardNumber: "1087111000002638",
 				CardInfo: {},
 				CKRInfo: {},
 				showCardRen: false,
