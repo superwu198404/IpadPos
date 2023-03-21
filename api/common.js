@@ -876,7 +876,20 @@ var SimpleLocalQuery = async function(table_name, filter) {
 	});
 	return result;
 }
-
+var WebDBQuery = async function(sql, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.QuerySQL";
+	let reqdata = Req.resObj(true, "查询中...", {
+		sql
+	}, apistr);
+	await Req.asyncFuncOne(reqdata, func, func);
+}
+var WebDBExecute = async function(sql, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
+	let reqdata = Req.resObj(true, "执行中...", {
+		sql
+	}, apistr);
+	await Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
 	InitData,
 	CreateBill,
@@ -906,5 +919,7 @@ export default {
 	SimpleAPIRequest,
 	TransLiteDataAsync,
 	TransLiteAsync,
-	SimpleLocalQuery
+	SimpleLocalQuery,
+	WebDBQuery,
+	WebDBExecute
 }
