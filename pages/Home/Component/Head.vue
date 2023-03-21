@@ -312,6 +312,9 @@
 			// 	that.showSign = true;
 			// }
 			this.Bind();
+			//获取蓝牙缓存信息
+			app.globalData.BLEInformation.deviceId = util.getStorage("BLE_deviceId");
+			app.globalData.BLEInformation.deviceName = util.getStorage("BLE_deviceName");
 		},
 		methods: {
 			Back: function() {
@@ -620,8 +623,7 @@
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
 
-						if (app.globalData.BLEInformation.deviceId != "" && app.globalData
-							.BLEInformation.deviceName != "") {
+						if (app.globalData.BLEInformation.deviceId != "" && app.globalData.BLEInformation.deviceName != "") {
 							that.startSearch();
 						}
 					} else {
@@ -725,10 +727,7 @@
 				//获取蓝牙设备信息
 				var that = this;
 				console.log("start search");
-				// uni.showLoading({
-				// 	title: "正在加载",
-				// 	icon: "loading"
-				// });
+
 				that.setData({
 					isScanning: true
 				});
@@ -749,27 +748,12 @@
 											devices[num] = res.devices[
 												i];
 											num++;
-											//console.log("蓝牙设备",res.devices[i].name)
-											if (res.devices[i].name ==
-												app.globalData
-												.BLEInformation
-												.deviceName && app
-												.globalData
-												.BLEInformation
-												.deviceName != "") {
-												console.log("蓝牙打印设备",
-													res.devices[i]
-													.name)
-												app.globalData
-													.BLEInformation
-													.deviceId = res
-													.devices[i]
-													.deviceId;
-												that.bindAutoTap(res
-													.devices[i]
-													.deviceId, res
-													.devices[i]
-													.name);
+
+											if (res.devices[i].name == app.globalData.BLEInformation.deviceName && app.globalData.BLEInformation.deviceName != "") {
+												console.log("蓝牙打印设备",res.devices[i].name);
+												app.globalData.BLEInformation.deviceId = res.devices[i].deviceId;
+												util.setStorage('BLE_deviceId', res.devices[i].deviceId);
+												that.bindAutoTap(res.devices[i].deviceId, res.devices[i].name);
 											}
 										}
 									}
@@ -813,17 +797,20 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				//console.log("当前连接蓝牙:", e.currentTarget.dataset.title + "||" + e.currentTarget.dataset.name + "||" + e.currentTarget.dataset.key);
-
+				
 				uni.createBLEConnection({
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
 						//console.log("Connection success:", res);
 						that.isLink = that.isLink.map(item => 0);
 						that.isLink.splice(e.currentTarget.dataset.key, 0, 1)
-						//that.isLink[e.currentTarget.dataset.key] = 1;
+
 						app.globalData.BLEInformation.deviceId = e.currentTarget.dataset.title;
 						app.globalData.BLEInformation.deviceName = e.currentTarget.dataset.name;
+						//写进缓存
+						util.setStorage('BLE_deviceId', e.currentTarget.dataset.title);
+						util.setStorage('BLE_deviceName', e.currentTarget.dataset.name);
+							
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
@@ -860,7 +847,9 @@
 					deviceId: deviceId,
 					success: function(res) {
 						//console.log("Connection success:", res);
-						app.globalData.BLEInformation.deviceId = deviceId;
+						app.globalData.BLEInformation.deviceId = deviceId;	
+						//写进缓存
+						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
 					},
 					fail: function(e) {
@@ -967,12 +956,15 @@
 							uni.showToast({
 								title: "连接成功" + deviceName
 							});
+							//写进缓存
+							util.setStorage('BLE_deviceId', deviceId);
+							util.setStorage('BLE_deviceName', deviceName);
+
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
-								"||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName + "||" + app.globalData.YN_PRINT_CON)
 
 							that.isLink = [];
 							var i = 0;
@@ -991,12 +983,9 @@
 						console.log(e);
 					},
 					complete: function(e) {
-						console.log("write:" + app.globalData.BLEInformation
-							.writeCharaterId);
-						console.log("read:" + app.globalData.BLEInformation
-							.readCharaterId);
-						console.log("notify:" + app.globalData.BLEInformation
-							.notifyCharaterId);
+						console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
+						console.log("read:" + app.globalData.BLEInformation.readCharaterId);
+						console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
 					}
 				});
 			},
