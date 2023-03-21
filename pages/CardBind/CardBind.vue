@@ -57,13 +57,6 @@
 		methods:{
 			tabs_change(data){
 				this.view.current_tab_title = data.title;
-			},
-			search_member(){
-				console.warn("[SearchMember]会员信息查询...");
-				this.search_member_infos(this.form.member_code);
-			},
-			search_card_infos(){
-				
 			}
 		}
 	}
