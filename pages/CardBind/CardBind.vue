@@ -9,12 +9,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- 顶部导航栏 -->
 		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="view.show_sale"></Head>
-		<view class="hh" style="padding-right:3.7%;">
-			<view class="hotcakes">
-				<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡券信息查询
-			</view>
-		</view>
-		<Tabs :tabs="source.tabs" style="margin-bottom: 20px;" @change="tabs_change">
+		<Tabs :tabs="source.tabs" style="margin-bottom: 20px;margin-top: 20px;" @change="tabs_change">
 			<template slot='tools'>
 				<view class="a-z">
 					<image src="../../images/img2/shuakalr.png" mode="widthFix">

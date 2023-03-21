@@ -75,6 +75,15 @@
 				</view>
 			</view>
 		</view>
+		<view class="bind-card-footer">
+			<view>
+				<em></em>
+				<label>绑定账户：<text>---</text></label>
+				<label>绑定卡号：<text>---</text></label>
+			</view>
+			<button class="btn">确认支付</button>
+			<!-- <button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button> -->
+		</view>
 	</view>
 </template>
 
@@ -148,6 +157,8 @@
 <style>
 	.bind-card-container{
 		padding: 10px 15px;
+		height: 100%;
+		box-sizing: border-box;
 	}
 	.bind-card-title{
 		color:#066e49;
@@ -320,5 +331,58 @@
 	    flex-direction: column;
 	    gap: 10px;
 	    padding: 20px 5px;
+	}
+	.bind-card-footer{
+		position: absolute;
+		bottom:0px;
+		left: 0px;
+		height: 80rpx;
+		background: linear-gradient(90deg, #DDFCDF 0%, #FFFFFF 100%);
+		border-radius: 10rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+	}
+	.bind-card-footer > .btn{
+		font-size: 24rpx;
+		height: 100%;
+		line-height: 50rpx;
+		padding: 0;
+		width: 340rpx;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	}
+	.bind-card-footer view{
+		display: flex;
+		align-items: center;
+		font-size: 28rpx;
+		width: 90%;
+	}
+	.bind-card-footer view em{
+		display: inline-block;
+		margin:0 16rpx 0 40rpx;
+		width: 8rpx;
+		height: 48rpx;
+		background: #42B14B;
+		border-radius: 12rpx;
+	}
+	.bind-card-footer view label{
+		margin-right: 40rpx;
+		display: flex;
+		align-items: center;
+	}
+	.bind-card-footer view label text{
+		font-weight: 700;
+		font-size: 34rpx;
+	}
+	.bind-card-footer button{
+		width:340rpx;
+		border-radius: 10rpx 0 10rpx 10rpx;
+		height: 100%;
+		line-height: 80rpx;
+		padding:0;
+		font-size: 32rpx;
 	}
 </style>
