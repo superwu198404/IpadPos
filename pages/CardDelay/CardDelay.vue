@@ -172,7 +172,7 @@
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
 			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
-			// console.log("日结销售数据：", a);
+			console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
@@ -483,7 +483,7 @@
 	}
 
 	.cardinfo {
-		padding: 10% 4% 1%;
+		padding: 10.5% 4% 1%;
 		transform: translateY(-60rpx);
 	}
 
