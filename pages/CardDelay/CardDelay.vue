@@ -89,7 +89,47 @@
 								</view>
 							</view>
 						</view>
-						<view class="carddet">
+						<view class="cardqs">
+							<view class="cardlist">
+								<view class="ulli" style="height: 483rpx;">
+									<view class="touch-list chikaren">
+										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;"></image>
+										<view class="h7"><image src="@/images/img2/quanmcheng.png"></image>卡号：{{CardInfo.cardId||"暂无"}}</view>
+										<view class="clues">
+											<text>姓名：</text>
+												<view class="label">
+													<input type="text" placeholder="请输入姓名" v-model="name" focus="true" />
+													<button v-if="name" @click="name=''">×</button>
+												</view>
+										</view>
+										<view class="clues">
+											<text>手机号：</text>
+											<view class="label"><input type="number" v-model="phone" placeholder="请输入手机号" />
+												<button v-if="phone" @click="phone=''">×</button>
+											</view>
+										</view>
+										<view class="clues">
+											<text>身份证号：</text>
+											<view class="label"><input type="text" v-model="idcard" placeholder="请输入身份证号" />
+												<button v-if="idcard" @click="idcard=''">×</button>
+											</view>
+										</view>								
+									</view>
+									<view class="jutiinfo">
+										<label><text>门店编码：</text></label>
+										<label><text>注册门店：</text></label>
+										<label><text>员工编号：</text></label>
+										<label><text>员工姓名：</text></label>
+									</view>
+								</view>
+							</view>
+							<view class="operat">
+								<button class="btn btn-qx" @click="Cancel">取消</button>
+								<button class="btn btn-h" @click="Confirm">确认</button>
+								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
+							</view>
+						</view>
+						<view class="carddet" v-if="carddet">
 							<view class="totals">
 								<view>
 									<em></em>
@@ -116,10 +156,7 @@
 								</label>
 								<label>
 									<text>有效期：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
-								</label>
-								<!-- <label>
-									<text>使用时间：</text><text>45644</text>
-								</label> -->
+								</label>							
 								<label>
 									暂无更多信息...
 								</label>
@@ -130,6 +167,7 @@
 								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
 							</view>
 						</view>
+					
 					</view>
 
 				</view>
@@ -430,6 +468,8 @@
 	.cardlist .ulli {
 		width: 100%;
 		margin: 0;
+		z-index: 99;
+		background: #fff;
 	}
 
 	.cardlist .ulli .h6 {
@@ -466,7 +506,38 @@
 	.cardlist .touch-list {
 		padding: 6% 0 0;
 	}
-
+	.ulli .h7{
+		color: #333333;
+		font-size: 38rpx;
+		line-height: 70px;
+	}
+	.ulli .h7 image{
+		width:38rpx;
+		height: 38rpx;
+		margin-right: 10rpx;
+	}
+	.cardlist .chikaren{
+		padding:2% 7%;
+		width:86%;
+	}
+	.jutiinfo{
+		background: #F1F9F1;
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		position: absolute;
+		bottom:0;
+		left: 0;
+		width:100%;
+		border-radius: 0 0 20rpx 20rpx;
+		padding:1% 6%;
+	}
+	.jutiinfo label{
+		color: #b0b0b0;
+		font-size: 26rpx;
+		width: 50%;
+		line-height: 50rpx;
+	}
 	.ulli .card-num {
 		border-bottom: none;
 	}
@@ -579,5 +650,66 @@
 
 	.operat button {
 		margin: 0 4%;
+	}
+</style>
+<style>
+	
+
+	.clues {
+		display: flex;
+		justify-content: start;
+		align-items: center;
+		line-height: 60rpx;
+		fony-size: 26rpx;
+		position: relative;
+		z-index: 2;
+		margin: 20rpx 0 0;
+	}
+
+	.clues text {
+		width: 162rpx;
+		color: #006B44;
+	}
+
+	.clues .label {
+		background-color: #fff;
+		height: 60rpx;
+		line-height: 60rpx;
+		border: 1px solid #C5E7C8;
+		width: 79%;
+		border-radius: 6rpx;
+		padding: 0 0.5%;
+		display: flex;
+		align-items: center;
+	}
+
+	.clues .label input {
+		width: 90%;
+		height: 70rpx;
+		line-height: 70rpx;
+		padding: 0 10rpx;
+	}
+
+	.clues .label button {
+		width: 32rpx;
+		height: 32rpx;
+		background: #98C3B3;
+		border-radius: 50%;
+		font-size: 18rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		color: #fff;
+	}
+
+	.rjcg {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-top: 100rpx;
+		color: #006B44;
+		font-weight: 700;
+		font-size: 40rpx;
 	}
 </style>
