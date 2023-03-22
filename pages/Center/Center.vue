@@ -396,7 +396,7 @@
 			},
 			//门店查询
 			Chaxun: function(e) {
-				if (not) {
+				if (e) {
 					util.simpleMsg("功能暂未开放！", true);
 					return;
 				}
