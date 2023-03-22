@@ -22,8 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<!-- @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry')" -->
-						<view @click="NotOpen">
+						<view @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry','not')">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -58,8 +57,8 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<!-- @click="ToSale('/pages/CardCouponMain/Menu')" -->
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="NotOpen">
+						<view style="border-left: 1rpx solid #C1F6D8;"
+							@click="ToSale('/pages/CardCouponMain/Menu','not')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -218,7 +217,11 @@
 				})
 			},
 			//跳转到销售页面
-			ToSale: async function(e) {
+			ToSale: async function(e, not) {
+				if (not) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				let store = util.getStorage("store");
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
@@ -395,10 +398,6 @@
 						}
 					}
 				})
-			},
-			//未开放
-			NotOpen: function(e) {
-				util.simpleMsg("功能暂未开放！", true);
 			},
 			//初始化
 			DataInit: function(e) {
