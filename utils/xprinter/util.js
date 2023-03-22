@@ -265,6 +265,7 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 
 	//支付数据
 	var sale3List = [];
+	var payTotal = 0.00;
 	for (var j = 0; j < sale3_arr.length; j++) {
 		var sale3_printer = {
 			bill: sale3_arr[j].BILL,
@@ -284,6 +285,7 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			save_je: nnvl(sale3_arr[j].balance,0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
+		payTotal += parseFloat(sale3_arr[j].AMT);
 	}
 
 	console.log("sale3List 转换后数据:", sale3List);
@@ -308,10 +310,10 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			mystr: nnvl(sale6_arr[j].MYSTR,0),
 		};
 		sale6_sumQty += nnvl(sale6_arr[j].QTY,0),
-		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0),
+		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0) * nnvl(sale6_arr[j].QTY,0),
 		sale6List = sale6List.concat(sale6_printer);
 	}
-	
+		
 	console.log("sale06List 转换后数据:", sale6List);
 
 	var printerInfo = {

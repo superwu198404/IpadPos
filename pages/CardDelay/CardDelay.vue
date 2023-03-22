@@ -18,6 +18,7 @@
 						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
+					<view class="tishis">请注意所选的操作类型是否符合顾客要求！</view>
 				</view>
 				<view class="commodity">
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
@@ -69,7 +70,7 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<label >卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
+												<label>卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
 												<!-- <view class="card-num">
 													<label>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
@@ -89,7 +90,53 @@
 								</view>
 							</view>
 						</view>
-						<view class="carddet">
+						<view class="cardqs" v-if="CurType=='Loss'">
+							<view class="cardlist">
+								<view class="ulli" style="height: 483rpx;">
+									<view class="touch-list chikaren">
+										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;">
+										</image>
+										<view class="h7">
+											<image src="@/images/img2/quanmcheng.png"></image>
+											卡号：{{CardInfo.cardId||"暂无"}}
+										</view>
+										<view class="clues" style="margin-top:14rpx;">
+											<text>姓名：</text>
+											<view class="label">
+												<input type="text" placeholder="请输入姓名" v-model="CKRInfo.name" />
+												<button v-if="CKRInfo.name" @click="CKRInfo.name=''">×</button>
+											</view>
+										</view>
+										<view class="clues">
+											<text>手机号：</text>
+											<view class="label"><input type="number" v-model="CKRInfo.phone"
+													placeholder="请输入手机号" />
+												<button v-if="CKRInfo.phone" @click="CKRInfo.phone=''">×</button>
+											</view>
+										</view>
+										<view class="clues">
+											<text>身份证号：</text>
+											<view class="label"><input type="text" v-model="CKRInfo.idcard"
+													placeholder="请输入身份证号" />
+												<button v-if="CKRInfo.idcard" @click="CKRInfo.idcard=''">×</button>
+											</view>
+										</view>
+									</view>
+									<view class="jutiinfo">
+										<label><text>卡名称：{{CardInfo.spName||"暂无"}}</text></label>
+										<label><text>卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</text></label>
+										<label><text>卡状态：{{statusDefault(CardInfo.status,"暂无")}}</text></label>
+										<label><text>卡余额：￥{{CardInfo.balance||0}}</text></label>
+									</view>
+								</view>
+							</view>
+							<view class="operat">
+								<button class="btn btn-qx" @click="Cancel">取消</button>
+								<button class="btn btn-h" @click="Confirm">确认</button>
+								<!-- <button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button> -->
+							</view>
+						</view>
+						<view class="carddet" v-else>
 							<view class="totals">
 								<view>
 									<em></em>
@@ -117,9 +164,6 @@
 								<label>
 									<text>有效期：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
 								</label>
-								<!-- <label>
-									<text>使用时间：</text><text>45644</text>
-								</label> -->
 								<label>
 									暂无更多信息...
 								</label>
@@ -127,9 +171,10 @@
 							<view class="operat">
 								<button class="btn btn-qx" @click="Cancel">取消</button>
 								<button class="btn btn-h" @click="Confirm">确认</button>
-								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
+								<!-- <button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button> -->
 							</view>
 						</view>
+
 					</view>
 
 				</view>
@@ -160,7 +205,7 @@
 		},
 		data() {
 			return {
-				CardNumber: "1087111000002638",
+				CardNumber: "",
 				CardInfo: {},
 				CKRInfo: {},
 				showCardRen: false,
@@ -172,7 +217,7 @@
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
 			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
-			console.log("日结销售数据：", a);
+			// console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
@@ -297,6 +342,40 @@
 					util.simpleMsg("请先查询卡信息", true);
 					return;
 				}
+				if (that.CurType != "Delay") {
+					if (that.CardInfo.cardType != 'Z001') {
+						util.simpleMsg("抱歉，卡类型错误", true);
+						return;
+					}
+					console.log("持卡人信息：", that.CKRInfo);
+					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
+						util.simpleMsg("请先填写顾客信息", true);
+						return;
+					} else {
+						if (!that.CKRInfo.name) {
+							util.simpleMsg("请输入姓名", true);
+							return;
+						}
+						if (!that.CKRInfo.phone) {
+							util.simpleMsg("请输入手机号", true);
+							return;
+						}
+						if (!(/^(13|14|15|18)\d{9}$/.test(that.CKRInfo.phone))) {
+							util.simpleMsg("手机号码有误，请重填", true);
+							return;
+						}
+						if (!that.CKRInfo.idcard) {
+							util.simpleMsg("请输入身份证号", true);
+							return;
+						}
+						var ids =
+							/^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
+						if (!ids.test(that.CKRInfo.idcard)) {
+							util.simpleMsg("身份证号有误，请重填", true);
+							return;
+						}
+					}
+				}
 				util.simpleModal("提示", "是否确认此操作？", res1 => {
 					if (res1) {
 						if (that.CurType == 'Delay') {
@@ -316,14 +395,6 @@
 								that.ResetBill(); //重置
 							})
 						} else {
-							if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
-								util.simpleMsg("请先填写顾客信息", true);
-								return;
-							}
-							if (that.CardInfo.cardType != 'Z001') {
-								util.simpleMsg("抱歉，卡类型错误", true);
-								return;
-							}
 							_card_sale.REPORT_LOSS({
 								salebill: that.OrderBill,
 								card_num: that.CardInfo.cardId,
@@ -382,6 +453,7 @@
 	.chaxun {
 		display: flex;
 		align-items: center;
+		margin-top: 20rpx;
 	}
 
 	.commodity .number .labnum {
@@ -410,7 +482,9 @@
 		padding-left: 2%;
 		white-space: nowrap;
 	}
-
+	.hh{
+		position: relative;
+	}
 	.totals view em {
 		height: 40rpx;
 		margin: 0 8rpx 0 30rpx;
@@ -430,6 +504,8 @@
 	.cardlist .ulli {
 		width: 100%;
 		margin: 0;
+		z-index: 99;
+		background: #fff;
 	}
 
 	.cardlist .ulli .h6 {
@@ -465,6 +541,43 @@
 
 	.cardlist .touch-list {
 		padding: 6% 0 0;
+	}
+
+	.ulli .h7 {
+		color: #333333;
+		font-size: 38rpx;
+		line-height: 50px;
+	}
+
+	.ulli .h7 image {
+		width: 38rpx;
+		height: 38rpx;
+		margin-right: 10rpx;
+	}
+
+	.cardlist .chikaren {
+		padding: 1% 7%;
+		width: 86%;
+	}
+
+	.jutiinfo {
+		background: #F1F9F1;
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		border-radius: 0 0 20rpx 20rpx;
+		padding: 1% 6%;
+	}
+
+	.jutiinfo label {
+		color: #b0b0b0;
+		font-size: 26rpx;
+		width: 50%;
+		line-height: 50rpx;
 	}
 
 	.ulli .card-num {
@@ -503,7 +616,7 @@
 
 	.chanxz {
 		width: 85%;
-		padding: 2% 15% 0 0;
+		padding: 0 15% 0 0;
 		position: relative;
 	}
 
@@ -579,5 +692,77 @@
 
 	.operat button {
 		margin: 0 4%;
+	}
+	.tishis{
+		background: #FE694B;
+		height: 50rpx;
+		line-height: 50rpx;
+		border-radius: 20rpx 20rpx 0 0;
+		color: #fff;
+		position: absolute;
+		bottom:0rpx;
+		right:2%;
+		font-size: 26rpx;
+		padding:0 30rpx;
+	}
+</style>
+<style>
+	.clues {
+		display: flex;
+		justify-content: start;
+		align-items: center;
+		line-height: 60rpx;
+		fony-size: 26rpx;
+		position: relative;
+		z-index: 2;
+		margin: 16rpx 0 0;
+	}
+
+	.clues text {
+		width: 164rpx;
+		color: #006B44;
+		font-size: 28rpx;
+	}
+
+	.clues .label {
+		background-color: #fff;
+		height: 60rpx;
+		line-height: 60rpx;
+		border: 1px solid #C5E7C8;
+		width: 79%;
+		border-radius: 6rpx;
+		padding: 0 0.5%;
+		display: flex;
+		align-items: center;
+	}
+
+	.clues .label input {
+		width: 90%;
+		height: 70rpx;
+		line-height: 70rpx;
+		padding: 0 10rpx;
+	}
+
+	.clues .label button {
+		width: 32rpx;
+		height: 32rpx;
+		background: #98C3B3;
+		border-radius: 50%;
+		font-size: 18rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		color: #fff;
+	}
+
+	.rjcg {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-top: 100rpx;
+		color: #006B44;
+		font-weight: 700;
+		font-size: 40rpx;
 	}
 </style>
