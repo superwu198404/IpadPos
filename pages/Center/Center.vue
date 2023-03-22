@@ -240,8 +240,8 @@
 					}
 					uni.redirectTo({
 						url: e,
-						complete:res=>{
-							console.log("跳转结果",res);
+						complete: res => {
+							console.log("跳转结果", res);
 						}
 					});
 					return;
@@ -258,8 +258,8 @@
 					}
 					uni.redirectTo({
 						url: e,
-						complete:res=>{
-							console.log("跳转结果",res);
+						complete: res => {
+							console.log("跳转结果", res);
 						}
 					});
 				})
@@ -396,11 +396,10 @@
 			},
 			//门店查询
 			Chaxun: function() {
-				console.log("点击");
 				uni.redirectTo({
-					url:  "/pages/Querypage/Storeinquiry/Storeinquiry",
-					complete:res=>{
-						console.log("跳转结果",res);
+					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
+					complete: res => {
+						console.log("跳转结果", res);
 					}
 				});
 			},

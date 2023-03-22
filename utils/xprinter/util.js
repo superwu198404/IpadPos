@@ -308,7 +308,7 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			mystr: nnvl(sale6_arr[j].MYSTR,0),
 		};
 		sale6_sumQty += nnvl(sale6_arr[j].QTY,0),
-		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0),
+		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0) * nnvl(sale6_arr[j].QTY,0),
 		sale6List = sale6List.concat(sale6_printer);
 	}
 	
