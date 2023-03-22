@@ -213,10 +213,10 @@
 			},
 			//跳转到销售页面
 			ToSale: async function(e, not) {
-				// if (not) {
-				// 	util.simpleMsg("功能暂未开放！", true);
-				// 	return;
-				// }
+				if (not) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				let store = util.getStorage("store");
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
