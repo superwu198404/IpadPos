@@ -207,7 +207,14 @@
 				}));
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
 			},
-			ToTakeout: function() {
+			ToTakeout: async function() {
+				let store = util.getStorage("store");
+				//初始化系统参数 (防止重读后失效的)
+				await _sysParam.init(store.KHID);
+				if (store.OPENFLAG != 1) {
+					util.simpleMsg("请先进行签到", true);
+					return;
+				}
 				uni.navigateTo({
 					url: "/pages/mainSale/MainSale",
 					success: util.callBind(this, function(res) {
