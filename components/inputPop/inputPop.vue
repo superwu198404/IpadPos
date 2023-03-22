@@ -6,9 +6,9 @@
 					❌
 				</view>
 				<view class="popInput">
-					<image src="../../images/chaxun.png" mode="" class="popimage"></image>
+					<!-- <image src="../../images/chaxun.png" mode="" class="popimage"></image> -->
 					<input type="text" :placeholder="name" class="popInput" :value="inputValue" :data-index="dataIndex"
-						@input="shoppinginput">
+						@input="shoppinginput" >
 				</view>
 				<view class="result" v-if="searchList.length">
 					<view class="resultItem" v-for="item,index in searchList" @click="selectItem(index)">
@@ -191,7 +191,7 @@
 		width: 30rpx;
 		height: 30rpx;
 		margin-right: 13rpx;
-		margin-left: 8px;
+		margin-left: 8px;  
 	}
 
 	.popInput {
@@ -202,6 +202,7 @@
 		flex-direction: row;
 		align-items: center;
 		border-radius: 20rpx;
+		padding-left: 10rpx;
 	}
 
 	.result {

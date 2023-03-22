@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry')">
+						<view @click="Chaxun()">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -395,12 +395,12 @@
 				})
 			},
 			//门店查询
-			Chaxun: function(e) {
-				console.log("页面参数值：", e);
+			Chaxun: function() {
+				console.log("点击");
 				uni.redirectTo({
-					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
-					complete(r) {
-						console.log("页面参数值：", r);
+					url:  "/pages/Querypage/Storeinquiry/Storeinquiry",
+					complete:res=>{
+						console.log("跳转结果",res);
 					}
 				});
 			},

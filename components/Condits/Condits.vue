@@ -61,10 +61,10 @@
 					<text class="tjmc">{{item.condname}}</text>
 
 					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
-						<view style="font-size: 16rpx; padding-left: 8rpx;" v-if="item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
 							{{item.value }}
 						</view>
-						<view style="font-size: 16rpx; padding-left: 8rpx;color: gray;" v-if="!item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;color: gray;" v-if="!item.value">
 							{{item.condname}}
 						</view>
 						<view class="closeClick" @click.stop="delItem(index)">
@@ -77,10 +77,10 @@
 				<view class="pulldown" v-if="item.type === 'popup1'" style="margin-bottom: 10rpx;">
 					<text class="tjmc">{{item.condname}}</text>
 					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
-						<view style="font-size: 16rpx; padding-left: 8rpx;" v-if="item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
 							{{item.value}}
 						</view>
-						<view style="font-size: 16rpx; padding-left: 8rpx;color: gray;" v-if="!item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;color: gray;" v-if="!item.value">
 							{{item.condname}}
 						</view>
 						<view class="closeClick" @click.stop="delItem(index)">
@@ -92,10 +92,10 @@
 				<view class="pulldown" v-if="item.type === 'store'" style="margin-bottom: 10rpx;">
 					<text class="tjmc">{{item.condname}}</text>
 					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
-						<view style="font-size: 16rpx; padding-left: 8rpx;" v-if="item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
 							{{item.value }}
 						</view>
-						<view style="font-size: 16rpx; padding-left: 8rpx;color: gray;" v-if="!item.value">
+						<view style="font-size: 12px; padding-left: 8rpx;color: gray;" v-if="!item.value">
 							{{item.condname}}
 						</view>
 
@@ -110,9 +110,9 @@
 					<text class="tjmc">{{item.condname}}：</text>
 					<label>
 						<picker mode="selector" :range="item.qs" value="0" range-key="name" @change="bindKeyInput"
-							:data-index="index" style=" background-color: #F5F5F5;color: #333; font-size: 7rpx;display: flex;align-items: center;border: 0rpx;
+							:data-index="index" style=" background-color: #F5F5F5;color: #333; font-size: 12px;display: flex;align-items: center;border: 0rpx;
 							solid #EEEEEE; border-radius: 3rpx; padding-left: 6rpx;">
-							<view class="uni-input">
+							<view class="uni-input" >
 								{{item.qs.find(_item=>_item.id === item.value) && item.qs.find(_item=>_item.id === item.value).name || '请选择'+item.condname}}
 							</view><button>∨</button>
 						</picker>
@@ -284,7 +284,7 @@
 			},
 			//重置
 			reSet() {
-				this.inqueryCondition = structuredClone(this.inqueryConditionInit)
+				this.inqueryCondition = JSON.parse(JSON.stringify(this.inqueryConditionInit))
 			},
 			// 相加
 			pSum: function(currentSelect, data) {
@@ -331,29 +331,29 @@
 			},
 			//确认 todo人员id先写死
 			affirm() {
-				let data = {}
-				data.QRYNAME = this.bill
-				data.KHID = this.KHID;
-				data.CZYID = '0376';
+				let affirmValue = {}
+				affirmValue.QRYNAME = this.bill
+				affirmValue.KHID = this.KHID;
+				affirmValue.CZYID = '0376';
 
 				for (let i = 0; i < this.inqueryCondition.length; i++) {
 					let item = this.inqueryCondition[i];
 					if (item.value == null && item.value1 == null) {
 						continue;
 					}
-					data[item.id] = item.f + this.getvalue(item.value);
+					affirmValue[item.id] = item.f + this.getvalue(item.value);
 					if (item.id == 'YWBHQH.KHID' && item.type == 'store' && item.f == '&') {
 						var ywKhidsplit = this.getvalue(item.value).split(',');
 						var ywkhidarry = ywKhidsplit.map(function(item) {
 							return "'" + item + "'";
 						})
-						data[item.id] = item.f + ywkhidarry.join(',');
+						affirmValue[item.id] = item.f + ywkhidarry.join(',');
 					}
 					if (item.type == 'dates') {
-						data[item.id] = "#" + this.getvalue(item.value) + "," + this.getvalue(item.value1)
+						affirmValue[item.id] = "#" + this.getvalue(item.value) + "," + this.getvalue(item.value1)
 					}
 					if (item.type == 'date') {
-						data[item.id] = "#" + this.getvalue(item.value);
+						affirmValue[item.id] = "#" + this.getvalue(item.value);
 					}
 				}
 				//请求数据 todo数据中为null的置为空字符串
