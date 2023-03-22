@@ -68,6 +68,7 @@
 	import util from '@/utils/util.js';
 	import db from '@/utils/db/db_excute.js';
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
+	var $;
 	export default {
 		components: {
 			Promotion
@@ -99,6 +100,7 @@
 				click_num: 0,
 				timer: 0,
 				showcdxp: false,
+				allow_page_switch: true
 			};
 		},
 		methods: {
@@ -112,6 +114,7 @@
 			},
 
 			MenuSelect(menu_name, menu_info) {
+				if(!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
 				// this.current_info = {
 				// 	name: menu_name,
@@ -177,6 +180,7 @@
 		},
 		created() {
 			console.log("[Page-Mounted]菜单初始化开始...");
+			$ = util.callContainer(this);
 			this.menu_info = base_sale.XsTypeObj;
 			this.current_info = {
 				name: 'sale',
@@ -190,6 +194,10 @@
 				this.current_info.info = this.menu_info[data];
 				console.log("[Page]当前菜单:", this.current_info);
 				this.$forceUpdate();
+			}))
+			uni.$off('external-operation');
+			uni.$on('external-operation', $(function(callback){
+				$(callback, false);
 			}))
 		}
 	}
