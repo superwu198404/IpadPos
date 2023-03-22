@@ -77,10 +77,6 @@
 			</view>
 		</view>
 		<view class="banbenhao">系统版本号：{{version}}</view>
-		<!-- <button @click="ToSale(1)">去销售（判断日结）</button>
-		<button @click="ToSale()">去销售（不判断日结）</button>
-		<button @click="Sign()">签到</button>
-		<button @click="SignOut()">日结</button> -->
 		<!-- 签到组件 -->
 		<!-- <qiandao @CloseSign="CloseSignIn" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
@@ -218,10 +214,10 @@
 			},
 			//跳转到销售页面
 			ToSale: async function(e, not) {
-				if (not) {
-					util.simpleMsg("功能暂未开放！", true);
-					return;
-				}
+				// if (not) {
+				// 	util.simpleMsg("功能暂未开放！", true);
+				// 	return;
+				// }
 				let store = util.getStorage("store");
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
