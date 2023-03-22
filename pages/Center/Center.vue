@@ -398,7 +398,7 @@
 			},
 			//未开放
 			NotOpen: function(e) {
-				util.simpleMsg("抱歉，暂未开放", true);
+				util.simpleMsg("功能暂未开放！", true);
 			},
 			//初始化
 			DataInit: function(e) {
