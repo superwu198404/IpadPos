@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="Chaxun()">
+						<view @click="Chaxun('not')">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -57,7 +57,7 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu')">
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu','not')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -395,7 +395,11 @@
 				})
 			},
 			//门店查询
-			Chaxun: function() {
+			Chaxun: function(e) {
+				if (not) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				uni.redirectTo({
 					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
 					complete: res => {
