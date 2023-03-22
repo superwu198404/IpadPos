@@ -44,6 +44,7 @@
 									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
 										<!-- <image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()"> -->
 										<input type="text" placeholder="请输入查询卡号" v-model="CardNumber" />
+										<button v-if="CardNumber" @click="CardNumber=''">×</button>
 								</view>
 								<button class="btn" @click="GetCardInfo()">查询</button>
 							</view>
@@ -195,7 +196,7 @@
 	import member from "@/api/hy/MemberInterfaces.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _card_coupon from "@/utils/sale/card_coupon.js";
-	// import _query_sale from "@/api/business/query_sale.js";
+	import _business from "@/utils/business_dictionary.js";
 
 	var that;
 	export default {
@@ -231,20 +232,7 @@
 			statusDefault() {
 				return function(v, def_val = '暂无') {
 					if (v) {
-						if (v == 'Z001') {
-							return '正常';
-						} else if (v == 'Z002') {
-							return '冻结'
-						} else if (v == 'Z003') {
-							return '注销'
-						} else if (v == 'Z004') {
-							return '挂失'
-						} else if (v == 'Z005') {
-							return '挂失'
-						} else if (v == 'Z006') {
-							return '挂失'
-						} else
-							return "未激活";
+						return _business.card_status[v];
 					} else
 						return def_val;
 				}
@@ -252,16 +240,7 @@
 			typeDefault() {
 				return function(v, d = "暂无") {
 					if (v) {
-						if (v == 'Z001') {
-							return '实体VIP卡';
-						} else if (v == 'Z002') {
-							return '实体礼品卡'
-						} else if (v == 'Z003') {
-							return '电子礼品卡'
-						} else if (v == 'Z005') {
-							return '电子储值卡'
-						} else
-							return d;
+						return _business.card_type[v];
 					} else
 						return d;
 				}
@@ -482,9 +461,11 @@
 		padding-left: 2%;
 		white-space: nowrap;
 	}
-	.hh{
+
+	.hh {
 		position: relative;
 	}
+
 	.totals view em {
 		height: 40rpx;
 		margin: 0 8rpx 0 30rpx;
@@ -693,17 +674,18 @@
 	.operat button {
 		margin: 0 4%;
 	}
-	.tishis{
+
+	.tishis {
 		background: #FE694B;
 		height: 50rpx;
 		line-height: 50rpx;
 		border-radius: 20rpx 20rpx 0 0;
 		color: #fff;
 		position: absolute;
-		bottom:0rpx;
-		right:2%;
+		bottom: 0rpx;
+		right: 2%;
 		font-size: 26rpx;
-		padding:0 30rpx;
+		padding: 0 30rpx;
 	}
 </style>
 <style>

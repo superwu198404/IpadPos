@@ -108,8 +108,8 @@ var XsTypeObj = {
 			console.log("[Sale]新单据生成中...");
 			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.createNewBill(); //创建新的sale001
+			console.log("[Sale]新单据生成完毕!", this.sale001);
 			this.sale001.XSTYPE = 1;
-			
 			if (this.sale001.TNET == 0) {
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -123,7 +123,16 @@ var XsTypeObj = {
 					show: false
 				}));
 			}
-			console.log("[Sale]新单据生成完毕!", this.sale001);
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
+				});
+			}
 			this.PayParamAssemble();
 			return true;
 		},
@@ -378,6 +387,16 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
+				});
+			}
 			return false;
 		},
 		//支付完成中
@@ -574,6 +593,16 @@ var XsTypeObj = {
 					sale2: this.sale002,
 					sale3: this.sale003,
 					payed: this.payed
+				});
+			}
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
 				});
 			}
 			this.PayParamAssemble();
@@ -1336,7 +1365,7 @@ var XsTypeObj = {
 			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
 		}
-	},//赊销结算
+	}, //赊销结算
 	sale_credit_settlement: {
 		close: false,
 		xstype: "7",
@@ -1774,7 +1803,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
-	
+
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = util.getStorage('FKDA_INFO');
@@ -2465,10 +2494,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.DKF', util.callBind(this, function(n, o) {
 		console.warn("[Watch-Big-Customer]打客户信息发生变更...");
 	}))
-	
+
 	this.Page.$watch('mainSale.billindex', util.callBind(this, function(n, o) {
 		console.warn("[Watch-Serial-Number]流水号发生变更...");
-		util.setStorage('serial-number',n);
+		util.setStorage('serial-number', n);
 	}))
 
 	this.update = function() {
