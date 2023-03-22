@@ -69,7 +69,7 @@
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<label >卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
+												<label>卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</label>
 												<view class="kname">卡号：{{CardInfo.cardId||"暂无"}}</view>
 												<!-- <view class="card-num">
 													<label>{{typeDefault(CardInfo.cardType,"暂无")}}</label>
@@ -89,47 +89,53 @@
 								</view>
 							</view>
 						</view>
-						<view class="cardqs">
+						<view class="cardqs" v-if="CurType=='Loss'">
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
 									<view class="touch-list chikaren">
-										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;"></image>
-										<view class="h7"><image src="@/images/img2/quanmcheng.png"></image>卡号：{{CardInfo.cardId||"暂无"}}</view>
+										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;">
+										</image>
+										<view class="h7">
+											<image src="@/images/img2/quanmcheng.png"></image>
+											卡号：{{CardInfo.cardId||"暂无"}}
+										</view>
 										<view class="clues" style="margin-top:14rpx;">
 											<text>姓名：</text>
-												<view class="label">
-													<input type="text" placeholder="请输入姓名" v-model="name" focus="true" />
-													<button v-if="name" @click="name=''">×</button>
-												</view>
+											<view class="label">
+												<input type="text" placeholder="请输入姓名" v-model="CKRInfo.name" />
+												<button v-if="CKRInfo.name" @click="CKRInfo.name=''">×</button>
+											</view>
 										</view>
 										<view class="clues">
 											<text>手机号：</text>
-											<view class="label"><input type="number" v-model="phone" placeholder="请输入手机号" />
-												<button v-if="phone" @click="phone=''">×</button>
+											<view class="label"><input type="number" v-model="CKRInfo.phone"
+													placeholder="请输入手机号" />
+												<button v-if="CKRInfo.phone" @click="CKRInfo.phone=''">×</button>
 											</view>
 										</view>
 										<view class="clues">
 											<text>身份证号：</text>
-											<view class="label"><input type="text" v-model="idcard" placeholder="请输入身份证号" />
-												<button v-if="idcard" @click="idcard=''">×</button>
+											<view class="label"><input type="text" v-model="CKRInfo.idcard"
+													placeholder="请输入身份证号" />
+												<button v-if="CKRInfo.idcard" @click="CKRInfo.idcard=''">×</button>
 											</view>
-										</view>								
+										</view>
 									</view>
 									<view class="jutiinfo">
-										<label><text>门店编码：</text></label>
-										<label><text>注册门店：</text></label>
-										<label><text>员工编号：</text></label>
-										<label><text>员工姓名：</text></label>
+										<label><text>卡名称：{{CardInfo.spName||"暂无"}}</text></label>
+										<label><text>卡类型：{{typeDefault(CardInfo.cardType,"暂无")}}</text></label>
+										<label><text>卡状态：{{statusDefault(CardInfo.status,"暂无")}}</text></label>
+										<label><text>卡余额：￥{{CardInfo.balance||0}}</text></label>
 									</view>
 								</view>
 							</view>
 							<view class="operat">
 								<button class="btn btn-qx" @click="Cancel">取消</button>
 								<button class="btn btn-h" @click="Confirm">确认</button>
-								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
+								<!-- <button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button> -->
 							</view>
 						</view>
-						<view class="carddet" v-if="carddet">
+						<view class="carddet" v-else>
 							<view class="totals">
 								<view>
 									<em></em>
@@ -156,7 +162,7 @@
 								</label>
 								<label>
 									<text>有效期：</text><text>{{formateDate(CardInfo.expireDate)}}</text>
-								</label>							
+								</label>
 								<label>
 									暂无更多信息...
 								</label>
@@ -164,10 +170,10 @@
 							<view class="operat">
 								<button class="btn btn-qx" @click="Cancel">取消</button>
 								<button class="btn btn-h" @click="Confirm">确认</button>
-								<button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button>
+								<!-- <button class="btn btn-qx" v-if="CurType=='Loss'" @click="showCardRen=true">持卡人</button> -->
 							</view>
 						</view>
-					
+
 					</view>
 
 				</view>
@@ -335,6 +341,40 @@
 					util.simpleMsg("请先查询卡信息", true);
 					return;
 				}
+				if (that.CurType != "Delay") {
+					if (that.CardInfo.cardType != 'Z001') {
+						util.simpleMsg("抱歉，卡类型错误", true);
+						return;
+					}
+					console.log("持卡人信息：", that.CKRInfo);
+					if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
+						util.simpleMsg("请先填写顾客信息", true);
+						return;
+					} else {
+						if (!that.CKRInfo.name) {
+							util.simpleMsg("请输入姓名", true);
+							return;
+						}
+						if (!that.CKRInfo.phone) {
+							util.simpleMsg("请输入手机号", true);
+							return;
+						}
+						if (!(/^(13|14|15|18)\d{9}$/.test(that.CKRInfo.phone))) {
+							util.simpleMsg("手机号码有误，请重填", true);
+							return;
+						}
+						if (!that.CKRInfo.idcard) {
+							util.simpleMsg("请输入身份证号", true);
+							return;
+						}
+						var ids =
+							/^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/;
+						if (!ids.test(that.CKRInfo.idcard)) {
+							util.simpleMsg("身份证号有误，请重填", true);
+							return;
+						}
+					}
+				}
 				util.simpleModal("提示", "是否确认此操作？", res1 => {
 					if (res1) {
 						if (that.CurType == 'Delay') {
@@ -354,14 +394,6 @@
 								that.ResetBill(); //重置
 							})
 						} else {
-							if (!that.CKRInfo || Object.keys(that.CKRInfo).length == 0) {
-								util.simpleMsg("请先填写顾客信息", true);
-								return;
-							}
-							if (that.CardInfo.cardType != 'Z001') {
-								util.simpleMsg("抱歉，卡类型错误", true);
-								return;
-							}
 							_card_sale.REPORT_LOSS({
 								salebill: that.OrderBill,
 								card_num: that.CardInfo.cardId,
@@ -420,7 +452,7 @@
 	.chaxun {
 		display: flex;
 		align-items: center;
-		margin-top:20rpx;
+		margin-top: 20rpx;
 	}
 
 	.commodity .number .labnum {
@@ -507,38 +539,44 @@
 	.cardlist .touch-list {
 		padding: 6% 0 0;
 	}
-	.ulli .h7{
+
+	.ulli .h7 {
 		color: #333333;
 		font-size: 38rpx;
 		line-height: 50px;
 	}
-	.ulli .h7 image{
-		width:38rpx;
+
+	.ulli .h7 image {
+		width: 38rpx;
 		height: 38rpx;
 		margin-right: 10rpx;
 	}
-	.cardlist .chikaren{
-		padding:1% 7%;
-		width:86%;
+
+	.cardlist .chikaren {
+		padding: 1% 7%;
+		width: 86%;
 	}
-	.jutiinfo{
+
+	.jutiinfo {
 		background: #F1F9F1;
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
 		position: absolute;
-		bottom:0;
+		bottom: 0;
 		left: 0;
-		width:100%;
+		width: 100%;
 		border-radius: 0 0 20rpx 20rpx;
-		padding:1% 6%;
+		padding: 1% 6%;
 	}
-	.jutiinfo label{
+
+	.jutiinfo label {
 		color: #b0b0b0;
 		font-size: 26rpx;
 		width: 50%;
 		line-height: 50rpx;
 	}
+
 	.ulli .card-num {
 		border-bottom: none;
 	}
