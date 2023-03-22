@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry','not')">
+						<view @click="Chaxun()">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -57,8 +57,7 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;"
-							@click="ToSale('/pages/CardCouponMain/Menu','not')">
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -394,6 +393,15 @@
 						}
 					}
 				})
+			},
+			//门店查询
+			Chaxun: function() {
+				uni.redirectTo({
+					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
+					complete: res => {
+						console.log("跳转结果", res);
+					}
+				});
 			},
 			//初始化
 			DataInit: function(e) {

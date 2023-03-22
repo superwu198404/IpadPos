@@ -544,6 +544,7 @@
 .partics .cardqs{
 	width: 44%;
 	margin-right:2%;
+	position: relative;
 }
 .partics .carddet{
 	width: 54%;

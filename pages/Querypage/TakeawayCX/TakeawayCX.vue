@@ -6,7 +6,7 @@
 
 <template>
 	<view class="content">
-		<query :index="sideIndex"></query>
+		<query></query>
 		<view class="right" style="position: relative;">
 			<Head></Head>
 			<view class="prolist">
@@ -41,9 +41,10 @@
 									</th>
 								</thead>
 								<tbody>
-									<tr style="100%" v-for="_item,_index in reason[currentSelect]"
-										@click="openDetail1(_index)">
-										<td v-for="(item) in TITLE['H'+currentSelect]"
+									<tr v-for="_item,_index in reason[currentSelect]" @click="openDetail1(_index)"
+										style="background:''">
+										<td :class="_index%2==0?'tdBg':'tdBg2'"
+											v-for="(item) in TITLE['H'+currentSelect]" style="background: '';"
 											v-if="item.YN_VIEW==='Y'?true:false">
 											{{_item[item.ID]}}
 										</td>
@@ -88,9 +89,10 @@
 									v-if="item.YN_VIEW==='Y'?true:false">{{item.TH}}</th>
 							</thead>
 							<tbody>
-								<tr style="100%" v-for="_item,_index in reason[currentSelect2]"
-									@click="openDetail1(_index,'sub')">
-									<td v-for="(item,index) in TITLE['H'+currentSelect2]"
+								<tr v-for="_item,_index in reason[currentSelect2]" @click="openDetail1(_index,'sub')"
+									style="background: '';">
+									<td :class="_index%2==0?'tdBg':'tdBg2'" style="background: '';"
+										v-for="(item,index) in TITLE['H'+currentSelect2]"
 										v-if="item.YN_VIEW==='Y'?true:false">{{_item[item.ID]}}</td>
 								</tr>
 							</tbody>
@@ -109,7 +111,7 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue'
-	import query from '@/components/query/query.vue';
+	import query from '@/components/query/query.vue'
 	import Condits from '@/components/Condits/Condits.vue'
 	import utils from "@/utils/util.js"
 	import getQueryCondition from "@/api/business/storeInquiry.js"
@@ -128,7 +130,6 @@
 				isOpen: false,
 				condits: true,
 				zibiao: false,
-				sideIndex: null,
 				KHID: '', //门店id
 				bill: '',
 				inqueryCondition: null, //查询条件
@@ -144,17 +145,14 @@
 				TITLE: {},
 				reason: {},
 				total: {},
-				list1:[],
-				list2:[],
+				list1: [],
+				list2: [],
 				hasTable2: false,
 				activeIndex: 1,
 			}
 		},
-		created() {
-			const index = utils.getStorage("index")
-			this.sideIndex = index
-		},
 		onLoad(option) {
+			console.log(option, `123`)
 			let qryid;
 			let name;
 			if (option.qrytype) {
@@ -166,6 +164,7 @@
 				name = "卡销售单查询"
 			}
 			this.KHID = option.khid
+			console.log((this.KHID))
 			//初始化时请求数据拿到渲染条件
 			// const queryDate = getQueryCondition(option.qrytype)
 			//先mock数据
@@ -245,10 +244,7 @@
 						}, {
 							id: "QD",
 							name: "渠道11"
-						}, {
-							id: "SQ",
-							name: "社群11"
-						}
+						},
 					],
 					sql: "SELECT PLID ID,SNAME NAME,#$1#$ YLID FROM PLDA WHERE  YN_XS=#$Y#$ AnD  PLJBID=2  ORDER BY PLID",
 					type: 'select',
@@ -274,6 +270,7 @@
 				START: "2023",
 				ENDDATE: "2024-12-31"
 			};
+			console.log(v, `第一份数据`)
 			// this.inqueryData = v
 			this.setDate(v)
 			//请求第二份配置数据
@@ -359,6 +356,7 @@
 				WIDTH: 100,
 				YN_VIEW: "Y",
 			}]
+			console.log(date2, `第二份数据`)
 			let tablelist = {};
 			for (let i = 0; i < date2.length; i++) {
 				let newid = date2[i].QRYNAME;
@@ -370,14 +368,15 @@
 			for (var item in tablelist) {
 				this.TITLE["H" + item] = tablelist[item]
 			}
+			console.log(this.TITLE, `条件数据`)
 		},
 		methods: {
 			changeTab(value) {
 				this.activeIndex = value
-				if(value === 1){
+				if (value === 1) {
 					this.reason[this.currentSelect2] = this.list1
 					this.pSum(this.currentSelect2, this.list1)
-				}else if(value === 2){
+				} else if (value === 2) {
 					this.reason[this.currentSelect2] = this.list2
 					this.pSum(this.currentSelect2, this.list2)
 				}
@@ -403,9 +402,9 @@
 			},
 			//设置页面数据
 			setDate(res) {
-				// const date = JSON.parse(res)
-				this.inqueryCondition = structuredClone(res.KCDID)
-				this.inqueryConditionInit = structuredClone(res.KCDID)
+				// const date = JSON.parse(res
+				this.inqueryCondition = JSON.parse(JSON.stringify(res.KCDID))
+				this.inqueryConditionInit = JSON.parse(JSON.stringify(res.KCDID))
 
 				let ls_headline = [];
 				for (var z = 0; z < res.DPID.length; z++) {
@@ -427,11 +426,11 @@
 					this.wdate = utils.getDateStr(null, -30)
 			},
 			openDetail1(index, isSub) {
-			
+
 				if (this.headline.length <= 0) {
 					return
 				} else {
-				
+
 					this.mrow = index
 					this.qrysub(index, this.headline[0].id, isSub);
 				}
@@ -557,5 +556,13 @@
 <style>
 	.prolist {
 		height: 90%;
+	}
+
+	.tdBg {
+		background-color: aliceblue;
+	}
+
+	.tdBg2 {
+		background-color: #f5f4f8;
 	}
 </style>
