@@ -22,7 +22,8 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry')">
+						<!-- @click="toSale('/pages/Querypage/Storeinquiry/Storeinquiry')" -->
+						<view @click="NotOpen">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -57,7 +58,8 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu')">
+						<!-- @click="ToSale('/pages/CardCouponMain/Menu')" -->
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="NotOpen">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -240,8 +242,8 @@
 					}
 					uni.redirectTo({
 						url: e,
-						complete:res=>{
-							console.log("跳转结果",res);
+						complete: res => {
+							console.log("跳转结果", res);
 						}
 					});
 					return;
@@ -258,8 +260,8 @@
 					}
 					uni.redirectTo({
 						url: e,
-						complete:res=>{
-							console.log("跳转结果",res);
+						complete: res => {
+							console.log("跳转结果", res);
 						}
 					});
 				})
@@ -394,15 +396,9 @@
 					}
 				})
 			},
-			//门店查询
-			Chaxun: function(e) {
-				console.log("页面参数值：", e);
-				uni.redirectTo({
-					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
-					complete(r) {
-						console.log("页面参数值：", r);
-					}
-				});
+			//未开放
+			NotOpen: function(e) {
+				util.simpleMsg("抱歉，暂未开放", true);
 			},
 			//初始化
 			DataInit: function(e) {
