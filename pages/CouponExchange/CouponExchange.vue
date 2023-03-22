@@ -9,7 +9,8 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'>
+			</Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -203,7 +204,7 @@
 				add_class: 0
 			}
 		},
-		
+
 		created: function() {
 			that = this;
 			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
@@ -495,7 +496,7 @@
 						materielId: r.SPID,
 						totalNum: r.QTY,
 						amount: r.NET,
-						discountAmount: 0,
+						discountAmount: r.BILLDISC,
 						storeNo: r.KHID,
 						guestFlag: 2,
 						saleChannelId: that.store.DQID,
@@ -528,8 +529,8 @@
 					bill: that.SALE001.BILL,
 					name: "仟吉兑换券",
 					amount: that.CouponInfo.coupon_value,
-					card_no: that.CouponInfo.coupon_num ,//003-ID 记录券号
-					disc: that.CouponInfo.total_info.ZZCPXSDISC//销售折扣额
+					card_no: that.CouponInfo.coupon_num, //003-ID 记录券号
+					disc: that.CouponInfo.total_info.ZZCPXSDISC //销售折扣额
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
 					show: true //是否显示
@@ -566,6 +567,31 @@
 					})
 				}
 			},
+			//券折扣分摊
+			CouponDiscCompute: function() {
+				let couponDisc = that.CouponInfo.total_info.ZZCPXSDISC;
+				let Sale2 = JSON.parse(JSON.stringify(that.SALE002));
+				let useDisc = 0;
+				if (couponDisc > 0) {
+					let TNET = 0;
+					Sale2.map(r1 => {
+						TNET += r1.NET;
+					})
+					Sale2.map((r, i) => {
+						if (i == Sale2.length - 1) {
+							let curDisc = _util.newFloat(couponDisc - useDisc, 2);
+							r.DISCRATE = curDisc;
+							r.BILLDISC = curDisc;
+						} else {
+							let curDisc = _util.newFloat((r.NET / TNET) * couponDisc, 2);
+							useDisc += curDisc; //累加使用的折扣
+							r.DISCRATE = curDisc;
+							r.BILLDISC = curDisc;
+						}
+					})
+					that.SALE002 = Sale2;
+				}
+			},
 			//去支付
 			ToPay: function() {
 				if (that.SALE002.length == 0) {
@@ -574,6 +600,7 @@
 				}
 				that.add_class = 2; //步骤设置
 				console.log("sale2", that.SALE002);
+				that.CouponDiscCompute();//券折扣额分摊
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("激活校验申请结果：", res);
 					if (res.code) {

@@ -10,7 +10,7 @@
 		<!-- 顶部导航栏 -->
 		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="view.show_sale"></Head>
 		<Tabs :tabs="source.tabs" style="margin-bottom: 20px;margin-top: 20px;" @change="tabs_change">
-			<template slot='tools'>
+			<!-- <template slot='tools'>
 				<view class="a-z">
 					<image src="../../images/img2/shuakalr.png" mode="widthFix">
 					</image>
@@ -18,7 +18,7 @@
 				<view class="a-z">
 					<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 				</view>
-			</template>
+			</template> -->
 			<template slot='content'>
 				<TLCardBind v-if="view.current_tab_title == '通联卡绑定'"></TLCardBind>
 			</template>
@@ -57,13 +57,6 @@
 		methods:{
 			tabs_change(data){
 				this.view.current_tab_title = data.title;
-			},
-			search_member(){
-				console.warn("[SearchMember]会员信息查询...");
-				this.search_member_infos(this.form.member_code);
-			},
-			search_card_infos(){
-				
 			}
 		}
 	}

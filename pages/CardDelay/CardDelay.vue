@@ -198,7 +198,7 @@
 		},
 		data() {
 			return {
-				CardNumber: "1087111000002638",
+				CardNumber: "",
 				CardInfo: {},
 				CKRInfo: {},
 				showCardRen: false,
@@ -210,7 +210,7 @@
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
 			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
-			console.log("日结销售数据：", a);
+			// console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
