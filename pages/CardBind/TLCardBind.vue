@@ -3,7 +3,7 @@
 		<h3 class="bind-card-title">绑卡信息</h3>
 		<view class="bind-card-form">
 			<view class="form-item-block">
-				<view class="form-item-tips">第一步&nbsp;&nbsp;-&nbsp;&nbsp;<b>输入会员信息</b>:</view>
+				<view class="form-item-tips">第一步<span class="title-gap">-</span><b>输入会员信息</b>:</view>
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
@@ -21,7 +21,7 @@
 							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80px;"></image>
 						</view>
 						<view class="member-details">
-							<view class="member-id">ID {{ source.member_infos.hyId }}</view>
+							<view class="member-id">ID {{ source.member_infos.hyId || '---' }}</view>
 							<view class="member-details-infos">
 								<view>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '---' }}</view>|
 								<view>电话:{{ source.member_infos.Phone || '---' }}</view>
@@ -29,29 +29,29 @@
 						</view>
 					</view>
 					<view class="gray-text" style="font-size: 1.1em;">
-						注册时间:{{ date_convert(source.member_infos.RegisterDay) || '---' }}
+						注册时间:{{ source.member_infos.RegisterDay ? (date_convert(source.member_infos.RegisterDay) || '---') : '---' }}
 					</view>
 				</view>
 				<view class="store-infos gray-text">
 					<view class="info-data-row">
 						<view>门店编号:{{ KHID }}</view>
-						<view>注册门店:---</view>
+						<view>注册门店:{{ NAME }}</view>
 					</view>
 					<view class="info-data-row">
 						<view>员工编号:{{ RYID }}</view>
-						<view>员工姓名:{{ NAME }}</view>
+						<view>员工姓名:{{ RYNAME }}</view>
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="bind-card-form">
 			<view class="form-item-block">
-				<view class="form-item-tips">第二步&nbsp;&nbsp;-&nbsp;&nbsp;<b>输入待绑定卡号</b>:</view>
+				<view class="form-item-tips">第二步<span class="title-gap">-</span><b>输入待绑定卡号</b>:</view>
 				<view class="form-item-input">
 					<view class="input-border-radius">
-						<view class="form-item-input-left">
+						<view class="form-item-input-left" @click="swipe_card">
 							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"></image>|
-							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number"/>
+							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true"/>
 						</view>
 						<view class="comfirm-btn" @click="search_card">确定</view>
 					</view>
@@ -67,7 +67,7 @@
 						<view>类型名称:{{ source.card_infos.cardType || "---" }}</view>
 					</view>
 					<view class="info-data-row">
-						<view>卡号:{{ source.card_infos.cardNum || "---"}}</view>
+						<view>卡号:{{ source.card_infos.cardNum || "---" }}</view>
 					</view>
 				</view>
 				<view class="card-valid-date">
@@ -78,10 +78,10 @@
 		<view class="bind-card-footer">
 			<view>
 				<em></em>
-				<label>绑定账户：<text>---</text></label>
-				<label>绑定卡号：<text>---</text></label>
+				<label>绑定账户：<text>{{ source.member_infos.hyId || '---' }}</text></label>
+				<label>绑定卡号：<text>{{ source.card_infos.cardNum || "---" }}</text></label>
 			</view>
-			<button class="btn">确认支付</button>
+			<button class="btn" @click="comfirm_card_bind">确认绑定</button>
 			<!-- <button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button> -->
 		</view>
 	</view>
@@ -89,6 +89,7 @@
 
 <script>
 	import card_bind from '@/api/business/card_bind.js';
+	import common from '@/api/common.js';
 	import util from '../../utils/util';
 	var $;
 	export default {
@@ -97,7 +98,8 @@
 			return {
 				form:{
 					member_code: "",
-					card_number: "1087110000742187"
+					card_number: "",
+					card_track: ""
 				},
 				source:{
 					member_infos: {
@@ -146,10 +148,62 @@
 				else{
 					util.simpleMsg('未查询到相关信息!',true);
 				}
+			},
+			async comfirm_card_bind(){
+				if(!this.source.card_infos.cardNum || !this.form.card_track) 
+					util.simpleMsg("请刷卡后再进行此操作!");
+				if(!this.source.member_infos.hyId)
+					util.simpleMsg("请录入会员信息后再进行此操作!");
+				let result = await common.SimpleAPIRequest({
+					class:"CardSaleCLASS",
+					method:"MemberBindCard",
+					data:{
+						store_num: this.KHID,
+						store_name: this.NAME,
+						employ_num: this.RYID,
+						employ_name: this.RYNAME,
+						member_num: this.source.member_infos.hyId,
+						card_num: this.source.card_infos.cardNum,
+						card_track: this.form.card_track
+					}
+				})
+				console.log("[ComfirmCardBind]卡绑定结果:",result);
+				if(result.code){
+					util.simpleMsg(result.msg,false);
+					
+				}
+				else{
+					util.simpleMsg(result.msg,true);
+				}
+			},
+			async swipe_card(){
+				let data = await this.get_swipe_card();
+				console.log("[SwipeCard]获取的卡信息:",data);
+				if(data.code){
+					this.form.card_track = data.data.track_info;
+					this.form.card_number = data.data.card_no;
+					util.simpleMsg('卡信息查询成功!',false);
+				}
+				else{
+					util.simpleMsg('未查询到相关信息!',true);
+				}
+			},
+			reset_form(){
+				this.form = this.$options.data().form;
+				this.source = this.$options.data().source;
 			}
 		},
 		created() {
 			$ = util.callContainer(this);
+			uni.$on("ReturnSale",$(function(){
+				util.simpleModal('提示','确定清除当前信息吗?',$(function(is_confirm){
+					if(is_confirm)
+						this.reset_form();
+				}))
+			}))
+		},
+		destroyed() {
+			uni.$off("ReturnSale");
 		}
 	}
 </script>
@@ -188,7 +242,7 @@
 		box-shadow:0px 0px 10px -1px #c4e6c8;
 		background-image: url('@/images/jsd-hybj.png');
 	    justify-content: space-between;
-		border-radius: 5px;
+		border-radius: 10px;
 	    display: flex;
 	    flex-direction: column;
 	}
@@ -384,5 +438,8 @@
 		line-height: 80rpx;
 		padding:0;
 		font-size: 32rpx;
+	}
+	.title-gap {
+		padding: 0px 5px;
 	}
 </style>

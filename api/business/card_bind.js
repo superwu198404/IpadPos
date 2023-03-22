@@ -56,8 +56,18 @@ export default{
 				result.data.cardType = bd.card_type[result.data.cardType];
 				result.data.expireDate = util.convertShortDate(result.data.expireDate);
 				result.data.cardNum = code;
+				result.data.trackInfo = "";
 				return result.data;
 			}
+		},
+		async get_swipe_card(){
+			let result = await new Promise((resolve,reject) => {
+				member.GetSwipeCardInfo(getApp().globalData.store, (res) => {
+					resolve(res);
+				})
+			})
+			console.log("[GetSwipeCard]获取磁卡信息:", result);
+			return result;
 		}
 	}
 }
