@@ -18,6 +18,7 @@
 						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
+					<view class="tishis">请注意所选的操作类型是否符合顾客要求！</view>
 				</view>
 				<view class="commodity">
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
@@ -449,7 +450,9 @@
 		padding-left: 2%;
 		white-space: nowrap;
 	}
-
+	.hh{
+		position: relative;
+	}
 	.totals view em {
 		height: 40rpx;
 		margin: 0 8rpx 0 30rpx;
@@ -651,6 +654,18 @@
 
 	.operat button {
 		margin: 0 4%;
+	}
+	.tishis{
+		background: #FE694B;
+		height: 50rpx;
+		line-height: 50rpx;
+		border-radius: 20rpx 20rpx 0 0;
+		color: #fff;
+		position: absolute;
+		bottom:0rpx;
+		right:2%;
+		font-size: 26rpx;
+		padding:0 30rpx;
 	}
 </style>
 <style>
