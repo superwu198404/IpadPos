@@ -509,7 +509,7 @@
 	.ulli .h7{
 		color: #333333;
 		font-size: 38rpx;
-		line-height: 70px;
+		line-height: 60px;
 	}
 	.ulli .h7 image{
 		width:38rpx;
@@ -517,7 +517,7 @@
 		margin-right: 10rpx;
 	}
 	.cardlist .chikaren{
-		padding:2% 7%;
+		padding:1% 7%;
 		width:86%;
 	}
 	.jutiinfo{
@@ -663,12 +663,13 @@
 		fony-size: 26rpx;
 		position: relative;
 		z-index: 2;
-		margin: 20rpx 0 0;
+		margin: 16rpx 0 0;
 	}
 
 	.clues text {
-		width: 162rpx;
+		width: 164rpx;
 		color: #006B44;
+		font-size: 28rpx;
 	}
 
 	.clues .label {
