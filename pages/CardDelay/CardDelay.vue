@@ -95,7 +95,7 @@
 									<view class="touch-list chikaren">
 										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;"></image>
 										<view class="h7"><image src="@/images/img2/quanmcheng.png"></image>卡号：{{CardInfo.cardId||"暂无"}}</view>
-										<view class="clues">
+										<view class="clues" style="margin-top:14rpx;">
 											<text>姓名：</text>
 												<view class="label">
 													<input type="text" placeholder="请输入姓名" v-model="name" focus="true" />
@@ -420,6 +420,7 @@
 	.chaxun {
 		display: flex;
 		align-items: center;
+		margin-top:20rpx;
 	}
 
 	.commodity .number .labnum {
@@ -509,7 +510,7 @@
 	.ulli .h7{
 		color: #333333;
 		font-size: 38rpx;
-		line-height: 60px;
+		line-height: 50px;
 	}
 	.ulli .h7 image{
 		width:38rpx;
@@ -574,7 +575,7 @@
 
 	.chanxz {
 		width: 85%;
-		padding: 2% 15% 0 0;
+		padding: 0 15% 0 0;
 		position: relative;
 	}
 
@@ -653,8 +654,6 @@
 	}
 </style>
 <style>
-	
-
 	.clues {
 		display: flex;
 		justify-content: start;
