@@ -7,7 +7,7 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
-				<label>
+				<label v-if="_ywtype=='kq_sale'">
 					是否赊销：
 					<view class="classifys">
 						<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
@@ -57,6 +57,12 @@
 	} from '@/api/business/bigclient.js';
 	export default {
 		name: "BigCustomer",
+		props: {
+			_ywtype: {
+				type: String,
+				default: ""
+			}
+		},
 		data() {
 			return {
 				search: {
