@@ -3184,6 +3184,33 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
+		var payTotal = 0.00;
+				
+		//支付方式分组的处理
+		let sale3_arrOrigin = JSON.stringify(data.sale3List);
+		let sale3_arr = [];
+		let zqNet = data.discountedAmount;
+		//付款方式
+		data.sale3List.forEach((item1, index1) => {
+			payTotal += parseFloat(item1.amt);		
+			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
+			if (!parent) {
+			    let list = data.sale3List.filter(el => {
+				  return el.fkid === item1.fkid
+			    })
+				//console.log("sFkid 111",list);
+				let totalAmt = list.reduce((prev, cur) => {
+					return prev + cur.amt;
+				}, 0)
+				//如果是赠券
+				if(item1.fkid == "ZZ01"|| item1.fkid=="ZCV1"){
+					zqNet += totalAmt;
+				}
+				item1.amt = totalAmt;
+				sale3_arr.push(item1)
+			} 
+		});
+		
 		if(type == "SKCZ" || type == "CZ" || type == "LPKJH" ||type == "DHQHK"){
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
@@ -3212,7 +3239,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText("卡券总金额:" + util.tnvl(data.sale6_sumNet,0));
+			jpPrinter.setText("卡券总金额:" + payTotal.toFixed(2).toString());
 			jpPrinter.setPrint(); //打印并换行
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -3226,33 +3253,6 @@ var jpPrinter = {
 		jpPrinter.setText("--------------------付款方式-------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
-		var payTotal = 0.00;
-				
-		//支付方式分组的处理
-		let sale3_arrOrigin = JSON.stringify(data.sale3List);
-		let sale3_arr = [];
-		let zqNet = data.discountedAmount;
-		//付款方式
-		data.sale3List.forEach((item1, index1) => {
-			payTotal += parseFloat(item1.amt);		
-			const parent = sale3_arr.find(c => c.fkid === item1.fkid)
-			if (!parent) {
-			    let list = data.sale3List.filter(el => {
-				  return el.fkid === item1.fkid
-			    })
-				//console.log("sFkid 111",list);
-				let totalAmt = list.reduce((prev, cur) => {
-					return prev + cur.amt;
-				}, 0)
-				//如果是赠券
-				if(item1.fkid == "ZZ01"|| item1.fkid=="ZCV1"){
-					zqNet += totalAmt;
-				}
-				item1.amt = totalAmt;
-				sale3_arr.push(item1)
-			} 
-		});
-	
 		sale3_arr.forEach((item2, index2) => {
 			let amount = item2.amt;
 			jpPrinter.setCharacterSize(0); //设置正常大小

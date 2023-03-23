@@ -21,15 +21,15 @@
 							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80px;"></image>
 						</view>
 						<view class="member-details">
-							<view class="member-id">ID {{ source.member_infos.hyId || '---' }}</view>
+							<view class="member-id">ID {{ source.member_infos.hyId || '暂无' }}</view>
 							<view class="member-details-infos">
-								<view>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '---' }}</view>|
-								<view>电话:{{ source.member_infos.Phone || '---' }}</view>
+								<view>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '暂无' }}</view>|
+								<view>电话:{{ source.member_infos.Phone || '暂无' }}</view>
 							</view>
 						</view>
 					</view>
 					<view class="gray-text" style="font-size: 1.1em;">
-						注册时间:{{ source.member_infos.RegisterDay ? (date_convert(source.member_infos.RegisterDay) || '---') : '---' }}
+						注册时间:{{ source.member_infos.RegisterDay ? (date_convert(source.member_infos.RegisterDay) || '暂无') : '暂无' }}
 					</view>
 				</view>
 				<view class="store-infos gray-text">
@@ -59,27 +59,27 @@
 			</view>
 			<view class="info-content card-infos">
 				<view class="card-info-head">
-					<view>{{ source.card_infos.cardName || "---" }}</view>
-					<view>￥{{ source.card_infos.amount || "---" }}</view>
+					<view>{{ source.card_infos.cardName || "暂无" }}</view>
+					<view>￥{{ source.card_infos.amount || "暂无" }}</view>
 				</view>
 				<view class="card-details">
 					<view class="info-data-row">
-						<view>类型名称:{{ source.card_infos.cardType || "---" }}</view>
+						<view>类型名称:{{ source.card_infos.cardType || "暂无" }}</view>
 					</view>
 					<view class="info-data-row">
-						<view>卡号:{{ source.card_infos.cardNum || "---" }}</view>
+						<view>卡号:{{ source.card_infos.cardNum || "暂无" }}</view>
 					</view>
 				</view>
 				<view class="card-valid-date">
-					有效期至:{{ source.card_infos.expireDate || "---" }}
+					有效期至:{{ source.card_infos.expireDate || "暂无" }}
 				</view>
 			</view>
 		</view>
 		<view class="bind-card-footer">
 			<view>
 				<em></em>
-				<label>绑定账户：<text>{{ source.member_infos.hyId || '---' }}</text></label>
-				<label>绑定卡号：<text>{{ source.card_infos.cardNum || "---" }}</text></label>
+				<label>绑定账户：<text>{{ source.member_infos.hyId || '暂无' }}</text></label>
+				<label>绑定卡号：<text>{{ source.card_infos.cardNum || "暂无" }}</text></label>
 			</view>
 			<button class="btn" @click="comfirm_card_bind">确认绑定</button>
 			<!-- <button class="btn" style="margin-left: 10px;" @click="to_printer">打印格式</button> -->

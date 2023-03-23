@@ -967,9 +967,12 @@
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
 			uni.$once("page-to-takeout", util.callBind(this, function() {
-				console.warn("[Created]切换至外卖单...");
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
-				this.mainSale.$initSale(XsTypeObj['sale_takeaway']); //切换到外卖
+				uni.$emit("external-operation",function(){
+					let menus = this.menu_info;
+					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu => menus[menu].close = true);
+					this.allow_page_switch = false;
+				});
 			}));
 			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
