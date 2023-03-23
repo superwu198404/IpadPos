@@ -9,8 +9,12 @@
 		</view>
 		<view class="menu" style="overflow-y:auto;overflow-x:visible;position:relative;z-index: 3;background-color: #fff;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : 'acts'" v-if="!value.close">
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
+				<view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
+					<view class="arrow-border-top"></view>
+					<view class="arrow-border-bottom"></view>
+				</view>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" v-if="guodu" :src="value.icon_guodu" mode="widthFix"></image>
@@ -69,7 +73,7 @@
 		</view>
 		<view class="menu" >
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
 				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
@@ -103,7 +107,7 @@
 				return util.callBind(this, function(name) {
 					return name === this.current_info?.name;
 				});
-			},
+			}
 		},
 		watch: {
 			current: function(n, o) {
@@ -115,6 +119,7 @@
 			return {
 				previous_info: null, //上一个菜单信息
 				current_info: null, //当前菜单信息
+				current_click_menu_name: null, //当前点击的菜单信息
 				menu_info: null,
 				showGJ: false,
 				showCX: false,
@@ -137,6 +142,7 @@
 			MenuSelect(menu_name, menu_info) {
 				if(!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
+				this.current_click_menu_name = menu_name;
 				// this.current_info = {
 				// 	name: menu_name,
 				// 	info: menu_info
@@ -228,5 +234,25 @@
 	.menu {
 		padding: 0px;
 		outline: 0px;
+	}
+	.arrow-box{
+		right: -5px;
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+		transform: rotate(-45deg);
+		position: absolute;
+		overflow: hidden;
+	}
+	.arrow-border {
+		border-bottom: 2px solid #006b44;
+	}
+	.arrow-border-top{
+		width: 10px;
+		border-bottom: 2px solid #006b44;
+	}
+	.arrow-border-bottom{
+		height: 10px;
+		border-left: 2px solid #006b44;
 	}
 </style>
