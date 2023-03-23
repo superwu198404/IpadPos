@@ -476,6 +476,7 @@
 				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc + tdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
+				console.log("[CalTNET]SALE001",that.SALE001);
 			},
 			//使用手工折扣进行计算 新版舍弃全部分的逻辑
 			SKdiscCompute: function() {
