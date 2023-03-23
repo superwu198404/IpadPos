@@ -559,6 +559,12 @@
 					sales.sale006.splice(remove_sale6_index, 1);//删除联合数据中的sale006部分数据
 					this.source.sale006.splice(remove_sale6_index, 1);//删除外部sale006中的数据
 					sales.sale002.QTY -= sale6.QTY;//在sale2中减去被移除掉的券数量
+					let sale6_list = this.source.sale2_union_sale6.map(union_sales => union_sales.sale006).find(s6 => s6.includes(sale6));
+					if(sale6_list && sale6_list.length){
+						let sale6_list_index = sale6_list.indexOf(sale6);
+						sale6_list.splice(sale6_list_index, 1);//删除联合数据中的sale006部分数据
+						console.log("[RemoveUnion]联合数据中的sale6对象已经清除:",this.source);
+					}
 					this.re_computed_sales(this.source.sale001,this.source.sale002);
 					this.craft_discount_computed();
 				}
@@ -702,7 +708,10 @@
 				this.event_register('ReturnSale',$(function(data){
 					console.log('[EventMonitor]表单信息清空...');
 					util.simpleModal("提示", "是否确认清空当前数据？", $(function(res){
-						if (res) this.reset_form();
+						if (res) {
+							this.reset_form();
+							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+						}
 					}))
 				}));
 				this.event_register('close-tszk',$(function(data){

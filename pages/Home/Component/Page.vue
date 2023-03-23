@@ -7,12 +7,14 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu"
-			style="overflow-y:auto;overflow-x:visible;position:relative;z-index: 3;background-color: #fff;">
+		<view class="menu" style="overflow-y:auto;overflow-x:visible;position:relative;z-index: 3;background-color: #fff;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' :'acts'" v-if="!value.close">
-				<!-- (click_name==key?'acts':'') -->
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
+				<view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
+					<view class="arrow-border-top"></view>
+					<view class="arrow-border-bottom"></view>
+				</view>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" v-if="guodu" :src="value.icon_guodu" mode="widthFix"></image>
@@ -22,7 +24,7 @@
 				</view>
 			</view>
 		</view>
-
+		
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
@@ -66,20 +68,20 @@
 			</view>
 		</view>
 		<view style="width:100%;position: absolute;top:200rpx;z-index: 1;margin-top:-2rpx">
-			<view class="logo">
-				<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
-			</view>
-			<view class="menu">
-				<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-					:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
-					<label></label>
-					<image class="gd" src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
-					<text>{{value.nameSale}}</text>
-					<view class="weiz-jtou" v-if="guodu">
-						<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
-					</view>
+		<view class="logo">
+			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
+		</view>
+		<view class="menu" >
+			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
+				<label></label>
+				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
+				<text>{{value.nameSale}}</text>
+				<view class="weiz-jtou" v-if="guodu">
+					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
 				</view>
 			</view>
+		</view>
 		</view>
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
@@ -105,20 +107,19 @@
 				return util.callBind(this, function(name) {
 					return name === this.current_info?.name;
 				});
-			},
+			}
 		},
 		watch: {
 			current: function(n, o) {
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
-				console.log("当前销售类型对象：", this.current_info);
-				this.click_name = n;
 			}
 		},
 		data() {
 			return {
 				previous_info: null, //上一个菜单信息
 				current_info: null, //当前菜单信息
+				current_click_menu_name: null, //当前点击的菜单信息
 				menu_info: null,
 				showGJ: false,
 				showCX: false,
@@ -126,8 +127,7 @@
 				timer: 0,
 				showcdxp: false,
 				allow_page_switch: true,
-				guodu: false,
-				click_name: "", //当前点击对象
+				guodu:false
 			};
 		},
 		methods: {
@@ -141,13 +141,13 @@
 			},
 
 			MenuSelect(menu_name, menu_info) {
-				if (!this.allow_page_switch) return;
+				if(!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
+				this.current_click_menu_name = menu_name;
 				// this.current_info = {
 				// 	name: menu_name,
 				// 	info: menu_info
 				// };
-				this.click_name = menu_name;
 				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
 				uni.$emit("change", {
 					name: menu_name,
@@ -224,7 +224,7 @@
 				this.$forceUpdate();
 			}))
 			uni.$off('external-operation');
-			uni.$on('external-operation', $(function(callback) {
+			uni.$on('external-operation', $(function(callback){
 				$(callback, false);
 			}))
 		}
@@ -235,5 +235,25 @@
 	.menu {
 		padding: 0px;
 		outline: 0px;
+	}
+	.arrow-box{
+		right: -5px;
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+		transform: rotate(-45deg);
+		position: absolute;
+		overflow: hidden;
+	}
+	.arrow-border {
+		border-bottom: 2px solid #006b44;
+	}
+	.arrow-border-top{
+		width: 10px;
+		border-bottom: 2px solid #006b44;
+	}
+	.arrow-border-bottom{
+		height: 10px;
+		border-left: 2px solid #006b44;
 	}
 </style>

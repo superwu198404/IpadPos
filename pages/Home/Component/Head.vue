@@ -298,6 +298,10 @@
 				this.DKFNAME = info;
 				this.YN_SX = false;
 			}))
+			uni.$off('head-external-operation');
+			uni.$on('head-external-operation', util.callBind(this, function(callback) {
+				callback.call(this);
+			}))
 			this.GetStoreMessage();
 			this.MonitorEvent(); //事件监听
 			//搜索蓝牙
