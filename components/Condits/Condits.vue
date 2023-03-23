@@ -56,40 +56,9 @@
 					</label>
 				</view>
 
-				<!-- 商品选择 -->
-				<view class="pulldown" v-if="item.type === 'popup'" style="margin-bottom: 10rpx;">
-					<text class="tjmc">{{item.condname}}</text>
-
-					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
-						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
-							{{item.value }}
-						</view>
-						<view style="font-size: 12px; padding-left: 8rpx;color: gray;" v-if="!item.value">
-							{{item.condname}}
-						</view>
-						<view class="closeClick" @click.stop="delItem(index)">
-							×
-						</view>
-					</button>
-
-				</view>
-				<!-- 品类选择 -->
-				<view class="pulldown" v-if="item.type === 'popup1'" style="margin-bottom: 10rpx;">
-					<text class="tjmc">{{item.condname}}</text>
-					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
-						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
-							{{item.value}}
-						</view>
-						<view style="font-size: 12px; padding-left: 8rpx;color: gray;" v-if="!item.value">
-							{{item.condname}}
-						</view>
-						<view class="closeClick" @click.stop="delItem(index)">
-							×
-						</view>
-					</button>
-				</view>
+			
 				<!-- 店铺选择 -->
-				<view class="pulldown" v-if="item.type === 'store'" style="margin-bottom: 10rpx;">
+				<view class="pulldown" v-if="item.sql.length" style="margin-bottom: 10rpx;">
 					<text class="tjmc">{{item.condname}}</text>
 					<button class="popupWrap" :data-index="index" @click="clickDig(item.id, $event)">
 						<view style="font-size: 12px; padding-left: 8rpx;" v-if="item.value">
@@ -127,13 +96,8 @@
 						<label style="margin-bottom: 10rpx;" v-for="(_item, _index) in item.qs"
 							@click="changeSelect(_item, index, _index)"
 							:class="{curr: activeIndex === _index && item.value}" :key="_index">
-
-
 							{{_item.name}}
-
 							<em>✓</em>
-
-
 						</label>
 					</view>
 				</view>
@@ -273,8 +237,6 @@
 			},
 			setInputDate(index, field, value) {
 				this.inqueryCondition[index][field] = value
-				
-				console.log(this.inqueryCondition[index])
 			},
 			changeSelect(_item, index, _index) {
 				this.activeIndex = _index

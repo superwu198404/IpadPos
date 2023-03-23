@@ -46,7 +46,7 @@
 									<view class="h6">
 										<label>￥{{ sale6_main.sale002.OPRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
 										<view class="zje">
-											<view><text>总金额</text>￥{{ sale6_main.sale002.PRICE * sale6_main.sale006.QTY }}</view>
+											<view><text>总金额</text>￥{{ coupon_segment_total_amount(sale6_main.sale002,sale6_main.sale006) }}</view>
 										</view>
 									</view>
 									<view class="card-num">
@@ -79,7 +79,7 @@
 				</view>
 				<CouponActivateFail v-if="view.current_part_view == 'coupon_activate_fail'"></CouponActivateFail>
 				<!-- 起始卡号 -->
-				<CardNumEntry :show.sync="view.no_input" :scan_code="true"></CardNumEntry>
+				<CardNumEntry :show.sync="view.no_input" :scan_code="view.scan_code"></CardNumEntry>
 			</view>
 			<view class="operation operation-correct">
 				<view class="sorting">
@@ -155,7 +155,8 @@
 					big_customer: false,
 					enable_customer: true,
 					enable_special_discount: false,
-					current_part_view: "coupon_activate"
+					current_part_view: "coupon_activate",
+					scan_code: true
 				},
 				source: {
 					enable_credit: false,
@@ -193,6 +194,11 @@
 			},
 			unpaid_total_discount(){
 				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p,n) => p+n,0).toFixed(2);
+			},
+			coupon_segment_total_amount(){
+				return $(function(sale2,sale6){
+					return (sale2.PRICE * sale6.QTY).toFixed(2);
+				})
 			},
 			get_union(){
 				return $(function(sale6){
