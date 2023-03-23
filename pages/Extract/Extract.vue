@@ -10,7 +10,9 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- <menu_page :menuIndex="4"></menu_page> -->
-		<view class="right">
+	<view class="right">
+	<view class="bkjb">
+		<view class="neik">
 	<view class="commodity" style="height: 100%;">
 		<view class="hh">
 			<view class="hotcakes">
@@ -81,6 +83,10 @@
 		<ReserveDrawer v-if="view.Details" :order="extract_order" @Close="CloseDrawer"></ReserveDrawer>
 	</view>
 	<!-- </menu_content> -->
+	
+	</view>
+	</view>
+	
 	</view>
 	</view>
 </template>

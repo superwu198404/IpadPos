@@ -7,15 +7,20 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
+		<view class="menu" style="overflow-y:auto;overflow-x:visible;position:relative;z-index: 3;background-color: #fff;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
+				:class="Selected(key) ? 'curr' : 'acts'" v-if="!value.close">
 				<label></label>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+				<image class="gd" v-if="guodu" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
+				<view class="weiz-jtou" v-if="guodu">
+					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
+				</view>
 			</view>
 		</view>
+		
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
@@ -57,6 +62,22 @@
 					</view>
 				</view>
 			</view>
+		</view>
+		<view style="width:100%;position: absolute;top:200rpx;z-index: 1;margin-top:-2rpx">
+		<view class="logo">
+			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
+		</view>
+		<view class="menu" >
+			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
+				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
+				<label></label>
+				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
+				<text>{{value.nameSale}}</text>
+				<view class="weiz-jtou" v-if="guodu">
+					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
+				</view>
+			</view>
+		</view>
 		</view>
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>

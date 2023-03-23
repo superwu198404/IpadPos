@@ -10,6 +10,8 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- <menu_page :menuIndex="4"></menu_page> -->
 		<view class="right">
+			<view class="bkjb">
+			<view class="neik">
 			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist">
@@ -119,6 +121,8 @@
 					</view>
 				</view>
 			</view>
+		</view>
+		</view>
 		</view>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">

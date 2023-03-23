@@ -46,6 +46,7 @@ page {
 	padding-top: 3%;
 	padding-top: 2%;
 	position: relative;
+	z-index: 9999;
 }
 
 .navmall .logo {
@@ -60,7 +61,7 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 79%;
+	height: 81%;
 	padding-bottom: 50%;
 }
 .navmall .gongju{
@@ -110,7 +111,9 @@ page {
 .menu .curr {
 	color: #fff;
 }
-
+.menu .acts{
+	color: #006B44;
+}
 .menu .curr label {
 	display: block;
 	position: absolute;
@@ -126,7 +129,21 @@ page {
 	animation: scaleDraw 0.3s ease-in-out;
 	-webkit-animation: scaleDraw 0.3s ease;
 }
-
+.menu .acts label{
+	display: block;
+	position: absolute;
+	top: 3%;
+	left: 6%;
+	background-color: #F2F7F5;
+	padding: 2% 0;
+	width: 88%;
+	margin: 0 auto;
+	border-radius: 30rpx;
+	height: 90%;
+	z-index: 0;
+	animation: scaleDraw 0.3s ease-in-out;
+	-webkit-animation: scaleDraw 0.3s ease;
+}
 @keyframes scaleDraw {
 
 	/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/

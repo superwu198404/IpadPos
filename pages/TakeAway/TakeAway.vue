@@ -10,10 +10,12 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- <menu_page :menuIndex="3"></menu_page> -->
 		<view class="right">
+			<view class="bkjb">
+			<view class="neik">
 			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist">
-					<view class="commodity">
+					
 						<view class="hh">
 							<view class="hotcakes">
 								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
@@ -113,6 +115,8 @@
 					</view>
 				</view>
 			</view>
+			</view>
+			
 		</view>
 		<!-- 报损数据 -->
 		<view class="boxs" v-if="yn_bs">
