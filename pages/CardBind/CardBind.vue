@@ -41,7 +41,7 @@
 			return {
 				view:{
 					big_customer: false,
-					enable_customer: true,
+					enable_customer: false,
 					show_sale: true,
 					current_tab_title: null
 				},

@@ -126,7 +126,8 @@
 				click_num: 0,
 				timer: 0,
 				showcdxp: false,
-				allow_page_switch: true
+				allow_page_switch: true,
+				guodu:false
 			};
 		},
 		methods: {

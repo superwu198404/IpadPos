@@ -1077,7 +1077,7 @@ uni-button:after {
 	top:0;
 	left:0;
 	background-color: #F5F4F8;
-	z-index: 9;
+	z-index: 9999;
 }
 .head {
 		height: 120rpx;

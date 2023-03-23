@@ -199,7 +199,14 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
 				showSMQ: false, //s是否显示扫码
-				CouponInfo: {}, //券信息
+				CouponInfo: {},
+				// CouponInfo: {
+				// 	coupon_num: "900000000002068164",
+				// 	coupon_value: 100,
+				// 	total_info: {
+				// 		ZZCPXSDISC: 10
+				// 	}
+				// }, //券信息
 				payed: [], //已支付信息用于组装券兑换
 				add_class: 0
 			}
@@ -600,12 +607,17 @@
 				}
 				that.add_class = 2; //步骤设置
 				console.log("sale2", that.SALE002);
-				that.CouponDiscCompute();//券折扣额分摊
+				that.CouponDiscCompute(); //券折扣额分摊
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("激活校验申请结果：", res);
 					if (res.code) {
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
+
+						// that.CreateSale003(); //创建已支付的兑换券记录
+						// console.log("兑换券支付记录：", that.payed);
+						// _card_sale.PayParamAssemble(that, that.PayedResult);
+						// return; 
 						//先进行券核销再进入支付 等待支付返回结果
 						_util.simpleModal("提示", "是否要核销该兑换券？", res => {
 							if (res) {
@@ -613,7 +625,6 @@
 								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
 									console.log("兑换券核销结果：", res1);
 									if (res1.code) {
-										// _util.simpleMsg("券核销成功即将跳转支付...", "none");
 										that.CreateSale003(); //创建已支付的兑换券记录
 										console.log("兑换券支付记录：", that.payed);
 										//跳转支付
@@ -674,6 +685,7 @@
 					.sale003(),
 					sale3));
 				console.log("支付后返回结果：", that.SALE001);
+				// return;
 				if (result.code) {
 					console.log("准备激活：", that.SALE002);
 					//手工折扣额分摊
