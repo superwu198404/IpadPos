@@ -38,6 +38,7 @@
 			storeType: {
 				type: Array,
 			},
+			//后台名称
 			model: {
 				type: String,
 				default: 'khItem'
@@ -45,9 +46,11 @@
 			clientTYPE: {
 				type: Array,
 			},
+			// 控制弹层数据
 			popInfo: {
 				type: Object
 			},
+			//查询条件数组
 			inqueryCondition: {
 				type: Array
 			}
@@ -85,7 +88,7 @@
 				this.setInputDate(qcid, valuef, newval)
 			},
 			setInputDate(index, field, value) {
-				this.$set(this.inqueryCondition[index], field, value.KHID)
+				this.$set(this.inqueryCondition[index], field, `${value.KHID}-${value.SNAME}`)
 			},
 			shoppinginput(e) {
 				this.inputValue = e.detail.value
@@ -203,6 +206,7 @@
 		align-items: center;
 		border-radius: 20rpx;
 		padding-left: 10rpx;
+		width: 80%;
 	}
 
 	.result {

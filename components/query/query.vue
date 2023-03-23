@@ -38,14 +38,14 @@
 		props: ['index'],
 		data() {
 			return {
-				curIndex:0,
+				curIndex: 1,
 				tableName: [{
 					name: "销售报表",
 					src1: "@/images/img2/xiaoshou.png ",
 					src2: "@/images/img2/xiaoshoucx-cu.png",
 					src: "/pages/Querypage/Statement/Statement"
 				}, {
-					name: "外卖单查询",			
+					name: "外卖单查询",
 					src1: "/images/img2/danjucx.png",
 					src2: "@/images/img2/danjucx-cu.png",
 					src: '/pages/Querypage/Storeinquiry/Storeinquiry'
@@ -57,14 +57,6 @@
 				}],
 			}
 		},
-		//组件生命周期
-		// created: function(e) {
-		// 	if(!this.index){
-		// 		this.activeIndex = 0
-		// 		return
-		// 	}
-		// 	this.activeIndex = this.index
-		// },
 		mounted() {
 			this.curIndex = utils.getStorage('queryIndex')
 		},
@@ -74,15 +66,14 @@
 					url: item.src
 				})
 				this.curIndex = index
-				utils.setStorage("queryIndex",index)
-				console.log(index, this.curIndex, 'index')
-				const a = utils.getStorage("queryIndex")
-				console.log(a,`00`)
+				utils.setStorage("queryIndex", index)
 			},
 			Return: function() {
 				uni.redirectTo({
 					url: "/pages/Center/Center"
 				})
+				utils.setStorage('queryIndex',1)
+			
 			}
 		}
 	}

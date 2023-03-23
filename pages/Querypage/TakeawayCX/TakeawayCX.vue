@@ -131,22 +131,22 @@
 				condits: true,
 				zibiao: false,
 				KHID: '', //门店id
-				bill: '',
+				bill: '', //主表查询id
 				inqueryCondition: null, //查询条件
 				inqueryConditionInit: null, //初始查询条件
 				headline: null, //子表
-				currentSelect2: '',
+				currentSelect2: '', //子表查询id
 				DPID: null,
 				mrow: '',
-				endDate: '',
-				start: '',
+				endDate: '',//日期截止点击时间
+				start: '', //日期开始时间
 				currentSelect: '', //当前请求id
 				wdate: '', //xx天后时间
-				TITLE: {},
-				reason: {},
-				total: {},
-				list1: [],
-				list2: [],
+				TITLE: {}, //条件汇总配置区
+				reason: {}, //查询到的表格数据
+				total: {},  //汇总区域展示数据
+				list1: [],  //查询到子表一数据
+				list2: [], //查询到子表二数据
 				hasTable2: false,
 				activeIndex: 1,
 			}
@@ -164,12 +164,10 @@
 				name = "卡销售单查询"
 			}
 			this.KHID = option.khid
-			console.log((this.KHID))
 			//初始化时请求数据拿到渲染条件
 			// const queryDate = getQueryCondition(option.qrytype)
 			//先mock数据
 			const v = {
-				BILL: "1009",
 				KCDID: [{
 					id: "YWXKQH.BILL",
 					type: "input",
@@ -192,7 +190,7 @@
 					f: '&',
 					id: "YWBHQH.SPID",
 					qs: [],
-					sql: "",
+					sql: "SELECT PLID ID,SNAME NAME,#$1#$ YLID FROM PLDA WHERE  YN_XS=#$Y#$ AnD  PLJBID=2  ORDER BY PLID",
 					type: 'popup',
 					value: "",
 					value1: ""
@@ -226,7 +224,7 @@
 							name: "CC"
 						}
 					],
-					sql: "SELECT PLID ID,SNAME NAME,#$1#$ YLID FROM PLDA WHERE  YN_XS=#$Y#$ AnD  PLJBID=2  ORDER BY PLID",
+					sql: "",
 					type: 'select',
 					value: "",
 					value1: ""
@@ -246,7 +244,7 @@
 							name: "渠道11"
 						},
 					],
-					sql: "SELECT PLID ID,SNAME NAME,#$1#$ YLID FROM PLDA WHERE  YN_XS=#$Y#$ AnD  PLJBID=2  ORDER BY PLID",
+					sql: "",
 					type: 'select',
 					value: "",
 					value1: ""
@@ -255,7 +253,7 @@
 					f: '&',
 					id: "YWKHDB.KHID",
 					qs: [],
-					sql: "",
+					sql: "SELECT PLID ID,SNAME NAME,#$1#$ YLID FROM PLDA WHERE  YN_XS=#$Y#$ AnD  PLJBID=2  ORDER BY PLID",
 					type: 'store',
 					value: "",
 					value1: ""
@@ -422,7 +420,7 @@
 				this.DPID = res.DPID
 				this.endDate = res.ENDDATE
 				this.start = res.START
-				this.currentSelect = res.BILL,
+				this.currentSelect = this.bill
 					this.wdate = utils.getDateStr(null, -30)
 			},
 			openDetail1(index, isSub) {
