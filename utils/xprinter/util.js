@@ -231,6 +231,10 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 	var hdnet = 0;
 	var totalQty = 0;
 	var totalPrice = 0;
+	//激活/充值,状态
+	let status = snvl(sale1_obj.STR1,"");
+	//激活/充值,原因
+	let reason = snvl(sale1_obj.REASON,"");
 	
 	let sale6_sumQty = 0;
 	let sale6_sumNet = 0;
@@ -315,7 +319,13 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 	}
 		
 	console.log("sale06List 转换后数据:", sale6List);
-
+	
+	//卡券号段状态
+	let issuccess = true;
+	if(status.indexOf('失败') >=0 || status == 'fail'){
+		issuccess = false;
+	}
+	
 	var printerInfo = {
 		xsType,
 		billType,
@@ -341,6 +351,9 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 		sale6_sumNet,
 		failSumQty,
 		failSumNet,
+		status,
+		reason,
+		issuccess,
 	}
 	console.log("打印接收数据转换后 skPrinterData:", printerInfo);
 	return printerInfo;
