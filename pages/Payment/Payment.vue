@@ -593,8 +593,8 @@
 				}
 			},
 			PayList: function(n, o) {
-				let dPayment = ;
-				console.log("待支付金额：", typeof(dPayment));
+				// let dPayment = ;
+				// console.log("待支付金额：", typeof(dPayment));
 				if (Number(this.toBePaidPrice()) === 0) { //判断如果待支付金额为 0 则返回上一个界面
 					this.CanBack = true;
 					console.log("[PayList-Watch]Payments：", this.PayList)
