@@ -11,15 +11,15 @@
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
-				<view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
+				<!-- <view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
 					<view class="arrow-border-top"></view>
 					<view class="arrow-border-bottom"></view>
-				</view>
+				</view> -->
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
-				<view class="weiz-jtou" v-if="guodu">
+				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
 				</view>
 			</view>
@@ -77,7 +77,7 @@
 				<label></label>
 				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
-				<view class="weiz-jtou" v-if="guodu">
+				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
 				</view>
 			</view>
