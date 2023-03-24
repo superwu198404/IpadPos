@@ -67,22 +67,7 @@
 				</view>
 			</view>
 		</view>
-		<view style="width:100%;position: absolute;top:200rpx;z-index: 1;margin-top:-2rpx">
-		<view class="logo">
-			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
-		</view>
-		<view class="menu" >
-			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')">
-				<label></label>
-				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
-				<text>{{value.nameSale}}</text>
-				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
-					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
-				</view>
-			</view>
-		</view>
-		</view>
+	
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>
