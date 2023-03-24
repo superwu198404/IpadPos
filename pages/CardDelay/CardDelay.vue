@@ -192,7 +192,6 @@
 	import Head from '@/pages/Home/Component/Head.vue';
 
 	//业务处理
-	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
 	import member from "@/api/hy/MemberInterfaces.js";
 	import _card_sale from "@/api/business/card_sale.js";
@@ -215,11 +214,9 @@
 				Store: getApp().globalData.store
 			}
 		},
-		async created() {
+		created() {
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
-			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
-			// console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
