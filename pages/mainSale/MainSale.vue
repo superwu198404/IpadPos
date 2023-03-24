@@ -770,7 +770,8 @@
 					position: "absolute",
 					left: "0px",
 					top: "0px",
-					transition: "all .5s"
+					transition: "all .5s",
+					display: "none"
 				}
 			}
 		},
@@ -959,8 +960,14 @@
 				uni.$off('menu-select-change');
 				uni.$on('menu-select-change',(function(data){
 					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
-						this.arrow_style.top = (info.top + info.height / 2) + "px";
-						this.arrow_style.left = info.left + info.width - 1 + "px";
+						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
+							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
+							this.arrow_style.left = info.left + info.width - 5 + "px";
+							this.arrow_style.display = "block";
+						}
+						else{
+							this.arrow_style.display = "none";
+						}
 					}).bind(this)).exec();
 				}).bind(this));
 			}
@@ -1154,7 +1161,7 @@
 		transform: rotate(-45deg);
 		position: absolute;
 		overflow: hidden;
-		z-index: 99999;
+		z-index: 10000;
 	}
 	.arrow-border-top{
 		width: 10px;

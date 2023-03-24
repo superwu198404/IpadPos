@@ -19,7 +19,7 @@
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
-				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
+				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key) && false">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
 				</view>
 			</view>
