@@ -7,7 +7,7 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:visible;position:relative;z-index: 3;background-color: #fff;">
+		<view class="menu" style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
@@ -17,7 +17,7 @@
 				</view>
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
-				<image class="gd" v-if="guodu" :src="value.icon_guodu" mode="widthFix"></image>
+				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
 				<view class="weiz-jtou" v-if="guodu">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
@@ -73,7 +73,7 @@
 		</view>
 		<view class="menu" >
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')">
 				<label></label>
 				<image class="gd"  src="@/images/tuihuo-lvv.png" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
