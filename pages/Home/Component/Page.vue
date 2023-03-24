@@ -28,7 +28,10 @@
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
-				<view @click.stop="operations()">
+				<view @click.stop="operations()" style="display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
