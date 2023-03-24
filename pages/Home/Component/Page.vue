@@ -210,7 +210,7 @@
 		created() {
 			console.log("[Page-Mounted]菜单初始化开始...");
 			$ = util.callContainer(this);
-			this.menu_info = base_sale.XsTypeObj;
+			this.menu_info = JSON.parse(JSON.stringify(base_sale.XsTypeObj));
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
 			uni.$off('set-menu');
 			uni.$on('set-menu', util.callBind(this, function(data) {

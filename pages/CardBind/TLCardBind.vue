@@ -49,8 +49,8 @@
 				<view class="form-item-tips">第二步<span class="title-gap">-</span><b>输入待绑定卡号</b>:</view>
 				<view class="form-item-input">
 					<view class="input-border-radius">
-						<view class="form-item-input-left" @click="swipe_card">
-							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"></image>|
+						<view class="form-item-input-left">
+							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;" @click="swipe_card"></image>|
 							<!-- <input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true"/> -->
 							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number"/>
 						</view>
@@ -98,8 +98,8 @@
 		data(){
 			return {
 				form:{
-					member_code: "",
-					card_number: "",
+					member_code: "18572113861",
+					card_number: "8661087110000744418=99125008620000",
 					card_track: ""
 				},
 				source:{
@@ -140,7 +140,8 @@
 			},
 			async search_card(){
 				console.log("[SearchMember]卡信息查询...");
-				let data = await this.search_card_infos(this.form.card_number);
+				let data = await this.search_card_infos(this.form.card_number.slice(3,19));
+				this.form.card_track = this.form.card_number;
 				console.log("[SearchMember]卡信息:",data);
 				if(data){
 					this.source.card_infos = data;

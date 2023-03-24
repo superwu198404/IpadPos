@@ -215,6 +215,7 @@
 					url: "/pages/mainSale/MainSale",
 					success: util.callBind(this, function(res) {
 						uni.$emit("page-to-takeout");
+						console.log("[ToTakeout]初始化外卖单...");
 					})
 				})
 			},

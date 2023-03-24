@@ -10,10 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
-			<!-- <view class="arrow-box" :style="arrow_style">
+			<view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view> -->
+			</view>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -980,9 +980,13 @@
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
-			uni.$once("page-to-takeout", util.callBind(this, function() {
+			uni.$off("page-to-takeout");
+			uni.$on("page-to-takeout", util.callBind(this, function() {
+				this.mainSale.currentOperation.ynCancel = false;
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
+				console.log("[ExternalOperation]切换到外卖单完成...");
 				uni.$emit("external-operation", function() {
+					console.warn("[ExternalOperation]开始隐藏...");
 					let menus = this.menu_info;
 					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
 						menus[menu].close = true);
