@@ -98,6 +98,8 @@
 			current: function(n, o) {
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
+				console.log("菜单变化：", n);
+				this.current_click_menu_name = n;
 			}
 		},
 		data() {
