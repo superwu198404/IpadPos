@@ -10,6 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
+			<view class="arrow-box" :style="arrow_style">
+				<view class="arrow-border-top"></view>
+				<view class="arrow-border-bottom"></view>
+			</view>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -761,7 +765,13 @@
 				canvasGZHHeight: 1,
 				sale_type_infos: null,
 				Tallylist: false,
-				P_URL: ""
+				P_URL: "",
+				arrow_style: {
+					position: "absolute",
+					left: "0px",
+					top: "0px",
+					transition: "all .5s"
+				}
 			}
 		},
 		components: {
@@ -945,21 +955,18 @@
 			sxjsBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			},
+			menu_select_arrow_position: function(){
+				uni.$off('menu-select-change');
+				uni.$on('menu-select-change',(function(data){
+					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
+						this.arrow_style.top = (info.top + info.height / 2) + "px";
+						this.arrow_style.left = info.left + info.width - 1 + "px";
+					}).bind(this)).exec();
+				}).bind(this));
+			}
 		},
 		created() {
-			// uni.setLocale("en");
-			// uni.showModal({
-			// 	content: "请使用扫码枪扫码",
-			// 	editable: true,
-			// 	confirmText: "确认",
-			// 	cancelText: "取消",
-			// 	success: function(res) {
-			// 		console.log("回调结果：", res);
-			// 		if (res.confirm) {
-			// 			if (res.content) {}
-			// 		}
-			// 	}
-			// })
+			this.menu_select_arrow_position();
 			console.log("[MainSale]开始构造函数!");
 			this.sale_type_infos = mysale.XsTypeObj;
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
@@ -1137,5 +1144,26 @@
 		top: 0;
 		right: 0;
 		background: none;
+	}
+	
+	.arrow-box{
+		right: -5px;
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+		transform: rotate(-45deg);
+		position: absolute;
+		overflow: hidden;
+		z-index: 99999;
+	}
+	.arrow-border-top{
+		width: 10px;
+		border-bottom: 2px solid #006b44;
+	}
+	.arrow-border-bottom{
+		height: 10px;
+		border-left: 2px solid #006b44;
+		width: 10px;
+		background: #f5f4f8;
 	}
 </style>
