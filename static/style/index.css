@@ -1805,7 +1805,7 @@ input:-ms-input-placeholder{
 .menu view .weiz-jtou{
 	position: absolute;
 	top:50%;
-	transform: translateY(-50%);
+	transform: translateY(-40%);
 	right:-2rpx;
 	width:16rpx;
 	height: 32rpx;
