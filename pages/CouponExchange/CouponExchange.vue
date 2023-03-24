@@ -457,13 +457,15 @@
 					tcxdisc = 0,
 					tbzdisc = 0,
 					ttpdisc = 0,
-					tlsdisc = 0;
+					tlsdisc = 0,
+					tdisc = 0;//用于记录兑换券折扣额
 				that.SALE002.map(r => {
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
 					tbzdisc += r.BZDISC;
 					ttpdisc += r.TPDISC;
 					tlsdisc += r.LSDISC;
+					tdisc += r.DISCRATE;
 				})
 				that.SALE001.TNET = _util.newFloat(tnet);
 				that.SALE001.ZNET = that.SALE001.TNET; //调整为原价
@@ -471,9 +473,10 @@
 				that.SALE001.TBZDISC = _util.newFloat(tbzdisc);
 				that.SALE001.TTPDISC = _util.newFloat(ttpdisc);
 				that.SALE001.TLSDISC = _util.newFloat(tlsdisc);
-				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc);
+				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc + tdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
+				console.log("[CalTNET]SALE001",that.SALE001);
 			},
 			//使用手工折扣进行计算 新版舍弃全部分的逻辑
 			SKdiscCompute: function() {

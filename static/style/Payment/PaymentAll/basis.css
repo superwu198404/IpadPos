@@ -178,15 +178,25 @@ page {
 .menu view .wx {
 	display: block;
 }
-
+.menu view .gd {
+	display: none;
+}
 .menu view.curr .xz {
 	display: block;
 }
 
-.menu view.curr .wx {
+.menu view.curr .wx,.menu view.curr .gd {
 	display: none;
 }
-
+.menu view.acts .wx {
+	display: none;
+}
+.menu view.acts .gd {
+	display: block;
+}
+.menu view.acts .wx,.menu view.acts .gd {
+	display: none;
+}
 .menu view .chargeback {
 	position: absolute;
 	width: 600rpx;
