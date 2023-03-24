@@ -183,7 +183,7 @@
 			</view>
 		</view>
 		<!-- 持卡人信息 -->
-		<chikaren :show.sync="showCardRen"></chikaren>
+		<!-- <chikaren :show.sync="showCardRen"></chikaren> -->
 	</view>
 </template>
 

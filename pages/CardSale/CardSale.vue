@@ -209,8 +209,8 @@
 				</view>
 			</view>
 		</view>
-		<!-- 持卡人信息 -->
-		<chikaren :show.sync="showCardRen"></chikaren>
+		<!-- 持卡人信息 :show.sync="showCardRen"-->
+		<chikaren v-if="showCardRen"></chikaren>
 		<!-- 特殊折扣 -->
 		<SpecialDisc v-if="showDisc" :zkdatas="ZKData" :product="SALE002">
 		</SpecialDisc>
