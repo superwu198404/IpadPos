@@ -688,7 +688,6 @@
 					.sale003(),
 					sale3));
 				console.log("支付后返回结果：", that.SALE001);
-				// return;
 				if (result.code) {
 					console.log("准备激活：", that.SALE002);
 					//手工折扣额分摊

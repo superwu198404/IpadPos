@@ -403,10 +403,10 @@
 			},
 			//门店查询
 			Chaxun: function(e) {
-				if (e) {
-					util.simpleMsg("功能暂未开放！", true);
-					return;
-				}
+				// if (e) {
+				// 	util.simpleMsg("功能暂未开放！", true);
+				// 	return;
+				// }
 				uni.redirectTo({
 					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
 					complete: res => {
