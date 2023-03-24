@@ -41,7 +41,8 @@
 							<text>卡号：</text>
 							<view class="chaxun">
 								<view class="label">
-									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
+									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()"
+										v-if="CurType=='Delay'">
 										<!-- <image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()"> -->
 										<input type="text" placeholder="请输入查询卡号" v-model="CardNumber" />
 										<button v-if="CardNumber" @click="CardNumber=''">×</button>
@@ -270,11 +271,16 @@
 					that.ResetBill(data);
 				}
 			},
-			ResetBill(e = 'Delay') {
-				that.CardNumber = "";
-				that.CurType = e;
-				that.CardInfo = {};
-				that.CKRInfo = {};
+			ResetBill(e = 'Delay', code=true) {
+				if (code) {//成功才清除
+					that.CardNumber = "";
+					that.CurType = e;
+					that.CardInfo = {};
+					that.CKRInfo = {};
+					Vue.set(that.CKRInfo, "name", ""); //响应式清除
+					Vue.set(that.CKRInfo, "phone", ""); //响应式清除
+					Vue.set(that.CKRInfo, "idcard", ""); //响应式清除
+				}
 				that.OrderBill = _card_coupon.getBill(that.Store);
 			},
 			swiping_card() {
@@ -323,7 +329,7 @@
 				}
 				if (that.CurType != "Delay") {
 					if (that.CardInfo.cardType != 'Z001') {
-						util.simpleMsg("抱歉，卡类型错误", true);
+						util.simpleMsg("仅实体VIP卡，可挂失！", true);
 						return;
 					}
 					console.log("持卡人信息：", that.CKRInfo);
@@ -371,7 +377,7 @@
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(); //重置
+								that.ResetBill(that.CurType, res.code); //重置
 							})
 						} else {
 							_card_sale.REPORT_LOSS({
@@ -388,7 +394,7 @@
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(); //重置
+								that.ResetBill(that.CurType, res.code); //重置
 							})
 						}
 					}
@@ -396,14 +402,14 @@
 			},
 			//取消
 			Cancel: function() {
-				that.ResetBill(); //重置
+				that.ResetBill(that.CurType); //重置
 			},
 
 			//清空数据
 			ClearSale: function() {
 				util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
-						that.ResetBill();
+						that.ResetBill(that.CurType);
 					}
 				})
 			},

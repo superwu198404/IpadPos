@@ -10,10 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
-			<view class="arrow-box" :style="arrow_style">
+			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view>
+			</view> -->
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -956,7 +956,7 @@
 			sxjsBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			},
-			menu_select_arrow_position: function(){
+			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
 				uni.$on('menu-select-change',(function(data){
 					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
@@ -982,9 +982,10 @@
 			this.mainSale.SetDefaultType();
 			uni.$once("page-to-takeout", util.callBind(this, function() {
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
-				uni.$emit("external-operation",function(){
+				uni.$emit("external-operation", function() {
 					let menus = this.menu_info;
-					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu => menus[menu].close = true);
+					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
+						menus[menu].close = true);
 					this.allow_page_switch = false;
 				});
 			}));
@@ -1152,8 +1153,8 @@
 		right: 0;
 		background: none;
 	}
-	
-	.arrow-box{
+
+	.arrow-box {
 		right: -5px;
 		width: 10px;
 		height: 10px;
@@ -1163,11 +1164,13 @@
 		overflow: hidden;
 		z-index: 10000;
 	}
-	.arrow-border-top{
+
+	.arrow-border-top {
 		width: 10px;
 		border-bottom: 2px solid #006b44;
 	}
-	.arrow-border-bottom{
+
+	.arrow-border-bottom {
 		height: 10px;
 		border-left: 2px solid #006b44;
 		width: 10px;
