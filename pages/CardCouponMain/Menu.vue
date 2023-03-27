@@ -17,6 +17,17 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
+			<view class="fanhui" tabindex="-1" @blur="showGJ = false">
+					<view class="bills">
+						<label></label>
+						<view @click.stop="operations()" style="display: flex;
+			justify-content: center;
+			align-items: center;">
+							<image class="xz" src="@/images/zhucaidan.png" mode="widthFix"></image>
+							<text>返回销售</text>
+						</view>
+					</view>
+			</view>
 		</view>
 		<div class="component-content">
 			<component :is="component_name"></component>
