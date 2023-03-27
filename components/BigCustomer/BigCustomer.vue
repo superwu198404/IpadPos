@@ -91,7 +91,13 @@
 				// 	return;
 				// }
 				console.log("[BigCustomer-Close]大客户信息:", this.big_client_info);
-				this.big_client_info.exists_credit = this.exists_credit;
+				if (this.exists_credit) {
+					this.big_client_info.exists_credit = this.exists_credit;
+				} else {
+					delete this.big_client_info.exists_credit;
+				};
+				// this.big_client_info.exists_credit = this.exists_credit;
+				console.log("组件回调的大客户：",this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
@@ -125,21 +131,26 @@
 				this.big_client_info = e;
 				this.big_client_info.DKFID = e.DKHID;
 				console.log("[BigCustomer-ConfimrBig]大客户信息:", this.big_client_info);
-				this.big_client_info.exists_credit = this.exists_credit;
+				if (this.exists_credit) {
+					this.big_client_info.exists_credit = this.exists_credit;
+				} else {
+					delete this.big_client_info.exists_credit;
+				};
+				console.log("组件回调的大客户：",this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
 			},
-			SelectedBigCustomer: function(evt) {
-				for (let i = 0; i < this.big_customers.length; i++) {
-					if (this.big_customers[i].DKHID === evt.detail.value) {
-						this.current = i;
-						this.big_client_info = this.big_customers[i];
-						this.big_client_info.exists_credit = this.exists_credit;
-						break;
-					}
-				}
-			},
+			// SelectedBigCustomer: function(evt) {
+			// 	for (let i = 0; i < this.big_customers.length; i++) {
+			// 		if (this.big_customers[i].DKHID === evt.detail.value) {
+			// 			this.current = i;
+			// 			this.big_client_info = this.big_customers[i];
+			// 			this.big_client_info.exists_credit = this.exists_credit;
+			// 			break;
+			// 		}
+			// 	}
+			// },
 			CustomListener: function() {
 				console.log("[CustomListener]准备接收名称...");
 				uni.$off("set-custom-event");
@@ -157,7 +168,12 @@
 			uni.$emit("big-customer-open");
 		},
 		destroyed() {
-			this.big_client_info.exists_credit = this.exists_credit;
+			if (this.exists_credit) {
+				this.big_client_info.exists_credit = this.exists_credit;
+			} else {
+				delete this.big_client_info.exists_credit;
+			};
+			// this.big_client_info.exists_credit = this.exists_credit;
 			uni.$emit("big-customer-close", this.big_client_info);
 			console.warn("[Destroyed]大客户关闭...");
 		}

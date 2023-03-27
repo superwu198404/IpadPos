@@ -11,7 +11,7 @@
 				<view class="h1">录入卡券号<button class="close" @click="Cancel">×</button></view>
 				<view class="number">
 					<view class="labnum">
-						<text>开始卡号：</text>
+						<text>起始号码：</text>
 						<view class="label">
 							<image src="@/images/img2/swiping_card.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"
@@ -19,7 +19,7 @@
 							</image>
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')" v-else></image>
-							<input type="number" placeholder="请输入开始卡号" v-model="beginNum" :focus="curFocus=='beginNum'"
+							<input type="number" placeholder="请输入起始号码" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
 							<button v-if="beginNum" @click="beginNum=''">×</button>
 						</view>
@@ -29,7 +29,7 @@
 						</view>
 					</view>
 					<view class="labnum" v-if="!single">
-						<text>截止卡号：</text>
+						<text>截止号码：</text>
 						<view class="label">
 							<image src="@/images/img2/swiping_card.png" mode="widthFix"
 								@click="ScanCodeHandle('endNum')"
@@ -38,7 +38,7 @@
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')"
 								v-else>
 							</image>
-							<input type="number" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
+							<input type="number" placeholder="请输入截止号码" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />
 							<button v-if="endNum" @click="endNum=''">×</button>
 						</view class="label">
