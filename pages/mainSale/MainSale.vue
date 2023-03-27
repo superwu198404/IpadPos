@@ -983,8 +983,11 @@
 			uni.$off("page-to-takeout");
 			uni.$on("page-to-takeout", util.callBind(this, function() {
 				this.mainSale.currentOperation.ynCancel = false;
+				this.mainSale.currentOperation.DKF = false;
+				this.mainSale.ComponentsManage.DKF = false;
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
 				console.log("[ExternalOperation]切换到外卖单完成...");
+				uni.$emit("movable-visible",false);
 				uni.$emit("external-operation", function() {
 					console.warn("[ExternalOperation]开始隐藏...");
 					let menus = this.menu_info;

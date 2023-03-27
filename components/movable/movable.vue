@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<!-- v-if="msgDatas.length>0" -->
-		<movable-area style="z-index: 999;">
+		<movable-area style="z-index: 999;" v-show="visible">
 			<movable-view :x="x" :y="y" direction="all" position="position" @change="onChange">
 				<view class="ordermes">
 					<em></em>
@@ -51,6 +51,7 @@
 					x: 0,
 					y: 0
 				},
+				visible: true,
 				orderlist: false,
 				msgDatas: [],
 				KHID: getApp().globalData.store.KHID,
@@ -90,6 +91,10 @@
 					// console.log("偏移宽度：", that.x);
 				}
 			})
+			
+			uni.$on("movable-visible",(function(data){
+				this.visible = data;
+			}).bind(this));
 		},
 		methods: {
 			onChange: function(e) {
@@ -210,8 +215,10 @@
 					}
 				});
 			}
-		}
-
+		},
+		destroyed() {
+			uni.$off("movable-visible");
+		},
 	}
 </script>
 
