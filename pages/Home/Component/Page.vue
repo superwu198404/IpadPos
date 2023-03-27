@@ -100,6 +100,9 @@
 				this.current_info.info = this.menu_info[n];
 				console.log("菜单变化：", n);
 				this.current_click_menu_name = n;
+			},
+			current_click_menu_name: function(n,o){
+				console.warn("[Watch-CurrentClickMenuName]发生改变:",n);
 			}
 		},
 		data() {
