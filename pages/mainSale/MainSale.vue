@@ -137,7 +137,7 @@
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
 				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway">
+				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
 				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
 				</TakeYD>
@@ -766,6 +766,7 @@
 				sale_type_infos: null,
 				Tallylist: false,
 				P_URL: "",
+				default_visible_template: "",
 				arrow_style: {
 					position: "absolute",
 					left: "0px",
@@ -973,6 +974,11 @@
 			}
 		},
 		created() {
+			let default_visible = util.getStorage('default-visible-template');
+			if(default_visible){
+				this.default_visible_template = default_visible;
+				util.setStorage('default-visible-template', null)
+			}
 			this.menu_select_arrow_position();
 			console.log("[MainSale]开始构造函数!");
 			this.sale_type_infos = mysale.XsTypeObj;
@@ -988,6 +994,7 @@
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
 				console.log("[ExternalOperation]切换到外卖单完成...");
 				uni.$emit("movable-visible",false);
+				
 				uni.$emit("external-operation", function() {
 					console.warn("[ExternalOperation]开始隐藏...");
 					let menus = this.menu_info;

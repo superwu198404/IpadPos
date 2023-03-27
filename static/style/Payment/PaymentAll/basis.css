@@ -241,6 +241,25 @@ page {
 .menu view .chargeback view.currs .wx {
 	display: none;
 }
+.fanhui{
+	position: fixed;
+	top:146rpx;
+	right:0;
+	border-radius: 30rpx 0 0 30rpx;
+	background: rgba(0,0,0,0.4);
+	height: 60rpx;
+	line-height: 60rpx;
+	padding:0 24rpx;
+	font-size: 26rpx;
+	display: flex;
+	align-items: center;
+	color: #fff;
+}
+.fanhui image{
+	width:28rpx;
+	line-height: 28rpx;
+	margin-right: 6rpx;
+}
 
 .right {
 	width: 100%;
