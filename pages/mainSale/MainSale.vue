@@ -928,6 +928,11 @@
 				return total;
 			},
 		},
+		// 下拉事件
+		onPullDownRefresh () {
+			console.log('触发下拉刷新了')
+			
+		},
 		methods: {
 			// 隐藏
 			Componentes: function() {

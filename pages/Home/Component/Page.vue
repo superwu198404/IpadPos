@@ -69,7 +69,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="fanhui" tabindex="-1" @blur="showGJ = false">
+		<!-- <view class="fanhui" tabindex="-1" @blur="showGJ = false">
 				<view class="bills">
 					<label></label>
 					<view @click.stop="operations()" style="display: flex;
@@ -79,7 +79,7 @@
 						<text>卡券销售</text>
 					</view>
 				</view>
-		</view>
+		</view> -->
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>
