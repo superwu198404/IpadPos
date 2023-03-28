@@ -205,6 +205,8 @@
 								:class="currentPayType === 'Others' ? 'selected':''">
 								<view class="tits seltss">
 									<p>更多</p>
+									<text
+										style="font-size: 12px;color: gray;">可用数量:{{PayWayList.filter(r=>{return r.poly=='S'&&r.yn_use=='Y'}).length}}</text>
 								</view>
 								<image src="../../images/moren-zfu.png" mode="widthFix">
 							</view>
@@ -591,14 +593,14 @@
 				}
 			},
 			PayList: function(n, o) {
-				if (this.toBePaidPrice() === 0) { //判断如果待支付金额为 0 则返回上一个界面
+				if (Number(this.toBePaidPrice()) === 0) { //判断如果待支付金额为 0 则返回上一个界面
 					this.CanBack = true;
 					console.log("[PayList-Watch]Payments：", this.PayList)
 					// this.backPrevPage();
 				} else {
 					if (n.length == 1 && n[0].fkid == "ZF11") { //如果是兑换券 则默认不让退出
 						this.CanBack = false;
-						console.log("兑换券不允许返回：",this.CanBack);
+						console.log("兑换券不允许返回：", this.CanBack);
 					}
 				}
 			},

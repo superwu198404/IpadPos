@@ -1802,3 +1802,29 @@ input:-ms-input-placeholder{
 	background: #42B14B;
 	margin-right: 8rpx;
 }
+.menu view .weiz-jtou{
+	position: absolute;
+	top:50%;
+	transform: translateY(-40%);
+	right:-2rpx;
+	width:16rpx;
+	height: 32rpx;
+}
+.menu view .weiz-jtou image{
+	width:16rpx;
+	height: 32rpx;
+}
+.right .bkjb{
+	width:99.6%;
+	height: 92%;
+	/* border: 4rpx solid #006B44; */
+	border-radius: 20rpx;
+	background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0.26) 100%);
+	padding:4rpx;
+}
+.right .bkjb .neik{
+	width:100%;
+	height: 100%;
+	background: #F5F4F8;
+	border-radius: 14rpx;
+}

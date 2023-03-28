@@ -41,6 +41,7 @@ var XsTypeObj = {
 		nameSale: "销售",
 		icon_open: require('@/images/xiaoshou.png'),
 		icon_close: require("@/images/xiaoshou-hui.png"),
+		icon_guodu: require("@/images/xiaoshou-hui.png"),
 		operation: { //只设置为true的就好 其他的默认设置为false
 			"HY": true, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
@@ -108,8 +109,8 @@ var XsTypeObj = {
 			console.log("[Sale]新单据生成中...");
 			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.createNewBill(); //创建新的sale001
+			console.log("[Sale]新单据生成完毕!", this.sale001);
 			this.sale001.XSTYPE = 1;
-			
 			if (this.sale001.TNET == 0) {
 				this.payed = [];
 				this.payed.push(Sale3ModelAdditional(Sale3Model({
@@ -123,7 +124,16 @@ var XsTypeObj = {
 					show: false
 				}));
 			}
-			console.log("[Sale]新单据生成完毕!", this.sale001);
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
+				});
+			}
 			this.PayParamAssemble();
 			return true;
 		},
@@ -187,6 +197,7 @@ var XsTypeObj = {
 		nameSale: "销售退货",
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
+		icon_guodu: require("@/images/xstd-lvv.png"),
 		operation: {
 			// "sale": true, //可以跳转到销售模式 此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -305,6 +316,7 @@ var XsTypeObj = {
 		nameSale: "预定",
 		icon_open: require("@/images/yuding.png"),
 		icon_close: require("@/images/yuding-hui.png"),
+		icon_guodu: require("@/images/yuding-lvv.png"),
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -378,6 +390,16 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
+				});
+			}
 			return false;
 		},
 		//支付完成中
@@ -464,6 +486,7 @@ var XsTypeObj = {
 		nameSale: "预定提取",
 		icon_open: require("@/images/xz-ydtq.png"),
 		icon_close: require("@/images/wxz-ydtq.png"),
+		icon_guodu: require("@/images/tiqu-lvv.png"),
 		operation: {
 			// "sale": true, //此模式禁止跳转到销售
 			"sale_takeaway_reserve": true,
@@ -576,6 +599,16 @@ var XsTypeObj = {
 					payed: this.payed
 				});
 			}
+			//特殊折扣的禁止支付方式
+			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
+				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i.fkid);
+				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
+					allow_type,
+					ban_type: this.ban_type
+				});
+			}
 			this.PayParamAssemble();
 		},
 		$saleFinishing: function(result) { //生成yd
@@ -641,6 +674,7 @@ var XsTypeObj = {
 		nameSale: "预定取消",
 		icon_open: require("@/images/ydqx.png"),
 		icon_close: require("@/images/ydqx-wxz.png"),
+		icon_guodu: require("@/images/ydqx-lvv.png"),
 		operation: {
 			// "sale": true,//此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -753,6 +787,7 @@ var XsTypeObj = {
 		nameSale: "蛋糕图册",
 		icon_open: require("@/images/dgaoyud.png"),
 		icon_close: require("@/images/dgaoyud-wxz.png"),
+		icon_guodu: require("@/images/dgaoyud-wxz.png"),
 		condition: [],
 		imgCurrent: 0,
 		afterPay: "sale_cake_reserve", //支付后要跳转的模式
@@ -1062,6 +1097,7 @@ var XsTypeObj = {
 		nameSale: "线上订单提取",
 		icon_open: require("@/images/xsddtiqu.png"),
 		icon_close: require("@/images/xsddtiqu-wxz.png"),
+		icon_guodu: require("@/images/xsddtiqu-lvv.png"),
 		operation: {
 			"ynCancel": true,
 			"sale_takeaway_reserve": true,
@@ -1198,6 +1234,7 @@ var XsTypeObj = {
 		nameSale: "赊销",
 		icon_open: require("@/images/xstd.png"),
 		icon_close: require("@/images/xstd-wxz.png"),
+		icon_guodu: require("@/images/xstd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
@@ -1332,11 +1369,16 @@ var XsTypeObj = {
 				this.ComponentsManage["DKF"] = false;
 				return;
 			}
+			if(Object.keys(data).length == 0){
+				uni.$emit("external-operation",function(){
+					this.SubmitMenuSelectEvent('sale', XsTypeObj.sale);
+				})
+			}
 			this.DKF.val = data;
 			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
 		}
-	},//赊销结算
+	}, //赊销结算
 	sale_credit_settlement: {
 		close: false,
 		xstype: "7",
@@ -1344,6 +1386,7 @@ var XsTypeObj = {
 		nameSale: "赊销结算",
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
+		icon_guodu: require("@/images/xstd-lvv.png"),
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
@@ -1473,6 +1516,7 @@ var XsTypeObj = {
 		nameSale: "外卖单",
 		icon_open: require("@/images/waimaid.png"),
 		icon_close: require("@/images/waimaid-hui.png"),
+		icon_guodu: require("@/images/waimaid-lvv.png"),
 		operation: {
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1512,6 +1556,7 @@ var XsTypeObj = {
 		nameSale: "外卖预定单",
 		icon_open: require("@/images/wmyudd.png"),
 		icon_close: require("@/images/wmyudd-hui.png"),
+		icon_guodu: require("@/images/wmyudd-lvv.png"),
 		operation: {
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1552,6 +1597,7 @@ var XsTypeObj = {
 		nameSale: "线上订单",
 		icon_open: require("@/images/xsdingdan.png"),
 		icon_close: require("@/images/xsdingdan-wxz.png"),
+		icon_guodu: require("@/images/xsdingdan-lvv.png"),
 		operation: {
 			"sale": true,
 			// "sale_online_order": true,
@@ -1588,6 +1634,7 @@ var XsTypeObj = {
 		nameSale: "赊销退货",
 		icon_open: require("@/images/sxtd.png"),
 		icon_close: require("@/images/sxtd-wxz.png"),
+		icon_guodu: require("@/images/sxtd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
 			"DKF": false, //是否可以打开录入大客户
@@ -1744,6 +1791,7 @@ var XsTypeObj = {
 		nameSale: "消息",
 		icon_open: require("@/images/xz-xx.png"),
 		icon_close: require("@/images/xiaoxi-hui.png"),
+		icon_guodu: require("@/images/xiaoxi-hui.png"),
 		operation: {
 			"sale_message": true
 		},
@@ -1774,7 +1822,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.GetPayedResult = () => payresult;
 
 	this.billindex = 0;
-	
+
 	//储存模式信息（用于界面行为绑定）
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = util.getStorage('FKDA_INFO');
@@ -2474,10 +2522,10 @@ function GetSale(global, vue, target_name, uni) {
 	this.Page.$watch('mainSale.DKF', util.callBind(this, function(n, o) {
 		console.warn("[Watch-Big-Customer]打客户信息发生变更...");
 	}))
-	
+
 	this.Page.$watch('mainSale.billindex', util.callBind(this, function(n, o) {
 		console.warn("[Watch-Serial-Number]流水号发生变更...");
-		util.setStorage('serial-number',n);
+		util.setStorage('serial-number', n);
 	}))
 
 	this.update = function() {
@@ -2800,6 +2848,15 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
+		if(!that.ComponentsManage[pm_mtype]){
+			uni.$emit("external-operation",function(){
+				uni.$emit("menu-select-change", {
+					name: 'sale',
+					info: XsTypeObj.sale,
+					vue: this
+				});
+			})
+		}
 		lastManage = pm_mtype;
 		// that.Page.$set(that.Page[that.pageName], "ComponentsManage", that.ComponentsManage);
 		// that.log("[SetManage]组件控制对象:", that.ComponentsManage);

@@ -199,9 +199,17 @@
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //支付方式
 				showSMQ: false, //s是否显示扫码
-				CouponInfo: {}, //券信息
+				CouponInfo: {},
+				// CouponInfo: {
+				// 	coupon_num: "900000000002068164",
+				// 	coupon_value: 100,
+				// 	total_info: {
+				// 		ZZCPXSDISC: 10
+				// 	}
+				// }, //券信息
 				payed: [], //已支付信息用于组装券兑换
-				add_class: 0
+				add_class: 0,
+				_sale2_count: 0
 			}
 		},
 
@@ -228,7 +236,13 @@
 			uni.$on("ReturnSale", that.ClearSale);
 
 		},
-		watch: {},
+		watch: {
+			SALE002: function(n, o) {
+				console.log("SALE002发生变化(新)：", n);
+				console.log("SALE002发生变化(旧)：", o);
+				that._sale2_count = n.length;
+			},
+		},
 		destroyed() {
 			uni.$off("GetCardNums");
 			uni.$off('GetCouponNums');
@@ -450,13 +464,15 @@
 					tcxdisc = 0,
 					tbzdisc = 0,
 					ttpdisc = 0,
-					tlsdisc = 0;
+					tlsdisc = 0,
+					tdisc = 0; //用于记录兑换券折扣额
 				that.SALE002.map(r => {
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
 					tbzdisc += r.BZDISC;
 					ttpdisc += r.TPDISC;
 					tlsdisc += r.LSDISC;
+					tdisc += r.DISCRATE;
 				})
 				that.SALE001.TNET = _util.newFloat(tnet);
 				that.SALE001.ZNET = that.SALE001.TNET; //调整为原价
@@ -464,9 +480,10 @@
 				that.SALE001.TBZDISC = _util.newFloat(tbzdisc);
 				that.SALE001.TTPDISC = _util.newFloat(ttpdisc);
 				that.SALE001.TLSDISC = _util.newFloat(tlsdisc);
-				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc);
+				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc + tdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
+				console.log("[CalTNET]SALE001", that.SALE001);
 			},
 			//使用手工折扣进行计算 新版舍弃全部分的逻辑
 			SKdiscCompute: function() {
@@ -600,12 +617,17 @@
 				}
 				that.add_class = 2; //步骤设置
 				console.log("sale2", that.SALE002);
-				that.CouponDiscCompute();//券折扣额分摊
+				that.CouponDiscCompute(); //券折扣额分摊
 				KQSale.ActiveApply(that.PackgeActivData(), res => {
 					console.log("激活校验申请结果：", res);
 					if (res.code) {
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
+
+						// that.CreateSale003(); //创建已支付的兑换券记录
+						// console.log("兑换券支付记录：", that.payed);
+						// _card_sale.PayParamAssemble(that, that.PayedResult);
+						// return; 
 						//先进行券核销再进入支付 等待支付返回结果
 						_util.simpleModal("提示", "是否要核销该兑换券？", res => {
 							if (res) {
@@ -613,7 +635,6 @@
 								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
 									console.log("兑换券核销结果：", res1);
 									if (res1.code) {
-										// _util.simpleMsg("券核销成功即将跳转支付...", "none");
 										that.CreateSale003(); //创建已支付的兑换券记录
 										console.log("兑换券支付记录：", that.payed);
 										//跳转支付
@@ -826,11 +847,13 @@
 			},
 			//显示扫码组件
 			showCardFunc: function() {
-				if (!that.CouponInfo || Object.keys(that.CouponInfo).length == 0) {
-					_util.simpleMsg("请录入有效兑换券", "none");
-					return;
+				if (_common.CheckSign()) {
+					if (!that.CouponInfo || Object.keys(that.CouponInfo).length == 0) {
+						_util.simpleMsg("请录入有效兑换券", "none");
+						return;
+					}
+					that.showCardNum = true;
 				}
-				that.showCardNum = true;
 			},
 			//扫码组件回调
 			GetCouponNums: async function(e) {

@@ -32,40 +32,58 @@
 	import card_bind from '@/api/business/card_bind.js';
 	import util from '@/utils/util.js';
 	export default {
-		mixins:[card_bind],
-		components:{
+		mixins: [card_bind],
+		components: {
 			Head,
 			TLCardBind
 		},
-		data(){
+		data() {
 			return {
-				view:{
+				view: {
 					big_customer: false,
-					enable_customer: true,
+					enable_customer: false,
 					show_sale: true,
 					current_tab_title: null
 				},
-				form:{
+				form: {
 					member_code: "",
 					card_number: ""
 				},
-				source:{
-					tabs: [{title:'通联卡绑定',icon:""},{title:'易慧达旧卡绑定',icon:""}]
-				}
+				source: {
+					tabs: [{
+						title: '通联卡绑定',
+						icon: ""
+					}, {
+						title: '易慧达旧卡绑定',
+						icon: ""
+					}]
+				},
+				_sale2_count: 0
 			}
 		},
-		methods:{
-			tabs_change(data){
+		methods: {
+			tabs_change(data) {
 				this.view.current_tab_title = data.title;
+			},
+			BindChange: function(e) {
+				//接收子组件的通知
+				console.log("来自子组件的通知：", e);
+				this._sale2_count = e;
 			}
+		},
+		created() {
+			uni.$on("BindChange", this.BindChange);//监听子组件的数据变化
+		},
+		destroyed() {
+			uni.$off("BindChange");
 		}
 	}
 </script>
 
 <style>
 	.container {
-		 display: flex;
-		 flex-direction: column;
-		 gap: 5px;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
 	}
 </style>

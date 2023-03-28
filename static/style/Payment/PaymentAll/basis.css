@@ -46,6 +46,7 @@ page {
 	padding-top: 3%;
 	padding-top: 2%;
 	position: relative;
+	z-index: 9999;
 }
 
 .navmall .logo {
@@ -60,7 +61,7 @@ page {
 .menu {
 	width: 100%;
 	margin-top: 20rpx;
-	height: 79%;
+	height: 81%;
 	padding-bottom: 50%;
 }
 .navmall .gongju{
@@ -110,7 +111,9 @@ page {
 .menu .curr {
 	color: #fff;
 }
-
+.menu .acts{
+	color: #006B44;
+}
 .menu .curr label {
 	display: block;
 	position: absolute;
@@ -126,7 +129,21 @@ page {
 	animation: scaleDraw 0.3s ease-in-out;
 	-webkit-animation: scaleDraw 0.3s ease;
 }
-
+.menu .acts label{
+	display: block;
+	position: absolute;
+	top: 3%;
+	left: 6%;
+	background-color: #F2F7F5;
+	padding: 2% 0;
+	width: 88%;
+	margin: 0 auto;
+	border-radius: 30rpx;
+	height: 90%;
+	z-index: 0;
+	animation: scaleDraw 0.3s ease-in-out;
+	-webkit-animation: scaleDraw 0.3s ease;
+}
 @keyframes scaleDraw {
 
 	/*定义关键帧、scaleDrew是需要绑定到选择器的关键帧名称*/
@@ -161,15 +178,25 @@ page {
 .menu view .wx {
 	display: block;
 }
-
+.menu view .gd {
+	display: none;
+}
 .menu view.curr .xz {
 	display: block;
 }
 
-.menu view.curr .wx {
+.menu view.curr .wx,.menu view.curr .gd {
 	display: none;
 }
-
+.menu view.acts .wx {
+	display: none;
+}
+.menu view.acts .gd {
+	display: block;
+}
+.menu view.acts .wx,.menu view.acts .xz {
+	display: none;
+}
 .menu view .chargeback {
 	position: absolute;
 	width: 600rpx;
@@ -214,6 +241,25 @@ page {
 .menu view .chargeback view.currs .wx {
 	display: none;
 }
+.fanhui{
+	position: fixed;
+	top:146rpx;
+	right:0;
+	border-radius: 30rpx 0 0 30rpx;
+	background: rgba(0,0,0,0.4);
+	height: 60rpx;
+	line-height: 60rpx;
+	padding:0 24rpx;
+	font-size: 26rpx;
+	display: flex;
+	align-items: center;
+	color: #fff;
+}
+.fanhui image{
+	width:28rpx;
+	line-height: 28rpx;
+	margin-right: 6rpx;
+}
 
 .right {
 	width: 100%;
@@ -228,6 +274,7 @@ page {
 	background-color: #fff;
 	border-left: 1rpx solid #eee;
 	padding-top: 44rpx;
+	height: 62rpx;
 }
 
 .message {
@@ -270,6 +317,7 @@ page {
 	justify-content: center;
 	align-items: center;
 	position: relative;
+	z-index: 9999;
 }
 
 .account image {
@@ -1060,7 +1108,7 @@ uni-button:after {
 	top:0;
 	left:0;
 	background-color: #F5F4F8;
-	z-index: 9;
+	z-index: 9999;
 }
 .head {
 		height: 120rpx;

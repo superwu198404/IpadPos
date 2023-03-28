@@ -7,19 +7,29 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:hidden;">
-			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value)"
-				:class="Selected(key) ? 'curr' : ''" v-if="!value.close">
+		<scroll-view scroll-y class="menu"
+			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
+			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
+				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
+				<!-- <view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
+					<view class="arrow-border-top"></view>
+					<view class="arrow-border-bottom"></view>
+				</view> -->
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
+				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
+				<!-- <view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
+					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
+				</view> -->
 			</view>
-		</view>
+		</scroll-view>
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
-				<view @click.stop="operations()">
+				<view @click.stop="operations()"
+					style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
@@ -58,6 +68,15 @@
 				</view>
 			</view>
 		</view>
+		<view class="fanhui" tabindex="-1">
+			<view class="bills">
+				<label></label>
+				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
+					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
+					<text>卡券销售</text>
+				</view>
+			</view>
+		</view>
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>
@@ -68,6 +87,8 @@
 	import util from '@/utils/util.js';
 	import db from '@/utils/db/db_excute.js';
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
+
+	import common from '@/api/common.js';
 	var $;
 	export default {
 		components: {
@@ -75,35 +96,47 @@
 		},
 		name: "Page",
 		props: {
-			current: String
+			current: String,
+			_sale2_count: {
+				type: Number,
+				default: 0
+			}
 		},
 		computed: {
 			Selected: function() {
 				return util.callBind(this, function(name) {
 					return name === this.current_info?.name;
 				});
-			},
+			}
 		},
 		watch: {
 			current: function(n, o) {
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
+			},
+			current_click_menu_name: function(n, o) {
+				console.warn("[Watch-CurrentClickMenuName]发生改变:", n);
 			}
 		},
 		data() {
 			return {
 				previous_info: null, //上一个菜单信息
 				current_info: null, //当前菜单信息
+				current_click_menu_name: null, //当前点击的菜单信息
 				menu_info: null,
 				showGJ: false,
 				showCX: false,
 				click_num: 0,
 				timer: 0,
 				showcdxp: false,
-				allow_page_switch: true
+				allow_page_switch: true,
+				guodu: false
 			};
 		},
 		methods: {
+			menu_scroll_move: function(e) {
+				uni.$emit("menu-scroll-move", e);
+			},
 			// 隐藏
 			hideIsShow: function() {
 				this.showGJ = false;
@@ -112,19 +145,29 @@
 				let that = this;
 				that.showGJ = !that.showGJ
 			},
-
 			MenuSelect(menu_name, menu_info) {
-				if(!this.allow_page_switch) return;
+				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
+				this.current_click_menu_name = menu_name;
 				// this.current_info = {
 				// 	name: menu_name,
 				// 	info: menu_info
 				// };
 				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
+				this.SubmitMenuSelectEvent(menu_name, menu_info);
+			},
+			SubmitMenuSelectEvent(name, info) {
 				uni.$emit("change", {
-					name: menu_name,
-					info: menu_info
+					name: name,
+					info: info
 				});
+				this.$nextTick(util.callBind(this, function() {
+					uni.$emit("menu-select-change", {
+						name: name,
+						info: info,
+						vue: this
+					});
+				}))
 			},
 			OpenDevoloper() {
 				this.click_num++;
@@ -176,16 +219,35 @@
 			//重打小票关闭
 			ClosePopup: function(data) {
 				this.showcdxp = false;
+			},
+			//普通销售和卡券销售切换
+			SwitchSale: function(e) {
+				if (common.CheckSign()) {
+					if (this._sale2_count > 0) {
+						util.simpleMsg("请先清空商品信息，再进行切换");
+						return;
+					}
+					util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
+						if (res) {
+							uni.redirectTo({
+								url: "/pages/CardCouponMain/Menu"
+							})
+						}
+					})
+				}
 			}
+		},
+		mounted() {
+			this.current_info = {
+				name: 'sale',
+				info: this.menu_info.sale
+			};
+			this.SubmitMenuSelectEvent('sale', this.menu_info.sale);
 		},
 		created() {
 			console.log("[Page-Mounted]菜单初始化开始...");
 			$ = util.callContainer(this);
 			this.menu_info = base_sale.XsTypeObj;
-			this.current_info = {
-				name: 'sale',
-				info: this.menu_info.sale
-			}
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
 			uni.$off('set-menu');
 			uni.$on('set-menu', util.callBind(this, function(data) {
@@ -196,7 +258,7 @@
 				this.$forceUpdate();
 			}))
 			uni.$off('external-operation');
-			uni.$on('external-operation', $(function(callback){
+			uni.$on('external-operation', $(function(callback) {
 				$(callback, false);
 			}))
 		}
@@ -204,8 +266,38 @@
 </script>
 
 <style>
+	.fanhui {
+		top: 90%;
+	}
+
 	.menu {
 		padding: 0px;
 		outline: 0px;
+	}
+
+	.arrow-box {
+		right: -5px;
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+		transform: rotate(-45deg);
+		position: absolute;
+		overflow: hidden;
+	}
+
+	.arrow-border {
+		border-bottom: 2px solid #006b44;
+	}
+
+	.arrow-border-top {
+		width: 10px;
+		border-bottom: 2px solid #006b44;
+	}
+
+	.arrow-border-bottom {
+		height: 10px;
+		border-left: 2px solid #006b44;
+		width: 10px;
+		background: #f5f4f8;
 	}
 </style>

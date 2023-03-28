@@ -12,16 +12,14 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "首页",
-        "enablePullDownRefresh": false
+        "navigationBarTitleText": "首页"
       }
     },
     {
       "path": "pages/Home/Home",
       "style": {
         "titleNView": false,
-        "navigationBarTitleText": "首页",
-        "enablePullDownRefresh": false
+        "navigationBarTitleText": "首页"
       }
     },
     {
@@ -81,10 +79,7 @@
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": false,
-        "mp-alipay": {
-          "allowsBounceVertical": "NO"
-        }
+        "enablePullDownRefresh":true
       }
     },
     {
@@ -165,8 +160,7 @@
       "path": "pages/Main/Main",
       "style": {
         "titleNView": false,
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
+        "navigationBarTitleText": ""
       }
     },
     {

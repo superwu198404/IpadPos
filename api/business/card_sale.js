@@ -96,6 +96,7 @@ var FallbackSpecialDiscount = function(sale001, sale002 = []) {
 		r.BZDISC = 0; //zk
 		r.LSDISC = 0; //zk
 		r.TPDISC = 0; //zk
+		r.CXDISC = 0; //zk
 	});
 	console.log("[FallbackSpecialDiscount]sale002折扣信息清除完毕:", sale002);
 	console.warn("[FallbackSpecialDiscount]清除折扣信息完毕...");

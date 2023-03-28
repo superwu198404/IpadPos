@@ -3166,6 +3166,7 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
+		let kqMsg = data.issuccess ? " 成功" : " 失败";
 		//售卡售券信息
 		data.sale6List.forEach((item, i) => {
 			jpPrinter.setCharacterSize(0); //设置正常大小
@@ -3175,7 +3176,7 @@ var jpPrinter = {
 			
 			jpPrinter.setCharacterSize(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
-			jpPrinter.setText(item.kqide.toString() + " 成功");
+			jpPrinter.setText(item.kqide.toString() + kqMsg);
 			jpPrinter.setPrint(); //打印并换行	
 		});
 		

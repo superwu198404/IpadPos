@@ -29,7 +29,7 @@
 					<label class="buyer shexiao" @click="ShowDKF()" v-else>
 						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
 						<text>赊销中：{{DKFNAME}}</text>
-					</label>
+					</label><strong></strong>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
 						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
@@ -176,9 +176,10 @@
 				</view>
 			</view>
 			<!-- 大客户组件 -->
-			<BigCustomer v-if="custom" @ClosePopup="ClosePopup"></BigCustomer>
+			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-if="showYWMsg && (type != 'sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData"></movable>
+			<movable v-show="showYWMsg && (type!='sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData">
+			</movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
@@ -297,6 +298,10 @@
 				console.log("[Head]设置大客户名称!", info);
 				this.DKFNAME = info;
 				this.YN_SX = false;
+			}))
+			uni.$off('head-external-operation');
+			uni.$on('head-external-operation', util.callBind(this, function(callback) {
+				callback.call(this);
 			}))
 			this.GetStoreMessage();
 			this.MonitorEvent(); //事件监听
@@ -611,6 +616,7 @@
 				that.showBle = true;
 				that.startSearch();
 			},
+			//设备主动上报低功耗蓝牙连接状态的变化
 			onBLEConnectionStateChange: function() {
 				let that = this;
 				uni.onBLEConnectionStateChange(res => {
@@ -619,17 +625,16 @@
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
 						try {
-							//closeBluetoothAdapter();
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
 
-						if (app.globalData.BLEInformation.deviceId != "" && app.globalData.BLEInformation.deviceName != "") {
+						if (app.globalData.BLEInformation.deviceId != "" && app.globalData.BLEInformation
+							.deviceName != "") {
 							that.startSearch();
 						}
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
 						that.YN_PRINT_CON = "Y";
-						//that.clearIntervalFun();
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -641,9 +646,7 @@
 					success: function(res) {
 						uni.getBluetoothAdapterState({
 							success: function(res) {
-								console.log("openBluetoothAdapter success",
-									res);
-
+								console.log("openBluetoothAdapter success", res);
 								if (res.available) {
 									if (res.discovering) {
 										uni.stopBluetoothDevicesDiscovery({
@@ -742,22 +745,27 @@
 									var num = 0;
 									for (var i = 0; i < res.devices
 										.length; ++i) {
-										if (res.devices[i].name !=
-											"未知设备" && res
+										if (res.devices[i].name != "未知设备" && res
 											.devices[i].name != "") {
-											devices[num] = res.devices[
-												i];
+											devices[num] = res.devices[i];
 											num++;
 
-											if (res.devices[i].name == app.globalData.BLEInformation.deviceName && app.globalData.BLEInformation.deviceName != "") {
-												console.log("蓝牙打印设备",res.devices[i].name);
-												app.globalData.BLEInformation.deviceId = res.devices[i].deviceId;
-												util.setStorage('BLE_deviceId', res.devices[i].deviceId);
-												that.bindAutoTap(res.devices[i].deviceId, res.devices[i].name);
+											if (res.devices[i].name == app.globalData
+												.BLEInformation.deviceName && app
+												.globalData.BLEInformation
+												.deviceName != "") {
+												console.log("蓝牙打印设备", res.devices[i]
+													.name);
+												app.globalData.BLEInformation
+													.deviceId = res.devices[i]
+													.deviceId;
+												util.setStorage('BLE_deviceId', res
+													.devices[i].deviceId);
+												that.bindAutoTap(res.devices[i]
+													.deviceId, res.devices[i].name);
 											}
 										}
 									}
-
 									that.setData({
 										list: devices,
 										isScanning: false
@@ -770,8 +778,6 @@
 										that.isLink.push(0)
 										i++;
 									});
-									//console.log("isLink", that.isLink);
-
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
 										success: function(res) {
@@ -788,7 +794,7 @@
 				var that = this;
 				uni.stopBluetoothDevicesDiscovery({
 					success: function(res) {
-						console.log(res);
+						//console.log(res);
 					}
 				});
 				that.setData({
@@ -797,7 +803,7 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				
+
 				uni.createBLEConnection({
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
@@ -810,7 +816,7 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', e.currentTarget.dataset.title);
 						util.setStorage('BLE_deviceName', e.currentTarget.dataset.name);
-							
+
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
@@ -833,7 +839,7 @@
 				var that = this;
 				uni.stopBluetoothDevicesDiscovery({
 					success: function(res) {
-						console.log(res);
+						//console.log(res);
 					}
 				});
 				that.setData({
@@ -847,7 +853,7 @@
 					deviceId: deviceId,
 					success: function(res) {
 						//console.log("Connection success:", res);
-						app.globalData.BLEInformation.deviceId = deviceId;	
+						app.globalData.BLEInformation.deviceId = deviceId;
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
@@ -867,14 +873,12 @@
 				});
 			},
 			getSeviceId: function(deviceId, deviceName) {
-				//console.log("getSeviceId",deviceName)
 				var that = this;
 				var platform = app.globalData.BLEInformation.platform;
 				uni.getBLEDeviceServices({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					success: function(res) {
-						console.log(res);
-
+						// console.log(res);
 						that.setData({
 							services: res.services
 						});
@@ -909,8 +913,7 @@
 							if (!notify) {
 								if (properties.notify) {
 									app.globalData.BLEInformation.notifyCharaterId = item;
-									app.globalData.BLEInformation.notifyServiceId = list[
-										num].uuid;
+									app.globalData.BLEInformation.notifyServiceId = list[num].uuid;
 									notify = true;
 								}
 							}
@@ -918,8 +921,7 @@
 							if (!write) {
 								if (properties.write) {
 									app.globalData.BLEInformation.writeCharaterId = item;
-									app.globalData.BLEInformation.writeServiceId = list[
-										num].uuid;
+									app.globalData.BLEInformation.writeServiceId = list[num].uuid;
 									write = true;
 								}
 							}
@@ -927,8 +929,7 @@
 							if (!read) {
 								if (properties.read) {
 									app.globalData.BLEInformation.readCharaterId = item;
-									app.globalData.BLEInformation.readServiceId = list[num]
-										.uuid;
+									app.globalData.BLEInformation.readServiceId = list[num].uuid;
 									read = true;
 								}
 							}
@@ -953,9 +954,9 @@
 								that.getCharacteristics(deviceId, deviceName);
 							}
 						} else {
-							uni.showToast({
-								title: "连接成功" + deviceName
-							});
+							// uni.showToast({
+							// 	title: "连接成功" + deviceName
+							// });
 							//写进缓存
 							util.setStorage('BLE_deviceId', deviceId);
 							util.setStorage('BLE_deviceName', deviceName);
@@ -964,7 +965,8 @@
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName + "||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
+								"||" + app.globalData.YN_PRINT_CON)
 
 							that.isLink = [];
 							var i = 0;
@@ -983,9 +985,9 @@
 						console.log(e);
 					},
 					complete: function(e) {
-						console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
-						console.log("read:" + app.globalData.BLEInformation.readCharaterId);
-						console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
+						// console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
+						// console.log("read:" + app.globalData.BLEInformation.readCharaterId);
+						// console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
 					}
 				});
 			},
@@ -1005,7 +1007,7 @@
 			},
 			//断开蓝牙连接
 			closeBLEConnection(deviceId, index) {
-				const that = this
+				let that = this
 				plus.bluetooth.closeBLEConnection({
 					deviceId: deviceId,
 					success: res => {
@@ -1017,6 +1019,7 @@
 				})
 			},
 			clearIntervalFun: function() {
+				let that = this
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},
@@ -1394,5 +1397,13 @@
 	.checkout .shexiao {
 		background: #006B44;
 		color: #fff;
+	}
+	movable{
+		position: fixed !important;
+		bottom:5%;
+		right:0;
+		width:90%;
+		height: 90%;
+		margin:10% 0 0 10%;
 	}
 </style>

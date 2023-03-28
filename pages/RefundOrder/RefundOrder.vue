@@ -12,6 +12,8 @@
 		<view class="right">
 			<!-- <menu_head></menu_head> -->
 			<view class="prolist">
+				<view class="bkjb">
+				<view class="neik">
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
@@ -121,6 +123,8 @@
 							</view>
 						</view>
 					</view>
+				</view>
+				</view>
 				</view>
 			</view>
 		</view>

@@ -41,9 +41,11 @@
 							<text>卡号：</text>
 							<view class="chaxun">
 								<view class="label">
-									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
+									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()"
+										v-if="CurType=='Delay'">
 										<!-- <image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()"> -->
 										<input type="text" placeholder="请输入查询卡号" v-model="CardNumber" />
+										<button v-if="CardNumber" @click="CardNumber=''">×</button>
 								</view>
 								<button class="btn" @click="GetCardInfo()">查询</button>
 							</view>
@@ -181,7 +183,7 @@
 			</view>
 		</view>
 		<!-- 持卡人信息 -->
-		<chikaren :show.sync="showCardRen"></chikaren>
+		<!-- <chikaren :show.sync="showCardRen"></chikaren> -->
 	</view>
 </template>
 
@@ -190,12 +192,12 @@
 	import Head from '@/pages/Home/Component/Head.vue';
 
 	//业务处理
-	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
 	import member from "@/api/hy/MemberInterfaces.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _card_coupon from "@/utils/sale/card_coupon.js";
-	// import _query_sale from "@/api/business/query_sale.js";
+	import _business from "@/utils/business_dictionary.js";
+	import common from '@/api/common.js';
 
 	var that;
 	export default {
@@ -210,14 +212,23 @@
 				CKRInfo: {},
 				showCardRen: false,
 				CurType: "Delay",
-				Store: getApp().globalData.store
+				Store: getApp().globalData.store,
+				_sale2_count: 0
 			}
 		},
-		async created() {
+		watch: {
+			CardInfo: function(n, o) {
+				console.log("卡信息发生变动：", n);
+				if (this.CardInfo.cardId || this.CardInfo.cardId != "") {
+					this._sale2_count = 1;
+				}else{
+					this._sale2_count = 0;
+				}
+			}
+		},
+		created() {
 			that = this;
 			that.OrderBill = _card_coupon.getBill(that.Store);
-			// let a = await _query_sale.GetRJData('K200QTD005','2023-03-20');
-			// console.log("日结销售数据：", a);
 		},
 		mounted() {
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
@@ -231,20 +242,7 @@
 			statusDefault() {
 				return function(v, def_val = '暂无') {
 					if (v) {
-						if (v == 'Z001') {
-							return '正常';
-						} else if (v == 'Z002') {
-							return '冻结'
-						} else if (v == 'Z003') {
-							return '注销'
-						} else if (v == 'Z004') {
-							return '挂失'
-						} else if (v == 'Z005') {
-							return '挂失'
-						} else if (v == 'Z006') {
-							return '挂失'
-						} else
-							return "未激活";
+						return _business.card_status[v];
 					} else
 						return def_val;
 				}
@@ -252,16 +250,7 @@
 			typeDefault() {
 				return function(v, d = "暂无") {
 					if (v) {
-						if (v == 'Z001') {
-							return '实体VIP卡';
-						} else if (v == 'Z002') {
-							return '实体礼品卡'
-						} else if (v == 'Z003') {
-							return '电子礼品卡'
-						} else if (v == 'Z005') {
-							return '电子储值卡'
-						} else
-							return d;
+						return _business.card_type[v];
 					} else
 						return d;
 				}
@@ -281,32 +270,41 @@
 		},
 		methods: {
 			select_type(data) {
-				if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
-					util.simpleModal("提示", "是否确认切换业务？", res => {
-						if (res) {
-							that.ResetBill(data);
-						}
-					})
-				} else {
-					that.ResetBill(data);
+				if (common.CheckSign()) {
+					if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
+						util.simpleModal("提示", "是否确认切换业务？", res => {
+							if (res) {
+								that.ResetBill(data);
+							}
+						})
+					} else {
+						that.ResetBill(data);
+					}
 				}
 			},
-			ResetBill(e = 'Delay') {
-				that.CardNumber = "";
-				that.CurType = e;
-				that.CardInfo = {};
-				that.CKRInfo = {};
+			ResetBill(e = 'Delay', code = true) {
+				if (code) { //成功才清除
+					that.CardNumber = "";
+					that.CurType = e;
+					that.CardInfo = {};
+					that.CKRInfo = {};
+					Vue.set(that.CKRInfo, "name", ""); //响应式清除
+					Vue.set(that.CKRInfo, "phone", ""); //响应式清除
+					Vue.set(that.CKRInfo, "idcard", ""); //响应式清除
+				}
 				that.OrderBill = _card_coupon.getBill(that.Store);
 			},
 			swiping_card() {
-				member.GetTLCard(getApp().globalData.store, function(res) {
-					if (!res.code) {
-						util.simpleMsg(res.msg, !res.code);
-						return;
-					}
-					that.CardNumber = res.data;
-					that.GetCardInfo();
-				})
+				if (common.CheckSign()) {
+					member.GetTLCard(getApp().globalData.store, function(res) {
+						if (!res.code) {
+							util.simpleMsg(res.msg, !res.code);
+							return;
+						}
+						that.CardNumber = res.data;
+						that.GetCardInfo();
+					})
+				}
 			},
 			//获取卡信息
 			GetCardInfo: function() {
@@ -344,7 +342,7 @@
 				}
 				if (that.CurType != "Delay") {
 					if (that.CardInfo.cardType != 'Z001') {
-						util.simpleMsg("抱歉，卡类型错误", true);
+						util.simpleMsg("仅实体VIP卡，可挂失！", true);
 						return;
 					}
 					console.log("持卡人信息：", that.CKRInfo);
@@ -392,7 +390,7 @@
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(); //重置
+								that.ResetBill(that.CurType, res.code); //重置
 							})
 						} else {
 							_card_sale.REPORT_LOSS({
@@ -409,7 +407,7 @@
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(); //重置
+								that.ResetBill(that.CurType, res.code); //重置
 							})
 						}
 					}
@@ -417,14 +415,14 @@
 			},
 			//取消
 			Cancel: function() {
-				that.ResetBill(); //重置
+				that.ResetBill(that.CurType); //重置
 			},
 
 			//清空数据
 			ClearSale: function() {
 				util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
-						that.ResetBill();
+						that.ResetBill(that.CurType);
 					}
 				})
 			},
@@ -482,9 +480,11 @@
 		padding-left: 2%;
 		white-space: nowrap;
 	}
-	.hh{
+
+	.hh {
 		position: relative;
 	}
+
 	.totals view em {
 		height: 40rpx;
 		margin: 0 8rpx 0 30rpx;
@@ -693,17 +693,18 @@
 	.operat button {
 		margin: 0 4%;
 	}
-	.tishis{
+
+	.tishis {
 		background: #FE694B;
 		height: 50rpx;
 		line-height: 50rpx;
 		border-radius: 20rpx 20rpx 0 0;
 		color: #fff;
 		position: absolute;
-		bottom:0rpx;
-		right:2%;
+		bottom: 0rpx;
+		right: 2%;
 		font-size: 26rpx;
-		padding:0 30rpx;
+		padding: 0 30rpx;
 	}
 </style>
 <style>

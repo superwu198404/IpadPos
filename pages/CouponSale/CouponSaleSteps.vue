@@ -3,7 +3,7 @@
 	<view class="steps">
 		<view :class="step == 1 ? 'listep curr' : 'listep'">
 			<text class="xuhao">01</text>
-			<view class="setname"><label>录入待售卡券</label><text>刷卡，扫券，或手动录入</text></view>
+			<view class="setname"><label>录入待售券</label><text>扫券，或手动录入</text></view>
 			<em>>>>>>></em>
 		</view>
 		<view :class="step == 2 ? 'listep curr' : 'listep'">
@@ -13,12 +13,12 @@
 		</view>
 		<view :class="step == 3 ? 'listep curr' : 'listep'">
 			<text class="xuhao">03</text>
-			<view class="setname"><label>支付</label><text>先支付，后激活/充值</text></view>
+			<view class="setname"><label>支付</label><text>先支付，后激活</text></view>
 			<em>>>>>>></em>
 		</view>
 		<view :class="step == 4 ? 'listep curr' : 'listep'">
 			<text class="xuhao">04</text>
-			<view class="setname"><label>等待激活/充值</label><text>已支付订单</text></view>
+			<view class="setname"><label>等待激活</label><text>已支付订单</text></view>
 			<!-- <em>>>>>>></em> -->
 		</view>
 	</view>

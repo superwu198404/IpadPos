@@ -10,17 +10,24 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- <menu_page :menuIndex="3"></menu_page> -->
 		<view class="right">
+			<view :class="exit_btn ? 'bkjb full-screen' : 'bkjb'">
+			<view class="neik">
 			<!-- <menu_head></menu_head> -->
 			<view class="listof">
 				<view class="prolist">
-					<view class="commodity">
+					
 						<view class="hh">
 							<view class="hotcakes">
 								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 							</view>
-							<view class="sousuo" @click="Refresh()">
-								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+							<view>
+								<view class="sousuo" @click="Refresh()">
+									<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+								</view>
+								<view class="sousuo" v-if="exit_btn" @click="Exit()">
+									<image src="@/images/shuaxin.png" mode="widthFix"></image>退出
+								</view>
 							</view>
 						</view>
 						<NoData v-if="WMOrders.length==0"></NoData>
@@ -113,6 +120,8 @@
 					</view>
 				</view>
 			</view>
+			</view>
+			
 		</view>
 		<!-- 报损数据 -->
 		<view class="boxs" v-if="yn_bs">
@@ -272,11 +281,15 @@
 				yn_ty: false, //同意按钮
 				yn_jj: false, //拒绝按钮
 				js_res: {}, //确认接收返回结果
+				exit_btn: false, //是否显示退出按钮
+				event_channel: null
 			}
 		},
 		methods: {
-			onLoad: function() {
+			onLoad: function(option) {
 				that = this; //全局赋值
+				this.event_channel = this.getOpenerEventChannel();
+				this.event_channel?.emit('get_take_away', this);
 				//外卖单渲染
 				that.GetOrders(that.KHID, r => {
 					that.ShowDetail(that.WMOrders[0], 0);
@@ -757,6 +770,9 @@
 			},
 			Moreand: function(e) {
 				this.Chargeback = !this.Chargeback
+			},
+			Exit: function() {
+				uni.navigateBack();
 			}
 		},
 		created() {
@@ -783,5 +799,13 @@
 		position: absolute;
 		bottom: 1%;
 		left: 0;
+	}
+	.sousuo{
+		margin-right: 0px !important;
+	}
+	.full-screen {
+		box-sizing: border-box;
+		width: 100% !important;
+		height: 100% !important;
 	}
 </style>

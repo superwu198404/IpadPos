@@ -5,6 +5,8 @@
 </style>
 
 <template>
+	<view class="bkjb">
+		<view class="neik">
 	<view class="commodity" style="position: relative;">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="hh">
@@ -66,6 +68,8 @@
 					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 			</view>
 		</view>
+	</view>
+	</view>
 	</view>
 	</view>
 </template>

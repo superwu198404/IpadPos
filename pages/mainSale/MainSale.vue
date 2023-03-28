@@ -10,6 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
+			<!-- <view class="arrow-box" :style="arrow_style">
+				<view class="arrow-border-top"></view>
+				<view class="arrow-border-bottom"></view>
+			</view> -->
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -177,7 +181,7 @@
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
 				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway">
+				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
 				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
 				</TakeYD>
@@ -808,7 +812,15 @@
 				canvasGZHHeight: 1,
 				sale_type_infos: null,
 				Tallylist: false,
-				P_URL: ""
+				P_URL: "",
+				default_visible_template: "",
+				arrow_style: {
+					position: "absolute",
+					left: "0px",
+					top: "0px",
+					transition: "all .5s",
+					display: "none"
+				}
 			}
 		},
 		components: {
@@ -963,6 +975,11 @@
 				return total;
 			},
 		},
+		// 下拉事件
+		onPullDownRefresh () {
+			console.log('触发下拉刷新了')
+			
+		},
 		methods: {
 			// 隐藏
 			Componentes: function() {
@@ -992,30 +1009,46 @@
 			sxjsBluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print) {
 				this.$refs.printerPage.sxjsBluePrinter(sale1_obj, sale2_arr, sale3_arr, print);
 			},
+			menu_select_arrow_position: function() {
+				uni.$off('menu-select-change');
+				uni.$on('menu-select-change',(function(data){
+					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
+						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
+							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
+							this.arrow_style.left = info.left + info.width - 5 + "px";
+							this.arrow_style.display = "block";
+						}
+						else{
+							this.arrow_style.display = "none";
+						}
+					}).bind(this)).exec();
+				}).bind(this));
+			}
 		},
 		created() {
-			// uni.setLocale("en");
-			// uni.showModal({
-			// 	content: "请使用扫码枪扫码",
-			// 	editable: true,
-			// 	confirmText: "确认",
-			// 	cancelText: "取消",
-			// 	success: function(res) {
-			// 		console.log("回调结果：", res);
-			// 		if (res.confirm) {
-			// 			if (res.content) {}
-			// 		}
-			// 	}
-			// })
+			let default_visible = util.getStorage('default-visible-template');
+			if(default_visible){
+				this.default_visible_template = default_visible;
+				util.setStorage('default-visible-template', null)
+			}
+			this.menu_select_arrow_position();
 			console.log("[MainSale]开始构造函数!");
 			this.sale_type_infos = mysale.XsTypeObj;
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
-			uni.$once("page-to-takeout", util.callBind(this, function() {
+			uni.$off("page-to-takeout");
+			uni.$on("page-to-takeout", util.callBind(this, function() {
+				this.mainSale.currentOperation.ynCancel = false;
+				this.mainSale.currentOperation.DKF = false;
+				this.mainSale.ComponentsManage.DKF = false;
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
+				console.log("[ExternalOperation]切换到外卖单完成...");
+				uni.$emit("movable-visible",false);
+				
 				uni.$emit("external-operation", function() {
+					console.warn("[ExternalOperation]开始隐藏...");
 					let menus = this.menu_info;
 					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
 						menus[menu].close = true);
@@ -1061,9 +1094,6 @@
 		padding: 0;
 	}
 
-	.listof {
-		height: 91%;
-	}
 
 	.catecyc {
 		height: 100%;
@@ -1187,6 +1217,28 @@
 		background: none;
 	}
 
+	.arrow-box {
+		right: -5px;
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+		transform: rotate(-45deg);
+		position: absolute;
+		overflow: hidden;
+		z-index: 10000;
+	}
+
+	.arrow-border-top {
+		width: 10px;
+		border-bottom: 2px solid #006b44;
+	}
+
+	.arrow-border-bottom {
+		height: 10px;
+		border-left: 2px solid #006b44;
+		width: 10px;
+		background: #f5f4f8;
+	}
 	.key-board-search {
 		width: 40px;
 		height: 40px;
@@ -1199,9 +1251,9 @@
 		align-items: center;
 		color: #1a7a57;
 		font-weight: 600;
-
+	
 	}
-
+	
 	.keyboard-input {
 		background-color: #fff;
 		width: 850px;
@@ -1213,18 +1265,18 @@
 		justify-content: center;
 		align-items: center;
 	}
-
+	
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
 	}
-
+	
 	.keyboard .keys {
 		display: flex;
 		list-style: none;
 		margin: 0 0;
 	}
-
+	
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		width: 60px;
@@ -1236,7 +1288,7 @@
 		line-height: 60px;
 		transition: all 0.25s;
 	}
-
+	
 	.keyboard li:active {
 		box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
 		color: rgb(12, 164, 190);

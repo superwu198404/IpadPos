@@ -3,7 +3,8 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<view class="boxs" v-if="show">
+	 <!-- v-if="show" -->
+	<view class="boxs">
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="guan">×</button></view>
