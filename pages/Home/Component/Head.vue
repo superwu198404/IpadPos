@@ -760,7 +760,6 @@
 										isScanning: false
 									});
 
-									//console.log("that.list======", that.list);
 									that.isLink = [];
 									var i = 0;
 									that.list.forEach(e => {
@@ -775,7 +774,7 @@
 									});
 								}
 							});
-						}, 5000);
+						}, 2000);
 					}
 				});
 			},
