@@ -178,7 +178,7 @@
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-if="showYWMsg && (type != 'sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData"></movable>
+			<movable v-show="showYWMsg && (type != 'sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
@@ -615,6 +615,7 @@
 				that.showBle = true;
 				that.startSearch();
 			},
+			//设备主动上报低功耗蓝牙连接状态的变化
 			onBLEConnectionStateChange: function() {
 				let that = this;
 				uni.onBLEConnectionStateChange(res => {
@@ -623,7 +624,6 @@
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
 						try {
-							//closeBluetoothAdapter();
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
 
@@ -633,7 +633,6 @@
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
 						that.YN_PRINT_CON = "Y";
-						//that.clearIntervalFun();
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -645,9 +644,7 @@
 					success: function(res) {
 						uni.getBluetoothAdapterState({
 							success: function(res) {
-								console.log("openBluetoothAdapter success",
-									res);
-
+								console.log("openBluetoothAdapter success",res);
 								if (res.available) {
 									if (res.discovering) {
 										uni.stopBluetoothDevicesDiscovery({
@@ -746,11 +743,8 @@
 									var num = 0;
 									for (var i = 0; i < res.devices
 										.length; ++i) {
-										if (res.devices[i].name !=
-											"未知设备" && res
-											.devices[i].name != "") {
-											devices[num] = res.devices[
-												i];
+										if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
+											devices[num] = res.devices[i];
 											num++;
 
 											if (res.devices[i].name == app.globalData.BLEInformation.deviceName && app.globalData.BLEInformation.deviceName != "") {
@@ -761,7 +755,6 @@
 											}
 										}
 									}
-
 									that.setData({
 										list: devices,
 										isScanning: false
@@ -774,8 +767,6 @@
 										that.isLink.push(0)
 										i++;
 									});
-									//console.log("isLink", that.isLink);
-
 									uni.stopPullDownRefresh();
 									uni.stopBluetoothDevicesDiscovery({
 										success: function(res) {
@@ -792,7 +783,7 @@
 				var that = this;
 				uni.stopBluetoothDevicesDiscovery({
 					success: function(res) {
-						console.log(res);
+						//console.log(res);
 					}
 				});
 				that.setData({
@@ -837,7 +828,7 @@
 				var that = this;
 				uni.stopBluetoothDevicesDiscovery({
 					success: function(res) {
-						console.log(res);
+						//console.log(res);
 					}
 				});
 				that.setData({
@@ -871,14 +862,12 @@
 				});
 			},
 			getSeviceId: function(deviceId, deviceName) {
-				//console.log("getSeviceId",deviceName)
 				var that = this;
 				var platform = app.globalData.BLEInformation.platform;
 				uni.getBLEDeviceServices({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					success: function(res) {
-						console.log(res);
-
+						// console.log(res);
 						that.setData({
 							services: res.services
 						});
@@ -913,8 +902,7 @@
 							if (!notify) {
 								if (properties.notify) {
 									app.globalData.BLEInformation.notifyCharaterId = item;
-									app.globalData.BLEInformation.notifyServiceId = list[
-										num].uuid;
+									app.globalData.BLEInformation.notifyServiceId = list[num].uuid;
 									notify = true;
 								}
 							}
@@ -922,8 +910,7 @@
 							if (!write) {
 								if (properties.write) {
 									app.globalData.BLEInformation.writeCharaterId = item;
-									app.globalData.BLEInformation.writeServiceId = list[
-										num].uuid;
+									app.globalData.BLEInformation.writeServiceId = list[num].uuid;
 									write = true;
 								}
 							}
@@ -931,8 +918,7 @@
 							if (!read) {
 								if (properties.read) {
 									app.globalData.BLEInformation.readCharaterId = item;
-									app.globalData.BLEInformation.readServiceId = list[num]
-										.uuid;
+									app.globalData.BLEInformation.readServiceId = list[num].uuid;
 									read = true;
 								}
 							}
@@ -987,9 +973,9 @@
 						console.log(e);
 					},
 					complete: function(e) {
-						console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
-						console.log("read:" + app.globalData.BLEInformation.readCharaterId);
-						console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
+						// console.log("write:" + app.globalData.BLEInformation.writeCharaterId);
+						// console.log("read:" + app.globalData.BLEInformation.readCharaterId);
+						// console.log("notify:" + app.globalData.BLEInformation.notifyCharaterId);
 					}
 				});
 			},
@@ -1009,7 +995,7 @@
 			},
 			//断开蓝牙连接
 			closeBLEConnection(deviceId, index) {
-				const that = this
+				let that = this
 				plus.bluetooth.closeBLEConnection({
 					deviceId: deviceId,
 					success: res => {
@@ -1021,6 +1007,7 @@
 				})
 			},
 			clearIntervalFun: function() {
+				let that = this
 				clearInterval(that.intervalId); //清除计时器
 				that.intervalId = null; //设置为null
 			},

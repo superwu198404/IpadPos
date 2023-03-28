@@ -111,6 +111,9 @@
 			current: function(n, o) {
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
+			},
+			current_click_menu_name: function(n,o){
+				console.warn("[Watch-CurrentClickMenuName]发生改变:",n);
 			}
 		},
 		data() {
