@@ -190,6 +190,7 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //付款信息
+				_sale2_count: 0
 			}
 		},
 		computed: {
@@ -270,6 +271,7 @@
 					return;
 				this.re_computed_sales(this.source.sale001, n);
 				this.craft_discount_computed();
+				this._sale2_count = n.length;
 				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source);
 			},
 			'source.discount_type'(n, o) {
@@ -480,7 +482,7 @@
 							let single_sale2_map_sale6 = this.factory.get_sale002(null, sales.sale002);
 							single_sale2_map_sale6.QTY = sale6.QTY; //把当前券号段的数量传入
 							single_sale2_map_sale6.NET = sale6.QTY * sales.sale002
-							.PRICE; //根据当前数量和单价计算出当前对应的总金额
+								.PRICE; //根据当前数量和单价计算出当前对应的总金额
 							return {
 								sale006: sale6,
 								sale002: single_sale2_map_sale6,
@@ -556,7 +558,7 @@
 				console.log("[PushSale2Check]检查完毕:", this.source);
 			},
 			push_sale2_union_sale6_check(sale2,
-			sale6) { //向sale2和sale6联合数组推入数据前，检查是否已经包含了当前sale2的数据，如果存在那么对现有的联合数据中的sale6做push操作，否则新增一个sale2和sale6的联合数据
+				sale6) { //向sale2和sale6联合数组推入数据前，检查是否已经包含了当前sale2的数据，如果存在那么对现有的联合数据中的sale6做push操作，否则新增一个sale2和sale6的联合数据
 				let match_sale2 = this.source.sale2_union_sale6.map(sales => sales.sale002).find(s2 => s2.SPID == sale2
 					.SPID);
 				if (match_sale2) {
@@ -633,7 +635,7 @@
 					discount_computed_params.ZKType = this.source.discount_type;
 					discount_computed_params.ZKData = this.source.discount_infos;
 					main.MatchZKDatas(discount_computed_params, sale2 || this.source
-					.sale002); //可使用传入的sale2，如果不存在则使用当前上下文的sale2
+						.sale002); //可使用传入的sale2，如果不存在则使用当前上下文的sale2
 					console.warn("[DiscountComputed]折扣计算完毕...");
 				}
 				console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
@@ -658,7 +660,7 @@
 					} else
 						sale2.YN_CXDISC = "F";
 					sale2.DISCRATE = parseFloat((Number(sale2.JFDISC) + Number(sale2.LSDISC) + Number(sale2
-						.TPDISC) + Number(sale2.BZDISC) + Number(sale2.HYDISC) + Number(sale2.CXDISC) +
+							.TPDISC) + Number(sale2.BZDISC) + Number(sale2.HYDISC) + Number(sale2.CXDISC) +
 						Number(sale2.DISC)).toFixed(2));
 				})
 				console.log("[CraftDiscountComputed]SALE001计算手工折扣后的新数据：", this.source);

@@ -62,7 +62,7 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="card-num">
-													<label>券号：{{ default_view(form.infos.card_id) }}</label>
+													<label>卡券号：{{ default_view(form.infos.card_id) }}</label>
 													<view>
 														<em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}
 													</view>
@@ -181,6 +181,16 @@
 				return this.source.types.length > 5;
 			}
 		},
+		watch: {
+			'form.infos': function(n, o) {
+				console.log("卡券信息发生变动：", n);
+				if (this.form.infos.card_id||this.form.infos.card_id != "") {
+					this._sale2_count = 1;
+				}else{
+					this._sale2_count = 0;
+				}
+			}
+		},
 		data() {
 			return {
 				form: {
@@ -190,7 +200,8 @@
 				source: {
 					current_type_info: null,
 					types: [],
-				}
+				},
+				_sale2_count: 0
 			}
 		},
 		methods: {

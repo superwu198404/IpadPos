@@ -99,8 +99,8 @@
 		data() {
 			return {
 				form: {
-					member_code: "",//18572113861
-					card_number: "",//8661087110000744418=99125008620000
+					member_code: "", //18572113861
+					card_number: "", //8661087110000744418=99125008620000
 					card_track: ""
 				},
 				source: {
@@ -116,6 +116,24 @@
 						cardNum: '',
 						expireDate: ''
 					}
+				}
+			}
+		},
+		watch: {
+			'source.member_infos': function(n, o) {
+				console.log("会员信息发生变化：", n);
+				if (this.source.member_infos.hyId != "" || this.source.card_infos.cardNum != "") {
+					uni.$emit("BindChange", 1); //通知父组件已录入数据
+				} else {
+					uni.$emit("BindChange", 0);
+				}
+			},
+			'source.card_infos': function(n, o) {
+				console.log("卡信息发生变化：", n);
+				if (this.source.member_infos.hyId != "" || this.source.card_infos.cardNum != "") {
+					uni.$emit("BindChange", 1); //通知父组件已录入数据
+				} else {
+					uni.$emit("BindChange", 0);
 				}
 			}
 		},
@@ -136,6 +154,7 @@
 					if (data) {
 						this.source.member_infos = data;
 						util.simpleMsg('会员信息查询成功!', false);
+						// uni.$emit("BindChange",1);//通知父组件已录入数据
 					} else {
 						util.simpleMsg('未查询到相关信息!', true);
 					}
@@ -150,6 +169,7 @@
 					if (data) {
 						this.source.card_infos = data;
 						util.simpleMsg('卡信息查询成功!', false);
+						// uni.$emit("BindChange",1);//通知父组件已录入数据
 					} else {
 						util.simpleMsg('未查询到相关信息!', true);
 					}

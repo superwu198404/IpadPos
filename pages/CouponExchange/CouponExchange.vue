@@ -209,7 +209,7 @@
 				// }, //券信息
 				payed: [], //已支付信息用于组装券兑换
 				add_class: 0,
-				_sale2_count
+				_sale2_count: 0
 			}
 		},
 

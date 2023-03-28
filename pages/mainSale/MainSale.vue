@@ -928,6 +928,22 @@
 				return total;
 			},
 		},
+		onPullDownRefresh() {
+			console.log("下拉刷新")
+			if (common.CheckSign()) {
+				if (this.mainSale.sale002.length > 0) {
+					util.simpleMsg("请先清空商品信息，再进行切换");
+					return;
+				}
+				util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
+					if (res) {
+						uni.redirectTo({
+							url: "/pages/CardCouponMain/Menu"
+						})
+					}
+				})
+			}
+		},
 		methods: {
 			// 隐藏
 			Componentes: function() {

@@ -80,8 +80,8 @@
       "path": "pages/mainSale/MainSale",
       "style": {
         "titleNView": false,
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false,
+        "navigationBarTitleText": "123",
+        "enablePullDownRefresh": true,
         "mp-alipay": {
           "allowsBounceVertical": "NO"
         }
