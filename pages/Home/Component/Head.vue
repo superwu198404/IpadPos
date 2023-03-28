@@ -178,7 +178,8 @@
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-show="showYWMsg && (type != 'sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData"></movable>
+			<movable v-show="showYWMsg && (type!='sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData">
+			</movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->
@@ -627,7 +628,8 @@
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
 
-						if (app.globalData.BLEInformation.deviceId != "" && app.globalData.BLEInformation.deviceName != "") {
+						if (app.globalData.BLEInformation.deviceId != "" && app.globalData.BLEInformation
+							.deviceName != "") {
 							that.startSearch();
 						}
 					} else {
@@ -644,7 +646,7 @@
 					success: function(res) {
 						uni.getBluetoothAdapterState({
 							success: function(res) {
-								console.log("openBluetoothAdapter success",res);
+								console.log("openBluetoothAdapter success", res);
 								if (res.available) {
 									if (res.discovering) {
 										uni.stopBluetoothDevicesDiscovery({
@@ -743,15 +745,24 @@
 									var num = 0;
 									for (var i = 0; i < res.devices
 										.length; ++i) {
-										if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
+										if (res.devices[i].name != "未知设备" && res
+											.devices[i].name != "") {
 											devices[num] = res.devices[i];
 											num++;
 
-											if (res.devices[i].name == app.globalData.BLEInformation.deviceName && app.globalData.BLEInformation.deviceName != "") {
-												console.log("蓝牙打印设备",res.devices[i].name);
-												app.globalData.BLEInformation.deviceId = res.devices[i].deviceId;
-												util.setStorage('BLE_deviceId', res.devices[i].deviceId);
-												that.bindAutoTap(res.devices[i].deviceId, res.devices[i].name);
+											if (res.devices[i].name == app.globalData
+												.BLEInformation.deviceName && app
+												.globalData.BLEInformation
+												.deviceName != "") {
+												console.log("蓝牙打印设备", res.devices[i]
+													.name);
+												app.globalData.BLEInformation
+													.deviceId = res.devices[i]
+													.deviceId;
+												util.setStorage('BLE_deviceId', res
+													.devices[i].deviceId);
+												that.bindAutoTap(res.devices[i]
+													.deviceId, res.devices[i].name);
 											}
 										}
 									}
@@ -792,7 +803,7 @@
 					readCharacter: false,
 					notifyCharacter: false
 				});
-				
+
 				uni.createBLEConnection({
 					deviceId: e.currentTarget.dataset.title,
 					success: function(res) {
@@ -805,7 +816,7 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', e.currentTarget.dataset.title);
 						util.setStorage('BLE_deviceName', e.currentTarget.dataset.name);
-							
+
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
@@ -842,7 +853,7 @@
 					deviceId: deviceId,
 					success: function(res) {
 						//console.log("Connection success:", res);
-						app.globalData.BLEInformation.deviceId = deviceId;	
+						app.globalData.BLEInformation.deviceId = deviceId;
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
@@ -954,7 +965,8 @@
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName + "||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
+								"||" + app.globalData.YN_PRINT_CON)
 
 							that.isLink = [];
 							var i = 0;
