@@ -2841,7 +2841,11 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		if(!that.ComponentsManage[pm_mtype]){
 			uni.$emit("external-operation",function(){
-				this.SubmitMenuSelectEvent('sale', XsTypeObj.sale);
+				uni.$emit("menu-select-change", {
+					name: 'sale',
+					info: XsTypeObj.sale,
+					vue: this
+				});
 			})
 		}
 		lastManage = pm_mtype;
