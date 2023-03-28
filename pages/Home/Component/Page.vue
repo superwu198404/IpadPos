@@ -7,7 +7,8 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;">
+		<view class="menu"
+			style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
@@ -24,14 +25,12 @@
 				</view>
 			</view>
 		</view>
-		
+
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
 			<view class="bills">
 				<label></label>
-				<view @click.stop="operations()" style="display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;">
+				<view @click.stop="operations()"
+					style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
 					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
@@ -70,16 +69,14 @@
 				</view>
 			</view>
 		</view>
-		<view class="fanhui" tabindex="-1" @blur="showGJ = false">
-				<view class="bills">
-					<label></label>
-					<view @click.stop="operations()" style="display: flex;
-		justify-content: center;
-		align-items: center;">
-						<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
-						<text>卡券销售</text>
-					</view>
+		<view class="fanhui">
+			<view class="bills">
+				<label></label>
+				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
+					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
+					<text>卡券销售</text>
 				</view>
+			</view>
 		</view>
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
@@ -98,7 +95,11 @@
 		},
 		name: "Page",
 		props: {
-			current: String
+			current: String,
+			_sale2_count: {
+				type: Number,
+				default: 0
+			}
 		},
 		computed: {
 			Selected: function() {
@@ -112,8 +113,8 @@
 				this.current_info.name = n;
 				this.current_info.info = this.menu_info[n];
 			},
-			current_click_menu_name: function(n,o){
-				console.warn("[Watch-CurrentClickMenuName]发生改变:",n);
+			current_click_menu_name: function(n, o) {
+				console.warn("[Watch-CurrentClickMenuName]发生改变:", n);
 			}
 		},
 		data() {
@@ -128,7 +129,7 @@
 				timer: 0,
 				showcdxp: false,
 				allow_page_switch: true,
-				guodu:false
+				guodu: false
 			};
 		},
 		methods: {
@@ -141,7 +142,7 @@
 				that.showGJ = !that.showGJ
 			},
 			MenuSelect(menu_name, menu_info) {
-				if(!this.allow_page_switch) return;
+				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
 				this.current_click_menu_name = menu_name;
 				// this.current_info = {
@@ -149,14 +150,14 @@
 				// 	info: menu_info
 				// };
 				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
-				this.SubmitMenuSelectEvent(menu_name,menu_info);
+				this.SubmitMenuSelectEvent(menu_name, menu_info);
 			},
-			SubmitMenuSelectEvent(name,info){
+			SubmitMenuSelectEvent(name, info) {
 				uni.$emit("change", {
 					name: name,
 					info: info
 				});
-				this.$nextTick(util.callBind(this,function(){
+				this.$nextTick(util.callBind(this, function() {
 					uni.$emit("menu-select-change", {
 						name: name,
 						info: info,
@@ -214,6 +215,20 @@
 			//重打小票关闭
 			ClosePopup: function(data) {
 				this.showcdxp = false;
+			},
+			//普通销售和卡券销售切换
+			SwitchSale: function(e) {
+				if (this._sale2_count > 0) {
+					util.simpleMsg("请先清空商品信息，再进行切换");
+					return;
+				}
+				util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
+					if (res) {
+						uni.redirectTo({
+							url: "/pages/CardCouponMain/Menu"
+						})
+					}
+				})
 			}
 		},
 		mounted() {
@@ -221,7 +236,7 @@
 				name: 'sale',
 				info: this.menu_info.sale
 			};
-			this.SubmitMenuSelectEvent('sale',this.menu_info.sale);
+			this.SubmitMenuSelectEvent('sale', this.menu_info.sale);
 		},
 		created() {
 			console.log("[Page-Mounted]菜单初始化开始...");
@@ -237,7 +252,7 @@
 				this.$forceUpdate();
 			}))
 			uni.$off('external-operation');
-			uni.$on('external-operation', $(function(callback){
+			uni.$on('external-operation', $(function(callback) {
 				$(callback, false);
 			}))
 		}
@@ -249,7 +264,8 @@
 		padding: 0px;
 		outline: 0px;
 	}
-	.arrow-box{
+
+	.arrow-box {
 		right: -5px;
 		width: 10px;
 		height: 10px;
@@ -258,14 +274,17 @@
 		position: absolute;
 		overflow: hidden;
 	}
+
 	.arrow-border {
 		border-bottom: 2px solid #006b44;
 	}
-	.arrow-border-top{
+
+	.arrow-border-top {
 		width: 10px;
 		border-bottom: 2px solid #006b44;
 	}
-	.arrow-border-bottom{
+
+	.arrow-border-bottom {
 		height: 10px;
 		border-left: 2px solid #006b44;
 		width: 10px;
