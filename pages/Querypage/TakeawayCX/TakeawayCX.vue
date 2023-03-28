@@ -64,7 +64,7 @@
 		<!-- 子表 -->
 		<view class="box" v-if="zibiao">
 			<view class="zibiao">
-				<view class="h1">外卖单查询<button class="close" @click="closeSub">×</button></view>
+				<view class="h1">子表查询数据<button class="close" @click="closeSub">×</button></view>
 				<view class="form">
 					<view class="choice">
 						<view class="table">
@@ -183,8 +183,8 @@
 					qs: [],
 					sql: "",
 					f: ")",
-					value: "2023-03-15",
-					value1: "2023-03-16"
+					value: "2023-03-27",
+					value1: "2023-03-28"
 				}, {
 					condname: "产品编码",
 					f: '&',
@@ -381,6 +381,7 @@
 			},
 			closeSub() {
 				this.zibiao = false
+				this.activeIndex = 1
 			},
 			open() {
 				this.isClose = false

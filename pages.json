@@ -385,7 +385,17 @@
       }
 
     }
-  ],
+      ,{
+            "path" : "pages/Querypage/QueryCenter/QueryCenter",
+            "style" :                                                                                    
+            {
+              "titleNView": false,
+              "navigationBarTitleText": "",
+              "enablePullDownRefresh": false
+            }  
+            
+        }
+    ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
