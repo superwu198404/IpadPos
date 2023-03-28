@@ -197,6 +197,7 @@
 	import _card_sale from "@/api/business/card_sale.js";
 	import _card_coupon from "@/utils/sale/card_coupon.js";
 	import _business from "@/utils/business_dictionary.js";
+	import common from '@/api/common.js';
 
 	var that;
 	export default {
@@ -258,18 +259,20 @@
 		},
 		methods: {
 			select_type(data) {
-				if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
-					util.simpleModal("提示", "是否确认切换业务？", res => {
-						if (res) {
-							that.ResetBill(data);
-						}
-					})
-				} else {
-					that.ResetBill(data);
+				if (common.CheckSign()) {
+					if (that.CardInfo && Object.keys(that.CardInfo).length > 0) {
+						util.simpleModal("提示", "是否确认切换业务？", res => {
+							if (res) {
+								that.ResetBill(data);
+							}
+						})
+					} else {
+						that.ResetBill(data);
+					}
 				}
 			},
-			ResetBill(e = 'Delay', code=true) {
-				if (code) {//成功才清除
+			ResetBill(e = 'Delay', code = true) {
+				if (code) { //成功才清除
 					that.CardNumber = "";
 					that.CurType = e;
 					that.CardInfo = {};
@@ -281,14 +284,16 @@
 				that.OrderBill = _card_coupon.getBill(that.Store);
 			},
 			swiping_card() {
-				member.GetTLCard(getApp().globalData.store, function(res) {
-					if (!res.code) {
-						util.simpleMsg(res.msg, !res.code);
-						return;
-					}
-					that.CardNumber = res.data;
-					that.GetCardInfo();
-				})
+				if (common.CheckSign()) {
+					member.GetTLCard(getApp().globalData.store, function(res) {
+						if (!res.code) {
+							util.simpleMsg(res.msg, !res.code);
+							return;
+						}
+						that.CardNumber = res.data;
+						that.GetCardInfo();
+					})
+				}
 			},
 			//获取卡信息
 			GetCardInfo: function() {

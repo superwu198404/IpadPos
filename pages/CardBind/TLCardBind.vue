@@ -8,7 +8,7 @@
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;"></image>|
-							<input placeholder="输入手机号或账户" v-model="form.member_code"/>
+							<input placeholder="输入手机号或账户" v-model="form.member_code" />
 						</view>
 						<view class="comfirm-btn" @click="search_member">确定</view>
 					</view>
@@ -50,9 +50,10 @@
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
-							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;" @click="swipe_card"></image>|
+							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"
+								@click="swipe_card"></image>|
 							<!-- <input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true"/> -->
-							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number"/>
+							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" />
 						</view>
 						<view class="comfirm-btn" @click="search_card">确定</view>
 					</view>
@@ -94,22 +95,22 @@
 	import util from '../../utils/util';
 	var $;
 	export default {
-		mixins:[card_bind],
-		data(){
+		mixins: [card_bind],
+		data() {
 			return {
-				form:{
-					member_code: "18572113861",
-					card_number: "8661087110000744418=99125008620000",
+				form: {
+					member_code: "",//18572113861
+					card_number: "",//8661087110000744418=99125008620000
 					card_track: ""
 				},
-				source:{
+				source: {
 					member_infos: {
 						hyId: "",
 						Name: "",
 						Phone: "",
 						RegisterDay: ""
 					},
-					card_infos:{
+					card_infos: {
 						amount: 0,
 						cardType: '',
 						cardNum: '',
@@ -118,48 +119,51 @@
 				}
 			}
 		},
-		computed:{
-			date_convert(){
-				return $(function(date){
+		computed: {
+			date_convert() {
+				return $(function(date) {
 					return util.convertShortDate(date);
 				})
 			}
 		},
-		methods:{
-			async search_member(){
-				console.log("[SearchMember]会员信息查询...");
-				let data = await this.search_member_infos(this.form.member_code);
-				console.log("[SearchMember]会员信息:",data);
-				if(data){
-					this.source.member_infos = data;
-					util.simpleMsg('会员信息查询成功!',false);
-				}
-				else{
-					util.simpleMsg('未查询到相关信息!',true);
-				}
-			},
-			async search_card(){
-				console.log("[SearchMember]卡信息查询...");
-				let data = await this.search_card_infos(this.form.card_number.slice(3,19));
-				this.form.card_track = this.form.card_number;
-				console.log("[SearchMember]卡信息:",data);
-				if(data){
-					this.source.card_infos = data;
-					util.simpleMsg('卡信息查询成功!',false);
-				}
-				else{
-					util.simpleMsg('未查询到相关信息!',true);
+		methods: {
+			async search_member() {
+
+				if (common.CheckSign()) {
+					console.log("[SearchMember]会员信息查询...");
+					let data = await this.search_member_infos(this.form.member_code);
+					console.log("[SearchMember]会员信息:", data);
+					if (data) {
+						this.source.member_infos = data;
+						util.simpleMsg('会员信息查询成功!', false);
+					} else {
+						util.simpleMsg('未查询到相关信息!', true);
+					}
 				}
 			},
-			async comfirm_card_bind(){
-				if(!this.source.card_infos.cardNum || !this.form.card_track) 
+			async search_card() {
+				if (common.CheckSign()) {
+					console.log("[SearchMember]卡信息查询...");
+					let data = await this.search_card_infos(this.form.card_number.slice(3, 19));
+					this.form.card_track = this.form.card_number;
+					console.log("[SearchMember]卡信息:", data);
+					if (data) {
+						this.source.card_infos = data;
+						util.simpleMsg('卡信息查询成功!', false);
+					} else {
+						util.simpleMsg('未查询到相关信息!', true);
+					}
+				}
+			},
+			async comfirm_card_bind() {
+				if (!this.source.card_infos.cardNum || !this.form.card_track)
 					util.simpleMsg("请刷卡后再进行此操作!");
-				if(!this.source.member_infos.hyId)
+				if (!this.source.member_infos.hyId)
 					util.simpleMsg("请录入会员信息后再进行此操作!");
 				let result = await common.SimpleAPIRequest({
-					class:"CardSaleCLASS",
-					method:"MemberBindCard",
-					data:{
+					class: "CardSaleCLASS",
+					method: "MemberBindCard",
+					data: {
 						store_num: this.KHID,
 						store_name: this.NAME,
 						employ_num: this.RYID,
@@ -169,37 +173,37 @@
 						card_track: this.form.card_track
 					}
 				})
-				console.log("[ComfirmCardBind]卡绑定结果:",result);
-				if(result.code){
-					util.simpleMsg(result.msg,false);
-					
-				}
-				else{
-					util.simpleMsg(result.msg,true);
-				}
-			},
-			async swipe_card(){
-				let data = await this.get_swipe_card();
-				console.log("[SwipeCard]获取的卡信息:",data);
-				if(data.code){
-					this.form.card_track = data.data.track_info;
-					this.form.card_number = data.data.card_no;
-					util.simpleMsg('卡信息查询成功!',false);
-				}
-				else{
-					util.simpleMsg('未查询到相关信息!',true);
+				console.log("[ComfirmCardBind]卡绑定结果:", result);
+				if (result.code) {
+					util.simpleMsg(result.msg, false);
+
+				} else {
+					util.simpleMsg(result.msg, true);
 				}
 			},
-			reset_form(){
+			async swipe_card() {
+				if (common.CheckSign()) {
+					let data = await this.get_swipe_card();
+					console.log("[SwipeCard]获取的卡信息:", data);
+					if (data.code) {
+						this.form.card_track = data.data.track_info;
+						this.form.card_number = data.data.card_no;
+						util.simpleMsg('卡信息查询成功!', false);
+					} else {
+						util.simpleMsg('未查询到相关信息!', true);
+					}
+				}
+			},
+			reset_form() {
 				this.form = this.$options.data().form;
 				this.source = this.$options.data().source;
 			}
 		},
 		created() {
 			$ = util.callContainer(this);
-			uni.$on("ReturnSale",$(function(){
-				util.simpleModal('提示','确定清除当前信息吗?',$(function(is_confirm){
-					if(is_confirm)
+			uni.$on("ReturnSale", $(function() {
+				util.simpleModal('提示', '确定清除当前信息吗?', $(function(is_confirm) {
+					if (is_confirm)
 						this.reset_form();
 				}))
 			}))
@@ -211,126 +215,148 @@
 </script>
 
 <style>
-	.bind-card-container{
+	.bind-card-container {
 		padding: 10px 15px;
 		height: 100%;
 		box-sizing: border-box;
 	}
-	.bind-card-title{
-		color:#066e49;
+
+	.bind-card-title {
+		color: #066e49;
 		padding: 6px 0px;
 	}
-	.bind-card-form{
-	    display: inline-flex;
-	    flex-direction: column;
-	    width: 50%;
+
+	.bind-card-form {
+		display: inline-flex;
+		flex-direction: column;
+		width: 50%;
 		gap: 15px;
 	}
-	.bind-card-infos{
+
+	.bind-card-infos {
 		display: flex;
 		justify-content: space-between;
 	}
-	.info-content{
+
+	.info-content {
 		height: 483rpx;
 		width: 856rpx;
 		background-size: contain;
 		background-repeat: no-repeat;
 	}
-	.info-between{
+
+	.info-between {
 		justify-content: space-between;
 	}
-	.menber-infos{
+
+	.menber-infos {
 		border: 2px solid #c4e6c8;
-		box-shadow:0px 0px 10px -1px #c4e6c8;
+		box-shadow: 0px 0px 10px -1px #c4e6c8;
 		background-image: url('@/images/jsd-hybj.png');
-	    justify-content: space-between;
+		justify-content: space-between;
 		border-radius: 10px;
-	    display: flex;
-	    flex-direction: column;
+		display: flex;
+		flex-direction: column;
 	}
-	.menber-info,.store-infos{
+
+	.menber-info,
+	.store-infos {
 		padding: 0px 15px;
 	}
+
 	.menber-info {
-	    display: flex;
-	    flex-direction: column;
-	    gap: 25px;
-	    box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 25px;
+		box-sizing: border-box;
 		padding-top: 15px;
 		padding-bottom: 15px;
 		flex: 1;
 	}
-	.menber-info-head{
+
+	.menber-info-head {
 		display: flex;
 		gap: 10px;
 	}
+
 	.member-id {
-	    font-weight: 600;
-	    font-size: 1.4em;
-	    display: flex;
-	    align-items: center;
-	    gap: 5px;
+		font-weight: 600;
+		font-size: 1.4em;
+		display: flex;
+		align-items: center;
+		gap: 5px;
 	}
+
 	.member-id::before {
-	    content: "V";
-	    display: inline-flex;
-	    font-size: 0.6em !important;
-	    background-color: #40b04d;
-	    border-radius: 50%;
-	    width: 1rem;
-	    height: 1rem;
-	    color: white;
-	    justify-content: center;
-	    align-items: center;
-	    padding: 2px;
-	    font-family: fangsong;
+		content: "V";
+		display: inline-flex;
+		font-size: 0.6em !important;
+		background-color: #40b04d;
+		border-radius: 50%;
+		width: 1rem;
+		height: 1rem;
+		color: white;
+		justify-content: center;
+		align-items: center;
+		padding: 2px;
+		font-family: fangsong;
 	}
+
 	.member-details {
-	    display: flex;
-	    flex-direction: column;
-	    justify-content: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		gap: 6px;
 	}
+
 	.member-details-infos {
-	    display: flex;
-	    color: #40b04d;
-		gap:10rpx
+		display: flex;
+		color: #40b04d;
+		gap: 10rpx
 	}
+
 	.info-data-row {
-	    display: flex;
-	    gap: 15px;
+		display: flex;
+		gap: 15px;
 		padding: 5rpx 0rpx;
 	}
-	.info-data-row > * {
-	    width: 50%;
-	    text-overflow: ellipsis;
-	    white-space: nowrap;
-	    overflow: hidden;
+
+	.info-data-row>* {
+		width: 50%;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
-	.card-infos{
+
+	.card-infos {
 		background-image: url('@/images/img2/kaqchaxun.png');
 		padding: 20px 20px;
-	    box-sizing: border-box;
-	    position: relative;
+		box-sizing: border-box;
+		position: relative;
 	}
-	.store-infos{
+
+	.store-infos {
 		background-color: #f0f8f0;
 		padding-top: 10rpx;
 		padding-bottom: 10rpx;
 	}
-	.comfirm-btn{
+
+	.comfirm-btn {
 		background-color: #40b04d;
 		color: white;
 		padding: 4px 8px;
 	}
-	.form-item-tips{
+
+	.form-item-tips {
 		color: #006a44;
 	}
-	.form-item-input{
+
+	.form-item-input {
 		display: flex;
-	    border-radius: 5px;
+		border-radius: 5px;
 	}
-	.form-item-input-left{
+
+	.form-item-input-left {
 		display: flex;
 		background-color: #f1f5f5;
 		border-right: 0px;
@@ -340,57 +366,67 @@
 		padding: 2px 2px;
 		gap: 5px;
 	}
+
 	.form-item-block {
-	    display: flex;
-	    flex-direction: column;
-	    gap: 15px;
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
 	}
-	.menber-headshots{
+
+	.menber-headshots {
 		border-radius: 5px;
 		overflow: hidden;
 		display: inline-block;
 	}
+
 	.input-border-radius {
-	    display: inline-flex;
-	    border-radius: 5px;
-	    overflow: hidden;
+		display: inline-flex;
+		border-radius: 5px;
+		overflow: hidden;
 	}
+
 	.gray-text {
 		color: darkgray;
 	}
+
 	.card-info-head {
-	    display: flex;
-	    justify-content: space-between;
-	    font-size: 1.4em;
-	    font-weight: 600;
-	    color: #006a44;
+		display: flex;
+		justify-content: space-between;
+		font-size: 1.4em;
+		font-weight: 600;
+		color: #006a44;
 		height: 2em;
 	}
-	.card-info-head:first-child{
+
+	.card-info-head:first-child {
 		position: relative;
 	}
+
 	.card-info-head:first-child::before {
-	    content: "";
-	    display: block;
-	    border-top: 4px solid #006a44;
-	    width: 2em;
-	    bottom: 0px;
-	    position: absolute;
-	}
-	.card-valid-date {
-	    position: absolute;
-	    bottom: 14px;
-	    color: white;
-	}
-	.card-details {
-	    display: flex;
-	    flex-direction: column;
-	    gap: 10px;
-	    padding: 20px 5px;
-	}
-	.bind-card-footer{
+		content: "";
+		display: block;
+		border-top: 4px solid #006a44;
+		width: 2em;
+		bottom: 0px;
 		position: absolute;
-		bottom:0px;
+	}
+
+	.card-valid-date {
+		position: absolute;
+		bottom: 14px;
+		color: white;
+	}
+
+	.card-details {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 20px 5px;
+	}
+
+	.bind-card-footer {
+		position: absolute;
+		bottom: 0px;
 		left: 0px;
 		height: 80rpx;
 		background: linear-gradient(90deg, #DDFCDF 0%, #FFFFFF 100%);
@@ -400,47 +436,54 @@
 		align-items: center;
 		width: 100%;
 	}
-	.bind-card-footer > .btn{
+
+	.bind-card-footer>.btn {
 		font-size: 24rpx;
 		height: 100%;
 		line-height: 50rpx;
 		padding: 0;
 		width: 340rpx;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
-	.bind-card-footer view{
+
+	.bind-card-footer view {
 		display: flex;
 		align-items: center;
 		font-size: 28rpx;
 		width: 90%;
 	}
-	.bind-card-footer view em{
+
+	.bind-card-footer view em {
 		display: inline-block;
-		margin:0 16rpx 0 40rpx;
+		margin: 0 16rpx 0 40rpx;
 		width: 8rpx;
 		height: 48rpx;
 		background: #42B14B;
 		border-radius: 12rpx;
 	}
-	.bind-card-footer view label{
+
+	.bind-card-footer view label {
 		margin-right: 40rpx;
 		display: flex;
 		align-items: center;
 	}
-	.bind-card-footer view label text{
+
+	.bind-card-footer view label text {
 		font-weight: 700;
 		font-size: 34rpx;
 	}
-	.bind-card-footer button{
-		width:340rpx;
+
+	.bind-card-footer button {
+		width: 340rpx;
 		border-radius: 10rpx 0 10rpx 10rpx;
 		height: 100%;
 		line-height: 80rpx;
-		padding:0;
+		padding: 0;
 		font-size: 32rpx;
 	}
+
 	.title-gap {
 		padding: 0px 5px;
 	}

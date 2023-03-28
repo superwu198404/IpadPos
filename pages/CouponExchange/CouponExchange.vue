@@ -208,7 +208,8 @@
 				// 	}
 				// }, //券信息
 				payed: [], //已支付信息用于组装券兑换
-				add_class: 0
+				add_class: 0,
+				_sale2_count
 			}
 		},
 
@@ -235,7 +236,13 @@
 			uni.$on("ReturnSale", that.ClearSale);
 
 		},
-		watch: {},
+		watch: {
+			SALE002: function(n, o) {
+				console.log("SALE002发生变化(新)：", n);
+				console.log("SALE002发生变化(旧)：", o);
+				that._sale2_count = n.length;
+			},
+		},
 		destroyed() {
 			uni.$off("GetCardNums");
 			uni.$off('GetCouponNums');
@@ -458,7 +465,7 @@
 					tbzdisc = 0,
 					ttpdisc = 0,
 					tlsdisc = 0,
-					tdisc = 0;//用于记录兑换券折扣额
+					tdisc = 0; //用于记录兑换券折扣额
 				that.SALE002.map(r => {
 					tnet += r.NET;
 					tcxdisc += r.CXDISC;
@@ -476,7 +483,7 @@
 				that.SALE001.BILLDISC = _util.newFloat(tcxdisc + tbzdisc + ttpdisc + tlsdisc + tdisc);
 				that.SALE001.TDISC = that.SALE001.BILLDISC;
 				that.SALE001.TLINE = that.SALE002.length; //这个是存商品行
-				console.log("[CalTNET]SALE001",that.SALE001);
+				console.log("[CalTNET]SALE001", that.SALE001);
 			},
 			//使用手工折扣进行计算 新版舍弃全部分的逻辑
 			SKdiscCompute: function() {
@@ -840,11 +847,13 @@
 			},
 			//显示扫码组件
 			showCardFunc: function() {
-				if (!that.CouponInfo || Object.keys(that.CouponInfo).length == 0) {
-					_util.simpleMsg("请录入有效兑换券", "none");
-					return;
+				if (_common.CheckSign()) {
+					if (!that.CouponInfo || Object.keys(that.CouponInfo).length == 0) {
+						_util.simpleMsg("请录入有效兑换券", "none");
+						return;
+					}
+					that.showCardNum = true;
 				}
-				that.showCardNum = true;
 			},
 			//扫码组件回调
 			GetCouponNums: async function(e) {

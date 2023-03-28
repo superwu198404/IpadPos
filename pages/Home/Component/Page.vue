@@ -7,7 +7,10 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @touchstart="menu_scroll_start($event)" @touchmove="menu_scroll_move($event)" @touchend="menu_scroll_end($event)">
+		<view class="menu"
+			style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;"
+			@touchstart="menu_scroll_start($event)" @touchmove="menu_scroll_move($event)"
+			@touchend="menu_scroll_end($event)">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
@@ -87,6 +90,8 @@
 	import util from '@/utils/util.js';
 	import db from '@/utils/db/db_excute.js';
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
+
+	import common from '@/api/common.js';
 	var $;
 	export default {
 		components: {
@@ -132,14 +137,14 @@
 			};
 		},
 		methods: {
-			menu_scroll_start: function(e){
-				console.log("[MenuScrollStart]菜单滚动开始:",e);
+			menu_scroll_start: function(e) {
+				console.log("[MenuScrollStart]菜单滚动开始:", e);
 			},
-			menu_scroll_move: function(e){
-				console.log("[MenuScrollStart]菜单滚动移动:",e);
+			menu_scroll_move: function(e) {
+				console.log("[MenuScrollStart]菜单滚动移动:", e);
 			},
-			menu_scroll_end: function(e){
-				console.log("[MenuScrollStart]菜单滚动结束:",e);
+			menu_scroll_end: function(e) {
+				console.log("[MenuScrollStart]菜单滚动结束:", e);
 			},
 			// 隐藏
 			hideIsShow: function() {
@@ -226,17 +231,19 @@
 			},
 			//普通销售和卡券销售切换
 			SwitchSale: function(e) {
-				if (this._sale2_count > 0) {
-					util.simpleMsg("请先清空商品信息，再进行切换");
-					return;
-				}
-				util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
-					if (res) {
-						uni.redirectTo({
-							url: "/pages/CardCouponMain/Menu"
-						})
+				if (common.CheckSign()) {
+					if (this._sale2_count > 0) {
+						util.simpleMsg("请先清空商品信息，再进行切换");
+						return;
 					}
-				})
+					util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
+						if (res) {
+							uni.redirectTo({
+								url: "/pages/CardCouponMain/Menu"
+							})
+						}
+					})
+				}
 			}
 		},
 		mounted() {
@@ -268,9 +275,10 @@
 </script>
 
 <style>
-	.fanhui{
-		top:90%;
+	.fanhui {
+		top: 90%;
 	}
+
 	.menu {
 		padding: 0px;
 		outline: 0px;

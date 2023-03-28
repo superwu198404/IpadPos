@@ -173,7 +173,7 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNum=true">
+							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
@@ -217,7 +217,7 @@
 		PointUploadNew
 	} from '@/bll/Common/bll.js';
 
-	import _common from '@/api/common.js';
+	import common from '@/api/common.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
@@ -267,7 +267,8 @@
 				FKDA_INFO: [], //支付方式
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
-				add_class: 0
+				add_class: 0,
+				_sale2_count
 			}
 		},
 		created: async function() {
@@ -316,6 +317,7 @@
 				console.log("SALE002发生变化(新)：", n);
 				console.log("SALE002发生变化(旧)：", o);
 				that.discCompute();
+				that._sale2_count = n.length;
 			},
 			CurZKDisc: function(n, o) {
 				console.log("特殊折扣发生变化(新)：", n);
@@ -378,6 +380,12 @@
 					txtStyle = "left:0";
 					list[index].txtStyle = txtStyle;
 					this.SALE002 = list
+				}
+			},
+			
+			showCardNumFunc: function() {
+				if (common.CheckSign()) {
+					that.showCardNum = true;
 				}
 			},
 			//组件卡号返回

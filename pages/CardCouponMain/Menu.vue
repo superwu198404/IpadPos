@@ -17,12 +17,10 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
-			<view class="fanhui" tabindex="-1" @blur="showGJ = false">
+			<view class="fanhui" tabindex="-1">
 					<view class="bills">
 						<label></label>
-						<view @click.stop="operations()" style="display: flex;
-			justify-content: center;
-			align-items: center;">
+						<view @click="SwitchSale('sale')" style="display: flex;justify-content: center;align-items: center;">
 							<image class="xz" src="@/images/zhucaidan.png" mode="widthFix"></image>
 							<text>返回销售</text>
 						</view>
@@ -30,7 +28,7 @@
 			</view>
 		</view>
 		<div class="component-content">
-			<component :is="component_name"></component>
+			<component :is="component_name"  ref="ChildObj"></component>
 		</div>
 	</view>
 </template>
@@ -44,7 +42,9 @@
 	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
 	import CardDelay from '@/pages/CardDelay/CardDelay.vue';
 	import CardBind from '@/pages/CardBind/CardBind.vue';
-	// import CardSale from '@/pages/CardSale/CardSale.vue';
+	
+	import common from '@/api/common.js';
+	
 	//页面组件 👆
 	export default {
 		name: "Menu",
@@ -120,6 +120,22 @@
 			},
 			setting_default_menu(){//设置默认菜单
 				this.source.current_menu_info = this.source.menu_infos[0];
+			},
+			//普通销售和卡券销售切换
+			SwitchSale: function(e) {
+				if (common.CheckSign()) {
+					if (this.$refs.ChildObj._sale2_count == 0) {
+						util.simpleMsg("请先清空卡券信息，再进行切换");
+						return;
+					}
+					util.simpleModal("提示", "是否确认切换到商品销售？", res => {
+						if (res) {
+							uni.redirectTo({
+								url: "/pages//mainSale/MainSale"
+							})
+						}
+					})
+				}
 			}
 		},
 		created() {

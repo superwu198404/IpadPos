@@ -890,6 +890,23 @@ var WebDBExecute = async function(sql, func) {
 	}, apistr);
 	await Req.asyncFuncOne(reqdata, func, func);
 }
+
+//签到状态是否过期判断
+var CheckSign = function() {
+	let store = util.getStorage("store");
+	console.log("签到日期：", store.LOGINDATE);
+	if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
+		util.simpleMsg("签到状态过期，请重新签到", "none");
+		store.OPENFLAG = 0;
+		util.setStorage("store", store);
+		util.sleep(1500);
+		uni.redirectTo({
+			url: "/pages/Center/Center"
+		});
+		return false;
+	}
+	return true;
+}
 export default {
 	InitData,
 	CreateBill,
@@ -921,5 +938,6 @@ export default {
 	TransLiteAsync,
 	SimpleLocalQuery,
 	WebDBQuery,
-	WebDBExecute
+	WebDBExecute,
+	CheckSign
 }
