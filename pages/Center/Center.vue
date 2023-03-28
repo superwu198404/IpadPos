@@ -420,7 +420,7 @@
 				uni.redirectTo({
 					url: "/pages/Querypage/QueryCenter/QueryCenter",
 					complete: res => {
-						console.log(res,`跳转成功`)
+						console.log(res)
 					}
 				});
 			},

@@ -178,7 +178,7 @@
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
 			<!-- 业务消息组件 -->
-			<movable v-show="showYWMsg && (type!='sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData">
+			<movable v-if="showYWMsg && (type!='sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData">
 			</movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
@@ -369,6 +369,7 @@
 						//外卖，外卖预定单，线上
 						return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
 					});
+					console.log("业务消息数据：", that.YW_MsgData);
 					if (that.YW_MsgData.length > 0) {
 						that.showYWMsg = false;
 						// console.log("触发没有：");
@@ -1398,12 +1399,13 @@
 		background: #006B44;
 		color: #fff;
 	}
-	movable{
+
+	movable {
 		position: fixed !important;
-		bottom:5%;
-		right:0;
-		width:90%;
+		bottom: 5%;
+		right: 0;
+		width: 90%;
 		height: 90%;
-		margin:10% 0 0 10%;
+		margin: 10% 0 0 10%;
 	}
 </style>
