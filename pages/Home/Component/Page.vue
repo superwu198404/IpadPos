@@ -7,7 +7,7 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<view class="menu" style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;">
+		<view class="menu" style="overflow-y:auto;overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @touchstart="menu_scroll_start($event)" @touchmove="menu_scroll_move($event)" @touchend="menu_scroll_end($event)">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
@@ -19,9 +19,9 @@
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
-				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
+				<!-- <view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		
@@ -132,6 +132,15 @@
 			};
 		},
 		methods: {
+			menu_scroll_start: function(e){
+				console.log("[MenuScrollStart]菜单滚动开始:",e);
+			},
+			menu_scroll_move: function(e){
+				console.log("[MenuScrollStart]菜单滚动移动:",e);
+			},
+			menu_scroll_end: function(e){
+				console.log("[MenuScrollStart]菜单滚动结束:",e);
+			},
 			// 隐藏
 			hideIsShow: function() {
 				this.showGJ = false;
