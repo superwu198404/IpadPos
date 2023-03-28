@@ -271,6 +271,7 @@
 					return;
 				this.re_computed_sales(this.source.sale001, n);
 				this.craft_discount_computed();
+				console.log("sale2发生变化：", n);
 				this._sale2_count = n.length;
 				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source);
 			},
@@ -295,10 +296,9 @@
 			},
 		},
 		methods: {
-
 			showCardNumFunc: function() {
 				if (common.CheckSign()) {
-					view.no_input = true
+					this.view.no_input = true
 				}
 			},
 			async get_discount_data(id) {
@@ -473,6 +473,7 @@
 				this.factory.reset_generators();
 				this.source = this.$options.data().source;
 				this.source.discount_infos = await this.get_discount_data(); //初始化折扣信息数据
+				this._sale2_count = 0;
 			},
 			get_single_coupon_segment_list() {
 				console.warn("[GetSingleCouponSegmentList]准备开始计算分摊后的折扣:", this.source);

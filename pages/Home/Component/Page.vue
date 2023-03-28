@@ -7,7 +7,8 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<scroll-view scroll-y class="menu" style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
+		<scroll-view scroll-y class="menu"
+			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
@@ -67,15 +68,15 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="fanhui" tabindex="-1">
-				<view class="bills">
-					<label></label>
-					<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
-						<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
-						<text>卡券销售</text>
-					</view>
+		<view class="fanhui" tabindex="-1">
+			<view class="bills">
+				<label></label>
+				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
+					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
+					<text>卡券销售</text>
 				</view>
-		</view> -->
+			</view>
+		</view>
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>
@@ -133,8 +134,8 @@
 			};
 		},
 		methods: {
-			menu_scroll_move: function(e){
-				uni.$emit("menu-scroll-move",e);
+			menu_scroll_move: function(e) {
+				uni.$emit("menu-scroll-move", e);
 			},
 			// 隐藏
 			hideIsShow: function() {
