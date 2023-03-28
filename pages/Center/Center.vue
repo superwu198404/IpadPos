@@ -204,7 +204,7 @@
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
 			},
 			ToTakeout: async function() {
-				let store = util.getStorage("store");
+				let store = util.getStorage("store"), take_away = null;
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
 				if (store.OPENFLAG != 1) {
@@ -213,11 +213,19 @@
 				}
 				util.setStorage('default-visible-template','sale_takeaway');
 				uni.navigateTo({
-					url: "/pages/mainSale/MainSale",
+					url: "/pages/TakeAway/TakeAway",
 					success: util.callBind(this, function(res) {
 						uni.$emit("page-to-takeout");
 						console.log("[ToTakeout]初始化外卖单...");
-					})
+					}),
+					events:{
+						get_take_away(data){
+							console.warn("[GetTakeAway]正在获取到外卖单数据...");
+							take_away = data;
+							take_away.exit_btn = true;
+							console.warn("[GetTakeAway]已获取到外卖单数据...");
+						}
+					}
 				})
 			},
 			//跳转到销售页面

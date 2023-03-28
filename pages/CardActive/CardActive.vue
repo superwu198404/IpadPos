@@ -10,7 +10,8 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'>
+			</Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -173,7 +174,7 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNum=true">
+							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
@@ -207,7 +208,6 @@
 	import Head from '@/pages/Home/Component/Head.vue';
 
 	import _card_coupon from "@/utils/sale/card_coupon.js";
-	import util from "@/utils/util.js";
 	import _util from "@/utils/util.js";
 	import _card_sale from "@/api/business/card_sale.js";
 	import _saleClass from "@/utils/sale/saleClass.js";
@@ -217,7 +217,7 @@
 		PointUploadNew
 	} from '@/bll/Common/bll.js';
 
-	import _common from '@/api/common.js';
+	import common from '@/api/common.js';
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import {
@@ -267,14 +267,15 @@
 				FKDA_INFO: [], //支付方式
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
-				add_class: 0
+				add_class: 0,
+				_sale2_count: 0
 			}
 		},
 		created: async function() {
 			that = this;
 			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
 			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
-			
+
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
 			// KQSale.InitData("礼品卡激活初始化", res => {
@@ -316,6 +317,7 @@
 				console.log("SALE002发生变化(新)：", n);
 				console.log("SALE002发生变化(旧)：", o);
 				that.discCompute();
+				that._sale2_count = n.length;
 			},
 			CurZKDisc: function(n, o) {
 				console.log("特殊折扣发生变化(新)：", n);
@@ -378,6 +380,12 @@
 					txtStyle = "left:0";
 					list[index].txtStyle = txtStyle;
 					this.SALE002 = list
+				}
+			},
+
+			showCardNumFunc: function() {
+				if (common.CheckSign()) {
+					that.showCardNum = true;
 				}
 			},
 			//组件卡号返回

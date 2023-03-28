@@ -10,7 +10,8 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'></Head>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'>
+			</Head>
 			<!-- 内容栏 -->
 			<view class="steps">
 				<view class="listep" :class="{'curr':add_class==0}">
@@ -194,7 +195,7 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNum=true">
+							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
@@ -247,6 +248,8 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
+	import card_sale from '@/api/business/card_sale.js';
+	import common from '@/api/common.js';
 
 	var that, KQSale;
 	export default {
@@ -297,13 +300,14 @@
 				curFailSale: {},
 				add_class: 0,
 				CKRInfo: {}, //持卡人信息
+				_sale2_count: 0
 			}
 		},
 		created: async function() {
 			that = this;
 			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
 			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
-			
+
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "VIPCard_Active");
 			KQSale.InitData("卡销售初始化", res => {
@@ -347,6 +351,7 @@
 				console.log("SALE002发生变化(新)：", n);
 				console.log("SALE002发生变化(旧)：", o);
 				that.discCompute();
+				that._sale2_count = n.length;
 			},
 			CurZKDisc: function(n, o) {
 				console.log("特殊折扣发生变化(新)：", n);
@@ -411,9 +416,12 @@
 					// console.log(list[index].txtStyle);
 					this.SALE002 = list
 				}
-
 			},
-
+			showCardNumFunc: function() {
+				if (common.CheckSign()) {
+					that.showCardNum = true;
+				}
+			},
 			//组件卡号返回
 			GetCardNums: function(e) {
 				console.log("卡号返回事件1：", e);
