@@ -10,10 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
-			<!-- <view class="arrow-box" :style="arrow_style">
+			<view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view> -->
+			</view>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -137,8 +137,7 @@
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
 				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
-				</TakeAway>
+				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway"></TakeAway>
 				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
 				</TakeYD>
 				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order">
@@ -773,7 +772,8 @@
 					top: "0px",
 					transition: "all .5s",
 					display: "none"
-				}
+				},
+				page_query: null
 			}
 		},
 		components: {
@@ -960,7 +960,9 @@
 			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
 				uni.$on('menu-select-change',(function(data){
-					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
+					this.page_query = uni.createSelectorQuery(data.vue);
+					this.page_query.select(".bills.acts").boundingClientRect((function(info){
+						if(!info) return;
 						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
 							this.arrow_style.left = info.left + info.width - 5 + "px";
@@ -1002,6 +1004,28 @@
 						menus[menu].close = true);
 					this.allow_page_switch = false;
 				});
+			}));
+			uni.$off("menu-scroll-move");
+			uni.$on("menu-scroll-move", util.callBind(this, function(start_data) {
+				let container_top = null,container_bottom = null, visible = this.arrow_style.display != 'none';
+				this.page_query.select(".menu").boundingClientRect((function(info){
+					container_top = info.top;
+					container_bottom = info.top + info.height;
+				}).bind(this)).exec();
+				this.page_query.select(".bills.acts").boundingClientRect((function(info){
+					let couputed_top = (info.top + info.height / 2) - 7.1;
+					if(info && container_top <= couputed_top && container_bottom >= couputed_top){
+						this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
+						if(this.arrow_style.display == 'none' && visible)
+							this.arrow_style.display = 'block'
+					}
+					else{
+						this.arrow_style.top = container_top + "px";
+						if(this.arrow_style.display == 'block'){
+							this.arrow_style.display = 'none';
+						}
+					}
+				}).bind(this)).exec();
 			}));
 			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
