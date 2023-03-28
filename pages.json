@@ -81,7 +81,6 @@
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": false,
         "mp-alipay": {
           "allowsBounceVertical": "NO"
         }
