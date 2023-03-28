@@ -29,7 +29,7 @@
 					<label class="buyer shexiao" @click="ShowDKF()" v-else>
 						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
 						<text>赊销中：{{DKFNAME}}</text>
-					</label>
+					</label><strong></strong>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
 						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
 						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
@@ -1385,5 +1385,13 @@
 	.checkout .shexiao {
 		background: #006B44;
 		color: #fff;
+	}
+	movable{
+		position: fixed !important;
+		bottom:5%;
+		right:0;
+		width:90%;
+		height: 90%;
+		margin:10% 0 0 10%;
 	}
 </style>

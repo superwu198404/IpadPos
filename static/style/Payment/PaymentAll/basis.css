@@ -274,6 +274,7 @@ page {
 	background-color: #fff;
 	border-left: 1rpx solid #eee;
 	padding-top: 44rpx;
+	height: 62rpx;
 }
 
 .message {

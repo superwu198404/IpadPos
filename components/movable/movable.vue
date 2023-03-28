@@ -224,7 +224,7 @@
 
 <style>
 	movable-area {
-		position: fixed;
+		position: fixed !important;
 		top: 10%;
 		left: 10%;
 		right: 0;
@@ -247,7 +247,7 @@
 	.ordermes {
 		position: fixed;
 		bottom: 20%;
-		right: 0;
+		right: -2%;
 		width: 110rpx;
 		height: 110rpx;
 		border-radius: 50%;
