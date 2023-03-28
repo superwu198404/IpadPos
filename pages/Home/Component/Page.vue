@@ -71,15 +71,17 @@
 				</view>
 			</view>
 		</view>
-		<view class="fanhui">
-			<view class="bills">
-				<label></label>
-				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
-					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
-					<text>卡券销售</text>
+		<!-- <view class="fanhui" tabindex="-1">
+				<view class="bills">
+					<label></label>
+					<view @click="SwitchSale('kqsale')" style="display: flex;
+		justify-content: center;
+		align-items: center;">
+						<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
+						<text>卡券销售</text>
+					</view>
 				</view>
-			</view>
-		</view>
+		</view> -->
 		<!-- 重打小票 -->
 		<cdxp v-if="showcdxp" @ClosePopup="ClosePopup"></cdxp>
 	</view>

@@ -943,9 +943,9 @@
 								that.getCharacteristics(deviceId, deviceName);
 							}
 						} else {
-							uni.showToast({
-								title: "连接成功" + deviceName
-							});
+							// uni.showToast({
+							// 	title: "连接成功" + deviceName
+							// });
 							//写进缓存
 							util.setStorage('BLE_deviceId', deviceId);
 							util.setStorage('BLE_deviceName', deviceName);
