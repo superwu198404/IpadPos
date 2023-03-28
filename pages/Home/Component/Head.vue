@@ -852,11 +852,17 @@
 				uni.createBLEConnection({
 					deviceId: deviceId,
 					success: function(res) {
-						//console.log("Connection success:", res);
 						app.globalData.BLEInformation.deviceId = deviceId;
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
+						
+						if(app.globalData.BLEInformation.firstconnect < 1 ){
+							uni.showToast({
+								title: "连接成功" + deviceName
+							});
+							app.globalData.BLEInformation.firstconnect = 1;
+						}
 					},
 					fail: function(e) {
 						uni.showModal({
@@ -963,6 +969,7 @@
 
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
+							app.globalData.BLEInformation.firstconnect = 1;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
 							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
