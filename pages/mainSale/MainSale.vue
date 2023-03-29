@@ -993,23 +993,6 @@
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
-			uni.$off("page-to-takeout");
-			uni.$on("page-to-takeout", util.callBind(this, function() {
-				this.mainSale.currentOperation.ynCancel = false;
-				this.mainSale.currentOperation.DKF = false;
-				this.mainSale.ComponentsManage.DKF = false;
-				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
-				console.log("[ExternalOperation]切换到外卖单完成...");
-				uni.$emit("movable-visible",false);
-				
-				uni.$emit("external-operation", function() {
-					console.warn("[ExternalOperation]开始隐藏...");
-					let menus = this.menu_info;
-					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
-						menus[menu].close = true);
-					this.allow_page_switch = false;
-				});
-			}));
 			uni.$off("menu-scroll-move");
 			uni.$on("menu-scroll-move", util.callBind(this, function(start_data) {
 				let container_top = null,container_bottom = null, visible = this.arrow_style.display != 'none';

@@ -221,11 +221,20 @@
 			},
 			async get_types(){
 				return await bussiness.get_types();
+			},
+			monitor(){
+				uni.$on('ReturnSale',$(function(){
+					this.form = this.$options.data().form;
+				}))
 			}
 		},
 		async created() {
 			$ = util.callContainer(this);
 			this.source.types = await this.get_types();
+			this.monitor();
+		},
+		destroyed() {
+			uni.$off('ReturnSale');
 		}
 	}
 </script>

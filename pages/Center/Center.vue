@@ -211,7 +211,6 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				util.setStorage('default-visible-template','sale_takeaway');
 				uni.navigateTo({
 					url: "/pages/TakeAway/TakeAway",
 					success: util.callBind(this, function(res) {
