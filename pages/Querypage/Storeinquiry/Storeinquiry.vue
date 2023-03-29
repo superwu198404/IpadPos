@@ -7,12 +7,12 @@
 <template>
 	<view class="content">
 
-		<query style="position: fixed;width: 14.5%;height: 100%;z-index: 10"></query>
+		<!-- <query style="position: fixed;width: 14.5%;height: 100%;z-index: 10"></query> -->
 
 		<view class="right" style="position: relative;">
 			<!-- :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType" -->
-			<Head style="position: fixed;height: 45px;width: 85.5%;right:0;background-color: #fff;z-index: 10;"></Head>
+			<!-- <Head style="position: fixed;height: 45px;width: 85.5%;right:0;background-color: #fff;z-index: 10;"></Head> -->
 			<view class="listof" style="position: absolute;z-index: 0;">
 
 				<view class="prolist">
@@ -48,7 +48,8 @@
 											<image src="@/images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
 										</label>
 										<view class="summary">{{_item.name}}</view>
-										<view class="examine" @click="goCommonQuery(_item)"><!-- '1009','裱花请货商品查询' -->
+										<view class="examine" @click="goCommonQuery(_item)">
+											<!-- '1009','裱花请货商品查询' -->
 											<text>点击查看</text>
 											<image src="@/images/img2/dianji-jinru.png"></image>
 										</view>

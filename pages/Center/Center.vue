@@ -214,7 +214,7 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				util.setStorage('default-visible-template','sale_takeaway');
+				util.setStorage('default-visible-template', 'sale_takeaway');
 				uni.navigateTo({
 					url: "/pages/TakeAway/TakeAway",
 					success: util.callBind(this, function(res) {
@@ -421,7 +421,7 @@
 				// 	return;
 				// }
 				uni.redirectTo({
-					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
+					url: "/pages/Querypage/QueryCenter/QueryCenter",
 					complete: res => {
 						console.log("跳转结果", res);
 					}
