@@ -30,7 +30,7 @@
 		</view>
 
 		<view class="right">
-		<Head style="position: fixed;height: 45px;width: 85.5%;right:0;top:0;background-color: #fff;z-index: 99;"></Head>
+		<Head style="position: fixed;height: 45px;width: 85.5%;right:0;top:0;background-color: #fff;z-index: 99;" :_ynMsg='false'></Head>
 		<view class="component-content" style="margin-top: 87px;">
 			<component :is="component_name"></component>
 		</view>

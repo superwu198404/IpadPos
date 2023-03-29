@@ -177,8 +177,8 @@
 			</view>
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
-			<!-- 业务消息组件 -->
-			<movable v-if="showYWMsg && (type!='sale_cake_reserve'&&type!='kq_sale')" :_msgDatas="YW_MsgData">
+			<!-- 业务消息组件 &&type!='kq_sale'-->
+			<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData">
 			</movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
@@ -205,6 +205,10 @@
 			custom: Boolean,
 			_showSale: Boolean,
 			_ynDKF: Boolean,
+			_ynMsg: {
+				type: Boolean,
+				default: true
+			},
 			type: {
 				type: String,
 				default: ""
@@ -506,7 +510,7 @@
 						clearInterval(getApp().globalData.Int); //取消定时传输
 						getApp().globalData.Int = null;
 						uni.redirectTo({
-							url: "../Center/Center"
+							url: "/pages/Center/Center"
 						})
 					}
 				})
@@ -856,8 +860,8 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
-						
-						if(app.globalData.BLEInformation.firstconnect < 1 ){
+
+						if (app.globalData.BLEInformation.firstconnect < 1) {
 							uni.showToast({
 								title: "连接成功" + deviceName
 							});
