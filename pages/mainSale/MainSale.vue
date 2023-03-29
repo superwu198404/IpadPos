@@ -103,9 +103,9 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="key-board-search" @click="mainSale.keyBoardSearch">
+							<!-- <view class="key-board-search" @click="mainSale.keyBoardSearch">
 								键盘
-							</view>
+							</view> -->
 							<!-- <view class="a-z" @click="SignIn()">
 								<span class="mini-text">签到</span>
 							</view>
