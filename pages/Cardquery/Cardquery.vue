@@ -24,11 +24,14 @@
 						<view class="labnum">
 							<text>卡/券类型：</text>
 							<view class="chaxun">
-								<view class="chanxz">
+								<view class="chanxz" :style="{ height: heightNum}">
 									<label v-for="type_info in source.types"
 										:class="source.current_type_info == type_info ? 'curr' : ''"
-										@click="select_type(type_info)">{{ type_info.text }} <em>✓</em></label>
-									<label class="quanbu" v-if="show_types_limit">全部</label>
+										@click="select_type(type_info)">{{ type_info.text }} <em>✓</em></label>						
+									<label class="quanbu" v-if="show_types_limit">
+										<span v-if="quanbu" @click="zkqb">全部<image src="@/images/img2/zhankaiiii.png"></image></span>
+										<span v-if="shouqi" @click="sqlb">收起<image src="@/images/img2/zhankaiiii.png"></image></span>
+									</label>
 								</view>
 							</view>
 						</view>
@@ -201,10 +204,24 @@
 					current_type_info: null,
 					types: [],
 				},
-				_sale2_count: 0
+				_sale2_count: 0,
+				heightNum:"74rpx",
+				quanbu:true,
+				shouqi:false
 			}
 		},
 		methods: {
+			zkqb(){
+				
+				this.heightNum="auto"
+				this.shouqi=true
+				this.quanbu=false
+			},
+			sqlb(){				
+				this.heightNum="74rpx"
+				this.quanbu=true
+				this.shouqi=false			
+			},
 			select_type(data) {
 				if (common.CheckSign()) {
 					this.source.current_type_info = data;
@@ -382,34 +399,46 @@
 
 	.labnum text {
 		line-height: 90rpx;
-		color: #b0b0b0;
+		color: #333;
 	}
 
 	.chanxz {
 		width: 85%;
 		padding: 0 15% 0 0;
 		position: relative;
+		overflow: hidden;
 	}
 
 	.chanxz label {
 		height: 70rpx;
-		width: 18%;
+		width: 17.5%;
 		font-size: 26rpx;
-		margin: 0 1% !important;
+		margin: 0 1% 2% !important;
 	}
 
 	.chanxz .quanbu {
-		width: 90rpx;
+		width: 94rpx;
 		position: absolute;
 		top: 0rpx;
 		right: 3%;
 		font-size: 18rpx;
 		color: #42B14B;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
-
+	.chanxz .quanbu span{
+		display: block;
+		width:100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	.chanxz .quanbu image {
-		width: 22rpx;
-		height: 22rpx;
+		width: 14rpx;
+		height: 14rpx;
+		margin-left: 6rpx;
 	}
 
 	.label picker {
