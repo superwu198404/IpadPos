@@ -10,10 +10,10 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
 			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length"></Page>
-			<!-- <view class="arrow-box" :style="arrow_style">
+			<view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view> -->
+			</view>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -1012,7 +1012,9 @@
 			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
 				uni.$on('menu-select-change',(function(data){
-					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
+					this.page_query = uni.createSelectorQuery(data.vue);
+					this.page_query.select(".bills.acts").boundingClientRect((function(info){
+						if(!info) return;
 						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
 							this.arrow_style.left = info.left + info.width - 5 + "px";
@@ -1023,6 +1025,32 @@
 						}
 					}).bind(this)).exec();
 				}).bind(this));
+			},
+			move_monitor:function(){
+				uni.$off("menu-scroll-move");
+				uni.$on("menu-scroll-move", util.callBind(this, function(start_data) {
+					let container_top = null,container_bottom = null, visible = this.arrow_style.display != 'none';
+					this.page_query.select(".menu").boundingClientRect((function(info){
+						if(!info) return;
+						container_top = info.top;
+						container_bottom = info.top + info.height;
+					}).bind(this)).exec();
+					this.page_query.select(".bills.acts").boundingClientRect((function(info){
+						if(!info) return;
+						let couputed_top = (info.top + info.height / 2) - 7.1;
+						if(info && container_top <= couputed_top && container_bottom >= couputed_top){
+							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
+							if(this.arrow_style.display == 'none' && visible)
+								this.arrow_style.display = 'block'
+						}
+						else{
+							this.arrow_style.top = container_top + "px";
+							if(this.arrow_style.display == 'block'){
+								this.arrow_style.display = 'none';
+							}
+						}
+					}).bind(this)).exec();
+				}));
 			}
 		},
 		created() {
@@ -1048,6 +1076,7 @@
 			if (sys && sys.DGIMGURL) {
 				this.P_URL = sys.DGIMGURL;
 			}
+			this.move_monitor();
 		}
 	}
 </script>
