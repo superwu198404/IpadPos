@@ -169,8 +169,8 @@
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button v-if="isLink[index]==0">连接</button><button class="b_has"
-								v-if="isLink[index]==1">已连接</button>
+							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
+								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -252,7 +252,8 @@
 				intervalId: null,
 				showYWMsg: false,
 				ynDKF: true,
-				YN_SX: false //是否赊销
+				YN_SX: false, //是否赊销
+				deviceId: getApp().globalData.BLEInformation.deviceId,
 			};
 		},
 		computed: {
@@ -629,6 +630,7 @@
 					if (res.connected == false) {
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
+						that.deviceId = "";
 						try {
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
@@ -640,6 +642,7 @@
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
 						that.YN_PRINT_CON = "Y";
+						that.deviceId = res.deviceId;
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -976,6 +979,7 @@
 							app.globalData.BLEInformation.firstconnect = 1;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
+							that.deviceId = deviceId;
 							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
 								"||" + app.globalData.YN_PRINT_CON)
 
