@@ -78,7 +78,7 @@
 											<view class="namewm">
 												<image src="@/images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
 											</view>
-											<label class="pric">{{(totalSale.pureCurMouth).replace('元','')}}</label>
+											<label class="pric">¥{{(totalSale.pureCurMouth).replace('元','')}}</label>
 											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 										</view>
 									</view>
