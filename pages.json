@@ -297,6 +297,14 @@
         "enablePullDownRefresh": false
       }
     },
+	{
+	  "path": "pages/Querypage/QueryCenter/QueryCenter",
+	  "style": {
+	    "titleNView": false,
+	    "navigationBarTitleText": "",
+	    "enablePullDownRefresh": false
+	  }
+	},
     {
       "path": "pages/Querypage/Statement/Statement",
       "style": {

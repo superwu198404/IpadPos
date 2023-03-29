@@ -21,6 +21,16 @@ var GetRJData = async function(khid, date = _date.getYMD()) {
 	});
 	return info;
 }
+
+/**
+ * 获取用户菜单数据
+ */
+var GetUserMenu = function(data, func) {
+	let apistr = "MobilePos_API.Models.StoreQueryClass.GetUserMenu";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
-	GetRJData
+	GetRJData,
+	GetUserMenu
 }

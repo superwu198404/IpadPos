@@ -55,7 +55,7 @@
 									<view class="touch-list list-touch">
 										<image class="bgs" style="position: absolute;top: 0px;" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
+											<label><em></em>{{ default_view(form.infos.type_name,'暂无') }}</label>											
 										</view>
 										<view class="denominat" v-if="form.infos.show_balance">
 											<label>￥<text>{{ default_view(form.infos.balance, 0) }}</text></label>
@@ -63,7 +63,7 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="card-num">											
-													<label>券号：{{ default_view(form.infos.card_id) }}</label>
+													<label>券号：{{ default_view(form.infos.card_id,'暂无') }}</label>
 													<view><em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}</view>
 												</view>
 											</view>
@@ -87,7 +87,7 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
+									<label>卡号：<text>{{ default_view(form.infos.card_id,'暂无') }}</text></label>
 								</view>
 								<button v-if="form.infos.status" class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
 							</view>
@@ -120,7 +120,7 @@
 									<text>操作员：</text><text>{{ default_view(form.infos.operator) }}</text>
 								</label>
 								<label v-if="show_not_more_infos">
-									暂无
+									暂无更多信息...
 								</label>
 							</view>
 						</view>
@@ -148,7 +148,7 @@
 		},
 		computed:{
 			default_view(){
-				return $(function(v, def_val = '暂无'){
+				return $(function(v, def_val = '暂无更多信息...'){
 					if(v)
 						if(v == 'Y'){
 							return '是';

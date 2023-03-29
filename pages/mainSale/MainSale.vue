@@ -103,7 +103,8 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="key-board-search" @click="mainSale.keyBoardSearch">
+							<!-- <view class="key-board-search" @click="mainSale.keyBoardSearch"> -->
+							<view class="key-board-search">
 								键盘
 							</view>
 							<!-- <view class="a-z" @click="SignIn()">

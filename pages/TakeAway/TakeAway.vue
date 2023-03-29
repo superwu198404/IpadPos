@@ -15,7 +15,7 @@
 			<!-- <menu_head></menu_head> -->
 				<view class="listof">
 					<view class="prolist" style="display: flex;flex-direction: column;">
-						<view class="hh">
+						<view :class="exit_btn ? 'hh add-top' : 'hh'">
 							<view class="hotcakes">
 								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
