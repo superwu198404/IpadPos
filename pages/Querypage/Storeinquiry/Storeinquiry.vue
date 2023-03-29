@@ -7,12 +7,12 @@
 <template>
 	<view class="content">
 
-		<query style="position: fixed;width: 14.5%;height: 100%;z-index: 10"></query>
+		<!-- <query style="position: fixed;width: 14.5%;height: 100%;z-index: 10"></query> -->
 
 		<view class="right" style="position: relative;">
 			<!-- :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType" -->
-			<Head style="position: fixed;height: 45px;width: 85.5%;right:0;background-color: #fff;z-index: 10;"></Head>
+			<!-- <Head style="position: fixed;height: 45px;width: 85.5%;right:0;background-color: #fff;z-index: 10;"></Head> -->
 			<view class="listof" style="position: absolute;z-index: 0;">
 
 				<view class="prolist">
@@ -31,7 +31,8 @@
 							<!-- <text>品类</text> -->
 						</view>
 					</view>
-					<scroll-view scroll-y="true" show-scrollbar="true">
+					<NoData v-if="list.length==0"></NoData>
+					<scroll-view scroll-y="true" show-scrollbar="true" v-else>
 						<view class="commodity" style="margin-top: 110px;margin-left:16%;width: 78%;">
 							<!-- 大类循坏 -->
 
@@ -47,7 +48,8 @@
 											<image src="@/images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
 										</label>
 										<view class="summary">{{_item.name}}</view>
-										<view class="examine" @click="goCommonQuery('1009','裱花请货商品查询')">
+										<view class="examine" @click="goCommonQuery(_item)">
+											<!-- '1009','裱花请货商品查询' -->
 											<text>点击查看</text>
 											<image src="@/images/img2/dianji-jinru.png"></image>
 										</view>
@@ -73,10 +75,36 @@
 			query,
 			Head
 		},
-
+		props: {
+			_menu: {
+				type: Object,
+				default: {}
+			}
+		},
+		watch: {
+			_menu: function(n, o) {
+				console.log("传入的菜单数据发生变化：", n);
+				if (n) {
+					let arr = n.Second.map(r => {
+						return {
+							tab: r.MenuName,
+							valueList: r.Third.map(r1 => {
+								return {
+									id: r1.MenuId,
+									name: r1.MenuName
+								}
+							})
+						}
+					})
+					console.log("菜单模块筛选后的数据：", arr);
+					this.list = arr;
+				}
+			}
+		},
 		data() {
 			return {
-				list: [{
+				list: [],
+				list1: [{
 					tab: "日销售1",
 					valueList: [{
 						name: "裱花请货商品汇总"
@@ -171,6 +199,21 @@
 			this.handleFnDebounce()
 		},
 		mounted() {
+			console.log("传入的菜单数据：", this._menu);
+			if (this._menu) {
+				let n = this._menu;
+				let arr = n.Second.map(r => {
+					return {
+						tab: r.MenuName,
+						valueList: r.Third.map(r1 => {
+							return {
+								name: r1.MenuName
+							}
+						})
+					}
+				})
+				this.list = arr;
+			}
 			const handleFn = () => {
 				uni.createSelectorQuery().selectAll('.mokuai').boundingClientRect((res) => {
 					for (let item of res) {
@@ -217,7 +260,7 @@
 				}).exec();
 			},
 			//点击进入详情
-			goCommonQuery(id, name) {
+			goCommonQuery(e) {
 				const khid = "K200QTD005" //门店id
 				const sname = "武汉领秀门厅" //门店名称
 				const username = "用户名" //用户名
@@ -228,7 +271,7 @@
 				const code = "Defqry" //门店名称
 
 				const url =
-					`/pages/Querypage/TakeawayCX/TakeawayCX?qrytype=${id}&qtyname=${name}&khid=${khid}&sname=${sname}&username=${username}&adrp=${adrp}&gsid=${gsid}&zztlx=${zztlx}&type=${type}&code=${code}`
+					`/pages/Querypage/TakeawayCX/TakeawayCX?qrytype=${e.id}&qtyname=${e.name}&khid=${khid}&sname=${sname}&username=${username}&adrp=${adrp}&gsid=${gsid}&zztlx=${zztlx}&type=${type}&code=${code}`
 				uni.navigateTo({
 					url: url
 				})

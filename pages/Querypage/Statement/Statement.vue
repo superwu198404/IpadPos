@@ -6,11 +6,11 @@
 
 <template>
 	<view class="content">
-		<query></query>
+		<!-- <query></query> -->
 		<view class="right" style="position: relative;">
 			<!-- :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType" -->
-			<Head></Head>
+			<!-- <Head></Head> -->
 			<view class="listof" style="position: absolute;z-index: 0;">
 				<view class="prolist">
 					<view class="hh" style="padding-right:3.7%;">
