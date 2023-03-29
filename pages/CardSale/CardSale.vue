@@ -790,6 +790,26 @@
 			SaleCompleted: async function() {
 				that.UploadCKR(); //更新持卡人信息
 				console.log("生成销售单");
+				
+				// //调用打印
+				// let printerPram = {
+				// 	"PRINTNUM": 1,
+				// 	"XSTYPE": that.KQXSTYPE,
+				// 	"ISFP": "Y",
+				// };
+				
+				// let arr3 = that.SALE003;
+				// let fkdaRes = that.FKDA_INFO;
+				// arr3.forEach(function(item, index) {
+				// 	try {
+				// 		item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+				// 		item.balance = item.balance;
+				// 	} catch (e) {
+				// 		item.SNAME = "";
+				// 		item.balance = 0;
+				// 	}
+				// });
+				
 				//激活成功-充值成功（与否）均生成销售单
 				await KQSale.Completed({
 					SALE001: that.SALE001,
@@ -797,6 +817,8 @@
 					SALE003: that.SALE003,
 					SALE006: that.SALE006,
 					SXSALE001: that.SXSALE001,
+					// printerPram: printerPram,
+					// arr3: arr3,
 				})
 				await that.PrintBill();
 				//重置销售单

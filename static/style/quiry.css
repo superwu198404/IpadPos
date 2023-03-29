@@ -307,12 +307,13 @@
 }
 .chanxz{
 	display: flex;
+	flex-wrap: wrap;
 	padding:0 0 3%;
 }
 .chanxz label{
 	width:30%;
 	border-radius: 8rpx;
-	border: 2rpx solid #DCF0DE;
+	border: 2rpx solid #C5E7C8;
 	height: 70rpx;
 	line-height: 70rpx;
 	text-align: center;
@@ -331,20 +332,21 @@
 	border: 2rpx solid #42B14B;
 	color: #42B14B;
 	font-weight: 700;
-	font-size: 28rpx;
+	font-size: 32rpx;
 }
 .chanxz label.curr em{
 	display: block;
 	position: absolute;
 	bottom:-2%;
 	right:-3%;
-	font-size: 14rpx;
-	padding:4rpx 10rpx;
+	font-size: 30rpx;
+	font-weight: 700;
+	padding:4rpx 12rpx;
 	border-radius: 8rpx 0 8rpx 0;
 	background:#42B14B;
 	color: #fff;
-	height: 18rpx;
-	line-height: 18rpx;
+	height: 20rpx;
+	line-height:20rpx;
 	transform: scale(0.8);
 }
 .pulldown{
