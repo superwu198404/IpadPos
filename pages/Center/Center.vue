@@ -98,6 +98,7 @@
 	import _init from '@/api/business/init.js';
 	import _cake from '@/api/business/CakeYD.js';
 	import _sysParam from '@/utils/sysParm/sysParm.js';
+	import _query_sale from '@/api/business/query_sale.js';
 	var that;
 	export default {
 		data() {
@@ -134,6 +135,7 @@
 				});
 			},
 			onShow: function() {
+				this.GetUserMenu(); //用户菜单数据
 				this.MonitorEvent();
 				this.timer = setInterval(() => {
 					this.timer = setTimeout(() => {
@@ -204,7 +206,8 @@
 				console.log("[MonitorEvent-Center]通讯轮询继续事件监听开始...");
 			},
 			ToTakeout: async function() {
-				let store = util.getStorage("store"), take_away = null;
+				let store = util.getStorage("store"),
+					take_away = null;
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
 				if (store.OPENFLAG != 1) {
@@ -217,8 +220,8 @@
 						uni.$emit("page-to-takeout");
 						console.log("[ToTakeout]初始化外卖单...");
 					}),
-					events:{
-						get_take_away(data){
+					events: {
+						get_take_away(data) {
 							console.warn("[GetTakeAway]正在获取到外卖单数据...");
 							take_away = data;
 							take_away.exit_btn = true;
@@ -426,6 +429,65 @@
 			//初始化
 			DataInit: function(e) {
 				_init.dataInit(e);
+			},
+			//用户菜单
+			GetUserMenu: function() {
+				let store = util.getStorage("store");
+				if (store && store.RYID)
+					_query_sale.GetUserMenu({
+						ryid: store.RYID
+					}, res => {
+						console.log("用户菜单数据查询结果：", res);
+						let menuArr;
+						if (res.code) {
+							let data = JSON.parse(res.data);
+							let M1 = data.menu1.map(r => {
+								return {
+									MenuName: r.MENUNAME,
+									MenuId: r.MENUID
+								}
+							})
+							let M2 = [];
+							data.menu2.map(r => {
+								let obj = M2.find(r1 => {
+									return r1.MenuName == r.NOTE
+								});
+								if (!obj) {
+									M2.push({
+										MenuName: r.NOTE,
+										MenuId: "_" + r.NOTE,
+										F_MenuId: r.F_MENUID
+									})
+								}
+							})
+							console.log("二级分组：", M2);
+
+							let M3 = data.menu2.map(r => {
+								return {
+									MenuName: r.MENUNAME,
+									MenuId: r.MENUID,
+									F_MenuId: "_" + r.NOTE
+								}
+							})
+							console.log("三级分组：", M3);
+
+							M2.map(r => {
+								r.Third = M3.filter(r1 => {
+									return r1.F_MenuId == r.MenuId;
+								})
+							})
+							M1.map(r => {
+								r.Second = M2.filter(r1 => {
+									return r1.F_MenuId == r.MenuId;
+								})
+							})
+							console.log("组装好的菜单数据：", M1);
+							menuArr = M1;
+							util.setStorage("MDMENU", menuArr);
+						} else {
+							util.removeStorage("MDMENU")
+						}
+					})
 			}
 		},
 	}
