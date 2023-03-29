@@ -42,12 +42,13 @@
 								<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
 								<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
 								<input type="text" placeholder="请输入查询卡号" v-model="form.number"/>
+								<button v-if="form.number" @click="form.number=''" style="margin-right: 5px;">×</button>
 							</view>
 							<button class="btn" @click="according_to_type_search">查询</button>
 							</view>
 						</view>	
 					</view>
-					<view class="partics" v-if="form.infos && form.infos.card_id">
+					<view class="partics">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli">
@@ -119,7 +120,7 @@
 									<text>操作员：</text><text>{{ default_view(form.infos.operator) }}</text>
 								</label>
 								<label v-if="show_not_more_infos">
-									暂无更多信息...
+									暂无
 								</label>
 							</view>
 						</view>
@@ -147,7 +148,7 @@
 		},
 		computed:{
 			default_view(){
-				return $(function(v, def_val = '暂无更多信息...'){
+				return $(function(v, def_val = '暂无'){
 					if(v)
 						if(v == 'Y'){
 							return '是';

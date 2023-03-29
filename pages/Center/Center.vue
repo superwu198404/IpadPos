@@ -214,19 +214,13 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				util.setStorage('default-visible-template', 'sale_takeaway');
+				uni.$off("exists-takeaway");
 				uni.navigateTo({
 					url: "/pages/TakeAway/TakeAway",
-					success: util.callBind(this, function(res) {
-						uni.$emit("page-to-takeout");
-						console.log("[ToTakeout]初始化外卖单...");
-					}),
 					events: {
 						get_take_away(data) {
-							console.warn("[GetTakeAway]正在获取到外卖单数据...");
 							take_away = data;
 							take_away.exit_btn = true;
-							console.warn("[GetTakeAway]已获取到外卖单数据...");
 						}
 					}
 				})
