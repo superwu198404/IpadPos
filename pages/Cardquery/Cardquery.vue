@@ -10,7 +10,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'>-->
-			<Head :_ynDKF="false" :custom="false" :_showSale="true" :type='"kq_sale"'> </Head>
+			<Head :_ynDKF="false" :custom="false" :_showSale="true" :_ynMsg='false'> </Head>
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
@@ -38,37 +38,32 @@
 						<view class="labnum">
 							<text>卡号：</text>
 							<view class="chaxun">
-								<view class="label">
-									<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix"
-										@click="swiping_card()">
-										<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix"
-											@click="scan_code_handle()">
-											<input type="text" placeholder="请输入查询卡号" v-model="form.number" />
-								</view>
-								<button class="btn" @click="according_to_type_search">查询</button>
+							<view class="label">
+								<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
+								<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
+								<input type="text" placeholder="请输入查询卡号" v-model="form.number"/>
 							</view>
-						</view>
+							<button class="btn" @click="according_to_type_search">查询</button>
+							</view>
+						</view>	
 					</view>
 					<view class="partics" v-if="form.infos && form.infos.card_id">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli">
 									<view class="touch-list list-touch">
-										<image class="bgs" style="position: absolute;top: 0px;"
-											src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
+										<image class="bgs" style="position: absolute;top: 0px;" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>{{ default_view(form.infos.type_name) }}</label>
+											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
 										</view>
 										<view class="denominat" v-if="form.infos.show_balance">
 											<label>￥<text>{{ default_view(form.infos.balance, 0) }}</text></label>
 										</view>
 										<view class="cardinfo">
 											<view class="leftinfo">
-												<view class="card-num">
-													<label>卡券号：{{ default_view(form.infos.card_id) }}</label>
-													<view>
-														<em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}
-													</view>
+												<view class="card-num">											
+													<label>券号：{{ default_view(form.infos.card_id) }}</label>
+													<view><em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}</view>
 												</view>
 											</view>
 											<!-- <view class="denominat">
@@ -77,10 +72,8 @@
 											</view> -->
 										</view>
 										<view class="statistic">
-											<text
-												:class="form.infos.valid_date ? '' : 'hidden'">有效期至：{{ default_view(form.infos.valid_date,'') }}</text>
-											<text
-												:class="form.infos.status ? '' : 'hidden'">{{ default_view(form.infos.status,'') }}</text>
+											<text :class="form.infos.valid_date ? '' : 'hidden'">有效期至：{{ default_view(form.infos.valid_date,'') }}</text>
+											<text :class="form.infos.status ? '' : 'hidden'">{{ default_view(form.infos.status,'') }}</text>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
@@ -95,8 +88,7 @@
 									<em></em>
 									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
 								</view>
-								<button v-if="form.infos.status"
-									class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
+								<button v-if="form.infos.status" class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
 							</view>
 							<view class="kainfolist">
 								<label v-if="form.infos.is_customer_emotional_coupon">
@@ -142,65 +134,54 @@
 <script>
 	//基础组件
 	import Head from '@/pages/Home/Component/Head.vue';
-
+	
 	//业务处理
 	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
 	import member from "@/api/hy/MemberInterfaces.js";
-	import common from '@/api/common.js';
 	var $;
 	export default {
 		name: "Cardquery",
 		components: {
 			Head
 		},
-		computed: {
-			default_view() {
-				return $(function(v, def_val = '暂无更多信息...') {
-					if (v)
-						if (v == 'Y') {
+		computed:{
+			default_view(){
+				return $(function(v, def_val = '暂无更多信息...'){
+					if(v)
+						if(v == 'Y'){
 							return '是';
 						}
-					else if (v == 'N') {
-						return '否'
-					} else
-						return v;
+						else if(v == 'N'){
+							return '否'
+						}
+						else
+							return v;
 					else
 						return def_val;
 				});
 			},
-			scan_code_icon() {
+			scan_code_icon(){
 				return (this.source.current_type_info?.scan_code || this.source.current_type_info == null) ? true : false;
 			},
-			show_not_more_infos() {
+			show_not_more_infos(){
 				let infos = this.form.infos;
-				if (!infos.apply || !infos.sale_store_name || !infos.form.infos.sale_date || !infos.use_date || !infos
-					.use_store_name || !infos.form.infos.operator)
+				if(!infos.apply || !infos.sale_store_name || !infos.form.infos.sale_date || !infos.use_date || !infos.use_store_name || !infos.form.infos.operator)
 					return true;
 				else
 					return false;
 			},
-			show_types_limit() {
+			show_types_limit(){
 				return this.source.types.length > 5;
-			}
-		},
-		watch: {
-			'form.infos': function(n, o) {
-				console.log("卡券信息发生变动：", n);
-				if (this.form.infos.card_id||this.form.infos.card_id != "") {
-					this._sale2_count = 1;
-				}else{
-					this._sale2_count = 0;
-				}
 			}
 		},
 		data() {
 			return {
-				form: {
+				form:{
 					number: '',
 					infos: bussiness.infos()
 				},
-				source: {
+				source:{
 					current_type_info: null,
 					types: [],
 				},
@@ -229,114 +210,117 @@
 					this.form = this.$options.data().form;
 				}
 			},
-			scan_code_handle() {
-				if (common.CheckSign()) {
-					uni.scanCode({
-						success: $(function(result) {
-							this.form.number = result.result;
-						})
+			scan_code_handle(){
+				uni.scanCode({
+					success: $(function(result) {
+						this.form.number = result.result;
 					})
-				}
+				})
 			},
-			swiping_card() {
-				if (common.CheckSign()) {
-					member.GetTLCard(getApp().globalData.store, $(function(res) {
-						if (!res.code) {
-							util.simpleMsg(res.msg, !res.code);
-							return;
-						}
-						this.form.number = res.data;
-					}))
-				}
+			swiping_card(){
+				member.GetTLCard(getApp().globalData.store, $(function(res){
+					if (!res.code) {
+						util.simpleMsg(res.msg, !res.code);
+						return;
+					}
+					this.form.number = res.data;
+				}))
 			},
-			async according_to_type_search() {
-				if (this.source.current_type_info) {
+			async according_to_type_search(){
+				if(this.source.current_type_info){
 					let result = await this.source.current_type_info.search(this.form.number);
 					console.log("[TypeSearch]查询结果:", result);
-					if (result.code) {
+					if(result.code){
 						this.form.infos = result.data;
-					} else {
+					}
+					else{
 						util.simpleMsg(result.msg);
 					}
-				} else {
+				}
+				else{
 					util.simpleMsg('请选择类型后再进行此操作!');
 				}
 			},
-			async get_types() {
+			async get_types(){
 				return await bussiness.get_types();
+			},
+			monitor(){
+				uni.$on('ReturnSale',$(function(){
+					this.form = this.$options.data().form;
+				}))
+			},
+			init(){
+				if(this.source.types.length)
+					this.source.current_type_info = this.source.types[0];
 			}
 		},
 		async created() {
 			$ = util.callContainer(this);
 			this.source.types = await this.get_types();
+			this.init();
+			this.monitor();
+		},
+		destroyed() {
+			uni.$off('ReturnSale');
 		}
 	}
 </script>
 
 <style>
-	.commodity .number {
+	.commodity .number{
 		padding: 0;
-		width: 100%;
+		width:100%;
 		display: flex;
 	}
-
-	.chaxun {
+	.chaxun{
 		display: flex;
 		align-items: center;
 	}
-
-	.commodity .number .labnum {
-		margin: 1% 0 2%;
+	.commodity .number .labnum{
+		margin:1% 0 2%;
 		display: flex;
 		flex-direction: column;
 		height: auto;
-		width: 46%;
+		width:46%;
 	}
-
-	.commodity .number button {
+	.commodity .number button{
 		width: 25%;
 		height: 70rpx;
 		line-height: 70rpx;
-		margin: 0 0 0 20rpx;
+		margin:0 0 0 20rpx;
 	}
-
-	.commodity .number {
+	.commodity .number{
 		display: flex;
 	}
-
-	.commodity .totals view label {
+	.commodity .totals view label{
 		font-size: 32rpx;
 		font-weight: 700;
 		color: #333;
 		padding-left: 2%;
 		white-space: nowrap;
 	}
-
-	.totals view em {
+	.totals view em{
 		height: 40rpx;
-		margin: 0 8rpx 0 30rpx;
+		margin:0 8rpx 0 30rpx;
 	}
-
-	.cardlist {
-		box-shadow: 0px 10px 30px 1px rgba(66, 177, 75, 0.16);
+	.cardlist{
+		box-shadow: 0px 10px 30px 1px rgba(66,177,75,0.16);
 		position: relative;
-		padding: 0;
+		padding:0;
 	}
-
-	.cardlist .ulli {
-		width: 100%;
-		margin: 0;
+	
+	.cardlist .ulli{
+		width:100%;
+		margin:0;			
 	}
-
-	.cardlist .ulli .h6 {
+	.cardlist .ulli .h6{
 		background: none;
-		padding: 2% 2% 0;
+		padding:2% 2% 0;
 		height: 120rpx;
-		width: 70%;
+		width:70%;
 		/* overflow: hidden; */
 	}
-
-	.cardlist .ulli .h6 label {
+	.cardlist .ulli .h6 label{
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -346,81 +330,70 @@
 		height: 120rpx;
 		line-height: 60rpx;
 	}
-
-	.cardlist .ulli .h6 em {
+	.cardlist .ulli .h6 em{
 		display: block;
-		width: 68rpx;
+		width:68rpx;
 		height: 6rpx;
 		position: absolute;
-		bottom: 20rpx;
-		left: 8%;
+		bottom:20rpx;
+		left:8%;
 		z-index: 6;
 		border-radius: 6rpx;
 		background-color: #006B44;
 	}
-
-	.cardlist .touch-list {
-		padding: 6% 0 0;
+	.cardlist .touch-list{
+		padding:6% 0 0;
 	}
-
-	.ulli .card-num {
+	.ulli .card-num{
 		border-bottom: none;
 	}
-
-	.ulli .card-num view {
+	.ulli .card-num view{
 		color: #42B14B;
 		font-size: 30rpx;
 		padding-left: 4%;
-		padding-top: 14rpx;
+		padding-top:14rpx;
 	}
-
-	.ulli .card-num label {
-		padding: 0;
+	.ulli .card-num label{
+		padding:0;
 	}
-
-	.cardinfo {
-		padding: 6% 4% 1%;
+	.cardinfo{
+		padding:6% 4% 1%;
 		transform: translateY(-60rpx);
 	}
-
-	.statistic {
-		padding: 3% 3%;
+	.statistic{
+		padding:3% 3%;
 		justify-content: space-between;
 		color: #fff;
 		transform: translateY(15rpx);
 	}
-
-	.statistic text:nth-child(2) {
+	.statistic text:nth-child(2){
 		background-color: #FFE8E4;
 		color: #FE694B;
 		font-size: 26rpx;
-		padding: 4rpx 10rpx;
+		padding:4rpx 10rpx;
 	}
-
-	.labnum text {
+	.labnum text{
 		line-height: 90rpx;
 		color: #333;
 	}
-
-	.chanxz {
-		width: 85%;
-		padding: 0 15% 0 0;
+	.chanxz{
+		width:85%;
+		padding:0 15% 0 0;
 		position: relative;
 		overflow: hidden;
 	}
-
-	.chanxz label {
+	.chanxz label{
 		height: 70rpx;
 		width: 17.5%;
 		font-size: 26rpx;
 		margin: 0 1% 2% !important;
 	}
 
-	.chanxz .quanbu {
-		width: 94rpx;
+	.chanxz .quanbu{
+		width:94rpx;
 		position: absolute;
-		top: 0rpx;
-		right: 3%;
+		top:0rpx;
+		right:3%;
 		font-size: 18rpx;
 		color: #42B14B;
 		display: flex;
@@ -441,18 +414,18 @@
 		margin-left: 6rpx;
 	}
 
-	.label picker {
+	.label picker{
 		width: 100%;
 		height: 100%;
 		border-radius: 5px;
 		background: #F5F5F5;
 	}
-
-	.picker {
+	
+	.picker{
 		width: 100%;
 		height: 100%;
 	}
-
+	
 	.hidden {
 		visibility: hidden;
 	}
