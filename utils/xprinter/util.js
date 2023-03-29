@@ -1067,8 +1067,7 @@ const onlyFourPhone = (value) => {
 // 添加打印记录
 const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
 	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
-		'","' + billStr + '")'
-	];
+		'","' + billStr + '")'];
 	db.get().executeDml(execSql_arr, "执行中", function(res) {
 		console.log("POS_XSBILLPRINT sql执行结果：", res);
 	}, function(err) {
