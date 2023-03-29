@@ -158,7 +158,7 @@ var KQTypeObj = {
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
-					console.log("业务单号:", data.SALE001.BILL);
+				console.log("业务单号:", data.SALE001.BILL);
 				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {

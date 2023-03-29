@@ -17,19 +17,19 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
-			<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
-					<view class="bills">
-						<label></label>
-						<view @click.stop="operations()" style="display: flex;
-			flex-direction: column;justify-content: center;align-items: center;">
-							<image class="wx" src="@/images/xiaoshou-hui.png" mode="widthFix"></image>
-							<text>返回销售</text>
-						</view>
+			<view class="menu gongju" tabindex="-1">
+				<view class="bills">
+					<label></label>
+					<view @click="SwitchSale('sale')"
+						style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+						<image class="wx" src="@/images/xiaoshou-hui.png" mode="widthFix"></image>
+						<text>返回销售</text>
 					</view>
+				</view>
 			</view>
 		</view>
 		<div class="component-content">
-			<component :is="component_name"></component>
+			<component :is="component_name" ref="ChildObj"></component>
 		</div>
 	</view>
 </template>
@@ -43,7 +43,10 @@
 	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
 	import CardDelay from '@/pages/CardDelay/CardDelay.vue';
 	import CardBind from '@/pages/CardBind/CardBind.vue';
-	// import CardSale from '@/pages/CardSale/CardSale.vue';
+
+	import common from '@/api/common.js';
+	import util from "@/utils/util.js";
+
 	//页面组件 👆
 	export default {
 		name: "Menu",
@@ -81,7 +84,7 @@
 						{
 							icon_open: require('@/images/img2/quanquan.png'),
 							icon_close: require('@/images/img2/quanquan-hui.png'),
-							name:'兑换券换卡',
+							name: '兑换券换卡',
 							key: 'CouponExchange'
 						},
 						{
@@ -99,13 +102,13 @@
 						{
 							icon_open: require('@/images/img2/kayanqi-bai.png'),
 							icon_close: require('@/images/img2/kayanqi.png'),
-							name:'卡延期/挂失',
+							name: '卡延期/挂失',
 							key: 'CardDelay'
-						},					
+						},
 						{
 							icon_open: require('@/images/img2/kabangd-bai.png'),
 							icon_close: require('@/images/img2/kabangd.png'),
-							name:'卡绑定',
+							name: '卡绑定',
 							key: 'CardBind'
 						},
 					]
@@ -117,8 +120,25 @@
 				this.source.current_menu_info = info;
 				console.log("[SelectMenu]当前选择的菜单信息:", info);
 			},
-			setting_default_menu(){//设置默认菜单
+			setting_default_menu() { //设置默认菜单
 				this.source.current_menu_info = this.source.menu_infos[0];
+			},
+			//普通销售和卡券销售切换
+			SwitchSale: function(e) {
+				if (common.CheckSign()) {
+					console.log("sale2数量：",this.$refs.ChildObj._sale2_count)
+					if (this.$refs.ChildObj._sale2_count > 0) {
+						util.simpleMsg("请先清空卡券信息，再进行切换");
+						return;
+					}
+					util.simpleModal("提示", "是否确认切换到商品销售？", res => {
+						if (res) {
+							uni.redirectTo({
+								url: "/pages/mainSale/MainSale"
+							})
+						}
+					})
+				}
 			}
 		},
 		created() {

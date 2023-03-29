@@ -78,7 +78,7 @@
 		created: function(position) {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
-			// console.log("传入的业务消息集合：", that.msgDatas);
+			console.log("传入的业务消息集合：", that.msgDatas);
 			// that._msgDatas.map(r => {
 			// 	that.totalCount += r.count;
 			// })
@@ -224,7 +224,7 @@
 
 <style>
 	movable-area {
-		position: fixed;
+		position: fixed !important;
 		top: 10%;
 		left: 10%;
 		right: 0;
@@ -247,7 +247,7 @@
 	.ordermes {
 		position: fixed;
 		bottom: 20%;
-		right: 0;
+		right: -2%;
 		width: 110rpx;
 		height: 110rpx;
 		border-radius: 50%;
