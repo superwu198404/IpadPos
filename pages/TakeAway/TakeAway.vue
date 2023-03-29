@@ -16,7 +16,7 @@
 			<view class="listof">
 				<view class="prolist">
 					
-						<view :class="exit_btn ? 'hh add-top' : 'hh'">
+						<view class="hh">
 							<view class="hotcakes">
 								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
@@ -807,8 +807,5 @@
 		box-sizing: border-box;
 		width: 100% !important;
 		height: 100% !important;
-	}
-	.add-top{
-		transform: translateY(14rpx);
 	}
 </style>

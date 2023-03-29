@@ -86,7 +86,6 @@
 			screenWidth: uni.getSystemInfoSync().screenWidth,
 			screenHeight: uni.getSystemInfoSync().screenHeight,
 			BLEInformation: {
-				firstconnect: 0,
 				platform: "",
 				deviceId: "",
 				deviceName: "",

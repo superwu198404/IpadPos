@@ -772,8 +772,10 @@ var GetPTOrder = function(e, b, d, t, func) {
 	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
 	if (t == 0) {
 		str += " and XSTYPE ='" + t + "'";
-	} else if (t != -1) {
+	} else if (t != -1 && t != 99) {
 		str += t ? " and XSTYPE ='" + t + "'" : "";
+	}else if(t == 99){
+		str += " and BILL_TYPE ='Z111'";
 	}
 	let sql = "SELECT * from SALE001 where 1=1" + str;
 	console.log("查询条件：", sql);

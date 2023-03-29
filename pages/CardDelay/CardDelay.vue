@@ -11,7 +11,7 @@
 		<view class="right">
 
 			<!-- 顶部导航栏-->
-			<Head :_ynDKF="false" :custom="false" :_showSale="true" :_ynMsg='false'></Head>
+			<Head :_ynDKF="false" :custom="false" :_showSale="true" :type='"kq_sale"'></Head>
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">

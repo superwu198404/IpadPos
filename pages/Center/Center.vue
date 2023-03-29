@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="Chaxun()">
+						<view @click="Chaxun('not')">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -214,6 +214,7 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
+				util.setStorage('default-visible-template','sale_takeaway');
 				uni.navigateTo({
 					url: "/pages/TakeAway/TakeAway",
 					success: util.callBind(this, function(res) {
@@ -420,9 +421,9 @@
 				// 	return;
 				// }
 				uni.redirectTo({
-					url: "/pages/Querypage/QueryCenter/QueryCenter",
+					url: "/pages/Querypage/Storeinquiry/Storeinquiry",
 					complete: res => {
-						console.log(res)
+						console.log("跳转结果", res);
 					}
 				});
 			},

@@ -46,7 +46,7 @@
 					src: "/pages/Querypage/Statement/Statement"
 				}, {
 					name: "外卖单查询",
-					src1: "@/images/img2/danju.png",
+					src1: "/images/img2/danjucx.png",
 					src2: "@/images/img2/danjucx-cu.png",
 					src: '/pages/Querypage/Storeinquiry/Storeinquiry'
 				}, {
@@ -73,6 +73,7 @@
 					url: "/pages/Center/Center"
 				})
 				utils.setStorage('queryIndex',1)
+			
 			}
 		}
 	}

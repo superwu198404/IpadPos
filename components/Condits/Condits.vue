@@ -16,7 +16,7 @@
 					<label>
 						<text>开始{{item.condname}}：</text>
 						<picker mode="date" fields="day" :data-index="index" data-flag=")" data-value="value"
-							:value="item.value" :start="wdate" :end="item.value1" @change="bindKeyInput">
+							:value="item.value" :start="wdate" :end="endDate" @change="bindKeyInput">
 							<view>{{ item.value }}
 								<image src="/images/img2/jiant-lvvvvv.png"></image>
 							</view>
@@ -165,7 +165,6 @@
 		created() {
 			const initValue = JSON.parse(JSON.stringify(this.inqueryCondition))
 			this.initValue = initValue
-			console.log(this.wdate,`011111111111111111111111111111111111111111111`)
 		},
 		methods: {
 			delItem(index) {

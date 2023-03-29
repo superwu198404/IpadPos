@@ -9,7 +9,7 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length"></Page>
+			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
 			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
@@ -103,8 +103,11 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<!-- <view class="key-board-search" @click="mainSale.keyBoardSearch">
-								键盘
+							<!-- <view class="a-z" @click="SignIn()">
+								<span class="mini-text">签到</span>
+							</view>
+							<view class="a-z" @click="DailySettlement()">
+								<span class="mini-text">日结</span>
 							</view> -->
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
@@ -124,49 +127,8 @@
 								<text>{{flagitem}}</text>
 								<em></em>
 							</label>
-						</view>
-						<!-- todo -->
-						<view class="keyboard-input" v-if='isKeyBoardShow'>
-							<view class="keyboard">
-								<ul class="keys">
-									<li>Q</li>
-									<li>W</li>
-									<li>E</li>
-									<li>R</li>
-									<li>T</li>
-									<li>Y</li>
-									<li>U</li>
-									<li>I</li>
-									<li>O</li>
-									<li>P</li>
-								</ul>
-								<ul class="keys">
-									<li>A</li>
-									<li>S</li>
-									<li>D</li>
-									<li>F</li>
-									<li>G</li>
-									<li>H</li>
-									<li>J</li>
-									<li>K</li>
-									<li>L</li>
-								</ul>
-								<ul class="keys">
-									<li>Z</li>
-									<li>X</li>
-									<li>C</li>
-									<li>V</li>
-									<li>B</li>
-									<li>N</li>
-									<li>M</li>
-								</ul>
-								<ul class="keys" style="position:absolute; bottom: 0; right: 0;">
-									<li class="enter">取消</li>
-									<li class="enter">Enter</li>
-								</ul>
-							</view>
-						</view>
 
+						</view>
 					</view>
 				</view>
 				<!-- 在这插入组件 -->
@@ -294,8 +256,6 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
 			</FZCX>
 		</view>
-		<!-- 搜索键盘 todo-->
-		<!-- <KeyboardSearch v-if='false'></KeyboardSearch> -->
 		<!-- 结算单  -->
 		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
@@ -782,7 +742,6 @@
 			return {
 				statements: false,
 				Alphabetical: false,
-				isKeyBoardShow: false,
 				Memberinfo: false,
 				Shoppingbags: false,
 				Chargeback: false,
@@ -838,7 +797,7 @@
 			// CouponSale,
 			// CardSale,
 			PrinterPage,
-			Swiper,
+			Swiper
 		},
 		computed: {
 			Reset: function() {
@@ -1032,6 +991,23 @@
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
+			uni.$off("page-to-takeout");
+			uni.$on("page-to-takeout", util.callBind(this, function() {
+				this.mainSale.currentOperation.ynCancel = false;
+				this.mainSale.currentOperation.DKF = false;
+				this.mainSale.ComponentsManage.DKF = false;
+				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
+				console.log("[ExternalOperation]切换到外卖单完成...");
+				uni.$emit("movable-visible",false);
+				
+				uni.$emit("external-operation", function() {
+					console.warn("[ExternalOperation]开始隐藏...");
+					let menus = this.menu_info;
+					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
+						menus[menu].close = true);
+					this.allow_page_switch = false;
+				});
+			}));
 			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
 				//console.log("[MainSale]商品实际的长度:", products.length);
@@ -1215,60 +1191,5 @@
 		border-left: 2px solid #006b44;
 		width: 10px;
 		background: #f5f4f8;
-	}
-	.key-board-search {
-		width: 40px;
-		height: 40px;
-		background-color: #e0eae9;
-		font-size: 12px;
-		margin-top: 30px;
-		border-radius: 8px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: #1a7a57;
-		font-weight: 600;
-	
-	}
-	
-	.keyboard-input {
-		background-color: #fff;
-		width: 850px;
-		height: 300px;
-		position: absolute;
-		bottom: 7%;
-		right: 0;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	
-	.keyboard {
-		user-select: none;
-		cursor: pointer;
-	}
-	
-	.keyboard .keys {
-		display: flex;
-		list-style: none;
-		margin: 0 0;
-	}
-	
-	.keyboard li {
-		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
-		width: 60px;
-		font-size: 18px;
-		margin: 9px;
-		background-color: #f2f2f2;
-		border-radius: 15px;
-		text-align: center;
-		line-height: 60px;
-		transition: all 0.25s;
-	}
-	
-	.keyboard li:active {
-		box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
-		color: rgb(12, 164, 190);
-		text-shadow: 0 0 15px #57c1f1;
 	}
 </style>
