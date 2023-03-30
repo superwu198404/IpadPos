@@ -131,24 +131,14 @@
 	</view>
 </template>
 <script>
-	var app = getApp();
-	import Req from '@/utils/request.js';
-	import common from '@/api/common.js';
-	import db from '@/utils/db/db_excute.js';
-	import dateformat from '@/utils/dateformat.js';
-	import util from '@/utils/util.js';
-	import _login from '@/api/business/login.js';
-	import _main from '@/api/business/main.js';
-	import PrinterPage from '@/pages/xprinter/receipt';
-	import cx_util from '@/utils/cx/cx_common.js';
-	import xprinter_util from '@/utils/xprinter/util.js';
+	
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
 
 	var that;
 	export default {
-		name: "saomaqiang",
+		name: "chikaren",
 		props: {
 			TH_DATE: "",
 		},
@@ -157,28 +147,7 @@
 		},
 		data() {
 			return {
-				xsBill: "",
-				qd_show: true,
-				//打印相关
-				jpgWidth: 1,
-				jpgHeight: 1,
-				qrCodeWidth: 256, //二维码宽
-				qrCodeHeight: 256, // 二维码高
-				canvasGZHWidth: 1,
-				canvasGZHHeight: 1,
-				POS_XSBILLPRINT: [], //重打查询数据集合
-				Datas: [],
-				Criterias: false,
-				p_date: dateformat.getYMD(),
-				p_bill: "",
-				p_xsType: "", //销售类别
-				xstypes: [],
-				current_data: {
-					"TYPE": 1,
-					"NAME": "销售"
-				},
-				current_index: 0,
-				init: 1
+				
 			};
 		},
 		created: async function() {
@@ -269,9 +238,6 @@
 						return "外卖订单";
 						break;
 					case "1":
-					if(bill_type == 'Z111')
-						return "卡/券";
-					else
 						return "销售";
 						break;
 					case "2":
@@ -297,9 +263,6 @@
 						break;
 					case "9":
 						return "线上订单取消";
-						break;
-					case "99":
-						return "卡券业务";
 						break;
 					default:
 						return "";
@@ -339,9 +302,6 @@
 			}, {
 				"TYPE": 9,
 				"NAME": "线上订单取消"
-			},{
-				"TYPE": 99,
-				"NAME": "卡券业务"
 			}];
 			if (this.init) {
 				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};
