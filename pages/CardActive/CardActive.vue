@@ -10,7 +10,7 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :type='"kq_sale"'>
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false'>
 			</Head>
 			<!-- 内容栏 -->
 			<view class="steps">
@@ -729,10 +729,13 @@
 					SALE003: that.SALE003,
 					SALE006: res.sale6,
 					SXSALE001: that.SXSALE001,
+				},resp => {
+					//销售单数据处理成功，再调用打印
+					if(resp.code)
+						that.PrintBill(res.sale2, res.sale6);
+					//重置销售单
+					that.ResetSaleBill();
 				})
-				await that.PrintBill(res.sale2, res.sale6);
-				//重置销售单
-				that.ResetSaleBill();
 			},
 			//数据合并
 			ConcatSale2_6: function() {

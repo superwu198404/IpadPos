@@ -78,7 +78,7 @@
 		created: function(position) {
 			that = this;
 			that.msgDatas = that._msgDatas; //消息数据赋值
-			// console.log("传入的业务消息集合：", that.msgDatas);
+			console.log("传入的业务消息集合：", that.msgDatas);
 			// that._msgDatas.map(r => {
 			// 	that.totalCount += r.count;
 			// })

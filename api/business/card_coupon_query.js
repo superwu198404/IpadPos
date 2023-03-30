@@ -149,7 +149,7 @@ export default {
 			this.extend_base({
 				text: "禄品卡",
 				value: "pl_card"
-			}),
+			})
 		])
 	}
 }

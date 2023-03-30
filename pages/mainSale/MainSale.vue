@@ -9,15 +9,15 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType" :isKeyBoardShow='isKeyBoardShow'></Page>
-			<!-- <view class="arrow-box" :style="arrow_style">
+			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length" :isKeyBoardShow='isKeyBoardShow'></Page>
+			<view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view> -->
+			</view>
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
-				<view class="listof" style="position: absolute;z-index: 0;">
+				<view class="listof" style="position: absolute;">
 					<view class="prolist">
 						<!-- 大类循环 -->
 						<view class="commodity">
@@ -109,12 +109,6 @@
 							<view class="key-board-search" @click="mainSale.keyBoardSearch">
 								键盘
 							</view>
-							<!-- <view class="a-z" @click="SignIn()">
-								<span class="mini-text">签到</span>
-							</view>
-							<view class="a-z" @click="DailySettlement()">
-								<span class="mini-text">日结</span>
-							</view> -->
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
@@ -156,7 +150,7 @@
 								</view>
 							</view>
 						
-							<view class="keyboard">
+								<view class="keyboard">
 								<ul class="keys" v-for='(item,index) in mainSale.keyBoardList'>
 									<li v-for='(_item,_index) in item.value' @click="mainSale.keyBoardClick(_item)">
 										{{_item}}
@@ -168,6 +162,11 @@
 									<li class="enter" @click="mainSale.affirmQueryKeys">搜索</li>
 								</ul>
 							</view>
+							
+							
+							
+							
+								
 							<view class="switchArea">
 								分类：
 								<switch checked color="#1aa034" @change="mainSale.switchAreaChange" />
@@ -1013,11 +1012,11 @@
 			},
 			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
-				uni.$on('menu-select-change', (function(data) {
-					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(
-						info) {
-						if (this.mainSale.clickSaleType.clickType == data.name && this.mainSale
-							.current_type?.clickType != data.name) {
+				uni.$on('menu-select-change',(function(data){
+					this.page_query = uni.createSelectorQuery(data.vue);
+					this.page_query.select(".bills.acts").boundingClientRect((function(info){
+						if(!info) return;
+						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
 							this.arrow_style.left = info.left + info.width - 5 + "px";
 							this.arrow_style.display = "block";
@@ -1026,6 +1025,32 @@
 						}
 					}).bind(this)).exec();
 				}).bind(this));
+			},
+			move_monitor:function(){
+				uni.$off("menu-scroll-move");
+				uni.$on("menu-scroll-move", util.callBind(this, function(start_data) {
+					let container_top = null,container_bottom = null, visible = this.arrow_style.display != 'none';
+					this.page_query.select(".menu").boundingClientRect((function(info){
+						if(!info) return;
+						container_top = info.top;
+						container_bottom = info.top + info.height;
+					}).bind(this)).exec();
+					this.page_query.select(".bills.acts").boundingClientRect((function(info){
+						if(!info) return;
+						let couputed_top = (info.top + info.height / 2) - 7.1;
+						if(info && container_top <= couputed_top && container_bottom >= couputed_top){
+							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
+							if(this.arrow_style.display == 'none' && visible)
+								this.arrow_style.display = 'block'
+						}
+						else{
+							this.arrow_style.top = container_top + "px";
+							if(this.arrow_style.display == 'block'){
+								this.arrow_style.display = 'none';
+							}
+						}
+					}).bind(this)).exec();
+				}));
 			}
 		},
 		created() {
@@ -1041,23 +1066,6 @@
 			console.log("[MainSale]原型:", this.mainSale.sale003.remove);
 			//console.log("[MainSale]开始设置基础的销售类型");
 			this.mainSale.SetDefaultType();
-			uni.$off("page-to-takeout");
-			uni.$on("page-to-takeout", util.callBind(this, function() {
-				this.mainSale.currentOperation.ynCancel = false;
-				this.mainSale.currentOperation.DKF = false;
-				this.mainSale.ComponentsManage.DKF = false;
-				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
-				console.log("[ExternalOperation]切换到外卖单完成...");
-				uni.$emit("movable-visible", false);
-
-				uni.$emit("external-operation", function() {
-					console.warn("[ExternalOperation]开始隐藏...");
-					let menus = this.menu_info;
-					Object.keys(this.menu_info).filter(menu => menu != 'sale_takeaway').forEach(menu =>
-						menus[menu].close = true);
-					this.allow_page_switch = false;
-				});
-			}));
 			console.log("初始化的khid:", this.KHID);
 			xs_sp_init.loadSaleSP.loadSp(this.KHID, util.callBind(this, function(products, prices, pm_spidKeyVal) {
 				//console.log("[MainSale]商品实际的长度:", products.length);
@@ -1068,6 +1076,7 @@
 			if (sys && sys.DGIMGURL) {
 				this.P_URL = sys.DGIMGURL;
 			}
+			this.move_monitor();
 		}
 	}
 </script>

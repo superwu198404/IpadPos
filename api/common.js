@@ -137,13 +137,14 @@ var CreateSQL = function(e, t) {
 }
 
 //传输支付数据
-var TransLiteData = function(e) {
+var TransLiteData = function(e,func) {
 	console.log("[TransLiteData]数据传输中...");
 	TransLite(e, r => {
 		if (e) {
 			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
 			db.get().executeDml(delArr, "数据删除中", function(res2) {
 				console.log("销售数据传输状态更改成功：", res2);
+				if (func) func(res2);
 			}, function(err1) {
 				console.log("销售数据传输状态更改失败", err1);
 			});
@@ -157,10 +158,14 @@ var TransLiteDataAsync = function(e) {
 		let transfer_result = await TransLiteAsync(e, r => {
 			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
 			console.log("[TransLiteDataAsync]执行更新操作...");
-			db.get().executeDml(delArr, "数据删除中", function(res2) {
-				console.log("[TransLiteDataAsync]销售数据传输状态更改成功：", res2);
-			}, function(err1) {
-				console.log("[TransLiteDataAsync]销售数据传输状态更改失败", err1);
+			return new Promise((inner_resolve,inner_reject) => {
+				db.get().executeDml(delArr, "数据删除中", function(res2) {
+					console.log("[TransLiteDataAsync]销售数据传输状态更改成功：", res2);
+					inner_resolve()
+				}, function(err1) {
+					console.log("[TransLiteDataAsync]销售数据传输状态更改失败", err1);
+					inner_resolve()
+				})
 			})
 		})
 		console.log("[TransLiteData]数据传输结果:", transfer_result);
@@ -243,12 +248,21 @@ var TransLiteAsync = function(e, func, load = false) {
 								db.get().executeDml1(delStr, "数据删除中", function(res2) {
 									console.log("[TransLiteAsync]缓存数据删除成功:", res2);
 									try {
-										if (func) func(res2);
+										if (func){
+											let callback_result = func(res2);
+											if(callback_result?.then)
+												callback_result?.then((res) => {
+													console.log("[TransLiteAsync]回调执行完成...");
+													resolve(result);
+												});
+											else{
+												console.log("[TransLiteAsync]回调执行完成...");
+												resolve(result);
+											}
+										};
 									} catch (e) {
 										console.log("[TransLiteAsync]回调执行异常:", e);
 									}
-									console.log("[TransLiteAsync]回调执行完成...");
-									resolve(result);
 								}, function(err1) {
 									console.log("[TransLiteAsync]缓存数据删除失败:", err1);
 									result.code = false;

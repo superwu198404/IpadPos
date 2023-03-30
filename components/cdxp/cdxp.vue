@@ -269,6 +269,9 @@
 						return "外卖订单";
 						break;
 					case "1":
+					if(bill_type == 'Z111')
+						return "卡/券";
+					else
 						return "销售";
 						break;
 					case "2":
@@ -294,6 +297,9 @@
 						break;
 					case "9":
 						return "线上订单取消";
+						break;
+					case "99":
+						return "卡券业务";
 						break;
 					default:
 						return "";
@@ -333,6 +339,9 @@
 			}, {
 				"TYPE": 9,
 				"NAME": "线上订单取消"
+			},{
+				"TYPE": 99,
+				"NAME": "卡券业务"
 			}];
 			if (this.init) {
 				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};

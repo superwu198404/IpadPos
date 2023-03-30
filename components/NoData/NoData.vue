@@ -1,13 +1,19 @@
 <template>
 	<view class="matter">
 		<image src="@/images/meiyoudd.png" mode="widthFix"></image>
-		<text>暂无数据</text>
+		<text>{{_tips}}</text>
 	</view>
 </template>
 
 <script>
 	export default {
 		name: "NoData",
+		props: {
+			_tips: {
+				type: String,
+				default: "暂无数据"
+			}
+		},
 		data() {
 			return {
 

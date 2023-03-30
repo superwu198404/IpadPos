@@ -39,22 +39,7 @@
 		data() {
 			return {
 				curIndex: 1,
-				tableName: [{
-					name: "销售报表",
-					src1: "@/images/img2/xiaoshou.png ",
-					src2: "@/images/img2/xiaoshoucx-cu.png",
-					src: "/pages/Querypage/Statement/Statement"
-				}, {
-					name: "外卖单查询",
-					src1: "@/images/img2/danju.png",
-					src2: "@/images/img2/danjucx-cu.png",
-					src: '/pages/Querypage/Storeinquiry/Storeinquiry'
-				}, {
-					name: "支付查询",
-					src1: "@/images/img2/zhifu.png",
-					src2: "@/images/img2/zhifucx-cu.png",
-					src: "/pages/Querypage/Storeinquiry/Storeinquiry"
-				}],
+				
 			}
 		},
 		mounted() {

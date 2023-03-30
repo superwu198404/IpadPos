@@ -17,13 +17,13 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
-			<view class="menu gongju" tabindex="-1">
+			<view class="fanhui" tabindex="-1">
 				<view class="bills">
 					<label></label>
 					<view @click="SwitchSale('sale')"
-						style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-						<image class="wx" src="@/images/xiaoshou-hui.png" mode="widthFix"></image>
-						<text>返回销售</text>
+						style="display: flex;justify-content: center;align-items: center;">
+						<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
+						<text>商品销售</text>
 					</view>
 				</view>
 			</view>

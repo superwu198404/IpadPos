@@ -14,12 +14,13 @@
 			<view class="hotcakes">
 				<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 			</view>
-			<view class="classifys">
+			<view class="classifys" v-if="list.length>0">
 				<text v-for="item,index in list" :class="activeIndex === index?'curr':''"
 					@click="listTable(index)">{{item.tab}}</text>
 			</view>
 		</view>
-		<scroll-view scroll-y="true" show-scrollbar="true">
+		<NoData v-if="list.length==0" :_tips="'功能暂未授权'"></NoData>
+		<scroll-view scroll-y="true" show-scrollbar="true" v-else>
 			<view class="commodity" style="margin-top: 28px;width: 95%;" height="100%">
 				<!-- 大类循坏 -->
 				<view class="broadcate" v-for="item,index in list">
@@ -28,13 +29,14 @@
 					</view>
 					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 					<view class="ol">
-						<view class="li" v-for='_item,_index in item.valueList'>
+						<view class="li" v-for='_item,_index in item.valueList' @click="goCommonQuery(_item)">
 							<text class="zhuangs">裱</text>
 							<label>
 								<image src="@/images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
 							</label>
 							<view class="summary">{{_item.name}}</view>
-							<view class="examine" @click="goCommonQuery('1009','裱花请货商品查询')">
+							<view class="examine">
+								<!-- '1009','裱花请货商品查询' -->
 								<text>点击查看</text>
 								<image src="@/images/img2/dianji-jinru.png"></image>
 							</view>
@@ -47,116 +49,48 @@
 </template>
 
 <script>
-	import utils from "@/utils/util.js"
+	var that;
+	import _util from "@/utils/util.js"
 
 	export default {
-
+		props: {
+			_menu: {
+				type: Object,
+				default: {}
+			}
+		},
+		watch: {
+			_menu: function(n, o) {
+				console.log("传入的菜单数据发生变化：", n);
+				if (n) {
+					let arr = n.Second.map(r => {
+						return {
+							tab: r.MenuName,
+							valueList: r.Third.map(r1 => {
+								return {
+									id: r1.MenuId,
+									name: r1.MenuName,
+									path: that.YWDict[r1.MenuId]
+								}
+							})
+						}
+					})
+					console.log("菜单模块筛选后的数据：", arr);
+					this.list = arr;
+				}
+			}
+		},
 		data() {
 			return {
-				list: [{
-					tab: "日销售1",
-					valueList: [{
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}]
-				}, {
-					tab: "日销售2",
-					valueList: [{
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}]
-				}, {
-					tab: "日销售3",
-					valueList: [{
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}]
-				}, {
-					tab: "日销售4",
-					valueList: [{
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
+				list: [],
 
-					}]
-				}, {
-
-					tab: "日销售5",
-
-					valueList: [{
-
-						name: "裱花请货商品汇总"
-
-					}, {
-
-						name: "裱花请货商品汇总"
-
-					}, {
-
-						name: "裱花请货商品汇总"
-
-					}, {
-
-						name: "裱花请货商品汇总"
-
-					}, {
-
-						name: "裱花请货商品汇总"
-
-					}]
-
-
-
-				}, {
-
-					tab: "日销售6",
-
-					valueList: [{
-
-						name: "裱花请货商品汇总"
-
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}, {
-						name: "裱花请货商品汇总"
-					}]
-
-				}],
 				activeIndex: 0,
-				handleFnDebounce: () => {}
+				handleFnDebounce: () => {},
+				store: getApp().globalData.store,
+				YWDict: {
+					"XSALLCX": "/pages/Querypage/Statement/Statement",
+					'Defqry1025': "/pages/Querypage/TakeawayCX/TakeawayCX"
+				}
 			}
 		},
 
@@ -164,8 +98,27 @@
 			console.log('191999999999999999999')
 			this.handleFnDebounce()
 		},
-
+		created() {
+			that = this;
+		},
 		mounted() {
+			console.log("传入的菜单数据：", this._menu);
+			if (this._menu) {
+				let n = this._menu;
+				let arr = n.Second.map(r => {
+					return {
+						tab: r.MenuName,
+						valueList: r.Third.map(r1 => {
+							return {
+								id: r1.MenuId,
+								name: r1.MenuName,
+								path: that.YWDict[r1.MenuId]
+							}
+						})
+					}
+				})
+				this.list = arr;
+			}
 			const handleFn = () => {
 				uni.createSelectorQuery().selectAll('.mokuai').boundingClientRect((res) => {
 					for (let item of res) {
@@ -201,18 +154,13 @@
 						uni.pageScrollTo({
 							duration: 100, //过渡时间
 							scrollTop: data.top - res.top, //到达距离顶部的top值
-
 						})
-
 					}).exec()
-
 				}).exec();
-
 			},
 
-			//点击进入详情
-
-			goCommonQuery(id, name) {
+			//点击进入详情e
+			goCommonQuery(e) {
 				const khid = "K200QTD005" //门店id
 				const sname = "武汉领秀门厅" //门店名称
 				const username = "用户名" //用户名
@@ -222,11 +170,22 @@
 				const type = "Defqry1009" //门店名称
 				const code = "Defqry" //门店名称
 				const url =
+					`/pages/Querypage/TakeawayCX/TakeawayCX?qrytype=${e.id}&qtyname=${e.name}&khid=${khid}&sname=${sname}&username=${username}&adrp=${adrp}&gsid=${gsid}&zztlx=${zztlx}&type=${type}&code=${code}`
 
-					`/pages/Querypage/TakeawayCX/TakeawayCX?qrytype=${id}&qtyname=${name}&khid=${khid}&sname=${sname}&username=${username}&adrp=${adrp}&gsid=${gsid}&zztlx=${zztlx}&type=${type}&code=${code}`
-
+				if (!e.path) {
+					_util.simpleMsg("抱歉，功能暂未开放", true);
+					return;
+				}
+				let obj = {
+					KHID: that.store.KHID, //门店编码
+					KHNAME: that.store.SNAME, //门店名称
+					GSID: that.store.GSID, //gsid
+					DQID: that.store.DQID, //dqid
+				}
+				let path = e.path + "?data=" + JSON.stringify(obj); //当前菜单要跳转的页面地址参数自定义
+				console.log("跳转的地址：", path);
 				uni.navigateTo({
-					url: url
+					url: path
 				})
 			}
 		}
