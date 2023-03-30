@@ -125,8 +125,8 @@
 								<em></em>
 							</label>
 						</view>
-						<!-- todo v-if='isKeyBoardShow'-->
-						<view class="keyboard-input" >
+						<!-- todo -->
+						<view class="keyboard-input" v-if='isKeyBoardShow'>
 							<view class="keyboard">
 								<ul class="keys">
 									<li>Q</li>
