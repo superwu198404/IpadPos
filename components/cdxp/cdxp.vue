@@ -67,7 +67,7 @@
 									<label>出售时间：{{item.SALETIME}}</label>
 								</view>
 								<view class="cods">
-									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE)}}</label>
+									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE,item.KQXSTYPE)}}</label>
 									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
@@ -131,11 +131,21 @@
 	</view>
 </template>
 <script>
-	
+	var app = getApp();
+	import Req from '@/utils/request.js';
+	import common from '@/api/common.js';
+	import db from '@/utils/db/db_excute.js';
+	import dateformat from '@/utils/dateformat.js';
+	import util from '@/utils/util.js';
+	import _login from '@/api/business/login.js';
+	import _main from '@/api/business/main.js';
+	import PrinterPage from '@/pages/xprinter/receipt';
+	import cx_util from '@/utils/cx/cx_common.js';
+	import xprinter_util from '@/utils/xprinter/util.js';
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-
+	
 	var that;
 	export default {
 		name: "chikaren",
@@ -147,7 +157,28 @@
 		},
 		data() {
 			return {
-				
+				xsBill: "",
+				qd_show: true,
+				//打印相关
+				jpgWidth: 1,
+				jpgHeight: 1,
+				qrCodeWidth: 256, //二维码宽
+				qrCodeHeight: 256, // 二维码高
+				canvasGZHWidth: 1,
+				canvasGZHHeight: 1,
+				POS_XSBILLPRINT: [], //重打查询数据集合
+				Datas: [],
+				Criterias: false,
+				p_date: dateformat.getYMD(),
+				p_bill: "",
+				p_xsType: "", //销售类别
+				xstypes: [],
+				current_data: {
+					"TYPE": 1,
+					"NAME": "销售"
+				},
+				current_index: 0,
+				init: 1
 			};
 		},
 		created: async function() {
@@ -232,12 +263,20 @@
 				// this.qd_show = false;
 				this.$emit("ClosePopup");
 			},
-			xsTypeName: function(xstype, bill_type) {
+			xsTypeName: function(xstype, bill_type,kqxstype) {
 				switch (xstype) {
 					case "0":
 						return "外卖订单";
 						break;
 					case "1":
+					//整合卡券业务，增加条件判断展示业务类型
+					if(bill_type == 'Z111' && kqxstype == 'SQ')
+						return "券销售";
+                    else if(bill_type == 'Z111' && kqxstype == 'SKCZ')
+						return "卡激活充值";		
+					else if(bill_type == 'Z111' && kqxstype != 'SKCZ')
+						return "卡销售";			
+					else
 						return "销售";
 						break;
 					case "2":
@@ -302,6 +341,9 @@
 			}, {
 				"TYPE": 9,
 				"NAME": "线上订单取消"
+			}, {
+				"TYPE": 99,
+				"NAME": "卡券业务"
 			}];
 			if (this.init) {
 				this.current_data = this.xstypes.find(item => item.TYPE === this.init) ?? {};
