@@ -56,22 +56,14 @@
 		data() {
 			return {
 				curIndex: 0,
-				tableName: [{
-					name: "销售报表",
-					src1: require('@/images/img2/xiaoshou.png'),
-					src2: require('@/images/img2/xiaoshoucx-cu.png'),
-					key: "Storeinquiry"
-				}, {
-					name: "外卖单查询",
-					src1: require('@/images/img2/danju.png'),
-					src2: require('@/images/img2/danjucx-cu.png'),
-					key: 'Storeinquiry'
-				}, {
-					name: "支付查询",
-					src1: require('@/images/img2/zhifu.png'),
-					src2: require('@/images/img2/zhifucx-cu.png'),
-					key: "Storeinquiry"
-				}],
+				tableName: [
+					// {
+				// 	name: "销售报表",
+				// 	src1: require('@/images/img2/xiaoshou.png'),
+				// 	src2: require('@/images/img2/xiaoshoucx-cu.png'),
+				// 	key: "Storeinquiry"
+				// }, 
+				],
 				currentComponent: '',
 				MenuArr: [],
 				curMenu: {} //当前菜单
