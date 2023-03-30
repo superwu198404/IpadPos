@@ -269,6 +269,9 @@
 						return "外卖订单";
 						break;
 					case "1":
+					if(bill_type == 'Z111')
+						return "卡/券";
+					else
 						return "销售";
 						break;
 					case "2":

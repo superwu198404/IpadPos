@@ -2151,6 +2151,15 @@ function GetSale(global, vue, target_name, uni) {
 	this.Letters = util.callBind(this, function(e) {
 		this.Page.Alphabetical = !this.Page.Alphabetical;
 	})
+	//搜索键盘 todo
+	this.keyBoardSearch = util.callBind(this,function(e){
+		// if (!this.currentOperation.FZCX || this.Page.Alphabetical === true) {
+		if ( this.Page.Alphabetical === true) {
+			util.simpleMsg("当前模式不允许搜索", "none");
+			return;
+		}
+		this.Page.isKeyBoardShow = !this.Page.isKeyBoardShow
+	})
 	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
 		if (this.sale002.length == 0) {

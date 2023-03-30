@@ -103,11 +103,14 @@
 									</view>
 									<view class="memb-stat">
 										<view><label><em>●</em> 当日来客数</label>
-											<text>{{numberOfVisitors.curVisiror}}</text></view>
+											<text>{{numberOfVisitors.curVisiror}}</text>
+										</view>
 										<view><label><em>●</em> 当月来客数</label>
-											<text>{{numberOfVisitors.curMountVisiror}}</text></view>
+											<text>{{numberOfVisitors.curMountVisiror}}</text>
+										</view>
 										<view><label><em>●</em> 当日去节令客单价(参考值)</label>
-											<text>￥{{(numberOfVisitors.curDoAwaySale).replace('元','')}}</text></view>
+											<text>￥{{(numberOfVisitors.curDoAwaySale).replace('元','')}}</text>
+										</view>
 										<view><label><em>●</em> 当月去节令客单价(参考值)</label>
 											<text>￥{{(numberOfVisitors.curMountDoAwaySale).replace('元','')}}</text>
 										</view>
@@ -137,15 +140,17 @@
 												</view>
 												<view class="dyxs">
 													<view class="dyname">当日销售</view>
-													<view><label :style="{height:(((freshRoast.curRoastSale).replace('元','')/100000)*100).toFixed(3)+'%'}">
-													</label>
+													<view><label
+															:style="{height:(((freshRoast.curRoastSale).replace('元','')/100000)*100).toFixed(3)+'%'}">
+														</label>
 													</view>
-													<view><label 
+													<view><label
 															:style="{height:(((mountingPatterns.curPatternSale).replace('元','')/100000)*100).toFixed(3)+'%'}">
-															</label>
-													</view> 
-													<view><label :style="{height:(((waterBar.curBarSaleRatio).replace('元','')/100000)*100).toFixed(3)+'%'}">
-													</label>
+														</label>
+													</view>
+													<view><label
+															:style="{height:(((waterBar.curBarSaleRatio).replace('元','')/100000)*100).toFixed(3)+'%'}">
+														</label>
 													</view>
 												</view>
 												<view class="drxs">
@@ -156,7 +161,8 @@
 													<view><label
 															:style="{height:(((mountingPatterns.curMonthPatternSale).replace('元','')/100000)*100).toFixed(3)+'%'}"><text>￥{{(mountingPatterns.curMonthPatternSale).replace('元','')}}</text></label>
 													</view>
-													<view><label :style="{height:(((waterBar.curMountBarRation).replace('元','')/100000)*100).toFixed(3)+'%'}"></label>
+													<view><label
+															:style="{height:(((waterBar.curMountBarRation).replace('元','')/100000)*100).toFixed(3)+'%'}"></label>
 													</view>
 												</view>
 											</view>
@@ -211,7 +217,8 @@
 													<view class="memb">
 														<view class="huiyuan">
 															<label>
-																<image src="@/images/img2/baosu.png"></image>{{reportDamage.curDamageRation}}
+																<image src="@/images/img2/baosu.png"></image>
+																{{reportDamage.curDamageRation}}
 															</label>
 															<text>当日报损率</text>
 														</view>
@@ -246,7 +253,8 @@
 													<view class="namewm">
 														<em class="gang"></em>当日领用
 													</view>
-													<label class="pric">¥{{(reportReceive.curReceive).replace('元','')}}</label>
+													<label
+														class="pric">¥{{(reportReceive.curReceive).replace('元','')}}</label>
 												</view>
 												<view class="waimai-list">
 													<!-- <em></em> -->
@@ -254,7 +262,8 @@
 														<em class="gang"></em>当月累积领用
 
 													</view>
-													<label class="pric">¥{{(reportReceive.curMonthReceive).replace('元','')}}</label>
+													<label
+														class="pric">¥{{(reportReceive.curMonthReceive).replace('元','')}}</label>
 												</view>
 											</view>
 										</view>
@@ -272,13 +281,16 @@
 											<em></em>
 											<view class="namewm">当日外卖销售 <text>去节令</text></view>
 											<label class="pric">¥{{(takeOut.curTakeSale).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月外卖销售：</text>￥{{(takeOut.curTakeSaleRatio).replace('元','')}}</view>
+											<view class="waimai-xs">
+												<text>当月外卖销售：</text>￥{{(takeOut.curTakeSaleRatio).replace('元','')}}
+											</view>
 										</view>
 										<view class="waimai-list">
 											<em></em>
 											<view class="namewm">当日外卖销售 <text>含节令</text></view>
 											<label class="pric">¥{{(takeOut.curMonthTakeSale).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月外卖销售：</text> ￥{{(takeOut.curMountTakeRation).replace('元','')}}</view>
+											<view class="waimai-xs"><text>当月外卖销售：</text>
+												￥{{(takeOut.curMountTakeRation).replace('元','')}}</view>
 										</view>
 									</view>
 								</view>
@@ -291,19 +303,24 @@
 											<em></em>
 											<view class="namewm">当日充值 </view>
 											<label class="pric">¥{{(cardCoupon.curTakeUp).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月累计充值：</text> ¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</view>
+											<view class="waimai-xs"><text>当月累计充值：</text>
+												¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</view>
 										</view>
 										<view class="waimai-list">
 											<em></em>
 											<view class="namewm">当日售卡 <text>面值</text></view>
 											<label class="pric">¥{{(cardCoupon.curSaleCard).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月累计售卡：</text>¥{{(cardCoupon.curMountSaleCard).replace('元','')}}</view>
+											<view class="waimai-xs">
+												<text>当月累计售卡：</text>¥{{(cardCoupon.curMountSaleCard).replace('元','')}}
+											</view>
 										</view>
 										<view class="waimai-list">
 											<em></em>
 											<view class="namewm">当日售劵 <text>面值</text></view>
 											<label class="pric">¥{{(cardCoupon.curSaleBond).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月累计售劵：</text>¥{{(cardCoupon.curMountSaleBond).replace('元','')}}</view>
+											<view class="waimai-xs">
+												<text>当月累计售劵：</text>¥{{(cardCoupon.curMountSaleBond).replace('元','')}}
+											</view>
 										</view>
 									</view>
 								</view>
@@ -325,6 +342,12 @@
 	import util from '@/utils/util.js';
 
 	export default {
+		props: {
+			_menu: {
+				type: Object,
+				default: {}
+			}
+		},
 		components: {
 			Head,
 			query
@@ -378,16 +401,16 @@
 
 		},
 		async created() {
-			let showDateString = await _query_sale.GetRJData(this.KHID,this.date);
-			console.log(showDateString,'111111111111111111111111111111')
-			if(showDateString){
+			let showDateString = await _query_sale.GetRJData(this.KHID, this.date);
+			console.log(showDateString, '111111111111111111111111111111')
+			if (showDateString) {
 				this.showDate = showDateString.split('【总销售达成】')[1]
 				this.spliceDate(this.showDate)
 				this.setDate()
-			}else{
-				util.simpleMsg("查询结果为空",true)
+			} else {
+				util.simpleMsg("查询结果为空", true)
 			}
-		
+
 		},
 		onLoad() {
 
@@ -512,14 +535,14 @@
 				if (e.detail.value) {
 					this.date = e.detail.value
 					let showDateString = await _query_sale.GetRJData(this.KHID, this.date);
-					if(showDateString){
+					if (showDateString) {
 						this.showDate = showDateString.split('【总销售达成】')[1]
 						this.spliceDate(this.showDate)
 						this.setDate()
-					}else{
-						util.simpleMsg("查询结果为空",true)
+					} else {
+						util.simpleMsg("查询结果为空", true)
 					}
-				
+
 
 				}
 			},
@@ -527,7 +550,7 @@
 			setDate() {
 				this.chartsDataArcbar.series[0].data = parseInt(this.totalSale.progress) / 100
 				this.chartsDataArcbar.series[1].data = parseInt(this.totalSale.timeProgress) / 100
-				this.chartsDataArcbar1.series[0].data = parseInt(this.reportDamage.curMonthDamage)/100
+				this.chartsDataArcbar1.series[0].data = parseInt(this.reportDamage.curMonthDamage) / 100
 			},
 
 		}

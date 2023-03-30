@@ -146,13 +146,9 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: async function(data) {
+		Completed: async function(data,func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
-				
-				// console.log("调用打印");			
-				// await that.$refs.printerPage.sksqBluePrinter(data.SALE001, data.SALE2, data.arr3, data.SALE006,data.printerPram);
-
 				let create_result = await CreateSaleOrder({
 					SALE001: data.SALE001,
 					SALE002: data.SALE002,
@@ -163,7 +159,10 @@ var KQTypeObj = {
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
 				console.log("业务单号:", data.SALE001.BILL);
-				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
+				_common.TransLiteData(data.SALE001.BILL, res => {
+					console.warn("Completed卡券 ======:", res);
+					if(res.code){ if (func) func(res);}
+				}); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);	
 			} catch (e) {
 				console.log("[Completed]订单sql生成发生异常:", e);
@@ -271,7 +270,7 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: async function(data) {
+		Completed: async function(data,func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -284,7 +283,10 @@ var KQTypeObj = {
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
 					console.log("业务单号:", data.SALE001.BILL);
-				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
+				_common.TransLiteData(data.SALE001.BILL, res => {
+					console.warn("Completed卡券 ======:", res);
+					if(res.code){ if (func) func(res);}
+				}); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
 				console.log("[Completed]订单sql生成发生异常:", e);
@@ -387,7 +389,7 @@ var KQTypeObj = {
 		},
 
 		//业务完成
-		Completed: async function(data) {
+		Completed: async function(data,func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -400,7 +402,10 @@ var KQTypeObj = {
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
 					console.log("业务单号:", data.SALE001.BILL);
-				_common.TransLiteData(data.SALE001.BILL); //上传至服务端
+				_common.TransLiteData(data.SALE001.BILL, res => {
+					console.warn("Completed卡券 ======:", res);
+					if(res.code){ if (func) func(res);}
+				}); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
 				console.log("[Completed]订单sql生成发生异常:", e);

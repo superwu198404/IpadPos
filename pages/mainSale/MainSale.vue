@@ -103,15 +103,8 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<!-- <view class="key-board-search" @click="mainSale.keyBoardSearch"> -->
-							<view class="key-board-search">
+							<!-- <view class="key-board-search" @click="mainSale.keyBoardSearch">
 								键盘
-							</view>
-							<!-- <view class="a-z" @click="SignIn()">
-								<span class="mini-text">签到</span>
-							</view>
-							<view class="a-z" @click="DailySettlement()">
-								<span class="mini-text">日结</span>
 							</view> -->
 							<view class="states" @click="mainSale.ShowStatement">
 								<text>结算单</text>

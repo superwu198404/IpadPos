@@ -110,18 +110,20 @@ var GetAllMsg = function(e, t, func) {
 	let reqdata = Req.resObj(true, "查询中...", {
 		khid: e,
 		type: t
-	}, apistr, false);//不显示加载提示
+	}, apistr, false); //不显示加载提示
 	// console.log("查询门店消息");
 	// Req.asyncFuncOne(reqdata, func, func);
-	Req.HttpPersonal(reqdata,func)
+	Req.HttpPersonal(reqdata, func)
 }
 
 //获取消息方法
 var ShowMsg = function(khid, type, func) {
 	_ShowMsg(khid, type, func);
-	getApp().globalData.msgInt = setInterval(r => {
-		_ShowMsg(khid, type, func);
-	}, 60000); //一分钟查询一次
+	if (!getApp().globalData.msgInt) {
+		getApp().globalData.msgInt = setInterval(r => {
+			_ShowMsg(khid, type, func);
+		}, 60000); //一分钟查询一次
+	}
 }
 //获取消息方法1
 var _ShowMsg = function(khid, type = "", func) {

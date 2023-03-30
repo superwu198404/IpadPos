@@ -169,16 +169,16 @@
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<button v-if="isLink[index]==0">连接</button><button class="b_has"
-								v-if="isLink[index]==1">已连接</button>
+							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
+								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
 						</view>
 					</view>
 				</view>
 			</view>
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
-			<!-- 业务消息组件 -->
-			<movable v-if="showYWMsg && (type != 'sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData">
+			<!-- 业务消息组件 &&type!='kq_sale'-->
+			<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData">
 			</movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
@@ -252,7 +252,8 @@
 				intervalId: null,
 				showYWMsg: false,
 				ynDKF: true,
-				YN_SX: false //是否赊销
+				YN_SX: false, //是否赊销
+				deviceId: getApp().globalData.BLEInformation.deviceId,
 			};
 		},
 		computed: {
@@ -373,6 +374,7 @@
 						//外卖，外卖预定单，线上
 						return (r.type == 'PTIP' || r.type == 'WMYS' || r.type == 'XTIP');
 					});
+					console.log("业务消息数据：", that.YW_MsgData);
 					if (that.YW_MsgData.length > 0) {
 						that.showYWMsg = false;
 						// console.log("触发没有：");
@@ -509,7 +511,7 @@
 						clearInterval(getApp().globalData.Int); //取消定时传输
 						getApp().globalData.Int = null;
 						uni.redirectTo({
-							url: "../Center/Center"
+							url: "/pages/Center/Center"
 						})
 					}
 				})
@@ -628,6 +630,7 @@
 					if (res.connected == false) {
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
+						that.deviceId = "";
 						try {
 							that.closeBLEConnection(res.deviceId, 0);
 						} catch (e) {}
@@ -639,6 +642,7 @@
 					} else {
 						app.globalData.YN_PRINT_CON = "Y";
 						that.YN_PRINT_CON = "Y";
+						that.deviceId = res.deviceId;
 					}
 					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
@@ -775,7 +779,6 @@
 										isScanning: false
 									});
 
-									//console.log("that.list======", that.list);
 									that.isLink = [];
 									var i = 0;
 									that.list.forEach(e => {
@@ -790,7 +793,7 @@
 									});
 								}
 							});
-						}, 5000);
+						}, 2000);
 					}
 				});
 			},
@@ -861,6 +864,13 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
+
+						if (app.globalData.BLEInformation.firstconnect < 1) {
+							uni.showToast({
+								title: "连接成功" + deviceName
+							});
+							app.globalData.BLEInformation.firstconnect = 1;
+						}
 					},
 					fail: function(e) {
 						uni.showModal({
@@ -967,8 +977,10 @@
 
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
+							app.globalData.BLEInformation.firstconnect = 1;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
+							that.deviceId = deviceId;
 							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
 								"||" + app.globalData.YN_PRINT_CON)
 
