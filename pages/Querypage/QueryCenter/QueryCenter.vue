@@ -58,11 +58,11 @@
 				curIndex: 0,
 				tableName: [
 					// {
-				// 	name: "销售报表",
-				// 	src1: require('@/images/img2/xiaoshou.png'),
-				// 	src2: require('@/images/img2/xiaoshoucx-cu.png'),
-				// 	key: "Storeinquiry"
-				// }, 
+					// 	name: "销售报表",
+					// 	src1: require('@/images/img2/xiaoshou.png'),
+					// 	src2: require('@/images/img2/xiaoshoucx-cu.png'),
+					// 	key: "Storeinquiry"
+					// }, 
 				],
 				currentComponent: '',
 				MenuArr: [],
@@ -80,15 +80,24 @@
 			console.log("菜单数量：", arr.length);
 			if (arr && arr.length > 0) {
 				arr.map(r => {
-					let obj = that.tableName.find(r1 => {
-						return r1.name == r.MenuName
-					});
-					if (obj)
-						Object.assign(r, obj);
-					else {
-						r.name = r.MenuName;
+					// let obj = that.tableName.find(r1 => {
+					// 	return r1.name == r.MenuName
+					// });
+					// if (obj)
+					// 	Object.assign(r, obj);
+					// else {
+					r.name = r.MenuName;
+					// }
+					r.key = 'Storeinquiry';
+					try {
+						r.src1 = require('@/images/img2/' + r.MenuId + '-bai.png');
+						r.src2 = require('@/images/img2/' + r.MenuId + '-lv.png');
+					} catch (e) {
+						//TODO handle the exception
+						//默认值
+						r.src1 = "";
+						r.src2 = "";
 					}
-						r.key = 'Storeinquiry';
 				})
 				console.log("合并结果：", arr);
 				that.MenuArr = arr;

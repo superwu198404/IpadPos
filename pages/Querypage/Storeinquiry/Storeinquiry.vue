@@ -19,7 +19,7 @@
 					@click="listTable(index)">{{item.tab}}</text>
 			</view>
 		</view>
-		<NoData v-if="list.length==0"></NoData>
+		<NoData v-if="list.length==0" :_tips="'功能暂未授权'"></NoData>
 		<scroll-view scroll-y="true" show-scrollbar="true" v-else>
 			<view class="commodity" style="margin-top: 28px;width: 95%;" height="100%">
 				<!-- 大类循坏 -->
