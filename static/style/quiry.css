@@ -26,8 +26,9 @@
 }
 .leftcx .menu{
 	margin-top:60rpx;
-	height: 68%;
+	height: 67%;
 	padding-bottom: 1%;
+	overflow: auto;
 }
 .leftcx .menu image{
 	width:30rpx;
@@ -39,7 +40,7 @@
 	justify-content: center;
 	align-items: center;
 	font-size: 30rpx;
-	padding:12rpx 2%;
+	padding:10rpx 2%;
 }
 .glcx.curr view{
 	background-color: #fff;
