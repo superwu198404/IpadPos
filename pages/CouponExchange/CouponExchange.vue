@@ -734,9 +734,9 @@
 					SALE003: that.SALE003,
 					SALE006: res.sale6,
 					SXSALE001: that.SXSALE001,
-				},res => {
+				},resp => {
 					//销售单数据处理成功，再调用打印
-					if(res.code)
+					if(resp.code)
 						that.PrintBill(res.sale2, res.sale6);
 					//重置销售单
 					that.ResetSaleBill();
