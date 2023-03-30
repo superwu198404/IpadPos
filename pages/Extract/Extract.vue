@@ -8,7 +8,7 @@
 <template>
 	<!-- <menu_content :index="2"> -->
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
+<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<!-- <menu_page :menuIndex="4"></menu_page> -->
 	<view class="right">
 	<view class="bkjb">
