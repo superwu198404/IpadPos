@@ -417,7 +417,7 @@
 				uni.redirectTo({
 					url: "/pages/Querypage/QueryCenter/QueryCenter",
 					complete: res => {
-						console.log(res)
+						console.log('跳转结果', res);
 					}
 				});
 			},
