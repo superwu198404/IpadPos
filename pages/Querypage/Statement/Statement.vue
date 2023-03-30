@@ -4,13 +4,8 @@
 	@import url(@/static/style/quiry.css);
 </style>
 
-<template>
-	<!-- <view class="content"> -->
-		<!-- <query></query> -->
-		<!-- <view class="right" style="position: relative;"> -->
-			<!-- <Head></Head> -->
-			<view class="listof" style="position: absolute;margin-top: -20px;" >
-				<view class="prolist" style="width: 84%;">
+<template>	
+				<view class="body" style="margin-top: -23px;">
 					<view class="hh" style="padding-right:8.7%;">
 						<view class="hotcakes">
 							<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
@@ -192,31 +187,31 @@
 												<view class="dyxs">
 													<view class="dyname">当日占比</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:freshRoast.curRoastSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(freshRoast.curRoastSaleRatio)}}</text></label>
+															:style="{height:panduan(decimals(freshRoast.curRoastSaleRatio))}"><text
+																style="font-size: 11px;">{{panduan(decimals(freshRoast.curRoastSaleRatio))}}</text></label>
 													</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:mountingPatterns.curPatternSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(mountingPatterns.curPatternSaleRatio) }}</text></label>
+															:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatio))}"><text
+																style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatio)) }}</text></label>
 													</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:waterBar.curBarSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(waterBar.curBarSaleRatio) }}</text></label>
+															:style="{height:panduan(decimals(waterBar.curBarSaleRatio))}"><text
+																style="font-size: 11px;">{{panduan(decimals(waterBar.curBarSaleRatio))}}</text></label>
 													</view>
 												</view>
 												<view class="drxs">
 													<view class="dyname">当月占比</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:freshRoast.curMountRoastRation}"><text
-																style="font-size: 11px;">{{decimals(freshRoast.curMountRoastRation) }}</text></label>
+															:style="{height:panduan(decimals(freshRoast.curMountRoastRation))}"><text
+																style="font-size: 11px;">{{panduan(decimals(freshRoast.curMountRoastRation)) }}</text></label>
 													</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:mountingPatterns.curPatternSaleRatioRatio}"><text
-																style="font-size: 11px;">{{decimals(mountingPatterns.curPatternSaleRatioRatio) }}</text></label>
+															:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatioRatio))}"><text
+																style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatioRatio)) }}</text></label>
 													</view>
 													<view style="margin: 0 20px;"><label
-															:style="{height:waterBar.curMountBarRation}"><text
-																style="font-size: 11px;">{{decimals(waterBar.curMountBarRation) }}</text></label>
+															:style="{height:panduan(decimals(waterBar.curMountBarRation))}"><text
+																style="font-size: 11px;">{{panduan(decimals(waterBar.curMountBarRation)) }}</text></label>
 													</view>
 												</view>
 											</view>
@@ -359,10 +354,7 @@
 						</view>
 					</view>
 				</view>
-			</view>
-		<!-- </view> -->
-	<!-- </view> -->
-	<!-- </view> -->
+
 </template>
 
 <script>
@@ -482,8 +474,7 @@
 
 		},
 		async created() {
-			// todo
-			let showDateString = await _query_sale.GetRJData('K200QTD005', '2023-03-20');
+			let showDateString = await _query_sale.GetRJData(this.KHID, this.date);
 			console.log(showDateString)
 			if (showDateString) {
 				this.showDate = showDateString.split('【总销售达成】')[1]
@@ -669,6 +660,14 @@
 				} else {
 					return value
 				}
+							
+			},
+			panduan(value){
+				if(parseInt(String(value)) >= 100){
+					return '100%'
+				}else{
+					return value
+				}
 			},
 			pushChartList(value) {
 				let maxValue = value.sort((a, b) => {
@@ -696,13 +695,10 @@
 		padding: 16rpx 2%;
 	}
 
-	.listof {
+/* 	.listof {
 		height: 92%;
-	}
+	} */
 
-	.commodity {
-		height: 95%;
-	}
 
 	.huanxing {
 		width: 23%;

@@ -68,7 +68,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="fanhui" tabindex="-1">
+		<view class="fanhui" tabindex="-1" v-show="!isKeyBoardShow">
 			<view class="bills">
 				<label></label>
 				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
@@ -100,7 +100,8 @@
 			_sale2_count: {
 				type: Number,
 				default: 0
-			}
+			},
+			isKeyBoardShow:Boolean
 		},
 		computed: {
 			Selected: function() {

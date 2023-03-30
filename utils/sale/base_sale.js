@@ -1369,8 +1369,8 @@ var XsTypeObj = {
 				this.ComponentsManage["DKF"] = false;
 				return;
 			}
-			if(Object.keys(data).length == 0){
-				uni.$emit("external-operation",function(){
+			if (Object.keys(data).length == 0) {
+				uni.$emit("external-operation", function() {
 					this.SubmitMenuSelectEvent('sale', XsTypeObj.sale);
 				})
 			}
@@ -2123,6 +2123,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.createHotSaleSpList = function(pm_rethotsale) {
+		that.turnOffKeys()
 		if (hotSale == null) {
 			hotSale = pm_rethotsale;
 			hotSale.forEach(plitem => {
@@ -2149,16 +2150,16 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
+		that.turnOffKeys()
 		this.Page.Alphabetical = !this.Page.Alphabetical;
 	})
 	//搜索键盘 todo
-	this.keyBoardSearch = util.callBind(this,function(e){
-		// if (!this.currentOperation.FZCX || this.Page.Alphabetical === true) {
-		if ( this.Page.Alphabetical === true) {
+	this.keyBoardSearch = util.callBind(this, function(e) {
+		if (this.Page.Alphabetical === true) {
 			util.simpleMsg("当前模式不允许搜索", "none");
 			return;
 		}
-		this.Page.isKeyBoardShow = !this.Page.isKeyBoardShow
+		this.Page.isKeyBoardShow = true
 	})
 	//*func*展开商品编辑
 	this.showEditFunc = util.callBind(this, function(e) {
@@ -2489,6 +2490,18 @@ function GetSale(global, vue, target_name, uni) {
 	this.CakeTagList = [];
 	//已选标签集合
 	this.CheckTagList = [];
+	//查询键盘字母 todo
+	this.keyBoardList = [{
+		value: ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P']
+	}, {
+		value: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L']
+	}, {
+		value: ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+	}]
+	//键盘查询词
+	this.boardQueryKeys = '';
+	this.showQueryKeys = '';
+	this.isDateClassify = true;
 	//蛋糕预定商品集合
 	this.CakeList = [
 		// 	{
@@ -2691,6 +2704,82 @@ function GetSale(global, vue, target_name, uni) {
 		//筛选字母的列表
 	}
 
+	const handleSearch = function(object, searchKey, isDateClassify) {
+		// 是否分类
+		if (isDateClassify) {
+			const result = []
+			for (const key in object) {
+				if (object.hasOwnProperty(key)) {
+					const element = object[key]
+					if (element.PINYIN && element.PINYIN.includes(searchKey)) {
+						if (
+							!result.some((item) => {
+								if (element.plid === item.plid) {
+									element.indexof = element.PINYIN.indexOf(searchKey)
+									item.plarr.push(element)
+									item.plarr = item.plarr.sort((a, b) => a.indexof - b.indexof)
+
+									return true
+								} else {
+									return false
+								}
+							})
+						) {
+							let itemObj = {
+								FSTR: element.FSTR,
+								plid: element.plid,
+								plname: element.plname,
+								plarr: [{
+									...element,
+									indexof: element.PINYIN.indexOf(searchKey),
+								}, ],
+							}
+							result.push(itemObj)
+						}
+					}
+				}
+			}
+			return result.sort((a, b) => a.plarr[0].indexof - b.plarr[0].indexof)
+		} else {
+			const result = []
+			let list = []
+			for (const key in object) {
+				if (object.hasOwnProperty(key)) {
+					const element = object[key]
+					if (element.PINYIN.includes(searchKey)) {
+						let itemObj = {
+							FSTR: element.FSTR,
+							plid: element.plid,
+							plname: element.plname,
+							indexof: element.PINYIN.indexOf(searchKey),
+							plarr: [element],
+						}
+						result.push(itemObj)
+					}
+				}
+			}
+			const value = result.sort((a, b) => a.indexof - b.indexof)
+			if (value.length >= 1) {
+				list.push(value[0])
+				value.shift()
+				value?.forEach(item => {
+					list[0].plarr.push(item.plarr[0])
+				})
+			}
+			return list
+		}
+
+	}
+	//todo
+	this.queryBoardList = function(searchKey) {
+		const queryList = handleSearch(that.spidKeyVal, searchKey, that.isDateClassify)
+		this.selectFlagList = queryList
+		if (queryList && queryList.length >= 1) {
+			this.selectPlid = queryList[0].plid
+		}
+		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
+	}
+
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用
 	this.setSaleTypeDefval = function(pm_key) {
 		if (this.current_type.operation.hasOwnProperty(pm_key)) {
@@ -2730,6 +2819,49 @@ function GetSale(global, vue, target_name, uni) {
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
+	}
+	//点击键盘字母 todo
+	this.keyBoardClick = function(e) {
+		this.boardQueryKeys = this.boardQueryKeys + e
+	}
+	this.affirmQueryKeys = function(e) {
+		if (that.boardQueryKeys.length < 2) {
+			util.simpleMsg('请至少输入两个字符', true)
+			return
+		}
+		if (that.boardQueryKeys.length > 10) {
+			util.simpleMsg('请最多输入十个字符', true)
+			return
+		}
+		const searchKey = that.boardQueryKeys.toLowerCase()
+		that.showQueryKeys = searchKey
+		that.boardQueryKeys = ''
+		//发起搜索
+		that.queryBoardList.call(that, searchKey)
+
+	}
+	//清空键盘
+	this.clearQueryKeys = function() {
+		that.boardQueryKeys = ''
+	}
+	// 删除键盘输入
+	this.delQueryKeys = function() {
+		that.boardQueryKeys = that.boardQueryKeys.substr(0, that.boardQueryKeys.length - 1)
+	}
+	// 关闭键盘
+	this.turnOffKeys = function() {
+		that.Page.isKeyBoardShow = false
+		that.boardQueryKeys = ''
+		that.showQueryKeys = ''
+		that.isDateClassify = true
+	}
+	//键盘搜索是否分类
+	this.switchAreaChange = function(e) {
+		if (e.detail.value) {
+			that.isDateClassify = true
+		} else {
+			that.isDateClassify = false
+		}
 	}
 	///当前模式下可以操作的功能，初始化以后会写到此列表中，在此列表中此可以进行点击操作，不在是不可以点击或者操作、计算等！
 	this.currentOperation = {
@@ -2848,8 +2980,8 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		if(!that.ComponentsManage[pm_mtype]){
-			uni.$emit("external-operation",function(){
+		if (!that.ComponentsManage[pm_mtype]) {
+			uni.$emit("external-operation", function() {
 				uni.$emit("menu-select-change", {
 					name: 'sale',
 					info: XsTypeObj.sale,

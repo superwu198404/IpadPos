@@ -9,7 +9,7 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType"></Page>
+			<Page ref="menu" :current="mainSale.current_type.clickType" :isKeyBoardShow='isKeyBoardShow'></Page>
 			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
@@ -26,7 +26,7 @@
 									<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
-								<view class="classifys">
+								<view class="classifys" v-show="mainSale.isDateClassify">
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
 										@click="mainSale.selectPlidChenged"
@@ -42,15 +42,17 @@
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
 									:scroll-into-view="mainSale.scrollinto">
-									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
+									<view class="products"  v-for="(plitem, plindex) in  mainSale.selectFlagList"
 										:data-plid="plitem.plid">
-
 										<view :id="mainSale.selectFlag+plitem.plid"
-											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2">
-											<text>{{plitem.plname}}</text>
+											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"  v-show="mainSale.isDateClassify">
+											<text>{{mainSale.isDateClassify?plitem.plname:'商品列表'}}</text>
 											<label></label>
 										</view>
-
+										<view  class='curr h2'  v-show="!mainSale.isDateClassify">
+											<text>{{'商品列表'}}</text>
+											<label></label>
+										</view>
 										<view class="procycle">
 											<!-- 产品循环 -->
 											<view class="li" v-for="(sptiem, spindex) in  plitem['plarr'] "
@@ -82,6 +84,7 @@
 											</view>
 										</view>
 									</view>
+
 								</scroll-view>
 							</view>
 							</scroll-view>
@@ -121,6 +124,7 @@
 								</view>
 							</view>
 						</view>
+
 						<!-- <view class="toproof">
 							<image src="../../images/dx-qdb.png" mode="widthFix"></image>
 						</view> -->
@@ -133,55 +137,54 @@
 						</view>
 						<!-- todo -->
 						<view class="keyboard-input" v-if='isKeyBoardShow'>
+							<view class="searchTerms">
+								<view class="affirmArea"
+									style="margin-left: 20px;font-size: 18px;display: flex;flex-direction: row;">
+									<view v-show="mainSale.showQueryKeys.length">
+										搜索词:
+									</view>{{(mainSale.showQueryKeys).toUpperCase()}}
+								</view>
+								<view class="inputArea"
+									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;">
+									<view>
+										{{mainSale.boardQueryKeys}}
+									</view>
+									<view v-show="mainSale.boardQueryKeys.length" class="borderCursor"></view>
+								</view>
+								<view class="deleteBoard" @click="mainSale.turnOffKeys">
+									X
+								</view>
+							</view>
+						
 							<view class="keyboard">
-								<ul class="keys">
-									<li>Q</li>
-									<li>W</li>
-									<li>E</li>
-									<li>R</li>
-									<li>T</li>
-									<li>Y</li>
-									<li>U</li>
-									<li>I</li>
-									<li>O</li>
-									<li>P</li>
+								<ul class="keys" v-for='(item,index) in mainSale.keyBoardList'>
+									<li v-for='(_item,_index) in item.value' @click="mainSale.keyBoardClick(_item)">
+										{{_item}}
+									</li>
 								</ul>
-								<ul class="keys">
-									<li>A</li>
-									<li>S</li>
-									<li>D</li>
-									<li>F</li>
-									<li>G</li>
-									<li>H</li>
-									<li>J</li>
-									<li>K</li>
-									<li>L</li>
+								<ul class="keys" style="position:absolute; bottom: 3px; right: 0;">
+									<li class="enter" @click="mainSale.delQueryKeys">删除</li>
+									<li class="enter" @click="mainSale.clearQueryKeys">清空</li>
+									<li class="enter" @click="mainSale.affirmQueryKeys">搜索</li>
 								</ul>
-								<ul class="keys">
-									<li>Z</li>
-									<li>X</li>
-									<li>C</li>
-									<li>V</li>
-									<li>B</li>
-									<li>N</li>
-									<li>M</li>
-								</ul>
-								<ul class="keys" style="position:absolute; bottom: 0; right: 0;">
-									<li class="enter">取消</li>
-									<li class="enter">Enter</li>
-								</ul>
+							</view>
+							<view class="switchArea">
+								分类：
+								<switch checked color="#1aa034" @change="mainSale.switchAreaChange" />
 							</view>
 						</view>
 
 					</view>
 				</view>
+
 				<!-- 在这插入组件 -->
 				<!-- <Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve> -->
 				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true"
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
 				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
+				<TakeAway style="position: absolute;z-index: 5;"
+					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
 				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
 				</TakeYD>
@@ -205,6 +208,7 @@
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
+
 		<view class="boxs" v-if="mainSale.tool_pages.promotions"
 			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
@@ -300,8 +304,6 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
 			</FZCX>
 		</view>
-		<!-- 搜索键盘 todo-->
-		<!-- <KeyboardSearch v-if='false'></KeyboardSearch> -->
 		<!-- 结算单  -->
 		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">
@@ -976,9 +978,9 @@
 			},
 		},
 		// 下拉事件
-		onPullDownRefresh () {
+		onPullDownRefresh() {
 			console.log('触发下拉刷新了')
-			
+
 		},
 		methods: {
 			// 隐藏
@@ -1011,14 +1013,15 @@
 			},
 			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
-				uni.$on('menu-select-change',(function(data){
-					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(info){
-						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
+				uni.$on('menu-select-change', (function(data) {
+					uni.createSelectorQuery(data.vue).select(".bills.acts").boundingClientRect((function(
+						info) {
+						if (this.mainSale.clickSaleType.clickType == data.name && this.mainSale
+							.current_type?.clickType != data.name) {
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
 							this.arrow_style.left = info.left + info.width - 5 + "px";
 							this.arrow_style.display = "block";
-						}
-						else{
+						} else {
 							this.arrow_style.display = "none";
 						}
 					}).bind(this)).exec();
@@ -1027,7 +1030,7 @@
 		},
 		created() {
 			let default_visible = util.getStorage('default-visible-template');
-			if(default_visible){
+			if (default_visible) {
 				this.default_visible_template = default_visible;
 				util.setStorage('default-visible-template', null)
 			}
@@ -1045,8 +1048,8 @@
 				this.mainSale.ComponentsManage.DKF = false;
 				this.mainSale.SetManage('sale_takeaway'); //切换到外卖
 				console.log("[ExternalOperation]切换到外卖单完成...");
-				uni.$emit("movable-visible",false);
-				
+				uni.$emit("movable-visible", false);
+
 				uni.$emit("external-operation", function() {
 					console.warn("[ExternalOperation]开始隐藏...");
 					let menus = this.menu_info;
@@ -1239,6 +1242,7 @@
 		width: 10px;
 		background: #f5f4f8;
 	}
+
 	.key-board-search {
 		width: 40px;
 		height: 40px;
@@ -1251,32 +1255,54 @@
 		align-items: center;
 		color: #1a7a57;
 		font-weight: 600;
-	
+
 	}
-	
+
 	.keyboard-input {
+		z-index: 999;
 		background-color: #fff;
-		width: 850px;
-		height: 300px;
+		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
+		border-radius: 22px;
+		width: 810px;
+		height: 287px;
 		position: absolute;
-		bottom: 7%;
+		bottom: 60px;
 		right: 0;
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-end;
+		padding-bottom: 38px;
+		animation: keyboard 0.5s ease;
+		-webkit-animation: keyboard 0.5s ease;
+
 	}
-	
+
+	@keyframes keyboard {
+		0% {
+			transform: scale(0);
+			/* right: -10%; */
+			/* width: 0; */
+		}
+
+		100% {
+			transform: scale(1);
+			/* width: 810px; */
+		}
+	}
+
+
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
+		width: 790px;
 	}
-	
+
 	.keyboard .keys {
 		display: flex;
 		list-style: none;
-		margin: 0 0;
+		margin: 0 0 0 -33px;
 	}
-	
+
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		width: 60px;
@@ -1288,10 +1314,87 @@
 		line-height: 60px;
 		transition: all 0.25s;
 	}
-	
+
 	.keyboard li:active {
 		box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
 		color: rgb(12, 164, 190);
 		text-shadow: 0 0 15px #57c1f1;
 	}
+
+	.searchTerms {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		font-size: 18px;
+		font-weight: 600;
+		color: gray;
+		width: 100%;
+		height: 60px;
+		padding-top: 5px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.switchArea {
+		font-size: 18px;
+		font-weight: 600;
+		color: gray;
+		position: absolute;
+		background-color: #fff;
+		top: -53px;
+		padding: 6px;
+		right: 10px;
+		border-radius: 8px;
+		display: flex;
+		flex-direction: row;
+		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
+	}
+
+	.deleteBoard {
+		width: 26px;
+		padding: 3px;
+		height: 26px;
+		background-color: darkgray;
+		color: #000;
+		margin-right: 10px;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.borderCursor {
+		position: relative;
+		color: gray;
+		height: 13px;
+		width: 2px;
+		margin-left: 2px;
+		margin-top: 5px;
+	}
+
+	.borderCursor:after {
+		position: absolute;
+		content: '';
+		display: inline-block;
+		width: 2px;
+		height: 18px;
+		top: 50%;
+		transform: translateY(-50%);
+		animation: blink 1.2s infinite steps(1, start);
+	}
+
+	@keyframes blink {
+
+		0%,
+		100% {
+			background-color: #000;
+		}
+
+		50% {
+			background-color: transparent;
+		}
+	}
+
+	/* todo */
 </style>
