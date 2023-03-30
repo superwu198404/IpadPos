@@ -859,6 +859,7 @@
 				uni.createBLEConnection({
 					deviceId: deviceId,
 					success: function(res) {
+						//console.log("Connection success:", res);
 						app.globalData.BLEInformation.deviceId = deviceId;
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);

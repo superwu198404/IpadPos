@@ -790,6 +790,7 @@
 			SaleCompleted: async function() {
 				that.UploadCKR(); //更新持卡人信息
 				console.log("生成销售单");
+							
 				//激活成功-充值成功（与否）均生成销售单
 				await KQSale.Completed({
 					SALE001: that.SALE001,
@@ -797,10 +798,13 @@
 					SALE003: that.SALE003,
 					SALE006: that.SALE006,
 					SXSALE001: that.SXSALE001,
+				},res => {
+					//销售单数据处理成功，再调用打印
+					if(res.code)
+						that.PrintBill();
+					//重置销售单
+					that.ResetSaleBill();
 				})
-				await that.PrintBill();
-				//重置销售单
-				that.ResetSaleBill();
 			},
 			PrintBill: async function() {
 				console.log("调用打印");

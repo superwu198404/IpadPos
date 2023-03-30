@@ -13,9 +13,8 @@
 			<view :class="exit_btn ? 'bkjb full-screen' : 'bkjb'">
 			<view class="neik">
 			<!-- <menu_head></menu_head> -->
-			<view class="listof">
-				<view class="prolist">
-					
+				<view class="listof">
+					<view class="prolist" style="display: flex;flex-direction: column;">
 						<view :class="exit_btn ? 'hh add-top' : 'hh'">
 							<view class="hotcakes">
 								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖单
@@ -31,7 +30,7 @@
 							</view>
 						</view>
 						<NoData v-if="WMOrders.length==0"></NoData>
-						<view class="products" v-else>
+						<view class="products" style="flex:1;margin-bottom:60rpx;" v-else>
 							<view class="procycle">
 								<!-- 外卖单循环 -->
 								<view class="li" :class="curIndex === index? 'curr':' '"
@@ -121,7 +120,6 @@
 				</view>
 			</view>
 			</view>
-			
 		</view>
 		<!-- 报损数据 -->
 		<view class="boxs" v-if="yn_bs">
@@ -809,6 +807,6 @@
 		height: 100% !important;
 	}
 	.add-top{
-		transform: translateY(14rpx);
+		padding-top: 60rpx;
 	}
 </style>

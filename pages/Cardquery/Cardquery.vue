@@ -42,19 +42,20 @@
 								<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()">
 								<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()">
 								<input type="text" placeholder="请输入查询卡号" v-model="form.number"/>
+								<button v-if="form.number" @click="form.number=''" style="margin-right: 5px;">×</button>
 							</view>
 							<button class="btn" @click="according_to_type_search">查询</button>
 							</view>
 						</view>	
 					</view>
-					<view class="partics" v-if="form.infos && form.infos.card_id">
+					<view class="partics">
 						<view class="cardqs">
 							<view class="cardlist">
 								<view class="ulli">
 									<view class="touch-list list-touch">
 										<image class="bgs" style="position: absolute;top: 0px;" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
-											<label><em></em>{{ default_view(form.infos.type_name) }}</label>											
+											<label><em></em>{{ default_view(form.infos.type_name,'暂无') }}</label>											
 										</view>
 										<view class="denominat" v-if="form.infos.show_balance">
 											<label>￥<text>{{ default_view(form.infos.balance, 0) }}</text></label>
@@ -62,7 +63,7 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="card-num">											
-													<label>券号：{{ default_view(form.infos.card_id) }}</label>
+													<label>券号：{{ default_view(form.infos.card_id,'暂无') }}</label>
 													<view><em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}</view>
 												</view>
 											</view>
@@ -86,7 +87,7 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>{{ default_view(form.infos.card_id) }}</text></label>
+									<label>卡号：<text>{{ default_view(form.infos.card_id,'暂无') }}</text></label>
 								</view>
 								<button v-if="form.infos.status" class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>
 							</view>

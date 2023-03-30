@@ -19,7 +19,8 @@
 					@click="listTable(index)">{{item.tab}}</text>
 			</view>
 		</view>
-		<scroll-view scroll-y="true" show-scrollbar="true">
+		<NoData v-if="list.length==0"></NoData>
+		<scroll-view scroll-y="true" show-scrollbar="true" v-else>
 			<view class="commodity" style="margin-top: 28px;width: 95%;" height="100%">
 				<!-- 大类循坏 -->
 				<view class="broadcate" v-for="item,index in list">
@@ -34,7 +35,8 @@
 								<image src="@/images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
 							</label>
 							<view class="summary">{{_item.name}}</view>
-							<view class="examine" @click="goCommonQuery('1009','裱花请货商品查询')">
+							<view class="examine" @click="goCommonQuery(_item)">
+								<!-- '1009','裱花请货商品查询' -->
 								<text>点击查看</text>
 								<image src="@/images/img2/dianji-jinru.png"></image>
 							</view>
@@ -50,10 +52,36 @@
 	import utils from "@/utils/util.js"
 
 	export default {
-
+		props: {
+			_menu: {
+				type: Object,
+				default: {}
+			}
+		},
+		watch: {
+			_menu: function(n, o) {
+				console.log("传入的菜单数据发生变化：", n);
+				if (n) {
+					let arr = n.Second.map(r => {
+						return {
+							tab: r.MenuName,
+							valueList: r.Third.map(r1 => {
+								return {
+									id: r1.MenuId,
+									name: r1.MenuName
+								}
+							})
+						}
+					})
+					console.log("菜单模块筛选后的数据：", arr);
+					this.list = arr;
+				}
+			}
+		},
 		data() {
 			return {
-				list: [{
+				list: [],
+				list1: [{
 					tab: "日销售1",
 					valueList: [{
 						name: "裱花请货商品汇总"
@@ -106,44 +134,24 @@
 						name: "裱花请货商品汇总"
 					}, {
 						name: "裱花请货商品汇总"
-
 					}]
 				}, {
-
 					tab: "日销售5",
-
 					valueList: [{
-
 						name: "裱花请货商品汇总"
-
 					}, {
-
 						name: "裱花请货商品汇总"
-
 					}, {
-
 						name: "裱花请货商品汇总"
-
 					}, {
-
 						name: "裱花请货商品汇总"
-
 					}, {
-
 						name: "裱花请货商品汇总"
-
 					}]
-
-
-
 				}, {
-
 					tab: "日销售6",
-
 					valueList: [{
-
 						name: "裱花请货商品汇总"
-
 					}, {
 						name: "裱花请货商品汇总"
 					}, {
@@ -166,6 +174,22 @@
 		},
 
 		mounted() {
+			console.log("传入的菜单数据：", this._menu);
+			if (this._menu) {
+				let n = this._menu;
+				let arr = n.Second.map(r => {
+					return {
+						tab: r.MenuName,
+						valueList: r.Third.map(r1 => {
+							return {
+								id: r1.MenuId,
+								name: r1.MenuName
+							}
+						})
+					}
+				})
+				this.list = arr;
+			}
 			const handleFn = () => {
 				uni.createSelectorQuery().selectAll('.mokuai').boundingClientRect((res) => {
 					for (let item of res) {

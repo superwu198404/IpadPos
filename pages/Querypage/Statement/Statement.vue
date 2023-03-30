@@ -5,17 +5,19 @@
 </style>
 
 <template>
-	<!-- <view class="content"> -->
+	<view class="content">
 		<!-- <query></query> -->
-		<!-- <view class="right" style="position: relative;"> -->
+		<view class="right" style="position: relative;">
+			<!-- :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
+					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType" -->
 			<!-- <Head></Head> -->
-			<view class="listof" style="position: absolute;margin-top: -20px;" >
-				<view class="prolist" style="width: 84%;">
-					<view class="hh" style="padding-right:8.7%;">
+			<view class="listof" style="position: absolute;z-index: 0;">
+				<view class="prolist">
+					<view class="hh" style="padding-right:3.7%;">
 						<view class="hotcakes">
 							<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 						</view>
-						<view class="classifys" v-if="date">
+						<view class="classifys">
 							<picker mode="date" fields="day" @change="changeDate" :value='date'>
 								<text>日期：{{date}}</text>
 							</picker>
@@ -78,7 +80,7 @@
 											<view class="namewm">
 												<image src="@/images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
 											</view>
-											<label class="pric">¥{{(totalSale.pureCurMouth).replace('元','')}}</label>
+											<label class="pric">{{(totalSale.pureCurMouth).replace('元','')}}</label>
 											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 										</view>
 									</view>
@@ -121,66 +123,50 @@
 										<image src="@/images/img2/zhuzhuangt.png" mode="widthFix"></image>重点品类销售明细
 									</view>
 									<view class="wk cons-pl">
-										<view class="sorts" style="text-align: left;margin-left: 3px;">
+										<view class="sorts">
 											<label><em>●</em>现烤</label>
 											<label><em>●</em>裱花</label>
 											<label><em>●</em>水吧</label>
-
-											<label @click="showWks('money')" style="margin-left: 18%;"
-												:class="showWk==='money'?'curWk':''">销售金额</label>
-											<label @click="showWks('radio')"
-												:class="showWk==='radio'?'curWk':''">销售占比</label>
 										</view>
-
 										<view class="timeperiod">
-											<view class="Barchart" style="width: 93%;" v-show="showWk==='money'">
+											<view class="Barchart">
 												<view class="beijing">
-
-													<view  v-for="item in 6"><text style='width: 10%;'>{{
-												    handleNumber(fenmu - (fenmu/5)*(item-1)) 
-													}}</text></view>
-
+													<view><text>100k</text></view>
+													<view><text>80k</text></view>
+													<view><text>60k</text></view>
+													<view><text>40k</text></view>
+													<view><text>20k</text></view>
+													<view><text>0K</text></view>
 												</view>
 												<view class="dyxs">
 													<view class="dyname">当日销售</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((freshRoast.curRoastSale).replace('元','')/fenmu)*100)+'%'}">
-
-															<text
-																style="font-size: 11px;">￥{{(freshRoast.curRoastSale).replace('元','')}}</text>
+													<view><label
+															:style="{height:(((freshRoast.curRoastSale).replace('元','')/100000)*100).toFixed(3)+'%'}">
 														</label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((mountingPatterns.curPatternSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(mountingPatterns.curPatternSale).replace('元','')}}</text>
+													<view><label
+															:style="{height:(((mountingPatterns.curPatternSale).replace('元','')/100000)*100).toFixed(3)+'%'}">
 														</label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((waterBar.curBarSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(waterBar.curBarSale).replace('元','')}}</text>
+													<view><label
+															:style="{height:(((waterBar.curBarSaleRatio).replace('元','')/100000)*100).toFixed(3)+'%'}">
 														</label>
 													</view>
 												</view>
 												<view class="drxs">
 													<view class="dyname">当月销售</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((freshRoast.curMonthRoastSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(freshRoast.curMonthRoastSale).replace('元','')}}</text></label>
+													<view><label
+															:style="{height:(((freshRoast.curMonthRoastSale).replace('元','')/100000)*100).toFixed(3)+'%'}"></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((mountingPatterns.curMonthPatternSale).replace('元','')/fenmu)*100)+'%'}"><text
-																style="font-size: 11px;">￥{{(mountingPatterns.curMonthPatternSale).replace('元','')}}</text></label>
+													<view><label
+															:style="{height:(((mountingPatterns.curMonthPatternSale).replace('元','')/100000)*100).toFixed(3)+'%'}"><text>￥{{(mountingPatterns.curMonthPatternSale).replace('元','')}}</text></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((waterBar.curMonthBarSale).replace('元','')/fenmu)*100)+'%'}"><text
-																style="font-size: 11px;">￥{{(waterBar.curMonthBarSale).replace('元','')}}</text></label>
+													<view><label
+															:style="{height:(((waterBar.curMountBarRation).replace('元','')/100000)*100).toFixed(3)+'%'}"></label>
 													</view>
 												</view>
 											</view>
-											<view class="Barchart" style="width: 93%;" v-show="showWk==='radio'">
+											<view class="Barchart">
 												<view class="beijing">
 													<view><text>100%</text></view>
 													<view><text>80%</text></view>
@@ -191,32 +177,23 @@
 												</view>
 												<view class="dyxs">
 													<view class="dyname">当日占比</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:freshRoast.curRoastSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(freshRoast.curRoastSaleRatio)}}</text></label>
+													<view><label :style="{height:freshRoast.curRoastSaleRatio}"></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:mountingPatterns.curPatternSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(mountingPatterns.curPatternSaleRatio) }}</text></label>
+													<view><label
+															:style="{height:mountingPatterns.curPatternSaleRatio}"></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:waterBar.curBarSaleRatio}"><text
-																style="font-size: 11px;">{{decimals(waterBar.curBarSaleRatio) }}</text></label>
+													<view><label :style="{height:waterBar.curBarSaleRatio}"></label>
 													</view>
 												</view>
 												<view class="drxs">
 													<view class="dyname">当月占比</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:freshRoast.curMountRoastRation}"><text
-																style="font-size: 11px;">{{decimals(freshRoast.curMountRoastRation) }}</text></label>
+													<view><label
+															:style="{height:freshRoast.curMountRoastRation}"></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:mountingPatterns.curPatternSaleRatioRatio}"><text
-																style="font-size: 11px;">{{decimals(mountingPatterns.curPatternSaleRatioRatio) }}</text></label>
+													<view><label
+															:style="{height:mountingPatterns.curPatternSaleRatioRatio}"><text>{{mountingPatterns.curPatternSaleRatioRatio}}</text></label>
 													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:waterBar.curMountBarRation}"><text
-																style="font-size: 11px;">{{decimals(waterBar.curMountBarRation) }}</text></label>
+													<view><label :style="{height:waterBar.curMountBarRation}"></label>
 													</view>
 												</view>
 											</view>
@@ -241,7 +218,7 @@
 														<view class="huiyuan">
 															<label>
 																<image src="@/images/img2/baosu.png"></image>
-																{{decimals( reportDamage.curDamageRation)}}
+																{{reportDamage.curDamageRation}}
 															</label>
 															<text>当日报损率</text>
 														</view>
@@ -254,7 +231,7 @@
 														<view class="huiyuan">
 															<label>
 																<image src="@/images/img2/baosun-leiji.png"></image>
-																{{decimals(reportDamage.DamageAllRation) }}
+																{{reportDamage.DamageAllRation}}
 															</label>
 															<text>当月累计报损率</text>
 														</view>
@@ -324,45 +301,37 @@
 									<view class="cons-qjl">
 										<view class="waimai-list">
 											<em></em>
-											<!-- <view class="namewm">当日充值: <view style="font-weight: 600; font-size: 15px; margin-left: 5px;">¥{{(cardCoupon.curTakeUp).replace('元','')}}</view></view> -->
-											<!-- <label class="pric">¥{{(cardCoupon.curTakeUp).replace('元','')}}</label> -->
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计充值:
-											</view>
-											<label class="pric">¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</label>
+											<view class="namewm">当日充值 </view>
+											<label class="pric">¥{{(cardCoupon.curTakeUp).replace('元','')}}</label>
+											<view class="waimai-xs"><text>当月累计充值：</text>
+												¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</view>
 										</view>
 										<view class="waimai-list">
 											<em></em>
-											<view class="namewm">当日售卡: <view
-													style="font-weight: 600; font-size: 15px; margin-left: 5px;">
-													¥{{(cardCoupon.curSaleCard).replace('元','')}}</view>
+											<view class="namewm">当日售卡 <text>面值</text></view>
+											<label class="pric">¥{{(cardCoupon.curSaleCard).replace('元','')}}</label>
+											<view class="waimai-xs">
+												<text>当月累计售卡：</text>¥{{(cardCoupon.curMountSaleCard).replace('元','')}}
 											</view>
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售卡:
-											</view>
-											<label
-												class="pric">¥{{(cardCoupon.curMountSaleCard).replace('元','')}}</label>
 										</view>
-
 										<view class="waimai-list">
 											<em></em>
-											<view class="namewm">当日售劵: <view
-													style="font-weight: 600; font-size: 15px; margin-left: 5px;">
-													¥{{(cardCoupon.curSaleBond).replace('元','')}}</view>
+											<view class="namewm">当日售劵 <text>面值</text></view>
+											<label class="pric">¥{{(cardCoupon.curSaleBond).replace('元','')}}</label>
+											<view class="waimai-xs">
+												<text>当月累计售劵：</text>¥{{(cardCoupon.curMountSaleBond).replace('元','')}}
 											</view>
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售劵:
-											</view>
-											<label
-												class="pric">¥{{(cardCoupon.curMountSaleBond).replace('元','')}}</label>
 										</view>
 									</view>
 								</view>
 							</view>
+
 						</view>
 					</view>
 				</view>
 			</view>
-		<!-- </view> -->
-	<!-- </view> -->
-	<!-- </view> -->
+		</view>
+	</view>
 </template>
 
 <script>
@@ -373,13 +342,18 @@
 	import util from '@/utils/util.js';
 
 	export default {
+		props: {
+			_menu: {
+				type: Object,
+				default: {}
+			}
+		},
 		components: {
 			Head,
 			query
 		},
 		data() {
 			return {
-				showWk: 'money',
 				sideIndex: null,
 				option: {},
 				optionone: {},
@@ -409,82 +383,26 @@
 						color: '#42B14B'
 					}]
 				},
-				chartList: [],
-				chartMaxValue: 0,
 				KHID: getApp().globalData.store.KHID,
 				date: new Date().toISOString().slice(0, 10),
 				isDate: false,
 				showDate: '',
-				totalSale: {
-					curSale: '',
-					pureCurSale: '',
-					noPureCureSale: '',
-					pureCurMouth: '',
-					timeProgress: '',
-					progress: ''
-				},
-				mountingPatterns: {
-					curPatternSale: '',
-					curPatternSaleRatio: '',
-					curMonthPatternSale: '',
-					curPatternSaleRatioRatio: '',
-					curPatternTargetRatio: ''
-				}, //裱花
-				freshRoast: {
-					curRoastSale: '',
-					curRoastSaleRatio: '',
-					curMonthRoastSale: '',
-					curMountRoastRation: '',
-					curMountRoastTargetRation: ''
-				}, //现烤
-				waterBar: {
-					curBarSale: '',
-					curBarSaleRatio: '',
-					curMonthBarSale: '',
-					curMountBarRation: '',
-				},
-				takeOut: {
-					curTakeSale: '',
-					curTakeSaleRatio: '',
-					curMonthTakeSale: '',
-					curMountTakeRation: ''
-				},
-				cardCoupon: {
-					curTakeUp: '',
-					curMonthTakeUp: '',
-					curSaleCard: '',
-					curMountSaleCard: '',
-					curSaleBond: '',
-					curMountSaleBond: ''
-				},
-				numberOfVisitors: {
-					curVisiror: '',
-					curMountVisiror: '',
-					curDoAwaySale: '',
-					curMountDoAwaySale: ''
-				},
-				reportDamage: {
-					curMonthDamage: '',
-					curDamage: '',
-					curDamageRation: '',
-					curMountDamageRation: '',
-					DamageAllRation: ''
-				},
-				reportReceive: {
-					curReceive: '',
-					curMonthReceive: ''
-				},
-				member: {
-					curMembers: '',
-					curMemberSale: ''
-				}
+				totalSale: {},
+				mountingPatterns: {}, //裱花
+				freshRoast: {}, //现烤
+				waterBar: {},
+				takeOut: {},
+				cardCoupon: {},
+				numberOfVisitors: {},
+				reportDamage: {},
+				reportReceive: {},
+				member: {}
 			}
 
 		},
 		async created() {
-			// todo
-			let showDateString = await _query_sale.GetRJData('K200QTD005', '2023-03-20');
-			console.log(showDateString)
+			let showDateString = await _query_sale.GetRJData(this.KHID, this.date);
+			console.log(showDateString, '111111111111111111111111111111')
 			if (showDateString) {
 				this.showDate = showDateString.split('【总销售达成】')[1]
 				this.spliceDate(this.showDate)
@@ -497,30 +415,7 @@
 		onLoad() {
 
 		},
-		computed: {
-			fenmu() {
-				if (this.chartMaxValue) {
-					console.log(Number(Number(String(this.chartMaxValue)[0]) + (Number(String(this.chartMaxValue)[1]) === 0 ?
-						0 :
-						1) + Array(this.chartMaxValue.toFixed(0).length -
-						1).fill(0).join("")))
-
-					return Number(Number(String(this.chartMaxValue)[0]) + (Number(String(this.chartMaxValue)[1]) === 0 ?
-						0 :
-						1) + Array(this.chartMaxValue.toFixed(0).length -
-						1).fill(0).join(""))
-				}
-
-			}
-		},
 		methods: {
-			showWks(value) {
-				if (value === "money") {
-					this.showWk = 'money'
-				} else if (value === 'radio') {
-					this.showWk = 'radio'
-				}
-			},
 			spliceDate(showDate) {
 				if (showDate) {
 					this.isDate = true
@@ -629,13 +524,8 @@
 					const curMemberSale = showDate.split('当日会员消费:')[1]
 					this.member.curMembers = curMembers
 					this.member.curMemberSale = curMemberSale
-					//图标区数据
-					const chartList = [this.spliceUnit(curPatternSale), this.spliceUnit(curMonthPatternSale), this
-						.spliceUnit(curRoastSale), this.spliceUnit(curMonthRoastSale), this.spliceUnit(curBarSale),
-						this.spliceUnit(curMonthBarSale)
-					]
-					this.pushChartList(chartList)
 
+					console.log(this.member, 'totalSale')
 				} else {
 					this.isDate = false
 					util.simpleMsg('未查询到数据', true)
@@ -650,41 +540,17 @@
 						this.spliceDate(this.showDate)
 						this.setDate()
 					} else {
-						this.isDate = false
 						util.simpleMsg("查询结果为空", true)
 					}
+
+
 				}
 			},
-			spliceUnit(value) {
-				return value.replace('元', '')
-			},
+
 			setDate() {
 				this.chartsDataArcbar.series[0].data = parseInt(this.totalSale.progress) / 100
 				this.chartsDataArcbar.series[1].data = parseInt(this.totalSale.timeProgress) / 100
 				this.chartsDataArcbar1.series[0].data = parseInt(this.reportDamage.curMonthDamage) / 100
-			},
-			decimals(value) {
-				if (value.startsWith(".")) {
-					return `0${value}`
-				} else {
-					return value
-				}
-			},
-			pushChartList(value) {
-				let maxValue = value.sort((a, b) => {
-					return Number(b) - Number(a);
-				})[0];
-				this.chartMaxValue = Number(maxValue)
-				// this.chartList = value
-			},
-			handleNumber(value) {
-
-				if (value >= 10000) {
-					const v1 = value / 10000
-					return v1.toFixed(1) + '万'
-				} else {
-					return value.toFixed(0)
-				}
 			},
 
 		}
@@ -715,26 +581,5 @@
 
 	.breakage .memb {
 		margin: 3% 0;
-	}
-
-	.frseh {
-		background-color: #e0fee4;
-		border-radius: 5%;
-	}
-
-	.patter {
-		background-color: #cff2ec;
-		border-radius: 5%;
-	}
-
-	.bar {
-		background-color: #f8f3e3;
-		border-radius: 5%;
-	}
-
-	.curWk {
-		background-color: #338969;
-		color: #fff;
-		border-radius: 10px;
 	}
 </style>

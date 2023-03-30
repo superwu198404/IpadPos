@@ -40,7 +40,10 @@
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
-							<NoData v-if="get_main_sale6.length==0"></NoData>
+							<view class="swipetip"  v-if="get_main_sale6.length==0">
+								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+								<text>请先录入活动券</text>
+							</view>
 							<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
 								<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)"
 									:data-style="get_text_style(sale6_main.sale006)" :data-index="index"
