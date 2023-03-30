@@ -17,7 +17,7 @@
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
-				<view class="listof" style="position: absolute;z-index: 0;">
+				<view class="listof" style="position: absolute;">
 					<view class="prolist">
 						<!-- 大类循环 -->
 						<view class="commodity">
@@ -125,8 +125,8 @@
 								<em></em>
 							</label>
 						</view>
-						<!-- todo -->
-						<view class="keyboard-input" v-if='isKeyBoardShow'>
+						<!-- todo v-if='isKeyBoardShow'-->
+						<view class="keyboard-input" >
 							<view class="keyboard">
 								<ul class="keys">
 									<li>Q</li>
