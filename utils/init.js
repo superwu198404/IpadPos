@@ -6,8 +6,8 @@ const init = {
 		let current = new Date();
 		return {
 			BILL: util.getBill(),
-			SALEDATE : current.toLocaleDateString().replaceAll('/','-'),
-			SALETIME : current.toLocaleString().replaceAll('/','-'),
+			SALEDATE : current.toLocaleDateString().replaceAll('/','-').replaceAll(/[\u4E00-\u9FA5]/g,''),
+			SALETIME : current.toLocaleString().replaceAll('/','-').replaceAll(/[\u4E00-\u9FA5]/g,''),
 			KHID : this.client.KHID,
 			POSID : this.client.POSID,
 			RYID : this.client.RYID,
