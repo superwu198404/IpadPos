@@ -60,7 +60,7 @@
 					name: "销售报表",
 					src1: require('@/images/img2/xiaoshou.png'),
 					src2: require('@/images/img2/xiaoshoucx-cu.png'),
-					key: "Statement"
+					key: "Storeinquiry"
 				}, {
 					name: "外卖单查询",
 					src1: require('@/images/img2/danju.png'),
@@ -95,8 +95,8 @@
 						Object.assign(r, obj);
 					else {
 						r.name = r.MenuName;
-						r.key = 'Storeinquiry';
 					}
+						r.key = 'Storeinquiry';
 				})
 				console.log("合并结果：", arr);
 				that.MenuArr = arr;
