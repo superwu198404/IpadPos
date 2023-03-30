@@ -24,13 +24,15 @@
 						<view class="labnum">
 							<text>卡/券类型：</text>
 							<view class="chaxun">
-								<view class="chanxz" :style="{ height: heightNum}">
-									<label v-for="type_info in source.types"
+								<view class="chanxz">
+									<label v-for="(type_info,index) in source.types"
 										:class="source.current_type_info == type_info ? 'curr' : ''"
-										@click="select_type(type_info)">{{ type_info.text }} <em>✓</em></label>						
+										v-show="hide_type_condition(index)"
+										@click="select_type(type_info)">{{ type_info.text }} 
+										<em>✓</em>
+									</label>						
 									<label class="quanbu" v-if="show_types_limit">
-										<span v-if="quanbu" @click="zkqb">全部<image src="@/images/img2/zhankaiiii.png"></image></span>
-										<span v-if="shouqi" @click="sqlb">收起<image src="@/images/img2/zhankaiiii.png"></image></span>
+										<span @click="switch_types">{{ view.open ? '收起' : '全部' }} <image :class="view.open ? 'close-types' : ''" src="@/images/img2/zhankaiiii.png"></image></span>
 									</label>
 								</view>
 							</view>
@@ -125,7 +127,6 @@
 							</view>
 						</view>
 					</view>
-					<NoData v-if="!(form.infos && form.infos.card_id)"></NoData>
 				</view>
 			</view>
 		</view>
@@ -140,6 +141,7 @@
 	import bussiness from '@/api/business/card_coupon_query.js';
 	import util from '@/utils/util.js';
 	import member from "@/api/hy/MemberInterfaces.js";
+	import common from '@/api/common.js';
 	var $;
 	export default {
 		name: "Cardquery",
@@ -161,6 +163,11 @@
 					else
 						return def_val;
 				});
+			},
+			hide_type_condition(){
+				return $(function(index){
+					return this.view.open || index <= 4 ? true : false;
+				})
 			},
 			scan_code_icon(){
 				return (this.source.current_type_info?.scan_code || this.source.current_type_info == null) ? true : false;
@@ -186,23 +193,14 @@
 					current_type_info: null,
 					types: [],
 				},
-				_sale2_count: 0,
-				heightNum:"74rpx",
-				quanbu:true,
-				shouqi:false
+				view:{
+					open: true
+				}
 			}
 		},
 		methods: {
-			zkqb(){
-				
-				this.heightNum="auto"
-				this.shouqi=true
-				this.quanbu=false
-			},
-			sqlb(){				
-				this.heightNum="74rpx"
-				this.quanbu=true
-				this.shouqi=false			
+			switch_types(){
+				this.view.open = !this.view.open;
 			},
 			select_type(data) {
 				if (common.CheckSign()) {
@@ -387,19 +385,22 @@
 		height: 70rpx;
 		width: 17.5%;
 		font-size: 26rpx;
-		margin: 0 1% 2% !important;
 	}
 
 	.chanxz .quanbu{
+		/* calc(20% - 46rpx) */
 		width:94rpx;
 		position: absolute;
 		top:0rpx;
-		right:3%;
+		right:6%;
 		font-size: 18rpx;
 		color: #42B14B;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+	.quanbu * {
+		transition: .5s all;
 	}
 	.chanxz .quanbu span{
 		display: block;
@@ -429,5 +430,13 @@
 	
 	.hidden {
 		visibility: hidden;
+	}
+	
+	.chanxz .uni-label-pointer{
+		flex:0 0 0.2;
+	}
+	
+	.close-types {
+		transform: rotate(180deg)
 	}
 </style>

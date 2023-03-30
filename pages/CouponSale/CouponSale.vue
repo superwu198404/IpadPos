@@ -355,8 +355,8 @@
 			},
 			async coupon_segment_activate() {
 				return member.coupon_sale.CouponActivation({
-					bill: "",
-					// bill: this.source.sale001.BILL,
+					// bill: "",
+					bill: this.source.sale001.BILL,
 					khid: this.KHID //测试错误参数激活后续进行重试操作
 				});
 			},

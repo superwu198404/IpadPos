@@ -259,10 +259,6 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		OracleSql += oracle_addition_sqls.join(';');
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
-		// console.log("[CreateSaleOrder]生成绑定BILL信息：", {
-		// 	销售BILL: dataObj["SALE001"]?.BILL || "-",
-		// 	赊销结算BILL: dataObj["YWSXJS"]?.BILL || "-"
-		// })
 		let tx_obj = {
 			TX_SQL: OracleSql,
 			STOREID: dataObj["SALE001"].KHID,
@@ -278,26 +274,32 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		let exeSql = SqliteSql.concat(sql4.sqlliteArr);
 		console.log("[CreateSaleOrder]准备执行SQL...");
 		let dbo = db.get();
-		await dbo.executeDml(exeSql, "订单创建中", res => {
-			if (func) func(res);
-			result.code = true;
-			result.msg = "销售单创建成功!"
-			result.data = res;
-			console.log("[CreateSaleOrder]销售单创建成功!", res);
-		}, err => {
-			if (func) func(err);
-			result.code = false;
-			result.msg = "销售单创建失败!"
-			result.data = err;
-			console.log("[CreateSaleOrder]销售单创建失败!", err);
-		});
+		await new Promise((resolve,reject) => {
+			dbo.executeDml(exeSql, "订单创建中", res => {
+				if (func) func(res);
+				result.code = true;
+				result.msg = "销售单创建成功!"
+				result.data = res;
+				console.log("[CreateSaleOrder]销售单创建成功!", res);
+				resolve();
+			}, err => {
+				if (func) func(err);
+				result.code = false;
+				result.msg = "销售单创建失败!"
+				result.data = err;
+				console.log("[CreateSaleOrder]销售单创建失败!", err);
+				resolve();
+			});
+		})
 		console.log("[CreateSaleOrder]SQL执行完毕!");
 	} catch (e) {
 		//TODO handle the exception
 		result.code = false;
 		result.data = e;
-		result.msg = "销售单创建异常!"
+		result.msg = "销售单创建异常!";
+		console.log("[CreateSaleOrder]创建过程中发生异常:",e);
 	}
+	console.log("[CreateSaleOrder]准备返回创建结果:",result);
 	return result;
 }
 export const SaleRefundOrderGenaration = async function(params = sale_order_generation_def_params, callback) {

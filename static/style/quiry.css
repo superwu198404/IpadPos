@@ -308,7 +308,7 @@
 .chanxz{
 	display: flex;
 	flex-wrap: wrap;
-	padding:0 0 3%;
+	gap:12rpx;
 }
 .chanxz label{
 	width:30%;
@@ -320,9 +320,6 @@
 	font-size: 26rpx;
 	position: relative;
 	overflow: hidden;
-}
-.chanxz label:nth-child(2),.chanxz label:nth-child(5){
-	margin:0 4%;
 }
 .chanxz label em{
 	display: none;

@@ -616,7 +616,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		KQTypeObj[this.YWType].Recharge(data, func);
 	};
 	this.Completed = function(data, func) {
-		KQTypeObj[this.YWType].Completed(data, func);
+		return KQTypeObj[this.YWType].Completed(data, func);
 	};
 	//商品信息匹配
 	this.MatchSP = async function() {
