@@ -982,7 +982,7 @@
 			Componentes: function() {
 				this.statement = false;
 			},
-			//销售打印小票
+			// //销售打印小票
 			bluePrinter: function(sale1_obj, sale2_arr, sale3_arr, print, type) {
 				this.$refs.printerPage.bluePrinter(sale1_obj, sale2_arr, sale3_arr, print, type);
 			},
