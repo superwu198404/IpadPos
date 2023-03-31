@@ -48,6 +48,7 @@
 	import Req from '@/utils/request.js';
 	import util from '@/utils/util.js';
 	import bleConnect from '@/utils/xprinter/bleConnect.js';
+	import cx_util from '@/utils/cx/cx_common.js';
 	import {
 		mapState,
 		mapGetters,
@@ -752,45 +753,45 @@
 				console.log("打印格式记录结束");
 			},
 			//重新打印
-			againPrinter: async function(xsBill, xsType, data) {
-				var that = this;
-				//console.log("重打单号:", xsBill)
-				if (xsBill == "" || xsBill == null) {
+			againPrinter: async function(xsBill, is_fpQRCode, data, printerData = "") {
+				let that = this;
+				if (cx_util.IsEmpty(xsBill)) {
 					uni.showToast({
 						icon: 'error',
 						title: "重打单号为空"
 					})
 					return;
 				}
-				//通过单号，查询重打格式数据
-				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
-				//console.log("pos_xsbillprint",pos_xsbillprint);	
-				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
-					util.simpleMsg("未查询到重打数据", "none");
-					return;
+				//有无传入打印数据
+				let pos_xsbillprint = "";
+				if(cx_util.IsEmpty(printerData)){
+					//通过单号，查询重打格式数据
+					pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
+					if (cx_util.IsEmpty(pos_xsbillprint)) {
+						util.simpleMsg("未查询到重打数据", "none");
+						return;
+					}
+				}else{
+					pos_xsbillprint = printerData;
 				}
 
 				//查询终端参数
 				var poscsData = await xprinter_util.getPOSCS(app.globalData.store.POSCSZID);
 				var printer_poscs = await xprinter_util.commonPOSCS(poscsData);
-				//console.log("查询终端参数", printer_poscs);
-
 				// 通过终端参数，Y 打印小票
 				if (printer_poscs.YN_YXDY != "Y") {
 					util.simpleMsg("未查询到重打数据", "none");
-					//console.log("终端参数未设置打印小票");
 					return;
 				}
-
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.addContent(pos_xsbillprint);
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				let is_ewm = true;
+				console.warn("重打小票=======", {is_dzfpewmdz,is_fpQRCode});
 				//电子发票二维码不为空，则打印二维码
-				if (is_dzfpewmdz && xprinter_util.nnvl(xsType, 0) == 1 && is_ewm) {
+				if (is_dzfpewmdz && xprinter_util.nnvl(is_fpQRCode, 0) == 1) {
 					let objQrCode = {
 						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
 						v: xprinter_util.snvl(1, ""),
@@ -818,27 +819,29 @@
 						command.endPrinter(); //打印切纸		
 						that.prepareSend(command.getData()); //发送数据
 					})
-				} else if (is_xpewm && xprinter_util.nnvl(xsType, 0) == 1 && is_ewm) {
-					//生成属于单号的公众号
-					Promise.all([
-						that.gzhQrCodeGenerate(is_xpewm, app.globalData.BLEInformation.printerFile +
-							printer_poscs.XPEWM),
-						xprinter_util.gzhQrCodeAction(is_xpewm, command, that.canvasGZHWidth, that
-							.canvasGZHHeight),
-					]).then(res => {
-						console.log("againPrinter开始发送打印命令");
-						command.setPrint();
-						command.setPrint();
-						command.endPrinter(); //打印切纸	
-						that.prepareSend(command.getData()); //发送数据
-					}).catch(reason => {
-						console.log('againPrinter reject failed reason', reason)
-						command.setPrint();
-						command.setPrint();
-						command.endPrinter(); //打印切纸		
-						that.prepareSend(command.getData()); //发送数据
-					})
-				} else {
+				} 
+				// else if (is_xpewm && xprinter_util.nnvl(is_fpQRCode, 0) == 1) {
+				// 	//生成属于单号的公众号
+				// 	Promise.all([
+				// 		that.gzhQrCodeGenerate(is_xpewm, app.globalData.BLEInformation.printerFile +
+				// 			printer_poscs.XPEWM),
+				// 		xprinter_util.gzhQrCodeAction(is_xpewm, command, that.canvasGZHWidth, that
+				// 			.canvasGZHHeight),
+				// 	]).then(res => {
+				// 		console.log("againPrinter开始发送打印命令");
+				// 		command.setPrint();
+				// 		command.setPrint();
+				// 		command.endPrinter(); //打印切纸	
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	}).catch(reason => {
+				// 		console.log('againPrinter reject failed reason', reason)
+				// 		command.setPrint();
+				// 		command.setPrint();
+				// 		command.endPrinter(); //打印切纸		
+				// 		that.prepareSend(command.getData()); //发送数据
+				// 	})
+				// } 
+				else {
 					//不打印二维码
 					that.prepareSend(command.getData()); //发送数据
 				}
