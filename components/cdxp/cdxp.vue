@@ -148,7 +148,7 @@
 	
 	var that;
 	export default {
-		name: "chikaren",
+		name: "cdxp",
 		props: {
 			TH_DATE: "",
 		},

@@ -153,7 +153,7 @@
 }
 .module .hh em{
 	position: absolute;
-	bottom:28rpx;
+	bottom:40rpx;
 	left: 2%;
 	background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0) 100%);
 	width: 128rpx;
