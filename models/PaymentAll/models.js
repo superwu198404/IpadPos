@@ -44,6 +44,8 @@ export const PayDataAssemble = function() {
 		store_name: this.NAME,
 		merchant_no: this.MerId,
 		channel: this.channel,
+		original_company_id: this.SALES.sale1.XS_GSID,
+		original_store_id: this.SALES.sale1.XS_KHID,
 		point: this.CashOffset.Score, //抵现积分数
 		point_money: this.CashOffset.Money, //积分积分对应金额
 		member_id: this.SALES.sale1.CUID,

@@ -59,18 +59,28 @@
 				default: {}
 			}
 		},
+		data() {
+			return {
+				list: [],
+				activeIndex: 0,
+				handleFnDebounce: () => {},
+				store: getApp().globalData.store,
+			}
+		},
 		watch: {
-			_menu: function(n, o) {
-				console.log("传入的菜单数据发生变化：", n);
-				if (n) {
-					let arr = n.Second.map(r => {
+			_menu: function(newValue) {
+				console.log("传入的菜单数据发生变化：", newValue);
+				if (newValue) {
+					let arr = newValue.Second.map(r => {
 						return {
 							tab: r.MenuName,
 							valueList: r.Third.map(r1 => {
 								return {
 									id: r1.MenuId,
 									name: r1.MenuName,
-									path: that.YWDict[r1.MenuId]
+									path: r1.MenuId === "XSALLCX" ?
+										'/pages/Querypage/Statement/Statement' :
+										'/pages/Querypage/TakeawayCX/TakeawayCX'
 								}
 							})
 						}
@@ -80,22 +90,7 @@
 				}
 			}
 		},
-		data() {
-			return {
-				list: [],
-
-				activeIndex: 0,
-				handleFnDebounce: () => {},
-				store: getApp().globalData.store,
-				YWDict: {
-					"XSALLCX": "/pages/Querypage/Statement/Statement",
-					'Defqry1025': "/pages/Querypage/TakeawayCX/TakeawayCX"
-				}
-			}
-		},
-
 		onPageScroll() {
-			console.log('191999999999999999999')
 			this.handleFnDebounce()
 		},
 		created() {
@@ -112,7 +107,9 @@
 							return {
 								id: r1.MenuId,
 								name: r1.MenuName,
-								path: that.YWDict[r1.MenuId]
+								path: r1.MenuId === "XSALLCX" ?
+									'/pages/Querypage/Statement/Statement' :
+									'/pages/Querypage/TakeawayCX/TakeawayCX'
 							}
 						})
 					}
@@ -161,17 +158,6 @@
 
 			//点击进入详情e
 			goCommonQuery(e) {
-				const khid = "K200QTD005" //门店id
-				const sname = "武汉领秀门厅" //门店名称
-				const username = "用户名" //用户名
-				const adrp = "170" //门店名称
-				const gsid = "k200" //门店名称
-				const zztlx = "QT" //门店名称
-				const type = "Defqry1009" //门店名称
-				const code = "Defqry" //门店名称
-				const url =
-					`/pages/Querypage/TakeawayCX/TakeawayCX?qrytype=${e.id}&qtyname=${e.name}&khid=${khid}&sname=${sname}&username=${username}&adrp=${adrp}&gsid=${gsid}&zztlx=${zztlx}&type=${type}&code=${code}`
-
 				if (!e.path) {
 					_util.simpleMsg("抱歉，功能暂未开放", true);
 					return;
@@ -181,12 +167,23 @@
 					KHNAME: that.store.SNAME, //门店名称
 					GSID: that.store.GSID, //gsid
 					DQID: that.store.DQID, //dqid
+					username: 'zd',
+					adrp: "170", //门店名称
+					// gsid : "k200", //门店名称
+					zztlx: "QT", //门店名称
+					type: "Defqry1009", //门店名称
+					code: "Defqry", //门店名称
+					qrytype: '1009',
+					qtyname: '现烤请货查询'
 				}
-				let path = e.path + "?data=" + JSON.stringify(obj); //当前菜单要跳转的页面地址参数自定义
+
+				const path =
+					`${e.path}?qrytype=${'1009'}&qtyname=${'现烤请货查询'}&khid=${that.store.KHID}&sname=${that.store.SNAME}&username=${obj.username}&adrp=${obj.adrp}&gsid=${that.store.GSID}&zztlx=${obj.zztlx}&type=${obj.type}&code=${obj.code} `
 				console.log("跳转的地址：", path);
 				uni.navigateTo({
 					url: path
 				})
+
 			}
 		}
 	}

@@ -26,6 +26,8 @@ var CreateData = function(pt, t, m, d, load = false) {
 			return item.TYPE == pt;
 		})
 		if (PayObj) { //查询到支付信息
+			console.warn("[CreateData]门店参数信息:",d);
+			console.warn("[CreateData]目标配置信息:",d.original_company_id);
 			data = {
 				code: true,
 				http: {
@@ -40,7 +42,8 @@ var CreateData = function(pt, t, m, d, load = false) {
 					method: m, //Payment
 					param: {
 						appid: PayObj.APPID, //getApp().globalData.appid,
-						gsid: store.GSID,
+						gsid: d.original_company_id || store.GSID,
+						// gsid: store.GSID,
 						source: PayObj.SOURCE
 					},
 					sign: aes.aesEncrypt(JSON.stringify(d))
@@ -382,7 +385,7 @@ var misPay = {
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
+		_GetConfig("TL", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
@@ -428,7 +431,8 @@ var misScanCodePay = {
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
+		console.log("[RefundAll]UPAY中的Body参数为:",body);
+		_GetConfig("UPAY", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
 				util.simpleMsg("支付参数为空!", true)
 				if (catchFunc) catchFunc();
@@ -937,7 +941,7 @@ var pinoPay = {
 		}
 	},
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
+		var config_result = await _GetConfig("PINNUOPAY", body.original_store_id || getApp().globalData.store.DQID).then((config) => {
 			var result = {
 				code: false,
 				msg: null,
