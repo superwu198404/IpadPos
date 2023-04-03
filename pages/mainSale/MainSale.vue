@@ -46,7 +46,7 @@
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"  v-show="mainSale.isDateClassify">
-											<text>{{mainSale.isDateClassify?plitem.plname:'商品列表'}}</text>
+											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
 										<view  class='curr h2'  v-show="!mainSale.isDateClassify">
@@ -165,7 +165,7 @@
 							</view>
 							<view class="switchArea">
 								分类：
-								<switch checked color="#1aa034" @change="mainSale.switchAreaChange" />
+								<switch :checked = mainSale.isDateClassify color="#1aa034" @change="mainSale.switchAreaChange" />
 							</view>
 						</view>
 
