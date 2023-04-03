@@ -2096,10 +2096,12 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//获取热销商品的列表
 	this.getHotSale = function() {
-		//关闭键盘并开启分类
+		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
 		}
+		that.classifyDate = []
+		that.notClassifyDate = []
 		that.turnOffKeys()
 		if (hotSale == null) {
 			let reqPosData = {
@@ -2154,8 +2156,10 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
-		//关闭键盘
+		//关闭键盘并清空分类数据
 		that.turnOffKeys()
+		that.classifyDate = []
+		that.notClassifyDate = []
 		this.Page.Alphabetical = !this.Page.Alphabetical;
 	})
 	//点击键盘图标
@@ -2783,13 +2787,15 @@ function GetSale(global, vue, target_name, uni) {
 		this.notClassifyDate = noClassDate
 		if (that.isDateClassify) {
 			this.selectFlagList = this.classifyDate
+			if (this.selectFlagList && this.selectFlagList.length >= 1) {
+				this.selectPlid = this.selectFlagList[0].plid
+			}
+			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		} else {
 			this.selectFlagList = this.notClassifyDate
+			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-		if (this.selectFlagList && this.selectFlagList.length >= 1) {
-			this.selectPlid = this.selectFlagList[0].plid
-		}
-		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
+		
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用

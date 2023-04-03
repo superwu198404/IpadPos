@@ -9,7 +9,8 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length" :isKeyBoardShow='isKeyBoardShow'></Page>
+			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length"
+				:isKeyBoardShow='isKeyBoardShow'></Page>
 			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
@@ -42,14 +43,15 @@
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
 									:scroll-into-view="mainSale.scrollinto">
-									<view class="products"  v-for="(plitem, plindex) in  mainSale.selectFlagList"
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
-											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"  v-show="mainSale.isDateClassify">
+											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"
+											v-show="mainSale.isDateClassify">
 											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
-										<view  class='curr h2'  v-show="!mainSale.isDateClassify">
+										<view class='curr h2' v-show="!mainSale.isDateClassify">
 											<text>{{'商品列表'}}</text>
 											<label></label>
 										</view>
@@ -106,7 +108,8 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="key-board-search a-z" @click="mainSale.keyBoardSearch" style="font-size: 30rpx;">
+							<view class="key-board-search a-z" @click="mainSale.keyBoardSearch"
+								style="font-size: 30rpx;">
 								键盘
 							</view>
 							<view class="states" @click="mainSale.ShowStatement">
@@ -139,37 +142,35 @@
 									</view>{{(mainSale.showQueryKeys).toUpperCase()}}
 								</view>
 								<view class="inputArea"
-									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;">
+									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;  margin-left: -15px;">
 									<view>
 										{{mainSale.boardQueryKeys}}
 									</view>
 									<view v-show="mainSale.boardQueryKeys.length" class="borderCursor"></view>
 								</view>
 								<view class="deleteBoard" @click="mainSale.turnOffKeys">
-									X
+									<image src="../../images/shouqi.png" style="width: 24px;height: 24px;"
+										mode="widthFix"></image>
 								</view>
 							</view>
-						
-								<view class="keyboard">
+
+							<view class="keyboard">
 								<ul class="keys" v-for='(item,index) in mainSale.keyBoardList'>
 									<li v-for='(_item,_index) in item.value' @click="mainSale.keyBoardClick(_item)">
 										{{_item}}
 									</li>
-								</ul>
-								<ul class="keys" style="position:absolute; bottom: 3px; right: 0;">
-									<li class="enter" @click="mainSale.delQueryKeys">删除</li>
-									<li class="enter" @click="mainSale.clearQueryKeys">清空</li>
-									<li class="enter" @click="mainSale.affirmQueryKeys">搜索</li>
+									<li class="enter" v-if="index===1" @click="mainSale.delQueryKeys">删除</li>
+									<li class="enter" v-if="index===2" style="color: red;"
+										@click="mainSale.clearQueryKeys">清空</li>
+									<li class="enter" v-if="index===2" @click="mainSale.affirmQueryKeys"
+										style="width: 137px; color: #127551;">搜索</li>
 								</ul>
 							</view>
-							
-							
-							
-							
-								
+
 							<view class="switchArea">
 								分类：
-								<switch :checked = mainSale.isDateClassify color="#1aa034" @change="mainSale.switchAreaChange" />
+								<switch :checked=mainSale.isDateClassify color="#1aa034"
+									@change="mainSale.switchAreaChange" />
 							</view>
 						</view>
 
@@ -1012,11 +1013,12 @@
 			},
 			menu_select_arrow_position: function() {
 				uni.$off('menu-select-change');
-				uni.$on('menu-select-change',(function(data){
+				uni.$on('menu-select-change', (function(data) {
 					this.page_query = uni.createSelectorQuery(data.vue);
-					this.page_query.select(".bills.acts").boundingClientRect((function(info){
-						if(!info) return;
-						if(this.mainSale.clickSaleType.clickType == data.name && this.mainSale.current_type?.clickType != data.name){
+					this.page_query.select(".bills.acts").boundingClientRect((function(info) {
+						if (!info) return;
+						if (this.mainSale.clickSaleType.clickType == data.name && this.mainSale
+							.current_type?.clickType != data.name) {
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
 							this.arrow_style.left = info.left + info.width - 5 + "px";
 							this.arrow_style.display = "block";
@@ -1026,26 +1028,28 @@
 					}).bind(this)).exec();
 				}).bind(this));
 			},
-			move_monitor:function(){
+			move_monitor: function() {
 				uni.$off("menu-scroll-move");
 				uni.$on("menu-scroll-move", util.callBind(this, function(start_data) {
-					let container_top = null,container_bottom = null, visible = this.arrow_style.display != 'none';
-					this.page_query.select(".menu").boundingClientRect((function(info){
-						if(!info) return;
+					let container_top = null,
+						container_bottom = null,
+						visible = this.arrow_style.display != 'none';
+					this.page_query.select(".menu").boundingClientRect((function(info) {
+						if (!info) return;
 						container_top = info.top;
 						container_bottom = info.top + info.height;
 					}).bind(this)).exec();
-					this.page_query.select(".bills.acts").boundingClientRect((function(info){
-						if(!info) return;
+					this.page_query.select(".bills.acts").boundingClientRect((function(info) {
+						if (!info) return;
 						let couputed_top = (info.top + info.height / 2) - 7.1;
-						if(info && container_top <= couputed_top && container_bottom >= couputed_top){
+						if (info && container_top <= couputed_top && container_bottom >=
+							couputed_top) {
 							this.arrow_style.top = (info.top + info.height / 2) - 7.1 + "px";
-							if(this.arrow_style.display == 'none' && visible)
+							if (this.arrow_style.display == 'none' && visible)
 								this.arrow_style.display = 'block'
-						}
-						else{
+						} else {
 							this.arrow_style.top = container_top + "px";
-							if(this.arrow_style.display == 'block'){
+							if (this.arrow_style.display == 'block') {
 								this.arrow_style.display = 'none';
 							}
 						}
@@ -1350,27 +1354,20 @@
 		font-weight: 600;
 		color: gray;
 		position: absolute;
-		background-color: #fff;
-		top: -53px;
+		/* background-color: #fff; */
+		top: 10px;
 		padding: 6px;
-		right: 10px;
+		right: 130px;
 		border-radius: 8px;
 		display: flex;
 		flex-direction: row;
-		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
+		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
 	}
 
 	.deleteBoard {
 		width: 26px;
-		padding: 3px;
+		margin-right: 27px;
 		height: 26px;
-		background-color: darkgray;
-		color: #000;
-		margin-right: 10px;
-		border-radius: 50%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 
 	.borderCursor {
