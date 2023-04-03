@@ -1206,17 +1206,15 @@
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no + `_${index}`, //退款单号
 									refund_money: (Math.abs(Number(total || refundInfo
-											.amount) * 100))
-										.toFixed(0), //退款金额
+										.amount) * 100)).toFixed(0), //退款金额
 									total_money: (Math.abs(Number(total || refundInfo
-											.amount) * 100))
-										.toFixed(0), //退款总金额（兼容微信）
+										.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
 									auth_code: refundInfo.origin
-										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
-										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
 									ywtype: this
 										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 								}, (function(err) { //如果发生异常（catch）
