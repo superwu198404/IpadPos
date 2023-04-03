@@ -98,7 +98,7 @@ var loadSaleSP = {
 		}
 	],
 	checkCode: function(pinyin, name) {
-		console.log("待校验pinyin：", pinyin + name);
+		// console.log("待校验pinyin：", pinyin + name);
 		let str = pinyin;
 		for (var i = 0; i < this.codeArr.length; i++) {
 			let codeObj = this.codeArr[i];
