@@ -2778,6 +2778,8 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectPlid = queryList[0].plid
 		}
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
+
+
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用

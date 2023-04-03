@@ -289,6 +289,15 @@ const DefaultNull = function(data,dataNull){
 	return strNull;
 }
 
+//判断字符是否为空
+const IsEmpty = function(res){
+    if(typeof res == "undefined" || res == null || res == ""){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 module.exports = {
 	getTime: getTime,
 	snvl: snvl,
@@ -307,4 +316,5 @@ module.exports = {
 	formatDate: formatDate,
 	DefaultNull: DefaultNull,
 	formatDateNew: formatDateNew,
+	IsEmpty: IsEmpty,
 };

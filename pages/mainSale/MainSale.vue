@@ -106,7 +106,7 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="key-board-search" @click="mainSale.keyBoardSearch">
+							<view class="key-board-search a-z" @click="mainSale.keyBoardSearch" style="font-size: 30rpx;">
 								键盘
 							</view>
 							<view class="states" @click="mainSale.ShowStatement">

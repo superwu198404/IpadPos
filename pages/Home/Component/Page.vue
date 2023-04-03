@@ -131,7 +131,7 @@
 				timer: 0,
 				showcdxp: false,
 				allow_page_switch: true,
-				guodu: false
+				guodu: false,
 			};
 		},
 		methods: {
