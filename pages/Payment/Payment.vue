@@ -1212,8 +1212,8 @@
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
 									auth_code: refundInfo.origin
 									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_company_id: this.SALES.sale1.XS_GSID, //2023-04-03新增 退款时取原销售公司 （防止异店退款失败）
+									original_store_id: this.SALES.sale1.XS_KHID, //2023-04-03新增 退款时取原销售门店（防止异店退款失败）
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
