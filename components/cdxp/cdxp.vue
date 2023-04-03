@@ -10,7 +10,7 @@
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
-							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 录入持卡人信息
+							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 重打小票
 							<!-- <view class="classifys">
 												<text class="curr">全部</text><text>今日</text><text>近三天</text>
 											</view> -->
@@ -67,7 +67,7 @@
 									<label>出售时间：{{item.SALETIME}}</label>
 								</view>
 								<view class="cods">
-									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE)}}</label>
+									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE,item.KQXSTYPE)}}</label>
 									<label>条目：{{item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
@@ -145,10 +145,10 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-
+	
 	var that;
 	export default {
-		name: "saomaqiang",
+		name: "cdxp",
 		props: {
 			TH_DATE: "",
 		},
@@ -184,8 +184,8 @@
 		created: async function() {
 			that = this;
 			this.qd_show = true;
+			//获取重打数据
 			let xsBillRes = await xprinter_util.getBillPrinterMax();
-			//console.log("获取重打数据 111", xsBillRes);
 			this.xsBill = xsBillRes;
 			this.GetPTOrder();
 		},
@@ -204,11 +204,10 @@
 				that.p_date = e.detail.value;
 			},
 			GetPTOrder: function(e) {
-				//console.log("current_data 111", that.current_data.TYPE)
 				let store = util.getStorage("store");
 				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, that.current_data.TYPE,
 					res => {
-						console.log("获取成功:", res);
+						//console.log("获取成功:", res);
 						if (res.code && res.msg.length > 0) {
 							that.Datas = res.msg;
 							if (e) {
@@ -236,41 +235,56 @@
 			},
 			//重打小票
 			ConfirmCD: async function(data) {
-				console.log("ConfirmCD =======",data);
+				let that = this;
+				console.log("重打小票 ConfirmCD =======", data);
 				let xsBill = cx_util.snvl(data.BILL,"");
 				let xsType = cx_util.snvl(data.XSTYPE,"");
-				
-				let that = this;
+				let bill_type = cx_util.snvl(data.BILL_TYPE,"");
+				let kqxstype = cx_util.snvl(data.KQXSTYPE,"");
 				let bill = cx_util.snvl(xsBill, "");
-				if (bill == "") {
+				
+				if (cx_util.IsEmpty(bill)) {
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
-
 				//通过单号，查询重打格式数据
-				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
-				//console.log("pos_xsbillprint ==================================",pos_xsbillprint);	
-				if (pos_xsbillprint == "" || pos_xsbillprint == null) {
+				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);	
+				if (cx_util.IsEmpty(pos_xsbillprint)) {
 					util.simpleMsg("未查询到重打数据", "none");
 					return;
 				}
-
 				this.$emit("ClosePopup");
-				that.$refs.printerPage.againPrinter(bill, xsType,data);
+				
+				//判断是否需要打印二维码
+				let is_fpQRCode = 0;
+				if(xsType == "1" && bill_type == "Z101") { 
+					is_fpQRCode = "1";
+				}else if(xsType == "3" && bill_type == "Z121"){
+					is_fpQRCode = "1" ;
+				}else if(xsType == "1" && bill_type == "Z111" 
+					&& (kqxstype == "CZ" || kqxstype == "SKCZ" || kqxstype == "SK" || kqxstype == "SQ")){
+					is_fpQRCode = "1";
+				}
+				//is_qrCode = 1 打印二维码
+				that.$refs.printerPage.againPrinter(bill, is_fpQRCode, data, cx_util.snvl(pos_xsbillprint));
 			},
 			//重打小票关闭
 			CloseCD: function(data) {
-				// this.qd_show = false;
 				this.$emit("ClosePopup");
 			},
-			xsTypeName: function(xstype, bill_type) {
+			xsTypeName: function(xstype, bill_type,kqxstype) {
 				switch (xstype) {
 					case "0":
 						return "外卖订单";
 						break;
 					case "1":
-					if(bill_type == 'Z111')
-						return "卡/券";
+					//整合卡券业务，增加条件判断展示业务类型
+					if(bill_type == 'Z111' && kqxstype == 'SQ')
+						return "券销售";
+                    else if(bill_type == 'Z111' && kqxstype == 'SKCZ')
+						return "卡激活充值";		
+					else if(bill_type == 'Z111' && kqxstype != 'SKCZ')
+						return "卡销售";			
 					else
 						return "销售";
 						break;
@@ -297,9 +311,6 @@
 						break;
 					case "9":
 						return "线上订单取消";
-						break;
-					case "99":
-						return "卡券业务";
 						break;
 					default:
 						return "";
@@ -339,7 +350,7 @@
 			}, {
 				"TYPE": 9,
 				"NAME": "线上订单取消"
-			},{
+			}, {
 				"TYPE": 99,
 				"NAME": "卡券业务"
 			}];

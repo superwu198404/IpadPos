@@ -23,7 +23,7 @@
 					<view @click="SwitchSale('sale')"
 						style="display: flex;justify-content: center;align-items: center;">
 						<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
-						<text>返回销售</text>
+						<text>商品销售</text>
 					</view>
 				</view>
 			</view>

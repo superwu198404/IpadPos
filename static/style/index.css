@@ -392,14 +392,15 @@ em{
 	/* height: 90%; */
 	padding-top: 6%;
 	position: relative;
+	z-index: 9999;
 }
 
 .operation .ranks {
 	position: absolute;
 	top: 1%;
-	left: -60%;
-	width: 72%;
-	height: 98%;
+	left: -55%;
+	width: 68%;
+	height: 90%;
 	/* transform: translate(-50%, -50%); */
 	background-color: #E0EAE9;
 	color: #006B44;

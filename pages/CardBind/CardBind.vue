@@ -6,7 +6,7 @@
 </style>
 <template>
 	<view class="container">
-		<PrinterPage ref="printerPage" style="display: none;" />
+<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<!-- 顶部导航栏 -->
 		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="view.show_sale" :_ynMsg='false'></Head>
 		<Tabs :tabs="source.tabs" style="margin-bottom: 20px;margin-top: 20px;" @change="tabs_change">

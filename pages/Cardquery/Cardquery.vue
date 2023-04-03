@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
+<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<view class="right">
 			<!-- 顶部导航栏 :custom.sync="view.big_customer" :_ynDKF='view.enable_customer'>-->
 			<Head :_ynDKF="false" :custom="false" :_showSale="true" :_ynMsg='false'> </Head>

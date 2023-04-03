@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-		<PrinterPage ref="printerPage" style="display: none;" />
+<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<view class="right">
 
 			<!-- 顶部导航栏-->
