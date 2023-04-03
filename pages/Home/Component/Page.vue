@@ -7,7 +7,7 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<scroll-view scroll-y class="menu"
+		<scroll-view scroll-y class="menu" 
 			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
@@ -20,9 +20,9 @@
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
-				<!-- <view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
+				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
 					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
-				</view> -->
+				</view>
 			</view>
 		</scroll-view>
 		<view class="menu gongju" tabindex="-1" @blur="showGJ = false">
@@ -131,7 +131,7 @@
 				timer: 0,
 				showcdxp: false,
 				allow_page_switch: true,
-				guodu: false
+				guodu: false,
 			};
 		},
 		methods: {
@@ -301,4 +301,23 @@
 		width: 10px;
 		background: #f5f4f8;
 	}
+
+	scroll-view::-webkit-scrollbar {
+		    	/* 隐藏滚动条，但依旧具备可以滚动的功能 */
+				display: none;
+			    width: 0 !important;
+			    height: 0 !important;
+			    -webkit-appearance: none;
+			    background: transparent;
+			    color: transparent;
+		    }
+	::-webkit-scrollbar {
+	    display: none;
+	    width: 0 !important;
+	    height: 0 !important;
+	    -webkit-appearance: none;
+	    background: transparent;
+	    color: transparent;
+	  }
+
 </style>

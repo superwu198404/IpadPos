@@ -317,7 +317,7 @@ page {
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	z-index: 9999;
+	z-index: 99999;
 }
 
 .account image {
