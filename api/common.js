@@ -852,6 +852,7 @@ const default_request_options = {
 	class: "", //反射类名（非空）
 	method: "", //反射接口（非空）
 	data: null, //反射调用传入参数（给 method 用的）
+	process: true,//传入参数是否处理
 	success: () => console.log(`[SimpleAPIRequest]接口调用成功...`),
 	error: () => console.log(`[SimpleAPIRequest]接口调用失败...`)
 }
@@ -862,6 +863,9 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		options = Object.assign(default_params, options);
 		let reqdata = Req.resObj(true, "操作中...", options.data,
 			`${options.namespace}.${options.class}.${options.method}`);
+		if(!options.process){
+			reqdata.data.data = options.data;
+		}
 		let result = null;
 		let callback = (res) => result = res;
 		await Req.asyncFuncOne(reqdata, callback, callback);
