@@ -1260,10 +1260,10 @@ const getBillPrinterData = async (xsBill) => {
 	let billStr = "";
 	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
-		console.log("重打数据查询成功", res);
+		//console.log("重打数据查询成功", res);
 		if(res.msg != null && res.msg != ""){
 			billStr = res.msg[0].BILLSTR;
-			console.log("重打数据查询成功", res.msg[0].XSBILL);
+			console.log("重打数据查询成功 单号", res.msg[0].XSBILL);
 		}
 	}, function(err) {
 		console.log("获取打印数据出错:", err);

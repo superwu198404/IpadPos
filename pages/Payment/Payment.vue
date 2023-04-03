@@ -946,7 +946,7 @@
 								success: (function(res) {
 									let code = common.ResetAuthCode(res.result);
 									this.authCode = code; //获取扫码的 authCode
-									let current_pay_info = this.PayWayInfo(this.PayTypeJudgment());
+									let current_pay_info = this.PayWayInfo(this.CurrentPaymentTypeJudge());
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
@@ -1212,6 +1212,8 @@
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
 									auth_code: refundInfo.origin
 									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
@@ -1322,6 +1324,24 @@
 				}
 				// console.log("[PayTypeJudgment]支付类型：", curPayType);
 				return curPayType;
+			},
+			//支付类型判断
+			CurrentPaymentTypeJudge: function() {
+				console.log("[CurrentPaymentTypeJudge]二维码:", this.authCode);
+				let startCode = this.authCode.substring(0, 2), current_type = "";
+				if (startCode) {
+					let CodeRule = getApp().globalData.CodeRule;
+					console.log("[CurrentPaymentTypeJudge]支付规则:", CodeRule);
+					if (this.currentPayType === "SZQ") //券
+						startCode = "coupon";
+					//取出当前是何种类型的支付方式
+					current_type = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
+				}
+				if (!current_type && this.authCode) {
+					util.simpleMsg("二维码错误！请重新扫码！", "none");
+					this.authCode = '';
+				}
+				return current_type;
 			},
 			//支付 data 对象组装
 			PayDataAssemble: PayDataAssemble,
