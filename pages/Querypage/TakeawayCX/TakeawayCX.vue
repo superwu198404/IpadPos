@@ -20,7 +20,7 @@
 					<!-- 查询条件 -->
 					<Condits v-if="condits" @reason="getReason" @totalValue="getTotal"
 						:inqueryCondition="inqueryCondition" :inqueryConditionInit='inqueryConditionInit' :wdate="wdate"
-						:endDate="endDate" :start="start" :bill="bill" :KHID="KHID" :currentSelect="currentSelect"
+						:endDate="endDate" :start="start" :bill="bill" :KHID="_KHID" :currentSelect="currentSelect"
 						:TITLE="TITLE"></Condits>
 
 					<view class="form">
@@ -130,7 +130,7 @@
 				isOpen: false,
 				condits: true,
 				zibiao: false,
-				KHID: '', //门店id
+				_KHID: '', //门店id
 				bill: '', //主表查询id
 				inqueryCondition: null, //查询条件
 				inqueryConditionInit: null, //初始查询条件
@@ -152,7 +152,6 @@
 			}
 		},
 		onLoad(option) {
-			console.log(option, `123`)
 			let qryid;
 			let name;
 			if (option.qrytype) {
@@ -163,11 +162,12 @@
 				qryid = '1056';
 				name = "卡销售单查询"
 			}
-			this.KHID = option.khid
+			this._KHID = option.khid
 			//初始化时请求数据拿到渲染条件
 			// const queryDate = getQueryCondition(option.qrytype)
 			//先mock数据
 			const v = {
+			
 				KCDID: [{
 					id: "YWXKQH.BILL",
 					type: "input",
@@ -394,6 +394,7 @@
 				this.condits = true
 			},
 			getReason(e) {
+				console.log(e,'子组件传来====================')
 				this.reason = e
 			},
 			getTotal(e) {
@@ -434,11 +435,11 @@
 					this.qrysub(index, this.headline[0].id, isSub);
 				}
 			},
-			pSum: function(currentSelect, data) {
+			pSum: function(currentSelect, value) {
 				if (currentSelect == "" || currentSelect == null || currentSelect == "undefined") {
 					return;
 				}
-				let pSumDataList = data;
+				let pSumDataList = value;
 				if (pSumDataList == null || pSumDataList.length == 0) {
 					return;
 				}
@@ -477,14 +478,14 @@
 			},
 			// todo 人员id
 			qrysub(mrows, subid, isSub) {
-				let data = {}
-				data.QRYNAME = subid;
-				data.KHID = this.KHID;
-				data.CZYID = '0376';
+				let dataValue = {}
+				dataValue.QRYNAME = subid;
+				dataValue.KHID = this._KHID;
+				dataValue.CZYID = '0376';
 				for (var i = 0; i < this.DPID.length; i++) {
 					let qtyid = this.DPID[i].id;
 					if (qtyid == subid) {
-						data[this.DPID[i].T] = this.DPID[i].CT + this.reason[this.currentSelect][mrows][this
+						dataValue[this.DPID[i].T] = this.DPID[i].CT + this.reason[this.currentSelect][mrows][this
 							.DPID[i].F
 						].toString();
 					}

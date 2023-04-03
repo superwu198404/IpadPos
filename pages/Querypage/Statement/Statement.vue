@@ -4,357 +4,360 @@
 	@import url(@/static/style/quiry.css);
 </style>
 
-<template>	
-				<view class="body" style="margin-top: -23px;">
-					<view class="hh" style="padding-right:8.7%;">
-						<view class="hotcakes">
-							<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
-						</view>
-						<view class="classifys" v-if="date">
-							<picker mode="date" fields="day" @change="changeDate" :value='date'>
-								<text>日期：{{date}}</text>
-							</picker>
-						</view>
+<template>
+	<view class="content">
+		<query></query>
+		<view class="right" style="position: relative;">
+			<Head></Head>
+			<view class="body" >
+				<view class="hh" style="padding-right:8.7%;">
+					<view class="hotcakes">
+						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 					</view>
-					<view class="commodity" v-if="isDate===true">
-						<view class="broadcate">
-							<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
-							<view class="mokuai">
-								<image src="@/images/img2/zhanbi-cai.png" mode="widthFix"></image>总体运营明细
-							</view>
-							<view class="operatys">
-								<view class="operat-sales wk">
-									<view class="huanxing">
-										<view class="charts-box">
-											<qiun-data-charts type="arcbar"
-												:opts="{title:{name:'',color:'#1890ff',fontSize:35},subtitle:{name: '',},extra:{arcbar:{type:'circle',startAngle:1.5}}}"
-												:chartData="chartsDataArcbar" />
-										</view>
-									</view>
-									<view class="memb plan-bf">
-										<view class="huiyuan">
-											<label>
-												<image src="@/images/img2/hylaikes.png"></image>
-												{{Boolean(parseInt(totalSale.progress))=== false?'0%':totalSale.progress}}
-											</label>
-											<text>达成进度(去节令)</text>
-										</view>
-										<view class="huiyuan">
-											<label>
-												<image src="@/images/img2/huiyxiaof.png"></image>
-												{{Boolean(parseInt(totalSale.timeProgress))=== false?'0%':totalSale.timeProgress}}
-											</label>
-											<text>时间进度</text>
-										</view>
-									</view>
-									<view class="sale-qk">
-										<view class="waimai-list">
-											<view class="namewm">
-												<image src="@/images/img2/drixshou.png"></image>当日销售
-											</view>
-											<label class="pric">¥{{(totalSale.curSale).replace('元','')}}</label>
-											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
-										</view>
-										<view class="waimai-list">
-											<view class="namewm">
-												<image src="@/images/img2/drixshou-qjiel.png"></image>当日销售(去节令)
-											</view>
-											<label class="pric">¥{{(totalSale.pureCurSale).replace('元','')}}</label>
-											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
-										</view>
-										<view class="waimai-list">
-											<view class="namewm">
-												<image src="@/images/img2/drixshou-jiel.png"></image>当日销售(节令)
-											</view>
-											<label class="pric">¥{{(totalSale.noPureCureSale).replace('元','')}}</label>
-											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
-										</view>
-										<view class="waimai-list">
-											<view class="namewm">
-												<image src="@/images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
-											</view>
-											<label class="pric">{{(totalSale.pureCurMouth).replace('元','')}}</label>
-											<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
-										</view>
+					<view class="classifys" v-if="date">
+						<picker mode="date" fields="day" @change="changeDate" :value='date'>
+							<text>日期：{{date}}</text>
+						</picker>
+					</view>
+				</view>
+				<view class="commodity" v-if="isDate===true">
+					<view class="broadcate">
+						<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+						<view class="mokuai">
+							<image src="@/images/img2/zhanbi-cai.png" mode="widthFix"></image>总体运营明细
+						</view>
+						<view class="operatys">
+							<view class="operat-sales wk">
+								<view class="huanxing">
+									<view class="charts-box">
+										<qiun-data-charts type="arcbar"
+											:opts="{title:{name:'',color:'#1890ff',fontSize:35},subtitle:{name: '',},extra:{arcbar:{type:'circle',startAngle:1.5}}}"
+											:chartData="chartsDataArcbar" />
 									</view>
 								</view>
-								<view class="operat-flow wk">
-									<view class="memb">
-										<view class="huiyuan">
-											<label>
-												<image src="@/images/img2/hylaikes.png"></image>{{member.curMembers}}
-											</label>
-											<text>当日会员来客数</text>
-										</view>
-										<view class="huiyuan">
-											<label>
-												<image src="@/images/img2/huiyxiaof.png"></image>
-												{{member.curMemberSale}}
-											</label>
-											<text>当日会员消费</text>
-										</view>
+								<view class="memb plan-bf">
+									<view class="huiyuan">
+										<label>
+											<image src="@/images/img2/hylaikes.png"></image>
+											{{Boolean(parseInt(totalSale.progress))=== false?'0%':totalSale.progress}}
+										</label>
+										<text>达成进度(去节令)</text>
 									</view>
-									<view class="memb-stat">
-										<view><label><em>●</em> 当日来客数</label>
-											<text>{{numberOfVisitors.curVisiror}}</text>
+									<view class="huiyuan">
+										<label>
+											<image src="@/images/img2/huiyxiaof.png"></image>
+											{{Boolean(parseInt(totalSale.timeProgress))=== false?'0%':totalSale.timeProgress}}
+										</label>
+										<text>时间进度</text>
+									</view>
+								</view>
+								<view class="sale-qk">
+									<view class="waimai-list">
+										<view class="namewm">
+											<image src="@/images/img2/drixshou.png"></image>当日销售
 										</view>
-										<view><label><em>●</em> 当月来客数</label>
-											<text>{{numberOfVisitors.curMountVisiror}}</text>
+										<label class="pric">¥{{(totalSale.curSale).replace('元','')}}</label>
+										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
+									</view>
+									<view class="waimai-list">
+										<view class="namewm">
+											<image src="@/images/img2/drixshou-qjiel.png"></image>当日销售(去节令)
 										</view>
-										<view><label><em>●</em> 当日去节令客单价(参考值)</label>
-											<text>￥{{(numberOfVisitors.curDoAwaySale).replace('元','')}}</text>
+										<label class="pric">¥{{(totalSale.pureCurSale).replace('元','')}}</label>
+										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
+									</view>
+									<view class="waimai-list">
+										<view class="namewm">
+											<image src="@/images/img2/drixshou-jiel.png"></image>当日销售(节令)
 										</view>
-										<view><label><em>●</em> 当月去节令客单价(参考值)</label>
-											<text>￥{{(numberOfVisitors.curMountDoAwaySale).replace('元','')}}</text>
+										<label class="pric">¥{{(totalSale.noPureCureSale).replace('元','')}}</label>
+										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
+									</view>
+									<view class="waimai-list">
+										<view class="namewm">
+											<image src="@/images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
 										</view>
+										<label class="pric">{{(totalSale.pureCurMouth).replace('元','')}}</label>
+										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 									</view>
 								</view>
 							</view>
-							<view class="particul">
-								<view class="part-sale">
-									<view class="mokuai">
-										<image src="@/images/img2/zhuzhuangt.png" mode="widthFix"></image>重点品类销售明细
+							<view class="operat-flow wk">
+								<view class="memb">
+									<view class="huiyuan">
+										<label>
+											<image src="@/images/img2/hylaikes.png"></image>{{member.curMembers}}
+										</label>
+										<text>当日会员来客数</text>
 									</view>
-									<view class="wk cons-pl">
-										<view class="sorts" style="text-align: left;margin-left: 3px;">
-											<label><em>●</em>现烤</label>
-											<label><em>●</em>裱花</label>
-											<label><em>●</em>水吧</label>
+									<view class="huiyuan">
+										<label>
+											<image src="@/images/img2/huiyxiaof.png"></image>
+											{{member.curMemberSale}}
+										</label>
+										<text>当日会员消费</text>
+									</view>
+								</view>
+								<view class="memb-stat">
+									<view><label><em>●</em> 当日来客数</label>
+										<text>{{numberOfVisitors.curVisiror}}</text>
+									</view>
+									<view><label><em>●</em> 当月来客数</label>
+										<text>{{numberOfVisitors.curMountVisiror}}</text>
+									</view>
+									<view><label><em>●</em> 当日去节令客单价(参考值)</label>
+										<text>￥{{(numberOfVisitors.curDoAwaySale).replace('元','')}}</text>
+									</view>
+									<view><label><em>●</em> 当月去节令客单价(参考值)</label>
+										<text>￥{{(numberOfVisitors.curMountDoAwaySale).replace('元','')}}</text>
+									</view>
+								</view>
+							</view>
+						</view>
+						<view class="particul">
+							<view class="part-sale">
+								<view class="mokuai">
+									<image src="@/images/img2/zhuzhuangt.png" mode="widthFix"></image>重点品类销售明细
+								</view>
+								<view class="wk cons-pl">
+									<view class="sorts" style="text-align: left;margin-left: 3px;">
+										<label><em>●</em>现烤</label>
+										<label><em>●</em>裱花</label>
+										<label><em>●</em>水吧</label>
 
-											<label @click="showWks('money')" style="margin-left: 18%;"
-												:class="showWk==='money'?'curWk':''">销售金额</label>
-											<label @click="showWks('radio')"
-												:class="showWk==='radio'?'curWk':''">销售占比</label>
-										</view>
+										<label @click="showWks('money')" style="margin-left: 18%;"
+											:class="showWk==='money'?'curWk':''">销售金额</label>
+										<label @click="showWks('radio')"
+											:class="showWk==='radio'?'curWk':''">销售占比</label>
+									</view>
 
-										<view class="timeperiod">
-											<view class="Barchart" style="width: 93%;" v-show="showWk==='money'">
-												<view class="beijing">
+									<view class="timeperiod">
+										<view class="Barchart" style="width: 93%;" v-show="showWk==='money'">
+											<view class="beijing">
 
-													<view  v-for="item in 6"><text style='width: 10%;'>{{
+												<view v-for="item in 6"><text style='width: 10%;'>{{
 												    handleNumber(fenmu - (fenmu/5)*(item-1)) 
 													}}</text></view>
 
-												</view>
-												<view class="dyxs">
-													<view class="dyname">当日销售</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((freshRoast.curRoastSale).replace('元','')/fenmu)*100)+'%'}">
+											</view>
+											<view class="dyxs">
+												<view class="dyname">当日销售</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((freshRoast.curRoastSale).replace('元','')/fenmu)*100)+'%'}">
 
-															<text
-																style="font-size: 11px;">￥{{(freshRoast.curRoastSale).replace('元','')}}</text>
-														</label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((mountingPatterns.curPatternSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(mountingPatterns.curPatternSale).replace('元','')}}</text>
-														</label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((waterBar.curBarSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(waterBar.curBarSale).replace('元','')}}</text>
-														</label>
-													</view>
+														<text
+															style="font-size: 11px;">￥{{(freshRoast.curRoastSale).replace('元','')}}</text>
+													</label>
 												</view>
-												<view class="drxs">
-													<view class="dyname">当月销售</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((freshRoast.curMonthRoastSale).replace('元','')/fenmu)*100)+'%'}">
-															<text
-																style="font-size: 11px;">￥{{(freshRoast.curMonthRoastSale).replace('元','')}}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((mountingPatterns.curMonthPatternSale).replace('元','')/fenmu)*100)+'%'}"><text
-																style="font-size: 11px;">￥{{(mountingPatterns.curMonthPatternSale).replace('元','')}}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:(((waterBar.curMonthBarSale).replace('元','')/fenmu)*100)+'%'}"><text
-																style="font-size: 11px;">￥{{(waterBar.curMonthBarSale).replace('元','')}}</text></label>
-													</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((mountingPatterns.curPatternSale).replace('元','')/fenmu)*100)+'%'}">
+														<text
+															style="font-size: 11px;">￥{{(mountingPatterns.curPatternSale).replace('元','')}}</text>
+													</label>
+												</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((waterBar.curBarSale).replace('元','')/fenmu)*100)+'%'}">
+														<text
+															style="font-size: 11px;">￥{{(waterBar.curBarSale).replace('元','')}}</text>
+													</label>
 												</view>
 											</view>
-											<view class="Barchart" style="width: 93%;" v-show="showWk==='radio'">
-												<view class="beijing">
-													<view><text>100%</text></view>
-													<view><text>80%</text></view>
-													<view><text>60%</text></view>
-													<view><text>40%</text></view>
-													<view><text>20%</text></view>
-													<view><text>0%</text></view>
+											<view class="drxs">
+												<view class="dyname">当月销售</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((freshRoast.curMonthRoastSale).replace('元','')/fenmu)*100)+'%'}">
+														<text
+															style="font-size: 11px;">￥{{(freshRoast.curMonthRoastSale).replace('元','')}}</text></label>
 												</view>
-												<view class="dyxs">
-													<view class="dyname">当日占比</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(freshRoast.curRoastSaleRatio))}"><text
-																style="font-size: 11px;">{{panduan(decimals(freshRoast.curRoastSaleRatio))}}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatio))}"><text
-																style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatio)) }}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(waterBar.curBarSaleRatio))}"><text
-																style="font-size: 11px;">{{panduan(decimals(waterBar.curBarSaleRatio))}}</text></label>
-													</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((mountingPatterns.curMonthPatternSale).replace('元','')/fenmu)*100)+'%'}"><text
+															style="font-size: 11px;">￥{{(mountingPatterns.curMonthPatternSale).replace('元','')}}</text></label>
 												</view>
-												<view class="drxs">
-													<view class="dyname">当月占比</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(freshRoast.curMountRoastRation))}"><text
-																style="font-size: 11px;">{{panduan(decimals(freshRoast.curMountRoastRation)) }}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatioRatio))}"><text
-																style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatioRatio)) }}</text></label>
-													</view>
-													<view style="margin: 0 20px;"><label
-															:style="{height:panduan(decimals(waterBar.curMountBarRation))}"><text
-																style="font-size: 11px;">{{panduan(decimals(waterBar.curMountBarRation)) }}</text></label>
-													</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:(((waterBar.curMonthBarSale).replace('元','')/fenmu)*100)+'%'}"><text
+															style="font-size: 11px;">￥{{(waterBar.curMonthBarSale).replace('元','')}}</text></label>
+												</view>
+											</view>
+										</view>
+										<view class="Barchart" style="width: 93%;" v-show="showWk==='radio'">
+											<view class="beijing">
+												<view><text>100%</text></view>
+												<view><text>80%</text></view>
+												<view><text>60%</text></view>
+												<view><text>40%</text></view>
+												<view><text>20%</text></view>
+												<view><text>0%</text></view>
+											</view>
+											<view class="dyxs">
+												<view class="dyname">当日占比</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(freshRoast.curRoastSaleRatio))}"><text
+															style="font-size: 11px;">{{panduan(decimals(freshRoast.curRoastSaleRatio))}}</text></label>
+												</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatio))}"><text
+															style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatio)) }}</text></label>
+												</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(waterBar.curBarSaleRatio))}"><text
+															style="font-size: 11px;">{{panduan(decimals(waterBar.curBarSaleRatio))}}</text></label>
+												</view>
+											</view>
+											<view class="drxs">
+												<view class="dyname">当月占比</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(freshRoast.curMountRoastRation))}"><text
+															style="font-size: 11px;">{{panduan(decimals(freshRoast.curMountRoastRation)) }}</text></label>
+												</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(mountingPatterns.curPatternSaleRatioRatio))}"><text
+															style="font-size: 11px;">{{panduan(decimals(mountingPatterns.curPatternSaleRatioRatio)) }}</text></label>
+												</view>
+												<view style="margin: 0 20px;"><label
+														:style="{height:panduan(decimals(waterBar.curMountBarRation))}"><text
+															style="font-size: 11px;">{{panduan(decimals(waterBar.curMountBarRation)) }}</text></label>
 												</view>
 											</view>
 										</view>
 									</view>
-								</view>
-								<view class="part-cons">
-									<view class="mokuai">
-										<image src="@/images/img2/haocai.png" mode="widthFix"></image>当日耗用明细
-									</view>
-									<view class="wk cons-jl">
-										<view class="jlbs">
-											<view class="h6"><em>●</em> 去节令报损</view>
-											<view class="bszb">
-												<view class="charts-box">
-													<qiun-data-charts type="arcbar"
-														:opts="{title:{name:reportDamage.curMonthDamage,color:'#2fc25b',fontSize:24},subtitle:{name:'当月报损指标',color:'#666666',fontSize:14}}"
-														:chartData="chartsDataArcbar1" />
-												</view>
-												<view class="breakage">
-													<view class="memb">
-														<view class="huiyuan">
-															<label>
-																<image src="@/images/img2/baosu.png"></image>
-																{{decimals( reportDamage.curDamageRation)}}
-															</label>
-															<text>当日报损率</text>
-														</view>
-														<view class="huiyuan">
-															<label>{{reportDamage.curDamage}}</label>
-															<text>当日报损金额</text>
-														</view>
-													</view>
-													<view class="memb">
-														<view class="huiyuan">
-															<label>
-																<image src="@/images/img2/baosun-leiji.png"></image>
-																{{decimals(reportDamage.DamageAllRation) }}
-															</label>
-															<text>当月累计报损率</text>
-														</view>
-														<view class="huiyuan">
-															<label>{{reportDamage.curMountDamageRation}}</label>
-															<text>当月累计报损</text>
-														</view>
-													</view>
-												</view>
-
-											</view>
-
-										</view>
-										<view class="jlly">
-											<view class="h6"><em>●</em> 去节令领用</view>
-											<view class="sale-qk">
-												<view class="waimai-list">
-
-													<view class="namewm">
-														<em class="gang"></em>当日领用
-													</view>
-													<label
-														class="pric">¥{{(reportReceive.curReceive).replace('元','')}}</label>
-												</view>
-												<view class="waimai-list">
-													<!-- <em></em> -->
-													<view class="namewm">
-														<em class="gang"></em>当月累积领用
-
-													</view>
-													<label
-														class="pric">¥{{(reportReceive.curMonthReceive).replace('元','')}}</label>
-												</view>
-											</view>
-										</view>
-									</view>
-
 								</view>
 							</view>
-							<view class="particul">
-								<view class="part-sale part-waimai">
-									<view class="mokuai">
-										<image src="@/images/img2/waimai.png" mode="widthFix"></image>外卖
-									</view>
-									<view class="cons-wm">
-										<view class="waimai-list">
-											<em></em>
-											<view class="namewm">当日外卖销售 <text>去节令</text></view>
-											<label class="pric">¥{{(takeOut.curTakeSale).replace('元','')}}</label>
-											<view class="waimai-xs">
-												<text>当月外卖销售：</text>￥{{(takeOut.curTakeSaleRatio).replace('元','')}}
+							<view class="part-cons">
+								<view class="mokuai">
+									<image src="@/images/img2/haocai.png" mode="widthFix"></image>当日耗用明细
+								</view>
+								<view class="wk cons-jl">
+									<view class="jlbs">
+										<view class="h6"><em>●</em> 去节令报损</view>
+										<view class="bszb">
+											<view class="charts-box">
+												<qiun-data-charts type="arcbar"
+													:opts="{title:{name:reportDamage.curMonthDamage,color:'#2fc25b',fontSize:24},subtitle:{name:'当月报损指标',color:'#666666',fontSize:14}}"
+													:chartData="chartsDataArcbar1" />
 											</view>
+											<view class="breakage">
+												<view class="memb">
+													<view class="huiyuan">
+														<label>
+															<image src="@/images/img2/baosu.png"></image>
+															{{decimals( reportDamage.curDamageRation)}}
+														</label>
+														<text>当日报损率</text>
+													</view>
+													<view class="huiyuan">
+														<label>{{reportDamage.curDamage}}</label>
+														<text>当日报损金额</text>
+													</view>
+												</view>
+												<view class="memb">
+													<view class="huiyuan">
+														<label>
+															<image src="@/images/img2/baosun-leiji.png"></image>
+															{{decimals(reportDamage.DamageAllRation) }}
+														</label>
+														<text>当月累计报损率</text>
+													</view>
+													<view class="huiyuan">
+														<label>{{reportDamage.curMountDamageRation}}</label>
+														<text>当月累计报损</text>
+													</view>
+												</view>
+											</view>
+
 										</view>
-										<view class="waimai-list">
-											<em></em>
-											<view class="namewm">当日外卖销售 <text>含节令</text></view>
-											<label class="pric">¥{{(takeOut.curMonthTakeSale).replace('元','')}}</label>
-											<view class="waimai-xs"><text>当月外卖销售：</text>
-												￥{{(takeOut.curMountTakeRation).replace('元','')}}</view>
+
+									</view>
+									<view class="jlly">
+										<view class="h6"><em>●</em> 去节令领用</view>
+										<view class="sale-qk">
+											<view class="waimai-list">
+
+												<view class="namewm">
+													<em class="gang"></em>当日领用
+												</view>
+												<label
+													class="pric">¥{{(reportReceive.curReceive).replace('元','')}}</label>
+											</view>
+											<view class="waimai-list">
+												<!-- <em></em> -->
+												<view class="namewm">
+													<em class="gang"></em>当月累积领用
+
+												</view>
+												<label
+													class="pric">¥{{(reportReceive.curMonthReceive).replace('元','')}}</label>
+											</view>
 										</view>
 									</view>
 								</view>
-								<view class="part-cons pasrt-kq">
-									<view class="mokuai">
-										<image src="@/images/img2/kaquan.png" mode="widthFix"></image>卡券
-									</view>
-									<view class="cons-qjl">
-										<view class="waimai-list">
-											<em></em>
-											<!-- <view class="namewm">当日充值: <view style="font-weight: 600; font-size: 15px; margin-left: 5px;">¥{{(cardCoupon.curTakeUp).replace('元','')}}</view></view> -->
-											<!-- <label class="pric">¥{{(cardCoupon.curTakeUp).replace('元','')}}</label> -->
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计充值:
-											</view>
-											<label class="pric">¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</label>
-										</view>
-										<view class="waimai-list">
-											<em></em>
-											<view class="namewm">当日售卡: <view
-													style="font-weight: 600; font-size: 15px; margin-left: 5px;">
-													¥{{(cardCoupon.curSaleCard).replace('元','')}}</view>
-											</view>
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售卡:
-											</view>
-											<label
-												class="pric">¥{{(cardCoupon.curMountSaleCard).replace('元','')}}</label>
-										</view>
 
-										<view class="waimai-list">
-											<em></em>
-											<view class="namewm">当日售劵: <view
-													style="font-weight: 600; font-size: 15px; margin-left: 5px;">
-													¥{{(cardCoupon.curSaleBond).replace('元','')}}</view>
-											</view>
-											<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售劵:
-											</view>
-											<label
-												class="pric">¥{{(cardCoupon.curMountSaleBond).replace('元','')}}</label>
+							</view>
+						</view>
+						<view class="particul">
+							<view class="part-sale part-waimai">
+								<view class="mokuai">
+									<image src="@/images/img2/waimai.png" mode="widthFix"></image>外卖
+								</view>
+								<view class="cons-wm">
+									<view class="waimai-list">
+										<em></em>
+										<view class="namewm">当日外卖销售 <text>去节令</text></view>
+										<label class="pric">¥{{(takeOut.curTakeSale).replace('元','')}}</label>
+										<view class="waimai-xs">
+											<text>当月外卖销售：</text>￥{{(takeOut.curTakeSaleRatio).replace('元','')}}
 										</view>
+									</view>
+									<view class="waimai-list">
+										<em></em>
+										<view class="namewm">当日外卖销售 <text>含节令</text></view>
+										<label class="pric">¥{{(takeOut.curMonthTakeSale).replace('元','')}}</label>
+										<view class="waimai-xs"><text>当月外卖销售：</text>
+											￥{{(takeOut.curMountTakeRation).replace('元','')}}</view>
+									</view>
+								</view>
+							</view>
+							<view class="part-cons pasrt-kq">
+								<view class="mokuai">
+									<image src="@/images/img2/kaquan.png" mode="widthFix"></image>卡券
+								</view>
+								<view class="cons-qjl">
+									<view class="waimai-list">
+										<em></em>
+										<!-- <view class="namewm">当日充值: <view style="font-weight: 600; font-size: 15px; margin-left: 5px;">¥{{(cardCoupon.curTakeUp).replace('元','')}}</view></view> -->
+										<!-- <label class="pric">¥{{(cardCoupon.curTakeUp).replace('元','')}}</label> -->
+										<view style="margin-bottom: 8px; margin-top: 6px;">当月累计充值:
+										</view>
+										<label class="pric">¥{{(cardCoupon.curMonthTakeUp).replace('元','')}}</label>
+									</view>
+									<view class="waimai-list">
+										<em></em>
+										<view class="namewm">当日售卡: <view
+												style="font-weight: 600; font-size: 15px; margin-left: 5px;">
+												¥{{(cardCoupon.curSaleCard).replace('元','')}}</view>
+										</view>
+										<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售卡:
+										</view>
+										<label class="pric">¥{{(cardCoupon.curMountSaleCard).replace('元','')}}</label>
+									</view>
+
+									<view class="waimai-list">
+										<em></em>
+										<view class="namewm">当日售劵: <view
+												style="font-weight: 600; font-size: 15px; margin-left: 5px;">
+												¥{{(cardCoupon.curSaleBond).replace('元','')}}</view>
+										</view>
+										<view style="margin-bottom: 8px; margin-top: 6px;">当月累计售劵:
+										</view>
+										<label class="pric">¥{{(cardCoupon.curMountSaleBond).replace('元','')}}</label>
 									</view>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
-
+			</view>
+		</view>
+	</view>
 </template>
 
 <script>
@@ -491,7 +494,8 @@
 		computed: {
 			fenmu() {
 				if (this.chartMaxValue) {
-					console.log(Number(Number(String(this.chartMaxValue)[0]) + (Number(String(this.chartMaxValue)[1]) === 0 ?
+					console.log(Number(Number(String(this.chartMaxValue)[0]) + (Number(String(this.chartMaxValue)[1]) ===
+						0 ?
 						0 :
 						1) + Array(this.chartMaxValue.toFixed(0).length -
 						1).fill(0).join("")))
@@ -660,12 +664,12 @@
 				} else {
 					return value
 				}
-							
+
 			},
-			panduan(value){
-				if(parseInt(String(value)) >= 100){
+			panduan(value) {
+				if (parseInt(String(value)) >= 100) {
 					return '100%'
-				}else{
+				} else {
 					return value
 				}
 			},
@@ -695,7 +699,7 @@
 		padding: 16rpx 2%;
 	}
 
-/* 	.listof {
+	/* 	.listof {
 		height: 92%;
 	} */
 

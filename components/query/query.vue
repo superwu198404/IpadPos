@@ -10,7 +10,7 @@
 		</view>
 		<text class="biaoti">门店查询</text>
 		<view class="menu">
-			<view v-for="(item,index) in tableName" class="glcx" @click="saleStatement(item,index)"
+			<view v-for="(item,index) in MenuArr" class="glcx" @click="saleStatement(item,index)"
 				:class=" curIndex=== index?'curr':''">
 				<view>
 					<!-- {{utils.getStorage('queryIndex')}} -->
@@ -34,30 +34,46 @@
 	import utils from "@/utils/util.js"
 	export default {
 		name: "query",
-		//属性
-		props: ['index'],
 		data() {
 			return {
 				curIndex: 1,
-				
+				MenuArr: [],
 			}
+		},
+		created() {
+			const queryIndex = utils.getStorage('queryIndex')
+			this.curIndex = queryIndex
+			let arr = utils.getStorage('MDMENU');
+			if (arr && arr.length > 0) {
+				arr.map(r => {
+					r.name = r.MenuName;
+					r.key = 'Storeinquiry';
+					try {
+						r.src1 = require('@/images/img2/' + r.MenuId + '-bai.png');
+						r.src2 = require('@/images/img2/' + r.MenuId + '-lv.png');
+					} catch (e) {
+						r.src1 = "";
+						r.src2 = "";
+					}
+				})
+				console.log("合并结果：", arr);
+				this.MenuArr = arr;	
+		}
 		},
 		mounted() {
 			this.curIndex = utils.getStorage('queryIndex')
 		},
+		
 		methods: {
 			saleStatement(item, index) {
 				uni.redirectTo({
-					url: item.src
+					url: `/pages/Querypage/QueryCenter/QueryCenter?queryIndex=${index}`
 				})
-				this.curIndex = index
-				utils.setStorage("queryIndex", index)
 			},
 			Return: function() {
 				uni.redirectTo({
 					url: "/pages/Center/Center"
-				})
-				utils.setStorage('queryIndex',1)
+				}) 
 			}
 		}
 	}
