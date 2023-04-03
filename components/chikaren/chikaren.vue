@@ -7,7 +7,7 @@
 	<view class="boxs">
 		<view class="customer">
 			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="guan">×</button></view>
+			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="close">×</button></view>
 			<view class="clues">
 				<text>姓名：</text>
 				<view class="label">
@@ -131,15 +131,8 @@
 		font-weight: 700;
 	}
 
-	.customer .h3 .guan {
-		float: right;
-		background: none;
-		font-size: 32rpx;
-		height: 100rpx;
-		line-height: 100rpx;
-		text-align: right;
-		padding: 0;
-		width: 60rpx;
+	.customer .h3 .close {
+		right:0;
 	}
 
 	.customer .h6 {
