@@ -44,7 +44,6 @@
 	import Storeinquiry from '@/pages/Querypage/Storeinquiry/Storeinquiry.vue'
 	import Statement from '@/pages/Querypage/Statement/Statement.vue'
 	import TakeawayCX from '@/pages/Querypage/TakeawayCX/TakeawayCX.vue'
-	var that;
 	export default {
 		name: "QueryCenter",
 		components: {
@@ -56,18 +55,17 @@
 		data() {
 			return {
 				curIndex: 0,
-				tableName: [
-					// {
-					// 	name: "销售报表",
-					// 	src1: require('@/images/img2/xiaoshou.png'),
-					// 	src2: require('@/images/img2/xiaoshoucx-cu.png'),
-					// 	key: "Storeinquiry"
-					// }, 
-				],
 				currentComponent: '',
 				MenuArr: [],
-				curMenu: {} //当前菜单
+				curMenu: {}, //当前菜单
+				pathIndex: null
 			}
+		},
+		onLoad(e) {
+			if (e && e.queryIndex) {
+				this.pathIndex = e.queryIndex
+			}
+
 		},
 		computed: {
 			component_name() {
@@ -75,60 +73,50 @@
 			}
 		},
 		created() {
-			that = this;
-			let arr = utils.getStorage('MDMENU');
-			console.log("菜单数量：", arr.length);
-			if (arr && arr.length > 0) {
-				arr.map(r => {
-					// let obj = that.tableName.find(r1 => {
-					// 	return r1.name == r.MenuName
-					// });
-					// if (obj)
-					// 	Object.assign(r, obj);
-					// else {
-					r.name = r.MenuName;
-					// }
-					r.key = 'Storeinquiry';
+			let tabArr = utils.getStorage('MDMENU');
+			if (tabArr && tabArr.length > 0) {
+				tabArr.map(item => {
+					item.name = item.MenuName;
+					item.key = 'Storeinquiry';
 					try {
-						r.src1 = require('@/images/img2/' + r.MenuId + '-bai.png');
-						r.src2 = require('@/images/img2/' + r.MenuId + '-lv.png');
+						item.src1 = require('@/images/img2/' + item.MenuId + '-bai.png');
+						item.src2 = require('@/images/img2/' + item.MenuId + '-lv.png');
 					} catch (e) {
-						//TODO handle the exception
-						//默认值
-						r.src1 = "";
-						r.src2 = "";
+						item.src1 = "";
+						item.src2 = "";
 					}
 				})
-				console.log("合并结果：", arr);
-				that.MenuArr = arr;
+				console.log("合并结果：", tabArr);
+				this.MenuArr = tabArr;
 			} else {
 				utils.simpleMsg("暂无权限查看", true);
 				return;
-				// that.MenuArr = that.tableName;
 			}
-			that.curIndex = this.MenuArr.findIndex(r => {
-				return r.key
-			});
-			let obj = this.MenuArr.find(r => {
-				return r.key
-			})
-			this.curMenu = obj;
-			this.currentComponent = obj.key;
+			if (this.pathIndex) {
+				const index = Number(this.pathIndex)
+				this.curMenu = this.MenuArr[index]
+				this.curIndex = index
+				this.currentComponent = this.MenuArr[index].key;
+				return;
+			} else if (this.MenuArr.length >= 1) {
+				console.log('www')
+				this.curMenu = this.MenuArr[0]
+				this.currentComponent = this.MenuArr[0].key;
+			}
 		},
+
 		methods: {
 			saleStatement(item, index) {
-				if (!item.key) {
-					utils.simpleMsg("抱歉，暂未开放", true);
-					return;
-				}
 				this.curMenu = item;
 				this.curIndex = index
 				this.currentComponent = item.key
+				utils.setStorage('queryIndex', index)
 			},
 			Return: function() {
 				uni.redirectTo({
 					url: "/pages/Center/Center"
 				})
+				utils.setStorage('queryIndex', 0)
 			}
 		}
 	}

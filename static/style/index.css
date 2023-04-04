@@ -392,7 +392,7 @@ em{
 	/* height: 90%; */
 	padding-top: 6%;
 	position: relative;
-	z-index: 9999;
+	z-index: 9997;
 }
 
 .operation .ranks {
@@ -1807,13 +1807,13 @@ input:-ms-input-placeholder{
 	position: absolute;
 	top:50%;
 	transform: translateY(-40%);
-	right:-2rpx;
+	right:-0rpx;
 	width:16rpx;
 	height: 32rpx;
 }
 .menu view .weiz-jtou image{
-	width:16rpx;
-	height: 32rpx;
+	width:22rpx;
+	height: 38rpx;
 }
 .right .bkjb{
 	width:99.6%;

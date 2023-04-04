@@ -60,9 +60,9 @@ var GetPayWay = async function(e) {
 				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
 				obj.raw = res.msg[i];
 				obj.yn_cezf = res.msg[i].YN_CEZF; //是否允许超额支付
-				if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式
-					obj.type = "EXCESS";
-				}
+				// if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式 无用
+				// 	obj.type = "EXCESS";
+				// }
 				PayWayList.push(obj);
 			}
 			//如果fkda没有则追加测试数据
@@ -105,30 +105,31 @@ var GetPayWay = async function(e) {
 					poly: "O", //不显示的支付方式
 					seq: 100,
 					addtype: "NEWADD",
-				}, {
-					name: "仟吉赠券",
-					fkid: "ZZ01",
-					type: "SZQ", //NOPAY 用于券支付退款时 通过fkid找到SZQ后 走券退回接口
-					api: "SZQ",
-					poly: "O",
-					seq: 101,
-					addtype: "NEWADD",
-				}, {
-					name: "预定金",
-					fkid: "ZG03",
-					type: "",
-					poly: "O",
-					seq: 102,
-					addtype: "NEWADD",
-				},
-				{
-					name: "券自动放弃金额",
-					fkid: "ZCV1",
-					type: "EXCESS",
-					poly: "O",
-					seq: 103,
-					addtype: "NEWADD",
 				}
+				// , {
+				// 	name: "仟吉赠券",
+				// 	fkid: "ZZ01",
+				// 	type: "SZQ", //NOPAY 用于券支付退款时 通过fkid找到SZQ后 走券退回接口
+				// 	api: "SZQ",
+				// 	poly: "O",
+				// 	seq: 101,
+				// 	addtype: "NEWADD",
+				// }, {
+				// 	name: "预定金",
+				// 	fkid: "ZG03",
+				// 	type: "",
+				// 	poly: "O",
+				// 	seq: 102,
+				// 	addtype: "NEWADD",
+				// },
+				// {
+				// 	name: "券自动放弃金额",
+				// 	fkid: "ZCV1",
+				// 	type: "EXCESS",
+				// 	poly: "O",
+				// 	seq: 103,
+				// 	addtype: "NEWADD",
+				// }
 			]
 			for (var i = 0; i < arr.length; i++) {
 				let obj = PayWayList.find((item) => {
@@ -161,11 +162,38 @@ var GetPayWay = async function(e) {
 			})
 			PayWayList = PayWayList.concat(arr1);
 			console.log("筛选后的二级支付方式：", arr1);
+
+			let arr2 = [];
+			//开始筛选其余不可见的方式
+			for (var i = 0; i < res.msg.length; i++) {
+				let obj1 = PayWayList.find((item) => {
+					return item.fkid == res.msg[i].FKID;
+				});
+				if (!obj1) {
+					let obj = {};
+					obj.name = res.msg[i].SNAME;
+					obj.fkid = res.msg[i].FKID;
+					obj.type = res.msg[i].JKSNAME || res.msg[i].FKID; //唯一性识别 用于通过type找到当前对象
+					if (obj.fkid == 'ZF09' || obj.fkid == 'ZZ01' || obj.fkid == 'ZF94') { //券相关的默认走SZQ
+						obj.api = "SZQ"; //api 只用于接口调用方式	
+					} else {
+						obj.api = res.msg[i].JKSNAME || "NOPAY"; //api 只用于接口调用方式
+					}
+					obj.poly = "O";
+					obj.seq = PayWayList.length + i + 1; //排序方式
+					obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
+					obj.yn_cezf = res.msg[i].YN_CEZF; //是否允许超额支付
+					arr2.push(obj);
+				}
+			}
+			PayWayList = PayWayList.concat(arr2);
+			console.log("筛选后的三级（其他不可见）支付方式：", arr2);
+			//排序操作
 			PayWayList = PayWayList.sort((r, r1) => {
 				return r.seq - r1.seq;
 			})
 		}
-		console.log("获取到的支付方式：", PayWayList);
+		console.warn("最终获取到的支付方式：", PayWayList);
 		util.setStorage("PayWayList", PayWayList);
 	})
 };
@@ -258,7 +286,7 @@ var get_payment_infos = async function() {
 			}
 		}))
 	} catch (e) {
-		console.error("[GetPaymentInfos]支付信息初始化失败：",e);
+		console.error("[GetPaymentInfos]支付信息初始化失败：", e);
 		util.simpleMsg("获取付款方式失败!", true);
 	}
 }

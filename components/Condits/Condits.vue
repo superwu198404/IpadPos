@@ -165,12 +165,9 @@
 		created() {
 			const initValue = JSON.parse(JSON.stringify(this.inqueryCondition))
 			this.initValue = initValue
-			console.log(this.wdate,`011111111111111111111111111111111111111111111`)
 		},
 		methods: {
 			delItem(index) {
-				console.log(index,"index")
-				console.log(this.inqueryCondition[index])
 				this.inqueryCondition[index].value = ''
 			},
 			getvalue: function(pm_v) {

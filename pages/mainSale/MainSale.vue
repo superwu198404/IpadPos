@@ -9,11 +9,12 @@
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="content" style="overflow: hidden;">
-			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length" :isKeyBoardShow='isKeyBoardShow'></Page>
-			<view class="arrow-box" :style="arrow_style">
+			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length"
+				:isKeyBoardShow='isKeyBoardShow'></Page>
+			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
-			</view>
+			</view> -->
 			<view class="right" style="position: relative;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -42,14 +43,15 @@
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
 									:scroll-into-view="mainSale.scrollinto">
-									<view class="products"  v-for="(plitem, plindex) in  mainSale.selectFlagList"
+									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
-											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"  v-show="mainSale.isDateClassify">
-											<text>{{mainSale.isDateClassify?plitem.plname:'商品列表'}}</text>
+											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"
+											v-show="mainSale.isDateClassify">
+											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
-										<view  class='curr h2'  v-show="!mainSale.isDateClassify">
+										<view class='curr h2' v-show="!mainSale.isDateClassify">
 											<text>{{'商品列表'}}</text>
 											<label></label>
 										</view>
@@ -106,7 +108,8 @@
 							<view class="a-z" @click="mainSale.GetTSZKData">
 								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
-							<view class="key-board-search" @click="mainSale.keyBoardSearch">
+							<view class="key-board-search a-z" @click="mainSale.keyBoardSearch"
+								style="font-size: 30rpx;">
 								键盘
 							</view>
 							<view class="states" @click="mainSale.ShowStatement">
@@ -139,7 +142,7 @@
 									</view>{{(mainSale.showQueryKeys).toUpperCase()}}
 								</view>
 								<view class="inputArea"
-									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;">
+									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;  margin-left: -15px;">
 									<view>
 										{{mainSale.boardQueryKeys}}
 									</view>
@@ -163,9 +166,11 @@
 										style="width: 137px; color: #127551;">搜索</li>
 								</ul>
 							</view>
+
 							<view class="switchArea">
 								分类：
-								<switch checked color="#1aa034" @change="mainSale.switchAreaChange" />
+								<switch :checked=mainSale.isDateClassify color="#1aa034"
+									@change="mainSale.switchAreaChange" />
 							</view>
 						</view>
 
@@ -1349,14 +1354,14 @@
 		font-weight: 600;
 		color: gray;
 		position: absolute;
-		background-color: #fff;
-		top: -53px;
+		/* background-color: #fff; */
+		top: 10px;
 		padding: 6px;
-		right: 10px;
+		right: 130px;
 		border-radius: 8px;
 		display: flex;
 		flex-direction: row;
-		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
+		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
 	}
 
 	.deleteBoard {

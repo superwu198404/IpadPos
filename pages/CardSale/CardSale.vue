@@ -79,7 +79,7 @@
 								</view>
 							</view>
 						</view>
-						<view class="module" style="height: 66%;">
+						<view class="module" style="height: 65%;">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
 							<view class="swipetip" v-if="SALE002.length==0">

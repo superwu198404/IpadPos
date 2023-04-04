@@ -137,7 +137,7 @@ var CreateSQL = function(e, t) {
 }
 
 //传输支付数据
-var TransLiteData = function(e,func) {
+var TransLiteData = function(e, func) {
 	console.log("[TransLiteData]数据传输中...");
 	TransLite(e, r => {
 		if (e) {
@@ -158,7 +158,7 @@ var TransLiteDataAsync = function(e) {
 		let transfer_result = await TransLiteAsync(e, r => {
 			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
 			console.log("[TransLiteDataAsync]执行更新操作...");
-			return new Promise((inner_resolve,inner_reject) => {
+			return new Promise((inner_resolve, inner_reject) => {
 				db.get().executeDml(delArr, "数据删除中", function(res2) {
 					console.log("[TransLiteDataAsync]销售数据传输状态更改成功：", res2);
 					inner_resolve()
@@ -248,15 +248,18 @@ var TransLiteAsync = function(e, func, load = false) {
 								db.get().executeDml1(delStr, "数据删除中", function(res2) {
 									console.log("[TransLiteAsync]缓存数据删除成功:", res2);
 									try {
-										if (func){
+										if (func) {
 											let callback_result = func(res2);
-											if(callback_result?.then)
+											if (callback_result?.then)
 												callback_result?.then((res) => {
-													console.log("[TransLiteAsync]回调执行完成...");
+													console.log(
+														"[TransLiteAsync]回调执行完成..."
+														);
 													resolve(result);
 												});
-											else{
-												console.log("[TransLiteAsync]回调执行完成...");
+											else {
+												console.log(
+												"[TransLiteAsync]回调执行完成...");
 												resolve(result);
 											}
 										};
@@ -852,7 +855,7 @@ const default_request_options = {
 	class: "", //反射类名（非空）
 	method: "", //反射接口（非空）
 	data: null, //反射调用传入参数（给 method 用的）
-	process: true,//传入参数是否处理
+	process: true, //传入参数是否处理
 	success: () => console.log(`[SimpleAPIRequest]接口调用成功...`),
 	error: () => console.log(`[SimpleAPIRequest]接口调用失败...`)
 }
@@ -863,7 +866,7 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		options = Object.assign(default_params, options);
 		let reqdata = Req.resObj(true, "操作中...", options.data,
 			`${options.namespace}.${options.class}.${options.method}`);
-		if(!options.process){
+		if (!options.process) {
 			reqdata.data.data = options.data;
 		}
 		let result = null;
@@ -925,6 +928,11 @@ var CheckSign = function() {
 	}
 	return true;
 }
+var GetDAPZCS = async function(data, func) {
+	let apistr = "MobilePos_API.Models.PaymentClass.GetDAPZCS";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	await Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
 	InitData,
 	CreateBill,
@@ -957,5 +965,6 @@ export default {
 	SimpleLocalQuery,
 	WebDBQuery,
 	WebDBExecute,
-	CheckSign
+	CheckSign,
+	GetDAPZCS
 }
