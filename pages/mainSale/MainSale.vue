@@ -1081,6 +1081,24 @@
 				this.P_URL = sys.DGIMGURL;
 			}
 			this.move_monitor();
+		},
+		destroyed() {
+			// uni.$off("change");
+			// uni.$off("redirect");
+			// uni.$off("member-close");
+			// uni.$off("close-big-customer");
+			// uni.$off("open-big-customer");
+			// uni.$off("reserve-drawer-close");
+			// uni.$off("close-tszk");
+			// uni.$off("close-FZCX");
+			uni.$off("ReturnSale");
+			// uni.$off("Switch");
+			// uni.$off("tools");
+			// uni.$off("exists-online-order");
+			// uni.$off("exists-takeaway");
+			// uni.$off("exists-takeaway-reserve");
+			// uni.$off("exit-cake-reservation");
+			// uni.$off("ShowCakeDetail");
 		}
 	}
 </script>
