@@ -2203,6 +2203,8 @@
 						_pay.RefundAll(payObj.api, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
+								original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+								original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 								refund_money: (Math.abs(Number(singleRefund.amount) * 100))
 									.toFixed(
 										0), //退款金额
@@ -2278,6 +2280,7 @@
 						type: type,
 						trade: info,
 						auth_code: info.auth_code,
+						
 						store_id: this.KHID,
 						trade_no,
 						data
