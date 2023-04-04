@@ -1176,7 +1176,7 @@
 					let payObj = this.PayWayList.find(i => i.fkid == refundInfo.fkid);
 					let current_refund_exists_only_code = false; //当前退款是否包含唯一码
 					console.log("[Refund]退款fkid:", refundInfo.fkid)
-					console.log("[Refund]退款payWayType:", payObj.type)
+					console.log("[Refund]退款payWayType:", payObj.api)
 					console.log("[Refund]groups:", groups);
 					let total = 0;
 					if (refundInfo.group) { //判断当前支付是否包含唯一码
@@ -2219,8 +2219,6 @@
 						_pay.RefundAll(payObj.api, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
-								original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 								refund_money: (Math.abs(Number(singleRefund.amount) * 100))
 									.toFixed(
 										0), //退款金额
@@ -2296,7 +2294,6 @@
 						type: type,
 						trade: info,
 						auth_code: info.auth_code,
-						
 						store_id: this.KHID,
 						trade_no,
 						data
