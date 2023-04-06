@@ -18,18 +18,20 @@
 				<view class="menber-info">
 					<view class="menber-info-head">
 						<view class="menber-headshots">
-							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80px;"></image>
+							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80rpx;height: 80rpx;"></image>
 						</view>
 						<view class="member-details">
 							<view class="member-id">ID {{ source.member_infos.hyId || '暂无' }}</view>
 							<view class="member-details-infos">
-								<view>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '暂无' }}</view>|
-								<view>电话:{{ source.member_infos.Phone || '暂无' }}</view>
+								
 							</view>
 						</view>
 					</view>
 					<view class="gray-text" style="font-size: 1.1em;">
-						注册时间:{{ source.member_infos.RegisterDay ? (date_convert(source.member_infos.RegisterDay) || '暂无') : '暂无' }}
+						<label>姓名:{{ source.member_infos.Name || source.member_infos.Phone || '暂无' }}</label>
+						<label>电话:{{ source.member_infos.Phone || '暂无' }}</label>
+						<label>注册时间:{{ source.member_infos.RegisterDay ? (date_convert(source.member_infos.RegisterDay) || '暂无') : '暂无' }}</label>
+						
 					</view>
 				</view>
 				<view class="store-infos gray-text">
@@ -73,7 +75,8 @@
 					</view>
 				</view>
 				<view class="card-valid-date">
-					有效期至:{{ source.card_infos.expireDate || "暂无" }}
+					<em></em>
+					<text>有效期至:{{ source.card_infos.expireDate || "暂无" }}</text>
 				</view>
 			</view>
 		</view>
@@ -349,7 +352,7 @@
 	}
 
 	.card-infos {
-		background-image: url('@/images/img2/kaqchaxun.png');
+		background-image: url('@/images/img2/kaqchaxun2.png');
 		padding: 20px 20px;
 		box-sizing: border-box;
 		position: relative;
@@ -408,7 +411,10 @@
 	.gray-text {
 		color: darkgray;
 	}
-
+	.gray-text label{
+		width:49%;
+		display: inline-block;
+	}
 	.card-info-head {
 		display: flex;
 		justify-content: space-between;
@@ -433,10 +439,29 @@
 
 	.card-valid-date {
 		position: absolute;
-		bottom: 14px;
+		bottom: 0px;
 		color: white;
+		height: 120rpx;
+		line-height: 120rpx;
+		width:94%;
+		left: 0;		
+		padding:0 3%;
 	}
-
+	.card-valid-date em{
+		position: absolute;
+		bottom: 0px;
+		background: linear-gradient(90deg, #006B44 0%, #FFFFFF 100%);
+		height: 120rpx;
+		width:100%;
+		left: 0;
+		z-index: 1;
+		border-radius: 0 0 24rpx 24rpx;
+		opacity: 0.8;
+	}
+	.card-valid-date text{
+		position: relative;
+		z-index: 4;
+	}
 	.card-details {
 		display: flex;
 		flex-direction: column;

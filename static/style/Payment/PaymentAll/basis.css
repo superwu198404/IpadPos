@@ -47,7 +47,7 @@ page {
 	padding-top: 3%;
 	padding-top: 2%;
 	position: relative;
-	z-index: 9999;
+	z-index: 9996;
 }
 
 .navmall .logo {
@@ -1468,4 +1468,13 @@ uni-button:after {
 }
 .coupons .operats button{
 	margin:0 2%;
+}
+
+.purple .uni-radio-input.uni-radio-input-checked{
+	background-color: #006B44 !important;
+	border-color: #006B44 !important;
+	color: #ffffff !important;
+}
+.purple:not([disabled]) .uni-radio-input:hover {
+	border-color: #006B44 !important;
 }

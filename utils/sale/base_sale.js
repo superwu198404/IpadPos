@@ -2010,6 +2010,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.score_info.money = 0;
 		this.score_info.score = 0;
 		this.score_info.ispoints = 0;
+		// this.score_info.isjf = false;
 		this.over48 = false;
 	})
 	//*func*辅助促销关闭回调
@@ -2399,6 +2400,9 @@ function GetSale(global, vue, target_name, uni) {
 	//*func* 积分促销控制
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
+		//触发的放弃积分促销
+		if(e==1)
+			this.score_info.ispoints = 0;
 		this.SaleNetAndDisc(e);
 	});
 	//*End* 自定义方法结束
@@ -2455,6 +2459,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//促销跟踪
 	this.cxfsArr = [];
+	//是否有促销单生效(不是满足)
+	this.cxIsJF = [];
 	//生效的促销活动集合
 	this.CXHDArr = [];
 	//生效的特殊折扣规则集合
@@ -3947,6 +3953,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
 			this.BanPayType(response?.cxfs); //收集禁止的支付id
 			this.cxfsArr = response?.cxfs; //促销跟踪
+			this.cxIsJF = response?.isjf; //是否有积分促销生效(不是满足)
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
 			that.sale002.map(r => {
@@ -4026,6 +4033,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	this.ScoreCount = function(list) {
 		console.log("[ScoreCount]积分原列表:", list);
+		// let isjf = false;
 		if (list) {
 			let score_total = 0;
 			let money_total = 0;
@@ -4034,6 +4042,7 @@ function GetSale(global, vue, target_name, uni) {
 				score_total += i.JFNUM;
 				money_total += i.DHNET;
 				ispoints += i.POINTS;
+				// isjf = i.ISJF;
 			})
 			this.score_info.money = money_total;
 			this.score_info.score = score_total;
@@ -4041,6 +4050,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
 		} else
 			console.warn("[ScoreCount]list值无效!");
+		// this.score_info.isjf = isjf;
 	}
 
 	this.BanPayType = function(list) {
@@ -4215,6 +4225,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.FZCX.oval = [];
 		this.FZCX.cval = {};
 		this.cxfsArr = [];
+		this.cxIsJF = false;
 		this.CXHDArr = [];
 		this.ZKHDArr = [];
 		this.bill = null;

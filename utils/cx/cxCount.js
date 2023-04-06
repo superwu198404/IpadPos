@@ -61,6 +61,8 @@ let fsdcx = new Array();
 let sdprice = [];
 //0:优先积分促销  1:放弃积分促销
 let is_Points = 0;
+//记录本次计算有无积分促销
+let is_JF = false;
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
 const Cxdict = async () => {
@@ -318,6 +320,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 		});
 		respData.products = sale02_order;
 		respData.cxfs = [];
+		respData.isjf = false;
 		return respData;
 	}
 
@@ -395,6 +398,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 	});
 	respData.products = sale02_order;
 	respData.cxfs = cxfsdt;
+	respData.isjf = is_JF;
 	console.log("Createcx促销返回结果respData=================", respData);
 	return respData;
 }
@@ -677,11 +681,17 @@ const xsTypeCheck = function(bill, is_Xstype) {
 const isPointsCheck = function(bill,isPoints) {
 	let mcc = cxdict.get(bill);
 	console.log("isPointsCheck", mcc.cxtype);
-	if ((mcc.cxtype == "D" || mcc.cxtype == "G") && isPoints == 0 ) {
-		return true;
-	} else if((mcc.cxtype == "D" || mcc.cxtype == "G") && isPoints == 1 ){
-		return false;
+	
+	if(mcc.cxtype == "D" || mcc.cxtype == "G"){
+		is_JF = true;
+		if (isPoints == 0)
+			return true;
+		else if(isPoints == 1)
+			return false;
+		else 
+			return true;
 	}else {
+		is_JF = false;
 		return true;
 	}
 }
@@ -1751,6 +1761,7 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["JFNUM"] =(jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.jfnum, 0) : 0; //抵扣积分
 	dr[notfkid] = cx_util.snvl(notfkid_dr, ""); //不可用支付方式
 	dr["NO"] = i;
+	// dr["ISJF"] = is_JF;
 	cxfsdt.push(dr);
 }
 
@@ -1800,6 +1811,7 @@ const ClearResult = function() {
 	cxbilldts = [];
 	sdprice = [];
 	is_Points = 0;
+	is_JF = false;
 }
 
 //清除所有全局数据
