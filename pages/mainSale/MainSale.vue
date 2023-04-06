@@ -159,10 +159,10 @@
 										{{_item}}
 									</li>
 									<li class="enter" v-if="index===1" @click="mainSale.delQueryKeys">删除</li>
-									<li class="enter" v-if="index===2" style="color: red;width: 92rpx; color:"
+									<li class="enter" v-if="index===2" style="color: red;width: 190rpx; color:"
 										@click="mainSale.clearQueryKeys">清空</li>
 									<li class="enter" v-if="index===2" @click="mainSale.affirmQueryKeys"
-										style="width: 92rpx; color: #127551;">搜索</li>
+										style="width: 190rpx; color: #127551;">搜索</li>
 								</ul>
 							</view>
 
@@ -1293,12 +1293,12 @@
 		background-color: #fff;
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		border-radius: 22px;
-		width: 810px;
+		width: 1600rpx;
 		padding:0 30rpx 30rpx ;
 		position: absolute;
-		bottom: 60px;
+		bottom: 60rpx;
 		right: 0;
-		padding-bottom: 38px;
+		padding-bottom: 40rpx;
 		animation: keyboard 0.5s ease;
 		-webkit-animation: keyboard 0.5s ease;
 
@@ -1327,19 +1327,19 @@
 	.keyboard .keys {
 		display: flex;
 		list-style: none;
-		margin: 0 0 0 -33px;
+		margin: 0 0 0 -33rpx;
 	}
 
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
-		width: 60rpx;
-		height:60rpx;
-		font-size: 18px;
-		margin: 9px;
+		width: 120rpx;
+		height:120rpx;
+		font-size: 36rpx;
+		margin: 18rpx;
 		background-color: #f2f2f2;
-		border-radius: 15px;
+		border-radius: 30rpx;
 		text-align: center;
-		line-height: 60px;
+		line-height: 120rpx;
 		transition: all 0.25s;
 	}
 
@@ -1350,13 +1350,14 @@
 	}
 
 	.searchTerms {
-		font-size: 18px;
-		font-weight: 600;
+		font-size: 36rpx;
+		font-weight: 700;
 		color: gray;
 		width: 100%;
-		height: 80rpx;
+		height: 70rpx;
 		display: flex;
 		justify-content: flex-end;
+		padding-top:20rpx;
 	}
 	.searchTerms image{
 		margin-top:20rpx;
@@ -1364,14 +1365,14 @@
 		height:40rpx;
 	}
 	.switchArea {
-		font-size: 18px;
+		font-size: 36px;
 		font-weight: 600;
 		color: gray;
 		position: absolute;
 		/* background-color: #fff; */
-		top: 0;
+		top: 18rpx;
 		padding: 6px;
-		right: 130px;
+		left: 100px;
 		border-radius: 8px;
 		display: flex;
 		align-items: center;
