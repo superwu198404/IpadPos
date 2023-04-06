@@ -1830,3 +1830,14 @@ input:-ms-input-placeholder{
 	background: #F5F4F8;
 	border-radius: 14rpx;
 }
+uni-radio .uni-radio-input,uni-radio .uni-radio-input.uni-radio-input-checked{
+	background-color: #006B44 !important;
+	border-color: #006B44 !important;
+	color: #ffffff !important;
+}
+uni-radio:not([disabled]) .uni-radio-input:hover {
+    border-color: #006B44 !important;
+}
+uni-radio:not([disabled]) .uni-radio-input:hover, uni-checkbox:not([disabled]) .uni-checkbox-input:hover {
+  border-color: #006B44!important;
+}

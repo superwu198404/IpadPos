@@ -286,8 +286,8 @@
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
-						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
-							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'modeli curr':'modeli'"
+						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)" class="modeli"
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'curr':'jinzhi'"
 							:id="item.type" @click="clickPayType(item,$event)">
 							<view>
 								<image :src="item.icon" mode="widthFix"></image>
@@ -2503,11 +2503,8 @@
 		width: 90%;
 	}
 
-	/* .bom-zhifu .pattern:nth-last-child(1) .tits p,
-	.bom-zhifu .pattern:nth-last-child(2) .tits p,
-	.bom-zhifu .pattern:nth-last-child(3) .tits p,
-	.bom-zhifu .pattern:nth-last-child(4) .tits p {
-		font-size: 30rpx !important;
-		line-hight:70rpx !important;
-	} */
+	.jinzhi{
+		opacity: 0.7;
+		color:#666;
+	}
 </style>
