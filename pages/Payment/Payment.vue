@@ -1222,6 +1222,7 @@
 									.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_store_id: this.SALES.sale1
 									.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_area_id: this.SALES.sale1.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
