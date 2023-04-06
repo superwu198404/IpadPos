@@ -7,7 +7,7 @@
 		<view class="logo">
 			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
-		<scroll-view scroll-y class="menu" 
+		<scroll-view scroll-y class="menu"
 			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
@@ -101,7 +101,7 @@
 				type: Number,
 				default: 0
 			},
-			isKeyBoardShow:Boolean
+			isKeyBoardShow: Boolean
 		},
 		computed: {
 			Selected: function() {
@@ -149,11 +149,12 @@
 			MenuSelect(menu_name, menu_info) {
 				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
-				this.current_click_menu_name = menu_name;
-				// this.current_info = {
-				// 	name: menu_name,
-				// 	info: menu_info
-				// };
+				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name ==
+					'sale_reserve_cancel' || menu_name == 'sale_reserve_extract') {//只有这四种模式（预定提取，预定取消，退单，赊销退单）需要预选定位
+					this.current_click_menu_name = menu_name;
+				} else {
+					this.current_click_menu_name = null;
+				}
 				console.log("[MenuSelect]切换页面...", menu_name + "," + menu_info);
 				this.SubmitMenuSelectEvent(menu_name, menu_info);
 			},
@@ -303,21 +304,21 @@
 	}
 
 	scroll-view::-webkit-scrollbar {
-		    	/* 隐藏滚动条，但依旧具备可以滚动的功能 */
-				display: none;
-			    width: 0 !important;
-			    height: 0 !important;
-			    -webkit-appearance: none;
-			    background: transparent;
-			    color: transparent;
-		    }
-	::-webkit-scrollbar {
-	    display: none;
-	    width: 0 !important;
-	    height: 0 !important;
-	    -webkit-appearance: none;
-	    background: transparent;
-	    color: transparent;
-	  }
+		/* 隐藏滚动条，但依旧具备可以滚动的功能 */
+		display: none;
+		width: 0 !important;
+		height: 0 !important;
+		-webkit-appearance: none;
+		background: transparent;
+		color: transparent;
+	}
 
+	::-webkit-scrollbar {
+		display: none;
+		width: 0 !important;
+		height: 0 !important;
+		-webkit-appearance: none;
+		background: transparent;
+		color: transparent;
+	}
 </style>
