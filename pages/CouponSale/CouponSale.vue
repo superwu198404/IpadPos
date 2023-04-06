@@ -8,7 +8,7 @@
 	<view>
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- 顶部导航栏 -->
-		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false'>
+		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false' :type="'kq_sale'">
 		</Head>
 		<!-- 内容栏 -->
 		<CouponSaleSteps ref="steps"></CouponSaleSteps>
