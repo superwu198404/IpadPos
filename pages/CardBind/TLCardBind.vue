@@ -213,7 +213,7 @@
 						this.form.card_number = data.data.card_no;
 						util.simpleMsg('卡信息查询成功!', false);
 					} else {
-						util.simpleMsg('未查询到相关信息!', true);
+						util.simpleMsg(data.msg, true);
 					}
 				}
 			},

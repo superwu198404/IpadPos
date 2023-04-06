@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
+		<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<view class="right">
 
 			<!-- 顶部导航栏-->
@@ -221,7 +221,7 @@
 				console.log("卡信息发生变动：", n);
 				if (this.CardInfo.cardId || this.CardInfo.cardId != "") {
 					this._sale2_count = 1;
-				}else{
+				} else {
 					this._sale2_count = 0;
 				}
 			}
@@ -318,8 +318,8 @@
 						card_num: that.CardNumber
 					}
 				}, async res => {
+					console.log("卡信息查询结果：", res);
 					if (res.code) {
-						console.log("卡信息查询结果：", res.data);
 						let cardInfo = res.data;
 						cardInfo.cardId = that.CardNumber;
 						let spinfo = await _card_sale.MatchSP(cardInfo.materielId); //商品信息匹配
@@ -328,9 +328,12 @@
 						}
 						that.CardInfo = cardInfo;
 					} else {
+						that.CardInfo = {};
 						util.simpleMsg(res.msg, true);
 					}
 				}, err => {
+					// console.log("卡信息查询结果：", err);
+					that.CardInfo = {};
 					util.simpleMsg(err.msg, true);
 				});
 			},

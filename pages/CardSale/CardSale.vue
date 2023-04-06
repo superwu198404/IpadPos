@@ -44,7 +44,7 @@
 								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-									<text>VIP售卡充值</text>
+									<text>VIP卡激活充值</text>
 								</label>
 							</view>
 							<view class="tab " @click="ChangeYWTYPE('VIPCard_Recharge')"

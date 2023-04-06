@@ -93,6 +93,9 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
+							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showCouponNum=true"></image>
+						</view>
+						<view class="a-z">
 							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardFunc">
 							</image>
 						</view>
@@ -102,9 +105,6 @@
 						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view> -->
-						<view class="a-z">
-							<image src="@/images/img2/dhquannn.png" mode="widthFix" @click="showCouponNum=true"></image>
-						</view>
 					</view>
 				</view>
 			</view>

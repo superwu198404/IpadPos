@@ -233,6 +233,7 @@
 						this.form.infos = result.data;
 					}
 					else{
+						this.form.infos =bussiness.infos();
 						util.simpleMsg(result.msg);
 					}
 				}
