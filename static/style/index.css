@@ -562,7 +562,7 @@ em{
 	}
 }
 .states {
-	width: 60rpx;
+	width: 64rpx;
 	display: flex;
 	flex-direction: column;
 	background-color: #E0EAE9;
@@ -571,13 +571,14 @@ em{
 	align-items: center;
 	border: 1px solid #006B44;
 	border-radius: 40rpx;
-	padding: 40rpx 0 0;
-	margin-top: 100rpx;
+	padding: 30rpx 0 0;
+	margin-top: 110rpx;
 }
 
 .states text {
 	text-align: center;
 	font-weight: 600;
+	font-size: 36rpx;
 }
 
 .toproof {

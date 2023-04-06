@@ -59,6 +59,16 @@
 			CardDelay,
 			CardBind
 		},
+		watch: {
+			'source.current_menu_info': function(n, o) {
+				console.log("监控到组件切换：", n);
+				let store = util.getStorage("store");
+				store.DKFID = "80000000";
+				store.DKFNAME = '默认大客户';
+				util.setStorage("store", store);
+				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+			}
+		},
 		computed: {
 			component_name() {
 				console.warn("[ComponentName]当前激活的组件名称:", this.source.current_menu_info?.key);
@@ -126,7 +136,7 @@
 			//普通销售和卡券销售切换
 			SwitchSale: function(e) {
 				if (common.CheckSign()) {
-					console.log("sale2数量：",this.$refs.ChildObj._sale2_count)
+					console.log("sale2数量：", this.$refs.ChildObj._sale2_count)
 					if (this.$refs.ChildObj._sale2_count > 0) {
 						util.simpleMsg("请先清空卡券信息，再进行切换");
 						return;

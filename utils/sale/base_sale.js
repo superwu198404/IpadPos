@@ -1090,143 +1090,6 @@ var XsTypeObj = {
 			this.imgCurrent = e;
 		}
 	},
-	//线上订单提取
-	sale_online_order_extract: {
-		xstype: "8",
-		clickType: "sale_online_order_extract",
-		nameSale: "线上订单提取",
-		icon_open: require("@/images/xsddtiqu.png"),
-		icon_close: require("@/images/xsddtiqu-wxz.png"),
-		icon_guodu: require("@/images/xsddtiqu-lvv.png"),
-		operation: {
-			"ynCancel": true,
-			"sale_takeaway_reserve": true,
-			"sale_message": true,
-			"lockRows": 0, //是否存在锁定行数
-		},
-		$initSale: function(params) {
-			this.actType = common.actTypeEnum.Payment;
-			this.old_bill = params.sale1.BILL;
-			console.log("[sale_online_order_extract]线上订单sale信息:", params);
-			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
-			this.sale002 = params.sale2.map(s2 => {
-				let new_s2 = Object.cover(new sale.sale002(), s2);
-				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
-				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
-				new_s2.STR1 = s2.GOODNAME ?? "";
-				return new_s2;
-			});
-			this.sale003 = params.sale3.map(s3 => {
-				let new_s3 = Object.cover(new sale.sale003(), s3)
-				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
-				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
-				new_s3.FKNAME = s3.SNAME ?? "";
-				util.hidePropety(new_s3, 'FKNAME');
-				new_s3.FKID = 'ZG03';
-				return new_s3
-			});
-			console.log("[InitSale]FKNAME:", this.sale003.map(i => i.FKNAME));
-			this.reserve_param = params.reserve_params;
-			console.log("[InitSale]线上订单提货参数:", this.reserve_param);
-			this.setNewParmSale({
-				sale001: this.sale001,
-				sale002: this.sale002,
-				sale003: this.sale003
-			}, common.actTypeEnum.Refund);
-			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
-			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
-			this.ShowStatement();
-			this.payed = [];
-			for (let s3 of this.sale003) {
-				this.payed.push(Sale3ModelAdditional(Sale3Model({
-					fkid: s3.FKID,
-					type: '',
-					bill: s3.BILL,
-					name: s3.SNAME,
-					amount: s3.AMT
-				}), { //业务配置字段（支付状态设定为成功）
-					fail: false //定金显示为成功
-				}));
-			}
-			console.log("[sale_online_order_extract]线上订单初始化完毕:", {
-				sale1: this.sale001,
-				sale2: this.sale002,
-				sale3: this.sale003
-			});
-		},
-		///对打印的控制
-		$print: function() {
-			return {
-				tName: "提取小票", // 名称
-				ynPrintFp: true, //是否打印发票二维码
-				ynPintCustem: false, // 是否打印客户信息
-				ynPintDisc: true, //是否打印折扣  
-				payOrRet: "", //支付还是退款
-			}
-		},
-		$click() {
-			this.SetManage("sale_online_order_extract");
-			return false;
-		},
-		$beforeFk: function() {
-			return true;
-		},
-		$saleFinishing: function(result) { //生成yd
-			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
-			this.sale001.ZNET = this.sale001.TNET; //线上订单的 ZNET 为下单时候的付款金额
-			this.sale001.BILLDISC = 0;
-			this.sale001.TCXDISC = 0;
-			this.sale001.TDISC = 0;
-			this.sale002.forEach(i => {
-				i.DISCRATE = 0;
-				i.DISC = 0;
-				i.CXDISC = 0;
-			});
-			console.log("[SaleFinishing]线上提取生成中...", this.sale003);
-			this.communication_for_oracle.push(
-				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
-			);
-			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
-			delete this.old_bill;
-		},
-		async $saleFinied(sales) {
-			console.log("[SaleFinied]线上提取提货...");
-			//调用打印
-			let arr2 = this.sale002;
-			arr2.forEach(function(item, index) {
-				item.SNAME = item.STR1;
-			})
-			let arr3 = this.sale003;
-			//查询支付方式
-			let fkdaRes = this.FKDA_INFO;
-			arr3.forEach(function(item, index) {
-				try {
-					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
-					item.balance = 0;
-				} catch (e) {
-					item.SNAME = "";
-					item.balance = 0;
-				}
-			})
-			console.log("线上订单提取开始调用打印", {
-				arr2,
-				arr3
-			})
-			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "XSDDTQ");
-
-			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
-				console.log("[SaleFinishing]提取成功！", res);
-			}), util.callBind(this, function(err) {
-				util.simpleMsg(err.msg, true);
-			}));
-			console.log("[SaleFinied]线上提取积分上传...");
-			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
-				console.log("[PayedResult]准备上传会员积分...");
-				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
-			}
-		},
-	},
 	//赊销
 	sale_credit: {
 		xstype: "6",
@@ -1379,6 +1242,7 @@ var XsTypeObj = {
 			uni.$emit('select-credit', data);
 		}
 	}, //赊销结算
+	//赊销结算
 	sale_credit_settlement: {
 		close: false,
 		xstype: "7",
@@ -1626,6 +1490,143 @@ var XsTypeObj = {
 			this.SetType("sale_online_order");
 			this.$initSale(XsTypeObj["sale_online_order"]);
 		}
+	},
+	//线上订单提取
+	sale_online_order_extract: {
+		xstype: "8",
+		clickType: "sale_online_order_extract",
+		nameSale: "线上订单提取",
+		icon_open: require("@/images/xsddtiqu.png"),
+		icon_close: require("@/images/xsddtiqu-wxz.png"),
+		icon_guodu: require("@/images/xsddtiqu-lvv.png"),
+		operation: {
+			"ynCancel": true,
+			"sale_takeaway_reserve": true,
+			"sale_message": true,
+			"lockRows": 0, //是否存在锁定行数
+		},
+		$initSale: function(params) {
+			this.actType = common.actTypeEnum.Payment;
+			this.old_bill = params.sale1.BILL;
+			console.log("[sale_online_order_extract]线上订单sale信息:", params);
+			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
+			this.sale002 = params.sale2.map(s2 => {
+				let new_s2 = Object.cover(new sale.sale002(), s2);
+				new_s2.SALETIME = new_s2.SALETIME.replace('T', ' ');
+				new_s2.SALEDATE = new_s2.SALEDATE.replace('T', ' ');
+				new_s2.STR1 = s2.GOODNAME ?? "";
+				return new_s2;
+			});
+			this.sale003 = params.sale3.map(s3 => {
+				let new_s3 = Object.cover(new sale.sale003(), s3)
+				new_s3.SALETIME = new_s3.SALETIME.replace('T', ' ');
+				new_s3.SALEDATE = new_s3.SALEDATE.replace('T', ' ');
+				new_s3.FKNAME = s3.SNAME ?? "";
+				util.hidePropety(new_s3, 'FKNAME');
+				new_s3.FKID = 'ZG03';
+				return new_s3
+			});
+			console.log("[InitSale]FKNAME:", this.sale003.map(i => i.FKNAME));
+			this.reserve_param = params.reserve_params;
+			console.log("[InitSale]线上订单提货参数:", this.reserve_param);
+			this.setNewParmSale({
+				sale001: this.sale001,
+				sale002: this.sale002,
+				sale003: this.sale003
+			}, common.actTypeEnum.Refund);
+			this.sale001.CUSTMTIME = this.sale001.CUSTMTIME.replace('T', ' ');
+			this.sale001.XS_DATE = this.sale001.XS_DATE.replace('T', ' ');
+			this.ShowStatement();
+			this.payed = [];
+			for (let s3 of this.sale003) {
+				this.payed.push(Sale3ModelAdditional(Sale3Model({
+					fkid: s3.FKID,
+					type: '',
+					bill: s3.BILL,
+					name: s3.SNAME,
+					amount: s3.AMT
+				}), { //业务配置字段（支付状态设定为成功）
+					fail: false //定金显示为成功
+				}));
+			}
+			console.log("[sale_online_order_extract]线上订单初始化完毕:", {
+				sale1: this.sale001,
+				sale2: this.sale002,
+				sale3: this.sale003
+			});
+		},
+		///对打印的控制
+		$print: function() {
+			return {
+				tName: "提取小票", // 名称
+				ynPrintFp: true, //是否打印发票二维码
+				ynPintCustem: false, // 是否打印客户信息
+				ynPintDisc: true, //是否打印折扣  
+				payOrRet: "", //支付还是退款
+			}
+		},
+		$click() {
+			this.SetManage("sale_online_order_extract");
+			return false;
+		},
+		$beforeFk: function() {
+			return true;
+		},
+		$saleFinishing: function(result) { //生成yd
+			this.sale001.DNET = this.sale001.TNET; //线上订单的 DNET 为下单时候的付款金额
+			this.sale001.ZNET = this.sale001.TNET; //线上订单的 ZNET 为下单时候的付款金额
+			this.sale001.BILLDISC = 0;
+			this.sale001.TCXDISC = 0;
+			this.sale001.TDISC = 0;
+			this.sale002.forEach(i => {
+				i.DISCRATE = 0;
+				i.DISC = 0;
+				i.CXDISC = 0;
+			});
+			console.log("[SaleFinishing]线上提取生成中...", this.sale003);
+			this.communication_for_oracle.push(
+				`UPDATE ydsale001 set YD_STATUS ='2', SJTHDATE = TO_DATE('${this.getDate()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
+			);
+			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
+			delete this.old_bill;
+		},
+		async $saleFinied(sales) {
+			console.log("[SaleFinied]线上提取提货...");
+			//调用打印
+			let arr2 = this.sale002;
+			arr2.forEach(function(item, index) {
+				item.SNAME = item.STR1;
+			})
+			let arr3 = this.sale003;
+			//查询支付方式
+			let fkdaRes = this.FKDA_INFO;
+			arr3.forEach(function(item, index) {
+				try {
+					item.SNAME = fkdaRes.find(c => c.FKID == item.FKID).SNAME;
+					item.balance = 0;
+				} catch (e) {
+					item.SNAME = "";
+					item.balance = 0;
+				}
+			})
+			console.log("线上订单提取开始调用打印", {
+				arr2,
+				arr3
+			})
+			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "XSDDTQ");
+	
+			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
+				console.log("[SaleFinishing]提取成功！", res);
+			}), util.callBind(this, function(err) {
+				util.simpleMsg(err.msg, true);
+			}));
+			console.log("[SaleFinied]线上提取积分上传...");
+			//一些特殊的设置 如积分上传
+			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作且有会员id
+				console.log("[PayedResult]准备上传会员积分...");
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+			}
+		},
 	},
 	//赊销退货
 	sale_credit_return_good: {

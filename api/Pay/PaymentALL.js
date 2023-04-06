@@ -294,7 +294,7 @@ var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				util.simpleMsg("支付参数为空!", true)
+				util.simpleMsg("支付参数未配置!", true)
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -327,7 +327,7 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数为空!", true);
+				util.simpleMsg("支付参数未配置!", true);
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -374,7 +374,7 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				util.simpleMsg("支付参数为空!", true);
+				util.simpleMsg("支付参数未配置!", true);
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -388,7 +388,7 @@ var misPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				util.simpleMsg("支付参数为空!", true)
+				util.simpleMsg("支付参数未配置!", true)
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -420,7 +420,7 @@ var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数为空!", true);
+				util.simpleMsg("支付参数未配置!", true);
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -435,7 +435,7 @@ var misScanCodePay = {
 		console.log("[RefundAll]UPAY中的Body参数为:",body);
 		_GetConfig("UPAY", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数为空!", true)
+				util.simpleMsg("支付参数未配置!", true)
 				if (catchFunc) catchFunc();
 				return;
 			}
@@ -823,7 +823,7 @@ var pinoPay = {
 			console.log("[PaymentAll]品诺支付参数获取:", config)
 			if (!config) {
 				result.code = false;
-				result.msg = "支付参数为空!";
+				result.msg = "支付参数未配置!";
 			} else {
 				result.code = true;
 				result.msg = "参数获取成功!";
@@ -951,7 +951,7 @@ var pinoPay = {
 			console.log("[RefundAll]品诺支付参数获取:", config)
 			if (!config) {
 				result.code = false;
-				result.msg = "支付参数为空!";
+				result.msg = "支付参数未配置!";
 			} else {
 				result.code = true;
 				result.msg = "参数获取成功!";
@@ -990,7 +990,7 @@ var pinoPay = {
 		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
 			console.log("[QueryCardDetails]品诺支付参数获取:", config)
 			if (!config) {
-				return util.createdResult(false,'支付参数为空!');
+				return util.createdResult(false,'支付参数未配置!');
 			} else {
 				return util.createdResult(true,'参数获取成功!',config);
 			}
@@ -1049,7 +1049,7 @@ var pinoPay = {
 			console.log("[PaymentAll]品诺支付参数获取:", config)
 			if (!config) {
 				result.code = false;
-				result.msg = "支付参数为空!";
+				result.msg = "支付参数未配置!";
 			} else {
 				result.code = true;
 				result.msg = "参数获取成功!";

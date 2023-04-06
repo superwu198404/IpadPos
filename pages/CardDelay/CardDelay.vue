@@ -7,7 +7,7 @@
 
 <template>
 	<view class="content">
-<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
+		<!-- 		<PrinterPage ref="printerPage" style="display: none;" /> -->
 		<view class="right">
 
 			<!-- 顶部导航栏-->
@@ -221,7 +221,7 @@
 				console.log("卡信息发生变动：", n);
 				if (this.CardInfo.cardId || this.CardInfo.cardId != "") {
 					this._sale2_count = 1;
-				}else{
+				} else {
 					this._sale2_count = 0;
 				}
 			}
@@ -328,6 +328,9 @@
 						}
 						that.CardInfo = cardInfo;
 					} else {
+						that.CardInfo = {};
+						console.log("测试卡号不对的情况：", that.CardInfo);
+						// Vue.$forceUpdate();
 						util.simpleMsg(res.msg, true);
 					}
 				}, err => {
