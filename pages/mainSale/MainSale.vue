@@ -149,8 +149,7 @@
 									<view v-show="mainSale.boardQueryKeys.length" class="borderCursor"></view>
 								</view>
 								<view class="deleteBoard" @click="mainSale.turnOffKeys">
-									<image src="../../images/shouqi.png" style="width: 24px;height: 24px;"
-										mode="widthFix"></image>
+									<image src="../../images/shouqi.png" mode="widthFix"></image>
 								</view>
 							</view>
 
@@ -160,16 +159,16 @@
 										{{_item}}
 									</li>
 									<li class="enter" v-if="index===1" @click="mainSale.delQueryKeys">删除</li>
-									<li class="enter" v-if="index===2" style="color: red;"
+									<li class="enter" v-if="index===2" style="color: red;width: 92rpx; color:"
 										@click="mainSale.clearQueryKeys">清空</li>
 									<li class="enter" v-if="index===2" @click="mainSale.affirmQueryKeys"
-										style="width: 137px; color: #127551;">搜索</li>
+										style="width: 92rpx; color: #127551;">搜索</li>
 								</ul>
 							</view>
 
 							<view class="switchArea">
 								分类：
-								<switch :checked=mainSale.isDateClassify color="#1aa034"
+								<switch :checked=mainSale.isDateClassify color="#1aa034" 
 									@change="mainSale.switchAreaChange" />
 							</view>
 						</view>
@@ -1295,13 +1294,10 @@
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		border-radius: 22px;
 		width: 810px;
-		height: 287px;
+		padding:0 30rpx 30rpx ;
 		position: absolute;
 		bottom: 60px;
 		right: 0;
-		display: flex;
-		justify-content: center;
-		align-items: flex-end;
 		padding-bottom: 38px;
 		animation: keyboard 0.5s ease;
 		-webkit-animation: keyboard 0.5s ease;
@@ -1325,7 +1321,7 @@
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
-		width: 790px;
+		padding:10rpx 0 40rpx;
 	}
 
 	.keyboard .keys {
@@ -1336,7 +1332,8 @@
 
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
-		width: 60px;
+		width: 60rpx;
+		height:60rpx;
 		font-size: 18px;
 		margin: 9px;
 		background-color: #f2f2f2;
@@ -1353,35 +1350,37 @@
 	}
 
 	.searchTerms {
-		position: absolute;
-		top: 0px;
-		left: 0px;
 		font-size: 18px;
 		font-weight: 600;
 		color: gray;
 		width: 100%;
-		height: 60px;
-		padding-top: 5px;
+		height: 80rpx;
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		justify-content: flex-end;
 	}
-
+	.searchTerms image{
+		margin-top:20rpx;
+		width:40rpx;
+		height:40rpx;
+	}
 	.switchArea {
 		font-size: 18px;
 		font-weight: 600;
 		color: gray;
 		position: absolute;
 		/* background-color: #fff; */
-		top: 10px;
+		top: 0;
 		padding: 6px;
 		right: 130px;
 		border-radius: 8px;
 		display: flex;
+		align-items: center;
 		flex-direction: row;
 		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
 	}
-
+	.switchArea switch .switch-input{
+		height:56rpx;
+	}
 	.deleteBoard {
 		width: 26px;
 		margin-right: 27px;

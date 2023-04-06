@@ -13,6 +13,7 @@ page {
 	background-color: #F5F4F8;
 	align-items: center;
 	/* padding-top:44rpx; */
+	z-index: 9;
 }
 
 .getback {
@@ -56,6 +57,9 @@ page {
 
 .navmall .logo image {
 	width: 100%;
+}
+.right .content{
+	z-index: 9999 !important;
 }
 
 .menu {
