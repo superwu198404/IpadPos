@@ -99,6 +99,8 @@
 	import _cake from '@/api/business/CakeYD.js';
 	import _sysParam from '@/utils/sysParm/sysParm.js';
 	import _query_sale from '@/api/business/query_sale.js';
+	
+	import tiktok from '@/api/business/tiktok.js';
 	var that;
 	export default {
 		data() {
@@ -119,7 +121,8 @@
 			};
 		},
 		methods: {
-			onLoad: function() {
+			onLoad:async function() {
+				console.warn("[onReady]token:",await tiktok.get_tiktok_token());
 				that = this;
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();

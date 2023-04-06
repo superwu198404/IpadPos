@@ -358,9 +358,6 @@
 	} from '@/bll/PaymentAll/bll.js'
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
-	import _payment from '@/api/business/payment.js';
-
-
 	var that, is_log = true;
 	var log = console.log;
 	export default {
@@ -556,8 +553,9 @@
 				console.log("[watch-authCode]判断authCode：", n);
 				console.log("[watch-authCode]PayWayList：", this.PayWayList);
 				if (n) {
-					this.currentPayInfo = this.PayWayList.find(i => i.type === this
-						.PayTypeJudgment()); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					let type = this.PayTypeJudgment();
+					console.log("[watch-authCode]当前支付类型:",type);
+					this.currentPayInfo = this.PayWayList.find((i) => i.type === type); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 					if (this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo; //储存包含聚合的支付信息
 				} else
 					this.currentPayInfo = null
@@ -725,18 +723,7 @@
 					return util.hidePropety(obj, "NAME");
 				}).bind(this));
 				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
-				let arr = util.getStorage("FKJHQTK");
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
-					let fkid = item.fkid; //兼容旧版 支付或者退款 均取旧值
-					if (this.isRefund && arr && arr.length > 0) { //处理新版券退款方式映射
-						let obj = arr.find(r => {
-							return r.old_fkid == item.fkid
-						});
-						console.log("匹配到的退款方式映射数据：", obj);
-						if (obj) {
-							fkid = obj.new_fkid;
-						}
-					}
 					return util.hidePropety({
 						BILL: sale1.BILL, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: sale1.SALEDATE,
@@ -744,7 +731,7 @@
 						KHID: sale1.KHID,
 						POSID: sale1.POSID,
 						NO: item.no, //付款序号
-						FKID: fkid, //付款类型id 
+						FKID: item.fkid, //付款类型id
 						AMT: this.isRefund ? -(Number(item.amount)) : item.amount, //付款金额(退款记录为负额)
 						ID: this.isRefund ? (item.origin?.ID || "") : item.card_no, //卡号或者券号
 						RYID: sale1.RYID, //人员
@@ -815,20 +802,20 @@
 					return;
 					//从这开始中止 后续处理在外部进行
 					//生成执行sql
-					// let exeSql = this.orderSQLGenarator();
-					// let dbo = db.get();
-					// console.log("sqlite待执行sql:", exeSql);
-					// await dbo.close();
-					// dbo.executeDml(exeSql, "订单创建中", (function(res) {
-					// 	if (func) func(res);
-					// 	this.complete = true;
-					// 	console.log("订单创建成功：", res);
-					// 	util.simpleMsg("销售单创建成功");
+					let exeSql = this.orderSQLGenarator();
+					let dbo = db.get();
+					console.log("sqlite待执行sql:", exeSql);
+					await dbo.close();
+					dbo.executeDml(exeSql, "订单创建中", (function(res) {
+						if (func) func(res);
+						this.complete = true;
+						console.log("订单创建成功：", res);
+						util.simpleMsg("销售单创建成功");
 
-					// }).bind(this), function(err) {
-					// 	console.log("订单创建失败：", err);
-					// 	util.simpleMsg("销售单创建失败", false);
-					// });
+					}).bind(this), function(err) {
+						console.log("订单创建失败：", err);
+						util.simpleMsg("销售单创建失败", false);
+					});
 				}
 			},
 			//使用的 单号 判断（支付单号、退款单号）
@@ -960,8 +947,7 @@
 								success: (function(res) {
 									let code = common.ResetAuthCode(res.result);
 									this.authCode = code; //获取扫码的 authCode
-									let current_pay_info = this.PayWayInfo(this
-										.CurrentPaymentTypeJudge());
+									let current_pay_info = this.PayWayInfo(this.CurrentPaymentTypeJudge());
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
@@ -1221,16 +1207,16 @@
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no + `_${index}`, //退款单号
 									refund_money: (Math.abs(Number(total || refundInfo
-										.amount) * 100)).toFixed(0), //退款金额
+											.amount) * 100))
+										.toFixed(0), //退款金额
 									total_money: (Math.abs(Number(total || refundInfo
-										.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
+											.amount) * 100))
+										.toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
 									auth_code: refundInfo.origin
 										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_company_id: this.SALES.sale1
-										.XS_GSID, //2023-04-03新增 退款时取原销售公司 （防止异店退款失败）
-									original_store_id: this.SALES.sale1
-										.XS_KHID, //2023-04-03新增 退款时取原销售门店（防止异店退款失败）
+									original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
@@ -1295,28 +1281,28 @@
 						//后续处理转移到销售页面处理
 						return;
 						//销售单单创建成功后 上传一下数据
-						// let bill = (that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
-						// 	.out_trade_no_old);
-						// common.TransLiteData(bill);
-						// that.scoreConsume();
-						// //调用打印
-						// let arr2 = that.sale2_arr;
-						// arr2.forEach(function(item, index) {
-						// 	let obj = that.Products.find((i) => {
-						// 		return i.SPID == item.SPID;
-						// 	})
-						// 	if (obj) {
-						// 		item.SNAME = obj.NAME;
-						// 	}
-						// })
-						// let arr3 = that.sale3_arr;
-						// arr3.forEach(function(item, index) {
-						// 	let obj = that.PayWayList.find((i) => {
-						// 		return i.fkid == item.FKID;
-						// 	})
-						// 	item.SNAME = obj.name;
-						// })
-						// that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+						let bill = (that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
+							.out_trade_no_old);
+						common.TransLiteData(bill);
+						that.scoreConsume();
+						//调用打印
+						let arr2 = that.sale2_arr;
+						arr2.forEach(function(item, index) {
+							let obj = that.Products.find((i) => {
+								return i.SPID == item.SPID;
+							})
+							if (obj) {
+								item.SNAME = obj.NAME;
+							}
+						})
+						let arr3 = that.sale3_arr;
+						arr3.forEach(function(item, index) {
+							let obj = that.PayWayList.find((i) => {
+								return i.fkid == item.FKID;
+							})
+							item.SNAME = obj.name;
+						})
+						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
 
 					});
 			},
@@ -1345,8 +1331,7 @@
 			//支付类型判断
 			CurrentPaymentTypeJudge: function() {
 				console.log("[CurrentPaymentTypeJudge]二维码:", this.authCode);
-				let startCode = this.authCode.substring(0, 2),
-					current_type = "";
+				let startCode = this.authCode.substring(0, 2), current_type = "";
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
 					console.log("[CurrentPaymentTypeJudge]支付规则:", CodeRule);
@@ -1374,7 +1359,7 @@
 				console.log("[PayHandle]支付参数:", payAfter);
 				if (await this.InPaymentBeforeStoped())
 					return;
-				console.log("[PayHandle]支付开始...");
+				console.log("[PayHandle]支付开始...", info);
 				this.in_payment = true; //必须放这里
 				_pay.PaymentAll(info.api, payAfter, (function(result) {
 						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
@@ -2401,9 +2386,8 @@
 		async created() {
 			console.log("进入created方法");
 			this.paramInit();
-			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0)
-				await common.GetZFRULE(); //初始化支付规则（如果没有的话）
-			await _payment.GetTKRelation(); //获取券退款fkid 映射方式
+			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
+				.GetZFRULE(); //初始化支付规则（如果没有的话）
 		},
 		mounted() {}
 	}

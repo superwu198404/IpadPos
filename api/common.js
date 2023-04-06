@@ -871,6 +871,7 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		}
 		let result = null;
 		let callback = (res) => result = res;
+		console.log("[SimpleAPIRequest]准备请求:",reqdata);
 		await Req.asyncFuncOne(reqdata, callback, callback);
 		if (result.code)
 			options.success.call(result);

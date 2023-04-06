@@ -72,7 +72,6 @@
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
 	
-	import tiktok from '@/api/business/tiktok.js';
 	import Vue from 'vue'
 	import {
 		global
@@ -144,7 +143,6 @@
 				// })	
 			},
 			onReady: async function() {
-				// console.warn("[onReady]token:",await tiktok.get_tiktok_token());
 				plus.runtime.getProperty(plus.runtime.appid, function(wgtinfo) {
 					// 获取 app的应用version
 					let appversion = wgtinfo.version;

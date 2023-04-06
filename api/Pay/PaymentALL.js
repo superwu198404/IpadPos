@@ -7,6 +7,7 @@ import common from '@/api/common.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
+import tiktok from '../business/tiktok';
 
 /**
  * 创建请求参数
@@ -1093,6 +1094,50 @@ var pinoPay = {
 	}
 }
 
+//抖音团购券（联机）支付
+var tiktokPay = {
+	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc){//核销
+		console.log("[PaymentAll]开始抖音券核销操作...");
+		// let poi_id = await tiktok.get_tiktok_store_id(),token = await tiktok.get_tiktok_token();
+		let poi_id = "6601138547808274439",token = "clt.77c30c142a6d19cc64a850c05cfa47e0egdTKA6pmrIKMugGKhLAplCofACb";
+		console.log("[PaymentAll]抖音券支付参数查询完毕...");
+		console.log("[PaymentAll]抖音券支付参数:",{
+			token,
+			poi_id
+		});
+		body.transaction_id = token;
+		body.store_id = poi_id;
+		Req.AsyncRequesrChain(CreateData(pt, "支付中...", "Payment", body), [
+			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
+				console.log("[PaymentAll]第一次结果（Payment）:", res);
+				return res;
+			}
+		], function(err) {
+			console.log("[PaymentAll]支付接口返回的错误信息：", err);
+			if (catchFunc) catchFunc(err);
+			util.simpleMsg(res.msg, true);
+		}, function(active_err) {
+			console.log("主动抛出异常:", active_err);
+		});
+	},
+	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc){//撤销
+		let token = await tiktok.get_tiktok_token();
+		body.transaction_id = token;
+		Req.AsyncRequesrChain(CreateData(pt, "退款中...", "Refund", body), [
+			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
+				console.log("[RefundAll]第一次结果（Refund）:", res);
+				return res;
+			}
+		], function(err) {
+			console.log("[RefundAll]支付接口返回的错误信息：", err);
+			if (catchFunc) catchFunc(err);
+			util.simpleMsg(res.msg, true);
+		}, function(active_err) {
+			console.log("主动抛出异常:", active_err);
+		});
+	}
+}
+
 //根据支付类型反射支付方式
 var payType = {
 	// 108使用
@@ -1117,11 +1162,13 @@ var payType = {
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）
 	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
+	DouYinJK: tiktokPay,//抖音团购券（联机）支付
 }
 
 //聚合支付主入口
 var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 	try {
+		console.log("[PaymentAll]开始调用:",[...arguments]);
 		payType[pt].PaymentAll(pt, body, func, catchFunc, finallyFunc)
 	} catch (e) {
 		console.log("[PaymentAll]发生调用异常:", e);
@@ -1132,6 +1179,7 @@ var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 //聚合退款主入口
 var RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 	try {
+		console.log("[RefundAll]开始调用:",[...arguments]);
 		payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
 	} catch (e) {
 		console.log("[RefundAll]发生调用异常:", e);
