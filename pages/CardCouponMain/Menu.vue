@@ -17,8 +17,8 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
-			<view class="fanhui" tabindex="-1" @click="SwitchSale('sale')">
-				<view class="bills">
+			<view class="fanhui" tabindex="-1">
+				<view class="bills" @click="SwitchSale('sale')">
 					<label></label>
 					<view style="display: flex;justify-content: center;align-items: center;">
 						<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
@@ -61,11 +61,13 @@
 		watch: {
 			'source.current_menu_info': function(n, o) {
 				console.log("监控到组件切换：", n);
-				let store = util.getStorage("store");
-				store.DKFID = "80000000";
-				store.DKFNAME = '默认大客户';
-				util.setStorage("store", store);
-				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				if (n && Object.keys(n).length > 0) {
+					let store = util.getStorage("store");
+					store.DKFID = "80000000";
+					store.DKFNAME = '默认大客户';
+					util.setStorage("store", store);
+					uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				}
 			}
 		},
 		computed: {
