@@ -101,7 +101,7 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.cardType != 'Z001') {
-				_util.simpleMsg("卡类型不是VIP卡", "none");
+				_util.simpleMsg("卡类型不是实体VIP卡", "none");
 				return false;
 			}
 			if (res.data.status != 'Z007') {
@@ -229,7 +229,7 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.cardType != 'Z001') {
-				_util.simpleMsg("卡类型不是VIP卡", "none");
+				_util.simpleMsg("卡类型不是实体VIP卡", "none");
 				return false;
 			}
 			if (res.data.status != 'Z001') { //要已激活的
@@ -343,7 +343,7 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.cardType != 'Z002') {
-				_util.simpleMsg("卡类型不是礼品卡", "none");
+				_util.simpleMsg("卡类型不是实体礼品卡", "none");
 				return false;
 			}
 			if (res.data.status != 'Z007') {
