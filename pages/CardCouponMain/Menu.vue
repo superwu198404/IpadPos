@@ -17,11 +17,10 @@
 					<text>{{menu_info.name}}</text>
 				</view>
 			</view>
-			<view class="fanhui" tabindex="-1">
+			<view class="fanhui" tabindex="-1" @click="SwitchSale('sale')">
 				<view class="bills">
 					<label></label>
-					<view @click="SwitchSale('sale')"
-						style="display: flex;justify-content: center;align-items: center;">
+					<view style="display: flex;justify-content: center;align-items: center;">
 						<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
 						<text>商品销售</text>
 					</view>

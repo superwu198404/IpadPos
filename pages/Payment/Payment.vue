@@ -287,11 +287,12 @@
 				<view class="listofpay">
 					<view class="modelist">
 						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)" class="modeli"
-							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'curr':'jinzhi'"
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'curr':''"
 							:id="item.type" @click="clickPayType(item,$event)">
-							<view>
+							<view :class="item.yn_use=='Y'?'':'jinzhi'">
 								<image :src="item.icon" mode="widthFix"></image>
-								<label>{{item.name}}</label>
+								<label v-if="item.yn_use=='Y'">{{item.name}}</label>
+								<label v-else>{{item.name}}<span style="font-size: 12px;">(禁用)</span></label>
 							</view>
 						</view>
 					</view>
@@ -554,8 +555,9 @@
 				console.log("[watch-authCode]PayWayList：", this.PayWayList);
 				if (n) {
 					let type = this.PayTypeJudgment();
-					console.log("[watch-authCode]当前支付类型:",type);
-					this.currentPayInfo = this.PayWayList.find((i) => i.type === type); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+					console.log("[watch-authCode]当前支付类型:", type);
+					this.currentPayInfo = this.PayWayList.find((i) => i.type ===
+					type); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 					if (this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo; //储存包含聚合的支付信息
 				} else
 					this.currentPayInfo = null
@@ -947,7 +949,8 @@
 								success: (function(res) {
 									let code = common.ResetAuthCode(res.result);
 									this.authCode = code; //获取扫码的 authCode
-									let current_pay_info = this.PayWayInfo(this.CurrentPaymentTypeJudge());
+									let current_pay_info = this.PayWayInfo(this
+										.CurrentPaymentTypeJudge());
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
@@ -1215,8 +1218,10 @@
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
 									auth_code: refundInfo.origin
 										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_company_id: this.SALES.sale1
+									.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_store_id: this.SALES.sale1
+									.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
@@ -1227,7 +1232,7 @@
 									refundInfo.fail = true;
 									resolve(); //结束状态
 									console.log("[Refund-退款]退款失败:", err);
-									if(err.msg)
+									if (err.msg)
 										util.simpleModal("退款失败", err.msg);
 								}).bind(that),
 								(function(res) { //执行完毕（finally），退款次数 +1
@@ -1335,7 +1340,8 @@
 			//支付类型判断
 			CurrentPaymentTypeJudge: function() {
 				console.log("[CurrentPaymentTypeJudge]二维码:", this.authCode);
-				let startCode = this.authCode.substring(0, 2), current_type = "";
+				let startCode = this.authCode.substring(0, 2),
+					current_type = "";
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
 					console.log("[CurrentPaymentTypeJudge]支付规则:", CodeRule);
@@ -2509,8 +2515,8 @@
 		width: 90%;
 	}
 
-	.jinzhi{
+	.jinzhi {
 		opacity: 0.7;
-		color:#666;
+		color: #666;
 	}
 </style>

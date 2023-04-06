@@ -350,7 +350,6 @@
 		white-space: nowrap;
 		overflow: hidden;
 	}
-
 	.card-infos {
 		background-image: url('@/images/img2/kaqchaxun2.png');
 		padding: 20px 20px;

@@ -68,10 +68,10 @@
 				</view>
 			</view>
 		</view>
-		<view class="fanhui" tabindex="-1" v-show="!isKeyBoardShow">
+		<view class="fanhui" tabindex="-1" v-show="!isKeyBoardShow" @click="SwitchSale('kqsale')">
 			<view class="bills">
 				<label></label>
-				<view @click="SwitchSale('kqsale')" style="display: flex;justify-content: center;align-items: center;">
+				<view style="display: flex;justify-content: center;align-items: center;">
 					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
 					<text>卡券销售</text>
 				</view>
