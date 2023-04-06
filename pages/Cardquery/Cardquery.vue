@@ -148,6 +148,11 @@
 		components: {
 			Head
 		},
+		watch:{
+			"form.number"(n,o){
+				if(n) this.according_to_type_search(n);
+			}
+		},
 		computed:{
 			default_view(){
 				return $(function(v, def_val = '暂无更多信息...'){
@@ -225,9 +230,9 @@
 					this.form.number = res.data;
 				}))
 			},
-			async according_to_type_search(){
+			async according_to_type_search(number){
 				if(this.source.current_type_info){
-					let result = await this.source.current_type_info.search(this.form.number);
+					let result = await this.source.current_type_info.search(number || this.form.number);
 					console.log("[TypeSearch]查询结果:", result);
 					if(result.code){
 						this.form.infos = result.data;

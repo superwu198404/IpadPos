@@ -124,6 +124,21 @@ const _GetConfig = async function(type, khid) { //获取 mis 支付参数，款�
 	return config;
 }
 
+//获取支付配置参数
+const _GetClientInfos = async function(khid) { //获取 mis 支付参数，款台号
+	let config;
+	let result = await RequestSend(
+		`select * from khda where KHID='${khid}'`
+	);
+	if (result.code && result.result.code) {
+		let config_arr = JSON.parse(result.result.data);
+		if (config_arr && config_arr.length && config_arr.length > 0) {
+			config = config_arr[0];
+		}
+	}
+	return config;
+}
+
 //包含支付和查询以及撤销的支付体
 const _PaymentAll = function(pt, body, func, catchFunc) {
 	let request = CreateData(pt, "支付中...", "Payment", body);
@@ -942,7 +957,9 @@ var pinoPay = {
 		}
 	},
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		var config_result = await _GetConfig("PINNUOPAY", body.original_company_id || getApp().globalData.store.DQID).then((config) => {
+		var original_area_id = await _GetClientInfos(body.original_store_id)?.DQID;
+		console.log("[RefundAll]原订单地区ID:", original_area_id);
+		var config_result = await _GetConfig("PINNUOPAY", original_area_id || getApp().globalData.store.DQID).then((config) => {
 			var result = {
 				code: false,
 				msg: null,
