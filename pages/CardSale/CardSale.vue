@@ -339,7 +339,7 @@
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
-				that.add_class = 1; //步骤
+				// that.add_class = 1; //步骤
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -365,7 +365,6 @@
 			uni.$off("close-tszk");
 			uni.$off("ReturnSale");
 			uni.$off("ConfirmCKR");
-
 		},
 		computed: {
 			//商品总数量
@@ -922,7 +921,7 @@
 						ZKType: data,
 						ZKData: that.ZKData
 					};
-					that.add_class = 2; //步骤
+					// that.add_class = 2; //步骤
 				}
 				that.CurZKDisc = obj;
 				//清除一下之前产生的促销和折扣
