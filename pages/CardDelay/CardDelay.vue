@@ -318,8 +318,8 @@
 						card_num: that.CardNumber
 					}
 				}, async res => {
+					console.log("卡信息查询结果：", res);
 					if (res.code) {
-						console.log("卡信息查询结果：", res.data);
 						let cardInfo = res.data;
 						cardInfo.cardId = that.CardNumber;
 						let spinfo = await _card_sale.MatchSP(cardInfo.materielId); //商品信息匹配
@@ -329,11 +329,11 @@
 						that.CardInfo = cardInfo;
 					} else {
 						that.CardInfo = {};
-						console.log("测试卡号不对的情况：", that.CardInfo);
-						// Vue.$forceUpdate();
 						util.simpleMsg(res.msg, true);
 					}
 				}, err => {
+					// console.log("卡信息查询结果：", err);
+					that.CardInfo = {};
 					util.simpleMsg(err.msg, true);
 				});
 			},
