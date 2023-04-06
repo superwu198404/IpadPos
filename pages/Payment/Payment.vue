@@ -1227,7 +1227,8 @@
 									refundInfo.fail = true;
 									resolve(); //结束状态
 									console.log("[Refund-退款]退款失败:", err);
-									util.simpleModal("退款失败", err.msg);
+									if(err.msg)
+										util.simpleModal("退款失败", err.msg);
 								}).bind(that),
 								(function(res) { //执行完毕（finally），退款次数 +1
 									console.log("[Refund-退款]Finally:", res);
@@ -1310,12 +1311,15 @@
 			PayTypeJudgment: function() {
 				let curPayType = "";
 				console.log("[PayTypeJudgment]二维码:", this.authCode);
+				console.log("[PayTypeJudgment]当前选择的支付类型:", this.currentPayType);
 				let startCode = this.authCode.substring(0, 2);
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
 					console.log("[PayTypeJudgment]支付规则:", CodeRule);
 					if (this.currentPayType === "SZQ") //券
 						startCode = "coupon";
+					if (this.currentPayType === "DouYinJK") //券
+						startCode = "ht";
 					//取出当前是何种类型的支付方式
 					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 					if (this.currentPayType === "UPAY") //银联二维码
@@ -1325,7 +1329,7 @@
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
 					this.authCode = '';
 				}
-				// console.log("[PayTypeJudgment]支付类型：", curPayType);
+				console.log("[PayTypeJudgment]当前返回的支付类型：", curPayType);
 				return curPayType;
 			},
 			//支付类型判断
@@ -1337,6 +1341,8 @@
 					console.log("[CurrentPaymentTypeJudge]支付规则:", CodeRule);
 					if (this.currentPayType === "SZQ") //券
 						startCode = "coupon";
+					if (this.currentPayType === "DouYinJK") //券
+						startCode = "ht";
 					//取出当前是何种类型的支付方式
 					current_type = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
 				}

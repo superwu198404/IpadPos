@@ -413,7 +413,9 @@ var AsyncRequesrChain = async function(pm_data, callbackfunArr, catchfun, otherf
 			current_callback: callbacklist[i],
 			current_index: i
 		});
+		console.log("[AsyncRequesrChain]ForPromise开始执行...");
 		res = await forPromise(callbacklist[i], res);
+		console.log("[AsyncRequesrChain]ForPromise执行完毕:",res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
 			break;

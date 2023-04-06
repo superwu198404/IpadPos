@@ -942,7 +942,7 @@ var pinoPay = {
 		}
 	},
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		var config_result = await _GetConfig("PINNUOPAY", body.original_store_id || getApp().globalData.store.DQID).then((config) => {
+		var config_result = await _GetConfig("PINNUOPAY", body.original_company_id || getApp().globalData.store.DQID).then((config) => {
 			var result = {
 				code: false,
 				msg: null,
@@ -1098,8 +1098,8 @@ var pinoPay = {
 var tiktokPay = {
 	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc){//核销
 		console.log("[PaymentAll]开始抖音券核销操作...");
-		// let poi_id = await tiktok.get_tiktok_store_id(),token = await tiktok.get_tiktok_token();
-		let poi_id = "6601138547808274439",token = "clt.77c30c142a6d19cc64a850c05cfa47e0egdTKA6pmrIKMugGKhLAplCofACb";
+		let poi_id = await tiktok.get_tiktok_store_id(),token = await tiktok.get_tiktok_token();
+		// let poi_id = "6601138547808274439",token = "clt.c350da9d0a84cc36228849b1e8d7a7c6FiQVObcIXCEl9fAFqwC9Cw9k7jZX";
 		console.log("[PaymentAll]抖音券支付参数查询完毕...");
 		console.log("[PaymentAll]抖音券支付参数:",{
 			token,
@@ -1110,6 +1110,7 @@ var tiktokPay = {
 		Req.AsyncRequesrChain(CreateData(pt, "支付中...", "Payment", body), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[PaymentAll]第一次结果（Payment）:", res);
+				func?.call(null, res);
 				return res;
 			}
 		], function(err) {
@@ -1123,18 +1124,12 @@ var tiktokPay = {
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc){//撤销
 		let token = await tiktok.get_tiktok_token();
 		body.transaction_id = token;
-		Req.AsyncRequesrChain(CreateData(pt, "退款中...", "Refund", body), [
-			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
-				console.log("[RefundAll]第一次结果（Refund）:", res);
-				return res;
+		Req.asyncFuncChain(CreateData(pt, "查询中...", "QueryPayment", body), [
+			function(res) {
+				console.log("[RefundAll]第一次结果（QueryPayment）:", res);
+				return CreateData(pt, "退款中...", "Refund", body);
 			}
-		], function(err) {
-			console.log("[RefundAll]支付接口返回的错误信息：", err);
-			if (catchFunc) catchFunc(err);
-			util.simpleMsg(res.msg, true);
-		}, function(active_err) {
-			console.log("主动抛出异常:", active_err);
-		});
+		], catchFunc, finallyFunc, resultsFunc);
 	}
 }
 
