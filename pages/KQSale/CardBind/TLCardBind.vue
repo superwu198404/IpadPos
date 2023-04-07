@@ -18,7 +18,7 @@
 				<view class="menber-info">
 					<view class="menber-info-head">
 						<view class="menber-headshots">
-							<image src="../../icon/KENGEE-180.png" mode="widthFix" style="width: 80rpx;height: 80rpx;"></image>
+							<image src="@/icon/KENGEE-180.png" mode="widthFix" style="width: 80rpx;height: 80rpx;"></image>
 						</view>
 						<view class="member-details">
 							<view class="member-id">ID {{ source.member_infos.hyId || '暂无' }}</view>
@@ -95,7 +95,7 @@
 <script>
 	import card_bind from '@/api/business/card_bind.js';
 	import common from '@/api/common.js';
-	import util from '../../utils/util';
+	import util from '@/utils/util.js';
 	var $;
 	export default {
 		mixins: [card_bind],

@@ -93,11 +93,11 @@
 			<view class="operation operation-correct">
 				<view class="sorting">
 					<view class="a-z">
-						<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
+						<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 						</image>
 					</view>
 					<view class="a-z">
-						<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
+						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
 						</image>
 					</view>
 				</view>
@@ -140,8 +140,8 @@
 		Sale3ModelAdditional
 	} from '@/bll/PaymentBusiness/bll.js';
 	//组件部分
-	import CouponActivateFail from '@/pages/CouponSale/CouponActivateFail.vue';
-	import CouponSaleSteps from '@/pages/CouponSale/CouponSaleSteps.vue';
+	import CouponActivateFail from '@/pages/KQSale/CouponSale/CouponActivateFail.vue';
+	import CouponSaleSteps from '@/pages/KQSale/CouponSale/CouponSaleSteps.vue';
 	var $ = null;
 	export default {
 		name: "CouponSale",

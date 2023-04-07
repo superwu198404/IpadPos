@@ -43,9 +43,12 @@ var PayParamAssemble = function(that, func) {
 	that.$store.commit('set-location', inputParm);
 	// console.log("支付前的sale6：", sales.SALE006);
 	uni.navigateTo({
-		url: "../Payment/Payment",
+		url: "/pages/Payment/Payment",
 		events: {
 			FinishOrder: func //that.PayedResult
+		},
+		complete: res => {
+			console.log("跳转结果：", res);
 		}
 	})
 }

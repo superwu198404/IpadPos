@@ -322,7 +322,7 @@
       }
     },
     {
-      "path": "pages/CardSale/CardSale",
+      "path": "pages/KQSale/CardSale/CardSale",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
@@ -330,7 +330,7 @@
       }
     },
     {
-      "path": "pages/CardActive/CardActive",
+      "path": "pages/KQSale/CardActive/CardActive",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
@@ -338,7 +338,7 @@
       }
     },
     {
-      "path": "pages/CouponSale/CouponSale",
+      "path": "pages/KQSale/CouponSale/CouponSale",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
@@ -346,7 +346,7 @@
       }
     },
     {
-      "path": "pages/Cardquery/Cardquery",
+      "path": "pages/KQSale/Cardquery/Cardquery",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
@@ -363,7 +363,7 @@
       }
     },
     {
-      "path": "pages/CouponExchange/CouponExchange",
+      "path": "pages/KQSale/CouponExchange/CouponExchange",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
@@ -372,13 +372,21 @@
 
     },
     {
-      "path": "pages/CardDelay/CardDelay",
+      "path": "pages/KQSale/CardDelay/CardDelay",
       "style": {
         "titleNView": false,
         "navigationBarTitleText": "",
         "enablePullDownRefresh": false
       }
     },
+	{
+	  "path": "pages/KQSale/CardBind/CardBind",
+	  "style": {
+	    "titleNView": false,
+	    "navigationBarTitleText": "",
+	    "enablePullDownRefresh": false
+	  }
+	},
     {
       "path": "components/inputPop/inputPop",
       "style": {
