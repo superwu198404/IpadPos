@@ -33,6 +33,7 @@ export default {
 	base:{
 		search(){
 			console.log(`[Search]${this.text || ''}查询信息...`);
+			util.simpleMsg("暂不支持当前类型!");
 			return Promise.resolve([]);
 		},
 		scan_code: true
