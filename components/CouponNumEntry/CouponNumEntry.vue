@@ -186,19 +186,15 @@
 			background-color: #006B44!important;
 			border-color: #006B44!important;
 			background-clip: content-box!important;
-			padding: 6rpx!important;
 			box-sizing: border-box;
 		}
-		
-		/* radio 选中后的图标样式*/
-		uni-radio .uni-radio-input.uni-radio-input-checked::before{
-			display: none!important;
-		}
+	/deep/.uni-radio-input{
+		border-color: #006B44!important;
+	}
 	/deep/.uni-radio-input-checked{
 				background-color: #006B44!important;
-						border-color: #006B44!important;
-						background-clip: content-box!important;
-						/* padding: 6rpx!important; */
-						box-sizing: border-box;
+				border-color: #006B44!important;
+				background-clip: content-box!important;
+				box-sizing: border-box;
 			}
 </style>
