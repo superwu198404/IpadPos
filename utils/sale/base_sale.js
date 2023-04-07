@@ -1614,7 +1614,7 @@ var XsTypeObj = {
 				arr3
 			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "XSDDTQ");
-	
+
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
 			}), util.callBind(this, function(err) {
@@ -2344,6 +2344,7 @@ function GetSale(global, vue, target_name, uni) {
 		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
 		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {
+				// if (this.sale001.TCXDISC > 0) //有促销值才允许清除 不然清除了特殊折扣值
 				if (!this.currentOperation.ynResetCX) {
 					this.currentOperation.ynCx = false;
 					this.ResetCXZK();
@@ -2401,7 +2402,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
 		//触发的放弃积分促销
-		if(e==1)
+		if (e == 1)
 			this.score_info.ispoints = 0;
 		this.SaleNetAndDisc(e);
 	});
@@ -2802,7 +2803,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectFlagList = this.notClassifyDate
 			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-		
+
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用

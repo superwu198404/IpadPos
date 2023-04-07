@@ -168,7 +168,7 @@
 
 							<view class="switchArea">
 								分类：
-								<switch :checked=mainSale.isDateClassify color="#1aa034" 
+								<switch :checked=mainSale.isDateClassify color="#1aa034"
 									@change="mainSale.switchAreaChange" />
 							</view>
 						</view>
@@ -437,9 +437,10 @@
 						</label>
 						<text class="fangqi" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
-						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0" @click="mainSale.CalScore(0)">优先积分促销</text>
+						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
+							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
+							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(mainSale.sale001.TBZDISC==0&&mainSale.sale001.TLSDISC==0&&mainSale.sale001.TTPDISC==0)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>
@@ -1294,7 +1295,7 @@
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		border-radius: 22px;
 		width: 1600rpx;
-		padding:0 30rpx 30rpx ;
+		padding: 0 30rpx 30rpx;
 		position: absolute;
 		bottom: 60rpx;
 		right: 0;
@@ -1321,7 +1322,7 @@
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
-		padding:10rpx 0 40rpx;
+		padding: 10rpx 0 40rpx;
 	}
 
 	.keyboard .keys {
@@ -1333,7 +1334,7 @@
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		width: 120rpx;
-		height:120rpx;
+		height: 120rpx;
 		font-size: 36rpx;
 		margin: 18rpx;
 		background-color: #f2f2f2;
@@ -1358,13 +1359,15 @@
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row;
-		padding-top:20rpx;
+		padding-top: 20rpx;
 	}
-	.searchTerms image{
-		margin-top:20rpx;
-		width:40rpx;
-		height:40rpx;
+
+	.searchTerms image {
+		margin-top: 20rpx;
+		width: 40rpx;
+		height: 40rpx;
 	}
+
 	.switchArea {
 		font-size: 36rpx;
 		font-weight: 600;
@@ -1380,9 +1383,11 @@
 		flex-direction: row;
 		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
 	}
-	.switchArea switch .switch-input{
-		height:56rpx;
+
+	.switchArea switch .switch-input {
+		height: 56rpx;
 	}
+
 	.deleteBoard {
 		width: 26px;
 		margin-right: 27px;
