@@ -28,7 +28,7 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue';
-	import TLCardBind from '@/pages/CardBind/TLCardBind.vue';
+	import TLCardBind from '@/pages/KQSale/CardBind/TLCardBind.vue';
 	import card_bind from '@/api/business/card_bind.js';
 	import util from '@/utils/util.js';
 	export default {

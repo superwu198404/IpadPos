@@ -659,7 +659,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		console.log("[RedirectToPayment]封装数据:", inputParm);
 		this.Vue.$store.commit('set-location', inputParm);
 		uni.navigateTo({
-			url: "../Payment/Payment",
+			url: "/pages/Payment/Payment",
 			events: {
 				FinishOrder: params.complet
 			}
