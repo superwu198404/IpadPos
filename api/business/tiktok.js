@@ -24,15 +24,15 @@ export default {
 			return null;
 		}
 	},
-	async get_tiktok_store_id(dqid){//获取抖音接口门店id
-		console.log("[GetTiktokStoreId]传入的地区ID:",dqid);
-		if(!dqid) dqid = getApp().globalData.store.DQID;
-		console.log("[GetTiktokStoreId]确认的地区ID:",dqid);
+	async get_tiktok_store_id(khid){//获取抖音接口门店id
+		console.log("[GetTiktokStoreId]传入的门店ID:",khid);
+		if(!khid) khid = getApp().globalData.store.KHID;
+		console.log("[GetTiktokStoreId]传入的门店ID:",khid);
 		let result = await common.SimpleAPIRequest({
 			class: 'DataQuery',
 			method: 'SALEQuery',
 			process: false,
-			data: `SELECT * FROM PAYCONFIG WHERE KHID='${dqid}' AND PAYTYPE='DYKHID'`
+			data: `SELECT * FROM PAYCONFIG WHERE KHID='${khid}' AND PAYTYPE='DYKHID'`
 		})
 		console.log("[GetTiktokStoreId]抖音poi_id查询结果:", result);
 		if(result.code) {

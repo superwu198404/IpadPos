@@ -168,7 +168,7 @@
 
 							<view class="switchArea">
 								分类：
-								<switch :checked=mainSale.isDateClassify color="#1aa034" 
+								<switch :checked=mainSale.isDateClassify color="#1aa034"
 									@change="mainSale.switchAreaChange" />
 							</view>
 						</view>
@@ -177,33 +177,22 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<!-- <Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve> -->
-				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true"
+				<Extract class="component-box" key="1" :mode="true"
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
+				<Extract class="component-box" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;"
+				<TakeAway class="component-box"
 					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
-				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
-				</TakeYD>
-				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order">
-				</OnlineOrders>
-				<OnlinePick style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
-				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message">
-				</Message>
-				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
-				</RefundOrder>
-				<SXRefund style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
-				</CreditSettlement>
-				<!-- <CouponSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_coupon">
-				</CouponSale>
-				<CardSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_card">
-				</CardSale> -->
+				<TakeYD class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders class="component-box" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract">
+				</OnlinePick>
+				<Message class="component-box" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<RefundOrder class="component-box" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund class="component-box" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement"
+					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -437,7 +426,8 @@
 						</label>
 						<text class="fangqi" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
-						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0" @click="mainSale.CalScore(0)">优先积分促销</text>
+						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
+							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
 							v-if="mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve'"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
@@ -1294,7 +1284,7 @@
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		border-radius: 22px;
 		width: 1600rpx;
-		padding:0 30rpx 30rpx ;
+		padding: 0 30rpx 30rpx;
 		position: absolute;
 		bottom: 60rpx;
 		right: 0;
@@ -1321,7 +1311,7 @@
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
-		padding:10rpx 0 40rpx;
+		padding: 10rpx 0 40rpx;
 	}
 
 	.keyboard .keys {
@@ -1333,7 +1323,7 @@
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
 		width: 120rpx;
-		height:120rpx;
+		height: 120rpx;
 		font-size: 36rpx;
 		margin: 18rpx;
 		background-color: #f2f2f2;
@@ -1358,13 +1348,15 @@
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row;
-		padding-top:20rpx;
+		padding-top: 20rpx;
 	}
-	.searchTerms image{
-		margin-top:20rpx;
-		width:40rpx;
-		height:40rpx;
+
+	.searchTerms image {
+		margin-top: 20rpx;
+		width: 40rpx;
+		height: 40rpx;
 	}
+
 	.switchArea {
 		font-size: 36rpx;
 		font-weight: 600;
@@ -1380,9 +1372,11 @@
 		flex-direction: row;
 		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
 	}
-	.switchArea switch .switch-input{
-		height:56rpx;
+
+	.switchArea switch .switch-input {
+		height: 56rpx;
 	}
+
 	.deleteBoard {
 		width: 26px;
 		margin-right: 27px;
@@ -1419,6 +1413,11 @@
 		50% {
 			background-color: transparent;
 		}
+	}
+
+	.component-box {
+		position: absolute;
+		z-index: 9999;
 	}
 
 	/* todo */

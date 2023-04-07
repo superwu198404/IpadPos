@@ -6,167 +6,172 @@
 	/* @import url(@/static/style/OnlineOrders/index.css); */
 </style>
 <template>
-	<view class="bkjb">
-		<view class="neik">
-	<!-- <menu_content :index="5" :_index="0"> -->
-	<view class="commodity" style="position: relative;">
-		<PrinterPage ref="printerPage" style="display: none;" />
-		<view class="hh">
-			<view class="hotcakes">
-				<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
-			</view>
-			<view class="prints">
-				<view>
-					<view class="prints">
-						<!-- <view class="sousuo" @click="view.search.open = true">
+	<view class="right">
+		<view class="bkjb">
+			<view class="neik">
+				<!-- <menu_content :index="5" :_index="0"> -->
+				<view class="commodity" style="position: relative;">
+					<PrinterPage ref="printerPage" style="display: none;" />
+					<view class="hh">
+						<view class="hotcakes">
+							<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
+						</view>
+						<view class="prints">
+							<view>
+								<view class="prints">
+									<!-- <view class="sousuo" @click="view.search.open = true">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>提取
 										</label>
 									</view> -->
-						<!-- <view class="sousuo">
+									<!-- <view class="sousuo">
 								<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
 							</view> -->
-						<!-- <view class="sousuo">
+									<!-- <view class="sousuo">
 										<label>
 											<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
 										</label>
 									</view> -->
-						<view class="sousuo" @click="GetOnlineOrders()" style="color: white;">
-							<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
-
-		<NoData v-if="Object.keys(onlineOrdersGroup).length==0"></NoData>
-		<!-- 小类循环 -->
-		<view class="products" v-else>
-			<view class="procycle">
-				<!-- 外卖单循环 -->
-				<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item)"
-					@tap="ShowDetail(onlineOrdersGroup[item][0])">
-					<view class="h3">
-						<view class="platform">
-							<label>
-								{{ item }}
-							</label>
-							<label
-								:class="'state quxiao ' + getTakeWayStyle(onlineOrdersGroup[item][0].THTYPE)"><text>●</text>{{ getTakeWayText(onlineOrdersGroup[item][0].THTYPE) }}</label>
-							<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
-						</view>
-						<view>￥{{onlineOrdersGroup[item][0].PRICE}}</view>
-					</view>
-					<view class="cods">
-						<label><text class="text-nowrap">预定时间：</text><text
-								class="ellipsis-text">{{onlineOrdersGroup[item][0].SALETIME || '-'}}</text></label>
-						<label><text class="text-nowrap">顾客姓名：</text><text
-								class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMNAME || '-'}}</text></label>
-					</view>
-					<view class="address">
-						顾客地址：{{onlineOrdersGroup[item][0].CUSTMADDRESS || '-'}}
-					</view>
-				</view>
-			</view>
-			<view class="details" v-if="onlineOrders.length>0">
-				<view class="meminfo">
-					<view class="member">
-						<label>
-							<image class="touxiang" src="@/images/touxiang.png"></image>
-							<label
-								class="meminfo"><text>{{ details.order.CUSTMNAME || "-" }}</text><text>{{ details.order.CUSTMPHONE || "-" }}</text></label>
-						</label>
-					</view>
-					<view class="harvest">
-						<label class="from-label">
-							<text>裱花间：</text>
-							<text v-if="mode('read')">{{details.order.KHSNAME || '-'}}</text>
-							<StorePicker mode="selector" class="input" style="z-index: 99999999;"
-								:init="details.order.KHID_BH" v-if="mode('edit')" @change="StoreChange"></StorePicker>
-						</label>
-						<label class="from-label">
-							<text>到货日期：</text>
-							<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
-							<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day"
-								:value="getOrderDate" :start="new Date()" @change="SelectDate">
-								<view class="uni-input">{{ viewDate }}</view>
-							</picker>
-							<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time"
-								:value="getOrderTime" :start="getCurrentTime" @change="SelectTime">
-								<view class="uni-input">{{ viewTime }}</view>
-							</picker>
-							<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
-						</label>
-						<label class="from-label">
-							<text>到货时段：</text>
-							<text>{{ timeRangeView }}</text>
-						</label>
-						<label class="from-label">
-							<text>数量：</text>
-							<text>{{details.goods.length || '-'}}</text>
-							<!-- <text>{{details.order.ZQTY_SQ || '-'}}</text> -->
-						</label>
-						<label class="from-label">
-							<text>单位：</text>
-							<text>{{details.order.UNIT || '-'}}</text>
-						</label>
-						<label class="from-label">
-							<text>客户要求：</text>
-							<text v-if="mode('read')">{{details.order.CUSTMCOMM || '-'}}</text>
-							<input v-if="mode('edit')" class="input" type="text" v-model="details.order.CUSTMCOMM" />
-						</label>
-					</view>
-					<view class="goods">
-						<!-- 商品循环 -->
-						<view class="prolist" v-for="(i,index) in this.details.goods">
-							<view class="h3">
-								<label>
-									<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
-									{{i.SNAME}} — <text>￥{{i.PRICE}}</text>
-								</label>
-								<view class="shuls"><text>×{{i.ZQTY_SQ}}</text></view>
-							</view>
-							<view class="cods">
-								<view>
-									<label>
-										<image src="@/images/dx-bm.png" mode="widthFix"></image>
-										{{i.SPID}}
-									</label>
-									<label>
-										<image src="@/images/dx-dw.png" mode="widthFix"></image>
-										{{i.STR7}}
-									</label>
+									<view class="sousuo" @click="GetOnlineOrders()" style="color: white;">
+										<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+									</view>
 								</view>
 							</view>
 						</view>
 					</view>
-				</view>
-				<view class="operat">
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
-						class="btn btn-edit" @click="Edit()">编辑</button>
-					<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
-					<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
-					<button v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
-						class="btn" @click="ConfirmAccept(true)">接受确认</button>
-					<button v-if="mode('read') && !view.search.confirm && !view.check.loading && view.check.result"
-						class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
-					<view class="check-tips loading" v-if="view.check.loading">订单状态检查中</view>
+
+					<NoData v-if="Object.keys(onlineOrdersGroup).length==0"></NoData>
+					<!-- 小类循环 -->
+					<view class="products" v-else>
+						<view class="procycle">
+							<!-- 外卖单循环 -->
+							<view v-for="(item,index) in Object.keys(onlineOrdersGroup)" :class="getCheckStyle(item)"
+								@tap="ShowDetail(onlineOrdersGroup[item][0])">
+								<view class="h3">
+									<view class="platform">
+										<label>
+											{{ item }}
+										</label>
+										<label
+											:class="'state quxiao ' + getTakeWayStyle(onlineOrdersGroup[item][0].THTYPE)"><text>●</text>{{ getTakeWayText(onlineOrdersGroup[item][0].THTYPE) }}</label>
+										<!-- <label class="state jiedan" v-if="jiedan"><text>●</text>请接单</label> -->
+									</view>
+									<view>￥{{onlineOrdersGroup[item][0].PRICE}}</view>
+								</view>
+								<view class="cods">
+									<label><text class="text-nowrap">预定时间：</text><text
+											class="ellipsis-text">{{onlineOrdersGroup[item][0].SALETIME || '-'}}</text></label>
+									<label><text class="text-nowrap">顾客姓名：</text><text
+											class="ellipsis-text">{{onlineOrdersGroup[item][0].CUSTMNAME || '-'}}</text></label>
+								</view>
+								<view class="address">
+									顾客地址：{{onlineOrdersGroup[item][0].CUSTMADDRESS || '-'}}
+								</view>
+							</view>
+						</view>
+						<view class="details" v-if="onlineOrders.length>0">
+							<view class="meminfo">
+								<view class="member">
+									<label>
+										<image class="touxiang" src="@/images/touxiang.png"></image>
+										<label
+											class="meminfo"><text>{{ details.order.CUSTMNAME || "-" }}</text><text>{{ details.order.CUSTMPHONE || "-" }}</text></label>
+									</label>
+								</view>
+								<view class="harvest">
+									<label class="from-label">
+										<text>裱花间：</text>
+										<text v-if="mode('read')">{{details.order.KHSNAME || '-'}}</text>
+										<StorePicker mode="selector" class="input" style="z-index: 99999999;"
+											:init="details.order.KHID_BH" v-if="mode('edit')" @change="StoreChange">
+										</StorePicker>
+									</label>
+									<label class="from-label">
+										<text>到货日期：</text>
+										<text v-if="mode('read')">{{details.order.DATE_DH || '-'}}</text>
+										<picker v-if="mode('edit')" class="date-picker picker" mode="date" fields="day"
+											:value="getOrderDate" :start="new Date()" @change="SelectDate">
+											<view class="uni-input">{{ viewDate }}</view>
+										</picker>
+										<picker v-if="mode('edit')" class="time-picker picker" mode="time" fields="time"
+											:value="getOrderTime" :start="getCurrentTime" @change="SelectTime">
+											<view class="uni-input">{{ viewTime }}</view>
+										</picker>
+										<text v-if="mode('edit')" class="tips" @click="DateTimeTips()">!</text>
+									</label>
+									<label class="from-label">
+										<text>到货时段：</text>
+										<text>{{ timeRangeView }}</text>
+									</label>
+									<label class="from-label">
+										<text>数量：</text>
+										<text>{{details.goods.length || '-'}}</text>
+										<!-- <text>{{details.order.ZQTY_SQ || '-'}}</text> -->
+									</label>
+									<label class="from-label">
+										<text>单位：</text>
+										<text>{{details.order.UNIT || '-'}}</text>
+									</label>
+									<label class="from-label">
+										<text>客户要求：</text>
+										<text v-if="mode('read')">{{details.order.CUSTMCOMM || '-'}}</text>
+										<input v-if="mode('edit')" class="input" type="text"
+											v-model="details.order.CUSTMCOMM" />
+									</label>
+								</view>
+								<view class="goods">
+									<!-- 商品循环 -->
+									<view class="prolist" v-for="(i,index) in this.details.goods">
+										<view class="h3">
+											<label>
+												<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+												{{i.SNAME}} — <text>￥{{i.PRICE}}</text>
+											</label>
+											<view class="shuls"><text>×{{i.ZQTY_SQ}}</text></view>
+										</view>
+										<view class="cods">
+											<view>
+												<label>
+													<image src="@/images/dx-bm.png" mode="widthFix"></image>
+													{{i.SPID}}
+												</label>
+												<label>
+													<image src="@/images/dx-dw.png" mode="widthFix"></image>
+													{{i.STR7}}
+												</label>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+							<view class="operat">
+								<button
+									v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
+									class="btn btn-edit" @click="Edit()">编辑</button>
+								<button v-if="mode('edit')" class="btn" @click="Save()">保存</button>
+								<button v-if="mode('edit')" class="btn btn-qx" @click="CancelSave()">取消</button>
+								<button
+									v-if="mode('read') && view.search.confirm && !view.check.loading && view.check.result"
+									class="btn" @click="ConfirmAccept(true)">接受确认</button>
+								<button
+									v-if="mode('read') && !view.search.confirm && !view.check.loading && view.check.result"
+									class="btn btn-qx" @click="ConfirmAccept(false)">取消</button>
+								<view class="check-tips loading" v-if="view.check.loading">订单状态检查中</view>
+							</view>
+						</view>
+					</view>
+					<!-- 画布 -->
+					<view class="canvasdiv" :style="'visibility:hidden;'">
+						<canvas canvas-id="couponQrcode" class="canvas"
+							:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+						<canvas canvas-id="canvasLogo" class="canvas"
+							:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+						<canvas canvas-id="canvasXPEWM" class="canvas"
+							:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
+					</view>
 				</view>
 			</view>
 		</view>
-		<!-- 画布 -->
-		<view class="canvasdiv" :style="'visibility:hidden;'">
-			<canvas canvas-id="couponQrcode" class="canvas"
-				:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-			<canvas canvas-id="canvasLogo" class="canvas"
-				:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-			<canvas canvas-id="canvasXPEWM" class="canvas"
-				:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-		</view>
-	</view>
-	</view>
-	</view>
-	</view>
 	</view>
 	<!-- </menu_content> -->
 </template>

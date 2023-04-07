@@ -4216,6 +4216,7 @@ function GetSale(global, vue, target_name, uni) {
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function(e) {
 		console.log("传入的参数：", e);
+		uni.$emit("reset-sales");
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 		this.HY.cval = {};

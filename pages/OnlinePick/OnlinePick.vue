@@ -5,72 +5,76 @@
 </style>
 
 <template>
-	<view class="bkjb">
-		<view class="neik">
-	<view class="commodity" style="position: relative;">
-		<PrinterPage ref="printerPage" style="display: none;" />
-		<view class="hh">
-			<view class="hotcakes">
-				<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
-			</view>
-			<view>
-				<view class="prints">
-					<!-- <view class="sousuo">
+	<view class="right">
+		<view class="bkjb">
+			<view class="neik">
+				<view class="commodity" style="position: relative;">
+					<PrinterPage ref="printerPage" style="display: none;" />
+					<view class="hh">
+						<view class="hotcakes">
+							<image src="../../images/ydtq.png" mode="widthFix"></image> 线上提取
+						</view>
+						<view>
+							<view class="prints">
+								<!-- <view class="sousuo">
 						<image src="../../images/ydtq-dyj.png" mode="widthFix"></image>打印
 					</view> -->
-					<view class="sousuo">
-						<label @click="Search">
-							<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
-						</label>
-						<view class="criterias" v-if="view.Criterias">
-							<view class="critlist"><text>订单号：</text><input type="text" v-model="form.search.bill" />
+								<view class="sousuo">
+									<label @click="Search">
+										<image src="../../images/sousuo.png" mode="widthFix"></image>搜索
+									</label>
+									<view class="criterias" v-if="view.Criterias">
+										<view class="critlist"><text>订单号：</text><input type="text"
+												v-model="form.search.bill" />
+										</view>
+										<view class="critlist"><text>自提码：</text><input type="text"
+												v-model="form.search.code" />
+										</view>
+										<view class="confs"><button class="btn btn-qx"
+												@click="ClearSearch()">清空</button><button class="btn"
+												@click="QueryOrder()">查询</button>
+										</view>
+									</view>
+								</view>
 							</view>
-							<view class="critlist"><text>自提码：</text><input type="text" v-model="form.search.code" />
+						</view>
+					</view>
+					<NoData v-if="!view.Order"></NoData>
+					<!-- 小类循环 -->
+					<view class="products" v-else>
+						<view class="procycle">
+							<!-- 产品循环 -->
+							<view v-for="(item,index) in [extracts]" class="li">
+								<view class="title-box">
+									<view class="price">{{ item.BILL || '-' }}</view>
+									<!-- <view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view> -->
+									<view class="price" style="width: auto;">{{ item.SALEDATE || '-' }}</view>
+								</view>
+								<view class="cods">
+									<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
+									<view>定金:{{ item.DNET || '-' }}</view>
+									<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
+									<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+										备注:{{ item.CUSTMCOMM || '-' }}</view>
+								</view>
+								<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
+									<button class="btn" @click="OpenReserve">提取</button>
+								</view>
 							</view>
-							<view class="confs"><button class="btn btn-qx" @click="ClearSearch()">清空</button><button
-									class="btn" @click="QueryOrder()">查询</button>
-							</view>
+						</view>
+						<!-- 画布 -->
+						<view class="canvasdiv" :style="'visibility:hidden;'">
+							<canvas canvas-id="couponQrcode" class="canvas"
+								:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
+							<canvas canvas-id="canvasLogo" class="canvas"
+								:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
+							<canvas canvas-id="canvasXPEWM" class="canvas"
+								:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-		<NoData v-if="!view.Order"></NoData>
-		<!-- 小类循环 -->
-		<view class="products" v-else>
-			<view class="procycle">
-				<!-- 产品循环 -->
-				<view v-for="(item,index) in [extracts]" class="li">
-					<view class="title-box">
-						<view class="price">{{ item.BILL || '-' }}</view>
-						<!-- <view :class="'state ' + Type(item.THTYPE)">{{ TypeText(item.THTYPE) }}</view> -->
-						<view class="price" style="width: auto;">{{ item.SALEDATE || '-' }}</view>
-					</view>
-					<view class="cods">
-						<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
-						<view>定金:{{ item.DNET || '-' }}</view>
-						<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
-						<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
-							备注:{{ item.CUSTMCOMM || '-' }}</view>
-					</view>
-					<view class="handles"><text>配送地址:{{ item.CUSTMADDRESS || ' -' }}</text>
-						<button class="btn" @click="OpenReserve">提取</button>
-					</view>
-				</view>
-			</view>
-			<!-- 画布 -->
-			<view class="canvasdiv" :style="'visibility:hidden;'">
-				<canvas canvas-id="couponQrcode" class="canvas"
-					:style="'border:0px solid; width:' + qrCodeWidth + 'px; height:' + qrCodeHeight + 'px;'"></canvas>
-				<canvas canvas-id="canvasLogo" class="canvas"
-					:style="'border:0px solid; width:' + jpgWidth + 'px; height:' + jpgHeight + 'px;'"></canvas>
-				<canvas canvas-id="canvasXPEWM" class="canvas"
-					:style="'border:0px solid; width:' + canvasGZHWidth + 'px; height:' + canvasGZHHeight + 'px;'"></canvas>
-			</view>
-		</view>
-	</view>
-	</view>
-	</view>
 	</view>
 </template>
 
@@ -153,7 +157,7 @@
 			Search: function(e) {
 				this.view.Criterias = !this.view.Criterias;
 			},
-			ClearSearch:function(){
+			ClearSearch: function() {
 				this.form.search.code = "";
 				this.form.search.bill = "";
 				this.form.code = "";
@@ -216,9 +220,9 @@
 						})
 						if (allow_cancel) {
 							util.simpleMsg("此单商品已全部取消，无法进行提取!", true)
-						} 
-						else {
-							if((!this.extracts.THTYPE || this.extracts.THTYPE == '0') && !this.form.code){
+						} else {
+							if ((!this.extracts.THTYPE || this.extracts.THTYPE == '0') && !this.form
+								.code) {
 								util.simpleMsg("自提订单需要自提码才能提取!", true);
 								return;
 							}
