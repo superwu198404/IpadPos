@@ -181,22 +181,24 @@
 		border-color: #006B44 !important;
 		color: #ffffff !important;
 	}
-	.purple:not([disabled]) .uni-radio-input:hover {
-	    border-color: #006B44 !important;
-	}
-	.purple:not([disabled]) .uni-radio-input:hover, uni-checkbox:not([disabled]) .uni-checkbox-input:hover {
-	  border-color: #006B44!important;
-	}
-	.purple .uni-radio-input.uni-radio-input-checked{
-			background-color: #248067!important;
-			border-color: #248067!important;
+	/* radio 选中后的样式 */
+		uni-radio .uni-radio-input.uni-radio-input-checked{
+			background-color: #006B44!important;
+			border-color: #006B44!important;
 			background-clip: content-box!important;
 			padding: 6rpx!important;
 			box-sizing: border-box;
 		}
-	
-	/* radio 选中后的图标样式*/
-	.purple .uni-radio-input.uni-radio-input-checked::before{
-		display: none!important;
-	}
+		
+		/* radio 选中后的图标样式*/
+		uni-radio .uni-radio-input.uni-radio-input-checked::before{
+			display: none!important;
+		}
+	/deep/.uni-radio-input-checked{
+				background-color: #006B44!important;
+						border-color: #006B44!important;
+						background-clip: content-box!important;
+						/* padding: 6rpx!important; */
+						box-sizing: border-box;
+			}
 </style>
