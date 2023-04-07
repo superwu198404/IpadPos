@@ -307,11 +307,18 @@
 					that.SALE001.DKFID = data.DKFID;
 				}else {
 					that.SALE001.DKFID = '80000000';
+					let store = _util.getStorage("store");
+					store.DKFID = "80000000";
+					store.DKFNAME = '默认大客户';
+					_util.setStorage("store", store);
+					uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 				}
 				that.ZKData = await _main.GetZKDatasAll(data.DKFID || '80000000');
 				console.log("大客户折扣数据：", that.ZKData);
 				if (that.SALE002.length > 0) {
 					that.add_class = 1; //步骤设置
+					//清除一下之前产生的促销和折扣
+					_card_sale.ResetCXZK(that);
 				}
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
