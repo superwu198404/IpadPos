@@ -2159,6 +2159,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
+		that.curHot = false;
 		//关闭键盘并清空分类数据
 		that.turnOffKeys()
 		that.classifyDate = []
@@ -2167,6 +2168,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
+		that.curHot = false;
 		if (this.Page.Alphabetical === true) {
 			util.simpleMsg("当前模式不允许搜索", "none");
 			return;
