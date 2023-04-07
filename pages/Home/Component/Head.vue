@@ -171,6 +171,7 @@
 							</label>
 							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
 								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
+<!-- 							<label>{{connTime}}</label> -->
 						</view>
 					</view>
 				</view>
@@ -247,6 +248,7 @@
 				notifyCharacter: false,
 				isScanning: false,
 				isLink: [],
+				connTime: dateformat.getYMDS(),
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
