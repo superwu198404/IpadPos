@@ -162,7 +162,7 @@
 				<view class="b_customer">
 					<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
-					<view class="b_critlist">											
+					<view class="b_critlist">
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
 							:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
 							@tap="bindViewTap">
@@ -170,8 +170,9 @@
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
 							<label class="shijian">{{displayBlueTime(item.deviceId,item.name)}}</label>
-							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
-								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>							
+							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button
+								class="b_has"
+								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
 						</view>
 					</view>
 				</view>
@@ -600,7 +601,7 @@
 			//选择大客户
 			ClosePopup: function(data) {
 				console.log("[ClosePopup]大客户信息:", data);
-				if (data && Object.keys(data).length && data.DKHID) {
+				if (data && Object.keys(data).length > 0 && data.DKHID) {
 					let store = util.getStorage("store");
 					store.DKFID = data.DKHID;
 					store.DKFNAME = data.NAME;
@@ -827,10 +828,10 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', e.currentTarget.dataset.title);
 						util.setStorage('BLE_deviceName', e.currentTarget.dataset.name);
-						
+
 						//写缓存，用于显示连接时间
 						that.timeStorage(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
-						
+
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
@@ -873,7 +874,7 @@
 						that.getSeviceId(deviceId, deviceName);
 						that.connTime = dateformat.getYMDS();
 						that.timeStorage(deviceId, deviceName);
-						
+
 						if (app.globalData.BLEInformation.firstconnect < 1) {
 							uni.showToast({
 								title: "连接成功" + deviceName
@@ -916,38 +917,40 @@
 				});
 			},
 			//处理蓝牙连接时间
-			timeStorage: function(deviceId,deviceName){
+			timeStorage: function(deviceId, deviceName) {
 				let that = this;
 				let obj = new Object();
 				obj.deviceId = deviceId;
 				obj.deviceName = deviceName;
 				obj.connTime = dateformat.getYMDS().toString();
-				
-				try{
+
+				try {
 					let storageMap = [];
 					let newMap = [];
 					//先获取缓存
 					storageMap = util.getStorage('connListConst');
 					//console.warn('connListConst==================',storageMap)
-					if(storageMap == null || storageMap.length <= 0 || storageMap == '{}'){
+					if (storageMap == null || storageMap.length <= 0 || storageMap == '{}') {
 						let arrFirst = [];
 						arrFirst.push(obj);
 						that.connList = arrFirst;
 						//console.warn('that.connList==================',that.connList)
-						util.setStorage('connListConst',arrFirst);
-					}else{
+						util.setStorage('connListConst', arrFirst);
+					} else {
 						let arrNew = [];
-						let isStorage = storageMap.find(x=> x.deviceId == deviceId);
-						if(isStorage != null)
-							arrNew = storageMap.filter((x) => {return x.deviceId != deviceId})
+						let isStorage = storageMap.find(x => x.deviceId == deviceId);
+						if (isStorage != null)
+							arrNew = storageMap.filter((x) => {
+								return x.deviceId != deviceId
+							})
 						else
 							arrNew = storageMap;
 						arrNew.push(obj);
-						util.setStorage('connListConst',arrNew);
+						util.setStorage('connListConst', arrNew);
 						that.connList = arrNew;
 					}
-				}catch(e){
-					console.error('connTime发生异常',e);
+				} catch (e) {
+					console.error('connTime发生异常', e);
 				}
 			},
 			getCharacteristics: function(deviceId, deviceName) {
@@ -1025,7 +1028,8 @@
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
 							that.deviceId = deviceId;
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName + "||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
+								"||" + app.globalData.YN_PRINT_CON)
 
 							that.isLink = [];
 							var i = 0;
@@ -1172,11 +1176,11 @@
 			},
 			//蓝牙连接时间显示
 			displayBlueTime: function(deviceId, deviceName) {
-                let that = this;
-				let deviceIdInfo = that.connList.find(x=>x.deviceId==deviceId);
-				if(deviceIdInfo!=null){
+				let that = this;
+				let deviceIdInfo = that.connList.find(x => x.deviceId == deviceId);
+				if (deviceIdInfo != null) {
 					return deviceIdInfo.connTime;
-				}else{
+				} else {
 					return "";
 				}
 			},
@@ -1407,6 +1411,7 @@
 		height: 50rpx;
 		margin-right: 10rpx;
 	}
+
 	.b_critlist view label {
 		height: 60rpx;
 		line-height: 60rpx;
@@ -1414,13 +1419,15 @@
 		display: flex;
 		align-items: center;
 	}
-	.b_critlist view .shijian{
-		position:absolute;
-		bottom:3%;
-		left:60rpx;
+
+	.b_critlist view .shijian {
+		position: absolute;
+		bottom: 3%;
+		left: 60rpx;
 		font-size: 24rpx;
 		color: #aaa;
 	}
+
 	.b_critlist view button {
 		width: 140rpx;
 		height: 60rpx;
