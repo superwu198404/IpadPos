@@ -423,6 +423,7 @@ var AsyncRequesrChain = async function(pm_data, callbackfunArr, catchfun, otherf
 	}
 	//到这里 应该httpFunc 与  forPromise 都执行完成且状态改变 应该直接运行即可
 	if (finallyfun) def(finallyfun, res);
+	hideloding(true);
 }
 
 var resObj = function(pm_code, pm_msg, pm_data, pm_url, pm_load) {

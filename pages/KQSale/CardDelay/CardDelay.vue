@@ -426,6 +426,7 @@
 				util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetBill(that.CurType);
+						util.simpleMsg("清空成功！");
 					}
 				})
 			},

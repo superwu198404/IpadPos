@@ -456,6 +456,7 @@
 				PayMode: '93', //支付类型
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
 				cash_change_tips: true,
+				cash_sum: 0
 			}
 		},
 		watch: {
@@ -1105,7 +1106,8 @@
 				let cash_paids = this.RefundList.filter(i => Number(i.amount || 0) > 0 && i.fkid == cash_info.FKID);
 				if (cash_paids.length) { //是否包含现金退款
 					let sum_cash = cash_paids.map(i => Number(i.amount)).reduce((prev, next) => prev + next);
-					util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash?.toFixed(2)} 元。`);
+					this.cash_sum = sum_cash;
+					// util.simpleModal('退款提示', `当前订单包含现金退款 ${sum_cash?.toFixed(2)} 元。`);
 				}
 				setTimeout(util.callBind(this, function() {
 					this.cash_change_tips = true;
@@ -2070,7 +2072,7 @@
 						});
 						this.event.emit("FinishOrder", {
 							code: true,
-							msg: this.isRefund ? "退款成功!" : "支付完成!",
+							msg: this.isRefund ? `退款成功!${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}` : "支付完成!",
 							data: {
 								sale1_obj: this.sale1_obj,
 								sale2_arr: this.sale2_arr,

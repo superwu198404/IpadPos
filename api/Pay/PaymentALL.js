@@ -653,7 +653,7 @@ var kbPay = {
 		await Req.AsyncRequesrChain(CreateData('COUPON', "查询中...", "QueryInfo", {
 				auth_code: card_number,
 				product_info: []
-			}), [
+			}, true), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[QueryInfo]第一次结果（QueryInfo）:", res);
 				details_result = res;
@@ -1039,7 +1039,7 @@ var pinoPay = {
 			base_require_request_params(), {
 				ryid: getApp().globalData.store.KHID,
 				card_no: card_number
-			})), [
+			}), true), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[QueryCardDetails]第一次结果（QueryCardDetails）:", res);
 				details_result = res;

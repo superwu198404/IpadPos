@@ -1614,7 +1614,7 @@ var XsTypeObj = {
 				arr3
 			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "XSDDTQ");
-	
+
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
 			}), util.callBind(this, function(err) {
@@ -2334,6 +2334,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
+					util.simpleMsg("清空成功！");
 				}
 			}
 		})
@@ -2401,7 +2402,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
 		//触发的放弃积分促销
-		if(e==1)
+		if (e == 1)
 			this.score_info.ispoints = 0;
 		this.SaleNetAndDisc(e);
 	});
@@ -2802,7 +2803,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectFlagList = this.notClassifyDate
 			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-		
+
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用

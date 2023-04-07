@@ -5,6 +5,25 @@ import sql from '@/utils/db/create_sql.js';
 import create_sql from '@/utils/db/create_sql.js';
 import dateformat from '../utils/dateformat';
 
+const loading_default_params = {
+	title: "加载中",
+	mask: true,
+	success: () => console.log("[Loading]加载框打开成功..."),
+	fail: () => console.log("[Loading]加载框打开失败..."),
+	complete: () => console.log("[Loading]加载框打开完成...")
+}
+
+var Loading = (open = true, options = loading_default_params) => {
+	let default_options = Object.assign({}, loading_default_params);
+	let custom_options = Object.assign(default_options, options);
+	if(open) {
+		uni.showLoading(custom_options);
+	}
+	else {
+		uni.hideLoading();
+	}
+}
+
 //初始化数据
 var InitData = function(e) {
 	Req.asyncFunc({
@@ -872,7 +891,9 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		let result = null;
 		let callback = (res) => result = res;
 		console.log("[SimpleAPIRequest]准备请求:",reqdata);
+		Loading(true);
 		await Req.asyncFuncOne(reqdata, callback, callback);
+		Loading(false);
 		if (result.code)
 			options.success.call(result);
 		else
