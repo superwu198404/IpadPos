@@ -80,7 +80,7 @@
 									name: r1.MenuName,
 									path: r1.MenuId === "XSALLCX" ?
 										'/pages/Querypage/Statement/Statement' :
-										'/pages/Querypage/TakeawayCX/TakeawayCX'
+										''
 								}
 							})
 						}
@@ -109,7 +109,7 @@
 								name: r1.MenuName,
 								path: r1.MenuId === "XSALLCX" ?
 									'/pages/Querypage/Statement/Statement' :
-									'/pages/Querypage/TakeawayCX/TakeawayCX'
+									''
 							}
 						})
 					}

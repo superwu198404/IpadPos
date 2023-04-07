@@ -35,13 +35,13 @@
 
 <script>
 	//页面组件 👇
-	import CouponSale from '@/pages/CouponSale/CouponSale.vue';
-	import CardSale from '@/pages/CardSale/CardSale.vue';
-	import Cardquery from '@/pages/Cardquery/Cardquery.vue';
-	import CardActive from '@/pages/CardActive/CardActive.vue';
-	import CouponExchange from '@/pages/CouponExchange/CouponExchange.vue';
-	import CardDelay from '@/pages/CardDelay/CardDelay.vue';
-	import CardBind from '@/pages/CardBind/CardBind.vue';
+	import CouponSale from '@/pages/KQSale/CouponSale/CouponSale.vue';
+	import CardSale from '@/pages/KQSale/CardSale/CardSale.vue';
+	import Cardquery from '@/pages/KQSale/Cardquery/Cardquery.vue';
+	import CardActive from '@/pages/KQSale/CardActive/CardActive.vue';
+	import CouponExchange from '@/pages/KQSale/CouponExchange/CouponExchange.vue';
+	import CardDelay from '@/pages/KQSale/CardDelay/CardDelay.vue';
+	import CardBind from '@/pages/KQSale/CardBind/CardBind.vue';
 
 	import common from '@/api/common.js';
 	import util from "@/utils/util.js";

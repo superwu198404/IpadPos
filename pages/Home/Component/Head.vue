@@ -162,15 +162,16 @@
 				<view class="b_customer">
 					<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
 					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
-					<view class="b_critlist">
+					<view class="b_critlist">											
 						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
 							:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
 							@tap="bindViewTap">
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
+							<label class="shijian">{{connTime}}</label>
 							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
-								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
+								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>							
 						</view>
 					</view>
 				</view>
@@ -247,6 +248,7 @@
 				notifyCharacter: false,
 				isScanning: false,
 				isLink: [],
+				connTime: dateformat.getYMDS(),
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
@@ -1342,10 +1344,11 @@
 	}
 
 	.b_critlist view {
-		padding: 2% 0;
+		padding: 2% 0 6%;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		position: relative;
 	}
 
 	.b_critlist view image {
@@ -1353,7 +1356,6 @@
 		height: 50rpx;
 		margin-right: 10rpx;
 	}
-
 	.b_critlist view label {
 		height: 60rpx;
 		line-height: 60rpx;
@@ -1361,7 +1363,13 @@
 		display: flex;
 		align-items: center;
 	}
-
+	.b_critlist view .shijian{
+		position:absolute;
+		bottom:3%;
+		left:60rpx;
+		font-size: 24rpx;
+		color: #aaa;
+	}
 	.b_critlist view button {
 		width: 140rpx;
 		height: 60rpx;

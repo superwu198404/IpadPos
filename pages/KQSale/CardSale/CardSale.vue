@@ -195,11 +195,11 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
+							<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
+							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
@@ -339,7 +339,9 @@
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				}
-				// that.add_class = 1; //步骤
+				if (that.SALE002.length > 0) {
+					that.add_class = 1; //步骤设置
+				}
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -352,6 +354,7 @@
 				console.log("SALE002发生变化(旧)：", o);
 				that.discCompute();
 				that._sale2_count = n.length;
+				that.add_class = (n.length == 0 ? 0 : 1); //步骤设置
 			},
 			CurZKDisc: function(n, o) {
 				console.log("特殊折扣发生变化(新)：", n);

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-	import util from '../../utils/util';
+	import util from '@/utils/util';
 	import common from '@/api/common.js';
 	import member from '@/api/hy/MemberInterfaces.js';
 	var $ = null;

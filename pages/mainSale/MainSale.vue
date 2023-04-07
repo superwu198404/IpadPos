@@ -1356,7 +1356,8 @@
 		width: 100%;
 		height: 70rpx;
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		flex-direction: row;
 		padding-top:20rpx;
 	}
 	.searchTerms image{
@@ -1365,14 +1366,14 @@
 		height:40rpx;
 	}
 	.switchArea {
-		font-size: 36px;
+		font-size: 36rpx;
 		font-weight: 600;
 		color: gray;
 		position: absolute;
 		/* background-color: #fff; */
-		top: 18rpx;
+		top: 8rpx;
 		padding: 6px;
-		left: 100px;
+		right: 142px;
 		border-radius: 8px;
 		display: flex;
 		align-items: center;

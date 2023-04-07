@@ -2459,8 +2459,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//促销跟踪
 	this.cxfsArr = [];
-	//是否有促销单生效(不是满足)
-	this.cxIsJF = [];
+	//是否有积分促销生效(不是满足)
+	this.cxIsJF = false;
 	//生效的促销活动集合
 	this.CXHDArr = [];
 	//生效的特殊折扣规则集合
