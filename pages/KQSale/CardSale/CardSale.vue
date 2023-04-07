@@ -338,11 +338,10 @@
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 				} else {
 					that.SALE001.DKFID = '80000000';
-					that.ZKData = [];
 				}
+				that.ZKData = await _main.GetZKDatasAll(data.DKFID || '80000000');
 				if (that.SALE002.length > 0) {
 					that.add_class = 1; //步骤设置
 				}
