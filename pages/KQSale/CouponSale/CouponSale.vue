@@ -421,7 +421,7 @@
 							console.log("[CouponSale]券商品信息查询失败:", e);
 						}
 					} else {
-						util.simpleMsg("券可销售号段校验有误!", true);
+						util.simpleMsg("券可销售号段校验有误!" + (res?.msg || ""), true);
 					}
 				})).then($(function() {
 					this.form = this.$options.data().form;

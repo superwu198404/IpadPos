@@ -265,7 +265,7 @@
 							this.form = this.$options.data().form;
 							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 							util.simpleMsg("清空成功！");
-						}
+						} 
 					}))
 				}))
 			},
