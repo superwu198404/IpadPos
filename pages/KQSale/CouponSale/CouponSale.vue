@@ -765,7 +765,7 @@
 						this.source.enable_credit = true; //启用赊销
 					}
 					this.source.big_customer_info = data;
-					this.source.discount_infos = await this.get_discount_data(data.DKHID);
+					this.source.discount_infos = await this.get_discount_data(data.DKFID);
 					console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
 				}));
 				this.event_register('coupon-activate-fail-close', $(function(data) {

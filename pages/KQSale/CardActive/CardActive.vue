@@ -307,6 +307,9 @@
 					that.SALE001.DKFID = data.DKFID;
 					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
 					console.log("大客户折扣数据：", that.ZKData);
+				}else {
+					that.SALE001.DKFID = '80000000';
+					that.ZKData = [];
 				}
 				if (that.SALE002.length > 0) {
 					that.add_class = 1; //步骤设置
