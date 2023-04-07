@@ -175,11 +175,11 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="@/images/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
+							<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
+							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>

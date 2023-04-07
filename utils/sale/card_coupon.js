@@ -14,7 +14,8 @@ import {
 import _common from '@/api/common.js';
 import {
 	RequestSend
-} from '@/api/business/da.js'
+} from '@/api/business/da.js';
+import _business from "@/utils/business_dictionary.js";
 //创建订单号
 var getBill = function(store, index = 0) {
 	var newbill = "";
@@ -101,11 +102,11 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.cardType != 'Z001') {
-				_util.simpleMsg("卡类型不是实体VIP卡", "none");
+				_util.simpleMsg("卡类型不是实体VIP卡", 'none');
 				return false;
 			}
 			if (res.data.status != 'Z007') {
-				_util.simpleMsg("卡状态不是“未激活”状态", "none");
+				_util.simpleMsg("业务卡状态错误，卡状态为：" + _business.card_status[res.data.status], "none");
 				return false;
 			}
 			return true;
@@ -146,7 +147,7 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: async function(data,func) {
+		Completed: async function(data, func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -158,12 +159,14 @@ var KQTypeObj = {
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
-				console.log("业务单号:", data.SALE001.BILL);
+					console.log("业务单号:", data.SALE001.BILL);
 				_common.TransLiteData(data.SALE001.BILL, res => {
 					console.warn("Completed卡券 ======:", res);
-					if(res.code){ if (func) func(res);}
+					if (res.code) {
+						if (func) func(res);
+					}
 				}); //上传至服务端
-				_util.simpleMsg(create_result.msg, !create_result.code);	
+				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
 				console.log("[Completed]订单sql生成发生异常:", e);
 			}
@@ -233,7 +236,8 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.status != 'Z001') { //要已激活的
-				_util.simpleMsg("卡状态不是“已激活”状态", "none");
+				// _util.simpleMsg("卡状态不是“已激活”状态", "none");
+				_util.simpleMsg("业务卡状态错误，卡状态为：" + _business.card_status[res.data.status], "none");
 				return false;
 			}
 			return true;
@@ -270,7 +274,7 @@ var KQTypeObj = {
 			}, func, func);
 		},
 		//业务完成
-		Completed: async function(data,func) {
+		Completed: async function(data, func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -285,7 +289,9 @@ var KQTypeObj = {
 					console.log("业务单号:", data.SALE001.BILL);
 				_common.TransLiteData(data.SALE001.BILL, res => {
 					console.warn("Completed卡券 ======:", res);
-					if(res.code){ if (func) func(res);}
+					if (res.code) {
+						if (func) func(res);
+					}
 				}); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
@@ -347,7 +353,8 @@ var KQTypeObj = {
 				return false;
 			}
 			if (res.data.status != 'Z007') {
-				_util.simpleMsg("卡状态不是“未激活”状态", "none");
+				// _util.simpleMsg("卡状态不是“未激活”状态", "none");
+				_util.simpleMsg("业务卡状态错误，卡状态为：" + _business.card_status[res.data.status], "none");
 				return false;
 			}
 			return true;
@@ -389,7 +396,7 @@ var KQTypeObj = {
 		},
 
 		//业务完成
-		Completed: async function(data,func) {
+		Completed: async function(data, func) {
 			try {
 				console.log("[Completed]即将创建销售单:", data);
 				let create_result = await CreateSaleOrder({
@@ -404,7 +411,9 @@ var KQTypeObj = {
 					console.log("业务单号:", data.SALE001.BILL);
 				_common.TransLiteData(data.SALE001.BILL, res => {
 					console.warn("Completed卡券 ======:", res);
-					if(res.code){ if (func) func(res);}
+					if (res.code) {
+						if (func) func(res);
+					}
 				}); //上传至服务端
 				_util.simpleMsg(create_result.msg, !create_result.code);
 			} catch (e) {
