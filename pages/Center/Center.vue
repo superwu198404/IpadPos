@@ -57,7 +57,7 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/CardCouponMain/Menu')">
+						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>

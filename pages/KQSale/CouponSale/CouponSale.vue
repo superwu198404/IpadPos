@@ -8,7 +8,8 @@
 	<view>
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<!-- 顶部导航栏 -->
-		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false' :type="'kq_sale'">
+		<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false'
+			:type="'kq_sale'">
 		</Head>
 		<!-- 内容栏 -->
 		<CouponSaleSteps ref="steps"></CouponSaleSteps>
@@ -40,7 +41,7 @@
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
-							<view class="swipetip"  v-if="get_main_sale6.length==0">
+							<view class="swipetip" v-if="get_main_sale6.length==0">
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先录入活动券</text>
 							</view>
@@ -119,7 +120,7 @@
 
 <script>
 	import Head from '@/pages/Home/Component/Head.vue';
-	import Menu from '@/pages/CardCouponMain/Menu.vue';
+	import Menu from '@/pages/KQSale/CardCouponMain/Menu.vue';
 
 	import member from '@/api/hy/MemberInterfaces.js';
 	import Sale from '@/utils/sale/card_coupon.js';
@@ -750,6 +751,7 @@
 						if (res) {
 							this.reset_form();
 							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+							util.simpleMsg("清空成功！");
 						}
 					}))
 				}));

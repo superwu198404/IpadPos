@@ -734,9 +734,9 @@
 					SALE003: that.SALE003,
 					SALE006: res.sale6,
 					SXSALE001: that.SXSALE001,
-				},resp => {
+				}, resp => {
 					//销售单数据处理成功，再调用打印
-					if(resp.code)
+					if (resp.code)
 						that.PrintBill(res.sale2, res.sale6);
 					//重置销售单
 					that.ResetSaleBill();
@@ -903,6 +903,7 @@
 				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetSaleBill();
+						_util.simpleMsg("清空成功！");
 					}
 				})
 			},

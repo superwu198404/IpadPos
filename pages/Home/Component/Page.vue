@@ -232,7 +232,7 @@
 					util.simpleModal("提示", "是否确认切换到卡券销售？", res => {
 						if (res) {
 							uni.redirectTo({
-								url: "/pages/CardCouponMain/Menu"
+								url: "/pages/KQSale/CardCouponMain/Menu"
 							})
 						}
 					})

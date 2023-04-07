@@ -2334,6 +2334,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
+					util.simpleMsg("清空成功！");
 				}
 			}
 		})
@@ -2344,7 +2345,6 @@ function GetSale(global, vue, target_name, uni) {
 		let tip = !this.currentOperation.ynResetCX ? "清除" : "恢复";
 		util.simpleModal("提示", "是否确认要" + tip + "促销折扣？", res => {
 			if (res) {
-				// if (this.sale001.TCXDISC > 0) //有促销值才允许清除 不然清除了特殊折扣值
 				if (!this.currentOperation.ynResetCX) {
 					this.currentOperation.ynCx = false;
 					this.ResetCXZK();
