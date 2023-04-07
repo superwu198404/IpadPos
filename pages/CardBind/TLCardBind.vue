@@ -54,8 +54,8 @@
 						<view class="form-item-input-left">
 							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"
 								@click="swipe_card"></image>|
-							<!-- <input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true"/> -->
-							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" />
+							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true"/>
+							<!-- <input placeholder="请刷卡以获取卡信息" v-model="form.card_number" /> -->
 						</view>
 						<view class="comfirm-btn" @click="search_card">确定</view>
 					</view>
@@ -350,7 +350,6 @@
 		white-space: nowrap;
 		overflow: hidden;
 	}
-
 	.card-infos {
 		background-image: url('@/images/img2/kaqchaxun2.png');
 		padding: 20px 20px;

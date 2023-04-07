@@ -219,7 +219,7 @@
 		watch: {
 			CardInfo: function(n, o) {
 				console.log("卡信息发生变动：", n);
-				if (this.CardInfo.cardId || this.CardInfo.cardId != "") {
+				if (this.CardInfo.cardId && this.CardInfo.cardId != "") {
 					this._sale2_count = 1;
 				} else {
 					this._sale2_count = 0;
