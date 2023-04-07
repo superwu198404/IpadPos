@@ -2098,6 +2098,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//获取热销商品的列表
 	this.getHotSale = function() {
+		that.curHot = true;
 		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
@@ -2158,6 +2159,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
+		that.curHot = false;
 		//关闭键盘并清空分类数据
 		that.turnOffKeys()
 		that.classifyDate = []
@@ -2166,6 +2168,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
+		that.curHot = false;
 		if (this.Page.Alphabetical === true) {
 			util.simpleMsg("当前模式不允许搜索", "none");
 			return;
@@ -2521,6 +2524,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.isDateClassify = true;
 	this.classifyDate = [];
 	this.notClassifyDate = [];
+	this.curHot = false; //是否是热销选品模式
 	//蛋糕预定商品集合
 	this.CakeList = [
 		// 	{
