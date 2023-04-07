@@ -788,6 +788,9 @@
 			$ = util.callContainer(this);
 			//test code...
 			// this.KHID = 'K200QTD006';
+		},
+		destroyed() {
+			uni.$off('ReturnSale');
 		}
 	}
 </script>

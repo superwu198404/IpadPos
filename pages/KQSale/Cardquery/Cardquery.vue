@@ -248,7 +248,13 @@
 			},
 			monitor(){
 				uni.$on('ReturnSale',$(function(){
-					this.form = this.$options.data().form;
+					console.log('[EventMonitor]表单信息清空...');
+					util.simpleModal("提示", "是否确认清空当前数据？", $(function(res) {
+						if (res) {
+							this.form = this.$options.data().form;
+							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+						}
+					}))
 				}))
 			},
 			init(){

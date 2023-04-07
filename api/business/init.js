@@ -63,6 +63,10 @@ var GetPayWay = async function(e) {
 				// if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式 无用
 				// 	obj.type = "EXCESS";
 				// }
+				if(res.msg[i].JKSNAME == "DouYinJK"){
+					obj.poly = "S";
+					obj.fkid_f = res.msg[i].FKID_F
+				}
 				PayWayList.push(obj);
 			}
 			//如果fkda没有则追加测试数据
@@ -142,7 +146,7 @@ var GetPayWay = async function(e) {
 
 			let arr1 = res.msg.filter(r => {
 				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
-					.FKJBID == '2' && r.YN_SQ == 'Y');
+					.FKJBID == '2' && r.YN_SQ == 'Y' && !PayWayList.find(f => f.fkid == r.FKID));
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
