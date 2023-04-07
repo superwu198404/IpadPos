@@ -390,10 +390,13 @@
 							}, res => {
 								if (res.code) {
 									util.simpleMsg("延期成功！");
+									setTimeout(() => {
+										that.GetCardInfo();
+									}, 1500);
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(that.CurType, res.code); //重置
+								// that.ResetBill(that.CurType, res.code); //重置
 							})
 						} else {
 							_card_sale.REPORT_LOSS({
@@ -407,10 +410,13 @@
 							}, res => {
 								if (res.code) {
 									util.simpleMsg("挂失成功！");
+									setTimeout(() => {
+										that.GetCardInfo();
+									}, 1500);
 								} else {
 									util.simpleModal("提示", res.msg);
 								}
-								that.ResetBill(that.CurType, res.code); //重置
+								// that.ResetBill(that.CurType, res.code); //重置
 							})
 						}
 					}
@@ -426,6 +432,7 @@
 				util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetBill(that.CurType);
+						util.simpleMsg("清空成功！");
 					}
 				})
 			},

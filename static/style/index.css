@@ -389,7 +389,7 @@ em{
 	align-items: center;
 	justify-content: space-between;
 	width: 6%;
-	/* height: 90%; */
+	height: 74%;
 	padding-top: 6%;
 	position: relative;
 	z-index: 9997;
@@ -501,7 +501,11 @@ em{
 	justify-content: center;
 	align-items: center;
 }
-
+.seasonal.curr{
+	width: 90rpx;
+	height: 90rpx;
+	border:2rpx solid #006B44;
+}
 .seasonal image {
 	width: 56rpx;
 	height: 56rpx;
@@ -1829,15 +1833,4 @@ input:-ms-input-placeholder{
 	height: 100%;
 	background: #F5F4F8;
 	border-radius: 14rpx;
-}
-uni-radio .uni-radio-input,uni-radio .uni-radio-input.uni-radio-input-checked{
-	background-color: #006B44 !important;
-	border-color: #006B44 !important;
-	color: #ffffff !important;
-}
-uni-radio:not([disabled]) .uni-radio-input:hover {
-    border-color: #006B44 !important;
-}
-uni-radio:not([disabled]) .uni-radio-input:hover, uni-checkbox:not([disabled]) .uni-checkbox-input:hover {
-  border-color: #006B44!important;
 }

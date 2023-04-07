@@ -1614,7 +1614,7 @@ var XsTypeObj = {
 				arr3
 			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "XSDDTQ");
-	
+
 			onlineOrderReserve(this.reserve_param, util.callBind(this, function(res) {
 				console.log("[SaleFinishing]提取成功！", res);
 			}), util.callBind(this, function(err) {
@@ -2098,6 +2098,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//获取热销商品的列表
 	this.getHotSale = function() {
+		that.curHot = true;
 		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
@@ -2158,6 +2159,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//*func*商品字母筛选
 	this.Letters = util.callBind(this, function(e) {
+		that.curHot = false;
 		//关闭键盘并清空分类数据
 		that.turnOffKeys()
 		that.classifyDate = []
@@ -2166,6 +2168,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
+		that.curHot = false;
 		if (this.Page.Alphabetical === true) {
 			util.simpleMsg("当前模式不允许搜索", "none");
 			return;
@@ -2334,6 +2337,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (res) {
 				if (this.currentOperation.ynCancel) {
 					this.resetSaleBill();
+					util.simpleMsg("清空成功！");
 				}
 			}
 		})
@@ -2401,7 +2405,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
 		//触发的放弃积分促销
-		if(e==1)
+		if (e == 1)
 			this.score_info.ispoints = 0;
 		this.SaleNetAndDisc(e);
 	});
@@ -2520,6 +2524,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.isDateClassify = true;
 	this.classifyDate = [];
 	this.notClassifyDate = [];
+	this.curHot = false; //是否是热销选品模式
 	//蛋糕预定商品集合
 	this.CakeList = [
 		// 	{
@@ -2802,7 +2807,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectFlagList = this.notClassifyDate
 			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-		
+
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用

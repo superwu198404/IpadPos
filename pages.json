@@ -353,7 +353,7 @@
             }
         },
         {
-            "path" : "pages/CardCouponMain/Menu",
+            "path" : "pages/KQSale/CardCouponMain/Menu",
             "style" : {
                 "titleNView" : false,
                 "navigationBarTitleText" : "",

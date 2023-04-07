@@ -251,17 +251,17 @@ page {
 	right:0;
 	border-radius: 30rpx 0 0 30rpx;
 	background: rgba(0,0,0,0.4);
-	height: 60rpx;
-	line-height: 60rpx;
+	height: 64rpx;
+	line-height: 64rpx;
 	padding:0 24rpx;
-	font-size: 26rpx;
+	font-size: 28rpx;
 	display: flex;
 	align-items: center;
 	color: #fff;
 }
 .fanhui image{
-	width:28rpx;
-	line-height: 28rpx;
+	width:30rpx;
+	line-height: 30rpx;
 	margin-right: 6rpx;
 }
 

@@ -10,7 +10,8 @@
 		<PrinterPage ref="printerPage" style="display: none;" />
 		<view class="right">
 			<!-- 顶部导航栏 -->
-			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false' :type="'kq_sale'">
+			<Head :custom.sync="view.big_customer" :_ynDKF='view.enable_customer' :_showSale="true" :_ynMsg='false'
+				:type="'kq_sale'">
 			</Head>
 			<!-- 内容栏 -->
 			<view class="steps">
@@ -337,8 +338,10 @@
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-					that.ZKData = await _main.GetZKDatasAll(data.DKFID);
+				} else {
+					that.SALE001.DKFID = '80000000';
 				}
+				that.ZKData = await _main.GetZKDatasAll(data.DKFID || '80000000');
 				if (that.SALE002.length > 0) {
 					that.add_class = 1; //步骤设置
 				}
@@ -792,7 +795,7 @@
 			SaleCompleted: async function() {
 				that.UploadCKR(); //更新持卡人信息
 				console.log("生成销售单");
-							
+
 				//激活成功-充值成功（与否）均生成销售单
 				await KQSale.Completed({
 					SALE001: that.SALE001,
@@ -800,9 +803,9 @@
 					SALE003: that.SALE003,
 					SALE006: that.SALE006,
 					SXSALE001: that.SXSALE001,
-				},resp => {
+				}, resp => {
 					//销售单数据处理成功，再调用打印
-					if(resp.code)
+					if (resp.code)
 						that.PrintBill();
 					//重置销售单
 					that.ResetSaleBill();
@@ -943,6 +946,7 @@
 				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetSaleBill();
+						_util.simpleMsg("清空成功！");
 					}
 				})
 			},
