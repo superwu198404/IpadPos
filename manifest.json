@@ -157,11 +157,11 @@
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
-    "appid" : "__UNI__A6034C6",
+    "appid" : "__UNI__DBF626B",
     "name" : "KengeePos",
-    "versionName" : "1.1.54",
+    "versionName" : "1.1.59",
     "description" : "ipad上运行的收银软件",
-    "versionCode" : 54,
+    "versionCode" : 59,
     "locale" : "zh-Hans",
     "fallbackLocale" : "zh-Hans"
 }
