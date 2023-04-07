@@ -1356,7 +1356,8 @@
 		width: 100%;
 		height: 70rpx;
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		flex-direction: row;
 		padding-top:20rpx;
 	}
 	.searchTerms image{
@@ -1372,7 +1373,7 @@
 		/* background-color: #fff; */
 		top: 18rpx;
 		padding: 6px;
-		left: 100px;
+		right: 142px;
 		border-radius: 8px;
 		display: flex;
 		align-items: center;
