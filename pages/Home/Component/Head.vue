@@ -169,7 +169,7 @@
 							<label>
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
-							<label class="shijian">{{connTime}}</label>
+							<label class="shijian" v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">{{connTime}}</label>
 							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button class="b_has"
 								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>							
 						</view>
@@ -249,6 +249,7 @@
 				isScanning: false,
 				isLink: [],
 				connTime: dateformat.getYMDS(),
+				connList: new Map(), //用于记录连接设备、连接时间
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
@@ -313,6 +314,7 @@
 			this.GetStoreMessage();
 			this.MonitorEvent(); //事件监听
 			//搜索蓝牙
+			that.list = [];
 			that.startSearch();
 			that.onBLEConnectionStateChange();
 			//去除日结的判断
@@ -628,7 +630,7 @@
 			onBLEConnectionStateChange: function() {
 				let that = this;
 				uni.onBLEConnectionStateChange(res => {
-					console.log(`设备状态 ${res.deviceId},connected: ${res.connected}`);
+					console.log(`设备 ${res.deviceId},connected: ${res.connected}`);
 					if (res.connected == false) {
 						app.globalData.YN_PRINT_CON = "N";
 						that.YN_PRINT_CON = "N";
@@ -646,7 +648,7 @@
 						that.YN_PRINT_CON = "Y";
 						that.deviceId = res.deviceId;
 					}
-					console.log(`连接状态 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
+					// console.log(`连接 ${res.deviceId},connected: ${app.globalData.YN_PRINT_CON}`);
 				})
 			},
 			//搜索设备
@@ -825,7 +827,10 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', e.currentTarget.dataset.title);
 						util.setStorage('BLE_deviceName', e.currentTarget.dataset.name);
-
+						
+						//写缓存，用于显示连接时间
+						that.timeStorage(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
+						
 						that.getSeviceId(e.currentTarget.dataset.title, e.currentTarget.dataset.name);
 					},
 					fail: function(e) {
@@ -839,7 +844,7 @@
 						uni.hideLoading();
 					},
 					complete: function(e) {
-						console.log("Connection complete:", e);
+						// console.log("Connection complete:", e);
 					}
 				});
 			},
@@ -866,7 +871,7 @@
 						//写进缓存
 						util.setStorage('BLE_deviceId', deviceId);
 						that.getSeviceId(deviceId, deviceName);
-
+						that.connTime = dateformat.getYMDS();
 						if (app.globalData.BLEInformation.firstconnect < 1) {
 							uni.showToast({
 								title: "连接成功" + deviceName
@@ -884,7 +889,7 @@
 						uni.hideLoading();
 					},
 					complete: function(e) {
-						console.log("Connection complete:", e);
+						// console.log("Connection complete:", e);
 					}
 				});
 			},
@@ -904,9 +909,36 @@
 						console.log(e);
 					},
 					complete: function(e) {
-						console.log(e);
+						// console.log(e);
 					}
 				});
+			},
+			//处理蓝牙连接时间
+			timeStorage: function(deviceId,deviceName){
+				let that = this;
+				let obj = new Object();
+				obj.deviceId = deviceId;
+				obj.deviceName = deviceName;
+				obj.connTime = dateformat.getYMDS().toString();
+				
+				try{
+					// let storageMap = new Map();
+					// let newMap = new Map();
+					// //先获取缓存
+					// storageMap = util.getStorage('connListConst');
+					// console.warn('connListConst==================',storageMap)
+					// if(storageMap == null || storageMap.size <= 0){
+					// 	that.connList = new Map();
+					// 	that.connList.set(deviceId, obj);
+					// 	console.warn('that.connList==================',that.connList)
+					// 	util.setStorage('connListConst',that.connList);
+					// }else{
+					// 	storageMap.set(deviceId, obj);
+					// 	util.setStorage('connListConst',storageMap);
+					// }
+				}catch(e){
+					console.error('connTime发生异常',e);
+				}
 			},
 			getCharacteristics: function(deviceId, deviceName) {
 				//console.log("getCharacteristics",deviceName)
@@ -920,7 +952,7 @@
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: list[num].uuid,
 					success: function(res) {
-						console.log(res);
+						// console.log(res);
 
 						for (var i = 0; i < res.characteristics.length; ++i) {
 							var properties = res.characteristics[i].properties;
@@ -976,15 +1008,14 @@
 							//写进缓存
 							util.setStorage('BLE_deviceId', deviceId);
 							util.setStorage('BLE_deviceName', deviceName);
-
+							that.connTime = dateformat.getYMDS();
 							app.globalData.BLEInformation.deviceId = deviceId;
 							app.globalData.BLEInformation.deviceName = deviceName;
 							app.globalData.BLEInformation.firstconnect = 1;
 							app.globalData.YN_PRINT_CON = "Y";
 							that.YN_PRINT_CON = "Y";
 							that.deviceId = deviceId;
-							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName +
-								"||" + app.globalData.YN_PRINT_CON)
+							console.log("连接成功 deviceName", app.globalData.BLEInformation.deviceName + "||" + app.globalData.YN_PRINT_CON)
 
 							that.isLink = [];
 							var i = 0;
