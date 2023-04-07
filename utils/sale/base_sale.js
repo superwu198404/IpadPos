@@ -2098,6 +2098,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//获取热销商品的列表
 	this.getHotSale = function() {
+		that.curHot = true;
 		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
@@ -2521,6 +2522,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.isDateClassify = true;
 	this.classifyDate = [];
 	this.notClassifyDate = [];
+	this.curHot = false; //是否是热销选品模式
 	//蛋糕预定商品集合
 	this.CakeList = [
 		// 	{
