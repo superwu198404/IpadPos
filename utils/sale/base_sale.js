@@ -1232,11 +1232,6 @@ var XsTypeObj = {
 				this.ComponentsManage["DKF"] = false;
 				return;
 			}
-			if (Object.keys(data).length == 0) {
-				uni.$emit("external-operation", function() {
-					this.SubmitMenuSelectEvent('sale', XsTypeObj.sale);
-				})
-			}
 			this.DKF.val = data;
 			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);

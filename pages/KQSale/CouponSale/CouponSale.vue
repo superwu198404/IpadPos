@@ -187,6 +187,7 @@
 				},
 				sale: null,
 				container: null,
+				ban_type: [],
 				//打印相关
 				jpgWidth: 1,
 				jpgHeight: 1,
@@ -474,6 +475,17 @@
 					console.log("[SaveOrders]执行异常:", e);
 				}
 			},
+			async get_coupon_sale_allow_payment(){
+				console.log("[GetCouponSaleAllowPayment]开始查询...");
+				let pay_id = (await common.Database().Query.Single("POSCSZMX").Condition("POSCS='SKSQFKID'").Condition(`POSCSZID='${this.POSCSZID}'`).Excute())?.POSCSNR;
+				console.log("[GetCouponSaleAllowPayment]查询完毕:",pay_id);
+				if(pay_id){
+					let allow_type = pay_id.split(',');
+					console.log("[GetCouponSaleAllowPayment]允许使用的FKID:", allow_type);
+					this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
+					console.log("[GetCouponSaleAllowPayment]禁止使用的FKID:", this.ban_type);
+				}
+			},
 			async reset_form() {
 				this.factory.reset_generators();
 				this.source = this.$options.data().source;
@@ -725,6 +737,7 @@
 						sale001: this.source.sale001,
 						sale002: this.source.sale002,
 						paid: this.source.paid,
+						ban_type: this.ban_type,
 						action: 'Payment',
 						complet: $(function(result) {
 							console.log("[ToPayment]支付完成，支付结果:", result);
@@ -783,6 +796,7 @@
 		mounted() {
 			this.event_monitor(); //批量事件处理
 			this.get_payment_infos(); //获取支付信息
+			this.get_coupon_sale_allow_payment();//获取允许使用的支付方式类型
 		},
 		async created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");

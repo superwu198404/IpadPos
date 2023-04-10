@@ -904,6 +904,53 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 	}
 }
 
+var Database = function(){
+	let Query = {
+		IsSingle: false,
+		SQL: "",
+		async Excute(){
+			if(!this.SQL) return;
+			let result = await SimpleAPIRequest({
+				class: 'DataQuery',
+				method: 'SALEQuery',
+				process: false,
+				data: this.SQL
+			});
+			if(result.code){
+				let data = JSON.parse(result.data);
+				if(this.IsSingle && data.length){
+					return data[0];
+				}
+				else{
+					return data;
+				}
+			}
+			else {
+				return null;
+			}
+		},
+		Condition(fragment){
+			this.SQL+= `AND ${fragment} `;
+			return this;
+		},
+		Single(table_name){
+			if(!table_name) return;
+			this.IsSingle = true;
+			this.SQL = `SELECT * FROM ${table_name} WHERE 1=1 `
+			return this;
+		},
+		Mutiple(table_name){
+			if(!table_name) return;
+			this.SQL = `SELECT * FROM ${table_name} WHERE 1=1 `
+			this.IsSingle = false;
+			return this;
+		}
+	}
+	return {
+		Query
+	}
+}
+
 var SimpleLocalQuery = async function(table_name, filter) {
 	let filter_string = "",
 		result = null;
@@ -988,5 +1035,6 @@ export default {
 	WebDBQuery,
 	WebDBExecute,
 	CheckSign,
-	GetDAPZCS
+	GetDAPZCS,
+	Database
 }
