@@ -1120,6 +1120,8 @@ var tiktokPay = {
 		});
 		body.transaction_id = token;
 		body.store_id = poi_id;
+		// body.transaction_id = "clt.424e09e8967240a74bb741e116e37004FCO3wRT53GsSx8FPtzjXNBgkCmlr";
+		// body.store_id = "6601132867395258372";
 		if (!poi_id) {
 			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
 			return;
@@ -1143,6 +1145,7 @@ var tiktokPay = {
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc){//撤销
 		let token = await tiktok.get_tiktok_token();
 		body.transaction_id = token;
+		// body.transaction_id = "clt.424e09e8967240a74bb741e116e37004FCO3wRT53GsSx8FPtzjXNBgkCmlr";
 		Req.asyncFuncChain(CreateData(pt, "查询中...", "QueryPayment", body), [
 			function(res) {
 				console.log("[RefundAll]第一次结果（QueryPayment）:", res);
