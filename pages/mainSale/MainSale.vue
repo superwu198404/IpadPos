@@ -1286,8 +1286,8 @@
 		width: 1600rpx;
 		padding: 0 30rpx 30rpx;
 		position: absolute;
-		bottom: 60rpx;
-		right: 0;
+		bottom: -170rpx;
+		right: 97rpx;
 		padding-bottom: 40rpx;
 		animation: keyboard 0.5s ease;
 		-webkit-animation: keyboard 0.5s ease;
