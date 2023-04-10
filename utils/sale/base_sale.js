@@ -4251,7 +4251,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_sqlite = [];
 
 		this.Page.Alphabetical = false;//关闭字母列表
-		this.filterSp('A');
+		this.filterSp('A');//重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
