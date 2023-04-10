@@ -2099,8 +2099,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
 		}
-		that.classifyDate = []
-		that.notClassifyDate = []
+		that.clearKeyDate()
 		that.turnOffKeys()
 		if (hotSale == null) {
 			let reqPosData = {
@@ -2158,8 +2157,6 @@ function GetSale(global, vue, target_name, uni) {
 		that.curHot = false;
 		//关闭键盘并清空分类数据
 		that.turnOffKeys()
-		that.classifyDate = []
-		that.notClassifyDate = []
 		this.Page.Alphabetical = !this.Page.Alphabetical;
 	})
 	//点击键盘图标
@@ -2518,8 +2515,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.boardQueryKeys = '';
 	this.showQueryKeys = '';
 	this.isDateClassify = true;
-	this.classifyDate = [];
-	this.notClassifyDate = [];
+	this.classifyDate = null;
+	this.notClassifyDate = null;
 	this.curHot = false; //是否是热销选品模式
 	//蛋糕预定商品集合
 	this.CakeList = [
@@ -2846,6 +2843,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
 		}
+		that.clearKeyDate()
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
@@ -2882,6 +2880,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.turnOffKeys = function() {
 		that.Page.isKeyBoardShow = false
 		that.boardQueryKeys = ''
+		// that.showQueryKeys = ''
+	}
+	
+	this.clearKeyDate = function() {
+		that.classifyDate = null
+		that.notClassifyDate = null
 		that.showQueryKeys = ''
 	}
 	//键盘搜索是否分类
