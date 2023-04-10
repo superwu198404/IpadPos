@@ -309,8 +309,7 @@ var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				util.simpleMsg("支付参数未配置!", true)
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
@@ -342,8 +341,7 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数未配置!", true);
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
 				return;
 			}
 			Req.asyncFuncOne(CreateData("TL", "查询中...",
@@ -389,8 +387,7 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				util.simpleMsg("支付参数未配置!", true);
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
@@ -403,8 +400,7 @@ var misPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				util.simpleMsg("支付参数未配置!", true)
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //使用全局配置（后端
@@ -435,8 +431,7 @@ var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数未配置!", true);
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 RYID 是 门店id/门店号，Note是 机器号/终端号/款台号，LONGKEY是商户号
@@ -450,8 +445,7 @@ var misScanCodePay = {
 		console.log("[RefundAll]UPAY中的Body参数为:",body);
 		_GetConfig("UPAY", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				util.simpleMsg("支付参数未配置!", true)
-				if (catchFunc) catchFunc();
+				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
 				return;
 			}
 			body.merchant_no = config.LONGKEY; //使用全局配置（后端
@@ -646,6 +640,7 @@ var kbPay = {
 		_PaymentAll(pt, body, func, catchFunc);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		body.store_id = body.original_store_id;
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
 	QueryCouponDetails: async function(card_number){
@@ -957,7 +952,8 @@ var pinoPay = {
 		}
 	},
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		var original_area_id = await _GetClientInfos(body.original_store_id)?.DQID;
+		console.log("[RefundAll]原订单门店ID:", body.original_store_id);
+		var original_area_id = (await _GetClientInfos(body.original_store_id))?.DQID;
 		console.log("[RefundAll]原订单地区ID:", original_area_id);
 		var config_result = await _GetConfig("PINNUOPAY", original_area_id || getApp().globalData.store.DQID).then((config) => {
 			var result = {
@@ -1124,6 +1120,10 @@ var tiktokPay = {
 		});
 		body.transaction_id = token;
 		body.store_id = poi_id;
+		if (!poi_id) {
+			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
+			return;
+		}
 		Req.AsyncRequesrChain(CreateData(pt, "支付中...", "Payment", body), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[PaymentAll]第一次结果（Payment）:", res);
