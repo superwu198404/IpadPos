@@ -429,7 +429,7 @@
 						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(mainSale.sale001.TBZDISC==0&&mainSale.sale001.TLSDISC==0&&mainSale.sale001.TTPDISC==0)"
+							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>

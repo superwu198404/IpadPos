@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<!-- v-if="msgDatas.length>0" -->
-		<movable-area style="z-index: 999;" v-show="visible">
+		<movable-area style="z-index: 99999;" v-show="visible">
 			<movable-view :x="x" :y="y" direction="all" position="position" @change="onChange">
 				<view class="ordermes">
 					<em></em>

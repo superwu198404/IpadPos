@@ -2002,6 +2002,7 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		this.CXHDArr = []; //
 		this.ZKHDArr = []; //清除一下已生效的活动数据
+		this.cxIsJF = false;
 		this.score_info.money = 0;
 		this.score_info.score = 0;
 		this.score_info.ispoints = 0;

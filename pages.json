@@ -386,6 +386,10 @@
         {
             "path" : "pages/KQSale/CouponExchange/CouponExchange",
             "style" : {}
+        },
+        {
+            "path" : "pages/KQSale/CardBind/TLCardBind",
+            "style" : {}
         }
     ],
     "globalStyle" : {
