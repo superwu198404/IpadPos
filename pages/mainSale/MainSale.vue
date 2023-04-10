@@ -23,7 +23,10 @@
 						<!-- 大类循环 -->
 						<view class="commodity">
 							<view class="hh" style="padding-right:3.7%;">
-								<view class="hotcakes">
+								<view class="hotcakes" v-if="mainSale.classifyDate || mainSale.notClassifyDate">
+									搜索关键词: {{(mainSale.showQueryKeys).toUpperCase()}}
+								</view>
+								<view class="hotcakes" v-else>
 									<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
@@ -1286,8 +1289,8 @@
 		width: 1600rpx;
 		padding: 0 30rpx 30rpx;
 		position: absolute;
-		bottom: 60rpx;
-		right: 0;
+		bottom: -170rpx;
+		right: 97rpx;
 		padding-bottom: 40rpx;
 		animation: keyboard 0.5s ease;
 		-webkit-animation: keyboard 0.5s ease;
