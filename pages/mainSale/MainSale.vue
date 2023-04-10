@@ -33,8 +33,8 @@
 								<view class="classifys" v-show="mainSale.isDateClassify">
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
-										@click="mainSale.selectPlidChenged"
-										:data-plid="xplitem.plid">{{xplitem.plname}}</text>
+										@click="mainSale.selectPlidChenged" :data-plid="xplitem.plid"
+										v-if="xplitem.plarr.length>0">{{xplitem.plname}}</text>
 									<label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 									</label>
@@ -50,7 +50,7 @@
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"
-											v-show="mainSale.isDateClassify">
+											v-show="mainSale.isDateClassify&&plitem.plarr.length>0">
 											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
