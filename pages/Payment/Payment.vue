@@ -576,6 +576,8 @@
 				} else if (n === "HyJfExchange") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
 					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
+				} else if (n === "DouYinJK") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+					this.allowInput = true;
 				} else {
 					if (n === 'Others' || this.currentPayInfo.poly === "S") {
 						return;
@@ -1378,21 +1380,26 @@
 				console.log("[PayHandle]支付开始...", info);
 				this.in_payment = true; //必须放这里
 				_pay.PaymentAll(info.api, payAfter, (function(result) {
-						if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
-							this.CashOffset.Score = 0;
-							this.CashOffset.Money = 0;
+						try{
+							if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
+								this.CashOffset.Score = 0;
+								this.CashOffset.Money = 0;
+							}
+							console.log("[Payment-付款]支付结果：", result);
+							util.simpleMsg("支付成功!");
+							this.UpdateHyInfo(result.data); //更新会员信息
+							console.log("[PayHandle]auth_code清空！");
+							this.orderGenarator(payAfter, info.type, result.data, false, info, {
+								excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this
+									.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
+							}); //支付记录处理(成功)
+							console.log("[PayHandle]判断待支付金额是否为0...");
+							if (this.debt > 0) {
+								this.CanBack = false;
+							}
 						}
-						console.log("[Payment-付款]支付结果：", result);
-						util.simpleMsg("支付成功!");
-						this.UpdateHyInfo(result.data); //更新会员信息
-						console.log("[PayHandle]auth_code清空！");
-						this.orderGenarator(payAfter, info.type, result.data, false, info, {
-							excess: this.dPayAmount - this.debt <= 0 ? 0 : Number(this
-								.CountCashChange()?.toFixed(2)), //判断是否是过量支付 [支付金额] - [欠款]，把过量的钱存起来
-						}); //支付记录处理(成功)
-						console.log("[PayHandle]判断待支付金额是否为0...");
-						if (this.debt > 0) {
-							this.CanBack = false;
+						catch(e){
+							console.error("[PayHandle]发生异常:",e);
 						}
 						console.log("[PayHandle]执行默认操作（关闭支付加载框+清空auth_code）...");
 						this.operationAfterSinglePayment();
@@ -1400,14 +1407,19 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
-						console.log("[Payment-付款]支付失败！")
-						util.simpleModal("支付失败", error.msg);
-						console.log("[Payment-付款]包装信息:", {
-							assemble: payAfter,
-							type: info.type
-						});
-						this.orderGenarator(payAfter, info.type, null, true,
-							info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+						try{
+							console.log("[Payment-付款]支付失败！",error)
+							util.simpleModal("支付失败", error.msg);
+							console.log("[Payment-付款]包装信息:", {
+								assemble: payAfter,
+								type: info.type
+							});
+							this.orderGenarator(payAfter, info.type, null, true,
+								info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
+						}
+						catch(e){
+							console.error("[Payment-付款]发生异常:",e);
+						}
 						this.operationAfterSinglePayment();
 					}).bind(this),
 					(function(end) { //finally
@@ -1677,7 +1689,7 @@
 				this.PushToPaidList(trade);
 			},
 			IsSaveAuthCode: function(fkid) {
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO'].includes(i
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO', 'DouYinJK'].includes(i
 					.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
