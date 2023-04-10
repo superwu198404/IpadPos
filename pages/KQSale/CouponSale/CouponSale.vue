@@ -94,7 +94,7 @@
 			<view class="operation operation-correct">
 				<view class="sorting">
 					<view class="a-z">
-						<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
+						<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="coupon_segment_input">
 						</image>
 					</view>
 					<view class="a-z">
@@ -301,7 +301,7 @@
 			},
 		},
 		methods: {
-			showCardNumFunc: function() {
+			coupon_segment_input() {
 				if (common.CheckSign()) {
 					this.view.no_input = true
 				}
@@ -371,7 +371,7 @@
 						console.warn("[CouponSale]券号段物料号:", good_id);
 						return this.coupon_store_search(good_id);
 					} else {
-						util.simpleMsg("券信息查询有误!" + (res?.msg || ""), true)
+						util.simpleMsg("券信息查询有误!", true)
 					}
 				})).then($(function(res) {
 					console.log("[CouponSale]券库存校验:", res);
@@ -379,7 +379,7 @@
 					if (res.code && data?.length && data[0].CARDNUM != 0) {
 						return this.coupon_segment_valid();
 					} else {
-						util.simpleMsg("券库存校验有误，请检查是否在当前门店券库存!" + (res?.msg || ""), true)
+						util.simpleMsg("券库存校验有误，请检查是否在当前门店券库存!", true)
 					}
 				})).then($(async function(res) {
 					console.log("[CouponSale]券可发售号段校验:", res);

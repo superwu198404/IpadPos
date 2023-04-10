@@ -177,33 +177,22 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<!-- <Reserve style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_reserve"></Reserve> -->
-				<Extract style="position: absolute;z-index: 5;" key="1" :mode="true"
+				<Extract class="component-box" key="1" :mode="true"
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract style="position: absolute;z-index: 5;" key="2" :mode="false"
+				<Extract class="component-box" key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway style="position: absolute;z-index: 5;"
+				<TakeAway class="component-box"
 					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
-				<TakeYD style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_takeaway_reserve">
-				</TakeYD>
-				<OnlineOrders style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_online_order">
-				</OnlineOrders>
-				<OnlinePick style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
-				<Message style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_message">
-				</Message>
-				<RefundOrder style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_return_good">
-				</RefundOrder>
-				<SXRefund style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement style="position: absolute;z-index: 5;"
-					v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val">
-				</CreditSettlement>
-				<!-- <CouponSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_coupon">
-				</CouponSale>
-				<CardSale style="position: absolute;z-index: 5;" v-if="mainSale.ComponentsManage.sale_card">
-				</CardSale> -->
+				<TakeYD class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders class="component-box" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract">
+				</OnlinePick>
+				<Message class="component-box" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<RefundOrder class="component-box" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund class="component-box" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement"
+					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -1424,6 +1413,11 @@
 		50% {
 			background-color: transparent;
 		}
+	}
+
+	.component-box {
+		position: absolute;
+		z-index: 9999;
 	}
 
 	/* todo */

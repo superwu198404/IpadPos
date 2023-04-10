@@ -25,7 +25,7 @@
 									<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
 								</view>
 								<view class="sousuo" v-if="exit_btn" @click="Exit()">
-									<image src="@/images/shuaxin.png" mode="widthFix"></image>退出
+									<image src="@/images/tuichu.png" style="filter: grayscale(1)invert(1)brightness(30.5);" mode="widthFix"></image>退出
 								</view>
 							</view>
 						</view>

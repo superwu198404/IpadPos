@@ -1127,6 +1127,8 @@ var tiktokPay = {
 		Req.AsyncRequesrChain(CreateData(pt, "支付中...", "Payment", body), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[PaymentAll]第一次结果（Payment）:", res);
+				if(res.code && res.data.money)
+					body.money = res.data.money;
 				func?.call(null, res);
 				return res;
 			}

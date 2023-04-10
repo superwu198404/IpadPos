@@ -1129,7 +1129,7 @@
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
-					util.simpleMsg("已完成退款!");
+					util.simpleMsg(`已完成退款!${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}`);
 					this.CanBack = true;
 					this.RefundFinish = true;
 					this.CashRefundTips(); //现金退款提示
@@ -1283,7 +1283,8 @@
 					.length !== 0 && this.PayList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
 						let tip = that.actType == common.actTypeEnum.Refund ? "退款" : "支付";
-						util.simpleMsg(tip + "已完成！");
+						let refund_cash_tips = `${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}`;
+						util.simpleMsg(tip + `已完成！${that.actType == common.actTypeEnum.Refund ? refund_cash_tips : ""}`);
 						setTimeout(function() {
 							that.backPrevPage();
 						}, 1500);
@@ -2072,7 +2073,7 @@
 						});
 						this.event.emit("FinishOrder", {
 							code: true,
-							msg: this.isRefund ? `退款成功!${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}` : "支付完成!",
+							msg: this.isRefund ? `退款成功!` : "支付完成!",
 							data: {
 								sale1_obj: this.sale1_obj,
 								sale2_arr: this.sale2_arr,

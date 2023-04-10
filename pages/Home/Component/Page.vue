@@ -263,6 +263,10 @@
 			uni.$on('external-operation', $(function(callback) {
 				$(callback, false);
 			}))
+			uni.$off('reset-sales');
+			uni.$on('reset-sales', $(function() {
+				this.current_click_menu_name = "";
+			}))
 		}
 	}
 </script>
