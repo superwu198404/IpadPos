@@ -558,7 +558,7 @@
 					let type = this.PayTypeJudgment();
 					console.log("[watch-authCode]当前支付类型:", type);
 					this.currentPayInfo = this.PayWayList.find((i) => i.type ===
-					type); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
+						type); //每次支付后根据 authcode 判断支付方式并给 currentPayInfo
 					if (this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo; //储存包含聚合的支付信息
 				} else
 					this.currentPayInfo = null
@@ -1223,10 +1223,11 @@
 									auth_code: refundInfo.origin
 										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_company_id: this.SALES.sale1
-									.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_store_id: this.SALES.sale1
-									.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_area_id: this.SALES.sale1.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_area_id: this.SALES.sale1
+										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 									card_no: refundInfo.origin
 										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
@@ -1285,8 +1286,10 @@
 					.length !== 0 && this.PayList.filter(i => i.fail).length === 0 || is_success)
 					this.CreateDBData((res) => {
 						let tip = that.actType == common.actTypeEnum.Refund ? "退款" : "支付";
-						let refund_cash_tips = `${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}`;
-						util.simpleMsg(tip + `已完成！${that.actType == common.actTypeEnum.Refund ? refund_cash_tips : ""}`);
+						let refund_cash_tips =
+							`${ this.cash_sum ? `当前订单包含现金退款 ${this.cash_sum?.toFixed(2)} 元。` : ""}`;
+						util.simpleMsg(tip +
+							`已完成！${that.actType == common.actTypeEnum.Refund ? refund_cash_tips : ""}`);
 						setTimeout(function() {
 							that.backPrevPage();
 						}, 1500);
@@ -1380,7 +1383,7 @@
 				console.log("[PayHandle]支付开始...", info);
 				this.in_payment = true; //必须放这里
 				_pay.PaymentAll(info.api, payAfter, (function(result) {
-						try{
+						try {
 							if (this.currentPayType == 'HyJfExchange') { //判断当前是不是积分支付，如果是则扣除所有积分
 								this.CashOffset.Score = 0;
 								this.CashOffset.Money = 0;
@@ -1397,9 +1400,8 @@
 							if (this.debt > 0) {
 								this.CanBack = false;
 							}
-						}
-						catch(e){
-							console.error("[PayHandle]发生异常:",e);
+						} catch (e) {
+							console.error("[PayHandle]发生异常:", e);
 						}
 						console.log("[PayHandle]执行默认操作（关闭支付加载框+清空auth_code）...");
 						this.operationAfterSinglePayment();
@@ -1407,8 +1409,8 @@
 						console.log("[PayHandle]序号列表：", this.used_no);
 					}).bind(this),
 					(function(error) {
-						try{
-							console.log("[Payment-付款]支付失败！",error)
+						try {
+							console.log("[Payment-付款]支付失败！", error)
 							util.simpleModal("支付失败", error.msg);
 							console.log("[Payment-付款]包装信息:", {
 								assemble: payAfter,
@@ -1416,9 +1418,8 @@
 							});
 							this.orderGenarator(payAfter, info.type, null, true,
 								info); //支付记录处理(失败) 注：此记录为必须，因为有的单会因为请求超时判定为失败，所以这里的得记录这个支付信息，方便后续重试进行查询
-						}
-						catch(e){
-							console.error("[Payment-付款]发生异常:",e);
+						} catch (e) {
+							console.error("[Payment-付款]发生异常:", e);
 						}
 						this.operationAfterSinglePayment();
 					}).bind(this),
@@ -1689,7 +1690,9 @@
 				this.PushToPaidList(trade);
 			},
 			IsSaveAuthCode: function(fkid) {
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO', 'DouYinJK'].includes(i
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
+					'DouYinJK'
+				].includes(i
 					.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
@@ -2402,6 +2405,10 @@
 			//返回操作
 			Others_ReturnPay: function(e) {
 				this.ShowOthersPay = false;
+				//重置为聚合支付
+				this.is_poly = true;
+				this.currentPayType = "POLY";
+				this.currentSelectedInfo = null;
 			},
 			//确认操作
 			Others_ConfirmPay: function(e) {
