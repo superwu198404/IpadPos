@@ -2095,6 +2095,7 @@ function GetSale(global, vue, target_name, uni) {
 	//获取热销商品的列表
 	this.getHotSale = function() {
 		that.curHot = true;
+		that.Page.Alphabetical = false; //字母列表关闭
 		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
@@ -2141,7 +2142,6 @@ function GetSale(global, vue, target_name, uni) {
 				});
 				that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
 
-
 			})
 		}
 		console.log("请求的返回结果是啥" + JSON.stringify(hotSale).substr(0, 300));
@@ -2160,7 +2160,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.turnOffKeys()
 		that.classifyDate = []
 		that.notClassifyDate = []
-		this.Page.Alphabetical = !this.Page.Alphabetical;
+		this.Page.Alphabetical = !this.Page.Alphabetical; //字母列表开启和关闭
 	})
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
@@ -4246,6 +4246,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
 
+		this.Page.Alphabetical = false;//关闭字母列表
+		this.filterSp('A');
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
