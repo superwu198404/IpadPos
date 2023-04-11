@@ -80,7 +80,8 @@
 				</view>
 			</view>
 		</view>
-		<ReserveDrawer v-if="view.Details" :order="extract_order" @Close="CloseDrawer"></ReserveDrawer>
+		<!-- v-if="view.Details" :order="extract_order" @Close="CloseDrawer" -->
+		<ReserveDrawer ></ReserveDrawer>
 	</view>
 	<!-- </menu_content> -->
 	

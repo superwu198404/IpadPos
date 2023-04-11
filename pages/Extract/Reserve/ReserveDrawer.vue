@@ -23,7 +23,7 @@
 					</label>
 					<label>
 						<text>提货时间：</text>
-						<picker mode="time" fields="time" @change="ExtractTimeChange">
+						<picker mode="time" fields="time" :start="startTime" :end="endTime" @change="ExtractTimeChange">
 							<view>{{ ExtractTime }}</view>
 						</picker>
 					</label>
@@ -130,6 +130,7 @@
 			ExtractTime: function() {
 				return this.details.info.THDATE.split(' ')?.last();
 			},
+			
 			ShowFirstAddress: function() {
 				return util.callBind(this, function(address_id) {
 					return this.view.more ? true : (address_id === this.details.current);
@@ -138,6 +139,8 @@
 		},
 		data() {
 			return {
+				startTime:"08:00",
+				endTime:"22:00",
 				view: {
 					form: false,
 					add_address: false,
