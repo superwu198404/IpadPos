@@ -2398,10 +2398,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
 		//触发的放弃积分促销
-		if (e == 1)
+		if (e == 1){
 			this.score_info.ispoints = 0;
+			this.cxIsJFYC = false;
+		}
 		else{
-			if(this.score_info.ispoints <= 0)
+			if(this.score_info.ispoints == 0 && this.cxIsJFYC)
 				util.simpleMsg("暂无生效的积分促销", "none");
 		}
 		this.SaleNetAndDisc(e);
@@ -2462,6 +2464,7 @@ function GetSale(global, vue, target_name, uni) {
 	this.cxfsArr = [];
 	//是否有积分促销生效(不是满足)
 	this.cxIsJF = false;
+	this.cxIsJFYC = true;
 	//生效的促销活动集合
 	this.CXHDArr = [];
 	//生效的特殊折扣规则集合
