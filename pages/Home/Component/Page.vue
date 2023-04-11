@@ -150,7 +150,8 @@
 				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
 				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name ==
-					'sale_reserve_cancel' || menu_name == 'sale_reserve_extract') {//只有这四种模式（预定提取，预定取消，退单，赊销退单）需要预选定位
+					'sale_reserve_cancel' || menu_name == 'sale_credit_settlement' || menu_name == 'sale_reserve_extract'
+					) { //只有这五种模式（预定提取，预定取消，退单，赊销结算，赊销退单）需要预选定位
 					this.current_click_menu_name = menu_name;
 				} else {
 					this.current_click_menu_name = null;
