@@ -643,6 +643,7 @@ var InitKQSale = function(vue, uni, store, ywtype) {
 		sale008: [],
 		score_info: null,
 		paid: [],
+		ban_type: [],
 		action: '',
 		member: null,
 		complet: (res) => console.log("[RedirectToPayment]支付完成:", res)

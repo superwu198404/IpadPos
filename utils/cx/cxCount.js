@@ -95,7 +95,7 @@ const Cxdict = async () => {
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	
+
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -509,6 +509,10 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
+			//0:优先积分促销  1:放弃积分促销 校验
+			if (!isPointsCheck(cxbill, is_Points)) {
+				continue;
+			}
 			//促销时间校验
 			if (!ynpastCx(cxbill)) {
 				continue;
@@ -525,10 +529,6 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (!xsTypeCheck(cxbill, is_Xstype)) {
 				continue;
 			}
-			//0:优先积分促销  1:放弃积分促销 校验
-			if (!isPointsCheck(cxbill, is_Points)) {
-				continue;
-			}	
 			//判断会员积分促销，积分是否够扣除
 			if(!ynCxjfCheck(cxbill)){
 				continue;
@@ -690,9 +690,6 @@ const isPointsCheck = function(bill,isPoints) {
 			return false;
 		else 
 			return true;
-	}else {
-		is_JF = false;
-		return true;
 	}
 }
 
@@ -1400,8 +1397,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 								//计算最小积分上限
 								setHyjfUpleve(cx.upleave);
 								//计算积分上限是否满足条件
-								calculateJf(dsnum, jfnum, cx);
-								setHjInfo(cx, jfxs, dsnum, jfnum);
+								var res = calculateJf(dsnum, jfnum, cx);
+								// debugger;
+								setHjInfo(cx, jfxs, res[0], res[1]);
 							}
 							newprice = price;
 						} catch {
@@ -1427,8 +1425,9 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 								//计算最小积分上限
 								setHyjfUpleve(cx.upleave);
 								//计算积分上限是否满足条件
-								calculateJf(dsnum, jfnum, cx);
-								setHjInfo(cx, jfxs, dsnum, jfnum);
+								var res = calculateJf(dsnum, jfnum, cx);
+								// debugger;
+								setHjInfo(cx, jfxs, res[0], res[1]);
 								newprice = price;
 							} catch {
 
@@ -1510,6 +1509,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 
 //每次计算之前先设置会员积分上限
 const setHyjfUpleve = function(num) {
+	// debugger;
 	//会员信息
 	if (cx_util.DefaultNull(hymen, hymen.hyId) == "") {
 		return;
@@ -1542,6 +1542,7 @@ const setHyjfUpleve = function(num) {
 
 //计算本次活动可加积分和金额
 const calculateJf = function(dsnum, jfnum, cx) {
+	// debugger;
 	try {
 		//会员为null
 		if (cx_util.DefaultNull(hymen, hymen.hyId) == "") {
@@ -1562,7 +1563,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 		//当积分超过最小上限时
 		if ((cx.upleave > 0 && dqjf > jfinfo.upleve) || dqjf > tj) {
 			//取一个比较小的金额
-			let min = tj > cx.upleave ? cx.upleave : tj;
+			let min = (tj > cx.upleave && cx.upleave > 0) ? cx.upleave : tj;
 			//先取商，算出剩余积分还能发生几次该促销
 			let bs = parseInt(min - syjf) / parseInt(cx.syjf);
 			if (bs <= 0) {
@@ -1578,6 +1579,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 				jfnum = time * cx.syjf;
 			}
 		}
+		return [cx_util.nnvl(dsnum,0),cx_util.nnvl(jfnum,0)];
 	} catch (e) {
 
 	}
@@ -1585,6 +1587,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 
 //设置积分相关的信息
 const setHjInfo = function(cx, jfxs, net, jfnum) {
+	// debugger;
 	if (net == 0 || jfnum == 0) {
 		return;
 	}

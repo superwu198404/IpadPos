@@ -47,7 +47,7 @@
 			"ActivityId": "", 
 			"youzanId": "FhRDCTGa996921810022846464", 
 			"Balance": 97700, 
-			"JFBalance": "500000", 
+			"JFBalance": "300", 
 			"JFFactor": null, 
 			"Name": "", 
 			"NickName": "", 
@@ -105,13 +105,13 @@
 			
 			let sale02_arr1 = [
 				{
-				    "SPID": "000000001040200003",
-				    "SNAME": "笨笨猪",
+				    "SPID": "000000001010500014",
+				    "SNAME": "杨枝甘露冰面包",
 				    "QTY": 2,
-				    "OPRICE": 10,
+				    "OPRICE": 16.5,
 				    "DISCRATE": 0,
-				    "NET": 30,
-				    "PRICE": 10,
+				    "NET": 33,
+				    "PRICE": 16.5,
 				    "NO": 111
 				}
 				];

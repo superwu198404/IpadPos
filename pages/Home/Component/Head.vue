@@ -179,9 +179,8 @@
 			</view>
 			<!-- 大客户组件 -->
 			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
-			<!-- 业务消息组件 &&type!='kq_sale'-->
-			<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData">
-			</movable>
+			<!-- 业务消息组件-->
+			<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData"></movable>
 			<!-- 签到组件 -->
 			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 			<!-- 日结组件 -->

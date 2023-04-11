@@ -23,15 +23,18 @@
 						<!-- 大类循环 -->
 						<view class="commodity">
 							<view class="hh" style="padding-right:3.7%;">
-								<view class="hotcakes">
+								<view class="hotcakes" v-if="mainSale.classifyDate || mainSale.notClassifyDate">
+									搜索关键词: {{(mainSale.showQueryKeys).toUpperCase()}}
+								</view>
+								<view class="hotcakes" v-else>
 									<image src="../../images/dx-tqi.png" mode="widthFix"></image> 本店热销
 									<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 								</view>
 								<view class="classifys" v-show="mainSale.isDateClassify">
 									<text v-for="(xplitem, xplindex) in mainSale.selectFlagList"
 										:class="mainSale.selectPlid==xplitem.plid?'curr':''"
-										@click="mainSale.selectPlidChenged"
-										:data-plid="xplitem.plid">{{xplitem.plname}}</text>
+										@click="mainSale.selectPlidChenged" :data-plid="xplitem.plid"
+										v-if="xplitem.plarr.length>0">{{xplitem.plname}}</text>
 									<label>
 										<image src="../../images/jt-zhangkai.png" mode="widthFix"></image>
 									</label>
@@ -47,7 +50,7 @@
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
 											:class="mainSale.selectPlid==plitem.plid?'curr':''" class="h2"
-											v-show="mainSale.isDateClassify">
+											v-show="mainSale.isDateClassify&&plitem.plarr.length>0">
 											<text>{{plitem.plname}}</text>
 											<label></label>
 										</view>
@@ -429,7 +432,7 @@
 						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(mainSale.sale001.TBZDISC==0&&mainSale.sale001.TLSDISC==0&&mainSale.sale001.TTPDISC==0)"
+							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>
@@ -1286,8 +1289,8 @@
 		width: 1600rpx;
 		padding: 0 30rpx 30rpx;
 		position: absolute;
-		bottom: 60rpx;
-		right: 0;
+		bottom: -170rpx;
+		right: 97rpx;
 		padding-bottom: 40rpx;
 		animation: keyboard 0.5s ease;
 		-webkit-animation: keyboard 0.5s ease;

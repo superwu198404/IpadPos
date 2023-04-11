@@ -7,7 +7,7 @@
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;"></image>|
+							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;" @click="scan_code"></image>|
 							<input placeholder="输入手机号或账户" v-model="form.member_code" />
 						</view>
 						<view class="comfirm-btn" @click="search_member">确定</view>
@@ -212,6 +212,7 @@
 					if (data.code) {
 						this.form.card_track = data.data.track_info;
 						this.form.card_number = data.data.card_no;
+						this.search_card();
 						util.simpleMsg('卡信息查询成功!', false);
 					} else {
 						util.simpleMsg(data.msg, true);
@@ -221,7 +222,15 @@
 			reset_form() {
 				this.form = this.$options.data().form;
 				this.source = this.$options.data().source;
-			}
+			},
+			scan_code() {
+				uni.scanCode({
+					success: $(function(result) {
+						this.form.member_code = result.result;
+						this.search_member();
+					})
+				})
+			},
 		},
 		created() {
 			$ = util.callContainer(this);

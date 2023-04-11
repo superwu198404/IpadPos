@@ -1232,11 +1232,6 @@ var XsTypeObj = {
 				this.ComponentsManage["DKF"] = false;
 				return;
 			}
-			if (Object.keys(data).length == 0) {
-				uni.$emit("external-operation", function() {
-					this.SubmitMenuSelectEvent('sale', XsTypeObj.sale);
-				})
-			}
 			this.DKF.val = data;
 			console.log("当前大客户信息：", this.DKF.val);
 			uni.$emit('select-credit', data);
@@ -2007,6 +2002,7 @@ function GetSale(global, vue, target_name, uni) {
 		});
 		this.CXHDArr = []; //
 		this.ZKHDArr = []; //清除一下已生效的活动数据
+		this.cxIsJF = false;
 		this.score_info.money = 0;
 		this.score_info.score = 0;
 		this.score_info.ispoints = 0;
@@ -2099,12 +2095,12 @@ function GetSale(global, vue, target_name, uni) {
 	//获取热销商品的列表
 	this.getHotSale = function() {
 		that.curHot = true;
+		that.Page.Alphabetical = false; //字母列表关闭
 		//关闭键盘并清空分类数据
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
 		}
-		that.classifyDate = []
-		that.notClassifyDate = []
+		that.clearKeyDate()
 		that.turnOffKeys()
 		if (hotSale == null) {
 			let reqPosData = {
@@ -2133,6 +2129,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.createHotSaleSpList = function(pm_rethotsale) {
+		// console.log("热销入参：", pm_rethotsale);
 		if (hotSale == null) {
 			hotSale = pm_rethotsale;
 			hotSale.forEach(plitem => {
@@ -2143,12 +2140,10 @@ function GetSale(global, vue, target_name, uni) {
 						plitem.plarr.push(that.spidKeyVal[spitem.SPID])
 					};
 				});
-				that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
-
-
+				// that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
 			})
 		}
-		console.log("请求的返回结果是啥" + JSON.stringify(hotSale).substr(0, 300));
+		// console.log("请求的返回结果是啥",hotSale);
 
 		that.selectFlagList = hotSale;
 		if (that.selectFlagList.length > 0) {
@@ -2162,9 +2157,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.curHot = false;
 		//关闭键盘并清空分类数据
 		that.turnOffKeys()
-		that.classifyDate = []
-		that.notClassifyDate = []
-		this.Page.Alphabetical = !this.Page.Alphabetical;
+		this.Page.Alphabetical = !this.Page.Alphabetical; //字母列表开启和关闭
 	})
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
@@ -2522,8 +2515,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.boardQueryKeys = '';
 	this.showQueryKeys = '';
 	this.isDateClassify = true;
-	this.classifyDate = [];
-	this.notClassifyDate = [];
+	this.classifyDate = null;
+	this.notClassifyDate = null;
 	this.curHot = false; //是否是热销选品模式
 	//蛋糕预定商品集合
 	this.CakeList = [
@@ -2850,6 +2843,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!that.isDateClassify) {
 			that.isDateClassify = true
 		}
+		that.clearKeyDate()
 		var flagX = e.currentTarget.dataset.flag;
 		that.log("点击的字母！" + flagX);
 		that.filterSp.call(that, flagX);
@@ -2886,6 +2880,12 @@ function GetSale(global, vue, target_name, uni) {
 	this.turnOffKeys = function() {
 		that.Page.isKeyBoardShow = false
 		that.boardQueryKeys = ''
+		// that.showQueryKeys = ''
+	}
+	
+	this.clearKeyDate = function() {
+		that.classifyDate = null
+		that.notClassifyDate = null
 		that.showQueryKeys = ''
 	}
 	//键盘搜索是否分类
@@ -4249,7 +4249,13 @@ function GetSale(global, vue, target_name, uni) {
 		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
+		this.classifyDate = null;  //重置键盘数据
+		this.notClassifyDate = null;
+		this.showQueryKeys = ''; //清空键盘搜索词
+		this.isDateClassify = true; //默认展示分类数据
 
+		this.Page.Alphabetical = false; //关闭字母列表
+		this.filterSp('A'); //重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
