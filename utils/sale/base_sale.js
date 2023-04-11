@@ -2129,6 +2129,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	this.createHotSaleSpList = function(pm_rethotsale) {
+		// console.log("热销入参：", pm_rethotsale);
 		if (hotSale == null) {
 			hotSale = pm_rethotsale;
 			hotSale.forEach(plitem => {
@@ -2139,11 +2140,10 @@ function GetSale(global, vue, target_name, uni) {
 						plitem.plarr.push(that.spidKeyVal[spitem.SPID])
 					};
 				});
-				that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
-
+				// that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
 			})
 		}
-		console.log("请求的返回结果是啥" + JSON.stringify(hotSale).substr(0, 300));
+		// console.log("请求的返回结果是啥",hotSale);
 
 		that.selectFlagList = hotSale;
 		if (that.selectFlagList.length > 0) {
@@ -4253,8 +4253,8 @@ function GetSale(global, vue, target_name, uni) {
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
 
-		this.Page.Alphabetical = false;//关闭字母列表
-		this.filterSp('A');//重置商品集合 为A字母筛选
+		this.Page.Alphabetical = false; //关闭字母列表
+		this.filterSp('A'); //重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情

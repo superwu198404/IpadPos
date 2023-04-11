@@ -11,7 +11,7 @@
 				<view class="h1">录入券号<button class="close" @click="Cancel">×</button></view>
 				<view class="number">
 					<view class="labnum">
-						<text>开始卡号：</text>
+						<text>开始券号：</text>
 						<view class="label">
 							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"></image>
