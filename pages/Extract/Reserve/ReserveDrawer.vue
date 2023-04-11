@@ -23,7 +23,7 @@
 					</label>
 					<label>
 						<text>提货时间：</text>
-						<picker mode="time" fields="time" :start="startTime" :end="endTime" @change="ExtractTimeChange">
+						<picker mode="time" fields="time" start="07:01" end="22:01" @change="ExtractTimeChange">
 							<view>{{ ExtractTime }}</view>
 						</picker>
 					</label>
@@ -139,8 +139,6 @@
 		},
 		data() {
 			return {
-				startTime:"08:00",
-				endTime:"22:00",
 				view: {
 					form: false,
 					add_address: false,
