@@ -90,7 +90,10 @@
 				<view class="pay-sum">
 					<view class="settleds">
 						<view class="paymentlist">
-							<h3 v-if="!isRefund">已结算<button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
+							<h3 v-if="!isRefund">已结算<button
+									v-if="!isRefund&&PayWayList.find(i=>i.fkid=='1001'&&i.yn_use=='Y')"
+									@click="ShowCoupon()">+ 可用券</button>
+							</h3>
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists yjs">
 									<view class="Methods"
@@ -132,7 +135,7 @@
 								</view>
 							</view>
 							<!-- 退款 -->
-							<h3 v-if="isRefund">已退款 <button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
+							<h3 v-if="isRefund">已退款</h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
