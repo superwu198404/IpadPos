@@ -1220,8 +1220,7 @@
 											.amount) * 100))
 										.toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
-									auth_code: refundInfo.origin
-										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									auth_code: refundInfo.origin.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_company_id: this.SALES.sale1
 										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_store_id: this.SALES.sale1
@@ -1229,8 +1228,8 @@
 									original_area_id: this.SALES.sale1
 										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
-									card_no: refundInfo.origin
-										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									card_no: refundInfo.origin.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									deviceno: refundInfo.origin.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
 									ywtype: this
 										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 								}, (function(err) { //如果发生异常（catch）
@@ -1665,7 +1664,8 @@
 							payload
 							.point_money?.toFixed(2),
 						fail,
-						card_no: result.open_id ?? result.transaction_id,
+						card_no: result.open_id ?? result.transaction_id,//抖音券核销撤销字段：certificate_id
+						auth: result.transaction_id,//抖音券核销撤销字段：verify_id
 						no: payload.no,
 						excess: excess_amount, //找零金额
 					}, result, type_info));

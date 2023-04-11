@@ -1280,8 +1280,6 @@ var XsTypeObj = {
 		},
 		$initSale: function(params) {
 			console.log("[InitSale]当前业务:", this.current_type);
-			this.mode_info.sale_credit_settlement.new_bill = this.getBill();
-			console.log("[InitSale]赊销结算生成单号:", this.mode_info.sale_credit_settlement.new_bill);
 			console.log("[InitSale]赊销结算单据信息:", params);
 			this.actType = common.actTypeEnum.Payment;
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
@@ -1294,6 +1292,8 @@ var XsTypeObj = {
 				sale003: this.sale003
 			}, common.actTypeEnum.Payment);
 			this.ShowStatement();
+			this.mode_info.sale_credit_settlement.new_bill = this.sale001.BILL;
+			console.log("[InitSale]赊销结算生成单号:", this.mode_info.sale_credit_settlement.new_bill);
 			this.additional['YWSXJS'] = params.ywsxjs;
 			this.additional['YWSXJSMX'] = params.ywsxjsmx;
 			console.log("[InitSale]赊销结算附加表生成:", this.additional);
@@ -3413,7 +3413,7 @@ function GetSale(global, vue, target_name, uni) {
 			console.warn("[PayedResult]结算模式信息获取:", this.current_type);
 			if (this.current_type.clickType == 'sale_credit_settlement') {
 				bill = this.mode_info.sale_credit_settlement.new_bill;
-				console.log("[PayedResult]赊销结算模式...");
+				console.log("[PayedResult]赊销结算模式...", this.mode_info.sale_credit_settlement.new_bill);
 			} else {
 				bill = this.sale001.BILL;
 				console.log("[PayedResult]其他结算模式...");
