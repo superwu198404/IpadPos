@@ -363,7 +363,7 @@
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import _payment from '@/api/business/payment.js';
-	
+
 	var that, is_log = true;
 	var log = console.log;
 	export default {
@@ -1923,8 +1923,7 @@
 						this.out_trade_no_old = prev_page_param.sale1_obj.BILL; //单号初始化（原单号）
 						this.out_trade_no = this.out_trade_no_old; //子单号（首次进入赋值）
 						this.PaymentInfos.PayList = prev_page_param?.PayList; //已支付的支付数据（某些业务下存在已支付的数据）
-						this
-							.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
+						this.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
 					} else { //退款
 						this.isRefund = true;
 						this.out_refund_no = prev_page_param.sale1_obj.BILL; //退款单号初始化
@@ -2436,7 +2435,9 @@
 			this.paramInit();
 			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0)
 				await common.GetZFRULE(); //初始化支付规则（如果没有的话）
-			await _payment.GetTKRelation(); //获取券退款fkid 映射方式
+				console.log("支付类型：",this.actType);
+			if (this.actType != common.actTypeEnum.Payment) //退款才获取
+				await _payment.GetTKRelation(); //获取券退款fkid 映射方式
 		},
 		mounted() {}
 	}
