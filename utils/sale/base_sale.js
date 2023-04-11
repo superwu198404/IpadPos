@@ -1243,9 +1243,9 @@ var XsTypeObj = {
 		xstype: "7",
 		clickType: "sale_credit_settlement",
 		nameSale: "赊销结算",
-		icon_open: require("@/images/sxtd.png"),
-		icon_close: require("@/images/sxtd-wxz.png"),
-		icon_guodu: require("@/images/xstd-lvv.png"),
+		icon_open: require("@/images/shexiaojs.png"),
+		icon_close: require("@/images/shexiaojs-wxz.png"),
+		icon_guodu: require("@/images/shexiaojs-lvv.png"),
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
@@ -2400,6 +2400,10 @@ function GetSale(global, vue, target_name, uni) {
 		//触发的放弃积分促销
 		if (e == 1)
 			this.score_info.ispoints = 0;
+		else{
+			if(this.score_info.ispoints <= 0)
+				util.simpleMsg("暂无生效的积分促销", "none");
+		}
 		this.SaleNetAndDisc(e);
 	});
 	//*End* 自定义方法结束
@@ -4249,6 +4253,10 @@ function GetSale(global, vue, target_name, uni) {
 		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
+		this.classifyDate = null;  //重置键盘数据
+		this.notClassifyDate = null;
+		this.showQueryKeys = ''; //清空键盘搜索词
+		this.isDateClassify = true; //默认展示分类数据
 
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.filterSp('A'); //重置商品集合 为A字母筛选

@@ -347,8 +347,8 @@
 
 	.info-data-row {
 		display: flex;
-		gap: 15px;
-		padding: 5rpx 0rpx;
+		line-height: 54rpx;
+		font-size: 28rpx;
 	}
 
 	.info-data-row>* {
@@ -422,6 +422,11 @@
 	.gray-text label {
 		width: 49%;
 		display: inline-block;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis; 
+		line-height: 54rpx;
+		font-size: 28rpx;
 	}
 
 	.card-info-head {

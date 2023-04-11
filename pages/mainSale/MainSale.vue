@@ -421,18 +421,18 @@
 							<view>
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
-								<button class="btn" v-else @click="mainSale.MemberLogin(1)">未登录...</button>
+								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员未登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
 									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
 								</view>
 							</view>
 						</label>
-						<text class="fangqi" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints"
+						<text class="fangqi" v-if="mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
-						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
+						<text class="youxian" v-else
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val)"
+							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val.ZKType)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>

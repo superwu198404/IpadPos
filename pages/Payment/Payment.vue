@@ -90,7 +90,10 @@
 				<view class="pay-sum">
 					<view class="settleds">
 						<view class="paymentlist">
-							<h3 v-if="!isRefund">已结算<button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
+							<h3 v-if="!isRefund">已结算<button
+									v-if="!isRefund&&PayWayList.find(i=>i.fkid=='1001'&&i.yn_use=='Y')"
+									@click="ShowCoupon()">+ 可用券</button>
+							</h3>
 							<view class="sets-list" v-if="!isRefund">
 								<view class="paylists yjs">
 									<view class="Methods"
@@ -132,7 +135,7 @@
 								</view>
 							</view>
 							<!-- 退款 -->
-							<h3 v-if="isRefund">已退款 <button v-if="!isRefund" @click="ShowCoupon()">+ 可用券</button></h3>
+							<h3 v-if="isRefund">已退款</h3>
 							<view class="sets-list refund" v-if="isRefund">
 								<view class="paylists">
 									<view class="Methods"
@@ -359,6 +362,8 @@
 	} from '@/bll/PaymentAll/bll.js'
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
+	import _payment from '@/api/business/payment.js';
+
 	var that, is_log = true;
 	var log = console.log;
 	export default {
@@ -728,7 +733,18 @@
 					return util.hidePropety(obj, "NAME");
 				}).bind(this));
 				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
+				let arr = util.getStorage("FKJHQTK");
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
+					let fkid = item.fkid; //兼容旧版 支付或者退款 均取旧值
+					if (this.isRefund && arr && arr.length > 0) { //处理新版券退款方式映射
+						let obj = arr.find(r => {
+							return r.old_fkid == item.fkid
+						});
+						console.log("匹配到的退款方式映射数据：", obj);
+						if (obj) {
+							fkid = obj.new_fkid;
+						}
+					}
 					return util.hidePropety({
 						BILL: sale1.BILL, //主单号，注：订单号为 BILL+ _ + NO,类似于 10010_1
 						SALEDATE: sale1.SALEDATE,
@@ -736,7 +752,7 @@
 						KHID: sale1.KHID,
 						POSID: sale1.POSID,
 						NO: item.no, //付款序号
-						FKID: item.fkid, //付款类型id
+						FKID: fkid, //付款类型id
 						AMT: this.isRefund ? -(Number(item.amount)) : item.amount, //付款金额(退款记录为负额)
 						ID: this.isRefund ? (item.origin?.ID || "") : item.card_no, //卡号或者券号
 						RYID: sale1.RYID, //人员
@@ -807,20 +823,20 @@
 					return;
 					//从这开始中止 后续处理在外部进行
 					//生成执行sql
-					let exeSql = this.orderSQLGenarator();
-					let dbo = db.get();
-					console.log("sqlite待执行sql:", exeSql);
-					await dbo.close();
-					dbo.executeDml(exeSql, "订单创建中", (function(res) {
-						if (func) func(res);
-						this.complete = true;
-						console.log("订单创建成功：", res);
-						util.simpleMsg("销售单创建成功");
+					// let exeSql = this.orderSQLGenarator();
+					// let dbo = db.get();
+					// console.log("sqlite待执行sql:", exeSql);
+					// await dbo.close();
+					// dbo.executeDml(exeSql, "订单创建中", (function(res) {
+					// 	if (func) func(res);
+					// 	this.complete = true;
+					// 	console.log("订单创建成功：", res);
+					// 	util.simpleMsg("销售单创建成功");
 
-					}).bind(this), function(err) {
-						console.log("订单创建失败：", err);
-						util.simpleMsg("销售单创建失败", false);
-					});
+					// }).bind(this), function(err) {
+					// 	console.log("订单创建失败：", err);
+					// 	util.simpleMsg("销售单创建失败", false);
+					// });
 				}
 			},
 			//使用的 单号 判断（支付单号、退款单号）
@@ -1295,28 +1311,28 @@
 						//后续处理转移到销售页面处理
 						return;
 						//销售单单创建成功后 上传一下数据
-						let bill = (that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
-							.out_trade_no_old);
-						common.TransLiteData(bill);
-						that.scoreConsume();
-						//调用打印
-						let arr2 = that.sale2_arr;
-						arr2.forEach(function(item, index) {
-							let obj = that.Products.find((i) => {
-								return i.SPID == item.SPID;
-							})
-							if (obj) {
-								item.SNAME = obj.NAME;
-							}
-						})
-						let arr3 = that.sale3_arr;
-						arr3.forEach(function(item, index) {
-							let obj = that.PayWayList.find((i) => {
-								return i.fkid == item.FKID;
-							})
-							item.SNAME = obj.name;
-						})
-						that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
+						// let bill = (that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
+						// 	.out_trade_no_old);
+						// common.TransLiteData(bill);
+						// that.scoreConsume();
+						// //调用打印
+						// let arr2 = that.sale2_arr;
+						// arr2.forEach(function(item, index) {
+						// 	let obj = that.Products.find((i) => {
+						// 		return i.SPID == item.SPID;
+						// 	})
+						// 	if (obj) {
+						// 		item.SNAME = obj.NAME;
+						// 	}
+						// })
+						// let arr3 = that.sale3_arr;
+						// arr3.forEach(function(item, index) {
+						// 	let obj = that.PayWayList.find((i) => {
+						// 		return i.fkid == item.FKID;
+						// 	})
+						// 	item.SNAME = obj.name;
+						// })
+						// that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
 
 					});
 			},
@@ -1907,8 +1923,7 @@
 						this.out_trade_no_old = prev_page_param.sale1_obj.BILL; //单号初始化（原单号）
 						this.out_trade_no = this.out_trade_no_old; //子单号（首次进入赋值）
 						this.PaymentInfos.PayList = prev_page_param?.PayList; //已支付的支付数据（某些业务下存在已支付的数据）
-						this
-							.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
+						this.PayDataHandle(); //处理上个页面传入的支付数据-> sale初始化，sale1:依赖传入，sale2:依赖 Product，sale3:依赖 PayList
 					} else { //退款
 						this.isRefund = true;
 						this.out_refund_no = prev_page_param.sale1_obj.BILL; //退款单号初始化
@@ -2088,7 +2103,7 @@
 						});
 						this.event.emit("FinishOrder", {
 							code: true,
-							msg: this.isRefund ? `退款成功!` : "支付完成!",
+							msg: this.isRefund ? "退款成功!" : "支付完成!",
 							data: {
 								sale1_obj: this.sale1_obj,
 								sale2_arr: this.sale2_arr,
@@ -2418,8 +2433,11 @@
 		async created() {
 			console.log("进入created方法");
 			this.paramInit();
-			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0) await common
-				.GetZFRULE(); //初始化支付规则（如果没有的话）
+			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0)
+				await common.GetZFRULE(); //初始化支付规则（如果没有的话）
+				console.log("支付类型：",this.actType);
+			if (this.actType != common.actTypeEnum.Payment) //退款才获取
+				await _payment.GetTKRelation(); //获取券退款fkid 映射方式
 		},
 		mounted() {}
 	}

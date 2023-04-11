@@ -7,7 +7,9 @@
 	<view class="content">
 		<view class="right">
 			<view class="listof">
-				<view class="prolist">
+				<view class="bkjb">
+					<view class="neik">
+					<view class="prolist">
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
@@ -50,6 +52,8 @@
 								</view>
 							</view>
 						</view>
+					</view>
+					</view>
 					</view>
 				</view>
 			</view>
@@ -265,9 +269,11 @@
 		border-radius: 30rpx;
 		padding: 0 18rpx;
 		height: 48rpx;
+		line-height:48rpx;
 		background-color: #006B44;
 		color: #fff;
 		align-items: center;
 		margin-left: 10px;
+		font-size: 26rpx;
 	}
 </style>
