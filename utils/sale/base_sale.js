@@ -4249,6 +4249,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
+		this.classifyDate = null;  //重置键盘数据
+		this.notClassifyDate = null;
+		this.showQueryKeys = ''; //清空键盘搜索词
 
 		this.Page.Alphabetical = false;//关闭字母列表
 		this.filterSp('A');//重置商品集合 为A字母筛选
