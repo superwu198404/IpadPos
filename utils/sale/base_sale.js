@@ -1243,9 +1243,9 @@ var XsTypeObj = {
 		xstype: "7",
 		clickType: "sale_credit_settlement",
 		nameSale: "赊销结算",
-		icon_open: require("@/images/sxtd.png"),
-		icon_close: require("@/images/sxtd-wxz.png"),
-		icon_guodu: require("@/images/xstd-lvv.png"),
+		icon_open: require("@/images/shexiaojs.png"),
+		icon_close: require("@/images/shexiaojs-wxz.png"),
+		icon_guodu: require("@/images/shexiaojs-lvv.png"),
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
