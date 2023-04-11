@@ -427,9 +427,9 @@
 								</view>
 							</view>
 						</label>
-						<text class="fangqi" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints"
+						<text class="fangqi" v-if="mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
-						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints==0"
+						<text class="youxian" v-else
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
 							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val.ZKType)"

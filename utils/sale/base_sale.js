@@ -2400,6 +2400,10 @@ function GetSale(global, vue, target_name, uni) {
 		//触发的放弃积分促销
 		if (e == 1)
 			this.score_info.ispoints = 0;
+		else{
+			if(this.score_info.ispoints <= 0)
+				util.simpleMsg("暂无生效的积分促销", "none");
+		}
 		this.SaleNetAndDisc(e);
 	});
 	//*End* 自定义方法结束
