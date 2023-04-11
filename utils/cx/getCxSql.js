@@ -25,7 +25,7 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 		let cxformd001_sql = "SELECT C1.KHID,C1.BILL,C1.YN_ZD,C1.YN_JSLB,C1.CXRY,C1.HYLV,C1.CXZT,C1.CX_WEEK,C1.SDATE,C1.EDATE,C1.YN_TIME,\
 							 C1.STIME1,C1.ETIME1,C1.STIME2,C1.ETIME2,C1.STIME3,C1.ETIME3,C1.NOTFKID,C1.BILL_STATUS,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END)AS ZKLQTY,C1.JFSX\
 							 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" + storeid + "' and C1.YN_JSLB!='F'\
-							 AND C1.SDATE<= DATETIME('" + dateTime + "') AND C1.EDATE>= DATETIME('" + dateTime + "')  AND  C1.cxzt like  '%" + cxkey + "%' order by C1.YN_ZD desc,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
+							 AND C1.SDATE<= DATETIME('" + dateTime + "') AND C1.EDATE>= DATETIME('" + dateTime + "')  AND  C1.cxzt like  '%" + cxkey + "%' order by C1.YN_ZD desc,(CASE WHEN C1.YN_JSLB='D' THEN 2 WHEN C1.YN_JSLB='G' THEN 1 ELSE 0 END) desc,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 		await db.get().executeQry(cxformd001_sql, "执行中", function(res1) {
 			// console.warn(cxformd001_sql + "cxformd001_sql执行结果", res1.msg);
 			cxformd001_arr = res1.msg;

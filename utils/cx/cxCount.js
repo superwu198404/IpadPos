@@ -656,6 +656,7 @@ const ynjsCxforHy = function(bill) {
 			case "all":
 				return true;
 			case "Hy":
+				is_JF = true;
 				return true;
 			case "Nhy":
 				return false;
