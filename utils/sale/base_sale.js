@@ -4252,6 +4252,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.classifyDate = null;  //重置键盘数据
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
+		this.isDateClassify = true; //默认展示分类数据
 
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.filterSp('A'); //重置商品集合 为A字母筛选
