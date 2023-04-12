@@ -1,3 +1,4 @@
+
 <template>
 	<view class="bind-card-container">
 		<h3 class="bind-card-title">绑卡信息</h3>
@@ -81,7 +82,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="bind-card-footer">
+		<view class="bind-card-footer totals">
 			<view>
 				<em></em>
 				<label>绑定账户：<text>{{ source.member_infos.hyId || '暂无' }}</text></label>
@@ -504,7 +505,7 @@
 	}
 
 	.bind-card-footer>.btn {
-		font-size: 24rpx;
+		font-size: 28rpx;
 		height: 100%;
 		line-height: 50rpx;
 		padding: 0;
@@ -512,6 +513,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		background: #40b04d;
+		color: #fff;
 	}
 
 	.bind-card-footer view {
