@@ -2163,10 +2163,7 @@ function GetSale(global, vue, target_name, uni) {
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
 		that.curHot = false;
-		if (this.Page.Alphabetical === true) {
-			util.simpleMsg("当前模式不允许搜索", "none");
-			return;
-		}
+		this.Page.Alphabetical = false  //关闭首字母搜索
 		this.Page.isKeyBoardShow = true
 	})
 	//*func*展开商品编辑
