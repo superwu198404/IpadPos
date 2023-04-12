@@ -501,14 +501,12 @@
 	}
 
 	.bind-card-footer>.btn {
-		font-size: 28rpx;
-		height: 100%;
-		line-height: 50rpx;
-		padding: 0;
-		width: 340rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		width:340rpx;
+		border-radius: 10rpx 0 10rpx 10rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		padding:0;
+		font-size: 32rpx;
 		background: #40b04d;
 		color: #fff;
 	}
