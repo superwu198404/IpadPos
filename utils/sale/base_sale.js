@@ -2000,6 +2000,7 @@ function GetSale(global, vue, target_name, uni) {
 			r.LSDISC = 0; //zk
 			r.TPDISC = 0; //zk
 		});
+		this.cxfsArr = [];
 		this.CXHDArr = []; //
 		this.ZKHDArr = []; //清除一下已生效的活动数据
 		this.cxIsJF = false;
@@ -2162,10 +2163,7 @@ function GetSale(global, vue, target_name, uni) {
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
 		that.curHot = false;
-		if (this.Page.Alphabetical === true) {
-			util.simpleMsg("当前模式不允许搜索", "none");
-			return;
-		}
+		this.Page.Alphabetical = false  //关闭首字母搜索
 		this.Page.isKeyBoardShow = true
 	})
 	//*func*展开商品编辑
@@ -2398,13 +2396,13 @@ function GetSale(global, vue, target_name, uni) {
 	this.CalScore = util.callBind(this, function(e) {
 		console.log("是否要积分促销", e);
 		//触发的放弃积分促销
-		if (e == 1){
+		if (e == 1) {
 			this.score_info.ispoints = 0;
 			this.cxIsJFYC = false;
-		}
-		else{
-			if(this.score_info.ispoints == 0 && this.cxIsJFYC)
+		} else {
+			if (this.score_info.ispoints == 0 && this.cxIsJFYC)
 				util.simpleMsg("暂无生效的积分促销", "none");
+			this.cxIsJFYC = true;				
 		}
 		this.SaleNetAndDisc(e);
 	});
@@ -2460,6 +2458,8 @@ function GetSale(global, vue, target_name, uni) {
 		communication: false, //通讯
 		tickers: false //重打小票
 	}
+	//本次是否有促销产生 不受清除促销影响
+	this.hasCX = false;
 	//促销跟踪
 	this.cxfsArr = [];
 	//是否有积分促销生效(不是满足)
@@ -2889,7 +2889,7 @@ function GetSale(global, vue, target_name, uni) {
 		that.boardQueryKeys = ''
 		// that.showQueryKeys = ''
 	}
-	
+
 	this.clearKeyDate = function() {
 		that.classifyDate = null
 		that.notClassifyDate = null
@@ -3965,6 +3965,7 @@ function GetSale(global, vue, target_name, uni) {
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
 			this.BanPayType(response?.cxfs); //收集禁止的支付id
 			this.cxfsArr = response?.cxfs; //促销跟踪
+			this.hasCX = (response?.cxfs.length > 0); //是否有促销生效
 			this.cxIsJF = response?.isjf; //是否有积分促销生效(不是满足)
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
@@ -4058,7 +4059,7 @@ function GetSale(global, vue, target_name, uni) {
 			})
 			this.score_info.money = money_total;
 			this.score_info.score = score_total;
-			this.score_info.ispoints = ispoints;
+			this.score_info.ispoints = score_total;
 			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
 		} else
 			console.warn("[ScoreCount]list值无效!");
@@ -4239,6 +4240,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.FZCX.cval = {};
 		this.cxfsArr = [];
 		this.cxIsJF = false;
+		this.hasCX = false;
 		this.CXHDArr = [];
 		this.ZKHDArr = [];
 		this.bill = null;
@@ -4256,7 +4258,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.additional = {};
 		this.communication_for_oracle = [];
 		this.communication_for_sqlite = [];
-		this.classifyDate = null;  //重置键盘数据
+		this.classifyDate = null; //重置键盘数据
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
 		this.isDateClassify = true; //默认展示分类数据

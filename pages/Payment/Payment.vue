@@ -283,9 +283,9 @@
 				</view>
 				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
-					<view :class="PayMode=='93'?'curr':' '" @click="PayMode='93'">银行合作</view>
-					<view :class="PayMode=='95'?'curr':' '" @click="PayMode='95'">异业合作</view>
-					<view :class="PayMode=='98'?'curr':' '" @click="PayMode='98'">其他方式</view>
+					<view :class="PayMode=='93'?'curr':' '" @click="ChangePayMode('93')">银行合作</view>
+					<view :class="PayMode=='95'?'curr':' '" @click="ChangePayMode('95')">异业合作</view>
+					<view :class="PayMode=='98'?'curr':' '" @click="ChangePayMode('98')">其他方式</view>
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
@@ -933,36 +933,36 @@
 						if (!this.PAD_SCAN) { //是否扫码枪扫码
 							this.showSMQ = true; //启动扫码框组件
 							return;
-							uni.showModal({
-								content: "请使用扫码枪扫码",
-								editable: true,
-								confirmText: "确认",
-								cancelText: "取消",
-								success: (function(res) {
-									console.log("回调结果：", res);
-									if (res.confirm) {
-										if (res.content) {
-											this.authCode = res.content; //获取扫码的 authCode
-											let current_pay_info = this.PayWayInfo(this
-												.PayTypeJudgment());
-											console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
-											console.log("[Pay]authCode:", this.authCode);
-											console.log("[Pay]支付信息：", {
-												current_pay_info,
-												pay_type: this.currentPayType
-											});
-											if (Object.keys(current_pay_info).length &&
-												current_pay_info
-												.poly != 'Y' && this.currentPayType == 'POLY') {
-												util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
-												this.authCode = "";
-												return;
-											}
-											that.PayHandle();
-										}
-									}
-								}).bind(this)
-							})
+							// uni.showModal({
+							// 	content: "请使用扫码枪扫码",
+							// 	editable: true,
+							// 	confirmText: "确认",
+							// 	cancelText: "取消",
+							// 	success: (function(res) {
+							// 		console.log("回调结果：", res);
+							// 		if (res.confirm) {
+							// 			if (res.content) {
+							// 				this.authCode = res.content; //获取扫码的 authCode
+							// 				let current_pay_info = this.PayWayInfo(this
+							// 					.PayTypeJudgment());
+							// 				console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
+							// 				console.log("[Pay]authCode:", this.authCode);
+							// 				console.log("[Pay]支付信息：", {
+							// 					current_pay_info,
+							// 					pay_type: this.currentPayType
+							// 				});
+							// 				if (Object.keys(current_pay_info).length &&
+							// 					current_pay_info
+							// 					.poly != 'Y' && this.currentPayType == 'POLY') {
+							// 					util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
+							// 					this.authCode = "";
+							// 					return;
+							// 				}
+							// 				that.PayHandle();
+							// 			}
+							// 		}
+							// 	}).bind(this)
+							// })
 						} else {
 							uni.scanCode({
 								success: (function(res) {
@@ -1265,7 +1265,8 @@
 											.amount) * 100))
 										.toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
-									auth_code: refundInfo.origin.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									auth_code: refundInfo.origin
+										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_company_id: this.SALES.sale1
 										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 									original_store_id: this.SALES.sale1
@@ -1273,8 +1274,10 @@
 									original_area_id: this.SALES.sale1
 										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
-									card_no: refundInfo.origin.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
-									deviceno: refundInfo.origin.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
+									card_no: refundInfo.origin
+										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									deviceno: refundInfo.origin
+										.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
 									ywtype: this
 										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 								}, (function(err) { //如果发生异常（catch）
@@ -1590,6 +1593,9 @@
 			operationAfterSinglePayment: function() {
 				this.in_payment = false;
 				this.authCode = ""; //避免同一个付款码多次使用
+				
+				//重置到聚合
+				this.Others_ReturnPay();
 			},
 			/* 支付后创建支付记录
 			 * 参数：
@@ -1709,8 +1715,8 @@
 							payload
 							.point_money?.toFixed(2),
 						fail,
-						card_no: result.open_id ?? result.transaction_id,//抖音券核销撤销字段：certificate_id
-						auth: result.transaction_id,//抖音券核销撤销字段：verify_id
+						card_no: result.open_id ?? result.transaction_id, //抖音券核销撤销字段：certificate_id
+						auth: result.transaction_id, //抖音券核销撤销字段：verify_id
 						no: payload.no,
 						excess: excess_amount, //找零金额
 					}, result, type_info));
@@ -2088,9 +2094,10 @@
 					e
 				});
 				if (r == 'Others') { //点击其他支付
+					console.log("展示其他方式");
 					this.ShowOthersPay = true;
 					this.currentPayType = r;
-					console.log("展示其他方式");
+					this.ChangePayMode('93'); //默认展示第一个可用
 					return;
 				}
 				// if(!e.currentTarget.id) return;
@@ -2215,6 +2222,18 @@
 					} else {
 						util.simpleMsg("订单已完成支付");
 					}
+				}
+			},
+			//切换支付方式
+			ChangePayMode: function(e) {
+				this.PayMode = e;
+				//默认选中第一个
+				let payObj = this.PayWayList.find(i => i.poly == 'S' && i.yn_use == 'Y' && i.fkid_f == e);
+				if (payObj) {
+					console.log("当前支付方式：", payObj);
+					this.is_poly = false;
+					this.currentPayType = payObj.type;
+					this.currentSelectedInfo = payObj;
 				}
 			},
 			//切换-退款和支付
@@ -2464,7 +2483,7 @@
 			this.paramInit();
 			if (!app.globalData?.CodeRule || Object.keys(app.globalData?.CodeRule) === 0)
 				await common.GetZFRULE(); //初始化支付规则（如果没有的话）
-				console.log("支付类型：",this.actType);
+			console.log("支付类型：", this.actType);
 			if (this.actType != common.actTypeEnum.Payment) //退款才获取
 				await _payment.GetTKRelation(); //获取券退款fkid 映射方式
 		},
