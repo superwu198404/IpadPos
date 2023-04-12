@@ -170,7 +170,7 @@
 								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 							</label>
 							<label class="shijian">{{displayBlueTime(item.deviceId,item.name)}}</label>
-							<button v-if="isLink[index] == 0 && deviceId != item.deviceId">连接</button><button
+							<button v-if="isLink[index] == 0 && (deviceId != item.deviceId)">连接</button><button
 								class="b_has"
 								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
 						</view>
@@ -250,13 +250,13 @@
 				isLink: [],
 				connTime: dateformat.getYMDS(),
 				connList: [], //用于记录连接设备、连接时间
+				deviceId: "",
 				urgenMsg: {}, //紧急信息
 				viewTime: 5, //默认5s
 				intervalId: null,
 				showYWMsg: false,
 				ynDKF: true,
 				YN_SX: false, //是否赊销
-				deviceId: getApp().globalData.BLEInformation.deviceId,
 			};
 		},
 		computed: {
