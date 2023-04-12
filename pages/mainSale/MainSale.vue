@@ -429,10 +429,11 @@
 						</label>
 						<text class="fangqi" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints"
 							@click="mainSale.CalScore(1)">放弃积分促销</text>
-						<text class="youxian" v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints<=0&&!mainSale.cxIsJFYC"
+						<text class="youxian"
+							v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints<=0&&!mainSale.cxIsJFYC"
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val.ZKType)"
+							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val.ZKType&&mainSale.hasCX)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>
