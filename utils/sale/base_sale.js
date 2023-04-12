@@ -2405,6 +2405,7 @@ function GetSale(global, vue, target_name, uni) {
 		else{
 			if(this.score_info.ispoints == 0 && this.cxIsJFYC)
 				util.simpleMsg("暂无生效的积分促销", "none");
+			this.cxIsJFYC = true;				
 		}
 		this.SaleNetAndDisc(e);
 	});
@@ -4058,7 +4059,7 @@ function GetSale(global, vue, target_name, uni) {
 			})
 			this.score_info.money = money_total;
 			this.score_info.score = score_total;
-			this.score_info.ispoints = ispoints;
+			this.score_info.ispoints = score_total;
 			console.log("[ScoreCount]抵现积分总和结果:", this.score_info);
 		} else
 			console.warn("[ScoreCount]list值无效!");
