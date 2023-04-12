@@ -413,7 +413,7 @@ var GetTLCard = function(store, func) {
 		if (!config || !config.LONGKEY) {
 			if (func) func({
 				code: false,
-				msg: "商户参数为空!"
+				msg: "未配置通联商户号!"
 			});
 			return;
 		}
@@ -446,7 +446,7 @@ var GetSwipeCardInfo = function(store, func) {
 		if (!config || !config.LONGKEY) {
 			if (func) func({
 				code: false,
-				msg: "商户参数为空!"
+				msg: "未配置通联商户号!"
 			});
 			return;
 		}

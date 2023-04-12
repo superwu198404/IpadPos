@@ -309,7 +309,7 @@ var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
@@ -341,7 +341,7 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			Req.asyncFuncOne(CreateData("TL", "查询中...",
@@ -387,7 +387,7 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
@@ -400,7 +400,7 @@ var misPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //使用全局配置（后端
@@ -431,7 +431,7 @@ var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 RYID 是 门店id/门店号，Note是 机器号/终端号/款台号，LONGKEY是商户号
@@ -445,7 +445,7 @@ var misScanCodePay = {
 		console.log("[RefundAll]UPAY中的Body参数为:",body);
 		_GetConfig("UPAY", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"支付参数未配置!", null));
+				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.LONGKEY; //使用全局配置（后端
@@ -846,10 +846,10 @@ var pinoPay = {
 		} else {
 			var config = config_result.data;
 			var base_require_request_params = () => ({
-				transaction_id: config.KEY, //渠道私钥
-				trade_no: config.LONGKEY, //密码aes加密用的密钥
-				deviceno: config.SHID, //门店标识id
-				store_id: config.APPID //门店id
+				transaction_id: config.KEY, //渠道私钥 cGpIBoaTnJBljg4l1OIW
+				trade_no: config.LONGKEY, //密码aes加密用的密钥 !@#$_^piNUC0906!
+				deviceno: config.SHID, //门店标识id 45952392
+				store_id: config.APPID //门店id 1421
 			});
 			if (!body.auth_code) {
 				catchFunc({
@@ -1112,7 +1112,6 @@ var tiktokPay = {
 	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc){//核销
 		console.log("[PaymentAll]开始抖音券核销操作...");
 		let poi_id = await tiktok.get_tiktok_store_id(),token = await tiktok.get_tiktok_token();
-		// let poi_id = "6601138547808274439",token = "clt.c350da9d0a84cc36228849b1e8d7a7c6FiQVObcIXCEl9fAFqwC9Cw9k7jZX";
 		console.log("[PaymentAll]抖音券支付参数查询完毕...");
 		console.log("[PaymentAll]抖音券支付参数:",{
 			token,
@@ -1120,7 +1119,7 @@ var tiktokPay = {
 		});
 		body.transaction_id = token;
 		body.store_id = poi_id;
-		// body.transaction_id = "clt.424e09e8967240a74bb741e116e37004FCO3wRT53GsSx8FPtzjXNBgkCmlr";
+		// body.transaction_id = "clt.ed203972c0b777fc71573e1f6fb0e1cax27V1Jp4SqWdplol91iqpXhpkSDh";
 		// body.store_id = "6601132867395258372";
 		if (!poi_id) {
 			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
@@ -1145,7 +1144,7 @@ var tiktokPay = {
 	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc){//撤销
 		let token = await tiktok.get_tiktok_token();
 		body.transaction_id = token;
-		// body.transaction_id = "clt.424e09e8967240a74bb741e116e37004FCO3wRT53GsSx8FPtzjXNBgkCmlr";
+		// body.transaction_id = "clt.ed203972c0b777fc71573e1f6fb0e1cax27V1Jp4SqWdplol91iqpXhpkSDh";
 		Req.asyncFuncChain(CreateData(pt, "查询中...", "QueryPayment", body), [
 			function(res) {
 				console.log("[RefundAll]第一次结果（QueryPayment）:", res);

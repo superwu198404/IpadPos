@@ -285,7 +285,8 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 	console.log("Createcx计算促销传入的商品sale02_arr=================", {
 		xstype,
 		sale02_arr,
-		hyinfoModel
+		hyinfoModel,
+		ispoints,
 	})
 	//计算时无生效的促销，再次请求初始化一次
 	if (cxdict == null || cxdict.size <= 0) {
@@ -509,10 +510,6 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			if (cxbill_val == null || cxbill_val == "") {
 				continue;
 			}
-			//0:优先积分促销  1:放弃积分促销 校验
-			if (!isPointsCheck(cxbill, is_Points)) {
-				continue;
-			}
 			//促销时间校验
 			if (!ynpastCx(cxbill)) {
 				continue;
@@ -527,6 +524,10 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			}
 			//销售方式校验
 			if (!xsTypeCheck(cxbill, is_Xstype)) {
+				continue;
+			}
+			//0:优先积分促销  1:放弃积分促销 校验
+			if (!isPointsCheck(cxbill, is_Points)) {
 				continue;
 			}
 			//判断会员积分促销，积分是否够扣除
@@ -655,6 +656,7 @@ const ynjsCxforHy = function(bill) {
 			case "all":
 				return true;
 			case "Hy":
+				is_JF = true;
 				return true;
 			case "Nhy":
 				return false;
@@ -706,7 +708,7 @@ const ynCxjfCheck = function(bill) {
 				case "Hy":
 					let tj = cx_util.TryParse(hymen.JFBalance);
 				    //会员积分不够扣除
-					if(tj < cx_util.nnvl(mcc.syjf,0)){
+					if(tj < cx_util.nnvl(mcc.syjf,0) && (mcc.cxtype == "D" || mcc.cxtype == "G")){
 						return false;
 					}else{
 						return true;	

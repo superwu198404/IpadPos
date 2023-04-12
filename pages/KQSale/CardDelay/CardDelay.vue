@@ -379,6 +379,7 @@
 				}
 				util.simpleModal("提示", "是否确认此操作？", res1 => {
 					if (res1) {
+						that.OrderBill = _card_coupon.getBill(that.Store);//重新生产单号
 						if (that.CurType == 'Delay') {
 							_card_sale.CARD_DELAY({
 								salebill: that.OrderBill,

@@ -57,7 +57,6 @@
 							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"
 								@click="swipe_card"></image>|
 							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true" />
-							<!-- <input placeholder="请刷卡以获取卡信息" v-model="form.card_number" /> -->
 						</view>
 						<view class="comfirm-btn" @click="search_card">确定</view>
 					</view>
@@ -66,7 +65,7 @@
 			<view class="info-content card-infos">
 				<view class="card-info-head">
 					<view>{{ source.card_infos.cardName || "暂无" }}</view>
-					<view>￥{{ source.card_infos.amount || "暂无" }}</view>
+					<view>￥{{ source.card_infos.balance || "暂无" }}</view>
 				</view>
 				<view class="card-details">
 					<view class="info-data-row">
@@ -151,7 +150,6 @@
 		},
 		methods: {
 			async search_member() {
-
 				if (common.CheckSign()) {
 					console.log("[SearchMember]会员信息查询...");
 					let data = await this.search_member_infos(this.form.member_code);
@@ -169,12 +167,10 @@
 				if (common.CheckSign()) {
 					console.log("[SearchMember]卡信息查询...");
 					let data = await this.search_card_infos(this.form.card_number.slice(3, 19));
-					this.form.card_track = this.form.card_number;
 					console.log("[SearchMember]卡信息:", data);
 					if (data) {
 						this.source.card_infos = data;
 						util.simpleMsg('卡信息查询成功!', false);
-						// uni.$emit("BindChange",1);//通知父组件已录入数据
 					} else {
 						util.simpleMsg('未查询到相关信息!', true);
 					}

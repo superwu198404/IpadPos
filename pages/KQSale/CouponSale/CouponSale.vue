@@ -19,14 +19,14 @@
 					<view :class="view.current_part_view == 'coupon_activate' ? 'tab curr' : 'tab'">
 						<label>
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text @click="view.current_part_view = 'coupon_activate'">活动券激活</text>
+							<text @click="view.current_part_view = 'coupon_activate'">券激活</text>
 						</label>
 						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 					</view>
 					<view :class="view.current_part_view == 'coupon_activate_fail' ? 'tab curr' : 'tab'">
 						<label>
 							<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
-							<text @click="view.current_part_view = 'coupon_activate_fail'">活动券激活失败</text>
+							<text @click="view.current_part_view = 'coupon_activate_fail'">券激活失败</text>
 						</label>
 						<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 					</view>
@@ -43,7 +43,7 @@
 						<view class="cardlist">
 							<view class="swipetip" v-if="get_main_sale6.length==0">
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
-								<text>请先录入活动券</text>
+								<text>请先录入券</text>
 							</view>
 							<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
 								<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)"
@@ -725,7 +725,7 @@
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
 				if (!this.source.sale001 || !this.source.sale002.length) {
-					util.simpleMsg('请添加活动券后再进行此操作!')
+					util.simpleMsg('请添加券后再进行此操作!')
 					return;
 				}
 				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
