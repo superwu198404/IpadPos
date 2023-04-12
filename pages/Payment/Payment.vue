@@ -1564,7 +1564,7 @@
 			operationAfterSinglePayment: function() {
 				this.in_payment = false;
 				this.authCode = ""; //避免同一个付款码多次使用
-				
+
 				//重置到聚合
 				this.Others_ReturnPay();
 			},
@@ -1647,20 +1647,15 @@
 							console.log("[OrderGenarator]卡券：", coupon)
 							console.log("[OrderGenarator]当前支付方式信息：", this.currentPayInfo)
 							this.PushToPaidList(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-								amount: ((coupon.yn_card === 'Y' ? coupon
-									.pay_amount :
-									(coupon.note === 'EXCESS' ? -coupon
-										.pay_amount :
-										coupon.denomination)) / 100).toFixed(
-									2),
+								amount: ((coupon.yn_card === 'Y' ? coupon.pay_amount : (coupon
+									.note === 'EXCESS' ? -coupon.pay_amount :
+									coupon.denomination)) / 100).toFixed(2),
 								fkid: coupon.yn_card === 'Y' ? this.currentPayInfo
 									?.fkid : coupon?.fkid,
 								name: coupon.yn_card === 'Y' ? this.currentPayInfo
 									?.name : excessInfo?.name,
-								balance: (coupon?.balance / 100)?.toFixed(
-									2), //如果是电子卡，余额
-								balance_old: ((coupon?.balance + coupon
-										?.pay_amount) / 100)
+								balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
+								balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 									?.toFixed(2), //如果是电子卡，余额
 								zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon
 									.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
@@ -1683,8 +1678,7 @@
 					console.log("[OrderGenarator]聚合支付订单生成...");
 					this.PushToPaidList(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
 						amount: type_info.type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) :
-							payload
-							.point_money?.toFixed(2),
+							payload.point_money?.toFixed(2),
 						fail,
 						card_no: result.open_id ?? result.transaction_id, //抖音券核销撤销字段：certificate_id
 						auth: result.transaction_id, //抖音券核销撤销字段：verify_id
