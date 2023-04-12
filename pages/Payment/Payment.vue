@@ -501,8 +501,9 @@
 					// else this.CanBack = false;
 					//检测待支付金额是否超过了欠款，如果超过则自动修正为欠款金额数
 					console.log("[Watch-dPayAmount]判断是否允许超额支付:", this.allow_debt_excess);
+					console.log("[Watch-dPayAmount]判断是否为积分抵现:", this.currentPayType);
 					if (Number(n) > this.toBePaidPrice() && !this
-						.allow_debt_excess) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
+						.allow_debt_excess && this.currentPayType != 'HyJfExchange') { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						console.log(`[Watch-dPayAmount]超过待支付金额!`, n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
 							console.log(`[Watch-dPayAmount]金额异常!`, {
