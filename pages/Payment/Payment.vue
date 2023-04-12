@@ -967,9 +967,14 @@
 							uni.scanCode({
 								success: (function(res) {
 									let code = common.ResetAuthCode(res.result);
+									let valid_result = this.PaymentTypeValid(code);
+									console.log("[Pay]判断结果:", valid_result);
+									if(!valid_result.code){
+										util.simpleMsg(valid_result.msg, true);
+										return;
+									}
 									this.authCode = code; //获取扫码的 authCode
-									let current_pay_info = this.PayWayInfo(this
-										.CurrentPaymentTypeJudge());
+									let current_pay_info = this.PayWayInfo(this.CurrentPaymentTypeJudge());
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
@@ -999,6 +1004,30 @@
 					}
 				} else {
 					util.simpleMsg("订单已完成支付!");
+				}
+			},
+			PaymentTypeValid:function(auth_code){
+				let type = this.CurrentPaymentTypeJudge(auth_code),
+					pay_type_info = this.PayWayInfo(type);
+				console.warn("[PaymentTypeValid]当前支付方式是否为聚合支付:",{
+					type, pay_type_info,select_pay_type: this.currentPayType
+				});
+				if(pay_type_info.poly == 'Y'){
+					if(pay_type_info.poly == 'Y') {
+						return util.createdResult(true, "校验成功!");
+					}
+					else {
+						return util.createdResult(false,"错误的支付类型，请重新扫码!")
+					}
+				}
+				else 
+				{
+					if(this.currentPayType == this.CurrentPaymentTypeJudge()) {
+						return util.createdResult(true, "校验成功!");
+					}
+					else {
+						return util.createdResult(false,"错误的支付类型，请重新扫码!")
+					}
 				}
 			},
 			//退款数据处理
@@ -1365,9 +1394,9 @@
 				return curPayType;
 			},
 			//支付类型判断
-			CurrentPaymentTypeJudge: function() {
+			CurrentPaymentTypeJudge: function(auth_code) {
 				console.log("[CurrentPaymentTypeJudge]二维码:", this.authCode);
-				let startCode = this.authCode.substring(0, 2),
+				let startCode = auth_code?.substring(0, 2) || this.authCode.substring(0, 2),
 					current_type = "";
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;

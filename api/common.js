@@ -157,7 +157,7 @@ var CreateSQL = function(e, t) {
 
 //传输支付数据
 var TransLiteData = function(e, func) {
-	console.log("[TransLiteData]数据传输中...");
+	console.log("[TransLiteData]数据传输中...", e);
 	TransLite(e, r => {
 		if (e) {
 			let delArr = ["update SALE001 set yn_sc='Y' where bill='" + e + "'"];
@@ -198,6 +198,7 @@ var TransLite = function(e, func, load = false) {
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
 	}
+	console.log("[TransLite]即将执行的SQL语句:",sql);
 	db.get().executeQry(sql, "数据查询中", function(res) {
 			console.log("[TransLite]传输数据查询成功", res);
 			if (res.code && res.msg.length > 0) {
