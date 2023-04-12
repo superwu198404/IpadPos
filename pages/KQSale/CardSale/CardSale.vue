@@ -397,7 +397,7 @@
 				that.SALE002.map(r => {
 					total += r.NET;
 				})
-				// total = _util.newFloat(Number(that.SALE001.TNET) + Number(that.SALE001.BILLDISC));
+				total = _util.newFloat(total, 2);
 				return total;
 			},
 			//总折扣额 赠送金额和特殊折扣
@@ -407,8 +407,9 @@
 					return total;
 				}
 				that.SALE002.map(r => {
-					total += _util.newFloat(r.DISCRATE + (r.ZSNET || 0), 2);
+					total += (r.DISCRATE + (r.ZSNET || 0));
 				})
+				total = _util.newFloat(total, 2);
 				return total;
 			},
 		},
