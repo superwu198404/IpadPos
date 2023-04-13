@@ -30,7 +30,7 @@
 					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
 				</view>
-				<view class="chargeback" v-if="showGJ">
+				<view class="chargeback" style="z-index: 16;" v-if="showGJ">
 					<view class="currs" @click="ShowTool('promotions')">
 						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>

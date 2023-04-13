@@ -58,9 +58,6 @@ page {
 .navmall .logo image {
 	width: 100%;
 }
-.right .content{
-	z-index: 9999 !important;
-}
 
 .menu {
 	width: 100%;
