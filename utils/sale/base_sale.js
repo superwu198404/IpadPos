@@ -4264,6 +4264,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.isDateClassify = true; //默认展示分类数据
 
 		this.Page.Alphabetical = false; //关闭字母列表
+		this.page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
