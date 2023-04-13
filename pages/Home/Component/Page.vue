@@ -326,4 +326,7 @@
 		background: transparent;
 		color: transparent;
 	}
+	.navmall{
+		z-index: 99999 !important;
+	}
 </style>
