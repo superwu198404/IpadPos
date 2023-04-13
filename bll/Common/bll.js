@@ -228,7 +228,8 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 			if (!dataObj[key]) continue;
 			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
 			if (key == "SALE001") {
-				dataArr.XSPTID = "PAD";
+				if(Object.keys(dataArr).length != 0)//空对象
+					dataArr.XSPTID = "PAD";
 			}
 			if (key == "SALE002") {
 				dataArr.forEach(r => {
@@ -261,10 +262,10 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 		let tx_obj = {
 			TX_SQL: OracleSql,
-			STOREID: dataObj["SALE001"].KHID,
-			POSID: dataObj["SALE001"].POSID,
+			STOREID: dataObj?.SALE001?.KHID || dataObj?.YWSXJS?.KHID,
+			POSID: dataObj?.SALE001?.POSID || dataObj?.YWSXJS?.POSID,
 			TAB_NAME: 'XS',
-			STR1: dataObj["SALE001"].BILL || dataObj["YWSXJS"].BILL,
+			STR1: dataObj?.SALE001?.BILL || dataObj["YWSXJS"].BILL,
 			BDATE: saletime, //增加时分秒的操作
 			YW_NAME: "销售单据",
 			CONNSTR: 'CONNSTRING'

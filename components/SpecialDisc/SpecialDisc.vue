@@ -153,7 +153,7 @@
 		},
 		methods: {
 			// Close:function() {
-				
+
 			// },
 			Def: function() {
 				console.log("冒泡事件：", that.curZKType);
@@ -246,7 +246,7 @@
 						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
 						pushArr.push(obj);
 					}
-					if (sortArr1.length > 0) { //追加标准折扣规则
+					if (sortArr1.length > 0) { //追加临时折扣规则
 						let obj = sortArr1[0];
 						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
@@ -256,7 +256,7 @@
 						return r.ZKSTR == r1.SPJGZ;
 					})
 					// console.log("55555:", sortArr2);
-					if (sortArr2.length > 0) { //追加标准折扣规则
+					if (sortArr2.length > 0) { //追加特批折扣规则
 						let obj = sortArr2[0];
 						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
@@ -285,10 +285,11 @@
 					// that.totalDisc = Number(anet.toFixed(1));
 					that.totalDisc = common.newFixed(anet, 1);
 				}
-				console.log("合并后的折扣规则1：", pushArr);
+				console.log("合并后的折扣规则1：", pushArr1);
 				if (pushArr1.length > 0) {
 					let anet = 0;
 					pushArr1.map(r => {
+						console.warn("特批折扣额：", r.ZKNET);
 						anet += r.ZKNET;
 					})
 					// that.totalDiscDKF = Number(anet.toFixed(1));
@@ -492,7 +493,7 @@
 		position: relative;
 		padding-bottom: 150rpx;
 	}
-	
+
 	.special .confirm {
 		position: absolute;
 		left: 0;
@@ -504,14 +505,16 @@
 		width: 100%;
 		padding-bottom: 20rpx;
 	}
-	
+
 	.special .confirm .btn {
 		width: 30%;
 		margin: 0 2%;
 	}
-	.close{
-		right:0;
+
+	.close {
+		right: 0;
 	}
+
 	.commods .uls .lis.curr {
 		background: #fff;
 	}

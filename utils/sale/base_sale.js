@@ -29,6 +29,7 @@ import hy_query from '@/api/hy/hy_query.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
+import dateformat from '@/utils/dateformat.js';
 // import { log } from 'console';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
@@ -1321,16 +1322,16 @@ var XsTypeObj = {
 			this.sale003.forEach(s3 => {
 				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
 				ywsxfk.BILL = credit_bill;
-				ywsxfk.JK_DATE = new Date().toLocaleString();
-				let exists_same_fkid = ywsxfk_list.find(i => i.FKID = ywsxfk.FKID);
+				ywsxfk.JK_DATE = dateformat.getYMD();
+				let exists_same_fkid = ywsxfk_list.find(i => i.FKID == ywsxfk.FKID);
 				if (exists_same_fkid) { //业务赊销付款判断当前是否存在重复的fkid，有重复的则合并
 					exists_same_fkid.AMT = Number(exists_same_fkid.AMT) + Number(ywsxfk.AMT);
 				} else
 					ywsxfk_list.push(ywsxfk);
 			})
-			// this.sale001 = {};
-			// this.sale002 = [];
-			// this.sale003 = [];
+			this.sale001 = {};
+			this.sale002 = [];
+			this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
 			//YWSXFK(类sale3)、YWSXJS(类sale1，主单号为BILL，大客户ID-DKFID，大客户名称-DKFNAME)、YWSXJSMX(类sale2-记录结算的单据，原单号记录字段为BILL_SX)
 			this.additional['YWSXFK'] = ywsxfk_list;
@@ -4264,6 +4265,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.isDateClassify = true; //默认展示分类数据
 
 		this.Page.Alphabetical = false; //关闭字母列表
+		this.page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {

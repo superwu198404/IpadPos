@@ -1009,25 +1009,26 @@
 			},
 			PaymentTypeValid:function(auth_code){
 				let type = this.CurrentPaymentTypeJudge(auth_code),
-					pay_type_info = this.PayWayInfo(type);
+					pay_type_info = this.PayWayInfo(type),
+					select_type_info = this.PayWayInfo(this.currentPayType);
 				console.warn("[PaymentTypeValid]当前支付方式是否为聚合支付:",{
 					type, pay_type_info,select_pay_type: this.currentPayType
 				});
-				if(pay_type_info.poly == 'Y'){
+				if(this.currentPayType == 'POLY'){
 					if(pay_type_info.poly == 'Y') {
 						return util.createdResult(true, "校验成功!");
 					}
 					else {
-						return util.createdResult(false,"错误的支付类型，请重新扫码!")
+						return util.createdResult(false, `请使用${(select_type_info?.name || (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`)
 					}
 				}
 				else 
 				{
-					if(this.currentPayType == this.CurrentPaymentTypeJudge()) {
+					if(this.currentPayType == type) {
 						return util.createdResult(true, "校验成功!");
 					}
 					else {
-						return util.createdResult(false,"错误的支付类型，请重新扫码!")
+						return util.createdResult(false, `请使用${(select_type_info?.name|| (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`)
 					}
 				}
 			},
