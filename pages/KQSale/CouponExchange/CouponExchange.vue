@@ -768,8 +768,8 @@
 						});
 						console.log("3：", index);
 						if (!obj) {
-							console.log("5：", obj);
-							arr.push(obj);
+							console.log("5：", r);
+							arr.push(r);
 						} else {
 							console.log("6：", obj);
 							arr[index].QTY = _util.newFloat(obj.QTY + r.QTY, 2);
