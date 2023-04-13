@@ -126,8 +126,12 @@
 										</view>
 										<div class="refund-more-box">
 											<text class="refund-text">{{pay.amount}}￥</text>
-											<div class="refund-reset" @click="singlePayRetry(pay)">
+											<!-- <div class="refund-reset" @click="singlePayRetry(pay)">
 												{{ pay.auth_code?"支付":"重试" }}
+												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
+											</div> -->
+											<div class="refund-reset" @click="singlePayRetry(pay)">
+												"重试"
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div>
 										</div>

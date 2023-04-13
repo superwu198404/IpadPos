@@ -178,7 +178,6 @@
 					sale006: [],
 					sxsale001: null,
 					sale2_union_sale6: [],
-					sale6_segment_discount: [], //针对sale6号段的单体折扣
 					sale6_map_style: new Map(),
 					coupon_active_success: false,
 					big_customer_info: null,
@@ -224,11 +223,6 @@
 				return $(function(sale6) {
 					return this.source.sale6_map_style.get(sale6)?.text_style;
 				})
-			},
-			get_current_single_discount_info() {
-				return $(function(sale6) {
-					return this.source.sale6_segment_discount.find(sales => sales.sale006 === sale6).sale002;
-				});
 			}
 		},
 		watch: {
@@ -337,15 +331,15 @@
 			async coupon_segment_distribute() {
 				return await member.coupon_sale.CouponDistribute({
 					bill: this.source.sale001.BILL,
-					disc: 0,
+					disc: this.source.sale001.BILLDISC,
 					khid: this.KHID,
 					appid: getApp().globalData.appid,
-					coupon_infos: this.source.sale2_union_sale6.map(sales => sales.sale006.map(sale6 => ({
-						start_no: sale6.KQIDS,
-						end_no: sale6.KQIDE,
-						count: sale6.QTY,
+					coupon_infos: this.source.sale2_union_sale6.map(sales => ({
+						start_no: sales.sale006.KQIDS,
+						end_no: sales.sale006.KQIDE,
+						count: sales.sale006.QTY,
 						total_denomination: sales.sale002.NET
-					}))).flat()
+					}))
 				})
 			},
 			async coupon_segment_activate() {
@@ -445,7 +439,6 @@
 					}
 				}))
 				console.log("[CouponActivate]券号激活流程执行完毕...");
-				// main.ManualDiscount(this.source.sale001, this.source.sale002);
 				this.save_orders();
 			},
 			async save_orders() {
@@ -482,36 +475,13 @@
 				this.source = this.$options.data().source;
 				this.source.discount_infos = await this.get_discount_data(); //初始化折扣信息数据
 				this._sale2_count = 0;
-			},
-			get_single_coupon_segment_list() {
-				console.warn("[GetSingleCouponSegmentList]准备开始计算分摊后的折扣:", this.source);
-				let sale6_main_discount_computed_list = this.source.sale2_union_sale6.map(
-					$(function(sales) {
-						let sale6_main = sales.sale006.map($(function(sale6) {
-							let single_sale2_map_sale6 = this.factory.get_sale002(null, sales.sale002);
-							single_sale2_map_sale6.QTY = sale6.QTY; //把当前券号段的数量传入
-							single_sale2_map_sale6.NET = sale6.QTY * sales.sale002
-								.PRICE; //根据当前数量和单价计算出当前对应的总金额
-							return {
-								sale006: sale6,
-								sale002: single_sale2_map_sale6,
-							}
-						}));
-						return sale6_main;
-					})).flat();
-				this.discount_computed(sale6_main_discount_computed_list.map(sales => sales.sale002));
-				console.warn("[GetSingleCouponSegmentList]针对单券号段折扣计算结果:", {
-					sale6_main_discount_computed_list,
-					source: this.source
-				});
-				this.source.sale6_segment_discount = sale6_main_discount_computed_list;
+				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 			},
 			total_discount_computed() {
 				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
 				$(this.reset_discount, false); //重置折扣
 				$(this.discount_computed, false); //特殊折扣计算
 				$(this.goods_discount_summary, false); //最后将折扣额汇总到sale001上
-				$(this.get_single_coupon_segment_list, false); //计算券号段的单体折扣
 				$(this.coupon_price_record.bind(null, this.source.sale002, this.source.sale006), false);
 				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
 			},
@@ -602,29 +572,17 @@
 				}
 				console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
-			craft_discount_computed() { //手工折扣额的处理
-				if (!this.source.sale001) return;
-				console.log("[CraftDiscountComputed]原金额:", this.source.sale001.TNET);
-				let SKY_DISCOUNT = util.newFloat(((this.source.sale001.TNET * 10) % 1) / 10, 2);
+			craft_discount_computed(sale1,sale2) { //手工折扣额的处理
+				if (!sale1) return;
+				console.log("[CraftDiscountComputed]原金额:", sale1.TNET);
+				let SKY_DISCOUNT = util.newFloat(((sale1.TNET * 10) % 1) / 10, 2);
 				console.log("[CraftDiscountComputed]手工折扣额：", SKY_DISCOUNT);
-				this.source.sale001.TNET = util.newFloat(Number(this.source.sale001.TNET) - SKY_DISCOUNT, 2);
-				this.source.sale001.ZNET = util.newFloat(Number(this.source.sale001.ZNET) - SKY_DISCOUNT, 2);
-				this.source.sale001.BILLDISC = util.newFloat(Number(this.source.sale001.BILLDISC) + SKY_DISCOUNT, 2);
-				this.source.sale001.TCXDISC = util.newFloat(Number(this.source.sale001.TCXDISC) + SKY_DISCOUNT, 2);
-				this.source.sale001.ROUND = SKY_DISCOUNT;
-				this.source.sale001.TDISC = util.newFloat(Number(this.source.sale001.TDISC) + SKY_DISCOUNT, 2);
-				this.source.sale002.forEach(sale2 => {
-					let SKY_DISCOUNT = util.newFloat((((sale2.PRICE * sale2.QTY) * 10) % 1) / 10, 2);
-					if (SKY_DISCOUNT) {
-						sale2.CXDISC = SKY_DISCOUNT;
-						sale2.NET = (sale2.PRICE * sale2.QTY) - SKY_DISCOUNT;
-						sale2.YN_CXDISC = "Y";
-					} else
-						sale2.YN_CXDISC = "F";
-					sale2.DISCRATE = parseFloat((Number(sale2.JFDISC) + Number(sale2.LSDISC) + Number(sale2
-							.TPDISC) + Number(sale2.BZDISC) + Number(sale2.HYDISC) + Number(sale2.CXDISC) +
-						Number(sale2.DISC)).toFixed(2));
-				})
+				sale1.TNET = util.newFloat(Number(sale1.TNET) - SKY_DISCOUNT, 2);
+				sale1.ZNET = util.newFloat(Number(sale1.ZNET) - SKY_DISCOUNT, 2);
+				sale1.BILLDISC = util.newFloat(Number(sale1.BILLDISC) + SKY_DISCOUNT, 2);
+				sale1.TCXDISC = util.newFloat(Number(sale1.TCXDISC) + SKY_DISCOUNT, 2);
+				sale1.ROUND = SKY_DISCOUNT;
+				sale1.TDISC = util.newFloat(Number(sale1.TDISC) + SKY_DISCOUNT, 2);
 				console.log("[CraftDiscountComputed]SALE001计算手工折扣后的新数据：", this.source);
 			},
 			receipt_printing(source) { //打印代码写在下面
@@ -666,6 +624,52 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
+			credit_order_setting(){
+				if(this.source.enable_credit){
+					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
+					this.source.sale001.BILL_TYPE = "Z112";
+					this.source.sale001.XSTYPE = 6;
+					console.log("[CreditOrderSetting]sale1设置完毕:", this.source.sale001);
+				}
+				else{
+					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
+					this.source.sale001.BILL_TYPE = "Z111";
+					this.source.sale001.XSTYPE = 1;
+					console.log("[CreditOrderSetting]sale1设置完毕:", this.source.sale001);
+				}
+			},
+			sales_process(){//单据处理，复制现在的sale1和sale2还有sale6，然后进行手工折扣额计算再进行
+				let sale001 = Object.assign({},this.source.sale001);
+				let sale002 = $(function(){
+					let new_sale2_list = [];//此时的sale2还是和券记录1对1，需要根据sale2.spid进行合并处理，并且合并折扣值
+					this.source.sale002.forEach($(function(sale2){
+						let same_good = new_sale2_list.find(ns2 => ns2.SPID == sale2.SPID);
+						if(same_good){//是否存在已有的商品，如果有：
+							//合并累加部分字段进行总和
+							same_good.QTY += sale2.QTY;
+							same_good.JFDISC += sale2.JFDISC;
+							same_good.LSDISC += sale2.LSDISC;
+							same_good.TPDISC += sale2.TPDISC;
+							same_good.BZDISC += sale2.BZDISC;
+							same_good.HYDISC += sale2.HYDISC;
+							same_good.CXDISC += sale2.CXDISC;
+							same_good.BILLDISC += sale2.BILLDISC;
+							same_good.DISC += sale2.DISC;
+							same_good.DISCRATE += sale2.DISCRATE;
+							same_good.NET += sale2.NET;
+						}
+						else{//如果没有：
+							new_sale2_list.push(Object.assign({}, sale2));
+						}
+					}));
+					return new_sale2_list;
+				},false);
+				this.craft_discount_computed(sale001, sale002);
+				return {
+					sale001,
+					sale002
+				}
+			},
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
 				this.craft_discount_computed();
@@ -674,13 +678,15 @@
 					return;
 				}
 				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
+				this.credit_order_setting();
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
 					this.coupon_activate(); //开始券申请激活流程
-				} else
+				} else{
+					let sales = this.sales_process();//复制避免折扣影响到原数据
 					this.sale.RedirectToPayment({
-						sale001: this.source.sale001,
-						sale002: this.source.sale002,
+						sale001: sales.sale001,
+						sale002: sales.sale002,
 						paid: this.source.paid,
 						ban_type: this.ban_type,
 						action: 'Payment',
@@ -700,6 +706,7 @@
 							}
 						})
 					});
+				}
 			},
 			event_monitor() {
 				console.log("[EventMonitor]事件处理...");
@@ -708,7 +715,6 @@
 					util.simpleModal("提示", "是否确认清空当前数据？", $(function(res) {
 						if (res) {
 							this.reset_form();
-							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 							util.simpleMsg("清空成功！");
 						}
 					}))

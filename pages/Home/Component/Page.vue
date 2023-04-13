@@ -12,10 +12,6 @@
 			<view class="bills" v-for="(value,key) in menu_info" @click="MenuSelect(key,value,$event)"
 				:class="Selected(key) ? 'curr' : (current_click_menu_name == key ? 'acts' : '')" v-if="!value.close">
 				<label></label>
-				<!-- <view v-if="current_click_menu_name == key && !Selected(key)" class="arrow-box">
-					<view class="arrow-border-top"></view>
-					<view class="arrow-border-bottom"></view>
-				</view> -->
 				<image class="xz" :src="value.icon_open" mode="widthFix"></image>
 				<image class="wx" :src="value.icon_close" mode="widthFix"></image>
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
@@ -149,10 +145,13 @@
 			MenuSelect(menu_name, menu_info) {
 				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
-				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name ==
-					'sale_reserve_cancel' || menu_name == 'sale_credit_settlement' || menu_name == 'sale_reserve_extract'
+				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name == 'sale_reserve_cancel' || menu_name == 'sale_credit_settlement' || menu_name == 'sale_reserve_extract'
 					) { //只有这五种模式（预定提取，预定取消，退单，赊销结算，赊销退单）需要预选定位
-					this.current_click_menu_name = menu_name;
+					uni.$once('allow-position',(function(name){
+						console.warn("[MenuSelect]测试",name);
+						if(name)
+							this.current_click_menu_name = name;
+					}).bind(this))
 				} else {
 					this.current_click_menu_name = null;
 				}

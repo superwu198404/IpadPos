@@ -3278,9 +3278,10 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetType]当前操作配置:", this.currentOperation);
 		if (!this.currentOperation[pm_type] && (!uncheck)) {
 			this.myAlert("请完成当前模式再进行切换！");
+			uni.$emit('allow-position');
 			return;
 		}
-
+		uni.$emit('allow-position',pm_type);
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
 			console.warn("type:", this.clickSaleType);
@@ -4265,7 +4266,7 @@ function GetSale(global, vue, target_name, uni) {
 		this.isDateClassify = true; //默认展示分类数据
 
 		this.Page.Alphabetical = false; //关闭字母列表
-		this.page.isKeyBoardShow = false; //关闭键盘
+		this.Page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选
 		console.log("this.clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
