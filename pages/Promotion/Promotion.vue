@@ -89,7 +89,7 @@
 					that.MDCXDatas = res;
 					that.showMDCXData = true;
 					if (e)
-						util.simpleMsg("获取成功");
+						util.simpleMsg("刷新成功！");
 				})
 			}
 		}
