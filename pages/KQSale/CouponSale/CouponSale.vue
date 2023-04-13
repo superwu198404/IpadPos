@@ -203,7 +203,7 @@
 				return this.source.sale002.map(sale2 => sale2.QTY).reduce((prev_qty, next_qty) => prev_qty + next_qty, 0);
 			},
 			unpaid_total_amount() {
-				return this.source.sale001?.TNET?.toFixed(2) || 0;
+				return this.source.sale001?.TNET || 0;
 			},
 			unpaid_total_discount() {
 				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p, n) => p + n, 0).toFixed(
@@ -517,8 +517,8 @@
 				this.source.sale001.TTPDISC = util.newFloat(total_tpdisc);
 				this.source.sale001.BILLDISC = util.newFloat(total_bzdisc + total_lsdisc + total_tpdisc + total_cxdisc);
 				this.source.sale001.TDISC = this.source.sale001.BILLDISC;
-				this.source.sale001.TNET = total_amount;
-				this.source.sale001.ZNET = total_amount;
+				this.source.sale001.TNET = util.newFloat(total_amount);
+				this.source.sale001.ZNET = util.newFloat(total_amount);
 				console.log("[GoodsDiscountSummary]对sale002的总金额、折扣汇总完毕:", this.source.sale001);
 			},
 			remove_union(sales) {
@@ -731,8 +731,12 @@
 				}));
 				this.event_register("big-customer-close", $(async function(data) {
 					console.log("[Created]大客户回调:", data);
+					console.log("[Created]当前是否有特殊折扣:", this.source.discount_type);
 					if (data.exists_credit) {
 						this.source.enable_credit = true; //启用赊销
+					}
+					if(Object.keys(data).length === 0 && this.source.discount_type == 'TP'){
+						this.source.discount_type = "NO";
 					}
 					this.source.big_customer_info = data;
 					this.source.discount_infos = await this.get_discount_data(data.DKFID);
