@@ -41,36 +41,36 @@
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
-							<view class="swipetip" v-if="get_main_sale6.length==0">
+							<view class="swipetip" v-if="source.sale2_union_sale6.length==0">
 								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先录入券</text>
 							</view>
-							<view class="ulli" v-for="(sale6_main,index) in get_main_sale6">
-								<view class="touch-list list-touch" @click="touch_list($event,sale6_main.sale006)"
-									:data-style="get_text_style(sale6_main.sale006)" :data-index="index"
-									:style="get_text_style(sale6_main.sale006)">
+							<view class="ulli" v-for="(sales,index) in source.sale2_union_sale6">
+								<view class="touch-list list-touch" @click="touch_list($event,sales.sale006)"
+									:data-style="get_text_style(sales.sale006)" :data-index="index"
+									:style="get_text_style(sales.sale006)">
 									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
-										<label>￥{{ sale6_main.sale002.OPRICE }}<text>/{{ sale6_main.sale006.QTY }}张</text></label>
+										<label>￥{{ sales.sale002.OPRICE }}<text>/{{ sales.sale006.QTY }}张</text></label>
 										<view class="zje">
 											<view>
-												<text>总金额</text>￥{{ coupon_segment_total_amount(sale6_main.sale002,sale6_main.sale006) }}
+												<text>总金额</text>￥{{ sales.sale002.NET }}
 											</view>
 										</view>
 									</view>
 									<view class="card-num">
-										<label>始：<text>{{ sale6_main.sale006.KQIDS }}</text></label>
-										<label>终：<text>{{ sale6_main.sale006.KQIDE }}</text></label>
+										<label>始：<text>{{ sales.sale006.KQIDS }}</text></label>
+										<label>终：<text>{{ sales.sale006.KQIDE }}</text></label>
 									</view>
 									<view class="statistic">
-										<label><em>●</em><text>总折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).DISCRATE }}</label>
-										<label><em>●</em><text>标准折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).BZDISC }}</label>
-										<label><em>●</em><text>临时折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).LSDISC }}</label>
-										<label><em>●</em><text>特批折扣：</text>{{ get_current_single_discount_info(sale6_main.sale006).TPDISC }}</label>
+										<label><em>●</em><text>总折扣：</text>{{ sales.sale002.DISCRATE }}</label>
+										<label><em>●</em><text>标准折扣：</text>{{ sales.sale002.BZDISC }}</label>
+										<label><em>●</em><text>临时折扣：</text>{{ sales.sale002.LSDISC }}</label>
+										<label><em>●</em><text>特批折扣：</text>{{ sales.sale002.TPDISC }}</label>
 									</view>
 								</view>
 								<view class="touch-list list-delete"
-									@click="remove_union(get_union(sale6_main.sale006),sale6_main.sale006)">
+									@click="remove_union(sales)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
@@ -212,19 +212,13 @@
 			},
 			coupon_segment_total_amount() {
 				return $(function(sale2, sale6) {
-					return (sale2.PRICE * sale6.QTY).toFixed(2);
+					return sale2.NET;
 				})
 			},
 			get_union() {
 				return $(function(sale6) {
 					return this.source.sale2_union_sale6.find(sales => sales.sale006.includes(sale6));
 				})
-			},
-			get_main_sale6() { //以 sale6 做 key 的数组序列
-				return this.source.sale2_union_sale6.map(sales => sales.sale006.map(sale6 => ({
-					sale006: sale6,
-					sale002: sales.sale002
-				}))).flat();
 			},
 			get_text_style() {
 				return $(function(sale6) {
@@ -276,7 +270,6 @@
 				else
 					return;
 				this.re_computed_sales(this.source.sale001, n);
-				this.craft_discount_computed();
 				console.log("sale2发生变化：", n);
 				this._sale2_count = n.length;
 				console.log("[WatchSale2]变化长度记录到SALE1上:", this.source);
@@ -410,12 +403,10 @@
 								KQIDSTR: this.form.start_coupon_no + "-" + this.form
 									.end_coupon_no,
 							});
-							this.push_sale2_check(sale002);
+							this.source.sale002.push(sale002);
 							this.source.sale006.push(sale006);
-							this.source.sale6_map_style.set(sale006, {
-								text_style: "left:0"
-							});
-							this.push_sale2_union_sale6_check(sale002, sale006);
+							this.source.sale6_map_style.set(sale006, { text_style: "left:0" });
+							this.source.sale2_union_sale6.push({ sale002, sale006 });
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 							this.total_discount_computed();
 						} catch (e) {
@@ -521,7 +512,6 @@
 				$(this.discount_computed, false); //特殊折扣计算
 				$(this.goods_discount_summary, false); //最后将折扣额汇总到sale001上
 				$(this.get_single_coupon_segment_list, false); //计算券号段的单体折扣
-				$(this.craft_discount_computed, false); //手工折扣额
 				$(this.coupon_price_record.bind(null, this.source.sale002, this.source.sale006), false);
 				console.log("[TotalDiscountComputed]特殊折扣和手工折扣计算完毕...");
 			},
@@ -542,7 +532,7 @@
 				let total_lsdisc = sale2.map(s2 => s2.LSDISC).reduce((p, n) => p + n, 0); //临时折扣
 				let total_tpdisc = sale2.map(s2 => s2.TPDISC).reduce((p, n) => p + n, 0); //特批折扣
 				let total_cxdisc = sale2.map(s2 => s2.CXDISC).reduce((p, n) => p + n, 0); //促销折扣
-				let total_amount = sale2.map(sale2 => sale2.PRICE * sale2.QTY).reduce((prev_net, next_net) => prev_net +
+				let total_amount = sale2.map(sale2 => sale2.NET).reduce((prev_net, next_net) => prev_net +
 					next_net, 0);
 				console.log("[GoodsDiscountSummary]汇总的折扣总金额信息:", {
 					total_bzdisc,
@@ -561,42 +551,10 @@
 				this.source.sale001.ZNET = total_amount;
 				console.log("[GoodsDiscountSummary]对sale002的总金额、折扣汇总完毕:", this.source.sale001);
 			},
-			push_sale2_check(sale2) { //向sale2推入数据前，检查是否存在有相同spid的，如果有则进行合并
-				let match_sale2 = this.source.sale002.find(s2 => s2.SPID == sale2.SPID);
-				if (match_sale2) {
-					console.log("[PushSale2Check]包含相同的商品，执行合并操作...");
-					match_sale2.QTY += sale2.QTY;
-					this.re_computed_sales(this.source.sale001, this.source.sale002);
-					this.craft_discount_computed();
-					console.log("[PushSale2Check]合并完成，合并项:", match_sale2);
-				} else {
-					console.log("[PushSale2Check]未包含相同的商品，执行新增操作...");
-					this.source.sale002.push(sale2);
-				}
-				console.log("[PushSale2Check]检查完毕:", this.source);
-			},
-			push_sale2_union_sale6_check(sale2,
-				sale6) { //向sale2和sale6联合数组推入数据前，检查是否已经包含了当前sale2的数据，如果存在那么对现有的联合数据中的sale6做push操作，否则新增一个sale2和sale6的联合数据
-				let match_sale2 = this.source.sale2_union_sale6.map(sales => sales.sale002).find(s2 => s2.SPID == sale2
-					.SPID);
-				if (match_sale2) {
-					console.log("[PushSale2UnionSale6Check]包含相同的商品，执行合并操作...");
-					let match_union_sales = this.source.sale2_union_sale6.find(sales => sales.sale002 === match_sale2);
-					console.log("[PushSale2UnionSale6Check]匹配到的联合数据对象:", match_union_sales);
-					match_union_sales.sale006 = match_union_sales.sale006.concat([sale6]);
-					console.log("[PushSale2UnionSale6Check]合并完成，合并项:", match_union_sales);
-				} else {
-					console.log("[PushSale2UnionSale6Check]未包含相同的商品，执行新增操作...");
-					this.source.sale2_union_sale6.push({
-						sale002: sale2,
-						sale006: [sale6]
-					});
-				}
-				console.log("[PushSale2UnionSale6Check]检查完毕:", this.source);
-			},
-			remove_union(sales, sale6) {
+			remove_union(sales) {
+				//其中 sale2_union_sale6 中储存的是 1对1 的sale2和sale6的数据对象，如果sale6发生删除，则应该删除对应的组合对象和对应的sale2数据
 				let remove_sale2_index = this.source.sale002.indexOf(sales.sale002),
-					remove_sale6_index = this.source.sale006.indexOf(sale6),
+					remove_sale6_index = this.source.sale006.indexOf(sales.sale006),
 					remove_union_index = this.source.sale2_union_sale6.indexOf(sales);
 				console.log("[RemoveUnion]即将要删除的元素索引:", {
 					remove_sale2_index,
@@ -604,26 +562,12 @@
 					remove_union_index
 				});
 				if (remove_sale6_index != -1) {
-					sales.sale006.splice(remove_sale6_index, 1); //删除联合数据中的sale006部分数据
+					this.source.sale002.splice(remove_sale2_index, 1); //删除外部sale002中的数据
 					this.source.sale006.splice(remove_sale6_index, 1); //删除外部sale006中的数据
-					sales.sale002.QTY -= sale6.QTY; //在sale2中减去被移除掉的券数量
-					let sale6_list = this.source.sale2_union_sale6.map(union_sales => union_sales.sale006).find(s6 => s6
-						.includes(sale6));
-					if (sale6_list && sale6_list.length) {
-						let sale6_list_index = sale6_list.indexOf(sale6);
-						sale6_list.splice(sale6_list_index, 1); //删除联合数据中的sale006部分数据
-						console.log("[RemoveUnion]联合数据中的sale6对象已经清除:", this.source);
-					}
-					this.re_computed_sales(this.source.sale001, this.source.sale002);
-					this.craft_discount_computed();
+					this.source.sale2_union_sale6.splice(remove_union_index, 1); //删除外部组合对象数组中的数据
+					this.source.sale6_map_style.delete(sales.sale006);//删除对应的样式集合对象
+					this.re_computed_sales(this.source.sale001, this.source.sale002);//重新计算sale相关信息
 				}
-				if (sales.sale006.length == 0) //如果sale006被删除完了，则删除sale002的对应物料
-					this.source.sale002.splice(remove_sale2_index, 1);
-				/*
-				 * 注：union内的结构是一对多，由一个sale2对应多个sale6，所以此处是检查sale6是否已经被删除完了，如果被删除完了那么就移除对应的 sale2和sale6 的联合数据。
-				 */
-				if (sales.sale006.length == 0) //如果sale002被删除完了，则删除 sale2_union_sale6 的对应物料
-					this.source.sale2_union_sale6.splice(remove_union_index, 1);
 				console.log("[RemoveUnion]删除信息后:", this.source);
 				$(this.total_discount_computed, false); //重新汇总折扣
 			},
@@ -724,6 +668,7 @@
 			},
 			to_payment() {
 				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
+				this.craft_discount_computed();
 				if (!this.source.sale001 || !this.source.sale002.length) {
 					util.simpleMsg('请添加券后再进行此操作!')
 					return;
