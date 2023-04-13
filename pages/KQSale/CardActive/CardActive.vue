@@ -299,13 +299,16 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.BILL_TYPE = "Z112"; //启用赊销
+					that.XSTYPE = '6';
 				} else {
 					that.BILL_TYPE = "Z111"; //不启用赊销	
+					that.XSTYPE = '1';
 				}
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
+				that.SALE001.XSTYPE = that.XSTYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-				}else {
+				} else {
 					that.SALE001.DKFID = '80000000';
 					let store = _util.getStorage("store");
 					store.DKFID = "80000000";
@@ -773,8 +776,8 @@
 							return r1.SPID == r.SPID;
 						});
 						console.log("3：", index);
-						if (!obj) {//不存在则追加r
-							console.log("5：",r);
+						if (!obj) { //不存在则追加r
+							console.log("5：", r);
 							arr.push(r);
 						} else {
 							console.log("6：", obj);
@@ -898,7 +901,7 @@
 				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetSaleBill();
-					_util.simpleMsg("清空成功！");
+						_util.simpleMsg("清空成功！");
 					}
 				})
 			},

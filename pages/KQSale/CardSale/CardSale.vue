@@ -332,9 +332,13 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.BILL_TYPE = "Z112"; //启用赊销
+					that.XSTYPE = '6';
 				} else {
-					that.BILL_TYPE = "Z111"; //不启用赊销	
+					that.BILL_TYPE = "Z111"; //不启用赊销
+					that.XSTYPE = '1';	
 				}
+
+				that.SALE001.XSTYPE = that.XSTYPE;
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
