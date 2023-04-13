@@ -333,10 +333,10 @@ var XsTypeObj = {
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			// "sale_credit": true,
-			"sale_return_good": false,
-			"sale_reserve_cancel": false,
-			"sale_takeaway": true,
-			"sale_takeaway_reserve": true,
+			// "sale_return_good": false,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_reserve_cancel": false,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_takeaway": true,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_takeaway_reserve": true,//2023-4-13 应wy要求，定为不准切换到其他功能
 			"sale_message": true,
 			"tools": true,
 			// "sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -1112,7 +1112,7 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 
 			// "sale": true,
-			"sale_takeaway_reserve": true,
+			// "sale_takeaway_reserve": true,//2023-4-13 应wy要求，定为不准切换到其他功能
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -3028,6 +3028,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
+		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype]);
 		if (!that.ComponentsManage[pm_mtype]) {
 			uni.$emit("external-operation", function() {
 				uni.$emit("menu-select-change", {
@@ -3281,7 +3282,13 @@ function GetSale(global, vue, target_name, uni) {
 			uni.$emit('allow-position');
 			return;
 		}
-		uni.$emit('allow-position',pm_type);
+		uni.$once("allow-position-switch",function(open){
+			console.log("[SetType]定位确定:",{ open, pm_type});
+			if(open)
+				uni.$emit('allow-position',pm_type);
+			else
+				uni.$emit('allow-position');
+		});
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
 			console.warn("type:", this.clickSaleType);

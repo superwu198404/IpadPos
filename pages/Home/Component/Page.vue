@@ -149,8 +149,7 @@
 					) { //只有这五种模式（预定提取，预定取消，退单，赊销结算，赊销退单）需要预选定位
 					uni.$once('allow-position',(function(name){
 						console.warn("[MenuSelect]测试",name);
-						if(name)
-							this.current_click_menu_name = name;
+						this.current_click_menu_name = name;
 					}).bind(this))
 				} else {
 					this.current_click_menu_name = null;

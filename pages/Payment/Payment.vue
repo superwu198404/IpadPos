@@ -131,7 +131,7 @@
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div> -->
 											<div class="refund-reset" @click="singlePayRetry(pay)">
-												"重试"
+												重试
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div>
 										</div>
@@ -280,8 +280,6 @@
 							<span v-if="isRefund">{{ refundView.debtAmount }}</span>
 							<input v-if="!isRefund && currentPayType != 'HyJfExchange'" type="number"
 								:disabled="allowInput" value="" :key="domRefresh" v-model="dPayAmount" min="0.01" />
-							<input v-if="!isRefund && currentPayType == 'HyJfExchange'" type="number" disabled="false"
-								value="" :key="domRefresh" v-model="CashOffset.Money" />
 						</text>
 					</p>
 				</view>
@@ -579,6 +577,7 @@
 				this.currentPayInfo = this.PayWayInfo(n); //根据 type 获取支付信息
 				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
 				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
+				console.log("[Watch-CurrentPayType]支付信息:", this.currentPayInfo);
 				if (n === "SZQ") { //如果用券，则不再允许编辑待付款金额
 					this.dPayAmount = this.toBePaidPrice();
 					this.domForceRefresh();
@@ -590,6 +589,7 @@
 					this.allowInput = true;
 				} else {
 					if (n === 'Others' || this.currentPayInfo.poly === "S") {
+						this.allowInput = false;
 						return;
 					}
 					this.dPayAmount = this.toBePaidPrice();

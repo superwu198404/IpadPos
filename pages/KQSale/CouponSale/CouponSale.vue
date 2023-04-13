@@ -679,8 +679,12 @@
 				}
 				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
 				this.credit_order_setting();
+				
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
+					let sales = this.sales_process();//复制避免折扣影响到原数据
+					this.source.sale001 = sales.sale001;
+					this.source.sale002 = sales.sale002;
 					this.coupon_activate(); //开始券申请激活流程
 				} else{
 					let sales = this.sales_process();//复制避免折扣影响到原数据
