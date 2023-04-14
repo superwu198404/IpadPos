@@ -1121,6 +1121,10 @@ var tiktokPay = {
 		body.store_id = poi_id;
 		// body.transaction_id = "clt.ed203972c0b777fc71573e1f6fb0e1cax27V1Jp4SqWdplol91iqpXhpkSDh";
 		// body.store_id = "6601132867395258372";
+		if (!token) {
+			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音TOKEN，禁止核销", null));
+			return;
+		}
 		if (!poi_id) {
 			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
 			return;
