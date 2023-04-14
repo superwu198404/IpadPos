@@ -1271,7 +1271,8 @@ var XsTypeObj = {
 			uni.$once('select-credit', util.callBind(this, function(data) {
 				if (Object.keys(data ?? {}).length > 0) {
 					console.log("[Change]切换到赊销结算!");
-					this.SetManage("sale_credit_settlement"); //切换到赊销
+					if(!this.ComponentsManage['sale_credit_settlement'])//如果在赊销结算则不切换
+						this.SetManage("sale_credit_settlement", true); //切换到赊销
 				} else { //如果没有大客户数据 则切换到普通销售模式
 					console.log("[Change]切换到普通模式!");
 					this.resetSaleBill();
@@ -1809,6 +1810,7 @@ var XsTypeObj = {
 function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
 	let brand = global.brand;
+	var SC = util.callContainer(this);
 	var that = this;
 	this.uni = uni;
 	var uni = uni;
@@ -2285,6 +2287,14 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		console.log("选中事件：", this.CheckTagList);
 	})
+	
+	this.JudgeBigCustomer = SC(function(data){
+		console.log("[JudgeBigCustomer]大客户选中被关闭，开始判断...",data);
+		if(!Object.keys(data).length && !this.ComponentsManage['sale_credit_settlement']){
+			uni.$emit("reset-sales");
+		}
+	})
+	
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -2309,6 +2319,8 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
+		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
+		uni.$on("close-big-customer", this.JudgeBigCustomer);
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
 		uni.$on("close-tszk", this.CloseTSZK);
@@ -3015,7 +3027,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
-	this.SetManage = function(pm_mtype) {
+	this.SetManage = function(pm_mtype, operation) {
 		console.log("[SetManage]组件类型:", pm_mtype);
 		if (!pm_mtype) return;
 		// console.log("[SetManage]LastManage:", lastManage);
@@ -3026,7 +3038,10 @@ function GetSale(global, vue, target_name, uni) {
 			that.ComponentsManage[lastManage] = false;
 		}
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		if(operation != null && operation != undefined)
+			that.ComponentsManage[pm_mtype] = operation;
+		else
+			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
 		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype]);
 		if (!that.ComponentsManage[pm_mtype]) {
@@ -3304,6 +3319,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType
 					.operation.sale002Rows)) {
 				this.myAlert("已录入商品，无法切换此模式！")
+				uni.$emit('allow-position');
 				return;
 			}
 			if (this.DKF && this.DKF.cval.DKFID != "80000000") {

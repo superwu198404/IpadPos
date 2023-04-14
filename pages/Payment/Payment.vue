@@ -183,7 +183,7 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="bom-zhifu">
-							<view class="pattern curr" :class="currentPayType === 'POLY'? 'selected':' '" id='POLY'
+							<view class="pattern curr" :class="(currentPayType === 'POLY' || currentPayInfo.poly == 'Y')? 'selected':' '" id='POLY'
 								@click="clickPayType('',$event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
@@ -985,6 +985,8 @@
 									console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
 									console.log("[Pay]scanCode:", res);
 									if (current_pay_info && Object.keys(current_pay_info).length) {
+										console.warn("[Pay]设置支付TYPE:",this.currentPayType);
+										console.warn("[Pay]设置支付信息:",current_pay_info);
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
 									}
@@ -1022,7 +1024,7 @@
 					pay_type_info,
 					select_pay_type: this.currentPayType
 				});
-				if (this.currentPayType == 'POLY') {
+				if (this.currentPayType == 'POLY' || select_type_info.poly == 'Y') {
 					if (pay_type_info.poly == 'Y') {
 						return util.createdResult(true, "校验成功!");
 					} else {
