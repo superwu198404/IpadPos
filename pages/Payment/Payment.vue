@@ -571,7 +571,7 @@
 					if (this.currentPayInfo) this.currentSelectedInfo = this.currentPayInfo; //储存包含聚合的支付信息
 				} else
 					this.currentPayInfo = null
-				console.log("[Watch-AuthCode]当前支付类型信息：", this.currentPayInfo);
+				console.log("[watch-authCode]当前支付类型信息：", this.currentPayInfo);
 			},
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				console.log("[Watch-CurrentPayType]当前类型:", n);
