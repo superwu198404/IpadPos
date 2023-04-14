@@ -1173,6 +1173,7 @@ var payType = {
 	PAYBRUSHCARD: kengeePay, //仟吉实体卡
 	HyJfExchange: pointPay, //积分抵现 
 	SZQ: szqPay, //电子券支付
+	JHQ: szqPay, //仟吉券支付（聚合）
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）

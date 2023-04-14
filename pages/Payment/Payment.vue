@@ -505,7 +505,8 @@
 					console.log("[Watch-dPayAmount]判断是否允许超额支付:", this.allow_debt_excess);
 					console.log("[Watch-dPayAmount]判断是否为积分抵现:", this.currentPayType);
 					if (Number(n) > this.toBePaidPrice() && !this
-						.allow_debt_excess && this.currentPayType != 'HyJfExchange') { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
+						.allow_debt_excess && this.currentPayType != 'HyJfExchange'
+						) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						console.log(`[Watch-dPayAmount]超过待支付金额!`, n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
 							console.log(`[Watch-dPayAmount]金额异常!`, {
@@ -578,7 +579,7 @@
 				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
 				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 				console.log("[Watch-CurrentPayType]支付信息:", this.currentPayInfo);
-				if (n === "SZQ") { //如果用券，则不再允许编辑待付款金额
+				if (n === "JHQ") { //如果用券，则不再允许编辑待付款金额
 					this.dPayAmount = this.toBePaidPrice();
 					this.domForceRefresh();
 					this.allowInput = true;
@@ -974,12 +975,13 @@
 									let code = common.ResetAuthCode(res.result);
 									let valid_result = this.PaymentTypeValid(code);
 									console.log("[Pay]判断结果:", valid_result);
-									if(!valid_result.code){
+									if (!valid_result.code) {
 										util.simpleMsg(valid_result.msg, true);
 										return;
 									}
 									this.authCode = code; //获取扫码的 authCode
-									let current_pay_info = this.PayWayInfo(this.CurrentPaymentTypeJudge());
+									let current_pay_info = this.PayWayInfo(this
+										.CurrentPaymentTypeJudge());
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
@@ -1011,28 +1013,30 @@
 					util.simpleMsg("订单已完成支付!");
 				}
 			},
-			PaymentTypeValid:function(auth_code){
+			PaymentTypeValid: function(auth_code) {
 				let type = this.CurrentPaymentTypeJudge(auth_code),
 					pay_type_info = this.PayWayInfo(type),
 					select_type_info = this.PayWayInfo(this.currentPayType);
-				console.warn("[PaymentTypeValid]当前支付方式是否为聚合支付:",{
-					type, pay_type_info,select_pay_type: this.currentPayType
+				console.warn("[PaymentTypeValid]当前支付方式是否为聚合支付:", {
+					type,
+					pay_type_info,
+					select_pay_type: this.currentPayType
 				});
-				if(this.currentPayType == 'POLY'){
-					if(pay_type_info.poly == 'Y') {
+				if (this.currentPayType == 'POLY') {
+					if (pay_type_info.poly == 'Y') {
 						return util.createdResult(true, "校验成功!");
+					} else {
+						return util.createdResult(false,
+							`请使用${(select_type_info?.name || (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`
+							)
 					}
-					else {
-						return util.createdResult(false, `请使用${(select_type_info?.name || (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`)
-					}
-				}
-				else 
-				{
-					if(this.currentPayType == type) {
+				} else {
+					if (this.currentPayType == type) {
 						return util.createdResult(true, "校验成功!");
-					}
-					else {
-						return util.createdResult(false, `请使用${(select_type_info?.name|| (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`)
+					} else {
+						return util.createdResult(false,
+							`请使用${(select_type_info?.name|| (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`
+							)
 					}
 				}
 			},
@@ -1383,12 +1387,12 @@
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
 					console.log("[PayTypeJudgment]支付规则:", CodeRule);
-					if (this.currentPayType === "SZQ") //券
+					if (this.currentPayType === "JHQ") //券
 						startCode = "coupon";
 					if (this.currentPayType === "DouYinJK") //券
 						startCode = "ht";
 					//取出当前是何种类型的支付方式
-					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
+					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,JHQ,HYK....
 					if (this.currentPayType === "UPAY") //银联二维码
 						curPayType = "UPAY";
 				}
@@ -1407,12 +1411,12 @@
 				if (startCode) {
 					let CodeRule = getApp().globalData.CodeRule;
 					console.log("[CurrentPaymentTypeJudge]支付规则:", CodeRule);
-					if (this.currentPayType === "SZQ") //券
+					if (this.currentPayType === "JHQ") //券
 						startCode = "coupon";
 					if (this.currentPayType === "DouYinJK") //券
 						startCode = "ht";
 					//取出当前是何种类型的支付方式
-					current_type = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,SZQ,HYK....
+					current_type = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,JHQ,HYK....
 				}
 				if (!current_type && this.authCode) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
@@ -1742,9 +1746,7 @@
 			},
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
-					'DouYinJK'
-				].includes(i
-					.type)).map(i => i.fkid);
+					'DouYinJK'].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
@@ -2172,7 +2174,7 @@
 					if (that.coupon_list.length <= 0) {
 						util.simpleMsg("暂无可用券", true);
 					} else {
-						this.currentPayType = "SZQ"
+						this.currentPayType = "JHQ"
 						let arr = that.coupon_list.filter(function(item, index, arr) {
 							return parseFloat(item.limitmoney) <= that.debt; //筛选下可支付的券
 						})
@@ -2213,7 +2215,7 @@
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
-					that.currentPayType = 'SZQ';
+					that.currentPayType = 'JHQ';
 					if (!this.YN_TotalPay) { //如果未支付完成
 						that.coupons = !that.coupons; //关闭弹窗
 						this.authCode = e; //券号赋值
