@@ -146,6 +146,7 @@
 						that.orderlist = false; //关闭消息框
 						//home下有监听该回调事件 废弃
 						// uni.$emit("Switch", xstype)
+						uni.$emit("reset-sales");
 						uni.$emit("change", {
 							name: xstype,
 							info: {
