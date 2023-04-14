@@ -422,7 +422,7 @@
 					if (res.code) {
 						return this.coupon_segment_activate();
 					} else {
-						this.source.sale001.STR1 = "激活申请失败";
+						this.source.sale001.STR1 = "fail";
 						this.source.sale001.YN_OK = "F";
 						this.source.sale001.REASON = "FPF";
 						util.simpleMsg("券激活申请失败!" + (res?.msg || ""), true);
@@ -430,9 +430,10 @@
 				})).then($(function(res) {
 					console.log("[CouponActivate]券号激活结果:", res);
 					if (res.code) {
+						this.source.sale001.STR1 = "success";
 						util.simpleMsg("券激活成功!", true);
 					} else {
-						this.source.sale001.STR1 = "激活失败";
+						this.source.sale001.STR1 = "fail";
 						this.source.sale001.YN_OK = "F";
 						this.source.sale001.REASON = "QJHF";
 						util.simpleMsg("券激活失败!" + (res?.msg || ""), true);
