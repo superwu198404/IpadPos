@@ -940,36 +940,6 @@
 						if (!this.PAD_SCAN) { //是否扫码枪扫码
 							this.showSMQ = true; //启动扫码框组件
 							return;
-							// uni.showModal({
-							// 	content: "请使用扫码枪扫码",
-							// 	editable: true,
-							// 	confirmText: "确认",
-							// 	cancelText: "取消",
-							// 	success: (function(res) {
-							// 		console.log("回调结果：", res);
-							// 		if (res.confirm) {
-							// 			if (res.content) {
-							// 				this.authCode = res.content; //获取扫码的 authCode
-							// 				let current_pay_info = this.PayWayInfo(this
-							// 					.PayTypeJudgment());
-							// 				console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
-							// 				console.log("[Pay]authCode:", this.authCode);
-							// 				console.log("[Pay]支付信息：", {
-							// 					current_pay_info,
-							// 					pay_type: this.currentPayType
-							// 				});
-							// 				if (Object.keys(current_pay_info).length &&
-							// 					current_pay_info
-							// 					.poly != 'Y' && this.currentPayType == 'POLY') {
-							// 					util.simpleMsg(`当前支付方式不属于聚合支付，请切换至对应的支付方式后进行支付!`)
-							// 					this.authCode = "";
-							// 					return;
-							// 				}
-							// 				that.PayHandle();
-							// 			}
-							// 		}
-							// 	}).bind(this)
-							// })
 						} else {
 							uni.scanCode({
 								success: (function(res) {
