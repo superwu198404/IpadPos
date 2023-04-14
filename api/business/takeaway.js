@@ -11,7 +11,7 @@ var GetWMOrders = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrders";
 	let reqdata = Req.resObj(true, "查询中...", {
 		khid: e
-	}, apistr);
+	}, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
@@ -20,7 +20,7 @@ var GetWMOrderDetail = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrderDetail";
 	let reqdata = Req.resObj(true, "查询中...", {
 		khid: e
-	}, apistr);
+	}, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 

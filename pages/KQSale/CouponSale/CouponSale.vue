@@ -31,7 +31,7 @@
 						<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 					</view>
 				</view>
-				<view v-if="view.current_part_view == 'coupon_activate'">
+				<view style="width: 100%; height: 100%;" v-if="view.current_part_view == 'coupon_activate'">
 					<view class="module">
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
