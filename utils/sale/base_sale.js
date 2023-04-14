@@ -2164,7 +2164,7 @@ function GetSale(global, vue, target_name, uni) {
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
 		that.curHot = false;
-		this.Page.Alphabetical = false  //关闭首字母搜索
+		this.Page.Alphabetical = false //关闭首字母搜索
 		this.Page.isKeyBoardShow = true
 	})
 	//*func*展开商品编辑
@@ -2403,7 +2403,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			if (this.score_info.ispoints == 0 && this.cxIsJFYC)
 				util.simpleMsg("暂无生效的积分促销", "none");
-			this.cxIsJFYC = true;				
+			this.cxIsJFYC = true;
 		}
 		this.SaleNetAndDisc(e);
 	});
@@ -3282,10 +3282,13 @@ function GetSale(global, vue, target_name, uni) {
 			uni.$emit('allow-position');
 			return;
 		}
-		uni.$once("allow-position-switch",function(open){
-			console.log("[SetType]定位确定:",{ open, pm_type});
-			if(open)
-				uni.$emit('allow-position',pm_type);
+		uni.$once("allow-position-switch", function(open) {
+			console.log("[SetType]定位确定:", {
+				open,
+				pm_type
+			});
+			if (open)
+				uni.$emit('allow-position', pm_type);
 			else
 				uni.$emit('allow-position');
 		});
@@ -4081,9 +4084,7 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			// this.sale001.CUID = this.HY.val.hyId; 
-			//!this.sale001.CUID || 
-			if (!this.HY.val.hyId) {
+			if (!this.HY.val.hyId || !this.cxIsJFYC) { //未登录会员或者登录后放弃了积分促销
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);

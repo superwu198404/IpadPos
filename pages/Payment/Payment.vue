@@ -506,7 +506,7 @@
 					console.log("[Watch-dPayAmount]判断是否为积分抵现:", this.currentPayType);
 					if (Number(n) > this.toBePaidPrice() && !this
 						.allow_debt_excess && this.currentPayType != 'HyJfExchange'
-						) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
+					) { //后面这部分是因为存在一个舍弃分（就是一分钱两分钱不要，自动折扣）
 						console.log(`[Watch-dPayAmount]超过待支付金额!`, n);
 						if (Number(n) - this.toBePaidPrice() > 0.1)
 							console.log(`[Watch-dPayAmount]金额异常!`, {
@@ -982,12 +982,12 @@
 									this.authCode = code; //获取扫码的 authCode
 									let current_pay_info = this.PayWayInfo(this
 										.CurrentPaymentTypeJudge());
+									console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
+									console.log("[Pay]scanCode:", res);
 									if (current_pay_info && Object.keys(current_pay_info).length) {
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
 									}
-									console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
-									console.log("[Pay]scanCode:", res);
 									console.log("[Pay]支付信息：", {
 										current_pay_info,
 										pay_type: this.currentPayType
@@ -1028,7 +1028,7 @@
 					} else {
 						return util.createdResult(false,
 							`请使用${(select_type_info?.name || (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`
-							)
+						)
 					}
 				} else {
 					if (this.currentPayType == type) {
@@ -1036,7 +1036,7 @@
 					} else {
 						return util.createdResult(false,
 							`请使用${(select_type_info?.name|| (this.currentPayType == 'POLY' ? "聚合支付所包含的支付类型的" : "") || "")}付款码支付`
-							)
+						)
 					}
 				}
 			},
@@ -1588,6 +1588,7 @@
 			LimitPaymentChannel: function() {
 				let XZZF = util.getStorage("XZZF");
 				let pt = this.PayTypeJudgment();
+				console.log("[LimitPaymentChannel]当前限制支付集合：", XZZF);
 				console.log("[LimitPaymentChannel]当前支付集合：", this.PayList);
 				console.log("[LimitPaymentChannel]当前支付类型：", pt);
 				if ((XZZF.length > 0 && this.PayList.length > 0 && XZZF.indexOf(pt) >= 0) && this.PayList.find((r) => r
@@ -1746,7 +1747,8 @@
 			},
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
-					'DouYinJK'].includes(i.type)).map(i => i.fkid);
+					'DouYinJK'
+				].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
@@ -1895,16 +1897,6 @@
 					actionType: this.useOrderTypeChoice() //values： INCREASE(增加) or DECREASE(减少)
 				}, obj);
 			},
-			ExistsAllowScore: function() { //判断是否允许使用积分抵现操作
-				console.log("[ExistsAllowScore]", this.SALES.sale1.CUID);
-				if (!this.SALES.sale1.CUID) {
-					let pay_info = this.PayWayList.find(i => i.type === 'HyJfExchange');
-					if (pay_info) pay_info.yn_use = 'N';
-				} else {
-					let pay_info = this.PayWayList.find(i => i.type === 'HyJfExchange');
-					if (pay_info) pay_info.yn_use = 'Y';
-				}
-			},
 			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
 				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage('PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
@@ -1943,7 +1935,6 @@
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
 					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
-					// this.ExistsAllowScore();//上一页面处理
 					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
 					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
