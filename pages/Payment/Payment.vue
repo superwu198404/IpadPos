@@ -1468,13 +1468,27 @@
 					0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
+			ScoreDiscount: function() {//积分抵现处理判断
+				console.log("[ScoreDiscount]积分抵现判断:",{
+					current_pay_type: this.currentPayType,
+					debt: this.dPayAmount,
+					real_debt: this.toBePaidPrice(),
+					cash_offset: this.CashOffset
+				});
+				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+					util.simpleMsg("积分抵现不允许超额支付!", true);
+					return false;
+				}
+				else {
+					return true;
+				}
+			},
 			//在 PayHandle 调用 PaymentAll 前的终止操作（用于控制是否进行支付操作），返回 Boolean，用于终止支付
 			//注：支持异步+同步方法(貌似 uniapp 或者是 ios 的 js 解释器内不支持在 Promise.all 中使用同步的代码，所以只能用 Promise.resolve 包裹同步代码的返回结果)
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this
-						.LimitPaymentChannel()
+					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this.LimitPaymentChannel(), this.ScoreDiscount()
 					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加

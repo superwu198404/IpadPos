@@ -186,6 +186,13 @@
 			}
 		},
 		created() {
+			uni.$on("close-big-customer",(function(data){
+				console.warn("[CreditSettlement-Created]赊销界面:",data);
+				if(Object.keys(data).length){
+					this.big_client_info = data;
+					this.GetBigClientSettlement();
+				}
+			}).bind(this))
 			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
 			console.log("[CreditSettlement-Created]门店信息:", {
 				ryid: this.RYID,

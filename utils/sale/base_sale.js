@@ -540,6 +540,11 @@ var XsTypeObj = {
 			}
 			this.raw_order = list;
 			this.raw_order?.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
+			if (this.sale001.CUID) {
+				this.HY.val = {
+					hyId: this.sale001.CUID
+				};
+			}
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -4288,7 +4293,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
 		this.isDateClassify = true; //默认展示分类数据
-
+		this.score_info.money = 0;
+		this.score_info.score = 0;
+		this.score_info.ispoints = 0;
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.Page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选
