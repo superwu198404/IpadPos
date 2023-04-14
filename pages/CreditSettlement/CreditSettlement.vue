@@ -27,8 +27,8 @@
 							</view>
 						</view>
 						<view class="h2" style="display: flex;align-items: center;">赊销结算
-							<view @click="SelectAll" class="select-all-orders">
-								{{ this.big_client_settlement.length === this.select_orders.length ? '取消全选' : '全选'}}
+							<view @click="SelectAll" :class="this.big_client_settlement.length ? 'select-all-orders' : 'select-all-orders select-all-disabled'">
+								{{ (this.big_client_settlement.length === this.select_orders.length && this.big_client_settlement.length != 0) ? '取消全选' : '全选'}}
 							</view>
 						</view>
 						<NoData v-if="big_client_settlement.length==0"></NoData>
@@ -276,5 +276,9 @@
 		align-items: center;
 		margin-left: 10px;
 		font-size: 26rpx;
+	}
+	
+	.select-all-disabled{
+		background: grey !important;
 	}
 </style>

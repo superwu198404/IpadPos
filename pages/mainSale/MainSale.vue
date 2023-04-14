@@ -96,7 +96,7 @@
 						</view>
 					</view>
 					<!--从这里开始为最右侧的选项去 包括热销、字母区，会员，特殊折扣等 -->
-					<view class="operation">
+					<view :class="Alphabetical ? 'operation top-layer' : 'operation'">
 						<view class="sorting">
 							<view class="seasonal" @click="mainSale.getHotSale()" :class="mainSale.curHot?'curr':''">
 								<image src="../../images/rexiao-fenlei.png" mode="widthFix"></image>
@@ -1422,6 +1422,11 @@
 	.component-box {
 		position: absolute;
 		z-index: 9998 !important;
+	}
+	
+	
+	.top-layer{
+		z-index: 99999999999;
 	}
 
 	/* todo */
