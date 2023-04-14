@@ -183,7 +183,7 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="bom-zhifu">
-							<view class="pattern curr" :class="(currentPayType === 'POLY' || currentPayInfo.poly == 'Y')? 'selected':' '" id='POLY'
+							<view class="pattern curr" :class="(currentPayType === 'POLY' || currentPayInfo.poly == 'Y') ? 'selected':' '" id='POLY'
 								@click="clickPayType('',$event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
