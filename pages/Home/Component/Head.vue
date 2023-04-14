@@ -1488,4 +1488,8 @@
 		height: 90%;
 		margin: 10% 0 0 10%;
 	}
+	
+	.account{
+		z-index: 100001;
+	}
 </style>

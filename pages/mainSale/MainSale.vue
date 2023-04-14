@@ -1426,7 +1426,7 @@
 	
 	
 	.top-layer{
-		z-index: 99999999999;
+		z-index: 100000;
 	}
 
 	/* todo */
