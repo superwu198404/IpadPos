@@ -200,7 +200,7 @@
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
 							<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='N')" class="pattern nots curr"
-								:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'selected':''"
+								:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid)? 'selected':''"
 								:id="item.type" @click="clickPayType(item,$event)">
 								<view class="tits" :class="{seltss:item.yn_use == 'Y'}">
 									<p v-if="item.yn_use == 'Y'">{{item.name}}</p>
@@ -576,6 +576,7 @@
 			currentPayType: function(n, o) { //每次发生变化,切换页面dom选中
 				console.log("[Watch-CurrentPayType]当前类型:", n);
 				this.currentPayInfo = this.PayWayInfo(n); //根据 type 获取支付信息
+				this.currentSelectedInfo = this.PayWayInfo(n); //根据 type 获取支付信息
 				this.allow_debt_excess = (this.currentPayInfo.yn_cezf == "Y"); //判断是否允许采用 金额>欠款 得操作 (超额支付)
 				console.log("[Watch-CurrentPayType]设置是否允许超额支付:", this.allow_debt_excess);
 				console.log("[Watch-CurrentPayType]支付信息:", this.currentPayInfo);
