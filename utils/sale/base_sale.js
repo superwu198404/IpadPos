@@ -3048,7 +3048,7 @@ function GetSale(global, vue, target_name, uni) {
 		else
 			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype]);
+		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype], pm_mtype);
 		if (!that.ComponentsManage[pm_mtype]) {
 			uni.$emit("external-operation", function() {
 				uni.$emit("menu-select-change", {
@@ -3302,13 +3302,14 @@ function GetSale(global, vue, target_name, uni) {
 			uni.$emit('allow-position');
 			return;
 		}
-		uni.$once("allow-position-switch", function(open) {
+		uni.$once("allow-position-switch", function(open, type) {
 			console.log("[SetType]定位确定:", {
 				open,
-				pm_type
+				pm_type,
+				current_type: type
 			});
 			if (open)
-				uni.$emit('allow-position', pm_type);
+				uni.$emit('allow-position', type);
 			else
 				uni.$emit('allow-position');
 		});
