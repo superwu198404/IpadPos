@@ -2875,6 +2875,10 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//点击键盘字母
 	this.keyBoardClick = function(e) {
+		//输入限制
+		if(this.boardQueryKeys.length>=10){
+			return
+		}
 		this.boardQueryKeys = this.boardQueryKeys + e
 	}
 	this.affirmQueryKeys = function(e) {
