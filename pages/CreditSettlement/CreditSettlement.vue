@@ -19,15 +19,16 @@
 								<view class="prints">
 									<view class="sousuo">
 										<label @click="Settlement">
-											<image src="../../images/sousuo.png" mode="widthFix"></image>结算
+											<image src="@/images/settlement.png" mode="widthFix"></image>结算
+											<!-- <image src="@/images/sousuo.png" mode="widthFix"></image>结算 -->
 										</label>
 									</view>
 								</view>
 							</view>
 						</view>
 						<view class="h2" style="display: flex;align-items: center;">赊销结算
-							<view @click="SelectAll" class="select-all-orders">
-								{{ this.big_client_settlement.length === this.select_orders.length ? '取消全选' : '全选'}}
+							<view @click="SelectAll" :class="this.big_client_settlement.length ? 'select-all-orders' : 'select-all-orders select-all-disabled'">
+								{{ (this.big_client_settlement.length === this.select_orders.length && this.big_client_settlement.length != 0) ? '取消全选' : '全选'}}
 							</view>
 						</view>
 						<NoData v-if="big_client_settlement.length==0"></NoData>
@@ -185,6 +186,13 @@
 			}
 		},
 		created() {
+			uni.$on("close-big-customer",(function(data){
+				console.warn("[CreditSettlement-Created]赊销界面:",data);
+				if(Object.keys(data).length){
+					this.big_client_info = data;
+					this.GetBigClientSettlement();
+				}
+			}).bind(this))
 			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
 			console.log("[CreditSettlement-Created]门店信息:", {
 				ryid: this.RYID,
@@ -275,5 +283,9 @@
 		align-items: center;
 		margin-left: 10px;
 		font-size: 26rpx;
+	}
+	
+	.select-all-disabled{
+		background: grey !important;
 	}
 </style>

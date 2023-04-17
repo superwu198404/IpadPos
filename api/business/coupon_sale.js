@@ -38,9 +38,9 @@ export default {
 			console.log("[ReComputedSales]重新计算sale1、2，计算前：",{
 				sale1,sale2
 			});
-			sale2.forEach(s2 => s2.NET = s2.PRICE * s2.QTY);
+			sale2.forEach(s2 => Number(s2.NET?.toFixed(2)));
 			console.log("[ReComputedSales]重新计算sale2金额：", sale2);
-			let total_amount = sale2.map(s2 => s2.NET - s2.CXDISC).reduce((p,n) => p + n,0);
+			let total_amount = sale2.map(s2 => s2.NET).reduce((p,n) => p + n,0);
 			sale1.ZNET = total_amount;
 			sale1.TNET = total_amount;
 			console.log("[ReComputedSales]重新计算sale1金额：", sale1);

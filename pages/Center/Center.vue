@@ -22,7 +22,7 @@
 							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
-						<view @click="Chaxun()">
+						<view @click="Chaxun(1)">
 							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
@@ -413,10 +413,10 @@
 			},
 			//门店查询
 			Chaxun: function(e) {
-				// if (e) {
-				// 	util.simpleMsg("功能暂未开放！", true);
-				// 	return;
-				// }
+				if (e) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				uni.redirectTo({
 					url: "/pages/Querypage/QueryCenter/QueryCenter",
 					complete: res => {

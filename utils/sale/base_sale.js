@@ -29,6 +29,7 @@ import hy_query from '@/api/hy/hy_query.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
+import dateformat from '@/utils/dateformat.js';
 // import { log } from 'console';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
@@ -332,10 +333,10 @@ var XsTypeObj = {
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			// "sale_credit": true,
-			"sale_return_good": false,
-			"sale_reserve_cancel": false,
-			"sale_takeaway": true,
-			"sale_takeaway_reserve": true,
+			// "sale_return_good": false,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_reserve_cancel": false,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_takeaway": true,//2023-4-13 应wy要求，定为不准切换到其他功能
+			// "sale_takeaway_reserve": true,//2023-4-13 应wy要求，定为不准切换到其他功能
 			"sale_message": true,
 			"tools": true,
 			// "sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -539,6 +540,11 @@ var XsTypeObj = {
 			}
 			this.raw_order = list;
 			this.raw_order?.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
+			if (this.sale001.CUID) {
+				this.HY.val = {
+					hyId: this.sale001.CUID
+				};
+			}
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -1111,7 +1117,7 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 
 			// "sale": true,
-			"sale_takeaway_reserve": true,
+			// "sale_takeaway_reserve": true,//2023-4-13 应wy要求，定为不准切换到其他功能
 			"sale_message": true,
 			"lockRows": 0, //是否存在锁定行数
 			"inputsp": true //是否可以输入商品
@@ -1270,7 +1276,8 @@ var XsTypeObj = {
 			uni.$once('select-credit', util.callBind(this, function(data) {
 				if (Object.keys(data ?? {}).length > 0) {
 					console.log("[Change]切换到赊销结算!");
-					this.SetManage("sale_credit_settlement"); //切换到赊销
+					if(!this.ComponentsManage['sale_credit_settlement'])//如果在赊销结算则不切换
+						this.SetManage("sale_credit_settlement", true); //切换到赊销
 				} else { //如果没有大客户数据 则切换到普通销售模式
 					console.log("[Change]切换到普通模式!");
 					this.resetSaleBill();
@@ -1321,16 +1328,16 @@ var XsTypeObj = {
 			this.sale003.forEach(s3 => {
 				let ywsxfk = Object.cover(new sale.ywsxfk(), s3);
 				ywsxfk.BILL = credit_bill;
-				ywsxfk.JK_DATE = new Date().toLocaleString();
-				let exists_same_fkid = ywsxfk_list.find(i => i.FKID = ywsxfk.FKID);
+				ywsxfk.JK_DATE = dateformat.getYMD();
+				let exists_same_fkid = ywsxfk_list.find(i => i.FKID == ywsxfk.FKID);
 				if (exists_same_fkid) { //业务赊销付款判断当前是否存在重复的fkid，有重复的则合并
 					exists_same_fkid.AMT = Number(exists_same_fkid.AMT) + Number(ywsxfk.AMT);
 				} else
 					ywsxfk_list.push(ywsxfk);
 			})
-			// this.sale001 = {};
-			// this.sale002 = [];
-			// this.sale003 = [];
+			this.sale001 = {};
+			this.sale002 = [];
+			this.sale003 = [];
 			console.log("[SaleFinishing]赊销结算三表信息(设置BILL前):", this.additional);
 			//YWSXFK(类sale3)、YWSXJS(类sale1，主单号为BILL，大客户ID-DKFID，大客户名称-DKFNAME)、YWSXJSMX(类sale2-记录结算的单据，原单号记录字段为BILL_SX)
 			this.additional['YWSXFK'] = ywsxfk_list;
@@ -1808,6 +1815,7 @@ var XsTypeObj = {
 function GetSale(global, vue, target_name, uni) {
 	let store = global.store; //店铺配置信息
 	let brand = global.brand;
+	var SC = util.callContainer(this);
 	var that = this;
 	this.uni = uni;
 	var uni = uni;
@@ -2163,7 +2171,7 @@ function GetSale(global, vue, target_name, uni) {
 	//点击键盘图标
 	this.keyBoardSearch = util.callBind(this, function(e) {
 		that.curHot = false;
-		this.Page.Alphabetical = false  //关闭首字母搜索
+		this.Page.Alphabetical = false //关闭首字母搜索
 		this.Page.isKeyBoardShow = true
 	})
 	//*func*展开商品编辑
@@ -2284,6 +2292,14 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		console.log("选中事件：", this.CheckTagList);
 	})
+	
+	this.JudgeBigCustomer = SC(function(data){
+		console.log("[JudgeBigCustomer]大客户选中被关闭，开始判断...",data);
+		if(!Object.keys(data).length && !this.ComponentsManage['sale_credit_settlement']){
+			uni.$emit("reset-sales");
+		}
+	})
+	
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -2308,6 +2324,8 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
+		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
+		uni.$on("close-big-customer", this.JudgeBigCustomer);
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
 		uni.$on("close-tszk", this.CloseTSZK);
@@ -2402,7 +2420,7 @@ function GetSale(global, vue, target_name, uni) {
 		} else {
 			if (this.score_info.ispoints == 0 && this.cxIsJFYC)
 				util.simpleMsg("暂无生效的积分促销", "none");
-			this.cxIsJFYC = true;				
+			this.cxIsJFYC = true;
 		}
 		this.SaleNetAndDisc(e);
 	});
@@ -3014,7 +3032,7 @@ function GetSale(global, vue, target_name, uni) {
 	}
 
 	//设定具体的插件件让其进行显示,并关闭其他插件
-	this.SetManage = function(pm_mtype) {
+	this.SetManage = function(pm_mtype, operation) {
 		console.log("[SetManage]组件类型:", pm_mtype);
 		if (!pm_mtype) return;
 		// console.log("[SetManage]LastManage:", lastManage);
@@ -3025,8 +3043,12 @@ function GetSale(global, vue, target_name, uni) {
 			that.ComponentsManage[lastManage] = false;
 		}
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
+		if(operation != null && operation != undefined)
+			that.ComponentsManage[pm_mtype] = operation;
+		else
+			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
+		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype], pm_mtype);
 		if (!that.ComponentsManage[pm_mtype]) {
 			uni.$emit("external-operation", function() {
 				uni.$emit("menu-select-change", {
@@ -3277,9 +3299,20 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetType]当前操作配置:", this.currentOperation);
 		if (!this.currentOperation[pm_type] && (!uncheck)) {
 			this.myAlert("请完成当前模式再进行切换！");
+			uni.$emit('allow-position');
 			return;
 		}
-
+		uni.$once("allow-position-switch", function(open, type) {
+			console.log("[SetType]定位确定:", {
+				open,
+				pm_type,
+				current_type: type
+			});
+			if (open)
+				uni.$emit('allow-position', type);
+			else
+				uni.$emit('allow-position');
+		});
 		if (XsTypeObj[pm_type]) {
 			// this.clickSaleType = XsTypeObj[pm_type];
 			console.warn("type:", this.clickSaleType);
@@ -3292,6 +3325,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (this.sale002.length > 0 && (this.currentOperation.sale002Rows == this.clickSaleType
 					.operation.sale002Rows)) {
 				this.myAlert("已录入商品，无法切换此模式！")
+				uni.$emit('allow-position');
 				return;
 			}
 			if (this.DKF && this.DKF.cval.DKFID != "80000000") {
@@ -4072,9 +4106,7 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			// this.sale001.CUID = this.HY.val.hyId; 
-			//!this.sale001.CUID || 
-			if (!this.HY.val.hyId) {
+			if (!this.HY.val.hyId || !this.cxIsJFYC) { //未登录会员或者登录后放弃了积分促销
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);
@@ -4262,7 +4294,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
 		this.isDateClassify = true; //默认展示分类数据
-
+		this.score_info.money = 0;
+		this.score_info.score = 0;
+		this.score_info.ispoints = 0;
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.Page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选

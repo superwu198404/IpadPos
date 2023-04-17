@@ -58,9 +58,6 @@ page {
 .navmall .logo image {
 	width: 100%;
 }
-.right .content{
-	z-index: 9999 !important;
-}
 
 .menu {
 	width: 100%;
@@ -938,7 +935,7 @@ uni-button:after {
 .voucher {
 	background-color: #42B14B;
 	color: #fff;
-	width: 35%;
+	width: 30%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -947,7 +944,7 @@ uni-button:after {
 }
 
 .voucher view {
-	font-size: 60rpx;
+	font-size: 58rpx;
 	line-height: 80rpx;
 	font-weight: 700;
 	letter-spacing: -2px;
@@ -963,7 +960,7 @@ uni-button:after {
 }
 
 .coupon-dets {
-	width: 80%;
+	width: 70%;
 	background-color: #F0F9F1;
 	border-radius: 0 14rpx 14rpx 0;
 	/* display: flex;

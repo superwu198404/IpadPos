@@ -84,13 +84,12 @@
 				uni.$emit('tools', 'promotions');
 			},
 			GetMDCXHD: function(e) {
-				_main.GetMDCXHD(e, res => {
+				_main.GetMDCXHD(null, res => {
 					console.log("获取成功:", res);
 					that.MDCXDatas = res;
 					that.showMDCXData = true;
-					if (e) {
-						util.simpleMsg("刷新成功");
-					}
+					if (e)
+						util.simpleMsg("刷新成功！");
 				})
 			}
 		}
@@ -117,16 +116,20 @@
 		border-radius: 50%;
 		font-size: 44rpx;
 	}
-	.commods .uls{
+
+	.commods .uls {
 		display: flex;
 	}
-	.commods .uls .lis{
-		width:43%;
+
+	.commods .uls .lis {
+		width: 43%;
 	}
-	.uls .lis .protheme .themes{
-		width:70%;
+
+	.uls .lis .protheme .themes {
+		width: 70%;
 	}
-	.uls .lis .protheme .themes .h8{
-		max-width:100%;
+
+	.uls .lis .protheme .themes .h8 {
+		max-width: 100%;
 	}
 </style>

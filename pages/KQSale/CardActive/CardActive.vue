@@ -61,7 +61,7 @@
 					</view>
 					<!-- 卡激活 -->
 					<view style="width: 100%; height: 100%;" v-if="YWTYPE!='GiftCard_Retry'">
-						<view class="module" style="height: 66%;">
+						<view class="module">
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
 							<view class="swipetip" v-if="SALE006.length==0">
@@ -299,13 +299,16 @@
 				console.log("[Created]大客户回调:", data);
 				if (data.exists_credit) {
 					that.BILL_TYPE = "Z112"; //启用赊销
+					that.XSTYPE = '6';
 				} else {
 					that.BILL_TYPE = "Z111"; //不启用赊销	
+					that.XSTYPE = '1';
 				}
 				that.SALE001.BILL_TYPE = that.BILL_TYPE;
+				that.SALE001.XSTYPE = that.XSTYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
-				}else {
+				} else {
 					that.SALE001.DKFID = '80000000';
 					let store = _util.getStorage("store");
 					store.DKFID = "80000000";
@@ -773,9 +776,9 @@
 							return r1.SPID == r.SPID;
 						});
 						console.log("3：", index);
-						if (!obj) {
-							console.log("5：", obj);
-							arr.push(obj);
+						if (!obj) { //不存在则追加r
+							console.log("5：", r);
+							arr.push(r);
 						} else {
 							console.log("6：", obj);
 							arr[index].QTY = _util.newFloat(obj.QTY + r.QTY, 2);
@@ -898,7 +901,7 @@
 				_util.simpleModal("提示", "是否确认清空当前数据？", res => {
 					if (res) {
 						that.ResetSaleBill();
-					_util.simpleMsg("清空成功！");
+						_util.simpleMsg("清空成功！");
 					}
 				})
 			},

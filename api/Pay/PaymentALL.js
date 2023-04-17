@@ -27,8 +27,8 @@ var CreateData = function(pt, t, m, d, load = false) {
 			return item.TYPE == pt;
 		})
 		if (PayObj) { //查询到支付信息
-			console.warn("[CreateData]门店参数信息:",d);
-			console.warn("[CreateData]目标配置信息:",d.original_company_id);
+			console.warn("[CreateData]门店参数信息:", d);
+			console.warn("[CreateData]目标配置信息:", d.original_company_id);
 			data = {
 				code: true,
 				http: {
@@ -309,7 +309,7 @@ var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //从数据库获取配置 因为和POS共用，SHID是POS的商户号，这个LONGKEY是IPAD的商户号
@@ -341,7 +341,7 @@ var kengeePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TLCARD", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			Req.asyncFuncOne(CreateData("TL", "查询中...",
@@ -387,7 +387,7 @@ var misPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("TL", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 Key 是 门店id/门店号，Note是 机器号/终端号/款台号
@@ -400,7 +400,7 @@ var misPay = {
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_GetConfig("TL", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.NOTE) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.SHID; //使用全局配置（后端
@@ -431,7 +431,7 @@ var misScanCodePay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			//参数从后端 PayConfig 表中获取 RYID 是 门店id/门店号，Note是 机器号/终端号/款台号，LONGKEY是商户号
@@ -442,10 +442,10 @@ var misScanCodePay = {
 		})
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		console.log("[RefundAll]UPAY中的Body参数为:",body);
+		console.log("[RefundAll]UPAY中的Body参数为:", body);
 		_GetConfig("UPAY", body.original_store_id || getApp().globalData.store.KHID).then((config) => {
 			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false,"未配置通联商户号!", null));
+				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
 				return;
 			}
 			body.merchant_no = config.LONGKEY; //使用全局配置（后端
@@ -590,6 +590,7 @@ var szqPay = {
 			//销售退货或预定取消才可进行券退回
 			console.log("券返回时的业务类型：", body.ywtype);
 			if (body.ywtype && (body.ywtype == 'Z151' || body.ywtype == 'Z171')) {
+				pt = pt == "SZQ" ? 'JHQ' : pt;
 				_Refund(pt, body, res => {
 					console.log("券返回结果：", res);
 				}, err => {
@@ -643,12 +644,12 @@ var kbPay = {
 		body.store_id = body.original_store_id;
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
-	QueryCouponDetails: async function(card_number){
+	QueryCouponDetails: async function(card_number) {
 		let details_result = null;
 		await Req.AsyncRequesrChain(CreateData('COUPON', "查询中...", "QueryInfo", {
-				auth_code: card_number,
-				product_info: []
-			}, true), [
+			auth_code: card_number,
+			product_info: []
+		}, true), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[QueryInfo]第一次结果（QueryInfo）:", res);
 				details_result = res;
@@ -955,23 +956,24 @@ var pinoPay = {
 		console.log("[RefundAll]原订单门店ID:", body.original_store_id);
 		var original_area_id = (await _GetClientInfos(body.original_store_id))?.DQID;
 		console.log("[RefundAll]原订单地区ID:", original_area_id);
-		var config_result = await _GetConfig("PINNUOPAY", original_area_id || getApp().globalData.store.DQID).then((config) => {
-			var result = {
-				code: false,
-				msg: null,
-				data: null
-			}
-			console.log("[RefundAll]品诺支付参数获取:", config)
-			if (!config) {
-				result.code = false;
-				result.msg = "支付参数未配置!";
-			} else {
-				result.code = true;
-				result.msg = "参数获取成功!";
-				result.data = config;
-			}
-			return result;
-		})
+		var config_result = await _GetConfig("PINNUOPAY", original_area_id || getApp().globalData.store.DQID)
+			.then((config) => {
+				var result = {
+					code: false,
+					msg: null,
+					data: null
+				}
+				console.log("[RefundAll]品诺支付参数获取:", config)
+				if (!config) {
+					result.code = false;
+					result.msg = "支付参数未配置!";
+				} else {
+					result.code = true;
+					result.msg = "参数获取成功!";
+					result.data = config;
+				}
+				return result;
+			})
 		if (!config_result.code) {
 			catchFunc(config_result);
 		} else {
@@ -999,17 +1001,17 @@ var pinoPay = {
 			], catchFunc, finallyFunc, resultsFunc);
 		}
 	},
-	QueryCardDetails: async function(card_number){
+	QueryCardDetails: async function(card_number) {
 		var config_result = await _GetConfig("PINNUOPAY", getApp().globalData.store.DQID).then((config) => {
 			console.log("[QueryCardDetails]品诺支付参数获取:", config)
 			if (!config) {
-				return util.createdResult(false,'支付参数未配置!');
+				return util.createdResult(false, '支付参数未配置!');
 			} else {
-				return util.createdResult(true,'参数获取成功!',config);
+				return util.createdResult(true, '参数获取成功!', config);
 			}
 		})
-		console.log("[QueryCardDetails]品诺支付参数获取结果:",config_result);
-		if (!config_result.code) {//如果没获取到参数
+		console.log("[QueryCardDetails]品诺支付参数获取结果:", config_result);
+		if (!config_result.code) { //如果没获取到参数
 			catchFunc(config_result);
 			return result;
 		}
@@ -1109,11 +1111,12 @@ var pinoPay = {
 
 //抖音团购券（联机）支付
 var tiktokPay = {
-	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc){//核销
+	PaymentAll: async function(pt, body, func, catchFunc, finallyFunc) { //核销
 		console.log("[PaymentAll]开始抖音券核销操作...");
-		let poi_id = await tiktok.get_tiktok_store_id(),token = await tiktok.get_tiktok_token();
+		let poi_id = await tiktok.get_tiktok_store_id(),
+			token = await tiktok.get_tiktok_token();
 		console.log("[PaymentAll]抖音券支付参数查询完毕...");
-		console.log("[PaymentAll]抖音券支付参数:",{
+		console.log("[PaymentAll]抖音券支付参数:", {
 			token,
 			poi_id
 		});
@@ -1121,14 +1124,18 @@ var tiktokPay = {
 		body.store_id = poi_id;
 		// body.transaction_id = "clt.ed203972c0b777fc71573e1f6fb0e1cax27V1Jp4SqWdplol91iqpXhpkSDh";
 		// body.store_id = "6601132867395258372";
+		if (!token) {
+			if (catchFunc) catchFunc(util.createdResult(false, "当前门店未配置抖音TOKEN，禁止核销", null));
+			return;
+		}
 		if (!poi_id) {
-			if (catchFunc) catchFunc(util.createdResult(false,"当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
+			if (catchFunc) catchFunc(util.createdResult(false, "当前门店未配置抖音POI_ID，未认领门店，禁止核销", null));
 			return;
 		}
 		Req.AsyncRequesrChain(CreateData(pt, "支付中...", "Payment", body), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[PaymentAll]第一次结果（Payment）:", res);
-				if(res.code && res.data.money)
+				if (res.code && res.data.money)
 					body.money = res.data.money;
 				func?.call(null, res);
 				return res;
@@ -1141,7 +1148,7 @@ var tiktokPay = {
 			console.log("主动抛出异常:", active_err);
 		});
 	},
-	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc){//撤销
+	RefundAll: async function(pt, body, catchFunc, finallyFunc, resultsFunc) { //撤销
 		let token = await tiktok.get_tiktok_token();
 		body.transaction_id = token;
 		// body.transaction_id = "clt.ed203972c0b777fc71573e1f6fb0e1cax27V1Jp4SqWdplol91iqpXhpkSDh";
@@ -1173,18 +1180,19 @@ var payType = {
 	PAYBRUSHCARD: kengeePay, //仟吉实体卡
 	HyJfExchange: pointPay, //积分抵现 
 	SZQ: szqPay, //电子券支付
+	JHQ: szqPay, //仟吉券支付（聚合）
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）
 	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
-	DouYinJK: tiktokPay,//抖音团购券（联机）支付
+	DouYinJK: tiktokPay, //抖音团购券（联机）支付
 }
 
 //聚合支付主入口
 var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 	try {
-		console.log("[PaymentAll]开始调用:",[...arguments]);
+		console.log("[PaymentAll]开始调用:", [...arguments]);
 		payType[pt].PaymentAll(pt, body, func, catchFunc, finallyFunc)
 	} catch (e) {
 		console.log("[PaymentAll]发生调用异常:", e);
@@ -1195,7 +1203,7 @@ var PaymentAll = function(pt, body, func, catchFunc, finallyFunc) {
 //聚合退款主入口
 var RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 	try {
-		console.log("[RefundAll]开始调用:",[...arguments]);
+		console.log("[RefundAll]开始调用:", [...arguments]);
 		payType[pt].RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc)
 	} catch (e) {
 		console.log("[RefundAll]发生调用异常:", e);
