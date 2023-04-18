@@ -2152,11 +2152,16 @@ function GetSale(global, vue, target_name, uni) {
 				// that.log("看一下品类初始化的怎么样" + JSON.stringify(plitem.plarr).substr(0, 300));
 			})
 		}
-		// console.log("请求的返回结果是啥",hotSale);
+		console.log("请求的返回结果是啥", hotSale);
 
 		that.selectFlagList = hotSale;
 		if (that.selectFlagList.length > 0) {
 			that.selectPlid = that.selectFlagList[0].plid;
+
+			setTimeout(function() { //滚动定位
+				that.scrollinto = that.selectFlag + that.selectPlid;
+				console.log("热销定位：", that.scrollinto);
+			})
 		}
 		that.update();
 	}
@@ -2741,8 +2746,8 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
-		
-		setTimeout(function() {//重新定位到顶部
+
+		setTimeout(function() { //重新定位到顶部
 			that.scrollinto = pm_flag + that.selectPlid;
 			console.log("重新定位：", that.scrollinto);
 		})
