@@ -540,6 +540,11 @@ var XsTypeObj = {
 			}
 			this.raw_order = list;
 			this.raw_order?.forEach(s3 => s3.FKID = 'ZG03') //预定金类型
+			if (this.sale001.CUID) {
+				this.HY.val = {
+					hyId: this.sale001.CUID
+				};
+			}
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
@@ -2870,6 +2875,10 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//点击键盘字母
 	this.keyBoardClick = function(e) {
+		//输入限制
+		if(this.boardQueryKeys.length>=10){
+			return
+		}
 		this.boardQueryKeys = this.boardQueryKeys + e
 	}
 	this.affirmQueryKeys = function(e) {
@@ -3043,7 +3052,7 @@ function GetSale(global, vue, target_name, uni) {
 		else
 			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype]);
+		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype], pm_mtype);
 		if (!that.ComponentsManage[pm_mtype]) {
 			uni.$emit("external-operation", function() {
 				uni.$emit("menu-select-change", {
@@ -3297,13 +3306,14 @@ function GetSale(global, vue, target_name, uni) {
 			uni.$emit('allow-position');
 			return;
 		}
-		uni.$once("allow-position-switch", function(open) {
+		uni.$once("allow-position-switch", function(open, type) {
 			console.log("[SetType]定位确定:", {
 				open,
-				pm_type
+				pm_type,
+				current_type: type
 			});
 			if (open)
-				uni.$emit('allow-position', pm_type);
+				uni.$emit('allow-position', type);
 			else
 				uni.$emit('allow-position');
 		});
@@ -4288,7 +4298,9 @@ function GetSale(global, vue, target_name, uni) {
 		this.notClassifyDate = null;
 		this.showQueryKeys = ''; //清空键盘搜索词
 		this.isDateClassify = true; //默认展示分类数据
-
+		this.score_info.money = 0;
+		this.score_info.score = 0;
+		this.score_info.ispoints = 0;
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.Page.isKeyBoardShow = false; //关闭键盘
 		this.filterSp('A'); //重置商品集合 为A字母筛选
