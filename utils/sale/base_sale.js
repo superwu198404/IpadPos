@@ -1276,7 +1276,7 @@ var XsTypeObj = {
 			uni.$once('select-credit', util.callBind(this, function(data) {
 				if (Object.keys(data ?? {}).length > 0) {
 					console.log("[Change]切换到赊销结算!");
-					if(!this.ComponentsManage['sale_credit_settlement'])//如果在赊销结算则不切换
+					if (!this.ComponentsManage['sale_credit_settlement']) //如果在赊销结算则不切换
 						this.SetManage("sale_credit_settlement", true); //切换到赊销
 				} else { //如果没有大客户数据 则切换到普通销售模式
 					console.log("[Change]切换到普通模式!");
@@ -2292,14 +2292,14 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		console.log("选中事件：", this.CheckTagList);
 	})
-	
-	this.JudgeBigCustomer = SC(function(data){
-		console.log("[JudgeBigCustomer]大客户选中被关闭，开始判断...",data);
-		if(!Object.keys(data).length && !this.ComponentsManage['sale_credit_settlement']){
+
+	this.JudgeBigCustomer = SC(function(data) {
+		console.log("[JudgeBigCustomer]大客户选中被关闭，开始判断...", data);
+		if (!Object.keys(data).length && !this.ComponentsManage['sale_credit_settlement']) {
 			uni.$emit("reset-sales");
 		}
 	})
-	
+
 	//*func*回调绑定监听
 	this.Bind = util.callBind(this, function() {
 		console.log("[Bind]UNBIND!");
@@ -2741,6 +2741,11 @@ function GetSale(global, vue, target_name, uni) {
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
+		
+		setTimeout(function() {//重新定位到顶部
+			that.scrollinto = pm_flag + that.selectPlid;
+			console.log("重新定位：", that.scrollinto);
+		})
 		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
@@ -2840,10 +2845,10 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 
-	this.selectPlidChenged = function(e) {
-		that.selectPlid = e.currentTarget.dataset.plid;
-		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
-	}
+	// this.selectPlidChenged = function(e) {
+	// 	that.selectPlid = e.currentTarget.dataset.plid;
+	// 	that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
+	// }
 	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表  ，初始化促销单 
 	this.SetAllGoods = function(pm_list, pm_price) {
 		// console.log("所有的商品集合：", pm_list);
@@ -2876,7 +2881,7 @@ function GetSale(global, vue, target_name, uni) {
 	//点击键盘字母
 	this.keyBoardClick = function(e) {
 		//输入限制
-		if(this.boardQueryKeys.length>=10){
+		if (this.boardQueryKeys.length >= 10) {
 			return
 		}
 		this.boardQueryKeys = this.boardQueryKeys + e
@@ -3047,7 +3052,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.ComponentsManage[lastManage] = false;
 		}
 		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
-		if(operation != null && operation != undefined)
+		if (operation != null && operation != undefined)
 			that.ComponentsManage[pm_mtype] = operation;
 		else
 			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
@@ -3116,7 +3121,7 @@ function GetSale(global, vue, target_name, uni) {
 		var plid = e.currentTarget.dataset.plid;
 		that.selectPlid = plid;
 		that.scrollinto = that.selectFlag + plid;
-		that.log("切换到的品类" + that.scrollinto)
+		console.log("切换到的品类" + that.scrollinto)
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
 	}
@@ -4110,7 +4115,11 @@ function GetSale(global, vue, target_name, uni) {
 		let PayWayList = util.getStorage("PayWayList");
 		if (list) {
 			var ban_pay = [];
-			if (!this.HY.val.hyId || !this.cxIsJFYC) { //未登录会员或者登录后放弃了积分促销
+			console.log("积分兑换禁止测试：", this.HY.val.hyId);
+			console.log("积分兑换禁止测试1：", this.cxIsJFYC);
+			console.log("积分兑换禁止测试2：", this.score_info.ispoints);
+			//未登录会员或者登录后放弃了积分促销或者不满足积分促销的时候 就禁止积分兑换支付方式
+			if (!this.HY.val.hyId || !this.cxIsJFYC || this.score_info.ispoints <= 0) {
 				let pay_info = PayWayList.find(i => i.type === 'HyJfExchange');
 				if (pay_info)
 					ban_pay.push(pay_info.fkid);
