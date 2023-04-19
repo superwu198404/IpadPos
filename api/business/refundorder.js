@@ -100,13 +100,13 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 //查询赊销单
 var SXGetOrders = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.GetOrders";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //查询赊销详情单
 var GetSXOrderDetails = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.GetSXOrderDetails";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 /**
@@ -116,7 +116,7 @@ var GetSXOrderDetails = function(data, func) {
  */
 var CreditOrderRefund = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.CreditOrderRefund";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr,true);
 	Req.asyncFuncOne(reqdata, func);
 }
 

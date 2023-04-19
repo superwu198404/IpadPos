@@ -8,6 +8,6 @@ import util from '@/utils/util.js';
  */
 export const getRefundBills = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetRefundBills";
-	let reqdata = Req.resObj(true, "退货单查询中", data, apistr);
+	let reqdata = Req.resObj(true, "退货单查询中", data, apistr,true);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }

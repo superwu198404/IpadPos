@@ -27,21 +27,21 @@ var GetWMOrderDetail = function(e, func) {
 //同意接收
 var ConfirmReceipt = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmReceipt";
-	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	let reqdata = Req.resObj(true, "操作中...", e, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 //同意和拒绝退单
 var CommonRefund = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund";
-	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	let reqdata = Req.resObj(true, "操作中...", e, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 //获取报损数据
 var GetBSData = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetBSData";
-	let reqdata = Req.resObj(true, "查询中...", e, apistr);
+	let reqdata = Req.resObj(true, "查询中...", e, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
@@ -192,21 +192,21 @@ var GetWMOrders_YD = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrders_YD";
 	let reqdata = Req.resObj(true, "查询中...", {
 		khid: e
-	}, apistr);
+	}, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 //同意接收预订单
 var ConfirmReceipt_YD = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmReceipt_YD";
-	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	let reqdata = Req.resObj(true, "操作中...", e, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 //同意和拒绝退单
 var CommonRefund_YD = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund_YD";
-	let reqdata = Req.resObj(true, "操作中...", e, apistr);
+	let reqdata = Req.resObj(true, "操作中...", e, apistr,true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 export default {

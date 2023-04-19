@@ -8,7 +8,7 @@ import util from '@/utils/util.js';
  */
 export const getBigClients = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetBigClients";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }
 
@@ -19,6 +19,6 @@ export const getBigClients = function(data, func, catchFunc) {
  */
 export const getBigClientSettlement = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetBigClientSettlement";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }
