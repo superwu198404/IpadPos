@@ -422,7 +422,7 @@
 							<view>
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
-								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员未登录...</button>
+								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
 									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
 								</view>
