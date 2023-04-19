@@ -3317,8 +3317,13 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[SetType]上一个类型:", this.previous);
 		console.log("[SetType]当前操作配置:", this.currentOperation);
 		if (!this.currentOperation[pm_type] && (!uncheck)) {
-			this.myAlert("请完成当前模式再进行切换！");
+			// this.myAlert("请完成当前模式再进行切换！");
 			uni.$emit('allow-position');
+			util.simpleModal("提示", "是否退出当前模式？", res => {
+				if (res) {
+					this.resetSaleBill();
+				}
+			})
 			return;
 		}
 		uni.$once("allow-position-switch", function(open, type) {
