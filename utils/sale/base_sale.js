@@ -2159,10 +2159,10 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.selectFlagList.length > 0) {
 			that.selectPlid = that.selectFlagList[0].plid;
 
-			setTimeout(function() { //滚动定位
-				that.scrollinto = that.selectFlag + that.selectPlid;
-				console.log("热销定位：", that.scrollinto);
-			})
+			// setTimeout(function() { //滚动定位
+			// 	that.scrollinto = that.selectFlag + that.selectPlid;
+			// 	console.log("热销定位：", that.scrollinto);
+			// })
 		}
 		that.update();
 	}
@@ -2748,10 +2748,10 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
 
-		setTimeout(function() { //重新定位到顶部
-			that.scrollinto = pm_flag + that.selectPlid;
-			console.log("重新定位：", that.scrollinto);
-		})
+		// setTimeout(function() { //重新定位到顶部
+		// 	that.scrollinto = pm_flag + that.selectPlid;
+		// 	console.log("重新定位：", that.scrollinto);
+		// })
 		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
@@ -2836,10 +2836,10 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectFlagList = this.notClassifyDate
 			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-		setTimeout(function() { //重新定位到顶部
-			that.scrollinto = that.selectFlag + that.selectPlid;
-			console.log("重新定位：", that.scrollinto);
-		})
+		// setTimeout(function() { //重新定位到顶部
+		// 	that.scrollinto = that.selectFlag + that.selectPlid;
+		// 	console.log("重新定位：", that.scrollinto);
+		// })
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用
