@@ -2095,6 +2095,9 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}));
 		}
+		else {
+			uni.$off('select-credit');
+		}
 		this.SetType(menu.info.clickType);
 	})
 	//*func*菜单切换
@@ -2122,7 +2125,7 @@ function GetSale(global, vue, target_name, uni) {
 				"khid": that.Storeid
 			};
 			let apistr = "MobilePos_API.Models.padGetHotSale.getHotSaleGoods";
-			let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr);
+			let reqdata = _Req.resObj(true, "正在获取热销商品...", reqPosData, apistr, true);
 			_Req.asyncFuncOne(reqdata,
 				res => {
 					// console.log("请求的返回结果是啥"+ JSON.stringify(res).substr(0,300));
@@ -2151,7 +2154,8 @@ function GetSale(global, vue, target_name, uni) {
 				//生成热销数据结构
 				plitem.plarr = [];
 				plitem.splist.forEach(spitem => {
-					if (that.spidKeyVal[spitem.SPID]) {
+					//20230419每品类至多显示20个
+					if (that.spidKeyVal[spitem.SPID] && plitem.plarr.length < 20) {
 						plitem.plarr.push(that.spidKeyVal[spitem.SPID])
 					};
 				});
@@ -2164,10 +2168,10 @@ function GetSale(global, vue, target_name, uni) {
 		if (that.selectFlagList.length > 0) {
 			that.selectPlid = that.selectFlagList[0].plid;
 
-			setTimeout(function() { //滚动定位
-				that.scrollinto = that.selectFlag + that.selectPlid;
-				console.log("热销定位：", that.scrollinto);
-			})
+			// setTimeout(function() { //滚动定位
+			// 	that.scrollinto = that.selectFlag + that.selectPlid;
+			// 	console.log("热销定位：", that.scrollinto);
+			// })
 		}
 		that.update();
 	}
@@ -2753,10 +2757,10 @@ function GetSale(global, vue, target_name, uni) {
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
 
-		setTimeout(function() { //重新定位到顶部
-			that.scrollinto = pm_flag + that.selectPlid;
-			console.log("重新定位：", that.scrollinto);
-		})
+		// setTimeout(function() { //重新定位到顶部
+		// 	that.scrollinto = pm_flag + that.selectPlid;
+		// 	console.log("重新定位：", that.scrollinto);
+		// })
 		//this.Page.$set(this.Page, "Alphabetical", "");
 		//筛选字母的列表
 	}
@@ -2841,7 +2845,10 @@ function GetSale(global, vue, target_name, uni) {
 			this.selectFlagList = this.notClassifyDate
 			this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		}
-
+		// setTimeout(function() { //重新定位到顶部
+		// 	that.scrollinto = that.selectFlag + that.selectPlid;
+		// 	console.log("重新定位：", that.scrollinto);
+		// })
 	}
 
 	///当出现一些互斥的操作的时候  恢复默认值的时候使用
@@ -2897,6 +2904,7 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		this.boardQueryKeys = this.boardQueryKeys + e
 	}
+	//键盘搜索事件
 	this.affirmQueryKeys = function(e) {
 		if (that.boardQueryKeys.length < 2) {
 			util.simpleMsg('请至少输入两个字符', true)
@@ -3312,16 +3320,26 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} pm_type 销售类型
 	 * @param {*} switch_callback 页面切换时的回调
 	 */
-	this.SetType = function(pm_type, uncheck = false) {
+	this.SetType = async function(pm_type, uncheck = false) {
 		console.log("[SetType]设置销售类型:", pm_type);
 		this.previous = this.clickSaleType?.clickType;
 		console.log("[SetType]上一个类型:", this.previous);
 		console.log("[SetType]当前操作配置:", this.currentOperation);
 		if (!this.currentOperation[pm_type] && (!uncheck)) {
-			this.myAlert("请完成当前模式再进行切换！");
+			// this.myAlert("请完成当前模式再进行切换！");
 			uni.$emit('allow-position');
+			let escape = new Promise((function(resolve,reject) {
+				util.simpleModal("提示", "是否退出当前模式？", res => {
+					if (res) {
+						this.resetSaleBill();
+					}
+					resolve();
+				})
+			}).bind(this))
+			await escape;
 			return;
 		}
+		console.log("[SetType]准备开始监听菜单定位切换...");
 		uni.$once("allow-position-switch", function(open, type) {
 			console.log("[SetType]定位确定:", {
 				open,

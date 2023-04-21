@@ -34,8 +34,7 @@
 								</view>
 							</view>
 						</view>
-
-						<view class="messageblob">
+						<view class="messageblob" v-if="XT_MsgData.length>0">
 							<view class="depart">
 								<view class="broad">
 									<label class="h8">紧急程度</label>
@@ -51,13 +50,13 @@
 									<view class="genres">
 										<!-- <text>管理部（10）</text>
 										<text>运营部（15）</text> -->
-										
+
 										<text v-for="(item) in Dep_Arr"
 											@click="SearchMsg({name:item.name})">{{item.name}}({{item.count}})</text>
 									</view>
 								</view>
 							</view>
-							<view class="messlist" v-if="XT_MsgData.length>0">
+							<view class="messlist">
 								<!-- 消息循环 -->
 								<view class="infors" v-for="(item,index) in XT_MsgData">
 									<text class="h7">{{item.newVal.DATE_LR}}</text>
@@ -76,8 +75,8 @@
 									</view>
 								</view>
 							</view>
-							<NoData v-else></NoData>
 						</view>
+						<NoData v-else></NoData>
 					</view>
 				</view>
 			</view>
@@ -296,8 +295,8 @@
 </script>
 
 <style>
-	NoData{
-		margin:6%;
-		width:80%;
+	NoData {
+		margin: 6%;
+		width: 80%;
 	}
 </style>

@@ -46,7 +46,7 @@
 							<!-- 小类循环 -->
 							<view style="height:92%;flex: 1;">
 								<scroll-view scroll-y="true" class="catecyc" :scroll-anchoring="true"
-									:scroll-into-view="mainSale.scrollinto">
+									:scroll-into-view="mainSale.scrollinto" :scroll-top="scrollTop" @scroll="scroll">
 									<view class="products" v-for="(plitem, plindex) in  mainSale.selectFlagList"
 										:data-plid="plitem.plid">
 										<view :id="mainSale.selectFlag+plitem.plid"
@@ -422,7 +422,7 @@
 							<view>
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
-								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员未登录...</button>
+								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员登录...</button>
 								<view class="score-box" v-if="mainSale.score_info.score && mainSale.score_info.money">
 									活动可用积分:{{ mainSale.score_info.score }},可抵扣金额{{ mainSale.score_info.money }}
 								</view>
@@ -782,6 +782,8 @@
 	export default {
 		data() {
 			return {
+				scrollTop: 0,
+				oldScrollTop: 0,
 				statements: false,
 				Alphabetical: false,
 				isKeyBoardShow: false,
@@ -976,7 +978,36 @@
 			console.log('触发下拉刷新了')
 
 		},
+		watch: {
+			'mainSale.selectFlagList': {
+				handler(new1) {
+					// console.log(new1, `----------------------------------`)
+					setTimeout(() => {
+						this.goTop()
+					}, 600)
+				},
+				//开启深度监听，只要对象中任何一个属性发生变化了，就会触发“对象的侦听器”
+				deep: true
+			},
+		},
 		methods: {
+			scroll(e) {
+				//记录scroll  位置
+				this.oldScrollTop = e.detail.scrollTop
+			},
+			goTop(e) {
+				// console.log('-----------------11111111111')
+				//视图会发生重新渲染
+				this.scrollTop = this.oldScrollTop
+				//当视图渲染结束 重新设置为0
+				this.$nextTick(() => {
+					this.scrollTop = 0
+				});
+				// uni.showToast({
+				// 	icon: "none",
+				// 	title: "纵向滚动 scrollTop 值已被修改为 0"
+				// })
+			},
 			// 隐藏
 			Componentes: function() {
 				this.statement = false;

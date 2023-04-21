@@ -9,52 +9,53 @@
 			<view class="listof">
 				<view class="bkjb">
 					<view class="neik">
-					<view class="prolist">
-					<view class="commodity">
-						<view class="hh">
-							<view class="hotcakes">
-								<image src="../../images/tuidan.png" mode="widthFix"></image> 结算业务
-							</view>
-							<view>
-								<view class="prints">
-									<view class="sousuo">
-										<label @click="Settlement">
-											<image src="@/images/settlement.png" mode="widthFix"></image>结算
-											<!-- <image src="@/images/sousuo.png" mode="widthFix"></image>结算 -->
-										</label>
+						<view class="prolist">
+							<view class="commodity">
+								<view class="hh">
+									<view class="hotcakes">
+										<image src="../../images/tuidan.png" mode="widthFix"></image> 结算业务
+									</view>
+									<view>
+										<view class="prints">
+											<view class="sousuo">
+												<label @click="Settlement">
+													<image src="@/images/settlement.png" mode="widthFix"></image>结算
+													<!-- <image src="@/images/sousuo.png" mode="widthFix"></image>结算 -->
+												</label>
+											</view>
+										</view>
+									</view>
+								</view>
+								<view class="h2" style="display: flex;align-items: center;">赊销结算
+									<view @click="SelectAll"
+										:class="this.big_client_settlement.length ? 'select-all-orders' : 'select-all-orders select-all-disabled'">
+										{{ (this.big_client_settlement.length === this.select_orders.length && this.big_client_settlement.length != 0) ? '取消全选' : '全选'}}
+									</view>
+								</view>
+								<NoData v-if="big_client_settlement.length==0"></NoData>
+								<!-- 小类循环 -->
+								<view class="products" v-else>
+									<view class="procycle">
+										<!-- 订单循环 -->
+										<view v-for="(item,index) in big_client_settlement"
+											:class="Selected(item) + ' li'" @click="SelectOrder(item)">
+											<view class="h3">
+												<text>单号：{{item.BILL}}</text>
+												<text class="price">￥{{item.TNET}}</text>
+											</view>
+											<view class="cods">
+												<label>下单时间：{{item.SALEDATE}}</label>
+												<label>客户编码：{{item.DKFID}}</label>
+												<label>客户名称：{{item.DKFNAME}}</label>
+											</view>
+											<view class="handles"><text></text>
+												<!-- <button class="btn" @click="Settlement(item.BILL)">结算</button> -->
+											</view>
+										</view>
 									</view>
 								</view>
 							</view>
 						</view>
-						<view class="h2" style="display: flex;align-items: center;">赊销结算
-							<view @click="SelectAll" :class="this.big_client_settlement.length ? 'select-all-orders' : 'select-all-orders select-all-disabled'">
-								{{ (this.big_client_settlement.length === this.select_orders.length && this.big_client_settlement.length != 0) ? '取消全选' : '全选'}}
-							</view>
-						</view>
-						<NoData v-if="big_client_settlement.length==0"></NoData>
-						<!-- 小类循环 -->
-						<view class="products" v-else>
-							<view class="procycle">
-								<!-- 订单循环 -->
-								<view v-for="(item,index) in big_client_settlement" :class="Selected(item) + ' li'"
-									@click="SelectOrder(item)">
-									<view class="h3">
-										<text>单号：{{item.BILL}}</text>
-										<text class="price">￥{{item.TNET}}</text>
-									</view>
-									<view class="cods">
-										<label>下单时间：{{item.SALEDATE}}</label>
-										<label>客户编码：{{item.DKFID}}</label>
-										<label>客户名称：{{item.DKFNAME}}</label>
-									</view>
-									<view class="handles"><text></text>
-										<!-- <button class="btn" @click="Settlement(item.BILL)">结算</button> -->
-									</view>
-								</view>
-							</view>
-						</view>
-					</view>
-					</view>
 					</view>
 				</view>
 			</view>
@@ -109,13 +110,13 @@
 					dkhid: this.big_client_info.DKHID,
 					khid: this.KHID
 				}, util.callBind(this, function(res) {
-					util.simpleMsg("大客户单据查询成功!");
+					// util.simpleMsg("查询成功!");
 					this.big_client_settlement = JSON.parse(res.data);
 					if (this.big_client_settlement?.length && this.big_client_settlement?.length > 0)
 						this.current_settlement = this.big_client_settlement[0];
 					console.log("[CreditSettlement]大客户单据：", res)
 				}), (err) => {
-					util.simpleMsg("大客户单据查询失败!", true, err);
+					util.simpleMsg(err.msg, true, err);
 					this.big_client_settlement = [];
 				})
 			},
@@ -284,15 +285,15 @@
 		border-radius: 30rpx;
 		padding: 0 18rpx;
 		height: 48rpx;
-		line-height:48rpx;
+		line-height: 48rpx;
 		background-color: #006B44;
 		color: #fff;
 		align-items: center;
 		margin-left: 10px;
 		font-size: 26rpx;
 	}
-	
-	.select-all-disabled{
+
+	.select-all-disabled {
 		background: grey !important;
 	}
 </style>
