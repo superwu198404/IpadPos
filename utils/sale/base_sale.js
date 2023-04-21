@@ -330,7 +330,7 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
-			"DKF": false, //是否可以打开录入大客户
+			"DKF": true, //是否可以打开录入大客户
 			
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1261,7 +1261,7 @@ var XsTypeObj = {
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
-			"DKF": false, //是否可以打开录入大客户
+			"DKF": true, //是否可以打开录入大客户
 			"Disc": false, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -1646,7 +1646,7 @@ var XsTypeObj = {
 		icon_guodu: require("@/images/sxtd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
-			"DKF": false, //是否可以打开录入大客户
+			"DKF": true, //是否可以打开录入大客户
 			"Disc": false, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
