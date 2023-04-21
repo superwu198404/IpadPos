@@ -369,7 +369,7 @@
 					</view>
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
-				<view class="meminfo" v-if="mainSale.currentOperation.showCXZK">
+				<view class="meminfo" style="width:45%;" v-if="mainSale.currentOperation.showCXZK">
 					<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label style="font-weight: 700;"><text>已使用的促销/折扣列表</text></label>
@@ -415,11 +415,11 @@
 					</view>
 				</view>
 				<!-- 结算单详情 -->
-				<view class="pop-r pop-rs">
+				<view class="pop-r pop-rs" style="min-width:760rpx;">
 					<view class="member">
 						<label>
 							<image class="touxiang" src="../../images/touxiang.png"></image>
-							<view>
+							<view style="position: relative;">
 								<button class="btn" @click="mainSale.HY.open=true"
 									v-if="mainSale.HY.cval.hyId">{{mainSale.HY.cval.hyId}}</button>
 								<button class="btn" v-else @click="mainSale.MemberLogin(1)">会员登录...</button>
@@ -1265,6 +1265,9 @@
 		padding: 2px 5px;
 		color: white;
 		white-space: nowrap;
+		position: absolute;
+		top:100%;
+		left:0;
 	}
 
 	.shareButton {

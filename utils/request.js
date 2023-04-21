@@ -381,8 +381,10 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 				break;
 			}
 		}
+		// console.log("第" + (i + 1) + "个回调函数：", res);
 		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res);
+		// console.log("第" + (i + 1) + "个回调函数返回的结果：", res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
 			break;

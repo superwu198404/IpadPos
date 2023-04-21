@@ -475,7 +475,7 @@ var misScanCodePay = {
 	}
 }
 
-//仟吉电子券
+//仟吉电子券 有偿券，赠券
 var szqPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		// _PaymentAll(pt, body, func, catchFunc);
@@ -494,6 +494,183 @@ var szqPay = {
 			},
 			function(res) {
 				if (show_log) console.log("[PaymentAll]第二次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res);
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第三次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第四次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第五次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第六次结果（QueryPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					util.sleep(5000);
+					return CreateData(pt, "查询中...", "QueryPayment", body);
+				}
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第七次结果（CancelPayment）:", res);
+				if (res.code && res.data.status == "SUCCESS") {
+					if (func)
+						func(res)
+					return {
+						code: false,
+						msg: "支付成功了"
+					};
+				} else { //res.code&&res.data.status=="PAYING"
+					//30s超时撤销
+					return CreateData(pt, "撤销中...", "CancelPayment", body);
+				}
+			}
+		], function(err) {
+			console.log("[PaymentAll]支付接口返回的错误信息：", err);
+			if (catchFunc) catchFunc(err);
+			util.simpleMsg(res.msg, true);
+		});
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		// _RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+
+		//调用下 券退回 接口 但是不能影响主线业务
+		try {
+			//销售退货或预定取消才可进行券退回
+			console.log("券返回时的业务类型：", body.ywtype);
+			if (body.ywtype && (body.ywtype == 'Z151' || body.ywtype == 'Z171')) {
+				_Refund(pt, body, res => {
+					console.log("券返回结果：", res);
+				}, err => {
+					console.log("券返回失败：", err);
+				});
+			}
+		} catch (e) {
+			//TODO handle the exception
+			console.log("券返回异常：", e.message);
+		}
+		//退款自处理
+		if (finallyFunc)
+			finallyFunc({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		//注意券后端无该接口
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		//_Refund(pt, body, func, catchFunc);
+		//自处理
+		if (func)
+			func({
+				code: true,
+				msg: "自处理成功",
+				body
+			});
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}
+
+//仟吉券 聚合券
+var jhqPay = {
+	PaymentAll: function(pt, body, func, catchFunc) {
+		let request = CreateData(pt, "查询中...", "QueryPayment", body);
+		let show_log = true;
+		console.log("[PaymentAll]获取请求体：", body);
+		console.log("[PaymentAll]获取请求体(whole)：", request);
+		Req.asyncFuncArr1(request, [
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第一次查询结果（QueryPayment）:", res);
+				if (res.code && body.pay_way_list && body.pay_way_list.length > 0) { //判断是否限制了某种券不能支付
+					for (var i = 0; i < body.pay_way_list.length; i++) {
+						let obj = res.data.vouchers.find(r => r.fkid == body.pay_way_list[i].fkid &&
+							body.pay_way_list[i].yn_use == 'N');
+						if (obj) {
+							console.log("当前券支付限制的支付：", obj);
+							let newRes = {
+								code: false,
+								msg: "抱歉，“" + body.pay_way_list[i].name + "”禁止支付！请更换其他类型券重新支付。"
+							};
+							if (catchFunc)
+								catchFunc(newRes);
+							return newRes;
+						}
+					}
+				}
+				return CreateData(pt, "支付中...", "Payment", body);
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第一次支付结果（Payment）:", res);
+				if (res.data.discount) { //将券核销返回的抵扣金额传入到查询接口中做比对
+					body.discount = res.data.discount;
+				}
+				return CreateData(pt, "查询中...", "QueryPayment", body);
+			},
+			function(res) {
+				if (show_log) console.log("[PaymentAll]第二次查询结果（QueryPayment）:", res);
 				if (res.code && res.data.status == "SUCCESS") {
 					if (func)
 						func(res);
@@ -1180,7 +1357,7 @@ var payType = {
 	PAYBRUSHCARD: kengeePay, //仟吉实体卡
 	HyJfExchange: pointPay, //积分抵现 
 	SZQ: szqPay, //电子券支付
-	JHQ: szqPay, //仟吉券支付（聚合）
+	JHQ: jhqPay, //仟吉券支付（聚合）
 	TL: misPay, //银联（银行卡）支付
 	UPAY: misScanCodePay, //银联二维码
 	PINNUO: pinoPay, //品诺支付（核销、支付、支付查询）
