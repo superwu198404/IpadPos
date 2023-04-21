@@ -55,7 +55,7 @@ var GetPayWay = async function(e) {
 				obj.poly = res.msg[i].POLY;
 				obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 				obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
-				obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
+				obj.yn_use = res.msg[i].YN_SQ || 'N'; //obj1.YN_USE; //该支付方式是否可用
 				obj.seq = obj1.SEQNO; //排序方式
 				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
 				obj.raw = res.msg[i];
@@ -63,7 +63,7 @@ var GetPayWay = async function(e) {
 				// if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式 无用
 				// 	obj.type = "EXCESS";
 				// }
-				if(res.msg[i].JKSNAME == "DouYinJK"){
+				if (res.msg[i].JKSNAME == "DouYinJK") {
 					obj.poly = "S";
 					obj.fkid_f = res.msg[i].FKID_F
 				}
@@ -146,7 +146,8 @@ var GetPayWay = async function(e) {
 
 			let arr1 = res.msg.filter(r => {
 				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
-					.FKJBID == '2' && r.YN_SQ == 'Y' && !PayWayList.find(f => f.fkid == r.FKID));
+					.FKJBID == '2' && r.YN_SQ == 'Y' && !PayWayList.find(f => f.fkid == r
+						.FKID));
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
