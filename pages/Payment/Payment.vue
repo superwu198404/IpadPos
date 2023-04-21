@@ -183,8 +183,9 @@
 				<view class="choosepays">
 					<view class="pays-bj">
 						<view class="bom-zhifu">
-							<view class="pattern curr" :class="(currentPayType === 'POLY' || currentPayInfo.poly == 'Y') ? 'selected':' '" id='POLY'
-								@click="clickPayType('',$event)">
+							<view class="pattern curr"
+								:class="(currentPayType === 'POLY' || currentPayInfo.poly == 'Y') ? 'selected':' '"
+								id='POLY' @click="clickPayType('',$event)">
 								<image class="p-bg" src="../../images/xzbj-da.png" mode="widthFix"></image>
 								<p>聚合支付</p>
 								<label>
@@ -463,7 +464,7 @@
 				PayMode: '93', //支付类型
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
 				cash_change_tips: true,
-				cash_sum: 0
+				cash_sum: 0,
 			}
 		},
 		watch: {
@@ -828,22 +829,6 @@
 							msg: "支付完成，数据整合完成"
 						});
 					return;
-					//从这开始中止 后续处理在外部进行
-					//生成执行sql
-					// let exeSql = this.orderSQLGenarator();
-					// let dbo = db.get();
-					// console.log("sqlite待执行sql:", exeSql);
-					// await dbo.close();
-					// dbo.executeDml(exeSql, "订单创建中", (function(res) {
-					// 	if (func) func(res);
-					// 	this.complete = true;
-					// 	console.log("订单创建成功：", res);
-					// 	util.simpleMsg("销售单创建成功");
-
-					// }).bind(this), function(err) {
-					// 	console.log("订单创建失败：", err);
-					// 	util.simpleMsg("销售单创建失败", false);
-					// });
 				}
 			},
 			//使用的 单号 判断（支付单号、退款单号）
@@ -956,8 +941,8 @@
 									console.log("[Pay]扫码判断支付方式信息:", current_pay_info);
 									console.log("[Pay]scanCode:", res);
 									if (current_pay_info && Object.keys(current_pay_info).length) {
-										console.warn("[Pay]设置支付TYPE:",this.currentPayType);
-										console.warn("[Pay]设置支付信息:",current_pay_info);
+										console.warn("[Pay]设置支付TYPE:", this.currentPayType);
+										console.warn("[Pay]设置支付信息:", current_pay_info);
 										this.currentPayInfo = current_pay_info;
 										this.currentPayType = current_pay_info?.type;
 									}
@@ -1281,8 +1266,7 @@
 								}).bind(that),
 								(function(ress) { //执行完毕（results），根据结果判断
 									console.log("[Refund-退款]Results:", ress);
-									if (!ress[1]
-										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+									if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 										refundInfo.fail = true;
 										refundInfo.msg = ress[1].msg; //错误提示信息记录
 									} else {
@@ -1291,8 +1275,7 @@
 											groups[refundInfo.group].forEach(g => g
 												.fail = false);
 											console.log("groups[refundInfo.group]",
-												groups[refundInfo
-													.group]);
+												groups[refundInfo.group]);
 										}
 									}
 									resolve(); //结束状态
@@ -1325,30 +1308,6 @@
 						}, 1500);
 						//后续处理转移到销售页面处理
 						return;
-						//销售单单创建成功后 上传一下数据
-						// let bill = (that.actType == common.actTypeEnum.Refund ? that.out_refund_no : that
-						// 	.out_trade_no_old);
-						// common.TransLiteData(bill);
-						// that.scoreConsume();
-						// //调用打印
-						// let arr2 = that.sale2_arr;
-						// arr2.forEach(function(item, index) {
-						// 	let obj = that.Products.find((i) => {
-						// 		return i.SPID == item.SPID;
-						// 	})
-						// 	if (obj) {
-						// 		item.SNAME = obj.NAME;
-						// 	}
-						// })
-						// let arr3 = that.sale3_arr;
-						// arr3.forEach(function(item, index) {
-						// 	let obj = that.PayWayList.find((i) => {
-						// 		return i.fkid == item.FKID;
-						// 	})
-						// 	item.SNAME = obj.name;
-						// })
-						// that.$refs.printerPage.bluePrinter(that.sale1_obj, arr2, arr3);
-
 					});
 			},
 			//支付类型判断
@@ -1468,18 +1427,18 @@
 					0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
-			ScoreDiscount: function() {//积分抵现处理判断
-				console.log("[ScoreDiscount]积分抵现判断:",{
+			ScoreDiscount: function() { //积分抵现处理判断
+				console.log("[ScoreDiscount]积分抵现判断:", {
 					current_pay_type: this.currentPayType,
 					debt: this.dPayAmount,
 					real_debt: this.toBePaidPrice(),
 					cash_offset: this.CashOffset
 				});
-				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset
+					.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
 					util.simpleMsg("积分抵现不允许超额支付!", true);
 					return false;
-				}
-				else {
+				} else {
 					return true;
 				}
 			},
@@ -1488,7 +1447,8 @@
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this.LimitPaymentChannel(), this.ScoreDiscount()
+					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this
+						.LimitPaymentChannel(), this.ScoreDiscount()
 					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
@@ -1907,7 +1867,7 @@
 					// 	i.yn_use = 'N';
 					// }
 					return i;
-				});;
+				});
 				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList);
 			},
 			//初始化
