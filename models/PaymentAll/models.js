@@ -61,7 +61,8 @@ export const PayDataAssemble = function() {
 				amount: (Number(i.NET) * 100).toFixed(0), //总金额
 				num: i.QTY
 			}
-		})
+		}),
+		pay_way_list: this.PayWayList //传入支付方式供业务使用
 	}
 }
 

@@ -272,12 +272,12 @@ var asyncFunc = async function(pm_data, callbackfun, callbackfun2, callbackfun3,
 	await asyncFuncArr(pm_data, callbacklist, catchfun, finallyfun);
 };
 
-var showloding = function(yn_show, pm_txt) {
+var showloding = function(yn_show, pm_txt = "加载中...") {
 	// console.log("打开加载框：", yn_show + "-" + pm_txt);
 	if (yn_show && pm_txt) {
 		// console.log("打开加载框1");
 		uni.showLoading({
-			title: pm_txt || "加载中...",
+			title: pm_txt,
 			mask: true
 		});
 	}
@@ -381,8 +381,10 @@ var asyncFuncArr1 = async function(pm_data, callbackfunArr, catchfun, otherfun, 
 				break;
 			}
 		}
+		// console.log("第" + (i + 1) + "个回调函数：", res);
 		showloding(res.load, res.msg);
 		res = await forPromise(callbacklist[i], res);
+		// console.log("第" + (i + 1) + "个回调函数返回的结果：", res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
 			break;
@@ -415,7 +417,7 @@ var AsyncRequesrChain = async function(pm_data, callbackfunArr, catchfun, otherf
 		});
 		console.log("[AsyncRequesrChain]ForPromise开始执行...");
 		res = await forPromise(callbacklist[i], res);
-		console.log("[AsyncRequesrChain]ForPromise执行完毕:",res);
+		console.log("[AsyncRequesrChain]ForPromise执行完毕:", res);
 		if (res && !res.code) { //如果是主动抛出的false 则执行自定义函数
 			def(otherfun, res);
 			break;

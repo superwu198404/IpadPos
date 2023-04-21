@@ -11,30 +11,30 @@ import util from '../../utils/util';
  */
 export const getReserveOrders = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrders";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 var GetAddr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.GetAddr";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var AddressQuery = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.AddressQuery";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var Del_Addr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.Del_Addr";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var ConfirmADDR = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.ConfirmADDR";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
@@ -69,43 +69,43 @@ var GetAmap = async function(e) {
 
 var MatchBHKH = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.MatchBHKH";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var reserveOrdersUpdate = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ReserveOrdersUpdate";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var reserveOrdersStatusUpdate = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ReserveOrdersStatusUpdate";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var getReserveOrdersDetails = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersDetails";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var getReserveOrderInfos = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrderInfos";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var getReserveOrdersPayed = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOrdersPayed";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
 var searchMapAddr = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.searchMapAddr";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
@@ -175,7 +175,7 @@ var GetPSCenter = function(gsid, khid, func) {
  */
 export const updateReserveOrder = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.UpdateReserveOrder";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
@@ -186,7 +186,7 @@ export const updateReserveOrder = function(data, func) {
  */
 export const IsForeignStore = function(data, func) {
 	let apistr = "MobilePos_API.Models.YDSALE001CLASS.IsForeignStore";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 
