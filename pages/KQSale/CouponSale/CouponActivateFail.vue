@@ -194,6 +194,9 @@
 		padding:0 1.5%;
 		height:93%;
 	}
+	.products .procycle{
+		overflow-x: hidden;
+	}
 	.products .procycle .li{
 		width:100%;
 		padding:0;
@@ -215,6 +218,7 @@
 	.products .procycle .li .jiedan em{
 		background: #FE694B;	
 	}
+	
 	.cods{
 		padding: 0 4%;
 	}

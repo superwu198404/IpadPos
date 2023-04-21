@@ -116,6 +116,7 @@
 					console.log("[CreditSettlement]大客户单据：", res)
 				}), (err) => {
 					util.simpleMsg("大客户单据查询失败!", true, err);
+					this.big_client_settlement = [];
 				})
 			},
 			SelectedClient: function(val) {
@@ -187,7 +188,10 @@
 		},
 		created() {
 			uni.$on("close-big-customer",(function(data){
-				console.warn("[CreditSettlement-Created]赊销界面:",data);
+				uni.$emit("credit-big-customer-change",data);
+			}).bind(this))
+			uni.$on('credit-big-customer-change',(function(data){
+				console.warn("[CreditSettlement-Destroyed]赊销界面:",data);
 				if(Object.keys(data).length){
 					this.big_client_info = data;
 					this.GetBigClientSettlement();
@@ -204,6 +208,9 @@
 			this.big_client_info = this.bigCustomerInfo;
 			console.log("[CreditSettlement-Created]获取大客户单据信息...");
 			this.GetBigClientSettlement();
+		},
+		destroyed:function(){
+			uni.$off('credit-big-customer-change');
 		}
 	}
 </script>

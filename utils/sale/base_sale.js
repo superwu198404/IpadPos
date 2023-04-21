@@ -205,7 +205,8 @@ var XsTypeObj = {
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
-
+			"DKF": false, //是否可以打开录入大客户
+			
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -329,7 +330,8 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
-
+			"DKF": false, //是否可以打开录入大客户
+			
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			// "sale_credit": true,
@@ -1228,8 +1230,12 @@ var XsTypeObj = {
 		},
 		OpenBigCustomer: function(data) {
 			console.log("[CloseBigCustomer]大客户打开!", data);
-			// this.mainSale.ComponentsManage.DKF = true;
-			this.setComponentsManage(null, "DKF");
+			// this.setComponentsManage(null, "DKF"); 
+			console.log("[CloseBigCustomer]当前菜单操作属性:", this.clickSaleType);
+			if(this.clickSaleType?.operation?.DKF)
+				this.ComponentsManage["DKF"] = !this.ComponentsManage["DKF"];
+			else
+				util.simpleMsg("禁止选择大客户", true);
 		},
 		CloseBigCustomer: function(data) {
 			console.log("[CloseBigCustomer]大客户关闭!", data);
