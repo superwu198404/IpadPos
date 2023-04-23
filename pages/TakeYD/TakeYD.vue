@@ -208,10 +208,10 @@
 					if (res.code) {
 						that.WMOrders = JSON.parse(res.data).main;
 						that.OrderDeails = JSON.parse(res.data).detail;
-						// console.log("主单集合信息：", JSON.stringify(that.WMOrders));
-						// console.log("明细单集合信息：", JSON.stringify(that.OrderDeails));
+						util.simpleMsg("外卖预订单信息查询成功!",false);
 						if (func) func(res);
 					} else {
+						util.simpleMsg("暂无数据!",true);
 						that.WMOrders = [];
 						that.OrderDeails = [];
 						that.Order = {};

@@ -441,6 +441,7 @@
 				sale1_obj: {},
 				sale2_arr: [],
 				sale3_arr: [], //已支付的交易数据（本页面存在多次交易的可能，所以此参数只能在本页面动态构造）
+				verification_goods: [],//抖音核销商品核销id
 				tx_obj: {},
 				domRefresh: new Date().toString(),
 				query: null,
@@ -1094,6 +1095,7 @@
 				});
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
+			//现金退还项合并
 			CashRefundCombine: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 				console.warn("[CashRefundCombine]现金支付信息:", {
@@ -1377,6 +1379,7 @@
 								this.CashOffset.Score = 0;
 								this.CashOffset.Money = 0;
 							}
+							
 							console.log("[Payment-付款]支付结果：", result);
 							util.simpleMsg("支付成功!");
 							this.UpdateHyInfo(result.data); //更新会员信息
@@ -1417,6 +1420,13 @@
 					}).bind(this)
 				)
 			},
+			//抖音核销商品记录
+			TikTokVerificationGoodRecord: function(verification_good_id){
+				if(verification_good_id){//如果有限制核销商品，则进行记录
+					this.verification_goods.push(verification_good_id);
+				}
+			},
+			//现金找零计算
 			CountCashChange: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 				console.warn('[CountCashChange]现金支付信息:', {
@@ -1427,7 +1437,8 @@
 					0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
-			ScoreDiscount: function() { //积分抵现处理判断
+			//积分抵现处理判断
+			ScoreDiscount: function() {
 				console.log("[ScoreDiscount]积分抵现判断:", {
 					current_pay_type: this.currentPayType,
 					debt: this.dPayAmount,
