@@ -1298,6 +1298,7 @@ var XsTypeObj = {
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = [];
+			this.currentOperation['DKF'] = false;//切换为禁用
 			this.communication_for_oracle = params.sql;
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -3075,7 +3076,8 @@ function GetSale(global, vue, target_name, uni) {
 			that.ComponentsManage[pm_mtype] = operation;
 		else
 			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
-		console.log("[SetManage]组件类型信息-修改前:", that.ComponentsManage[pm_mtype]);
+		
+		console.log("[SetManage]组件类型信息-修改后:", that.ComponentsManage[pm_mtype]);
 		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype], pm_mtype);
 		if (!that.ComponentsManage[pm_mtype]) {
 			uni.$emit("external-operation", function() {
