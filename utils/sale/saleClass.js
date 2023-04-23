@@ -313,7 +313,7 @@ var ydsale001 = function() {
 	this.THTYPE = "";
 	this.NOTE1 = "";
 	this.NOTE2 = "";
-	this.PLATTYPE = "";
+	this.PLATTYPE = "PAD";
 	this.YDSPTYPE = "";
 }
 
@@ -427,7 +427,7 @@ var sxsale001 = function(pm_obj) {
 	this.GSID = null;
 	this.NOTE1 = null;
 	this.NOTE2 = null;
-	this.PLATTYPE = null;
+	this.PLATTYPE = "PAD";
 	this.YDSPTYPE = null;
 
 	for (var item in pm_obj) {
