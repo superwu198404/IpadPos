@@ -1647,7 +1647,7 @@ var XsTypeObj = {
 		icon_guodu: require("@/images/sxtd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
-			"DKF": true, //是否可以打开录入大客户
+			"DKF": false, //是否可以打开录入大客户
 			"Disc": false, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
