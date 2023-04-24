@@ -198,7 +198,7 @@
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 								<label class="poly-text" v-else>
-									<text>暂无可用</text>
+									<text>暂无可用，请选择其他支付方式！</text>
 								</label>
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
