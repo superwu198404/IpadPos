@@ -16,7 +16,7 @@ import {
 } from '@/bll/PaymentBusiness/bll.js'
 
 /**
- * 获取支付方式
+ * 获取支付方式 已废弃 20230424追溯后确认
  */
 export const GetPayWayList = async function() {
 	let PayWayList = [];

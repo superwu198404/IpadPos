@@ -308,7 +308,7 @@
 				});
 
 			},
-			//获取支付方式
+			//获取支付方式 已废弃 20230424追溯后确认
 			GetPayWay: async function(e) {
 				let that = this;
 				console.log("[GetPayWay]开始获取本地支付方式...");
