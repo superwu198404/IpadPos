@@ -194,9 +194,11 @@
 										</image>
 									</view>
 								</label>
-								<label class="poly-text">
-									<!-- <text>支持</text> -->
+								<label class="poly-text" v-if="PayWayList.filter(i=>i.poly=='Y').length>0">
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
+								</label>
+								<label class="poly-text" v-else>
+									<text>暂无可用</text>
 								</label>
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
@@ -441,7 +443,7 @@
 				sale1_obj: {},
 				sale2_arr: [],
 				sale3_arr: [], //已支付的交易数据（本页面存在多次交易的可能，所以此参数只能在本页面动态构造）
-				verification_goods: [],//抖音核销商品核销id
+				verification_goods: [], //抖音核销商品核销id
 				tx_obj: {},
 				domRefresh: new Date().toString(),
 				query: null,
@@ -906,6 +908,12 @@
 			//支付按钮点击事件
 			Pay: function() {
 				let that = this; //适配真机
+				console.log("支付方式：", this.PayWayList);
+				if (this.currentPayType == 'POLY' && this.PayWayList.filter(r => r.poly == 'Y').length ==
+					0) { //无聚合支付提示
+					util.simpleMsg("聚合支付暂无可用，请更换其他支付方式!", 'none');
+					return;
+				}
 				console.log("[Pay]当前支付类型:", this.currentPayType);
 				if (!this.currentPayType || this.currentPayType == 'Others') { //增加其他选项 不允许支付的控制
 					util.simpleMsg("请选择支付方式后再进行支付!", false);
@@ -1268,7 +1276,8 @@
 								}).bind(that),
 								(function(ress) { //执行完毕（results），根据结果判断
 									console.log("[Refund-退款]Results:", ress);
-									if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+									if (!ress[1]
+										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 										refundInfo.fail = true;
 										refundInfo.msg = ress[1].msg; //错误提示信息记录
 									} else {
@@ -1379,7 +1388,7 @@
 								this.CashOffset.Score = 0;
 								this.CashOffset.Money = 0;
 							}
-							
+
 							console.log("[Payment-付款]支付结果：", result);
 							util.simpleMsg("支付成功!");
 							this.UpdateHyInfo(result.data); //更新会员信息
@@ -1421,8 +1430,8 @@
 				)
 			},
 			//抖音核销商品记录
-			TikTokVerificationGoodRecord: function(verification_good_id){
-				if(verification_good_id){//如果有限制核销商品，则进行记录
+			TikTokVerificationGoodRecord: function(verification_good_id) {
+				if (verification_good_id) { //如果有限制核销商品，则进行记录
 					this.verification_goods.push(verification_good_id);
 				}
 			},
@@ -2045,6 +2054,10 @@
 					e
 				});
 				if (r == 'Others') { //点击其他支付
+					if (this.PayWayList.filter(r => r.poly == 'S').length == 0) {
+						util.simpleMsg("暂无更多可用的支付方式！", "none");
+						return;
+					}
 					console.log("展示其他方式");
 					this.ShowOthersPay = true;
 					this.currentPayType = r;
