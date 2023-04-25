@@ -33,7 +33,7 @@ var YN_Init = function(sucFunc, errFunc) {
 var GetPayWay = async function(e) {
 	let PayWayList = [];
 	await common.GetPayWay(e, function(res) {
-		console.warn("[GetPayWay]本地查到的付款信息：", res);
+		console.log("[GetPayWay]本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
 			console.log("[GetPayWay]支付规则信息：", PayInfo);
@@ -231,7 +231,7 @@ var get_payment_infos = async function() {
 			if (res.code) {
 				var infos = JSON.parse(res.data);
 				util.setStorage('FKDA_INFO', infos)
-				console.warn("[GetPaymentInfos]获取支付方式:", infos);
+				console.warn("[GetPaymentInfos]获取全部的支付方式:", infos);
 			} else {
 				util.simpleMsg("获取付款方式失败!", true)
 			}

@@ -15,6 +15,7 @@
 		</view>
 		<view>
 			<button @click="MenuPage(10)">数据查看</button>
+			<button @click="MenuPage(7)">切换门店</button>
 			<!-- <button @click="MenuPage(12)">查看轮播</button> -->
 			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
@@ -475,7 +476,9 @@
 						url: "/pages/mainSale/MainSale"
 					});
 				} else if (e == 7) {
-					uni.navigateTo({
+					util.setStorage("store", {});
+					uni.clearStorageSync(); //清除所有缓存
+					uni.reLaunch({
 						url: "../start/start"
 					});
 				} else if (e == 8) {
