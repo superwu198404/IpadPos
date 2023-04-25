@@ -2177,7 +2177,7 @@
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
-					that.currentPayType = 'JHQ';
+					this.currentPayType = "JHQ";
 					if (!this.YN_TotalPay) { //如果未支付完成
 						that.coupons = !that.coupons; //关闭弹窗
 						this.authCode = e; //券号赋值

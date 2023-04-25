@@ -590,6 +590,7 @@ var szqPay = {
 			//销售退货或预定取消才可进行券退回
 			console.log("券返回时的业务类型：", body.ywtype);
 			if (body.ywtype && (body.ywtype == 'Z151' || body.ywtype == 'Z171')) {
+				pt = pt == "SZQ" ? 'JHQ' : pt; //退款时候
 				_Refund(pt, body, res => {
 					console.log("券返回结果：", res);
 				}, err => {
