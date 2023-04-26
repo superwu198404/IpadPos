@@ -7,8 +7,7 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
-				<label >
-					<!-- v-if="_ywtype=='kq_sale'" -->
+				<label v-if="_ywtype=='kq_sale'" >
 					是否赊销：
 					<view class="classifys">
 						<label @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''"><em><text></text></em>是</label>
