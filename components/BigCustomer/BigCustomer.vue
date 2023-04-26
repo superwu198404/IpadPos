@@ -7,11 +7,12 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
-				<label v-if="_ywtype=='kq_sale'">
+				<label >
+					<!-- v-if="_ywtype=='kq_sale'" -->
 					是否赊销：
 					<view class="classifys">
-						<text @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''">是</text>
-						<text @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'">否</text>
+						<label @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''"><em><text></text></em>是</label>
+						<label @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'"><em><text></text></em>否</label>
 					</view>
 				</label>
 				<view class="client">
@@ -349,21 +350,42 @@
 	.classifys {
 		display: flex;
 		align-items: center;
-		background-color: #E0EAE9;
-		color: #006B44;
+		background: none;
+		color: #333;
 		font-weight: 400;
 		border-radius: 40rpx;
 		font-size: 14px;
-		padding: 1px;
-		border: 1px solid #006B44;
+		border: none;
 	}
-
-	.classifys text.curr {
+	.classifys label{
+		width:120rpx;
+	}
+	.classifys label em{
+		width:24rpx;
+		height: 24rpx;
+		border:2rpx solid #333;
+		border-radius: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-right:8rpx;
+	}
+	.classifys label.curr{
+		color: #006B44;
+	}
+	.classifys label.curr em{
+		border:2rpx solid #006B44;		
+	}
+	.classifys label.curr em text{
+		display: inline-block;
+		width:20rpx;
+		height: 20rpx;
 		background-color: #006B44;
-		color: #fff;
-
+		padding:0;
+		margin:2rpx;
+		border-radius: 50%;
+		font-weight: 700;
 	}
-
 	.confirm .btn-qx {
 		width: 70%;
 		margin: 0 auto;
