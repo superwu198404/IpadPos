@@ -53,6 +53,7 @@ export const PayDataAssemble = function() {
 			?.fkid, //因为前者会受到authcode影响被清空，导致用券支付时，如果扫了错误的码会导致找不到支付信息，从而使其获取不到fkid，导致失败后端券查询报无auth_code的问题
 		// discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		discountable_amount: zfb_disc,
+		verification_goods: this.verification_goods,//核销过的商品id，针对抖音券同种商品对应券只能核销一次的问题
 		product_info: this.Products.map(i => { //商品清单
 			return {
 				spid: i.SPID,

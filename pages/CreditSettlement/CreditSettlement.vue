@@ -185,6 +185,12 @@
 							ywsxjsmx,
 						})
 					}))
+			},
+			close_auto_search:function(is_open,type){
+				console.warn("[CreditSettlement]切换信息:",is_open,type);
+				if(type != 'sale_credit_settlement' && is_open == true){
+					uni.$off('credit-big-customer-change');
+				}
 			}
 		},
 		created() {
@@ -198,6 +204,7 @@
 					this.GetBigClientSettlement();
 				}
 			}).bind(this))
+			uni.$on('allow-position-switch', this.close_auto_search)
 			console.log("[CreditSettlement-Created]大客户信息:", this.bigCustomerInfo);
 			console.log("[CreditSettlement-Created]门店信息:", {
 				ryid: this.RYID,
@@ -212,6 +219,7 @@
 		},
 		destroyed:function(){
 			uni.$off('credit-big-customer-change');
+			uni.$off('allow-position-switch', this.close_auto_search);
 		}
 	}
 </script>

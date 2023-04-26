@@ -33,7 +33,7 @@ var YN_Init = function(sucFunc, errFunc) {
 var GetPayWay = async function(e) {
 	let PayWayList = [];
 	await common.GetPayWay(e, function(res) {
-		console.warn("[GetPayWay]本地查到的付款信息：", res);
+		console.log("[GetPayWay]本地查到的付款信息：", res);
 		if (res.code) {
 			let PayInfo = util.getStorage("PayInfo");
 			console.log("[GetPayWay]支付规则信息：", PayInfo);
@@ -41,11 +41,12 @@ var GetPayWay = async function(e) {
 				if (!PayInfo || JSON.stringify(PayInfo) == "{}") { //没有支付规则则退出
 					return;
 				}
-				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i]
-					.SNAME);
-				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
+				// let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME && r.NOTE == res.msg[i].SNAME);
+				let obj1 = PayInfo.find(r => r.TYPE == res.msg[i].JKSNAME);
+				// console.log("支付规则匹配项：", obj1);
 				if (!obj1) { //如果规则数据中不存在这种支付方式则不追加
-					continue;
+					if (res.msg[i].SNAME != '现金') //现金放行
+						continue;
 				}
 				let obj = {};
 				obj.name = res.msg[i].SNAME;
@@ -55,98 +56,25 @@ var GetPayWay = async function(e) {
 				obj.poly = res.msg[i].POLY;
 				obj.dbm = res.msg[i].YN_DBM; //是否要扫码 Y:扫码 N:不扫码
 				obj.zklx = res.msg[i].ZKLX; //折扣类型（主要是会员卡使用）
-				obj.yn_use = obj1.YN_USE || "Y"; //该支付方式是否可用
-				obj.seq = obj1.SEQNO; //排序方式
+				obj.yn_use = res.msg[i].YN_SQ || 'N'; //obj1.YN_USE; //该支付方式是否可用
+				obj.seq = i; //排序方式obj1.SEQNO
 				obj.addtype = res.msg[i].NET_ADDTYPE; //支付记录 显示方式 是追加（NEWADD）还是覆盖(COVER)
 				obj.raw = res.msg[i];
 				obj.yn_cezf = res.msg[i].YN_CEZF; //是否允许超额支付
-				// if (res.msg[i].FKID == 'ZCV1') { //超额溢出的支付方式 无用
-				// 	obj.type = "EXCESS";
+
+				// if (res.msg[i].JKSNAME == "DouYinJK") {
+				// 	obj.poly = "S";
+				// 	obj.fkid_f = res.msg[i].FKID_F
 				// }
-				if(res.msg[i].JKSNAME == "DouYinJK"){
-					obj.poly = "S";
-					obj.fkid_f = res.msg[i].FKID_F
-				}
-				PayWayList.push(obj);
+				if (!res.msg[i].FKID_F || res.msg[i].FKID_F == '89') //为空或者属于聚合的
+					PayWayList.push(obj);
 			}
-			//如果fkda没有则追加测试数据
-			let arr = [
-				//  {
-				// 		name: "仟吉电子券",
-				// 		fkid: "ZF09",
-				// 		type: "SZQ",
-				// 		yn_use: "Y",
-				// 		dbm: "Y",
-				// 		poly: "N"
-				// 	},
-				// {
-				// 	name: "云闪付",
-				// 	fkid: "ZF33",
-				// 	type: "YSF",
-				// 	poly: "N"
-				// },
-				// {
-				// 	name: "可伴支付",
-				// 	fkid: "ZF22",
-				// 	type: "COUPON",
-				// 	poly: "N"
-				// }, {
-				// 	name: "品诺支付",
-				// 	fkid: "ZF32",
-				// 	type: "PINNUO",
-				// 	poly: "N",
-				// },
-				// {
-				// 	name: "现金",
-				// 	fkid: "ZF01",
-				// 	type: "",
-				// 	poly: "O"
-				// }, 
-				{
-					name: "不可原路退回",
-					fkid: "ZG11",
-					type: "NO",
-					poly: "O", //不显示的支付方式
-					seq: 100,
-					addtype: "NEWADD",
-				}
-				// , {
-				// 	name: "仟吉赠券",
-				// 	fkid: "ZZ01",
-				// 	type: "SZQ", //NOPAY 用于券支付退款时 通过fkid找到SZQ后 走券退回接口
-				// 	api: "SZQ",
-				// 	poly: "O",
-				// 	seq: 101,
-				// 	addtype: "NEWADD",
-				// }, {
-				// 	name: "预定金",
-				// 	fkid: "ZG03",
-				// 	type: "",
-				// 	poly: "O",
-				// 	seq: 102,
-				// 	addtype: "NEWADD",
-				// },
-				// {
-				// 	name: "券自动放弃金额",
-				// 	fkid: "ZCV1",
-				// 	type: "EXCESS",
-				// 	poly: "O",
-				// 	seq: 103,
-				// 	addtype: "NEWADD",
-				// }
-			]
-			for (var i = 0; i < arr.length; i++) {
-				let obj = PayWayList.find((item) => {
-					return item.type == arr[i].type && item.fkid == arr[i].fkid;
-				});
-				if (!obj) {
-					PayWayList.push(arr[i]);
-				}
-			}
+			console.log("一级常用的支付方式：", PayWayList);
 
 			let arr1 = res.msg.filter(r => {
 				return ((r.FKID_F == "93" || r.FKID_F == "95" || r.FKID_F == "98") && r
-					.FKJBID == '2' && r.YN_SQ == 'Y' && !PayWayList.find(f => f.fkid == r.FKID));
+					.FKJBID == '2' && r.YN_SQ == 'Y' && !PayWayList.find(f => f.fkid == r
+						.FKID));
 			}).map((r, i) => {
 				return {
 					name: r.SNAME,
@@ -156,8 +84,10 @@ var GetPayWay = async function(e) {
 					dbm: r.YN_DBM,
 					zklx: r.ZKLX,
 					fkid_f: r.FKID_F,
-					yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r => r.TYPE == r.JKSNAME && r
-						.NOTE == r.SNAME) ? 'Y' : "N"),
+					// yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME && r1
+					// 	.NOTE == r.SNAME) ? 'Y' : "N"),
+					yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME) ? 'Y' :
+						"N"),
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
 					addtype: r.NET_ADDTYPE,
@@ -165,7 +95,7 @@ var GetPayWay = async function(e) {
 				}
 			})
 			PayWayList = PayWayList.concat(arr1);
-			console.log("筛选后的二级支付方式：", arr1);
+			console.log("二级其他支付方式：", arr1);
 
 			let arr2 = [];
 			//开始筛选其余不可见的方式
@@ -191,7 +121,24 @@ var GetPayWay = async function(e) {
 				}
 			}
 			PayWayList = PayWayList.concat(arr2);
-			console.log("筛选后的三级（其他不可见）支付方式：", arr2);
+			console.log("三级不可见支付方式：", arr2);
+			//如果fkda没有则追加测试数据
+			let arr = [{
+				name: "不可原路退回",
+				fkid: "ZG11",
+				type: "NO",
+				poly: "O", //不显示的支付方式
+				seq: PayWayList.length + 1,
+				addtype: "NEWADD",
+			}]
+			for (var i = 0; i < arr.length; i++) {
+				let obj = PayWayList.find((item) => {
+					return item.type == arr[i].type && item.fkid == arr[i].fkid;
+				});
+				if (!obj) {
+					PayWayList.push(arr[i]);
+				}
+			}
 			//排序操作
 			PayWayList = PayWayList.sort((r, r1) => {
 				return r.seq - r1.seq;
@@ -284,7 +231,7 @@ var get_payment_infos = async function() {
 			if (res.code) {
 				var infos = JSON.parse(res.data);
 				util.setStorage('FKDA_INFO', infos)
-				console.warn("[GetPaymentInfos]获取支付方式:", infos);
+				console.warn("[GetPaymentInfos]获取全部的支付方式:", infos);
 			} else {
 				util.simpleMsg("获取付款方式失败!", true)
 			}

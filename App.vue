@@ -3,6 +3,7 @@
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import _init from '@/api/business/init.js';
+	import dateformat from '@/utils/dateformat.js';
 	import Vue from 'vue'
 	import {
 		global
@@ -168,12 +169,38 @@
 		},
 		onShow: function() {
 			console.log('App Show');
+			let time = dateformat.gettimes().substr(0, 4);
+			console.log("当前时间：", time);
 		},
 		onHide: function() {
 			console.log('App Hide');
 		},
 		onUnload: function() {
 			console.log('App 卸载');
+			// let ZF_RULE = [{
+			// 	NOTE:"微信支付",
+			// 	TYPE: "WXZF",
+			// 	PAYTYPE: "WxPay_ScanCode",
+			// 	URL: "/PaymentAll/Handle",
+			// 	APPID: "keengee",
+			// 	DA_STATUS: "Y",
+			// 	BRAND: "KG",
+			// 	SEQNO: "1",
+			// 	CODE: "10,11,12,13,14,15",
+			// 	SOURCE:"Mobile_Pos"
+			// }, {
+			// 	NOTE:"支付宝2.0",
+			// 	TYPE: "ZFB20",
+			// 	PAYTYPE: "AliPay_ScanCode",
+			// 	URL: "/PaymentAll/Handle",
+			// 	APPID: "keengee",
+			// 	DA_STATUS: "Y",
+			// 	BRAND: "KG",
+			// 	SEQNO: "2",
+			// 	CODE: "25,26,27,28,29,30",
+			// 	SOURCE:"Mobile_Pos"
+			// }]
+			// }
 		}
 	}
 </script>

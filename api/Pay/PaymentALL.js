@@ -590,6 +590,7 @@ var szqPay = {
 			//销售退货或预定取消才可进行券退回
 			console.log("券返回时的业务类型：", body.ywtype);
 			if (body.ywtype && (body.ywtype == 'Z151' || body.ywtype == 'Z171')) {
+				pt = pt == "SZQ" ? 'JHQ' : pt; //退款时候
 				_Refund(pt, body, res => {
 					console.log("券返回结果：", res);
 				}, err => {
@@ -645,14 +646,21 @@ var jhqPay = {
 			function(res) {
 				if (show_log) console.log("[PaymentAll]第一次查询结果（QueryPayment）:", res);
 				if (res.code && body.pay_way_list && body.pay_way_list.length > 0) { //判断是否限制了某种券不能支付
-					for (var i = 0; i < body.pay_way_list.length; i++) {
-						let obj = res.data.vouchers.find(r => r.fkid == body.pay_way_list[i].fkid &&
-							body.pay_way_list[i].yn_use == 'N');
-						if (obj) {
+					for (var i = 0; i < res.data.vouchers.length; i++) {
+						let obj = body.pay_way_list.find(r => r.fkid == res.data.vouchers[i].fkid);
+						if (!obj || obj.yn_use == 'N') { //支付方式不存在或者业务禁用了该支付方式
 							console.log("当前券支付限制的支付：", obj);
+							let fkname = "";
+							if (obj)
+								fkname = obj.name;
+							else {
+								let FKDA_INFO = util.getStorage('FKDA_INFO');
+								let obj1 = FKDA_INFO.find(r => r.FKID == res.data.vouchers[i].fkid);
+								fkname = obj1.SNAME;
+							}
 							let newRes = {
 								code: false,
-								msg: "抱歉，“" + body.pay_way_list[i].name + "”禁止支付！请更换其他类型券重新支付。"
+								msg: "抱歉，“" + fkname + "”禁止使用！请更换其他类型券重新支付。"
 							};
 							if (catchFunc)
 								catchFunc(newRes);

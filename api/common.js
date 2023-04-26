@@ -16,10 +16,9 @@ const loading_default_params = {
 var Loading = (open = true, options = loading_default_params) => {
 	let default_options = Object.assign({}, loading_default_params);
 	let custom_options = Object.assign(default_options, options);
-	if(open) {
+	if (open) {
 		uni.showLoading(custom_options);
-	}
-	else {
+	} else {
 		uni.hideLoading();
 	}
 }
@@ -198,7 +197,7 @@ var TransLite = function(e, func, load = false) {
 	if (e) {
 		sql = "select * from POS_TXFILE where STR1='" + e + "'"; //如果有单号的话 处理该笔订单
 	}
-	console.log("[TransLite]即将执行的SQL语句:",sql);
+	console.log("[TransLite]即将执行的SQL语句:", sql);
 	db.get().executeQry(sql, "数据查询中", function(res) {
 			console.log("[TransLite]传输数据查询成功", res);
 			if (res.code && res.msg.length > 0) {
@@ -274,12 +273,12 @@ var TransLiteAsync = function(e, func, load = false) {
 												callback_result?.then((res) => {
 													console.log(
 														"[TransLiteAsync]回调执行完成..."
-														);
+													);
 													resolve(result);
 												});
 											else {
 												console.log(
-												"[TransLiteAsync]回调执行完成...");
+													"[TransLiteAsync]回调执行完成...");
 												resolve(result);
 											}
 										};
@@ -316,10 +315,10 @@ var TransLiteAsync = function(e, func, load = false) {
 			});
 	})
 }
-
 //获取支付方式
-var GetPayWay = function(e, func) {
+var GetPayWay1 = function(e, func) {
 	console.log("查询门店的支付方式:", e);
+	//按照地区获取
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
                                        F1.JK_PRINT_PATH  JK_PRINT_PATH,\
                                        IFNULL(F1.YN_ZL, 'N') YN_ZL,\
@@ -370,9 +369,6 @@ var GetPayWay = function(e, func) {
 					}
 				}
 				arr = res;
-				// if (func) func(res);
-				// console.log("测试调用1");
-				// return res;
 			})
 			// console.log("聚合处理后的付款数据：",arr);
 			if (func) func(arr);
@@ -382,8 +378,114 @@ var GetPayWay = function(e, func) {
 			util.simpleMsg("获取付款方式出错", true);
 		});
 }
+//获取支付方式 新版 先查门店无数据再查地区
+var GetPayWay = async function(e, func) {
+	console.log("查询门店的支付方式:", e);
+	//按照地区获取
+	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
+                                       F1.JK_PRINT_PATH  JK_PRINT_PATH,\
+                                       IFNULL(F1.YN_ZL, 'N') YN_ZL,\
+                                       IFNULL(F1.NET_ADDTYPE, 'N') NET_ADDTYPE,\
+                                       IFNULL(F1.YN_INPUTJE, 'N') YN_INPUTJE,\
+                                       F1.FKID  FKID,\
+                                       F1.SNAME  SNAME,\
+                                       F1.PINYIN  PINYIN,\
+                                       F1.MEDIA  MEDIA,\
+                                       F1.YN_DBM  YN_DBM,\
+                                       F1. YN_SQ  YN_SQ,\
+                                       F1. YN_CEZF  YN_CEZF,\
+                                       IFNULL(F1.YN_JK, 'N') YN_JK,\
+                                       F1.JK_KEY1  JK_KEY1,\
+                                       F1.JK_KEY2  JK_KEY2,\
+                                       F1.JK_KEY3  JK_KEY3,\
+                                       F1.FKJBID   FKJBID,\
+                                       F1.FKID_F   FKID_F,\
+                                       F1.ID_RY_LR  ID_RY_LR,\
+                                       F1.DATE_LR  DATE_LR,\
+                                       F1.ID_RY_XG  ID_RY_XG,\
+                                       F1.DATE_XG  DATE_XG,\
+                                       F1.DA_STATUS  DA_STATUS,\
+                                       F1. ID_RY_SH  ID_RY_SH,\
+                                       F1.DATE_SH  DATE_SH,\
+                                       F1.JKSNAME  JKSNAME,\
+                                       F1. NBJKNO  NBJKNO,\
+                                       'N' YN_FP  ,\
+                                       'Y' YN_YLTH ,\
+                                       F1.ZKLX  ZKLX\
+                                  FROM FKDA F1, KHZFKDA K1,KHDA K2 \
+                                     WHERE  f1.fkid = k1.fkid  \
+                                        AND  k2.dqid = k1.khzid \
+                                        AND  k2.khid ='" + e + "' \
+                                 ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
+	//按照门店获取
+	//按照门店获取
+	let sql1 = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
+								      F1.JK_PRINT_PATH  JK_PRINT_PATH,\
+								      IFNULL(F1.YN_ZL, 'N') YN_ZL,\
+								      IFNULL(F1.NET_ADDTYPE, 'N') NET_ADDTYPE,\
+								      IFNULL(F1.YN_INPUTJE, 'N') YN_INPUTJE,\
+								      F1.FKID  FKID,\
+								      F1.SNAME  SNAME,\
+								      F1.PINYIN  PINYIN,\
+								      F1.MEDIA  MEDIA,\
+								      F1.YN_DBM  YN_DBM,\
+								      F1. YN_SQ  YN_SQ,\
+								      F1. YN_CEZF  YN_CEZF,\
+								      IFNULL(F1.YN_JK, 'N') YN_JK,\
+								      F1.JK_KEY1  JK_KEY1,\
+								      F1.JK_KEY2  JK_KEY2,\
+								      F1.JK_KEY3  JK_KEY3,\
+								      F1.FKJBID   FKJBID,\
+								      F1.FKID_F   FKID_F,\
+								      F1.ID_RY_LR  ID_RY_LR,\
+								      F1.DATE_LR  DATE_LR,\
+								      F1.ID_RY_XG  ID_RY_XG,\
+								      F1.DATE_XG  DATE_XG,\
+								      F1.DA_STATUS  DA_STATUS,\
+								      F1. ID_RY_SH  ID_RY_SH,\
+								      F1.DATE_SH  DATE_SH,\
+								      F1.JKSNAME  JKSNAME,\
+								      F1. NBJKNO  NBJKNO,\
+								      'N' YN_FP  ,\
+								      'Y' YN_YLTH ,\
+								      F1.ZKLX  ZKLX\
+								 FROM FKDA F1, KHZFKDA K1\
+								      WHERE f1.fkid = k1.fkid  \
+								      AND k1.khzid ='" + e + "' \
+								ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
+	let arr;
+	console.log("开始查询门店付款0");
+	await db.get().executeQry(sql1, "查询中...", function(res) {
+		console.log("[GetPayWay]门店查询本地fkda:", res);
+		arr = res;
+	});
+	if (arr && arr.msg.length == 0) {
+		console.log("开始查询地区付款1");
+		await db.get().executeQry(sql, "查询中...", function(res) {
+			console.log("[GetPayWay]地区查询本地fkda:", res);
+			arr = res;
+		});
+	}
+	if (arr && arr.msg.length > 0) {
+		console.log("开始查询聚合付款2");
+		await GetPolyPayWay(e, res1 => {
+			for (var i = 0; i < arr.msg.length; i++) {
+				let obj = res1.msg.find((item) => {
+					return item.ID_NR == arr.msg[i].FKID;
+				})
+				if (obj) {
+					arr.msg[i].POLY = 'Y';
+				} else {
+					arr.msg[i].POLY = 'N';
+				}
+			}
+		})
+	}
+	console.log("聚合处理后的最终FKDA：", arr);
+	if (func) func(arr);
+}
 
-//获取支付方式
+//获取支付方式 旧版使用 已废弃（20230424追溯确认）
 var GetPayWayAsync = async function(e, func) {
 	// e = 'K0101QT2'; //测试使用
 	let list = [];
@@ -704,6 +806,7 @@ var GetZFRULE = async function(e, func) {
 					}
 				}
 			}
+			console.log("付款码规则：", obj);
 			util.setStorage("CodeRule", obj);
 			// getApp().globalData.CodeRule = obj;
 		}
@@ -891,7 +994,7 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		}
 		let result = null;
 		let callback = (res) => result = res;
-		console.log("[SimpleAPIRequest]准备请求:",reqdata);
+		console.log("[SimpleAPIRequest]准备请求:", reqdata);
 		Loading(true);
 		await Req.asyncFuncOne(reqdata, callback, callback);
 		Loading(false);
@@ -905,43 +1008,41 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 	}
 }
 
-var Database = function(){
+var Database = function() {
 	let Query = {
 		IsSingle: false,
 		SQL: "",
-		async Excute(){
-			if(!this.SQL) return;
+		async Excute() {
+			if (!this.SQL) return;
 			let result = await SimpleAPIRequest({
 				class: 'DataQuery',
 				method: 'SALEQuery',
 				process: false,
 				data: this.SQL
 			});
-			if(result.code){
+			if (result.code) {
 				let data = JSON.parse(result.data);
-				if(this.IsSingle && data.length){
+				if (this.IsSingle && data.length) {
 					return data[0];
-				}
-				else{
+				} else {
 					return data;
 				}
-			}
-			else {
+			} else {
 				return null;
 			}
 		},
-		Condition(fragment){
-			this.SQL+= `AND ${fragment} `;
+		Condition(fragment) {
+			this.SQL += `AND ${fragment} `;
 			return this;
 		},
-		Single(table_name){
-			if(!table_name) return;
+		Single(table_name) {
+			if (!table_name) return;
 			this.IsSingle = true;
 			this.SQL = `SELECT * FROM ${table_name} WHERE 1=1 `
 			return this;
 		},
-		Mutiple(table_name){
-			if(!table_name) return;
+		Mutiple(table_name) {
+			if (!table_name) return;
 			this.SQL = `SELECT * FROM ${table_name} WHERE 1=1 `
 			this.IsSingle = false;
 			return this;

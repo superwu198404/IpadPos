@@ -194,9 +194,11 @@
 										</image>
 									</view>
 								</label>
-								<label class="poly-text">
-									<!-- <text>支持</text> -->
+								<label class="poly-text" v-if="PayWayList.filter(i=>i.poly=='Y').length>0">
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
+								</label>
+								<label class="poly-text" v-else>
+									<text>暂无可用，请选择其他支付方式！</text>
 								</label>
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
@@ -441,6 +443,7 @@
 				sale1_obj: {},
 				sale2_arr: [],
 				sale3_arr: [], //已支付的交易数据（本页面存在多次交易的可能，所以此参数只能在本页面动态构造）
+				verification_goods: [], //抖音核销商品核销id
 				tx_obj: {},
 				domRefresh: new Date().toString(),
 				query: null,
@@ -905,6 +908,12 @@
 			//支付按钮点击事件
 			Pay: function() {
 				let that = this; //适配真机
+				console.log("支付方式：", this.PayWayList);
+				if (this.currentPayType == 'POLY' && this.PayWayList.filter(r => r.poly == 'Y').length ==
+					0) { //无聚合支付提示
+					util.simpleMsg("聚合支付暂无可用，请更换其他支付方式!", 'none');
+					return;
+				}
 				console.log("[Pay]当前支付类型:", this.currentPayType);
 				if (!this.currentPayType || this.currentPayType == 'Others') { //增加其他选项 不允许支付的控制
 					util.simpleMsg("请选择支付方式后再进行支付!", false);
@@ -1094,6 +1103,7 @@
 				});
 				return this.PayWayList.find(i => i.type === type) || {};
 			},
+			//现金退还项合并
 			CashRefundCombine: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 				console.warn("[CashRefundCombine]现金支付信息:", {
@@ -1266,7 +1276,8 @@
 								}).bind(that),
 								(function(ress) { //执行完毕（results），根据结果判断
 									console.log("[Refund-退款]Results:", ress);
-									if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+									if (!ress[1]
+										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
 										refundInfo.fail = true;
 										refundInfo.msg = ress[1].msg; //错误提示信息记录
 									} else {
@@ -1377,6 +1388,7 @@
 								this.CashOffset.Score = 0;
 								this.CashOffset.Money = 0;
 							}
+
 							console.log("[Payment-付款]支付结果：", result);
 							util.simpleMsg("支付成功!");
 							this.UpdateHyInfo(result.data); //更新会员信息
@@ -1417,6 +1429,13 @@
 					}).bind(this)
 				)
 			},
+			//抖音核销商品记录
+			TikTokVerificationGoodRecord: function(verification_good_id) {
+				if (verification_good_id) { //如果有限制核销商品，则进行记录
+					this.verification_goods.push(verification_good_id);
+				}
+			},
+			//现金找零计算
 			CountCashChange: function() {
 				let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 				console.warn('[CountCashChange]现金支付信息:', {
@@ -1427,7 +1446,8 @@
 					0; //查找上一个现金支付金额判断是否存在
 				return Number(this.dPayAmount) - (Number(this.allAmount) + Number(prev_cash_amount));
 			},
-			ScoreDiscount: function() { //积分抵现处理判断
+			//积分抵现处理判断
+			ScoreDiscount: function() {
 				console.log("[ScoreDiscount]积分抵现判断:", {
 					current_pay_type: this.currentPayType,
 					debt: this.dPayAmount,
@@ -2034,6 +2054,10 @@
 					e
 				});
 				if (r == 'Others') { //点击其他支付
+					if (this.PayWayList.filter(r => r.poly == 'S').length == 0) {
+						util.simpleMsg("暂无更多可用的支付方式！", "none");
+						return;
+					}
 					console.log("展示其他方式");
 					this.ShowOthersPay = true;
 					this.currentPayType = r;
@@ -2153,7 +2177,7 @@
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
-					that.currentPayType = 'JHQ';
+					this.currentPayType = "JHQ";
 					if (!this.YN_TotalPay) { //如果未支付完成
 						that.coupons = !that.coupons; //关闭弹窗
 						this.authCode = e; //券号赋值
