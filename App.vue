@@ -3,6 +3,7 @@
 	import util from '@/utils/util.js';
 	import Req from '@/utils/request.js';
 	import _init from '@/api/business/init.js';
+	import dateformat from '@/utils/dateformat.js';
 	import Vue from 'vue'
 	import {
 		global
@@ -168,6 +169,8 @@
 		},
 		onShow: function() {
 			console.log('App Show');
+			let time = dateformat.gettimes().substr(0, 4);
+			console.log("当前时间：", time);
 		},
 		onHide: function() {
 			console.log('App Hide');
