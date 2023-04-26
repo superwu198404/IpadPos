@@ -184,7 +184,6 @@
 						title: "输入密码",
 						editable: true,
 						success(res) {
-							// 202304260902
 							let time = dateformat.gettimes().substr(0, 4);
 							console.log("当前时间：", time);
 							if (res.confirm && res.content === "123" + time) {

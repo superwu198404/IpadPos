@@ -91,7 +91,7 @@
 					<view class="settleds">
 						<view class="paymentlist">
 							<h3 v-if="!isRefund">已结算<button
-									v-if="!isRefund&&PayWayList.find(i=>i.fkid=='1001'&&i.yn_use=='Y')"
+									v-if="!isRefund&&PayWayList.find(i=>i.type=='JHQ'&&i.yn_use=='Y')"
 									@click="ShowCoupon()">+ 可用券</button>
 							</h3>
 							<view class="sets-list" v-if="!isRefund">
@@ -294,8 +294,9 @@
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
-						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)" class="modeli"
-							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'curr':''"
+						<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
+							class="modeli"
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid)? ' curr':''"
 							:id="item.type" @click="clickPayType(item,$event)">
 							<view :class="item.yn_use=='Y'?'':'jinzhi'">
 								<image :src="item.icon" mode="widthFix"></image>
@@ -1097,11 +1098,16 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
+				let obj = {};
+				if (!this.ShowOthersPay)
+					obj = this.PayWayList.find(i => i.type === type) || {};
+				else //打开其他支付时候 只查询其他支付中的
+					obj = this.PayWayList.find(i => i.type === type && i.poly == 'S') || {}; //其它支付
 				console.log("[PayWayInfo]根据TYPE获取对应支付的具体信息:", {
 					type,
-					info: this.PayWayList.find(i => i.type === type) || {}
+					obj
 				});
-				return this.PayWayList.find(i => i.type === type) || {};
+				return obj;
 			},
 			//现金退还项合并
 			CashRefundCombine: function() {
@@ -2122,8 +2128,8 @@
 					// },5000)
 					uni.navigateBack();
 				} else
-				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`,
-					true);
+				if (!this.CanBack && !this.AlreadyBack)
+					util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
