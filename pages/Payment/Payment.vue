@@ -1719,9 +1719,8 @@
 				this.PushToPaidList(trade);
 			},
 			IsSaveAuthCode: function(fkid) {
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
-					'DouYinJK'
-				].includes(i.type)).map(i => i.fkid);
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON', 'PINNUO',
+					'DouYinJK'].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
@@ -2568,7 +2567,7 @@
 	.bom-zhifu .pattern:nth-child(2) .tits p,
 	.bom-zhifu .pattern:nth-child(3) .tits p,
 	.bom-zhifu .pattern:nth-child(4) .tits p,
-	.bom-zhifu .pattern:nth-child(5) .tits p{
+	.bom-zhifu .pattern:nth-child(5) .tits p {
 		font-size: 40rpx !important;
 		line-height: 80rpx !important;
 	}
