@@ -476,10 +476,12 @@
 						url: "/pages/mainSale/MainSale"
 					});
 				} else if (e == 7) {
-					util.setStorage("store", {});
-					uni.clearStorageSync(); //清除所有缓存
 					uni.reLaunch({
-						url: "../start/start"
+						url: "../start/start",
+						success: () => {
+							util.setStorage("store", {});
+							uni.clearStorageSync(); //清除所有缓存
+						}
 					});
 				} else if (e == 8) {
 					uni.navigateTo({
