@@ -670,7 +670,7 @@ page {
 
 .bom-zhifu .pattern:nth-child(1) p {
 	font-size: 40rpx;
-	line-height: 160rpx;
+	line-height: 160rpx !important;
 	font-weight: 700;
 	position: relative;
 	z-index: 9;
@@ -726,12 +726,14 @@ page {
 .pattern:nth-child(1) {}
 
 .pattern p {
-	font-size: 40rpx;
+	font-size: 30rpx;
 	font-weight: 700;
-	line-height: 80rpx;
+	
 	position: relative;
 	z-index: 9;
 	color:#333;
+	line-height: 56rpx;
+	width: 90%;
 }
 
 .pattern text {

@@ -15,6 +15,7 @@
 		</view>
 		<view>
 			<button @click="MenuPage(10)">数据查看</button>
+			<button @click="MenuPage(7)">切换门店</button>
 			<!-- <button @click="MenuPage(12)">查看轮播</button> -->
 			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
@@ -308,7 +309,7 @@
 				});
 
 			},
-			//获取支付方式
+			//获取支付方式 已废弃 20230424追溯后确认
 			GetPayWay: async function(e) {
 				let that = this;
 				console.log("[GetPayWay]开始获取本地支付方式...");
@@ -475,8 +476,12 @@
 						url: "/pages/mainSale/MainSale"
 					});
 				} else if (e == 7) {
-					uni.navigateTo({
-						url: "../start/start"
+					uni.reLaunch({
+						url: "../start/start",
+						success: () => {
+							util.setStorage("store", {});
+							uni.clearStorageSync(); //清除所有缓存
+						}
 					});
 				} else if (e == 8) {
 					uni.navigateTo({

@@ -85,6 +85,7 @@
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
 
 	import common from '@/api/common.js';
+	import dateformat from '../../../utils/dateformat';
 	var $;
 	export default {
 		components: {
@@ -145,10 +146,11 @@
 			MenuSelect(menu_name, menu_info) {
 				if (!this.allow_page_switch) return;
 				this.previous_info = this.current_info;
-				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name == 'sale_reserve_cancel' || menu_name == 'sale_credit_settlement' || menu_name == 'sale_reserve_extract'
-					) { //只有这五种模式（预定提取，预定取消，退单，赊销结算，赊销退单）需要预选定位
-					uni.$once('allow-position',(function(name){
-						console.warn("[MenuSelect]测试",name);
+				if (menu_name == 'sale_credit_return_good' || menu_name == 'sale_return_good' || menu_name ==
+					'sale_reserve_cancel' || menu_name == 'sale_credit_settlement' || menu_name == 'sale_reserve_extract'
+				) { //只有这五种模式（预定提取，预定取消，退单，赊销结算，赊销退单）需要预选定位
+					uni.$once('allow-position', (function(name) {
+						console.warn("[MenuSelect]测试", name);
 						this.current_click_menu_name = name;
 					}).bind(this))
 				} else {
@@ -182,10 +184,14 @@
 						title: "输入密码",
 						editable: true,
 						success(res) {
-							if (res.confirm && res.content === '1234321') {
+							let time = dateformat.gettimes().substr(0, 4);
+							console.log("当前时间：", time);
+							if (res.confirm && res.content === "123" + time) {
 								uni.navigateTo({
 									url: "../index/index"
 								})
+							} else {
+								util.simpleMsg("密码错误！", true);
 							}
 						}
 					})
@@ -324,7 +330,8 @@
 		background: transparent;
 		color: transparent;
 	}
-	.navmall{
+
+	.navmall {
 		z-index: 99999 !important;
 	}
 </style>

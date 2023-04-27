@@ -397,7 +397,9 @@
 		padding: 2px 2px;
 		gap: 5px;
 	}
-
+	.form-item-input-left input{
+		color: #006B44;
+	}
 	.form-item-block {
 		display: flex;
 		flex-direction: column;

@@ -121,7 +121,7 @@ var UpdatePWD_Local = function(pwd, ryid, func) {
  */
 export const UpdatePWD = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.UpdatePWD";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //初始化当前门店信息
@@ -165,11 +165,11 @@ var InitStore = function(khid, posid, ryinfo, func) {
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
 		init_object_factory.init();
-		Object.assign(store1,{
+		Object.assign(store1, {
 			factory: init_object_factory
 		});
 		console.log("[InitStore]全局混入客户端信息！");
-		global.data = function(){
+		global.data = function() {
 			return store1;
 		};
 		Vue.mixin(global);
@@ -231,7 +231,7 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 	}
 
 	let apistr = "MobilePos_API.Models.MainCLASS.SignOrSignOut";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 var SignOrSignOutSql = async function(sql, func) {
@@ -264,7 +264,7 @@ var GetSignOutInWeek = async function(func) {
 		khid: store.KHID
 	}
 	let apistr = "MobilePos_API.Models.MainCLASS.GetSignOutInWeek";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //获取收银员是否结款
@@ -276,7 +276,7 @@ var GetSkyJk = async function(func) {
 		ryid: store.RYID
 	}
 	let apistr = "MobilePos_API.Models.MainCLASS.GetSkyJk";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 

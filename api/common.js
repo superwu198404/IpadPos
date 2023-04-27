@@ -460,7 +460,7 @@ var GetPayWay = async function(e, func) {
 		arr = res;
 	});
 	if (arr && arr.msg.length == 0) {
-	console.log("开始查询地区付款1");
+		console.log("开始查询地区付款1");
 		await db.get().executeQry(sql, "查询中...", function(res) {
 			console.log("[GetPayWay]地区查询本地fkda:", res);
 			arr = res;
@@ -806,6 +806,7 @@ var GetZFRULE = async function(e, func) {
 					}
 				}
 			}
+			console.log("付款码规则：", obj);
 			util.setStorage("CodeRule", obj);
 			// getApp().globalData.CodeRule = obj;
 		}

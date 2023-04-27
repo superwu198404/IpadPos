@@ -91,7 +91,7 @@
 					<view class="settleds">
 						<view class="paymentlist">
 							<h3 v-if="!isRefund">已结算<button
-									v-if="!isRefund&&PayWayList.find(i=>i.fkid=='1001'&&i.yn_use=='Y')"
+									v-if="!isRefund&&PayWayList.find(i=>i.type=='JHQ'&&i.yn_use=='Y')"
 									@click="ShowCoupon()">+ 可用券</button>
 							</h3>
 							<view class="sets-list" v-if="!isRefund">
@@ -198,7 +198,7 @@
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 								<label class="poly-text" v-else>
-									<text>暂无可用</text>
+									<text>暂无可用，请选择其他支付方式！</text>
 								</label>
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
@@ -294,8 +294,9 @@
 				</view>
 				<view class="listofpay">
 					<view class="modelist">
-						<view v-for="(item) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)" class="modeli"
-							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid )? 'curr':''"
+						<view v-for="(item,index) in PayWayList.filter(i=>i.poly=='S'&&i.fkid_f==PayMode)"
+							class="modeli"
+							:class="(currentSelectedInfo&&currentSelectedInfo.fkid == item.fkid)? ' curr':''"
 							:id="item.type" @click="clickPayType(item,$event)">
 							<view :class="item.yn_use=='Y'?'':'jinzhi'">
 								<image :src="item.icon" mode="widthFix"></image>
@@ -1097,11 +1098,16 @@
 			},
 			//根据 type 获取 支付信息
 			PayWayInfo: function(type) {
+				let obj = {};
+				if (!this.ShowOthersPay)
+					obj = this.PayWayList.find(i => i.type === type) || {};
+				else //打开其他支付时候 只查询其他支付中的
+					obj = this.PayWayList.find(i => i.type === type && i.poly == 'S') || {}; //其它支付
 				console.log("[PayWayInfo]根据TYPE获取对应支付的具体信息:", {
 					type,
-					info: this.PayWayList.find(i => i.type === type) || {}
+					obj
 				});
-				return this.PayWayList.find(i => i.type === type) || {};
+				return obj;
 			},
 			//现金退还项合并
 			CashRefundCombine: function() {
@@ -1713,9 +1719,8 @@
 				this.PushToPaidList(trade);
 			},
 			IsSaveAuthCode: function(fkid) {
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
-					'DouYinJK'
-				].includes(i.type)).map(i => i.fkid);
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON', 'PINNUO',
+					'DouYinJK'].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
@@ -2122,8 +2127,8 @@
 					// },5000)
 					uni.navigateBack();
 				} else
-				if (!this.CanBack && !this.AlreadyBack) util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`,
-					true);
+				if (!this.CanBack && !this.AlreadyBack)
+					util.simpleMsg(`您还未完成${this.isRefund ? "退款":"支付"}`, true);
 			},
 			//展示会员卡券信息
 			ShowCoupon: function() {
@@ -2177,7 +2182,7 @@
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
-					that.currentPayType = 'JHQ';
+					this.currentPayType = "JHQ";
 					if (!this.YN_TotalPay) { //如果未支付完成
 						that.coupons = !that.coupons; //关闭弹窗
 						this.authCode = e; //券号赋值
@@ -2559,13 +2564,12 @@
 		padding: 0 1% 0 2%;
 	}
 
-	.bom-zhifu .pattern:nth-last-child(1) .tits p,
-	.bom-zhifu .pattern:nth-last-child(2) .tits p,
-	.bom-zhifu .pattern:nth-last-child(3) .tits p,
-	.bom-zhifu .pattern:nth-last-child(4) .tits p {
-		font-size: 30rpx !important;
-		line-height: 56rpx !important;
-		width: 90%;
+	.bom-zhifu .pattern:nth-child(2) .tits p,
+	.bom-zhifu .pattern:nth-child(3) .tits p,
+	.bom-zhifu .pattern:nth-child(4) .tits p,
+	.bom-zhifu .pattern:nth-child(5) .tits p {
+		font-size: 40rpx !important;
+		line-height: 80rpx !important;
 	}
 
 	.jinzhi {

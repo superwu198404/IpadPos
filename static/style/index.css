@@ -113,23 +113,10 @@ em{
 		        }
 	}
 
-.classifys text {
-	display: inline-block;
-	padding: 4rpx 20rpx;
-	border-radius: 30rpx;
-	height: 44rpx;
-	line-height:44rpx;
-	white-space: nowrap;
-	overflow: hidden; 
-	max-width: 124rpx;
-/* 	text-overflow: ellipsis; */
-}
 
-.classifys text.curr {
-	background-color: #006B44;
-	color: #fff;
+.classifys text{
+	margin:0 16rpx;
 }
-
 .classifys label image {
 	width: 22rpx;
 	margin-top: 8rpx;
