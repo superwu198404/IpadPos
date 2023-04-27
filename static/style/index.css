@@ -114,7 +114,9 @@ em{
 	}
 
 
-
+.classifys text{
+	margin:0 16rpx;
+}
 .classifys label image {
 	width: 22rpx;
 	margin-top: 8rpx;
