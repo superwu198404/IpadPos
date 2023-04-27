@@ -2559,13 +2559,12 @@
 		padding: 0 1% 0 2%;
 	}
 
-	.bom-zhifu .pattern:nth-last-child(1) .tits p,
-	.bom-zhifu .pattern:nth-last-child(2) .tits p,
-	.bom-zhifu .pattern:nth-last-child(3) .tits p,
-	.bom-zhifu .pattern:nth-last-child(4) .tits p {
-		font-size: 30rpx !important;
-		line-height: 56rpx !important;
-		width: 90%;
+	.bom-zhifu .pattern:nth-child(2) .tits p,
+	.bom-zhifu .pattern:nth-child(3) .tits p,
+	.bom-zhifu .pattern:nth-child(4) .tits p,
+	.bom-zhifu .pattern:nth-child(5) .tits p{
+		font-size: 40rpx !important;
+		line-height: 80rpx !important;
 	}
 
 	.jinzhi {
