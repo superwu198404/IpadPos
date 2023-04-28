@@ -360,6 +360,7 @@ em{
 .cods label image {
 	width: 30rpx;
 	height: 30rpx;
+	vertical-align: middle;
 }
 
 .price {
