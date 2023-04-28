@@ -1719,7 +1719,7 @@
 				this.PushToPaidList(trade);
 			},
 			IsSaveAuthCode: function(fkid) {
-				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['SZQ', 'COUPON', 'PINNUO',
+				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON', 'PINNUO',
 					'DouYinJK'
 				].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
@@ -2314,7 +2314,7 @@
 			},
 			//判断是否存在相同的付款类型
 			existSamePayType: function(type) {
-				if (type === 'HYK' || type === 'ZQ' || type === 'SZQ')
+				if (type === 'HYK' || type === 'ZQ' || type === 'JHQ')
 					return false;
 				return this.PayList.indexOf(i => i.type == type) !== -1; //满足则是存在，否则不存在
 			},
@@ -2568,7 +2568,7 @@
 	.bom-zhifu .pattern:nth-child(2) .tits p,
 	.bom-zhifu .pattern:nth-child(3) .tits p,
 	.bom-zhifu .pattern:nth-child(4) .tits p,
-	.bom-zhifu .pattern:nth-child(5) .tits p{
+	.bom-zhifu .pattern:nth-child(5) .tits p {
 		font-size: 40rpx !important;
 		line-height: 80rpx !important;
 	}
