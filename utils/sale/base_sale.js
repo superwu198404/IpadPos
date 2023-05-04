@@ -206,7 +206,7 @@ var XsTypeObj = {
 			"FZCX": false, //是否可以打开辅助促销组件
 			"upload_point": true, //允许积分上传
 			"DKF": false, //是否可以打开录入大客户
-			
+
 			"sale_takeaway_reserve": true,
 			"sale_message": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
@@ -331,7 +331,7 @@ var XsTypeObj = {
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
 			"DKF": true, //是否可以打开录入大客户
-			
+
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
 			// "sale_credit": true,
@@ -1232,7 +1232,7 @@ var XsTypeObj = {
 			console.log("[CloseBigCustomer]大客户打开!", data);
 			// this.setComponentsManage(null, "DKF"); 
 			console.log("[CloseBigCustomer]当前菜单操作属性:", this.clickSaleType);
-			if(this.clickSaleType?.operation?.DKF)
+			if (this.clickSaleType?.operation?.DKF)
 				this.ComponentsManage["DKF"] = !this.ComponentsManage["DKF"];
 			else
 				util.simpleMsg("禁止选择大客户", true);
@@ -1298,7 +1298,7 @@ var XsTypeObj = {
 			this.sale001 = Object.cover(new sale.sale001(), (params.sale1 ?? {}));
 			this.sale002 = (params.sale2 ?? []).map(sale2 => Object.cover(new sale.sale002(), sale2));
 			this.sale003 = [];
-			this.currentOperation['DKF'] = false;//切换为禁用
+			this.currentOperation['DKF'] = false; //切换为禁用
 			this.communication_for_oracle = params.sql;
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -2095,8 +2095,7 @@ function GetSale(global, vue, target_name, uni) {
 					this.resetSaleBill();
 				}
 			}));
-		}
-		else {
+		} else {
 			uni.$off('select-credit');
 		}
 		this.SetType(menu.info.clickType);
@@ -3076,7 +3075,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.ComponentsManage[pm_mtype] = operation;
 		else
 			that.ComponentsManage[pm_mtype] = !that.ComponentsManage[pm_mtype];
-		
+
 		console.log("[SetManage]组件类型信息-修改后:", that.ComponentsManage[pm_mtype]);
 		uni.$emit("allow-position-switch", that.ComponentsManage[pm_mtype], pm_mtype);
 		if (!that.ComponentsManage[pm_mtype]) {
@@ -3330,7 +3329,7 @@ function GetSale(global, vue, target_name, uni) {
 		if (!this.currentOperation[pm_type] && (!uncheck)) {
 			// this.myAlert("请完成当前模式再进行切换！");
 			uni.$emit('allow-position');
-			let escape = new Promise((function(resolve,reject) {
+			let escape = new Promise((function(resolve, reject) {
 				util.simpleModal("提示", "是否退出当前模式？", res => {
 					if (res) {
 						this.resetSaleBill();
@@ -4037,6 +4036,8 @@ function GetSale(global, vue, target_name, uni) {
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
+			if (e != 1)
+				this.cxIsJFYC = true;
 			this.BanPayType(response?.cxfs); //收集禁止的支付id
 			this.cxfsArr = response?.cxfs; //促销跟踪
 			this.hasCX = (response?.cxfs.length > 0); //是否有促销生效
