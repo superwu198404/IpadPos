@@ -9,32 +9,45 @@
 			<label style="display:block;width: 100%;border: 1px solid;" v-model="errTxt"
 				disabled="true">{{errTxt}}</label>
 			<view style="display: flex;">
-				<button class="bx" @click="exec">查询ttt</button>
-				<button class="bx" @click="alltable">所有表</button>
+				<button class="bx" @click="exec">查询</button>
+				<button class="bx" @click="alltable">显示所有表</button>
 				<button class="bx" @click="adddata">加载100条</button>
 			</view>
 		</view>
 		<view style="width: 100%;overflow: auto;white-space: nowrap;">
-			<view class="data" v-model="mydata" v-for="(item, index) in mydata">
-
+			<view class="data" v-for="(item, index) in mydata">
 				<view style="white-space: nowrap;border-color: black;border: 1rpx;">
 					<label class="tab" v-if="index==0" style="width: 40px;">行号:排序</label>
+					<label class="tab" v-if="index==0&&item.type!='table'" style="width: 60px;">操作</label>
 					<label :id="index+key" v-if="index==0" v-for="(key, X) in Object.keys(item)" data-type="B"
 						:data-index="index" :data-key="key" @click="ordrby" class="tab">{{key}}</label>
 				</view>
-
 				<view style="white-space: nowrap;">
 					<label class="tab" style="width: 40px;">{{index}}</label>
+					<!-- <button class="tab" style="width: 60px;" @click="Copy(item)">复制</button> -->
+					<button class="tab" style="width: 60px;" v-if="item.type!='table'"
+						@click="ShowContent(item)">提取</button>
 					<label v-for="(key, X) in Object.keys(item)" @click="showView" :data-index="index" :data-key="key"
 						class="tab">{{item[key]}}</label>
 				</view>
 			</view>
 		</view>
-
+		<text selectable="true" v-if="showContent" class="scontent">
+			<pre>
+			{{showContent}}
+			</pre>
+		</text>
 	</view>
-
 </template>
 <style>
+	.scontent {
+		position: absolute;
+		left: 50px;
+		z-index: 99999;
+		/* width: 500px;
+		height: 400px; */
+	}
+
 	.newrow {
 		white-space: wrap;
 		word-break: break-all;
@@ -63,10 +76,12 @@
 <script>
 	import sqlLite from '@/utils/db/db_excute.js';
 	import Req from '@/utils/request.js';
+	import _util from '@/utils/util.js';
 	var mysqlite = sqlLite.get();
 	export default {
 		data() {
 			return {
+				showContent: "",
 				alldata: [],
 				sql: "",
 				sqltable: false,
@@ -114,6 +129,7 @@
 			onLoad() {
 				console.log("load")
 				this.sql = "select * from sale001";
+				// this.sql = "select * from  cxformd001 where khid='K200QTD006'";
 				this.qry(this.sql);
 				console.log("默认sql:", this.sql);
 			},
@@ -175,9 +191,37 @@
 			},
 			exec() {
 				this.sqltable = false;
-				this.qry(this.sql);
+				let sql = this.sql.replace(/‘/g, "'");
+				sql = sql.replace(/’/g, "'");
+				sql = sql.replace(/“/g, "'");
+				sql = sql.replace(/”/g, "'");
+				this.qry(sql);
 			},
-
+			// //复制
+			// Copy(e) {
+			// 	if (e) {
+			// 		uni.setClipboardData({
+			// 			data: JSON.stringify(e),
+			// 			success(res) {
+			// 				console.log("复制结果：", res);
+			// 				_util.simpleMsg("复制成功");
+			// 			}
+			// 		})
+			// 	}
+			// },
+			//提取展示
+			ShowContent(e) {
+				if (e) {
+					uni.setClipboardData({
+						data: JSON.stringify(e),
+						success(res) {
+							console.log("复制结果：", res);
+							_util.simpleMsg("复制成功");
+						}
+					})
+					this.showContent = JSON.stringify(e, null, 2);
+				}
+			},
 			closeVshow() {
 				this.$set(this, 'showAll', false);
 			},
@@ -186,15 +230,21 @@
 				console.log(JSON.stringify(inputSql));
 				mysqlite.executeQry(inputSql, "校验本地数据库信息",
 					(res) => {
-						this.alldata = res.msg;
-						this.mydata = [];
-						//this.$set(this, 'mydata', res.msg);
-						this.adddata();
+						console.log("查询结果：", res);
+						if (res.code && res.msg.length > 0) {
+							this.alldata = res.msg;
+							this.mydata = [];
+							//this.$set(this, 'mydata', res.msg);
+							this.adddata();
+						} else {
+							this.mydata = [];
+							_util.simpleMsg("暂无数据：", res.msg);
+						}
 					},
-
 					(res) => {
 						this.$set(this, 'errTxt', res.msg.message);
 						this.OrderByType = [];
+						_util.simpleModal("查询异常", res.msg.message);
 					});
 			}
 		}

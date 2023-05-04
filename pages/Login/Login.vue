@@ -58,8 +58,8 @@
 
 <script>
 	import CakeReservation from '@/pages/CakeReservation/CakeReservation.vue';
-	
-	
+
+
 	var app = getApp();
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
@@ -71,7 +71,7 @@
 	import _checker from '@/utils/graceChecker.js';
 	import _login from '@/api/business/login.js';
 	import _init from '@/api/business/init.js';
-	
+
 	import Vue from 'vue'
 	import {
 		global
@@ -104,7 +104,7 @@
 				return this.khid + "-" + this.name;
 			}
 		},
-		components:{
+		components: {
 			CakeReservation
 		},
 		methods: {
@@ -116,7 +116,7 @@
 					that.khid = Init_Data.KHID;
 					that.posid = Init_Data.POSID;
 				}
-				util.setStorage('open-loading',true);
+				util.setStorage('open-loading', true);
 				//初始化支付方式和全局配置参数
 				console.log("[Login-onLoad]初始化基本数据!");
 				_init.InitData(that.khid);
@@ -182,7 +182,7 @@
 					//提醒用户更新
 					this.isUpdate = true;
 				}
-				console.log("db_appversion：================================",this.v_db);
+				console.log("db_appversion：================================", this.v_db);
 			},
 			GetKHIDS: function() {
 				if (that.khid) {
@@ -216,6 +216,10 @@
 				// console.log("选择事件1：", that.index);
 			},
 			Login: function() {
+				// uni.navigateTo({
+				// 	url: "/pages/sqlitetest/sqlitetest"
+				// });
+				// return;
 				if (!that.userid || !that.password) {
 					util.simpleMsg("请输入账号密码", true);
 					return;
@@ -227,8 +231,8 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							console.log("[Login]获取门店信息:",util.getStorage("store"));
-							console.log("[Login]获取支付规则:",util.getStorage("PayInfo"));
+							console.log("[Login]获取门店信息:", util.getStorage("store"));
+							console.log("[Login]获取支付规则:", util.getStorage("PayInfo"));
 							// if (that.store.OPENFLAG == "1") {
 							// 	uni.redirectTo({
 							// 		url: "../mainSale/MainSale"
@@ -241,7 +245,7 @@
 							uni.redirectTo({
 								url: "/pages/Center/Center",
 								complete(data) {
-									console.log("[Login]跳转完成:",data);
+									console.log("[Login]跳转完成:", data);
 								}
 							})
 						}, 1000);

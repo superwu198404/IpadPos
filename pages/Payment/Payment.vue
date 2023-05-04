@@ -1720,7 +1720,8 @@
 			},
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON', 'PINNUO',
-					'DouYinJK'].includes(i.type)).map(i => i.fkid);
+					'DouYinJK'
+				].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
 			//订单对象创建
@@ -2313,7 +2314,7 @@
 			},
 			//判断是否存在相同的付款类型
 			existSamePayType: function(type) {
-				if (type === 'HYK' || type === 'ZQ' || type === 'SZQ')
+				if (type === 'HYK' || type === 'ZQ' || type === 'JHQ')
 					return false;
 				return this.PayList.indexOf(i => i.type == type) !== -1; //满足则是存在，否则不存在
 			},

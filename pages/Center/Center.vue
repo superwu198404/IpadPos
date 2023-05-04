@@ -57,7 +57,8 @@
 							<label><text>销售</text><text>SALES</text></label>
 							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;" @click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
+						<view style="border-left: 1rpx solid #C1F6D8;"
+							@click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
 							<label><text>卡券业务</text><text>CARD</text></label>
 						</view>
 					</view>
@@ -99,7 +100,7 @@
 	import _cake from '@/api/business/CakeYD.js';
 	import _sysParam from '@/utils/sysParm/sysParm.js';
 	import _query_sale from '@/api/business/query_sale.js';
-	
+
 	import tiktok from '@/api/business/tiktok.js';
 	var that;
 	export default {
@@ -121,8 +122,8 @@
 			};
 		},
 		methods: {
-			onLoad:async function() {
-				console.warn("[onReady]token:",await tiktok.get_tiktok_token());
+			onLoad: async function() {
+				console.warn("[onReady]token:", await tiktok.get_tiktok_token());
 				that = this;
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();

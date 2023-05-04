@@ -115,7 +115,12 @@ em{
 
 
 .classifys text{
-	margin:0 16rpx;
+	padding:0 16rpx;
+	border-radius:40rpx;
+}
+.classifys text.curr{
+	background-color: #006B44;
+	color: #fff;
 }
 .classifys label image {
 	width: 22rpx;
@@ -355,6 +360,7 @@ em{
 .cods label image {
 	width: 30rpx;
 	height: 30rpx;
+	vertical-align: middle;
 }
 
 .price {

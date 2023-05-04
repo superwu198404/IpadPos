@@ -198,4 +198,8 @@
 		left: 0;
 		width: 100%;
 	}
+	
+	.classifys .curr{
+		background-color: #;
+	}
 </style>
