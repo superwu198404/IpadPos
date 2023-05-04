@@ -106,8 +106,8 @@
 								</view>
 							</view>
 							<view class="caozuo">
-								<button class="btn-xg" @click="Up_Addr(item)">修改</button>
-								<button class="btn-sc" @click="Del_Addr(item)">删除</button>
+								<button class="btn-xg" @click.stop="Up_Addr(item)">修改</button>
+								<button class="btn-sc" @click.stop="Del_Addr(item)">删除</button>
 							</view>
 						</view>
 					</view>
