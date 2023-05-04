@@ -1490,6 +1490,6 @@
 	}
 	
 	.account{
-		z-index: 100001;
+		z-index: 1001;
 	}
 </style>
