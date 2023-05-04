@@ -414,18 +414,7 @@ var misScanCodePay = {
 		_Payment(pt, body, func, catchFunc);
 	},
 	QueryPayment: function(pt, body, func, catchFunc) {
-		_GetConfig("UPAY", getApp().globalData.store.KHID).then((config) => {
-			if (!config || !config.LONGKEY) {
-				if (catchFunc) catchFunc(util.createdResult(false, "未配置通联商户号!", null));
-				return;
-			}
-			//参数从后端 PayConfig 表中获取 RYID 是 门店id/门店号，Note是 机器号/终端号/款台号，LONGKEY是商户号
-			body.merchant_no = config.LONGKEY; //使用全局配置（后端）
-			body.terminalCode = config.NOTE;
-			body.store_id = config.RYID;
-			_QueryPayment(pt, body, func, catchFunc);
-		})
-		// _QueryPayment(pt, body, func, catchFunc);
+		_QueryPayment(pt, body, func, catchFunc);
 	},
 	CancelPayment: function(pt, body, func, catchFunc) {
 		_CancelPayment(pt, body, func, catchFunc);
