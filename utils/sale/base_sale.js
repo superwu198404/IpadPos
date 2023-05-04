@@ -4036,7 +4036,7 @@ function GetSale(global, vue, target_name, uni) {
 			// that.sale002 = response.products;
 			this.CheckOver48Hours(response?.cxfs); //检查是否包含 hylv=3-48 的数据
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
-			if (e != 1)
+			if (!e)
 				this.cxIsJFYC = true;
 			this.BanPayType(response?.cxfs); //收集禁止的支付id
 			this.cxfsArr = response?.cxfs; //促销跟踪
