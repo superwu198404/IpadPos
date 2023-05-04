@@ -332,6 +332,6 @@
 	}
 
 	.navmall {
-		z-index: 99999 !important;
+		z-index: 996 !important;
 	}
 </style>
