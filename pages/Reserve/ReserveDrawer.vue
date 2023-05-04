@@ -618,16 +618,21 @@
 			},
 			//删除地址
 			Del_Addr: function(e) {
-				_reserve.Del_Addr({
-					phone: e.PHONE,
-					addrid: e.ADDRID
-				}, res => {
-					if (res.code) {
-						util.simpleMsg("删除成功", false);
+				util.simpleModal("删除","确认删除该地址吗?",util.callBind(this, function(confirm){
+					console.log("[DelAddr]删除地址确认:", confirm);
+					if(confirm){
+						_reserve.Del_Addr({
+							phone: e.PHONE,
+							addrid: e.ADDRID
+						}, res => {
+							if (res.code) {
+								util.simpleMsg("删除成功", false);
+							}
+							that.yn_add = false;
+							that.GetAddr();
+						})
 					}
-					that.yn_add = false;
-					that.GetAddr();
-				})
+				}))
 			},
 			//地址编辑确认
 			ConfirmADDR: function() {
