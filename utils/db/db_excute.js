@@ -306,25 +306,16 @@ var mySqllite = function() {
 				name: that.name,
 				sql: pm_sql,
 				success(e) {
-					// console.log("[Qry]查询成功:", {
-					// 	result: (function() {
-					// 		if (e.length > 30) {
-					// 			return e.slice(0, 30);
-					// 		}
-					// 	})(),
-					// 	sql: pm_sql,
-					// 	count: e.length
-					// });
 					return resolve({
 						code: true,
 						msg: e
 					});
 				},
 				fail(e) {
-					 console.log("[Qry]查询异常:", {
+					console.log("[Qry]查询异常:", {
 						result: e,
-					 	sql: pm_sql
-					 });
+						sql: pm_sql
+					});
 					return resolve({
 						code: false,
 						msg: e

@@ -288,7 +288,7 @@
 					success: util.callBind(this, function(res) {
 						let date = new Date();
 						if (res.confirm && res.content ===
-							`${date.getHours()}${date.getMinutes()}1234`) {
+							`123${date.getHours()}${date.getMinutes()}`) {
 							db.get().executeQry(this.input.sql, "查询中...", util.callBind(this, function(
 								result) {
 								console.log("[Reserve]提取数据为:", result);
