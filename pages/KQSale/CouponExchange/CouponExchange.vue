@@ -545,7 +545,7 @@
 			CreateSale003: function() {
 				that.payed.push(Sale3ModelAdditional(Sale3Model({
 					fkid: 'ZF11',
-					type: 'SZQ',
+					type: 'JHQ',
 					bill: that.SALE001.BILL,
 					name: "仟吉兑换券",
 					amount: that.CouponInfo.coupon_value,
@@ -626,7 +626,10 @@
 					if (res.code) {
 						that.CalTNET(); //汇总计算SALE001的折扣值
 						that.SKdiscCompute() //手工折扣
-
+						if (that.CouponInfo.coupon_value > that.SALE001.TNET) {
+							_util.simpleMsg("券面额大于总金额，不允许核销", true);
+							return;
+						}
 						// that.CreateSale003(); //创建已支付的兑换券记录
 						// console.log("兑换券支付记录：", that.payed);
 						// _card_sale.PayParamAssemble(that, that.PayedResult);
