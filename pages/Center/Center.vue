@@ -287,7 +287,8 @@
 				// that.showSign = true;
 				util.simpleModal("提示", "是否确认签到？", res => {
 					if (res) {
-						_login.SignOrSignOut(true, "", res => {
+						let date = dateformat.getYMD(); //可不传，主要为了兼容后台接口字段判断的问题
+						_login.SignOrSignOut(true, date, res => {
 							console.log("手动签到结果：", res);
 							if (res.code) {
 								let data = JSON.parse(res.data);
