@@ -94,7 +94,7 @@
 										:data-index="index" :style="item.txtStyle">
 										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
 										<view class="h6">
-											<label>￥{{item.OPRICE}}<text>/{{item.QTY}}张</text></label>
+											<label>￥{{ItemDisc(item,0)}}<text>/{{item.QTY}}张</text></label>
 											<view class="zje">
 												<view><text>总金额: ￥</text>{{item.NET}}</view>
 											</view>
@@ -104,7 +104,7 @@
 											<label>终：<text>{{item.end_num}}</text></label>
 										</view>
 										<view class="statistic">
-											<label><em>●</em><text>总折扣：</text>{{item.DISCRATE}}</label>
+											<label><em>●</em><text>总折扣：</text>{{ItemDisc(item,1)}}</label>
 											<label><em>●</em><text>标准折扣：</text>{{item.BZDISC}}</label>
 											<label><em>●</em><text>临时折扣：</text>{{item.LSDISC}}</label>
 											<label><em>●</em><text>特批折扣：</text>{{item.TPDISC}}</label>
@@ -335,7 +335,7 @@
 					that.XSTYPE = '6';
 				} else {
 					that.BILL_TYPE = "Z111"; //不启用赊销
-					that.XSTYPE = '1';	
+					that.XSTYPE = '1';
 				}
 
 				that.SALE001.XSTYPE = that.XSTYPE;
@@ -416,6 +416,15 @@
 				total = _util.newFloat(total, 2);
 				return total;
 			},
+			ItemDisc: function() {
+				return (e, t) => {
+					// console.log("商品项：", e);
+					if (t == 1)
+						return _util.newFloat(e.DISCRATE + (e.ZSNET || 0), 2);
+					else
+						return _util.newFloat(e.OPRICE + (e.ZSNET || 0), 2);
+				}
+			}
 		},
 		methods: {
 			Touchlist: function(e) {
