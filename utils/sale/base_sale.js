@@ -2449,7 +2449,12 @@ function GetSale(global, vue, target_name, uni) {
 		}
 	}
 	//由于未知弹窗所以暂时用这个	 
-	this.myAlert = function(pm_str1, pm_str2) {
+	this.myAlert =  function(pm_str1, pm_str2) 
+	{
+        //返回值yes=0/no=1/取消=2  
+		//myAlert("111","title","yesnocancel",默认焦点在哪个按钮上,定时关闭,icon="警告、询问、")
+		//myAlert("111")
+		//模态弹出
 		util.simpleMsg(pm_str1, "none")
 		that.log("--------------看到这个说明弹窗功能还没有做！--------------")
 	}
@@ -3117,7 +3122,7 @@ function GetSale(global, vue, target_name, uni) {
 			// console.log("[SetComponentsManage]设置弹窗类组件切换!", mtype);
 			that.SetManage(mtype);
 		} else {
-			that.myAlert("当前模式不支持此操作")
+        	that.myAlert("当前模式不支持此操作")
 		}
 	}
 
@@ -3144,15 +3149,15 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("切换到的品类" + that.scrollinto)
 		that.Page.$set(that.Page[that.pageName], "selectPlid", that.selectPlid);
 		that.Page.$set(that.Page[that.pageName], "scrollinto", that.scrollinto);
+		
 	}
 
 	//展示商品的详情的事件
 	this.showSpDetails = function(e) {
 		//that.log("开始点击"+ JSON.stringify(that.currentOperation));
 		if (!that.currentOperation.inputsp) {
-			that.myAlert("当前模式下不可录入商品")
+	      that.myAlert("当前模式下不可录入商品")
 			return;
-
 		}
 		let plindex = e.currentTarget.dataset.plindex;
 		that.log("开始点击plindex" + plindex);
@@ -4248,7 +4253,7 @@ function GetSale(global, vue, target_name, uni) {
 		//如果 operation 中包含就弹出
 		if (this.currentOperation.ynFzCx && this.FZCX.oval.length > 0) { //要有辅助促销数据
 			console.log("[BeforeFk]此模式包含辅助销促操作...");
-			this.setComponentsManage(null, 'FZCX');
+		 	this.setComponentsManage(null, 'FZCX');
 			uni.$once('close-FZCX', util.callBind(this, function(e) {
 				console.log("[BeforeFk]辅助促销关闭!");
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
