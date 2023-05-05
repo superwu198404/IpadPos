@@ -765,16 +765,26 @@ var GetUnLoad = function(func) {
 }
 
 //获取销售单
-var GetPTOrder = function(e, b, d, t, func) {
+var GetPTOrder = function(khid, p_bill, p_date, type, func) {
+	//不是外卖单
+	if(type != 0){
+		GetPTOrder1(khid, p_bill, p_date, type, func);
+	}else{
+	//是外卖单
+		GetPTOrder2(khid, p_bill, p_date, type, func);
+	}
+}
+
+var GetPTOrder1 = async function(khid, p_bill, p_date, type, func) {
 	let str = "";
-	str += b ? " and BILL like '%" + b + "%'" : "";
-	str += e ? " and KHID='" + e + "'" : "";
-	str += d ? " and date(SALEDATE) >=date('" + d + "')" : " and date(SALEDATE) = date('now')";
-	if (t == 0) {
-		str += " and BILL_TYPE != 'Z111' and XSTYPE ='" + t + "'";
-	} else if (t != -1 && t != 99) {
-		str += t ? " and BILL_TYPE != 'Z111' and XSTYPE ='" + t + "'" : "";
-	}else if(t == 99){
+	str += p_bill ? " and BILL like '%" + p_bill + "%'" : "";
+	str += khid ? " and KHID='" + khid + "'" : "";
+	str += p_date ? " and date(SALEDATE) >=date('" + p_date + "')" : " and date(SALEDATE) = date('now')";
+	if (type == 0) {
+		str += " and BILL_TYPE != 'Z111' and XSTYPE ='" + type + "'";
+	} else if (type != -1 && type != 99) {
+		str += type ? " and BILL_TYPE != 'Z111' and XSTYPE ='" + type + "'" : "";
+	}else if(type == 99){
 		str += " and BILL_TYPE = 'Z111'";
 	}
 	let sql = "SELECT * from SALE001 where 1=1" + str;
@@ -786,6 +796,63 @@ var GetPTOrder = function(e, b, d, t, func) {
 	}, err => {
 		console.log("查询错误：", err);
 	})
+}
+
+var GetPTOrder2 = async function(khid, p_bill, p_date, type, func) {
+	let str = "";
+	str += p_bill ? " and BILL like '%" + p_bill + "%'" : "";
+	str += khid ? " and KHID='" + khid + "'" : "";
+	str += p_date ? " and SALEDATE >=to_date('" + p_date + "','yyyy-mm-dd')" : " and SALEDATE = TRUNC(sysdate)";
+	str += " and BILL_TYPE in ('Z102','Z152') ";
+	let sql = "SELECT * from jk_syssale001 where 1=1 " + str;
+	console.log("查询条件：", sql);
+	try {
+		   common.WebDBQuery(sql,async res => {
+			var resp = {};
+			resp.code = res.code;
+			var data = JSON.parse(res.data || "");
+			if (res.code && data.length > 0) {
+				//查询打印记录
+				let printData = await getPOS_XSBILLPRINT(); 
+				if(printData.code && printData.msg.length > 0){
+					// console.warn("resp data======", data);
+					let data_new = data.filter(item1=>{
+						return printData.msg.find(item2=>{return item1.BILL===item2.XSBILL})
+					});
+					// console.warn("resp data new======", data_new);
+					resp.msg = data_new;
+				}else{
+					resp.msg = [];
+				}
+				if (func)
+					func(resp);
+			}else{
+				resp.msg = [];
+				if (func)
+					func(resp);
+			}
+		});
+	} catch (e) {
+		console.log("获取jk_syssale001失败:", e);
+	}
+}
+
+/**
+ * 查询打印记录
+ */
+const getPOS_XSBILLPRINT = async () => {
+	let arr = {};
+	arr.code = false;
+	arr.msg = [];
+	let execSql_arr = "SELECT * from POS_XSBILLPRINT";
+	await db.get().executeQry(execSql_arr, "执行中", function(res) {
+		// console.log("POS_XSBILLPRINT sql执行结果：", res);
+		arr.code = true;
+		arr.msg = res.msg;
+	}, function(err) {
+		console.log("POS_XSBILLPRINT sql执行失败：", err);
+	});
+	return arr;
 }
 
 var ManualDiscountAlter = function(sale1, sale2_arr) {
