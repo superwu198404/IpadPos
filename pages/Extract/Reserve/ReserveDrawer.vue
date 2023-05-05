@@ -76,8 +76,8 @@
 										<label>{{ i.ADDRESS }}</label>
 									</view>
 								</view>
-								<view class="caozuo"><button class="btn-xg" @click="EditAddress(i)">修改</button><button
-										class="btn-sc" @click="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
+								<view class="caozuo"><button class="btn-xg" @click.stop="EditAddress(i)">修改</button><button
+										class="btn-sc" @click.stop="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
 							</view>
 						</view>
 					</view>

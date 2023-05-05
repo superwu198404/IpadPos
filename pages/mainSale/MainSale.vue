@@ -348,11 +348,12 @@
 									<view><text>￥</text>{{item.money}}</view>
 								</view>
 								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
-								<view class="coupon-dets">
+								<view class="coupon-dets" style="transform: translateX(-1px);">
 									<view class="limit">
 										<view class="h3">
 											<text>{{item.sname}}</text>
 										</view>
+										<text class="datas">满{{ item.limitmoney }}元可用</text>
 										<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 									</view>
 									<view class="directions">
