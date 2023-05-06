@@ -68,7 +68,7 @@
 								</view>
 								<view class="cods">
 									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE,item.KQXSTYPE)}}</label>
-									<label>条目：{{item.TLINE}}</label>
+									<label>条目：{{ (item.TLINE =='' || item.TLINE == null) ? 1 : item.TLINE}}</label>
 								</view>
 								<view class="handles"><text></text>
 									<button class="btn" @click="ConfirmCD(item)">重新打印</button>

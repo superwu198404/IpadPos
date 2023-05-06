@@ -283,7 +283,8 @@
 				//打印格式
 				command.wmFormString(printerInfo, printer_poscs, print, type);
 				//写入打印记录表
-				xprinter_util.addPos_XsBillPrintData(sale1_obj.BILL, dateNow, command.getData());
+				let print_bill= (new_bill !="" && new_bill != null)? new_bill : sale1_obj.BILL;
+				xprinter_util.addPos_XsBillPrintData(print_bill, dateNow, command.getData());
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
