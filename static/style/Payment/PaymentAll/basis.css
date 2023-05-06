@@ -47,7 +47,7 @@ page {
 	padding-top: 3%;
 	padding-top: 2%;
 	position: relative;
-	z-index: 996;
+	z-index: 9996;
 }
 
 .navmall .logo {
@@ -74,7 +74,7 @@ page {
 	bottom:0;
 	background-color: #fff;
 	border-top: 1rpx #eee solid;
-	z-index: 6;
+	z-index: 9999;
 }
 .menu .bills {
 	width: 100%;
@@ -276,6 +276,7 @@ page {
 	border-left: 1rpx solid #eee;
 	padding-top: 44rpx;
 	height: 62rpx;
+	z-index:9999;
 }
 
 .message {

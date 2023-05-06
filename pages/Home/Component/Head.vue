@@ -7,6 +7,103 @@
 </style>
 <template>
 	<view>
+		<!-- 紧急消息弹窗 -->
+		<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
+			<view class="popup promot">
+				<image class="tchw" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<view class="infor">
+					<view class="shoppbag">
+						<view class="liis messadet">
+							<view class="emergs">
+								<label class="zhoyao">重要</label>
+								<!-- <label class="putong" v-if="putong">普通</label> -->
+								<text>● 进行中</text>
+							</view>
+							<view class="h6">{{urgenMsg.newVal.TITLE}}</view>
+							<view class="sender"><text>{{urgenMsg.newVal.YYBM}} ·
+									{{urgenMsg.newVal.ID_RY_XG}}</text><text>创建时间：{{urgenMsg.newVal.DATE_LR}}</text>
+							</view>
+						</view>
+						<view class="matters">
+							<image src="@/images/dl-login.png" mode="widthFix"></image>
+							<text>
+								暂无数据。。。。。。。。。。。。
+							</text>
+						</view>
+						<view class="tally">
+							<label>
+								<image src="@/images/yewu-xx.png"></image><text>{{urgenMsg.newVal.YYBM}}</text>
+							</label>
+							<view>
+								<label>
+									<image src="@/images/kaishisj-xx.png"></image>
+									<text>{{urgenMsg.newVal.SDATE}}开始</text>
+								</label>
+								<label>
+									<image src="@/images/jieshusj-xx.png"></image>
+									<text>{{urgenMsg.newVal.EDATE}}截止</text>
+								</label>
+							</view>
+						</view>
+		
+					</view>
+					<view class="confirm">
+						<button class="btn" :disabled="viewTime>0" @click="CloseMsg()">关 闭 <text
+								v-if="viewTime>0">({{viewTime}}s)</text></button>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 修改密码弹窗 -->
+		<view class="boxs" v-if="showPWD">
+			<view class="customer">
+				<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<view class="h3">修改密码 <button @click="showPWD=false" class="guan">×</button></view>
+				<view class="critlist">
+					<view>
+						<text>旧密码：</text>
+						<label><input focus="true" placeholder="请输入旧密码" password="true" v-model="oldPwd" /><button
+								@click="oldPwd=''">×</button></label>
+					</view>
+					<view><text>新密码：</text><label><input placeholder="请输入新密码" password="true"
+								v-model="newPwd" /><button @click="newPwd=''">×</button></label></view>
+					<view><text>确认密码：</text><label><input placeholder="再次输入新密码" password="true"
+								v-model="secPwd" /><button @click="secPwd=''">×</button></label></view>
+				</view>
+				<view class="affirm">
+					<button class="btn btn-qk" @click="EmptyPWD()">清空</button>
+					<button class="btn btn-qr" @click="ConfirmPWD()">确认</button>
+				</view>
+			</view>
+		</view>
+		<!-- 蓝牙弹窗 -->
+		<view class="boxs" v-if="showBle">
+			<view class="b_customer">
+				<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
+				<view class="b_critlist">
+					<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
+						:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
+						@tap="bindViewTap">
+						<label>
+							<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
+						</label>
+						<label class="shijian">{{displayBlueTime(item.deviceId,item.name)}}</label>
+						<button v-if="isLink[index] == 0 && (deviceId != item.deviceId)">连接</button><button
+							class="b_has"
+							v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 大客户组件 -->
+		<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
+		<!-- 业务消息组件-->
+		<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData"></movable>
+		<!-- 签到组件 -->
+		<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
+		<!-- 日结组件 -->
+		<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
 		<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
 				<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
@@ -88,103 +185,7 @@
 					</view>
 				</view>
 			</view>
-			<!-- 紧急消息弹窗 -->
-			<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
-				<view class="popup promot">
-					<image class="tchw" src="@/images/dx-tchw.png" mode="widthFix"></image>
-					<view class="infor">
-						<view class="shoppbag">
-							<view class="liis messadet">
-								<view class="emergs">
-									<label class="zhoyao">重要</label>
-									<!-- <label class="putong" v-if="putong">普通</label> -->
-									<text>● 进行中</text>
-								</view>
-								<view class="h6">{{urgenMsg.newVal.TITLE}}</view>
-								<view class="sender"><text>{{urgenMsg.newVal.YYBM}} ·
-										{{urgenMsg.newVal.ID_RY_XG}}</text><text>创建时间：{{urgenMsg.newVal.DATE_LR}}</text>
-								</view>
-							</view>
-							<view class="matters">
-								<image src="@/images/dl-login.png" mode="widthFix"></image>
-								<text>
-									暂无数据。。。。。。。。。。。。
-								</text>
-							</view>
-							<view class="tally">
-								<label>
-									<image src="@/images/yewu-xx.png"></image><text>{{urgenMsg.newVal.YYBM}}</text>
-								</label>
-								<view>
-									<label>
-										<image src="@/images/kaishisj-xx.png"></image>
-										<text>{{urgenMsg.newVal.SDATE}}开始</text>
-									</label>
-									<label>
-										<image src="@/images/jieshusj-xx.png"></image>
-										<text>{{urgenMsg.newVal.EDATE}}截止</text>
-									</label>
-								</view>
-							</view>
-
-						</view>
-						<view class="confirm">
-							<button class="btn" :disabled="viewTime>0" @click="CloseMsg()">关 闭 <text
-									v-if="viewTime>0">({{viewTime}}s)</text></button>
-						</view>
-					</view>
-				</view>
-			</view>
-			<!-- 修改密码弹窗 -->
-			<view class="boxs" v-if="showPWD">
-				<view class="customer">
-					<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-					<view class="h3">修改密码 <button @click="showPWD=false" class="guan">×</button></view>
-					<view class="critlist">
-						<view>
-							<text>旧密码：</text>
-							<label><input focus="true" placeholder="请输入旧密码" password="true" v-model="oldPwd" /><button
-									@click="oldPwd=''">×</button></label>
-						</view>
-						<view><text>新密码：</text><label><input placeholder="请输入新密码" password="true"
-									v-model="newPwd" /><button @click="newPwd=''">×</button></label></view>
-						<view><text>确认密码：</text><label><input placeholder="再次输入新密码" password="true"
-									v-model="secPwd" /><button @click="secPwd=''">×</button></label></view>
-					</view>
-					<view class="affirm">
-						<button class="btn btn-qk" @click="EmptyPWD()">清空</button>
-						<button class="btn btn-qr" @click="ConfirmPWD()">确认</button>
-					</view>
-				</view>
-			</view>
-			<!-- 蓝牙弹窗 -->
-			<view class="boxs" v-if="showBle">
-				<view class="b_customer">
-					<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
-					<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
-					<view class="b_critlist">
-						<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
-							:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
-							@tap="bindViewTap">
-							<label>
-								<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
-							</label>
-							<label class="shijian">{{displayBlueTime(item.deviceId,item.name)}}</label>
-							<button v-if="isLink[index] == 0 && (deviceId != item.deviceId)">连接</button><button
-								class="b_has"
-								v-if="isLink[index] == 1 || (deviceId == item.deviceId && YN_PRINT_CON == 'Y')">已连接</button>
-						</view>
-					</view>
-				</view>
-			</view>
-			<!-- 大客户组件 -->
-			<BigCustomer v-if="custom" @ClosePopup="ClosePopup" :_ywtype="type"></BigCustomer>
-			<!-- 业务消息组件-->
-			<movable v-if="showYWMsg && (type!='sale_cake_reserve')&&_ynMsg" :_msgDatas="YW_MsgData"></movable>
-			<!-- 签到组件 -->
-			<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
-			<!-- 日结组件 -->
-			<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
+			
 		</view>
 	</view>
 </template>

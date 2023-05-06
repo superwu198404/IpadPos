@@ -1463,8 +1463,6 @@
 	.top-layer {
 		z-index: 100000;
 	}
-.operation{
-	z-index: 999;
-}
+
 	/* todo */
 </style>
