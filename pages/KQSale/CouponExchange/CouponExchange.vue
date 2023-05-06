@@ -635,7 +635,7 @@
 						_util.simpleModal("提示", "是否要核销该兑换券？", res => {
 							if (res) {
 								//券核销成功后
-								_pay.Payment("SZQ", that.CreatePayData(), res1 => {
+								_pay.Payment("JHQ", that.CreatePayData(), res1 => {
 									console.log("兑换券核销结果：", res1);
 									if (res1.code) {
 										that.CreateSale003(); //创建已支付的兑换券记录

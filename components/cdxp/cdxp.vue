@@ -207,7 +207,6 @@
 				let store = util.getStorage("store");
 				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, that.current_data.TYPE,
 					res => {
-						//console.log("获取成功:", res);
 						if (res.code && res.msg.length > 0) {
 							that.Datas = res.msg;
 							if (e) {
@@ -274,9 +273,6 @@
 			},
 			xsTypeName: function(xstype, bill_type,kqxstype) {
 				switch (xstype) {
-					case "0":
-						return "外卖订单";
-						break;
 					case "1":
 					//整合卡券业务，增加条件判断展示业务类型
 					if(bill_type == 'Z111' && kqxstype == 'SQ')
@@ -313,6 +309,11 @@
 						return "线上订单取消";
 						break;
 					default:
+					if(bill_type == 'Z102')
+						return "外卖订单";
+					else if(bill_type == 'Z152')
+						return "外卖退单";
+					else
 						return "";
 						break;
 				}
@@ -344,6 +345,9 @@
 			}, {
 				"TYPE": 7,
 				"NAME": "赊销退货"
+			}, {
+				"TYPE": 0,
+				"NAME": "外卖单"
 			}, {
 				"TYPE": 8,
 				"NAME": "线上订单提取"

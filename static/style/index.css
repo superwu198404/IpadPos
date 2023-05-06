@@ -1363,6 +1363,8 @@ em{
 	
 .coulist .uls .lis .banyuan {
 	width: 20rpx;
+	height: 100%;
+	border: 1px solid transparent;
 }
 
 .coulist .directions button {

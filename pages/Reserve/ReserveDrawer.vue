@@ -618,19 +618,31 @@
 			},
 			//删除地址
 			Del_Addr: function(e) {
-				util.simpleModal("删除","确认删除该地址吗?",util.callBind(this, function(confirm){
+				util.simpleModal("删除","确认删除该地址吗?",util.callBind(this,async function(confirm){
 					console.log("[DelAddr]删除地址确认:", confirm);
 					if(confirm){
-						_reserve.Del_Addr({
-							phone: e.PHONE,
-							addrid: e.ADDRID
-						}, res => {
-							if (res.code) {
-								util.simpleMsg("删除成功", false);
+						let use_current_address_order = [];
+						await common.WebDBQuery(`select * from ydsale001 where note2='${e.ADDRID}' and yd_status='1'`, function(data){
+							if(data.code){
+								use_current_address_order = JSON.parse(data.data);
 							}
-							that.yn_add = false;
-							that.GetAddr();
+							console.log("[DelAddr]查询当前地址信息:", use_current_address_order);
 						})
+						if(!use_current_address_order.length){
+							_reserve.Del_Addr({
+								phone: e.PHONE,
+								addrid: e.ADDRID
+							}, res => {
+								if (res.code) {
+									util.simpleMsg("删除成功", false);
+								}
+								that.yn_add = false;
+								that.GetAddr();
+							})
+						}
+						else{
+							util.simpleMsg("当前地址部分订单正在使用中,禁止删除!",true)
+						}
 					}
 				}))
 			},
@@ -662,7 +674,7 @@
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
-					if (that.Order.CUSTMPHONE != that.ADDR.PHONE) exists_address_refresh = true;
+					if (that.Order.CUSTMPHONE != that.ADDR.PHONE || that.Order.CUSTMADDRESS != that.ADDR.ADDRESS) exists_address_refresh = true;
 					that.Order.CUSTMPHONE = that.ADDR.PHONE;
 					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
