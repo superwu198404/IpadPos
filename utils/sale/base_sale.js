@@ -3168,7 +3168,7 @@ function GetSale(global, vue, target_name, uni) {
 			that.SetManage("inputsp")
 		} catch (e) {
 			//TODO handle the exception
-			util.simpleMsg(e);
+			util.simpleMsg(e, true);
 		}
 	}
 	//初始化选中的item，预定选蛋糕和 正常的商品点选都会使用
@@ -3197,13 +3197,12 @@ function GetSale(global, vue, target_name, uni) {
 			}
 		}
 		that.resetDrinkPro();
-		try {
+		if (Object.keys(that.spPrice).find(r => r == that.clikSpItem.selectSPID)) {
 			that.clikSpItem.PRICE = that.spPrice[that.clikSpItem.selectSPID].PRICE;
 			that.log("设置显示对象" + JSON.stringify(that.clikSpItem));
 			that.Page.$set(that.Page[that.pageName], "clikSpItem", that.clikSpItem);
-		} catch (e) {
+		} else
 			throw '抱歉，该商品暂无可售价格!';
-		}
 		//that.cakeFilter([{'ID':'002002'},{'ID':'003002'},{'ID':'003009'}])
 	}
 
