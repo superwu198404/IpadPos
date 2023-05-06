@@ -181,21 +181,21 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<Extract class="component-box" key="1" :mode="true"
+				<Extract key="1" :mode="true"
 					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract class="component-box" key="2" :mode="false"
+				<Extract  key="2" :mode="false"
 					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway class="component-box"
+				<TakeAway 
 					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
-				<TakeYD class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
-				<OnlineOrders class="component-box" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
-				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract">
+				<TakeYD  v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract">
 				</OnlinePick>
-				<Message class="component-box" v-if="mainSale.ComponentsManage.sale_message"></Message>
-				<RefundOrder class="component-box" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
-				<SXRefund class="component-box" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement"
+				<Message  v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund  v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement  v-if="mainSale.ComponentsManage.sale_credit_settlement"
 					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
@@ -284,7 +284,7 @@
 			</view>
 		</view>
 		<!-- 预定信息录入 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
+		<view class="boxs"  v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
 				:confirm="(mainSale.current_type.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration" :_saleType="mainSale.clickSaleType.clickType">
@@ -292,7 +292,7 @@
 		</view>
 
 		<!-- 辅助促销 -->
-		<view class="boxs" v-if="mainSale.ComponentsManage.FZCX">
+		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.FZCX">
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
 			</FZCX>
 		</view>
