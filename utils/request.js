@@ -2,7 +2,6 @@ import configInfo from '@/utils/configInfo.js'; //配置参数
 import util from './util';
 
 const baseUrl = configInfo.baseUrl;
-// const centerUrl = configInfo.centerUrl;
 
 const showToast = (title, icon = "none") => {
 	uni.showToast({
@@ -30,9 +29,6 @@ const http = (url, data = {}, msg = "加载中...", option = {}) => {
 			mask: true
 		})
 	}
-	// if (option.url == 'center') {
-	// 	p_url = centerUrl;
-	// }
 	//console.log("请求地址：", p_url + url);
 	return new Promise((resolve, reject) => {
 		uni.request({

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 //const baseUrl = 'http://192.168.0.28:44377/Api/'; //本地业务地址
+=======
+// const baseUrl = 'http://192.168.0.28:44377/Api/'; //本地业务地址
+>>>>>>> b9033a82505a906da7af1dd2f763751deb8d1279
 // const baseUrl = 'http://192.168.0.201:44378/Api/'; //iis业务后台
 // const baseUrl = 'http://wgpay.zczyofficial.com:8001/Api/'; //华为云业务后台
 const baseUrl = 'http://183.94.2.127:8805/Api/'; //仟吉uat业务后台
