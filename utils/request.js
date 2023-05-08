@@ -165,9 +165,9 @@ let httpFunc = function(pm_data) {
 	// 	pm_data.data.brand = "MobilePos_API.Models";
 	// }
 	return new Promise(function(resolve, reject) {
-		console.log("请求地址：", p_url + pm_data.http.url);
-		console.log("请求参数类型：", pm_data.method);
-		console.log("请求参数参数：", pm_data.data);
+		// console.log("请求地址：", p_url + pm_data.http.url);
+		// console.log("请求参数类型：", pm_data.method);
+		// console.log("请求参数参数：", pm_data.data);
 		uni.request({
 			url: p_url + pm_data.http.url,
 			method: pm_data.method || "POST",
@@ -178,7 +178,7 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				console.log("请求成功:", res);
+				// console.log("请求成功:", res);
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
