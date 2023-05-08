@@ -1829,6 +1829,8 @@ input:-ms-input-placeholder{
 	border-radius: 20rpx;
 	background: linear-gradient(90deg, #006B44 0%, rgba(0,107,68,0.26) 100%);
 	padding:4rpx;
+	position: relative;
+	z-index: 9997;
 }
 .right .bkjb .neik{
 	width:100%;
