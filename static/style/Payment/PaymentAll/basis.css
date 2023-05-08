@@ -276,7 +276,7 @@ page {
 	border-left: 1rpx solid #eee;
 	padding-top: 44rpx;
 	height: 62rpx;
-	z-index:9999;
+	z-index:9998;
 }
 
 .message {
