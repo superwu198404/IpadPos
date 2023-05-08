@@ -263,6 +263,8 @@
 				}else if(xsType == "1" && bill_type == "Z111" 
 					&& (kqxstype == "CZ" || kqxstype == "SKCZ" || kqxstype == "SK" || kqxstype == "SQ")){
 					is_fpQRCode = "1";
+				}else if(bill_type == "Z102"){
+					is_fpQRCode = "1";
 				}
 				//is_qrCode = 1 打印二维码
 				that.$refs.printerPage.againPrinter(bill, is_fpQRCode, data, cx_util.snvl(pos_xsbillprint));
