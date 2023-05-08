@@ -313,6 +313,19 @@
 			},
 			//签退
 			SignOut: function() {
+				// _login.CheckSignOut(res => {
+				// 	console.log("日结校验结果：", res);
+				// 	if (!res.code) {
+				// 		_util.simpleMsg(res.msg, true);
+				// 		if (res.data && res.data.length > 0) { //有未日结的数据
+				// 			that.showSignOut = true;
+				// 			that.signOutDate = res.data;
+				// 		}
+				// 		return;
+				// 	}
+				// 	//今日日结
+				// 	that.ConfirmRJ();
+				// })
 				console.log("将要签退的数据：", that.signOutDates);
 				if (that.signOutDates.length > 0) { //历史日结
 					that.showSignOut = true;

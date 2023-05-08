@@ -234,6 +234,17 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+//日结校验
+var CheckSignOut = async function(func) {
+	let store = util.getStorage("store");
+	let data = {
+		khid: store.KHID,
+		ryid: store.RYID
+	}
+	let apistr = "MobilePos_API.Models.MainCLASS.CheckSignOut";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 var SignOrSignOutSql = async function(sql, func) {
 	let sqlArr = sql.split(';');
 	await db.get().executeDml(sqlArr[0], "执行中...", res => {
@@ -289,5 +300,6 @@ export default {
 	SignOrSignOut,
 	SignOrSignOutSql,
 	GetSignOutInWeek,
-	GetSkyJk
+	GetSkyJk,
+	CheckSignOut
 }
