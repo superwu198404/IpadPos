@@ -1461,9 +1461,9 @@
 	}
 
 
-	.top-layer {
+	/* .top-layer {
 		z-index: 100000;
-	}
+	} */
 
 	/* todo */
 </style>
