@@ -386,8 +386,8 @@
 								card_num: that.CardInfo.cardId,
 								ryid: that.Store.RYID,
 								ry_name: that.Store.RYNAME,
-								khid: that.Store.RYID,
-								kh_name: that.Store.RYID,
+								khid: that.Store.KHID,
+								kh_name: that.Store.NAME,
 							}, res => {
 								if (res.code) {
 									util.simpleMsg("延期成功！");

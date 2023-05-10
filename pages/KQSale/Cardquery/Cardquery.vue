@@ -41,14 +41,14 @@
 							</view>
 						</view>
 						<view class="labnum">
-							<text>卡号：</text>
+							<text>卡/券号：</text>
 							<view class="chaxun">
 								<view class="label">
 									<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix"
 										@click="swiping_card()">
 										<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix"
 											@click="scan_code_handle()">
-											<input type="text" placeholder="请输入查询卡号" v-model="form.number" />
+											<input type="text" placeholder="请输入查询卡/券号" v-model="form.number" />
 											<button v-if="form.number" @click="form.number=''"
 												style="margin-right: 5px;">×</button>
 								</view>
@@ -245,13 +245,12 @@
 					console.log("[TypeSearch]查询结果:", result);
 					if (result.code) {
 						this.form.infos = result.data;
-					}
-					else{
+					} else {
 						this.form.infos = bussiness.infos();
-						util.simpleMsg(result.msg);
+						util.simpleMsg(result.msg, true);
 					}
 				} else {
-					util.simpleMsg('请选择类型后再进行此操作!');
+					util.simpleMsg('请选择类型后再进行此操作!',true);
 				}
 			},
 			async get_types() {
@@ -265,7 +264,7 @@
 							this.form = this.$options.data().form;
 							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 							util.simpleMsg("清空成功！");
-						} 
+						}
 					}))
 				}))
 			},
