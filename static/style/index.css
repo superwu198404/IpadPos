@@ -1450,6 +1450,12 @@ checkbox.mycheck .wx-checkbox-input,
 	display: inline-block;
 	color: #b0b0b0;
 	width: 130rpx;
+	visibility: top;
+	white-space: nowrap;
+}
+.harvest label text:nth-child(2){
+	display: inline-block;
+	/* max-width:80%; */
 }
 .harvest label .input{
 	border:1px solid #ddd;
