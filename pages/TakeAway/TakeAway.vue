@@ -290,6 +290,7 @@
 				that = this; //全局赋值
 				this.event_channel = this.getOpenerEventChannel();
 				this.event_channel?.emit('get_take_away', this);
+				console.log("onload",that.KHID);
 				//外卖单渲染
 				that.GetOrders(that.KHID, r => {
 					that.ShowDetail(that.WMOrders[0], 0);
@@ -776,6 +777,7 @@
 		},
 		created() {
 			that = this; //全局赋值
+			console.log("created",that.KHID);
 			//外卖单渲染
 			that.GetOrders(that.KHID, r => {
 				that.ShowDetail(that.WMOrders[0], 0);

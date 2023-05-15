@@ -68,7 +68,7 @@
 			<view class="bills" @click="SwitchSale('kqsale')">
 				<label></label>
 				<view style="display: flex;justify-content: center;align-items: center;">
-					<image class="xz" src="@/images/kaqyewu-bai.png" mode="widthFix"></image>
+					<!-- <image class="xz" src="@/images/xiaoxi-tz.png" mode="widthFix"></image> -->
 					<text>卡券销售</text>
 				</view>
 			</view>

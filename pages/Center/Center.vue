@@ -123,7 +123,7 @@
 		},
 		methods: {
 			onLoad: async function() {
-				console.warn("[onReady]token:", await tiktok.get_tiktok_token());
+				// console.warn("[onReady]token:", await tiktok.get_tiktok_token());
 				that = this;
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();

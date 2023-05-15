@@ -22,7 +22,7 @@
 						</view>
 					</view>
 					<view class="cods">
-						<label>单号：{{ sales.sale001.BILL }} <text>￥{{ sales.sale001.TNET }}</text></label>
+						<label>{{ sales.sale001.BILL }} <text>￥{{ sales.sale001.TNET }}</text></label>
 						<label><text>收银员：{{ sales.sale001.RYID }}</text><text>折扣价：￥{{ sales.sale001.ZNET }}</text></label>
 
 					</view>
