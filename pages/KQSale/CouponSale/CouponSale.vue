@@ -19,14 +19,14 @@
 					<view :class="view.current_part_view == 'coupon_activate' ? 'tab curr' : 'tab'">
 						<label>
 							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
-							<text @click="view.current_part_view = 'coupon_activate'">券激活</text>
+							<text @click="switch_to_page('coupon_activate')">券激活</text>
 						</label>
 						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
 					</view>
 					<view :class="view.current_part_view == 'coupon_activate_fail' ? 'tab curr' : 'tab'">
 						<label>
 							<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
-							<text @click="view.current_part_view = 'coupon_activate_fail'">券激活失败</text>
+							<text @click="switch_to_page('coupon_activate_fail')">券激活失败</text>
 						</label>
 						<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
 					</view>
@@ -293,6 +293,13 @@
 				if (common.CheckSign()) {
 					this.view.no_input = true
 				}
+			},
+			switch_to_page(name){
+				util.simpleModal("提示","是否切换业务类型?",$(function(res){
+					if(res){
+						this.view.current_part_view = name;
+					}
+				}))
 			},
 			async get_discount_data(id) {
 				return await main.GetZKDatasAll(id);
