@@ -68,7 +68,7 @@ export default {
 							apply: result.data.total_info.ZZCPSL_STAFF,
 							use_date: result.data.total_info.ZZCPHXDATE,
 							use_store_id: result.data.total_info.ZZCPHX_STORE,
-							status: bd.coupon_status[result.data.total_info.ZZCPSTATE] || ""
+							status: result.data.total_info.ZZCPSTATETXT//bd.coupon_status[result.data.total_info.ZZCPSTATE] || ""
 						});
 						console.log("[Search]仟吉券查询信息:",infos);
 						return util.createdResult(true,result.msg,infos);

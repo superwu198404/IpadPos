@@ -295,7 +295,7 @@
 				}
 			},
 			switch_to_page(name){
-				util.simpleModal("提示","是否切换业务类型?",$(function(res){
+				util.simpleModal("提示","是否确认切换业务类型?",$(function(res){
 					if(res){
 						this.view.current_part_view = name;
 					}
