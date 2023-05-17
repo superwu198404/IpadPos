@@ -1350,6 +1350,7 @@ em{
 	line-height: 70rpx;
 	white-space: nowrap;
 	overflow: hidden;
+	height:auto;
 }
 
 .coulist .limit .h3 text {
@@ -1358,8 +1359,10 @@ em{
 }
 .coulist .limit .datas{
 	font-size: 24rpx;
-	white-space: nowrap;
 	overflow: hidden;
+	display: inline-block;
+	margin:4rpx 0;
+	line-height: 28rpx;
 }
 	
 .coulist .uls .lis .banyuan {
