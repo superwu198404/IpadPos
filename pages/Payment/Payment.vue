@@ -1156,7 +1156,9 @@
 				let refund_no = this.out_refund_no,
 					that = this,
 					promises = [];
-				this.RefundList.find(i => i.refund_num != 0) ? this.CanBack = false : this.CanBack = true;
+				// this.RefundList.find(i => i.refund_num != 0) ? this.CanBack = false : this.CanBack = true;
+				//2023-5-24变更：因为连续点击两次右下角退款第二次就算失败也不能退出的问题(判断条件从：是否存在退款过的单据 => 是否存在退款过的单据 并且 退款成功的单据)。
+				this.RefundList.find(i => i.refund_num != 0 && !i.fail) ? this.CanBack = false : this.CanBack = true;
 				//遍历所有退款失败的(或者未退款的)
 				console.log("退款单列表：", this.RefundList)
 				if (this.RefundList.filter(i => i.fail).length === 0) {
@@ -1344,6 +1346,8 @@
 					curPayType = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,JHQ,HYK....
 					if (this.currentPayType === "UPAY") //银联二维码
 						curPayType = "UPAY";
+					if (this.currentPayType === "JUBAOPEN") //美团券
+						curPayType = "JUBAOPEN";
 				}
 				if (!curPayType && this.authCode) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
@@ -1366,6 +1370,9 @@
 						startCode = "ht";
 					//取出当前是何种类型的支付方式
 					current_type = CodeRule[startCode]; //WX_CLZF,ZFB_CLZF,JHQ,HYK....
+					//后续值覆盖操作（针对部分没有具体规则的支付类型，次序必须在上面赋值后）
+					if (this.currentPayType === "JUBAOPEN") //美团券
+						current_type = "JUBAOPEN";
 				}
 				if (!current_type && this.authCode) {
 					util.simpleMsg("二维码错误！请重新扫码！", "none");
@@ -1720,7 +1727,7 @@
 			},
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON', 'PINNUO',
-					'DouYinJK'
+					'DouYinJK', 'JUBAOPEN'
 				].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
@@ -2094,6 +2101,11 @@
 			},
 			//返回上个页面
 			backPrevPage: function() {
+				console.log("[BackPrevPage]返回上个页面:", {
+					can_back: this.CanBack,
+					already_back: this.AlreadyBack,
+					refund_finish: this.RefundFinish
+				});
 				if (this.CanBack && !this.AlreadyBack) {
 					console.log("[BackPrevPage]待支付金额:", this.toBePaidPrice());
 					console.log("[BackPrevPage]是否已完成退款:", this.RefundFinish);

@@ -45,6 +45,7 @@ var CreateData = function(pt, t, m, d, load = false) {
 						appid: PayObj.APPID, //getApp().globalData.appid,
 						gsid: d.original_company_id || store.GSID,
 						khid: d.original_store_id || store.KHID,
+						khname: d.original_store_id || store.NAME,
 						dqid: d.original_area_id || store.DQID,
 						type: PayInfo.TYPE,
 						source: PayObj.SOURCE
@@ -254,6 +255,33 @@ const _RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		}
 	], catchFunc, finallyFunc, resultsFunc);
 }
+
+/**
+ * 通用支付模板
+*/
+const CommonTemplate = (current) => Object.assign({
+	PaymentAll: function(pt, body, func, catchFunc) {
+		_PaymentAll(pt, body, func, catchFunc);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+	},
+	Payment: function(pt, body, func, catchFunc) {
+		_Payment(pt, body, func, catchFunc);
+	},
+	QueryPayment: function(pt, body, func, catchFunc) {
+		_QueryPayment(pt, body, func, catchFunc);
+	},
+	CancelPayment: function(pt, body, func, catchFunc) {
+		_CancelPayment(pt, body, func, catchFunc);
+	},
+	Refund: function(pt, body, func, catchFunc) {
+		_Refund(pt, body, func, catchFunc);
+	},
+	QueryRefund: function(pt, body, func, catchFunc) {
+		_QueryRefund(pt, body, func, catchFunc);
+	}
+}, current)
 
 //微信支付类
 var wxPay = {
@@ -965,14 +993,14 @@ var pinoPay = {
 			password
 		});
 		Req.AsyncRequesrChain(CreateData(pt, "查询中...", "QueryPayment", {
-				out_refund_no: body.out_trade_no, //查询订单号
-			}), [
+			out_refund_no: body.out_trade_no, //查询订单号
+		}), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[PaymentAll]第一次结果（QueryPayment）:", res);
 				var request_data = CreateData(pt, "查询中...", "QueryCardDetails", {
-						ryid: getApp().globalData.store.KHID,
-						card_no: body.auth_code
-					});
+					ryid: getApp().globalData.store.KHID,
+					card_no: body.auth_code
+				});
 				return request_data;
 			},
 			function(res) {
@@ -985,13 +1013,13 @@ var pinoPay = {
 					password,
 				});
 				var request_data = CreateData(pt, "支付中...", "Payment", {
-						ryid: getApp().globalData.store.KHID,
-						card_no: is_pe_code ? res.data.card_id :
-						card_no, //如果是PE码则传入查询卡信息返回的card_id,否则按照PN规则传入
-						auth_code: is_pe_code ? res.data.card_password : password,
-						money: body.money,
-						out_trade_no: body.out_trade_no
-					});
+					ryid: getApp().globalData.store.KHID,
+					card_no: is_pe_code ? res.data.card_id :
+					card_no, //如果是PE码则传入查询卡信息返回的card_id,否则按照PN规则传入
+					auth_code: is_pe_code ? res.data.card_password : password,
+					money: body.money,
+					out_trade_no: body.out_trade_no
+				});
 				console.log("[PaymentAll]支付请求参数:", request_data);
 				if (res.code && (res.data.balance - (body.money / 100)) >= 0) {
 					return request_data;
@@ -1004,8 +1032,8 @@ var pinoPay = {
 			},
 			function(res) {
 				var request_data = CreateData(pt, "查询中...", "QueryPayment", {
-						out_refund_no: body.out_trade_no, //查询订单号
-					});
+					out_refund_no: body.out_trade_no, //查询订单号
+				});
 				console.log("[PaymentAll]第三次结果（Payment）:", res);
 				if (res.code) { //支付成功
 					return request_data;
@@ -1052,16 +1080,16 @@ var pinoPay = {
 		console.log("[RefundAll]原订单地区ID:", original_area_id);
 		console.log("[RefundAll]退款数据:", body);
 		Req.asyncFuncChain(CreateData(pt, "查询中...", "QueryPayment", {
-				out_refund_no: body.out_trade_no, //本地订单号
-				original_area_id
-			}), [ 
+			out_refund_no: body.out_trade_no, //本地订单号
+			original_area_id
+		}), [
 			function(res) {
 				console.log("[RefundAll]第一次结果（QueryPayment）:", res);
 				console.log("[RefundAll]准备被退款的渠道单号:", body.point);
 				return CreateData(pt, "退款中...", "Refund", {
-						out_refund_no: body.point, //品诺渠道单号
-						posid: body.out_refund_no, //品诺渠道单号
-					});
+					out_refund_no: body.point, //品诺渠道单号
+					posid: body.out_refund_no, //品诺渠道单号
+				});
 			}
 		], catchFunc, finallyFunc, resultsFunc);
 	},
@@ -1078,9 +1106,9 @@ var pinoPay = {
 		});
 		let details_result = null;
 		await Req.AsyncRequesrChain(CreateData('PINNUO', "查询中...", "QueryCardDetails", {
-				ryid: getApp().globalData.store.KHID,
-				card_no: card_number
-			}, true), [
+			ryid: getApp().globalData.store.KHID,
+			card_no: card_number
+		}, true), [
 			function(res) { //先判断订单查询，当前订单是否没支付过，如果没支付过，再进行卡信息查询，获取余额信息
 				console.log("[QueryCardDetails]第一次结果（QueryCardDetails）:", res);
 				details_result = res;
@@ -1153,6 +1181,23 @@ var tiktokPay = {
 	}
 }
 
+//美团券支付
+var meituanCouponPay = CommonTemplate({
+	PaymentAll: function(pt, body, func, catchFunc) {
+		console.log("[PaymentAll-美团]支付参数:",{pt,body});
+		_PaymentAll(pt, body, (res) => {
+			console.log("[PaymentAll-美团]支付结果:",res);
+			body.money = res.data.money;
+			if(func)
+				func(res)
+		}, catchFunc);
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		console.log("[RefundAll-美团]退款参数:",{pt,body});
+		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
+	},
+});
+
 //根据支付类型反射支付方式
 var payType = {
 	// 108使用
@@ -1179,6 +1224,8 @@ var payType = {
 	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
 	DouYinJK: tiktokPay, //抖音团购券（联机）支付
+	//2023-5-22 新增美团券支付
+	JUBAOPEN: meituanCouponPay, //美团券支付
 }
 
 //聚合支付主入口
