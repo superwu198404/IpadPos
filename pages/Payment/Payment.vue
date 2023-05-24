@@ -2552,23 +2552,23 @@
 	.bom-zhifu .pattern:nth-child(1),
 	.bom-zhifu .pattern:nth-child(2),
 	.bom-zhifu .pattern:nth-child(3),
-	.bom-zhifu .pattern:nth-child(4),
-	.pattern:nth-child(5) {
+	.bom-zhifu .pattern:nth-child(4){
 		width: 47% !important;
 	}
 
 	.bom-zhifu .pattern:nth-last-child(1),
 	.bom-zhifu .pattern:nth-last-child(2),
 	.bom-zhifu .pattern:nth-last-child(3),
-	.bom-zhifu .pattern:nth-last-child(4) {
+	.bom-zhifu .pattern:nth-last-child(4),
+	.bom-zhifu .pattern:nth-last-child(5),
+	.bom-zhifu .pattern:nth-last-child(6) {
 		width: 22%;
 		padding: 0 1% 0 2%;
 	}
 
 	.bom-zhifu .pattern:nth-child(2) .tits p,
 	.bom-zhifu .pattern:nth-child(3) .tits p,
-	.bom-zhifu .pattern:nth-child(4) .tits p,
-	.bom-zhifu .pattern:nth-child(5) .tits p {
+	.bom-zhifu .pattern:nth-child(4) .tits p {
 		font-size: 40rpx !important;
 		line-height: 80rpx !important;
 	}
