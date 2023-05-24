@@ -45,7 +45,7 @@
 								</label>
 							</view>
 						</view>
-		
+
 					</view>
 					<view class="confirm">
 						<button class="btn" :disabled="viewTime>0" @click="CloseMsg()">关 闭 <text
@@ -65,8 +65,8 @@
 						<label><input focus="true" placeholder="请输入旧密码" password="true" v-model="oldPwd" /><button
 								@click="oldPwd=''">×</button></label>
 					</view>
-					<view><text>新密码：</text><label><input placeholder="请输入新密码" password="true"
-								v-model="newPwd" /><button @click="newPwd=''">×</button></label></view>
+					<view><text>新密码：</text><label><input placeholder="请输入新密码" password="true" v-model="newPwd" /><button
+								@click="newPwd=''">×</button></label></view>
 					<view><text>确认密码：</text><label><input placeholder="再次输入新密码" password="true"
 								v-model="secPwd" /><button @click="secPwd=''">×</button></label></view>
 				</view>
@@ -112,7 +112,7 @@
 						<image src="@/images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
-					<text v-if="XT_MsgData.length==0">暂无系统消息！</text>
+					<text v-if="XT_MsgData.length==0" @click="NoMsg">暂无系统消息！</text>
 					<text v-else v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
 						@click="ReadMsg(item)">{{item.title}}</text>
 				</view>
@@ -185,7 +185,7 @@
 					</view>
 				</view>
 			</view>
-			
+
 		</view>
 	</view>
 </template>
@@ -1184,6 +1184,10 @@
 					return "";
 				}
 			},
+			//无消息提示
+			NoMsg: function() {
+				util.simpleMsg("暂无系统消息！", true);
+			}
 		}
 	}
 </script>
@@ -1489,8 +1493,8 @@
 		height: 90%;
 		margin: 10% 0 0 10%;
 	}
-	
-	.account{
+
+	.account {
 		z-index: 1001;
 	}
 </style>
