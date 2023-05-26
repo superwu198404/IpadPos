@@ -372,6 +372,7 @@
 
 	var that, is_log = true;
 	var log = console.log;
+	var $ = util.callContainer(this);
 	export default {
 		mixins: [global, print],
 		components: {
@@ -2230,7 +2231,8 @@
 				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
 				return new Promise(util.callBind(this, function(resolve, reject) {
 					util.simpleModal('退款', '确定使用不可原路退回方式退款吗?', util.callBind(this, function(res) {
-						if (res.confirm) {
+						console.log("[NoOrginRefund]结果:", res);
+						if (res) {
 							this.RecordInfoAsNoOrgin(refund_info);
 							resolve(true);
 						} else
@@ -2263,9 +2265,10 @@
 			singleRetry: async function(info) {
 				console.log("[SingleRetry]退款重试次数:", info.refund_num);
 				let trade_no = info.bill;
-				if (info.refund_num != 0) {
+				if (info.refund_num > 1) {
 					if (await this.NoOrginRefund(info)) {
-						this.refundAmountCount(); //重新计算
+						console.log("[SingleRetry]以不可原路退回记录...");
+						$(this.refundAmountCount,false);//重新计算
 						return;
 					}
 				}
