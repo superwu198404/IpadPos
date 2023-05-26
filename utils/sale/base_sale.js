@@ -617,6 +617,9 @@ var XsTypeObj = {
 					ban_type: this.ban_type
 				});
 			}
+			let obj = util.getStorage("PayWayList").find(i => i.type == 'HyJfExchange');
+			if (obj) //20230524 测试要求预定提取禁用 积分兑换支付方式
+				this.ban_type.push(obj.fkid);
 			this.PayParamAssemble();
 		},
 		$saleFinishing: function(result) { //生成yd
