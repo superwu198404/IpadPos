@@ -130,7 +130,8 @@
 												{{ pay.auth_code?"支付":"重试" }}
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div> -->
-											<div class="refund-reset" @click="singlePayRetry(pay)">
+											<div class="refund-reset" @click="singlePayRetry(pay)"
+												@longpress="useNotOriginBack(pay,$event)">
 												重试
 												<div v-if="pay.loading" class="refund-icon refund-loading"></div>
 											</div>
@@ -334,6 +335,7 @@
 </template>
 <script>
 	var app = getApp();
+	var $;
 	import uniPopup from '@/components/uni-popup/components/uni-popup/uni-popup.vue';
 	import hy from '@/api/hy/hy_query.js';
 	import {
@@ -2029,7 +2031,7 @@
 			},
 			//欠款界面绑定数据更新
 			refundAmountCount: function() {
-				console.log("重新计算金额：", this.RefundList)
+				console.log("[RefundAmountCount]重新计算金额：", this.RefundList)
 				let ta = 0,
 					aa = 0,
 					da = 0;
@@ -2257,8 +2259,15 @@
 				}));
 			},
 			RecordInfoAsNoOrgin: function(info) { //记录为不可回退类型
-				info.fkid = 'ZG11';
-				info.name = '不可原路退回';
+				let not_origin_back = util.getStorage("FKDA_INFO").find(info => info.SNAME == '手工退款');
+				if(not_origin_back){
+					info.fkid = not_origin_back.FKID;
+					info.name = not_origin_back.SNAME;
+				}
+				else{
+					info.fkid = 'ZG02';
+					info.name = '不可原路退回';
+				}
 				info.fail = false;
 			},
 			//单笔订单退款重试
@@ -2268,7 +2277,8 @@
 				if (info.refund_num > 1) {
 					if (await this.NoOrginRefund(info)) {
 						console.log("[SingleRetry]以不可原路退回记录...");
-						$(this.refundAmountCount,false);//重新计算
+						$(this.refundAmountCount, false); //重新计算
+						this.RefundList = Object.assign([], this.RefundList) //刷新视图
 						return;
 					}
 				}
@@ -2297,6 +2307,7 @@
 									.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
+								this.in_payment = false;
 							}).bind(this),
 							(function(res) { //执行完毕（finally），退款次数 +1
 								this.in_payment = false;
@@ -2306,10 +2317,7 @@
 							(function(ress) { //执行完毕（results），根据结果判断
 								this.in_payment = false;
 								if (!ress[1].code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
-									let info = this.PayWayInfo('NO');
 									singleRefund.fail = true; //退款失败
-									singleRefund.fkid = info.fkid;
-									singleRefund.name = info.name;
 									singleRefund.msg = ress[1].msg; //错误提示信息记录
 									if (ress[1].msg && !ress[1].msg.includes(
 											'网络错误')) { //本地查询超时，判定为可重试为 不可回退方式过机
@@ -2336,17 +2344,6 @@
 			//单笔订单重试
 			singlePayRetry: async function(info) {
 				console.log('[SinglePayRetry]重试支付:', info);
-				if (info.pay_num > 1 && info.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
-					if (await this.NoOrginPay(info)) {
-						console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
-						this.used_no.push(info.no); //如果成功
-						console.log("[SinglePayRetry]已储存单序号...", info.no);
-						this.yPayAmount += Number(info.amount);
-						console.log("[SinglePayRetry]已计算待支付金额...", info.amount);
-						this.PayList.sort(); //刷新视图
-						return;
-					}
-				}
 				let fkid = info.fkid,
 					trade_no = info.bill;
 				let type = this.PayWayList.find(i => i.fkid == fkid)?.type,
@@ -2383,6 +2380,28 @@
 
 				} else
 					util.simpleMsg("已存在相同的付款方式！", false);
+			},
+			//使用不可原路退回
+			useNotOriginBack: function(pay, event) {
+				console.warn("[UseNotOriginBack]触发:", {
+					pay,
+					event
+				});
+				setTimeout($(async function() {
+					if (pay.pay_num > 1 && pay.exactly) { //重试次数大于1，且支付结果必须为确定的（失败或成功，支付中属于不确定的结果）
+						if (await this.NoOrginPay(pay)) {
+							console.log("[SinglePayRetry]已使用不可原路退回方式记录...");
+							this.used_no.push(pay.no); //如果成功
+							console.log("[SinglePayRetry]已储存单序号...", pay.no);
+							this.yPayAmount += Number(pay.amount);
+							console.log("[SinglePayRetry]已计算待支付金额...", pay.amount);
+							this.PayList.sort(); //刷新视图
+							return;
+						}
+						else
+							this.singlePayRetry(pay);
+					}
+				}), 2000)
 			},
 			RefundErrorCallback: function(info, judge_net_err, err) { //单据记录
 				this.in_payment = false;
@@ -2471,6 +2490,7 @@
 			console.log("支付类型：", this.actType);
 			if (this.actType != common.actTypeEnum.Payment) //退款才获取
 				await _payment.GetTKRelation(); //获取券退款fkid 映射方式
+			$ = util.callContainer(this);
 		},
 		mounted() {}
 	}
@@ -2567,7 +2587,7 @@
 	.bom-zhifu .pattern:nth-child(1),
 	.bom-zhifu .pattern:nth-child(2),
 	.bom-zhifu .pattern:nth-child(3),
-	.bom-zhifu .pattern:nth-child(4){
+	.bom-zhifu .pattern:nth-child(4) {
 		width: 47% !important;
 	}
 

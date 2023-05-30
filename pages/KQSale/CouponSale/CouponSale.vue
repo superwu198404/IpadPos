@@ -69,8 +69,7 @@
 										<label><em>●</em><text>特批折扣：</text>{{ sales.sale002.TPDISC }}</label>
 									</view>
 								</view>
-								<view class="touch-list list-delete"
-									@click="remove_union(sales)">
+								<view class="touch-list list-delete" @click="remove_union(sales)">
 									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
@@ -294,9 +293,9 @@
 					this.view.no_input = true
 				}
 			},
-			switch_to_page(name){
-				util.simpleModal("提示","是否确认切换业务类型?",$(function(res){
-					if(res){
+			switch_to_page(name) {
+				util.simpleModal("提示", "是否确认切换业务类型?", $(function(res) {
+					if (res) {
 						this.view.current_part_view = name;
 					}
 				}))
@@ -336,16 +335,29 @@
 				})
 			},
 			async coupon_segment_distribute() {
-				return await member.coupon_sale.CouponDistribute({
-					bill: this.source.sale001.BILL,
-					disc: this.source.sale001.BILLDISC,
-					khid: this.KHID,
-					appid: getApp().globalData.appid,
-					coupon_infos: this.source.sale2_union_sale6.map(sales => ({
+				let combine_sale2 = this.sales_process()?.sale002; //合并sale2
+				console.log("[CouponSegmentDistribute]合并后信息:", combine_sale2);
+				let sale2_and_sale6 = {};
+				this.source.sale2_union_sale6.forEach(sales => {
+					if (!sale2_and_sale6[sales.sale002.SPID]) {
+						sale2_and_sale6[sales.sale002.SPID] = [];
+					}
+					sale2_and_sale6[sales.sale002.SPID].push({ //push到对应的商品集合中
 						start_no: sales.sale006.KQIDS,
 						end_no: sales.sale006.KQIDE,
-						count: sales.sale006.QTY,
-						total_denomination: sales.sale002.NET
+						count: sales.sale006.QTY
+					});
+				});
+				return await member.coupon_sale.CouponDistribute({
+					bill: this.source.sale001.BILL,
+					khid: this.KHID,
+					appid: getApp().globalData.appid,
+					coupon_infos: combine_sale2.map((sale2, index) => ({
+						no: index + 1,
+						disc: sale2.DISCRATE,
+						count: sale2.QTY || 0,
+						goods: sale2_and_sale6[sale2.SPID] || [],
+						total_denomination: sale2.NET
 					}))
 				})
 			},
@@ -406,8 +418,13 @@
 							});
 							this.source.sale002.push(sale002);
 							this.source.sale006.push(sale006);
-							this.source.sale6_map_style.set(sale006, { text_style: "left:0" });
-							this.source.sale2_union_sale6.push({ sale002, sale006 });
+							this.source.sale6_map_style.set(sale006, {
+								text_style: "left:0"
+							});
+							this.source.sale2_union_sale6.push({
+								sale002,
+								sale006
+							});
 							console.log("[CouponSale]已加入到待支付列表:", this.source);
 							this.total_discount_computed();
 						} catch (e) {
@@ -467,14 +484,16 @@
 					console.log("[SaveOrders]执行异常:", e);
 				}
 			},
-			async get_coupon_sale_allow_payment(){
+			async get_coupon_sale_allow_payment() {
 				console.log("[GetCouponSaleAllowPayment]开始查询...");
-				let pay_id = (await common.Database().Query.Single("POSCSZMX").Condition("POSCS='SKSQFKID'").Condition(`POSCSZID='${this.POSCSZID}'`).Excute())?.POSCSNR;
-				console.log("[GetCouponSaleAllowPayment]查询完毕:",pay_id);
-				if(pay_id){
+				let pay_id = (await common.Database().Query.Single("POSCSZMX").Condition("POSCS='SKSQFKID'").Condition(
+					`POSCSZID='${this.POSCSZID}'`).Excute())?.POSCSNR;
+				console.log("[GetCouponSaleAllowPayment]查询完毕:", pay_id);
+				if (pay_id) {
 					let allow_type = pay_id.split(',');
 					console.log("[GetCouponSaleAllowPayment]允许使用的FKID:", allow_type);
-					this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
+					this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
+						.fkid);
 					console.log("[GetCouponSaleAllowPayment]禁止使用的FKID:", this.ban_type);
 				}
 			},
@@ -543,8 +562,8 @@
 					this.source.sale002.splice(remove_sale2_index, 1); //删除外部sale002中的数据
 					this.source.sale006.splice(remove_sale6_index, 1); //删除外部sale006中的数据
 					this.source.sale2_union_sale6.splice(remove_union_index, 1); //删除外部组合对象数组中的数据
-					this.source.sale6_map_style.delete(sales.sale006);//删除对应的样式集合对象
-					this.re_computed_sales(this.source.sale001, this.source.sale002);//重新计算sale相关信息
+					this.source.sale6_map_style.delete(sales.sale006); //删除对应的样式集合对象
+					this.re_computed_sales(this.source.sale001, this.source.sale002); //重新计算sale相关信息
 				}
 				console.log("[RemoveUnion]删除信息后:", this.source);
 				$(this.total_discount_computed, false); //重新汇总折扣
@@ -580,7 +599,7 @@
 				}
 				console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
-			craft_discount_computed(sale1,sale2) { //手工折扣额的处理
+			craft_discount_computed(sale1, sale2) { //手工折扣额的处理
 				if (!sale1) return;
 				console.log("[CraftDiscountComputed]原金额:", sale1.TNET);
 				let SKY_DISCOUNT = util.newFloat(((sale1.TNET * 10) % 1) / 10, 2);
@@ -632,27 +651,26 @@
 				console.log("[CreditSalesCreate]创建赊销单据支付记录完成...");
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
-			credit_order_setting(){
-				if(this.source.enable_credit){
+			credit_order_setting() {
+				if (this.source.enable_credit) {
 					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
 					this.source.sale001.BILL_TYPE = "Z112";
 					this.source.sale001.XSTYPE = 6;
 					console.log("[CreditOrderSetting]sale1设置完毕:", this.source.sale001);
-				}
-				else{
+				} else {
 					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
 					this.source.sale001.BILL_TYPE = "Z111";
 					this.source.sale001.XSTYPE = 1;
 					console.log("[CreditOrderSetting]sale1设置完毕:", this.source.sale001);
 				}
 			},
-			sales_process(){//单据处理，复制现在的sale1和sale2还有sale6，然后进行手工折扣额计算再进行
-				let sale001 = Object.assign({},this.source.sale001);
-				let sale002 = $(function(){
-					let new_sale2_list = [];//此时的sale2还是和券记录1对1，需要根据sale2.spid进行合并处理，并且合并折扣值
-					this.source.sale002.forEach($(function(sale2){
+			sales_process() { //单据处理，复制现在的sale1和sale2还有sale6，然后进行手工折扣额计算再进行
+				let sale001 = Object.assign({}, this.source.sale001);
+				let sale002 = $(function() {
+					let new_sale2_list = []; //此时的sale2还是和券记录1对1，需要根据sale2.spid进行合并处理，并且合并折扣值
+					this.source.sale002.forEach($(function(sale2) {
 						let same_good = new_sale2_list.find(ns2 => ns2.SPID == sale2.SPID);
-						if(same_good){//是否存在已有的商品，如果有：
+						if (same_good) { //是否存在已有的商品，如果有：
 							//合并累加部分字段进行总和
 							same_good.QTY += sale2.QTY;
 							same_good.JFDISC += sale2.JFDISC;
@@ -665,13 +683,12 @@
 							same_good.DISC += sale2.DISC;
 							same_good.DISCRATE += sale2.DISCRATE;
 							same_good.NET += sale2.NET;
-						}
-						else{//如果没有：
+						} else { //如果没有：
 							new_sale2_list.push(Object.assign({}, sale2));
 						}
 					}));
 					return new_sale2_list;
-				},false);
+				}, false);
 				this.craft_discount_computed(sale001, sale002);
 				return {
 					sale001,
@@ -687,15 +704,15 @@
 				}
 				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
 				this.credit_order_setting();
-				
+
 				if (this.source.enable_credit) {
 					this.credit_sales_create();
-					let sales = this.sales_process();//复制避免折扣影响到原数据
+					let sales = this.sales_process(); //复制避免折扣影响到原数据
 					this.source.sale001 = sales.sale001;
 					this.source.sale002 = sales.sale002;
 					this.coupon_activate(); //开始券申请激活流程
-				} else{
-					let sales = this.sales_process();//复制避免折扣影响到原数据
+				} else {
+					let sales = this.sales_process(); //复制避免折扣影响到原数据
 					this.sale.RedirectToPayment({
 						sale001: sales.sale001,
 						sale002: sales.sale002,
@@ -743,7 +760,7 @@
 					if (data.exists_credit) {
 						this.source.enable_credit = true; //启用赊销
 					}
-					if(Object.keys(data).length === 0 && this.source.discount_type == 'TP'){
+					if (Object.keys(data).length === 0 && this.source.discount_type == 'TP') {
 						this.source.discount_type = "NO";
 					}
 					this.source.big_customer_info = data;
@@ -763,7 +780,7 @@
 		mounted() {
 			this.event_monitor(); //批量事件处理
 			this.get_payment_infos(); //获取支付信息
-			this.get_coupon_sale_allow_payment();//获取允许使用的支付方式类型
+			this.get_coupon_sale_allow_payment(); //获取允许使用的支付方式类型
 		},
 		async created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
