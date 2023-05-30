@@ -2242,7 +2242,7 @@
 					}))
 				}));
 			},
-			NoOrginPay: async function(pay_info) { //不可原路——退款
+			NoOrginPay: async function(pay_info) { //不可原路——支付
 				console.log("[NoOrginRefund]判断是否使用不可元路退回方式过机...");
 				return new Promise(util.callBind(this, function(resolve, reject) {
 					util.simpleModal('付款', '确定使用不可原路退回方式付款吗?', util.callBind(this, function(

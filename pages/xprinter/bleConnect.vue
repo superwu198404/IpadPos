@@ -344,7 +344,7 @@
 							if (num == list.length) {
 								uni.showModal({
 									title: "提示",
-									content: "找不到该读写的特征值",
+									content: "蓝牙连接异常，请手动连接！",
 									showCancel: false
 								});
 							} else {
