@@ -204,12 +204,17 @@ var TransLite = function(e, func, load = false) {
 				for (var i = 0; i < res.msg.length; i++) { //一条条的处理 防止阻塞后续的单据
 					let sql1 = res.msg[i].TX_SQL;
 					let delVal = res.msg[i].STR1;
+					let khid = res.msg[i]?.STOREID;
+					let date = res.msg[i]?.BDATE;
 					// console.log("传输sql", sql1);
 					// console.log("待删除数据", delVal);
-					// sql1 = "select * from dual"
 					let apistr = "MobilePos_API.Models.SALE001CLASS.ExecuteBatchSQL";
 					let reqdata = Req.resObj(true, "数据传输中", {
-						sql: sql1
+						sql: sql1,
+						bill: delVal,
+						khid: khid,
+						date: date,
+						type: "sale_upload"
 					}, apistr, load);
 					Req.asyncFuncOne(reqdata, function(res1) {
 						console.log("[TransLite-Success]数据传输结果：", res1);
