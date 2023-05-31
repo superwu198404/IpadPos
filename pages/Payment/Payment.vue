@@ -595,7 +595,9 @@
 				} else if (n === "HyJfExchange") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
 					this.dPayAmount = this.CashOffset.Score;
 					this.allowInput = true;
-				} else if (n === "DouYinJK") { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+				} else if (n === "DouYinJK") { //如果是用的抖音券支付，则不能修改
+					this.allowInput = true;
+				} else if (n === "JUBAOPEN") { //如果是用的美团券支付，则不能修改
 					this.allowInput = true;
 				} else {
 					if (n === 'Others' || this.currentPayInfo.poly === "S") {

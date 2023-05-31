@@ -65,6 +65,8 @@ export default {
 							valid_date: result.data.total_info.ZZCPVALIDT.replaceAll('-','/'),
 							is_customer_emotional_coupon: result.data.total_info.ZZIFKQ,
 							is_customer_complaint_coupon: result.data.total_info.ZZKSZQ,
+							sale_store_name: result.data.total_info.ZZCPXSSTORE,
+							use_store_name: result.data.total_info.ZZCPHX_STORE,
 							apply: result.data.total_info.ZZCPSL_STAFF,
 							use_date: result.data.total_info.ZZCPHXDATE,
 							use_store_id: result.data.total_info.ZZCPHX_STORE,
