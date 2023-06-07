@@ -235,6 +235,7 @@ const _PaymentAll = function(pt, body, func, catchFunc) {
 				};
 			} else { //res.code&&res.data.status=="PAYING"
 				if (show_log) console.log("[PaymentAll]超时发起撤销");
+				if (catchFunc) catchFunc(util.createdResult(false, "当前支付已撤销,请重新支付!" + (res.msg || "")));
 				//30s超时撤销
 				return CreateData(pt, "撤销中...", "CancelPayment", body);
 			}

@@ -178,10 +178,11 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				// console.log("请求成功:", res);
+				console.log("[Success]请求完成!");
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
+					console.warn("[Fail]请求结果异常:",res);
 					return resolve(new retData(false, res.errMsg));
 				}
 			},
