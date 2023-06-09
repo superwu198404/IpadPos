@@ -248,12 +248,11 @@
 									<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 								</view>
 								<view class="directions">
-									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+									<image class="bg" src="../../images/quan-bg.png" mode="widthFix" style="z-index: -1;"></image>
 									<view>使用说明:<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text></view>
 									<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
 
-									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-											mode="widthFix"></image></button>
+									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png" mode="widthFix"></image></button>
 								</view>
 							</view>
 						</view>
@@ -1249,28 +1248,17 @@
 							_pay.RefundAll(payObj.api, {
 									out_trade_no: refundInfo.bill, //单号
 									out_refund_no: refund_no + `_${index}`, //退款单号
-									refund_money: (Math.abs(Number(total || refundInfo
-											.amount) * 100))
-										.toFixed(0), //退款金额
-									total_money: (Math.abs(Number(total || refundInfo
-											.amount) * 100))
-										.toFixed(0), //退款总金额（兼容微信）
+									refund_money: (Math.abs(Number(total || refundInfo.amount) * 100)).toFixed(0), //退款金额
+									total_money: (Math.abs(Number(total || refundInfo.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
 									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
-									auth_code: refundInfo.origin
-										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_company_id: this.SALES.sale1
-										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_store_id: this.SALES.sale1
-										.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_area_id: this.SALES.sale1
-										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
+									auth_code: refundInfo.origin.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_company_id: this.SALES.sale1.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_store_id: this.SALES.sale1.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+									original_area_id: this.SALES.sale1.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
-									card_no: refundInfo.origin
-										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
-									deviceno: refundInfo.origin
-										.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
-									ywtype: this
-										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+									card_no: refundInfo.origin.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+									deviceno: refundInfo.origin.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
+									ywtype: this.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 								}, (function(err) { //如果发生异常（catch）
 									// util.simpleMsg(err.msg, true, err);
 									refundInfo.fail = true;
@@ -2195,8 +2183,12 @@
 					})
 				}
 			},
+			Test(e){
+				console.warn("[Test]点击元素信息:",e);
+			},
 			//点击券去使用
 			CouponToUse: function(e) {
+				console.log("[CouponToUse]点击使用:",e);
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
@@ -2295,18 +2287,13 @@
 						_pay.RefundAll(payObj.api, {
 								out_trade_no: singleRefund.bill, //单号
 								out_refund_no: refund_no, //退款单号
-								refund_money: (Math.abs(Number(singleRefund.amount) * 100))
-									.toFixed(
-										0), //退款金额
-								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(
-									0), //退款总金额（兼容微信）
-								auth_code: singleRefund.origin
-									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+								refund_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0), //退款金额
+								total_money: (Math.abs(Number(singleRefund.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
+								auth_code: singleRefund.origin.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 								store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
-								card_no: singleRefund.origin
-									.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
-								ywtype: this
-									.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+								deviceno: singleRefund.origin.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
+								card_no: singleRefund.origin.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+								ywtype: this.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 								this.in_payment = false;
@@ -2369,11 +2356,16 @@
 							info.exactly = false; //结果为不确定的
 							return;
 						}
+						console.log("[SinglePayRetry]赋值开始:",{ info,data });
 						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
-						info.discount = data.discount ?? 0;
-						info.disc = data.zklx ?? "";
+						info.disc = (data?.discount || 0) / 100;
+						info.card_no = data.open_id ?? data.transaction_id;//记住authcode
+						info.zklx = data?.disc_type || "";
+						info.amount = (data?.money || 0) / 100;//重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
+						info.auth = data.transaction_id //交易号 用于多卡退款时的分组依据
 						info.user_id = (data?.open_id || data?.hyid) ?? "";
 						this.used_no.push(this.prev_no); //如果成功
+						console.log("[SinglePayRetry]赋值完成:",{ info,data });
 						this.retryEnd(info, false)
 						this.yPayAmount += (data.money / 100);
 						this.PayList = Object.assign([], this.PayList); //刷新视图
@@ -2613,5 +2605,9 @@
 	.jinzhi {
 		opacity: 0.7;
 		color: #666;
+	}
+	
+	.uls,.uls *{
+		box-sizing: border-box;
 	}
 </style>
