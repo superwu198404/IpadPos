@@ -248,12 +248,11 @@
 									<text class="datas">{{item.s_date}} 至 {{item.e_date}}</text>
 								</view>
 								<view class="directions">
-									<image class="bg" src="../../images/quan-bg.png" mode="widthFix"></image>
+									<image class="bg" src="../../images/quan-bg.png" mode="widthFix" style="z-index: -1;"></image>
 									<view>使用说明:<text v-for="(item1,index1) in item.limitDesc">{{item1}}</text></view>
 									<!-- <image src="../../images/xiala.png" mode="widthFix"></image> -->
 
-									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png"
-											mode="widthFix"></image></button>
+									<button @click="CouponToUse(item.lqid)">点击使用<image src="../../images/ewm.png" mode="widthFix"></image></button>
 								</view>
 							</view>
 						</view>
@@ -2184,8 +2183,12 @@
 					})
 				}
 			},
+			Test(e){
+				console.warn("[Test]点击元素信息:",e);
+			},
 			//点击券去使用
 			CouponToUse: function(e) {
+				console.log("[CouponToUse]点击使用:",e);
 				//有券号
 				if (e) {
 					console.log("选择使用的卡券号：", e);
@@ -2602,5 +2605,9 @@
 	.jinzhi {
 		opacity: 0.7;
 		color: #666;
+	}
+	
+	.uls,.uls *{
+		box-sizing: border-box;
 	}
 </style>

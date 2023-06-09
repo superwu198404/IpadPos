@@ -297,6 +297,7 @@
 				console.log("[DataInit]时间限制配置:", {
 					start_time: this.STIME,
 					end_time: this.ETIME,
+					store_info: app.globalData.store
 				})
 				that = this;
 				await that.getTHTYPE();
