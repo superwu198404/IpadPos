@@ -1004,9 +1004,9 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		await Req.asyncFuncOne(reqdata, callback, callback);
 		Loading(false);
 		if (result.code)
-			options.success.call(result);
+			options.success.call(null,result);
 		else
-			options.error.call(result);
+			options.error.call(null,result);
 		return result;
 	} catch (e) {
 		console.warn("[SimpleAPIRequest]发生异常:", e);
