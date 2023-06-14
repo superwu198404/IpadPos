@@ -6,7 +6,7 @@ zjq
 
 //校验手机格式
 const checkMobile = (mobile) => {
-	return RegExp(/^1[34578]\d{9}$/).test(mobile);
+	return RegExp(/^1[3456789]\d{9}$/).test(mobile);
 }
 //校验邮箱格式
 const checkEmail = (email) => {
