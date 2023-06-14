@@ -95,7 +95,7 @@ const Cxdict = async () => {
 
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-
+	
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		console.log("没有生效的促销单：", dscxm.length);
@@ -1239,7 +1239,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 	let Zfsqty = new Map();
 	let Row = new Map();
 	//已经使用过的行
-	let Rowlist = new Array();
+	let Rowlist = new Map();
 	/*
 	 * 第一循环取出有多少个类别和 免单数量
 	 */
@@ -1276,7 +1276,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 				if (pm_list[xx] != key) {
 					continue;
 				}
-				if (Rowlist.hasOwnProperty(xx)) {
+				if (Rowlist.has(xx)) {
 					continue;
 				}
 				let price = cx_util.nnvl(cxbilldts[xx][oprice], 0);
@@ -1292,7 +1292,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 				if (fsqty <= 0) {
 					continue;
 				}
-				Rowlist.push(minrow);
+				Rowlist.set(minrow,minrow);
 				let syqty = Clqty - fsqty;
 				if (syqty > 0) {
 					syqty = fsqty;
@@ -1349,7 +1349,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 				break;
 			}
 		}
-		let MinRow = null;
+		let MinRow = new Map();
 		for (let i = 0; i < pm_list.length; i++) {
 			//累计的分摊的积分
 			if (pm_list[i] == null) {
@@ -1450,7 +1450,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					  第一次循环到这里的时候 就要获取所有需要计算的行信息
 					  然后判断就简单了 
 					 */
-					if (MinRow == null) {
+					if (MinRow.size<=0) {
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
