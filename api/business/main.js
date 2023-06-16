@@ -244,7 +244,7 @@ var GetZKDatasAll = async function(dkhid) {
 		ZKDatas: ZKDatas,
 		DKFZKDatas: DKFZKDatas
 	}
-	console.log("[GetZKDatasAll]折扣数据:",obj);
+	console.log("[GetZKDatasAll]折扣数据:", obj);
 	return obj;
 }
 //数据筛选
@@ -441,6 +441,8 @@ var GetFZCXNew = async function(arr, sale1, sale2, spPrice) {
 		let hasBill = []; //用来存储加购商品是否存在于促销活动限制商品中的促销活动单号
 		let sql = "select * from CXFORMD003 where bill in(" + billStr + ") and KHID='" + sale1.KHID + "'";
 		await db.get().executeQry(sql, "", res => {
+			console.log("筛选sql:", sql);
+			console.log("筛选结果:", res);
 			let xzSPArr = res.msg; //所有生效的辅助促销活动限制商品集合
 			if (xzSPArr.length > 0) {
 				sale2.forEach(r1 => {
@@ -472,11 +474,12 @@ var GetFZCXNew = async function(arr, sale1, sale2, spPrice) {
 					qty = r1.XX_QTY4;
 				}
 				r1.CZQTY = qty; // Math.floor((sale1.TNET || 0) / r1.XX_NET1);
-				let price = spPrice[r1.CLASSID].PRICE;
+				let price = spPrice[r1.CLASSID]?.PRICE || 0;
 				r1.PRICE = price;
 				r1.DESCRIBE = "满" + r1.XX_NET1 + "可售" + (price * (r1.MJ_DISC1 || 0) / 100);
 			})
 		})
+		console.log("参数检测2：", arr);
 	}
 	return arr;
 }
@@ -767,10 +770,10 @@ var GetUnLoad = function(func) {
 //获取销售单
 var GetPTOrder = function(khid, p_bill, p_date, type, func) {
 	//不是外卖单
-	if(type != 0){
+	if (type != 0) {
 		GetPTOrder1(khid, p_bill, p_date, type, func);
-	}else{
-	//是外卖单
+	} else {
+		//是外卖单
 		GetPTOrder2(khid, p_bill, p_date, type, func);
 	}
 }
@@ -784,7 +787,7 @@ var GetPTOrder1 = async function(khid, p_bill, p_date, type, func) {
 		str += " and BILL_TYPE != 'Z111' and XSTYPE ='" + type + "'";
 	} else if (type != -1 && type != 99) {
 		str += type ? " and BILL_TYPE != 'Z111' and XSTYPE ='" + type + "'" : "";
-	}else if(type == 99){
+	} else if (type == 99) {
 		str += " and BILL_TYPE = 'Z111'";
 	}
 	let sql = "SELECT * from SALE001 where 1=1" + str;
@@ -807,26 +810,28 @@ var GetPTOrder2 = async function(khid, p_bill, p_date, type, func) {
 	let sql = "SELECT * from jk_syssale001 where 1=1 " + str;
 	console.log("查询条件：", sql);
 	try {
-		   common.WebDBQuery(sql,async res => {
+		common.WebDBQuery(sql, async res => {
 			var resp = {};
 			resp.code = res.code;
 			var data = JSON.parse(res.data || "");
 			if (res.code && data.length > 0) {
 				//查询打印记录
-				let printData = await getPOS_XSBILLPRINT(); 
-				if(printData.code && printData.msg.length > 0){
+				let printData = await getPOS_XSBILLPRINT();
+				if (printData.code && printData.msg.length > 0) {
 					// console.warn("resp data======", data);
-					let data_new = data.filter(item1=>{
-						return printData.msg.find(item2=>{return item1.BILL===item2.XSBILL})
+					let data_new = data.filter(item1 => {
+						return printData.msg.find(item2 => {
+							return item1.BILL === item2.XSBILL
+						})
 					});
 					// console.warn("resp data new======", data_new);
 					resp.msg = data_new;
-				}else{
+				} else {
 					resp.msg = [];
 				}
 				if (func)
 					func(resp);
-			}else{
+			} else {
 				resp.msg = [];
 				if (func)
 					func(resp);
