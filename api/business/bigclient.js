@@ -8,7 +8,7 @@ import common from '@/api/common.js';
  * @param {*} func 回调函数
  */
 export const getBigClients = function(data, func, catchFunc) {
-	if(getApp().globalData.brand == 'KG'){
+	if(getApp().globalData.brand == 'KG' && false){
 		let apistr = "MobilePos_API.Models.SALE001CLASS.GetBigClients";
 		let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 		Req.asyncFuncOne(reqdata, func, catchFunc);

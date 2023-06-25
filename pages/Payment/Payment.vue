@@ -1670,8 +1670,7 @@
 								balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
 								balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 									?.toFixed(2), //如果是电子卡，余额
-								zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon
-									.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
+								zklx: coupon.yn_card === 'Y' ? payObj.zklx : coupon.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
 								disc: (coupon?.discount / 100)?.toFixed(2),
 								fail,
 								id_type: coupon?.type,
@@ -2335,7 +2334,8 @@
 				console.log('[SinglePayRetry]重试支付:', info);
 				let fkid = info.fkid,
 					trade_no = info.bill;
-				let type = this.PayWayList.find(i => i.fkid == fkid)?.type,
+				let type_info = this.PayWayList.find(i => i.fkid == fkid),
+					type = type_info?.type,
 					data = this.PayDataAssemble();
 				info.loading = true;
 				if (!this.existSamePayType(type)) {
@@ -2360,10 +2360,11 @@
 						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
 						info.disc = (data?.discount || 0) / 100;
 						info.card_no = data.open_id ?? data.transaction_id;//记住authcode
-						info.zklx = data?.disc_type || "";
+						info.zklx = data?.disc_type || type_info.zklx || "";//23-6-25新增 type_info.zklx 项，用于实体卡支付返回实体卡支付折扣信息
 						info.amount = (data?.money || 0) / 100;//重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
 						info.auth = data.transaction_id //交易号 用于多卡退款时的分组依据
 						info.user_id = (data?.open_id || data?.hyid) ?? "";
+						info.id_type = data?.card_type || "";//23-6-25新增 data?.card_type 项，用于实体卡支付返回实体卡类型信息
 						this.used_no.push(this.prev_no); //如果成功
 						console.log("[SinglePayRetry]赋值完成:",{ info,data });
 						this.retryEnd(info, false)
