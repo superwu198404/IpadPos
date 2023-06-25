@@ -157,6 +157,7 @@
 			let that = this;
 			//初始化画布
 			that.initPhoto();
+			that.getComputedByteLen(null,6);
 		},
 		methods: {
 			//初始化画布数据
@@ -204,7 +205,27 @@
 				arr.push(obj);
 				return arr;
 			},
-
+			// 获取字节的个数
+			getComputedByteLen(content, totalleng) {
+				debugger;
+				if(content==null||content=="null"){
+					content = "";
+				}
+				let contentLength = content.replace(/[^\x00-\xff]/g, '01').length;
+				let data = "";
+				let nbspStr = "";
+				//如果长度超出最大占位，则截取字符显示
+				if (contentLength > totalleng) {
+					data = content.substr(0, totalleng / 2).PadRight(totalleng - 1, '\u0020');
+				} else {
+					data = content;
+					let subLength = totalleng - contentLength;
+					for (var i = 0; i < subLength; i++) {
+						nbspStr += "\u0020";
+					}
+				}
+				return data + nbspStr;
+			}
 		}
 	}
 </script>
