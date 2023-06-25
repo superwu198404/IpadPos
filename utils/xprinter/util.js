@@ -96,6 +96,9 @@ function getTime(type) {
 
 // 获取字节的个数
 function getComputedByteLen(content, totalleng) {
+	if(content == null||content == "null"){
+		content = "";
+	}
 	let contentLength = content.replace(/[^\x00-\xff]/g, '01').length;
 	let data = "";
 	let nbspStr = "";
@@ -792,6 +795,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 			unit: snvl(sale2_arr[i].STR7,""), //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
 			bqty: nnvl(sale2_arr[i].BQTY,0),
+			attribute: snvl(sale2_arr[i].STR2,""), //商品属性
 		};
 		goodsList = goodsList.concat(sale2_printer);
 	}
