@@ -8,14 +8,14 @@
 <template>
 	<view class="content">
 		<PrinterPage ref="printerPage" style="display: none;" />
-		<view class="content" style="overflow: hidden;">
+		<view class="content" style="overflow: hidden; display: flex; flex-direction: row;">
 			<Page ref="menu" :current="mainSale.current_type.clickType" :_sale2_count="mainSale.sale002.length"
 				:isKeyBoardShow='isKeyBoardShow'></Page>
 			<!-- <view class="arrow-box" :style="arrow_style">
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
 			</view> -->
-			<view class="right" style="position: relative;">
+			<view class="right" style="position: relative; flex: 1;overflow: hidden;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
 				<view class="listof" style="position: absolute;">
@@ -181,22 +181,16 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<Extract key="1" :mode="true"
-					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract  key="2" :mode="false"
-					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway 
-					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
-				</TakeAway>
-				<TakeYD  v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
-				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
-				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract">
-				</OnlinePick>
-				<Message  v-if="mainSale.ComponentsManage.sale_message"></Message>
-				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
-				<SXRefund  v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement  v-if="mainSale.ComponentsManage.sale_credit_settlement"
-					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
+				<Extract class="component-box" key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract class="component-box" key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
+				<TakeAway class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'"></TakeAway>
+				<TakeYD class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<OnlineOrders class="component-box" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
+				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<Message class="component-box" v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<RefundOrder class="component-box" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
+				<SXRefund class="component-box" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
@@ -1459,7 +1453,6 @@
 		position: absolute;
 		z-index: 9998 !important;
 	}
-
 
 	/* .top-layer {
 		z-index: 100000;

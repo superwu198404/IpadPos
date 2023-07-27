@@ -76,7 +76,7 @@
 									</view>
 									<view class="cods">
 										<view>客户名称:{{ item.CUSTMNAME || '-' }}</view>
-										<view>定金:{{ item.DNET.toString() || '-' }}</view>
+										<view>定金:{{ Earnest(item) || '-' }}</view>
 										<view>手机号:{{ item.CUSTMPHONE || '-' }}</view>
 										<view style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
 											备注:{{ item.CUSTMCOMM || '-' }}</view>
@@ -178,6 +178,11 @@
 				return function(type) {
 					return type?.slice(2) || "-"
 				}
+			},
+			Earnest: function(){
+				return util.callBind(this,function(order){
+					return order?.DNET?.toString() || 0;
+				})
 			}
 		},
 		methods: {
@@ -333,6 +338,7 @@
 						return;
 					}
 					let data = JSON.parse(res.data);
+					console.log("[GetList]预定信息获取成功:", data);
 					if (data.constructor === Array) {
 						this.extracts = (function() {
 							let indexs = data.map(item => {

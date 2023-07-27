@@ -358,7 +358,7 @@ var mySqllite = function() {
 		}
 		let ret
 		if (infun) {
-			//console.log("进入方法了" + infun)
+			// console.log("[CallBackCloseLoading]方法调用!", infun)
 			return infun(res)
 		} else {
 			ret = res;
@@ -405,8 +405,9 @@ var mySqllite = function() {
 		retcode = await open(pm_msg);
 		//console.log("[ExecuteQry]打开数据库:", retcode);
 		if (!retcode.code) return callBackCloseLoading(retcode, fail);
-		//console.log("[ExecuteQry]执行SQL:", [sql]);
+		// console.log("[ExecuteQry]执行SQL:", [sql]);
 		retcode = await qry(sql);
+		console.log("[ExecuteQry]执行完毕:", retcode.code);
 		if (retcode.code) {
 			return callBackCloseLoading(retcode, success, pm_msg);
 		} else {

@@ -1351,7 +1351,10 @@
 			},
 			//支付类型判断
 			CurrentPaymentTypeJudge: function(auth_code) {
-				console.log("[CurrentPaymentTypeJudge]二维码:", this.authCode);
+				console.log("[CurrentPaymentTypeJudge]二维码:", {
+					auth_code, 
+					current: this.currentPayType
+				});
 				let startCode = auth_code?.substring(0, 2) || this.authCode.substring(0, 2),
 					current_type = "";
 				if (startCode) {

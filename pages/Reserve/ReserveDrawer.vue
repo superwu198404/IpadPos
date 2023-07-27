@@ -634,9 +634,9 @@
 								phone: e.PHONE,
 								addrid: e.ADDRID
 							}, res => {
-								if (res.code) {
-									util.simpleMsg("删除成功", false);
-								}
+								console.log("[DelAddr]删除地址结果:",res);
+								util.simpleMsg((res.code ? "删除成功" : res.msg), !res.code);
+								util.sleep(2000);
 								that.yn_add = false;
 								that.GetAddr();
 							})
