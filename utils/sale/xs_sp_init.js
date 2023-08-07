@@ -69,28 +69,28 @@ var loadSaleSP = {
 			}
 		}, {
 			key: "()",
-			val: new RegExp(/\(.+\)/g),
+			val: new RegExp(/\((.+?)\)/g),
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
 			}
 		}, {
 			key: "（）",
-			val: new RegExp(/\（.+\）/g),
+			val: new RegExp(/\（(.+?)\）/g),// /\（.+\）/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
 			}
 		}, {
 			key: "[]",
-			val: new RegExp(/\[.+\]/g),
+			val: new RegExp(/\[(.+?)\]/g),// /\[.+\]/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
 			}
 		}, {
 			key: "【】",
-			val: new RegExp(/\【.+\】/g),
+			val: new RegExp(/\【(.+?)\】/g),// /\【.+\】/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
@@ -126,7 +126,7 @@ var loadSaleSP = {
 			old = r.PINYIN;
 		try {
 			//匹配括号中内容()（）[] 【】
-			if (/^(\W+)/.test(r.PINYIN)) {
+			if (/^(\W+)/.test(r.PINYIN)) {//括号开头
 				// console.warn("开始进入括号校验")
 				r.PINYIN = this.checkCode(r.PINYIN);
 				// console.warn("校验完毕后的拼音：", r.PINYIN);
@@ -391,9 +391,8 @@ var loadSaleSP = {
 			}
 			plarr.push(item);
 			pm_spidKeyList[item.SPID] = item;
-		    //蛋糕类初始化第一个选择的商品id
-			if (item.specslist.length > 0&&item.ynshowlist == "1") 
-			{
+			//蛋糕类初始化第一个选择的商品id
+			if (item.specslist.length > 0 && item.ynshowlist == "1") {
 				item.SPID = item.specslist[0].SPID;
 			}
 		})
@@ -464,7 +463,7 @@ var loadSaleSP = {
 		await $sqlLite.executeQry(msplistSql, "正在获取主数据", (res) => {
 			// console.log(JSON.stringify(res).substring(0, 2000));
 			mainArr = res.msg;
-			console.log(JSON.stringify(mainArr.length));
+			// console.log("商品主数据：", mainArr);
 		}, null);
 
 		console.log("##############################开始获取蛋糕主商品##############################")
