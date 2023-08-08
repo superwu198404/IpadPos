@@ -550,7 +550,8 @@
 					name: "仟吉兑换券",
 					amount: that.CouponInfo.coupon_value,
 					card_no: that.CouponInfo.coupon_num, //003-ID 记录券号
-					disc: that.CouponInfo.total_info.ZZCPXSDISC //销售折扣额
+					disc: that.CouponInfo.total_info.ZZCPXSDISC, //销售折扣额
+					zklx: that.CouponInfo.total_info.ZZDISCTYPE  //折扣类型
 				}), { //业务配置字段（支付状态设定为成功）
 					fail: false, //显示为成功
 					show: true //是否显示

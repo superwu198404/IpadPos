@@ -21,7 +21,7 @@
 				<view class="listof" style="position: absolute;">
 					<view class="prolist">
 						<!-- 大类循环 -->
-						<view class="commodity">
+						<view class="commodity" v-if="mainSale.selectFlagList.length>0">
 							<view class="hh" style="padding-right:3.7%;">
 								<view class="hotcakes" v-if="mainSale.classifyDate || mainSale.notClassifyDate">
 									搜索关键词: {{(mainSale.showQueryKeys).toUpperCase()}}
@@ -95,6 +95,7 @@
 							</view>
 							</scroll-view>
 						</view>
+						<NoData v-else></NoData>
 					</view>
 					<!--从这里开始为最右侧的选项去 包括热销、字母区，会员，特殊折扣等 -->
 					<view :class="Alphabetical ? 'operation top-layer' : 'operation'">
@@ -181,21 +182,18 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<Extract key="1" :mode="true"
-					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract  key="2" :mode="false"
-					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway 
-					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
+				<Extract key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
+				<TakeAway v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
 				</TakeAway>
-				<TakeYD  v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
+				<TakeYD v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
 				<OnlineOrders v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
 				<OnlinePick v-if="mainSale.ComponentsManage.sale_online_order_extract">
 				</OnlinePick>
-				<Message  v-if="mainSale.ComponentsManage.sale_message"></Message>
+				<Message v-if="mainSale.ComponentsManage.sale_message"></Message>
 				<RefundOrder v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
-				<SXRefund  v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement  v-if="mainSale.ComponentsManage.sale_credit_settlement"
+				<SXRefund v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
+				<CreditSettlement v-if="mainSale.ComponentsManage.sale_credit_settlement"
 					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
@@ -284,7 +282,7 @@
 			</view>
 		</view>
 		<!-- 预定信息录入 -->
-		<view class="boxs"  v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
+		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
 				:confirm="(mainSale.current_type.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration" :_saleType="mainSale.clickSaleType.clickType">
@@ -1267,8 +1265,8 @@
 		color: white;
 		white-space: nowrap;
 		position: absolute;
-		top:100%;
-		left:0;
+		top: 100%;
+		left: 0;
 	}
 
 	.shareButton {

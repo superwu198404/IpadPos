@@ -102,7 +102,7 @@
 													</label>
 													<label>
 														<image src="@/images/dx-dw.png" mode="widthFix"></image>
-														{{item1.STR7}}
+														{{item1.STR7}}-{{item1.STR2}}
 													</label>
 												</view>
 												<text>已取消：{{item1.BQTY}}</text>

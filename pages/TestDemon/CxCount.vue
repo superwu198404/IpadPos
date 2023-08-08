@@ -105,18 +105,48 @@
 			
 			let sale02_arr1 = [
 				{
-				    "SPID": "000000001010500014",
-				    "SNAME": "杨枝甘露冰面包",
-				    "QTY": 2,
-				    "OPRICE": 16.5,
+				    "SPID": "000000001010500042",
+				    "SNAME": "火腿芝士帕尼尼",
+				    "QTY": 1,
+				    "OPRICE": 22,
 				    "DISCRATE": 0,
-				    "NET": 33,
-				    "PRICE": 16.5,
-				    "NO": 111
-				}
+				    "NET": 22,
+				    "PRICE": 22,
+				    "NO": 1
+				},
+				{
+				    "SPID": "000000001010500041",
+				    "SNAME": "红梅贝果调理面包",
+				    "QTY": 1,
+				    "OPRICE": 18,
+				    "DISCRATE": 0,
+				    "NET": 18,
+				    "PRICE": 18,
+				    "NO": 2
+				},
+				{
+				    "SPID": "000000001010100029",
+				    "SNAME": "红豆吐司4片",
+				    "QTY": 1,
+				    "OPRICE": 13.8,
+				    "DISCRATE": 0,
+				    "NET": 13.8,
+				    "PRICE": 13.8,
+				    "NO": 3
+				},
+				{
+				    "SPID": "000000001010600001",
+				    "SNAME": "黄金唱片-改名TX",
+				    "QTY": 1,
+				    "OPRICE": 10.9,
+				    "DISCRATE": 0,
+				    "NET": 10.9,
+				    "PRICE": 10.9,
+				    "NO": 4
+				},
 				];
 		   
-			cxCount.Createcx(sale02_arr1, "sale",hyinfoModel);
+			cxCount.Createcx(sale02_arr1, "sale",null);
 			
 			var that = this;
 			setTimeout(() => {
@@ -127,6 +157,7 @@
 			let that = this;
 			//初始化画布
 			that.initPhoto();
+			that.getComputedByteLen(null,6);
 		},
 		methods: {
 			//初始化画布数据
@@ -174,7 +205,27 @@
 				arr.push(obj);
 				return arr;
 			},
-
+			// 获取字节的个数
+			getComputedByteLen(content, totalleng) {
+				debugger;
+				if(content==null||content=="null"){
+					content = "";
+				}
+				let contentLength = content.replace(/[^\x00-\xff]/g, '01').length;
+				let data = "";
+				let nbspStr = "";
+				//如果长度超出最大占位，则截取字符显示
+				if (contentLength > totalleng) {
+					data = content.substr(0, totalleng / 2).PadRight(totalleng - 1, '\u0020');
+				} else {
+					data = content;
+					let subLength = totalleng - contentLength;
+					for (var i = 0; i < subLength; i++) {
+						nbspStr += "\u0020";
+					}
+				}
+				return data + nbspStr;
+			}
 		}
 	}
 </script>

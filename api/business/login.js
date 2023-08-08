@@ -158,6 +158,8 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			JGID: res.msg[0].JGID,
 			STIME: dateformat.CheckStoreTime(res.msg[0].STIME),
 			ETIME: dateformat.CheckStoreTime(res.msg[0].ETIME),
+			// STIME: "8:00",
+			// ETIME: "20:00",
 			DKFID: "80000000",
 			DKFNAME: "默认大客户",
 		}

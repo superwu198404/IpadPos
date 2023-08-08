@@ -2442,7 +2442,7 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.pack.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(
-					item.unit, 6));
+					util.snvl(item.attribute,""), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		
@@ -2648,7 +2648,7 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText(util.getComputedByteLen("", 15) + util.getComputedByteLen(item.qty.toString(), 6) + util
 				.getComputedByteLen(item.price.toString(), 6) + util.getComputedByteLen(item.net.toString(), 6) + util.getComputedByteLen(
-					item.unit, 6));
+					util.snvl(item.attribute,""), 6));
 			jpPrinter.setPrint(); //打印并换行		
 		});
 		

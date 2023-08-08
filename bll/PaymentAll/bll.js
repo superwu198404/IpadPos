@@ -8,6 +8,7 @@ import _pay from '@/api/Pay/PaymentALL.js';
  * @param {*} trade 进行重试的订单数据集合
  */
 export const retrySinglePay = function(trade,succes,error){
+	console.log("[RetrySinglePay]单笔订单重试:",{trade,succes,error});
 	if(trade.trade.auth_code){//根据此属性判断接下来的重试是 查询，还是支付
 		trade.data.auth_code = trade.trade.auth_code;
 		trade.data.money = (Number(trade.trade.amount) * 100).toFixed(0), //这一笔的支付金额

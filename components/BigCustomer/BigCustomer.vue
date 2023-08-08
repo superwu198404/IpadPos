@@ -115,8 +115,8 @@
 					name: this.search.client_name,
 					storeid: store.KHID
 				}, util.callBind(this, function(res) {
+					console.log("[GetBigClients]查询出的大客户信息：", res);
 					this.big_customers = JSON.parse(res.data);
-					console.log("查询出的大客户信息：", res);
 					//需要注释 不然默认第一个大客户
 					// this.big_client_info = this.big_customers[0];
 					// util.simpleMsg("大客户查询成功!", false, this.big_customers);

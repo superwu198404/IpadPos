@@ -2175,6 +2175,8 @@ function GetSale(global, vue, target_name, uni) {
 			// 	that.scrollinto = that.selectFlag + that.selectPlid;
 			// 	console.log("热销定位：", that.scrollinto);
 			// })
+		} else {
+			util.simpleMsg("暂无热销商品", true);
 		}
 		that.update();
 	}
@@ -2754,12 +2756,19 @@ function GetSale(global, vue, target_name, uni) {
 	//初始化字母的列表
 	this.filterSp = function(pm_flag) {
 		this.selectFlag = pm_flag;
-		this.selectFlagList = this.Allsplist.filter(item => {
-			return item.FSTR == pm_flag
+		let arr = this.Allsplist.filter(item => {
+			return item.FSTR == pm_flag; //限制数量
 		});
-		if (this.selectFlagList.length > 0) {
-			this.selectPlid = this.selectFlagList[0].plid;
+		if (arr.length > 0) {
+			this.selectPlid = arr[0].plid;
+			arr.map(r => {
+				r.plarr = r.plarr.slice(0, 20);
+			})
+			this.selectFlagList = arr;
+		} else {
+			this.selectFlagList = [];
 		}
+		console.log("筛选出来的商品：", this.selectFlagList);
 		that.log("[FilterSp]筛选出来的长度", this.selectFlagList.length)
 		this.Page.$set(this.Page[this.pageName], "selectFlagList", this.selectFlagList);
 		this.Page.$set(this.Page[this.pageName], "selectFlag", this.selectFlag);
@@ -2814,7 +2823,7 @@ function GetSale(global, vue, target_name, uni) {
 		for (const key in object) {
 			if (object.hasOwnProperty(key)) {
 				const element = object[key]
-				if (element.PINYIN.includes(searchKey)) {
+				if (element.PINYIN && element.PINYIN.includes(searchKey)) {
 					let itemObj = {
 						FSTR: element.FSTR,
 						plid: element.plid,
