@@ -973,6 +973,7 @@ uni-button:after {
 	width: 70%;
 	background-color: #F0F9F1;
 	border-radius: 0 14rpx 14rpx 0;
+	position: relative;
 	/* display: flex;
 	white-space: nowrap; */
 }
