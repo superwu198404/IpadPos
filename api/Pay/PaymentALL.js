@@ -259,7 +259,7 @@ const _RefundAll = function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 
 /**
  * 通用支付模板
-*/
+ */
 const CommonTemplate = (current) => Object.assign({
 	PaymentAll: function(pt, body, func, catchFunc) {
 		_PaymentAll(pt, body, func, catchFunc);
@@ -617,6 +617,16 @@ var jhqPay = {
 				if (show_log) console.log("[PaymentAll]第一次查询结果（QueryPayment）:", res);
 				if (res.code && body.pay_way_list && body.pay_way_list.length > 0) { //判断是否限制了某种券不能支付
 					for (var i = 0; i < res.data.vouchers.length; i++) {
+						let newRes;
+						if (res.data.vouchers[i].yn_dhq == 'Y') { //是兑换券
+							newRes = {
+								code: false,
+								msg: "抱歉，兑换券不可核销。"
+							};
+							if (catchFunc)
+								catchFunc(newRes);
+							return newRes;
+						}
 						let obj = body.pay_way_list.find(r => r.fkid == res.data.vouchers[i].fkid);
 						if (!obj || obj.yn_use == 'N') { //支付方式不存在或者业务禁用了该支付方式
 							console.log("当前券支付限制的支付：", obj);
@@ -628,7 +638,7 @@ var jhqPay = {
 								let obj1 = FKDA_INFO.find(r => r.FKID == res.data.vouchers[i].fkid);
 								fkname = obj1.SNAME;
 							}
-							let newRes = {
+							newRes = {
 								code: false,
 								msg: "抱歉，“" + fkname + "”禁止使用！请更换其他类型券重新支付。"
 							};
@@ -1185,16 +1195,22 @@ var tiktokPay = {
 //美团券支付
 var meituanCouponPay = CommonTemplate({
 	PaymentAll: function(pt, body, func, catchFunc) {
-		console.log("[PaymentAll-美团]支付参数:",{pt,body});
+		console.log("[PaymentAll-美团]支付参数:", {
+			pt,
+			body
+		});
 		_PaymentAll(pt, body, (res) => {
-			console.log("[PaymentAll-美团]支付结果:",res);
+			console.log("[PaymentAll-美团]支付结果:", res);
 			body.money = res.data.money;
-			if(func)
+			if (func)
 				func(res)
 		}, catchFunc);
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
-		console.log("[RefundAll-美团]退款参数:",{pt,body});
+		console.log("[RefundAll-美团]退款参数:", {
+			pt,
+			body
+		});
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
 	},
 });
