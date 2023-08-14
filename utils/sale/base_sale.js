@@ -2823,7 +2823,7 @@ function GetSale(global, vue, target_name, uni) {
 		for (const key in object) {
 			if (object.hasOwnProperty(key)) {
 				const element = object[key]
-				if (element.PINYIN.includes(searchKey)) {
+				if (element.PINYIN && element.PINYIN.includes(searchKey)) {
 					let itemObj = {
 						FSTR: element.FSTR,
 						plid: element.plid,

@@ -561,7 +561,7 @@
 			<view class="head">
 				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
 					<image src="@/images/touxiang.png" mode="widthFix"></image>
-					<view class="member-account">{{ mainSale.HY.val.hyId ? (mainSale.HY.val.hyId) : "点击登录..."}}</view>
+					<view class="member-account">{{ mainSale.HY.val.hyId ? SensitiveInfoHandle(mainSale.HY.val.Phone) : "点击登录..."}}</view>
 				</view>
 				<view class="head-exit">
 					<view class="exit" @click="mainSale.dgydExit">
@@ -843,6 +843,17 @@
 			Reset: function() {
 				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale, this.mainSale
 					.mode_info.sale_cake_reserve.condition);
+			},
+			SensitiveInfoHandle(){
+				return (function(input){
+					if (!input || input.length < 6) {
+					   return input;
+					}
+					 var start = Math.floor((input.length - 4) / 2);
+					 var length = 4;
+					 var replacement = '*'.repeat(length);
+					 return input.slice(0, start) + replacement + input.slice(start + length);
+				}).bind(this)
 			},
 			Confirm: function() {
 				return (this.sale_type_infos.sale_cake_reserve.ConfirmCondition).bind(this.mainSale, this.mainSale
