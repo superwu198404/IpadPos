@@ -129,7 +129,6 @@
 			onLoad() {
 				console.log("load")
 				this.sql = "select * from sale001";
-				// this.sql = "select * from  cxformd001 where khid='K200QTD006'";
 				this.qry(this.sql);
 				console.log("默认sql:", this.sql);
 			},
