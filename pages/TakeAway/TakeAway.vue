@@ -671,7 +671,7 @@
 					return;
 				}
 				let obj = {
-					storeid: that.KHID,
+					khid: that.KHID,
 					posid: that.POSID,
 					gsid: that.GSID,
 					czyid: that.RYID,
