@@ -63,8 +63,8 @@
 									<!-- 预定提取的单展示整单金额 -->
 								</view>
 								<view class="cods">
-									<label>销售日期：{{item.SALEDATE}}</label>
-									<label>出售时间：{{item.SALETIME}}</label>
+									<label>销售日期：{{ short_date(item.SALEDATE)}}</label>
+									<label>出售时间：{{ short_time(item.SALETIME)}}</label>
 								</view>
 								<view class="cods">
 									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE,item.KQXSTYPE)}}</label>
@@ -151,6 +151,18 @@
 		name: "cdxp",
 		props: {
 			TH_DATE: "",
+		},
+		computed: {
+			short_date(){
+				return (function(datetime){
+					return datetime?.split(' ')[0] || "-";
+				}).bind(this)
+			},
+			short_time(){
+				return (function(datetime){
+					return datetime?.split(' ')[1] || "-";
+				}).bind(this)
+			}
 		},
 		components: {
 			PrinterPage
