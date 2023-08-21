@@ -208,7 +208,11 @@
 				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, that.current_data.TYPE,
 					res => {
 						if (res.code && res.msg.length > 0) {
-							that.Datas = res.msg;
+							that.Datas = res.msg.sort((p, n) => {
+								let prev = p.SALETIME ? Number(new Date(p.SALETIME)) : 0,
+									next = n.SALETIME ? Number(new Date(n.SALETIME)) : 0;
+								return next - prev;
+							});
 							if (e) {
 								util.simpleMsg("查询成功");
 							}
