@@ -105,48 +105,28 @@
 			
 			let sale02_arr1 = [
 				{
-				    "SPID": "000000001010500042",
-				    "SNAME": "火腿芝士帕尼尼",
+				    "SPID": "000000001010500185",
+				    "SNAME": "草莓桃桃冰面包",
 				    "QTY": 1,
-				    "OPRICE": 22,
+				    "OPRICE": 8.8,
 				    "DISCRATE": 0,
-				    "NET": 22,
-				    "PRICE": 22,
+				    "NET": 8.8,
+				    "PRICE": 8.8,
 				    "NO": 1
 				},
 				{
-				    "SPID": "000000001010500041",
-				    "SNAME": "红梅贝果调理面包",
-				    "QTY": 1,
-				    "OPRICE": 18,
+				    "SPID": "000000001010500187",
+				    "SNAME": "海盐芝士冰面包",
+				    "QTY": 4,
+				    "OPRICE": 8.8,
 				    "DISCRATE": 0,
-				    "NET": 18,
-				    "PRICE": 18,
+				    "NET": 30.98,
+				    "PRICE": 7.75,
 				    "NO": 2
-				},
-				{
-				    "SPID": "000000001010100029",
-				    "SNAME": "红豆吐司4片",
-				    "QTY": 1,
-				    "OPRICE": 13.8,
-				    "DISCRATE": 0,
-				    "NET": 13.8,
-				    "PRICE": 13.8,
-				    "NO": 3
-				},
-				{
-				    "SPID": "000000001010600001",
-				    "SNAME": "黄金唱片-改名TX",
-				    "QTY": 1,
-				    "OPRICE": 10.9,
-				    "DISCRATE": 0,
-				    "NET": 10.9,
-				    "PRICE": 10.9,
-				    "NO": 4
 				},
 				];
 		   
-			cxCount.Createcx(sale02_arr1, "sale",null);
+			cxCount.Createcx(sale02_arr1, "sale",hyinfoModel);
 			
 			var that = this;
 			setTimeout(() => {

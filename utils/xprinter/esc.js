@@ -2410,6 +2410,13 @@ var jpPrinter = {
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
 		
+		if(data.greeting !="" && data.greeting !=null && data.greeting!=undefined){
+			jpPrinter.setCharacterScale(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("祝福语: " + data.greeting + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}
+		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("订单备注: " + data.remark + "\n");
@@ -2615,6 +2622,13 @@ var jpPrinter = {
 		jpPrinter.setSelectJustification(0); //设置居左
 		jpPrinter.setText("-----------------------------------------------");
 		jpPrinter.setPrint(); //打印并换行
+		
+		if(data.greeting !="" && data.greeting !=null && data.greeting!=undefined){
+			jpPrinter.setCharacterScale(0); //设置正常大小
+			jpPrinter.setSelectJustification(0); //设置居左
+			jpPrinter.setText("祝福语: " + data.greeting + "\n");
+			jpPrinter.setPrint(); //打印并换行
+		}
 		
 		jpPrinter.setCharacterScale(1); //设置正常大小
 		jpPrinter.setSelectJustification(0); //设置居左

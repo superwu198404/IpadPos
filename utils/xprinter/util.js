@@ -768,6 +768,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 	var nowTime = getTime(3);
 	var posId = snvl(sale1_obj.POSID,"");
 	var note2 = snvl(sale1_obj.NOTE2,""); //平台名称。如美团外卖
+	var greeting = snvl(sale1_obj.GREETING,"");
 	
 	var bsReason = "";
 	var bsNote = "";
@@ -836,6 +837,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 		nowTime, //当前时间
 		posId,
 		newBill, //新产生的退货单号
+		greeting, //祝福语
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 
