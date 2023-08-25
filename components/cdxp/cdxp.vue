@@ -63,8 +63,8 @@
 									<!-- 预定提取的单展示整单金额 -->
 								</view>
 								<view class="cods">
-									<label>销售日期：{{item.SALEDATE}}</label>
-									<label>出售时间：{{item.SALETIME}}</label>
+									<label>销售日期：{{ short_date(item.SALEDATE)}}</label>
+									<label>出售时间：{{ short_time(item.SALETIME)}}</label>
 								</view>
 								<view class="cods">
 									<label>订单类型：{{xsTypeName(item.XSTYPE,item.BILL_TYPE,item.KQXSTYPE)}}</label>
@@ -152,6 +152,18 @@
 		props: {
 			TH_DATE: "",
 		},
+		computed: {
+			short_date(){
+				return (function(datetime){
+					return datetime?.split(' ')[0] || "-";
+				}).bind(this)
+			},
+			short_time(){
+				return (function(datetime){
+					return datetime?.split(' ')[1] || "-";
+				}).bind(this)
+			}
+		},
 		components: {
 			PrinterPage
 		},
@@ -208,7 +220,11 @@
 				_main.GetPTOrder(store.KHID, that.p_bill, that.p_date, that.current_data.TYPE,
 					res => {
 						if (res.code && res.msg.length > 0) {
-							that.Datas = res.msg;
+							that.Datas = res.msg.sort((p, n) => {
+								let prev = p.SALETIME ? Number(new Date(p.SALETIME)) : 0,
+									next = n.SALETIME ? Number(new Date(n.SALETIME)) : 0;
+								return next - prev;
+							});
 							if (e) {
 								util.simpleMsg("查询成功");
 							}

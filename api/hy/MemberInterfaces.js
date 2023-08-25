@@ -2,6 +2,10 @@ import Req from '@/utils/request.js';
 import aes from '@/utils/encrypt/encrypt.js';
 import util from '@/utils/util.js';
 import paymentAll from "@/api/Pay/PaymentALL.js"
+import common from '../../utils/common';
+import {
+	Database
+} from '../../api/common';
 
 var requestAssemble = function(loading_title = "请求中...", options) {
 	try {

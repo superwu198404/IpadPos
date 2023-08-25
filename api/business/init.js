@@ -88,6 +88,8 @@ var GetPayWay = async function(e) {
 					// 	.NOTE == r.SNAME) ? 'Y' : "N"),
 					yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME) ? 'Y' :
 						"N"),
+						yn_use: r.FKID == "ZF83" ? 'Y' : (!r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME) ? 'Y' :
+						"N")),
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
 					addtype: r.NET_ADDTYPE,

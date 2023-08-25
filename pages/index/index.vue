@@ -2,6 +2,7 @@
 	<view>
 		<view>
 			<input v-model="input.sql" />
+			<input v-model="input.ip" />
 		</view>
 		<view class="hidden-box" v-if="input.query_json">
 			<view class="hidden-box-inner">
@@ -19,6 +20,7 @@
 			<!-- <button @click="MenuPage(12)">查看轮播</button> -->
 			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
+			<button @click="ConnectDebug()">连接调试{{ input.connect.open ? "(online)" : "(offline)" }}</button>
 		</view>
 		<view v-if="false">
 			<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
@@ -102,7 +104,7 @@
 			<!-- <button @click="MenuPage(3)">返回调试</button>-->
 			<button @click="Test(2)">测试一下</button>
 			<button @click="toMainSale">主销售界面</button>
-
+			
 
 			<div v-if="view.orders.showDetail"
 				style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
@@ -177,6 +179,10 @@
 				first: true,
 				input: {
 					sql: "select * from SPDA where spid='000000008010100002'",
+					ip: "192.168.0.28:8000",
+					connect:{
+						open: false
+					},
 					fromData: {
 						PLID: "101",
 						SPID: "",
@@ -1142,6 +1148,24 @@
 			},
 			closeDB: async function() {
 				await db.get().close();
+			},
+			ConnectDebug(){
+				common.ConnectDebug(this.input.ip, this.KHID, {
+					open: (function(s){
+						console.log("[ConnectDebug]连接开启!");
+						this.input.connect.open = true;
+					}).bind(this),
+					close: (function(s){
+						console.log("[ConnectDebug]连接关闭!");
+						this.input.connect.open = false;
+					}).bind(this),
+					error: (function(s,err){
+						console.log("[ConnectDebug]连接异常!",err);
+					}).bind(this),
+					message: (function(s, msg){
+						console.log("[ConnectDebug]连接消息!",msg);
+					}).bind(this),
+				});
 			}
 		},
 		//接收上个页面传入的参数

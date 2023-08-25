@@ -385,7 +385,7 @@ var GetPayWay1 = function(e, func) {
 }
 //获取支付方式 新版 先查门店无数据再查地区
 var GetPayWay = async function(e, func) {
-	console.log("查询门店的支付方式:", e);
+	console.log("[GetPayWay]查询门店的支付方式:", e);
 	//按照地区获取
 	let sql = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
                                        F1.JK_PRINT_PATH  JK_PRINT_PATH,\
@@ -422,7 +422,7 @@ var GetPayWay = async function(e, func) {
                                         AND  k2.dqid = k1.khzid \
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
-	//按照门店获取
+	console.log("[GetPayWay]按照地区查询SQL:", sql);
 	//按照门店获取
 	let sql1 = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
 								      F1.JK_PRINT_PATH  JK_PRINT_PATH,\
@@ -459,20 +459,20 @@ var GetPayWay = async function(e, func) {
 								      AND k1.khzid ='" + e + "' \
 								ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	let arr;
-	console.log("开始查询门店付款0");
+	console.log("[GetPayWay]按照门店查询SQL:", sql1);
 	await db.get().executeQry(sql1, "查询中...", function(res) {
-		console.log("[GetPayWay]门店查询本地fkda:", res);
+		console.log("[GetPayWay]按照门店查询本地FKDA:", res);
 		arr = res;
 	});
 	if (arr && arr.msg.length == 0) {
-		console.log("开始查询地区付款1");
+		console.log("[GetPayWay]门店FKDA查询数据为空，转到查询地区下的FKDA...");
 		await db.get().executeQry(sql, "查询中...", function(res) {
-			console.log("[GetPayWay]地区查询本地fkda:", res);
+			console.log("[GetPayWay]按照地区查询本地FKDA:", res);
 			arr = res;
 		});
 	}
 	if (arr && arr.msg.length > 0) {
-		console.log("开始查询聚合付款2");
+		console.log("[GetPayWay]开始查询聚合付款...");
 		await GetPolyPayWay(e, res1 => {
 			for (var i = 0; i < arr.msg.length; i++) {
 				let obj = res1.msg.find((item) => {
@@ -486,7 +486,7 @@ var GetPayWay = async function(e, func) {
 			}
 		})
 	}
-	console.log("聚合处理后的最终FKDA：", arr);
+	console.log("[GetPayWay]聚合处理后的最终FKDA：", arr);
 	if (func) func(arr);
 }
 
@@ -764,6 +764,45 @@ var InitZFRULE = async function(e, func) {
 		console.log("支付规则数据和聚合数据初始化失败:", err);
 	});
 }
+
+//连接调试
+var ConnectDebug = async function(ip, khid, callbacks = { open: () => {}, close: () => {}, error: () => {}, message: () => {} }) {
+	var socket_task = uni.connectSocket({
+		url: `ws://${ip}/` + khid,
+		success() {
+			console.log("[ConnectDebug]连接建立成功!");
+		}
+	});
+	socket_task.onOpen(function() {
+		callbacks.open?.call(this, socket_task);
+	});
+
+	socket_task.onClose((function() {
+		callbacks.close?.call(this, socket_task);
+	}).bind(this));
+
+	socket_task.onError(function(err) {
+		callbacks.error?.call(this, socket_task, err);
+	});
+
+	socket_task.onMessage(async function(msg) {
+		let result = await SimpleLocalDML(msg.data);
+		socket_task.send({
+			data: JSON.stringify(result),
+			success() {
+				console.log("[ConnectDebug][OnMessage]消息发送成功!");
+			},
+			fail(err) {
+				console.log("[ConnectDebug][OnMessage]消息发送失败!", err);
+			},
+			complete() {
+				console.log("[ConnectDebug][OnMessage]消息发送完成!");
+			}
+		});
+		callbacks.message?.call(this, socket_task, msg);
+	});
+}
+
 //获取支付规则 旧版
 var GetZFRULE1 = async function(e, func) {
 	let sql = "select * from ZF_RULE where YN_USE ='Y' and source='Mobile_Pos'";
@@ -1004,9 +1043,9 @@ var SimpleAPIRequest = async function(options = default_request_options) {
 		await Req.asyncFuncOne(reqdata, callback, callback);
 		Loading(false);
 		if (result.code)
-			options.success.call(null,result);
+			options.success.call(null, result);
 		else
-			options.error.call(null,result);
+			options.error.call(null, result);
 		return result;
 	} catch (e) {
 		console.warn("[SimpleAPIRequest]发生异常:", e);
@@ -1073,6 +1112,18 @@ var SimpleLocalQuery = async function(table_name, filter) {
 	});
 	return result;
 }
+
+var SimpleLocalDML = async function(sql) {
+	let result = null;
+	console.log("[SimpleLocalDML]待执行的sql:", sql);
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		result = util.createdResult(true, '查询成功!', res.msg);
+	}, function(err) {
+		result = util.createdResult(false, '查询失败!');
+	});
+	console.log("[SimpleLocalDML]执行完成!");
+	return result;
+}
 var WebDBQuery = async function(sql, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.QuerySQL";
 	let reqdata = Req.resObj(true, "查询中...", {
@@ -1135,10 +1186,12 @@ export default {
 	GetPayOrRefund,
 	ResetAuthCode,
 	newFixed,
+	ConnectDebug,
 	SimpleAPIRequest,
 	TransLiteDataAsync,
 	TransLiteAsync,
 	SimpleLocalQuery,
+	SimpleLocalDML,
 	WebDBQuery,
 	WebDBExecute,
 	CheckSign,
