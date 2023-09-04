@@ -298,6 +298,26 @@ const IsEmpty = function(res){
     }
 }
 
+// 向上取整的结果
+const CeilQuantity = function(quantity) {
+  // 判断传入的值是否为空
+  if (quantity === null || quantity === undefined || quantity === '') {
+    return 0;
+  }
+
+  // 判断传入的值是否为字符串
+  if (typeof quantity === 'string') {
+    // 尝试将字符串转换为数值
+    quantity = parseFloat(quantity);
+    // 判断转换后的结果是否为有效数值
+    if (isNaN(quantity)) {
+      return 0;
+    }
+  }
+
+  return Math.ceil(quantity);
+}
+
 module.exports = {
 	getTime: getTime,
 	snvl: snvl,
@@ -317,4 +337,5 @@ module.exports = {
 	DefaultNull: DefaultNull,
 	formatDateNew: formatDateNew,
 	IsEmpty: IsEmpty,
+	CeilQuantity: CeilQuantity,
 };
