@@ -73,7 +73,7 @@
 						</picker>
 					</label>
 
-					<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM"></textarea></label>
+					<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM" placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
 				</view>
 				<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>
@@ -953,6 +953,10 @@
 						util.simpleMsg("配送地址为空", true);
 						return;
 					}
+				}
+				if (that.Order.CUSTMCOMM && util.isEmojiCharacter(that.Order.CUSTMCOMM)) {
+					util.simpleMsg("备注不允许输入表情符号等特殊字符", true);
+					return false;
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				// that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id
