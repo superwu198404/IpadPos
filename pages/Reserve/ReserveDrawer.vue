@@ -653,15 +653,19 @@
 					util.simpleMsg("电话为空", true);
 					return;
 				}
+				if (!that.ADDR.NAME) {
+					util.simpleMsg("收货人名称为空", true);
+					return;
+				}
+				if (!that.ADDR.ADDRESS) {
+					util.simpleMsg("地址信息为空", true);
+					return;
+				}
 				if (!that.ADDR.LONGITUDE && !that.ADDR.LATITUDE) {
 					console.log("[ConfirmADDR]缓存地址:", this.CatchAddress);
 					that.ADDR.ADDRESS = that.ADDR.ADDRESS ?? this.CatchAddress.address;
 					that.ADDR.LONGITUDE = this.CatchAddress.adrjd;
 					that.ADDR.LATITUDE = this.CatchAddress.adrwd;
-				}
-				if (!that.ADDR.ADDRESS) {
-					util.simpleMsg("地址信息为空", true);
-					return;
 				}
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
@@ -951,6 +955,11 @@
 				if (that.Order.THTYPE == '1' || that.Order.THTYPE == '2') {
 					if (!that.Order.CUSTMADDRESS) {
 						util.simpleMsg("配送地址为空", true);
+						return;
+					}
+					
+					if (!that.Order.NOTE2) {
+						util.simpleMsg("配送地址编码为空，请重新选择地址", true);
 						return;
 					}
 				}

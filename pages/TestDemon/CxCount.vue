@@ -103,30 +103,29 @@
 			"coupons": [ ]
 			};
 			
-			let sale02_arr1 = [
-				{
-				    "SPID": "000000001010500185",
-				    "SNAME": "草莓桃桃冰面包",
-				    "QTY": 1,
-				    "OPRICE": 8.8,
-				    "DISCRATE": 0,
-				    "NET": 8.8,
-				    "PRICE": 8.8,
-				    "NO": 1
-				},
-				{
-				    "SPID": "000000001010500187",
-				    "SNAME": "海盐芝士冰面包",
-				    "QTY": 4,
-				    "OPRICE": 8.8,
-				    "DISCRATE": 0,
-				    "NET": 30.98,
-				    "PRICE": 7.75,
-				    "NO": 2
-				},
-				];
-		   
-			cxCount.Createcx(sale02_arr1, "sale",hyinfoModel);
+			let sale02_arr = [
+								{
+									"SPID": "000000001080300008",
+									"SNAME": "樱桃诱惑12号-仟吉",
+									"QTY": 3,
+									"OPRICE": 100,
+									"DISCRATE": 0,
+									"NET": 300,
+									"PRICE": 100,
+									"NO": 1
+								},
+								{
+									"SPID": "000000001080700018",
+									"SNAME": "樱桃诱惑12号-仟吉",
+									"QTY": 3,
+									"OPRICE": 200,
+									"DISCRATE": 0,
+									"NET": 600,
+									"PRICE": 100,
+									"NO": 2
+								}
+								];
+							cxCount.Createcx(sale02_arr, "Sale",null);
 			
 			var that = this;
 			setTimeout(() => {

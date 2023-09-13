@@ -355,7 +355,6 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 			sale02_arr[i].DISCRATE = cxdiscvalue;
 			// sale02_arr[i].$DISCRATE = cxdiscvalue;
 			// util.hidePropety(sale02_arr[i], '$DISCRATE');
-
 			sale02_arr[i].CXDISC = cxdiscvalue;
 			sale02_arr[i].YN_CXDISC = (cxdiscvalue > 0 ? 'Y' : 'N');
 		}
@@ -381,10 +380,6 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 		sale02_arr[i].QTY = ProNum;
 		sale02_arr[i].PRICE = Math.round((sale02_arr[i].NET / ProNum) * 100) / 100;
 		sale02_arr[i].CXBILL = cxbillStr;
-		//不是sale02表字段，不返回
-		//sale02_arr[i].SPJF = jfnum;
-		//sale02_arr[i].CXZT = cxztStr;
-		//sale02_arr[i].HYLV = hylv;
 	}
 	if (cxfsdt != null && cxfsdt.length > 0) {
 		//修改其中的SPID编码，通过行数
@@ -471,7 +466,7 @@ const AddRowCxbilldts = async (itemid, price, qty, net, row) => {
 			cxbilldts[row].OPRICE = price;
 		}
 	}
-	console.log("cxbilldts 数据", cxbilldts);
+	//console.log("cxbilldts 数据", cxbilldts);
 }
 
 //开始计算促销的方法
@@ -578,7 +573,6 @@ const ynpastCx = function(bill) {
 	//console.log("ynpastCx dateTime",dateTime);	
 	let dateTime1 = cx_util.formatDateNew(dateTime);
 	let edate1 = cx_util.formatDateNew(mcc.EDATE);
-
 	//console.log("ynpastCx edate1",edate1);
 	//console.log("ynpastCx dateTime1",dateTime1);			
 	let dateNowNum = Date.parse(dateTime1);
@@ -607,23 +601,9 @@ const ynjsCx = function(bill) {
 		let tstart2 = mcc.Tstart2;
 		let tstart3 = mcc.Tstart3;
 
-		// console.log("ynjsCx Tstart", {
-		// 	    decnow,
-		// 		tstart1,
-		// 		tstart2,
-		// 		tstart3,
-		// });
-
 		let tstop1 = mcc.Tstop1;
 		let tstop2 = mcc.Tstop2;
 		let tstop3 = mcc.Tstop3;
-
-		// console.log("ynjsCx Tstop", {
-		// 	    decnow,
-		// 		tstop1,
-		// 		tstop2,
-		// 		tstop3,
-		// });
 		if (mcc.Tstart1 <= decnow && decnow <= mcc.Tstop1) {
 			return true;
 		}
@@ -989,20 +969,10 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 					let Spprice = 0;
 					//取出条件数量
 					let fsqty = 0;
-
-					//let ynzs = true;
-					// let zsds = getCxSql_db.cxspdaSql(spid);
-					// if (zsds != null && zsds.length > 0) {
-					// 	let iszs = cx_util.snvl(zsds[0]["YN_ZS"], "");
-					// 	if (iszs == "N") {
-					// 		ynzs = false;
-					// 	}
-					// }
-
-					let ynzs = false; //测试使用，正式注释，使用上面注释的代码
-
+					//这里判断商品是不是整数
+					let ynzs = true;
 					if (subx.ZkTj == "Qty") {
-						if (currqty >= Tjqty) //&& ynzs==true
+						if (currqty >= Tjqty)
 						{
 							fsqty = Tjqty;
 						} else {
@@ -1141,15 +1111,7 @@ const FreeZhCx = function(spid, bill, saledate, cx, pmList, qtytype) {
 				//发生数量
 				let fsqty = 0;
 				//这里判断商品是不是整数
-				// let ynzs = true;
-				// let zsds = getCxSql_db.cxspdaSql(spid);
-				// if (zsds != null && zsds.length > 0) {
-				// 	let iszs = cx_util.snvl(zsds[0]['YN_ZS'], "");
-				// 	if (iszs == "N") {
-				// 		ynzs = false;
-				// 	}
-				// }
-				let ynzs = false;
+				let ynzs = true;
 				if (cx.OneSp) {
 					fsqty = getOneSp_Num(pmList, cx, subid, currqty, Spprice);
 					if (fsqty < 0) {
