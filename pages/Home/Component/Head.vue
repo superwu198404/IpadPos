@@ -681,10 +681,23 @@
 						});
 					},
 					fail: function() {
+						// uni.showModal({
+						// 	title: "提示",
+						// 	content: "蓝牙初始化失败，请到设置打开蓝牙",
+						// 	showCancel: false
+						// });
 						uni.showModal({
-							title: "提示",
-							content: "蓝牙初始化失败，请到设置打开蓝牙",
-							showCancel: false
+							content: "蓝牙初始化失败，请在设置中开启蓝牙",
+							confirmText: '去设置',
+							cancelText: "取消",
+							success(res) {
+								if (res.confirm)
+									uni.openAppAuthorizeSetting({
+										success(res) {
+											console.log(res)
+										}
+									})
+							}
 						});
 					}
 				});

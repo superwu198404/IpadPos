@@ -1632,7 +1632,8 @@
 			//终止支付判断条件3: 判断是否是支付次数受限的支付
 			LimitPaymentChannel: function() {
 				let XZZF = util.getStorage("XZZF");
-				let pt = this.PayTypeJudgment();
+				// let pt = this.PayTypeJudgment();
+				let pt = this.currentPayType;
 				console.log("[LimitPaymentChannel]当前限制支付集合：", XZZF);
 				console.log("[LimitPaymentChannel]当前支付集合：", this.PayList);
 				console.log("[LimitPaymentChannel]当前支付类型：", pt);
