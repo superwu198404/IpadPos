@@ -44,7 +44,7 @@
 					</label> -->
 					<!-- <label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label> -->
 					<!-- <label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label> -->
-					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"></textarea></label>
+					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM" placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
 				</view>
 				<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>
@@ -441,6 +441,10 @@
 						util.simpleMsg("配送地址为空", true);
 						return false;
 					}
+				}
+				if (order.CUSTMCOMM && util.isEmojiCharacter(order.CUSTMCOMM)) {
+					util.simpleMsg("备注不允许输入表情符号等特殊字符", true);
+					return false;
 				}
 				return true;
 			},

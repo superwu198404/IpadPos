@@ -544,7 +544,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 			cxClasCompute(spid, bill, saledate, cxbill, retclssid, sysl);
 		}
 	}
-	console.log("SaleCxCreate cxbilldts new", cxbilldts);
+	// console.log("SaleCxCreate cxbilldts new", cxbilldts);
 	return cxbilldts;
 }
 
@@ -1717,10 +1717,10 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["XSBILL"] = bill;
 	dr["SPID"] = spid_dr;
 	dr["XSQTY"] = fsqty;
-	dr["OPRICE"] = price;
-	dr["ONET"] = price * fsqty;
-	dr["CXPRICE"] = newprice;
-	dr["CXNET"] = newprice * fsqty;
+	dr["OPRICE"] = util.newFloat(price);
+	dr["ONET"] = util.newFloat(price * fsqty);
+	dr["CXPRICE"] = util.newFloat(newprice);
+	dr["CXNET"] = util.newFloat(newprice * fsqty);
 	dr["CXLV"] = level + 1;
 	dr["LCM"] = PM_LCM;
 	dr[hylv] = cx.HYLV;

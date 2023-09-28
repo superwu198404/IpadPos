@@ -353,23 +353,23 @@ const utils = {
 	 * @param addDayCount 天数 可正可负
 	 **/
 	getDateStr(today, addDayCount) {
-	  var dd;
-	  if (today) {
-	    dd = new Date(today);
-	  } else {
-	    dd = new Date();
-	  }
-	  dd.setDate(dd.getDate() + addDayCount);//获取AddDayCount天后的日期 
-	  var y = dd.getFullYear();
-	  var m = dd.getMonth() + 1;//获取当前月份的日期 
-	  var d = dd.getDate();
-	  if (m < 10) {
-	    m = '0' + m;
-	  };
-	  if (d < 10) {
-	    d = '0' + d;
-	  };
-	  return y + "-" + m + "-" + d;
+		var dd;
+		if (today) {
+			dd = new Date(today);
+		} else {
+			dd = new Date();
+		}
+		dd.setDate(dd.getDate() + addDayCount); //获取AddDayCount天后的日期 
+		var y = dd.getFullYear();
+		var m = dd.getMonth() + 1; //获取当前月份的日期 
+		var d = dd.getDate();
+		if (m < 10) {
+			m = '0' + m;
+		};
+		if (d < 10) {
+			d = '0' + d;
+		};
+		return y + "-" + m + "-" + d;
 	},
 	//排序
 	compare: function(prop, sort = 'desc') {
@@ -465,6 +465,68 @@ const utils = {
 		}
 		return utils.IntervalOverlap1(arr, obj);
 	},
+	//检查是否有特殊符号
+	isEmojiCharacter: function(substring) {
+		if (substring) {
+			var a = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\@\！\!\+\$]/g);
+			if (a.test(substring))
+				return true; //有特殊符号
+			else
+				return false; //无特殊符号
+		}
+		return false;
+	},
+	//检查特殊符号和表情
+	isEmojiCharacter1: function(substring) {
+		console.log("开始校验emoji:", substring);
+		if (substring) {
+			// var reg = new RegExp("[~#^$@%&!?%*]", 'g');
+			// if (substring.match(reg)) {
+			//     return true;
+			// }//暂不检查特殊符号
+			for (var i = 0; i < substring.length; i++) {
+				var hs = substring.charCodeAt(i);
+				console.log("开始校验emoji:", hs);
+				if (0xd800 <= hs && hs <= 0xdbff) {
+					if (substring.length > 1) {
+						var ls = substring.charCodeAt(i + 1);
+						var uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+						if (0x1d000 <= uc && uc <= 0x1f77f) {
+							console.log("校验1");
+							return true;
+						}
+					}
+				}
+				//  else if (substring.length > 1) {
+				// 	var ls = substring.charCodeAt(i + 1);
+				// 	if (ls == 0x20e3) {
+				// 		console.log("校验2");
+				// 		return true;
+				// 	}
+				// } 
+				else {
+					if (0x2100 <= hs && hs <= 0x27ff) {
+						console.log("校验3");
+						return true;
+					} else if (0x2B05 <= hs && hs <= 0x2b07) {
+						console.log("校验4");
+						return true;
+					} else if (0x2934 <= hs && hs <= 0x2935) {
+						console.log("校验5");
+						return true;
+					} else if (0x3297 <= hs && hs <= 0x3299) {
+						console.log("校验6");
+						return true;
+					} else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 ||
+						hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b ||
+						hs == 0x2b50) {
+						console.log("校验7");
+						return true;
+					}
+				}
+			}
+		}
+	}
 }
 
 export default {
@@ -503,5 +565,6 @@ export default {
 	createdResult: utils.createdResult,
 	convertShortDate: utils.convertShortDate,
 	IntervalOverlap: utils.IntervalOverlap,
-	getDateStr:utils.getDateStr
+	getDateStr: utils.getDateStr,
+	isEmojiCharacter: utils.isEmojiCharacter
 }

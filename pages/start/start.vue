@@ -244,9 +244,9 @@
 						that.tx001 = Req.getResData(res);
 						// let sysinfo = util.getStorage("sysinfo");
 						let reqPosData = {
-							"khid": that.khid,
-							"posid": that.posid,
-							"passkey": that.poskey,
+							"khid": that.khid.trim(),
+							"posid": that.posid.trim(),
+							"passkey": that.poskey.trim(),
 							//"deviceId": sysinfo?.deviceId || "IPADPOS" //传入设备号 注意设备号会随着storage清除而发生改变
 						};
 						let apistr = "MobilePos_API.Utils.PosInit.reloadsqlite";
