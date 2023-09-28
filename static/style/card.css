@@ -615,10 +615,10 @@
 	display: flex;
 }
 .kainfolist label:nth-child(3){
-	color: #FE694B;
+	/* color: #FE694B; */
 }
 .kainfolist label:nth-child(3) text:nth-child(1){
-	color: #FE694B;
+	/* color: #FE694B; */
 }
 .kainfolist label text:nth-child(1){
 	display: inline-block;

@@ -72,7 +72,7 @@
 										<view class="cardinfo">
 											<view class="leftinfo">
 												<view class="card-num">
-													<label>券号：{{ default_view(form.infos.card_id,'暂无') }}</label>
+													<label>{{ identity_title }}号：{{ default_view(form.infos.card_id,'暂无') }}</label>
 													<view>
 														<em>●</em>{{ default_view(source.current_type_info ? source.current_type_info.text : '') }}
 													</view>
@@ -130,8 +130,20 @@
 								<label v-if="form.infos.spend_amount">
 									<text>消费金额：</text><text>￥{{ default_view(form.infos.spend_amount, 0) }}</text>
 								</label>
+								<label v-if="form.infos.brand">
+									<text>品牌：</text><text>{{ default_view(form.infos.brand) }}</text>
+								</label>
 								<label v-if="form.infos.operator">
 									<text>操作员：</text><text>{{ default_view(form.infos.operator) }}</text>
+								</label>
+								<label v-if="form.infos.salesman">
+									<text>销售员：</text><text>{{ default_view(form.infos.salesman) }}</text>
+								</label>
+								<label v-if="form.infos.materiel_id">
+									<text>物料号：</text><text>{{ default_view(form.infos.materiel_id) }}</text>
+								</label>
+								<label v-if="form.infos.init_balance">
+									<text>初始面额：</text><text>{{ default_view(form.infos.init_balance) }}</text>
 								</label>
 								<label v-if="show_not_more_infos">
 									暂无更多信息...
@@ -161,6 +173,9 @@
 			Head
 		},
 		computed: {
+			identity_title(){
+				return this.source.current_type_info?.text?.slice(-1) || "编";
+			},
 			default_view() {
 				return $(function(v, def_val = '暂无更多信息...') {
 					if (v)

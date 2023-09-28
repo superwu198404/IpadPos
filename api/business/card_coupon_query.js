@@ -6,6 +6,7 @@ import bd from '@/utils/business_dictionary.js';
 const infos_template = {
 		type_name: '',//类型名称
 		balance: 0,//余额
+		init_balance: 0,//初始余额
 		status: '',//状态
 		coupon_denomination: 0,//券面额
 		card_id: '',//卡号
@@ -22,7 +23,10 @@ const infos_template = {
 		use_store_id: '',//使用门店id
 		use_store_name: '',//使用门店
 		spend_amount: '',//消费金额
+		brand: '',//品牌
+		materiel_id: '',//物料号
 		operator: '',//操作员
+		salesman: '',//销售员
 		//下面的是额外的信息，和卡券基本信息无关，用于一些特殊的控制
 		show_balance: true,//是否显示余额 注：实体卡未激活不显示余额
 	};
@@ -95,7 +99,11 @@ export default {
 							card_id: data,
 							valid_date: util.convertShortDate(result.data.expireDate),
 							status: bd.card_status[result.data.status] || "",
-							show_balance: result.data.status != 'Z007'//卡未激活
+							show_balance: result.data.status != 'Z007',//卡未激活
+							salesman: result.data.saleUserName || "",
+							materiel_id: result.data.materielId || "",
+							brand: result.data.brandId || "",
+							init_balance: result.data.amount
 						});
 						console.log("[Search]处理后的卡信息:",infos);
 						return util.createdResult(true,result.msg,infos);
