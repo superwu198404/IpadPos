@@ -1098,7 +1098,7 @@ var pinoPay = {
 				console.log("[RefundAll]第一次结果（QueryPayment）:", res);
 				console.log("[RefundAll]准备被退款的渠道单号:", body.point);
 				return CreateData(pt, "退款中...", "Refund", {
-					out_refund_no: body.point, //品诺渠道单号
+					out_refund_no: body.point || res.data.point, //品诺渠道单号
 					posid: body.out_refund_no, //品诺渠道单号
 				});
 			}
