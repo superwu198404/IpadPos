@@ -54,6 +54,7 @@ export const PayDataAssemble = function() {
 		// discountable_amount: (Number(this.ZFBZK) * 100).toFixed(0), //支付宝折扣金额（只有支付宝才有噢）
 		discountable_amount: zfb_disc,
 		verification_goods: this.verification_goods,//核销过的商品id，针对抖音券同种商品对应券只能核销一次的问题
+		record: this.record,//记录字段
 		product_info: this.Products.map(i => { //商品清单
 			return {
 				spid: i.SPID,

@@ -473,6 +473,7 @@
 				allow_debt_excess: false, //设置是否允许超过待支付金额进行支付
 				cash_change_tips: true,
 				cash_sum: 0,
+				record: null,
 			}
 		},
 		watch: {
@@ -1458,7 +1459,6 @@
 								this.CashOffset.Score = 0;
 								this.CashOffset.Money = 0;
 							}
-
 							console.log("[Payment-付款]支付结果：", result);
 							util.simpleMsg("支付成功!");
 							this.UpdateHyInfo(result.data); //更新会员信息
@@ -1681,6 +1681,7 @@
 					console.log("[OrderGenarator]支付失败请求...");
 					this.FailOrderGenerator(payload, result, fail, type_info, other_info);
 				}
+				this.record = result?.record;//记录
 				this.yPayAmount += paid_amount;
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -1810,7 +1811,9 @@
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON',
 					'PINNUO',
-					'DouYinJK', 'JUBAOPEN'
+					'DouYinJK', 
+					'JUBAOPEN',
+					'ZFBTGQ'
 				].includes(i.type)).map(i => i.fkid);
 				return get_need_save_id.includes(fkid);
 			},
@@ -2412,6 +2415,7 @@
 							}, (function(err) { //如果发生异常（catch）
 								// catch code...
 								this.in_payment = false;
+								singleRefund.loading = false; //关闭加载样式
 							}).bind(this),
 							(function(res) { //执行完毕（finally），退款次数 +1
 								this.in_payment = false;
