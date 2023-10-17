@@ -468,7 +468,7 @@ const utils = {
 	//检查是否有特殊符号
 	isEmojiCharacter: function(substring) {
 		if (substring) {
-			var a = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\@\！\!\+\$]/g);
+			var a = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\？\?\<\>\(\)\（\）\。\，\-\——\=\;\@\！\!\+\$\s+\%\&]/g);
 			if (a.test(substring))
 				return true; //有特殊符号
 			else
