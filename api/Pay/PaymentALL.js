@@ -1215,6 +1215,52 @@ var meituanCouponPay = CommonTemplate({
 	},
 });
 
+//支付宝团购券支付
+var zfbtgqPay = CommonTemplate({
+	PaymentAll: function(pt, body, func, catchFunc) {
+		console.log("[PaymentAll-支付宝团购券]支付参数:", {
+			pt,
+			body
+		});
+		_Payment(pt, body, (res) => {
+			console.log("[PaymentAll-支付宝团购券]支付成功，支付数据:", {
+				pt,
+				body,
+				res
+			});
+			body.money = res.data.money;
+			if(func)
+				func(res);
+		}, (err) => {
+			console.warn("[PaymentAll-支付宝团购券]支付失败，支付数据:", {
+				pt,
+				body,
+				err
+			});
+			body.money = err?.data?.money || 0;
+			if(catchFunc)
+				catchFunc(err);
+		});
+	},
+	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
+		console.log("[RefundAll-支付宝团购券]退款参数:", {
+			pt,
+			body
+		});
+		_Refund(pt, body, (res) => {
+			if(resultsFunc)
+				resultsFunc([,res]);
+			if(finallyFunc)
+				finallyFunc(res);
+		}, (err) => {
+			if(catchFunc)
+				catchFunc(err);
+			if(finallyFunc)
+				finallyFunc(err);
+		});
+	},
+});
+
 //根据支付类型反射支付方式
 var payType = {
 	// 108使用
@@ -1241,6 +1287,7 @@ var payType = {
 	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
 	DouYinJK: tiktokPay, //抖音团购券（联机）支付
+	ZFBTGQ: zfbtgqPay,//支付宝团购券支付
 	//2023-5-22 新增美团券支付
 	JUBAOPEN: meituanCouponPay, //美团券支付
 }
