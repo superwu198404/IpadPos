@@ -1237,7 +1237,7 @@ var zfbtgqPay = CommonTemplate({
 				body,
 				err
 			});
-			body.money = err?.data?.money || 0;
+			// body.money = err?.data?.money || 0;
 			if(catchFunc)
 				catchFunc(err);
 		});

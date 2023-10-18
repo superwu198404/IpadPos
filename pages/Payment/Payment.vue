@@ -788,7 +788,7 @@
 							.disc || 0, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
-						AUTH: item.auth, //交易号
+						AUTH: item.auth || item.origin?.AUTH, //交易号
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
@@ -1229,7 +1229,7 @@
 					console.log("[Refund]退款payWayType:", payObj.api)
 					console.log("[Refund]groups:", groups);
 					let total = 0;
-					if (refundInfo.group) { //判断当前支付是否包含唯一码
+					if (refundInfo.group && !['ZFBTGQ'].includes(payObj.api)) { //判断当前支付是否包含唯一码，部分支付不进如这个判断，避免退款失败
 						refundInfo = groups[refundInfo.group][0]; //获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
 						groups[refundInfo.group].map(r => {
 							total += Number(r.amount); //聚合多卡支付的总金额
@@ -1526,8 +1526,7 @@
 					real_debt: this.toBePaidPrice(),
 					cash_offset: this.CashOffset
 				});
-				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset
-					.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
 					util.simpleMsg("积分抵现不允许超额支付!", true);
 					return false;
 				} else {
@@ -1539,10 +1538,7 @@
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(),
-						this
-						.LimitPaymentChannel(), this.ScoreDiscount()
-					]));
+					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(),this.LimitPaymentChannel(), this.ScoreDiscount()]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
 					return !results.every(result => result == true);
@@ -1681,7 +1677,7 @@
 					console.log("[OrderGenarator]支付失败请求...");
 					this.FailOrderGenerator(payload, result, fail, type_info, other_info);
 				}
-				this.record = result?.record;//记录
+				this.record = result?.record || this.record;//记录
 				this.yPayAmount += paid_amount;
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -2468,6 +2464,7 @@
 						auth_code: info.auth_code,
 						store_id: this.KHID,
 						trade_no,
+						record: this.record,//记录字段
 						data
 					}, (function(res) {
 						this.in_payment = false;
@@ -2490,8 +2487,7 @@
 							.transaction_id; //记住authcode
 						info.zklx = data?.disc_type || type_info.zklx ||
 							""; //23-6-25新增 type_info.zklx 项，用于实体卡支付返回实体卡支付折扣信息
-						info.amount = (data?.money || 0) /
-							100; //重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
+						info.amount = ((data?.money || 0) / 100).toFixed(2); //重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
 						info.auth = data.transaction_id //交易号 用于多卡退款时的分组依据
 						info.user_id = (data?.open_id || data?.hyid) ?? "";
 						info.id_type = data?.card_type ||
