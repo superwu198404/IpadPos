@@ -453,7 +453,7 @@ var loadSaleSP = {
 					 0 ynAddPro,'' addlist  \
 	                 FROM SPDA S1,SPKHDA SM,PLDA \
 					WHERE S1.SPID =SM.SPID AND PLDA.PLID=SM.ZLID  \
-			    AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  \
+			    AND SM.YN_XS='Y'  AND  S1.SPJGZ IN ('01','02')  AND S1.PLID<>'11201'  \
 			    AND ifnull(S1.yn_xpdg,'N') ='N'  AND S1.SPJGZ IS NOT NULL  AND SM.KHID ='" + pm_storeid + "' \
 			    AND not exists(select 1 from spda_dgxl where  spda_dgxl.spid = SM.SPID) \
 				AND not exists(select 1 from SPDOWNQT where  SPDOWNQT.spid = SM.SPID AND SPDOWNQT.KHID ='" + pm_storeid + "' ) \
