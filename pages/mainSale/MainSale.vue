@@ -1088,6 +1088,7 @@
 				}));
 			}
 		},
+		
 		created() {
 			let default_visible = util.getStorage('default-visible-template');
 			if (default_visible) {
