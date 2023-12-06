@@ -1221,115 +1221,149 @@
 					console.log("[Refund]检查出不受支持的支付类型...", check_result);
 					return;
 				}
-				//遍历 RefundList 发起退单请求
-				this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
-					let payObj = this.PayWayList.find(i => i.fkid == refundInfo.fkid);
-					let current_refund_exists_only_code = false; //当前退款是否包含唯一码
-					console.log("[Refund]退款fkid:", refundInfo.fkid)
-					console.log("[Refund]退款payWayType:", payObj.api)
-					console.log("[Refund]groups:", groups);
-					let total = 0;
-					if (refundInfo.group && !['ZFBTGQ'].includes(payObj.api)) { //判断当前支付是否包含唯一码，部分支付不进如这个判断，避免退款失败
-						refundInfo = groups[refundInfo.group][0]; //获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
-						groups[refundInfo.group].map(r => {
-							total += Number(r.amount); //聚合多卡支付的总金额
-						})
-						// refundInfo.amount = total.toFixed(2);
-						total = total.toFixed(2);
-						console.log("refundInfo:", refundInfo);
-						current_refund_exists_only_code = true;
-					}
-					console.log("[Refund]退款单据信息:", refundInfo);
-					//如果是预定金、现金（如果为0）门店赊销，直接跳过
-					if (['ZG03', 'ZF01', 'ZG01', 'ZCV1'].indexOf(refundInfo.fkid) !== -1) {
-						if (current_refund_exists_only_code) { //是否带唯一码
-							groups[refundInfo.group].forEach(g => g.fail = false);
+				//退款成功的
+				let succArr = this.RefundList.filter(i => !i.fail && i.refund_num != 0 && !i.refunding && i.show);
+				//退款失败的
+				let failArr = this.RefundList.filter(i => i.fail && i.refund_num != 0 && !i.refunding && i.show);
+
+				//有退款失败的且支付方式选择了手工退款(ZG02商户不一定)的 直接走手工退款操作
+				if (failArr.length > 0 && this.currentPayType == 'ZG02') {
+					console.log("开始进行手工退款操作：", failArr);
+					console.log("开始进行手工退款操作1：", this.currentPayInfo);
+					let obj = failArr.find((r, i) => i == 0); //随便找一个
+					obj.fkid = this.currentPayInfo.fkid;
+					obj.bill = obj.bill.split('_')[0] + '_' + succArr.length; //重新生成单号
+					obj.name = this.currentPayInfo.name;
+					obj.amount = Math.abs(Number(this.refundView.debtAmount));
+					obj.no = succArr.length;
+					obj.fail = false;
+					obj.pay_num = 0;
+					obj.refund_num = 1;
+					obj.paying = false;
+					obj.refunding = false;
+					obj.show = true;
+					obj.loading = false;
+					obj.exactly = true;
+					obj.msg = "";
+					obj.origin = null;
+					console.log("手工退款记录：", obj);
+					succArr.push(obj);
+					this.RefundList = succArr; //替换所有记录。
+				} else {
+					//自动退款
+					//遍历 RefundList 发起退单请求
+					this.RefundList.filter(i => i.fail).forEach((function(refundInfo, index) {
+						let payObj = this.PayWayList.find(i => i.fkid == refundInfo.fkid);
+						let current_refund_exists_only_code = false; //当前退款是否包含唯一码
+						console.log("[Refund]退款fkid:", refundInfo.fkid)
+						console.log("[Refund]退款payWayType:", payObj.api)
+						console.log("[Refund]groups:", groups);
+						let total = 0;
+						//判断当前支付是否包含唯一码，部分支付不进如这个判断，避免退款失败
+						if (refundInfo.group && !['ZFBTGQ'].includes(payObj.api)) {
+							//获取此唯一码组的第一条数据（第一条数据的单号默认为退款的原单号）
+							refundInfo = groups[refundInfo.group][0];
+							groups[refundInfo.group].map(r => {
+								total += Number(r.amount); //聚合多卡支付的总金额
+							})
+							// refundInfo.amount = total.toFixed(2);
+							total = total.toFixed(2);
+							console.log("refundInfo:", refundInfo);
+							current_refund_exists_only_code = true;
 						}
-						console.log("[Refund]跳过接口调用...");
-						if (!(refundInfo.fkid === cash_info.FKID && Number(refundInfo.amount) !==
-								0)) { //如果为现金且金额不为 0
-							refundInfo.fail = false;
-							promises.push(Promise.resolve())
+						console.log("[Refund]退款单据信息:", refundInfo);
+						//如果是预定金、现金（如果为0）门店赊销，直接跳过
+						if (['ZG03', 'ZF01', 'ZG01', 'ZCV1'].indexOf(refundInfo.fkid) !== -1) {
+							if (current_refund_exists_only_code) { //是否带唯一码
+								groups[refundInfo.group].forEach(g => g.fail = false);
+							}
+							console.log("[Refund]跳过接口调用...");
+							if (!(refundInfo.fkid === cash_info.FKID && Number(refundInfo.amount) !==
+									0)) { //如果为现金且金额不为 0
+								refundInfo.fail = false;
+								promises.push(Promise.resolve())
+								return;
+							}
+						}
+						if (!refundInfo.fail && refundInfo.refunding) {
+							console.log("[Refund]跳出当前循环...");
 							return;
 						}
-					}
-					if (!refundInfo.fail && refundInfo.refunding) {
-						console.log("[Refund]跳出当前循环...");
-						return;
-					}
-					if (payObj) {
-						if (!isRetry) { //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
-							refundInfo.fail = false;
-						}
-						refundInfo.refunding = true; //标记为正在退款的状态
-						let res = new Promise(util.callBind(this, function(resolve, reject) {
-							this.in_payment = true;
-							console.log("[Refund]加载框打开...", {
-								pay_type: payObj.type
-							});
-							_pay.RefundAll(payObj.api, {
-									out_trade_no: refundInfo.bill, //单号
-									out_refund_no: refund_no + `_${index}`, //退款单号
-									refund_money: (Math.abs(Number(total || refundInfo
-										.amount) * 100)).toFixed(0), //退款金额
-									total_money: (Math.abs(Number(total || refundInfo
-										.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
-									point: refundInfo.origin.BMID, //兼容积分抵现返还积分
-									auth_code: refundInfo.origin
-										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_company_id: this.SALES.sale1
-										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_store_id: this.SALES.sale1
-										.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
-									original_area_id: this.SALES.sale1
-										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
-									store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
-									card_no: refundInfo.origin
-										.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
-									deviceno: refundInfo.origin
-										.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
-									ywtype: this
-										.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
-								}, (function(err) { //如果发生异常（catch）
-									// util.simpleMsg(err.msg, true, err);
-									refundInfo.fail = true;
-									resolve(); //结束状态
-									console.log("[Refund-退款]退款失败:", err);
-									if (err.msg)
-										util.simpleModal("退款失败", err.msg);
-								}).bind(that),
-								(function(res) { //执行完毕（finally），退款次数 +1
-									console.log("[Refund-退款]Finally:", res);
-									refundInfo.refund_num += 1; //发起请求默认加1
-									refundInfo.refunding = false; //标记为已经结束退款操作
-									this.RefundList = Object.assign([], this
-										.RefundList) //刷新视图
-									resolve(); //结束状态
-								}).bind(that),
-								(function(ress) { //执行完毕（results），根据结果判断
-									console.log("[Refund-退款]Results:", ress);
-									if (!ress[1]
-										.code) { //如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+						if (payObj) {
+							if (!isRetry) { //开始默认为退款成功（只包含首次退款的，如果是第二次尝试则默认为原有状态，也就是false）
+								refundInfo.fail = false;
+							}
+							refundInfo.refunding = true; //标记为正在退款的状态
+							let res = new Promise(util.callBind(this, function(resolve, reject) {
+								this.in_payment = true;
+								console.log("[Refund]加载框打开...", {
+									pay_type: payObj.type
+								});
+								_pay.RefundAll(payObj.api, {
+										out_trade_no: refundInfo.bill, //单号
+										out_refund_no: refund_no + `_${index}`, //退款单号
+										refund_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100)).toFixed(0), //退款金额
+										total_money: (Math.abs(Number(total || refundInfo
+											.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
+										point: refundInfo.origin.BMID, //兼容积分抵现返还积分
+										auth_code: refundInfo.origin
+											.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+										original_company_id: this.SALES.sale1
+											.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+										original_store_id: this.SALES.sale1
+											.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+										original_area_id: this.SALES.sale1
+											.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
+										store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
+										card_no: refundInfo.origin
+											.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+										deviceno: refundInfo.origin
+											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
+										ywtype: this
+											.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+									}, (function(err) { //如果发生异常（catch）
+										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
-										refundInfo.msg = ress[1].msg; //错误提示信息记录
-									} else {
-										refundInfo.fail = false;
-										if (current_refund_exists_only_code) { //是否带唯一码
-											groups[refundInfo.group].forEach(g => g
-												.fail = false);
-											console.log("groups[refundInfo.group]",
-												groups[refundInfo.group]);
+										resolve(); //结束状态
+										console.log("[Refund-退款]退款失败:", err);
+										if (err.msg)
+											util.simpleModal("退款失败", err.msg);
+									}).bind(that),
+									(function(res) { //执行完毕（finally），退款次数 +1
+										console.log("[Refund-退款]Finally:", res);
+										refundInfo.refund_num += 1; //发起请求默认加1
+										refundInfo.refunding = false; //标记为已经结束退款操作
+										this.RefundList = Object.assign([], this
+											.RefundList) //刷新视图
+										resolve(); //结束状态
+									}).bind(that),
+									(function(ress) { //执行完毕（results），根据结果判断
+										console.log("[Refund-退款]Results:", ress);
+										//如果第二个回调退款结果异常，那么把当前退款标记为失败，否则标记为成功
+										if (!ress[1].code) {
+											refundInfo.fail = true;
+											console.warn("退款成功示例：", refundInfo);
+											refundInfo.msg = ress[1].msg; //错误提示信息记录
+										} else {
+											refundInfo.fail = false;
+											if (current_refund_exists_only_code) { //是否带唯一码
+												groups[refundInfo.group].forEach(g => g
+													.fail = false);
+												console.log("groups[refundInfo.group]",
+													groups[refundInfo.group]);
+											}
 										}
-									}
-									resolve(); //结束状态
-								}).bind(that));
-						}));
-						promises.push(res)
-					} else {
-						util.simpleMsg("支付方式不存在!", true);
-						if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
-					}
-				}).bind(this));
+										resolve(); //结束状态
+									}).bind(that));
+							}));
+							promises.push(res)
+						} else {
+							util.simpleMsg("支付方式不存在!", true);
+							if (this.RefundList.length === 0) this.CanBack = true; //锁定退出
+						}
+					}).bind(this));
+				}
 				console.log("[Refund]等待退款队列请求执行完毕...");
 				Promise.all(promises).then(util.callBind(this, function(res) {
 					console.log("[Refund]RefundList-After:", this.RefundList);
@@ -1526,7 +1560,8 @@
 					real_debt: this.toBePaidPrice(),
 					cash_offset: this.CashOffset
 				});
-				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
+				if (this.currentPayType === "HyJfExchange" && this.toBePaidPrice() < this.CashOffset
+					.Money) { //如果是用的积分抵现，则修改为当前可用的积分上限进行支付（对应金额，且不能修改）
 					util.simpleMsg("积分抵现不允许超额支付!", true);
 					return false;
 				} else {
@@ -1538,7 +1573,9 @@
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(),this.LimitPaymentChannel(), this.ScoreDiscount()]));
+					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this
+						.LimitPaymentChannel(), this.ScoreDiscount()
+					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
 					return !results.every(result => result == true);
@@ -1677,7 +1714,7 @@
 					console.log("[OrderGenarator]支付失败请求...");
 					this.FailOrderGenerator(payload, result, fail, type_info, other_info);
 				}
-				this.record = result?.record || this.record;//记录
+				this.record = result?.record || this.record; //记录
 				this.yPayAmount += paid_amount;
 				this.PayList = Object.assign([], this.PayList);
 			},
@@ -1807,7 +1844,7 @@
 			IsSaveAuthCode: function(fkid) {
 				let get_need_save_id = util.getStorage('PayWayList').filter(i => ['JHQ', 'COUPON',
 					'PINNUO',
-					'DouYinJK', 
+					'DouYinJK',
 					'JUBAOPEN',
 					'ZFBTGQ'
 				].includes(i.type)).map(i => i.fkid);
@@ -2464,7 +2501,7 @@
 						auth_code: info.auth_code,
 						store_id: this.KHID,
 						trade_no,
-						record: this.record,//记录字段
+						record: this.record, //记录字段
 						data
 					}, (function(res) {
 						this.in_payment = false;
@@ -2487,7 +2524,8 @@
 							.transaction_id; //记住authcode
 						info.zklx = data?.disc_type || type_info.zklx ||
 							""; //23-6-25新增 type_info.zklx 项，用于实体卡支付返回实体卡支付折扣信息
-						info.amount = ((data?.money || 0) / 100).toFixed(2); //重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
+						info.amount = ((data?.money || 0) / 100).toFixed(
+							2); //重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
 						info.auth = data.transaction_id //交易号 用于多卡退款时的分组依据
 						info.user_id = (data?.open_id || data?.hyid) ?? "";
 						info.id_type = data?.card_type ||
