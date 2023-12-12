@@ -1229,7 +1229,7 @@ var zfbtgqPay = CommonTemplate({
 				res
 			});
 			body.money = res.data.money;
-			if(func)
+			if (func)
 				func(res);
 		}, (err) => {
 			console.warn("[PaymentAll-支付宝团购券]支付失败，支付数据:", {
@@ -1238,7 +1238,7 @@ var zfbtgqPay = CommonTemplate({
 				err
 			});
 			// body.money = err?.data?.money || 0;
-			if(catchFunc)
+			if (catchFunc)
 				catchFunc(err);
 		});
 	},
@@ -1247,15 +1247,17 @@ var zfbtgqPay = CommonTemplate({
 			pt,
 			body
 		});
+		body.memo = body.point;//重构团购券商品id
+		body.refund_money = util.newFloat(body.refund_money - body.discountable_amount * 100); //减去折扣金额
 		_Refund(pt, body, (res) => {
-			if(resultsFunc)
-				resultsFunc([,res]);
-			if(finallyFunc)
+			if (resultsFunc)
+				resultsFunc([, res]);
+			if (finallyFunc)
 				finallyFunc(res);
 		}, (err) => {
-			if(catchFunc)
+			if (catchFunc)
 				catchFunc(err);
-			if(finallyFunc)
+			if (finallyFunc)
 				finallyFunc(err);
 		});
 	},
@@ -1287,7 +1289,7 @@ var payType = {
 	COUPON: kbPay, //可伴电子券支付
 	NOPAY: noPay, //不走接口的支付方式
 	DouYinJK: tiktokPay, //抖音团购券（联机）支付
-	ZFBTGQ: zfbtgqPay,//支付宝团购券支付
+	ZFBTGQ: zfbtgqPay, //支付宝团购券支付
 	//2023-5-22 新增美团券支付
 	JUBAOPEN: meituanCouponPay, //美团券支付
 }

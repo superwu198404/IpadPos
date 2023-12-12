@@ -166,7 +166,7 @@ export const Sale3Model = function(init = sale3_def) {
 		user_id: "", //*支付宝微信独有 用户id 
 		is_free: "", //*卡券独有 是否是赠券
 		card_no: "" ,//*卡券独有卡券号码
-		point: 0, //积分数（积分抵现）
+		point: 0, //积分数（积分抵现）或者 ||存储支付宝侧商品id（支付宝团购券 ）
 		auth_code: "", //*支付宝微信，其他的不知道
 	}, init)
 }
