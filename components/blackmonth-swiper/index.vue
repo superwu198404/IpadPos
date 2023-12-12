@@ -1,19 +1,19 @@
 <template>
 	<view>
-		<!-- @touchstart="startMove" @touchend="endMove" -->
+		 <!-- @touchstart="startMove" @touchend="endMove" -->
 		<swiper class="swiperPanel" previous-margin='28px' next-margin='28px' @change="change" circular="true">
-			<swiper-item class="swiperItem" v-for="(item, index) in swiperList" :key="index" @click="ChooseCake(item)">
+			<swiper-item class="swiperItem" v-for="(item, index) in swiperList" :key="index"				
+				@click="ChooseCake(item)">
 				<view class="children" :class="index == currentIndex?'animationData':''">
 					<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
 					<image class="pic" :src="item.img" mode="widthFix" @error="imgerr($event,index)"></image>
 					<view class="products">
-						<view class="names">{{item.SNAME}}({{index+1+"/"+swiperList.length}})
-							<!-- <text class="price">￥145</text> -->
+						<view class="names">{{item.SNAME}} <!-- <text class="price">￥145</text> -->
 						</view>
 						<text>{{item.note}}</text>
 					</view>
 				</view>
-			</swiper-item>
+			</swiper-item >
 		</swiper>
 	</view>
 </template>
@@ -59,7 +59,7 @@
 				swiperList: [],
 				// P_URL: "http://58.19.103.220:8805/CakeImage/"
 				P_URL: "",
-				currentIndex: 0,
+				currentIndex:0,
 				animationData: {},
 				animationData2: {},
 			};
@@ -104,57 +104,57 @@
 				// 	}
 				// }
 			},
-			change(e) {
+			change(e){
 				this.currentIndex = e.detail.current
 			},
-			// 	startMove(e) {
-			// 		this.slideNote.x = e.changedTouches[0] ? e.changedTouches[0].pageX : 0;
-			// 		this.slideNote.y = e.changedTouches[0] ? e.changedTouches[0].pageY : 0;
-			// 	},
-			// 	endMove(e) {
-			// 		var newList = JSON.parse(JSON.stringify(this.itemStyle))
+		// 	startMove(e) {
+		// 		this.slideNote.x = e.changedTouches[0] ? e.changedTouches[0].pageX : 0;
+		// 		this.slideNote.y = e.changedTouches[0] ? e.changedTouches[0].pageY : 0;
+		// 	},
+		// 	endMove(e) {
+		// 		var newList = JSON.parse(JSON.stringify(this.itemStyle))
 
-			// 		console.log("滑动数据：", );
-			// 		let touchCode = e.changedTouches[0].pageX - this.slideNote.x;
-			// 		if (touchCode == 0) {
-			// 			//说明是点击事件
-			// 			console.log("点击事件");
-			// 			return;
-			// 		}
-			// 		if (touchCode < 0) {
-			// 			// 向左滑动
-			// 			var last = [newList.pop()]
-			// 			newList = last.concat(newList)
-			// 		} else {
-			// 			// 向右滑动
-			// 			newList.push(newList[0])
-			// 			newList.splice(0, 1)
-			// 		}
-			// 		console.log("滑动集合：", newList);
-			// 		this.itemStyle = newList
-			// 	}
-
+		// 		console.log("滑动数据：", );
+		// 		let touchCode = e.changedTouches[0].pageX - this.slideNote.x;
+		// 		if (touchCode == 0) {
+		// 			//说明是点击事件
+		// 			console.log("点击事件");
+		// 			return;
+		// 		}
+		// 		if (touchCode < 0) {
+		// 			// 向左滑动
+		// 			var last = [newList.pop()]
+		// 			newList = last.concat(newList)
+		// 		} else {
+		// 			// 向右滑动
+		// 			newList.push(newList[0])
+		// 			newList.splice(0, 1)
+		// 		}
+		// 		console.log("滑动集合：", newList);
+		// 		this.itemStyle = newList
+		// 	}
+		
 		},
-		computed: {
+		computed:{
 			stretch() {
-				var animation = uni.createAnimation({
-					duration: 400,
-					timingFunction: 'ease',
-				})
-				animation.scale(1).step()
-				this.animationData = animation.export()
-			},
-			// 展开
-			shrink(h) {
-				var animation2 = uni.createAnimation({
-					duration: 400,
-					timingFunction: 'ease',
-				})
-				animation2.scale(0.9).step()
-				this.animationData2 = animation2.export()
-			},
+					   var animation = uni.createAnimation({
+					     duration: 400,
+					     timingFunction: 'ease',
+					   })
+					   animation.scale(1).step()
+					   this.animationData =  animation.export()
+					 },
+					 // 展开
+					 shrink(h) {
+					    var animation2 = uni.createAnimation({
+					      duration: 400,
+					      timingFunction: 'ease',
+					    })
+					    animation2.scale(0.9).step()
+					    this.animationData2 =  animation2.export()
+				},		
 		}
-
+	
 	}
 </script>
 
@@ -166,11 +166,9 @@
 		// overflow: hidden;
 		position: relative;
 	}
-
-	.swiper-wrapper {
-		overflow: inherit;
-	}
-
+.swiper-wrapper{
+	overflow: inherit;
+}
 	.swiperItem {
 		height: 99%;
 		width: 99%;
@@ -196,12 +194,10 @@
 		opacity: 0.7;
 		transform: scale(0.98);
 	}
-
-	.animationData {
-		opacity: 1;
-		transform: scale(1);
-	}
-
+.animationData{
+	opacity: 1;
+	transform: scale(1);
+}
 	.children .logo {
 		position: absolute;
 		top: 16rpx;
@@ -219,7 +215,6 @@
 		width: 100%;
 		border-radius: 20rpx;
 	}
-
 	.children .products {
 		position: absolute;
 		bottom: 0;

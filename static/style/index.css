@@ -100,7 +100,9 @@ em{
 	display:flex;
 	justify-content: space-between;
 	align-items: center;
-	max-width:89%;
+	max-width:88%;
+	white-space: nowrap;
+	overflow: auto;
 	}
 	@keyframes classy { 
 			0%{
