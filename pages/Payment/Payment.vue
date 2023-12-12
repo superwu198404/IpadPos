@@ -1113,7 +1113,7 @@
 							fkid: i.FKID,
 							bill: `${that.SALES.sale1.XS_BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-							amount: Number(i.AMT).toFixed(2),
+							amount:util.newFloat(i.AMT),
 							no: i.NO,
 							group: i.AUTH,
 							origin: i
@@ -1306,7 +1306,7 @@
 											.amount) * 100)).toFixed(0), //退款金额
 										total_money: (Math.abs(Number(total || refundInfo
 											.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
-										point: refundInfo.origin.BMID, //兼容积分抵现返还积分
+										point: refundInfo.origin.BMID, //兼容积分抵现返还积分 和支付宝团购券
 										auth_code: refundInfo.origin
 											.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_company_id: this.SALES.sale1
@@ -1321,7 +1321,8 @@
 										deviceno: refundInfo.origin
 											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
 										ywtype: this
-											.BILL_TYPE // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+											.BILL_TYPE, // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+										discountable_amount:refundInfo.origin.DISC //折扣金额 支付宝团购券使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
@@ -1799,8 +1800,7 @@
 									card_no: coupon?.no,
 									no: payload.no,
 									excess: excess_amount, //找零金额
-									auth: result
-										.transaction_id //交易号 用于多卡退款时的分组依据
+									auth: result.transaction_id, //交易号 用于多卡退款时的分组依据
 								}, result, type_info));
 							payload.no++;
 						} catch (e) {
@@ -1858,6 +1858,12 @@
 					payload,
 					current_pay_info
 				})
+				let sku_id = 0; //商品id
+				if (payload?.record) {
+					let obj = JSON.parse(payload.record);
+					sku_id = Object.keys(obj)[0];
+					console.log("支付宝团购商品id:", sku_id);
+				}
 				let order = Object.assign(Sale3ModelAdditional(Sale3Model({
 					fkid: current_pay_info?.fkid ?? "",
 					type: current_pay_info?.type ?? "",
@@ -1870,7 +1876,7 @@
 						?.toFixed(2) : 0,
 					zklx: payload?.disc_type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
-					point: payload?.point ?? 0, //抵现积分数
+					point: payload?.point || sku_id // 存储 抵现积分数或者支付宝验券返回的商品id
 				})), obj);
 				console.log("[OrderCreated]封装响应体:", order)
 				return order;
@@ -2039,7 +2045,7 @@
 					this.SALES.sale1 = prev_page_param?.sale1_obj; //sale1数据
 					this.SALES.sale2 = prev_page_param?.sale2_arr; //sale2数据
 					this.SALES.sale3 = prev_page_param?.sale3_arr; //sale3数据
-					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale3数据
+					this.SALES.sale8 = prev_page_param?.sale8_arr; //sale8数据
 					this.CashOffset.Money = prev_page_param?.score_info?.money ?? 0;
 					this.CashOffset.Score = prev_page_param?.score_info?.score ?? 0;
 					console.log("[ParamInit]积分信息:", {
