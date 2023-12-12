@@ -1247,7 +1247,7 @@ var zfbtgqPay = CommonTemplate({
 			pt,
 			body
 		});
-		body.memo = body.point;//重构团购券商品id
+		body.memo = body.point; //重构团购券商品id
 		body.refund_money = util.newFloat(body.refund_money - body.discountable_amount * 100); //减去折扣金额
 		_Refund(pt, body, (res) => {
 			if (resultsFunc)

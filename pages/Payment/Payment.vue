@@ -1859,9 +1859,9 @@
 					current_pay_info
 				})
 				let sku_id = 0; //商品id
-				if (payload?.record) {
-					let obj = JSON.parse(payload.record);
-					sku_id = Object.keys(obj)[0];
+				//记录本次核销的商品 
+				if (payload?.verification_good_id) {
+					sku_id = payload.verification_good_id;
 					console.log("支付宝团购商品id:", sku_id);
 				}
 				let order = Object.assign(Sale3ModelAdditional(Sale3Model({
