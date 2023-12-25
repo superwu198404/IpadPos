@@ -1113,7 +1113,7 @@
 							fkid: i.FKID,
 							bill: `${that.SALES.sale1.XS_BILL}_${i.NO}`,
 							name: this.PayWayList.find(p => p.fkid == i.FKID)?.name ?? "",
-							amount:util.newFloat(i.AMT),
+							amount: util.newFloat(i.AMT),
 							no: i.NO,
 							group: i.AUTH,
 							origin: i
@@ -1322,7 +1322,7 @@
 											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
 										ywtype: this
 											.BILL_TYPE, // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
-										discountable_amount:refundInfo.origin.DISC //折扣金额 支付宝团购券使用
+										discountable_amount:(Math.abs(Number(refundInfo.origin.DISC) * 100)).toFixed(0) //折扣金额 支付宝团购券使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
@@ -2007,7 +2007,7 @@
 						.useOrderTypeChoice() //values： INCREASE(增加) or DECREASE(减少)
 				}, obj);
 			},
-			PayWayListInit: function(ban_pay_type = []) { //支付方式初始化
+			PayWayListInit: function(ban_pay_type = [], sale1) { //支付方式初始化
 				let pay_way_list = JSON.parse(JSON.stringify(util.getStorage(
 					'PayWayList'))); //获取支付方式 
 				console.log("[PayWayListInit]被禁止使用的支付类型:", ban_pay_type);
@@ -2021,15 +2021,10 @@
 					} catch (e) {
 						i.icon = require('../../images/default_pay.png');
 					}
-					if (ban_pay_type?.find(t => t == i.fkid)) {
+					if (ban_pay_type?.find(t => t == i.fkid))
 						i.yn_use = 'N'; //如果是被禁止类型的支付方式那么赋值为N表示无法用此选项支付
-					}
-					// if (i.fkid === 'ZF15') { //测试:用于测试禁止使用部分聚合支付的效果
-					// 	i.poly = 'N';
-					// } //银联二维码 属于聚合支付
-					// if(i.poly == 'Y'){//测试:用于测试禁止使用部分聚合支付的效果
-					// 	i.yn_use = 'N';
-					// }
+					// if (sale1.XSTYPE != '7' && i.fkid == 'ZF00') //20231221 应测试要求赊销结算才可用 对公进账
+					// 	i.yn_use = 'N'; //20231222 调整为销售模块增加，待观察后删除
 					return i;
 				});
 				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList);
@@ -2038,7 +2033,7 @@
 			paramInit: function() {
 				that = this;
 				var prev_page_param = this.$store.state.location;
-				this.PayWayListInit(prev_page_param?.ban_pay);
+				this.PayWayListInit(prev_page_param?.ban_pay, prev_page_param?.sale1_obj);
 				console.log("[ParamInit]传入页面参数:", prev_page_param);
 				if (prev_page_param) {
 					//传入的sale系列表数据初始化 👇

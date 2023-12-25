@@ -1217,7 +1217,7 @@ var meituanCouponPay = CommonTemplate({
 
 //支付宝团购券支付
 var zfbtgqPay = CommonTemplate({
-	PaymentAll: function(pt, body, func, catchFunc) {
+	PaymentAll1: function(pt, body, func, catchFunc) {
 		console.log("[PaymentAll-支付宝团购券]支付参数:", {
 			pt,
 			body
@@ -1242,13 +1242,42 @@ var zfbtgqPay = CommonTemplate({
 				catchFunc(err);
 		});
 	},
+	PaymentAll: function(pt, body, func, catchFunc) {
+		let request = CreateData(pt, "支付中...", "Payment", body);
+		Req.asyncFuncOne(request, (res) => {
+			body.money = res.data.money;
+			if (func) func(res);
+		}, (err) => {
+			console.log("[zfbtgqPay]支付失败：", err);
+			if (err.data.transaction_id && err.data.open_id) {
+				//参数中转
+				body.money = err.data.money; //核销金额
+				body.discount = err.data.discount; //折扣金额
+				body.memo = err.data.verification_good_id; //核销商品ID
+				body.card_no = err.data.open_id; //支付宝用户ID
+				body.deviceno = err.data.transaction_id; //支付宝订单号
+				request = CreateData(pt, "查询中...", "QueryPayment", body);
+				Req.asyncFuncOne(request, (res1) => {
+					if (func) func(res1);
+				}, (err1) => {
+					util.simpleMsg("支付失败：" + err1.msg, true)
+					console.log("[zfbtgqPay]支付失败：", err1);
+					if (catchFunc) catchFunc(err1);
+				});
+			} else {
+				util.simpleMsg("支付失败：" + err.msg, true)
+				if (catchFunc) catchFunc(err);
+			}
+		});
+	},
+
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		console.log("[RefundAll-支付宝团购券]退款参数:", {
 			pt,
 			body
 		});
 		body.memo = body.point; //重构团购券商品id
-		body.refund_money = util.newFloat(body.refund_money - body.discountable_amount * 100); //减去折扣金额
+		body.refund_money = util.newFloat(body.refund_money - body.discountable_amount); //减去折扣金额
 		_Refund(pt, body, (res) => {
 			if (resultsFunc)
 				resultsFunc([, res]);

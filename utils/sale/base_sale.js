@@ -125,6 +125,7 @@ var XsTypeObj = {
 					show: false
 				}));
 			}
+			this.ban_type.push("ZF00");//应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
@@ -393,6 +394,7 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
+			this.ban_type.push("ZF00");//应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
@@ -607,6 +609,7 @@ var XsTypeObj = {
 					payed: this.payed
 				});
 			}
+			this.ban_type.push("ZF00");//应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
