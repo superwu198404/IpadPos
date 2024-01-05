@@ -2762,7 +2762,11 @@
 	.bom-zhifu .pattern:nth-last-child(6),
 	.bom-zhifu .pattern:nth-last-child(7),
 	.bom-zhifu .pattern:nth-last-child(8),
-	.bom-zhifu .pattern:nth-last-child(9){
+	.bom-zhifu .pattern:nth-last-child(9),
+	.bom-zhifu .pattern:nth-last-child(10),
+	.bom-zhifu .pattern:nth-last-child(11),
+	.bom-zhifu .pattern:nth-last-child(12),
+	.bom-zhifu .pattern:nth-last-child(13){
 		width: 22% !important;
 		padding: 0 1% 0 2%;
 	}
