@@ -2756,16 +2756,14 @@
 	}
 
 	
-
-	.bom-zhifu .pattern:nth-last-child(1),
-	.bom-zhifu .pattern:nth-last-child(2),
-	.bom-zhifu .pattern:nth-last-child(3),
+	
 	.bom-zhifu .pattern:nth-last-child(4),
 	.bom-zhifu .pattern:nth-last-child(5),
 	.bom-zhifu .pattern:nth-last-child(6),
 	.bom-zhifu .pattern:nth-last-child(7),
-	.bom-zhifu .pattern:nth-last-child(8){
-		width: 22%;
+	.bom-zhifu .pattern:nth-last-child(8),
+	.bom-zhifu .pattern:nth-last-child(9){
+		width: 22% !important;
 		padding: 0 1% 0 2%;
 	}
 	.bom-zhifu .pattern:nth-child(1),
@@ -2773,6 +2771,7 @@
 	.bom-zhifu .pattern:nth-child(3)
 	 {
 		width: 47% !important;
+		padding: 0 1% 0 2%;
 	}
 	.bom-zhifu .pattern:nth-child(2) .tits p,
 	.bom-zhifu .pattern:nth-child(3) .tits p,
