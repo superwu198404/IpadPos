@@ -325,7 +325,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				// console.log("重建数据的sql:", res.data);
 				let x = await db.get().executeSqlArray(res.data, "开始创建数据库1",
 					(resks) => {
-						console.log("重读成功");
+						console.log("重读成功，即将更新缓存参数。");
 						let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
 						return reqdata;
 					},
