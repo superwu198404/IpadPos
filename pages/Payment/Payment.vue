@@ -2769,13 +2769,12 @@
 		padding: 0 1% 0 2%;
 	}
 	.bom-zhifu .pattern:nth-child(1),
-	.bom-zhifu .pattern:nth-child(2),
-	.bom-zhifu .pattern:nth-child(3)
+	.bom-zhifu .pattern:nth-child(2)
 	 {
 		width: 47% !important;
 	}
 	.bom-zhifu .pattern:nth-child(2) .tits p,
-	.bom-zhifu .pattern:nth-child(3) .tits p,
+	
 	{
 		font-size: 40rpx !important;
 		line-height: 80rpx !important;
