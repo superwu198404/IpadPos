@@ -221,7 +221,7 @@
 								</view>
 								<image src="../../images/moren-zfu.png" mode="widthFix">
 							</view>
-							
+
 						</view>
 					</view>
 					<!-- </p> -->
@@ -1323,7 +1323,9 @@
 											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
 										ywtype: this
 											.BILL_TYPE, // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
-										discountable_amount:(Math.abs(Number(refundInfo.origin.DISC) * 100)).toFixed(0) //折扣金额 支付宝团购券使用
+										discountable_amount: (Math.abs(Number(refundInfo
+												.origin.DISC) * 100)).toFixed(
+											0) //折扣金额 支付宝团购券使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
@@ -2028,6 +2030,8 @@
 					// 	i.yn_use = 'N'; //20231222 调整为销售模块增加，待观察后删除
 					return i;
 				});
+				let aa = this.PayWayList.filter(i => i.poly == 'N');
+				console.log("监测：", aa);
 				console.log("[PayWayListInit]支付初始化——可用的支付方式:", this.PayWayList);
 			},
 			//初始化
@@ -2756,7 +2760,6 @@
 	}
 
 	
-	
 	.bom-zhifu .pattern:nth-last-child(4),
 	.bom-zhifu .pattern:nth-last-child(5),
 	.bom-zhifu .pattern:nth-last-child(6),
@@ -2770,18 +2773,19 @@
 		width: 22% !important;
 		padding: 0 1% 0 2%;
 	}
+
 	.bom-zhifu .pattern:nth-child(1),
 	.bom-zhifu .pattern:nth-child(2),
-	.bom-zhifu .pattern:nth-child(3)
-	 {
+	.bom-zhifu .pattern:nth-child(3) {
 		width: 47% !important;
 		padding: 0 1% 0 2%;
 	}
+
 	.bom-zhifu .pattern:nth-child(2) .tits p,
 	.bom-zhifu .pattern:nth-child(3) .tits p,
 	{
-		font-size: 40rpx !important;
-		line-height: 80rpx !important;
+	font-size: 40rpx !important;
+	line-height: 80rpx !important;
 	}
 
 	.jinzhi {

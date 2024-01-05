@@ -323,15 +323,14 @@ var dataInit = async function(pm_initType, ynshow = false) {
 		async (res) => {
 				//console.log("数据库通讯结果：" + JSON.stringify(res.data));
 				// console.log("重建数据的sql:", res.data);
-				console.log("1231231312131");
 				let x = await db.get().executeSqlArray(res.data, "开始创建数据库1",
 					(resks) => {
-						console.log("执行语句成功", resks.data.length);
+						console.log("重读成功");
 						let reqdata = Req.retData(true, "OK") //对应finally函数的判断;
 						return reqdata;
 					},
 					(resF) => {
-						cconsole.log("执行失败了：", resF);
+						cconsole.log("重读失败：", resF);
 						return Req.retData(false, "start创建失败" + JSON.stringify(resF.msg))
 					}
 				);

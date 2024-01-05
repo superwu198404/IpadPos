@@ -38,11 +38,17 @@ const utils = {
 	 * @returns void
 	 */
 	simpleMsg: function(title, isError = false, errData) {
+		// console.log("弹窗检测：", title);
+		// console.log("弹窗检测1：", isError);
+		// console.log("弹窗检测2：", errData);
 		uni.showToast({
 			title: (isError == 'none' || title.length > 7) ? `${isError ? '⚠' : '✔'}提示:\n` + title :
 				title,
 			icon: (isError == 'none' || title.length > 7) ? "none" : (isError ? 'error' :
-				"success") //可传入none值
+				"success"), //可传入none值
+			complete: com => {
+				// console.log("弹窗检测3：", com);
+			}
 		})
 		if (errData) console.log(title, errData)
 	},
@@ -468,7 +474,8 @@ const utils = {
 	//检查是否有特殊符号
 	isEmojiCharacter: function(substring) {
 		if (substring) {
-			var a = new RegExp(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\？\?\<\>\(\)\（\）\。\，\-\——\=\;\@\！\!\+\$\s+\%\&]/g);
+			var a = new RegExp(
+				/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\？\?\<\>\(\)\（\）\。\，\-\——\=\;\@\！\!\+\$\s+\%\&]/g);
 			if (a.test(substring))
 				return true; //有特殊符号
 			else

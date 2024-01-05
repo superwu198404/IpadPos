@@ -125,7 +125,7 @@ var XsTypeObj = {
 					show: false
 				}));
 			}
-			this.ban_type.push("ZF00");//应测试要求禁用对公进账
+			this.ban_type.push("ZF00"); //应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
@@ -394,7 +394,7 @@ var XsTypeObj = {
 				sale003: this.sale003,
 				ydsale001: this.ydsale001
 			});
-			this.ban_type.push("ZF00");//应测试要求禁用对公进账
+			this.ban_type.push("ZF00"); //应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
@@ -609,7 +609,7 @@ var XsTypeObj = {
 					payed: this.payed
 				});
 			}
-			this.ban_type.push("ZF00");//应测试要求禁用对公进账
+			this.ban_type.push("ZF00"); //应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
@@ -1861,7 +1861,8 @@ function GetSale(global, vue, target_name, uni) {
 	//获取当前时间：时分秒-hh:mm:ss
 	this.getTime = function() {
 		let d = new Date();
-		var x = d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + d.getDate().toString().padStart(2, '0') + " " + d.getHours().toString().padStart(2, '0') + ":" +
+		var x = d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + d.getDate()
+			.toString().padStart(2, '0') + " " + d.getHours().toString().padStart(2, '0') + ":" +
 			d.getMinutes().toString().padStart(2, '0') + ":" + d.getSeconds().toString().padStart(2, '0');
 		return x;
 	}
@@ -3421,11 +3422,15 @@ function GetSale(global, vue, target_name, uni) {
 		if (!result.code) { //取消支付或者支付失败了 不走后续的处理
 			util.simpleMsg(result.msg, !result.code);
 			//清除一下辅助促销 以及辅助促销产生的折扣数据 
-			this.FZCX.cval = {};
-			this.sale001.TCXDISC = 0; //fzcx
-			this.sale001.TDISC = 0; //fzcx 
-			//清除手工折扣
-			this.sale001.ROUND = 0;
+			// this.FZCX.cval = {};
+			// this.sale001.TCXDISC = 0; //fzcx
+			// this.sale001.TDISC = 0; //fzcx 
+			// //清除手工折扣
+			// this.sale001.ROUND = 0;
+			console.log("购物车状态：",that.ComponentsManage.statement);
+			await that.SaleNetAndDisc(); //重新计算折扣
+			if (!that.ComponentsManage.statement) //关闭就打开
+				that.SetManage("statement");
 			return;
 		}
 		payresult = result;

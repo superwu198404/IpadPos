@@ -179,8 +179,8 @@
 					return type?.slice(2) || "-"
 				}
 			},
-			Earnest: function(){
-				return util.callBind(this,function(order){
+			Earnest: function() {
+				return util.callBind(this, function(order) {
 					return order?.DNET?.toString() || 0;
 				})
 			}
