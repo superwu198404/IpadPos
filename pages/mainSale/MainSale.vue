@@ -332,6 +332,7 @@
 							<view><text>会员生日：</text>{{mainSale.HY.val.Birthday}}</view>
 							<view><text>注册日期：</text>{{RegisterDate}}</view>
 							<view><text>企微好友：</text>{{mainSale.HY.val.WxCpFriend?"是":"否"}}</view>
+							<view><text>社群好友：</text>{{mainSale.HY.val.WxCpChatFriend?"是":"否"}}</view>
 						</view>
 					</view>
 					<view class="coulist">

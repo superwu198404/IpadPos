@@ -106,7 +106,7 @@ var XsTypeObj = {
 			return true;
 		},
 		///在付款之前的操作
-		$beforeFk: function() {
+		$beforeFk: function(e) {
 			console.log("[Sale]新单据生成中...");
 			let cash_info = util.getStorage("FKDA_INFO").find(info => info.MEDIA == '1');
 			this.createNewBill(); //创建新的sale001
@@ -136,8 +136,12 @@ var XsTypeObj = {
 					ban_type: this.ban_type
 				});
 			}
-			this.PayParamAssemble();
-			return true;
+			// this.PayParamAssemble();
+			// return true;
+			if (e) //中间有操作 如辅助促销 
+				this.PayParamAssemble();
+			else
+				return true; //直接跳转到支付
 		},
 		//支付完成之前销售单之前
 		$SaleBefor: function() {
@@ -1070,9 +1074,8 @@ var XsTypeObj = {
 						this.setComponentsManage(null, "statement");
 						this.PayParamAssemble();
 					} else {
-						if (data.content != getApp().globalData?.userinfo?.pwd) util.simpleMsg(
-							"密码错误",
-							true)
+						if (data.content != getApp().globalData?.userinfo?.pwd)
+							util.simpleMsg("密码错误", true);
 					}
 				}
 			}), true)
@@ -3427,7 +3430,7 @@ function GetSale(global, vue, target_name, uni) {
 			// this.sale001.TDISC = 0; //fzcx 
 			// //清除手工折扣
 			// this.sale001.ROUND = 0;
-			console.log("购物车状态：",that.ComponentsManage.statement);
+			console.log("购物车状态：", that.ComponentsManage.statement);
 			await that.SaleNetAndDisc(); //重新计算折扣
 			if (!that.ComponentsManage.statement) //关闭就打开
 				that.SetManage("statement");
@@ -4285,9 +4288,7 @@ function GetSale(global, vue, target_name, uni) {
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
 				if (this.FZCX.cval && Object.keys(this.FZCX.cval).length > 0 && Object.keys(
-						this
-						.FZCX
-						.cval.data || {}).length > 0) {
+						this.FZCX.cval.data || {}).length > 0) {
 					console.warn("[BeforeFk]辅助促销计算部分!");
 					this.sale001.TNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
 					this.sale001.ZNET += this.FZCX.cval.payAmount; //加上辅助促销的的差价
@@ -4306,10 +4307,13 @@ function GetSale(global, vue, target_name, uni) {
 				//计算手工折扣
 				if (that.currentOperation.ynSKDisc) {
 					this.SKdiscCompute();
+					console.log("手工折扣计算完毕");
 				}
-				console.log("手工折扣计算完毕");
-				return this.CurrentTypeCall("$beforeFk",
-					pm_inputParm); //将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+				//将对应模式的 $beforeFK 调用，根据返回布尔确认是否进行进入支付操作。
+				// return this.CurrentTypeCall("$beforeFk", pm_inputParm);
+
+				//将对应模式的 $beforeFK 调用,传参代表 需要内部调用 PayParamAssemble
+				this.CurrentTypeCall("$beforeFk", true);
 			}))
 			return false;
 		} else {
