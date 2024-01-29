@@ -195,11 +195,12 @@
 										</image>
 									</view>
 								</label>
-								<label class="poly-text" v-if="PayWayList.filter(i=>i.poly=='Y').length>0">
+								<label class="poly-text"
+									v-if="PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').length>0">
 									<text>支持{{PayWayList.filter(i=>i.poly=='Y'&&i.yn_use=='Y').map(i => i.name).join(",")}}</text>
 								</label>
 								<label class="poly-text" v-else>
-									<text>暂无可用，请选择其他支付方式！</text>
+									<text>聚合支付暂无可用，请选择其他支付方式！</text>
 								</label>
 							</view>
 							<!-- :class="currentPayType === item.type ? 'selected':''" -->
@@ -918,8 +919,8 @@
 			Pay: function() {
 				let that = this; //适配真机
 				console.log("支付方式：", this.PayWayList);
-				if (this.currentPayType == 'POLY' && this.PayWayList.filter(r => r.poly == 'Y').length ==
-					0) { //无聚合支付提示
+				if (this.currentPayType == 'POLY' && this.PayWayList.filter(r => r.poly == 'Y' && r.yn_use == 'Y')
+					.length ==0) { //无聚合支付提示
 					util.simpleMsg("聚合支付暂无可用，请更换其他支付方式!", 'none');
 					return;
 				}
@@ -1324,7 +1325,7 @@
 										ywtype: this
 											.BILL_TYPE, // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 										discountable_amount: (Math.abs(Number(refundInfo
-												.origin.DISC) * 100)).toFixed(
+											.origin.DISC) * 100)).toFixed(
 											0) //折扣金额 支付宝团购券使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
@@ -2759,7 +2760,7 @@
 		padding: 2% 0 3%;
 	}
 
-	
+
 	.bom-zhifu .pattern:nth-last-child(4),
 	.bom-zhifu .pattern:nth-last-child(5),
 	.bom-zhifu .pattern:nth-last-child(6),
@@ -2769,7 +2770,7 @@
 	.bom-zhifu .pattern:nth-last-child(10),
 	.bom-zhifu .pattern:nth-last-child(11),
 	.bom-zhifu .pattern:nth-last-child(12),
-	.bom-zhifu .pattern:nth-last-child(13){
+	.bom-zhifu .pattern:nth-last-child(13) {
 		width: 22% !important;
 		padding: 0 1% 0 2%;
 	}
