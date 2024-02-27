@@ -265,9 +265,9 @@
 			</view>
 		</view>
 
-		<!-- 其他支付方式 v-if="ShowOthersPay"-->
-		<view class="boxs" >
-			<view class="coupons" style="width:80%;height: 85%;overflow: auto;">
+		<!-- 其他支付方式 -->
+		<view class="boxs" v-if="ShowOthersPay">
+			<view class="coupons" style="width:80%;height: 85%;">
 				<view class="hh" style="padding-top:56rpx;">
 					<view style="width:45%">
 						<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
