@@ -791,6 +791,7 @@
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth || item.origin?.AUTH, //交易号
+						STR2: item.str2 || "", //凭证号 目前仅限支付宝团购券使用
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
@@ -920,7 +921,7 @@
 				let that = this; //适配真机
 				console.log("支付方式：", this.PayWayList);
 				if (this.currentPayType == 'POLY' && this.PayWayList.filter(r => r.poly == 'Y' && r.yn_use == 'Y')
-					.length ==0) { //无聚合支付提示
+					.length == 0) { //无聚合支付提示
 					util.simpleMsg("聚合支付暂无可用，请更换其他支付方式!", 'none');
 					return;
 				}
@@ -1310,23 +1311,25 @@
 											.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
 										point: refundInfo.origin.BMID, //兼容积分抵现返还积分 和支付宝团购券
 										auth_code: refundInfo.origin
-											.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_company_id: this.SALES.sale1
-											.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_store_id: this.SALES.sale1
-											.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_area_id: this.SALES.sale1
-											.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
+										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 										store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 										card_no: refundInfo.origin
-											.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用）
+											.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用），支付宝团购券作为凭证号使用
 										deviceno: refundInfo.origin
-											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用
+											.AUTH, //2023-04-11新增 用于抖音券核销撤销使用，支付宝团购券作为用户ID使用
 										ywtype: this
-											.BILL_TYPE, // + "-" + this.XSTYPE //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
+											.BILL_TYPE, //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 										discountable_amount: (Math.abs(Number(refundInfo
 											.origin.DISC) * 100)).toFixed(
-											0) //折扣金额 支付宝团购券使用
+										0), //折扣金额 支付宝团购券使用
+										transaction_id: refundInfo.origin
+										.STR2, //支付宝团购券作为支付宝订单号使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
@@ -1880,7 +1883,8 @@
 						?.toFixed(2) : 0,
 					zklx: payload?.disc_type ?? "",
 					user_id: payload?.open_id || payload?.hyid,
-					point: payload?.point || sku_id // 存储 抵现积分数或者支付宝验券返回的商品id
+					point: payload?.point || sku_id, // 存储 抵现积分数或者支付宝验券返回的商品id
+					str2: payload?.raw || "", // 存储支付宝验券返回的凭证id
 				})), obj);
 				console.log("[OrderCreated]封装响应体:", order)
 				return order;

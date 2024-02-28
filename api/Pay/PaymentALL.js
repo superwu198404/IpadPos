@@ -1246,6 +1246,11 @@ var zfbtgqPay = CommonTemplate({
 		let request = CreateData(pt, "支付中...", "Payment", body);
 		Req.asyncFuncOne(request, (res) => {
 			body.money = res.data.money;
+			//保持和pos记录一致，调整下记录字段
+			// res.str2 = res.data.raw; //s3.str2 记录支付宝订单号
+			// res.card_no=res.open_id;
+			// res.auth=res.transaction_id;
+			console.log("支付宝团购券支付结果：", res);
 			if (func) func(res);
 		}, (err) => {
 			console.log("[zfbtgqPay]支付失败：", err);
@@ -1253,11 +1258,17 @@ var zfbtgqPay = CommonTemplate({
 				//参数中转
 				body.money = err.data.money; //核销金额
 				body.discount = err.data.discount; //折扣金额
-				body.memo = err.data.verification_good_id; //核销商品ID
+				body.memo = err.data.verification_good_id; //核销商品ID&&凭证号
 				body.card_no = err.data.open_id; //支付宝用户ID
 				body.deviceno = err.data.transaction_id; //支付宝订单号
 				request = CreateData(pt, "查询中...", "QueryPayment", body);
 				Req.asyncFuncOne(request, (res1) => {
+					//保持和pos记录一致，调整下记录字段
+					// res1.card_no = res1.verification_good_id?.split('&&')[1]; //s3.ID记录商品凭证号
+					// res1.auth = res1.open_id; //s3.AUTH 记录支付宝用户ID
+					// res1.str2 = res1.transaction_id; //s3.str2 记录支付宝订单号
+					// res1.str2 = err.data.raw; //s3.str2 记录支付宝订单号
+					console.log("查询支付宝团购券支付结果：", res);
 					if (func) func(res1);
 				}, (err1) => {
 					util.simpleMsg("支付失败：" + err1.msg, true)
