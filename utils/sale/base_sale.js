@@ -3500,8 +3500,7 @@ function GetSale(global, vue, target_name, uni) {
 			});
 			console.log("[PayedResult]执行 CXMDFS 中...");
 			let cxfsSqlArr = _main.CXMDFS(this.sale001, this.cxfsArr, this.FZCX.cval.data, this
-				.currentOperation
-				.ynCx, this.currentOperation.FZCX);
+				.currentOperation.ynCx, this.currentOperation.FZCX);
 			this.communication_for_oracle = this.communication_for_oracle.concat(cxfsSqlArr);
 			console.log("[PayedResult]追加了促销跟踪的sql:", this.communication_for_oracle);
 			let create_result;
@@ -4214,9 +4213,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("001数据：", that.sale001);
 		// console.log("总的商品价格：", that.spPrice);
 		// 先获取辅助促销数据
-		_main.GetFZCX(this.Storeid, async res => {
-			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that
-				.spPrice);
+		_main.GetFZCX(this.Storeid, this.HY.cval.hyId, async res => {
+			that.FZCX.oval = await _main.GetFZCXNew(res, that.sale001, that.sale002, that.spPrice);
 			console.log("[ComputeFzCx]重组后的辅助促销商品:", that.FZCX.oval);
 		});
 	}

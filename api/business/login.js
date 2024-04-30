@@ -21,8 +21,8 @@ var GetPassWord = function(khid, userid, password, func) {
 				return;
 			}
 			let newPs = get_mystr(ps);
-			console.log("密文解密：", ps);
 			newPs = newPs.substr(2, newPs.length - 4);
+			console.log("密文解密：", newPs);
 			if (newPs != password) {
 				util.simpleMsg("密码输入错误", true);
 				return;

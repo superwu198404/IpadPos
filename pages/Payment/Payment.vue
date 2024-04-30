@@ -1328,8 +1328,7 @@
 										discountable_amount: (Math.abs(Number(refundInfo
 											.origin.DISC) * 100)).toFixed(
 										0), //折扣金额 支付宝团购券使用
-										transaction_id: refundInfo.origin
-										.STR2, //支付宝团购券作为支付宝订单号使用
+										transaction_id: refundInfo.origin.STR2, //支付宝团购券作为支付宝订单号使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;

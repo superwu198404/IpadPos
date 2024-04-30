@@ -105,7 +105,11 @@ var CreateSQL = function(e, t) {
 				}
 			}
 			sql1 = "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) + ") values(" +
-				valStr.substring(0, valStr.lastIndexOf(',')) + ");";
+				valStr.substring(0, valStr.lastIndexOf(',')) + ")";
+			if (t == 'SALE001' || t == 'SALE002' || t == 'SALE003' || t == 'CXMDFSMX') //添加数据库日志
+				sql1 += " LOG ERRORS INTO " + t + "_ERROR_LOG;";
+			else
+				sql1 += ";"
 			sql2 = "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) +
 				") values(" + liteStr.substring(0, liteStr.lastIndexOf(',')) + ")";
 
@@ -139,8 +143,13 @@ var CreateSQL = function(e, t) {
 				}
 			}
 		}
+
 		oracle_sql += "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) + ") values(" +
-			valStr.substring(0, valStr.lastIndexOf(',')) + ");";
+			valStr.substring(0, valStr.lastIndexOf(',')) + ")";
+		if (t == 'SALE001' || t == 'SALE002' || t == 'SALE003' || t == 'CXMDFSMX') //添加数据库日志
+			oracle_sql += " LOG ERRORS INTO " + t + "_ERROR_LOG;";
+		else
+			oracle_sql += ";"
 		lite_sql += "insert into " + t + " (" + nameStr.substring(0, nameStr.lastIndexOf(',')) +
 			") values(" + liteStr.substring(0, liteStr.lastIndexOf(',')) + ")";
 		oracle_arr.push(oracle_sql);
@@ -766,7 +775,12 @@ var InitZFRULE = async function(e, func) {
 }
 
 //连接调试
-var ConnectDebug = async function(ip, khid, callbacks = { open: () => {}, close: () => {}, error: () => {}, message: () => {} }) {
+var ConnectDebug = async function(ip, khid, callbacks = {
+	open: () => {},
+	close: () => {},
+	error: () => {},
+	message: () => {}
+}) {
 	var socket_task = uni.connectSocket({
 		url: `ws://${ip}/` + khid,
 		success() {

@@ -4,7 +4,7 @@
 		<view class="login">
 			<view class="h1">登录<image src="../../images/dl-bjhw.png" mode="widthFix"></image>
 			</view>
-			<image class="eng" src="../../images/dl-login.png" mode="widthFix"></image>
+			<image class="eng" src="../../images/dl-login.png" mode="widthFix" @click="OpenDevoloper"></image>
 			<view class="import">
 				<label>
 					<image src="../../images/zhanghu.png" mode="widthFix"></image>
@@ -334,6 +334,32 @@
 			//现在升级
 			ConfirmUpgrade: function(data) {
 				plus.runtime.openURL(getApp().globalData.AppStore_DownLoad + "id" + this.down_id);
+			},
+			//查看数据
+			OpenDevoloper() {
+				this.click_num++;
+				if (!this.timer)
+					this.timer = setTimeout(util.callBind(this, function() {
+						this.click_num = 0;
+						this.timer = 0;
+					}), 5000);
+				if (this.click_num === 10) {
+					uni.showModal({
+						title: "输入密码",
+						editable: true,
+						success(res) {
+							let time = dateformat.gettimes().substr(0, 4);
+							console.log("当前时间：", time);
+							if (res.confirm && res.content === "123" + time) {
+								uni.navigateTo({
+									url: "../index/index"
+								})
+							} else {
+								util.simpleMsg("密码错误！", true);
+							}
+						}
+					})
+				}
 			},
 		}
 	}

@@ -50,7 +50,8 @@
 					</hTimePicker> -->
 					</label>
 					<label><text><i class="sgin">*</i>定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else
-							type="number" v-model="Order.DNET" @input="CheckMoney" :disabled="over48" />
+							type="number" v-model="Order.DNET" @input="CheckMoney"
+							:disabled="over48||Order.THTYPE == '1'" /><!-- 宅配到家和超时均不可修改 -->
 					</label>
 					<label><text><i class="sgin">*</i>蛋糕规格：</text>
 						<picker @change="GGChange" :range="GGDatas">
@@ -73,7 +74,8 @@
 						</picker>
 					</label>
 
-					<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM" placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
+					<label class="hui"><text>备注：</text><textarea v-model="Order.CUSTMCOMM"
+							placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
 				</view>
 				<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>
@@ -329,7 +331,7 @@
 				this.Order.DNET = this.sale.ZNET;
 				this.Order.TNET = this.sale.ZNET;
 				console.log("[DataInit]预订单初始化完毕!", this.Order);
-				this.IsForeignStore();//判断是否是外地门店提货
+				this.IsForeignStore(); //判断是否是外地门店提货
 			},
 			onLoad: function() {
 				this.DataInit();
@@ -362,13 +364,16 @@
 				that.RefreshData(); //刷新一下数据
 			},
 			IsForeignStore: function() {
-				console.log("[IsForeignStore]判断门店是否是外地提货...",this.KHID);
+				console.log("[IsForeignStore]判断门店是否是外地提货...", this.KHID);
 				_reserve.IsForeignStore({
 					KHID: this.KHID
-				},util.callBind(this,function(res){
+				}, util.callBind(this, function(res) {
 					let data = JSON.parse(res.data);
-					console.log("[IsForeignStore]查询结果:",{raw:res,data});
-					if(!(data && data.length)){
+					console.log("[IsForeignStore]查询结果:", {
+						raw: res,
+						data
+					});
+					if (!(data && data.length)) {
 						this.Order.THTYPE = 0;
 						this.index = 0;
 						this.YN_THTYPE = true; //默认自提且不允许更改
@@ -568,6 +573,8 @@
 						that.MatchBHKH();
 					else
 						that.Order.CUSTMADDRESS = "";
+					//240222 需求设定 宅配到家定金必须为整单金额 且不可修改
+					that.Order.DNET = that.Order.ZNET;
 				}
 				if (!that.Order.CUSTMADDRESS && that.Order.CUSTMPHONE) { //有手机号且无地址的时候
 					that.GetAddr();
@@ -619,30 +626,31 @@
 			},
 			//删除地址
 			Del_Addr: function(e) {
-				util.simpleModal("删除","确认删除该地址吗?",util.callBind(this,async function(confirm){
+				util.simpleModal("删除", "确认删除该地址吗?", util.callBind(this, async function(confirm) {
 					console.log("[DelAddr]删除地址确认:", confirm);
-					if(confirm){
+					if (confirm) {
 						let use_current_address_order = [];
-						await common.WebDBQuery(`select * from ydsale001 where note2='${e.ADDRID}' and yd_status='1'`, function(data){
-							if(data.code){
-								use_current_address_order = JSON.parse(data.data);
-							}
-							console.log("[DelAddr]查询当前地址信息:", use_current_address_order);
-						})
-						if(!use_current_address_order.length){
+						await common.WebDBQuery(
+							`select * from ydsale001 where note2='${e.ADDRID}' and yd_status='1'`,
+							function(data) {
+								if (data.code) {
+									use_current_address_order = JSON.parse(data.data);
+								}
+								console.log("[DelAddr]查询当前地址信息:", use_current_address_order);
+							})
+						if (!use_current_address_order.length) {
 							_reserve.Del_Addr({
 								phone: e.PHONE,
 								addrid: e.ADDRID
 							}, res => {
-								console.log("[DelAddr]删除地址结果:",res);
+								console.log("[DelAddr]删除地址结果:", res);
 								util.simpleMsg((res.code ? "删除成功" : res.msg), !res.code);
 								util.sleep(2000);
 								that.yn_add = false;
 								that.GetAddr();
 							})
-						}
-						else{
-							util.simpleMsg("当前地址部分订单正在使用中,禁止删除!",true)
+						} else {
+							util.simpleMsg("当前地址部分订单正在使用中,禁止删除!", true)
 						}
 					}
 				}))
@@ -669,17 +677,19 @@
 				}
 				console.log("新增的地址信息：", that.ADDR);
 				_reserve.ConfirmADDR(that.ADDR, res => {
-					let exists_address_refresh = false,data = null;
-					if(res.data){
+					let exists_address_refresh = false,
+						data = null;
+					if (res.data) {
 						let data = JSON.parse(res.data);
-						if(data.AddressID){
+						if (data.AddressID) {
 							that.Order.NOTE2 = Number(data.AddressID);
 						}
 					}
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
-					if (that.Order.CUSTMPHONE != that.ADDR.PHONE || that.Order.CUSTMADDRESS != that.ADDR.ADDRESS) exists_address_refresh = true;
+					if (that.Order.CUSTMPHONE != that.ADDR.PHONE || that.Order.CUSTMADDRESS != that.ADDR
+						.ADDRESS) exists_address_refresh = true;
 					that.Order.CUSTMPHONE = that.ADDR.PHONE;
 					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
@@ -957,7 +967,7 @@
 						util.simpleMsg("配送地址为空", true);
 						return;
 					}
-					
+
 					if (!that.Order.NOTE2) {
 						util.simpleMsg("配送地址编码为空，请重新选择地址", true);
 						return;

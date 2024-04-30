@@ -49,16 +49,24 @@ var _GetFZCX = function(khid, func) {
  * 获取辅助促销信息
  * @param {} khid 
  */
-var GetFZCX = function(khid, func) {
+var GetFZCX = function(khid, hyid, func) {
 	let cxArr = [];
-	let sql = "SELECT cx1.CXZT, cx2.bill, cx2.classid, sp.sname, '0' CZQTY, '0' BQTY, cx2.XX_NET1,cx2.XX_QTY4, cx2.MJ_DISC1, '' PRICE, '满' || cx2.XX_NET1 || '可售' || cx2.MJ_DISC1 || '%' describe \
+	let sql = "SELECT cx1.CXZT, cx1.CXRY, cx2.bill, cx2.classid, sp.sname, '0' CZQTY, '0' BQTY, cx2.XX_NET1,cx2.XX_QTY4, cx2.MJ_DISC1, '' PRICE, '满' || cx2.XX_NET1 || '可售' || cx2.MJ_DISC1 || '%' describe \
 				FROM  cxformd001 cx1 LEFT JOIN cxformd002 cx2  ON cx1.bill = cx2.bill AND cx1.khid = cx2.khid LEFT JOIN spda sp ON cx2.classid = sp.spid LEFT JOIN spkhda sk ON sp.spid = sk.spid AND cx1.KHID = sk.KHID \
 				WHERE cx1.KHID = '" + khid +
 		"'  AND cx1.Yn_Jslb = 'F' AND sp.PINYIN IS NOT NULL  AND sk.YN_XS = 'Y' AND sp.PRODUCT_TYPE IN ( 'Z001', 'Z004', 'Z005' ) and date(cx1.sdate)<=date('now') and date(cx1.edate)>=date('now') Order by cx1.CXZT";
 	console.log("辅助促查询sql：", sql);
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("辅助促销主单查询结果：", res);
-		res.msg.forEach((item, index) => {
+		let newArr = []; // JSON.parse(JSON.stringify(res.msg));
+		if (hyid) {
+			newArr = res.msg.filter(r1 => r1.CXRY == '2');
+		} else {
+			newArr = res.msg.filter(r1 => r1.CXRY != '2');
+		}
+		console.log("生效的辅助促销条件：" + khid + ",hyid：" + hyid);
+		console.log("生效的辅助促销：", newArr);
+		newArr.forEach((item, index) => {
 			let cxobj = cxArr.find(r => {
 				return r.BILL == item.BILL
 			});
@@ -66,7 +74,7 @@ var GetFZCX = function(khid, func) {
 				let obj = {
 					BILL: item.BILL,
 					CXZT: item.CXZT,
-					Details: res.msg.filter(r1 => {
+					Details: newArr.filter(r1 => {
 						return r1.BILL == item.BILL
 					})
 				};
