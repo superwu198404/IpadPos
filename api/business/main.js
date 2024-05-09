@@ -58,12 +58,13 @@ var GetFZCX = function(khid, hyid, func) {
 	console.log("辅助促查询sql：", sql);
 	db.get().executeQry(sql, "查询中...", res => {
 		console.log("辅助促销主单查询结果：", res);
-		let newArr = []; // JSON.parse(JSON.stringify(res.msg));
-		if (hyid) {
-			newArr = res.msg.filter(r1 => r1.CXRY == '2');
-		} else {
-			newArr = res.msg.filter(r1 => r1.CXRY != '2');
-		}
+		let newArr = [],
+			arr = [],
+			arr1 = []; // JSON.parse(JSON.stringify(res.msg));
+		if (hyid)
+			arr = res.msg.filter(r1 => r1.CXRY == '2');
+		arr1 = res.msg.filter(r1 => r1.CXRY != '2');
+		newArr = [...arr, ...arr1];
 		console.log("生效的辅助促销条件：" + khid + ",hyid：" + hyid);
 		console.log("生效的辅助促销：", newArr);
 		newArr.forEach((item, index) => {

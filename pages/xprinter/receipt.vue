@@ -198,7 +198,8 @@
 				if (is_dzfpewmdz && isPrinterFP) {
 
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -283,17 +284,25 @@
 				//打印格式
 				command.wmFormString(printerInfo, printer_poscs, print, type);
 				//写入打印记录表
-				let print_bill= (new_bill !="" && new_bill != null)? new_bill : sale1_obj.BILL;
+				let print_bill = (new_bill != "" && new_bill != null) ? new_bill : sale1_obj.BILL;
 				xprinter_util.addPos_XsBillPrintData(print_bill, dateNow, command.getData());
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				//电子发票二维码不为空、小票结尾二维码不为空
 				let isPrinterFP = ((type == "WM") && (xprinter_util.snvl(sale1_obj.STATUS, "") == "12")) ? true :
-				false;
+					false;
 				if (is_dzfpewmdz && isPrinterFP) {
+					let str = "RC_04";
+					if (sale1_obj.XSPTID == 'QJXCX')
+						str = "RC_03";
+					if (sale1_obj.XSPTID == 'MEITUAN')
+						str = "RC_07";
+					if (sale1_obj.XSPTID == 'ELM')
+						str = "RC_08";
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + str +
+							"&merOrderld=" + sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.WDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -350,6 +359,19 @@
 					//console.log("终端参数未设置打印小票");
 					return;
 				}
+				let isprint = true;
+				//判断是否会员 没会员的单 正常打  有会员需要选择是否打印
+				//查询是否存在打印弹窗提示
+
+				if (printer_poscs.YN_SHOWPRINTTIP == "Y" && sale1_obj.CUID != null) {
+					//需要询问是否打印小票
+					isprint = await that.isPrint(); //true 表示打印
+				}
+				if (!isprint) {
+					console.log("用户选择不打印");
+					return;
+				}
+
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				var printerInfo = xprinter_util.printerData(sale1_obj, sale2_arr, sale3_arr, ggyContent, type);
@@ -366,7 +388,8 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -447,6 +470,21 @@
 					//console.log("终端参数未设置打印小票");
 					return;
 				}
+				//是否打印提示
+				let isprint = true;
+				//判断是否会员 没会员的单 正常打  有会员需要选择是否打印
+				//查询是否存在打印弹窗提示
+				//如果存在 则进入判断
+				if (printer_poscs.YN_SHOWPRINTTIP == "Y" && sale1_obj.CUID != null) {
+					//需要询问是否打印小票
+					isprint = await that.isPrint(); //true 表示打印
+				}
+
+				if (!isprint) {
+					console.log("用户选择不打印 ");
+					return;
+				}
+
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				var printerInfo = xprinter_util.ydPrinterData(sale1_obj, sale2_arr, sale3_arr, ydsale001, ggyContent);
@@ -465,7 +503,8 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -549,7 +588,7 @@
 				var ggyContent = await that.ggyAction();
 				//打印数据转换
 				var printerInfo = xprinter_util.sxPrinterData(sale1_obj, sale2_arr, sale3_arr, print, ggyContent,
-				type);
+					type);
 				//初始化打印机
 				var command = esc.jpPrinter.createNew();
 				command.init();
@@ -563,7 +602,8 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -640,7 +680,8 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.DATE_QT, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -718,7 +759,9 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz) {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + (sale1_obj.CUID ==
+								'CZ' || sale1_obj.CUID == 'SKCZ') ? 'RC_01' : 'RC_02' + "&merOrderld=" +
+							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -765,14 +808,14 @@
 				}
 				//有无传入打印数据
 				let pos_xsbillprint = "";
-				if(cx_util.IsEmpty(printerData)){
+				if (cx_util.IsEmpty(printerData)) {
 					//通过单号，查询重打格式数据
 					pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 					if (cx_util.IsEmpty(pos_xsbillprint)) {
 						util.simpleMsg("未查询到重打数据", "none");
 						return;
 					}
-				}else{
+				} else {
 					pos_xsbillprint = printerData;
 				}
 
@@ -790,7 +833,10 @@
 
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y") ? true : false;
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
-				console.warn("重打小票=======", {is_dzfpewmdz,is_fpQRCode});
+				console.warn("重打小票=======", {
+					is_dzfpewmdz,
+					is_fpQRCode
+				});
 				//电子发票二维码不为空，则打印二维码
 				if (is_dzfpewmdz && xprinter_util.nnvl(is_fpQRCode, 0) == 1) {
 					let objQrCode = {
@@ -820,7 +866,7 @@
 						command.endPrinter(); //打印切纸		
 						that.prepareSend(command.getData()); //发送数据
 					})
-				} 
+				}
 				// else if (is_xpewm && xprinter_util.nnvl(is_fpQRCode, 0) == 1) {
 				// 	//生成属于单号的公众号
 				// 	Promise.all([
@@ -1246,7 +1292,37 @@
 					printNumIndex: index,
 					printerNum: num
 				});
-			}
+			},
+
+			//弹窗询问打印
+			isPrint: async function() {
+				try {
+					return new Promise(function(resolve, reject) {
+
+						uni.showModal({
+							title: "提示",
+							content: '会员消费是否打印小票？',
+							confirmText: "确定",
+							success: e => {
+								if (e.confirm) {
+									console.log("点击了确定");
+									return resolve(true);
+
+								} else if (e.cancel) {
+									console.log('用户点击取消');
+									return resolve(false);
+								}
+							},
+							fail: (e) => {
+								console.log("弹窗失败失败: ", e);
+								return resolve(false);
+							}
+						})
+					});
+				} catch (e) {
+					return false;
+				}
+			},
 		}
 	};
 </script>

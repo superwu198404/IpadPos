@@ -17,7 +17,7 @@ const formatNumber = n => {
 	return n[1] ? n : '0' + n;
 };
 
-function formatDate (date){
+function formatDate(date) {
 	// debugger
 	let dateNew = new Date(date);
 	const year = dateNew.getFullYear();
@@ -27,16 +27,16 @@ function formatDate (date){
 	return year + '-' + month + '-' + day;
 }
 
-function formatDateNew (date){
-	try{
-		let dateNew = new Date(date.replace(/-/g,'/'));
+function formatDateNew(date) {
+	try {
+		let dateNew = new Date(date.replace(/-/g, '/'));
 		const year = dateNew.getFullYear();
 		const month = dateNew.getMonth() + 1;
 		const day = dateNew.getDate();
 		//yyyy-MM-dd HH:mm:ss
 		return year + '/' + month + '/' + day;
-	}catch(e){
-		console.log("formatDateNew err",e)
+	} catch (e) {
+		console.log("formatDateNew err", e)
 	}
 	return "";
 }
@@ -96,7 +96,7 @@ function getTime(type) {
 
 // 获取字节的个数
 function getComputedByteLen(content, totalleng) {
-	if(content == null||content == "null"){
+	if (content == null || content == "null") {
 		content = "";
 	}
 	let contentLength = content.replace(/[^\x00-\xff]/g, '01').length;
@@ -216,7 +216,7 @@ function convertToMonoImage(width, height, data, shake) {
  * 售卡/售券打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {	
+const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => {
 	var billType = sale1_obj.BILL_TYPE; //Z101
 	var bill = sale1_obj.BILL;
 	var xsBill = sale1_obj.XS_BILL;
@@ -224,26 +224,26 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYID,"");
+	var posId = snvl(sale1_obj.POSID, "");
+	var posUser = snvl(sale1_obj.RYID, "");
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
-	var originalAmount = sale1_obj.TNET + nnvl(sale1_obj.BILLDISC,0);
-	var cuid = snvl(sale1_obj.CUID,"");
+	var discountedAmount = nnvl(sale1_obj.BILLDISC, 0);
+	var originalAmount = sale1_obj.TNET + nnvl(sale1_obj.BILLDISC, 0);
+	var cuid = snvl(sale1_obj.CUID, "");
 	var hdnet = 0;
 	var totalQty = 0;
 	var totalPrice = 0;
 	//激活/充值,状态
-	let status = snvl(sale1_obj.STR1,"");
+	let status = snvl(sale1_obj.STR1, "");
 	//激活/充值,原因
-	let reason = snvl(sale1_obj.REASON,"");
-	
+	let reason = snvl(sale1_obj.REASON, "");
+
 	let sale6_sumQty = 0;
 	let sale6_sumNet = 0;
 	let failSumQty = 0;
 	let failSumNet = 0;
-	
+
 	//商品表信息
 	var sale2List = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -252,22 +252,22 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			saleDate: sale2_arr[i].SALEDATE,
 			saleTime: sale2_arr[i].SALETIME,
 			khid: sale2_arr[i].KHID,
-			posId: snvl(sale2_arr[i].POSID,""),
+			posId: snvl(sale2_arr[i].POSID, ""),
 			no: i,
-			
+
 			barCode: sale2_arr[i].BARCODE,
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
-			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
+			oprice: nnvl(sale2_arr[i].OPRICE, 0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
+			originalNet: nnvl(sale2_arr[i].OPRICE, 0) * sale2_arr[i].QTY,
 		};
 		sale2List = sale2List.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE, 0) * nnvl(sale2_arr[i].QTY, 1);
 	}
-	
+
 	console.log("sale02List 转换后数据:", sale2List);
 
 	//支付数据
@@ -278,25 +278,25 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			bill: sale3_arr[j].BILL,
 			saleDate: sale3_arr[j].SALEDATE,
 			saleTime: sale3_arr[j].SALETIME,
-			khid: snvl(sale3_arr[j].KHID,""),
-			posId: snvl(sale3_arr[j].POSID,""),
+			khid: snvl(sale3_arr[j].KHID, ""),
+			posId: snvl(sale3_arr[j].POSID, ""),
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
 			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: snvl(sale3_arr[j].RYID,""), //人员
+			ryid: snvl(sale3_arr[j].RYID, ""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX, ""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: snvl(sale3_arr[j].SNAME,""),
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+			fkName: snvl(sale3_arr[j].SNAME, ""),
+			save_je: nnvl(sale3_arr[j].balance, 0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 		payTotal += parseFloat(sale3_arr[j].AMT);
 	}
 
 	console.log("sale3List 转换后数据:", sale3List);
-	
+
 	//销售卡券明细
 	var sale6List = [];
 	for (var j = 0; j < sale6_arr.length; j++) {
@@ -304,31 +304,31 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
 			bill: sale6_arr[j].BILL,
 			saleDate: sale6_arr[j].SALEDATE, //销售日期
 			saleTime: sale6_arr[j].SALETIME, //销售时间
-			khid: snvl(sale6_arr[j].KHID,""), //门店
-			posId: snvl(sale6_arr[j].POSID,""), //收款台
-			spid: snvl(sale6_arr[j].SPID,""),
+			khid: snvl(sale6_arr[j].KHID, ""), //门店
+			posId: snvl(sale6_arr[j].POSID, ""), //收款台
+			spid: snvl(sale6_arr[j].SPID, ""),
 			no: sale6_arr[j].NO, //序号
-			
-			kqids: snvl(sale6_arr[j].KQIDS,""), //起始卡券号
-			kqide: snvl(sale6_arr[j].KQIDE,""), //截止卡券号
-									
-			kqidstr: snvl(sale6_arr[j].KQIDSTR,""), //卡券范围
-			qty: nnvl(sale6_arr[j].QTY,0), //数量
-			mystr: nnvl(sale6_arr[j].MYSTR,0),
+
+			kqids: snvl(sale6_arr[j].KQIDS, ""), //起始卡券号
+			kqide: snvl(sale6_arr[j].KQIDE, ""), //截止卡券号
+
+			kqidstr: snvl(sale6_arr[j].KQIDSTR, ""), //卡券范围
+			qty: nnvl(sale6_arr[j].QTY, 0), //数量
+			mystr: nnvl(sale6_arr[j].MYSTR, 0),
 		};
-		sale6_sumQty += nnvl(sale6_arr[j].QTY,0),
-		sale6_sumNet += nnvl(sale6_arr[j].MYSTR,0) * nnvl(sale6_arr[j].QTY,0),
-		sale6List = sale6List.concat(sale6_printer);
+		sale6_sumQty += nnvl(sale6_arr[j].QTY, 0),
+			sale6_sumNet += nnvl(sale6_arr[j].MYSTR, 0) * nnvl(sale6_arr[j].QTY, 0),
+			sale6List = sale6List.concat(sale6_printer);
 	}
-		
+
 	console.log("sale06List 转换后数据:", sale6List);
-	
+
 	//卡券号段状态
 	let issuccess = true;
-	if(status.indexOf('失败') >=0 || status == 'fail'){
+	if (status.indexOf('失败') >= 0 || status == 'fail') {
 		issuccess = false;
 	}
-	
+
 	var printerInfo = {
 		xsType,
 		billType,
@@ -366,7 +366,7 @@ const sksqPrinterData = (sale1_obj, sale2_arr, sale3_arr, sale6_arr, xsType) => 
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
+const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent, type) => {
 	var xsType = "XS";
 	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
@@ -407,14 +407,14 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYID,"");
+	var posId = snvl(sale1_obj.POSID, "");
+	var posUser = snvl(sale1_obj.RYID, "");
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
+	var discountedAmount = nnvl(sale1_obj.BILLDISC, 0);
 	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var originalAmount = 0;
-	var cuid = snvl(sale1_obj.CUID,"");
+	var cuid = snvl(sale1_obj.CUID, "");
 	var hdnet = 0;
 	var ggy = ggyContent;
 	var totalQty = 0;
@@ -427,26 +427,26 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			saleDate: sale2_arr[i].SALEDATE,
 			saleTime: sale2_arr[i].SALETIME,
 			khid: sale2_arr[i].KHID,
-			posId: snvl(sale2_arr[i].POSID,""),
+			posId: snvl(sale2_arr[i].POSID, ""),
 			no: i,
-			plid: snvl(sale2_arr[i].PLID,""),
+			plid: snvl(sale2_arr[i].PLID, ""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: snvl(sale2_arr[i].UNIT,""), //单位
+			unit: snvl(sale2_arr[i].UNIT, ""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
-			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
+			spname: snvl(sale2_arr[i].SNAME, ""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
-			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
+			oprice: nnvl(sale2_arr[i].OPRICE, 0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
+			originalNet: nnvl(sale2_arr[i].OPRICE, 0) * sale2_arr[i].QTY,
 		};
 		goodsList = goodsList.concat(sale2_printer);
 		totalQty += sale2_arr[i].QTY;
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE, 0) * nnvl(sale2_arr[i].QTY, 1);
 	}
-	
+
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);
 
@@ -457,18 +457,18 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
 			bill: sale3_arr[j].BILL,
 			saleDate: sale3_arr[j].SALEDATE,
 			saleTime: sale3_arr[j].SALETIME,
-			khid: snvl(sale3_arr[j].KHID,""),
-			posId: snvl(sale3_arr[j].POSID,""),
+			khid: snvl(sale3_arr[j].KHID, ""),
+			posId: snvl(sale3_arr[j].POSID, ""),
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
 			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: snvl(sale3_arr[j].RYID,""), //人员
+			ryid: snvl(sale3_arr[j].RYID, ""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX, ""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: snvl(sale3_arr[j].SNAME,""),
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+			fkName: snvl(sale3_arr[j].SNAME, ""),
+			save_je: nnvl(sale3_arr[j].balance, 0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
@@ -506,7 +506,7 @@ const printerData = (sale1_obj, sale2_arr, sale3_arr, ggyContent,type) => {
  * 赊销打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) => {
+const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent, type) => {
 	var xsType = "SX";
 	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
@@ -547,21 +547,21 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYID,"");
+	var posId = snvl(sale1_obj.POSID, "");
+	var posUser = snvl(sale1_obj.RYID, "");
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
+	var discountedAmount = nnvl(sale1_obj.BILLDISC, 0);
 	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var originalAmount = 0;
-	var cuid = snvl(sale1_obj.CUID,"");
+	var cuid = snvl(sale1_obj.CUID, "");
 	var hdnet = 0;
 	var ggy = ggyContent;
 	var totalQty = 0;
 	var totalPrice = 0;
-	var dnet = nnvl(sale1_obj.DNET,0); //定金
-    var dkhName = "";
-	
+	var dnet = nnvl(sale1_obj.DNET, 0); //定金
+	var dkhName = "";
+
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -570,26 +570,26 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 			saleDate: sale2_arr[i].SALEDATE,
 			saleTime: sale2_arr[i].SALETIME,
 			khid: sale2_arr[i].KHID,
-			posId: snvl(sale2_arr[i].POSID,""),
+			posId: snvl(sale2_arr[i].POSID, ""),
 			no: i,
-			plid: snvl(sale2_arr[i].PLID,""),
+			plid: snvl(sale2_arr[i].PLID, ""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: snvl(sale2_arr[i].UNIT,""), //单位
+			unit: snvl(sale2_arr[i].UNIT, ""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
-			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
+			spname: snvl(sale2_arr[i].SNAME, ""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
-			oprice: nnvl(sale2_arr[i].OPRICE,0), //原价
+			oprice: nnvl(sale2_arr[i].OPRICE, 0), //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,
+			originalNet: nnvl(sale2_arr[i].OPRICE, 0) * sale2_arr[i].QTY,
 		};
 		goodsList = goodsList.concat(sale2_printer);
-		totalQty += nnvl(sale2_arr[i].QTY,1);
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
+		totalQty += nnvl(sale2_arr[i].QTY, 1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE, 0) * nnvl(sale2_arr[i].QTY, 1);
 	}
-	
+
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);
 
@@ -600,18 +600,18 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 			bill: sale3_arr[j].BILL,
 			saleDate: sale3_arr[j].SALEDATE,
 			saleTime: sale3_arr[j].SALETIME,
-			khid: snvl(sale3_arr[j].KHID,""),
-			posId: snvl(sale3_arr[j].POSID,""),
+			khid: snvl(sale3_arr[j].KHID, ""),
+			posId: snvl(sale3_arr[j].POSID, ""),
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
 			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: snvl(sale3_arr[j].RYID,""), //人员
+			ryid: snvl(sale3_arr[j].RYID, ""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX, ""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: snvl(sale3_arr[j].SNAME,""),
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+			fkName: snvl(sale3_arr[j].SNAME, ""),
+			save_je: nnvl(sale3_arr[j].balance, 0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
@@ -619,9 +619,9 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
 	console.log("sale3List 转换后数据:", sale3List);
 
 	let printerNum = 1;
-	if(print != null){
-		printerNum = nnvl(print.PRINTNUM,1);
-		dkhName = snvl(print.DKFNAME,"");
+	if (print != null) {
+		printerNum = nnvl(print.PRINTNUM, 1);
+		dkhName = snvl(print.DKFNAME, "");
 	}
 
 	var printerInfo = {
@@ -659,37 +659,37 @@ const sxPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent,type) 
  */
 const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => {
 	var xsType = "SXJS";
-	
+
 	var bill = sale1_obj.BILL;
 	// var xsDate = sale1_obj.DATE_QT;
 	var xsDate = getTime(3);
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYNAME_LR,"");
-	var dkfid = snvl(sale1_obj.DKFID,"");
-	var dkfname = snvl(sale1_obj.DKFNAME,"");
+	var posId = snvl(sale1_obj.POSID, "");
+	var posUser = snvl(sale1_obj.RYNAME_LR, "");
+	var dkfid = snvl(sale1_obj.DKFID, "");
+	var dkfname = snvl(sale1_obj.DKFNAME, "");
 	var lineNum = sale2_arr.length;
-	var payableAmount = nnvl(sale1_obj.TJSNET,0);
-    
+	var payableAmount = nnvl(sale1_obj.TJSNET, 0);
+
 	var ggy = ggyContent;
 	var totalPrice = 0;
-	
+
 	//arr2数据
 	var arr2List = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
 		var sale2_printer = {
-			bill: snvl(sale2_arr[i].BILL,""), //单号
-			bill_sx: snvl(sale2_arr[i].BILL_SX,""),//BILL_SX
-			dnet: nnvl(sale2_arr[i].DNET,0), //待结算额
-			jsnet: nnvl(sale2_arr[i].JSNET,0), //本次结算额
+			bill: snvl(sale2_arr[i].BILL, ""), //单号
+			bill_sx: snvl(sale2_arr[i].BILL_SX, ""), //BILL_SX
+			dnet: nnvl(sale2_arr[i].DNET, 0), //待结算额
+			jsnet: nnvl(sale2_arr[i].JSNET, 0), //本次结算额
 			no: i,
 		};
 		arr2List = arr2List.concat(sale2_printer);
-		totalPrice += nnvl(sale2_arr[i].JSNET,0);
+		totalPrice += nnvl(sale2_arr[i].JSNET, 0);
 	}
-	
+
 	var originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("arr2List 转换后数据:", arr2List);
 
@@ -701,11 +701,11 @@ const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => 
 			saleTime: sale3_arr[j].JK_DATE,
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
-			fkName: snvl(sale3_arr[j].SNAME,""),
+			fkName: snvl(sale3_arr[j].SNAME, ""),
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
-			disc: nnvl(sale3_arr[j].DISC,0), //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+			disc: nnvl(sale3_arr[j].DISC, 0), //折扣金额
+			zklx: snvl(sale3_arr[j].ZKLX, ""), //折扣类型
+			save_je: nnvl(sale3_arr[j].balance, 0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
@@ -713,8 +713,8 @@ const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => 
 	console.log("sale3List 转换后数据:", sale3List);
 
 	let printerNum = 1;
-	if(print != null){
-		printerNum = nnvl(print.PRINTNUM,1);
+	if (print != null) {
+		printerNum = nnvl(print.PRINTNUM, 1);
 	}
 
 	var printerInfo = {
@@ -744,40 +744,40 @@ const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => 
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,new_bill) => {
+const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Note, new_bill) => {
 	var xsType = "WM";
 	var bill = sale1_obj.BILL;
 	var wdate = sale1_obj.WDATE;
 	var wtime = sale1_obj.WTIME;
 	var xsBill = sale1_obj.XS_BILL;
-	var custmtime = snvl(sale1_obj.CUSTMTIME,"");
-	var daysn = snvl(sale1_obj.DAYSN,"");
+	var custmtime = snvl(sale1_obj.CUSTMTIME, "");
+	var daysn = snvl(sale1_obj.DAYSN, "");
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var gsid = snvl(sale1_obj.GSID,"");
-	var status = nnvl(sale1_obj.STATUS,0);
-	var remark = snvl(sale1_obj.STR1,"");
+	var gsid = snvl(sale1_obj.GSID, "");
+	var status = nnvl(sale1_obj.STATUS, 0);
+	var remark = snvl(sale1_obj.STR1, "");
 	var payableAmount = sale1_obj.STR2;
-	var originalAmount = nnvl(sale1_obj.STR8,0);
-	var shAddress = snvl(sale1_obj.STR4,"");
-	var shPhone = snvl(sale1_obj.STR6,"");
-	var shContact = snvl(sale1_obj.STR5,"");
+	var originalAmount = nnvl(sale1_obj.STR8, 0);
+	var shAddress = snvl(sale1_obj.STR4, "");
+	var shPhone = snvl(sale1_obj.STR6, "");
+	var shContact = snvl(sale1_obj.STR5, "");
 	var ggy = ggyContent;
 	var xsptid = sale1_obj.XSPTID;
 	var nowTime = getTime(3);
-	var posId = snvl(sale1_obj.POSID,"");
-	var note2 = snvl(sale1_obj.NOTE2,""); //平台名称。如美团外卖
-	var greeting = snvl(sale1_obj.GREETING,"");
-	
+	var posId = snvl(sale1_obj.POSID, "");
+	var note2 = snvl(sale1_obj.NOTE2, ""); //平台名称。如美团外卖
+	var greeting = snvl(sale1_obj.GREETING, "");
+
 	var bsReason = "";
 	var bsNote = "";
-	var newBill="";
-	if(type == "WMTHBS"){
+	var newBill = "";
+	if (type == "WMTHBS") {
 		bsReason = bs_Reason;
 		bsNote = bs_Note;
 		newBill = new_bill;
-	}else if(type == "WM"){
+	} else if (type == "WM") {
 		newBill = new_bill;
 	}
 	var wmType = type;
@@ -792,11 +792,11 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type,bs_Reason,bs_Note,
 			qty: sale2_arr[i].QTY, //商品数量
 			price: sale2_arr[i].PRICE, //商品价格
 			oprice: sale2_arr[i].OPRICE, //原价
-			net: nnvl(sale2_arr[i].NET,0), //商品金额
-			unit: snvl(sale2_arr[i].STR7,""), //商品单位
+			net: nnvl(sale2_arr[i].NET, 0), //商品金额
+			unit: snvl(sale2_arr[i].STR7, ""), //商品单位
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
-			bqty: nnvl(sale2_arr[i].BQTY,0),
-			attribute: snvl(sale2_arr[i].STR2,""), //商品属性
+			bqty: nnvl(sale2_arr[i].BQTY, 0),
+			attribute: snvl(sale2_arr[i].STR2, ""), //商品属性
 		};
 		goodsList = goodsList.concat(sale2_printer);
 	}
@@ -855,10 +855,10 @@ const xsPrinterData = (sale1_obj, ggyContent, type) => {
 	var date_dh = sale1_obj.DATE_DH;
 	var saletime = sale1_obj.SALETIME;
 	var thtype = sale1_obj.THTYPE;
-	var custmname = snvl(sale1_obj.CUSTMNAME,"");
-	var custmaddress = snvl(sale1_obj.CUSTMADDRESS,"");
-	var custmphone = snvl(sale1_obj.CUSTMPHONE,"");
-	var custmcomm = snvl(sale1_obj.CUSTMCOMM,"");
+	var custmname = snvl(sale1_obj.CUSTMNAME, "");
+	var custmaddress = snvl(sale1_obj.CUSTMADDRESS, "");
+	var custmphone = snvl(sale1_obj.CUSTMPHONE, "");
+	var custmcomm = snvl(sale1_obj.CUSTMCOMM, "");
 
 	var spid = sale1_obj.SPID;
 	var sname = sale1_obj.SNAME;
@@ -893,7 +893,7 @@ const xsPrinterData = (sale1_obj, ggyContent, type) => {
  * 打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
  */
-const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) => {
+const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr, ydsale001, ggyContent) => {
 	var xsType = "YD";
 	switch (sale1_obj.XSTYPE) {
 		case "0": //外卖单接单
@@ -934,19 +934,19 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 	var khName = getApp().globalData.store.NAME;
 	var khAddress = getApp().globalData.store.KHAddress;
 	var khPhone = getApp().globalData.store.PHONE;
-	var posId = snvl(sale1_obj.POSID,"");
-	var posUser = snvl(sale1_obj.RYID,"");
+	var posId = snvl(sale1_obj.POSID, "");
+	var posUser = snvl(sale1_obj.RYID, "");
 	var lineNum = sale2_arr.length;
 	var payableAmount = sale1_obj.TNET;
-	var discountedAmount = nnvl(sale1_obj.BILLDISC,0);
+	var discountedAmount = nnvl(sale1_obj.BILLDISC, 0);
 	//var originalAmount = nnvl(sale1_obj.ZNET,0) + discountedAmount;
 	var originalAmount = 0;
-	var cuid = snvl(sale1_obj.CUID,"");
+	var cuid = snvl(sale1_obj.CUID, "");
 	var hdnet = 0;
 	var ggy = ggyContent;
 	var totalQty = 0;
 	var totalPrice = 0;
-	
+
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
@@ -955,24 +955,24 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			saleDate: sale2_arr[i].SALEDATE,
 			saleTime: sale2_arr[i].SALETIME,
 			khid: sale2_arr[i].KHID,
-			posId: snvl(sale2_arr[i].POSID,""),
+			posId: snvl(sale2_arr[i].POSID, ""),
 			no: i,
-			plid: snvl(sale2_arr[i].PLID,""),
+			plid: snvl(sale2_arr[i].PLID, ""),
 			barCode: sale2_arr[i].BARCODE,
-			unit: snvl(sale2_arr[i].UNIT,""), //单位
+			unit: snvl(sale2_arr[i].UNIT, ""), //单位
 
 			spid: sale2_arr[i].SPID, //商品编码
-			spname: snvl(sale2_arr[i].SNAME,""), //商品名称
+			spname: snvl(sale2_arr[i].SNAME, ""), //商品名称
 			qty: sale2_arr[i].QTY, //数量
 			price: sale2_arr[i].PRICE, //单价
 			oprice: sale2_arr[i].OPRICE, //原价
 			amount: nnvl(sale2_arr[i].NET, 0), //金额
 			discount: nnvl(sale2_arr[i].DISCRATE, 0), //总折扣额
-			originalNet: nnvl(sale2_arr[i].OPRICE,0) * sale2_arr[i].QTY,	
+			originalNet: nnvl(sale2_arr[i].OPRICE, 0) * sale2_arr[i].QTY,
 		};
 		goodsList = goodsList.concat(sale2_printer);
-		totalQty += nnvl(sale2_arr[i].QTY,1);
-		totalPrice += nnvl(sale2_arr[i].OPRICE,0) * nnvl(sale2_arr[i].QTY,1);
+		totalQty += nnvl(sale2_arr[i].QTY, 1);
+		totalPrice += nnvl(sale2_arr[i].OPRICE, 0) * nnvl(sale2_arr[i].QTY, 1);
 	}
 	originalAmount = totalPrice; //原金额，重新通过商品列表获取赋值
 	console.log("goodsList 转换后数据:", goodsList);
@@ -984,32 +984,33 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 			bill: sale3_arr[j].BILL,
 			saleDate: sale3_arr[j].SALEDATE,
 			saleTime: sale3_arr[j].SALETIME,
-			khid: snvl(sale3_arr[j].KHID,""),
-			posId: snvl(sale3_arr[j].POSID,""),
+			khid: snvl(sale3_arr[j].KHID, ""),
+			posId: snvl(sale3_arr[j].POSID, ""),
 			no: sale3_arr[j].NO, //付款序号
 			fkid: sale3_arr[j].FKID, //付款类型id
 			amt: parseFloat(sale3_arr[j].AMT), //付款金额
 			id: sale3_arr[j].ID, //卡号或者券号
-			ryid: snvl(sale3_arr[j].RYID,""), //人员
+			ryid: snvl(sale3_arr[j].RYID, ""), //人员
 			disc: sale3_arr[j].DISC, //折扣金额
-			zklx: snvl(sale3_arr[j].ZKLX,""), //折扣类型
+			zklx: snvl(sale3_arr[j].ZKLX, ""), //折扣类型
 			idType: sale3_arr[j].IDTYPE, //卡类型
-			fkName: snvl(sale3_arr[j].SNAME,""),
-			save_je: nnvl(sale3_arr[j].balance,0), // 余额
+			fkName: snvl(sale3_arr[j].SNAME, ""),
+			save_je: nnvl(sale3_arr[j].balance, 0), // 余额
 		};
 		sale3List = sale3List.concat(sale3_printer);
 	}
 
 	console.log("sale3List 转换后数据:", sale3List);
-	
-	var qknet = Math.round((nnvl(originalAmount,0) - nnvl(payableAmount,0) - nnvl(discountedAmount,0))*100)/100;
-	var dnet = nnvl(sale1_obj.DNET,0);
-	var custmname = snvl(ydsale001.CUSTMNAME,"");
-	var custmphone = snvl(ydsale001.CUSTMPHONE,"");
-	var thdate = snvl(ydsale001.THDATE,"");
-	var custmcomm = snvl(ydsale001.CUSTMCOMM,"");;
-	var thkhid = snvl(ydsale001.THKHID,"");;
-	var custmaddress = snvl(ydsale001.CUSTMADDRESS,"");
+
+	var qknet = Math.round((nnvl(originalAmount, 0) - nnvl(payableAmount, 0) - nnvl(discountedAmount, 0)) * 100) /
+		100;
+	var dnet = nnvl(sale1_obj.DNET, 0);
+	var custmname = snvl(ydsale001.CUSTMNAME, "");
+	var custmphone = snvl(ydsale001.CUSTMPHONE, "");
+	var thdate = snvl(ydsale001.THDATE, "");
+	var custmcomm = snvl(ydsale001.CUSTMCOMM, "");;
+	var thkhid = snvl(ydsale001.THKHID, "");;
+	var custmaddress = snvl(ydsale001.CUSTMADDRESS, "");
 
 	var printerInfo = {
 		xsType, //销售、退单、预订、预订提取、预订取消、赊销、赊销退单、线上订单、外卖；
@@ -1032,15 +1033,15 @@ const ydPrinterData = (sale1_obj, sale2_arr, sale3_arr,ydsale001, ggyContent) =>
 		hdnet, //商家承担
 		sale3List, //支付信息
 		ggy, //广告语
-		
-		qknet,//欠款
-		dnet,//定金金额
-		custmname,//客户名称
-		custmphone,//客户电话
-		thdate,//要求提货日期
-		custmcomm,//客户要求
-		thkhid,//要求提货门店	
-		custmaddress,//送货地址
+
+		qknet, //欠款
+		dnet, //定金金额
+		custmname, //客户名称
+		custmphone, //客户电话
+		thdate, //要求提货日期
+		custmcomm, //客户要求
+		thkhid, //要求提货门店	
+		custmaddress, //送货地址
 	}
 	console.log("打印接收数据转换后 printerInfo:", printerInfo);
 
@@ -1073,7 +1074,8 @@ const onlyFourPhone = (value) => {
 // 添加打印记录
 const addPos_XsBillPrintData = (xsBill, xsDate, billStr) => {
 	let execSql_arr = ['insert into POS_XSBILLPRINT (XSBILL,XSDATE,BILLSTR) values ("' + xsBill + '","' + xsDate +
-		'","' + billStr + '")'];
+		'","' + billStr + '")'
+	];
 	db.get().executeDml(execSql_arr, "执行中", function(res) {
 		console.log("POS_XSBILLPRINT sql执行结果：", res);
 	}, function(err) {
@@ -1126,6 +1128,7 @@ const commonPOSCS = async (poscsData) => {
 	var YN_CALLNUM = ""; //水吧产品叫号 ，维护Y的时候 ，支付前 收银员手工录入水吧叫号的号码，小票顶部打印这个号码
 	var SBLBBM = "";
 	var YN_DYDZFPEWM = ""; //是否打印电子发票二维码
+	var YN_SHOWPRINTTIP = ""; //是否打印弹窗提示
 
 	var obj1 = poscsData;
 	var YN_YXDY_obj = obj1.filter(item => {
@@ -1236,6 +1239,15 @@ const commonPOSCS = async (poscsData) => {
 	if (YN_DYDZFPEWM_obj.length > 0) {
 		YN_DYDZFPEWM = YN_DYDZFPEWM_obj[0].POSCSNR;
 	}
+	var obj12 = poscsData;
+	var YN_SHOWPRINTTIP_obj = obj12.filter(item => {
+		if (item.POSCS == "YN_SHOWPRINTTIP") {
+			return item.POSCSNR;
+		}
+	});
+	if (YN_SHOWPRINTTIP_obj.length > 0) {
+		YN_SHOWPRINTTIP = YN_SHOWPRINTTIP_obj[0].POSCSNR;
+	}
 
 	// console.log("YN_YXDY",YN_YXDY);
 	// console.log("SBLBBM",SBLBBM);
@@ -1252,6 +1264,7 @@ const commonPOSCS = async (poscsData) => {
 		YN_CALLNUM,
 		SBLBBM,
 		YN_DYDZFPEWM,
+		YN_SHOWPRINTTIP
 	};
 
 	//console.log("commonPOSCS",printer_poscs)
@@ -1267,7 +1280,7 @@ const getBillPrinterData = async (xsBill) => {
 	let sql = "select * from POS_XSBILLPRINT where XSBILL = '" + xsBill + "' order by XSDATE desc";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		//console.log("重打数据查询成功", res);
-		if(res.msg != null && res.msg != ""){
+		if (res.msg != null && res.msg != "") {
 			billStr = res.msg[0].BILLSTR;
 			console.log("重打数据查询成功 单号", res.msg[0].XSBILL);
 		}
@@ -1290,7 +1303,7 @@ const getBillPrinterMax = async () => {
 	let sql = "select * from (select * from POS_XSBILLPRINT order by XSDATE DESC) limit 1";
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		//console.log("重打数据查询成功 getBillPrinterMax", res);
-		if(res.msg != null && res.msg != ""){
+		if (res.msg != null && res.msg != "") {
 			xsBill = res.msg[0].XSBILL;
 			//console.log("重打数据查询成功 getBillPrinterMax", res.msg[0].XSBILL);
 		}
@@ -1434,10 +1447,12 @@ const qrCodeAction = function(is_dzfpewmdz, command, qrCodeWidth, qrCodeHeight) 
  * @param {*} qrCodeWidth 
  * @param {*} qrCodeHeight
  */
-const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight,objQrCode) {
+const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, qrCodeHeight, objQrCode) {
 	return new Promise((resolve, reject) => {
 		let saleDate = formatDateNew(objQrCode.saledate);
-		let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + saleDate + "&bill=" + objQrCode.bill + "&khid=" + objQrCode.khid + "&gsid=" +objQrCode.gsid + "&sltype=" +objQrCode.sltype;
+		// let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + saleDate + "&bill=" + objQrCode
+		// 	.bill + "&khid=" + objQrCode.khid + "&gsid=" + objQrCode.gsid + "&sltype=" + objQrCode.sltype;
+		let qrText = objQrCode.url;//240509修改版
 		console.log("1.二维码生成内容:", qrText)
 		if (!is_dzfpewmdz) {
 			resolve('1')
