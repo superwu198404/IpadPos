@@ -294,7 +294,7 @@
 					false;
 				if (is_dzfpewmdz && isPrinterFP) {
 					let str = "RC_04";
-					if (sale1_obj.XSPTID == 'QJXCX')
+					if (sale1_obj.XSPTID == 'KGXCX')
 						str = "RC_03";
 					if (sale1_obj.XSPTID == 'MEITUAN')
 						str = "RC_07";
