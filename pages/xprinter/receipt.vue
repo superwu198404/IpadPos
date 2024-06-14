@@ -198,7 +198,7 @@
 				if (is_dzfpewmdz && isPrinterFP) {
 
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderId=" +
 							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
@@ -302,7 +302,7 @@
 						str = "RC_08";
 					let objQrCode = {
 						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + str +
-							"&merOrderld=" + sale1_obj.BILL,
+							"&merOrderId=" + sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.WDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -388,7 +388,7 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderId=" +
 							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
@@ -503,7 +503,7 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderId=" +
 							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
@@ -602,7 +602,7 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && type == "XS") {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderId=" +
 							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
@@ -680,7 +680,7 @@
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz && isPrinterFP) {
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderld=" +
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=RC_04&merOrderId=" +
 							sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.DATE_QT, ""),
@@ -756,12 +756,18 @@
 				//打印二维码
 				let is_dzfpewmdz = (printer_poscs.DZFPEWMDZ != "" && printer_poscs.YN_DYDZFPEWM == "Y" && isFP ==
 					"Y") ? true : false;
+				console.log("打印参数：", printer_poscs.DZFPEWMDZ + "," + isFP);
 				//电子发票二维码不为空、小票结尾二维码不为空
 				if (is_dzfpewmdz) {
+					let orderType = "RC_10";
+					if (sale1_obj.CUID == 'CZ' || sale1_obj.CUID == 'SKCZ')
+						orderType = "RC_11";
+					console.log("打印参数1：", sale1_obj.CUID);
+					console.log("打印参数2：", xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" +
+						orderType + "&merOrderId=" + sale1_obj.BILL);
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + (sale1_obj.CUID ==
-								'CZ' || sale1_obj.CUID == 'SKCZ') ? 'RC_01' : 'RC_02' + "&merOrderld=" +
-							sale1_obj.BILL,
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + orderType +
+							"&merOrderId=" + sale1_obj.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(sale1_obj.SALEDATE, ""),
 						bill: xprinter_util.snvl(sale1_obj.BILL, ""),
@@ -835,12 +841,30 @@
 				let is_xpewm = printer_poscs.XPEWM != "" ? true : false;
 				console.warn("重打小票=======", {
 					is_dzfpewmdz,
-					is_fpQRCode
+					is_fpQRCode,
+					bill_type: data.BILL_TYPE
 				});
 				//电子发票二维码不为空，则打印二维码
 				if (is_dzfpewmdz && xprinter_util.nnvl(is_fpQRCode, 0) == 1) {
+					let orderType = "RC_04";
+					if (data.BILL_TYPE == 'Z102' || data.BILL_TYPE == 'Z152') //外卖 正向单和退单
+					{
+						if (data.XSPTID == 'KGXCX')
+							orderType = "RC_03";
+						if (data.XSPTID == 'MEITUAN')
+							orderType = "RC_07";
+						if (data.XSPTID == 'ELM')
+							orderType = "RC_08";
+					}
+					if (data.BILL_TYPE == 'Z111' || data.BILL_TYPE == 'Z112' || data.BILL_TYPE == 'Z113' || data
+						.BILL_TYPE == 'Z163') {
+						orderType = "RC_10";
+						if (data.CUID == 'CZ' || data.CUID == 'SKCZ')
+							orderType = "RC_11";
+					}
 					let objQrCode = {
-						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, ""),
+						url: xprinter_util.snvl(printer_poscs.DZFPEWMDZ, "") + "&orderType=" + orderType +
+							"&merOrderId=" + data.BILL,
 						v: xprinter_util.snvl(1, ""),
 						saledate: xprinter_util.snvl(data.SALEDATE, ""),
 						bill: xprinter_util.snvl(xsBill, ""),

@@ -276,8 +276,7 @@
 					is_fpQRCode = "1";
 				}else if(xsType == "3" && bill_type == "Z121"){
 					is_fpQRCode = "1" ;
-				}else if(xsType == "1" && bill_type == "Z111" 
-					&& (kqxstype == "CZ" || kqxstype == "SKCZ" || kqxstype == "SK" || kqxstype == "SQ")){
+				}else if(xsType == "1" && bill_type == "Z111" && (kqxstype == "CZ" || kqxstype == "SKCZ" || kqxstype == "SK" || kqxstype == "SQ")){
 					is_fpQRCode = "1";
 				}else if(bill_type == "Z102"){
 					is_fpQRCode = "1";
