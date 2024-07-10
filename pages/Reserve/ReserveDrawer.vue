@@ -51,7 +51,7 @@
 					</label>
 					<label><text><i class="sgin">*</i>定金：</text><text v-if="over48">{{ Order.DNET }}</text><input v-else
 							type="number" v-model="Order.DNET" @input="CheckMoney"
-							:disabled="over48||Order.THTYPE == '1'" /><!-- 宅配到家和超时均不可修改 -->
+							:disabled="over48||Order.THTYPE == '1'||Order.THTYPE == '2'" /><!-- 宅配到家和超时均不可修改 -->
 					</label>
 					<label><text><i class="sgin">*</i>蛋糕规格：</text>
 						<picker @change="GGChange" :range="GGDatas">
@@ -573,6 +573,8 @@
 						that.MatchBHKH();
 					else
 						that.Order.CUSTMADDRESS = "";
+				}
+				if (that.Order.THTYPE == '1' || that.Order.THTYPE == '2') { //宅配到家 现卖配送
 					//240222 需求设定 宅配到家定金必须为整单金额 且不可修改
 					that.Order.DNET = that.Order.ZNET;
 				}
