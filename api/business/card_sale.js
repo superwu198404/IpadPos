@@ -65,12 +65,14 @@ var ResetCXZK = function(that) {
 		that.SALE001.BILLDISC = 0; //cx zk
 	}
 	that.SALE002.map(r => {
-		r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		// r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		r.NET = util.newFloat(r.OPRICE * r.QTY, 2);; //回退一下折扣？
 		r.PRICE = util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
 		r.DISCRATE = 0; //zk
 		r.BZDISC = 0; //zk
 		r.LSDISC = 0; //zk
 		r.TPDISC = 0; //zk
+		r.CXDISC = 0; //cx
 	});
 }
 
@@ -93,7 +95,8 @@ var FallbackSpecialDiscount = function(sale001, sale002 = []) {
 	}
 	console.log("[FallbackSpecialDiscount]开始清除sale002折扣信息:", sale002);
 	sale002.map(r => {
-		r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		// r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
+		r.NET = util.newFloat(r.OPRICE * r.QTY, 2);; //回退一下折扣？
 		r.PRICE = util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
 		r.DISCRATE = 0; //zk
 		r.BZDISC = 0; //zk

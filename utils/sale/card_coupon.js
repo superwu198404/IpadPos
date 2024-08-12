@@ -155,7 +155,7 @@ var KQTypeObj = {
 					SALE002: data.SALE002,
 					SALE003: data.SALE003,
 					SALE006: data.SALE006,
-					SXSALE001: data.SXSALE001,
+					SXSALE001: data.SXSALE001
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
@@ -405,6 +405,7 @@ var KQTypeObj = {
 					SALE003: data.SALE003,
 					SALE006: data.SALE006,
 					SXSALE001: data.SXSALE001,
+					CXMDFSMX: data.CXMDFSMX
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)
@@ -486,6 +487,7 @@ var KQTypeObj = {
 					SALE003: data.SALE003,
 					SALE006: data.SALE006,
 					SXSALE001: data.SXSALE001,
+					CXMDFSMX: data.CXMDFSMX
 				});
 				console.log("[Completed]创建销售单结果:", create_result);
 				if (create_result.code)

@@ -100,6 +100,10 @@
 						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
 						</image>
 					</view>
+					<view class="a-z">
+						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="CheckPromotion">
+						</image>
+					</view>
 				</view>
 			</view>
 			<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002">
@@ -194,7 +198,10 @@
 				canvasGZHWidth: 1,
 				canvasGZHHeight: 1,
 				FKDA_INFO: [], //付款信息
-				_sale2_count: 0
+				_sale2_count: 0,
+				checkPromotion: false,
+				CXData: [], //促销数据
+				cxfsArr: [], //促销跟踪数据
 			}
 		},
 		computed: {
@@ -288,6 +295,21 @@
 			},
 		},
 		methods: {
+			//勾选促销
+			CheckPromotion: function() {
+				uni.showModal({
+					title: "提示",
+					content: "是否生效促销？",
+					success: suc => {
+						if (suc.confirm) {
+							this.checkPromotion = true;
+						} else {
+							this.checkPromotion = false;
+						}
+						this.total_discount_computed();
+					}
+				})
+			},
 			coupon_segment_input() {
 				if (common.CheckSign()) {
 					this.view.no_input = true
@@ -474,7 +496,8 @@
 						SALE002: this.source.sale002,
 						SALE003: this.source.sale003,
 						SALE006: this.source.sale006,
-						SXSALE001: this.source.sxsale001
+						SXSALE001: this.source.sxsale001,
+						CXMDFSMX: this.cxfsArr
 					});
 					console.log("[SaveOrders]上传完毕，上传结果：", created_sales_result);
 					$(this.receipt_printing.bind(this.source), false);
@@ -503,6 +526,8 @@
 				this.source.discount_infos = await this.get_discount_data(); //初始化折扣信息数据
 				this._sale2_count = 0;
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				this.checkPromotion = false
+				this.cxfsArr = [] //促销跟踪数据
 			},
 			total_discount_computed() {
 				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
@@ -585,17 +610,30 @@
 				this.view.enable_special_discount = true;
 			},
 			discount_computed(sale2) { //使用特殊折扣进行计算
-				let discount_computed_params = {};
-				if (this.source.discount_type != 'NO') {
-					console.warn("[DiscountComputed]准备折扣计算参数...", {
-						param_sale2: sale2,
-						context_sale2: this.source.sale002
-					});
-					discount_computed_params.ZKType = this.source.discount_type;
-					discount_computed_params.ZKData = this.source.discount_infos;
-					main.MatchZKDatas(discount_computed_params, sale2 || this.source
-						.sale002); //可使用传入的sale2，如果不存在则使用当前上下文的sale2
-					console.warn("[DiscountComputed]折扣计算完毕...");
+				if (this.checkPromotion) { //促销计算
+					let res = main.MatchCXDatas(this.CXData, this.source.sale002, this.source.sale001);
+					this.source.sale002 = res.sale2;
+					this.source.sale2_union_sale6.map(r => {
+						let obj = res.sale2.find(r1 => r1.SPID == r.sale002.SPID);
+						if (obj)
+							r.sale002.DISCRATE = obj.DISCRATE;
+					})
+					console.log("sale26:", this.source.sale2_union_sale6);
+					this.cxfsArr = res.cxfsArr;
+					console.log("002增加促销或折扣后的新数据：", this.source.sale002);
+				} else { //折扣计算
+					let discount_computed_params = {};
+					if (this.source.discount_type != 'NO') {
+						console.warn("[DiscountComputed]准备折扣计算参数...", {
+							param_sale2: sale2,
+							context_sale2: this.source.sale002
+						});
+						discount_computed_params.ZKType = this.source.discount_type;
+						discount_computed_params.ZKData = this.source.discount_infos;
+						main.MatchZKDatas(discount_computed_params, sale2 || this.source
+							.sale002); //可使用传入的sale2，如果不存在则使用当前上下文的sale2
+						console.warn("[DiscountComputed]折扣计算完毕...");
+					}
 				}
 				console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source);
 			},
@@ -752,6 +790,7 @@
 					console.log("[EventMonitor]用户选择的折扣信息:", data);
 					this.source.discount_type = data; //记录折扣类型
 					console.log("[EventMonitor]用户选择的折扣处理后的SALE2信息:", this.source.sale002);
+					this.checkPromotion = false;
 					this.view.enable_special_discount = false; //关闭特殊折扣弹窗
 				}));
 				this.event_register("big-customer-close", $(async function(data) {
@@ -763,6 +802,7 @@
 					if (Object.keys(data).length === 0 && this.source.discount_type == 'TP') {
 						this.source.discount_type = "NO";
 					}
+					that.checkPromotion = false; //取消促销
 					this.source.big_customer_info = data;
 					this.source.discount_infos = await this.get_discount_data(data.DKFID);
 					console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
@@ -785,6 +825,7 @@
 		async created() {
 			this.sale = new Sale.InitKQSale(this, uni, getApp().globalData.store, "GiftCoupon_Active");
 			this.source.discount_infos = await this.get_discount_data(); //初始化折扣信息数据
+			this.CXData = await main.GetCXDatasAll(getApp().globalData.store.KHID);
 			$ = util.callContainer(this);
 			//test code...
 			// this.KHID = 'K200QTD006';

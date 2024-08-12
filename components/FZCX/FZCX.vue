@@ -191,11 +191,13 @@
 		align-items: center;
 		display: flex;
 	}
-	.bag .h8 text:nth-child(1){
+
+	.bag .h8 text:nth-child(1) {
 		font-weight: 700;
 		max-width: 70%;
 		overflow: auto;
 	}
+
 	.bag .h8 text {
 		font-weight: 400;
 	}

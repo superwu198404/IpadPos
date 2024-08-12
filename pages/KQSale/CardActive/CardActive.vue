@@ -181,6 +181,9 @@
 						<view class="a-z">
 							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
+						<view class="a-z">
+							<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="CheckPromotion"></image>
+						</view>
 						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
 						</view> -->
@@ -269,7 +272,10 @@
 				FailSaleList: [], //激活、充值失败的单据集合
 				curFailSale: {},
 				add_class: 0,
-				_sale2_count: 0
+				_sale2_count: 0,
+				checkPromotion: false,
+				CXData: [], //促销数据
+				cxfsArr: [], //促销跟踪数据
 			}
 		},
 		created: async function() {
@@ -291,6 +297,8 @@
 			});
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
+			that.CXData = await _main.GetCXDatasAll(store.KHID);
+			console.log("促销数据：", that.CXData);
 		},
 		mounted() {
 			//事件监听
@@ -308,6 +316,7 @@
 				that.SALE001.XSTYPE = that.XSTYPE;
 				if (data.DKFID) {
 					that.SALE001.DKFID = data.DKFID;
+					that.checkPromotion = false; //取消促销
 				} else {
 					that.SALE001.DKFID = '80000000';
 					let store = _util.getStorage("store");
@@ -331,7 +340,7 @@
 			SALE002: function(n, o) {
 				console.log("SALE002发生变化(新)：", n);
 				console.log("SALE002发生变化(旧)：", o);
-				that.discCompute();
+				// that.discCompute();
 				that._sale2_count = n.length;
 				that.add_class = (n.length == 0 ? 0 : 1); //步骤设置
 			},
@@ -339,7 +348,12 @@
 				console.log("特殊折扣发生变化(新)：", n);
 				console.log("特殊折扣发生变化(旧)：", o);
 				that.discCompute();
-			}
+			},
+			// checkPromotion: function(n, o) {
+			// 	console.log("促销状态发生变化(新)：", n);
+			// 	console.log("促销状态发生变化(旧)：", o);
+			// 	that.discCompute();
+			// }
 		},
 		computed: {
 			//商品总数量
@@ -384,6 +398,21 @@
 			uni.$off("ReturnSale");
 		},
 		methods: {
+			//勾选促销
+			CheckPromotion: function() {
+				uni.showModal({
+					title: "提示",
+					content: "是否生效促销？",
+					success: suc => {
+						if (suc.confirm) {
+							that.checkPromotion = true;
+						} else {
+							that.checkPromotion = false;
+						}
+						that.discCompute();
+					}
+				})
+			},
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
 				var index = e.currentTarget.dataset.index;
@@ -484,8 +513,8 @@
 										spObj.QTY = r3.cardNum; //重写一下QTY
 										spObj.NET = _util.newFloat(spObj
 											.PRICE * spObj.QTY, 2); //重写一下NET
-										that.SALE002.push(
-											spObj); //追加当前号段的商品信息
+										that.SALE002.push(spObj); //追加当前号段的商品信息
+										that.discCompute(); //计算促销或折扣
 										console.log("sale2", that.SALE002);
 										console.log("sale6", that.SALE006);
 									})
@@ -564,6 +593,7 @@
 							return r.KQIDSTR != e.STR2;
 						});
 						that.SALE006 = arr1;
+						that.discCompute(); //重新计算折扣
 					}
 				})
 			},
@@ -746,6 +776,7 @@
 					SALE003: that.SALE003,
 					SALE006: res.sale6,
 					SXSALE001: that.SXSALE001,
+					CXMDFSMX: that.cxfsArr
 				}, resp => {
 					//销售单数据处理成功，再调用打印
 					if (resp.code)
@@ -846,12 +877,14 @@
 				that.SALE003 = [];
 				that.SALE006 = [];
 				that.SXSALE001 = [];
+				that.cxfsArr = [];
 				that.CurCZGZ = {};
 				that.Amount = 0;
 				that.CurZKDisc = {};
 				let store = _util.getStorage("store");
 				store.DKFID = "80000000";
 				store.DKFNAME = '默认大客户';
+				that.checkPromotion = false;
 				_util.setStorage("store", store);
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 				console.log("单据重置成功")
@@ -883,18 +916,25 @@
 						ZKData: that.ZKData
 					};
 					that.add_class = 1; //步骤设置
+					that.checkPromotion = false; //取消促销
 				}
 				that.CurZKDisc = obj;
 				//清除一下之前产生的促销和折扣
-				_card_sale.ResetCXZK(that);
+				// _card_sale.ResetCXZK(that);
 			},
 			//使用特殊折扣进行计算
 			discCompute: function() {
+				//清除一下之前产生的折扣
+				_card_sale.ResetCXZK(that);
 				// 计算商品的折扣值
-				let res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
+				let res;
+				if (that.checkPromotion) //促销
+					res = _main.MatchCXDatas(that.CXData, that.SALE002, that.SALE001);
+				else //折扣
+					res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002);
 				that.SALE002 = res.sale2;
-				// that.ZKHDArr = res.zkrule;
-				console.log("002增加折扣后的新数据：", that.SALE002);
+				that.cxfsArr = res.cxfsArr;
+				console.log("002增加促销或折扣后的新数据：", that.SALE002);
 			},
 			//清空数据
 			ClearSale: function() {

@@ -3463,7 +3463,7 @@ function GetSale(global, vue, target_name, uni) {
 						let SPObj = _main.FindSP(this.Allsplist, r.SPID);
 						console.log("当前匹配到的商品对象:", SPObj);
 						console.log("当前辅助促销商品对象:", r);
-						if (Object.keys(SPObj).length > 0) {
+						if (SPObj && Object.keys(SPObj).length > 0) {
 							let NO = this.sale002.length;
 							let s2 = _main.CreateSale2(r, this.sale001, SPObj, NO);
 							s2 = Object.assign(new sale.sale002(), s2); //合并一下对象
