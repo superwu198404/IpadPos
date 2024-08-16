@@ -101,7 +101,7 @@
 						</image>
 					</view>
 					<view class="a-z">
-						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="CheckPromotion">
+						<image src="@/images/img2/cuxsxiao.png" mode="widthFix" @click="CheckPromotion">
 						</image>
 					</view>
 				</view>

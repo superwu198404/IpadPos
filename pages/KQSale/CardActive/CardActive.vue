@@ -182,7 +182,7 @@
 							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="CheckPromotion"></image>
+							<image src="@/images/img2/cuxsxiao.png" mode="widthFix" @click="CheckPromotion"></image>
 						</view>
 						<!-- <view class="a-z">
 							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>

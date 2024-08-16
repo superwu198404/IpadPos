@@ -33,7 +33,7 @@
 					<view class='rests' v-if="Newaddr" style="margin-bottom: 0; padding-bottom: 0;">
 						<view class="h6"><text>新增地址</text></view>
 						<view class="restlist">
-							<label><text>收货人：</text><input type="text" v-model="from.address.NAME" /></label>
+							<label><text>收货人：</text><input type="text" v-model="from.address.CNAME" /></label>
 							<label><text>联系电话：</text><input type="text" v-model="from.address.PHONE" /></label>
 							<label class="long"><text>收货地址：</text>
 								<AddressPicker @change="AddressChange"></AddressPicker>
@@ -190,7 +190,7 @@
 					more: false,
 					selected: { //当前选中的配送地址
 						ACT: "",
-						NAME: "", //客户名称
+						CNAME: "", //客户名称
 						PHONE: "", //客户电话
 						LATITUDE: "", //纬度
 						LONGITUDE: "", //经度
@@ -199,7 +199,7 @@
 					},
 					address: {
 						ACT: "",
-						NAME: "", //客户名称
+						CNAME: "", //客户名称
 						PHONE: "", //客户电话
 						LATITUDE: "", //纬度
 						LONGITUDE: "", //经度

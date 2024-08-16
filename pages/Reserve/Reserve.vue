@@ -76,7 +76,7 @@
 						<view class='rests' v-if="yn_add" style="margin-bottom: 0; padding-bottom: 0;">
 							<view class="h6"><text>新增地址</text></view>
 							<view class="restlist">
-								<label><text>收货人：</text><input type="text" v-model="ADDR.NAME" /></label>
+								<label><text>收货人：</text><input type="text" v-model="ADDR.CNAME" /></label>
 								<label><text>联系电话：</text><input type="number" v-model="ADDR.PHONE" /></label>
 								<!-- :disabled="ADDR.ACT=='Update'" -->
 								<label class="long"><text>收货地址：</text><input type="text" v-model="ADDR.ADDRESS"
@@ -281,7 +281,7 @@
 				yn_add: false,
 				ADDRS: [],
 				ADDR: {
-					NAME: "",
+					CNAME: "",
 					PHONE: "",
 					ADDRESS: "",
 					NOTE: "",
@@ -461,7 +461,7 @@
 			ShowAddADDR: () => {
 				console.log("显示新增地址框")
 				// that.ADDR = {};
-				that.ADDR.NAME = "";
+				that.ADDR.CNAME = "";
 				that.ADDR.ADDRESS = "";
 				that.ADDR.PHONE = that.Order.CUSTMPHONE; //默认赋值手机号
 				that.ADDR.ACT = "Add"; //操作类型
@@ -490,7 +490,7 @@
 				that.ADDR.ACT = "Update";
 				that.ADDR.ADDRID = e.ADDRID;
 				that.ADDR.PHONE = e.PHONE;
-				that.ADDR.NAME = e.CNAME;
+				that.ADDR.CNAME = e.CNAME;
 				that.ADDR.ADDRESS = e.ADDRESS;
 				//坐标如何处理
 
@@ -514,7 +514,7 @@
 					util.simpleMsg("电话为空", true);
 					return;
 				}
-				if (!that.ADDR.NAME) {
+				if (!that.ADDR.CNAME) {
 					util.simpleMsg("联系人为空", true);
 					return;
 				}
@@ -527,7 +527,7 @@
 					console.log("编辑结果：", res);
 					util.simpleMsg("操作" + (res.code ? "成功" : "失败"), !res.code)
 					that.yn_add = !res.code;
-					that.Order.CUSTMNAME = that.ADDR.NAME; //默认赋值
+					that.Order.CUSTMNAME = that.ADDR.CNAME; //默认赋值
 					that.Order.CUSTMADDRESS = that.ADDR.ADDRESS; //默认赋值
 					// if (res.code) {
 					// 	that.GetAddr(); //刷新一下地址列表
@@ -724,7 +724,7 @@
 				};
 				that.ADDRS = [];
 				that.ADDR = {
-					NAME: "",
+					CNAME: "",
 					PHONE: "",
 					ADDRESS: "",
 					NOTE: "",

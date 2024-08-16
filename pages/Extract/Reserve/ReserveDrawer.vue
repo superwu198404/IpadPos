@@ -49,7 +49,7 @@
 				<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>
 					<view class="restlist">
-						<label><text>收货人：</text><input type="text" v-model="form.address.NAME" /></label>
+						<label><text>收货人：</text><input type="text" v-model="form.address.CNAME" /></label>
 						<label><text>联系电话：</text><input type="text" v-model="form.address.PHONE" /></label>
 						<label class="long" style="display: flex;padding-right: 70rpx;"><text>收货地址：</text>
 							<AddressPicker @change="AddressChange" @catch="FirstAddressCatch"
@@ -133,8 +133,8 @@
 			},
 
 			ShowFirstAddress: function() {
-				return util.callBind(this, function(address_id) {
-					return this.view.more ? true : (address_id === this.details.current);
+				return util.callBind(this, function(address) {
+					return this.view.more ? true : (address === this.details.current);
 				})
 			}
 		},
@@ -156,7 +156,7 @@
 				form: {
 					selected: { //当前选中的配送地址
 						ACT: "",
-						NAME: "", //客户名称
+						CNAME: "", //客户名称
 						PHONE: "", //客户电话
 						LATITUDE: "", //纬度
 						LONGITUDE: "", //经度
@@ -165,7 +165,7 @@
 					},
 					address: {
 						ACT: "",
-						NAME: "", //客户名称
+						CNAME: "", //客户名称
 						PHONE: "", //客户电话
 						LATITUDE: "", //纬度
 						LONGITUDE: "", //经度
@@ -220,7 +220,7 @@
 				this.view.add_address = true; //新增地址
 				this.view.address_edit = false;
 				this.form.address.PHONE = this.details.info.CUSTMPHONE;
-				this.form.address.NAME = this.details.info.CUSTMNAME;
+				this.form.address.CNAME = this.details.info.CUSTMNAME;
 			},
 			GetDistributionCenter: function() { //获取配送中心
 				_extract.GetPSCenter(this.GSID, this.KHID, util.callBind(this, function(r) {
@@ -244,7 +244,7 @@
 						regenerate: this.ExistsGenarate(),
 						order: {
 							remark: this.details.info.CUSTMCOMM,
-							addr_id: this.details.current,
+							addr_id: this.details.info.NOTE2,
 							bhid: this.details.info.STR2,
 							date: this.details.info.THDATE,
 							phone: this.details.info.CUSTMPHONE,
@@ -306,7 +306,7 @@
 				this.form.address.LATITUDE = data.adrwd; //纬度
 			},
 			AddressVaild: async function() {
-				if (!this.form.address.NAME) {
+				if (!this.form.address.CNAME) {
 					util.simpleMsg("收货人不能为空!", 'none');
 					return false;
 				}
@@ -350,8 +350,10 @@
 						ACT: this.view.address_edit ? "Edit" : "Add"
 					}), util.callBind(this, function(res) {
 						console.log("[ChangeCustomerAddress]ConfirmADDR回调:", res);
-						util.simpleMsg(res.msg, res.code, res);
+						util.simpleMsg(res.msg, !res.code, res);
+						util.sleep(1000);
 						this.Newaddr = false;
+						this.view.add_address = false;
 						this.GetCustomerAddress(this.details.info.CUSTMPHONE, util.callBind(this, function(
 							res) {
 							if (!this.view.address_edit) {
@@ -364,11 +366,10 @@
 								console.log("[GetCustomerAddress-Inner]Address信息:", address_info);
 								if (address_info) {
 									this.RadioChange(address_info);
-									this.details.info.CUSTMNAME = this.form.address.NAME;
+									this.details.info.CUSTMNAME = this.form.address.CNAME;
 									this.details.info.CUSTMPHONE = this.form.address.PHONE;
 								}
-								this.view.more = false;
-								this.view.add_address = false;
+								// this.view.more = false;
 							}
 						}));
 					}))
