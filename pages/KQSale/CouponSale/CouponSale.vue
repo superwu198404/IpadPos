@@ -100,16 +100,16 @@
 						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
 						</image>
 					</view>
-					<view class="a-z"  style="display:block;height:105px;">
-						<image src="@/images/img2/cuxsxiao.png" mode="widthFix" >
+					<view class="a-z" style="display:block;height:105px;">
+						<image src="@/images/img2/cuxsxiao.png" mode="widthFix">
 						</image>
-							<view class="shifoubox" @click="CheckPromotion">
-									<view class="shibtn"  v-if="checkPromotion">
-									是
-									</view>
-									<view class="foubtn" v-if="!checkPromotion">
-									否
-									</view>
+						<view class="shifoubox" @click="CheckPromotion">
+							<view class="shibtn" v-if="checkPromotion">
+								是
+							</view>
+							<view class="foubtn" v-if="!checkPromotion">
+								否
+							</view>
 						</view>
 					</view>
 				</view>
@@ -305,18 +305,25 @@
 		methods: {
 			//勾选促销
 			CheckPromotion: function() {
-				uni.showModal({
-					title: "提示",
-					content: "是否生效促销？",
-					success: suc => {
-						if (suc.confirm) {
-							this.checkPromotion = true;
-						} else {
-							this.checkPromotion = false;
-						}
-						this.total_discount_computed();
-					}
-				})
+				this.checkPromotion = !this.checkPromotion;
+				this.total_discount_computed();
+				if (this.checkPromotion)
+					util.simpleMsg("已生效促销！", false);
+				else
+					util.simpleMsg("已取消促销！", true);
+				return;
+				// uni.showModal({
+				// 	title: "提示",
+				// 	content: "是否生效促销？",
+				// 	success: suc => {
+				// 		if (suc.confirm) {
+				// 			this.checkPromotion = true;
+				// 		} else {
+				// 			this.checkPromotion = false;
+				// 		}
+				// 		this.total_discount_computed();
+				// 	}
+				// })
 			},
 			coupon_segment_input() {
 				if (common.CheckSign()) {
@@ -868,25 +875,26 @@
 		height: 100%;
 		margin-top: -40px;
 	}
-	
-	.shifoubox{
-	    	height: 84px;
-		    width: 40px;
-		    margin: 0 auto;
-		    background: #E0EAE9;
-		    border-radius: 20px ;
-		    border: 2px solid #006B44;
-		   font-weight: 400;
-		   font-size: 20px;
-		   color: #FFFFFF;
-		   position: relative;
+
+	.shifoubox {
+		height: 84px;
+		width: 40px;
+		margin: 0 auto;
+		background: #E0EAE9;
+		border-radius: 20px;
+		border: 2px solid #006B44;
+		font-weight: 400;
+		font-size: 20px;
+		color: #FFFFFF;
+		position: relative;
 	}
+
 	.shibtn {
 		width: 34px;
 		height: 34px;
 		background: #006B44;
-		border-radius: 17px ;
-		text-align:center;
+		border-radius: 17px;
+		text-align: center;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -894,17 +902,18 @@
 		top: 5%;
 		left: 5%;
 	}
-	 .foubtn{
+
+	.foubtn {
 		width: 34px;
 		height: 34px;
 		background: #006B44;
-		border-radius: 17px ;
-		text-align:center;
+		border-radius: 17px;
+		text-align: center;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		position: absolute;
 		bottom: 5%;
 		left: 5%;
-		}
+	}
 </style>
