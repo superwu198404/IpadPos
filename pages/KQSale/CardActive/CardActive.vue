@@ -181,10 +181,14 @@
 						<view class="a-z">
 							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
-						<view class="a-z"  style="display:block;height:105px;">
-							<image src="@/images/img2/cuxsxiao.png" mode="widthFix" ></image>
+						<view class="a-z" style="display:block;height:105px;">
+							<image src="@/images/img2/cuxsxiao.png" mode="widthFix"></image>
 							<view class="shifoubox" @click="CheckPromotion">
+<<<<<<< HEAD
 									<view class="shibtn"  v-if="checkPromotion">
+=======
+								<view class="shibtn" v-if="checkPromotion">
+>>>>>>> ace93bc0a19735fe8e8b9d1e33aef78f8f9410a8
 									是
 									</view>
 									<view class="weishibtn"  v-if="!checkPromotion">
@@ -414,19 +418,26 @@
 		methods: {
 			//勾选促销
 			CheckPromotion: function() {
-				uni.showModal({
-					title: "提示",
-					content: "是否生效促销？",
-					success: suc => {
-						if (suc.confirm) {
-							that.checkPromotion = true;
-							
-						} else {
-							that.checkPromotion = false;
-						}
-						that.discCompute();
-					}
-				})
+				that.checkPromotion = !that.checkPromotion;
+				that.discCompute();
+				if (that.checkPromotion)
+					_util.simpleMsg("已生效促销！", false);
+				else
+					_util.simpleMsg("已取消促销！", true);
+				return;
+				// uni.showModal({
+				// 	title: "提示",
+				// 	content: "是否生效促销？",
+				// 	success: suc => {
+				// 		if (suc.confirm) {
+				// 			that.checkPromotion = true;
+
+				// 		} else {
+				// 			that.checkPromotion = false;
+				// 		}
+				// 		that.discCompute();
+				// 	}
+				// })
 			},
 			Touchlist: function(e) {
 				var txtStyle = e.currentTarget.dataset.style;
@@ -1054,6 +1065,7 @@
 </script>
 
 <style>
+<<<<<<< HEAD
 	.shifoubox{
 	    	height: 73px;
 		    width: 34px;
@@ -1065,13 +1077,32 @@
 		   font-size: 16px;
 		   color: #FFFFFF;
 		   position: relative;
+=======
+	.shifoubox {
+		height: 84px;
+		width: 40px;
+		margin: 0 auto;
+		background: #E0EAE9;
+		border-radius: 20px;
+		border: 2px solid #006B44;
+		font-weight: 400;
+		font-size: 20px;
+		color: #FFFFFF;
+		position: relative;
+>>>>>>> ace93bc0a19735fe8e8b9d1e33aef78f8f9410a8
 	}
+
 	.shibtn {
 		width: 28px;
 		height: 28px;
 		background: #006B44;
+<<<<<<< HEAD
 		border-radius: 50% ;
 		text-align:center;
+=======
+		border-radius: 17px;
+		text-align: center;
+>>>>>>> ace93bc0a19735fe8e8b9d1e33aef78f8f9410a8
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -1079,12 +1110,22 @@
 		top: 5%;
 		left: 5%;
 	}
+<<<<<<< HEAD
 	 .foubtn{
 		width: 28px;
 		height: 28px;
 		background: #006B44;
 		border-radius: 50% ;
 		text-align:center;
+=======
+
+	.foubtn {
+		width: 34px;
+		height: 34px;
+		background: #006B44;
+		border-radius: 17px;
+		text-align: center;
+>>>>>>> ace93bc0a19735fe8e8b9d1e33aef78f8f9410a8
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -1092,6 +1133,7 @@
 		bottom: 5%;
 		left: 5%;
 	}
+<<<<<<< HEAD
 	.weishibtn {
 			width: 28px;
 			height: 28px;
@@ -1118,4 +1160,6 @@
 			bottom: 5%;
 			left: 5%;
 		}
+=======
+>>>>>>> ace93bc0a19735fe8e8b9d1e33aef78f8f9410a8
 </style>
