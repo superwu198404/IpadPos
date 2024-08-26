@@ -85,10 +85,13 @@
 											<label>终：<text>{{item.end_num}}</text></label>
 										</view>
 										<view class="statistic">
-											<label><em>●</em><text>总折扣：</text>{{item.DISCRATE||0}}</label>
-											<label><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
-											<label><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
-											<label><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
+											<label class="firstzjk">
+												<view><em>●</em><text>总折扣：</text></view>{{item.DISCRATE||0}}
+											</label>
+											<label class="f12"><em>●</em><text>标准折扣：</text>{{item.BZDISC||0}}</label>
+											<label class="f12"><em>●</em><text>临时折扣：</text>{{item.LSDISC||0}}</label>
+											<label class="f12"><em>●</em><text>特批折扣：</text>{{item.TPDISC||0}}</label>
+											<label class="f12"><em>●</em><text>促销折扣：</text>{{item.CXDISC||0}}</label>
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveItem(item)">
@@ -1085,7 +1088,7 @@
 		justify-content: center;
 		position: absolute;
 		top: 5%;
-		left: 5%;
+		left: 8%;
 	}
 
 	.foubtn {
@@ -1099,7 +1102,7 @@
 		justify-content: center;
 		position: absolute;
 		bottom: 5%;
-		left: 5%;
+		left: 8%;
 	}
 
 	.weishibtn {
@@ -1113,7 +1116,7 @@
 		justify-content: center;
 		position: absolute;
 		top: 5%;
-		left: 5%;
+		left: 8%;
 		color: #006b44;
 	}
 
@@ -1128,7 +1131,17 @@
 		justify-content: center;
 		position: absolute;
 		bottom: 5%;
-		left: 5%;
+		left: 8%;
 		color: #006b44;
+	}
+
+	.firstzjk {
+		width: 80.5% !important;
+		display: flex !important;
+		/* justify-content: space-between !important; */
+	}
+
+	.f12 {
+		font-size: 12px !important;
 	}
 </style>
