@@ -444,136 +444,220 @@ var MatchCXDatas = function(CXData, products, sale1) {
 	let cxfsArr = []; //促销跟踪数据
 	let net_pri_disc_Arr = []; //生效的促销集合
 	if (CXData && CXData.length > 0) {
-		arr.map(r1 => {
-			let matchCXArr = CXData.filter(r => r.SPID == r1.SPID);
-			console.log("符合单个卡券商品的促销：", matchCXArr);
-
-			matchCXArr.map(r => {
-				console.log("促销单项：", r);
-				if (r.YN_JSLB == 'J') { //阶梯计算促销
-					for (var i = 4; i > 0; i--) {
-						let xfnet = r["XX_NET" + i]; //满足金额
-						if (!xfnet)
-							continue;
-						if (r.DISCTYPE == 2) //打折
-						{
-							let disc = r["MJ_DISC" + i];
-							if (xfnet <= r1.NET) {
-								let newNet = util.newFloat(r1.NET * Number(disc) / 100); //优惠后net
-								let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
-								// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
-								let newDisc = util.newFloat(r1.NET - newNet); //折扣额
-								net_pri_disc_Arr.push({
-									newNet,
-									newPrice,
-									newDisc,
-									cxbill: r.BILL,
-									spid: r1.SPID
-								})
-								break;
-							}
-						}
-						if (r.DISCTYPE == 1) { //满减
-							let _net = r["MJ_NET" + i];
-							if (xfnet <= r1.NET) {
-								let newNet = util.newFloat(r1.NET - Number(_net)); //优惠后net
-								let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
-								// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
-								let newDisc = util.newFloat(r1.NET - newNet); //折扣额
-								net_pri_disc_Arr.push({
-									newNet,
-									newPrice,
-									newDisc,
-									cxbill: r.BILL,
-									spid: r1.SPID
-								})
-								break;
-							}
-						}
-					}
+		let matchCXArr = CXData.filter(r => {
+			return arr.find(r1 => r1.SPID == r.SPID);
+		});
+		console.log("符合录入卡券商品的促销：", matchCXArr);
+		let cx_net_Arr = []; //所有生效的促销单计算总价格
+		matchCXArr.map(r => {
+			let cxspArr = arr.filter(f => f.SPID == r.SPID);
+			let t_net = 0;
+			cxspArr.map(m => {
+				t_net = util.newFloat(t_net + m.NET);
+			})
+			if (cx_net_Arr.length == 0)
+				cx_net_Arr.push({
+					BILL: r.BILL,
+					NET: t_net,
+					CXINFO: r
+				})
+			else {
+				let i = cx_net_Arr.findIndex(f1 => f1.BILL == r.BILL);
+				if (i >= 0) {
+					cx_net_Arr[i].NET = util.newFloat(t_net + cx_net_Arr[i].NET);
+				} else {
+					cx_net_Arr.push({
+						BILL: r.BILL,
+						NET: t_net,
+						CXINFO: r
+					})
 				}
-				if (r.YN_JSLB == 'N') { //普通计算
-					let xfnet = r["XX_NET1"]; //满足金额
+			}
+			// cx_net_Arr.map(m1 => {
+			// 	if (m1.BILL == r.BILL)
+			// 		m1.NET = util.newFloat(t_net + m1.NET);
+			// 	else
+			// 		cx_net_Arr.push({
+			// 			BILL: r.BILL,
+			// 			NET: t_net,
+			// 			CXINFO: r
+			// 		})
+			// })
+		})
+		cx_net_Arr.map(r1 => {
+			let r = r1.CXINFO;
+			console.log("促销单项：", r1);
+			if (r.YN_JSLB == 'J') { //阶梯计算促销
+				for (var i = 4; i > 0; i--) {
+					let xfnet = r["XX_NET" + i]; //满足金额
+					if (!xfnet)
+						continue;
 					if (r.DISCTYPE == 2) //打折
 					{
-						let disc = r["MJ_DISC1"];
+						let disc = r["MJ_DISC" + i];
 						if (xfnet <= r1.NET) {
 							let newNet = util.newFloat(r1.NET * Number(disc) / 100); //优惠后net
-							let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
+							// let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
 							// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
 							let newDisc = util.newFloat(r1.NET - newNet); //折扣额
 							net_pri_disc_Arr.push({
 								newNet,
-								newPrice,
+								// newPrice,
 								newDisc,
-								cxbill: r.BILL,
-								spid: r1.SPID
+								cxbill: r.BILL
+								// spid: r1.SPID
 							})
+							break;
 						}
 					}
 					if (r.DISCTYPE == 1) { //满减
-						let _net = r["MJ_NET1"];
+						let _net = r["MJ_NET" + i];
 						if (xfnet <= r1.NET) {
-							let newNet = util.newFloat(r1.NET - Number(_net));
-							let newPrice = util.newFloat(newNet / r1.QTY);
+							let newNet = util.newFloat(r1.NET - Number(_net)); //优惠后net
+							// let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
 							// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
 							let newDisc = util.newFloat(r1.NET - newNet); //折扣额
 							net_pri_disc_Arr.push({
 								newNet,
-								newPrice,
+								// newPrice,
 								newDisc,
 								cxbill: r.BILL,
-								spid: r1.SPID
+								// spid: r1.SPID
 							})
+							break;
 						}
 					}
 				}
-			})
-			console.log("单组商品计算后的促销结果(集合)：", net_pri_disc_Arr);
+			}
+			if (r.YN_JSLB == 'N') { //普通计算
+				let xfnet = r["XX_NET1"]; //满足金额
+				if (r.DISCTYPE == 2) //打折
+				{
+					let disc = r["MJ_DISC1"];
+					if (xfnet <= r1.NET) {
+						let newNet = util.newFloat(r1.NET * Number(disc) / 100); //优惠后net
+						// let newPrice = util.newFloat(newNet / r1.QTY); //优惠后单价
+						// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
+						let newDisc = util.newFloat(r1.NET - newNet); //折扣额
+						net_pri_disc_Arr.push({
+							newNet,
+							// newPrice,
+							newDisc,
+							cxbill: r.BILL,
+							// spid: r1.SPID
+						})
+					}
+				}
+				if (r.DISCTYPE == 1) { //满减
+					let _net = r["MJ_NET1"];
+					if (xfnet <= r1.NET) {
+						let newNet = util.newFloat(r1.NET - Number(_net));
+						// let newPrice = util.newFloat(newNet / r1.QTY);
+						// let newDisc = util.newFloat(r1.PRICE - newPrice); //折扣额
+						let newDisc = util.newFloat(r1.NET - newNet); //折扣额
+						net_pri_disc_Arr.push({
+							newNet,
+							// newPrice,
+							newDisc,
+							cxbill: r.BILL,
+							// spid: r1.SPID
+						})
+					}
+				}
+			}
 		})
+		console.log("单组促销计算后的促销结果(集合)：", net_pri_disc_Arr);
+		// })
 		//计算最优促销
 		if (net_pri_disc_Arr && net_pri_disc_Arr.length > 0) {
 			//折扣额降序
-			let sortArr = net_pri_disc_Arr.sort((r, r1) => r1.newDisc - r.newDisc);
-			let sxSP = arr.find(r => r.SPID == sortArr[0].spid); //最优惠的促销商品
-			console.log("排序后的生效促销：", net_pri_disc_Arr);
-			console.log("最优商品：", sxSP);
-			cxfsArr.push({
-				XSBILL: sale1.BILL,
-				KHID: sale1.KHID,
-				GSID: sale1.GSID,
-				SALEDATE: sale1.SALEDATE,
-				CXBILL: sortArr[0].cxbill,
-				CLASSID: sxSP.SPID,
-				SPID: sxSP.SPID,
-				XSQTY: sxSP.QTY,
-				OPRICE: sxSP.OPRICE,
-				ONET: util.newFloat(sxSP.OPRICE * sxSP.QTY),
-				CXPRICE: sortArr[0].newPrice,
-				CXNET: sortArr[0].newNet,
-				CXLV: 1,
-				NO: cxfsArr.length + 1
-			})
-
-			let sp_len = products1.filter(r => r.SPID == sxSP.SPID); //商品行
-			//折扣分摊
-			products1.map((r, i, arr1) => {
-				let total_disc = 0,
-					len = 0;
-				if (r.SPID == sxSP.SPID) {
-					len += 1;
-					let s_disc = util.newFloat(sortArr[0].newDisc / sxSP.QTY); //单行商品的折扣值
-					if (len == sp_len) { //如果是最后一个
-						s_disc = util.newFloat(sortArr[0].newDisc - total_disc);
+			let sortArr = net_pri_disc_Arr.sort((r, r1) => r1.newDisc - r.newDisc); //最优惠促销
+			let cxArr = matchCXArr.filter(r => r.BILL == sortArr[0].cxbill); //找到生效的商品
+			console.log("最优促销的商品信息：", cxArr)
+			let spArr = products1.filter(r => {
+				return cxArr.find(f => f.SPID == r.SPID)
+			}); //生效促销的商品行数
+			console.log("生效促销的商品行:", spArr);
+			let total_disc = 0,
+				len = 0;
+			cxArr.map(m => {
+				//折扣分摊
+				products1.map((r, i, arr1) => {
+					if (r.SPID == m.SPID) {
+						len += 1;
+						// console.log("商品折扣额平摊len：", len);
+						//每种商品的占比
+						let rate = util.newFloat(sortArr[0].newNet / (sortArr[0].newNet + sortArr[0]
+							.newDisc));
+						// console.log("商品折扣额平摊rate：", rate);
+						let s_net = util.newFloat(r.NET * rate); //单行商品的折扣值
+						let s_disc = util.newFloat(r.NET - s_net);
+						// console.log("商品折扣额平摊s_disc：", s_disc);
+						if (len == spArr.length) { //如果是最后一个
+							s_disc = util.newFloat(sortArr[0].newDisc - total_disc);
+							// console.log("商品折扣额平摊s_disc1：", s_disc);
+						}
+						r.NET = util.newFloat(r.NET - s_disc);
+						r.PRICE = util.newFloat(r.NET / r.QTY);
+						r.CXDISC = util.newFloat(s_disc);
+						r.DISCRATE = util.newFloat(s_disc);
+						r.YN_CXDISC = s_disc > 0 ? 'Y' : 'N';
+						total_disc = util.newFloat(total_disc + s_disc);
+						// console.log("商品折扣额平摊total_disc：", total_disc);
 					}
-					r.PRICE = util.newFloat(r.OPRICE - s_disc);
-					r.NET = util.newFloat(r.PRICE * r.QTY);
-					r.CXDISC = util.newFloat(s_disc * r.QTY);
-					r.DISCRATE = util.newFloat(s_disc * r.QTY);
-					r.YN_CXDISC = s_disc > 0 ? 'Y' : 'N';
-					total_disc = util.newFloat(total_disc + s_disc);
+				})
+			})
+			console.log("促销折扣分摊后商品：", products1);
+			products1.map(m => {
+				if (m.CXDISC > 0) {
+					console.log("促销跟踪cxfsArr：", cxfsArr);
+					if (cxfsArr.length == 0) {
+						cxfsArr.push({
+							XSBILL: sale1.BILL,
+							KHID: sale1.KHID,
+							GSID: sale1.GSID,
+							SALEDATE: sale1.SALEDATE,
+							CXBILL: sortArr[0].cxbill,
+							CLASSID: m.SPID,
+							SPID: m.SPID,
+							XSQTY: m.QTY,
+							OPRICE: m.OPRICE,
+							ONET: util.newFloat(m.OPRICE * m.QTY),
+							CXPRICE: m.PRICE,
+							CXNET: m.NET,
+							CXLV: 1,
+							NO: cxfsArr.length + 1
+						})
+					} else {
+						console.log("促销跟踪cxfsArr1：", cxfsArr);
+						let index = cxfsArr.findIndex(m2 => m2.SPID == m.SPID);
+						if (index >= 0) {
+							cxfsArr[index].XSQTY = cxfsArr[index].XSQTY + m.QTY;
+							cxfsArr[index].ONET = util.newFloat(cxfsArr[index].ONET + m.OPRICE * m.QTY);
+							cxfsArr[index].CXNET = cxfsArr[index].CXNET + m.NET;
+						} else {
+							cxfsArr.push({
+								XSBILL: sale1.BILL,
+								KHID: sale1.KHID,
+								GSID: sale1.GSID,
+								SALEDATE: sale1.SALEDATE,
+								CXBILL: sortArr[0].cxbill,
+								CLASSID: m.SPID,
+								SPID: m.SPID,
+								XSQTY: m.QTY,
+								OPRICE: m.OPRICE,
+								ONET: util.newFloat(m.OPRICE * m.QTY),
+								CXPRICE: m.PRICE,
+								CXNET: m.NET,
+								CXLV: 1,
+								NO: cxfsArr.length + 1
+							})
+						}
+					}
+
 				}
 			})
+			console.log("促销跟踪数据：", cxfsArr);
 		}
 	}
 	let obj = {
