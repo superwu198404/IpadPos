@@ -533,6 +533,15 @@ const utils = {
 				}
 			}
 		}
+	},
+	//是否是同一个对象
+	YNSameObject: function(source, comparison) {
+		const _source = JSON.stringify(source)
+		const _comparison = JSON.stringify({
+			...source,
+			...comparison
+		})
+		return _source !== _comparison
 	}
 }
 
@@ -573,5 +582,6 @@ export default {
 	convertShortDate: utils.convertShortDate,
 	IntervalOverlap: utils.IntervalOverlap,
 	getDateStr: utils.getDateStr,
-	isEmojiCharacter: utils.isEmojiCharacter
+	isEmojiCharacter: utils.isEmojiCharacter,
+	YNSameObject: utils.YNSameObject
 }

@@ -610,7 +610,7 @@ var MatchCXDatas = function(CXData, products, sale1) {
 			console.log("促销折扣分摊后商品：", products1);
 			products1.map(m => {
 				if (m.CXDISC > 0) {
-					console.log("促销跟踪cxfsArr：", cxfsArr);
+					// console.log("促销跟踪cxfsArr：", cxfsArr);
 					if (cxfsArr.length == 0) {
 						cxfsArr.push({
 							XSBILL: sale1.BILL,
@@ -629,7 +629,7 @@ var MatchCXDatas = function(CXData, products, sale1) {
 							NO: cxfsArr.length + 1
 						})
 					} else {
-						console.log("促销跟踪cxfsArr1：", cxfsArr);
+						// console.log("促销跟踪cxfsArr1：", cxfsArr);
 						let index = cxfsArr.findIndex(m2 => m2.SPID == m.SPID);
 						if (index >= 0) {
 							cxfsArr[index].XSQTY = cxfsArr[index].XSQTY + m.QTY;

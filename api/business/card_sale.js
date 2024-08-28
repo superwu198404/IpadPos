@@ -98,11 +98,12 @@ var FallbackSpecialDiscount = function(sale001, sale002 = []) {
 		// r.NET = util.newFloat(r.NET + r.DISCRATE, 2);; //回退一下折扣？
 		r.NET = util.newFloat(r.OPRICE * r.QTY, 2);; //回退一下折扣？
 		r.PRICE = util.newFloat(r.NET / r.QTY, 2); //回退一下折扣？
-		r.DISCRATE = 0; //zk
+		r.DISCRATE = 0; //cx/zk
 		r.BZDISC = 0; //zk
 		r.LSDISC = 0; //zk
 		r.TPDISC = 0; //zk
-		r.CXDISC = 0; //zk
+		r.CXDISC = 0; //cx
+		r.YN_CXDISC = 'N'; //cx
 	});
 	console.log("[FallbackSpecialDiscount]sale002折扣信息清除完毕:", sale002);
 	console.warn("[FallbackSpecialDiscount]清除折扣信息完毕...");
