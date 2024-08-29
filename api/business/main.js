@@ -217,7 +217,7 @@ var GetCXDatasAll = async function(khid, func) {
 	// let spids = spidArr.join("','");
 	let sql =
 		"SELECT c3.SPID, c1.YN_JSLB, c1.CXZT, c2.* FROM CXFORMD001 c1 left join  CXFORMD002 c2 on c1.BIll=c2.BILL and c1.KHID=c2.KHID left join CXFORMD003 c3 on c1.BIll=c3.BILL and c1.KHID=c3.KHID\
-			WHERE c1.BILL_STATUS = '1'  AND ( c1.YN_JSLB = 'N' OR c1.YN_JSLB = 'J' ) AND c1.SDATE <= DATE('now')  AND c1.EDATE >= DATE('now') AND c1.KHID = '" +
+			WHERE c1.BILL_STATUS = '1'  AND ( c1.YN_JSLB = 'N' OR c1.YN_JSLB = 'J' ) AND DATE(c1.SDATE) <= DATE('now')  AND DATE(c1.EDATE) >= DATE('now') AND c1.KHID = '" +
 		khid + "' and c1.CX_WEEK like '%" + day + "%'";
 	let data = [];
 	await db.get().executeQry(sql, "查询中...", res => {
