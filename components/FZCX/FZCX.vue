@@ -5,7 +5,6 @@
 	@import url(@/static/style/index.css);
 </style>
 <template>
-	<!-- <view class="boxs"> -->
 	<!-- 辅助促销数据 -->
 	<view class="meminfo" style="padding-top: 30px;">
 		<text class="tishi">提示：{{FZCXRes.msg}}</text>
@@ -43,7 +42,6 @@
 			<button class="btn" @click="Confirm()">确定</button>
 		</view>
 	</view>
-	<!-- </view> -->
 </template>
 
 <script>

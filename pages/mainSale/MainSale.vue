@@ -290,6 +290,11 @@
 			<FZCX v-if="mainSale.ComponentsManage.FZCX" :_FZCXDatas="mainSale.FZCX" :_sale="mainSale.sale001">
 			</FZCX>
 		</view>
+		<!-- 销售赠品 -->
+		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.XSZS">
+			<XSZS v-if="mainSale.ComponentsManage.XSZS" :_sale2="mainSale.sale002">
+			</XSZS>
+		</view>
 		<!-- 结算单  -->
 		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.statement">
 			<view class="memberes">

@@ -30,6 +30,7 @@ import {
 	RequestSend
 } from '@/api/business/da.js'
 import dateformat from '@/utils/dateformat.js';
+import sysParm from '../sysParm/sysParm';
 // import { log } from 'console';
 /**
  * 销售类型列表进入销售页面之后会根据此列表配置进行初始化
@@ -51,6 +52,7 @@ var XsTypeObj = {
 			"ynFzCx": true, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式 wy测试要求销售放出清空按钮
 			"FZCX": true, //是否可以打开辅助促销组件
+			"XSZS": true, //是否可以销售赠品
 			"upload_point": true, //允许积分上传
 			"inputsp": true, //是否可以输入商品
 			"ynSKDisc": true, //是否可以计算特殊折扣
@@ -150,10 +152,23 @@ var XsTypeObj = {
 		//支付完成中
 		$saleFinishing: function(result) {
 			//一些特殊的设置
-			console.log("[sale-$saleFinishing]:", result)
+			console.warn("[sale-$saleFinishing]:", result)
+
+			console.log("[BeforeFk]此模式包含销售赠品操作...");
+			// this.setComponentsManage(null, 'XSZS');
+			this.ComponentsManage.XSZS = true;
+			uni.$once('close-XSZS', util.callBind(this, function(e) {
+				console.log("关闭销售赠品。", e);
+				// this.ComponentsManage.XSZS = false;
+				// this.$saleFinied();
+			}))
+
 		},
 		//支付完成以后
 		$saleFinied: async function() {
+			console.warn("销售finshed：");
+			// if (this.ComponentsManage.XSZS)
+			// 	return;
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
@@ -209,6 +224,7 @@ var XsTypeObj = {
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynFzCx": false, //是否可以辅助促销
 			"FZCX": false, //是否可以打开辅助促销组件
+			"XSZS": false, //是否可以销售赠品
 			"upload_point": true, //允许积分上传
 			"DKF": false, //是否可以打开录入大客户
 
@@ -502,6 +518,7 @@ var XsTypeObj = {
 			"sale_message": true,
 			"FZCX": true, //是否可以打开辅助促销组件
 			"ynFzCx": true, //是否可以辅助促销
+			"XSZS": true, //是否可以销售赠品
 			"ynSKDisc": true, //是否可以计算手工折扣
 			"ynCancel": true, //是否可以退出当前销售模式
 			"ynEdit": true, //当前业务能否编辑商品
@@ -652,6 +669,15 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]生成合并后的 sale3 数据:", this.sale003);
 			delete this.old_bill;
 			// this.ClearDiscount(this.sale001, this.sale002); //清除折扣信息
+
+			//赠品处理
+			console.log("[BeforeFk]此模式包含销售赠品操作...");
+			this.ComponentsManage.XSZS = true;
+			uni.$once('close-XSZS', util.callBind(this, function(e) {
+				console.log("关闭销售赠品。", e);
+				// this.ComponentsManage.XSZS = false;
+				// this.$saleFinied();
+			}))
 		},
 		async $saleFinied(sales) {
 			//调用打印
@@ -1122,6 +1148,7 @@ var XsTypeObj = {
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
+			"XSZS": true, //是否可以销售赠品
 			"ynCx": false, //是否进行可以进行促销
 			"ynSKDisc": true, //是否可以计算手工折扣
 			"ynEdit": true, //当前业务能否编辑商品
@@ -1199,6 +1226,14 @@ var XsTypeObj = {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
 			});
+			//赠品处理
+			console.log("[BeforeFk]此模式包含销售赠品操作...");
+			this.ComponentsManage.XSZS = true;
+			uni.$once('close-XSZS', util.callBind(this, function(e) {
+				console.log("关闭销售赠品。", e);
+				// this.ComponentsManage.XSZS = false;
+				// this.$saleFinied();
+			}))
 		},
 		$saleFinied: function(sales) {
 			//调用打印
@@ -1661,6 +1696,7 @@ var XsTypeObj = {
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
+			"XSZS": false, //是否可以销售赠品
 			"ynCx": false, //是否进行可以进行促销
 			"ynSKDisc": false, //是否可以计算手工折扣
 			"ynEdit": false, //当前业务能否编辑商品
@@ -2043,6 +2079,15 @@ function GetSale(global, vue, target_name, uni) {
 			this.FZCX.val = res; //选择商品后的提示信息
 		}
 	})
+
+	//*func*销售赠品关闭回调
+	this.CloseXSZS = util.callBind(this, function(res) {
+		this.setComponentsManage(null, "XSZS");
+		console.log("销售赠品回调结果：", res);
+		// if (res) {
+		// 	this.FZCX.val = res; //选择商品后的提示信息
+		// }
+	})
 	//*func*获取会员优惠券
 	this.GetHyCoupons = util.callBind(this, function() {
 		console.log("[GetHyCoupons]打印会员信息：", this.HY.val);
@@ -2337,6 +2382,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("reserve-drawer-close");
 		uni.$off("close-tszk");
 		uni.$off("close-FZCX");
+		uni.$off("close-XSZS");
 		uni.$off("ReturnSale");
 		uni.$off("Switch");
 		uni.$off("tools");
@@ -2356,6 +2402,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
+		uni.$on("close-XSZS", this.CloseXSZS);
 		uni.$on("ReturnSale", this.CancelSale);
 		uni.$on("Switch", this.SetManage);
 		uni.$on("tools", this.ToolsManage);
@@ -2992,6 +3039,7 @@ function GetSale(global, vue, target_name, uni) {
 		"ynSKDisc": false, //是否要计算特殊折扣
 		"ynCancel": false, //是否可以退出当前销售模式
 		"FZCX": false, //是否可以打开辅助促销组件
+		"XSZS": true, //是否可以销售赠品
 		"ynCx": false, //是否进行可以进行促销  
 		"member_login": false, //是否打开会员登录界面
 		"upload_point": false, //支付完毕后是否进行积分上传
@@ -3030,6 +3078,7 @@ function GetSale(global, vue, target_name, uni) {
 		"DKF": false, //大客户插件是否打开
 		"Disc": false, //折扣插件是否打开
 		"FZCX": false, //辅助促销插件是否打开
+		"XSZS": false, //是否可以销售赠品
 		// "showEdit": false, //商品数量编辑是否打开
 		"member_login": false,
 		"sale": true, //从这里开始都是销售模式
@@ -3533,6 +3582,13 @@ function GetSale(global, vue, target_name, uni) {
 			}
 			console.log('[PayedResult]通信表记录单号:', bill);
 			common.TransLiteData(bill); //上传至服务端
+			// console.log("sale001",this.sale001);
+			// console.log("sale002",this.sale002);
+			// console.log("sale003",this.sale003);
+			// if (this.sale001.TCXDISC != this.sale001.BILLDISC) {
+			// 	return util.simpleMsg("D：" + this.sale001.TCXDISC + ",B：" + this.sale001.BILLDISC,
+			// 		true);
+			// }
 			console.log("[PayedResult]创建销售单结果:", create_result);
 			util.simpleMsg(create_result.msg, !create_result.code);
 			try {
@@ -3584,6 +3640,7 @@ function GetSale(global, vue, target_name, uni) {
 			hyinfo: that.HY.cval //会员信息
 		}
 		// console.log("[PayParamAssemble]封装数据:", inputParm);
+
 		that.Page.$store.commit('set-location', inputParm);
 		uni.navigateTo({
 			url: "../Payment/Payment",

@@ -940,7 +940,8 @@ var actTypeEnum = {
 //y业务类型
 var ywTypeEnum = {
 	QTBS: "QTBS",
-	QTLY: "QTLY"
+	QTLY: "QTLY",
+	XSZS: "XSZS"
 }
 
 //删除过期的销售单

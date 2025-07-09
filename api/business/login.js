@@ -128,7 +128,7 @@ export const UpdatePWD = function(data, func) {
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
-		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME FROM KHDA where KHID='" +
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME,SYBID FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		if (!res.code || res.msg.length == 0) {
@@ -162,6 +162,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			// ETIME: "20:00",
 			DKFID: "80000000",
 			DKFNAME: "默认大客户",
+			SYBID: res.msg[0].SYBID,
 		}
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);

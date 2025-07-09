@@ -109,6 +109,43 @@ var dj_commit = async function(pm_bill, is_ywtype, khid, posid, func) {
 		util.simpleMsg("数据更改失败", true);
 	})
 }
+//查询赠品
+var GetZSData = async function(dqid, khzid, khid, sybid, plids, spids) {
+	let info;
+	var sql = "select spid,sname,unit,BQTY,sum(zqty) zqty,PRICE from ( \
+                                 select \
+                                 x.SPID_ZP SPID,s.SNAME,s.UNIT,0 BQTY,x.ZQTY_ZP ZQTY,\
+                                 (SELECT nvl(PRICE,-1) \
+                                 FROM PRICDA \
+		                                 WHERE SDATE <= TRUNC(SYSDATE) \
+		                                 AND EDATE >= TRUNC(SYSDATE) \
+		                                 and (dqid is null or dqid = '" + dqid + "') \
+		                                 and (khzid is null or khzid = '" + khzid + "') \
+		                                 and  QYSTAT  ='1' \
+		                                 AND SPID = x.SPID_ZP \
+		                                 and ROWNUM = 1) PRICE \
+                                 FROM \
+                                 XSZSGZ x \
+                                 LEFT JOIN SPDA s ON s.SPID = x.SPID_ZP \
+                                 LEFT JOIN (select SPID from SPKHDA where khid = '" + khid + "' and yn_xs = 'Y' ) sk on sk.SPID = x.SPID_ZP \
+                                 where x.DA_STATUS = '1' \
+                                 and sk.spid is not null \
+                                 and (x.dqid = '" + dqid + "' or x.dqid = 'K00000' or x.khid = '" + khid +
+		"' or x.SYBID = '" + sybid + "') \
+                                 and (x.plid in ('" + plids + "') or x.plid is null ) \
+                                 and (x.spid in ('" + spids + "') or x.spid is null ) \
+                                 and (x.cccz in (select specs from spda where spid in ('" + spids + "')) or x.cccz is null ) \
+                                 order by x.spid,x.PLID,x.khid,x.dqid \
+                            ) group by spid,sname,unit,BQTY,PRICE ";
+	console.log("[GetZSData]查询sql：", sql);
+	await common.WebDBQuery(sql, res => {
+		console.log("[GetZSData]查询结果：", res);
+		if (res.code && res.data.length > 0) {
+			info = JSON.parse(res.data || "");
+		}
+	});
+	return info;
+}
 //查询外卖袋
 var GetWMDData = function(d, e, func) {
 	let sql = "select dr.note SPID, sd.sname, sd.unit, '0' BQTY, dr.sz ZQTY from dapzcs_nr dr, spda sd\
@@ -146,7 +183,6 @@ var ConfirmLY = function(obj, bill, ywtype, func) {
 		console.log("后台报损返回数据:", err1);
 	});
 }
-
 //报损业务确认
 var ConfirmBS = function(data, is_ywtype, bill, Program, func) {
 	let excesql = common.CreateSQL(data, "SYSYWTEMP002");
@@ -221,5 +257,6 @@ export default {
 	ConfirmBS,
 	GetWMOrders_YD,
 	ConfirmReceipt_YD,
-	CommonRefund_YD
+	CommonRefund_YD,
+	GetZSData
 }
