@@ -161,7 +161,7 @@
     "name" : "KengeePos",
     "versionName" : "1.1.116",
     "description" : "ipad上运行的收银软件",
-    "versionCode" : 108,
+    "versionCode" : 116,
     "locale" : "zh-Hans",
     "fallbackLocale" : "zh-Hans",
     "networkTimeout" : {
