@@ -6,7 +6,7 @@
 	<view class="boxs">
 	<!-- v-if="qd_show" -->
 	<view class="customer">
-		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+		<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 		<view class="h3">请使用扫码枪扫码 <button @click="ConfirmScan()" class="guan">×</button></view>
 		<view class="clues">
 			<input password="true" placeholder="请扫码" @confirm="ConfirmScan" v-model="AuthCode" focus="true" />

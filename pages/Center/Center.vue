@@ -4,11 +4,11 @@
 </style>
 <template>
 	<view class="centre">
-		<image class="bg" src="@/images/chushihua.png" mode="widthFix"></image>
+		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
 		<view class="tranlist">
 			<view class="leftlist">
 				<view class="logos">
-					<image src="@/images/hello-card.png" mode="widthFix"></image>
+					<image src="../../images/hello-card.png" mode="widthFix"></image>
 					<view class="xingqi"><text>{{curWeek}}</text>{{curDate}}</view>
 				</view>
 				<view class="sginout">
@@ -16,14 +16,14 @@
 					<view @click="SignOut()"><label>签退</label><text>CHECK OUT</text></view>
 				</view>
 				<view class="dates">
-					<image class="datebg" src="@/images/quan-bg.png" mode="widthFix"></image>
+					<image class="datebg" src="../../images/quan-bg.png" mode="widthFix"></image>
 					<view class="sginout">
 						<view @click="ToTakeout()">
-							<image class="tubiao" src="@/images/waimai.png" mode="widthFix"></image>
+							<image class="tubiao" src="../../images/waimai.png" mode="widthFix"></image>
 							<label>外卖单</label><text>TAKE OUT</text>
 						</view>
 						<view @click="Chaxun(1)">
-							<image class="tubiao" src="@/images/chaxun.png" mode="widthFix"></image>
+							<image class="tubiao" src="../../images/chaxun.png" mode="widthFix"></image>
 							<label>门店查询</label><text>QUERY</text>
 						</view>
 					</view>
@@ -33,29 +33,29 @@
 				<view class="market">
 					<view class="prods">
 						<view class="div">
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu2-1.png"
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="../../images/xstu2-1.png"
 								mode="heightFix"></image>
-							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="@/images/xstu1-1.png"
+							<image :style="{'transform':'rotateY('+ angle +'deg)'}" src="../../images/xstu1-1.png"
 								mode="heightFix"></image>
 
 						</view>
 						<view class="div">
-							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="@/images/xstu2-1.png"
+							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="../../images/xstu2-1.png"
 								mode="heightFix"></image>
-							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="@/images/xstu1-1.png"
+							<image :style="{'transform':'rotateY('+ angles +'deg)'}" src="../../images/xstu1-1.png"
 								mode="heightFix"></image>
 						</view>
 						<view class="div">
-							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="@/images/xstu2-1.png"
+							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="../../images/xstu2-1.png"
 								mode="heightFix"></image>
-							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="@/images/xstu1-1.png"
+							<image :style="{'transform':'rotateY('+ angless +'deg)'}" src="../../images/xstu1-1.png"
 								mode="heightFix"></image>
 						</view>
 					</view>
 					<view class="dates">
 						<view @click="ToSale('/pages/mainSale/MainSale')">
 							<label><text>销售</text><text>SALES</text></label>
-							<!-- <image src="@/images/jinruxs-jt.png" mode="widthFix"></image> -->
+							<!-- <image src="../../images/jinruxs-jt.png" mode="widthFix"></image> -->
 						</view>
 						<view style="border-left: 1rpx solid #C1F6D8;"
 							@click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
@@ -69,7 +69,7 @@
 						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
-						<image src="@/images/logout.png" mode="widthFix"></image>
+						<image src="../../images/logout.png" mode="widthFix"></image>
 						退出
 					</view>
 				</view>

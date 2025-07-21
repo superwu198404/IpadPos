@@ -12,7 +12,7 @@
 				<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
 				<view class="message">
 					<view class="imgs">
-						<image src="@/images/tongzhi.png" mode="widthFix"></image>
+						<image src="../../images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
 					<text v-for="(item,index) in MsgData" @click="ReadMsg(item)">{{item.title}}</text>
@@ -24,28 +24,28 @@
 						大客户：{{DKFNAME}}▼
 					</label>
 					<label>
-						<image src="@/images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
+						<image src="../../images/dx-mendian.png" mode="widthFix"></image>{{STORE_NAME}}
 					</label>
 					<label>
-						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
+						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>款台号：{{POSID}}
 					</label>
 				</view>
 				<view class="account">
 					<view>
-						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<image src="../../images/touxiang.png" mode="widthFix"></image>
 					</view>
 					<text @click="exits()">{{RYID}}▼</text>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="Login()">
-							<image src="@/images/qiehuan.png" mode="widthFix"></image>
+							<image src="../../images/qiehuan.png" mode="widthFix"></image>
 							<text>切换账号</text>
 						</view>
 						<view class="exit" @click="LoginOut()">
-							<image src="@/images/tuichu.png" mode="widthFix"></image>
+							<image src="../../images/tuichu.png" mode="widthFix"></image>
 							<text>退出登录</text>
 						</view>
 						<view class="exit" @click="LoginOut()">
-							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<image src="../../images/zhuxiao.png" mode="widthFix"></image>
 							<text>注销</text>
 						</view>
 					</view>

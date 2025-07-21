@@ -8,14 +8,14 @@
 		<view>
 			<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 				<view class="account">
-						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<image src="../../images/touxiang.png" mode="widthFix"></image>
 						<text>会员登录</text>
 					
 					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
 						<text></text>
 					</view>
 				</view>
-				<button class="qiehuan"><image src="@/images/tuichu.png"></image> 切换</button>
+				<button class="qiehuan"><image src="../../images/tuichu.png"></image> 切换</button>
 			</view>
 			
 		</view>

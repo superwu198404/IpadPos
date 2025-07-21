@@ -23,7 +23,7 @@
 			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">日结 <button @click="Close()" class="guan close">×</button></view>
 			<view class="clues">
-				<image src="@/images/rijie.png" mode="widthFix"></image>
+				<image src="../../images/rijie.png" mode="widthFix"></image>
 			</view>
 			<label class="rjcg">日结成功</label>
 		</view>

@@ -18,11 +18,11 @@
 					<view class="commodity">
 						<view class="hh">
 							<view class="hotcakes">
-								<image src="@/images/waimaidan.png" mode="widthFix"></image> 外卖预定单
+								<image src="../../images/waimaidan.png" mode="widthFix"></image> 外卖预定单
 								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 							</view>
 							<view class="sousuo" @click="Refresh()">
-								<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+								<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 							</view>
 						</view>
 						<NoData v-if="WMOrders.length==0"></NoData>
@@ -36,11 +36,11 @@
 									<view class="h3">
 										<view class="platform">
 											<label>
-												<image v-if="item.XSPTID=='ELM'" src="@/images/wmd-eleme.png"
+												<image v-if="item.XSPTID=='ELM'" src="../../images/wmd-eleme.png"
 													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='MEITUAN'" src="@/images/wmd-meituan.png"
+												<image v-if="item.XSPTID=='MEITUAN'" src="../../images/wmd-meituan.png"
 													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='YOUZAN'" src="@/images/wmd-youzan.png"
+												<image v-if="item.XSPTID=='YOUZAN'" src="../../images/wmd-youzan.png"
 													mode="widthFix"></image>
 												{{item.NOTE2}}
 											</label>
@@ -67,7 +67,7 @@
 								<view class="detinfo">
 									<view class="member">
 										<label>
-											<image class="touxiang" src="@/images/touxiang.png"></image>
+											<image class="touxiang" src="../../images/touxiang.png"></image>
 											<label
 												class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
 										</label>
@@ -89,7 +89,7 @@
 													<checkbox-group @click="checkFunc(item1)" v-if="item1.yn_sb">
 														<checkbox :checked="item1.isChecked"></checkbox>
 													</checkbox-group>
-													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
 													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 												</label>
 												<view class="shuls"><text>×{{item1.PACK}}</text></view>
@@ -97,11 +97,11 @@
 											<view class="cods">
 												<view>
 													<label>
-														<image src="@/images/dx-bm.png" mode="widthFix"></image>
+														<image src="../../images/dx-bm.png" mode="widthFix"></image>
 														{{item1.SPID}}
 													</label>
 													<label>
-														<image src="@/images/dx-dw.png" mode="widthFix"></image>
+														<image src="../../images/dx-dw.png" mode="widthFix"></image>
 														{{item1.STR7}}-{{item1.STR2}}
 													</label>
 												</view>

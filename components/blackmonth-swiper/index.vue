@@ -5,7 +5,7 @@
 			<swiper-item class="swiperItem" v-for="(item, index) in swiperList" :key="index"				
 				@click="ChooseCake(item)">
 				<view class="children" :class="index == currentIndex?'animationData':''">
-					<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
+					<image class="logo" src="../../images/kengee-logo.png" mode="widthFix"></image>
 					<image class="pic" :src="item.img" mode="widthFix" @error="imgerr($event,index)"></image>
 					<view class="products">
 						<view class="names">{{item.SNAME}} <!-- <text class="price">￥145</text> -->

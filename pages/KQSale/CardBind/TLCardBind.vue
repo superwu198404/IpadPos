@@ -8,7 +8,7 @@
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;" @click="scan_code"></image>|
+							<image src="../../../images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;" @click="scan_code"></image>|
 							<input placeholder="输入手机号或账户" v-model="form.member_code" />
 						</view>
 						<view class="comfirm-btn" @click="search_member">确定</view>
@@ -54,7 +54,7 @@
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
-							<image src="@/images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"
+							<image src="../../../images/img2/swiping_card.png" mode="widthFix" style="width: 20px;"
 								@click="swipe_card"></image>|
 							<input placeholder="请刷卡以获取卡信息" v-model="form.card_number" disabled="true" />
 						</view>
@@ -283,7 +283,7 @@
 	.menber-infos {
 		border: 2px solid #c4e6c8;
 		box-shadow: 0px 0px 10px -1px #c4e6c8;
-		background-image: url('@/images/jsd-hybj.png');
+		background-image: url('../../../images/jsd-hybj.png');
 		justify-content: space-between;
 		border-radius: 10px;
 		display: flex;
@@ -360,7 +360,7 @@
 	}
 
 	.card-infos {
-		background-image: url('@/images/img2/kaqchaxun2.png');
+		background-image: url('../../../images/img2/kaqchaxun2.png');
 		padding: 20px 20px;
 		box-sizing: border-box;
 		position: relative;

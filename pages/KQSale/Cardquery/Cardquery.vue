@@ -14,12 +14,12 @@
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡券信息查询
+						<image src="../../../images/img2/zhongxin.png" mode="widthFix"></image> 卡券信息查询
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 				</view>
 				<view class="commodity">
-					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+					<image class="bg-top" src="../../../images/jsd-hybj.png" mode="widthFix"></image>
 					<view class="number">
 						<view class="labnum">
 							<text>卡/券类型：</text>
@@ -34,7 +34,7 @@
 									<label class="quanbu" v-if="show_types_limit">
 										<span @click="switch_types">{{ view.open ? '收起' : '全部' }}
 											<image :class="view.open ? 'close-types' : ''"
-												src="@/images/img2/zhankaiiii.png"></image>
+												src="../../../images/img2/zhankaiiii.png"></image>
 										</span>
 									</label>
 								</view>
@@ -44,9 +44,9 @@
 							<text>卡/券号：</text>
 							<view class="chaxun">
 								<view class="label">
-									<image v-if="!scan_code_icon" src="@/images/img2/swiping_card.png" mode="widthFix"
+									<image v-if="!scan_code_icon" src="../../../images/img2/swiping_card.png" mode="widthFix"
 										@click="swiping_card()">
-										<image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix"
+										<image v-else src="../../../images/img2/zhifucx-cu.png" mode="widthFix"
 											@click="scan_code_handle()">
 											<input type="text" placeholder="请输入查询卡/券号" v-model="form.number" />
 											<button v-if="form.number" @click="form.number=''"
@@ -62,7 +62,7 @@
 								<view class="ulli">
 									<view class="touch-list list-touch">
 										<image class="bgs" style="position: absolute;top: 0px;"
-											src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
+											src="../../../images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
 											<label><em></em>{{ default_view(form.infos.type_name,'暂无') }}</label>
 										</view>
@@ -91,7 +91,7 @@
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
-										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+										<image src="../../../images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
 							</view>

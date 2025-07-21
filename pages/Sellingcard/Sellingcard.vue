@@ -34,11 +34,11 @@
 				<view class="prolist zxpro" style="width: 92%;">
 					<view class="choice">
 						<view class="tab curr">
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+							<image src="../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 							<text>VIP售卡充值</text>
 						</view>
 						<view class="tab">
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
+							<image src="../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>VIP售卡充值
 						</view>
 
 						<view class="ckr">“持卡人姓名”：877888999</view>
@@ -78,19 +78,19 @@
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
 						<view class="swipetip" v-if="swipetip">
-							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+							<image src="../../images/img2/tip-skaluru.png" mode="widthFix"></image>
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
 							<view class="ulli">
-								<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+								<image class="bgs" src="../../images/quan-bg.png" mode="widthFix"></image>
 								<view class="h6">
 									<label>￥550<text>/10张</text></label>
 									<view class="zje">
 										<view><text>总金额</text>￥56780</view>
 										<button>
-											<image src="@/images/img2/ka-shanchu.png"></image>
+											<image src="../../images/img2/ka-shanchu.png"></image>
 										</button>
 									</view>
 								</view>
@@ -148,7 +148,7 @@
 							<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 						</view>
 						<view class="a-z" @click="mainSale.GetTSZKData">
-							<image src="@/images/img2/chikaren.png" mode="widthFix"></image>
+							<image src="../../images/img2/chikaren.png" mode="widthFix"></image>
 						</view>
 					</view>
 					<!-- <view class="toproof">

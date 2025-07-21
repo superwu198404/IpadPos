@@ -6,12 +6,12 @@
 	<view  class="content" style="display: block;">
 		<view class="head">
 			<view class="head-portrait">
-				<image src="@/images/touxiang.png" mode="widthFix"></image>
+				<image src="../../images/touxiang.png" mode="widthFix"></image>
 				<view class="member-account">会员账户</view>
 			</view>
 			<view class="head-exit">
 				<view class="exit" @click="Exit">
-					<image src="@/images/tuichu.png"></image> 切换
+					<image src="../../images/tuichu.png"></image> 切换
 				</view>
 			</view>
 		</view>
@@ -35,15 +35,15 @@
 					</swiper>
 				</view>
 				<view class="tupian">
-					<label><image src="@/images/xstu2-1.png"></image></label>
-					<label><image src="@/images/xstu2-1.png"></image></label>
-					<label><image src="@/images/xstu2-1.png"></image></label>
-					<label><image src="@/images/xstu2-1.png"></image></label>
-					<label><image src="@/images/xstu2-1.png"></image></label>
+					<label><image src="../../images/xstu2-1.png"></image></label>
+					<label><image src="../../images/xstu2-1.png"></image></label>
+					<label><image src="../../images/xstu2-1.png"></image></label>
+					<label><image src="../../images/xstu2-1.png"></image></label>
+					<label><image src="../../images/xstu2-1.png"></image></label>
 				</view>
 			</view>
 			<view class="exhibiting">
-				<view class="h3"><image src="@/images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕</view>
+				<view class="h3"><image src="../../images/dx-mrxk.png" mode="widthFix"> 仟吉加油鸭乳脂奶油网红水果生日蛋糕</view>
 				<view class="miaos">加油鸭草莓限定款！芝士慕斯+草莓慕斯，丝绒奶香遇上清甜草莓香，
 				棉花糖装饰盖顶趣味多多，萌动可爱甜蜜加倍！！！</view>
 				<view class="commods">
@@ -97,7 +97,7 @@
 			<text>结算单</text>
 			<label>«</label>
 			<view class="statnum">
-				<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+				<image src="../../images/jsd-dxiao.gif" mode="widthFix"></image>
 				<text>{{TotalNum}}</text>
 			</view>
 		</view>

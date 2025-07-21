@@ -13,7 +13,7 @@
 					<view class="labnum">
 						<text>开始券号：</text>
 						<view class="label">
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
+							<image src="../../imagesages/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"></image>
 							<input type="number" placeholder="请录入券号" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
@@ -27,7 +27,7 @@
 					<!-- <view class="labnum" v-if="!single">
 						<text>截止卡号：</text>
 						<view class="label">
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
+							<image s../../images./images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')">
 							</image>
 							<input type="number" placeholder="请输入截止卡号" v-model="endNum" :focus="curFocus=='endNum'"
 								@confirm="ScanCodeHandle('endNum')" @focus="curFocus='endNum'" />

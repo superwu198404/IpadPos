@@ -6,7 +6,7 @@
 <template name="query">
 	<view class="leftcx navmall">
 		<view class="logo">
-			<image src="@/images/img2/kgeeeee.png" mode="widthFix"></image>
+			<image src="../../images/img2/kgeeeee.png" mode="widthFix"></image>
 		</view>
 		<text class="biaoti">门店查询</text>
 		<view class="menu">
@@ -21,9 +21,9 @@
 			</view>
 		</view>
 		<view class="tuichu">
-			<image class="mendian" src="@/images/img2/dianmian.png"></image>
+			<image class="mendian" src="../../images/img2/dianmian.png"></image>
 			<button @click="Return">
-				<image src="@/images/img2/tuitui.png"></image>退出
+				<image src="../../images/img2/tuitui.png"></image>退出
 			</button>
 		</view>
 	</view>
@@ -49,8 +49,8 @@
 					r.name = r.MenuName;
 					r.key = 'Storeinquiry';
 					try {
-						r.src1 = require('@/images/img2/' + r.MenuId + '-bai.png');
-						r.src2 = require('@/images/img2/' + r.MenuId + '-lv.png');
+						r.src1 = require('../../images/img2/' + r.MenuId + '-bai.png');
+						r.src2 = require('../../images/img2/' + r.MenuId + '-lv.png');
 					} catch (e) {
 						r.src1 = "";
 						r.src2 = "";

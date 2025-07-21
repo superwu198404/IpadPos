@@ -8,7 +8,7 @@
 	<view class="content">
 		<view class="leftcx navmall" style="position: fixed;width: 14.5%;height: 100%;z-index: 10">
 			<view class="logo">
-				<image src="@/images/img2/kgeeeee.png" mode="widthFix"></image>
+				<image src="../../../images/img2/kgeeeee.png" mode="widthFix"></image>
 			</view>
 			<text class="biaoti">门店查询</text>
 			<view class="menu">
@@ -22,9 +22,9 @@
 				</view>
 			</view>
 			<view class="tuichu">
-				<image class="mendian" src="@/images/img2/dianmian.png"></image>
+				<image class="mendian" src="../../../images/img2/dianmian.png"></image>
 				<button @click="Return">
-					<image src="@/images/img2/tuitui.png"></image>退出
+					<image src="../../../images/img2/tuitui.png"></image>退出
 				</button>
 			</view>
 		</view>
@@ -79,8 +79,8 @@
 					item.name = item.MenuName;
 					item.key = 'Storeinquiry';
 					try {
-						item.src1 = require('@/images/img2/' + item.MenuId + '-bai.png');
-						item.src2 = require('@/images/img2/' + item.MenuId + '-lv.png');
+						item.src1 = require('../../../images/img2/' + item.MenuId + '-bai.png');
+						item.src2 = require('../../../images/img2/' + item.MenuId + '-lv.png');
 					} catch (e) {
 						item.src1 = "";
 						item.src2 = "";

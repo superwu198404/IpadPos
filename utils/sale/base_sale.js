@@ -41,9 +41,9 @@ var XsTypeObj = {
 		xstype: "1",
 		clickType: "sale", //目前尚未用到
 		nameSale: "销售",
-		icon_open: require('@/images/xiaoshou.png'),
-		icon_close: require("@/images/xiaoshou-hui.png"),
-		icon_guodu: require("@/images/xiaoshou-hui.png"),
+		icon_open: require('../../images/xiaoshou.png'),
+		icon_close: require('../../images/xiaoshou-hui.png'),
+		icon_guodu: require('../../images/xiaoshou-hui.png'),
 		operation: { //只设置为true的就好 其他的默认设置为false
 			"HY": true, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
@@ -60,7 +60,6 @@ var XsTypeObj = {
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
 			"showEdit": false, //展开编辑商品
-
 			"sale": true, //从这里开始都是销售模式
 			"sale_cake_reserve": true,
 			"sale_reserve": true,
@@ -216,9 +215,9 @@ var XsTypeObj = {
 		xstype: "2",
 		clickType: "sale_return_good",
 		nameSale: "销售退货",
-		icon_open: require("@/images/xstd.png"),
-		icon_close: require("@/images/xstd-wxz.png"),
-		icon_guodu: require("@/images/xstd-lvv.png"),
+		icon_open: require("../../images/xstd.png"),
+		icon_close: require("../../images/xstd-wxz.png"),
+		icon_guodu: require("../../images/xstd-lvv.png"),
 		operation: {
 			// "sale": true, //可以跳转到销售模式 此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -337,9 +336,9 @@ var XsTypeObj = {
 		xstype: "3",
 		clickType: "sale_reserve",
 		nameSale: "预定",
-		icon_open: require("@/images/yuding.png"),
-		icon_close: require("@/images/yuding-hui.png"),
-		icon_guodu: require("@/images/yuding-lvv.png"),
+		icon_open: require("../../images/yuding.png"),
+		icon_close: require("../../images/yuding-hui.png"),
+		icon_guodu: require("../../images/yuding-lvv.png"),
 		operation: {
 			"HY": true, //是否可以录入会员
 			"Disc": true, //是否可以打开录入折扣
@@ -509,9 +508,9 @@ var XsTypeObj = {
 		xstype: "5",
 		clickType: "sale_reserve_extract",
 		nameSale: "预定提取",
-		icon_open: require("@/images/xz-ydtq.png"),
-		icon_close: require("@/images/wxz-ydtq.png"),
-		icon_guodu: require("@/images/tiqu-lvv.png"),
+		icon_open: require("../../images/xz-ydtq.png"),
+		icon_close: require("../../images/wxz-ydtq.png"),
+		icon_guodu: require("../../images/tiqu-lvv.png"),
 		operation: {
 			// "sale": true, //此模式禁止跳转到销售
 			"sale_takeaway_reserve": true,
@@ -716,9 +715,9 @@ var XsTypeObj = {
 		xstype: "4",
 		clickType: "sale_reserve_cancel",
 		nameSale: "预定取消",
-		icon_open: require("@/images/ydqx.png"),
-		icon_close: require("@/images/ydqx-wxz.png"),
-		icon_guodu: require("@/images/ydqx-lvv.png"),
+		icon_open: require("../../images/ydqx.png"),
+		icon_close: require("../../images/ydqx-wxz.png"),
+		icon_guodu: require("../../images/ydqx-lvv.png"),
 		operation: {
 			// "sale": true,//此模式禁止跳转到销售
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -829,9 +828,9 @@ var XsTypeObj = {
 		xstype: "3",
 		clickType: "sale_cake_reserve",
 		nameSale: "蛋糕图册",
-		icon_open: require("@/images/dgaoyud.png"),
-		icon_close: require("@/images/dgaoyud-wxz.png"),
-		icon_guodu: require("@/images/dgaoyud-wxz.png"),
+		icon_open: require("../../images/dgaoyud.png"),
+		icon_close: require("../../images/dgaoyud-wxz.png"),
+		icon_guodu: require("../../images/dgaoyud-wxz.png"),
 		condition: [],
 		imgCurrent: 0,
 		afterPay: "sale_cake_reserve", //支付后要跳转的模式
@@ -1138,9 +1137,9 @@ var XsTypeObj = {
 		xstype: "6",
 		clickType: "sale_credit",
 		nameSale: "赊销",
-		icon_open: require("@/images/xstd.png"),
-		icon_close: require("@/images/xstd-wxz.png"),
-		icon_guodu: require("@/images/xstd-lvv.png"),
+		icon_open: require("../../images/xstd.png"),
+		icon_close: require("../../images/xstd-wxz.png"),
+		icon_guodu: require("../../images/xstd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
 			"DKF": true, //是否可以打开录入大客户
@@ -1299,9 +1298,9 @@ var XsTypeObj = {
 		xstype: "7",
 		clickType: "sale_credit_settlement",
 		nameSale: "赊销结算",
-		icon_open: require("@/images/shexiaojs.png"),
-		icon_close: require("@/images/shexiaojs-wxz.png"),
-		icon_guodu: require("@/images/shexiaojs-lvv.png"),
+		icon_open: require("../../images/shexiaojs.png"),
+		icon_close: require("../../images/shexiaojs-wxz.png"),
+		icon_guodu: require("../../images/shexiaojs-lvv.png"),
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
@@ -1431,9 +1430,9 @@ var XsTypeObj = {
 		xstype: "8",
 		clickType: "sale_takeaway",
 		nameSale: "外卖单",
-		icon_open: require("@/images/waimaid.png"),
-		icon_close: require("@/images/waimaid-hui.png"),
-		icon_guodu: require("@/images/waimaid-lvv.png"),
+		icon_open: require("../../images/waimaid.png"),
+		icon_close: require("../../images/waimaid-hui.png"),
+		icon_guodu: require("../../images/waimaid-lvv.png"),
 		operation: {
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1471,9 +1470,9 @@ var XsTypeObj = {
 		xstype: "8",
 		clickType: "sale_takeaway_reserve",
 		nameSale: "外卖预定单",
-		icon_open: require("@/images/wmyudd.png"),
-		icon_close: require("@/images/wmyudd-hui.png"),
-		icon_guodu: require("@/images/wmyudd-lvv.png"),
+		icon_open: require("../../images/wmyudd.png"),
+		icon_close: require("../../images/wmyudd-hui.png"),
+		icon_guodu: require("../../images/wmyudd-lvv.png"),
 		operation: {
 			"sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1512,9 +1511,9 @@ var XsTypeObj = {
 		xstype: "8",
 		clickType: "sale_online_order",
 		nameSale: "线上订单",
-		icon_open: require("@/images/xsdingdan.png"),
-		icon_close: require("@/images/xsdingdan-wxz.png"),
-		icon_guodu: require("@/images/xsdingdan-lvv.png"),
+		icon_open: require("../../images/xsdingdan.png"),
+		icon_close: require("../../images/xsdingdan-wxz.png"),
+		icon_guodu: require("../../images/xsdingdan-lvv.png"),
 		operation: {
 			"sale": true,
 			// "sale_online_order": true,
@@ -1549,9 +1548,9 @@ var XsTypeObj = {
 		xstype: "8",
 		clickType: "sale_online_order_extract",
 		nameSale: "线上订单提取",
-		icon_open: require("@/images/xsddtiqu.png"),
-		icon_close: require("@/images/xsddtiqu-wxz.png"),
-		icon_guodu: require("@/images/xsddtiqu-lvv.png"),
+		icon_open: require("../../images/xsddtiqu.png"),
+		icon_close: require("../../images/xsddtiqu-wxz.png"),
+		icon_guodu: require("../../images/xsddtiqu-lvv.png"),
 		operation: {
 			"ynCancel": true,
 			"sale_takeaway_reserve": true,
@@ -1686,9 +1685,9 @@ var XsTypeObj = {
 		xstype: "7",
 		clickType: "sale_credit_return_good",
 		nameSale: "赊销退货",
-		icon_open: require("@/images/sxtd.png"),
-		icon_close: require("@/images/sxtd-wxz.png"),
-		icon_guodu: require("@/images/sxtd-lvv.png"),
+		icon_open: require("../../images/sxtd.png"),
+		icon_close: require("../../images/sxtd-wxz.png"),
+		icon_guodu: require("../../images/sxtd-lvv.png"),
 		operation: {
 			"HY": false, //是否可以录入会员
 			"DKF": false, //是否可以打开录入大客户
@@ -1844,9 +1843,9 @@ var XsTypeObj = {
 		xstype: "6",
 		clickType: "sale_message",
 		nameSale: "消息",
-		icon_open: require("@/images/xz-xx.png"),
-		icon_close: require("@/images/xiaoxi-hui.png"),
-		icon_guodu: require("@/images/xiaoxi-hui.png"),
+		icon_open: require("../../images/xz-xx.png"),
+		icon_close: require("../../images/xiaoxi-hui.png"),
+		icon_guodu: require("../../images/xiaoxi-hui.png"),
 		operation: {
 			"sale_message": true
 		},

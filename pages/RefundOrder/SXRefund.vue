@@ -77,7 +77,7 @@
 								<view class="detinfo">
 									<view class="member">
 										<label>
-											<image class="touxiang" src="@/images/touxiang.png"></image>
+											<image class="touxiang" src="../../images/touxiang.png"></image>
 											<label
 												class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
 										</label>
@@ -92,7 +92,7 @@
 										<view class="prolist" v-for="(item1,index1) in Details">
 											<view class="h3">
 												<label>
-													<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
 													{{item1.SNAME}} — <text>￥{{item1.PRICE}}</text>
 												</label>
 												<view class="shuls"><text>×{{item1.QTY}}</text></view>
@@ -100,11 +100,11 @@
 											<view class="cods">
 												<view>
 													<label>
-														<image src="@/images/dx-bm.png" mode="widthFix"></image>
+														<image src="../../images/dx-bm.png" mode="widthFix"></image>
 														{{item1.SPID}}
 													</label>
 													<label>
-														<image src="@/images/dx-dw.png" mode="widthFix"></image>
+														<image src="../../images/dx-dw.png" mode="widthFix"></image>
 														{{item1.UNIT}}
 													</label>
 												</view>

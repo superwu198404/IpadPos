@@ -1,6 +1,6 @@
 <template>
 	<view class="centre">
-		<image class="bg" src="@/images/chushihua.png" mode="widthFix"></image>
+		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
 		<view class="subject">
 			<view class="hh">
 				<view class="h1">系统初始化</view><text>Initialize</text>

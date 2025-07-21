@@ -19,8 +19,8 @@
 										<view class="prints">
 											<view class="sousuo">
 												<label @click="Settlement">
-													<image src="@/images/settlement.png" mode="widthFix"></image>结算
-													<!-- <image src="@/images/sousuo.png" mode="widthFix"></image>结算 -->
+													<image src="../../images/settlement.png" mode="widthFix"></image>结算
+													<!-- <image src="../../images/sousuo.png" mode="widthFix"></image>结算 -->
 												</label>
 											</view>
 										</view>

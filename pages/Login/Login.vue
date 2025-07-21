@@ -35,7 +35,7 @@
 		<!-- v-if="false" -->
 		<view v-if="isUpdate" class="box">
 			<view class="renewal">
-				<image src="@/images/shengji-tanc.png" mode="widthFix"></image>
+				<image src="../../images/shengji-tanc.png" mode="widthFix"></image>
 				<view class="upinfo">
 					<view class="h9">{{v_version}}</view>
 					<label>

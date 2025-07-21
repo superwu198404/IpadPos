@@ -2,11 +2,11 @@
 	<view class="full-screen">
 		<view class="head">
 				<view class="head-portrait">
-					<image src="@/images/touxiang.png" mode="widthFix"></image>
+					<image src="../../images/touxiang.png" mode="widthFix"></image>
 					<view class="member-account">会员账户</view>
 				</view>
 				<view class="head-exit">
-					<view class="exit" @click="Exit"><image src="@/images/tuichu.png"></image> 退出</view>
+					<view class="exit" @click="Exit"><image src="../../images/tuichu.png"></image> 退出</view>
 				</view>
 		</view>
 		<view class="body">
@@ -20,7 +20,7 @@
 						<text>已选</text>
 						<label>生日精选 <button>×</button></label>
 					</view>
-					<view><image src="@/images/TL.png"></image></view>
+					<view><image src="../../images/TL.png"></image></view>
 				</view>
 				<!-- <view class="body-title-right">
 					<view class="btn-group">

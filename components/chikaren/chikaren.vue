@@ -6,7 +6,7 @@
 	 <!-- v-if="show" -->
 	<view class="boxs">
 		<view class="customer">
-			<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+			<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 			<view class="h3">录入持卡人信息 <button @click="ConfirmCKR('N')" class="close">×</button></view>
 			<view class="clues">
 				<text>姓名：</text>

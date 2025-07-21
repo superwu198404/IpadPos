@@ -6,7 +6,7 @@
 	<view class="full container border-box">
 		<view class="navmall" style="height: 100%;">
 			<view class="logo">
-				<image src="@/images/KGlogo-2.png" mode="widthFix" style="width: 100%;"></image>
+				<image src="../../../images/KGlogo-2.png" mode="widthFix" style="width: 100%;"></image>
 			</view>
 			<view class="menu">
 				<view :class="source.current_menu_info === menu_info ? 'bills curr' : 'bills'"
@@ -21,7 +21,7 @@
 				<view class="bills" @click="SwitchSale('sale')">
 					<label></label>
 					<view style="display: flex;justify-content: center;align-items: center;">
-						<image class="wx" src="@/images/xiaoshou.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/xiaoshou.png" mode="widthFix"></image>
 						<text>商品销售</text>
 					</view>
 				</view>
@@ -81,44 +81,44 @@
 				source: {
 					current_menu_info: null,
 					menu_infos: [{
-							icon_open: require('@/images/img2/kakaka.png'),
-							icon_close: require('@/images/img2/kakaka-hui.png'),
+							icon_open: require('../../../images/img2/kakaka.png'),
+							icon_close: require('../../../images/img2/kakaka-hui.png'),
 							name: 'VIP卡充值',
 							key: 'CardSale'
 						},
 						{
-							icon_open: require('@/images/img2/lpkjih-bai.png'),
-							icon_close: require('@/images/img2/lpkjih.png'),
+							icon_open: require('../../../images/img2/lpkjih-bai.png'),
+							icon_close: require('../../../images/img2/lpkjih.png'),
 							name: '礼品卡激活',
 							key: 'CardActive'
 						},
 						{
-							icon_open: require('@/images/img2/quanquan.png'),
-							icon_close: require('@/images/img2/quanquan-hui.png'),
+							icon_open: require('../../../images/img2/quanquan.png'),
+							icon_close: require('../../../images/img2/quanquan-hui.png'),
 							name: '兑换券换卡',
 							key: 'CouponExchange'
 						},
 						{
-							icon_open: require('@/images/img2/quanjh-bai.png'),
-							icon_close: require('@/images/img2/quanjh.png'),
+							icon_open: require('../../../images/img2/quanjh-bai.png'),
+							icon_close: require('../../../images/img2/quanjh.png'),
 							name: '券激活',
 							key: 'CouponSale'
 						},
 						{
-							icon_open: require('@/images/img2/kachaxun-bai.png'),
-							icon_close: require('@/images/img2/kachaxun.png'),
+							icon_open: require('../../../images/img2/kachaxun-bai.png'),
+							icon_close: require('../../../images/img2/kachaxun.png'),
 							name: '卡券查询',
 							key: 'Cardquery'
 						},
 						{
-							icon_open: require('@/images/img2/kayanqi-bai.png'),
-							icon_close: require('@/images/img2/kayanqi.png'),
+							icon_open: require('../../../images/img2/kayanqi-bai.png'),
+							icon_close: require('../../../images/img2/kayanqi.png'),
 							name: '卡延期/挂失',
 							key: 'CardDelay'
 						},
 						{
-							icon_open: require('@/images/img2/kabangd-bai.png'),
-							icon_close: require('@/images/img2/kabangd.png'),
+							icon_open: require('../../../images/img2/kabangd-bai.png'),
+							icon_close: require('../../../images/img2/kabangd.png'),
 							name: '卡绑定',
 							key: 'CardBind'
 						},

@@ -12,7 +12,7 @@
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 外卖单查询
+						<image src="../../../images/img2/zhongxin.png" mode="widthFix"></image> 外卖单查询
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 				</view>
@@ -26,10 +26,10 @@
 					<view class="form">
 						<view class="Putaway">
 							<label @click="open" v-if="isClose">
-								<image src="@/images/img2/zhankaiiii.png" mode="widthFix"></image>
+								<image src="../../../images/img2/zhankaiiii.png" mode="widthFix"></image>
 							</label>
 							<label @click="close" v-if="isOpen">
-								<image src="@/images/img2/sousuoooo.png" mode="widthFix"></image>
+								<image src="../../../images/img2/sousuoooo.png" mode="widthFix"></image>
 							</label>
 						</view>
 						<view class="biaoge" v-if="reason[currentSelect]">
@@ -69,13 +69,13 @@
 					<view class="choice">
 						<view class="table">
 							<view class="tab" :class="activeIndex===1?'curr':''" @click="changeTab(1)">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<image class="bgs" src="../../../images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<text>子表一</text>
 								</label>
 							</view>
 							<view class="tab" :class="activeIndex===2?'curr':''" v-if="hasTable2" @click="changeTab(2)">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<image class="bgs" src="../../../images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
 									<text>子表二</text>
 								</label>

@@ -10,7 +10,7 @@
 		<!-- 紧急消息弹窗 -->
 		<view class="boxs" v-if="urgenMsg&&JSON.stringify(urgenMsg)!='{}'">
 			<view class="popup promot">
-				<image class="tchw" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<image class="tchw" src="../../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="infor">
 					<view class="shoppbag">
 						<view class="liis messadet">
@@ -25,22 +25,22 @@
 							</view>
 						</view>
 						<view class="matters">
-							<image src="@/images/dl-login.png" mode="widthFix"></image>
+							<image src="../../../images/dl-login.png" mode="widthFix"></image>
 							<text>
 								暂无数据。。。。。。。。。。。。
 							</text>
 						</view>
 						<view class="tally">
 							<label>
-								<image src="@/images/yewu-xx.png"></image><text>{{urgenMsg.newVal.YYBM}}</text>
+								<image src="../../../images/yewu-xx.png"></image><text>{{urgenMsg.newVal.YYBM}}</text>
 							</label>
 							<view>
 								<label>
-									<image src="@/images/kaishisj-xx.png"></image>
+									<image src="../../../images/kaishisj-xx.png"></image>
 									<text>{{urgenMsg.newVal.SDATE}}开始</text>
 								</label>
 								<label>
-									<image src="@/images/jieshusj-xx.png"></image>
+									<image src="../../../images/jieshusj-xx.png"></image>
 									<text>{{urgenMsg.newVal.EDATE}}截止</text>
 								</label>
 							</view>
@@ -57,7 +57,7 @@
 		<!-- 修改密码弹窗 -->
 		<view class="boxs" v-if="showPWD">
 			<view class="customer">
-				<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<image class="bg" src="../../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="h3">修改密码 <button @click="showPWD=false" class="guan">×</button></view>
 				<view class="critlist">
 					<view>
@@ -79,14 +79,14 @@
 		<!-- 蓝牙弹窗 -->
 		<view class="boxs" v-if="showBle">
 			<view class="b_customer">
-				<image class="b_bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+				<image class="b_bg" src="../../../images/dx-tchw.png" mode="widthFix"></image>
 				<view class="b_h3">设备连接 <button @click="showBle=false" class="b_guan">×</button></view>
 				<view class="b_critlist">
 					<view v-for="(item, index) in list" :key="index" :title="item.name" :data-title="item.deviceId"
 						:data-name="item.name" :data-key="index" :data-advertisData="item.advertisServiceUUIDs"
 						@tap="bindViewTap">
 						<label>
-							<image src="@/images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
+							<image src="../../../images/zfcg-dyj.png"></image><text>设备：{{item.name}}</text>
 						</label>
 						<label class="shijian">{{displayBlueTime(item.deviceId,item.name)}}</label>
 						<button v-if="isLink[index] == 0 && (deviceId != item.deviceId)">连接</button><button
@@ -106,10 +106,10 @@
 		<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
 		<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
-				<!-- <image class="fh" src="../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
+				<!-- <image class="fh" src="../../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
 				<view class="message">
 					<view class="imgs">
-						<image src="@/images/tongzhi.png" mode="widthFix"></image>
+						<image src="../../../images/tongzhi.png" mode="widthFix"></image>
 					</view>
 					<!-- <text>门店有一条新的外卖配送单消息来啦...</text> -->
 					<text v-if="XT_MsgData.length==0" @click="NoMsg">暂无系统消息！</text>
@@ -120,37 +120,37 @@
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
 					<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
-						<image src="@/images/dakehu.png" mode="widthFix"></image>
+						<image src="../../../images/dakehu.png" mode="widthFix"></image>
 						<text>大客户：{{DKFNAME}}</text>
 					</label>
 					<label class="buyer shexiao" @click="ShowDKF()" v-else>
-						<image src="@/images/dakehu-xuanz.png" mode="widthFix"></image>
+						<image src="../../../images/dakehu-xuanz.png" mode="widthFix"></image>
 						<text>赊销中：{{DKFNAME}}</text>
 					</label><strong></strong>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
-						<image src="@/images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
-						<!-- <image src="@/images/xiala.png" mode="widthFix"></image> -->
+						<image src="../../../images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
+						<!-- <image src="../../../images/xiala.png" mode="widthFix"></image> -->
 					</label>
 					<label>
-						<image src="@/images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
+						<image src="../../../images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
 					</label>
 					<label>
-						<image src="@/images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
+						<image src="../../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 					<label @click="ShowPrint()">
-						<image src="@/images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
-						<image src="@/images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
+						<image src="../../../images/dx-dayinji.png" mode="widthFix" v-if="YN_PRINT_CON=='Y'"></image>
+						<image src="../../../images/dx-dayinji-hong.png" mode="widthFix" v-else></image>
 						<text v-if="YN_PRINT_CON=='Y'">已连接</text>
 						<text v-else style="color: #FE694B;">未连接</text>
 					</label>
 					<label class="rijie" v-if="showSale">
-						<image src="@/images/dx-qingkong.png" mode="widthFix"></image>
+						<image src="../../../images/dx-qingkong.png" mode="widthFix"></image>
 						<button @click="ReturnSale()">清空</button>
 					</label>
 				</view>
 				<!-- <view class="account" v-if="hyinfo">
 					<view>
-						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<image src="../../../images/touxiang.png" mode="widthFix"></image>
 					</view>
 					<view style="display:flex;flex-wrap: nowrap;align-items: center;">
 						<text>{{ hyinfo.hyId}}</text>
@@ -158,28 +158,28 @@
 				</view> -->
 				<view class="account">
 					<view>
-						<image src="@/images/touxiang.png" mode="widthFix"></image>
+						<image src="../../../images/touxiang.png" mode="widthFix"></image>
 					</view>
 					<view @click="exits()" style="display:flex;flex-wrap: nowrap;align-items: center;">
 						<text>{{RYID}}</text>
-						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="@/images/xiala.png"
+						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="../../../images/xiala.png"
 							mode="widthFix"></image>
 					</view>
 					<view class="dropout" v-if="dropout">
 						<view class="exit" @click="LoginOut()">
-							<image src="@/images/tuichu.png" mode="widthFix"></image>
+							<image src="../../../images/tuichu.png" mode="widthFix"></image>
 							<text>退出</text>
 						</view>
 						<view class="exit" @click="Login()">
-							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<image src="../../../images/zhuxiao.png" mode="widthFix"></image>
 							<text>注销</text>
 						</view>
 						<view class="exit" @click="UPPWD()">
-							<image src="@/images/xgmima.png" mode="widthFix"></image>
+							<image src="../../../images/xgmima.png" mode="widthFix"></image>
 							<text>修改密码</text>
 						</view>
 						<!-- <view class="exit" @click="Back()">
-							<image src="@/images/zhuxiao.png" mode="widthFix"></image>
+							<image src="../../../images/zhuxiao.png" mode="widthFix"></image>
 							<text>返回上级</text>
 						</view> -->
 					</view>

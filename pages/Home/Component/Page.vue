@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall" @click="hideIsShow">
 		<view class="logo">
-			<image src="@/images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
+			<image src="../../../images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
 		<scroll-view scroll-y class="menu"
 			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
@@ -17,7 +17,7 @@
 				<image class="gd" :src="value.icon_guodu" mode="widthFix"></image>
 				<text>{{value.nameSale}}</text>
 				<view class="weiz-jtou" v-if="current_click_menu_name == key && !Selected(key)">
-					<image src="@/images/weiz-jtou.png" mode="widthFix"></image>
+					<image src="../../../images/weiz-jtou.png" mode="widthFix"></image>
 				</view>
 			</view>
 		</scroll-view>
@@ -26,39 +26,39 @@
 				<label></label>
 				<view @click.stop="operations()"
 					style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-					<image class="xz" src="@/images/gongju.png" mode="widthFix"></image>
-					<image class="wx" src="@/images/gongju-hui.png" mode="widthFix"></image>
+					<image class="xz" src="../../../images/gongju.png" mode="widthFix"></image>
+					<image class="wx" src="../../../images/gongju-hui.png" mode="widthFix"></image>
 					<text>工具</text>
 				</view>
 				<view class="chargeback" style="z-index: 16;" v-if="showGJ">
 					<view class="currs" @click="ShowTool('promotions')">
-						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/dqcuxiao.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>当前促销活动</text>
 					</view>
 					<!-- <view @click="ShowTool('TX')">
-						<image class="xz" src="@/images/tongxun.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/tongxun-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/tongxun.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/tongxun-wxz.png" mode="widthFix"></image>
 						<text>通讯</text>
 					</view> -->
 					<!-- <view @click="ShowTool('CD')">
-						<image class="xz" src="@/images/chongdu.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/chongdu-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/chongdu.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/chongdu-wxz.png" mode="widthFix"></image>
 						<text>重读</text>
 					</view> -->
 					<view class="currs" @click="ShowTool('communication')">
-						<image class="xz" src="@/images/wschuan.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/wschuan-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/wschuan.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/wschuan-wxz.png" mode="widthFix"></image>
 						<text>未上传</text>
 					</view>
 					<!-- <view class="currs" @click="CloseDB">
-						<image class="xz" src="@/images/dqcuxiao.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/dqcuxiao-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/dqcuxiao.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/dqcuxiao-wxz.png" mode="widthFix"></image>
 						<text>断开连接</text>
 					</view> -->
 					<view class="currs" @click="ShowTool('CD')">
-						<image class="xz" src="@/images/cdxp.png" mode="widthFix"></image>
-						<image class="wx" src="@/images/cdxp-wxz.png" mode="widthFix"></image>
+						<image class="xz" src="../../../images/cdxp.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/cdxp-wxz.png" mode="widthFix"></image>
 						<text>重打小票</text>
 					</view>
 				</view>
@@ -68,7 +68,7 @@
 			<view class="bills" @click="SwitchSale('kqsale')">
 				<label></label>
 				<view style="display: flex;justify-content: center;align-items: center;">
-					<!-- <image class="xz" src="@/images/xiaoxi-tz.png" mode="widthFix"></image> -->
+					<!-- <image class="xz" src="../../../images/xiaoxi-tz.png" mode="widthFix"></image> -->
 					<text>卡券销售</text>
 				</view>
 			</view>

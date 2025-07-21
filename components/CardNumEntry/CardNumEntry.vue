@@ -13,11 +13,11 @@
 					<view class="labnum">
 						<text>起始号码：</text>
 						<view class="label">
-							<image src="@/images/img2/swiping_card.png" mode="widthFix"
+							<image src="../../images/img2/swiping_card.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')"
 								v-if="ywtype=='VIPCard_Active'||ywtype=='VIPCard_Recharge'||ywtype=='GiftCard_Active'">
 							</image>
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix"
+							<image src="../../images/img2/zhifucx-cu.png" mode="widthFix"
 								@click="ScanCodeHandle('beginNum')" v-else></image>
 							<input type="number" placeholder="请输入起始号码" v-model="beginNum" :focus="curFocus=='beginNum'"
 								@confirm="ScanCodeHandle('beginNum')" @focus="curFocus='beginNum'" />
@@ -31,11 +31,11 @@
 					<view class="labnum" v-if="!single">
 						<text>截止号码：</text>
 						<view class="label">
-							<image src="@/images/img2/swiping_card.png" mode="widthFix"
+							<image src="../../images/img2/swiping_card.png" mode="widthFix"
 								@click="ScanCodeHandle('endNum')"
 								v-if="ywtype=='VIPCard_Active'||ywtype=='VIPCard_Recharge'||ywtype=='GiftCard_Active'">
 							</image>
-							<image src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')"
+							<image src="../../images/img2/zhifucx-cu.png" mode="widthFix" @click="ScanCodeHandle('endNum')"
 								v-else>
 							</image>
 							<input type="number" placeholder="请输入截止号码" v-model="endNum" :focus="curFocus=='endNum'"

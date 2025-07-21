@@ -12,7 +12,7 @@
 			<view class="body" >
 				<view class="hh" style="padding-right:8.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
+						<image src="../../../images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 					</view>
 					<view class="classifys" v-if="date">
 						<picker mode="date" fields="day" @change="changeDate" :value='date'>
@@ -22,9 +22,9 @@
 				</view>
 				<view class="commodity" v-if="isDate===true">
 					<view class="broadcate">
-						<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+						<image class="bg-top" src="../../../images/jsd-hybj.png" mode="widthFix"></image>
 						<view class="mokuai">
-							<image src="@/images/img2/zhanbi-cai.png" mode="widthFix"></image>总体运营明细
+							<image src="../../../images/img2/zhanbi-cai.png" mode="widthFix"></image>总体运营明细
 						</view>
 						<view class="operatys">
 							<view class="operat-sales wk">
@@ -38,14 +38,14 @@
 								<view class="memb plan-bf">
 									<view class="huiyuan">
 										<label>
-											<image src="@/images/img2/hylaikes.png"></image>
+											<image src="../../../images/img2/hylaikes.png"></image>
 											{{Boolean(parseInt(totalSale.progress))=== false?'0%':totalSale.progress}}
 										</label>
 										<text>达成进度(去节令)</text>
 									</view>
 									<view class="huiyuan">
 										<label>
-											<image src="@/images/img2/huiyxiaof.png"></image>
+											<image src="../../../images/img2/huiyxiaof.png"></image>
 											{{Boolean(parseInt(totalSale.timeProgress))=== false?'0%':totalSale.timeProgress}}
 										</label>
 										<text>时间进度</text>
@@ -54,28 +54,28 @@
 								<view class="sale-qk">
 									<view class="waimai-list">
 										<view class="namewm">
-											<image src="@/images/img2/drixshou.png"></image>当日销售
+											<image src="../../../images/img2/drixshou.png"></image>当日销售
 										</view>
 										<label class="pric">¥{{(totalSale.curSale).replace('元','')}}</label>
 										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 									</view>
 									<view class="waimai-list">
 										<view class="namewm">
-											<image src="@/images/img2/drixshou-qjiel.png"></image>当日销售(去节令)
+											<image src="../../../images/img2/drixshou-qjiel.png"></image>当日销售(去节令)
 										</view>
 										<label class="pric">¥{{(totalSale.pureCurSale).replace('元','')}}</label>
 										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 									</view>
 									<view class="waimai-list">
 										<view class="namewm">
-											<image src="@/images/img2/drixshou-jiel.png"></image>当日销售(节令)
+											<image src="../../../images/img2/drixshou-jiel.png"></image>当日销售(节令)
 										</view>
 										<label class="pric">¥{{(totalSale.noPureCureSale).replace('元','')}}</label>
 										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
 									</view>
 									<view class="waimai-list">
 										<view class="namewm">
-											<image src="@/images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
+											<image src="../../../images/img2/dyuexshou-qjiel.png"></image>当月销售(去节令)
 										</view>
 										<label class="pric">{{(totalSale.pureCurMouth).replace('元','')}}</label>
 										<!-- <view class="sale-jd"><label></label><text>12.5%</text></view> -->
@@ -86,13 +86,13 @@
 								<view class="memb">
 									<view class="huiyuan">
 										<label>
-											<image src="@/images/img2/hylaikes.png"></image>{{member.curMembers}}
+											<image src="../../../images/img2/hylaikes.png"></image>{{member.curMembers}}
 										</label>
 										<text>当日会员来客数</text>
 									</view>
 									<view class="huiyuan">
 										<label>
-											<image src="@/images/img2/huiyxiaof.png"></image>
+											<image src="../../../images/img2/huiyxiaof.png"></image>
 											{{member.curMemberSale}}
 										</label>
 										<text>当日会员消费</text>
@@ -117,7 +117,7 @@
 						<view class="particul">
 							<view class="part-sale">
 								<view class="mokuai">
-									<image src="@/images/img2/zhuzhuangt.png" mode="widthFix"></image>重点品类销售明细
+									<image src="../../../images/img2/zhuzhuangt.png" mode="widthFix"></image>重点品类销售明细
 								</view>
 								<view class="wk cons-pl">
 									<view class="sorts" style="text-align: left;margin-left: 3px;">
@@ -224,7 +224,7 @@
 							</view>
 							<view class="part-cons">
 								<view class="mokuai">
-									<image src="@/images/img2/haocai.png" mode="widthFix"></image>当日耗用明细
+									<image src="../../../images/img2/haocai.png" mode="widthFix"></image>当日耗用明细
 								</view>
 								<view class="wk cons-jl">
 									<view class="jlbs">
@@ -239,7 +239,7 @@
 												<view class="memb">
 													<view class="huiyuan">
 														<label>
-															<image src="@/images/img2/baosu.png"></image>
+															<image src="../../../images/img2/baosu.png"></image>
 															{{decimals( reportDamage.curDamageRation)}}
 														</label>
 														<text>当日报损率</text>
@@ -252,7 +252,7 @@
 												<view class="memb">
 													<view class="huiyuan">
 														<label>
-															<image src="@/images/img2/baosun-leiji.png"></image>
+															<image src="../../../images/img2/baosun-leiji.png"></image>
 															{{decimals(reportDamage.DamageAllRation) }}
 														</label>
 														<text>当月累计报损率</text>
@@ -296,7 +296,7 @@
 						<view class="particul">
 							<view class="part-sale part-waimai">
 								<view class="mokuai">
-									<image src="@/images/img2/waimai.png" mode="widthFix"></image>外卖
+									<image src="../../../images/img2/waimai.png" mode="widthFix"></image>外卖
 								</view>
 								<view class="cons-wm">
 									<view class="waimai-list">
@@ -318,7 +318,7 @@
 							</view>
 							<view class="part-cons pasrt-kq">
 								<view class="mokuai">
-									<image src="@/images/img2/kaquan.png" mode="widthFix"></image>卡券
+									<image src="../../../images/img2/kaquan.png" mode="widthFix"></image>卡券
 								</view>
 								<view class="cons-qjl">
 									<view class="waimai-list">

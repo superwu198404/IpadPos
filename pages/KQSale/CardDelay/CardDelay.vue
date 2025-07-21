@@ -15,15 +15,15 @@
 			<view class="prolist">
 				<view class="hh" style="padding-right:3.7%;">
 					<view class="hotcakes">
-						<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
+						<image src="../../../images/img2/zhongxin.png" mode="widthFix"></image> 卡务操作
 						<!-- <view>偏好：<text>蛋黄蛋挞</text><text>绿豆糕</text></view> -->
 					</view>
 					<view class="tishis">请注意所选的操作类型是否符合顾客要求！</view>
 				</view>
 				<view class="commodity">
-					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+					<image class="bg-top" src="../../../images/jsd-hybj.png" mode="widthFix"></image>
 					<!-- <view class="typeoper">
-						<label><button>卡延期</button><image src="@/images/img2/danju.png" mode="widthFix"></image></label>
+						<label><button>卡延期</button><image src="../../../images/img2/danju.png" mode="widthFix"></image></label>
 					</view> -->
 					<view class="number">
 						<view class="labnum">
@@ -41,9 +41,9 @@
 							<text>卡号：</text>
 							<view class="chaxun">
 								<view class="label">
-									<image src="@/images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()"
+									<image src="../../../images/img2/swiping_card.png" mode="widthFix" @click="swiping_card()"
 										v-if="CurType=='Delay'">
-										<!-- <image v-else src="@/images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()"> -->
+										<!-- <image v-else src="../../../images/img2/zhifucx-cu.png" mode="widthFix" @click="scan_code_handle()"> -->
 										<input type="text" placeholder="请输入查询卡号" v-model="CardNumber" />
 										<button v-if="CardNumber" @click="CardNumber=''">×</button>
 								</view>
@@ -56,7 +56,7 @@
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
 									<view class="touch-list list-touch">
-										<image class="bgs" src="@/images/img2/kaqchaxun.png" mode="widthFix"></image>
+										<image class="bgs" src="../../../images/img2/kaqchaxun.png" mode="widthFix"></image>
 										<view class="h6">
 											<label><em></em>{{CardInfo.spName||"暂无"}}</label>
 										</view>
@@ -87,7 +87,7 @@
 										</view>
 									</view>
 									<view class="touch-list list-delete">
-										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+										<image src="../../../images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
 							</view>
@@ -96,10 +96,10 @@
 							<view class="cardlist">
 								<view class="ulli" style="height: 483rpx;">
 									<view class="touch-list chikaren">
-										<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix" style="top:0;">
+										<image class="bgs" src="../../../images/dl-bjhw.png" mode="widthFix" style="top:0;">
 										</image>
 										<view class="h7">
-											<image src="@/images/img2/quanmcheng.png"></image>
+											<image src="../../../images/img2/quanmcheng.png"></image>
 											卡号：{{CardInfo.cardId||"暂无"}}
 										</view>
 										<view class="clues" style="margin-top:14rpx;">

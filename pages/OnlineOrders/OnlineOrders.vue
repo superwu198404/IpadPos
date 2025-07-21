@@ -14,7 +14,7 @@
 					<PrinterPage ref="printerPage" style="display: none;" />
 					<view class="hh">
 						<view class="hotcakes">
-							<image src="@/images/ydtq.png" mode="widthFix"></image> 线上订单
+							<image src="../../images/ydtq.png" mode="widthFix"></image> 线上订单
 						</view>
 						<view class="prints">
 							<view>
@@ -33,7 +33,7 @@
 										</label>
 									</view> -->
 									<view class="sousuo" @click="GetOnlineOrders()" style="color: white;">
-										<image src="@/images/shuaxin.png" mode="widthFix"></image>刷新
+										<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 									</view>
 								</view>
 							</view>
@@ -73,7 +73,7 @@
 							<view class="meminfo">
 								<view class="member">
 									<label>
-										<image class="touxiang" src="@/images/touxiang.png"></image>
+										<image class="touxiang" src="../../images/touxiang.png"></image>
 										<label
 											class="meminfo"><text>{{ details.order.CUSTMNAME || "-" }}</text><text>{{ details.order.CUSTMPHONE || "-" }}</text></label>
 									</label>
@@ -124,7 +124,7 @@
 									<view class="prolist" v-for="(i,index) in this.details.goods">
 										<view class="h3">
 											<label>
-												<image src="@/images/dx-mrxk.png" mode="widthFix"></image>
+												<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
 												{{i.SNAME}} — <text>￥{{i.PRICE}}</text>
 											</label>
 											<view class="shuls"><text>×{{i.ZQTY_SQ}}</text></view>
@@ -132,11 +132,11 @@
 										<view class="cods">
 											<view>
 												<label>
-													<image src="@/images/dx-bm.png" mode="widthFix"></image>
+													<image src="../../images/dx-bm.png" mode="widthFix"></image>
 													{{i.SPID}}
 												</label>
 												<label>
-													<image src="@/images/dx-dw.png" mode="widthFix"></image>
+													<image src="../../images/dx-dw.png" mode="widthFix"></image>
 													{{i.STR7}}
 												</label>
 											</view>

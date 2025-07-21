@@ -61,8 +61,8 @@
 						<image src="../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
 					<label @click="PAD_SCANFunc()">
-						<image src="@/images/dx-smqiang.png" mode="widthFix" v-if="!PAD_SCAN"></image>
-						<image src="@/images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
+						<image src="../../images/dx-smqiang.png" mode="widthFix" v-if="!PAD_SCAN"></image>
+						<image src="../../images/dx-smqiang-hong.png" mode="widthFix" v-else></image>
 						<text v-if="!PAD_SCAN">使用扫码枪</text>
 						<text v-else style="color: #FE694B;">使用拍照扫码</text>
 					</label>
@@ -290,7 +290,7 @@
 						</text>
 					</p>
 				</view>
-				<image class="bjs" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+				<image class="bjs" src="../../images/jsd-hybj.png" mode="widthFix"></image>
 				<view class="modeclassy">
 					<view :class="PayMode=='93'?'curr':' '" @click="ChangePayMode('93')">银行合作</view>
 					<view :class="PayMode=='95'?'curr':' '" @click="ChangePayMode('95')">异业合作</view>
@@ -2706,7 +2706,7 @@
 		height: 15px;
 		display: inline-block;
 		background-size: cover;
-		background-image: url('@/images/loading.png');
+		background-image: url('../../images/loading.png');
 		filter: brightness(10);
 		margin-left: 6px;
 	}

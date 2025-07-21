@@ -12,7 +12,7 @@
 		<view class="hh"
 			style="padding-right:3.7%;position: fixed; top:59px;height: 32px;width: 80%;z-index:10;background-color: #F5F4F8;">
 			<view class="hotcakes">
-				<image src="@/images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
+				<image src="../../../images/img2/zhongxin.png" mode="widthFix"></image> 功能中心
 			</view>
 			<view class="classifys" v-if="list.length>0">
 				<text v-for="item,index in list" :class="activeIndex === index?'curr':''"
@@ -27,18 +27,18 @@
 					<view class="mokuai" :class="'mokuai'+index" :data-index='index'>
 						{{item.tab}}<text>/{{item.valueList.length}}</text>
 					</view>
-					<image class="bg-top" src="@/images/jsd-hybj.png" mode="widthFix"></image>
+					<image class="bg-top" src="../../../images/jsd-hybj.png" mode="widthFix"></image>
 					<view class="ol">
 						<view class="li" v-for='_item,_index in item.valueList' @click="goCommonQuery(_item)">
 							<text class="zhuangs">裱</text>
 							<label>
-								<image src="@/images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
+								<image src="../../../images/img2/biaodan-cai.png" mode="widthFix"></image> 表单
 							</label>
 							<view class="summary">{{_item.name}}</view>
 							<view class="examine">
 								<!-- '1009','裱花请货商品查询' -->
 								<text>点击查看</text>
-								<image src="@/images/img2/dianji-jinru.png"></image>
+								<image src="../../../images/img2/dianji-jinru.png"></image>
 							</view>
 						</view>
 					</view>

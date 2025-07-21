@@ -65,6 +65,12 @@
     },
     "app-plus" : {
         "popGesture" : "none",
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : false
+            }
+        },
+        "runmode" : "normal",
         "modules" : {
             "SQLite" : {},
             "Bluetooth" : {},
@@ -98,6 +104,8 @@
                     "NSLocationAlwaysAndWhenInUseUsageDescription" : "对店铺的位置进行定位",
                     "NSCameraUsageDescription" : "识别二维码"
                 },
+                "UIWebView" : false, // 是否使用旧版 UIWebView（建议 false，使用 WKWebView）
+                "renderer" : "native", // 渲染模式，一般不用改
                 "dSYMs" : false,
                 "idfa" : false
             },
@@ -157,15 +165,30 @@
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
     },
-    "appid" : "__UNI__D975D37",
+    "appid" : "__UNI__DBF626B",
     "name" : "KengeePos",
-    "versionName" : "1.1.116",
+    "versionName" : "1.1.126",
     "description" : "ipad上运行的收银软件",
-    "versionCode" : 116,
+    "versionCode" : 126,
     "locale" : "zh-Hans",
     "fallbackLocale" : "zh-Hans",
     "networkTimeout" : {
         "request" : "180000"
+    },
+    "h5" : {
+        "devServer" : {
+            "https" : true
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        }
+    },
+    "mp-weixin" : {
+        "setting" : {
+            "urlCheck" : true
+        }
     }
 }
 // ,

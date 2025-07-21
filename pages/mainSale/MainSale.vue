@@ -110,7 +110,7 @@
 								<image src="../../images/VIP-dlu.png" mode="widthFix"></image>
 							</view>
 							<view class="a-z" @click="mainSale.GetTSZKData">
-								<image src="@/images/cuxiaohd-dlu.png" mode="widthFix"></image>
+								<image src="../../images/cuxiaohd-dlu.png" mode="widthFix"></image>
 							</view>
 							<view class="key-board-search a-z" @click="mainSale.keyBoardSearch"
 								style="font-size: 30rpx;">
@@ -120,7 +120,7 @@
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum" style="margin-top:10rpx;">
-									<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+									<image src="../../images/jsd-dxiao.gif" mode="widthFix"></image>
 									<text>{{TotalNum}}</text>
 								</view>
 							</view>
@@ -215,7 +215,7 @@
 					style="z-index: 99999;">×</button>
 				<view class="commods">
 					<view class="h3">
-						<image src="@/images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
+						<image src="../../images/dx-mrxk.png" mode="widthFix"></image> {{mainSale.clikSpItem.SNAME}}
 					</view>
 					<view class="cods">
 						<label>
@@ -371,7 +371,7 @@
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
 				<view class="meminfo" style="width:45%;" v-if="mainSale.currentOperation.showCXZK">
-					<image class="bgs" src="@/images/dl-bjhw.png" mode="widthFix"></image>
+					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label style="font-weight: 700;"><text>已使用的促销/折扣列表</text></label>
 						<button class="close" @click="mainSale.showCXZKFunc">×</button>
@@ -480,13 +480,13 @@
 								<view class="bianji"
 									v-if="mainSale.currentOperation.showEdit && !(CheckGoodIsLock(spinx))">
 									<text @click="mainSale.Calculate(spinx,sp,-1)">
-										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jian.png"
+										<image style="width: 40rpx; height: 40rpx;" src="../../images/dx-jian.png"
 											mode="widthFix"></image>
 									</text>
 									<label
 										style="display:inline-block;text-align: center;width:100rpx">{{sp.QTY}}</label>
 									<text @click="mainSale.Calculate(spinx,sp,1)">
-										<image style="width: 40rpx; height: 40rpx;" src="@/images/dx-jia.png"
+										<image style="width: 40rpx; height: 40rpx;" src="../../images/dx-jia.png"
 											mode="widthFix"></image>
 									</text>
 								</view>
@@ -503,7 +503,7 @@
 						</view>
 						<view class="li" @click="mainSale.showCXZKFunc">
 							<text>总折扣<image style="width:40rpx;height:40rpx;vertical-align: middle;"
-									src="@/images/ts-zhekou.png"></image>
+									src="../../images/ts-zhekou.png"></image>
 							</text><text>￥{{mainSale.actType=='Payment'?-mainSale.sale001.BILLDISC:0}}</text>
 						</view>
 						<view class="li">
@@ -541,7 +541,7 @@
 						<text>结算单</text>
 						<label>»</label>
 						<view class="statnum">
-							<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+							<image src="../../images/jsd-dxiao.gif" mode="widthFix"></image>
 							<text>{{TotalNum}}</text>
 						</view>
 					</view>
@@ -566,12 +566,12 @@
 			@open="mainSale.ShowStatement">
 			<view class="head">
 				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
-					<image src="@/images/touxiang.png" mode="widthFix"></image>
+					<image src="../../images/touxiang.png" mode="widthFix"></image>
 					<view class="member-account">{{ mainSale.HY.val.hyId ? SensitiveInfoHandle(mainSale.HY.val.Phone) : "点击登录..."}}</view>
 				</view>
 				<view class="head-exit">
 					<view class="exit" @click="mainSale.dgydExit">
-						<image src="@/images/tuichu.png"></image> 切换
+						<image src="../../images/tuichu.png"></image> 切换
 					</view>
 				</view>
 			</view>
@@ -597,7 +597,7 @@
 					</view>
 					<view class="filter" @click="mainSale.ToChoose">
 						<span>共{{mainSale.CakeList.length}}款</span>
-						<image src="@/images/qushaixuan.png"></image> 去筛选
+						<image src="../../images/qushaixuan.png"></image> 去筛选
 					</view>
 					<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
 						<view class="yixuan">
@@ -636,7 +636,7 @@
 					<text>结算单</text>
 					<label>«</label>
 					<view class="statnum">
-						<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+						<image src="../../images/jsd-dxiao.gif" mode="widthFix"></image>
 						<text>{{TotalNum}}</text>
 					</view>
 				</view>
@@ -661,7 +661,7 @@
 								:current="mainSale.mode_info.sale_cake_reserve.imgCurrent">
 								<!-- @change="swiperChange" -->
 								<swiper-item v-for="(item, index) in mainSale.clikSpItem.imglist" :key="index">
-									<image class="logo" src="@/images/kengee-logo.png" mode="widthFix"></image>
+									<image class="logo" src="../../images/kengee-logo.png" mode="widthFix"></image>
 									<image :src="P_URL+item.IMGURL"></image>
 								</swiper-item>
 							</swiper>
@@ -675,7 +675,7 @@
 					</view>
 					<view class="exhibiting">
 						<view class="h3">
-							<image src="@/images/dx-mrxk.png" mode="widthFix"> {{mainSale.clikSpItem.SNAME}}
+							<image src="../../images/dx-mrxk.png" mode="widthFix"> {{mainSale.clikSpItem.SNAME}}
 						</view>
 						<view class="miaos">{{mainSale.clikSpItem.note}}</view>
 						<view class="commods">
@@ -732,7 +732,7 @@
 					<text>结算单</text>
 					<label>«</label>
 					<view class="statnum">
-						<image src="@/images/jsd-dxiao.gif" mode="widthFix"></image>
+						<image src="../../images/jsd-dxiao.gif" mode="widthFix"></image>
 						<text>{{TotalNum}}</text>
 					</view>
 				</view>

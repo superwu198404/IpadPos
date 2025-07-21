@@ -42,25 +42,25 @@
 						<view class="table">
 							<view class="tab " @click="ChangeYWTYPE('VIPCard_Active')"
 								:class="YWTYPE=='VIPCard_Active'?'curr':''">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<image class="bgs" src="../../../images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
-									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<image src="../../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 									<text>VIP卡激活充值</text>
 								</label>
 							</view>
 							<view class="tab " @click="ChangeYWTYPE('VIPCard_Recharge')"
 								:class="YWTYPE=='VIPCard_Recharge'?'curr':''">
-								<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+								<image class="bgs" src="../../../images/img2/tab-zuo.png" mode="widthFix"></image>
 								<label>
-									<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+									<image src="../../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 									<text>VIP卡充值</text>
 								</label>
 							</view>
 							<view class="tab jh-sb" @click="ChangeYWTYPE('VIPCard_Retry')"
 								:class="YWTYPE=='VIPCard_Retry'?'curr':''">
-								<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
+								<image class="bgs" src="../../../images/img2/shibai-biaoq.png" mode="widthFix"></image>
 								<label>
-									<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
+									<image src="../../../images/img2/jihuoshibai.png" mode="widthFix"></image>
 									<text>激活/充值失败</text>
 								</label>
 							</view>
@@ -84,7 +84,7 @@
 							<view class="hh">待售详情 <em></em></view>
 							<!-- 没刷卡时显示 -->
 							<view class="swipetip" v-if="SALE002.length==0">
-								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+								<image src="../../../images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先刷卡录入</text>
 							</view>
 							<!-- 刷卡后显示卡列表-->
@@ -92,7 +92,7 @@
 								<view class="ulli" v-for="(item,index) in SALE002">
 									<view class="touch-list list-touch" @click="Touchlist" :data-style="item.txtStyle"
 										:data-index="index" :style="item.txtStyle">
-										<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+										<image class="bgs" src="../../../images/quan-bg.png" mode="widthFix"></image>
 										<view class="h6">
 											<label>￥{{ItemDisc(item,0)}}<text>/{{item.QTY}}张</text></label>
 											<view class="zje">
@@ -111,7 +111,7 @@
 										</view>
 									</view>
 									<view class="touch-list list-delete" @click="RemoveSP(item)">
-										<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+										<image src="../../../images/img2/ka-shanchu.png" mode="widthFix"></image>
 									</view>
 								</view>
 							</view>
@@ -196,14 +196,14 @@
 				<view class="operation">
 					<view class="sorting">
 						<view class="a-z">
-							<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
+							<image src="../../../images/img2/shuakalr.png" mode="widthFix" @click="showCardNumFunc">
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
+							<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
 						</view>
 						<view class="a-z">
-							<image src="@/images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
+							<image src="../../../images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
 						</view>
 
 

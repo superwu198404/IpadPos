@@ -10,10 +10,10 @@
 			<view class="choice">
 				<view v-for="tab in tabs" :class="tab == source.select_tab ? 'tab curr' : 'tab'" @click.capture="select_tab(tab)">
 					<label>
-						<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+						<image src="../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 						<text>{{ tab.title }}</text>
 					</label>
-					<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+					<image class="bgs" src="../../images/img2/tab-zuo.png" mode="widthFix"></image>
 				</view>
 			</view>
 			<slot name="content"></slot>

@@ -18,17 +18,17 @@
 				<view class="choice">
 					<view :class="view.current_part_view == 'coupon_activate' ? 'tab curr' : 'tab'">
 						<label>
-							<image src="@/images/img2/VIP-skaczhi.png" mode="widthFix"></image>
+							<image src="../../../images/img2/VIP-skaczhi.png" mode="widthFix"></image>
 							<text @click="switch_to_page('coupon_activate')">券激活</text>
 						</label>
-						<image class="bgs" src="@/images/img2/tab-zuo.png" mode="widthFix"></image>
+						<image class="bgs" src="../../../images/img2/tab-zuo.png" mode="widthFix"></image>
 					</view>
 					<view :class="view.current_part_view == 'coupon_activate_fail' ? 'tab curr' : 'tab'">
 						<label>
-							<image src="@/images/img2/jihuoshibai.png" mode="widthFix"></image>
+							<image src="../../../images/img2/jihuoshibai.png" mode="widthFix"></image>
 							<text @click="switch_to_page('coupon_activate_fail')">券激活失败</text>
 						</label>
-						<image class="bgs" src="@/images/img2/shibai-biaoq.png" mode="widthFix"></image>
+						<image class="bgs" src="../../../images/img2/shibai-biaoq.png" mode="widthFix"></image>
 					</view>
 				</view>
 				<view style="width: 100%; height: 100%;" v-if="view.current_part_view == 'coupon_activate'">
@@ -36,20 +36,20 @@
 						<view class="hh">待售详情 <em></em></view>
 						<!-- 没刷卡时显示 -->
 						<view class="swipetip" v-if="view.swipe_tip">
-							<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+							<image src="../../../images/img2/tip-skaluru.png" mode="widthFix"></image>
 							<text>请先刷卡录入</text>
 						</view>
 						<!-- 刷卡后显示卡列表 -->
 						<view class="cardlist">
 							<view class="swipetip" v-if="source.sale2_union_sale6.length==0">
-								<image src="@/images/img2/tip-skaluru.png" mode="widthFix"></image>
+								<image src="../../../images/img2/tip-skaluru.png" mode="widthFix"></image>
 								<text>请先录入券</text>
 							</view>
 							<view class="ulli" v-for="(sales,index) in source.sale2_union_sale6">
 								<view class="touch-list list-touch" @click="touch_list($event,sales.sale006)"
 									:data-style="get_text_style(sales.sale006)" :data-index="index"
 									:style="get_text_style(sales.sale006)">
-									<image class="bgs" src="@/images/quan-bg.png" mode="widthFix"></image>
+									<image class="bgs" src="../../../images/quan-bg.png" mode="widthFix"></image>
 									<view class="h6">
 										<label>￥{{ sales.sale002.OPRICE }}<text>/{{ sales.sale006.QTY }}张</text></label>
 										<view class="zje">
@@ -77,7 +77,7 @@
 									</view>
 								</view>
 								<view class="touch-list list-delete" @click="remove_union(sales)">
-									<image src="@/images/img2/ka-shanchu.png" mode="widthFix"></image>
+									<image src="../../../images/img2/ka-shanchu.png" mode="widthFix"></image>
 								</view>
 							</view>
 						</view>
@@ -100,15 +100,15 @@
 			<view class="operation operation-correct">
 				<view class="sorting">
 					<view class="a-z">
-						<image src="@/images/img2/shuakalr.png" mode="widthFix" @click="coupon_segment_input">
+						<image src="../../../images/img2/shuakalr.png" mode="widthFix" @click="coupon_segment_input">
 						</image>
 					</view>
 					<view class="a-z">
-						<image src="@/images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
+						<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="select_special_discount">
 						</image>
 					</view>
 					<view class="a-z" style="display:block;height:105px;">
-						<image src="@/images/img2/cuxsxiao.png" mode="widthFix"></image>
+						<image src="../../../images/img2/cuxsxiao.png" mode="widthFix"></image>
 						<view class="shifoubox" @click="CheckPromotion">
 							<view class="shibtn" v-if="checkPromotion">
 								是
