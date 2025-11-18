@@ -24,7 +24,7 @@ const getCxmSql = async (storeDqid,dateTime,storeid) => {
 		
 		let cxformd001_sql = "SELECT C1.KHID,C1.BILL,C1.YN_ZD,C1.YN_JSLB,C1.CXRY,C1.HYLV,C1.CXZT,C1.CX_WEEK,C1.SDATE,C1.EDATE,C1.YN_TIME,\
 							 C1.STIME1,C1.ETIME1,C1.STIME2,C1.ETIME2,C1.STIME3,C1.ETIME3,C1.NOTFKID,C1.BILL_STATUS,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END)AS ZKLQTY,C1.JFSX\
-							 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" + storeid + "' and C1.YN_JSLB!='F'\
+							 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" + storeid + "' and C1.YN_JSLB NOT IN ('F','H','L')\
 							 AND C1.SDATE<= DATETIME('" + dateTime + "') AND C1.EDATE>= DATETIME('" + dateTime + "')  AND  C1.cxzt like  '%" + cxkey + "%' order by C1.YN_ZD desc,(CASE WHEN C1.YN_JSLB='D' THEN 2 WHEN C1.YN_JSLB='G' THEN 1 ELSE 0 END) desc,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 		await db.get().executeQry(cxformd001_sql, "执行中", function(res1) {
 			//console.log(cxformd001_sql + "cxformd001_sql执行结果", res1.msg);
@@ -47,7 +47,7 @@ const cxClassSql = async (storeid,date1) => {
 	let cxformd002_sql = "SELECT KHID,BILL,BILL||CLASSID CLASSID,ZKTYPE,DISCTYPE,CHANGELV,XX_QTY1,XX_NET1,MJ_DISC1,\
                              MJ_NET1,ZJPRICE1,JFFACTOR1,XX_QTY2,XX_NET2,MJ_DISC2,ZJPRICE2,JFFACTOR2,MJ_NET2,\
                                 XX_QTY3,XX_NET3,ZJPRICE3,JFFACTOR3,MJ_DISC3,MJ_NET3,XX_QTY4,XX_NET4,ZJPRICE4,JFFACTOR4,MJ_DISC4,MJ_NET4,SYJF\
-                             FROM   cxformd002 WHERE bill IN  ( SELECT  BILL  FROM  cxformd001 WHERE     BILL_STATUS ='1' and YN_JSLB!='F'  AND khid ='" + storeid + "'\
+                             FROM   cxformd002 WHERE bill IN  ( SELECT  BILL  FROM  cxformd001 WHERE     BILL_STATUS ='1' and YN_JSLB NOT IN ('F','H','L')  AND khid ='" + storeid + "'\
 							AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) AND khid ='" + storeid + "'  ORDER  by CLASSID*1";
     await db.get().executeQry(cxformd002_sql, "执行中", function(res) {
 		//console.log(cxformd002_sql + "cxformd002_sql执行结果", res.msg);
@@ -64,7 +64,7 @@ const cxClassSql = async (storeid,date1) => {
  */
 const cxSPsql = async (storeid,date1) => {
 	let cxformd003_arr = [];
-	let cxformd003_sql = "SELECT C3.KHID,C3.BILL,C3.BILL||C3.CLASSID CLASSID,C3.SPID  FROM  cxformd003 C3 LEFT JOIN cxformd006 C6 ON C3.BILL = C6.BILL AND C3.KHID = C6.KHID WHERE  C3.bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB!='F'\
+	let cxformd003_sql = "SELECT C3.KHID,C3.BILL,C3.BILL||C3.CLASSID CLASSID,C3.SPID  FROM  cxformd003 C3 LEFT JOIN cxformd006 C6 ON C3.BILL = C6.BILL AND C3.KHID = C6.KHID WHERE  C3.bill IN  (  SELECT  BILL  FROM  cxformd001 WHERE  BILL_STATUS ='1'  and YN_JSLB NOT IN ('F','H','L')\
 					   AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) AND C3.KHID='" + storeid + "' order by (CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 	await db.get().executeQry(cxformd003_sql, "执行中", function(res) {
 		//console.log(cxformd003_sql + "cxformd003_sql执行结果", res.msg);
@@ -83,7 +83,7 @@ const cxZqSql = async (gsid,storeid,date1) => {
 	let cxformd005_arr = [];
 	let cxformd005_sql = "SELECT Khid, Bill, Kquser, Lqtype, Zqty, Hqty, Aqty, Note  FROM  cxformd005\
 					  WHERE Kquser in (select sname  from Dapzcs_Nr  where  id   like  'DSF%'  and  id_nr  like  'KQUSER_%' and note ='" + gsid + "')  and  bill IN  (   SELECT  BILL  FROM  cxformd001 WHERE\
-                      BILL_STATUS ='1' and YN_JSLB!='F'  AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) AND khid ='" + storeid + "' ";
+                      BILL_STATUS ='1' and YN_JSLB NOT IN ('F','H','L')  AND khid ='" + storeid + "'  AND SDATE<= DATETIME('" + date1 + "')  and EDATE>= DATETIME('" + date1 + "') ) AND khid ='" + storeid + "' ";
     await db.get().executeQry(cxformd005_sql, "执行中", function(res) {
 		//console.log(cxformd005_sql + "cxformd005_sql执行结果", res.msg);
 		cxformd005_arr = res.msg;
