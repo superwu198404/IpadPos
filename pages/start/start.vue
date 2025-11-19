@@ -210,7 +210,7 @@
 				mysqlite.executeQry("SELECT * FROM sqlite_master WHERE type ='table'", "操作中...", res => {
 					// console.log("查询的表信息：", res);
 					let arr = res.msg.map(r => {
-						return "drop table " + r.name;
+						return "drop table IF EXISTS " + r.name;
 					})
 					console.log("删除sql:", arr);
 					mysqlite.executeSqlArray(arr, "删除中...", res => {
@@ -272,7 +272,7 @@
 							});
 							if (new004.length > 0) //存在数据说明这里有初始化的内容
 							{
-								sql.push("drop table  " + item.TABNAME);
+								sql.push("drop table IF EXISTS " + item.TABNAME);
 							}
 							sql.push(item.DDLSTR);
 							sql = sql.concat(new004);

@@ -5,7 +5,7 @@
 const baseUrl = 'http://10.0.101.151:8805/Api/'; //仟吉uat业务后台
 // const baseUrl = 'http://192.168.0.28:44377/Api/'; //本地业务后台
 // const baseUrl = 'http://pad.kengee.com.cn:8018/Api/'; //仟吉生产业务后台
- 
+
 
 export default {
 	baseUrl

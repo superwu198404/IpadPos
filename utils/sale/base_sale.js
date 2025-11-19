@@ -3581,9 +3581,9 @@ function GetSale(global, vue, target_name, uni) {
 			}
 			console.log('[PayedResult]通信表记录单号:', bill);
 			common.TransLiteData(bill); //上传至服务端
-			// console.log("sale001",this.sale001);
-			// console.log("sale002",this.sale002);
-			// console.log("sale003",this.sale003);
+			// console.log("sale001", this.sale001);
+			// console.log("sale002", this.sale002);
+			// console.log("sale003", this.sale003);
 			// if (this.sale001.TCXDISC != this.sale001.BILLDISC) {
 			// 	return util.simpleMsg("D：" + this.sale001.TCXDISC + ",B：" + this.sale001.BILLDISC,
 			// 		true);

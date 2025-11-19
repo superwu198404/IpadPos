@@ -66,7 +66,7 @@
 				<view class="chongdu">
 					<view class="dates">
 						<button @click="reset()">重读基础数据 <text>REREAD</text></button>
-						<button @click="zbtx()">通讯 <text>MRSSAGE</text></button>
+						<button @click="zbtx()">通讯 <text>MESSAGE</text></button>
 					</view>
 					<view class="tuichu" @click="ToOut()">
 						<image src="../../images/logout.png" mode="widthFix"></image>

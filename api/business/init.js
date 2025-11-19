@@ -88,7 +88,8 @@ var GetPayWay = async function(e) {
 					// 	.NOTE == r.SNAME) ? 'Y' : "N"),
 					yn_use: !r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME) ? 'Y' :
 						"N"),
-						yn_use: r.FKID == "ZF83" ? 'Y' : (!r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1.TYPE == r.JKSNAME) ? 'Y' :
+					yn_use: r.FKID == "ZF83" ? 'Y' : (!r.JKSNAME ? "Y" : (PayInfo.find(r1 => r1
+							.TYPE == r.JKSNAME) ? 'Y' :
 						"N")),
 					poly: "S", //更多中的支付方式
 					seq: PayWayList.length + i + 1,
@@ -307,7 +308,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				if (pm_initType == "reloadsqlite") {
 					if (new004.length > 0) //存在数据说明这里有初始化的内容
 					{
-						let sqldrop = "drop table  " + item.TABNAME;
+						let sqldrop = "drop table IF EXISTS " + item.TABNAME;
 						// console.log("删除一天数据" + sqldrop + "建表的语句" + item.DDLSTR);
 						sql.push(sqldrop);
 						sql.push(item.DDLSTR);

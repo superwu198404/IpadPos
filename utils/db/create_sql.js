@@ -334,7 +334,7 @@ const ZFRuleSql =
 
 //上述sql 已在数据库实现，通讯表数据库没有则在本地创建
 //创建通讯表的过程
-const TXSql = [`drop table POS_TXFILE`,
+const TXSql = [`drop table IF EXISTS POS_TXFILE`,
 	`create table POS_TXFILE(SEQ_NO integer,
 			    TX_SQL        VARCHAR2(6),  
 			    STOREID      VARCHAR(10),  
@@ -349,7 +349,7 @@ const TXSql = [`drop table POS_TXFILE`,
 ];
 
 //创建重打表的过程
-const PRINTSql = [`drop table POS_XSBILLPRINT`,
+const PRINTSql = [`drop table IF EXISTS POS_XSBILLPRINT`,
 	`CREATE TABLE POS_XSBILLPRINT( 
              XSBILL    VARCHAR2(20)  NOT NULL,  
              XSDATE    DATE   NOT NULL, 

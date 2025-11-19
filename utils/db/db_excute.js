@@ -366,7 +366,14 @@ var mySqllite = function() {
 
 		return ret;
 	};
-
+	//数组分割
+	var chunkArray = function(array, size) {
+		const result = [];
+		for (let i = 0; i < array.length; i += size) {
+			result.push(array.slice(i, i + size));
+		}
+		return result;
+	}
 
 	this.executeSqlArray = async function(sqlArray, pm_msg, success, fail, hideloading) {
 		var retcode;
@@ -377,15 +384,15 @@ var mySqllite = function() {
 		retcode = await tran(tranEnum.begin);
 		console.log("tran:" + JSON.stringify(retcode));
 		if (!retcode.code) return callBackCloseLoading(retcode, fail, pm_msg);
-		for (var i = 0; i < sqlArray.length; i++) {
-			retcode = await exec(sqlArray[i]);
+		var newSqlArr = chunkArray(sqlArray, 500);
+		for (var i = 0; i < newSqlArr.length; i++) {
+			retcode = await exec(newSqlArr[i]);
 			if (!retcode.code) {
-				// console.log(i + "exec:" + JSON.stringify(retcode)); 
-				//if (retcode.msg.code === -1404) {
-				//	continue;
-				//	}
-				//await tran(tranEnum.rollback);
-				//return callBackCloseLoading(retcode, fail, pm_msg);
+				let obj = {
+					sql: newSqlArr[i],
+					msg: retcode
+				}
+				console.warn("sql执行报错:", obj);
 			}
 		}
 		retcode = await tran(tranEnum.commit);
