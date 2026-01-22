@@ -511,6 +511,7 @@ var XsTypeObj = {
 		icon_open: require("../../images/xz-ydtq.png"),
 		icon_close: require("../../images/wxz-ydtq.png"),
 		icon_guodu: require("../../images/tiqu-lvv.png"),
+		ydnotfk: [], //预定提取时的禁止支付方式
 		operation: {
 			// "sale": true, //此模式禁止跳转到销售
 			"sale_takeaway_reserve": true,
@@ -569,11 +570,15 @@ var XsTypeObj = {
 					hyId: this.sale001.CUID
 				};
 			}
+			if (params.notfkids) {
+				this.clickSaleType.ydnotfk = params.notfkids.split(',');
+			}
 			console.log("[BeforeFk]预定提取信息初始化:", {
 				sale1: this.sale001,
 				sale2: this.sale002,
 				sale3: this.sale003,
-				sale3_raw: this.raw_order
+				sale3_raw: this.raw_order,
+				ydnotfk: this.clickSaleType.ydnotfk
 			});
 		},
 		///对打印的控制
@@ -629,12 +634,17 @@ var XsTypeObj = {
 					payed: this.payed
 				});
 			}
+			console.log("[BeforeFk_ydnotfk]原预定单是否有禁止支付方式:", this.ydnotfk);
+			if (this.clickSaleType.ydnotfk?.length > 0) { //原预定单有限制支付方式
+				this.ban_type = this.ban_type.concat(this.clickSaleType.ydnotfk);
+			}
 			this.ban_type.push("ZF00"); //应测试要求禁用对公进账
 			//特殊折扣的禁止支付方式
 			if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC > 0) {
 				let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'TSDISC')?.POSCSNR.split(',');
-				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+				var ban_fk = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
 					i.fkid);
+				this.ban_type = this.ban_type.concat(ban_fk);
 				console.warn("[BeforeFk]普通销售有特殊折扣时获取的允许、和禁止 的付款类型:", {
 					allow_type,
 					ban_type: this.ban_type
@@ -708,6 +718,7 @@ var XsTypeObj = {
 				console.log("[PayedResult]准备上传会员积分...");
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 			}
+			this.clickSaleType.ydnotfk = []; //业务完成后清空一下禁止支付方式集合
 		},
 	},
 	//预订单取消

@@ -262,7 +262,21 @@
 							sale3
 						});
 						this.view.loading = sale1.BILL;
-						RequestSend(`select YD_STATUS from ydsale001 where bill='${sale1.BILL}'`, util
+						var sql = `select YD_STATUS from ydsale001 where bill='${sale1.BILL}'`; //旧版
+						sql = `SELECT
+									yd.YD_STATUS,
+									wm_CONCAT ( cx.cxbill ) cxbill,
+									wm_CONCAT ( cx1.NOTFKID ) NOTFKID 
+								FROM
+									ydsale001 yd
+									LEFT JOIN CXMDFSMX cx ON yd.bill = cx.xsbill 
+									AND yd.saledate = cx.saledate
+									LEFT JOIN MDCX001 cx1 ON cx.cxbill = cx1.bill 
+								WHERE
+									yd.bill ='${sale1.BILL}'
+								GROUP BY
+									yd.YD_STATUS`; //新版
+						RequestSend(sql, util
 							.callBind(this, function(res) {
 								this.view.loading = "";
 								if (res.code) {
@@ -278,7 +292,8 @@
 														sale2);
 													return sale2;
 												})(),
-												sale3
+												sale3,
+												notfkids: data.NOTFKID
 											});
 									} else
 										util.simpleMsg("单据状态已变更，请刷新后重试!", true)
