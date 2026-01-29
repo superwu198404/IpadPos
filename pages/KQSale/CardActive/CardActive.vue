@@ -182,7 +182,8 @@
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
+							<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true">
+							</image>
 						</view>
 						<view class="a-z" style="display:block;height:105px;">
 							<image src="../../../images/img2/cuxsxiao.png" mode="widthFix"></image>
@@ -293,6 +294,7 @@
 				checkPromotion: false,
 				CXData: [], //促销数据
 				cxfsArr: [], //促销跟踪数据
+				JDY: {} //业务员
 			}
 		},
 		created: async function() {
@@ -349,6 +351,12 @@
 					//清除一下之前产生的促销和折扣
 					_card_sale.ResetCXZK(that);
 				}
+			});
+			//业务员监控
+			uni.$on("choose-mdry", function(data) {
+				console.log("[ChooseMDRY]业务员选择!", mdry_info);
+				that.JDY = mdry_info;
+				that.SALE001.CUSTID = mdry_info.RYID;
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -409,6 +417,7 @@
 
 		},
 		destroyed() {
+			uni.$off("choose-mdry");
 			uni.$off("close-tszk");
 			uni.$off("big-customer-close");
 			uni.$off("GetCardNums");
@@ -779,6 +788,8 @@
 						console.log("礼品卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
+						if (that.JDY.RYID) //记录业务员
+							that.SALE001.CUSTID = that.JDY.RYID;
 						if (!res2.code) { //激活失败要记录一下
 							that.SALE001.YN_OK = "F";
 							that.SALE001.REASON = "JHF"; //激活失败
@@ -910,8 +921,13 @@
 				store.DKFID = "80000000";
 				store.DKFNAME = '默认大客户';
 				that.checkPromotion = false;
+				that.MDRY = {};
 				_util.setStorage("store", store);
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				uni.$emit('set-jdy', {
+					RYID: store.RYID,
+					SNAME: store.RYNAME
+				}); //通知一下外部 恢复默认接待员信息
 				console.log("单据重置成功")
 			},
 			//创建sxsale1

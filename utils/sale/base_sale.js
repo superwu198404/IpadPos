@@ -263,6 +263,13 @@ var XsTypeObj = {
 				};
 				this.HY.val = obj;
 			}
+			// //原单业务员赋值
+			// if (this.sale001.CUSTID) {
+			// 	let obj = {
+			// 		RYID: this.sale001.CUSTID
+			// 	};
+			// 	this.JDY.val = obj;
+			// }
 			this.ShowStatement();
 		},
 		///对打印的控制
@@ -1315,7 +1322,7 @@ var XsTypeObj = {
 		new_bill: "",
 		operation: {
 			"HY": false, //是否可以录入会员
-			"DKF": true, //是否可以打开录入大客户
+			"DKF": false, //是否可以打开录入大客户
 			"Disc": false, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
@@ -1330,19 +1337,19 @@ var XsTypeObj = {
 		},
 		$click() {
 			console.log("[sale_credit_settlement]赊销结算点击...");
-			console.log("[sale_credit_settlement]大客户权限(设置前)：", this.currentOperation);
-			this.ComponentsManage.DKF = true; //打开大客户弹窗
-			console.log("[sale_credit_settlement]大客户权限(设置后)：", this.currentOperation.DKF);
-			uni.$once('select-credit', util.callBind(this, function(data) {
-				if (Object.keys(data ?? {}).length > 0) {
-					console.log("[Change]切换到赊销结算!");
-					if (!this.ComponentsManage['sale_credit_settlement']) //如果在赊销结算则不切换
-						this.SetManage("sale_credit_settlement", true); //切换到赊销
-				} else { //如果没有大客户数据 则切换到普通销售模式
-					console.log("[Change]切换到普通模式!");
-					this.resetSaleBill();
-				}
-			}));
+			// console.log("[sale_credit_settlement]大客户权限(设置前)：", this.currentOperation);
+			// this.ComponentsManage.DKF = true; //打开大客户弹窗 //20260128 按需调整不先选择大客户
+			// console.log("[sale_credit_settlement]大客户权限(设置后)：", this.currentOperation.DKF);
+			// uni.$once('select-credit', util.callBind(this, function(data) {
+			// 	if (Object.keys(data ?? {}).length > 0) {
+			console.log("[Change]切换到赊销结算!");
+			if (!this.ComponentsManage['sale_credit_settlement']) //如果在赊销结算则不切换
+				this.SetManage("sale_credit_settlement", true); //切换到赊销
+			// 	} else { //如果没有大客户数据 则切换到普通销售模式
+			// 		console.log("[Change]切换到普通模式!");
+			// 		this.resetSaleBill();
+			// 	}
+			// }));
 			return false;
 		},
 		$initSale: function(params) {
@@ -2124,6 +2131,17 @@ function GetSale(global, vue, target_name, uni) {
 			})
 		}
 	})
+	//*func*接待员选中事件回调
+	this.ChooseMDRY = util.callBind(this, function(mdry_info) {
+
+		console.log("[ChooseMDRY]接待员选择!", mdry_info);
+		//this.JDY.val = mdry_info;
+		//this.JDY.val = JSON.parse(JSON.stringify(mdry_info));
+		// 只赋值需要的属性，避免其他默认属性干扰
+		this.JDY.val.RYID = mdry_info.RYID;
+		this.JDY.val.SNAME = mdry_info.SNAME;
+		console.log("[ChooseMDRY]接待员信息:", this.JDY.val);
+	})
 	//*func*会员登录关闭回调
 	this.CloseMember = util.callBind(this, function(member_info) {
 		this.setComponentsManage(null, "HY");
@@ -2389,6 +2407,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$off("member-close");
 		uni.$off("close-big-customer");
 		uni.$off("open-big-customer");
+		uni.$off("choose-mdry");
 		uni.$off("reserve-drawer-close");
 		uni.$off("close-tszk");
 		uni.$off("close-FZCX");
@@ -2409,6 +2428,7 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
 		uni.$on("close-big-customer", this.JudgeBigCustomer);
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
+		uni.$on("choose-mdry", this.ChooseMDRY);
 		uni.$on("reserve-drawer-close", (XsTypeObj.sale_reserve.CloseReserveDrawer).bind(this));
 		uni.$on("close-tszk", this.CloseTSZK);
 		uni.$on("close-FZCX", this.CloseFZCX);
@@ -2674,6 +2694,34 @@ function GetSale(global, vue, target_name, uni) {
 			that.Page.$forceUpdate()
 		} else {
 			that.log("页面变量丢失！！！！！！！")
+		}
+	}
+	//接待员结构
+	this.JDY = {
+		cval: {},
+		base: {},
+		open: false,
+		// 新增标记位：是否是主动选择空值
+		isEmptySelected: false,
+		get val() {
+			if (!this.cval.RYID) { //默认为当前人员
+				console.log("触发get：");
+				this.cval.RYID = store.RYID;
+			}
+			return this.cval;
+		},
+		set val(newval) {
+			// this.base.ComponentsManage["HY"] = false;
+			this.cval = newval;
+			if (this.cval && Object.keys(this.cval).length > 0) {
+				//使用that
+				// that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
+				// this.base.GetHyCoupons();
+			} else {
+				console.log("清空后的权限操作：");
+				// that.setSaleTypeDefval("DKF");
+			}
+			that.update();
 		}
 	}
 	//初始化所有可以点击的商品，会员的结构
@@ -4332,11 +4380,19 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[BeforeFk]支付前触发:", pm_inputParm);
 		console.log("[BeforeFk]当前的权限:", this.currentOperation);
 		console.log("[BeforeFk]当前的模式:", this.current_type);
+		console.log("[BeforeFk]当前的JDY:", this.JDY);
 		//在付款前写这个防止左右更改！
 		this.sale001.XSTYPE = this.xsType //付款的时候写
 		this.sale001.BILL_TYPE = this.bill_type; //
 		this.sale001.DKFID = this.DKF.val.DKFID; //当前选择的大客户的编码
 		this.sale001.CUID = this.HY.cval.hyId; //如果sale1无hyid则写会员对象的hyid
+		//如果当前模式等于clickType  销售，赊销，(销售退 ,赊销结算，赊销退 传逆向单会自动赋值)
+		let ywTypeArr = [
+			'sale', 'sale_credit' //, 'sale_return_good','sale_credit_settlement', 'sale_credit_return_good'
+		];
+		if (ywTypeArr.indexOf(this.current_type.clickType) >= 0) {
+			this.sale001.CUSTID = this.JDY.val.RYID; //260129增加业务员记录
+		}
 		console.log("[BeforeFk]sale001：", this.sale001);
 		//写大客户
 		//code...
@@ -4409,9 +4465,14 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit("reset-sales");
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+		uni.$emit('set-jdy', {
+			RYID: store.RYID,
+			SNAME: store.RYNAME
+		}); //通知一下外部 恢复默认接待员信息
 		this.HY.cval = {};
 		this.HY.val = {};
 		this.DKF.cval = {};
+		this.JDY.val = {};
 		this.Disc.cval = {};
 		this.FZCX.oval = [];
 		this.FZCX.cval = {};

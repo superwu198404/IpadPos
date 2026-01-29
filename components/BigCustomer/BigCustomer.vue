@@ -7,13 +7,22 @@
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
 			<view class="search">
-				<label v-if="_ywtype=='kq_sale'" >
+				<label v-if="_ywtype=='kq_sale'">
 					<!-- -->
 					是否赊销：
 					<view class="classifys">
-						<label @click="CreditMode(true)" :class="exists_credit ? 'curr' : ''"><em><text></text></em>是</label>
-						<label @click="CreditMode(false)" :class="exists_credit ? '' : 'curr'"><em><text></text></em>否</label>
+						<label @click="CreditMode(true)"
+							:class="exists_credit ? 'curr' : ''"><em><text></text></em>是</label>
+						<label @click="CreditMode(false)"
+							:class="exists_credit ? '' : 'curr'"><em><text></text></em>否</label>
 					</view>
+				</label>
+				<!-- 业务员 -->
+				<label>
+					业务员：
+					<picker @change="MDRYChange" mode="selector" :value="ryIndex" range-key="SNAME" :range="RYData">
+						<view class="uni-input">{{MDRY.SNAME}}</view>
+					</picker>
 				</label>
 				<view class="client">
 					<label>
@@ -53,9 +62,12 @@
 
 <script>
 	import util from '@/utils/util.js';
+	import common from '@/api/common.js';
+	import _login from '@/api/business/login.js';
 	import {
 		getBigClients
 	} from '@/api/business/bigclient.js';
+	let that;
 	export default {
 		name: "BigCustomer",
 		props: {
@@ -75,7 +87,13 @@
 				big_client_info: {},
 				current: -1,
 				curIndex: -1,
-				custom_event_name: ""
+				custom_event_name: "",
+				RYData: [], //门店人员信息
+				MDRY: {
+					RYID: getApp().globalData.store.RYID,
+					SNAME: getApp().globalData.store.RYNAME
+				},
+				ryIndex: 0
 			}
 		},
 		computed: {
@@ -98,7 +116,7 @@
 					delete this.big_client_info.exists_credit;
 				};
 				// this.big_client_info.exists_credit = this.exists_credit;
-				console.log("组件回调的大客户：",this.big_client_info);
+				console.log("组件回调的大客户：", this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
@@ -137,7 +155,7 @@
 				} else {
 					delete this.big_client_info.exists_credit;
 				};
-				console.log("组件回调的大客户：",this.big_client_info);
+				console.log("组件回调的大客户：", this.big_client_info);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
@@ -159,14 +177,45 @@
 					console.log("[CustomListener]获取名称:", data);
 					this.custom_event_name = data;
 				}))
-			}
+			},
+			//获取门店人员
+			GetMDKHRY: e => {
+				let store = getApp().globalData.store;
+				_login.GetMDKHRY(store.KHID, res => {
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						// 在数据数组开头添加一个空对象作为默认选项
+						that.RYData = [{
+							RYID: getApp().globalData.store.RYID,
+							SNAME: getApp().globalData.store.RYNAME
+						}, ...data];
+						console.log("RYData结果：", that.RYData);
+					}
+				})
+			},
+			//门店人员切换事件
+			MDRYChange: function(e) {
+				console.log('picker发送选择改变，携带值为', e.detail.value)
+				that.ryIndex = e.detail.value;
+				if (that.RYData.length > 0)
+					that.MDRY = that.RYData[that.ryIndex];
+				console.log("选择的接待员：", that.MDRY);
+				uni.$emit("choose-mdry", that.MDRY); //通知外部选择事件
+			},
 		},
 		mounted() {
 			this.GetBigClients();
 		},
 		created() {
+			that = this;
 			this.CustomListener();
+			this.GetMDKHRY();
 			uni.$emit("big-customer-open");
+			uni.$off('set-jdy');
+			uni.$on('set-jdy', util.callBind(this, function(info) {
+				console.log("[Head]设置接待员名称!", info);
+				this.MDRY = info;
+			}))
 		},
 		destroyed() {
 			if (this.exists_credit) {
@@ -357,35 +406,41 @@
 		font-size: 14px;
 		border: none;
 	}
-	.classifys label{
-		width:120rpx;
+
+	.classifys label {
+		width: 120rpx;
 	}
-	.classifys label em{
-		width:24rpx;
+
+	.classifys label em {
+		width: 24rpx;
 		height: 24rpx;
-		border:2rpx solid #333;
+		border: 2rpx solid #333;
 		border-radius: 50%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-right:8rpx;
+		margin-right: 8rpx;
 	}
-	.classifys label.curr{
+
+	.classifys label.curr {
 		color: #006B44;
 	}
-	.classifys label.curr em{
-		border:2rpx solid #006B44;		
+
+	.classifys label.curr em {
+		border: 2rpx solid #006B44;
 	}
-	.classifys label.curr em text{
+
+	.classifys label.curr em text {
 		display: inline-block;
-		width:20rpx;
+		width: 20rpx;
 		height: 20rpx;
 		background-color: #006B44;
-		padding:0;
-		margin:2rpx;
+		padding: 0;
+		margin: 2rpx;
 		border-radius: 50%;
 		font-weight: 700;
 	}
+
 	.confirm .btn-qx {
 		width: 70%;
 		margin: 0 auto;

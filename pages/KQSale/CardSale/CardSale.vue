@@ -200,10 +200,12 @@
 							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true"></image>
+							<image src="../../../images/cuxiaohd-dlu.png" mode="widthFix" @click="showDisc=true">
+							</image>
 						</view>
 						<view class="a-z">
-							<image src="../../../images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true"></image>
+							<image src="../../../images/img2/chikaren.png" mode="widthFix" @click="showCardRen=true">
+							</image>
 						</view>
 
 
@@ -301,7 +303,8 @@
 				curFailSale: {},
 				add_class: 0,
 				CKRInfo: {}, //持卡人信息
-				_sale2_count: 0
+				_sale2_count: 0,
+				JDY: {} //业务员
 			}
 		},
 		created: async function() {
@@ -357,6 +360,12 @@
 					_card_sale.ResetCXZK(that);
 				}
 			});
+			//业务员监控
+			uni.$on("choose-mdry", function(data) {
+				console.log("[ChooseMDRY]业务员选择!", mdry_info);
+				that.JDY = mdry_info;
+				that.SALE001.CUSTID = mdry_info.RYID;
+			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
 			uni.$on("ConfirmCKR", that.ConfirmCKR);
@@ -377,6 +386,7 @@
 			}
 		},
 		destroyed() {
+			uni.$off("choose-mdry");
 			uni.$off("GetCardNums");
 			uni.$off("big-customer-close");
 			uni.$off("close-tszk");
@@ -780,6 +790,8 @@
 						console.log("VIP单卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
+						if (that.JDY.RYID) //记录业务员
+							that.SALE001.CUSTID = that.JDY.RYID;
 						if (res2.code) { //激活成功
 							//发起充值
 							KQSale.Recharge({
@@ -891,8 +903,13 @@
 				let store = _util.getStorage("store");
 				store.DKFID = "80000000";
 				store.DKFNAME = '默认大客户';
+				that.JDY = {};
 				_util.setStorage("store", store);
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				uni.$emit('set-jdy', {
+					RYID: store.RYID,
+					SNAME: store.RYNAME
+				}); //通知一下外部 恢复默认接待员信息
 				console.log("单据重置成功:", that.SALE001);
 			},
 			//创建sxsale1

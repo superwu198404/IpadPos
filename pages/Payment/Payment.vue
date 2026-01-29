@@ -755,6 +755,8 @@
 				}).bind(this));
 				console.log("[SaleDataCombine]sale2 封装完毕!", this.sale2_arr);
 				let arr = util.getStorage("FKJHQTK");
+				console.log("[SaleDataCombine]PayList s输出!", this.PayList);
+				console.log("[SaleDataCombine]Sale3Source s输出!", this.Sale3Source());
 				this.sale3_arr = this.Sale3Source().map((function(item, index) {
 					let fkid = item.fkid; //兼容旧版 支付或者退款 均取旧值
 					if (this.isRefund && arr && arr.length > 0) { //处理新版券退款方式映射
@@ -792,6 +794,7 @@
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth || item.origin?.AUTH, //交易号
 						STR2: item.str2 || "", //凭证号 目前仅限支付宝团购券使用
+						SAVE_JEO: item?.save_jeo || "", //微信支付优惠卷抵扣额
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
 					}, "balance", "balance_old");;
@@ -1724,6 +1727,7 @@
 				this.record = result?.record || this.record; //记录
 				this.yPayAmount += paid_amount;
 				this.PayList = Object.assign([], this.PayList);
+				console.log("[OrderGenarator]支付成功 PayList：", this.PayList)
 			},
 			//已支付金额计算
 			PaidAmountCalculation: function(payload, result, type_info) {
@@ -1807,6 +1811,7 @@
 									no: payload.no,
 									excess: excess_amount, //找零金额
 									auth: result.transaction_id, //交易号 用于多卡退款时的分组依据
+									save_jeo: result?.save_jeo??"", //微信支付的优惠卷抵扣额
 								}, result, type_info));
 							payload.no++;
 						} catch (e) {
@@ -1823,6 +1828,7 @@
 						card_no: result.open_id ?? result
 							.transaction_id, //抖音券核销撤销字段：certificate_id
 						auth: result.transaction_id, //抖音券核销撤销字段：verify_id
+						save_jeo: result?.save_jeo??"", 
 						no: payload.no,
 						excess: excess_amount, //找零金额
 					}, result, type_info));
@@ -1884,6 +1890,7 @@
 					user_id: payload?.open_id || payload?.hyid,
 					point: payload?.point || sku_id, // 存储 抵现积分数或者支付宝验券返回的商品id
 					str2: payload?.raw || "", // 存储支付宝验券返回的凭证id
+						save_jeo: payload?.save_jeo ?? "",
 				})), obj);
 				console.log("[OrderCreated]封装响应体:", order)
 				return order;

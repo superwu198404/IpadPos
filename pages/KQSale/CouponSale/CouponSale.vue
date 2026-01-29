@@ -204,6 +204,7 @@
 					sale6_map_style: new Map(),
 					coupon_active_success: false,
 					big_customer_info: null,
+					jdy: null,
 					discount_infos: null,
 					discount_type: 'NO'
 				},
@@ -233,7 +234,8 @@
 				return this.source.sale002.map(sale2 => util.newFloat(sale2.NET)).reduce((p, n) => p + n, 0).toFixed(2);
 			},
 			unpaid_total_discount() {
-				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p, n) => p + n, 0).toFixed(2);
+				return this.source.sale002.map(sale2 => util.newFloat(sale2.DISCRATE)).reduce((p, n) => p + n, 0).toFixed(
+					2);
 			},
 			coupon_segment_total_amount() {
 				return $(function(sale2, sale6) {
@@ -304,12 +306,24 @@
 						this.source.sale001.DKFID = source.big_customer_info.DKHID;
 					}
 				}
+				if (n && n.CUSTID) { //如果设置的值合法
+					if (this.source.jdy && source.jdy.RYID) { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
+						this.source.sale001.CUSTID = source.jdy.RYID;
+					}
+				}
 			},
 			'source.big_customer_info'(n, o) { //如果设置了大客户信息
 				if (n && n.DKHID) { //如果设置的值合法
 					if (this.source.sale001) { //判断sale001是否生成，如果已经生成那么设置其大客户id信息
 						this.source.sale001.DKFID = n.DKHID;
 						this.$refs.steps.set_step(3);
+					}
+				}
+			},
+			'source.jdy'(n, o) { //如果设置了业务员
+				if (n && n.RYID) { //如果设置的值合法
+					if (this.source.sale001) { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
+						this.source.sale001.CUSTID = n.RYID;
 					}
 				}
 			},
@@ -559,6 +573,11 @@
 				this.source.discount_infos = await this.get_discount_data(); //初始化折扣信息数据
 				this._sale2_count = 0;
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
+				let store = getApp().globalData.store;
+				uni.$emit('set-jdy', {
+					RYID: store.RYID,
+					SNAME: store.RYNAME
+				}); //通知一下外部 恢复默认接待员信息
 				this.checkPromotion = false
 				this.cxfsArr = [] //促销跟踪数据
 			},
@@ -885,6 +904,11 @@
 				this.event_register('coupon-activate-fail-close', $(function(data) {
 					console.log("[EventMonitor]退出券激活界面...");
 					this.view.current_part_view = "coupon_activate";
+				}));
+				//业务员监控
+				this.event_register('choose-mdry', $(function(data) {
+					console.log("[EventMonitor]业务员监控...");
+					this.source.jdy = data;
 				}));
 			},
 			event_register(event_name, event_callback) {

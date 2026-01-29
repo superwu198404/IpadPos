@@ -128,7 +128,8 @@
 						<text>赊销中：{{DKFNAME}}</text>
 					</label><strong></strong>
 					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
-						<image src="../../../images/huiyuanID.png" mode="widthFix"></image><text>会员：{{hyinfo.hyId}}</text>
+						<image src="../../../images/huiyuanID.png" mode="widthFix"></image>
+						<text>会员：{{hyinfo.hyId}}</text>
 						<!-- <image src="../../../images/xiala.png" mode="widthFix"></image> -->
 					</label>
 					<label>
@@ -257,7 +258,7 @@
 				intervalId: null,
 				showYWMsg: false,
 				ynDKF: true,
-				YN_SX: false, //是否赊销
+				YN_SX: false //是否赊销
 			};
 		},
 		computed: {
@@ -318,6 +319,7 @@
 			that.list = [];
 			that.startSearch();
 			that.onBLEConnectionStateChange();
+
 			//去除日结的判断
 			// let store = util.getStorage("store");
 			// if (store.OPENFLAG == 1) { //已签到才进行日结的提示 未签到的等到 签到后再做日结
@@ -1187,6 +1189,7 @@
 					}
 				})
 			},
+
 			//蓝牙连接时间显示
 			displayBlueTime: function(deviceId, deviceName) {
 				let that = this;

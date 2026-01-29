@@ -27,10 +27,10 @@
 									</view>
 								</view>
 								<view class="h2" style="display: flex;align-items: center;">赊销结算
-									<view @click="SelectAll"
+									<!-- <view @click="SelectAll"
 										:class="this.big_client_settlement.length ? 'select-all-orders' : 'select-all-orders select-all-disabled'">
 										{{ (this.big_client_settlement.length === this.select_orders.length && this.big_client_settlement.length != 0) ? '取消全选' : '全选'}}
-									</view>
+									</view> -->
 								</view>
 								<NoData v-if="big_client_settlement.length==0"></NoData>
 								<!-- 小类循环 -->
@@ -102,12 +102,18 @@
 				if (this.select_orders.includes(info)) {
 					let index = this.select_orders.indexOf(info);
 					if (index != -1) this.select_orders.splice(index, 1);
-				} else
-					this.select_orders.push(info);
+				} else {
+					if (this.select_orders.length > 0 && !this.select_orders.find(r => r.DKFID == info.DKFID)) {
+						util.simpleModal("提示", "请选择同一大客户的赊销单进行结算，当前已选择的大客户为：" + this.select_orders[0].DKFID + "-" +
+							this.select_orders[0].DKFNAME);
+						return;
+					} else
+						this.select_orders.push(info);
+				}
 			},
 			GetBigClientSettlement: function() {
 				getBigClientSettlement({
-					dkhid: this.big_client_info.DKHID,
+					dkhid: "", //this.big_client_info.DKHID,
 					khid: this.KHID
 				}, util.callBind(this, function(res) {
 					// util.simpleMsg("查询成功!");
@@ -134,6 +140,14 @@
 				if (!this.select_orders.length) {
 					util.simpleMsg("请选择需要结算的单据后进行结算!");
 					return;
+				}
+				let arr = [];
+				arr.push(this.select_orders[0].DKFID);
+				for (var i = 0; i < this.select_orders.length; i++) {
+					if (arr.find(r => r != this.select_orders[i].DKFID)) {
+						util.simpleMsg("请选择同一大客户的赊销单进行结算!");
+						return;
+					}
 				}
 				let bills = [],
 					main_order = Object.assign({}, this.select_orders[0]),
@@ -186,20 +200,20 @@
 						})
 					}))
 			},
-			close_auto_search:function(is_open,type){
-				console.warn("[CreditSettlement]切换信息:",is_open,type);
-				if(type != 'sale_credit_settlement' && is_open == true){
+			close_auto_search: function(is_open, type) {
+				console.warn("[CreditSettlement]切换信息:", is_open, type);
+				if (type != 'sale_credit_settlement' && is_open == true) {
 					uni.$off('credit-big-customer-change');
 				}
 			}
 		},
 		created() {
-			uni.$on("close-big-customer",(function(data){
-				uni.$emit("credit-big-customer-change",data);
+			uni.$on("close-big-customer", (function(data) {
+				uni.$emit("credit-big-customer-change", data);
 			}).bind(this))
-			uni.$on('credit-big-customer-change',(function(data){
-				console.warn("[CreditSettlement-Destroyed]赊销界面:",data);
-				if(Object.keys(data).length){
+			uni.$on('credit-big-customer-change', (function(data) {
+				console.warn("[CreditSettlement-Destroyed]赊销界面:", data);
+				if (Object.keys(data).length) {
 					this.big_client_info = data;
 					this.GetBigClientSettlement();
 				}
@@ -215,9 +229,30 @@
 			});
 			this.big_client_info = this.bigCustomerInfo;
 			console.log("[CreditSettlement-Created]获取大客户单据信息...");
-			this.GetBigClientSettlement();
+			let that = this;
+			uni.showModal({
+				title: "提示",
+				content: "是否确认检索最近一年未结算赊销单？",
+				confirmText: "是",
+				cancelText: "否",
+				success(res) {
+					if (res.confirm) {
+						that.GetBigClientSettlement();
+					} else {
+						uni.$emit("reset-sales"); //清除预选项
+						//回退到销售模式
+						uni.$emit("change", {
+							name: "sale",
+							info: {
+								clickType: "sale"
+							}
+						});
+					}
+				}
+			})
+
 		},
-		destroyed:function(){
+		destroyed: function() {
 			uni.$off('credit-big-customer-change');
 			uni.$off('allow-position-switch', this.close_auto_search);
 		}
