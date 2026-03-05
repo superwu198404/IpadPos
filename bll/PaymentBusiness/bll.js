@@ -169,7 +169,8 @@ export const Sale3Model = function(init = sale3_def) {
 		point: 0, //积分数（积分抵现）或者 ||存储支付宝侧商品id（支付宝团购券 ）
 		auth_code: "", //*支付宝微信，其他的不知道
 		str2: "", //支付宝团购券的商品凭证id
-		save_jeo: "" //微信返回的优惠卷抵扣金额
+		save_jeo: "", //微信返回的优惠卷抵扣金额
+		yn_ylth: "" //电子卡，实体卡，电子券 “渠道”标识
 	}, init)
 }
 

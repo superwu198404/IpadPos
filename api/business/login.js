@@ -163,6 +163,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			DKFID: "80000000",
 			DKFNAME: "默认大客户",
 			SYBID: res.msg[0].SYBID,
+			ZZTLX: res.msg[0].ZZTLX,
 		}
 		let store1 = util.getStorage("store");
 		store1 = Object.assign(store1, store);
@@ -272,8 +273,7 @@ var SignOrSignOutSql = async function(sql, func) {
 }
 var GetMDKHRY = function(khid, func) {
 	let info;
-	var sql = "select ry.SNAME,ry.ryid from MDRYKH md left join RYDA ry on md.ryid=ry.ryid where md.khid='" + khid +
-		"'  and ry.RY_STATUS in ('1','2','3') order by ryid ";
+	var sql = "select SNAME,ryid,ryid||'-'||SNAME idname from RYDA where RY_STATUS in ('1','2','3') order by ryid";
 	common.WebDBQuery(sql, res => {
 		console.log("[GetMDKHRY]查询结果：", res);
 		func(res);

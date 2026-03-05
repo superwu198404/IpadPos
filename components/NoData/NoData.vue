@@ -1,6 +1,6 @@
 <template>
 	<view class="matter">
-		<image src="@/images/meiyoudd.png" mode="widthFix"></image>
+		<image src="../../images/meiyoudd.png" mode="widthFix"></image>
 		<text>{{_tips}}</text>
 	</view>
 </template>

@@ -163,9 +163,25 @@
             "waiting" : true,
             "alwaysShowBeforeRender" : true
         },
-        "screenOrientation" : [ "portrait-primary", "landscape-primary" ]
+        "screenOrientation" : [ "portrait-primary", "landscape-primary" ],
+        "nativePlugins" : {
+            "uniplugin_printer" : {
+                "__plugin_info__" : {
+                    "name" : "uniplugin_printer",
+                    "description" : "打印机uniapp插件",
+                    "platforms" : "Android,iOS",
+                    "url" : "",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
+                    "parameters" : {}
+                }
+            }
+        }
     },
-    "appid" : "__UNI__DBF626B",
+    "appid" : "__UNI__D975D37",
     "name" : "KengeePos",
     "versionName" : "1.1.128",
     "description" : "ipad上运行的收银软件",

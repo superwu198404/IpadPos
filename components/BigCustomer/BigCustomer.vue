@@ -9,7 +9,7 @@
 			<view class="search">
 				<label v-if="_ywtype=='kq_sale'">
 					<!-- -->
-					是否赊销：
+					赊销：
 					<view class="classifys">
 						<label @click="CreditMode(true)"
 							:class="exists_credit ? 'curr' : ''"><em><text></text></em>是</label>
@@ -20,9 +20,25 @@
 				<!-- 业务员 -->
 				<label>
 					业务员：
-					<picker @change="MDRYChange" mode="selector" :value="ryIndex" range-key="SNAME" :range="RYData">
-						<view class="uni-input">{{MDRY.SNAME}}</view>
-					</picker>
+					<!-- 下拉搜索选择组件 -->
+					<view style="width: 250rpx; z-index: 99999; position: relative;">
+						<input v-model="searchValue" placeholder="请输入人员名称"
+							style="width: 100%; padding: 10rpx; border: 1px solid #e5e5e5; border-radius: 6rpx;"
+							@focus="showDropdown = true" />
+						<view v-if="showDropdown && filteredList.length"
+							style="position: absolute; top: 80rpx; left: 0; width: 320rpx;  max-height: 400rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
+							<view v-for="(item, index) in filteredList" :key="index"
+								style="padding: 10rpx; border-bottom: 1px solid #f5f5f5;" @click="handleSelect(item)">
+								{{item.IDNAME }}
+							</view>
+						</view>
+
+						<!-- 无结果提示 -->
+						<view v-if="showDropdown && !filteredList.length"
+							style="position: absolute; top: 80rpx; left: 0; width: 100%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999;">
+							暂无匹配结果
+						</view>
+					</view>
 				</label>
 				<view class="client">
 					<label>
@@ -64,6 +80,7 @@
 	import util from '@/utils/util.js';
 	import common from '@/api/common.js';
 	import _login from '@/api/business/login.js';
+	import qiaoSelect from '@/uni_modules/qiao-select/components/qiao-select/qiaoSelect.vue'
 	import {
 		getBigClients
 	} from '@/api/business/bigclient.js';
@@ -75,6 +92,9 @@
 				type: String,
 				default: ""
 			}
+		},
+		components: {
+			qiaoSelect
 		},
 		data() {
 			return {
@@ -93,7 +113,13 @@
 					RYID: getApp().globalData.store.RYID,
 					SNAME: getApp().globalData.store.RYNAME
 				},
-				ryIndex: 0
+				ryIndex: 0,
+				value: "",
+
+				// 搜索输入框的值
+				searchValue: '',
+				// 是否显示下拉列表
+				showDropdown: false,
 			}
 		},
 		computed: {
@@ -101,9 +127,32 @@
 				return function(id) {
 					return this.big_client_info.DKHID === id;
 				}
+			},
+			// 模糊搜索过滤后的列表
+			filteredList() {
+				if (!this.searchValue) {
+					return this.RYData;
+				}
+				const keyword = this.searchValue.trim();
+				return this.RYData.filter(item => {
+					if (!item.IDNAME) return false;
+
+					const targetText = item.IDNAME;
+					return targetText.includes(keyword);
+				});
 			}
 		},
 		methods: {
+			// 选择人员
+			handleSelect(item) {
+				this.value = item.IDNAME; // 绑定选中值
+				this.searchValue = item.IDNAME; // 同步到搜索框
+				this.showDropdown = false; // 关闭下拉列表
+				this.MDRY = item;
+				console.log("选择的接待员：", this.MDRY);
+				uni.$emit("choose-mdry", this.MDRY); //通知外部选择事件
+				uni.$emit('set-jdy', this.MDRY); //通知一下外部显示业务员信息
+			},
 			Close: function() {
 				// if (Object.keys(this.big_client_info).length == 0) {
 				// 	util.simpleMsg("请选择大客户", true);
@@ -185,22 +234,28 @@
 					if (res.code) {
 						let data = JSON.parse(res.data);
 						// 在数据数组开头添加一个空对象作为默认选项
-						that.RYData = [{
-							RYID: getApp().globalData.store.RYID,
-							SNAME: getApp().globalData.store.RYNAME
-						}, ...data];
+						let id = getApp().globalData.store.RYID;
+						let name = getApp().globalData.store.RYNAME;
+						that.RYData = data;
+						// [{
+						// 	RYID: id,
+						// 	SNAME: name,
+						// 	IDNAME: id + '-' + name
+						// }, ...data];
 						console.log("RYData结果：", that.RYData);
 					}
 				})
 			},
+
 			//门店人员切换事件
-			MDRYChange: function(e) {
+			MDRYChange1: function(e) {
 				console.log('picker发送选择改变，携带值为', e.detail.value)
 				that.ryIndex = e.detail.value;
 				if (that.RYData.length > 0)
 					that.MDRY = that.RYData[that.ryIndex];
 				console.log("选择的接待员：", that.MDRY);
 				uni.$emit("choose-mdry", that.MDRY); //通知外部选择事件
+				uni.$emit('set-jdy', that.MDRY); //通知一下外部显示业务员信息
 			},
 		},
 		mounted() {
@@ -211,11 +266,6 @@
 			this.CustomListener();
 			this.GetMDKHRY();
 			uni.$emit("big-customer-open");
-			uni.$off('set-jdy');
-			uni.$on('set-jdy', util.callBind(this, function(info) {
-				console.log("[Head]设置接待员名称!", info);
-				this.MDRY = info;
-			}))
 		},
 		destroyed() {
 			if (this.exists_credit) {
@@ -284,7 +334,7 @@
 	.search label {
 		display: flex;
 		align-items: center;
-		width: 48%;
+		width: 49%;
 		margin-right: 2%;
 	}
 
@@ -325,8 +375,8 @@
 		background: #006B44;
 		border-radius: 0 6rpx 6rpx 0;
 		position: absolute;
-		top: -1px;
-		right: 0;
+		top: 5px;
+		right: 5px;
 	}
 
 	.credit {
@@ -408,7 +458,7 @@
 	}
 
 	.classifys label {
-		width: 120rpx;
+		width: 100rpx;
 	}
 
 	.classifys label em {

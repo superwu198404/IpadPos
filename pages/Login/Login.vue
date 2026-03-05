@@ -29,6 +29,8 @@
 			</view>
 			<view class="logbtn">
 				<button @click="Login()">登 录</button>
+
+				<!-- <button @click="test()">打印</button> -->
 				<!-- <button @click="reset()" style="margin-top: 20rpx;">重新初始化</button> -->
 			</view>
 		</view>
@@ -215,6 +217,31 @@
 				// console.log("选择事件：", e.detail.value);
 				// console.log("选择事件1：", that.index);
 			},
+			//打印测试
+			test: function() {
+				console.log("打印测试");
+				const printer = uni.requireNativePlugin("Printer");
+				printer.net_connectScoket({
+					"host": "10.4.12.189",
+					"port": '9100'
+				}, result => {
+					console.log("打印机连接结果：", result);
+				});
+				var base64 = btoa("打印测试一下吧！");
+				//发送数据
+				//将写入模版数据的base64
+				//base64为空或者不传会默认打印拼接缓存数据，打印后会清空缓存
+				printer.net_writeData({
+					"key": "eJwzNLewtDA3MDQ3AwALjAIX",
+					"base64": base64
+				}, result => {
+					console.log("net_writeData:", result);
+				});
+				//断开连接
+				// printer.net_closeScoket(result => {
+				// 	console.log(result);
+				// });
+			},
 			Login: function() {
 				// uni.navigateTo({
 				// 	url: "/pages/sqlitetest/sqlitetest"
@@ -231,7 +258,8 @@
 					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
-							console.log("[Login]获取门店信息:", util.getStorage("store"));
+							let store = util.getStorage("store");
+							console.log("[Login]获取门店信息:", store);
 							console.log("[Login]获取支付规则:", util.getStorage("PayInfo"));
 							// if (that.store.OPENFLAG == "1") {
 							// 	uni.redirectTo({
@@ -242,8 +270,11 @@
 							// 		url: "/pages/Center/Center"
 							// 	})
 							// }
+							let _url = "/pages/Center/Center";
+							if (store.ZZTLX == 'BH')
+								_url = "/pages/Center/BHCenter";
 							uni.redirectTo({
-								url: "/pages/Center/Center",
+								url: _url,
 								complete(data) {
 									console.log("[Login]跳转完成:", data);
 								}

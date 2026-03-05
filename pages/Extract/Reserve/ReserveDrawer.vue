@@ -23,8 +23,7 @@
 					</label>
 					<label>
 						<text>提货时间：</text>
-						<picker mode="time" fields="time" start="07:01" end="22:01"
-							@change="ExtractTimeChange">
+						<picker mode="time" fields="time" start="07:01" end="22:01" @change="ExtractTimeChange">
 							<view>{{ ExtractTime }}</view>
 						</picker>
 					</label>
@@ -44,7 +43,8 @@
 					</label> -->
 					<!-- <label><text>定金：</text><input type="text" v-model="details.info.DNET" /></label> -->
 					<!-- <label><text>配送方式：</text><input type="text" v-model="details.info.THTYPE" /></label> -->
-					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM" placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
+					<label><text>备注：</text><textarea v-model="details.info.CUSTMCOMM"
+							placeholder="请勿输入表情符号等特殊字符!"></textarea></label>
 				</view>
 				<view class='rests' v-if="view.add_address" style="margin-bottom: 0; padding-bottom: 0;">
 					<view class="h6"><text>新增地址</text></view>
@@ -76,8 +76,9 @@
 										<label>{{ i.ADDRESS }}</label>
 									</view>
 								</view>
-								<view class="caozuo"><button class="btn-xg" @click.stop="EditAddress(i)">修改</button><button
-										class="btn-sc" @click.stop="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
+								<view class="caozuo"><button class="btn-xg"
+										@click.stop="EditAddress(i)">修改</button><button class="btn-sc"
+										@click.stop="DeleteAddress(i.ADDRID,i.PHONE)">删除</button></view>
 							</view>
 						</view>
 					</view>
@@ -189,6 +190,7 @@
 						LATITUDE: "", //纬度
 						LONGITUDE: "", //经度
 						STR2: "",
+						STR1: ""
 					}, //主单数据（商品集合中共有的部分，如买家的信息）
 					address: [], //用户配送地址集合
 					current: 0
@@ -228,7 +230,7 @@
 					if (r.msg.length > 0) {
 						this.distribution = r.msg;
 					}
-				}))
+				}), this.details.info.STR1);
 			},
 			CenterChange: function(e) {
 				this.details.info.STR2 = this.distribution[e.detail.value]?.KHID;

@@ -301,14 +301,15 @@
 			},
 			'source.sale001'(n, o) {
 				if (n && n.DKHID) { //如果设置的值合法
-					if (this.source.big_customer_info && source.big_customer_info
+					if (this.source.big_customer_info && this.source.big_customer_info
 						.DKHID) { //判断sale001是否生成，如果已经生成那么设置其大客户id信息
-						this.source.sale001.DKFID = source.big_customer_info.DKHID;
+						this.source.sale001.DKFID = this.source.big_customer_info.DKHID;
 					}
 				}
 				if (n && n.CUSTID) { //如果设置的值合法
-					if (this.source.jdy && source.jdy.RYID) { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
-						this.source.sale001.CUSTID = source.jdy.RYID;
+					if (this.source.jdy && this.source.jdy.RYID && this.source.sale001.DKFID !=
+						'80000000') { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
+						this.source.sale001.CUSTID = this.source.jdy.RYID;
 					}
 				}
 			},
@@ -322,7 +323,8 @@
 			},
 			'source.jdy'(n, o) { //如果设置了业务员
 				if (n && n.RYID) { //如果设置的值合法
-					if (this.source.sale001) { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
+					//判断sale001是否生成，如果已经生成那么设置其业务员id信息
+					if (this.source.sale001 && this.source.sale001.DKFID != '80000000') {
 						this.source.sale001.CUSTID = n.RYID;
 					}
 				}

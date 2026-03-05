@@ -90,6 +90,25 @@ const UploadPoint = async function(loading_title, request, success, error) {
 	});
 }
 
+//二维码查卡信息
+const queryCardInfoByCode = function(loading_title, request, success, error) {
+	console.log("[queryCardInfoByCode]查询卡信息中...", request);
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "queryCardInfoByCode"
+	});
+	console.log("[queryCardInfoByCode]查询卡信息参数:", data);
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+
 //会员券列表
 const CouponList = function(loading_title, request, success, error) {
 	let data = requestAssemble(loading_title, {
@@ -476,6 +495,7 @@ export default {
 	CouponList,
 	QueryHyInfo,
 	QueryHyInfoByCode,
+	queryCardInfoByCode,
 	PointsDeduction,
 	PointsReturn,
 	CARD_QUERY,

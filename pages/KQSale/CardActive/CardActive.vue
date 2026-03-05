@@ -353,10 +353,11 @@
 				}
 			});
 			//业务员监控
-			uni.$on("choose-mdry", function(data) {
+			uni.$on("choose-mdry", function(mdry_info) {
 				console.log("[ChooseMDRY]业务员选择!", mdry_info);
 				that.JDY = mdry_info;
-				that.SALE001.CUSTID = mdry_info.RYID;
+				if (that.SALE001.DKFID != '80000000')
+					that.SALE001.CUSTID = mdry_info.RYID;
 			});
 			uni.$on("close-tszk", that.CloseTSZK);
 			uni.$on("ReturnSale", that.ClearSale);
@@ -788,7 +789,7 @@
 						console.log("礼品卡激活结果：", res2);
 						that.SALE001.STR1 = res2.code ? "success" : "fail";
 						that.SALE001.CUID = that.SALE001.KQXSTYPE; //回调重写 
-						if (that.JDY.RYID) //记录业务员
+						if (that.JDY.RYID && that.SALE001.DKFID != '80000000') //记录业务员
 							that.SALE001.CUSTID = that.JDY.RYID;
 						if (!res2.code) { //激活失败要记录一下
 							that.SALE001.YN_OK = "F";

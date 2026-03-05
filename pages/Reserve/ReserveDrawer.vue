@@ -232,7 +232,8 @@
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
 					CARDID: "普通蛋糕", //蛋糕类型  
-					YD_STATUS: "1"
+					YD_STATUS: "1",
+					STR1: "" //记录是否ToC 订单
 				},
 				map: {
 					longitude: util.getStorage('StoreCoodinate').longitude ?? 114.3093413671875, //经度
@@ -539,6 +540,10 @@
 			dateChange: e => {
 				that.Order.TH_DATE = e.detail.value;
 				that.Order.THDATE = that.Order.TH_DATE + ' ' + that.Order.TH_TIME;
+				console.log("日期切换：", that.Order);
+				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == "1") { //ToC 尝试匹配
+					that.MatchBHKH();
+				}
 			},
 			timeChange: e => {
 				console.log("[TimeChange]时间切换：", e.detail);
@@ -559,6 +564,7 @@
 			//提货类型改变
 			THChange: e => {
 				that.index = e.detail.value;
+				that.Order.STR1 = ""; //提货类型切换清除ToC标记
 				that.Order.THTYPE = that.THTYPES[that.index].ID;
 				if (that.Order.THTYPE == '0' || that.Order.THTYPE == '2') {
 					if (that.Order.THTYPE == '0') {
@@ -568,6 +574,7 @@
 					that.Order.STR2 = "";
 					that.Order._STR2 = "";
 				}
+				console.log("THChange：", that.Order);
 				if (that.Order.THTYPE == '1') { //宅配到家
 					if (that.Order.LONGITUDE && that.Order.LATITUDE)
 						that.MatchBHKH();
@@ -772,11 +779,18 @@
 				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
 				// GSKHINFO = "in ('K210') ";
 				console.log("[MatchBHKH]获取到的GSKHINFO", GSKHINFO);
+				var yn_toc = 'N';
+				//20260224 TOC：提货方式=1且提货日期=今天  
+				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
+					.toLocaleDateString()) {
+					yn_toc = 'Y';
+				}
 				_reserve.MatchBHKH({
 					LONGITUDE: that.Order.LONGITUDE,
 					LATITUDE: that.Order.LATITUDE,
 					GSKHINFO: GSKHINFO,
-					KHID: this.KHID
+					KHID: this.KHID,
+					TOC: yn_toc
 				}, res => {
 					console.log("[MatchBHKH]匹配结果:", res);
 					if (res.code) {
@@ -790,11 +804,14 @@
 							that.Order.LONGITUDE = 0;
 							that.Order.LATITUDE = 0;
 							that.Order.CUSTMADDRESS = ""; //清空地址信息
+							that.Order.STR1 = "";
 							console.log("[MatchBHKH]清空结果:", that.Order);
 						} else {
 							util.simpleMsg("已匹配最近的配送中心", "none");
 							that.Order.STR2 = data.khid;
 							that.Order._STR2 = data.name;
+							if (yn_toc == "Y")
+								that.Order.STR1 = "C";
 							that.$forceUpdate(); //刷新input的值 狗bug
 						}
 					}

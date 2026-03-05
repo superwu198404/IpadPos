@@ -476,6 +476,7 @@
 				cash_change_tips: true,
 				cash_sum: 0,
 				record: null,
+				payRecord: null, //本单已支付的数据 主要用于卡券支付渠道互斥的处理
 			}
 		},
 		watch: {
@@ -794,10 +795,11 @@
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth || item.origin?.AUTH, //交易号
 						STR2: item.str2 || "", //凭证号 目前仅限支付宝团购券使用
-						SAVE_JEO: item?.save_jeo || "", //微信支付优惠卷抵扣额
+						SAVE_JEO: this.isRefund ? -Number(item.origin?.SAVE_JEO || 0) : item
+							.save_jeo || 0, //微信支付优惠卷抵扣额
 						balance: this.isRefund ? "" : (item.balance || ""), //如果是电子卡，余额
 						balance_old: this.isRefund ? "" : (item.balance_old || "") //如果是电子卡，余额
-					}, "balance", "balance_old");;
+					}, "balance", "balance_old");
 				}).bind(this));
 				console.log("[SaleDataCombine]sale3 封装完毕!", this.sale3_arr);
 				this.sale8_arr = sale8; //使用直接传入的水吧商品
@@ -1314,13 +1316,13 @@
 											.amount) * 100)).toFixed(0), //退款总金额（兼容微信）
 										point: refundInfo.origin.BMID, //兼容积分抵现返还积分 和支付宝团购券
 										auth_code: refundInfo.origin
-										.ID, //2023-02-15新增 可伴 退款和查询也需要券号
+											.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_company_id: this.SALES.sale1
-										.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
+											.XS_GSID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_store_id: this.SALES.sale1
-										.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
+											.XS_KHID, //2023-02-15新增 可伴 退款和查询也需要券号
 										original_area_id: this.SALES.sale1
-										.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
+											.XS_DQID, //2023-02-15新增 可伴 退款和查询也需要券号
 										store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号
 										card_no: refundInfo.origin
 											.ID, //2023-02-06新增 获取支付时的卡/券号（ID也可能记录的是openid,卡号等，按需使用），支付宝团购券作为凭证号使用
@@ -1330,8 +1332,9 @@
 											.BILL_TYPE, //2023-02-06新增 业务类型 用于券退款是否要调用 券退回 接口 （销售退款，预定取消）
 										discountable_amount: (Math.abs(Number(refundInfo
 											.origin.DISC) * 100)).toFixed(
-										0), //折扣金额 支付宝团购券使用
-										transaction_id: refundInfo.origin.STR2, //支付宝团购券作为支付宝订单号使用
+											0), //折扣金额 支付宝团购券使用
+										transaction_id: refundInfo.origin
+											.STR2, //支付宝团购券作为支付宝订单号使用
 									}, (function(err) { //如果发生异常（catch）
 										// util.simpleMsg(err.msg, true, err);
 										refundInfo.fail = true;
@@ -1775,33 +1778,22 @@
 					console.log("[OrderGenarator]卡券支付订单生成...");
 					result.vouchers.forEach((function(coupon, index) {
 						try {
-							let excessInfo = this.PayWayList.find(item => item.fkid ==
-								coupon
-								.fkid); //放弃金额
+							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
 							console.log("[OrderGenarator]卡券：", coupon)
-							console.log("[OrderGenarator]当前支付方式信息：", this
-								.currentPayInfo)
+							console.log("[OrderGenarator]当前支付方式信息：", this.currentPayInfo)
 							this.PushToPaidList(this
 								.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-									amount: ((coupon.yn_card === 'Y' ? coupon
-											.pay_amount : (coupon
-												.note === 'EXCESS' ? -
-												coupon.pay_amount :
-												coupon.denomination)) /
-										100).toFixed(2),
-									fkid: coupon.yn_card === 'Y' ? this
-										.currentPayInfo
-										?.fkid : coupon?.fkid,
-									name: coupon.yn_card === 'Y' ? this
-										.currentPayInfo
-										?.name : excessInfo?.name,
-									balance: (coupon?.balance / 100)?.toFixed(
-										2), //如果是电子卡，余额
-									balance_old: ((coupon?.balance + coupon
-											?.pay_amount) / 100)
+									amount: ((coupon.yn_card == 'Y' ? coupon.pay_amount : (coupon
+										.note == 'EXCESS' ? -coupon.pay_amount :
+										coupon.denomination)) / 100).toFixed(2),
+									fkid: coupon.yn_card == 'Y' ? this.currentPayInfo?.fkid :
+										coupon?.fkid,
+									name: coupon.yn_card == 'Y' ? this.currentPayInfo?.name :
+										excessInfo?.name,
+									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
+									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
 										?.toFixed(2), //如果是电子卡，余额
-									zklx: coupon.yn_card === 'Y' ? payObj
-										.zklx : coupon
+									zklx: coupon.yn_card == 'Y' ? payObj.zklx : coupon
 										.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
 									disc: (coupon?.discount / 100)?.toFixed(2),
 									fail,
@@ -1811,7 +1803,9 @@
 									no: payload.no,
 									excess: excess_amount, //找零金额
 									auth: result.transaction_id, //交易号 用于多卡退款时的分组依据
-									save_jeo: result?.save_jeo??"", //微信支付的优惠卷抵扣额
+									save_jeo: util.newFloat((result?.save_jeo || 0) /
+										100), //微信支付的优惠卷抵扣额
+									yn_ylth: coupon?.yn_qdkq, //渠道标识（仟吉电子卡，仟吉实体卡，仟吉券)
 								}, result, type_info));
 							payload.no++;
 						} catch (e) {
@@ -1822,13 +1816,12 @@
 				} else { //如果是聚合支付(这里应该是非卡券类别)
 					console.log("[OrderGenarator]聚合支付订单生成...");
 					this.PushToPaidList(this.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
-						amount: type_info.type != 'HyJfExchange' ? (payload.money /
-							100).toFixed(2) : payload.point_money?.toFixed(2),
+						amount: type_info.type != 'HyJfExchange' ? (payload.money / 100).toFixed(2) :
+							payload.point_money?.toFixed(2),
 						fail,
-						card_no: result.open_id ?? result
-							.transaction_id, //抖音券核销撤销字段：certificate_id
+						card_no: result.open_id ?? result.transaction_id, //抖音券核销撤销字段：certificate_id
 						auth: result.transaction_id, //抖音券核销撤销字段：verify_id
-						save_jeo: result?.save_jeo??"", 
+						save_jeo: util.newFloat((result?.save_jeo || 0) / 100),
 						no: payload.no,
 						excess: excess_amount, //找零金额
 					}, result, type_info));
@@ -1890,7 +1883,7 @@
 					user_id: payload?.open_id || payload?.hyid,
 					point: payload?.point || sku_id, // 存储 抵现积分数或者支付宝验券返回的商品id
 					str2: payload?.raw || "", // 存储支付宝验券返回的凭证id
-						save_jeo: payload?.save_jeo ?? "",
+					save_jeo: util.newFloat((payload?.save_jeo || 0) / 100),
 				})), obj);
 				console.log("[OrderCreated]封装响应体:", order)
 				return order;
@@ -2451,8 +2444,7 @@
 								refund_money: (Math.abs(Number(singleRefund.amount) *
 									100)).toFixed(0), //退款金额
 								total_money: (Math.abs(Number(singleRefund.amount) *
-									100)).toFixed(
-									0), //退款总金额（兼容微信）
+									100)).toFixed(0), //退款总金额（兼容微信）
 								auth_code: singleRefund.origin
 									.ID, //2023-02-15新增 可伴 退款和查询也需要券号
 								store_id: this.KHID, //2023-02-15新增 可伴 退款和查询需要门店号

@@ -338,7 +338,40 @@ var zfbPay = {
 //仟吉电子卡支付类
 var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
-		_PaymentAll(pt, body, func, catchFunc);
+		// _PaymentAll(pt, body, func, catchFunc);
+		member.queryCardInfoByCode("查询中", {
+			brand: getApp().globalData?.brand,
+			data: {
+				code: body.auth_code
+			}
+		}, function(res) {
+			console.log("[hykPay]电子卡查询结果：", res);
+			console.log("当前已支付的数据：", body.pay_list);
+			if (res.code) {
+				let obj1 = body.pay_list.find(r => r.type == 'JHQ' && r.yn_ylth == '1'); //有渠道券支付数据
+				if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType == 'Z003')) { //当前卡是渠道卡
+					let newRes = {
+						code: false,
+						msg: "抱歉，渠道卡不可和渠道券叠加核销。"
+					};
+					if (catchFunc)
+						catchFunc(newRes);
+					return newRes;
+				} else
+					_PaymentAll(pt, body, func, catchFunc);
+			} else {
+				let newRes = {
+					code: false,
+					msg: "抱歉，卡信息查询异常：" + res.msg
+				};
+				if (catchFunc)
+					catchFunc(newRes);
+				return newRes;
+			}
+		}, (err) => {
+			util.simpleMsg("查询卡信息异常!" + err.msg, true)
+			if (catchFunc) catchFunc(err);
+		});
 	},
 	RefundAll: function(pt, body, catchFunc, finallyFunc, resultsFunc) {
 		_RefundAll(pt, body, catchFunc, finallyFunc, resultsFunc);
@@ -371,7 +404,41 @@ var kengeePay = {
 			body.auth_code = card_info.track_info;
 			body.storeName = getApp().globalData.store.NAME;
 			console.log("[ReadCard]组装支付参数:", body);
-			_PaymentAll(pt, body, func, catchFunc);
+			// _PaymentAll(pt, body, func, catchFunc);
+			member.CARD_QUERY("查询中", {
+				cardinfo: {
+					card_num: body.card_no
+				}
+			}, function(res) {
+				console.log("[kengeePay]实体卡查询结果：", res);
+				console.log("当前已支付的数据：", body.pay_list);
+				if (res.code) {
+					let obj1 = body.pay_list.find(r => r.type == 'JHQ' && r.yn_ylth ==
+						'1'); //有渠道券支付数据
+					if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType ==
+							'Z003')) { //当前卡是渠道卡
+						let newRes = {
+							code: false,
+							msg: "抱歉，渠道卡不可和渠道券叠加核销。"
+						};
+						if (catchFunc)
+							catchFunc(newRes);
+						return newRes;
+					} else
+						_PaymentAll(pt, body, func, catchFunc);
+				} else {
+					let newRes = {
+						code: false,
+						msg: "抱歉，卡信息查询异常：" + res.msg
+					};
+					if (catchFunc)
+						catchFunc(newRes);
+					return newRes;
+				}
+			}, (err) => {
+				util.simpleMsg("查询卡信息异常!" + err.msg, true)
+				if (catchFunc) catchFunc(err);
+			});
 		}, (err) => {
 			util.simpleMsg("读卡异常!" + err.msg, true)
 			console.log("[ReadCard]读卡异常!", err);
@@ -641,6 +708,18 @@ var jhqPay = {
 							newRes = {
 								code: false,
 								msg: "抱歉，“" + fkname + "”禁止使用！请更换其他类型券重新支付。"
+							};
+							if (catchFunc)
+								catchFunc(newRes);
+							return newRes;
+						}
+						console.log("当前券支付已支付的数据：", body.pay_list);
+						let obj1 = body.pay_list.find(r => (r.type == 'PAYCARD' || r.type ==
+							'PAYBRUSHCARD') && r.yn_ylth == '1'); //有渠道电子卡或者渠道实体卡
+						if (obj1 && res.data.vouchers[i].yn_ylq == '1') { //当前券是渠道券
+							newRes = {
+								code: false,
+								msg: "抱歉，渠道券不可和渠道卡叠加核销。"
 							};
 							if (catchFunc)
 								catchFunc(newRes);

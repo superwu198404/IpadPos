@@ -119,6 +119,10 @@
 			</view>
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
+					<label class="buyer" v-if="!YN_SX&&DKFNAME!='默认大客户'">
+						<image src="../../../images/dakehu.png" mode="widthFix"></image>
+						<text>业务员：{{RYNAME}}</text>
+					</label>
 					<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
 						<image src="../../../images/dakehu.png" mode="widthFix"></image>
 						<text>大客户：{{DKFNAME}}</text>
@@ -258,7 +262,7 @@
 				intervalId: null,
 				showYWMsg: false,
 				ynDKF: true,
-				YN_SX: false //是否赊销
+				YN_SX: false, //是否赊销
 			};
 		},
 		computed: {
@@ -301,6 +305,12 @@
 			uni.$on('set-member', util.callBind(this, function(info) {
 				console.log("[Head]设置会员名称!", info);
 				this.hyinfo = info;
+			}))
+			//来自销售页面的事件通知
+			uni.$off('set-jdy');
+			uni.$on('set-jdy', util.callBind(this, function(info) {
+				console.log("[Head]设置业务员名称!", info);
+				this.RYNAME = info.SNAME;
 			}))
 			//来自销售页面的事件通知
 			uni.$off('set-dkf');

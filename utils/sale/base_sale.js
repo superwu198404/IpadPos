@@ -499,6 +499,8 @@ var XsTypeObj = {
 			console.log("[ReserveInfoInput]预定提取录入完成,准备进入支付页面...", sale1);
 			Object.cover(this.sale001, sale1); //用于 sale001,如 DNET 赋值
 			Object.cover(this.ydsale001, sale1); //用于 ydsale001
+			if (sale1.STR1 == "C")
+				this.ydsale001.YDSPTYPE = "C"; //记录ToC标识
 			console.log("[ReserveInfoInput]预定提取录入信息赋值完毕!", {
 				ydsale1: this.ydsale001,
 				sale1: this.sale001
@@ -4390,7 +4392,7 @@ function GetSale(global, vue, target_name, uni) {
 		let ywTypeArr = [
 			'sale', 'sale_credit' //, 'sale_return_good','sale_credit_settlement', 'sale_credit_return_good'
 		];
-		if (ywTypeArr.indexOf(this.current_type.clickType) >= 0) {
+		if (ywTypeArr.indexOf(this.current_type.clickType) >= 0 && this.sale001.DKFID != '80000000') {
 			this.sale001.CUSTID = this.JDY.val.RYID; //260129增加业务员记录
 		}
 		console.log("[BeforeFk]sale001：", this.sale001);

@@ -235,7 +235,7 @@
 								util.simpleMsg("此预定单对应的裱花请货单已经审核，不能再进行修改!", 'none');
 							}
 						} else {
-							util.simpleMsg("裱花查询失败!", true)
+							util.simpleMsg("裱花查询失败!", true);
 						}
 					}))
 			},
