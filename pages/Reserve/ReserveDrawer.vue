@@ -544,6 +544,7 @@
 				if (that.Order.CUSTMADDRESS && that.Order.THTYPE == "1") { //ToC 尝试匹配
 					that.MatchBHKH();
 				}
+				that.GetPSCenter();
 			},
 			timeChange: e => {
 				console.log("[TimeChange]时间切换：", e.detail);
@@ -566,6 +567,7 @@
 				that.index = e.detail.value;
 				that.Order.STR1 = ""; //提货类型切换清除ToC标记
 				that.Order.THTYPE = that.THTYPES[that.index].ID;
+				that.GetPSCenter();
 				if (that.Order.THTYPE == '0' || that.Order.THTYPE == '2') {
 					if (that.Order.THTYPE == '0') {
 						that.Order.CUSTMADDRESS = ""; //清空地址信息
@@ -774,6 +776,7 @@
 				//预先获取配送中心数据，供手动修改
 				that.GetPSCenter();
 			},
+
 			//自动匹配配送中心
 			MatchBHKH: function() {
 				let GSKHINFO = _reserve.getGSKHINFO(that.GSID, that.KHID);
@@ -834,16 +837,45 @@
 			},
 			//获取配送中心数据
 			GetPSCenter: function(e) {
+				var yn_toc = 'N';
+				//20260224 TOC：提货方式=1且提货日期=今天  
+				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
+					.toLocaleDateString() && that.Order.THTYPE == '1') {
+					yn_toc = 'C';
+				}
 				_reserve.GetPSCenter(that.GSID, that.KHID, r => {
 					if (r.msg.length > 0) {
 						that.PSDatas = r.msg;
 					}
-				})
+				}, yn_toc);
 			},
+
 			//配送数据切换
 			PSChange: e => {
-				that.Order.STR2 = that.PSDatas[e.detail.value].KHID;
-				that.Order._STR2 = that.PSDatas[e.detail.value].SNAME;
+				let khid = that.PSDatas[e.detail.value].KHID;
+				let name = that.PSDatas[e.detail.value].SNAME;
+				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
+					.toLocaleDateString() && that.Order.THTYPE == '1') {
+					//计算ToC 裱花的配送距离
+					_reserve.CheckBHDistance({
+						LONGITUDE: that.Order.LONGITUDE,
+						LATITUDE: that.Order.LATITUDE,
+						KHID: khid
+					}, res => {
+						console.log("[CheckBHDistance]匹配结果:", res);
+						if (res.code) {
+							that.Order.STR2 = khid;
+							that.Order._STR2 = name;
+						} else {
+							util.simpleMsg(res.msg, true);
+							that.Order.STR2 = "";
+							that.Order._STR2 = "";
+						}
+					})
+				} else {
+					that.Order.STR2 = khid;
+					that.Order._STR2 = name;
+				}
 			},
 			//用户信息确定
 			Confirm: () => {

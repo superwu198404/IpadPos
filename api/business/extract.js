@@ -72,6 +72,12 @@ var MatchBHKH = function(data, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+//校验ToC裱花配送距离
+var CheckBHDistance = function(data, func) {
+	let apistr = "MobilePos_API.Models.YDSALE001CLASS.CheckBHDistance";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 
 var reserveOrdersUpdate = function(data, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.ReserveOrdersUpdate";
@@ -201,6 +207,7 @@ export default {
 	GetAmap,
 	searchMapAddr,
 	MatchBHKH,
+	CheckBHDistance,
 	getGSKHINFO,
 	GetPSCenter,
 	GetTHKHDA,

@@ -1,46 +1,33 @@
-<style scopeed>
+<style scoped>
 	@import url(@/static/style/payment/paymentall/basis.css);
 	@import url(@/static/style/index.css);
 </style>
 <template>
 	<view class="centre">
 		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
-		<Head ref="bhHead" :_showSale="true" :showType="1" :_ynMsg='false' :type="'ywbhqh'"></Head>
+		<Head :_showSale="true" :showType="2" :_ynMsg='false' :type="'ywxkqh'"></Head>
 		<view class="tranlist">
 			<view class="leftlist">
-				<view class="logos">
-					<image src="../../images/imgbh/peis@1x.png" mode="widthFix"></image>
+				<view class="logos" @click="ToSale('/pages/YWXKDY/YWXKDY','not')">
+					<!-- <image src="../../images/imgxk/dayrw.png" mode="widthFix"></image> -->
 					<view class="xingqi">
-						<view>要货配送</view>
-						<view>DISTRIBUTION</view>
+						<view>现烤要货任务打印</view>
+						<view>PRINT THE LIST</view>
 					</view>
 				</view>
 				<view class="sginout-qd">
-					<view class="left">
-						<view @click="ToSale('/pages/mainSale/MainSale')">
-							<view class="label">裱花主动入库</view>
-							<image class="img" src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
-						</view>
-						<view class="base-line"></view>
-						<view @click="ToSale('/pages/mainSale/MainSale')">
-							<view class="label">裱花主动配送</view>
-							<image class="img" src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
-						</view>
+					<view class="right">
+						<image class="datebg gaip_bj" src="../../images/imgxk/zhuan_bj.png" mode="widthFix"></image>
+						<label>商品转换</label><text>CONVERT</text>
 					</view>
-					<view class="right" @click="ToTakeout()">
-						<image class="datebg gaip_bj" src="../../images/imgbh/gaip_bj@1x.png" mode="widthFix"></image>
-						<image class="tubiao" src="../../images/imgbh/gaip@1x.png" mode="widthFix"></image>
-						<label>改胚</label><text>CHANGE</text>
+					<view class="right" @click="Chaxun(1)">
+						<image class="datebg gaip_bj" src="../../images/imgxk/cx_bj.png" mode="widthFix"></image>
+						<label>查询</label><text>INQUIRY</text>
 					</view>
 				</view>
 				<view class="dates">
 					<image class="datebg" src="../../images/imgbh/hwen@1x.png" mode="widthFix"></image>
 					<view class="sginout sginout-bh">
-						<view @click="Chaxun(1)">
-							<image class="tubiao" src="../../images/imgbh/cx@1x.png" mode="widthFix"></image>
-							<label>查询</label><text>INQUIRY</text>
-						</view>
-						<view class="line"></view>
 						<view @click="reset()">
 							<image class="tubiao" src="../../images/imgbh/cd@1x.png" mode="widthFix"></image>
 							<label>重读</label><text>REREAD</text>
@@ -48,7 +35,7 @@
 						<view class="line"></view>
 						<view @click="zbtx()">
 							<image class="tubiao" src="../../images/imgbh/txl@1x.png" mode="widthFix"></image>
-							<label>通讯</label><text>MESSAGE</text>
+							<label>通讯录</label><text>ADDRESS BOOK</text>
 						</view>
 					</view>
 				</view>
@@ -57,27 +44,18 @@
 				<view class="market">
 					<view class="prods">
 						<view class="div">
-							<image src="../../images/imgbh/bhuaa@1x.jpg" mode="heightFix"></image>
+							<image src="../../images/imgxk/xiankk.jpg" mode="widthFix"></image>
 						</view>
 					</view>
 					<view class="dates dates-bh">
-						<view @click="ToSale('/pages/YWBHQH/YWBHQH')">
-							<label><text>要货生产</text><text>PRODUCTION</text></label>
+						<view @click="ToSale('/pages/YWXKQH/YWXKQH','not')">
+							<label><text>现烤生产任务</text><text>PRODUCTION TASK</text></label>
 							<image src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
 						</view>
-						<!-- <view @click="ToSale('/pages/mainSale/MainSale')">
-							<label><text>销售</text><text>SALES</text></label>
-						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;"
-							@click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
-							<label><text>卡券业务</text><text>CARD</text></label>
-						</view> -->
 					</view>
 				</view>
 				<view class="chongdu">
 					<view class="dates">
-						<!-- 	<button @click="reset()">重读基础数据 <text>REREAD</text></button>
-						<button @click="zbtx()">通讯 <text>MESSAGE</text></button> -->
 						<button @click="Sign()"><label>签到</label><text>SIGN IN</text></button>
 						<view class="line"></view>
 						<button @click="SignOut()"><label>签退</label><text>CHECK OUT</text></button>
@@ -248,10 +226,10 @@
 			},
 			//跳转到销售页面
 			ToSale: async function(e, not) {
-				// if (not) {
-				// 	util.simpleMsg("功能暂未开放！", true);
-				// 	return;
-				// }
+				if (not) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				let store = util.getStorage("store");
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
@@ -575,10 +553,13 @@
 
 	.leftlist .logos {
 		width: 100%;
-		height: 240rpx;
+		height: 356rpx;
 		position: relative;
 		overflow: hidden;
 		border-radius: 30rpx;
+
+		background-image: url('../../images/imgxk/dayrw.png');
+		background-size: 100% 100%;
 	}
 
 	.leftlist .logos .xingqi {
@@ -671,8 +652,8 @@
 	}
 
 	.leftlist .sginout-qd .left {
-		width: 62%;
-		height: 444rpx;
+		width: 50%;
+		height: 222rpx;
 		background: #FFFFFF;
 		padding: 82rpx 6%;
 		box-sizing: border-box;
@@ -688,11 +669,6 @@
 		height: 2px;
 		background: rgba(0, 107, 68, 0.2);
 		border-radius: 30px 30px 30px 30px;
-	}
-
-	.leftlist .sginout-qd .left image {
-		width: 44rpx !important;
-		height: 44rpx !important;
 	}
 
 	.leftlist .sginout-qd .left>view {
@@ -711,16 +687,16 @@
 
 	.leftlist .sginout-qd .right {
 		position: relative;
-		width: 32%;
+		width: 48%;
 
-		height: 444rpx;
-		/* background: linear-gradient( 180deg, #E5FFE7 0%, rgba(229,255,231,0) 100%); */
+		height: 260rpx;
 		border-radius: 30px 30px 30px 30px;
 
 		display: flex;
 		flex-direction: column;
-		padding: 12% 6%;
+		padding: 0 6%;
 		box-sizing: border-box;
+		justify-content: center;
 	}
 
 	.right .gaip_bj {
@@ -760,7 +736,7 @@
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		position: relative;
 		padding: 0;
-		height: 312rpx;
+		height: 320rpx;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -820,7 +796,7 @@
 		box-shadow: none;
 
 		position: relative;
-		top: 2rpx;
+		top: 6rpx;
 	}
 
 	.dates .sginout view .tubiao {
@@ -838,7 +814,10 @@
 		background-color: #fff;
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
-		height: 800rpx;
+		height: 740rpx;
+
+		display: flex;
+		flex-direction: column;
 	}
 
 	.rightlist .market .prods {
@@ -848,7 +827,7 @@
 
 	.rightlist .market .prods view {
 		border-radius: 30rpx;
-		height: 540rpx;
+		/* height: 540rpx; */
 		overflow: hidden;
 		position: relative;
 	}
@@ -866,11 +845,11 @@
 	.market .dates {
 		padding: 0;
 		box-shadow: none;
+		flex: 1;
 		display: flex;
 		width: 100%;
 		justify-content: space-between;
 		align-items: center;
-		height: 33%;
 	}
 
 	.rightlist .dates view {
@@ -974,7 +953,7 @@
 
 	.div {
 		width: 100;
-		height: 450px;
+		height: 460rpx;
 		margin: 0 auto;
 		position: relative;
 	}

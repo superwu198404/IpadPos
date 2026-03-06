@@ -237,6 +237,10 @@
 				let store = util.getStorage("store");
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
+				if (store.CLIENT_STATUS != '1') {
+					util.simpleMsg("门店非营业状态，禁止操作！", "none");
+					return;
+				}
 				if (store.OPENFLAG != 1) {
 					util.simpleMsg("请先进行签到", true);
 					return;
@@ -318,7 +322,7 @@
 						util.simpleMsg(res.msg, true);
 						if (res.data && res.data.length > 0) { //有未日结的数据
 							that.showSignOut = true;
-							that.signOutDate =JSON.parse(res.data);
+							that.signOutDate = JSON.parse(res.data);
 						}
 						return;
 					}

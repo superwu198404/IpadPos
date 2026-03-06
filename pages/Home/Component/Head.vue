@@ -104,10 +104,14 @@
 		<!-- <qiandao @GetSignOut="GetSignOutInWeek" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
 		<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
-		<view class="nav" style="display: flex;justify-content: space-between;align-items: center;position: relative;">
+
+		<view class="nav" :class="showType != 0 ? 'n_nav' : ''"
+			style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
 				<!-- <image class="fh" src="../../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
-				<view class="message">
+
+				<!-- 通用显示 -->
+				<view v-if="showType == 0" class="message">
 					<view class="imgs">
 						<image src="../../../images/tongzhi.png" mode="widthFix"></image>
 					</view>
@@ -116,29 +120,38 @@
 					<text v-else v-for="(item,index) in XT_MsgData.filter((r,i)=>{return i==0})"
 						@click="ReadMsg(item)">{{item.title}}</text>
 				</view>
+
+				<!-- 裱花/现烤显示 -->
+				<view v-else class="time-text">
+					{{ STORE_NAME }}
+				</view>
 			</view>
 			<view class="stores" style="position: absolute;right: 1%;">
 				<view class="checkout">
-					<label class="buyer" v-if="!YN_SX&&DKFNAME!='默认大客户'">
-						<image src="../../../images/dakehu.png" mode="widthFix"></image>
-						<text>业务员：{{RYNAME}}</text>
-					</label>
-					<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
-						<image src="../../../images/dakehu.png" mode="widthFix"></image>
-						<text>大客户：{{DKFNAME}}</text>
-					</label>
-					<label class="buyer shexiao" @click="ShowDKF()" v-else>
-						<image src="../../../images/dakehu-xuanz.png" mode="widthFix"></image>
-						<text>赊销中：{{DKFNAME}}</text>
-					</label><strong></strong>
-					<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
-						<image src="../../../images/huiyuanID.png" mode="widthFix"></image>
-						<text>会员：{{hyinfo.hyId}}</text>
-						<!-- <image src="../../../images/xiala.png" mode="widthFix"></image> -->
-					</label>
-					<label>
-						<image src="../../../images/dx-mendian.png" mode="widthFix"></image><text>{{STORE_NAME}}</text>
-					</label>
+					<!-- 非裱花请货才显示 -->
+					<block v-if="showType == 0">
+						<label class="buyer" v-if="!YN_SX&&DKFNAME!='默认大客户'">
+							<image src="../../../images/dakehu.png" mode="widthFix"></image>
+							<text>业务员：{{RYNAME}}</text>
+						</label>
+						<label class="buyer" @click="ShowDKF()" v-if="!YN_SX">
+							<image src="../../../images/dakehu.png" mode="widthFix"></image>
+							<text>大客户：{{DKFNAME}}</text>
+						</label>
+						<label class="buyer shexiao" @click="ShowDKF()" v-else>
+							<image src="../../../images/dakehu-xuanz.png" mode="widthFix"></image>
+							<text>赊销中：{{DKFNAME}}</text>
+						</label><strong></strong>
+						<label class="buyer" v-if="hyinfo&&Object.keys(hyinfo).length>0">
+							<image src="../../../images/huiyuanID.png" mode="widthFix"></image>
+							<text>会员：{{hyinfo.hyId}}</text>
+							<!-- <image src="../../../images/xiala.png" mode="widthFix"></image> -->
+						</label>
+						<label>
+							<image src="../../../images/dx-mendian.png" mode="widthFix"></image>
+							<text>{{STORE_NAME}}</text>
+						</label>
+					</block>
 					<label>
 						<image src="../../../images/dx-kuantai.png" mode="widthFix"></image>{{POSID}}
 					</label>
@@ -148,7 +161,7 @@
 						<text v-if="YN_PRINT_CON=='Y'">已连接</text>
 						<text v-else style="color: #FE694B;">未连接</text>
 					</label>
-					<label class="rijie" v-if="showSale">
+					<label class="rijie" v-if="showSale && showType == 0">
 						<image src="../../../images/dx-qingkong.png" mode="widthFix"></image>
 						<button @click="ReturnSale()">清空</button>
 					</label>
@@ -219,7 +232,12 @@
 			type: {
 				type: String,
 				default: ""
-			}
+			},
+			showType: {
+				type: Number,
+				default: 0 // 0-默认通用 1 裱花请货，2现烤请货
+			},
+
 		},
 		data() {
 			return {
@@ -527,8 +545,14 @@
 						}
 						clearInterval(getApp().globalData.Int); //取消定时传输
 						getApp().globalData.Int = null;
+						console.log("showType：", that.showType);
+						let _url = "/pages/Center/Center";
+						if (that.showType == 1)
+							_url = "/pages/Center/BHCenter";
+						if (that.showType == 2)
+							_url = "/pages/Center/XKCenter";
 						uni.redirectTo({
-							url: "/pages/Center/Center"
+							url: _url
 						})
 					}
 				})
@@ -1522,5 +1546,16 @@
 
 	.account {
 		z-index: 1001;
+	}
+
+	.time-text {
+		font-weight: 600;
+		font-size: 40rpx;
+		color: #006637;
+	}
+
+	.n_nav {
+		background: none;
+		padding-top: 48rpx;
 	}
 </style>

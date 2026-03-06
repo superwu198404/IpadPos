@@ -248,6 +248,14 @@
 			}
 		},
 		{
+			"path": "pages/Center/XKCenter",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/Reserve/ReserveDrawer",
 			"style": {}
 		},

@@ -261,22 +261,15 @@
 							let store = util.getStorage("store");
 							console.log("[Login]获取门店信息:", store);
 							console.log("[Login]获取支付规则:", util.getStorage("PayInfo"));
-							// if (that.store.OPENFLAG == "1") {
-							// 	uni.redirectTo({
-							// 		url: "../mainSale/MainSale"
-							// 	})
-							// } else {
-							// 	uni.redirectTo({
-							// 		url: "/pages/Center/Center"
-							// 	})
-							// }
 							let _url = "/pages/Center/Center";
 							if (store.ZZTLX == 'BH')
 								_url = "/pages/Center/BHCenter";
+							if (store.ZZTLX == 'XK')
+								_url = "/pages/Center/XKCenter";
 							uni.redirectTo({
 								url: _url,
 								complete(data) {
-									console.log("[Login]跳转完成:", data);
+									console.log("[Login]跳转主页面结果:", data);
 								}
 							})
 						}, 1000);

@@ -3936,10 +3936,15 @@ function GetSale(global, vue, target_name, uni) {
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
 		let store = util.getStorage("store");
-		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
-			util.simpleMsg("签到状态过期，请重新签到", "none");
-			store.OPENFLAG = 0;
-			util.setStorage("store", store);
+		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+			.CLIENT_STATUS != '1') {
+			if (store.CLIENT_STATUS != '1') {
+				util.simpleMsg("门店非营业状态，禁止操作！", "none");
+			} else {
+				util.simpleMsg("签到状态过期，请重新签到！", "none");
+				store.OPENFLAG = 0;
+				util.setStorage("store", store);
+			}
 			util.sleep(1500);
 			uni.redirectTo({
 				url: "/pages/Center/Center"
@@ -4144,10 +4149,15 @@ function GetSale(global, vue, target_name, uni) {
 	 */
 	this.ShowStatement = async function(e) {
 		let store = util.getStorage("store");
-		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
-			util.simpleMsg("签到状态过期，请重新签到", "none");
-			store.OPENFLAG = 0;
-			util.setStorage("store", store);
+		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+			.CLIENT_STATUS != '1') {
+			if (store.CLIENT_STATUS != '1') {
+				util.simpleMsg("门店非营业状态，禁止操作！", "none");
+			} else {
+				util.simpleMsg("签到状态过期，请重新签到！", "none");
+				store.OPENFLAG = 0;
+				util.setStorage("store", store);
+			}
 			util.sleep(1500);
 			uni.redirectTo({
 				url: "/pages/Center/Center"

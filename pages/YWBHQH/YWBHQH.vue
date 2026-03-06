@@ -6,7 +6,7 @@
 
  	<view class="centre">
  		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
- 		<Head ref="bhHead" :_showSale="true" :_ynMsg='false' :type="'ywbhqh'"></Head>
+ 		<Head ref="bhHead" :_showSale="true" :showType="1" :_ynMsg='false' :type="'ywbhqh'"></Head>
  		<!-- 页面主数据 裱花请货默认页面-->
  		<view v-show="bhstep == 1" class="tranlist" style="margin-top: 4%;height: 78%">
  			<!-- 加急宅配 -->
@@ -204,11 +204,11 @@
  										<td>{{ item.SPID }}-{{item.SPNAME}}</td>
  										<td>{{ item.ZQTY_SQ }}</td>
  										<td>{{ item.UNIT }}</td>
- 										<td>{{ item.CCCZ }}</td>
+ 										<td>{{ item.SPECS }}</td>
  										<td>{{ item.NOTE }}</td>
  										<td>{{ item.DHSJD }}</td>
  										<td>{{ item.KHID }}-{{ item.KHNAME }}</td>
- 										<td>{{ item.QH_NOTE }}</td>
+ 										<td>{{ item.NOTE }}</td>
  										<td>{{ item.BILL_STATUS_NAME }}</td>
  										<td>{{ item.YN_SC=="Y"?"是":"否" }}</td>
  										<td>{{ item.YN_YD=="Y"?"是":"否" }}</td>
@@ -290,7 +290,8 @@
  						<label class="radio-item" style="margin-right: 20rpx;" v-for="(item, index) in pickupOptions"
  							:key="item.value">
  							<radio :value="item.value" color="#006537"
- 								style="margin-right:32rpx;display: flex;align-items: center;" />
+ 								style="margin-right:32rpx;display: flex;align-items: center;"
+ 								:checked="item.value == filterForm.pickupType" />
  							<text class="radio-text">{{ item.label }}</text>
  						</label>
  					</radio-group>
@@ -362,7 +363,7 @@
  							<view v-for="(item, index) in filteredGoodsList" :key="index"
  								style="padding: 10rpx; border-bottom: 1px solid #f5f5f5;font-size:28rpx"
  								@click="selectGoods(item)">
- 								{{item.SNAME}} ({{item.SPID}})
+ 								{{item.SNAME}}_{{item.SPID}}
  							</view>
  						</view>
 
@@ -431,7 +432,7 @@
 
  <script>
  	var app = getApp();
- 	import Head from '@/pages/Home/Component/BHHead.vue';
+ 	import Head from '@/pages/Home/Component/Head.vue';
  	import Req from '@/utils/request.js';
  	import common from '@/api/common.js';
  	import db from '@/utils/db/db_excute.js';
@@ -497,10 +498,10 @@
  				filterForm: {
  					khid: "",
  					source: '门店',
- 					isPreOrder: true,
+ 					isPreOrder: false,
  					isDirect: false,
  					isEcommerce: false,
- 					pickupType: '0',
+ 					pickupType: '-1',
  					arrivalDate: dateformat.getYMD(),
  					arrivalTime: '',
  					arrivalTimeId: '',
@@ -661,7 +662,9 @@
  					gsid: store.GSID,
  					date: this.curDate,
  				};
+ 				util.simpleModal("提示", JSON.stringify(data1));
  				_ywbhqh.GetBHQHOrders(data1, res => {
+ 					util.simpleModal("提示1", "完成查询结果：" + res.data.substr(1, 50));
  					console.log("查询到的裱花请货数据：", res);
  					if (res.code) {
  						let data = JSON.parse(res.data);
@@ -691,7 +694,7 @@
  							that.urgentStats.progress = 0;
  						}
  						if (data.ps.length > 0) {
- 							let arr = data.yd.map(r => {
+ 							let arr = data.ps.map(r => {
  								return {
  									bill: r.STR6,
  									time: r.NOTE2,
@@ -760,11 +763,27 @@
  			},
  			//裱花出入库
  			BHQHInput: function(yn_rk, e, obj) {
+ 				let store = util.getStorage("store");
+ 				if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+ 					.CLIENT_STATUS != '1') {
+ 					if (store.CLIENT_STATUS != '1') {
+ 						util.simpleMsg("门店非营业状态，禁止操作！", "none");
+ 					} else {
+ 						util.simpleMsg("签到状态过期，请重新签到！", "none");
+ 						store.OPENFLAG = 0;
+ 						util.setStorage("store", store);
+ 					}
+ 					util.sleep(1500);
+ 					uni.redirectTo({
+ 						url: "/pages/Center/BHCenter"
+ 					});
+ 					return;
+ 				}
  				let bills = "",
  					tit = "入库";
  				console.log("e", e);
  				if (yn_rk != "1")
- 					tit = "取消";
+ 					tit = "作废";
  				if (that.bhstep == 1) {
  					if (!e) {
  						let arr1 = that.urgentData.filter(r => r.done).map(r => r.bill);
@@ -777,13 +796,14 @@
  							return;
  						}
  						bills = Arr.join(',');
+ 						tit += "这批裱花任务";
  					} else {
  						if (obj && obj.finish == 'Y') {
- 							util.simpleMsg("该订单已生产暂无法入库！");
+ 							util.simpleMsg("该单据已生产暂无法入库！");
  							return;
  						}
  						bills = e;
- 						tit += "裱花单：" + e;
+ 						tit += "裱花任务：" + e;
  					}
  				} else {
  					if (!e) {
@@ -793,14 +813,15 @@
  							return;
  						}
  						bills = Arr.join(',');
+ 						tit += "这批裱花任务";
  					} else {
  						bills = e;
- 						tit += "裱花单：" + e;
+ 						tit += "裱花任务：" + e;
  					}
  				}
- 				util.simpleModal("提示", "是否确认" + tit + "？", (conf) => {
+
+ 				util.simpleModal("提示", "是否" + tit + "？", (conf) => {
  					if (conf) {
- 						let store = util.getStorage("store");
  						let data1 = {
  							khid: store.KHID,
  							gsid: store.GSID,
@@ -828,6 +849,22 @@
  			},
  			//扫码入库
  			ScanInput() {
+ 				let store = util.getStorage("store");
+ 				if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+ 					.CLIENT_STATUS != '1') {
+ 					if (store.CLIENT_STATUS != '1') {
+ 						util.simpleMsg("门店非营业状态，禁止操作！", "none");
+ 					} else {
+ 						util.simpleMsg("签到状态过期，请重新签到！", "none");
+ 						store.OPENFLAG = 0;
+ 						util.setStorage("store", store);
+ 					}
+ 					util.sleep(1500);
+ 					uni.redirectTo({
+ 						url: "/pages/Center/BHCenter"
+ 					});
+ 					return;
+ 				}
  				uni.scanCode({
  					success: res => {
  						console.log("[ScanInput.success]扫码结果:", res);
@@ -835,7 +872,7 @@
  						{
  							that.BHQHInput("1", res.result);
  						} else {
- 							util.simpleMsg("未识别到有效内容！");
+ 							util.simpleMsg("未识别到有效单号！");
  						}
  					},
  					fail: err => {
@@ -845,18 +882,22 @@
  			},
  			//获取配送类型
  			getTHTYPE: function() {
+ 				that.pickupOptions = [{
+ 					value: "-1",
+ 					label: "全部"
+ 				}];
  				common.GetDapzcs("THTYPE", res => {
  					console.log("[getTHTYPE]提货类型数据：", res);
  					if (res.code && res.msg.length > 0) {
- 						that.pickupOptions = res.msg.map((item, index) => {
+ 						let arr = res.msg.map((item, index) => {
  							return {
  								value: item.ID_NR,
  								label: item.SNAME
  							};
  						}).filter(i => i.value != '2')
+ 						that.pickupOptions = that.pickupOptions.concat(arr);
  						console.log("[getTHTYPE]提货类型数据THTYPES：", that.pickupOptions);
- 					} else
- 						that.pickupOptions = [];
+ 					}
  				})
  			},
  			//获取到货时间段
@@ -913,10 +954,10 @@
  				this.filterForm = {
  					khid: "",
  					source: '门店',
- 					isPreOrder: true,
+ 					isPreOrder: false,
  					isDirect: false,
  					isEcommerce: false,
- 					pickupType: '0',
+ 					pickupType: '-1',
  					arrivalDate: dateformat.getYMD(),
  					arrivalTime: '',
  					arrivalTimeId: '',
