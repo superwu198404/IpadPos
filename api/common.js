@@ -1158,16 +1158,26 @@ var WebDBExecute = async function(sql, func) {
 }
 
 //签到状态是否过期判断
-var CheckSign = function() {
+var CheckSign = function(e) {
 	let store = util.getStorage("store");
 	console.log("签到日期：", store.LOGINDATE);
-	if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate()) {
-		util.simpleMsg("签到状态过期，请重新签到", "none");
-		store.OPENFLAG = 0;
-		util.setStorage("store", store);
+	if ((store.LOGINDATE && new Date(store.LOGINDATE).getDate() != new Date().getDate()) || store.CLIENT_STATUS !=
+		'1') {
+		if (store.CLIENT_STATUS != '1') {
+			util.simpleMsg("门店非营业状态，禁止操作！", "none");
+		} else {
+			util.simpleMsg("签到状态过期，请重新签到！", "none");
+			store.OPENFLAG = 0;
+			util.setStorage("store", store);
+		}
 		util.sleep(1500);
+		let _url = "/pages/Center/Center";
+		if (e == "1")
+			_url = "/pages/Center/BHCenter";
+		if (e == "2")
+			_url = "/pages/Center/XKCenter";
 		uni.redirectTo({
-			url: "/pages/Center/Center"
+			url: _url
 		});
 		return false;
 	}

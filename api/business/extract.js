@@ -162,12 +162,14 @@ var GetTHKHDA = function(gsid, khid, func) {
 var GetPSCenter = function(gsid, khid, func, toc) {
 	let gskhinfo = getGSKHINFO(gsid, khid);
 	var param = "";
-	if (toc == 'C') //toc 查询条件
-		param = " AND YN_CL='C'";
+	if (toc == 'C') //toc 查询条件 Y:2C,C:2B2C,N:其他
+		param = " AND YN_CL in('Y','C')";
+	else
+		param = " AND YN_CL not in('Y')";
 	let sql =
 		"SELECT KHID,SNAME FROM KHDA WHERE  PINYIN NOT NULL AND BHTYPE IN( '1','2','3') AND ZZTLX IN('BH') and client_status  not  in ('2','3')  AND GSID" +
 		gskhinfo + param + " ORDER BY KHID";
-	console.log("sql:", sql);
+	console.log("GetPSCenter.sql:", sql);
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("配送中心查询成功：", res);
 		if (func)

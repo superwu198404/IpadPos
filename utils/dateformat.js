@@ -399,6 +399,34 @@ function toDateTimeString(date) {
 	return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,"0")}-${date.getDate().toString().padStart(2,"0")} ${date.getHours().toString().padStart(2,"0")}:${date.getMinutes().toString().padStart(2,"0")}`;
 }
 
+/**
+ * 判断 当前时间 距离 指定的 hh:mm 是否小于指定时间(60-min)
+ * @param {string} timeStr 格式："14:30"
+ * @returns {boolean} true=小于1小时 | false=大于1小时
+ */
+function isLessThanOneHour(timeStr, c_min = 60) {
+	if (!timeStr) return false;
+	try {
+		// 正则提取所有 小时:分钟 的数字
+		const match = timeStr.match(/(\d{1,2}):(\d{1,2})/);
+		if (!match) return false;
+		const hour = parseInt(match[1], 10);
+		const minute = parseInt(match[2], 10);
+		// 只使用今天的 hh:mm
+		const now = new Date();
+		const target = new Date(now);
+		target.setHours(hour, minute, 0, 0);
+		// console.log("isLessThanOneHour.target", target);
+		// 计算差（分钟）
+		const diffMin = (target - now) / (1000 * 60);
+		// console.log("isLessThanOneHour.diffMin", diffMin);
+		//已过期+小于50分钟
+		return diffMin < c_min;
+
+	} catch (e) {
+		return false;
+	}
+}
 export default {
 	stringToDate,
 	formatDate,
@@ -422,5 +450,6 @@ export default {
 	CheckStoreTime,
 	getWeekDate,
 	toDateString,
-	toDateTimeString
+	toDateTimeString,
+	isLessThanOneHour
 }

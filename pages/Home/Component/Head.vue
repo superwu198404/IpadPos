@@ -105,7 +105,7 @@
 		<!-- 日结组件 -->
 		<!-- <rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie> -->
 
-		<view class="nav" :class="showType != 0 ? 'n_nav' : ''"
+		<view class="nav" :class="showType == 1 ? 'n_nav' : ''"
 			style="display: flex;justify-content: space-between;align-items: center;position: relative;">
 			<view class="getback">
 				<!-- <image class="fh" src="../../../images/fh.png" mode="widthFix" @click="backPrevPage()"></image> -->
@@ -235,7 +235,7 @@
 			},
 			showType: {
 				type: Number,
-				default: 0 // 0-默认通用 1 裱花请货，2现烤请货
+				default: 0 // 0-默认通用 1 其他定制信息
 			},
 
 		},
@@ -545,7 +545,6 @@
 						}
 						clearInterval(getApp().globalData.Int); //取消定时传输
 						getApp().globalData.Int = null;
-						console.log("showType：", that.showType);
 						let _url = "/pages/Center/Center";
 						if (that.showType == 1)
 							_url = "/pages/Center/BHCenter";
@@ -1556,6 +1555,6 @@
 
 	.n_nav {
 		background: none;
-		padding-top: 48rpx;
+		padding-top: 58rpx;
 	}
 </style>

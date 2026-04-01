@@ -125,6 +125,7 @@ export const UpdatePWD = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //初始化当前门店信息
+8
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
@@ -167,13 +168,14 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			CLIENT_STATUS: res.msg[0].CLIENT_STATUS,
 		}
 		let store1 = util.getStorage("store");
+		console.log("[InitStore]全局混入客户端信息！", JSON.stringify(store1));
 		store1 = Object.assign(store1, store);
 		util.setStorage("store", store1);
 		init_object_factory.init();
 		Object.assign(store1, {
 			factory: init_object_factory
 		});
-		console.log("[InitStore]全局混入客户端信息！");
+
 		global.data = function() {
 			return store1;
 		};

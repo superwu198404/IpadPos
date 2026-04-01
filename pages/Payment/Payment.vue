@@ -792,6 +792,8 @@
 						RATE: this.isRefund ? (item.origin?.RATE || 0) : item
 							.disc || 0, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
+						YN_YLTH: this.isRefund ? (item.origin?.YN_YLTH || "") : item
+						.yn_ylth, //渠道卡券标识
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth || item.origin?.AUTH, //交易号
 						STR2: item.str2 || "", //凭证号 目前仅限支付宝团购券使用

@@ -789,6 +789,10 @@ var XsTypeObj = {
 			this.communication_for_oracle.push(
 				`UPDATE ydsale001 set YD_STATUS ='3',ID_RY_TH ='${this.ryid}', SJTHDATE = TO_DATE('${this.getTime()}', 'SYYYY-MM-DD HH24:MI:SS'), SJTHGSID = '${this.GSID}', SJTHGCID = '${this.GCID}', SJTHDPID = '${this.DPID}', SJTHKCDID = '${this.KCDID}', SJTHKHID = '${this.Storeid}', SJTHPOSID = '${this.POSID}', SJTHBILL = '${this.sale001.BILL}' WHERE bill ='${this.old_bill}';`
 			);
+			//作废积木业务裱花请货单，随后由接口定时通知到积木方
+			this.communication_for_oracle.push(
+				`UPDATE ywbhqh SET bill_status = '9',YN_TX='N' WHERE bill_yd = '${this.old_bill}' AND GYS = 'J' AND EXISTS ( SELECT 1 FROM spda WHERE ywbhqh.spid = spda.SPID AND SPKW = 'J' );`
+			);
 			this.sale001.XSTYPE = this.current_type.xstype;
 			this.sale001.TNET = -this.sale001.DNET;
 			this.sale001.ZNET = -this.sale001.DNET;
@@ -1376,10 +1380,27 @@ var XsTypeObj = {
 			console.log("[InitSale]赊销结算附加表生成:", this.additional);
 		},
 		$beforeFk: function() {
+
+			//20260316，判断当前的单据是否存在折扣，如果存在折扣保持原有付款逻辑不变
+			//如果不存在折扣，使用当前门店可用付款方式结算（即 不受限..）
+			console.log("[$beforeFk]赊销结算付款之前的sale001:", this.sale001);
+
+			this.ban_type.push("ZF00"); //要求禁用对公进账
+
 			let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
-			// allow_type.push('ZF04'); //测试用
-			this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i
-				.fkid);
+			if (this.sale001.BILLDISC != 0) {
+				//表示有折扣 保持原有逻辑不变
+				this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i =>
+					i
+					.fkid);
+			} else {
+				//不存在折扣，则只禁止单店合作兑换
+				this.ban_type.push("ZF37"); //要求禁止单店合作兑换
+			}
+
+			//let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'XSJSFKID')?.POSCSNR.split(',');
+			//// allow_type.push('ZF04'); //测试用
+			//this.ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
 			console.warn("[BeforeFk]赊销结算获取的允许、和禁止 的付款类型:", {
 				allow_type,
 				ban_type: this.ban_type
@@ -2166,6 +2187,7 @@ function GetSale(global, vue, target_name, uni) {
 	})
 	//*func*菜单切换
 	this.Change = util.callBind(this, function(menu) {
+		this.tool_pages.changeGoods = false; //菜单切换后关闭外卖换货页面
 		console.log("[Change]菜单点击触发!", menu);
 		if (menu.info.clickType === 'sale_credit') {
 			uni.$once('select-credit', util.callBind(this, function(data) {
@@ -2583,7 +2605,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.tool_pages = {
 		promotions: false, //当前促销活动
 		communication: false, //通讯
-		tickers: false //重打小票
+		tickers: false, //重打小票
+		changeGoods: false //外卖换货
 	}
 	//本次是否有促销产生 不受清除促销影响
 	this.hasCX = false;
@@ -3231,6 +3254,8 @@ function GetSale(global, vue, target_name, uni) {
 			console.log("[ToolsManage]修改前:", this.tool_pages[info]);
 			this.tool_pages[info] = !this.tool_pages[info];
 			console.log("[ToolsManage]修改后:", this.tool_pages[info]);
+
+			this.update();
 		}
 	})
 
@@ -3935,20 +3960,23 @@ function GetSale(global, vue, target_name, uni) {
 
 	//点击商品的详情触发的事件
 	this.getSp = function(e) {
-		let store = util.getStorage("store");
-		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
-			.CLIENT_STATUS != '1') {
-			if (store.CLIENT_STATUS != '1') {
-				util.simpleMsg("门店非营业状态，禁止操作！", "none");
-			} else {
-				util.simpleMsg("签到状态过期，请重新签到！", "none");
-				store.OPENFLAG = 0;
-				util.setStorage("store", store);
-			}
-			util.sleep(1500);
-			uni.redirectTo({
-				url: "/pages/Center/Center"
-			});
+		// let store = util.getStorage("store");
+		// if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+		// 	.CLIENT_STATUS != '1') {
+		// 	if (store.CLIENT_STATUS != '1') {
+		// 		util.simpleMsg("门店非营业状态，禁止操作！", "none");
+		// 	} else {
+		// 		util.simpleMsg("签到状态过期，请重新签到！", "none");
+		// 		store.OPENFLAG = 0;
+		// 		util.setStorage("store", store);
+		// 	}
+		// 	util.sleep(1500);
+		// 	uni.redirectTo({
+		// 		url: "/pages/Center/Center"
+		// 	});
+		// 	return;
+		// }
+		if (!common.CheckSign()) {
 			return;
 		}
 		console.log("[GetSp]获取商品详情:");
@@ -4148,20 +4176,23 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
-		let store = util.getStorage("store");
-		if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
-			.CLIENT_STATUS != '1') {
-			if (store.CLIENT_STATUS != '1') {
-				util.simpleMsg("门店非营业状态，禁止操作！", "none");
-			} else {
-				util.simpleMsg("签到状态过期，请重新签到！", "none");
-				store.OPENFLAG = 0;
-				util.setStorage("store", store);
-			}
-			util.sleep(1500);
-			uni.redirectTo({
-				url: "/pages/Center/Center"
-			});
+		// let store = util.getStorage("store");
+		// if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
+		// 	.CLIENT_STATUS != '1') {
+		// 	if (store.CLIENT_STATUS != '1') {
+		// 		util.simpleMsg("门店非营业状态，禁止操作！", "none");
+		// 	} else {
+		// 		util.simpleMsg("签到状态过期，请重新签到！", "none");
+		// 		store.OPENFLAG = 0;
+		// 		util.setStorage("store", store);
+		// 	}
+		// 	util.sleep(1500);
+		// 	uni.redirectTo({
+		// 		url: "/pages/Center/Center"
+		// 	});
+		// 	return;
+		// }
+		if (!common.CheckSign()) {
 			return;
 		}
 		console.log("促销权限：", that.currentOperation.ynCx);

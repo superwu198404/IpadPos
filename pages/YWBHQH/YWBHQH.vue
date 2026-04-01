@@ -5,230 +5,137 @@
  <template>
 
  	<view class="centre">
- 		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
- 		<Head ref="bhHead" :_showSale="true" :showType="1" :_ynMsg='false' :type="'ywbhqh'"></Head>
- 		<!-- 页面主数据 裱花请货默认页面-->
- 		<view v-show="bhstep == 1" class="tranlist" style="margin-top: 4%;height: 78%">
- 			<!-- 加急宅配 -->
- 			<view class="card-column">
- 				<image v-if="urgentData && urgentData.length" class="bg" src="../../images/imgbh/biank@1x.png"
- 					mode="widthFix"></image>
- 				<view class="column-header">
- 					<text class="title">今日加急宅配</text>
- 					<text class="count"><text
- 							class="text">{{ urgentStats.completed }}个</text>/{{ urgentStats.total }}个</text>
- 					<!-- 进度条容器 - 动态计算宽度 -->
- 					<view class="progress-container">
- 						<view class="progress-bar" :style="{ width: urgentStats.progress + '%' }"></view>
- 					</view>
- 				</view>
- 				<view v-if="urgentData && urgentData.length" class="task-list">
- 					<view v-for="(item, index) in urgentData" :key="index" class="task-item"
- 						:class="{ 'task-done': item.done }">
- 						<!-- 勾选框 -->
- 						<view class="task-checkbox" :class="{ 'checked': item.done }"
- 							@click="toggleTaskDone('urgent', index)" v-if="item.finish!='Y'">
- 							<image v-if="item.done" class="check-icon" src="../../images/imgbh/gou@1x.png"
- 								mode="widthFix"></image>
- 						</view>
- 						<view class="task-main">
- 							<view class="task-content">
- 								<view class="task-size">{{ item.size }}</view>
- 								<view>
- 									<view class="task-name">{{ item.name }}*{{ item.qty }}</view>
- 									<view class="task-shop">{{ item.shop }}</view>
- 								</view>
- 							</view>
- 							<view class="task-actions">
- 								<view class="task-time">{{ item.time }}</view>
- 								<view>
- 									<text class="action-btn action-discard"
- 										@click="BHQHInput('0',item.bill,item)">作废</text>
- 									<text class="action-btn action-warehouse" @click="BHQHInput('1',item.bill,item)"
- 										v-if="item.finish!='Y'">入库</text>
- 									<text class="action-btn action-warehouse" v-else>已生产</text>
- 								</view>
- 							</view>
- 						</view>
- 					</view>
- 				</view>
- 			</view>
-
- 			<!-- 预定宅配 -->
- 			<view class="card-column">
- 				<image v-if="scheduledData && scheduledData.length" class="bg" src="../../images/imgbh/biank@1x.png"
- 					mode="widthFix"></image>
- 				<view class="column-header">
- 					<text class="title">今日预定宅配</text>
- 					<text class="count"><text class="text">{{ scheduledStats.completed }}个</text>
- 						/{{ scheduledStats.total }}个</text>
- 					<view class="progress-container">
- 						<view class="progress-bar" :style="{ width: scheduledStats.progress + '%' }"></view>
- 					</view>
- 				</view>
- 				<view v-if="scheduledData && scheduledData.length" class="task-list">
- 					<view v-for="(item, index) in scheduledData" :key="index" class="task-item"
- 						:class="{ 'task-done': item.done }">
- 						<view class="task-checkbox" :class="{ 'checked': item.done }"
- 							@click="toggleTaskDone('scheduled', index)" v-if="item.finish!='Y'">
- 							<image v-if="item.done" class="check-icon" src="../../images/imgbh/gou@1x.png"
- 								mode="widthFix"></image>
- 						</view>
- 						<view class="task-main">
- 							<view class="task-content">
- 								<view class="task-size">{{ item.size }}</view>
- 								<view>
- 									<view class="task-name">{{ item.name }}</view>
- 									<view class="task-shop">{{ item.shop }}</view>
- 								</view>
- 							</view>
- 							<view class="task-actions">
- 								<view class="task-time">{{ item.time }}</view>
- 								<view>
- 									<text class="action-btn action-discard"
- 										@click="BHQHInput('0',item.bill,item)">作废</text>
- 									<text class="action-btn action-warehouse" @click="BHQHInput('1',item.bill,item)"
- 										v-if="item.finish!='Y'">入库</text>
- 									<text class="action-btn action-warehouse" v-else>已生产</text>
- 								</view>
- 							</view>
- 						</view>
- 					</view>
- 				</view>
- 			</view>
-
- 			<!-- 到店自提 -->
- 			<view class="card-column">
- 				<image v-if="pickupData && pickupData.length" class="bg" src="../../images/imgbh/biank@1x.png"
- 					mode="widthFix"></image>
- 				<view class="column-header">
- 					<text class="title">今日到店<text style="font-size: 26rpx;">(自提或摆柜)</text></text>
- 					<text class="count"><text class="text">{{ pickupStats.completed }}个</text>
- 						/{{ pickupStats.total }}个</text>
- 					<view class="progress-container">
- 						<view class="progress-bar" :style="{ width: pickupStats.progress + '%' }"></view>
- 					</view>
- 				</view>
- 				<view v-if="pickupData && pickupData.length" class="task-list">
- 					<view v-for="(item, index) in pickupData" :key="index" class="task-item"
- 						:class="{ 'task-done': item.done }">
- 						<view class="task-checkbox" :class="{ 'checked': item.done }"
- 							@click="toggleTaskDone('pickup', index)" v-if="item.finish!='Y'">
- 							<image v-if="item.done" class="check-icon" src="../../images/imgbh/gou@1x.png"
- 								mode="widthFix"></image>
- 						</view>
- 						<view class="task-main">
- 							<view class="task-content">
- 								<view class="task-size">{{ item.size }}</view>
- 								<view>
- 									<view class="task-name">{{ item.name }}</view>
- 									<view class="task-shop">{{ item.shop }}</view>
- 								</view>
- 							</view>
- 							<view class="task-actions">
- 								<view class="task-time">{{ item.time }}</view>
- 								<view>
- 									<text class="action-btn action-discard"
- 										@click="BHQHInput('0',item.bill,item)">作废</text>
- 									<text class="action-btn action-warehouse" @click="BHQHInput('1',item.bill,item)"
- 										v-if="item.finish!='Y'">入库</text>
- 									<text class="action-btn action-warehouse" v-else>已生产</text>
- 								</view>
- 							</view>
- 						</view>
- 					</view>
- 				</view>
- 			</view>
- 		</view>
+ 		<!-- <image class="bg" src="../../images/chushihua.png" mode="widthFix"></image> -->
+ 		<Head ref="bhHead" :BUSSINESS_NAME="BUSSINESS_NAME" :_showSale="true" :_ynMsg='false'></Head>
 
  		<!-- 筛选列表页面 -->
- 		<view v-show="bhstep == 2" class="tranlist tranlist-list">
+ 		<view class="tranlist tranlist-list">
  			<view class="filter-result-page ">
- 				<!-- 顶部标题栏 -->
- 				<view class="header">
- 					<text class="title">筛选结果 <text class="total">共<text
- 								style="color: #42B14B;">{{ listData.length }}条</text>数据</text></text>
- 					<view class="back-btn" @click="bhstep = 1">
- 						<image src="../../images/imgbh/fhui@2x.png" mode="widthFix" style="margin-right: 6rpx;">
- 							<text>返回</text>
+ 				<view class="status-tabs">
+ 					<view class="tab-item" v-for="(item, index) in tabList" :key="index"
+ 						:class="{ active: item.active }" @click="toggleActive(index,item)">
+ 						<image v-if="item.active" class="bg" style="z-index:0" src="../../images/imgbh/bh-check-bg.png"
+ 							mode="widthFix"></image>
+
+ 						<view class="tab-label">{{ item.label }}</view>
+ 						<view class="tab-value" style="position:relative;">
+ 							<NumberFormat :value="item.value" :color="item.active ? '#006637' : '#666'" />
+
+ 							<view v-if="!item.active" class="tab-dashed"></view>
+ 						</view>
+
+ 						<view v-if="index < tabList.length - 1 
+						  && !item.active 
+						  && !tabList[index + 1].active" class="tab-split-line"></view>
  					</view>
  				</view>
+
  				<NoData v-if="listData.length==0"
- 					style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);"></NoData>
- 				<view v-if="listData.length>0" class="table-container">
- 					<div class="table-scroll-x" ref="scrollX">
- 						<div class="table-scroll-y" ref="scrollY">
- 							<table class="data-table" border="0" cellpadding="0" cellspacing="0">
- 								<thead class="table-header">
- 									<tr>
- 										<th class="th-checkbox" @click="handleAllCheck()">
- 											<view class="task-checkbox" :class="{ 'checked': allChecked }">
- 												<image v-if="allChecked" class="check-icon"
- 													src="../../images/imgbh/gou@1x.png" mode="widthFix"></image>
- 											</view>
- 										</th>
- 										<th>序号</th>
- 										<th>到货日期</th>
- 										<th>任务商品</th>
- 										<th>数量</th>
- 										<th>单位</th>
- 										<th>尺寸</th>
- 										<th>到货时间</th>
- 										<th>到货时段</th>
- 										<th>要货门店</th>
- 										<th>要求</th>
- 										<th>任务状态</th>
- 										<th>已生产</th>
- 										<th>是否预定</th>
- 										<th>送货方式</th>
- 										<th>是否打印</th>
- 										<th>任务单号</th>
- 										<th>预定单号</th>
- 										<th>提交人</th>
- 										<th>确认时间</th>
- 									</tr>
- 								</thead>
- 								<tbody>
- 									<tr v-for="(item, index) in listData" :key="item.id" class="table-row"
- 										:class="{ 'tr-even': index % 2 == 0 }">
- 										<td class="td-checkbox">
- 											<view v-if="item.BILL_STATUS=='1'" @click="toggleTaskChecked(index)"
- 												class="task-checkbox" :class="{ 'checked': item.isChecked }">
- 												<image v-if="item.isChecked" class="check-icon"
- 													src="../../images/imgbh/gou@1x.png" mode="widthFix"></image>
- 											</view>
- 											<view v-else class="task-checkbox task-checkbox-none"> </view>
- 										</td>
- 										<td>{{ index + 1 }}</td>
- 										<td>{{ item.DATE_DH }}</td>
- 										<td>{{ item.SPID }}-{{item.SPNAME}}</td>
- 										<td>{{ item.ZQTY_SQ }}</td>
- 										<td>{{ item.UNIT }}</td>
- 										<td>{{ item.SPECS }}</td>
- 										<td>{{ item.NOTE }}</td>
- 										<td>{{ item.DHSJD }}</td>
- 										<td>{{ item.KHID }}-{{ item.KHNAME }}</td>
- 										<td>{{ item.NOTE }}</td>
- 										<td>{{ item.BILL_STATUS_NAME }}</td>
- 										<td>{{ item.YN_SC=="Y"?"是":"否" }}</td>
- 										<td>{{ item.YN_YD=="Y"?"是":"否" }}</td>
- 										<td>{{ item.PSTYPE_NAME }}</td>
- 										<td>{{ (item.YN_PRINT=="Y"||item.YN_PRINT=="1")?"是":"否" }}</td>
- 										<td>{{ item.BILL }}</td>
- 										<td>{{ item.BILL_YD }}</td>
- 										<td>{{ item.RY_NAME }}</td>
- 										<td>{{ item.DATE_XG }}</td>
- 									</tr>
- 								</tbody>
- 							</table>
+ 					style="position: absolute; left: 50%; top: 60%; transform: translate(-50%, -50%);padding-top:0 ;">
+ 				</NoData>
+
+ 				<!-- 操作列表 -->
+ 				<view class="page-list">
+ 					<view class="btns-list">
+ 						<view class="btns-groups">
+ 							<view class="btn1" @click="filterTasks()">刷新</view>
+ 							<view class="btn1" @click="BHQHInput('1')">入库</view>
+ 							<view class="btn1" @click="BHQHInput('0')">作废</view>
+ 							<view class="btn1" @click="BHQHOrderPrint()">打印</view>
+ 							<view class="btn2" @click="ScanInput('1')">扫码入库</view>
+ 							<view class="btn2" @click="ScanInput('0')">扫码作废</view>
+ 						</view>
+ 						<view class="filter" @click="openFilterModal()">
+ 							<image src="../../images/imgbh/operate-icon.png" mode="widthFix"></image>
+ 							<text>筛选</text>
+ 						</view>
+ 					</view>
+ 					<view v-if="listData.length>0" class="table-container">
+ 						<div class="table-scroll-x" ref="scrollX">
+ 							<div class="table-scroll-y" ref="scrollY">
+ 								<table class="data-table" border="0" cellpadding="0" cellspacing="0">
+ 									<thead class="table-header">
+ 										<tr>
+ 											<th class="th-checkbox fixed-col1 th" @click="handleAllCheck()">
+ 												<view class="task-checkbox" :class="{ 'checked': allChecked }">
+ 													<image v-if="allChecked" class="check-icon"
+ 														src="../../images/imgbh/gou@1x.png" mode="widthFix"></image>
+ 												</view>
+ 											</th>
+ 											<th class="fixed-col2 th">序号</th>
+ 											<th class="fixed-col3">任务商品</th>
+ 											<th>类型</th>
+ 											<th>到货日期</th>
+ 											<th>数量</th>
+ 											<th>单位</th>
+ 											<th>尺寸</th>
+ 											<th>到货时间</th>
+ 											<th>到货时段</th>
+ 											<th>要货门店</th>
+ 											<th>要求</th>
+ 											<th>任务状态</th>
+ 											<th>已生产</th>
+ 											<th>是否预定</th>
+ 											<th>送货方式</th>
+ 											<th>是否打印</th>
+ 											<th>任务单号</th>
+ 											<th>预定单号</th>
+ 											<th>提交人</th>
+ 											<th>确认时间</th>
+ 										</tr>
+ 									</thead>
+ 									<tbody>
+ 										<tr v-for="(item, index) in listData" :key="item.id" class="table-row" :class="[
+											    index % 2 == 1 ? 'tr-even' : '', 
+											    item.isChecked ? 'tr-checked' : ''
+											  ]">
+ 											<td class="fixed-col1 td-checkbox">
+ 												<view v-if="item.BILL_STATUS=='1'" @click="toggleTaskChecked(index)"
+ 													class="task-checkbox" :class="{ 'checked': item.isChecked }">
+ 													<image v-if="item.isChecked" class="check-icon"
+ 														src="../../images/imgbh/gou@1x.png" mode="widthFix"></image>
+ 												</view>
+ 												<view v-else class="task-checkbox task-checkbox-none"> </view>
+ 											</td>
+ 											<td class="fixed-col2">{{ index + 1 }}</td>
+ 											<td class="fixed-col3 " @click.stop="openOrderModal(item)">
+ 												<view class="fixed-tdd">
+ 													{{ item.SPID.slice(8) }}-{{item.SPNAME}}
+ 													<view class="tab-dashed"></view>
+ 												</view>
+ 											</td>
+ 											<td>{{ item.GYS=='C'?"ToC任务":"其他" }}</td>
+ 											<td>{{ item.DATE_DH }}</td>
+ 											<td>{{ item.ZQTY_SQ }}</td>
+ 											<td>{{ item.UNIT }}</td>
+ 											<td>{{ item.SPECS }}</td>
+ 											<td>{{ item.NOTE }}</td>
+ 											<td>{{ item.DHSJD }}</td>
+ 											<td style="text-align: left;">{{ item.KHID }}-{{ item.KHNAME }}</td>
+ 											<td>{{ item.QH_NOTE }}</td>
+ 											<td>{{ item.BILL_STATUS_NAME }}</td>
+ 											<td>{{ item.YN_SC=="Y"?"是":"否" }}</td>
+ 											<td>{{ item.YN_YD=="Y"?"是":"否" }}</td>
+ 											<td>{{ item.PSTYPE_NAME }}</td>
+ 											<td>{{ item.YN_PRINT=="N"?"否":("是-"+(item.YN_PRINT=='Y'?'1':item.YN_PRINT)) }}
+ 											</td>
+ 											<td>{{ item.BILL }}</td>
+ 											<td>{{ item.BILL_YD }}</td>
+ 											<td>{{ item.RY_NAME }}</td>
+ 											<td>{{ item.DATE_XG }}</td>
+ 										</tr>
+ 									</tbody>
+ 								</table>
+ 							</div>
  						</div>
- 					</div>
+ 					</view>
  				</view>
+
  			</view>
  		</view>
 
  		<!-- 底部操作栏 -->
- 		<view class="bottom-bar">
+ 		<!-- 	<view class="bottom-bar">
  			<view class="bar-btn bar-refresh" v-if="bhstep == 1" @click="GetBHQHOrders(1)">
  				<image src="../../images/imgbh/shuaxin.png" mode="widthFix"></image>刷新列表
  			</view>
@@ -244,12 +151,23 @@
  			<view class="bar-btn bar-warehouse" @click="BHQHInput('1')">
  				<image src="../../images/imgbh/ruk@1x.png" mode="widthFix"></image>入库
  			</view>
- 		</view>
+ 		</view> -->
+
+
  		<!-- 任务筛选弹窗 -->
  		<view class="filter-modal" v-show="showFilterModal" @click="closeFilterModal">
- 			<view class="filter-content" @click.stop>
- 				<!-- <image style=" position: absolute;top: -32rpx;left: -32rpx;" src="../../images/imgbh/tanc-bg@1x.png" mode="widthFix"></image> -->
- 				<text class="filter-title">任务筛选</text>
+ 			<view :style="{ bottom: isKeyBoardShow ? '700rpx' : '' }" class="filter-content" @click.stop>
+
+ 				<h1 style="width: 100%;display: flex;justify-content: space-between;">
+ 					<!-- <image style=" position: absolute;top: -32rpx;left: -32rpx;" src="../../images/imgbh/tanc-bg@1x.png" mode="widthFix"></image> -->
+ 					<text class="filter-title" style="border-bottom: none;">任务筛选</text>
+
+ 					<!-- 关闭 -->
+ 					<image src="../../images/imgpro/schuxx.png" style="width:56rpx;height:56rpx;"
+ 						@click="closeFilterModal" mode="widthFix"></image>
+ 				</h1>
+
+
 
  				<!-- 1. 任务来源 暂不启用-->
  				<!-- <view class="filter-section">
@@ -296,6 +214,29 @@
  						</label>
  					</radio-group>
  				</view>
+ 				<view class="filter-section">
+ 					<text class="section-label">任务类型：</text>
+ 					<radio-group v-model="filterForm.yn_toc" class="radio-group" @change="handleToCChange">
+ 						<label class="radio-item" style="margin-right: 20rpx;">
+ 							<radio value="ALL" color="#006537"
+ 								style="margin-right:32rpx;display: flex;align-items: center;"
+ 								:checked="filterForm.yn_toc=='ALL'" />
+ 							<text class="radio-text">全部</text>
+ 						</label>
+ 						<label class="radio-item" style="margin-right: 20rpx;">
+ 							<radio value="C" color="#006537"
+ 								style="margin-right:32rpx;display: flex;align-items: center;"
+ 								:checked="filterForm.yn_toc=='C'" />
+ 							<text class="radio-text">ToC</text>
+ 						</label>
+ 						<label class="radio-item" style="margin-right: 20rpx;">
+ 							<radio value="N" color="#006537"
+ 								style="margin-right:32rpx;display: flex;align-items: center;"
+ 								:checked="filterForm.yn_toc=='N'" />
+ 							<text class="radio-text">其他</text>
+ 						</label>
+ 					</radio-group>
+ 				</view>
  				<!-- 4. 到货日期 -->
  				<view class="filter-section input-section">
  					<text class="section-label">到货日期：</text>
@@ -324,115 +265,181 @@
  				</view>
 
  				<!-- 6. 要货门店-支持模糊搜索 -->
- 				<view class="filter-section input-section">
+ 				<view class="filter-section input-section" style="position:relative;">
  					<text class="section-label">要货门店：</text>
  					<view style="flex:1;position: relative;">
- 						<input v-model="filterForm.shopName" placeholder="请输入门店名称" class="filter-picker"
+ 						<input @click="showBorad('store')" style="background:#F5F5F5" disabled
+ 							v-model="filterForm.shopName" placeholder="请选择门店" class="filter-picker"
  							@focus="showDropdown_shop = true" @blur="delayCloseShopDropdown" />
+ 						<view style="opacity: 0;position: absolute;left:0;top:0;height:100%;width:100%"
+ 							@click="showBorad('store')"></view>
  						<view v-if="showDropdown_shop && filteredShopList.length"
- 							style="position: absolute; top: 80rpx; left: 0; width: 100%;  max-height: 400rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
+ 							style="position: absolute; top: 80rpx; left: 0; width: 100%;  max-height: 340rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
  							<view v-for="(item, index) in filteredShopList" :key="index"
  								style="padding: 10rpx; border-bottom: 1px solid #f5f5f5;font-size:28rpx"
- 								@click="selectShop(item)">
+ 								@click.stop="selectShop(item)">
  								{{item.ADDR}}
  							</view>
  						</view>
 
  						<view v-if="showDropdown_shop && !filteredShopList.length"
- 							style="position: absolute; top: 80rpx; left: 0; width: 100%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999;">
+ 							style="position: absolute; top: 80rpx; left: 0; width: 98%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999; z-index: 100000;">
  							暂无匹配门店
  						</view>
+
+ 						<!-- 关闭 -->
 
  						<!-- <picker :value="0" :range="THKHDATA" range-key="ADDR" @change="selectShop"
 					  class="filter-picker">
 						<text>{{ filterForm.shopName || '请选择门店' }}</text>
 					</picker> -->
  					</view>
- 					<!-- <image src="../../images/imgbh/rjp@1.5x.png" style="width:40rpx;height:40rpx;margin-left:10rpx;"
-					@click="showBorad" mode="widthFix"></image> -->
+ 					<image src="../../images/jsd-gb.png"
+ 						style="width:40rpx;height:40rpx;position: absolute;right: 80rpx;" @click.stop="clearShop()"
+ 						mode="widthFix"></image>
+
+ 					<image src="../../images/imgbh/rjp@1.5x.png" style="width:40rpx;height:40rpx;margin-left:10rpx;"
+ 						@click="showBorad('store')" mode="widthFix"></image>
  				</view>
 
  				<!-- 7. 任务商品-支持模糊搜索 -->
- 				<view class="filter-section input-section">
+ 				<view class="filter-section input-section" style="position:relative;">
  					<text class="section-label">任务商品：</text>
  					<view style="flex:1;position: relative;">
- 						<input v-model="filterForm.goodsName" placeholder="请输入商品名称" class="filter-picker"
+ 						<input @click="showBorad('good')" style="background:#F5F5F5" disabled
+ 							v-model="filterForm.goodsName" placeholder="请选择任务商品" class="filter-picker"
  							@focus="showDropdown_goods = true" @blur="delayCloseGoodsDropdown" />
+ 						<view style="opacity: 0;position: absolute;left:0;top:0;height:100%;width:100%"
+ 							@click="showBorad('good')"></view>
  						<view v-if="showDropdown_goods && filteredGoodsList.length"
- 							style="position: absolute; top: 80rpx; left: 0; width: 100%;  max-height: 400rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
+ 							style="position: absolute; top: 80rpx; left: 0; width: 100%;  max-height: 340rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
  							<view v-for="(item, index) in filteredGoodsList" :key="index"
  								style="padding: 10rpx; border-bottom: 1px solid #f5f5f5;font-size:28rpx"
- 								@click="selectGoods(item)">
+ 								@click.stop="selectGoods(item)">
  								{{item.SNAME}}_{{item.SPID}}
  							</view>
  						</view>
-
  						<view v-if="showDropdown_goods && !filteredGoodsList.length"
- 							style="position: absolute; top: 80rpx; left: 0; width: 100%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999;">
- 							暂无匹配商品
+ 							style="position: absolute; top: 80rpx; left: 0; width: 98%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999; z-index: 100000;">
+ 							暂无匹配任务商品
  						</view>
 
- 						<!-- <picker :value="0" :range="SPDATA" range-key="SNAME" @change="selectGoods"
-					  class="filter-picker">
-						<text>{{ filterForm.goodsName || '请选择任务商品' }}</text>
-					</picker> -->
+
+
  					</view>
- 					<!-- 	<image src="../../images/imgbh/rjp@1.5x.png" style="width:40rpx;height:40rpx;margin-left:10rpx"
-					@click="showBorad" mode="widthFix"></image> -->
+ 					<!-- 关闭 -->
+ 					<image src="../../images/jsd-gb.png"
+ 						style="width:40rpx;height:40rpx;position: absolute;right: 80rpx;" @click.stop="clearGoods()"
+ 						mode="widthFix"></image>
+
+ 					<image src="../../images/imgbh/rjp@1.5x.png" style="width:40rpx;height:40rpx;margin-left:10rpx"
+ 						@click="showBorad('good')" mode="widthFix"></image>
  				</view>
 
  				<!-- 底部按钮组 -->
  				<view class="filter-btn-group">
- 					<button class="btn-cancel" @click="closeFilterModal">关闭</button>
+ 					<button class="btn-cancel" @click="resetFilterModal">重置</button>
  					<button class="btn-confirm" @click="confirmFilter">确认筛选</button>
  				</view>
  			</view>
  		</view>
 
- 		<!-- 软键盘 -->
- 		<view v-if='isKeyBoardShow' class="keyboard-input">
- 			<view class="searchTerms">
- 				<view class="affirmArea" style="margin-left: 20px;font-size: 18px;display: flex;flex-direction: row;">
- 					<view v-show="mainSale.showQueryKeys.length">
- 						搜索词:
- 					</view>{{(mainSale.showQueryKeys).toUpperCase()}}
+ 		<!-- 右侧订单详情弹窗 -->
+ 		<view class="order-modal" v-show="showOrderModal" @click="closeOrderModal">
+ 			<view class="modal-content" :class="{ 'modal-show': showOrderModal }" @click.stop>
+ 				<!-- 弹窗头部 -->
+ 				<view class="modal-header">
+ 					<view class="modal-title">{{currentOrder.TYPE_NAME}}</view>
+ 					<view class="pickup-time">提货时间：{{ currentOrder.THDATE }}</view>
  				</view>
- 				<view class="inputArea"
- 					style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;  margin-left: -15px;">
- 					<view>
- 						{{mainSale.boardQueryKeys}}
+
+ 				<!-- 订单基础信息 -->
+ 				<view class="order-info">
+ 					<view class="info-row">
+ 						<text class="info-label">单号：</text>
+ 						<text class="info-value">{{ currentOrder.BILL }}</text>
  					</view>
- 					<view v-show="mainSale.boardQueryKeys.length" class="borderCursor"></view>
+ 					<view class="info-row">
+ 						<text class="info-label">提货门店：</text>
+ 						<text class="info-value">{{ currentOrder.TH_KH_NAME }}</text>
+ 					</view>
+ 					<view class="info-row">
+ 						<text class="info-label">顾客：</text>
+ 						<text class="info-value">{{ currentOrder.CUSTMNAME }}</text>
+ 					</view>
+ 					<view class="info-row">
+ 						<text class="info-label">手机号：</text>
+ 						<text class="info-value">{{ currentOrder.CUSTMPHONE }}</text>
+ 					</view>
+ 					<view class="info-row">
+ 						<text class="info-label">地址：</text>
+ 						<text class="info-value">{{ currentOrder.CUSTMADDRESS }}</text>
+ 					</view>
+ 					<view class="info-row">
+ 						<text class="info-label">下单时间：</text>
+ 						<text class="info-value">{{ currentOrder.SALETIME }}</text>
+ 					</view>
+ 					<view class="info-row">
+ 						<text class="info-label">下单门店：</text>
+ 						<text class="info-value">{{ currentOrder.XD_KH_NAME }}</text>
+ 					</view>
  				</view>
- 				<view class="deleteBoard" @click="mainSale.turnOffKeys">
- 					<image src="../../images/shouqi.png" mode="widthFix"></image>
+
+ 				<!-- 商品列表 -->
+ 				<view class="goods-list">
+ 					<view class="goods-item" v-for="(goods, index) in currentOrder.GOODS" :key="index">
+ 						<view class="goods-info">
+ 							<text class="goods-name">{{ goods.SP_NAME }}</text>
+ 							<text class="goods-spec"><text style="margin-right:60rpx;">
+ 									<image src="../../images/dx-bm.png"
+ 										style="width:32rpx;height:32rpx;vertical-align: bottom;margin-right:6rpx"
+ 										mode="widthFix"></image>{{ goods.SPID }}
+ 								</text> <text>
+ 									<image src="../../images/dx-dw.png"
+ 										style="width:32rpx;height:32rpx;vertical-align: bottom;margin-right:6rpx"
+ 										mode="widthFix"></image>{{ goods.SPECS }}
+ 								</text></text>
+ 						</view>
+ 						<view class="goods-price">
+ 							<text class="goods-qty">x{{ goods.QTY }}<text
+ 									style="color:#777777;font-size:28rpx;">/{{ goods.UNIT }}</text></text>
+ 							<text class="goods-amount">¥{{ goods.NET }}</text>
+ 						</view>
+ 					</view>
  				</view>
- 			</view>
 
- 			<view class="keyboard">
- 				<ul class="keys" v-for='(item,index) in mainSale.keyBoardList'>
- 					<li v-for='(_item,_index) in item.value' @click="mainSale.keyBoardClick(_item)">
- 						{{_item}}
- 					</li>
- 					<li class="enter" v-if="index===1" @click="mainSale.delQueryKeys">删除</li>
- 					<li class="enter" v-if="index===2" style="color: red;width: 190rpx; color:"
- 						@click="mainSale.clearQueryKeys">清空</li>
- 					<li class="enter" v-if="index===2" @click="mainSale.affirmQueryKeys"
- 						style="width: 190rpx; color: #127551;">搜索</li>
- 				</ul>
- 			</view>
+ 				<!-- 订单合计 -->
+ 				<view class="order-summary">
+ 					<view class="summary-row">
+ 						<text class="summary-label">总金额</text>
+ 						<text class="summary-value">¥{{ currentOrder.totalAmount }}</text>
+ 					</view>
+ 					<view class="summary-row">
+ 						<text class="summary-label">件数</text>
+ 						<text class="summary-value">x{{ currentOrder.totalQty }}</text>
+ 					</view>
+ 				</view>
 
- 			<view class="switchArea">
- 				分类：
- 				<switch :checked=mainSale.isDateClassify color="#1aa034" @change="mainSale.switchAreaChange" />
+ 				<!-- 底部关闭按钮 -->
+ 				<view class="modal-footer">
+ 					<view class="close-modal-btn" @click="closeOrderModal">关 闭</view>
+ 				</view>
  			</view>
  		</view>
+ 		<!-- 软键盘 -->
+ 		<KeyboardInput :isShow="isKeyBoardShow" @close="turnOffKeys" @confirm="handleKeyboardConfirm" />
+
+ 		<!-- 模拟扫码框 -->
+ 		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
  	</view>
  </template>
 
  <script>
  	var app = getApp();
- 	import Head from '@/pages/Home/Component/Head.vue';
+ 	import Head from '@/pages/Home/Component/YWHead.vue';
+ 	import NumberFormat from '@/components/NumberFormat/NumberFormat.vue';
+ 	import KeyboardInput from '@/components/KeyboardInput/KeyboardInput.vue';
+ 	import ScanModal from '@/components/ScanModal/ScanModal.vue'
  	import Req from '@/utils/request.js';
  	import common from '@/api/common.js';
  	import db from '@/utils/db/db_excute.js';
@@ -449,12 +456,61 @@
  	var that;
  	export default {
  		components: {
- 			Head
+ 			Head,
+ 			NumberFormat,
+ 			KeyboardInput,
+ 			ScanModal
  		},
  		data() {
  			return {
- 				mainSale: {},
+ 				BUSSINESS_NAME: '生产任务',
  				isKeyBoardShow: false,
+ 				searchType: 'store', // store 门店 good 商品
+ 				tabList: [{
+ 						label: "全部(个)",
+ 						key: "ALL",
+ 						value: 0,
+ 						active: true
+ 					},
+ 					{
+ 						label: "待接单(个)",
+ 						key: "DJD",
+ 						value: 0,
+ 						active: false
+ 					},
+ 					{
+ 						label: "待生产(个)",
+ 						key: "DSC",
+ 						value: 0,
+ 						active: false
+ 					},
+ 					{
+ 						label: "生产中(个)",
+ 						key: "SCZ",
+ 						value: "--",
+ 						active: false
+ 					},
+ 					{
+ 						label: "已入库(个)",
+ 						key: "YRK",
+ 						value: 0,
+ 						active: false
+ 					},
+ 					{
+ 						label: "已作废(个)",
+ 						key: "YZF",
+ 						value: 0,
+ 						active: false
+ 					},
+ 					{
+ 						label: "超时预警(个)",
+ 						key: "CSYJ",
+ 						value: 0,
+ 						active: false
+ 					}
+ 				],
+
+ 				mainSale: {},
  				showSign: false,
  				showSignOut: false,
  				signOutDate: [],
@@ -476,6 +532,7 @@
  				pickupData: [],
  				allChecked: false, // 全选状态
  				listData: [], // 筛选列表
+ 				_listData: [], // 筛选列表 原集合
  				urgentStats: {
  					completed: 0,
  					total: 0,
@@ -494,6 +551,7 @@
 
  				// 筛选弹窗相关数据
  				showFilterModal: false,
+ 				_filterForm: {},
  				// 筛选表单数据
  				filterForm: {
  					khid: "",
@@ -502,6 +560,7 @@
  					isDirect: false,
  					isEcommerce: false,
  					pickupType: '-1',
+ 					yn_toc: 'ALL',
  					arrivalDate: dateformat.getYMD(),
  					arrivalTime: '',
  					arrivalTimeId: '',
@@ -542,37 +601,19 @@
  				THKHDATA: [],
  				SPDATA: [],
 
- 				showDropdown_shop: false,
+ 				// 右侧弹窗数据
+ 				showOrderModal: false, // 弹窗显示状态
+ 				currentOrder: {},
 
+ 				showScanModal: false, // 扫码弹窗
+ 				showDropdown_shop: false,
  				showDropdown_goods: false,
+ 				filteredShopList: [], // 过滤后的 门店列表
+ 				filteredGoodsList: [], // 过滤后的 商品列表
  			};
  		},
  		computed: {
- 			filteredShopList() {
- 				if (!this.filterForm.shopName) {
- 					return this.THKHDATA;
- 				}
- 				const keyword = this.filterForm.shopName.trim();
- 				return this.THKHDATA.filter(item => {
- 					if (!item.ADDR && !item.KHID && !item.shopName) return false;
 
- 					const targetText = item.ADDR || item.shopName || item.KHID;
- 					return targetText.includes(keyword);
- 				});
- 			},
-
- 			filteredGoodsList() {
- 				if (!this.filterForm.goodsName) {
- 					return this.SPDATA;
- 				}
- 				const keyword = this.filterForm.goodsName.trim();
- 				return this.SPDATA.filter(item => {
- 					if (!item.SNAME && !item.SPID) return false;
-
- 					const targetText = item.SNAME || item.SPID;
- 					return targetText.includes(keyword);
- 				});
- 			}
  		},
  		components: {
  			Head,
@@ -588,6 +629,52 @@
  			}
  		},
  		methods: {
+ 			// 软键盘相关
+ 			handleKeyboardConfirm(query) {
+ 				const keyword = query.query.trim() // 搜索关键词
+ 				console.log("搜索值：", keyword);
+ 				// searchType:'store', // store 门店 good 商品
+ 				if (this.searchType == 'store') {
+ 					this.showDropdown_shop = true
+
+ 					if (!keyword) {
+ 						this.filteredShopList = this.THKHDATA;
+ 					}
+ 					this.filteredShopList = this.THKHDATA.filter(item => {
+ 						if (!item.SNAME && !item.PINYIN) return false;
+
+ 						// 匹配
+ 						const targetText = item.KHID || item.PINYIN.toUpperCase();
+ 						if (item.KHID.includes(keyword) || item.PINYIN.toUpperCase().includes(keyword))
+ 							return true;
+ 						else
+ 							return false;
+ 					});
+ 				}
+ 				if (this.searchType == 'good') {
+ 					this.showDropdown_goods = true
+
+ 					if (!keyword) {
+ 						this.filteredGoodsList = this.SPDATA;
+ 					}
+ 					this.filteredGoodsList = this.SPDATA.filter(item => {
+ 						if (!item.SPID && !item.PINYIN) return false;
+ 						// 匹配
+ 						if (item.SPID.includes(keyword) || item.PINYIN.toUpperCase().includes(keyword))
+ 							return true;
+ 						else
+ 							return false;
+ 					});
+ 				}
+ 			},
+ 			// 关闭键盘
+ 			turnOffKeys() {
+ 				this.isKeyBoardShow = false
+
+ 				this.showDropdown_shop = false
+ 				this.showDropdown_goods = false
+ 			},
+
  			// 新增：延迟关闭门店下拉列表
  			delayCloseShopDropdown() {
  				setTimeout(() => {
@@ -601,14 +688,27 @@
  					this.showDropdown_goods = false;
  				}, 200);
  			},
+ 			openOrderModal(item) {
+ 				this.showOrderModal = true;
+ 				// 禁止背景滚动
+ 				// document.body.style.overflow = 'hidden';
+ 				this.GetYWBHQHDetail(item);
+ 			},
 
+ 			// 关闭弹窗
+ 			closeOrderModal() {
+ 				this.showOrderModal = false;
+ 				this.currentOrder = {};
+ 				// 恢复背景滚动
+ 				// document.body.style.overflow = 'auto';
+ 			},
  			// 更新全选按钮状态
  			updateAllCheckedStatus() {
  				if (this.listData.length === 0) {
  					this.allChecked = false;
  					return;
  				}
- 				this.allChecked = this.listData.every(item => item.isChecked);
+ 				this.allChecked = this.listData.filter(item => item.BILL_STATUS == '1').every(item => item.isChecked);
  			},
 
  			// 全选/取消全选
@@ -623,14 +723,54 @@
  			},
  			// 切换任务勾选状态
  			toggleTaskChecked(index) {
- 				if (this.listData[index].BILL_STATUS == '1')
- 					this.listData[index].isChecked = !this.listData[index].isChecked;
+ 				// if (this.listData[index].BILL_STATUS == '1') {
+ 				let it = this.listData[index];
+ 				const check = it.isChecked;
+ 				const bill_yd = it.BILL_YD;
+ 				console.log("toggleTaskChecked:", it);
+ 				this.listData.map((r, i, arr) => {
+ 					if ((r.BILL_STATUS == '1' && r.BILL_YD && r.BILL_YD == bill_yd) || i == index) {
+ 						r.isChecked = !check;
+ 					}
+ 				})
+ 				// }
+ 			},
+ 			toggleActive(index, obj) {
+ 				this.tabList = this.tabList.map((item, i) => ({
+ 					...item,
+ 					active: i === index
+ 				}));
+ 				if (obj.key == "ALL") {
+ 					that.listData = that._listData;
+ 				}
+ 				if (obj.key == "SCZ") {
+ 					that.listData = [];
+ 				}
+ 				if (obj.key == "DJD") {
+ 					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_PRINT == 'N');
+ 				}
+ 				if (obj.key == "DSC") {
+ 					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N');
+ 				}
+ 				if (obj.key == "YRK") {
+ 					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'Y');
+ 				}
+ 				if (obj.key == "YZF") {
+ 					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '9');
+ 				}
+ 				if (obj.key == "CSYJ") {
+ 					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N' && dateformat
+ 						.isLessThanOneHour(r1.NOTE, 50));
+ 				}
  			},
  			handleSourceChange(e) {
  				this.filterForm.source = e.detail.value;
  			},
  			handlePickupChange(e) {
  				this.filterForm.pickupType = e.detail.value;
+ 			},
+ 			handleToCChange(e) {
+ 				this.filterForm.yn_toc = e.detail.value;
  			},
  			// 切换任务勾选状态
  			toggleTaskDone(type, index) {
@@ -645,7 +785,10 @@
  			onLoad: async function() {
  				that = this;
  				console.log("ywbhqh.onload");
- 				that.GetBHQHOrders(); //获取裱花单
+ 				// that.GetBHQHOrders(); //获取裱花单
+
+
+ 				that.filterTasks();
  				that.getTHTYPE(); //获取提货类型
  				that.getDHSJD(); //获取到货时间段
  				that.getKHDA(); //获取到货时间段
@@ -656,15 +799,16 @@
  			},
  			//数据库查询
  			GetBHQHOrders: function(t) {
+ 				console.log("123123");
  				let store = util.getStorage("store");
  				let data1 = {
  					khid: store.KHID,
  					gsid: store.GSID,
  					date: this.curDate,
  				};
- 				util.simpleModal("提示", JSON.stringify(data1));
+ 				// util.simpleModal("提示", JSON.stringify(data1));
  				_ywbhqh.GetBHQHOrders(data1, res => {
- 					util.simpleModal("提示1", "完成查询结果：" + res.data.substr(1, 50));
+ 					// util.simpleModal("提示1", "完成查询结果：" + res.data.substr(1, 50));
  					console.log("查询到的裱花请货数据：", res);
  					if (res.code) {
  						let data = JSON.parse(res.data);
@@ -763,20 +907,7 @@
  			},
  			//裱花出入库
  			BHQHInput: function(yn_rk, e, obj) {
- 				let store = util.getStorage("store");
- 				if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
- 					.CLIENT_STATUS != '1') {
- 					if (store.CLIENT_STATUS != '1') {
- 						util.simpleMsg("门店非营业状态，禁止操作！", "none");
- 					} else {
- 						util.simpleMsg("签到状态过期，请重新签到！", "none");
- 						store.OPENFLAG = 0;
- 						util.setStorage("store", store);
- 					}
- 					util.sleep(1500);
- 					uni.redirectTo({
- 						url: "/pages/Center/BHCenter"
- 					});
+ 				if (!common.CheckSign(1)) {
  					return;
  				}
  				let bills = "",
@@ -784,103 +915,169 @@
  				console.log("e", e);
  				if (yn_rk != "1")
  					tit = "作废";
- 				if (that.bhstep == 1) {
- 					if (!e) {
- 						let arr1 = that.urgentData.filter(r => r.done).map(r => r.bill);
- 						let arr2 = that.scheduledData.filter(r => r.done).map(r => r.bill);
- 						let arr3 = that.pickupData.filter(r => r.done).map(r => r.bill);
- 						let Arr = arr1.concat(arr2).concat(arr3);
- 						console.log("BHQHInput.Arr：", Arr);
- 						if (Arr.length <= 0) {
- 							util.simpleMsg("请选择要" + tit + "的单据！");
- 							return;
- 						}
- 						bills = Arr.join(',');
- 						tit += "这批裱花任务";
- 					} else {
- 						if (obj && obj.finish == 'Y') {
- 							util.simpleMsg("该单据已生产暂无法入库！");
- 							return;
- 						}
- 						bills = e;
- 						tit += "裱花任务：" + e;
+ 				if (!e) {
+ 					let Arr = that.listData.filter(r => r.isChecked).map(r => r.BILL);
+ 					if (Arr.length <= 0) {
+ 						util.simpleMsg("请选择要" + tit + "的单据！");
+ 						return;
  					}
+ 					bills = Arr.join(',');
+ 					tit += "这批裱花任务";
  				} else {
- 					if (!e) {
- 						let Arr = that.listData.filter(r => r.isChecked).map(r => r.BILL);
- 						if (Arr.length <= 0) {
- 							util.simpleMsg("请选择要" + tit + "的单据！");
- 							return;
- 						}
- 						bills = Arr.join(',');
- 						tit += "这批裱花任务";
- 					} else {
- 						bills = e;
- 						tit += "裱花任务：" + e;
- 					}
+ 					bills = e;
+ 					tit += "裱花任务：" + e;
  				}
+ 				if (obj)
+ 					that._BHQHInput(tit, yn_rk, bills);
+ 				else
+ 					util.simpleModal("提示", "是否" + tit + "？", (conf) => {
+ 						if (conf) {
+ 							that._BHQHInput(tit, yn_rk, bills);
+ 						}
+ 					})
+ 			},
+ 			//裱花任务详情
+ 			GetYWBHQHDetail: function(e) {
+ 				if (!e.BILL_YD) {
+ 					this.currentOrder = {};
+ 					util.simpleMsg("暂无预定单详情！", true);
+ 					return;
+ 				}
+ 				let data1 = {
+ 					bill: e.BILL_YD
+ 				};
+ 				_ywbhqh.GetYWBHQHDetail(data1, res => {
+ 					console.log("GetYWBHQHDetail：", res);
+ 					if (!res.code) {
+ 						this.currentOrder = {};
+ 						util.simpleMsg(res.msg, true);
+ 						return;
+ 					}
+ 					let data = JSON.parse(res.data);
+ 					let tqty = 0,
+ 						tnet = 0;
+ 					let spArr = data.map(r => {
+ 						tqty += r.QTY;
+ 						tnet += r.NET;
+ 						return {
+ 							SPID: r.SPID,
+ 							SP_NAME: r.SP_NAME,
+ 							QTY: r.QTY,
+ 							UNIT: r.UNIT,
+ 							SPECS: r.SPECS,
+ 							NET: r.NET
+ 						}
+ 					})
+ 					let detail = data[0];
+ 					detail.GOODS = spArr;
+ 					detail.totalQty = tqty;
+ 					detail.totalAmount = tnet;
+ 					this.currentOrder = detail;
+ 					console.log("详情结果：", detail);
+ 				})
+ 			},
 
- 				util.simpleModal("提示", "是否" + tit + "？", (conf) => {
+ 			_BHQHInput: function(tit, yn_rk, bills) {
+ 				let store = util.getStorage("store");
+ 				let data1 = {
+ 					khid: store.KHID,
+ 					gsid: store.GSID,
+ 					posid: store.POSID,
+ 					ryid: store.RYID,
+ 					ryname: store.RYNAME,
+ 					sfrk: yn_rk,
+ 					billNos: bills
+ 				};
+ 				_ywbhqh.BHQHInput(data1, res => {
+ 					console.log("BHQHInput：", res);
+ 					if (res.code)
+ 						util.simpleMsg(tit + "操作成功！");
+ 					else
+ 						util.simpleMsg(res.msg, true);
+ 					setTimeout(() => {
+ 						this.filterTasks(); //刷新列表
+ 					}, 1500);
+ 				})
+ 			},
+ 			//裱花任务打印
+ 			BHQHOrderPrint: function() {
+ 				let Arr = that.listData.filter(r => r.isChecked); //勾选的单
+ 				let Arr1 = that.listData.filter(r => !r.isChecked && r.BILL_STATUS == '1'); //未勾选的单
+ 				if (Arr.length <= 0) {
+ 					util.simpleMsg("请选择要打印的单据！");
+ 					return;
+ 				}
+ 				let sameIds = [...new Set(Arr.filter(a => Arr1.some(b => a.BILL_YD && b.BILL_YD && b.BILL_YD === a
+ 					.BILL_YD)).map(item => item.BILL_YD))];
+ 				if (sameIds.length > 0) {
+ 					util.simpleMsg("请勾选相同预定单的裱花任务：" + sameIds);
+ 					return;
+ 				}
+ 				let date_dh = that.listData[0].DATE_DH;
+ 				let bills = Arr.map(r => r.BILL).join(',');
+ 				let store = util.getStorage("store");
+ 				util.simpleModal("提示", "是否要打印这批裱花任务？", (conf) => {
  					if (conf) {
  						let data1 = {
- 							khid: store.KHID,
- 							gsid: store.GSID,
- 							posid: store.POSID,
- 							ryid: store.RYID,
- 							ryname: store.RYNAME,
- 							sfrk: yn_rk,
- 							billNos: bills
+ 							khid_bh: store.KHID,
+ 							date_dh,
+ 							bills
  						};
- 						_ywbhqh.BHQHInput(data1, res => {
- 							console.log("BHQHInput：", res);
+ 						_ywbhqh.BHQHOrderPrint(data1, res => {
+ 							console.log("BHQHOrderPrint：", res);
  							if (res.code)
- 								util.simpleMsg(tit + "操作成功！");
+ 								util.simpleModal("提示", "裱花任务打印成功，" + res.msg);
  							else
  								util.simpleMsg(res.msg, true);
  							setTimeout(() => {
- 								if (that.bhstep == 1)
- 									that.GetBHQHOrders(); //刷新列表
- 								else
- 									this.filterTasks(); //刷新列表
+ 								this.filterTasks(); //刷新列表
  							}, 1500);
  						})
  					}
  				})
  			},
- 			//扫码入库
- 			ScanInput() {
- 				let store = util.getStorage("store");
- 				if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
- 					.CLIENT_STATUS != '1') {
- 					if (store.CLIENT_STATUS != '1') {
- 						util.simpleMsg("门店非营业状态，禁止操作！", "none");
- 					} else {
- 						util.simpleMsg("签到状态过期，请重新签到！", "none");
- 						store.OPENFLAG = 0;
- 						util.setStorage("store", store);
- 					}
- 					util.sleep(1500);
- 					uni.redirectTo({
- 						url: "/pages/Center/BHCenter"
- 					});
- 					return;
- 				}
- 				uni.scanCode({
- 					success: res => {
- 						console.log("[ScanInput.success]扫码结果:", res);
- 						if (res.result) //扫码内容
- 						{
- 							that.BHQHInput("1", res.result);
- 						} else {
- 							util.simpleMsg("未识别到有效单号！");
- 						}
- 					},
- 					fail: err => {
- 						console.log("[ScanInput.fail]扫码异常:", err);
- 					}
- 				})
+ 			// 扫码入库 / 扫码作废
+ 			ScanInput(type) {
+ 				// if (!common.CheckSign(1)) return
+ 				this.scanType = type;
+ 				this.showScanModal = true;
  			},
- 			//获取配送类型
+
+ 			// 接收扫码/输入结果
+ 			handleScanResult(code) {
+ 				this.BHQHInput(this.scanType, code, true);
+ 			},
+ 			// ScanInput(e) {
+ 			// 	if (!common.CheckSign(1)) {
+ 			// 		return;
+ 			// 	}
+ 			// 	util.simpleModal("提示", "扫码录入裱花任务！", (bo, res) => {
+ 			// 		console.log("扫码res：", res);
+ 			// 		if (bo) {
+ 			// 			if (res.content) //扫码内容
+ 			// 			{
+ 			// 				that.BHQHInput(e, res.content.trim());
+ 			// 			} else {
+ 			// 				util.simpleMsg("未识别到有效单号！");
+ 			// 			}
+ 			// 		}
+ 			// 	}, true);
+ 			// 	// uni.scanCode({
+ 			// 	// 	success: res => {
+ 			// 	// 		console.log("[ScanInput.success]扫码结果:", res);
+ 			// 	// 		if (res.result) //扫码内容
+ 			// 	// 		{
+ 			// 	// 			that.BHQHInput("1", res.result);
+ 			// 	// 		} else {
+ 			// 	// 			util.simpleMsg("未识别到有效单号！");
+ 			// 	// 		}
+ 			// 	// 	},
+ 			// 	// 	fail: err => {
+ 			// 	// 		console.log("[ScanInput.fail]扫码异常:", err);
+ 			// 	// 	}
+ 			// 	// })
+ 			// },
+ 			// //获取配送类型
  			getTHTYPE: function() {
  				that.pickupOptions = [{
  					value: "-1",
@@ -940,17 +1137,19 @@
  					} else {
  						that.SPDATA = [];
  					}
- 				});
+ 				}, "N", store.KHZID, store.DQID);
  			},
  			// ========== 新增筛选弹窗相关方法 ==========
  			// 打开筛选弹窗
  			openFilterModal() {
  				this.showFilterModal = true;
+ 				if (that._filterForm && JSON.stringify(that._filterForm) != "{}") //旧条件赋值
+ 					that.filterForm = that._filterForm;
  				this.$refs.bhHead.dropout = false;
  			},
- 			// 关闭筛选弹窗
- 			closeFilterModal() {
- 				this.showFilterModal = false;
+
+ 			//条件重置
+ 			resetFilterModal() {
  				this.filterForm = {
  					khid: "",
  					source: '门店',
@@ -958,6 +1157,7 @@
  					isDirect: false,
  					isEcommerce: false,
  					pickupType: '-1',
+ 					yn_toc: 'ALL',
  					arrivalDate: dateformat.getYMD(),
  					arrivalTime: '',
  					arrivalTimeId: '',
@@ -967,6 +1167,11 @@
  					goodsId: '',
  					goodsName: ''
  				};
+ 			},
+ 			// 关闭筛选弹窗
+ 			closeFilterModal() {
+ 				this.showFilterModal = false;
+ 				this.isKeyBoardShow = false;
  			},
  			// 日期选择
  			onDateChange(e) {
@@ -984,13 +1189,24 @@
  				this.filterForm.shopId = item.KHID;
  				this.filterForm.shopName = item.ADDR;
  				this.showDropdown_shop = false;
+ 				this.isKeyBoardShow = false;
  			},
  			// 选择商品
  			selectGoods(item) {
  				this.filterForm.goodsId = item.SPID;
  				this.filterForm.goodsName = item.SNAME;
  				this.showDropdown_goods = false;
+ 				this.isKeyBoardShow = false;
  			},
+ 			clearShop() {
+ 				this.filterForm.shopId = '';
+ 				this.filterForm.shopName = '';
+ 			},
+ 			clearGoods() {
+ 				this.filterForm.goodsId = '';
+ 				this.filterForm.goodsName = '';
+ 			},
+
  			// 确认筛选
  			confirmFilter() {
  				console.log('筛选条件：', this.filterForm);
@@ -1017,13 +1233,65 @@
  							r.isChecked = false;
  						})
  						console.log("GetBHQHOrdersByParam查询到的裱花请货数据data：", data);
+ 						that._listData = JSON.parse(JSON.stringify(data));
  						that.listData = data;
  					} else {
+
+ 						that._listData = [];
  						that.listData = [];
+
  						util.simpleMsg("暂无更多数据!", true);
  					}
+ 					that._filterForm = that.filterForm;
+ 					that.filterData(that.listData);
+ 					that.tabList.map((r, i, arr) => {
+ 						r.active = (i == 0 ? true : false);
+ 					})
  				})
  			},
+ 			//数据二次筛选
+ 			filterData(data) {
+ 				if (data && data.length > 0) {
+ 					that.tabList.map(r => {
+ 						if (r.key == 'ALL')
+ 							r.value = data.length;
+ 						if (r.key == 'DJD') {
+ 							let num = data.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_PRINT == 'N').reduce((sum,
+ 								it) => sum + it.ZQTY_SQ, 0);
+ 							r.value = num;
+ 						}
+ 						if (r.key == 'DSC') {
+ 							let num = data.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N').reduce((sum,
+ 									it) =>
+ 								sum + it.ZQTY_SQ, 0);
+ 							r.value = num;
+ 						}
+ 						if (r.key == 'YRK') {
+ 							let num = data.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'Y').reduce((sum,
+ 									it) =>
+ 								sum + it.ZQTY_SQ, 0);
+ 							r.value = num;
+ 						}
+ 						if (r.key == 'YZF') {
+ 							let num = data.filter(r1 => r1.BILL_STATUS == '9').reduce((sum, it) => sum + it
+ 								.ZQTY_SQ,
+ 								0);
+ 							r.value = num;
+ 						}
+ 						if (r.key == 'CSYJ') {
+ 							let num = data.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N' && dateformat
+ 								.isLessThanOneHour(r1.NOTE, 50)).reduce((sum, it) =>
+ 								sum + it.ZQTY_SQ, 0);
+ 							r.value = num;
+ 						}
+ 					})
+ 				} else {
+ 					that.tabList.map(r => {
+ 						r.value = 0;
+ 					})
+ 				}
+ 			},
+
  			// 更新任务统计数据
  			updateTaskStats() {
  				// 重新计算完成数和进度
@@ -1043,8 +1311,13 @@
  				// this.pickupStats.progress = this.pickupData.length > 0 ?
  				// 	Math.round((this.pickupStats.completed / this.pickupStats.total) * 100) : 0;
  			},
- 			showBorad() {
- 				this.isKeyBoardShow = true;
+ 			showBorad(searchType) {
+ 				this.searchType = searchType
+ 				this.isKeyBoardShow = !this.isKeyBoardShow;
+ 				if (!this.isKeyBoardShow) {
+ 					this.showDropdown_shop = false
+ 					this.showDropdown_goods = false
+ 				}
  			},
  			// 初始化滚动处理器
  			initScrollHandler() {
@@ -1180,6 +1453,169 @@
  	}
  </script>
  <style scoped>
+ 	@font-face {
+ 		font-family: 'Bahnschrift';
+ 		src: url('../../images/imgbh/bahnschrift.ttf') format('truetype');
+ 		/* ttf格式用truetype */
+ 		font-weight: normal;
+ 		/* 常规字重 */
+ 		font-style: normal;
+ 	}
+
+ 	.btns-list {
+ 		display: flex;
+ 		justify-content: space-between;
+ 		align-items: center;
+ 		border-top: 4rpx dashed rgba(147, 192, 151, 0.35);
+ 		padding-top: 20rpx;
+ 		margin-bottom: 20rpx;
+ 	}
+
+ 	.btns-list .btns-groups {
+ 		display: flex;
+ 		align-items: center;
+ 		gap: 24rpx;
+ 	}
+
+ 	.btns-groups .btn1 {
+ 		padding: 20rpx 32rpx;
+ 		box-sizing: border-box;
+ 		background: #F3F3F3;
+ 		border-radius: 12rpx;
+
+ 		font-weight: 700;
+ 		font-size: 36rpx;
+ 		color: #333333;
+ 	}
+
+ 	.btns-groups .btn2 {
+ 		padding: 20rpx 32rpx;
+ 		box-sizing: border-box;
+ 		background: #006B44;
+ 		border-radius: 12rpx;
+
+ 		font-weight: 700;
+ 		font-size: 36rpx;
+ 		color: #fff;
+ 	}
+
+ 	.filter {
+ 		padding: 20rpx 32rpx;
+ 		box-sizing: border-box;
+ 		background: #E8F5E9;
+ 		border-radius: 12rpx;
+ 		border: 2rpx solid #CFE2D3;
+ 		font-size: 24rpx;
+
+ 		display: flex;
+ 		justify-content: center;
+ 		align-items: center;
+
+
+ 		font-family: PingFang SC, PingFang SC;
+ 		font-weight: 700;
+ 		font-size: 36rpx;
+ 		color: #006B44;
+ 	}
+
+ 	.filter image {
+ 		width: 30rpx;
+ 		height: 30rpx;
+ 		margin-right: 6rpx;
+ 	}
+
+ 	/* 整体容器 */
+ 	.status-tabs {
+ 		width: 100%;
+ 		background: #F5F7F6;
+ 		border-top-left-radius: 30rpx;
+ 		border-top-right-radius: 30rpx;
+ 		display: flex;
+ 		align-items: center;
+ 	}
+
+ 	/* 单个Tab项 */
+ 	.tab-item {
+ 		flex: 1;
+ 		display: flex;
+ 		flex-direction: column;
+ 		align-items: center;
+ 		justify-content: center;
+ 		padding: 32rpx 0;
+ 		position: relative;
+ 	}
+
+ 	/* 最后一项去掉右边框 */
+ 	.tab-item:last-child {
+ 		border-right: none;
+ 	}
+
+ 	/* 选中态样式 */
+ 	.tab-item.active {
+ 		/* background: #E6F7EF; */
+ 		/* border-radius: 24rpx; */
+ 		color: #006637;
+
+
+
+ 	}
+
+ 	/* Tab标签文字 */
+ 	.tab-label {
+ 		font-size: 40rpx;
+ 		font-weight: 500;
+ 		color: #536961;
+ 		margin-bottom: 24rpx;
+ 		position: relative;
+ 	}
+
+ 	.tab-item.active .tab-label {
+ 		color: #006637;
+ 		font-weight: 600;
+ 		font-size: 46rpx;
+ 	}
+
+ 	/* Tab数值 */
+ 	.tab-value {
+ 		font-size: 64rpx;
+ 		font-weight: 700;
+ 		color: #333333;
+ 		font-family: 'Bahnschrift', sans-serif;
+ 		/* 用你引入的数字字体 */
+ 	}
+
+ 	.tab-item.active .tab-value {
+ 		color: #006637;
+ 		font-size: 66rpx;
+ 	}
+
+ 	/* 非选中态底部绿色虚线 */
+ 	.tab-dashed {
+ 		position: absolute;
+ 		bottom: -10rpx;
+ 		left: 50%;
+ 		transform: translateX(-50%);
+ 		width: 44%;
+ 		height: 4rpx;
+ 		background: repeating-linear-gradient(to right,
+ 				#42B14B,
+ 				#42B14B 6rpx,
+ 				transparent 6rpx,
+ 				transparent 12rpx);
+ 	}
+
+ 	.tab-split-line {
+ 		position: absolute;
+ 		right: 0;
+ 		top: 50%;
+ 		height: 40%;
+ 		width: 0.5px;
+ 		background-color: #E5E5E5;
+ 		transform: translateY(-50%);
+ 	}
+
+
+
  	page-body,
  	page-refresh,
  	page {
@@ -1201,9 +1637,14 @@
  	.centre {
  		width: 100%;
  		height: 100vh;
- 		/* position: relative; */
+ 		position: relative;
  		position: fixed;
  		top: 0;
+ 		left: 0;
+ 		background-image: url('../../images/chushihua.png');
+ 		background-size: cover;
+ 		background-repeat: no-repeat;
+ 		background-position: left top;
  	}
 
  	.centre .bg {
@@ -1218,7 +1659,7 @@
  		position: relative;
  		z-index: 99;
  		width: 100%;
- 		height: 84%;
+ 		height: 88vh;
  		padding: 1% 2% 2%;
  		display: flex;
  		gap: 20rpx;
@@ -1311,8 +1752,8 @@
 
  	/* 勾选框样式 */
  	.task-checkbox {
- 		width: 32rpx;
- 		height: 32rpx;
+ 		width: 36rpx;
+ 		height: 36rpx;
  		border-radius: 50%;
  		display: flex;
  		align-items: center;
@@ -1490,15 +1931,18 @@
  	}
 
  	.filter-content {
- 		width: 68%;
+ 		position: absolute;
+
+
+ 		width: 1400rpx;
  		max-width: 750rpx;
- 		height: 880rpx;
+ 		height: 950rpx;
  		background-color: #fff;
  		border-radius: 16rpx;
  		padding: 32rpx;
  		/* overflow-y: auto; */
  		box-sizing: border-box;
- 		position: relative;
+ 		/* position: relative; */
 
  		background-image: url('../../images/imgbh/tanc-bg@1x.png');
  		background-size: 100% 274rpx;
@@ -1661,143 +2105,6 @@
  	}
 
 
- 	/* 软键盘 */
- 	.keyboard-input {
- 		z-index: 999;
- 		background-color: #fff;
- 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
- 		border-radius: 22px;
- 		width: 1600rpx;
- 		padding: 0 30rpx 30rpx;
- 		position: absolute;
- 		bottom: 200rpx;
- 		right: 196rpx;
- 		padding-bottom: 40rpx;
- 		animation: keyboard 0.5s ease;
- 		-webkit-animation: keyboard 0.5s ease;
-
- 	}
-
- 	@keyframes keyboard {
- 		0% {
- 			transform: scale(0);
- 			/* right: -10%; */
- 			/* width: 0; */
- 		}
-
- 		100% {
- 			transform: scale(1);
- 			/* width: 810px; */
- 		}
- 	}
-
-
- 	.keyboard {
- 		user-select: none;
- 		cursor: pointer;
- 		padding: 10rpx 0 40rpx;
- 	}
-
- 	.keyboard .keys {
- 		display: flex;
- 		list-style: none;
- 		margin: 0 0 0 -33rpx;
- 	}
-
- 	.keyboard li {
- 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
- 		width: 120rpx;
- 		height: 120rpx;
- 		font-size: 36rpx;
- 		margin: 18rpx;
- 		background-color: #f2f2f2;
- 		border-radius: 30rpx;
- 		text-align: center;
- 		line-height: 120rpx;
- 		transition: all 0.25s;
- 	}
-
- 	.keyboard li:active {
- 		box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
- 		color: rgb(12, 164, 190);
- 		text-shadow: 0 0 15px #57c1f1;
- 	}
-
- 	.searchTerms {
- 		font-size: 36rpx;
- 		font-weight: 700;
- 		color: gray;
- 		width: 100%;
- 		height: 70rpx;
- 		display: flex;
- 		justify-content: space-between;
- 		flex-direction: row;
- 		padding-top: 20rpx;
- 	}
-
- 	.searchTerms image {
- 		margin-top: 20rpx;
- 		width: 40rpx;
- 		height: 40rpx;
- 	}
-
- 	.switchArea {
- 		font-size: 36rpx;
- 		font-weight: 600;
- 		color: gray;
- 		position: absolute;
- 		/* background-color: #fff; */
- 		top: 8rpx;
- 		padding: 6px;
- 		right: 142px;
- 		border-radius: 8px;
- 		display: flex;
- 		align-items: center;
- 		flex-direction: row;
- 		/* box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3); */
- 	}
-
- 	.switchArea switch .switch-input {
- 		height: 56rpx;
- 	}
-
- 	.deleteBoard {
- 		width: 26px;
- 		margin-right: 27px;
- 		height: 26px;
- 	}
-
- 	.borderCursor {
- 		position: relative;
- 		color: gray;
- 		height: 13px;
- 		width: 2px;
- 		margin-left: 2px;
- 		margin-top: 5px;
- 	}
-
- 	.borderCursor:after {
- 		position: absolute;
- 		content: '';
- 		display: inline-block;
- 		width: 2px;
- 		height: 18px;
- 		top: 50%;
- 		transform: translateY(-50%);
- 		animation: blink 1.2s infinite steps(1, start);
- 	}
-
- 	@keyframes blink {
-
- 		0%,
- 		100% {
- 			background-color: #000;
- 		}
-
- 		50% {
- 			background-color: transparent;
- 		}
- 	}
 
  	.component-box {
  		position: absolute;
@@ -1840,11 +2147,10 @@
  	/* 列表页面样式 */
  	.filter-result-page {
  		width: 100%;
- 		padding: 40rpx;
+ 		height: 100%;
  		box-sizing: border-box;
  		background: #FCFDFD;
  		border-radius: 40rpx;
- 		overflow: auto;
  		position: relative;
 
 
@@ -1904,6 +2210,11 @@
 
  	}
 
+ 	.page-list {
+ 		padding: 20rpx;
+ 		height: 100%;
+ 	}
+
  	/* 表格容器 - 负责滚动 */
  	.table-container {
  		flex: 1;
@@ -1911,6 +2222,9 @@
  		/* 纵向滚动 */
  		overflow-x: auto;
  		/* 横向滚动 */
+
+ 		height: 78%;
+
  		width: 100%;
  		position: relative;
  		touch-action: pan-x pan-y;
@@ -1923,11 +2237,53 @@
  		/* 防止滚动条导致容器宽度跳动 */
  	}
 
+ 	.fixed-col1 {
+ 		position: sticky;
+ 		left: 0rpx !important;
+ 		min-width: 36rpx;
+ 		z-index: 10 !important;
+ 	}
+
+ 	.fixed-col2 {
+ 		position: sticky;
+ 		left: 80rpx !important;
+ 		min-width: 54rpx;
+ 		z-index: 11 !important;
+ 	}
+
+ 	.fixed-col3 {
+ 		position: sticky;
+ 		left: 200rpx !important;
+ 		min-width: 320rpx;
+ 		z-index: 12 !important;
+ 		text-align: left;
+ 	}
+
+ 	.fixed-tdd {
+ 		position: relative;
+ 		display: inline-flex;
+ 		align-items: baseline
+ 	}
+
+ 	.fixed-tdd .tab-dashed {
+ 		position: absolute;
+ 		bottom: -10rpx;
+ 		left: 50%;
+ 		transform: translateX(-50%);
+ 		width: 74%;
+ 		height: 4rpx;
+ 		background: repeating-linear-gradient(to right,
+ 				#42B14B,
+ 				#42B14B 6rpx,
+ 				transparent 6rpx,
+ 				transparent 12rpx);
+ 	}
+
  	.table-scroll-x {
  		width: 100%;
  		height: 100%;
  		overflow-x: auto;
- 		overflow-y: hidden;
+ 		overflow-y: auto;
  		-webkit-overflow-scrolling: touch;
  		position: relative;
  		white-space: nowrap;
@@ -1936,8 +2292,7 @@
  	/* 纵向滚动层 - 负责纵向滚动 */
  	.table-scroll-y {
  		height: 100%;
- 		overflow-y: auto;
- 		overflow-x: hidden;
+
  		-webkit-overflow-scrolling: touch;
  		position: relative;
  		display: inline-block;
@@ -1950,7 +2305,7 @@
  		position: sticky;
  		top: -2rpx;
  		/* table的sticky定位要设top:0 */
- 		z-index: 2;
+ 		z-index: 15;
  	}
 
  	/* 表头单元格 */
@@ -1961,10 +2316,17 @@
  		z-index: 10;
  		padding: 20rpx 20rpx;
  		text-align: center;
- 		font-size: 26rpx;
- 		color: #555555;
+ 		font-size: 40rpx;
+ 		color: #333;
  		white-space: nowrap;
+ 		font-weight: 400;
  	}
+
+ 	.table-header .th {
+ 		z-index: 14 !important;
+ 	}
+
+
 
  	/* 确保 sticky 在浏览器中正常工作 */
  	/* 针对不同浏览器的兼容性写法 */
@@ -1983,22 +2345,31 @@
  	}
 
  	/* 偶数行背景色 */
- 	.tr-even {
- 		background-color: #F0F5F4;
+ 	.tr-even td {
+ 		background-color: #F8F8F8;
+ 	}
+
+ 	.tr-checked {
+ 		background-color: #E7F0EA;
  	}
 
  	/* 表体单元格 */
  	tbody td {
  		padding: 20rpx 20rpx;
  		text-align: center;
- 		font-size: 26rpx;
+ 		font-size: 40rpx;
  		color: #111111;
  		white-space: nowrap;
+ 		font-weight: bold;
  		/* 禁止文字换行 */
  		overflow: hidden;
  		/* 超长内容隐藏 */
  		text-overflow: ellipsis;
  		/* 超长显示省略号 */
+ 		position: relative;
+ 		background-color: #FFF;
+
+
  	}
 
 
@@ -2031,5 +2402,261 @@
  		left: 0;
  		bottom: 0;
  		right: 0;
+ 	}
+
+
+ 	/* 隐藏所有滚动容器的滚动条 - 通用方案 */
+ 	::-webkit-scrollbar {
+ 		width: 0 !important;
+ 		/* 纵向滚动条宽度设为0 */
+ 		height: 0 !important;
+ 		/* 横向滚动条高度设为0 */
+ 		display: none !important;
+ 		/* 直接隐藏滚动条 */
+ 	}
+
+ 	/* 针对表格滚动容器单独处理（增强兼容性） */
+ 	.table-container::-webkit-scrollbar,
+ 	.table-scroll-x::-webkit-scrollbar,
+ 	.table-scroll-y::-webkit-scrollbar {
+ 		display: none;
+ 		width: 0;
+ 		height: 0;
+ 	}
+
+ 	/* 兼容非webkit内核（如Firefox） */
+ 	.table-container,
+ 	.table-scroll-x,
+ 	.table-scroll-y {
+ 		scrollbar-width: none;
+ 		/* Firefox隐藏滚动条 */
+ 		-ms-overflow-style: none;
+ 		/* IE/Edge隐藏滚动条 */
+ 	}
+
+ 	/* 页面整体滚动条隐藏（可选） */
+ 	page,
+ 	.centre,
+ 	.tranlist {
+ 		-ms-overflow-style: none;
+ 		scrollbar-width: none;
+ 	}
+
+ 	page::-webkit-scrollbar,
+ 	.centre::-webkit-scrollbar,
+ 	.tranlist::-webkit-scrollbar {
+ 		display: none;
+ 	}
+
+
+ 	/* 右侧弹窗遮罩层 */
+ 	.order-modal {
+ 		position: fixed;
+ 		top: 0;
+ 		left: 0;
+ 		width: 100%;
+ 		height: 100%;
+ 		background-color: rgba(0, 0, 0, 0.5);
+ 		z-index: 999999;
+ 		display: flex;
+ 		justify-content: flex-end;
+ 		align-items: stretch;
+ 	}
+
+ 	/* 弹窗主体 */
+ 	.modal-content {
+ 		width: 40vw;
+ 		height: 100%;
+ 		background-color: #fff;
+ 		transform: translateX(100%);
+ 		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+ 		display: flex;
+ 		flex-direction: column;
+ 		overflow-y: auto;
+ 		-webkit-overflow-scrolling: touch;
+
+ 		display: flex;
+ 		flex-direction: column;
+ 	}
+
+ 	/* 弹窗显示动效 */
+ 	.modal-show {
+ 		transform: translateX(0);
+ 	}
+
+ 	/* 弹窗头部 */
+ 	.modal-header {
+ 		padding: 40rpx 40rpx 0;
+ 		position: relative;
+ 		display: flex;
+ 		justify-content: space-between;
+ 		align-items: center;
+ 		flex-wrap: wrap;
+ 		box-sizing: border-box;
+ 	}
+
+ 	/* 绿色竖线图标 */
+ 	.modal-title::before {
+ 		content: '';
+ 		width: 10rpx;
+ 		height: 36rpx;
+ 		background-color: #42B14B;
+ 		border-radius: 2rpx;
+ 		margin-right: 16rpx;
+ 		flex-shrink: 0;
+ 		position: absolute;
+ 		top: 10rpx;
+ 		left: -16rpx;
+ 	}
+
+ 	/* 标题文字 */
+ 	.modal-title {
+ 		font-size: 40rpx;
+ 		font-weight: 700;
+ 		color: #111111;
+ 		letter-spacing: 2rpx;
+ 		position: relative;
+ 		left: 16rpx;
+ 	}
+
+ 	.pickup-time {
+ 		font-size: 32rpx;
+ 		color: #42B14B;
+ 		font-weight: 600;
+ 	}
+
+ 	.close-btn {
+ 		width: 56rpx;
+ 		height: 56rpx;
+ 		position: absolute;
+ 		top: 32rpx;
+ 		right: 32rpx;
+ 	}
+
+ 	/* 订单基础信息 */
+ 	.order-info {
+ 		padding: 40rpx;
+ 		border-bottom: 1rpx solid #DBE1D9;
+ 	}
+
+ 	.info-row {
+ 		display: flex;
+ 		margin-bottom: 16rpx;
+ 		line-height: 1.5;
+ 	}
+
+ 	.info-label {
+ 		font-size: 28rpx;
+ 		color: #777777;
+ 		min-width: 160rpx;
+ 	}
+
+ 	.info-value {
+ 		font-size: 28rpx;
+ 		color: #111111;
+ 		flex: 1;
+ 		white-space: pre-wrap;
+ 		word-break: break-all;
+ 	}
+
+ 	/* 商品列表 */
+ 	.goods-list {
+ 		padding: 40rpx;
+ 		box-sizing: border-box;
+ 		border-bottom: 1rpx solid #DBE1D9;
+ 		flex: 1;
+ 		overflow-y: auto;
+ 	}
+
+ 	.goods-item {
+ 		display: flex;
+ 		justify-content: space-between;
+ 		align-items: flex-start;
+ 		margin-bottom: 32rpx;
+ 	}
+
+ 	.goods-item:last-child {
+ 		margin-bottom: 0;
+ 	}
+
+ 	.goods-info {
+ 		display: flex;
+ 		flex-direction: column;
+ 		gap: 8rpx;
+ 	}
+
+ 	.goods-name {
+ 		font-size: 32rpx;
+ 		font-weight: 700;
+ 		color: #111111;
+ 	}
+
+ 	.goods-spec {
+ 		font-size: 26rpx;
+ 		color: #777777;
+ 	}
+
+ 	.goods-price {
+ 		display: flex;
+ 		flex-direction: column;
+ 		align-items: flex-end;
+ 		gap: 8rpx;
+ 	}
+
+ 	.goods-qty {
+ 		font-size: 32rpx;
+ 		color: #111111;
+ 		font-weight: bold;
+ 	}
+
+ 	.goods-amount {
+ 		font-size: 32rpx;
+ 		font-weight: 700;
+ 		color: #111111;
+ 	}
+
+ 	/* 订单合计 */
+ 	.order-summary {
+ 		padding: 40rpx;
+ 		border-bottom: 2rpx solid #f0f0f0;
+ 	}
+
+ 	.summary-row {
+ 		display: flex;
+ 		justify-content: space-between;
+ 		align-items: center;
+ 		margin-bottom: 16rpx;
+ 	}
+
+ 	.summary-row:last-child {
+ 		margin-bottom: 0;
+ 	}
+
+ 	.summary-label {
+ 		font-size: 32rpx;
+ 		color: #333;
+ 	}
+
+ 	.summary-value {
+ 		font-size: 32rpx;
+ 		color: #111111;
+ 		font-weight: 700;
+ 	}
+
+ 	/* 弹窗底部 */
+ 	.modal-footer {
+ 		padding: 40rpx;
+ 	}
+
+ 	.close-modal-btn {
+ 		width: 100%;
+ 		height: 88rpx;
+ 		line-height: 88rpx;
+ 		background: #EEEEEE;
+ 		border-radius: 16rpx;
+ 		text-align: center;
+ 		font-size: 32rpx;
+ 		font-weight: 700;
+ 		color: #333;
  	}
  </style>

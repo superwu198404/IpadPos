@@ -107,6 +107,13 @@
 			AppStore_DownLoad: "https://apps.apple.com/cn/app/", //App Store下载地址
 		},
 		onLaunch: async function() {
+			uni.getStorageInfo({
+				complete: (res) => {
+
+					console.log("onLaunch所有缓存：", res);
+					console.log("onLaunch.store缓存：", uni.getStorageSync("store"));
+				}
+			})
 			console.log('[APP-LAUNCH]APP启动!')
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  

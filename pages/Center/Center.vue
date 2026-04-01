@@ -242,7 +242,12 @@
 					return;
 				}
 				if (store.OPENFLAG != 1) {
-					util.simpleMsg("请先进行签到", true);
+					util.simpleMsg("请先进行签到！", true);
+					return;
+				}
+				if (store.OPENFLAG == 1 && store.LOGINDATE != dateformat.getYMD()) //判断是否为当天签到
+				{
+					util.simpleMsg("签到状态已过期，请重新签到！", true);
 					return;
 				}
 				let int = getApp().globalData.Int;
@@ -250,8 +255,8 @@
 				if (!int) { //销售单定时传输
 					this.TimedCommunication();
 				}
-				store.LOGINDATE = dateformat.getYMD();
-				util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+				// store.LOGINDATE = dateformat.getYMD();
+				// util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作 迁移到签到方法下
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
 				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
@@ -299,6 +304,9 @@
 									_login.SignOrSignOutSql(data.sql, store => {
 										console.log("签到结果回调：", store);
 										if (store.OPENFLAG == 1) {
+											//缓存当天日期 用于在销售页判断是否为当天业务操作
+											store.LOGINDATE = dateformat.getYMD();
+											util.setStorage("store", store);
 											util.simpleMsg("签到成功！");
 										} else {
 											util.simpleMsg("签到失败！", true);
@@ -308,6 +316,11 @@
 									util.simpleMsg("签到失败：签到数据异常！", "none");
 								}
 							} else {
+								if (res.msg.indexOf("已经进行了签到") >= 0) {
+									let store = util.getStorage("store");
+									store.LOGINDATE = dateformat.getYMD();
+									util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+								}
 								util.simpleModal("提示", res.msg);
 							}
 						})

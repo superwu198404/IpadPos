@@ -255,7 +255,6 @@
 					console.log("[Login]登录成功:", res);
 					util.simpleMsg("登录成功");
 					getApp().globalData.userinfo = res.data;
-					//初始化门店信息
 					_login.InitStore(that.khid, that.posid, res.data, r => {
 						setTimeout(r => {
 							let store = util.getStorage("store");
@@ -283,7 +282,7 @@
 			},
 			//清空密码
 			ResetPWD: function(e) {
-				console.log("输入事件:", e);
+				// console.log("输入事件:", e);
 				this.delshow = true;
 				if (e.target.value) {
 					this.password = "";

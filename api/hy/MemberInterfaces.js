@@ -193,6 +193,29 @@ const PointsReturn = async function(loading_title, request, success, error) {
 
 //卡券类销售接口
 
+//礼品卡扫码消费时 判断是否可以与渠道券共同使用
+const CARD_SMQUERY = function(loading_title, request, success, error) {
+	console.log("[CARD_SMQUERY]参数信息:", {
+		loading_title,
+		request,
+		success,
+		error
+	});
+	let data = requestAssembleTwo(loading_title, {
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "CARD_SMQUERY"
+	});
+	Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+
+
 //单卡查询（与会员中心，查卡 所属物料号，面额等信息）
 const CARD_QUERY = function(loading_title, request, success, error) {
 	let data = requestAssembleTwo(loading_title, {
@@ -498,6 +521,7 @@ export default {
 	queryCardInfoByCode,
 	PointsDeduction,
 	PointsReturn,
+	CARD_SMQUERY,
 	CARD_QUERY,
 	StockQuery,
 	singleCardActiveApply,

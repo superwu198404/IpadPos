@@ -4,41 +4,47 @@
 </style>
 <template>
 	<view class="centre">
-		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
+		<!-- <image class="bg" src="../../images/chushihua.png" mode="widthFix"></image> -->
 		<Head ref="bhHead" :_showSale="true" :showType="1" :_ynMsg='false' :type="'ywbhqh'"></Head>
+
 		<view class="tranlist">
 			<view class="leftlist">
-				<view class="logos">
-					<image src="../../images/imgbh/peis@1x.png" mode="widthFix"></image>
+				<view class="logos" @click="ToSale('/pages/BHYHPS/BHYHPS')">
+					<!-- <image src="../../images/imgbh/peis@1x.png" mode="widthFix"></image> -->
 					<view class="xingqi">
 						<view>要货配送</view>
 						<view>DISTRIBUTION</view>
-					</view>
+					</view> 
 				</view>
 				<view class="sginout-qd">
 					<view class="left">
-						<view @click="ToSale('/pages/mainSale/MainSale')">
+						<view @click="ToSale('/pages/YWMDSC/YWMDSC')">
 							<view class="label">裱花主动入库</view>
 							<image class="img" src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
 						</view>
 						<view class="base-line"></view>
-						<view @click="ToSale('/pages/mainSale/MainSale')">
+						<view @click="ToSale('/pages/BHZDPS/BHZDPS')">
 							<view class="label">裱花主动配送</view>
 							<image class="img" src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
 						</view>
 					</view>
-					<view class="right" @click="ToTakeout()">
-						<image class="datebg gaip_bj" src="../../images/imgbh/gaip_bj@1x.png" mode="widthFix"></image>
-						<image class="tubiao" src="../../images/imgbh/gaip@1x.png" mode="widthFix"></image>
-						<label>改胚</label><text>CHANGE</text>
+					<view class="right right-qd">
+						<view @click="ToSale('/pages/BHZDPS/BHZDPS','not')">
+							<image class="datebg gaip_bj" src="../../images/gaip_bj.png" mode="widthFix"></image>
+							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/gaip@1x.png" mode="widthFix"></image><label>改胚</label>
+						</view>
+						<view  @click="Chaxun(1)">
+							<image class="datebg gaip_bj" src="../../images/cxxun_bj.png" mode="widthFix"></image>
+							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/cx@1x.png" mode="widthFix"></image><label>查询</label>
+						</view>
 					</view>
 				</view>
-				<view class="dates">
-					<image class="datebg" src="../../images/imgbh/hwen@1x.png" mode="widthFix"></image>
+				<view class="dates dates-bh2">
+					<!-- <image class="datebg" src="../../images/new-bg.png" mode="widthFix"></image> -->
 					<view class="sginout sginout-bh">
-						<view @click="Chaxun(1)">
-							<image class="tubiao" src="../../images/imgbh/cx@1x.png" mode="widthFix"></image>
-							<label>查询</label><text>INQUIRY</text>
+						<view @click="openMoreFunc()">
+							<image class="tubiao" src="../../images/gdd.png" mode="widthFix"></image>
+							<label>更多功能</label><text>MORE</text>
 						</view>
 						<view class="line"></view>
 						<view @click="reset()">
@@ -61,23 +67,20 @@
 						</view>
 					</view>
 					<view class="dates dates-bh">
-						<view @click="ToSale('/pages/YWBHQH/YWBHQH')">
-							<label><text>要货生产</text><text>PRODUCTION</text></label>
-							<image src="../../images/imgbh/jt_sx@1x.png" mode="widthFix"></image>
+						<view>
+							<view style="display: flex;justify-content: flex-start;align-items: flex-start;gap: 12rpx;">
+								<image src="../../images/yaohsc.png" mode="heightFix"></image>
+								<label style="line-height: 1;" @click="ToSale('/pages/YWBHQH/YWBHQH')"><text>生产任务</text><text>PRODUCTION</text></label>
+							</view>
+							<view style="display: flex;justify-content: flex-start;align-items: flex-start;gap: 12rpx;">
+								<image src="../../images/drrwyl.png" mode="heightFix"></image>
+							    <label style="line-height: 1;" @click="viewTasks()"><text>今日任务概览</text><text>TASK</text></label>
+							</view>
 						</view>
-						<!-- <view @click="ToSale('/pages/mainSale/MainSale')">
-							<label><text>销售</text><text>SALES</text></label>
-						</view>
-						<view style="border-left: 1rpx solid #C1F6D8;"
-							@click="ToSale('/pages/KQSale/CardCouponMain/Menu')">
-							<label><text>卡券业务</text><text>CARD</text></label>
-						</view> -->
 					</view>
 				</view>
 				<view class="chongdu">
 					<view class="dates">
-						<!-- 	<button @click="reset()">重读基础数据 <text>REREAD</text></button>
-						<button @click="zbtx()">通讯 <text>MESSAGE</text></button> -->
 						<button @click="Sign()"><label>签到</label><text>SIGN IN</text></button>
 						<view class="line"></view>
 						<button @click="SignOut()"><label>签退</label><text>CHECK OUT</text></button>
@@ -95,16 +98,60 @@
 		<!-- <qiandao @CloseSign="CloseSignIn" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
 		<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
-		<!-- //用于预先加载图片使用 -->
-		<!-- <view v-show="false">
-			<image :src="item.IMGURL" v-for="(item,index) in IMAGES" mode="widthFix"></image>
-		</view> -->
+
+
+		<!-- 更多功能弹窗 -->
+		<view class="more-func-modal" v-show="showMoreFunc" @click="closeMoreFunc">
+			<view class="modal-content" @click.stop>
+				<!-- <image class="bj" src="../../images/hwen-ys.png" mode="widthFix"></image> -->
+				<view class="title-left">
+					<view>全部功能</view>
+					<image @click="closeMoreFunc" src="../../images/gbb.png" mode="widthFix"></image>
+				</view>
+				<view class="content-list">
+					<!-- 左侧分类栏 -->
+					<view class="category-sidebar">
+						<view 
+							v-for="(item, index) in menuList" 
+							:key="item.MenuId"
+							class="category-item"
+							:class="{ active: activeCategoryIndex === index }"
+							@click="switchCategory(index)"
+						>
+							{{ item.MenuName }}
+							<image  v-if="activeCategoryIndex === index" class="xzzz" src="../../images/xzzz.png" ></image>
+						</view>
+					</view>
+					<!-- 右侧功能网格 -->
+					<view class="func-grid">
+						<view 
+							v-for="(func,index) in currentFuncList" 
+							:key="index"
+							class="func-item"
+							@click="handleFuncClick(func)"
+						>
+							<image v-if="index%5 == 0" class="func-icon" src="../../images/ic_1.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 1" class="func-icon" src="../../images/ic_2.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 2" class="func-icon" src="../../images/ic_3.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 3" class="func-icon" src="../../images/ic_4.png" mode="widthFix"></image>
+							<image v-else class="func-icon" src="../../images/ic_5.png" mode="widthFix"></image>
+
+							<text class="func-name">{{ func.MenuName }}</text>
+						</view>
+					</view>
+
+				</view>
+
+			</view>
+		
+		</view>
 	</view>
 </template>
 
 <script>
 	var app = getApp();
 	import Head from '@/pages/Home/Component/Head.vue';
+	import NumberFormat from '@/components/NumberFormat/NumberFormat.vue';
 	import Req from '@/utils/request.js';
 	import common from '@/api/common.js';
 	import db from '@/utils/db/db_excute.js';
@@ -115,12 +162,13 @@
 	import _cake from '@/api/business/CakeYD.js';
 	import _sysParam from '@/utils/sysParm/sysParm.js';
 	import _query_sale from '@/api/business/query_sale.js';
-
+	import _ywbhqh from '@/api/business/ywbhqh.js';
 	import tiktok from '@/api/business/tiktok.js';
 	var that;
 	export default {
 		components: {
-			Head
+			Head,
+			NumberFormat
 		},
 		data() {
 			return {
@@ -136,12 +184,23 @@
 				angless: 0,
 				syyjk: {}, //收银员是否结款
 				version: "1.0.0", //版本号
-				IMAGES: []
+				IMAGES: [],
+
+				showMoreFunc: false, // 控制弹窗显示
+				menuList: [], // 一级分类菜单
+				activeCategoryIndex: 0, // 当前选中的分类索引
 			};
+		},
+		computed: {
+			currentFuncList() {
+				const current = this.menuList[this.activeCategoryIndex];
+				return current ? current.Second || [] : [];
+			}
 		},
 		methods: {
 			onLoad: async function() {
 				that = this;
+
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();
 				let sysinfo = util.getStorage("sysinfo");
@@ -157,6 +216,7 @@
 			},
 			onShow: function() {
 				this.GetUserMenu(); //用户菜单数据
+				//this.GetBHQHRwTj();
 				// this.MonitorEvent();
 				// this.timer = setInterval(() => {
 				// 	this.timer = setTimeout(() => {
@@ -183,6 +243,62 @@
 				// }, 5500);
 
 			},
+			 // 打开更多功能弹窗
+			openMoreFunc() {
+				const menu = util.getStorage("MDMENU") || [];
+				this.menuList = menu;
+
+				this.menuList = [
+					{
+					MenuName: "业务办理",
+					Second: [
+						{
+						MenuName: "入库管理",
+						},
+						{
+						MenuName: "配送管理",
+						},
+					]
+					},
+					{
+					MenuName: "查询统计",
+					Second: [
+						{
+						MenuName: "数据查询",
+						}
+					]
+					},
+					{
+					MenuName: "系统设置",
+					Second: [
+						{
+						MenuName: "基础设置",
+						}
+					]
+					}
+				];
+
+
+				this.activeCategoryIndex = 0;
+				this.showMoreFunc = true;
+				
+			},
+			// 关闭弹窗
+			closeMoreFunc() {
+				this.showMoreFunc = false;
+			},
+			// 切换左侧分类
+			switchCategory(index) {
+				this.activeCategoryIndex = index;
+			},
+			// 处理功能点击
+			handleFuncClick(func) {
+				console.log("点击功能:", func);
+				util.simpleMsg("功能暂未开放！", true);
+				return
+				this.closeMoreFunc(); // 点击后关闭弹窗
+			},
+
 			reset: function() {
 				_init.dataInit('reloadsqlite', true)
 			},
@@ -248,11 +364,12 @@
 			},
 			//跳转到销售页面
 			ToSale: async function(e, not) {
-				// if (not) {
-				// 	util.simpleMsg("功能暂未开放！", true);
-				// 	return;
-				// }
+				if (not) {
+					util.simpleMsg("功能暂未开放！", true);
+					return;
+				}
 				let store = util.getStorage("store");
+				console.log("ToSale.store：", store);
 				//初始化系统参数 (防止重读后失效的)
 				await _sysParam.init(store.KHID);
 				if (store.CLIENT_STATUS != '1') {
@@ -263,13 +380,12 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				// let int = getApp().globalData.Int;
-				// console.log("传输定时ID:", int);
-				// if (!int) { //销售单定时传输
-				// 	this.TimedCommunication();
-				// }
-				store.LOGINDATE = dateformat.getYMD();
-				util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+				if (store.OPENFLAG == 1 && store.LOGINDATE != dateformat.getYMD()) //判断是否为当天签到
+				{
+					util.simpleMsg("签到状态已过期，请重新签到！", true);
+					return;
+				}
+
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
 				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
@@ -318,6 +434,9 @@
 										console.log("签到结果回调：", store);
 										if (store.OPENFLAG == 1) {
 											util.simpleMsg("签到成功！");
+											//缓存当天日期 用于在销售页判断是否为当天业务操作
+											store.LOGINDATE = dateformat.getYMD();
+											util.setStorage("store", store);
 										} else {
 											util.simpleMsg("签到失败！", true);
 										}
@@ -326,6 +445,11 @@
 									util.simpleMsg("签到失败：签到数据异常！", "none");
 								}
 							} else {
+								if (res.msg.indexOf("已经进行了签到") >= 0) {
+									let store = util.getStorage("store");
+									store.LOGINDATE = dateformat.getYMD();
+									util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+								}
 								util.simpleModal("提示", res.msg);
 							}
 						})
@@ -460,6 +584,15 @@
 					}
 				});
 			},
+			// 今日概览
+			viewTasks: function() {
+				uni.redirectTo({
+					url: "/pages/TaskOverview/TaskOverview",
+					complete: res => {
+						console.log('跳转结果', res);
+					}
+				});
+			},
 			//初始化
 			DataInit: function(e) {
 				_init.dataInit(e);
@@ -528,6 +661,223 @@
 </script>
 
 <style scoped>
+	/* 今日概览CSS */
+	@font-face {
+		font-family: 'Bahnschrift';
+		src: url('../../images/imgbh/bahnschrift.ttf') format('truetype');
+		/* ttf格式用truetype */
+		font-weight: normal;
+		/* 常规字重 */
+		font-style: normal;
+	}
+
+	/* 页面容器：控制两个区块的间距 */
+	.page-container {
+		width: 96%;
+		margin: 20rpx auto;
+		display: flex;
+		flex-direction: column;
+		gap: 30rpx;
+		/* 两个区块之间的空白间隔 */
+	}
+
+	/* 通用区块样式：两个块共用 */
+	.section-block {
+		background: #fff;
+		border-radius: 16rpx;
+		padding: 24rpx;
+
+
+		background: rgba(255, 255, 255, 0.75);
+		border-radius: 30rpx;
+	}
+
+	/* 区块标题 */
+	.section-title {
+		font-size: 36rpx;
+		font-weight: 700;
+		color: #111111;
+		margin-bottom: 24rpx;
+	}
+
+	/* 任务行布局 */
+	.tasks-row {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 30rpx;
+
+		padding: 36rpx;
+		box-sizing: border-box;
+	}
+
+	.tasks-row-one {
+		background: rgba(240, 245, 244, 0.4);
+		border-radius: 40rpx;
+
+	}
+
+	.tasks-row:last-child {
+		margin-bottom: 0;
+	}
+
+	/* 任务卡片 */
+	.task-card {
+		flex: 1;
+		padding: 0 16rpx;
+		text-align: left;
+		position: relative;
+	}
+
+	/* 卡片间虚线分隔 */
+	.task-card:not(:last-child)::after {
+		content: '';
+		position: absolute;
+		right: 40rpx;
+		top: 10%;
+		height: 80%;
+		width: 2rpx;
+		background: repeating-linear-gradient(to bottom,
+				#eee,
+				#eee 6rpx,
+				transparent 6rpx,
+				transparent 12rpx);
+	}
+
+	/* 标签+圆点 */
+	.card-label {
+		display: flex;
+		align-items: center;
+		font-size: 30rpx;
+		color: #536961;
+		margin-bottom: 12rpx;
+	}
+
+	.dot {
+		display: inline-block;
+		width: 16rpx;
+		height: 16rpx;
+		border-radius: 50%;
+		margin-right: 8rpx;
+	}
+
+	.dot.deepgreen {
+		background: #006637;
+	}
+
+	.dot.green {
+		background: #42B14B;
+	}
+
+	.dot.teal {
+		background: #19C7A5;
+	}
+
+	.dot.light-blue {
+		background: #62E6E6;
+	}
+
+	.dot.orange {
+		background: #F39017;
+	}
+
+	/* 数值样式 */
+	.card-value {
+		font-size: 48rpx;
+		font-weight: 700;
+		color: #333333;
+		margin-bottom: 12rpx;
+		line-height: 1.1;
+		padding-left: 20rpx;
+		box-sizing: border-box;
+
+		font-family: "Bahnschrift";
+	}
+
+	/* 较昨日提示 */
+	.card-tip {
+		font-size: 26rpx;
+		color: #999999;
+		padding-left: 20rpx;
+		box-sizing: border-box;
+
+		margin-top: 10rpx;
+		display: flex;
+		align-items: center;
+	}
+
+	.card-icon {
+		width: 24rpx;
+		height: 24rpx;
+		position: relative;
+		top: 2rpx;
+		margin-left: 4rpx;
+	}
+
+	.card-tip>text:nth-child(1) {
+		margin-right: 32rpx;
+	}
+
+	.card-tip .up {
+		color: #FF6040;
+		font-weight: 700;
+	}
+
+	.card-tip .down {
+		color: #42B14B;
+		font-weight: 700;
+	}
+
+	/* 入库尺寸分布卡片布局 */
+	.size-cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 30rpx;
+
+	}
+
+	.size-card {
+		background: #fff;
+		border: 2rpx solid #D8D8D8;
+		border-radius: 16rpx;
+		padding: 36rpx;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		gap: 54rpx;
+	}
+
+	.size-tag {
+		background: #E6F7EF;
+		color: #006637;
+		font-size: 28rpx;
+		font-weight: 700;
+		padding: 16rpx 12rpx;
+		white-space: nowrap;
+		border-radius: 20rpx;
+	}
+
+	.size-info {
+		display: flex;
+		flex-direction: column;
+		gap: 4rpx;
+	}
+
+	.size-count,
+	.size-amount {
+		font-family: "Bahnschrift";
+		font-size: 32rpx;
+		font-weight: 700;
+		color: #333333;
+	}
+
+	.size-desc {
+		font-size: 24rpx;
+		color: #999999;
+	}
+
+	/* ----- ↑ */
+
+
 	page-body,
 	page-refresh,
 	page {
@@ -542,13 +892,18 @@
 		font-size: 28rpx;
 		color: #999;
 		padding: 0 3%;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.centre {
 		width: 100%;
 		height: 100%;
 		position: relative;
+
+		background-image: url('../../images/chushihua.png');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: left top;
 	}
 
 	.centre .bg {
@@ -579,6 +934,9 @@
 		position: relative;
 		overflow: hidden;
 		border-radius: 30rpx;
+
+		background-image: url('../../images/imgbh/peis@1x.png');
+		background-size: 100% 100%;
 	}
 
 	.leftlist .logos .xingqi {
@@ -611,13 +969,15 @@
 		display: flex;
 		margin: 60rpx 0;
 		height: 260rpx;
+
+
 	}
 
 	.leftlist .sginout view {
 		width: 45%;
-		background-color: #fff;
+		/* background-color: #fff;
 		border-radius: 30rpx;
-		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
+		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1); */
 		display: flex;
 		flex-direction: column;
 		color: #006B44;
@@ -657,7 +1017,7 @@
 	}
 
 	.leftlist .sginout-bh .line {
-		width: 1rpx;
+		width: 2rpx;
 		height: 25%;
 		background: #006B44;
 		border-radius: 10rpx 10rpx 10rpx 10rpx;
@@ -677,7 +1037,7 @@
 		padding: 82rpx 6%;
 		box-sizing: border-box;
 		box-shadow: 10px 20px 99px 0px rgba(0, 107, 68, 0.102);
-		border-radius: 30px 30px 30px 30px;
+		border-radius: 30rpx 30rpx 30rpx 30rpx;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
@@ -687,7 +1047,7 @@
 		width: 100%;
 		height: 2px;
 		background: rgba(0, 107, 68, 0.2);
-		border-radius: 30px 30px 30px 30px;
+		border-radius: 30rpx 30rpx 30rpx 30rpx;
 	}
 
 	.leftlist .sginout-qd .left image {
@@ -715,15 +1075,27 @@
 
 		height: 444rpx;
 		/* background: linear-gradient( 180deg, #E5FFE7 0%, rgba(229,255,231,0) 100%); */
-		border-radius: 30px 30px 30px 30px;
+		border-radius: 30rpx 30rpx 30rpx 30rpx;
 
 		display: flex;
 		flex-direction: column;
-		padding: 12% 6%;
+		justify-content: space-between;
+		gap:24rpx;
 		box-sizing: border-box;
 	}
-
-	.right .gaip_bj {
+	.leftlist .sginout-qd .right-qd {
+		display: flex;
+		flex-direction: column;
+	}
+	.leftlist .sginout-qd .right-qd>view {
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding-left: 40rpx;
+		box-sizing: border-box;
+		flex:1;
+	}
+	 .gaip_bj {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -764,11 +1136,31 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+
+
+	}
+	.dates-bh2 {
+		background-image: url('../../images/new-bg.png');
+		background-size: 100% 100%;
 	}
 
 	.dates-bh image {
 		width: 44rpx !important;
 		height: 44rpx !important;
+	}
+
+	.dates-bh .line {
+		display: block;
+		width: 2rpx;
+		height: 64rpx;
+		background: #006B44;
+		border-radius: 10rpx 10rpx 10rpx 10rpx;
+		opacity: 0.2;
+		padding: 0;
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		box-shadow: none;
 	}
 
 	.dates .datebg {
@@ -789,6 +1181,7 @@
 	.dates label {
 		display: flex;
 		flex-direction: column;
+		/* line-height: 1; */
 		color: #006B44;
 		font-size: 40rpx;
 		font-weight: 700;
@@ -839,6 +1232,7 @@
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		height: 800rpx;
+		overflow: hidden;
 	}
 
 	.rightlist .market .prods {
@@ -871,11 +1265,12 @@
 		justify-content: space-between;
 		align-items: center;
 		height: 33%;
+		padding-left: 3%
 	}
 
 	.rightlist .dates view {
-		padding: 0 6%;
-		width: 88%;
+		padding: 0 2%;
+		width: 100%;
 	}
 
 	.rightlist .dates view image {
@@ -1022,5 +1417,107 @@
 		font-size: 34rpx;
 		border-radius: 20rpx;
 		font-weight: 700;
+	}
+
+
+	/* 更多弹窗 */
+	.more-func-modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	/* 弹窗内容容器 */
+	.modal-content {
+		width: 70%;
+		height: 60vh;
+		background: #fff;
+		border-radius: 40rpx;
+		overflow: hidden;
+
+		
+ 		background-image: url('../../images/imgbh/tanc-bg@1x.png');
+ 		background-size: 100% 274rpx;
+ 		/* 禁止背景图重复平铺 */
+ 		background-repeat: no-repeat;
+ 		/* 可选：控制背景图垂直位置（比如置顶，也可设center/bottom） */
+ 		background-position: left top;
+	}
+	.modal-content .title-left {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 2%;
+		border-bottom: 2rpx solid #E9E9E9;
+	}
+	.modal-content .title-left view {
+		font-weight: 700;
+		font-size: 40rpx;
+		color: #333333;
+	}
+	.modal-content .title-left image {
+		width: 48rpx;
+		height: 48rpx;
+	}
+	.modal-content .content-list {
+		display: flex;
+		height:100%;
+	}
+	/* 左侧分类栏 */
+	.category-sidebar {
+		background: #F5F6F9;
+		height: 93%;
+		width: 25%;
+		overflow-y: auto;
+	}
+	.category-item {
+		padding: 30rpx 20rpx;
+		font-size: 36rpx;
+		color: #333;
+		text-align: center;
+		position: relative;
+	}
+	.category-item .xzzz {
+		position: absolute;
+		left: 0;
+		top:0;
+		width: 16rpx;
+		height:100%;
+	}
+	.category-item.active {
+		background: #fff;
+		color: #006B44;
+		font-weight: 700;
+	}
+	/* 右侧功能网格 */
+	.func-grid {
+		flex: 1;
+		padding: 40rpx;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		align-content: start;
+		gap: 56rpx;
+		overflow-y: auto;
+	}
+	.func-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20rpx;
+	}
+	.func-icon {
+		width: 100rpx;
+		height: 100rpx;
+	}
+	.func-name {
+		font-size: 40rpx;
+		color: #111111;
+		text-align: center;
 	}
 </style>

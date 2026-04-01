@@ -15,6 +15,7 @@
 				<view class="arrow-border-top"></view>
 				<view class="arrow-border-bottom"></view>
 			</view> -->
+			<!-- 页面显示包含页面组件 -->
 			<view class="right" style="position: relative; flex: 1;overflow: hidden;">
 				<Head :custom="mainSale.ComponentsManage.DKF" :_showSale="mainSale.currentOperation.ynCancel"
 					:_ynDKF="mainSale.currentOperation.DKF" :type="mainSale.current_type.clickType"></Head>
@@ -181,20 +182,26 @@
 				</view>
 
 				<!-- 在这插入组件 -->
-				<Extract class="component-box" key="1" :mode="true" v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
-				<Extract class="component-box" key="2" :mode="false" v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
-				<TakeAway class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'"></TakeAway>
+				<Extract class="component-box" key="1" :mode="true"
+					v-if="mainSale.ComponentsManage.sale_reserve_extract"></Extract>
+				<Extract class="component-box" key="2" :mode="false"
+					v-if="mainSale.ComponentsManage.sale_reserve_cancel"></Extract>
+				<TakeAway class="component-box"
+					v-if="mainSale.ComponentsManage.sale_takeaway || default_visible_template == 'sale_takeaway'">
+				</TakeAway>
 				<TakeYD class="component-box" v-if="mainSale.ComponentsManage.sale_takeaway_reserve"></TakeYD>
 				<OnlineOrders class="component-box" v-if="mainSale.ComponentsManage.sale_online_order"></OnlineOrders>
-				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract"></OnlinePick>
+				<OnlinePick class="component-box" v-if="mainSale.ComponentsManage.sale_online_order_extract">
+				</OnlinePick>
 				<Message class="component-box" v-if="mainSale.ComponentsManage.sale_message"></Message>
 				<RefundOrder class="component-box" v-if="mainSale.ComponentsManage.sale_return_good"></RefundOrder>
 				<SXRefund class="component-box" v-if="mainSale.ComponentsManage.sale_credit_return_good"></SXRefund>
-				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement" :big-customer-info="mainSale.DKF.val"></CreditSettlement>
+				<CreditSettlement class="component-box" v-if="mainSale.ComponentsManage.sale_credit_settlement"
+					:big-customer-info="mainSale.DKF.val"></CreditSettlement>
+				<TakeExchange class="component-box1" v-if="mainSale.tool_pages.changeGoods"></TakeExchange>
 			</view>
 			<!-- <newToast ref="message" @Close="CloseMessage" :yn_show="view.message" :title="'测试一下'"></newToast> -->
 		</view>
-
 		<view class="boxs" v-if="mainSale.tool_pages.promotions"
 			style="display: flex;justify-content: center;align-items: center;">
 			<Promotion style="width: 90%;height: 90%;background-color: white;border-radius: 5px;"></Promotion>
@@ -278,7 +285,7 @@
 			</view>
 		</view>
 		<!-- 预定信息录入 -->
-		<view class="boxs"  v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
+		<view class="boxs" v-if="mainSale.ComponentsManage.openydCustmInput" style="text-align: right;z-index: 99999;">
 			<ReserveDrawer :show="mainSale.ComponentsManage.openydCustmInput" :over48="mainSale.over48"
 				:confirm="(mainSale.current_type.ReserveInfoInput).bind(mainSale)" :sale="mainSale.sale001"
 				:decoration="mainSale.decoration" :_saleType="mainSale.clickSaleType.clickType">
@@ -567,7 +574,9 @@
 			<view class="head">
 				<view class="head-portrait" @click="mainSale.MemberLogin(1)">
 					<image src="../../images/touxiang.png" mode="widthFix"></image>
-					<view class="member-account">{{ mainSale.HY.val.hyId ? SensitiveInfoHandle(mainSale.HY.val.Phone) : "点击登录..."}}</view>
+					<view class="member-account">
+						{{ mainSale.HY.val.hyId ? SensitiveInfoHandle(mainSale.HY.val.Phone) : "点击登录..."}}
+					</view>
 				</view>
 				<view class="head-exit">
 					<view class="exit" @click="mainSale.dgydExit">
@@ -757,6 +766,7 @@
 	import SXRefund from '@/pages/RefundOrder/SXRefund.vue'
 	import Message from '@/pages/Message/Message.vue'
 	import CreditSettlement from '@/pages/CreditSettlement/CreditSettlement.vue'
+	import TakeExchange from '@/pages/TakeExchange/TakeExchange.vue'
 	import Promotion from '@/pages/Promotion/Promotion.vue'
 	import UnUpload from '@/pages/UnUpload/UnUpload.vue'
 	import MemberLogin from '@/pages/MemberLogin/MemberLogin.vue'
@@ -836,6 +846,7 @@
 			Message,
 			CreditSettlement,
 			Promotion,
+			TakeExchange,
 			UnUpload,
 			MemberLogin,
 			ReserveDrawer,
@@ -850,15 +861,15 @@
 				return (this.sale_type_infos.sale_cake_reserve.ResetCondition).bind(this.mainSale, this.mainSale
 					.mode_info.sale_cake_reserve.condition);
 			},
-			SensitiveInfoHandle(){
-				return (function(input){
+			SensitiveInfoHandle() {
+				return (function(input) {
 					if (!input || input.length < 6) {
-					   return input;
+						return input;
 					}
-					 var start = Math.floor((input.length - 4) / 2);
-					 var length = 4;
-					 var replacement = '*'.repeat(length);
-					 return input.slice(0, start) + replacement + input.slice(start + length);
+					var start = Math.floor((input.length - 4) / 2);
+					var length = 4;
+					var replacement = '*'.repeat(length);
+					return input.slice(0, start) + replacement + input.slice(start + length);
 				}).bind(this)
 			},
 			Confirm: function() {
@@ -1094,7 +1105,7 @@
 				}));
 			}
 		},
-		
+
 		created() {
 			let default_visible = util.getStorage('default-visible-template');
 			if (default_visible) {
@@ -1279,8 +1290,8 @@
 		color: white;
 		white-space: nowrap;
 		position: absolute;
-		top:100%;
-		left:0;
+		top: 100%;
+		left: 0;
 	}
 
 	.shareButton {
@@ -1470,6 +1481,10 @@
 	.component-box {
 		position: absolute;
 		z-index: 9998 !important;
+	}
+	.component-box1 {
+		position: absolute;
+		z-index: 9997 !important;
 	}
 
 	/* .top-layer {

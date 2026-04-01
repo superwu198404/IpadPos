@@ -238,6 +238,24 @@
 			},
 			Save: function() {
 				console.log("[Save]选择的地址:", this.details.current);
+				//260309
+				let custmName = this.details.info.CUSTMNAME || '';
+				let custmAddress = this.details.info.CUSTMADDRESS || '';
+				if (custmName || custmAddress) {
+					// 全局替换中文分号为英文分号
+					const cname = custmName.replace(/;/g, '；');
+					const addressWithEnglishSemicolon = custmAddress.replace(/;/g, '；');
+					// 更新回Order对象中
+					this.details.info.CUSTMNAME = cname;
+					this.details.info.CUSTMADDRESS = addressWithEnglishSemicolon;
+					console.log("[save]替换分号后的info：", this.details.info);
+				}
+				let xzaddr = this.details.current || '';
+				if (xzaddr) {
+					const addr = xzaddr.replace(/;/g, '；');
+					this.details.current = addr;
+					console.log("[save]替换分号后的current：", this.details.current);
+				}
 				if (this.ValidFromData())
 					_extract.reserveOrdersUpdate({
 						khid: this.details.info.KHID,
@@ -310,6 +328,10 @@
 			AddressVaild: async function() {
 				if (!this.form.address.CNAME) {
 					util.simpleMsg("收货人不能为空!", 'none');
+					return false;
+				}
+				if (this.form.address.CNAME&&util.isEmojiCharacterName(this.form.address.CNAME)) {
+					util.simpleMsg("收货人名称不允许输入表情符号等特殊字符!", 'none');
 					return false;
 				}
 				if (!this.form.address.LONGITUDE && !this.form.address.LATITUDE) { //如果经纬度为空
@@ -447,6 +469,10 @@
 				}
 				if (order.CUSTMCOMM && util.isEmojiCharacter(order.CUSTMCOMM)) {
 					util.simpleMsg("备注不允许输入表情符号等特殊字符", true);
+					return false;
+				}
+				if (order.CUSTMNAME && util.isEmojiCharacterName(order.CUSTMNAME)) {
+					util.simpleMsg("收货人名称不允许输入表情符号等特殊字符", true);
 					return false;
 				}
 				return true;

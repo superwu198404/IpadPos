@@ -26,11 +26,17 @@
 				<label></label>
 				<view @click.stop="operations()"
 					style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-					<image class="xz" src="../../../images/gongju.png" mode="widthFix"></image>
-					<image class="wx" src="../../../images/gongju-hui.png" mode="widthFix"></image>
-					<text>工具</text>
+					<image class="xz" src="../../../images/img-more.png" mode="widthFix"></image>
+					<!-- 实际生效的是这个灰色的图标 -->
+					<image class="wx" src="../../../images/img-more-active.png" mode="widthFix"></image>
+					<text>更多</text>
 				</view>
 				<view class="chargeback" style="z-index: 16;" v-if="showGJ">
+					<view class="currs" @click="ShowTool('changeGoods')">
+						<image class="xz" src="../../../images/huanhh.png" mode="widthFix"></image>
+						<image class="wx" src="../../../images/huanhh.png" mode="widthFix"></image>
+						<text>外卖换货</text>
+					</view>
 					<view class="currs" @click="ShowTool('promotions')">
 						<image class="xz" src="../../../images/dqcuxiao.png" mode="widthFix"></image>
 						<image class="wx" src="../../../images/dqcuxiao-wxz.png" mode="widthFix"></image>
@@ -202,7 +208,7 @@
 				if (e == 'CD') {
 					this.showcdxp = true;
 					console.log("重打小票", this.showcdxp)
-				} else if (e == 'promotions' || e == 'communication') {
+				} else if (e == 'promotions' || e == 'communication' || e == 'changeGoods') {
 					uni.$emit('tools', e);
 				} else {
 					//功能放开，则去掉该提示

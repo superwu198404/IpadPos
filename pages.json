@@ -123,6 +123,14 @@
 			}
 		},
 		{
+			"path": "pages/TakeExchange/TakeExchange",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/TakeYD/TakeYD",
 			"style": {
 				"titleNView": false,
@@ -400,6 +408,41 @@
 		},
 		{
 			"path": "pages/YWBHQH/YWBHQH",
+			"style": {
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/YWMDSC/YWMDSC",
+			"style": {
+				"disableScroll": false,
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/TaskOverview/TaskOverview",
+			"style": {
+				"disableScroll": false,
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/BHZDPS/BHZDPS",
+			"style": {
+				"disableScroll": false,
+				"titleNView": false,
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/BHYHPS/BHYHPS",
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",

@@ -245,6 +245,24 @@ var CommonRefund_YD = function(e, func) {
 	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+//外卖查询-换货
+var GetWMOrderForChange = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrderForChange";
+	let reqdata = Req.resObj(true, "查询中...", e, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+//外卖单详情-换货
+var GetWMOrderDetailForChange = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetWMOrderDetailForChange";
+	let reqdata = Req.resObj(true, "查询中...", e, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
+//确认换绑
+var ConfirmWMOrderForChange = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.ConfirmWMOrderForChange";
+	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 export default {
 	GetWMOrders,
 	GetWMOrderDetail,
@@ -258,5 +276,8 @@ export default {
 	GetWMOrders_YD,
 	ConfirmReceipt_YD,
 	CommonRefund_YD,
-	GetZSData
+	GetZSData,
+	GetWMOrderForChange,
+	GetWMOrderDetailForChange,
+	ConfirmWMOrderForChange
 }

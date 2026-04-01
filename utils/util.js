@@ -483,6 +483,23 @@ const utils = {
 		}
 		return false;
 	},
+	isEmojiCharacterName: function(substring) {
+	    console.log("开始校验字符:", substring);
+	    if (substring) {
+	    // 定义允许的字符正则：中文+英文+数字+()_-+
+	    // 正则说明：
+	    // [\u4e00-\u9fa5] ：匹配中文字符
+	    // a-zA-Z          ：匹配英文字母（大小写）
+	    // 0-9             ：匹配数字
+	    // \(\)\-_\+       ：匹配允许的符号（()-_+，-需要转义，+也需要转义）
+	    const allowReg = /^[\u4e00-\u9fa5a-zA-Z0-9\(\)\-_\+]+$/;
+	    // 检查是否包含不允许的字符（取反）
+	    const hasInvalidChar = !allowReg.test(substring);
+	    console.log("是否包含非法字符:", hasInvalidChar);
+	    // 返回结果：有非法字符返回true，无则返回false（和原函数逻辑对齐）
+	    return hasInvalidChar;
+		}
+	},
 	//检查特殊符号和表情
 	isEmojiCharacter1: function(substring) {
 		console.log("开始校验emoji:", substring);
@@ -583,5 +600,6 @@ export default {
 	IntervalOverlap: utils.IntervalOverlap,
 	getDateStr: utils.getDateStr,
 	isEmojiCharacter: utils.isEmojiCharacter,
+	isEmojiCharacterName:utils.isEmojiCharacterName,
 	YNSameObject: utils.YNSameObject
 }

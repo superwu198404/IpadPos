@@ -5,7 +5,7 @@
 <template>
 	<view class="centre">
 		<image class="bg" src="../../images/chushihua.png" mode="widthFix"></image>
-		<Head :_showSale="true" :showType="2" :_ynMsg='false' :type="'ywxkqh'"></Head>
+		<Head :_showSale="true" :showType="1" :_ynMsg='false' :type="'ywxkqh'"></Head>
 		<view class="tranlist">
 			<view class="leftlist">
 				<view class="logos" @click="ToSale('/pages/YWXKDY/YWXKDY','not')">
@@ -25,8 +25,8 @@
 						<label>查询</label><text>INQUIRY</text>
 					</view>
 				</view>
-				<view class="dates">
-					<image class="datebg" src="../../images/imgbh/hwen@1x.png" mode="widthFix"></image>
+				<view class="dates dates-bh2">
+					<!-- <image class="datebg" src="../../images/imgbh/hwen@1x.png" mode="widthFix"></image> -->
 					<view class="sginout sginout-bh">
 						<view @click="reset()">
 							<image class="tubiao" src="../../images/imgbh/cd@1x.png" mode="widthFix"></image>
@@ -35,7 +35,12 @@
 						<view class="line"></view>
 						<view @click="zbtx()">
 							<image class="tubiao" src="../../images/imgbh/txl@1x.png" mode="widthFix"></image>
-							<label>通讯录</label><text>ADDRESS BOOK</text>
+							<label>通讯录</label><text>MESSAGE</text>
+						</view>
+						<view class="line"></view>
+						<view @click="openMoreFunc()">
+							<image class="tubiao" src="../../images/gdd.png" mode="widthFix"></image>
+							<label>更多</label><text>MORE</text>
 						</view>
 					</view>
 				</view>
@@ -73,10 +78,53 @@
 		<!-- <qiandao @CloseSign="CloseSignIn" v-show="showSign"></qiandao> -->
 		<!-- 日结组件 -->
 		<rijie @CloseRJ="CloseSignOut" v-show="showSignOut" :_signOutDate="signOutDate"></rijie>
-		<!-- //用于预先加载图片使用 -->
-		<!-- <view v-show="false">
-			<image :src="item.IMGURL" v-for="(item,index) in IMAGES" mode="widthFix"></image>
-		</view> -->
+		
+
+				<!-- 更多功能弹窗 -->
+		<view class="more-func-modal" v-show="showMoreFunc" @click="closeMoreFunc">
+			<view class="modal-content" @click.stop>
+				<!-- <image class="bj" src="../../images/hwen-ys.png" mode="widthFix"></image> -->
+				<view class="title-left">
+					<view>全部功能</view>
+					<image @click="closeMoreFunc" src="../../images/gbb.png" mode="widthFix"></image>
+				</view>
+				<view class="content-list">
+					<!-- 左侧分类栏 -->
+					<view class="category-sidebar">
+						<view 
+							v-for="(item, index) in menuList" 
+							:key="item.MenuId"
+							class="category-item"
+							:class="{ active: activeCategoryIndex === index }"
+							@click="switchCategory(index)"
+						>
+							{{ item.MenuName }}
+							<image  v-if="activeCategoryIndex === index" class="xzzz" src="../../images/xzzz.png" ></image>
+						</view>
+					</view>
+					<!-- 右侧功能网格 -->
+					<view class="func-grid">
+						<view 
+							v-for="(func,index) in currentFuncList" 
+							:key="index"
+							class="func-item"
+							@click="handleFuncClick(func)"
+						>
+							<image v-if="index%5 == 0" class="func-icon" src="../../images/ic_1.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 1" class="func-icon" src="../../images/ic_2.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 2" class="func-icon" src="../../images/ic_3.png" mode="widthFix"></image>
+							<image v-else-if="index%5 == 3" class="func-icon" src="../../images/ic_4.png" mode="widthFix"></image>
+							<image v-else class="func-icon" src="../../images/ic_5.png" mode="widthFix"></image>
+
+							<text class="func-name">{{ func.MenuName }}</text>
+						</view>
+					</view>
+
+				</view>
+
+			</view>
+		
+		</view>
 	</view>
 </template>
 
@@ -114,8 +162,18 @@
 				angless: 0,
 				syyjk: {}, //收银员是否结款
 				version: "1.0.0", //版本号
-				IMAGES: []
+				IMAGES: [],
+
+				showMoreFunc: false, // 控制弹窗显示
+				menuList: [], // 一级分类菜单
+				activeCategoryIndex: 0, // 当前选中的分类索引
 			};
+		},
+		computed: {
+			currentFuncList() {
+				const current = this.menuList[this.activeCategoryIndex];
+				return current ? current.Second || [] : [];
+			}
 		},
 		methods: {
 			onLoad: async function() {
@@ -161,6 +219,71 @@
 				// }, 5500);
 
 			},
+
+			 // 打开更多功能弹窗
+			openMoreFunc() {
+				const menu = util.getStorage("MDMENU") || [];
+				this.menuList = menu;
+
+				this.menuList = [
+					{
+					MenuName: "业务办理",
+					Second: [
+						{
+						MenuName: "入库管理",
+						},
+						{
+						MenuName: "配送管理",
+						},
+					]
+					},
+					{
+					MenuName: "查询统计",
+					Second: [
+						{
+						MenuName: "数据查询",
+						}
+					]
+					},
+					{
+					MenuName: "系统设置",
+					Second: [
+						{
+						MenuName: "基础设置",
+						}
+					]
+					},
+					{
+					MenuName: "查询统计",
+					Second: [
+						{
+						MenuName: "数据查询",
+						}
+					]
+					},
+				];
+
+
+				this.activeCategoryIndex = 0;
+				this.showMoreFunc = true;
+				
+			},
+			// 关闭弹窗
+			closeMoreFunc() {
+				this.showMoreFunc = false;
+			},
+			// 切换左侧分类
+			switchCategory(index) {
+				this.activeCategoryIndex = index;
+			},
+			// 处理功能点击
+			handleFuncClick(func) {
+				console.log("点击功能:", func);
+				util.simpleMsg("功能暂未开放！", true);
+				return
+				this.closeMoreFunc(); // 点击后关闭弹窗
+			},
+
 			reset: function() {
 				_init.dataInit('reloadsqlite', true)
 			},
@@ -241,13 +364,13 @@
 					util.simpleMsg("请先进行签到", true);
 					return;
 				}
-				// let int = getApp().globalData.Int;
-				// console.log("传输定时ID:", int);
-				// if (!int) { //销售单定时传输
-				// 	this.TimedCommunication();
-				// }
-				store.LOGINDATE = dateformat.getYMD();
-				util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+				if (store.OPENFLAG == 1 && store.LOGINDATE != dateformat.getYMD()) //判断是否为当天签到
+				{
+					util.simpleMsg("签到状态已过期，请重新签到！", true);
+					return;
+				}
+				// store.LOGINDATE = dateformat.getYMD();
+				// util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
 				let sysParam = util.getStorage("sysParam");
 				console.log("是否结款判断参数：", sysParam.YN_JKXS);
 				if (sysParam.YN_JKXS != "Y") { //是否要结款判断
@@ -296,6 +419,9 @@
 										console.log("签到结果回调：", store);
 										if (store.OPENFLAG == 1) {
 											util.simpleMsg("签到成功！");
+											//缓存当天日期 用于在销售页判断是否为当天业务操作
+											store.LOGINDATE = dateformat.getYMD();
+											util.setStorage("store", store);
 										} else {
 											util.simpleMsg("签到失败！", true);
 										}
@@ -304,6 +430,11 @@
 									util.simpleMsg("签到失败：签到数据异常！", "none");
 								}
 							} else {
+								if (res.msg.indexOf("已经进行了签到") >= 0) {
+									let store = util.getStorage("store");
+									store.LOGINDATE = dateformat.getYMD();
+									util.setStorage("store", store); //缓存当天日期 用于在销售页判断是否为当天业务操作
+								}
 								util.simpleModal("提示", res.msg);
 							}
 						})
@@ -596,7 +727,7 @@
 
 	.leftlist .sginout view {
 		width: 45%;
-		background-color: #fff;
+		/* background-color: #fff; */
 		border-radius: 30rpx;
 		box-shadow: 10px 20px 99px 1px rgba(0, 107, 68, 0.1);
 		display: flex;
@@ -638,7 +769,7 @@
 	}
 
 	.leftlist .sginout-bh .line {
-		width: 1rpx;
+		width: 2rpx;
 		height: 25%;
 		background: #006B44;
 		border-radius: 10rpx 10rpx 10rpx 10rpx;
@@ -741,6 +872,10 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+	.dates-bh2 {
+		background-image: url('../../images/new-bg.png');
+		background-size: 100% 100%;
+	}
 
 	.dates-bh image {
 		width: 44rpx !important;
@@ -796,7 +931,7 @@
 		box-shadow: none;
 
 		position: relative;
-		top: 6rpx;
+		top: 8rpx;
 	}
 
 	.dates .sginout view .tubiao {
@@ -818,6 +953,8 @@
 
 		display: flex;
 		flex-direction: column;
+
+		overflow: hidden;
 	}
 
 	.rightlist .market .prods {
@@ -880,7 +1017,7 @@
 	}
 
 	.rightlist .chongdu .line {
-		width: 1rpx;
+		width: 2rpx;
 		height: 25%;
 		background: #006B44;
 		border-radius: 10rpx 10rpx 10rpx 10rpx;
@@ -1001,5 +1138,108 @@
 		font-size: 34rpx;
 		border-radius: 20rpx;
 		font-weight: 700;
+	}
+
+
+	
+	/* 更多弹窗 */
+	.more-func-modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	/* 弹窗内容容器 */
+	.modal-content {
+		width: 70%;
+		height: 60vh;
+		background: #fff;
+		border-radius: 40rpx;
+		overflow: hidden;
+
+		
+ 		background-image: url('../../images/imgbh/tanc-bg@1x.png');
+ 		background-size: 100% 274rpx;
+ 		/* 禁止背景图重复平铺 */
+ 		background-repeat: no-repeat;
+ 		/* 可选：控制背景图垂直位置（比如置顶，也可设center/bottom） */
+ 		background-position: left top;
+	}
+	.modal-content .title-left {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 2%;
+		border-bottom: 2rpx solid #E9E9E9;
+	}
+	.modal-content .title-left view {
+		font-weight: 700;
+		font-size: 40rpx;
+		color: #333333;
+	}
+	.modal-content .title-left image {
+		width: 48rpx;
+		height: 48rpx;
+	}
+	.modal-content .content-list {
+		display: flex;
+		height:100%;
+	}
+	/* 左侧分类栏 */
+	.category-sidebar {
+		background: #F5F6F9;
+		height: 93%;
+		width: 25%;
+		overflow-y: auto;
+	}
+	.category-item {
+		padding: 30rpx 20rpx;
+		font-size: 36rpx;
+		color: #333;
+		text-align: center;
+		position: relative;
+	}
+	.category-item .xzzz {
+		position: absolute;
+		left: 0;
+		top:0;
+		width: 16rpx;
+		height:100%;
+	}
+	.category-item.active {
+		background: #fff;
+		color: #006B44;
+		font-weight: 700;
+	}
+	/* 右侧功能网格 */
+	.func-grid {
+		flex: 1;
+		padding: 40rpx;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		align-content: start;
+		gap: 56rpx;
+		overflow-y: auto;
+	}
+	.func-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20rpx;
+	}
+	.func-icon {
+		width: 100rpx;
+		height: 100rpx;
+	}
+	.func-name {
+		font-size: 40rpx;
+		color: #111111;
+		text-align: center;
 	}
 </style>

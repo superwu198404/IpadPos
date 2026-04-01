@@ -339,17 +339,27 @@ var zfbPay = {
 var hykPay = {
 	PaymentAll: function(pt, body, func, catchFunc) {
 		// _PaymentAll(pt, body, func, catchFunc);
-		member.queryCardInfoByCode("查询中", {
+		//member.queryCardInfoByCode("查询中", {
+		//brand: getApp().globalData?.brand,
+		//data: {
+		//code: body.auth_code
+		//}
+		console.log("[CARD_SMQUERY]电子卡查询：", body);
+		member.CARD_SMQUERY("查询中", {
 			brand: getApp().globalData?.brand,
 			data: {
-				code: body.auth_code
+				card_num: body.auth_code,
+				amount: body.money
 			}
 		}, function(res) {
 			console.log("[hykPay]电子卡查询结果：", res);
 			console.log("当前已支付的数据：", body.pay_list);
 			if (res.code) {
+				// 核心修改：将canUseFlag赋值到yn_ylth字段
+				body.yn_qdk = res.data.canUseFlag;
 				let obj1 = body.pay_list.find(r => r.type == 'JHQ' && r.yn_ylth == '1'); //有渠道券支付数据
-				if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType == 'Z003')) { //当前卡是渠道卡
+				//if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType == 'Z003')) { //当前卡是渠道卡
+				if (obj1 && (res.data.canUseFlag == '2')) { //当前卡不允许与渠道券一起用
 					let newRes = {
 						code: false,
 						msg: "抱歉，渠道卡不可和渠道券叠加核销。"
@@ -406,17 +416,18 @@ var kengeePay = {
 			console.log("[ReadCard]组装支付参数:", body);
 			// _PaymentAll(pt, body, func, catchFunc);
 			member.CARD_QUERY("查询中", {
-				cardinfo: {
+				data: {
 					card_num: body.card_no
 				}
 			}, function(res) {
 				console.log("[kengeePay]实体卡查询结果：", res);
 				console.log("当前已支付的数据：", body.pay_list);
 				if (res.code) {
+					body.yn_qdk = res.data.canUseFlag;
 					let obj1 = body.pay_list.find(r => r.type == 'JHQ' && r.yn_ylth ==
 						'1'); //有渠道券支付数据
-					if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType ==
-							'Z003')) { //当前卡是渠道卡
+					//if (obj1 && (res.data.cardType == 'Z002' || res.data.cardType =='Z003')) { //当前卡是渠道卡
+					if (obj1 && (res.data.canUseFlag == '2')) { //当前卡不允许与渠道券一起用
 						let newRes = {
 							code: false,
 							msg: "抱歉，渠道卡不可和渠道券叠加核销。"
@@ -716,7 +727,7 @@ var jhqPay = {
 						console.log("当前券支付已支付的数据：", body.pay_list);
 						let obj1 = body.pay_list.find(r => (r.type == 'PAYCARD' || r.type ==
 							'PAYBRUSHCARD') && r.yn_ylth == '1'); //有渠道电子卡或者渠道实体卡
-						if (obj1 && res.data.vouchers[i].yn_ylq == '1') { //当前券是渠道券
+						if (obj1 && res.data.vouchers[i].yn_qdkq == '1') { //当前券是渠道券
 							newRes = {
 								code: false,
 								msg: "抱歉，渠道券不可和渠道卡叠加核销。"

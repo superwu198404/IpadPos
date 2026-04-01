@@ -41,7 +41,8 @@
 											:class="Selected(item) + ' li'" @click="SelectOrder(item)">
 											<view class="h3">
 												<text>单号：{{item.BILL}}</text>
-												<text class="price">￥{{item.TNET}}</text>
+												<text class="price">欠款￥{{item.TNET}}</text>
+												<text class="price">折扣￥{{item.BILLDISC}}</text>
 											</view>
 											<view class="cods">
 												<label>下单时间：{{item.SALETIME}}</label>
@@ -128,6 +129,7 @@
 			},
 			SelectedClient: function(val) {
 				this.big_client_info = this.big_clients[val.detail.value];
+				console.log("[CreditSettlement]所有的大客户数据：", this.big_clients)
 				this.GetBigClientSettlement();
 			},
 			SelectAll: function() {
@@ -165,9 +167,10 @@
 					s3.JSNET = i.ZNET;
 					ywsxjsmx.push(s3);
 				})
+				console.log("[CreditSettlement]大客户信息：", this.select_orders)
 				let ywsxjs = new sale.ywsxjs({
-					DKFID: this.big_client_info.DKHID,
-					DKFNAME: this.big_client_info.NAME,
+					DKFID: this.select_orders[0].DKFID, //this.big_client_info.DKFID,
+					DKFNAME: this.select_orders[0].DKFNAME, //this.big_client_info.NAME,
 					KHID: this.KHID,
 					BILL_STATUS: 1,
 					TPNET: main_order.ZNET,
@@ -177,7 +180,8 @@
 					RYNAME_LR: this.RYNAME,
 					DATE_QT: dateformat.toDateString(new Date()),
 					POSID: this.POSID,
-					DPID: this.DPID
+					DPID: this.DPID,
+					NOTE: "PAD"
 				});
 				let condition = bills.join("','");
 				console.log("[Settlement]查询总商品信息:", condition);

@@ -145,6 +145,9 @@
 	import dateformat from '@/utils/dateformat.js';
 	import util from '@/utils/util.js';
 	import _reserve from '@/api/business/extract.js';
+	import {
+		RequestSend
+	} from '@/api/business/da.js'
 
 	var that;
 	export default {
@@ -475,13 +478,15 @@
 				// else {
 				// 	that.Order.DNET = 0;
 				// }
-				if (that.Order.THTYPE == '0') { //自提
-					that.startTime = that.STIME;
-					that.endTime = that.ETIME;
-				} else if (that.Order.THTYPE == '2') { //现卖
-					that.startTime = dateformat.getDateByParam('h') + ":" + dateformat.getDateByParam('m');
-					that.endTime = "19:00";
-				}
+				// if (that.Order.THTYPE == '0') { //自提
+				// 	that.startTime = that.STIME;
+				// 	that.endTime = that.ETIME;
+				// } else if (that.Order.THTYPE == '2') { //现卖
+				// 	that.startTime = dateformat.getDateByParam('h') + ":" + dateformat.getDateByParam('m');
+				// 	that.endTime = "19:00";
+				// }
+				that.startTime = that.STIME;
+				that.endTime = that.ETIME;
 				console.log("[RefreshData]开始时间：", that.startTime);
 				console.log("[RefreshData]结束时间：", that.endTime);
 			},
@@ -680,6 +685,10 @@
 					util.simpleMsg("地址信息为空", true);
 					return;
 				}
+				if (that.ADDR.CNAME && util.isEmojiCharacterName(that.ADDR.CNAME)) {
+					util.simpleMsg("收货人名称不允许输入表情符号等特殊字符", true);
+					return false;
+				}
 				if (!that.ADDR.LONGITUDE && !that.ADDR.LATITUDE) {
 					console.log("[ConfirmADDR]缓存地址:", this.CatchAddress);
 					that.ADDR.ADDRESS = that.ADDR.ADDRESS ?? this.CatchAddress.address;
@@ -815,8 +824,13 @@
 							that.Order._STR2 = data.name;
 							if (yn_toc == "Y")
 								that.Order.STR1 = "C";
+							else
+								that.Order.STR1 = "";
 							that.$forceUpdate(); //刷新input的值 狗bug
 						}
+					} else {
+
+						util.simpleMsg(data.msg, "none");
 					}
 				})
 			},
@@ -854,31 +868,46 @@
 			PSChange: e => {
 				let khid = that.PSDatas[e.detail.value].KHID;
 				let name = that.PSDatas[e.detail.value].SNAME;
+				var yn_tc = "N";
 				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
 					.toLocaleDateString() && that.Order.THTYPE == '1') {
 					//计算ToC 裱花的配送距离
-					_reserve.CheckBHDistance({
-						LONGITUDE: that.Order.LONGITUDE,
-						LATITUDE: that.Order.LATITUDE,
-						KHID: khid
-					}, res => {
-						console.log("[CheckBHDistance]匹配结果:", res);
-						if (res.code) {
-							that.Order.STR2 = khid;
-							that.Order._STR2 = name;
-						} else {
-							util.simpleMsg(res.msg, true);
-							that.Order.STR2 = "";
-							that.Order._STR2 = "";
-						}
-					})
-				} else {
-					that.Order.STR2 = khid;
-					that.Order._STR2 = name;
+					yn_tc = "Y";
 				}
+				// else {
+				// 	that.Order.STR2 = khid;
+				// 	that.Order._STR2 = name;
+				// }
+				_reserve.CheckBHDistance({
+					LONGITUDE: that.Order.LONGITUDE,
+					LATITUDE: that.Order.LATITUDE,
+					KHID: khid,
+					YN_TC: yn_tc
+				}, res => {
+					console.log("[CheckBHDistance]匹配结果:", res);
+					if (res.code) {
+						that.Order.STR2 = khid;
+						that.Order._STR2 = name;
+					} else {
+						util.simpleMsg(res.msg, "none");
+						if (res.data == "OverDis") //超出配送距离了 切换到自提
+						{
+							if (yn_tc == "N") { //非Toc则切回自提
+								that.Order.STR2 = "";
+								that.Order._STR2 = "";
+								that.index = 0;
+								that.Order.THTYPE = 0;
+								that.Order.LONGITUDE = 0;
+								that.Order.LATITUDE = 0;
+								that.Order.CUSTMADDRESS = ""; //清空地址信息
+								that.Order.STR1 = "";
+							}
+						}
+					}
+				})
 			},
 			//用户信息确定
-			Confirm: () => {
+			Confirm: async () => {
 				console.log("预定信息：", that.Order);
 				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
 				let hour = th_date.getHours();
@@ -898,6 +927,17 @@
 				});
 				if (!that.Order.THKHID) {
 					util.simpleMsg("提货门店为空", true);
+					return;
+				}
+				//营业时间判断
+				if (!(Number(that.STIME.substr(0, 5).replace(':', '')) <= Number(hour_minute)) && !(Number(that.ETIME
+						.substr(0, 5).replace(':', '')) >= Number(
+						hour_minute))) {
+					console.log("[Confirm]时间限制:", {
+						start_time: that.STIME,
+						end_time: that.ETIME
+					});
+					util.simpleMsg("提货时间不在营业时间内", 'none');
 					return;
 				}
 				if (th_date < mix_time_interval) {
@@ -922,7 +962,8 @@
 				if (new Date(that.Order.THDATE.replace(/-/g, "/")).toLocaleDateString() == new Date()
 					.toLocaleDateString()) {
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
+					// let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);//旧版固定19:00
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString() + " " + that.ETIME); //营业结束时间
 					let current_datetime = new Date();
 					console.log("[Confirm]提货时间控制:", {
 						th_datetime: th_datetime.toLocaleString(),
@@ -934,13 +975,15 @@
 						return;
 					}
 					if (th_datetime > max_th_datetime) {
-						util.simpleMsg("当天提货时间必须小于 19:00!", true);
+						util.simpleMsg("当天提货时间必须小于" + that.ETIME + "!", true);
 						return;
 					}
 				} else { //否则判断时间是否在 8:00 ~ 19:00 之间
 					let th_datetime = new Date(that.Order.THDATE.replace(/-/g, "/"));
-					let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);
-					let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);
+					// let max_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(19);//旧版固定时间
+					// let min_th_datetime = new Date(th_datetime.toLocaleDateString()).SetHours(8);//旧版固定时间
+					let max_th_datetime = new Date(th_datetime.toLocaleDateString() + " " + that.ETIME); //营业结束时间
+					let min_th_datetime = new Date(th_datetime.toLocaleDateString() + " " + that.STIME); //营业开始时间
 					console.log("[Confirm]提货时间控制:", {
 						th_raw: that.Order.THDATE,
 						th_raw_datetime: th_datetime.toLocaleString(),
@@ -948,11 +991,11 @@
 						min_th_datetime: min_th_datetime.toLocaleString()
 					});
 					if (th_datetime < min_th_datetime) {
-						util.simpleMsg("提货时间必须在 8:00 之后!", true);
+						util.simpleMsg("提货时间必须在" + that.STIME + "之后!", true);
 						return;
 					}
 					if (th_datetime > max_th_datetime) {
-						util.simpleMsg("提货时间必须在 19:00 之前!", true);
+						util.simpleMsg("提货时间必须在" + that.ETIME + "之前!", true);
 						return;
 					}
 				}
@@ -964,26 +1007,47 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-				if (that.Order.THTYPE == '0' && !(Number(that.STIME.substr(0, 5).replace(':', '')) <= Number(
-						hour_minute)) && !(Number(that.ETIME.substr(0, 5).replace(':', '')) >= Number(
-						hour_minute))) { //自提
-					console.log("[Confirm]时间限制:", {
-						start_time: that.STIME,
-						end_time: that.ETIME
-					});
-					util.simpleMsg("提货时间不在营业时间内", 'none');
+
+				if (!that.Order.CUSTMPHONE) {
+					util.simpleMsg("请输入联系电话", true);
 					return;
 				}
 				if (that.Order.THTYPE == '1') { //宅配到家
+					let s_hour = that.STIME.split(':')[0];
+					let e_hour = that.ETIME.split(':')[0];
 					let hour = new Date(that.Order.THDATE.replace(/-/g, "/")).getHours(); //提货时间的小时部分
-					if (hour < 7 || hour > 19) {
-						util.simpleMsg("提货时间不在7到19点", 'none');
+					if (hour < s_hour || hour > e_hour) {
+						util.simpleMsg("提货时间不在" + s_hour + "到" + e_hour + "点", 'none');
 						return;
 					}
 					if (new Date(that.Order.THDATE.replace(/-/g, "/")) < new Date().setHours(new Date().getHours() +
 							1)) {
 						util.simpleMsg("提货时间小于一小时内", 'none');
 						return;
+					}
+					if (!that.Order.CUSTMADDRESS) {
+						util.simpleMsg("请输入配送地址", 'none');
+						return;
+					}
+					if (!that.Order.STR2) {
+						util.simpleMsg("请选择配送中心", 'none');
+						return;
+					}
+					//ToC单判断门店是否日结了
+					if (that.Order.STR1 == "C") {
+						let result = await RequestSend(
+							`select YN_QT from KHYY where khid='${that.Order.STR2}' and TRUNC(DATE_YY)=TRUNC(sysdate)`
+						);
+						console.log("配送中心签到查询结果：", result);
+						if (result.code && result.result.code) {
+							let config_arr = JSON.parse(result.result.data);
+							if (config_arr && config_arr.length && config_arr.length > 0) {
+								if (config_arr[0].YN_QT == "Y") {
+									util.simpleMsg("该配送中心已日结，请更换配送中心", true);
+									return;
+								}
+							}
+						}
 					}
 				}
 				if (that.Order.THTYPE == '2') { //现卖限制时间不能早于当前和19点以后
@@ -992,8 +1056,10 @@
 						util.simpleMsg("提货时间小于当前时间", 'none');
 						return;
 					}
-					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > new Date().setHours(19)) {
-						util.simpleMsg("提货时间晚于19点", 'none');
+					let yysj = new Date(new Date().toLocaleDateString() + " " + that.ETIME); //今日营业结束时间
+					console.log("今日营业结束时间:", yysj);
+					if (new Date(that.Order.THDATE.replace(/-/g, "/")) > yysj) {
+						util.simpleMsg("提货时间晚于" + that.ETIME + "点", 'none');
 						return;
 					}
 				}
@@ -1007,10 +1073,6 @@
 				}
 				if (that.Order.ZNET < that.Order.DNET) {
 					util.simpleMsg("定金大于应收金额", 'none');
-					return;
-				}
-				if (!that.Order.CUSTMPHONE) {
-					util.simpleMsg("联系电话为空", true);
 					return;
 				}
 				if (that.Order.THTYPE == '1' || that.Order.THTYPE == '2') {
@@ -1027,6 +1089,27 @@
 				if (that.Order.CUSTMCOMM && util.isEmojiCharacter(that.Order.CUSTMCOMM)) {
 					util.simpleMsg("备注不允许输入表情符号等特殊字符", true);
 					return false;
+				}
+				if (that.Order.CUSTMNAME && util.isEmojiCharacterName(that.Order.CUSTMNAME)) {
+					util.simpleMsg("收货人名称不允许输入表情符号等特殊字符", true);
+					return false;
+				}
+				//260309 分号替换
+				let custmName = that.Order.CUSTMNAME || '';
+				let custmAddress = that.Order.CUSTMADDRESS || '';
+				if (custmName) {
+					// 全局替换中文分号为英文分号
+					const cname = custmName.replace(/;/g, '；');
+					// 更新回Order对象中
+					that.Order.CUSTMNAME = cname;
+					console.log("替换分号后的order：", that.Order);
+				}
+				if (custmAddress) {
+					// 全局替换中文分号为英文分号
+					const addressWithEnglishSemicolon = custmAddress.replace(/;/g, '；');
+					// 更新回Order对象中
+					that.Order.CUSTMADDRESS = addressWithEnglishSemicolon;
+					console.log("替换分号后的order：", that.Order);
 				}
 				that.Order.CUSTMADDRESS = util.stripscript(that.Order.CUSTMADDRESS); //去除一下特殊字符串
 				// that.Order.CUSTMADDRESS = that.Order.ADDRID; //赋值为地址对应的id

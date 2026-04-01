@@ -161,9 +161,11 @@ var GetMDQD = function(khid, func) {
 		if (res.code && res.msg.length > 0) {
 			let obj = util.getStorage("store");
 			obj.OPENFLAG = res.msg[0].RUN_STATUS;
+			obj.LOGINDATE = dateformat.getYMD();
 			util.setStorage("store", obj);
 		} else {
 			obj.OPENFLAG = 0;
+			obj.LOGINDATE = "";
 		}
 		if (func) func(res);
 	}, err => {
