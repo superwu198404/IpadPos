@@ -72,7 +72,7 @@
  											<th>到货时间</th>
  											<th>到货时段</th>
  											<th>要货门店</th>
- 											<th>要求</th>
+ 											<!-- <th>要求</th> -->
  											<th>任务状态</th>
  											<th>已生产</th>
  											<th>是否预定</th>
@@ -112,7 +112,7 @@
  											<td>{{ item.NOTE }}</td>
  											<td>{{ item.DHSJD }}</td>
  											<td style="text-align: left;">{{ item.KHID }}-{{ item.KHNAME }}</td>
- 											<td>{{ item.QH_NOTE }}</td>
+ 											<!-- <td>{{ item.QH_NOTE }}</td> -->
  											<td>{{ item.BILL_STATUS_NAME }}</td>
  											<td>{{ item.YN_SC=="Y"?"是":"否" }}</td>
  											<td>{{ item.YN_YD=="Y"?"是":"否" }}</td>
@@ -376,6 +376,10 @@
  						<text class="info-value">{{ currentOrder.CUSTMADDRESS }}</text>
  					</view>
  					<view class="info-row">
+ 						<text class="info-label">顾客要求：</text>
+ 						<text class="info-value">{{ currentOrder.CUSTMCOMM }}</text>
+ 					</view>
+ 					<view class="info-row">
  						<text class="info-label">下单时间：</text>
  						<text class="info-value">{{ currentOrder.SALETIME }}</text>
  					</view>
@@ -427,7 +431,8 @@
  			</view>
  		</view>
  		<!-- 软键盘 -->
- 		<KeyboardInput :isShow="isKeyBoardShow" @close="turnOffKeys" @confirm="handleKeyboardConfirm" />
+ 		<KeyboardInput :custom-style="myKeyboardStyle" :isShow="isKeyBoardShow" @close="turnOffKeys"
+ 			@confirm="handleKeyboardConfirm" />
 
  		<!-- 模拟扫码框 -->
  		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
@@ -463,6 +468,18 @@
  		},
  		data() {
  			return {
+ 				myKeyboardStyle: {
+ 					zIndex: 999999,
+ 					backgroundColor: '#fff',
+ 					boxShadow: '0 -6px 10px rgb(255,255,255), 0 4px 15px rgba(0,0,0,0.3)',
+ 					borderRadius: '22rpx',
+ 					width: '1400rpx',
+ 					padding: '0 30rpx 0',
+ 					position: 'absolute',
+ 					bottom: '80rpx',
+ 					left: '50%',
+ 					transform: 'translateX(-50%)'
+ 				},
  				BUSSINESS_NAME: '生产任务',
  				isKeyBoardShow: false,
  				searchType: 'store', // store 门店 good 商品
@@ -473,7 +490,7 @@
  						active: true
  					},
  					{
- 						label: "待接单(个)",
+ 						label: "未打印(个)",
  						key: "DJD",
  						value: 0,
  						active: false
@@ -1131,7 +1148,7 @@
  			getSPDA: function() {
  				let store = util.getStorage("store");
  				_ywbhqh.GetSPDA(store.KHID, res => {
- 					console.log("[GetSPDA]门店数据：", res);
+ 					console.log("[GetSPDA]商品数据：", res);
  					if (res.code && res.msg.length > 0) {
  						that.SPDATA = res.msg;
  					} else {
@@ -1431,7 +1448,7 @@
  			}
  		},
  		created() {
- 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
+ 			// this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
  		},
  		mounted() {
  			this.$nextTick(() => {
@@ -1934,7 +1951,7 @@
  		position: absolute;
 
 
- 		width: 1400rpx;
+ 		width: 1350rpx;
  		max-width: 750rpx;
  		height: 950rpx;
  		background-color: #fff;

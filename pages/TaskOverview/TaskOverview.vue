@@ -21,7 +21,7 @@
                         <view class="card-label">
                             <text class="dot" :class="item.dotClass"></text>{{ item.label }}
                         </view>
-                        <NumberFormat class="card-value" :value="item.value" color="#333333" />
+                        <NumberFormat class="card-value" :decimalScale="0.9" :value="item.value" color="#333333" />
                         <view v-if="item.isShow" class="card-tip">
                             <text>较上周同期</text>
                             <text :class="item.compareType == 1 ? 'up' : 'down'">{{ item.compareValue }}</text>
@@ -37,7 +37,7 @@
                         <view class="card-label">
                             <text class="dot" :class="item.dotClass"></text>{{ item.label }}
                         </view>
-                        <NumberFormat class="card-value" :value="item.value" color="#333333" />
+                        <NumberFormat class="card-value" :decimalScale="0.9" :value="item.value" color="#333333" />
                         <view v-if="item.isShow" class="card-tip">
                             <text>较上周同期</text>
                             <text :class="item.compareType == 1 ? 'up' : 'down'">{{ item.compareValue }}</text>
@@ -60,7 +60,7 @@
                             <view class="size-desc">总数量(个)</view>
                         </view>
                         <view class="size-info">
-                            <NumberFormat class="size-amount" :value="item.amount" color="#333333" />
+                            <NumberFormat class="size-amount" :decimalScale="0.9" :value="item.amount" color="#333333" />
                             <view class="size-desc">总金额(元)</view>
                         </view>
                     </view>

@@ -44,6 +44,16 @@ const GetBHQHOrdersByParam = function(data, func) {
 	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+/**
+ * 要货配送
+ * @param {*} data 参数 
+ * @param {*} func 回调函数
+ */
+const GetBHYHPSByParam = function(data, func) {
+	let apistr = "MobilePos_API.Models.YWBHQH.GetBHYHPSByParam";
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 //获取商品数据 
 var GetSPDA = function(khid, func, yn_xs = 'N', khzid, dqid) {
 	// let gskhinfo = getGSKHINFO(gsid, khid);
@@ -62,10 +72,10 @@ var GetSPDA = function(khid, func, yn_xs = 'N', khzid, dqid) {
 	if (yn_xs == "Y")
 		str = " and sk.YN_XS='Y'"; //销售业务
 	let sql =
-		"select s.SPID,s.SNAME,s.spid||'-'||s.sname IDNAME,s.PINYIN,s.PLID,sk.ZLID,s.SPECS,s.CCCZ,(SELECT PRICE/(CASE UQTY WHEN 0 THEN 1 ELSE UQTY END) PRICE FROM PRICDA WHERE DATE (SDATE)<=DATE ('" +
+		"select s.SPID,s.SNAME,s.spid||'-'||s.sname IDNAME,s.PINYIN,s.PLID,sk.ZLID,s.SPECS,xl.CCCZ,(SELECT PRICE/(CASE UQTY WHEN 0 THEN 1 ELSE UQTY END) PRICE FROM PRICDA WHERE DATE (SDATE)<=DATE ('" +
 		x + "') AND DATE (EDATE)>=DATE ('" + x + "') AND (dqid IS NULL OR dqid='" + dqid +
 		"') AND (khzid IS NULL OR khzid='" + khzid +
-		"') AND QYSTAT='1' and spid=sk.spid) PRICE from  SPKHDA sk left join spda s on sk.spid=s.spid where sk.khid='" +
+		"') AND QYSTAT='1' and spid=sk.spid) PRICE from  SPKHDA sk left join spda s on sk.spid=s.spid left join spda_dgxl xl on sk.spid=xl.spid where sk.khid='" +
 		khid + "' and s.PRODUCT_STATUS='1'" + str + " order by s.spid";
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("商品信息查询成功：", res);
@@ -188,6 +198,12 @@ const BHQHZDPS = function(data, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+//要货配送
+const SubmitBHYHPS = function(data, func) {
+	let apistr = "MobilePos_API.Models.YWBHQH.SubmitBHYHPS";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 
 
 export default {
@@ -202,5 +218,7 @@ export default {
 	BHQHZDInput,
 	GetPsKHList,
 	BHQHZDPS,
-	GetYWBHQHDetail
+	GetYWBHQHDetail,
+	GetBHYHPSByParam,
+	SubmitBHYHPS
 }

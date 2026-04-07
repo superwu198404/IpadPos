@@ -18,9 +18,14 @@
 						<view class="prolist" style="display: flex;flex-direction: column;">
 							<view :class="exit_btn ? 'hh add-top' : 'hh'">
 								<view class="hotcakes">
-									<image src="../../images/waimaidan.png" mode="widthFix"></image> 当日外卖订单
+									<image src="../../images/waimaidan.png" mode="widthFix"></image>外卖订单换货(当日)
 								</view>
-								<view>
+								<view style="gap:20rpx;">
+									<view class="sousuo" @click="GetOrders(KHID)">
+										<image src="../../images/imgbh/cd@1x.png"
+											style="filter: grayscale(1)invert(1)brightness(30.5);" mode="widthFix">
+										</image>刷新
+									</view>
 									<view class="sousuo" v-if="exit_btn" @click="Exit()">
 										<image src="../../images/tuichu.png"
 											style="filter: grayscale(1)invert(1)brightness(30.5);" mode="widthFix">
@@ -71,7 +76,17 @@
 					<view class="listof">
 						<view class="prolist" style="display: flex;flex-direction: column;">
 							<view class="top-wm">
-								<view class="hotcakes">外卖单换货</view>
+								<view :class="exit_btn ? 'hh add-top hotcakes' : 'hh hotcakes'"
+									style="padding-top: 36rpx;">
+									<view class="">外卖单换货</view>
+									<view style="gap:20rpx;">
+										<view class="sousuo" @click="Exit()">
+											<image src="../../images/tuichu.png"
+												style="filter: grayscale(1)invert(1)brightness(30.5);" mode="widthFix">
+											</image>退出
+										</view>
+									</view>
+								</view>
 								<view class="content-container">
 									<!-- 左侧 -->
 									<view class="exchange-left-panel">
@@ -88,6 +103,7 @@
 															<th>序号</th>
 															<th>订单商品</th>
 															<th>商品编码</th>
+															<th>品类</th>
 															<th>规格</th>
 															<th>可换数量</th>
 															<th>单价</th>
@@ -103,7 +119,8 @@
 													}">
 															<td>{{ idx + 1 }}</td>
 															<td>{{ item.SNAME }}</td>
-															<td>{{ item.SPID }}</td>
+															<td>{{ item.SPID.slice(8) }}</td>
+															<td>{{ item.ZLID }}-{{ item.ZL_NAME }}</td>
 															<td>{{ item.SPECS }}</td>
 															<td>{{ item.QTY }}</td>
 															<td>¥{{ item.PRICE }}</td>
@@ -197,8 +214,8 @@
 												<text class="form-label">商品名称</text>
 												<view class="form-picker" style="flex:1;position: relative;">
 													<input @click.stop="showBorad('good')"
-														style="background:#F5F5F5;height:100%;width:100%;padding-left: 6rpx;"
-														disabled v-model="selectedProductItem.SNAME" placeholder="请选择商品"
+														style="height:100%;width:100%;padding-left: 6rpx;" disabled
+														v-model="selectedProductItem.SNAME" placeholder="请选择商品"
 														class="filter-picker" @focus="showDropdown_goods = true"
 														@blur="delayCloseGoodsDropdown" />
 													<view
@@ -216,11 +233,11 @@
 														style="position: absolute; top: 64rpx; left: 0; width: 94%;font-size:28rpx; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999; z-index: 100000;">
 														暂无匹配任务商品
 													</view>
+													<!-- 关闭 -->
+													<image src="../../images/jsd-gb.png"
+														style="width:40rpx;height:40rpx;position: absolute;right: 12rpx;top:50%;transform:translateY(-50%);"
+														@click.stop="clearGoods()" mode="widthFix"></image>
 												</view>
-												<!-- 关闭 -->
-												<image src="../../images/jsd-gb.png"
-													style="width:40rpx;height:40rpx;position: absolute;right: 120rpx;"
-													@click.stop="clearGoods()" mode="widthFix"></image>
 												<image src="../../images/imgbh/rjp@1.5x.png"
 													style="width:40rpx;height:40rpx;margin-left:10rpx"
 													@click.stop="showBorad('good')" mode="widthFix"></image>
@@ -284,8 +301,8 @@
 
 
 		<!-- 软键盘 -->
-		<KeyboardInput style="position:absolute;bottom:100rpx;" @click.stop :isShow="isKeyBoardShow"
-			@close="turnOffKeys" @confirm="handleKeyboardConfirm" />
+		<KeyboardInput :custom-style="myKeyboardStyle" @click.stop :isShow="isKeyBoardShow" @close="turnOffKeys"
+			@confirm="handleKeyboardConfirm" />
 	</view>
 </template>
 
@@ -355,7 +372,18 @@
 				exit_btn: true, //是否显示退出按钮
 				event_channel: null,
 
-
+				myKeyboardStyle: {
+					zIndex: 999999,
+					backgroundColor: '#fff',
+					boxShadow: '0 -6px 10px rgb(255,255,255), 0 4px 15px rgba(0,0,0,0.3)',
+					borderRadius: '22rpx',
+					width: '1400rpx',
+					padding: '0 30rpx 0',
+					position: 'absolute',
+					bottom: '180rpx',
+					left: '60rpx',
+					transform: 'none' // 因为你 left:10% 不需要居中
+				},
 
 				todayDate: '',
 				// 换前商品（原订单商品）
@@ -586,27 +614,32 @@
 			//追加换货商品
 			tempSave() {
 				if (!this.selectedOriginalItem) {
-					util.simpleMsg('请在左侧选择被换的商品', 'none');
+					util.simpleMsg('请在左侧选择被换的商品!', 'none');
 					return;
 				}
 				if (!this.selectedProductItem.SNAME) {
-					util.simpleMsg('请搜索后选择要更换多商品', 'none');
+					util.simpleMsg('请搜索后选择要更换的商品!', 'none');
 					return;
 				}
 				if (this.selectedProductItem.SPID == this.selectedOriginalItem.SPID) {
-					util.simpleMsg('不能更换为相同的商品', 'none');
+					util.simpleMsg('不能更换为相同的商品!', 'none');
 					return;
+				}
+				let _qty = 0;
+				let spArr = this.exchangedGoodsList.filter(r => r.originalSpid == this.selectedOriginalItem?.SPID);
+				if (spArr.length > 0) {
+					_qty = spArr.reduce((acc, cur) => acc + cur.qty, 0);
 				}
 				if (this.currentCount.totalAmount <= 0) {
-					util.simpleMsg('请输入要换货的数量', 'none');
+					util.simpleMsg('请输入要换货的数量!', 'none');
 					return;
 				}
-				if (this.currentCount.totalAmount > this.selectedOriginalItem.QTY) {
-					util.simpleMsg('换货数量不能多于原商品的可换数量', 'none');
+				if ((_qty + this.currentCount.totalAmount) > this.selectedOriginalItem.QTY) {
+					util.simpleMsg('待换货数量加上已换货数量不能多于原商品的可换数量!', 'none');
 					return;
 				}
 				if (this.selectedProductItem.ZLID != this.selectedOriginalItem.ZLID) {
-					util.simpleMsg('换货商品与原商品品类不一致', 'none');
+					util.simpleMsg('换货商品与原商品品类不一致!', 'none');
 					return;
 				}
 				let obj = util.getStorage("sysParam");
@@ -623,54 +656,54 @@
 				const qty = parseFloat(this.currentCount.totalAmount || 1);
 				const oldPrice = parseFloat(oldItem.PRICE || 0);
 				const newPrice = parseFloat(this.selectedProductItem.PRICE || 0);
-				console.log("tempSave.qty:",
-					qty);
-				console.log("tempSave.oldPrice:", oldPrice);
-				console.log("tempSave.newPrice:", newPrice);
 				const oldTotal = util.newFloat(oldPrice * qty);
 				const newTotal = util.newFloat(newPrice * qty);
 				const diffPrice = util.newFloat(newTotal - oldTotal);
-				console.log("tempSave.diffPrice:", diffPrice);
-				console.log("tempSave.priceLimit:", this.priceLimit);
 				if (Math.abs(diffPrice) < this.priceLimit.min || Math.abs(diffPrice) > this.priceLimit.max) {
 					util.simpleMsg('超出可换货价差范围', 'none');
 					return;
 				}
-				let newItem = {
-					exchangedName: this.selectedProductItem.SNAME,
-					exchangedCode: this.selectedProductItem.SPID,
-					exchangedPlid: this.selectedProductItem.PLID,
-					spec: oldItem.SPECS || '',
-					qty: qty,
-					price: newPrice,
-					oldPrice: oldPrice,
-					totalPrice: newTotal,
-					diffPrice: diffPrice,
-					originalName: oldItem.SNAME || '',
-					originalSpid: oldItem.SPID,
-					originalPlid: oldItem.PLID,
-					isChecked: false,
-				};
+				console.log("this.exchangedGoodsList", this.exchangedGoodsList);
+				console.log("this.selectedProductItem", this.selectedProductItem);
+				console.log("this.selectedOriginalItem", this.selectedOriginalItem);
+				let spObj = this.exchangedGoodsList.find(r => r.exchangedCode == this.selectedProductItem?.SPID && r
+					.originalSpid == oldItem.SPID);
+				if (spObj) //有相同的就累加
+					spObj.qty += qty;
+				else {
+					let newItem = {
+						exchangedName: this.selectedProductItem.SNAME,
+						exchangedCode: this.selectedProductItem.SPID,
+						exchangedPlid: this.selectedProductItem.PLID,
+						spec: oldItem.SPECS || '',
+						qty: qty,
+						price: newPrice,
+						oldPrice: oldPrice,
+						totalPrice: newTotal,
+						diffPrice: diffPrice,
+						originalName: oldItem.SNAME || '',
+						originalSpid: oldItem.SPID,
+						originalPlid: oldItem.PLID,
+						isChecked: false,
+					};
 
-				this.exchangedGoodsList.push(newItem);
-
+					this.exchangedGoodsList.push(newItem);
+				}
 				this.calcExchangeStats();
 				this.currentIndex = -1;
 				this.selectedOriginalItem = null;
-				this
-					.resetRightForm();
+				this.resetRightForm();
 			},
 
 			// 查询外卖单
 			saveProductListToCache() {
 				this.showExchange = false;
-				// 清空
-				this.calcExchangeStats();
 				this.currentIndex = -1;
 				this.selectedOriginalItem = null;
-				this.exchangedGoodsList = []
+				this.exchangedGoodsList = [];
 				this.resetRightForm();
-
+				// 清空
+				this.calcExchangeStats();
 				// 查询外卖单
 				this.GetOrders(this.KHID, () => {});
 			},
@@ -718,51 +751,54 @@
 					});
 					return;
 				}
+				util.simpleModal("提示", "是否确定提交外卖换货?", res => {
+					if (res) {
+						let khid = this.KHID;
+						let posid = this.POSID;
+						let rybh = this.RYID || '';
+						let gcid = this.GCID;
+						let orderNo = this.Order.BILL;
+						let date = this.Order.SALEDATE;
 
-				let khid = this.KHID;
-				let posid = this.POSID;
-				let rybh = this.RYID || '';
-				let gcid = this.GCID;
-				let orderNo = this.Order.BILL;
-				let date = this.Order.SALEDATE;
+						let backDetails = [];
+						let normalDetails = [];
 
-				let backDetails = [];
-				let normalDetails = [];
-
-				let submitParams = {
-					khid: khid,
-					posid: posid,
-					ryid: rybh,
-					bill: orderNo,
-					gcid: gcid,
-					date: date,
-					products: this.exchangedGoodsList.map(r => {
-						return {
-							oldSpid: r.originalSpid,
-							oldPlid: r.originalPlid,
-							newSpid: r.exchangedCode,
-							newPlid: r.exchangedPlid,
-							qty: r.qty,
-							oldPrice: r.oldPrice,
-							newPrice: r.price
-						}
-					}),
-				};
-				console.log("换货提交参数：", submitParams);
-				_take.ConfirmWMOrderForChange(submitParams, res => {
-					if (res.code) {
-						uni.showToast({
-							title: '提交成功',
-							icon: 'success'
-						});
-						this.exchangedGoodsList = [];
-						this.calcExchangeStats();
-						this.updateAllCheckedStatus();
-						setTimeout(() => {
-							this.saveProductListToCache();
-						}, 1000);
-					} else {
-						util.simpleMsg(res.msg)
+						let submitParams = {
+							khid: khid,
+							posid: posid,
+							ryid: rybh,
+							bill: orderNo,
+							gcid: gcid,
+							date: date,
+							products: this.exchangedGoodsList.map(r => {
+								return {
+									oldSpid: r.originalSpid,
+									oldPlid: r.originalPlid,
+									newSpid: r.exchangedCode,
+									newPlid: r.exchangedPlid,
+									qty: r.qty,
+									oldPrice: r.oldPrice,
+									newPrice: r.price
+								}
+							}),
+						};
+						console.log("换货提交参数：", submitParams);
+						_take.ConfirmWMOrderForChange(submitParams, res => {
+							if (res.code) {
+								uni.showToast({
+									title: '提交成功',
+									icon: 'success'
+								});
+								this.exchangedGoodsList = [];
+								this.calcExchangeStats();
+								this.updateAllCheckedStatus();
+								setTimeout(() => {
+									this.saveProductListToCache();
+								}, 1000);
+							} else {
+								util.simpleMsg(res.msg)
+							}
+						})
 					}
 				})
 			},
@@ -778,6 +814,7 @@
 						if (func) func(res);
 					} else {
 						that.WMOrders = []
+						util.simpleMsg("暂无数据!", "none");
 					}
 				})
 			},

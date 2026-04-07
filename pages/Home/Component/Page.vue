@@ -32,7 +32,7 @@
 					<text>更多</text>
 				</view>
 				<view class="chargeback" style="z-index: 16;" v-if="showGJ">
-					<view class="currs" @click="ShowTool('changeGoods')">
+					<view class="currs" @click="ShowTool('changeGoods1')">
 						<image class="xz" src="../../../images/huanhh.png" mode="widthFix"></image>
 						<image class="wx" src="../../../images/huanhh.png" mode="widthFix"></image>
 						<text>外卖换货</text>

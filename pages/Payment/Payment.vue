@@ -243,6 +243,7 @@
 							</view>
 							<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 							<view class="coupon-dets">
+								<view v-if="item.qdkq=='1'" class="qudao">渠道</view>
 								<view class="limit">
 									<view class="h3">
 										<text>{{item.sname}}</text>
@@ -793,7 +794,7 @@
 							.disc || 0, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						YN_YLTH: this.isRefund ? (item.origin?.YN_YLTH || "") : item
-						.yn_ylth, //渠道卡券标识
+							.yn_ylth, //渠道卡券标识
 						IDTYPE: this.isRefund ? (item.origin?.IDTYPE || "") : item.id_type, //卡类型
 						AUTH: item.auth || item.origin?.AUTH, //交易号
 						STR2: item.str2 || "", //凭证号 目前仅限支付宝团购券使用
@@ -2495,8 +2496,9 @@
 					return false;
 				return this.PayList.indexOf(i => i.type == type) !== -1; //满足则是存在，否则不存在
 			},
-			//单笔订单重试
-			singlePayRetry: async function(info) {
+
+			//单笔订单重试(这是备份的)
+			__singlePayRetry: async function(info) {
 				console.log('[SinglePayRetry]重试支付:', info);
 				let fkid = info.fkid,
 					trade_no = info.bill;
@@ -2556,6 +2558,165 @@
 
 				} else
 					util.simpleMsg("已存在相同的付款方式！", false);
+			},
+
+			//单笔订单重试
+			singlePayRetry: async function(info) {
+				console.log('[SinglePayRetry]重试支付:', info);
+				let fkid = info.fkid,
+					trade_no = info.bill;
+				let type_info = this.PayWayList.find(i => i.fkid == fkid),
+					type = type_info?.type,
+					data = this.PayDataAssemble();
+				info.loading = true;
+				if (!this.existSamePayType(type)) {
+					this.in_payment = true;
+					retrySinglePay({
+						type: type,
+						trade: info,
+						auth_code: info.auth_code,
+						store_id: this.KHID,
+						trade_no,
+						record: this.record, //记录字段
+						data
+					}, (function(res) {
+						this.in_payment = false;
+						let data = res.data;
+						if (data.status === 'PAYING') { //如果查询成功，状态为支付中
+							console.log("[SinglePayRetry]重试查询结果为支付中...",
+								data)
+							this.RefundErrorCallback(info, false,
+								res); //调用失败回调
+							info.exactly = false; //结果为不确定的
+							return;
+						}
+						console.log("[SinglePayRetry]赋值开始:", {
+							info,
+							data
+						});
+						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
+
+						//20260407 新加逻辑 因为券的重试是不对的。
+						let coupon = data.vouchers?.filter(i => i.yn_card === 'N' && i.note != 'EXCESS'),
+							excoupon = data.vouchers?.filter(i => i.yn_card === 'N' && i.note ===
+								'EXCESS'),
+							card = data.vouchers?.filter(i => i.yn_card === 'Y');
+						console.log("[OrderGenarator]重试券 coupony：", coupon)
+
+						info.disc = (data?.discount || 0) / 100;
+						info.card_no = data.open_id ?? data
+							.transaction_id; //记住authcode
+						info.zklx = data?.disc_type || type_info.zklx ||
+							""; //23-6-25新增 type_info.zklx 项，用于实体卡支付返回实体卡支付折扣信息
+						//info.amount = ((data?.money || 0) / 100).toFixed(2); //重新赋值金额，避免类似抖音券这种延迟获取金额的支付会因为首次失败导致记录错误的问题
+						if (card && card.length > 0) {
+							info.amount = (card[0].pay_amount / 100).toFixed(2)
+							info.card_no = card[0].no;
+						} else if (coupon && coupon.length > 0) {
+							info.amount = (coupon[0].denomination / 100).toFixed(2)
+							info.card_no = coupon[0].no;
+							info.fkid = coupon[0].fkid;
+						}
+						//info.amount: ((coupon.yn_card == 'Y' ? coupon.pay_amount : (coupon
+						//.note == 'EXCESS' ? -coupon.pay_amount :
+						//coupon.denomination)) / 100).toFixed(2),
+						info.auth = data.transaction_id //交易号 用于多卡退款时的分组依据
+						//2026
+
+						info.user_id = (data?.open_id || data?.hyid) ?? "";
+						info.id_type = data?.card_type ||
+							""; //23-6-25新增 data?.card_type 项，用于实体卡支付返回实体卡类型信息
+						this.used_no.push(this.prev_no); //如果成功
+						console.log("[SinglePayRetry]赋值完成:", {
+							info,
+							data
+						});
+						this.retryEnd(info, false)
+
+
+						let coupons = data.vouchers?.filter(i => i.yn_card === 'N');
+						if (coupons.length > 0) {
+							console.log("[OrderGenarator]重试券 payload.money：", data.money)
+							let fq = coupons.find(i => i.note === "EXCESS"); //针对仟吉券
+							if (fq) {
+								this.yPayAmount += (coupons.length > 1 ? (fq.denomination - fq
+										.pay_amount) : data
+									.vouchers[0].denomination) / 100;
+							} else { //其他券支付 如可伴券
+								let num = 0;
+								coupon.map(i => num += i.denomination);
+								this.yPayAmount += num / 100
+							}
+						} else if (card && card.length > 0) {
+							let num = 0;
+							card.map(i => num += i.pay_amount);
+							this.yPayAmount += num / 100
+							//this.yPayAmount += (data.money / 100);
+						} else {
+							this.yPayAmount += (data.money / 100);
+						}
+						if (excoupon.length > 0 || card.length > 1) {
+							if (excoupon.length > 0) {
+								console.log("[OrderGenarator]重试券 ForCouK：", excoupon)
+								this.ForCouK(excoupon, this.PayDataAssemble(), data.transaction_id);
+							} else {
+								this.ForCouK(card.slice(1), this.PayDataAssemble(), data.transaction_id);
+
+							}
+						}
+
+
+
+						this.PayList = Object.assign([], this
+							.PayList); //刷新视图
+						util.simpleModal('重试结果', res);
+					}).bind(this), (this.RefundErrorCallback).bind(this, info,
+						true));
+
+				} else
+					util.simpleMsg("已存在相同的付款方式！", false);
+			},
+
+			ForCouK: function(info, payload, transaction_id) {
+				console.log("[OrderGenarator]重试券 payload：", payload)
+				//循环卡券，由于已经将 支付失败的修改了，所以需要去除第一条
+				if (info && info.length > 0) { //如果是券支付，且返回的卡券数组列表为非空
+					console.log("[OrderGenarator]卡券支付订单生成...");
+					info.forEach((function(coupon, index) {
+						try {
+							let excessInfo = this.PayWayList.find(item => item.fkid == coupon.fkid); //放弃金额
+							console.log("[OrderGenarator]卡券：", coupon)
+							console.log("[OrderGenarator]当前支付方式信息excessInfo：", excessInfo)
+							this.PushToPaidList(this
+								.orderCreated({ //每支付成功一笔，则往此数组内存入一笔记录
+									amount: ((coupon.yn_card == 'Y' ? coupon.pay_amount : (coupon
+										.note == 'EXCESS' ? -coupon.pay_amount :
+										coupon.denomination)) / 100).toFixed(2),
+									fkid: coupon?.fkid,
+									name: excessInfo?.name,
+									balance: (coupon?.balance / 100)?.toFixed(2), //如果是电子卡，余额
+									balance_old: ((coupon?.balance + coupon?.pay_amount) / 100)
+										?.toFixed(2), //如果是电子卡，余额
+									zklx: coupon.yn_card == 'Y' ? excessInfo.zklx : coupon
+										.disc_type, //22.11.21 测试要求券放弃金额 记录原折扣类型
+									disc: (coupon?.discount / 100)?.toFixed(2),
+									fail: false,
+									id_type: coupon?.type,
+									is_free: coupon?.yn_zq,
+									card_no: coupon?.no,
+									no: payload.no,
+									excess: 0, //找零金额
+									auth: transaction_id, //交易号 用于多卡退款时的分组依据
+									yn_ylth: coupon?.yn_qdkq, //渠道标识（仟吉电子卡，仟吉实体卡，仟吉券)
+								}, payload, excessInfo));
+							payload.no++;
+						} catch (e) {
+							console.warn("[OrderGenarator]券信息生成异常:", e);
+						}
+					}).bind(this));
+					console.log("[OrderGenarator]卡、券支付列表:", this.PayList);
+				}
+
 			},
 			//使用不可原路退回
 			useNotOriginBack: function(pay, event) {
@@ -2801,5 +2962,51 @@
 	.uls,
 	.uls * {
 		box-sizing: border-box;
+	}
+
+
+	.directions {
+		padding-top: 20rpx;
+		margin-top: 20rpx;
+	}
+
+	.limit {
+		padding: 6% 3% 2% 2%;
+	}
+
+	.limit .h3 {
+		font-size: 40rpx;
+		display: block;
+		max-width: 83%;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+		line-height: normal;
+		height: fit-content;
+		line-height: 1;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.coupon-dets {
+		position: relative;
+	}
+
+	.coupon-dets .qudao {
+		position: absolute;
+		right: 0;
+		top: 20rpx;
+		font-size: 30rpx;
+		width: 100rpx;
+		height: 48rpx;
+		color: #fff;
+		background: #42B14B;
+		border-radius: 20rpx 4rpx 4rpx 20rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

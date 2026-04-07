@@ -16,7 +16,7 @@
 					style="position: absolute; left: 50%; top: 60%; transform: translate(-50%, -50%);padding-top:0 ;">
 				</NoData>
 
-				<div v-if="listData.length>0"  class="table-scroll-x" ref="scrollX">
+				<div v-if="listData.length>0" class="table-scroll-x" ref="scrollX">
 					<div class="table-scroll-y" ref="scrollY">
 						<table class="data-table" border="0" cellpadding="0" cellspacing="0">
 							<thead class="table-header">
@@ -44,18 +44,18 @@
 										item.isChecked ? 'tr-checked' : ''
 										]">
 									<td class="fixed-col1 td-checkbox">
-										<view @click="toggleTaskChecked(index,item)"
-											class="task-checkbox" :class="{ 'checked': item.isChecked }">
+										<view @click="toggleTaskChecked(index,item)" class="task-checkbox"
+											:class="{ 'checked': item.isChecked }">
 											<image v-if="item.isChecked" class="check-icon"
 												src="../../images/imgbh/gou@1x.png" mode="widthFix"></image>
 										</view>
 										<!-- <view v-else class="task-checkbox task-checkbox-none"> </view> -->
 									</td>
 									<td class="fixed-col2">{{ index + 1 }}</td>
-									<td class="fixed-col3 ">{{item.SPNAME}}</td>
+									<td class="fixed-col3 ">{{item.SPID}}-{{item.SPNAME}}</td>
 									<td>{{ item.SPECS }}</td>
 									<td>{{ item.ZQTY_SQ }}</td>
-									<td>{{ item.NET }}</td>
+									<td>{{ item.PRICE }}</td>
 									<td>{{ item.NOTE }}</td>
 									<td>{{ item.DHSJD }}</td>
 									<td style="text-align: left;">{{ item.KHID }}-{{ item.KHNAME }}</td>
@@ -88,7 +88,7 @@
 					<!-- 到货日期 -->
 					<view class="form-item">
 						<view class="form-label">到货日期</view>
-						<view style="flex:1;position: relative;width:100%;">
+						<view style="flex:1;">
 							<picker style="width: 100%;" mode="date" :value="arrivalDate" @change="onDateChange"
 								class="filter-picker-date">
 								<view :class="arrivalDate ? 'picker-label' : 'picker-placeholder'">
@@ -102,10 +102,9 @@
 						<text class="form-label">要货门店</text>
 						<view class="form-picker" style="flex:1;position: relative;">
 							<input @click.stop="showBorad('shop')"
-								style="height:100%;width:100%;padding-left: 6rpx;box-sizing: border-box;" disabled="true" class="filter-picker"
-								v-model="selectedShopName" placeholder="请选择门店"
-								@focus="(showDropdown_shop = true)"
-								@blur="delayCloseShopDropdown" />
+								style="height:100%;width:100%;padding-left: 6rpx;box-sizing: border-box;"
+								disabled="true" class="filter-picker" v-model="selectedShopName" placeholder="请选择门店"
+								@focus="(showDropdown_shop = true)" @blur="delayCloseShopDropdown" />
 							<view style="opacity: 0;position: absolute;left:0;top:0;height:100%;width:100%"
 								@click.stop="showBorad('shop')"></view>
 
@@ -123,8 +122,8 @@
 							</view>
 
 							<image src="../../images/jsd-gb.png"
-							style="width:40rpx;height:40rpx;position: absolute;right: 12rpx;top:50%;transform:translateY(-50%);"
-							@click.stop="clearShop()" mode="widthFix"></image>
+								style="width:40rpx;height:40rpx;position: absolute;right: 12rpx;top:50%;transform:translateY(-50%);"
+								@click.stop="clearShop()" mode="widthFix"></image>
 						</view>
 
 
@@ -135,9 +134,8 @@
 					<view class="form-item">
 						<text class="form-label">商品名称</text>
 						<view class="form-picker" style="flex:1;position: relative;">
-							<input @click.stop="showBorad('good')"
-								style="height:100%;width:100%;padding-left: 6rpx;" disabled class="filter-picker"
-								v-model="selectedProductName" placeholder="请选择商品" 
+							<input @click.stop="showBorad('good')" style="height:100%;width:100%;padding-left: 6rpx;"
+								disabled class="filter-picker" v-model="selectedProductName" placeholder="请选择商品"
 								@focus="showDropdown_goods = true" @blur="delayCloseGoodsDropdown" />
 							<view style="opacity: 0;position: absolute;left:0;top:0;height:100%;width:100%"
 								@click.stop="showBorad('good')"></view>
@@ -172,7 +170,7 @@
 				<!-- 操作区域按钮 -->
 				<view class="panel-section operation-section" style="padding:24rpx;">
 					<view class="operation-btns">
-						<button class="btn btn-warning" @click="clearAll">取消配送</button>
+						<button class="btn btn-warning" @click="clearAll">返回首页</button>
 						<button class="btn btn-primary" @click="submitData">提交配送</button>
 					</view>
 				</view>
@@ -230,7 +228,7 @@
 
 				// 选中状态
 				currentIndex: -1,
-				arrivalDate:'', // 选中日期
+				arrivalDate: dateformat.getYMD(), // 选中日期
 				selectedShopName: '',
 				selectedShopCode: '',
 				selectedProductName: '',
@@ -247,6 +245,16 @@
 				searchType: ''
 			};
 		},
+		// 监听列表数据变化，自动更新全选状态
+		watch: {
+			// 深度监听listData的变化
+			listData: {
+				handler() {
+					this.updateAllCheckedStatus();
+				},
+				deep: true
+			}
+		},
 		methods: {
 			// 清空门店选择
 			clearShop() {
@@ -260,48 +268,50 @@
 				this.selectedProductName = '';
 			},
 			// 日期选择
- 			onDateChange(e) {
- 				this.arrivalDate = e.detail.value;
- 			},
+			onDateChange(e) {
+				this.arrivalDate = e.detail.value;
+			},
 			// 更新全选按钮状态
- 			updateAllCheckedStatus() {
- 				if (this.listData.length === 0) {
- 					this.allChecked = false;
- 					return;
- 				}
- 				this.allChecked = this.listData.every(item => item.isChecked);
- 			},
+			updateAllCheckedStatus() {
+				if (this.listData.length === 0) {
+					this.allChecked = false;
+					return;
+				}
+				this.allChecked = this.listData.every(item => item.isChecked);
+			},
 
- 			// 全选/取消全选
- 			handleAllCheck() {
- 				const isAllChecked = !this.allChecked;
- 				this.listData.forEach(item => {
- 					item.isChecked = isAllChecked;
- 				});
+			// 全选/取消全选
+			handleAllCheck() {
+				const isAllChecked = !this.allChecked;
+				this.listData.forEach(item => {
+					item.isChecked = isAllChecked;
+				});
 
+				this.updateAllCheckedStatus()
 				this.calcTotalStats()
- 			},
- 			// 切换任务勾选状态
- 			toggleTaskChecked(index,item) {
+			},
+			// 切换任务勾选状态
+			toggleTaskChecked(index, item) {
 				item.isChecked = !item.isChecked;
- 				// let it = this.listData[index];
- 				// const check = it.isChecked;
- 				// const bill_yd = it.BILL_YD;
- 				// console.log("toggleTaskChecked:", it);
- 				// this.listData.map((r, i, arr) => {
- 				// 	if ((r.BILL_STATUS == '1' && r.BILL_YD && r.BILL_YD == bill_yd) || i == index) {
- 				// 		r.isChecked = !check;
- 				// 	}
- 				// })
+				// let it = this.listData[index];
+				// const check = it.isChecked;
+				// const bill_yd = it.BILL_YD;
+				// console.log("toggleTaskChecked:", it);
+				// this.listData.map((r, i, arr) => {
+				// 	if ((r.BILL_STATUS == '1' && r.BILL_YD && r.BILL_YD == bill_yd) || i == index) {
+				// 		r.isChecked = !check;
+				// 	}
+				// })
 
+				this.updateAllCheckedStatus();
 				this.calcTotalStats()
- 			},
+			},
 			// 计算统计总数（数量+金额）
 			calcTotalStats() {
 				const listData = this.listData.filter(item => item.isChecked);
 				this.totalStats = listData.reduce((acc, cur) => {
 					const quantity = Number(cur.ZQTY_SQ) || 0;
-					const price = Number(cur.NET) || 0;
+					const price = Number(cur.PRICE) || 0;
 
 					acc.totalQuantity += quantity;
 					acc.totalAmount += quantity * price;
@@ -334,13 +344,14 @@
 			//获取可售商品
 			getSPDA: function() {
 				let store = util.getStorage("store");
-				_ywbhqh.GetBHRKSPDA(store.KHID, 'PS', store.DQID, store.KHZID, res => {
+				_ywbhqh.GetSPDA(store.KHID, res => {
+					console.log("[GetSPDA]商品数据：", res);
 					if (res.code && res.msg.length > 0) {
 						that.SPDATA = res.msg;
 					} else {
 						that.SPDATA = [];
 					}
-				});
+				}, "N", store.KHZID, store.DQID);
 			},
 
 			// 获取门店列表
@@ -359,28 +370,41 @@
 
 			// 查询商品
 			getList() {
+				let store = util.getStorage("store");
 				let data1 = {
-					selectedShopCode : this.selectedShopCode || '',
-					selectedProductCode : this.selectedProductCode || '',
-					arrivalDate : this.arrivalDate || ''
+					khid: store.KHID,
+					shopId: this.selectedShopCode || '',
+					goodsId: this.selectedProductCode || '',
+					arrivalDate: this.arrivalDate || ''
 				}
-				_ywbhqh.BHQHZDPS(data1, res => {
-					console.log("提交结果：", res);
+				_ywbhqh.GetBHYHPSByParam(data1, res => {
+					console.log("GetBHYHPSByParam查询结果：", res);
 					if (res.code) {
 						let data = JSON.parse(res.data);
- 						data.map(r => {
- 							r.isChecked = false;
- 						})
- 						that.listData = data;
+						data.map(r => {
+							r.isChecked = false;
+						})
+						that.listData = data;
 
 					} else {
-						that.listData = []
+						that.listData = [];
+						that.totalStats = {
+							totalAmount: 0,
+							totalQuantity: 0
+						}
+						that.allChecked = false;
 					}
 				})
-
-				
 			},
-
+			//取消配送
+			clearAll() {
+				util.simpleModal("提示", "是否要退出当前页面?", res => {
+					if (res)
+						uni.redirectTo({
+							url: "/pages/Center/BHCenter"
+						})
+				})
+			},
 			// 提交数据
 			submitData() {
 				if (!common.CheckSign(1)) {
@@ -388,7 +412,7 @@
 				}
 				// 已选中项
 				const listData = this.listData.filter(item => item.isChecked);
-			
+
 				if (!listData || listData.length === 0) {
 					uni.showToast({
 						title: '请先选择商品后再提交',
@@ -397,15 +421,22 @@
 					});
 					return;
 				}
-			
-				// 数据提交
-				const data1 = listData
 
+				let Arr = this.listData.filter(r => r.isChecked).map(r => r.BILL);
+				var bills = Arr.join(',');
 				let store = util.getStorage("store");
+				let data1 = {
+					khid: store.KHID,
+					gsid: store.GSID,
+					posid: store.POSID,
+					ryid: store.RYID,
+					ryname: store.RYNAME,
+					billNos: bills
+				};
 				util.simpleModal("提示", "是否提交配送？", (conf) => {
 					if (conf) {
 						console.log("提交数据：", data1);
-						_ywbhqh.BHQHZDPS(data1, res => {
+						_ywbhqh.SubmitBHYHPS(data1, res => {
 							console.log("提交结果：", res);
 							if (res.code) {
 								util.simpleModal("提示", res.msg);
@@ -427,7 +458,7 @@
 				this.selectedShopCode = '';
 				this.selectedProductCode = '';
 				this.selectedProductName = '';
-				this.arrivalDate = '';
+				this.arrivalDate = dateformat.getYMD();
 			},
 
 			// 软键盘确认处理
@@ -555,9 +586,9 @@
 			}
 		},
 		// 监听列表数据变化，自动更新全选状态
- 		watch: {
- 		
- 		},
+		watch: {
+
+		},
 		created() {
 			this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
 		},
@@ -565,15 +596,14 @@
 			that = this;
 
 			await that.getList() // 获取页面数据
-			
+
 			that.calcTotalStats();
 			that.getSPDA(); // 获取商品数据
 			that.getShopList(); // 获取门店数据
-			
+
 			console.log("页面加载完成");
 		},
-		onUnload() {
-		},
+		onUnload() {},
 		mounted() {
 			this.$nextTick(() => {
 				this.initScrollHandler();
@@ -651,11 +681,12 @@
 		box-sizing: border-box;
 		gap: 24rpx;
 	}
+
 	.page-title {
 		font-weight: 500;
 		font-size: 34rpx;
 		color: #111111;
-		margin-bottom:24rpx;
+		margin-bottom: 24rpx;
 	}
 
 	/* 左侧卡片列表 */
@@ -671,235 +702,237 @@
 		border-radius: 24rpx;
 		position: relative;
 	}
+
 	.fixed-col1 {
- 		position: sticky;
- 		left: 0rpx !important;
- 		min-width: 36rpx;
- 		z-index: 10 !important;
- 	}
+		position: sticky;
+		left: 0rpx !important;
+		min-width: 36rpx;
+		z-index: 10 !important;
+	}
 
- 	.fixed-col2 {
- 		position: sticky;
- 		left:76rpx !important;
- 		min-width: 54rpx;
- 		z-index: 11 !important;
- 	}
+	.fixed-col2 {
+		position: sticky;
+		left: 76rpx !important;
+		min-width: 54rpx;
+		z-index: 11 !important;
+	}
 
- 	.fixed-col3 {
- 		position: sticky;
- 		left: 176rpx !important;
- 		min-width: 160rpx;
- 		z-index: 12 !important;
- 		text-align: left;
- 	}
+	.fixed-col3 {
+		position: sticky;
+		left: 176rpx !important;
+		min-width: 160rpx;
+		z-index: 12 !important;
+		text-align: left;
+	}
+
 	.table-scroll-x {
- 		width: 100%;
- 		height: 96%;
- 		overflow-x: auto;
- 		overflow-y: auto;
- 		-webkit-overflow-scrolling: touch;
- 		position: relative;
- 		white-space: nowrap;
- 	}
+		width: 100%;
+		height: 96%;
+		overflow-x: auto;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		position: relative;
+		white-space: nowrap;
+	}
 
- 	/* 纵向滚动层 - 负责纵向滚动 */
- 	.table-scroll-y {
- 		height: 96%;
+	/* 纵向滚动层 - 负责纵向滚动 */
+	.table-scroll-y {
+		height: 96%;
 
- 		-webkit-overflow-scrolling: touch;
- 		position: relative;
- 		display: inline-block;
- 		min-width: 100%;
- 	}
+		-webkit-overflow-scrolling: touch;
+		position: relative;
+		display: inline-block;
+		min-width: 100%;
+	}
 
- 	/* 表头样式 */
- 	.table-header {
- 		background-color: #FDFDFE;
- 		position: sticky;
- 		top: -2rpx;
- 		/* table的sticky定位要设top:0 */
- 		z-index: 15;
- 	}
+	/* 表头样式 */
+	.table-header {
+		background-color: #FDFDFE;
+		position: sticky;
+		top: -2rpx;
+		/* table的sticky定位要设top:0 */
+		z-index: 15;
+	}
 
- 	/* 表头单元格 */
- 	thead th {
- 		background-color: #FDFDFE;
- 		position: sticky;
- 		top: -2rpx;
- 		z-index: 10;
- 		padding: 20rpx 20rpx;
- 		text-align: center;
- 		font-size: 30rpx;
- 		color: #333;
- 		white-space: nowrap;
- 		font-weight: 400;
- 	}
+	/* 表头单元格 */
+	thead th {
+		background-color: #FDFDFE;
+		position: sticky;
+		top: -2rpx;
+		z-index: 10;
+		padding: 20rpx 20rpx;
+		text-align: center;
+		font-size: 30rpx;
+		color: #333;
+		white-space: nowrap;
+		font-weight: 400;
+	}
 
- 	.table-header .th {
- 		z-index: 14 !important;
- 	}
-
-
-	/* 核心表格样式 */
- 	.data-table {
- 		width: 100%;
- 		border-collapse: collapse;
- 		/* 合并单元格边框，避免间隙 */
- 		background-color: #fff;
-
- 	}
-
- 	/* 确保 sticky 在浏览器中正常工作 */
- 	/* 针对不同浏览器的兼容性写法 */
- 	@supports (position: sticky) or (position: -webkit-sticky) {
- 		.data-table thead th {
- 			position: -webkit-sticky;
- 			position: sticky;
- 			top: 0;
- 		}
- 	}
-
- 	/* 复选框表头单独样式 */
- 	.th-checkbox {
- 		width: 80rpx;
- 		cursor: pointer;
- 	}
-
- 	/* 表体单元格 */
- 	tbody td {
- 		padding: 20rpx 20rpx;
- 		text-align: center;
- 		font-size: 30rpx;
- 		color: #111111;
- 		white-space: nowrap;
- 		font-weight: bold;
- 		/* 禁止文字换行 */
- 		overflow: hidden;
- 		/* 超长内容隐藏 */
- 		text-overflow: ellipsis;
- 		/* 超长显示省略号 */
- 		position: relative;
- 		background-color: #FFF;
-
-
- 	}
-
-	/* 偶数行背景色 */
- 	.tr-even td {
- 		background-color: #F8F8F8;
- 	}
-
-	.tr-checked td {
-		background: #E1F2E2;
-		color:#42B14B;
+	.table-header .th {
+		z-index: 14 !important;
 	}
 
 
- 	/* 生产状态颜色 */
- 	.status-text {
- 		padding: 4rpx 12rpx;
- 		border-radius: 4rpx;
- 		font-size: 24rpx;
- 	}
+	/* 核心表格样式 */
+	.data-table {
+		width: 100%;
+		border-collapse: collapse;
+		/* 合并单元格边框，避免间隙 */
+		background-color: #fff;
 
- 	.status-canceled {
- 		color: #F39017;
- 	}
+	}
 
- 	.status-stored {
- 		color: #006537;
- 	}
+	/* 确保 sticky 在浏览器中正常工作 */
+	/* 针对不同浏览器的兼容性写法 */
+	@supports (position: sticky) or (position: -webkit-sticky) {
+		.data-table thead th {
+			position: -webkit-sticky;
+			position: sticky;
+			top: 0;
+		}
+	}
 
- 	.centre>.bottom-bar:last-child {
- 		position: fixed;
- 		bottom: 0;
- 		left: 0;
- 		background-color: #fff;
- 	}
+	/* 复选框表头单独样式 */
+	.th-checkbox {
+		width: 80rpx;
+		cursor: pointer;
+	}
 
- 	/* 勾选框样式 */
- 	.tranlist-list .task-checkbox {
- 		position: relative;
- 		top: 0;
- 		left: 0;
- 		bottom: 0;
- 		right: 0;
- 	}
+	/* 表体单元格 */
+	tbody td {
+		padding: 20rpx 20rpx;
+		text-align: center;
+		font-size: 30rpx;
+		color: #111111;
+		white-space: nowrap;
+		font-weight: bold;
+		/* 禁止文字换行 */
+		overflow: hidden;
+		/* 超长内容隐藏 */
+		text-overflow: ellipsis;
+		/* 超长显示省略号 */
+		position: relative;
+		background-color: #FFF;
 
- 	/* 勾选框样式 */
- 	.task-checkbox {
- 		width: 32rpx;
- 		height: 32rpx;
- 		border-radius: 50%;
- 		display: flex;
- 		align-items: center;
- 		justify-content: center;
- 		flex-shrink: 0;
- 		transition: all 0.2s ease;
- 		border: 2rpx solid #42B14B;
- 		position: absolute;
- 		right: 20%;
-    	top: 22rpx;
- 	}
 
- 	.task-checkbox.checked {
- 		background-color: #4caf50;
- 		border-color: #4caf50;
- 	}
+	}
 
- 	.task-checkbox-none {
- 		background-color: #D8D8D8;
- 		border-color: #ECECEC;
- 	}
+	/* 偶数行背景色 */
+	.tr-even td {
+		background-color: #F8F8F8;
+	}
 
- 	.check-icon {
- 		color: #fff;
- 		font-size: 24rpx;
- 		font-weight: bold;
- 	}
+	.tr-checked td {
+		background: #E1F2E2;
+		color: #42B14B;
+	}
 
- 	/* 隐藏所有滚动容器的滚动条 - 通用方案 */
- 	::-webkit-scrollbar {
- 		width: 0 !important;
- 		/* 纵向滚动条宽度设为0 */
- 		height: 0 !important;
- 		/* 横向滚动条高度设为0 */
- 		display: none !important;
- 		/* 直接隐藏滚动条 */
- 	}
 
- 	/* 针对表格滚动容器单独处理（增强兼容性） */
- 	.table-container::-webkit-scrollbar,
- 	.table-scroll-x::-webkit-scrollbar,
- 	.table-scroll-y::-webkit-scrollbar {
- 		display: none;
- 		width: 0;
- 		height: 0;
- 	}
+	/* 生产状态颜色 */
+	.status-text {
+		padding: 4rpx 12rpx;
+		border-radius: 4rpx;
+		font-size: 24rpx;
+	}
 
- 	/* 兼容非webkit内核（如Firefox） */
- 	.table-container,
- 	.table-scroll-x,
- 	.table-scroll-y {
- 		scrollbar-width: none;
- 		/* Firefox隐藏滚动条 */
- 		-ms-overflow-style: none;
- 		/* IE/Edge隐藏滚动条 */
- 	}
+	.status-canceled {
+		color: #F39017;
+	}
 
- 	/* 页面整体滚动条隐藏（可选） */
- 	page,
- 	.centre,
- 	.tranlist {
- 		-ms-overflow-style: none;
- 		scrollbar-width: none;
- 	}
+	.status-stored {
+		color: #006537;
+	}
 
- 	page::-webkit-scrollbar,
- 	.centre::-webkit-scrollbar,
- 	.tranlist::-webkit-scrollbar {
- 		display: none;
- 	}
+	.centre>.bottom-bar:last-child {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		background-color: #fff;
+	}
+
+	/* 勾选框样式 */
+	.tranlist-list .task-checkbox {
+		position: relative;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+
+	/* 勾选框样式 */
+	.task-checkbox {
+		width: 32rpx;
+		height: 32rpx;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: all 0.2s ease;
+		border: 2rpx solid #42B14B;
+		position: absolute;
+		right: 20%;
+		top: 22rpx;
+	}
+
+	.task-checkbox.checked {
+		background-color: #4caf50;
+		border-color: #4caf50;
+	}
+
+	.task-checkbox-none {
+		background-color: #D8D8D8;
+		border-color: #ECECEC;
+	}
+
+	.check-icon {
+		color: #fff;
+		font-size: 24rpx;
+		font-weight: bold;
+	}
+
+	/* 隐藏所有滚动容器的滚动条 - 通用方案 */
+	::-webkit-scrollbar {
+		width: 0 !important;
+		/* 纵向滚动条宽度设为0 */
+		height: 0 !important;
+		/* 横向滚动条高度设为0 */
+		display: none !important;
+		/* 直接隐藏滚动条 */
+	}
+
+	/* 针对表格滚动容器单独处理（增强兼容性） */
+	.table-container::-webkit-scrollbar,
+	.table-scroll-x::-webkit-scrollbar,
+	.table-scroll-y::-webkit-scrollbar {
+		display: none;
+		width: 0;
+		height: 0;
+	}
+
+	/* 兼容非webkit内核（如Firefox） */
+	.table-container,
+	.table-scroll-x,
+	.table-scroll-y {
+		scrollbar-width: none;
+		/* Firefox隐藏滚动条 */
+		-ms-overflow-style: none;
+		/* IE/Edge隐藏滚动条 */
+	}
+
+	/* 页面整体滚动条隐藏（可选） */
+	page,
+	.centre,
+	.tranlist {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	page::-webkit-scrollbar,
+	.centre::-webkit-scrollbar,
+	.tranlist::-webkit-scrollbar {
+		display: none;
+	}
 
 
 	/* 右侧面板 */
@@ -1088,24 +1121,25 @@
 	}
 
 	.filter-picker-date,
- 	.filter-input {
- 		flex: 1;
- 		height: 72rpx;
- 		line-height: 72rpx;
- 		border: 1rpx solid #E5E5E5;
- 		border-radius: 8rpx;
- 		padding: 0 20rpx 0 8rpx;
- 		font-size: 26rpx;
- 		color: #999;
- 		box-sizing: border-box;
- 	}
-	.picker-label {
- 		color: #111;
- 		font-size: 28rpx;
- 	}
-	.picker-placeholder {
- 		color: gray;
- 		font-size: 28rpx;
- 	}
+	.filter-input {
+		flex: 1;
+		height: 72rpx;
+		line-height: 72rpx;
+		border: 1rpx solid #E5E5E5;
+		border-radius: 8rpx;
+		padding: 0 20rpx 0 8rpx;
+		font-size: 26rpx;
+		color: #999;
+		box-sizing: border-box;
+	}
 
+	.picker-label {
+		color: #111;
+		font-size: 28rpx;
+	}
+
+	.picker-placeholder {
+		color: gray;
+		font-size: 28rpx;
+	}
 </style>

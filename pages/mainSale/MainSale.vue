@@ -356,6 +356,7 @@
 								</view>
 								<image class="banyuan" src="../../images/quan-fenge.png" mode="widthFix"></image>
 								<view class="coupon-dets" style="transform: translateX(-1px);">
+									<view v-if="item.qdkq=='1'" class="qudao">渠道</view>
 									<view class="limit">
 										<view class="h3">
 											<text>{{item.sname}}</text>
@@ -1482,6 +1483,7 @@
 		position: absolute;
 		z-index: 9998 !important;
 	}
+
 	.component-box1 {
 		position: absolute;
 		z-index: 9997 !important;
@@ -1492,4 +1494,46 @@
 	} */
 
 	/* todo */
+
+	.directions {
+		padding-top: 20rpx;
+		margin-top: 20rpx;
+	}
+
+	.limit {
+		padding:2% 3% 2% 2%;
+	}
+	.limit .h3 {
+		font-size: 40rpx;
+		display: block;
+		max-width: 83%;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+		line-height: normal;
+	    height: fit-content;
+		line-height: 1;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.coupon-dets {
+		position: relative;
+	}
+	.coupon-dets .qudao {
+		position: absolute;
+		right: 0;
+		top: 20rpx;
+		font-size: 30rpx;
+		width: 100rpx;
+		height: 48rpx;
+		color: #fff;
+		background: #42B14B;
+		border-radius: 20rpx 4rpx 4rpx 20rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 </style>

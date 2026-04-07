@@ -1046,6 +1046,9 @@
 									util.simpleMsg("该配送中心已日结，请更换配送中心", true);
 									return;
 								}
+							} else {
+								util.simpleMsg("该配送中心暂未签到，请更换配送中心", true);
+								return;
 							}
 						}
 					}

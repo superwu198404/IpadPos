@@ -1,5 +1,5 @@
 <template>
-	<view @click.stop v-if="isShow" class="keyboard-input">
+	<view @click.stop v-if="isShow" class="keyboard-input" :style="customStyle || defaultStyle">
 		<view class="searchTerms">
 			<view class="affirmArea" style="margin-left: 20px;font-size: 18px;display: flex;flex-direction: row;">
 				<view v-show="innerQueryKeys.length">
@@ -41,12 +41,31 @@
 			maxLength: {
 				type: Number,
 				default: 10
+			},
+			customStyle: {
+				type: Object,
+				default: () => null
 			}
 		},
 		data() {
 			return {
 				// 组件内部维护输入的搜索词
 				innerQueryKeys: '',
+				// 默认样式
+				defaultStyle: {
+					zIndex: 999999,
+					backgroundColor: '#fff',
+					boxShadow: '0 -6px 10px rgb(255,255,255), 0 4px 15px rgba(0,0,0,0.3)',
+					borderRadius: '22rpx',
+					width: '1400rpx',
+					padding: '0 30rpx 0',
+					position: 'absolute',
+					bottom: '80rpx',
+					// left: '50%',
+					// transform: 'translateX(-50%)'
+					left: '5vw',
+					
+				},
 				keyBoardList: [
 				{
 					"value": [
@@ -136,41 +155,31 @@
 <style scoped>
 	/* 软键盘样式 */
 	.keyboard-input {
-		z-index: 999999;
-		background-color: #fff;
-		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 15px rgba(0, 0, 0, 0.3);
-		border-radius: 22px;
-		width: 1600rpx;
-		padding: 0 30rpx 30rpx;
-		position: absolute;
-		bottom: 10rpx;
-		left: 50%;
-		transform: translateX(-50%);
-		padding-bottom: 40rpx;
+
 	}
 
 	.keyboard {
 		user-select: none;
 		cursor: pointer;
-		padding: 10rpx 0 40rpx;
+		padding: 10rpx 0 30rpx;
 	}
 
 	.keyboard .keys {
 		display: flex;
 		list-style: none;
-		margin: 0 0 0 -33rpx;
+		margin: 0 0 0 -72rpx;
 	}
 
 	.keyboard li {
 		box-shadow: 0 -6px 10px rgb(255, 255, 255), 0 4px 10px rgba(0, 0, 0, 0.3);
-		width: 120rpx;
-		height: 120rpx;
+		width: 112rpx;
+		height: 112rpx;
 		font-size: 36rpx;
 		margin: 18rpx;
 		background-color: #f2f2f2;
-		border-radius: 30rpx;
+		border-radius: 28rpx;
 		text-align: center;
-		line-height: 120rpx;
+		line-height: 112rpx;
 		transition: all 0.25s;
 	}
 
@@ -185,7 +194,7 @@
 		font-weight: 700;
 		color: gray;
 		width: 100%;
-		height: 70rpx;
+		height: 56rpx;
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row;

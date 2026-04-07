@@ -104,7 +104,7 @@
 			<!-- <button @click="MenuPage(3)">返回调试</button>-->
 			<button @click="Test(2)">测试一下</button>
 			<button @click="toMainSale">主销售界面</button>
-			
+
 
 			<div v-if="view.orders.showDetail"
 				style="position: absolute;width: 70%;height: 70%;left: 50%;right: 50%;top: 50%;bottom: 50%;transform: translate(-50%,-50%);background-color: white;box-shadow: 0px 0px 10px 0px #8f8f94;">
@@ -180,7 +180,7 @@
 				input: {
 					sql: "select * from SPDA where spid='000000008010100002'",
 					ip: "192.168.0.28:8000",
-					connect:{
+					connect: {
 						open: false
 					},
 					fromData: {
@@ -485,8 +485,9 @@
 					uni.reLaunch({
 						url: "../start/start",
 						success: () => {
-							util.setStorage("store", {});
-							uni.clearStorageSync(); //清除所有缓存
+							// util.setStorage("store", {});
+							// uni.clearStorageSync(); //清除所有缓存
+							this.clearAllAppData();
 						}
 					});
 				} else if (e == 8) {
@@ -516,6 +517,35 @@
 						url: "/pages/TestDemon/Swiper"
 					});
 				}
+			},
+			//清除本地数据
+			clearAllAppData: function() {
+				// 1. 清除 Storage
+				try {
+					uni.clearStorageSync()
+				} catch (e) {}
+
+				// 2. App 端清除缓存与文件
+				// #ifdef APP-PLUS
+				plus.cache.clear()
+				// 清除_doc目录
+				plus.io.resolveLocalFileSystemURL('_doc/ipad.db', (entry) => {
+					console.log("clearAllAppData.resolveLocalFileSystemURL", entry);
+					s
+					entry.removeRecursively()
+				})
+				// #endif
+
+				// 3. H5 额外清除
+				// #ifdef H5
+				localStorage.clear()
+				sessionStorage.clear()
+				// #endif
+
+				uni.showToast({
+					title: '已清除所有本地数据',
+					icon: 'success'
+				})
 			},
 			//新版
 			XS_POSID: function() {
@@ -1149,21 +1179,21 @@
 			closeDB: async function() {
 				await db.get().close();
 			},
-			ConnectDebug(){
+			ConnectDebug() {
 				common.ConnectDebug(this.input.ip, this.KHID, {
-					open: (function(s){
+					open: (function(s) {
 						console.log("[ConnectDebug]连接开启!");
 						this.input.connect.open = true;
 					}).bind(this),
-					close: (function(s){
+					close: (function(s) {
 						console.log("[ConnectDebug]连接关闭!");
 						this.input.connect.open = false;
 					}).bind(this),
-					error: (function(s,err){
-						console.log("[ConnectDebug]连接异常!",err);
+					error: (function(s, err) {
+						console.log("[ConnectDebug]连接异常!", err);
 					}).bind(this),
-					message: (function(s, msg){
-						console.log("[ConnectDebug]连接消息!",msg);
+					message: (function(s, msg) {
+						console.log("[ConnectDebug]连接消息!", msg);
 					}).bind(this),
 				});
 			}

@@ -354,7 +354,7 @@ var hykPay = {
 		}, function(res) {
 			console.log("[hykPay]电子卡查询结果：", res);
 			console.log("当前已支付的数据：", body.pay_list);
-			if (res.code) {
+			if (res.code||(!res.code&&res.msg.includes("用户没有可用礼品卡"))) {
 				// 核心修改：将canUseFlag赋值到yn_ylth字段
 				body.yn_qdk = res.data.canUseFlag;
 				let obj1 = body.pay_list.find(r => r.type == 'JHQ' && r.yn_ylth == '1'); //有渠道券支付数据

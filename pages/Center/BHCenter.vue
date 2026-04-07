@@ -9,12 +9,12 @@
 
 		<view class="tranlist">
 			<view class="leftlist">
-				<view class="logos" @click="ToSale('/pages/BHYHPS/BHYHPS')">
+				<view class="logos" @click="ToSale('/pages/BHYHPS/BHYHPS','not')">
 					<!-- <image src="../../images/imgbh/peis@1x.png" mode="widthFix"></image> -->
 					<view class="xingqi">
 						<view>要货配送</view>
 						<view>DISTRIBUTION</view>
-					</view> 
+					</view>
 				</view>
 				<view class="sginout-qd">
 					<view class="left">
@@ -31,11 +31,13 @@
 					<view class="right right-qd">
 						<view @click="ToSale('/pages/BHZDPS/BHZDPS','not')">
 							<image class="datebg gaip_bj" src="../../images/gaip_bj.png" mode="widthFix"></image>
-							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/gaip@1x.png" mode="widthFix"></image><label>改胚</label>
+							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/gaip@1x.png"
+								mode="widthFix"></image><label>改胚</label>
 						</view>
-						<view  @click="Chaxun(1)">
+						<view @click="Chaxun(1)">
 							<image class="datebg gaip_bj" src="../../images/cxxun_bj.png" mode="widthFix"></image>
-							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/cx@1x.png" mode="widthFix"></image><label>查询</label>
+							<image class="tubiao" style="margin-right:20rpx;" src="../../images/imgbh/cx@1x.png"
+								mode="widthFix"></image><label>查询</label>
 						</view>
 					</view>
 				</view>
@@ -70,11 +72,13 @@
 						<view>
 							<view style="display: flex;justify-content: flex-start;align-items: flex-start;gap: 12rpx;">
 								<image src="../../images/yaohsc.png" mode="heightFix"></image>
-								<label style="line-height: 1;" @click="ToSale('/pages/YWBHQH/YWBHQH')"><text>生产任务</text><text>PRODUCTION</text></label>
+								<label style="line-height: 1;"
+									@click="ToSale('/pages/YWBHQH/YWBHQH')"><text>生产任务</text><text>PRODUCTION</text></label>
 							</view>
 							<view style="display: flex;justify-content: flex-start;align-items: flex-start;gap: 12rpx;">
 								<image src="../../images/drrwyl.png" mode="heightFix"></image>
-							    <label style="line-height: 1;" @click="viewTasks()"><text>今日任务概览</text><text>TASK</text></label>
+								<label style="line-height: 1;"
+									@click="viewTasks()"><text>今日任务概览</text><text>TASK</text></label>
 							</view>
 						</view>
 					</view>
@@ -111,29 +115,25 @@
 				<view class="content-list">
 					<!-- 左侧分类栏 -->
 					<view class="category-sidebar">
-						<view 
-							v-for="(item, index) in menuList" 
-							:key="item.MenuId"
-							class="category-item"
-							:class="{ active: activeCategoryIndex === index }"
-							@click="switchCategory(index)"
-						>
+						<view v-for="(item, index) in menuList" :key="item.MenuId" class="category-item"
+							:class="{ active: activeCategoryIndex === index }" @click="switchCategory(index)">
 							{{ item.MenuName }}
-							<image  v-if="activeCategoryIndex === index" class="xzzz" src="../../images/xzzz.png" ></image>
+							<image v-if="activeCategoryIndex === index" class="xzzz" src="../../images/xzzz.png">
+							</image>
 						</view>
 					</view>
 					<!-- 右侧功能网格 -->
 					<view class="func-grid">
-						<view 
-							v-for="(func,index) in currentFuncList" 
-							:key="index"
-							class="func-item"
-							@click="handleFuncClick(func)"
-						>
-							<image v-if="index%5 == 0" class="func-icon" src="../../images/ic_1.png" mode="widthFix"></image>
-							<image v-else-if="index%5 == 1" class="func-icon" src="../../images/ic_2.png" mode="widthFix"></image>
-							<image v-else-if="index%5 == 2" class="func-icon" src="../../images/ic_3.png" mode="widthFix"></image>
-							<image v-else-if="index%5 == 3" class="func-icon" src="../../images/ic_4.png" mode="widthFix"></image>
+						<view v-for="(func,index) in currentFuncList" :key="index" class="func-item"
+							@click="handleFuncClick(func)">
+							<image v-if="index%5 == 0" class="func-icon" src="../../images/ic_1.png" mode="widthFix">
+							</image>
+							<image v-else-if="index%5 == 1" class="func-icon" src="../../images/ic_2.png"
+								mode="widthFix"></image>
+							<image v-else-if="index%5 == 2" class="func-icon" src="../../images/ic_3.png"
+								mode="widthFix"></image>
+							<image v-else-if="index%5 == 3" class="func-icon" src="../../images/ic_4.png"
+								mode="widthFix"></image>
 							<image v-else class="func-icon" src="../../images/ic_5.png" mode="widthFix"></image>
 
 							<text class="func-name">{{ func.MenuName }}</text>
@@ -143,7 +143,7 @@
 				</view>
 
 			</view>
-		
+
 		</view>
 	</view>
 </template>
@@ -243,45 +243,39 @@
 				// }, 5500);
 
 			},
-			 // 打开更多功能弹窗
+			// 打开更多功能弹窗
 			openMoreFunc() {
 				const menu = util.getStorage("MDMENU") || [];
 				this.menuList = menu;
 
-				this.menuList = [
-					{
-					MenuName: "业务办理",
-					Second: [
-						{
-						MenuName: "入库管理",
-						},
-						{
-						MenuName: "配送管理",
-						},
-					]
+				this.menuList = [{
+						MenuName: "业务办理",
+						Second: [{
+								MenuName: "入库管理",
+							},
+							{
+								MenuName: "配送管理",
+							},
+						]
 					},
 					{
-					MenuName: "查询统计",
-					Second: [
-						{
-						MenuName: "数据查询",
-						}
-					]
+						MenuName: "查询统计",
+						Second: [{
+							MenuName: "数据查询",
+						}]
 					},
 					{
-					MenuName: "系统设置",
-					Second: [
-						{
-						MenuName: "基础设置",
-						}
-					]
+						MenuName: "系统设置",
+						Second: [{
+							MenuName: "基础设置",
+						}]
 					}
 				];
 
 
 				this.activeCategoryIndex = 0;
 				this.showMoreFunc = true;
-				
+
 			},
 			// 关闭弹窗
 			closeMoreFunc() {
@@ -1080,22 +1074,25 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		gap:24rpx;
+		gap: 24rpx;
 		box-sizing: border-box;
 	}
+
 	.leftlist .sginout-qd .right-qd {
 		display: flex;
 		flex-direction: column;
 	}
+
 	.leftlist .sginout-qd .right-qd>view {
 		position: relative;
 		display: flex;
 		align-items: center;
 		padding-left: 40rpx;
 		box-sizing: border-box;
-		flex:1;
+		flex: 1;
 	}
-	 .gaip_bj {
+
+	.gaip_bj {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -1139,6 +1136,7 @@
 
 
 	}
+
 	.dates-bh2 {
 		background-image: url('../../images/new-bg.png');
 		background-size: 100% 100%;
@@ -1433,6 +1431,7 @@
 		justify-content: center;
 		align-items: center;
 	}
+
 	/* 弹窗内容容器 */
 	.modal-content {
 		width: 70%;
@@ -1441,14 +1440,15 @@
 		border-radius: 40rpx;
 		overflow: hidden;
 
-		
- 		background-image: url('../../images/imgbh/tanc-bg@1x.png');
- 		background-size: 100% 274rpx;
- 		/* 禁止背景图重复平铺 */
- 		background-repeat: no-repeat;
- 		/* 可选：控制背景图垂直位置（比如置顶，也可设center/bottom） */
- 		background-position: left top;
+
+		background-image: url('../../images/imgbh/tanc-bg@1x.png');
+		background-size: 100% 274rpx;
+		/* 禁止背景图重复平铺 */
+		background-repeat: no-repeat;
+		/* 可选：控制背景图垂直位置（比如置顶，也可设center/bottom） */
+		background-position: left top;
 	}
+
 	.modal-content .title-left {
 		display: flex;
 		justify-content: space-between;
@@ -1456,19 +1456,23 @@
 		padding: 2%;
 		border-bottom: 2rpx solid #E9E9E9;
 	}
+
 	.modal-content .title-left view {
 		font-weight: 700;
 		font-size: 40rpx;
 		color: #333333;
 	}
+
 	.modal-content .title-left image {
 		width: 48rpx;
 		height: 48rpx;
 	}
+
 	.modal-content .content-list {
 		display: flex;
-		height:100%;
+		height: 100%;
 	}
+
 	/* 左侧分类栏 */
 	.category-sidebar {
 		background: #F5F6F9;
@@ -1476,6 +1480,7 @@
 		width: 25%;
 		overflow-y: auto;
 	}
+
 	.category-item {
 		padding: 30rpx 20rpx;
 		font-size: 36rpx;
@@ -1483,18 +1488,21 @@
 		text-align: center;
 		position: relative;
 	}
+
 	.category-item .xzzz {
 		position: absolute;
 		left: 0;
-		top:0;
+		top: 0;
 		width: 16rpx;
-		height:100%;
+		height: 100%;
 	}
+
 	.category-item.active {
 		background: #fff;
 		color: #006B44;
 		font-weight: 700;
 	}
+
 	/* 右侧功能网格 */
 	.func-grid {
 		flex: 1;
@@ -1505,16 +1513,19 @@
 		gap: 56rpx;
 		overflow-y: auto;
 	}
+
 	.func-item {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 20rpx;
 	}
+
 	.func-icon {
 		width: 100rpx;
 		height: 100rpx;
 	}
+
 	.func-name {
 		font-size: 40rpx;
 		color: #111111;
