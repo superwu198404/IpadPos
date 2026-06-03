@@ -2,7 +2,7 @@
 	--green: #42b14b;
 	--light-green: #e0eae9;
 	--drak-green: #006b44;
-	--light-gray:#f5f4f8;
+	--light-gray: #f5f4f8;
 }
 
 @keyframes rotate {
@@ -32,11 +32,12 @@
 	height: 100%;
 }
 
-.all-border-box, .all-border-box * {
+.all-border-box,
+.all-border-box * {
 	box-sizing: border-box;
 }
 
-.component-content > * {
+.component-content>* {
 	height: 100% !important;
 	width: 100% !important;
 	overflow: hidden;

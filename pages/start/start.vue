@@ -143,6 +143,7 @@
 		},
 		methods: {
 			onLoad() {
+		
 				that = this;
 				// util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
 				// let Init_Data = util.getStorage("Init_Data");

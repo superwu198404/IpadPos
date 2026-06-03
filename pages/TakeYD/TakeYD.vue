@@ -11,118 +11,130 @@
 		<!-- <menu_page :menuIndex="4"></menu_page> -->
 		<view class="right">
 			<view class="bkjb">
-			<view class="neik">
-			<!-- <menu_head></menu_head> -->
-			<view class="listof">
-				<view class="prolist">
-					<view class="commodity">
-						<view class="hh">
-							<view class="hotcakes">
-								<image src="../../images/waimaidan.png" mode="widthFix"></image> 外卖预定单
-								<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
-							</view>
-							<view class="sousuo" @click="Refresh()">
-								<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
-							</view>
-						</view>
-						<NoData v-if="WMOrders.length==0"></NoData>
-						<!-- 小类循环 -->
-						<view class="products" v-else>
-							<view class="procycle">
-								<!-- 外卖单循环 -->
-
-								<view class="li" :class="curIndex === index? 'curr':' '"
-									v-for="(item,index) in WMOrders" :order="item" @click="ShowDetail(item,index)">
-									<view class="h3">
-										<view class="platform">
-											<label>
-												<image v-if="item.XSPTID=='ELM'" src="../../images/wmd-eleme.png"
-													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='MEITUAN'" src="../../images/wmd-meituan.png"
-													mode="widthFix"></image>
-												<image v-if="item.XSPTID=='YOUZAN'" src="../../images/wmd-youzan.png"
-													mode="widthFix"></image>
-												{{item.NOTE2}}
-											</label>
-											<label class="state jiedan"
-												v-if="item.STATUS==12"><text>●</text>{{item.STR3}}</label>
-											<label class="state quxiao" v-else><text>●</text>{{item.STR3}}</label>
-										</view>
-										<view>￥{{item.ZNET}}</view>
+				<view class="neik">
+					<!-- <menu_head></menu_head> -->
+					<view class="listof">
+						<view class="prolist">
+							<view class="commodity">
+								<view class="hh">
+									<view class="hotcakes">
+										<image src="../../images/waimaidan.png" mode="widthFix"></image> 外卖预定单
+										<!-- <view>类型：<text>立即送</text><text>预订单</text></view> -->
 									</view>
-									<view class="cods">
-										<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
-										<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
-										<!-- <label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
-										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
-										<label><text>备注：</text><text>{{item.STR1}}</text></label> -->
-									</view>
-									<view class="address">
-										订单类型：{{item.GSID}}
+									<view class="sousuo" @click="Refresh()">
+										<image src="../../images/shuaxin.png" mode="widthFix"></image>刷新
 									</view>
 								</view>
+								<NoData v-if="WMOrders.length==0"></NoData>
+								<!-- 小类循环 -->
+								<view class="products" v-else>
+									<view class="procycle">
+										<!-- 外卖单循环 -->
 
-							</view>
-							<view class="details">
-								<view class="detinfo">
-									<view class="member">
-										<label>
-											<image class="touxiang" src="../../images/touxiang.png"></image>
-											<label
-												class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
-										</label>
-									</view>
-									<view class="harvest">
-										<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
-										<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
-										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
-										<label><text>下单时间：</text><text>{{Order.WDATE}} {{Order.WTIME}}</text></label>
-										<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
-										<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
-									</view>
-									<view class="h5"><text>单号：{{Order.BILL}}</text></view>
-									<view class="goods">
-										<!-- 商品循环 -->
-										<view class="prolist" v-for="(item1,index1) in Details">
+										<view class="li" :class="curIndex === index? 'curr':' '"
+											v-for="(item,index) in WMOrders" :order="item"
+											@click="ShowDetail(item,index)">
 											<view class="h3">
-												<label>
-													<checkbox-group @click="checkFunc(item1)" v-if="item1.yn_sb">
-														<checkbox :checked="item1.isChecked"></checkbox>
-													</checkbox-group>
-													<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
-													{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
-												</label>
-												<view class="shuls"><text>×{{item1.PACK}}</text></view>
+												<view class="platform">
+													<label>
+														<image v-if="item.XSPTID=='ELM'"
+															src="../../images/wmd-eleme.png" mode="widthFix"></image>
+														<image v-if="item.XSPTID=='MEITUAN'"
+															src="../../images/wmd-meituan.png" mode="widthFix"></image>
+														<image v-if="item.XSPTID=='YOUZAN'"
+															src="../../images/wmd-youzan.png" mode="widthFix"></image>
+														{{item.NOTE2}}
+													</label>
+													<label class="state jiedan"
+														v-if="item.STATUS==12"><text>●</text>{{item.STR3}}</label>
+													<label class="state quxiao"
+														v-else><text>●</text>{{item.STR3}}</label>
+												</view>
+												<view>￥{{item.ZNET}}</view>
 											</view>
 											<view class="cods">
-												<view>
-													<label>
-														<image src="../../images/dx-bm.png" mode="widthFix"></image>
-														{{item1.SPID}}
-													</label>
-													<label>
-														<image src="../../images/dx-dw.png" mode="widthFix"></image>
-														{{item1.STR7}}-{{item1.STR2}}
-													</label>
-												</view>
-												<text>已取消：{{item1.BQTY}}</text>
+												<label><text>流水号：</text><text>{{item.XS_BILL}}</text></label>
+												<label><text>提货时间：</text><text>{{item.CUSTMTIME}}</text></label>
+												<!-- <label><text>下单时间：</text><text>{{item.WDATE}}</text></label>
+										<label><text>顾客电话：</text><text>{{item.STR6}}</text></label>
+										<label><text>备注：</text><text>{{item.STR1}}</text></label> -->
+											</view>
+											<view class="address">
+												订单类型：{{item.GSID}}
 											</view>
 										</view>
+
 									</view>
-								</view>
-								<view class="operat">
-									<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
-									<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
-									<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
-									<!-- <button class="btn btn-qx" @click="ReBack()">退出</button> -->
+									<view class="details">
+										<view class="detinfo">
+											<view class="member">
+												<label>
+													<image class="touxiang" src="../../images/touxiang.png"></image>
+													<label
+														class="xixin"><text>{{Order.STR5}}</text><text>{{Order.STR6}}</text></label>
+												</label>
+											</view>
+											<view class="harvest">
+												<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
+												<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
+										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
+												<label><text>下单时间：</text><text>{{Order.WDATE}}
+														{{Order.WTIME}}</text></label>
+												<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
+												<label><text>下单渠道：</text><text>{{Order.XDQD}}</text></label>
+												<label><text>修改类型：</text><text>{{Order.UP_CONTENT}}</text></label>
+												<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
+											</view>
+											<view class="h5"><text>单号：{{Order.BILL}}</text></view>
+											<view class="goods">
+												<!-- 商品循环 -->
+												<view class="prolist" v-for="(item1,index1) in Details">
+													<view class="h3">
+														<label>
+															<checkbox-group @click="checkFunc(item1)"
+																v-if="item1.yn_sb">
+																<checkbox :checked="item1.isChecked"></checkbox>
+															</checkbox-group>
+															<image src="../../images/dx-mrxk.png" mode="widthFix">
+															</image>
+															{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
+														</label>
+														<view class="shuls"><text>×{{item1.PACK}}</text></view>
+													</view>
+													<view class="cods">
+														<view>
+															<label>
+																<image src="../../images/dx-bm.png" mode="widthFix">
+																</image>
+																{{item1.SPID}}
+															</label>
+															<label>
+																<image src="../../images/dx-dw.png" mode="widthFix">
+																</image>
+																{{item1.STR7}}-{{item1.STR2}}
+															</label>
+															<label>
+																{{item1.COMBONAME}}
+															</label>
+														</view>
+														<text>已取消：{{item1.BQTY}}</text>
+													</view>
+												</view>
+											</view>
+										</view>
+										<view class="operat">
+											<button class="btn" @click="ConfirmReceipt()" v-if="yn_qr">接受确认</button>
+											<button class="btn" @click="ConfirmReback()" v-if="yn_ty">同意退单</button>
+											<button class="btn" @click="RejectReback()" v-if="yn_jj">拒绝退单</button>
+											<!-- <button class="btn btn-qx" @click="ReBack()">退出</button> -->
+										</view>
+									</view>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-		</view>
-		</view>
 		</view>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
@@ -208,10 +220,10 @@
 					if (res.code) {
 						that.WMOrders = JSON.parse(res.data).main;
 						that.OrderDeails = JSON.parse(res.data).detail;
-						util.simpleMsg("外卖预订单信息查询成功!",false);
+						util.simpleMsg("外卖预订单信息查询成功!", false);
 						if (func) func(res);
 					} else {
-						util.simpleMsg("暂无数据!",true);
+						util.simpleMsg("暂无数据!", true);
 						that.WMOrders = [];
 						that.OrderDeails = [];
 						that.Order = {};
@@ -297,8 +309,7 @@
 							let data = JSON.parse(res.data);
 							if (data.yn_print) {
 								//调用打印
-								let printerPram = 
-								{
+								let printerPram = {
 									"PRINTNUM": 1,
 									"XSTYPE": "WMYD",
 									"BS_REASON": "",

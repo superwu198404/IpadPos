@@ -126,7 +126,9 @@
 					</view>
 				</view>
 			</view>
-			<SpecialDisc v-if="view.enable_special_discount" :zkdatas="source.discount_infos" :product="source.sale002">
+			<SpecialDisc v-if="view.enable_special_discount" :dkhid="DKFID" :zkdatas="source.discount_infos"
+				:product="source.sale002"
+				:ywtype="(source.sale001&&source.sale001.BILL_TYPE == 'Z112')?'sale_credit':'kq_sale'" :sxjgz="JGZList">
 			</SpecialDisc>
 			<!-- 画布 -->
 			<view class="canvasdiv" :style="'visibility:hidden;'">
@@ -206,6 +208,8 @@
 					big_customer_info: null,
 					jdy: null,
 					discount_infos: null,
+					discount_infos_new: null, //新修改过的折扣数据
+					discount_infos_his: null,
 					discount_type: 'NO'
 				},
 				sale: null,
@@ -223,6 +227,8 @@
 				checkPromotion: false,
 				CXData: [], //促销数据
 				cxfsArr: [], //促销跟踪数据
+				JGZList: [], //价格组
+				DKFID: getApp().globalData.store.DKFID
 			}
 		},
 		computed: {
@@ -300,12 +306,18 @@
 				$(this.total_discount_computed, false);
 			},
 			'source.sale001'(n, o) {
-				if (n && n.DKHID) { //如果设置的值合法
-					if (this.source.big_customer_info && this.source.big_customer_info
-						.DKHID) { //判断sale001是否生成，如果已经生成那么设置其大客户id信息
+					console.log("[WatchSale1]变化长度记录到SALE1上:", this.source);
+							console.log("[WatchSale1]进入sale001big:", this.source.big_customer_info);
+							console.log("[WatchSale1]进入n:", n);
+				if (n && n.DKFID) { //如果设置的值合法
+					if (this.source.big_customer_info && this.source.big_customer_info.DKHID) { 
+						//判断sale001是否生成，如果已经生成那么设置其大客户id信息
 						this.source.sale001.DKFID = this.source.big_customer_info.DKHID;
+						console.log("[WatchSale1]进入sale001:", this.source.sale001);
+						console.log("[WatchSale1]进入sale001big:", this.source.big_customer_info);
 					}
 				}
+				console.log("[WatchSale1]变化长度记录到SALE1上:", this.source.sale001);
 				if (n && n.CUSTID) { //如果设置的值合法
 					if (this.source.jdy && this.source.jdy.RYID && this.source.sale001.DKFID !=
 						'80000000') { //判断sale001是否生成，如果已经生成那么设置其业务员id信息
@@ -314,11 +326,15 @@
 				}
 			},
 			'source.big_customer_info'(n, o) { //如果设置了大客户信息
+			console.log("[WatchBig]source.big_customer_info:", n);
 				if (n && n.DKHID) { //如果设置的值合法
 					if (this.source.sale001) { //判断sale001是否生成，如果已经生成那么设置其大客户id信息
 						this.source.sale001.DKFID = n.DKHID;
 						this.$refs.steps.set_step(3);
+						console.log("[WatchBig]source.big_customer_info进入:", this.source.sale001);
 					}
+					console.log("[WatchBig]source.big_customer_info进入111:", this.source.sale001);
+					this.DKFID = n.DKHID;
 				}
 			},
 			'source.jdy'(n, o) { //如果设置了业务员
@@ -580,8 +596,9 @@
 					RYID: store.RYID,
 					SNAME: store.RYNAME
 				}); //通知一下外部 恢复默认接待员信息
-				this.checkPromotion = false
-				this.cxfsArr = [] //促销跟踪数据
+				this.checkPromotion = false;
+				this.cxfsArr = []; //促销跟踪数据
+				this.DKFID = store.DKFID;
 			},
 			total_discount_computed() {
 				console.log("[TotalDiscountComputed]开始计算特殊折扣和手工折扣...");
@@ -691,8 +708,11 @@
 						});
 						discount_computed_params.ZKType = this.source.discount_type;
 						discount_computed_params.ZKData = this.source.discount_infos;
-						main.MatchZKDatas(discount_computed_params, sale2 || this.source
-							.sale002); //可使用传入的sale2，如果不存在则使用当前上下文的sale2
+						discount_computed_params.ZKData_New = this.source.discount_infos_new; //普通特批
+						discount_computed_params.ZKData_HIS = this.source.discount_infos_his; //历史特批
+						//可使用传入的sale2，如果不存在则使用当前上下文的sale2
+						main.MatchZKDatas(discount_computed_params, sale2 || this.source.sale002, (this.source.sale001
+							.BILL_TYPE == 'Z112' ? 'sale_credit' : 'kq_sale'), this.JGZList, "");
 						console.warn("[DiscountComputed]折扣计算完毕...");
 					}
 					console.warn("[DiscountComputed]SALE002增加折扣后的新数据:", this.source.sale002);
@@ -757,6 +777,18 @@
 					DKFNAME: this.source.big_customer_info.NAME,
 					DKFID: this.source.big_customer_info.DKHID,
 				});
+
+				//进入到这里肯定是赊销，那么就需要记录价格组的合同号
+				console.log("[CreditSalesCreate]s输出价格组",this.JGZList);
+				
+				this.source.sxsale001.YDSPTYPE="U";
+				this.source.sxsale001.CUSTMNAME=this.source.sale001.RYID;
+
+				const oadhs = this.JGZList.map(item => item.OADH).join('，');
+				this.source.sxsale001.STR1 = oadhs;
+				console.log("[CreditSalesCreate]oadhs", oadhs);
+				console.log("[CreditSalesCreate]sxsale001", this.source.sxsale001);
+
 				console.log("[CreditSalesCreate]创建赊销单据记录完成...");
 				console.log("[CreditSalesCreate]准备开始创建赊销单据支付记录...");
 				this.source.sale003.push(this.factory.get_sale003(this.source.sale001, {
@@ -767,11 +799,13 @@
 				console.log("[CreditSalesCreate]创建结果:", this.source);
 			},
 			credit_order_setting() {
+				console.log("[ToPayment]判断JGZList1", this.JGZList);
 				if (this.source.enable_credit) {
 					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
 					this.source.sale001.BILL_TYPE = "Z112";
 					this.source.sale001.XSTYPE = 6;
 					console.log("[CreditOrderSetting]sale1设置完毕:", this.source.sale001);
+					console.log("[ToPayment]判断JGZList2", this.JGZList);
 				} else {
 					console.log("[CreditOrderSetting]设置sale1的BILL_TYPE和XSTYPE...");
 					this.source.sale001.BILL_TYPE = "Z111";
@@ -811,6 +845,7 @@
 				}
 			},
 			to_payment() {
+				let that = this;
 				console.log("[ToPayment]准备开始进入支付操作，判断是否存在提交的商品信息操作...", this.source);
 				// this.craft_discount_computed(this.source.sale001); //手工折扣计算
 				if (!this.source.sale001 || !this.source.sale002.length) {
@@ -818,15 +853,41 @@
 					return;
 				}
 				console.log("[ToPayment]判断是否进行赊销操作...", this.source.enable_credit);
+						console.log("[ToPayment]判断JGZList", this.JGZList);
 				this.credit_order_setting();
 
 				if (this.source.enable_credit) {
+				console.log("[ToPayment]进入赊销", this.source.sale002);
+					//价格组不需要管折扣什么的。直接使用002 的价格组判断就行了
+					let arr2 = this.source.sale002;
+						//arr2.forEach(function(item, index) {
+						//const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
+						//if (!isExist) {
+							//console.log("[ToPayment]进入提示", isExist);
+							//util.simpleMsg("券信息不在当前所选大客户有效价格组内!")
+							//return;
+						//}
+
+					//});
+					for(let i = 0; i < arr2.length; i++){
+					  const item = arr2[i]
+					  const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
+					  if (!isExist) {
+					    util.simpleMsg("券信息不在当前所选大客户有效价格组内!")
+					    return; // 直接跳出整个函数，后面credit不再执行
+					  }
+					}
+					
+					//进入赊销了，直接回去 (测试用)
+					//util.simpleMsg("进入赊销了，直接回去!")
+					//return
 					this.credit_sales_create();
 					let sales = this.sales_process(); //复制避免折扣影响到原数据 +计算手工折扣
 					this.source.sale001 = sales.sale001;
 					this.source.sale002 = sales.sale002;
 					this.coupon_activate(); //开始券申请激活流程
 				} else {
+					console.log("[ToPayment]不是赊销进入", this.source.sale002);
 					let sales = this.sales_process(); //复制避免折扣影响到原数据 +计算手工折扣
 					this.sale.RedirectToPayment({
 						sale001: sales.sale001,
@@ -863,18 +924,38 @@
 						}
 					}))
 				}));
-				this.event_register('close-tszk', $(function(data) {
-					console.log("[EventMonitor]用户选择的折扣信息:", data);
-					this.source.discount_type = data; //记录折扣类型
+				this.event_register('close-tszk', $(function(type, data) {
+					console.log("特殊折扣返回的折扣类型：", type); //返回折扣类型 再次根据商品匹配一下折扣
+					console.log("特殊折扣返回修改过的折扣数据：", data); //修改过折扣的数据（目前只有标准折扣数据才能被修改)
+					this.source.discount_type = type; //记录折扣类型
+					if ((type == 'BZ' || type == 'LS') && data && data.length > 0) //非特批时才赋值
+						this.source.discount_infos_new = data; //记录修改后的折扣数据
+					else if (type == 'HIS' && data && data.length > 0) {
+						this.source.discount_infos_his = data; //选择的历史折扣数据
+						this.source.discount_infos_new = []; //清空一下呢
+					} else {
+						this.source.discount_infos_his = [];
+						this.source.discount_infos_new = [];
+					}
 					console.log("[EventMonitor]用户选择的折扣处理后的SALE2信息:", this.source.sale002);
+					// 强制触发 discount_type 的 watch 监听
+					this.$watch('source.discount_type', (n, o) => {
+					  $(this.total_discount_computed, false);
+					}, { immediate: true })();
 					this.checkPromotion = false;
 					this.view.enable_special_discount = false; //关闭特殊折扣弹窗
 				}));
 				this.event_register("big-customer-close", $(async function(data) {
-					console.log("[Created]大客户回调:", data);
-					console.log("[Created]当前是否有特殊折扣:", this.source.discount_type);
-					if (data.exists_credit) {
+					console.log("[big-customer-close]大客户回调:", data);
+					console.log("[big-customer-close]当前是否有特殊折扣:", this.source.discount_type);
+					if (data.exists_credit&&data.DKFID&&data.DKFID!= '80000000') {
+						console.log("[big-customer-close]启用赊销:");
 						this.source.enable_credit = true; //启用赊销
+					}
+					if(!data.exists_credit&&data.DKFID){
+						console.log("[big-customer-close]不启用赊销:");
+						this.source.enable_credit = false; //启用赊销
+						
 					}
 					if (Object.keys(data).length === 0 && this.source.discount_type == 'TP') {
 						this.source.discount_type = "NO";
@@ -882,6 +963,7 @@
 					this.checkPromotion = false; //取消促销
 					let arr = this.source.sale002.filter(f => f.CXDISC > 0);
 					if (arr.length > 0) {
+						console.log("[big-customer-close]进入重置促销页面");
 						this.reset_discount(); //重置促销折扣
 						//渲染列表显示
 						this.source.sale2_union_sale6.map(r => {
@@ -899,9 +981,35 @@
 							}
 						})
 					}
-					this.source.big_customer_info = data;
-					this.source.discount_infos = await this.get_discount_data(data.DKFID);
+					if(data.DKFID){
+						
+						this.source.big_customer_info = data;
+						this.source.discount_infos = await this.get_discount_data(data.DKFID);
+						//这是为了换大客户清空折扣准备的
+						this.source.discount_type = "NO";
+						this.source.discount_infos_new=[]; //换了大客户就需要清空
+						this.source.discount_infos_his=[];
+					}
+					
 					console.log("[Created]获取当前大客户折扣信息:", this.source.discount_infos);
+					console.log("[Created]获取当前大客户信息:", this.source.big_customer_info);
+				}));
+				this.event_register('close-big-customer_JGZ', $(function(dkfData,data) {
+					console.log("[data]大客户价格组回调:", data);
+					console.log("[dkfData]大客户价格组回调:", dkfData);
+					
+					
+					if (dkfData.exists_credit&&dkfData.DKFID&&dkfData.DKFID!= '80000000') {
+											console.log("回调需要大客户价格组:");
+											this.JGZList = data;
+										}
+										if(!dkfData.exists_credit&&dkfData.DKFID){
+											console.log("其实不是赊销不需要:");
+											this.JGZList = data;
+											
+										}
+					//this.JGZList = data;
+						console.log("[Created]大客户价格组回调11:", this.JGZList);
 				}));
 				this.event_register('coupon-activate-fail-close', $(function(data) {
 					console.log("[EventMonitor]退出券激活界面...");

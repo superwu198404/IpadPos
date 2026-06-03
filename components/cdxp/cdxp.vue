@@ -10,7 +10,7 @@
 				<view class="commodity">
 					<view class="hh">
 						<view class="hotcakes">
-							<image src="@/images/xianshangdingd.png" mode="widthFix"></image> 重打小票
+							<image src="../../images/xianshangdingd.png" mode="widthFix"></image> 重打小票
 							<!-- <view class="classifys">
 												<text class="curr">全部</text><text>今日</text><text>近三天</text>
 											</view> -->
@@ -99,7 +99,7 @@
 		</view>
 
 		<!-- <view class="customer">
-		<image class="bg" src="@/images/dx-tchw.png" mode="widthFix"></image>
+		<image class="bg" src="../../images/dx-tchw.png" mode="widthFix"></image>
 		<view class="h3">重打小票 <button @click="CloseCD" class="guan">×</button></view>
 		<view class="clues">
 			<view class="infors">
@@ -145,7 +145,7 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
-	
+
 	var that;
 	export default {
 		name: "cdxp",
@@ -153,13 +153,13 @@
 			TH_DATE: "",
 		},
 		computed: {
-			short_date(){
-				return (function(datetime){
+			short_date() {
+				return (function(datetime) {
 					return datetime?.split(' ')[0] || "-";
 				}).bind(this)
 			},
-			short_time(){
-				return (function(datetime){
+			short_time() {
+				return (function(datetime) {
 					return datetime?.split(' ')[1] || "-";
 				}).bind(this)
 			}
@@ -252,33 +252,34 @@
 			ConfirmCD: async function(data) {
 				let that = this;
 				console.log("重打小票 ConfirmCD =======", data);
-				let xsBill = cx_util.snvl(data.BILL,"");
-				let xsType = cx_util.snvl(data.XSTYPE,"");
-				let bill_type = cx_util.snvl(data.BILL_TYPE,"");
-				let kqxstype = cx_util.snvl(data.KQXSTYPE,"");
+				let xsBill = cx_util.snvl(data.BILL, "");
+				let xsType = cx_util.snvl(data.XSTYPE, "");
+				let bill_type = cx_util.snvl(data.BILL_TYPE, "");
+				let kqxstype = cx_util.snvl(data.KQXSTYPE, "");
 				let bill = cx_util.snvl(xsBill, "");
-				
+
 				if (cx_util.IsEmpty(bill)) {
 					util.simpleMsg("小票单号不能为空!", true);
 					return;
 				}
 				//通过单号，查询重打格式数据
-				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);	
+				let pos_xsbillprint = await xprinter_util.getBillPrinterData(xsBill);
 				if (cx_util.IsEmpty(pos_xsbillprint)) {
 					util.simpleMsg("未查询到重打数据", "none");
 					return;
 				}
 				this.$emit("ClosePopup");
-				
+
 				//判断是否需要打印二维码
 				let is_fpQRCode = 0;
-				if(xsType == "1" && bill_type == "Z101") { 
+				if (xsType == "1" && bill_type == "Z101") {
 					is_fpQRCode = "1";
-				}else if(xsType == "3" && bill_type == "Z121"){
-					is_fpQRCode = "1" ;
-				}else if(xsType == "1" && bill_type == "Z111" && (kqxstype == "CZ" || kqxstype == "SKCZ" || kqxstype == "SK" || kqxstype == "SQ")){
+				} else if (xsType == "3" && bill_type == "Z121") {
 					is_fpQRCode = "1";
-				}else if(bill_type == "Z102"){
+				} else if (xsType == "1" && bill_type == "Z111" && (kqxstype == "CZ" || kqxstype == "SKCZ" ||
+						kqxstype == "SK" || kqxstype == "SQ")) {
+					is_fpQRCode = "1";
+				} else if (bill_type == "Z102") {
 					is_fpQRCode = "1";
 				}
 				//is_qrCode = 1 打印二维码
@@ -288,18 +289,18 @@
 			CloseCD: function(data) {
 				this.$emit("ClosePopup");
 			},
-			xsTypeName: function(xstype, bill_type,kqxstype) {
+			xsTypeName: function(xstype, bill_type, kqxstype) {
 				switch (xstype) {
 					case "1":
-					//整合卡券业务，增加条件判断展示业务类型
-					if(bill_type == 'Z111' && kqxstype == 'SQ')
-						return "券销售";
-                    else if(bill_type == 'Z111' && kqxstype == 'SKCZ')
-						return "卡激活充值";		
-					else if(bill_type == 'Z111' && kqxstype != 'SKCZ')
-						return "卡销售";			
-					else
-						return "销售";
+						//整合卡券业务，增加条件判断展示业务类型
+						if (bill_type == 'Z111' && kqxstype == 'SQ')
+							return "券销售";
+						else if (bill_type == 'Z111' && kqxstype == 'SKCZ')
+							return "卡激活充值";
+						else if (bill_type == 'Z111' && kqxstype != 'SKCZ')
+							return "卡销售";
+						else
+							return "销售";
 						break;
 					case "2":
 						return "销售退货";
@@ -326,19 +327,18 @@
 						return "线上订单取消";
 						break;
 					default:
-					if(bill_type == 'Z102')
-						return "外卖订单";
-					else if(bill_type == 'Z152')
-						return "外卖退单";
-					else
-						return "";
+						if (bill_type == 'Z102')
+							return "外卖订单";
+						else if (bill_type == 'Z152')
+							return "外卖退单";
+						else
+							return "";
 						break;
 				}
 			}
 		},
 		mounted() {
-			this.xstypes = [
-			{
+			this.xstypes = [{
 				"TYPE": -1,
 				"NAME": "--全部--"
 			}, {
@@ -398,13 +398,16 @@
 		box-shadow: 10rpx 20rpx 99rpx 1px rgba(0, 107, 68, 0.25);
 		max-height: 86%;
 	}
-	.commodity{
-		background:#fff;
+
+	.commodity {
+		background: #fff;
 	}
-	.products{
+
+	.products {
 		max-height: 1200rpx;
-		overflow:auto;
+		overflow: auto;
 	}
+
 	.procycle .li .h3 {
 		display: flex;
 		justify-content: space-between;

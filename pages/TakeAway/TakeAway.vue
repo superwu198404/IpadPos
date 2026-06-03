@@ -42,10 +42,10 @@
 												<label>
 													<image v-if="item.XSPTID=='ELM'" src="../../images/wmd-eleme.png"
 														mode="widthFix"></image>
-													<image v-if="item.XSPTID=='MEITUAN'" src="../../images/wmd-meituan.png"
-														mode="widthFix"></image>
-													<image v-if="item.XSPTID=='YOUZAN'" src="../../images/wmd-youzan.png"
-														mode="widthFix"></image>
+													<image v-if="item.XSPTID=='MEITUAN'"
+														src="../../images/wmd-meituan.png" mode="widthFix"></image>
+													<image v-if="item.XSPTID=='YOUZAN'"
+														src="../../images/wmd-youzan.png" mode="widthFix"></image>
 													{{item.NOTE2}}
 												</label>
 												<label class="state jiedan"
@@ -80,7 +80,9 @@
 											<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
 										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
 											<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
-											<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
+											<label><text>异店直配：</text><text>{{Order.YNYDZP}}</text></label>
+											<label><text>下单渠道：</text><text>{{Order.XDQD}}</text></label>
+											<label><text>修改类型：</text><text>{{Order.UP_CONTENT}}</text></label>
 											<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
 										</view>
 										<!-- <view class="h5"><text>单号：{{Order.BILL}}</text></view> -->
@@ -88,8 +90,15 @@
 											<!-- 商品循环 -->
 											<view class="prolist" v-for="(item1,index1) in Details">
 												<view class="h3">
-													<label>
-														<image src="../../images/dx-mrxk.png" mode="widthFix"></image>
+													<label style="display:flex;align-items:center">
+														<!-- <image src="../../images/dx-mrxk.png" mode="widthFix"></image> -->
+														<view v-if="!item1.READONLY" @click="toggleTaskChecked(item1)"
+															class="task-checkbox" :class="{ 'checked': item1.CHECK }">
+															<image v-show="item1.CHECK" class="check-icon"
+																src="../../images/imgbh/gou@1x.png" mode="widthFix">
+															</image>
+														</view>
+														<view v-else class="task-checkbox task-checkbox-none"> </view>
 														{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 													</label>
 													<view class="shuls"><text>×{{item1.QTY}}</text></view>
@@ -97,12 +106,17 @@
 												<view class="cods">
 													<view>
 														<label>
-															<image src="../../images/dx-bm.png" mode="widthFix"></image>
+															<image src="../../images/dx-bm.png" mode="widthFix">
+															</image>
 															{{item1.SPID}}
 														</label>
 														<label>
-															<image src="../../images/dx-dw.png" mode="widthFix"></image>
+															<image src="../../images/dx-dw.png" mode="widthFix">
+															</image>
 															{{item1.STR7}}-{{item1.STR2}}
+														</label>
+														<label>
+															{{item1.COMBONAME}}
 														</label>
 													</view>
 													<text>已取消：{{item1.BQTY}}</text>
@@ -290,7 +304,7 @@
 				that = this; //全局赋值
 				this.event_channel = this.getOpenerEventChannel();
 				this.event_channel?.emit('get_take_away', this);
-				console.log("onload",that.KHID);
+				console.log("onload", that.KHID);
 				//外卖单渲染
 				that.GetOrders(that.KHID, r => {
 					that.ShowDetail(that.WMOrders[0], 0);
@@ -331,76 +345,164 @@
 				}
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
-				that.Details = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				let spArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				let obj = util.getStorage("sysParam");
+				let bmArr = [];
+				if (obj && obj.BHLBBM) {
+					bmArr = obj.BHLBBM.split(',');
+				}
+				if (spArr && spArr.length > 0) {
+					spArr.map(r => {
+						if (e.STATUS == '12' && bmArr.includes('109')) { //接单状态且有裱花109
+							if (e.YN_YDZP == "1" || r.SPKW == "J") //裱花类或者积木商品
+							{
+								if (r.STR4 == "109") //异店直配默认勾选
+									r.CHECK = true;
+								else
+									r.CHECK = false;
+								r.READONLY = false;
+								if (!bmArr.includes(r.STR4)) { //260519 wy要求非裱花类别禁用勾选框
+									r.CHECK = false;
+									r.READONLY = true;
+								}
+							} else {
+								r.CHECK = false;
+								r.READONLY = true;
+							}
+						} else {
+							r.CHECK = false;
+							r.READONLY = true;
+						}
+					})
+				}
+				that.Details = spArr;
 				that.curIndex = i;
 				console.log("明细单详情：", JSON.stringify(that.Details));
 			},
+			// 切换任务勾选状态
+			toggleTaskChecked(item) {
+				item.CHECK = !item.CHECK;
+				console.log("toggleTaskChecked：", item);
+				console.log("明细单详情：", JSON.stringify(that.Details));
+				that.$forceUpdate(); //刷新input的值 狗bug
+			},
 			//确认接收
 			ConfirmReceipt: function() {
-				if (that.Order && JSON.stringify(that.Order) != "{}") {
-					_take.ConfirmReceipt({
-						status: that.Order.STATUS,
+				if (!that.Order && JSON.stringify(that.Order) == "{}") {
+					return util.simpleMsg("暂无数据", true);
+				}
+				//同意退单
+				if (that.Order.STATUS == "15" || that.Order.STATUS == "33") {
+					_take.GetOrderHasSC({
 						bill: that.Order.BILL,
-						khid: that.KHID,
-						posid: that.POSID,
-						ryid: that.RYID,
-						storeKcdid: that.KCDID,
-						storeKcdid: that.KCDID,
-						refundtype: that.Order.BMID,
-						orderDate: that.Order.WDATE,
-						platformid: that.Order.XSPTID,
-						storeGcid: that.GCID,
-						storeDqid: that.DQID,
-						gsid: that.GSID
+						orderDate: that.Order.WDATE
 					}, res => {
-						console.log("外卖单接收结果：", res);
-
+						console.log("GetOrderHasSC：", res);
 						if (res.code) {
 							let data = JSON.parse(res.data);
 							console.log("返回信息:", data);
-							that.js_res = data;
-							//是退单状态接收确认，打印退单小票
-							if (data.yn_print && (that.Order.STATUS == "33" || that.Order.STATUS == "15")) {
-								let wm_type = "WM";
-								let printerPram = {
-									"PRINTNUM": 1,
-									"XSTYPE": wm_type,
-									"BS_REASON": that.bs_Reason,
-									"BS_NOTE": that.bs_Note,
-									"NEW_BILL": data.new_bill,
-								};
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
-							}
-							if (data.yn_bs) { //有报损操作
-								that.new_bill = data.new_bill;
-								//调用处理报损
-								console.log("此处调用报损：");
-								that.GetBSData(that.new_bill, that.Order.WDATE);
-							}
-							if (data.yn_wmd) //有外卖袋
-							{
-								console.log("此处调用领用：");
-								that.GetWMDData(that.DQID, that.Order.XSPTID);
-							}
-							// if (data.pay_data && data.pay_data.length > 0) {
-							// 	if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
-							// 		console.log("有赞接单后调用积分上传接口:")
-							// 		that.JFConsume(data.pay_data, that.Order.YZID);
-							// 	}
-							// }
-						} else {
-							// util.simpleMsg("接收失败：", res.msg, true);
-							util.simpleModal("接收失败", res.msg);
-						}
-						if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
-							//刷新列表
-							that.Refresh();
-						}
-
+							if (data && data.length > 0)
+								util.simpleModal("提示", "部分商品已生产确认要继续操作吗？" + data.map(r => r.SNAME).join(','),
+									bol => {
+										if (bol)
+											that._ConfirmReceipt();
+									})
+							else
+								that._ConfirmReceipt();
+						} else
+							util.simpleModal("裱花商品生产检查失败：", res.msg);
 					})
-				} else {
-					util.simpleMsg("暂无数据", true);
+				} else
+					that._ConfirmReceipt();
+			},
+			//确认接收
+			_ConfirmReceipt: function() {
+				// if (that.Order && JSON.stringify(that.Order) != "{}") {
+				let spArr = that.Details.filter(r => r.CHECK); //筛选勾选的商品
+				console.log("勾选的裱花商品：", spArr);
+				var spids = "";
+				if (spArr.length > 0) {
+					spids = spArr.map(r1 => r1.SPID).join("','");
 				}
+				_take.ConfirmReceipt({
+					status: that.Order.STATUS,
+					bill: that.Order.BILL,
+					khid: that.KHID,
+					posid: that.POSID,
+					ryid: that.RYID,
+					storeKcdid: that.KCDID,
+					storeKcdid: that.KCDID,
+					refundtype: that.Order.BMID,
+					orderDate: that.Order.WDATE,
+					platformid: that.Order.XSPTID,
+					storeGcid: that.GCID,
+					storeDqid: that.DQID,
+					gsid: that.GSID,
+					spids
+				}, res => {
+					console.log("外卖单接收结果：", res);
+
+					if (res.code) {
+						let data = JSON.parse(res.data);
+						console.log("返回信息:", data);
+						that.js_res = data;
+						//特殊接单打印
+						if (that.Order.STATUS == "12" && data.yn_print && !data.yn_wmd) {
+							let printerPram = {
+								"PRINTNUM": 2,
+								"XSTYPE": 'WM',
+								"BS_REASON": that.bs_Reason,
+								"BS_NOTE": that.bs_Note,
+								"NEW_BILL": that.new_bill,
+							};
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,
+								printerPram);
+							return;
+						}
+						//是退单状态接收确认，打印退单小票
+						if (data.yn_print && (that.Order.STATUS == "33" || that.Order.STATUS ==
+								"15")) {
+							let wm_type = "WM";
+							let printerPram = {
+								"PRINTNUM": 1,
+								"XSTYPE": wm_type,
+								"BS_REASON": that.bs_Reason,
+								"BS_NOTE": that.bs_Note,
+								"NEW_BILL": data.new_bill,
+							};
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,
+								printerPram);
+						}
+						if (data.yn_bs) { //有报损操作
+							that.new_bill = data.new_bill;
+							//调用处理报损
+							console.log("此处调用报损：");
+							that.GetBSData(that.new_bill, that.Order.WDATE);
+						}
+						if (data.yn_wmd) //有外卖袋
+						{
+							console.log("此处调用领用：");
+							that.GetWMDData(that.DQID, that.Order.XSPTID);
+						}
+						// if (data.pay_data && data.pay_data.length > 0) {
+						// 	if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
+						// 		console.log("有赞接单后调用积分上传接口:")
+						// 		that.JFConsume(data.pay_data, that.Order.YZID);
+						// 	}
+						// }
+					} else {
+						// util.simpleMsg("接收失败：", res.msg, true);
+						util.simpleModal("接收失败", res.msg);
+					}
+					if (!that.yn_bs && !that.yn_wmd) { //防止刷新过快
+						//刷新列表
+						that.Refresh();
+					}
+
+				})
+				// } else {
+				// 	util.simpleMsg("暂无数据", true);
+				// }
 			},
 
 			//同意退单
@@ -467,7 +569,8 @@
 									"BS_NOTE": that.bs_Note,
 									"NEW_BILL": that.new_bill,
 								};
-								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
+								that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,
+									printerPram);
 							}
 						}
 					} else {
@@ -479,9 +582,11 @@
 			},
 
 			//调用积分
-			JFConsume: function(PayList, hyid) {
+			JFConsume: function(PayList, hyid, xsptid) {
+				let QNET = PayList.filter(r => ["ZZ01", 'ZF09'].includes(r.FKID)).reduce((sum, r1) => sum +
+					r1.AMT, 0); //券支付的金额
 				let obj = {
-					channel: "POS",
+					channel: (xsptid == "KGXCX" ? "MALL" : "POS"),
 					bill: that.Order.BILL, //订单号
 					date: dateformat.getYMDS(),
 					productList: this.Details.map((item, i) => {
@@ -495,8 +600,9 @@
 							netPrice: item.NET
 						}
 					}),
-					amount: that.Order.ZNET, //netAmount: that.totalAmount,
-					orderAmount: that.Order.ZNET,
+					amount: util.newFloat(that.Order.ZNET -
+						QNET), //netAmount: that.totalAmount,260416扣减券支付金额
+					orderAmount: that.Order.STR8,
 					payList: PayList.map(item => {
 						return {
 							paymentType: item.FKID,
@@ -593,7 +699,8 @@
 								"BS_NOTE": that.bs_Note,
 								"NEW_BILL": that.new_bill,
 							};
-							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details, printerPram);
+							that.$refs.printerPage.wmBluePrinter(that.Order, that.Details,
+								printerPram);
 						}
 					} else {
 						util.simpleModal("操作失败", res.msg);
@@ -694,10 +801,13 @@
 			UpAndPrint: function() {
 				//先上传积分
 				if (that.js_res.pay_data && that.js_res.pay_data.length > 0) {
-					if (that.Order.XSPTID == 'YOUZAN' && that.Order.YZID) {
-						console.log("有赞接单后调用积分上传接口:")
-						that.JFConsume(that.js_res.pay_data, that.Order.YZID);
-					}
+					let xsptid = that.Order.XSPTID;
+					console.log("调用积分上传接口:", {
+						xsptid,
+						mid: that.Order.YZID
+					});
+					if (["YOUZAN", "KGXCX"].includes(xsptid) && that.Order.YZID) //有赞和仟吉小程序的 都需要上传积分
+						that.JFConsume(that.js_res.pay_data, that.Order.YZID, xsptid);
 				}
 				util.simpleMsg("接收成功");
 				//后打印
@@ -777,7 +887,7 @@
 		},
 		created() {
 			that = this; //全局赋值
-			console.log("created",that.KHID);
+			console.log("created", that.KHID);
 			//外卖单渲染
 			that.GetOrders(that.KHID, r => {
 				that.ShowDetail(that.WMOrders[0], 0);
@@ -814,5 +924,35 @@
 
 	.add-top {
 		padding-top: 60rpx;
+	}
+
+	/* 勾选框样式 */
+	.task-checkbox {
+		width: 50rpx;
+		height: 50rpx;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: all 0.2s ease;
+		border: 2rpx solid #42B14B;
+		margin-right: 4rpx;
+	}
+
+	.task-checkbox.checked {
+		background-color: #4caf50;
+		border-color: #4caf50;
+	}
+
+	.task-checkbox-none {
+		background-color: #D8D8D8;
+		border-color: #ECECEC;
+	}
+
+	.check-icon {
+		color: #fff;
+		font-size: 24rpx;
+		font-weight: bold;
 	}
 </style>

@@ -318,18 +318,63 @@
 					]).then(res => {
 						console.log("wmBluePrinter 开始发送打印命令");
 						command.setPrint();
+						//打印低实收提示语
+						if (sale1_obj.YN_SS == "1" || sale1_obj.YN_SS == "2") {
+							console.log("打印低实收提示语:", sale1_obj.YN_SS);
+							command.setCharacterScale(0); //设置正常大小
+							command.setSelectJustification(0); //设置居左
+							command.setText("当前订单预计收入过低未能自动接单，需您打开饿了么商家版确认并处理接单。");
+							command.setPrint();
+						}
+						if (sale1_obj.DDUPGRADE == "1" || sale1_obj.DDUPGRADE == "2") {
+							console.log("打印订单变更提示语:", sale1_obj.DDUPGRADE);
+							command.setCharacterScale(0); //设置正常大小
+							command.setSelectJustification(0); //设置居左
+							command.setText("门店须知：当前订单信息待完善，建议优先完成货品拣货操作。订单完善后，销售单会同步推送，届时将同步扣减库存。");
+							command.setPrint();
+						}
 						command.setPrint();
 						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					}).catch(reason => {
 						console.log('wmBluePrinter reject failed reason', reason)
 						command.setPrint();
+						//打印订单变更提示语
+						if (sale1_obj.YN_SS == "1" || sale1_obj.YN_SS == "2") {
+							console.log("打印订单变更提示语:", sale1_obj.YN_SS);
+							command.setCharacterScale(0); //设置正常大小
+							command.setSelectJustification(0); //设置居左
+							command.setText("当前订单预计收入过低未能自动接单，需您打开饿了么商家版确认并处理接单。");
+							command.setPrint();
+						}
+						if (sale1_obj.DDUPGRADE == "1" || sale1_obj.DDUPGRADE == "2") {
+							console.log("打印订单变更提示语:", sale1_obj.DDUPGRADE);
+							command.setCharacterScale(0); //设置正常大小
+							command.setSelectJustification(0); //设置居左
+							command.setText("门店须知：当前订单信息待完善，建议优先完成货品拣货操作。订单完善后，销售单会同步推送，届时将同步扣减库存。");
+							command.setPrint();
+						}
 						command.setPrint();
 						command.endPrinter(); //打印切纸
 						that.prepareSend(command.getData()); //发送数据
 					})
 				} else {
 					command.setPrint();
+					//打印订单变更提示语
+					if (sale1_obj.YN_SS == "1" || sale1_obj.YN_SS == "2") {
+						console.log("打印订单变更提示语:", sale1_obj.YN_SS);
+						command.setCharacterScale(0); //设置正常大小
+						command.setSelectJustification(0); //设置居左
+						command.setText("当前订单预计收入过低未能自动接单，需您打开饿了么商家版确认并处理接单。");
+						command.setPrint();
+					}
+					if (sale1_obj.DDUPGRADE == "1" || sale1_obj.DDUPGRADE == "2") {
+						console.log("打印订单变更提示语:", sale1_obj.DDUPGRADE);
+						command.setCharacterScale(0); //设置正常大小
+						command.setSelectJustification(0); //设置居左
+						command.setText("门店须知：当前订单信息待完善，建议优先完成货品拣货操作。订单完善后，销售单会同步推送，届时将同步扣减库存。");
+						command.setPrint();
+					}
 					command.setPrint();
 					command.endPrinter(); //打印切纸
 					that.prepareSend(command.getData()); //发送数据
@@ -1125,8 +1170,38 @@
 					}
 				});
 			},
-			//准备发送，根据每次发送字节数来处理分包数量
 			prepareSend: function(buff) {
+				console.log("printer prepareSend")
+				var that = this;
+
+				var isAndroid = false;
+				// #ifdef APP-PLUS
+				if (plus.os.name === "Android") {
+					isAndroid = true;
+				}
+				// #endif
+
+				// ✅ 安卓 128（不乱码、不卡顿） ✅ iOS 500
+				var oneTimeData = isAndroid ? 100 : that.oneTimeData;
+
+				var totalLen = buff.length;
+				var looptime = Math.ceil(totalLen / oneTimeData);
+				var lastData = totalLen % oneTimeData;
+				if (lastData === 0) {
+					lastData = oneTimeData;
+				}
+
+				that.setData({
+					looptime: looptime,
+					lastData: lastData,
+					currentTime: 1,
+					oneTimeData: oneTimeData
+				});
+
+				that.Send(buff);
+			},
+			//准备发送，根据每次发送字节数来处理分包数量
+			prepareSend111: function(buff) {
 				console.log("printer prepareSend")
 				var that = this;
 				var time = that.oneTimeData;
@@ -1138,6 +1213,7 @@
 					lastData: lastData,
 					currentTime: 1
 				});
+
 				that.Send(buff);
 			},
 			queryStatus: function() {
@@ -1223,6 +1299,138 @@
 				return blueStatus;
 			},
 			Send: function(buff) {
+				var that = this;
+				var currentTime = that.currentTime;
+				var loopTime = that.looptime;
+				var lastData = that.lastData;
+				var onTimeData = that.oneTimeData;
+				var printNum = that.printerNum;
+				var currentPrint = that.currentPrint;
+				var bleRetry = that.bleRetry || 0;
+
+				var start = (currentTime - 1) * onTimeData;
+				var sendLen = currentTime < loopTime ? onTimeData : lastData;
+
+				if (start + sendLen > buff.length) sendLen = buff.length - start;
+				if (sendLen <= 0) {
+					util.simpleMsg("打印成功");
+					return;
+				}
+
+				var buf = new ArrayBuffer(sendLen);
+				var dataView = new DataView(buf);
+				for (var i = 0; i < sendLen; ++i) {
+					dataView.setUint8(i, buff[start + i]);
+				}
+
+				var nextStep = function() {
+					currentTime++;
+					if (currentTime <= loopTime) {
+						that.setData({
+							currentTime: currentTime
+						});
+						// 安卓加一点间隔，避免末包丢失
+						setTimeout(function() {
+							that.Send(buff);
+						}, 25);
+					} else {
+						if (currentPrint == printNum) {
+							that.setData({
+								looptime: 0,
+								lastData: 0,
+								currentTime: 1,
+								isReceiptSend: false,
+								currentPrint: 1,
+								bleRetry: 0
+							});
+						} else {
+							currentPrint++;
+							that.setData({
+								currentPrint: currentPrint,
+								currentTime: 1,
+								bleRetry: 0
+							});
+							setTimeout(function() {
+								that.Send(buff);
+							}, 25);
+						}
+					}
+				};
+
+				uni.writeBLECharacteristicValue({
+					deviceId: app.globalData.BLEInformation.deviceId,
+					serviceId: app.globalData.BLEInformation.writeServiceId,
+					characteristicId: app.globalData.BLEInformation.writeCharaterId,
+					value: buf,
+					// 小程序环境可尝试加：writeType: "write"（更稳但稍慢）
+					success: function() {
+						that.setData({
+							bleRetry: 0
+						});
+						nextStep(); // 只在成功时推进
+					},
+					fail: function(e) {
+						if (bleRetry < 2) {
+							that.setData({
+								bleRetry: bleRetry + 1
+							});
+							setTimeout(function() {
+								that.Send(buff); // 重发当前包，不跳包
+							}, 60);
+							return;
+						}
+
+						var yn_print_con = app.globalData.YN_PRINT_CON;
+						if (yn_print_con != "Y") {
+							util.simpleMsg("打印失败，请检查打印机连接状态", "none");
+						} else {
+							console.log("打印报错信息:", e);
+							util.simpleMsg("打印第" + currentPrint + "张失败", "none");
+						}
+						that.setData({
+							bleRetry: 0
+						});
+					}
+				});
+			},
+			Send222: function(buff) {
+				var that = this;
+				var currentTime = that.currentTime;
+				var loopTime = that.looptime;
+				var lastData = that.lastData;
+				var onTimeData = that.oneTimeData;
+
+				// 正确截取包（绝对不乱序）
+				var start = (currentTime - 1) * onTimeData;
+				var end = currentTime < loopTime ? start + onTimeData : start + lastData;
+				var chunk = buff.slice(start, end);
+
+				var u8 = new Uint8Array(chunk);
+
+				uni.writeBLECharacteristicValue({
+					deviceId: app.globalData.BLEInformation.deviceId,
+					serviceId: app.globalData.BLEInformation.writeServiceId,
+					characteristicId: app.globalData.BLEInformation.writeCharaterId,
+					writeType: "write",
+					value: u8.buffer,
+					success: function(res) {
+						if (currentTime <= loopTime) {
+							that.currentTime++;
+							// ✅ 安卓只需要 15ms 即可，不卡也不乱
+							setTimeout(function() {
+								that.Send(buff);
+							}, 15);
+						} else {
+							util.simpleMsg("打印成功");
+						}
+					},
+					fail: function(e) {
+						console.log("发送失败", e);
+					}
+				});
+			},
+			Send1111: function(buff) {
+				console.log("进入分包发送", buff)
 				//分包发送
 				var that = this;
 				var currentTime = that.currentTime;
@@ -1249,7 +1457,7 @@
 						dataView.setUint8(i, buff[(currentTime - 1) * onTimeData + i]);
 					}
 				}
-				//console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
+				console.log("第" + currentTime + "次发送数据大小为：" + buf.byteLength)
 				uni.writeBLECharacteristicValue({
 					deviceId: app.globalData.BLEInformation.deviceId,
 					serviceId: app.globalData.BLEInformation.writeServiceId,
@@ -1267,6 +1475,7 @@
 						if (yn_print_con != "Y") {
 							util.simpleMsg("打印失败，请检查打印机连接状态", "none");
 						} else {
+							console.log("打印报错信息:", e);
 							util.simpleMsg("打印第" + currentPrint + "张失败", "none");
 						}
 					},

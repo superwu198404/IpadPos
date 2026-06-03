@@ -107,7 +107,7 @@
 			AppStore_DownLoad: "https://apps.apple.com/cn/app/", //App Store下载地址
 		},
 		onLaunch: async function() {
-			uni.getStorageInfo({
+			   uni.getStorageInfo({
 				complete: (res) => {
 
 					console.log("onLaunch所有缓存：", res);
@@ -187,5 +187,6 @@
 </script>
 
 <style>
+
 	@import url(@/static/style/common.css);
 </style>

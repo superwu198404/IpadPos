@@ -6,7 +6,8 @@
 	<view class="boxs">
 		<view class="customer">
 			<view class="h3">选择大客户 <button @click="Close()" class="guan close">×</button></view>
-			<view class="search">
+			<view v-if="_ywtype=='kq_sale' || (_ywtype=='sale_credit'||currentSaleType=='sale_credit')" class="search">
+
 				<label v-if="_ywtype=='kq_sale'">
 					<!-- -->
 					赊销：
@@ -17,6 +18,47 @@
 							:class="exists_credit ? '' : 'curr'"><em><text></text></em>否</label>
 					</view>
 				</label>
+				
+				
+				<label v-if="_ywtype=='sale_credit'||currentSaleType=='sale_credit'">
+					<!-- -->
+					是否临时授信赊销：
+					<view class="classifys">
+						<label @click="SaleCreditMode(true)"
+							:class="sales_credit ? 'curr' : ''"><em><text></text></em>是</label>
+						<label @click="SaleCreditMode(false)"
+							:class="sales_credit ? '' : 'curr'"><em><text></text></em>否</label>
+					</view>
+				</label>
+				
+				<!-- 授信业务员 -->
+				<label v-if="_ywtype=='sale_credit'||currentSaleType=='sale_credit'">
+					授信业务员：
+					<!-- 下拉搜索选择组件 -->
+					<view style="width: 250rpx; z-index: 99999; position: relative;">
+						<input v-model="sxsearchValue" placeholder="请输入人员名称"
+							style="width: 100%; padding: 10rpx; border: 1px solid #e5e5e5; border-radius: 6rpx;"
+							@focus="sxshowDropdown = true" />
+						<view v-if="sxshowDropdown && sxfilteredList.length"
+							style="position: absolute; top: 80rpx; left: 0; width: 320rpx;  max-height: 400rpx; overflow-y: auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; z-index: 100000;">
+							<view v-for="(item, index) in sxfilteredList" :key="index"
+								style="padding: 10rpx; border-bottom: 1px solid #f5f5f5;" @click="sxhandleSelect(item)">
+								{{item.IDNAME }}
+							</view>
+						</view>
+				
+						<!-- 无结果提示 -->
+						<view v-if="sxshowDropdown && !sxfilteredList.length"
+							style="position: absolute; top: 80rpx; left: 0; width: 100%; padding: 10rpx; background: #fff; border: 1px solid #e5e5e5; border-radius: 6rpx; text-align: center; color: #999;">
+							暂无匹配结果
+						</view>
+					</view>
+				</label>
+				
+			</view>
+			<view class="search">
+	
+				
 				<!-- 业务员 -->
 				<label>
 					业务员：
@@ -50,7 +92,7 @@
 							type="text" placeholder="大客户编码" />
 					</label>
 				</view>
-				<button class="btn" @click="GetBigClients()">搜索</button>
+				<button class="btn" @click="GetBigClients('1')">搜索</button>
 			</view>
 			<view class="credit">
 				<!-- <radio-group @change="SelectedBigCustomer" style="width: 100%; display: flex;"> -->
@@ -82,7 +124,9 @@
 	import _login from '@/api/business/login.js';
 	import qiaoSelect from '@/uni_modules/qiao-select/components/qiao-select/qiaoSelect.vue'
 	import {
-		getBigClients
+		getBigClients,
+		getBigClientsJGZ,
+		GetBigRYCredit
 	} from '@/api/business/bigclient.js';
 	let that;
 	export default {
@@ -102,7 +146,10 @@
 					client_no: "", //大客户编号 0020000955
 					client_name: ""
 				},
+				JGZList:[],
 				exists_credit: false,
+				sales_credit: false,
+				//xyed:0,
 				big_customers: [],
 				big_client_info: {},
 				current: -1,
@@ -120,6 +167,18 @@
 				searchValue: '',
 				// 是否显示下拉列表
 				showDropdown: false,
+				currentSaleType:'',
+				
+				//授信人员
+				sxMDRY: {
+					RYID: getApp().globalData.store.RYID,
+					SNAME: getApp().globalData.store.RYNAME
+				},
+				sxvalue: "",
+				sxsearchValue: '',
+				// 是否显示下拉列表
+				sxshowDropdown: false,
+				
 			}
 		},
 		computed: {
@@ -140,9 +199,34 @@
 					const targetText = item.IDNAME;
 					return targetText.includes(keyword);
 				});
+			},
+			//授信人员模糊过滤
+			sxfilteredList() {
+				if (!this.sxsearchValue) {
+					return this.RYData;
+				}
+				const keyword = this.sxsearchValue.trim();
+				return this.RYData.filter(item => {
+					if (!item.IDNAME) return false;
+			
+					const targetText = item.IDNAME;
+					return targetText.includes(keyword);
+				});
 			}
 		},
+		
 		methods: {
+			//授信选择人员
+			sxhandleSelect(item) {
+				this.sxvalue = item.IDNAME; // 绑定选中值
+				this.sxsearchValue = item.IDNAME; // 同步到搜索框
+				this.sxshowDropdown = false; // 关闭下拉列表
+				this.sxMDRY = item;
+				console.log("选择的授信接待员：", this.sxMDRY);
+				//uni.$emit("choose-mdry", this.MDRY); //通知外部选择事件
+				//uni.$emit('set-jdy', this.MDRY); //通知一下外部显示业务员信息
+			},
+			
 			// 选择人员
 			handleSelect(item) {
 				this.value = item.IDNAME; // 绑定选中值
@@ -164,17 +248,39 @@
 				} else {
 					delete this.big_client_info.exists_credit;
 				};
+				//if (this.sales_credit) {
+					//this.big_client_info.sales_credit = this.sales_credit;
+				//} else {
+					//delete this.big_client_info.sales_credit;
+				//};
+				
+				
 				// this.big_client_info.exists_credit = this.exists_credit;
 				console.log("组件回调的大客户：", this.big_client_info);
 				uni.$emit('close-big-customer', this.big_client_info);
+				 uni.$emit('close-big-customer_JGZ', this.big_client_info,this.JGZList);
 				this.$emit('ClosePopup', this.big_client_info);
 				uni.$emit(this.custom_event_name, 'close');
 			},
 			CreditMode: function(is_credit) {
 				this.exists_credit = is_credit;
 			},
-			GetBigClients: function() {
+			SaleCreditMode: function(is_credit) {
+				
+				this.sales_credit = is_credit;
+			},
+			GetBigClients: function(type) {
 				console.log("查看门店信心：", this.GSID + this.KHID);
+				if(type!='1'){
+				uni.$emit('get-current-type', (type) => {
+				  console.log("百分百拿到类型122222：", type); 
+				  console.log("_ywtype:", this._ywtype);
+				  console.log("currentSaleType:", this.currentSaleType);
+				  this.currentSaleType = type; // 赋值
+				});
+				//拿到后就清空
+				uni.$emit('clear-current-type');
+				}
 				let store = getApp().globalData.store;
 				getBigClients({
 					gsid: store.GSID,
@@ -198,16 +304,132 @@
 				this.curIndex = i;
 				this.big_client_info = e;
 				this.big_client_info.DKFID = e.DKHID;
-				console.log("[BigCustomer-ConfimrBig]大客户信息:", this.big_client_info);
-				if (this.exists_credit) {
-					this.big_client_info.exists_credit = this.exists_credit;
-				} else {
-					delete this.big_client_info.exists_credit;
+				
+				
+				// 1. 把【关闭弹窗】的逻辑抽成函数
+				const closePopupAndEmit = (data) => {
+				  console.log("[BigCustomer-ConfimrBig]大客户信息:", this.big_client_info);
+				  
+				  if (this.exists_credit) {
+				    this.big_client_info.exists_credit = this.exists_credit;
+				  } else {
+				    delete this.big_client_info.exists_credit;
+				  };
+				  
+				  if (this.sales_credit) {
+				    this.big_client_info.sales_credit = this.sales_credit;
+					//还需要将选择的授信人员给传出去
+					this.big_client_info.sales_ryid = this.sxMDRY.RYID;
+					 //this.big_client_info.xyed = this.xyed;
+					//由于临时授信选择的授信业务员  默认相当于接待员
+					uni.$emit("choose-mdry", this.sxMDRY); //通知外部选择事件
+					uni.$emit('set-jdy', this.sxMDRY); //通知一下外部显示业务员信息
+					
+				  } else {
+				    delete this.big_client_info.sales_credit;
+					delete this.big_client_info.sales_ryid ;
+					//delete this.big_client_info.xyed ;
+				  };
+				  
+				  console.log("组件回调的大客户：", this.big_client_info);
+				  this.$emit('ClosePopup', this.big_client_info);
+				  uni.$emit('close-big-customer', this.big_client_info);
+				  uni.$emit('close-big-customer_JGZ',this.big_client_info, this.JGZList);
+				  uni.$emit(this.custom_event_name, 'close');
 				};
-				console.log("组件回调的大客户：", this.big_client_info);
-				this.$emit('ClosePopup', this.big_client_info);
-				uni.$emit('close-big-customer', this.big_client_info);
-				uni.$emit(this.custom_event_name, 'close');
+				
+			  //uni.$emit('get-current-type', (type) => {
+			    //console.log("百分百拿到类型12：", type); 
+			    //this.currentSaleType = type; // 赋值
+			  //});
+				let store = getApp().globalData.store;
+				console.log("_ywtype:", this._ywtype);
+				console.log("currentSaleType:", this.currentSaleType);
+				console.log("exists_credit:", this.exists_credit);
+				console.log("sales_credit:", this.sales_credit);
+				//先判断是否临时授信
+				if(this.sales_credit){
+					//临时授信必须选业务员，需要查业务员是否有效的临时授信员工
+					if (!this.sxMDRY || !this.sxMDRY.RYID) {
+					  util.simpleMsg('临时授信赊销请选择授信业务员', true)
+					  return false;
+					}
+					GetBigRYCredit({
+						RYID:this.sxMDRY.RYID,
+						KHID: store.KHID
+					},  util.callBind(this, function(res) {
+									console.log("GetBigRYCredit1:", res);	
+						let resdt = JSON.parse(res.data);
+						console.log("GetBigRYCredit:", resdt);
+							if(resdt.length<=0){
+								  util.simpleMsg('当前业务员不是临时受信员工', true)
+								  this.big_client_info={};
+								  return false;
+							}else{
+								// this.xyed=resdt[0].XYED;
+								 //console.log("信用额度:", this.xyed);
+								closePopupAndEmit();
+								
+							}
+						
+						}), (err) => {
+							util.simpleMsg('当前业务员不是临时受信员工', true)
+							//如果失败了 也不让往下走
+							this.big_client_info={};
+								  return false;
+						})
+					
+					
+				}else{
+					//根据选中的大客户信息 去查询大客户价格组
+					if((this._ywtype=="sale_credit"||this.currentSaleType=='sale_credit')||(this._ywtype=='kq_sale'&&this.exists_credit)){
+						
+						this.JGZList=[];
+						getBigClientsJGZ({
+							dkhid:  e.DKHID,
+							khid: store.KHID
+						}, util.callBind(this, function(res) {
+							
+							let JGZList = JSON.parse(res.data);
+						console.log("[BigCustomer-Close]大客户价格组:", JGZList);
+							if(JGZList.length<=0){
+								//表示没有价格组。则保持原样不关闭，
+								util.simpleMsg("无生效合同，不允许赊销!", true);
+								this.big_client_info={};
+							}else{
+								this.JGZList=JGZList;
+								closePopupAndEmit();
+								
+							}
+						
+						}), (err) => {
+							util.simpleMsg("大客户价格组查询失败!", true, err);
+							//如果失败了 也不让往下走
+							this.big_client_info={};
+						})
+						
+					}else{
+						closePopupAndEmit();
+					}
+					
+					
+				}
+				
+				
+				
+				
+				
+				
+				// console.log("[BigCustomer-ConfimrBig]大客户信息:", this.big_client_info);
+				// if (this.exists_credit) {
+				// 	this.big_client_info.exists_credit = this.exists_credit;
+				// } else {
+				// 	delete this.big_client_info.exists_credit;
+				// };
+				// console.log("组件回调的大客户：", this.big_client_info);
+				// this.$emit('ClosePopup', this.big_client_info);
+				// uni.$emit('close-big-customer', this.big_client_info);
+				// uni.$emit(this.custom_event_name, 'close');
 			},
 			// SelectedBigCustomer: function(evt) {
 			// 	for (let i = 0; i < this.big_customers.length; i++) {
@@ -258,6 +480,7 @@
 				uni.$emit('set-jdy', that.MDRY); //通知一下外部显示业务员信息
 			},
 		},
+		
 		mounted() {
 			this.GetBigClients();
 		},
@@ -266,6 +489,9 @@
 			this.CustomListener();
 			this.GetMDKHRY();
 			uni.$emit("big-customer-open");
+			
+		
+		
 		},
 		destroyed() {
 			if (this.exists_credit) {
@@ -273,8 +499,22 @@
 			} else {
 				delete this.big_client_info.exists_credit;
 			};
+			
+			if (this.sales_credit) {
+				this.big_client_info.sales_credit = this.sales_credit;
+				//还需要将选择的授信人员给传出去
+				this.big_client_info.sales_ryid = this.sxMDRY.RYID;
+				 //this.big_client_info.xyed = this.xyed;
+			} else {
+				delete this.big_client_info.sales_credit;
+				delete this.big_client_info.sales_ryid ;
+				//delete this.big_client_info.xyed ;
+			};
 			// this.big_client_info.exists_credit = this.exists_credit;
 			uni.$emit("big-customer-close", this.big_client_info);
+			  uni.$emit('close-big-customer_JGZ', this.big_client_info,this.JGZList);
+			  uni.$emit('set-lssx', this.sales_credit);
+			  	console.warn("[Destroyed]big_client_info...",  this.big_client_info);
 			console.warn("[Destroyed]大客户关闭...");
 		}
 	}
@@ -283,7 +523,7 @@
 <style>
 	.customer {
 		background-color: #fff;
-		width: 75%;
+		width: 78%;
 		min-height: 800rpx;
 		max-height: 88%;
 		border-radius: 20rpx;
@@ -291,7 +531,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		padding: 0 3% 40rpx;
+		padding: 0 3% 8%;
 	}
 
 	.customer .h3 {

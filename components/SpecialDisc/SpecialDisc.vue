@@ -16,7 +16,7 @@
 						<!-- <button class="close" @click="Close()">×</button> -->
 					</view>
 					<view class="uls">
-						<view :class="curZKType!='TP'?'lis curr':'lis'" @click="ChooseZK('BZ')">
+						<view :class="(curZKType=='BZ'||curZKType=='LS')?'lis curr':'lis'" @click="ChooseZK('BZ')">
 							<view class="h8">
 								<view>标准折扣<em></em></view>
 								<label>总折扣额:￥{{totalDisc}}<text></text></label>
@@ -24,12 +24,16 @@
 							</view>
 							<view class="discount">
 								<view class="zhekou">
-									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})">·
-										{{item.ZKNAME}}，满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(2)}}折；
-											折扣额：<text>￥{{item.ZKNET}};</text></span>
+									<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD02'})"
+										style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">·
+										{{item.ZKNAME}},满<span>{{item.MZNET}}</span>打<span>{{((item.ZKQTY_JS_NEW||item.ZKQTY_JS)*10).toFixed(2)}}折,
+											折扣额:<text>￥{{item.ZKNET||0}}</text></span>
+										,上调至<input :placeholder="`${item.ZKQTY_JS}~1`" type="number"
+											v-model="item.ZKQTY_JS_NEW" maxlength="4" @blur="onBlurZkqty(item)"
+											style="border:1px solid #ccc; border-radius:4px; padding:6px; width:60px;" />
 									</label>
 								</view>
-								<view @click.stop="Def">
+								<view @click.stop="Def" v-if="ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'}).length>0">
 									<label>
 										<checkbox-group @change="ChooseLS">
 											<checkbox :checked="curZKType=='LS'"></checkbox>临时折扣
@@ -37,13 +41,13 @@
 									</label>
 									<view class="zhekou" style="margin-top:0;border:none;">
 										<label v-for="(item,index) in ZKDatas.filter(r=>{return r.ZKTYPE=='ZD03'})">
-											<text>{{item.ZKNAME}}，满¥{{item.MZNET}}即打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：￥{{item.ZKNET}};</text>
+											{{item.ZKNAME}},满{{item.MZNET}}打{{(item.ZKQTY_JS*10).toFixed(2)}}折,折扣额:<text>￥{{item.ZKNET||0}}</text>
 										</label>
 									</view>
 								</view>
 							</view>
 						</view>
-						<view :class="curZKType=='TP'?'lis curr':'lis'" v-if="DKFZKDatas.length>0"
+						<view :class="curZKType=='TP'?'lis curr':'lis'" v-if="DKFZKDatas.length>0&&!salesCredit"
 							@click="ChooseZK('TP')">
 							<view class="h8">
 								<view>特批折扣<em></em></view>
@@ -53,11 +57,52 @@
 							<view class="discount">
 								<view class="zhekou">
 									<label v-for="(item,index) in DKFZKDatas">·
-										{{item.ZKNAME}}，打{{(item.ZKQTY_JS*10).toFixed(2)}}折；折扣额：<text>￥{{item.ZKNET}};</text></label>
+										{{item.ZKNAME}},打{{(item.ZKQTY_JS*10).toFixed(2)}}折,折扣额:<text>￥{{item.ZKNET||0}}</text></label>
 								</view>
 							</view>
 						</view>
-
+						<view :class="curZKType=='HIS'?'lis curr':'lis'" v-if="HISZKDatas.length>0&&!salesCredit"
+							@click="ChooseZK('HIS')">
+							<view class="h8">
+								<view>历史特批折扣<em></em></view>
+								<label>折扣额:￥{{totalDiscHIS}}<text></text></label>
+								<span>已选</span>
+							</view>
+							<view class="discount">
+								<view class="zhekou">
+									<!-- <label v-for="(item,index) in HISZKDatas" @click="ChooseHIS(e)">
+										大客户ID:{{item.DKFID}},日期:{{item.SALEDATE}},业务类型:{{item.BILL_TYPE_NAME}},价格组:{{item.SPJGZ_NAME}},单号:{{(item.BILL)}},折扣率:{{item.ZKRATE}}%,整单金额:{{item.NET}}</label> -->
+									<div class="table-wrapper">
+										<table class="data-table">
+											<thead>
+												<tr>
+													<th>大客户ID</th>
+													<th>销售日期</th>
+													<th>业务类型</th>
+													<th>价格组</th>
+													<th>单号</th>
+													<th>折扣率</th>
+													<th>整单金额</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr v-for="(item, idx) in HISZKDatas" :key="idx"
+													@click.stop="ChooseHIS(item,idx)"
+													:class="{ active: currentIndex === idx}">
+													<td>{{ item.DKFID}}</td>
+													<td>{{ item.SALEDATE }}</td>
+													<td>{{ item.BILL_TYPE_NAME }}</td>
+													<td>{{ item.SPJGZ_NAME }}</td>
+													<td>{{ item.BILL }}</td>
+													<td>{{ item.ZKRATE }}%</td>
+													<td>¥{{ item.NET }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</view>
+							</view>
+						</view>
 					</view>
 				</view>
 				<view class="confirm">
@@ -85,7 +130,14 @@
 		props: {
 			dkhid: String,
 			product: Array,
-			zkdatas: Object
+			salesCredit: {
+			    type: Boolean,
+			    default: false
+			  },
+			zkdatas: Object,
+			sxjgz: Array,
+			ywtype: String
+
 		},
 		data() {
 			return {
@@ -95,32 +147,18 @@
 				JGID: util.getStorage("store").JGID,
 				ZKDatas: [],
 				DKFZKDatas: [],
+				HISZKDatas: [],
+				SXJGZ: [],
 				curZK: {},
 				totalDisc: 0,
 				totalDiscDKF: 0,
+				totalDiscHIS: 0,
 				Product: [],
-				Product1: [{
-						SPJGZ: "01",
-						NET: 2000,
-						SPID: "123456"
-					},
-					{
-						SPJGZ: "01",
-						NET: 1250,
-						SPID: "123457"
-					},
-					{
-						SPJGZ: "02",
-						NET: 5000,
-						SPID: "12345678"
-					}, {
-						SPJGZ: "03",
-						NET: 3000,
-						SPID: "123456789"
-					}
-				],
 				ProductOld: [],
-				YN_LSZK: false
+				YN_LSZK: false,
+				YN_DOWN: false, //是否下调等级
+				HISZKData: {}, //历史特批折扣数据
+				currentIndex: -1,
 			};
 		},
 		watch: {
@@ -129,16 +167,46 @@
 				console.log("特殊折扣传入的商品信息:", this.Product);
 			},
 		},
+		computed: {},
 		created: function() {
 			that = this;
 			console.log("传入的折扣数据：", that.zkdatas);
-			that.ZKDatas = that.zkdatas.ZKDatas;
-			that.DKFZKDatas = that.zkdatas.DKFZKDatas;
-			that.CalProZK();
-			// that.CalProZK1();
+			console.log("传入的大客户ID数据：", that.dkhid);
+			console.log("传入的大客户是否临时授信数据：", that.salesCredit);
+			console.log("传入的赊销价格组：", that.sxjgz);
+			console.log("传入的业务类型：", that.ywtype);
+			
+			that.ZKDatas = JSON.parse(JSON.stringify(that.zkdatas.ZKDatas)); //DeepCopy 防止修改折扣系数后 父级数据也被修改
+			that.DKFZKDatas = JSON.parse(JSON.stringify(that.zkdatas.DKFZKDatas)); //DeepCopy
+			that.HISZKDatas = JSON.parse(JSON.stringify(that.zkdatas.HISZKDatas)); //DeepCopy
+			that.SXJGZ = JSON.parse(JSON.stringify(that.sxjgz)); //DeepCopy
+			//v1.3 根据大客户合同接口控制价格组是否下调
+			that.CalProZK(that.SXJGZ, that.ywtype);
 			if (that.ZKDatas.length == 0 && that.DKFZKDatas.length == 0) {
 				util.simpleMsg("当前无可满足的折扣规则", "none");
 			}
+			//V1.2 弹窗确认下调版本
+			// if (that.dkhid && that.dkhid != '80000000') {
+			// 	util.simpleModal("提示", "是否账期是否超30天自动下调折扣等级", bool => {
+			// 		that.YN_DOWN = bool; //下调标识
+			// 		that.CalProZK(bool);
+			// 		if (that.ZKDatas.length == 0 && that.DKFZKDatas.length == 0) {
+			// 			util.simpleMsg("当前无可满足的折扣规则", "none");
+			// 		}
+			// 	})
+			// } else {
+			// 	that.CalProZK();
+			// 	if (that.ZKDatas.length == 0 && that.DKFZKDatas.length == 0) {
+			// 		util.simpleMsg("当前无可满足的折扣规则", "none");
+			// 	}
+			// }
+			//V1.1
+			// that.CalProZK();
+			// if (that.ZKDatas.length == 0 && that.DKFZKDatas.length == 0) {
+			// 	util.simpleMsg("当前无可满足的折扣规则", "none");
+			// }
+			//V1.0
+			// that.CalProZK1();
 			// that.GetZKDatas();
 			// if (that.dkhid && that.dkhid != '80000000') {
 			// 	// that.dkhid = '0020004289';
@@ -152,9 +220,31 @@
 			// that.ProductOld = that.Product;
 		},
 		methods: {
-			// Close:function() {
-
-			// },
+			// 实时限制
+			onInputZkqty(item) {
+				const min = item.ZKQTY_JS;
+				const max = 1;
+				let val = Number(item.ZKQTY_JS_NEW)
+				console.log("本行最小折扣值：", min);
+				console.log("输入的折扣值：", val);
+				if (isNaN(val)) val = min
+				if (val < min || val > max) {
+					util.simpleMsg("输入的折扣不在有效范围：" + item.ZKQTY_JS + "~1");
+					val = item.ZKQTY_JS;
+				} else {
+					item.ZKNET = util.newFloat(item.TNET * (1 - val), 1);
+					console.log("输入的折扣计算值：", item.ZKNET);
+				}
+				// 异步修正（App/iOS 必须）
+				this.$nextTick(() => {
+					item.ZKQTY_JS_NEW = val
+				})
+			},
+			// 失焦再校验一次
+			onBlurZkqty(item) {
+				this.onInputZkqty(item);
+				that.totalDisc = util.newFloat(that.ZKDatas.reduce((sum, r) => sum + (r.ZKNET || 0), 0), 1);
+			},
 			Def: function() {
 				console.log("冒泡事件：", that.curZKType);
 				if (that.curZKType == 'LS') {
@@ -163,7 +253,38 @@
 			},
 			ChooseZK: function(e) {
 				console.log("测试：", that.curZKType);
+				console.log("E：", e);
+				
+				if((e=='TP'||e == 'HIS')&&this.salesCredit&&that.ywtype == "sale_credit"){
+					//临时授信赊销 不许使用特批折扣
+					util.simpleMsg('临时授信赊销无法使用特批折扣', true)
+					return false;
+				}
 				that.curZKType = e;
+				if (e == "HIS") //给个默认值
+					if (that.HISZKDatas && that.HISZKDatas.length > 0) {
+						let fobj = that.product.find(r => r.SPJGZ == that.HISZKDatas[0].SPJGZ);
+						if (fobj) {
+							that.currentIndex = 0;
+							that.HISZKData = that.HISZKDatas[0];
+						} else {
+							let ii = that.HISZKDatas.findIndex(r => r.SPJGZ == that.product[0].SPJGZ);
+							that.currentIndex = ii;
+							that.HISZKData = that.HISZKDatas[ii];
+						}
+						let tnet = that.product.filter(r => r.SPJGZ == that.HISZKData.SPJGZ)
+							.reduce((sum, r) => sum + (r.QTY * r.OPRICE), 0);
+						that.totalDiscHIS = util.newFloat(tnet * (1 - that.HISZKData.ZKQTY_JS), 1);
+					} else {
+						that.currentIndex = -1;
+						that.HISZKData = {};
+						that.totalDiscHIS = 0;
+					}
+				else {
+					that.currentIndex = -1;
+					that.HISZKData = {};
+					that.totalDiscHIS = 0;
+				}
 			},
 			Cancel: function() {
 				// uni.$emit('close-tszk', that.ProductOld);
@@ -171,11 +292,45 @@
 			},
 			//确认折扣
 			ConfirmZK: function() {
-				// that.CalProduct();
-				// that.Product
-				// uni.$emit('close-tszk', that.Product);
 				console.log("选择的折扣类型：", that.curZKType);
-				uni.$emit('close-tszk', that.curZKType);
+				let arr;
+				if (that.curZKType == "BZ" || that.curZKType == "LS") {
+					//找出修改过折扣值的折扣数据 自动和手动的都算
+					arr = that.ZKDatas.filter(r => r.ZKQTY_JS_NEW > 0 && r.ZKQTY_JS_NEW != r.ZKQTY_JS);
+					console.log("修改过折扣的数据：", arr);
+				}
+				if (that.curZKType == "HIS") {
+					if (!that.HISZKData || Object.keys(that.HISZKData).length == 0) { //给默认值一下
+						util.simpleMsg("暂无可用的历史特批折扣数据,请更换为其他折扣!");
+						return;
+					}
+					arr = [that.HISZKData];
+					console.log("选择的历史特批折扣数据：", arr);
+				}
+				uni.$emit('close-tszk', that.curZKType, arr);
+			},
+			ChooseHIS: (e, i) => {
+				// if (e.ZKRATE == 0) {
+				// 	util.simpleMsg("该折扣率为0,请更换其他折扣数据!")
+				// 	return;
+				// }
+				let spobj = that.product.find(r => r.SPJGZ == e.SPJGZ);
+				if (!spobj) {
+					util.simpleMsg("该折扣价格组与当前销售商品价格组不一致,请更换其他折扣数据!")
+					return;
+				}
+				if(that.salesCredit&&that.ywtype == "sale_credit"){
+					//如果为true  那肯定就是临时赊销
+					util.simpleMsg('临时授信赊销无法使用特批折扣', true)
+					return false;
+				}
+				that.curZKType = "HIS";
+				that.HISZKData = e;
+				that.currentIndex = i;
+				console.log("ChooseHIS:", that.HISZKData);
+				let tnet = that.product.filter(r => r.SPJGZ == that.HISZKData.SPJGZ)
+					.reduce((sum, r) => sum + (r.QTY * r.OPRICE), 0);
+				that.totalDiscHIS = util.newFloat(tnet * (1 - that.HISZKData.ZKQTY_JS), 1);
 			},
 			ChooseLS: e => {
 				if (e.detail.value.length > 0) { //勾选了临时
@@ -191,7 +346,7 @@
 				console.log("折扣类型切换：", that.curZKType);
 			},
 			//计算满足折扣规则的商品以及对应折扣额 标准，临时
-			CalProZK: function() {
+			CalProZK: function(sxjgz, ywtype) {
 				console.log("商品信息：", this.product);
 				let TNET = 0;
 				let jgzArr = []; //商品价格组集合
@@ -204,7 +359,7 @@
 						});
 						let aa = 0;
 						a.map(r4 => {
-							aa += Number((r4.OPRICE * r4.QTY).toFixed(2)); //修改为由原价计算 防止促销生效后 net改变了
+							aa += util.newFloat(r4.OPRICE * r4.QTY, 2); //修改为由原价计算 防止促销生效后 net改变了
 						});
 						let obj = {
 							SPJGZ: r.SPJGZ,
@@ -231,7 +386,7 @@
 					let sortArr = newArr.sort((a, b) => {
 						return b.MZNET - a.MZNET;
 					});
-					// console.log("222222:", sortArr);
+					console.log("222222:", sortArr);
 					let newArr1 = arr1.filter(r => {
 						return r.MZNET <= r1.TNET && r.ZKSTR == r1.SPJGZ;
 					})
@@ -242,14 +397,31 @@
 					// console.log("444444:", sortArr1);
 					if (sortArr.length > 0) { //追加标准折扣规则
 						let obj = sortArr[0];
-						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
-						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
-						pushArr.push(obj);
+						// if (down && sortArr.length > 1) //旧版手动下调折扣等级
+						// 	obj.ZKQTY_JS_NEW = sortArr[1].ZKQTY_JS;
+						if (ywtype == "sale_credit" && sxjgz.length > 0) //赊销模式,且有赊销价格组
+						{
+							let sxObj = sxjgz.find(r => r.WLJGZ == obj.ZKSTR);
+							console.log("sxObj", sxObj);
+							if (sxObj) {
+								if (sxObj.ZQTS == "是" && sortArr.length > 1) { //有自动下调标识,取下一级的折扣率
+									obj.ZKQTY_JS_NEW = sortArr[1].ZKQTY_JS;
+								}
+								obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS_NEW || obj
+									.ZKQTY_JS)), 1);
+								obj.TNET = r1.TNET;
+								pushArr.push(obj);
+							}
+						} else {
+							obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
+							obj.TNET = r1.TNET;
+							pushArr.push(obj);
+						}
 					}
 					if (sortArr1.length > 0) { //追加临时折扣规则
 						let obj = sortArr1[0];
-						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
+						obj.TNET = r1.TNET;
 						pushArr.push(obj);
 					}
 					let sortArr2 = arr2.filter(r => {
@@ -260,6 +432,7 @@
 						let obj = sortArr2[0];
 						// obj.ZKNET = Number((r1.TNET * (1 - Number(obj.ZKQTY_JS))).toFixed(1));
 						obj.ZKNET = common.newFixed(r1.TNET * (1 - Number(obj.ZKQTY_JS)), 1);
+						obj.TNET = r1.TNET;
 						pushArr1.push(obj);
 					}
 				})
@@ -517,5 +690,60 @@
 
 	.commods .uls .lis.curr {
 		background: #fff;
+	}
+
+	.table-wrapper {
+		width: 100%;
+		max-height: 94%;
+		overflow: auto;
+	}
+
+	/* 原生 table 样式 */
+	.data-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 24rpx;
+		color: #111;
+	}
+
+	.data-table th {
+		padding: 16rpx 10rpx;
+		text-align: center;
+		font-weight: 500;
+		color: #999;
+		white-space: nowrap;
+
+		position: sticky;
+		top: -2rpx;
+		z-index: 15;
+		background: #fff;
+	}
+
+	.data-table td {
+		text-align: center;
+	}
+
+	.data-table-hh th {
+		color: #555555;
+	}
+
+	.data-table .exchanged td {
+		background: #EEF4F0;
+	}
+
+	.data-table .active td {
+		color: #42B14B;
+		background: rgba(66, 177, 75, 0.16);
+	}
+
+	.data-table td {
+		padding: 18rpx 10rpx;
+		border-bottom: 1rpx solid #f0f0f0;
+		word-break: break-all;
+		white-space: pre-wrap;
+	}
+
+	.data-table tr:active {
+		background: #f9f9f9;
 	}
 </style>

@@ -9,7 +9,7 @@
 
 		<view class="tranlist">
 			<view class="leftlist">
-				<view class="logos" @click="ToSale('/pages/BHYHPS/BHYHPS','not')">
+				<view class="logos" @click="ToSale('/pages/BHYHPS/BHYHPS')">
 					<!-- <image src="../../images/imgbh/peis@1x.png" mode="widthFix"></image> -->
 					<view class="xingqi">
 						<view>要货配送</view>

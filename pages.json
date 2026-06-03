@@ -69,7 +69,7 @@
 			"style": {
 				"titleNView": false,
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": false
 			}
 		},
 		{
@@ -451,6 +451,9 @@
 		}
 	],
 	"globalStyle": {
+		"rpxCalcMaxDeviceWidth": 0,
+		"rpxCalcBaseDeviceWidth": 375,
+		"rpxCalcIncludeWidth": 375,
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
@@ -471,6 +474,14 @@
 			"waiting": true,
 			"autoclose": false,
 			"delay": 0
+		},
+		"safearea": {
+			"bottom": {
+				"offset": "none"
+			}
+		},
+		"webview": {
+			"viewport-fit": "cover"
 		}
 	},
 	"condition": {

@@ -30,7 +30,12 @@ var ConfirmReceipt = function(e, func) {
 	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
-
+//检查是否有生产
+var GetOrderHasSC = function(e, func) {
+	let apistr = "MobilePos_API.Models.SALE001CLASS.GetOrderHasSC";
+	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 //同意和拒绝退单
 var CommonRefund = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund";
@@ -267,6 +272,7 @@ export default {
 	GetWMOrders,
 	GetWMOrderDetail,
 	ConfirmReceipt,
+	GetOrderHasSC,
 	CommonRefund,
 	GetBSData,
 	ConfirmLY,

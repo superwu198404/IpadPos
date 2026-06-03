@@ -142,7 +142,7 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>{{CardInfo.cardId||"暂无"}}</text></label>
+									<text>卡号：<text>{{CardInfo.cardId||"暂无"}}</text></text>
 								</view>
 							</view>
 							<view class="kainfolist">

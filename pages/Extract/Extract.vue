@@ -123,7 +123,7 @@
 		getReserveOrders
 	} from '@/api/business/extract.js'
 	export default {
-		mixins: [global],
+		//mixins: [global],
 		props: {
 			mode: Boolean
 		},

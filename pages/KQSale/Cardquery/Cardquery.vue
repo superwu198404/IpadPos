@@ -100,7 +100,7 @@
 							<view class="totals">
 								<view>
 									<em></em>
-									<label>卡号：<text>{{ default_view(form.infos.card_id,'暂无') }}</text></label>
+									<text>卡号：<text>{{ default_view(form.infos.card_id,'暂无') }}</text></text>
 								</view>
 								<button v-if="form.infos.status"
 									class="btn btn-qx">{{ default_view(form.infos.status,'') }}</button>

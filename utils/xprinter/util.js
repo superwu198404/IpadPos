@@ -740,6 +740,8 @@ const sxjsPrinterData = (sale1_obj, sale2_arr, sale3_arr, print, ggyContent) => 
 	return printerInfo;
 }
 
+
+
 /**
  * 外卖打印数据转换
  * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
@@ -767,7 +769,169 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 	var xsptid = sale1_obj.XSPTID;
 	var nowTime = getTime(3);
 	var posId = snvl(sale1_obj.POSID, "");
-	var note2 = snvl(sale1_obj.NOTE2, ""); //平台名称。如美团外卖
+	var note2 = snvl(sale1_obj.XDQD, sale1_obj.NOTE2); //平台名称。如美团外卖//260430 优先下单渠道
+	var greeting = snvl(sale1_obj.GREETING, "");
+	var update = snvl(sale1_obj.DDUPGRADE, ""); //变更类型 0未变更，1修改备注 2修改时间
+
+	var bsReason = "";
+	var bsNote = "";
+	var newBill = "";
+	if (type == "WMTHBS") {
+		bsReason = bs_Reason;
+		bsNote = bs_Note;
+		newBill = new_bill;
+	} else if (type == "WM") {
+		newBill = new_bill;
+	}
+	var wmType = type;
+
+	// 1. 生成带标记的商品列表
+	const tempList = [];
+	const oidFirstMap = {};
+
+	// 先标记每个OID第一次出现位置
+	for (let i = 0; i < sale2_arr.length; i++) {
+		const item = sale2_arr[i];
+		const oid = item.OID || null;
+		const comboName = item.COMBONAME || null;
+		const isCombo = !!oid && !!comboName;
+
+		if (isCombo && !oidFirstMap[oid]) {
+			oidFirstMap[oid] = i;
+		}
+
+		tempList.push({
+			oriIndex: i,
+			bill: item.BILL,
+			spid: item.SPID,
+			spname: item.STR5,
+			qty: item.QTY,
+			price: item.PRICE,
+			oprice: item.OPRICE,
+			net: nnvl(item.NET, 0),
+			unit: snvl(item.STR7, ""),
+			pack: item.PACK,
+			bqty: nnvl(item.BQTY, 0),
+			attribute: snvl(item.STR2, ""),
+			oid: oid,
+			comboName: comboName,
+			isCombo: isCombo,
+			isFirstComboItem: false
+		});
+	}
+
+	// 标记首项
+	tempList.forEach((it, idx) => {
+		if (it.isCombo && oidFirstMap[it.oid] === idx) {
+			it.isFirstComboItem = true;
+		}
+	});
+
+	// ===================== 核心逻辑：按原始顺序插入整组 =====================
+	const used = new Array(tempList.length).fill(false);
+	const goodsList = [];
+
+	for (let i = 0; i < tempList.length; i++) {
+		const curr = tempList[i];
+
+		// 已处理过 → 跳过
+		if (used[i]) continue;
+
+		// 如果是普通商品 → 直接加入
+		if (!curr.isCombo) {
+			goodsList.push(curr);
+			used[i] = true;
+			continue;
+		}
+
+		// 如果是套餐首项 → 把本组所有商品一次性加入
+		if (curr.isFirstComboItem) {
+			const group = tempList.filter(
+				it => it.oid === curr.oid && it.isCombo
+			);
+			group.sort((a, b) => b.isFirstComboItem - a.isFirstComboItem);
+
+			group.forEach(g => {
+				used[g.oriIndex] = true;
+				goodsList.push(g);
+			});
+		}
+	}
+	// ====================================================================
+
+	console.log("goodsList 转换后数据:", goodsList);
+
+	//支付数据
+	var sale3List = [];
+
+	var printerInfo = {
+		xsType,
+		bill, //单号
+		xsBill, //原单号
+		wdate,
+		wtime,
+		custmtime,
+		daysn,
+		khName, //门店名称
+		khAddress, //门店地址
+		khPhone, //门店电话	
+		gsid,
+		status, //'12', '请接单', '15', '取消订单', '33', '退货订单', '30', '申请退货', '20', '申请取消', '其他'
+		remark,
+
+		goodsList, //商品集合
+
+		payableAmount, //应付金额
+		originalAmount, //原金额
+		shAddress, //收货地址
+		shPhone, //收货联系电话
+		shContact, // 收货联系人
+		sale3List, //支付信息
+		ggy, //广告语
+		xsptid,
+		note2,
+		wmType,
+		bsReason,
+		bsNote,
+		nowTime, //当前时间
+		posId,
+		newBill, //新产生的退货单号
+		greeting, //祝福语
+		update
+	}
+
+	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
+	return printerInfo;
+};
+
+/**
+ * 外卖打印数据转换（遇到套餐商品排序会乱，先废掉）
+ * @param {sale1_obj, sale2_arr, sale3_arr} 传入数据
+ */
+const wmPrinterData11 = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Note, new_bill) => {
+	var xsType = "WM";
+	var bill = sale1_obj.BILL;
+	var wdate = sale1_obj.WDATE;
+	var wtime = sale1_obj.WTIME;
+	var xsBill = sale1_obj.XS_BILL;
+	var custmtime = snvl(sale1_obj.CUSTMTIME, "");
+	var daysn = snvl(sale1_obj.DAYSN, "");
+	var khName = getApp().globalData.store.NAME;
+	var khAddress = getApp().globalData.store.KHAddress;
+	var khPhone = getApp().globalData.store.PHONE;
+	var gsid = snvl(sale1_obj.GSID, "");
+	var status = nnvl(sale1_obj.STATUS, 0);
+	var remark = snvl(sale1_obj.STR1, "");
+	var payableAmount = sale1_obj.STR2;
+	var originalAmount = nnvl(sale1_obj.STR8, 0);
+	var shAddress = snvl(sale1_obj.STR4, "");
+	var shPhone = snvl(sale1_obj.STR6, "");
+	var shContact = snvl(sale1_obj.STR5, "");
+	var ggy = ggyContent;
+	var xsptid = sale1_obj.XSPTID;
+	var nowTime = getTime(3);
+	var posId = snvl(sale1_obj.POSID, "");
+	var note2 = snvl(sale1_obj.XDQD, sale1_obj.NOTE2); //平台名称。如美团外卖//260430 优先下单渠道
 	var greeting = snvl(sale1_obj.GREETING, "");
 
 	var bsReason = "";
@@ -782,9 +946,40 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 	}
 	var wmType = type;
 
+	//20260417 为了适应 外卖单有套餐商品
+	// 先遍历一次，找到每个 OID 第一次出现的位置
+	var firstOidMap = {};
+	for (var i = 0; i < sale2_arr.length; i++) {
+		var item = sale2_arr[i];
+		var oid = item.OID;
+		var comboName = item.COMBONAME;
+
+		if (oid && oid !== null && oid !== "" && comboName && comboName !== null && comboName !== "") {
+			if (!firstOidMap[oid]) {
+				firstOidMap[oid] = i; // 记录套餐第一个商品索引
+			}
+		}
+	}
+
 	//商品数据
 	var goodsList = [];
 	for (var i = 0; i < sale2_arr.length; i++) {
+
+		var item = sale2_arr[i];
+		var oid = item.OID;
+		var comboName = item.COMBONAME;
+
+		var isCombo = false; // 是否是套餐商品
+		var isFirstComboItem = false; // 是否是套餐第一个（要打印标题）
+
+		if (oid && oid !== null && oid !== "" && comboName && comboName !== null && comboName !== "") {
+			isCombo = true;
+			// 判断是不是本组套餐第一个
+			if (firstOidMap[oid] === i) {
+				isFirstComboItem = true;
+			}
+		}
+
 		var sale2_printer = {
 			bill: sale2_arr[i].BILL, //主单号
 			spid: sale2_arr[i].SPID, //商品编码
@@ -797,6 +992,11 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 			pack: sale2_arr[i].PACK, //外卖预订单商品数量
 			bqty: nnvl(sale2_arr[i].BQTY, 0),
 			attribute: snvl(sale2_arr[i].STR2, ""), //商品属性
+			// 新增套餐相关标识
+			oid: oid || null,
+			comboName: comboName || null,
+			isCombo: isCombo, // 套餐商品 = true
+			isFirstComboItem: isFirstComboItem // 套餐第一个 = true
 		};
 		goodsList = goodsList.concat(sale2_printer);
 	}
@@ -838,6 +1038,7 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 		posId,
 		newBill, //新产生的退货单号
 		greeting, //祝福语
+
 	}
 	console.log("外卖打印接收数据转换后 printerInfo:", printerInfo);
 
@@ -1452,7 +1653,7 @@ const qrCodeGenerate = function(is_dzfpewmdz, bill, qrCodeContent, qrCodeWidth, 
 		let saleDate = formatDateNew(objQrCode.saledate);
 		// let qrText = objQrCode.url + "?v=" + objQrCode.v + "&saledate=" + saleDate + "&bill=" + objQrCode
 		// 	.bill + "&khid=" + objQrCode.khid + "&gsid=" + objQrCode.gsid + "&sltype=" + objQrCode.sltype;
-		let qrText = objQrCode.url;//240509修改版
+		let qrText = objQrCode.url; //240509修改版
 		console.log("1.二维码生成内容:", qrText)
 		if (!is_dzfpewmdz) {
 			resolve('1')

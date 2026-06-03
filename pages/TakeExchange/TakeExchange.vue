@@ -145,7 +145,8 @@
 																<view class="task-checkbox"
 																	:class="{ 'checked': allChecked }">
 																	<image v-show="allChecked" class="check-icon"
-																		src="@/images/imgbh/gou@1x.png" mode="widthFix">
+																		src="../../images/imgbh/gou@1x.png"
+																		mode="widthFix">
 																	</image>
 																</view>
 															</th>
@@ -168,7 +169,8 @@
 																	class="task-checkbox"
 																	:class="{ 'checked': item.isChecked }">
 																	<image v-show="item.isChecked" class="check-icon"
-																		src="@/images/imgbh/gou@1x.png" mode="widthFix">
+																		src="../../images/imgbh/gou@1x.png"
+																		mode="widthFix">
 																	</image>
 																</view>
 															</td>
@@ -642,15 +644,23 @@
 					util.simpleMsg('换货商品与原商品品类不一致!', 'none');
 					return;
 				}
-				let obj = util.getStorage("sysParam");
-				//是裱花类要判断规格和尺寸，都要满足才行
-				if (obj && obj.BHLBBM && obj.BHLBBM?.includes(this.selectedOriginalItem.ZLID)) {
-					if (this.selectedProductItem.SPECS != this.selectedOriginalItem.SPECS && this.selectedProductItem
-						.CCCZ != this.selectedOriginalItem.CCCZ) {
-						util.simpleMsg('换货商品与原商品尺寸不一致', 'none');
+				//V1.1 固定判断109 
+				if (this.selectedProductItem.ZLID == "109") {
+					if (this.selectedProductItem.SPECS != this.selectedOriginalItem.SPECS) {
+						util.simpleMsg('换货商品与原商品规格或尺寸不一致', 'none');
 						return;
 					}
 				}
+				//V1.0
+				// let obj = util.getStorage("sysParam");
+				// //是裱花类要判断规格和尺寸，都要满足才行
+				// if (obj && obj.BHLBBM && obj.BHLBBM?.includes(this.selectedOriginalItem.ZLID)) {
+				// 	if (this.selectedProductItem.SPECS != this.selectedOriginalItem.SPECS && this.selectedProductItem
+				// 		.CCCZ != this.selectedOriginalItem.CCCZ) {
+				// 		util.simpleMsg('换货商品与原商品尺寸不一致', 'none');
+				// 		return;
+				// 	}
+				// }
 
 				const oldItem = this.selectedOriginalItem;
 				const qty = parseFloat(this.currentCount.totalAmount || 1);
@@ -659,10 +669,12 @@
 				const oldTotal = util.newFloat(oldPrice * qty);
 				const newTotal = util.newFloat(newPrice * qty);
 				const diffPrice = util.newFloat(newTotal - oldTotal);
-				if (Math.abs(diffPrice) < this.priceLimit.min || Math.abs(diffPrice) > this.priceLimit.max) {
-					util.simpleMsg('超出可换货价差范围', 'none');
-					return;
-				}
+				//20260410  非109才判断价差
+				if (this.selectedProductItem.ZLID != '109')
+					if (Math.abs(diffPrice) < this.priceLimit.min || Math.abs(diffPrice) > this.priceLimit.max) {
+						util.simpleMsg('超出可换货价差范围', 'none');
+						return;
+					}
 				console.log("this.exchangedGoodsList", this.exchangedGoodsList);
 				console.log("this.selectedProductItem", this.selectedProductItem);
 				console.log("this.selectedOriginalItem", this.selectedOriginalItem);

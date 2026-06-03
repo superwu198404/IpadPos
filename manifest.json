@@ -61,7 +61,11 @@
         "navigationBarTextStyle" : "black",
         "navigationBarTitleText" : "uni-app",
         "navigationBarBackgroundColor" : "#F8F8F8",
-        "backgroundColor" : "#F8F8F8"
+        "backgroundColor" : "#F8F8F8",
+        "rpxCalcMaxDeviceWidth" : 0,
+        "rpxCalcBaseDeviceWidth" : 750,
+        "rpxCalcIncludeWidth" : 750,
+        "rpxCalcExcludeWidth" : 0
     },
     "app-plus" : {
         "popGesture" : "none",
@@ -105,6 +109,7 @@
                     "NSCameraUsageDescription" : "识别二维码"
                 },
                 "UIWebView" : false, // 是否使用旧版 UIWebView（建议 false，使用 WKWebView）
+				"disableViewportScale": true,
                 "renderer" : "native", // 渲染模式，一般不用改
                 "dSYMs" : false,
                 "idfa" : false
@@ -151,6 +156,9 @@
                     "xxhdpi" : "unpackage/res/icons/144x144.png",
                     "xxxhdpi" : "unpackage/res/icons/192x192.png"
                 }
+            },
+            "splashscreen" : {
+                "iosStyle" : "common"
             }
         },
         "orientation" : [
@@ -164,24 +172,14 @@
             "alwaysShowBeforeRender" : true
         },
         "screenOrientation" : [ "portrait-primary", "landscape-primary" ],
-        "nativePlugins" : {
-            "uniplugin_printer" : {
-                "__plugin_info__" : {
-                    "name" : "uniplugin_printer",
-                    "description" : "打印机uniapp插件",
-                    "platforms" : "Android,iOS",
-                    "url" : "",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : false,
-                    "bought" : -1,
-                    "pid" : "",
-                    "parameters" : {}
-                }
-            }
-        }
+        "statusbar" : {
+            "immersed" : true,
+            "style" : "dark"
+        },
+        "fullscreen" : true,
+        "titleNView" : false
     },
-    "appid" : "__UNI__D975D37",
+    "appid" : "__UNI__9B87ED3",
     "name" : "KengeePos",
     "versionName" : "1.1.128",
     "description" : "ipad上运行的收银软件",

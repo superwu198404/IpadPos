@@ -144,6 +144,11 @@
 					}
 					util.simpleModal("提示", "是否确认切换到商品销售？", res => {
 						if (res) {
+							let store = util.getStorage("store");
+							store.DKFID = "80000000";
+							store.DKFNAME = '默认大客户';
+							util.setStorage("store", store);
+							uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 							uni.redirectTo({
 								url: "/pages/mainSale/MainSale"
 							})

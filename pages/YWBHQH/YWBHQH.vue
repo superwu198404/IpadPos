@@ -241,8 +241,8 @@
  				<view class="filter-section input-section">
  					<text class="section-label">到货日期：</text>
  					<view style="flex:1">
- 						<picker style="width: 100%;" mode="date" :value="filterForm.arrivalDate" @change="onDateChange"
- 							class="filter-picker">
+ 						<picker style="width: 100%;" mode="date" fields="day" :value="filterForm.arrivalDate"
+ 							@change="onDateChange" class="filter-picker">
  							<view :class="filterForm.arrivalDate ? 'picker-label' : 'picker-placeholder'">
  								{{ filterForm.arrivalDate || '请选择日期' }}
  							</view>
@@ -416,7 +416,7 @@
  				<view class="order-summary">
  					<view class="summary-row">
  						<text class="summary-label">总金额</text>
- 						<text class="summary-value">¥{{ currentOrder.totalAmount }}</text>
+ 						<text class="summary-value">¥{{formattedAmount(currentOrder.totalAmount)  }}</text>
  					</view>
  					<view class="summary-row">
  						<text class="summary-label">件数</text>
@@ -630,7 +630,6 @@
  			};
  		},
  		computed: {
-
  		},
  		components: {
  			Head,
@@ -646,6 +645,10 @@
  			}
  		},
  		methods: {
+			  formattedAmount(amount) {
+			    if (!amount) return '0.00'
+			    return Number(amount).toFixed(2)
+			  },
  			// 软键盘相关
  			handleKeyboardConfirm(query) {
  				const keyword = query.query.trim() // 搜索关键词
@@ -1336,136 +1339,15 @@
  					this.showDropdown_goods = false
  				}
  			},
- 			// 初始化滚动处理器
- 			initScrollHandler() {
- 				const scrollX = this.$refs.scrollX;
- 				const scrollY = this.$refs.scrollY;
-
- 				if (!scrollX || !scrollY) return;
-
- 				// 触摸开始
- 				scrollY.addEventListener('touchstart', (e) => {
- 					if (e.touches.length !== 1) return;
-
- 					const touch = e.touches[0];
-
- 					this.scrollState = {
- 						startX: touch.clientX,
- 						startY: touch.clientY,
- 						startScrollLeft: scrollX.scrollLeft,
- 						startScrollTop: scrollY.scrollTop,
- 						scrollDirection: null,
- 						isScrolling: false
- 					};
- 				}, {
- 					passive: true
- 				});
-
- 				// 触摸移动 - 核心逻辑：强制分离X轴和Y轴
- 				scrollY.addEventListener('touchmove', (e) => {
- 					if (e.touches.length !== 1) return;
- 					if (!this.scrollState.startX && this.scrollState.startX !== 0) return;
-
- 					const touch = e.touches[0];
-
- 					// 计算移动距离
- 					const deltaX = touch.clientX - this.scrollState.startX;
- 					const deltaY = touch.clientY - this.scrollState.startY;
-
- 					const absDeltaX = Math.abs(deltaX);
- 					const absDeltaY = Math.abs(deltaY);
-
- 					// 判断滚动方向（只在开始时判断一次）
- 					if (!this.scrollState.scrollDirection) {
- 						if (absDeltaX > 5 || absDeltaY > 5) {
- 							// 移动超过阈值才判定方向
- 							if (absDeltaX > absDeltaY) {
- 								this.scrollState.scrollDirection = 'horizontal';
- 							} else {
- 								this.scrollState.scrollDirection = 'vertical';
- 							}
- 							this.scrollState.isScrolling = true;
- 						} else {
- 							return; // 小于阈值认为是点击，不处理
- 						}
- 					}
-
- 					// 根据确定的方向处理滚动
- 					if (this.scrollState.scrollDirection === 'horizontal') {
- 						// 只处理横向滚动
- 						const maxScrollLeft = scrollX.scrollWidth - scrollX.clientWidth;
- 						const newScrollLeft = this.scrollState.startScrollLeft - deltaX;
- 						const limitedScrollLeft = Math.max(0, Math.min(maxScrollLeft, newScrollLeft));
-
- 						// 应用横向滚动
- 						scrollX.scrollLeft = limitedScrollLeft;
-
- 						// 阻止页面滚动
- 						e.preventDefault();
-
- 					} else if (this.scrollState.scrollDirection === 'vertical') {
- 						// 只处理纵向滚动
- 						const maxScrollTop = scrollY.scrollHeight - scrollY.clientHeight;
- 						const newScrollTop = this.scrollState.startScrollTop - deltaY;
- 						const limitedScrollTop = Math.max(0, Math.min(maxScrollTop, newScrollTop));
-
- 						// 应用纵向滚动
- 						scrollY.scrollTop = limitedScrollTop;
-
- 						// 阻止页面滚动
- 						e.preventDefault();
- 					}
- 				}, {
- 					passive: false
- 				});
-
- 				// 触摸结束
- 				scrollY.addEventListener('touchend', () => {
- 					this.scrollState.scrollDirection = null;
- 					this.scrollState.isScrolling = false;
- 				}, {
- 					passive: true
- 				});
-
- 				scrollY.addEventListener('touchcancel', () => {
- 					this.scrollState.scrollDirection = null;
- 					this.scrollState.isScrolling = false;
- 				}, {
- 					passive: true
- 				});
-
- 				// 阻止iOS页面整体拖动
- 				document.body.addEventListener('touchmove', (e) => {
- 					const target = e.target;
- 					const isInTable = target.closest('.table-fixed-container');
-
- 					if (isInTable) {
- 						e.preventDefault();
- 					}
- 				}, {
- 					passive: false
- 				});
- 			}
  		},
  		created() {
  			// this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
  		},
  		mounted() {
- 			this.$nextTick(() => {
- 				this.initScrollHandler();
- 			});
  		},
  		// 组件销毁前移除事件监听
  		beforeDestroy() {
- 			const scrollY = this.$refs.scrollY;
- 			const scrollX = this.$refs.scrollX;
-
- 			if (scrollY) {
- 				scrollY.removeEventListener('touchstart', this.handleTouchStart);
- 				scrollY.removeEventListener('touchmove', this.handleTouchMove);
- 				scrollY.removeEventListener('touchend', this.handleTouchEnd);
- 				scrollY.removeEventListener('touchcancel', this.handleTouchEnd);
- 			}
+ 			
  		}
  	}
  </script>
@@ -1947,27 +1829,20 @@
  		top: 0;
  	}
 
- 	.filter-content {
- 		position: absolute;
-
-
- 		width: 1350rpx;
- 		max-width: 750rpx;
- 		height: 950rpx;
- 		background-color: #fff;
- 		border-radius: 16rpx;
- 		padding: 32rpx;
- 		/* overflow-y: auto; */
- 		box-sizing: border-box;
- 		/* position: relative; */
-
- 		background-image: url('../../images/imgbh/tanc-bg@1x.png');
- 		background-size: 100% 274rpx;
- 		/* 禁止背景图重复平铺 */
- 		background-repeat: no-repeat;
- 		/* 可选：控制背景图垂直位置（比如置顶，也可设center/bottom） */
- 		background-position: left top;
- 	}
+ .filter-content {
+   position: absolute;
+   width: 90vw; /* 用视口宽度的90%，适配不同屏幕 */
+   max-width: 1350rpx; /* 把最大宽度改回1350rpx，恢复原来的宽度 */
+   height: 950rpx;
+   background-color: #fff;
+   border-radius: 16rpx;
+   padding: 32rpx;
+   box-sizing: border-box;
+   background-image: url('../../images/imgbh/tanc-bg@1x.png');
+   background-size: 100% 274rpx;
+   background-repeat: no-repeat;
+   background-position: left top;
+ }
 
  	/* 标题 */
  	.filter-title {

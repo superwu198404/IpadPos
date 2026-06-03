@@ -89,7 +89,7 @@
 					<view class="form-item">
 						<view class="form-label">到货日期</view>
 						<view style="flex:1;">
-							<picker style="width: 100%;" mode="date" :value="arrivalDate" @change="onDateChange"
+							<picker style="width: 100%;" mode="date" fields="day" :value="arrivalDate" @change="onDateChange"
 								class="filter-picker-date">
 								<view :class="arrivalDate ? 'picker-label' : 'picker-placeholder'">
 									{{ arrivalDate || '请选择日期' }}

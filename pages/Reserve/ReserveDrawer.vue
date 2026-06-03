@@ -40,7 +40,9 @@
 						<!-- <input type="date" v-model="Order.THDATE" /> -->
 						<picker mode="time" fields="time" position="bottom" get-container="#picker"
 							:value="extract_time" @change="timeChange">
-							<view>{{Order.TH_TIME}}</view>
+							<!-- <view>{{Order.TH_TIME}}</view>-->
+							<view>{{extract_time}}</view>
+							
 							<text class="xial">▼</text>
 						</picker>
 						<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -176,6 +178,13 @@
 		computed: {
 			extract_time: function() {
 				console.log("[ExtractTime]提货时间:", this.Order.TH_TIME);
+					// 核心：不管带不带时区，先把 HH:mm 抠出来（安卓/iOS 通用）
+					let timeStr = this.Order.TH_TIME || "";
+					let match = timeStr.match(/(\d{2}:\d{2})/);
+					if (match) {
+						console.log("[ExtractTime]返回的提货时间match:", match[1]);
+						return match[1]; // 直接返回 14:48 这种格式
+					}
 				if (this.Order.TH_TIME.length >= 5) {
 					return this.Order.TH_TIME.substr(0, 5);
 				} else if (this.Order.TH_TIME.length == 2) {
@@ -909,11 +918,28 @@
 			//用户信息确定
 			Confirm: async () => {
 				console.log("预定信息：", that.Order);
-				let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				//这是原本的  不兼容安卓
+				//let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
+				
+				// 直接干掉时区后缀，修改原 THDATE
+				that.Order.THDATE = that.Order.THDATE.replace(/GMT.*/, '');
+				
+				// 1. 清洗时间字符串：干掉 GMT 时区后缀，只保留 年-月-日 时:分:秒
+				let timeStr = that.Order.THDATE.replace(/GMT.*$/g, '').trim();
+				let th_date = new Date(timeStr.replace(/-/g, "/"));
+				
+				
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
 				let hour_minute = hour.toString().padStart(2, 0) + minute.toString().padStart(2, 0);
 				let mix_time_interval = new Date().SetMinutes(Number(that.YDJGSJ)); //获取提货最短时间间隔
+				console.log("[Confirm]时间参数123:", {
+					th_date: th_date,
+					hour: hour,
+					minute: minute,
+					hour_minute: hour_minute
+				});
+				
 				console.log("[Confirm]时间参数:", {
 					current: hour_minute,
 					stime: that.STIME,

@@ -104,7 +104,7 @@
 	display: flex;
 }
 .choice .tab{
-	width: 250rpx;
+	width: 270rpx;
 	height: 70rpx;
 	line-height: 70rpx;
 	padding:0 52rpx 0 46rpx;
@@ -441,6 +441,9 @@
 	align-items: center;
 	font-size: 28rpx;
 	width: 90%;
+	/* 新增下面 2 行，强制不换行、自动撑开 安卓修改*/
+		white-space: nowrap;
+		flex-shrink: 0;
 }
 .zxpro .totals view em{
 	display: inline-block;
@@ -454,6 +457,8 @@
 	margin-right: 40rpx;
 	display: flex;
 	align-items: center;
+		/* 新增 安卓修改*/
+		white-space: nowrap;
 }
 .zxpro .totals view label text{
 	font-weight: 700;

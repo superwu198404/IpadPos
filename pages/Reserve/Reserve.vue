@@ -376,7 +376,7 @@
 				}
 				that.Order.THDATE = date + ' ' + time;
 				that.Order.TH_DATE = date;
-				that.Order.TH_TIME = time;
+				that.Order.TH_TIME = time.substring(0, 5); 
 
 				if (that.Order.THKHID != that.KHID || that.Order.THTYPE == '1') { //异店提货，且宅配到家
 					that.Order.DNET = that.Order.TNET;

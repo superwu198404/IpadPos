@@ -146,6 +146,12 @@ var GetZKDatas = async function(data, func) {
 		let apistr = "MobilePos_API.Models.SALE001CLASS.GetZKDatas";
 		let reqdata = Req.resObj(true, "查询中...", data, apistr);
 		await Req.asyncFuncOne(reqdata, func, func);
+	} else if (data.zktype == 'HIS') { //历史折扣
+		let sql =
+			"SELECT dkfid,TO_CHAR(SALEDATE,'yyyy-MM-dd') SALEDATE,bill_type,d.sname bill_type_NAME,d1.sname spjgz_NAME,SPJGZ,bill,ZKRATE,NET,SPJGZ ZKSTR,(1-nvl(ZKRATE,0)/100) ZKQTY_JS FROM DKF_SYSSALE sy LEFT JOIN DAPZCS_NR d ON d.id_nr=sy.bill_type LEFT JOIN DAPZCS_NR d1 ON d1.id_nr=sy.spjgz WHERE d.id='BILL_TYPE' AND d1.id='SPJGZ' AND khid='" +
+			data.khid + "' AND DKFID='" + data.dkhid +
+			"' and nvl(ZKRATE,0)>0 and bill_type='Z104' ORDER BY SALETIME DESC";
+		await common.WebDBQuery(sql, func);
 	} else {
 		let pm_zktype = "ZD02','ZD03";
 		if (data.zktype == 'BZ') {
@@ -221,7 +227,7 @@ var GetCXDatasAll = async function(khid, func) {
 		khid + "' and c1.CX_WEEK like '%" + day + "%'";
 	let data = [];
 	await db.get().executeQry(sql, "查询中...", res => {
-		console.log("门店卡券促销数据查询结果：", res);
+		// console.log("门店卡券促销数据查询结果：", res);
 		if (res.code && res.msg.length > 0) {
 			data = res.msg;
 		}
@@ -233,11 +239,13 @@ var GetCXDatasAll = async function(khid, func) {
 //获取并门店促销活动 包含标准临时和特批
 var GetZKDatasAll = async function(dkhid) {
 	let ZKDatas = [],
-		DKFZKDatas = [];
+		DKFZKDatas = [],
+		HISZKDatas = [];
 	let store = util.getStorage("store");
 	let data = {
 		zktype: "",
 		dqid: store.DQID,
+		khid: store.KHID,
 		spjgz: "",
 		dkhid: dkhid, //测试使用 "0020004824"
 		jgid: store.JGID
@@ -255,6 +263,7 @@ var GetZKDatasAll = async function(dkhid) {
 		data = {
 			zktype: "TP",
 			dqid: store.DQID,
+			khid: store.KHID,
 			spjgz: "",
 			dkhid: dkhid, //测试使用 "0020004824"
 			jgid: store.JGID
@@ -275,10 +284,20 @@ var GetZKDatasAll = async function(dkhid) {
 				DKFZKDatas = [];
 			}
 		})
+		data.zktype = "HIS"; //查询历史折扣数据
+		await GetZKDatas(data, res => {
+			console.log("历史折扣数据获取结果：", res);
+			if (res.code) {
+				HISZKDatas = JSON.parse(res.data);
+			} else {
+				HISZKDatas = [];
+			}
+		})
 	}
 	let obj = {
 		ZKDatas: ZKDatas,
-		DKFZKDatas: DKFZKDatas
+		DKFZKDatas: DKFZKDatas,
+		HISZKDatas: HISZKDatas
 	}
 	console.log("[GetZKDatasAll]折扣数据:", obj);
 	return obj;
@@ -297,7 +316,7 @@ var SortData = (type, data, pro) => {
 				})
 				let Net = 0;
 				arr1.forEach(r2 => {
-					Net += Number((r2.OPRICE * r2.QTY).toFixed(2)); //r2.NET
+					Net += util.newFloat(r2.OPRICE * r2.QTY, 2); //r2.NET
 				})
 				spArr.push({
 					SPJGZ: r.SPJGZ,
@@ -308,13 +327,11 @@ var SortData = (type, data, pro) => {
 		//spArr=[{SPJGZ:"01",NET:2250}]
 		console.log("分组统计后的商品信息：", spArr);
 		spArr.forEach(r3 => {
-			if (type == "TP") {
+			if (type == "TP" || type == "HIS") {
 				let arr4 = data.filter(r4 => {
 					return r4.ZKSTR == r3.SPJGZ;
 				});
 				if (arr4.length > 0) {
-					// arr4[0].ZKNET = ((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3
-					// 		.NET)).toFixed(1);
 					arr4[0].ZKNET = common.newFixed((1 - parseFloat(arr4[0].ZKQTY_JS)) * parseFloat(r3.NET),
 						1);
 					zkData.push(arr4[0]);
@@ -328,19 +345,12 @@ var SortData = (type, data, pro) => {
 					return (r4.ZKSTR == r3.SPJGZ && r4.MZNET <= r3.NET && r4
 						.ZKTYPE == 'ZD03');
 				});
-				// let sortArr = arr2.sort((a, b) => {
-				// 	return b - a
-				// });
 				if (arr2.length > 0) {
-					// arr2[0].ZKNET = ((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3
-					// 	.NET)).toFixed(1);
 					arr2[0].ZKNET = common.newFixed((1 - parseFloat(arr2[0].ZKQTY_JS)) * parseFloat(r3.NET),
 						1);
 					zkData.push(arr2[0]);
 				}
 				if (arr2.length > 0 && arr3.length > 0) { //临时生效必须要标准折扣满足最低生效金额
-					// arr3[0].ZKNET = ((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3
-					// 	.NET)).toFixed(1);
 					arr3[0].ZKNET = common.newFixed((1 - parseFloat(arr3[0].ZKQTY_JS)) * parseFloat(r3.NET),
 						1);
 					zkData.push(arr3[0]);
@@ -359,8 +369,8 @@ var SortData = (type, data, pro) => {
 var CalProduct = function(curData, Product) {
 	if (curData.length == 0) {
 		Product.forEach(r => {
-			r.NET = Number((r.OPRICE * r.QTY).toFixed(2));
-			r.PRICE = Number((r.NET / r.QTY).toFixed(2));
+			r.NET = util.newFloat(r.OPRICE * r.QTY, 2);
+			r.PRICE = util.newFloat(r.NET / r.QTY, 2);
 			r.BZDISC = 0;
 			r.LSDISC = 0;
 			r.TPDISC = 0;
@@ -668,20 +678,50 @@ var MatchCXDatas = function(CXData, products, sale1) {
 	return obj;
 }
 //匹配商品的有效规则 包含标准临时和特批
-var MatchZKDatas = function(ZKObj, products) {
-	console.log("计算商品折扣传入的折扣数据：", ZKObj);
-	console.log("计算商品折扣传入的商品信息：", products);
+var MatchZKDatas = function(ZKObj, products, ywtype, sxjgz,sfsx) {
+	console.log("计算商品折扣传入的数据：", {
+		ZKObj,
+		products,
+		ywtype,
+		sxjgz,
+		sfsx
+	});
 	let CurData;
 	if (ZKObj && ZKObj.ZKData && ZKObj.ZKType) {
+		//标准和临时折扣且如果有修改后的折扣数据 则替换原折扣数据的折扣系数
+		if ((ZKObj.ZKType == 'BZ' || ZKObj.ZKType == 'LS') && ZKObj.ZKData_New && ZKObj.ZKData_New.length > 0)
+			ZKObj.ZKData.ZKDatas.map(r => {
+				ZKObj.ZKData_New.map(r1 => {
+					//价格组，折扣类型（标准，临时，特批），满足金额 都要匹配
+					if (r.ZKSTR == r1.ZKSTR && r.ZKTYPE == r1.ZKTYPE && r.MZNET == r1.MZNET) {
+						r.ZKQTY_JS_OLD = r1.ZKQTY_JS; //备份一下旧的折扣系数
+						r.ZKQTY_JS = r1.ZKQTY_JS_NEW; //替换为新的折扣系数
+					}
+				})
+
+			})
+		console.log("替换计算后的折扣数据：", ZKObj);
+		let filter_ZKDatas = ZKObj.ZKData.ZKDatas;
+		if ((ZKObj.ZKType == "BZ" || ZKObj.ZKType == "LS") && ywtype == "sale_credit"&&sfsx!=true) //赊销模式下的标准和临时折扣筛选处理
+		{
+			if (sxjgz.length > 0) {
+				const jgzSet = new Set(sxjgz.map(item => item.WLJGZ));
+				filter_ZKDatas = ZKObj.ZKData.ZKDatas.filter(r => jgzSet.has(r.ZKSTR));
+			} else
+				filter_ZKDatas = []; //无价格组则不允许折扣
+			console.log("根据赊销价格组筛选后的折扣数据:", filter_ZKDatas);
+		}
 		if (ZKObj.ZKType == "BZ") {
-			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
+			CurData = SortData("", filter_ZKDatas, products);
 			if (CurData.length > 0) {
 				CurData = CurData.filter(r => {
 					return r.ZKTYPE == 'ZD02'
 				})
 			}
 		} else if (ZKObj.ZKType == "LS") {
-			CurData = SortData("", ZKObj.ZKData.ZKDatas, products);
+			CurData = SortData("", filter_ZKDatas, products);
+		} else if (ZKObj.ZKType == "HIS") { //历史特批折扣
+			CurData = SortData("HIS", ZKObj.ZKData_HIS, products);
 		} else {
 			CurData = SortData("TP", ZKObj.ZKData.DKFZKDatas, products);
 		}

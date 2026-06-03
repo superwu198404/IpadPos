@@ -99,7 +99,7 @@
 					</view>
 					<!--从这里开始为最右侧的选项去 包括热销、字母区，会员，特殊折扣等 -->
 					<view :class="Alphabetical ? 'operation top-layer' : 'operation'">
-						<view class="sorting">
+						<view class="sorting" style="height:100%">
 							<view class="seasonal" @click="mainSale.getHotSale()" :class="mainSale.curHot?'curr':''">
 								<image src="../../images/rexiao-fenlei.png" mode="widthFix"></image>
 							</view>
@@ -117,7 +117,7 @@
 								style="font-size: 30rpx;">
 								键盘
 							</view>
-							<view class="states" @click="mainSale.ShowStatement">
+							<view class="states" style="position: relative;bottom: unset;right: unset;" @click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum" style="margin-top:10rpx;">
@@ -142,9 +142,9 @@
 							<view class="searchTerms">
 								<view class="affirmArea"
 									style="margin-left: 20px;font-size: 18px;display: flex;flex-direction: row;">
-									<view v-show="mainSale.showQueryKeys.length">
+									<view v-show="mainSale.boardQueryKeys.length">
 										搜索词:
-									</view>{{(mainSale.showQueryKeys).toUpperCase()}}
+									</view>{{(mainSale.boardQueryKeys).toUpperCase()}}
 								</view>
 								<view class="inputArea"
 									style="max-width: 280px;overflow: hidden;display: flex;flex-direction: row;  margin-left: -15px;">
@@ -557,8 +557,9 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :zkdatas="mainSale.Disc.val.ZKData"
-			:product="mainSale.sale002">
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKFID" :salesCredit="!!mainSale.DKF.val.sales_credit"
+			:zkdatas="mainSale.Disc.val.ZKData" :product="mainSale.sale002" :sxjgz="mainSale.SXJGZ"
+			:ywtype="mainSale.current_type.clickType">
 		</SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
@@ -1501,8 +1502,9 @@
 	}
 
 	.limit {
-		padding:2% 3% 2% 2%;
+		padding: 2% 3% 2% 2%;
 	}
+
 	.limit .h3 {
 		font-size: 40rpx;
 		display: block;
@@ -1510,7 +1512,7 @@
 		word-wrap: break-word;
 		white-space: pre-wrap;
 		line-height: normal;
-	    height: fit-content;
+		height: fit-content;
 		line-height: 1;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -1519,9 +1521,11 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
 	.coupon-dets {
 		position: relative;
 	}
+
 	.coupon-dets .qudao {
 		position: absolute;
 		right: 0;
@@ -1535,5 +1539,64 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	/* 蛋糕详情页只在 MainSale 覆盖，避免安卓平板左侧图片把底部内容挤出屏幕 */
+	.dgyd .detailys {
+		width: 100%;
+		height: calc(100% - 120rpx);
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.dgyd .detailys .body-titles {
+		flex-shrink: 0;
+		box-sizing: border-box;
+	}
+
+	.dgyd .detailys .particular {
+		display: flex;
+		flex: 1;
+		height: auto;
+		min-height: 0;
+		margin-top: 20rpx;
+		padding: 0 2%;
+		width: 94%;
+		box-sizing: border-box;
+	}
+
+	.dgyd .detailys .particular .shuffs {
+		width: 54%;
+		height: 100%;
+		min-height: 0;
+		margin-right: 1%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.dgyd .detailys .shuffs .banner {
+		width: 100%;
+		flex: 1;
+		height: auto;
+		min-height: 0;
+		padding-bottom: 0;
+		position: relative;
+	}
+
+	.dgyd .detailys .tupian {
+		display: flex;
+		height: 140rpx;
+		flex-shrink: 0;
+		margin-top: 1.5%;
+		padding: 0 5%;
+		overflow: hidden;
+		box-sizing: border-box;
+	}
+
+	.dgyd .detailys .tupian label image {
+		width: 120rpx;
+		height: 120rpx;
 	}
 </style>
