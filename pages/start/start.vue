@@ -25,15 +25,40 @@
 			</view>
 		</view>
 
-		<!-- <text>{{showmsg}}</text>>
-		<p>门店：<input placeholder="请输入门店的编码" v-model="khid" /></p>
-		<p>款台：<input placeholder="请输入款台号" v-model="posid" /></p>
-		<button @click="init">数据初始化</button>
-		<button @click="toDbqry">数据查看</button>
-		<button @click="toIndex">去结算</button>
-		<button @click="toPrinter">蓝牙与打印</button>
-		<button @click="toMainSale">进入销售界面</button>
-		<button @click="toLogin">登录</button> -->
+		<!-- 隐私政策弹窗 -->
+		<view class="privacy-mask" v-if="showPrivacyModal" @touchmove.stop.prevent>
+			<view class="privacy-modal">
+				<view class="privacy-title">用户协议及隐私政策</view>
+				<view class="privacy-content">
+					<view class="privacy-intro">
+						欢迎使用本APP，我们将依据本APP用户协议、隐私政策、第三方信息共享清单来帮助您了解我们在收集、使用、存储和共享您个人信息的情况以及您享有的相关权利。请您点击下方链接查看并仔细阅读以了解详细信息。
+					</view>
+					<view class="privacy-agreement">
+						点击同意或注册、使用本APP视为您已详细阅读，并同意
+						<text class="privacy-link" @click="openPrivacyDoc('用户协议')">用户协议</text>、
+						<text class="privacy-link" @click="openPrivacyDoc('隐私政策')">隐私协议</text>、
+						<text class="privacy-link" @click="openPrivacyDoc('第三方信息共享清单')">第三方信息共享清单</text>
+					</view>
+				</view>
+				<view class="privacy-buttons">
+					<button class="btn-agree" @click="agreePrivacy">同意</button>
+					<button class="btn-disagree" @click="disagreePrivacy">不同意并退出</button>
+				</view>
+			</view>
+		</view>
+
+		<!-- 文档查看弹窗 -->
+		<view class="doc-mask" v-if="showDocModal" @touchmove.stop.prevent>
+			<view class="doc-modal">
+				<view class="doc-header">
+					<text class="doc-title">{{ docTitle }}</text>
+					<text class="doc-close" @click="closeDocModal">×</text>
+				</view>
+				<scroll-view class="doc-content" scroll-y="true">
+					<text class="doc-text">{{ docContent }}</text>
+				</scroll-view>
+			</view>
+		</view>
 	</view>
 </template>
 <style>
@@ -123,6 +148,7 @@
 	import sqlLite from '@/utils/db/db_excute.js';
 	import _create_sql from '@/utils/db/create_sql.js';
 	import util from '@/utils/util.js';
+	import privacyContent from '@/privacy/privacyContent.js';
 
 	var mysqlite = sqlLite.get();
 	var that = null;
@@ -138,13 +164,21 @@
 				posid: "", //"8",//108通讯 测试使用
 				poskey: "", //pos初始化的密码
 				yninit: false,
-				showmsg: "门店基础数据初始化"
+				showmsg: "门店基础数据初始化",
+				showPrivacyModal: false, // 隐私弹窗显示状态
+				showDocModal: false, // 文档弹窗显示状态
+				docTitle: "", // 文档标题
+				docContent: "" // 文档内容
 			}
 		},
 		methods: {
 			onLoad() {
-		
+
 				that = this;
+
+				// 检查隐私授权状态
+				this.checkPrivacyAgreed();
+
 				// util.setStorage("Init_Data", {KHID:"K200QTD005",POSID:"1"});
 				// let Init_Data = util.getStorage("Init_Data");
 				// if (Init_Data && JSON.stringify(Init_Data) != '{}') { //初始化过
@@ -165,6 +199,43 @@
 					that.khid = store.KHID;
 					that.posid = store.POSID;
 				}
+			},
+			// 检查是否已同意隐私政策
+			checkPrivacyAgreed() {
+				const privacyAgreed = util.getStorage("Privacy_Agrereed");
+				if (!privacyAgreed) {
+					// 未同意过，显示隐私弹窗
+					this.showPrivacyModal = true;
+				}
+			},
+			// 同意隐私政策
+			agreePrivacy() {
+				util.setStorage("Privacy_Agrereed", true);
+				this.showPrivacyModal = false;
+			},
+			// 不同意并退出
+			disagreePrivacy() {
+				// #ifdef APP-PLUS
+				if (uni.getSystemInfoSync().platform == 'ios') {
+					plus.ios.import("UIApplication").sharedApplication()
+						.performSelector("exit")
+				} else if (uni.getSystemInfoSync().platform == 'android') {
+					plus.runtime.quit();
+				}
+				// #endif
+				// #ifdef H5
+				window.close();
+				// #endif
+			},
+			// 打开隐私文档
+			openPrivacyDoc(docName) {
+				this.docTitle = docName;
+				this.docContent = privacyContent[docName] || '文档加载失败';
+				this.showDocModal = true;
+			},
+			// 关闭文档弹窗
+			closeDocModal() {
+				this.showDocModal = false;
 			},
 			toDbqry: function() {
 				uni.navigateTo({
@@ -330,5 +401,167 @@
 </script>
 
 <style>
+	/* 隐私弹窗遮罩 */
+	.privacy-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.6);
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
+	/* 隐私弹窗主体 */
+	.privacy-modal {
+		width: 80%;
+		max-width: 600rpx;
+		background-color: #fff;
+		border-radius: 24rpx;
+		overflow: hidden;
+	}
+
+	/* 弹窗标题 */
+	.privacy-title {
+		font-size: 36rpx;
+		font-weight: bold;
+		color: #333;
+		text-align: center;
+		padding: 40rpx 30rpx 30rpx;
+		border-bottom: 1rpx solid #eee;
+	}
+
+	/* 弹窗内容区 */
+	.privacy-content {
+		padding: 30rpx;
+	}
+
+	/* 第一段浅灰色背景框 */
+	.privacy-intro {
+		background-color: #f5f5f5;
+		padding: 24rpx;
+		border-radius: 12rpx;
+		font-size: 26rpx;
+		color: #666;
+		line-height: 1.6;
+		margin-bottom: 24rpx;
+	}
+
+	/* 第二段协议文本 */
+	.privacy-agreement {
+		font-size: 26rpx;
+		color: #333;
+		line-height: 1.8;
+	}
+
+	/* 绿色下划线链接 */
+	.privacy-link {
+		color: #006B44;
+		text-decoration: underline;
+	}
+
+	/* 按钮区域 */
+	.privacy-buttons {
+		padding: 20rpx 30rpx 40rpx;
+	}
+
+	/* 同意按钮 - 绿色填充 */
+	.btn-agree {
+		width: 100%;
+		height: 88rpx;
+		line-height: 88rpx;
+		background-color: #006B44;
+		color: #fff;
+		font-size: 32rpx;
+		border-radius: 44rpx;
+		border: none;
+		margin-bottom: 20rpx;
+	}
+
+	.btn-agree::after {
+		border: none;
+	}
+
+	/* 不同意按钮 - 白底绿边框 */
+	.btn-disagree {
+		width: 100%;
+		height: 88rpx;
+		line-height: 88rpx;
+		background-color: #fff;
+		color: #006B44;
+		font-size: 32rpx;
+		border-radius: 44rpx;
+		border: 2rpx solid #006B44;
+		box-sizing: border-box;
+	}
+
+	.btn-disagree::after {
+		border: none;
+	}
+
+	/* 文档弹窗遮罩 */
+	.doc-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.6);
+		z-index: 10000;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* 文档弹窗主体 */
+	.doc-modal {
+		width: 85%;
+		max-width: 700rpx;
+		height: 80%;
+		background-color: #fff;
+		border-radius: 24rpx;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* 文档头部 */
+	.doc-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 30rpx;
+		border-bottom: 1rpx solid #eee;
+		flex-shrink: 0;
+	}
+
+	.doc-title {
+		font-size: 34rpx;
+		font-weight: bold;
+		color: #333;
+	}
+
+	.doc-close {
+		font-size: 48rpx;
+		color: #999;
+		line-height: 1;
+		padding: 0 10rpx;
+	}
+
+	/* 文档内容区 */
+	.doc-content {
+		flex: 1;
+		padding: 30rpx;
+		overflow-y: auto;
+	}
+
+	.doc-text {
+		font-size: 26rpx;
+		color: #333;
+		line-height: 1.8;
+		white-space: pre-wrap;
+	}
 </style>

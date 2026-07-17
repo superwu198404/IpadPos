@@ -64,6 +64,8 @@
  											</th>
  											<th class="fixed-col2 th">序号</th>
  											<th class="fixed-col3">任务商品</th>
+ 											<th>产品图片</th>
+ 											<th>产品视频</th>
  											<th>类型</th>
  											<th>到货日期</th>
  											<th>数量</th>
@@ -104,6 +106,30 @@
  													<view class="tab-dashed"></view>
  												</view>
  											</td>
+ 											<!-- 图片与视频 -->
+ 											<!-- 图片列 -->
+ 											<td>
+ 												<view class="fixed-tdd">
+ 													<image v-if="item.IMGURL"
+ 														:src="getImgUrl(item.IMGURL.split(',')[0])"
+ 														style="width: 60px; height: 60px; margin-right: 5px; display: inline-block; cursor: pointer;"
+ 														mode="aspectFill" @click.stop="previewImage(item.IMGURL, 0)" />
+ 													<text v-if="!item.IMGURL"
+ 														style="color:#999;font-size:12px;">暂无图片</text>
+ 													<text v-if="item.IMGURL && item.IMGURL.split(',').length > 1"
+ 														style="position:absolute;bottom:0;right:0;background:rgba(0,0,0,.5);color:#fff;font-size:20rpx;padding:0 6rpx;border-radius:4rpx;">{{ item.IMGURL.split(',').length }}</text>
+ 												</view>
+ 											</td>
+ 											<!-- 视频列 -->
+ 											<td>
+ 												<view class="video-cell" @click.stop="openVideoPreview(item)"
+ 													v-if="item.VIDEOURL && item.VIDEOURL.trim()">
+ 													<text
+ 														style="color:#006B44;font-size:24rpx;margin-left:8rpx;">播放视频</text>
+ 												</view>
+ 												<text v-else style="color:#999;font-size:12px;">暂无视频</text>
+ 											</td>
+
  											<td>{{ item.GYS=='C'?"ToC任务":"其他" }}</td>
  											<td>{{ item.DATE_DH }}</td>
  											<td>{{ item.ZQTY_SQ }}</td>
@@ -416,7 +442,7 @@
  				<view class="order-summary">
  					<view class="summary-row">
  						<text class="summary-label">总金额</text>
- 						<text class="summary-value">¥{{formattedAmount(currentOrder.totalAmount)  }}</text>
+ 						<text class="summary-value">¥{{formattedAmount(currentOrder.totalAmount) }}</text>
  					</view>
  					<view class="summary-row">
  						<text class="summary-label">件数</text>
@@ -435,7 +461,30 @@
  			@confirm="handleKeyboardConfirm" />
 
  		<!-- 模拟扫码框 -->
- 		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
+		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
+
+		<!-- 图片预览弹窗 -->
+		<view class="img-preview-overlay" v-if="showImgPreview" @click="closeImgPreview">
+			<view class="img-preview-close" @click="closeImgPreview">×</view>
+			<view class="img-preview-count" v-if="previewImgs.length > 1">{{ previewIdx + 1 }} / {{ previewImgs.length }}</view>
+			<view class="img-preview-scroll" @click.stop @dblclick="toggleZoom">
+				<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw' }"
+					@dblclick="toggleZoom" @touchstart="onPinchStart" @touchmove="onPinchMove" />
+			</view>
+			<view class="img-preview-arrow img-preview-left" v-if="previewIdx > 0" @click.stop="imgPrev">‹</view>
+			<view class="img-preview-arrow img-preview-right" v-if="previewIdx < previewImgs.length - 1" @click.stop="imgNext">›</view>
+		</view>
+
+		<!-- 视频播放弹窗 -->
+ 		<view class="video-preview-overlay" v-if="showVideoPreview">
+ 			<view v-if="platform=='ios'">
+ 				<video :src="videoUrl" style="width:80vw;height:80vh;" autoplay playsinline webkit-playsinline />
+ 			</view>
+ 			<view v-if="platform=='android'">
+ 				<DomVideoPlayer :src="videoUrl" :autoplay="true" :controls="true" :isLoading="true"></DomVideoPlayer>
+ 			</view>
+ 			<view class="video-close-btn" @click="closeVideoPreview">× 关闭</view>
+ 		</view>
  	</view>
  </template>
 
@@ -444,7 +493,8 @@
  	import Head from '@/pages/Home/Component/YWHead.vue';
  	import NumberFormat from '@/components/NumberFormat/NumberFormat.vue';
  	import KeyboardInput from '@/components/KeyboardInput/KeyboardInput.vue';
- 	import ScanModal from '@/components/ScanModal/ScanModal.vue'
+ 	import ScanModal from '@/components/ScanModal/ScanModal.vue';
+ 	import DomVideoPlayer from '@/components/DomVideoPlayer/DomVideoPlayer.vue';
  	import Req from '@/utils/request.js';
  	import common from '@/api/common.js';
  	import db from '@/utils/db/db_excute.js';
@@ -585,7 +635,7 @@
  					shopId: '',
  					shopName: '',
  					goodsId: '',
- 					goodsName: ''
+ 					goodsName: '',
  				},
  				// 筛选选项列表
  				sourceOptions: [{
@@ -624,12 +674,30 @@
 
  				showScanModal: false, // 扫码弹窗
  				showDropdown_shop: false,
- 				showDropdown_goods: false,
+				showDropdown_goods: false,
+				// 图片预览
+				showImgPreview: false,
+				previewImgs: [],
+				previewIdx: 0,
+				imgWidth: 50,
+				imgLastDist: 0,
+				// 视频预览
+ 				showVideoPreview: false,
+ 				videoUrl: '',
  				filteredShopList: [], // 过滤后的 门店列表
  				filteredGoodsList: [], // 过滤后的 商品列表
+ 				P_URL: '', //图片地址
+ 				V_URL: '', //视频地址
+ 				platform: uni.getSystemInfoSync().platform
  			};
  		},
  		computed: {
+ 			imgUrlList() {
+ 				return (item) => {
+ 					if (!item || !item.IMGURL) return []
+ 					return item.IMGURL.split(',').filter(s => s.trim())
+ 				}
+ 			}
  		},
  		components: {
  			Head,
@@ -645,10 +713,58 @@
  			}
  		},
  		methods: {
-			  formattedAmount(amount) {
-			    if (!amount) return '0.00'
-			    return Number(amount).toFixed(2)
+ 			formattedAmount(amount) {
+ 				if (!amount) return '0.00'
+ 				return Number(amount).toFixed(2)
+ 			},
+ 			// 获取图片URL
+ 			getImgUrl(url) {
+ 				if (!url) return '';
+ 				// 如果是完整URL直接返回，否则拼接服务器地址
+ 				if (url.startsWith('http://') || url.startsWith('https://')) {
+ 					return url;
+ 				}
+ 				return this.P_URL + url;
+ 			},
+ 			// 预览图片
+ 			previewImage(imgUrls, currentIndex) {
+			    if (!imgUrls) return;
+			    this.previewImgs = imgUrls.split(',').map(url => this.getImgUrl(url));
+			    this.previewIdx = currentIndex || 0;
+			    this.imgWidth = 50;
+			    this.showImgPreview = true;
 			  },
+			  closeImgPreview() { this.showImgPreview = false; },
+			  imgPrev() { this.previewIdx--; this.imgWidth = 50; },
+			  imgNext() { this.previewIdx++; this.imgWidth = 50; },
+			  toggleZoom() { this.imgWidth = this.imgWidth > 120 ? 50 : 200; },
+			  onPinchStart(e) {
+			    if (e.touches.length === 2) {
+			      let dx = e.touches[0].clientX - e.touches[1].clientX;
+			      let dy = e.touches[0].clientY - e.touches[1].clientY;
+			      this.imgLastDist = Math.sqrt(dx * dx + dy * dy);
+			    }
+			  },
+			  onPinchMove(e) {
+			    if (e.touches.length === 2 && this.imgLastDist > 0) {
+			      let dx = e.touches[0].clientX - e.touches[1].clientX;
+			      let dy = e.touches[0].clientY - e.touches[1].clientY;
+			      let dist = Math.sqrt(dx * dx + dy * dy);
+			      let newW = this.imgWidth * (dist / this.imgLastDist);
+			      this.imgWidth = Math.max(20, Math.min(300, newW));
+			      this.imgLastDist = dist;
+			    }
+			  },
+			  // 视频预览
+ 			openVideoPreview(item) {
+ 				if (!item.VIDEOURL) return;
+ 				this.videoUrl = this.V_URL + item.VIDEOURL;
+ 				this.showVideoPreview = true;
+ 			},
+ 			closeVideoPreview() {
+ 				this.showVideoPreview = false;
+ 				this.videoUrl = '';
+ 			},
  			// 软键盘相关
  			handleKeyboardConfirm(query) {
  				const keyword = query.query.trim() // 搜索关键词
@@ -1185,7 +1301,7 @@
  					shopId: '',
  					shopName: '',
  					goodsId: '',
- 					goodsName: ''
+ 					goodsName: '',
  				};
  			},
  			// 关闭筛选弹窗
@@ -1238,35 +1354,31 @@
  				// 切换列表模式
  				this.bhstep = 2;
  			},
- 			// 根据筛选条件过滤任务列表（示例实现）
+ 			// 根据筛选条件过滤任务列表
  			filterTasks() {
- 				// 模拟筛选：实际替换为接口返回数据
- 				// this.updateTaskStats();
  				console.log("filterTasks查询参数：", that.filterForm);
  				let store = util.getStorage("store");
  				that.filterForm.khid = store.KHID;
+ 				that.filterForm.dqid = store.DQID;
  				_ywbhqh.GetBHQHOrdersByParam(that.filterForm, res => {
- 					console.log("GetBHQHOrdersByParam查询到的裱花请货数据：", res);
+ 					console.log("GetBHQHOrdersByParam：", res);
  					if (res.code) {
  						let data = JSON.parse(res.data);
  						data.map(r => {
  							r.isChecked = false;
  						})
- 						console.log("GetBHQHOrdersByParam查询到的裱花请货数据data：", data);
  						that._listData = JSON.parse(JSON.stringify(data));
  						that.listData = data;
  					} else {
-
  						that._listData = [];
  						that.listData = [];
-
  						util.simpleMsg("暂无更多数据!", true);
  					}
  					that._filterForm = that.filterForm;
  					that.filterData(that.listData);
- 					that.tabList.map((r, i, arr) => {
- 						r.active = (i == 0 ? true : false);
- 					})
+ 					that.tabList.map((r, i) => {
+ 						r.active = (i == 0);
+ 					});
  				})
  			},
  			//数据二次筛选
@@ -1341,13 +1453,28 @@
  			},
  		},
  		created() {
+ 			let sys = util.getStorage("sysParam");
+ 			console.log("sys：", sys);
+ 			if (sys && sys.DGIMGURL) {
+ 				this.P_URL = sys.DGIMGURL;
+ 				//简单一点，直接截取吧
+ 				this.V_URL = sys.DGIMGURL.replace('CakeImage', 'CakeVideo');
+ 				console.log("P_URL：", this.P_URL);
+ 				console.log("V_URL：", this.V_URL);
+ 			}
  			// this.mainSale = new mysale.GetSale(getApp().globalData, this, "MainSale", uni);
+
+ 			// if (uni.getSystemInfoSync().platform == 'android') {
+ 			// 	this.platform = 'android';
+ 			// } else {
+ 			// 	this.platform = 'ios';
+ 			// }
+ 			console.log("platform：", this.platform);
  		},
- 		mounted() {
- 		},
+ 		mounted() {},
  		// 组件销毁前移除事件监听
  		beforeDestroy() {
- 			
+
  		}
  	}
  </script>
@@ -1829,20 +1956,22 @@
  		top: 0;
  	}
 
- .filter-content {
-   position: absolute;
-   width: 90vw; /* 用视口宽度的90%，适配不同屏幕 */
-   max-width: 1350rpx; /* 把最大宽度改回1350rpx，恢复原来的宽度 */
-   height: 950rpx;
-   background-color: #fff;
-   border-radius: 16rpx;
-   padding: 32rpx;
-   box-sizing: border-box;
-   background-image: url('../../images/imgbh/tanc-bg@1x.png');
-   background-size: 100% 274rpx;
-   background-repeat: no-repeat;
-   background-position: left top;
- }
+ 	.filter-content {
+ 		position: absolute;
+ 		width: 90vw;
+ 		/* 用视口宽度的90%，适配不同屏幕 */
+ 		max-width: 1350rpx;
+ 		/* 把最大宽度改回1350rpx，恢复原来的宽度 */
+ 		height: 950rpx;
+ 		background-color: #fff;
+ 		border-radius: 16rpx;
+ 		padding: 32rpx;
+ 		box-sizing: border-box;
+ 		background-image: url('../../images/imgbh/tanc-bg@1x.png');
+ 		background-size: 100% 274rpx;
+ 		background-repeat: no-repeat;
+ 		background-position: left top;
+ 	}
 
  	/* 标题 */
  	.filter-title {
@@ -2189,6 +2318,18 @@
  		position: relative;
  		display: inline-block;
  		min-width: 100%;
+ 	}
+
+ 	/* 视频单元格 */
+ 	.video-cell {
+ 		display: inline-flex;
+ 		align-items: center;
+ 		justify-content: center;
+ 		padding: 8rpx 16rpx;
+ 		background: #E8F5E9;
+ 		border-radius: 8rpx;
+ 		border: 2rpx solid #CFE2D3;
+ 		cursor: pointer;
  	}
 
  	/* 表头样式 */
@@ -2551,4 +2692,64 @@
  		font-weight: 700;
  		color: #333;
  	}
- </style>
+
+ 	.video-preview-overlay {
+ 		position: fixed;
+ 		top: 0;
+ 		left: 0;
+ 		width: 100vw;
+ 		height: 100vh;
+ 		background: rgba(0, 0, 0, 0.9);
+ 		z-index: 9999999;
+ 		display: flex;
+ 		align-items: center;
+ 		justify-content: center;
+ 	}
+
+ 	.video-close-btn {
+ 		position: fixed;
+ 		top: 40rpx;
+ 		right: 40rpx;
+ 		z-index: 99999999;
+ 		background: rgba(255, 255, 255, 0.9);
+ 		color: #333;
+ 		font-size: 32rpx;
+ 		font-weight: 700;
+ 		padding: 16rpx 36rpx;
+ 		border-radius: 16rpx;
+ 		pointer-events: auto;
+	}
+
+	.img-preview-overlay {
+		position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+		background: rgba(0, 0, 0, 0.92);
+		z-index: 9999999;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.img-preview-scroll {
+		min-height: 100vh;
+		display: flex; align-items: center; justify-content: center;
+		overflow-y: auto;
+	}
+	.img-preview-close {
+		position: fixed; top: 20rpx; right: 30rpx;
+		width: 60rpx; height: 60rpx; line-height: 60rpx;
+		text-align: center; font-size: 40rpx; color: #fff;
+		background: rgba(255,255,255,.2); border-radius: 50%;
+		z-index: 10;
+	}
+	.img-preview-count {
+		position: fixed; bottom: 30rpx; left: 50%; transform: translateX(-50%);
+		color: #fff; font-size: 26rpx; background: rgba(0,0,0,.5);
+		padding: 10rpx 30rpx; border-radius: 30rpx; z-index: 10;
+	}
+	.img-preview-arrow {
+		position: fixed; top: 50%; transform: translateY(-50%);
+		width: 70rpx; height: 70rpx; line-height: 70rpx; text-align: center;
+		color: #fff; font-size: 50rpx; background: rgba(255,255,255,.15);
+		border-radius: 50%; z-index: 10;
+	}
+	.img-preview-left  { left: 30rpx; }
+	.img-preview-right { right: 30rpx; }
+</style>

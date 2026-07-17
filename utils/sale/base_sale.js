@@ -29,9 +29,9 @@ import hy_query from '@/api/hy/hy_query.js';
 import {
 	RequestSend
 } from '@/api/business/da.js'
-	import {
-		GetBigRYCredit
-	} from '@/api/business/bigclient.js';
+import {
+	GetBigRYCredit
+} from '@/api/business/bigclient.js';
 import dateformat from '@/utils/dateformat.js';
 import sysParm from '../sysParm/sysParm';
 // import { log } from 'console';
@@ -1217,7 +1217,7 @@ var XsTypeObj = {
 			return true;
 		},
 		///在付款之前的操作
-		$beforeFk:async function() {
+		$beforeFk: async function() {
 			//生成赊销单
 			this.sxsale001 = Object.cover(new sale.sxsale001(), this.sale001);
 			console.log("[sale_reserve-$BeforeFk]预定信息生成:", {
@@ -1229,24 +1229,24 @@ var XsTypeObj = {
 			//判断是否是临时授信赊销，有些东西需要更改
 			//（1）sale001：DKFID  提交的是选中的临时授信大客户；
 			//（2）sxsale001.YDSPTYPE: 普通赊销，赊销退--> U；
-			  //   临时授信赊销、临时授信赊销退 -->L ; （结算和统计要用，临时授信赊销和退 要单独统计...）
+			//   临时授信赊销、临时授信赊销退 -->L ; （结算和统计要用，临时授信赊销和退 要单独统计...）
 			//（3）sxsale001.DKFID: 提交选中的 授信人员ID （RYID）
 			//（4）sxsale001.CUSTMPHONE ：提交 本次选中的实际赊销客户DKFID；
 			//（5）SALE001.CUSTID , SXSALE001.CUSTOMNAME  还是提交业务员ID。
-			console.log("[sale_reserve-$BeforeFk]预定信息生成DKF:",this.DKF.cval);
-			this.sxsale001.YDSPTYPE="U";
+			console.log("[sale_reserve-$BeforeFk]预定信息生成DKF:", this.DKF.cval);
+			this.sxsale001.YDSPTYPE = "U";
 
-			if(this.DKF?.cval?.sales_credit === true){
-				
+			if (this.DKF?.cval?.sales_credit === true) {
 
-					//表示为临时授信赊销
-					this.sale001.DKFID=this.DKF.cval.sales_ryid;
-					this.sxsale001.YDSPTYPE="L";
-					this.sxsale001.DKFID=this.DKF.cval.sales_ryid;
-					this.sxsale001.CUSTMPHONE=this.DKF.cval.DKHID;
-					this.sxsale001.CUSTMNAME=this.sale001.CUSTID
-					//由于支付之后还会重写一遍sxsale001 所以 sale001 中的CUSTMPHONE 也需要给一样的值
-						this.sale001.CUSTMPHONE=this.DKF.cval.DKHID;
+
+				//表示为临时授信赊销
+				this.sale001.DKFID = this.DKF.cval.sales_ryid;
+				this.sxsale001.YDSPTYPE = "L";
+				this.sxsale001.DKFID = this.DKF.cval.sales_ryid;
+				this.sxsale001.CUSTMPHONE = this.DKF.cval.DKHID;
+				this.sxsale001.CUSTMNAME = this.sale001.CUSTID
+				//由于支付之后还会重写一遍sxsale001 所以 sale001 中的CUSTMPHONE 也需要给一样的值
+				this.sale001.CUSTMPHONE = this.DKF.cval.DKHID;
 				console.log("[sale_reserve-$BeforeFk]预定信息生成(临时授信之后的):", {
 					sale001: this.sale001,
 					sale002: this.sale002,
@@ -1254,7 +1254,7 @@ var XsTypeObj = {
 					sxsale001: this.sxsale001
 				});
 			}
-			
+
 			if (this.sale002.length > 0 && this.sale001.TNET >= 0) { // 部分商品金额为0
 				console.log("[sale_credit]提前组装赊销已支付的数据...");
 				this.payed = [];
@@ -1276,17 +1276,17 @@ var XsTypeObj = {
 			console.log("[SaleFinishing]赊销订单生成前...", result);
 			console.log("[SaleFinishing]赊销订单生成前sxsale001...", this.sxsale001);
 			console.log("[SaleFinishing]赊销订单生成前SXJGZ...", this.SXJGZ);
-			
+
 			this.sxsale001 = Object.cover(this.sxsale001, result.sale1_obj);
 			this.sxsale001.SX_STATUS = 1;
 			this.sxsale001.DKFNAME = this.DKF.val.NAME; //赊销追加一下 大客户名称
-			this.sxsale001.CUSTMNAME=this.sale001.CUSTID;
-			
+			this.sxsale001.CUSTMNAME = this.sale001.CUSTID;
+
 			//追加赊销下的 STR1
-			const oadhs  = this.SXJGZ.map(item => item.OADH).join('，');
-			this.sxsale001.STR1=oadhs;
-			
-			
+			const oadhs = this.SXJGZ.map(item => item.OADH).join('，');
+			this.sxsale001.STR1 = oadhs;
+
+
 			console.log("[SaleFinishing]赊销订单生成完毕!", {
 				sxsale001: this.sxsale001,
 				sale003: this.sale003
@@ -1356,13 +1356,13 @@ var XsTypeObj = {
 			this.DKF.val = data;
 			console.log("当前大客户信息：", this.DKF.val);
 			//关闭大客户的时候判断是否授信临时赊销，需要打开促销计算
-				if(this.DKF?.val?.sales_credit === true){
-					this.currentOperation.ynCx= true;
-						console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
-				}
+			if (this.DKF?.val?.sales_credit === true) {
+				this.currentOperation.ynCx = true;
+				console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
+			}
 			uni.$emit('select-credit', data);
 		},
-		CloseBigCustomerJGZ: function(dkfdata,data) {
+		CloseBigCustomerJGZ: function(dkfdata, data) {
 			console.log("[CloseBigCustomerJGZ]大客户所选大客户!", dkfdata);
 			console.log("[CloseBigCustomerJGZ]大客户赋值价格组!", data);
 			if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000' && Object
@@ -1371,7 +1371,7 @@ var XsTypeObj = {
 			}
 			this.SXJGZ = data;
 			console.log("当前大客户价格组：", this.SXJGZ);
-			if(this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000'){
+			if (this.clickSaleType.clickType == 'sale_credit' && this.DKF.cval.DKFID != '80000000') {
 				this.bill = null;
 				this.sale001 = {};
 				this.sale002 = [];
@@ -1400,7 +1400,7 @@ var XsTypeObj = {
 				this.update();
 			}
 		},
-		
+
 	}, //赊销结算
 	//赊销结算
 	sale_credit_settlement: {
@@ -2010,21 +2010,21 @@ function GetSale(global, vue, target_name, uni) {
 	this.mode_info = XsTypeObj;
 	this.FKDA_INFO = util.getStorage('FKDA_INFO');
 	console.warn("[GetSale]获取的支付方式信息:", this.FKDA_INFO);
-	
-	
+
+
 	// 在 base_sale 初始化的地方加这段
 	uni.$off('get-current-type');
 	uni.$on('get-current-type', (callback) => {
-	  // 有人要，就直接把当前值给他
-	  callback(this.currentPmType);
-	   // 取完立刻清空
-	    //this.currentPmType = '';
+		// 有人要，就直接把当前值给他
+		callback(this.currentPmType);
+		// 取完立刻清空
+		//this.currentPmType = '';
 	});
 	// 🔥 新加：监听清空事件
 	uni.$on('clear-current-type', () => {
-	  this.currentPmType = ''; // 真正清空
+		this.currentPmType = ''; // 真正清空
 	});
-	
+
 	/*
 	 * 工具方法 
 	 */
@@ -2301,26 +2301,26 @@ function GetSale(global, vue, target_name, uni) {
 	//*func*菜单切换
 	this.Change = util.callBind(this, function(menu) {
 		this.tool_pages.changeGoods = false; //菜单切换后关闭外卖换货页面
-		this.currentPmType ="";
+		this.currentPmType = "";
 		console.log("[Change]菜单点击触发!", menu);
 		if (menu.info.clickType === 'sale_credit') {
-				console.log("[Change]触发了11111111111111111111!");
-				this.currentPmType ="sale_credit";
-			 uni.$emit('sale-type-changed', 'sale_credit');
+			console.log("[Change]触发了11111111111111111111!");
+			this.currentPmType = "sale_credit";
+			uni.$emit('sale-type-changed', 'sale_credit');
 			uni.$once('select-credit', util.callBind(this, function(data) {
 				if (Object.keys(data ?? {}).length > 0) {
 					console.log("[Change]切换到赊销!");
 					this.SetManage('sale_credit'); //切换到赊销
 					this.$initSale(XsTypeObj['sale_credit']); //切换到赊销
-					if(this.DKF?.val?.sales_credit === true){
-						this.currentOperation.ynCx= true;
-							console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
+					if (this.DKF?.val?.sales_credit === true) {
+						this.currentOperation.ynCx = true;
+						console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
 					}
 					console.log("切换到促销权限：", this.currentOperation.ynCx);
 					// uni.$emit('set-menu','sale_credit');
 				} else { //如果没有大客户数据 则切换到普通销售模式
 					console.log("[Change]切换到普通模式!");
-					this.currentPmType ="";
+					this.currentPmType = "";
 					this.resetSaleBill();
 				}
 			}));
@@ -2572,12 +2572,12 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$on("redirect", this.Redirect);
 		uni.$on("member-close", this.CloseMember);
 		uni.$on("close-big-customer", (XsTypeObj.sale_credit.CloseBigCustomer).bind(this));
-		
+
 		//uni.$on("close-big-customer_JGZ", (XsTypeObj.sale_credit.CloseBigCustomerJGZ).bind(this));
-	uni.$on("close-big-customer_JGZ", (dkfdata, data) => {
-	  XsTypeObj.sale_credit.CloseBigCustomerJGZ.call(this, dkfdata, data);
-	});
-		
+		uni.$on("close-big-customer_JGZ", (dkfdata, data) => {
+			XsTypeObj.sale_credit.CloseBigCustomerJGZ.call(this, dkfdata, data);
+		});
+
 		uni.$on("close-big-customer", this.JudgeBigCustomer);
 		uni.$on("open-big-customer", (XsTypeObj.sale_credit.OpenBigCustomer).bind(this));
 		uni.$on("choose-mdry", this.ChooseMDRY);
@@ -2803,8 +2803,8 @@ function GetSale(global, vue, target_name, uni) {
 	this.classifyDate = null;
 	this.notClassifyDate = null;
 	this.curHot = false; //是否是热销选品模式
-	
-	this.SXJGZ=[];//赊销价格组
+
+	this.SXJGZ = []; //赊销价格组
 	//蛋糕预定商品集合
 	this.CakeList = [
 		// 	{
@@ -2967,7 +2967,7 @@ function GetSale(global, vue, target_name, uni) {
 			if (newval && newval.ZKType) { //有赋值折扣类型才算折扣生效
 				that.currentOperation.ynCx = false;
 				// that.currentOperation.FZCX = false;
-					console.log("这里修改了：", that.currentOperation.ynCx);
+				console.log("这里修改了：", that.currentOperation.ynCx);
 			} else {
 				console.log("折扣赋空值前的促销权限：", that.currentOperation.ynCx);
 
@@ -3206,7 +3206,8 @@ function GetSale(global, vue, target_name, uni) {
 	}
 	//清空键盘
 	this.clearQueryKeys = function() {
-		that.boardQueryKeys = ''
+		that.boardQueryKeys = '';
+		that.showQueryKeys = '';
 	}
 	// 删除键盘输入
 	this.delQueryKeys = function() {
@@ -3215,8 +3216,8 @@ function GetSale(global, vue, target_name, uni) {
 	// 关闭键盘
 	this.turnOffKeys = function() {
 		that.Page.isKeyBoardShow = false
-		that.boardQueryKeys = ''
-		// that.showQueryKeys = ''
+		that.boardQueryKeys = '';
+		that.showQueryKeys = '';
 	}
 
 	this.clearKeyDate = function() {
@@ -3448,7 +3449,9 @@ function GetSale(global, vue, target_name, uni) {
 		let spitem = plitem.plarr[spindex];
 		try {
 			that.initClikSpItem(spitem);
-			that.SetManage("inputsp")
+			that.SetManage("inputsp");
+			//清除键盘里的输入信息
+			that.clearQueryKeys();
 		} catch (e) {
 			//TODO handle the exception
 			util.simpleMsg(e, true);
@@ -3833,31 +3836,32 @@ function GetSale(global, vue, target_name, uni) {
 		}
 		if (that.$beforeFk()) {
 			console.log("[Pay]已进入支付!");
-			
-			
-			if (that.clickSaleType.clickType == 'sale_credit' && that.DKF.cval.DKFID != "80000000" && that.DKF?.cval?.sales_credit) {
-				  that.checkCreditLimit().then((pass) => {
-				      if (pass) {
-				        // 额度够，继续执行后续逻辑
-				   	that.PayParamAssemble();
-				      } else {
-				        // 额度不够，拦截
-				        util.simpleMsg("信用额度不足");
-						return ;
-				      }
-				    });
-				  
-			}else{
-					that.PayParamAssemble();
+
+
+			if (that.clickSaleType.clickType == 'sale_credit' && that.DKF.cval.DKFID != "80000000" && that.DKF
+				?.cval?.sales_credit) {
+				that.checkCreditLimit().then((pass) => {
+					if (pass) {
+						// 额度够，继续执行后续逻辑
+						that.PayParamAssemble();
+					} else {
+						// 额度不够，拦截
+						util.simpleMsg("信用额度不足");
+						return;
+					}
+				});
+
+			} else {
+				that.PayParamAssemble();
 			}
-			
-			
-			
+
+
+
 		} else {
 			console.log("[Pay]未进入支付!");
 		}
 	}
-	
+
 
 	this.PayParamAssemble = function(sales) {
 		uni.$emit('stop-message');
@@ -4130,31 +4134,32 @@ function GetSale(global, vue, target_name, uni) {
 		if (!common.CheckSign()) {
 			return;
 		}
-		
-	
-		
-		console.log("[GetSp]获取商品详情:",that.clikSpItem);
-		console.log("[GetSp]DKF.cval:",that.DKF.cval);
-				console.log("[GetSp]SXJGZ:",that.SXJGZ);
-		
-		
+
+
+
+		console.log("[GetSp]获取商品详情:", that.clikSpItem);
+		console.log("[GetSp]DKF.cval:", that.DKF.cval);
+		console.log("[GetSp]SXJGZ:", that.SXJGZ);
+
+
 		//如果是赊销模式，则需要判断用户选择的商品价格组是否在选择的大客户价格组下。
 		//现在有需要判断是否是临时授信赊销模式   这个判断就是  如果是赊销且不是临时授信模式，才进入去判断价格组
-		if(that.clickSaleType.clickType == 'sale_credit' && that.DKF.cval.DKFID != "80000000"&&!that.DKF?.cval?.sales_credit){
-				//与大客户的价格组判断是否在其中
-				const targetJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
-			
-				//  检查是否存在 相等的 WLJGZ
-				const isExist = that.SXJGZ.some(item => item.WLJGZ === targetJGZ);
-				
-				
-				if (!isExist) {
-				   util.simpleMsg("当前所选商品,不在该大客户价格组下", true);
-				    return; // 直接终止，不往下执行
-				}
+		if (that.clickSaleType.clickType == 'sale_credit' && that.DKF.cval.DKFID != "80000000" && !that.DKF?.cval
+			?.sales_credit) {
+			//与大客户的价格组判断是否在其中
+			const targetJGZ = that.clikSpItem.DGJGZ || that.clikSpItem.SPJGZ;
 
-				
-			
+			//  检查是否存在 相等的 WLJGZ
+			const isExist = that.SXJGZ.some(item => item.WLJGZ === targetJGZ);
+
+
+			if (!isExist) {
+				util.simpleMsg("当前所选商品,不在该大客户价格组下", true);
+				return; // 直接终止，不往下执行
+			}
+
+
+
 		}
 		let pm_spid = that.clikSpItem.selectSPID;
 		let pm_yndgxp = e.currentTarget.dataset.yndgxp; //是否是改胚蛋糕
@@ -4559,7 +4564,8 @@ function GetSale(global, vue, target_name, uni) {
 		// console.log("002旧数据：", that.sale002);
 		//判断是否临时授信赊销
 		console.log("002判断是否临时授信赊销：", that.DKF.cval);
-		let res = _main.MatchZKDatas(this.Disc.val, that.sale002, this.clickSaleType.clickType, this.SXJGZ,this.DKF?.cval?.sales_credit);
+		let res = _main.MatchZKDatas(this.Disc.val, that.sale002, this.clickSaleType.clickType, this.SXJGZ, this.DKF
+			?.cval?.sales_credit);
 		that.sale002 = res.sale2;
 		that.ZKHDArr = res.zkrule;
 		console.log("002增加折扣后的新数据：", that.sale002);
@@ -4615,8 +4621,8 @@ function GetSale(global, vue, target_name, uni) {
 			this.sale001.CUSTID = this.JDY.val.RYID; //260129增加业务员记录
 		}
 		console.log("[BeforeFk]sale001：", this.sale001);
-	
-		
+
+
 		//写大客户
 		//code...
 		//写会员
@@ -4668,63 +4674,63 @@ function GetSale(global, vue, target_name, uni) {
 			}
 			return this.CurrentTypeCall("$beforeFk", pm_inputParm);
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	// 信用额度校验 —— 完整 Promise 方法
-	this.checkCreditLimit= function() {
+	this.checkCreditLimit = function() {
 		console.log("✅进入查询信用额度");
-	  return new Promise((resolve) => {
-	    // 1. 调用接口查询额度
-	    GetBigRYCredit({
-	      RYID: this.DKF.cval.sales_ryid,
-	      KHID: this.sale001.KHID
-	    }, 
-	    // 成功回调
-	    util.callBind(this, (res) => {
-	      try {
-	        // 2. 解析返回数据
-	        let resdt = JSON.parse(res.data);
-	        console.log("✅ 信用额度返回：", resdt);
-	
-	        // 3. 数据为空判断
-	        if (!Array.isArray(resdt) || resdt.length === 0) {
-	          util.simpleMsg("未查询到该人员信用额度", true);
-	          resolve(false);
-	          return;
-	        }
-	
-	        // 4. 金额转数字（最关键，防止字符串/空值报错）
-	        const znet = Number(this.sale001.ZNET) || 0;
-	        const xyed = Number(resdt[0]?.SYED) || 0;
-	
-	        // 5. 最终判断：订单金额 ≤ 信用额度
-	        if (znet <= xyed) {
-	          console.log("✅ 额度足够");
-	          resolve(true);
-	        } else {
-	          util.simpleMsg("订单金额超出信用额度，无法赊销", true);
-	          console.log("❌ 额度不足");
-	          resolve(false);
-	        }
-	
-	      } catch (e) {
-	        console.error("❌ 额度解析异常：", e);
-	        util.simpleMsg("信用额度解析失败", true);
-	        resolve(false);
-	      }
-	    }), 
-	    // 失败回调
-	    util.callBind(this, () => {
-	      util.simpleMsg("获取信用额度失败，请重试", true);
-	      resolve(false);
-	    })
-	  );
-	})
+		return new Promise((resolve) => {
+			// 1. 调用接口查询额度
+			GetBigRYCredit({
+					RYID: this.DKF.cval.sales_ryid,
+					KHID: this.sale001.KHID
+				},
+				// 成功回调
+				util.callBind(this, (res) => {
+					try {
+						// 2. 解析返回数据
+						let resdt = JSON.parse(res.data);
+						console.log("✅ 信用额度返回：", resdt);
+
+						// 3. 数据为空判断
+						if (!Array.isArray(resdt) || resdt.length === 0) {
+							util.simpleMsg("未查询到该人员信用额度", true);
+							resolve(false);
+							return;
+						}
+
+						// 4. 金额转数字（最关键，防止字符串/空值报错）
+						const znet = Number(this.sale001.ZNET) || 0;
+						const xyed = Number(resdt[0]?.SYED) || 0;
+
+						// 5. 最终判断：订单金额 ≤ 信用额度
+						if (znet <= xyed) {
+							console.log("✅ 额度足够");
+							resolve(true);
+						} else {
+							util.simpleMsg("订单金额超出信用额度，无法赊销", true);
+							console.log("❌ 额度不足");
+							resolve(false);
+						}
+
+					} catch (e) {
+						console.error("❌ 额度解析异常：", e);
+						util.simpleMsg("信用额度解析失败", true);
+						resolve(false);
+					}
+				}),
+				// 失败回调
+				util.callBind(this, () => {
+					util.simpleMsg("获取信用额度失败，请重试", true);
+					resolve(false);
+				})
+			);
+		})
 	}
-	
+
 	//付款之后生成订单前触发
 	this.$saleFinishing = function(sales) {
 		console.log("[$SaleFinishing]支付完毕后触发:", sales);
@@ -4743,12 +4749,12 @@ function GetSale(global, vue, target_name, uni) {
 		uni.$emit("reset-sales");
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
-		uni.$emit('set-lssx',false);
+		uni.$emit('set-lssx', false);
 		uni.$emit('set-jdy', {
 			RYID: store.RYID,
 			SNAME: store.RYNAME
 		}); //通知一下外部 恢复默认接待员信息
-		this.SXJGZ=[];//清空价格组
+		this.SXJGZ = []; //清空价格组
 		this.HY.cval = {};
 		this.HY.val = {};
 		this.DKF.cval = {};

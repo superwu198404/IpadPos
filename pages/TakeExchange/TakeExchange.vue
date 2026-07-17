@@ -105,8 +105,10 @@
 															<th>商品编码</th>
 															<th>品类</th>
 															<th>规格</th>
+															<th>总数量</th>
 															<th>可换数量</th>
-															<th>单价</th>
+															<th>平台价格</th>
+															<th>标签价</th>
 															<th>总价</th>
 															<th>外卖单号</th>
 														</tr>
@@ -122,7 +124,9 @@
 															<td>{{ item.SPID.slice(8) }}</td>
 															<td>{{ item.ZLID }}-{{ item.ZL_NAME }}</td>
 															<td>{{ item.SPECS }}</td>
+															<td>{{ item.T_QTY }}</td>
 															<td>{{ item.QTY }}</td>
+															<td>¥{{ item.PT_PRICE }}</td>
 															<td>¥{{ item.PRICE }}</td>
 															<td>¥{{ item.NET }}</td>
 															<td>{{ item.BILL }}</td>
@@ -155,7 +159,7 @@
 															<th>商品编码</th>
 															<th>规格</th>
 															<th>数量</th>
-															<th>单价</th>
+															<th>标签价</th>
 															<th>总价</th>
 															<th>差额</th>
 															<th>换前商品</th>

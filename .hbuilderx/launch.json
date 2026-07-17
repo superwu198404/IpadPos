@@ -13,8 +13,9 @@
             "type" : "uniCloud"
         },
         {
-            "customPlaygroundType" : "device",
-            "playground" : "standard",
+            "customPlaygroundType" : "local",
+            "packageName" : "uni.UNID975D37",
+            "playground" : "custom",
             "type" : "uni-app:app-android"
         }
     ]

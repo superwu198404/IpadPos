@@ -772,7 +772,8 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 	var note2 = snvl(sale1_obj.XDQD, sale1_obj.NOTE2); //平台名称。如美团外卖//260430 优先下单渠道
 	var greeting = snvl(sale1_obj.GREETING, "");
 	var update = snvl(sale1_obj.DDUPGRADE, ""); //变更类型 0未变更，1修改备注 2修改时间
-
+	var yn_ydzp = snvl(sale1_obj.YN_YDZP, "");
+	var yn_zp = snvl(sale1_obj.YN_ZP, "");
 	var bsReason = "";
 	var bsNote = "";
 	var newBill = "";
@@ -897,6 +898,8 @@ const wmPrinterData = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_Not
 		posId,
 		newBill, //新产生的退货单号
 		greeting, //祝福语
+		yn_ydzp, //是否异店直配
+		yn_zp, //是否商家自配
 		update
 	}
 
@@ -933,6 +936,7 @@ const wmPrinterData11 = (sale1_obj, sale2_arr, ggyContent, type, bs_Reason, bs_N
 	var posId = snvl(sale1_obj.POSID, "");
 	var note2 = snvl(sale1_obj.XDQD, sale1_obj.NOTE2); //平台名称。如美团外卖//260430 优先下单渠道
 	var greeting = snvl(sale1_obj.GREETING, "");
+
 
 	var bsReason = "";
 	var bsNote = "";

@@ -81,8 +81,11 @@
 										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
 											<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
 											<label><text>异店直配：</text><text>{{Order.YNYDZP}}</text></label>
+											<label><text>商家自配：</text><text>{{Order.YNZP}}</text></label>
+											<label><text>指定裱花间：</text><text>{{Order.BH_ZP_NAME}}</text></label>
 											<label><text>下单渠道：</text><text>{{Order.XDQD}}</text></label>
 											<label><text>修改类型：</text><text>{{Order.UP_CONTENT}}</text></label>
+											<label><text>到货时间：</text><text>{{Order.CUSTMTIME}}</text></label>
 											<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
 										</view>
 										<!-- <view class="h5"><text>单号：{{Order.BILL}}</text></view> -->
@@ -354,7 +357,7 @@
 				if (spArr && spArr.length > 0) {
 					spArr.map(r => {
 						if (e.STATUS == '12' && bmArr.includes('109')) { //接单状态且有裱花109
-							if (e.YN_YDZP == "1" || r.SPKW == "J") //裱花类或者积木商品
+							if (e.YN_ZP == "1" || e.YN_YDZP == "1" || r.SPKW == "J") //商家自配，异店直配或者积木商品
 							{
 								if (r.STR4 == "109") //异店直配默认勾选
 									r.CHECK = true;
@@ -772,7 +775,9 @@
 				let arr = that.WMDDATA.filter((item) => {
 					return item.BQTY > 0
 				});
-				let bill = "WMLY" + that.Order.BILL;
+				//数据过长 改为只使用W
+				//let bill = "WMLY" + that.Order.BILL;
+				let bill = "W" + that.Order.BILL;
 				if (!arr || arr.length == 0) {
 					util.simpleMsg("无可用数据", true);
 					return;

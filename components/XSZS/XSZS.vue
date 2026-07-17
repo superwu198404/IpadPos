@@ -178,7 +178,9 @@
 				let arr = that.XSZSDatas.filter((item) => {
 					return item.BQTY > 0
 				});
-				let bill = "XSLY" + that.BILL;
+				//单号太长，指保留X
+				//let bill = "XSLY" + that.BILL;
+				let bill = "X" + that.BILL;
 				if (!arr || arr.length == 0) {
 					util.simpleMsg("无可用数据", true);
 					return;

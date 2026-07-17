@@ -513,7 +513,10 @@
 			// this.big_client_info.exists_credit = this.exists_credit;
 			uni.$emit("big-customer-close", this.big_client_info);
 			  uni.$emit('close-big-customer_JGZ', this.big_client_info,this.JGZList);
-			  uni.$emit('set-lssx', this.sales_credit);
+			  if(this.big_client_info&&this.big_client_info.DKHID&&this.big_client_info.DKHID!= '80000000'){
+				   uni.$emit('set-lssx', this.sales_credit);
+			  }
+			 
 			  	console.warn("[Destroyed]big_client_info...",  this.big_client_info);
 			console.warn("[Destroyed]大客户关闭...");
 		}

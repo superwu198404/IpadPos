@@ -76,21 +76,21 @@ var loadSaleSP = {
 			}
 		}, {
 			key: "（）",
-			val: new RegExp(/\（(.+?)\）/g),// /\（.+\）/g
+			val: new RegExp(/\（(.+?)\）/g), // /\（.+\）/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
 			}
 		}, {
 			key: "[]",
-			val: new RegExp(/\[(.+?)\]/g),// /\[.+\]/g
+			val: new RegExp(/\[(.+?)\]/g), // /\[.+\]/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
 			}
 		}, {
 			key: "【】",
-			val: new RegExp(/\【(.+?)\】/g),// /\【.+\】/g
+			val: new RegExp(/\【(.+?)\】/g), // /\【.+\】/g
 			func: function(pinyin, reg) {
 				let str = pinyin.match(reg);
 				return pinyin.split(str[0])[1];
@@ -126,7 +126,7 @@ var loadSaleSP = {
 			old = r.PINYIN;
 		try {
 			//匹配括号中内容()（）[] 【】
-			if (/^(\W+)/.test(r.PINYIN)) {//括号开头
+			if (/^(\W+)/.test(r.PINYIN)) { //括号开头
 				// console.warn("开始进入括号校验")
 				r.PINYIN = this.checkCode(r.PINYIN);
 				// console.warn("校验完毕后的拼音：", r.PINYIN);
@@ -402,7 +402,7 @@ var loadSaleSP = {
 	getDgxlImg: function(pm_dqid) {
 		let sql =
 			"select dgxlimage.DGXLID , url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL,DESCRIBE  from dgxlimage where DQID='" +
-			pm_dqid + "' order by DGXLID,yn_main desc";
+			pm_dqid + "' and ifnull(yn_video,'N') ='N' and PICUSE='DGXL' order by DGXLID,yn_main desc";
 		/* 	let sql= "select dgxlimage.DGXLID ,  url||'?v='|| strftime('%Y%m%d%H%M%S',date_xg) IMGURL  from   dgxlimage  where exists(select 1 from spda_dgxl,spkhda where spda_dgxl.spid= spkhda.spid " +
 			   	" and spda_dgxl.dgxlid =dgxlimage.dgxlid " +
 			   " and spkhda.YN_XS='Y' and   spkhda.khid ='" + pm_storeid + "') order by yn_main desc "; */

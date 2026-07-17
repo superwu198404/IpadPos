@@ -117,7 +117,8 @@
 								style="font-size: 30rpx;">
 								键盘
 							</view>
-							<view class="states" style="position: relative;bottom: unset;right: unset;" @click="mainSale.ShowStatement">
+							<view class="states" style="position: relative;bottom: unset;right: unset;"
+								@click="mainSale.ShowStatement">
 								<text>结算单</text>
 								<label>«</label>
 								<view class="statnum" style="margin-top:10rpx;">
@@ -307,7 +308,7 @@
 			<view class="memberes">
 				<view class="shareButton" @click="mainSale.setComponentsManage" data-mtype='statement'></view>
 				<!-- 会员信息 -->
-				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open">
+				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open" style="display: flex;flex-direction: column;">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label>
@@ -347,9 +348,10 @@
 							<view><text>社群好友：</text>{{mainSale.HY.val.WxCpChatFriend?"是":"否"}}</view>
 						</view>
 					</view>
-					<view class="coulist">
+					<view class="coulist"
+						style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;">
 						<view class="h2">优惠券</view>
-						<view class="uls">
+						<view class="uls" style="flex:1;overflow-y:auto;min-height:0;">
 							<view class="lis" v-for="(item,index) in MemberCoupons">
 								<view class="voucher">
 									<view><text>￥</text>{{item.money}}</view>
@@ -378,49 +380,54 @@
 					</view>
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
-				<view class="meminfo" style="width:45%;" v-if="mainSale.currentOperation.showCXZK">
+				<view class="meminfo" style="width:45%;display:flex;flex-direction:column;"
+					v-if="mainSale.currentOperation.showCXZK">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label style="font-weight: 700;"><text>已使用的促销/折扣列表</text></label>
 						<button class="close" @click="mainSale.showCXZKFunc">×</button>
 					</view>
-					<!-- 促销集合 -->
-					<view class="listuls" v-if="mainSale.currentOperation.ynCx" style="padding:20rpx 2%">
-						<view class="lis" v-for="(item,index) in mainSale.CXHDArr"
-							style="width:90%;flex-direction: column;border:1px solid #eee">
-							<view class="protheme">
-								<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
-								<view class="themes">
-									<view class="h8">活动主题：{{item.CXZT}}</view>
-									<label><text>顾客范围：</text>{{item.CXRY}}</label>
-									<label class="eventdate">活动日期：{{item.SDATE}} 至 {{item.EDATE}}</label>
+					<view style="flex:1;overflow-y:auto;min-height:0;">
+						<!-- 促销集合 -->
+						<view class="listuls" v-if="mainSale.currentOperation.ynCx" style="padding:20rpx 2%">
+							<view class="lis" v-for="(item,index) in mainSale.CXHDArr"
+								style="width:90%;flex-direction: column;border:1px solid #eee">
+								<view class="protheme">
+									<image src="../../images/dakehu-xz.png" mode="widthFix"></image>
+									<view class="themes">
+										<view class="h8">活动主题：{{item.CXZT}}</view>
+										<label><text>顾客范围：</text>{{item.CXRY}}</label>
+										<label class="eventdate">活动日期：{{item.SDATE}} 至 {{item.EDATE}}</label>
+									</view>
 								</view>
 							</view>
 						</view>
-					</view>
-					<!-- 折扣集合 -->
-					<view class="zhekou" v-if="mainSale.currentOperation.Disc">
-						<view class="lis" v-for="(item,index) in mainSale.ZKHDArr" style="width:90%;padding-top:4rpx;">
-							<view v-if="item.ZKTYPE">
-								<view class="h8">
-									<view>折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}}</view>
-									<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
-								</view>
-								<vlew class="manjian">
-									满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折；</vlew>
-								<view class="neirong">内容：{{item.ZKNAME}}</view>
+						<!-- 折扣集合 -->
+						<view class="zhekou" v-if="mainSale.currentOperation.Disc">
+							<view class="lis" v-for="(item,index) in mainSale.ZKHDArr"
+								style="width:90%;padding-top:4rpx;">
+								<view v-if="item.ZKTYPE">
+									<view class="h8">
+										<view>折扣类型：{{item.ZKTYPE=='ZD02'?"标准折扣":"临时折扣"}}</view>
+										<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
+									</view>
+									<vlew class="manjian">
+										满<span>{{item.MZNET}}</span>打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折；
+									</vlew>
+									<view class="neirong">内容：{{item.ZKNAME}}</view>
 
-							</view>
-							<view v-else>
-								<view class="h8">
-									<view>折扣类型：{{"特批折扣"}}</view>
-									<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
 								</view>
-								<vlew class="manjian">打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折</vlew>
-								<view class="neirong">内容：{{item.ZKNAME}}</view>
+								<view v-else>
+									<view class="h8">
+										<view>折扣类型：{{"特批折扣"}}</view>
+										<view>折扣额：<text>￥{{item.ZKNET}}</text></view>
+									</view>
+									<vlew class="manjian">打<span>{{(item.ZKQTY_JS*10).toFixed(1)}}</span>折</vlew>
+									<view class="neirong">内容：{{item.ZKNAME}}</view>
+								</view>
 							</view>
+
 						</view>
-
 					</view>
 				</view>
 				<!-- 结算单详情 -->
@@ -557,9 +564,9 @@
 			</view>
 		</view>
 		<!-- 特殊折扣 -->
-		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKFID" :salesCredit="!!mainSale.DKF.val.sales_credit"
-			:zkdatas="mainSale.Disc.val.ZKData" :product="mainSale.sale002" :sxjgz="mainSale.SXJGZ"
-			:ywtype="mainSale.current_type.clickType">
+		<SpecialDisc v-if="mainSale.ComponentsManage.Disc" :dkhid="mainSale.DKF.val.DKFID"
+			:salesCredit="!!mainSale.DKF.val.sales_credit" :zkdatas="mainSale.Disc.val.ZKData"
+			:product="mainSale.sale002" :sxjgz="mainSale.SXJGZ" :ywtype="mainSale.current_type.clickType">
 		</SpecialDisc>
 		<!-- 画布 -->
 		<view class="canvasdiv" :style="'visibility:hidden;'">
@@ -596,7 +603,7 @@
 						</view>
 						<view class="yixuan" v-if="CheckedList.length>0">
 
-							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;">已选：</text>
+							<text style="display:inline-block;height: 70rpx; line-height: 70rpx;width:100rpx">已选：</text>
 							<view class="yxlb" style="max-height: 70rpx;">
 								<label v-for="tag in CheckedList">{{ tag._NAME }}
 									<!-- <button @click="DeleteCheckedTag(tag)">×</button> -->
@@ -612,7 +619,7 @@
 					</view>
 					<view class="shaixuan" v-if="mainSale.mode_info.sale_cake_reserve.filter">
 						<view class="yixuan">
-							<text>全部已选：</text>
+							<text style="display:inline-block;width:200rpx">全部已选：</text>
 							<view class="yxlb">
 								<label v-for="item2 in mainSale.CheckTagList">{{item2._NAME}}<button
 										@click="DeleteCheckingTag(item2)">×</button></label>

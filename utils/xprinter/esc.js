@@ -2421,13 +2421,24 @@ var jpPrinter = {
 			jpPrinter.setText("订单类型: " + data.gsid + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
+			if (data.yn_ydzp == "1") {
+				jpPrinter.setCharacterScale(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("是否异店直配：是");
+				jpPrinter.setPrint(); //打印并换行
+			}
+			if (data.yn_zp == "1") {
+				jpPrinter.setCharacterScale(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("是否商家自配：是");
+				jpPrinter.setPrint(); //打印并换行
+			}
 			if (data.custmtime != "" && data.custmtime != null && data.custmtime != undefined) {
 				jpPrinter.setCharacterScale(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左
 				jpPrinter.setText("要求送达时间: " + data.custmtime);
 				jpPrinter.setPrint(); //打印并换行
 			}
-
 			jpPrinter.setCharacterScale(0); //设置正常大小
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("--------------------------------");
@@ -2643,7 +2654,18 @@ var jpPrinter = {
 			jpPrinter.setSelectJustification(0); //设置居左
 			jpPrinter.setText("订单类型: " + data.gsid + "\n");
 			jpPrinter.setPrint(); //打印并换行
-
+			if (data.yn_ydzp == "1") {
+				jpPrinter.setCharacterScale(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("是否异店直配：是");
+				jpPrinter.setPrint(); //打印并换行
+			}
+			if (data.yn_zp == "1") {
+				jpPrinter.setCharacterScale(0); //设置正常大小
+				jpPrinter.setSelectJustification(0); //设置居左
+				jpPrinter.setText("是否商家自配：是");
+				jpPrinter.setPrint(); //打印并换行
+			}
 			if (data.gsid == "顾客自提") {
 				jpPrinter.setCharacterScale(0); //设置正常大小
 				jpPrinter.setSelectJustification(0); //设置居左

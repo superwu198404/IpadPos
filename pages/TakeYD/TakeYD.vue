@@ -81,8 +81,12 @@
 												<label><text>下单时间：</text><text>{{Order.WDATE}}
 														{{Order.WTIME}}</text></label>
 												<!-- <label><text>提货时间：</text><text>{{Order.CUSTMTIME}}</text></label> -->
+												<label><text>异店直配：</text><text>{{Order.YNYDZP}}</text></label>
+												<label><text>商家自配：</text><text>{{Order.YNZP}}</text></label>
+												<label><text>指定裱花间：</text><text>{{Order.BH_ZP_NAME}}</text></label>
 												<label><text>下单渠道：</text><text>{{Order.XDQD}}</text></label>
 												<label><text>修改类型：</text><text>{{Order.UP_CONTENT}}</text></label>
+												<label><text>到货时间：</text><text>{{Order.CUSTMTIME}}</text></label>
 												<label><text>订单备注：</text><text>{{Order.STR1}}</text></label>
 											</view>
 											<view class="h5"><text>单号：{{Order.BILL}}</text></view>
@@ -90,13 +94,22 @@
 												<!-- 商品循环 -->
 												<view class="prolist" v-for="(item1,index1) in Details">
 													<view class="h3">
-														<label>
-															<checkbox-group @click="checkFunc(item1)"
+														<label style="display:flex;align-items:center">
+															<!-- <checkbox-group @click="checkFunc(item1)"
 																v-if="item1.yn_sb">
 																<checkbox :checked="item1.isChecked"></checkbox>
 															</checkbox-group>
 															<image src="../../images/dx-mrxk.png" mode="widthFix">
-															</image>
+															</image> -->
+															<view v-if="!item1.READONLY"
+																@click="toggleTaskChecked(item1)" class="task-checkbox"
+																:class="{ 'checked': item1.CHECK }">
+																<image v-show="item1.CHECK" class="check-icon"
+																	src="../../images/imgbh/gou@1x.png" mode="widthFix">
+																</image>
+															</view>
+															<view v-else class="task-checkbox task-checkbox-none">
+															</view>
 															{{item1.STR5}} — <text>￥{{item1.PRICE}}</text>
 														</label>
 														<view class="shuls"><text>×{{item1.PACK}}</text></view>
@@ -247,7 +260,7 @@
 				}
 				console.log("主单详情：", JSON.stringify(e));
 				that.Order = e; //订单对象
-				let detailArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
+				let spArr = that.OrderDeails.filter(i => i.BILL == e.BILL);
 				// let arr = util.getStorage("POSCS");
 				// console.log("参数组数据:", arr);
 				// let obj = arr.find((r) => r.POSCS == 'BHLBBM');
@@ -256,19 +269,44 @@
 				if (obj && obj.BHLBBM) {
 					bmArr = obj.BHLBBM.split(',');
 				}
-				if (detailArr.length > 0) {
-					detailArr.map((r) => {
-						if (bmArr.indexOf(r.STR4) >= 0) {
-							r.yn_sb = true;
+				if (spArr && spArr.length > 0) {
+					spArr.map(r => {
+						if (e.STATUS == '12' && bmArr.includes('109')) { //接单状态且有裱花109
+							//2026-07-16外卖预定单和外卖单判断不一致
+							if (r.STR4 == "109") {
+								r.CHECK = true;
+								r.READONLY = false;
+							} else {
+								r.CHECK = false;
+								r.READONLY = true;
+							}
 						} else {
-							r.yn_sb = false;
-						};
-						r.isChecked = false; //复选框默认值
-					});
-					that.Details = detailArr;
+							r.CHECK = false;
+							r.READONLY = true;
+						}
+					})
 				}
+				that.Details = spArr;
+				// if (detailArr.length > 0) {
+				// 	detailArr.map((r) => {
+				// 		if (bmArr.indexOf(r.STR4) >= 0) {
+				// 			r.yn_sb = true;
+				// 		} else {
+				// 			r.yn_sb = false;
+				// 		};
+				// 		r.isChecked = false; //复选框默认值
+				// 	});
+				// 	that.Details = detailArr;
+				// }
 				that.curIndex = i;
 				console.log("明细单详情：", JSON.stringify(that.Details));
+			},
+			// 切换任务勾选状态
+			toggleTaskChecked(item) {
+				item.CHECK = !item.CHECK;
+				console.log("toggleTaskChecked：", item);
+				console.log("明细单详情：", JSON.stringify(that.Details));
+				that.$forceUpdate(); //刷新input的值 狗bug
 			},
 			//复选款点击事件
 			checkFunc: function(e) {
@@ -436,5 +474,35 @@
 <style>
 	.right {
 		height: 100%;
+	}
+
+	/* 勾选框样式 */
+	.task-checkbox {
+		width: 50rpx;
+		height: 50rpx;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		transition: all 0.2s ease;
+		border: 2rpx solid #42B14B;
+		margin-right: 4rpx;
+	}
+
+	.task-checkbox.checked {
+		background-color: #4caf50;
+		border-color: #4caf50;
+	}
+
+	.task-checkbox-none {
+		background-color: #D8D8D8;
+		border-color: #ECECEC;
+	}
+
+	.check-icon {
+		color: #fff;
+		font-size: 24rpx;
+		font-weight: bold;
 	}
 </style>

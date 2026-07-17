@@ -72,13 +72,40 @@ var GetSPDA = function(khid, func, yn_xs = 'N', khzid, dqid) {
 	if (yn_xs == "Y")
 		str = " and sk.YN_XS='Y'"; //销售业务
 	let sql =
-		"select s.SPID,s.SNAME,s.spid||'-'||s.sname IDNAME,s.PINYIN,s.PLID,sk.ZLID,s.SPECS,(SELECT PRICE/(CASE UQTY WHEN 0 THEN 1 ELSE UQTY END) PRICE FROM PRICDA WHERE DATE (SDATE)<=DATE ('" +
-		x + "') AND DATE (EDATE)>=DATE ('" + x + "') AND (dqid IS NULL OR dqid='" + dqid +
-		"') AND (khzid IS NULL OR khzid='" + khzid +
-		"') AND QYSTAT='1' and spid=sk.spid) PRICE from  SPKHDA sk left join spda s on sk.spid=s.spid where sk.khid='" +
+		"select s.SPID,s.SNAME,s.spid||'-'||s.sname IDNAME,s.PINYIN,s.PLID,sk.ZLID,s.SPECS,(SELECT PRICE/(CASE UQTY WHEN 0 THEN 1 ELSE UQTY END) PRICE FROM PRICDA p WHERE DATE (p.SDATE)<=DATE ('" +
+		x + "') AND DATE (p.EDATE)>=DATE ('" + x + "') AND (p.dqid IS NULL OR p.dqid='" + dqid +
+		"') AND (p.khzid IS NULL OR p.khzid='" + khzid +
+		"') AND p.QYSTAT='1' and p.spid=sk.spid ORDER BY p.SDATE DESC limit 1) PRICE from  SPKHDA sk left join spda s on sk.spid=s.spid where sk.khid='" +
 		khid + "' and s.PRODUCT_STATUS='1'" + str + " order by s.spid";
+	sql = `SELECT
+    s.SPID,
+    s.SNAME,
+    s.spid||'-'||s.sname IDNAME,
+    s.PINYIN,
+    s.PLID,
+    sk.ZLID,
+    s.SPECS,
+    (
+        SELECT PRICE / (CASE UQTY WHEN 0 THEN 1 ELSE UQTY END)
+        FROM PRICDA p
+        WHERE p.spid = sk.spid
+          AND DATE(p.SDATE) <= DATE('` + x + `')
+          AND DATE(p.EDATE) >= DATE('` + x + `')
+          AND (p.dqid IS NULL OR p.dqid ='` + dqid + `')
+          AND (p.khzid IS NULL OR p.khzid ='` + khzid + `')
+          AND p.QYSTAT = '1'
+        ORDER BY p.PRICETYPE DESC, p.SDATE DESC
+        LIMIT 1
+    ) AS PRICE
+FROM SPKHDA sk
+LEFT JOIN spda s ON sk.spid = s.spid
+WHERE sk.khid ='` + khid + `'
+  AND s.PRODUCT_STATUS = '1'
+  ` + str + `
+ORDER BY s.spid`;
 	db.get().executeQry(sql, "加载中...", res => {
 		console.log("商品信息查询成功：", res);
+		console.log("商品信息查询sql：", sql);
 		if (func)
 			func(res);
 	}, err => {

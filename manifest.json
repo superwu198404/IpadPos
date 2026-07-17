@@ -81,7 +81,8 @@
             "Maps" : {},
             "OAuth" : {},
             "Camera" : {},
-            "Barcode" : {}
+            "Barcode" : {},
+            "VideoPlayer" : {}
         },
         "distribute" : {
             "android" : {
@@ -109,7 +110,7 @@
                     "NSCameraUsageDescription" : "识别二维码"
                 },
                 "UIWebView" : false, // 是否使用旧版 UIWebView（建议 false，使用 WKWebView）
-				"disableViewportScale": true,
+                "disableViewportScale" : true,
                 "renderer" : "native", // 渲染模式，一般不用改
                 "dSYMs" : false,
                 "idfa" : false
@@ -179,7 +180,7 @@
         "fullscreen" : true,
         "titleNView" : false
     },
-    "appid" : "__UNI__9B87ED3",
+    "appid" : "__UNI__D975D37",
     "name" : "KengeePos",
     "versionName" : "1.1.128",
     "description" : "ipad上运行的收银软件",
