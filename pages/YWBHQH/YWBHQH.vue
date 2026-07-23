@@ -461,21 +461,24 @@
  			@confirm="handleKeyboardConfirm" />
 
  		<!-- 模拟扫码框 -->
-		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
+ 		<ScanModal :show.sync="showScanModal" tip-text="扫码录入裱花任务！" @confirm="handleScanResult" />
 
-		<!-- 图片预览弹窗 -->
-		<view class="img-preview-overlay" v-if="showImgPreview" @click="closeImgPreview">
-			<view class="img-preview-close" @click="closeImgPreview">×</view>
-			<view class="img-preview-count" v-if="previewImgs.length > 1">{{ previewIdx + 1 }} / {{ previewImgs.length }}</view>
-			<view class="img-preview-scroll" @click.stop @dblclick="toggleZoom">
-				<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw' }"
-					@dblclick="toggleZoom" @touchstart="onPinchStart" @touchmove="onPinchMove" />
-			</view>
-			<view class="img-preview-arrow img-preview-left" v-if="previewIdx > 0" @click.stop="imgPrev">‹</view>
-			<view class="img-preview-arrow img-preview-right" v-if="previewIdx < previewImgs.length - 1" @click.stop="imgNext">›</view>
-		</view>
+ 		<!-- 图片预览弹窗 -->
+ 		<view class="img-preview-overlay" v-if="showImgPreview" @click="closeImgPreview">
+ 			<view class="img-preview-close" @click="closeImgPreview">×</view>
+ 			<view class="img-preview-count" v-if="previewImgs.length > 1">{{ previewIdx + 1 }} /
+ 				{{ previewImgs.length }}
+ 			</view>
+ 			<view class="img-preview-scroll" @click.stop @dblclick="toggleZoom">
+ 				<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw' }"
+ 					@dblclick="toggleZoom" @touchstart="onPinchStart" @touchmove="onPinchMove" />
+ 			</view>
+ 			<view class="img-preview-arrow img-preview-left" v-if="previewIdx > 0" @click.stop="imgPrev">‹</view>
+ 			<view class="img-preview-arrow img-preview-right" v-if="previewIdx < previewImgs.length - 1"
+ 				@click.stop="imgNext">›</view>
+ 		</view>
 
-		<!-- 视频播放弹窗 -->
+ 		<!-- 视频播放弹窗 -->
  		<view class="video-preview-overlay" v-if="showVideoPreview">
  			<view v-if="platform=='ios'">
  				<video :src="videoUrl" style="width:80vw;height:80vh;" autoplay playsinline webkit-playsinline />
@@ -674,14 +677,14 @@
 
  				showScanModal: false, // 扫码弹窗
  				showDropdown_shop: false,
-				showDropdown_goods: false,
-				// 图片预览
-				showImgPreview: false,
-				previewImgs: [],
-				previewIdx: 0,
-				imgWidth: 50,
-				imgLastDist: 0,
-				// 视频预览
+ 				showDropdown_goods: false,
+ 				// 图片预览
+ 				showImgPreview: false,
+ 				previewImgs: [],
+ 				previewIdx: 0,
+ 				imgWidth: 50,
+ 				imgLastDist: 0,
+ 				// 视频预览
  				showVideoPreview: false,
  				videoUrl: '',
  				filteredShopList: [], // 过滤后的 门店列表
@@ -728,34 +731,44 @@
  			},
  			// 预览图片
  			previewImage(imgUrls, currentIndex) {
-			    if (!imgUrls) return;
-			    this.previewImgs = imgUrls.split(',').map(url => this.getImgUrl(url));
-			    this.previewIdx = currentIndex || 0;
-			    this.imgWidth = 50;
-			    this.showImgPreview = true;
-			  },
-			  closeImgPreview() { this.showImgPreview = false; },
-			  imgPrev() { this.previewIdx--; this.imgWidth = 50; },
-			  imgNext() { this.previewIdx++; this.imgWidth = 50; },
-			  toggleZoom() { this.imgWidth = this.imgWidth > 120 ? 50 : 200; },
-			  onPinchStart(e) {
-			    if (e.touches.length === 2) {
-			      let dx = e.touches[0].clientX - e.touches[1].clientX;
-			      let dy = e.touches[0].clientY - e.touches[1].clientY;
-			      this.imgLastDist = Math.sqrt(dx * dx + dy * dy);
-			    }
-			  },
-			  onPinchMove(e) {
-			    if (e.touches.length === 2 && this.imgLastDist > 0) {
-			      let dx = e.touches[0].clientX - e.touches[1].clientX;
-			      let dy = e.touches[0].clientY - e.touches[1].clientY;
-			      let dist = Math.sqrt(dx * dx + dy * dy);
-			      let newW = this.imgWidth * (dist / this.imgLastDist);
-			      this.imgWidth = Math.max(20, Math.min(300, newW));
-			      this.imgLastDist = dist;
-			    }
-			  },
-			  // 视频预览
+ 				if (!imgUrls) return;
+ 				this.previewImgs = imgUrls.split(',').map(url => this.getImgUrl(url));
+ 				this.previewIdx = currentIndex || 0;
+ 				this.imgWidth = 50;
+ 				this.showImgPreview = true;
+ 			},
+ 			closeImgPreview() {
+ 				this.showImgPreview = false;
+ 			},
+ 			imgPrev() {
+ 				this.previewIdx--;
+ 				this.imgWidth = 50;
+ 			},
+ 			imgNext() {
+ 				this.previewIdx++;
+ 				this.imgWidth = 50;
+ 			},
+ 			toggleZoom() {
+ 				this.imgWidth = this.imgWidth > 120 ? 50 : 200;
+ 			},
+ 			onPinchStart(e) {
+ 				if (e.touches.length === 2) {
+ 					let dx = e.touches[0].clientX - e.touches[1].clientX;
+ 					let dy = e.touches[0].clientY - e.touches[1].clientY;
+ 					this.imgLastDist = Math.sqrt(dx * dx + dy * dy);
+ 				}
+ 			},
+ 			onPinchMove(e) {
+ 				if (e.touches.length === 2 && this.imgLastDist > 0) {
+ 					let dx = e.touches[0].clientX - e.touches[1].clientX;
+ 					let dy = e.touches[0].clientY - e.touches[1].clientY;
+ 					let dist = Math.sqrt(dx * dx + dy * dy);
+ 					let newW = this.imgWidth * (dist / this.imgLastDist);
+ 					this.imgWidth = Math.max(20, Math.min(300, newW));
+ 					this.imgLastDist = dist;
+ 				}
+ 			},
+ 			// 视频预览
  			openVideoPreview(item) {
  				if (!item.VIDEOURL) return;
  				this.videoUrl = this.V_URL + item.VIDEOURL;
@@ -896,7 +909,7 @@
  				}
  				if (obj.key == "CSYJ") {
  					that.listData = that._listData.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N' && dateformat
- 						.isLessThanOneHour(r1.NOTE, 50));
+ 						.isLessThanOneHour(r1.NOTE, 35));
  				}
  			},
  			handleSourceChange(e) {
@@ -1406,13 +1419,12 @@
  						}
  						if (r.key == 'YZF') {
  							let num = data.filter(r1 => r1.BILL_STATUS == '9').reduce((sum, it) => sum + it
- 								.ZQTY_SQ,
- 								0);
+ 								.ZQTY_SQ, 0);
  							r.value = num;
  						}
  						if (r.key == 'CSYJ') {
  							let num = data.filter(r1 => r1.BILL_STATUS == '1' && r1.YN_SC == 'N' && dateformat
- 								.isLessThanOneHour(r1.NOTE, 50)).reduce((sum, it) =>
+ 								.isLessThanOneHour(r1.NOTE, 35)).reduce((sum, it) =>
  								sum + it.ZQTY_SQ, 0);
  							r.value = num;
  						}
@@ -2718,38 +2730,76 @@
  		padding: 16rpx 36rpx;
  		border-radius: 16rpx;
  		pointer-events: auto;
-	}
+ 	}
 
-	.img-preview-overlay {
-		position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-		background: rgba(0, 0, 0, 0.92);
-		z-index: 9999999;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-	}
-	.img-preview-scroll {
-		min-height: 100vh;
-		display: flex; align-items: center; justify-content: center;
-		overflow-y: auto;
-	}
-	.img-preview-close {
-		position: fixed; top: 20rpx; right: 30rpx;
-		width: 60rpx; height: 60rpx; line-height: 60rpx;
-		text-align: center; font-size: 40rpx; color: #fff;
-		background: rgba(255,255,255,.2); border-radius: 50%;
-		z-index: 10;
-	}
-	.img-preview-count {
-		position: fixed; bottom: 30rpx; left: 50%; transform: translateX(-50%);
-		color: #fff; font-size: 26rpx; background: rgba(0,0,0,.5);
-		padding: 10rpx 30rpx; border-radius: 30rpx; z-index: 10;
-	}
-	.img-preview-arrow {
-		position: fixed; top: 50%; transform: translateY(-50%);
-		width: 70rpx; height: 70rpx; line-height: 70rpx; text-align: center;
-		color: #fff; font-size: 50rpx; background: rgba(255,255,255,.15);
-		border-radius: 50%; z-index: 10;
-	}
-	.img-preview-left  { left: 30rpx; }
-	.img-preview-right { right: 30rpx; }
-</style>
+ 	.img-preview-overlay {
+ 		position: fixed;
+ 		top: 0;
+ 		left: 0;
+ 		width: 100vw;
+ 		height: 100vh;
+ 		background: rgba(0, 0, 0, 0.92);
+ 		z-index: 9999999;
+ 		overflow-y: auto;
+ 		-webkit-overflow-scrolling: touch;
+ 	}
+
+ 	.img-preview-scroll {
+ 		min-height: 100vh;
+ 		display: flex;
+ 		align-items: center;
+ 		justify-content: center;
+ 		overflow-y: auto;
+ 	}
+
+ 	.img-preview-close {
+ 		position: fixed;
+ 		top: 20rpx;
+ 		right: 30rpx;
+ 		width: 60rpx;
+ 		height: 60rpx;
+ 		line-height: 60rpx;
+ 		text-align: center;
+ 		font-size: 40rpx;
+ 		color: #fff;
+ 		background: rgba(255, 255, 255, .2);
+ 		border-radius: 50%;
+ 		z-index: 10;
+ 	}
+
+ 	.img-preview-count {
+ 		position: fixed;
+ 		bottom: 30rpx;
+ 		left: 50%;
+ 		transform: translateX(-50%);
+ 		color: #fff;
+ 		font-size: 26rpx;
+ 		background: rgba(0, 0, 0, .5);
+ 		padding: 10rpx 30rpx;
+ 		border-radius: 30rpx;
+ 		z-index: 10;
+ 	}
+
+ 	.img-preview-arrow {
+ 		position: fixed;
+ 		top: 50%;
+ 		transform: translateY(-50%);
+ 		width: 70rpx;
+ 		height: 70rpx;
+ 		line-height: 70rpx;
+ 		text-align: center;
+ 		color: #fff;
+ 		font-size: 50rpx;
+ 		background: rgba(255, 255, 255, .15);
+ 		border-radius: 50%;
+ 		z-index: 10;
+ 	}
+
+ 	.img-preview-left {
+ 		left: 30rpx;
+ 	}
+
+ 	.img-preview-right {
+ 		right: 30rpx;
+ 	}
+ </style>
