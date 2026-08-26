@@ -8,7 +8,7 @@
 		<view class="tranlist">
 			<view class="leftlist">
 				<view class="logos">
-					<image src="../../images/hello-card.png" mode="widthFix"></image>
+					<image :src="helloCardLogo" mode="widthFix"></image>
 					<view class="xingqi"><text>{{curWeek}}</text>{{curDate}}</view>
 				</view>
 				<view class="sginout">
@@ -102,6 +102,14 @@
 	import _query_sale from '@/api/business/query_sale.js';
 
 	import tiktok from '@/api/business/tiktok.js';
+	import {
+		getCurrentBrand
+	} from '@/utils/configInfo.js';
+
+	const HELLO_CARD_LOGOS = {
+		'KG': '/static/images/hello-card.png',
+		'YYM': '/static/images/yym_hello_card.jpg'
+	};
 	var that;
 	export default {
 		data() {
@@ -113,17 +121,27 @@
 				curWeek: dateformat.getWeekDate(),
 				curDate: dateformat.getYMD(),
 				timer: null,
+				timers: null,
+				timerss: null,
+				cycleTimer: null,
+				flipStopped: false,
 				angle: 0,
 				angles: 0,
 				angless: 0,
 				syyjk: {}, //收银员是否结款
 				version: "1.0.0", //版本号
-				IMAGES: []
+				IMAGES: [],
+				helloCardLogo: '/static/images/hello-card.png'
 			};
 		},
 		methods: {
 			onLoad: async function() {
+				console.log("Center.OnLoad触发");
 				that = this;
+				const brand = getCurrentBrand();
+				if (brand) {
+					that.helloCardLogo = HELLO_CARD_LOGOS[brand.brandNo] || HELLO_CARD_LOGOS['KG'];
+				}
 				that.GetSignOutInWeeks();
 				// that.GetSkyJk();
 				let sysinfo = util.getStorage("sysinfo");
@@ -140,30 +158,53 @@
 			onShow: function() {
 				this.GetUserMenu(); //用户菜单数据
 				this.MonitorEvent();
-				this.timer = setInterval(() => {
-					this.timer = setTimeout(() => {
-						if (this.angle == 0) {
-							this.angle = 180;
-						} else if (this.angle == 180) {
-							this.angle = 0;
-						}
-					}, 4000);
-					this.timers = setTimeout(() => {
-						if (this.angles == 0) {
-							this.angles = 180;
-						} else if (this.angles == 180) {
-							this.angles = 0;
-						}
-					}, 4500);
-					this.timerss = setTimeout(() => {
-						if (this.angless == 0) {
-							this.angless = 180;
-						} else if (this.angless == 180) {
-							this.angless = 0;
-						}
-					}, 5000);
+				this.startFlipCycle();
+			},
+			// 开始一轮翻转计时
+			startFlipCycle: function() {
+				//console.log("[翻转]新一轮调度", new Date().toLocaleTimeString() + "." + new Date().getMilliseconds());
+				this.clearFlipTimers();
+				// 重新激活：每个回调内会校验此标记，页面离开后已排队的回调直接作废
+				this.flipStopped = false;
+				// 模块1：4000ms后翻转
+				this.timer = setTimeout(() => {
+					if (this.flipStopped) return;
+					this.angle = this.angle == 0 ? 180 : 0;
+				}, 4000);
+				// 模块2：4500ms后翻转
+				this.timers = setTimeout(() => {
+					if (this.flipStopped) return;
+					this.angles = this.angles == 0 ? 180 : 0;
+				}, 4500);
+				// 模块3：5000ms后翻转
+				this.timerss = setTimeout(() => {
+					if (this.flipStopped) return;
+					this.angless = this.angless == 0 ? 180 : 0;
+				}, 5000);
+				// 本轮完成后，5500ms调度下一轮（链式，不叠加）
+				this.cycleTimer = setTimeout(() => {
+					if (this.flipStopped) return;
+					this.startFlipCycle();
 				}, 5500);
-
+			},
+			// 清除所有翻转定时器
+			clearFlipTimers: function() {
+				if (this.timer) clearTimeout(this.timer);
+				if (this.timers) clearTimeout(this.timers);
+				if (this.timerss) clearTimeout(this.timerss);
+				if (this.cycleTimer) clearTimeout(this.cycleTimer);
+				this.timer = null;
+				this.timers = null;
+				this.timerss = null;
+				this.cycleTimer = null;
+			},
+			// 停止翻转：作废已排队的回调 + 清除定时器 + 复位角度
+			stopFlipCycle: function() {
+				this.flipStopped = true;
+				this.clearFlipTimers();
+				this.angle = 0;
+				this.angles = 0;
+				this.angless = 0;
 			},
 			reset: function() {
 				_init.dataInit('reloadsqlite', true)
@@ -171,11 +212,14 @@
 			zbtx: function() {
 				_init.dataInit('download_zbtx', true)
 			},
-			//uniapp中onHide()能监听到页面离开
-			onHide() { //离开页面前清除计时器
+			//uniapp中onHide()能监听到页面隐藏（navigateTo跳出、切到后台）
+			onHide() {
 				// console.log('onHide');
-				clearInterval(this.timer);
-				this.timer = null;
+				this.stopFlipCycle();
+			},
+			//redirectTo/reLaunch只走onUnload，不走onHide，必须在此兜底清理
+			onUnload() {
+				this.stopFlipCycle();
 			},
 			TimedCommunication: function() {
 				//3min执行一次销售单传输 从终端参数获取
@@ -518,6 +562,10 @@
 						}
 					})
 			}
+		},
+		//Vue标准销毁钩子，与uniapp的onUnload互为兜底，确保定时器链一定被切断
+		beforeDestroy() {
+			this.stopFlipCycle();
 		},
 	}
 </script>

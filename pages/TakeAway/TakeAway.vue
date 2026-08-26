@@ -79,7 +79,8 @@
 											<label><text>外卖单号：</text><text>{{Order.BILL}}</text></label>
 											<!-- <label><text>收货人：</text><text>{{Order.STR5}}</text></label>
 										<label><text>联系电话：</text><text>{{Order.STR6}}</text></label> -->
-											<label><text>下单时间：</text><text>{{Order.WTIME}}</text></label>
+											<label><text>下单时间：</text><text>{{Order.WDATE}}
+													{{Order.WTIME}}</text></label>
 											<label><text>异店直配：</text><text>{{Order.YNYDZP}}</text></label>
 											<label><text>商家自配：</text><text>{{Order.YNZP}}</text></label>
 											<label><text>指定裱花间：</text><text>{{Order.BH_ZP_NAME}}</text></label>

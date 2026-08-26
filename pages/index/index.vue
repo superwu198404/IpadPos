@@ -15,12 +15,39 @@
 			</view>
 		</view>
 		<view>
-			<button @click="MenuPage(10)">数据查看</button>
+
+			<button @click="MenuPage(10)">查看DB数据</button>
+			<button @click="toggleDebug">{{ showDebug ? '关闭参数信息' : '查看参数信息' }}</button>
 			<button @click="MenuPage(7)">切换门店</button>
 			<!-- <button @click="MenuPage(12)">查看轮播</button> -->
 			<button @click="Reserve">提取</button>
 			<button @click="closeDB()">断开数据库链接</button>
 			<button @click="ConnectDebug()">连接调试{{ input.connect.open ? "(online)" : "(offline)" }}</button>
+
+		</view>
+		<view class="debug-mask" v-if="showDebug" @touchmove.stop.prevent>
+			<view class="debug-modal">
+				<view class="debug-header">
+					<text class="debug-title">本地参数调试</text>
+					<text class="debug-close" @click="showDebug = false">×</text>
+				</view>
+				<view class="debug-search">
+					<input class="debug-search-input" v-model="debugKeyword" placeholder="输入关键字搜索..."
+						@confirm="onDebugSearch" @input="onDebugSearch" />
+					<view class="debug-nav" v-if="matchIndexes.length > 0">
+						<text class="debug-nav-btn" @click="prevMatch">▲</text>
+						<text class="debug-nav-count">{{ currentMatchIdx + 1 }}/{{ matchIndexes.length }}</text>
+						<text class="debug-nav-btn" @click="nextMatch">▼</text>
+					</view>
+				</view>
+				<scroll-view class="debug-body" scroll-y="true" :scroll-into-view="scrollToId"
+					scroll-with-animation="true">
+					<text selectable="true" class="debug-text">
+						<text v-for="(line, idx) in debugLines" :key="idx" :id="'dl_' + idx"
+							:class="{ 'debug-highlight': line.match }">{{ line.text }}</text>
+					</text>
+				</scroll-view>
+			</view>
 		</view>
 		<view v-if="false">
 			<PrinterPage ref="printerPage" style="display: none;"></PrinterPage>
@@ -163,6 +190,10 @@
 	import util from '@/utils/util.js';
 	import dateformat from '@/utils/dateformat.js';
 	import {
+		getBaseUrl,
+		resetGlobalData
+	} from '@/utils/configInfo.js';
+	import {
 		RefundQuery
 	} from '@/api/business/da.js';
 	import PrinterPage from '@/pages/xprinter/receipt';
@@ -177,6 +208,13 @@
 		data() {
 			return {
 				first: true,
+				showDebug: false,
+				debugText: '',
+				debugKeyword: '',
+				debugLines: [],
+				scrollToId: '',
+				matchIndexes: [],
+				currentMatchIdx: -1,
 				input: {
 					sql: "select * from SPDA where spid='000000008010100002'",
 					ip: "192.168.0.28:8000",
@@ -482,12 +520,43 @@
 						url: "/pages/mainSale/MainSale"
 					});
 				} else if (e == 7) {
-					uni.reLaunch({
-						url: "../start/start",
-						success: () => {
-							// util.setStorage("store", {});
-							// uni.clearStorageSync(); //清除所有缓存
-							this.clearAllAppData();
+					// 切换门店：确认后清除所有数据，回到初始化页面
+					uni.showModal({
+						title: '切换门店',
+						content: '切换门店将清除所有本地数据，需要重新初始化，是否继续？',
+						success: (res) => {
+							if (res.confirm) {
+								uni.showLoading({
+									title: '清理数据中...',
+									mask: true
+								});
+								// ① 清除所有缓存
+								try {
+									uni.clearStorageSync()
+								} catch (e) {}
+								// ② 重置 globalData 到初始状态
+								resetGlobalData();
+								// ③ App端清除数据库和缓存
+								// #ifdef APP-PLUS
+								try {
+									plus.sqlite.closeDatabase({
+										name: 'ipad'
+									});
+								} catch (e) {}
+								// 删除数据库文件
+								plus.io.resolveLocalFileSystemURL('_doc/', (dir) => {
+									dir.getFile('ipad.db', {}, (fileEntry) => {
+										fileEntry.remove();
+									});
+								});
+								plus.cache.clear();
+								// #endif
+								uni.hideLoading();
+								// ③ 跳转到初始化页面
+								uni.reLaunch({
+									url: "../start/start"
+								});
+							}
 						}
 					});
 				} else if (e == 8) {
@@ -531,7 +600,6 @@
 				// 清除_doc目录
 				plus.io.resolveLocalFileSystemURL('_doc/ipad.db', (entry) => {
 					console.log("clearAllAppData.resolveLocalFileSystemURL", entry);
-					s
 					entry.removeRecursively()
 				})
 				// #endif
@@ -546,6 +614,119 @@
 					title: '已清除所有本地数据',
 					icon: 'success'
 				})
+			},
+			// 调试：切换显示本地参数信息
+			toggleDebug: function() {
+				this.showDebug = !this.showDebug;
+				if (this.showDebug) {
+					this.refreshDebug();
+					this.debugKeyword = '';
+				}
+			},
+			// 调试：刷新本地参数信息
+			refreshDebug: function() {
+				let text = '';
+				// 尝试将类 JSON 字符串格式化为可读 JSON
+				const tryFormatJson = (val) => {
+					if (typeof val === 'object' && val !== null) return JSON.stringify(val, null, 2);
+					const str = String(val);
+					const trimmed = str.trim();
+					if ((trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+						(trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+						try {
+							return JSON.stringify(JSON.parse(trimmed), null, 2);
+						} catch (e) {
+							/* 非标准 JSON，原样返回 */
+						}
+					}
+					return str;
+				};
+
+				text += '========== Storage ==========\n';
+				try {
+					const keys = uni.getStorageInfoSync().keys;
+					if (keys.length === 0) {
+						text += '(空)\n';
+					} else {
+						keys.forEach(key => {
+							try {
+								const val = uni.getStorageSync(key);
+								text += '[' + key + ']\n' + tryFormatJson(val) + '\n\n';
+							} catch (e) {
+								text += '[' + key + '] (读取失败)\n';
+							}
+						});
+					}
+				} catch (e) {
+					text += '获取失败: ' + e.message + '\n';
+				}
+
+				text += '========== currentBaseUrl ==========\n';
+				try {
+					text += getBaseUrl() + '\n\n';
+				} catch (e) {
+					text += '获取失败: ' + e.message + '\n';
+				}
+
+				text += '========== globalData ==========\n';
+				try {
+					const app = getApp();
+					text += JSON.stringify(app.globalData, (k, v) => {
+						if (typeof v === 'function') return '[Function]';
+						return v;
+					}, 2);
+				} catch (e) {
+					text += '获取失败: ' + e.message;
+				}
+
+				this.debugText = text;
+				this.applyDebugFilter();
+			},
+			// 调试：关键字过滤
+			applyDebugFilter: function() {
+				const keyword = (this.debugKeyword || '').trim().toLowerCase();
+				const lines = this.debugText.split('\n');
+				const matchIndexes = [];
+				this.debugLines = lines.map((line, idx) => {
+					const match = keyword ? line.toLowerCase().includes(keyword) : false;
+					if (match) matchIndexes.push(idx);
+					return {
+						text: line + '\n',
+						match
+					};
+				});
+				this.matchIndexes = matchIndexes;
+				// 自动滚动到第一个匹配行
+				if (matchIndexes.length > 0) {
+					this.currentMatchIdx = 0;
+					this.$nextTick(() => {
+						this.scrollToId = 'dl_' + matchIndexes[0];
+					});
+				} else {
+					this.currentMatchIdx = -1;
+					this.scrollToId = '';
+				}
+			},
+			// 调试：上一个匹配
+			prevMatch: function() {
+				if (this.matchIndexes.length === 0) return;
+				this.currentMatchIdx = (this.currentMatchIdx - 1 + this.matchIndexes.length) % this.matchIndexes
+					.length;
+				this.$nextTick(() => {
+					this.scrollToId = 'dl_' + this.matchIndexes[this.currentMatchIdx];
+				});
+			},
+			// 调试：下一个匹配
+			nextMatch: function() {
+				if (this.matchIndexes.length === 0) return;
+				this.currentMatchIdx = (this.currentMatchIdx + 1) % this.matchIndexes.length;
+				this.$nextTick(() => {
+					this.scrollToId = 'dl_' + this.matchIndexes[this.currentMatchIdx];
+				});
+			},
+			// 调试：搜索输入
+			onDebugSearch: function() {
+				this.applyDebugFilter();
 			},
 			//新版
 			XS_POSID: function() {
@@ -1205,15 +1386,15 @@
 			this.first = false;
 		},
 		async onShow() {
-			console.log("[Index-onShow]刷新商品列表开始...");
-			this.refreshProduct(); //获取测试用的商品列表
-			console.log("[Index-onShow]获取上一条支付单号...");
-			this.refund_no = this.$store.state.trade;
-			console.log("[Index-onShow]查询本地订单号用于自动联想提示...");
-			var bills = await common.Query("SELECT BILL FROM SALE001");
-			console.log("[Index-onShow]查询结果:", bills);
-			this.input.bills = bills?.map(i => i.BILL)?.reverse();
-			console.log("[Index-onShow]查询本地订单号完毕...", this.input.bills);
+			// console.log("[Index-onShow]刷新商品列表开始...");
+			// this.refreshProduct(); //获取测试用的商品列表
+			// console.log("[Index-onShow]获取上一条支付单号...");
+			// this.refund_no = this.$store.state.trade;
+			// console.log("[Index-onShow]查询本地订单号用于自动联想提示...");
+			// var bills = await common.Query("SELECT BILL FROM SALE001");
+			// console.log("[Index-onShow]查询结果:", bills);
+			// this.input.bills = bills?.map(i => i.BILL)?.reverse();
+			// console.log("[Index-onShow]查询本地订单号完毕...", this.input.bills);
 		},
 		onReady() {
 			//监听页面初次渲染完成。注意如果渲染速度快，会在页面进入动画完成前触发
@@ -1348,5 +1529,115 @@
 		right: 0px;
 		top: 0px;
 		color: white;
+	}
+
+	/* 调试弹窗 */
+	.debug-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.debug-modal {
+		width: 96%;
+		max-width: 1200rpx;
+		height: 80%;
+		background-color: #fff;
+		border-radius: 24rpx;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.debug-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 30rpx;
+		border-bottom: 1rpx solid #eee;
+		flex-shrink: 0;
+	}
+
+	.debug-title {
+		font-size: 34rpx;
+		font-weight: bold;
+		color: #333;
+	}
+
+	.debug-close {
+		font-size: 48rpx;
+		color: #999;
+		line-height: 1;
+		padding: 0 10rpx;
+	}
+
+	.debug-search {
+		padding: 20rpx 30rpx;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		gap: 16rpx;
+	}
+
+	.debug-search-input {
+		height: 72rpx;
+		line-height: 72rpx;
+		background-color: #f5f5f5;
+		border-radius: 12rpx;
+		padding: 0 24rpx;
+		font-size: 28rpx;
+		border: 1rpx solid #e0e0e0;
+		flex: 1;
+	}
+
+	.debug-nav {
+		display: flex;
+		align-items: center;
+		gap: 8rpx;
+		flex-shrink: 0;
+	}
+
+	.debug-nav-btn {
+		font-size: 20rpx;
+		background-color: #006B44;
+		color: #fff;
+		padding: 6rpx 14rpx;
+		border-radius: 8rpx;
+		text-align: center;
+		line-height: 1.4;
+	}
+
+	.debug-nav-count {
+		font-size: 24rpx;
+		color: #666;
+		min-width: 60rpx;
+		text-align: center;
+	}
+
+	.debug-body {
+		flex: 1;
+		padding: 0 30rpx 30rpx;
+		overflow-y: auto;
+	}
+
+	.debug-text {
+		font-size: 22rpx;
+		color: #333;
+		line-height: 1.6;
+		white-space: pre-wrap;
+		word-break: break-all;
+		font-family: monospace;
+	}
+
+	.debug-highlight {
+		background-color: #FFEB3B;
+		color: #000;
 	}
 </style>

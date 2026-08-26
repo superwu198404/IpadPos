@@ -489,7 +489,8 @@
 				this.EditLoad(true, bill);
 				this.view.check.result = false;
 				return ordersStatusCheck({
-					bill: bill
+					bill: bill,
+					khid: this.KHID,
 				}, util.callBind(this, function(res) {
 					this.EditLoad(false, bill);
 					this.view.search.confirm = res.code;

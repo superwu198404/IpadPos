@@ -469,10 +469,15 @@
  			<view class="img-preview-count" v-if="previewImgs.length > 1">{{ previewIdx + 1 }} /
  				{{ previewImgs.length }}
  			</view>
- 			<view class="img-preview-scroll" @click.stop @dblclick="toggleZoom">
- 				<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw' }"
- 					@dblclick="toggleZoom" @touchstart="onPinchStart" @touchmove="onPinchMove" />
+ 			<scroll-view class="img-preview-scroll" scroll-y enable-flex :scroll-top="imgScrollTop"
+				@touchstart="onImgSwipeStart"
+				@touchend="onImgSwipeEnd">
+ 				<view class="img-preview-inner">
+					<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw', opacity: imgOpacity, transition: 'opacity 0.15s ease' }"
+ 					@click.stop
+					@touchstart="onPinchStart" @touchmove="onPinchMove" />
  			</view>
+			</scroll-view>
  			<view class="img-preview-arrow img-preview-left" v-if="previewIdx > 0" @click.stop="imgPrev">‹</view>
  			<view class="img-preview-arrow img-preview-right" v-if="previewIdx < previewImgs.length - 1"
  				@click.stop="imgNext">›</view>
@@ -683,7 +688,11 @@
  				previewImgs: [],
  				previewIdx: 0,
  				imgWidth: 50,
+				imgOpacity: 1,
  				imgLastDist: 0,
+				imgSwipeStartX: 0,
+				imgSwipeStartY: 0,
+				imgScrollTop: 0,
  				// 视频预览
  				showVideoPreview: false,
  				videoUrl: '',
@@ -741,16 +750,31 @@
  				this.showImgPreview = false;
  			},
  			imgPrev() {
- 				this.previewIdx--;
- 				this.imgWidth = 50;
+				if (this.previewIdx > 0) {
+					this.imgOpacity = 0;
+					setTimeout(() => {
+						this.previewIdx--;
+						this.imgWidth = 50;
+						this.imgScrollTop = Math.random();
+						this.$nextTick(() => {
+							this.imgOpacity = 1;
+						});
+					}, 150);
+				}
  			},
  			imgNext() {
- 				this.previewIdx++;
- 				this.imgWidth = 50;
- 			},
- 			toggleZoom() {
- 				this.imgWidth = this.imgWidth > 120 ? 50 : 200;
- 			},
+				if (this.previewIdx < this.previewImgs.length - 1) {
+					this.imgOpacity = 0;
+					setTimeout(() => {
+						this.previewIdx++;
+						this.imgWidth = 50;
+						this.imgScrollTop = Math.random();
+						this.$nextTick(() => {
+							this.imgOpacity = 1;
+						});
+					}, 150);
+				}
+			},
  			onPinchStart(e) {
  				if (e.touches.length === 2) {
  					let dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -768,6 +792,34 @@
  					this.imgLastDist = dist;
  				}
  			},
+			// 图片预览滑动切换
+			onImgSwipeStart(e) {
+				if (e.touches.length === 1) {
+					this.imgSwipeStartX = e.touches[0].clientX;
+					this.imgSwipeStartY = e.touches[0].clientY;
+				}
+			},
+			onImgSwipeEnd(e) {
+				if (e.touches.length > 0 || this.imgLastDist > 0) {
+					if (e.touches.length === 0) {
+						this.imgLastDist = 0;
+					}
+					return;
+				}
+				const deltaX = e.changedTouches[0].clientX - this.imgSwipeStartX;
+				const deltaY = e.changedTouches[0].clientY - this.imgSwipeStartY;
+				const threshold = 60;
+				if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
+					// 左右滑动
+					if (deltaX > 0) {
+						this.imgPrev();
+					} else {
+						this.imgNext();
+					}
+				}
+				this.imgSwipeStartX = 0;
+				this.imgSwipeStartY = 0;
+			},
  			// 视频预览
  			openVideoPreview(item) {
  				if (!item.VIDEOURL) return;
@@ -2740,27 +2792,27 @@
  		height: 100vh;
  		background: rgba(0, 0, 0, 0.92);
  		z-index: 9999999;
- 		overflow-y: auto;
- 		-webkit-overflow-scrolling: touch;
  	}
 
  	.img-preview-scroll {
+ 		height: 100vh;
+ 	}
+ 	.img-preview-inner {
  		min-height: 100vh;
  		display: flex;
  		align-items: center;
  		justify-content: center;
- 		overflow-y: auto;
  	}
 
  	.img-preview-close {
  		position: fixed;
- 		top: 20rpx;
- 		right: 30rpx;
- 		width: 60rpx;
- 		height: 60rpx;
- 		line-height: 60rpx;
+ 		top: 72rpx;
+ 		right: 100rpx;
+ 		width: 100rpx;
+ 		height: 100rpx;
+ 		line-height: 100rpx;
  		text-align: center;
- 		font-size: 40rpx;
+ 		font-size: 60rpx;
  		color: #fff;
  		background: rgba(255, 255, 255, .2);
  		border-radius: 50%;
@@ -2784,22 +2836,22 @@
  		position: fixed;
  		top: 50%;
  		transform: translateY(-50%);
- 		width: 70rpx;
- 		height: 70rpx;
- 		line-height: 70rpx;
+ 		width: 100rpx;
+ 		height: 100rpx;
+ 		line-height: 100rpx;
  		text-align: center;
  		color: #fff;
- 		font-size: 50rpx;
+ 		font-size: 60rpx;
  		background: rgba(255, 255, 255, .15);
  		border-radius: 50%;
  		z-index: 10;
  	}
 
  	.img-preview-left {
- 		left: 30rpx;
+ 		left: 100rpx;
  	}
 
  	.img-preview-right {
- 		right: 30rpx;
+ 		right: 100rpx;
  	}
  </style>

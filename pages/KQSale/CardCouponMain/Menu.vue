@@ -6,7 +6,7 @@
 	<view class="full container border-box">
 		<view class="navmall" style="height: 100%;">
 			<view class="logo">
-				<image src="../../../images/KGlogo-2.png" mode="widthFix" style="width: 100%;"></image>
+				<image :src="brandLogo" mode="widthFix" style="width: 100%;"></image>
 			</view>
 			<view class="menu">
 				<view :class="source.current_menu_info === menu_info ? 'bills curr' : 'bills'"
@@ -45,7 +45,14 @@
 
 	import common from '@/api/common.js';
 	import util from "@/utils/util.js";
+	import {
+		getCurrentBrand
+	} from '@/utils/configInfo.js';
 
+	const BRAND_LOGOS = {
+		'KG': '/static/images/KGlogo-2.png',
+		'YYM': '/static/images/yym-logo.jpg'
+	};
 	//页面组件 👆
 	export default {
 		name: "Menu",
@@ -78,6 +85,7 @@
 		},
 		data() {
 			return {
+				brandLogo: '/static/images/KGlogo-2.png',
 				source: {
 					current_menu_info: null,
 					menu_infos: [{
@@ -160,6 +168,12 @@
 		created() {
 			console.log("[Created]Menu菜单加载...");
 			this.setting_default_menu();
+			const brand = getCurrentBrand();
+			console.log("品牌brand：", brand);
+			if (brand) {
+				this.brandLogo = BRAND_LOGOS[brand.brandNo] || BRAND_LOGOS['KG'];
+				console.log("品牌logo：", this.brandLogo);
+			}
 		}
 	}
 </script>

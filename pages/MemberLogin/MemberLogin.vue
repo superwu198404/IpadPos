@@ -10,7 +10,7 @@
 		<!-- <Head></Head> -->
 		<view class="mem-bg">
 			<button class="skip" @click="ReBack()">×</button>
-			<image class="img-bg" src="../../images/hydl-bj.png" mode="widthFix"></image>
+			<image class="img-bg" src="../../images/hydl-bj.jpg" mode="widthFix"></image>
 			<view class="import">
 				<view class="h1">会员登录</view>
 				<text class="zim">Member login</text>

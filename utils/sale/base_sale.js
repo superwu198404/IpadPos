@@ -3152,8 +3152,8 @@ function GetSale(global, vue, target_name, uni) {
 	// }
 	//设置所有商品列表数据，初始化字母列表  售价列表  和商品列表  ，初始化促销单 
 	this.SetAllGoods = function(pm_list, pm_price) {
-		// console.log("所有的商品集合：", pm_list);
-		cx.Cxdict();
+		console.log("所有的商品集合：", pm_list.length);
+		//cx.Cxdict(); //260824删除，调整Createcx中按需初始化
 		this.spPrice = pm_price;
 		this.Page.$set(this.Page[this.pageName], "spPrice", this.spPrice);
 		this.Allsplist = pm_list;
@@ -3379,12 +3379,15 @@ function GetSale(global, vue, target_name, uni) {
 		// that.log("[SetManage]绑定完成:", that.ComponentsManage[pm_mtype]);
 		that.update();
 	}
-
+	//工具栏菜单点击事件
 	this.ToolsManage = util.callBind(this, function(info) {
 		console.log("[ToolsManage]信息:", info);
 		if (this.tool_pages[info] !== undefined) {
 			console.log("[ToolsManage]修改前:", this.tool_pages[info]);
 			this.tool_pages[info] = !this.tool_pages[info];
+			if (info == "changeGoods" && this.tool_pages[info]) { //外卖换货 打开后销售模式重置
+				this.resetSaleBill();
+			}
 			console.log("[ToolsManage]修改后:", this.tool_pages[info]);
 
 			this.update();
@@ -4166,10 +4169,11 @@ function GetSale(global, vue, target_name, uni) {
 		let pm_qty = that.clikSpItem.inputQty;
 		let find = false;
 		let inqty = parseFloat(pm_qty);
-		that.log(pm_spid + "#" + pm_qty + "pm_yndgxp")
+		console.log(pm_spid + "#" + pm_qty + "pm_yndgxp")
 		var drink = that.sale008.filter(item => {
-			return item.SPID = pm_spid
+			return item.SPID == pm_spid;
 		});
+		console.log("是否加购过该水吧商品：", drink);
 		///检查是否已经添加过  如果已经添加过 直接修改某一行
 		if (drink.length == 0) //如果有水吧商品的信息这里直接跳过
 		{
@@ -4180,6 +4184,21 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 		}
+		console.log("是否加购过该水吧商品0：", that.sale002);
+		console.log("是否加购过该水吧商品1：", find);
+		//商品选中状态
+		that.selectFlagList.map(r => {
+			r.plarr.map(r1 => {
+				if (r1.SPID == pm_spid) {
+					if (pm_qty > 0)
+						r1.check = true;
+					else
+						r1.check = false;
+				}
+			})
+		})
+		// console.log("商品总集合：", that.selectFlagList);
+		that.update();
 		if (pm_qty <= 0) {
 			util.simpleMsg("请选择商品数量", true);
 			return;
@@ -4328,6 +4347,11 @@ function GetSale(global, vue, target_name, uni) {
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
+		const qty = Number(pm_qty);
+		if (!Number.isFinite(qty)) {
+			util.simpleMsg('数量无效', true);
+			return true;
+		}
 		if (pm_row < this.currentOperation.lockRows && pm_qty !== 0 && pm_qty != this.sale002[pm_row].QTY) {
 			util.simpleMsg("该商品已被锁定!", true)
 			console.log("[UpdateSp]商品处于被锁定行，无法修改数量!");
@@ -4348,6 +4372,17 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 			this.sale002.splice(pm_row, 1);
+			//更改商品选中状态
+			that.selectFlagList.map(r => {
+				r.plarr.map(r1 => {
+					if (r1.SPID == pm_spid) {
+						if (pm_qty > 0)
+							r1.check = true;
+						else
+							r1.check = false;
+					}
+				})
+			})
 		}
 		return true;
 	}
@@ -4357,22 +4392,6 @@ function GetSale(global, vue, target_name, uni) {
 	 * @param {*} e 
 	 */
 	this.ShowStatement = async function(e) {
-		// let store = util.getStorage("store");
-		// if (store.LOGINDATE && new Date(store.LOGINDATE).getDate() !== new Date().getDate() || store
-		// 	.CLIENT_STATUS != '1') {
-		// 	if (store.CLIENT_STATUS != '1') {
-		// 		util.simpleMsg("门店非营业状态，禁止操作！", "none");
-		// 	} else {
-		// 		util.simpleMsg("签到状态过期，请重新签到！", "none");
-		// 		store.OPENFLAG = 0;
-		// 		util.setStorage("store", store);
-		// 	}
-		// 	util.sleep(1500);
-		// 	uni.redirectTo({
-		// 		url: "/pages/Center/Center"
-		// 	});
-		// 	return;
-		// }
 		if (!common.CheckSign()) {
 			return;
 		}
@@ -4410,9 +4429,10 @@ function GetSale(global, vue, target_name, uni) {
 			this.ScoreCount(response?.cxfs); //总和积分和抵现积分金额
 			if (!e)
 				this.cxIsJFYC = true;
-			this.BanPayType(response?.cxfs); //收集禁止的支付id
-			this.cxfsArr = response?.cxfs; //促销跟踪
-			this.hasCX = (response?.cxfs.length > 0); //是否有促销生效
+			let cxfs = response?.cxfs ?? [];
+			this.BanPayType(cxfs); //收集禁止的支付id
+			this.cxfsArr = cxfs; //促销跟踪
+			this.hasCX = (cxfs.length > 0); //是否有促销生效
 			this.cxIsJF = response?.isjf; //是否有积分促销生效(不是满足)
 			console.log("促销跟踪数据：", this.cxfsArr);
 			let TCXDISC = 0;
@@ -4450,11 +4470,9 @@ function GetSale(global, vue, target_name, uni) {
 			ONET: 0,
 			NET: 0,
 			QTY: 0,
-			DISCRATE: 0
+			DISCRATE: 0,
+			CXDISC: 0 //新增：汇总促销折扣，供 TCXDISC 无条件重算
 		});
-		// that.log("***************计算结果展示******************")
-		// that.log(retx)
-		// that.log("***************计算结果展示******************")
 		console.log("[SaleNetAndDisc]参数:", {
 			retx
 		});
@@ -4470,7 +4488,9 @@ function GetSale(global, vue, target_name, uni) {
 		// }
 		that.sale001.ZNET = that.sale001.TNET; //调整为原价
 		that.sale001.BILLDISC = this.float(retx.DISCRATE, 2); //包含了促销 和特殊折扣
-		// that.sale001.TLINE = this.float(retx.QTY, 2);
+		//与 BILLDISC 同步无条件重算：TCXDISC 原先仅在 ynCx 分支重置，
+		//导致「清除促销+特殊折扣」模式下取消支付后残留旧值，再次支付时TCXDISC翻倍的bug
+		that.sale001.TCXDISC = this.float(retx.CXDISC, 2);
 		that.sale001.TLINE = that.sale002.length; //这个是存商品行
 		//注意这一步不是计算辅助促销，仅仅是筛选辅助促销的数据
 		if (that.currentOperation.ynFzCx) {
@@ -4517,7 +4537,7 @@ function GetSale(global, vue, target_name, uni) {
 		console.log("[BanPayType]被禁止类型:", list);
 
 		let PayWayList = util.getStorage("PayWayList");
-		if (list) {
+		if (list) { //切勿加上 && list.length > 0 空数组代表无禁用的支付方式
 			var ban_pay = [];
 			console.log("积分兑换禁止测试：", this.HY.val.hyId);
 			console.log("积分兑换禁止测试1：", this.cxIsJFYC);
@@ -4633,7 +4653,11 @@ function GetSale(global, vue, target_name, uni) {
 		if (this.currentOperation.ynFzCx && this.FZCX.oval.length > 0) { //要有辅助促销数据
 			console.log("[BeforeFk]此模式包含辅助销促操作...");
 			this.setComponentsManage(null, 'FZCX');
-			uni.$once('close-FZCX', util.callBind(this, function(e) {
+			//必须先判空：$off 第二参为 undefined 时会清掉该事件的全部监听，
+			//包括 Bind() 中常驻的 CloseFZCX
+			if (this._fzcxPayHandler)
+				uni.$off('close-FZCX', this._fzcxPayHandler);
+			this._fzcxPayHandler = util.callBind(this, function(e) {
 				console.log("[BeforeFk]辅助促销关闭!");
 				console.log("[BeforeFk] 追加辅助促销前的sale001：", this.sale001);
 				//追加辅助促销的差价和折扣
@@ -4664,7 +4688,8 @@ function GetSale(global, vue, target_name, uni) {
 
 				//将对应模式的 $beforeFK 调用,传参代表 需要内部调用 PayParamAssemble
 				this.CurrentTypeCall("$beforeFk", true);
-			}))
+			})
+			uni.$once('close-FZCX', this._fzcxPayHandler);
 			return false;
 		} else {
 			console.log("[BeforeFk]此模式不包含辅助促销操作...");
@@ -4745,7 +4770,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	//重置销售单据
 	this.resetSaleBill = util.callBind(this, function(e) {
-		console.log("传入的参数：", e);
+		console.log("resetSaleBill传入的参数：", e);
 		uni.$emit("reset-sales");
 		uni.$emit('set-member', {}); //通知一下外部 清空会员信息
 		uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
@@ -4791,12 +4816,17 @@ function GetSale(global, vue, target_name, uni) {
 		this.score_info.ispoints = 0;
 		this.Page.Alphabetical = false; //关闭字母列表
 		this.Page.isKeyBoardShow = false; //关闭键盘
+		this.Allsplist.map(r => { //清除普通商品的选中状态
+			r.plarr.map(r1 => {
+				r1.check = false;
+			})
+		})
 		this.filterSp('A'); //重置商品集合 为A字母筛选
-		console.log("this.clickSaleType", this.clickSaleType);
+		console.log("resetSaleBill-clickSaleType", this.clickSaleType);
 		if (this.clickSaleType.clickType == "sale_cake_reserve") {
 			this.clickSaleType.ShowCakeDetail() //关闭蛋糕预定的详情
 		}
-		console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
+		// console.log("this.clickSaleType.yn_showDetail", this.clickSaleType.yn_showDetail);
 		// console.log("this.clickSaleType", this.clickSaleType);
 		// console.log("重置后跳转到：", this.clickSaleType.afterPay);
 		// this.SetDefaultType(this.clickSaleType.afterPay);
@@ -4811,7 +4841,7 @@ function GetSale(global, vue, target_name, uni) {
 
 	}
 
-	//
+	//回到默认的“销售”业务
 	this.SetDefaultType = function(type = "sale") {
 		console.log("[SetDefaultType]设置默认类型:", type);
 		this.SetType(type, true);

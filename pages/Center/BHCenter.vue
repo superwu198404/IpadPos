@@ -178,10 +178,6 @@
 				signOutDates: [],
 				curWeek: dateformat.getWeekDate(),
 				curDate: dateformat.getYMD(),
-				timer: null,
-				angle: 0,
-				angles: 0,
-				angless: 0,
 				syyjk: {}, //收银员是否结款
 				version: "1.0.0", //版本号
 				IMAGES: [],
@@ -218,30 +214,6 @@
 				this.GetUserMenu(); //用户菜单数据
 				//this.GetBHQHRwTj();
 				// this.MonitorEvent();
-				// this.timer = setInterval(() => {
-				// 	this.timer = setTimeout(() => {
-				// 		if (this.angle == 0) {
-				// 			this.angle = 180;
-				// 		} else if (this.angle == 180) {
-				// 			this.angle = 0;
-				// 		}
-				// 	}, 4000);
-				// 	this.timers = setTimeout(() => {
-				// 		if (this.angles == 0) {
-				// 			this.angles = 180;
-				// 		} else if (this.angles == 180) {
-				// 			this.angles = 0;
-				// 		}
-				// 	}, 4500);
-				// 	this.timerss = setTimeout(() => {
-				// 		if (this.angless == 0) {
-				// 			this.angless = 180;
-				// 		} else if (this.angless == 180) {
-				// 			this.angless = 0;
-				// 		}
-				// 	}, 5000);
-				// }, 5500);
-
 			},
 			// 打开更多功能弹窗
 			openMoreFunc() {
@@ -300,10 +272,8 @@
 				_init.dataInit('download_zbtx', true)
 			},
 			//uniapp中onHide()能监听到页面离开
-			onHide() { //离开页面前清除计时器
+			onHide() {
 				// console.log('onHide');
-				clearInterval(this.timer);
-				this.timer = null;
 			},
 			TimedCommunication: function() {
 				//3min执行一次销售单传输 从终端参数获取

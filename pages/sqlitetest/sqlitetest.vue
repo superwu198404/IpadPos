@@ -19,16 +19,15 @@
 				<view style="white-space: nowrap;border-color: black;border: 1rpx;">
 					<label class="tab" v-if="index==0" style="width: 40px;">行号:排序</label>
 					<label class="tab" v-if="index==0&&item.type!='table'" style="width: 60px;">操作</label>
-					<label :id="index+key" v-if="index==0" v-for="(key, X) in Object.keys(item)" data-type="B"
-						:data-index="index" :data-key="key" @click="ordrby" class="tab">{{key}}</label>
+					<label :id="index+col" v-if="index==0" v-for="col in columns" data-type="B"
+						:data-index="index" :data-key="col" @click="ordrby" class="tab">{{col}}</label>
 				</view>
 				<view style="white-space: nowrap;">
 					<label class="tab" style="width: 40px;">{{index}}</label>
-					<!-- <button class="tab" style="width: 60px;" @click="Copy(item)">复制</button> -->
 					<button class="tab" style="width: 60px;" v-if="item.type!='table'"
 						@click="ShowContent(item)">提取</button>
-					<label v-for="(key, X) in Object.keys(item)" @click="showView" :data-index="index" :data-key="key"
-						class="tab">{{item[key]}}</label>
+					<label v-for="col in columns" @click="showView" :data-index="index" :data-key="col"
+						class="tab">{{ item[col] !== null && item[col] !== undefined ? item[col] : '--' }}</label>
 				</view>
 			</view>
 		</view>
@@ -90,6 +89,7 @@
 				errTxt: "",
 				clickText: "",
 				clickRowAndcol: "",
+				columns: [],
 				mydata: [{
 						"DATE_LR": "2015-01-13 14:47:54",
 						"DATE_SH": "2015-01-13 14:47:54",
@@ -231,11 +231,16 @@
 					(res) => {
 						console.log("查询结果：", res);
 						if (res.code && res.msg.length > 0) {
+							// 从所有行合并提取全部字段名，避免第一行遗漏 null 字段
+							const keySet = new Set();
+							res.msg.forEach(row => Object.keys(row).forEach(k => keySet.add(k)));
+							this.columns = Array.from(keySet);
 							this.alldata = res.msg;
 							this.mydata = [];
 							//this.$set(this, 'mydata', res.msg);
 							this.adddata();
 						} else {
+							this.columns = [];
 							this.mydata = [];
 							_util.simpleMsg("暂无数据：", res.msg);
 						}

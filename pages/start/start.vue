@@ -8,6 +8,14 @@
 			<view class="infos">
 				<label>
 					<image src="../../images/dx-mendian.png" mode="widthFix"></image>
+					<picker @change="onBrandChange" :range="brandList" range-key="name">
+						<view class="picker-text" :class="{ 'picker-placeholder': selectedBrandIndex < 0 }">
+							{{ selectedBrandIndex >= 0 ? brandList[selectedBrandIndex].name : '请选择品牌' }}
+						</view>
+					</picker>
+				</label>
+				<label>
+					<image src="../../images/dx-mendian.png" mode="widthFix"></image>
 					<input placeholder="请输入门店的编码" v-model="khid" />
 				</label>
 				<label>
@@ -124,6 +132,18 @@
 		padding: 0 20rpx;
 	}
 
+	.infos label .picker-text {
+		width: 86%;
+		height: 80rpx;
+		line-height: 80rpx;
+		padding: 0 20rpx;
+		font-size: 28rpx;
+	}
+
+	.infos label .picker-placeholder {
+		color: #999;
+	}
+
 	.infos image {
 		width: 38rpx;
 		height: 36rpx;
@@ -149,6 +169,11 @@
 	import _create_sql from '@/utils/db/create_sql.js';
 	import util from '@/utils/util.js';
 	import privacyContent from '@/privacy/privacyContent.js';
+	import {
+		getBrandList,
+		setCurrentBrand,
+		getCurrentBrand
+	} from '@/utils/configInfo.js';
 
 	var mysqlite = sqlLite.get();
 	var that = null;
@@ -168,13 +193,45 @@
 				showPrivacyModal: false, // 隐私弹窗显示状态
 				showDocModal: false, // 文档弹窗显示状态
 				docTitle: "", // 文档标题
-				docContent: "" // 文档内容
+				docContent: "", // 文档内容
+				brandList: [], // 品牌列表
+				selectedBrandIndex: -1 // 选中的品牌索引
 			}
 		},
 		methods: {
+			// 品牌选择
+			onBrandChange(e) {
+				const idx = e.detail.value;
+				this.selectedBrandIndex = idx;
+				const brand = this.brandList[idx];
+				if (brand) {
+					setCurrentBrand(brand.brandNo);
+					console.log('[品牌]已切换为:', brand);
+				}
+			},
 			onLoad() {
 
 				that = this;
+
+				// 加载品牌列表
+				this.brandList = getBrandList();
+				// 恢复上次选中的品牌
+				const savedBrand = getCurrentBrand();
+				if (savedBrand) {
+					const idx = this.brandList.findIndex(b => b.brandNo === savedBrand.brandNo);
+					if (idx >= 0) {
+						this.selectedBrandIndex = idx;
+						// 恢复品牌配置（baseUrl 等）
+						setCurrentBrand(savedBrand.brandNo);
+					}
+				} else {
+					// 旧设备无品牌记录，兜底默认选 KG
+					const idx = this.brandList.findIndex(b => b.brandNo === 'KG');
+					if (idx >= 0) {
+						this.selectedBrandIndex = idx;
+						setCurrentBrand('KG');
+					}
+				}
 
 				// 检查隐私授权状态
 				this.checkPrivacyAgreed();
@@ -198,6 +255,14 @@
 				if (store && JSON.stringify(store) != "{}") {
 					that.khid = store.KHID;
 					that.posid = store.POSID;
+					// 从Init_Data中恢复品牌配置
+					if (store.brandNo) {
+						const idx = that.brandList.findIndex(b => b.brandNo === store.brandNo);
+						if (idx >= 0) {
+							that.selectedBrandIndex = idx;
+							setCurrentBrand(store.brandNo);
+						}
+					}
 				}
 			},
 			// 检查是否已同意隐私政策
@@ -306,6 +371,14 @@
 					util.simpleMsg("请输入密码", "none");
 					return;
 				}
+				if (!that.brandList.length || that.selectedBrandIndex < 0) {
+					util.simpleMsg("请选择品牌", "none");
+					return;
+				}
+				// 确保品牌配置已应用
+				const selectedBrand = that.brandList[that.selectedBrandIndex];
+				setCurrentBrand(selectedBrand.brandNo);
+				console.log("[品牌]初始化使用:", selectedBrand.name, selectedBrand.baseUrl);
 				console.log("准备开始初始化" + that.khid);
 				let apistr = "MobilePos_API.Utils.PosInit.getTx001";
 				let reqdata = Req.resObj(true, "开始初始化...", null, apistr, true);
@@ -385,7 +458,8 @@
 								//储存初始化门店和款台
 								util.setStorage("Init_Data", {
 									KHID: that.khid,
-									POSID: that.posid
+									POSID: that.posid,
+									brandNo: selectedBrand.brandNo
 								});
 								setTimeout(r => {
 									uni.redirectTo({

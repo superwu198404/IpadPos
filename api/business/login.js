@@ -125,19 +125,18 @@ export const UpdatePWD = function(data, func) {
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //初始化当前门店信息
-8
 var InitStore = function(khid, posid, ryinfo, func) {
 	let store = {};
 	let sql =
-		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME ,KCDID,ZZTLX,JGID,STIME,ETIME,SYBID,CLIENT_STATUS FROM KHDA where KHID='" +
+		"SELECT GSID,POSCSZID,SNAME,KHDA.adress,khda.Phone,sname ,CLIENT_TYPE,DQID,DQNAME,DPID,GCID,KHZID,ADRC,ADRPNAME,KCDID,ZZTLX,JGID,STIME,ETIME,SYBID,CLIENT_STATUS,ID_RY_SH FROM KHDA where KHID='" +
 		khid + "'";
 	db.get().executeQry(sql, "加载中...", res => {
 		if (!res.code || res.msg.length == 0) {
 			util.simpleMsg("门店信息查询失败，请重新初始化", "none");
 			return;
 		}
-		console.warn("[InitStore]门店信息查询成功：", res);
-		console.warn("[InitStore]人员信息展示：", ryinfo);
+		console.log("[InitStore]门店信息查询成功：", res);
+		console.log("[InitStore]人员信息展示：", ryinfo);
 		store = {
 			GSID: res.msg[0].GSID,
 			KHID: khid,
@@ -166,6 +165,7 @@ var InitStore = function(khid, posid, ryinfo, func) {
 			SYBID: res.msg[0].SYBID,
 			ZZTLX: res.msg[0].ZZTLX,
 			CLIENT_STATUS: res.msg[0].CLIENT_STATUS,
+			ID_RY_SH: res.msg[0].ID_RY_SH //主要用于查大客户之类使用
 		}
 		let store1 = util.getStorage("store");
 		console.log("[InitStore]全局混入客户端信息！", JSON.stringify(store1));
@@ -226,6 +226,7 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 	// console.log("门店签到查询sql：", sql1);
 	// console.log("门店签到信息：", openflag);
 	let data = {
+		appid: getApp().globalData.appid,
 		gsid: store.GSID,
 		khid: store.KHID,
 		posid: store.POSID,
@@ -245,6 +246,7 @@ var SignOrSignOut = async function(ynqd, qtdate, func) {
 var CheckSignOut = async function(func) {
 	let store = util.getStorage("store");
 	let data = {
+		appid: getApp().globalData.appid,
 		khid: store.KHID,
 		ryid: store.RYID
 	}

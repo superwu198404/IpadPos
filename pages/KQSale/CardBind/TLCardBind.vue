@@ -1,4 +1,3 @@
-
 <template>
 	<view class="bind-card-container">
 		<h3 class="bind-card-title">绑卡信息</h3>
@@ -8,7 +7,8 @@
 				<view class="form-item-input">
 					<view class="input-border-radius">
 						<view class="form-item-input-left">
-							<image src="../../../images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;" @click="scan_code"></image>|
+							<image src="../../../images/img2/zhifucx-cu.png" mode="widthFix" style="width: 20px;"
+								@click="scan_code"></image>|
 							<input placeholder="输入手机号或账户" v-model="form.member_code" />
 						</view>
 						<view class="comfirm-btn" @click="search_member">确定</view>
@@ -185,6 +185,7 @@
 					class: "CardSaleCLASS",
 					method: "MemberBindCard",
 					data: {
+						appid: getApp().globalData.appid,
 						store_num: this.KHID,
 						store_name: this.NAME,
 						employ_num: this.RYID,
@@ -397,9 +398,11 @@
 		padding: 2px 2px;
 		gap: 5px;
 	}
-	.form-item-input-left input{
+
+	.form-item-input-left input {
 		color: #006B44;
 	}
+
 	.form-item-block {
 		display: flex;
 		flex-direction: column;
@@ -427,7 +430,7 @@
 		display: inline-block;
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis; 
+		text-overflow: ellipsis;
 		line-height: 54rpx;
 		font-size: 28rpx;
 	}
@@ -503,11 +506,11 @@
 	}
 
 	.bind-card-footer>.btn {
-		width:340rpx;
+		width: 340rpx;
 		border-radius: 10rpx 0 10rpx 10rpx;
 		height: 80rpx;
 		line-height: 80rpx;
-		padding:0;
+		padding: 0;
 		font-size: 32rpx;
 		background: #40b04d;
 		color: #fff;

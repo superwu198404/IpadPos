@@ -20,6 +20,7 @@ export const getOnlineOrders = function(data, func, catchFunc) {
  */
 export const getReserveOnlineOrders = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetReserveOnlineOrders";
+	data.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "线上订单查询中", data, apistr);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }
@@ -44,6 +45,7 @@ export const getReserveOnlineRawOrderInfo = function(data, func, catchFunc) {
  */
 export const onlineOrderReserve = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.OnlineOrderReserve";
+	data.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "线上订单提取中", data, apistr);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }
@@ -88,6 +90,7 @@ export const updateOrderInfo = function(data, func, catchFunc) {
  */
 export const ordersAccept = function(data, func, err) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.OrdersAccept";
+	data.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "订单处理中", data, apistr);
 	Req.asyncFuncOne(reqdata, func, err);
 }
@@ -99,6 +102,7 @@ export const ordersAccept = function(data, func, err) {
  */
 export const ordersStatusCheck = function(data, func, err) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.OnlineOrderStatusCheck";
-	let reqdata = Req.resObj(true, "订单查询中", data, apistr,true);
+	data.appid = getApp().globalData.appid;
+	let reqdata = Req.resObj(true, "订单查询中", data, apistr, true);
 	return Req.asyncFuncOne(reqdata, func, err);
 }

@@ -62,9 +62,9 @@
 										</view>
 										<view class="procycle">
 											<!-- 产品循环 -->
-											<view class="li" v-for="(sptiem, spindex) in  plitem['plarr'] "
+											<view v-for="(sptiem, spindex) in  plitem['plarr'] "
 												@click="mainSale.showSpDetails" :data-plindex="plindex"
-												:data-spindex="spindex">
+												:data-spindex="spindex" :class="sptiem.check?'curr li':'li'">
 												<view class="h3">
 													<!-- <image src="../../images/dx-mrxk.png" mode="widthFix"></image> -->
 													{{sptiem.SNAME}}
@@ -308,7 +308,8 @@
 			<view class="memberes">
 				<view class="shareButton" @click="mainSale.setComponentsManage" data-mtype='statement'></view>
 				<!-- 会员信息 -->
-				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open" style="display: flex;flex-direction: column;">
+				<view class="meminfo" v-if="ShowHY&&mainSale.HY.open"
+					style="display: flex;flex-direction: column;border-radius: 2%;">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
 						<label>
@@ -352,7 +353,7 @@
 						style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;">
 						<view class="h2">优惠券</view>
 						<view class="uls" style="flex:1;overflow-y:auto;min-height:0;">
-							<view class="lis" v-for="(item,index) in MemberCoupons">
+							<view class="lis" style="height: fit-content;" v-for="(item,index) in MemberCoupons">
 								<view class="voucher">
 									<view><text>￥</text>{{item.money}}</view>
 								</view>
@@ -380,7 +381,7 @@
 					</view>
 				</view>
 				<!-- 折扣信息 促销和折扣下且有值才显示-->
-				<view class="meminfo" style="width:45%;display:flex;flex-direction:column;"
+				<view class="meminfo" style="width:45%;display:flex;flex-direction:column;border-radius: 2%;"
 					v-if="mainSale.currentOperation.showCXZK">
 					<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>
 					<view class="member">
@@ -679,7 +680,7 @@
 								:current="mainSale.mode_info.sale_cake_reserve.imgCurrent">
 								<!-- @change="swiperChange" -->
 								<swiper-item v-for="(item, index) in mainSale.clikSpItem.imglist" :key="index">
-									<image class="logo" src="../../images/kengee-logo.png" mode="widthFix"></image>
+									<!-- <image class="logo" src="../../images/kengee-logo.png" mode="widthFix"></image> -->
 									<image :src="P_URL+item.IMGURL"></image>
 								</swiper-item>
 							</swiper>

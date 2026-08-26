@@ -27,8 +27,13 @@ var CreateData = function(pt, t, m, d, load = false) {
 			return item.TYPE == pt;
 		})
 		if (PayObj) { //查询到支付信息
-			console.warn("[CreateData]门店参数信息:", d);
+			const {
+				pay_way_list,
+				...newData
+			} = d; //上送参数去除pay_way_list 防止报文过大 后端也不需要
+			console.warn("[CreateData]支付参数信息:", newData);
 			console.warn("[CreateData]目标配置信息:", d.original_company_id);
+
 			data = {
 				code: true,
 				http: {
@@ -42,15 +47,15 @@ var CreateData = function(pt, t, m, d, load = false) {
 					paytype: PayObj.PAYTYPE, //"WxPay_ScanCode",
 					method: m, //Payment
 					param: {
-						appid: PayObj.APPID, //getApp().globalData.appid,
+						appid: getApp().globalData.appid,
 						gsid: d.original_company_id || store.GSID,
 						khid: d.original_store_id || store.KHID,
 						khname: d.original_store_id || store.NAME,
 						dqid: d.original_area_id || store.DQID,
-						type: PayInfo.TYPE,
+						type: PayObj.TYPE,
 						source: PayObj.SOURCE
 					},
-					sign: aes.aesEncrypt(JSON.stringify(d))
+					sign: aes.aesEncrypt(JSON.stringify(newData))
 				}
 			}
 		} else {

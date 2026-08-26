@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<image class="bgs" src="../../images/dl-bj.png" mode="widthFix"></image>
+		<image class="bgs" src="../../images/dl-bj.jpg" mode="widthFix"></image>
 		<view class="login">
 			<view class="h1">登录<image src="../../images/dl-bjhw.png" mode="widthFix"></image>
 			</view>

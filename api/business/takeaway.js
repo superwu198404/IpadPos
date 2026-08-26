@@ -39,6 +39,7 @@ var GetOrderHasSC = function(e, func) {
 //同意和拒绝退单
 var CommonRefund = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund";
+	e.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
@@ -247,6 +248,7 @@ var ConfirmReceipt_YD = function(e, func) {
 //同意和拒绝退单
 var CommonRefund_YD = function(e, func) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.CommonRefund_YD";
+	e.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "操作中...", e, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }

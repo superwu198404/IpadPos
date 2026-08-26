@@ -9,6 +9,7 @@ import common from '@/api/common.js';
  */
 export const getBigClients = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetBigClients";
+	data.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }
@@ -20,6 +21,7 @@ export const getBigClients = function(data, func, catchFunc) {
  */
 export const getBigClientsJGZ = function(data, func, catchFunc) {
 	let apistr = "MobilePos_API.Models.SALE001CLASS.GetBigClientsJGZ";
+	data.appid = getApp().globalData.appid;
 	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, catchFunc);
 }

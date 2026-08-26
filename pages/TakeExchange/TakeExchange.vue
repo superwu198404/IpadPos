@@ -105,8 +105,8 @@
 															<th>商品编码</th>
 															<th>品类</th>
 															<th>规格</th>
-															<th>总数量</th>
-															<th>可换数量</th>
+															<!-- <th>总数量</th> -->
+															<th>数量</th>
 															<th>平台价格</th>
 															<th>标签价</th>
 															<th>总价</th>
@@ -124,7 +124,7 @@
 															<td>{{ item.SPID.slice(8) }}</td>
 															<td>{{ item.ZLID }}-{{ item.ZL_NAME }}</td>
 															<td>{{ item.SPECS }}</td>
-															<td>{{ item.T_QTY }}</td>
+															<!-- <td>{{ item.T_QTY }}</td> -->
 															<td>{{ item.QTY }}</td>
 															<td>¥{{ item.PT_PRICE }}</td>
 															<td>¥{{ item.PRICE }}</td>
@@ -641,15 +641,16 @@
 					return;
 				}
 				if ((_qty + this.currentCount.totalAmount) > this.selectedOriginalItem.QTY) {
-					util.simpleMsg('待换货数量加上已换货数量不能多于原商品的可换数量!', 'none');
+					util.simpleMsg('待换货数量加上已换货数量不能多于原商品的数量!', 'none');
 					return;
 				}
-				if (this.selectedProductItem.ZLID != this.selectedOriginalItem.ZLID) {
+				let obj = util.getStorage("sysParam"); //根据参数控制是否校验换货商品中类是否一致
+				if (obj.WMHHPL == 'Y' && this.selectedProductItem.ZLID != this.selectedOriginalItem.ZLID) {
 					util.simpleMsg('换货商品与原商品品类不一致!', 'none');
 					return;
 				}
 				//V1.1 固定判断109 
-				if (this.selectedProductItem.ZLID == "109") {
+				if (this.selectedOriginalItem.ZLID == "109") {
 					if (this.selectedProductItem.SPECS != this.selectedOriginalItem.SPECS) {
 						util.simpleMsg('换货商品与原商品规格或尺寸不一致', 'none');
 						return;

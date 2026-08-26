@@ -324,7 +324,7 @@ var dataInit = async function(pm_initType, ynshow = false) {
 			return Req.resObj(true, "即将完成...", sql, null, true);
 		},
 		async (res) => {
-				//console.log("数据库通讯结果：" + JSON.stringify(res.data));
+				// console.log("数据库通讯结果：" + JSON.stringify(res.data));
 				// console.log("重建数据的sql:", res.data);
 				let x = await db.get().executeSqlArray(res.data, "开始创建数据库1",
 					(resks) => {

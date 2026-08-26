@@ -303,7 +303,7 @@
 		created: async function() {
 			that = this;
 			this.FKDA_INFO = _util.getStorage('FKDA_INFO');
-			console.warn("[Created]付款档案信息:", this.FKDA_INFO);
+			console.log("[Created]付款档案信息:", this.FKDA_INFO);
 
 			let store = getApp().globalData.store;
 			KQSale = new _card_coupon.InitKQSale(that, uni, store, "GiftCard_Active");
@@ -319,7 +319,7 @@
 			});
 			//初始化折扣数据
 			that.ZKData = await _main.GetZKDatasAll(store.DKFID);
-			that.CXData = await _main.GetCXDatasAll(store.KHID);
+			//that.CXData = await _main.GetCXDatasAll(store.KHID);
 			// console.log("促销数据：", that.CXData);
 		},
 		mounted() {
@@ -327,7 +327,7 @@
 			uni.$on("GetCardNums", that.GetCardNums);
 			uni.$on("big-customer-close", async function(data) {
 				console.log("[big-customer-close]大客户回调:", data);
-				if (data.exists_credit&&data.DKFID&&data.DKFID!= '80000000') {
+				if (data.exists_credit && data.DKFID && data.DKFID != '80000000') {
 					console.log("[big-customer-close]进入赊销:", data);
 					that.BILL_TYPE = "Z112"; //启用赊销
 					that.XSTYPE = '6';
@@ -360,7 +360,7 @@
 			});
 
 			//接收选中大客户的价格组
-			uni.$on("close-big-customer_JGZ", async function(dkfData,data) {
+			uni.$on("close-big-customer_JGZ", async function(dkfData, data) {
 				console.log("[Created]大客户价格组回调:", data);
 				that.JGZList = data;
 
@@ -739,21 +739,21 @@
 
 					let arr2 = that.SALE002;
 					//arr2.forEach(function(item, index) {
-						//const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
-						//if (!isExist) {
-							//_util.simpleMsg("礼品卡不在当前所选大客户有效价格组内!", true)
-							//return;
-						//}
+					//const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
+					//if (!isExist) {
+					//_util.simpleMsg("礼品卡不在当前所选大客户有效价格组内!", true)
+					//return;
+					//}
 
 					//});
-					
-					for(let i = 0; i < arr2.length; i++){
-					  const item = arr2[i]
-					  const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
-					  if (!isExist) {
-					    util.simpleMsg("券信息不在当前所选大客户有效价格组内!")
-					    return; // 直接跳出整个函数，后面credit不再执行
-					  }
+
+					for (let i = 0; i < arr2.length; i++) {
+						const item = arr2[i]
+						const isExist = that.JGZList.some(jg => jg.WLJGZ === item.SPJGZ);
+						if (!isExist) {
+							util.simpleMsg("券信息不在当前所选大客户有效价格组内!")
+							return; // 直接跳出整个函数，后面credit不再执行
+						}
 					}
 
 				}
@@ -986,8 +986,8 @@
 				sale3.AMT = that.SALE001.TNET;
 				that.SALE003.push(sale3);
 
-				that.SXSALE001.YDSPTYPE="U";
-				that.SXSALE001.CUSTMNAME=that.SALE001.RYID;
+				that.SXSALE001.YDSPTYPE = "U";
+				that.SXSALE001.CUSTMNAME = that.SALE001.RYID;
 				if (that.SALE001.XSTYPE == '6') {
 					const oadhs = that.JGZList.map(item => item.OADH).join('，');
 					that.SXSALE001.STR1 = oadhs;
@@ -1025,14 +1025,17 @@
 				// _card_sale.ResetCXZK(that);
 			},
 			//使用特殊折扣进行计算
-			discCompute: function() {
+			discCompute: async function() {
 				//清除一下之前产生的折扣
 				_card_sale.ResetCXZK(that);
 				// 计算商品的折扣值
 				let res;
 				if (that.checkPromotion) //促销
+				{
+					let spids = that.SALE002.map(r => r.SPID);
+					that.CXData = await _main.GetCXDatasBySpids(that.store.KHID, spids);
 					res = _main.MatchCXDatas(that.CXData, that.SALE002, that.SALE001);
-				else //折扣
+				} else //折扣
 					res = _main.MatchZKDatas(that.CurZKDisc, that.SALE002, (that.BILL_TYPE == 'Z112' ? 'sale_credit' :
 						'kq_sale'), that.JGZList, "");
 				that.SALE002 = res.sale2;

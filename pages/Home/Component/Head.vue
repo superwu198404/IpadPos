@@ -184,27 +184,24 @@
 						<image style="width:24rpx;height: 24rpx;,margin-left:10rpx" src="../../../images/xiala.png"
 							mode="widthFix"></image>
 					</view>
-					<view class="dropout" v-if="dropout">
-						<view class="exit" @click="LoginOut()">
-							<image src="../../../images/tuichu.png" mode="widthFix"></image>
-							<text>退出</text>
-						</view>
-						<view class="exit" @click="Login()">
-							<image src="../../../images/zhuxiao.png" mode="widthFix"></image>
-							<text>注销</text>
-						</view>
-						<view class="exit" @click="UPPWD()">
-							<image src="../../../images/xgmima.png" mode="widthFix"></image>
-							<text>修改密码</text>
-						</view>
-						<!-- <view class="exit" @click="Back()">
-							<image src="../../../images/zhuxiao.png" mode="widthFix"></image>
-							<text>返回上级</text>
-						</view> -->
-					</view>
 				</view>
 			</view>
 
+		</view>
+
+		<view class="dropout-fixed" v-if="dropout">
+			<view class="exit" @click="LoginOut()">
+				<image src="../../../images/tuichu.png" mode="widthFix"></image>
+				<text>退出</text>
+			</view>
+			<view class="exit" @click="Login()">
+				<image src="../../../images/zhuxiao.png" mode="widthFix"></image>
+				<text>注销</text>
+			</view>
+			<view class="exit" @click="UPPWD()">
+				<image src="../../../images/xgmima.png" mode="widthFix"></image>
+				<text>修改密码</text>
+			</view>
 		</view>
 	</view>
 </template>
@@ -282,7 +279,7 @@
 				showYWMsg: false,
 				ynDKF: true,
 				YN_SX: false, //是否赊销
-				ynlssx:false,
+				ynlssx: false,
 			};
 		},
 		computed: {
@@ -332,17 +329,17 @@
 				console.log("[Head]设置业务员名称!", info);
 				this.RYNAME = info.SNAME;
 			}))
-			
-			
-			
+
+
+
 			uni.$off('set-lssx');
 			uni.$on('set-lssx', util.callBind(this, function(info) {
 				console.log("[Head]是否临时授信!", info);
-				
+
 				console.log("[Head]是否赊销页面!", this.type);
 				this.ynlssx = info;
 			}))
-			
+
 			//来自销售页面的事件通知
 			uni.$off('set-dkf');
 			uni.$on('set-dkf', util.callBind(this, function(info) {
@@ -820,9 +817,10 @@
 									console.log("蓝牙打印设备1111", res);
 									for (var i = 0; i < res.devices
 										.length; ++i) {
-										if (res.devices[i].name != "未知设备" && res.devices[i].name != "") {
-										
-											
+										if (res.devices[i].name != "未知设备" && res
+											.devices[i].name != "") {
+
+
 											devices[num] = res.devices[i];
 											num++;
 
@@ -842,47 +840,58 @@
 											}
 										}
 									}
-									
-									     // ====================== 【安卓：合并已配对蓝牙 + 去重】 ======================
-									            // #ifdef APP-PLUS
-									            if (plus.os.name === "Android") {
-									              try {
-									                const BluetoothAdapter = plus.android.importClass("android.bluetooth.BluetoothAdapter");
-									                const adapter = BluetoothAdapter.getDefaultAdapter();
-									                
-									                if (adapter && adapter.isEnabled()) {
-									                  let bondedDevices = adapter.getBondedDevices();
-									                  let iter = plus.android.invoke(bondedDevices, "iterator");
-									
-									                  while (plus.android.invoke(iter, "hasNext")) {
-									                    let device = plus.android.invoke(iter, "next");
-									                    let name = plus.android.invoke(device, "getName");
-									                    let address = plus.android.invoke(device, "getAddress");
-									
-									                    // 只保留有名字的
-									                    if (!name || name === "未知设备" || name === "") continue;
-									
-									                    // 去重：如果 deviceId / address 已存在，则不添加
-									                    let exist = devices.some(d => 
-									                      d.deviceId === address || 
-									                      d.address === address
-									                    );
-									                    if (!exist) {
-									                      devices.push({
-									                        deviceId: address,
-									                        name: name,
-									                        address: address
-									                      });
-									                    }
-									                  }
-									                }
-									              } catch (e) {
-									                console.log("获取已配对蓝牙失败", e);
-									              }
-									            }
-									            // #endif
-									
-									
+
+									// ====================== 【安卓：合并已配对蓝牙 + 去重】 ======================
+									// #ifdef APP-PLUS
+									if (plus.os.name === "Android") {
+										try {
+											const BluetoothAdapter = plus.android
+												.importClass(
+													"android.bluetooth.BluetoothAdapter"
+												);
+											const adapter = BluetoothAdapter
+												.getDefaultAdapter();
+
+											if (adapter && adapter.isEnabled()) {
+												let bondedDevices = adapter
+													.getBondedDevices();
+												let iter = plus.android.invoke(
+													bondedDevices, "iterator");
+
+												while (plus.android.invoke(iter,
+														"hasNext")) {
+													let device = plus.android.invoke(
+														iter, "next");
+													let name = plus.android.invoke(
+														device, "getName");
+													let address = plus.android.invoke(
+														device, "getAddress");
+
+													// 只保留有名字的
+													if (!name || name === "未知设备" ||
+														name === "") continue;
+
+													// 去重：如果 deviceId / address 已存在，则不添加
+													let exist = devices.some(d =>
+														d.deviceId === address ||
+														d.address === address
+													);
+													if (!exist) {
+														devices.push({
+															deviceId: address,
+															name: name,
+															address: address
+														});
+													}
+												}
+											}
+										} catch (e) {
+											console.log("获取已配对蓝牙失败", e);
+										}
+									}
+									// #endif
+
+
 									that.setData({
 										list: devices,
 										isScanning: false

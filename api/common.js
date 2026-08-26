@@ -431,7 +431,7 @@ var GetPayWay = async function(e, func) {
                                         AND  k2.dqid = k1.khzid \
                                         AND  k2.khid ='" + e + "' \
                                  ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
-	console.log("[GetPayWay]按照地区查询SQL:", sql);
+	// console.log("[GetPayWay]按照地区查询SQL:", sql);
 	//按照门店获取
 	let sql1 = "SELECT IFNULL(F1.YN_JKPRINT, 'N') YN_JKPRINT,\
 								      F1.JK_PRINT_PATH  JK_PRINT_PATH,\
@@ -468,7 +468,7 @@ var GetPayWay = async function(e, func) {
 								      AND k1.khzid ='" + e + "' \
 								ORDER BY F1.DATE_LR, F1.FKJBID,F1.MEDIA, F1.FKID";
 	let arr;
-	console.log("[GetPayWay]按照门店查询SQL:", sql1);
+	// console.log("[GetPayWay]按照门店查询SQL:", sql1);
 	await db.get().executeQry(sql1, "查询中...", function(res) {
 		console.log("[GetPayWay]按照门店查询本地FKDA:", res);
 		arr = res;
@@ -850,7 +850,8 @@ var GetZFRULE1 = async function(e, func) {
 //获取支付规则 新版
 var GetZFRULE = async function(e, func) {
 	let sql =
-		"select PINYIN TYPE,ZF APPID,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE,SEQNO from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos' order by seqno";
+		"select PINYIN APPID,ZF TYPE,NOTE URL,ID_NR PAYTYPE,FIELDNAME1 CODE,SNAME NOTE,ID_RY_SH BRAND,DA_STATUS YN_USE,SEQNO from DAPZCS_NR where id='ZF_RULE' and DA_STATUS='Y' and FIELDNAME2='Mobile_Pos' order by seqno";
+	//260814pinyin->ZF  因pinyin字段受触发器影响会被改为拼音 不受人为控制风险太大 后续逐步调整为使用ZF字段 对应FKDA.JKSNAME
 	await db.get().executeQry(sql, "数据查询中", function(res) {
 		console.log("新版本获取支付规则数据成功：", res);
 		if (res.code) {

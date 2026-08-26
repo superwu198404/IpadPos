@@ -144,6 +144,8 @@ var GetZKDatas = async function(data, func) {
 	if (data.zktype == 'TP') {
 		//data:{dkhid:"",jgid:""}
 		let apistr = "MobilePos_API.Models.SALE001CLASS.GetZKDatas";
+		data.appid = getApp().globalData.appid;
+		data.partid = util.getStorage("store")?.ID_RY_SH;
 		let reqdata = Req.resObj(true, "查询中...", data, apistr);
 		await Req.asyncFuncOne(reqdata, func, func);
 	} else if (data.zktype == 'HIS') { //历史折扣
@@ -209,7 +211,7 @@ var GetRXSPDatas = async function(khid, time, func) {
 	}
 }
 /**
- * 获取门店卡券促销
+ * 获取门店卡券促销 旧版全量查会卡死
  * @param {门店id} khid 
  * @param {sale2} sale2 
  */
@@ -226,14 +228,59 @@ var GetCXDatasAll = async function(khid, func) {
 			WHERE c1.BILL_STATUS = '1'  AND ( c1.YN_JSLB = 'N' OR c1.YN_JSLB = 'J' ) AND DATE(c1.SDATE) <= DATE('now')  AND DATE(c1.EDATE) >= DATE('now') AND c1.KHID = '" +
 		khid + "' and c1.CX_WEEK like '%" + day + "%'";
 	let data = [];
+	console.log("门店卡券促销数据开始查询：", sql);
 	await db.get().executeQry(sql, "查询中...", res => {
-		// console.log("门店卡券促销数据查询结果：", res);
+		console.log("门店卡券促销数据查询结果：", res);
 		if (res.code && res.msg.length > 0) {
 			data = res.msg;
 		}
 	}, err => {
 		console.log("查询卡券促销数据异常：", err);
 	})
+	return data;
+}
+/**
+ * 根据商品ID查询相关促销（按需查询，避免全量加载）
+ * @param {string} khid - 门店ID
+ * @param {array} spids - 商品ID数组，如 ['000000001080100003', '000000001080100005']
+ * @returns {array} 促销数据数组
+ */
+var GetCXDatasBySpids = async function(khid, spids) {
+	// 1. 参数校验
+	if (!spids || spids.length === 0) {
+		console.log("[GetCXDatasBySpids]商品ID为空，跳过促销查询");
+		return [];
+	}
+
+	let day = new Date().getDay();
+	let spidStr = spids.join("','"); // 拼接 SQL IN 条件
+
+	// 2. SQL：先从 CXFORMD003 找到包含这些商品的促销单号，再 JOIN 主表
+	let sql = `
+        SELECT c3.SPID, c1.YN_JSLB, c1.CXZT, c2.* 
+        FROM CXFORMD001 c1 
+        LEFT JOIN CXFORMD002 c2 ON c1.BILL = c2.BILL AND c1.KHID = c2.KHID 
+        LEFT JOIN CXFORMD003 c3 ON c1.BILL = c3.BILL AND c1.KHID = c3.KHID
+        WHERE c1.BILL_STATUS = '1' 
+          AND (c1.YN_JSLB = 'N' OR c1.YN_JSLB = 'J') 
+          AND DATE(c1.SDATE) <= DATE('now')  
+          AND DATE(c1.EDATE) >= DATE('now') 
+          AND c1.KHID = '${khid}' 
+          AND c1.CX_WEEK LIKE '%${day}%'
+          AND c3.SPID IN ('${spidStr}')`;
+	let data = [];
+	console.log("[GetCXDatasBySpids]按商品查询促销 SQL:", sql);
+
+	// 3. 执行查询
+	await db.get().executeQry(sql, "查询促销中...", res => {
+		console.log("[GetCXDatasBySpids]查询结果:", res);
+		if (res.code && res.msg && res.msg.length > 0) {
+			data = res.msg;
+		}
+	}, err => {
+		console.log("[GetCXDatasBySpids]查询异常:", err);
+	});
+
 	return data;
 }
 //获取并门店促销活动 包含标准临时和特批
@@ -678,7 +725,7 @@ var MatchCXDatas = function(CXData, products, sale1) {
 	return obj;
 }
 //匹配商品的有效规则 包含标准临时和特批
-var MatchZKDatas = function(ZKObj, products, ywtype, sxjgz,sfsx) {
+var MatchZKDatas = function(ZKObj, products, ywtype, sxjgz, sfsx) {
 	console.log("计算商品折扣传入的数据：", {
 		ZKObj,
 		products,
@@ -702,7 +749,8 @@ var MatchZKDatas = function(ZKObj, products, ywtype, sxjgz,sfsx) {
 			})
 		console.log("替换计算后的折扣数据：", ZKObj);
 		let filter_ZKDatas = ZKObj.ZKData.ZKDatas;
-		if ((ZKObj.ZKType == "BZ" || ZKObj.ZKType == "LS") && ywtype == "sale_credit"&&sfsx!=true) //赊销模式下的标准和临时折扣筛选处理
+		if ((ZKObj.ZKType == "BZ" || ZKObj.ZKType == "LS") && ywtype == "sale_credit" && sfsx !=
+			true) //赊销模式下的标准和临时折扣筛选处理
 		{
 			if (sxjgz.length > 0) {
 				const jgzSet = new Set(sxjgz.map(item => item.WLJGZ));
@@ -1244,5 +1292,6 @@ export default {
 	GetPTOrder,
 	ManualDiscountAlter,
 	GetCXDatasAll,
+	GetCXDatasBySpids,
 	MatchCXDatas
 }

@@ -11,12 +11,16 @@
 	import {
 		RequestSend
 	} from '@/api/business/da.js';
+	import {
+		setCurrentBrand,
+		getCurrentBrand
+	} from '@/utils/configInfo.js';
 
 	export default {
 		globalData: {
 			appid: 'keengee',
-			kquser: "CSKQ",
 			brand: "KG",
+			kquser: "CSKQ",
 			store: {
 				GSID: "",
 				KHID: "",
@@ -25,13 +29,11 @@
 				DPID: "",
 				DKFID: '80000000',
 				DKFNAME: '默认大客户',
-				BMID: "", //对应program.xsbm pos 这个参数为空字符串
+				BMID: "",
 				GCID: "",
-				DQID: '', //地区ID（销售地区）
-				DQNAME: '', //地区名称（销售地区）
+				DQID: '',
+				DQNAME: '',
 				NAME: "",
-				// MERID: "999990053990001",
-				// deviceno: "13001001",
 				KHAddress: "",
 				POSCSZID: "",
 				RYID: "",
@@ -43,44 +45,29 @@
 				JGID: "",
 				STIME: "",
 				ETIME: "",
-				OPENFLAG: 0, //签到状态
-				LOGINDATE: "", //登录时间
+				OPENFLAG: 0,
+				LOGINDATE: "",
 			},
-			hyinfo: {
-				// hyId: "1000311640"
-			},
-			PayInfo: [], //支付规则
+			hyinfo: {},
+			PayInfo: [],
 			CodeRule: {},
-			PZCS: { //档案配置参数
-				// YN_ZFBKBQ: "N"
-			},
-			POSCS: [
-				// 	{ //POS参数组 测试用
-				// 	KHID: "K0101QT2",
-				// 	SNAME: "水吧类别编码",
-				// 	POSCS: "SBLBBM",
-				// 	POSCSNR: "107,108"
-				// },
-			],
+			PZCS: {},
+			POSCS: [],
 			XZZF: [
-				"WX_CLZF", "ZFB_CLZF", //108金凤
-				"WXZF", "ZFB20", "HyJfExchange" //仟吉
-			], //支付中禁止第多次支付的支付方式
+				"WX_CLZF", "ZFB_CLZF",
+				"WXZF", "ZFB20", "HyJfExchange"
+			],
 			getModel: function() {
-				//获取手机型号
-				return wx.getSystemInfoSync()["model"];
+				return uni.getSystemInfoSync()["model"];
 			},
 			getSystem: function() {
-				//获取操作系统版本
-				return wx.getSystemInfoSync()["system"];
+				return uni.getSystemInfoSync()["system"];
 			},
 			getPlatform: function() {
-				//获取客户端平台
-				return wx.getSystemInfoSync()["platform"];
+				return uni.getSystemInfoSync()["platform"];
 			},
 			getSDKVersion: function() {
-				//获取客户端基础库版本
-				return wx.getSystemInfoSync()["SDKVersion"];
+				return uni.getSystemInfoSync()["SDKVersion"];
 			},
 			userInfo: null,
 			platform: "",
@@ -96,18 +83,17 @@
 				notifyServiceId: "",
 				readCharaterId: "",
 				readServiceId: "",
-				//printerFile: "http://58.19.103.220:8805/files/xprinter/", //测试环境 - 打印广告语文件存放url
-				printerFile: "http://pad.kengee.com.cn:8018/files/xprinter/", //正式环境 - 打印广告语文件存放url
-				qrCodeContent: "https://www.jufanba.com/pinpai/88783/", //二维码地址,走终端参数获取
-				ggy: "", //广告语
+				printerFile: "http://pad.kengee.com.cn:8018/files/xprinter/",
+				qrCodeContent: "https://www.jufanba.com/pinpai/88783/",
+				ggy: "",
 			},
-			YN_PRINT_CON: "N", //打印机连接状态
-			msgInt: 0, //消息定时id
-			Int: null, //单据定时传输的定时器
-			AppStore_DownLoad: "https://apps.apple.com/cn/app/", //App Store下载地址
+			YN_PRINT_CON: "N",
+			msgInt: 0,
+			Int: null,
+			AppStore_DownLoad: "https://apps.apple.com/cn/app/",
 		},
 		onLaunch: async function() {
-			   uni.getStorageInfo({
+			uni.getStorageInfo({
 				complete: (res) => {
 
 					console.log("onLaunch所有缓存：", res);
@@ -118,6 +104,26 @@
 			plus.screen.lockOrientation('landscape-primary'); //锁定横屏
 			// #ifdef APP-PLUS  
 			console.log("进行通讯！")
+			// 从 Init_Data 恢复品牌配置（确保不经过 start 时 baseUrl 正确）
+			try {
+				const initData = util.getStorage("Init_Data");
+				console.log("onLaunch_initData：", initData);
+				let brandNo = initData && initData.brandNo;
+				// 兼容旧版本：Init_Data 没有 brandNo 时，从 currentBrand 缓存兜底
+				if (!brandNo) {
+					const oldBrand = getCurrentBrand();
+					if (oldBrand) brandNo = oldBrand.brandNo;
+				}
+				// 兜底逻辑：旧设备无品牌信息时，默认设为 KG 品牌
+				if (!brandNo) {
+					brandNo = 'KG';
+					console.log('[APP-LAUNCH]未检测到品牌信息，默认设为 KG');
+				}
+				setCurrentBrand(brandNo);
+				console.log('[APP-LAUNCH]品牌已恢复:', brandNo);
+			} catch (e) {
+				console.error('[APP-LAUNCH]品牌恢复失败:', e);
+			}
 			await _init.dataInit("download_zbtx");
 			await _init.YN_Init(function(res) {
 				//执行通讯
@@ -187,6 +193,5 @@
 </script>
 
 <style>
-
 	@import url(@/static/style/common.css);
 </style>

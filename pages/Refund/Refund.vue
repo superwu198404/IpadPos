@@ -314,18 +314,18 @@
 						refundbill: e.out_refund_no,
 						refundnet: e.refund_amount
 					}
-					if (that.brand == "KG") {
-						obj.payTxnId = "";
-					} else {
-						obj.kquser = that.kquser;
-						obj.storeid = that.KHID;
-						obj.deviceno = that.deviceno;
-						obj.ryid = that.RYID;
-						obj.mer_id = that.MerId;
-						obj.posid = that.POSID;
-						obj.trans_date = dateformat.getdate();
-						obj.hyid = "856666000100005005";
-					}
+					// if (that.brand == "KG") {
+					obj.payTxnId = "";
+					// } else {
+					// 	obj.kquser = that.kquser;
+					// 	obj.storeid = that.KHID;
+					// 	obj.deviceno = that.deviceno;
+					// 	obj.ryid = that.RYID;
+					// 	obj.mer_id = that.MerId;
+					// 	obj.posid = that.POSID;
+					// 	obj.trans_date = dateformat.getdate();
+					// 	obj.hyid = "856666000100005005";
+					// }
 					hy.REFUND_ALL(that.brand, obj, function(res) {
 						if (res.code) {
 							res.code = '1';
@@ -625,58 +625,58 @@
 				let hyinfo = app.gloabaldata.hyinfo;
 				if (that.totalAmount > 0 && hyinfo) { //录入过会员信息
 					let param;
-					if (that.brand == 'KG') {
-						let arr = [],
-							arr1 = [];
-						that.Products.forEach(function(item, i) {
-							arr.push({
-								lineNumber: i,
-								product: item.BARCODE,
-								category: item.PLID,
-								quantity: item.QTY,
-								userPrice: item.PRICE,
-								basePrice: item.OPRICE,
-								netPrice: item.AMOUNT
-							})
+					// if (that.brand == 'KG') {
+					let arr = [],
+						arr1 = [];
+					that.Products.forEach(function(item, i) {
+						arr.push({
+							lineNumber: i,
+							product: item.BARCODE,
+							category: item.PLID,
+							quantity: item.QTY,
+							userPrice: item.PRICE,
+							basePrice: item.OPRICE,
+							netPrice: item.AMOUNT
+						})
+					});
+					that.PayList.forEach(function(item, i) {
+						arr1.push({
+							paymentType: item.fkid,
+							payAmount: item.amount
 						});
-						that.PayList.forEach(function(item, i) {
-							arr1.push({
-								paymentType: item.fkid,
-								payAmount: item.amount
-							});
-						});
-						param = {
-							addPoint: 0,
-							channel: "POS",
-							cityCode: "",
-							code: that.out_trade_no,
-							date: dateformat.getYMDS(),
-							deducePoint: 0,
-							districtCode: "",
-							entryList: arr,
-							memberCode: hyinfo.hyid,
-							netAmount: that.totalAmount,
-							orderAmount: that.allAmount,
-							orderType: "1",
-							paymentInfoList: arr1,
-							pointOfService: that.KHID,
-							preOrderCode: "",
-							promotionIds: [],
-							region: that.BMID,
-							stateCode: ""
-						}
-					} else {
-						param = {
-							kquser: that.kquser,
-							soreid: that.KHID,
-							oderbill: that.out_trade_no,
-							psid: that.POSID,
-							slenet: -that.totalAmount,
-							cxbill: "",
-							hyid: hyinfo.hyid,
-							sign: ""
-						}
+					});
+					param = {
+						addPoint: 0,
+						channel: "POS",
+						cityCode: "",
+						code: that.out_trade_no,
+						date: dateformat.getYMDS(),
+						deducePoint: 0,
+						districtCode: "",
+						entryList: arr,
+						memberCode: hyinfo.hyid,
+						netAmount: that.totalAmount,
+						orderAmount: that.allAmount,
+						orderType: "1",
+						paymentInfoList: arr1,
+						pointOfService: that.KHID,
+						preOrderCode: "",
+						promotionIds: [],
+						region: that.BMID,
+						stateCode: ""
 					}
+					// } else {
+					// 	param = {
+					// 		kquser: that.kquser,
+					// 		soreid: that.KHID,
+					// 		oderbill: that.out_trade_no,
+					// 		psid: that.POSID,
+					// 		slenet: -that.totalAmount,
+					// 		cxbill: "",
+					// 		hyid: hyinfo.hyid,
+					// 		sign: ""
+					// 	}
+					// }
 					hy.consumeJF(that.brand, param, function(res) {
 						console.log("积分上传结果：" + res);
 					})

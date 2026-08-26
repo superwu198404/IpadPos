@@ -65,7 +65,7 @@ let is_Points = 0;
 let is_JF = false;
 
 //从数据库中取出所有的促销信息，然后创建促销信息 创建缓存表格
-const Cxdict = async () => {
+const Cxdict = async (spids) => {
 	console.log("进入促销初始化方法Cxdict=================")
 	let storeDqid = getApp().globalData.store.DQID;
 	let dateTime = cx_util.getTime(0);
@@ -84,21 +84,20 @@ const Cxdict = async () => {
 	dszqda = [];
 	sdprice = [];
 
-	//获取主单的Sql
+	//获取主单的Sql cxformd001
 	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-
+	console.log("生效的促销单数量1：", dscxm.length);
 	//促销规则Sql
 	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-
+	console.log("生效的促销单数量2：", dscxclass.length);
 	//促销内容对应的产品Sql
-	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime);
-
+	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime, spids);
+	console.log("生效的促销单数量3：", dscxm.length);
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	
+	console.log("生效的促销单数量4：", dszqda.length);
 	//循环主单数据处理
 	if (dscxm.length < 1) {
-		console.log("没有生效的促销单：", dscxm.length);
 		return;
 	}
 
@@ -289,9 +288,13 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 		ispoints,
 	})
 	//计算时无生效的促销，再次请求初始化一次
-	if (cxdict == null || cxdict.size <= 0) {
-		await Cxdict();
-	}
+	var spids = "";
+	if (sale02_arr && sale02_arr?.length > 0)
+		spids = sale02_arr.map(r => r.SPID).join("','");
+	// if (cxdict == null || cxdict.size <= 0) {//260821 每次都初始化，根据商品信息来查003，不然促销数据太多查询会卡死
+	console.log("促销数据初始化！", spids);
+	await Cxdict(spids);
+	// } 
 	if (xstype == "sale") {
 		is_Xstype = "Sale";
 	} else {
@@ -302,14 +305,14 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 	if (hyinfoModel != null) {
 		hymen = hyinfoModel;
 		isHy = cx_util.DefaultNull(hyinfoModel, hyinfoModel.hyId) != "" ? true : false;
-	}else{
+	} else {
 		hymen = {};
 		isHy = false;
 	}
-	
+
 	//清除计算过的集合
 	ClearResult();
-	
+
 	is_Points = ispoints;
 	let respData = new Object();
 	let sale02_order = [];
@@ -346,8 +349,8 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 		let jfnum = cx_util.nnvl(cxbilldts[i].jfnum, 0);
 		let cxzt = cx_util.snvl(cxbilldts[i].CXZT, "");
 		//let hylv = cx_util.nnvl(cxbilldts[i].HYLV, -1);
-		cxdiscvalue = cx_util.nnvl(cxdiscvalue,0);
-		if (cxdiscvalue >= 0) { 
+		cxdiscvalue = cx_util.nnvl(cxdiscvalue, 0);
+		if (cxdiscvalue >= 0) {
 			if (spnet - cxdiscvalue < 0) {
 				cxdiscvalue = spnet;
 			}
@@ -526,7 +529,7 @@ const SaleCxCreate = async (spid, bill, saledate, fxbill, hylevel) => {
 				continue;
 			}
 			//判断会员积分促销，积分是否够扣除
-			if(!ynCxjfCheck(cxbill)){
+			if (!ynCxjfCheck(cxbill)) {
 				continue;
 			}
 
@@ -660,26 +663,26 @@ const xsTypeCheck = function(bill, is_Xstype) {
 }
 
 //0:优先积分促销、1:放弃积分促销
-const isPointsCheck = function(bill,isPoints) {
+const isPointsCheck = function(bill, isPoints) {
 	let mcc = cxdict.get(bill);
-	console.log("isPointsCheck", mcc.cxtype);
-	
-	if(mcc.cxtype == "D" || mcc.cxtype == "G"){
+	// console.log("isPointsCheck", mcc.cxtype);
+
+	if (mcc.cxtype == "D" || mcc.cxtype == "G") {
 		is_JF = true;
 		if (isPoints == 0)
 			return true;
-		else if(isPoints == 1)
+		else if (isPoints == 1)
 			return false;
-		else 
+		else
 			return true;
-	}else{
+	} else {
 		return true;
 	}
 }
 
 //判断会员积分促销，积分是否够扣除
 const ynCxjfCheck = function(bill) {
-	try{
+	try {
 		let mcc = cxdict.get(bill);
 		if (isHy) {
 			switch (mcc.CXRY) {
@@ -687,11 +690,11 @@ const ynCxjfCheck = function(bill) {
 					return true;
 				case "Hy":
 					let tj = cx_util.TryParse(hymen.JFBalance);
-				    //会员积分不够扣除
-					if(tj < cx_util.nnvl(mcc.syjf,0) && (mcc.cxtype == "D" || mcc.cxtype == "G")){
+					//会员积分不够扣除
+					if (tj < cx_util.nnvl(mcc.syjf, 0) && (mcc.cxtype == "D" || mcc.cxtype == "G")) {
 						return false;
-					}else{
-						return true;	
+					} else {
+						return true;
 					}
 				case "Nhy":
 					return true;
@@ -701,7 +704,7 @@ const ynCxjfCheck = function(bill) {
 		} else {
 			return true;
 		}
-	}catch(err){
+	} catch (err) {
 		return true;
 	}
 }
@@ -972,8 +975,7 @@ const Jslbcx = function(spid, bill, saledate, cx, pmList, qtytype) {
 					//这里判断商品是不是整数
 					let ynzs = true;
 					if (subx.ZkTj == "Qty") {
-						if (currqty >= Tjqty)
-						{
+						if (currqty >= Tjqty) {
 							fsqty = Tjqty;
 						} else {
 							fsqty = currqty;
@@ -1254,7 +1256,7 @@ const MinComputedRow = function(pm_list, cx, lcm, level) {
 				if (fsqty <= 0) {
 					continue;
 				}
-				Rowlist.set(minrow,minrow);
+				Rowlist.set(minrow, minrow);
 				let syqty = Clqty - fsqty;
 				if (syqty > 0) {
 					syqty = fsqty;
@@ -1374,7 +1376,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					} else {
 						newprice = (price * fsqty - subdisc) / fsqty;
 						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) /
-						100;
+							100;
 					}
 					break;
 				case "zjprice":
@@ -1412,7 +1414,7 @@ const SubCxQty = function(spid, bill, saledate, pm_list, cx, fsznet, level, lcm)
 					  第一次循环到这里的时候 就要获取所有需要计算的行信息
 					  然后判断就简单了 
 					 */
-					if (MinRow.size<=0) {
+					if (MinRow.size <= 0) {
 						MinRow = MinComputedRow(pm_list, cx, lcm, level);
 					}
 					if (MinRow.has(i)) {
@@ -1545,7 +1547,7 @@ const calculateJf = function(dsnum, jfnum, cx) {
 				jfnum = time * cx.syjf;
 			}
 		}
-		return [cx_util.nnvl(dsnum,0),cx_util.nnvl(jfnum,0)];
+		return [cx_util.nnvl(dsnum, 0), cx_util.nnvl(jfnum, 0)];
 	} catch (e) {
 
 	}
@@ -1571,10 +1573,10 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 	if (null != jfinfo) {
 		yyjf = jfinfo.jfnum;
 	}
-	
+
 	//累计单号
 	jfinfo.hdbill.push(cx.CxBill);
-	
+
 	//当前累计积分超过会员积分的时候，就返回
 	if (tj < (jfnum + yyjf)) {
 		return;
@@ -1665,10 +1667,10 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 						break;
 					case "Subnet":
 						let subdisc = Math.round((price * fsqty * cxsub.discnet[level] * lcm / subznet) * 100) /
-						100;
+							100;
 						newprice = (price * fsqty - subdisc) / fsqty;
 						cxbilldts[i][disc] = Math.round((cx_util.nnvl(cxbilldts[i][disc], 0) + subdisc) * 100) /
-						100;
+							100;
 						break;
 					case "zjprice":
 						let zjprice = cxsub.zjprice[level];
@@ -1727,7 +1729,7 @@ const AddCxTable = function(spid, bill, saledate, cx, subid, row, fsqty, newpric
 	dr["SPJF"] = jfnum;
 	dr["POINTS"] = (jfinfo.hdbill == cx.CxBill) ? 1 : 0; //1:积分促销  0:不是积分促销
 	dr["DHNET"] = (jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.dhnet, 0) : 0; //积分抵扣金额
-	dr["JFNUM"] =(jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.jfnum, 0) : 0; //抵扣积分
+	dr["JFNUM"] = (jfinfo.hdbill == cx.CxBill) ? cx_util.nnvl(jfinfo.jfnum, 0) : 0; //抵扣积分
 	dr[notfkid] = cx_util.snvl(notfkid_dr, ""); //不可用支付方式
 	dr["NO"] = i;
 	// dr["ISJF"] = is_JF;

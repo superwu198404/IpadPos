@@ -1,8 +1,18 @@
 var encode = require("./encoding.js");
 var util = require("./util.js");
 import excPostUtil from '@/components/gprint/EscPosUtil.js';
+import { getCurrentBrand } from '@/utils/configInfo.js';
 
 var app = getApp();
+
+const BRAND_TITLES = {
+	'KG': 'KenGee 仟吉',
+	'YYM': 'UDNN 优D妞妞'
+};
+function getBrandTitle() {
+	const brand = getCurrentBrand();
+	return BRAND_TITLES[brand && brand.brandNo] || BRAND_TITLES['KG'];
+}
 var jpPrinter = {
 	createNew: function() {
 		var jpPrinter = {};
@@ -1215,7 +1225,7 @@ var jpPrinter = {
 			var isYD = false;
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
 			let HYY = "欢迎光临";
@@ -1547,7 +1557,7 @@ var jpPrinter = {
 			var isYD = false;
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
 			let HYY = "欢迎光临";
@@ -1836,7 +1846,7 @@ var jpPrinter = {
 
 			// jpPrinter.setSelectJustification(1); //居中
 			// jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			// jpPrinter.setText("KenGee 仟吉" + "\n");
+			// jpPrinter.setText(getBrandTitle() + "\n");
 			// jpPrinter.setPrint(); //打印并换行
 
 			let HYY = "欢迎光临";
@@ -1966,7 +1976,7 @@ var jpPrinter = {
 			var isYD = false;
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
 			let HYY = "欢迎光临";
@@ -2327,7 +2337,7 @@ var jpPrinter = {
 
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 			//打印变更类型 
 			if (data.update == "1" || data.update == "2") {
@@ -2561,7 +2571,7 @@ var jpPrinter = {
 
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
 			//打印变更类型 
@@ -2811,7 +2821,7 @@ var jpPrinter = {
 
 			// jpPrinter.setSelectJustification(1); //居中
 			// jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			// jpPrinter.setText("KenGee 仟吉" + "\n");
+			// jpPrinter.setText(getBrandTitle() + "\n");
 			// jpPrinter.setPrint(); //打印并换行
 
 			switch (data.status) {
@@ -3074,7 +3084,7 @@ var jpPrinter = {
 					break;
 			}
 
-			let strCmd = strCenter + strSize2 + "KenGee 仟吉" + "\n" + strSetPrint;
+			let strCmd = strCenter + strSize2 + getBrandTitle() + "\n" + strSetPrint;
 			strCmd += strCenter + strSize1 + "欢迎光临" + strSetPrint;
 			strCmd += strLeft + strSize1 + (xpType + "小票: " + data.khName) + strSetPrint;
 			strCmd += strLeft + strSize1 + (xpType + "时间: " + data.xsDate) + strSetPrint;
@@ -3216,7 +3226,7 @@ var jpPrinter = {
 			var isYD = false;
 			jpPrinter.setSelectJustification(1); //居中
 			jpPrinter.setCharacterSize(17); //设置倍高倍宽
-			jpPrinter.setText("KenGee 仟吉" + "\n");
+			jpPrinter.setText(getBrandTitle() + "\n");
 			jpPrinter.setPrint(); //打印并换行
 
 			let HYY = "欢迎光临";

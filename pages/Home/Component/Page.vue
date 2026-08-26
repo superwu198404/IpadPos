@@ -5,7 +5,7 @@
 <template>
 	<view class="navmall" @click="hideIsShow">
 		<view class="logo">
-			<image src="../../../images/KGlogo-2.png" mode="widthFix" @click="OpenDevoloper"></image>
+			<image :src="brandLogo" mode="widthFix" @click="OpenDevoloper"></image>
 		</view>
 		<scroll-view scroll-y class="menu"
 			style="overflow-x:hidden;position:relative;z-index: 3;background-color: #fff;" @scroll="menu_scroll_move">
@@ -89,9 +89,16 @@
 	import util from '@/utils/util.js';
 	import db from '@/utils/db/db_excute.js';
 	import Promotion from '@/pages/Promotion/Promotion.vue'; //页面注册为组件
-
 	import common from '@/api/common.js';
 	import dateformat from '../../../utils/dateformat';
+	import {
+		getCurrentBrand
+	} from '@/utils/configInfo.js';
+
+	const BRAND_LOGOS = {
+		'KG': '/static/images/KGlogo-2.png',
+		'YYM': '/static/images/yym-logo.jpg'
+	};
 	var $;
 	export default {
 		components: {
@@ -135,6 +142,7 @@
 				showcdxp: false,
 				allow_page_switch: true,
 				guodu: false,
+				brandLogo: '/static/images/KGlogo-2.png',
 			};
 		},
 		methods: {
@@ -262,6 +270,12 @@
 			$ = util.callContainer(this);
 			this.menu_info = base_sale.XsTypeObj;
 			console.log("[Page-Mounted]菜单初始化完毕:", this.menu_info);
+			const brand = getCurrentBrand();
+			console.log("品牌brand：", brand);
+			if (brand) {
+				this.brandLogo = BRAND_LOGOS[brand.brandNo] || BRAND_LOGOS['KG'];
+				console.log("品牌logo：", this.brandLogo);
+			}
 			uni.$off('set-menu');
 			uni.$on('set-menu', util.callBind(this, function(data) {
 				console.log("[Page]手动切换菜单!", data);

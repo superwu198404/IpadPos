@@ -6,7 +6,7 @@
 </style>
 <template>
 	<!-- 辅助促销数据 -->
-	<view class="meminfo" style="padding-top: 30px;">
+	<view class="meminfo" style="padding-top: 30px;border-radius: 2%;">
 		<text class="tishi">提示：{{FZCXRes.msg}}</text>
 		<!-- <button class="close" @click="Close()" style="z-index: 99;">×</button> -->
 		<image class="bgs" src="../../images/dl-bjhw.png" mode="widthFix"></image>

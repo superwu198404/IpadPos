@@ -1,7 +1,6 @@
 import Req from '@/utils/request.js';
 import _checker from '@/utils/graceChecker.js';
-var Brand = getApp().globalData.brand;
-var appid = getApp().globalData.appid;
+const getAppid = () => getApp().globalData.appid;
 var kquser = getApp().globalData.kquser;
 var hyinfoModel = {
 	hyId: null,
@@ -71,7 +70,7 @@ var hyinfoModel = {
 const Query_Member_Assets = (d, func) => {
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "acc",
 		data: d
 	}, "查询中...").then(function(res) {
@@ -84,7 +83,7 @@ const Query_Member_Assets = (d, func) => {
 const hyQuery_new = (a, b, func) => {
 	Req.http("Hy/hy", {
 		apiname: "hyQuery_new",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "acc",
 		data: {
 			acc: acc,
@@ -99,7 +98,7 @@ const hyQuery_new = (a, b, func) => {
 const queryCustomCard = (p, func) => {
 	Req.http("Hy/hy", {
 		apiname: "queryCustomCard",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
@@ -123,7 +122,7 @@ const queryCustomCard = (p, func) => {
 const queryCustomCard_Pos = (p, func) => {
 	Req.http("Hy/hy", {
 		apiname: "queryCustomCard_Pos",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
@@ -147,7 +146,7 @@ const queryCustomCard_Pos = (p, func) => {
 const GetCardInfo = (c, func) => {
 	Req.http("Hy/hy", {
 		apiname: "GetCardInfo",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "others",
 		source: "wxsmallprogram",
 		data: {
@@ -170,7 +169,7 @@ const GetCardInfo = (c, func) => {
 const QJTicktQuery = (a, b, func) => {
 	Req.http("Hy/hy", {
 		apiname: "TICKETQUERY",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "acc",
 		data: {
 			GT_IMPORT: [{
@@ -187,7 +186,7 @@ const QJTicktQuery = (a, b, func) => {
 const Query_Member_Assets_Code = (d, func) => {
 	Req.http("Hy/hy", {
 		apiname: "Query_Member_Assets_Code",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "YWD",
 		data: {
 			YWD: '门店' + d.khid + '查询信息:' + d.code,
@@ -203,7 +202,7 @@ const Query_Member_Assets_Code = (d, func) => {
 const QJTicktUse = (d, func) => {
 	Req.http("Hy/hy", {
 		apiname: "TICKETUSE",
-		appid: appid,
+		appid: getAppid(),
 		paramkey: "acc",
 		data: {
 			GT_IMPORT: d
@@ -217,7 +216,7 @@ const QJTicktUse = (d, func) => {
 //会员券列表——卓越
 const customcouponList = (p, func) => {
 	Req.http("Hy/hy", {
-		appid: appid,
+		appid: getAppid(),
 		apiname: "customcouponList",
 		paramkey: "others",
 		source: "wxsmallprogram",
@@ -243,7 +242,7 @@ const customcouponList = (p, func) => {
  */
 const NEW_HYQCX = (o, func) => {
 	Req.http("Hy/hy", {
-		appid: appid,
+		appid: getAppid(),
 		apiname: "NEW_HYQCX",
 		paramkey: "I_PARTNER",
 		source: "Mobile_Pos",
@@ -260,7 +259,7 @@ const NEW_HYQCX = (o, func) => {
 //卓越券核销
 const couponConsume = (d, b, func) => {
 	Req.http("Hy/hy", {
-		appid: appid,
+		appid: getAppid(),
 		apiname: "couponConsume",
 		paramkey: "others",
 		source: "wxsmallprogram",
@@ -280,20 +279,20 @@ const couponConsume = (d, b, func) => {
 const HyQuery = (mumbers, func) => {
 	let typeName = null;
 	let flag = _checker.checkMobile(mumbers);
-	if (Brand == "KG") {
-		if (flag) {
-			typeName = 'Mobile';
-		} else {
-			typeName = 'ACCOUNT';
-		}
-		let obj = {
-			acc: mumbers,
-			type: typeName
-		}
-		Query_Member_Assets(obj, func);
-	} else if (Brand == "ZY") {
-		queryCustomCard_Pos(mumbers, func);
+	// if (Brand == "KG") {
+	if (flag) {
+		typeName = 'Mobile';
+	} else {
+		typeName = 'ACCOUNT';
 	}
+	let obj = {
+		acc: mumbers,
+		type: typeName
+	}
+	Query_Member_Assets(obj, func);
+	// } else if (Brand == "ZY") {
+	// 	queryCustomCard_Pos(mumbers, func);
+	// }
 };
 /**
  *会员扫码查询 
@@ -301,32 +300,32 @@ const HyQuery = (mumbers, func) => {
  * @param {*} func 
  */
 const HyCodeQuery = (o, func) => {
-	if (Brand == "KG") {
-		Query_Member_Assets_Code(o, func)
-	} else if (Brand == "ZY") {
-		GetCardInfo(o, func);
-	}
+	// if (Brand == "KG") {
+	Query_Member_Assets_Code(o, func)
+	// } else if (Brand == "ZY") {
+	// 	GetCardInfo(o, func);
+	// }
 };
 const TicktQuery = (a, b, func) => {
-	if (Brand == "KG") {
-		QJTicktQuery(a, b, func);
-	} else if (Brand == "ZY") {
-		func({
-			code: true
-		})
-	}
+	// if (Brand == "KG") {
+	QJTicktQuery(a, b, func);
+	// } else if (Brand == "ZY") {
+	// 	func({
+	// 		code: true
+	// 	})
+	// }
 };
 const TicktUse = (d, b, func) => {
-	if (Brand == "KG") {
-		QJTicktUse(d, func);
-	} else if (Brand == "ZY") {
-		couponConsume(d, b, func);
-	}
+	// if (Brand == "KG") {
+	QJTicktUse(d, func);
+	// } else if (Brand == "ZY") {
+	// 	couponConsume(d, b, func);
+	// }
 };
 //仟吉会员卡二维码核销接口
 function QRCODE_CONSUME(e, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "QRCODE_CONSUME",
 		"paramkey": "cardNo",
 		"source": "mobile_pos",
@@ -348,7 +347,7 @@ function QRCODE_CONSUME(e, func) {
 //仟吉 支付订单查询接口
 function SALE_QUERY(m, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "SALE_QUERY",
 		"paramkey": "merOrderId",
 		"source": "mobile_pos",
@@ -364,7 +363,7 @@ function SALE_QUERY(m, func) {
 //仟吉 支付订单退款接口
 function REFUND(e, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "REFUND",
 		"paramkey": "merOrderId",
 		"source": "mobile_pos",
@@ -383,7 +382,7 @@ function REFUND(e, func) {
 //卓越会员卡核销
 function customCardpay(d, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "customCardpay",
 		"paramkey": "others",
 		"source": "wxsmallprogram",
@@ -402,7 +401,7 @@ function customCardpay(d, func) {
 //卓越卡核销后退款
 function customCardrefund(d, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "customCardrefund",
 		"paramkey": "bill",
 		"source": "wxsmallprogram",
@@ -420,30 +419,30 @@ function customCardrefund(d, func) {
 };
 //会员卡支付接口
 function PAY_ALL(m, e, func) {
-	if (m == 'KG') {
-		QRCODE_CONSUME(e, func);
-	} else {
-		customCardpay(e, func);
-	}
+	// if (m == 'KG') {
+	QRCODE_CONSUME(e, func);
+	// } else {
+	// 	customCardpay(e, func);
+	// }
 }
 //会员卡支付查询接口
 function QUERY_ALL(m, e, func) {
-	if (m == 'KG') {
-		SALE_QUERY(e, func);
-	} else {
-		func({
-			code: true
-		});
-		//customCardrefund(e, func);
-	}
+	// if (m == 'KG') {
+	SALE_QUERY(e, func);
+	// } else {
+	// 	func({
+	// 		code: true
+	// 	});
+	// 	//customCardrefund(e, func);
+	// }
 }
 //会员卡退款接口
 function REFUND_ALL(m, e, func) {
-	if (m == 'KG') {
-		REFUND(e, func);
-	} else {
-		customCardrefund(e, func);
-	}
+	// if (m == 'KG') {
+	REFUND(e, func);
+	// } else {
+	// 	customCardrefund(e, func);
+	// }
 }
 
 /**
@@ -452,16 +451,16 @@ function REFUND_ALL(m, e, func) {
  * @param {*} func 
  */
 const CouponList_ALL = (o, func) => {
-	if (Brand == "KG") {
-		NEW_HYQCX(o, func);
-	} else if (Brand == "ZY") {
-		customcouponList(o, func);
-	}
+	// if (Brand == "KG") {
+	NEW_HYQCX(o, func);
+	// } else if (Brand == "ZY") {
+	// 	customcouponList(o, func);
+	// }
 }
 //卓越积分
 function consumeJFscore(d, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "consumeJFscore",
 		"source": "wxsmallprogram",
 		"paramkey": "bill",
@@ -481,7 +480,7 @@ function consumeJFscore(d, func) {
 //增加积分
 function newUploadHyjf(d, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "newUploadHyjf",
 		"paramkey": "code",
 		"data": d
@@ -498,7 +497,7 @@ function newUploadHyjf(d, func) {
  */
 function minusHyJf(d, func) {
 	Req.http("Hy/hy", {
-		"appid": appid,
+		"appid": getAppid(),
 		"apiname": "minusHyJf",
 		"paramkey": "code",
 		"data": d
@@ -510,11 +509,11 @@ function minusHyJf(d, func) {
 };
 //会员积分 合集(支付调用)
 const consumeJF = function(m, e, func) {
-	if (m == 'KG') {
-		newUploadHyjf(e, func);
-	} else {
-		consumeJFscore(e, func);
-	}
+	// if (m == 'KG') {
+	newUploadHyjf(e, func);
+	// } else {
+	// 	consumeJFscore(e, func);
+	// }
 }
 export default {
 	HyQuery,

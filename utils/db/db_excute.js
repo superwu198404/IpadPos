@@ -392,7 +392,7 @@ var mySqllite = function() {
 					sql: newSqlArr[i],
 					msg: retcode
 				}
-				console.warn("sql执行报错:", obj);
+				console.error("sql执行报错:", obj);
 			}
 		}
 		retcode = await tran(tranEnum.commit);

@@ -105,7 +105,7 @@
 				auxiliary_gifts: [], //辅助促销礼品
 				current_discount_type: "BZ", //当前折扣类型
 				view: {
-					show:false,
+					show: false,
 					show_member: false,
 					shopping_bags: false,
 					member_info_form: false,

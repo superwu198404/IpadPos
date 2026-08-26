@@ -1,7 +1,8 @@
-import configInfo from '@/utils/configInfo.js'; //配置参数
+import {
+	getBaseUrl
+} from '@/utils/configInfo.js'; //配置参数
 import util from './util';
-
-const baseUrl = configInfo.baseUrl;
+import _date from '@/utils/dateformat.js';
 
 const showToast = (title, icon = "none") => {
 	uni.showToast({
@@ -19,7 +20,7 @@ const showToast = (title, icon = "none") => {
  * @return {Object} Promise
  */
 const http = (url, data = {}, msg = "加载中...", option = {}) => {
-	let p_url = option.url || baseUrl // 地址给默认值
+	let p_url = option.url || getBaseUrl() // 地址给默认值
 	let hideLoading = option.hideLoading || false // 是否显示 loading
 	let hideMsg = option.hideMsg || false // 是否隐藏错误提示
 	let token = uni.getStorageSync("auth"); //获取接口凭证
@@ -154,7 +155,7 @@ function retData(pm_code, pm_msg, pm_http) {
 //请求方法
 let httpFunc = function(pm_data) {
 	// let config = uni.getStorageSync("config"); //从缓存中取出要请求的地址
-	let p_url = baseUrl;
+	let p_url = getBaseUrl();
 	// if (config) {
 	// 	p_url = config.urls[pm_data.url_type]; //通过键值来取
 	// }
@@ -165,7 +166,7 @@ let httpFunc = function(pm_data) {
 	// 	pm_data.data.brand = "MobilePos_API.Models";
 	// }
 	return new Promise(function(resolve, reject) {
-		// console.log("请求地址：", p_url + pm_data.http.url);
+		console.log("请求地址：", p_url + pm_data.http.url);
 		// console.log("请求参数类型：", pm_data.method);
 		// console.log("请求参数参数：", pm_data.data);
 		uni.request({
@@ -178,11 +179,11 @@ let httpFunc = function(pm_data) {
 			},
 			data: pm_data.data,
 			success: (res) => {
-				console.log("[Success]请求完成!");
+				console.log("[httpFunc.Success]请求完成!");
 				if (res.statusCode == 200) {
 					return resolve(res.data);
 				} else {
-					console.warn("[Fail]请求结果异常:",res);
+					console.warn("[httpFunc.Fail]请求结果异常:", res);
 					return resolve(new retData(false, res.errMsg));
 				}
 			},
@@ -297,19 +298,17 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 	callbacklist = callbackfunArr;
 	let res = pm_data;
 	for (var i = 0; i < callbacklist.length; i++) {
+		const key = Date.now();
 		if (res && res.http) {
-			console.log("[AsyncFuncArr]http请求参数:", res);
+			console.warn("[AsyncFuncArr-" + key + "]http请求参数:", res);
 			showloding(res.http.load, res.http.title);
-			// console.log("[AsyncFuncArr]已打开加载框...");
-			// console.log("[AsyncFuncArr]开始请求数据...");
 			try {
 				res = await httpFunc(res);
 			} catch (e) {
-				console.log("[AsyncFuncArr]请求异常:", e);
+				console.error("[AsyncFuncArr-" + key + "]请求异常:", e);
 			}
-			// console.log("[AsyncFuncArr]请求完成...");
 			//谨慎放开 初始化请求返回大量数据可能会造成日志打印卡死
-			console.log("[AsyncFuncArr]http请求返回值:", JSON.stringify(res).substring(0, 1000));
+			console.warn("[AsyncFuncArr-" + key + "]http请求返回值:", JSON.stringify(res).substring(0, 1000));
 			hideloding();
 			if (res && !res.code) {
 				def(catchfun, res);
@@ -320,7 +319,7 @@ var asyncFuncArr = async function(pm_data, callbackfunArr, catchfun, finallyfun)
 		res = await forPromise(callbacklist[i], res)
 		// console.log("回调函数" + i.toString() + JSON.stringify(res).substring(0, 100));
 		if (res && !res.code) {
-			console.log("回调函数异常了" + i.toString() + JSON.stringify(res));
+			console.error("[AsyncFuncArr-" + key + "]回调函数异常了" + i.toString() + JSON.stringify(res));
 			def(catchfun, res);
 			break;
 		}

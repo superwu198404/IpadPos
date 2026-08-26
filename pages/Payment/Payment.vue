@@ -478,6 +478,7 @@
 				cash_sum: 0,
 				record: null,
 				payRecord: null, //本单已支付的数据 主要用于卡券支付渠道互斥的处理
+				KQDSFEXC: [] //仟吉券限制的支付方式集合
 			}
 		},
 		watch: {
@@ -664,9 +665,6 @@
 					popGesture: 'none'
 				});
 			},
-			ShowDefaultAfterImageLoadError: function(e, index, i) {
-
-			},
 			//扫码方式切换
 			PAD_SCANFunc: function(e) {
 				this.PAD_SCAN = !this.PAD_SCAN;
@@ -786,12 +784,12 @@
 						KCDID: sale1.KCDID, //库存点
 						// BMID: this.BMID, //部门id
 						BMID: item.point, //部门id
-						DISC: this.isRefund ? (item.origin?.DISC || 0) : item
-							.disc || 0, //折扣金额 *逆向退款 不需要记录为负数*
-						FAMT: this.isRefund ? (item.origin?.FAMT || 0) : item
-							.disc || 0, //折扣金额(卡券消费后要记录) *逆向退款 不需要记录为负数*
-						RATE: this.isRefund ? (item.origin?.RATE || 0) : item
-							.disc || 0, //折扣金额(卡消费后要记录) *逆向退款 不需要记录为负数*
+						DISC: this.isRefund ? -(Number(item.origin?.DISC || 0)) : item
+							.disc || 0, //折扣金额 *260826wy要求逆向退款需要取反,不仅仅是负值,因为正向还有负的折扣,如抖音券
+						FAMT: this.isRefund ? -(Number(item.origin?.FAMT || 0)) : item
+							.disc || 0, //折扣金额(卡券消费后要记录) *260826wy要求逆向退款需要取反,不仅仅是负值,因为正向还有负的折扣,如抖音券
+						RATE: this.isRefund ? -(Number(item.origin?.RATE || 0)) : item
+							.disc || 0, //折扣金额(卡消费后要记录) *260826wy要求逆向退款需要取反,不仅仅是负值,因为正向还有负的折扣,如抖音券
 						ZKLX: this.isRefund ? (item.origin?.ZKLX || "") : item.zklx, //折扣类型
 						YN_YLTH: this.isRefund ? (item.origin?.YN_YLTH || "") : item
 							.yn_ylth, //渠道卡券标识
@@ -947,6 +945,7 @@
 					return;
 				}
 				if (!this.YN_TotalPay) { //如果未支付完成
+
 					if ((pay_info.dbm === "Y" || this.is_poly) && !this.authCode) { //需要扫码操作(条件：1、指定为聚合支付。2、或直接设定扫或不扫码)
 						console.log("此操作类型需要扫码！", pay_info)
 						console.log("是否属于聚合支付：", this.is_poly)
@@ -1072,7 +1071,7 @@
 				let count = 0;
 				console.log("[PayedCount]已支付记录:", this.PaymentInfos.PayList);
 				this.PaymentInfos.PayList?.filter(i => !i.fail).map(pay => { //总和计算上个页面已经支付成功的订单的金额
-					count += pay.amount;
+					count += Number(pay.amount) || 0;
 				});
 				console.log("[PayedCount]已支付金额(已完成支付的记录计算金额):", count);
 				return count;
@@ -1155,8 +1154,8 @@
 				});
 				let cash_list = this.RefundList.filter(i => i.fkid == cash_info.FKID);
 				let other_list = this.RefundList.filter(i => i.fkid != cash_info.FKID);
-				if (cash_list.length == 2) { //现金存在找零的情况
-					let sum = cash_list.reduce((prev, next) => Number(prev.amount) + Number(next.amount));
+				if (cash_list.length >= 2) { //现金存在找零的情况
+					let sum = cash_list.reduce((s, i) => s + Number(i.amount || 0), 0);
 					cash_list[0].amount = sum;
 					other_list.push(cash_list[0]);
 					this.RefundList = other_list;
@@ -1499,6 +1498,13 @@
 					info = this.PayWayInfo(this.PayTypeJudgment());
 				console.log("[PayHandle]支付单号:", this.out_trade_no);
 				console.log("[PayHandle]支付参数:", payAfter);
+				//支付方式互斥判断
+				var xzRes = this.CheckKQDSFEXC(info.fkid);
+				if (xzRes.hasLimit) {
+					util.simpleMsg("与已使用的 " + xzRes.limitNames.join("、") + " 互斥");
+					this.authCode = ""; //必须要重置一下code
+					return;
+				}
 				if (await this.InPaymentBeforeStoped())
 					return;
 				console.log("[PayHandle]支付开始...", info);
@@ -2235,6 +2241,7 @@
 					if (r.yn_use == 'Y') {
 						this.currentPayType = e.currentTarget.id; //可使用的支付方式
 						this.currentSelectedInfo = r; //缓存当前点击选中的支付信息
+						console.log("currentSelectedInfo:", this.currentSelectedInfo);
 					} else {
 						if (!this.ShowOthersPay) { //不在其他支付选项的时候
 							this.is_poly = poly; //聚合支付复位
@@ -2369,7 +2376,7 @@
 					this.currentSelectedInfo = payObj;
 				}
 			},
-			//切换-退款和支付
+			//选择支付方式后点击支付或者退款事件
 			ActionSwtich: function() {
 				console.log("是否是退款：", this.isRefund)
 				if (this.isRefund)
@@ -2597,10 +2604,10 @@
 						//由于失败支付这仨字段是没有正确的赋值的，不出意外应该都是 undefined,这里重试成功了之后得给这几个字段重新赋值
 
 						//20260407 新加逻辑 因为券的重试是不对的。
-						let coupon = data.vouchers?.filter(i => i.yn_card === 'N' && i.note != 'EXCESS'),
-							excoupon = data.vouchers?.filter(i => i.yn_card === 'N' && i.note ===
-								'EXCESS'),
-							card = data.vouchers?.filter(i => i.yn_card === 'Y');
+						var vouchers = data.vouchers ?? [];
+						let coupon = vouchers.filter(i => i.yn_card === 'N' && i.note != 'EXCESS'),
+							excoupon = vouchers.filter(i => i.yn_card === 'N' && i.note === 'EXCESS'),
+							card = vouchers.filter(i => i.yn_card === 'Y');
 						console.log("[OrderGenarator]重试券 coupony：", coupon)
 
 						info.disc = (data?.discount || 0) / 100;
@@ -2631,17 +2638,14 @@
 							info,
 							data
 						});
-						this.retryEnd(info, false)
-
-
-						let coupons = data.vouchers?.filter(i => i.yn_card === 'N');
+						this.retryEnd(info, false);
+						let coupons = vouchers.filter(i => i.yn_card === 'N');
 						if (coupons.length > 0) {
 							console.log("[OrderGenarator]重试券 payload.money：", data.money)
 							let fq = coupons.find(i => i.note === "EXCESS"); //针对仟吉券
 							if (fq) {
 								this.yPayAmount += (coupons.length > 1 ? (fq.denomination - fq
-										.pay_amount) : data
-									.vouchers[0].denomination) / 100;
+									.pay_amount) : vouchers[0].denomination) / 100;
 							} else { //其他券支付 如可伴券
 								let num = 0;
 								coupon.map(i => num += i.denomination);
@@ -2661,14 +2665,9 @@
 								this.ForCouK(excoupon, this.PayDataAssemble(), data.transaction_id);
 							} else {
 								this.ForCouK(card.slice(1), this.PayDataAssemble(), data.transaction_id);
-
 							}
 						}
-
-
-
-						this.PayList = Object.assign([], this
-							.PayList); //刷新视图
+						this.PayList = Object.assign([], this.PayList); //刷新视图
 						util.simpleModal('重试结果', res);
 					}).bind(this), (this.RefundErrorCallback).bind(this, info,
 						true));
@@ -2822,6 +2821,56 @@
 			Others_ConfirmPay: function(e) {
 				this.ShowOthersPay = false;
 			},
+			//获取仟吉券互斥的支付方式
+			GetKQDSFEXC: async function() {
+				await common.GetDapzcs("KQDSFEXC", res => {
+					console.log("[KQDSFEXC]仟吉券互斥数据：", res);
+					if (res.code && res.msg.length > 0) {
+						that.KQDSFEXC = res.msg.map((item, index) => {
+							return {
+								FKID: item.ID_NR,
+								NAME: item.ZF,
+								XZIDS: item.SNAME.split(','),
+							};
+						});
+						console.log("[GetKQDSFEXC]仟吉券互斥数据筛选后：", that.KQDSFEXC);
+					}
+				})
+			},
+			//判断已支付的仟吉券限制支付与当前选的支付方式是否与互斥（双向：已支付限制当前，或当前限制已支付）
+			CheckKQDSFEXC: function(cur_fkid) {
+				console.log("CheckKQDSFEXC：", {
+					cur_fkid,
+					KQDSFEXC: that.KQDSFEXC,
+					PayList: that.PayList
+				})
+				let sucPayList = that.PayList.filter(i => !i.fail && !i.paying && i.show); //筛选支付成功的来判断
+				if (!cur_fkid || !that.KQDSFEXC || that.KQDSFEXC.length <= 0 || sucPayList.length <= 0) {
+					return {
+						hasLimit: false,
+						limitNames: []
+					};
+				}
+				//已支付的FKIDS
+				const fkidSet = new Set(sucPayList.map(item => item.fkid));
+				const conflictNames = [];
+				//已支付的fkid限制了当前cur_fkid
+				const payedConflicts = that.KQDSFEXC.filter(item => fkidSet.has(item.FKID) && item.XZIDS.includes(
+					cur_fkid));
+				conflictNames.push(...payedConflicts.map(item => item.NAME));
+				//当前cur_fkid限制了已支付的某个fkid（已支付的fkid可能没有KQDSFEXC自己的条目，直接从PayList取名称）
+				const curConfig = that.KQDSFEXC.find(item => item.FKID === cur_fkid);
+				if (curConfig) {
+					const blockedPayeds = sucPayList.filter(item => curConfig.XZIDS.includes(item.fkid));
+					conflictNames.push(...blockedPayeds.map(item => item.name));
+				}
+				const uniqueNames = [...new Set(conflictNames)];
+				console.log("CheckKQDSFEXC-冲突支付方式：", uniqueNames);
+				return {
+					hasLimit: uniqueNames.length > 0,
+					limitNames: uniqueNames
+				};
+			},
 		},
 		async created() {
 			console.log("进入created方法");
@@ -2831,6 +2880,8 @@
 			console.log("支付类型：", this.actType);
 			if (this.actType != common.actTypeEnum.Payment) //退款才获取
 				await _payment.GetTKRelation(); //获取券退款fkid 映射方式
+			//获取仟吉券互斥的支付方式
+			await this.GetKQDSFEXC();
 			$ = util.callContainer(this);
 		},
 		mounted() {}
