@@ -1612,13 +1612,14 @@
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
 					// 逐个 await，不要用 Promise.all 并发——CashChange 与 CashLimit 都会弹窗，
 					// 并行会让两个弹窗同时可见（重叠）并留下永不消费的 uni.$once 监听器。
-					// 串行还有个好处：走到 CashLimit 时 currentPayInfo 已由 CashChange 初始化完毕。
+					// 顺序：现金超限提示必须在找零提示**之前**（需求要求先弹超额限制，
+					// 确认继续支付后才谈找零）。
 					let results = [];
 					results.push(await this.DisabledPaymentChannel());
 					results.push(await this.LimitPaymentChannel());
 					results.push(await this.ScoreDiscount());
-					results.push(await this.CashChange());
 					results.push(await this.CashLimit());
+					results.push(await this.CashChange());
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
 					return !results.every(result => result == true);
