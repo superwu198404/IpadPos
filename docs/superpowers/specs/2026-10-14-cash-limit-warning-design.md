@@ -16,6 +16,40 @@
 
 **退款不触发**（`Z151` / `Z152` 等），即使它们也走同一页面——退款是退钱给顾客，不构成赊销风险。实现上在 `CashLimit` 开头用 `isRefund` 短路。
 
+### 售卡售券的兼容性（已验证）
+
+售卡售券**跳的就是同一个支付页**，因此 `InPaymentBeforeStoped` 这个挂载点天然覆盖它们，**无需任何额外代码**：
+
+| 调用方 | 位置 |
+|---|---|
+| 卡券通用跳转 | [card_coupon.js:674](utils/sale/card_coupon.js:674) |
+| 售卡（CardSale.vue） | [card_sale.js:46](api/business/card_sale.js:46) |
+| 礼品券兑换 | [CouponExchange.vue:678](pages/KQSale/CouponExchange/CouponExchange.vue:678) |
+
+四个数据依赖全部齐全（`sale001` 构造器 [saleClass.js:63-65](utils/sale/saleClass.js:63) 有 `for (var item in pm_obj) this[item] = pm_obj[item]` 兜底赋值，[card_coupon.js:40-68](utils/sale/card_coupon.js:40) 的 `InitSale001` 显式填了这些字段）：
+
+| 字段 | 售卡售券来源 | 可用 |
+|---|---|---|
+| `SALEDATE` | `_date.getYMD()` → `'YYYY-MM-DD'` | 是，格式与销售单一致 |
+| `RYID` | `store.RYID` | 是 |
+| `KHID` | `store.KHID` | 是 |
+| `BILL_TYPE` | `'Z111'`（普通）/ `'Z112'`（赊销，[CardSale.vue:342](pages/KQSale/CardSale/CardSale.vue:342)） | 是 |
+
+`isRefund` 不会误判：[Payment.vue:416](pages/Payment/Payment.vue:416) 默认 `true`，但 [paramInit:2073](pages/Payment/Payment.vue:2073) 按 `actType == Payment` 显式置 `false`，而 `card_sale.js:38` 传的正是 `actType: "Payment"`。
+
+### 售卡售券的前置依赖：`SKSQFKID` 白名单
+
+售卡时付款方式受 `POSCS='SKSQFKID'` 白名单限制（[card_sale.js:28-30](api/business/card_sale.js:28)）：
+
+```js
+let allow_type = util.getStorage("POSCS").find(i => i.POSCS == 'SKSQFKID')?.POSCSNR.split(',');
+let ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.fkid)).map(i => i.fkid);
+```
+
+**若现金的 FKID 不在 `SKSQFKID` 中，售卡售券时现金根本选不了**，这段逻辑不会被触发。这不是不兼容，是没机会触发。
+
+**实施前需确认服务端 `SKSQFKID` 是否包含现金 FKID。** 若不包含而业务又需要售卡场景走现金超限管控，需要同步调整该参数配置。
+
 不改动的部分：
 - 服务端 `ExecuteBatchSQL` 接收逻辑保持不变
 - 本地 SQLite **不建** `POS_INFOR_WARM` 表，该表只在 Oracle 侧存在
@@ -197,7 +231,7 @@ SqliteSql.concat(sqlite_addition_sqls);   // 缺少赋值
 
 ### 新增 `utils/sale/cashLimit.js`
 
-三个纯函数，不依赖 vue 实例，便于单独验证：
+五个纯函数，不依赖 vue 实例，便于单独验证：
 
 | 函数 | 签名 | 职责 |
 |---|---|---|
@@ -243,6 +277,8 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 9 | 现金含找零 | 找零负数记录不计入合计 |
 | 10 | 退款（Z151）现金超限 | **不触发**，直接放行 |
 | 11 | 倒计时期间点【确定】 | 按钮置灰，点不动 |
+| 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`（前提：现金在 `SKSQFKID` 白名单内） |
+| 13 | 售券（CouponSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111` |
 
 日志沿用项目约定：`console.log("[CashLimit]...")` 前缀。
 
@@ -256,3 +292,4 @@ props：`visible`、`text`、`seconds`（默认 10）。
 2. 服务端 `ExecuteBatchSQL` 端到端验证：确认 `POS_TXFILE.TX_SQL` 中带末尾分号的 INSERT 能被正确拆分执行。
 3. `Payment.vue` 能否直接访问 `current_type.clickType`（决定 `isSaleCreditSettlement` 是页面侧算好还是工具函数自己取）。实现第一步先查清。
 4. 同一单重复超限确认会撞主键 `(SALEDATE,KHID,BILL)`。当前设计接受该风险（"确定"是人工决策，收银员不会明知会失败还重复点）。若需彻底规避，需要服务端把约束改为唯一索引并改用 `MERGE`，或客户端先查后写 —— 但客户端无法查询 Oracle，此路不通。**建议先按当前设计实现，观察实际是否出现该场景。**
+5. 服务端 `SKSQFKID` 是否包含现金 FKID（决定售卡售券场景能否真的走到这段逻辑）。
