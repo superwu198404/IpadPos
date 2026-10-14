@@ -1650,7 +1650,7 @@
 				} else if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
 					this.CashModal.Text =
-						`支付 ${ this.dPayAmount } 元，需找零 ${ change_number?.toFixed(2) } 元，确认支付？`;
+						`现金支付 ${ this.dPayAmount } 元，需找零 ${ change_number?.toFixed(2) } 元，是否确认支付？`;
 					this.CashModal.Visible = true;
 					var async_callback = new Promise(util.callBind(this, function(reslove,
 						reject) {
@@ -1670,7 +1670,7 @@
 						return false;
 				} else {
 					console.log("[CashChange]支付金额小于欠款...");
-					this.CashModal.Text = `支付 ${ this.dPayAmount } 元，确认支付？`;
+					this.CashModal.Text = `现金支付 ${ this.dPayAmount } 元，是否确认支付？`;
 					this.CashModal.Visible = true;
 					var async_callback = new Promise(util.callBind(this, function(reslove,
 						reject) {
