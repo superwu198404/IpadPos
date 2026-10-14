@@ -9,12 +9,13 @@
 		<view class="cash-limit-contain">
 			<view class="cash-limit-head">
 				<span>现金支付提示</span>
+				<span class="cash-limit-close-btn" @click="Cancel">×</span>
 			</view>
 			<view class="cash-limit-content">
 				{{ text }}
 			</view>
-			<view class="cash-limit-countdown" v-if="!unlocked">
-				请阅读提示，{{ remain }} 秒后可确认
+			<view class="cash-limit-countdown">
+				{{ unlocked ? '' : '请阅读提示，' + remain + ' 秒后可确认' }}
 			</view>
 			<view class="cash-limit-btn-groups">
 				<button class="btn btn-qx" @click="Cancel">取消</button>
@@ -109,18 +110,27 @@
 
 	.cash-limit-head {
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
 		line-height: 70rpx;
 		padding: 0 2%;
 		font-size: 32rpx;
+	}
+
+	.cash-limit-close-btn {
+		padding: 3px;
+		box-sizing: border-box;
 		font-weight: bold;
 	}
 
 	.cash-limit-contain {
-		width: 40%;
+		width: 30%;
 		display: flex;
 		flex-direction: column;
+		background-blend-mode: multiply;
+		background-image: url(../../images/dx-tchw.png);
+		background-size: contain;
+		background-repeat: no-repeat;
 		background-color: white;
 		padding: 5px;
 		box-sizing: border-box;
