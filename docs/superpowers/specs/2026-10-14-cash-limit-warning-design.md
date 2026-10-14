@@ -65,7 +65,7 @@ CreateSaleOrder(dataObj)   ← 所有落库路径的唯一入口
 
 覆盖业务：所有进入支付页的正向支付（见"全链路覆盖分析"）。
 
-**退款不触发**（`Z151` / `Z152` 等）：在 `CashLimit` 开头用 `isRefund` 短路，支付页不写标记，`CreateSaleOrder` 自然无标记可消费。
+**退款不触发**（`Z151` / `Z152` 等）：`CashChange` 开头有 `if (this.isRefund) return true;` 短路，支付页不写标记，`CreateSaleOrder` 自然无标记可消费。
 
 不改动的部分：
 - 服务端 `ExecuteBatchSQL` 接收逻辑不变
@@ -221,37 +221,81 @@ if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC
 
 ## 交互设计
 
-### 触发位置
+这一节是**唯一权威的规则说明**。实现集中在 `Payment.vue` 的 `CashChange()` 一个方法里——原先独立的 `CashLimit()` 方法已删除，超限判定并入 `CashChange`。
 
-在 `InPaymentBeforeStoped`（[Payment.vue:1595](pages/Payment/Payment.vue:1595)）的 `Promise.all` 数组中，排在 `CashChange` 之后新增 `this.CashLimit()`。
+### 触发位置与判定顺序
 
-顺序必须在 `CashChange` 之后：先让用户确认找零金额无误，再做超限管控，避免两个弹窗叠加。
+`CashChange()` 在 `InPaymentBeforeStoped()` 里**逐个 `await`** 调用（不能用 `Promise.all`：这些方法会弹窗，并行会让多个弹窗同时可见并留下永不消费的 `uni.$once` 监听器）。
 
-### 弹窗
+判定顺序（顺序本身就是规则的一部分）：
 
-新建 `components/CashLimitModal/CashLimitModal.vue`，样式与事件机制仿照 [CashChangeModal](components/CashChangeModal/CashChangeModal.vue)（`uni.$emit` 派发事件，父页面 `uni.$once` + Promise 封装成可 `await` 的交互）。
+```
+1. 非现金 / 退款        -> 直接 return true，不弹窗
+2. 找零 > 100          -> 最优先拦截，只弹找零框，单按钮，终止
+3. 超额（现金合计 > CASHSX）-> 只弹超限框（含找零金额），取消/确定
+4. 未超额              -> 弹原有现金/找零确认框
+```
 
-不复用 `CashChangeModal` 的原因：现有组件按钮是【取消 / 确认】，而本需求是【确定 / 取消】，且**取消的语义相反**——`CashChangeModal` 的取消是"这一笔先不支付"，本需求是"终止本次支付"。混用会污染每天在用的找零确认逻辑。
+**找零拦截必须在超额判断之前**：找零 > 100 属于"输入有误"，用户看到的应该是"你钱输错了"，而不是"你超限了"。若放在后面，超额单会先看到超限提示，误导收银员。
 
-提示文案（固定）：
+### 规则表
 
-> 现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长
+| 场景 | 弹窗组件 | 文案 | 按钮 | 点确定 | 点取消 |
+|---|---|---|---|---|---|
+| 找零 > 100（无论是否超额） | `CashChangeModal` | `找零 X 元已超过 100 元，请重新输入支付金额!` | **只有【确定】** | 终止 | — |
+| 超额，无找零 | `CashLimitModal` | 固定文案 | 取消 / 确定 | **记标记 + 继续支付** | 终止 |
+| 超额，找零 ≤ 100 | `CashLimitModal` | 固定文案 + `(本次需找零 X 元)` | 取消 / 确定 | **记标记 + 继续支付** | 终止 |
+| 未超额，找零 ≤ 100 | `CashChangeModal` | `现金支付 X 元，需找零 Y 元，是否确认支付？` | 取消 / 确定 | 继续支付 | 终止 |
+| 未超额，无找零 | `CashChangeModal` | `现金支付 X 元，是否确认支付？` | 取消 / 确定 | 继续支付 | 终止 |
+| 非现金 / 退款 | — | — | — | 放行 | — |
 
-### 状态机
+**边界**：判据是 `change_number > 100`，所以**找零正好 = 100 走正常流程**（与项目原有行为一致）。
+
+**任何时候都只弹一个弹窗。** 超额时 `CashChangeModal` 完全不参与；未超额时超限逻辑完全不参与。
+
+### 两个弹窗的分工
+
+| 组件 | data 字段 | 事件前缀 | 倒计时 | 用在哪 |
+|---|---|---|---|---|
+| `components/CashLimitModal/CashLimitModal.vue` | `CashLimitInfo` | `cash-limit-*` | **有**（默认 10s） | 仅超限提示 |
+| `components/CashChangeModal/CashChangeModal.vue` | `CashModal` | `cash-modal-*` | 无 | 找零拦截 + 常规金额确认 |
+
+**为什么找零拦截用 `CashChangeModal` 而不是 `CashLimitModal`**：倒计时是为了强制收银员看完合规风险提示。而"找零超百"是操作失误提示，不需要强制阅读 10 秒——多等 10 秒只会拖慢纠错。
+
+两个组件都新增了 `show-cancel` 属性（Boolean，默认 `true`）；置 `false` 时只渲染主按钮，用于"两个按钮都会终止支付"的场景（本项目只有找零拦截这一处）。`CashChangeModal` 只被 `Payment.vue` 引用一处，默认值保证既有行为不变。
+
+### `CashLimitModal` 状态机（超限提示专有）
 
 弹窗有两个状态：`countdown`（倒计时中）与 `awaitUser`（等待用户决策）。进入弹窗即处于 `countdown`，10 秒。
 
 | 事件 | 触发时机 | 行为 |
 |---|---|---|
 | 倒计时结束 | `countdown` 态下 10s 走完 | 切换为 `awaitUser` 态。【确定】由置灰变为可点。弹窗不关闭，不自动支付 |
-| 点【确定】 | **仅 `awaitUser` 态可用** | 停止倒计时 → 关闭弹窗 → 返回 `true` → 支付继续 → 写 storage 标记 |
-| 点【取消】 | 两个状态都可用 | 停止倒计时 → 关闭弹窗 → 返回 `false` → 支付终止 → **保留输入框原值，不清空** |
+| 点【确定】 | **仅 `awaitUser` 态可用** | 停止倒计时 → 关闭弹窗 → resolve(true) |
+| 点【取消】 | 两个状态都可用 | 停止倒计时 → 关闭弹窗 → resolve(false) |
 
 **【确定】在倒计时期间置灰不可点**，这是本功能的核心约束：10 秒内用户唯一能做的操作是【取消】或等待，强制收银员至少看完 10 秒风险提示。
 
-支付流程在弹窗期间挂起（`await` 在 `Promise.all` 里），不设额外超时。
+支付流程在弹窗期间挂起（`await`），不设额外超时。
+
+### 等待用户决策的方法
+
+`Payment.vue` 里有两个方法，**各只注册自己那组事件**：
+
+| 方法 | 监听事件 |
+|---|---|
+| `WaitCashLimitConfirm()` | `cash-limit-confirm` / `cash-limit-cancel` |
+| `WaitCashModalConfirm()` | `cash-modal-confirm` / `cash-modal-cancel` |
+
+**不要把两组事件注册在同一个方法里**：`uni.$once` 注册后只有被触发的那一个会被消费，另一组会永久残留——每次现金支付泄漏两个监听器。这是实现过程中实际踩过的坑。
 
 ### 多次触发
+
+用户点【取消】后，`PayList` 未变化，**输入框保留原值**。用户可直接改金额或再次点支付，若仍超限会再次弹窗。
+
+保留输入值是有意为之：收银员往往只需微调金额降到上限以下，清空会强迫重输。
+
+每次进入 `CashChange` 的现金分支都会先 `cashLimit.clearPending()`，防止上一单残留的标记被本单复用。
 
 用户点【取消】后，`PayList` 未变化，**输入框保留原值**。用户可直接改金额或再次点支付，若仍超限会再次弹窗。
 
@@ -309,7 +353,7 @@ create index IN_POS_INFOR_WARM_tx on POS_INFOR_WARM (yn_tx,saledate,khid,bill) t
 
 ```js
 // 循环结束，OracleSql 已累积全部业务 SQL
-let warm_sql = cashLimit.buildWarmSql(dataObj.SALE001);   // 读 storage + 拼 INSERT + 清标记
+let warm_sql = cashLimit.buildWarmSql(dataObj);   // 读 storage + 拼 INSERT + 清标记
 if (warm_sql) OracleSql += warm_sql;
 
 let tx_obj = { TX_SQL: OracleSql, ... };   // 一起进 POS_TXFILE
@@ -395,28 +439,54 @@ bill_type = 'YWSXJS' in dataObj ? 'SXJS' : dataObj.SALE001.BILL_TYPE
 
 ### 新增 `components/CashLimitModal/CashLimitModal.vue`
 
-props：`visible`、`text`、`seconds`（默认 10）。
+props：`visible`、`text`、`seconds`（默认 10）、`show-cancel`（默认 `true`）。
 内部维护 `countdown` / `remain` 状态与 `setInterval`；组件销毁或 `visible` 变 `false` 时必须 `clearInterval`，避免定时器泄漏。
 事件：`uni.$emit("cash-limit-confirm")` / `uni.$emit("cash-limit-cancel")`。
 
+### 修改 `components/CashChangeModal/CashChangeModal.vue`
+
+新增 props：`show-cancel`（Boolean，默认 `true`）。置 `false` 时隐藏【取消】按钮。
+⚠️ 这是每天在用的组件，改动必须保持默认行为不变——只有 `Payment.vue` 一处引用它。
+
 ### 修改 `pages/Payment/Payment.vue`
 
-1. `components` 注册 `CashLimitModal`，模板中挂载
-2. `data` 增加 `CashLimitModal: { Visible: false, Confirm: false, Text: "", Remain: 10 }`
-3. 新增 `CashLimit: async function()`。**开头 `if (this.isRefund) return true;`** 短路退款
-4. `InPaymentBeforeStoped` 的 `Promise.all` 数组加入 `this.CashLimit()`
-5. 判定超限且用户点【确定】后调 `cashLimit.savePending(net)`
+1. `components` 注册 `CashLimitModal`，模板中挂载（`CashChangeModal` 保持原有挂载）
+2. `data` 增加 `CashLimitInfo: { Visible: false, Text: "", ShowCancel: true }`，并给 `CashModal` 补 `ShowCancel: true`
+3. 模板上把 `:show-cancel` 分别接到两个 `ShowCancel` 字段
+4. **`CashChange` 内新增超限判定与找零拦截**（原独立的 `CashLimit` 方法已删除）
+5. 新增 `WaitCashLimitConfirm()` / `WaitCashModalConfirm()` 两个等待方法，各只注册自己那组事件
+6. `InPaymentBeforeStoped` 改为逐个 `await`（**不要用 `Promise.all`**，见"交互设计"）
 
 ### 修改 `bll/Common/bll.js`
 
-`CreateSaleOrder` 内（[bll.js:257](bll/Common/bll.js:257) 附近）调用 `buildWarmSql(dataObj)` 并把结果拼进 `OracleSql`。**这是唯一的写入点，5 个调用方零改动。**
+`CreateSaleOrder` 内（[bll.js:262](bll/Common/bll.js:262) 附近）调用 `buildWarmSql(dataObj)` 并把结果拼进 `OracleSql`。**这是唯一的写入点，5 个调用方零改动。**
 
-## 验证方式
+`buildWarmSql` 接收整个 `dataObj` 而非 `SALE001`——它需要同时读 `dataObj.SALE001`（字段来源）和 `dataObj.YWSXJS`（赊销结算判定）。只传 `SALE001` 会让 `SXJS` 覆盖失效。
 
-本项目无测试框架，验证靠 HBuilderX 真机/模拟器运行 + 控制台日志。
+## 测试
 
-| # | 场景 | 预期 |
-|---|---|---|
+项目 `CLAUDE.md` 记录"无测试框架"，本功能引入了一套**零 npm 依赖**的 `node:test` 脚手架（`tests/cashLimit/`，不影响 uni-app 打包）。
+
+| 文件 | 覆盖 |
+|---|---|
+| `tests/cashLimit/cashLimit.test.mjs` | `cashLimit.js` 的纯函数（36 例） |
+| `tests/cashLimit/cashChange.test.mjs` | `CashChange` 的弹窗编排（14 例），覆盖规则表全部分支 |
+| `tests/cashLimit/smoke.test.mjs` | 脚手架自检 |
+
+运行（**必须带 `--import`，否则 `@/` 别名解析不了、`cashLimit.test.mjs` 会整个加载失败**）：
+
+```bash
+cd "D:/SVN项目/IpadPos" && node --import ./tests/cashLimit/register.mjs --test tests/cashLimit/cashLimit.test.mjs tests/cashLimit/cashChange.test.mjs
+```
+
+`cashChange.test.mjs` 的做法值得说明：它在运行时**从 `Payment.vue` 源码里按花括号配平抽出 `CashChange` 的方法体**再驱动，测的是页面里的真实代码而非副本，避免副本漂移。
+
+⚠️ 抽取时要按「行首 + 恰好 3 个 tab 缩进 + `名称:`」定位，**不能直接 `indexOf('CashChange:')`**——源码里到处是 `console.log("[CashChange]...")` 日志前缀，会先命中注释。
+
+## 真机验证
+
+以下项目**只能真机确认**（代码层能自动化的已在上一节覆盖）。
+
 | 1 | `CASHSX` 未配置 | 不弹窗，支付正常 |
 | 2 | 现金金额 ≤ `CASHSX` | 不弹窗，支付正常 |
 | 3 | 现金 > `CASHSX`，点【确定】 | 弹窗 → 支付成功 → `POS_TXFILE.TX_SQL` 含 INSERT → Oracle 有记录且 `yn_tx='N'` |
@@ -434,8 +504,11 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 15 | 超限确认后支付中断，下一单正常支付 | 下一单**不**被误记（标记已清理 / 已过期） |
 | 16 | 赊销售卡（`BILL_TYPE='Z112'`）+ 现金超限 | `BILL_TYPE` 写 `Z112` |
 | 17 | 对比 Oracle 上 `SALE001.SALEDATE` 与 `POS_INFOR_WARM.SALEDATE` | 两者**完全相同**（预期均为 `2026-10-13 00:00:00`） |
+| 18 | 超额 + 找零 > 100 | 只弹找零拦截框、**无倒计时**、只有一个【确定】，点后终止；**不显示超限提示** |
+| 19 | 超额 + 找零 ≤ 100 | 只弹一个超限框，文案含「(本次需找零 X 元)」，有倒计时 |
+| 20 | 任何现金支付 | 全程**只弹一个**弹窗，不出现两个叠加 |
 
-日志沿用项目约定：`console.log("[CashLimit]...")` 前缀。
+日志沿用项目约定，前缀为 `[CashChange]` / `[WaitCashLimitConfirm]` / `[WaitCashModalConfirm]` / `[CreateSaleOrder]`。
 
 ## 版本与发版
 
