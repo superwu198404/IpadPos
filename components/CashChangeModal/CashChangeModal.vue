@@ -82,7 +82,7 @@
 	.cash-modal-contain{
 		width: 45%;
 		/* 与现金超限提示(CashLimitModal)统一尺寸，避免顺序弹出时大小跳变 */
-		height: 520px;
+		height: 430px;
 		display: flex;
 		flex-direction: column;
 		background-blend-mode: multiply;
