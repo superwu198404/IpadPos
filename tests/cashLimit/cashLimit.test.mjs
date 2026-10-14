@@ -29,30 +29,23 @@ test('getCashLimitParam 参数缺失返回空字符串', () => {
   assert.strictEqual(cashLimit.getCashLimitParam(), '');
 });
 
-test('getCashTotal 累加本次输入与本单已录现金', () => {
-  const payList = [
-    { fkid: 'ZF01', amount: 500 },
-    { fkid: 'WXZF', amount: 300 }
-  ];
-  // 500（已录现金）+ 800（本次输入）= 1300，微信的 300 不计
-  assert.strictEqual(cashLimit.getCashTotal(payList, 800, 'ZF01'), 1300);
+test('getCashTotal 直接返回 dPayAmount（整单待付余额）', () => {
+  // dPayAmount 是全单余额，已包含本单此前的现金额，不能再累加 PayList
+  assert.strictEqual(cashLimit.getCashTotal(1300), 1300);
 });
 
-test('getCashTotal 过滤找零的负数记录', () => {
-  const payList = [
-    { fkid: 'ZF01', amount: 2000 },
-    { fkid: 'ZF01', amount: -500 } // 找零
-  ];
-  // 只算 2000，找零不算，再加本次 0
-  assert.strictEqual(cashLimit.getCashTotal(payList, 0, 'ZF01'), 2000);
+test('getCashTotal 字符串数字也能处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal('1300.50'), 1300.5);
 });
 
-test('getCashTotal 空 PayList 只算本次输入', () => {
-  assert.strictEqual(cashLimit.getCashTotal([], 600, 'ZF01'), 600);
+test('getCashTotal undefined / null / 空串按 0 处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal(undefined), 0);
+  assert.strictEqual(cashLimit.getCashTotal(null), 0);
+  assert.strictEqual(cashLimit.getCashTotal(''), 0);
 });
 
-test('getCashTotal PayList 为 null 不炸', () => {
-  assert.strictEqual(cashLimit.getCashTotal(null, 600, 'ZF01'), 600);
+test('getCashTotal 非数字按 0 处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal('abc'), 0);
 });
 
 test('isOverLimit 超限返回 true', () => {

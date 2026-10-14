@@ -27,15 +27,25 @@ export const getCashLimitParam = function() {
 }
 
 /**
- * 本单现金合计 = 已录现金 + 本次输入
- * 已录现金只累加 amount > 0 的行——找零会被写成一条负数 amount 的记录
- * （见 Payment.vue 的 CheckCashPayment），按"不含找零的录入金额合计"口径应排除。
+ * 本单现金合计。
+ *
+ * 直接用 dPayAmount，**不能再累加 PayList** —— dPayAmount 是"整单待付余额"，
+ * 不是增量：
+ *   - toBePaidPrice() = totalAmount - yPayAmount - PayedAmount
+ *   - dPayAmount 在切换支付方式时被重置为 toBePaidPrice()（见 Payment.vue 的
+ *     currentPayType watcher），因此它已经包含了本单此前的现金金额。
+ *   - 现金是全单唯一支付方式（CheckCashPayment 会合并前一条现金记录），
+ *     所以 dPayAmount 就是本单截至目前（含本次输入）的全部现金额。
+ *   - yPayAmount / PayList 的更新发生在 PushToPaidList，晚于本函数被调用的时机
+ *     （InPaymentBeforeStoped 在 PayHandle 开头执行）。
+ *
+ * 注意：CashLimit 只在当前支付方式是现金时被调用，所以这里不需要判断 fkid。
+ *
+ * @param {number|string} dPayAmount 输入框中的本次支付金额
+ * @returns {number} 本单现金合计
  */
-export const getCashTotal = function(payList, dPayAmount, cashFkid) {
-	const recorded = (payList || [])
-		.filter(i => i && i.fkid == cashFkid && Number(i.amount) > 0)
-		.reduce((sum, i) => sum + Number(i.amount), 0);
-	return recorded + (Number(dPayAmount) || 0);
+export const getCashTotal = function(dPayAmount) {
+	return Number(dPayAmount) || 0;
 }
 
 // 超限判定：参数必须是一个正数才生效，否则本功能不触发（参数缺失不应阻塞收银）
