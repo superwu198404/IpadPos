@@ -14,6 +14,7 @@ import {
 import {
 	Payment
 } from '@/bll/PaymentBusiness/bll.js'
+import * as cashLimit from '@/utils/sale/cashLimit.js';
 
 /**
  * 获取支付方式 已废弃 20230424追溯后确认
@@ -258,6 +259,12 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]将外部传入sql和生成的sql进行合并...");
 		SqliteSql.concat(sqlite_addition_sqls);
 		OracleSql += oracle_addition_sqls.join(';');
+		// 现金超限提醒记录：支付页确认超限时在 storage 留了标记，此处组装并追加
+		let warm_sql = cashLimit.buildWarmSql(dataObj);
+		if (warm_sql) {
+			OracleSql += warm_sql;
+			console.log("[CreateSaleOrder]追加现金超限提醒SQL:", warm_sql);
+		}
 		console.log("[CreateSaleOrder]循环生成OracleSql：", OracleSql);
 		console.log("[CreateSaleOrder]循环生成SqliteSql：", SqliteSql)
 		let tx_obj = {
