@@ -1684,25 +1684,31 @@
 					use_limit_modal
 				});
 
-				//超额：只弹超限框，无论点确定还是取消都终止支付（不写标记）。
-				//找零 > 100 时把"找零超百"这个拦截理由也写进同一提示，并且只留一个
-				//【确定】按钮——两个按钮语义都是"放弃本次支付"，同时显示会让人误以为
-				//【确定】能继续。
+				//超额：只弹超限框。
+				//  找零 ≤ 100 -> 点确定则继续支付（并落标记，落库时记消息表），点取消则终止
+				//  找零 > 100 -> 输入有误，只留一个【确定】，无论点什么都终止且不记消息
 				if (use_limit_modal) {
 					console.warn("[CashChange]现金支付超限:", cash_total, limit_value);
+					let change_too_much = change_number > 100;
 					let limit_text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
-					if (change_number > 100) {
+					if (change_too_much) {
 						limit_text += `\n(找零 ${ change_number.toFixed(2) } 元已超过 100 元，请重新输入支付金额!)`;
 					} else if (change_number > 0) {
 						limit_text += `\n(本次需找零 ${ change_number.toFixed(2) } 元)`;
 					}
 					this.CashLimitInfo.Text = limit_text;
-					this.CashLimitInfo.ShowCancel = change_number <= 100;
+					// 找零超百时两个按钮都会终止支付，只留一个【确定】避免误导
+					this.CashLimitInfo.ShowCancel = !change_too_much;
 					this.CashLimitInfo.Visible = true;
-					//超限一律终止：点确定也不放行，所以不写 storage 标记
-					await this.WaitCashLimitConfirm();
-					console.log("[CashChange]现金支付超限，终止本次支付");
-					return false;
+					let limit_ok = await this.WaitCashLimitConfirm();
+					if (change_too_much || limit_ok != true) {
+						console.log("[CashChange]超限且找零超百或用户取消，终止本次支付");
+						return false;
+					}
+					//知情并继续支付，落标记（落库时组装 Oracle SQL 记入消息表）
+					cashLimit.savePending(cash_total);
+					console.log("[CashChange]已写入现金超限标记:", cash_total);
+					return true;
 				}
 
 				//未超额：走原有的现金/找零确认框

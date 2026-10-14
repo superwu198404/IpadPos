@@ -6,8 +6,10 @@
 // 而不是复制一份到测试里——复制的副本会漂移。
 //
 // 规则（需求原文）：
-//   超额   -> 只弹超限框，**无论点确定还是取消都终止支付**，不写标记。
-//             找零 > 100 时文案里一并说明，且只留一个【确定】按钮（ShowCancel=false）。
+//   超额 + 找零 ≤ 100 -> 只弹超限框；点确定继续支付并写标记（落库时记消息表），
+//                        点取消终止。
+//   超额 + 找零 > 100 -> 只弹超限框，文案里一并说明找零超百，只留一个【确定】
+//                        （ShowCancel=false）；无论点什么都终止且不写标记。
 //   未超额 -> 只弹原有的现金/找零确认框（超限逻辑完全不介入）；
 //             但找零 > 100 仍然是输入有误，弹拦截框并终止。
 // 即：任何时候都只弹**一个**弹窗。
@@ -118,25 +120,34 @@ async function run(o, confirm = true) {
   };
 }
 
-// ---------- 超额：一律终止 ----------
+// ---------- 超额 + 找零 ≤ 100：确定继续支付并记消息，取消终止 ----------
 
-test('超额且无找零：只弹超限框，点确定也终止且不写标记', async () => {
+test('超额且无找零：只弹超限框，点确定继续支付并写标记', async () => {
   const r = await run({ pay: 1500, debt: 1500 }, true);
   assert.deepStrictEqual(r.shown, ['L'], '只应弹出超限框');
   assert.strictEqual(r.showCancel, true, '无找零应保留【取消】按钮');
   assert.ok(!r.limitText.includes('找零'), '无找零时提示里不应出现找零字样');
-  assert.strictEqual(r.saved, null, '超额一律不写标记');
-  assert.strictEqual(r.result, false, '点确定也应终止支付');
+  assert.strictEqual(r.saved, 1500, '应写入标记 1500（落库时记入消息表）');
+  assert.strictEqual(r.result, true, '点确定应继续支付');
 });
 
-test('超额且有找零(≤100)：只弹超限框，带出找零金额，点确定也终止', async () => {
+test('超额且有找零(≤100)：只弹超限框，带出找零金额，点确定继续支付并写标记', async () => {
   const r = await run({ pay: 1050, debt: 1000 }, true);
   assert.deepStrictEqual(r.shown, ['L'], '不应再弹现金确认框');
   assert.ok(r.limitText.includes('需找零 50.00'), '提示里应带出找零金额');
   assert.strictEqual(r.showCancel, true, '找零≤100 应保留【取消】按钮');
-  assert.strictEqual(r.saved, null, '超额一律不写标记');
-  assert.strictEqual(r.result, false, '点确定也应终止支付');
+  assert.strictEqual(r.saved, 1050, '应写入标记 1050');
+  assert.strictEqual(r.result, true, '点确定应继续支付');
 });
+
+test('超额且找零≤100：点取消终止且不写标记', async () => {
+  const r = await run({ pay: 1050, debt: 1000 }, false);
+  assert.deepStrictEqual(r.shown, ['L']);
+  assert.strictEqual(r.saved, null, '取消不应写标记');
+  assert.strictEqual(r.result, false, '应终止支付');
+});
+
+// ---------- 超额 + 找零 > 100：终止且不记消息 ----------
 
 test('超额 + 找零>100：只弹超限框，只留一个确定按钮，且终止', async () => {
   const r = await run({ pay: 1200, debt: 1000 }, true);   // cash_total=1200>1000, change=200
@@ -144,22 +155,14 @@ test('超额 + 找零>100：只弹超限框，只留一个确定按钮，且终�
   assert.ok(r.limitText.includes('已超过 100 元'), '提示里应说明找零超百');
   assert.ok(r.limitText.includes('200.00'), '提示里应带出找零金额');
   assert.strictEqual(r.showCancel, false, '找零>100 只留一个确定按钮');
-  assert.strictEqual(r.saved, null);
+  assert.strictEqual(r.saved, null, '不应写标记');
   assert.strictEqual(r.result, false, '应终止支付');
 });
 
-test('超额 + 找零>100：点取消同样终止', async () => {
-  const r = await run({ pay: 1200, debt: 1000 }, false);
-  assert.deepStrictEqual(r.shown, ['L']);
-  assert.strictEqual(r.saved, null);
+test('超额 + 找零>100：点确定也终止（唯一按钮）', async () => {
+  const r = await run({ pay: 1200, debt: 1000 }, true);
   assert.strictEqual(r.result, false);
-});
-
-test('超额且有找零：点取消也终止、不写标记', async () => {
-  const r = await run({ pay: 1050, debt: 1000 }, false);
-  assert.deepStrictEqual(r.shown, ['L']);
-  assert.strictEqual(r.saved, null, '取消不应写标记');
-  assert.strictEqual(r.result, false, '应终止支付');
+  assert.strictEqual(r.saved, null);
 });
 
 // ---------- 未超额：走原有现金框 ----------
