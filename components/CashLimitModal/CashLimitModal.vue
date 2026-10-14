@@ -106,6 +106,8 @@
 		z-index: 9999999;
 		top: 0;
 		left: 0;
+		/* 半透明遮罩：与找零提示一致，避免弹窗和页面内容糊在一起分不出前后 */
+		background-color: rgba(0, 0, 0, 0.4);
 	}
 
 	.cash-limit-head {

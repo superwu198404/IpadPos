@@ -58,7 +58,8 @@
 		top: 0;
 		left: 0;
 		border: 1px solid red;
-		
+		/* 半透明遮罩：让弹窗与页面内容拉开层次 */
+		background-color: rgba(0, 0, 0, 0.4);
 	}
 	
 	.cash-modal-head{
