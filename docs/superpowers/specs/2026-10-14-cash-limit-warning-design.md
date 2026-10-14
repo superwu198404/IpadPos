@@ -12,13 +12,18 @@
 
 ## 范围
 
-只改 `pages/Payment/Payment.vue` 这一个支付页。覆盖走该页的以下业务：销售、预订、预订提取、售卡、售券、赊销结算。
+改动落在两处：
+
+1. `pages/Payment/Payment.vue` —— 拦截与弹窗
+2. `utils/sale/card_coupon.js` —— 卡券侧的写入点（**原方案遗漏，见下**）
+
+覆盖业务：销售、预订、预订提取、售卡、售券、赊销结算。
 
 **退款不触发**（`Z151` / `Z152` 等），即使它们也走同一页面——退款是退钱给顾客，不构成赊销风险。实现上在 `CashLimit` 开头用 `isRefund` 短路。
 
-### 售卡售券的兼容性（已验证）
+### 售卡售券：拦截点天然覆盖，但**写入路径不覆盖**
 
-售卡售券**跳的就是同一个支付页**，因此 `InPaymentBeforeStoped` 这个挂载点天然覆盖它们，**无需任何额外代码**：
+**拦截（弹窗）天然覆盖。** 售卡售券跳的就是同一个支付页，`InPaymentBeforeStoped` 这个挂载点自动生效：
 
 | 调用方 | 位置 |
 |---|---|
@@ -37,6 +42,23 @@
 
 `isRefund` 不会误判：[Payment.vue:416](pages/Payment/Payment.vue:416) 默认 `true`，但 [paramInit:2073](pages/Payment/Payment.vue:2073) 按 `actType == Payment` 显式置 `false`，而 `card_sale.js:38` 传的正是 `actType: "Payment"`。
 
+#### 但写入路径不覆盖（原方案的真实漏洞）
+
+`CreateSaleOrder` 有三个调用方，**只有销售侧传了 `additional`**：
+
+| 调用方 | 位置 | 是否传 `additional` |
+|---|---|---|
+| 销售/预定/提取/赊销结算 | [base_sale.js:3851](utils/sale/base_sale.js:3851) | 传 `{sqlite, oracle}` |
+| **售卡** | [card_coupon.js:153](utils/sale/card_coupon.js:153) | **没传** |
+| **售券** | [card_coupon.js:280](utils/sale/card_coupon.js:280) | **没传** |
+
+落库链路：
+
+- 售卡：[CardSale.vue:885](pages/KQSale/CardSale/CardSale.vue:885) `SaleCompleted()` → `KQSale.Completed` → [card_coupon.js:150](utils/sale/card_coupon.js:150)
+- 售券：[CouponSale.vue:559](pages/KQSale/CouponSale/CouponSale.vue:559) `save_orders()` → 同一个 `Completed`
+
+`card_coupon.js` 不在 `base_sale` 实例上，**没有 `communication_for_oracle` 这个概念**。原方案"在 `SaleDataCombine` 拼好 SQL、等若干异步调用后由 `PayedResult` 读取"在卡券路径下必然拿不到数据。写入机制因此重构，见下节。
+
 ### 售卡售券的前置依赖：`SKSQFKID` 白名单
 
 售卡时付款方式受 `POSCS='SKSQFKID'` 白名单限制（[card_sale.js:28-30](api/business/card_sale.js:28)）：
@@ -53,7 +75,7 @@ let ban_type = util.getStorage("PayWayList").filter(i => !allow_type.includes(i.
 不改动的部分：
 - 服务端 `ExecuteBatchSQL` 接收逻辑保持不变
 - 本地 SQLite **不建** `POS_INFOR_WARM` 表，该表只在 Oracle 侧存在
-- 不新增上传队列机制，复用现有的 `communication_for_oracle` 附加 SQL 通道
+- 不新增上传队列机制，复用现有的 `additional.oracle` 附加 SQL 通道
 
 ## 术语与口径定义
 
@@ -209,11 +231,86 @@ VALUES (TO_DATE('<saledate>','yyyy-mm-dd'),'<khid>','<bill>','<bill_type>','<ryi
 
 **`NET` 是数字列。** 拼入前用 `Number(...).toFixed(3)` 或等价方式归一，不加引号。
 
-### 追加位置
+### 写入机制：经 storage 中转，在**每个** `CreateSaleOrder` 调用点现场拼装
 
-在 `SaleDataCombine` 之后、`orderSQLGenarator` 之前（此时 `sale1_obj` 已填充 `KHID` / `RYID` / `BILL` / `SALEDATE` / `BILL_TYPE`），把拼好的语句 push 进 `this.communication_for_oracle`。
+因为 `CreateSaleOrder` 有三个调用方（见"范围"一节），且卡券路径不在 `base_sale` 实例上，**不能**把 SQL 字符串从支付页一路传到落库点。改为：
 
-`PayedResult` 会把 `communication_for_oracle` 作为 `additional.oracle` 传给 `CreateSaleOrder`（[base_sale.js:3851](utils/sale/base_sale.js:3851)），后者追加进 `POS_TXFILE.TX_SQL`，随单据一起上传。
+```
+① CashLimit 判定超限且用户点【确定】
+      └─ 写 storage: CashLimit_Warm = { khid, bill, net, billType, ts }
+                        （不带 saledate，见 ③ 的理由）
+
+② Payment.vue 完成支付、CloseEvents 发出 FinishOrder
+      └─ 此时收银员已离开支付页，但单据尚未落库
+
+③ 各落库点调用 CreateSaleOrder 时，用「当次现成的 sale1_obj」现场拼 SQL
+      ├─ base_sale.js PayedResult   → sale1_obj.SALEDATE / BILL_TYPE
+      └─ card_coupon.js Completed   → data.SALE001.SALEDATE / BILL_TYPE
+      └─ 拼完立即清掉 storage，避免污染下一单
+```
+
+**③ 为什么必须用当次的 `sale1_obj`，而不是 ① 里存的值：**
+
+- `SALEDATE`：`sale1_obj` 可能被重用或重算（[CardSale.vue:810](pages/KQSale/CardSale/CardSale.vue:810) 支付后 `that.SALE001 = Object.cover(new sale001(), result.data.sale1_obj)`；[CardSale.vue:939](pages/KQSale/CardSale/CardSale.vue:939) `ResetSaleBill()` 重建）。取当次落库的那个 `sale1_obj`，才能与 `SALE001.SALEDATE` **保证一致**。
+- `BILL_TYPE`：卡券路径下支付页的 `this.BILL_TYPE` 与页面侧的 `that.SALE001.BILL_TYPE` 可能是不同来源；赊销场景还会被改写（[CardSale.vue:342-350](pages/KQSale/CardSale/CardSale.vue:342)）。
+- `BILL`：卡券在支付后仍可能改写单据状态（[CardSale.vue:843-844](pages/KQSale/CardSale/CardSale.vue:843) 写 `STR1` / `CUID`）。
+
+**① 只负责证明"这一单发生过超限且用户确认了"**，②③ 负责用当次真实数据把它翻译成一条 INSERT。
+
+#### 为什么用 storage 而不是模块级变量
+
+`card_coupon.js` 与 `Payment.vue` 之间没有共享的运行时对象。项目里跨模块、跨页面传递短生命周期的状态，惯例就是 storage（`FKDA_INFO`、`sysParam`、`POSCS`、`XZ_ZF` 等都这么做）。模块级变量在 uni-app 多页面实例下不可靠。
+
+storage 记录用 `ts`（时间戳）标记，落库点消费时校验新鲜度（比如 5 分钟内），避免异常中断后残留的旧记录被下一单误消费。
+
+### 卡券失败单的处理
+
+卡券的 `Completed` 在**激活失败 / 充值失败时也会被调用**（[CardSale.vue:867](pages/KQSale/CardSale/CardSale.vue:867)、[872](pages/KQSale/CardSale/CardSale.vue:872)），此时 `YN_OK='F'`，但**销售单照样生成并上传**。
+
+按已确认的口径：**只要现金过机了就记消息**，不看激活/充值结果。因此写入逻辑**不要**加 `YN_OK` 判断。
+
+## SQL 拼装
+
+```sql
+INSERT INTO POS_INFOR_WARM (SALEDATE,KHID,BILL,BILL_TYPE,RYID,NET,YN_TX)
+VALUES (TO_DATE('<saledate>','yyyy-mm-dd'),'<khid>','<bill>','<bill_type>','<ryid>',<net>,'N');
+```
+
+`<saledate>` 取**当次落库的 `sale1_obj.SALEDATE`**（`'YYYY-MM-DD'`），格式串固定 `yyyy-mm-dd`。
+
+### 关键实现约束
+
+**末尾必须带分号。** `CreateSaleOrder` 对 `dataObj` 里的业务表 SQL 会自动补 `;`（由 `CreateSQL` 处理），但对 `additional.oracle` 只做 `join(';')` **不给每条补分号**（[bll.js:260](bll/Common/bll.js:260)）。而现有调用方传入的附加 SQL 本身就是不带分号的（见 [base_sale.js:3837](utils/sale/base_sale.js:3837) 的 `CXMDFS`）。因此本 INSERT 需自带 `;`，否则会与后续语句粘连。
+
+**单引号转义。** 拼接字符串值前统一做 `replace(/'/g, "''")`，避免门店名或单号含单引号时 SQL 出错。
+
+**`NET` 是数字列。** 拼入前用 `Number(...).toFixed(3)` 或等价方式归一，不加引号。
+
+### 各落库点的改造
+
+**销售侧** —— `base_sale.js` 的 `PayedResult`：
+
+在 `CreateSaleOrder(...)` 调用处（[base_sale.js:3851](utils/sale/base_sale.js:3851)）的 `additional` 参数上追加：
+
+```js
+oracle: this.communication_for_oracle.concat(cashLimitSql ? [cashLimitSql] : [])
+```
+
+**卡券侧** —— `card_coupon.js` 的 `Completed`：
+
+`Completed` 当前**完全没传 `additional`**（[card_coupon.js:153](utils/sale/card_coupon.js:153)、[280](utils/sale/card_coupon.js:280)），需要新增第二个参数：
+
+```js
+let create_result = await CreateSaleOrder({
+    SALE001: data.SALE001, ...
+}, {
+    oracle: cashLimitSql ? [cashLimitSql] : []
+});
+```
+
+`cashLimitSql` 由 `cashLimit.js` 的工具函数从 storage 记录 + `data.SALE001` 现场生成。注意 `Completed` 有两处（`VIPCard_Active` / `VIPCard_Recharge` 共用一处，`GiftCard_Active` 一处），**两处都要改**。
+
+> `Completed` 没有第三个 `func` 参数可用（第二参数已是回调），所以用新增参数最自然。
 
 ## 已知问题记录（不在本次范围内）
 
@@ -239,9 +336,13 @@ SqliteSql.concat(sqlite_addition_sqls);   // 缺少赋值
 | `getCashTotal(payList, dPayAmount, cashFkid)` | → `number` | 算本单现金合计 |
 | `isOverLimit(cashTotal, paramValue)` | → `boolean` | 参数容错 + 比较 |
 | `getBillType(sale1Obj, isSaleCreditSettlement)` | → `string` | 映射 `SXJS`，见下 |
-| `buildWarmInsert({saledate, khid, bill, billType, ryid, net})` | → `string` | 拼 Oracle INSERT |
+| `savePending(payload)` | → `void` | 写 storage 待落库记录（含时间戳） |
+| `consumePending(sale1Obj, isSaleCreditSettlement)` | → `string \| null` | 校验新鲜度 → 拼 INSERT → **清掉 storage**，返回 SQL 或 `null` |
+| `buildWarmInsert({saledate, khid, bill, billType, ryid, net})` | → `string` | 拼 Oracle INSERT（内部函数，可单独导出便于验证） |
 
 **`isSaleCreditSettlement` 由调用方传入。** 工具函数不依赖 `Payment.vue` 的 `current_type`。实现时先查清 `Payment.vue` 能否直接拿到 `current_type.clickType`；拿不到就用 [`base_sale.js:3860`](utils/sale/base_sale.js:3860) 同一个判定口径，在页面侧算出布尔值再传入。**不要用 `sale1_obj.XSTYPE` 反查** —— 赊销结算的 `xstype` 与普通销售在 `Z101` 上重合，不可靠。
+
+`consumePending` 是核心入口：三个落库点都调它，它自己负责拼 SQL + 清理 storage，调用方只需要把返回值塞进 `additional.oracle`。这样三处调用的代码形状完全一致。
 
 ### 新增 `components/CashLimitModal/CashLimitModal.vue`
 
@@ -253,10 +354,17 @@ props：`visible`、`text`、`seconds`（默认 10）。
 
 1. `components` 注册 `CashLimitModal`，模板中挂载
 2. `data` 增加 `CashLimitModal: { Visible: false, Confirm: false, Text: "", Remain: 10 }`
-3. 新增 `CashLimit: async function()` 方法。**方法开头 `if (this.isRefund) return true;`** —— 退款不触发超限提示（退款是退钱给顾客，不构成赊销风险，也不应进课长消息）。
+3. 新增 `CashLimit: async function()` 方法。**方法开头 `if (this.isRefund) return true;`** —— 退款不触发超限提示（退款是退钱给顾客，不构成赊销风险，也不应进课长消息）
 4. `InPaymentBeforeStoped` 的 `Promise.all` 数组里加入 `this.CashLimit()`
-5. `SaleDataCombine`（或 `orderSQLGenarator`）里追加消息 INSERT
-6. 记录本次是否超限+确认（供第 5 步判断），以及确认时的现金合计值
+5. `CashLimit` 判定超限且用户点【确定】后，调 `cashLimit.savePending({...})` 写 storage 记录（**不拼 SQL**，因为此时 `sale1_obj` 尚未最终化）
+
+### 修改 `utils/sale/base_sale.js`
+
+`PayedResult` 里 `CreateSaleOrder` 的 `additional`（[base_sale.js:3851](utils/sale/base_sale.js:3851)）追加 `cashLimit.consumePending(this.sale001, isSaleCreditSettlement)` 的结果。
+
+### 修改 `utils/sale/card_coupon.js`
+
+`Completed` 两处（[150](utils/sale/card_coupon.js:150)、[277](utils/sale/card_coupon.js:277)）新增 `additional` 参数，内容为 `cashLimit.consumePending(data.SALE001, false)` 的结果。
 
 ## 验证方式
 
@@ -277,8 +385,11 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 9 | 现金含找零 | 找零负数记录不计入合计 |
 | 10 | 退款（Z151）现金超限 | **不触发**，直接放行 |
 | 11 | 倒计时期间点【确定】 | 按钮置灰，点不动 |
-| 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`（前提：现金在 `SKSQFKID` 白名单内） |
-| 13 | 售券（CouponSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111` |
+| 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录（前提：现金在 `SKSQFKID` 白名单内） |
+| 13 | 售券（CouponSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录 |
+| 14 | 卡券激活失败（`YN_OK='F'`）+ 现金超限 | **仍然记录**（只要现金过机就记） |
+| 15 | 超限确认后支付被中断，下一单正常支付 | 下一单**不**被误记（storage 记录已清理 / 已过期） |
+| 16 | 赊销售卡（`BILL_TYPE='Z112'`）+ 现金超限 | `BILL_TYPE` 写 `Z112` |
 
 日志沿用项目约定：`console.log("[CashLimit]...")` 前缀。
 
