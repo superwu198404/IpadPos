@@ -112,7 +112,8 @@
 				"disableViewportScale": true,
 				"renderer": "native", // 渲染模式，一般不用改
 				"dSYMs": false,
-				"idfa": false
+				"idfa": false,
+				"deploymentTarget": "15.0" //ios 最低版本
 			},
 			"sdkConfigs": {
 				"geolocation": {},
@@ -181,9 +182,9 @@
 	},
 	"appid": "__UNI__D975D37",
 	"name": "KengeePos",
-	"versionName": "1.1.140",
+	"versionName": "1.1.145",
 	"description": "ipad上运行的收银软件",
-	"versionCode": 140,
+	"versionCode": 145,
 	"locale": "zh-Hans",
 	"fallbackLocale": "zh-Hans",
 	"networkTimeout": {
