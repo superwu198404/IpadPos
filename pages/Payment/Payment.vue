@@ -334,6 +334,9 @@
 		<!-- 现金支付提示弹窗 -->
 		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text">
 		</CashChangeModal>
+		<!-- 现金超限提示弹窗 -->
+		<CashLimitModal :visible.sync="CashLimitModal.Visible" :text="CashLimitModal.Text" :seconds="10">
+		</CashLimitModal>
 	</view>
 	<!-- </view> -->
 </template>
@@ -375,6 +378,9 @@
 	//打印相关
 	import PrinterPage from '@/pages/xprinter/receipt';
 	import _payment from '@/api/business/payment.js';
+	//现金超限提示相关
+	import CashLimitModal from '@/components/CashLimitModal/CashLimitModal.vue';
+	import * as cashLimit from '@/utils/sale/cashLimit.js';
 
 	var that, is_log = true;
 	var log = console.log;
@@ -383,7 +389,8 @@
 		mixins: [global, print],
 		components: {
 			uniPopup,
-			PrinterPage
+			PrinterPage,
+			CashLimitModal
 		},
 		data() {
 			return {
@@ -396,6 +403,11 @@
 				CashModal: {
 					Visible: false,
 					Text: ""
+				},
+				CashLimitModal: {
+					Visible: false,
+					Text: "",
+					Remain: 10
 				},
 				PaymentInfos: { //从上个页面传来的支付信息
 					PayList: [],
@@ -1595,7 +1607,8 @@
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.DisabledPaymentChannel(), this
+					let results = (await Promise.all([this.CashChange(), this.CashLimit(), this
+						.DisabledPaymentChannel(), this
 						.LimitPaymentChannel(), this.ScoreDiscount()
 					]));
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
@@ -1667,6 +1680,54 @@
 					else
 						return false;
 				}
+			},
+			//终止支付判断条件1.5: 现金支付超限提示（在 CashChange 之后，避免两个弹窗叠加）
+			//只有正向支付的现金支付方式才走这里，金额超限时强制收银员阅读风险提示
+			CashLimit: async function() {
+				if (this.isRefund) return true; //退款是退钱给顾客，不构成赊销风险，直接放行
+				console.log("[CashLimit]现金超限判断...", {
+					dPayAmount: this.dPayAmount
+				});
+				// 取现金 FKID 是为了"当前是否现金支付"这个更早、更明确的判断，
+				// 避免依赖 currentPayInfo 是否已初始化
+				let cash_fkid = cashLimit.getCashFkid();
+				if (!cash_fkid) {
+					console.log("[CashLimit]未配置现金支付方式(FKDA.MEDIA=1)，跳过");
+					return true;
+				}
+				let my_fkid = this.currentPayInfo?.fkid;
+				if (my_fkid != cash_fkid) {
+					console.log("[CashLimit]当前不是现金支付:", my_fkid);
+					return true; //不是现金不走这个条件
+				}
+				let cash_total = cashLimit.getCashTotal(this.dPayAmount);
+				let limit_value = cashLimit.getCashLimitParam();
+				if (!cashLimit.isOverLimit(cash_total, limit_value)) {
+					console.log("[CashLimit]未超限:", cash_total, limit_value);
+					return true;
+				}
+				console.warn("[CashLimit]现金支付超限:", {
+					cash_total,
+					limit_value
+				});
+				this.CashLimitModal.Text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
+				this.CashLimitModal.Visible = true;
+				var async_callback = new Promise(util.callBind(this, function(resolve, reject) {
+					uni.$once("cash-limit-confirm", util.callBind(this, function() {
+						console.log("[CashLimit]弹窗点击了确定...");
+						resolve(true);
+					}));
+					uni.$once("cash-limit-cancel", util.callBind(this, function() {
+						console.log("[CashLimit]弹窗点击了取消...");
+						resolve(false);
+					}));
+				}));
+				let confirmed = await async_callback;
+				if (confirmed) {
+					// 只写标记，不拼 SQL——单据字段由 CreateSaleOrder 落库时从 dataObj 取
+					cashLimit.savePending(cash_total);
+				}
+				return confirmed; //取消时返回 false，终止本次支付（输入框保留原值）
 			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
 			DisabledPaymentChannel: function() {
