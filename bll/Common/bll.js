@@ -259,9 +259,11 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		console.log("[CreateSaleOrder]将外部传入sql和生成的sql进行合并...");
 		SqliteSql.concat(sqlite_addition_sqls);
 		OracleSql += oracle_addition_sqls.join(';');
-		// 现金超限提醒记录：支付页确认超限时在 storage 留了标记，此处组装并追加
+		// 现金超限提醒记录：支付页确认超限时在 storage 留了标记，此处组装并追加。
+		// buildWarmSql 返回 "NOCASH" 表示读到了标记但不是现金单/不该记录，标记已被
+		// 内部清掉，这里直接忽略即可；返回 null 表示压根没有标记。
 		let warm_sql = cashLimit.buildWarmSql(dataObj);
-		if (warm_sql) {
+		if (warm_sql && warm_sql !== "NOCASH") {
 			OracleSql += warm_sql;
 			console.log("[CreateSaleOrder]追加现金超限提醒SQL:", warm_sql);
 		}

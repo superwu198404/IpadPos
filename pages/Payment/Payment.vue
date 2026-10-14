@@ -406,8 +406,7 @@
 				},
 				CashLimitInfo: {
 					Visible: false,
-					Text: "",
-					Remain: 10
+					Text: ""
 				},
 				PaymentInfos: { //从上个页面传来的支付信息
 					PayList: [],
@@ -673,6 +672,10 @@
 					this.PAD_SCAN = a;
 				}
 				this.event = this.getOpenerEventChannel();
+				// 清理上一单可能残留的现金超限标记：若上一次超限确认后未走到落库
+				// （支付失败、用户中途退出等），标记会留在 storage；本次进来先清掉。
+				// 本单确认超限时会重新写入，所以这一清不会影响本单。
+				cashLimit.clearPending();
 				this.$mp?.page?.$getAppWebview()?.setStyle({
 					popGesture: 'none'
 				});
@@ -1607,10 +1610,15 @@
 			InPaymentBeforeStoped: async function() {
 				try {
 					console.log("[InPaymentBeforeStoped]支付前终止判断...");
-					let results = (await Promise.all([this.CashChange(), this.CashLimit(), this
-						.DisabledPaymentChannel(), this
-						.LimitPaymentChannel(), this.ScoreDiscount()
-					]));
+					// 逐个 await，不要用 Promise.all 并发——CashChange 与 CashLimit 都会弹窗，
+					// 并行会让两个弹窗同时可见（重叠）并留下永不消费的 uni.$once 监听器。
+					// 串行还有个好处：走到 CashLimit 时 currentPayInfo 已由 CashChange 初始化完毕。
+					let results = [];
+					results.push(await this.DisabledPaymentChannel());
+					results.push(await this.LimitPaymentChannel());
+					results.push(await this.ScoreDiscount());
+					results.push(await this.CashChange());
+					results.push(await this.CashLimit());
 					console.log("[InPaymentBeforeStoped]限制条件处理结果:", results);
 					//自定义判断，往数组里加
 					return !results.every(result => result == true);
@@ -1726,6 +1734,10 @@
 				if (confirmed) {
 					// 只写标记，不拼 SQL——单据字段由 CreateSaleOrder 落库时从 dataObj 取
 					cashLimit.savePending(cash_total);
+				} else {
+					// 用户放弃本次现金支付。此时不能立即清标记（可能残留着上一单的同名标记，
+					// 那属于另一个收银流程），改为在下次进入支付页时清理，见 onLoad。
+					console.log("[CashLimit]用户取消，本次不写标记");
 				}
 				return confirmed; //取消时返回 false，终止本次支付（输入框保留原值）
 			},

@@ -88,15 +88,13 @@ const escapeSql = function(v) {
  * 组装 POS_INFOR_WARM 的 Oracle INSERT。
  * 由 bll/Common/bll.js 的 CreateSaleOrder 调用，是标记的唯一消费入口。
  *
- * 返回 null 表示本次无需写入。**只要读到了标记就一定清掉**（无论能否成功生成），
- * 以保证标记不会泄漏到下一张单据。
+ * 返回值有三种：
+ *   - SQL 字符串：正常生成，调用方应追加进 OracleSql
+ *   - "NOCASH"：读到了标记，但本单**本来就不该记录**（非现金单、现金方式不可用、
+ *     单据字段不全）。标记已在内部清掉，调用方不需要做任何事。
+ *   - null：根本没有标记，什么都没发生，调用方不需要做任何事。
  *
- * 单据字段一律从 dataObj.SALE001 取——它与 Oracle 侧那条 SALE001 是同一份数据，
- * 保证 SALEDATE 等字段与单据完全一致（POS_INFOR_WARM 主键含 SALEDATE）。
- *
- * ⚠️ 字段缺失时宁可返回 null 不写，也不能生成跑不通的 SQL：本 INSERT 与业务 SQL
- * 拼在同一条 TX_SQL 里上传，若 Oracle 执行报错，TransLite 不会删除 POS_TXFILE 队列行
- * （只有 res1.code 为真才 delete），会导致**整张单据卡在队列里反复重试**。
+ * 支付页靠区分后两者来决定要不要清理残留标记，见 Payment.vue 的 CashLimit。
  */
 export const buildWarmSql = function(dataObj) {
 	const pending = readPending();
@@ -105,18 +103,51 @@ export const buildWarmSql = function(dataObj) {
 	// 无论后续哪条分支返回，标记都已消费完毕
 	clearPending();
 
+	// 「不是现金单」是**正常情况**，不算异常，不写 warn 日志（否则每次支付都刷屏）。
+	// 但必须与 null 区分开：null 表示"从来没写过标记"，
+	// 而这里表示"写过一个标记、但它没被消费掉"，支付页据此清理残留。
+	// BILL / SALEDATE 同时是主键成员，缺失会让 TO_DATE 或主键约束在 Oracle 报错，
+	// 而报错会让整张单据卡在上传队列里反复重试，故一并校验。
 	const sale1 = dataObj && dataObj.SALE001;
-	if (!sale1) return null;
+	if (!sale1 || !sale1.BILL || !sale1.SALEDATE) {
+		return "NOCASH";
+	}
 
-	// BILL / SALEDATE 同时是 POS_INFOR_WARM 的主键成员，任何一个缺失都会让
-	// TO_DATE 或主键约束在 Oracle 侧报错，进而拖垮整张单据的上传，故一并校验。
-	// 其余列（BILL_TYPE / RYID）缺失只会插入 null，不会阻断上传，不做校验。
-	if (!sale1.BILL || !sale1.SALEDATE) {
-		console.warn("[BuildWarmSql]单据信息不完整，跳过超限提醒记录:", {
-			BILL: sale1.BILL,
-			SALEDATE: sale1.SALEDATE
-		});
-		return null;
+	// 若现金支付方式是"不可用"状态，本次不可能是现金支付。
+	// 典型场景：用户在弹窗【取消】后改用其它方式 —— 标记会残留到下一张单据，
+	// 此时必须丢弃，否则会写一条 BILL 属于新单、NET 却是旧单的脏记录。
+	// （FKDA_INFO / PayWayList 取不到时跳过该判断，不因取数失败影响正常记录）
+	const fkda = util.getStorage("FKDA_INFO");
+	const cash_info = (fkda && fkda.length) ? fkda.find(info => info.MEDIA == '1') : null;
+	const cash_way = util.getStorage("PayWayList");
+	if (cash_info && cash_way && cash_way.length) {
+		const settled = cash_way.find(w => w.fkid == cash_info.FKID);
+		if (settled && settled.yn_use == 'N') {
+			console.warn("[BuildWarmSql]本单现金支付方式不可用，丢弃残留标记:", cash_info.FKID);
+			return "NOCASH";
+		}
+	}
+
+	// 不变式校验：支付页写下的 net 必须等于本单实际落库的现金额。
+	//
+	// 为什么这是**精确**判据而不是凑数的防御：
+	//   - 只有"当前支付方式 = 现金"时 CashLimit 才会写标记，所以有标记的单必有现金支付行；
+	//   - 金额无关的竞态（用户改金额、上一单残留的同名标记、用户取消后改用其它方式）
+	//     都会让两者对不上，从而被这一条全部拦掉。
+	//
+	// 求和时**只取正数行**：超额支付时 PayList/SALE003 里会多出一条负数找零记录
+	// （CheckCashPayment 把找零写成 -excess，且带着同一个 FKID），
+	// 而 net 记的是"不含找零的录入金额"，所以负数行必须排除。
+	//
+	// 不相等说明标记不属于本单，丢弃。这里不 warn：真发生时要靠本单的现金行数
+	// （0 行说明本单根本没有现金支付）来区分，日志价值有限。
+	if (cash_info && Array.isArray(dataObj.SALE003)) {
+		const cash_amt = dataObj.SALE003
+			.filter(i => i && i.FKID == cash_info.FKID && Number(i.AMT) > 0)
+			.reduce((sum, i) => sum + Number(i.AMT || 0), 0);
+		if (Math.abs(cash_amt - Number(pending.net || 0)) > 0.005) {
+			return "NOCASH";
+		}
 	}
 
 	// 赊销结算判定：YWSXJS 表只在 sale_credit_settlement 模式生成

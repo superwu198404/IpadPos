@@ -100,6 +100,10 @@ test('clearPending 清掉标记', () => {
   assert.strictEqual(cashLimit.readPending(), null);
 });
 
+// 注意：本组用例只造 SALE001、不设 FKDA_INFO，走的是 buildWarmSql 里
+// "取数失败则跳过不变式校验" 的兜底分支，因此专注于验证 SQL 的格式与字段。
+// 含不变式校验的完整路径见文件末尾的「不变式校验」一组。
+
 const SALE1 = {
   SALEDATE: '2026-10-13',
   KHID: 'K200QTD005',
@@ -161,23 +165,23 @@ test('buildWarmSql 转义单引号', () => {
   assert.ok(sql.includes("'RY''O1'"), '单引号必须转义为两个单引号');
 });
 
-test('buildWarmSql 无 SALE001 时清掉标记并返回 null', () => {
+test('buildWarmSql 无 SALE001 时清掉标记并返回 NOCASH', () => {
   cashLimit.savePending(1300);
-  assert.strictEqual(cashLimit.buildWarmSql({}), null);
+  assert.strictEqual(cashLimit.buildWarmSql({}), 'NOCASH');
   assert.strictEqual(cashLimit.readPending(), null);
 });
 
-test('buildWarmSql 无 BILL 时清掉标记并返回 null（主键不能为空）', () => {
+test('buildWarmSql 无 BILL 时清掉标记并返回 NOCASH（主键不能为空）', () => {
   cashLimit.savePending(1300);
   const sql = cashLimit.buildWarmSql({ SALE001: Object.assign({}, SALE1, { BILL: '' }) });
-  assert.strictEqual(sql, null);
+  assert.strictEqual(sql, 'NOCASH');
   assert.strictEqual(cashLimit.readPending(), null);
 });
 
-test('buildWarmSql 无 SALEDATE 时清掉标记并返回 null（避免 Oracle TO_DATE 报错拖垮上传）', () => {
+test('buildWarmSql 无 SALEDATE 时清掉标记并返回 NOCASH（避免 Oracle TO_DATE 报错拖垮上传）', () => {
   cashLimit.savePending(1300);
   const sql = cashLimit.buildWarmSql({ SALE001: Object.assign({}, SALE1, { SALEDATE: '' }) });
-  assert.strictEqual(sql, null);
+  assert.strictEqual(sql, 'NOCASH');
   assert.strictEqual(cashLimit.readPending(), null);
 });
 
@@ -185,6 +189,62 @@ test('buildWarmSql SALEDATE 缺失（undefined）同样跳过', () => {
   cashLimit.savePending(1300);
   const s1 = Object.assign({}, SALE1);
   delete s1.SALEDATE;
-  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: s1 }), null);
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: s1 }), 'NOCASH');
   assert.strictEqual(cashLimit.readPending(), null);
+});
+
+// ---- 不变式校验：net 必须等于本单实际落库的现金额 ----
+
+const CASH_FKID = 'ZF01';
+const WAYS = [{ fkid: 'ZF01', yn_use: 'Y' }, { fkid: 'WXZF', yn_use: 'Y' }];
+
+// 带 SALE003 的完整 dataObj：SALE1 + 一条现金支付行
+const withSale3 = (cashAmt, extra = []) => ({
+  SALE001: SALE1,
+  SALE003: [{ FKID: CASH_FKID, AMT: cashAmt }].concat(extra)
+});
+
+test('现金额与 net 一致时正常生成', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', WAYS);
+  cashLimit.savePending(2000);
+  const sql = cashLimit.buildWarmSql(withSale3(2000));
+  assert.ok(sql && sql.includes('2000.000'), '应生成并写入 2000.000');
+});
+
+test('含找零负数行时只算正数行（找零不计入，与 net 口径一致）', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', WAYS);
+  cashLimit.savePending(2000);   // net = 录入金额（不含找零）
+  const sql = cashLimit.buildWarmSql(withSale3(2000, [{ FKID: CASH_FKID, AMT: -500 }]));
+  assert.ok(sql && sql.includes('2000.000'), '找零负数行必须被排除，否则会误判为不匹配');
+});
+
+test('net 与现金流不一致时丢弃（防上一单残留标记串单）', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', WAYS);
+  cashLimit.savePending(9999);   // 与 SALE003 的 2000 对不上
+  assert.strictEqual(cashLimit.buildWarmSql(withSale3(2000)), 'NOCASH');
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('本单无现金支付行时丢弃（已配置失效等）', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', WAYS);
+  cashLimit.savePending(2000);
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: SALE1, SALE003: [] }), 'NOCASH');
+});
+
+test('现金支付方式不可用时丢弃', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', [{ fkid: 'ZF01', yn_use: 'N' }]);  // 被限制掉
+  cashLimit.savePending(2000);
+  assert.strictEqual(cashLimit.buildWarmSql(withSale3(2000)), 'NOCASH');
+});
+
+test('FKDA_INFO 取不到时跳过不变式校验，仍正常生成', () => {
+  util.setStorage('PayWayList', WAYS);   // 故意不设 FKDA_INFO
+  cashLimit.savePending(2000);
+  const sql = cashLimit.buildWarmSql(withSale3(2000));
+  assert.ok(sql && sql.includes('2000.000'), '取数失败不应影响正常记录');
 });
