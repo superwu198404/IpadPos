@@ -332,7 +332,8 @@
 		<!-- 支付加载框 -->
 		<Loading :title="isRefund?'退款中...':'支付中...'" :show="in_payment"></Loading>
 		<!-- 现金支付提示弹窗 -->
-		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text">
+		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text"
+			:show-cancel="CashModal.ShowCancel">
 		</CashChangeModal>
 		<!-- 现金超限提示弹窗 -->
 		<CashLimitModal :visible.sync="CashLimitInfo.Visible" :text="CashLimitInfo.Text" :seconds="10"
@@ -403,7 +404,8 @@
 				},
 				CashModal: {
 					Visible: false,
-					Text: ""
+					Text: "",
+					ShowCancel: true // 是否显示【取消】按钮，见 CashChangeModal 的 show-cancel
 				},
 				CashLimitInfo: {
 					Visible: false,
@@ -1670,6 +1672,18 @@
 				//找零金额
 				let change_number = this.CountCashChange();
 
+				//找零 > 100 是"输入有误"级别的拦截，放在超额判断**之前**并要求优先处理：
+				//只提示找零超百、不展示超限提示，且只留一个【确定】，点了就终止支付。
+				if (change_number > 100) {
+					console.log("[CashChange]找零超过100元...");
+					this.CashModal.Text =
+						`找零 ${ change_number.toFixed(2) } 元已超过 100 元，请重新输入支付金额!`;
+					this.CashModal.ShowCancel = false;
+					this.CashModal.Visible = true;
+					await this.WaitCashModalConfirm();
+					return false;
+				}
+
 				//防重复触发：上一单若没走到落库（支付失败/中途退出），标记会残留，
 				//这里先清掉再按本单实际金额重写，保证 storage 里只有一份本单标记。
 				cashLimit.clearPending();
@@ -1684,25 +1698,19 @@
 					use_limit_modal
 				});
 
-				//超额：只弹超限框。
-				//  找零 ≤ 100 -> 点确定则继续支付（并落标记，落库时记消息表），点取消则终止
-				//  找零 > 100 -> 输入有误，只留一个【确定】，无论点什么都终止且不记消息
+				//超额：只弹超限框。找零 ≤ 100（含无找零）。
+				//  点确定 -> 继续支付（落标记，落库时记消息表）
+				//  点取消 -> 终止
 				if (use_limit_modal) {
 					console.warn("[CashChange]现金支付超限:", cash_total, limit_value);
-					let change_too_much = change_number > 100;
 					let limit_text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
-					if (change_too_much) {
-						limit_text += `\n(找零 ${ change_number.toFixed(2) } 元已超过 100 元，请重新输入支付金额!)`;
-					} else if (change_number > 0) {
+					if (change_number > 0) {
 						limit_text += `\n(本次需找零 ${ change_number.toFixed(2) } 元)`;
 					}
 					this.CashLimitInfo.Text = limit_text;
-					// 找零超百时两个按钮都会终止支付，只留一个【确定】避免误导
-					this.CashLimitInfo.ShowCancel = !change_too_much;
 					this.CashLimitInfo.Visible = true;
-					let limit_ok = await this.WaitCashLimitConfirm();
-					if (change_too_much || limit_ok != true) {
-						console.log("[CashChange]超限且找零超百或用户取消，终止本次支付");
+					if ((await this.WaitCashLimitConfirm()) != true) {
+						console.log("[CashChange]超限提示被取消，终止支付");
 						return false;
 					}
 					//知情并继续支付，落标记（落库时组装 Oracle SQL 记入消息表）
@@ -1712,13 +1720,6 @@
 				}
 
 				//未超额：走原有的现金/找零确认框
-				if (change_number > 100) {
-					//未超额但找零超百，仍是输入有误，终止支付
-					console.log("[CashChange]找零超过100元...");
-					this.CashModal.Text = "找零金额超过100￥，重新输入支付金额!";
-					this.CashModal.Visible = true;
-					return false;
-				}
 				if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
 					this.CashModal.Text =
@@ -1732,8 +1733,7 @@
 					console.log("[CashChange]现金确认被取消，终止支付");
 					return false;
 				}
-				return true;
-			},
+				return true;			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
 			DisabledPaymentChannel: function() {
 				var payment_channel_info = this.PayWayInfo(this.currentPayType); //支付方式信息

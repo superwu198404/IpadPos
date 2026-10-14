@@ -17,7 +17,7 @@
 			</view>
 			<view class="cash-modal-btn-groups">
 				
-				<button class="btn btn-qx" @click="Cancel">取消</button>
+				<button v-if="showCancel" class="btn btn-qx" @click="Cancel">取消</button>
 				<button class="btn btn-qr btn-flex" @click="Confirm">确认</button>
 			</view>
 		</view>
@@ -29,7 +29,13 @@
 		props:{
 			visible: Boolean,
 			text: String,
-			confirm: Boolean
+			confirm: Boolean,
+			// 是否显示【取消】。默认显示；置 false 时只剩一个【确认】，
+			// 用于"两个按钮都会终止支付"的场景
+			showCancel: {
+				type: Boolean,
+				default: true
+			}
 		},
 		methods:{
 			Confirm(){
