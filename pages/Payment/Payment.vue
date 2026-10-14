@@ -335,7 +335,7 @@
 		<CashChangeModal :visible.sync="CashModal.Visible" :confirm.sync="CashModal.Confirm" :text="CashModal.Text">
 		</CashChangeModal>
 		<!-- 现金超限提示弹窗 -->
-		<CashLimitModal :visible.sync="CashLimitModal.Visible" :text="CashLimitModal.Text" :seconds="10">
+		<CashLimitModal :visible.sync="CashLimitInfo.Visible" :text="CashLimitInfo.Text" :seconds="10">
 		</CashLimitModal>
 	</view>
 	<!-- </view> -->
@@ -404,7 +404,7 @@
 					Visible: false,
 					Text: ""
 				},
-				CashLimitModal: {
+				CashLimitInfo: {
 					Visible: false,
 					Text: "",
 					Remain: 10
@@ -1710,8 +1710,8 @@
 					cash_total,
 					limit_value
 				});
-				this.CashLimitModal.Text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
-				this.CashLimitModal.Visible = true;
+				this.CashLimitInfo.Text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
+				this.CashLimitInfo.Visible = true;
 				var async_callback = new Promise(util.callBind(this, function(resolve, reject) {
 					uni.$once("cash-limit-confirm", util.callBind(this, function() {
 						console.log("[CashLimit]弹窗点击了确定...");
