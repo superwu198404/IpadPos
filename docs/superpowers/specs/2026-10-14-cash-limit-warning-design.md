@@ -185,14 +185,26 @@ if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC
 | 术语 | 定义 |
 |---|---|
 | 现金支付方式 | `util.getStorage("FKDA_INFO")` 中 `MEDIA == '1'` 的记录的 `FKID` |
-| 本单现金合计 | 已录现金 + 本次输入 |
-| 已录现金 | `PayList` 中 `fkid == 现金FKID` 且 `amount > 0` 的行的 `amount` 之和 |
-| 本次输入 | 输入框绑定的 `dPayAmount` |
+| 本单现金合计 | 输入框 `dPayAmount` 的值 |
 | 超限 | 本单现金合计 > `CASHSX` 参数值，且 `CASHSX` 解析为数字后 > 0 |
 
-### 为什么已录现金要过滤 `amount > 0`
+### 为什么合计直接取 `dPayAmount`，而不是「已录现金 + 本次输入」
 
-`CheckCashPayment`（[Payment.vue:1936](pages/Payment/Payment.vue:1936)）会把找零写成一条负数 `amount` 的记录。按"不含找零的录入金额合计"口径（已确认），过滤掉负数行即可。
+初版设计写的是「已录现金（`PayList` 中现金行求和）+ 本次输入」，**实现时发现这是错的，会把本次输入算两遍**：
+
+- `dPayAmount` 是**整单待付余额**，不是增量。它由 `toBePaidPrice()` 得来：
+  ```
+  toBePaidPrice() = totalAmount - yPayAmount - PaymentInfos.PayedAmount
+  ```
+- 切换支付方式时 `dPayAmount` 会被重置为 `toBePaidPrice()`（`Payment.vue` 的 `currentPayType` watcher，见 `Payment.vue:576` / `614` / `944`），所以它**已经包含本单此前的现金金额**
+- 现金是全单唯一支付方式（`CheckCashPayment` 会把前一条现金记录合并掉），因此 `dPayAmount` 就是本单截至目前（含本次输入）的全部现金额
+- 而 `yPayAmount` / `PayList` 的更新发生在 `PushToPaidList`（`Payment.vue:1793` / `1827` / `1856`），**晚于** `CashLimit` 被调用的时机（`InPaymentBeforeStoped` 在 `PayHandle` 开头执行，见 `Payment.vue:1508`）
+
+若按旧口径相加，例：待付 500，收银员输入 500 现金 → 判定时 `PayList` 无现金行，`dPayAmount` 已是 500，相加仍是 500（碰巧正确）；但待付 1300、先收现金 500 再改输入 800 时，`dPayAmount` 为 1300、`PayList` 现金行若存在 500，相加得 1800，**虚高 500**，会把未超限的单误判为超限。
+
+**结论**：`getCashTotal(dPayAmount)` 只做数值归一，不做任何累加。
+
+**待真机确认**：场景 9（分两次收现金）需重点验证 `NET` 不出现重复计数。
 
 ### 关于 `MEDIA` 字段名
 
@@ -371,7 +383,7 @@ bill_type = 'YWSXJS' in dataObj ? 'SXJS' : dataObj.SALE001.BILL_TYPE
 | 函数 | 签名 | 职责 |
 |---|---|---|
 | `getCashFkid()` | → `string` | 从 `FKDA_INFO` 取 `MEDIA=='1'` 的 `FKID` |
-| `getCashTotal(payList, dPayAmount, cashFkid)` | → `number` | 算本单现金合计 |
+| `getCashTotal(dPayAmount)` | → `number` | 本单现金合计（数值归一，不累加） |
 | `isOverLimit(cashTotal, paramValue)` | → `boolean` | 参数容错 + 比较 |
 | `savePending(net)` | → `void` | 写 storage 标记 |
 | `buildWarmSql(dataObj)` | → `string \| null` | 读标记 → 校验新鲜度 → 拼 INSERT → **清标记**；无标记或已过期返回 `null` |
@@ -413,7 +425,7 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 6 | 倒计时期间点【确定】 | 按钮置灰，点不动 |
 | 7 | 非现金支付方式 | 完全不触发 |
 | 8 | 赊销结算 + 现金超限 | `BILL_TYPE` 写 `SXJS` |
-| 9 | 分两次收现金，第二次触发超限 | 合计口径正确，`NET` 为两笔之和 |
+| 9 | 分两次收现金，第二次触发超限 | `NET` 等于整单现金额，**不含重复计数** |
 | 10 | 现金含找零 | 找零负数记录不计入合计 |
 | 11 | 退款（Z151）现金超限 | **不触发**，直接放行 |
 | 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录 |

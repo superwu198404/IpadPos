@@ -169,30 +169,23 @@ test('getCashLimitParam 参数缺失返回空字符串', () => {
   assert.strictEqual(cashLimit.getCashLimitParam(), '');
 });
 
-test('getCashTotal 累加本次输入与本单已录现金', () => {
-  const payList = [
-    { fkid: 'ZF01', amount: 500 },
-    { fkid: 'WXZF', amount: 300 }
-  ];
-  // 500（已录现金）+ 800（本次输入）= 1300，微信的 300 不计
-  assert.strictEqual(cashLimit.getCashTotal(payList, 800, 'ZF01'), 1300);
+test('getCashTotal 直接返回 dPayAmount（整单待付余额）', () => {
+  // dPayAmount 是全单余额，已包含本单此前的现金额，不能再累加 PayList
+  assert.strictEqual(cashLimit.getCashTotal(1300), 1300);
 });
 
-test('getCashTotal 过滤找零的负数记录', () => {
-  const payList = [
-    { fkid: 'ZF01', amount: 2000 },
-    { fkid: 'ZF01', amount: -500 } // 找零
-  ];
-  // 只算 2000，找零不算，再加本次 0
-  assert.strictEqual(cashLimit.getCashTotal(payList, 0, 'ZF01'), 2000);
+test('getCashTotal 字符串数字也能处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal('1300.50'), 1300.5);
 });
 
-test('getCashTotal 空 PayList 只算本次输入', () => {
-  assert.strictEqual(cashLimit.getCashTotal([], 600, 'ZF01'), 600);
+test('getCashTotal undefined / null / 空串按 0 处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal(undefined), 0);
+  assert.strictEqual(cashLimit.getCashTotal(null), 0);
+  assert.strictEqual(cashLimit.getCashTotal(''), 0);
 });
 
-test('getCashTotal PayList 为 null 不炸', () => {
-  assert.strictEqual(cashLimit.getCashTotal(null, 600, 'ZF01'), 600);
+test('getCashTotal 非数字按 0 处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal('abc'), 0);
 });
 
 test('isOverLimit 超限返回 true', () => {
@@ -262,15 +255,25 @@ export const getCashLimitParam = function() {
 }
 
 /**
- * 本单现金合计 = 已录现金 + 本次输入
- * 已录现金只累加 amount > 0 的行——找零会被写成一条负数 amount 的记录
- * （见 Payment.vue 的 CheckCashPayment），按"不含找零的录入金额合计"口径应排除。
+ * 本单现金合计。
+ *
+ * 直接用 dPayAmount，**不能再累加 PayList** —— dPayAmount 是"整单待付余额"，
+ * 不是增量：
+ *   - toBePaidPrice() = totalAmount - yPayAmount - PayedAmount
+ *   - dPayAmount 在切换支付方式时被重置为 toBePaidPrice()（见 Payment.vue 的
+ *     currentPayType watcher），因此它已经包含了本单此前的现金金额。
+ *   - 现金是全单唯一支付方式（CheckCashPayment 会合并前一条现金记录），
+ *     所以 dPayAmount 就是本单截至目前（含本次输入）的全部现金额。
+ *   - yPayAmount / PayList 的更新发生在 PushToPaidList，晚于本函数被调用的时机
+ *     （InPaymentBeforeStoped 在 PayHandle 开头执行）。
+ *
+ * 注意：CashLimit 只在当前支付方式是现金时被调用，所以这里不需要判断 fkid。
+ *
+ * @param {number|string} dPayAmount 输入框中的本次支付金额
+ * @returns {number} 本单现金合计
  */
-export const getCashTotal = function(payList, dPayAmount, cashFkid) {
-	const recorded = (payList || [])
-		.filter(i => i && i.fkid == cashFkid && Number(i.amount) > 0)
-		.reduce((sum, i) => sum + Number(i.amount), 0);
-	return recorded + (Number(dPayAmount) || 0);
+export const getCashTotal = function(dPayAmount) {
+	return Number(dPayAmount) || 0;
 }
 
 // 超限判定：参数必须是一个正数才生效，否则本功能不触发（参数缺失不应阻塞收银）
@@ -818,19 +821,21 @@ import * as cashLimit from '@/utils/sale/cashLimit.js';
 			CashLimit: async function() {
 				if (this.isRefund) return true; //退款是退钱给顾客，不构成赊销风险，直接放行
 				console.log("[CashLimit]现金超限判断...", {
-					dPayAmount: this.dPayAmount,
-					payList: this.PayList
+					dPayAmount: this.dPayAmount
 				});
+				// 取现金 FKID 是为了"当前是否现金支付"这个更早、更明确的判断，
+				// 避免依赖 currentPayInfo 是否已初始化
 				let cash_fkid = cashLimit.getCashFkid();
 				if (!cash_fkid) {
 					console.log("[CashLimit]未配置现金支付方式(FKDA.MEDIA=1)，跳过");
 					return true;
 				}
-				if (this.currentPayInfo?.fkid != cash_fkid) {
-					console.log("[CashLimit]当前不是现金支付");
+				let my_fkid = this.currentPayInfo?.fkid;
+				if (my_fkid != cash_fkid) {
+					console.log("[CashLimit]当前不是现金支付:", my_fkid);
 					return true; //不是现金不走这个条件
 				}
-				let cash_total = cashLimit.getCashTotal(this.PayList, this.dPayAmount, cash_fkid);
+				let cash_total = cashLimit.getCashTotal(this.dPayAmount);
 				let limit_value = cashLimit.getCashLimitParam();
 				if (!cashLimit.isOverLimit(cash_total, limit_value)) {
 					console.log("[CashLimit]未超限:", cash_total, limit_value);
@@ -977,7 +982,7 @@ Expected: PASS，`pass 28` / `fail 0`
 | 6 | 倒计时期间点【确定】 | 按钮置灰，点不动 |
 | 7 | 非现金支付方式 | 完全不触发 |
 | 8 | 赊销结算 + 现金超限 | `BILL_TYPE` 写 `SXJS` |
-| 9 | 分两次收现金，第二次触发超限 | 合计口径正确，`NET` 为两笔之和 |
+| 9 | 分两次收现金，第二次触发超限 | `NET` 等于整单现金额，**不含重复计数** |
 | 10 | 现金含找零 | 找零负数记录不计入合计 |
 | 11 | 退款（Z151）现金超限 | **不触发**，直接放行 |
 | 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录 |
