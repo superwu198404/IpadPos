@@ -1626,7 +1626,35 @@
 					return true;
 				}
 			},
-			//终止支付判断条件1: 现金支付（找零校验 + 超限提示，二者二选一）
+			//等待【超限提示】弹窗的用户决策：点确定 resolve(true)，点取消 resolve(false)。
+			//只注册这一个弹窗的两个事件——注册另一个弹窗的事件却等不到它触发，
+			//会留下永不消费的 uni.$once 监听器（每次现金支付泄漏两个）。
+			WaitCashLimitConfirm: function() {
+				return new Promise(util.callBind(this, function(resolve, reject) {
+					uni.$once("cash-limit-confirm", util.callBind(this, function() {
+						console.log("[WaitCashLimitConfirm]超限弹窗点击了确定...");
+						resolve(true);
+					}));
+					uni.$once("cash-limit-cancel", util.callBind(this, function() {
+						console.log("[WaitCashLimitConfirm]超限弹窗点击了取消...");
+						resolve(false);
+					}));
+				}));
+			},
+			//等待【找零/现金确认】弹窗的用户决策。理由同上，只注册本弹窗的事件。
+			WaitCashModalConfirm: function() {
+				return new Promise(util.callBind(this, function(resolve, reject) {
+					uni.$once("cash-modal-confirm", util.callBind(this, function() {
+						console.log("[WaitCashModalConfirm]找零弹窗点击了确定...");
+						resolve(true);
+					}));
+					uni.$once("cash-modal-cancel", util.callBind(this, function() {
+						console.log("[WaitCashModalConfirm]找零弹窗点击了取消...");
+						resolve(false);
+					}));
+				}));
+			},
+			//终止支付判断条件1: 现金支付（找零校验 + 超限提示，二者顺序弹出）
 			CashChange: async function() {
 				console.log("[CashChange]现金找零操作判断处理...", {
 					pay_money: this.dPayAmount,
@@ -1646,65 +1674,54 @@
 					return false;
 				}
 
-				// ---- 二选一：超额只弹超额框，未超额只弹找零确认框 ----
-				// 防重复触发：上一单若没走到落库（支付失败/中途退出），标记会残留，
-				// 这里先清掉再按本单实际金额重写，保证 storage 里只会有一份本单标记。
+				//防重复触发：上一单若没走到落库（支付失败/中途退出），标记会残留，
+				//这里先清掉再按本单实际金额重写，保证 storage 里只有一份本单标记。
 				cashLimit.clearPending();
 
 				let cash_total = cashLimit.getCashTotal(this.dPayAmount);
 				let limit_value = cashLimit.getCashLimitParam();
-				// 二选一判据只看是否超限：超额只弹超额框，未超额只弹现金确认框。
-				// 注意：超额且本次录入有找零时，也走超额框 —— 找零金额不再单独提示。
 				let use_limit_modal = cashLimit.isOverLimit(cash_total, limit_value);
-
-				console.log("[CashChange]现金弹窗选择:", {
+				console.log("[CashChange]现金弹窗判断:", {
 					cash_total,
 					limit_value,
 					change_number,
 					use_limit_modal
 				});
 
+				//超额：只弹超限框（有找零时把找零金额一并写在提示里），不弹现金确认框
 				if (use_limit_modal) {
 					console.warn("[CashChange]现金支付超限:", cash_total, limit_value);
-					this.CashLimitInfo.Text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
+					let limit_text = "现金赊销须三日内存现，如违规使用现金过机系统记录并同步课长";
+					if (change_number > 0) {
+						limit_text += `\n(本次需找零 ${ change_number.toFixed(2) } 元)`;
+					}
+					this.CashLimitInfo.Text = limit_text;
 					this.CashLimitInfo.Visible = true;
-				} else if (change_number > 0) {
+					if ((await this.WaitCashLimitConfirm()) != true) {
+						console.log("[CashChange]超限提示被取消，终止支付");
+						return false;
+					}
+					//超限框点确定 = 知情并继续支付，此时才落标记（落库时组装 Oracle SQL）
+					cashLimit.savePending(cash_total);
+					console.log("[CashChange]已写入现金超限标记:", cash_total);
+					return true;
+				}
+
+				//未超额：走原有的现金/找零确认框
+				if (change_number > 0) {
 					console.log("[CashChange]找零低于100元但大于0元...");
 					this.CashModal.Text =
 						`现金支付 ${ this.dPayAmount } 元，需找零 ${ change_number?.toFixed(2) } 元，是否确认支付？`;
-					this.CashModal.Visible = true;
 				} else {
 					console.log("[CashChange]支付金额小于欠款...");
 					this.CashModal.Text = `现金支付 ${ this.dPayAmount } 元，是否确认支付？`;
-					this.CashModal.Visible = true;
 				}
-
-				// 二选一，所以只需要等一个弹窗事件
-				let confirmed = await new Promise(util.callBind(this, function(resolve, reject) {
-					uni.$once("cash-limit-confirm", util.callBind(this, function() {
-						console.log("[CashChange]超限弹窗点击了确定...");
-						resolve(true);
-					}));
-					uni.$once("cash-limit-cancel", util.callBind(this, function() {
-						console.log("[CashChange]超限弹窗点击了取消...");
-						resolve(false);
-					}));
-					uni.$once("cash-modal-confirm", util.callBind(this, function() {
-						console.log("[CashChange]找零弹窗点击了确定...");
-						resolve(true);
-					}));
-					uni.$once("cash-modal-cancel", util.callBind(this, function() {
-						console.log("[CashChange]找零弹窗点击了取消...");
-						resolve(false);
-					}));
-				}));
-
-				// 超限弹窗点【确定】= 知情并继续支付，此时才落标记（落库时组装 Oracle SQL）
-				if (confirmed && use_limit_modal) {
-					cashLimit.savePending(cash_total);
+				this.CashModal.Visible = true;
+				if ((await this.WaitCashModalConfirm()) != true) {
+					console.log("[CashChange]现金确认被取消，终止支付");
+					return false;
 				}
-				return confirmed;
-			},
+				return true;			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
 			DisabledPaymentChannel: function() {
 				var payment_channel_info = this.PayWayInfo(this.currentPayType); //支付方式信息
