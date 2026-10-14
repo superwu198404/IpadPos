@@ -99,3 +99,77 @@ test('clearPending 清掉标记', () => {
   cashLimit.clearPending();
   assert.strictEqual(cashLimit.readPending(), null);
 });
+
+const SALE1 = {
+  SALEDATE: '2026-10-13',
+  KHID: 'K200QTD005',
+  BILL: 'K200QTD005251013120000',
+  BILL_TYPE: 'Z101',
+  RYID: 'RY001'
+};
+
+test('buildWarmSql 无标记时返回 null', () => {
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: SALE1 }), null);
+});
+
+test('buildWarmSql 正常生成 INSERT 并自带结尾分号', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({ SALE001: SALE1 });
+  assert.ok(sql.endsWith(';'), '必须自带结尾分号');
+  assert.ok(sql.includes("insert into POS_INFOR_WARM"));
+  assert.ok(sql.includes("'K200QTD005'"));
+  assert.ok(sql.includes("'K200QTD005251013120000'"));
+  assert.ok(sql.includes("'RY001'"));
+  assert.ok(sql.includes('1300.000'), 'NET 需归一为三位小数');
+  assert.ok(sql.includes("'N'"), 'YN_TX 显式写 N');
+  assert.ok(sql.includes("TO_DATE('2026-10-13','yyyy-MM-dd HH24:mi:ss')"));
+});
+
+test('buildWarmSql 消费后清掉标记，不会污染下一单', () => {
+  cashLimit.savePending(1300);
+  cashLimit.buildWarmSql({ SALE001: SALE1 });
+  assert.strictEqual(cashLimit.readPending(), null);
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: SALE1 }), null);
+});
+
+test('buildWarmSql 标记过期时不生成', () => {
+  util.setStorage('CashLimit_Warm', { ts: Date.now() - 6 * 60 * 1000, net: 1300 });
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: SALE1 }), null);
+});
+
+test('buildWarmSql 赊销结算写 SXJS', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({
+    SALE001: SALE1,
+    YWSXJS: { BILL: 'SX001' }   // YWSXJS 只在赊销结算模式生成
+  });
+  assert.ok(sql.includes("'SXJS'"));
+  assert.ok(!sql.includes("'Z101'"));
+});
+
+test('buildWarmSql 非赊销结算沿用 BILL_TYPE', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({ SALE001: SALE1 });
+  assert.ok(sql.includes("'Z101'"));
+});
+
+test('buildWarmSql 转义单引号', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({
+    SALE001: Object.assign({}, SALE1, { RYID: "RY'O1" })
+  });
+  assert.ok(sql.includes("'RY''O1'"), '单引号必须转义为两个单引号');
+});
+
+test('buildWarmSql 无 SALE001 时清掉标记并返回 null', () => {
+  cashLimit.savePending(1300);
+  assert.strictEqual(cashLimit.buildWarmSql({}), null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('buildWarmSql 无 BILL 时清掉标记并返回 null（主键不能为空）', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({ SALE001: Object.assign({}, SALE1, { BILL: '' }) });
+  assert.strictEqual(sql, null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});

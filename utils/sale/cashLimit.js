@@ -78,3 +78,46 @@ export const readPending = function() {
 export const clearPending = function() {
 	util.removeStorage(STORAGE_KEY);
 }
+
+// SQL 字符串值转义：单引号需要写成两个单引号
+const escapeSql = function(v) {
+	return String(v == null ? "" : v).replace(/'/g, "''");
+}
+
+/**
+ * 组装 POS_INFOR_WARM 的 Oracle INSERT。
+ * 由 bll/Common/bll.js 的 CreateSaleOrder 调用，是标记的唯一消费入口。
+ *
+ * 返回 null 表示本次无需写入。**只要读到了标记就一定清掉**（无论能否成功生成），
+ * 以保证标记不会泄漏到下一张单据。
+ *
+ * 单据字段一律从 dataObj.SALE001 取——它与 Oracle 侧那条 SALE001 是同一份数据，
+ * 保证 SALEDATE 等字段与单据完全一致（POS_INFOR_WARM 主键含 SALEDATE）。
+ */
+export const buildWarmSql = function(dataObj) {
+	const pending = readPending();
+	if (!pending) return null;
+
+	// 无论后续哪条分支返回，标记都已消费完毕
+	clearPending();
+
+	const sale1 = dataObj && dataObj.SALE001;
+	if (!sale1 || !sale1.BILL) return null;
+
+	// 赊销结算判定：YWSXJS 表只在 sale_credit_settlement 模式生成
+	// （base_sale.js 的 $initSale 内 this.additional['YWSXJS'] = params.ywsxjs）
+	// 需求要求赊销结算写 SXJS，而 saleBillType 数组里没有这个值，故在此覆盖。
+	const billType = dataObj.YWSXJS ? 'SXJS' : sale1.BILL_TYPE;
+
+	// 数字列，不加引号；与 CreateSQL 保持一致，归一为三位小数
+	const net = Number(pending.net || 0).toFixed(3);
+
+	// 日期格式串必须与 api/common.js 的 CreateSQL 一致，否则 SALEDATE 与单据对不上
+	return "insert into POS_INFOR_WARM (SALEDATE,KHID,BILL,BILL_TYPE,RYID,NET,YN_TX) values(" +
+		"TO_DATE('" + escapeSql(sale1.SALEDATE) + "','yyyy-MM-dd HH24:mi:ss')," +
+		"'" + escapeSql(sale1.KHID) + "'," +
+		"'" + escapeSql(sale1.BILL) + "'," +
+		"'" + escapeSql(billType) + "'," +
+		"'" + escapeSql(sale1.RYID) + "'," +
+		net + ",'N');";
+}
