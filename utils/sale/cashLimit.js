@@ -54,3 +54,27 @@ export const isOverLimit = function(cashTotal, paramValue) {
 	if (isNaN(limit) || limit <= 0) return false;
 	return Number(cashTotal) > limit;
 }
+
+// storage 标记：支付页确认超限后写，CreateSaleOrder 落库时消费
+const STORAGE_KEY = "CashLimit_Warm";
+// 新鲜度阈值：超过这个时间的标记视为残留（异常中断），不再消费，避免污染后续单据
+const FRESH_MS = 5 * 60 * 1000;
+
+export const savePending = function(net) {
+	util.setStorage(STORAGE_KEY, {
+		ts: Date.now(),
+		net: Number(net) || 0
+	});
+}
+
+// 读标记；不存在或已过期都返回 null
+export const readPending = function() {
+	const pending = util.getStorage(STORAGE_KEY);
+	if (!pending || !pending.ts) return null;
+	if (Date.now() - Number(pending.ts) > FRESH_MS) return null;
+	return pending;
+}
+
+export const clearPending = function() {
+	util.removeStorage(STORAGE_KEY);
+}

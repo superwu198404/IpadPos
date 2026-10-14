@@ -71,3 +71,31 @@ test('isOverLimit 参数为 0 不触发', () => {
 test('isOverLimit 参数为负数不触发', () => {
   assert.strictEqual(cashLimit.isOverLimit(9999, '-5'), false);
 });
+
+test('savePending 写入标记并在 readPending 读回', () => {
+  cashLimit.savePending(1300);
+  const pending = cashLimit.readPending();
+  assert.strictEqual(pending.net, 1300);
+  assert.ok(typeof pending.ts === 'number' && pending.ts > 0);
+});
+
+test('readPending 无标记返回 null', () => {
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('readPending 标记过期返回 null', () => {
+  // 手动写入一个 6 分钟前的标记（新鲜度阈值是 5 分钟）
+  util.setStorage('CashLimit_Warm', { ts: Date.now() - 6 * 60 * 1000, net: 1300 });
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('readPending 刚写入的标记不算过期', () => {
+  util.setStorage('CashLimit_Warm', { ts: Date.now() - 60 * 1000, net: 1300 });
+  assert.strictEqual(cashLimit.readPending().net, 1300);
+});
+
+test('clearPending 清掉标记', () => {
+  cashLimit.savePending(1300);
+  cashLimit.clearPending();
+  assert.strictEqual(cashLimit.readPending(), null);
+});
