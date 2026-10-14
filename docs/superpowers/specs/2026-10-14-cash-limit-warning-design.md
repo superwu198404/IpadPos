@@ -71,7 +71,7 @@
 
 新建 `components/CashLimitModal/CashLimitModal.vue`，样式与事件机制仿照现有的 [CashChangeModal](components/CashChangeModal/CashChangeModal.vue)，即通过 `uni.$emit` 派发事件、父页面用 `uni.$once` + Promise 封装成可 `await` 的交互。
 
-不复用 `CashChangeModal` 的原因：现有组件的按钮是【取消 / 确认】，而本需求是【确定 / 取消】，且**取消的语义相反**——`CashChangeModal` 的取消是"不支付"，本需求是"终止本次支付并清空输入"。混用会污染每天在用的找零确认逻辑。
+不复用 `CashChangeModal` 的原因：现有组件的按钮是【取消 / 确认】，而本需求是【确定 / 取消】，且**取消的语义相反**——`CashChangeModal` 的取消是"这一笔先不支付"，本需求是"终止本次支付"。混用会污染每天在用的找零确认逻辑。
 
 提示文案（固定）：
 
@@ -87,7 +87,7 @@
 |---|---|---|
 | 倒计时结束 | `countdown` 态下 10s 走完 | 切换为 `awaitUser` 态。【确定】按钮由置灰变为可点。弹窗不关闭，不自动支付，不写消息表 |
 | 点【确定】 | **仅 `awaitUser` 态可用** | 停止倒计时 → 关闭弹窗 → 返回 `true` → 支付流程继续 → 支付成功后追加消息 SQL |
-| 点【取消】 | 两个状态都可用 | 停止倒计时 → 关闭弹窗 → 返回 `false` → 支付流程终止 → 清空输入 |
+| 点【取消】 | 两个状态都可用 | 停止倒计时 → 关闭弹窗 → 返回 `false` → 支付流程终止 → **保留输入框原值，不清空** |
 
 **【确定】在倒计时期间置灰不可点**，这是本功能的核心约束：10 秒内用户唯一能做的操作是【取消】或等待，强制收银员至少看完 10 秒风险提示。倒计时走完后【确定】才解锁，此时用户可以自由决定确认支付还是取消。
 
@@ -95,7 +95,9 @@
 
 ### 多次触发
 
-用户点【取消】终止支付后，`PayList` 未变化（已录现金不变），输入框被清空。用户重新输入并再次点支付，会再次超限并再次弹窗。属预期行为。
+用户点【取消】终止支付后，`PayList` 未变化（已录现金不变），**输入框保留原值**。用户可直接改金额或再次点支付，若仍超限会再次弹窗。属预期行为。
+
+保留输入值是有意为之：收银员往往只需要微调金额（比如少收一点降到上限以下），清空会强迫重新输入。
 
 ## 数据设计
 
@@ -122,13 +124,17 @@ create index IN_POS_INFOR_WARM_tx on POS_INFOR_WARM (yn_tx,saledate,khid,bill) t
 
 | 列 | 来源 | 说明 |
 |---|---|---|
-| `SALEDATE` | `dateformat.getYMDS()` | 含时分秒；与 `SaleDataCombine` 生成 SALE003 时的取法一致 |
+| `SALEDATE` | `sale1_obj.SALEDATE` | **必须与单据的 `SALE001.SALEDATE` 一致**，不能另外取当前时间。理由是 `POS_INFOR_WARM` 的主键含 `SALEDATE`，且后台按 `(yn_tx, saledate, khid, bill)` 建了索引，两处取值不一致会导致消息与单据关联不上 |
 | `KHID` | `sale1_obj.KHID` | |
 | `BILL` | `sale1_obj.BILL` | 赊销结算场景 `sale1_obj.BILL` 即 `mode_info.sale_credit_settlement.new_bill`，两者一致 |
 | `BILL_TYPE` | `sale1_obj.BILL_TYPE`，赊销结算场景覆盖为 `SXJS` | 见下节 |
 | `RYID` | `sale1_obj.RYID` | 收银员 |
 | `NET` | 本单现金合计（元） | 与超限判定同一个值 |
 | `YN_TX` | 常量 `'N'` | |
+
+`SALEDATE` 是 `date` 列，走 `TO_DATE` 格式化。格式串用 `yyyy-mm-dd`：`sale1_obj.SALEDATE` 由 [`base_sale.js:2084`](utils/sale/base_sale.js:2084) 的 `getDate()` 生成，只拼年月日（**不含时分秒**），时分秒是独立的 `SALETIME` 字段。`GetSale` 初始化时 `this.saledate = this.getDate()`（[base_sale.js:2811](utils/sale/base_sale.js:2811)），再写入 `sale001.SALEDATE`（[base_sale.js:4084](utils/sale/base_sale.js:4084)、[4120](utils/sale/base_sale.js:4120)）。
+
+注意：**不要用 `dateformat.getYMDS()`**，那是 `SALETIME` 的口径（`'YYYY-MM-DD HH:mm:ss'`），与 `SALEDATE` 不是同一个值，会造成消息与单据关联不上。
 
 ### BILL_TYPE 的现有链路
 
@@ -156,8 +162,10 @@ bill_type = (current_type.clickType == 'sale_credit_settlement') ? 'SXJS' : sale
 
 ```sql
 INSERT INTO POS_INFOR_WARM (SALEDATE,KHID,BILL,BILL_TYPE,RYID,NET,YN_TX)
-VALUES (TO_DATE('<saledate>','yyyy-mm-dd hh24:mi:ss'),'<khid>','<bill>','<bill_type>','<ryid>',<net>,'N');
+VALUES (TO_DATE('<saledate>','yyyy-mm-dd'),'<khid>','<bill>','<bill_type>','<ryid>',<net>,'N');
 ```
+
+`<saledate>` 取 `sale1_obj.SALEDATE`（`'YYYY-MM-DD'`），格式串固定 `yyyy-mm-dd`。
 
 ### 关键实现约束
 
@@ -169,7 +177,7 @@ VALUES (TO_DATE('<saledate>','yyyy-mm-dd hh24:mi:ss'),'<khid>','<bill>','<bill_t
 
 ### 追加位置
 
-在 `SaleDataCombine` 之后（此时 `sale1_obj` 已填充 `KHID` / `RYID` / `BILL`），把拼好的语句 push 进 `this.communication_for_oracle`。
+在 `SaleDataCombine` 之后、`orderSQLGenarator` 之前（此时 `sale1_obj` 已填充 `KHID` / `RYID` / `BILL` / `SALEDATE` / `BILL_TYPE`），把拼好的语句 push 进 `this.communication_for_oracle`。
 
 `PayedResult` 会把 `communication_for_oracle` 作为 `additional.oracle` 传给 `CreateSaleOrder`（[base_sale.js:3851](utils/sale/base_sale.js:3851)），后者追加进 `POS_TXFILE.TX_SQL`，随单据一起上传。
 
@@ -227,7 +235,7 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 1 | `CASHSX` 未配置 | 不弹窗，支付正常 |
 | 2 | 现金金额 ≤ `CASHSX` | 不弹窗，支付正常 |
 | 3 | 现金金额 > `CASHSX`，点【确定】 | 弹窗 → 支付成功 → `POS_TXFILE.TX_SQL` 含 INSERT → 上传后 Oracle 有记录且 `yn_tx='N'` |
-| 4 | 现金金额 > `CASHSX`，点【取消】 | 弹窗关闭 → 支付终止 → 输入框清空 → 无 Oracle 记录 |
+| 4 | 现金金额 > `CASHSX`，点【取消】 | 弹窗关闭 → 支付终止 → **输入框保留原值** → 无 Oracle 记录 |
 | 5 | 倒数 10s 不操作 | 弹窗不关，【确定】可点，支付仍挂起 |
 | 6 | 非现金支付方式 | 完全不触发 |
 | 7 | 赊销结算 + 现金超限 | `BILL_TYPE` 写入 `SXJS` |
