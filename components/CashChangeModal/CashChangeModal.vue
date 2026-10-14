@@ -80,7 +80,9 @@
 	}
 	
 	.cash-modal-contain{
-		width: 30%;	
+		width: 45%;
+		/* 与现金超限提示(CashLimitModal)统一尺寸，避免顺序弹出时大小跳变 */
+		height: 520px;
 		display: flex;
 		flex-direction: column;
 		background-blend-mode: multiply;
@@ -107,7 +109,10 @@
 		font-size: 46rpx;
 		font-weight: 700;
 		text-align: center;
-		display: block;
+		/* 容器已固定高度，文字改为垂直居中，否则会顶在上方留大片空白 */
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	
 	.cash-modal-btn-groups .btn{
