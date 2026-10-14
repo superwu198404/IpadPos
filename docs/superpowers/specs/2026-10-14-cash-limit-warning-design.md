@@ -171,9 +171,8 @@ if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC
 |---|---|
 | POSCS | `CASHSX` |
 | POSCSNR | 现金上限，单位为**元** |
-| 读取方式 | `common.GetPOSCS_Local("CASHSX")`（[api/common.js:928](api/common.js:928)） |
 
-配置与下发由服务端负责（`POSCSZMX` + `DAPZCS_NR`，经 `sysParm.getSysParam` 落本地 `sysParam` 缓存）。
+**读取方式：取 `sysParam` 缓存的 `CASHSX` 值。** `sysParam` 由 [sysParm.js:82-103](utils/sysParm/sysParm.js:82) 的 `getSysParam` 在初始化时从 `POSCSZMX` + `DAPZCS_NR` 拉取并持久化，键为 POSCS、值为 POSCSNR。
 
 容错：参数未配置或解析为 `NaN` 时按 `0` 处理，**不触发**提示。本功能属业务管控，不应因参数缺失阻塞收银。
 
@@ -432,15 +431,16 @@ props：`visible`、`text`、`seconds`（默认 10）。
 
 ## 待确认事项
 
-1. 服务端 `POSCSZMX` / `DAPZCS_NR` 中 `CASHSX` 的配置与下发（已确认"已配置或即将配置"）。
-2. 服务端 `ExecuteBatchSQL` 端到端验证：确认 `POS_TXFILE.TX_SQL` 中带末尾分号的 INSERT 能被正确拆分执行。
-3. 同一单重复超限确认会撞主键 `(SALEDATE,KHID,BILL)`。当前设计接受该风险（"确定"是人工决策，收银员不会明知会失败还重复点）。若需彻底规避，需要服务端改为唯一索引 + `MERGE`，或客户端先查后写 —— 但客户端无法查询 Oracle，此路不通。
+无阻塞项。全部前置问题已闭环，见下。
 
-### 已闭环的原待确认项
+### 已闭环事项
 
+- **`CASHSX` 参数来源**：直接取 `sysParam` 缓存的 `CASHSX` 值，不新增取数逻辑。
 - **`SALE001.SALEDATE` 的实际存储格式**：确认为 `2026-10-13 00:00:00`（日期列，时分秒恒为 0）。本 INSERT 用同一格式串即可对齐。
 - **`Payment.vue` 能否取 `current_type.clickType`**：取不到。改用 `dataObj.YWSXJS` 判定赊销结算，见"`BILL_TYPE` 的来源与 `SXJS` 映射"。
-- **各白名单是否包含现金 FKID**：已确认**包含**。因此限制支付时现金会显示为不可用，用户选不了现金，自然也不会触发后续逻辑。不需要额外处理——这正好也是期望行为（限制支付即禁用现金时，本功能无从触发）。
+- **各白名单是否包含现金 FKID**：已确认**包含**。限制支付时现金显示为不可用，收银员选不到现金，自然不触发后续逻辑。这是期望行为，不需要额外处理。
+- **服务端 SQL 分隔**：传入服务端的 SQL **按分号分隔**。本 INSERT 自带结尾分号，符合要求。
+- **同一单重复超限确认撞主键**：暂不考虑。
 
 ## 已知问题记录（不在本次范围内）
 
