@@ -93,6 +93,10 @@ const escapeSql = function(v) {
  *
  * 单据字段一律从 dataObj.SALE001 取——它与 Oracle 侧那条 SALE001 是同一份数据，
  * 保证 SALEDATE 等字段与单据完全一致（POS_INFOR_WARM 主键含 SALEDATE）。
+ *
+ * ⚠️ 字段缺失时宁可返回 null 不写，也不能生成跑不通的 SQL：本 INSERT 与业务 SQL
+ * 拼在同一条 TX_SQL 里上传，若 Oracle 执行报错，TransLite 不会删除 POS_TXFILE 队列行
+ * （只有 res1.code 为真才 delete），会导致**整张单据卡在队列里反复重试**。
  */
 export const buildWarmSql = function(dataObj) {
 	const pending = readPending();
@@ -102,7 +106,18 @@ export const buildWarmSql = function(dataObj) {
 	clearPending();
 
 	const sale1 = dataObj && dataObj.SALE001;
-	if (!sale1 || !sale1.BILL) return null;
+	if (!sale1) return null;
+
+	// BILL / SALEDATE 同时是 POS_INFOR_WARM 的主键成员，任何一个缺失都会让
+	// TO_DATE 或主键约束在 Oracle 侧报错，进而拖垮整张单据的上传，故一并校验。
+	// 其余列（BILL_TYPE / RYID）缺失只会插入 null，不会阻断上传，不做校验。
+	if (!sale1.BILL || !sale1.SALEDATE) {
+		console.warn("[BuildWarmSql]单据信息不完整，跳过超限提醒记录:", {
+			BILL: sale1.BILL,
+			SALEDATE: sale1.SALEDATE
+		});
+		return null;
+	}
 
 	// 赊销结算判定：YWSXJS 表只在 sale_credit_settlement 模式生成
 	// （base_sale.js 的 $initSale 内 this.additional['YWSXJS'] = params.ywsxjs）

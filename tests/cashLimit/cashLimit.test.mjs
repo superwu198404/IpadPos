@@ -173,3 +173,18 @@ test('buildWarmSql 无 BILL 时清掉标记并返回 null（主键不能为空�
   assert.strictEqual(sql, null);
   assert.strictEqual(cashLimit.readPending(), null);
 });
+
+test('buildWarmSql 无 SALEDATE 时清掉标记并返回 null（避免 Oracle TO_DATE 报错拖垮上传）', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({ SALE001: Object.assign({}, SALE1, { SALEDATE: '' }) });
+  assert.strictEqual(sql, null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('buildWarmSql SALEDATE 缺失（undefined）同样跳过', () => {
+  cashLimit.savePending(1300);
+  const s1 = Object.assign({}, SALE1);
+  delete s1.SALEDATE;
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: s1 }), null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});
