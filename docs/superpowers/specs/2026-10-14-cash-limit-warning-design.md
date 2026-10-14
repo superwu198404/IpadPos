@@ -155,7 +155,9 @@ if (this.sale001.TBZDISC > 0 || this.sale001.TLSDISC > 0 || this.sale001.TTPDISC
 | 售卡售券 | `SKSQFKID` 白名单（`card_sale.js:28`） | 视参数 |
 | 礼品券兑换 | 无（`CouponExchange.vue:665-675` 传空 `ban_pay`） | 可用 |
 
-**`TSDISC` / `ydnotfk` / `XSJSFKID` / `SKSQFKID` 都必须包含现金 FKID，本功能才会在这些场景真实生效。** 需与运营确认配置。
+**`TSDISC` / `ydnotfk` / `XSJSFKID` / `SKSQFKID` 这些白名单都已确认包含现金 FKID**，因此限制生效时现金会显示为**不可用**，收银员选不到现金，自然不会触发本功能。
+
+这是期望行为——限制支付即禁用现金时，本功能无从触发。**不需要为这些场景做任何额外处理。**
 
 ### `actType` 的一致性
 
@@ -317,7 +319,9 @@ values(TO_DATE('<saledate>','yyyy-MM-dd HH24:mi:ss'),'<khid>','<bill>','<bill_ty
 
 **日期格式串必须是 `yyyy-MM-dd HH24:mi:ss`**，与 [common.js:91](api/common.js:91) 保持一致（那里对所有含 `DATE` 的列统一用这个格式串）。
 
-**⚠️ 待实测确认：** `sale1_obj.SALEDATE` 由 [base_sale.js:2084](utils/sale/base_sale.js:2084) 的 `getDate()` 生成，只拼年月日（如 `'2026-10-14'`），不含时分秒。用 `yyyy-MM-dd HH24:mi:ss` 解析它，Oracle 会取 `00:00:00`。如果 SALE001 侧也是同样处理，则两边一致、主键能对上；**实现时必须实测确认 Oracle 上 `SALE001.SALEDATE` 的实际存储值**，不能想当然。
+**已实测确认：** `sale1_obj.SALEDATE` 值为 `'2026-10-13'`（只有年月日），经 `CreateSQL` 用 `yyyy-MM-dd HH24:mi:ss` 解析后，Oracle 存入 **`2026-10-13 00:00:00`**。因此本 INSERT 只要用**同一个格式串 + 同一个取值**，`POS_INFOR_WARM.SALEDATE` 就能与 `SALE001.SALEDATE` 完全相等，主键 `(SALEDATE, KHID, BILL)` 可以正确关联。
+
+注意：`SALEDATE` 列是**日期而非时间戳**，同一天的所有单据 `SALEDATE` 都是 `00:00:00`。
 
 **单引号转义。** 拼接字符串值前做 `replace(/'/g, "''")`。
 
@@ -330,14 +334,23 @@ values(TO_DATE('<saledate>','yyyy-MM-dd HH24:mi:ss'),'<khid>','<bill>','<bill_ty
 需求要求"赊销结算写 `SXJS`"，但 `saleBillType` 数组（[saleClass.js:484](utils/sale/saleClass.js:484)）里**没有 `SXJS`**。需要覆盖：
 
 ```
-bill_type = isSaleCreditSettlement ? 'SXJS' : dataObj.SALE001.BILL_TYPE
+bill_type = 'YWSXJS' in dataObj ? 'SXJS' : dataObj.SALE001.BILL_TYPE
 ```
 
-`isSaleCreditSettlement` 由调用方（`base_sale.js` 的 `PayedResult`）传入或由工具函数自行判定。判定口径应与 [base_sale.js:3860](utils/sale/base_sale.js:3860) 一致（`current_type.clickType == 'sale_credit_settlement'`）。
+#### 为什么用 `dataObj.YWSXJS` 判定（而非 `clickType`）
 
-**不要用 `XSTYPE` 反查** —— 赊销结算的 `xstype` 与普通销售在 `Z101` 上重合，不可靠。
+`Payment.vue` **取不到 `current_type.clickType`**（其参数来源是 `$store.state.location`，不含销售模式对象）。
 
-**实现时先查清 `Payment.vue` 能否直接拿到 `current_type.clickType`**（其参数来源是 `$store.state.location`）。若拿不到，需要把判定结果随标记一起写入 storage。
+改为在 `CreateSaleOrder` 内判断 `dataObj` 是否有 `YWSXJS` 表。这个办法更简单，而且**语义更准**：
+
+- `YWSXJS`（赊销结算主单）**只在赊销结算模式生成**
+- 唯一的赋值点是 [base_sale.js:1512](utils/sale/base_sale.js:1512) `this.additional['YWSXJS'] = params.ywsxjs`，位于 `sale_credit_settlement` 的 `$initSale` 钩子内（[base_sale.js:1458](utils/sale/base_sale.js:1458)）
+- 全项目对 `YWSXJS` 的写入引用仅此一处
+- 它随 `...this.additional` 展开进 `CreateSaleOrder` 的实参（[base_sale.js:3850](utils/sale/base_sale.js:3850)）
+
+因此 `'YWSXJS' in dataObj` 是赊销结算的**可靠且唯一**的判据。附带好处：判定逻辑全部收在 `bll.js` 内，支付页连 `isSaleCreditSettlement` 都不需要传。
+
+**仍然不要用 `XSTYPE` 反查** —— 赊销结算的 `xstype` 与普通销售在 `Z101` 上重合，不可靠。
 
 ## Storage 标记的设计
 
@@ -361,11 +374,13 @@ bill_type = isSaleCreditSettlement ? 'SXJS' : dataObj.SALE001.BILL_TYPE
 | `getCashFkid()` | → `string` | 从 `FKDA_INFO` 取 `MEDIA=='1'` 的 `FKID` |
 | `getCashTotal(payList, dPayAmount, cashFkid)` | → `number` | 算本单现金合计 |
 | `isOverLimit(cashTotal, paramValue)` | → `boolean` | 参数容错 + 比较 |
-| `savePending(net, isSaleCreditSettlement)` | → `void` | 写 storage 标记 |
-| `buildWarmSql(sale1Obj)` | → `string \| null` | 读标记 → 校验新鲜度 → 拼 INSERT → **清标记**；无标记或已过期返回 `null` |
+| `savePending(net)` | → `void` | 写 storage 标记 |
+| `buildWarmSql(dataObj)` | → `string \| null` | 读标记 → 校验新鲜度 → 拼 INSERT → **清标记**；无标记或已过期返回 `null` |
 | `escape(v)` | → `string` | 单引号转义（内部函数） |
 
-`buildWarmSql` 在 `bll.js` 里被调用，是唯一的消费入口。`bll.js` 需 import 该模块。
+`buildWarmSql` 接收整个 `dataObj`（而非只收 `SALE001`），因为它需要同时判断 `dataObj.SALE001`（字段来源）和 `dataObj.YWSXJS`（赊销结算判定）。它在 `bll.js` 里被调用，是唯一的消费入口，`bll.js` 需 import 该模块。
+
+**注意 `savePending` 不需要传 `isSaleCreditSettlement`** —— 赊销判定的全部逻辑收在 `buildWarmSql` 内，支付页不参与。
 
 ### 新增 `components/CashLimitModal/CashLimitModal.vue`
 
@@ -379,11 +394,11 @@ props：`visible`、`text`、`seconds`（默认 10）。
 2. `data` 增加 `CashLimitModal: { Visible: false, Confirm: false, Text: "", Remain: 10 }`
 3. 新增 `CashLimit: async function()`。**开头 `if (this.isRefund) return true;`** 短路退款
 4. `InPaymentBeforeStoped` 的 `Promise.all` 数组加入 `this.CashLimit()`
-5. 判定超限且用户点【确定】后调 `cashLimit.savePending(net, isSaleCreditSettlement)`
+5. 判定超限且用户点【确定】后调 `cashLimit.savePending(net)`
 
 ### 修改 `bll/Common/bll.js`
 
-`CreateSaleOrder` 内（[bll.js:257](bll/Common/bll.js:257) 附近）追加 `buildWarmSql` 调用并把结果拼进 `OracleSql`。**这是唯一的写入点，5 个调用方零改动。**
+`CreateSaleOrder` 内（[bll.js:257](bll/Common/bll.js:257) 附近）调用 `buildWarmSql(dataObj)` 并把结果拼进 `OracleSql`。**这是唯一的写入点，5 个调用方零改动。**
 
 ## 验证方式
 
@@ -402,12 +417,12 @@ props：`visible`、`text`、`seconds`（默认 10）。
 | 9 | 分两次收现金，第二次触发超限 | 合计口径正确，`NET` 为两笔之和 |
 | 10 | 现金含找零 | 找零负数记录不计入合计 |
 | 11 | 退款（Z151）现金超限 | **不触发**，直接放行 |
-| 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录（前提：现金在 `SKSQFKID` 白名单内） |
+| 12 | 售卡（CardSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录 |
 | 13 | 售券（CouponSale）+ 现金超限 | 触发，`BILL_TYPE` 写 `Z111`，Oracle 有记录 |
 | 14 | 卡券激活失败（`YN_OK='F'`）+ 现金超限 | **仍然记录**（只要现金过机就记） |
 | 15 | 超限确认后支付中断，下一单正常支付 | 下一单**不**被误记（标记已清理 / 已过期） |
 | 16 | 赊销售卡（`BILL_TYPE='Z112'`）+ 现金超限 | `BILL_TYPE` 写 `Z112` |
-| 17 | 对比 Oracle 上 `SALE001.SALEDATE` 与 `POS_INFOR_WARM.SALEDATE` | 两者**完全相同**（验证日期格式串） |
+| 17 | 对比 Oracle 上 `SALE001.SALEDATE` 与 `POS_INFOR_WARM.SALEDATE` | 两者**完全相同**（预期均为 `2026-10-13 00:00:00`） |
 
 日志沿用项目约定：`console.log("[CashLimit]...")` 前缀。
 
@@ -419,10 +434,13 @@ props：`visible`、`text`、`seconds`（默认 10）。
 
 1. 服务端 `POSCSZMX` / `DAPZCS_NR` 中 `CASHSX` 的配置与下发（已确认"已配置或即将配置"）。
 2. 服务端 `ExecuteBatchSQL` 端到端验证：确认 `POS_TXFILE.TX_SQL` 中带末尾分号的 INSERT 能被正确拆分执行。
-3. **`SALE001.SALEDATE` 在 Oracle 上的实际存储格式**（决定 `TO_DATE` 格式串与主键能否对上）。实现时第一步实测。
-4. `Payment.vue` 能否直接访问 `current_type.clickType`（决定 `isSaleCreditSettlement` 是页面侧算好还是工具函数自己取）。
-5. 服务端 `SKSQFKID` / `XSJSFKID` / `TSDISC` / `ydnotfk` 是否包含现金 FKID（决定各场景能否真的走到这段逻辑）。
-6. 同一单重复超限确认会撞主键 `(SALEDATE,KHID,BILL)`。当前设计接受该风险（"确定"是人工决策，收银员不会明知会失败还重复点）。若需彻底规避，需要服务端改为唯一索引 + `MERGE`，或客户端先查后写 —— 但客户端无法查询 Oracle，此路不通。
+3. 同一单重复超限确认会撞主键 `(SALEDATE,KHID,BILL)`。当前设计接受该风险（"确定"是人工决策，收银员不会明知会失败还重复点）。若需彻底规避，需要服务端改为唯一索引 + `MERGE`，或客户端先查后写 —— 但客户端无法查询 Oracle，此路不通。
+
+### 已闭环的原待确认项
+
+- **`SALE001.SALEDATE` 的实际存储格式**：确认为 `2026-10-13 00:00:00`（日期列，时分秒恒为 0）。本 INSERT 用同一格式串即可对齐。
+- **`Payment.vue` 能否取 `current_type.clickType`**：取不到。改用 `dataObj.YWSXJS` 判定赊销结算，见"`BILL_TYPE` 的来源与 `SXJS` 映射"。
+- **各白名单是否包含现金 FKID**：已确认**包含**。因此限制支付时现金会显示为不可用，用户选不了现金，自然也不会触发后续逻辑。不需要额外处理——这正好也是期望行为（限制支付即禁用现金时，本功能无从触发）。
 
 ## 已知问题记录（不在本次范围内）
 
