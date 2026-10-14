@@ -18,7 +18,10 @@
 				{{ unlocked ? '' : '请阅读提示，' + remain + ' 秒后可确认' }}
 			</view>
 			<view class="cash-limit-btn-groups">
-				<button class="btn btn-qx" @click="Cancel">取消</button>
+				<!-- 单按钮模式：两个按钮的语义都是"关闭并放弃本次支付"，显示两个反而让人
+				     以为【确定】能继续，所以只留一个。@click 仍走 Cancel，
+				     由父页面的 Cancel 保持"终止支付"的语义。 -->
+				<button v-if="showCancel" class="btn btn-qx" @click="Cancel">取消</button>
 				<button class="btn btn-qr btn-flex" :disabled="!unlocked" :class="{ 'btn-disabled': !unlocked }"
 					@click="Confirm">
 					{{ unlocked ? '确定' : remain + 's' }}
@@ -36,6 +39,12 @@
 			seconds: {
 				type: Number,
 				default: 10
+			},
+			// 是否显示【取消】。默认显示（超限提示：确定=继续支付，取消=终止）。
+			// 置 false 时只剩一个【确定】，用于"两个按钮都会终止支付"的场景。
+			showCancel: {
+				type: Boolean,
+				default: true
 			}
 		},
 		data() {
