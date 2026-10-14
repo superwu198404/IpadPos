@@ -480,6 +480,21 @@ test('buildWarmSql 无 BILL 时清掉标记并返回 null（主键不能为空�
   assert.strictEqual(sql, null);
   assert.strictEqual(cashLimit.readPending(), null);
 });
+
+test('buildWarmSql 无 SALEDATE 时清掉标记并返回 null（避免 Oracle TO_DATE 报错拖垮上传）', () => {
+  cashLimit.savePending(1300);
+  const sql = cashLimit.buildWarmSql({ SALE001: Object.assign({}, SALE1, { SALEDATE: '' }) });
+  assert.strictEqual(sql, null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});
+
+test('buildWarmSql SALEDATE 缺失（undefined）同样跳过', () => {
+  cashLimit.savePending(1300);
+  const s1 = Object.assign({}, SALE1);
+  delete s1.SALEDATE;
+  assert.strictEqual(cashLimit.buildWarmSql({ SALE001: s1 }), null);
+  assert.strictEqual(cashLimit.readPending(), null);
+});
 ```
 
 - [ ] **Step 2: 运行测试确认失败**
@@ -518,7 +533,18 @@ export const buildWarmSql = function(dataObj) {
 	clearPending();
 
 	const sale1 = dataObj && dataObj.SALE001;
-	if (!sale1 || !sale1.BILL) return null;
+	if (!sale1) return null;
+
+	// BILL / SALEDATE 同时是 POS_INFOR_WARM 的主键成员，任何一个缺失都会让
+	// TO_DATE 或主键约束在 Oracle 侧报错，进而拖垮整张单据的上传，故一并校验。
+	// 其余列（BILL_TYPE / RYID）缺失只会插入 null，不会阻断上传，不做校验。
+	if (!sale1.BILL || !sale1.SALEDATE) {
+		console.warn("[BuildWarmSql]单据信息不完整，跳过超限提醒记录:", {
+			BILL: sale1.BILL,
+			SALEDATE: sale1.SALEDATE
+		});
+		return null;
+	}
 
 	// 赊销结算判定：YWSXJS 表只在 sale_credit_settlement 模式生成
 	// （base_sale.js 的 $initSale 内 this.additional['YWSXJS'] = params.ywsxjs）
@@ -545,7 +571,7 @@ Run:
 ```bash
 cd "D:/SVN项目/IpadPos" && node --import ./tests/cashLimit/register.mjs --test tests/cashLimit/cashLimit.test.mjs
 ```
-Expected: PASS，`pass 28` / `fail 0`
+Expected: PASS，`pass 30` / `fail 0`
 
 - [ ] **Step 5: 提交**
 
@@ -968,7 +994,7 @@ Run:
 ```bash
 cd "D:/SVN项目/IpadPos" && node --import ./tests/cashLimit/register.mjs --test tests/cashLimit/cashLimit.test.mjs
 ```
-Expected: PASS，`pass 28` / `fail 0`
+Expected: PASS，`pass 30` / `fail 0`
 
 - [ ] **Step 3: HBuilderX 运行到真机/模拟器，按清单逐条验证**
 
@@ -1005,7 +1031,7 @@ git commit -m "chore: 版本号递增至 1.1.145"
 
 ## 完成标准
 
-- 全部 28 个单测通过
+- 全部 30 个单测通过
 - Task 8 的 17 条真机场景全部符合预期
 - `utils/sale/base_sale.js` 与 `utils/sale/card_coupon.js` **未被修改**（5 个调用方零改动）
 - Oracle 中 `POS_INFOR_WARM` 出现记录且 `yn_tx='N'`
@@ -1020,7 +1046,7 @@ git commit -m "chore: 版本号递增至 1.1.145"
 cd "D:/SVN项目/IpadPos" && node --import ./tests/cashLimit/register.mjs --test tests/cashLimit/cashLimit.test.mjs
 ```
 
-**已验证可行**：本计划中 `cashLimit.js` 与 `cashLimit.test.mjs` 的完整代码已在本仓库实际跑通，结果 `pass 28 / fail 0`，耗时约 276ms。
+**已验证可行**：本计划中 `cashLimit.js` 与 `cashLimit.test.mjs` 的完整代码已在本仓库实际跑通，结果 `pass 30 / fail 0`。
 
 **已知无害警告**：首次运行会打印
 
