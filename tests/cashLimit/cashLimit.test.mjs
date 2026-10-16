@@ -29,16 +29,23 @@ test('getCashLimitParam 参数缺失返回空字符串', () => {
   assert.strictEqual(cashLimit.getCashLimitParam(), '');
 });
 
-test('getCashTotal 直接返回 dPayAmount（整单待付余额）', () => {
-  // dPayAmount 是全单余额，已包含本单此前的现金额，不能再累加 PayList
+test('getCashTotal 直接返回待支付金额（实收口径）', () => {
+  // 找零 = 录入 - 待付，所以 实收 = 录入 - 找零 = 待付；调用方传 toBePaidPrice()
+  assert.strictEqual(cashLimit.getCashTotal(800), 800);
   assert.strictEqual(cashLimit.getCashTotal(1300), 1300);
 });
 
-test('getCashTotal 字符串数字也能处理', () => {
+test('getCashTotal 待付为字符串数字也能处理（toBePaidPrice 走 toFixed 返回字符串）', () => {
+  assert.strictEqual(cashLimit.getCashTotal('800.00'), 800);
   assert.strictEqual(cashLimit.getCashTotal('1300.50'), 1300.5);
 });
 
-test('getCashTotal undefined / null / 空串按 0 处理', () => {
+test('getCashTotal 待付为 0 时返回 0', () => {
+  assert.strictEqual(cashLimit.getCashTotal('0.00'), 0);
+  assert.strictEqual(cashLimit.getCashTotal(0), 0);
+});
+
+test('getCashTotal 参数缺失按 0 处理', () => {
   assert.strictEqual(cashLimit.getCashTotal(undefined), 0);
   assert.strictEqual(cashLimit.getCashTotal(null), 0);
   assert.strictEqual(cashLimit.getCashTotal(''), 0);

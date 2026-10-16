@@ -1688,7 +1688,8 @@
 				//这里先清掉再按本单实际金额重写，保证 storage 里只有一份本单标记。
 				cashLimit.clearPending();
 
-				let cash_total = cashLimit.getCashTotal(this.dPayAmount);
+				// 现金合计按**实收**算：录入金额 - 找零 = 待支付金额，所以直接取待支付金额
+				let cash_total = cashLimit.getCashTotal(this.toBePaidPrice());
 				let limit_value = cashLimit.getCashLimitParam();
 				let use_limit_modal = cashLimit.isOverLimit(cash_total, limit_value);
 				console.log("[CashChange]现金弹窗判断:", {

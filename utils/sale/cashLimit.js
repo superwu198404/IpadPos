@@ -27,25 +27,25 @@ export const getCashLimitParam = function() {
 }
 
 /**
- * 本单现金合计。
+ * 本单现金合计 = **实收金额**。
  *
- * 直接用 dPayAmount，**不能再累加 PayList** —— dPayAmount 是"整单待付余额"，
- * 不是增量：
- *   - toBePaidPrice() = totalAmount - yPayAmount - PayedAmount
- *   - dPayAmount 在切换支付方式时被重置为 toBePaidPrice()（见 Payment.vue 的
- *     currentPayType watcher），因此它已经包含了本单此前的现金金额。
- *   - 现金是全单唯一支付方式（CheckCashPayment 会合并前一条现金记录），
- *     所以 dPayAmount 就是本单截至目前（含本次输入）的全部现金额。
- *   - yPayAmount / PayList 的更新发生在 PushToPaidList，晚于本函数被调用的时机
- *     （InPaymentBeforeStoped 在 PayHandle 开头执行）。
+ * 口径（2026-10-16 调整）：按**实收**算，也就是去掉找零后的值。
+ * 由于 找零 = 录入金额 - 待支付金额，所以 实收 = 录入金额 - 找零 = **待支付金额**，
+ * 调用方直接传 `toBePaidPrice()` 即可，不用自己减找零。
  *
- * 注意：CashLimit 只在当前支付方式是现金时被调用，所以这里不需要判断 fkid。
+ * 例：待付 800、收银员输 1000、找零 200 -> 现金合计 = 800。
  *
- * @param {number|string} dPayAmount 输入框中的本次支付金额
- * @returns {number} 本单现金合计
+ * 为什么不用 `dPayAmount`：它是录入金额（含找零），按新口径要扣掉找零才是实收。
+ * 为什么不用累加 `PayList`：`dPayAmount` / 待付余额本身已包含本单此前的现金额
+ * （现金是全单唯一支付方式，`CheckCashPayment` 会合并前一条现金记录），
+ * 再累加会把本次输入算两遍；且 `PayList` 的更新发生在 `PushToPaidList`，
+ * 晚于本函数被调用的时机（`InPaymentBeforeStoped` 在 `PayHandle` 开头执行）。
+ *
+ * @param {number|string} toBePaid 待支付金额，来自 `toBePaidPrice()`（返回字符串）
+ * @returns {number} 实收现金合计
  */
-export const getCashTotal = function(dPayAmount) {
-	return Number(dPayAmount) || 0;
+export const getCashTotal = function(toBePaid) {
+	return Number(toBePaid) || 0;
 }
 
 // 超限判定：参数必须是一个正数才生效，否则本功能不触发（参数缺失不应阻塞收银）
