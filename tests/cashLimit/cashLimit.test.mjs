@@ -219,12 +219,24 @@ test('现金额与 net 一致时正常生成', () => {
   assert.ok(sql && sql.includes('2000.000'), '应生成并写入 2000.000');
 });
 
-test('含找零负数行时只算正数行（找零不计入，与 net 口径一致）', () => {
+test('含找零负数行时按净额校验（正数行 + 负数行 = 实收）', () => {
   util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
   util.setStorage('PayWayList', WAYS);
-  cashLimit.savePending(2000);   // net = 录入金额（不含找零）
+  // 待付 1500、录入 2000、找零 500 -> 实收 1500，net 记的就是 1500
+  cashLimit.savePending(1500);
   const sql = cashLimit.buildWarmSql(withSale3(2000, [{ FKID: CASH_FKID, AMT: -500 }]));
-  assert.ok(sql && sql.includes('2000.000'), '找零负数行必须被排除，否则会误判为不匹配');
+  assert.ok(sql, '正数行 2000 + 负数行 -500 = 1500，应匹配 net 并生成');
+  assert.ok(sql.includes('1500.000'), 'NET 应写实收 1500');
+});
+
+test('若只累加正数行则会误判（回归防护）', () => {
+  util.setStorage('FKDA_INFO', [{ FKID: CASH_FKID, MEDIA: '1' }]);
+  util.setStorage('PayWayList', WAYS);
+  // 同样的数据，但 net 写录入金额 2000 —— 模拟"只算正数行"的旧口径。
+  // 这条断言确认新旧算法确实会得出不同结论，说明上一条用例是有区分度的。
+  cashLimit.savePending(2000);
+  assert.strictEqual(cashLimit.buildWarmSql(withSale3(2000, [{ FKID: CASH_FKID, AMT: -500 }])),
+    'NOCASH', '按录入金额写 net 与净额 1500 对不上，应被丢弃');
 });
 
 test('net 与现金流不一致时丢弃（防上一单残留标记串单）', () => {

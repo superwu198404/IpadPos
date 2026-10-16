@@ -128,22 +128,26 @@ export const buildWarmSql = function(dataObj) {
 		}
 	}
 
-	// 不变式校验：支付页写下的 net 必须等于本单实际落库的现金额。
+	// 不变式校验：支付页写下的 net 必须等于本单实际落库的**现金净额**。
 	//
 	// 为什么这是**精确**判据而不是凑数的防御：
-	//   - 只有"当前支付方式 = 现金"时 CashLimit 才会写标记，所以有标记的单必有现金支付行；
+	//   - 只有"当前支付方式 = 现金"时 CashChange 才会写标记，所以有标记的单必有现金支付行；
 	//   - 金额无关的竞态（用户改金额、上一单残留的同名标记、用户取消后改用其它方式）
 	//     都会让两者对不上，从而被这一条全部拦掉。
 	//
-	// 求和时**只取正数行**：超额支付时 PayList/SALE003 里会多出一条负数找零记录
-	// （CheckCashPayment 把找零写成 -excess，且带着同一个 FKID），
-	// 而 net 记的是"不含找零的录入金额"，所以负数行必须排除。
+	// 求和时**正负行都要算**：净额 = 正数行（录入口径的支付）+ 负数行（找零）。
+	//   SALE003 里的现金行有两类：
+	//     - 支付行：`AMT = dPayAmount`（录入金额，含找零）
+	//     - 找零行：`AMT = -excess`（CheckCashPayment 写入，带着同一个 FKID）
+	//   两者相加才是实收，而 `pending.net` 记的正是实收（= 待支付金额），口径才一致。
 	//
-	// 不相等说明标记不属于本单，丢弃。这里不 warn：真发生时要靠本单的现金行数
-	// （0 行说明本单根本没有现金支付）来区分，日志价值有限。
+	// 早期版本这里只累加正数行（当时 net 也记录入金额），2026-10-16 口径改为实收后
+	// 若仍只取正数行，会让**有找零的超限单全部被判为不匹配而丢弃**。
+	//
+	// 不相等说明标记不属于本单，丢弃。
 	if (cash_info && Array.isArray(dataObj.SALE003)) {
 		const cash_amt = dataObj.SALE003
-			.filter(i => i && i.FKID == cash_info.FKID && Number(i.AMT) > 0)
+			.filter(i => i && i.FKID == cash_info.FKID)
 			.reduce((sum, i) => sum + Number(i.AMT || 0), 0);
 		if (Math.abs(cash_amt - Number(pending.net || 0)) > 0.005) {
 			return "NOCASH";
