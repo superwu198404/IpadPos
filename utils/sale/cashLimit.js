@@ -27,25 +27,36 @@ export const getCashLimitParam = function() {
 }
 
 /**
- * 本单现金合计 = **实收金额**。
+ * 本单现金合计 = **实收金额** = 录入金额 - 找零。
  *
- * 口径（2026-10-16 调整）：按**实收**算，也就是去掉找零后的值。
- * 由于 找零 = 录入金额 - 待支付金额，所以 实收 = 录入金额 - 找零 = **待支付金额**，
- * 调用方直接传 `toBePaidPrice()` 即可，不用自己减找零。
+ * 口径（2026-10-16 调整）：按实收算，也就是去掉找零后的值。
  *
- * 例：待付 800、收银员输 1000、找零 200 -> 现金合计 = 800。
+ * ⚠️ 不能用 `toBePaidPrice()`（待支付金额）代替：
+ *   待付 = 这单还欠多少，与收银员实际收了多少钱是**两回事**。
+ *   例：待付 5000、收银员只收了 800 现金 -> 实收 800，不该判超限；
+ *       若用待付判，会拿 5000 去比限额，导致"输入的金额远小于限额也弹超额"。
+ *   两者只有在"录入金额恰好等于待付"（无找零）时才相等。
  *
- * 为什么不用 `dPayAmount`：它是录入金额（含找零），按新口径要扣掉找零才是实收。
- * 为什么不用累加 `PayList`：`dPayAmount` / 待付余额本身已包含本单此前的现金额
- * （现金是全单唯一支付方式，`CheckCashPayment` 会合并前一条现金记录），
- * 再累加会把本次输入算两遍；且 `PayList` 的更新发生在 `PushToPaidList`，
- * 晚于本函数被调用的时机（`InPaymentBeforeStoped` 在 `PayHandle` 开头执行）。
+ * 为什么用 `dPayAmount` 作为录入金额、而不是累加 `PayList`：
+ *   - `dPayAmount` 是输入框当前值，也等于 `toBePaidPrice()`（切换支付方式时被重置），
+ *     已包含本单此前的现金额度；现金是全单唯一支付方式（`CheckCashPayment`
+ *     会合并前一条现金记录），所以它就是本次的录入金额。
+ *   - `PayList` 的更新发生在 `PushToPaidList`，**晚于**本函数被调用的时机
+ *     （`InPaymentBeforeStoped` 在 `PayHandle` 开头执行），此刻读它是旧值。
  *
- * @param {number|string} toBePaid 待支付金额，来自 `toBePaidPrice()`（返回字符串）
+ * `changeNumber` 来自 `CountCashChange()`，即 `录入金额 - 待支付金额`。
+ * 理论上不会超过录入金额，这里仍用 `Math.max(0, ...)` 兜底异常输入。
+ *
+ * @param {number|string} dPayAmount 输入框中的支付金额（录入金额）
+ * @param {number|string} changeNumber 找零金额
  * @returns {number} 实收现金合计
  */
-export const getCashTotal = function(toBePaid) {
-	return Number(toBePaid) || 0;
+export const getCashTotal = function(dPayAmount, changeNumber) {
+	const paid = Number(dPayAmount) || 0;
+	// 找零为负表示"输入小于待付"（还欠钱），此时没有找零，实收就是输入金额本身。
+	// 直接把负数当减项会算成"倒找钱"，是错的，所以先归零。
+	const change = Math.max(0, Number(changeNumber) || 0);
+	return Math.max(0, paid - change);
 }
 
 // 超限判定：参数必须是一个正数才生效，否则本功能不触发（参数缺失不应阻塞收银）

@@ -1688,8 +1688,10 @@
 				//这里先清掉再按本单实际金额重写，保证 storage 里只有一份本单标记。
 				cashLimit.clearPending();
 
-				// 现金合计按**实收**算：录入金额 - 找零 = 待支付金额，所以直接取待支付金额
-				let cash_total = cashLimit.getCashTotal(this.toBePaidPrice());
+				// 现金合计按**实收**算：输入金额 - 找零。
+				// 不能用待支付金额代替——待付是"这单还欠多少"，与收银员实际收多少现金无关；
+				// 用待付判会导致"输入的金额远小于限额也弹超额"。
+				let cash_total = cashLimit.getCashTotal(this.dPayAmount, change_number);
 				let limit_value = cashLimit.getCashLimitParam();
 				let use_limit_modal = cashLimit.isOverLimit(cash_total, limit_value);
 				console.log("[CashChange]现金弹窗判断:", {
@@ -1734,7 +1736,8 @@
 					console.log("[CashChange]现金确认被取消，终止支付");
 					return false;
 				}
-				return true;			},
+				return true;
+			},
 			//终止支付判断条件2: 判断是否使用了禁用的支付方式支付 + 支付方式是否存在
 			DisabledPaymentChannel: function() {
 				var payment_channel_info = this.PayWayInfo(this.currentPayType); //支付方式信息
@@ -2269,9 +2272,7 @@
 				return price;
 			},
 			toBePaidPriceAllNumber: function() { //和上面那个区别就是包含负数，避免券那种首先返回券面额再返回放弃金额导致订单提前结束生成
-				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos
-						.PayedAmount))
-					.toFixed(2);
+				let amount = (Number(this.totalAmount - this.yPayAmount - this.PaymentInfos.PayedAmount)).toFixed(2);
 				return amount;
 			},
 			//文本框dom刷新

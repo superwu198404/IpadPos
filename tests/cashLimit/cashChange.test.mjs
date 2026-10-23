@@ -56,7 +56,12 @@ globalThis.util = {
   getStorage: (k) => (k === 'FKDA_INFO' ? [{ FKID: 'ZF01', MEDIA: '1' }] : null)
 };
 globalThis.cashLimit = {
-  getCashTotal: (a) => Number(a) || 0,
+  // 与真实实现同口径：实收 = 输入金额 - 找零（负数找零归零）
+  getCashTotal: (dPayAmount, changeNumber) => {
+    const paid = Number(dPayAmount) || 0;
+    const change = Math.max(0, Number(changeNumber) || 0);
+    return Math.max(0, paid - change);
+  },
   getCashLimitParam: () => '1000',
   isOverLimit: (total, param) => {
     const n = Number(param);
@@ -222,16 +227,29 @@ test('边界：正好等于 CASHSX 不算超额，走普通现金框', async () 
   assert.strictEqual(r.saved, null, '未超限不应写标记');
 });
 
-// ---------- 实收口径：用待支付金额，不含找零 ----------
+// ---------- 实收口径：输入金额 - 找零（不是待支付金额） ----------
 
-test('超额判定用待付金额而非录入金额（找零刚好 100 时可区分）', async () => {
-  // 待付 950、录入 1050、找零 100（不触发找零拦截）。
-  // 旧口径：cash_total=1050 > 1000 -> 会弹超限框
-  // 新口径：cash_total= 950 <= 1000 -> 不弹超限框，走普通找零确认
-  const r = await run({ pay: 1050, debt: 950 }, true);
-  assert.deepStrictEqual(r.shown, ['C'], '按实收 950 算，不应弹超限框');
-  assert.ok(r.cashText.includes('需找零 100.00'));
+test('输入 800、待付 5000（远超限额）、限额 1000：不该弹超限框', async () => {
+  // 现场问题回归：早期版本误用待支付金额判定，会拿 5000 去比限额，导致
+  // "输入的金额远小于限额也弹超额"。正确口径按输入金额（无找零）= 800 判，不超限。
+  const r = await run({ pay: 800, debt: 5000 }, true);
+  assert.ok(!r.shown.includes('L'), '按实收 800 算不应弹超限框，实际弹出: ' + r.shown);
   assert.strictEqual(r.saved, null, '未超限不应写标记');
+});
+
+test('实收恰好等于限额：不超限，走普通现金框', async () => {
+  // 输入 1000、待付 900、找零 100 -> 实收 1000，等于限额不算超限
+  const r = await run({ pay: 1000, debt: 900 }, true);
+  assert.deepStrictEqual(r.shown, ['C'], '等于限额应走普通现金框');
+  assert.ok(r.cashText.includes('需找零 100.00'));
+  assert.strictEqual(r.saved, null);
+});
+
+test('实收超限 1 元即触发超限框（证明用的是实收而非录入金额）', async () => {
+  // 输入 1050、待付 950、找零 100 -> 实收 950，不超限；
+  // 而录入金额 1050 > 1000 —— 若误用录入金额就会弹。这里确认用的是实收。
+  const r = await run({ pay: 1050, debt: 950 }, true);
+  assert.deepStrictEqual(r.shown, ['C'], '实收 950 不超限，不应弹超限框');
 });
 // ---------- 非现金 / 退款 ----------
 

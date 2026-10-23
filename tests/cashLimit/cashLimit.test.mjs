@@ -29,30 +29,44 @@ test('getCashLimitParam 参数缺失返回空字符串', () => {
   assert.strictEqual(cashLimit.getCashLimitParam(), '');
 });
 
-test('getCashTotal 直接返回待支付金额（实收口径）', () => {
-  // 找零 = 录入 - 待付，所以 实收 = 录入 - 找零 = 待付；调用方传 toBePaidPrice()
-  assert.strictEqual(cashLimit.getCashTotal(800), 800);
-  assert.strictEqual(cashLimit.getCashTotal(1300), 1300);
+test('getCashTotal 无找零时等于输入金额', () => {
+  assert.strictEqual(cashLimit.getCashTotal(800, 0), 800);
+  assert.strictEqual(cashLimit.getCashTotal(1300, 0), 1300);
 });
 
-test('getCashTotal 待付为字符串数字也能处理（toBePaidPrice 走 toFixed 返回字符串）', () => {
-  assert.strictEqual(cashLimit.getCashTotal('800.00'), 800);
-  assert.strictEqual(cashLimit.getCashTotal('1300.50'), 1300.5);
+test('getCashTotal 有找零时按实收算（输入 - 找零）', () => {
+  // 待付 800、输入 1000、找零 200 -> 实收 800
+  assert.strictEqual(cashLimit.getCashTotal(1000, 200), 800);
 });
 
-test('getCashTotal 待付为 0 时返回 0', () => {
-  assert.strictEqual(cashLimit.getCashTotal('0.00'), 0);
-  assert.strictEqual(cashLimit.getCashTotal(0), 0);
+test('getCashTotal 输入远小于限额时不应被待付金额带偏（回归防护）', () => {
+  // 现场场景：待付 5000（超过限额 1000），收银员只收 800 现金、无找零。
+  // 实收 800 不该判超限；早期版本用 toBePaidPrice() 判会拿 5000 去比，误弹超额。
+  assert.strictEqual(cashLimit.getCashTotal(800, 0), 800);
+  assert.strictEqual(cashLimit.isOverLimit(cashLimit.getCashTotal(800, 0), '1000'), false);
+});
+
+test('getCashTotal 字符串数字也能处理', () => {
+  assert.strictEqual(cashLimit.getCashTotal('1300.50', '300.50'), 1000);
+});
+
+test('getCashTotal 找零为负（异常输入）时按 0 处理，不会倒扣', () => {
+  assert.strictEqual(cashLimit.getCashTotal(800, -100), 800);
+});
+
+test('getCashTotal 找零大于录入（异常输入）时兜底为 0', () => {
+  assert.strictEqual(cashLimit.getCashTotal(100, 300), 0);
 });
 
 test('getCashTotal 参数缺失按 0 处理', () => {
   assert.strictEqual(cashLimit.getCashTotal(undefined), 0);
-  assert.strictEqual(cashLimit.getCashTotal(null), 0);
-  assert.strictEqual(cashLimit.getCashTotal(''), 0);
+  assert.strictEqual(cashLimit.getCashTotal(null, null), 0);
+  assert.strictEqual(cashLimit.getCashTotal('', ''), 0);
+  assert.strictEqual(cashLimit.getCashTotal(900), 900);
 });
 
 test('getCashTotal 非数字按 0 处理', () => {
-  assert.strictEqual(cashLimit.getCashTotal('abc'), 0);
+  assert.strictEqual(cashLimit.getCashTotal('abc', 'xyz'), 0);
 });
 
 test('isOverLimit 超限返回 true', () => {
