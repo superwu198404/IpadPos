@@ -24,7 +24,7 @@ const getCxmSql = async (storeDqid, dateTime, storeid) => {
 		});
 
 		let cxformd001_sql =
-			"SELECT C1.KHID,C1.BILL,C1.YN_ZD,C1.YN_JSLB,C1.CXRY,C1.HYLV,C1.CXZT,C1.CX_WEEK,C1.SDATE,C1.EDATE,C1.YN_TIME,\
+			"SELECT C1.KHID,C1.BILL,C1.YN_ZD,C1.YN_JSLB,C1.CXRY,C1.HYJBID,C1.HYLV,C1.CXZT,C1.CX_WEEK,C1.SDATE,C1.EDATE,C1.YN_TIME,\
 							 C1.STIME1,C1.ETIME1,C1.STIME2,C1.ETIME2,C1.STIME3,C1.ETIME3,C1.NOTFKID,C1.BILL_STATUS,(CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END)AS ZKLQTY,C1.JFSX\
 							 FROM   cxformd001 C1 LEFT JOIN cxformd006 C6 ON C1.BILL = C6.BILL AND C1.KHID = C6.KHID WHERE C1.BILL_STATUS ='1' AND C1.khid ='" +
 			storeid + "' and C1.YN_JSLB NOT IN ('F','H','L')\
@@ -80,7 +80,7 @@ const cxSPsql = async (storeid, date1, spids) => {
 		"') ) AND C3.KHID='" + storeid + "' " + str +
 		" order by (CASE WHEN C6.ZKLQTY IS NULL THEN 0 ELSE C6.ZKLQTY END) desc ";
 	await db.get().executeQry(cxformd003_sql, "执行中", function(res) {
-		console.log(cxformd003_sql + "cxformd003_sql执行结果", res.msg);
+		//console.log(cxformd003_sql + "cxformd003_sql执行结果", res.msg);
 		cxformd003_arr = res.msg;
 	}, function(err) {
 		console.log("cxformd003_sql执行失败：", err);

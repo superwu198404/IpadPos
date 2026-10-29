@@ -8,6 +8,7 @@ import _date from '@/utils/dateformat.js';
 import _member from '@/api/hy/MemberInterfaces.js';
 import _cake from '@/api/business/CakeYD.js';
 import _Req from '@/utils/request.js';
+import _take from '@/api/business/takeaway.js';
 
 import {
 	onlineOrderReserve //更新表接口
@@ -206,7 +207,8 @@ var XsTypeObj = {
 				hyid: this.HY.cval.hyId,
 				sale1: this.sale001
 			});
-			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
+			//默认大客户且有会员才上传积分
+			if (this.DKF?.cval?.DKFID == "80000000" && this.HY?.cval?.hyId) {
 				console.log("[PayedResult]准备上传会员积分数据...");
 				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
@@ -311,6 +313,8 @@ var XsTypeObj = {
 		},
 		//支付完成以后
 		$saleFinied: async function() {
+			//下面 await 挂起期间 PayedResult 会执行 resetSaleBill 重置 this.sale001，先存一份给积分上传用
+			let up_sale1 = this.sale001;
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
@@ -333,10 +337,49 @@ var XsTypeObj = {
 				arr3
 			})
 			this.Page.bluePrinter(this.sale001, arr2, arr3, "", "TD");
+			//销售赠品-退还赠积分(按原单 XS_BILL 从本地取值)
+			//会员号以退货单自身的 sale001.CUID 为准(它由 RefundOrder 从原单 SALE001 带过来)，
+			//HY.cval 只作兜底——$initSale 里给 HY 赋值是 if(sale001.CUID) 条件赋值，
+			//原单没有会员时 HY.cval 会保留上一笔单子的残留会员，用它会把积分错扣到别人账上。
+			//XS_BILL 由 bll/RefundBusiness/bll.js:84 的 sale_refund.XS_BILL = raw.BILL 赋值。
+			let hyid = this.sale001?.CUID || this.HY?.cval?.hyId || "";
+			let oriBill = this.sale001?.XS_BILL || "";
+			try {
+				console.log("[SaleReturnGood]准备退还赠积分:", {
+					oriBill: oriBill,
+					bill: this.sale001?.BILL,
+					"sale001.CUID": this.sale001?.CUID,
+					"HY.cval.hyId(兜底)": this.HY?.cval?.hyId,
+					"最终hyid": hyid
+				});
+				if (!hyid) {
+					console.log("[SaleReturnGood]取不到会员号,跳过退还赠积分");
+				} else if (!oriBill) {
+					console.log("[SaleReturnGood]取不到原销售单号(XS_BILL),跳过退还赠积分");
+				} else {
+					await _take.CancelZSPayed({
+						oriBill: oriBill,
+						bill: this.sale001.BILL,
+						khid: this.Storeid,
+						posid: this.POSID,
+						hyid: hyid,
+						saledate: dateformat.getYMD()
+					});
+				}
+			} catch (e) {
+				console.log("[SaleReturnGood]退还赠积分异常(不阻塞退货):", e);
+			}
+			console.log("[sale_return_good]积分上传前信息：", {
+				dkfid: up_sale1.DKFID,
+				hyid
+			});
 			//一些特殊的设置 如积分上传
-			if (this.currentOperation.upload_point && this.HY.cval.hyId) { //判断是否又上传积分的操作
+			//大客户判断取原单快照的 DKFID：this.DKF.val 的 getter 在 cval 为空时会回填默认大客户，
+			//而 resetSaleBill 已把 cval 清空，用它判断恒为默认大客户，必然误判
+			if (up_sale1.DKFID == "80000000" && hyid) { //判断是否又上传积分的操作
 				console.log("[PayedResult]准备上传会员积分数据...");
-				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+				//传快照：此处 this.sale001 可能已被 resetSaleBill 重置
+				let upload_result = await PointUploadNew(up_sale1, arr2, arr3);
 				console.log("[PayedResult]上传会员积分结果:", upload_result);
 			}
 		},
@@ -360,7 +403,7 @@ var XsTypeObj = {
 			"showEdit": false, //展开编辑商品
 			"ynResetCX": false, //是否清除了促销
 			"showCXZK": false, //展示促销和折扣来源
-			"DKF": true, //是否可以打开录入大客户
+			"DKF": false, //是否可以打开录入大客户 261008需求调整为预定不允许录入大客户
 
 			// "sale": true, //从这里开始都是销售模式
 			"sale_reserve": true,
@@ -1168,18 +1211,19 @@ var XsTypeObj = {
 		icon_close: require("../../images/xstd-wxz.png"),
 		icon_guodu: require("../../images/xstd-lvv.png"),
 		operation: {
-			"HY": false, //是否可以录入会员
+			"HY": true, //是否可以录入会员//260828调整为可录入会员
 			"DKF": true, //是否可以打开录入大客户
 			"Disc": true, //是否可以打开录入折扣
 			"ynFzCx": false, //是否可以辅助促销
 			"ynCancel": true, //是否可以退出当前销售模式
 			"FZCX": false, //是否可以打开辅助促销组件
 			"XSZS": true, //是否可以销售赠品
-			"ynCx": false, //是否进行可以进行促销
+			"ynCx": true, //是否进行可以进行促销
 			"ynSKDisc": true, //是否可以计算手工折扣
 			"ynEdit": true, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
 
+			"upload_point": true, //允许积分上传
 			// "sale": true,
 			// "sale_takeaway_reserve": true,//2023-4-13 应wy要求，定为不准切换到其他功能
 			"sale_message": true,
@@ -1236,17 +1280,16 @@ var XsTypeObj = {
 			console.log("[sale_reserve-$BeforeFk]预定信息生成DKF:", this.DKF.cval);
 			this.sxsale001.YDSPTYPE = "U";
 
-			if (this.DKF?.cval?.sales_credit === true) {
-
-
-				//表示为临时授信赊销
-				this.sale001.DKFID = this.DKF.cval.sales_ryid;
-				this.sxsale001.YDSPTYPE = "L";
-				this.sxsale001.DKFID = this.DKF.cval.sales_ryid;
-				this.sxsale001.CUSTMPHONE = this.DKF.cval.DKHID;
-				this.sxsale001.CUSTMNAME = this.sale001.CUSTID
+			//表示为临时授信赊销
+			if (this.DKF?.cval?.sales_credit == true) {
+				this.sale001.DKFID = this.DKF.cval.DKFID;
 				//由于支付之后还会重写一遍sxsale001 所以 sale001 中的CUSTMPHONE 也需要给一样的值
-				this.sale001.CUSTMPHONE = this.DKF.cval.DKHID;
+				this.sale001.CUSTMPHONE = this.DKF.cval.sales_ryid;
+				this.sxsale001.YDSPTYPE = "L";
+				this.sxsale001.DKFID = this.DKF.cval.DKFID;
+				this.sxsale001.CUSTMPHONE = this.DKF.cval.sales_ryid;
+				this.sxsale001.CUSTMNAME = this.DKF.cval.sales_ryid;
+
 				console.log("[sale_reserve-$BeforeFk]预定信息生成(临时授信之后的):", {
 					sale001: this.sale001,
 					sale002: this.sale002,
@@ -1300,7 +1343,7 @@ var XsTypeObj = {
 				// this.$saleFinied();
 			}))
 		},
-		$saleFinied: function(sales) {
+		$saleFinied: async function(sales) {
 			//调用打印
 			let arr2 = this.sale002;
 			arr2.forEach(function(item, index) {
@@ -1329,6 +1372,12 @@ var XsTypeObj = {
 				printerPram
 			})
 			this.Page.sxBluePrinter(this.sale001, arr2, arr3, this.sxsale001, printerPram, "SX");
+			//默认大客户且有录入会员就上传积分
+			if (this.DKF?.cval?.DKFID == "80000000" && this.HY?.cval?.hyId) {
+				console.log("[sale_credit-$saleFinied]准备上传会员积分数据...");
+				let upload_result = await PointUploadNew(this.sale001, this.sale002, this.sale003);
+				console.log("[sale_credit-$saleFinied]上传会员积分结果:", upload_result);
+			}
 		},
 		$click() {
 			console.log("[sale_credit]赊销点击...");
@@ -1338,9 +1387,9 @@ var XsTypeObj = {
 			return false;
 		},
 		OpenBigCustomer: function(data) {
-			console.log("[CloseBigCustomer]大客户打开!", data);
+			console.log("[OpenBigCustomer]大客户打开!", data);
 			// this.setComponentsManage(null, "DKF"); 
-			console.log("[CloseBigCustomer]当前菜单操作属性:", this.clickSaleType);
+			console.log("[OpenBigCustomer]当前菜单操作属性:", this.clickSaleType);
 			if (this.clickSaleType?.operation?.DKF)
 				this.ComponentsManage["DKF"] = !this.ComponentsManage["DKF"];
 			else
@@ -1357,8 +1406,17 @@ var XsTypeObj = {
 			console.log("当前大客户信息：", this.DKF.val);
 			//关闭大客户的时候判断是否授信临时赊销，需要打开促销计算
 			if (this.DKF?.val?.sales_credit === true) {
+				console.log("选择的是临时授信赊销");
 				this.currentOperation.ynCx = true;
+				this.currentOperation.HY = true;
 				console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
+			} else {
+				//普通赊销 261008加
+				if (this.clickSaleType.clickType == 'sale_credit' && data.DKFID != '80000000') {
+					console.log("选择的是普通赊销：需要禁止会员录入");
+					this.currentOperation.HY = false;
+					console.log("会员权限：", this.currentOperation.HY);
+				}
 			}
 			uni.$emit('select-credit', data);
 		},
@@ -1423,7 +1481,6 @@ var XsTypeObj = {
 			"ynSKDisc": false, //是否可以计算手工折扣
 			"ynEdit": false, //当前业务能否编辑商品
 			"showEdit": false, //展开编辑商品
-
 			"sale_credit_settlement": true,
 			"sale002Rows": true, // 当前模式下有商品输入的时候是否可以切换销售模式,只有两个都是true才可以进行切换
 		},
@@ -1858,7 +1915,7 @@ var XsTypeObj = {
 			console.log("[sale_credit_return_good]SALE001:", this.sale001);
 			console.log("[sale_credit_return_good]SALE002:", this.sale002);
 			console.log("[sale_credit_return_good]SALE003:", this.sale003);
-			console.log("[sale_credit_return_good]SXSALE003:", this.sxsale001);
+			console.log("[sale_credit_return_good]SXSALE001:", this.sxsale001);
 
 			this.setNewParmSale({
 				sale001: this.sale001,
@@ -2309,12 +2366,17 @@ function GetSale(global, vue, target_name, uni) {
 			uni.$emit('sale-type-changed', 'sale_credit');
 			uni.$once('select-credit', util.callBind(this, function(data) {
 				if (Object.keys(data ?? {}).length > 0) {
-					console.log("[Change]切换到赊销!");
+					console.log("[Change]切换到赊销：", data);
 					this.SetManage('sale_credit'); //切换到赊销
 					this.$initSale(XsTypeObj['sale_credit']); //切换到赊销
 					if (this.DKF?.val?.sales_credit === true) {
 						this.currentOperation.ynCx = true;
+						this.currentOperation.HY = true;
 						console.log("设置赊销的促销开关：", this.currentOperation.ynCx);
+					} else {
+						//普通赊销禁止录入会员 授信赊销才可录入会员
+						if (data.DKFID != '80000000')
+							this.currentOperation.HY = false;
 					}
 					console.log("切换到促销权限：", this.currentOperation.ynCx);
 					// uni.$emit('set-menu','sale_credit');
@@ -2497,10 +2559,14 @@ function GetSale(global, vue, target_name, uni) {
 			that.sale001.TLINE = 0; //这个是存商品行
 			this.sale001.TCXDISC = 0;
 			this.sale001.TDISC = 0;
+			this.SyncSpCheck(); //清空前也要同步勾选，否则商品列表仍显示为勾选中
 			return;
 		}
-		//重新计算一下 促销啊 折扣啊 
+		//重新计算一下 促销啊 折扣啊
 		this.SaleNetAndDisc();
+		//编辑期间数量被改成 0 的商品不会被上面的循环触达(updateSp 只对 >0 的更新数量)，
+		//这里按结算单全量重建一次勾选，保证与页面显示一致
+		this.SyncSpCheck();
 	})
 	//*func*选中标签
 	this.ChooseBQ = util.callBind(this, function(e) {
@@ -2891,8 +2957,9 @@ function GetSale(global, vue, target_name, uni) {
 			this.base.ComponentsManage["HY"] = false;
 			this.cval = newval;
 			if (this.cval && Object.keys(this.cval).length > 0) {
-				//使用that
-				that.currentOperation["DKF"] = false; //会员和大客户互斥 录入会员后则不允许使用大客户
+				//会员和大客户互斥 录入会员后则不允许使用大客户
+				//260828调整为销售和核销可同时录入会员和大客户
+				that.currentOperation["DKF"] = ["sale", "sale_credit"].includes(that.clickSaleType.clickType);
 				this.base.GetHyCoupons();
 			} else {
 				console.log("会员清空后的权限操作：");
@@ -2931,8 +2998,12 @@ function GetSale(global, vue, target_name, uni) {
 				uni.$emit('set-dkf', "默认大客户"); //通知外部 恢复默认大客户
 			} else {
 				this.cval = newval;
-				that.currentOperation["HY"] = false; //会员和大客户互斥 录入大客户则不允许使用会员
-				that.currentOperation["ynCx"] = false; //选择大客户后 促销也同步失效
+				//会员和大客户互斥 录入大客户则不允许使用会员
+				//260828调整为销售和核销可同时录入会员和大客户
+				that.currentOperation["HY"] = ["sale", "sale_credit"].includes(that.clickSaleType.clickType);
+				//选择大客户后 促销也同步失效
+				//260828调整为销售和核销可同时录入会员和大客户
+				that.currentOperation["ynCx"] = ["sale", "sale_credit"].includes(that.clickSaleType.clickType);
 				store.DKFID = newval.DKFID;
 				store.DKFNAME = newval.NAME;
 				// if (that.clickSaleType.clickType == 'sale' || that.clickSaleType.clickType == 'sale_reserve') {
@@ -3849,7 +3920,7 @@ function GetSale(global, vue, target_name, uni) {
 						that.PayParamAssemble();
 					} else {
 						// 额度不够，拦截
-						util.simpleMsg("信用额度不足");
+						util.simpleMsg("业务员信用额度不足");
 						return;
 					}
 				});
@@ -4344,6 +4415,31 @@ function GetSale(global, vue, target_name, uni) {
 		that.update()
 	}
 
+	/**
+	 * 以结算单(sale002)为准，全量重建商品列表的勾选状态
+	 * 规则：商品在结算单里且数量 > 0 → 勾选，否则不勾选
+	 *
+	 * 为什么不按"删除时清除对应商品"的写法：
+	 * 之前 updateSp 只遍历 selectFlagList（当前字母/品类），跨品类删除时遍历不到，
+	 * 勾选会残留；编辑模式下删空商品又触达不到该清除逻辑。改成从 sale002 反向推导，
+	 * 只需一个事实来源，任何删除路径(行被移除 / 行仍在但数量为0)都自动正确。
+	 */
+	this.SyncSpCheck = function() {
+		let inCart = {};
+		(this.sale002 || []).forEach(s2 => {
+			if (Number(s2.QTY) > 0) inCart[s2.SPID] = true;
+		});
+		//必须遍历 Allsplist 全量：它才包含所有品类下的商品
+		(this.Allsplist || []).forEach(r => {
+			(r.plarr || []).forEach(r1 => {
+				r1.check = !!inCart[r1.SPID];
+			});
+		});
+		console.log("[SyncSpCheck]勾选状态已按结算单重建, 在单商品数:", Object.keys(inCart).length);
+		//check 是动态添加的属性，不在 Vue2 响应式内，需强制刷新
+		this.update();
+	}
+
 	//大于0的时候修改,小于等于0删除
 	this.updateSp = function(pm_row, pm_spid, pm_qty) {
 		console.log("[UpdateSp]更新商品...");
@@ -4372,17 +4468,8 @@ function GetSale(global, vue, target_name, uni) {
 				}
 			}
 			this.sale002.splice(pm_row, 1);
-			//更改商品选中状态
-			that.selectFlagList.map(r => {
-				r.plarr.map(r1 => {
-					if (r1.SPID == pm_spid) {
-						if (pm_qty > 0)
-							r1.check = true;
-						else
-							r1.check = false;
-					}
-				})
-			})
+			//更改商品选中状态：以结算单为准全量重建
+			this.SyncSpCheck();
 		}
 		return true;
 	}
@@ -4400,9 +4487,29 @@ function GetSale(global, vue, target_name, uni) {
 			util.simpleMsg("请先加购商品", true);
 			return;
 		}
-		console.log("[ShowStatement]SALE001:", that.sale001);
-		console.log("[ShowStatement]商品信息:", that.sale002);
+		console.log("[ShowStatement]SALE单据:", {
+			s1: that.sale001,
+			s2: that.sale002
+		});
 		await that.SaleNetAndDisc();
+		console.log("[ShowStatement-SaleNetAndDisc]SALE单据:", {
+			s1: that.sale001,
+			s2: that.sale002
+		});
+		// 仅常规销售，且应付金额 >= 2000，且当前为默认大客户
+		const needBigCustomer = that.current_type.clickType == "sale" && Number(that.sale001.TNET || 0) >=
+			2000 && that.DKF.val.DKFID == "80000000";
+		if (needBigCustomer) {
+			util.simpleModal("提示", "整单金额超2K，需要录入大客户", res => {
+				if (res) {
+					// 打开现有大客户弹窗
+					// that.ComponentsManage.DKF = true;
+					that.SetManage("DKF");
+					that.update();
+				}
+			})
+			return;
+		}
 		console.log("[ShowStatement]打开结算单:", that.sale002);
 		that.SetManage("statement");
 		//如果会员存在 则直接打开会员详情

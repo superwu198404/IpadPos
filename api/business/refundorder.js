@@ -4,7 +4,6 @@ import common from '@/api/common.js';
 import _date from '@/utils/dateformat.js';
 import util from '../../utils/util';
 
-var Program = getApp().globalData.store;
 
 //查询销售单据
 var GetOrders = function(khid, gsid, posid, bill, date, func) {
@@ -19,7 +18,8 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
                  WHERE S1.XSTYPE IN('1','5') \
                  AND not exists  (select 1 from sale001 s2 where  s1.bill =s2.xs_bill \
                  AND s1.saledate = s2.xs_date and s1.khid =s2.xs_khid and s1.posid =s2.xs_posid) \
-                 AND S1.KHID='" + khid + "'  AND S1.GSID  ='" + gsid + "'  AND S1.POSID ='" + posid + "' and s1.BILL_TYPE not in ('Z111','Z112')";
+                 AND S1.KHID='" + khid + "'  AND S1.GSID  ='" + gsid + "'  AND S1.POSID ='" + posid +
+		"' and s1.BILL_TYPE not in ('Z111','Z112')";
 	if (bill) {
 		sql += " and S1.BILL='" + bill + "' ";
 	}
@@ -44,35 +44,9 @@ var GetOrders = function(khid, gsid, posid, bill, date, func) {
  * @param {回调函数} func 
  */
 var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
-	let sql = " SELECT '" + Program.KHID + "' KHID ,'" + Program.GSID + "' GSID,'" + Program.BMID + "' BMID,'" +
-		Program.POSID + "' POSID," +
-		" date('" + _date.getYMDS() + "') SALEDATE,DATETIME('" + _date.getYMDS() + "') SALETIME,'" + refund_bill +
-		"' BILL,'" + Program.RYID + "' RYID, cast(s2.NO as int) NO," +
-		" s1.spid,s1.sname,S1.UNIT,s1.plid,t1.barcode,'' SERIAL,(-1)*S2.QTY QTY,S2.PRICE,S2.OPRICE,(-1)*S2.NET NET," +
-		"HYBL,0.0 DISCRATE,0.0 BILLDISC,'N'YN_CXDISC,-1*abs(S2.CXDISC) CXDISC,'' CXID,'N' YN_HYDISC,0.0 HYDISC, 0.0 HYJF,'N' YN_SKYDISC,0.0 DISC,'' DISC_TYPE,'" +
-		_date.getDateByParam("Y") + "' YAER,'" +
-		_date.getDateByParam("M") + "' MONTH,'" + _date.getDateByParam("w") + "' WEEK," + _date.getDateByParam(
-			"h") + " TIME,'' STR1, STR2,  S1.YN_ZS,'" + Program.DQID + "' DPID,'" + Program.KCDID + "' KCDID,'" +
-		Program.GCID +
-		"' GCID, -1*abs(s2.BZDISC) BZDISC, -1*abs(s2.TPDISC) TPDISC , -1*abs(s2.LSDISC) LSDISC, s2.SPJGZ FROM SALE002 S2, SPDA S1,SPTMDA T1,SPKHDA SM  WHERE  S1.SPID =T1.SPID " +
-		"AND T1.YN_MAIN ='Y' AND S1.SPID =SM.SPID AND SM.KHID ='" + Program.KHID +
-		"'AND S2.KHID =SM.KHID  AND S2.SPID =S1.SPID AND S2.SALEDATE =DATETIME('" + xs_date + "') AND S2.BILL ='" +
-		xs_bill + "'";
-	// console.log("[GetOrderDetails]查询详情单条件参数列表:", {
-	// 	KHID: Program.KHID,
-	// 	GSID: Program.GSID,
-	// 	BMID: Program.BMID,
-	// 	RYID: Program.RYID,
-	// 	POSID: Program.POSID,
-	// 	REFUND_BILL: refund_bill,
-	// 	XS_BILL: xs_bill,
-	// 	DQID: Program.DQID,
-	// 	KCDID: Program.KCDID,
-	// 	GCID: Program.GCID
-	// });
-
+	let Program = getApp().globalData.store;
 	//去除表sptmda的关联 初始化去除了这个表
-	sql = " SELECT '" + Program.KHID + "' KHID ,'" + Program.GSID + "' GSID,'" + Program.BMID + "' BMID,'" +
+	let sql = " SELECT '" + Program.KHID + "' KHID ,'" + Program.GSID + "' GSID,'" + Program.BMID + "' BMID,'" +
 		Program.POSID + "' POSID," +
 		" date('" + _date.getYMDS() + "') SALEDATE,DATETIME('" + _date.getYMDS() + "') SALETIME,'" + refund_bill +
 		"' BILL,'" + Program.RYID + "' RYID, cast(s2.NO as int) NO," +
@@ -100,13 +74,13 @@ var GetOrderDetails = function(refund_bill, xs_bill, xs_date, func) {
 //查询赊销单
 var SXGetOrders = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.GetOrders";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr,true);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 //查询赊销详情单
 var GetSXOrderDetails = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.GetSXOrderDetails";
-	let reqdata = Req.resObj(true, "查询中...", data, apistr,true);
+	let reqdata = Req.resObj(true, "查询中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
 /**
@@ -116,7 +90,7 @@ var GetSXOrderDetails = function(data, func) {
  */
 var CreditOrderRefund = function(data, func) {
 	let apistr = "MobilePos_API.Models.SXSALE001CLASS.CreditOrderRefund";
-	let reqdata = Req.resObj(true, "操作中...", data, apistr,true);
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func);
 }
 

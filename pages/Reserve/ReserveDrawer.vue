@@ -42,7 +42,7 @@
 							:value="extract_time" @change="timeChange">
 							<!-- <view>{{Order.TH_TIME}}</view>-->
 							<view>{{extract_time}}</view>
-							
+
 							<text class="xial">▼</text>
 						</picker>
 						<!-- <hTimePicker sTime="15" cTime="15" interval="1" @changeTime="timeChange">
@@ -61,9 +61,22 @@
 							<text class="xial">▼</text>
 						</picker>
 					</label>
-					<label class="hui"><text>收货人：</text><input type="text" v-model="Order.CUSTMNAME" /></label>
+					<label class="hui"><text><i class="sgin">*</i>收货人：</text><input type="text"
+							v-model="Order.CUSTMNAME" /></label>
 					<label><text><i class="sgin">*</i>联系电话：</text><input type="number" v-model="Order.CUSTMPHONE"
 							@blur="GetAddr()" /></label>
+					<label><text>性别：</text>
+						<picker @change="sexChange" :range="SEXArr" range-key="NAME" value="index1">
+							<view>{{SEXArr.length>0?SEXArr[index1].NAME:""}}</view>
+							<text class="xial">▼</text>
+						</picker>
+					</label>
+					<label><text>年龄：</text>
+						<picker @change="ageChange" :range="AGEArr" range-key="NAME" value="index2">
+							<view>{{AGEArr.length>0?AGEArr[index2].NAME:""}}</view>
+							<text class="xial">▼</text>
+						</picker>
+					</label>
 					<label class="hui"><text>配送地址：</text><input type="text" v-model="Order.CUSTMADDRESS"
 							disabled="true" /></label>
 					<!-- <label><text>配送中心：</text><input type="text" v-model="Order.STR2" /></label> -->
@@ -178,13 +191,13 @@
 		computed: {
 			extract_time: function() {
 				console.log("[ExtractTime]提货时间:", this.Order.TH_TIME);
-					// 核心：不管带不带时区，先把 HH:mm 抠出来（安卓/iOS 通用）
-					let timeStr = this.Order.TH_TIME || "";
-					let match = timeStr.match(/(\d{2}:\d{2})/);
-					if (match) {
-						console.log("[ExtractTime]返回的提货时间match:", match[1]);
-						return match[1]; // 直接返回 14:48 这种格式
-					}
+				// 核心：不管带不带时区，先把 HH:mm 抠出来（安卓/iOS 通用）
+				let timeStr = this.Order.TH_TIME || "";
+				let match = timeStr.match(/(\d{2}:\d{2})/);
+				if (match) {
+					console.log("[ExtractTime]返回的提货时间match:", match[1]);
+					return match[1]; // 直接返回 14:48 这种格式
+				}
 				if (this.Order.TH_TIME.length >= 5) {
 					return this.Order.TH_TIME.substr(0, 5);
 				} else if (this.Order.TH_TIME.length == 2) {
@@ -206,7 +219,11 @@
 				ETIME: app.globalData.store.ETIME,
 				statements: false,
 				index: 0,
+				index1: 0,
+				index2: 0,
 				THTYPES: [],
+				AGEArr: [],
+				SEXArr: [],
 				LimitDate: '2000-01-01',
 				LimitMaxDate: '2100-01-01',
 				LimitTime: '00:00',
@@ -296,6 +313,16 @@
 					that.Order.STR2 = "";
 					that.Order._STR2 = "";
 					console.log("[WATCH-THTYPE]清空自提的地址信息...");
+					that.yn_add = false;
+				} else {
+					that.yn_add = false;
+				}
+				//性别和年龄所有提货方式都记录，仅在未选择时补默认值，切换提货方式不清空已选值
+				if (!that.Order.SEX && that.SEXArr.length > 0) {
+					that.Order.SEX = that.SEXArr[that.index1] ? that.SEXArr[that.index1].ID : that.SEXArr[0].ID;
+				}
+				if (!that.Order.AGES && that.AGEArr.length > 0) {
+					that.Order.AGES = that.AGEArr[that.index2] ? that.AGEArr[that.index2].ID : that.AGEArr[0].ID;
 				}
 			},
 			'Order.CUSTMADDRESS': function(n, o) {
@@ -316,6 +343,7 @@
 				})
 				that = this;
 				await that.getTHTYPE();
+				await that.getAgeSex();
 				that.Order.BILL = common.CreateBill(that.KHID, that.POSID);
 				// that.Order.CARDID = that.GGDatas[0];
 				console.log("[DataInit]是否支持异店提货:", common.GetPOSCS_Local("YN_YDTH"));
@@ -528,6 +556,12 @@
 				if (that.THTYPES.length > 0) {
 					that.Order.THTYPE = that.THTYPES[0].ID;
 				}
+				if (that.AGEArr.length > 0) {
+					that.Order.AGES = that.AGEArr[0].ID;
+				}
+				if (that.SEXArr.length > 0) {
+					that.Order.SEX = that.SEXArr[0].ID;
+				}
 			},
 			Close: function() {
 				that.statements = false;
@@ -548,6 +582,36 @@
 							};
 						}).filter(i => over48 ? (i.NAME === '宅配到家') : (decoration || (i.NAME !== '宅配到家')))
 						console.log("[ReserveDrawer]提货类型数据THTYPES：", that._THTYPES);
+					}
+				})
+			},
+			//获取性别和年龄参数
+			getAgeSex: async function() {
+				await common.GetDapzcsMuti(["AGES", "SEX"], res => {
+					console.log("[GetDapzcsMuti]：", res);
+					if (res.code && res.msg.length > 0) {
+						that.AGEArr = res.msg.filter(r => r.ID == 'AGES').map((item, index) => {
+							return {
+								ID: item.ID_NR,
+								NAME: item.SNAME
+							};
+						});
+						that.SEXArr = res.msg.filter(r => r.ID == 'SEX').map((item, index) => {
+							return {
+								ID: item.ID_NR,
+								NAME: item.SNAME
+							};
+						});
+						console.log("[getAgeSex]：", that.AGEArr, that.SEXArr);
+						//性别和年龄所有提货方式都要记录，字典加载完成后补默认值
+						if (!that.Order.SEX && that.SEXArr.length > 0) {
+							that.Order.SEX = that.SEXArr[that.index1] ? that.SEXArr[that.index1].ID : that
+								.SEXArr[0].ID;
+						}
+						if (!that.Order.AGES && that.AGEArr.length > 0) {
+							that.Order.AGES = that.AGEArr[that.index2] ? that.AGEArr[that.index2].ID : that
+								.AGEArr[0].ID;
+						}
 					}
 				})
 			},
@@ -606,11 +670,29 @@
 				}
 				that.RefreshData();
 			},
+			//性别选择
+			sexChange: e => {
+				that.index1 = e.detail.value;
+				if (!that.SEXArr[that.index1]) {
+					console.log("[sexChange]性别字典为空或下标越界:", that.index1);
+					return;
+				}
+				that.Order.SEX = that.SEXArr[that.index1].ID;
+			},
+			//年龄段选择
+			ageChange: e => {
+				that.index2 = e.detail.value;
+				if (!that.AGEArr[that.index2]) {
+					console.log("[ageChange]年龄字典为空或下标越界:", that.index2);
+					return;
+				}
+				that.Order.AGES = that.AGEArr[that.index2].ID;
+			},
 			//显示地址框
 			ShowAddADDR: () => {
 				console.log("显示新增地址框")
 				// that.ADDR = {};
-				that.ADDR.CNAME = "";
+				that.ADDR.CNAME = that.Order.CUSTMNAME; //默认赋值收货人
 				that.ADDR.ADDRESS = "";
 				that.ADDR.PHONE = that.Order.CUSTMPHONE; //默认赋值手机号
 				that.ADDR.ACT = "Add"; //操作类型
@@ -920,15 +1002,15 @@
 				console.log("预定信息：", that.Order);
 				//这是原本的  不兼容安卓
 				//let th_date = new Date(that.Order.THDATE.replace(/-/g, "/"));
-				
+
 				// 直接干掉时区后缀，修改原 THDATE
 				that.Order.THDATE = that.Order.THDATE.replace(/GMT.*/, '');
-				
+
 				// 1. 清洗时间字符串：干掉 GMT 时区后缀，只保留 年-月-日 时:分:秒
 				let timeStr = that.Order.THDATE.replace(/GMT.*$/g, '').trim();
 				let th_date = new Date(timeStr.replace(/-/g, "/"));
-				
-				
+
+
 				let hour = th_date.getHours();
 				let minute = th_date.getMinutes();
 				let hour_minute = hour.toString().padStart(2, 0) + minute.toString().padStart(2, 0);
@@ -939,7 +1021,7 @@
 					minute: minute,
 					hour_minute: hour_minute
 				});
-				
+
 				console.log("[Confirm]时间参数:", {
 					current: hour_minute,
 					stime: that.STIME,
@@ -1025,7 +1107,7 @@
 						return;
 					}
 				}
-				if (that.Order.THTYPE == undefined || that.Order.THTYPE == null) {
+				if (!that.Order.THTYPE) {
 					util.simpleMsg("配送方式为空", true);
 					return;
 				}
@@ -1033,7 +1115,10 @@
 					util.simpleMsg("提货时间早于当前", 'none');
 					return;
 				}
-
+				if (!that.Order.CUSTMNAME) {
+					util.simpleMsg("请输入收货人", true);
+					return;
+				}
 				if (!that.Order.CUSTMPHONE) {
 					util.simpleMsg("请输入联系电话", true);
 					return;
@@ -1147,6 +1232,15 @@
 				console.log("[Confirm]已设置定金金额:", that.Order);
 				that.Order.YD_STATUS = "1";
 				that.Order.BMID = that.BMID;
+				//所有提货方式都保存客户信息(含性别、年龄)到 wm_customers
+				_reserve.confirmADDR({
+					PHONE: that.Order.CUSTMPHONE,
+					AGES: that.Order.AGES,
+					SEX: that.Order.SEX,
+					CNAME: that.Order.CUSTMNAME
+				}, res => {
+					console.log("confirmADDR：", res);
+				});
 				if (that.confirm) {
 					console.log("[Confirm]外部传入事件触发!");
 					that.confirm(that.Order);
@@ -1178,8 +1272,9 @@
 					CUSTMCOMM: "",
 					STR2: "", //配送中心ID
 					_STR2: "", //配送中心名称
-					CARDID: "普通蛋糕" //蛋糕类型
-
+					CARDID: "普通蛋糕", //蛋糕类型
+					SEX: "", //性别
+					AGES: "" //年龄
 				};
 				that.ADDRS = [];
 				that.ADDR = {

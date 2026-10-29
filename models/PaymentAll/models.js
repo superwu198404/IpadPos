@@ -62,7 +62,8 @@ export const PayDataAssemble = function() {
 				price: (Number(i.PRICE) * 100).toFixed(0), //单价
 				amount: (Number(i.NET) * 100).toFixed(0), //总金额
 				num: i.QTY,
-				plid: i.PLID
+				plid: i.PLID,
+				discount: "" //该行应抵扣金额(元)，折扣券查询时由后端回填，其他券种保持空串
 			}
 		}),
 		pay_way_list: this.PayWayList, //传入支付方式供业务使用

@@ -190,6 +190,40 @@ const PointsReturn = async function(loading_title, request, success, error) {
 			error(res)
 	});
 }
+//加赠积分（销售赠品赠积分）
+const AddGiftPoint = async function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "SingleAddCustPoints"
+	});
+	console.log("[AddGiftPoint]加赠积分参数:", data);
+	await Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
+//退还赠积分（退单时按原单积分数退回）
+const CancelGiftPoint = async function(loading_title, request, success, error) {
+	let data = requestAssemble(loading_title, {
+		brand: request.brand,
+		data: request.data,
+		paytype: "MemberInterface",
+		method: "SingleSubCustPoints"
+	});
+	console.log("[CancelGiftPoint]退还赠积分参数:", data);
+	await Req.asyncFuncOne(data, function(res) {
+		if (success)
+			success(res)
+	}, function(res) {
+		if (error)
+			error(res)
+	});
+}
 
 //卡券类销售接口
 
@@ -521,6 +555,8 @@ export default {
 	queryCardInfoByCode,
 	PointsDeduction,
 	PointsReturn,
+	AddGiftPoint,
+	CancelGiftPoint,
 	CARD_SMQUERY,
 	CARD_QUERY,
 	StockQuery,

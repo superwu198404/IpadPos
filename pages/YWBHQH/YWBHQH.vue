@@ -39,15 +39,17 @@
  					<view class="btns-list">
  						<view class="btns-groups">
  							<view class="btn1" @click="filterTasks()">刷新</view>
- 							<view class="btn1" @click="BHQHInput('1')">入库</view>
- 							<view class="btn1" @click="BHQHInput('0')">作废</view>
  							<view class="btn1" @click="BHQHOrderPrint()">打印</view>
+ 							<view class="btn2" @click="BHQHInput('1')">入库</view>
  							<view class="btn2" @click="ScanInput('1')">扫码入库</view>
- 							<view class="btn2" @click="ScanInput('0')">扫码作废</view>
  						</view>
- 						<view class="filter" @click="openFilterModal()">
- 							<image src="../../images/imgbh/operate-icon.png" mode="widthFix"></image>
- 							<text>筛选</text>
+ 						<view class="btns-groups">
+ 							<view class="btn3" @click="BHQHInput('0')">作废</view>
+ 							<view class="btn3" @click="ScanInput('0')">扫码作废</view>
+ 							<view class="filter" @click="openFilterModal()">
+ 								<image src="../../images/imgbh/operate-icon.png" mode="widthFix"></image>
+ 								<text>筛选</text>
+ 							</view>
  						</view>
  					</view>
  					<view v-if="listData.length>0" class="table-container">
@@ -470,14 +472,13 @@
  				{{ previewImgs.length }}
  			</view>
  			<scroll-view class="img-preview-scroll" scroll-y enable-flex :scroll-top="imgScrollTop"
-				@touchstart="onImgSwipeStart"
-				@touchend="onImgSwipeEnd">
+ 				@touchstart="onImgSwipeStart" @touchend="onImgSwipeEnd">
  				<view class="img-preview-inner">
-					<image :src="previewImgs[previewIdx]" mode="widthFix" :style="{ width: imgWidth + 'vw', opacity: imgOpacity, transition: 'opacity 0.15s ease' }"
- 					@click.stop
-					@touchstart="onPinchStart" @touchmove="onPinchMove" />
- 			</view>
-			</scroll-view>
+ 					<image :src="previewImgs[previewIdx]" mode="widthFix"
+ 						:style="{ width: imgWidth + 'vw', opacity: imgOpacity, transition: 'opacity 0.15s ease' }"
+ 						@click.stop @touchstart="onPinchStart" @touchmove="onPinchMove" />
+ 				</view>
+ 			</scroll-view>
  			<view class="img-preview-arrow img-preview-left" v-if="previewIdx > 0" @click.stop="imgPrev">‹</view>
  			<view class="img-preview-arrow img-preview-right" v-if="previewIdx < previewImgs.length - 1"
  				@click.stop="imgNext">›</view>
@@ -688,11 +689,11 @@
  				previewImgs: [],
  				previewIdx: 0,
  				imgWidth: 50,
-				imgOpacity: 1,
+ 				imgOpacity: 1,
  				imgLastDist: 0,
-				imgSwipeStartX: 0,
-				imgSwipeStartY: 0,
-				imgScrollTop: 0,
+ 				imgSwipeStartX: 0,
+ 				imgSwipeStartY: 0,
+ 				imgScrollTop: 0,
  				// 视频预览
  				showVideoPreview: false,
  				videoUrl: '',
@@ -750,31 +751,31 @@
  				this.showImgPreview = false;
  			},
  			imgPrev() {
-				if (this.previewIdx > 0) {
-					this.imgOpacity = 0;
-					setTimeout(() => {
-						this.previewIdx--;
-						this.imgWidth = 50;
-						this.imgScrollTop = Math.random();
-						this.$nextTick(() => {
-							this.imgOpacity = 1;
-						});
-					}, 150);
-				}
+ 				if (this.previewIdx > 0) {
+ 					this.imgOpacity = 0;
+ 					setTimeout(() => {
+ 						this.previewIdx--;
+ 						this.imgWidth = 50;
+ 						this.imgScrollTop = Math.random();
+ 						this.$nextTick(() => {
+ 							this.imgOpacity = 1;
+ 						});
+ 					}, 150);
+ 				}
  			},
  			imgNext() {
-				if (this.previewIdx < this.previewImgs.length - 1) {
-					this.imgOpacity = 0;
-					setTimeout(() => {
-						this.previewIdx++;
-						this.imgWidth = 50;
-						this.imgScrollTop = Math.random();
-						this.$nextTick(() => {
-							this.imgOpacity = 1;
-						});
-					}, 150);
-				}
-			},
+ 				if (this.previewIdx < this.previewImgs.length - 1) {
+ 					this.imgOpacity = 0;
+ 					setTimeout(() => {
+ 						this.previewIdx++;
+ 						this.imgWidth = 50;
+ 						this.imgScrollTop = Math.random();
+ 						this.$nextTick(() => {
+ 							this.imgOpacity = 1;
+ 						});
+ 					}, 150);
+ 				}
+ 			},
  			onPinchStart(e) {
  				if (e.touches.length === 2) {
  					let dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -792,34 +793,34 @@
  					this.imgLastDist = dist;
  				}
  			},
-			// 图片预览滑动切换
-			onImgSwipeStart(e) {
-				if (e.touches.length === 1) {
-					this.imgSwipeStartX = e.touches[0].clientX;
-					this.imgSwipeStartY = e.touches[0].clientY;
-				}
-			},
-			onImgSwipeEnd(e) {
-				if (e.touches.length > 0 || this.imgLastDist > 0) {
-					if (e.touches.length === 0) {
-						this.imgLastDist = 0;
-					}
-					return;
-				}
-				const deltaX = e.changedTouches[0].clientX - this.imgSwipeStartX;
-				const deltaY = e.changedTouches[0].clientY - this.imgSwipeStartY;
-				const threshold = 60;
-				if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
-					// 左右滑动
-					if (deltaX > 0) {
-						this.imgPrev();
-					} else {
-						this.imgNext();
-					}
-				}
-				this.imgSwipeStartX = 0;
-				this.imgSwipeStartY = 0;
-			},
+ 			// 图片预览滑动切换
+ 			onImgSwipeStart(e) {
+ 				if (e.touches.length === 1) {
+ 					this.imgSwipeStartX = e.touches[0].clientX;
+ 					this.imgSwipeStartY = e.touches[0].clientY;
+ 				}
+ 			},
+ 			onImgSwipeEnd(e) {
+ 				if (e.touches.length > 0 || this.imgLastDist > 0) {
+ 					if (e.touches.length === 0) {
+ 						this.imgLastDist = 0;
+ 					}
+ 					return;
+ 				}
+ 				const deltaX = e.changedTouches[0].clientX - this.imgSwipeStartX;
+ 				const deltaY = e.changedTouches[0].clientY - this.imgSwipeStartY;
+ 				const threshold = 60;
+ 				if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
+ 					// 左右滑动
+ 					if (deltaX > 0) {
+ 						this.imgPrev();
+ 					} else {
+ 						this.imgNext();
+ 					}
+ 				}
+ 				this.imgSwipeStartX = 0;
+ 				this.imgSwipeStartY = 0;
+ 			},
  			// 视频预览
  			openVideoPreview(item) {
  				if (!item.VIDEOURL) return;
@@ -1582,6 +1583,17 @@
  		padding: 20rpx 32rpx;
  		box-sizing: border-box;
  		background: #006B44;
+ 		border-radius: 12rpx;
+
+ 		font-weight: 700;
+ 		font-size: 36rpx;
+ 		color: #fff;
+ 	}
+
+ 	.btns-groups .btn3 {
+ 		padding: 20rpx 32rpx;
+ 		box-sizing: border-box;
+ 		background: #b75c00;
  		border-radius: 12rpx;
 
  		font-weight: 700;
@@ -2797,6 +2809,7 @@
  	.img-preview-scroll {
  		height: 100vh;
  	}
+
  	.img-preview-inner {
  		min-height: 100vh;
  		display: flex;

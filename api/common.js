@@ -590,6 +590,23 @@ var GetDapzcs = async function(e, func, p) {
 		console.log("获取配置参数出错:", err);
 	});
 }
+//批量获取档案参数
+var GetDapzcsMuti = async function(e, func, p) {
+	let str = e;
+	if (Array.isArray(e) && e.length > 0) {
+		str = e.join("','");
+	}
+	let sql = "select * from  dapzcs_nr where id  in('" + str + "')";
+	if (p) { //附加条件
+		sql += p;
+	}
+	await db.get().executeQry(sql, "数据查询中", function(res) {
+		console.log("获取档案配置参数成功:", res);
+		if (func) func(res);
+	}, function(err) {
+		console.log("获取档案配置参数出错:", err);
+	});
+}
 
 //查询退单所需信息
 var QueryRefund = async function(trade) {
@@ -1225,5 +1242,6 @@ export default {
 	WebDBExecute,
 	CheckSign,
 	GetDAPZCS,
+	GetDapzcsMuti,
 	Database
 }

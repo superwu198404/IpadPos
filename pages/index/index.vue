@@ -1358,6 +1358,12 @@
 				that.$refs.printerPage.againPrinter(that.refund_no);
 			},
 			closeDB: async function() {
+				// let result = await common.Query("select *,IFNULL(DKFID, '') DKFID from cxformd001");
+				// let result1 = await common.Query("select * from cxformd003");
+				// console.log("cxformd001", {
+				// 	cx1: result,
+				// 	cx3: result1
+				// });
 				await db.get().close();
 			},
 			ConnectDebug() {

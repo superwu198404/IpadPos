@@ -229,7 +229,7 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 			if (!dataObj[key]) continue;
 			let dataArr = JSON.parse(JSON.stringify(dataObj[key])); //深拷贝一下
 			if (key == "SALE001") {
-				if(Object.keys(dataArr).length != 0)//空对象
+				if (Object.keys(dataArr).length != 0) //空对象
 					dataArr.XSPTID = "PAD";
 			}
 			if (key == "SALE002") {
@@ -284,7 +284,7 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		let exeSql = SqliteSql.concat(sql4.sqlliteArr);
 		console.log("[CreateSaleOrder]准备执行SQL...");
 		let dbo = db.get();
-		await new Promise((resolve,reject) => {
+		await new Promise((resolve, reject) => {
 			dbo.executeDml(exeSql, "订单创建中", res => {
 				if (func) func(res);
 				result.code = true;
@@ -307,9 +307,9 @@ export const CreateSaleOrder = async function(dataObj, additional = additional_d
 		result.code = false;
 		result.data = e;
 		result.msg = "销售单创建异常!";
-		console.log("[CreateSaleOrder]创建过程中发生异常:",e);
+		console.log("[CreateSaleOrder]创建过程中发生异常:", e);
 	}
-	console.log("[CreateSaleOrder]准备返回创建结果:",result);
+	console.log("[CreateSaleOrder]准备返回创建结果:", result);
 	return result;
 }
 export const SaleRefundOrderGenaration = async function(params = sale_order_generation_def_params, callback) {
@@ -333,12 +333,12 @@ export const SaleRefundOrderGenaration = async function(params = sale_order_gene
 }
 //新积分上传 适配 sale123
 export const PointUploadNew = async function(sale1, sale2, sale3) {
+	console.log("[PointUploadNew]sale1参数：", sale1);
 	if (!sale1 || !sale1.CUID) { //为空或者hyid为空则跳出
 		util.simpleMsg("积分上传失败：会员ID为空", "none");
 		return;
 	}
 	let obj = {};
-	console.log("sale1参数：", sale1);
 	let type1 = common.GetPayOrRefund(sale1);
 	let mode = (type1 == common.actTypeEnum.Payment) ? "INCREASE" : "DECREASE";
 	obj.order_no = sale1.BILL;
@@ -391,7 +391,7 @@ export const PointUpload = async function(def = point_upload_def_params) {
 			total_amount += item.NET;
 			return {
 				lineNumber: i,
-				product: item.BARCODE,
+				product: item.BARCODE || item.SPID,
 				category: item.PLID,
 				quantity: item.QTY,
 				userPrice: item.PRICE,

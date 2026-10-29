@@ -86,16 +86,17 @@ const Cxdict = async (spids) => {
 
 	//获取主单的Sql cxformd001
 	dscxm = await getCxSql_db.getCxmSql(storeDqid, dateTime, storeid);
-	console.log("生效的促销单数量1：", dscxm.length);
+	// console.log("生效的促销单数量1：", dscxm.length);
 	//促销规则Sql
 	dscxclass = await getCxSql_db.cxClassSql(storeid, dateTime);
-	console.log("生效的促销单数量2：", dscxclass.length);
+	// console.log("生效的促销单数量2：", dscxclass.length);
 	//促销内容对应的产品Sql
 	dscxsp = await getCxSql_db.cxSPsql(storeid, dateTime, spids);
-	console.log("生效的促销单数量3：", dscxm.length);
+	// console.log("生效的促销单数量3：", dscxm.length);
 	//促销赠券
 	dszqda = await getCxSql_db.cxZqSql(gsid, storeid, dateTime);
-	console.log("生效的促销单数量4：", dszqda.length);
+	// console.log("生效的促销单数量4：", dszqda.length);
+
 	//循环主单数据处理
 	if (dscxm.length < 1) {
 		return;
@@ -141,6 +142,7 @@ const Cxdict = async (spids) => {
 			C1.upleave = cxjfup;
 			C1.OneSp = false;
 			C1.HYLV = cx_util.snvl(dscxm[i].HYLV, 0);
+			C1.HYJBID = cx_util.snvl(dscxm[i].HYJBID, "");
 			C1.SDATE = cx_util.snvl(dscxm[i].SDATE, "");
 			C1.EDATE = cx_util.snvl(dscxm[i].EDATE, "");
 			try {
@@ -295,7 +297,7 @@ const Createcx = async (sale02_arr, xstype, hyinfoModel, ispoints) => {
 	console.log("促销数据初始化！", spids);
 	await Cxdict(spids);
 	// } 
-	if (xstype == "sale") {
+	if (xstype == "sale" || xstype == "sale_credit") { //260924赊销也能参数促销和普通销售一个限定
 		is_Xstype = "Sale";
 	} else {
 		is_Xstype = "SaleYd";
@@ -619,8 +621,32 @@ const ynjsCx = function(bill) {
 	}
 }
 
+//判断会员级别限定  HYJBID为空则不限定，所有会员参与；有值则须与当前会员级别相等
+const hyLevelCheck = function(bill) {
+	let mcc = cxdict.get(bill);
+	//非会员促销不校验
+	if (mcc.CXRY != "Hy") {
+		return true;
+	}
+	let limit = cx_util.snvl(mcc.HYJBID, "");
+	//没限定（空），所有会员参与
+	if (limit == "") {
+		return true;
+	}
+	//有限定，取当前会员级别
+	let curLv = cx_util.snvl(hymen.hy_Level ? hymen.hy_Level.Level : "", "");
+	if (curLv == "") {
+		return false;
+	}
+	return limit.trim() == curLv.trim();
+}
+
 //判断会员促销方式
 const ynjsCxforHy = function(bill) {
+	//会员级别限定校验
+	if (!hyLevelCheck(bill)) {
+		return false;
+	}
 	let mcc = cxdict.get(bill);
 	//console.log("ynjsCxforHy mcc.CXRY", mcc.CXRY);
 	if (!isHy) {
@@ -824,6 +850,7 @@ const cxClasCompute = function(spid, salebill, saledate, bill, bufflist, sltype)
 	let cx1 = cxdict.get(bill);
 	if (cx1.YN_JSLB) {
 		if (cx1.OneJs) {
+			// console.log("JustOnelbcx 只计算一次价随量变", bill);
 			JustOnelbcx(spid, salebill, saledate, cx1, bufflist, sltype);
 		} else {
 			Jslbcx(spid, salebill, saledate, cx1, bufflist, sltype);
@@ -1607,6 +1634,25 @@ const setHjInfo = function(cx, jfxs, net, jfnum) {
 //作为一次价随量变促销的计算方法
 const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level) {
 	try {
+		//2026-10-09 修改：先对本次参与促销的所有商品（满足促销条件的商品）求和
+		//sumQty：参与促销的商品总数量   sumNet：参与促销的商品总金额
+		let sumQty = 0;
+		let sumNet = 0;
+		for (let k = 0; k < pm_list.length; k++) {
+			if (pm_list[k] == null) {
+				continue;
+			}
+			let kFsqty = cx_util.nnvl(cxbilldts[k][fscs], 0);
+			if (kFsqty == 0) {
+				continue;
+			}
+			let kPrice = cx_util.nnvl(cxbilldts[k][oprice], 0);
+			//合并总数量
+			sumQty += kFsqty;
+			//合并总金额 = 单价 * 数量 累加
+			sumNet += kPrice * kFsqty;
+		}
+
 		let TjQty = Number.MIN_VALUE;
 		let lcm = 1
 		for (let i = 0; i < pm_list.length; i++) {
@@ -1625,15 +1671,24 @@ const SubjustJslbCx = function(spid, bill, saledate, pm_list, cx, fsznet, level)
 			if (TjQty == Number.MIN_VALUE) {
 				switch (cxsub.ZkTj) {
 					case "Net":
-						TjQty = cxsub.NetCondition[level];
+						///2026-10-09 修改，原取满足第一次价随量变的规则金额参与计算，改为参与促销商品合并后的总金额计算
+						//TjQty = cxsub.NetCondition[level];
+						TjQty = sumNet;
 						break;
 					case "Qty":
-						TjQty = cxsub.QtyCondition[level];
+						///2026-10-09 修改，原取满足第一次价随量变的规则数量参与计算，改为参与促销商品合并后的总数量计算
+						//TjQty = cxsub.QtyCondition[level];
+						TjQty = sumQty;
 						break;
 				}
 			}
 			//判断当前产品的数量和条件之间的差异关系
-			if (TjQty > 0) {
+			//仅一级阶梯（cxsub.sublv==1）时：满足条件后对实际购买数量整体计算，不按条件数量/金额封顶
+			if (cxsub.sublv == 1) {
+				if (TjQty <= 0) {
+					fsqty = 0;
+				}
+			} else if (TjQty > 0) {
 				switch (cxsub.ZkTj) {
 					case "Net":
 						if (fsqty * price > TjQty) {

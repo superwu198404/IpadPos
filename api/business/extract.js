@@ -37,6 +37,11 @@ var ConfirmADDR = function(data, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
+var confirmADDR = function(data, func) {
+	let apistr = "MobilePos_API.Models.YDSALE001CLASS.confirmADDR";
+	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
+	Req.asyncFuncOne(reqdata, func, func);
+}
 
 //获取高德配置信息
 var GetAmap = async function(e) {
@@ -114,7 +119,6 @@ var searchMapAddr = function(data, func) {
 	let reqdata = Req.resObj(true, "操作中...", data, apistr, true);
 	Req.asyncFuncOne(reqdata, func, func);
 }
-
 var getGSKHINFO = (gsid, khid) => {
 	// await common.GetPOSCS(khid, r => {
 	// 	console.log("POSCS查询结果", r)；
@@ -206,6 +210,7 @@ export default {
 	AddressQuery,
 	Del_Addr,
 	ConfirmADDR,
+	confirmADDR,
 	GetAmap,
 	searchMapAddr,
 	MatchBHKH,

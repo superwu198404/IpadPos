@@ -296,7 +296,6 @@ var dataInit = async function(pm_initType, ynshow = false) {
 				let arr004 = tx004.filter((item4) => {
 					return item4.TABNAME == item.TABNAME
 				});
-				//console.log( JSON.stringify( arr004));
 				let new004 = arr004.map(function(item004) {
 					var ret_Sql = "";
 					if (item004.DELSTR) {

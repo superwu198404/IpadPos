@@ -299,8 +299,10 @@
 			</FZCX>
 		</view>
 		<!-- 销售赠品 -->
-		<view class="boxs" style="z-index: 99999;" v-if="mainSale.ComponentsManage.XSZS">
-			<XSZS v-if="mainSale.ComponentsManage.XSZS" :_sale2="mainSale.sale002">
+		<!-- 去掉 boxs：半透明遮罩移到 XSZS 组件内部，随数据一起出现，避免无赠品时闪黑屏 -->
+		<view v-if="mainSale.ComponentsManage.XSZS">
+			<XSZS v-if="mainSale.ComponentsManage.XSZS" :_sale2="mainSale.sale002" :_sale="mainSale.sale001"
+				:_mainSale="mainSale">
 			</XSZS>
 		</view>
 		<!-- 结算单  -->
@@ -451,7 +453,7 @@
 							v-if="mainSale.cxIsJF&&mainSale.score_info.ispoints<=0&&!mainSale.cxIsJFYC"
 							@click="mainSale.CalScore(0)">优先积分促销</text>
 						<text class="qingk"
-							v-if="(mainSale.clickSaleType.clickType=='sale'||mainSale.clickSaleType.clickType=='sale_reserve')&&(!mainSale.Disc.val.ZKType&&mainSale.hasCX)"
+							v-if="CXLimitSaleType.includes(mainSale.clickSaleType.clickType)&&(!mainSale.Disc.val.ZKType&&mainSale.hasCX)"
 							@click="mainSale.ResetCX()">{{!mainSale.currentOperation.ynResetCX?"清除促销":"恢复促销"}}</text>
 					</view>
 					<view class="h5"><text>账单</text>
@@ -839,7 +841,8 @@
 					top: "0px",
 					transition: "all .5s",
 					display: "none"
-				}
+				},
+				CXLimitSaleType: ["sale", "sale_reserve", "sale_credit"], //促销可用模式：销售，预定，赊销
 			}
 		},
 		components: {

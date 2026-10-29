@@ -743,6 +743,23 @@ var jhqPay = {
 						}
 					}
 				}
+				//折扣券：后端已按参与商品完成行级分摊，此处整份替换 product_info
+				//必须放在 CreateData 之前，否则核销请求的 sign 里还是不含 discount 的旧数据
+				if (res.code && res.data && Array.isArray(res.data.product_info) && res.data.product_info
+					.length > 0) {
+					console.log("[PaymentAll]折扣券行级抵扣明细：", res.data.product_info);
+					body.product_info = res.data.product_info.map(p => {
+						return {
+							spid: p.spid,
+							name: p.name,
+							price: p.price,
+							amount: p.amount,
+							num: p.num,
+							plid: p.plid,
+							discount: p.discount ?? ""
+						}
+					});
+				}
 				return CreateData(pt, "支付中...", "Payment", body);
 			},
 			function(res) {
